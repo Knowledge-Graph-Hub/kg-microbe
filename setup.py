@@ -24,7 +24,7 @@ def find_version(*file_paths):
     raise RuntimeError('Unable to find version string.')
 
 
-__version__ = find_version('kg_covid_19', '__version__.py')
+__version__ = find_version('traits', '__version__.py')
 
 test_deps = [
     'pytest',
@@ -40,13 +40,13 @@ extras = {
 }
 
 setup(
-    name='kg_covid_19',
+    name='traits',
     version=__version__,
-    description='KG hub for emerging viruses',
+    description='KG hub for traits',
     long_description=long_description,
-    url='https://github.com/justaddcoffee/kg-emerging-viruses',
-    author='justaddcoffee+github@gmail.com',
-    author_email='Justin Reese',
+    url='https://github.com/Knowledge-Graph-Hub/traits',
+    author='Harshad Hegde',
+    author_email='hhegde@lbl.gov',
     python_requires='>=3.7',
 
     # choose your license

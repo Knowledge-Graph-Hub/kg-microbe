@@ -3,12 +3,12 @@
 import os
 
 import click
-from micro-pheno-traits import download as kg_download
-from micro-pheno-traits import transform as kg_transform
-from micro-pheno-traits.make_holdouts import make_holdouts
-from micro-pheno-traits.merge_utils.merge_kg import load_and_merge
-from micro-pheno-traits.query import run_query, parse_query_yaml, result_dict_to_tsv
-from micro-pheno-traits.transform import DATA_SOURCES
+from traits import download as kg_download
+from traits import transform as kg_transform
+from traits.make_holdouts import make_holdouts
+from traits.merge_utils.merge_kg import load_and_merge
+from traits.query import run_query, parse_query_yaml, result_dict_to_tsv
+from traits.transform import DATA_SOURCES
 
 
 @click.group()
@@ -47,7 +47,7 @@ def download(*args, **kwargs) -> None:
 @click.option("sources", "-s", default=None, multiple=True,
               type=click.Choice(DATA_SOURCES.keys()))
 def transform(*args, **kwargs) -> None:
-    """Calls scripts in micro-pheno-traits/transform/[source name]/ to transform each source
+    """Calls scripts in traits/transform/[source name]/ to transform each source
     into nodes and edges.
 
     Args:

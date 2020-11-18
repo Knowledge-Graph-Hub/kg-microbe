@@ -7,7 +7,7 @@ from numpy import NaN
 from pandas import np
 from parameterized import parameterized
 
-from kg_covid_19.make_holdouts import make_holdouts, tsv_to_df, make_negative_edges, \
+from traits.make_holdouts import make_holdouts, tsv_to_df, make_negative_edges, \
     make_positive_edges, df_to_tsv
 
 

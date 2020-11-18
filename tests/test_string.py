@@ -5,7 +5,7 @@ from unittest import TestCase, skip
 
 from parameterized import parameterized
 
-from kg_covid_19.transform_utils.string_ppi import StringTransform
+from traits.transform_utils.string_ppi import StringTransform
 
 
 class TestString(TestCase):

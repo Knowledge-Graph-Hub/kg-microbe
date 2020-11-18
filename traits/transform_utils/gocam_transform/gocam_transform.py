@@ -5,7 +5,7 @@ from typing import Optional
 
 from kgx import RdfTransformer, PandasTransformer # type: ignore
 
-from kg_covid_19.transform_utils.transform import Transform
+from traits.transform_utils.transform import Transform
 
 
 class GocamTransform(Transform):

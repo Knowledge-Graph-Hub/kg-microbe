@@ -8,8 +8,8 @@ import tempfile
 from collections import defaultdict
 from typing import Union, Dict, List, Optional
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils.transform_utils import write_node_edge_item, unzip_to_tempdir
+from traits.transform_utils.transform import Transform
+from traits.utils.transform_utils import write_node_edge_item, unzip_to_tempdir
 from xml.dom import minidom  # type: ignore
 
 """

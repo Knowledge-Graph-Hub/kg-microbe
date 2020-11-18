@@ -3,29 +3,29 @@
 import logging
 from typing import List
 
-from kg_covid_19.transform_utils.chembl.chembl_transform import ChemblTransform
-from kg_covid_19.transform_utils.drug_central.drug_central import DrugCentralTransform
-from kg_covid_19.transform_utils.gocam_transform.gocam_transform import GocamTransform
-from kg_covid_19.transform_utils.intact.intact import IntAct
-from kg_covid_19.transform_utils.ontology import OntologyTransform
-from kg_covid_19.transform_utils.ontology.ontology_transform import ONTOLOGIES
-from kg_covid_19.transform_utils.\
-    sars_cov_2_gene_annot.sars_cov_2_gene_annot import SARSCoV2GeneAnnot
-from kg_covid_19.transform_utils.pharmgkb import PharmGKB
-from kg_covid_19.transform_utils.scibite_cord import ScibiteCordTransform
-from kg_covid_19.transform_utils.string_ppi import StringTransform
-from kg_covid_19.transform_utils.ttd.ttd import TTDTransform
-from kg_covid_19.transform_utils.zhou_host_proteins.zhou_transform import ZhouTransform
+from traits.transform_utils.chembl.chembl_transform import ChemblTransform
+#from traits.transform_utils.drug_central.drug_central import DrugCentralTransform
+from traits.transform_utils.gocam_transform.gocam_transform import GocamTransform
+from traits.transform_utils.intact.intact import IntAct
+from traits.transform_utils.ontology import OntologyTransform
+from traits.transform_utils.ontology.ontology_transform import ONTOLOGIES
+#from traits.transform_utils.\
+#    sars_cov_2_gene_annot.sars_cov_2_gene_annot import SARSCoV2GeneAnnot
+#from traits.transform_utils.pharmgkb import PharmGKB
+#from traits.transform_utils.scibite_cord import ScibiteCordTransform
+from traits.transform_utils.string_ppi import StringTransform
+#from traits.transform_utils.ttd.ttd import TTDTransform
+# from traits.transform_utils.zhou_host_proteins.zhou_transform import ZhouTransform
 
 
 DATA_SOURCES = {
-    'ZhouTransform': ZhouTransform,
-    'DrugCentralTransform': DrugCentralTransform,
-    'TTDTransform': TTDTransform,
+    #'ZhouTransform': ZhouTransform,
+    #'DrugCentralTransform': DrugCentralTransform,
+    #'TTDTransform': TTDTransform,
     'StringTransform': StringTransform,
-    'ScibiteCordTransform': ScibiteCordTransform,
-    'PharmGKB': PharmGKB,
-    'SARSCoV2GeneAnnot': SARSCoV2GeneAnnot,
+    #'ScibiteCordTransform': ScibiteCordTransform,
+    #'PharmGKB': PharmGKB,
+    #'SARSCoV2GeneAnnot': SARSCoV2GeneAnnot,
     'IntAct': IntAct,
     'GoTransform': OntologyTransform,
     'HpTransform': OntologyTransform,
@@ -37,7 +37,7 @@ DATA_SOURCES = {
 
 
 def transform(input_dir: str, output_dir: str, sources: List[str] = None) -> None:
-    """Call scripts in kg_covid_19/transform/[source name]/ to transform each source into a graph format that
+    """Call scripts in traits/transform/[source name]/ to transform each source into a graph format that
     KGX can ingest directly, in either TSV or JSON format:
     https://github.com/NCATS-Tangerine/kgx/blob/master/data-preparation.md
 

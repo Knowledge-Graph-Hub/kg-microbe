@@ -4,8 +4,8 @@ import os
 import compress_json  # type: ignore
 from typing import Dict, List, Any, Set, Optional, IO
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils.transform_utils import write_node_edge_item, \
+from traits.transform_utils.transform import Transform
+from traits.utils.transform_utils import write_node_edge_item, \
     get_item_by_priority, uniprot_make_name_to_id_mapping, collapse_uniprot_curie
 
 """

@@ -1,6 +1,6 @@
 import unittest
 from parameterized import parameterized
-from kg_covid_19.utils.transform_utils import guess_bl_category, collapse_uniprot_curie
+from traits.utils.transform_utils import guess_bl_category, collapse_uniprot_curie
 
 
 class TestTransformUtils(unittest.TestCase):

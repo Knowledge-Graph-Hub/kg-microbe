@@ -18,141 +18,20 @@
 #  https://bucket-name.s3.Region.amazonaws.com/key_name
 #
 ---
+# #
+# # Most of the data is extracted from the 'bacteria-archaea-traits' github repository
+# # link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw
+# #
 #
-#  Zhou host proteins - viral protein interactions
-#  Data from "Network-based drug repurposing for novel coronavirus 2019-nCoV/SARS-CoV-2"
-#  https://doi.org/10.1038/s41421-020-0153-3
--
-  # Supplementary data containing viral protein -> host protein interactions
-  # https://doi.org/10.1038/s41421-020-0153-3
-  url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41421-020-0153-3/MediaObjects/41421_2020_153_MOESM1_ESM.pdf
-  local_name: 41421_2020_153_MOESM1_ESM.pdf
-
-#
-# Drug Central
+# Amend-shock-species
 #
 -
-  # drug - target interactions from Drug Central
-  url: http://unmtid-shinyapps.net/download/drug.target.interaction.tsv.gz
-  local_name: drug.target.interaction.tsv.gz
--
-  url: http://unmtid-shinyapps.net/download/tcrd.zip
-  local_name: tcrd.zip
+  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/amend-shock/amend%26shock2001_species.csv
+  local_name: amendShockSpecies
 
 #
-# PPI from STRING DB
+# Microbe-directory
 #
 -
-
-  # This is protein network data (incl. distinction: direct vs. interologs)
-  # constrained to just human interactions.
-  url: https://stringdb-static.org/download/protein.links.full.v11.0/9606.protein.links.full.v11.0.txt.gz
-  local_name: 9606.protein.links.full.v11.0.txt.gz
-
--
-  # gene to ensembl IDs
-  url: https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2ensembl.gz
-  local_name: gene2ensembl.gz
-
--
-  # gene info
-  url: https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene_info.gz
-  local_name: gene_info.gz
-
--
-  # this is to make bl:xrefs from ENSP protein ids to UniprotKB ids (issue #235)
-  # to be ID mapped in merge step
-  # nb: we are also downloading and using this file for the TTD transform
-  url: ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz
-  local_name: HUMAN_9606_idmapping.dat.gz
-
-#
-# TTD - Therapeutic Targets Database
-# drug targets, and associated data for each (drugs, ids, etc)
-#
--
-  # full data download file
-  url: http://db.idrblab.net/ttd/sites/default/files/ttd_database/P1-01-TTD_target_download.txt
-  local_name: P1-01-TTD_target_download.txt
-
--
-  url: ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz
-  local_name: HUMAN_9606_idmapping.dat.gz
-
-#
-# SciBite CORD-19 annotations v1.5
-#
--
-  url: https://media.githubusercontent.com/media/SciBiteLabs/CORD19/master/annotated-CORD-19/1.5/pdf_json.zip
-  local_name: pdf_json.zip
-
--
-  url: https://media.githubusercontent.com/media/SciBiteLabs/CORD19/master/annotated-CORD-19/1.5/pmc_json.zip
-  local_name: pmc_json.zip
-
- # SciBite CORD-19 entity co-occurrences v1.2
--
-  url: https://media.githubusercontent.com/media/SciBiteLabs/CORD19/master/sentence-co-occurrence-CORD-19/1.2/cv19_scc_1_2.zip
-  local_name: cv19_scc_1_2.zip
-
--
-  url: https://gist.githubusercontent.com/deepakunni3/e4490cfb8262e8928944047140856fce/raw/72f617f6726f0811b3da4d5c11ab1677af7ee5f4/wikidata_country_codes.tsv
-  local_name: wikidata_country_codes.tsv
-
-#
-# PharmGKB - drug -> drug target info, and gene id mappings
-#
--
-  url: https://api.pharmgkb.org/v1/download/file/data/relationships.zip
-  local_name: relationships.zip
--
-  url: https://s3.pgkb.org/data/genes.zip
-  local_name: pharmgkb_genes.zip
--
-  url: https://s3.pgkb.org/data/drugs.zip
-  local_name: pharmgkb_drugs.zip
-
-# SARS-CoV-2 gene annotations from Uniprot
-#
-
--
-  # Gene Product Association Data for SARS-CoV-2 genes in GPAD format
-  # http://geneontology.org/docs/gene-product-association-data-gpad-format/
-  url: ftp://ftp.ebi.ac.uk/pub/contrib/goa/uniprot_sars-cov-2.gpa
-  local_name: uniprot_sars-cov-2.gpa
--
-  # Gene Product information for SARS-CoV-2 genes in GPI format
-  # http://geneontology.org/docs/gene-product-information-gpi-format/
-  url: https://raw.githubusercontent.com/Knowledge-Graph-Hub/kg-covid-19/master/curated/ORFs/uniprot_sars-cov-2.gpi
-  local_name: uniprot_sars-cov-2.gpi
-
-#
-# IntAct - CoV protein -> human protein interaction data
-#
--
-  url: ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi30/datasets/Coronavirus.zip
-  local_name: intact_coronavirus.zip
-
-#
-# Ontologies
-#
--
-  url: http://purl.obolibrary.org/obo/hp.json
-  local_name: hp.json
--
-  url: http://purl.obolibrary.org/obo/mondo.json
-  local_name: mondo.json
--
-  url: http://current.geneontology.org/ontology/extensions/go-plus.json
-  local_name: go-plus.json
--
-  url: http://kg-hub.berkeleybop.io/frozen_incoming_data/chebi.json.gz
-  local_name: chebi.json.gz
-
-#
-# GO-CAM
-#
-
--
-  url: https://github.com/justaddcoffee/go-cam-models-kg-covid-19/raw/master/lifted-go-cams-20200619.xml.gz
-  local_name: lifted-go-cams-20200619.xml.gz
+  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/microbe-directory/microbe-directory.csv?raw=true
+  local_name: microbe-directory

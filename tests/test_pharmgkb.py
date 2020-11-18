@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from kg_covid_19.transform_utils.pharmgkb import PharmGKB
+from traits.transform_utils.pharmgkb import PharmGKB
 
 
 class TestPharmGKB(TestCase):

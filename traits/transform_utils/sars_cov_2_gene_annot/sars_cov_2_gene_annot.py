@@ -4,10 +4,10 @@ import logging
 import os
 from typing import Generator, TextIO, List, Optional
 
-from kg_covid_19.utils.transform_utils import get_item_by_priority, ItemInDictNotFound, guess_bl_category
+from traits.utils.transform_utils import get_item_by_priority, ItemInDictNotFound, guess_bl_category
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils import write_node_edge_item
+from traits.transform_utils.transform import Transform
+from traits.utils import write_node_edge_item
 
 """Parse the GPA and GPI files for SARS-CoV-2 gene annotations, including GO annotations
 and more. Make a node for each gene using GPI lines, and make an edge for 

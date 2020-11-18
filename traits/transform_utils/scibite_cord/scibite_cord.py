@@ -10,9 +10,9 @@ from zipfile import ZipFile
 import pandas as pd # type: ignore
 from prefixcommons import contract_uri # type: ignore
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils import write_node_edge_item
-from kg_covid_19.utils.transform_utils import unzip_to_tempdir
+from traits.transform_utils.transform import Transform
+from traits.utils import write_node_edge_item
+from traits.utils.transform_utils import unzip_to_tempdir
 
 CUSTOM_CMAP = {
     'CHEMBL.COMPOUND': 'https://www.ebi.ac.uk/chembl/compound_report_card/',

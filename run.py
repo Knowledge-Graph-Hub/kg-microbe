@@ -5,9 +5,9 @@ import os
 import click
 from traits import download as kg_download
 from traits import transform as kg_transform
-from traits.make_holdouts import make_holdouts
+#from traits.make_holdouts import make_holdouts
 from traits.merge_utils.merge_kg import load_and_merge
-from traits.query import run_query, parse_query_yaml, result_dict_to_tsv
+#from traits.query import run_query, parse_query_yaml, result_dict_to_tsv
 from traits.transform import DATA_SOURCES
 
 

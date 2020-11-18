@@ -6,9 +6,9 @@ import os
 import re
 from typing import Union, List, Dict, Any, Optional
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils import write_node_edge_item
-from kg_covid_19.utils.transform_utils import get_item_by_priority, \
+from traits.transform_utils.transform import Transform
+from traits.utils import write_node_edge_item
+from traits.utils.transform_utils import get_item_by_priority, \
     ItemInDictNotFound, uniprot_make_name_to_id_mapping
 
 """Ingest TTD - Therapeutic Targets Database

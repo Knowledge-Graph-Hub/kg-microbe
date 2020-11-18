@@ -7,7 +7,7 @@ from unittest import TestCase
 import pandas as pd
 from parameterized import parameterized
 
-from kg_covid_19.query import parse_query_yaml, result_dict_to_tsv
+from traits.query import parse_query_yaml, result_dict_to_tsv
 
 
 class TestQuery(TestCase):

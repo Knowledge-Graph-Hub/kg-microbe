@@ -1,4 +1,4 @@
-from kg_covid_19.__version__ import __version__
+from traits.__version__ import __version__
 from validate_version_code import validate_version_code
 
 

@@ -6,8 +6,8 @@ import compress_json  # type: ignore
 from typing import Optional, Set, Dict, List
 from requests import HTTPError
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils import write_node_edge_item
+from traits.transform_utils.transform import Transform
+from traits.utils import write_node_edge_item
 
 
 TAXON_MAP = {

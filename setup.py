@@ -62,15 +62,10 @@ setup(
     # add package dependencies
     install_requires=[
         'tqdm',
-        'tabula-py',
-        'obonet',
         'wget',
         'compress_json',
         'click',
-        'pyyaml',
-        'bmt',
-        'SPARQLWrapper',
-        'ensmallen_graph==0.4.3'
+        'pyyaml'
     ],
     extras_require=extras,
 )

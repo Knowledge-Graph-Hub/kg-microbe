@@ -8,8 +8,8 @@ from collections import defaultdict
 from io import TextIOBase
 from typing import Optional, TextIO
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils.transform_utils import data_to_dict, parse_header, \
+from traits.transform_utils.transform import Transform
+from traits.utils.transform_utils import data_to_dict, parse_header, \
     unzip_to_tempdir, write_node_edge_item, get_item_by_priority, ItemInDictNotFound
 
 """Ingest PharmGKB drug -> drug target info

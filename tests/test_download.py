@@ -1,7 +1,7 @@
 import os
 import tempfile
 from unittest import TestCase, mock
-from kg_covid_19 import download
+from traits import download
 
 
 class TestDownload(TestCase):

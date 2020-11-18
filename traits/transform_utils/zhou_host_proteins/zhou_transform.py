@@ -7,8 +7,8 @@ from typing import Optional
 
 from tabula import io  # type: ignore
 
-from kg_covid_19.transform_utils.transform import Transform
-from kg_covid_19.utils.transform_utils import multi_page_table_to_list, write_node_edge_item
+from traits.transform_utils.transform import Transform
+from traits.utils.transform_utils import multi_page_table_to_list, write_node_edge_item
 
 """
 Ingest Covid-19 associated host proteins from Suppl Fig 3 of this paper: 

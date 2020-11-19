@@ -1,7 +1,7 @@
 import types
 from unittest import TestCase
 from parameterized import parameterized
-from kg-microbe.transform_utils.ttd.ttd import TTDTransform
+from kg_microbe.transform_utils.ttd.ttd import TTDTransform
 
 
 class TestTTD(TestCase):

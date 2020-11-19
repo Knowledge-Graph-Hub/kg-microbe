@@ -3,7 +3,7 @@ from xml.dom import minidom
 
 from parameterized import parameterized
 
-from kg-microbe.transform_utils.intact.intact import IntAct
+from kg_microbe.transform_utils.intact.intact import IntAct
 
 
 class TestIntAct(unittest.TestCase):

@@ -1,7 +1,7 @@
 import os
 import tempfile
 from unittest import TestCase, mock
-from traits.utils import download_from_yaml
+from kg-microbe.utils import download_from_yaml
 
 
 class TestDownloadFromYaml(TestCase):

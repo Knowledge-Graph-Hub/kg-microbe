@@ -22,7 +22,7 @@
 # # Most of the data is extracted from the 'bacteria-archaea-traits' github repository
 # # link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw
 # #
-#
+# # ******Raw Data*******
 # Amend-shock-species (_species.csv)
 # link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/amend-shock
 #
@@ -55,16 +55,16 @@
 # (3) GOLD_Organism_Metabolism_08252020.csv: This file contains metabolism (metabolic pathway) data from the GOLD database 
 #     This is merged into above main GOLD data during prep..
 -
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Organism_Metadata_Export_02152018.txt?raw=true
-  local_name: GOLD-TraitData
+#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Organism_Metadata_Export_02152018.txt?raw=true
+#  local_name: GOLD-TraitData.tsv
 
 -
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Genome_Size_Details_Export_02152018.txt?raw=true
-  local_name: GOLD-GenomeSizeEstimates
+  #url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Genome_Size_Details_Export_02152018.txt?raw=true
+  #local_name: GOLD-GenomeSizeEstimates
 
 -
-  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/gold/GOLD_Organism_Metabolism_08252020.csv
-  local_name: GOLD-MetabolicPathwayData
+#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/gold/GOLD_Organism_Metabolism_08252020.csv
+#  local_name: GOLD-MetabolicPathwayData.csv
 
 #
 # Jemma-refseq - Bacteria_archaea_traits_dataset.csv
@@ -103,3 +103,26 @@
 #-
 #  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/schulz-jorgensen/schulz-jorgensen_table1.csv
 #  local_name: Schulz-Jorgenson
+# 
+# # ****Conversion Tables****
+
+#
+# Environment
+#
+-
+#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
+#  local_name: environments.csv
+
+#
+# Pathways
+#
+-
+#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/renaming_pathways.csv
+#  local_name: renaming_pathways.csv
+
+#
+# Fierer
+#
+-
+  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/prepared_data/fierer.csv?raw=true
+  local_name: fierer.csv

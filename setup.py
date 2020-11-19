@@ -24,7 +24,7 @@ def find_version(*file_paths):
     raise RuntimeError('Unable to find version string.')
 
 
-__version__ = find_version('kg-microbe', '__version__.py')
+__version__ = find_version('kg_microbe', '__version__.py')
 
 test_deps = [
     'pytest',
@@ -40,11 +40,11 @@ extras = {
 }
 
 setup(
-    name='kg-microbe',
+    name='kg_microbe',
     version=__version__,
-    description='KG hub for kg-microbe',
+    description='KG hub for kg_microbe',
     long_description=long_description,
-    url='https://github.com/Knowledge-Graph-Hub/kg-microbe',
+    url='https://github.com/Knowledge-Graph-Hub/kg_microbe',
     author='Harshad Hegde',
     author_email='hhegde@lbl.gov',
     python_requires='>=3.7',

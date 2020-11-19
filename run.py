@@ -3,12 +3,12 @@
 import os
 
 import click
-from kg-microbe import download as kg_download
-from kg-microbe import transform as kg_transform
-#from kg-microbe.make_holdouts import make_holdouts
-from kg-microbe.merge_utils.merge_kg import load_and_merge
-#from kg-microbe.query import run_query, parse_query_yaml, result_dict_to_tsv
-from kg-microbe.transform import DATA_SOURCES
+from kg_microbe import download as kg_download
+from kg_microbe import transform as kg_transform
+#from kg_microbe.make_holdouts import make_holdouts
+from kg_microbe.merge_utils.merge_kg import load_and_merge
+#from kg_microbe.query import run_query, parse_query_yaml, result_dict_to_tsv
+from kg_microbe.transform import DATA_SOURCES
 
 
 @click.group()
@@ -47,7 +47,7 @@ def download(*args, **kwargs) -> None:
 @click.option("sources", "-s", default=None, multiple=True,
               type=click.Choice(DATA_SOURCES.keys()))
 def transform(*args, **kwargs) -> None:
-    """Calls scripts in kg-microbe/transform/[source name]/ to transform each source
+    """Calls scripts in kg_microbe/transform/[source name]/ to transform each source
     into nodes and edges.
 
     Args:

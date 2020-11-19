@@ -4,8 +4,8 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from kg-microbe.transform_utils.sars_cov_2_gene_annot import SARSCoV2GeneAnnot
-from kg-microbe.transform_utils.sars_cov_2_gene_annot.sars_cov_2_gene_annot import \
+from kg_microbe.transform_utils.sars_cov_2_gene_annot import SARSCoV2GeneAnnot
+from kg_microbe.transform_utils.sars_cov_2_gene_annot.sars_cov_2_gene_annot import \
     _gpi12iterator, _gpa11iterator
 
 

@@ -1,7 +1,7 @@
 import os
 import tempfile
 from unittest import TestCase, mock
-from kg-microbe import download
+from kg_microbe import download
 
 
 class TestDownload(TestCase):

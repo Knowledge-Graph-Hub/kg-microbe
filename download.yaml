@@ -54,15 +54,15 @@
 #     to the main data file using the gold organism id.
 # (3) GOLD_Organism_Metabolism_08252020.csv: This file contains metabolism (metabolic pathway) data from the GOLD database 
 #     This is merged into above main GOLD data during prep..
--
+#-
 #  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Organism_Metadata_Export_02152018.txt?raw=true
 #  local_name: GOLD-TraitData.tsv
 
--
+#-
   #url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Genome_Size_Details_Export_02152018.txt?raw=true
   #local_name: GOLD-GenomeSizeEstimates
 
--
+#-
 #  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/gold/GOLD_Organism_Metabolism_08252020.csv
 #  local_name: GOLD-MetabolicPathwayData.csv
 
@@ -109,14 +109,14 @@
 #
 # Environment
 #
--
+#-
 #  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
 #  local_name: environments.csv
 
 #
 # Pathways
 #
--
+#-
 #  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/renaming_pathways.csv
 #  local_name: renaming_pathways.csv
 

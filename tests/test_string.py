@@ -5,7 +5,7 @@ from unittest import TestCase, skip
 
 from parameterized import parameterized
 
-from traits.transform_utils.string_ppi import StringTransform
+from kg-microbe.transform_utils.string_ppi import StringTransform
 
 
 class TestString(TestCase):

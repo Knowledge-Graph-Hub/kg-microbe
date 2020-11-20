@@ -30,9 +30,9 @@ class FiererDataTransform(Transform):
         source_name = "fierer"
         super().__init__(source_name, input_dir, output_dir)  # set some variables
 
-        self.node_header = ['id', 'entity', 'category', 'reference', 'CURIE']
+        self.node_header = ['id', 'entity', 'category', 'reference', 'curie']
         self.edge_header = ['subject', 'edge_label', 'object', 'relation',
-                            'reference', 'CURIE']
+                            'reference', 'curie']
 
     def run(self, data_file: Optional[str] = None):
         """Method is called and performs needed transformations to process the 

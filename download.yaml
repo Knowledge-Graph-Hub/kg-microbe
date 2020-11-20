@@ -109,9 +109,9 @@
 #
 # Environment
 #
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
-#  local_name: environments.csv
+-
+  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
+  local_name: environments.csv
 
 #
 # Pathways
@@ -123,6 +123,6 @@
 #
 # Fierer
 #
--
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/prepared_data/fierer.csv?raw=true
-  local_name: fierer.csv
+#-
+#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/prepared_data/fierer.csv?raw=true
+#  local_name: fierer.csv

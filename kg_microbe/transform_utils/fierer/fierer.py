@@ -71,19 +71,20 @@ class FiererDataTransform(Transform):
             # Nodes
             org_node_type = "biolink:OrganismalEntity" # [org_name]
             chem_node_type = "biolink:ChemicalSubstance" # [carbon_substrate]
-            activity_node_type = "biolink:ActivityAndBehavior" # [metabolism]
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
+            activity_node_type = "biolink:ActivityAndBehavior" # [metabolism]
             source_node_type = "biolink:Association" # [isolation_source]
+            
             #Prefixes
             org_prefix = "Organism:"
             chem_prefix = "Carbon:"
+            shape_prefix = "Shape:"
             activity_prefix = "Metab:"
             source_prefix = "Env:"
-            shape_prefix = "Shape:"
 
             # Edges
-            trait_edge_label = "biolink:has_phenotype" #  [org_name -> cell_shape, metabolism]
-            trait_edge_relation = "RO:0002200" #  [org_name -> cell_shape, metabolism]
+            org_to_shape_edge_label = "biolink:has_phenotype" #  [org_name -> cell_shape, metabolism]
+            org_to_shape_edge_relation = "RO:0002200" #  [org_name -> cell_shape, metabolism]
             org_to_chem_edge_label = "biolink:produces" # [org_name -> carbon_substrate]
             org_to_chem_edge_relation = "RO:0003000" # [org_name -> carbon_substrate]
             org_tosource_edge_relation = ""# [org -> isolation_source]
@@ -118,7 +119,7 @@ class FiererDataTransform(Transform):
                 reference = items_dict['reference']
                 ref_type = items_dict['ref_type']
 
-                # Write Node ['id', 'entity', 'category', 'reference', 'ref_type']
+            # Write Node ['id', 'entity', 'category', 'reference', 'ref_type']
                 # Write organism node 
                 org_id = org_prefix + str(tax_id)
                 if org_id not in seen_organism:
@@ -144,11 +145,23 @@ class FiererDataTransform(Transform):
                                                 ref_type])
                         seen_carbon_substrate[chem_id] += 1
 
-                #pdb.set_trace()
+                # Write shape node
+                shape_id = shape_prefix + cell_shape
+                if shape_id not in seen_shape:
+                    write_node_edge_item(fh=node,
+                                         header=self.node_header,
+                                         data=[shape_id,
+                                               cell_shape,
+                                               shape_node_type,
+                                               reference,
+                                               ref_type])
+                    seen_shape[shape_id] += 1
+
                 
 
 
-                # Write Edge
+            # Write Edge
+                # org-chem edge
                 write_node_edge_item(fh=edge,
                                          header=self.edge_header,
                                          data=[org_id,
@@ -157,6 +170,16 @@ class FiererDataTransform(Transform):
                                                org_to_chem_edge_relation,
                                                reference,
                                                ref_type])
+                # org-shape edge
+                write_node_edge_item(fh=edge,
+                                         header=self.edge_header,
+                                         data=[org_id,
+                                               org_to_shape_edge_label,
+                                               shape_id,
+                                               org_to_shape_edge_relation,
+                                               reference,
+                                               ref_type])
+
 
 
 

@@ -49,7 +49,7 @@ class FiererDataTransform(Transform):
 
 
         # transform data, something like:
-        with open(input_file, 'rb') as f, \
+        with open(input_file, 'r') as f, \
                 open(self.output_node_file, 'w') as node, \
                 open(self.output_edge_file, 'w') as edge:
 
@@ -60,10 +60,10 @@ class FiererDataTransform(Transform):
             header_items = parse_header(f.readline(), sep=',')
 
             seen_organism: dict = defaultdict(int)
-            seen_carbon_substrate: dict = defaultdict(str)
-            seen_shape: dict = defaultdict(str)
-            seen_env: dict = defaultdict(str)
-            seen_metab_type: dict = defaultdict(str)
+            seen_carbon_substrate: dict = defaultdict(int)
+            seen_shape: dict = defaultdict(int)
+            seen_env: dict = defaultdict(int)
+            seen_metab_type: dict = defaultdict(int)
 
 
             # Nodes
@@ -102,6 +102,7 @@ class FiererDataTransform(Transform):
                 # node.write(this_node1)
                 # node.write(this_node2)
                 # edge.write(this_edge)
+                print(line)
 
                 line = re.sub(r'(?!(([^"]*"){2})*[^"]*$),', '|', line) # alanine, glucose -> alanine| glucose
                 items_dict = parse_line(line, header_items, sep=',')
@@ -112,9 +113,9 @@ class FiererDataTransform(Transform):
                 tax_id = items_dict['tax_id']
                 strain = items_dict['Strain']
                 metabolism = items_dict['metabolism']
-                carbon_substrates = [x.strip() for x in items_dict['carbon_substrates'].split('|')]
+                carbon_substrates = set([x.strip() for x in items_dict['carbon_substrates'].split('|')])
                 cell_shape = items_dict['cell_shape']
-                isolation_source = [x.strip() for x in items_dict['isolation_source'].split('|')]
+                isolation_source = set([x.strip() for x in items_dict['isolation_source'].split('|')])
                 reference = items_dict['reference']
                 ref_type = items_dict['ref_type']
 
@@ -130,7 +131,21 @@ class FiererDataTransform(Transform):
                                                ref_type])
                     seen_organism[tax_id] += 1
 
-                # Write chemical node 
+                # Write chemical node
+                for cName in carbon_substrates:
+                    cID = chem_prefix + cName.lower()
+                    if cID not in seen_carbon_substrate:
+                        write_node_edge_item(fh=node,
+                                            header=self.node_header,
+                                            data=[cID, # NEEDS TO BE UPDATED
+                                                cName,
+                                                chem_node_type,
+                                                reference,
+                                                ref_type])
+                        seen_carbon_substrate[cID] += 1
+
+                pdb.set_trace()
+                
 
 
                 # Write Edge

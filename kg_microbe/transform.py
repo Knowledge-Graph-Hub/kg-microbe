@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES
 #from kg_microbe.transform_utils.string_ppi import StringTransform
 #from kg_microbe.transform_utils.ttd.ttd import TTDTransform
 # from kg_microbe.transform_utils.zhou_host_proteins.zhou_transform import ZhouTransform
+from kg_microbe.transform_utils.fierer.fierer import FiererDataTransform
 
 
 DATA_SOURCES = {
@@ -32,7 +33,8 @@ DATA_SOURCES = {
     #'MondoTransform': OntologyTransform,
     #'ChebiTransform': OntologyTransform,
     #'GocamTransform': GocamTransform,
-    #'ChemblTransform': ChemblTransform
+    #'ChemblTransform': ChemblTransform,
+    'FiererDataTransform': FiererDataTransform
 }
 
 

@@ -31,6 +31,8 @@ class FiererDataTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)  # set some variables
 
         self.node_header = ['id', 'entity', 'category', 'reference', 'ref_type']
+        self.edge_header = ['subject', 'edge_label', 'object', 'relation',
+                            'reference', 'ref_type']
 
     def run(self, data_file: Optional[str] = None):
         """Method is called and performs needed transformations to process the 
@@ -68,10 +70,11 @@ class FiererDataTransform(Transform):
 
             # Nodes
             org_node_type = "biolink:OrganismalEntity" # [org_name]
-            source_node_type = "biolink:Association" # [isolation_source]
             chem_node_type = "biolink:ChemicalSubstance" # [carbon_substrate]
             activity_node_type = "biolink:ActivityAndBehavior" # [metabolism]
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
+            source_node_type = "biolink:Association" # [isolation_source]
+            #Prefixes
             org_prefix = "Organism:"
             chem_prefix = "Carbon:"
             activity_prefix = "Metab:"
@@ -85,11 +88,7 @@ class FiererDataTransform(Transform):
             org_to_chem_edge_relation = "RO:0003000" # [org_name -> carbon_substrate]
             org_tosource_edge_relation = ""# [org -> isolation_source]
 
-            self.edge_header = ['subject', 'edge_label', 'object', 'relation',
-                            'reference', 'ref_type']
-                            
-            nodes_df = pd.DataFrame(columns=self.node_header)
-            edges_df = pd.DataFrame(columns = self.edge_header)
+            
             
             # transform
             for line in f:
@@ -102,14 +101,14 @@ class FiererDataTransform(Transform):
                 # node.write(this_node1)
                 # node.write(this_node2)
                 # edge.write(this_edge)
-                print(line)
+                
 
                 line = re.sub(r'(?!(([^"]*"){2})*[^"]*$),', '|', line) # alanine, glucose -> alanine| glucose
                 items_dict = parse_line(line, header_items, sep=',')
 
                 #nodesExtract = extract_nodes(items_dict, self.node_header)
 
-                org = items_dict['org_name']
+                org_name = items_dict['org_name']
                 tax_id = items_dict['tax_id']
                 strain = items_dict['Strain']
                 metabolism = items_dict['metabolism']
@@ -121,35 +120,46 @@ class FiererDataTransform(Transform):
 
                 # Write Node ['id', 'entity', 'category', 'reference', 'ref_type']
                 # Write organism node 
-                if tax_id not in seen_organism:
+                org_id = org_prefix + str(tax_id)
+                if org_id not in seen_organism:
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
-                                         data=[tax_id,
-                                               org,
+                                         data=[org_id,
+                                               org_name,
                                                org_node_type,
                                                reference,
                                                ref_type])
                     seen_organism[tax_id] += 1
 
                 # Write chemical node
-                for cName in carbon_substrates:
-                    cID = chem_prefix + cName.lower()
-                    if cID not in seen_carbon_substrate:
+                for chem_name in carbon_substrates:
+                    chem_id = chem_prefix + chem_name.lower().replace(' ','_')
+                    if chem_id not in seen_carbon_substrate:
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
-                                            data=[cID, # NEEDS TO BE UPDATED
-                                                cName,
+                                            data=[chem_id, # NEEDS TO BE UPDATED
+                                                chem_name,
                                                 chem_node_type,
                                                 reference,
                                                 ref_type])
-                        seen_carbon_substrate[cID] += 1
+                        seen_carbon_substrate[chem_id] += 1
 
-                pdb.set_trace()
+                #pdb.set_trace()
                 
 
 
                 # Write Edge
+                write_node_edge_item(fh=edge,
+                                         header=self.edge_header,
+                                         data=[org_id,
+                                               org_to_chem_edge_label,
+                                               chem_id,
+                                               org_to_chem_edge_relation,
+                                               reference,
+                                               ref_type])
+
 
 
                 #pdb.set_trace()
+                #pdb.set_trace = lambda:None
         return None

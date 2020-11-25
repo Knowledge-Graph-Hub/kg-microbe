@@ -56,6 +56,10 @@ class TraitsTransform(Transform):
         create_settings_file(self.nlp_dir, 'CHEBI')
         oger_output = run_oger(self.nlp_dir, n_workers=5)
         #oger_output = process_oger_output(self.nlp_dir)
+
+        """
+        Get information from the EnvironemtTransform
+        """
         
         
 

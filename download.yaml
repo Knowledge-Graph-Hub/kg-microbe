@@ -20,109 +20,37 @@
 ---
 # #
 # # Most of the data is extracted from the 'bacteria-archaea-traits' github repository
-# # link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw
+# # link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
 # #
-# # ******Raw Data*******
-# Amend-shock-species (_species.csv)
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/amend-shock
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/amend-shock/amend%26shock2001_species.csv
-#  local_name: amendShockSpecies
+# # ******Output Data*******
+# Condensed-species
+# - GTDB
+#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv
+-
+  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv?raw=true
+  local_name: condensed_species_GTDB.csv
+# - NCBI
+#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv
+-
+  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv?raw=true
+  local_name: condensed_species_NCBI.csv
 
-#
-# Microbe-directory
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/microbe-directory
-#
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/microbe-directory/microbe-directory.csv?raw=true
-#  local_name: microbe-directory
+# Condensed-traits
+# - GTDB
+#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv
+-
+  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv?raw=true
+  local_name: condensed_traits_GTDB.csv
+# - NCBI
+#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
+-
+  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
+  local_name: condensed_traits_NCBI.csv
 
-#
-# Fierer notes - ijsem_05_05_15_clean_fixed.csv is currently the dataset processed and used for analyses.
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/fierer
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/fierer/ijsem_05_05_15_clean_fixed.csv
-#  local_name: ijsem_05_05_15_clean_fixed.csv
-
-#
-# Gold notes - Mark_Westoby_Organism_Metadata_Export_02152018.txt.zip.
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/gold
-# (1) Mark_Westoby_Organism_Metadata_Export_02152018.txt.zip: This file contains the main trait data for each organism
-# (2) Mark_Westoby_Genome_Size_Details_Export_02152018.txt.zip: This file contains genome size estimates and are linked 
-#     to the main data file using the gold organism id.
-# (3) GOLD_Organism_Metabolism_08252020.csv: This file contains metabolism (metabolic pathway) data from the GOLD database 
-#     This is merged into above main GOLD data during prep..
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Organism_Metadata_Export_02152018.txt?raw=true
-#  local_name: GOLD-TraitData.tsv
-
-#-
-  #url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/data/raw/gold/Mark_Westoby_Genome_Size_Details_Export_02152018.txt?raw=true
-  #local_name: GOLD-GenomeSizeEstimates
-
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/gold/GOLD_Organism_Metabolism_08252020.csv
-#  local_name: GOLD-MetabolicPathwayData.csv
-
-#
-# Jemma-refseq - Bacteria_archaea_traits_dataset.csv
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/jemma-refseq
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/jemma-refseq/Bacteria_archaea_traits_dataset.csv
-#  local_name: JemmRefSeq
-
-#
-# MediaDB
-# We were only after growth rate and some environemntal factors:
-#   SELECT Genus, Species, Strain, Growth_Rate, Growth_Units, pH, Temperature_C 
-#   FROM growth_data 
-#   JOIN organisms 
-#   ON growth_data.StrainID = organisms.StrainID;
-
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/mediadb
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/mediadb/media_database.csv
-#  local_name: MediaDB
-
-#
-# Rode-Jin : Organism; e_donor; e_acceptor; energy_process; reference
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/roden-jin
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/roden-jin/roden-jin.csv
-#  local_name: Roden-Jin
-
-#
-# Schulz & Jorgensen 2001: Big Bacteria
-# link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/raw/schulz-jorgensen
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/raw/schulz-jorgensen/schulz-jorgensen_table1.csv
-#  local_name: Schulz-Jorgenson
-# 
 # # ****Conversion Tables****
-
 #
 # Environment
 #
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
-
-#
-# Pathways
-#
-#-
-#  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/renaming_pathways.csv
-#  local_name: renaming_pathways.csv
-
-#
-# Fierer
-#
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/prepared_data/fierer.csv?raw=true
-#  local_name: fierer.csv

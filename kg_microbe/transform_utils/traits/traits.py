@@ -1,19 +1,18 @@
 import csv
 import re
 import os
-import pandas as pd
 from typing import Dict, List, Optional
 from collections import defaultdict
 
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.transform_utils import parse_header, parse_line, write_node_edge_item
+from kg_microbe.utils.nlp_utils import *
 
-import pdb
 """
-Ingest fierer dataset
+Ingest traits dataset (NCBI/GTDB)
 
 Essentially just ingests and transforms this file:
-https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/prepared_data/fierer.csv
+https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv
 
 And extracts the following columns:
     - tax_id
@@ -24,31 +23,41 @@ And extracts the following columns:
     - isolation_source
 """
 
-class FiererDataTransform(Transform):
+class TraitsTransform(Transform):
 
-    def __init__(self, input_dir: str = None, output_dir: str = None) -> None:
-        source_name = "fierer"
-        super().__init__(source_name, input_dir, output_dir)  # set some variables
+    def __init__(self, input_dir: str = None, output_dir: str = None, nlp = True) -> None:
+        source_name = "condensed_traits_NCBI"
+        super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
 
-        self.node_header = ['id', 'entity', 'category', 'reference', 'curie']
-        self.edge_header = ['subject', 'edge_label', 'object', 'relation',
-                            'reference', 'curie']
+        self.node_header = ['id', 'entity', 'category', 'curie']
+        self.edge_header = ['subject', 'edge_label', 'object', 'relation']
 
     def run(self, data_file: Optional[str] = None):
         """Method is called and performs needed transformations to process the 
-        Fierer data, additional information on this data can be found in the comment 
+        trait data (NCBI/GTDB), additional information on this data can be found in the comment 
         at the top of this script"""
         
         if data_file is None:
-            data_file = "fierer.csv"
+            data_file = self.source_name + ".csv"
         
         input_file = os.path.join(
             self.input_base_dir, data_file)
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
-
-
+        """
+        NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'
+        """
+        #if nlp:
+        #Prep for NLP. Make sure the first column is the ID
+        cols_for_nlp = ['tax_id', 'carbon_substrates']
+        prep_nlp_input(input_file, cols_for_nlp)
+        #set-up the settings.ini file for OGER and run
+        create_settings_file(self.nlp_dir, 'CHEBI')
+        oger_output = run_oger(self.nlp_dir, n_workers=5)
+        #oger_output = process_oger_output(self.nlp_dir)
+        
+        
 
         # transform data, something like:
         with open(input_file, 'r') as f, \
@@ -74,6 +83,7 @@ class FiererDataTransform(Transform):
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
             #metabolism_node_type = "biolink:ActivityAndBehavior" # [metabolism]
             source_node_type = "biolink:Association" # [isolation_source]
+            curie = 'NEED_CURIE'
             
             #Prefixes
             org_prefix = "NCBITaxon:"
@@ -112,15 +122,13 @@ class FiererDataTransform(Transform):
 
                 org_name = items_dict['org_name']
                 tax_id = items_dict['tax_id']
-                strain = items_dict['Strain']
                 metabolism = items_dict['metabolism']
                 carbon_substrates = set([x.strip() for x in items_dict['carbon_substrates'].split('|')])
                 cell_shape = items_dict['cell_shape']
                 isolation_source = set([x.strip() for x in items_dict['isolation_source'].split('|')])
-                reference = items_dict['reference']
-                curie = "NEED-CURIE"
+                
 
-            # Write Node ['id', 'entity', 'category', 'reference', 'ref_type']
+            # Write Node ['id', 'entity', 'category']
                 # Write organism node 
                 org_id = org_prefix + str(tax_id)
                 if org_id not in seen_organism:
@@ -129,32 +137,45 @@ class FiererDataTransform(Transform):
                                          data=[org_id,
                                                org_name,
                                                org_node_type,
-                                               reference,
                                                curie])
                     seen_organism[tax_id] += 1
 
                 # Write chemical node
                 for chem_name in carbon_substrates:
                     chem_id = chem_prefix + chem_name.lower().replace(' ','_')
+
+                    
+
+
                     if chem_id not in seen_carbon_substrate:
+                        # Get relevant NLP output attached
+                        if chem_name != 'NA':
+                            relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
+                            relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
+                            if len(relevant_chem) == 1:
+                                chem_curie = relevant_chem.iloc[0]['CURIE']
+                                chem_node_type = relevant_chem.iloc[0]['Biolink']
+                            
+                        else:
+                            chem_curie = chem_name
+                            chem_node_type = chem_name
+
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[chem_id, # NEEDS TO BE UPDATED
                                                 chem_name,
                                                 chem_node_type,
-                                                reference,
-                                                curie])
+                                                chem_curie])
                         seen_carbon_substrate[chem_id] += 1
 
                 # Write shape node
-                shape_id = shape_prefix + cell_shape
+                shape_id = shape_prefix + cell_shape.lower()
                 if shape_id not in seen_shape:
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[shape_id,
                                                cell_shape,
                                                shape_node_type,
-                                               reference,
                                                curie])
                     seen_shape[shape_id] += 1
 
@@ -167,7 +188,6 @@ class FiererDataTransform(Transform):
                                             data=[source_id, # NEEDS TO BE UPDATED
                                                 source_name,
                                                 source_node_type,
-                                                reference,
                                                 curie])
                         seen_isolation_source[source_id] += 1
 
@@ -181,18 +201,14 @@ class FiererDataTransform(Transform):
                                          data=[org_id,
                                                org_to_chem_edge_label,
                                                chem_id,
-                                               org_to_chem_edge_relation,
-                                               reference,
-                                               curie])
+                                               org_to_chem_edge_relation])
                 # org-shape edge
                 write_node_edge_item(fh=edge,
                                          header=self.edge_header,
                                          data=[org_id,
                                                org_to_shape_edge_label,
                                                shape_id,
-                                               org_to_shape_edge_relation,
-                                               reference,
-                                               curie])
+                                               org_to_shape_edge_relation])
                 
                 # org-source edge
                 write_node_edge_item(fh=edge,
@@ -200,9 +216,5 @@ class FiererDataTransform(Transform):
                                          data=[org_id,
                                                org_to_source_edge_label,
                                                source_id,
-                                               org_to_source_edge_relation,
-                                               reference,
-                                               curie])
-                #pdb.set_trace()
-                #pdb.set_trace = lambda:None
+                                               org_to_source_edge_relation])
         return None

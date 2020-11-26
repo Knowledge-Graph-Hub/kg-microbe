@@ -45,21 +45,27 @@ class TraitsTransform(Transform):
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
-        """
-        NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'
-        """
-        #if nlp:
-        #Prep for NLP. Make sure the first column is the ID
-        cols_for_nlp = ['tax_id', 'carbon_substrates']
-        prep_nlp_input(input_file, cols_for_nlp)
-        #set-up the settings.ini file for OGER and run
-        create_settings_file(self.nlp_dir, 'CHEBI')
-        oger_output = run_oger(self.nlp_dir, n_workers=5)
-        #oger_output = process_oger_output(self.nlp_dir)
 
         """
         Get information from the EnvironemtTransform
         """
+        environment_file = os.path.join(self.input_base_dir, 'environments.csv')
+        env_df = pd.read_csv(environment_file, sep=',', low_memory=False, usecols=['Type', 'ENVO_terms', 'ENVO_ids'])
+        unique_env_df = env_df.drop_duplicates()
+
+
+        """
+        NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'
+        """
+        #if nlp:
+        # Prep for NLP. Make sure the first column is the ID
+        '''cols_for_nlp = ['tax_id', 'carbon_substrates']
+        prep_nlp_input(input_file, cols_for_nlp)
+        # Set-up the settings.ini file for OGER and run
+        create_settings_file(self.nlp_dir, 'CHEBI')
+        oger_output = run_oger(self.nlp_dir, n_workers=5)'''
+        oger_output = process_oger_output(self.nlp_dir)
+
         
         
 
@@ -187,12 +193,20 @@ class TraitsTransform(Transform):
                 for source_name in isolation_source:
                     source_id = source_prefix + source_name.lower().replace(' ','_')
                     if source_id not in seen_isolation_source:
+                        # Get information from the environments.csv (unique_env_df)
+                        relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
+                        
+                        if len(relevant_env_df) == 1:
+                            env_curie = str(relevant_env_df.iloc[0]['ENVO_ids'])
+                        else:
+                            env_curie = curie             
+
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[source_id, # NEEDS TO BE UPDATED
                                                 source_name,
                                                 source_node_type,
-                                                curie])
+                                                env_curie])
                         seen_isolation_source[source_id] += 1
 
                 

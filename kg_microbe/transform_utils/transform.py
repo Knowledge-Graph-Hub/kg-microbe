@@ -1,6 +1,7 @@
 import os
 import shutil
 from typing import Optional
+import yaml
 
 
 class Transform:
@@ -14,6 +15,7 @@ class Transform:
     DEFAULT_NLP_TERMS_DIR = os.path.join(DEFAULT_NLP_DIR,'terms')
     DEFAULT_NLP_INPUT_DIR = os.path.join(DEFAULT_NLP_DIR,'input')
     DEFAULT_NLP_OUTPUT_DIR = os.path.join(DEFAULT_NLP_DIR,'output')
+    DEFAULT_NLP_STOPWORDS_DIR = os.path.join(DEFAULT_NLP_DIR, 'stopwords')
     
 
     def __init__(self, source_name, input_dir: str = None, output_dir: str = None, nlp: bool = False):
@@ -44,16 +46,27 @@ class Transform:
             self.nlp_input_dir = self.DEFAULT_NLP_INPUT_DIR
             self.nlp_output_dir = self.DEFAULT_NLP_OUTPUT_DIR
             self.nlp_terms_dir = self.DEFAULT_NLP_TERMS_DIR
+            self.nlp_stopwords_dir = self.DEFAULT_NLP_STOPWORDS_DIR
 
             # Delete previously developed files
             if os.path.exists(self.nlp_input_dir):
                 shutil.rmtree(self.nlp_input_dir)
+                shutil.rmtree(self.nlp_stopwords_dir)
 
             
             os.makedirs(self.nlp_dir,exist_ok=True)
             os.makedirs(self.nlp_input_dir, exist_ok=True)
             os.makedirs(self.nlp_output_dir, exist_ok=True)
             os.makedirs(self.nlp_terms_dir, exist_ok=True)
+            os.makedirs(self.nlp_stopwords_dir, exist_ok=True)
+
+            with open('stopwords.yaml', 'r') as stop_list:
+                doc = yaml.load(stop_list, Loader=yaml.FullLoader)
+                stop_words =  doc['English']
+                
+            with open(os.path.join(self.nlp_stopwords_dir,'stopWords.txt'), 'w') as stop_terms:
+                stop_terms.write(stop_words)
+
 
             self.output_nlp_file = os.path.join(self.nlp_output_dir, "nlpOutput.tsv")
 

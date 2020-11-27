@@ -55,9 +55,9 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
         'input-directory' : os.path.join(path,'input'),
         'output-directory' : os.path.join(path,'output'),
         'pointer-type' : 'glob',
-        'pointers' : '*.txt',
+        'pointers' : '*.tsv',
         'iter-mode' : 'collection',
-        'article-format' : 'txt',
+        'article-format' : 'txt_tsv',
         'export_format': 'tsv'
     }
 
@@ -83,7 +83,7 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
     with open(os.path.join(path, SETTINGS_FILENAME), 'w') as settings_file:
         config.write(settings_file)
 
-def prep_nlp_input(path: str, columns: list):
+def prep_nlp_input(path: str, columns: list)-> str:
     '''
     Arguments: 
         path - path to the file which has text to be analyzed
@@ -92,7 +92,8 @@ def prep_nlp_input(path: str, columns: list):
     df = pd.read_csv(path, sep=',', low_memory=False, usecols=columns)
     sub_df = df.dropna()
     
-    for idx, row in sub_df.T.iteritems():
+    # Hacky way of creating i/p files to run OGER
+    '''for idx, row in sub_df.T.iteritems():
         new_file = 'nlp/input/'+str(row[0])+'.txt'
         path_to_new_file = os.path.abspath(os.path.join(os.path.dirname(path),'..',new_file))
 
@@ -102,31 +103,36 @@ def prep_nlp_input(path: str, columns: list):
             mode = 'w'
 
         with open(path_to_new_file, mode) as txt_file:
-            txt_file.write(row[1])
+            txt_file.write(row[1])'''
+    # New way of doing this : PR submitted to Ontogene for merging code.
+    fn = 'nlp'
+    nlp_input = os.path.abspath(os.path.join(os.path.dirname(path),'..','nlp/input/'+fn+'.tsv'))
+    sub_df.to_csv(nlp_input, sep='\t', index=False)
+    return fn
             
 
 
-def run_oger(path: str , n_workers :int = 1 ) -> pd.DataFrame:
+def run_oger(path: str , input_file_name: str , n_workers :int = 1 ) -> pd.DataFrame:
     config = configparser.ConfigParser()
     config.read(os.path.join(path, SETTINGS_FILENAME))
     sections = config._sections
     settings = sections['Main']
     settings['n_workers'] = n_workers
     og_run(**settings)
-    df = process_oger_output(path)
+    df = process_oger_output(path, input_file_name)
     
     return df
 
-def process_oger_output(path: str) -> pd.DataFrame:
+def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
     """
     The OGER output is a TSV which is imported and only the terms that occurred in the text file
     are considered and a dataframe of relevant information is returned
     """
     cols = ['TaxId', 'Biolink', 'BeginTerm', 'EndTerm', 'TokenizedTerm', 'PreferredTerm', \
             'CURIE', 'NaN1', 'SentenceID', 'NaN2', 'UMLS_CUI']
-    df = pd.read_csv(os.path.join(path, 'output/None.tsv'), sep='\t', names=cols)
+    df = pd.read_csv(os.path.join(path, 'output',input_file_name+'.tsv'), sep='\t', names=cols)
     sub_df = df[['TaxId', 'Biolink','TokenizedTerm', 'PreferredTerm', 'CURIE']]
     interested_df = sub_df.loc[(df['TokenizedTerm'] == df['PreferredTerm'].str.replace(r"\(.*\)",""))]
     interested_df = interested_df.drop(columns = ['PreferredTerm']).drop_duplicates()
-    interested_df.to_csv(os.path.join(path, 'output/NoneFiltered.tsv'), sep='\t')
+    interested_df.to_csv(os.path.join(path, 'output',input_file_name +'Filtered.tsv'), sep='\t', index=False)
     return interested_df

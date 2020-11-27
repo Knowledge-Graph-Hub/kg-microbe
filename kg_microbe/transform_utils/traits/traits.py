@@ -59,14 +59,12 @@ class TraitsTransform(Transform):
         """
         #if nlp:
         # Prep for NLP. Make sure the first column is the ID
-        '''cols_for_nlp = ['tax_id', 'carbon_substrates']
-        prep_nlp_input(input_file, cols_for_nlp)
+        cols_for_nlp = ['tax_id', 'carbon_substrates']
+        input_file_name = prep_nlp_input(input_file, cols_for_nlp)
         # Set-up the settings.ini file for OGER and run
         create_settings_file(self.nlp_dir, 'CHEBI')
-        oger_output = run_oger(self.nlp_dir, n_workers=5)'''
-        oger_output = process_oger_output(self.nlp_dir)
-
-        
+        oger_output = run_oger(self.nlp_dir, input_file_name, n_workers=5)
+        #oger_output = process_oger_output(self.nlp_dir, input_file_name)
         
 
         # transform data, something like:
@@ -128,8 +126,6 @@ class TraitsTransform(Transform):
                 line = re.sub(r'(?!(([^"]*"){2})*[^"]*$),', '|', line) # alanine, glucose -> alanine| glucose
                 items_dict = parse_line(line, header_items, sep=',')
 
-                #nodesExtract = extract_nodes(items_dict, self.node_header)
-
                 org_name = items_dict['org_name']
                 tax_id = items_dict['tax_id']
                 metabolism = items_dict['metabolism']
@@ -158,7 +154,7 @@ class TraitsTransform(Transform):
 
 
                     if chem_id not in seen_carbon_substrate:
-                        # Get relevant NLP output attached
+                        # Get relevant NLP results
                         if chem_name != 'NA':
                             relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
                             relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
@@ -172,7 +168,7 @@ class TraitsTransform(Transform):
 
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
-                                            data=[chem_id, # NEEDS TO BE UPDATED
+                                            data=[chem_id,
                                                 chem_name,
                                                 chem_node_type,
                                                 chem_curie])
@@ -203,7 +199,7 @@ class TraitsTransform(Transform):
 
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
-                                            data=[source_id, # NEEDS TO BE UPDATED
+                                            data=[source_id,
                                                 source_name,
                                                 source_node_type,
                                                 env_curie])

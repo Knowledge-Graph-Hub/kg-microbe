@@ -58,22 +58,20 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
         'pointers' : '*.tsv',
         'iter-mode' : 'collection',
         'article-format' : 'txt_tsv',
-        'export_format': 'tsv'
+        'export_format': 'tsv',
+        'termlist_stopwords': os.path.join(path,'stopwords','stopwords.txt')
+
     }
 
     if ont == 'ENVO':
-        config.set('Main','termlist1_path', os.path.join(path,'terms/envo_termlist.tsv'))
-        config.set('Main', 'termlist1_stopwords', os.path.join(path,'stopwords','stopwords.txt'))
+        config.set('Main','termlist_path', os.path.join(path,'terms/envo_termlist.tsv'))
         
     elif ont == 'CHEBI':
-        config.set('Main','termlist1_path', os.path.join(path,'terms/chebi_termlist.tsv'))
-        config.set('Main', 'termlist1_stopwords', os.path.join(path,'stopwords','stopwords.txt'))
+        config.set('Main','termlist_path', os.path.join(path,'terms/chebi_termlist.tsv'))
         
     else:
         config.set('Main', 'termlist1_path', os.path.join(path,'terms/envo_termlist.tsv'))
-        config.set('Main', 'termlist1_stopwords', os.path.join(path,'stopwords','stopwords.txt'))
         config.set('Main', 'termlist2_path', os.path.join(path,'terms/chebi_termlist.tsv'))
-        config.set('Main', 'termlist2_stopwords', os.path.join(path,'stopwords','stopwords.txt'))
     
     # This is how OGER prescribes in it's test file but above works too.
     '''config['Termlist1'] = {

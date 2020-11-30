@@ -90,7 +90,7 @@ class TraitsTransform(Transform):
             chem_node_type = "biolink:ChemicalSubstance" # [carbon_substrate]
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
             #metabolism_node_type = "biolink:ActivityAndBehavior" # [metabolism]
-            source_node_type = "biolink:Association" # [isolation_source]
+            source_node_type = "NEED_BIOLINK" # [isolation_source]
             curie = 'NEED_CURIE'
             
             #Prefixes

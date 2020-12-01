@@ -7,7 +7,6 @@ from kg_microbe.transform_utils.drug_central.drug_central import DrugCentralTran
 #from kg_microbe.transform_utils.ontology import OntologyTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
-from kg_microbe.transform_utils.environment.environment import EnvironmentDataTransform
 
 
 DATA_SOURCES = {
@@ -16,8 +15,7 @@ DATA_SOURCES = {
     #'HpTransform': OntologyTransform,
     #'MondoTransform': OntologyTransform,
     #'ChebiTransform': OntologyTransform,
-    'TraitsTransform': TraitsTransform,
-    'EnvironmentDataTransform': EnvironmentDataTransform
+    'TraitsTransform': TraitsTransform
 }
 
 

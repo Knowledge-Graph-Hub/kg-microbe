@@ -83,6 +83,7 @@ class TraitsTransform(Transform):
             seen_shape: dict = defaultdict(int)
             seen_isolation_source: dict = defaultdict(int)
             seen_metab_type: dict = defaultdict(int)
+            seen_edge: dict = defaultdict(int)
 
 
             # Nodes
@@ -103,10 +104,10 @@ class TraitsTransform(Transform):
             # Edges
             org_to_shape_edge_label = "biolink:has_phenotype" #  [org_name -> cell_shape, metabolism]
             org_to_shape_edge_relation = "RO:0002200" #  [org_name -> cell_shape, metabolism]
-            org_to_chem_edge_label = "biolink:produces" # [org_name -> carbon_substrate]
-            org_to_chem_edge_relation = "RO:0003000" # [org_name -> carbon_substrate]
-            org_to_source_edge_label = "biolink:EnvironmentalFeature"# [org -> isolation_source]
-            org_to_source_edge_relation = "ENVO:01000254"
+            org_to_chem_edge_label = "consumes (need biolink)" #"biolink:produces" # [org_name -> carbon_substrate]
+            org_to_chem_edge_relation = "NEED_CURIE" #"RO:0003000" # [org_name -> carbon_substrate]
+            org_to_source_edge_label = "biolink:location_of"  #"biolink:EnvironmentalFeature"# [org -> isolation_source]
+            org_to_source_edge_relation = "RO:0001015" #"ENVO:01000254"
 
             
             
@@ -137,7 +138,7 @@ class TraitsTransform(Transform):
             # Write Node ['id', 'entity', 'category']
                 # Write organism node 
                 org_id = org_prefix + str(tax_id)
-                if org_id not in seen_organism:
+                if not org_id.endswith(':na') and org_id not in seen_organism:
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[org_id,
@@ -153,7 +154,7 @@ class TraitsTransform(Transform):
                     
 
 
-                    if chem_id not in seen_carbon_substrate:
+                    if  not chem_id.endswith(':na') and  chem_id not in seen_carbon_substrate:
                         # Get relevant NLP results
                         if chem_name != 'NA':
                             relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
@@ -176,7 +177,7 @@ class TraitsTransform(Transform):
 
                 # Write shape node
                 shape_id = shape_prefix + cell_shape.lower()
-                if shape_id not in seen_shape:
+                if  not shape_id.endswith(':na') and shape_id not in seen_shape:
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[shape_id,
@@ -188,7 +189,7 @@ class TraitsTransform(Transform):
                 # Write source node
                 for source_name in isolation_source:
                     source_id = source_prefix + source_name.lower().replace(' ','_')
-                    if source_id not in seen_isolation_source:
+                    if  not source_id.endswith(':na') and source_id not in seen_isolation_source:
                         # Get information from the environments.csv (unique_env_df)
                         relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
                         
@@ -210,25 +211,32 @@ class TraitsTransform(Transform):
 
             # Write Edge
                 # org-chem edge
-                write_node_edge_item(fh=edge,
-                                         header=self.edge_header,
-                                         data=[org_id,
-                                               org_to_chem_edge_label,
-                                               chem_id,
-                                               org_to_chem_edge_relation])
+                if not chem_id.endswith(':na') and org_id+chem_id not in seen_edge:
+                    write_node_edge_item(fh=edge,
+                                            header=self.edge_header,
+                                            data=[org_id,
+                                                org_to_chem_edge_label,
+                                                chem_id,
+                                                org_to_chem_edge_relation])
+                    seen_edge[org_id+chem_id] += 1
+
                 # org-shape edge
-                write_node_edge_item(fh=edge,
-                                         header=self.edge_header,
-                                         data=[org_id,
-                                               org_to_shape_edge_label,
-                                               shape_id,
-                                               org_to_shape_edge_relation])
+                if  not shape_id.endswith(':na') and org_id+shape_id not in seen_edge:
+                    write_node_edge_item(fh=edge,
+                                            header=self.edge_header,
+                                            data=[org_id,
+                                                org_to_shape_edge_label,
+                                                shape_id,
+                                                org_to_shape_edge_relation])
+                    seen_edge[org_id+shape_id] += 1
                 
                 # org-source edge
-                write_node_edge_item(fh=edge,
-                                         header=self.edge_header,
-                                         data=[org_id,
-                                               org_to_source_edge_label,
-                                               source_id,
-                                               org_to_source_edge_relation])
+                if not source_id.endswith(':na') and org_id+source_id not in seen_edge:
+                    write_node_edge_item(fh=edge,
+                                            header=self.edge_header,
+                                            data=[org_id,
+                                                org_to_source_edge_label,
+                                                source_id,
+                                                org_to_source_edge_relation])
+                    seen_edge[org_id+source_id] += 1
         return None

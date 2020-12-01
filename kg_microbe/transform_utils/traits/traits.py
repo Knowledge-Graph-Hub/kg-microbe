@@ -104,10 +104,10 @@ class TraitsTransform(Transform):
             # Edges
             org_to_shape_edge_label = "biolink:has_phenotype" #  [org_name -> cell_shape, metabolism]
             org_to_shape_edge_relation = "RO:0002200" #  [org_name -> cell_shape, metabolism]
-            org_to_chem_edge_label = "consumes (need biolink)" #"biolink:produces" # [org_name -> carbon_substrate]
-            org_to_chem_edge_relation = "NEED_CURIE" #"RO:0003000" # [org_name -> carbon_substrate]
-            org_to_source_edge_label = "biolink:location_of"  #"biolink:EnvironmentalFeature"# [org -> isolation_source]
-            org_to_source_edge_relation = "RO:0001015" #"ENVO:01000254"
+            org_to_chem_edge_label = "consumes (need biolink)" # [org_name -> carbon_substrate]
+            org_to_chem_edge_relation = "NEED_CURIE" # [org_name -> carbon_substrate]
+            org_to_source_edge_label = "biolink:location_of" # [org -> isolation_source]
+            org_to_source_edge_relation = "RO:0001015" 
 
             
             

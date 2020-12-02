@@ -77,12 +77,8 @@ class TraitsTransform(Transform):
             edge.write("\t".join(self.edge_header) + "\n")
             
             header_items = parse_header(f.readline(), sep=',')
-
-            seen_organism: dict = defaultdict(int)
-            seen_carbon_substrate: dict = defaultdict(int)
-            seen_shape: dict = defaultdict(int)
-            seen_isolation_source: dict = defaultdict(int)
-            seen_metab_type: dict = defaultdict(int)
+            
+            seen_node: dict = defaultdict(int)
             seen_edge: dict = defaultdict(int)
 
 
@@ -138,23 +134,19 @@ class TraitsTransform(Transform):
             # Write Node ['id', 'entity', 'category']
                 # Write organism node 
                 org_id = org_prefix + str(tax_id)
-                if not org_id.endswith(':na') and org_id not in seen_organism:
+                if not org_id.endswith(':na') and org_id not in seen_node:
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[org_id,
                                                org_name,
                                                org_node_type,
                                                curie])
-                    seen_organism[tax_id] += 1
+                    seen_node[org_id] += 1
 
                 # Write chemical node
                 for chem_name in carbon_substrates:
                     chem_id = chem_prefix + chem_name.lower().replace(' ','_')
-
-                    
-
-
-                    if  not chem_id.endswith(':na') and  chem_id not in seen_carbon_substrate:
+                    if  not chem_id.endswith(':na') and  chem_id not in seen_node:
                         # Get relevant NLP results
                         if chem_name != 'NA':
                             relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
@@ -173,23 +165,29 @@ class TraitsTransform(Transform):
                                                 chem_name,
                                                 chem_node_type,
                                                 chem_curie])
-                        seen_carbon_substrate[chem_id] += 1
+                        seen_node[chem_id] += 1
 
                 # Write shape node
                 shape_id = shape_prefix + cell_shape.lower()
-                if  not shape_id.endswith(':na') and shape_id not in seen_shape:
+                if  not shape_id.endswith(':na') and shape_id not in seen_node:
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[shape_id,
                                                cell_shape,
                                                shape_node_type,
                                                curie])
-                    seen_shape[shape_id] += 1
+                    seen_node[shape_id] += 1
 
                 # Write source node
                 for source_name in isolation_source:
-                    source_id = source_prefix + source_name.lower().replace(' ','_')
-                    if  not source_id.endswith(':na') and source_id not in seen_isolation_source:
+                    #   Collapse the entity
+                    #   A_B_C_D => [A, B, C, D]
+                    #   D is the entity of interest
+                    source_name_split = source_name.split('_')
+                    source_name_collapse = source_name_split[-1]
+
+                    source_id = source_prefix + source_name_collapse.lower()
+                    if  not source_id.endswith(':na') and source_id not in seen_node:
                         # Get information from the environments.csv (unique_env_df)
                         relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
                         
@@ -201,10 +199,10 @@ class TraitsTransform(Transform):
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[source_id,
-                                                source_name,
+                                                source_name_collapse,
                                                 source_node_type,
                                                 env_curie])
-                        seen_isolation_source[source_id] += 1
+                        seen_node[source_id] += 1
 
                 
 

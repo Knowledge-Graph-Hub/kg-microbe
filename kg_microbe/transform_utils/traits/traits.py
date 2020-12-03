@@ -31,6 +31,7 @@ class TraitsTransform(Transform):
 
         self.node_header = ['id', 'entity', 'category', 'curie']
         self.edge_header = ['subject', 'edge_label', 'object', 'relation']
+        self.nlp = nlp
 
     def run(self, data_file: Optional[str] = None):
         """Method is called and performs needed transformations to process the 
@@ -57,14 +58,14 @@ class TraitsTransform(Transform):
         """
         NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'
         """
-        #if nlp:
-        # Prep for NLP. Make sure the first column is the ID
-        cols_for_nlp = ['tax_id', 'carbon_substrates']
-        input_file_name = prep_nlp_input(input_file, cols_for_nlp)
-        # Set-up the settings.ini file for OGER and run
-        create_settings_file(self.nlp_dir, 'CHEBI')
-        oger_output = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-        #oger_output = process_oger_output(self.nlp_dir, input_file_name)
+        if self.nlp:
+            # Prep for NLP. Make sure the first column is the ID
+            cols_for_nlp = ['tax_id', 'carbon_substrates']
+            input_file_name = prep_nlp_input(input_file, cols_for_nlp)
+            # Set-up the settings.ini file for OGER and run
+            create_settings_file(self.nlp_dir, 'CHEBI')
+            oger_output = run_oger(self.nlp_dir, input_file_name, n_workers=5)
+            #oger_output = process_oger_output(self.nlp_dir, input_file_name)
         
 
         # transform data, something like:
@@ -186,20 +187,22 @@ class TraitsTransform(Transform):
                     source_name_split = source_name.split('_')
                     source_name_collapse = source_name_split[-1]
 
-                    source_id = source_prefix + source_name_collapse.lower()
+                    source_id = source_prefix + source_name.lower()
                     if  not source_id.endswith(':na') and source_id not in seen_node:
                         # Get information from the environments.csv (unique_env_df)
                         relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
-                        
+                        #import pdb; pdb.set_trace()
                         if len(relevant_env_df) == 1:
                             env_curie = str(relevant_env_df.iloc[0]['ENVO_ids'])
+                            env_terms = str(relevant_env_df.iloc[0]['ENVO_terms'])
                         else:
-                            env_curie = curie             
+                            env_curie = curie
+                            env_terms = source_name_collapse  
 
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[source_id,
-                                                source_name_collapse,
+                                                env_terms,
                                                 source_node_type,
                                                 env_curie])
                         seen_node[source_id] += 1

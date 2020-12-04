@@ -88,7 +88,6 @@ class TraitsTransform(Transform):
             chem_node_type = "biolink:ChemicalSubstance" # [carbon_substrate]
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
             #metabolism_node_type = "biolink:ActivityAndBehavior" # [metabolism]
-            source_node_type = "NEED_BIOLINK" # [isolation_source]
             curie = 'NEED_CURIE'
             
             #Prefixes
@@ -147,7 +146,7 @@ class TraitsTransform(Transform):
                 # Write chemical node
                 for chem_name in carbon_substrates:
                     chem_curie = curie
-                    chem_node_type = chem_name
+                    #chem_node_type = chem_name
 
                     # Get relevant NLP results
                     if chem_name != 'NA':
@@ -165,18 +164,6 @@ class TraitsTransform(Transform):
 
                     
                     if  not chem_id.endswith(':na') and  chem_id not in seen_node:
-                        """# Get relevant NLP results
-                        if chem_name != 'NA':
-                            relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
-                            relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
-                            if len(relevant_chem) == 1:
-                                chem_curie = relevant_chem.iloc[0]['CURIE']
-                                chem_node_type = relevant_chem.iloc[0]['Biolink']
-                            
-                        else:
-                            chem_curie = chem_name
-                            chem_node_type = chem_name"""
-
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[chem_id,
@@ -205,6 +192,7 @@ class TraitsTransform(Transform):
                     source_name_collapsed = source_name_split[-1]
                     env_curie = curie
                     env_term = source_name_collapsed
+                    source_node_type = "NEED_BIOLINK" # [isolation_source]
 
                     # Get information from the environments.csv (unique_env_df)
                     relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
@@ -229,26 +217,10 @@ class TraitsTransform(Transform):
                         source_id = source_prefix + source_name.lower()
                     else:
                         source_id = env_curie
+                        if source_id.startswith('CHEBI:'):
+                            source_node_type = chem_node_type
 
                     if  not source_id.endswith(':na') and source_id not in seen_node:
-                        
-                        
-                        """if len(relevant_env_df) == 1:
-                            '''
-                            If multiple ENVOs exist, take the last one since that would be the curie of interest
-                            after collapsing the entity.
-                            TODO(Maybe): If CURIE is 'nan', it could be sourced from OGER o/p (ENVO backend)
-                                  of environments.csv
-                            '''
-                            env_curie = str(relevant_env_df.iloc[0]['ENVO_ids']).split(',')[-1].strip()
-                            env_term = str(relevant_env_df.iloc[0]['ENVO_terms']).split(',')[-1].strip()
-                            if env_term == 'nan':
-                                env_curie = curie
-                                env_term = source_name_collapsed
-                        else:
-                            env_curie = curie
-                            env_term = source_name_collapsed  """
-
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[source_id,

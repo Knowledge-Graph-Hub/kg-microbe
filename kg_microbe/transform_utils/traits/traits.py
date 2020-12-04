@@ -214,7 +214,7 @@ class TraitsTransform(Transform):
 
                     #source_id = source_prefix + source_name.lower()
                     if env_curie == curie:
-                        source_id = source_prefix + source_name.lower()
+                        source_id = source_prefix + source_name_collapsed.lower()
                     else:
                         source_id = env_curie
                         if source_id.startswith('CHEBI:'):

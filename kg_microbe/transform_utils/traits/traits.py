@@ -141,14 +141,31 @@ class TraitsTransform(Transform):
                                          data=[org_id,
                                                org_name,
                                                org_node_type,
-                                               curie])
+                                               org_id])
                     seen_node[org_id] += 1
 
                 # Write chemical node
                 for chem_name in carbon_substrates:
-                    chem_id = chem_prefix + chem_name.lower().replace(' ','_')
+                    chem_curie = curie
+                    chem_node_type = chem_name
+
+                    # Get relevant NLP results
+                    if chem_name != 'NA':
+                        relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
+                        relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
+                        if len(relevant_chem) == 1:
+                            chem_curie = relevant_chem.iloc[0]['CURIE']
+                            chem_node_type = relevant_chem.iloc[0]['Biolink']
+                        
+
+                    if chem_curie == curie:
+                        chem_id = chem_prefix + chem_name.lower().replace(' ','_')
+                    else:
+                        chem_id = chem_curie
+
+                    
                     if  not chem_id.endswith(':na') and  chem_id not in seen_node:
-                        # Get relevant NLP results
+                        """# Get relevant NLP results
                         if chem_name != 'NA':
                             relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
                             relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
@@ -158,7 +175,7 @@ class TraitsTransform(Transform):
                             
                         else:
                             chem_curie = chem_name
-                            chem_node_type = chem_name
+                            chem_node_type = chem_name"""
 
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
@@ -185,24 +202,57 @@ class TraitsTransform(Transform):
                     #   A_B_C_D => [A, B, C, D]
                     #   D is the entity of interest
                     source_name_split = source_name.split('_')
-                    source_name_collapse = source_name_split[-1]
+                    source_name_collapsed = source_name_split[-1]
+                    env_curie = curie
+                    env_term = source_name_collapsed
 
-                    source_id = source_prefix + source_name.lower()
+                    # Get information from the environments.csv (unique_env_df)
+                    relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
+
+                    if len(relevant_env_df) == 1:
+                            '''
+                            If multiple ENVOs exist, take the last one since that would be the curie of interest
+                            after collapsing the entity.
+                            TODO(Maybe): If CURIE is 'nan', it could be sourced from OGER o/p (ENVO backend)
+                                  of environments.csv
+                            '''
+                            env_curie = str(relevant_env_df.iloc[0]['ENVO_ids']).split(',')[-1].strip()
+                            env_term = str(relevant_env_df.iloc[0]['ENVO_terms']).split(',')[-1].strip()
+                            if env_term == 'nan':
+                                env_curie = curie
+                                env_term = source_name_collapsed
+                            
+                                 
+
+                    #source_id = source_prefix + source_name.lower()
+                    if env_curie == curie:
+                        source_id = source_prefix + source_name.lower()
+                    else:
+                        source_id = env_curie
+
                     if  not source_id.endswith(':na') and source_id not in seen_node:
-                        # Get information from the environments.csv (unique_env_df)
-                        relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
-                        #import pdb; pdb.set_trace()
-                        if len(relevant_env_df) == 1:
-                            env_curie = str(relevant_env_df.iloc[0]['ENVO_ids'])
-                            env_terms = str(relevant_env_df.iloc[0]['ENVO_terms'])
+                        
+                        
+                        """if len(relevant_env_df) == 1:
+                            '''
+                            If multiple ENVOs exist, take the last one since that would be the curie of interest
+                            after collapsing the entity.
+                            TODO(Maybe): If CURIE is 'nan', it could be sourced from OGER o/p (ENVO backend)
+                                  of environments.csv
+                            '''
+                            env_curie = str(relevant_env_df.iloc[0]['ENVO_ids']).split(',')[-1].strip()
+                            env_term = str(relevant_env_df.iloc[0]['ENVO_terms']).split(',')[-1].strip()
+                            if env_term == 'nan':
+                                env_curie = curie
+                                env_term = source_name_collapsed
                         else:
                             env_curie = curie
-                            env_terms = source_name_collapse  
+                            env_term = source_name_collapsed  """
 
                         write_node_edge_item(fh=node,
                                             header=self.node_header,
                                             data=[source_id,
-                                                env_terms,
+                                                env_term,
                                                 source_node_type,
                                                 env_curie])
                         seen_node[source_id] += 1

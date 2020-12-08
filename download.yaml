@@ -54,3 +54,11 @@
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
+
+# #**** Ontology files****
+#
+# ENVO
+#
+-
+  url: http://purl.obolibrary.org/obo/envo.json
+  local_name: envo.json

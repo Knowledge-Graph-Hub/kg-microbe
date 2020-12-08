@@ -7,10 +7,11 @@ from kgx import PandasTransformer, ObographJsonTransformer  # type: ignore
 
 
 ONTOLOGIES = {
-    'HpTransform': 'hp.json',
-    'GoTransform': 'go-plus.json',
-    'MondoTransform':  'mondo.json',
-    'ChebiTransform': 'chebi.json.gz'
+    #'HpTransform': 'hp.json',
+    #'GoTransform': 'go-plus.json',
+    #'MondoTransform':  'mondo.json',
+    #'ChebiTransform': 'chebi.json.gz',
+    'EnvoTransform': 'envo.json'
 }
 
 

@@ -4,7 +4,7 @@ import logging
 from typing import List
 
 from kg_microbe.transform_utils.drug_central.drug_central import DrugCentralTransform
-#from kg_microbe.transform_utils.ontology import OntologyTransform
+from kg_microbe.transform_utils.ontology import OntologyTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
 
@@ -15,6 +15,7 @@ DATA_SOURCES = {
     #'HpTransform': OntologyTransform,
     #'MondoTransform': OntologyTransform,
     #'ChebiTransform': OntologyTransform,
+    'EnvoTransform' : OntologyTransform,
     'TraitsTransform': TraitsTransform
 }
 

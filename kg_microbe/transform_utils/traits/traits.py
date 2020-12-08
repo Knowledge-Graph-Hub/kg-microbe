@@ -29,7 +29,7 @@ class TraitsTransform(Transform):
         source_name = "condensed_traits_NCBI"
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
 
-        self.node_header = ['id', 'entity', 'category', 'curie']
+        self.node_header = ['id', 'name', 'category', 'curie']
         self.edge_header = ['subject', 'edge_label', 'object', 'relation']
         self.nlp = nlp
 

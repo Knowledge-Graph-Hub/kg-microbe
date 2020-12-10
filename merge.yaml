@@ -24,12 +24,12 @@ merged_graph:
         - data/transformed/condensed_traits_NCBI/nodes.tsv
         - data/transformed/condensed_traits_NCBI/edges.tsv
 
-      operations:
-        - name: kgx.utils.graph_utils.remap_node_identifier
-          args:
-            category: biolink:Protein
-            alternative_property: xrefs
-            prefix: UniProtKB
+#      operations:
+#        - name: kgx.utils.graph_utils.remap_node_identifier
+#          args:
+#            category: biolink:Protein
+#            alternative_property: xrefs
+#            prefix: UniProtKB
  
     envo-ontology:
       input:

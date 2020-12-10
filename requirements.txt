@@ -1,2 +1,1 @@
-kgx
 git+https://github.com/OntoGene/OGER.git

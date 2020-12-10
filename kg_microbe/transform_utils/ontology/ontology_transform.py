@@ -10,7 +10,7 @@ ONTOLOGIES = {
     #'HpTransform': 'hp.json',
     #'GoTransform': 'go-plus.json',
     #'MondoTransform':  'mondo.json',
-    #'ChebiTransform': 'chebi.json.gz',
+    'ChebiTransform': 'chebi.json',
     'EnvoTransform': 'envo.json'
 }
 

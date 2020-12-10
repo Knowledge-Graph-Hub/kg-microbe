@@ -14,7 +14,7 @@ DATA_SOURCES = {
     #'GoTransform': OntologyTransform,
     #'HpTransform': OntologyTransform,
     #'MondoTransform': OntologyTransform,
-    #'ChebiTransform': OntologyTransform,
+    'ChebiTransform': OntologyTransform,
     'EnvoTransform' : OntologyTransform,
     'TraitsTransform': TraitsTransform
 }

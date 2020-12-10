@@ -7,6 +7,7 @@ from collections import defaultdict
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.transform_utils import parse_header, parse_line, write_node_edge_item
 from kg_microbe.utils.nlp_utils import *
+from kg_microbe.utils.robot_utils import *
 
 """
 Ingest traits dataset (NCBI/GTDB)
@@ -46,6 +47,22 @@ class TraitsTransform(Transform):
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
+
+        """
+        Implement ROBOT 
+        """
+        # Convert OWL to JSON for CheBI Ontology
+        convert_to_json(self.input_base_dir, 'CHEBI')
+
+        # Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
+        '''
+        NCBITaxon_131567 = cellular organisms 
+        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
+        '''
+        #TODO: Figure out to extract children rather than just the individual ont
+        extract_convert_to_json(self.input_base_dir, 'NCBITaxon', '131567')
+
+        
 
         """
         Get information from the EnvironemtTransform

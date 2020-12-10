@@ -65,7 +65,8 @@ setup(
         'wget',
         'compress_json',
         'click',
-        'pyyaml'
+        'pyyaml',
+        'kgx'
     ],
     extras_require=extras,
 )

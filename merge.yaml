@@ -34,10 +34,26 @@ merged_graph:
     envo-ontology:
       input:
         name: "ENVO Ontology"
-        type: tsv
+        format: tsv
         filename:
           - data/transformed/ontologies/envo_nodes.tsv
           - data/transformed/ontologies/envo_edges.tsv
+    
+    chebi-ontology:
+      input:
+        name: "CheBI Ontology"
+        format: tsv
+        filename:
+          - data/transformed/ontologies/chebi_nodes.tsv
+          - data/transformed/ontologies/chebi_edges.tsv
+    
+    ncbi-ontology:
+      input:
+        name: "NCBITaxon Ontology"
+        format: tsv
+        filename:
+          - data/transformed/ontologies/ncbitaxon_nodes.tsv
+          - data/transformed/ontologies/ncbitaxon_edges.tsv
 
   operations:
     - name: kgx.operations.summarize_graph.generate_graph_stats

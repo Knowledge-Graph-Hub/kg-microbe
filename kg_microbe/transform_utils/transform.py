@@ -37,6 +37,7 @@ class Transform:
         self.output_node_file = os.path.join(self.output_dir, "nodes.tsv")
         self.output_edge_file = os.path.join(self.output_dir, "edges.tsv")
         self.output_json_file = os.path.join(self.output_dir, "nodes_edges.json")
+        self.subset_terms_file = os.path.join(self.input_base_dir,"subset_terms.tsv")
         
         os.makedirs(self.output_dir, exist_ok=True)
 

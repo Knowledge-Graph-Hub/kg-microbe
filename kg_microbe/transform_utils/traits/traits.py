@@ -54,15 +54,6 @@ class TraitsTransform(Transform):
         # Convert OWL to JSON for CheBI Ontology
         convert_to_json(self.input_base_dir, 'CHEBI')
 
-        # Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
-        '''
-        NCBITaxon_131567 = cellular organisms 
-        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
-        '''
-        #TODO: Figure out to extract children rather than just the individual ont
-        extract_convert_to_json(self.input_base_dir, 'NCBITaxon', '131567')
-
-        
 
         """
         Get information from the EnvironemtTransform
@@ -83,12 +74,12 @@ class TraitsTransform(Transform):
             create_settings_file(self.nlp_dir, 'CHEBI')
             oger_output = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)
-        
 
         # transform data, something like:
         with open(input_file, 'r') as f, \
                 open(self.output_node_file, 'w') as node, \
-                open(self.output_edge_file, 'w') as edge:
+                open(self.output_edge_file, 'w') as edge, \
+                open(self.subset_terms_file, 'w') as terms_file:
 
             # write headers (change default node/edge headers if necessary
             node.write("\t".join(self.node_header) + "\n")
@@ -159,6 +150,8 @@ class TraitsTransform(Transform):
                                                org_node_type,
                                                org_id])
                     seen_node[org_id] += 1
+                    if org_id.startswith('NCBITaxon:'):
+                        terms_file.write(org_id + "\n")
 
                 # Write chemical node
                 for chem_name in carbon_substrates:
@@ -279,4 +272,12 @@ class TraitsTransform(Transform):
                                                 source_id,
                                                 org_to_source_edge_relation])
                     seen_edge[org_id+source_id] += 1
-        return None
+        # Files write ends
+
+        # Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
+        '''
+        NCBITaxon_131567 = cellular organisms 
+        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
+        '''
+        subset_ontology_needed = 'NCBITaxon'
+        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file)

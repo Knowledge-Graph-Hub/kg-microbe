@@ -202,7 +202,7 @@ class TraitsTransform(Transform):
                     source_name_collapsed = source_name_split[-1]
                     env_curie = curie
                     env_term = source_name_collapsed
-                    source_node_type = "NEED_BIOLINK" # [isolation_source]
+                    source_node_type = "" # [isolation_source] left blank intentionally
 
                     # Get information from the environments.csv (unique_env_df)
                     relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]

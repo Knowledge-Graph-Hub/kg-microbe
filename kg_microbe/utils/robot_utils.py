@@ -35,21 +35,21 @@ def convert_to_json(path:str, ont:str):
     
     return None
 
-def extract_convert_to_json(path:str, ont_name:str, ont_id:str):
+def extract_convert_to_json(path:str, ont_name:str, term_file:str):
     """
     This method extracts all children of provided CURIE
     """
     robot_file, env = initialize_robot(path)
     input_owl = os.path.join(path, ont_name.lower()+'.owl')
-    output_json = os.path.join(path, ont_name.lower()+'_extracted_subset.json')
+    output_json = os.path.join(path, ont_name.lower()+'.json')
     output_owl = os.path.join(path, ont_name.lower()+'_extracted_subset.owl')
-    term = ont_name + ':' + ont_id
+
     if not os.path.isfile(output_json):
         call = ['bash', robot_file, 'extract', \
                                     '--method', 'STAR',
                                     '--input', input_owl, \
                                     '--output', output_owl, \
-                                    '--term', term, \
+                                    '--term-file', term_file, \
                                     'convert', \
                                     '--output', output_json, \
                                     '-f', 'json']

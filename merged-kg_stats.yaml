@@ -19,7 +19,7 @@ edge_stats:
     biolink:has_phenotype:
       count: 19727
     biolink:interacts_with:
-      count: 4336
+      count: 4337
     biolink:inverseOf:
       count: 2
     biolink:located_in:
@@ -51,58 +51,16 @@ edge_stats:
     unknown:
       count: 0
   count_by_spo:
-    NEED_BIOLINK-biolink:develops_from-biolink:AnatomicalEntity:
-      count: 1
-    NEED_BIOLINK-biolink:has_output-biolink:OntologyClass:
-      count: 1
-    NEED_BIOLINK-biolink:has_part-NEED_BIOLINK:
-      count: 2
-    NEED_BIOLINK-biolink:has_part-biolink:AnatomicalEntity:
-      count: 3
-    NEED_BIOLINK-biolink:has_part-biolink:OntologyClass:
-      count: 5
-    NEED_BIOLINK-biolink:located_in-biolink:OntologyClass:
-      count: 3
-    NEED_BIOLINK-biolink:occurs_in-NEED_BIOLINK:
-      count: 1
-    NEED_BIOLINK-biolink:part_of-biolink:AnatomicalEntity:
-      count: 2
-    NEED_BIOLINK-biolink:part_of-biolink:OntologyClass:
-      count: 1
-    NEED_BIOLINK-biolink:related_to-NEED_BIOLINK:
-      count: 3
-    NEED_BIOLINK-biolink:related_to-biolink:AnatomicalEntity:
-      count: 4
-    NEED_BIOLINK-biolink:related_to-biolink:ChemicalSubstance:
-      count: 3
-    NEED_BIOLINK-biolink:related_to-biolink:OntologyClass:
-      count: 8
-    NEED_BIOLINK-biolink:related_to-organism taxon:
-      count: 3
-    NEED_BIOLINK-biolink:subclass_of-NEED_BIOLINK:
-      count: 8
-    NEED_BIOLINK-biolink:subclass_of-biolink:AnatomicalEntity:
-      count: 5
-    NEED_BIOLINK-biolink:subclass_of-biolink:OntologyClass:
-      count: 52
-    NEED_BIOLINK-biolink:subclass_of-organism taxon:
-      count: 1
     biolink:AnatomicalEntity-biolink:develops_from-biolink:AnatomicalEntity:
-      count: 100
-    biolink:AnatomicalEntity-biolink:has_part-NEED_BIOLINK:
-      count: 1
+      count: 101
     biolink:AnatomicalEntity-biolink:has_part-biolink:AnatomicalEntity:
-      count: 89
-    biolink:AnatomicalEntity-biolink:part_of-NEED_BIOLINK:
-      count: 7
+      count: 93
     biolink:AnatomicalEntity-biolink:part_of-biolink:AnatomicalEntity:
-      count: 414
+      count: 423
     biolink:AnatomicalEntity-biolink:related_to-biolink:AnatomicalEntity:
-      count: 20
-    biolink:AnatomicalEntity-biolink:subclass_of-NEED_BIOLINK:
-      count: 9
+      count: 21
     biolink:AnatomicalEntity-biolink:subclass_of-biolink:AnatomicalEntity:
-      count: 806
+      count: 820
     biolink:AnatomicalEntity-biolink:subclass_of-biolink:OntologyClass:
       count: 2
     biolink:ChemicalSubstance-biolink:has_part-biolink:ChemicalSubstance:
@@ -113,74 +71,54 @@ edge_stats:
       count: 192573
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:OntologyClass:
       count: 2
-    biolink:OntologyClass-biolink:derives_from-NEED_BIOLINK:
-      count: 10
     biolink:OntologyClass-biolink:derives_from-biolink:AnatomicalEntity:
       count: 1
     biolink:OntologyClass-biolink:derives_from-biolink:ChemicalSubstance:
       count: 1
     biolink:OntologyClass-biolink:derives_from-biolink:OntologyClass:
-      count: 31
+      count: 41
     biolink:OntologyClass-biolink:derives_from-organism taxon:
       count: 1
-    biolink:OntologyClass-biolink:derives_into-NEED_BIOLINK:
-      count: 1
     biolink:OntologyClass-biolink:derives_into-biolink:OntologyClass:
-      count: 1
+      count: 2
     biolink:OntologyClass-biolink:develops_from-biolink:OntologyClass:
       count: 6
     biolink:OntologyClass-biolink:has_attribute-biolink:OntologyClass:
       count: 1
-    biolink:OntologyClass-biolink:has_input-NEED_BIOLINK:
-      count: 6
     biolink:OntologyClass-biolink:has_input-biolink:ChemicalSubstance:
       count: 5
     biolink:OntologyClass-biolink:has_input-biolink:OntologyClass:
-      count: 27
-    biolink:OntologyClass-biolink:has_output-NEED_BIOLINK:
-      count: 4
+      count: 33
     biolink:OntologyClass-biolink:has_output-biolink:ChemicalSubstance:
       count: 7
     biolink:OntologyClass-biolink:has_output-biolink:OntologyClass:
-      count: 49
-    biolink:OntologyClass-biolink:has_part-NEED_BIOLINK:
-      count: 8
+      count: 54
     biolink:OntologyClass-biolink:has_part-biolink:ChemicalSubstance:
       count: 17
     biolink:OntologyClass-biolink:has_part-biolink:OntologyClass:
-      count: 170
-    biolink:OntologyClass-biolink:has_participant-NEED_BIOLINK:
-      count: 12
+      count: 185
     biolink:OntologyClass-biolink:has_participant-biolink:ChemicalSubstance:
       count: 3
     biolink:OntologyClass-biolink:has_participant-biolink:OntologyClass:
-      count: 107
+      count: 119
     biolink:OntologyClass-biolink:has_participant-organism taxon:
       count: 4
     biolink:OntologyClass-biolink:inverseOf-biolink:OntologyClass:
       count: 2
     biolink:OntologyClass-biolink:located_in-biolink:OntologyClass:
-      count: 48
-    biolink:OntologyClass-biolink:location_of-NEED_BIOLINK:
-      count: 1
+      count: 51
     biolink:OntologyClass-biolink:location_of-biolink:OntologyClass:
-      count: 4
+      count: 5
     biolink:OntologyClass-biolink:location_of-organism taxon:
       count: 1
     biolink:OntologyClass-biolink:negatively_regulates_process_to_process-biolink:OntologyClass:
       count: 1
-    biolink:OntologyClass-biolink:occurs_in-NEED_BIOLINK:
-      count: 1
     biolink:OntologyClass-biolink:occurs_in-biolink:OntologyClass:
-      count: 26
-    biolink:OntologyClass-biolink:overlaps-NEED_BIOLINK:
-      count: 2
+      count: 28
     biolink:OntologyClass-biolink:overlaps-biolink:OntologyClass:
-      count: 62
-    biolink:OntologyClass-biolink:part_of-NEED_BIOLINK:
-      count: 10
+      count: 64
     biolink:OntologyClass-biolink:part_of-biolink:OntologyClass:
-      count: 303
+      count: 314
     biolink:OntologyClass-biolink:part_of-organism taxon:
       count: 1
     biolink:OntologyClass-biolink:participates_in-biolink:OntologyClass:
@@ -189,48 +127,50 @@ edge_stats:
       count: 1
     biolink:OntologyClass-biolink:regulates_process_to_process-biolink:OntologyClass:
       count: 2
-    biolink:OntologyClass-biolink:related_to-NEED_BIOLINK:
-      count: 84
     biolink:OntologyClass-biolink:related_to-biolink:AnatomicalEntity:
-      count: 30
+      count: 35
     biolink:OntologyClass-biolink:related_to-biolink:ChemicalSubstance:
-      count: 68
+      count: 71
     biolink:OntologyClass-biolink:related_to-biolink:OntologyClass:
-      count: 681
+      count: 774
     biolink:OntologyClass-biolink:related_to-organism taxon:
-      count: 10
+      count: 13
     biolink:OntologyClass-biolink:subPropertyOf-biolink:OntologyClass:
       count: 122
-    biolink:OntologyClass-biolink:subclass_of-NEED_BIOLINK:
-      count: 200
     biolink:OntologyClass-biolink:subclass_of-biolink:AnatomicalEntity:
       count: 3
     biolink:OntologyClass-biolink:subclass_of-biolink:ChemicalSubstance:
       count: 3
     biolink:OntologyClass-biolink:subclass_of-biolink:OntologyClass:
-      count: 4423
+      count: 4682
+    biolink:OntologyClass-biolink:subclass_of-organism taxon:
+      count: 1
     biolink:OntologyClass-biolink:type-biolink:OntologyClass:
       count: 45
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:AbstractEntity:
       count: 19727
     biolink:OrganismTaxon-biolink:interacts_with-biolink:ChemicalSubstance:
-      count: 4336
-    biolink:OrganismTaxon-biolink:location_of-NEED_BIOLINK:
-      count: 24343
+      count: 4337
+    biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
+      count: 1763
     biolink:OrganismTaxon-biolink:location_of-biolink:ChemicalSubstance:
       count: 910
+    biolink:OrganismTaxon-biolink:location_of-biolink:OntologyClass:
+      count: 14128
+    biolink:OrganismTaxon-biolink:location_of-organism taxon:
+      count: 624
+    biolink:OrganismTaxon-biolink:location_of-unknown:
+      count: 7828
     biolink:OrganismTaxon-biolink:subclass_of-biolink:OrganismTaxon:
       count: 26745
     biolink:OrganismTaxon-biolink:subclass_of-organism taxon:
       count: 832
-    organism taxon-biolink:subclass_of-NEED_BIOLINK:
-      count: 1
     organism taxon-biolink:subclass_of-biolink:OntologyClass:
-      count: 4
+      count: 5
     organism taxon-biolink:subclass_of-biolink:OrganismTaxon:
       count: 404
     organism taxon-biolink:subclass_of-organism taxon:
-      count: 194
+      count: 195
   edge_labels:
   - biolink:derives_from
   - biolink:derives_into
@@ -256,12 +196,10 @@ edge_stats:
   - biolink:subPropertyOf
   - biolink:subclass_of
   - biolink:type
-  total_edges: 362571
+  total_edges: 362572
 graph_name: Merged Graph
 node_stats:
   count_by_category:
-    NEED_BIOLINK:
-      count: 65
     biolink:AbstractEntity:
       count: 19
     biolink:AnatomicalEntity:
@@ -275,9 +213,8 @@ node_stats:
     organism taxon:
       count: 49492
     unknown:
-      count: 0
+      count: 10
   node_categories:
-  - NEED_BIOLINK
   - biolink:AbstractEntity
   - biolink:AnatomicalEntity
   - biolink:ChemicalSubstance

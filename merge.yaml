@@ -16,9 +16,9 @@ configuration:
 merged_graph:
   name: KG-MICROBE Graph
   source:
-    ncbi-traits:
+    bacteria-archaea-traits-ncbi:
       input:
-        name: "NCBI Traits"
+        name: "bacteria-archaea-traits-ncbi"
         format: tsv
         filename:
         - data/transformed/condensed_traits_NCBI/nodes.tsv

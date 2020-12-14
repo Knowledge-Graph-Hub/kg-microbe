@@ -55,6 +55,16 @@
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
 
+#
+# #**** ROBOT ****
+#
+-
+  url: https://github.com/ontodev/robot/releases/download/v1.7.2/robot.jar
+  local_name: robot.jar
+-
+  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
+  local_name: robot
+  
 # #**** Ontology files****
 #
 # ENVO
@@ -65,21 +75,12 @@
 #
 # CHEBI
 #
--
-  url: http://purl.obolibrary.org/obo/chebi.owl
-  local_name: chebi.owl
+#-
+#  url: http://purl.obolibrary.org/obo/chebi.owl
+#  local_name: chebi.owl
 #
 # NCBI Taxon
 #
--
-  url: http://purl.obolibrary.org/obo/ncbitaxon.owl
-  local_name: ncbitaxon.owl
-#
-# #**** ROBOT ****
-#
--
-  url: https://github.com/ontodev/robot/releases/download/v1.7.2/robot.jar
-  local_name: robot.jar
--
-  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
-  local_name: robot
+#-
+#  url: http://purl.obolibrary.org/obo/ncbitaxon.owl
+#  local_name: ncbitaxon.owl

@@ -1,3 +1,6 @@
 .vscode/settings.json
 data
 __pycache__/
+.DS_Store
+build
+kg_microbe.egg-info

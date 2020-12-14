@@ -6,8 +6,11 @@ from collections import defaultdict
 
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.transform_utils import parse_header, parse_line, write_node_edge_item
+from kg_microbe.utils import biohub_converter as bc
 from kg_microbe.utils.nlp_utils import *
 from kg_microbe.utils.robot_utils import *
+
+from kgx.cli.cli_utils import transform
 
 """
 Ingest traits dataset (NCBI/GTDB)
@@ -62,6 +65,23 @@ class TraitsTransform(Transform):
         env_df = pd.read_csv(environment_file, sep=',', low_memory=False, usecols=['Type', 'ENVO_terms', 'ENVO_ids'])
         unique_env_df = env_df.drop_duplicates()
 
+        
+
+        """
+        Create termlist.tsv files from ontology JSON files for NLP
+        TODO: Replace this code once runNER is installed and remove 'kg_microbe/utils/biohub_converter.py'
+        """
+        ont = 'chebi'
+        ont_int = ont+'.json'
+        
+        json_input = os.path.join(self.input_base_dir,ont_int)
+        tsv_output = os.path.join(self.input_base_dir,ont)
+
+        transform(inputs=[json_input], input_format='obojson', output= tsv_output, output_format='tsv')
+
+        ont_nodes = os.path.join(self.input_base_dir, ont + '_nodes.tsv')
+        ont_terms = os.path.abspath(os.path.join(os.path.dirname(json_input),'..','nlp/terms/', ont+'_termlist.tsv'))
+        bc.parse(ont_nodes, ont_terms)
 
         """
         NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'

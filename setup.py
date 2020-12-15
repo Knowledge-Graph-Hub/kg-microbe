@@ -64,7 +64,7 @@ setup(
         'tqdm',
         'wget',
         'compress_json',
-        'click',
+        'click==7',
         'pyyaml',
         'kgx'
     ],

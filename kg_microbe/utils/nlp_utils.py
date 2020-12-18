@@ -3,8 +3,11 @@
 
 import os
 import configparser
+from kgx.cli.cli_utils import transform
 from oger.ctrl.router import Router, PipelineServer
 from oger.ctrl.run import run as og_run
+
+from kg_microbe.utils import biohub_converter as bc
 
 import pandas as pd
 
@@ -65,13 +68,14 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
 
     if ont == 'ENVO':
         config.set('Main','termlist_path', os.path.join(path,'terms/envo_termlist.tsv'))
-        
     elif ont == 'CHEBI':
         config.set('Main','termlist_path', os.path.join(path,'terms/chebi_termlist.tsv'))
-        
+    elif ont == 'ECOCORE':
+        config.set('Main','termlist_path', os.path.join(path,'terms/ecocore_termlist.tsv')) 
     else:
-        config.set('Main', 'termlist1_path', os.path.join(path,'terms/envo_termlist.tsv'))
-        config.set('Main', 'termlist2_path', os.path.join(path,'terms/chebi_termlist.tsv'))
+        #config.set('Main', 'termlist1_path', os.path.join(path,'terms/envo_termlist.tsv'))
+        config.set('Main', 'termlist1_path', os.path.join(path,'terms/chebi_termlist.tsv'))
+        config.set('Main', 'termlist2_path', os.path.join(path,'terms/ecocore_termlist.tsv'))
     
     # This is how OGER prescribes in it's test file but above works too.
     '''config['Termlist1'] = {
@@ -85,29 +89,35 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
     with open(os.path.join(path, SETTINGS_FILENAME), 'w') as settings_file:
         config.write(settings_file)
 
-def prep_nlp_input(path: str, columns: list)-> str:
+def create_termlist(path: str, ont: str) -> None:
+        """
+        Create termlist.tsv files from ontology JSON files for NLP
+        TODO: Replace this code once runNER is installed and remove 'kg_microbe/utils/biohub_converter.py'
+        """
+        ont_int = ont+'.json'
+        
+        json_input = os.path.join(path,ont_int)
+        tsv_output = os.path.join(path,ont)
+
+        transform(inputs=[json_input], input_format='obojson', output= tsv_output, output_format='tsv')
+
+        ont_nodes = os.path.join(path, ont + '_nodes.tsv')
+        ont_terms = os.path.abspath(os.path.join(os.path.dirname(json_input),'..','nlp/terms/', ont+'_termlist.tsv'))
+        bc.parse(ont_nodes, ont_terms)
+
+
+def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     '''
     Arguments: 
         path - path to the file which has text to be analyzed
         columns - The first column HAS to be an id column.
+        dic - The Ontology to be used as a dictionary for NLP
     '''
     df = pd.read_csv(path, sep=',', low_memory=False, usecols=columns)
     sub_df = df.dropna()
     
-    # Hacky way of creating i/p files to run OGER
-    '''for idx, row in sub_df.T.iteritems():
-        new_file = 'nlp/input/'+str(row[0])+'.txt'
-        path_to_new_file = os.path.abspath(os.path.join(os.path.dirname(path),'..',new_file))
-
-        if os.path.exists(path_to_new_file):
-            mode = 'a'
-        else:
-            mode = 'w'
-
-        with open(path_to_new_file, mode) as txt_file:
-            txt_file.write(row[1])'''
     # New way of doing this : PR submitted to Ontogene for merging code.
-    fn = 'nlp'
+    fn = 'nlp'+dic
     nlp_input = os.path.abspath(os.path.join(os.path.dirname(path),'..','nlp/input/'+fn+'.tsv'))
     sub_df.to_csv(nlp_input, sep='\t', index=False)
     return fn

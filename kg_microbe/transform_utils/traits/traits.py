@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.transform_utils import parse_header, parse_line, write_node_edge_item
-from kg_microbe.utils import biohub_converter as bc
+
 from kg_microbe.utils.nlp_utils import *
 from kg_microbe.utils.robot_utils import *
 
@@ -56,6 +56,7 @@ class TraitsTransform(Transform):
         """
         # Convert OWL to JSON for CheBI Ontology
         convert_to_json(self.input_base_dir, 'CHEBI')
+        convert_to_json(self.input_base_dir, 'ECOCORE')
 
 
         """
@@ -71,29 +72,32 @@ class TraitsTransform(Transform):
         Create termlist.tsv files from ontology JSON files for NLP
         TODO: Replace this code once runNER is installed and remove 'kg_microbe/utils/biohub_converter.py'
         """
-        ont = 'chebi'
-        ont_int = ont+'.json'
+        create_termlist(self.input_base_dir, 'chebi')
+        create_termlist(self.input_base_dir, 'ecocore')
         
-        json_input = os.path.join(self.input_base_dir,ont_int)
-        tsv_output = os.path.join(self.input_base_dir,ont)
-
-        transform(inputs=[json_input], input_format='obojson', output= tsv_output, output_format='tsv')
-
-        ont_nodes = os.path.join(self.input_base_dir, ont + '_nodes.tsv')
-        ont_terms = os.path.abspath(os.path.join(os.path.dirname(json_input),'..','nlp/terms/', ont+'_termlist.tsv'))
-        bc.parse(ont_nodes, ont_terms)
 
         """
         NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'
         """
         if self.nlp:
             # Prep for NLP. Make sure the first column is the ID
+            # CHEBI
             cols_for_nlp = ['tax_id', 'carbon_substrates']
-            input_file_name = prep_nlp_input(input_file, cols_for_nlp)
+            input_file_name = prep_nlp_input(input_file, cols_for_nlp, 'CHEBI')
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, 'CHEBI')
-            oger_output = run_oger(self.nlp_dir, input_file_name, n_workers=5)
+            oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)
+            
+            '''# ECOCORE
+            cols_for_nlp = ['tax_id', 'metabolism']
+            input_file_name = prep_nlp_input(input_file, cols_for_nlp, 'ECOCORE')
+            # Set-up the settings.ini file for OGER and run
+            create_settings_file(self.nlp_dir, 'ECOCORE')
+            oger_output_ecocore = run_oger(self.nlp_dir, input_file_name, n_workers=5)
+            #oger_output = process_oger_output(self.nlp_dir, input_file_name)'''
+
+            
 
         # transform data, something like:
         with open(input_file, 'r') as f, \
@@ -115,14 +119,14 @@ class TraitsTransform(Transform):
             org_node_type = "biolink:OrganismTaxon" # [org_name]
             chem_node_type = "biolink:ChemicalSubstance" # [carbon_substrate]
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
-            #metabolism_node_type = "biolink:ActivityAndBehavior" # [metabolism]
+            metabolism_node_type = "biolink:ActivityAndBehavior" # [metabolism]
             curie = 'NEED_CURIE'
             
             #Prefixes
             org_prefix = "NCBITaxon:"
             chem_prefix = "Carbon:"
             shape_prefix = "Shape:"
-            #activity_prefix = "Metab:"
+            metab_prefix = "Metab:"
             source_prefix = "Env:"
 
             # Edges
@@ -132,6 +136,8 @@ class TraitsTransform(Transform):
             org_to_chem_edge_relation = "RO:0002438" # [org_name -> 'trophically interacts with' -> carbon_substrate]
             org_to_source_edge_label = "biolink:location_of" # [org -> isolation_source]
             org_to_source_edge_relation = "RO:0001015" #[org -> location_of -> source]
+            org_to_metab_edge_label = "biolink:BiologicalProcess" # [org -> metabolism]
+            org_to_metab_edge_relation = "GO:0008150" # [org -> biological_process -> metabolism]
 
             
             
@@ -180,7 +186,7 @@ class TraitsTransform(Transform):
 
                     # Get relevant NLP results
                     if chem_name != 'NA':
-                        relevant_tax = oger_output.loc[oger_output['TaxId'] == int(tax_id)]
+                        relevant_tax = oger_output_chebi.loc[oger_output_chebi['TaxId'] == int(tax_id)]
                         relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
                         if len(relevant_chem) == 1:
                             chem_curie = relevant_chem.iloc[0]['CURIE']
@@ -258,6 +264,14 @@ class TraitsTransform(Transform):
                                                 source_node_type,
                                                 env_curie])
                         seen_node[source_id] += 1
+                    
+                # Write metabolism node
+                for metabolism_type in metabolism:
+                    metab_curie = curie
+                    
+                    
+                    if metabolism_type != 'NA':
+                        # TODO create nodes and edges and write them
 
                 
 
@@ -301,3 +315,5 @@ class TraitsTransform(Transform):
         '''
         subset_ontology_needed = 'NCBITaxon'
         extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file)
+
+    

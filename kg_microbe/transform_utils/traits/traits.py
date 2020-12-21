@@ -97,7 +97,18 @@ class TraitsTransform(Transform):
             oger_output_ecocore = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)'''
 
-            
+        # Mapping table for metabolism.
+        # TODO: Find an alternative way for doing this
+        col = ['ID', 'ActualTerm', 'PreferredTerm']
+        metabolism_map_df = pd.DataFrame(columns=col)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000172', 'ActualTerm':'anaerobic', 'PreferredTerm':'anaerobe'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000172', 'ActualTerm':'strictly anaerobic', 'PreferredTerm':'anaerobe'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'MICRO:0000504', 'ActualTerm':'obligate anaerobic', 'PreferredTerm':'obligately anaerobic'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'OMP:0000087', 'ActualTerm':'facultative', 'PreferredTerm':'facultative anaerobe'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'MICRO:0000516', 'ActualTerm':'obligate aerobic', 'PreferredTerm':'obligately aerobic'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000173', 'ActualTerm':'aerobic', 'PreferredTerm':'aerobe'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'MICRO:0000515', 'ActualTerm':'microaerophilic', 'PreferredTerm':'microaerophilic'}, ignore_index=True)
+
 
         # transform data, something like:
         with open(input_file, 'r') as f, \
@@ -126,7 +137,7 @@ class TraitsTransform(Transform):
             org_prefix = "NCBITaxon:"
             chem_prefix = "Carbon:"
             shape_prefix = "Shape:"
-            metab_prefix = "Metab:"
+            #metab_prefix = "Metab:"
             source_prefix = "Env:"
 
             # Edges
@@ -266,13 +277,21 @@ class TraitsTransform(Transform):
                         seen_node[source_id] += 1
                     
                 # Write metabolism node
-                for metabolism_type in metabolism:
-                    metab_curie = curie
-                    
-                    
-                    if metabolism_type != 'NA':
-                        # TODO create nodes and edges and write them
 
+                metabolism_id = None
+                
+                if metabolism != 'NA':
+                    if metabolism_map_df['ActualTerm'].str.contains(metabolism).any():
+                        metabolism_id = metabolism_map_df.loc[metabolism_map_df['ActualTerm'] == metabolism]['ID'].item()
+                        metabolism_term = metabolism_map_df.loc[metabolism_map_df['ActualTerm'] == metabolism]['PreferredTerm'].item()
+                        if metabolism_id not in seen_node:
+                            write_node_edge_item(fh=node,
+                                                header=self.node_header,
+                                                data=[metabolism_id,
+                                                    metabolism_term,
+                                                    metabolism_node_type,
+                                                    metabolism_id])
+                            seen_node[metabolism_id] += 1
                 
 
 
@@ -306,6 +325,16 @@ class TraitsTransform(Transform):
                                                 source_id,
                                                 org_to_source_edge_relation])
                     seen_edge[org_id+source_id] += 1
+
+                # org-metabolism edge
+                if metabolism_id != None and org_id+metabolism_id not in seen_edge:
+                    write_node_edge_item(fh=edge,
+                                            header=self.edge_header,
+                                            data=[org_id,
+                                                org_to_metab_edge_label,
+                                                metabolism_id,
+                                                org_to_metab_edge_relation])
+                    seen_edge[org_id+source_id] += 1
         # Files write ends
 
         # Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
@@ -315,5 +344,3 @@ class TraitsTransform(Transform):
         '''
         subset_ontology_needed = 'NCBITaxon'
         extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file)
-
-    

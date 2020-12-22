@@ -22,6 +22,7 @@ And extracts the following columns:
     - tax_id
     - org_name
     - metabolism
+    - pathways
     - carbon_substrates
     - cell_shape
     - isolation_source

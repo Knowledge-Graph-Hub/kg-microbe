@@ -33,7 +33,7 @@ class TraitsTransform(Transform):
         source_name = "condensed_traits_NCBI"
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
 
-        self.node_header = ['id', 'name', 'category', 'curie']
+        self.node_header = ['id', 'name', 'category']#, 'curie']
         self.edge_header = ['subject', 'edge_label', 'object', 'relation']
         self.nlp = nlp
 
@@ -184,8 +184,8 @@ class TraitsTransform(Transform):
                                          header=self.node_header,
                                          data=[org_id,
                                                org_name,
-                                               org_node_type,
-                                               org_id])
+                                               org_node_type])#,
+                                               #org_id])
                     seen_node[org_id] += 1
                     if org_id.startswith('NCBITaxon:'):
                         terms_file.write(org_id + "\n")
@@ -215,8 +215,8 @@ class TraitsTransform(Transform):
                                             header=self.node_header,
                                             data=[chem_id,
                                                 chem_name,
-                                                chem_node_type,
-                                                chem_curie])
+                                                chem_node_type])#,
+                                                #chem_curie])
                         seen_node[chem_id] += 1
 
                 # Write shape node
@@ -226,8 +226,8 @@ class TraitsTransform(Transform):
                                          header=self.node_header,
                                          data=[shape_id,
                                                cell_shape,
-                                               shape_node_type,
-                                               curie])
+                                               shape_node_type])#,
+                                               #curie])
                     seen_node[shape_id] += 1
 
                 # Write source node
@@ -272,8 +272,8 @@ class TraitsTransform(Transform):
                                             header=self.node_header,
                                             data=[source_id,
                                                 env_term,
-                                                source_node_type,
-                                                env_curie])
+                                                source_node_type])#,
+                                                #env_curie])
                         seen_node[source_id] += 1
                     
                 # Write metabolism node
@@ -289,8 +289,8 @@ class TraitsTransform(Transform):
                                                 header=self.node_header,
                                                 data=[metabolism_id,
                                                     metabolism_term,
-                                                    metabolism_node_type,
-                                                    metabolism_id])
+                                                    metabolism_node_type])#,
+                                                    #metabolism_id])
                             seen_node[metabolism_id] += 1
                 
 

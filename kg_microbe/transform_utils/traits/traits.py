@@ -103,11 +103,11 @@ class TraitsTransform(Transform):
         metabolism_map_df = pd.DataFrame(columns=col)
         metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000172', 'ActualTerm':'anaerobic', 'PreferredTerm':'anaerobe'}, ignore_index=True)
         metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000172', 'ActualTerm':'strictly anaerobic', 'PreferredTerm':'anaerobe'}, ignore_index=True)
-        metabolism_map_df = metabolism_map_df.append({'ID':'MICRO:0000504', 'ActualTerm':'obligate anaerobic', 'PreferredTerm':'obligately anaerobic'}, ignore_index=True)
-        metabolism_map_df = metabolism_map_df.append({'ID':'OMP:0000087', 'ActualTerm':'facultative', 'PreferredTerm':'facultative anaerobe'}, ignore_index=True)
-        metabolism_map_df = metabolism_map_df.append({'ID':'MICRO:0000516', 'ActualTerm':'obligate aerobic', 'PreferredTerm':'obligately aerobic'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000178', 'ActualTerm':'obligate anaerobic', 'PreferredTerm':'obligate anaerobe'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000177', 'ActualTerm':'facultative', 'PreferredTerm':'facultative anaerobe'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000179', 'ActualTerm':'obligate aerobic', 'PreferredTerm':'obligate aerobe'}, ignore_index=True)
         metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000173', 'ActualTerm':'aerobic', 'PreferredTerm':'aerobe'}, ignore_index=True)
-        metabolism_map_df = metabolism_map_df.append({'ID':'MICRO:0000515', 'ActualTerm':'microaerophilic', 'PreferredTerm':'microaerophilic'}, ignore_index=True)
+        metabolism_map_df = metabolism_map_df.append({'ID':'ECOCORE:00000180', 'ActualTerm':'microaerophilic', 'PreferredTerm':'microaerophilic'}, ignore_index=True)
 
 
         # transform data, something like:

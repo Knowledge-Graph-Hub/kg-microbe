@@ -23,6 +23,7 @@ And extracts the following columns:
     - org_name
     - metabolism
     - pathways
+    - shape
     - carbon_substrates
     - cell_shape
     - isolation_source
@@ -58,6 +59,14 @@ class TraitsTransform(Transform):
         # Convert OWL to JSON for CheBI Ontology
         convert_to_json(self.input_base_dir, 'CHEBI')
         convert_to_json(self.input_base_dir, 'ECOCORE')
+
+        # Extract the 'cellular organisms' tree from NCBITaxon and convert to JSON
+        '''
+        NCBITaxon_131567 = cellular organisms 
+        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
+        '''
+        subset_ontology_needed = 'NCBITaxon'
+        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, 'NCBITaxon:131567', 'TOP')
 
 
         """
@@ -97,6 +106,8 @@ class TraitsTransform(Transform):
             create_settings_file(self.nlp_dir, 'ECOCORE')
             oger_output_ecocore = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)'''
+            
+            
 
         # Mapping table for metabolism.
         # TODO: Find an alternative way for doing this
@@ -114,8 +125,9 @@ class TraitsTransform(Transform):
         # transform data, something like:
         with open(input_file, 'r') as f, \
                 open(self.output_node_file, 'w') as node, \
-                open(self.output_edge_file, 'w') as edge, \
-                open(self.subset_terms_file, 'w') as terms_file:
+                open(self.output_edge_file, 'w') as edge:
+                # If need to capture CURIEs for ROBOT STAR extraction
+                #open(self.subset_terms_file, 'w') as terms_file:
 
             # write headers (change default node/edge headers if necessary
             node.write("\t".join(self.node_header) + "\n")
@@ -188,8 +200,9 @@ class TraitsTransform(Transform):
                                                org_node_type])#,
                                                #org_id])
                     seen_node[org_id] += 1
-                    if org_id.startswith('NCBITaxon:'):
-                        terms_file.write(org_id + "\n")
+                    # If capture of all NCBITaxon: CURIEs are needed for ROBOT STAR extraction
+                    #if org_id.startswith('NCBITaxon:'):
+                    #    terms_file.write(org_id + "\n")
 
                 # Write chemical node
                 for chem_name in carbon_substrates:
@@ -338,10 +351,10 @@ class TraitsTransform(Transform):
                     seen_edge[org_id+source_id] += 1
         # Files write ends
 
-        # Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
+        """# Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
         '''
         NCBITaxon_131567 = cellular organisms 
         (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
         '''
         subset_ontology_needed = 'NCBITaxon'
-        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file)
+        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file, 'BOT')"""

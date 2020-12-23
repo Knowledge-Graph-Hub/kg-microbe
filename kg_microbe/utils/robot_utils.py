@@ -12,7 +12,7 @@ def initialize_robot(path:str) -> list:
     env = dict(os.environ)
     #(JDK compatibility issue: https://stackoverflow.com/questions/49962437/unrecognized-vm-option-useparnewgc-error-could-not-create-the-java-virtual)
     #env['ROBOT_JAVA_ARGS'] = '-Xmx8g -XX:+UseConcMarkSweepGC' # for JDK 9 and older 
-    env['ROBOT_JAVA_ARGS'] = '-Xmx16g -XX:+UseG1GC' # For JDK 10 and over
+    env['ROBOT_JAVA_ARGS'] = '-Xmx12g -XX:+UseG1GC' # For JDK 10 and over
     env['PATH'] = os.environ['PATH']
     env['PATH'] += os.pathsep + path
 

@@ -10,7 +10,7 @@ from kg_microbe.transform_utils.traits.traits import TraitsTransform
 
 
 DATA_SOURCES = {
-    'DrugCentralTransform': DrugCentralTransform,
+    #'DrugCentralTransform': DrugCentralTransform,
     #'GoTransform': OntologyTransform,
     #'HpTransform': OntologyTransform,
     'NCBITransform': OntologyTransform,

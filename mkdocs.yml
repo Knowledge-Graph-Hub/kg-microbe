@@ -2,7 +2,7 @@ site_name: KG-Microbe
 repo_name: KG-Microbe
 theme: readthedocs
 repo_url: https://github.com/Knowledge-Graph-Hub/kg-microbe
-edit_uri: '?query=root/path/docs/'
+
 nav:
     - Home: index.md
 

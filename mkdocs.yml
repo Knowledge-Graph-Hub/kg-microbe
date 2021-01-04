@@ -1,4 +1,3 @@
 site_name: KG-Microbe
 nav:
     - Home: index.md
-theme: readthedocs

@@ -1,4 +1,8 @@
 site_name: KG-Microbe
+repo_name: KG-Microbe
+theme: readthedocs
+repo_url: https://github.com/Knowledge-Graph-Hub/kg-microbe
+edit_uri: root/docs/
 nav:
     - Home: index.md
-theme: readthedocs
+

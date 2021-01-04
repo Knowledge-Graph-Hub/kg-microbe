@@ -16,7 +16,7 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 * `pip install -r requirements.txt`
 * `python setup.py install`
 
-## There are 3 steps to running the pipeline:
+## Pipeline Stages
 1. Download
 2. Transform
 3. Merge
@@ -52,5 +52,5 @@ In this step, all the above transforms are merged and a cumulative nodes and edg
 script - `python run.py merge`
 
 
-### Data
+# Data
 The final merged data is available [here](https://drive.google.com/file/d/1MdstYXWWUrnn2L-pI5Kx6tOWP_rdfa0C/view?usp=sharing)

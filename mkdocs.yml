@@ -11,4 +11,5 @@ repo_url: https://github.com/Knowledge-Graph-Hub/kg-microbe/
 edit_uri: blob/master/docs/
 nav:
     - Home: index.md
+    - About: index.md
 

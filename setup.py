@@ -66,7 +66,8 @@ setup(
         'compress_json',
         'click==7',
         'pyyaml',
-        'kgx'
+        'kgx',
+        'mkdocs'
     ],
     extras_require=extras,
 )

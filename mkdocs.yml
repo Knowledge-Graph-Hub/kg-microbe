@@ -1,1 +1,4 @@
-site_name: My Docs
+site_name: KG-Microbe
+nav:
+    - Home: index.md
+theme: readthedocs

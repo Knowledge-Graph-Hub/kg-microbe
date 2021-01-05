@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kg_microbe.transform_utils.ontology package &#8212; KG-Microbe 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.traits package" href="kg_microbe.transform_utils.traits.html" />
+    <link rel="prev" title="kg_microbe.transform_utils package" href="kg_microbe.transform_utils.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="kg-microbe-transform-utils-ontology-package">
+<h1>kg_microbe.transform_utils.ontology package<a class="headerlink" href="#kg-microbe-transform-utils-ontology-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-kg_microbe.transform_utils.ontology.ontology_transform">
+<span id="kg-microbe-transform-utils-ontology-ontology-transform-module"></span><h2>kg_microbe.transform_utils.ontology.ontology_transform module<a class="headerlink" href="#module-kg_microbe.transform_utils.ontology.ontology_transform" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="kg_microbe.transform_utils.ontology.ontology_transform.OntologyTransform">
+<em class="property">class </em><code class="sig-prename descclassname">kg_microbe.transform_utils.ontology.ontology_transform.</code><code class="sig-name descname">OntologyTransform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontology.ontology_transform.OntologyTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">kg_microbe.transform_utils.transform.Transform</span></code></a></p>
+<p>OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges.</p>
+<dl class="py method">
+<dt id="kg_microbe.transform_utils.ontology.ontology_transform.OntologyTransform.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.transform_utils.ontology.ontology_transform.OntologyTransform.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the data_file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the ontology</p></li>
+<li><p><strong>data_file</strong> – data file to parse</p></li>
+<li><p><strong>source</strong> – Source name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kg_microbe.transform_utils.ontology.ontology_transform.OntologyTransform.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.transform_utils.ontology.ontology_transform.OntologyTransform.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method is called and performs needed transformations to process an ontology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_file</strong> – data file to parse</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.transform_utils.ontology">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.ontology" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="kg_microbe.transform_utils.ontology.OntologyTransform">
+<em class="property">class </em><code class="sig-prename descclassname">kg_microbe.transform_utils.ontology.</code><code class="sig-name descname">OntologyTransform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontology.OntologyTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">kg_microbe.transform_utils.transform.Transform</span></code></a></p>
+<p>OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges.</p>
+<dl class="py method">
+<dt id="kg_microbe.transform_utils.ontology.OntologyTransform.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">source</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.transform_utils.ontology.OntologyTransform.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the data_file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the ontology</p></li>
+<li><p><strong>data_file</strong> – data file to parse</p></li>
+<li><p><strong>source</strong> – Source name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kg_microbe.transform_utils.ontology.OntologyTransform.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.transform_utils.ontology.OntologyTransform.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method is called and performs needed transformations to process an ontology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_file</strong> – data file to parse</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">KG-Microbe</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg-microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="query_utils.html">query_utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run.html">run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">kg-microbe</a><ul>
+  <li><a href="kg_microbe.html">kg_microbe package</a><ul>
+  <li><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a><ul>
+      <li>Previous: <a href="kg_microbe.transform_utils.html" title="previous chapter">kg_microbe.transform_utils package</a></li>
+      <li>Next: <a href="kg_microbe.transform_utils.traits.html" title="next chapter">kg_microbe.transform_utils.traits package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Harshad Hegde.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/kg_microbe.transform_utils.ontology.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

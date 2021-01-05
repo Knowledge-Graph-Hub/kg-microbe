@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kg_microbe.utils package &#8212; KG-Microbe 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="query_utils package" href="query_utils.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.traits package" href="kg_microbe.transform_utils.traits.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="kg-microbe-utils-package">
+<h1>kg_microbe.utils package<a class="headerlink" href="#kg-microbe-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-kg_microbe.utils.biohub_converter">
+<span id="kg-microbe-utils-biohub-converter-module"></span><h2>kg_microbe.utils.biohub_converter module<a class="headerlink" href="#module-kg_microbe.utils.biohub_converter" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.utils.biohub_converter.parse">
+<code class="sig-prename descclassname">kg_microbe.utils.biohub_converter.</code><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_filename</span></em>, <em class="sig-param"><span class="n">output_filename</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.biohub_converter.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the typical KGX compatible nodes TSV into Bio Term Hub format
+for compatibility with OGER.</p>
+<p>Mapping of columns from KGX format to Bio Term Hub format,
+[0] ‘CUI-less’ -&gt; UMLS CUI
+[1] ‘N/A’ -&gt; resource from which it comes
+[2] CURIE -&gt; native ID
+[3] name -&gt; term (this is the field that is tokenized)
+[4] name -&gt; preferred form
+[5] category -&gt; type</p>
+<dl class="simple">
+<dt>input_filename: str</dt><dd><p>Input file path</p>
+</dd>
+<dt>output_filename: str</dt><dd><p>Output file path</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.biohub_converter.parse_header">
+<code class="sig-prename descclassname">kg_microbe.utils.biohub_converter.</code><code class="sig-name descname">parse_header</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elements</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#kg_microbe.utils.biohub_converter.parse_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse headers from nodes TSV</p>
+<dl class="simple">
+<dt>elements: list</dt><dd><p>The header record</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>dict:</dt><dd><p>A dictionary of node header names to index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.biohub_converter.write_line">
+<code class="sig-prename descclassname">kg_microbe.utils.biohub_converter.</code><code class="sig-name descname">write_line</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elements</span></em>, <em class="sig-param"><span class="n">OUTSTREAM</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.biohub_converter.write_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write line to OUTSTREAM.</p>
+<dl class="simple">
+<dt>elements: list</dt><dd><p>The record to write</p>
+</dd>
+<dt>OUTSTREAM:</dt><dd><p>File handle to the output file</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.utils.download_utils">
+<span id="kg-microbe-utils-download-utils-module"></span><h2>kg_microbe.utils.download_utils module<a class="headerlink" href="#module-kg_microbe.utils.download_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.utils.download_utils.download_from_yaml">
+<code class="sig-prename descclassname">kg_microbe.utils.download_utils.</code><code class="sig-name descname">download_from_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ignore_cache</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.download_utils.download_from_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an download info from an download.yaml file, download all files</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>yaml_file: A string pointing to the download.yaml file, to be parsed for things to download.
+output_dir: A string pointing to where to write out downloaded files.
+ignore_cache: Ignore cache and download files even if they exist [false]</p>
+</dd>
+<dt>Returns:</dt><dd><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.utils.nlp_utils">
+<span id="kg-microbe-utils-nlp-utils-module"></span><h2>kg_microbe.utils.nlp_utils module<a class="headerlink" href="#module-kg_microbe.utils.nlp_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.utils.nlp_utils.create_settings_file">
+<code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">create_settings_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'ALL'</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.nlp_utils.create_settings_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the settings.ini file for OGER to get parameters.</p>
+<ul class="simple">
+<li><p>Parameters: 
+-   path - path of the ‘nlp’ folder
+-   ont - the ontology to be used as dictionary [‘ALL’, ‘ENVO’, ‘CHEBI’]</p></li>
+<li><p>The ‘Shared’ section declares global variables that can be used in other sections
+e.g. Data root.
+root = location of the working directory
+accessed in other sections using =&gt; ${Shared:root}/</p></li>
+<li><p>Input formats accepted:
+txt, txt_json, bioc_xml, bioc_json, conll, pubmed,
+pxml, pxml.gz, pmc, nxml, pubtator, pubtator_fbk,
+becalmabstracts, becalmpatents</p></li>
+<li><p>Two iter-modes available: [collection or document]
+document:- ‘n’ input files = ‘n’ output files
+(provided every file has ontology terms)
+collection:- n input files = 1 output file</p></li>
+<li><p>Export formats possible:
+tsv, txt, text_tsv, xml, text_xml, bioc_xml,
+bioc_json, bionlp, bionlp.ann, brat, brat.ann,
+conll, pubtator, pubanno_json, pubtator, pubtator_fbk,
+europepmc, europepmc.zip, odin, becalm_tsv, becalm_json
+These can be passed as a list for multiple outputs too.</p></li>
+<li><p>Multiple Termlists can be declared in separate sections
+e.g. [Termlist1], [Termlist2] …[Termlistn] with each having
+their own paths</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.nlp_utils.create_termlist">
+<code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">create_termlist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.nlp_utils.create_termlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create termlist.tsv files from ontology JSON files for NLP</p>
+<p>TODO: Replace this code once runNER is installed and remove ‘kg_microbe/utils/biohub_converter.py’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.nlp_utils.prep_nlp_input">
+<code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">prep_nlp_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">columns</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">dic</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#kg_microbe.utils.nlp_utils.prep_nlp_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a tsv which forms the input for OGER</p>
+<dl class="simple">
+<dt>Parameters: </dt><dd><p>path - path to the file which has text to be analyzed
+columns - The first column HAS to be an id column.
+dic - The Ontology to be used as a dictionary for NLP</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.nlp_utils.process_oger_output">
+<code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">process_oger_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">input_file_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#kg_microbe.utils.nlp_utils.process_oger_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>The OGER output is a TSV which is imported and only the terms that occurred in the text file
+are considered and a dataframe of relevant information is returned</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>path: Path to the folder containing relevant files
+input_file_name: OGER output (tsv file)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.nlp_utils.run_oger">
+<code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">run_oger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">input_file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">n_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#kg_microbe.utils.nlp_utils.run_oger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.utils.robot_utils">
+<span id="kg-microbe-utils-robot-utils-module"></span><h2>kg_microbe.utils.robot_utils module<a class="headerlink" href="#module-kg_microbe.utils.robot_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.utils.robot_utils.convert_to_json">
+<code class="sig-prename descclassname">kg_microbe.utils.robot_utils.</code><code class="sig-name descname">convert_to_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.convert_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method converts owl to JSON using ROBOT and the subprocess library</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.robot_utils.extract_convert_to_json">
+<code class="sig-prename descclassname">kg_microbe.utils.robot_utils.</code><code class="sig-name descname">extract_convert_to_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">terms</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.extract_convert_to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method extracts all children of provided CURIE
+Parameters:
+path: path of file to be converted
+ont_name: Namae of the ontology
+terms: Either CURIE or a file of CURIEs list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.robot_utils.initialize_robot">
+<code class="sig-prename descclassname">kg_microbe.utils.robot_utils.</code><code class="sig-name descname">initialize_robot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#kg_microbe.utils.robot_utils.initialize_robot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.utils.transform_utils">
+<span id="kg-microbe-utils-transform-utils-module"></span><h2>kg_microbe.utils.transform_utils module<a class="headerlink" href="#module-kg_microbe.utils.transform_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="kg_microbe.utils.transform_utils.ItemInDictNotFound">
+<em class="property">exception </em><code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">ItemInDictNotFound</code><a class="headerlink" href="#kg_microbe.utils.transform_utils.ItemInDictNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kg_microbe.utils.transform_utils.TransformError" title="kg_microbe.utils.transform_utils.TransformError"><code class="xref py py-class docutils literal notranslate"><span class="pre">kg_microbe.utils.transform_utils.TransformError</span></code></a></p>
+<p>Raised when the input value is too small</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="kg_microbe.utils.transform_utils.TransformError">
+<em class="property">exception </em><code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">TransformError</code><a class="headerlink" href="#kg_microbe.utils.transform_utils.TransformError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for other exceptions</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.collapse_uniprot_curie">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">collapse_uniprot_curie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uniprot_curie</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#kg_microbe.utils.transform_utils.collapse_uniprot_curie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a UniProtKB curie for an isoform such as UniprotKB:P63151-1
+or UniprotKB:P63151-2, collapse to parent protein
+(UniprotKB:P63151 / UniprotKB:P63151)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uniprot_curie</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>collapsed UniProtKB ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.data_to_dict">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">data_to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">these_keys</span></em>, <em class="sig-param"><span class="n">these_values</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#kg_microbe.utils.transform_utils.data_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zip up two lists to make a dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>these_keys</strong> – keys for new dict</p></li>
+<li><p><strong>these_values</strong> – values for new dict</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.get_header_items">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">get_header_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">table_data</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span> &#x2192; List<a class="headerlink" href="#kg_microbe.utils.transform_utils.get_header_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility fxn to get header from (first page of) a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table_data</strong> – Data, as list of dicts from tabula.io.read_pdf().</p>
+</dd>
+<dt class="field-even">Return header_items</dt>
+<dd class="field-even"><p>An array of header items.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.get_item_by_priority">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">get_item_by_priority</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items_dict</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">keys_by_priority</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#kg_microbe.utils.transform_utils.get_item_by_priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve item from a dict using a list of keys, in descending order of priority.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items_dict</strong> – </p></li>
+<li><p><strong>keys_by_priority</strong> – list of keys to use to find values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>str: first value in dict for first item in keys_by_priority that isn’t blank, or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.guess_bl_category">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">guess_bl_category</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identifier</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#kg_microbe.utils.transform_utils.guess_bl_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess category for a given identifier.
+Note: This is a temporary solution and should not be used long term.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>identifier</strong> – A CURIE</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The category for the given CURIE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.multi_page_table_to_list">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">multi_page_table_to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">multi_page_table</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Dict<span class="p">]</span><a class="headerlink" href="#kg_microbe.utils.transform_utils.multi_page_table_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to turn table data returned from tabula.io.read_pdf(), possibly broken over several pages, into a list
+of dicts, one dict for each row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>multi_page_table</strong> – </p>
+</dd>
+<dt class="field-even">Return table_data</dt>
+<dd class="field-even"><p>A list of dicts, where each dict is item from one row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.parse_header">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">parse_header</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header_string</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sep</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'\t'</span></em><span class="sig-paren">)</span> &#x2192; List<a class="headerlink" href="#kg_microbe.utils.transform_utils.parse_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses header data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header_string</strong> – A string containing header items.</p></li>
+<li><p><strong>sep</strong> – A string containing a delimiter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of header items.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.parse_line">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">parse_line</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">this_line</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">header_items</span><span class="p">:</span> <span class="n">List</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">','</span></em><span class="sig-paren">)</span> &#x2192; Dict<a class="headerlink" href="#kg_microbe.utils.transform_utils.parse_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Methods processes a line of text from the csv file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>this_line</strong> – A string containing a line of text.</p></li>
+<li><p><strong>header_items</strong> – A list of header items.</p></li>
+<li><p><strong>sep</strong> – A string containing a delimiter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return item_dict</dt>
+<dd class="field-even"><p>A dictionary of header items and a processed item from the dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.ungzip_to_tempdir">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">ungzip_to_tempdir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gzipped_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">tempdir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#kg_microbe.utils.transform_utils.ungzip_to_tempdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.uniprot_make_name_to_id_mapping">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">uniprot_make_name_to_id_mapping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dat_gz_file</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#kg_microbe.utils.transform_utils.uniprot_make_name_to_id_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a Uniprot dat.gz file, like this:
+<a class="reference external" href="ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz">ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping.dat.gz</a>
+makes dict with name to id mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dat_gz_file</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with mapping</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.uniprot_name_to_id">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">uniprot_name_to_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name_to_id_map</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span>str<span class="p">]</span><a class="headerlink" href="#kg_microbe.utils.transform_utils.uniprot_name_to_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uniprot name to ID mapping</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name_to_id_map</strong> – mapping dict[name] -&gt; id</p></li>
+<li><p><strong>name</strong> – name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return id</dt>
+<dd class="field-even"><p>string, or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.unzip_to_tempdir">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">unzip_to_tempdir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">zip_file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">tempdir</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.transform_utils.unzip_to_tempdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.transform_utils.write_node_edge_item">
+<code class="sig-prename descclassname">kg_microbe.utils.transform_utils.</code><code class="sig-name descname">write_node_edge_item</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fh</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="n">header</span><span class="p">:</span> <span class="n">List</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">List</span></em>, <em class="sig-param"><span class="n">sep</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_utils.write_node_edge_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a single line for a node or an edge in .tsv</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fh</strong> – file handle of node or edge file</p></li>
+<li><p><strong>header</strong> – list of header items</p></li>
+<li><p><strong>data</strong> – data for line to write out</p></li>
+<li><p><strong>sep</strong> – separator [     ]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.utils.download_from_yaml">
+<code class="sig-prename descclassname">kg_microbe.utils.</code><code class="sig-name descname">download_from_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ignore_cache</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.download_from_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an download info from an download.yaml file, download all files</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>yaml_file: A string pointing to the download.yaml file, to be parsed for things to download.
+output_dir: A string pointing to where to write out downloaded files.
+ignore_cache: Ignore cache and download files even if they exist [false]</p>
+</dd>
+<dt>Returns:</dt><dd><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.multi_page_table_to_list">
+<code class="sig-prename descclassname">kg_microbe.utils.</code><code class="sig-name descname">multi_page_table_to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">multi_page_table</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Dict<span class="p">]</span><a class="headerlink" href="#kg_microbe.utils.multi_page_table_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to turn table data returned from tabula.io.read_pdf(), possibly broken over several pages, into a list
+of dicts, one dict for each row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>multi_page_table</strong> – </p>
+</dd>
+<dt class="field-even">Return table_data</dt>
+<dd class="field-even"><p>A list of dicts, where each dict is item from one row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.utils.write_node_edge_item">
+<code class="sig-prename descclassname">kg_microbe.utils.</code><code class="sig-name descname">write_node_edge_item</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fh</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="n">header</span><span class="p">:</span> <span class="n">List</span></em>, <em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">List</span></em>, <em class="sig-param"><span class="n">sep</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'\t'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.write_node_edge_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out a single line for a node or an edge in .tsv</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fh</strong> – file handle of node or edge file</p></li>
+<li><p><strong>header</strong> – list of header items</p></li>
+<li><p><strong>data</strong> – data for line to write out</p></li>
+<li><p><strong>sep</strong> – separator [     ]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">KG-Microbe</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg-microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="query_utils.html">query_utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run.html">run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">kg-microbe</a><ul>
+  <li><a href="kg_microbe.html">kg_microbe package</a><ul>
+      <li>Previous: <a href="kg_microbe.transform_utils.traits.html" title="previous chapter">kg_microbe.transform_utils.traits package</a></li>
+      <li>Next: <a href="query_utils.html" title="next chapter">query_utils package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Harshad Hegde.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/kg_microbe.utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

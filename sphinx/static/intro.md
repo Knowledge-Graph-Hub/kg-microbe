@@ -16,7 +16,7 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 * `pip install -r requirements.txt`
 * `python setup.py install`
 
-## There are 3 steps to running the pipeline:
+## Pipeline Stages:
 1. Download
 2. Transform
 3. Merge

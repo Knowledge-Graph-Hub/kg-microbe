@@ -10,7 +10,7 @@ KG-Microbe documentation
    :maxdepth: 2
    :caption: Contents:
 
-   static/intro.rst
+   static/intro.md
 
    modules
 

@@ -47,6 +47,7 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     :param path: path of file to be converted
     :param ont_name: Namae of the ontology
     :param terms: Either CURIE or a file of CURIEs list
+    :return: None
 
     ROBOT Method options: 
     1. STAR: The STAR-module contains mainly the terms in the seed and the inter-relations between them (not necessarily sub- and super-classes). 

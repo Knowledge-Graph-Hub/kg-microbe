@@ -73,7 +73,8 @@ def write_node_edge_item(fh: Any, header: List, data: List, sep: str = '\t'):
     :param fh: file handle of node or edge file
     :param header: list of header items
     :param data: data for line to write out
-    :param sep: separator [\t] 
+    :param sep: separator [\t]
+    :return: None.
     """
 
     if len(header) != len(data):
@@ -91,7 +92,7 @@ def get_item_by_priority(items_dict: dict, keys_by_priority: list) -> str:
 
     :param items_dict:
     :param keys_by_priority: list of keys to use to find values
-    :return: str: first value in dict for first item in keys_by_priority that isn't blank, or None
+    :return: First value in dict for first item in keys_by_priority that isn't blank (str), or None.
     """
 
     value = None

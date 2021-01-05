@@ -85,6 +85,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Knowledge Graphs for Microbial data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#knowledge-graph-hub-concept">Knowledge Graph Hub concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#there-are-3-steps-to-running-the-pipeline">There are 3 steps to running the pipeline:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download">Download</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transform">Transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#merge">Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data">Data</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">kg-microbe</a></li>
@@ -164,6 +172,60 @@
 <ul class="simple">
 <li><p>Java/JDK is required in order for the transform step to work properly. Installation instructions can be found <a class="reference external" href="https://docs.oracle.com/en/java/javase/15/install/overview-jdk-installation.html#GUID-8677A77F-231A-40F7-98B9-1FD0B48C346A">here</a>.</p></li>
 </ul>
+</div>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Knowledge-Graph-Hub/kg-microbe</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">kg-microbe</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="there-are-3-steps-to-running-the-pipeline">
+<h2>There are 3 steps to running the pipeline:<a class="headerlink" href="#there-are-3-steps-to-running-the-pipeline" title="Permalink to this headline">¶</a></h2>
+<ol class="simple">
+<li><p>Download</p></li>
+<li><p>Transform</p></li>
+<li><p>Merge</p></li>
+</ol>
+<div class="section" id="download">
+<h3>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h3>
+<p>This step download all files from the urls declared in the <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/download.yaml">download.yaml</a> file.</p>
+<p>script - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">download</span></code></p>
+<p>File currently downloaded:</p>
+<ol class="simple">
+<li><p>Traits data from <a class="reference external" href="https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output">bacteria-arachaea-traits</a> repository. Considering only ‘condensed_traits_NCBI.csv’ for now.</p></li>
+<li><p>Environments data from the same repository found as a conversion table titled <a class="reference external" href="https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/data/conversion_tables">‘environments.csv’</a>.</p></li>
+<li><p>ROBOT <a class="reference external" href="https://github.com/ontodev/robot/releases/download/v1.7.2/robot.jar">jar</a> and <a class="reference external" href="https://raw.githubusercontent.com/ontodev/robot/master/bin/robot">shell script</a> files. ROBOT is used to convert the OWL format files of ontologies into OBOJSON format to extract nodes and edges from the ontologies. In this case, we also leverage the ‘extract’ feature of ROBOT to get subsets of ontologies. Documentation on ROBOT could be found <a class="reference external" href="http://robot.obolibrary.org">here</a>.</p></li>
+<li><p><a class="reference external" href="http://www.obofoundry.org/ontology/chebi.html">CHEBI.owl</a> is used as dictionary while running <a class="reference external" href="https://github.com/OntoGene/OGER">OGER</a> to annotate ‘carbon substrate’ information from the traits data.</p></li>
+<li><p><a class="reference external" href="http://www.obofoundry.org/ontology/ncbitaxon.html">NCBITaxon.owl</a> is used as the ontology source to capture organismal classification information.</p></li>
+</ol>
+</div>
+<div class="section" id="transform">
+<h3>Transform<a class="headerlink" href="#transform" title="Permalink to this headline">¶</a></h3>
+<p>In this step, we create nodes and edges corresponding to the four downloaded files mentioned above (#1, #4 and #5).</p>
+<p>scripts</p>
+<ol class="simple">
+<li><p>All together - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span></code></p></li>
+</ol>
+<p>OR</p>
+<p>Running transforms individually:</p>
+<ol class="simple">
+<li><p>For traits data - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">TraitsTransform</span></code></p></li>
+<li><p>For CHEBI.owl = <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">ChebiTransform</span></code></p></li>
+<li><p>For NCBITaxon.owl = <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">NCBITransform</span></code></p></li>
+</ol>
+</div>
+<div class="section" id="merge">
+<h3>Merge<a class="headerlink" href="#merge" title="Permalink to this headline">¶</a></h3>
+<p>In this step, all the above transforms are merged and a cumulative nodes and edges files are generated.</p>
+<p>script - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">merge</span></code></p>
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p>The final merged data is available <a class="reference external" href="https://drive.google.com/file/d/1MdstYXWWUrnn2L-pI5Kx6tOWP_rdfa0C/view?usp=sharing">here</a></p>
+</div>
 </div>
 </div>
 

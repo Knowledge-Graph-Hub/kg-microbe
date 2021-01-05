@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kg_microbe package &#8212; KG-Microbe 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils package" href="kg_microbe.transform_utils.html" />
+    <link rel="prev" title="kg-microbe" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="kg-microbe-package">
+<h1>kg_microbe package<a class="headerlink" href="#kg-microbe-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html">kg_microbe.transform_utils.ontology package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html#module-kg_microbe.transform_utils.ontology.ontology_transform">kg_microbe.transform_utils.ontology.ontology_transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html#module-kg_microbe.transform_utils.ontology">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.traits.html">kg_microbe.transform_utils.traits package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.traits.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.traits.html#module-kg_microbe.transform_utils.traits.traits">kg_microbe.transform_utils.traits.traits module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.traits.html#module-kg_microbe.transform_utils.traits">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#module-kg_microbe.transform_utils.transform">kg_microbe.transform_utils.transform module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#module-kg_microbe.transform_utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.biohub_converter">kg_microbe.utils.biohub_converter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.download_utils">kg_microbe.utils.download_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.nlp_utils">kg_microbe.utils.nlp_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.robot_utils">kg_microbe.utils.robot_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.transform_utils">kg_microbe.utils.transform_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-kg_microbe.download">
+<span id="kg-microbe-download-module"></span><h2>kg_microbe.download module<a class="headerlink" href="#module-kg_microbe.download" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.download.download">
+<code class="sig-prename descclassname">kg_microbe.download.</code><code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ignore_cache</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.download.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads data files from list of URLs (default: download.yaml) into data directory (default: data/).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> – A string pointing to the yaml file utilized to facilitate the downloading of data.</p></li>
+<li><p><strong>output_dir</strong> – A string pointing to the location to download data to.</p></li>
+<li><p><strong>ignore_cache</strong> – Ignore cache and download files even if they exist [false]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.query">
+<span id="kg-microbe-query-module"></span><h2>kg_microbe.query module<a class="headerlink" href="#module-kg_microbe.query" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.query.parse_query_yaml">
+<code class="sig-prename descclassname">kg_microbe.query.</code><code class="sig-name descname">parse_query_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#kg_microbe.query.parse_query_yaml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.query.result_dict_to_tsv">
+<code class="sig-prename descclassname">kg_microbe.query.</code><code class="sig-name descname">result_dict_to_tsv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result_dict</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.query.result_dict_to_tsv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.query.run_query">
+<code class="sig-prename descclassname">kg_microbe.query.</code><code class="sig-name descname">run_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">endpoint</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">return_format</span><span class="o">=</span><span class="default_value">'json'</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#kg_microbe.query.run_query" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.transform">
+<span id="kg-microbe-transform-module"></span><h2>kg_microbe.transform module<a class="headerlink" href="#module-kg_microbe.transform" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.transform.transform">
+<code class="sig-prename descclassname">kg_microbe.transform.</code><code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sources</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.transform.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call scripts in kg_microbe/transform/[source name]/ to transform each source into a graph format that
+KGX can ingest directly, in either TSV or JSON format:
+<a class="reference external" href="https://github.com/NCATS-Tangerine/kgx/blob/master/data-preparation.md">https://github.com/NCATS-Tangerine/kgx/blob/master/data-preparation.md</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dir</strong> – A string pointing to the directory to import data from.</p></li>
+<li><p><strong>output_dir</strong> – A string pointing to the directory to output data to.</p></li>
+<li><p><strong>sources</strong> – A list of sources to transform.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="kg_microbe.download">
+<code class="sig-prename descclassname">kg_microbe.</code><code class="sig-name descname">download</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ignore_cache</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads data files from list of URLs (default: download.yaml) into data directory (default: data/).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> – A string pointing to the yaml file utilized to facilitate the downloading of data.</p></li>
+<li><p><strong>output_dir</strong> – A string pointing to the location to download data to.</p></li>
+<li><p><strong>ignore_cache</strong> – Ignore cache and download files even if they exist [false]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kg_microbe.transform">
+<code class="sig-prename descclassname">kg_microbe.</code><code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">sources</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call scripts in kg_microbe/transform/[source name]/ to transform each source into a graph format that
+KGX can ingest directly, in either TSV or JSON format:
+<a class="reference external" href="https://github.com/NCATS-Tangerine/kgx/blob/master/data-preparation.md">https://github.com/NCATS-Tangerine/kgx/blob/master/data-preparation.md</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dir</strong> – A string pointing to the directory to import data from.</p></li>
+<li><p><strong>output_dir</strong> – A string pointing to the directory to output data to.</p></li>
+<li><p><strong>sources</strong> – A list of sources to transform.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">KG-Microbe</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg-microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">kg_microbe package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="query_utils.html">query_utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run.html">run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">kg-microbe</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">kg-microbe</a></li>
+      <li>Next: <a href="kg_microbe.transform_utils.html" title="next chapter">kg_microbe.transform_utils package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Harshad Hegde.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/kg_microbe.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

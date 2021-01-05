@@ -1,7 +1,8 @@
 .vscode
 dist
 data
-__pycache__/
+__pycache__
+kg_microbe/__pycache__/
 .DS_Store
 build
 kg_microbe.egg-info

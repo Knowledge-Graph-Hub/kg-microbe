@@ -1,0 +1,10 @@
+kg-microbe
+==========
+
+.. toctree::
+   :maxdepth: 4
+
+   kg_microbe
+   query_utils
+   run
+   setup

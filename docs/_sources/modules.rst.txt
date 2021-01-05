@@ -8,3 +8,4 @@ kg-microbe
    query_utils
    run
    setup
+   tests

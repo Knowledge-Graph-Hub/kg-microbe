@@ -10,20 +10,16 @@ def parse(input_filename, output_filename) -> None:
     for compatibility with OGER.
 
     Mapping of columns from KGX format to Bio Term Hub format,
-    [0] 'CUI-less' -> UMLS CUI
-    [1] 'N/A' -> resource from which it comes
-    [2] CURIE -> native ID
-    [3] name -> term (this is the field that is tokenized)
-    [4] name -> preferred form
-    [5] category -> type
+    0.  'CUI-less' -> UMLS CUI
+    1.  'N/A' -> resource from which it comes
+    2.  CURIE -> native ID
+    3.  name -> term (this is the field that is tokenized)
+    4.  name -> preferred form
+    5.  category -> type
 
-    Parameters
-    ----------
-    input_filename: str
-        Input file path
-    output_filename: str
-        Output file path
-
+    :param input_filename: Input file path (str)
+    :param output_filename: Output file path (str)
+    :return: None.
     """
     counter = 0
     OUTSTREAM = open(output_filename, 'w')
@@ -71,17 +67,11 @@ def parse_header(elements) -> dict:
     """
     Parse headers from nodes TSV
 
-    Parameters
-    ----------
-    elements: list
-        The header record
-
-    Returns
-    -------
-    dict:
-        A dictionary of node header names to index
+    :param elements: The header record (list)
+    :return dict: A dictionary of node header names to index
 
     """
+
     header_dict = {}
     for col in elements:
         header_dict[col] = elements.index(col)
@@ -92,12 +82,9 @@ def write_line(elements, OUTSTREAM) -> None:
     """
     Write line to OUTSTREAM.
 
-    Parameters
-    ----------
-    elements: list
-        The record to write
-    OUTSTREAM:
-        File handle to the output file
+    :param elements: The record to write (list).
+    :param OUTSTREAM: File handle to the output file.
 
     """
+    
     OUTSTREAM.write('\t'.join(elements) + '\n')

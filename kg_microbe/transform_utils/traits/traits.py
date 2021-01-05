@@ -12,26 +12,38 @@ from kg_microbe.utils.robot_utils import *
 
 from kgx.cli.cli_utils import transform
 
-"""
-Ingest traits dataset (NCBI/GTDB)
-
-Essentially just ingests and transforms this file:
-https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv
-
-And extracts the following columns:
-    - tax_id
-    - org_name
-    - metabolism
-    - pathways
-    - shape
-    - carbon_substrates
-    - cell_shape
-    - isolation_source
-"""
 
 class TraitsTransform(Transform):
 
+    """
+    Ingest traits dataset (NCBI/GTDB)
+
+    Essentially just ingests and transforms this file:
+    https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv
+
+    And extracts the following columns:
+        - tax_id
+        - org_name
+        - metabolism
+        - pathways
+        - shape
+        - carbon_substrates
+        - cell_shape
+        - isolation_source
+    
+    Also implements:
+        -   OGER to run NLP via the 'nlp_utils' module and 
+        -   ROBOT using 'robot_utils' module.
+    """
+
     def __init__(self, input_dir: str = None, output_dir: str = None, nlp = True) -> None:
+        '''
+        Initialize TraitsTransform Class
+
+        :param input_dir: Input file path (str)
+        :param output_dir: Output file path (str)
+
+        '''
         source_name = "condensed_traits_NCBI"
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
 
@@ -40,9 +52,12 @@ class TraitsTransform(Transform):
         self.nlp = nlp
 
     def run(self, data_file: Optional[str] = None):
-        """Method is called and performs needed transformations to process the 
-        trait data (NCBI/GTDB), additional information on this data can be found in the comment 
-        at the top of this script"""
+        """
+        Method is called and performs needed transformations to process the 
+        trait data (NCBI/GTDB).
+        
+        :param data_file: Input file name.
+        """
         
         if data_file is None:
             data_file = self.source_name + ".csv"

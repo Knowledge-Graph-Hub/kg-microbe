@@ -21,6 +21,9 @@ def initialize_robot(path:str) -> list:
 def convert_to_json(path:str, ont:str):
     """
     This method converts owl to JSON using ROBOT and the subprocess library
+
+    :param path: Path to ROBOT files
+    :param ont: Ontology
     """
    
     robot_file, env = initialize_robot(path)
@@ -39,30 +42,25 @@ def convert_to_json(path:str, ont:str):
 
 def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     """
-    This method extracts all children of provided CURIE
-    Parameters:
-    path: path of file to be converted
-    ont_name: Namae of the ontology
-    terms: Either CURIE or a file of CURIEs list
+    This method extracts all children of provided CURIE.
+
+    :param path: path of file to be converted
+    :param ont_name: Namae of the ontology
+    :param terms: Either CURIE or a file of CURIEs list
+    :return: None
+
+    ROBOT Method options: 
+    1. STAR: The STAR-module contains mainly the terms in the seed and the inter-relations between them (not necessarily sub- and super-classes). 
+    2. TOP: The TOP-module contains mainly the terms in the seed, plus all their sub-classes and the inter-relations between them. 
+    3. BOT: The BOT, or BOTTOM, -module contains mainly the terms in the seed, plus all their super-classes and the inter-relations between them. 
+    4. MIREOT : The MIREOT method preserves the hierarchy of the input ontology (subclass and subproperty relationships), but does not try to preserve the full set of logical entailments.
+
     """
+
     robot_file, env = initialize_robot(path)
     input_owl = os.path.join(path, ont_name.lower()+'.owl')
     output_json = os.path.join(path, ont_name.lower()+'.json')
     output_owl = os.path.join(path, ont_name.lower()+'_extracted_subset.owl')
-
-
-    """
-    Method options: 
-    1. STAR :   The STAR-module contains mainly the terms in the seed and 
-                the inter-relations between them (not necessarily sub- and super-classes). 
-    2. TOP :    The TOP-module contains mainly the terms in the seed, 
-                plus all their sub-classes and the inter-relations between them. 
-    3. BOT:     The BOT, or BOTTOM, -module contains mainly the terms in the seed, 
-                plus all their super-classes and the inter-relations between them. 
-    4. MIREOT : The MIREOT method preserves the hierarchy of the input ontology 
-                (subclass and subproperty relationships), but does not try to preserve 
-                the full set of logical entailments. 
-    """
     
     if not os.path.isfile(output_json):
         if ':' in terms:

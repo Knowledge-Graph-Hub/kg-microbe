@@ -6,19 +6,18 @@ import configparser
 from kgx.cli.cli_utils import transform
 from oger.ctrl.router import Router, PipelineServer
 from oger.ctrl.run import run as og_run
-
 from kg_microbe.utils import biohub_converter as bc
-
 import pandas as pd
 
 SETTINGS_FILENAME = 'settings.ini'
 
-def create_settings_file(path: str, ont: str = 'ALL') -> None:
+def create_settings_file(path: str, ont: str = 'ALL') -> None: 
     """
     Creates the settings.ini file for OGER to get parameters.
-    -   Parameters: 
-        -   path - path of the 'nlp' folder
-        -   ont - the ontology to be used as dictionary ['ALL', 'ENVO', 'CHEBI']
+
+    :param path: Path of the 'nlp' folder
+    :param ont: The ontology to be used as dictionary ['ALL', 'ENVO', 'CHEBI']
+    :return: None.
 
     -   The 'Shared' section declares global variables that can be used in other sections
         e.g. Data root.
@@ -45,10 +44,8 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
     -   Multiple Termlists can be declared in separate sections
         e.g. [Termlist1], [Termlist2] ...[Termlistn] with each having
         their own paths
-
-
-
     """
+
     config = configparser.ConfigParser()
     config['Section'] = {}
     config['Shared'] = {}
@@ -89,9 +86,11 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
     with open(os.path.join(path, SETTINGS_FILENAME), 'w') as settings_file:
         config.write(settings_file)
 
+
 def create_termlist(path: str, ont: str) -> None:
         """
         Create termlist.tsv files from ontology JSON files for NLP
+
         TODO: Replace this code once runNER is installed and remove 'kg_microbe/utils/biohub_converter.py'
         """
         ont_int = ont+'.json'
@@ -108,10 +107,12 @@ def create_termlist(path: str, ont: str) -> None:
 
 def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     '''
-    Arguments: 
-        path - path to the file which has text to be analyzed
-        columns - The first column HAS to be an id column.
-        dic - The Ontology to be used as a dictionary for NLP
+    Creates a tsv which forms the input for OGER
+
+    :param path: Path to the file which has text to be analyzed
+    :param columns: The first column HAS to be an id column.
+    :param dic: The Ontology to be used as a dictionary for NLP
+    :return: Filename (str)
     '''
     df = pd.read_csv(path, sep=',', low_memory=False, usecols=columns)
     sub_df = df.dropna()
@@ -125,6 +126,15 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
 
 
 def run_oger(path: str , input_file_name: str , n_workers :int = 1 ) -> pd.DataFrame:
+    '''
+    Runs OGER using the settings.ini file created previously.
+
+    :param path: Path of the input file.
+    :param input_file_name: Filename.
+    :param n_workers: Number of threads to run (default: 1).
+    :return: Pandas DataFrame containing the output of OGER analysis.
+
+    '''
     config = configparser.ConfigParser()
     config.read(os.path.join(path, SETTINGS_FILENAME))
     sections = config._sections
@@ -139,7 +149,12 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
     """
     The OGER output is a TSV which is imported and only the terms that occurred in the text file
     are considered and a dataframe of relevant information is returned
+    
+    :param path: Path to the folder containing relevant files
+    :param input_file_name: OGER output (tsv file)
+    :return: Pandas Dataframe containing required data for further analyses.
     """
+    
     cols = ['TaxId', 'Biolink', 'BeginTerm', 'EndTerm', 'TokenizedTerm', 'PreferredTerm', \
             'CURIE', 'NaN1', 'SentenceID', 'NaN2', 'UMLS_CUI']
     df = pd.read_csv(os.path.join(path, 'output',input_file_name+'.tsv'), sep='\t', names=cols)

@@ -189,10 +189,12 @@ for compatibility with OGER.</p>
 [3] name -&gt; term (this is the field that is tokenized)
 [4] name -&gt; preferred form
 [5] category -&gt; type</p>
-<dl class="simple">
-<dt>input_filename: str</dt><dd><p>Input file path</p>
-</dd>
-<dt>output_filename: str</dt><dd><p>Output file path</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_filename</strong> – Input file path (str)</p></li>
+<li><p><strong>output_filename</strong> – Output file path (str)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -201,12 +203,12 @@ for compatibility with OGER.</p>
 <dt id="kg_microbe.utils.biohub_converter.parse_header">
 <code class="sig-prename descclassname">kg_microbe.utils.biohub_converter.</code><code class="sig-name descname">parse_header</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elements</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#kg_microbe.utils.biohub_converter.parse_header" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse headers from nodes TSV</p>
-<dl class="simple">
-<dt>elements: list</dt><dd><p>The header record</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>elements</strong> – The header record (list)</p>
 </dd>
-</dl>
-<dl class="simple">
-<dt>dict:</dt><dd><p>A dictionary of node header names to index</p>
+<dt class="field-even">Return dict</dt>
+<dd class="field-even"><p>A dictionary of node header names to index</p>
 </dd>
 </dl>
 </dd></dl>
@@ -215,10 +217,12 @@ for compatibility with OGER.</p>
 <dt id="kg_microbe.utils.biohub_converter.write_line">
 <code class="sig-prename descclassname">kg_microbe.utils.biohub_converter.</code><code class="sig-name descname">write_line</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elements</span></em>, <em class="sig-param"><span class="n">OUTSTREAM</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.biohub_converter.write_line" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write line to OUTSTREAM.</p>
-<dl class="simple">
-<dt>elements: list</dt><dd><p>The record to write</p>
-</dd>
-<dt>OUTSTREAM:</dt><dd><p>File handle to the output file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elements</strong> – The record to write (list).</p></li>
+<li><p><strong>OUTSTREAM</strong> – File handle to the output file.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -230,12 +234,16 @@ for compatibility with OGER.</p>
 <dt id="kg_microbe.utils.download_utils.download_from_yaml">
 <code class="sig-prename descclassname">kg_microbe.utils.download_utils.</code><code class="sig-name descname">download_from_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ignore_cache</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.download_utils.download_from_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an download info from an download.yaml file, download all files</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>yaml_file: A string pointing to the download.yaml file, to be parsed for things to download.
-output_dir: A string pointing to where to write out downloaded files.
-ignore_cache: Ignore cache and download files even if they exist [false]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> – A string pointing to the download.yaml file, to be parsed for things to download.</p></li>
+<li><p><strong>output_dir</strong> – A string pointing to where to write out downloaded files.</p></li>
+<li><p><strong>ignore_cache</strong> – Ignore cache and download files even if they exist [false]</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>None.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -247,10 +255,15 @@ ignore_cache: Ignore cache and download files even if they exist [false]</p>
 <dt id="kg_microbe.utils.nlp_utils.create_settings_file">
 <code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">create_settings_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'ALL'</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.nlp_utils.create_settings_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates the settings.ini file for OGER to get parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path of the ‘nlp’ folder</p></li>
+<li><p><strong>ont</strong> – The ontology to be used as dictionary [‘ALL’, ‘ENVO’, ‘CHEBI’]</p></li>
+</ul>
+</dd>
+</dl>
 <ul class="simple">
-<li><p>Parameters: 
--   path - path of the ‘nlp’ folder
--   ont - the ontology to be used as dictionary [‘ALL’, ‘ENVO’, ‘CHEBI’]</p></li>
 <li><p>The ‘Shared’ section declares global variables that can be used in other sections
 e.g. Data root.
 root = location of the working directory
@@ -286,10 +299,13 @@ their own paths</p></li>
 <dt id="kg_microbe.utils.nlp_utils.prep_nlp_input">
 <code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">prep_nlp_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">columns</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">dic</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#kg_microbe.utils.nlp_utils.prep_nlp_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a tsv which forms the input for OGER</p>
-<dl class="simple">
-<dt>Parameters: </dt><dd><p>path - path to the file which has text to be analyzed
-columns - The first column HAS to be an id column.
-dic - The Ontology to be used as a dictionary for NLP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to the file which has text to be analyzed</p></li>
+<li><p><strong>columns</strong> – The first column HAS to be an id column.</p></li>
+<li><p><strong>dic</strong> – The Ontology to be used as a dictionary for NLP</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -299,9 +315,12 @@ dic - The Ontology to be used as a dictionary for NLP</p>
 <code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">process_oger_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">input_file_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#kg_microbe.utils.nlp_utils.process_oger_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>The OGER output is a TSV which is imported and only the terms that occurred in the text file
 are considered and a dataframe of relevant information is returned</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>path: Path to the folder containing relevant files
-input_file_name: OGER output (tsv file)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to the folder containing relevant files</p></li>
+<li><p><strong>input_file_name</strong> – OGER output (tsv file)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -318,16 +337,34 @@ input_file_name: OGER output (tsv file)</p>
 <dt id="kg_microbe.utils.robot_utils.convert_to_json">
 <code class="sig-prename descclassname">kg_microbe.utils.robot_utils.</code><code class="sig-name descname">convert_to_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.convert_to_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method converts owl to JSON using ROBOT and the subprocess library</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path to ROBOT files</p></li>
+<li><p><strong>ont</strong> – Ontology</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="kg_microbe.utils.robot_utils.extract_convert_to_json">
 <code class="sig-prename descclassname">kg_microbe.utils.robot_utils.</code><code class="sig-name descname">extract_convert_to_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">terms</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.extract_convert_to_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method extracts all children of provided CURIE
-Parameters:
-path: path of file to be converted
-ont_name: Namae of the ontology
-terms: Either CURIE or a file of CURIEs list</p>
+<dd><p>This method extracts all children of provided CURIE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – path of file to be converted</p></li>
+<li><p><strong>ont_name</strong> – Namae of the ontology</p></li>
+<li><p><strong>terms</strong> – Either CURIE or a file of CURIEs list</p></li>
+</ul>
+</dd>
+</dl>
+<p>ROBOT Method options: 
+1. STAR: The STAR-module contains mainly the terms in the seed and the inter-relations between them (not necessarily sub- and super-classes). 
+2. TOP: The TOP-module contains mainly the terms in the seed, plus all their sub-classes and the inter-relations between them. 
+3. BOT: The BOT, or BOTTOM, -module contains mainly the terms in the seed, plus all their super-classes and the inter-relations between them. 
+4. MIREOT : The MIREOT method preserves the hierarchy of the input ontology (subclass and subproperty relationships), but does not try to preserve the full set of logical entailments.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -547,12 +584,16 @@ makes dict with name to id mapping</p>
 <dt id="kg_microbe.utils.download_from_yaml">
 <code class="sig-prename descclassname">kg_microbe.utils.</code><code class="sig-name descname">download_from_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">yaml_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ignore_cache</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.download_from_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an download info from an download.yaml file, download all files</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>yaml_file: A string pointing to the download.yaml file, to be parsed for things to download.
-output_dir: A string pointing to where to write out downloaded files.
-ignore_cache: Ignore cache and download files even if they exist [false]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> – A string pointing to the download.yaml file, to be parsed for things to download.</p></li>
+<li><p><strong>output_dir</strong> – A string pointing to where to write out downloaded files.</p></li>
+<li><p><strong>ignore_cache</strong> – Ignore cache and download files even if they exist [false]</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>None.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -183,12 +183,37 @@
 <dt id="kg_microbe.transform_utils.traits.traits.TraitsTransform">
 <em class="property">class </em><code class="sig-prename descclassname">kg_microbe.transform_utils.traits.traits.</code><code class="sig-name descname">TraitsTransform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nlp</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.traits.traits.TraitsTransform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">kg_microbe.transform_utils.transform.Transform</span></code></a></p>
+<p>Ingest traits dataset (NCBI/GTDB)</p>
+<p>Essentially just ingests and transforms this file:
+<a class="reference external" href="https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv">https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv</a></p>
+<dl class="simple">
+<dt>And extracts the following columns:</dt><dd><ul class="simple">
+<li><p>tax_id</p></li>
+<li><p>org_name</p></li>
+<li><p>metabolism</p></li>
+<li><p>pathways</p></li>
+<li><p>shape</p></li>
+<li><p>carbon_substrates</p></li>
+<li><p>cell_shape</p></li>
+<li><p>isolation_source</p></li>
+</ul>
+</dd>
+<dt>Also implements:</dt><dd><ul class="simple">
+<li><p>OGER to run NLP via the ‘nlp_utils’ module and</p></li>
+<li><p>ROBOT using ‘robot_utils’ module.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="kg_microbe.transform_utils.traits.traits.TraitsTransform.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.traits.traits.TraitsTransform.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method is called and performs needed transformations to process the 
-trait data (NCBI/GTDB), additional information on this data can be found in the comment 
-at the top of this script</p>
+trait data (NCBI/GTDB).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_file</strong> – Input file name.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -200,12 +225,37 @@ at the top of this script</p>
 <dt id="kg_microbe.transform_utils.traits.TraitsTransform">
 <em class="property">class </em><code class="sig-prename descclassname">kg_microbe.transform_utils.traits.</code><code class="sig-name descname">TraitsTransform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nlp</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.traits.TraitsTransform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">kg_microbe.transform_utils.transform.Transform</span></code></a></p>
+<p>Ingest traits dataset (NCBI/GTDB)</p>
+<p>Essentially just ingests and transforms this file:
+<a class="reference external" href="https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv">https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv</a></p>
+<dl class="simple">
+<dt>And extracts the following columns:</dt><dd><ul class="simple">
+<li><p>tax_id</p></li>
+<li><p>org_name</p></li>
+<li><p>metabolism</p></li>
+<li><p>pathways</p></li>
+<li><p>shape</p></li>
+<li><p>carbon_substrates</p></li>
+<li><p>cell_shape</p></li>
+<li><p>isolation_source</p></li>
+</ul>
+</dd>
+<dt>Also implements:</dt><dd><ul class="simple">
+<li><p>OGER to run NLP via the ‘nlp_utils’ module and</p></li>
+<li><p>ROBOT using ‘robot_utils’ module.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="kg_microbe.transform_utils.traits.TraitsTransform.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_file</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.traits.TraitsTransform.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method is called and performs needed transformations to process the 
-trait data (NCBI/GTDB), additional information on this data can be found in the comment 
-at the top of this script</p>
+trait data (NCBI/GTDB).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_file</strong> – Input file name.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

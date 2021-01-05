@@ -5,7 +5,9 @@ import yaml
 
 
 class Transform:
-    """Parent class for transforms, that sets up a lot of default file info
+    """
+    Parent class for transforms, that sets up a lot of default file info
+
     """
 
     DEFAULT_INPUT_DIR = os.path.join('data', 'raw')
@@ -19,6 +21,15 @@ class Transform:
     
 
     def __init__(self, source_name, input_dir: str = None, output_dir: str = None, nlp: bool = False):
+        '''
+        Initialize all variables needed for transforms
+
+        :param source_name: Name of the data source.
+        :param input_dir: Input file path.
+        :param output_dir: Output file path.
+        :param nlp: Boolean indicating the use of NLP.
+
+        '''
         # default columns, can be appended to or overwritten as necessary
         self.source_name = source_name
         self.node_header = ['id', 'name', 'category']
@@ -77,5 +88,5 @@ class Transform:
             
 
 
-    def run(self, data_file: Optional[str] = None):
-        pass
+    #def run(self, data_file: Optional[str] = None):
+    #    pass

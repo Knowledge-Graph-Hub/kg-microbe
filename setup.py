@@ -7,11 +7,14 @@ from setuptools import find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 # get the long description from the relevant file
-with copen(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+with copen(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 
 def read(*parts):
+    '''
+    This module provides the list of libraries required for kg-microbe.
+    '''
     with copen(os.path.join(here, *parts), 'r') as fp:
         return fp.read()
 
@@ -67,7 +70,9 @@ setup(
         'click==7',
         'pyyaml',
         'kgx',
-        'mkdocs'
+        'sphinx',
+        'sphinx_rtd_theme',
+        'recommonmark'
     ],
     extras_require=extras,
 )

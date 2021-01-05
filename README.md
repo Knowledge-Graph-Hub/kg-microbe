@@ -1,8 +1,10 @@
-KG_Microbe
+KG-Microbe
 =========================================================================================
-KG hub to produce a knowledge graph for microbial traits and species
+KG hub tool to produce a knowledge graphs for microbial traits.
 
 Documentation
 ----------------------------------------------
+
+[GitHub Pages](https://knowledge-graph-hub.github.io/kg-microbe/index.html)
 
 

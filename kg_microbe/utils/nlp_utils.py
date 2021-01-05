@@ -17,6 +17,7 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
 
     :param path: Path of the 'nlp' folder
     :param ont: The ontology to be used as dictionary ['ALL', 'ENVO', 'CHEBI']
+    :return: None.
 
     -   The 'Shared' section declares global variables that can be used in other sections
         e.g. Data root.
@@ -111,6 +112,7 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     :param path: Path to the file which has text to be analyzed
     :param columns: The first column HAS to be an id column.
     :param dic: The Ontology to be used as a dictionary for NLP
+    :return: Filename (str)
     '''
     df = pd.read_csv(path, sep=',', low_memory=False, usecols=columns)
     sub_df = df.dropna()
@@ -124,6 +126,15 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
 
 
 def run_oger(path: str , input_file_name: str , n_workers :int = 1 ) -> pd.DataFrame:
+    '''
+    Runs OGER using the settings.ini file created previously.
+
+    :param path: Path of the input file.
+    :param input_file_name: Filename.
+    :param n_workers: Number of threads to run (default: 1).
+    :return: Pandas DataFrame containing the output of OGER analysis.
+
+    '''
     config = configparser.ConfigParser()
     config.read(os.path.join(path, SETTINGS_FILENAME))
     sections = config._sections
@@ -141,6 +152,7 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
     
     :param path: Path to the folder containing relevant files
     :param input_file_name: OGER output (tsv file)
+    :return: Pandas Dataframe containing required data for further analyses.
     """
     
     cols = ['TaxId', 'Biolink', 'BeginTerm', 'EndTerm', 'TokenizedTerm', 'PreferredTerm', \

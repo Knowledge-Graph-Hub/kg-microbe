@@ -262,6 +262,9 @@ for compatibility with OGER.</p>
 <li><p><strong>ont</strong> – The ontology to be used as dictionary [‘ALL’, ‘ENVO’, ‘CHEBI’]</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
 </dl>
 <ul class="simple">
 <li><p>The ‘Shared’ section declares global variables that can be used in other sections
@@ -307,6 +310,9 @@ their own paths</p></li>
 <li><p><strong>dic</strong> – The Ontology to be used as a dictionary for NLP</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filename (str)</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -322,13 +328,29 @@ are considered and a dataframe of relevant information is returned</p>
 <li><p><strong>input_file_name</strong> – OGER output (tsv file)</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas Dataframe containing required data for further analyses.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="kg_microbe.utils.nlp_utils.run_oger">
 <code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">run_oger</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">input_file_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">n_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#kg_microbe.utils.nlp_utils.run_oger" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Runs OGER using the settings.ini file created previously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Path of the input file.</p></li>
+<li><p><strong>input_file_name</strong> – Filename.</p></li>
+<li><p><strong>n_workers</strong> – Number of threads to run (default: 1).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas DataFrame containing the output of OGER analysis.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-kg_microbe.utils.robot_utils">

@@ -22,18 +22,16 @@ def cli():
 @click.option("output_dir", "-o", required=True, default="data/raw")
 @click.option("ignore_cache", "-i", is_flag=True, default=False,
               help='ignore cache and download files even if they exist [false]')
+
 def download(*args, **kwargs) -> None:
-    """Downloads data files from list of URLs (default: download.yaml) into data
+    """
+    Downloads data files from list of URLs (default: download.yaml) into data
     directory (default: data/raw).
 
-    Args:
-        yaml_file: Specify the YAML file containing a list of datasets to download.
-        output_dir: A string pointing to the directory to download data to.
-        ignore_cache: If specified, will ignore existing files and download again.
-
-    Returns:
-        None.
-
+    :param yaml_file: Specify the YAML file containing a list of datasets to download.
+    :param output_dir: A string pointing to the directory to download data to.
+    :param ignore_cache: If specified, will ignore existing files and download again.
+    :return: None.
     """
 
     kg_download(*args, **kwargs)
@@ -46,18 +44,16 @@ def download(*args, **kwargs) -> None:
 @click.option("output_dir", "-o", default="data/transformed")
 @click.option("sources", "-s", default=None, multiple=True,
               type=click.Choice(DATA_SOURCES.keys()))
+
 def transform(*args, **kwargs) -> None:
-    """Calls scripts in kg_microbe/transform/[source name]/ to transform each source
+    """
+    Calls scripts in kg_microbe/transform/[source name]/ to transform each source
     into nodes and edges.
 
-    Args:
-        input_dir: A string pointing to the directory to import data from.
-        output_dir: A string pointing to the directory to output data to.
-        sources: A list of sources to transform.
-
-    Returns:
-        None.
-
+    :param input_dir: A string pointing to the directory to import data from.
+    :param output_dir: A string pointing to the directory to output data to.
+    :param sources: A list of sources to transform.
+    :return: None.
     """
 
     # call transform script for each source
@@ -69,16 +65,14 @@ def transform(*args, **kwargs) -> None:
 @cli.command()
 @click.option('yaml', '-y', default="merge.yaml", type=click.Path(exists=True))
 @click.option('processes', '-p', default=1, type=int)
+
 def merge(yaml: str, processes: int) -> None:
-    """Use KGX to load subgraphs to create a merged graph.
+    """
+    Use KGX to load subgraphs to create a merged graph.
 
-    Args:
-        yaml: A string pointing to a KGX compatible config YAML.
-        processes: Number of processes to use.
-
-    Returns:
-        None.
-
+    :param yaml: A string pointing to a KGX compatible config YAML.
+    :param processes: Number of processes to use.
+    :return: None.
     """
 
     load_and_merge(yaml, processes)
@@ -87,21 +81,21 @@ def merge(yaml: str, processes: int) -> None:
 @cli.command()
 @click.option("yaml", "-y", required=True, default=None, multiple=False)
 @click.option("output_dir", "-o", default="data/queries/")
+
 def query(yaml: str, output_dir: str,
           query_key: str='query', endpoint_key: str='endpoint',
           outfile_ext: str=".tsv") -> None:
-    """Perform a query of knowledge graph using a class contained in query_utils
-
-    Args:
-        yaml: A YAML file containing a SPARQL query (see queries/sparql/ for examples)
-        output_dir: Directory to output results of query
-        query_key: the key in the yaml file containing the query string
-        endpoint_key: the key in the yaml file containing the sparql endpoint URL
-        outfile_ext: file extension for output file [.tsv]
-    Returns:
-        None.
-
     """
+    Perform a query of knowledge graph using a class contained in query_utils
+
+    :param yaml: A YAML file containing a SPARQL query (see queries/sparql/ for examples)
+    :param output_dir: Directory to output results of query
+    :param query_key: the key in the yaml file containing the query string
+    :param endpoint_key: the key in the yaml file containing the sparql endpoint URL
+    :param outfile_ext: file extension for output file [.tsv]
+    :return: None.
+    """
+
     query = parse_query_yaml(yaml)
     result_dict = run_query(query=query[query_key], endpoint=query[endpoint_key])
     if not os.path.exists(output_dir):
@@ -122,6 +116,7 @@ def query(yaml: str, output_dir: str,
               help="fraction of input graph to use in training graph [0.8]",
               default=0.8, type=float)
 @click.option("validation", "-v", help="make validation set", is_flag=True, default=False)
+
 def holdouts(*args, **kwargs) -> None:
     """Make holdouts for ML training
 
@@ -150,13 +145,12 @@ def holdouts(*args, **kwargs) -> None:
         neg_valid.tsv (optional) - a set of edges not present in input graph for
                       validation
 
-    Args:
-        :param nodes:   nodes for input graph, in KGX TSV format [data/merged/nodes.tsv]
-        :param edges:   edges for input graph, in KGX TSV format [data/merged/edges.tsv]
-        :param output_dir:     directory to output edges and new graph [data/edges/]
-        :param train_fraction: fraction of edges to emit as training [0.8]
-        :param validation:     should we make validation edges? [False]
-
+    :param nodes:   nodes for input graph, in KGX TSV format [data/merged/nodes.tsv]
+    :param edges:   edges for input graph, in KGX TSV format [data/merged/edges.tsv]
+    :param output_dir:     directory to output edges and new graph [data/edges/]
+    :param train_fraction: fraction of edges to emit as training [0.8]
+    :param validation:     should we make validation edges? [False]
+    :return: None.
     """
     make_holdouts(*args, **kwargs)
 

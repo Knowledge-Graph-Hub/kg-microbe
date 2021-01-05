@@ -183,18 +183,21 @@
 <dd><p>Parse the typical KGX compatible nodes TSV into Bio Term Hub format
 for compatibility with OGER.</p>
 <p>Mapping of columns from KGX format to Bio Term Hub format,
-[0] ‘CUI-less’ -&gt; UMLS CUI
-[1] ‘N/A’ -&gt; resource from which it comes
-[2] CURIE -&gt; native ID
-[3] name -&gt; term (this is the field that is tokenized)
-[4] name -&gt; preferred form
-[5] category -&gt; type</p>
+0.  ‘CUI-less’ -&gt; UMLS CUI
+1.  ‘N/A’ -&gt; resource from which it comes
+2.  CURIE -&gt; native ID
+3.  name -&gt; term (this is the field that is tokenized)
+4.  name -&gt; preferred form
+5.  category -&gt; type</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_filename</strong> – Input file path (str)</p></li>
 <li><p><strong>output_filename</strong> – Output file path (str)</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -381,6 +384,9 @@ are considered and a dataframe of relevant information is returned</p>
 <li><p><strong>terms</strong> – Either CURIE or a file of CURIEs list</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
 </dl>
 <p>ROBOT Method options: 
 1. STAR: The STAR-module contains mainly the terms in the seed and the inter-relations between them (not necessarily sub- and super-classes). 
@@ -470,7 +476,7 @@ or UniprotKB:P63151-2, collapse to parent protein
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>str: first value in dict for first item in keys_by_priority that isn’t blank, or None</p>
+<dd class="field-even"><p>First value in dict for first item in keys_by_priority that isn’t blank (str), or None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -596,6 +602,9 @@ makes dict with name to id mapping</p>
 <li><p><strong>sep</strong> – separator [     ]</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -647,6 +656,9 @@ of dicts, one dict for each row.</p>
 <li><p><strong>data</strong> – data for line to write out</p></li>
 <li><p><strong>sep</strong> – separator [     ]</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None.</p>
 </dd>
 </dl>
 </dd></dl>

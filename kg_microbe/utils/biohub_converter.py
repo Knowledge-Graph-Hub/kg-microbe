@@ -10,16 +10,16 @@ def parse(input_filename, output_filename) -> None:
     for compatibility with OGER.
 
     Mapping of columns from KGX format to Bio Term Hub format,
-    [0] 'CUI-less' -> UMLS CUI
-    [1] 'N/A' -> resource from which it comes
-    [2] CURIE -> native ID
-    [3] name -> term (this is the field that is tokenized)
-    [4] name -> preferred form
-    [5] category -> type
+    0.  'CUI-less' -> UMLS CUI
+    1.  'N/A' -> resource from which it comes
+    2.  CURIE -> native ID
+    3.  name -> term (this is the field that is tokenized)
+    4.  name -> preferred form
+    5.  category -> type
 
     :param input_filename: Input file path (str)
     :param output_filename: Output file path (str)
-
+    :return: None.
     """
     counter = 0
     OUTSTREAM = open(output_filename, 'w')

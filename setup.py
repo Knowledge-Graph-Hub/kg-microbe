@@ -12,6 +12,9 @@ with copen(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 def read(*parts):
+    '''
+    This module provides the list of libraries required for kg-microbe.
+    '''
     with copen(os.path.join(here, *parts), 'r') as fp:
         return fp.read()
 

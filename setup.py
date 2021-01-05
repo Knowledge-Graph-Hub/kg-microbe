@@ -68,6 +68,7 @@ setup(
         'pyyaml',
         'kgx',
         'sphinx',
+        'sphinx_rtd_theme',
         'recommonmark'
     ],
     extras_require=extras,

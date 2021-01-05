@@ -67,7 +67,7 @@ setup(
         'click==7',
         'pyyaml',
         'kgx',
-        'sphinx'
+        'mkdocs'
     ],
     extras_require=extras,
 )

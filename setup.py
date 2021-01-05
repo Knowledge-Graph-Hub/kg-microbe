@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 # get the long description from the relevant file
-with copen(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+with copen(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 

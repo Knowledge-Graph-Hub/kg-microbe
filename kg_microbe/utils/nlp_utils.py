@@ -8,14 +8,15 @@ from oger.ctrl.router import Router, PipelineServer
 from oger.ctrl.run import run as og_run
 from kg_microbe.utils import biohub_converter as bc
 import pandas as pd
+
 SETTINGS_FILENAME = 'settings.ini'
+
 def create_settings_file(path: str, ont: str = 'ALL') -> None: 
     """
     Creates the settings.ini file for OGER to get parameters.
 
-    -   Parameters: 
-        -   path - path of the 'nlp' folder
-        -   ont - the ontology to be used as dictionary ['ALL', 'ENVO', 'CHEBI']
+    :param path: Path of the 'nlp' folder
+    :param ont: The ontology to be used as dictionary ['ALL', 'ENVO', 'CHEBI']
 
     -   The 'Shared' section declares global variables that can be used in other sections
         e.g. Data root.
@@ -107,10 +108,9 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     '''
     Creates a tsv which forms the input for OGER
 
-    Parameters: 
-        path - path to the file which has text to be analyzed
-        columns - The first column HAS to be an id column.
-        dic - The Ontology to be used as a dictionary for NLP
+    :param path: Path to the file which has text to be analyzed
+    :param columns: The first column HAS to be an id column.
+    :param dic: The Ontology to be used as a dictionary for NLP
     '''
     df = pd.read_csv(path, sep=',', low_memory=False, usecols=columns)
     sub_df = df.dropna()
@@ -139,9 +139,8 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
     The OGER output is a TSV which is imported and only the terms that occurred in the text file
     are considered and a dataframe of relevant information is returned
     
-    Args:
-        path: Path to the folder containing relevant files
-        input_file_name: OGER output (tsv file)
+    :param path: Path to the folder containing relevant files
+    :param input_file_name: OGER output (tsv file)
     """
     
     cols = ['TaxId', 'Biolink', 'BeginTerm', 'EndTerm', 'TokenizedTerm', 'PreferredTerm', \

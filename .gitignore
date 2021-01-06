@@ -7,3 +7,4 @@ kg_microbe/__pycache__/
 build
 kg_microbe.egg-info
 _build/
+.DS_Store

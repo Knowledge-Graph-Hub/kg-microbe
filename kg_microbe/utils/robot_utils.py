@@ -5,6 +5,11 @@ import os
 import subprocess # Source: https://docs.python.org/2/library/subprocess.html#popen-constructor
 
 def initialize_robot(path:str) -> list:
+    '''
+    This initializes ROBOT with necessary configuration.
+    :param path: Path to ROBOT files.
+    :return: A list consisting of robot shell script name and environment variables.
+    '''
      # Declare variables
     robot_file = os.path.join(path, 'robot')
 

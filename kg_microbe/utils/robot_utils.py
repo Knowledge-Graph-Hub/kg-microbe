@@ -58,10 +58,10 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     :return: None
 
     ROBOT Method options: 
-    - STAR: The STAR-module contains mainly the terms in the seed and the inter-relations between them (not necessarily sub- and super-classes). 
-    - TOP: The TOP-module contains mainly the terms in the seed, plus all their sub-classes and the inter-relations between them. 
-    - BOT: The BOT, or BOTTOM, -module contains mainly the terms in the seed, plus all their super-classes and the inter-relations between them. 
-    - MIREOT : The MIREOT method preserves the hierarchy of the input ontology (subclass and subproperty relationships), but does not try to preserve the full set of logical entailments.
+    -   STAR: The STAR-module contains mainly the terms in the seed and the inter-relations between them (not necessarily sub- and super-classes). 
+    -   TOP: The TOP-module contains mainly the terms in the seed, plus all their sub-classes and the inter-relations between them. 
+    -   BOT: The BOT, or BOTTOM, -module contains mainly the terms in the seed, plus all their super-classes and the inter-relations between them. 
+    -   MIREOT : The MIREOT method preserves the hierarchy of the input ontology (subclass and subproperty relationships), but does not try to preserve the full set of logical entailments.
 
     """
 

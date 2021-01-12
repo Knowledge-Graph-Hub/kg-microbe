@@ -47,6 +47,7 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     :param path: path of file to be converted
     :param ont_name: Namae of the ontology
     :param terms: Either CURIE or a file of CURIEs list
+    :param mode: Method options as listed below.
     :return: None
 
     ROBOT Method options: 
@@ -65,7 +66,7 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     if not os.path.isfile(output_json):
         if ':' in terms:
             call = ['bash', robot_file, 'extract', \
-                                    '--method', mode,
+                                    '--method', mode, \
                                     '--input', input_owl, \
                                     '--output', output_owl, \
                                     '--term', terms, \
@@ -74,7 +75,7 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
                                     '-f', 'json']
         else:
             call = ['bash', robot_file, 'extract', \
-                                        '--method', mode,
+                                        '--method', mode, \
                                         '--input', input_owl, \
                                         '--output', output_owl, \
                                         '--term-file', terms, \

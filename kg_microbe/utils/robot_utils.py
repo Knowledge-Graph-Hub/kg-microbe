@@ -29,6 +29,7 @@ def convert_to_json(path:str, ont:str):
 
     :param path: Path to ROBOT files
     :param ont: Ontology
+    :return: None
     """
    
     robot_file, env = initialize_robot(path)

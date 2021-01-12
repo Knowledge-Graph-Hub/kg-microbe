@@ -80,8 +80,8 @@ class TraitsTransform(Transform):
         NCBITaxon_131567 = cellular organisms 
         (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
         '''
-        subset_ontology_needed = 'NCBITaxon'
-        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, 'NCBITaxon:131567', 'TOP')
+        #subset_ontology_needed = 'NCBITaxon'
+        #extract_convert_to_json(self.input_base_dir, subset_ontology_needed, 'NCBITaxon:131567', 'TOP')
 
 
         """
@@ -90,7 +90,6 @@ class TraitsTransform(Transform):
         environment_file = os.path.join(self.input_base_dir, 'environments.csv')
         env_df = pd.read_csv(environment_file, sep=',', low_memory=False, usecols=['Type', 'ENVO_terms', 'ENVO_ids'])
         unique_env_df = env_df.drop_duplicates()
-
         
 
         """
@@ -140,9 +139,8 @@ class TraitsTransform(Transform):
         # transform data, something like:
         with open(input_file, 'r') as f, \
                 open(self.output_node_file, 'w') as node, \
-                open(self.output_edge_file, 'w') as edge:
-                # If need to capture CURIEs for ROBOT STAR extraction
-                #open(self.subset_terms_file, 'w') as terms_file:
+                open(self.output_edge_file, 'w') as edge, \
+                open(self.subset_terms_file, 'w') as terms_file:   # If need to capture CURIEs for ROBOT STAR extraction
 
             # write headers (change default node/edge headers if necessary
             node.write("\t".join(self.node_header) + "\n")
@@ -216,8 +214,8 @@ class TraitsTransform(Transform):
                                                #org_id])
                     seen_node[org_id] += 1
                     # If capture of all NCBITaxon: CURIEs are needed for ROBOT STAR extraction
-                    #if org_id.startswith('NCBITaxon:'):
-                    #    terms_file.write(org_id + "\n")
+                    if org_id.startswith('NCBITaxon:'):
+                        terms_file.write(org_id + "\n")
 
                 # Write chemical node
                 for chem_name in carbon_substrates:
@@ -366,10 +364,10 @@ class TraitsTransform(Transform):
                     seen_edge[org_id+source_id] += 1
         # Files write ends
 
-        """# Extract the 'cellular organismes' tree from NCBITaxon and convert to JSON
+        # Get trees from all relevant IDs from NCBITaxon and convert to JSON
         '''
         NCBITaxon_131567 = cellular organisms 
         (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
         '''
         subset_ontology_needed = 'NCBITaxon'
-        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file, 'BOT')"""
+        extract_convert_to_json(self.input_base_dir, subset_ontology_needed, self.subset_terms_file, 'BOT')

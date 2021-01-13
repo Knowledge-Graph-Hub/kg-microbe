@@ -74,26 +74,25 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     output_json = os.path.join(path, ont_name.lower()+'.json')
     output_owl = os.path.join(path, ont_name.lower()+'_extracted_subset.owl')
     
-    if not os.path.isfile(output_json):
-        if ':' in terms:
-            call = ['bash', robot_file, 'extract', \
+    if ':' in terms:
+        call = ['bash', robot_file, 'extract', \
+                                '--method', mode, \
+                                '--input', input_owl, \
+                                '--output', output_owl, \
+                                '--term', terms, \
+                                'convert', \
+                                '--output', output_json, \
+                                '-f', 'json']
+    else:
+        call = ['bash', robot_file, 'extract', \
                                     '--method', mode, \
                                     '--input', input_owl, \
                                     '--output', output_owl, \
-                                    '--term', terms, \
+                                    '--term-file', terms, \
                                     'convert', \
                                     '--output', output_json, \
                                     '-f', 'json']
-        else:
-            call = ['bash', robot_file, 'extract', \
-                                        '--method', mode, \
-                                        '--input', input_owl, \
-                                        '--output', output_owl, \
-                                        '--term-file', terms, \
-                                        'convert', \
-                                        '--output', output_json, \
-                                        '-f', 'json']
-        
-        subprocess.call(call, env=env)
+    
+    subprocess.call(call, env=env)
 
     return None

@@ -9,10 +9,10 @@ from kg_microbe.transform_utils.traits.traits import TraitsTransform
 
 
 DATA_SOURCES = {
+    'TraitsTransform': TraitsTransform,
     'NCBITransform': OntologyTransform,
     'ChebiTransform': OntologyTransform,
-    'EnvoTransform' : OntologyTransform,
-    'TraitsTransform': TraitsTransform
+    'EnvoTransform' : OntologyTransform
 }
 
 

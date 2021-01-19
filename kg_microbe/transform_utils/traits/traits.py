@@ -48,7 +48,7 @@ class TraitsTransform(Transform):
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
 
         self.node_header = ['id', 'name', 'category']#, 'curie']
-        self.edge_header = ['subject', 'edge_label', 'object', 'relation']
+        self.edge_header = ['subject', 'predicate', 'object', 'relation']
         self.nlp = nlp
 
     def run(self, data_file: Optional[str] = None):

@@ -114,7 +114,7 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     :param dic: The Ontology to be used as a dictionary for NLP
     :return: Filename (str)
     '''
-    df = pd.read_csv(path, sep=',', low_memory=False, usecols=columns)
+    df = pd.read_csv(path, sep='\t', low_memory=False, usecols=columns)
     sub_df = df.dropna()
     
     # New way of doing this : PR submitted to Ontogene for merging code.

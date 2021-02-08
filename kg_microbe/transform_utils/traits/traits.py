@@ -146,7 +146,7 @@ class TraitsTransform(Transform):
             node.write("\t".join(self.node_header) + "\n")
             edge.write("\t".join(self.edge_header) + "\n")
             
-            header_items = parse_header(f.readline(), sep=',')
+            header_items = parse_header(f.readline(), sep='\t')
             
             seen_node: dict = defaultdict(int)
             seen_edge: dict = defaultdict(int)
@@ -192,7 +192,7 @@ class TraitsTransform(Transform):
                 
 
                 line = re.sub(r'(?!(([^"]*"){2})*[^"]*$),', '|', line) # alanine, glucose -> alanine| glucose
-                items_dict = parse_line(line, header_items, sep=',')
+                items_dict = parse_line(line, header_items, sep='\t')
 
                 org_name = items_dict['org_name']
                 tax_id = items_dict['tax_id']

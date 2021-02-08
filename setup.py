@@ -72,7 +72,9 @@ setup(
         'kgx',
         'sphinx',
         'sphinx_rtd_theme',
-        'recommonmark'
+        'recommonmark',
+        'parameterized',
+        'validate_version_code'
     ],
     extras_require=extras,
 )

@@ -10,16 +10,15 @@ class TestRun(TestCase):
     def setUp(self) -> None:
         self.runner = CliRunner()
 
-    # @mock.patch('requests.get')
-    # def test_download(self, mock_get):
-    #     result = self.runner.invoke(cli=download,
-    #                                 args=['-y', 'tests/resources/download.yaml'])
-    #     # this really just makes sure request.get get called somewhere downstream
-    #     self.assertTrue(mock_get.called)
+    #@mock.patch('requests.get')
+    #def test_download(self, mock_get):
+    #    result = self.runner.invoke(cli=download, args=['-y', 'tests/resources/download.yaml'])
+    #    # this really just makes sure request.get get called somewhere downstream
+    #    self.assertTrue(mock_get.called)
 
     def test_transform(self):
         result = self.runner.invoke(cli=transform,
-                                    args=['-i', 'tests/data/raw'])
+                                    args=['-i', 'tests/resources/traits/input/trait_test.tsv'])
         self.assertNotEqual(result.exit_code, 0)
 
     def test_merge_missing_file_error(self):

@@ -7,4 +7,4 @@ kg_microbe/__pycache__/
 build
 kg_microbe.egg-info
 _build/
-.DS_Store
+kg_microbe/kg_microbe/tests/resources/traits/

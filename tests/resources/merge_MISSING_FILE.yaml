@@ -1,11 +1,12 @@
 ---
 merged_graph:
-  targets:
+  source:
     condensed_traits_NCBI:
-      type: tsv
-      filename:
-        - data/transformed/condensed_traits_NCBI/nodes.tsv
-        - data/transformed/condensed_traits_NCBI/DOESNT_EXIST.tsv
-destination:
-  type: tsv
-  filename: merged-kg
+      input:
+        format: tsv
+        filename:
+          - data/transformed/condensed_traits_NCBI/nodes.tsv
+          - data/transformed/condensed_traits_NCBI/DOESNT_EXIST.tsv
+  destination:
+    type: tsv
+    filename: merged-kg

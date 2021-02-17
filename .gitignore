@@ -8,3 +8,4 @@ build
 kg_microbe.egg-info
 _build/
 tests/resources/traits/
+.DS_Store

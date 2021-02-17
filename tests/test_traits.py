@@ -15,7 +15,8 @@ class TestTraits(unittest.TestCase):
         self.resources = 'tests/resources/'
         self.input_dir = os.path.join(self.resources,'traits/input/')
         self.output_dir = os.path.join(self.resources,'traits/output/')
-        self.trait_fh = open(os.path.join(self.input_dir, 'trait_test.tsv'), 'rt')
+        self.test_file = 'trait_test.tsv'
+        self.trait_fh = open(os.path.join(self.input_dir, self.test_file), 'rt')
         self.traits_output_dir = os.path.join(self.output_dir, "condensed_traits_NCBI/")
         self.traits = TraitsTransform(input_dir=self.input_dir,
                                                  output_dir=self.output_dir)
@@ -66,11 +67,11 @@ class TestTraits(unittest.TestCase):
 
     def test_run(self):
         self.assertTrue(isinstance(self.traits.run, object))
-        self.traits.run(data_file='trait_test.tsv')
+        self.traits.run(data_file=self.test_file)
         self.assertTrue(os.path.isdir(self.traits_output_dir))
 
     def test_nodes_file(self):
-        self.traits.run(data_file='trait_test.tsv')
+        self.traits.run(data_file=self.test_file)
         node_file = os.path.join(self.traits_output_dir, "nodes.tsv")
         self.assertTrue(os.path.isfile(node_file))
         node_df = pd.read_csv(node_file, sep="\t", header=0)
@@ -79,7 +80,7 @@ class TestTraits(unittest.TestCase):
                          list(node_df.columns))
 
     def test_nodes_are_not_repeated(self):
-        self.traits.run(data_file='trait_test.tsv')
+        self.traits.run(data_file=self.test_file)
         node_file = os.path.join(self.traits_output_dir, "nodes.tsv")
         node_df = pd.read_csv(node_file, sep="\t", header=0)
         nodes = list(node_df.id)
@@ -87,7 +88,7 @@ class TestTraits(unittest.TestCase):
         self.assertCountEqual(nodes, unique_nodes)
 
     def test_edges_file(self, *args):
-        self.traits.run(data_file='trait_test.tsv')
+        self.traits.run(data_file=self.test_file)
         edge_file = os.path.join(self.traits_output_dir, "edges.tsv")
         self.assertTrue(os.path.isfile(edge_file))
         edge_df = pd.read_csv(edge_file, sep="\t", header=0)

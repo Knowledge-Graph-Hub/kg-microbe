@@ -1,11 +1,12 @@
 ---
 merged_graph:
-  targets:
-    drug-central:
-      type: tsv
-      filename:
-        - data/transformed/traits/nodes.tsv
-        - data/transformed/traits/edges.tsv
-destination:
-  type: tsv
-  filename: merged-kg
+  source:
+    condensed_traits_NCBI:
+      input:
+        format: tsv
+        filename:
+          - data/transformed/traits/nodes.tsv
+          - data/transformed/traits/edges.tsv
+  destination:
+    type: tsv
+    filename: merged-kg

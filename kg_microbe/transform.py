@@ -12,7 +12,8 @@ DATA_SOURCES = {
     'TraitsTransform': TraitsTransform,
     'NCBITransform': OntologyTransform,
     'ChebiTransform': OntologyTransform,
-    'EnvoTransform' : OntologyTransform
+    'EnvoTransform' : OntologyTransform,
+    'GoTransform': OntologyTransform
 }
 
 

@@ -98,7 +98,7 @@ class TraitsTransform(Transform):
         """
         create_termlist(self.input_base_dir, 'chebi')
         create_termlist(self.input_base_dir, 'ecocore')
-        #create_termlist(self.input_base_dir, 'pato')
+        create_termlist(self.input_base_dir, 'go')
         
 
         """
@@ -114,12 +114,12 @@ class TraitsTransform(Transform):
             oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)
 
-            '''# PATO
-            cols_for_nlp = ['tax_id', 'cell_shape']
-            input_file_name = prep_nlp_input(input_file, cols_for_nlp, 'PATO')
+            # GO
+            cols_for_nlp = ['tax_id', 'pathways']
+            input_file_name = prep_nlp_input(input_file, cols_for_nlp, 'GO')
             # Set-up the settings.ini file for OGER and run
-            create_settings_file(self.nlp_dir, 'PATO')
-            oger_output_pato = run_oger(self.nlp_dir, input_file_name, n_workers=5)'''
+            create_settings_file(self.nlp_dir, 'GO')
+            oger_output_go = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             
             '''# ECOCORE
             cols_for_nlp = ['tax_id', 'metabolism']
@@ -164,6 +164,7 @@ class TraitsTransform(Transform):
             chem_node_type = "biolink:ChemicalSubstance" # [carbon_substrate]
             shape_node_type = "biolink:AbstractEntity" # [cell_shape]
             metabolism_node_type = "biolink:ActivityAndBehavior" # [metabolism]
+            pathway_node_type = "biolink:BiologicalProcess" # [pathways]
             curie = 'NEED_CURIE'
             
             #Prefixes
@@ -172,6 +173,7 @@ class TraitsTransform(Transform):
             shape_prefix = "Shape:"
             #metab_prefix = "Metab:"
             source_prefix = "Env:"
+            pathway_prefix = "Path:"
 
             # Edges
             org_to_shape_edge_label = "biolink:has_phenotype" #  [org_name -> cell_shape, metabolism]
@@ -182,6 +184,8 @@ class TraitsTransform(Transform):
             org_to_source_edge_relation = "RO:0001015" #[org -> location_of -> source]
             org_to_metab_edge_label = "biolink:BiologicalProcess" # [org -> metabolism]
             org_to_metab_edge_relation = "GO:0008150" # [org -> biological_process -> metabolism]
+            org_to_pathway_edge_label = "biolink:BiologicalProcess" # # [org -> pathway]
+            org_to_pathway_edge_relation = "GO:0008150" # [org -> biological_process -> metabolism]
 
             
             
@@ -207,7 +211,7 @@ class TraitsTransform(Transform):
                 carbon_substrates = set([x.strip() for x in items_dict['carbon_substrates'].split('|')])
                 cell_shape = items_dict['cell_shape']
                 isolation_source = set([x.strip() for x in items_dict['isolation_source'].split('|')])
-                
+                pathways = set([x.strip() for x in items_dict['pathways'].replace('_',' ').split('|')])
 
             # Write Node ['id', 'entity', 'category']
                 # Write organism node 
@@ -265,7 +269,6 @@ class TraitsTransform(Transform):
                 shape_id = shape_prefix + cell_shape.lower()
 
                 if  not shape_id.endswith(':na') and shape_id not in seen_node:
-                    # import pdb; pdb.set_trace()
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[shape_id,
@@ -336,6 +339,35 @@ class TraitsTransform(Transform):
                                                     metabolism_node_type])#,
                                                     #metabolism_id])
                             seen_node[metabolism_id] += 1
+
+                # Write pathway node 
+                for pathway_name in pathways:
+                    pathway_curie = curie
+
+                    # Get relevant NLP results
+                    if pathway_name != 'NA':
+                        relevant_tax = oger_output_go.loc[oger_output_go['TaxId'] == int(tax_id)]
+                        relevant_pathway = relevant_tax.loc[relevant_tax['TokenizedTerm'] == pathway_name]
+                        if len(relevant_pathway) == 1:
+                            pathway_curie = relevant_pathway.iloc[0]['CURIE']
+                            pathway_node_type = relevant_pathway.iloc[0]['Biolink']
+                        
+
+                    if pathway_curie == curie:
+                        pathway_id = pathway_prefix + pathway_name.lower().replace(' ','_')
+                    else:
+                        pathway_id = pathway_curie
+
+                    
+                    if  not pathway_id.endswith(':na') and  pathway_id not in seen_node:
+                        write_node_edge_item(fh=node,
+                                            header=self.node_header,
+                                            data=[pathway_id,
+                                                pathway_name,
+                                                pathway_node_type])#,
+                                                #pathway_curie])
+                        seen_node[pathway_id] += 1
+               
                 
 
 
@@ -378,7 +410,18 @@ class TraitsTransform(Transform):
                                                 org_to_metab_edge_label,
                                                 metabolism_id,
                                                 org_to_metab_edge_relation])
+                    seen_edge[org_id+metabolism_id] += 1
+
+                # org-pathway edge
+                if pathway_id != None and org_id+pathway_id not in seen_edge:
+                    write_node_edge_item(fh=edge,
+                                            header=self.edge_header,
+                                            data=[org_id,
+                                                org_to_pathway_edge_label,
+                                                pathway_id,
+                                                org_to_pathway_edge_relation])
                     seen_edge[org_id+source_id] += 1
+
         # Files write ends
 
         # Get trees from all relevant IDs from NCBITaxon and convert to JSON

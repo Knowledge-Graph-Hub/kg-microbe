@@ -121,6 +121,9 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     df = pd.read_csv(path, low_memory=False, usecols=columns)
     sub_df = df.dropna()
     
+    if 'pathways' in columns:
+        sub_df['pathways'] = sub_df['pathways'].str.replace('_', ' ')
+
     # New way of doing this : PR submitted to Ontogene for merging code.
     fn = 'nlp'+dic
     nlp_input = os.path.abspath(os.path.join(os.path.dirname(path),'..','nlp/input/'+fn+'.tsv'))

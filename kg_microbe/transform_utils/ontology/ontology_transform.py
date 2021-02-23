@@ -11,7 +11,8 @@ ONTOLOGIES = {
     #'GoTransform': 'go-plus.json',
     'NCBITransform':  'ncbitaxon.json',
     'ChebiTransform': 'chebi.json',
-    'EnvoTransform': 'envo.json'
+    'EnvoTransform': 'envo.json',
+    'GoTransform': 'go.json'
 }
 
 

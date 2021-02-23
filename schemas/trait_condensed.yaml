@@ -1,0 +1,415 @@
+id: https://w3id.org/example
+name: example
+description: example
+imports:
+- biolinkml:types
+prefixes:
+  biolinkml: https://w3id.org/biolink/biolinkml/
+  example: https://w3id.org/example
+default_prefix: example
+types: {}
+classes:
+  example:
+    slots:
+    - tax_id
+    - species_tax_id
+    - data_source
+    - org_name
+    - species
+    - genus
+    - family
+    - order
+    - class
+    - phylum
+    - superkingdom
+    - gram_stain
+    - metabolism
+    - pathways
+    - carbon_substrates
+    - sporulation
+    - motility
+    - range_tmp
+    - range_salinity
+    - cell_shape
+    - isolation_source
+    - d1_lo
+    - d1_up
+    - d2_lo
+    - d2_up
+    - doubling_h
+    - genome_size
+    - gc_content
+    - coding_genes
+    - optimum_tmp
+    - optimum_ph
+    - growth_tmp
+    - rRNA16S_genes
+    - tRNA_genes
+    - ref_id
+slots:
+  tax_id:
+    range: integer
+    examples:
+      value: '542'
+  species_tax_id:
+    range: integer
+    examples:
+      value: '542'
+  data_source:
+    range: data_source_enum
+    examples:
+      value: silva
+  org_name:
+    range: string
+    examples:
+      value: Zymomonas mobilis
+  species:
+    range: string
+    examples:
+      value: Zymomonas mobilis
+  genus:
+    range: string
+    examples:
+      value: Zymomonas
+  family:
+    range: string
+    examples:
+      value: Sphingomonadaceae
+  order:
+    range: string
+    examples:
+      value: Sphingomonadales
+  class:
+    range: string
+    examples:
+      value: Alphaproteobacteria
+  phylum:
+    range: string
+    examples:
+      value: Proteobacteria
+  superkingdom:
+    range: superkingdom_enum
+    examples:
+      value: Bacteria
+  gram_stain:
+    range: gram_stain_enum
+    examples:
+      value: NA
+  metabolism:
+    range: metabolism_enum
+    examples:
+      value: NA
+  pathways:
+    range: string
+    examples:
+      value: NA
+  carbon_substrates:
+    range: string
+    examples:
+      value: NA
+  sporulation:
+    range: sporulation_enum
+    examples:
+      value: NA
+  motility:
+    range: motility_enum
+    examples:
+      value: NA
+  range_tmp:
+    range: range_tmp_enum
+    examples:
+      value: NA
+  range_salinity:
+    range: range_salinity_enum
+    examples:
+      value: NA
+  cell_shape:
+    range: cell_shape_enum
+    examples:
+      value: NA
+  isolation_source:
+    range: string
+    examples:
+      value: NA
+  d1_lo:
+    range: string
+    examples:
+      value: NA
+  d1_up:
+    range: string
+    examples:
+      value: NA
+  d2_lo:
+    range: string
+    examples:
+      value: NA
+  d2_up:
+    range: string
+    examples:
+      value: NA
+  doubling_h:
+    range: string
+    examples:
+      value: '1.7'
+  genome_size:
+    range: string
+    examples:
+      value: NA
+  gc_content:
+    range: string
+    examples:
+      value: NA
+  coding_genes:
+    range: string
+    examples:
+      value: NA
+  optimum_tmp:
+    range: string
+    examples:
+      value: NA
+  optimum_ph:
+    range: string
+    examples:
+      value: NA
+  growth_tmp:
+    range: string
+    examples:
+      value: '30'
+  rRNA16S_genes:
+    range: rRNA16S_genes_enum
+    examples:
+      value: NA
+  tRNA_genes:
+    range: string
+    examples:
+      value: NA
+  ref_id:
+    range: string
+    examples:
+      value: '20237'
+enums:
+  data_source_enum:
+    permissible_values:
+      methanogen:
+        description: methanogen
+      bacdive-microa:
+        description: bacdive-microa
+      amend-shock:
+        description: amend-shock
+      faprotax:
+        description: faprotax
+      protraits:
+        description: protraits
+      edwards:
+        description: edwards
+      engqvist:
+        description: engqvist
+      kremer:
+        description: kremer
+      mediadb:
+        description: mediadb
+      gold:
+        description: gold
+      schulz-jorgensen:
+        description: schulz-jorgensen
+      corkrey:
+        description: corkrey
+      jemma-refseq:
+        description: jemma-refseq
+      nielsensl:
+        description: nielsensl
+      genbank:
+        description: genbank
+      kegg:
+        description: kegg
+      fierer:
+        description: fierer
+      prochlorococcus:
+        description: prochlorococcus
+      rrndb:
+        description: rrndb
+      campedelli:
+        description: campedelli
+      patric:
+        description: patric
+      silva:
+        description: silva
+      pasteur:
+        description: pasteur
+      roden-jin:
+        description: roden-jin
+      masonmm:
+        description: masonmm
+      microbe-directory:
+        description: microbe-directory
+  superkingdom_enum:
+    permissible_values:
+      Archaea:
+        description: Archaea
+      Bacteria:
+        description: Bacteria
+  gram_stain_enum:
+    permissible_values:
+      negative:
+        description: negative
+      positive:
+        description: positive
+      NA:
+        description: NA
+  metabolism_enum:
+    permissible_values:
+      anaerobic:
+        description: anaerobic
+      strictly anaerobic:
+        description: strictly anaerobic
+      obligate aerobic:
+        description: obligate aerobic
+      aerobic:
+        description: aerobic
+      facultative:
+        description: facultative
+      microaerophilic:
+        description: microaerophilic
+      obligate anaerobic:
+        description: obligate anaerobic
+      NA:
+        description: NA
+  sporulation_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+      NA:
+        description: NA
+  motility_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+      gliding:
+        description: gliding
+      flagella:
+        description: flagella
+      axial filament:
+        description: axial filament
+      NA:
+        description: NA
+  range_tmp_enum:
+    permissible_values:
+      mesophilic:
+        description: mesophilic
+      facultative psychrophilic:
+        description: facultative psychrophilic
+      extreme thermophilic:
+        description: extreme thermophilic
+      NA:
+        description: NA
+      thermophilic:
+        description: thermophilic
+      psychrotolerant:
+        description: psychrotolerant
+      thermotolerant:
+        description: thermotolerant
+      psychrophilic:
+        description: psychrophilic
+  range_salinity_enum:
+    permissible_values:
+      halotolerant:
+        description: halotolerant
+      extreme-halophilic:
+        description: extreme-halophilic
+      euryhaline:
+        description: euryhaline
+      halophilic:
+        description: halophilic
+      moderate-halophilic:
+        description: moderate-halophilic
+      stenohaline:
+        description: stenohaline
+      non-halophilic:
+        description: non-halophilic
+      NA:
+        description: NA
+  cell_shape_enum:
+    permissible_values:
+      'disc ':
+        description: 'disc '
+      ring:
+        description: ring
+      flask:
+        description: flask
+      star:
+        description: star
+      bacillus:
+        description: bacillus
+      spirochete:
+        description: spirochete
+      coccus:
+        description: coccus
+      coccobacillus:
+        description: coccobacillus
+      filament:
+        description: filament
+      square:
+        description: square
+      fusiform:
+        description: fusiform
+      triangular:
+        description: triangular
+      spindle:
+        description: spindle
+      irregular:
+        description: irregular
+      spiral:
+        description: spiral
+      tailed:
+        description: tailed
+      NA:
+        description: NA
+      branced:
+        description: branced
+      pleomorphic:
+        description: pleomorphic
+      vibrio:
+        description: vibrio
+  rRNA16S_genes_enum:
+    permissible_values:
+      '16':
+        description: '16'
+      '15':
+        description: '15'
+      '6':
+        description: '6'
+      '11':
+        description: '11'
+      '9':
+        description: '9'
+      '14':
+        description: '14'
+      '10':
+        description: '10'
+      '12':
+        description: '12'
+      '8':
+        description: '8'
+      '4':
+        description: '4'
+      '1':
+        description: '1'
+      '2':
+        description: '2'
+      '13':
+        description: '13'
+      '5':
+        description: '5'
+      '3':
+        description: '3'
+      '7':
+        description: '7'
+      '17':
+        description: '17'
+      NA:
+        description: NA
+

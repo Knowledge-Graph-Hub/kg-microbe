@@ -64,7 +64,7 @@ class TraitsTransform(Transform):
         
         input_file = os.path.join(
             self.input_base_dir, data_file)
-
+            
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -98,6 +98,7 @@ class TraitsTransform(Transform):
         """
         create_termlist(self.input_base_dir, 'chebi')
         create_termlist(self.input_base_dir, 'ecocore')
+        #create_termlist(self.input_base_dir, 'pato')
         
 
         """
@@ -112,6 +113,13 @@ class TraitsTransform(Transform):
             create_settings_file(self.nlp_dir, 'CHEBI')
             oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)
+
+            '''# PATO
+            cols_for_nlp = ['tax_id', 'cell_shape']
+            input_file_name = prep_nlp_input(input_file, cols_for_nlp, 'PATO')
+            # Set-up the settings.ini file for OGER and run
+            create_settings_file(self.nlp_dir, 'PATO')
+            oger_output_pato = run_oger(self.nlp_dir, input_file_name, n_workers=5)'''
             
             '''# ECOCORE
             cols_for_nlp = ['tax_id', 'metabolism']
@@ -146,8 +154,7 @@ class TraitsTransform(Transform):
             node.write("\t".join(self.node_header) + "\n")
             edge.write("\t".join(self.edge_header) + "\n")
             
-            header_items = parse_header(f.readline(), sep='\t')
-            
+            header_items = parse_header(f.readline(), sep=',')
             seen_node: dict = defaultdict(int)
             seen_edge: dict = defaultdict(int)
 
@@ -192,7 +199,7 @@ class TraitsTransform(Transform):
                 
 
                 line = re.sub(r'(?!(([^"]*"){2})*[^"]*$),', '|', line) # alanine, glucose -> alanine| glucose
-                items_dict = parse_line(line, header_items, sep='\t')
+                items_dict = parse_line(line, header_items, sep=',')
 
                 org_name = items_dict['org_name']
                 tax_id = items_dict['tax_id']
@@ -247,8 +254,18 @@ class TraitsTransform(Transform):
                         seen_node[chem_id] += 1
 
                 # Write shape node
+                '''# Get relevant NLP results
+                if cell_shape != 'NA':
+                    relevant_tax = oger_output_pato.loc[oger_output_pato['TaxId'] == int(tax_id)]
+                    relevant_shape = relevant_tax.loc[relevant_tax['TokenizedTerm'] == cell_shape]
+                    if len(relevant_shape) == 1:
+                        cell_shape = relevant_shape.iloc[0]['CURIE']
+                        shape_node_type = relevant_shape.iloc[0]['Biolink']'''
+                        
                 shape_id = shape_prefix + cell_shape.lower()
+
                 if  not shape_id.endswith(':na') and shape_id not in seen_node:
+                    # import pdb; pdb.set_trace()
                     write_node_edge_item(fh=node,
                                          header=self.node_header,
                                          data=[shape_id,

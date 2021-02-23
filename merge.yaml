@@ -55,6 +55,14 @@ merged_graph:
           - data/transformed/ontologies/ncbitaxon_nodes.tsv
           - data/transformed/ontologies/ncbitaxon_edges.tsv
 
+    gene-ontology:
+      input:
+        name: "Gene Ontology"
+        format: tsv
+        filename:
+          - data/transformed/ontologies/go_nodes.tsv
+          - data/transformed/ontologies/ncbitaxon_edges.tsv
+
   operations:
     - name: kgx.operations.summarize_graph.generate_graph_stats
       args:

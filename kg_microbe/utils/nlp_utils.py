@@ -68,11 +68,15 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
     elif ont == 'CHEBI':
         config.set('Main','termlist_path', os.path.join(path,'terms/chebi_termlist.tsv'))
     elif ont == 'ECOCORE':
-        config.set('Main','termlist_path', os.path.join(path,'terms/ecocore_termlist.tsv')) 
+        config.set('Main','termlist_path', os.path.join(path,'terms/ecocore_termlist.tsv'))
+    elif ont == 'GO':
+        config.set('Main','termlist_path', os.path.join(path,'terms/go_termlist.tsv'))
+    elif ont == 'PATO':
+        config.set('Main','termlist_path', os.path.join(path,'terms/pato_termlist.tsv'))
     else:
         #config.set('Main', 'termlist1_path', os.path.join(path,'terms/envo_termlist.tsv'))
         config.set('Main', 'termlist1_path', os.path.join(path,'terms/chebi_termlist.tsv'))
-        config.set('Main', 'termlist2_path', os.path.join(path,'terms/ecocore_termlist.tsv'))
+        #config.set('Main', 'termlist2_path', os.path.join(path,'terms/ecocore_termlist.tsv'))
     
     # This is how OGER prescribes in it's test file but above works too.
     '''config['Termlist1'] = {
@@ -114,7 +118,7 @@ def prep_nlp_input(path: str, columns: list, dic: str)-> str:
     :param dic: The Ontology to be used as a dictionary for NLP
     :return: Filename (str)
     '''
-    df = pd.read_csv(path, sep='\t', low_memory=False, usecols=columns)
+    df = pd.read_csv(path, low_memory=False, usecols=columns)
     sub_df = df.dropna()
     
     # New way of doing this : PR submitted to Ontogene for merging code.

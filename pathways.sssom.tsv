@@ -1,0 +1,168 @@
+#curie_map:
+#  GO: http://purl.obolibrary.org/obo/GO_
+#  pathway: https://w3id.org/kg-microbe/traits/pathway/
+#  skos: http://www.w3.org/2004/02/skos/core#
+#license: https://creativecommons.org/publicdomain/zero/1.0/
+subject_id	subject_label	object_id	object_label	comments
+pathway:cellulose_degradation, chitin_degradation	cellulose_degradation, chitin_degradation	.	.	count: 1
+pathway:thiocyanate_reduction	thiocyanate_reduction	.	.	count: 1
+pathway:gelatin_degradation	gelatin_degradation	.	.	count: 1
+pathway:cellulose_degradation, heterotrophic	cellulose_degradation, heterotrophic	.	.	count: 1
+pathway:thiocyanate_oxidation	thiocyanate_oxidation	.	.	count: 1
+pathway:dithionite_disproportionation	dithionite_disproportionation	.	.	count: 1
+pathway:hydrocarbon_degradation, MTBE_degradation	hydrocarbon_degradation, MTBE_degradation	.	.	count: 1
+pathway:hydrogen_oxidation, sulfur_reduction	hydrogen_oxidation, sulfur_reduction	.	.	count: 1
+pathway:autotrophy, iron_oxidation, sulfur_oxidation	autotrophy, iron_oxidation, sulfur_oxidation	.	.	count: 1
+pathway:nitrification, autotrophy, nitrification	nitrification, autotrophy, nitrification	.	.	count: 1
+pathway:sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation	sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation	.	.	count: 1
+pathway:iron_oxidation, iron_reduction	iron_oxidation, iron_reduction	.	.	count: 1
+pathway:cellulose_degradation, heterotrophic, xylan_degradation	cellulose_degradation, heterotrophic, xylan_degradation	.	.	count: 1
+pathway:nitrate_reduction, thiosulfate_reduction	nitrate_reduction, thiosulfate_reduction	.	.	count: 1
+pathway:acetogenesis, sulfate_reduction	acetogenesis, sulfate_reduction	.	.	count: 1
+pathway:hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation	hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation	.	.	count: 1
+pathway:autotrophy, nitrification, nitrite_oxidation	autotrophy, nitrification, nitrite_oxidation	.	.	count: 1
+pathway:RDX_degradation	RDX_degradation	.	.	count: 1
+pathway:fermentation, iron_reduction, fermentation	fermentation, iron_reduction, fermentation	.	.	count: 1
+pathway:EDTA_degradation, nitrogen_fixation	EDTA_degradation, nitrogen_fixation	.	.	count: 1
+pathway:carbonylsulfide_reduction	carbonylsulfide_reduction	.	.	count: 1
+pathway:covellite_oxidation	covellite_oxidation	.	.	count: 1
+pathway:iron_reduction, sulfur_oxidation	iron_reduction, sulfur_oxidation	.	.	count: 1
+pathway:polyisoprene_degradation	polyisoprene_degradation	.	.	count: 1
+pathway:pyrrhotite_oxidation	pyrrhotite_oxidation	.	.	count: 1
+pathway:cobalt_reduction	cobalt_reduction	.	.	count: 1
+pathway:hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation	hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation	.	.	count: 1
+pathway:hydrocarbon_degradation, hydrocarbon_degradation	hydrocarbon_degradation, hydrocarbon_degradation	.	.	count: 1
+pathway:chlorocarbon_degradation, PAH_degradation	chlorocarbon_degradation, PAH_degradation	.	.	count: 1
+pathway:Denitrification, hydrocarbon_degradation, nitrate_reduction	Denitrification, hydrocarbon_degradation, nitrate_reduction	.	.	count: 1
+pathway:hydrogen_oxidation, sulfur_oxidation	hydrogen_oxidation, sulfur_oxidation	.	.	count: 1
+pathway:iron_reduction, PAH_degradation, sulfur_reduction	iron_reduction, PAH_degradation, sulfur_reduction	.	.	count: 1
+pathway:sulfate_reduction, sulfur_reduction, thiosulfate_reduction	sulfate_reduction, sulfur_reduction, thiosulfate_reduction	.	.	count: 1
+pathway:pathways	pathways	.	.	count: 1
+pathway:acetogenesis, methanogenesis	acetogenesis, methanogenesis	.	.	count: 1
+pathway:propionate_oxidation	propionate_oxidation	.	.	count: 1
+pathway:autotrophy, nitrification	autotrophy, nitrification	.	.	count: 1
+pathway:carbonylsulfide_oxidation	carbonylsulfide_oxidation	.	.	count: 1
+pathway:methanogenesis, nitrogen_fixation	methanogenesis, nitrogen_fixation	.	.	count: 1
+pathway:DMSP_degradation	DMSP_degradation	.	.	count: 1
+pathway:hydrogen_oxidation, nitrate_reduction	hydrogen_oxidation, nitrate_reduction	.	.	count: 1
+pathway:chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic	chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic	.	.	count: 1
+pathway:methanogenesis, sulfur_reduction	methanogenesis, sulfur_reduction	.	.	count: 1
+pathway:sulfur_reduction, thiosulfate_reduction	sulfur_reduction, thiosulfate_reduction	.	.	count: 2
+pathway:autotrophy, sulfur_oxidation	autotrophy, sulfur_oxidation	.	.	count: 2
+pathway:hydrocarbon_degradation, methane_oxidation	hydrocarbon_degradation, methane_oxidation	.	.	count: 2
+pathway:tetrathionate_oxidation, iron_reduction	tetrathionate_oxidation, iron_reduction	.	.	count: 2
+pathway:heterotrophic, heterotrophic	heterotrophic, heterotrophic	.	.	count: 2
+pathway:galena_oxidation	galena_oxidation	.	.	count: 2
+pathway:carbonmonoxide_reduction, methanogenesis	carbonmonoxide_reduction, methanogenesis	.	.	count: 2
+pathway:iron_oxidation, uranium_oxidation	iron_oxidation, uranium_oxidation	.	.	count: 2
+pathway:sulfide_oxidation, nitrate_reduction	sulfide_oxidation, nitrate_reduction	.	.	count: 2
+pathway:iron_oxidation, sulfur_oxidation	iron_oxidation, sulfur_oxidation	.	.	count: 2
+pathway:hydrocarbon_degradation, sulfate_reduction	hydrocarbon_degradation, sulfate_reduction	.	.	count: 2
+pathway:lignin_degradation	lignin_degradation	.	.	count: 2
+pathway:cellulose_degradation, xylan_degradation	cellulose_degradation, xylan_degradation	.	.	count: 2
+pathway:acetogenesis, fermentation	acetogenesis, fermentation	.	.	count: 2
+pathway:hydrocarbon_degradation, PAH_degradation	hydrocarbon_degradation, PAH_degradation	.	.	count: 2
+pathway:hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation	hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation	.	.	count: 2
+pathway:sulfite_oxidation	sulfite_oxidation	.	.	count: 3
+pathway:polymer_degradation	polymer_degradation	.	.	count: 3
+pathway:nitrification, Denitrification, nitrification	nitrification, Denitrification, nitrification	.	.	count: 3
+pathway:carbonmonoxide_oxidation	carbonmonoxide_oxidation	.	.	count: 3
+pathway:sulfur_oxidation, iron_reduction	sulfur_oxidation, iron_reduction	.	.	count: 3
+pathway:aminoacid_degradation	aminoacid_degradation	.	.	count: 3
+pathway:iron_reduction, uranyl_reduction	iron_reduction, uranyl_reduction	.	.	count: 3
+pathway:cellobiose_degradation	cellobiose_degradation	.	.	count: 4
+pathway:trithionate_oxidation	trithionate_oxidation	.	.	count: 4
+pathway:PCB_degradation	PCB_degradation	.	.	count: 4
+pathway:uraninite_oxidation	uraninite_oxidation	.	.	count: 4
+pathway:thiosulfate_disproportionation	thiosulfate_disproportionation	.	.	count: 4
+pathway:thiosulfate_oxidation, denitrification	thiosulfate_oxidation, denitrification	.	.	count: 4
+pathway:iron_oxidation, sulfide_oxidation	iron_oxidation, sulfide_oxidation	.	.	count: 4
+pathway:sulfur_oxidation, denitrification	sulfur_oxidation, denitrification	.	.	count: 4
+pathway:cellulose_degradation, fermentation	cellulose_degradation, fermentation	.	.	count: 4
+pathway:Selenate_reduction	Selenate_reduction	.	.	count: 4
+pathway:cellulose_degradation, nitrogen_fixation	cellulose_degradation, nitrogen_fixation	.	.	count: 4
+pathway:sulfur_compound_oxidation_dark	sulfur_compound_oxidation_dark	.	.	count: 5
+pathway:sulfide_oxidation, denitrification	sulfide_oxidation, denitrification	.	.	count: 6
+pathway:nitrogen_fixation, nitrogen_fixation	nitrogen_fixation, nitrogen_fixation	.	.	count: 6
+pathway:carbon_monoxide_oxidation	carbon_monoxide_oxidation	.	.	count: 6
+pathway:tetrathionate_oxidation	tetrathionate_oxidation	.	.	count: 6
+pathway:chalcopyrite_oxidation	chalcopyrite_oxidation	.	.	count: 6
+pathway:selenate_reduction	selenate_reduction	.	.	count: 6
+pathway:uranyl_reduction	uranyl_reduction	.	.	count: 6
+pathway:sphalerite_oxidation	sphalerite_oxidation	.	.	count: 6
+pathway:autotrophy, nitrogen_fixation	autotrophy, nitrogen_fixation	.	.	count: 6
+pathway:nitric_oxide_reduction	nitric_oxide_reduction	.	.	count: 6
+pathway:sulfate_reduction, thiosulfate_reduction	sulfate_reduction, thiosulfate_reduction	.	.	count: 8
+pathway:sulfite_oxidation_dark	sulfite_oxidation_dark	.	.	count: 10
+pathway:nitrification, nitrification	nitrification, nitrification	.	.	count: 10
+pathway:pyrite_oxidation	pyrite_oxidation	.	.	count: 10
+pathway:anoxygenic_photoautotrophy_iron_oxidation	anoxygenic_photoautotrophy_iron_oxidation	.	.	count: 10
+pathway:thiosulfate_oxidation	thiosulfate_oxidation	.	.	count: 10
+pathway:hydrocarbon_degradation, Denitrification	hydrocarbon_degradation, Denitrification	.	.	count: 12
+pathway:chlorocarbon_degradation	chlorocarbon_degradation	.	.	count: 13
+pathway:PAH_degradation	PAH_degradation	.	.	count: 13
+pathway:hydrogen_oxidation	hydrogen_oxidation	.	.	count: 13
+pathway:fermentation, fermentation, arsenate_reduction	fermentation, fermentation, arsenate_reduction	.	.	count: 14
+pathway:annamox	annamox	.	.	count: 15
+pathway:pah_degradation	pah_degradation	.	.	count: 15
+pathway:methanogenesis_acetoclastic	methanogenesis_acetoclastic	.	.	count: 17
+pathway:hydrogen_oxidation, methanogenesis, nitrogen_fixation	hydrogen_oxidation, methanogenesis, nitrogen_fixation	.	.	count: 17
+pathway:nitrite_oxidation	nitrite_oxidation	.	.	count: 17
+pathway:manganese_oxidation	manganese_oxidation	.	.	count: 23
+pathway:acetogenesis, autotrophy	acetogenesis, autotrophy	.	.	count: 23
+pathway:MTBE_degradation	MTBE_degradation	.	.	count: 24
+pathway:arsenite_oxidation	arsenite_oxidation	.	.	count: 25
+pathway:sulfide_oxidation	sulfide_oxidation	.	.	count: 25
+pathway:autotrophy	autotrophy	.	.	count: 30
+pathway:aerobic_heterotrophy	aerobic_heterotrophy	.	.	count: 30
+pathway:plastic_degradation	plastic_degradation	.	.	count: 31
+pathway:manganese_reduction	manganese_reduction	.	.	count: 41
+pathway:iron_oxidation	iron_oxidation	.	.	count: 41
+pathway:chlorate_reduction	chlorate_reduction	.	.	count: 44
+pathway:acetogenesis	acetogenesis	.	.	count: 52
+pathway:aliphatic_non_methane_hydrocarbon_degradation	aliphatic_non_methane_hydrocarbon_degradation	.	.	count: 52
+pathway:iron_oxidation_dark	iron_oxidation_dark	.	.	count: 53
+pathway:heterotrophic	heterotrophic	.	.	count: 56
+pathway:anoxygenic_photoautotrophy_hydrogen_oxidation	anoxygenic_photoautotrophy_hydrogen_oxidation	.	.	count: 58
+pathway:sulfur_oxidation	sulfur_oxidation	.	.	count: 59
+pathway:nitrification	nitrification	.	.	count: 63
+pathway:methane_oxidation	methane_oxidation	.	.	count: 67
+pathway:ligninolysis	ligninolysis	.	.	count: 68
+pathway:urea_degradation	urea_degradation	.	.	count: 68
+pathway:photoautotrophy	photoautotrophy	.	.	count: 68
+pathway:methylotrophy	methylotrophy	.	.	count: 70
+pathway:anoxygenic_photoautotrophy	anoxygenic_photoautotrophy	.	.	count: 71
+pathway:sulfide_oxidation_dark	sulfide_oxidation_dark	.	.	count: 74
+pathway:methanol_oxidation	methanol_oxidation	.	.	count: 86
+pathway:methanogenesis_H2CO2	methanogenesis_H2CO2	.	.	count: 91
+pathway:arsenate_reduction	arsenate_reduction	.	.	count: 94
+pathway:sulfur_oxidation_dark	sulfur_oxidation_dark	.	.	count: 96
+pathway:fumarate_reduction	fumarate_reduction	.	.	count: 103
+pathway:anoxygenic_photoautotrophy_sulfur_oxidation	anoxygenic_photoautotrophy_sulfur_oxidation	.	.	count: 106
+pathway:photoheterotrophy	photoheterotrophy	.	.	count: 124
+pathway:chitin_degradation	chitin_degradation	.	.	count: 135
+pathway:nitrite_reduction_to_ammonia	nitrite_reduction_to_ammonia	.	.	count: 135
+pathway:aerobic_anoxygenic_phototrophy	aerobic_anoxygenic_phototrophy	.	.	count: 136
+pathway:nitrous_oxide_reduction	nitrous_oxide_reduction	.	.	count: 143
+pathway:aromatic_hydrocarbon_degradation	aromatic_hydrocarbon_degradation	.	.	count: 150
+pathway:thiosulfate_oxidation_dark	thiosulfate_oxidation_dark	.	.	count: 162
+pathway:aromatic_compound_degradation	aromatic_compound_degradation	.	.	count: 174
+pathway:hydrogen_oxidation_dark	hydrogen_oxidation_dark	.	.	count: 197
+pathway:sulfite_reduction	sulfite_reduction	.	.	count: 212
+pathway:nitrate_reduction_to_ammonia	nitrate_reduction_to_ammonia	.	.	count: 218
+pathway:hydrocarbon_degradation	hydrocarbon_degradation	.	.	count: 242
+pathway:thiosulfate_reduction	thiosulfate_reduction	.	.	count: 299
+pathway:sulfur_reduction	sulfur_reduction	.	.	count: 313
+pathway:cellulose_degradation	cellulose_degradation	.	.	count: 364
+pathway:xylan_degradation	xylan_degradation	.	.	count: 371
+pathway:methanogenesis	methanogenesis	.	.	count: 393
+pathway:iron_reduction	iron_reduction	.	.	count: 441
+pathway:Denitrification	Denitrification	.	.	count: 468
+pathway:sulfate_reduction	sulfate_reduction	.	.	count: 483
+pathway:nitrogen_fixation	nitrogen_fixation	.	.	count: 640
+pathway:nitrite_reduction	nitrite_reduction	.	.	count: 641
+pathway:denitrification	denitrification	.	.	count: 657
+pathway:aerobic_chemo_heterotrophy	aerobic_chemo_heterotrophy	.	.	count: 1000
+pathway:fermentation	fermentation	.	.	count: 2509
+pathway:nitrate_reduction	nitrate_reduction	.	.	count: 3189
+pathway:NA	NA	.	.	count: 156328

@@ -192,16 +192,19 @@ enums:
     permissible_values:
       methanogen:
         description: methanogen
+        meaning: http://purl.obolibrary.org/obo/NCBITaxon_206131
       bacdive-microa:
         description: bacdive-microa
       amend-shock:
         description: amend-shock
+        meaning: http://purl.obolibrary.org/obo/OMIT_0013662
       faprotax:
         description: faprotax
       protraits:
         description: protraits
       edwards:
         description: edwards
+        meaning: http://purl.obolibrary.org/obo/GSSO_007098
       engqvist:
         description: engqvist
       kremer:
@@ -210,22 +213,28 @@ enums:
         description: mediadb
       gold:
         description: gold
+        meaning: http://purl.obolibrary.org/obo/NCIT_C2392
       schulz-jorgensen:
         description: schulz-jorgensen
+        meaning: http://purl.obolibrary.org/obo/GAZ_00137373
       corkrey:
         description: corkrey
       jemma-refseq:
         description: jemma-refseq
+        meaning: http://purl.obolibrary.org/obo/MI_0481
       nielsensl:
         description: nielsensl
       genbank:
         description: genbank
+        meaning: http://purl.obolibrary.org/obo/NCIT_C43818
       kegg:
         description: kegg
+        meaning: http://purl.obolibrary.org/obo/FOBI_040235
       fierer:
         description: fierer
       prochlorococcus:
         description: prochlorococcus
+        meaning: http://purl.obolibrary.org/obo/NCBITaxon_1218
       rrndb:
         description: rrndb
       campedelli:
@@ -234,182 +243,259 @@ enums:
         description: patric
       silva:
         description: silva
+        meaning: http://purl.obolibrary.org/obo/GAZ_00556354
       pasteur:
         description: pasteur
+        meaning: http://purl.obolibrary.org/obo/GAZ_00390372
       roden-jin:
         description: roden-jin
+        meaning: http://purl.obolibrary.org/obo/GAZ_00599142
       masonmm:
         description: masonmm
       microbe-directory:
         description: microbe-directory
+        meaning: http://purl.obolibrary.org/obo/NCIT_C49057
   superkingdom_enum:
     permissible_values:
       Archaea:
         description: Archaea
+        meaning: http://purl.obolibrary.org/obo/NCIT_C61092
       Bacteria:
         description: Bacteria
+        meaning: http://purl.obolibrary.org/obo/NCBITaxon_2
   gram_stain_enum:
     permissible_values:
       negative:
         description: negative
+        meaning: http://www.ebi.ac.uk/efo/EFO_0009949
       positive:
         description: positive
+        meaning: http://purl.obolibrary.org/obo/CL_0000084
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
   metabolism_enum:
     permissible_values:
       anaerobic:
         description: anaerobic
+        meaning: http://purl.obolibrary.org/obo/NCIT_C103137
       strictly anaerobic:
         description: strictly anaerobic
+        meaning: http://identifiers.org/teddy/TEDDY_0000007
       obligate aerobic:
         description: obligate aerobic
+        meaning: http://purl.obolibrary.org/obo/NCIT_C28341
       aerobic:
         description: aerobic
+        meaning: http://purl.obolibrary.org/obo/EO_0007024
       facultative:
         description: facultative
+        meaning: http://purl.obolibrary.org/obo/OMP_0000087
       microaerophilic:
         description: microaerophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0000515
       obligate anaerobic:
         description: obligate anaerobic
+        meaning: http://purl.obolibrary.org/obo/NCIT_C103137
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
   sporulation_enum:
     permissible_values:
       'yes':
         description: 'yes'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0004238
       'no':
         description: 'no'
+        meaning: http://identifiers.org/medgen/CN239215
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
   motility_enum:
     permissible_values:
       'yes':
         description: 'yes'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0004238
       'no':
         description: 'no'
+        meaning: http://identifiers.org/medgen/CN239215
       gliding:
         description: gliding
+        meaning: http://purl.obolibrary.org/obo/IDOMAL_0002121
       flagella:
         description: flagella
+        meaning: http://purl.obolibrary.org/obo/OMIT_0006618
       axial filament:
         description: axial filament
+        meaning: http://www.orpha.net/ORDO/Orphanet_98904
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
   range_tmp_enum:
     permissible_values:
       mesophilic:
         description: mesophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0000111
       facultative psychrophilic:
         description: facultative psychrophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001306
       extreme thermophilic:
         description: extreme thermophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0000118
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
       thermophilic:
         description: thermophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0000118
       psychrotolerant:
         description: psychrotolerant
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001310
       thermotolerant:
         description: thermotolerant
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001286
       psychrophilic:
         description: psychrophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001306
   range_salinity_enum:
     permissible_values:
       halotolerant:
         description: halotolerant
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001316
       extreme-halophilic:
         description: extreme-halophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001314
       euryhaline:
         description: euryhaline
       halophilic:
         description: halophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001314
       moderate-halophilic:
         description: moderate-halophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001314
       stenohaline:
         description: stenohaline
       non-halophilic:
         description: non-halophilic
+        meaning: http://purl.obolibrary.org/obo/MICRO_0001314
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
   cell_shape_enum:
     permissible_values:
       'disc ':
         description: 'disc '
+        meaning: http://purl.obolibrary.org/obo/FBbt_00001768
       ring:
         description: ring
+        meaning: http://www.ebi.ac.uk/cmpo/CMPO_0000302
       flask:
         description: flask
+        meaning: http://purl.obolibrary.org/obo/NCIT_C96144
       star:
         description: star
+        meaning: http://www.orpha.net/ORDO/Orphanet_140952
       bacillus:
         description: bacillus
+        meaning: http://purl.obolibrary.org/obo/NCBITaxon_1471
       spirochete:
         description: spirochete
+        meaning: http://purl.obolibrary.org/obo/OMP_0000125
       coccus:
         description: coccus
+        meaning: http://purl.obolibrary.org/obo/MICRO_0000402
       coccobacillus:
         description: coccobacillus
+        meaning: http://purl.obolibrary.org/obo/MICRO_0000366
       filament:
         description: filament
+        meaning: http://www.orpha.net/ORDO/Orphanet_98904
       square:
         description: square
+        meaning: http://www.ebi.ac.uk/efo/EFO_0007843
       fusiform:
         description: fusiform
+        meaning: http://www.ebi.ac.uk/efo/EFO_0010305
       triangular:
         description: triangular
+        meaning: http://purl.obolibrary.org/obo/HP_0000325
       spindle:
         description: spindle
+        meaning: http://identifiers.org/medgen/C1968782
       irregular:
         description: irregular
+        meaning: http://identifiers.org/medgen/C0156404
       spiral:
         description: spiral
+        meaning: http://purl.obolibrary.org/obo/UBERON_0002227
       tailed:
         description: tailed
+        meaning: http://purl.obolibrary.org/obo/UBERON_0002533
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
       branced:
         description: branced
       pleomorphic:
         description: pleomorphic
+        meaning: http://www.ebi.ac.uk/efo/EFO_1001972
       vibrio:
         description: vibrio
+        meaning: http://purl.obolibrary.org/obo/NCBITaxon_55601
   rRNA16S_genes_enum:
     permissible_values:
       '16':
         description: '16'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002344
       '15':
         description: '15'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0006482
       '6':
         description: '6'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002845
       '11':
         description: '11'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0006368
       '9':
         description: '9'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002847
       '14':
         description: '14'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002844
       '10':
         description: '10'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002181
       '12':
         description: '12'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0006282
       '8':
         description: '8'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0006737
       '4':
         description: '4'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002798
       '1':
         description: '1'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0006645
       '2':
         description: '2'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0005158
       '13':
         description: '13'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0003797
       '5':
         description: '5'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002861
       '3':
         description: '3'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0006622
       '7':
         description: '7'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0002846
       '17':
         description: '17'
+        meaning: http://www.ebi.ac.uk/efo/EFO_0003758
       NA:
         description: NA
+        meaning: http://purl.obolibrary.org/obo/CL_0000895
 

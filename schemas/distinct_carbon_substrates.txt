@@ -1,0 +1,110 @@
+1-butanol
+2
+2-aminethanol
+2-butanol
+2-ketogluconate
+2-propanol
+3-butanediol
+3-hydroxybenzoate
+3-hydroxybutyrate
+4-hydroxbenzoate
+5-ketogluconate
+H2_CO2
+H2_methanol
+N-acetylgulcosamine
+NA
+Tween 20
+Tween 40
+Tween 60
+Tween 80
+acetate
+adipate
+adonitol
+alaninamide
+alanine
+alpha-cyclodextrin
+alpha-ketovaleric acid
+arabinose
+arabitol
+arginine
+asparagine
+aspartate
+butanol
+caprate
+carbon_monoxide
+carbon_substrates
+carnitine
+cellobiose
+citrate
+cyclopentanol
+dextrin
+dimethyl_sulfide
+dimethylamine
+ethanol
+formic acid
+fructose
+fucose
+galactonic acid
+galactose
+galacturonic acid
+gamma-aminobutyric acid
+gelatin
+gluconic acid
+glucosamine
+glucose
+glucuronamide
+glutamate
+glycerol
+glycine
+glycogen
+histidine
+hyrdoxyproline
+inosine
+isobutanol
+itaconate
+lactate
+lactose
+leucine
+malate
+malonate
+maltose
+mannitol
+mannose
+melibiose
+methanol
+methyl beta-D-glucoside
+methyl pyruvate
+methylamine
+myo-inositol
+ornithine
+phenethylamine
+phenylacetate
+phenylalanine
+proline
+propanol
+propionate
+putrescine
+pyruvate
+pyruvic acid methyl ester
+quinic acid
+raffinose
+rhamnose
+ribose
+salicin
+serine
+sorbitol
+suberic acid
+succinate
+sucrose
+threonine
+thymidine
+trehalose
+trimethylamine
+trisodium citrate
+tryptophan
+urea
+uridine
+urocanic acid
+valerate
+xylitol
+xylose

@@ -100,6 +100,7 @@ slots:
     examples:
       value: NA
   pathways:
+    ## TODO map to GO. See https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/5
     range: string
     examples:
       value: NA
@@ -189,6 +190,7 @@ slots:
       value: '20237'
 enums:
   data_source_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       methanogen:
         description: methanogen
@@ -256,6 +258,7 @@ enums:
         description: microbe-directory
         meaning: http://purl.obolibrary.org/obo/NCIT_C49057
   superkingdom_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       Archaea:
         description: Archaea
@@ -264,6 +267,7 @@ enums:
         description: Bacteria
         meaning: http://purl.obolibrary.org/obo/NCBITaxon_2
   gram_stain_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       negative:
         description: negative
@@ -275,6 +279,7 @@ enums:
         description: NA
         meaning: http://purl.obolibrary.org/obo/CL_0000895
   metabolism_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       anaerobic:
         description: anaerobic
@@ -301,6 +306,7 @@ enums:
         description: NA
         meaning: http://purl.obolibrary.org/obo/CL_0000895
   sporulation_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       'yes':
         description: 'yes'
@@ -312,6 +318,7 @@ enums:
         description: NA
         meaning: http://purl.obolibrary.org/obo/CL_0000895
   motility_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       'yes':
         description: 'yes'
@@ -332,6 +339,7 @@ enums:
         description: NA
         meaning: http://purl.obolibrary.org/obo/CL_0000895
   range_tmp_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       mesophilic:
         description: mesophilic
@@ -358,6 +366,7 @@ enums:
         description: psychrophilic
         meaning: http://purl.obolibrary.org/obo/MICRO_0001306
   range_salinity_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       halotolerant:
         description: halotolerant
@@ -382,6 +391,8 @@ enums:
         description: NA
         meaning: http://purl.obolibrary.org/obo/CL_0000895
   cell_shape_enum:
+    ## TODO: the mappings below are automated
+    ## https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/4
     permissible_values:
       'disc ':
         description: 'disc '
@@ -443,6 +454,7 @@ enums:
         description: vibrio
         meaning: http://purl.obolibrary.org/obo/NCBITaxon_55601
   rRNA16S_genes_enum:
+    ## TODO: the mappings below are automated
     permissible_values:
       '16':
         description: '16'

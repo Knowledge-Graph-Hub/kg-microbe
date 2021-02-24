@@ -1,168 +1,179 @@
+#license: "https://creativecommons.org/publicdomain/zero/1.0/"
+#mapping_tool: "https://github.com/cmungall/rdf_matcher"
+#mapping_date: "2021-02-24"
 #curie_map:
-#  GO: http://purl.obolibrary.org/obo/GO_
-#  pathway: https://w3id.org/kg-microbe/traits/pathway/
-#  skos: http://www.w3.org/2004/02/skos/core#
-#license: https://creativecommons.org/publicdomain/zero/1.0/
-subject_id	subject_label	object_id	object_label	comments
-pathway:cellulose_degradation, chitin_degradation	cellulose_degradation, chitin_degradation	.	.	count: 1
-pathway:thiocyanate_reduction	thiocyanate_reduction	.	.	count: 1
-pathway:gelatin_degradation	gelatin_degradation	.	.	count: 1
-pathway:cellulose_degradation, heterotrophic	cellulose_degradation, heterotrophic	.	.	count: 1
-pathway:thiocyanate_oxidation	thiocyanate_oxidation	.	.	count: 1
-pathway:dithionite_disproportionation	dithionite_disproportionation	.	.	count: 1
-pathway:hydrocarbon_degradation, MTBE_degradation	hydrocarbon_degradation, MTBE_degradation	.	.	count: 1
-pathway:hydrogen_oxidation, sulfur_reduction	hydrogen_oxidation, sulfur_reduction	.	.	count: 1
-pathway:autotrophy, iron_oxidation, sulfur_oxidation	autotrophy, iron_oxidation, sulfur_oxidation	.	.	count: 1
-pathway:nitrification, autotrophy, nitrification	nitrification, autotrophy, nitrification	.	.	count: 1
-pathway:sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation	sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation	.	.	count: 1
-pathway:iron_oxidation, iron_reduction	iron_oxidation, iron_reduction	.	.	count: 1
-pathway:cellulose_degradation, heterotrophic, xylan_degradation	cellulose_degradation, heterotrophic, xylan_degradation	.	.	count: 1
-pathway:nitrate_reduction, thiosulfate_reduction	nitrate_reduction, thiosulfate_reduction	.	.	count: 1
-pathway:acetogenesis, sulfate_reduction	acetogenesis, sulfate_reduction	.	.	count: 1
-pathway:hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation	hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation	.	.	count: 1
-pathway:autotrophy, nitrification, nitrite_oxidation	autotrophy, nitrification, nitrite_oxidation	.	.	count: 1
-pathway:RDX_degradation	RDX_degradation	.	.	count: 1
-pathway:fermentation, iron_reduction, fermentation	fermentation, iron_reduction, fermentation	.	.	count: 1
-pathway:EDTA_degradation, nitrogen_fixation	EDTA_degradation, nitrogen_fixation	.	.	count: 1
-pathway:carbonylsulfide_reduction	carbonylsulfide_reduction	.	.	count: 1
-pathway:covellite_oxidation	covellite_oxidation	.	.	count: 1
-pathway:iron_reduction, sulfur_oxidation	iron_reduction, sulfur_oxidation	.	.	count: 1
-pathway:polyisoprene_degradation	polyisoprene_degradation	.	.	count: 1
-pathway:pyrrhotite_oxidation	pyrrhotite_oxidation	.	.	count: 1
-pathway:cobalt_reduction	cobalt_reduction	.	.	count: 1
-pathway:hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation	hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation	.	.	count: 1
-pathway:hydrocarbon_degradation, hydrocarbon_degradation	hydrocarbon_degradation, hydrocarbon_degradation	.	.	count: 1
-pathway:chlorocarbon_degradation, PAH_degradation	chlorocarbon_degradation, PAH_degradation	.	.	count: 1
-pathway:Denitrification, hydrocarbon_degradation, nitrate_reduction	Denitrification, hydrocarbon_degradation, nitrate_reduction	.	.	count: 1
-pathway:hydrogen_oxidation, sulfur_oxidation	hydrogen_oxidation, sulfur_oxidation	.	.	count: 1
-pathway:iron_reduction, PAH_degradation, sulfur_reduction	iron_reduction, PAH_degradation, sulfur_reduction	.	.	count: 1
-pathway:sulfate_reduction, sulfur_reduction, thiosulfate_reduction	sulfate_reduction, sulfur_reduction, thiosulfate_reduction	.	.	count: 1
-pathway:pathways	pathways	.	.	count: 1
-pathway:acetogenesis, methanogenesis	acetogenesis, methanogenesis	.	.	count: 1
-pathway:propionate_oxidation	propionate_oxidation	.	.	count: 1
-pathway:autotrophy, nitrification	autotrophy, nitrification	.	.	count: 1
-pathway:carbonylsulfide_oxidation	carbonylsulfide_oxidation	.	.	count: 1
-pathway:methanogenesis, nitrogen_fixation	methanogenesis, nitrogen_fixation	.	.	count: 1
-pathway:DMSP_degradation	DMSP_degradation	.	.	count: 1
-pathway:hydrogen_oxidation, nitrate_reduction	hydrogen_oxidation, nitrate_reduction	.	.	count: 1
-pathway:chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic	chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic	.	.	count: 1
-pathway:methanogenesis, sulfur_reduction	methanogenesis, sulfur_reduction	.	.	count: 1
-pathway:sulfur_reduction, thiosulfate_reduction	sulfur_reduction, thiosulfate_reduction	.	.	count: 2
-pathway:autotrophy, sulfur_oxidation	autotrophy, sulfur_oxidation	.	.	count: 2
-pathway:hydrocarbon_degradation, methane_oxidation	hydrocarbon_degradation, methane_oxidation	.	.	count: 2
-pathway:tetrathionate_oxidation, iron_reduction	tetrathionate_oxidation, iron_reduction	.	.	count: 2
-pathway:heterotrophic, heterotrophic	heterotrophic, heterotrophic	.	.	count: 2
-pathway:galena_oxidation	galena_oxidation	.	.	count: 2
-pathway:carbonmonoxide_reduction, methanogenesis	carbonmonoxide_reduction, methanogenesis	.	.	count: 2
-pathway:iron_oxidation, uranium_oxidation	iron_oxidation, uranium_oxidation	.	.	count: 2
-pathway:sulfide_oxidation, nitrate_reduction	sulfide_oxidation, nitrate_reduction	.	.	count: 2
-pathway:iron_oxidation, sulfur_oxidation	iron_oxidation, sulfur_oxidation	.	.	count: 2
-pathway:hydrocarbon_degradation, sulfate_reduction	hydrocarbon_degradation, sulfate_reduction	.	.	count: 2
-pathway:lignin_degradation	lignin_degradation	.	.	count: 2
-pathway:cellulose_degradation, xylan_degradation	cellulose_degradation, xylan_degradation	.	.	count: 2
-pathway:acetogenesis, fermentation	acetogenesis, fermentation	.	.	count: 2
-pathway:hydrocarbon_degradation, PAH_degradation	hydrocarbon_degradation, PAH_degradation	.	.	count: 2
-pathway:hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation	hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation	.	.	count: 2
-pathway:sulfite_oxidation	sulfite_oxidation	.	.	count: 3
-pathway:polymer_degradation	polymer_degradation	.	.	count: 3
-pathway:nitrification, Denitrification, nitrification	nitrification, Denitrification, nitrification	.	.	count: 3
-pathway:carbonmonoxide_oxidation	carbonmonoxide_oxidation	.	.	count: 3
-pathway:sulfur_oxidation, iron_reduction	sulfur_oxidation, iron_reduction	.	.	count: 3
-pathway:aminoacid_degradation	aminoacid_degradation	.	.	count: 3
-pathway:iron_reduction, uranyl_reduction	iron_reduction, uranyl_reduction	.	.	count: 3
-pathway:cellobiose_degradation	cellobiose_degradation	.	.	count: 4
-pathway:trithionate_oxidation	trithionate_oxidation	.	.	count: 4
-pathway:PCB_degradation	PCB_degradation	.	.	count: 4
-pathway:uraninite_oxidation	uraninite_oxidation	.	.	count: 4
-pathway:thiosulfate_disproportionation	thiosulfate_disproportionation	.	.	count: 4
-pathway:thiosulfate_oxidation, denitrification	thiosulfate_oxidation, denitrification	.	.	count: 4
-pathway:iron_oxidation, sulfide_oxidation	iron_oxidation, sulfide_oxidation	.	.	count: 4
-pathway:sulfur_oxidation, denitrification	sulfur_oxidation, denitrification	.	.	count: 4
-pathway:cellulose_degradation, fermentation	cellulose_degradation, fermentation	.	.	count: 4
-pathway:Selenate_reduction	Selenate_reduction	.	.	count: 4
-pathway:cellulose_degradation, nitrogen_fixation	cellulose_degradation, nitrogen_fixation	.	.	count: 4
-pathway:sulfur_compound_oxidation_dark	sulfur_compound_oxidation_dark	.	.	count: 5
-pathway:sulfide_oxidation, denitrification	sulfide_oxidation, denitrification	.	.	count: 6
-pathway:nitrogen_fixation, nitrogen_fixation	nitrogen_fixation, nitrogen_fixation	.	.	count: 6
-pathway:carbon_monoxide_oxidation	carbon_monoxide_oxidation	.	.	count: 6
-pathway:tetrathionate_oxidation	tetrathionate_oxidation	.	.	count: 6
-pathway:chalcopyrite_oxidation	chalcopyrite_oxidation	.	.	count: 6
-pathway:selenate_reduction	selenate_reduction	.	.	count: 6
-pathway:uranyl_reduction	uranyl_reduction	.	.	count: 6
-pathway:sphalerite_oxidation	sphalerite_oxidation	.	.	count: 6
-pathway:autotrophy, nitrogen_fixation	autotrophy, nitrogen_fixation	.	.	count: 6
-pathway:nitric_oxide_reduction	nitric_oxide_reduction	.	.	count: 6
-pathway:sulfate_reduction, thiosulfate_reduction	sulfate_reduction, thiosulfate_reduction	.	.	count: 8
-pathway:sulfite_oxidation_dark	sulfite_oxidation_dark	.	.	count: 10
-pathway:nitrification, nitrification	nitrification, nitrification	.	.	count: 10
-pathway:pyrite_oxidation	pyrite_oxidation	.	.	count: 10
-pathway:anoxygenic_photoautotrophy_iron_oxidation	anoxygenic_photoautotrophy_iron_oxidation	.	.	count: 10
-pathway:thiosulfate_oxidation	thiosulfate_oxidation	.	.	count: 10
-pathway:hydrocarbon_degradation, Denitrification	hydrocarbon_degradation, Denitrification	.	.	count: 12
-pathway:chlorocarbon_degradation	chlorocarbon_degradation	.	.	count: 13
-pathway:PAH_degradation	PAH_degradation	.	.	count: 13
-pathway:hydrogen_oxidation	hydrogen_oxidation	.	.	count: 13
-pathway:fermentation, fermentation, arsenate_reduction	fermentation, fermentation, arsenate_reduction	.	.	count: 14
-pathway:annamox	annamox	.	.	count: 15
-pathway:pah_degradation	pah_degradation	.	.	count: 15
-pathway:methanogenesis_acetoclastic	methanogenesis_acetoclastic	.	.	count: 17
-pathway:hydrogen_oxidation, methanogenesis, nitrogen_fixation	hydrogen_oxidation, methanogenesis, nitrogen_fixation	.	.	count: 17
-pathway:nitrite_oxidation	nitrite_oxidation	.	.	count: 17
-pathway:manganese_oxidation	manganese_oxidation	.	.	count: 23
-pathway:acetogenesis, autotrophy	acetogenesis, autotrophy	.	.	count: 23
-pathway:MTBE_degradation	MTBE_degradation	.	.	count: 24
-pathway:arsenite_oxidation	arsenite_oxidation	.	.	count: 25
-pathway:sulfide_oxidation	sulfide_oxidation	.	.	count: 25
-pathway:autotrophy	autotrophy	.	.	count: 30
-pathway:aerobic_heterotrophy	aerobic_heterotrophy	.	.	count: 30
-pathway:plastic_degradation	plastic_degradation	.	.	count: 31
-pathway:manganese_reduction	manganese_reduction	.	.	count: 41
-pathway:iron_oxidation	iron_oxidation	.	.	count: 41
-pathway:chlorate_reduction	chlorate_reduction	.	.	count: 44
-pathway:acetogenesis	acetogenesis	.	.	count: 52
-pathway:aliphatic_non_methane_hydrocarbon_degradation	aliphatic_non_methane_hydrocarbon_degradation	.	.	count: 52
-pathway:iron_oxidation_dark	iron_oxidation_dark	.	.	count: 53
-pathway:heterotrophic	heterotrophic	.	.	count: 56
-pathway:anoxygenic_photoautotrophy_hydrogen_oxidation	anoxygenic_photoautotrophy_hydrogen_oxidation	.	.	count: 58
-pathway:sulfur_oxidation	sulfur_oxidation	.	.	count: 59
-pathway:nitrification	nitrification	.	.	count: 63
-pathway:methane_oxidation	methane_oxidation	.	.	count: 67
-pathway:ligninolysis	ligninolysis	.	.	count: 68
-pathway:urea_degradation	urea_degradation	.	.	count: 68
-pathway:photoautotrophy	photoautotrophy	.	.	count: 68
-pathway:methylotrophy	methylotrophy	.	.	count: 70
-pathway:anoxygenic_photoautotrophy	anoxygenic_photoautotrophy	.	.	count: 71
-pathway:sulfide_oxidation_dark	sulfide_oxidation_dark	.	.	count: 74
-pathway:methanol_oxidation	methanol_oxidation	.	.	count: 86
-pathway:methanogenesis_H2CO2	methanogenesis_H2CO2	.	.	count: 91
-pathway:arsenate_reduction	arsenate_reduction	.	.	count: 94
-pathway:sulfur_oxidation_dark	sulfur_oxidation_dark	.	.	count: 96
-pathway:fumarate_reduction	fumarate_reduction	.	.	count: 103
-pathway:anoxygenic_photoautotrophy_sulfur_oxidation	anoxygenic_photoautotrophy_sulfur_oxidation	.	.	count: 106
-pathway:photoheterotrophy	photoheterotrophy	.	.	count: 124
-pathway:chitin_degradation	chitin_degradation	.	.	count: 135
-pathway:nitrite_reduction_to_ammonia	nitrite_reduction_to_ammonia	.	.	count: 135
-pathway:aerobic_anoxygenic_phototrophy	aerobic_anoxygenic_phototrophy	.	.	count: 136
-pathway:nitrous_oxide_reduction	nitrous_oxide_reduction	.	.	count: 143
-pathway:aromatic_hydrocarbon_degradation	aromatic_hydrocarbon_degradation	.	.	count: 150
-pathway:thiosulfate_oxidation_dark	thiosulfate_oxidation_dark	.	.	count: 162
-pathway:aromatic_compound_degradation	aromatic_compound_degradation	.	.	count: 174
-pathway:hydrogen_oxidation_dark	hydrogen_oxidation_dark	.	.	count: 197
-pathway:sulfite_reduction	sulfite_reduction	.	.	count: 212
-pathway:nitrate_reduction_to_ammonia	nitrate_reduction_to_ammonia	.	.	count: 218
-pathway:hydrocarbon_degradation	hydrocarbon_degradation	.	.	count: 242
-pathway:thiosulfate_reduction	thiosulfate_reduction	.	.	count: 299
-pathway:sulfur_reduction	sulfur_reduction	.	.	count: 313
-pathway:cellulose_degradation	cellulose_degradation	.	.	count: 364
-pathway:xylan_degradation	xylan_degradation	.	.	count: 371
-pathway:methanogenesis	methanogenesis	.	.	count: 393
-pathway:iron_reduction	iron_reduction	.	.	count: 441
-pathway:Denitrification	Denitrification	.	.	count: 468
-pathway:sulfate_reduction	sulfate_reduction	.	.	count: 483
-pathway:nitrogen_fixation	nitrogen_fixation	.	.	count: 640
-pathway:nitrite_reduction	nitrite_reduction	.	.	count: 641
-pathway:denitrification	denitrification	.	.	count: 657
-pathway:aerobic_chemo_heterotrophy	aerobic_chemo_heterotrophy	.	.	count: 1000
-pathway:fermentation	fermentation	.	.	count: 2509
-pathway:nitrate_reduction	nitrate_reduction	.	.	count: 3189
-pathway:NA	NA	.	.	count: 156328
+#  GO: "http://purl.obolibrary.org/obo/GO_"
+#  external_resource: "http://example.org/external_resource/"
+#  oio: "http://www.geneontology.org/formats/oboInOwl#"
+#  owl: "http://www.w3.org/2002/07/owl#"
+subject_id	subject_label	predicate_id	object_id	object_label	match_type	subject_source	object_source	mapping_tool	confidence	subject_match_field	object_match_field	subject_category	object_category	match_string	match_category	comment
+external_resource:lignin_degradation	lignin_degradation	owl:equivalentClass	GO:0046274	lignin catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	lignin_degradation	biological_process	degradationlignin	unique	.
+external_resource:'hydrocarbon_degradation, hydrocarbon_degradation'	'hydrocarbon_degradation, hydrocarbon_degradation'	owl:equivalentClass	GO:0120253	hydrocarbon catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	'hydrocarbon_degradation, hydrocarbon_degradation'	biological_process	degradationhydrocarbon	many_to_one	.
+external_resource:methanogenesis	methanogenesis	owl:equivalentClass	GO:0015948	methanogenesis	Lexical|Stemming	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	methanogenesis	biological_process	methanogenesi	unique	.
+external_resource:methanogenesis	methanogenesis	owl:equivalentClass	GO:0015948	methanogenesis	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	methanogenesis	biological_process	methanogenesis	unique	.
+external_resource:methanogenesis	methanogenesis	owl:equivalentClass	GO:0015948	methanogenesis	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	methanogenesis	biological_process	methanogenesis	unique	.
+external_resource:xylan_degradation	xylan_degradation	owl:equivalentClass	GO:0045493	xylan catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	xylan_degradation	biological_process	degradationxylan	unique	.
+external_resource:nitrogen_fixation	nitrogen_fixation	owl:equivalentClass	GO:0009399	nitrogen fixation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	nitrogen_fixation	biological_process	fixationnitrogen	many_to_one	.
+external_resource:sulfate_reduction	sulfate_reduction	owl:equivalentClass	GO:0019419	sulfate reduction	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	sulfate_reduction	biological_process	reductionsulfate	unique	.
+external_resource:fermentation	fermentation	owl:equivalentClass	GO:0006113	fermentation	Lexical|Stemming	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	fermentation	biological_process	ferment	unique	.
+external_resource:fermentation	fermentation	owl:equivalentClass	GO:0006113	fermentation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	fermentation	biological_process	fermentation	unique	.
+external_resource:fermentation	fermentation	owl:equivalentClass	GO:0006113	fermentation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	fermentation	biological_process	fermentation	unique	.
+external_resource:chitin_degradation	chitin_degradation	owl:equivalentClass	GO:0006032	chitin catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	chitin_degradation	biological_process	chitindegradation	unique	.
+external_resource:aromatic_compound_degradation	aromatic_compound_degradation	owl:equivalentClass	GO:0019439	aromatic compound catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	aromatic_compound_degradation	biological_process	aromaticcompounddegradation	unique	.
+external_resource:cellulose_degradation	cellulose_degradation	owl:equivalentClass	GO:0030245	cellulose catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	cellulose_degradation	biological_process	cellulosedegradation	unique	.
+external_resource:hydrocarbon_degradation	hydrocarbon_degradation	owl:equivalentClass	GO:0120253	hydrocarbon catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	hydrocarbon_degradation	biological_process	degradationhydrocarbon	many_to_one	.
+external_resource:sulfur_oxidation	sulfur_oxidation	owl:equivalentClass	GO:0019417	sulfur oxidation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	sulfur_oxidation	biological_process	oxidationsulfur	unique	.
+external_resource:urea_degradation	urea_degradation	owl:equivalentClass	GO:0043419	urea catabolic process	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	urea_degradation	biological_process	degradationurea	unique	.
+external_resource:methanol_oxidation	methanol_oxidation	owl:equivalentClass	GO:0015946	methanol oxidation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	methanol_oxidation	biological_process	methanoloxidation	unique	.
+external_resource:autotrophy	autotrophy	owl:equivalentClass	GO:0015977	carbon fixation	Lexical|Stemming	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	autotrophy	biological_process	autotrophi	unique	.
+external_resource:autotrophy	autotrophy	owl:equivalentClass	GO:0015977	carbon fixation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	autotrophy	biological_process	autotrophy	unique	.
+external_resource:autotrophy	autotrophy	owl:equivalentClass	GO:0015977	carbon fixation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasExactSynonym	autotrophy	biological_process	autotrophy	unique	.
+external_resource:sulfide_oxidation	sulfide_oxidation	owl:equivalentClass	GO:0019418	sulfide oxidation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	sulfide_oxidation	biological_process	oxidationsulfide	unique	.
+external_resource:hydrogen_oxidation	hydrogen_oxidation	owl:equivalentClass	GO:0019412	aerobic respiration, using hydrogen as electron donor	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasBroadSynonym	hydrogen_oxidation	biological_process	hydrogenoxidation	unique	.
+external_resource:nitrite_oxidation	nitrite_oxidation	owl:equivalentClass	GO:0019332	aerobic respiration, using nitrite as electron donor	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	oio:hasBroadSynonym	nitrite_oxidation	biological_process	nitriteoxidation	unique	.
+external_resource:'nitrogen_fixation, nitrogen_fixation'	'nitrogen_fixation, nitrogen_fixation'	owl:equivalentClass	GO:0009399	nitrogen fixation	Lexical	external_resource	GO	rdf_matcher	0.5	rdfs:label	rdfs:label	'nitrogen_fixation, nitrogen_fixation'	biological_process	fixationnitrogen	many_to_one	.
+external_resource:'"subject_label'	'"subject_label'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'"subject_label'	.	.	.	no match found
+external_resource:'cellulose_degradation, heterotrophic'	'cellulose_degradation, heterotrophic'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'cellulose_degradation, heterotrophic'	.	.	.	no match found
+external_resource:dithionite_disproportionation	dithionite_disproportionation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	dithionite_disproportionation	.	.	.	no match found
+external_resource:thiocyanate_oxidation	thiocyanate_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	thiocyanate_oxidation	.	.	.	no match found
+external_resource:'cellulose_degradation, chitin_degradation'	'cellulose_degradation, chitin_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'cellulose_degradation, chitin_degradation'	.	.	.	no match found
+external_resource:gelatin_degradation	gelatin_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	gelatin_degradation	.	.	.	no match found
+external_resource:thiocyanate_reduction	thiocyanate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	thiocyanate_reduction	.	.	.	no match found
+external_resource:'sulfur_oxidation, denitrification'	'sulfur_oxidation, denitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfur_oxidation, denitrification'	.	.	.	no match found
+external_resource:'cellulose_degradation, fermentation'	'cellulose_degradation, fermentation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'cellulose_degradation, fermentation'	.	.	.	no match found
+external_resource:'thiosulfate_oxidation, denitrification'	'thiosulfate_oxidation, denitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'thiosulfate_oxidation, denitrification'	.	.	.	no match found
+external_resource:'iron_oxidation, sulfide_oxidation'	'iron_oxidation, sulfide_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_oxidation, sulfide_oxidation'	.	.	.	no match found
+external_resource:sulfur_compound_oxidation_dark	sulfur_compound_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfur_compound_oxidation_dark	.	.	.	no match found
+external_resource:'sulfide_oxidation, denitrification'	'sulfide_oxidation, denitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfide_oxidation, denitrification'	.	.	.	no match found
+external_resource:'Selenate_reduction'	'Selenate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'Selenate_reduction'	.	.	.	no match found
+external_resource:'cellulose_degradation, nitrogen_fixation'	'cellulose_degradation, nitrogen_fixation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'cellulose_degradation, nitrogen_fixation'	.	.	.	no match found
+external_resource:carbonmonoxide_oxidation	carbonmonoxide_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	carbonmonoxide_oxidation	.	.	.	no match found
+external_resource:'sulfur_oxidation, iron_reduction'	'sulfur_oxidation, iron_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfur_oxidation, iron_reduction'	.	.	.	no match found
+external_resource:aminoacid_degradation	aminoacid_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	aminoacid_degradation	.	.	.	no match found
+external_resource:sulfite_oxidation	sulfite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfite_oxidation	.	.	.	no match found
+external_resource:polymer_degradation	polymer_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	polymer_degradation	.	.	.	no match found
+external_resource:'nitrification, Denitrification, nitrification'	'nitrification, Denitrification, nitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'nitrification, Denitrification, nitrification'	.	.	.	no match found
+external_resource:'PCB_degradation'	'PCB_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'PCB_degradation'	.	.	.	no match found
+external_resource:uraninite_oxidation	uraninite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	uraninite_oxidation	.	.	.	no match found
+external_resource:thiosulfate_disproportionation	thiosulfate_disproportionation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	thiosulfate_disproportionation	.	.	.	no match found
+external_resource:'iron_reduction, uranyl_reduction'	'iron_reduction, uranyl_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_reduction, uranyl_reduction'	.	.	.	no match found
+external_resource:cellobiose_degradation	cellobiose_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	cellobiose_degradation	.	.	.	no match found
+external_resource:trithionate_oxidation	trithionate_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	trithionate_oxidation	.	.	.	no match found
+external_resource:'iron_oxidation, sulfur_oxidation'	'iron_oxidation, sulfur_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_oxidation, sulfur_oxidation'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, sulfate_reduction'	'hydrocarbon_degradation, sulfate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, sulfate_reduction'	.	.	.	no match found
+external_resource:'iron_oxidation, uranium_oxidation'	'iron_oxidation, uranium_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_oxidation, uranium_oxidation'	.	.	.	no match found
+external_resource:'sulfide_oxidation, nitrate_reduction'	'sulfide_oxidation, nitrate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfide_oxidation, nitrate_reduction'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, PAH_degradation'	'hydrocarbon_degradation, PAH_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, PAH_degradation'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation'	'hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, iron_oxidation, hydrocarbon_degradation'	.	.	.	no match found
+external_resource:'cellulose_degradation, xylan_degradation'	'cellulose_degradation, xylan_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'cellulose_degradation, xylan_degradation'	.	.	.	no match found
+external_resource:'acetogenesis, fermentation'	'acetogenesis, fermentation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'acetogenesis, fermentation'	.	.	.	no match found
+external_resource:'autotrophy, sulfur_oxidation'	'autotrophy, sulfur_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'autotrophy, sulfur_oxidation'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, methane_oxidation'	'hydrocarbon_degradation, methane_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, methane_oxidation'	.	.	.	no match found
+external_resource:'methanogenesis, sulfur_reduction'	'methanogenesis, sulfur_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'methanogenesis, sulfur_reduction'	.	.	.	no match found
+external_resource:'sulfur_reduction, thiosulfate_reduction'	'sulfur_reduction, thiosulfate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfur_reduction, thiosulfate_reduction'	.	.	.	no match found
+external_resource:galena_oxidation	galena_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	galena_oxidation	.	.	.	no match found
+external_resource:'carbonmonoxide_reduction, methanogenesis'	'carbonmonoxide_reduction, methanogenesis'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'carbonmonoxide_reduction, methanogenesis'	.	.	.	no match found
+external_resource:'tetrathionate_oxidation, iron_reduction'	'tetrathionate_oxidation, iron_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'tetrathionate_oxidation, iron_reduction'	.	.	.	no match found
+external_resource:'heterotrophic, heterotrophic'	'heterotrophic, heterotrophic'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'heterotrophic, heterotrophic'	.	.	.	no match found
+external_resource:propionate_oxidation	propionate_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	propionate_oxidation	.	.	.	no match found
+external_resource:'autotrophy, nitrification'	'autotrophy, nitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'autotrophy, nitrification'	.	.	.	no match found
+external_resource:carbonylsulfide_oxidation	carbonylsulfide_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	carbonylsulfide_oxidation	.	.	.	no match found
+external_resource:'sulfate_reduction, sulfur_reduction, thiosulfate_reduction'	'sulfate_reduction, sulfur_reduction, thiosulfate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfate_reduction, sulfur_reduction, thiosulfate_reduction'	.	.	.	no match found
+external_resource:pathways	pathways	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	pathways	.	.	.	no match found
+external_resource:'acetogenesis, methanogenesis'	'acetogenesis, methanogenesis'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'acetogenesis, methanogenesis'	.	.	.	no match found
+external_resource:'hydrogen_oxidation, nitrate_reduction'	'hydrogen_oxidation, nitrate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrogen_oxidation, nitrate_reduction'	.	.	.	no match found
+external_resource:'chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic'	'chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'chlorocarbon_degradation, hydrocarbon_degradation, heterotrophic'	.	.	.	no match found
+external_resource:'methanogenesis, nitrogen_fixation'	'methanogenesis, nitrogen_fixation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'methanogenesis, nitrogen_fixation'	.	.	.	no match found
+external_resource:'DMSP_degradation'	'DMSP_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'DMSP_degradation'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation'	'hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, chlorate_reduction, hydrocarbon_degradation'	.	.	.	no match found
+external_resource:polyisoprene_degradation	polyisoprene_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	polyisoprene_degradation	.	.	.	no match found
+external_resource:pyrrhotite_oxidation	pyrrhotite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	pyrrhotite_oxidation	.	.	.	no match found
+external_resource:cobalt_reduction	cobalt_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	cobalt_reduction	.	.	.	no match found
+external_resource:'hydrogen_oxidation, sulfur_oxidation'	'hydrogen_oxidation, sulfur_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrogen_oxidation, sulfur_oxidation'	.	.	.	no match found
+external_resource:'iron_reduction, PAH_degradation, sulfur_reduction'	'iron_reduction, PAH_degradation, sulfur_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_reduction, PAH_degradation, sulfur_reduction'	.	.	.	no match found
+external_resource:'chlorocarbon_degradation, PAH_degradation'	'chlorocarbon_degradation, PAH_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'chlorocarbon_degradation, PAH_degradation'	.	.	.	no match found
+external_resource:'Denitrification, hydrocarbon_degradation, nitrate_reduction'	'Denitrification, hydrocarbon_degradation, nitrate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'Denitrification, hydrocarbon_degradation, nitrate_reduction'	.	.	.	no match found
+external_resource:'autotrophy, nitrification, nitrite_oxidation'	'autotrophy, nitrification, nitrite_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'autotrophy, nitrification, nitrite_oxidation'	.	.	.	no match found
+external_resource:'RDX_degradation'	'RDX_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'RDX_degradation'	.	.	.	no match found
+external_resource:'acetogenesis, sulfate_reduction'	'acetogenesis, sulfate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'acetogenesis, sulfate_reduction'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation'	'hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, iron_reduction, chlorocarbon_degradation'	.	.	.	no match found
+external_resource:carbonylsulfide_reduction	carbonylsulfide_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	carbonylsulfide_reduction	.	.	.	no match found
+external_resource:covellite_oxidation	covellite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	covellite_oxidation	.	.	.	no match found
+external_resource:'iron_reduction, sulfur_oxidation'	'iron_reduction, sulfur_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_reduction, sulfur_oxidation'	.	.	.	no match found
+external_resource:'fermentation, iron_reduction, fermentation'	'fermentation, iron_reduction, fermentation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'fermentation, iron_reduction, fermentation'	.	.	.	no match found
+external_resource:'EDTA_degradation, nitrogen_fixation'	'EDTA_degradation, nitrogen_fixation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'EDTA_degradation, nitrogen_fixation'	.	.	.	no match found
+external_resource:'autotrophy, iron_oxidation, sulfur_oxidation'	'autotrophy, iron_oxidation, sulfur_oxidation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'autotrophy, iron_oxidation, sulfur_oxidation'	.	.	.	no match found
+external_resource:'nitrification, autotrophy, nitrification'	'nitrification, autotrophy, nitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'nitrification, autotrophy, nitrification'	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, MTBE_degradation'	'hydrocarbon_degradation, MTBE_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, MTBE_degradation'	.	.	.	no match found
+external_resource:'hydrogen_oxidation, sulfur_reduction'	'hydrogen_oxidation, sulfur_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrogen_oxidation, sulfur_reduction'	.	.	.	no match found
+external_resource:'cellulose_degradation, heterotrophic, xylan_degradation'	'cellulose_degradation, heterotrophic, xylan_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'cellulose_degradation, heterotrophic, xylan_degradation'	.	.	.	no match found
+external_resource:'nitrate_reduction, thiosulfate_reduction'	'nitrate_reduction, thiosulfate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'nitrate_reduction, thiosulfate_reduction'	.	.	.	no match found
+external_resource:'sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation'	'sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfate_reduction, sulfur_reduction, thiosulfate_reduction, xylan_degradation'	.	.	.	no match found
+external_resource:'iron_oxidation, iron_reduction'	'iron_oxidation, iron_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'iron_oxidation, iron_reduction'	.	.	.	no match found
+external_resource:iron_reduction	iron_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	iron_reduction	.	.	.	no match found
+external_resource:nitrite_reduction	nitrite_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitrite_reduction	.	.	.	no match found
+external_resource:'Denitrification'	'Denitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'Denitrification'	.	.	.	no match found
+external_resource:nitrate_reduction	nitrate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitrate_reduction	.	.	.	no match found
+external_resource:aerobic_chemo_heterotrophy	aerobic_chemo_heterotrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	aerobic_chemo_heterotrophy	.	.	.	no match found
+external_resource:denitrification	denitrification	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	denitrification	.	.	.	no match found
+external_resource:'"'	'"'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'"'	.	.	.	no match found
+external_resource:'NA'	'NA'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'NA'	.	.	.	no match found
+external_resource:nitrite_reduction_to_ammonia	nitrite_reduction_to_ammonia	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitrite_reduction_to_ammonia	.	.	.	no match found
+external_resource:photoheterotrophy	photoheterotrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	photoheterotrophy	.	.	.	no match found
+external_resource:anoxygenic_photoautotrophy_sulfur_oxidation	anoxygenic_photoautotrophy_sulfur_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	anoxygenic_photoautotrophy_sulfur_oxidation	.	.	.	no match found
+external_resource:thiosulfate_oxidation_dark	thiosulfate_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	thiosulfate_oxidation_dark	.	.	.	no match found
+external_resource:aromatic_hydrocarbon_degradation	aromatic_hydrocarbon_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	aromatic_hydrocarbon_degradation	.	.	.	no match found
+external_resource:nitrous_oxide_reduction	nitrous_oxide_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitrous_oxide_reduction	.	.	.	no match found
+external_resource:aerobic_anoxygenic_phototrophy	aerobic_anoxygenic_phototrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	aerobic_anoxygenic_phototrophy	.	.	.	no match found
+external_resource:nitrate_reduction_to_ammonia	nitrate_reduction_to_ammonia	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitrate_reduction_to_ammonia	.	.	.	no match found
+external_resource:sulfite_reduction	sulfite_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfite_reduction	.	.	.	no match found
+external_resource:hydrogen_oxidation_dark	hydrogen_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	hydrogen_oxidation_dark	.	.	.	no match found
+external_resource:sulfur_reduction	sulfur_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfur_reduction	.	.	.	no match found
+external_resource:thiosulfate_reduction	thiosulfate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	thiosulfate_reduction	.	.	.	no match found
+external_resource:nitrification	nitrification	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitrification	.	.	.	no match found
+external_resource:anoxygenic_photoautotrophy_hydrogen_oxidation	anoxygenic_photoautotrophy_hydrogen_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	anoxygenic_photoautotrophy_hydrogen_oxidation	.	.	.	no match found
+external_resource:heterotrophic	heterotrophic	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	heterotrophic	.	.	.	no match found
+external_resource:photoautotrophy	photoautotrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	photoautotrophy	.	.	.	no match found
+external_resource:ligninolysis	ligninolysis	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	ligninolysis	.	.	.	no match found
+external_resource:methane_oxidation	methane_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	methane_oxidation	.	.	.	no match found
+external_resource:sulfide_oxidation_dark	sulfide_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfide_oxidation_dark	.	.	.	no match found
+external_resource:anoxygenic_photoautotrophy	anoxygenic_photoautotrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	anoxygenic_photoautotrophy	.	.	.	no match found
+external_resource:methylotrophy	methylotrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	methylotrophy	.	.	.	no match found
+external_resource:fumarate_reduction	fumarate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	fumarate_reduction	.	.	.	no match found
+external_resource:sulfur_oxidation_dark	sulfur_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfur_oxidation_dark	.	.	.	no match found
+external_resource:arsenate_reduction	arsenate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	arsenate_reduction	.	.	.	no match found
+external_resource:methanogenesis_H2CO2	methanogenesis_H2CO2	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	methanogenesis_H2CO2	.	.	.	no match found
+external_resource:'acetogenesis, autotrophy'	'acetogenesis, autotrophy'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'acetogenesis, autotrophy'	.	.	.	no match found
+external_resource:manganese_oxidation	manganese_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	manganese_oxidation	.	.	.	no match found
+external_resource:arsenite_oxidation	arsenite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	arsenite_oxidation	.	.	.	no match found
+external_resource:'MTBE_degradation'	'MTBE_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'MTBE_degradation'	.	.	.	no match found
+external_resource:iron_oxidation	iron_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	iron_oxidation	.	.	.	no match found
+external_resource:manganese_reduction	manganese_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	manganese_reduction	.	.	.	no match found
+external_resource:plastic_degradation	plastic_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	plastic_degradation	.	.	.	no match found
+external_resource:aerobic_heterotrophy	aerobic_heterotrophy	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	aerobic_heterotrophy	.	.	.	no match found
+external_resource:iron_oxidation_dark	iron_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	iron_oxidation_dark	.	.	.	no match found
+external_resource:aliphatic_non_methane_hydrocarbon_degradation	aliphatic_non_methane_hydrocarbon_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	aliphatic_non_methane_hydrocarbon_degradation	.	.	.	no match found
+external_resource:acetogenesis	acetogenesis	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	acetogenesis	.	.	.	no match found
+external_resource:chlorate_reduction	chlorate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	chlorate_reduction	.	.	.	no match found
+external_resource:'hydrocarbon_degradation, Denitrification'	'hydrocarbon_degradation, Denitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrocarbon_degradation, Denitrification'	.	.	.	no match found
+external_resource:thiosulfate_oxidation	thiosulfate_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	thiosulfate_oxidation	.	.	.	no match found
+external_resource:anoxygenic_photoautotrophy_iron_oxidation	anoxygenic_photoautotrophy_iron_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	anoxygenic_photoautotrophy_iron_oxidation	.	.	.	no match found
+external_resource:'PAH_degradation'	'PAH_degradation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'PAH_degradation'	.	.	.	no match found
+external_resource:chlorocarbon_degradation	chlorocarbon_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	chlorocarbon_degradation	.	.	.	no match found
+external_resource:pah_degradation	pah_degradation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	pah_degradation	.	.	.	no match found
+external_resource:annamox	annamox	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	annamox	.	.	.	no match found
+external_resource:'fermentation, fermentation, arsenate_reduction'	'fermentation, fermentation, arsenate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'fermentation, fermentation, arsenate_reduction'	.	.	.	no match found
+external_resource:'hydrogen_oxidation, methanogenesis, nitrogen_fixation'	'hydrogen_oxidation, methanogenesis, nitrogen_fixation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'hydrogen_oxidation, methanogenesis, nitrogen_fixation'	.	.	.	no match found
+external_resource:methanogenesis_acetoclastic	methanogenesis_acetoclastic	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	methanogenesis_acetoclastic	.	.	.	no match found
+external_resource:chalcopyrite_oxidation	chalcopyrite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	chalcopyrite_oxidation	.	.	.	no match found
+external_resource:tetrathionate_oxidation	tetrathionate_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	tetrathionate_oxidation	.	.	.	no match found
+external_resource:carbon_monoxide_oxidation	carbon_monoxide_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	carbon_monoxide_oxidation	.	.	.	no match found
+external_resource:sphalerite_oxidation	sphalerite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sphalerite_oxidation	.	.	.	no match found
+external_resource:uranyl_reduction	uranyl_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	uranyl_reduction	.	.	.	no match found
+external_resource:selenate_reduction	selenate_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	selenate_reduction	.	.	.	no match found
+external_resource:'sulfate_reduction, thiosulfate_reduction'	'sulfate_reduction, thiosulfate_reduction'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'sulfate_reduction, thiosulfate_reduction'	.	.	.	no match found
+external_resource:nitric_oxide_reduction	nitric_oxide_reduction	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	nitric_oxide_reduction	.	.	.	no match found
+external_resource:'autotrophy, nitrogen_fixation'	'autotrophy, nitrogen_fixation'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'autotrophy, nitrogen_fixation'	.	.	.	no match found
+external_resource:pyrite_oxidation	pyrite_oxidation	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	pyrite_oxidation	.	.	.	no match found
+external_resource:'nitrification, nitrification'	'nitrification, nitrification'	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	'nitrification, nitrification'	.	.	.	no match found
+external_resource:sulfite_oxidation_dark	sulfite_oxidation_dark	noMatch	:NO_MATCH	.	Lexical	external_resource	GO	rdf_matcher	0.5	.	.	sulfite_oxidation_dark	.	.	.	no match found

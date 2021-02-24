@@ -169,11 +169,11 @@ class TraitsTransform(Transform):
             
             #Prefixes
             org_prefix = "NCBITaxon:"
-            chem_prefix = "Carbon:"
-            shape_prefix = "Shape:"
-            #metab_prefix = "Metab:"
-            source_prefix = "Env:"
-            pathway_prefix = "Path:"
+            chem_prefix = "microtraits.carbon_substrates:"
+            shape_prefix = "microtraits.cell_shape_enum:"
+            #metab_prefix = "microtraits.metabolism:"
+            source_prefix = "microtraits.data_source:"
+            pathway_prefix = "microtraits.pathways:"
 
             # Edges
             org_to_shape_edge_label = "biolink:has_phenotype" #  [org_name -> cell_shape, metabolism]

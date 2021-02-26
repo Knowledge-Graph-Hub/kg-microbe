@@ -69,6 +69,16 @@ class TraitsTransform(Transform):
         os.makedirs(self.output_dir, exist_ok=True)
 
         """
+        Import SSSOM 
+        """
+        sssom_columns = ['subject_label', 'object_id', 'object_label', 'object_match_field', 'match_category']
+        chem_sssom = pd.read_csv(self.chemicals_sssom, sep='\t', low_memory=False, comment='#', usecols=sssom_columns)
+        chem_sssom['subject_label'] = chem_sssom['subject_label'].str.replace(r"[\'\",]","")
+
+        path_sssom = pd.read_csv(self.pathways_sssom, sep='\t', low_memory=False, comment='#', usecols=sssom_columns)
+        path_sssom['subject_label'] = path_sssom['subject_label'].str.replace(r"[\'\",]","").str.replace('_',' ')
+
+        """
         Implement ROBOT 
         """
         # Convert OWL to JSON for CheBI Ontology
@@ -112,7 +122,7 @@ class TraitsTransform(Transform):
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, 'CHEBI')
             oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            #oger_output = process_oger_output(self.nlp_dir, input_file_name)
+            oger_output_chebi_not_exact_match = oger_output_chebi[oger_output_chebi['StringMatch'] != 'Exact']
 
             # GO
             cols_for_nlp = ['tax_id', 'pathways']
@@ -120,6 +130,7 @@ class TraitsTransform(Transform):
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, 'GO')
             oger_output_go = run_oger(self.nlp_dir, input_file_name, n_workers=5)
+            oger_output_go_not_exact_match = oger_output_go[oger_output_go['StringMatch'] != 'Exact']
             
             '''# ECOCORE
             cols_for_nlp = ['tax_id', 'metabolism']
@@ -128,9 +139,7 @@ class TraitsTransform(Transform):
             create_settings_file(self.nlp_dir, 'ECOCORE')
             oger_output_ecocore = run_oger(self.nlp_dir, input_file_name, n_workers=5)
             #oger_output = process_oger_output(self.nlp_dir, input_file_name)'''
-            
-            
-
+        
         # Mapping table for metabolism.
         # TODO: Find an alternative way for doing this
         col = ['ID', 'ActualTerm', 'PreferredTerm']
@@ -187,7 +196,11 @@ class TraitsTransform(Transform):
             org_to_pathway_edge_label = "biolink:BiologicalProcess" # # [org -> pathway]
             org_to_pathway_edge_relation = "GO:0008150" # [org -> biological_process -> metabolism]
 
-            
+            ''' TEST
+                Collector of partial and NoMatches.
+            '''
+            remnants_chebi = pd.DataFrame()
+            remnants_path = pd.DataFrame()
             
             # transform
             for line in f:
@@ -237,9 +250,20 @@ class TraitsTransform(Transform):
                     if chem_name != 'NA':
                         relevant_tax = oger_output_chebi.loc[oger_output_chebi['TaxId'] == int(tax_id)]
                         relevant_chem = relevant_tax.loc[relevant_tax['TokenizedTerm'] == chem_name]
-                        if len(relevant_chem) == 1:
-                            chem_curie = relevant_chem.iloc[0]['CURIE']
-                            chem_node_type = relevant_chem.iloc[0]['Biolink']
+                        # Check if term exists
+                        if len(relevant_chem) >= 1:
+                            # 'Exact' string match 
+                            if any(relevant_chem['StringMatch'].str.contains('Exact')):
+                                chem_curie = relevant_chem['CURIE'].loc[relevant_chem['StringMatch']=='Exact'].item()
+                                chem_node_type = relevant_chem['Biolink'].loc[relevant_chem['StringMatch']=='Exact'].item()
+                            # 'Partial' or 'No Match'
+                            else:
+                                chem_ner_sssom = relevant_chem.merge(chem_sssom, how='inner', left_on=['TokenizedTerm', 'CURIE'], right_on=['subject_label', 'object_id'])
+                                remnants_chebi = remnants_chebi.append(chem_ner_sssom,ignore_index=True)
+                                #chem_curie = relevant_chem.iloc[0]['CURIE']
+                                #chem_node_type = relevant_chem.iloc[0]['Biolink']
+                                
+                                
                         
 
                     if chem_curie == curie:
@@ -348,11 +372,16 @@ class TraitsTransform(Transform):
                     if pathway_name != 'NA':
                         relevant_tax = oger_output_go.loc[oger_output_go['TaxId'] == int(tax_id)]
                         relevant_pathway = relevant_tax.loc[relevant_tax['TokenizedTerm'] == pathway_name]
-                        if len(relevant_pathway) == 1:
-                            pathway_curie = relevant_pathway.iloc[0]['CURIE']
-                            pathway_node_type = relevant_pathway.iloc[0]['Biolink']
-                        
-
+                        if len(relevant_pathway) >= 1:
+                            # 'Exact' string match 
+                            if any(relevant_pathway['StringMatch'].str.contains('Exact')):
+                                pathway_curie = relevant_pathway['CURIE'].loc[relevant_pathway['StringMatch']=='Exact'].item()
+                                pathway_node_type = relevant_pathway['Biolink'].loc[relevant_pathway['StringMatch']=='Exact'].item()
+                            # 'Partial' or 'No Match'
+                            else:
+                                path_ner_sssom = relevant_pathway.merge(path_sssom, how='inner', left_on=['TokenizedTerm', 'CURIE'], right_on=['subject_label', 'object_id'])
+                                remnants_path = remnants_path.append(path_ner_sssom,ignore_index=True)
+                                
                     if pathway_curie == curie:
                         pathway_id = pathway_prefix + pathway_name.lower().replace(' ','_')
                     else:
@@ -423,6 +452,8 @@ class TraitsTransform(Transform):
                     seen_edge[org_id+source_id] += 1
 
         # Files write ends
+        remnants_chebi.to_csv(os.path.join(self.DEFAULT_NLP_OUTPUT_DIR,'remnantsCHEBI.tsv'), sep='\t', index=False)
+        remnants_path.to_csv(os.path.join(self.DEFAULT_NLP_OUTPUT_DIR,'remnantsGO.tsv'), sep='\t', index=False)
 
         # Get trees from all relevant IDs from NCBITaxon and convert to JSON
         '''

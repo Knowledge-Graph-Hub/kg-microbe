@@ -31,7 +31,7 @@ edge_stats:
     biolink:in_taxon:
       count: 1
     biolink:interacts_with:
-      count: 4314
+      count: 4319
     biolink:inverseOf:
       count: 2
     biolink:located_in:
@@ -200,7 +200,7 @@ edge_stats:
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:AbstractEntity:
       count: 19727
     biolink:OrganismTaxon-biolink:interacts_with-biolink:ChemicalSubstance:
-      count: 4314
+      count: 4319
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1763
     biolink:OrganismTaxon-biolink:location_of-biolink:ChemicalSubstance:
@@ -248,7 +248,7 @@ edge_stats:
   - biolink:subclass_of
   - biolink:temporally_related_to
   - biolink:type
-  total_edges: 480772
+  total_edges: 480777
 graph_name: Merged Graph
 node_stats:
   count_by_category:

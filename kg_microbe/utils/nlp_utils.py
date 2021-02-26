@@ -166,7 +166,40 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
             'CURIE', 'NaN1', 'SentenceID', 'NaN2', 'UMLS_CUI']
     df = pd.read_csv(os.path.join(path, 'output',input_file_name+'.tsv'), sep='\t', names=cols)
     sub_df = df[['TaxId', 'Biolink','TokenizedTerm', 'PreferredTerm', 'CURIE']]
-    interested_df = sub_df.loc[(df['TokenizedTerm'] == df['PreferredTerm'].str.replace(r"\(.*\)",""))]
-    interested_df = interested_df.drop(columns = ['PreferredTerm']).drop_duplicates()
-    interested_df.to_csv(os.path.join(path, 'output',input_file_name +'Filtered.tsv'), sep='\t', index=False)
-    return interested_df
+
+    sub_df['StringMatch'] = sub_df.apply(lambda row : assign_string_match_rating(row), axis=1) 
+    sub_df = sub_df.drop_duplicates()
+    sub_df.to_csv(os.path.join(path, 'output',input_file_name +'Filtered.tsv'), sep='\t', index=False)
+    #interested_df = sub_df.loc[(df['TokenizedTerm'] == df['PreferredTerm'].str.replace(r"\(.*\)",""))]
+    #interested_df = interested_df.drop(columns = ['PreferredTerm']).drop_duplicates()
+    #interested_df.to_csv(os.path.join(path, 'output',input_file_name +'Filtered.tsv'), sep='\t', index=False)
+    '''
+        TODO: Figure out synonym categories amongst nodes using OBO Format
+        -   Synonyms are always scoped into one of four disjoint categories: EXACT, BROAD, NARROW, RELATED
+        LOGIC:
+            IF TokenizedTerm and PreferredTerm are used interchangeably: EXACT
+            ELIF TokenizedTerm is parent of PreferredTerm: BROAD
+            ELIF TokenizedTerm is child of PreferredTerm: NARROW
+            ELSE: RELATED
+
+    '''
+    return sub_df
+
+def assign_string_match_rating(dfRow):
+    '''
+    Assign another column categorizing the level of match between TokenizedTerm and PreferredTerm
+    -   Exact
+    -   Partial
+    -   Synonym
+
+    :param dfRow: each row of the OGER output
+    :returns: Same dataframe with an extra 'matchRating' column
+    '''
+    result = None
+    if dfRow['TokenizedTerm'] == dfRow['PreferredTerm']:
+        result = 'Exact'
+    elif dfRow['TokenizedTerm'] in dfRow['PreferredTerm']:
+        result =  'Partial'
+    else:
+        result =  'NoMatch'
+    return result

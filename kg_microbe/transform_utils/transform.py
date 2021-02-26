@@ -18,6 +18,7 @@ class Transform:
     DEFAULT_NLP_INPUT_DIR = os.path.join(DEFAULT_NLP_DIR,'input')
     DEFAULT_NLP_OUTPUT_DIR = os.path.join(DEFAULT_NLP_DIR,'output')
     DEFAULT_NLP_STOPWORDS_DIR = os.path.join(DEFAULT_NLP_DIR, 'stopwords')
+    DEFAULT_SCHEMA_DIR = 'schemas'
     
 
     def __init__(self, source_name, input_dir: str = None, output_dir: str = None, nlp: bool = False):
@@ -39,6 +40,7 @@ class Transform:
         self.input_base_dir = input_dir if input_dir else self.DEFAULT_INPUT_DIR
         self.output_base_dir = output_dir if output_dir else self.DEFAULT_OUTPUT_DIR
         self.output_dir = os.path.join(self.output_base_dir, source_name)
+        self.schema_dir = self.DEFAULT_SCHEMA_DIR
         
         
         
@@ -48,6 +50,9 @@ class Transform:
         self.output_edge_file = os.path.join(self.output_dir, "edges.tsv")
         self.output_json_file = os.path.join(self.output_dir, "nodes_edges.json")
         self.subset_terms_file = os.path.join(self.input_base_dir,"subset_terms.tsv")
+        self.chemicals_sssom = os.path.join(self.schema_dir,'chemicals.sssom.tsv')
+        self.pathways_sssom = os.path.join(self.schema_dir,'pathways.sssom.tsv')
+
         
         os.makedirs(self.output_dir, exist_ok=True)
 

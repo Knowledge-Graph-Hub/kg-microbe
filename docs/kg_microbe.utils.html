@@ -255,6 +255,23 @@ for compatibility with OGER.</p>
 <div class="section" id="module-kg_microbe.utils.nlp_utils">
 <span id="kg-microbe-utils-nlp-utils-module"></span><h2>kg_microbe.utils.nlp_utils module<a class="headerlink" href="#module-kg_microbe.utils.nlp_utils" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
+<dt id="kg_microbe.utils.nlp_utils.assign_string_match_rating">
+<code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">assign_string_match_rating</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dfRow</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.nlp_utils.assign_string_match_rating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign another column categorizing the level of match between TokenizedTerm and PreferredTerm
+-   Exact
+-   Partial
+-   Synonym</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dfRow</strong> – each row of the OGER output</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Same dataframe with an extra ‘matchRating’ column</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="kg_microbe.utils.nlp_utils.create_settings_file">
 <code class="sig-prename descclassname">kg_microbe.utils.nlp_utils.</code><code class="sig-name descname">create_settings_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">ont</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'ALL'</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#kg_microbe.utils.nlp_utils.create_settings_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates the settings.ini file for OGER to get parameters.</p>

@@ -1,7 +1,7 @@
 edge_stats:
   count_by_predicates:
     biolink:BiologicalProcess:
-      count: 80489
+      count: 80490
     biolink:capable_of:
       count: 1
     biolink:caused_by:
@@ -31,7 +31,7 @@ edge_stats:
     biolink:in_taxon:
       count: 1
     biolink:interacts_with:
-      count: 4330
+      count: 4317
     biolink:inverseOf:
       count: 2
     biolink:located_in:
@@ -80,7 +80,7 @@ edge_stats:
     biolink:AnatomicalEntity-biolink:subclass_of-biolink:OntologyClass:
       count: 2
     biolink:BiologicalProcess-biolink:subclass_of-biolink:OntologyClass:
-      count: 4
+      count: 9
     biolink:ChemicalSubstance-biolink:has_attribute-biolink:ChemicalSubstance:
       count: 40054
     biolink:ChemicalSubstance-biolink:has_part-biolink:ChemicalSubstance:
@@ -184,7 +184,7 @@ edge_stats:
     biolink:OntologyClass-biolink:subclass_of-biolink:ChemicalSubstance:
       count: 3
     biolink:OntologyClass-biolink:subclass_of-biolink:OntologyClass:
-      count: 4678
+      count: 4673
     biolink:OntologyClass-biolink:subclass_of-biolink:OrganismTaxon:
       count: 1
     biolink:OntologyClass-biolink:temporally_related_to-biolink:OntologyClass:
@@ -194,13 +194,13 @@ edge_stats:
     biolink:OrganismTaxon-biolink:BiologicalProcess-biolink:ActivityAndBehavior:
       count: 24353
     biolink:OrganismTaxon-biolink:BiologicalProcess-biolink:BiologicalProcess:
-      count: 7570
+      count: 7571
     biolink:OrganismTaxon-biolink:BiologicalProcess-unknown:
       count: 48566
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:AbstractEntity:
       count: 19727
     biolink:OrganismTaxon-biolink:interacts_with-biolink:ChemicalSubstance:
-      count: 4330
+      count: 4317
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1763
     biolink:OrganismTaxon-biolink:location_of-biolink:ChemicalSubstance:
@@ -248,7 +248,7 @@ edge_stats:
   - biolink:subclass_of
   - biolink:temporally_related_to
   - biolink:type
-  total_edges: 480789
+  total_edges: 480777
 graph_name: Merged Graph
 node_stats:
   count_by_category:
@@ -259,7 +259,7 @@ node_stats:
     biolink:AnatomicalEntity:
       count: 585
     biolink:BiologicalProcess:
-      count: 30575
+      count: 30573
     biolink:CellularComponent:
       count: 4463
     biolink:ChemicalSubstance:
@@ -282,4 +282,4 @@ node_stats:
   - biolink:MolecularActivity
   - biolink:OntologyClass
   - biolink:OrganismTaxon
-  total_nodes: 266150
+  total_nodes: 266148

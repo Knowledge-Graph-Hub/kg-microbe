@@ -47,7 +47,7 @@ class TraitsTransform(Transform):
         source_name = "condensed_traits_NCBI"
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
 
-        self.node_header = ['id', 'name', 'category', 'description']
+        self.node_header = ['id', 'name', 'category', 'match_description']
         self.edge_header = ['subject', 'predicate', 'object', 'relation']
         self.nlp = nlp
 
@@ -217,7 +217,7 @@ class TraitsTransform(Transform):
 
                 line = re.sub(r'(?!(([^"]*"){2})*[^"]*$),', '|', line) # alanine, glucose -> alanine| glucose
                 items_dict = parse_line(line, header_items, sep=',')
-                description = ''
+                match_description = ''
 
                 org_name = items_dict['org_name']
                 tax_id = items_dict['tax_id']
@@ -236,7 +236,7 @@ class TraitsTransform(Transform):
                                          data=[org_id,
                                                org_name,
                                                org_node_type,
-                                               description])
+                                               match_description])
                     seen_node[org_id] += 1
                     # If capture of all NCBITaxon: CURIEs are needed for ROBOT STAR extraction
                     if org_id.startswith('NCBITaxon:'):
@@ -246,7 +246,7 @@ class TraitsTransform(Transform):
                 for chem_name in carbon_substrates:
                     chem_curie = curie
                     multi_row_flag = False
-                    description = ''
+                    match_description = ''
                     #chem_node_type = chem_name
 
                     # Get relevant NLP results
@@ -259,7 +259,7 @@ class TraitsTransform(Transform):
                             if any(relevant_chem['StringMatch'].str.contains('Exact')):
                                 chem_curie = relevant_chem['CURIE'].loc[relevant_chem['StringMatch']=='Exact'].item()
                                 chem_node_type = relevant_chem['Biolink'].loc[relevant_chem['StringMatch']=='Exact'].item()
-                                description = 'ExactStringMatch'
+                                match_description = 'ExactStringMatch'
                             # 'Partial' or 'No Match'
                             else:
                                 chem_ner_sssom = relevant_chem.merge(chem_sssom, how='inner', left_on=['TokenizedTerm', 'CURIE'], right_on=['subject_label', 'object_id'])
@@ -268,25 +268,25 @@ class TraitsTransform(Transform):
                                 if any(chem_ner_sssom['object_match_field'].str.contains('oio:hasExactSynonym')):
                                     chem_curie = chem_ner_sssom['CURIE'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
                                     chem_node_type = chem_ner_sssom['Biolink'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
-                                    description = chem_ner_sssom['object_match_field'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
+                                    match_description = chem_ner_sssom['object_match_field'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
                                 # if 'oio:hasRelatedSynonym' present
                                 elif any(chem_ner_sssom['object_match_field'].str.contains('oio:hasRelatedSynonym')):
                                     if len(chem_ner_sssom['CURIE'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']) > 1:
                                         multi_row_flag = True
                                         chem_curie = chem_ner_sssom['CURIE'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
                                         chem_node_type = chem_ner_sssom['Biolink'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
-                                        description = chem_ner_sssom['object_match_field'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
+                                        match_description = chem_ner_sssom['object_match_field'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
                                     else:
                                         chem_curie = chem_ner_sssom['CURIE'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
                                         chem_node_type = chem_ner_sssom['Biolink'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
-                                        description = chem_ner_sssom['object_match_field'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
+                                        match_description = chem_ner_sssom['object_match_field'].loc[chem_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
                                 else:
                                     remnants_chebi = remnants_chebi.append(chem_ner_sssom,ignore_index=True)
                                     #chem_curie = relevant_chem.iloc[0]['CURIE']
                                     #chem_node_type = relevant_chem.iloc[0]['Biolink']
                                 
                                 
-                    if multi_row_flag:
+                    if multi_row_flag == True:
                         for i,v in chem_curie.items():
                             if chem_curie[i] == curie:
                                 chem_id = chem_prefix + chem_name.lower().replace(' ','_')
@@ -298,11 +298,10 @@ class TraitsTransform(Transform):
                                                     data=[chem_id,
                                                         chem_name,
                                                         chem_node_type[i],
-                                                        description[i]])
+                                                        match_description[i]])
                                 seen_node[chem_id] += 1
-                        multi_row_flag = False
-                    else:    
-
+                        
+                    else:
                         if chem_curie == curie:
                             chem_id = chem_prefix + chem_name.lower().replace(' ','_')
                         else:
@@ -314,7 +313,7 @@ class TraitsTransform(Transform):
                                                 data=[chem_id,
                                                     chem_name,
                                                     chem_node_type,
-                                                    description])
+                                                    match_description])
                             seen_node[chem_id] += 1
 
                 # Write shape node
@@ -334,7 +333,7 @@ class TraitsTransform(Transform):
                                          data=[shape_id,
                                                cell_shape,
                                                shape_node_type,
-                                               description])
+                                               match_description])
                     seen_node[shape_id] += 1
 
                 # Write source node
@@ -347,7 +346,7 @@ class TraitsTransform(Transform):
                     env_curie = curie
                     env_term = source_name_collapsed
                     source_node_type = "" # [isolation_source] left blank intentionally
-                    description = ''
+                    match_description = ''
 
                     # Get information from the environments.csv (unique_env_df)
                     relevant_env_df = unique_env_df.loc[unique_env_df['Type'] == source_name]
@@ -381,7 +380,7 @@ class TraitsTransform(Transform):
                                             data=[source_id,
                                                 env_term,
                                                 source_node_type,
-                                                description])
+                                                match_description])
                         seen_node[source_id] += 1
                     
                 # Write metabolism node
@@ -398,13 +397,13 @@ class TraitsTransform(Transform):
                                                 data=[metabolism_id,
                                                     metabolism_term,
                                                     metabolism_node_type,
-                                                    description])
+                                                    match_description])
                             seen_node[metabolism_id] += 1
 
                 # Write pathway node 
                 for pathway_name in pathways:
                     pathway_curie = curie
-                    description = ''
+                    match_description = ''
                     multi_row_flag = False
 
                     # Get relevant NLP results
@@ -416,7 +415,7 @@ class TraitsTransform(Transform):
                             if any(relevant_pathway['StringMatch'].str.contains('Exact')):
                                 pathway_curie = relevant_pathway['CURIE'].loc[relevant_pathway['StringMatch']=='Exact'].item()
                                 pathway_node_type = relevant_pathway['Biolink'].loc[relevant_pathway['StringMatch']=='Exact'].item()
-                                description = 'ExactStringMatch'
+                                match_description = 'ExactStringMatch'
                             # 'Partial' or 'No Match'
                             else:
                                 path_ner_sssom = relevant_pathway.merge(path_sssom, how='inner', left_on=['TokenizedTerm', 'CURIE'], right_on=['subject_label', 'object_id'])
@@ -425,33 +424,33 @@ class TraitsTransform(Transform):
                                 if any(path_ner_sssom['object_match_field'].str.contains('oio:hasExactSynonym')):
                                     pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
                                     pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
-                                    description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
+                                    match_description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasExactSynonym'].item()
                                 # if 'oio:hasRelatedSynonym' present
                                 elif any(path_ner_sssom['object_match_field'].str.contains('oio:hasRelatedSynonym')):
-                                    multi_row_flag = True
                                     if len(path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']) > 1:
+                                        multi_row_flag = True
                                         pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
                                         pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
-                                        description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
+                                        match_description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym']
                                     else:
                                         pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
                                         pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
-                                        description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
-                                # if 'oio:hasBraodSynonym' present
-                                elif any(path_ner_sssom['object_match_field'].str.contains('oio:hasBraodSynonym')):
-                                    multi_row_flag = True
-                                    if len(path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym']) > 1:
-                                        pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym']
-                                        pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym']
-                                        description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym']
+                                        match_description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasRelatedSynonym'].item()
+                                # if 'oio:hasBroadSynonym' present
+                                elif any(path_ner_sssom['object_match_field'].str.contains('oio:hasBroadSynonym')):
+                                    if len(path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym']) > 1:
+                                        multi_row_flag = True
+                                        pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym']
+                                        pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym']
+                                        match_description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym']
                                     else:
-                                        pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym'].item()
-                                        pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym'].item()
-                                        description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBraodSynonym'].item()
+                                        pathway_curie = path_ner_sssom['CURIE'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym'].item()
+                                        pathway_node_type = path_ner_sssom['Biolink'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym'].item()
+                                        match_description = path_ner_sssom['object_match_field'].loc[path_ner_sssom['object_match_field'] == 'oio:hasBroadSynonym'].item()
                                 else:
                                     remnants_path = remnants_path.append(path_ner_sssom,ignore_index=True)
 
-                    if multi_row_flag:
+                    if multi_row_flag == True:
                         for i,v in pathway_curie.items():
                             if pathway_curie[i] == curie:
                                 pathway_id = pathway_prefix + pathway_name.lower().replace(' ','_')
@@ -463,7 +462,7 @@ class TraitsTransform(Transform):
                                                     data=[pathway_id,
                                                         pathway_name,
                                                         pathway_node_type[i],
-                                                        description[i]])
+                                                        match_description[i]])
                                 seen_node[pathway_id] += 1
                         multi_row_flag = False
                     else:
@@ -479,7 +478,7 @@ class TraitsTransform(Transform):
                                                 data=[pathway_id,
                                                     pathway_name,
                                                     pathway_node_type,
-                                                    description])
+                                                    match_description])
                             seen_node[pathway_id] += 1
                
                 

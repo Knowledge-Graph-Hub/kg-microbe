@@ -1,7 +1,7 @@
 edge_stats:
   count_by_predicates:
     biolink:BiologicalProcess:
-      count: 80488
+      count: 80489
     biolink:capable_of:
       count: 1
     biolink:caused_by:
@@ -31,7 +31,7 @@ edge_stats:
     biolink:in_taxon:
       count: 1
     biolink:interacts_with:
-      count: 4319
+      count: 4330
     biolink:inverseOf:
       count: 2
     biolink:located_in:
@@ -194,13 +194,13 @@ edge_stats:
     biolink:OrganismTaxon-biolink:BiologicalProcess-biolink:ActivityAndBehavior:
       count: 24353
     biolink:OrganismTaxon-biolink:BiologicalProcess-biolink:BiologicalProcess:
-      count: 7569
+      count: 7570
     biolink:OrganismTaxon-biolink:BiologicalProcess-unknown:
       count: 48566
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:AbstractEntity:
       count: 19727
     biolink:OrganismTaxon-biolink:interacts_with-biolink:ChemicalSubstance:
-      count: 4319
+      count: 4330
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1763
     biolink:OrganismTaxon-biolink:location_of-biolink:ChemicalSubstance:
@@ -248,7 +248,7 @@ edge_stats:
   - biolink:subclass_of
   - biolink:temporally_related_to
   - biolink:type
-  total_edges: 480777
+  total_edges: 480789
 graph_name: Merged Graph
 node_stats:
   count_by_category:
@@ -259,11 +259,11 @@ node_stats:
     biolink:AnatomicalEntity:
       count: 585
     biolink:BiologicalProcess:
-      count: 30583
+      count: 30575
     biolink:CellularComponent:
       count: 4463
     biolink:ChemicalSubstance:
-      count: 155143
+      count: 155116
     biolink:MolecularActivity:
       count: 12257
     biolink:OntologyClass:
@@ -282,4 +282,4 @@ node_stats:
   - biolink:MolecularActivity
   - biolink:OntologyClass
   - biolink:OrganismTaxon
-  total_nodes: 266185
+  total_nodes: 266150

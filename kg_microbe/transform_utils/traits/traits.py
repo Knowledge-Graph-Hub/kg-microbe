@@ -516,7 +516,7 @@ class TraitsTransform(Transform):
                     seen_edge[org_id+source_id] += 1
 
                 # org-metabolism edge
-                if metabolism_id != None and org_id+metabolism_id not in seen_edge:
+                if metabolism_id != None and not metabolism_id.endswith(':na') and org_id+metabolism_id not in seen_edge:
                     write_node_edge_item(fh=edge,
                                             header=self.edge_header,
                                             data=[org_id,
@@ -526,7 +526,7 @@ class TraitsTransform(Transform):
                     seen_edge[org_id+metabolism_id] += 1
 
                 # org-pathway edge
-                if pathway_id != None and org_id+pathway_id not in seen_edge:
+                if pathway_id != None and not pathway_id.endswith(':na') and org_id+pathway_id not in seen_edge:
                     write_node_edge_item(fh=edge,
                                             header=self.edge_header,
                                             data=[org_id,

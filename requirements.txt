@@ -1,3 +1,2 @@
 git+https://github.com/OntoGene/OGER.git
-git+git://github.com/deepakunni3/kgx@kg-covid-19
 #git+https://github.com/monarch-initiative/runner.git

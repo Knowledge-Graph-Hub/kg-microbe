@@ -52,7 +52,7 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     This method extracts all children of provided CURIE.
 
     :param path: path of file to be converted
-    :param ont_name: Namae of the ontology
+    :param ont_name: Name of the ontology
     :param terms: Either CURIE or a file of CURIEs list
     :param mode: Method options as listed below.
     :return: None

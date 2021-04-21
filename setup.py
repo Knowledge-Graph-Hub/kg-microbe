@@ -69,7 +69,7 @@ setup(
         'compress_json',
         'click==7',
         'pyyaml',
-        'kgx==0.4.0',
+        'kgx==0.4.0', 
         'sphinx',
         'sphinx_rtd_theme',
         'recommonmark',

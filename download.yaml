@@ -26,21 +26,21 @@
 # Condensed-species
 # - GTDB
 #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv
--
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv?raw=true
-  local_name: condensed_species_GTDB.csv
+#-
+#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv?raw=true
+#  local_name: condensed_species_GTDB.csv
 # - NCBI
 #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv
--
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv?raw=true
-  local_name: condensed_species_NCBI.csv
+#-
+#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv?raw=true
+#  local_name: condensed_species_NCBI.csv
 
 # Condensed-traits
 # - GTDB
 #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv
--
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv?raw=true
-  local_name: condensed_traits_GTDB.csv
+#-
+#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv?raw=true
+#  local_name: condensed_traits_GTDB.csv
 # - NCBI
 #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
 -

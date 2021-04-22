@@ -87,6 +87,18 @@
 #
 # PATO
 #
+#-
+#  url: http://purl.obolibrary.org/obo/pato.json
+#  local_name: pato.json
+#
+# ECOCORE
+#
+- url: http://purl.obolibrary.org/obo/ecocore.owl
+  local_name: ecocore.owl
+#
+# GO
+#
 -
-  url: http://purl.obolibrary.org/obo/pato.json
-  local_name: pato.json
+  url: http://purl.obolibrary.org/obo/go.json
+  local_name: go.json
+  

@@ -93,8 +93,9 @@
 #
 # ECOCORE
 #
-- url: http://purl.obolibrary.org/obo/ecocore.owl
-  local_name: ecocore.owl
+#- 
+#  url: http://purl.obolibrary.org/obo/ecocore.owl
+#  local_name: ecocore.owl
 #
 # GO
 #

@@ -1,6 +1,11 @@
 .vscode
 dist
-data
+data/raw/*
+data/transformed/*
+data/nlp/input/*
+data/nlp/output/*
+data/nlp/terms/*
+data/merged/*
 __pycache__
 kg_microbe/__pycache__/
 .DS_Store

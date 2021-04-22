@@ -83,7 +83,7 @@ class TraitsTransform(Transform):
         """
         # Convert OWL to JSON for CheBI Ontology
         convert_to_json(self.input_base_dir, 'CHEBI')
-        convert_to_json(self.input_base_dir, 'ECOCORE')
+        #convert_to_json(self.input_base_dir, 'ECOCORE')
 
         # Extract the 'cellular organisms' tree from NCBITaxon and convert to JSON
         '''
@@ -107,7 +107,7 @@ class TraitsTransform(Transform):
         TODO: Replace this code once runNER is installed and remove 'kg_microbe/utils/biohub_converter.py'
         """
         create_termlist(self.input_base_dir, 'chebi')
-        create_termlist(self.input_base_dir, 'ecocore')
+        #create_termlist(self.input_base_dir, 'ecocore')
         create_termlist(self.input_base_dir, 'go')
         
 

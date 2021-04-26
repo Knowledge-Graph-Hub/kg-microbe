@@ -75,8 +75,7 @@ setup(
         'recommonmark',
         'parameterized',
         'validate_version_code',
-        'pandas',
-        'linkml'
+        'pandas'
     ],
     extras_require=extras,
 )

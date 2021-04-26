@@ -74,7 +74,8 @@ setup(
         'sphinx_rtd_theme',
         'recommonmark',
         'parameterized',
-        'validate_version_code'
+        'validate_version_code',
+        'pandas'
     ],
     extras_require=extras,
 )

@@ -70,13 +70,14 @@ setup(
         'click==7',
         'pyyaml',
         'biolinkml==1.7.6',
+        'linkml==0.0.6',
         'kgx==0.4.0',
         'sphinx',
         'sphinx_rtd_theme',
         'recommonmark',
         'parameterized',
         'validate_version_code',
-        'pandas',
+        'pandas'
         
     ],
     extras_require=extras,

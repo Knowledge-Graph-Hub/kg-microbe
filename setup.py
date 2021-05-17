@@ -69,12 +69,15 @@ setup(
         'compress_json',
         'click==7',
         'pyyaml',
+        'biolinkml==1.7.6',
         'kgx==0.4.0',
         'sphinx',
         'sphinx_rtd_theme',
         'recommonmark',
         'parameterized',
-        'validate_version_code'
+        'validate_version_code',
+        'pandas',
+        
     ],
     extras_require=extras,
 )

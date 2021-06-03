@@ -69,7 +69,7 @@ setup(
         'compress_json',
         'click==7.1.2',
         'pyyaml',
-        'linkml>0.0.7',
+        'linkml',
         'bmt',
         'kgx',
         'sphinx',

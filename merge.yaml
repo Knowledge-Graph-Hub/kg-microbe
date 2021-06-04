@@ -61,7 +61,7 @@ merged_graph:
         format: tsv
         filename:
           - data/transformed/ontologies/go_nodes.tsv
-          - data/transformed/ontologies/ncbitaxon_edges.tsv
+          - data/transformed/ontologies/go_edges.tsv
 
   operations:
     - name: kgx.operations.summarize_graph.generate_graph_stats

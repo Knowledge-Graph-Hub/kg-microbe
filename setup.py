@@ -67,36 +67,41 @@ setup(
         'tqdm',
         'wget',
         'compress_json',
-        'click==7.1.2',
+        'click',
         'pyyaml',
-        'linkml',
-        'bmt',
         'kgx',
         'sphinx',
         'sphinx_rtd_theme',
         'recommonmark',
         'parameterized',
         'validate_version_code',
-        'pandas'
+        'pandas',
+        'networkx',
         # Extra packages added
-        # 'six',
-        # 'ordered-set',
-        # 'requests',
+        'six', # needed by rdflib
+        'ordered-set', #needed by kgx
+        'requests', # needed by kgx
         # 'stringcase',
         # 'rdflib',
-        # 'ShExJSG',
-        # 'jsonasobj==1.2.1', #deprecated
-        # 'prefixcommons',
+        'ShExJSG', # needed by linkml-runtime
+        'jsonasobj==1.2.1', #deprecated # needed by kgx
+        'prefixcommons', # needed by kgx
         # 'pyshex',
         # 'antlr4-python3-runtime',
-        # 'packaging==20.8',
-        # 'cachetools==4.2.0',
-        # 'deprecation==2.1.0',
-        # 'networkx==2.5',
+        'packaging', #needed by deprecation
+        'cachetools', # needed by kgx
         # 'pystache==0.5.4',
-        # 'jsonlines==1.2.0',
-        # 'neo4jrestclient==2.1.1',
-        # 'validators==0.18.1'
+        'jsonlines', # needed by kgx
+        'neo4jrestclient', # needed by kgx
+        'validators', # needed by kgx
+        'stringcase', # needed by kgx
+        'linkml_model', # needed by kgx
+        'isodate', # needed by rdflib
+        'deprecated', # needed by linkml-runtime
+        'hbreader', # needed by jsonasobj
+        'bmt', # needed by kgx
+        'jsonstreams', # needed by kgx
+        'ijson', # needed by kgx
     ],
     extras_require=extras,
 )

@@ -73,10 +73,10 @@ class TraitsTransform(Transform):
         """
         sssom_columns = ['subject_label', 'object_id', 'object_label', 'object_match_field', 'match_category']
         chem_sssom = pd.read_csv(self.chemicals_sssom, sep='\t', low_memory=False, comment='#', usecols=sssom_columns)
-        chem_sssom['subject_label'] = chem_sssom['subject_label'].str.replace(r"[\'\",]","")
+        chem_sssom['subject_label'] = chem_sssom['subject_label'].str.replace(r"[\'\",]","",regex=True)
 
         path_sssom = pd.read_csv(self.pathways_sssom, sep='\t', low_memory=False, comment='#', usecols=sssom_columns)
-        path_sssom['subject_label'] = path_sssom['subject_label'].str.replace(r"[\'\",]","").str.replace('_',' ')
+        path_sssom['subject_label'] = path_sssom['subject_label'].str.replace(r"[\'\",]","",regex=True).str.replace('_',' ')
 
         """
         Implement ROBOT 

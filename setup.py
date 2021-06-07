@@ -81,16 +81,11 @@ setup(
         'six', # needed by rdflib
         'ordered-set', #needed by kgx
         'requests', # needed by kgx
-        # 'stringcase',
-        # 'rdflib',
         'ShExJSG', # needed by linkml-runtime
         'jsonasobj==1.2.1', #deprecated # needed by kgx
         'prefixcommons', # needed by kgx
-        # 'pyshex',
-        # 'antlr4-python3-runtime',
         'packaging', #needed by deprecation
         'cachetools', # needed by kgx
-        # 'pystache==0.5.4',
         'jsonlines', # needed by kgx
         'neo4jrestclient', # needed by kgx
         'validators', # needed by kgx

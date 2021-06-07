@@ -2,7 +2,8 @@ import os
 
 from typing import Optional
 
-from kgx.transformer import Transformer
+#from kgx.transformer import Transformer
+from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.transform import Transform
 
@@ -53,29 +54,5 @@ class OntologyTransform(Transform):
         """
 
         print(f"Parsing {data_file}")
-        transformer = Transformer()
-        
-        
-        input_args = {
-            'format': data_file.split('.')[-1],
-            'filename': [data_file],
-            'name': name
-        }
 
-        output_args = {
-            'format': 'tsv',
-            'filename': os.path.join(self.output_dir, name)
-        }
-        
-        transformer.transform(input_args=input_args, output_args=output_args)
-        transformer.save(output_args=output_args)
-    
-        '''transformer = ObographJsonTransformer()
-        compression: Optional[str]
-        if data_file.endswith('.gz'):
-            compression = 'gz'
-        else:
-            compression = None
-        transformer.parse(data_file, compression=compression, provided_by=source)
-        output_transformer = PandasTransformer(transformer.graph)
-        output_transformer.save(filename=os.path.join(self.output_dir, f'{name}'), output_format='tsv', mode=None)'''
+        transform(inputs=[data_file], input_format='obojson', output= os.path.join(self.output_dir, name), output_format='tsv')

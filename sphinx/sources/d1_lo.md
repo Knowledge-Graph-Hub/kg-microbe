@@ -1,0 +1,29 @@
+
+# Slot: d1_lo
+
+
+
+
+URI: [example:d1_lo](https://w3id.org/exampled1_lo)
+
+
+## Domain and Range
+
+None ->  <sub>OPT</sub> [String](types/String.md)
+
+## Parents
+
+
+## Children
+
+
+## Used by
+
+ * [Example](Example.md)
+
+## Other properties
+
+|  |  |  |
+| --- | --- | --- |
+| **Examples:** | | Example(value='NA', description=None) |
+

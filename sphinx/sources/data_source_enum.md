@@ -4,7 +4,7 @@
 
 
 
-URI: [example:data_source_enum](https://w3id.org/exampledata_source_enum)
+URI: [bacteria-archaea-traits:data_source_enum](https://w3id.org/bacteria-archaea-traitsdata_source_enum)
 
 
 ## Other properties

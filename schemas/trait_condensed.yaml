@@ -1,15 +1,15 @@
-id: https://w3id.org/example
-name: example
-description: example
+id: https://w3id.org/bacteria-archaea-traits
+name: bacteria-archaea-traits
+description: bacteria-archaea-traits
 imports:
 - biolinkml:types
 prefixes:
   biolinkml: https://w3id.org/biolink/biolinkml/
-  example: https://w3id.org/example
-default_prefix: example
+  bacteria-archaea-traits: https://w3id.org/bacteria-archaea-traits
+default_prefix: bacteria-archaea-traits
 types: {}
 classes:
-  example:
+  bacteria-archaea-traits:
     slots:
     - tax_id
     - species_tax_id

@@ -4,7 +4,7 @@
 
 
 
-URI: [example:range_salinity_enum](https://w3id.org/examplerange_salinity_enum)
+URI: [bacteria-archaea-traits:range_salinity_enum](https://w3id.org/bacteria-archaea-traitsrange_salinity_enum)
 
 
 ## Other properties

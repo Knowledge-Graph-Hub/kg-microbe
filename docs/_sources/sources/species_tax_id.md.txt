@@ -4,7 +4,7 @@
 
 
 
-URI: [example:species_tax_id](https://w3id.org/examplespecies_tax_id)
+URI: [bacteria-archaea-traits:species_tax_id](https://w3id.org/bacteria-archaea-traitsspecies_tax_id)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [Integer](types/Integer.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

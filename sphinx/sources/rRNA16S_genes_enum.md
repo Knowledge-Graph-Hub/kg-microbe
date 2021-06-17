@@ -4,7 +4,7 @@
 
 
 
-URI: [example:rRNA16S_genes_enum](https://w3id.org/examplerRNA16S_genes_enum)
+URI: [bacteria-archaea-traits:rRNA16S_genes_enum](https://w3id.org/bacteria-archaea-traitsrRNA16S_genes_enum)
 
 
 ## Other properties

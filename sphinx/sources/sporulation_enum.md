@@ -4,7 +4,7 @@
 
 
 
-URI: [example:sporulation_enum](https://w3id.org/examplesporulation_enum)
+URI: [bacteria-archaea-traits:sporulation_enum](https://w3id.org/bacteria-archaea-traitssporulation_enum)
 
 
 ## Other properties

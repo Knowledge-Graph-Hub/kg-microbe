@@ -4,7 +4,7 @@
 
 
 
-URI: [example:sporulation](https://w3id.org/examplesporulation)
+URI: [bacteria-archaea-traits:sporulation](https://w3id.org/bacteria-archaea-traitssporulation)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [sporulation_enum](sporulation_enum.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

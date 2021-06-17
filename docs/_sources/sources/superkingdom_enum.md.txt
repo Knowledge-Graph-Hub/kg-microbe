@@ -4,7 +4,7 @@
 
 
 
-URI: [example:superkingdom_enum](https://w3id.org/examplesuperkingdom_enum)
+URI: [bacteria-archaea-traits:superkingdom_enum](https://w3id.org/bacteria-archaea-traitssuperkingdom_enum)
 
 
 ## Other properties

@@ -4,7 +4,7 @@
 
 
 
-URI: [example:metabolism_enum](https://w3id.org/examplemetabolism_enum)
+URI: [bacteria-archaea-traits:metabolism_enum](https://w3id.org/bacteria-archaea-traitsmetabolism_enum)
 
 
 ## Other properties

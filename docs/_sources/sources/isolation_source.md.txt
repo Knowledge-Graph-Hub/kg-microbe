@@ -4,7 +4,7 @@
 
 
 
-URI: [example:isolation_source](https://w3id.org/exampleisolation_source)
+URI: [bacteria-archaea-traits:isolation_source](https://w3id.org/bacteria-archaea-traitsisolation_source)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

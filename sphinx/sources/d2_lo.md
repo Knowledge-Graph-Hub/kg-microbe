@@ -4,7 +4,7 @@
 
 
 
-URI: [example:d2_lo](https://w3id.org/exampled2_lo)
+URI: [bacteria-archaea-traits:d2_lo](https://w3id.org/bacteria-archaea-traitsd2_lo)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

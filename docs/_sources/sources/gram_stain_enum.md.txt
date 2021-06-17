@@ -4,7 +4,7 @@
 
 
 
-URI: [example:gram_stain_enum](https://w3id.org/examplegram_stain_enum)
+URI: [bacteria-archaea-traits:gram_stain_enum](https://w3id.org/bacteria-archaea-traitsgram_stain_enum)
 
 
 ## Other properties

@@ -1,13 +1,13 @@
 
-# Class: Example
+# Class: Bacteria-archaea-traits
 
 
 
 
-URI: [example:Example](https://w3id.org/exampleExample)
+URI: [bacteria-archaea-traits:Bacteria-archaea-traits](https://w3id.org/bacteria-archaea-traitsBacteria-archaea-traits)
 
 
-![img](http://yuml.me/diagram/nofunky;dir:TB/class/[Example&#124;tax_id:integer%20%3F;species_tax_id:integer%20%3F;data_source:data_source_enum%20%3F;org_name:string%20%3F;species:string%20%3F;genus:string%20%3F;family:string%20%3F;order:string%20%3F;class:string%20%3F;phylum:string%20%3F;superkingdom:superkingdom_enum%20%3F;gram_stain:gram_stain_enum%20%3F;metabolism:metabolism_enum%20%3F;pathways:string%20%3F;carbon_substrates:string%20%3F;sporulation:sporulation_enum%20%3F;motility:motility_enum%20%3F;range_tmp:range_tmp_enum%20%3F;range_salinity:range_salinity_enum%20%3F;cell_shape:cell_shape_enum%20%3F;isolation_source:string%20%3F;d1_lo:string%20%3F;d1_up:string%20%3F;d2_lo:string%20%3F;d2_up:string%20%3F;doubling_h:string%20%3F;genome_size:string%20%3F;gc_content:string%20%3F;coding_genes:string%20%3F;optimum_tmp:string%20%3F;optimum_ph:string%20%3F;growth_tmp:string%20%3F;rRNA16S_genes:rRNA16S_genes_enum%20%3F;tRNA_genes:string%20%3F;ref_id:string%20%3F])
+![img](http://yuml.me/diagram/nofunky;dir:TB/class/[Bacteria-archaea-traits&#124;tax_id:integer%20%3F;species_tax_id:integer%20%3F;data_source:data_source_enum%20%3F;org_name:string%20%3F;species:string%20%3F;genus:string%20%3F;family:string%20%3F;order:string%20%3F;class:string%20%3F;phylum:string%20%3F;superkingdom:superkingdom_enum%20%3F;gram_stain:gram_stain_enum%20%3F;metabolism:metabolism_enum%20%3F;pathways:string%20%3F;carbon_substrates:string%20%3F;sporulation:sporulation_enum%20%3F;motility:motility_enum%20%3F;range_tmp:range_tmp_enum%20%3F;range_salinity:range_salinity_enum%20%3F;cell_shape:cell_shape_enum%20%3F;isolation_source:string%20%3F;d1_lo:string%20%3F;d1_up:string%20%3F;d2_lo:string%20%3F;d2_up:string%20%3F;doubling_h:string%20%3F;genome_size:string%20%3F;gc_content:string%20%3F;coding_genes:string%20%3F;optimum_tmp:string%20%3F;optimum_ph:string%20%3F;growth_tmp:string%20%3F;rRNA16S_genes:rRNA16S_genes_enum%20%3F;tRNA_genes:string%20%3F;ref_id:string%20%3F])
 
 ## Attributes
 

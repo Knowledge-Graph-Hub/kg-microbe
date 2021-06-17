@@ -4,7 +4,7 @@
 
 
 
-URI: [example:range_tmp_enum](https://w3id.org/examplerange_tmp_enum)
+URI: [bacteria-archaea-traits:range_tmp_enum](https://w3id.org/bacteria-archaea-traitsrange_tmp_enum)
 
 
 ## Other properties

@@ -4,7 +4,7 @@
 
 
 
-URI: [example:carbon_substrates](https://w3id.org/examplecarbon_substrates)
+URI: [bacteria-archaea-traits:carbon_substrates](https://w3id.org/bacteria-archaea-traitscarbon_substrates)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

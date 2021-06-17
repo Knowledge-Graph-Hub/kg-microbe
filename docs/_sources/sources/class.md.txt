@@ -4,7 +4,7 @@
 
 
 
-URI: [example:class](https://w3id.org/exampleclass)
+URI: [bacteria-archaea-traits:class](https://w3id.org/bacteria-archaea-traitsclass)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

@@ -73,6 +73,7 @@ setup(
         'sphinx',
         'sphinx_rtd_theme',
         'recommonmark',
+        'myst-parser',
         'parameterized',
         'validate_version_code',
         'pandas',

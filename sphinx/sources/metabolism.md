@@ -4,7 +4,7 @@
 
 
 
-URI: [example:metabolism](https://w3id.org/examplemetabolism)
+URI: [bacteria-archaea-traits:metabolism](https://w3id.org/bacteria-archaea-traitsmetabolism)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [metabolism_enum](metabolism_enum.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

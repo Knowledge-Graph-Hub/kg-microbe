@@ -4,7 +4,7 @@
 
 
 
-URI: [example:order](https://w3id.org/exampleorder)
+URI: [bacteria-archaea-traits:order](https://w3id.org/bacteria-archaea-traitsorder)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

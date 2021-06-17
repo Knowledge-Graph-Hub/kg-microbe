@@ -4,7 +4,7 @@
 
 
 
-URI: [example:cell_shape_enum](https://w3id.org/examplecell_shape_enum)
+URI: [bacteria-archaea-traits:cell_shape_enum](https://w3id.org/bacteria-archaea-traitscell_shape_enum)
 
 
 ## Other properties

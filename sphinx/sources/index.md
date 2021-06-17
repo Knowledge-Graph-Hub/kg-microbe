@@ -1,13 +1,13 @@
 
-# Example schema
+# Bacteria-Archaea-Traits schema
 
 
-example
+bacteria-archaea-traits
 
 
 ### Classes
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ### Mixins
 

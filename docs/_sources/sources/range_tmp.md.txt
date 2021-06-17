@@ -4,7 +4,7 @@
 
 
 
-URI: [example:range_tmp](https://w3id.org/examplerange_tmp)
+URI: [bacteria-archaea-traits:range_tmp](https://w3id.org/bacteria-archaea-traitsrange_tmp)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [range_tmp_enum](range_tmp_enum.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

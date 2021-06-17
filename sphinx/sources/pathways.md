@@ -4,7 +4,7 @@
 
 
 
-URI: [example:pathways](https://w3id.org/examplepathways)
+URI: [bacteria-archaea-traits:pathways](https://w3id.org/bacteria-archaea-traitspathways)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

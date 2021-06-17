@@ -4,7 +4,7 @@
 
 
 
-URI: [example:motility](https://w3id.org/examplemotility)
+URI: [bacteria-archaea-traits:motility](https://w3id.org/bacteria-archaea-traitsmotility)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [motility_enum](motility_enum.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

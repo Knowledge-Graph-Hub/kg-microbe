@@ -4,7 +4,7 @@
 
 
 
-URI: [example:motility_enum](https://w3id.org/examplemotility_enum)
+URI: [bacteria-archaea-traits:motility_enum](https://w3id.org/bacteria-archaea-traitsmotility_enum)
 
 
 ## Other properties

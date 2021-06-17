@@ -4,7 +4,7 @@
 
 
 
-URI: [example:doubling_h](https://w3id.org/exampledoubling_h)
+URI: [bacteria-archaea-traits:doubling_h](https://w3id.org/bacteria-archaea-traitsdoubling_h)
 
 
 ## Domain and Range
@@ -19,7 +19,7 @@ None ->  <sub>OPT</sub> [String](types/String.md)
 
 ## Used by
 
- * [Example](Example.md)
+ * [Bacteria-archaea-traits](Bacteria-archaea-traits.md)
 
 ## Other properties
 

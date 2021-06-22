@@ -11,6 +11,7 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 
 ## Setup
 
+* Create a python virtual environment (venv, anaconda etc.)
 * `git clone https://github.com/Knowledge-Graph-Hub/kg-microbe`
 * `cd kg-microbe`
 * `pip install -r requirements.txt`

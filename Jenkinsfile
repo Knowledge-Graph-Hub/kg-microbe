@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    
+    agent {
+        docker {
+            reuseNode false
+            image 'justaddcoffee/ubuntu20-python-3-8-5-dev:2'
+        }
+    }
 
     triggers{
         cron('H H 15 1-12 *')

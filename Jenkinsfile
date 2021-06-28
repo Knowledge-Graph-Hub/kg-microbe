@@ -38,6 +38,7 @@ pipeline {
             steps {
                 // print some info
                 dir('./gitrepo') {
+                    sh 'echo hello world'
                     //sh 'env > env.txt'
                     //sh 'echo $BRANCH_NAME > branch.txt'
                     //sh 'echo "$BRANCH_NAME"'
@@ -45,7 +46,7 @@ pipeline {
                     //sh 'cat branch.txt'
                     //sh "echo $BUILDSTARTDATE > dow.txt"
                     //sh "echo $BUILDSTARTDATE"
-                    sh "python3.7 --version"
+                    //sh "python3.7 --version"
                 }
             }
         }

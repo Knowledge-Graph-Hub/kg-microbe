@@ -36,18 +36,16 @@ pipeline {
 
         stage('Initialize') {
             steps {
-                // Start preparing environment.
-                dir('./gitrepo'){
-                    parallel(
-                            "Report": {
-                                sh 'env > env.txt'
-                                sh 'echo $BRANCH_NAME > branch.txt'
-                                sh 'echo "$BRANCH_NAME"'
-                                sh 'cat env.txt'
-                                sh 'cat branch.txt'
-                                sh "echo $BUILDSTARTDATE > dow.txt"
-                                sh "echo $BUILDSTARTDATE"
-                            })
+                // print some info
+                dir('./gitrepo') {
+                    sh 'env > env.txt'
+                    sh 'echo $BRANCH_NAME > branch.txt'
+                    sh 'echo "$BRANCH_NAME"'
+                    sh 'cat env.txt'
+                    sh 'cat branch.txt'
+                    sh "echo $BUILDSTARTDATE > dow.txt"
+                    sh "echo $BUILDSTARTDATE"
+                    sh "python3.7 --version"
                 }
             }
         }

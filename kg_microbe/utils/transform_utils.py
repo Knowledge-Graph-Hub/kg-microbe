@@ -80,7 +80,7 @@ def write_node_edge_item(fh: Any, header: List, data: List, sep: str = '\t'):
     if len(header) != len(data):
         raise Exception('Header and data are not the same length.')
     try:
-        #print(data)
+        print(data)
         fh.write(sep.join(data) + "\n")
     except IOError:
         logging.warning("Can't write data for {}".format(data))

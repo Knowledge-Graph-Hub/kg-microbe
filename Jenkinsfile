@@ -73,7 +73,7 @@ pipeline {
                             url: 'https://github.com/Knowledge-Graph-Hub/kg-microbe',
                             branch: env.BRANCH_NAME
                     )
-                    sh '/usr/bin/python3.9 -m venv venv'
+                    sh '/usr/bin/python3.7 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'
                     sh './venv/bin/pip install .'
@@ -86,7 +86,7 @@ pipeline {
                 dir('./gitrepo') {
                     script {
                         def run_py_dl = sh(
-                            script: '. venv/bin/activate && python3.9 run.py download', returnStatus: true
+                            script: '. venv/bin/activate && python3.7 run.py download', returnStatus: true
                         )
                         if (run_py_dl == 0) {
                             if (env.BRANCH_NAME != 'master') { // upload raw to s3 if we're on correct branch
@@ -112,7 +112,7 @@ pipeline {
             steps {
                 dir('./gitrepo') {
                     sh 'env'
-                    sh '. venv/bin/activate && env && python3.9 run.py transform'
+                    sh '. venv/bin/activate && env && python3.7 run.py transform'
                 }
             }
         }
@@ -120,7 +120,7 @@ pipeline {
         stage('Merge') {
             steps {
                 dir('./gitrepo') {
-                    sh '. venv/bin/activate && python3.9 run.py merge -y merge.yaml'
+                    sh '. venv/bin/activate && python3.7 run.py merge -y merge.yaml'
                     sh 'env'
                     sh 'cp merged-kg_stats.yaml merged-kg_stats_$BUILDSTARTDATE.yaml'
                     sh 'tar -rvf data/merged/merged-kg.tar merged-kg_stats_$BUILDSTARTDATE.yaml'
@@ -208,7 +208,7 @@ pipeline {
                                 //
                                 // put $S3PROJECTDIR/$BUILDSTARTDATE/ and $S3PROJECTDIR/current in s3 bucket
                                 //
-                                sh '. venv/bin/activate && python3.9 ./go-site/scripts/directory_indexer.py -v --inject ./go-site/scripts/directory-index-template.html --directory $S3PROJECTDIR --prefix https://kg-hub.berkeleybop.io/$S3PROJECTDIR/ -x -u'
+                                sh '. venv/bin/activate && python3.7 ./go-site/scripts/directory_indexer.py -v --inject ./go-site/scripts/directory-index-template.html --directory $S3PROJECTDIR --prefix https://kg-hub.berkeleybop.io/$S3PROJECTDIR/ -x -u'
                                 // for existing builds on s3, we just made an index.html that will clobber the existing (correct) s3 index.html
                                 // here we download the existing index.html and clobber the local one instead
                                 sh "for dir in `s3cmd ls s3://kg-hub-public-data/kg-microbe/ | grep '\\/\$' | awk '{print \$NF}' | grep -w -v -E 'raw|current' | xargs -n1 basename`; do s3cmd get --force --continue s3://kg-hub-public-data/kg-microbe/\$dir/index.html $S3PROJECTDIR/\$dir/ || true; done"
@@ -218,13 +218,13 @@ pipeline {
                                 // Build the top level index.html
                                 // "External" packages required to run these scripts.
                                 sh '. venv/bin/activate && ./venv/bin/pip install pystache boto3'
-                                sh '. venv/bin/activate && python3.9 ./go-site/scripts/bucket-indexer.py --credentials $AWS_JSON --bucket kg-hub-public-data --inject ./go-site/scripts/directory-index-template.html --prefix https://kg-hub.berkeleybop.io/ > top-level-index.html'
+                                sh '. venv/bin/activate && python3.7 ./go-site/scripts/bucket-indexer.py --credentials $AWS_JSON --bucket kg-hub-public-data --inject ./go-site/scripts/directory-index-template.html --prefix https://kg-hub.berkeleybop.io/ > top-level-index.html'
                                 sh 's3cmd -c $S3CMD_CFG put --acl-public --mime-type=text/html --cf-invalidate top-level-index.html s3://kg-hub-public-data/index.html'
 
                                 // Invalidate the CDN now that the new files are up.
                                 sh '. venv/bin/activate && ./venv/bin/pip install awscli'
                                 sh 'echo "[preview]" > ./awscli_config.txt && echo "cloudfront=true" >> ./awscli_config.txt'
-                                sh '. venv/bin/activate && AWS_CONFIG_FILE=./awscli_config.txt python3.9 ./venv/bin/aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
+                                sh '. venv/bin/activate && AWS_CONFIG_FILE=./awscli_config.txt python3.7 ./venv/bin/aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
 
                                 // Should now appear at:
                                 // https://kg-hub.berkeleybop.io/[artifact name]

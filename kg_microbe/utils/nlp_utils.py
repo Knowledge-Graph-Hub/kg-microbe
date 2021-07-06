@@ -59,7 +59,7 @@ def create_settings_file(path: str, ont: str = 'ALL') -> None:
         'iter-mode' : 'collection',
         'article-format' : 'txt_tsv',
         'export_format': 'tsv',
-        'termlist_stopwords': os.path.join(path,'stopwords','stopwords.txt')
+        'termlist_stopwords': os.path.join(path,'stopwords','stopWords.txt')
 
     }
 

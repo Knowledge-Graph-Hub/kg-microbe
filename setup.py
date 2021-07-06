@@ -67,12 +67,14 @@ setup(
         'tqdm',
         'wget',
         'compress_json',
-        'click',
+        'click~=7.0', # Version pinned due to KGX and linkML
         'pyyaml',
         'kgx',
-        'sphinx',
-        'sphinx_rtd_theme',
-        'recommonmark',
+        # == ONLY to create or edit documentation ====
+        #'sphinx',
+        #'sphinx_rtd_theme',
+        #'recommonmark',
+        # ===========================================
         'parameterized',
         'validate_version_code',
         'pandas',

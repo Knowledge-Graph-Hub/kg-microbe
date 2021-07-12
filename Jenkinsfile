@@ -34,37 +34,37 @@ pipeline {
             }
         }
 
-        stage('Initialize') {
-            steps {
-                // Start preparing environment.
-                parallel(
-                        "Report": {
-                            sh 'env > env.txt'
-                            sh 'echo $BRANCH_NAME > branch.txt'
-                            sh 'echo "$BRANCH_NAME"'
-                            sh 'cat env.txt'
-                            sh 'cat branch.txt'
-                            sh "echo $BUILDSTARTDATE > dow.txt"
-                            sh "echo $BUILDSTARTDATE"
-                        })
-            }
-        }
         // stage('Initialize') {
         //     steps {
-        //         // print some info
-        //         dir('./gitrepo') {
-        //             sh 'echo hello world'
-        //             //sh 'env > env.txt'
-        //             //sh 'echo $BRANCH_NAME > branch.txt'
-        //             //sh 'echo "$BRANCH_NAME"'
-        //             //sh 'cat env.txt'
-        //             //sh 'cat branch.txt'
-        //             //sh "echo $BUILDSTARTDATE > dow.txt"
-        //             //sh "echo $BUILDSTARTDATE"
-        //             //sh "python3.7 --version"
-        //         }
+        //         // Start preparing environment.
+        //         parallel(
+        //                 "Report": {
+        //                     sh 'env > env.txt'
+        //                     sh 'echo $BRANCH_NAME > branch.txt'
+        //                     sh 'echo "$BRANCH_NAME"'
+        //                     sh 'cat env.txt'
+        //                     sh 'cat branch.txt'
+        //                     sh "echo $BUILDSTARTDATE > dow.txt"
+        //                     sh "echo $BUILDSTARTDATE"
+        //                 })
         //     }
         // }
+        stage('Initialize') {
+            steps {
+                // print some info
+                dir('./gitrepo') {
+                    sh 'echo hello world'
+                    //sh 'env > env.txt'
+                    //sh 'echo $BRANCH_NAME > branch.txt'
+                    //sh 'echo "$BRANCH_NAME"'
+                    //sh 'cat env.txt'
+                    //sh 'cat branch.txt'
+                    //sh "echo $BUILDSTARTDATE > dow.txt"
+                    //sh "echo $BUILDSTARTDATE"
+                    //sh "python3.7 --version"
+                }
+            }
+        }
 
         stage('Build kg_microbe') {
             steps {

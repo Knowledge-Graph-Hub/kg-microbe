@@ -11,14 +11,14 @@ pipeline {
         cron('H H 15 1-12 *')
     }
 
-    // environment {
-    //     BUILDSTARTDATE = sh(script: "echo `date +%Y%m%d`", returnStdout: true).trim()
-    //     S3PROJECTDIR = 'kg-microbe' // no trailing slash
+    environment {
+        BUILDSTARTDATE = sh(script: "echo `date +%Y%m%d`", returnStdout: true).trim()
+        S3PROJECTDIR = 'kg-microbe' // no trailing slash
 
-    //     // Distribution ID for the AWS CloudFront for this bucket
-    //     // used solely for invalidations
-    //     AWS_CLOUDFRONT_DISTRIBUTION_ID = 'EUVSWXZQBXCFP'
-    // }
+        // Distribution ID for the AWS CloudFront for this bucket
+        // used solely for invalidations
+        AWS_CLOUDFRONT_DISTRIBUTION_ID = 'EUVSWXZQBXCFP'
+    }
 
     options {
         timestamps()
@@ -29,7 +29,7 @@ pipeline {
         stage('Ready and clean') {
             steps {
                 // Give us a minute to cancel if we want.
-                // sleep time: 1, unit: 'MINUTES'
+                sleep time: 1, unit: 'MINUTES'
                 // cleanWs()
                 sh 'env'
             }
@@ -54,14 +54,14 @@ pipeline {
             steps {
                 // print some info
                 dir('./gitrepo') {
-                    sh 'echo hello world'
+                    // sh 'echo hello world'
                     sh 'env > env.txt'
-                    // sh 'echo $BRANCH_NAME > branch.txt'
-                    // sh 'echo "$BRANCH_NAME"'
+                    sh 'echo $BRANCH_NAME > branch.txt'
+                    sh 'echo "$BRANCH_NAME"'
                     sh 'cat env.txt'
                     sh 'cat branch.txt'
-                    // sh "echo $BUILDSTARTDATE > dow.txt"
-                    // sh "echo $BUILDSTARTDATE"
+                    sh "echo $BUILDSTARTDATE > dow.txt"
+                    sh "echo $BUILDSTARTDATE"
                     sh "python3 --version"
                 }
             }

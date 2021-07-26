@@ -7,30 +7,30 @@ pipeline {
         }
     }
 
-    triggers{
-        cron('H H 15 1-12 *')
-    }
+    // triggers{
+    //     cron('H H 15 1-12 *')
+    // }
 
-    environment {
-        BUILDSTARTDATE = sh(script: "echo `date +%Y%m%d`", returnStdout: true).trim()
-        S3PROJECTDIR = 'kg-microbe' // no trailing slash
+    // environment {
+    //     BUILDSTARTDATE = sh(script: "echo `date +%Y%m%d`", returnStdout: true).trim()
+    //     S3PROJECTDIR = 'kg-microbe' // no trailing slash
 
-        // Distribution ID for the AWS CloudFront for this bucket
-        // used solely for invalidations
-        AWS_CLOUDFRONT_DISTRIBUTION_ID = 'EUVSWXZQBXCFP'
-    }
+    //     // Distribution ID for the AWS CloudFront for this bucket
+    //     // used solely for invalidations
+    //     AWS_CLOUDFRONT_DISTRIBUTION_ID = 'EUVSWXZQBXCFP'
+    // }
 
-    options {
-        timestamps()
-    }
+    // options {
+    //     timestamps()
+    // }
     stages {
         // Very first: pause for a minute to give a chance to
         // cancel and clean the workspace before use.
         stage('Ready and clean') {
             steps {
                 // Give us a minute to cancel if we want.
-                sleep time: 1, unit: 'MINUTES'
-                cleanWs()
+                // sleep time: 1, unit: 'MINUTES'
+                // cleanWs()
                 sh 'env'
             }
         }

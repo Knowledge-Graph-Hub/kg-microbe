@@ -62,7 +62,7 @@ pipeline {
                     sh 'cat branch.txt'
                     sh "echo $BUILDSTARTDATE > dow.txt"
                     sh "echo $BUILDSTARTDATE"
-                    sh "python --version"
+                    sh "python3 --version"
                 }
             }
         }

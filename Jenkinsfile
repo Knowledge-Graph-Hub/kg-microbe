@@ -7,9 +7,9 @@ pipeline {
         }
     }
 
-    // triggers{
-    //     cron('H H 15 1-12 *')
-    // }
+    triggers{
+        cron('H H 15 1-12 *')
+    }
 
     // environment {
     //     BUILDSTARTDATE = sh(script: "echo `date +%Y%m%d`", returnStdout: true).trim()
@@ -20,9 +20,9 @@ pipeline {
     //     AWS_CLOUDFRONT_DISTRIBUTION_ID = 'EUVSWXZQBXCFP'
     // }
 
-    // options {
-    //     timestamps()
-    // }
+    options {
+        timestamps()
+    }
     stages {
         // Very first: pause for a minute to give a chance to
         // cancel and clean the workspace before use.
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 // Give us a minute to cancel if we want.
                 // sleep time: 1, unit: 'MINUTES'
-                // cleanWs()
+                cleanWs()
                 sh 'env'
             }
         }

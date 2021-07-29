@@ -63,7 +63,7 @@ pipeline {
                     // sh '. venv/bin/activate'
                     // sh './venv/bin/pip install -r requirements.txt'
                     // sh './venv/bin/pip install .'
-                    sh 'apt-get install pip'
+                    sh 'sudo apt-get install pip'
                     sh 'pip install -r requirements.txt'
                     sh 'pip install .'
                 }

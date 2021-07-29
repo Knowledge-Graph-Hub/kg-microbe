@@ -48,7 +48,6 @@ pipeline {
                     sh "echo $BUILDSTARTDATE > dow.txt"
                     sh "echo $BUILDSTARTDATE"
                     sh "python3 --version"
-                    sh "whoami"
                 }
             }
         }

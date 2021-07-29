@@ -63,9 +63,11 @@ pipeline {
                     // sh '. venv/bin/activate'
                     // sh './venv/bin/pip install -r requirements.txt'
                     // sh './venv/bin/pip install .'
-                    sh 'pip --version'
-                    sh 'pip install -r requirements.txt'
-                    sh 'pip install .'
+                    withEnv(["HOME=${env.WORKSPACE}"]){
+                        sh 'pip install --user -r requirements.txt'
+                        sh 'pip install .'
+                    }
+                    
                 }
             }
         }

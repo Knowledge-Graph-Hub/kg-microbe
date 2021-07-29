@@ -29,7 +29,7 @@ pipeline {
         stage('Ready and clean') {
             steps {
                 // Give us a minute to cancel if we want.
-                sleep time: 15, unit: 'SECONDS'
+                sleep time: 5, unit: 'SECONDS'
                 // cleanWs()
                 sh 'env'
             }
@@ -63,7 +63,7 @@ pipeline {
                     // sh '. venv/bin/activate'
                     // sh './venv/bin/pip install -r requirements.txt'
                     // sh './venv/bin/pip install .'
-                    sh 'sudo apt-get install pip'
+                    sh 'pip --version'
                     sh 'pip install -r requirements.txt'
                     sh 'pip install .'
                 }

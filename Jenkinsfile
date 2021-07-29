@@ -32,7 +32,6 @@ pipeline {
                 sleep time: 5, unit: 'SECONDS'
                 // cleanWs()
                 sh 'env'
-                sh 'docker pull kghub/ubuntu20-py-38'
             }
         }
 

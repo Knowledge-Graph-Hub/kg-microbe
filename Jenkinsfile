@@ -30,7 +30,7 @@ pipeline {
             steps {
                 // Give us a minute to cancel if we want.
                 sleep time: 5, unit: 'SECONDS'
-                // cleanWs()
+                cleanWs()
                 sh 'env'
             }
         }
@@ -60,6 +60,7 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
+                    sh 'docker pull kghub/ubuntu20-py-38'
                     sh '/usr/bin/python3.8 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'

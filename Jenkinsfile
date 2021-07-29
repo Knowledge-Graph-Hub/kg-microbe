@@ -63,8 +63,8 @@ pipeline {
                     // sh '. venv/bin/activate'
                     // sh './venv/bin/pip install -r requirements.txt'
                     // sh './venv/bin/pip install .'
-                    sh 'pip install -r requirements.txt'
-                    sh 'pip install .'
+                    sh '/usr/bin/pip install -r requirements.txt'
+                    sh '/usr/bin/pip install .'
                 }
             }
         }

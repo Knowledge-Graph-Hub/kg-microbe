@@ -74,7 +74,7 @@ pipeline {
                             url: 'https://github.com/Knowledge-Graph-Hub/kg-microbe',
                             branch: env.BRANCH_NAME
                     )
-                    sh 'apt install python3.8-venv'
+                    sh 'sudo apt install python3.8-venv'
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'

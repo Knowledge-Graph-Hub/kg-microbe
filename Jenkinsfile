@@ -59,10 +59,12 @@ pipeline {
                             url: 'https://github.com/Knowledge-Graph-Hub/kg-microbe',
                             branch: env.BRANCH_NAME
                     )
-                    sh '/usr/bin/python3 -m venv venv --without-pip --system-site-packages'
-                    sh '. venv/bin/activate'
-                    sh './venv/bin/pip install -r requirements.txt'
-                    sh './venv/bin/pip install .'
+                    // sh '/usr/bin/python3 -m venv venv'
+                    // sh '. venv/bin/activate'
+                    // sh './venv/bin/pip install -r requirements.txt'
+                    // sh './venv/bin/pip install .'
+                    sh 'pip install -r requirements.txt'
+                    sh 'pip install .'
                 }
             }
         }
@@ -137,7 +139,8 @@ pipeline {
                         // code for building s3 index files
                         sh 'git clone https://github.com/justaddcoffee/go-site.git'
                         // fail early if there's going to be a problem installing these
-                        sh '. venv/bin/activate && ./venv/bin/pip install awscli pystache boto3'
+                        // sh '. venv/bin/activate && ./venv/bin/pip install awscli pystache boto3'
+                        sh 'pip install awscli pystache boto3'
 
                         // make sure we aren't going to clobber existing data
                         withCredentials([file(credentialsId: 's3cmd_kg_hub_push_configuration', variable: 'S3CMD_CFG')]) {
@@ -203,14 +206,19 @@ pipeline {
 
                                 // Build the top level index.html
                                 // "External" packages required to run these scripts.
-                                sh '. venv/bin/activate && ./venv/bin/pip install pystache boto3'
-                                sh '. venv/bin/activate && python3 ./go-site/scripts/bucket-indexer.py --credentials $AWS_JSON --bucket kg-hub-public-data --inject ./go-site/scripts/directory-index-template.html --prefix https://kg-hub.berkeleybop.io/ > top-level-index.html'
-                                sh '. venv/bin/activate && s3cmd -c $S3CMD_CFG put --acl-public --mime-type=text/html --cf-invalidate top-level-index.html s3://kg-hub-public-data/index.html'
+                                // sh '. venv/bin/activate && ./venv/bin/pip install pystache boto3'
+                                sh 'pip install pystache boto3'
+                                // sh '. venv/bin/activate && python3 ./go-site/scripts/bucket-indexer.py --credentials $AWS_JSON --bucket kg-hub-public-data --inject ./go-site/scripts/directory-index-template.html --prefix https://kg-hub.berkeleybop.io/ > top-level-index.html'
+                                sh 'python3 ./go-site/scripts/bucket-indexer.py --credentials $AWS_JSON --bucket kg-hub-public-data --inject ./go-site/scripts/directory-index-template.html --prefix https://kg-hub.berkeleybop.io/ > top-level-index.html'
+                                // sh '. venv/bin/activate && s3cmd -c $S3CMD_CFG put --acl-public --mime-type=text/html --cf-invalidate top-level-index.html s3://kg-hub-public-data/index.html'
+                                sh 's3cmd -c $S3CMD_CFG put --acl-public --mime-type=text/html --cf-invalidate top-level-index.html s3://kg-hub-public-data/index.html'
 
                                 // Invalidate the CDN now that the new files are up.
-                                sh '. venv/bin/activate && ./venv/bin/pip install awscli'
+                                // sh '. venv/bin/activate && ./venv/bin/pip install awscli'
+                                sh 'pip install awscli'
                                 sh 'echo "[preview]" > ./awscli_config.txt && echo "cloudfront=true" >> ./awscli_config.txt'
-                                sh '. venv/bin/activate && AWS_CONFIG_FILE=./awscli_config.txt python3 ./venv/bin/aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
+                                // sh '. venv/bin/activate && AWS_CONFIG_FILE=./awscli_config.txt python3 ./venv/bin/aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
+                                sh 'AWS_CONFIG_FILE=./awscli_config.txt python3 aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
 
                                 // Should now appear at:
                                 // https://kg-hub.berkeleybop.io/[artifact name]

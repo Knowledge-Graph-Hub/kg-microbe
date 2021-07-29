@@ -64,7 +64,6 @@ pipeline {
                     // sh './venv/bin/pip install -r requirements.txt'
                     // sh './venv/bin/pip install .'
                     
-                    sh 'pip --version'
                     sh 'python3 -m pip install -r requirements.txt'
                     sh 'python3 -m pip install .'
                 }

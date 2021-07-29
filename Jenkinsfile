@@ -63,8 +63,9 @@ pipeline {
                     // sh '. venv/bin/activate'
                     // sh './venv/bin/pip install -r requirements.txt'
                     // sh './venv/bin/pip install .'
-                    sh '/usr/bin/pip install -r requirements.txt'
-                    sh '/usr/bin/pip install .'
+                    sh 'python3 --version'
+                    sh 'pip install -r requirements.txt'
+                    sh 'pip install .'
                 }
             }
         }

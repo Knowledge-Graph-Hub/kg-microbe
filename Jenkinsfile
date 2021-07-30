@@ -60,6 +60,7 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
+                    sh 'less /etc/passwd'
                     sh 'whoami'
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'

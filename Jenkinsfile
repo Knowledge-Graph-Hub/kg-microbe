@@ -58,6 +58,7 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
+                    sh 'apt list --installed '
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'

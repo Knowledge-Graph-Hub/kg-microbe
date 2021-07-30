@@ -62,7 +62,7 @@ pipeline {
                     
                     sh 'export LC_ALL="en_US.UTF-8"'
                     sh 'export LC_CTYPE="en_US.UTF-8"'
-                    sh 'sudo dpkg-reconfigure locales'
+                    sh 'dpkg-reconfigure locales'
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'

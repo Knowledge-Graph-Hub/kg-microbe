@@ -58,7 +58,6 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
-                    sh "strace whoami 2>&1 | grep -E '/etc|/lib'"
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'

@@ -30,8 +30,6 @@ pipeline {
             steps {
                 // Give us a minute to cancel if we want.
                 sleep time: 5, unit: 'SECONDS'
-                // cleanWs()
-                sh 'env'
             }
         }
 
@@ -60,7 +58,6 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
-                    sh 'less /etc/passwd'
                     sh 'whoami'
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'

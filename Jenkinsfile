@@ -60,10 +60,7 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
-                    sh 'export LC_ALL="en_US.UTF-8"'
-                    sh 'export LC_CTYPE="en_US.UTF-8"'
-                    sh 'dpkg-reconfigure locales'
-                    sh '/usr/bin/python3 -m venv venv'
+                    sh '/usr/bin/python3 -m venv venv --without-pip'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'
                     sh './venv/bin/pip install .'

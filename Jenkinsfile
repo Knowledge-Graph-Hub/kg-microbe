@@ -3,7 +3,7 @@ pipeline {
     agent {
         docker {
             reuseNode false
-            image 'ubuntu20.04-py3:v1'
+            image 'kghub/ubuntu20.04-py3:v1'
         }
     }
 

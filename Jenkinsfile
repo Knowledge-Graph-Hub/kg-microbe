@@ -60,7 +60,7 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
-                    sh 'which python'
+                    sh 'which python3'
                     sh '/usr/bin/python3.8 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'

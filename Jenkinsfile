@@ -22,14 +22,14 @@ pipeline {
 
     options {
         timestamps()
-        timeout(time:1, unit: "HOURS")
+        // timeout(time:1, unit: "HOURS")
     }
     stages {
         // Very first: pause for a minute to give a chance to
         // cancel and clean the workspace before use.
         stage('Ready and clean') {
             steps {
-                // Give us a minute to cancel if we want.
+                // Give us a time to cancel if we want.
                 sleep time: 5, unit: 'SECONDS'
             }
         }
@@ -38,14 +38,14 @@ pipeline {
             steps {
                 // print some info
                 dir('./gitrepo') {
-                    // sh 'echo hello world'
-                    sh 'env > env.txt'
-                    sh 'echo $BRANCH_NAME > branch.txt'
-                    sh 'echo "$BRANCH_NAME"'
-                    sh 'cat env.txt'
-                    sh 'cat branch.txt'
-                    sh "echo $BUILDSTARTDATE > dow.txt"
-                    sh "echo $BUILDSTARTDATE"
+                    sh 'echo hello world'
+                    // sh 'env > env.txt'
+                    // sh 'echo $BRANCH_NAME > branch.txt'
+                    // sh 'echo "$BRANCH_NAME"'
+                    // sh 'cat env.txt'
+                    // sh 'cat branch.txt'
+                    // sh "echo $BUILDSTARTDATE > dow.txt"
+                    // sh "echo $BUILDSTARTDATE"
                     sh "python3 --version"
                 }
             }

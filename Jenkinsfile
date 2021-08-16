@@ -39,6 +39,8 @@ pipeline {
                 // print some info
                 dir('./gitrepo') {
                     sh 'echo hello world'
+                    sh 'echo env'
+                    sh 'echo $HOME'
                     // sh 'env > env.txt'
                     // sh 'echo $BRANCH_NAME > branch.txt'
                     // sh 'echo "$BRANCH_NAME"'

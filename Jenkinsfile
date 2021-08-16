@@ -22,6 +22,7 @@ pipeline {
 
     options {
         timestamps()
+        timeout(time:1, unit: "HOURS")
     }
     stages {
         // Very first: pause for a minute to give a chance to

@@ -61,8 +61,6 @@ pipeline {
                             branch: env.BRANCH_NAME
                     )
                     
-                    sh 'less/etc/passwd'
-                    sh 'apt list --installed '
                     sh '/usr/bin/python3 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install -r requirements.txt'
@@ -231,5 +229,24 @@ pipeline {
         //     }
         // }
 
+    }
+    post {
+        always {
+            echo 'In always'
+            echo 'Cleaning workspace...'
+            cleanWs()
+        }
+        success {
+            echo 'I succeeded!'
+        }
+        unstable {
+            echo 'I am unstable :/'
+        }
+        failure {
+            echo 'I failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
     }
 }

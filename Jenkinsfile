@@ -3,7 +3,7 @@ pipeline {
     agent {
         docker {
             reuseNode false
-            image 'kghub/ubuntu20.04-py3:latest'
+            image 'justaddcoffee/ubuntu20-python-3-8-5-dev:4'
         }
     }
 
@@ -38,16 +38,16 @@ pipeline {
             steps {
                 // print some info
                 dir('./gitrepo') {
-                    sh 'echo hello world'
-                    sh 'echo env'
-                    sh 'echo $HOME'
-                    // sh 'env > env.txt'
-                    // sh 'echo $BRANCH_NAME > branch.txt'
-                    // sh 'echo "$BRANCH_NAME"'
-                    // sh 'cat env.txt'
-                    // sh 'cat branch.txt'
-                    // sh "echo $BUILDSTARTDATE > dow.txt"
-                    // sh "echo $BUILDSTARTDATE"
+                    // sh 'echo hello world'
+                    // sh 'echo env'
+                    // sh 'echo $HOME'
+                    sh 'env > env.txt'
+                    sh 'echo $BRANCH_NAME > branch.txt'
+                    sh 'echo "$BRANCH_NAME"'
+                    sh 'cat env.txt'
+                    sh 'cat branch.txt'
+                    sh "echo $BUILDSTARTDATE > dow.txt"
+                    sh "echo $BUILDSTARTDATE"
                     sh "python3 --version"
                 }
             }

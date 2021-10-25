@@ -64,6 +64,11 @@ setup(
     tests_require=test_deps,
     # add package dependencies
     install_requires=[
+	'json_flattener',
+	'rdflib_pyld_compat',
+	'pyld',
+	'jsonasobj2',
+	'rdflib',
         'tqdm',
         'wget',
         'compress_json',

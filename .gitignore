@@ -2,8 +2,7 @@
 dist
 data/raw/*
 data/transformed/*
-data/nlp/input/*
-data/nlp/output/*
+data/nlp/output/*.tsv
 data/nlp/terms/*
 data/merged/*
 __pycache__

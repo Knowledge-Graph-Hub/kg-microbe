@@ -30,7 +30,7 @@ def convert_to_json(path: str, ont: str):
     """
     This method converts owl to JSON using ROBOT and the subprocess library
 
-    :param path: Path to ROBOT files
+    :param path: Path to ROBOT and the input OWL files.
     :param ont: Ontology
     :return: None
     """

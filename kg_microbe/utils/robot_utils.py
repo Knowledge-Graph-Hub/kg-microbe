@@ -2,29 +2,31 @@
 # -*- coding: utf-8 -*-
 
 import os
-import subprocess # Source: https://docs.python.org/2/library/subprocess.html#popen-constructor
+import subprocess  # Source: https://docs.python.org/2/library/subprocess.html#popen-constructor
 
-def initialize_robot(path:str) -> list:
-    '''
+
+def initialize_robot(path: str) -> list:
+    """
     This initializes ROBOT with necessary configuration.
 
     :param path: Path to ROBOT files.
     :return: A list consisting of robot shell script name and environment variables.
-    '''
-     # Declare variables
-    robot_file = os.path.join(path, 'robot')
+    """
+    # Declare variables
+    robot_file = os.path.join(path, "robot")
 
-     # Declare environment variables
+    # Declare environment variables
     env = dict(os.environ)
-    #(JDK compatibility issue: https://stackoverflow.com/questions/49962437/unrecognized-vm-option-useparnewgc-error-could-not-create-the-java-virtual)
-    #env['ROBOT_JAVA_ARGS'] = '-Xmx8g -XX:+UseConcMarkSweepGC' # for JDK 9 and older 
-    env['ROBOT_JAVA_ARGS'] = '-Xmx12g -XX:+UseG1GC' # For JDK 10 and over
-    env['PATH'] = os.environ['PATH']
-    env['PATH'] += os.pathsep + path
+    # (JDK compatibility issue: https://stackoverflow.com/questions/49962437/unrecognized-vm-option-useparnewgc-error-could-not-create-the-java-virtual)
+    # env['ROBOT_JAVA_ARGS'] = '-Xmx8g -XX:+UseConcMarkSweepGC' # for JDK 9 and older
+    env["ROBOT_JAVA_ARGS"] = "-Xmx12g -XX:+UseG1GC"  # For JDK 10 and over
+    env["PATH"] = os.environ["PATH"]
+    env["PATH"] += os.pathsep + path
 
     return [robot_file, env]
 
-def convert_to_json(path:str, ont:str):
+
+def convert_to_json(path: str, ont: str):
     """
     This method converts owl to JSON using ROBOT and the subprocess library
 
@@ -32,22 +34,30 @@ def convert_to_json(path:str, ont:str):
     :param ont: Ontology
     :return: None
     """
-   
+
     robot_file, env = initialize_robot(path)
-    input_owl = os.path.join(path, ont.lower()+'.owl')
-    output_json = os.path.join(path, ont.lower()+'.json')
+    input_owl = os.path.join(path, ont.lower() + ".owl")
+    output_json = os.path.join(path, ont.lower() + ".json")
     if not os.path.isfile(output_json):
         # Setup the arguments for ROBOT through subprocess
-        call = ['bash', robot_file, 'convert', \
-                                    '--input', input_owl, \
-                                    '--output', output_json, \
-                                    '-f', 'json']
+        call = [
+            "bash",
+            robot_file,
+            "convert",
+            "--input",
+            input_owl,
+            "--output",
+            output_json,
+            "-f",
+            "json",
+        ]
 
         subprocess.call(call, env=env)
-    
+
     return None
 
-def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
+
+def extract_convert_to_json(path: str, ont_name: str, terms: str, mode: str):
     """
     This method extracts all children of provided CURIE.
 
@@ -70,29 +80,49 @@ def extract_convert_to_json(path:str, ont_name:str, terms:str, mode:str):
     """
 
     robot_file, env = initialize_robot(path)
-    input_owl = os.path.join(path, ont_name.lower()+'.owl')
-    output_json = os.path.join(path, ont_name.lower()+'.json')
-    output_owl = os.path.join(path, ont_name.lower()+'_extracted_subset.owl')
-    
-    if ':' in terms:
-        call = ['bash', robot_file, 'extract', \
-                                '--method', mode, \
-                                '--input', input_owl, \
-                                '--output', output_owl, \
-                                '--term', terms, \
-                                'convert', \
-                                '--output', output_json, \
-                                '-f', 'json']
+    input_owl = os.path.join(path, ont_name.lower() + ".owl")
+    output_json = os.path.join(path, ont_name.lower() + ".json")
+    output_owl = os.path.join(path, ont_name.lower() + "_extracted_subset.owl")
+
+    if ":" in terms:
+        call = [
+            "bash",
+            robot_file,
+            "extract",
+            "--method",
+            mode,
+            "--input",
+            input_owl,
+            "--output",
+            output_owl,
+            "--term",
+            terms,
+            "convert",
+            "--output",
+            output_json,
+            "-f",
+            "json",
+        ]
     else:
-        call = ['bash', robot_file, 'extract', \
-                                    '--method', mode, \
-                                    '--input', input_owl, \
-                                    '--output', output_owl, \
-                                    '--term-file', terms, \
-                                    'convert', \
-                                    '--output', output_json, \
-                                    '-f', 'json']
-    
+        call = [
+            "bash",
+            robot_file,
+            "extract",
+            "--method",
+            mode,
+            "--input",
+            input_owl,
+            "--output",
+            output_owl,
+            "--term-file",
+            terms,
+            "convert",
+            "--output",
+            output_json,
+            "-f",
+            "json",
+        ]
+
     subprocess.call(call, env=env)
 
     return None

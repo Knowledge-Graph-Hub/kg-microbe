@@ -55,12 +55,15 @@ def parse(input_filename, output_filename) -> None:
             parsed_record.append(elements[header_dict["name"]])
             parsed_record.append(elements[header_dict["name"]])
             parsed_record.append(elements[header_dict["category"]])
-            if elements[header_dict["synonym"]]:
-                synonyms = elements[header_dict["synonym"]]
-                for s in synonyms.split("|"):
-                    syn_record = [x for x in parsed_record]
-                    syn_record[3] = s
-                    write_line(syn_record, outstream)
+            try:
+                if elements[header_dict["synonym"]]:
+                    synonyms = elements[header_dict["synonym"]]
+                    for s in synonyms.split("|"):
+                        syn_record = [x for x in parsed_record]
+                        syn_record[3] = s
+                        write_line(syn_record, outstream)
+            except KeyError:  # no synonyms here!
+                pass
             write_line(parsed_record, outstream)
 
 

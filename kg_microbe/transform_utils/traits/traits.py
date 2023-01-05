@@ -111,9 +111,6 @@ class TraitsTransform(Transform):
         (Source =http://www.ontobee.org/ontology/NCBITaxon?
         iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
         """
-        # subset_ontology_needed = 'NCBITaxon'
-        # extract_convert_to_json(self.input_base_dir, subset_ontology_needed, 'NCBITaxon:131567', 'TOP')
-
         """
         Get information from the EnvironemtTransform.
         """
@@ -128,7 +125,8 @@ class TraitsTransform(Transform):
 
         """
         Create termlist.tsv files from ontology JSON files for NLP.
-        TODO: Replace this code once runNER is installed and remove 'kg_microbe/utils/biohub_converter.py'
+        TODO: Replace this code once runNER is installed
+                and remove 'kg_microbe/utils/biohub_converter.py'
         """
         create_termlist(self.input_base_dir, "chebi")
         # create_termlist(self.input_base_dir, 'ecocore')
@@ -269,7 +267,7 @@ class TraitsTransform(Transform):
             org_to_chem_edge_label = (
                 "biolink:interacts_with"  # [org_name -> carbon_substrate]
             )
-            org_to_chem_edge_relation = "RO:0002438"  
+            org_to_chem_edge_relation = "RO:0002438"
             # [org_name -> 'trophically interacts with' -> carbon_substrate]
             org_to_source_edge_label = (
                 "biolink:location_of"  # [org -> isolation_source]

@@ -13,6 +13,7 @@ from kg_microbe.utils.transform_utils import parse_header
 
 class TestTraits(unittest.TestCase):
     """Test the traits transformation."""
+
     def setUp(self) -> None:
         """Set up the transformation test."""
         self.resources = "tests/resources/"

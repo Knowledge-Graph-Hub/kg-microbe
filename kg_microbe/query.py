@@ -18,6 +18,7 @@ def run_query(query: str, endpoint: str, return_format=JSON) -> dict:
 def parse_query_rq(rq_file) -> dict:
     """
     Parse a SPARQL query file in grlc rq format.
+
     Args:
         rq_file: sparql query in grlc rq format
     Returns: dict with parsed info about sparql query

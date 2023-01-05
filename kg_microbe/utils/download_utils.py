@@ -18,6 +18,7 @@ def download_from_yaml(
 ) -> None:
     """
     Download files specified in an input yaml.
+
     Given an download info from an download.yaml file,
     download all files.
     Args:
@@ -68,6 +69,7 @@ def download_from_yaml(
 def download_from_api(yaml_item, outfile) -> None:
     """
     Download from an Elasticsearch API.
+
     Args:
         yaml_item: item to be download, parsed from yaml
         outfile: where to write out file
@@ -98,6 +100,7 @@ def elastic_search_query(
 ):
     """
     Fetch records from the given URL and query parameters.
+
     Args:
         es_connection: elastic search connection
         index: the elastic search index for query

@@ -28,6 +28,7 @@ class ItemInDictNotFoundError(TransformError):
 def multi_page_table_to_list(multi_page_table: Any) -> List[Dict]:
     """
     Convert multi-page tables to lists of dicts.
+
     Method to turn table data returned from tabula.io.read_pdf(),
     possibly broken over several pages, into a list
     of dicts, one dict for each row.
@@ -55,6 +56,7 @@ def multi_page_table_to_list(multi_page_table: Any) -> List[Dict]:
 
 def get_header_items(table_data: Any) -> List:
     """Get header from (first page of) a table.
+
     Args:
         table_data: Data, as list of dicts from tabula.io.read_pdf().
     Returns:
@@ -69,6 +71,7 @@ def get_header_items(table_data: Any) -> List:
 def write_node_edge_item(fh: Any, header: List, data: List, sep: str = "\t"):
     r"""
     Write out a single line for a node or an edge in *.tsv.
+
     :param fh: file handle of node or edge file
     :param header: list of header items
     :param data: data for line to write out
@@ -85,6 +88,7 @@ def write_node_edge_item(fh: Any, header: List, data: List, sep: str = "\t"):
 def get_item_by_priority(items_dict: dict, keys_by_priority: list) -> str:
     """
     Retrieve item from a dict using a list of keys.
+
     Keys should be in descending order of priority.
     :param items_dict:
     :param keys_by_priority: list of keys to use to find values
@@ -105,6 +109,7 @@ def get_item_by_priority(items_dict: dict, keys_by_priority: list) -> str:
 
 def data_to_dict(these_keys, these_values) -> dict:
     """Zip up two lists to make a dict.
+
     :param these_keys: keys for new dict
     :param these_values: values for new dict
     :return: dictionary
@@ -115,6 +120,7 @@ def data_to_dict(these_keys, these_values) -> dict:
 def uniprot_make_name_to_id_mapping(dat_gz_file: str) -> dict:
     """
     Convert UniProtKB id maps to dict of maps.
+
     Given a Uniprot dat.gz file, like this:
     ftp://ftp.uniprot.org/pub/databases/uniprot/
     current_release/knowledgebase/idmapping/by_organism/
@@ -134,6 +140,7 @@ def uniprot_make_name_to_id_mapping(dat_gz_file: str) -> dict:
 
 def uniprot_name_to_id(name_to_id_map: dict, name: str) -> Union[str, None]:
     """Set up Uniprot name to ID mapping.
+
     :param name_to_id_map: mapping dict[name] -> id
     :param name: name
     :return: id string, or None
@@ -146,6 +153,7 @@ def uniprot_name_to_id(name_to_id_map: dict, name: str) -> Union[str, None]:
 
 def parse_header(header_string: str, sep: str = "\t") -> List:
     """Parse header data from a file.
+
     Args:
         header_string: A string containing header items.
         sep: A string containing a delimiter.
@@ -175,6 +183,7 @@ def ungzip_to_tempdir(gzipped_file: str, tempdir: str) -> str:
 
 def guess_bl_category(identifier: str) -> str:
     """Guess Biolink category for a given identifier.
+
     Note: This is a temporary solution
     and should not be used long term.
     Args:
@@ -195,6 +204,7 @@ def guess_bl_category(identifier: str) -> str:
 def collapse_uniprot_curie(uniprot_curie: str) -> str:
     """
     Collapse a UniProtKB isoform ID to a parent ID.
+
     Given a UniProtKB curie for an
     isoform such as UniprotKB:P63151-1
     or UniprotKB:P63151-2, collapse to parent protein

@@ -26,7 +26,7 @@ class TestTransform(TestCase):
             ("node_header", ["id", "name", "category"]),
             (
                 "edge_header",
-                ["subject", "predicate", "object", "relation", "provided_by"],
+                ["subject", "predicate", "object", "relation"],
             ),
             ("output_base_dir", os.path.join("data", "transformed")),
             ("input_base_dir", os.path.join("data", "raw")),

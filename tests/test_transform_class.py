@@ -66,6 +66,7 @@ class TestTransform(TestCase):
     def test_transform_child_classes(self, src_name):
         """
         Test whether Transform child classes work as expected.
+
         Make sure Transform child classes:
         - properly set default input_dir and output_dir
         - properly pass and set input_dir and output from constructor

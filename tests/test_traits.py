@@ -12,8 +12,9 @@ from kg_microbe.utils.transform_utils import parse_header
 
 
 class TestTraits(unittest.TestCase):
+    """Test the traits transformation."""
     def setUp(self) -> None:
-
+        """Set up the transformation test."""
         self.resources = "tests/resources/"
         self.input_dir = os.path.join(self.resources, "traits/input/")
         self.output_dir = os.path.join(self.resources, "traits/output/")
@@ -63,6 +64,7 @@ class TestTraits(unittest.TestCase):
         ]
     )
     def test_parse_traits_line(self, key, value):
+        """Test parsing traits line."""
         header = parse_header(self.trait_fh.readline())
         line = self.trait_fh.readline()
         parsed = parse_line(line, header, sep="\t")
@@ -70,11 +72,13 @@ class TestTraits(unittest.TestCase):
         self.assertEqual(value, parsed[key])
 
     def test_run(self):
+        """Test running the transformation."""
         self.assertTrue(isinstance(self.traits.run, object))
         self.traits.run(data_file=self.test_file)
         self.assertTrue(os.path.isdir(self.traits_output_dir))
 
     def test_nodes_file(self):
+        """Test structure of the nodes file."""
         self.traits.run(data_file=self.test_file)
         node_file = os.path.join(self.traits_output_dir, "nodes.tsv")
         self.assertTrue(os.path.isfile(node_file))
@@ -83,6 +87,7 @@ class TestTraits(unittest.TestCase):
         self.assertEqual(["id", "name", "category"], list(node_df.columns))
 
     def test_nodes_are_not_repeated(self):
+        """Test that nodes are not repeated."""
         self.traits.run(data_file=self.test_file)
         node_file = os.path.join(self.traits_output_dir, "nodes.tsv")
         node_df = pd.read_csv(node_file, sep="\t", header=0)
@@ -91,6 +96,7 @@ class TestTraits(unittest.TestCase):
         self.assertCountEqual(nodes, unique_nodes)
 
     def test_edges_file(self, *args):
+        """Test structure of the edges file."""
         self.traits.run(data_file=self.test_file)
         edge_file = os.path.join(self.traits_output_dir, "edges.tsv")
         self.assertTrue(os.path.isfile(edge_file))

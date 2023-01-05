@@ -157,7 +157,7 @@ def run_oger(path: str, input_file_name: str, n_workers: int = 1) -> pd.DataFram
     """
     config = configparser.ConfigParser()
     config.read(os.path.join(path, SETTINGS_FILENAME))
-    #sections = config._sections
+    # sections = config._sections
     settings = config["Main"]
     settings["n_workers"] = str(n_workers)
     og_run(**settings)

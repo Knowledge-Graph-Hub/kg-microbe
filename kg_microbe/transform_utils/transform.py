@@ -80,7 +80,7 @@ class Transform:
                 stop_words = doc['English']
 
             with open(
-                os.path.join(self.nlp_stopwords_dir, "stopWords.txt"), "w"
+                os.path.join(self.nlp_stopwords_dir, "stopwords.txt"), "w"
             ) as stop_terms:
                 # stop_terms.write(stop_words)
                 for word in stop_words.split(" "):

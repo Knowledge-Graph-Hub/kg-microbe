@@ -157,10 +157,12 @@ def run_oger(path: str, input_file_name: str, n_workers: int = 1) -> pd.DataFram
     """
     config = configparser.ConfigParser()
     config.read(os.path.join(path, SETTINGS_FILENAME))
-    # sections = config._sections
+    # The config expects to be mappings between strings,
+    # and the ConfigParser throws a TypeError if they aren't.
+    # But n_workers needs to be an int when passed to OGER.
     settings = config["Main"]
-    settings["n_workers"] = str(n_workers)
-    og_run(**settings)
+    #settings["n_workers"] = str(n_workers)
+    og_run(**settings, n_workers=n_workers)
     df = process_oger_output(path, input_file_name)
 
     return df

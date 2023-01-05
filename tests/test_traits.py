@@ -19,12 +19,22 @@ class TestTraits(unittest.TestCase):
         self.resources = "tests/resources/"
         self.input_dir = os.path.join(self.resources, "traits/input/")
         self.output_dir = os.path.join(self.resources, "traits/output/")
+        self.nlp_dir = os.path.join(self.resources, "traits/nlp/")
+        self.nlp_input_dir = os.path.join(self.nlp_dir, "terms")
+        self.nlp_output_dir = os.path.join(self.nlp_dir, "input")
+        self.nlp_terms_dir = os.path.join(self.nlp_dir, "output")
+        self.nlp_stopwords_dir = os.path.join(self.nlp_dir, "stopwords")
         self.test_file = "trait_test.tsv"
         self.trait_fh = open(os.path.join(self.input_dir, self.test_file), "rt")
         self.traits_output_dir = os.path.join(self.output_dir, "condensed_traits_NCBI/")
         self.traits = TraitsTransform(
             input_dir=self.input_dir, output_dir=self.output_dir
         )
+        self.traits.nlp_dir = self.traits.nlp_dir
+        self.traits.nlp_input_dir = self.traits.nlp_input_dir
+        self.traits.nlp_output_dir = self.traits.nlp_output_dir
+        self.traits.nlp_terms_dir = self.traits.nlp_terms_dir
+        self.traits.nlp_stopwords_dir = self.traits.nlp_stopwords_dir
 
     @parameterized.expand(
         [

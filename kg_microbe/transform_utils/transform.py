@@ -4,6 +4,7 @@ import os
 import shutil
 
 import yaml
+from typing import Optional
 
 
 class Transform:
@@ -22,8 +23,8 @@ class Transform:
     def __init__(
         self,
         source_name,
-        input_dir: str = None,
-        output_dir: str = None,
+        input_dir: Optional[str] = None,
+        output_dir: Optional[str] = None,
         nlp: bool = False,
     ):
         """

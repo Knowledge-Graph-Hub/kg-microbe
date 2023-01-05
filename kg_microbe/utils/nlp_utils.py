@@ -131,7 +131,7 @@ def prep_nlp_input(path: str, columns: list, dic: str) -> str:
     :param dic: The Ontology to be used as a dictionary for NLP
     :return: Filename (str)
     """
-    df = pd.read_csv(path, low_memory=False, usecols=columns)
+    df = pd.read_csv(path, low_memory=False, usecols=columns, sep="\t")
     sub_df = df.dropna()
 
     if "pathways" in columns:

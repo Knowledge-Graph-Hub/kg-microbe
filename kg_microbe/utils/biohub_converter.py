@@ -21,11 +21,11 @@ def parse(input_filename, output_filename) -> None:
     :return: None.
     """
     counter = 0
-    OUTSTREAM = open(output_filename, "w")
+    outstream = open(output_filename, "w")
     header_dict = None
 
-    with open(input_filename) as FH:
-        for line in FH:
+    with open(input_filename) as filehandler:
+        for line in filehandler:
             if counter == 0:
                 header = line.rstrip().split("\t")
                 header_dict = parse_header(header)
@@ -60,8 +60,8 @@ def parse(input_filename, output_filename) -> None:
                 for s in synonyms.split("|"):
                     syn_record = [x for x in parsed_record]
                     syn_record[3] = s
-                    write_line(syn_record, OUTSTREAM)
-            write_line(parsed_record, OUTSTREAM)
+                    write_line(syn_record, outstream)
+            write_line(parsed_record, outstream)
 
 
 def parse_header(elements) -> dict:
@@ -77,11 +77,11 @@ def parse_header(elements) -> dict:
     return header_dict
 
 
-def write_line(elements, OUTSTREAM) -> None:
+def write_line(elements, outstream) -> None:
     """
-    Write line to OUTSTREAM.
+    Write line to outstream.
 
     :param elements: The record to write (list).
-    :param OUTSTREAM: File handle to the output file.
+    :param outstream: File handle to the output file.
     """
-    OUTSTREAM.write("\t".join(elements) + "\n")
+    outstream.write("\t".join(elements) + "\n")

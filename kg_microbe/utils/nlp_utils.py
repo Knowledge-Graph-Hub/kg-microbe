@@ -19,7 +19,8 @@ def create_settings_file(path: str, ont: str = "ALL") -> None:
     :param path: Path of the 'nlp' folder
     :param ont: The ontology to be used as dictionary ['ALL', 'ENVO', 'CHEBI']
     :return: None.
-    -   The 'Shared' section declares global variables that can be used in other sections
+    -   The 'Shared' section declares global variables that
+        can be used in other sections
         e.g. Data root.
         root = location of the working directory
         accessed in other sections using => ${Shared:root}/
@@ -76,11 +77,9 @@ def create_settings_file(path: str, ont: str = "ALL") -> None:
             "Main", "termlist_path", os.path.join(path, "terms/pato_termlist.tsv")
         )
     else:
-        # config.set('Main', 'termlist1_path', os.path.join(path,'terms/envo_termlist.tsv'))
         config.set(
             "Main", "termlist1_path", os.path.join(path, "terms/chebi_termlist.tsv")
         )
-        # config.set('Main', 'termlist2_path', os.path.join(path,'terms/ecocore_termlist.tsv'))
 
     # This is how OGER prescribes in it's test file but above works too.
     """config['Termlist1'] = {
@@ -178,7 +177,6 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
     :param input_file_name: OGER output (tsv file)
     :return: Pandas Dataframe containing required data for further analyses.
     """
-
     cols = [
         "TaxId",
         "Biolink",
@@ -206,12 +204,11 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
         sep="\t",
         index=False,
     )
-    # interested_df = sub_df.loc[(df['TokenizedTerm'] == df['PreferredTerm'].str.replace(r"\(.*\)",""))]
-    # interested_df = interested_df.drop(columns = ['PreferredTerm']).drop_duplicates()
-    # interested_df.to_csv(os.path.join(path, 'output',input_file_name +'Filtered.tsv'), sep='\t', index=False)
+
     """
     TODO: Figure out synonym categories amongst nodes using OBO Format
-    -   Synonyms are always scoped into one of four disjoint categories: EXACT, BROAD, NARROW, RELATED
+    -   Synonyms are always scoped into one of four disjoint categories:
+        EXACT, BROAD, NARROW, RELATED
     LOGIC:
         IF TokenizedTerm and PreferredTerm are used interchangeably: EXACT
         ELIF TokenizedTerm is parent of PreferredTerm: BROAD
@@ -221,10 +218,10 @@ def process_oger_output(path: str, input_file_name: str) -> pd.DataFrame:
     return sub_df
 
 
-def assign_string_match_rating(dfRow):
+def assign_string_match_rating(dfrow):
     """
-    Assign another column categorizing the level of match between TokenizedTerm and PreferredTerm.
-    
+    Assign a column categorizing match between TokenizedTerm and PreferredTerm.
+
     -   Exact
     -   Partial
     -   Synonym
@@ -232,9 +229,9 @@ def assign_string_match_rating(dfRow):
     :returns: Same dataframe with an extra 'matchRating' column
     """
     result = None
-    if dfRow["TokenizedTerm"] == dfRow["PreferredTerm"]:
+    if dfrow["TokenizedTerm"] == dfrow["PreferredTerm"]:
         result = "Exact"
-    elif dfRow["TokenizedTerm"] in dfRow["PreferredTerm"]:
+    elif dfrow["TokenizedTerm"] in dfrow["PreferredTerm"]:
         result = "Partial"
     else:
         result = "NoMatch"

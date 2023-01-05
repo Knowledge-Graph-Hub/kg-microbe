@@ -8,6 +8,7 @@ from kgx.cli.cli_utils import merge
 
 def parse_load_config(yaml_file: str) -> Dict:
     """Parse load config YAML.
+
     Args:
         yaml_file: A string pointing to a KGX compatible config YAML.
     Returns:
@@ -20,6 +21,7 @@ def parse_load_config(yaml_file: str) -> Dict:
 
 def load_and_merge(yaml_file: str, processes: int = 1) -> nx.MultiDiGraph:
     """Load and merge sources defined in the config YAML.
+
     Args:
         yaml_file: A string pointing to a KGX compatible config YAML.
         processes: Number of processes to use.

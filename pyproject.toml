@@ -25,7 +25,7 @@ sphinx-rtd-theme = "^1.1.1"
 recommonmark = "^0.7.1"
 parameterized = "^0.8.1"
 pandas = "^1.5.2"
-oger = {git = "https://github.com/OntoGene/OGER.git"}
+oger = "^1.5"
 kghub-downloader = "^0.3.3"
 networkx = "^2.8.8"
 

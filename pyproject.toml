@@ -25,6 +25,7 @@ sphinx-rtd-theme = "^1.1.1"
 recommonmark = "^0.7.1"
 parameterized = "^0.8.1"
 pandas = "^1.5.2"
+oger = {git = "https://github.com/OntoGene/OGER.git"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"

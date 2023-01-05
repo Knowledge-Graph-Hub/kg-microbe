@@ -25,6 +25,7 @@ class OntologyTransform(Transform):
 
     def run(self, data_file: Optional[str] = None) -> None:
         """Perform transformations to process an ontology.
+
         Args:
             data_file: data file to parse
         Returns:
@@ -42,6 +43,7 @@ class OntologyTransform(Transform):
 
     def parse(self, name: str, data_file: str, source: str) -> None:
         """Process the data_file.
+
         Args:
             name: Name of the ontology
             data_file: data file to parse

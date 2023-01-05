@@ -5,7 +5,7 @@ import unittest
 from parameterized import parameterized
 
 from kg_microbe.utils.transform_utils import (collapse_uniprot_curie,
-                                               guess_bl_category)
+                                              guess_bl_category)
 
 
 class TestTransformUtils(unittest.TestCase):

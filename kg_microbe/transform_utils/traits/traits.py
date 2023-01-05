@@ -5,9 +5,13 @@ import re
 from collections import defaultdict
 from typing import Optional
 
+import pandas as pd
+
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.nlp_utils import *
-from kg_microbe.utils.robot_utils import *
+from kg_microbe.utils.nlp_utils import (create_settings_file, create_termlist,
+                                        prep_nlp_input, run_oger)
+from kg_microbe.utils.robot_utils import (convert_to_json,
+                                          extract_convert_to_json)
 from kg_microbe.utils.transform_utils import (parse_header, parse_line,
                                               write_node_edge_item)
 
@@ -48,7 +52,7 @@ class TraitsTransform(Transform):
 
     def run(self, data_file: Optional[str] = None):
         """
-        Call method and perform needed transformations to process trait data (NCBI/GTDB).
+        Call method and perform needed transformations for trait data (NCBI/GTDB).
 
         :param data_file: Input file name.
         """
@@ -104,7 +108,8 @@ class TraitsTransform(Transform):
         # Extract the 'cellular organisms' tree from NCBITaxon and convert to JSON
         """
         NCBITaxon_131567 = cellular organisms
-        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
+        (Source =http://www.ontobee.org/ontology/NCBITaxon?
+        iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
         """
         # subset_ontology_needed = 'NCBITaxon'
         # extract_convert_to_json(self.input_base_dir, subset_ontology_needed, 'NCBITaxon:131567', 'TOP')
@@ -140,7 +145,7 @@ class TraitsTransform(Transform):
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, "CHEBI")
             oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            oger_output_chebi_not_exact_match = oger_output_chebi[
+            oger_output_chebi[
                 oger_output_chebi["StringMatch"] != "Exact"
             ]
 
@@ -150,7 +155,7 @@ class TraitsTransform(Transform):
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, "GO")
             oger_output_go = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            oger_output_go_not_exact_match = oger_output_go[
+            oger_output_go[
                 oger_output_go["StringMatch"] != "Exact"
             ]
 
@@ -256,15 +261,16 @@ class TraitsTransform(Transform):
 
             # Edges
             org_to_shape_edge_label = (
-                "biolink:has_phenotype"  #  [org_name -> cell_shape, metabolism]
+                "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
             )
             org_to_shape_edge_relation = (
-                "RO:0002200"  #  [org_name -> has phenotype -> cell_shape, metabolism]
+                "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
             )
             org_to_chem_edge_label = (
                 "biolink:interacts_with"  # [org_name -> carbon_substrate]
             )
-            org_to_chem_edge_relation = "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
+            org_to_chem_edge_relation = "RO:0002438"  
+            # [org_name -> 'trophically interacts with' -> carbon_substrate]
             org_to_source_edge_label = (
                 "biolink:location_of"  # [org -> isolation_source]
             )
@@ -329,7 +335,8 @@ class TraitsTransform(Transform):
                         data=[org_id, org_name, org_node_type, match_description],
                     )
                     seen_node[org_id] += 1
-                    # If capture of all NCBITaxon: CURIEs are needed for ROBOT STAR extraction
+                    # If capture of all NCBITaxon:
+                    # CURIEs are needed for ROBOT STAR extraction
                     if org_id.startswith("NCBITaxon:"):
                         terms_file.write(org_id + "\n")
 
@@ -464,8 +471,8 @@ class TraitsTransform(Transform):
                                     # chem_curie = relevant_chem.iloc[0]['CURIE']
                                     # chem_node_type = relevant_chem.iloc[0]['Biolink']
 
-                    if multi_row_flag == True:
-                        for i, v in chem_curie.items():
+                    if multi_row_flag is True:
+                        for i, _ in chem_curie.items():
                             if chem_curie[i] == curie:
                                 chem_id = chem_prefix + chem_name.lower().replace(
                                     " ", "_"
@@ -507,8 +514,10 @@ class TraitsTransform(Transform):
                 # Write shape node
                 """# Get relevant NLP results
                 if cell_shape != 'NA':
-                    relevant_tax = oger_output_pato.loc[oger_output_pato['TaxId'] == int(tax_id)]
-                    relevant_shape = relevant_tax.loc[relevant_tax['TokenizedTerm'] == cell_shape]
+                    relevant_tax =
+                        oger_output_pato.loc[oger_output_pato['TaxId'] == int(tax_id)]
+                    relevant_shape =
+                        relevant_tax.loc[relevant_tax['TokenizedTerm'] == cell_shape]
                     if len(relevant_shape) == 1:
                         cell_shape = relevant_shape.iloc[0]['CURIE']
                         shape_node_type = relevant_shape.iloc[0]['Biolink']"""
@@ -542,10 +551,12 @@ class TraitsTransform(Transform):
 
                     if len(relevant_env_df) == 1:
                         """
-                        If multiple ENVOs exist, take the last one since that would be the curie of interest
+                        If multiple ENVOs exist,
+                        take the last one since that would be the curie of interest
                         after collapsing the entity.
-                        TODO(Maybe): If CURIE is 'nan', it could be sourced from OGER o/p (ENVO backend)
-                              of environments.csv
+                        TODO(Maybe): If CURIE is 'nan',
+                        it could be sourced from OGER o/p (ENVO backend)
+                        of environments.csv.
                         """
                         env_curie = (
                             str(relevant_env_df.iloc[0]["ENVO_ids"])
@@ -795,8 +806,8 @@ class TraitsTransform(Transform):
                                         path_ner_sssom, ignore_index=True
                                     )
 
-                    if multi_row_flag == True:
-                        for i, v in pathway_curie.items():
+                    if multi_row_flag is True:
+                        for i, _ in pathway_curie.items():
                             if pathway_curie[i] == curie:
                                 pathway_id = (
                                     pathway_prefix
@@ -892,7 +903,7 @@ class TraitsTransform(Transform):
 
                 # org-metabolism edge
                 if (
-                    metabolism_id != None
+                    metabolism_id is not None
                     and not metabolism_id.endswith(":na")
                     and org_id + metabolism_id not in seen_edge
                 ):
@@ -910,7 +921,7 @@ class TraitsTransform(Transform):
 
                 # org-pathway edge
                 if (
-                    pathway_id != None
+                    pathway_id is not None
                     and not pathway_id.endswith(":na")
                     and org_id + pathway_id not in seen_edge
                 ):
@@ -941,7 +952,8 @@ class TraitsTransform(Transform):
         # Get trees from all relevant IDs from NCBITaxon and convert to JSON
         """
         NCBITaxon_131567 = cellular organisms
-        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
+        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=
+        http://purl.obolibrary.org/obo/NCBITaxon_131567)
         """
         subset_ontology_needed = "NCBITaxon"
         extract_convert_to_json(

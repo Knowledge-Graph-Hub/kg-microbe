@@ -7,9 +7,7 @@ import yaml
 
 
 class Transform:
-    """
-    Parent class for transforms, that sets up a lot of default file info.
-    """
+    """Parent class for transforms to set up default file info."""
 
     DEFAULT_INPUT_DIR = os.path.join("data", "raw")
     DEFAULT_OUTPUT_DIR = os.path.join("data", "transformed")

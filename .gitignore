@@ -14,3 +14,6 @@ _build/
 .DS_Store
 **/__pycache__/
 .ipynb_checkpoints
+tests/resources/traits/input/chebi*
+tests/resources/traits/input/go*
+tests/resources/traits/nlp/terms/

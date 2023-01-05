@@ -1,6 +1,7 @@
 """Converter utils for Bio Term Hub."""
 
 import logging
+from typing import Dict
 
 EXCLUDE = ["biolink:Publication"]
 
@@ -64,7 +65,7 @@ def parse(input_filename, output_filename) -> None:
             write_line(parsed_record, outstream)
 
 
-def parse_header(elements) -> dict:
+def parse_header(elements) -> Dict[str, str]:
     """
     Parse headers from nodes TSV.
 

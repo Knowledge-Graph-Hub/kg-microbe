@@ -77,7 +77,7 @@ class Transform:
             os.makedirs(self.nlp_stopwords_dir, exist_ok=True)
 
             with open('stopwords.yaml', 'r') as stop_list:
-                doc = yaml.load(stop_list, Loader=yaml.FullLoader)
+                doc = yaml.safe_load(stop_list)
                 stop_words =  doc['English']
                 
             with open(os.path.join(self.nlp_stopwords_dir,'stopWords.txt'), 'w') as stop_terms:

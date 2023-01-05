@@ -40,6 +40,10 @@ def parse_query_rq(rq_file) -> dict:
     return parsed_rq
 
 
+def parse_query_yaml(yaml_file) -> dict:
+    return yaml.safe_load(open(yaml_file))
+
+
 def result_dict_to_tsv(result_dict: dict, outfile: str) -> None:
     """Convert a result_dict to a TSV for output."""
     with open(outfile, "wt") as f:

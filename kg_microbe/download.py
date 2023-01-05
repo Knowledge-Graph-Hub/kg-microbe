@@ -5,6 +5,7 @@ from kghub_downloader.download_utils import download_from_yaml
 
 def download(yaml_file: str, output_dir: str, ignore_cache: bool = False) -> None:
     """Download data files from list of URLs into data directory.
+
     Args:
         yaml_file: A string pointing to the yaml file utilized
         to facilitate the downloading of data.

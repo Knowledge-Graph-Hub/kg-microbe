@@ -2,9 +2,9 @@
 
 import os
 import shutil
+from typing import Optional
 
 import yaml
-from typing import Optional
 
 
 class Transform:
@@ -77,7 +77,7 @@ class Transform:
 
             with open('stopwords.yaml', 'r') as stop_list:
                 doc = yaml.safe_load(stop_list)
-                stop_words =  doc['English']
+                stop_words = doc['English']
 
             with open(
                 os.path.join(self.nlp_stopwords_dir, "stopWords.txt"), "w"

@@ -2,8 +2,8 @@
 import logging
 import re
 
-from SPARQLWrapper import JSON, SPARQLWrapper
 import yaml
+from SPARQLWrapper import JSON, SPARQLWrapper
 
 
 def run_query(query: str, endpoint: str, return_format=JSON) -> dict:
@@ -42,6 +42,7 @@ def parse_query_rq(rq_file) -> dict:
 
 
 def parse_query_yaml(yaml_file) -> dict:
+    """Parse a yaml query."""
     return yaml.safe_load(open(yaml_file))
 
 

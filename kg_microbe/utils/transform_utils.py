@@ -171,11 +171,12 @@ def parse_line(this_line: str, header_items: List, sep=',') -> Dict:
     :param this_line: A string containing a line of text.
     :param header_items: A list of header items.
     :param sep: A string containing a delimiter.
-    :return item_dict: A dictionary of header items and a processed item from the dataset.
+    :return item_dict: A dictionary of header items
+    and a processed item from the dataset.
     """
     data = this_line.strip().split(sep)
     data = [i.replace('"', '') for i in data]
-    
+
     item_dict = data_to_dict(header_items, data)
 
     return item_dict

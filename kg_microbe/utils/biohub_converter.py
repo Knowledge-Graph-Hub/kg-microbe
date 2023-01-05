@@ -23,7 +23,6 @@ def parse(input_filename, output_filename) -> None:
     """
     counter = 0
     outstream = open(output_filename, "w")
-    header_dict = None
 
     with open(input_filename) as filehandler:
         for line in filehandler:
@@ -65,7 +64,7 @@ def parse(input_filename, output_filename) -> None:
             write_line(parsed_record, outstream)
 
 
-def parse_header(elements) -> Dict[str, str]:
+def parse_header(elements) -> Dict[str, int]:
     """
     Parse headers from nodes TSV.
 

@@ -1,7 +1,7 @@
 """Top-level functions for transforming data."""
 
 import logging
-from typing import List
+from typing import List, Optional
 
 from kg_microbe.transform_utils.ontology import OntologyTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES
@@ -16,7 +16,9 @@ DATA_SOURCES = {
 }
 
 
-def transform(input_dir: str, output_dir: str, sources: List[str] = None) -> None:
+def transform(
+    input_dir: str, output_dir: str, sources: Optional[List[str]] = None
+) -> None:
     """Call scripts in kg_microbe/transform/[source name]/ to transform data.
 
     KGX can ingest each directly, in either TSV or JSON format.

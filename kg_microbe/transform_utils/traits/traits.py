@@ -3,7 +3,6 @@
 import os
 import re
 from collections import defaultdict
-from typing import Optional
 
 import pandas as pd
 
@@ -36,7 +35,7 @@ class TraitsTransform(Transform):
         -   ROBOT using 'robot_utils' module.
     """
 
-    def __init__(self, input_dir: str = None, output_dir: str = None, nlp=True) -> None:
+    def __init__(self, input_dir: str, output_dir: str, nlp=True) -> None:
         """
         Initialize TraitsTransform Class.
 
@@ -50,7 +49,7 @@ class TraitsTransform(Transform):
         self.edge_header = ["subject", "predicate", "object", "relation"]
         self.nlp = nlp
 
-    def run(self, data_file: Optional[str] = None):
+    def run(self, data_file):
         """
         Call method and perform needed transformations for trait data (NCBI/GTDB).
 

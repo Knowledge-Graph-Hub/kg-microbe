@@ -164,6 +164,23 @@ def parse_header(header_string: str, sep: str = "\t") -> List:
     return [i.replace('"', "") for i in header]
 
 
+def parse_line(this_line: str, header_items: List, sep=',') -> Dict:
+    """
+    Process a line of text from the csv file.
+
+    :param this_line: A string containing a line of text.
+    :param header_items: A list of header items.
+    :param sep: A string containing a delimiter.
+    :return item_dict: A dictionary of header items and a processed item from the dataset.
+    """
+    data = this_line.strip().split(sep)
+    data = [i.replace('"', '') for i in data]
+    
+    item_dict = data_to_dict(header_items, data)
+
+    return item_dict
+
+
 def unzip_to_tempdir(zip_file_name: str, tempdir: str) -> None:
     """Decompress a zip file into a temp directory."""
     with zipfile.ZipFile(zip_file_name, "r") as z:

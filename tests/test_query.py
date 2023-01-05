@@ -16,7 +16,7 @@ class TestQuery(TestCase):
 
     def setUp(self) -> None:
         """Set up for query function tests."""
-        self.test_rq = "tests/resources/query/test_template.yaml"
+        self.test_rq = "tests/resources/query/test_template.rq"
         self.test_result_dict_file = "tests/resources/query/test_result_dict.pkl"
         self.tempfile = os.path.join(tempfile.mkdtemp(), "output.tsv")
 

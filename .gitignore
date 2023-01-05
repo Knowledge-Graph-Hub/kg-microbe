@@ -11,7 +11,6 @@ kg_microbe/__pycache__/
 build
 kg_microbe.egg-info
 _build/
-tests/resources/traits/
 .DS_Store
 **/__pycache__/
 .ipynb_checkpoints

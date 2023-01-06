@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import zipfile
+import pandas as pd
 from typing import Any, Dict, List, Union
 
 from tqdm import tqdm
@@ -80,9 +81,12 @@ def write_node_edge_item(fh: Any, header: List, data: List, sep: str = "\t"):
     if len(header) != len(data):
         raise Exception("Header and data are not the same length.")
     try:
+        if isinstance(data, pd.Series):
+            strdata = data.to_string()
+            data = strdata
         fh.write(sep.join(data) + "\n")
-    except IOError:
-        logging.warning("Can't write data for {}".format(data))
+    except (IOError, TypeError):
+        logging.warning(f"Can't write data for {data}")
 
 
 def get_item_by_priority(items_dict: dict, keys_by_priority: list) -> str:

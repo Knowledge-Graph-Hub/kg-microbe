@@ -3,6 +3,7 @@
 import os
 import re
 from collections import defaultdict
+from typing import Optional
 
 import pandas as pd
 
@@ -49,7 +50,7 @@ class TraitsTransform(Transform):
         self.edge_header = ["subject", "predicate", "object", "relation"]
         self.nlp = nlp
 
-    def run(self, data_file):
+    def run(self, data_file: Optional[str] = None):
         """
         Call method and perform needed transformations for trait data (NCBI/GTDB).
 
@@ -142,9 +143,7 @@ class TraitsTransform(Transform):
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, "CHEBI")
             oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            oger_output_chebi[
-                oger_output_chebi["StringMatch"] != "Exact"
-            ]
+            oger_output_chebi[oger_output_chebi["StringMatch"] != "Exact"]
 
             # GO
             cols_for_nlp = ["tax_id", "pathways"]
@@ -152,9 +151,7 @@ class TraitsTransform(Transform):
             # Set-up the settings.ini file for OGER and run
             create_settings_file(self.nlp_dir, "GO")
             oger_output_go = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            oger_output_go[
-                oger_output_go["StringMatch"] != "Exact"
-            ]
+            oger_output_go[oger_output_go["StringMatch"] != "Exact"]
 
             """# ECOCORE
             cols_for_nlp = ['tax_id', 'metabolism']

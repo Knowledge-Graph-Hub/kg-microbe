@@ -466,7 +466,7 @@ class TraitsTransform(Transform):
                                     # chem_node_type = relevant_chem.iloc[0]['Biolink']
 
                     if multi_row_flag is True:
-                        for i, _ in chem_curie.items():
+                        for i, _ in chem_curie.items():  # type: ignore
                             if chem_curie[i] == curie:
                                 chem_id = chem_prefix + chem_name.lower().replace(
                                     " ", "_"
@@ -801,7 +801,7 @@ class TraitsTransform(Transform):
                                     )
 
                     if multi_row_flag is True:
-                        for i, _ in pathway_curie.items():
+                        for i, _ in pathway_curie.items():  # type: ignore
                             if pathway_curie[i] == curie:
                                 pathway_id = (
                                     pathway_prefix

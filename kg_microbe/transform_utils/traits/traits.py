@@ -102,7 +102,11 @@ class TraitsTransform(Transform):
         Implement ROBOT.
         """
         # Convert OWL to JSON for CheBI Ontology
-        convert_to_json(self.input_base_dir, "CHEBI")
+        # The CheBI transform should be done first,
+        # so this is only necessary if running alone.
+        onto_path = os.path.join(self.input_base_dir, "chebi.json")
+        if not os.path.isfile(onto_path):
+            convert_to_json(self.input_base_dir, "CHEBI")
         # convert_to_json(self.input_base_dir, 'ECOCORE')
 
         # Extract the 'cellular organisms' tree from NCBITaxon and convert to JSON

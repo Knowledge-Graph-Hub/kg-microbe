@@ -1,2 +1,0 @@
-git+https://github.com/OntoGene/OGER.git
-#git+https://github.com/monarch-initiative/runner.git

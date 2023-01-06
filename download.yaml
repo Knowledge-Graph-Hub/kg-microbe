@@ -76,8 +76,8 @@
 # CHEBI
 #
 -
-  url: http://purl.obolibrary.org/obo/chebi.owl
-  local_name: chebi.owl
+  url: http://purl.obolibrary.org/obo/chebi.owl.gz
+  local_name: chebi.owl.gz
 #
 # NCBI Taxon
 #

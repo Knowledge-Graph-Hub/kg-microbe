@@ -11,7 +11,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.robot_utils import convert_to_json
 
 ONTOLOGIES = {
-    "NCBITransform": "ncbitaxon.json",
+    "NCBITransform": "ncbitaxon.owl.gz",
     "ChebiTransform": "chebi.owl.gz",
     "EnvoTransform": "envo.json",
     "GoTransform": "go.json",
@@ -65,7 +65,8 @@ class OntologyTransform(Transform):
         convert_this = False
         decompress_this = False
 
-        if name in ["chebi"]:
+        print(name)
+        if name in ["chebi", "ncbitaxon"]:
             convert_this = True
             decompress_this = True
 
@@ -75,10 +76,10 @@ class OntologyTransform(Transform):
             with gzip.open(data_file, "rb") as data_file_gz:
                 with open(outpath, "wb") as data_file_new:
                     shutil.copyfileobj(data_file_gz, data_file_new)
-            
+
         if convert_this:
             print("Converting to obojson...")
-            convert_to_json(self.input_base_dir, "CHEBI")
+            convert_to_json(self.input_base_dir, name)
             data_file = os.path.join(self.input_base_dir, name + ".json")
 
         transform(

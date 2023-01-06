@@ -82,8 +82,8 @@
 # NCBI Taxon
 #
 -
-  url: http://purl.obolibrary.org/obo/ncbitaxon.owl
-  local_name: ncbitaxon.owl
+  url: https://github.com/obophenotype/ncbitaxon/releases/latest/download/ncbitaxon.owl.gz
+  local_name: ncbitaxon.owl.gz
 #
 # PATO
 #

@@ -76,14 +76,14 @@
 # CHEBI
 #
 -
-  url: http://purl.obolibrary.org/obo/chebi.owl
-  local_name: chebi.owl
+  url: http://purl.obolibrary.org/obo/chebi.owl.gz
+  local_name: chebi.owl.gz
 #
 # NCBI Taxon
 #
 -
-  url: http://purl.obolibrary.org/obo/ncbitaxon.owl
-  local_name: ncbitaxon.owl
+  url: https://github.com/obophenotype/ncbitaxon/releases/latest/download/ncbitaxon.owl.gz
+  local_name: ncbitaxon.owl.gz
 #
 # PATO
 #

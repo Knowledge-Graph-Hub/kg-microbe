@@ -1,3 +1,5 @@
+"""Initialize the traits transform."""
+
 from .traits import TraitsTransform
 
 __all__ = [

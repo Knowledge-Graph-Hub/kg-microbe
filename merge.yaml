@@ -14,7 +14,7 @@ configuration:
     # define the type for non-canonical properties for RDF export
 
 merged_graph:
-  name: KG-MICROBE Graph
+  name: KG-Microbe
   source:
     bacteria-archaea-traits-ncbi:
       input:
@@ -66,13 +66,15 @@ merged_graph:
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:
-        graph_name: Merged Graph
-        filename: merged-kg_stats.yaml
+        graph_name: KG-Microbe
+        filename: merged_graph_stats.yaml
         node_facet_properties:
+          - provided_by
         edge_facet_properties:
+          - provided_by
+          - source
   destination:
     merged-kg-tsv:
       format: tsv
+      filename: merged-kg
       compression: tar.gz
-      filename:
-        - merged-kg

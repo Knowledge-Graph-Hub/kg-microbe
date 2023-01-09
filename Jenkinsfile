@@ -165,9 +165,7 @@ pipeline {
                                 // make $BUILDSTARTDATE/ directory and sync to s3 bucket
                                 //
                                 sh 'mkdir $BUILDSTARTDATE/'
-                                sh 'cp -p data/merged/merged-kg.nt.gz $BUILDSTARTDATE/kg-microbe.nt.gz'
                                 sh 'cp -p data/merged/merged-kg.tar.gz $BUILDSTARTDATE/kg-microbe.tar.gz'
-                                sh 'cp -p merged-kg.jnl.gz $BUILDSTARTDATE/kg-microbe.jnl.gz'
                                 // transformed data
                                 sh 'rm -fr data/transformed/.gitkeep'
                                 sh 'cp -pr data/transformed $BUILDSTARTDATE/'

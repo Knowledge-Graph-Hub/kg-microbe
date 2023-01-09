@@ -62,7 +62,7 @@ pipeline {
                     sh '/usr/bin/python3.8 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install .'
-                    sh './venv/bin/pip install awscli pystache boto3 s3cmd'
+                    sh './venv/bin/pip install awscli pystache boto3 s3cmd multi-indexer'
                 }
             }
         }

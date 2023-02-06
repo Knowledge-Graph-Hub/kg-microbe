@@ -12,10 +12,10 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 ## Setup
 
 * Create a python virtual environment (venv, anaconda etc.)
+* `pip install poetry`
 * `git clone https://github.com/Knowledge-Graph-Hub/kg-microbe`
 * `cd kg-microbe`
-* `pip install -r requirements.txt`
-* `python setup.py install`
+* `poetry install`
 
 ## Pipeline Stages:
 1. Download
@@ -25,7 +25,7 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 ### Download
 This step download all files from the urls declared in the [download.yaml](https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/download.yaml) file. 
 
-script - `python run.py download`
+script - `poetry run python run.py download`
 
 File currently downloaded:
 1. Traits data from [bacteria-arachaea-traits](https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output) repository. Considering only 'condensed_traits_NCBI.csv' for now.
@@ -38,19 +38,19 @@ File currently downloaded:
 In this step, we create nodes and edges corresponding to the four downloaded files mentioned above (#1, #4 and #5).
 
 scripts
-1. All together - `python run.py transform`
+1. All together - `poetry run python run.py transform`
 
 OR
 
 Running transforms individually:
-1. For traits data - `python run.py transform -s TraitsTransform`
-2. For CHEBI.owl = `python run.py transform -s ChebiTransform`
-3. For NCBITaxon.owl = `python run.py transform -s NCBITransform`
+1. For traits data - `poetry run python run.py transform -s TraitsTransform`
+2. For CHEBI.owl = `poetry run python run.py transform -s ChebiTransform`
+3. For NCBITaxon.owl = `poetry run python run.py transform -s NCBITransform`
 
 ### Merge
 In this step, all the above transforms are merged and a cumulative nodes and edges files are generated.
 
-script - `python run.py merge`
+script - `poetry run python run.py merge`
 
 
 ## Data

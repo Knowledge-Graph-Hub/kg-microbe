@@ -14,8 +14,7 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 * Create a python virtual environment (venv, anaconda etc.)
 * `git clone https://github.com/Knowledge-Graph-Hub/kg-microbe`
 * `cd kg-microbe`
-* `pip install -r requirements.txt`
-* `python setup.py install`
+* `poetry install` [assuming your virtual environment has poetry installed]
 
 ## Pipeline Stages:
 1. Download

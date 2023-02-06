@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe package &mdash; KG-Microbe 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils package" href="kg_microbe.transform_utils.html" />
+    <link rel="prev" title="kg-microbe" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> KG-Microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg-microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">kg_microbe package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-kg_microbe.download">kg_microbe.download module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.download.download"><code class="docutils literal notranslate"><span class="pre">download()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-kg_microbe.query">kg_microbe.query module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.query.parse_query_rq"><code class="docutils literal notranslate"><span class="pre">parse_query_rq()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.query.parse_query_yaml"><code class="docutils literal notranslate"><span class="pre">parse_query_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.query.result_dict_to_tsv"><code class="docutils literal notranslate"><span class="pre">result_dict_to_tsv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.query.run_query"><code class="docutils literal notranslate"><span class="pre">run_query()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-kg_microbe.transform">kg_microbe.transform module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.transform.transform"><code class="docutils literal notranslate"><span class="pre">transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-kg_microbe">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.download"><code class="docutils literal notranslate"><span class="pre">download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.transform"><code class="docutils literal notranslate"><span class="pre">transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="query_utils.html">query_utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run.html">run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">KG-Microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg-microbe</a></li>
+      <li class="breadcrumb-item active">kg_microbe package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="kg-microbe-package">
+<h1>kg_microbe package<a class="headerlink" href="#kg-microbe-package" title="Permalink to this heading"></a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html">kg_microbe.transform_utils.ontology package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html#module-kg_microbe.transform_utils.ontology.ontology_transform">kg_microbe.transform_utils.ontology.ontology_transform module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontology.html#module-kg_microbe.transform_utils.ontology">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.traits.html">kg_microbe.transform_utils.traits package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.traits.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.traits.html#module-kg_microbe.transform_utils.traits.traits">kg_microbe.transform_utils.traits.traits module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.traits.html#module-kg_microbe.transform_utils.traits">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#module-kg_microbe.transform_utils.transform">kg_microbe.transform_utils.transform module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform"><code class="docutils literal notranslate"><span class="pre">Transform</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_INPUT_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_INPUT_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_NLP_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_NLP_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_NLP_INPUT_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_NLP_INPUT_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_NLP_OUTPUT_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_NLP_OUTPUT_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_NLP_STOPWORDS_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_NLP_STOPWORDS_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_NLP_TERMS_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_NLP_TERMS_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_OUTPUT_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_OUTPUT_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_SCHEMA_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_SCHEMA_DIR</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#module-kg_microbe.transform_utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.biohub_converter">kg_microbe.utils.biohub_converter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.biohub_converter.parse"><code class="docutils literal notranslate"><span class="pre">parse()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.biohub_converter.parse_header"><code class="docutils literal notranslate"><span class="pre">parse_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.biohub_converter.write_line"><code class="docutils literal notranslate"><span class="pre">write_line()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.download_utils">kg_microbe.utils.download_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.download_utils.download_from_api"><code class="docutils literal notranslate"><span class="pre">download_from_api()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.download_utils.download_from_yaml"><code class="docutils literal notranslate"><span class="pre">download_from_yaml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.download_utils.elastic_search_query"><code class="docutils literal notranslate"><span class="pre">elastic_search_query()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.nlp_utils">kg_microbe.utils.nlp_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.nlp_utils.assign_string_match_rating"><code class="docutils literal notranslate"><span class="pre">assign_string_match_rating()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.nlp_utils.create_settings_file"><code class="docutils literal notranslate"><span class="pre">create_settings_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.nlp_utils.create_termlist"><code class="docutils literal notranslate"><span class="pre">create_termlist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.nlp_utils.prep_nlp_input"><code class="docutils literal notranslate"><span class="pre">prep_nlp_input()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.nlp_utils.process_oger_output"><code class="docutils literal notranslate"><span class="pre">process_oger_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.nlp_utils.run_oger"><code class="docutils literal notranslate"><span class="pre">run_oger()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.robot_utils">kg_microbe.utils.robot_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.robot_utils.convert_to_json"><code class="docutils literal notranslate"><span class="pre">convert_to_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.robot_utils.extract_convert_to_json"><code class="docutils literal notranslate"><span class="pre">extract_convert_to_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.robot_utils.initialize_robot"><code class="docutils literal notranslate"><span class="pre">initialize_robot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.transform_utils">kg_microbe.utils.transform_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.ItemInDictNotFoundError"><code class="docutils literal notranslate"><span class="pre">ItemInDictNotFoundError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.TransformError"><code class="docutils literal notranslate"><span class="pre">TransformError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.collapse_uniprot_curie"><code class="docutils literal notranslate"><span class="pre">collapse_uniprot_curie()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.data_to_dict"><code class="docutils literal notranslate"><span class="pre">data_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.get_header_items"><code class="docutils literal notranslate"><span class="pre">get_header_items()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.get_item_by_priority"><code class="docutils literal notranslate"><span class="pre">get_item_by_priority()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.guess_bl_category"><code class="docutils literal notranslate"><span class="pre">guess_bl_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.multi_page_table_to_list"><code class="docutils literal notranslate"><span class="pre">multi_page_table_to_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.parse_header"><code class="docutils literal notranslate"><span class="pre">parse_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.parse_line"><code class="docutils literal notranslate"><span class="pre">parse_line()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.ungzip_to_tempdir"><code class="docutils literal notranslate"><span class="pre">ungzip_to_tempdir()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.uniprot_make_name_to_id_mapping"><code class="docutils literal notranslate"><span class="pre">uniprot_make_name_to_id_mapping()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.uniprot_name_to_id"><code class="docutils literal notranslate"><span class="pre">uniprot_name_to_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.unzip_to_tempdir"><code class="docutils literal notranslate"><span class="pre">unzip_to_tempdir()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.transform_utils.write_node_edge_item"><code class="docutils literal notranslate"><span class="pre">write_node_edge_item()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.download_from_yaml"><code class="docutils literal notranslate"><span class="pre">download_from_yaml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.multi_page_table_to_list"><code class="docutils literal notranslate"><span class="pre">multi_page_table_to_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.write_node_edge_item"><code class="docutils literal notranslate"><span class="pre">write_node_edge_item()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-kg_microbe.download">
+<span id="kg-microbe-download-module"></span><h2>kg_microbe.download module<a class="headerlink" href="#module-kg_microbe.download" title="Permalink to this heading"></a></h2>
+<p>Basic download function.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.download.download">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.download.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#kg_microbe.download.download" title="Permalink to this definition"></a></dt>
+<dd><p>Download data files from list of URLs into data directory.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>yaml_file: A string pointing to the yaml file utilized
+to facilitate the downloading of data.
+output_dir: A string pointing to the location to download data to.
+ignore_cache: Ignore cache and download files even if they exist [false]</p>
+</dd>
+<dt>Returns:</dt><dd><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.query">
+<span id="kg-microbe-query-module"></span><h2>kg_microbe.query module<a class="headerlink" href="#module-kg_microbe.query" title="Permalink to this heading"></a></h2>
+<p>Functions for querying data.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query.parse_query_rq">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query.</span></span><span class="sig-name descname"><span class="pre">parse_query_rq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rq_file</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#kg_microbe.query.parse_query_rq" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a SPARQL query file in grlc rq format.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>rq_file: sparql query in grlc rq format</p>
+</dd>
+</dl>
+<p>Returns: dict with parsed info about sparql query</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query.parse_query_yaml">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query.</span></span><span class="sig-name descname"><span class="pre">parse_query_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#kg_microbe.query.parse_query_yaml" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a yaml query.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query.result_dict_to_tsv">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query.</span></span><span class="sig-name descname"><span class="pre">result_dict_to_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#kg_microbe.query.result_dict_to_tsv" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a result_dict to a TSV for output.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query.run_query">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query.</span></span><span class="sig-name descname"><span class="pre">run_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#kg_microbe.query.run_query" title="Permalink to this definition"></a></dt>
+<dd><p>Run a query.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe.transform">
+<span id="kg-microbe-transform-module"></span><h2>kg_microbe.transform module<a class="headerlink" href="#module-kg_microbe.transform" title="Permalink to this heading"></a></h2>
+<p>Top-level functions for transforming data.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform.transform">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#kg_microbe.transform.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Call scripts in kg_microbe/transform/[source name]/ to transform data.</p>
+<p>KGX can ingest each directly, in either TSV or JSON format.
+Args:</p>
+<blockquote>
+<div><p>input_dir: A string pointing to the directory to import data from.
+output_dir: A string pointing to the directory to output data to.
+sources: A list of sources to transform.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-kg_microbe">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe" title="Permalink to this heading"></a></h2>
+<p>Initialize the KG-Microbe project.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.download">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#kg_microbe.download" title="Permalink to this definition"></a></dt>
+<dd><p>Download data files from list of URLs into data directory.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>yaml_file: A string pointing to the yaml file utilized
+to facilitate the downloading of data.
+output_dir: A string pointing to the location to download data to.
+ignore_cache: Ignore cache and download files even if they exist [false]</p>
+</dd>
+<dt>Returns:</dt><dd><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.</span></span><span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#kg_microbe.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Call scripts in kg_microbe/transform/[source name]/ to transform data.</p>
+<p>KGX can ingest each directly, in either TSV or JSON format.
+Args:</p>
+<blockquote>
+<div><p>input_dir: A string pointing to the directory to import data from.
+output_dir: A string pointing to the directory to output data to.
+sources: A list of sources to transform.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="kg-microbe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Harshad Hegde.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

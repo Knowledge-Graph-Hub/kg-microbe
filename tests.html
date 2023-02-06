@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tests package &mdash; KG-Microbe 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> KG-Microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg-microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">KG-Microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">tests package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tests-package">
+<h1>tests package<a class="headerlink" href="#tests-package" title="Permalink to this heading"></a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="tests-test-download-module">
+<h2>tests.test_download module<a class="headerlink" href="#tests-test-download-module" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="tests-test-download-from-yaml-module">
+<h2>tests.test_download_from_yaml module<a class="headerlink" href="#tests-test-download-from-yaml-module" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-tests.test_query">
+<span id="tests-test-query-module"></span><h2>tests.test_query module<a class="headerlink" href="#module-tests.test_query" title="Permalink to this heading"></a></h2>
+<p>Test for query functions.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_query.</span></span><span class="sig-name descname"><span class="pre">TestQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_query.TestQuery" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Test query functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.setUp">
+<span class="sig-name descname"><span class="pre">setUp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.setUp" title="Permalink to this definition"></a></dt>
+<dd><p>Set up for query function tests.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing a query in rq.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq_parameterized">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq_parameterized</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq_parameterized" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq_parameterized_0_title">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq_parameterized_0_title</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq_parameterized_0_title" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing a query with parameters [with key=’title’, value=’some title’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq_parameterized_1_description">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq_parameterized_1_description</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq_parameterized_1_description" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing a query with parameters [with key=’description’, value=’what is it’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq_parameterized_2_endpoint">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq_parameterized_2_endpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq_parameterized_2_endpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing a query with parameters [with key=’endpoint’, value=’<a class="reference external" href="http://zombo.com">http://zombo.com</a>’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq_parameterized_3_query">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq_parameterized_3_query</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq_parameterized_3_query" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing a query with parameters [with key=’query’, value=’SELECT (COUNT(?v2) AS ?v1) ?v0...category&gt; ?v0n} GROUP BY ?v0n’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_parse_query_rq_should_return_dict">
+<span class="sig-name descname"><span class="pre">test_parse_query_rq_should_return_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_query.TestQuery.test_parse_query_rq_should_return_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing a query in rq and returning a dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_result_dict_to_tsv_makes_correct_file">
+<span class="sig-name descname"><span class="pre">test_result_dict_to_tsv_makes_correct_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_query.TestQuery.test_result_dict_to_tsv_makes_correct_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test that result_dict converts a TSV, as expected.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_query.TestQuery.test_result_dict_to_tsv_makes_file">
+<span class="sig-name descname"><span class="pre">test_result_dict_to_tsv_makes_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_query.TestQuery.test_result_dict_to_tsv_makes_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test that result_dict converts to TSV.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_query.load_obj">
+<span class="sig-prename descclassname"><span class="pre">tests.test_query.</span></span><span class="sig-name descname"><span class="pre">load_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_query.load_obj" title="Permalink to this definition"></a></dt>
+<dd><p>Load an object from a pickle.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tests.test_query.save_obj">
+<span class="sig-prename descclassname"><span class="pre">tests.test_query.</span></span><span class="sig-name descname"><span class="pre">save_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_query.save_obj" title="Permalink to this definition"></a></dt>
+<dd><p>Save an object as a pickle.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.test_run">
+<span id="tests-test-run-module"></span><h2>tests.test_run module<a class="headerlink" href="#module-tests.test_run" title="Permalink to this heading"></a></h2>
+<p>Tests for the run.py script defining the CLI.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_run.TestRun">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_run.</span></span><span class="sig-name descname"><span class="pre">TestRun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_run.TestRun" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Tests the run.py script.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_run.TestRun.setUp">
+<span class="sig-name descname"><span class="pre">setUp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_run.TestRun.setUp" title="Permalink to this definition"></a></dt>
+<dd><p>Set up for the CLI script tests.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_run.TestRun.test_merge_missing_file_error">
+<span class="sig-name descname"><span class="pre">test_merge_missing_file_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_run.TestRun.test_merge_missing_file_error" title="Permalink to this definition"></a></dt>
+<dd><p>Test case in which a file is missing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_run.TestRun.test_transform">
+<span class="sig-name descname"><span class="pre">test_transform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_run.TestRun.test_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Test the transformation command from the CLI.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.test_traits">
+<span id="tests-test-traits-module"></span><h2>tests.test_traits module<a class="headerlink" href="#module-tests.test_traits" title="Permalink to this heading"></a></h2>
+<p>Test the traits transform.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_traits.</span></span><span class="sig-name descname"><span class="pre">TestTraits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Test the traits transformation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.setUp">
+<span class="sig-name descname"><span class="pre">setUp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_traits.TestTraits.setUp" title="Permalink to this definition"></a></dt>
+<dd><p>Set up the transformation test.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_edges_file">
+<span class="sig-name descname"><span class="pre">test_edges_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_edges_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test structure of the edges file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_nodes_are_not_repeated">
+<span class="sig-name descname"><span class="pre">test_nodes_are_not_repeated</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_nodes_are_not_repeated" title="Permalink to this definition"></a></dt>
+<dd><p>Test that nodes are not repeated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_nodes_file">
+<span class="sig-name descname"><span class="pre">test_nodes_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_nodes_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test structure of the nodes file.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_00_species_tax_id">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_00_species_tax_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_00_species_tax_id" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’species_tax_id’, value=’256826’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_01_data_source">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_01_data_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_01_data_source" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’data_source’, value=’methanogen’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_02_org_name">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_02_org_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_02_org_name" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’org_name’, value=’Methanobacterium aarhusense’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_03_species">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_03_species</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_03_species" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’species’, value=’Methanobacterium aarhusense’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_04_genus">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_04_genus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_04_genus" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’genus’, value=’Methanobacterium’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_05_family">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_05_family</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_05_family" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’family’, value=’Methanobacteriaceae’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_06_order">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_06_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_06_order" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’order’, value=’Methanobacteriales’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_07_class">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_07_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_07_class" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’class’, value=’Methanobacteria’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_08_phylum">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_08_phylum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_08_phylum" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’phylum’, value=’Euryarchaeota’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_09_superkingdom">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_09_superkingdom</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_09_superkingdom" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’superkingdom’, value=’Archaea’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_10_gram_stain">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_10_gram_stain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_10_gram_stain" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’gram_stain’, value=’positive’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_11_metabolism">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_11_metabolism</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_11_metabolism" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’metabolism’, value=’anaerobic’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_12_pathways">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_12_pathways</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_12_pathways" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’pathways’, value=’methanogenesis’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_13_carbon_substrates">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_13_carbon_substrates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_13_carbon_substrates" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’carbon_substrates’, value=’H2_CO2’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_14_sporulation">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_14_sporulation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_14_sporulation" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’sporulation’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_15_motility">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_15_motility</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_15_motility" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’motility’, value=’no’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_16_range_tmp">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_16_range_tmp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_16_range_tmp" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’range_tmp’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_17_range_salinity">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_17_range_salinity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_17_range_salinity" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’range_salinity’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_18_cell_shape">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_18_cell_shape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_18_cell_shape" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’cell_shape’, value=’bacillus’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_19_isolation_source">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_19_isolation_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_19_isolation_source" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’isolation_source’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_20_d1_lo">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_20_d1_lo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_20_d1_lo" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’d1_lo’, value=’0.7’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_21_d1_up">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_21_d1_up</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_21_d1_up" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’d1_up’, value=’0.7’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_22_d2_lo">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_22_d2_lo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_22_d2_lo" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’d2_lo’, value=’5’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_23_d2_up">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_23_d2_up</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_23_d2_up" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’d2_up’, value=’18’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_24_doubling_h">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_24_doubling_h</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_24_doubling_h" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’doubling_h’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_25_genome_size">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_25_genome_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_25_genome_size" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’genome_size’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_26_gc_content">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_26_gc_content</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_26_gc_content" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’gc_content’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_27_coding_genes">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_27_coding_genes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_27_coding_genes" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’coding_genes’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_28_optimum_tmp">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_28_optimum_tmp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_28_optimum_tmp" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’optimum_tmp’, value=’45’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_29_optimum_ph">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_29_optimum_ph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_29_optimum_ph" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’optimum_ph’, value=’7.75’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_30_growth_tmp">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_30_growth_tmp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_30_growth_tmp" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’growth_tmp’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_31_rRNA16S_genes">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_31_rRNA16S_genes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_31_rRNA16S_genes" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’rRNA16S_genes’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_32_tRNA_genes">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_32_tRNA_genes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_32_tRNA_genes" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’tRNA_genes’, value=’NA’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_parse_traits_line_33_ref_id">
+<span class="sig-name descname"><span class="pre">test_parse_traits_line_33_ref_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_parse_traits_line_33_ref_id" title="Permalink to this definition"></a></dt>
+<dd><p>Test parsing traits line [with key=’ref_id’, value=’19751’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_traits.TestTraits.test_run">
+<span class="sig-name descname"><span class="pre">test_run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_traits.TestTraits.test_run" title="Permalink to this definition"></a></dt>
+<dd><p>Test running the transformation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.test_transform_class">
+<span id="tests-test-transform-class-module"></span><h2>tests.test_transform_class module<a class="headerlink" href="#module-tests.test_transform_class" title="Permalink to this heading"></a></h2>
+<p>Test the parent Transform class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_transform_class.</span></span><span class="sig-name descname"><span class="pre">TestTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Tests for all transform child classes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.setUp">
+<span class="sig-name descname"><span class="pre">setUp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tests.test_transform_class.TestTransform.setUp" title="Permalink to this definition"></a></dt>
+<dd><p>Set up the transform tests.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes">
+<span class="sig-name descname"><span class="pre">test_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_0_source_name">
+<span class="sig-name descname"><span class="pre">test_attributes_0_source_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_0_source_name" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’source_name’, default=’test_transform’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_1_node_header">
+<span class="sig-name descname"><span class="pre">test_attributes_1_node_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_1_node_header" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’node_header’, default=[‘id’, ‘name’, ‘category’]].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_2_edge_header">
+<span class="sig-name descname"><span class="pre">test_attributes_2_edge_header</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_2_edge_header" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’edge_header’, default=[‘subject’, ‘predicate’, ‘object’, ‘relation’]].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_3_output_base_dir">
+<span class="sig-name descname"><span class="pre">test_attributes_3_output_base_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_3_output_base_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’output_base_dir’, default=’data/transformed’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_4_input_base_dir">
+<span class="sig-name descname"><span class="pre">test_attributes_4_input_base_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_4_input_base_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’input_base_dir’, default=’data/raw’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_5_output_dir">
+<span class="sig-name descname"><span class="pre">test_attributes_5_output_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_5_output_dir" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’output_dir’, default=’data/transformed/test_transform’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_6_output_node_file">
+<span class="sig-name descname"><span class="pre">test_attributes_6_output_node_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_6_output_node_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’output_node_file’, default=’data/transformed/test_transform/nodes.tsv’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_7_output_edge_file">
+<span class="sig-name descname"><span class="pre">test_attributes_7_output_edge_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_7_output_edge_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’output_edge_file’, default=’data/transformed/test_transform/edges.tsv’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_attributes_8_output_json_file">
+<span class="sig-name descname"><span class="pre">test_attributes_8_output_json_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_attributes_8_output_json_file" title="Permalink to this definition"></a></dt>
+<dd><p>Test the attributes of a Transform instance [with attr=’output_json_file’, default=’data/transformed/test_transform/nodes_edges.json’].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_default_dir">
+<span class="sig-name descname"><span class="pre">test_default_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_default_dir" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_default_dir_0_DEFAULT_INPUT_DIR">
+<span class="sig-name descname"><span class="pre">test_default_dir_0_DEFAULT_INPUT_DIR</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_default_dir_0_DEFAULT_INPUT_DIR" title="Permalink to this definition"></a></dt>
+<dd><p>Test the default directory [with dir_var_name=’DEFAULT_INPUT_DIR’, dir_var_value=’data/raw’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_default_dir_1_DEFAULT_OUTPUT_DIR">
+<span class="sig-name descname"><span class="pre">test_default_dir_1_DEFAULT_OUTPUT_DIR</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_default_dir_1_DEFAULT_OUTPUT_DIR" title="Permalink to this definition"></a></dt>
+<dd><p>Test the default directory [with dir_var_name=’DEFAULT_OUTPUT_DIR’, dir_var_value=’data/transformed’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_reality">
+<span class="sig-name descname"><span class="pre">test_reality</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_reality" title="Permalink to this definition"></a></dt>
+<dd><p>Test the nature of reality.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_transform_child_classes">
+<span class="sig-name descname"><span class="pre">test_transform_child_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_transform_child_classes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_transform_child_classes_0_ChebiTransform">
+<span class="sig-name descname"><span class="pre">test_transform_child_classes_0_ChebiTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_transform_child_classes_0_ChebiTransform" title="Permalink to this definition"></a></dt>
+<dd><p>Test whether Transform child classes work as expected [with src_name=’ChebiTransform’].</p>
+<p>Make sure Transform child classes:
+- properly set default input_dir and output_dir
+- properly pass and set input_dir and output from constructor
+- implement run()
+:param src_name:
+:return: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_transform_child_classes_1_NCBITransform">
+<span class="sig-name descname"><span class="pre">test_transform_child_classes_1_NCBITransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_transform_child_classes_1_NCBITransform" title="Permalink to this definition"></a></dt>
+<dd><p>Test whether Transform child classes work as expected [with src_name=’NCBITransform’].</p>
+<p>Make sure Transform child classes:
+- properly set default input_dir and output_dir
+- properly pass and set input_dir and output from constructor
+- implement run()
+:param src_name:
+:return: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_transform_child_classes_2_EnvoTransform">
+<span class="sig-name descname"><span class="pre">test_transform_child_classes_2_EnvoTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_transform_child_classes_2_EnvoTransform" title="Permalink to this definition"></a></dt>
+<dd><p>Test whether Transform child classes work as expected [with src_name=’EnvoTransform’].</p>
+<p>Make sure Transform child classes:
+- properly set default input_dir and output_dir
+- properly pass and set input_dir and output from constructor
+- implement run()
+:param src_name:
+:return: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_transform_child_classes_3_GoTransform">
+<span class="sig-name descname"><span class="pre">test_transform_child_classes_3_GoTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_transform_child_classes_3_GoTransform" title="Permalink to this definition"></a></dt>
+<dd><p>Test whether Transform child classes work as expected [with src_name=’GoTransform’].</p>
+<p>Make sure Transform child classes:
+- properly set default input_dir and output_dir
+- properly pass and set input_dir and output from constructor
+- implement run()
+:param src_name:
+:return: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_class.TestTransform.test_transform_child_classes_4_TraitsTransform">
+<span class="sig-name descname"><span class="pre">test_transform_child_classes_4_TraitsTransform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_class.TestTransform.test_transform_child_classes_4_TraitsTransform" title="Permalink to this definition"></a></dt>
+<dd><p>Test whether Transform child classes work as expected [with src_name=’TraitsTransform’].</p>
+<p>Make sure Transform child classes:
+- properly set default input_dir and output_dir
+- properly pass and set input_dir and output from constructor
+- implement run()
+:param src_name:
+:return: None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_transform_class.TransformChildClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_transform_class.</span></span><span class="sig-name descname"><span class="pre">TransformChildClass</span></span><a class="headerlink" href="#tests.test_transform_class.TransformChildClass" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>An example Transform class.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tests.test_transform_utils">
+<span id="tests-test-transform-utils-module"></span><h2>tests.test_transform_utils module<a class="headerlink" href="#module-tests.test_transform_utils" title="Permalink to this heading"></a></h2>
+<p>Test the transformation utilities.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tests.test_transform_utils.</span></span><span class="sig-name descname"><span class="pre">TestTransformUtils</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<p>Tests for running transform utilities.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie">
+<span class="sig-name descname"><span class="pre">test_collapse_uniprot_curie</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_0_foobar">
+<span class="sig-name descname"><span class="pre">test_collapse_uniprot_curie_0_foobar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_0_foobar" title="Permalink to this definition"></a></dt>
+<dd><p>Test for collapsing a UniProtKB curie [with curie=’foobar’, collapsed_curie=’foobar’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_1_ENSEMBL_ENSG00000178607">
+<span class="sig-name descname"><span class="pre">test_collapse_uniprot_curie_1_ENSEMBL_ENSG00000178607</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_1_ENSEMBL_ENSG00000178607" title="Permalink to this definition"></a></dt>
+<dd><p>Test for collapsing a UniProtKB curie [with curie=’ENSEMBL:ENSG00000178607’, collapsed_curie=’ENSEMBL:ENSG00000178607’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_2_UniprotKB_P63151_1">
+<span class="sig-name descname"><span class="pre">test_collapse_uniprot_curie_2_UniprotKB_P63151_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_2_UniprotKB_P63151_1" title="Permalink to this definition"></a></dt>
+<dd><p>Test for collapsing a UniProtKB curie [with curie=’UniprotKB:P63151-1’, collapsed_curie=’UniprotKB:P63151’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_3_uniprotkb_P63151_1">
+<span class="sig-name descname"><span class="pre">test_collapse_uniprot_curie_3_uniprotkb_P63151_1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_3_uniprotkb_P63151_1" title="Permalink to this definition"></a></dt>
+<dd><p>Test for collapsing a UniProtKB curie [with curie=’uniprotkb:P63151-1’, collapsed_curie=’uniprotkb:P63151’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_4_UniprotKB_P63151_2">
+<span class="sig-name descname"><span class="pre">test_collapse_uniprot_curie_4_UniprotKB_P63151_2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_collapse_uniprot_curie_4_UniprotKB_P63151_2" title="Permalink to this definition"></a></dt>
+<dd><p>Test for collapsing a UniProtKB curie [with curie=’UniprotKB:P63151-2’, collapsed_curie=’UniprotKB:P63151’].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_guess_bl_category">
+<span class="sig-name descname"><span class="pre">test_guess_bl_category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_guess_bl_category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_0_">
+<span class="sig-name descname"><span class="pre">test_guess_bl_category_0_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_0_" title="Permalink to this definition"></a></dt>
+<dd><p>Test inference of Biolink categories for a CURIE [with curie=’’, category=’biolink:NamedThing’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_1_UniProtKB">
+<span class="sig-name descname"><span class="pre">test_guess_bl_category_1_UniProtKB</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_1_UniProtKB" title="Permalink to this definition"></a></dt>
+<dd><p>Test inference of Biolink categories for a CURIE [with curie=’UniProtKB’, category=’biolink:Protein’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_2_ComplexPortal">
+<span class="sig-name descname"><span class="pre">test_guess_bl_category_2_ComplexPortal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_2_ComplexPortal" title="Permalink to this definition"></a></dt>
+<dd><p>Test inference of Biolink categories for a CURIE [with curie=’ComplexPortal’, category=’biolink:Protein’].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_3_GO">
+<span class="sig-name descname"><span class="pre">test_guess_bl_category_3_GO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tests.test_transform_utils.TestTransformUtils.test_guess_bl_category_3_GO" title="Permalink to this definition"></a></dt>
+<dd><p>Test inference of Biolink categories for a CURIE [with curie=’GO’, category=’biolink:OntologyClass’].</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="tests-test-version-module">
+<h2>tests.test_version module<a class="headerlink" href="#tests-test-version-module" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-tests" title="Permalink to this heading"></a></h2>
+<p>Initialize the tests.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Harshad Hegde.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -98,9 +98,10 @@
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Create a python virtual environment (venv, anaconda etc.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">poetry</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Knowledge-Graph-Hub/kg-microbe</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">kg-microbe</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code> [assuming your virtual environment has poetry installed]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="pipeline-stages">
@@ -113,7 +114,7 @@
 <div class="section" id="download">
 <h3>Download<a class="headerlink" href="#download" title="Permalink to this heading"></a></h3>
 <p>This step download all files from the urls declared in the <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/download.yaml">download.yaml</a> file.</p>
-<p>script - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">download</span></code></p>
+<p>script - <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">download</span></code></p>
 <p>File currently downloaded:</p>
 <ol class="simple">
 <li><p>Traits data from <a class="reference external" href="https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output">bacteria-arachaea-traits</a> repository. Considering only ‘condensed_traits_NCBI.csv’ for now.</p></li>
@@ -128,20 +129,20 @@
 <p>In this step, we create nodes and edges corresponding to the four downloaded files mentioned above (#1, #4 and #5).</p>
 <p>scripts</p>
 <ol class="simple">
-<li><p>All together - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span></code></p></li>
+<li><p>All together - <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span></code></p></li>
 </ol>
 <p>OR</p>
 <p>Running transforms individually:</p>
 <ol class="simple">
-<li><p>For traits data - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">TraitsTransform</span></code></p></li>
-<li><p>For CHEBI.owl = <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">ChebiTransform</span></code></p></li>
-<li><p>For NCBITaxon.owl = <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">NCBITransform</span></code></p></li>
+<li><p>For traits data - <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">TraitsTransform</span></code></p></li>
+<li><p>For CHEBI.owl = <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">ChebiTransform</span></code></p></li>
+<li><p>For NCBITaxon.owl = <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">NCBITransform</span></code></p></li>
 </ol>
 </div>
 <div class="section" id="merge">
 <h3>Merge<a class="headerlink" href="#merge" title="Permalink to this heading"></a></h3>
 <p>In this step, all the above transforms are merged and a cumulative nodes and edges files are generated.</p>
-<p>script - <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">merge</span></code></p>
+<p>script - <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">run.py</span> <span class="pre">merge</span></code></p>
 </div>
 </div>
 <div class="section" id="data">

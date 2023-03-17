@@ -20,7 +20,7 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     
     # Get Organism data:
     print('Parsing NCBI Taxonomy')
-    #ncbi_taxonomy_utils.load(writer, array_delimiter)
+    ncbi_taxonomy_utils.load(writer, array_delimiter)
     
     # Get Chemical and Reaction data.
     # Write chemistry csv files:
@@ -28,19 +28,19 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     reac_man = reaction_utils.ReactionManager()
 
 
-    #print('Parsing MNXref')
+    print('Parsing MNXref')
     mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer)
     mnx_loader.load()
     
     print('Parsing ChEBI')
-    #chebi_utils.load(chem_man, writer)
+    chebi_utils.load(chem_man, writer)
 
     ####Using all memory (120+Gb) and eventually is killed
     # Get Spectrum data:
     #print('Parsing spectrum data')
     #spectra_utils.load(writer, chem_man, array_delimiter=array_delimiter)
     
-    #chem_man.write_files(writer)
+    chem_man.write_files(writer)
 
     ####Not including KEGG for now
     # Get Reaction / Enzyme / Organism data:
@@ -49,8 +49,8 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     
  
     print('Parsing Rhea')
-    #rhea_utils.load(reac_man, num_threads=num_threads)
-    #reac_man.write_files(writer)
+    rhea_utils.load(reac_man, num_threads=num_threads)
+    reac_man.write_files(writer)
     
 
 def main(args):

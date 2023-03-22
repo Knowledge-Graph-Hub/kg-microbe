@@ -17,30 +17,34 @@ import chebi_utils, chemical_utils, mnxref_utils, \
 def build_csv(dest_dir, array_delimiter, num_threads):
     '''Build database CSV files.'''
     writer = utils.Writer(dest_dir)
+
+    reac_man = reaction_utils.ReactionManager()
     
     # Get Organism data:
     print('Parsing NCBI Taxonomy')
-    ncbi_taxonomy_utils.load(writer, array_delimiter)
+    ncbi_taxonomy_utils.load(reac_man, writer, array_delimiter)
+
     
     # Get Chemical and Reaction data.
     # Write chemistry csv files:
-    chem_man = chemical_utils.ChemicalManager(array_delimiter=array_delimiter)
-    reac_man = reaction_utils.ReactionManager()
+    #chem_man = chemical_utils.ChemicalManager(array_delimiter=array_delimiter)
+    # May be duplicate line
+    #reac_man = reaction_utils.ReactionManager()
 
 
-    print('Parsing MNXref')
-    mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer)
-    mnx_loader.load()
+    #print('Parsing MNXref')
+    #mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer)
+    #mnx_loader.load()
     
-    print('Parsing ChEBI')
-    chebi_utils.load(chem_man, writer)
+    #print('Parsing ChEBI')
+    #chebi_utils.load(chem_man, writer)
 
     ####Using all memory (120+Gb) and eventually is killed
     # Get Spectrum data:
     #print('Parsing spectrum data')
     #spectra_utils.load(writer, chem_man, array_delimiter=array_delimiter)
     
-    chem_man.write_files(writer)
+    #chem_man.write_files(writer)
 
     ####Not including KEGG for now
     # Get Reaction / Enzyme / Organism data:

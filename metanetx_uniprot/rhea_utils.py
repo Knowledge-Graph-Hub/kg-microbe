@@ -30,7 +30,9 @@ def load(reaction_manager, source=__RHEA_URL, num_threads=0):
     data.update(data_small)
     '''
     ######Not sure why source is Rhea here, calls to UniProt
-    reaction_manager.add_react_to_enz(data, 'rhea', num_threads)
+    #Remove, since this goes from rhea2uniprot to uniprot enzymes. use add_org_to_enz function in ncbi_taxonomy_utils instead
+    #reaction_manager.add_react_to_enz(data, 'rhea', num_threads)
+    reaction_manager.add_react_to_enz_organism(data, 'rhea', num_threads)
 
 
 def _parse(filename):

@@ -29,6 +29,8 @@ from synbiochem.utils import thread_utils
 import queue
 
 import numpy as np
+from tqdm import tqdm
+import sys
 
 def get_uniprot_values(uniprot_ids, fields, batch_size, verbose=False,
                        num_threads=0):
@@ -107,6 +109,36 @@ def _parse_uniprot_data(url, values):
                     if key.startswith('Cross-reference'):
                         resp[key] = resp[key].split(';')
 
+                if 'Error messages' in resp:
+                    print(resp); sys.exit()
                 values.append(resp)
     except Exception as err:
         print(err)
+
+
+def get_uniprot_values_organism(organism_ids, fields, batch_size, verbose=False, num_threads=0):
+    values = []
+
+    for i in tqdm(range(0, len(organism_ids), batch_size)):
+        values = _get_uniprot_batch_organism(organism_ids, i, batch_size, fields, values,verbose)
+
+    return {value['Organism (ID)']: value for value in values}
+
+def _get_uniprot_batch_organism(organism_ids, i, batch_size, fields, values, verbose):
+    '''Get batch of Uniprot data.'''
+    if verbose:
+        print('seq_utils: getting Uniprot values ' + str(i) + ' - ' +
+              str(min(i + batch_size, len(organism_ids))) + ' / ' +
+              str(len(organism_ids)))
+
+    #If getting values in batch Remove 'accession:' +  from start of join([HERE .....]) and accession: from query=HERE
+    batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
+    query = '%20OR%20'.join(['organism_id:' + organism_id for organism_id in batch])
+    url = 'https://rest.uniprot.org/uniprotkb/search?query=' + query + \
+        '&format=tsv&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
+                                              for field in fields])
+
+    #print('_get_uniprot_batch_organism url: ',url)
+
+    _parse_uniprot_data(url, values)
+    return values

@@ -9,6 +9,8 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 from enzyme_utils import EnzymeManager
 
+from numpy import *
+
 
 class ReactionManager(object):
     '''Class to implement a manager of Reaction data.'''
@@ -18,6 +20,7 @@ class ReactionManager(object):
         self.__nodes = {}
         self.__reac_ids = {}
         self.__reac_enz_rels = []
+        self.__enz_reac_rels = []
         self.__org_enz_rels = []
         self.__enz_man = EnzymeManager()
 
@@ -29,6 +32,8 @@ class ReactionManager(object):
                                     'Enzyme')],
                 [writer.write_rels(self.__reac_enz_rels,
                                    'Reaction', 'Enzyme'),
+                writer.write_rels(self.__enz_reac_rels,
+                                   'Enzyme', 'Reaction'),
                  writer.write_rels(self.__enz_man.get_org_enz_rels(),
                                    'Organism', 'Enzyme')])
 
@@ -64,7 +69,12 @@ class ReactionManager(object):
         enzyme_ids = self.__create_react_enz(data, source)
 
         # Create Enzyme nodes:
-        self.__enz_man.add_uniprot_data(enzyme_ids, source, num_threads)
+        self.__enz_man.add_uniprot_data(enzyme_ids, source, num_threads) 
+
+    def add_react_to_enz_organism(self, data, source, num_threads=0):
+
+        #Create Reaction relationships
+        reaction_ids = self.__create_enz_react(data, source)
 
     def __create_react_enz(self, data, source):
         '''Creates Reaction and Enzyme nodes and their Relationships.'''
@@ -80,3 +90,37 @@ class ReactionManager(object):
                                              {'source': source}])
 
         return list(set(enzyme_ids))
+
+    def __create_enz_react(self, data, source):
+        '''Creates Reaction and Enzyme nodes and their Relationships.'''
+        print('adding reaction to enzyme relationships')
+        reaction_ids = []
+        enzyme_ids = self.__enz_man.get_nodes()
+
+        for enz_id in enzyme_ids:
+            reac_ids = [key for key, value in data.items() if enz_id['entry'] in value]
+            reaction_ids = reaction_ids+reac_ids
+            for j in reac_ids:
+                self.__enz_reac_rels.append([j, 'catalysed_by',
+                                                enz_id['entry'],
+                                                {'source': source}])
+
+        return list(set(reaction_ids))
+
+    def add_org_to_enz(self, nodes, source, num_threads=0):
+        '''Submit data to the graph.'''
+        # Create Organism nodes:
+        organism_ids = self.__create_organism_ids(nodes, source)
+
+        ## For testing
+        #organism_ids = organism_ids[0:10]
+
+        # Create Organism and Enzyme nodes:
+        self.__enz_man.add_uniprot_data_organism(organism_ids, source, num_threads)
+
+    def __create_organism_ids(self, data, source):
+
+        ids = unique(list(data.keys()))
+
+        return ids
+

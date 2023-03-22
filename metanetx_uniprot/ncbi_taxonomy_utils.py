@@ -21,19 +21,23 @@ import pandas as pd
 __NCBITAXONOMY_URL = 'ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz'
 
 
-def load(writer, array_delimiter, source=__NCBITAXONOMY_URL):
+def load(reaction_manager, writer, array_delimiter, source=__NCBITAXONOMY_URL):
     '''Loads NCBI Taxonomy data.'''
+    #Not used currently
     #nodes_filename, names_filename = _get_ncbi_taxonomy_files(source)
-    ####Update filepath accordingly
-    nodes_filename = '~/kg_microbe/kg-microbe/data/raw/ncbitaxon.json'
     #nodes, rels = _parse_nodes(nodes_filename, array_delimiter)
+    #_parse_names(nodes, names_filename, array_delimiter)
+    #######
+    nodes_filename = '/Users/brooksantangelo/Documents/HunterLab/Exploration/kg_microbe/kg-microbe/data/raw/ncbitaxon.json'
     print('parsing ncbi taxon json file')
     kgx_nodes_json,kgx_edges_json = _parse_nodes_kgmicrobe(nodes_filename, array_delimiter)
     nodes,rels = transform_kgx_output_format(kgx_nodes_json,kgx_edges_json)
-    #_parse_names(nodes, names_filename, array_delimiter)
 
     writer.write_nodes(nodes.values(), 'Organism')
     writer.write_rels(rels, 'Organism', 'Organism')
+
+    print('adding organism-enzyme relationships')
+    reaction_manager.add_org_to_enz(nodes, 'uniprot')
 
 
 def _get_ncbi_taxonomy_files(source):
@@ -54,8 +58,7 @@ def _get_ncbi_taxonomy_files(source):
 def _parse_nodes_kgmicrobe(filename, array_delimiter):
     '''Parses nodes file.'''
 
-    ####Update filepath accordingly
-    output_dir = '~/biochem4j/'
+    output_dir = '/Users/brooksantangelo/Documents/HunterLab/biochem4j/biochem4j/'
     name = 'ncbitaxon_transformed'
     
     transform(inputs=[filename], input_format='obojson', output= os.path.join(output_dir, name), output_format='tsv')
@@ -72,7 +75,7 @@ def transform_kgx_output_format(transformed_nodes_tsv,transformed_edges_tsv):
     rels = []
 
     for i in range(len(labels)):
-        tax_id = labels.iloc[i].loc['id']
+        tax_id = labels.iloc[i].loc['id'].split('NCBITaxon:')[1]
         nodes[tax_id] = {'taxonomy:ID(Organism)': tax_id,
                              ':LABEL':
                              'Organism,unknown'}
@@ -125,6 +128,7 @@ def _parse_names(nodes, filename, array_delimiter):
         if 'names:string[]' in node:
             node['names:string[]'] = \
                 array_delimiter.join(node['names:string[]'])
+
 
 
 def main(argv):

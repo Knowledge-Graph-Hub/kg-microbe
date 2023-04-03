@@ -1,6 +1,9 @@
 '''
 SYNBIOCHEM-DB (c) University of Manchester 2015
 
+'''
+SYNBIOCHEM-DB (c) University of Manchester 2015
+
 SYNBIOCHEM-DB is licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
@@ -10,31 +13,23 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import multiprocessing
 import sys
 
-import chebi_utils, chemical_utils, mnxref_utils, \
-    ncbi_taxonomy_utils, reaction_utils, rhea_utils, spectra_utils, utils, seq_utils #, kegg_utils
+import chebi_utils, chemical_utils, mnxref_utils, ncbi_taxonomy_utils, reaction_utils, rhea_utils, spectra_utils, utils, seq_utils #, kegg_utils
 
 
 def build_csv(dest_dir, array_delimiter, num_threads):
     '''Build database CSV files.'''
     writer = utils.Writer(dest_dir)
-
     reac_man = reaction_utils.ReactionManager()
-    
+
     # Get Organism data:
     print('Parsing NCBI Taxonomy')
-    ncbi_taxonomy_utils.load(reac_man, writer, array_delimiter)
+    ncbi_taxonomy_utils.load(reac_man, writer, array_delimiter) #--> writes Organism_Enzyme.tsv
 
-    
     # Get Chemical and Reaction data.
     # Write chemistry csv files:
-    #chem_man = chemical_utils.ChemicalManager(array_delimiter=array_delimiter)
-    # May be duplicate line
-    #reac_man = reaction_utils.ReactionManager()
+    chem_man = chemical_utils.ChemicalManager(array_delimiter=array_delimiter)
 
 
-    #print('Parsing MNXref')
-    #mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer)
-    #mnx_loader.load()
     
     #print('Parsing ChEBI')
     #chebi_utils.load(chem_man, writer)
@@ -44,7 +39,6 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     #print('Parsing spectrum data')
     #spectra_utils.load(writer, chem_man, array_delimiter=array_delimiter)
     
-    #chem_man.write_files(writer)
 
     ####Not including KEGG for now
     # Get Reaction / Enzyme / Organism data:
@@ -53,8 +47,16 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     
  
     print('Parsing Rhea')
-    rhea_utils.load(reac_man, num_threads=num_threads)
-    reac_man.write_files(writer)
+    ##Returns rhea reaction ids
+    reaction_ids = rhea_utils.load(reac_man, num_threads=num_threads)
+    reac_man.write_files(writer) #--> writes Enzyme_Reaction.tsv
+
+    #
+    print('Parsing MNXref')
+    mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer, reaction_ids)
+    mnx_loader.load() #--> writes Reaction_Chemical.tsv
+    
+    #chem_man.write_files(writer)
     
 
 def main(args):
@@ -71,6 +73,8 @@ def main(args):
     print('Running build with ' + str(num_threads) + ' threads')
 
     build_csv(args[0], args[1], num_threads)
+
+
 
 
 if __name__ == '__main__':

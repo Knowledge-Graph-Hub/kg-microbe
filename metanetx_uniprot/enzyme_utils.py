@@ -68,41 +68,39 @@ class EnzymeManager(object):
     def add_uniprot_data_organism(self, organism_ids, source, num_threads=0):
         '''Gets Uniprot data.'''
 
-        #fields = ['entry name', 'protein names', 'organism-id', 'ec']
         fields = ['id', 'accession','protein_name', 'organism_id', 'ec']
-        #enzyme_ids = [enzyme_id for enzyme_id in enzyme_ids if enzyme_id not in self.__nodes]
         print('querying uniprot for enzymes per organism')
+        ##Uniprot returns list of dicts for each entry
         uniprot_values = get_uniprot_values_organism(organism_ids, fields, 
                                                                    batch_size=128,
                                                                    verbose=False,
                                                                    num_threads=num_threads)
 
-        print('add_uniprot_data function: added uniprot values: ',len(uniprot_values))
-
-
-
         print('adding uniprot data to graph')
-        for uniprot_id, uniprot_value in tqdm(uniprot_values.items()):
+        
+        ##To return all organism-enzyme entries
+        for entry in tqdm(uniprot_values):
             enzyme_node = {':LABEL': 'Enzyme',
-                        'uniprot:ID(Enzyme)': uniprot_id}
-            self.__nodes[uniprot_id] = enzyme_node
+                        'uniprot:ID(Enzyme)': entry['Entry']}
+            self.__nodes[entry['Entry']] = enzyme_node
 
-            organism_id = uniprot_value.pop('Organism (ID)') \
-                if 'Organism (ID)' in uniprot_value else None
+            organism_id = entry['Organism (ID)'] \
+                if 'Organism (ID)' in entry.keys() else None
 
-            if 'Entry' in uniprot_value:
-                enzyme_node['entry'] = uniprot_value['Entry']
+            if 'Entry' in entry.keys():
+                enzyme_node['entry'] = entry['Entry']
 
-            if 'Protein names' in uniprot_value:
-                enzyme_node['names'] = uniprot_value['Protein names']
+            if 'Protein names' in entry:
+                enzyme_node['names'] = entry['Protein names']
 
-                if enzyme_node['names']:
-                    enzyme_node['name'] = enzyme_node['names'][0]
+                if 'names' in entry.keys():
+                    enzyme_node['name'] = entry['names'][0]
 
-            if 'EC number' in uniprot_value:
-                enzyme_node['ec-code'] = uniprot_value['EC number']
+            if 'EC number' in entry:
+                enzyme_node['ec-code'] = entry['EC number']
 
             if organism_id:
-                self.__org_enz_rels.append([organism_id, 'expresses',uniprot_value['Entry'], {'source': source}])
+                self.__org_enz_rels.append([organism_id, 'expresses',entry['Entry'], {'source': source}])
 
         return uniprot_values
+        

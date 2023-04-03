@@ -32,8 +32,9 @@ class ReactionManager(object):
                                     'Enzyme')],
                 [writer.write_rels(self.__reac_enz_rels,
                                    'Reaction', 'Enzyme'),
+                #Gets reactions connected to all enzymes
                 writer.write_rels(self.__enz_reac_rels,
-                                   'Enzyme', 'Reaction'),
+                                   'Reaction', 'Enzyme'),
                  writer.write_rels(self.__enz_man.get_org_enz_rels(),
                                    'Organism', 'Enzyme')])
 
@@ -76,6 +77,8 @@ class ReactionManager(object):
         #Create Reaction relationships
         reaction_ids = self.__create_enz_react(data, source)
 
+        return reaction_ids
+
     def __create_react_enz(self, data, source):
         '''Creates Reaction and Enzyme nodes and their Relationships.'''
         enzyme_ids = []
@@ -104,7 +107,6 @@ class ReactionManager(object):
                 self.__enz_reac_rels.append([j, 'catalysed_by',
                                                 enz_id['entry'],
                                                 {'source': source}])
-
         return list(set(reaction_ids))
 
     def add_org_to_enz(self, nodes, source, num_threads=0):

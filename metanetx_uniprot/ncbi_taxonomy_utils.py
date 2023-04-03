@@ -28,7 +28,8 @@ def load(reaction_manager, writer, array_delimiter, source=__NCBITAXONOMY_URL):
     #nodes, rels = _parse_nodes(nodes_filename, array_delimiter)
     #_parse_names(nodes, names_filename, array_delimiter)
     #######
-    nodes_filename = '/Users/brooksantangelo/Documents/HunterLab/Exploration/kg_microbe/kg-microbe/data/raw/ncbitaxon.json'
+    nodes_filename = os.getcwd()+'/Files/ncbitaxon.json'
+    #nodes_filename = os.getcwd()+'/TestingFiles/ncbitaxon.json'
     print('parsing ncbi taxon json file')
     kgx_nodes_json,kgx_edges_json = _parse_nodes_kgmicrobe(nodes_filename, array_delimiter)
     nodes,rels = transform_kgx_output_format(kgx_nodes_json,kgx_edges_json)
@@ -64,7 +65,7 @@ def _parse_nodes_kgmicrobe(filename, array_delimiter):
     transform(inputs=[filename], input_format='obojson', output= os.path.join(output_dir, name), output_format='tsv')
 
     return output_dir+name+'_nodes.tsv',output_dir+name+'_edges.tsv'
-
+    
 def transform_kgx_output_format(transformed_nodes_tsv,transformed_edges_tsv):
 
     labels = pd.read_csv(transformed_nodes_tsv, sep = '\t', usecols = ['id','name'])
@@ -106,7 +107,6 @@ def _parse_nodes(filename, array_delimiter):
                              ':LABEL':
                              'Organism' + array_delimiter + tokens[2]}
 
-    print(list(nodes.values())[0:5])
     return nodes, rels
 
 

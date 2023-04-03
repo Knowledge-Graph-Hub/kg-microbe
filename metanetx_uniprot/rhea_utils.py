@@ -10,29 +10,28 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import tempfile
 import urllib
 from urllib.request import urlretrieve
+import os
 
 
 __RHEA_URL = 'ftp://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot%5Fsprot.tsv'
-
+#For test, also update load function
+#__RHEA_URL = os.getcwd()+'/TestingFiles/rhea2uniprot_sprot.txt'
 
 def load(reaction_manager, source=__RHEA_URL, num_threads=0):
     '''Loads Rhea data.'''
     # Parse data:
+    
     temp_file = tempfile.NamedTemporaryFile()
     urlretrieve(source, temp_file.name)
     data = _parse(temp_file.name)
-    '''
-    ###For testing, uncomment the following code
-    data_small = dict()
-    for key in sorted(data)[:50]:
-        data_small[key] = data[key]
-    data.clear()
-    data.update(data_small)
-    '''
+    ##If using test data
+    #data = _parse(source)
     ######Not sure why source is Rhea here, calls to UniProt
     #Remove, since this goes from rhea2uniprot to uniprot enzymes. use add_org_to_enz function in ncbi_taxonomy_utils instead
     #reaction_manager.add_react_to_enz(data, 'rhea', num_threads)
-    reaction_manager.add_react_to_enz_organism(data, 'rhea', num_threads)
+    reaction_ids = reaction_manager.add_react_to_enz_organism(data, 'rhea', num_threads)
+
+    return reaction_ids
 
 
 def _parse(filename):

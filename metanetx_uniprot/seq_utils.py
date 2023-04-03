@@ -122,7 +122,10 @@ def get_uniprot_values_organism(organism_ids, fields, batch_size, verbose=False,
     for i in tqdm(range(0, len(organism_ids), batch_size)):
         values = _get_uniprot_batch_organism(organism_ids, i, batch_size, fields, values,verbose)
 
-    return {value['Organism (ID)']: value for value in values}
+    ##Issue: Only returns one enzyme per organism
+    #return {value['Organism (ID)']: value for value in values}
+    ##Returns list of dicts for each organism-id enzyme entry
+    return values
 
 def _get_uniprot_batch_organism(organism_ids, i, batch_size, fields, values, verbose):
     '''Get batch of Uniprot data.'''
@@ -135,10 +138,10 @@ def _get_uniprot_batch_organism(organism_ids, i, batch_size, fields, values, ver
     batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
     query = '%20OR%20'.join(['organism_id:' + organism_id for organism_id in batch])
     url = 'https://rest.uniprot.org/uniprotkb/search?query=' + query + \
-        '&format=tsv&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
+        '&format=tsv&size=500&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
+    #    '&format=tsv&size=1&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
                                               for field in fields])
 
-    #print('_get_uniprot_batch_organism url: ',url)
 
     _parse_uniprot_data(url, values)
     return values

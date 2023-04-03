@@ -1,0 +1,359 @@
+### MetaNetX/MNXref reconciliation ###
+#Based on the following resources:
+#
+#RESOURCE:  MetaNetX/MNXref
+#VERSION:   4.4
+#DATE:      2022/03/16
+#URL:       https://www.metanetx.org
+#LICENSE:	
+#	MetaNetX copyright 2011 SystemsX, SIB Swiss Institute of Bioinformatics
+#	Except where otherwise noted, the data  available  from  this  site  are
+#	licensed under a Creative Commons Attribution 4.0 International License.
+#	MNXref  uses  information  on  cellular  compartments,  reactions,   and
+#	metabolites that is sourced from a number  of  external  resources.  The
+#	licensing agreements of those resources are specified  in  each  of  the
+#	downloadable  files  listed  below.  For  each  compound,  reaction  and
+#	cellular compartment in the MNXref namespace we indicate which  external
+#	resource  provided  the  information  used  in  MNXref.  Compounds   and
+#	reactions in the MNXref namespace may be identical to, or  differ  from,
+#	those in the external resource. In either case the data from MNXref  may
+#	be considered to be subject to the original  licensing  restrictions  of
+#	the external resource.
+#	(https://www.metanetx.org/mnxdoc/mnxref.html)
+#
+#RESOURCE:  BiGG
+#VERSION:   1.6.0, last updated: 2019/10/31 (downloaded on 2021/07/23)
+#URL:       http://bigg.ucsd.edu
+#LICENSE:	
+#	Copyright 2015 The Regents of the University of California
+#	
+#	All Rights Reserved
+#	
+#	Permission to use, copy, modify and distribute any part of  BiGG  Models
+#	for educational, research and  non-profit  purposes,  without  fee,  and
+#	without a written agreement is hereby granted, provided that  the  above
+#	copyright notice, this paragraph  and  the  following  three  paragraphs
+#	appear in all copies.
+#	
+#	Those desiring to incorporate BiGG Models into  commercial  products  or
+#	use for commercial purposes should contact  the  Technology  Transfer  &
+#	Intellectual Property Services, University  of  California,  San  Diego,
+#	9500 Gilman Drive, Mail Code 0910, La Jolla, CA  92093-0910,  Ph:  (858)
+#	534-5815, FAX: (858) 534-7345, e-mail: invent@ucsd.edu.
+#	
+#	In no event shall the University of California be liable  to  any  party
+#	for direct, indirect, special,  incidental,  or  consequential  damages,
+#	including lost profits, arising out of the use of  this  bigg  database,
+#	even if the University of California has been advised of the possibility
+#	of such damage.
+#	
+#	The BiGG Models provided  herein  is  on  an  "as  is"  basis,  and  the
+#	University of California  has  no  obligation  to  provide  maintenance,
+#	support, updates, enhancements,  or  modifications.  The  University  of
+#	California makes no representations and extends  no  warranties  of  any
+#	kind, either implied or express, including,  but  not  limited  to,  the
+#	implied warranties  of  merchantability  or  fitness  for  a  particular
+#	purpose, or that the use of  the  BiGG  Models  will  not  infringe  any
+#	patent, trademark or other rights.
+#	(http://bigg.ucsd.edu/)
+#
+#RESOURCE:  The Cell Component Ontology
+#VERSION:   25.0 (downloaded on 2021/06/03)
+#URL:       https://bioinformatics.ai.sri.com/CCO/
+#LICENSE:	
+#	"Open  Databases"  means  the  EcoCyc   and   MetaCyc   Pathway/genome
+#	databases.
+#	
+#	2.1 Open Databases. SRI  hereby  grants  to  LICENSEE  a  non-exclusive,
+#	royalty-free license to use, modify and redistribute the Open  Databases
+#	(as such term  is  defined  in  Exhibit  B)  and  LICENSEE's  modified
+#	versions thereof on a royalty-free basis, worldwide and for any purpose;
+#	provided, in each case, that if LICENSEE modifies any Open Database (the
+#	modified  version  being  a  "Modified  Open  Database"),  then  (i)
+#	LICENSEE must provide a copy of the Modified Open Database to  SRI  (and
+#	hereby grants to  SRI  a  nonexclusive,  royalty-free  license  to  use,
+#	modify, and redistribute the Modified Open Database  worldwide  and  for
+#	any purpose and to authorize others to do so);  and  (ii)  any  Modified
+#	Open Databases, or websites from which such Modified Open Databases  may
+#	be obtained, must clearly and prominently:
+#	
+#	(a) identify the Open Databases from which they were derived:
+#	
+#	(b) include all applicable copyright notices and author lists  from  the
+#	Open Databases from which they were derived; and
+#	
+#	(c) identify or summarize all modifications that were made.
+#	
+#	Any distribution of such Modified Open Databases  without  the  required
+#	notices is a violation of SRI's and its licensors' copyright  and  other
+#	proprietary rights. All trademarks, service marks, and trade  names  are
+#	proprietary to SRI and its licensors. The Open Databases, including  any
+#	files incorporated in or generated from  the  Open  Databases  and  data
+#	accompanying the Open Databases, are licensed to LICENSEE by SRI and its
+#	licensors, and SRI and its licensors do not transfer title or any  other
+#	rights in the Open Databases to LICENSEE. LICENSEE may not use the  Open
+#	Databases except as otherwise specified herein.
+#	
+#	2.1.1 If SRI,  in  its  sole  discretion,  determines  that  a  Modified
+#	Database is of sufficient quality and interest to the  community  to  be
+#	hosted on biocyc.org, then SRI may (if the  Modified  Database  includes
+#	significant curation over the original Open Database it is derived from,
+#	or the last version of the Modified Database provided to SRI) provide to
+#	LICENSEE a  personal,  one-year  subscription  to  biocyc  at  no  cost;
+#	provided, however, that if LICENSEE edits the Modified  Database  via  a
+#	MySQL server operated by SRI or  its  contractors,  such  free  one-year
+#	subscription will be forfeited.
+#	(https://biocyc.org/ptools-academic-license.shtml)
+#
+#RESOURCE:  ChEBI
+#VERSION:   203 (downloaded on 2021/09/30)
+#URL:       https://www.ebi.ac.uk/chebi/
+#LICENSE:	
+#	All data in the  database  is  non-proprietary  or  is  derived  from  a
+#	non-proprietary source. It is thus freely accessible  and  available  to
+#	anyone. In addition, each data item is fully  traceable  and  explicitly
+#	referenced to the original source.
+#	(https://www.ebi.ac.uk/chebi/aboutChebiForward.do)
+#
+#RESOURCE:  enviPath
+#VERSION:   (downloaded on 2021/11/24)
+#URL:       https://envipath.org
+#LICENSE:	
+#	The core data sets of enviPath are licensed under the Creative Commons
+#	Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+#	license. This allows you to use them in a non-commercial context, for
+#	example if you work at a University or for a public research institute.
+#	You can even redistribute and modify the data using the same license. If
+#	you want to use the data commercially, contact us, we offer commercial
+#	license agreements.
+#	We summarized how you can use the data on our license page.
+#	(https://envipath.com/license/)
+#
+#RESOURCE:  HMDB
+#VERSION:   4.0 (downloaded on 2021/06/18)
+#URL:       https://hmdb.ca
+#LICENSE:	
+#	HMDB is offered to the public as a freely available  resource.  Use  and
+#	re-distribution of the  data,  in  whole  or  in  part,  for  commercial
+#	purposes requires  explicit  permission  of  the  authors  and  explicit
+#	acknowledgment  of  the  source  material  (HMDB)   and   the   original
+#	publication.
+#	(https://hmdb.ca/about)
+#
+#RESOURCE:  KEGG
+#VERSION:   98.0+/06-11, Jun 21 (downloaded on 2021/06/11)
+#URL:       https://www.kegg.jp
+#LICENSE:	
+#	Academic users may freely use the KEGG website and may also freely  link
+#	to the KEGG website.
+#	Non-academic  users  may  use  the  KEGG  website  as  end   users   for
+#	non-commercial purposes, but any other use requires a license agreement.
+#	Academic users who utilize KEGG  for  providing  academic  services  are
+#	requested to obtain a KEGG  FTP  subscription  for  organizational  use,
+#	which includes a proper license agreement.
+#	Non-academic  users  and  Academic  users  intending  to  use  KEGG  for
+#	commercial purposes are requested to obtain a license agreement  through
+#	KEGG's exclusive licensing agent, Pathway Solutions.
+#	(https://www.kegg.jp/kegg/legal.html)
+#
+#RESOURCE:  LipidMaps
+#VERSION:   2021-05-28 (downloaded on 2021/06/11)
+#URL:       https://www.lipidmaps.org
+#LICENSE:	
+#	The Lipidomics Gateway is provided on an "as is" basis, without warranty
+#	or representation of any kind, express or implied. The  content  of  the
+#	Lipidomics Gateway website  is  protected  by  international  copyright,
+#	trademark and other laws. You may download articles and web  pages  from
+#	this site for your personal, non-commercial use only, provided that  you
+#	keep intact all authorship, copyright and other proprietary notices. The
+#	Featured Lipid can also be used for educational purposes, provided  that
+#	credit is given to the Lipidomics Gateway. If  you  use  the  Lipidomics
+#	Gateway, you accept these terms. The LIPID MAPS Consortium reserves  the
+#	right to modify these terms at any time.
+#	(https://www.lipidmaps.org/about/)
+#
+#RESOURCE:  MetaCyc
+#VERSION:   25.0 (downloaded on 2021/06/03)
+#URL:       https://metacyc.org
+#LICENSE:	
+#	"Open  Databases"  means  the  EcoCyc   and   MetaCyc   Pathway/genome
+#	databases.
+#	
+#	2.1 Open Databases. SRI  hereby  grants  to  LICENSEE  a  non-exclusive,
+#	royalty-free license to use, modify and redistribute the Open  Databases
+#	(as such term  is  defined  in  Exhibit  B)  and  LICENSEE's  modified
+#	versions thereof on a royalty-free basis, worldwide and for any purpose;
+#	provided, in each case, that if LICENSEE modifies any Open Database (the
+#	modified  version  being  a  "Modified  Open  Database"),  then  (i)
+#	LICENSEE must provide a copy of the Modified Open Database to  SRI  (and
+#	hereby grants to  SRI  a  nonexclusive,  royalty-free  license  to  use,
+#	modify, and redistribute the Modified Open Database  worldwide  and  for
+#	any purpose and to authorize others to do so);  and  (ii)  any  Modified
+#	Open Databases, or websites from which such Modified Open Databases  may
+#	be obtained, must clearly and prominently:
+#	
+#	(a) identify the Open Databases from which they were derived:
+#	
+#	(b) include all applicable copyright notices and author lists  from  the
+#	Open Databases from which they were derived; and
+#	
+#	(c) identify or summarize all modifications that were made.
+#	
+#	Any distribution of such Modified Open Databases  without  the  required
+#	notices is a violation of SRI's and its licensors' copyright  and  other
+#	proprietary rights. All trademarks, service marks, and trade  names  are
+#	proprietary to SRI and its licensors. The Open Databases, including  any
+#	files incorporated in or generated from  the  Open  Databases  and  data
+#	accompanying the Open Databases, are licensed to LICENSEE by SRI and its
+#	licensors, and SRI and its licensors do not transfer title or any  other
+#	rights in the Open Databases to LICENSEE. LICENSEE may not use the  Open
+#	Databases except as otherwise specified herein.
+#	
+#	2.1.1 If SRI,  in  its  sole  discretion,  determines  that  a  Modified
+#	Database is of sufficient quality and interest to the  community  to  be
+#	hosted on biocyc.org, then SRI may (if the  Modified  Database  includes
+#	significant curation over the original Open Database it is derived from,
+#	or the last version of the Modified Database provided to SRI) provide to
+#	LICENSEE a  personal,  one-year  subscription  to  biocyc  at  no  cost;
+#	provided, however, that if LICENSEE edits the Modified  Database  via  a
+#	MySQL server operated by SRI or  its  contractors,  such  free  one-year
+#	subscription will be forfeited.
+#	(https://biocyc.org/ptools-academic-license.shtml)
+#
+#RESOURCE:  Reactome
+#VERSION:   77 June 14, 2021 (downloaded on 2021/09/03)
+#URL:       https://reactome.org
+#LICENSE:	
+#	Reactome is an open source and open access resource, available to anyone.
+#	Usage of Reactome material is covered by two Creative Commons licenses:
+#	
+#	The terms of the Creative Commons Public Domain (CC0) License apply to all
+#	Reactome annotation files, e.g. identifier mapping data, specialized data
+#	files, and interaction data derived from Reactome.
+#	(https://reactome.org/license/)
+#
+#RESOURCE:  Rhea
+#VERSION:   119 (downloaded on 2021/11/03)
+#URL:       https://www.rhea-db.org
+#LICENSE:	
+#	All data in Rhea is freely accessible and available for anyone to use under
+#	the Creative Commons Attribution License.
+#	(https://www.rhea-db.org/documentation)
+#
+#RESOURCE:  SABIO-RK
+#VERSION:   Software Update: 2021/05/11 -- Database Release: 2021/05/28 (downloaded on 2021/07/01)
+#URL:       http://sabiork.h-its.org
+#LICENSE:	
+#	HITS, gGmbH HITS own the  SABIO-RK  database,  its  interfaces  and  its
+#	associated  documentation  (all  referred  to  in   the   following   as
+#	"Database").  You  should  carefully  read  the  following   terms   and
+#	conditions before  using  this  Database.  Your  use  of  this  Database
+#	indicates your acceptance of this license agreement and  all  terms  and
+#	conditions.You are hereby granted a non-exclusive  and  non-transferable
+#	license to use  the  Database  according  to  the  following  terms  and
+#	conditions. This license is  to  use  the  Database  for  Non-Commercial
+#	Purpose only. Non-Commercial Purpose  means  the  use  of  the  Database
+#	solely for  internal  non-commercial  research  and  academic  purposes.
+#	Non-Commercial Purpose excludes, without  limitation,  any  use  of  the
+#	Database, as part of, or in any way in  connection  with  a  product  or
+#	service which is sold, offered for sale, licensed,  leased,  loaned,  or
+#	rented. Permission to use this Database for  Non-Commercial  Purpose  is
+#	hereby granted without fee and subject to the following  terms  of  this
+#	license.
+#	
+#	Commercial Use
+#	If you desire to  use  the  Database  for  profit-making  or  commercial
+#	purposes, you agree to negotiate in good faith a license with  the  HITS
+#	prior to such profit-making or commercial use. The HITS  shall  have  no
+#	obligation to grant such license to you,  and  may  grant  exclusive  or
+#	non-exclusive licenses to others. You agree to notify the  HITS  of  any
+#	inquiries you have  for  commercial  use  of  the  Database  and/or  its
+#	modifications. You may contact the following email to discuss commercial
+#	use: sabiork at h-its.org
+#	
+#	Governing Law
+#	This Agreement is governed  by  the  law  of  the  Federal  Republic  of
+#	Germany. The application of the UN Convention on the Sale  of  Goods  is
+#	excluded.
+#	
+#	Disclaimer of Warranty
+#	Because this Database is licensed free of charge, there is  no  warranty
+#	for the data in it contained and the methods used for its querying.  The
+#	HITS makes no warranty or  representation  that  the  operation  of  the
+#	Database in this compilation will be error-free, and the HITS  is  under
+#	no obligation to provide any services, by way of maintenance, update, or
+#	otherwise.
+#	
+#	THIS DATABASE AND THE  ACCOMPANYING  FILES  ARE  LICENSED  "AS  IS"  AND
+#	WITHOUT WARRANTIES AS TO PERFORMANCE OR  MERCHANTABILITY  OR  ANY  OTHER
+#	WARRANTIES WHETHER EXPRESSED OR IMPLIED. NO WARRANTY OF  FITNESS  FOR  A
+#	PARTICULAR PURPOSE IS OFFERED. THE ENTIRE RISK AS  TO  THE  QUALITY  AND
+#	PERFORMANCE OF THE  PROGRAM  IS  WITH  YOU.  SHOULD  THE  PROGRAM  PROVE
+#	DEFECTIVE, YOU ASSUME THE COST OF ALL  NECESSARY  SERVICING,  REPAIR  OR
+#	CORRECTION.
+#	
+#	Limitation of Liability
+#	IN NO EVENT WILL  HITS,  OR  ANY  OTHER  PARTY  WHO  MAY  MODIFY  AND/OR
+#	REDISTRIBUTE THE DATABASE AS PERMITTED  ABOVE,  BE  LIABLE  TO  YOU  FOR
+#	DAMAGES, INCLUDING ANY GENERAL,  SPECIAL,  INCIDENTAL  OR  CONSEQUENTIAL
+#	DAMAGES ARISING  OUT  OF  THE  USE  OR  INABILITY  TO  USE  THE  PROGRAM
+#	(INCLUDING BUT NOT LIMITED TO  LOSS  OF  DATA  OR  DATA  BEING  RENDERED
+#	INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A  FAILURE  OF
+#	THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF VTIP  AND  HITS
+#	OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+#	
+#	Reference to SABIO-RK  Users  will  cite  SABIO-RK  in  publications  or
+#	presentations, whenever the data used was extracted from  the  database.
+#	Termination This  agreement  is  effective  until  terminated.  You  may
+#	terminate this agreement  at  any  time  by  destroying  all  associated
+#	material (e.g., documentation or web service clients) to the database in
+#	your possession and by stopping any access to the database  directly  or
+#	from  software  generated  by  you.  This   agreement   will   terminate
+#	immediately without notice from and HITS if you fail to comply with  any
+#	of the terms and conditions of this license. This  agreement  will  also
+#	terminate immediately without notice from the HITS if  it  is  found  to
+#	implement patented algorithms or contain copyrighted code not  owned  or
+#	licensed the HITS for the purpose  of  its  inclusion  in  the  SABIO-RK
+#	Database. This agreement cannot be terminated by any other mechanism  or
+#	for any other reason than those stated herein.
+#	
+#	Place of Court
+#	The exclusive venue for all disputes arising from or in connection  with
+#	this Agreement is Mannheim, Germany (HRB 337446), when the Licensee is a
+#	business person, a legal entity governed by public  law,  or  a  special
+#	fund governed by public law,  or  does  not  have  a  general  place  of
+#	jurisdiction  within  the  Federal  Republic  of  Germany.  Address  all
+#	correspondence  regarding  this  license  to  electronic  mail  address:
+#	sabiork at h-its.org Any inquiries  and  comments  regarding  bugs,  bug
+#	fixes, enhancements, modifications or any other similar issues should be
+#	directed to: sabiork at h-its.org
+#	
+#	Copyright 2007 by HITS, gGmbH. All rights reserved.
+#	(http://sabiork.h-its.org/layouts/content/termscondition.gsp)
+#
+#RESOURCE:  The SEED
+#VERSION:   2.6.1 (July 31, 2020) (downloaded on 2021/08/09)
+#URL:       https://modelseed.org
+#LICENSE:	
+#	All tools and datasets that make up the SEED are in the public domain.
+#	(https://modelseed.org)
+#
+#RESOURCE:  SwissLipids
+#VERSION:   (downloaded on 2021/07/29)
+#URL:       https://www.swisslipids.org
+#LICENSE:	
+#	SwissLipids  is  licensed  under  a  Creative  Commons   Attribution-Non
+#	Commercial-NoDerivatives 4.0 International License.
+#	
+#	Commercial users and those who wish to  use  this  work  for  commercial
+#	purposes  please  contact  the  SIB  technology  transfer  officer   at:
+#	marc.filliettaz@genebio.com
+#	(https://www.swisslipids.org/#/downloads)
+#ID	mnx_equation	reference	classifs	is_balanced	is_transport
+EMPTY	 = 	mnx:EMPTY		B	
+MNXR114744	1 MNXM162730@MNXD1 + 1 MNXM5@MNXD1 + 1 WATER@MNXD1 = 1 MNXM1@MNXD1 + 1 MNXM735438@MNXD1 + 1 MNXM738702@MNXD1 + 1 MNXM97613@MNXD1	rheaR:50004	1.14.13.231	B	
+MNXR171656	1 MNXM5@MNXD1 + 1 MNXM743287@MNXD1 + 1 WATER@MNXD1 = 1 MNXM735438@MNXD1 + 1 MNXM738702@MNXD1 + 1 MNXM743286@MNXD1	rheaR:61444			
+MNXR168222	1 MNXM1089988@MNXD1 + 1 MNXM1102167@MNXD1 = 1 MNXM1089989@MNXD1 + 1 MNXM1102072@MNXD1	rheaR:42776	2.1.1.180		
+MNXR165961	1 MNXM1107698@MNXD1 + 1 WATER@MNXD1 = 1 MNXM1108087@MNXD1 + 1 MNXM728579@MNXD1	rheaR:18689	3.1.1.32		
+MNXR171532	2 MNXM1107708@MNXD1 + 2 MNXM1@MNXD1 + 1 MNXM734941@MNXD1 = 1 MNXM737425@MNXD1 + 2 WATER@MNXD1	rheaR:60624		B	
+MNXR171532	2 MNXM1107708@MNXD1 + 2 MNXM1@MNXD1 + 1 MNXM734941@MNXD1 = 1 MNXM737425@MNXD1 + 2 WATER@MNXD1	rheaR:60624		B	

@@ -1,0 +1,188 @@
+{
+  "graphs" : [ {
+    "nodes" : [ {
+      "id" : "http://purl.obolibrary.org/obo/NCBITaxon_817",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "PMID:16559622"
+        }, {
+          "val" : "GC_ID:11"
+        }, {
+          "val" : "PMID:28066339"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacteroides incommunis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Pseudobacterium fragilis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Ristella uncata",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Ristella incommunis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacteroides inaequalis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Pseudobacterium incommunis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacteroides uncatus",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Sphaerophorus inaequalis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Fusiformis fragilis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Sphaerophorus intermedius",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Pseudobacterium inaequalis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacillus fragilis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Ristella fragilis",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Pseudobacterium uncatum",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:665938"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:33929"
+        }, {
+          "pred" : "http://purl.obolibrary.org/obo/ncbitaxon#has_rank",
+          "val" : "http://purl.obolibrary.org/obo/NCBITaxon_species"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "ncbi_taxonomy"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:469587"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "Bacteroides fragilis"
+    },  {
+      "id" : "http://purl.obolibrary.org/obo/NCBITaxon_562",
+      "meta" : {
+        "xrefs" : [ {
+          "val" : "GC_ID:11"
+        }, {
+          "val" : "PMID:10319482"
+        } ],
+        "synonyms" : [ {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Enterococcus coli",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "Escherichia/Shigella coli",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#equivalent_name"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacillus coli",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacterium coli",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasRelatedSynonym",
+          "val" : "Bacterium coli commune",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#synonym"
+        }, {
+          "pred" : "hasExactSynonym",
+          "val" : "E. coli",
+          "xrefs" : [ ],
+          "synonymType" : "http://purl.obolibrary.org/obo/ncbitaxon#common_name"
+        } ],
+        "basicPropertyValues" : [ {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:1806490"
+        }, {
+          "pred" : "http://purl.obolibrary.org/obo/ncbitaxon#has_rank",
+          "val" : "http://purl.obolibrary.org/obo/NCBITaxon_species"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:469598"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:1637691"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+          "val" : "ncbi_taxonomy"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:662104"
+        }, {
+          "pred" : "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+          "val" : "NCBITaxon:662101"
+        } ]
+      },
+      "type" : "CLASS",
+      "lbl" : "Escherichia coli"
+    } ],
+    "edges" : [ {
+      "sub" : "http://purl.obolibrary.org/obo/NCBITaxon_295405",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/NCBITaxon_817"
+    }, {
+      "sub" : "http://purl.obolibrary.org/obo/NCBITaxon_1389418",
+      "pred" : "is_a",
+      "obj" : "http://purl.obolibrary.org/obo/NCBITaxon_562"
+    } ],
+    "id" : "http://purl.obolibrary.org/obo/ncbitaxon.owl",
+    "meta" : {
+      "subsets" : [ ],
+      "xrefs" : [ ],
+      "basicPropertyValues" : [ ]
+    },
+    "equivalentNodesSets" : [ ],
+    "logicalDefinitionAxioms" : [ ],
+    "`domainRangeAxioms`" : [ ],
+    "propertyChainAxioms" : [ ]
+  } ]
+}

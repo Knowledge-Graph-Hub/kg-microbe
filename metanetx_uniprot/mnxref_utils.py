@@ -24,10 +24,12 @@ import numpy
 
 import namespace_utils
 from synbiochem.utils import chem_utils
+import os
 
 
 _METANETX_URL = 'http://metanetx.org/cgi-bin/mnxget/mnxref/'
-
+#For test, also update __read_data function
+#_METANETX_URL = os.getcwd()+'/TestingFiles/'
 
 class MnxRefReader(object):
     '''Class to read MnxRef data from the chem_prop.tsv, the chem_xref.tsv and
@@ -47,11 +49,14 @@ class MnxRefReader(object):
 
         return self.__chem_data
 
-    def get_reac_data(self):
+    def get_reac_data(self,reaction_ids):
         '''Gets reaction data.'''
         if not self.__reac_data:
-            self.__read_reac_prop()
+            mxn_reaction_ids = self.__read_reac_prop(reaction_ids)
             self.__read_xref('reac_xref.tsv', self.__reac_data, False)
+
+        #Only include reaction data for reactions in reaction_ids
+        self.__reac_data = {key:val for key,val in self.__reac_data.items() if key in mxn_reaction_ids}
 
         return self.__reac_data
 
@@ -101,14 +106,23 @@ class MnxRefReader(object):
                 if namespace != 'chebi' \
                 else 'CHEBI:' + xref[1]
 
-    def __read_reac_prop(self):
+    def __read_reac_prop(self,reaction_ids):
         '''Read reaction properties and create Nodes.'''
         reac_prop_keys = ['id', 'equation', 'reference', 'ec', 'balance', 'transport']
 
+        ##Relabel reaction ids by MXN id rather than rhea id
+        mxn_reaction_ids = []
+
         for values in self.__read_data('reac_prop.tsv'):
-            if not values[0].startswith('#'):
+            if not values[0].startswith('#'): 
+                if values[0] == 'EMPTY': continue
                 values[0] = self.__parse_id(values[0])
                 values[2] = self.__parse_id(values[2])
+
+                try:
+                    if 'rhea' in values[2].split(':')[0].lower() and values[2].split(':')[1] in reaction_ids:
+                        mxn_reaction_ids.append(values[0])
+                except IndexError: continue
 
                 props = dict(zip(reac_prop_keys, values))
                 props.pop('reference')
@@ -129,6 +143,8 @@ class MnxRefReader(object):
                     print('WARNING: Suspected polymerisation reaction: ' + \
                         values[0] + '\t' + str(props))
 
+        return mxn_reaction_ids
+
     def __add_chem(self, chem_id):
         '''Adds a chemical with given id.'''
         props = {'id': chem_id}
@@ -138,6 +154,7 @@ class MnxRefReader(object):
     def __read_data(self, filename):
         '''Downloads and reads tab-limited files into lists of lists of
         strings.'''
+        
         with requests.Session() as s:
             download = s.get(self.__source + filename)
 
@@ -146,7 +163,21 @@ class MnxRefReader(object):
             cr = csv.reader(decoded_content.splitlines(), delimiter='\t')
             my_list = list(cr)
         return my_list
-
+        '''
+        ###Reads downloaded file for offline testing
+        #cr = csv.reader((self.__source + filename).splitlines(), delimiter='\t')
+        import pandas as pd
+        cr = pd.read_csv(self.__source + filename, delimiter='\t', comment='#',header=None)
+        cr_d = []
+        for i in range(len(cr)):
+            l = []
+            for j in range(len(cr.columns)):
+                l.append(cr.iloc[i,j])
+            cr_d.append(l)
+        
+        return cr_d
+        '''
+        
 
     def __parse_id(self, item_id):
         '''Parses mnx ids.'''
@@ -161,21 +192,24 @@ class MnxRefReader(object):
 class MnxRefLoader(object):
     '''Loads MNXref data into neo4j format.'''
 
-    def __init__(self, chem_man, reac_man, writer):
+    def __init__(self, chem_man, reac_man, writer,reaction_ids):
         self.__chem_man = chem_man
         self.__reac_man = reac_man
         self.__writer = writer
+        self.__reactions = reaction_ids
 
     def load(self):
         '''Loads MnxRef data from chem_prop.tsv, chem_xref.tsv,
         reac_prop.tsv and reac_xref.tsv files.'''
         reader = MnxRefReader()
 
+        #First gets all chemical data from MxnRef (chem_xref and chem_prop) and adds to __chem_man
         for properties in reader.get_chem_data().values():
             properties['mnx'] = properties.pop('id')
             self.__chem_man.add_chemical(properties)
 
-        rels = self.__add_reac_nodes(reader.get_reac_data())
+        #Then gets reaction data from reac_xref and reac_prop and adds to __chem_man
+        rels = self.__add_reac_nodes(reader.get_reac_data(self.__reactions))
 
         return [], [self.__writer.write_rels(rels, 'Reaction', 'Chemical')]
 
@@ -276,8 +310,10 @@ def _filter(counter, cutoff):
 
     # Fit straight-line to histogram log-log plot and filter...
     x_val, y_val = zip(*list(hist_counter.items()))
-    m_val, b_val = numpy.polyfit(numpy.log(x_val), numpy.log(y_val), 1)
-
+    l_x_val = numpy.log(x_val)[0]
+    l_y_val = numpy.log(y_val)[0]
+    if l_x_val == 0.0: l_x_val += 0.01
+    m_val, b_val = numpy.polyfit([l_x_val], [l_y_val], 1)
     return [item[0] for item in counter.items()
             if item[1] > math.exp(cutoff * -b_val / m_val)]
 

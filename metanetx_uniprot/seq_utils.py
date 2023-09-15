@@ -138,10 +138,59 @@ def _get_uniprot_batch_organism(organism_ids, i, batch_size, fields, values, ver
     batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
     query = '%20OR%20'.join(['organism_id:' + organism_id for organism_id in batch])
     url = 'https://rest.uniprot.org/uniprotkb/search?query=' + query + \
-        '&format=tsv&size=500&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
+        '&format=tsv&size=500&keywords=Reference+proteome&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
     #    '&format=tsv&size=1&fields=organism_id%2C' + '%2C'.join([parse.quote(field)
                                               for field in fields])
 
-
     _parse_uniprot_data(url, values)
+    return values
+
+def parse_response(res,values):
+    
+    headers = None
+
+    for line in res.iter_lines():
+        line = line.decode('utf-8')
+        tokens = line.strip().split('\t')
+
+        if headers is None:
+            headers = tokens
+        else:
+            res = dict(zip(headers, tokens))
+            #print(res)
+            #print(type(res))
+            #print(type(values))
+            values.append(res)
+            
+        #print(values)
+    
+    return values
+
+
+def get_jobs(url,values):
+    
+    session = requests.Session()
+    
+    paging = True
+    
+    first_page = session.get(url)
+    first_response = parse_response(first_page,values)
+        
+    while paging == True:
+
+        if 'next' in first_page.links:
+            next_url = first_page.links['next']['url']
+            next_page = session.get(next_url)
+            next_response = parse_response(next_page,values)
+            first_page = next_page
+        else:
+            paging = False
+            break
+
+def _get_uniprot_batch_reference_proteome(url):
+
+    values = []
+
+    get_jobs(url,values)
+
     return values

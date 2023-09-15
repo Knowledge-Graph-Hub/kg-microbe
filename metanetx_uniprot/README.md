@@ -19,4 +19,4 @@ To run and only get reference proteome taxa that also exist in kg-microbe:
 ```
 python build_taxa_ids.py ~/biochem4j 1
 ```
-*Note, uses ncbitaxon.json (build from kg-microbe) which is included in the Files directory.
+*Note, uses ncbitaxon.json (built from kg-microbe) which is expected to be in the Files directory.

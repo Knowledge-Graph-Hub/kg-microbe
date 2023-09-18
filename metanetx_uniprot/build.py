@@ -1,9 +1,6 @@
 '''
 SYNBIOCHEM-DB (c) University of Manchester 2015
 
-'''
-SYNBIOCHEM-DB (c) University of Manchester 2015
-
 SYNBIOCHEM-DB is licensed under the MIT License.
 
 To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
@@ -30,7 +27,7 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     chem_man = chemical_utils.ChemicalManager(array_delimiter=array_delimiter)
 
 
-    
+    ## Getting error: urllib.error.URLError: <urlopen error ftp error: error_temp('425 Failed to establish connection.')>
     #print('Parsing ChEBI')
     #chebi_utils.load(chem_man, writer)
 
@@ -51,12 +48,12 @@ def build_csv(dest_dir, array_delimiter, num_threads):
     reaction_ids = rhea_utils.load(reac_man, num_threads=num_threads)
     reac_man.write_files(writer) #--> writes Enzyme_Reaction.tsv
 
-    #
     print('Parsing MNXref')
-    mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer, reaction_ids)
-    mnx_loader.load() #--> writes Reaction_Chemical.tsv
+    mnx_loader = mnxref_utils.MnxRefLoader(chem_man, reac_man, writer, reaction_ids, process_ids,ncbi_taxonomy_utils,array_delimiter)
+    print('mxn loading')
+    mnx_loader.load() #--> writes Reaction_Chemical.tsv, Chemical_Process.tsv, ##NOT WORKING: Process_Disease.tsv, Process_Phenotype.tsv
     
-    #chem_man.write_files(writer)
+    chem_man.write_files(writer) #--> writes Chemicals.tsv
     
 
 def main(args):

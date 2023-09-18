@@ -17,21 +17,31 @@ __RHEA_URL = 'ftp://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot%5Fsprot.tsv'
 #For test, also update load function
 #__RHEA_URL = os.getcwd()+'/TestingFiles/rhea2uniprot_sprot.txt'
 
-def load(reaction_manager, source=__RHEA_URL, num_threads=0):
+__RHEA_GO_URL = 'ftp://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv'
+#__RHEA_GO_URL = os.getcwd()+'/TestingFiles/rhea2go_NOTREAL.txt'
+
+def load(reaction_manager, source=__RHEA_URL, go_source = __RHEA_GO_URL, num_threads=0):
     '''Loads Rhea data.'''
     # Parse data:
     
     temp_file = tempfile.NamedTemporaryFile()
     urlretrieve(source, temp_file.name)
     data = _parse(temp_file.name)
+    
+    
+    temp_file = tempfile.NamedTemporaryFile()
+    urlretrieve(go_source, temp_file.name)
+    go_data = _parse(temp_file.name)
+
     ##If using test data
     #data = _parse(source)
+    #go_data = _parse(go_source)
     ######Not sure why source is Rhea here, calls to UniProt
     #Remove, since this goes from rhea2uniprot to uniprot enzymes. use add_org_to_enz function in ncbi_taxonomy_utils instead
     #reaction_manager.add_react_to_enz(data, 'rhea', num_threads)
-    reaction_ids = reaction_manager.add_react_to_enz_organism(data, 'rhea', num_threads)
+    reaction_ids,process_ids = reaction_manager.add_react_to_enz_organism(data, 'rhea', go_data, num_threads) 
 
-    return reaction_ids
+    return reaction_ids,process_ids
 
 
 def _parse(filename):

@@ -18,11 +18,17 @@ class EnzymeManager(object):
     def __init__(self):
         '''Constructor.'''
         self.__nodes = {}
+        self.__node_enzymes = {}
         self.__org_enz_rels = []
 
     def get_nodes(self):
         '''Gets enzyme nodes.'''
         return self.__nodes.values()
+
+    def get_enz_nodes(self):
+        #nodes_enzymes_df = pd.DataFrame(self.__node_enzymes.items(), columns=['entity_uri', 'label'])
+        return self.__node_enzymes.values()
+
 
     def get_org_enz_rels(self):
         '''Gets organism-to-enzyme relationships.'''
@@ -49,10 +55,10 @@ class EnzymeManager(object):
                 if 'Organism (ID)' in uniprot_value else None
 
             if 'Entry name' in uniprot_value:
-                enzyme_node['entry'] = uniprot_value['Entry name']
+                enzyme_node['entry'] = 'Uniprot:'+uniprot_value['Entry name']
 
             if 'Protein names' in uniprot_value:
-                enzyme_node['names'] = uniprot_value['Protein names']
+                enzyme_node['names'] = 'Uniprot:'+uniprot_value['Protein names']
 
                 if enzyme_node['names']:
                     enzyme_node['name'] = enzyme_node['names'][0]
@@ -91,7 +97,7 @@ class EnzymeManager(object):
                 enzyme_node['entry'] = entry['Entry']
 
             if 'Protein names' in entry:
-                enzyme_node['names'] = entry['Protein names']
+                enzyme_node['names'] = entry['Protein names'][0]
 
                 if 'names' in entry.keys():
                     enzyme_node['name'] = entry['names'][0]
@@ -100,7 +106,9 @@ class EnzymeManager(object):
                 enzyme_node['ec-code'] = entry['EC number']
 
             if organism_id:
-                self.__org_enz_rels.append([organism_id, 'expresses',entry['Entry'], {'source': source}])
+                self.__org_enz_rels.append(['NCBITaxon:'+organism_id, 'expresses','Uniprot:'+entry['Entry'], {'source': source}])
+
+            self.__node_enzymes['Uniprot:'+entry['Entry']] = {'entity_uri':'Uniprot:'+entry['Entry'], 'label':enzyme_node['names']}
 
         return uniprot_values
         

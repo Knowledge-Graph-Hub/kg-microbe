@@ -29,6 +29,9 @@ class ChemicalManager(object):
         '''Write neo4j import files.'''
         return writer.write_nodes(self.__nodes.values(), 'Chemical')
 
+    def write_rels(self, writer, rels):
+        return writer.write_rels(rels, 'Chemical', 'Process')
+
     def add_chemical(self, properties):
         '''Adds a chemical to the collection of nodes, ensuring uniqueness.'''
         chem_id, chebi_ent = self.__get_chem_id(properties)

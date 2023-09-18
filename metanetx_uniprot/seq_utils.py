@@ -193,4 +193,8 @@ def _get_uniprot_batch_reference_proteome(url):
 
     get_jobs(url,values)
 
+<<<<<<< HEAD
     return values
+=======
+    return values
+>>>>>>> 79638d7925b65aea0f3e96bf5441ae4a883cfbb0

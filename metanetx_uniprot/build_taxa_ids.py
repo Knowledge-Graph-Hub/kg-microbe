@@ -22,6 +22,10 @@ __UNIPROT_REFERENCE_PROTEOMES_URL = 'https://rest.uniprot.org/proteomes/search?&
 
 def build_csv(dest_dir, num_threads):
     #'''Build database CSV files.'''
+<<<<<<< HEAD
+=======
+    #writer = utils.Writer(dest_dir)
+>>>>>>> 79638d7925b65aea0f3e96bf5441ae4a883cfbb0
 
     # Get Organism data:
     print('Parsing NCBI Taxonomy')
@@ -37,6 +41,7 @@ def load(output_dir, source=__NCBITAXONOMY_URL, ref_source=__UNIPROT_REFERENCE_P
     #_parse_names(nodes, names_filename, array_delimiter)
     #######
     #To get data from kg-microbe
+<<<<<<< HEAD
     nodes_filename = os.getcwd()+'/Files/ncbitaxon_nodes.tsv'     #ncbitaxon.json
     #For testing
     #nodes_filename = os.getcwd()+'/TestingFiles/ncbitaxon.json'
@@ -47,18 +52,33 @@ def load(output_dir, source=__NCBITAXONOMY_URL, ref_source=__UNIPROT_REFERENCE_P
 
     #Update to kgx_nodes_file if ncbitaxon.json is input
     nodes,nodes_df = transform_kgx_output_format(nodes_filename)  #kgx_nodes_file)
+=======
+    nodes_filename = os.getcwd()+'/Files/ncbitaxon.json'
+    #For testing
+    #nodes_filename = os.getcwd()+'/TestingFiles/ncbitaxon.json'
+    print('parsing ncbi taxon json file')
+    kgx_nodes_json = _parse_nodes_kgmicrobe(nodes_filename,'ncbitaxon_transformed',output_dir)
+
+    nodes,nodes_df = transform_kgx_output_format(kgx_nodes_json)
+>>>>>>> 79638d7925b65aea0f3e96bf5441ae4a883cfbb0
 
     #Constrain by those that have reference proteomes, don't use if testing
     ref_organisms = _get_uniprot_batch_reference_proteome(ref_source)
     ref_organism_ids = [str(k['Organism Id']) for k in ref_organisms]
     node_vals = [i for i in nodes if i in ref_organism_ids]
 
+<<<<<<< HEAD
     nodes_not_in_refProteome = list(set(ref_organism_ids) - set(nodes))
     print('nodes_not_in_refProteome: ',nodes_not_in_refProteome)
 
     node_vals = ['NCBITaxon:' + i for i in node_vals]
     kgx_nodes_subset = nodes_df[nodes_df['id'].isin(node_vals)]
     kgx_nodes_subset.to_csv(output_dir+'/Organism.tsv', index=False, sep='\t')
+=======
+    node_vals = ['NCBITaxon:' + i for i in node_vals]
+    kgx_nodes_json_subset = nodes_df[nodes_df['id'].isin(node_vals)]
+    kgx_nodes_json_subset.to_csv(output_dir+'/Organism.tsv', index=False, sep='\t')
+>>>>>>> 79638d7925b65aea0f3e96bf5441ae4a883cfbb0
     print('Wrote file: ',output_dir+'/Organism.tsv')
 
 def _get_ncbi_taxonomy_files(source):
@@ -79,7 +99,11 @@ def _get_ncbi_taxonomy_files(source):
 def _parse_nodes_kgmicrobe(filename, output_name,output_dir):
     '''Parses nodes file.'''
     
+<<<<<<< HEAD
     transform(inputs=[filename], input_format='tsv', output= os.path.join(output_dir, output_name), output_format='tsv') #obojson
+=======
+    transform(inputs=[filename], input_format='obojson', output= os.path.join(output_dir, output_name), output_format='tsv')
+>>>>>>> 79638d7925b65aea0f3e96bf5441ae4a883cfbb0
 
     return output_dir+'/'+output_name+'_nodes.tsv'
     
@@ -91,10 +115,15 @@ def transform_kgx_output_format(transformed_nodes_tsv):
 
     #Get node IDs to help subset according to reference proteomes
     for i in range(len(labels)):
+<<<<<<< HEAD
         try:
             tax_id = labels.iloc[i].loc['id'].split('NCBITaxon:')[1]
             nodes.append(tax_id)
         except IndexError: print(labels.iloc[i].loc['id'])
+=======
+        tax_id = labels.iloc[i].loc['id'].split('NCBITaxon:')[1]
+        nodes.append(tax_id)
+>>>>>>> 79638d7925b65aea0f3e96bf5441ae4a883cfbb0
 
     return nodes,labels
 

@@ -169,7 +169,7 @@ class TraitsTransform(Transform):
         # TODO: Find an alternative way for doing this
         col = ["ID", "ActualTerm", "PreferredTerm"]
         metabolism_map_df = pd.DataFrame(columns=col)
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000172",
                 "ActualTerm": "anaerobic",
@@ -177,7 +177,7 @@ class TraitsTransform(Transform):
             },
             ignore_index=True,
         )
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000172",
                 "ActualTerm": "strictly anaerobic",
@@ -185,7 +185,7 @@ class TraitsTransform(Transform):
             },
             ignore_index=True,
         )
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000178",
                 "ActualTerm": "obligate anaerobic",
@@ -193,7 +193,7 @@ class TraitsTransform(Transform):
             },
             ignore_index=True,
         )
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000177",
                 "ActualTerm": "facultative",
@@ -201,7 +201,7 @@ class TraitsTransform(Transform):
             },
             ignore_index=True,
         )
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000179",
                 "ActualTerm": "obligate aerobic",
@@ -209,7 +209,7 @@ class TraitsTransform(Transform):
             },
             ignore_index=True,
         )
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000173",
                 "ActualTerm": "aerobic",
@@ -217,7 +217,7 @@ class TraitsTransform(Transform):
             },
             ignore_index=True,
         )
-        metabolism_map_df = metabolism_map_df.append(
+        metabolism_map_df = metabolism_map_df._append(
             {
                 "ID": "ECOCORE:00000180",
                 "ActualTerm": "microaerophilic",
@@ -463,7 +463,7 @@ class TraitsTransform(Transform):
                                             .item()
                                         )
                                 else:
-                                    remnants_chebi = remnants_chebi.append(
+                                    remnants_chebi = remnants_chebi._append(
                                         chem_ner_sssom, ignore_index=True
                                     )
                                     # chem_curie = relevant_chem.iloc[0]['CURIE']
@@ -800,7 +800,7 @@ class TraitsTransform(Transform):
                                             .item()
                                         )
                                 else:
-                                    remnants_path = remnants_path.append(
+                                    remnants_path = remnants_path._append(
                                         path_ner_sssom, ignore_index=True
                                     )
 

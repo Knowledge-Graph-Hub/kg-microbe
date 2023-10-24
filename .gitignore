@@ -17,3 +17,5 @@ _build/
 tests/resources/traits/input/chebi*
 tests/resources/traits/input/go*
 tests/resources/traits/nlp/terms/
+
+!data/raw/subset_terms.tsv

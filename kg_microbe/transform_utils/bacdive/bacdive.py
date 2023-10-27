@@ -260,7 +260,7 @@ class BacDiveTransform(Transform):
 
                         edge_writer.writerow(edges_data_to_write)
 
-                    progress.set_description(f"Processing file: {key}.yaml")
+                    progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 

@@ -1,90 +1,95 @@
-"""Transform an ontology in Obograph JSON format."""
-
+"""Ontology transform module."""
 import gzip
-import os
 import shutil
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Union
 
+# from kgx.transformer import Transformer
 from kgx.cli.cli_utils import transform
 
-from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.robot_utils import convert_to_json
+from kg_microbe.transform_utils.constants import (
+    EXCLUSION_TERMS_FILE,
+    NCBITAXON_PREFIX,
+    ROBOT_REMOVED_SUFFIX,
+)
+from kg_microbe.utils.robot_utils import convert_to_json, remove_convert_to_json
+
+from ..transform import Transform
 
 ONTOLOGIES = {
-    "NCBITransform": "ncbitaxon.owl.gz",
-    "ChebiTransform": "chebi.owl.gz",
-    "EnvoTransform": "envo.json",
-    "GoTransform": "go.json",
+    # "HpTransform": "hp.json",
+    # 'GoTransform': 'go-plus.json',
+    "ncbitaxon": "ncbitaxon.owl.gz",
+    "chebi": "chebi.owl.gz",
+    # "EnvoTransform": "envo.json",
+    # 'GoTransform': 'go.json'
 }
 
 
 class OntologyTransform(Transform):
-    """Parse a raw form of an Ontology into nodes and edges."""
 
-    def __init__(
-        self, input_dir: Optional[str] = None, output_dir: Optional[str] = None
-    ):
-        """Initialize."""
+    """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
+
+    def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
+        """Instantiate object."""
         source_name = "ontologies"
         super().__init__(source_name, input_dir, output_dir)
 
-    def run(self, data_file: Optional[str] = None) -> None:
-        """Perform transformations to process an ontology.
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None) -> None:
+        """
+        Transform an ontology.
 
-        Args:
-            data_file: data file to parse
-        Returns:
-            None.
+        :param data_file: data file to parse
+        :return: None.
         """
         if data_file:
-            k = data_file.split(".")[0]
-            data_file = os.path.join(self.input_base_dir, data_file)
+            k = str(data_file).split(".")[0]
+            data_file = self.input_base_dir / data_file
             self.parse(k, data_file, k)
         else:
             # load all ontologies
             for k in ONTOLOGIES.keys():
-                data_file = os.path.join(self.input_base_dir, ONTOLOGIES[k])
+                data_file = self.input_base_dir / ONTOLOGIES[k]
                 self.parse(k, data_file, k)
 
-    def parse(self, name: str, data_file: str, source: str) -> None:
-        """Process the data_file.
-
-        If the file is is compressed,
-        decompress it.
-        If the file isn't in obojson format,
-        convert it first.
-        Args:
-            name: Name of the ontology
-            data_file: data file to parse
-            source: Source name
-        Returns:
-             None.
+    def parse(self, name: str, data_file: Optional[Path], source: str) -> None:
         """
-        print(f"Parsing {data_file}")
+        Process the data_file.
 
-        convert_this = False
-        decompress_this = False
+        :param name: Name of the ontology.
+        :param data_file: data file to parse.
+        :param source: Source name.
+        :return: None.
+        """
+        if data_file.suffixes == [".owl", ".gz"]:
+            if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
+                json_path = str(data_file).replace(".owl.gz", ROBOT_REMOVED_SUFFIX + ".json")
+                if not Path(json_path).is_file():
+                    with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
+                        terms = [
+                            line.strip() for line in f if line.lower().startswith(name.lower())
+                        ]
+                    remove_convert_to_json(str(self.input_base_dir), name, terms)
+            else:
+                json_path = str(data_file).replace("owl.gz", "json")
+                if not Path(json_path).is_file():
+                    # Unzip the file
+                    self.decompress(data_file)
+                    print(f"Converting {data_file} to obojson...")
+                    convert_to_json(str(self.input_base_dir), name)
 
-        print(name)
-        if name in ["chebi", "ncbitaxon"]:
-            convert_this = True
-            decompress_this = True
-
-        if decompress_this:
-            print("Decompressing...")
-            outpath = data_file[:-3]
-            with gzip.open(data_file, "rb") as data_file_gz:
-                with open(outpath, "wb") as data_file_new:
-                    shutil.copyfileobj(data_file_gz, data_file_new)
-
-        if convert_this:
-            print("Converting to obojson...")
-            convert_to_json(self.input_base_dir, name)
-            data_file = os.path.join(self.input_base_dir, name + ".json")
+            data_file = json_path
 
         transform(
             inputs=[data_file],
             input_format="obojson",
-            output=os.path.join(self.output_dir, name),
+            output=self.output_dir / name,
             output_format="tsv",
         )
+
+    def decompress(self, data_file):
+        """Unzip file."""
+        print(f"Decompressing {data_file}...")
+        with gzip.open(data_file, "rb") as f_in:
+            with open(data_file.parent / data_file.stem, "wb") as f_out:
+                shutil.copyfileobj(f_in, f_out)

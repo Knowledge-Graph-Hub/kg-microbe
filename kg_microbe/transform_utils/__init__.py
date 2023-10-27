@@ -1,1 +1,1 @@
-"""Intialization of tranform utils."""
+"""Transform utilities module."""

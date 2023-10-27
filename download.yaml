@@ -1,4 +1,4 @@
-# This file is a list of things to be downloaded using the command:
+## This file is a list of things to be downloaded using the command:
 #   run.py download
 
 # To add a new item to be download, add a block like this - must have 'url',
@@ -18,22 +18,63 @@
 #  https://bucket-name.s3.Region.amazonaws.com/key_name
 #
 ---
-# #
-# # Most of the data is extracted from the 'bacteria-archaea-traits' github repository
-# # link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
-# #
-# # ******Output Data*******
-# Condensed-species
-# - GTDB
-#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_GTDB.csv?raw=true
-#  local_name: condensed_species_GTDB.csv
-# - NCBI
-#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_species_NCBI.csv?raw=true
-#  local_name: condensed_species_NCBI.csv
+
+#
+# **** ROBOT ****
+#
+-
+  url: https://github.com/ontodev/robot/releases/download/v1.9.5/robot.jar
+  local_name: robot.jar
+-
+  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
+  local_name: robot
+
+# **** Ontology files ****
+#
+# ENVO
+#
+-
+  url: http://purl.obolibrary.org/obo/envo.json
+  local_name: envo.json
+
+# NCBITaxon
+#
+-
+  url: http://purl.obolibrary.org/obo/ncbitaxon.owl.gz
+  local_name: ncbitaxon.owl.gz
+
+#
+# ChEBI
+#
+-
+  url: http://purl.obolibrary.org/obo/chebi.owl.gz
+  local_name: chebi.owl.gz
+
+#
+# GO
+#
+-
+  url: http://purl.obolibrary.org/obo/go.json
+  local_name: go.json
+# **** Data sources ****
+# ATC
+# The Anatomical Therapeutic Chemical Classification for drugs
+# Primarily for establishing hierarchical relationships of DrugCentral entries
+# -
+#   url: https://data.bioontology.org/ontologies/ATC/download?apikey=8b5b7825-538d-40e0-9e9e-5ab9274a9aeb&download_format=csv
+#   local_name: atc.csv.gz
+
+# BacDive
+# Explore Bacterial Diversity
+-
+  url: gdrive:1dOquB0M6H5Vxu6cBPa4kJ7F9v44medoV
+  local_name: bacdive_strains.json
+
+# MediaDive
+# Explore MediaDive data
+-
+  url: https://mediadive.dsmz.de/rest/media
+  local_name: mediadive.json
 
 # Condensed-traits
 # - GTDB
@@ -45,7 +86,7 @@
 #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
 -
   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
-  local_name: condensed_traits_NCBI.csv
+  local_name: traits.csv
 
 # # ****Conversion Tables****
 #
@@ -54,52 +95,3 @@
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
-
-#
-# #**** ROBOT ****
-#
--
-  url: https://github.com/ontodev/robot/releases/download/v1.7.2/robot.jar
-  local_name: robot.jar
--
-  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
-  local_name: robot
-  
-# #**** Ontology files****
-#
-# ENVO
-#
--
-  url: http://purl.obolibrary.org/obo/envo.json
-  local_name: envo.json
-#
-# CHEBI
-#
--
-  url: http://purl.obolibrary.org/obo/chebi.owl.gz
-  local_name: chebi.owl.gz
-#
-# NCBI Taxon
-#
--
-  url: https://github.com/obophenotype/ncbitaxon/releases/latest/download/ncbitaxon.owl.gz
-  local_name: ncbitaxon.owl.gz
-#
-# PATO
-#
-#-
-#  url: http://purl.obolibrary.org/obo/pato.json
-#  local_name: pato.json
-#
-# ECOCORE
-#
-#- 
-#  url: http://purl.obolibrary.org/obo/ecocore.owl
-#  local_name: ecocore.owl
-#
-# GO
-#
--
-  url: http://purl.obolibrary.org/obo/go.json
-  local_name: go.json
-  

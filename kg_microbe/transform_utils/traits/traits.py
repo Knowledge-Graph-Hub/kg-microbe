@@ -1,22 +1,65 @@
 """Transform the traits data from NCBI and GTDB."""
 
-import os
-import re
-from collections import defaultdict
-from typing import Optional
+import csv
+from pathlib import Path
+from typing import Optional, Union
 
+import numpy as np
 import pandas as pd
+from tqdm import tqdm
+import yaml
+from oaklib.utilities.ner_utilities import get_exclusion_token_list
 
+from kg_microbe.transform_utils.constants import (
+    ACTUAL_TERM_KEY,
+    BIOLOGICAL_PROCESS,
+    CARBON_SUBSTRATE_CATEGORY,
+    CARBON_SUBSTRATE_PREFIX,
+    CARBON_SUBSTRATES_COLUMN,
+    CELL_SHAPE_COLUMN,
+    CHEBI_PREFIX,
+    ENVO_ID_COLUMN,
+    ENVO_TERMS_COLUMN,
+    GO_PREFIX,
+    HAS_PHENOTYPE,
+    ID_COLUMN,
+    ISOLATION_SOURCE_COLUMN,
+    ISOLATION_SOURCE_PREFIX,
+    LOCATION_OF,
+    METABOLISM_CATEGORY,
+    METABOLISM_COLUMN,
+    NCBI_CATEGORY,
+    NCBI_TO_CHEM_EDGE,
+    NCBI_TO_ISOLATION_SOURCE_EDGE,
+    NCBI_TO_METABOLISM_EDGE,
+    NCBI_TO_PATHWAY_EDGE,
+    NCBI_TO_SHAPE_EDGE,
+    NCBITAXON_PREFIX,
+    OBJECT_LABEL_COLUMN,
+    ORG_NAME_COLUMN,
+    PATHWAY_CATEGORY,
+    PATHWAY_PREFIX,
+    PATHWAYS_COLUMN,
+    PREFERRED_TERM_KEY,
+    SHAPE_CATEGORY,
+    SHAPE_PREFIX,
+    SUBJECT_LABEL_COLUMN,
+    TAX_ID_COLUMN,
+    TRAITS_DATASET_LABEL_COLUMN,
+    TROPHICALLY_INTERACTS_WITH,
+    TYPE_COLUMN,
+)
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.nlp_utils import (create_settings_file, create_termlist,
-                                        prep_nlp_input, run_oger)
-from kg_microbe.utils.robot_utils import (convert_to_json,
-                                          extract_convert_to_json)
-from kg_microbe.utils.transform_utils import (parse_header, parse_line,
-                                              write_node_edge_item)
+from kg_microbe.utils.ner_utils import annotate
+from kg_microbe.utils.pandas_utils import drop_duplicates
+
+OUTPUT_FILE_SUFFIX = "_ner.tsv"
+STOPWORDS_FN = "stopwords.txt"
+PARENT_DIR = Path(__file__).resolve().parent
 
 
 class TraitsTransform(Transform):
+
     """
     Ingest traits dataset (NCBI/GTDB).
 
@@ -32,7 +75,7 @@ class TraitsTransform(Transform):
         - cell_shape
         - isolation_source
     Also implements:
-        -   OGER to run NLP via the 'nlp_utils' module and
+        -   OAK to run NLP via the 'ner_utils' module and
         -   ROBOT using 'robot_utils' module.
     """
 
@@ -43,14 +86,13 @@ class TraitsTransform(Transform):
         :param input_dir: Input file path (str)
         :param output_dir: Output file path (str)
         """
-        source_name = "condensed_traits_NCBI"
+        source_name = "traits"
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
-
-        self.node_header = ["id", "name", "category", "match_description"]
-        self.edge_header = ["subject", "predicate", "object", "relation"]
         self.nlp = nlp
+        self.metabolism_map_yaml = PARENT_DIR / "metabolism_map.yaml"
+        self.environments_file = self.input_base_dir / "environments.csv"
 
-    def run(self, data_file: Optional[str] = None):
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
         """
         Call method and perform needed transformations for trait data (NCBI/GTDB).
 
@@ -58,902 +100,284 @@ class TraitsTransform(Transform):
         """
         if data_file is None:
             data_file = self.source_name + ".csv"
+        input_file = self.input_base_dir / data_file
+        cols_for_nlp = [TAX_ID_COLUMN, PATHWAYS_COLUMN, CARBON_SUBSTRATES_COLUMN]
+        nlp_df = pd.read_csv(input_file, usecols=cols_for_nlp, low_memory=False)
+        nlp_df[[TAX_ID_COLUMN, PATHWAYS_COLUMN]].dropna()
+        nlp_df[TAX_ID_COLUMN] = nlp_df[TAX_ID_COLUMN].apply(lambda x: NCBITAXON_PREFIX + str(x))
+        chebi_nlp_df = nlp_df[[TAX_ID_COLUMN, CARBON_SUBSTRATES_COLUMN]].dropna()
+        go_nlp_df = nlp_df[[TAX_ID_COLUMN, PATHWAYS_COLUMN]].dropna()
+        exclusion_list = get_exclusion_token_list([self.nlp_stopwords_dir / STOPWORDS_FN])
+        go_result_fn = GO_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
+        chebi_result_fn = CHEBI_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
 
-        input_file = os.path.join(self.input_base_dir, data_file)
+        if not (self.nlp_output_dir / chebi_result_fn).is_file():
+            annotate(
+                chebi_nlp_df,
+                CHEBI_PREFIX,
+                exclusion_list,
+                self.nlp_output_dir / chebi_result_fn,
+                False,
+            )
+            chebi_result = pd.read_csv(
+                str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
+            )
+            chebi_result = chebi_result.drop_duplicates()
+            chebi_result.to_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", index=False)
+        else:
+            chebi_result = pd.read_csv(
+                str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
+            )
+        if not (self.nlp_output_dir / go_result_fn).is_file():
+            annotate(
+                go_nlp_df, GO_PREFIX, exclusion_list, self.nlp_output_dir / go_result_fn, False
+            )
+            go_result = pd.read_csv(
+                str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False
+            )
+            go_result = go_result.drop_duplicates()
+            go_result.to_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", index=False)
+        else:
+            go_result = pd.read_csv(
+                str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False
+            )
 
-        # make directory in data/transformed
-        os.makedirs(self.output_dir, exist_ok=True)
+        with open(self.metabolism_map_yaml, "r") as file:
+            data = yaml.safe_load(file)
 
-        """
-        Import SSSOM.
-        """
-        sssom_columns = [
-            "subject_label",
-            "object_id",
-            "object_label",
-            "object_match_field",
-            "match_category",
+        metabolism_map = {item[ACTUAL_TERM_KEY]: item for item in data}
+        envo_cols = [TYPE_COLUMN, ENVO_TERMS_COLUMN, ENVO_ID_COLUMN]
+        envo_df = pd.read_csv(
+            self.environments_file, low_memory=False, usecols=envo_cols
+        ).drop_duplicates()
+        envo_mapping = envo_df.set_index(TYPE_COLUMN).T.to_dict()
+        traits_columns_of_interest = [
+            TAX_ID_COLUMN,
+            ORG_NAME_COLUMN,
+            METABOLISM_COLUMN,
+            PATHWAYS_COLUMN,
+            CARBON_SUBSTRATES_COLUMN,
+            CELL_SHAPE_COLUMN,
+            ISOLATION_SOURCE_COLUMN,
         ]
-        chem_sssom = pd.read_csv(
-            self.chemicals_sssom,
-            sep="\t",
-            low_memory=False,
-            comment="#",
-            usecols=sssom_columns,
-        )
-        chem_sssom["subject_label"] = chem_sssom["subject_label"].str.replace(
-            r"[\'\",]", "", regex=True
-        )
+        with open(input_file, "r") as f:
+            total_lines = sum(1 for line in f)
 
-        path_sssom = pd.read_csv(
-            self.pathways_sssom,
-            sep="\t",
-            low_memory=False,
-            comment="#",
-            usecols=sssom_columns,
-        )
-        path_sssom["subject_label"] = (
-            path_sssom["subject_label"]
-            .str.replace(r"[\'\",]", "", regex=True)
-            .str.replace("_", " ")
-        )
-
-        """
-        Implement ROBOT.
-        """
-        # Convert OWL to JSON for CheBI Ontology
-        # The CheBI transform should be done first,
-        # so this is only necessary if running alone.
-        onto_path = os.path.join(self.input_base_dir, "chebi.json")
-        if not os.path.isfile(onto_path):
-            convert_to_json(self.input_base_dir, "CHEBI")
-        # convert_to_json(self.input_base_dir, 'ECOCORE')
-
-        # Extract the 'cellular organisms' tree from NCBITaxon and convert to JSON
-        """
-        NCBITaxon_131567 = cellular organisms
-        (Source =http://www.ontobee.org/ontology/NCBITaxon?
-        iri=http://purl.obolibrary.org/obo/NCBITaxon_131567)
-        """
-        """
-        Get information from the EnvironemtTransform.
-        """
-        environment_file = os.path.join(self.input_base_dir, "environments.csv")
-        env_df = pd.read_csv(
-            environment_file,
-            sep=",",
-            low_memory=False,
-            usecols=["Type", "ENVO_terms", "ENVO_ids"],
-        )
-        unique_env_df = env_df.drop_duplicates()
-
-        """
-        Create termlist.tsv files from ontology JSON files for NLP.
-        TODO: Replace this code once runNER is installed
-                and remove 'kg_microbe/utils/biohub_converter.py'
-        """
-        create_termlist(self.input_base_dir, "chebi")
-        # create_termlist(self.input_base_dir, 'ecocore')
-        create_termlist(self.input_base_dir, "go")
-
-        """
-        NLP: Get 'chem_node_type' and 'org_to_chem_edge_label'
-        """
-        if self.nlp:
-            # Prep for NLP. Make sure the first column is the ID
-            # CHEBI
-            cols_for_nlp = ["tax_id", "carbon_substrates"]
-            input_file_name = prep_nlp_input(input_file, cols_for_nlp, "CHEBI")
-            # Set-up the settings.ini file for OGER and run
-            create_settings_file(self.nlp_dir, "CHEBI")
-            oger_output_chebi = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            oger_output_chebi[oger_output_chebi["StringMatch"] != "Exact"]
-
-            # GO
-            cols_for_nlp = ["tax_id", "pathways"]
-            input_file_name = prep_nlp_input(input_file, cols_for_nlp, "GO")
-            # Set-up the settings.ini file for OGER and run
-            create_settings_file(self.nlp_dir, "GO")
-            oger_output_go = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            oger_output_go[oger_output_go["StringMatch"] != "Exact"]
-
-            """# ECOCORE
-            cols_for_nlp = ['tax_id', 'metabolism']
-            input_file_name = prep_nlp_input(input_file, cols_for_nlp, 'ECOCORE')
-            # Set-up the settings.ini file for OGER and run
-            create_settings_file(self.nlp_dir, 'ECOCORE')
-            oger_output_ecocore = run_oger(self.nlp_dir, input_file_name, n_workers=5)
-            #oger_output = process_oger_output(self.nlp_dir, input_file_name)"""
-
-        # Mapping table for metabolism.
-        # TODO: Find an alternative way for doing this
-        col = ["ID", "ActualTerm", "PreferredTerm"]
-        metabolism_map_df = pd.DataFrame(columns=col)
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000172",
-                "ActualTerm": "anaerobic",
-                "PreferredTerm": "anaerobe",
-            },
-            ignore_index=True,
-        )
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000172",
-                "ActualTerm": "strictly anaerobic",
-                "PreferredTerm": "anaerobe",
-            },
-            ignore_index=True,
-        )
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000178",
-                "ActualTerm": "obligate anaerobic",
-                "PreferredTerm": "obligate anaerobe",
-            },
-            ignore_index=True,
-        )
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000177",
-                "ActualTerm": "facultative",
-                "PreferredTerm": "facultative anaerobe",
-            },
-            ignore_index=True,
-        )
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000179",
-                "ActualTerm": "obligate aerobic",
-                "PreferredTerm": "obligate aerobe",
-            },
-            ignore_index=True,
-        )
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000173",
-                "ActualTerm": "aerobic",
-                "PreferredTerm": "aerobe",
-            },
-            ignore_index=True,
-        )
-        metabolism_map_df = metabolism_map_df._append(
-            {
-                "ID": "ECOCORE:00000180",
-                "ActualTerm": "microaerophilic",
-                "PreferredTerm": "microaerophilic",
-            },
-            ignore_index=True,
-        )
-
-        # transform data, something like:
         with open(input_file, "r") as f, open(self.output_node_file, "w") as node, open(
             self.output_edge_file, "w"
-        ) as edge, open(
-            self.subset_terms_file, "w"
-        ) as terms_file:  # If need to capture CURIEs for ROBOT STAR extraction
+        ) as edge:
+            reader = csv.DictReader(f)
+            node_writer = csv.writer(node, delimiter="\t")
+            node_writer.writerow(self.node_header)
+            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer.writerow(self.edge_header)
+            with tqdm(total=total_lines, desc="Processing files") as progress:
+                for line in reader:
+                    pathway_nodes = None
+                    carbon_substrate_nodes = None
+                    cell_shape_node = None
+                    isolation_source_node = None
+                    metabolism_node = None
 
-            # write headers (change default node/edge headers if necessary
-            node.write("\t".join(self.node_header) + "\n")
-            edge.write("\t".join(self.edge_header) + "\n")
+                    tax_pathway_edge = None
+                    tax_metabolism_edge = None
+                    tax_isolation_source_edge = None
+                    tax_carbon_substrate_edge = None
+                    tax_to_cell_shape_edge = None
 
-            header_items = parse_header(f.readline(), sep=",")
-            seen_node: dict = defaultdict(int)
-            seen_edge: dict = defaultdict(int)
+                    filtered_row = {k: line[k] for k in traits_columns_of_interest}
+                    tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
+                    tax_name = filtered_row[ORG_NAME_COLUMN]
+                    tax_node = [tax_id, NCBI_CATEGORY, tax_name]
 
-            # Nodes
-            org_node_type = "biolink:OrganismTaxon"  # [org_name]
-            chem_node_type = "biolink:ChemicalSubstance"  # [carbon_substrate]
-            shape_node_type = "biolink:AbstractEntity"  # [cell_shape]
-            metabolism_node_type = "biolink:ActivityAndBehavior"  # [metabolism]
-            pathway_node_type = "biolink:BiologicalProcess"  # [pathways]
-            curie = "NEED_CURIE"
-
-            # Prefixes
-            org_prefix = "NCBITaxon:"
-            chem_prefix = "microtraits.carbon_substrates:"
-            shape_prefix = "microtraits.cell_shape_enum:"
-            # metab_prefix = "microtraits.metabolism:"
-            source_prefix = "microtraits.data_source:"
-            pathway_prefix = "microtraits.pathways:"
-
-            # Edges
-            org_to_shape_edge_label = (
-                "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-            )
-            org_to_shape_edge_relation = (
-                "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
-            )
-            org_to_chem_edge_label = (
-                "biolink:interacts_with"  # [org_name -> carbon_substrate]
-            )
-            org_to_chem_edge_relation = "RO:0002438"
-            # [org_name -> 'trophically interacts with' -> carbon_substrate]
-            org_to_source_edge_label = (
-                "biolink:location_of"  # [org -> isolation_source]
-            )
-            org_to_source_edge_relation = "RO:0001015"  # [org -> location_of -> source]
-            org_to_metab_edge_label = "biolink:capable_of"  # [org -> metabolism]
-            org_to_metab_edge_relation = (
-                "RO:0002215"  # [org -> biological_process -> metabolism]
-            )
-            org_to_pathway_edge_label = "biolink:capable_of"  # # [org -> pathway]
-            org_to_pathway_edge_relation = (
-                "RO:0002215"  # [org -> biological_process -> metabolism]
-            )
-
-            """ TEST
-                Collector of partial and NoMatches.
-            """
-            remnants_chebi = pd.DataFrame()
-            remnants_path = pd.DataFrame()
-
-            # transform
-            for line in f:
-                """
-                This dataset is a csv and also has commas
-                present within a column of data.
-                Hence a regex solution
-                """
-                # transform line into nodes and edges
-                # node.write(this_node1)
-                # node.write(this_node2)
-                # edge.write(this_edge)
-
-                line = re.sub(
-                    r'(?!(([^"]*"){2})*[^"]*$),', "|", line
-                )  # alanine, glucose -> alanine| glucose
-                items_dict = parse_line(line, header_items, sep=",")
-                match_description = ""
-
-                org_name = items_dict["org_name"]
-                tax_id = items_dict["tax_id"]
-                metabolism = items_dict["metabolism"]
-                carbon_substrates = set(
-                    [x.strip() for x in items_dict["carbon_substrates"].split("|")]
-                )
-                cell_shape = items_dict["cell_shape"]
-                isolation_source = set(
-                    [x.strip() for x in items_dict["isolation_source"].split("|")]
-                )
-                pathways = set(
-                    [
-                        x.strip()
-                        for x in items_dict["pathways"].replace("_", " ").split("|")
-                    ]
-                )
-
-                # Write Node ['id', 'entity', 'category']
-                # Write organism node
-                org_id = org_prefix + str(tax_id)
-                if not org_id.endswith(":na") and org_id not in seen_node:
-                    write_node_edge_item(
-                        fh=node,
-                        header=self.node_header,
-                        data=[org_id, org_name, org_node_type, match_description],
+                    metabolism = metabolism_map.get(filtered_row[METABOLISM_COLUMN], None)
+                    if metabolism:
+                        metabolism_node = [
+                            metabolism[ID_COLUMN.upper()],
+                            METABOLISM_CATEGORY,
+                            PREFERRED_TERM_KEY,
+                        ]
+                        tax_metabolism_edge = [
+                            tax_id,
+                            NCBI_TO_METABOLISM_EDGE,
+                            metabolism[ID_COLUMN.upper()],
+                            BIOLOGICAL_PROCESS,
+                        ]
+                    # Get these from NER results
+                    pathways = (
+                        None
+                        if filtered_row[PATHWAYS_COLUMN].split(",") == ["NA"]
+                        else filtered_row[PATHWAYS_COLUMN].split(",")
                     )
-                    seen_node[org_id] += 1
-                    # If capture of all NCBITaxon:
-                    # CURIEs are needed for ROBOT STAR extraction
-                    if org_id.startswith("NCBITaxon:"):
-                        terms_file.write(org_id + "\n")
-
-                # Write chemical node
-                for chem_name in carbon_substrates:
-                    chem_curie = curie
-                    multi_row_flag = False
-                    match_description = ""
-                    # chem_node_type = chem_name
-
-                    # Get relevant NLP results
-                    if chem_name != "NA":
-                        relevant_tax = oger_output_chebi.loc[
-                            oger_output_chebi["TaxId"] == int(tax_id)
-                        ]
-                        relevant_chem = relevant_tax.loc[
-                            relevant_tax["TokenizedTerm"] == chem_name
-                        ]
-                        # Check if term exists
-                        if len(relevant_chem) >= 1:
-                            # 'Exact' string match
-                            if any(relevant_chem["StringMatch"].str.contains("Exact")):
-                                chem_curie = (
-                                    relevant_chem["CURIE"]
-                                    .loc[relevant_chem["StringMatch"] == "Exact"]
-                                    .item()
-                                )
-                                chem_node_type = (
-                                    relevant_chem["Biolink"]
-                                    .loc[relevant_chem["StringMatch"] == "Exact"]
-                                    .item()
-                                )
-                                match_description = "ExactStringMatch"
-                            # 'Partial' or 'No Match'
-                            else:
-                                chem_ner_sssom = relevant_chem.merge(
-                                    chem_sssom,
-                                    how="inner",
-                                    left_on=["TokenizedTerm", "CURIE"],
-                                    right_on=["subject_label", "object_id"],
-                                )
-                                chem_ner_sssom = chem_ner_sssom.drop_duplicates()
-                                # If 'oio:hasExactSynonym' present
-                                if any(
-                                    chem_ner_sssom["object_match_field"].str.contains(
-                                        "oio:hasExactSynonym"
-                                    )
-                                ):
-                                    chem_curie = (
-                                        chem_ner_sssom["CURIE"]
-                                        .loc[
-                                            chem_ner_sssom["object_match_field"]
-                                            == "oio:hasExactSynonym"
-                                        ]
-                                        .item()
-                                    )
-                                    chem_node_type = (
-                                        chem_ner_sssom["Biolink"]
-                                        .loc[
-                                            chem_ner_sssom["object_match_field"]
-                                            == "oio:hasExactSynonym"
-                                        ]
-                                        .item()
-                                    )
-                                    match_description = (
-                                        chem_ner_sssom["object_match_field"]
-                                        .loc[
-                                            chem_ner_sssom["object_match_field"]
-                                            == "oio:hasExactSynonym"
-                                        ]
-                                        .item()
-                                    )
-                                # if 'oio:hasRelatedSynonym' present
-                                elif any(
-                                    chem_ner_sssom["object_match_field"].str.contains(
-                                        "oio:hasRelatedSynonym"
-                                    )
-                                ):
-                                    if (
-                                        len(
-                                            chem_ner_sssom["CURIE"].loc[
-                                                chem_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                        )
-                                        > 1
-                                    ):
-                                        multi_row_flag = True
-                                        chem_curie = chem_ner_sssom["CURIE"].loc[
-                                            chem_ner_sssom["object_match_field"]
-                                            == "oio:hasRelatedSynonym"
-                                        ]
-                                        chem_node_type = chem_ner_sssom["Biolink"].loc[
-                                            chem_ner_sssom["object_match_field"]
-                                            == "oio:hasRelatedSynonym"
-                                        ]
-                                        match_description = chem_ner_sssom[
-                                            "object_match_field"
-                                        ].loc[
-                                            chem_ner_sssom["object_match_field"]
-                                            == "oio:hasRelatedSynonym"
-                                        ]
-                                    else:
-                                        chem_curie = (
-                                            chem_ner_sssom["CURIE"]
-                                            .loc[
-                                                chem_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                        chem_node_type = (
-                                            chem_ner_sssom["Biolink"]
-                                            .loc[
-                                                chem_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                        match_description = (
-                                            chem_ner_sssom["object_match_field"]
-                                            .loc[
-                                                chem_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                else:
-                                    remnants_chebi = remnants_chebi._append(
-                                        chem_ner_sssom, ignore_index=True
-                                    )
-                                    # chem_curie = relevant_chem.iloc[0]['CURIE']
-                                    # chem_node_type = relevant_chem.iloc[0]['Biolink']
-
-                    if multi_row_flag is True:
-                        for i, _ in chem_curie.items():  # type: ignore
-                            if chem_curie[i] == curie:
-                                chem_id = chem_prefix + chem_name.lower().replace(
-                                    " ", "_"
-                                )
-                            else:
-                                chem_id = chem_curie[i]
-                            if not chem_id.endswith(":na") and chem_id not in seen_node:
-                                write_node_edge_item(
-                                    fh=node,
-                                    header=self.node_header,
-                                    data=[
-                                        chem_id,
-                                        chem_name,
-                                        chem_node_type[i],
-                                        match_description[i],
-                                    ],
-                                )
-                                seen_node[chem_id] += 1
-
-                    else:
-                        if chem_curie == curie:
-                            chem_id = chem_prefix + chem_name.lower().replace(" ", "_")
+                    if pathways:
+                        go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
+                        go_condition_2 = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
+                        go_result_for_tax_id = go_result.loc[go_condition_1 & go_condition_2]
+                        if go_result_for_tax_id.empty:
+                            pathway_nodes = [
+                                [PATHWAY_PREFIX + item.strip(), PATHWAY_CATEGORY, item.strip()]
+                                for item in pathways
+                            ]
+                            tax_pathway_edge = [
+                                [
+                                    tax_id,
+                                    NCBI_TO_PATHWAY_EDGE,
+                                    PATHWAY_PREFIX + item.strip(),
+                                    BIOLOGICAL_PROCESS,
+                                ]
+                                for item in pathways
+                            ]
                         else:
-                            chem_id = chem_curie
-
-                        if not chem_id.endswith(":na") and chem_id not in seen_node:
-                            write_node_edge_item(
-                                fh=node,
-                                header=self.node_header,
-                                data=[
-                                    chem_id,
-                                    chem_name,
-                                    chem_node_type,
-                                    match_description,
-                                ],
+                            exact_condition_go = (
+                                go_result_for_tax_id[OBJECT_LABEL_COLUMN]
+                                == go_result_for_tax_id[SUBJECT_LABEL_COLUMN]
                             )
-                            seen_node[chem_id] += 1
+                            exact_match_go_df = go_result_for_tax_id[exact_condition_go]
+                            if not exact_match_go_df.empty:
+                                go_result_for_tax_id = exact_match_go_df
+                            pathway_nodes = []
+                            tax_pathway_edge = []
+                            for row in go_result_for_tax_id.iterrows():
+                                pathway_nodes.append(
+                                    [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                )
+                                tax_pathway_edge.append(
+                                    [
+                                        tax_id,
+                                        NCBI_TO_PATHWAY_EDGE,
+                                        row[1].object_id,
+                                        BIOLOGICAL_PROCESS,
+                                    ]
+                                )
 
-                # Write shape node
-                """# Get relevant NLP results
-                if cell_shape != 'NA':
-                    relevant_tax =
-                        oger_output_pato.loc[oger_output_pato['TaxId'] == int(tax_id)]
-                    relevant_shape =
-                        relevant_tax.loc[relevant_tax['TokenizedTerm'] == cell_shape]
-                    if len(relevant_shape) == 1:
-                        cell_shape = relevant_shape.iloc[0]['CURIE']
-                        shape_node_type = relevant_shape.iloc[0]['Biolink']"""
+                        node_writer.writerows(pathway_nodes)
+                        edge_writer.writerows(tax_pathway_edge)
 
-                shape_id = shape_prefix + cell_shape.lower()
-
-                if not shape_id.endswith(":na") and shape_id not in seen_node:
-                    write_node_edge_item(
-                        fh=node,
-                        header=self.node_header,
-                        data=[shape_id, cell_shape, shape_node_type, match_description],
+                    carbon_substrates = (
+                        None
+                        if filtered_row[CARBON_SUBSTRATES_COLUMN].split(",") == ["NA"]
+                        else filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
                     )
-                    seen_node[shape_id] += 1
-
-                # Write source node
-                for source_name in isolation_source:
-                    #   Collapse the entity
-                    #   A_B_C_D => [A, B, C, D]
-                    #   D is the entity of interest
-                    source_name_split = source_name.split("_")
-                    source_name_collapsed = source_name_split[-1]
-                    env_curie = curie
-                    env_term = source_name_collapsed
-                    source_node_type = ""  # [isolation_source] left blank intentionally
-                    match_description = ""
-
-                    # Get information from the environments.csv (unique_env_df)
-                    relevant_env_df = unique_env_df.loc[
-                        unique_env_df["Type"] == source_name
-                    ]
-
-                    if len(relevant_env_df) == 1:
-                        """
-                        If multiple ENVOs exist,
-                        take the last one since that would be the curie of interest
-                        after collapsing the entity.
-                        TODO(Maybe): If CURIE is 'nan',
-                        it could be sourced from OGER o/p (ENVO backend)
-                        of environments.csv.
-                        """
-                        env_curie = (
-                            str(relevant_env_df.iloc[0]["ENVO_ids"])
-                            .split(",")[-1]
-                            .strip()
+                    if carbon_substrates:
+                        chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
+                        chebi_condition_2 = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
+                            carbon_substrates
                         )
-                        env_term = (
-                            str(relevant_env_df.iloc[0]["ENVO_terms"])
-                            .split(",")[-1]
-                            .strip()
-                        )
-                        if env_term == "nan":
-                            env_curie = curie
-                            env_term = source_name_collapsed
-
-                    # source_id = source_prefix + source_name.lower()
-                    if env_curie == curie:
-                        source_id = source_prefix + source_name_collapsed.lower()
-                    else:
-                        source_id = env_curie
-                        if source_id.startswith("CHEBI:"):
-                            source_node_type = chem_node_type
-
-                    if not source_id.endswith(":na") and source_id not in seen_node:
-                        write_node_edge_item(
-                            fh=node,
-                            header=self.node_header,
-                            data=[
-                                source_id,
-                                env_term,
-                                source_node_type,
-                                match_description,
-                            ],
-                        )
-                        seen_node[source_id] += 1
-
-                # Write metabolism node
-
-                metabolism_id = None
-
-                if metabolism != "NA":
-                    if metabolism_map_df["ActualTerm"].str.contains(metabolism).any():
-                        metabolism_id = metabolism_map_df.loc[
-                            metabolism_map_df["ActualTerm"] == metabolism
-                        ]["ID"].item()
-                        metabolism_term = metabolism_map_df.loc[
-                            metabolism_map_df["ActualTerm"] == metabolism
-                        ]["PreferredTerm"].item()
-                        if metabolism_id not in seen_node:
-                            write_node_edge_item(
-                                fh=node,
-                                header=self.node_header,
-                                data=[
-                                    metabolism_id,
-                                    metabolism_term,
-                                    metabolism_node_type,
-                                    match_description,
-                                ],
-                            )
-                            seen_node[metabolism_id] += 1
-
-                # Write pathway node
-                for pathway_name in pathways:
-                    pathway_curie = curie
-                    match_description = ""
-                    multi_row_flag = False
-
-                    # Get relevant NLP results
-                    if pathway_name != "NA":
-                        relevant_tax = oger_output_go.loc[
-                            oger_output_go["TaxId"] == int(tax_id)
+                        chebi_result_for_tax_id = chebi_result.loc[
+                            chebi_condition_1 & chebi_condition_2
                         ]
-                        relevant_pathway = relevant_tax.loc[
-                            relevant_tax["TokenizedTerm"] == pathway_name
-                        ]
-                        if len(relevant_pathway) >= 1:
-                            # 'Exact' string match
-                            if any(
-                                relevant_pathway["StringMatch"].str.contains("Exact")
-                            ):
-                                pathway_curie = (
-                                    relevant_pathway["CURIE"]
-                                    .loc[relevant_pathway["StringMatch"] == "Exact"]
-                                    .item()
-                                )
-                                pathway_node_type = (
-                                    relevant_pathway["Biolink"]
-                                    .loc[relevant_pathway["StringMatch"] == "Exact"]
-                                    .item()
-                                )
-                                match_description = "ExactStringMatch"
-                            # 'Partial' or 'No Match'
-                            else:
-                                path_ner_sssom = relevant_pathway.merge(
-                                    path_sssom,
-                                    how="inner",
-                                    left_on=["TokenizedTerm", "CURIE"],
-                                    right_on=["subject_label", "object_id"],
-                                )
-                                path_ner_sssom = path_ner_sssom.drop_duplicates()
-                                # If 'oio:hasExactSynonym' present
-                                if any(
-                                    path_ner_sssom["object_match_field"].str.contains(
-                                        "oio:hasExactSynonym"
-                                    )
-                                ):
-                                    pathway_curie = (
-                                        path_ner_sssom["CURIE"]
-                                        .loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasExactSynonym"
-                                        ]
-                                        .item()
-                                    )
-                                    pathway_node_type = (
-                                        path_ner_sssom["Biolink"]
-                                        .loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasExactSynonym"
-                                        ]
-                                        .item()
-                                    )
-                                    match_description = (
-                                        path_ner_sssom["object_match_field"]
-                                        .loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasExactSynonym"
-                                        ]
-                                        .item()
-                                    )
-                                # if 'oio:hasRelatedSynonym' present
-                                elif any(
-                                    path_ner_sssom["object_match_field"].str.contains(
-                                        "oio:hasRelatedSynonym"
-                                    )
-                                ):
-                                    if (
-                                        len(
-                                            path_ner_sssom["CURIE"].loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                        )
-                                        > 1
-                                    ):
-                                        multi_row_flag = True
-                                        pathway_curie = path_ner_sssom["CURIE"].loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasRelatedSynonym"
-                                        ]
-                                        pathway_node_type = path_ner_sssom[
-                                            "Biolink"
-                                        ].loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasRelatedSynonym"
-                                        ]
-                                        match_description = path_ner_sssom[
-                                            "object_match_field"
-                                        ].loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasRelatedSynonym"
-                                        ]
-                                    else:
-                                        pathway_curie = (
-                                            path_ner_sssom["CURIE"]
-                                            .loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                        pathway_node_type = (
-                                            path_ner_sssom["Biolink"]
-                                            .loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                        match_description = (
-                                            path_ner_sssom["object_match_field"]
-                                            .loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasRelatedSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                # if 'oio:hasBroadSynonym' present
-                                elif any(
-                                    path_ner_sssom["object_match_field"].str.contains(
-                                        "oio:hasBroadSynonym"
-                                    )
-                                ):
-                                    if (
-                                        len(
-                                            path_ner_sssom["CURIE"].loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasBroadSynonym"
-                                            ]
-                                        )
-                                        > 1
-                                    ):
-                                        multi_row_flag = True
-                                        pathway_curie = path_ner_sssom["CURIE"].loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasBroadSynonym"
-                                        ]
-                                        pathway_node_type = path_ner_sssom[
-                                            "Biolink"
-                                        ].loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasBroadSynonym"
-                                        ]
-                                        match_description = path_ner_sssom[
-                                            "object_match_field"
-                                        ].loc[
-                                            path_ner_sssom["object_match_field"]
-                                            == "oio:hasBroadSynonym"
-                                        ]
-                                    else:
-                                        pathway_curie = (
-                                            path_ner_sssom["CURIE"]
-                                            .loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasBroadSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                        pathway_node_type = (
-                                            path_ner_sssom["Biolink"]
-                                            .loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasBroadSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                        match_description = (
-                                            path_ner_sssom["object_match_field"]
-                                            .loc[
-                                                path_ner_sssom["object_match_field"]
-                                                == "oio:hasBroadSynonym"
-                                            ]
-                                            .item()
-                                        )
-                                else:
-                                    remnants_path = remnants_path._append(
-                                        path_ner_sssom, ignore_index=True
-                                    )
-
-                    if multi_row_flag is True:
-                        for i, _ in pathway_curie.items():  # type: ignore
-                            if pathway_curie[i] == curie:
-                                pathway_id = (
-                                    pathway_prefix
-                                    + pathway_name.lower().replace(" ", "_")
-                                )
-                            else:
-                                pathway_id = pathway_curie[i]
-                            if (
-                                not pathway_id.endswith(":na")
-                                and pathway_id not in seen_node
-                            ):
-                                write_node_edge_item(
-                                    fh=node,
-                                    header=self.node_header,
-                                    data=[
-                                        pathway_id,
-                                        pathway_name,
-                                        pathway_node_type[i],
-                                        match_description[i],
-                                    ],
-                                )
-                                seen_node[pathway_id] += 1
-                        multi_row_flag = False
-                    else:
-                        if pathway_curie == curie:
-                            pathway_id = pathway_prefix + pathway_name.lower().replace(
-                                " ", "_"
-                            )
+                        if chebi_result_for_tax_id.empty:
+                            carbon_substrate_nodes = [
+                                [
+                                    CARBON_SUBSTRATE_PREFIX + item.strip(),
+                                    CARBON_SUBSTRATE_CATEGORY,
+                                    item.strip(),
+                                ]
+                                for item in carbon_substrates
+                            ]
+                            tax_carbon_substrate_edge = [
+                                [
+                                    tax_id,
+                                    NCBI_TO_CHEM_EDGE,
+                                    CARBON_SUBSTRATE_PREFIX + item.strip(),
+                                    TROPHICALLY_INTERACTS_WITH,
+                                ]
+                                for item in carbon_substrates
+                            ]
                         else:
-                            pathway_id = pathway_curie
-
-                        if (
-                            not pathway_id.endswith(":na")
-                            and pathway_id not in seen_node
-                        ):
-                            write_node_edge_item(
-                                fh=node,
-                                header=self.node_header,
-                                data=[
-                                    pathway_id,
-                                    pathway_name,
-                                    pathway_node_type,
-                                    match_description,
-                                ],
+                            carbon_substrate_nodes = []
+                            tax_carbon_substrate_edge = []
+                            exact_condition_chebi = (
+                                chebi_result_for_tax_id[OBJECT_LABEL_COLUMN]
+                                == chebi_result_for_tax_id[SUBJECT_LABEL_COLUMN]
                             )
-                            seen_node[pathway_id] += 1
+                            exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
+                            if not exact_match_chebi_df.empty:
+                                chebi_result_for_tax_id = exact_match_chebi_df
 
-                # Write Edge
-                # org-chem edge
-                if not chem_id.endswith(":na") and org_id + chem_id not in seen_edge:
-                    write_node_edge_item(
-                        fh=edge,
-                        header=self.edge_header,
-                        data=[
-                            org_id,
-                            org_to_chem_edge_label,
-                            chem_id,
-                            org_to_chem_edge_relation,
-                        ],
+                            for row in chebi_result_for_tax_id.iterrows():
+                                carbon_substrate_nodes.append(
+                                    [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                )
+                                tax_carbon_substrate_edge.append(
+                                    [
+                                        tax_id,
+                                        NCBI_TO_PATHWAY_EDGE,
+                                        row[1].object_id,
+                                        BIOLOGICAL_PROCESS,
+                                    ]
+                                )
+
+                        node_writer.writerows(carbon_substrate_nodes)
+                        edge_writer.writerows(tax_carbon_substrate_edge)
+
+                    cell_shape = (
+                        None
+                        if filtered_row[CELL_SHAPE_COLUMN] == "NA"
+                        else filtered_row[CELL_SHAPE_COLUMN]
                     )
-                    seen_edge[org_id + chem_id] += 1
+                    if cell_shape:
+                        cell_shape_node = [SHAPE_PREFIX + cell_shape, SHAPE_CATEGORY, cell_shape]
+                        tax_to_cell_shape_edge = [
+                            tax_id,
+                            NCBI_TO_SHAPE_EDGE,
+                            SHAPE_PREFIX + cell_shape,
+                            HAS_PHENOTYPE,
+                        ]
+                    # envo_df
+                    isolation_source = envo_mapping.get(filtered_row[ISOLATION_SOURCE_COLUMN], None)
+                    if isolation_source:
+                        if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
+                            isolation_source_node = [
+                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                None,
+                                filtered_row[ISOLATION_SOURCE_COLUMN],
+                            ]
+                            tax_isolation_source_edge = [
+                                tax_id,
+                                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                LOCATION_OF,
+                            ]
+                        else:
+                            isolation_source_node = [
+                                isolation_source[ENVO_ID_COLUMN],
+                                None,
+                                isolation_source[ENVO_TERMS_COLUMN],
+                            ]
+                            tax_isolation_source_edge = [
+                                tax_id,
+                                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                isolation_source[ENVO_ID_COLUMN],
+                                LOCATION_OF,
+                            ]
+                    nodes_data_to_write = [
+                        sublist
+                        for sublist in [
+                            tax_node,
+                            cell_shape_node,
+                            isolation_source_node,
+                            metabolism_node,
+                        ]
+                        if sublist is not None
+                    ]
+                    node_writer.writerows(nodes_data_to_write)
 
-                # org-shape edge
-                if not shape_id.endswith(":na") and org_id + shape_id not in seen_edge:
-                    write_node_edge_item(
-                        fh=edge,
-                        header=self.edge_header,
-                        data=[
-                            org_id,
-                            org_to_shape_edge_label,
-                            shape_id,
-                            org_to_shape_edge_relation,
-                        ],
-                    )
-                    seen_edge[org_id + shape_id] += 1
+                    edges_data_to_write = [
+                        sublist
+                        for sublist in [
+                            tax_isolation_source_edge,
+                            tax_metabolism_edge,
+                            tax_to_cell_shape_edge,
+                        ]
+                        if sublist is not None
+                    ]
+                    if len(edges_data_to_write) > 0:
+                        edge_writer.writerows(edges_data_to_write)
 
-                # org-source edge
-                if (
-                    not source_id.endswith(":na")
-                    and org_id + source_id not in seen_edge
-                ):
-                    write_node_edge_item(
-                        fh=edge,
-                        header=self.edge_header,
-                        data=[
-                            org_id,
-                            org_to_source_edge_label,
-                            source_id,
-                            org_to_source_edge_relation,
-                        ],
-                    )
-                    seen_edge[org_id + source_id] += 1
+                    progress.set_description(f"Processing taxonomy: {tax_id}")
+                    # After each iteration, call the update method to advance the progress bar.
+                    progress.update()
 
-                # org-metabolism edge
-                if (
-                    metabolism_id is not None
-                    and not metabolism_id.endswith(":na")
-                    and org_id + metabolism_id not in seen_edge
-                ):
-                    write_node_edge_item(
-                        fh=edge,
-                        header=self.edge_header,
-                        data=[
-                            org_id,
-                            org_to_metab_edge_label,
-                            metabolism_id,
-                            org_to_metab_edge_relation,
-                        ],
-                    )
-                    seen_edge[org_id + metabolism_id] += 1
-
-                # org-pathway edge
-                if (
-                    pathway_id is not None
-                    and not pathway_id.endswith(":na")
-                    and org_id + pathway_id not in seen_edge
-                ):
-                    write_node_edge_item(
-                        fh=edge,
-                        header=self.edge_header,
-                        data=[
-                            org_id,
-                            org_to_pathway_edge_label,
-                            pathway_id,
-                            org_to_pathway_edge_relation,
-                        ],
-                    )
-                    seen_edge[org_id + source_id] += 1
-
-        # Files write ends
-        remnants_chebi.to_csv(
-            os.path.join(self.DEFAULT_NLP_OUTPUT_DIR, "remnantsCHEBI.tsv"),
-            sep="\t",
-            index=False,
-        )
-        remnants_path.to_csv(
-            os.path.join(self.DEFAULT_NLP_OUTPUT_DIR, "remnantsGO.tsv"),
-            sep="\t",
-            index=False,
-        )
-
-        # Get trees from all relevant IDs from NCBITaxon and convert to JSON
-        """
-        NCBITaxon_131567 = cellular organisms
-        (Source = http://www.ontobee.org/ontology/NCBITaxon?iri=
-        http://purl.obolibrary.org/obo/NCBITaxon_131567)
-        """
-        subset_ontology_needed = "NCBITaxon"
-        extract_convert_to_json(
-            self.input_base_dir, subset_ontology_needed, self.subset_terms_file, "BOT"
-        )
+        drop_duplicates(self.output_node_file)
+        drop_duplicates(self.output_edge_file)

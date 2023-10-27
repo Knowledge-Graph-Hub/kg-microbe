@@ -1,6 +1,6 @@
 # Knowledge Graphs for Microbial data
 
-This repository is derived from [kg-covid-19](https://github.com/Knowledge-Graph-Hub/kg-covid-19).
+The source for the framework of this repository is from [kg-cookiecutter](https://github.com/Knowledge-Graph-Hub/kg-cookiecutter).
 
 ## Knowledge Graph Hub concept
 Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowledge-graph-hub-concept)
@@ -25,7 +25,7 @@ Please see [here](https://github.com/Knowledge-Graph-Hub/kg-covid-19/wiki#knowle
 ### Download
 This step download all files from the urls declared in the [download.yaml](https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/download.yaml) file. 
 
-script - `poetry run python run.py download`
+script - `poetry run kg download`
 
 File currently downloaded:
 1. Traits data from [bacteria-arachaea-traits](https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output) repository. Considering only 'condensed_traits_NCBI.csv' for now.
@@ -33,25 +33,29 @@ File currently downloaded:
 3. ROBOT [jar](https://github.com/ontodev/robot/releases/download/v1.7.2/robot.jar) and [shell script](https://raw.githubusercontent.com/ontodev/robot/master/bin/robot) files. ROBOT is used to convert the OWL format files of ontologies into OBOJSON format to extract nodes and edges from the ontologies. In this case, we also leverage the 'extract' feature of ROBOT to get subsets of ontologies. Documentation on ROBOT could be found [here](http://robot.obolibrary.org).
 4. [CHEBI.owl](http://www.obofoundry.org/ontology/chebi.html) is used as dictionary while running [OGER](https://github.com/OntoGene/OGER) to annotate 'carbon substrate' information from the traits data.
 5. [NCBITaxon.owl](http://www.obofoundry.org/ontology/ncbitaxon.html) is used as the ontology source to capture organismal classification information.
+6. [bacdive_strains.json](https://drive.google.com/file/d/1dOquB0M6H5Vxu6cBPa4kJ7F9v44medoV/view?usp=share_link)
+7. [mediadive.json](https://mediadive.dsmz.de/rest/media)
 
 ### Transform
 In this step, we create nodes and edges corresponding to the four downloaded files mentioned above (#1, #4 and #5).
 
 scripts
-1. All together - `poetry run python run.py transform`
+1. All together - `poetry run kg transform`
 
 OR
 
 Running transforms individually:
-1. For traits data - `poetry run python run.py transform -s TraitsTransform`
-2. For CHEBI.owl = `poetry run python run.py transform -s ChebiTransform`
-3. For NCBITaxon.owl = `poetry run python run.py transform -s NCBITransform`
+1. For traits data => `poetry run kg transform -s TraitsTransform`
+2. For CHEBI.owl => `poetry run kg transform -s ChebiTransform`
+3. For NCBITaxon.owl => `poetry run kg transform -s NCBITransform`
+3. For BacDive data => `poetry run kg transform -s BacDiveTransform`
+4. For MediaDive data => `poetry run kg transform -s MediaDiveTransform`
 
 ### Merge
 In this step, all the above transforms are merged and a cumulative nodes and edges files are generated.
 
-script - `poetry run python run.py merge`
+script - `poetry run kg merge`
 
 
 ## Data
-The final merged data is available [here](https://drive.google.com/file/d/1Ard-RyQQuOGShrxeNObNnpgriksx7XxO/view?usp=sharing)
+The final merged data is available [here](https://drive.google.com/drive/folders/1W2iGourDmo1gB8ip6GfCEax9El_OMR9h)

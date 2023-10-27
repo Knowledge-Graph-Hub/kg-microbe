@@ -1,0 +1,20 @@
+{
+  "template": "https://github.com/Knowledge-Graph-Hub/kg-cookiecutter.git",
+  "commit": "8a6ab7e6c30fd3cb4b2f914a33a1ff5795827d11",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "kg-microbe",
+      "__project_slug": "kg_microbe",
+      "project_description": "Knowledge graph construction for BacDive data",
+      "min_python_version": "3.9",
+      "full_name": "Harshad Hegde",
+      "email": "hhegde@lbl.gov",
+      "__author": "Harshad Hegde <hhegde@lbl.gov>",
+      "license": "MIT",
+      "github_token_for_doc_deployment": "GH_TOKEN",
+      "_template": "https://github.com/Knowledge-Graph-Hub/kg-cookiecutter.git"
+    }
+  },
+  "directory": null
+}

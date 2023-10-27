@@ -1,7 +1,4 @@
-"""Initialize the traits transform."""
-
+"""Traits transform."""
 from .traits import TraitsTransform
 
-__all__ = [
-    "TraitsTransform"
-]
+__all__ = ["TraitsTransform"]

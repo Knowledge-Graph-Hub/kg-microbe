@@ -1,48 +1,37 @@
-name: KG-Microbe QC
+name: kg-microbe QC
 
 on:
-  # Triggers the workflow on push or pull request events
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
   build:
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10']
-        os: [ ubuntu-latest ]
+        python-version: [ "3.8", "3.9", "3.10" ]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v3.0.2
 
-    #----------------------------------------------
-    #          install & configure poetry
-    #----------------------------------------------
-    - name: Install Poetry
-      uses: snok/install-poetry@v1.3
-    
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    #----------------------------------------------
-    #    install your root project, if required 
-    #----------------------------------------------      
-    - name: Install library
-      run: poetry install --no-interaction
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
 
-    #----------------------------------------------
-    #              run tox
-    #----------------------------------------------
-    - name: Lint with flake8
-      run: poetry run tox -e flake8
-    - name: Test with MyPy
-      run: poetry run tox -e mypy
-    - name: Test with pytest
-      run: poetry run pytest
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run CodeSpell
+        run: poetry run tox -e codespell
+
+      - name: Check static typing with MyPy
+        run: poetry run tox -e lint
+
+      - name: Test with pytest and generate coverage file
+        run: poetry run tox -e py

@@ -1,33 +1,43 @@
-"""Top-level functions for transforming data."""
-
+"""Transform module."""
 import logging
+from pathlib import Path
 from typing import List, Optional
 
-from kg_microbe.transform_utils.ontology import OntologyTransform
-from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES
+from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
+from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, OntologyTransform
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
 
 DATA_SOURCES = {
-    "ChebiTransform": OntologyTransform,
-    "NCBITransform": OntologyTransform,
-    "EnvoTransform": OntologyTransform,
-    "GoTransform": OntologyTransform,
+    "OntologyTransform": OntologyTransform,
+    # "DrugCentralTransform": DrugCentralTransform,
+    # "OrphanetTransform": OrphanetTransform,
+    # "OMIMTransform": OMIMTransform,
+    # "ReactomeTransform": ReactomeTransform,
+    # "GOCAMTransform": GOCAMTransform,
+    # "TCRDTransform": TCRDTransform,
+    # "ProteinAtlasTransform": ProteinAtlasTransform,
+    # "STRINGTransform": STRINGTransform,
+    "BacDiveTransform": BacDiveTransform,
+    "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
 }
 
 
 def transform(
-    input_dir: str, output_dir: str, sources: Optional[List[str]] = None
+    input_dir: Optional[Path], output_dir: Optional[Path], sources: List[str] = None
 ) -> None:
-    """Call scripts in kg_microbe/transform/[source name]/ to transform data.
+    """
+    Transform based on resource and class declared in DATA_SOURCES.
 
-    KGX can ingest each directly, in either TSV or JSON format.
-    Args:
-        input_dir: A string pointing to the directory to import data from.
-        output_dir: A string pointing to the directory to output data to.
-        sources: A list of sources to transform.
-    Returns:
-        None.
+    Call scripts in kg_microbe/transform/[source name]/ to
+    transform each source into a graph format that
+    KGX can ingest directly, in either TSV or JSON format:
+    https://github.com/biolink/kgx/blob/master/data-preparation.md
+
+    :param input_dir: A string pointing to the directory to import data from.
+    :param output_dir: A string pointing to the directory to output data to.
+    :param sources: A list of sources to transform.
     """
     if not sources:
         # run all sources

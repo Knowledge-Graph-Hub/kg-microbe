@@ -6,6 +6,7 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 import yaml
 from oaklib.utilities.ner_utilities import get_exclusion_token_list
 
@@ -159,6 +160,8 @@ class TraitsTransform(Transform):
             CELL_SHAPE_COLUMN,
             ISOLATION_SOURCE_COLUMN,
         ]
+        with open(input_file, "r") as f:
+            total_lines = sum(1 for line in f)
 
         with open(input_file, "r") as f, open(self.output_node_file, "w") as node, open(
             self.output_edge_file, "w"
@@ -168,198 +171,213 @@ class TraitsTransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
-            for line in reader:
-                pathway_nodes = None
-                carbon_substrate_nodes = None
-                cell_shape_node = None
-                isolation_source_node = None
-                metabolism_node = None
+            with tqdm(total=total_lines, desc="Processing files") as progress:
+                for line in reader:
+                    pathway_nodes = None
+                    carbon_substrate_nodes = None
+                    cell_shape_node = None
+                    isolation_source_node = None
+                    metabolism_node = None
 
-                tax_pathway_edge = None
-                tax_metabolism_edge = None
-                tax_isolation_source_edge = None
-                tax_carbon_substrate_edge = None
-                tax_to_cell_shape_edge = None
+                    tax_pathway_edge = None
+                    tax_metabolism_edge = None
+                    tax_isolation_source_edge = None
+                    tax_carbon_substrate_edge = None
+                    tax_to_cell_shape_edge = None
 
-                filtered_row = {k: line[k] for k in traits_columns_of_interest}
-                tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
-                tax_name = filtered_row[ORG_NAME_COLUMN]
-                tax_node = [tax_id, NCBI_CATEGORY, tax_name]
+                    filtered_row = {k: line[k] for k in traits_columns_of_interest}
+                    tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
+                    tax_name = filtered_row[ORG_NAME_COLUMN]
+                    tax_node = [tax_id, NCBI_CATEGORY, tax_name]
 
-                metabolism = metabolism_map.get(filtered_row[METABOLISM_COLUMN], None)
-                if metabolism:
-                    metabolism_node = [
-                        metabolism[ID_COLUMN.upper()],
-                        METABOLISM_CATEGORY,
-                        PREFERRED_TERM_KEY,
-                    ]
-                    tax_metabolism_edge = [
-                        tax_id,
-                        NCBI_TO_METABOLISM_EDGE,
-                        metabolism[ID_COLUMN.upper()],
-                        BIOLOGICAL_PROCESS,
-                    ]
-                # Get these from NER results
-                pathways = (
-                    None
-                    if filtered_row[PATHWAYS_COLUMN].split(",") == ["NA"]
-                    else filtered_row[PATHWAYS_COLUMN].split(",")
-                )
-                if pathways:
-                    go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
-                    go_condition_2 = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
-                    go_result_for_tax_id = go_result.loc[go_condition_1 & go_condition_2]
-                    if go_result_for_tax_id.empty:
-                        pathway_nodes = [
-                            [PATHWAY_PREFIX + item.strip(), PATHWAY_CATEGORY, item.strip()]
-                            for item in pathways
+                    metabolism = metabolism_map.get(filtered_row[METABOLISM_COLUMN], None)
+                    if metabolism:
+                        metabolism_node = [
+                            metabolism[ID_COLUMN.upper()],
+                            METABOLISM_CATEGORY,
+                            PREFERRED_TERM_KEY,
                         ]
-                        tax_pathway_edge = [
-                            [
-                                tax_id,
-                                NCBI_TO_PATHWAY_EDGE,
-                                PATHWAY_PREFIX + item.strip(),
-                                BIOLOGICAL_PROCESS,
-                            ]
-                            for item in pathways
+                        tax_metabolism_edge = [
+                            tax_id,
+                            NCBI_TO_METABOLISM_EDGE,
+                            metabolism[ID_COLUMN.upper()],
+                            BIOLOGICAL_PROCESS,
                         ]
-                    else:
-                        exact_condition_go = (
-                            go_result_for_tax_id[OBJECT_LABEL_COLUMN]
-                            == go_result_for_tax_id[SUBJECT_LABEL_COLUMN]
-                        )
-                        exact_match_go_df = go_result_for_tax_id[exact_condition_go]
-                        if not exact_match_go_df.empty:
-                            go_result_for_tax_id = exact_match_go_df
-                        pathway_nodes = []
-                        tax_pathway_edge = []
-                        for row in go_result_for_tax_id.iterrows():
-                            pathway_nodes.append(
-                                [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
-                            )
-                            tax_pathway_edge.append(
-                                [tax_id, NCBI_TO_PATHWAY_EDGE, row[1].object_id, BIOLOGICAL_PROCESS]
-                            )
-
-                    node_writer.writerows(pathway_nodes)
-                    edge_writer.writerows(tax_pathway_edge)
-
-                carbon_substrates = (
-                    None
-                    if filtered_row[CARBON_SUBSTRATES_COLUMN].split(",") == ["NA"]
-                    else filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
-                )
-                if carbon_substrates:
-                    chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
-                    chebi_condition_2 = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
-                        carbon_substrates
+                    # Get these from NER results
+                    pathways = (
+                        None
+                        if filtered_row[PATHWAYS_COLUMN].split(",") == ["NA"]
+                        else filtered_row[PATHWAYS_COLUMN].split(",")
                     )
-                    chebi_result_for_tax_id = chebi_result.loc[
-                        chebi_condition_1 & chebi_condition_2
-                    ]
-                    if chebi_result_for_tax_id.empty:
-                        carbon_substrate_nodes = [
-                            [
-                                CARBON_SUBSTRATE_PREFIX + item.strip(),
-                                CARBON_SUBSTRATE_CATEGORY,
-                                item.strip(),
+                    if pathways:
+                        go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
+                        go_condition_2 = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
+                        go_result_for_tax_id = go_result.loc[go_condition_1 & go_condition_2]
+                        if go_result_for_tax_id.empty:
+                            pathway_nodes = [
+                                [PATHWAY_PREFIX + item.strip(), PATHWAY_CATEGORY, item.strip()]
+                                for item in pathways
                             ]
-                            for item in carbon_substrates
-                        ]
-                        tax_carbon_substrate_edge = [
-                            [
-                                tax_id,
-                                NCBI_TO_CHEM_EDGE,
-                                CARBON_SUBSTRATE_PREFIX + item.strip(),
-                                TROPHICALLY_INTERACTS_WITH,
+                            tax_pathway_edge = [
+                                [
+                                    tax_id,
+                                    NCBI_TO_PATHWAY_EDGE,
+                                    PATHWAY_PREFIX + item.strip(),
+                                    BIOLOGICAL_PROCESS,
+                                ]
+                                for item in pathways
                             ]
-                            for item in carbon_substrates
-                        ]
-                    else:
-                        carbon_substrate_nodes = []
-                        tax_carbon_substrate_edge = []
-                        exact_condition_chebi = (
-                            chebi_result_for_tax_id[OBJECT_LABEL_COLUMN]
-                            == chebi_result_for_tax_id[SUBJECT_LABEL_COLUMN]
+                        else:
+                            exact_condition_go = (
+                                go_result_for_tax_id[OBJECT_LABEL_COLUMN]
+                                == go_result_for_tax_id[SUBJECT_LABEL_COLUMN]
+                            )
+                            exact_match_go_df = go_result_for_tax_id[exact_condition_go]
+                            if not exact_match_go_df.empty:
+                                go_result_for_tax_id = exact_match_go_df
+                            pathway_nodes = []
+                            tax_pathway_edge = []
+                            for row in go_result_for_tax_id.iterrows():
+                                pathway_nodes.append(
+                                    [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                )
+                                tax_pathway_edge.append(
+                                    [
+                                        tax_id,
+                                        NCBI_TO_PATHWAY_EDGE,
+                                        row[1].object_id,
+                                        BIOLOGICAL_PROCESS,
+                                    ]
+                                )
+
+                        node_writer.writerows(pathway_nodes)
+                        edge_writer.writerows(tax_pathway_edge)
+
+                    carbon_substrates = (
+                        None
+                        if filtered_row[CARBON_SUBSTRATES_COLUMN].split(",") == ["NA"]
+                        else filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
+                    )
+                    if carbon_substrates:
+                        chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
+                        chebi_condition_2 = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
+                            carbon_substrates
                         )
-                        exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
-                        if not exact_match_chebi_df.empty:
-                            chebi_result_for_tax_id = exact_match_chebi_df
-
-                        for row in chebi_result_for_tax_id.iterrows():
-                            carbon_substrate_nodes.append(
-                                [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                        chebi_result_for_tax_id = chebi_result.loc[
+                            chebi_condition_1 & chebi_condition_2
+                        ]
+                        if chebi_result_for_tax_id.empty:
+                            carbon_substrate_nodes = [
+                                [
+                                    CARBON_SUBSTRATE_PREFIX + item.strip(),
+                                    CARBON_SUBSTRATE_CATEGORY,
+                                    item.strip(),
+                                ]
+                                for item in carbon_substrates
+                            ]
+                            tax_carbon_substrate_edge = [
+                                [
+                                    tax_id,
+                                    NCBI_TO_CHEM_EDGE,
+                                    CARBON_SUBSTRATE_PREFIX + item.strip(),
+                                    TROPHICALLY_INTERACTS_WITH,
+                                ]
+                                for item in carbon_substrates
+                            ]
+                        else:
+                            carbon_substrate_nodes = []
+                            tax_carbon_substrate_edge = []
+                            exact_condition_chebi = (
+                                chebi_result_for_tax_id[OBJECT_LABEL_COLUMN]
+                                == chebi_result_for_tax_id[SUBJECT_LABEL_COLUMN]
                             )
-                            tax_carbon_substrate_edge.append(
-                                [tax_id, NCBI_TO_PATHWAY_EDGE, row[1].object_id, BIOLOGICAL_PROCESS]
-                            )
+                            exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
+                            if not exact_match_chebi_df.empty:
+                                chebi_result_for_tax_id = exact_match_chebi_df
 
-                    node_writer.writerows(carbon_substrate_nodes)
-                    edge_writer.writerows(tax_carbon_substrate_edge)
+                            for row in chebi_result_for_tax_id.iterrows():
+                                carbon_substrate_nodes.append(
+                                    [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                )
+                                tax_carbon_substrate_edge.append(
+                                    [
+                                        tax_id,
+                                        NCBI_TO_PATHWAY_EDGE,
+                                        row[1].object_id,
+                                        BIOLOGICAL_PROCESS,
+                                    ]
+                                )
 
-                cell_shape = (
-                    None
-                    if filtered_row[CELL_SHAPE_COLUMN] == "NA"
-                    else filtered_row[CELL_SHAPE_COLUMN]
-                )
-                if cell_shape:
-                    cell_shape_node = [SHAPE_PREFIX + cell_shape, SHAPE_CATEGORY, cell_shape]
-                    tax_to_cell_shape_edge = [
-                        tax_id,
-                        NCBI_TO_SHAPE_EDGE,
-                        SHAPE_PREFIX + cell_shape,
-                        HAS_PHENOTYPE,
-                    ]
-                # envo_df
-                isolation_source = envo_mapping.get(filtered_row[ISOLATION_SOURCE_COLUMN], None)
-                if isolation_source:
-                    if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
-                        isolation_source_node = [
-                            ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                            None,
-                            filtered_row[ISOLATION_SOURCE_COLUMN],
-                        ]
-                        tax_isolation_source_edge = [
+                        node_writer.writerows(carbon_substrate_nodes)
+                        edge_writer.writerows(tax_carbon_substrate_edge)
+
+                    cell_shape = (
+                        None
+                        if filtered_row[CELL_SHAPE_COLUMN] == "NA"
+                        else filtered_row[CELL_SHAPE_COLUMN]
+                    )
+                    if cell_shape:
+                        cell_shape_node = [SHAPE_PREFIX + cell_shape, SHAPE_CATEGORY, cell_shape]
+                        tax_to_cell_shape_edge = [
                             tax_id,
-                            NCBI_TO_ISOLATION_SOURCE_EDGE,
-                            ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                            LOCATION_OF,
+                            NCBI_TO_SHAPE_EDGE,
+                            SHAPE_PREFIX + cell_shape,
+                            HAS_PHENOTYPE,
                         ]
-                    else:
-                        isolation_source_node = [
-                            isolation_source[ENVO_ID_COLUMN],
-                            None,
-                            isolation_source[ENVO_TERMS_COLUMN],
+                    # envo_df
+                    isolation_source = envo_mapping.get(filtered_row[ISOLATION_SOURCE_COLUMN], None)
+                    if isolation_source:
+                        if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
+                            isolation_source_node = [
+                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                None,
+                                filtered_row[ISOLATION_SOURCE_COLUMN],
+                            ]
+                            tax_isolation_source_edge = [
+                                tax_id,
+                                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                LOCATION_OF,
+                            ]
+                        else:
+                            isolation_source_node = [
+                                isolation_source[ENVO_ID_COLUMN],
+                                None,
+                                isolation_source[ENVO_TERMS_COLUMN],
+                            ]
+                            tax_isolation_source_edge = [
+                                tax_id,
+                                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                isolation_source[ENVO_ID_COLUMN],
+                                LOCATION_OF,
+                            ]
+                    nodes_data_to_write = [
+                        sublist
+                        for sublist in [
+                            tax_node,
+                            cell_shape_node,
+                            isolation_source_node,
+                            metabolism_node,
                         ]
-                        tax_isolation_source_edge = [
-                            tax_id,
-                            NCBI_TO_ISOLATION_SOURCE_EDGE,
-                            isolation_source[ENVO_ID_COLUMN],
-                            LOCATION_OF,
-                        ]
-                nodes_data_to_write = [
-                    sublist
-                    for sublist in [
-                        tax_node,
-                        cell_shape_node,
-                        isolation_source_node,
-                        metabolism_node,
+                        if sublist is not None
                     ]
-                    if sublist is not None
-                ]
-                node_writer.writerows(nodes_data_to_write)
+                    node_writer.writerows(nodes_data_to_write)
 
-                edges_data_to_write = [
-                    sublist
-                    for sublist in [
-                        tax_isolation_source_edge,
-                        tax_metabolism_edge,
-                        tax_to_cell_shape_edge,
+                    edges_data_to_write = [
+                        sublist
+                        for sublist in [
+                            tax_isolation_source_edge,
+                            tax_metabolism_edge,
+                            tax_to_cell_shape_edge,
+                        ]
+                        if sublist is not None
                     ]
-                    if sublist is not None
-                ]
-                if len(edges_data_to_write) > 0:
-                    edge_writer.writerows(edges_data_to_write)
+                    if len(edges_data_to_write) > 0:
+                        edge_writer.writerows(edges_data_to_write)
+
+                    progress.set_description(f"Processing taxonomy: {tax_id}")
+                    # After each iteration, call the update method to advance the progress bar.
+                    progress.update()
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

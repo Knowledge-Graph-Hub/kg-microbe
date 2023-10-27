@@ -1,3 +1,0 @@
-id	subject	predicate	object	relation	knowledge_source
-urn:uuid:c2edf4fd-99ff-4a92-828a-904229b485c2	CHEBI:23367	biolink:subclass_of	CHEBI:24431	rdfs:subClassOf	chebi.json
-urn:uuid:7c124b2d-1f0f-4488-9b5a-97ac38ac3e32	OBO:chebi#is_conjugate_acid_of	biolink:inverseOf	OBO:chebi#is_conjugate_base_of	inverseOf	chebi.json

@@ -201,8 +201,8 @@ class MediaDiveTransform(Transform):
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
-            index = self.edge_header.index("provided_by")
-            self.edge_header[index] = "knowledge_source"
+            # index = self.edge_header.index("provided_by")
+            # self.edge_header[index] = "knowledge_source"
             edge_writer.writerow(self.edge_header)
 
             with tqdm(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:

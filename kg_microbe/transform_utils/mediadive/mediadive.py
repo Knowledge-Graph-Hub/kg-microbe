@@ -42,6 +42,7 @@ from kg_microbe.transform_utils.constants import (
     INGREDIENTS_COLUMN,
     KEGG_KEY,
     KEGG_PREFIX,
+    REFERENCE_COLUMN,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
     MEDIADIVE_DESC_COLUMN,
     MEDIADIVE_ID_COLUMN,
@@ -61,6 +62,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
     NAME_COLUMN,
+    PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RECIPE_KEY,
@@ -201,8 +203,8 @@ class MediaDiveTransform(Transform):
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
-            # index = self.edge_header.index("provided_by")
-            # self.edge_header[index] = "knowledge_source"
+            index = self.edge_header.index(PROVIDED_BY_COLUMN)
+            self.edge_header[index] = REFERENCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
             with tqdm(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:

@@ -1,4 +1,4 @@
-subject	predicate	object	relation	provided_by
+subject	predicate	object	relation	reference
 NCBITaxon:1955243	biolink:occurs_in	mediadive.medium:1669	BAO:0002924	bacdive:158156
 NCBITaxon:1873457	biolink:occurs_in	mediadive.medium:92	BAO:0002924	bacdive:139807
 NCBITaxon:1848903	biolink:occurs_in	mediadive.medium:1609	BAO:0002924	bacdive:132461

@@ -1,9 +1,7 @@
-# Sourced from: https://github.com/biolink/kgx/tree/master/examples
 ---
 configuration:
   output_directory: data/merged
   checkpoint: false
-
   curie_map:
     # define non-canonical CURIE to IRI mappings (for RDF)
   node_properties:
@@ -14,59 +12,47 @@ configuration:
     # define the type for non-canonical properties for RDF export
 
 merged_graph:
-  name: KG-Microbe
+  name: kg-microbe graph
   source:
-    bacteria-archaea-traits-ncbi:
+    ncbitaxon:
+      name: "NCBITaxon"
       input:
-        name: "bacteria-archaea-traits-ncbi"
-        format: tsv
-        filename:
-        - data/transformed/condensed_traits_NCBI/nodes.tsv
-        - data/transformed/condensed_traits_NCBI/edges.tsv
-
-#      operations:
-#        - name: kgx.utils.graph_utils.remap_node_identifier
-#          args:
-#            category: biolink:Protein
-#            alternative_property: xrefs
-#            prefix: UniProtKB
- 
-    envo-ontology:
-      input:
-        name: "ENVO Ontology"
-        format: tsv
-        filename:
-          - data/transformed/ontologies/envo_nodes.tsv
-          - data/transformed/ontologies/envo_edges.tsv
-    
-    chebi-ontology:
-      input:
-        name: "CheBI Ontology"
-        format: tsv
-        filename:
-          - data/transformed/ontologies/chebi_nodes.tsv
-          - data/transformed/ontologies/chebi_edges.tsv
-    
-    ncbi-ontology:
-      input:
-        name: "NCBITaxon Ontology"
         format: tsv
         filename:
           - data/transformed/ontologies/ncbitaxon_nodes.tsv
           - data/transformed/ontologies/ncbitaxon_edges.tsv
-
-    gene-ontology:
+    chebi:
+      name: "CHEBI"
       input:
-        name: "Gene Ontology"
         format: tsv
         filename:
-          - data/transformed/ontologies/go_nodes.tsv
-          - data/transformed/ontologies/go_edges.tsv
-
+          - data/transformed/ontologies/chebi_nodes.tsv
+          - data/transformed/ontologies/chebi_edges.tsv
+    bacdive:
+      name: "BacDive"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/BacDive/nodes.tsv
+          - data/transformed/BacDive/edges.tsv
+    mediadive:
+      name: "MediaDive"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/MediaDive/nodes.tsv
+          - data/transformed/MediaDive/edges.tsv
+    traits:
+      input:
+        name: "traits"
+        format: tsv
+        filename:
+          - data/transformed/traits/nodes.tsv
+          - data/transformed/traits/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:
-        graph_name: KG-Microbe
+        graph_name: kg-microbe graph
         filename: merged_graph_stats.yaml
         node_facet_properties:
           - provided_by
@@ -76,5 +62,9 @@ merged_graph:
   destination:
     merged-kg-tsv:
       format: tsv
-      filename: merged-kg
       compression: tar.gz
+      filename: merged-kg
+    # merged-kg-nt:
+    #   format: nt
+    #   compression: gz
+    #   filename: kg_microbe.nt.gz

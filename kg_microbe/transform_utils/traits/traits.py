@@ -17,6 +17,7 @@ from kg_microbe.transform_utils.constants import (
     CARBON_SUBSTRATE_PREFIX,
     CARBON_SUBSTRATES_COLUMN,
     CELL_SHAPE_COLUMN,
+    CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
@@ -51,7 +52,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.ner_utils import annotate
-from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.pandas_utils import drop_duplicates, dump_ont_nodes_from
 
 OUTPUT_FILE_SUFFIX = "_ner.tsv"
 STOPWORDS_FN = "stopwords.txt"
@@ -381,3 +382,6 @@ class TraitsTransform(Transform):
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
+        dump_ont_nodes_from(
+            self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        )

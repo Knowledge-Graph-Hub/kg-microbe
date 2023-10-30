@@ -132,9 +132,12 @@ dmypy.json
 # User added files
 data/raw/*.*
 data/raw/robot
+
 !data/raw/.keep
 !data/raw/exclusion_branches.tsv
+!data/raw/chebi_curies.tsv
 !data/raw/nlp/*
+
 kg_microbe/transform_utils/*/tmp/*/*.yaml
 data/transformed/ontologies/*.tsv
 *.sqlite

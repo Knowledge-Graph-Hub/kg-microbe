@@ -31,6 +31,7 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
+    CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
     COMPOUND,
     COMPOUND_ID_KEY,
@@ -74,7 +75,11 @@ from kg_microbe.transform_utils.constants import (
     SOLUTIONS_KEY,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.pandas_utils import drop_duplicates, establish_transitive_relationship
+from kg_microbe.utils.pandas_utils import (
+    drop_duplicates,
+    dump_ont_nodes_from,
+    establish_transitive_relationship,
+)
 
 
 class MediaDiveTransform(Transform):
@@ -266,6 +271,8 @@ class MediaDiveTransform(Transform):
                         for k, v in solutions_dict.items()
                     ]
 
+                    # TODO for all "CHEBI:XX" in ingredients_dict.keys(), get has_role nodes.
+
                     data = [
                         medium_id,
                         dictionary[NAME_COLUMN],
@@ -304,4 +311,7 @@ class MediaDiveTransform(Transform):
             MEDIADIVE_SOLUTION_PREFIX,
             MEDIUM_TO_INGREDIENT_EDGE,
             MEDIADIVE_INGREDIENT_PREFIX,
+        )
+        dump_ont_nodes_from(
+            self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         )

@@ -61,7 +61,7 @@ from kg_microbe.transform_utils.constants import (
     STRAIN,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.pandas_utils import drop_duplicates, dump_ont_nodes_from
 
 
 class BacDiveTransform(Transform):

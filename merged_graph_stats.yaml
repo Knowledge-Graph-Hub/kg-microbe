@@ -49,21 +49,21 @@ edge_stats:
         unknown:
           count: 8597
     biolink:related_to:
-      count: 90277
+      count: 3417
       provided_by:
         unknown:
-          count: 90277
+          count: 3417
       source:
         unknown:
-          count: 90277
+          count: 3417
     biolink:subclass_of:
-      count: 1056056
+      count: 819462
       provided_by:
         unknown:
-          count: 1056056
+          count: 819462
       source:
         unknown:
-          count: 1056056
+          count: 819462
     unknown:
       count: 0
   count_by_spo:
@@ -188,53 +188,53 @@ edge_stats:
         unknown:
           count: 832
     biolink:ChemicalSubstance-biolink:related_to-biolink:BiologicalProcess:
-      count: 755
+      count: 86
       provided_by:
         unknown:
-          count: 755
+          count: 86
       source:
         unknown:
-          count: 755
+          count: 86
     biolink:ChemicalSubstance-biolink:related_to-biolink:ChemicalEntity:
-      count: 3763
+      count: 347
       provided_by:
         unknown:
-          count: 3763
+          count: 347
       source:
         unknown:
-          count: 3763
+          count: 347
     biolink:ChemicalSubstance-biolink:related_to-biolink:ChemicalSubstance:
-      count: 90277
+      count: 3417
       provided_by:
         unknown:
-          count: 90277
+          count: 3417
       source:
         unknown:
-          count: 90277
+          count: 3417
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:BiologicalProcess:
-      count: 132
+      count: 60
       provided_by:
         unknown:
-          count: 132
+          count: 60
       source:
         unknown:
-          count: 132
+          count: 60
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 436
+      count: 95
       provided_by:
         unknown:
-          count: 436
+          count: 95
       source:
         unknown:
-          count: 436
+          count: 95
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalSubstance:
-      count: 240712
+      count: 4118
       provided_by:
         unknown:
-          count: 240712
+          count: 4118
       source:
         unknown:
-          count: 240712
+          count: 4118
     biolink:OntologyClass-None-biolink:OntologyClass:
       count: 1
       provided_by:
@@ -464,7 +464,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 1341461
+  total_edges: 1018007
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -481,29 +481,29 @@ node_stats:
     biolink:BiologicalProcess:
       count: 194
       provided_by:
-        chebi.json:
+        chebi_extract_subset.json:
           count: 83
         nodes.tsv:
           count: 194
     biolink:ChemicalEntity:
       count: 9710
       provided_by:
-        chebi.json:
+        chebi_extract_subset.json:
           count: 460
         nodes.tsv:
           count: 9710
     biolink:ChemicalSubstance:
-      count: 185295
+      count: 2788
       provided_by:
-        chebi.json:
-          count: 185295
+        chebi_extract_subset.json:
+          count: 2788
         nodes.tsv:
           count: 498
     biolink:OntologyClass:
-      count: 46
+      count: 39
       provided_by:
-        chebi.json:
-          count: 25
+        chebi_extract_subset.json:
+          count: 9
         ncbitaxon_removed_subset.json:
           count: 30
     biolink:OrganismTaxon:
@@ -528,15 +528,15 @@ node_stats:
   count_by_id_prefixes:
     BFO: 1
     CAS-RN: 190
-    CHEBI: 185853
+    CHEBI: 3346
     ECOCORE: 6
     ENVO: 35
     GO: 17
     IAO: 1
     KEGG: 1
     NCBITaxon: 865713
-    OBO: 30
-    OIO: 13
+    OBO: 26
+    OIO: 10
     PO: 1
     PubChem: 20
     RO: 1
@@ -567,12 +567,12 @@ node_stats:
       mediadive.solution: 5381
       traits.carbon_substrates: 76
     biolink:ChemicalSubstance:
-      CHEBI: 185295
+      CHEBI: 2788
     biolink:OntologyClass:
       BFO: 1
       IAO: 1
-      OBO: 30
-      OIO: 13
+      OBO: 26
+      OIO: 10
       RO: 1
     biolink:OrganismTaxon:
       NCBITaxon: 50370
@@ -651,7 +651,7 @@ node_stats:
     - UBERON
     - PO
   provided_by:
-  - chebi.json
+  - chebi_extract_subset.json
   - ncbitaxon_removed_subset.json
   - nodes.tsv
-  total_nodes: 1010611
+  total_nodes: 828097

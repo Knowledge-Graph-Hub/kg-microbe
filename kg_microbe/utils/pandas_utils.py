@@ -76,6 +76,13 @@ def establish_transitive_relationship(
 
 
 def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
+    """
+    Dump CURIEs of an ontology for further processing.
+
+    :param nodes_filepath: Path of the nodes file.
+    :param target_path: Path where this list of CURIEs need to be exported.
+    :param prefix: Prefix determines the CURIEs of interest.
+    """
     df = pd.read_csv(nodes_filepath, sep="\t", low_memory=False)
     all_ont_nodes = (
         df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]]

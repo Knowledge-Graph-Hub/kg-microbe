@@ -6,10 +6,10 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 import yaml
-from oaklib.utilities.ner_utilities import get_exclusion_token_list
 from oaklib import get_adapter
+from oaklib.utilities.ner_utilities import get_exclusion_token_list
+from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ACTUAL_TERM_KEY,
@@ -321,7 +321,11 @@ class TraitsTransform(Transform):
 
                             for row in chebi_result_for_tax_id.iterrows():
                                 carbon_substrate_nodes.append(
-                                    [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                    [
+                                        row[1].object_id,
+                                        CARBON_SUBSTRATE_CATEGORY,
+                                        row[1].object_label,
+                                    ]
                                 )
                                 tax_carbon_substrate_edge.append(
                                     [
@@ -382,13 +386,16 @@ class TraitsTransform(Transform):
                                 preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
                                 relations = [LOCATION_OF for _ in range(len(curies))]
                                 isolation_source_node = [
-                                    list(item) for item in zip(curies, category, labels)
+                                    list(item)
+                                    for item in zip(curies, category, labels, strict=True)
                                 ]
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 
                                 tax_isolation_source_edge = [
                                     list(item)
-                                    for item in zip(curies, preds, tax_id_list, relations)
+                                    for item in zip(
+                                        curies, preds, tax_id_list, relations, strict=True
+                                    )
                                 ]
                             else:
                                 isolation_source_node = [

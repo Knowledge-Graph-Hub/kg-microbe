@@ -8,6 +8,14 @@ edge_stats:
       source:
         unknown:
           count: 36244
+    biolink:has_chemical_role:
+      count: 1037
+      provided_by:
+        unknown:
+          count: 1037
+      source:
+        unknown:
+          count: 1037
     biolink:has_part:
       count: 102140
       provided_by:
@@ -57,16 +65,32 @@ edge_stats:
         unknown:
           count: 3417
     biolink:subclass_of:
-      count: 819462
+      count: 819469
       provided_by:
         unknown:
-          count: 819462
+          count: 819469
       source:
         unknown:
-          count: 819462
+          count: 819469
     unknown:
       count: 0
   count_by_spo:
+    biolink:BiologicalProcess-biolink:has_chemical_role-biolink:ChemicalRole:
+      count: 169
+      provided_by:
+        unknown:
+          count: 169
+      source:
+        unknown:
+          count: 169
+    biolink:BiologicalProcess-biolink:has_chemical_role-biolink:ChemicalSubstance:
+      count: 169
+      provided_by:
+        unknown:
+          count: 169
+      source:
+        unknown:
+          count: 169
     biolink:BiologicalProcess-biolink:related_to-biolink:BiologicalProcess:
       count: 6
       provided_by:
@@ -83,6 +107,14 @@ edge_stats:
       source:
         unknown:
           count: 10
+    biolink:BiologicalProcess-biolink:related_to-biolink:ChemicalRole:
+      count: 169
+      provided_by:
+        unknown:
+          count: 169
+      source:
+        unknown:
+          count: 169
     biolink:BiologicalProcess-biolink:related_to-biolink:ChemicalSubstance:
       count: 251
       provided_by:
@@ -115,6 +147,22 @@ edge_stats:
       source:
         unknown:
           count: 133
+    biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalRole:
+      count: 926
+      provided_by:
+        unknown:
+          count: 926
+      source:
+        unknown:
+          count: 926
+    biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalSubstance:
+      count: 926
+      provided_by:
+        unknown:
+          count: 926
+      source:
+        unknown:
+          count: 926
     biolink:ChemicalEntity-biolink:has_part-biolink:BiologicalProcess:
       count: 2027
       provided_by:
@@ -155,6 +203,14 @@ edge_stats:
       source:
         unknown:
           count: 85
+    biolink:ChemicalEntity-biolink:related_to-biolink:ChemicalRole:
+      count: 927
+      provided_by:
+        unknown:
+          count: 927
+      source:
+        unknown:
+          count: 927
     biolink:ChemicalEntity-biolink:related_to-biolink:ChemicalSubstance:
       count: 1376
       provided_by:
@@ -187,6 +243,38 @@ edge_stats:
       source:
         unknown:
           count: 832
+    biolink:ChemicalRole-biolink:subclass_of-biolink:ChemicalRole:
+      count: 71
+      provided_by:
+        unknown:
+          count: 71
+      source:
+        unknown:
+          count: 71
+    biolink:ChemicalRole-biolink:subclass_of-biolink:ChemicalSubstance:
+      count: 262
+      provided_by:
+        unknown:
+          count: 262
+      source:
+        unknown:
+          count: 262
+    biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalRole:
+      count: 989
+      provided_by:
+        unknown:
+          count: 989
+      source:
+        unknown:
+          count: 989
+    biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalSubstance:
+      count: 989
+      provided_by:
+        unknown:
+          count: 989
+      source:
+        unknown:
+          count: 989
     biolink:ChemicalSubstance-biolink:related_to-biolink:BiologicalProcess:
       count: 86
       provided_by:
@@ -203,6 +291,14 @@ edge_stats:
       source:
         unknown:
           count: 347
+    biolink:ChemicalSubstance-biolink:related_to-biolink:ChemicalRole:
+      count: 1564
+      provided_by:
+        unknown:
+          count: 1564
+      source:
+        unknown:
+          count: 1564
     biolink:ChemicalSubstance-biolink:related_to-biolink:ChemicalSubstance:
       count: 3417
       provided_by:
@@ -227,14 +323,22 @@ edge_stats:
       source:
         unknown:
           count: 95
-    biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalSubstance:
-      count: 4118
+    biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalRole:
+      count: 91
       provided_by:
         unknown:
-          count: 4118
+          count: 91
       source:
         unknown:
-          count: 4118
+          count: 91
+    biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalSubstance:
+      count: 4125
+      provided_by:
+        unknown:
+          count: 4125
+      source:
+        unknown:
+          count: 4125
     biolink:OntologyClass-None-biolink:OntologyClass:
       count: 1
       provided_by:
@@ -451,8 +555,25 @@ edge_stats:
       source:
         unknown:
           count: 815311
+    unknown-biolink:has_chemical_role-biolink:ChemicalRole:
+      count: 48
+      provided_by:
+        unknown:
+          count: 48
+      source:
+        unknown:
+          count: 48
+    unknown-biolink:has_chemical_role-biolink:ChemicalSubstance:
+      count: 48
+      provided_by:
+        unknown:
+          count: 48
+      source:
+        unknown:
+          count: 48
   predicates:
   - biolink:capable_of
+  - biolink:has_chemical_role
   - biolink:has_part
   - biolink:has_phenotype
   - biolink:interacts_with
@@ -464,7 +585,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 1018007
+  total_edges: 1019051
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -492,13 +613,20 @@ node_stats:
           count: 460
         nodes.tsv:
           count: 9710
-    biolink:ChemicalSubstance:
-      count: 2788
+    biolink:ChemicalRole:
+      count: 228
       provided_by:
         chebi_extract_subset.json:
-          count: 2788
+          count: 228
         nodes.tsv:
-          count: 498
+          count: 228
+    biolink:ChemicalSubstance:
+      count: 2795
+      provided_by:
+        chebi_extract_subset.json:
+          count: 2795
+        nodes.tsv:
+          count: 726
     biolink:OntologyClass:
       count: 39
       provided_by:
@@ -521,14 +649,16 @@ node_stats:
         nodes.tsv:
           count: 49899
     unknown:
-      count: 69
+      count: 85
       provided_by:
         nodes.tsv:
           count: 69
+        unknown:
+          count: 16
   count_by_id_prefixes:
     BFO: 1
     CAS-RN: 190
-    CHEBI: 3346
+    CHEBI: 3597
     ECOCORE: 6
     ENVO: 35
     GO: 17
@@ -566,8 +696,10 @@ node_stats:
       mediadive.medium: 3292
       mediadive.solution: 5381
       traits.carbon_substrates: 76
+    biolink:ChemicalRole:
+      CHEBI: 228
     biolink:ChemicalSubstance:
-      CHEBI: 2788
+      CHEBI: 2795
     biolink:OntologyClass:
       BFO: 1
       IAO: 1
@@ -579,6 +711,7 @@ node_stats:
     biolink:OrganismalEntity:
       NCBITaxon: 815343
     unknown:
+      CHEBI: 16
       ENVO: 35
       PO: 1
       UBERON: 5
@@ -588,6 +721,7 @@ node_stats:
   - biolink:ActivityAndBehavior
   - biolink:BiologicalProcess
   - biolink:ChemicalEntity
+  - biolink:ChemicalRole
   - biolink:ChemicalSubstance
   - biolink:OntologyClass
   - biolink:OrganismTaxon
@@ -633,6 +767,8 @@ node_stats:
     - PubChem
     - KEGG
     - traits.carbon_substrates
+    biolink:ChemicalRole:
+    - CHEBI
     biolink:ChemicalSubstance:
     - CHEBI
     biolink:OntologyClass:
@@ -650,8 +786,10 @@ node_stats:
     - ENVO
     - UBERON
     - PO
+    - CHEBI
   provided_by:
   - chebi_extract_subset.json
   - ncbitaxon_removed_subset.json
   - nodes.tsv
-  total_nodes: 828097
+  - unknown
+  total_nodes: 828120

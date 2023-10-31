@@ -323,6 +323,14 @@ edge_stats:
       source:
         unknown:
           count: 3417
+    biolink:ChemicalSubstance-biolink:related_to-biolink:EnvironmentalFeature:
+      count: 2
+      provided_by:
+        unknown:
+          count: 2
+      source:
+        unknown:
+          count: 2
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:BiologicalProcess:
       count: 60
       provided_by:
@@ -355,6 +363,46 @@ edge_stats:
       source:
         unknown:
           count: 4125
+    biolink:ChemicalSubstance-biolink:subclass_of-biolink:EnvironmentalFeature:
+      count: 4
+      provided_by:
+        unknown:
+          count: 4
+      source:
+        unknown:
+          count: 4
+    biolink:EnvironmentalFeature-biolink:location_of-biolink:OrganismTaxon:
+      count: 2898
+      provided_by:
+        unknown:
+          count: 2898
+      source:
+        unknown:
+          count: 2898
+    biolink:EnvironmentalFeature-biolink:location_of-biolink:OrganismalEntity:
+      count: 2873
+      provided_by:
+        unknown:
+          count: 2873
+      source:
+        unknown:
+          count: 2873
+    biolink:EnvironmentalFeature-biolink:related_to-biolink:ChemicalSubstance:
+      count: 1
+      provided_by:
+        unknown:
+          count: 1
+      source:
+        unknown:
+          count: 1
+    biolink:EnvironmentalFeature-biolink:subclass_of-biolink:ChemicalSubstance:
+      count: 2
+      provided_by:
+        unknown:
+          count: 2
+      source:
+        unknown:
+          count: 2
     biolink:OntologyClass-None-biolink:OntologyClass:
       count: 1
       provided_by:
@@ -427,6 +475,14 @@ edge_stats:
       source:
         unknown:
           count: 851
+    biolink:OrganismTaxon-biolink:location_of-biolink:EnvironmentalFeature:
+      count: 17082
+      provided_by:
+        unknown:
+          count: 17082
+      source:
+        unknown:
+          count: 17082
     biolink:OrganismTaxon-biolink:location_of-biolink:OrganismalEntity:
       count: 624
       provided_by:
@@ -523,6 +579,14 @@ edge_stats:
       source:
         unknown:
           count: 837
+    biolink:OrganismalEntity-biolink:location_of-biolink:EnvironmentalFeature:
+      count: 16936
+      provided_by:
+        unknown:
+          count: 16936
+      source:
+        unknown:
+          count: 16936
     biolink:OrganismalEntity-biolink:location_of-biolink:OrganismalEntity:
       count: 614
       provided_by:
@@ -547,6 +611,14 @@ edge_stats:
       source:
         unknown:
           count: 8581
+    biolink:OrganismalEntity-biolink:subclass_of-biolink:EnvironmentalFeature:
+      count: 3
+      provided_by:
+        unknown:
+          count: 3
+      source:
+        unknown:
+          count: 3
     biolink:OrganismalEntity-biolink:subclass_of-biolink:OntologyClass:
       count: 31
       provided_by:
@@ -643,6 +715,15 @@ node_stats:
           count: 2795
         nodes.tsv:
           count: 727
+    biolink:EnvironmentalFeature:
+      count: 60
+      provided_by:
+        chebi_extract_subset.json:
+          count: 2
+        ncbitaxon_removed_subset.json:
+          count: 1
+        nodes.tsv:
+          count: 60
     biolink:OntologyClass:
       count: 39
       provided_by:
@@ -674,16 +755,21 @@ node_stats:
   count_by_id_prefixes:
     BFO: 1
     CAS-RN: 190
-    CHEBI: 3597
+    CHEBI: 3599
     ECOCORE: 6
+    ENVO: 43
+    FOODON: 1
     GO: 17
     IAO: 1
     KEGG: 1
-    NCBITaxon: 865713
+    NCBITaxon: 865714
     OBO: 26
     OIO: 10
+    PATO: 6
+    PO: 1
     PubChem: 20
     RO: 1
+    UBERON: 6
     mediadive.ingredient: 258
     mediadive.medium: 3292
     mediadive.solution: 5381
@@ -713,6 +799,14 @@ node_stats:
       CHEBI: 228
     biolink:ChemicalSubstance:
       CHEBI: 2795
+    biolink:EnvironmentalFeature:
+      CHEBI: 2
+      ENVO: 43
+      FOODON: 1
+      NCBITaxon: 1
+      PATO: 6
+      PO: 1
+      UBERON: 6
     biolink:OntologyClass:
       BFO: 1
       IAO: 1
@@ -733,6 +827,7 @@ node_stats:
   - biolink:ChemicalEntity
   - biolink:ChemicalRole
   - biolink:ChemicalSubstance
+  - biolink:EnvironmentalFeature
   - biolink:OntologyClass
   - biolink:OrganismTaxon
   - biolink:OrganismalEntity
@@ -741,14 +836,19 @@ node_stats:
   - CAS-RN
   - CHEBI
   - ECOCORE
+  - ENVO
+  - FOODON
   - GO
   - IAO
   - KEGG
   - NCBITaxon
   - OBO
   - OIO
+  - PATO
+  - PO
   - PubChem
   - RO
+  - UBERON
   - mediadive.ingredient
   - mediadive.medium
   - mediadive.solution
@@ -778,6 +878,14 @@ node_stats:
     - CHEBI
     biolink:ChemicalSubstance:
     - CHEBI
+    biolink:EnvironmentalFeature:
+    - NCBITaxon
+    - CHEBI
+    - ENVO
+    - UBERON
+    - FOODON
+    - PO
+    - PATO
     biolink:OntologyClass:
     - IAO
     - OBO

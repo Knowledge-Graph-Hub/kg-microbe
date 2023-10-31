@@ -42,7 +42,6 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEYWORDS,
     KEYWORDS_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
     MEDIADIVE_URL_COLUMN,
@@ -56,12 +55,13 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_ID,
     NCBITAXON_ID_COLUMN,
     NCBITAXON_PREFIX,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     SPECIES,
     STRAIN,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.pandas_utils import drop_duplicates, dump_ont_nodes_from
+from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):

@@ -31,18 +31,21 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
+    CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
+    CHEBI_TO_ROLE_EDGE,
     COMPOUND,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
     HAS_PART,
+    HAS_ROLE,
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
     KEGG_KEY,
     KEGG_PREFIX,
-    REFERENCE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
     MEDIADIVE_DESC_COLUMN,
     MEDIADIVE_ID_COLUMN,
@@ -66,6 +69,7 @@ from kg_microbe.transform_utils.constants import (
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RECIPE_KEY,
+    ROLE_CATEGORY,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,
@@ -74,7 +78,11 @@ from kg_microbe.transform_utils.constants import (
     SOLUTIONS_KEY,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.pandas_utils import drop_duplicates, establish_transitive_relationship
+from kg_microbe.utils.pandas_utils import (
+    drop_duplicates,
+    dump_ont_nodes_from,
+    establish_transitive_relationship,
+)
 
 
 class MediaDiveTransform(Transform):
@@ -204,7 +212,7 @@ class MediaDiveTransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
             index = self.edge_header.index(PROVIDED_BY_COLUMN)
-            self.edge_header[index] = REFERENCE_COLUMN
+            self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
             with tqdm(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:
@@ -266,6 +274,32 @@ class MediaDiveTransform(Transform):
                         for k, v in solutions_dict.items()
                     ]
 
+                    # TODO for all "CHEBI:XX" in ingredients_dict.keys(), get has_role nodes.
+                    chebi_list = [
+                        v for _, v in ingredients_dict.items() if str(v).startswith(CHEBI_PREFIX)
+                    ]
+                    if len(chebi_list) > 0:
+                        chebi_roles = set(
+                            self.chebi_impl.relationships(
+                                subjects=set(chebi_list), predicates=[HAS_ROLE]
+                            )
+                        )
+                        roles = {x for (_, _, x) in chebi_roles}
+                        role_nodes = [
+                            [role, ROLE_CATEGORY, self.chebi_impl.label(role)] for role in roles
+                        ]
+                        node_writer.writerows(role_nodes)
+                        role_edges = [
+                            [
+                                subject,
+                                CHEBI_TO_ROLE_EDGE,
+                                object,
+                                predicate,
+                            ]
+                            for (subject, predicate, object) in chebi_roles
+                        ]
+                        edge_writer.writerows(role_edges)
+
                     data = [
                         medium_id,
                         dictionary[NAME_COLUMN],
@@ -304,4 +338,7 @@ class MediaDiveTransform(Transform):
             MEDIADIVE_SOLUTION_PREFIX,
             MEDIUM_TO_INGREDIENT_EDGE,
             MEDIADIVE_INGREDIENT_PREFIX,
+        )
+        dump_ont_nodes_from(
+            self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         )

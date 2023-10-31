@@ -9,7 +9,6 @@ from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, O
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
 
 DATA_SOURCES = {
-    "OntologyTransform": OntologyTransform,
     # "DrugCentralTransform": DrugCentralTransform,
     # "OrphanetTransform": OrphanetTransform,
     # "OMIMTransform": OMIMTransform,
@@ -21,6 +20,7 @@ DATA_SOURCES = {
     "BacDiveTransform": BacDiveTransform,
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
+    "OntologyTransform": OntologyTransform,
 }
 
 

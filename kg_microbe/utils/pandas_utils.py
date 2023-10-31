@@ -3,7 +3,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from kg_microbe.transform_utils.constants import OBJECT_COLUMN, PREDICATE_COLUMN, SUBJECT_COLUMN
+from kg_microbe.transform_utils.constants import (
+    ID_COLUMN,
+    OBJECT_COLUMN,
+    PREDICATE_COLUMN,
+    SUBJECT_COLUMN,
+)
 
 
 def drop_duplicates(file_path: Path):
@@ -68,3 +73,17 @@ def establish_transitive_relationship(
     df = pd.concat([df] + list_of_dfs_to_append)
     df.to_csv(file_path, sep="\t", index=False)
     return df
+
+
+def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
+    df = pd.read_csv(nodes_filepath, sep="\t", low_memory=False)
+    all_ont_nodes = df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]].drop_duplicates()
+    if target_path.is_file():
+        try:
+            captured_chebi = pd.read_csv(
+                target_path, sep="\t", low_memory=False, names=all_ont_nodes.columns
+            )
+        except pd.errors.EmptyDataError:
+            captured_chebi = pd.DataFrame(columns=all_ont_nodes.columns)
+        all_ont_nodes = pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates()
+    all_ont_nodes.to_csv(target_path, sep="\t", index=False, header=None)

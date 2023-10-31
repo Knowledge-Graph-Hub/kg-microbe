@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Union
 
 from kg_microbe.transform_utils.constants import (
+    ROBOT_EXTRACT_SUFFIX,
     ROBOT_REMOVED_SUFFIX,
 )
 
@@ -61,7 +62,7 @@ def convert_to_json(path: str, ont: str):
     return None
 
 
-def extract_convert_to_json(path: str, ont_name: str, terms: str, mode: str):
+def extract_convert_to_json(path: str, ont_name: str, terms: Union[str, Path], mode: str):
     """
     Extract all children of provided CURIE.
 
@@ -88,8 +89,7 @@ def extract_convert_to_json(path: str, ont_name: str, terms: str, mode: str):
     """
     robot_file, env = initialize_robot(path)
     input_owl = os.path.join(path, ont_name.lower() + ".owl")
-    output_json = os.path.join(path, ont_name.lower() + ".json")
-    output_owl = os.path.join(path, ont_name.lower() + "_extracted_subset.owl")
+    output_json = os.path.join(path, ont_name.lower() + ROBOT_EXTRACT_SUFFIX + ".json")
 
     if ":" in terms:
         call = [
@@ -100,8 +100,6 @@ def extract_convert_to_json(path: str, ont_name: str, terms: str, mode: str):
             mode,
             "--input",
             input_owl,
-            "--output",
-            output_owl,
             "--term",
             terms,
             "convert",
@@ -119,8 +117,6 @@ def extract_convert_to_json(path: str, ont_name: str, terms: str, mode: str):
             mode,
             "--input",
             input_owl,
-            "--output",
-            output_owl,
             "--term-file",
             terms,
             "convert",

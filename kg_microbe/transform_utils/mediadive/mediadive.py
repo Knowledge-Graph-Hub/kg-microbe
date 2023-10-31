@@ -33,11 +33,13 @@ from kg_microbe.transform_utils.constants import (
     CHEBI_KEY,
     CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
+    CHEBI_TO_ROLE_EDGE,
     COMPOUND,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
     HAS_PART,
+    HAS_ROLE,
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
@@ -67,6 +69,7 @@ from kg_microbe.transform_utils.constants import (
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RECIPE_KEY,
+    ROLE_CATEGORY,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,
@@ -272,6 +275,30 @@ class MediaDiveTransform(Transform):
                     ]
 
                     # TODO for all "CHEBI:XX" in ingredients_dict.keys(), get has_role nodes.
+                    chebi_list = [
+                        v for _, v in ingredients_dict.items() if str(v).startswith(CHEBI_PREFIX)
+                    ]
+                    if len(chebi_list) > 0:
+                        chebi_roles = set(
+                            self.chebi_impl.relationships(
+                                subjects=set(chebi_list), predicates=[HAS_ROLE]
+                            )
+                        )
+                        roles = {x for (_, _, x) in chebi_roles}
+                        role_nodes = [
+                            [role, ROLE_CATEGORY, self.chebi_impl.label(role)] for role in roles
+                        ]
+                        node_writer.writerows(role_nodes)
+                        role_edges = [
+                            [
+                                subject,
+                                CHEBI_TO_ROLE_EDGE,
+                                object,
+                                predicate,
+                            ]
+                            for (subject, predicate, object) in chebi_roles
+                        ]
+                        edge_writer.writerows(role_edges)
 
                     data = [
                         medium_id,

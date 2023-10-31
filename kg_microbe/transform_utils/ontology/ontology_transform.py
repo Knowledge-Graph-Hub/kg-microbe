@@ -93,7 +93,7 @@ class OntologyTransform(Transform):
                     # Unzip the file
                     self.decompress(data_file)
                     print(f"Converting {data_file} to obojson...")
-                    convert_to_json(str(self.input_base_dir), name)
+                convert_to_json(str(self.input_base_dir), name)
 
             data_file = json_path
 

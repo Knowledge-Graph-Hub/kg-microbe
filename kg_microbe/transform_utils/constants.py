@@ -108,7 +108,7 @@ METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 ROLE_CATEGORY = "biolink:ChemicalRole"
-ENVIRONMENT_CATEGORY = "ENVO:01000254"  # biolink=> enviromental feature.
+ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"

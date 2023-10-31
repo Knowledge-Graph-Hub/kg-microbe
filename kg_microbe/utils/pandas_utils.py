@@ -77,7 +77,11 @@ def establish_transitive_relationship(
 
 def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
     df = pd.read_csv(nodes_filepath, sep="\t", low_memory=False)
-    all_ont_nodes = df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]].drop_duplicates()
+    all_ont_nodes = (
+        df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]]
+        .drop_duplicates()
+        .sort_values(by=[ID_COLUMN])
+    )
     if target_path.is_file():
         try:
             captured_chebi = pd.read_csv(
@@ -85,5 +89,7 @@ def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
             )
         except pd.errors.EmptyDataError:
             captured_chebi = pd.DataFrame(columns=all_ont_nodes.columns)
-        all_ont_nodes = pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates()
+        all_ont_nodes = (
+            pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates().sort_values(by=[ID_COLUMN])
+        )
     all_ont_nodes.to_csv(target_path, sep="\t", index=False, header=None)

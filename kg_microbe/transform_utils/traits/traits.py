@@ -21,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
     CHEBI_TO_ROLE_EDGE,
+    ENVIRONMENT_CATEGORY,
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
     GO_PREFIX,
@@ -352,44 +353,75 @@ class TraitsTransform(Transform):
                     if isolation_source:
                         if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
                             isolation_source_node = [
-                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                None,
-                                filtered_row[ISOLATION_SOURCE_COLUMN],
+                                [
+                                    ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                    None,
+                                    filtered_row[ISOLATION_SOURCE_COLUMN],
+                                ]
                             ]
                             tax_isolation_source_edge = [
-                                tax_id,
-                                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                LOCATION_OF,
+                                [
+                                    tax_id,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                    LOCATION_OF,
+                                ]
                             ]
                         else:
-                            isolation_source_node = [
-                                isolation_source[ENVO_ID_COLUMN],
-                                None,
-                                isolation_source[ENVO_TERMS_COLUMN],
-                            ]
-                            tax_isolation_source_edge = [
-                                tax_id,
-                                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                isolation_source[ENVO_ID_COLUMN],
-                                LOCATION_OF,
-                            ]
+                            if "," in isolation_source[ENVO_ID_COLUMN]:
+                                curies = [
+                                    x.strip() for x in isolation_source[ENVO_ID_COLUMN].split(",")
+                                ]
+                                labels = [
+                                    x.strip()
+                                    for x in isolation_source[ENVO_TERMS_COLUMN].split(",")
+                                ]
+                                if len(labels) == 1 and len(labels) != len(curies):
+                                    labels = [labels[0] for _ in range(len(curies))]
+                                category = [ENVIRONMENT_CATEGORY for _ in range(len(curies))]
+                                preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
+                                relations = [LOCATION_OF for _ in range(len(curies))]
+                                isolation_source_node = [
+                                    list(item) for item in zip(curies, category, labels)
+                                ]
+                                tax_id_list = [tax_id for _ in range(len(labels))]
+
+                                tax_isolation_source_edge = [
+                                    list(item)
+                                    for item in zip(curies, preds, tax_id_list, relations)
+                                ]
+                            else:
+                                isolation_source_node = [
+                                    [
+                                        isolation_source[ENVO_ID_COLUMN],
+                                        ENVIRONMENT_CATEGORY,
+                                        isolation_source[ENVO_TERMS_COLUMN],
+                                    ]
+                                ]
+                                tax_isolation_source_edge = [
+                                    [
+                                        tax_id,
+                                        NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                        isolation_source[ENVO_ID_COLUMN],
+                                        LOCATION_OF,
+                                    ]
+                                ]
                     nodes_data_to_write = [
                         sublist
                         for sublist in [
                             tax_node,
                             cell_shape_node,
-                            isolation_source_node,
                             metabolism_node,
                         ]
                         if sublist is not None
                     ]
                     node_writer.writerows(nodes_data_to_write)
+                    if isolation_source_node:
+                        node_writer.writerows(isolation_source_node)
 
                     edges_data_to_write = [
                         sublist
                         for sublist in [
-                            tax_isolation_source_edge,
                             tax_metabolism_edge,
                             tax_to_cell_shape_edge,
                         ]
@@ -397,6 +429,8 @@ class TraitsTransform(Transform):
                     ]
                     if len(edges_data_to_write) > 0:
                         edge_writer.writerows(edges_data_to_write)
+                    if tax_isolation_source_edge:
+                        edge_writer.writerows(tax_isolation_source_edge)
 
                     progress.set_description(f"Processing taxonomy: {tax_id}")
                     # After each iteration, call the update method to advance the progress bar.

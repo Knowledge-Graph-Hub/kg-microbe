@@ -83,10 +83,12 @@ class OntologyTransform(Transform):
                         remove_convert_to_json(str(self.input_base_dir), name, terms)
                 elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
                     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
-                    if not Path(json_path).is_file():
+                    owl_path = str(data_file).strip(".gz")
+                    # Convert CHEBI owl => JSON each time to handle varying terms (if any) in CHEBI_NODES_FILENAME
+                    if not Path(owl_path).is_file():
                         self.decompress(data_file)
-                        terms = str(self.input_base_dir / CHEBI_NODES_FILENAME)
-                        extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
+                    terms = str(self.input_base_dir / CHEBI_NODES_FILENAME)
+                    extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
             else:
                 json_path = str(data_file).replace("owl.gz", "json")
                 if not Path(json_path).is_file():

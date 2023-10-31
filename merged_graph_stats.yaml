@@ -41,13 +41,13 @@ edge_stats:
         unknown:
           count: 3145
     biolink:location_of:
-      count: 25274
+      count: 26755
       provided_by:
         unknown:
-          count: 25274
+          count: 26755
       source:
         unknown:
-          count: 25274
+          count: 26755
     biolink:occurs_in:
       count: 8597
       provided_by:
@@ -275,6 +275,22 @@ edge_stats:
       source:
         unknown:
           count: 989
+    biolink:ChemicalSubstance-biolink:location_of-biolink:OrganismTaxon:
+      count: 59
+      provided_by:
+        unknown:
+          count: 59
+      source:
+        unknown:
+          count: 59
+    biolink:ChemicalSubstance-biolink:location_of-biolink:OrganismalEntity:
+      count: 58
+      provided_by:
+        unknown:
+          count: 58
+      source:
+        unknown:
+          count: 58
     biolink:ChemicalSubstance-biolink:related_to-biolink:BiologicalProcess:
       count: 86
       provided_by:
@@ -420,13 +436,13 @@ edge_stats:
         unknown:
           count: 624
     biolink:OrganismTaxon-biolink:location_of-unknown:
-      count: 23799
+      count: 6775
       provided_by:
         unknown:
-          count: 23799
+          count: 6775
       source:
         unknown:
-          count: 23799
+          count: 6775
     biolink:OrganismTaxon-biolink:occurs_in-biolink:ChemicalEntity:
       count: 8597
       provided_by:
@@ -516,13 +532,13 @@ edge_stats:
         unknown:
           count: 614
     biolink:OrganismalEntity-biolink:location_of-unknown:
-      count: 23603
+      count: 6713
       provided_by:
         unknown:
-          count: 23603
+          count: 6713
       source:
         unknown:
-          count: 23603
+          count: 6713
     biolink:OrganismalEntity-biolink:occurs_in-biolink:ChemicalEntity:
       count: 8581
       provided_by:
@@ -585,7 +601,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 1019051
+  total_edges: 1020532
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -626,7 +642,7 @@ node_stats:
         chebi_extract_subset.json:
           count: 2795
         nodes.tsv:
-          count: 726
+          count: 727
     biolink:OntologyClass:
       count: 39
       provided_by:
@@ -649,10 +665,10 @@ node_stats:
         nodes.tsv:
           count: 49899
     unknown:
-      count: 85
+      count: 21
       provided_by:
         nodes.tsv:
-          count: 69
+          count: 5
         unknown:
           count: 16
   count_by_id_prefixes:
@@ -660,17 +676,14 @@ node_stats:
     CAS-RN: 190
     CHEBI: 3597
     ECOCORE: 6
-    ENVO: 35
     GO: 17
     IAO: 1
     KEGG: 1
     NCBITaxon: 865713
     OBO: 26
     OIO: 10
-    PO: 1
     PubChem: 20
     RO: 1
-    UBERON: 5
     mediadive.ingredient: 258
     mediadive.medium: 3292
     mediadive.solution: 5381
@@ -712,9 +725,6 @@ node_stats:
       NCBITaxon: 815343
     unknown:
       CHEBI: 16
-      ENVO: 35
-      PO: 1
-      UBERON: 5
       traits.data_source: 5
   node_categories:
   - biolink:AbstractEntity
@@ -731,17 +741,14 @@ node_stats:
   - CAS-RN
   - CHEBI
   - ECOCORE
-  - ENVO
   - GO
   - IAO
   - KEGG
   - NCBITaxon
   - OBO
   - OIO
-  - PO
   - PubChem
   - RO
-  - UBERON
   - mediadive.ingredient
   - mediadive.medium
   - mediadive.solution
@@ -783,13 +790,10 @@ node_stats:
     - NCBITaxon
     unknown:
     - traits.data_source
-    - ENVO
-    - UBERON
-    - PO
     - CHEBI
   provided_by:
   - chebi_extract_subset.json
   - ncbitaxon_removed_subset.json
   - nodes.tsv
   - unknown
-  total_nodes: 828120
+  total_nodes: 828113

@@ -9,6 +9,7 @@ import pandas as pd
 from tqdm import tqdm
 import yaml
 from oaklib.utilities.ner_utilities import get_exclusion_token_list
+from oaklib import get_adapter
 
 from kg_microbe.transform_utils.constants import (
     ACTUAL_TERM_KEY,
@@ -19,10 +20,12 @@ from kg_microbe.transform_utils.constants import (
     CELL_SHAPE_COLUMN,
     CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
+    CHEBI_TO_ROLE_EDGE,
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
     GO_PREFIX,
     HAS_PHENOTYPE,
+    HAS_ROLE,
     ID_COLUMN,
     ISOLATION_SOURCE_COLUMN,
     ISOLATION_SOURCE_PREFIX,
@@ -36,12 +39,14 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_PATHWAY_EDGE,
     NCBI_TO_SHAPE_EDGE,
     NCBITAXON_PREFIX,
+    OBJECT_ID_COLUMN,
     OBJECT_LABEL_COLUMN,
     ORG_NAME_COLUMN,
     PATHWAY_CATEGORY,
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PREFERRED_TERM_KEY,
+    ROLE_CATEGORY,
     SHAPE_CATEGORY,
     SHAPE_PREFIX,
     SUBJECT_LABEL_COLUMN,
@@ -129,6 +134,21 @@ class TraitsTransform(Transform):
             chebi_result = pd.read_csv(
                 str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
             )
+        chebi_list = chebi_result[OBJECT_ID_COLUMN].to_list()
+        oi = get_adapter("sqlite:obo:chebi")
+        chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
+        roles = {x for (_, _, x) in chebi_roles}
+        role_nodes = [[role, ROLE_CATEGORY, oi.label(role)] for role in roles]
+        role_edges = [
+            [
+                subject,
+                CHEBI_TO_ROLE_EDGE,
+                object,
+                predicate,
+            ]
+            for (subject, predicate, object) in chebi_roles
+        ]
+
         if not (self.nlp_output_dir / go_result_fn).is_file():
             annotate(
                 go_nlp_df, GO_PREFIX, exclusion_list, self.nlp_output_dir / go_result_fn, False
@@ -170,8 +190,10 @@ class TraitsTransform(Transform):
             reader = csv.DictReader(f)
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
+            node_writer.writerows(role_nodes)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
+            edge_writer.writerows(role_edges)
             with tqdm(total=total_lines, desc="Processing files") as progress:
                 for line in reader:
                     pathway_nodes = None

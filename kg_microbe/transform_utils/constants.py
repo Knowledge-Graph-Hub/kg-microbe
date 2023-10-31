@@ -96,6 +96,8 @@ NCBI_TO_CHEM_EDGE = "biolink:interacts_with"  # [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:capable_of"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
+CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
+
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -105,6 +107,7 @@ SHAPE_CATEGORY = "biolink:AbstractEntity"
 METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
+ROLE_CATEGORY = "biolink:ChemicalRole"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -114,6 +117,7 @@ TROPHICALLY_INTERACTS_WITH = (
 )
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
+HAS_ROLE = "RO:0000087"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"

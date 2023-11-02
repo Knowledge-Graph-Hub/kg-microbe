@@ -140,6 +140,5 @@ data/raw/robot
 
 kg_microbe/transform_utils/*/tmp/*/*.yaml
 data/transformed/ontologies/*.tsv
-*.sqlite
 data/merged/*
 **/.DS_Store

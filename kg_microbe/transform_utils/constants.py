@@ -182,7 +182,7 @@ TYPE_COLUMN = "Type"
 ENVO_TERMS_COLUMN = "ENVO_terms"
 ENVO_ID_COLUMN = "ENVO_ids"
 
-CHEBI_NODES_FILENAME = "chebi_curies.tsv"
+# CHEBI_NODES_FILENAME = "chebi_curies.tsv"
 
 # ROBOT
 ROBOT_REMOVED_SUFFIX = "_removed_subset"

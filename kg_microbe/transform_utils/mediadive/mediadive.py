@@ -31,7 +31,6 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
-    CHEBI_NODES_FILENAME,
     CHEBI_PREFIX,
     CHEBI_TO_ROLE_EDGE,
     COMPOUND,
@@ -80,7 +79,6 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
-    dump_ont_nodes_from,
     establish_transitive_relationship,
 )
 
@@ -339,6 +337,6 @@ class MediaDiveTransform(Transform):
             MEDIUM_TO_INGREDIENT_EDGE,
             MEDIADIVE_INGREDIENT_PREFIX,
         )
-        dump_ont_nodes_from(
-            self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
-        )
+        # dump_ont_nodes_from(
+        #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        # )

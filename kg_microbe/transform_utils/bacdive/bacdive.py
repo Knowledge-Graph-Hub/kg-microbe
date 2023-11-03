@@ -17,7 +17,6 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
-import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
 
@@ -27,7 +26,6 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
-    BACDIVE_YAML_DIR,
     CULTURE_AND_GROWTH_CONDITIONS,
     CULTURE_LINK,
     CULTURE_MEDIUM,
@@ -120,11 +118,15 @@ class BacDiveTransform(Transform):
 
             with tqdm(total=len(input_json.items()) + 1, desc="Processing files") as progress:
                 for key, value in input_json.items():
-                    # start_time = time.time()
-                    fn: Path = Path(str(BACDIVE_YAML_DIR / key) + ".yaml")
-                    if not fn.is_file():
-                        with open(str(fn), "w") as outfile:
-                            yaml.dump(value, outfile)
+                    # * Uncomment this block ONLY if you want to view the split *******
+                    # * contents of the JSON file source into YAML files.
+                    # import yaml
+                    # from kg_microbe.transform_utils.constants import BACDIVE_YAML_DIR
+                    # fn: Path = Path(str(BACDIVE_YAML_DIR / key) + ".yaml")
+                    # if not fn.is_file():
+                    #     with open(str(fn), "w") as outfile:
+                    #         yaml.dump(value, outfile)
+                    # *******************************************************************
 
                     # Get "General" information
                     general_info = value.get(GENERAL, {})

@@ -386,16 +386,13 @@ class TraitsTransform(Transform):
                                 preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
                                 relations = [LOCATION_OF for _ in range(len(curies))]
                                 isolation_source_node = [
-                                    list(item)
-                                    for item in zip(curies, category, labels, strict=True)
+                                    list(item) for item in zip(curies, category, labels)  # noqa
                                 ]
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 
                                 tax_isolation_source_edge = [
                                     list(item)
-                                    for item in zip(
-                                        curies, preds, tax_id_list, relations, strict=True
-                                    )
+                                    for item in zip(curies, preds, tax_id_list, relations)  # noqa
                                 ]
                             else:
                                 isolation_source_node = [

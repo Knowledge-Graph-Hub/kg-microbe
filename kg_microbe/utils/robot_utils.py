@@ -148,7 +148,7 @@ def remove_convert_to_json(path: str, ont_name: str, terms: Union[List, Path]):
 
     if isinstance(terms, List):
         terms_param = [
-            item for sublist in zip(["--term"] * len(terms), terms, strict=True) for item in sublist
+            item for sublist in zip(["--term"] * len(terms), terms) for item in sublist  # noqa
         ]
         call = [
             "bash",

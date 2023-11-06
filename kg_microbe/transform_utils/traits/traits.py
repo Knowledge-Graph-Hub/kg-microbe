@@ -279,8 +279,12 @@ class TraitsTransform(Transform):
                     carbon_substrates = (
                         None
                         if filtered_row[CARBON_SUBSTRATES_COLUMN].split(",") == ["NA"]
-                        else filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
+                        else [
+                            substrate.strip()
+                            for substrate in filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
+                        ]
                     )
+
                     if carbon_substrates:
                         chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
                         chebi_condition_2 = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(

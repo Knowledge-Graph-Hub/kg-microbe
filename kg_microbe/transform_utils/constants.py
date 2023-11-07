@@ -99,7 +99,7 @@ NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
 
 
-NCBI_CATEGORY = "biolink:OrganismalEntity"
+NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
 SOLUTION_CATEGORY = "biolink:ChemicalEntity"
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"

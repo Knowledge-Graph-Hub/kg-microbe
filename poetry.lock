@@ -1719,13 +1719,13 @@ typer = ">=0.7.0,<0.8.0"
 
 [[package]]
 name = "kgx"
-version = "2.2.3"
+version = "2.2.5"
 description = "A Python library and set of command line utilities for exchanging Knowledge Graphs (KGs) that conform to or are aligned to the Biolink Model."
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "kgx-2.2.3-py3-none-any.whl", hash = "sha256:06c78e43e5b6f937d1f931a9d9c357758aaa382a55bb6cd7cde2634e8560a320"},
-    {file = "kgx-2.2.3.tar.gz", hash = "sha256:80eb9d0422ab3b88e4c631423923e458753fd64273a88bf3e1f54956fd4a46bf"},
+    {file = "kgx-2.2.5-py3-none-any.whl", hash = "sha256:a10d546b031c9f3c20978000823a4a5bef491ed844f174f3a11cfa73d9540b1c"},
+    {file = "kgx-2.2.5.tar.gz", hash = "sha256:0e917b5f09eb839b6d4ae891f88f37d02c66f531f953f835ad15c121cb9bb5ca"},
 ]
 
 [package.dependencies]
@@ -5068,4 +5068,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "4fae9f1573b04bb362dd2abfb219c190c37c9f79c3ae1ee8153e3fce3b153959"
+content-hash = "4d94b4ab5836483ccad819709cbf3b47d7b17d0dc3ad7c6a7b940731d1bb8e2e"

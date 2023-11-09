@@ -230,7 +230,9 @@ class TraitsTransform(Transform):
                     pathways = (
                         None
                         if filtered_row[PATHWAYS_COLUMN].split(",") == ["NA"]
-                        else filtered_row[PATHWAYS_COLUMN].split(",")
+                        else [
+                            pathway.strip() for pathway in filtered_row[PATHWAYS_COLUMN].split(",")
+                        ]
                     )
                     if pathways:
                         go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id

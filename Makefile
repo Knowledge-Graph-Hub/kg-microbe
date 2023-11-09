@@ -13,8 +13,6 @@ run-summary:
 	grep 'KEGG:' data/merged/merged-kg_nodes.tsv  | wc -l
 	echo "CAS-RN:"
 	grep 'CAS-RN:' data/merged/merged-kg_nodes.tsv  | wc -l
-	echo "mediadive"
-	grep 'mediadive' data/merged/merged-kg_nodes.tsv  | wc -l
 	echo "mediadive."
 	grep 'mediadive.' data/merged/merged-kg_nodes.tsv  | wc -l
 	echo "mediadive.ingredient:"
@@ -25,6 +23,12 @@ run-summary:
 	grep 'mediadive.medium:' data/merged/merged-kg_nodes.tsv  | wc -l
 	echo "traits"
 	grep 'traits.' data/merged/merged-kg_nodes.tsv  | wc -l
+	echo "traits.carbon_substrate"
+	grep 'traits.carbon_substrate' data/merged/merged-kg_nodes.tsv  | wc -l
+	echo "traits.pathways"
+	grep 'traits.pathways' data/merged/merged-kg_nodes.tsv  | wc -l
+	echo "traits.cell_shape_enum"
+	grep 'traits.cell_shape_enum' data/merged/merged-kg_nodes.tsv  | wc -l
 
 	echo "EDGES"
 	wc -l data/merged/merged-kg_edges.tsv
@@ -44,11 +48,3 @@ run-summary:
 	grep 'CHEBI:'  data/merged/merged-kg_edges.tsv  | grep 'NCBITaxon:' | wc -l
 	echo "taxon -> GO"
 	grep 'GO:'  data/merged/merged-kg_edges.tsv  | grep 'NCBITaxon:' | wc -l
-	echo "trait -> CHEBI"
-	grep 'trait'  data/merged/merged-kg_edges.tsv  | grep 'CHEBI:' | wc -l
-
-	echo "traits.pathways -> CHEBI"
-	grep 'traits.pathways'  data/merged/merged-kg_edges.tsv  | grep 'CHEBI:' | wc -l
-
-	echo "traits.carbon_substrate-> CHEBI"
-	grep 'traits.carbon_substrate'  data/merged/merged-kg_edges.tsv  | grep 'CHEBI:' | wc -l

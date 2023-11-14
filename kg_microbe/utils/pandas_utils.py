@@ -3,7 +3,12 @@ from pathlib import Path
 
 import pandas as pd
 
-from kg_microbe.transform_utils.constants import OBJECT_COLUMN, PREDICATE_COLUMN, SUBJECT_COLUMN
+from kg_microbe.transform_utils.constants import (
+    ID_COLUMN,
+    OBJECT_COLUMN,
+    PREDICATE_COLUMN,
+    SUBJECT_COLUMN,
+)
 
 
 def drop_duplicates(file_path: Path):
@@ -14,7 +19,7 @@ def drop_duplicates(file_path: Path):
     :param file_path: file path.
     """
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
-    df = df.drop_duplicates()
+    df = df.drop_duplicates().sort_values(by=[SUBJECT_COLUMN])
     df.to_csv(file_path, sep="\t", index=False)
     return df
 
@@ -65,6 +70,33 @@ def establish_transitive_relationship(
         ] = row[1].subject
         list_of_dfs_to_append.append(transitive_relations_df)
 
-    df = pd.concat([df] + list_of_dfs_to_append)
+    df = pd.concat([df] + list_of_dfs_to_append).sort_values(by=[SUBJECT_COLUMN])
     df.to_csv(file_path, sep="\t", index=False)
     return df
+
+
+def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
+    """
+    Dump CURIEs of an ontology for further processing.
+
+    :param nodes_filepath: Path of the nodes file.
+    :param target_path: Path where this list of CURIEs need to be exported.
+    :param prefix: Prefix determines the CURIEs of interest.
+    """
+    df = pd.read_csv(nodes_filepath, sep="\t", low_memory=False)
+    all_ont_nodes = (
+        df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]]
+        .drop_duplicates()
+        .sort_values(by=[ID_COLUMN])
+    )
+    if target_path.is_file():
+        try:
+            captured_chebi = pd.read_csv(
+                target_path, sep="\t", low_memory=False, names=all_ont_nodes.columns
+            )
+        except pd.errors.EmptyDataError:
+            captured_chebi = pd.DataFrame(columns=all_ont_nodes.columns)
+        all_ont_nodes = (
+            pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates().sort_values(by=[ID_COLUMN])
+        )
+    all_ont_nodes.to_csv(target_path, sep="\t", index=False, header=None)

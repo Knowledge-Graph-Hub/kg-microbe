@@ -28,6 +28,20 @@ merged_graph:
         filename:
           - data/transformed/ontologies/chebi_nodes.tsv
           - data/transformed/ontologies/chebi_edges.tsv
+    envo:
+      name: "ENVO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/envo_nodes.tsv
+          - data/transformed/ontologies/envo_edges.tsv
+    go:
+      name: "GO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/go_nodes.tsv
+          - data/transformed/ontologies/go_edges.tsv
     bacdive:
       name: "BacDive"
       input:

@@ -107,12 +107,11 @@ class TraitsTransform(Transform):
         if data_file is None:
             data_file = self.source_name + ".csv"
         input_file = self.input_base_dir / data_file
-        cols_for_nlp = [TAX_ID_COLUMN, PATHWAYS_COLUMN, CARBON_SUBSTRATES_COLUMN]
+        cols_for_nlp = [PATHWAYS_COLUMN, CARBON_SUBSTRATES_COLUMN]
         nlp_df = pd.read_csv(input_file, usecols=cols_for_nlp, low_memory=False)
-        nlp_df[[TAX_ID_COLUMN, PATHWAYS_COLUMN]].dropna()
-        nlp_df[TAX_ID_COLUMN] = nlp_df[TAX_ID_COLUMN].apply(lambda x: NCBITAXON_PREFIX + str(x))
-        chebi_nlp_df = nlp_df[[TAX_ID_COLUMN, CARBON_SUBSTRATES_COLUMN]].dropna()
-        go_nlp_df = nlp_df[[TAX_ID_COLUMN, PATHWAYS_COLUMN]].dropna()
+        # nlp_df[TAX_ID_COLUMN] = nlp_df[TAX_ID_COLUMN].apply(lambda x: NCBITAXON_PREFIX + str(x))
+        chebi_nlp_df = nlp_df[[CARBON_SUBSTRATES_COLUMN]].dropna()
+        go_nlp_df = nlp_df[[PATHWAYS_COLUMN]].dropna()
         exclusion_list = get_exclusion_token_list([self.nlp_stopwords_dir / STOPWORDS_FN])
         go_result_fn = GO_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
         chebi_result_fn = CHEBI_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
@@ -235,9 +234,9 @@ class TraitsTransform(Transform):
                         ]
                     )
                     if pathways:
-                        go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
-                        go_condition_2 = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
-                        go_result_for_tax_id = go_result.loc[go_condition_1 & go_condition_2]
+                        # go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
+                        go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
+                        go_result_for_tax_id = go_result.loc[go_condition]
                         if go_result_for_tax_id.empty:
                             pathway_nodes = [
                                 [PATHWAY_PREFIX + item.strip(), PATHWAY_CATEGORY, item.strip()]
@@ -288,13 +287,11 @@ class TraitsTransform(Transform):
                     )
 
                     if carbon_substrates:
-                        chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
-                        chebi_condition_2 = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
+                        # chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
+                        chebi_condition = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
                             carbon_substrates
                         )
-                        chebi_result_for_tax_id = chebi_result.loc[
-                            chebi_condition_1 & chebi_condition_2
-                        ]
+                        chebi_result_for_tax_id = chebi_result.loc[chebi_condition]
                         if chebi_result_for_tax_id.empty:
                             carbon_substrate_nodes = [
                                 [

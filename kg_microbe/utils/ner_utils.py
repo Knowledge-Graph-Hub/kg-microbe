@@ -23,7 +23,8 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 # LLM_MODEL = "gpt-4"
 
 
-def overlap(a, b):
+def _overlap(a, b):
+    """Get number of characters in 2 strings that overlap."""
     return len(set(a) & set(b))
 
 
@@ -104,7 +105,7 @@ def annotate(df: pd.DataFrame, prefix: str, exclusion_list: List, outfile: Path,
         for k, v in unique_terms_annotated_not_whole_match.items():
             # Find the max value using the overlap function and assign it to the new dictionary
             if v != []:
-                max_overlap_dict[k] = [max(v, key=lambda obj: overlap(obj.object_label, k))]
+                max_overlap_dict[k] = [max(v, key=lambda obj: _overlap(obj.object_label, k))]
         # Now new_dict is equivalent to unique_terms_annotated_not_whole_match in the original code
         unique_terms_annotated_not_whole_match = max_overlap_dict
 

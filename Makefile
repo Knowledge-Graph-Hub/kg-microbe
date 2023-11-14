@@ -49,3 +49,12 @@ run-summary:
 	grep 'CHEBI:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "taxon -> GO"
 	grep 'GO:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
+
+
+neo4j-upload:
+	kgx neo4j-upload --uri bolt://localhost:7687 \
+                     --username neo4j \
+                     --password 12345678 \
+                     --input-format tsv \
+                     data/merged/merged-kg/merged-kg_nodes.tsv data/merged/merged-kg/merged-kg_edges.tsv
+

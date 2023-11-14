@@ -96,6 +96,8 @@ NCBI_TO_CHEM_EDGE = "biolink:interacts_with"  # [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:capable_of"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
+CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
+
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -105,6 +107,8 @@ SHAPE_CATEGORY = "biolink:AbstractEntity"
 METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
+ROLE_CATEGORY = "biolink:ChemicalRole"
+ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -114,6 +118,7 @@ TROPHICALLY_INTERACTS_WITH = (
 )
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
+HAS_ROLE = "RO:0000087"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -123,7 +128,7 @@ PREDICATE_COLUMN = "predicate"
 OBJECT_COLUMN = "object"
 RELATION_COLUMN = "relation"
 PROVIDED_BY_COLUMN = "provided_by"
-REFERENCE_COLUMN = "reference"
+PRIMARY_KNOWLEDGE_SOURCE_COLUMN = "primary_knowledge_source"
 DESCRIPTION_COLUMN = "description"
 XREF_COLUMN = "xref"
 SYNONYM_COLUMN = "synonym"
@@ -176,6 +181,8 @@ ISOLATION_SOURCE_COLUMN = "isolation_source"
 TYPE_COLUMN = "Type"
 ENVO_TERMS_COLUMN = "ENVO_terms"
 ENVO_ID_COLUMN = "ENVO_ids"
+
+# CHEBI_NODES_FILENAME = "chebi_curies.tsv"
 
 # ROBOT
 ROBOT_REMOVED_SUFFIX = "_removed_subset"

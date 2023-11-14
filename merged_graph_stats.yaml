@@ -1,13 +1,13 @@
 edge_stats:
   count_by_predicates:
     biolink:capable_of:
-      count: 68591
+      count: 68577
       provided_by:
         unknown:
-          count: 68591
+          count: 68577
       source:
         unknown:
-          count: 68591
+          count: 68577
     biolink:has_chemical_role:
       count: 1037
       provided_by:
@@ -692,13 +692,13 @@ edge_stats:
         unknown:
           count: 24353
     biolink:OrganismTaxon-biolink:capable_of-biolink:BiologicalProcess:
-      count: 7615
+      count: 7601
       provided_by:
         unknown:
-          count: 7615
+          count: 7601
       source:
         unknown:
-          count: 7615
+          count: 7601
     biolink:OrganismTaxon-biolink:capable_of-biolink:ChemicalEntity:
       count: 36623
       provided_by:
@@ -716,13 +716,13 @@ edge_stats:
         unknown:
           count: 36623
     biolink:OrganismTaxon-biolink:capable_of-biolink:OntologyClass:
-      count: 259
+      count: 258
       provided_by:
         unknown:
-          count: 259
+          count: 258
       source:
         unknown:
-          count: 259
+          count: 258
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:AbstractEntity:
       count: 19727
       provided_by:
@@ -834,7 +834,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 1469030
+  total_edges: 1469016
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -856,14 +856,14 @@ node_stats:
         nodes.tsv:
           count: 4
     biolink:BiologicalProcess:
-      count: 30702
+      count: 30692
       provided_by:
         envo.json:
           count: 42
         go.json:
           count: 30608
         nodes.tsv:
-          count: 111
+          count: 101
     biolink:CellularComponent:
       count: 4494
       provided_by:
@@ -973,7 +973,7 @@ node_stats:
     traits.carbon_substrates: 3
     traits.cell_shape_enum: 18
     traits.data_source: 5
-    traits.pathways: 94
+    traits.pathways: 84
   count_by_id_prefixes_by_category:
     biolink:AbstractEntity:
       traits.cell_shape_enum: 18
@@ -983,7 +983,7 @@ node_stats:
       UBERON: 596
     biolink:BiologicalProcess:
       GO: 30608
-      traits.pathways: 94
+      traits.pathways: 84
     biolink:CellularComponent:
       GO: 4494
     biolink:ChemicalEntity:
@@ -1137,4 +1137,4 @@ node_stats:
   - go.json
   - ncbitaxon_removed_subset.json
   - nodes.tsv
-  total_nodes: 1068001
+  total_nodes: 1067991

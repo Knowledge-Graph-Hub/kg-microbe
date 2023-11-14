@@ -11,7 +11,7 @@ from kg_microbe.transform_utils.constants import (
 )
 
 
-def drop_duplicates(file_path: Path):
+def drop_duplicates(file_path: Path, sort_by: str = SUBJECT_COLUMN):
     """
     Read TSV, drop duplicates and export to same file.
 
@@ -19,7 +19,7 @@ def drop_duplicates(file_path: Path):
     :param file_path: file path.
     """
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
-    df = df.drop_duplicates().sort_values(by=[SUBJECT_COLUMN])
+    df = df.drop_duplicates().sort_values(by=[sort_by])
     df.to_csv(file_path, sep="\t", index=False)
     return df
 

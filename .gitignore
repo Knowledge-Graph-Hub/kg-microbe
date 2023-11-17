@@ -142,3 +142,4 @@ kg_microbe/transform_utils/*/tmp/*/*.yaml
 data/transformed/ontologies/*.tsv
 data/merged/*
 **/.DS_Store
+notebooks/*.db

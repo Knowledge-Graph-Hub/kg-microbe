@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
+import pandas as pd
 import requests
 import requests_cache
 import yaml
@@ -28,6 +29,9 @@ from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    BACDIVE_ID_COLUMN,
+    BACDIVE_PREFIX,
+    BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
@@ -42,6 +46,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
+    IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
@@ -51,6 +56,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE_LINK_COLUMN,
     MEDIADIVE_MAX_PH_COLUMN,
     MEDIADIVE_MEDIUM_PREFIX,
+    MEDIADIVE_MEDIUM_STRAIN_YAML_DIR,
     MEDIADIVE_MEDIUM_YAML_DIR,
     MEDIADIVE_MIN_PH_COLUMN,
     MEDIADIVE_REF_COLUMN,
@@ -60,9 +66,12 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE_TMP_DIR,
     MEDIUM,
     MEDIUM_CATEGORY,
+    MEDIUM_STRAINS,
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
     NAME_COLUMN,
+    NCBI_TO_MEDIUM_EDGE,
+    NCBITAXON_ID_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
@@ -103,7 +112,7 @@ class MediaDiveTransform(Transform):
         """
         r = requests.get(url, timeout=30)
         data_json = r.json()
-        return data_json[DATA_KEY]
+        return data_json.get(DATA_KEY)
 
     def _get_label_via_oak(self, curie: str):
         prefix = curie.split(":")[0]
@@ -165,17 +174,45 @@ class MediaDiveTransform(Transform):
         :param url: Path provided by MetaDive API.
         """
         data_json = self._get_mediadive_json(url)
-        parsed_url = urlparse(url)
-        fn = parsed_url.path.split("/")[-1] + ".yaml"
-        if not (target_dir / fn).is_file():
-            with open(str(target_dir / fn), "w") as f:
-                f.write(yaml.dump(data_json))
+        if data_json:
+            parsed_url = urlparse(url)
+            fn = parsed_url.path.split("/")[-1] + ".yaml"
+            if not (target_dir / fn).is_file():
+                with open(str(target_dir / fn), "w") as f:
+                    f.write(yaml.dump(data_json))
         return data_json
+
+    def get_json_object(
+        self, fn: Union[Path, str], url_extension: str, target_dir: Path
+    ) -> Dict[str, str]:
+        """
+        Download YAML file if absent and return contents as a JSON object.
+
+        :param fn: YAML file path.
+        :return: Dictionary
+        """
+        if not fn.is_file():
+            url = MEDIADIVE_REST_API_BASE_URL + url_extension
+            json_obj = self.download_yaml_and_get_json(url, target_dir)
+        else:
+            # Import YAML file fn as a dict
+            with open(fn, "r") as f:
+                try:
+                    json_obj = yaml.safe_load(f)
+                except yaml.YAMLError as exc:
+                    print(exc)
+        # if json_obj is None:
+        #     print(f"No data was retrieved from {url}")
+        return json_obj
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
         """Run the transformation."""
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
+        bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
+        bacdive_df = pd.read_csv(
+            bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
+        )
 
         # mediadive_data:List = mediadive["data"]
         # Read the JSON file into the variable input_json
@@ -217,16 +254,41 @@ class MediaDiveTransform(Transform):
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
-                    if not fn.is_file():
-                        url = MEDIADIVE_REST_API_BASE_URL + MEDIUM + id
-                        json_obj = self.download_yaml_and_get_json(url, MEDIADIVE_MEDIUM_YAML_DIR)
-                    else:
-                        # Import YAML file fn as a dict
-                        with open(fn, "r") as f:
-                            try:
-                                json_obj = yaml.safe_load(f)
-                            except yaml.YAMLError as exc:
-                                print(exc)
+                    fn_medium_strain = Path(str(MEDIADIVE_MEDIUM_STRAIN_YAML_DIR / id) + ".yaml")
+                    json_obj = self.get_json_object(fn, MEDIUM + id, MEDIADIVE_MEDIUM_YAML_DIR)
+                    json_obj_medium_strain = self.get_json_object(
+                        fn_medium_strain, MEDIUM_STRAINS + id, MEDIADIVE_MEDIUM_STRAIN_YAML_DIR
+                    )
+
+                    medium_id = MEDIADIVE_MEDIUM_PREFIX + str(id)  # SUBJECT
+
+                    # Medium-Strains KG
+                    if json_obj_medium_strain:
+                        medium_strain_edge = []
+                        for strain in json_obj_medium_strain:
+                            strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
+                            ncbi_strain_id = bacdive_df[bacdive_df[BACDIVE_ID_COLUMN] == strain_id][
+                                NCBITAXON_ID_COLUMN
+                            ].values
+
+                            if ncbi_strain_id.size == 0:
+                                ncbi_strain_id = strain_id
+                            else:
+                                ncbi_strain_id = ncbi_strain_id[0]
+
+                            medium_strain_edge.extend(
+                                [
+                                    [
+                                        ncbi_strain_id,
+                                        NCBI_TO_MEDIUM_EDGE,
+                                        medium_id,
+                                        IS_GROWN_IN,
+                                        strain_id,
+                                    ]
+                                ]
+                            )
+                        edge_writer.writerows(medium_strain_edge)
+
                     if SOLUTIONS_KEY not in json_obj:
                         continue
                     # solution_id_list = [solution[ID_COLUMN] for solution in json_obj[SOLUTIONS_KEY]]
@@ -236,7 +298,6 @@ class MediaDiveTransform(Transform):
                     }
                     ingredients_dict = {}
                     solution_ingredient_edges = []
-                    medium_id = MEDIADIVE_MEDIUM_PREFIX + str(id)  # SUBJECT
 
                     for solution_id in solutions_dict.keys():
                         solution_curie = MEDIADIVE_SOLUTION_PREFIX + str(solution_id)
@@ -330,6 +391,7 @@ class MediaDiveTransform(Transform):
                     progress.update()
 
         drop_duplicates(self.output_node_file)
+        drop_duplicates(self.output_edge_file)
         establish_transitive_relationship(
             self.output_edge_file,
             MEDIADIVE_MEDIUM_PREFIX,

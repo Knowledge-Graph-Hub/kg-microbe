@@ -7,7 +7,7 @@ BACDIVE_YAML_DIR = BACDIVE_TMP_DIR / "yaml"
 MEDIADIVE_DIR = Path(__file__).parent / "mediadive"
 MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
-MEDIADIVE_RECIPE_YAML_DIR = MEDIADIVE_TMP_DIR / "recipe_yaml"
+MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 
 
 # KEYS FOR JSON FILE
@@ -84,6 +84,7 @@ BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
 MEDIUM = "medium/"
 COMPOUND = "ingredient/"
 SOLUTION = "solution/"
+MEDIUM_STRAINS = "medium-strains/"
 
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 

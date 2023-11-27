@@ -1,21 +1,21 @@
 edge_stats:
   count_by_predicates:
     biolink:capable_of:
-      count: 68577
+      count: 69386
       provided_by:
         unknown:
-          count: 68577
+          count: 69386
       source:
         unknown:
-          count: 68577
+          count: 69386
     biolink:has_chemical_role:
-      count: 1037
+      count: 1038
       provided_by:
         unknown:
-          count: 1037
+          count: 1038
       source:
         unknown:
-          count: 1037
+          count: 1038
     biolink:has_part:
       count: 102140
       provided_by:
@@ -33,13 +33,13 @@ edge_stats:
         unknown:
           count: 19727
     biolink:interacts_with:
-      count: 89
+      count: 88
       provided_by:
         unknown:
-          count: 89
+          count: 88
       source:
         unknown:
-          count: 89
+          count: 88
     biolink:location_of:
       count: 26755
       provided_by:
@@ -49,13 +49,13 @@ edge_stats:
         unknown:
           count: 26755
     biolink:occurs_in:
-      count: 8597
+      count: 34374
       provided_by:
         unknown:
-          count: 8597
+          count: 34374
       source:
         unknown:
-          count: 8597
+          count: 34374
     biolink:related_to:
       count: 110986
       provided_by:
@@ -292,21 +292,21 @@ edge_stats:
         unknown:
           count: 262
     biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalRole:
-      count: 1037
+      count: 1038
       provided_by:
         unknown:
-          count: 1037
+          count: 1038
       source:
         unknown:
-          count: 1037
+          count: 1038
     biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalSubstance:
-      count: 1037
+      count: 1038
       provided_by:
         unknown:
-          count: 1037
+          count: 1038
       source:
         unknown:
-          count: 1037
+          count: 1038
     biolink:ChemicalSubstance-biolink:location_of-biolink:OrganismTaxon:
       count: 59
       provided_by:
@@ -700,21 +700,21 @@ edge_stats:
         unknown:
           count: 7601
     biolink:OrganismTaxon-biolink:capable_of-biolink:ChemicalEntity:
-      count: 36623
+      count: 37432
       provided_by:
         unknown:
-          count: 36623
+          count: 37432
       source:
         unknown:
-          count: 36623
+          count: 37432
     biolink:OrganismTaxon-biolink:capable_of-biolink:ChemicalSubstance:
-      count: 36623
+      count: 37432
       provided_by:
         unknown:
-          count: 36623
+          count: 37432
       source:
         unknown:
-          count: 36623
+          count: 37432
     biolink:OrganismTaxon-biolink:capable_of-biolink:OntologyClass:
       count: 258
       provided_by:
@@ -732,13 +732,13 @@ edge_stats:
         unknown:
           count: 19727
     biolink:OrganismTaxon-biolink:interacts_with-biolink:ChemicalEntity:
-      count: 89
+      count: 88
       provided_by:
         unknown:
-          count: 89
+          count: 88
       source:
         unknown:
-          count: 89
+          count: 88
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1759
       provided_by:
@@ -788,13 +788,13 @@ edge_stats:
         unknown:
           count: 6775
     biolink:OrganismTaxon-biolink:occurs_in-biolink:ChemicalEntity:
-      count: 8597
+      count: 32505
       provided_by:
         unknown:
-          count: 8597
+          count: 32505
       source:
         unknown:
-          count: 8597
+          count: 32505
     biolink:OrganismTaxon-biolink:subclass_of-biolink:EnvironmentalFeature:
       count: 3
       provided_by:
@@ -819,6 +819,14 @@ edge_stats:
       source:
         unknown:
           count: 815467
+    unknown-biolink:occurs_in-biolink:ChemicalEntity:
+      count: 1869
+      provided_by:
+        unknown:
+          count: 1869
+      source:
+        unknown:
+          count: 1869
   predicates:
   - biolink:capable_of
   - biolink:has_chemical_role
@@ -834,7 +842,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 1469016
+  total_edges: 1495602
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -870,14 +878,14 @@ node_stats:
         go.json:
           count: 4494
     biolink:ChemicalEntity:
-      count: 9667
+      count: 9666
       provided_by:
         chebi.json:
           count: 507
         envo.json:
           count: 25
         nodes.tsv:
-          count: 9667
+          count: 9666
     biolink:ChemicalRole:
       count: 228
       provided_by:
@@ -940,10 +948,12 @@ node_stats:
         nodes.tsv:
           count: 50371
     unknown:
-      count: 5
+      count: 1229
       provided_by:
         nodes.tsv:
           count: 5
+        unknown:
+          count: 1224
   count_by_id_prefixes:
     BFO: 34
     CARO: 3
@@ -956,7 +966,7 @@ node_stats:
     GO: 51325
     IAO: 28
     KEGG: 1
-    NCBITaxon: 815970
+    NCBITaxon: 815973
     OBI: 6
     OBO: 40
     OIO: 15
@@ -967,10 +977,11 @@ node_stats:
     RO: 222
     UBERON: 602
     WD_Entity: 4
+    bacdive: 1221
     mediadive.ingredient: 258
     mediadive.medium: 3292
     mediadive.solution: 5381
-    traits.carbon_substrates: 3
+    traits.carbon_substrates: 2
     traits.cell_shape_enum: 18
     traits.data_source: 5
     traits.pathways: 84
@@ -994,7 +1005,7 @@ node_stats:
       mediadive.ingredient: 258
       mediadive.medium: 3292
       mediadive.solution: 5381
-      traits.carbon_substrates: 3
+      traits.carbon_substrates: 2
     biolink:ChemicalRole:
       CHEBI: 228
     biolink:ChemicalSubstance:
@@ -1029,6 +1040,8 @@ node_stats:
     biolink:OrganismTaxon:
       NCBITaxon: 815969
     unknown:
+      NCBITaxon: 3
+      bacdive: 1221
       traits.data_source: 5
   node_categories:
   - biolink:AbstractEntity
@@ -1067,6 +1080,7 @@ node_stats:
   - RO
   - UBERON
   - WD_Entity
+  - bacdive
   - mediadive.ingredient
   - mediadive.medium
   - mediadive.solution
@@ -1129,6 +1143,8 @@ node_stats:
     biolink:OrganismTaxon:
     - NCBITaxon
     unknown:
+    - NCBITaxon
+    - bacdive
     - traits.data_source
   provided_by:
   - Graph
@@ -1137,4 +1153,5 @@ node_stats:
   - go.json
   - ncbitaxon_removed_subset.json
   - nodes.tsv
-  total_nodes: 1067991
+  - unknown
+  total_nodes: 1069214

@@ -1,7 +1,1 @@
 object_id	object_label	subject_label	matches_whole_text	subject_start	subject_end	traits_dataset_term
-CHEBI:16526	CO2		False	4	6	H2_CO2
-CHEBI:17790	methanol		False	4	11	H2_methanol
-CHEBI:30963	butano		False	1	6	butanol
-CHEBI:32816	pyruvic acid		False	1	12	pyruvic acid methyl ester
-CHEBI:32952	amine		False	3	7	2-aminethanol
-CHEBI:60246	Adi		False	1	3	adipate

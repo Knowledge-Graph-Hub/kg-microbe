@@ -5,17 +5,20 @@ from typing import List
 
 import pandas as pd
 from oaklib import get_adapter
-from oaklib.datamodels.text_annotator import TextAnnotationConfiguration
+from oaklib.datamodels.text_annotator import TextAnnotationConfiguration, TextAnnotation
 
 from kg_microbe.transform_utils.constants import (
+    ACTION_COLUMN,
     END_COLUMN,
     MATCHES_WHOLE_TEXT_COLUMN,
     OBJECT_ALIASES_COLUMN,
     OBJECT_CATEGORIES_COLUMN,
     OBJECT_ID_COLUMN,
     OBJECT_LABEL_COLUMN,
+    REPLACEMENT,
     START_COLUMN,
     SUBJECT_LABEL_COLUMN,
+    SUPPLEMENT,
     TRAITS_DATASET_LABEL_COLUMN,
 )
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -28,7 +31,14 @@ def _overlap(a, b):
     return len(set(a) & set(b))
 
 
-def annotate(df: pd.DataFrame, prefix: str, exclusion_list: List, outfile: Path, llm: bool = False):
+def annotate(
+    df: pd.DataFrame,
+    prefix: str,
+    exclusion_list: List,
+    outfile: Path,
+    llm: bool = False,
+    manual_annotation_path: Path = None,
+):
     """
     Annotate dataframe column text using oaklib + llm.
 
@@ -38,6 +48,7 @@ def annotate(df: pd.DataFrame, prefix: str, exclusion_list: List, outfile: Path,
     """
     ontology = prefix.strip(":")
     outfile_for_unmatched = outfile.with_name(outfile.stem + "_unmatched" + outfile.suffix)
+
     if llm:
         # ! Experimental
         oi = get_adapter(f"llm:sqlite:obo:{ontology}")
@@ -118,6 +129,8 @@ def annotate(df: pd.DataFrame, prefix: str, exclusion_list: List, outfile: Path,
         writer_2 = csv.writer(file_2, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_1.writerow(annotated_columns)
         writer_2.writerow(annotated_columns)
+        if manual_annotation_path:
+            manual_annotation_df = pd.read_csv(manual_annotation_path, sep="\t", low_memory=False)
 
         for row in df.iterrows():
             terms_split = row[1].iloc[0].split(", ")
@@ -125,10 +138,29 @@ def annotate(df: pd.DataFrame, prefix: str, exclusion_list: List, outfile: Path,
                 responses = unique_terms_annotated.get(term, None)
                 if responses:
                     writer = writer_1
-
                 else:
+                    manual_annotation_row: pd.DataFrame = manual_annotation_df.loc[
+                        manual_annotation_df[TRAITS_DATASET_LABEL_COLUMN] == term
+                    ]
                     responses = unique_terms_annotated_not_whole_match.get(term, None)
-                    if responses:
+                    if not manual_annotation_row.empty:
+                        for _, row in manual_annotation_row.iterrows():
+                            if row[ACTION_COLUMN] == REPLACEMENT:
+                                responses[0].object_id = row[OBJECT_ID_COLUMN]
+                                responses[0].object_label = row[OBJECT_LABEL_COLUMN]
+                            elif row[ACTION_COLUMN] == SUPPLEMENT:
+                                tmp_response = TextAnnotation(
+                                    object_id=row[OBJECT_ID_COLUMN],
+                                    object_label=row[OBJECT_LABEL_COLUMN],
+                                    subject_start=1,
+                                    subject_end=len(row[OBJECT_LABEL_COLUMN]),
+                                )
+
+                                responses.append(tmp_response)
+                            else:
+                                print(f"{row[ACTION_COLUMN]} has no action implemented.")
+                        writer = writer_1
+                    else:
                         writer = writer_2
                 if responses:
                     for response in responses:

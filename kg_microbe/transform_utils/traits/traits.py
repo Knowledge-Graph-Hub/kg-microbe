@@ -18,6 +18,7 @@ from kg_microbe.transform_utils.constants import (
     CARBON_SUBSTRATE_PREFIX,
     CARBON_SUBSTRATES_COLUMN,
     CELL_SHAPE_COLUMN,
+    CHEBI_MANUAL_ANNOTATION_PATH,
     CHEBI_PREFIX,
     CHEBI_TO_ROLE_EDGE,
     ENVIRONMENT_CATEGORY,
@@ -123,6 +124,7 @@ class TraitsTransform(Transform):
                 exclusion_list,
                 self.nlp_output_dir / chebi_result_fn,
                 False,
+                CHEBI_MANUAL_ANNOTATION_PATH,
             )
             chebi_result = pd.read_csv(
                 str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False

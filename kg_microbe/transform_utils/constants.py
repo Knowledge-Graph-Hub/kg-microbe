@@ -8,6 +8,7 @@ MEDIADIVE_DIR = Path(__file__).parent / "mediadive"
 MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
+TRAITS_DIR = Path(__file__).parent / "traits"
 
 
 # KEYS FOR JSON FILE
@@ -182,8 +183,11 @@ ISOLATION_SOURCE_COLUMN = "isolation_source"
 TYPE_COLUMN = "Type"
 ENVO_TERMS_COLUMN = "ENVO_terms"
 ENVO_ID_COLUMN = "ENVO_ids"
+ACTION_COLUMN = "action"
+REPLACEMENT = "REPLACE"
+SUPPLEMENT = "SUPPLEMENT"
 
-# CHEBI_NODES_FILENAME = "chebi_curies.tsv"
+CHEBI_MANUAL_ANNOTATION_PATH = TRAITS_DIR / "chebi_manual_annotation.tsv"
 
 # ROBOT
 ROBOT_REMOVED_SUFFIX = "_removed_subset"

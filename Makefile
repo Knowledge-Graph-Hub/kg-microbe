@@ -58,10 +58,8 @@ neo4j-upload:
                      --input-format tsv \
                      data/merged/merged-kg/merged-kg_nodes.tsv data/merged/merged-kg/merged-kg_edges.tsv
 
-CURRENT_DIR := $(shell pwd)
-
-feba-schema:
-	docker run --mount type=bind,source="$(CURRENT_DIR)",target=/home/schcrwlr \
+feba-schema-diagram:
+	CURRENT_DIR=$(shell pwd) && docker run --mount type=bind,source="$$CURRENT_DIR",target=/home/schcrwlr \
 	--rm -it schemacrawler/schemacrawler /opt/schemacrawler/bin/schemacrawler.sh \
 	--server=sqlite --database=notebooks/feba.db \
 	--info-level=maximum  \
@@ -71,4 +69,5 @@ feba-schema:
 	--weak-associations \
 	--infer-extension-tables  \
 	--output-file notebooks/schema.pdf
+
 

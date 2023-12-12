@@ -44,7 +44,6 @@ SAFETY_INFO = "Safety information"
 SEQUENCE_INFO = "Sequence information"
 
 DATA_KEY = "data"
-SOLUTION_KEY = "solutions"
 
 RECIPE_KEY = "recipe"
 COMPOUND_KEY = "compound"
@@ -137,6 +136,10 @@ SYNONYM_COLUMN = "synonym"
 IRI_COLUMN = "iri"
 SAME_AS_COLUMN = "same_as"
 SUBSETS_COLUMN = "subsets"
+AMOUNT_COLUMN = "amount"
+UNIT_COLUMN = "unit"
+GRAMS_PER_LITER_COLUMN = "g_l"
+MMOL_PER_LITER_COLUMN = "mmol_l"
 
 BACDIVE_ID_COLUMN = "bacdive_id"
 DSM_NUMBER_COLUMN = "dsm_number"

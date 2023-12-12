@@ -5,7 +5,7 @@ from typing import List
 
 import pandas as pd
 from oaklib import get_adapter
-from oaklib.datamodels.text_annotator import TextAnnotationConfiguration, TextAnnotation
+from oaklib.datamodels.text_annotator import TextAnnotation, TextAnnotationConfiguration
 
 from kg_microbe.transform_utils.constants import (
     ACTION_COLUMN,

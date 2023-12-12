@@ -29,6 +29,7 @@ from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AMOUNT_COLUMN,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
@@ -41,6 +42,7 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
+    GRAMS_PER_LITER_COLUMN,
     HAS_PART,
     HAS_ROLE,
     ID_COLUMN,
@@ -69,6 +71,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_STRAINS,
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
+    MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
@@ -84,6 +87,7 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_KEY,
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
+    UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import (
@@ -133,13 +137,21 @@ class MediaDiveTransform(Transform):
         ingredients_dict = {}
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
-                ingredients_dict[item[COMPOUND_KEY]] = self.standardize_compound_id(
-                    str(item[COMPOUND_ID_KEY])
-                )
+                ingredients_dict[item[COMPOUND_KEY]] = {
+                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY])),
+                    AMOUNT_COLUMN: item[AMOUNT_COLUMN],
+                    UNIT_COLUMN: item[UNIT_COLUMN],
+                    GRAMS_PER_LITER_COLUMN: item[GRAMS_PER_LITER_COLUMN],
+                    MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
+                }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
-                ingredients_dict[item[SOLUTION_KEY]] = MEDIADIVE_SOLUTION_PREFIX + str(
-                    item[SOLUTION_ID_KEY]
-                )
+                ingredients_dict[item[SOLUTION_KEY]] = {
+                    ID_COLUMN: MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
+                    AMOUNT_COLUMN: item[AMOUNT_COLUMN],
+                    UNIT_COLUMN: item[UNIT_COLUMN],
+                    GRAMS_PER_LITER_COLUMN: item[GRAMS_PER_LITER_COLUMN],
+                    MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
+                }
             else:
                 continue
         return ingredients_dict
@@ -308,7 +320,7 @@ class MediaDiveTransform(Transform):
                                 [
                                     solution_curie,
                                     MEDIUM_TO_INGREDIENT_EDGE,
-                                    v,
+                                    v[ID_COLUMN],
                                     HAS_PART,
                                     MEDIADIVE_REST_API_BASE_URL + SOLUTION + str(solution_id),
                                 ]
@@ -327,16 +339,17 @@ class MediaDiveTransform(Transform):
                         )
 
                     ingredient_nodes = [
-                        [v, INGREDIENT_CATEGORY, k] for k, v in ingredients_dict.items()
+                        [v[ID_COLUMN], INGREDIENT_CATEGORY, k] for k, v in ingredients_dict.items()
                     ]
                     solution_nodes = [
                         [MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v]
                         for k, v in solutions_dict.items()
                     ]
 
-                    # TODO for all "CHEBI:XX" in ingredients_dict.keys(), get has_role nodes.
                     chebi_list = [
-                        v for _, v in ingredients_dict.items() if str(v).startswith(CHEBI_PREFIX)
+                        v[ID_COLUMN]
+                        for _, v in ingredients_dict.items()
+                        if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
                     ]
                     if len(chebi_list) > 0:
                         chebi_roles = set(

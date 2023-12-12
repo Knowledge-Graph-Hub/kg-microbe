@@ -89,6 +89,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
+    get_ingredients_overlap,
 )
 
 
@@ -271,10 +272,10 @@ class MediaDiveTransform(Transform):
                                 NCBITAXON_ID_COLUMN
                             ].values
 
-                            if ncbi_strain_id.size == 0:
-                                ncbi_strain_id = strain_id
-                            else:
+                            if ncbi_strain_id.size > 0:
                                 ncbi_strain_id = ncbi_strain_id[0]
+                            else:
+                                ncbi_strain_id = strain_id
 
                             medium_strain_edge.extend(
                                 [
@@ -402,3 +403,4 @@ class MediaDiveTransform(Transform):
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         # )
+        get_ingredients_overlap(self.output_edge_file, MEDIADIVE_TMP_DIR / "ingredient_overlap.tsv")

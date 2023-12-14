@@ -167,7 +167,7 @@ class BacDiveTransform(Transform):
         os.makedirs(self.output_dir, exist_ok=True)
 
         with open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1, open(
-            str(BACDIVE_TMP_DIR / "bacdive_physiology_morphology.tsv"), "w"
+            str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w"
         ) as tsvfile_2, open(self.output_node_file, "w") as node, open(
             self.output_edge_file, "w"
         ) as edge:

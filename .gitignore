@@ -144,4 +144,4 @@ data/merged/*
 **/.DS_Store
 notebooks/*.db
 kg_microbe/transform_utils/mediadive/tmp/ingredient_overlap.*
-kg_microbe/transform_utils/bacdive/tmp/bacdive_physiology_morphology.tsv
+kg_microbe/transform_utils/bacdive/tmp/bacdive_physiology_metabolism.tsv

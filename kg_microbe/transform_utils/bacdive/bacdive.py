@@ -21,23 +21,37 @@ from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    ANTIBIOGRAM,
+    ANTIBIOTIC_RESISTANCE,
+    API_X_COLUMN,
     BACDIVE_API_BASE_URL,
     BACDIVE_ID_COLUMN,
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
+    CELL_MORPHOLOGY,
+    COLONY_MORPHOLOGY,
+    COMPOUND_PRODUCTION,
     CULTURE_AND_GROWTH_CONDITIONS,
     CULTURE_LINK,
     CULTURE_MEDIUM,
     CULTURE_NAME,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
+    ENZYMES,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
     EXTERNAL_LINKS_CULTURE_NUMBER_COLUMN,
+    FATTY_ACID_PROFILE,
     GENERAL,
     GENERAL_DESCRIPTION,
+    HALOPHILY,
     IS_GROWN_IN,
+    ISOLATION,
+    ISOLATION_COLUMN,
+    ISOLATION_SAMPLING_ENV_INFO,
+    ISOLATION_SOURCE_CATEGORIES,
+    ISOLATION_SOURCE_CATEGORIES_COLUMN,
     KEYWORDS,
     KEYWORDS_COLUMN,
     MATCHING_LEVEL,
@@ -47,16 +61,38 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_ID_COLUMN,
     MEDIUM_LABEL_COLUMN,
     MEDIUM_URL_COLUMN,
+    METABOLITE_PRODUCTION,
+    METABOLITE_TESTS,
+    METABOLITE_UTILIZATION,
+    MORPHOLOGY,
+    MORPHOLOGY_CELL_MORPHOLOGY_COLUMN,
+    MORPHOLOGY_COLONY_MORPHOLOGY_COLUMN,
+    MORPHOLOGY_MULTICELLULAR_MORPHOLOGY_COLUMN,
+    MORPHOLOGY_MULTIMEDIA_COLUMN,
+    MORPHOLOGY_PIGMENTATION_COLUMN,
+    MULTICELLULAR_MORPHOLOGY,
+    MULTIMEDIA,
+    MUREIN,
     NCBI_CATEGORY,
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_DESCRIPTION_COLUMN,
     NCBITAXON_ID,
     NCBITAXON_ID_COLUMN,
     NCBITAXON_PREFIX,
+    NUTRITION_TYPE,
+    OBSERVATION,
+    OXYGEN_TOLERANCE,
+    PHYSIOLOGY_AND_METABOLISM,
+    PIGMENTATION,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
+    RISK_ASSESSMENT,
+    RISK_ASSESSMENT_COLUMN,
+    SAFETY_INFO,
     SPECIES,
+    SPORE_FORMATION,
     STRAIN,
+    TOLERANCE,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -97,17 +133,49 @@ class BacDiveTransform(Transform):
             MEDIUM_LABEL_COLUMN,
             MEDIUM_URL_COLUMN,
             MEDIADIVE_URL_COLUMN,
+            ISOLATION_COLUMN,
+            ISOLATION_SOURCE_CATEGORIES_COLUMN,
+            MORPHOLOGY_MULTIMEDIA_COLUMN,
+            MORPHOLOGY_MULTICELLULAR_MORPHOLOGY_COLUMN,
+            MORPHOLOGY_COLONY_MORPHOLOGY_COLUMN,
+            MORPHOLOGY_CELL_MORPHOLOGY_COLUMN,
+            MORPHOLOGY_PIGMENTATION_COLUMN,
+            RISK_ASSESSMENT_COLUMN,
+        ]
+
+        PHYS_AND_META_COL_NAMES = [
+            BACDIVE_ID_COLUMN,
+            OBSERVATION,
+            ENZYMES,
+            METABOLITE_UTILIZATION,
+            METABOLITE_PRODUCTION,
+            METABOLITE_TESTS,
+            API_X_COLUMN,
+            OXYGEN_TOLERANCE,
+            SPORE_FORMATION,
+            HALOPHILY,
+            ANTIBIOTIC_RESISTANCE,
+            MUREIN,
+            COMPOUND_PRODUCTION,
+            FATTY_ACID_PROFILE,
+            TOLERANCE,
+            ANTIBIOGRAM,
+            NUTRITION_TYPE,
         ]
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
-        with open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as csvfile, open(
-            self.output_node_file, "w"
-        ) as node, open(self.output_edge_file, "w") as edge:
-            writer = csv.writer(csvfile, delimiter="\t")
+        with open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1, open(
+            str(BACDIVE_TMP_DIR / "bacdive_physiology_morphology.tsv"), "w"
+        ) as tsvfile_2, open(self.output_node_file, "w") as node, open(
+            self.output_edge_file, "w"
+        ) as edge:
+            writer = csv.writer(tsvfile_1, delimiter="\t")
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
+            writer_2 = csv.writer(tsvfile_2, delimiter="\t")
+            writer_2.writerow(PHYS_AND_META_COL_NAMES)
 
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
@@ -134,6 +202,87 @@ class BacDiveTransform(Transform):
                     dsm_number = general_info.get(DSM_NUMBER)
                     external_links = value.get(EXTERNAL_LINKS, {})
                     culture_number_from_external_links = None
+                    isolation = value.get(ISOLATION_SAMPLING_ENV_INFO, {}).get(ISOLATION)
+                    isolation_source_categories = value.get(ISOLATION_SAMPLING_ENV_INFO, {}).get(
+                        ISOLATION_SOURCE_CATEGORIES
+                    )
+
+                    if value.get(ISOLATION_SAMPLING_ENV_INFO):
+                        if set(value.get(ISOLATION_SAMPLING_ENV_INFO).keys()) - set(
+                            [
+                                ISOLATION,
+                                ISOLATION_SOURCE_CATEGORIES,
+                            ]
+                        ):
+                            import pdb
+
+                            pdb.set_trace()
+                    morphology_multimedia = value.get(MORPHOLOGY, {}).get(MULTIMEDIA)
+                    morphology_multicellular = value.get(MORPHOLOGY, {}).get(
+                        MULTICELLULAR_MORPHOLOGY
+                    )
+                    morphology_colony = value.get(MORPHOLOGY, {}).get(COLONY_MORPHOLOGY)
+                    morphology_cell = value.get(MORPHOLOGY, {}).get(CELL_MORPHOLOGY)
+                    morphology_pigmentation = value.get(MORPHOLOGY, {}).get(PIGMENTATION)
+                    phys_and_metabolism_observation = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                        OBSERVATION
+                    )
+                    phys_and_metabolism_enzymes = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                        ENZYMES
+                    )
+                    phys_and_metabolism_metabolite_utilization = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(METABOLITE_UTILIZATION)
+                    phys_and_metabolism_metabolite_production = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(METABOLITE_PRODUCTION)
+                    phys_and_metabolism_metabolite_tests = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(METABOLITE_TESTS)
+                    phys_and_metabolism_API = (
+                        {
+                            k: v
+                            for k, v in value.get(PHYSIOLOGY_AND_METABOLISM, {}).items()
+                            if k.startswith("API ")
+                        }
+                        if any(
+                            k.startswith("API ") for k in value.get(PHYSIOLOGY_AND_METABOLISM, {})
+                        )
+                        else None
+                    )
+                    phys_and_metabolism_oxygen_tolerance = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(OXYGEN_TOLERANCE)
+                    phys_and_metabolism_spore_formation = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(SPORE_FORMATION)
+                    phys_and_metabolism_halophily = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                        HALOPHILY
+                    )
+                    phys_and_metabolism_antibiotic_resistance = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(ANTIBIOTIC_RESISTANCE)
+                    phys_and_metabolism_murein_type = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                        MUREIN
+                    )
+                    phys_and_metabolism_compound_production = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(COMPOUND_PRODUCTION)
+                    phys_and_metabolism_fatty_acid_profile = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(FATTY_ACID_PROFILE)
+                    phys_and_metabolism_tolerance = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                        TOLERANCE
+                    )
+                    phys_and_metabolism_antibiogram = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                        ANTIBIOGRAM
+                    )
+                    phys_and_metabolism_nutrition_type = value.get(
+                        PHYSIOLOGY_AND_METABOLISM, {}
+                    ).get(NUTRITION_TYPE)
+
+                    risk_assessment = value.get(SAFETY_INFO, {}).get(RISK_ASSESSMENT)
+
                     if EXTERNAL_LINKS_CULTURE_NUMBER in external_links:
                         culture_number_from_external_links = (
                             external_links[EXTERNAL_LINKS_CULTURE_NUMBER] or ""
@@ -237,9 +386,40 @@ class BacDiveTransform(Transform):
                         medium_label,
                         medium_url,
                         mediadive_url,
+                        isolation,
+                        isolation_source_categories,
+                        morphology_multimedia,
+                        morphology_multicellular,
+                        morphology_colony,
+                        morphology_cell,
+                        morphology_pigmentation,
+                        risk_assessment,
                     ]
 
                     writer.writerow(data)  # writing the data
+
+                    phys_and_meta_data = [
+                        BACDIVE_PREFIX + key,
+                        phys_and_metabolism_observation,
+                        phys_and_metabolism_enzymes,
+                        phys_and_metabolism_metabolite_utilization,
+                        phys_and_metabolism_metabolite_production,
+                        phys_and_metabolism_metabolite_tests,
+                        phys_and_metabolism_API,
+                        phys_and_metabolism_oxygen_tolerance,
+                        phys_and_metabolism_spore_formation,
+                        phys_and_metabolism_halophily,
+                        phys_and_metabolism_antibiotic_resistance,
+                        phys_and_metabolism_murein_type,
+                        phys_and_metabolism_compound_production,
+                        phys_and_metabolism_fatty_acid_profile,
+                        phys_and_metabolism_tolerance,
+                        phys_and_metabolism_antibiogram,
+                        phys_and_metabolism_nutrition_type,
+                    ]
+
+                    if not all(item is None for item in phys_and_meta_data[1:]):
+                        writer_2.writerow(phys_and_meta_data)
 
                     if ncbitaxon_id and medium_id:
                         # Combine list creation and extension

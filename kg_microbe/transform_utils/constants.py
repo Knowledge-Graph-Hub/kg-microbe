@@ -38,10 +38,33 @@ CULTURE_TEMP_TYPE = "type"
 CULTURE_TEMP_TEMP = "temperature"
 CULTURE_TEMP_RANGE = "range"
 
-PHYS_AND_METABOLISM = "Physiology and metabolism"
+PHYSIOLOGY_AND_METABOLISM = "Physiology and metabolism"
 ISOLATION_SAMPLING_ENV_INFO = "Isolation, sampling and environmental information"
 SAFETY_INFO = "Safety information"
 SEQUENCE_INFO = "Sequence information"
+RISK_ASSESSMENT = "risk assessment"
+OBSERVATION = "observation"
+MULTIMEDIA = "multimedia"
+MULTICELLULAR_MORPHOLOGY = "multicellular morphology"
+COLONY_MORPHOLOGY = "colony morphology"
+CELL_MORPHOLOGY = "cell morphology"
+PIGMENTATION = "pigmentation"
+ENZYMES = "enzymes"
+METABOLITE_UTILIZATION = "metabolite utilization"
+METABOLITE_PRODUCTION = "metabolite production"
+METABOLITE_TESTS = "metabolite tests"
+OXYGEN_TOLERANCE = "oxygen tolerance"
+SPORE_FORMATION = "spore formation"
+HALOPHILY = "halophily"
+ANTIBIOTIC_RESISTANCE = "antibiotic resistance"
+MUREIN = "murein"
+COMPOUND_PRODUCTION = "compound production"
+FATTY_ACID_PROFILE = "fatty acid profile"
+TOLERANCE = "tolerance"
+ANTIBIOGRAM = "antibiogram"
+NUTRITION_TYPE = "nutrition type"
+ISOLATION = "isolation"
+ISOLATION_SOURCE_CATEGORIES = "isolation source categories"
 
 DATA_KEY = "data"
 
@@ -140,6 +163,7 @@ AMOUNT_COLUMN = "amount"
 UNIT_COLUMN = "unit"
 GRAMS_PER_LITER_COLUMN = "g_l"
 MMOL_PER_LITER_COLUMN = "mmol_l"
+RISK_ASSESSMENT_COLUMN = RISK_ASSESSMENT
 
 BACDIVE_ID_COLUMN = "bacdive_id"
 DSM_NUMBER_COLUMN = "dsm_number"
@@ -153,6 +177,15 @@ MEDIUM_URL_COLUMN = "medium_url"
 MEDIADIVE_URL_COLUMN = "mediadive_medium_url"
 SOLUTIONS_COLUMN = "solutions"
 INGREDIENTS_COLUMN = "ingredents"
+ISOLATION_COLUMN = ISOLATION
+ISOLATION_SOURCE_CATEGORIES_COLUMN = ISOLATION_SOURCE_CATEGORIES
+# Morphology
+MORPHOLOGY_MULTIMEDIA_COLUMN = MORPHOLOGY + "_" + MULTIMEDIA
+MORPHOLOGY_MULTICELLULAR_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + MULTICELLULAR_MORPHOLOGY
+MORPHOLOGY_COLONY_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + COLONY_MORPHOLOGY
+MORPHOLOGY_CELL_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + CELL_MORPHOLOGY
+MORPHOLOGY_PIGMENTATION_COLUMN = MORPHOLOGY + "_" + PIGMENTATION
+API_X_COLUMN = "API_X"
 
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"

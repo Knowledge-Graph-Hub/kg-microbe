@@ -123,3 +123,25 @@
 -
   url: https://rest.kegg.jp/link/pathway/rn
   local_name: kegg-rxn-pathway.tsv
+
+#
+# Uniprot
+#
+
+- base_url: https://rest.uniprot.org/uniprotkb/
+  api: rest
+  #input_data: '~/Documents/HunterLab/Exploration/biochem4j/kg-microbe/metanetx_uniprot/git/kg-microbe/metanetx_uniprot/Files/Disbiome_Edges.csv'
+  local_name: 'uniprot'
+  fields: [
+    "organism_id",
+    "id", 
+    "accession",
+    "protein_name",
+    "ec",
+    "ft_binding"
+  ]
+  keywords: [
+    "Reference+proteome"
+  ]
+  size: 500
+  batch_size: 1

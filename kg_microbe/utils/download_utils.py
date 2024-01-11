@@ -1,4 +1,3 @@
-
 import os, pathlib, re
 import logging
 
@@ -70,9 +69,11 @@ def download_from_yaml(
 
         for item in tqdm(data, desc="Downloading files"):
             ###########
-            '''if "url" not in item:
-                logging.error("Couldn't find url for source in {}".format(item))
-                continue'''
+            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+                if "url" not in item:
+                    logging.error("Couldn't find url for source in {}".format(item))
+                    continue
+
             if snippet_only and (item["local_name"])[-3:] in [
                 "zip",
                 ".gz",
@@ -89,7 +90,8 @@ def download_from_yaml(
             )
             outfile = os.path.join(output_dir, local_name)
 
-            #logging.info("Retrieving %s from %s" % (outfile, item["url"]))
+            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+                logging.info("Retrieving %s from %s" % (outfile, item["url"]))
 
             if "local_name" in item:
                 local_file_dir = os.path.join(
@@ -99,13 +101,14 @@ def download_from_yaml(
                     logging.info(f"Creating local directory {local_file_dir}")
                     pathlib.Path(local_file_dir).mkdir(parents=True, exist_ok=True)
             
-            '''if os.path.exists(outfile):
-                if ignore_cache:
-                    logging.info("Deleting cached version of {}".format(outfile))
-                    os.remove(outfile)
-                else:
-                    logging.info("Using cached version of {}".format(outfile))
-                    continue'''
+            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+                if os.path.exists(outfile):
+                    if ignore_cache:
+                        logging.info("Deleting cached version of {}".format(outfile))
+                        os.remove(outfile)
+                    else:
+                        logging.info("Using cached version of {}".format(outfile))
+                        continue
 
             # Download file
             if "api" in item:

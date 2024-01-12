@@ -69,10 +69,10 @@ def download_from_yaml(
 
         for item in tqdm(data, desc="Downloading files"):
             ###########
-            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
-                if "url" not in item:
-                    logging.error("Couldn't find url for source in {}".format(item))
-                    continue
+            #if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+            if "url" not in item:
+                logging.error("Couldn't find url for source in {}".format(item))
+                continue
 
             if snippet_only and (item["local_name"])[-3:] in [
                 "zip",
@@ -88,10 +88,11 @@ def download_from_yaml(
                 if "local_name" in item and item["local_name"]
                 else item["url"].split("/")[-1]
             )
+            
             outfile = os.path.join(output_dir, local_name)
 
-            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
-                logging.info("Retrieving %s from %s" % (outfile, item["url"]))
+            #if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+            logging.info("Retrieving %s from %s" % (outfile, item["url"]))
 
             if "local_name" in item:
                 local_file_dir = os.path.join(
@@ -101,66 +102,77 @@ def download_from_yaml(
                     logging.info(f"Creating local directory {local_file_dir}")
                     pathlib.Path(local_file_dir).mkdir(parents=True, exist_ok=True)
             
-            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
-                if os.path.exists(outfile):
-                    if ignore_cache:
-                        logging.info("Deleting cached version of {}".format(outfile))
-                        os.remove(outfile)
-                    else:
-                        logging.info("Using cached version of {}".format(outfile))
+            #if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+            if os.path.exists(outfile):
+                if ignore_cache:
+                    logging.info("Deleting cached version of {}".format(outfile))
+                    os.remove(outfile)
+                else:
+                    logging.info("Using cached version of {}".format(outfile))
+                    if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
                         continue
 
             # Download file
-            if "api" in item:
-                download_from_api(item, outfile)
-            if "url" in item:
+            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+                if "api" in item:
+                    download_from_api(item, outfile)
+                if "url" in item:
+                    url = parse_url(item["url"])
+                    if url.startswith("gs://"):
+                        Blob.from_string(url, client=storage.Client()).download_to_filename(
+                            outfile
+                        )
+                    elif any(
+                        url.startswith(str(i))
+                        for i in list(GDOWN_MAP.keys()) + list(GDOWN_MAP.values())
+                    ):
+                        # Check if url starts with a key or a value
+                        for key, value in GDOWN_MAP.items():
+                            if url.startswith(str(value)):
+                                # If value, then download the file directly
+                                gdown.download(url, output=outfile)
+                                break
+                            elif url.startswith(str(key)):
+                                # If key, replace key by value and then download
+                                new_url = url.replace(str(key) + ":", str(value))
+                                gdown.download(new_url, output=outfile)
+                                break
+                        else:
+                            # If the loop completes without breaking (i.e., no match found), throw an error
+                            raise ValueError("Invalid URL")
+                    else:
+                        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                        try:
+                            with urlopen(req) as response, open(outfile, "wb") as out_file:  # type: ignore
+                                if snippet_only:
+                                    data = response.read(
+                                        5120
+                                    )  # first 5 kB of a `bytes` object
+                                else:
+                                    data = response.read()  # a `bytes` object
+                                out_file.write(data)
+                                if snippet_only:  # Need to clean up the outfile
+                                    in_file = open(outfile, "r+")
+                                    in_lines = in_file.read()
+                                    in_file.close()
+                                    splitlines = in_lines.split("\n")
+                                    outstring = "\n".join(splitlines[:-1])
+                                    cleanfile = open(outfile, "w+")
+                                    for i in range(len(outstring)):
+                                        cleanfile.write(outstring[i])
+                                    cleanfile.close()
+                        except URLError:
+                            logging.error(f"Failed to download: {url}")
+                            raise
+            elif "local_name" in item and item["local_name"] == "Uniprot_genome_features":
+                outfile = outfile.split(item['local_name'])[0]
+                outfile = outfile + 'ncbitaxon_removed_subset.json'
                 url = parse_url(item["url"])
                 if url.startswith("gs://"):
                     Blob.from_string(url, client=storage.Client()).download_to_filename(
                         outfile
                     )
-                elif any(
-                    url.startswith(str(i))
-                    for i in list(GDOWN_MAP.keys()) + list(GDOWN_MAP.values())
-                ):
-                    # Check if url starts with a key or a value
-                    for key, value in GDOWN_MAP.items():
-                        if url.startswith(str(value)):
-                            # If value, then download the file directly
-                            gdown.download(url, output=outfile)
-                            break
-                        elif url.startswith(str(key)):
-                            # If key, replace key by value and then download
-                            new_url = url.replace(str(key) + ":", str(value))
-                            gdown.download(new_url, output=outfile)
-                            break
-                    else:
-                        # If the loop completes without breaking (i.e., no match found), throw an error
-                        raise ValueError("Invalid URL")
-                else:
-                    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-                    try:
-                        with urlopen(req) as response, open(outfile, "wb") as out_file:  # type: ignore
-                            if snippet_only:
-                                data = response.read(
-                                    5120
-                                )  # first 5 kB of a `bytes` object
-                            else:
-                                data = response.read()  # a `bytes` object
-                            out_file.write(data)
-                            if snippet_only:  # Need to clean up the outfile
-                                in_file = open(outfile, "r+")
-                                in_lines = in_file.read()
-                                in_file.close()
-                                splitlines = in_lines.split("\n")
-                                outstring = "\n".join(splitlines[:-1])
-                                cleanfile = open(outfile, "w+")
-                                for i in range(len(outstring)):
-                                    cleanfile.write(outstring[i])
-                                cleanfile.close()
-                    except URLError:
-                        logging.error(f"Failed to download: {url}")
-                        raise
+                download_from_api(item, outfile)
                     
             # If mirror, upload to remote storage
             if mirror:
@@ -235,15 +247,15 @@ def download_from_api(yaml_item, outfile) -> None:
         json.dump(records, output)
         return None
     elif yaml_item["api"] == "rest":
-        #TO DO: Update with organism id's from NCBI taxon owl file
-        try:
-            ncbi_taxon_df = pd.read_csv(yaml_item['input_data'], delimiter="\t")
-            ncbi_organisms = list(ncbi_taxon_df.loc[ncbi_taxon_df.object.str.contains('NCBITaxon:')]['object'].str.replace('NCBITaxon:','').unique())
-            ncbi_organisms.remove('None')
-        except KeyError:
+        if yaml_item['test']:
             ncbi_organisms = ['1591', '885', '84112', '1308']
+        else:
+            ncbi_organisms = parse_ncbitaxon_json(outfile)
 
-        os.makedirs(outfile, exist_ok=True)
+        
+
+        outyamls = outfile.rsplit('/', 1)[0] + '/' + yaml_item["local_name"]
+        os.makedirs(outyamls, exist_ok=True)
 
         get_uniprot_values_organism(ncbi_organisms,
                                 yaml_item["base_url"],
@@ -251,7 +263,7 @@ def download_from_api(yaml_item, outfile) -> None:
                                 yaml_item["keywords"],
                                 yaml_item["size"],
                                 yaml_item["batch_size"],
-                                outfile)
+                                outyamls)
                                 
     else:
         raise RuntimeError(f"API {yaml_item['api']} not supported")
@@ -306,39 +318,48 @@ def parse_url(url: str):
         url = url.replace("{" + i + "}", secret)
     return url
 
+def parse_ncbitaxon_json(input_file):
+
+    with open(input_file, 'r') as f:
+        contents = json.loads(f.read())
+
+        organism_ids = [i['id'].split('NCBITaxon_')[1] for i in contents['graphs'][0]['nodes'] if 'NCBITaxon_' in i['id']]
+    
+    return organism_ids
+
 def get_uniprot_values_organism(organism_ids,
                                 base_url,
                                 fields,
                                 keywords,
                                 size,
                                 batch_size,
-                                outfile):
+                                outyamls):
 
     values = []
 
     print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
     with tqdm(total=len(organism_ids), desc="Processing files") as progress:
         for i in (range(0, len(organism_ids), batch_size)):
-            values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outfile)
+            values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls)
 
             progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.yaml")
             # After each iteration, call the update method to advance the progress bar.
             progress.update()
         
-def check_for_file_existence_in_batch(batch,outfile):
+def check_for_file_existence_in_batch(batch,outyamls):
 
     for org in batch.copy():
-        org_file = outfile + '/' + org + ".json"
+        org_file = outyamls + '/' + org + ".json"
         if os.path.exists(org_file):
             batch.remove(org)
 
     return batch
 
-def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outfile):
+def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls):
     '''Get batch of Uniprot data.'''
 
     batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
-    nonexistent_batch = check_for_file_existence_in_batch(batch,outfile)
+    nonexistent_batch = check_for_file_existence_in_batch(batch,outyamls)
 
     if len(nonexistent_batch) > 0:
         query = '%20OR%20'.join(['organism_id:' + organism_id for organism_id in nonexistent_batch])
@@ -354,7 +375,7 @@ def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, siz
         values = _get_uniprot_batch_reference_proteome(url)
 
         for org in nonexistent_batch:
-            org_file = outfile + '/' + org + ".json"
+            org_file = outyamls + '/' + org + ".json"
             with open(org_file, "w") as f:
                 org_values = [j for j in values if j['Organism (ID)'] == org]
                 json.dump(org_values, f)

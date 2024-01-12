@@ -1,10 +1,14 @@
 """Pandas utilities."""
+import csv
+from itertools import combinations
 from pathlib import Path
 
 import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
+    MEDIADIVE_MEDIUM_PREFIX,
+    MEDIADIVE_SOLUTION_PREFIX,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     SUBJECT_COLUMN,
@@ -100,3 +104,63 @@ def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
             pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates().sort_values(by=[ID_COLUMN])
         )
     all_ont_nodes.to_csv(target_path, sep="\t", index=False, header=None)
+
+
+def get_ingredients_overlap(file_path: Path, target_path: Path):
+    """
+    Export TSV showing ingredient overlap between solutions and media.
+
+    :param file_path: Edges file path
+    :param target_path: Output path.
+    """
+    columns_of_interest = [SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN]
+    edges_df = pd.read_csv(file_path, sep="\t", low_memory=False, usecols=columns_of_interest)
+    edges_df.dropna(inplace=True)
+
+    # Filter rows where subject starts with the desired prefixes
+    solution_medium_df = edges_df[
+        edges_df[SUBJECT_COLUMN].str.startswith(
+            (MEDIADIVE_MEDIUM_PREFIX, MEDIADIVE_SOLUTION_PREFIX)
+        )
+    ]
+
+    # Create a dictionary to store ingredients for each solution/medium
+    ingredients_dict = {
+        sol_med: set(group_df[OBJECT_COLUMN])
+        for sol_med, group_df in solution_medium_df.groupby(SUBJECT_COLUMN)
+    }
+
+    # Prepare the list to hold all rows for the CSV file
+    rows_to_write = []
+
+    for sol_med_1, sol_med_2 in combinations(ingredients_dict.keys(), 2):
+        ingredients_1 = ingredients_dict[sol_med_1]
+        ingredients_2 = ingredients_dict[sol_med_2]
+
+        overlapping_ingredients = ingredients_1.intersection(ingredients_2)
+        total_unique_ingredients = len(ingredients_1.union(ingredients_2))
+
+        # Calculate overlap percentage and round it to 2 decimal places
+        overlap_percentage = round(
+            ((len(overlapping_ingredients) / total_unique_ingredients) * 100)
+            if total_unique_ingredients > 0
+            else 0,
+            2,
+        )
+
+        # Add the current row to the list if there is an overlap
+        if overlap_percentage > 0.0:
+            rows_to_write.append(
+                [sol_med_1, sol_med_2, ", ".join(overlapping_ingredients), overlap_percentage]
+            )
+
+    # Sort the rows by overlap percentage in descending order
+    rows_to_write.sort(key=lambda x: x[3], reverse=True)
+
+    # Write the sorted rows to the CSV file
+    with open(target_path, "w", newline="") as f:
+        writer = csv.writer(f, delimiter="\t")
+        writer.writerow(
+            ["Solution_medium_1", "Solution_medium_2", "Overlapping_ingredients", "Overlap_%"]
+        )
+        writer.writerows(rows_to_write)

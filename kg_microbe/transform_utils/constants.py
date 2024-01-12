@@ -7,7 +7,8 @@ BACDIVE_YAML_DIR = BACDIVE_TMP_DIR / "yaml"
 MEDIADIVE_DIR = Path(__file__).parent / "mediadive"
 MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
-MEDIADIVE_RECIPE_YAML_DIR = MEDIADIVE_TMP_DIR / "recipe_yaml"
+MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
+TRAITS_DIR = Path(__file__).parent / "traits"
 
 
 # KEYS FOR JSON FILE
@@ -37,13 +38,35 @@ CULTURE_TEMP_TYPE = "type"
 CULTURE_TEMP_TEMP = "temperature"
 CULTURE_TEMP_RANGE = "range"
 
-PHYS_AND_METABOLISM = "Physiology and metabolism"
+PHYSIOLOGY_AND_METABOLISM = "Physiology and metabolism"
 ISOLATION_SAMPLING_ENV_INFO = "Isolation, sampling and environmental information"
 SAFETY_INFO = "Safety information"
 SEQUENCE_INFO = "Sequence information"
+RISK_ASSESSMENT = "risk assessment"
+OBSERVATION = "observation"
+MULTIMEDIA = "multimedia"
+MULTICELLULAR_MORPHOLOGY = "multicellular morphology"
+COLONY_MORPHOLOGY = "colony morphology"
+CELL_MORPHOLOGY = "cell morphology"
+PIGMENTATION = "pigmentation"
+ENZYMES = "enzymes"
+METABOLITE_UTILIZATION = "metabolite utilization"
+METABOLITE_PRODUCTION = "metabolite production"
+METABOLITE_TESTS = "metabolite tests"
+OXYGEN_TOLERANCE = "oxygen tolerance"
+SPORE_FORMATION = "spore formation"
+HALOPHILY = "halophily"
+ANTIBIOTIC_RESISTANCE = "antibiotic resistance"
+MUREIN = "murein"
+COMPOUND_PRODUCTION = "compound production"
+FATTY_ACID_PROFILE = "fatty acid profile"
+TOLERANCE = "tolerance"
+ANTIBIOGRAM = "antibiogram"
+NUTRITION_TYPE = "nutrition type"
+ISOLATION = "isolation"
+ISOLATION_SOURCE_CATEGORIES = "isolation source categories"
 
 DATA_KEY = "data"
-SOLUTION_KEY = "solutions"
 
 RECIPE_KEY = "recipe"
 COMPOUND_KEY = "compound"
@@ -84,6 +107,7 @@ BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
 MEDIUM = "medium/"
 COMPOUND = "ingredient/"
 SOLUTION = "solution/"
+MEDIUM_STRAINS = "medium-strains/"
 
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
@@ -135,6 +159,11 @@ SYNONYM_COLUMN = "synonym"
 IRI_COLUMN = "iri"
 SAME_AS_COLUMN = "same_as"
 SUBSETS_COLUMN = "subsets"
+AMOUNT_COLUMN = "amount"
+UNIT_COLUMN = "unit"
+GRAMS_PER_LITER_COLUMN = "g_l"
+MMOL_PER_LITER_COLUMN = "mmol_l"
+RISK_ASSESSMENT_COLUMN = RISK_ASSESSMENT
 
 BACDIVE_ID_COLUMN = "bacdive_id"
 DSM_NUMBER_COLUMN = "dsm_number"
@@ -148,6 +177,15 @@ MEDIUM_URL_COLUMN = "medium_url"
 MEDIADIVE_URL_COLUMN = "mediadive_medium_url"
 SOLUTIONS_COLUMN = "solutions"
 INGREDIENTS_COLUMN = "ingredents"
+ISOLATION_COLUMN = ISOLATION
+ISOLATION_SOURCE_CATEGORIES_COLUMN = ISOLATION_SOURCE_CATEGORIES
+# Morphology
+MORPHOLOGY_MULTIMEDIA_COLUMN = MORPHOLOGY + "_" + MULTIMEDIA
+MORPHOLOGY_MULTICELLULAR_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + MULTICELLULAR_MORPHOLOGY
+MORPHOLOGY_COLONY_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + COLONY_MORPHOLOGY
+MORPHOLOGY_CELL_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + CELL_MORPHOLOGY
+MORPHOLOGY_PIGMENTATION_COLUMN = MORPHOLOGY + "_" + PIGMENTATION
+API_X_COLUMN = "API_X"
 
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"
@@ -181,10 +219,18 @@ ISOLATION_SOURCE_COLUMN = "isolation_source"
 TYPE_COLUMN = "Type"
 ENVO_TERMS_COLUMN = "ENVO_terms"
 ENVO_ID_COLUMN = "ENVO_ids"
+ACTION_COLUMN = "action"
+REPLACEMENT = "REPLACE"
+SUPPLEMENT = "SUPPLEMENT"
 
-# CHEBI_NODES_FILENAME = "chebi_curies.tsv"
+CHEBI_MANUAL_ANNOTATION_PATH = TRAITS_DIR / "chebi_manual_annotation.tsv"
 
 # ROBOT
 ROBOT_REMOVED_SUFFIX = "_removed_subset"
 ROBOT_EXTRACT_SUFFIX = "_extract_subset"
 EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
+
+#Uniprot
+ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
+ENZYME_CATEGORY = "biolink:Enzyme"
+CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"

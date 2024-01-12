@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
+import pandas as pd
 import requests
 import requests_cache
 import yaml
@@ -28,6 +29,10 @@ from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AMOUNT_COLUMN,
+    BACDIVE_ID_COLUMN,
+    BACDIVE_PREFIX,
+    BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
@@ -37,11 +42,13 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
+    GRAMS_PER_LITER_COLUMN,
     HAS_PART,
     HAS_ROLE,
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
+    IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
@@ -51,6 +58,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE_LINK_COLUMN,
     MEDIADIVE_MAX_PH_COLUMN,
     MEDIADIVE_MEDIUM_PREFIX,
+    MEDIADIVE_MEDIUM_STRAIN_YAML_DIR,
     MEDIADIVE_MEDIUM_YAML_DIR,
     MEDIADIVE_MIN_PH_COLUMN,
     MEDIADIVE_REF_COLUMN,
@@ -60,9 +68,13 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE_TMP_DIR,
     MEDIUM,
     MEDIUM_CATEGORY,
+    MEDIUM_STRAINS,
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
+    MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
+    NCBI_TO_MEDIUM_EDGE,
+    NCBITAXON_ID_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
@@ -75,11 +87,13 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_KEY,
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
+    UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
+    get_ingredients_overlap,
 )
 
 
@@ -103,7 +117,7 @@ class MediaDiveTransform(Transform):
         """
         r = requests.get(url, timeout=30)
         data_json = r.json()
-        return data_json[DATA_KEY]
+        return data_json.get(DATA_KEY)
 
     def _get_label_via_oak(self, curie: str):
         prefix = curie.split(":")[0]
@@ -123,13 +137,21 @@ class MediaDiveTransform(Transform):
         ingredients_dict = {}
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
-                ingredients_dict[item[COMPOUND_KEY]] = self.standardize_compound_id(
-                    str(item[COMPOUND_ID_KEY])
-                )
+                ingredients_dict[item[COMPOUND_KEY]] = {
+                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY])),
+                    AMOUNT_COLUMN: item[AMOUNT_COLUMN],
+                    UNIT_COLUMN: item[UNIT_COLUMN],
+                    GRAMS_PER_LITER_COLUMN: item[GRAMS_PER_LITER_COLUMN],
+                    MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
+                }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
-                ingredients_dict[item[SOLUTION_KEY]] = MEDIADIVE_SOLUTION_PREFIX + str(
-                    item[SOLUTION_ID_KEY]
-                )
+                ingredients_dict[item[SOLUTION_KEY]] = {
+                    ID_COLUMN: MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
+                    AMOUNT_COLUMN: item[AMOUNT_COLUMN],
+                    UNIT_COLUMN: item[UNIT_COLUMN],
+                    GRAMS_PER_LITER_COLUMN: item[GRAMS_PER_LITER_COLUMN],
+                    MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
+                }
             else:
                 continue
         return ingredients_dict
@@ -165,17 +187,45 @@ class MediaDiveTransform(Transform):
         :param url: Path provided by MetaDive API.
         """
         data_json = self._get_mediadive_json(url)
-        parsed_url = urlparse(url)
-        fn = parsed_url.path.split("/")[-1] + ".yaml"
-        if not (target_dir / fn).is_file():
-            with open(str(target_dir / fn), "w") as f:
-                f.write(yaml.dump(data_json))
+        if data_json:
+            parsed_url = urlparse(url)
+            fn = parsed_url.path.split("/")[-1] + ".yaml"
+            if not (target_dir / fn).is_file():
+                with open(str(target_dir / fn), "w") as f:
+                    f.write(yaml.dump(data_json))
         return data_json
+
+    def get_json_object(
+        self, fn: Union[Path, str], url_extension: str, target_dir: Path
+    ) -> Dict[str, str]:
+        """
+        Download YAML file if absent and return contents as a JSON object.
+
+        :param fn: YAML file path.
+        :return: Dictionary
+        """
+        if not fn.is_file():
+            url = MEDIADIVE_REST_API_BASE_URL + url_extension
+            json_obj = self.download_yaml_and_get_json(url, target_dir)
+        else:
+            # Import YAML file fn as a dict
+            with open(fn, "r") as f:
+                try:
+                    json_obj = yaml.safe_load(f)
+                except yaml.YAMLError as exc:
+                    print(exc)
+        # if json_obj is None:
+        #     print(f"No data was retrieved from {url}")
+        return json_obj
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
         """Run the transformation."""
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
+        bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
+        bacdive_df = pd.read_csv(
+            bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
+        )
 
         # mediadive_data:List = mediadive["data"]
         # Read the JSON file into the variable input_json
@@ -217,16 +267,41 @@ class MediaDiveTransform(Transform):
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
-                    if not fn.is_file():
-                        url = MEDIADIVE_REST_API_BASE_URL + MEDIUM + id
-                        json_obj = self.download_yaml_and_get_json(url, MEDIADIVE_MEDIUM_YAML_DIR)
-                    else:
-                        # Import YAML file fn as a dict
-                        with open(fn, "r") as f:
-                            try:
-                                json_obj = yaml.safe_load(f)
-                            except yaml.YAMLError as exc:
-                                print(exc)
+                    fn_medium_strain = Path(str(MEDIADIVE_MEDIUM_STRAIN_YAML_DIR / id) + ".yaml")
+                    json_obj = self.get_json_object(fn, MEDIUM + id, MEDIADIVE_MEDIUM_YAML_DIR)
+                    json_obj_medium_strain = self.get_json_object(
+                        fn_medium_strain, MEDIUM_STRAINS + id, MEDIADIVE_MEDIUM_STRAIN_YAML_DIR
+                    )
+
+                    medium_id = MEDIADIVE_MEDIUM_PREFIX + str(id)  # SUBJECT
+
+                    # Medium-Strains KG
+                    if json_obj_medium_strain:
+                        medium_strain_edge = []
+                        for strain in json_obj_medium_strain:
+                            strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
+                            ncbi_strain_id = bacdive_df[bacdive_df[BACDIVE_ID_COLUMN] == strain_id][
+                                NCBITAXON_ID_COLUMN
+                            ].values
+
+                            if ncbi_strain_id.size > 0:
+                                ncbi_strain_id = ncbi_strain_id[0]
+                            else:
+                                ncbi_strain_id = strain_id
+
+                            medium_strain_edge.extend(
+                                [
+                                    [
+                                        ncbi_strain_id,
+                                        NCBI_TO_MEDIUM_EDGE,
+                                        medium_id,
+                                        IS_GROWN_IN,
+                                        strain_id,
+                                    ]
+                                ]
+                            )
+                        edge_writer.writerows(medium_strain_edge)
+
                     if SOLUTIONS_KEY not in json_obj:
                         continue
                     # solution_id_list = [solution[ID_COLUMN] for solution in json_obj[SOLUTIONS_KEY]]
@@ -236,7 +311,6 @@ class MediaDiveTransform(Transform):
                     }
                     ingredients_dict = {}
                     solution_ingredient_edges = []
-                    medium_id = MEDIADIVE_MEDIUM_PREFIX + str(id)  # SUBJECT
 
                     for solution_id in solutions_dict.keys():
                         solution_curie = MEDIADIVE_SOLUTION_PREFIX + str(solution_id)
@@ -246,7 +320,7 @@ class MediaDiveTransform(Transform):
                                 [
                                     solution_curie,
                                     MEDIUM_TO_INGREDIENT_EDGE,
-                                    v,
+                                    v[ID_COLUMN],
                                     HAS_PART,
                                     MEDIADIVE_REST_API_BASE_URL + SOLUTION + str(solution_id),
                                 ]
@@ -265,16 +339,17 @@ class MediaDiveTransform(Transform):
                         )
 
                     ingredient_nodes = [
-                        [v, INGREDIENT_CATEGORY, k] for k, v in ingredients_dict.items()
+                        [v[ID_COLUMN], INGREDIENT_CATEGORY, k] for k, v in ingredients_dict.items()
                     ]
                     solution_nodes = [
                         [MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v]
                         for k, v in solutions_dict.items()
                     ]
 
-                    # TODO for all "CHEBI:XX" in ingredients_dict.keys(), get has_role nodes.
                     chebi_list = [
-                        v for _, v in ingredients_dict.items() if str(v).startswith(CHEBI_PREFIX)
+                        v[ID_COLUMN]
+                        for _, v in ingredients_dict.items()
+                        if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
                     ]
                     if len(chebi_list) > 0:
                         chebi_roles = set(
@@ -330,6 +405,7 @@ class MediaDiveTransform(Transform):
                     progress.update()
 
         drop_duplicates(self.output_node_file)
+        drop_duplicates(self.output_edge_file)
         establish_transitive_relationship(
             self.output_edge_file,
             MEDIADIVE_MEDIUM_PREFIX,
@@ -340,3 +416,4 @@ class MediaDiveTransform(Transform):
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         # )
+        get_ingredients_overlap(self.output_edge_file, MEDIADIVE_TMP_DIR / "ingredient_overlap.tsv")

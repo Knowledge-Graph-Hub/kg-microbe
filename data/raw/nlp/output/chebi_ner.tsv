@@ -9,6 +9,7 @@ CHEBI:15603	L-leucine	leucine	True	1	7	leucine
 CHEBI:15792	malonate(2-)	malonate	True	1	8	malonate
 CHEBI:15963	ribitol	adonitol	True	1	8	adonitol
 CHEBI:15971	L-histidine	histidine	True	1	9	histidine
+CHEBI:16000	ethanolamine		False	3	7	2-aminethanol
 CHEBI:16015	L-glutamic acid	glutamate	True	1	9	glutamate
 CHEBI:16133	cyclopentanol	cyclopentanol	True	1	13	cyclopentanol
 CHEBI:16193	3-hydroxybenzoate	3-hydroxybenzoate	True	1	17	3-hydroxybenzoate
@@ -17,6 +18,7 @@ CHEBI:16236	ethanol	ethanol	True	1	7	ethanol
 CHEBI:16347	(R)-carnitine	carnitine	True	1	9	carnitine
 CHEBI:16449	alanine	alanine	True	1	7	alanine
 CHEBI:16467	L-arginine	arginine	True	1	8	arginine
+CHEBI:16526	CO2		False	4	6	H2_CO2
 CHEBI:16551	alpha,alpha-trehalose	trehalose	True	1	9	trehalose
 CHEBI:16634	raffinose	raffinose	True	1	9	raffinose
 CHEBI:16704	uridine	uridine	True	1	7	uridine
@@ -51,6 +53,7 @@ CHEBI:17716	lactose	lactose	True	1	7	lactose
 CHEBI:17748	thymidine	thymidine	True	1	9	thymidine
 CHEBI:17754	glycerol	glycerol	True	1	8	glycerol
 CHEBI:17790	methanol	methanol	True	1	8	methanol
+CHEBI:17790	methanol		False	4	11	H2_methanol
 CHEBI:17814	salicin	salicin	True	1	7	salicin
 CHEBI:17822	serine	serine	True	1	6	serine
 CHEBI:17824	propan-2-ol	2-propanol	True	1	10	2-propanol
@@ -60,6 +63,8 @@ CHEBI:18167	alpha-maltose	maltose	True	1	7	maltose
 CHEBI:18222	xylose	xylose	True	1	6	xylose
 CHEBI:18237	glutamic acid	glutamate	True	1	9	glutamate
 CHEBI:18257	ornithine	ornithine	True	1	9	ornithine
+CHEBI:18276	dihydrogen			1	10	H2_methanol
+CHEBI:18276	dihydrogen			1	10	H2_CO2
 CHEBI:18397	2-phenylethylamine	phenethylamine	True	1	14	phenethylamine
 CHEBI:18401	phenylacetate	phenylacetate	True	1	13	phenylacetate
 CHEBI:21217	L-alaninamide	alaninamide	True	1	11	alaninamide
@@ -91,6 +96,7 @@ CHEBI:28645	beta-D-fructofuranose	fructose	True	1	8	fructose
 CHEBI:28675	dextrin	dextrin	True	1	7	dextrin
 CHEBI:28757	fructose	fructose	True	1	8	fructose
 CHEBI:28831	propan-1-ol	propanol	True	1	8	propanol
+CHEBI:28885	butan-1-ol		False	1	6	butanol
 CHEBI:28885	butan-1-ol	1-butanol	True	1	9	1-butanol
 CHEBI:29016	arginine	arginine	True	1	8	arginine
 CHEBI:29864	mannitol	mannitol	True	1	8	mannitol
@@ -102,6 +108,7 @@ CHEBI:30089	acetate	acetate	True	1	7	acetate
 CHEBI:30751	formic acid	formic acid	True	1	11	formic acid
 CHEBI:30797	(S)-malic acid	malate	True	1	6	malate
 CHEBI:30817	trans-urocanic acid	urocanic acid	True	1	13	urocanic acid
+CHEBI:30832	adipic acid		False	1	3	adipate
 CHEBI:30911	glucitol	sorbitol	True	1	8	sorbitol
 CHEBI:31011	valerate	valerate	True	1	8	valerate
 CHEBI:320055	methyl beta-D-glucopyranoside	methyl beta-D-glucoside	True	1	23	methyl beta-D-glucoside
@@ -135,6 +142,7 @@ CHEBI:47622	acetate ester	acetate	True	1	7	acetate
 CHEBI:50347	L-asparagine residue	asparagine	True	1	10	asparagine
 CHEBI:50348	L-asparaginyl group	asparagine	True	1	10	asparagine
 CHEBI:50744	citrate salt	citrate	True	1	7	citrate
+CHEBI:51850	Methyl pyruvate		False	1	12	pyruvic acid methyl ester
 CHEBI:51850	methyl pyruvate	methyl pyruvate	True	1	15	methyl pyruvate
 CHEBI:5291	gelatin	gelatin	True	1	7	gelatin
 CHEBI:53258	sodium citrate	trisodium citrate	True	1	17	trisodium citrate

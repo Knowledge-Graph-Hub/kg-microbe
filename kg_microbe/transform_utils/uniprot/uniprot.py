@@ -34,7 +34,7 @@ class UniprotTransform(Transform):
 
         self.__enz_data = {}
 
-        source_name = "Uniprot"
+        source_name = "uniprot_genome_features"
         super().__init__(source_name, input_dir, output_dir)
         
 
@@ -62,7 +62,7 @@ class UniprotTransform(Transform):
             edge_writer.writerow(self.edge_header)
 
             #Generates __enz_data
-            self.add_org_to_enz(input_dir, ncbi_organisms, 'uniprot', node_writer, edge_writer)
+            self.add_org_to_enz(input_dir, ncbi_organisms, 'uniprot_genome_features', node_writer, edge_writer)
 
 
         drop_duplicates(self.output_node_file)

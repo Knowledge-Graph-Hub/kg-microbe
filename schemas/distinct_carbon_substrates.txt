@@ -11,7 +11,7 @@
 5-ketogluconate
 H2_CO2
 H2_methanol
-N-acetylgulcosamine
+N-acetylglucosamine
 NA
 Tween 20
 Tween 40

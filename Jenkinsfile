@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             reuseNode false
-            image 'justaddcoffee/ubuntu20-python-3-8-5-dev:4'
+            image 'caufieldjh/ubuntu20-python-3-9-14-dev:2'
         }
     }
     triggers{
@@ -40,7 +40,7 @@ pipeline {
                     sh 'cat branch.txt'
                     sh "echo $BUILDSTARTDATE > dow.txt"
                     sh "echo $BUILDSTARTDATE"
-                    sh "python3.8 --version"
+                    sh "python3 --version"
                     sh "id"
                     sh "whoami" // this should be jenkinsuser
                     // if the above fails, then the docker host didn't start the docker
@@ -59,7 +59,7 @@ pipeline {
                             url: 'https://github.com/Knowledge-Graph-Hub/kg-microbe',
                             branch: env.BRANCH_NAME
                     )
-                    sh '/usr/bin/python3.8 -m venv venv'
+                    sh '/usr/bin/python3.9 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install .'
                     sh './venv/bin/pip install awscli pystache boto3 s3cmd multi-indexer'
@@ -72,7 +72,7 @@ pipeline {
                 dir('./gitrepo') {
                     script {
                         def run_py_dl = sh(
-                            script: '. venv/bin/activate && python3.8 run.py download', returnStatus: true
+                            script: '. venv/bin/activate && kg download', returnStatus: true
                         )
                         if (run_py_dl == 0) {
                             if (env.BRANCH_NAME != 'master') { // upload raw to s3 if we're on correct branch
@@ -98,7 +98,7 @@ pipeline {
         stage('Transform') {
             steps {
                 dir('./gitrepo') {
-                    sh '. venv/bin/activate && env && python3.8 run.py transform'
+                    sh '. venv/bin/activate && env && kg transform'
                 }
             }
         }
@@ -106,7 +106,7 @@ pipeline {
         stage('Merge') {
             steps {
                 dir('./gitrepo') {
-                    sh '. venv/bin/activate && python3.8 run.py merge -y merge.yaml'
+                    sh '. venv/bin/activate && kg merge -y merge.yaml'
                     sh 'cp merged_graph_stats.yaml merged_graph_stats_$BUILDSTARTDATE.yaml'
                     sh 'tar -rvf data/merged/merged-kg.tar merged_graph_stats_$BUILDSTARTDATE.yaml'
                 }
@@ -198,7 +198,7 @@ pipeline {
 
                                 // Invalidate the CDN now that the new files are up.
                                 sh 'echo "[preview]" > ./awscli_config.txt && echo "cloudfront=true" >> ./awscli_config.txt'
-                                sh '. venv/bin/activate && AWS_CONFIG_FILE=./awscli_config.txt python3.8 ./venv/bin/aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
+                                sh '. venv/bin/activate && AWS_CONFIG_FILE=./awscli_config.txt python3 ./venv/bin/aws cloudfront create-invalidation --distribution-id $AWS_CLOUDFRONT_DISTRIBUTION_ID --paths "/*"'
 
                                 // Should now appear at:
                                 // https://kg-hub.berkeleybop.io/[artifact name]

@@ -132,11 +132,16 @@ dmypy.json
 # User added files
 data/raw/*.*
 data/raw/robot
+
 !data/raw/.keep
 !data/raw/exclusion_branches.tsv
+!data/raw/chebi_curies.tsv
 !data/raw/nlp/*
+
 kg_microbe/transform_utils/*/tmp/*/*.yaml
 data/transformed/ontologies/*.tsv
-*.sqlite
 data/merged/*
 **/.DS_Store
+notebooks/*.db
+kg_microbe/transform_utils/mediadive/tmp/ingredient_overlap.*
+kg_microbe/transform_utils/bacdive/tmp/bacdive_physiology_metabolism.tsv

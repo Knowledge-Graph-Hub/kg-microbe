@@ -1,0 +1,57 @@
+object_id	object_label	subject_label	matches_whole_text	subject_start	subject_end	traits_dataset_term
+CHEBI:15075	selenate		False	1	8	Selenate_reduction
+CHEBI:15075	selenate		False	1	8	selenate_reduction
+CHEBI:16134	ammonia		False	19	25	nitrite_reduction_to_ammonia
+CHEBI:16183	methane		False	1	7	methane_oxidation
+CHEBI:16301	nitrite		False	1	7	nitrite_reduction
+CHEBI:16480	nitric oxide		False	1	12	nitric_oxide_reduction
+CHEBI:17245	carbon monoxide		False	1	15	carbon_monoxide_oxidation
+CHEBI:17272	propionate		False	1	10	propionate_oxidation
+CHEBI:17359	sulfite		False	1	7	sulfite_oxidation
+CHEBI:17359	sulfite		False	1	7	sulfite_reduction
+CHEBI:17359	sulfite		False	1	7	sulfite_oxidation_dark
+CHEBI:17632	nitrate		False	1	7	nitrate_reduction
+CHEBI:17632	nitrate		False	1	7	nitrate_reduction_to_ammonia
+CHEBI:18022	thiocyanate		False	1	11	thiocyanate_reduction
+CHEBI:18022	thiocyanate		False	1	11	thiocyanate_oxidation
+CHEBI:25741	oxide		False	9	13	nitrous_oxide_reduction
+CHEBI:26977	thiosulfate		False	1	11	thiosulfate_oxidation_dark
+CHEBI:26977	thiosulfate		False	1	11	thiosulfate_reduction
+CHEBI:26977	thiosulfate		False	1	11	thiosulfate_disproportionation
+CHEBI:26977	thiosulfate		False	1	11	thiosulfate_oxidation
+CHEBI:36275	HETE		False	1	4	heterotrophic
+CHEBI:49709	chlorate		False	1	8	chlorate_reduction
+CHEBI:6457	lignin		False	1	6	ligninolysis
+GO:0004851	CobA		False	1	4	cobalt_reduction
+GO:0005826	CAR		False	1	3	carbonylsulfide_oxidation
+GO:0005826	CAR		False	1	3	carbonmonoxide_reduction
+GO:0005826	CAR		False	1	3	carbonmonoxide_oxidation
+GO:0005826	CAR		False	1	3	carbonylsulfide_reduction
+GO:0008705	MetH		False	1	4	methylotrophy
+GO:0009056	degradation		False	5	15	PAH_degradation
+GO:0009056	degradation		False	6	16	MTBE_degradation
+GO:0009056	degradation		False	12	22	cellobiose_degradation
+GO:0009056	degradation		False	9	19	plastic_degradation
+GO:0009056	degradation		False	14	24	chlorocarbon_degradation
+GO:0009056	degradation		False	6	16	DMSP_degradation
+GO:0009056	degradation		False	9	19	polymer_degradation
+GO:0009056	degradation		False	14	24	polyisoprene_degradation
+GO:0009056	degradation		False	5	15	pah_degradation
+GO:0009056	degradation		False	5	15	PCB_degradation
+GO:0009056	degradation		False	11	21	aminoacid_degradation
+GO:0009056	degradation		False	5	15	RDX_degradation
+GO:0009056	degradation		False	9	19	gelatin_degradation
+GO:0009056	degradation		False	6	16	EDTA_degradation
+GO:0015948	methanogenesis		False	1	14	methanogenesis_acetoclastic
+GO:0015948	methanogenesis		False	1	14	methanogenesis_H2CO2
+GO:0015976	heterotrophy		False	9	20	aerobic_heterotrophy
+GO:0015976	heterotrophy		False	15	26	aerobic_chemo_heterotrophy
+GO:0019412	hydrogen oxidation		False	28	45	anoxygenic_photoautotrophy_hydrogen_oxidation
+GO:0019412	hydrogen oxidation		False	1	18	hydrogen_oxidation_dark
+GO:0019417	sulfur oxidation		False	28	43	anoxygenic_photoautotrophy_sulfur_oxidation
+GO:0019417	sulfur oxidation		False	1	16	sulfur_oxidation_dark
+GO:0019418	sulfide oxidation		False	1	17	sulfide_oxidation_dark
+GO:0070914	AER		False	1	3	aerobic_anoxygenic_phototrophy
+GO:0120253	hydrocarbon degradation		False	10	32	aromatic_hydrocarbon_degradation
+GO:0120253	hydrocarbon degradation		False	19	41	aliphatic_non_methane_hydrocarbon_degradation
+PR:000007806	GAL		False	1	3	galena_oxidation

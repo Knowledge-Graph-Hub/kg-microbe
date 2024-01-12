@@ -6,9 +6,10 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 import yaml
+from oaklib import get_adapter
 from oaklib.utilities.ner_utilities import get_exclusion_token_list
+from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ACTUAL_TERM_KEY,
@@ -17,11 +18,15 @@ from kg_microbe.transform_utils.constants import (
     CARBON_SUBSTRATE_PREFIX,
     CARBON_SUBSTRATES_COLUMN,
     CELL_SHAPE_COLUMN,
+    CHEBI_MANUAL_ANNOTATION_PATH,
     CHEBI_PREFIX,
+    CHEBI_TO_ROLE_EDGE,
+    ENVIRONMENT_CATEGORY,
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
     GO_PREFIX,
     HAS_PHENOTYPE,
+    HAS_ROLE,
     ID_COLUMN,
     ISOLATION_SOURCE_COLUMN,
     ISOLATION_SOURCE_PREFIX,
@@ -35,12 +40,14 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_PATHWAY_EDGE,
     NCBI_TO_SHAPE_EDGE,
     NCBITAXON_PREFIX,
+    OBJECT_ID_COLUMN,
     OBJECT_LABEL_COLUMN,
     ORG_NAME_COLUMN,
     PATHWAY_CATEGORY,
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PREFERRED_TERM_KEY,
+    ROLE_CATEGORY,
     SHAPE_CATEGORY,
     SHAPE_PREFIX,
     SUBJECT_LABEL_COLUMN,
@@ -101,12 +108,11 @@ class TraitsTransform(Transform):
         if data_file is None:
             data_file = self.source_name + ".csv"
         input_file = self.input_base_dir / data_file
-        cols_for_nlp = [TAX_ID_COLUMN, PATHWAYS_COLUMN, CARBON_SUBSTRATES_COLUMN]
+        cols_for_nlp = [PATHWAYS_COLUMN, CARBON_SUBSTRATES_COLUMN]
         nlp_df = pd.read_csv(input_file, usecols=cols_for_nlp, low_memory=False)
-        nlp_df[[TAX_ID_COLUMN, PATHWAYS_COLUMN]].dropna()
-        nlp_df[TAX_ID_COLUMN] = nlp_df[TAX_ID_COLUMN].apply(lambda x: NCBITAXON_PREFIX + str(x))
-        chebi_nlp_df = nlp_df[[TAX_ID_COLUMN, CARBON_SUBSTRATES_COLUMN]].dropna()
-        go_nlp_df = nlp_df[[TAX_ID_COLUMN, PATHWAYS_COLUMN]].dropna()
+        # nlp_df[TAX_ID_COLUMN] = nlp_df[TAX_ID_COLUMN].apply(lambda x: NCBITAXON_PREFIX + str(x))
+        chebi_nlp_df = nlp_df[[CARBON_SUBSTRATES_COLUMN]].dropna()
+        go_nlp_df = nlp_df[[PATHWAYS_COLUMN]].dropna()
         exclusion_list = get_exclusion_token_list([self.nlp_stopwords_dir / STOPWORDS_FN])
         go_result_fn = GO_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
         chebi_result_fn = CHEBI_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
@@ -118,6 +124,7 @@ class TraitsTransform(Transform):
                 exclusion_list,
                 self.nlp_output_dir / chebi_result_fn,
                 False,
+                CHEBI_MANUAL_ANNOTATION_PATH,
             )
             chebi_result = pd.read_csv(
                 str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
@@ -128,6 +135,21 @@ class TraitsTransform(Transform):
             chebi_result = pd.read_csv(
                 str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
             )
+        chebi_list = chebi_result[OBJECT_ID_COLUMN].to_list()
+        oi = get_adapter("sqlite:obo:chebi")
+        chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
+        roles = {x for (_, _, x) in chebi_roles}
+        role_nodes = [[role, ROLE_CATEGORY, oi.label(role)] for role in roles]
+        role_edges = [
+            [
+                subject,
+                CHEBI_TO_ROLE_EDGE,
+                object,
+                predicate,
+            ]
+            for (subject, predicate, object) in chebi_roles
+        ]
+
         if not (self.nlp_output_dir / go_result_fn).is_file():
             annotate(
                 go_nlp_df, GO_PREFIX, exclusion_list, self.nlp_output_dir / go_result_fn, False
@@ -169,8 +191,10 @@ class TraitsTransform(Transform):
             reader = csv.DictReader(f)
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
+            node_writer.writerows(role_nodes)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
+            edge_writer.writerows(role_edges)
             with tqdm(total=total_lines, desc="Processing files") as progress:
                 for line in reader:
                     pathway_nodes = None
@@ -207,12 +231,14 @@ class TraitsTransform(Transform):
                     pathways = (
                         None
                         if filtered_row[PATHWAYS_COLUMN].split(",") == ["NA"]
-                        else filtered_row[PATHWAYS_COLUMN].split(",")
+                        else [
+                            pathway.strip() for pathway in filtered_row[PATHWAYS_COLUMN].split(",")
+                        ]
                     )
                     if pathways:
-                        go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
-                        go_condition_2 = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
-                        go_result_for_tax_id = go_result.loc[go_condition_1 & go_condition_2]
+                        # go_condition_1 = go_result[TAX_ID_COLUMN] == tax_id
+                        go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways)
+                        go_result_for_tax_id = go_result.loc[go_condition]
                         if go_result_for_tax_id.empty:
                             pathway_nodes = [
                                 [PATHWAY_PREFIX + item.strip(), PATHWAY_CATEGORY, item.strip()]
@@ -256,16 +282,18 @@ class TraitsTransform(Transform):
                     carbon_substrates = (
                         None
                         if filtered_row[CARBON_SUBSTRATES_COLUMN].split(",") == ["NA"]
-                        else filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
+                        else [
+                            substrate.strip()
+                            for substrate in filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
+                        ]
                     )
+
                     if carbon_substrates:
-                        chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
-                        chebi_condition_2 = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
+                        # chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
+                        chebi_condition = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
                             carbon_substrates
                         )
-                        chebi_result_for_tax_id = chebi_result.loc[
-                            chebi_condition_1 & chebi_condition_2
-                        ]
+                        chebi_result_for_tax_id = chebi_result.loc[chebi_condition]
                         if chebi_result_for_tax_id.empty:
                             carbon_substrate_nodes = [
                                 [
@@ -297,7 +325,11 @@ class TraitsTransform(Transform):
 
                             for row in chebi_result_for_tax_id.iterrows():
                                 carbon_substrate_nodes.append(
-                                    [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                    [
+                                        row[1].object_id,
+                                        CARBON_SUBSTRATE_CATEGORY,
+                                        row[1].object_label,
+                                    ]
                                 )
                                 tax_carbon_substrate_edge.append(
                                     [
@@ -329,44 +361,75 @@ class TraitsTransform(Transform):
                     if isolation_source:
                         if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
                             isolation_source_node = [
-                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                None,
-                                filtered_row[ISOLATION_SOURCE_COLUMN],
+                                [
+                                    ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                    None,
+                                    filtered_row[ISOLATION_SOURCE_COLUMN],
+                                ]
                             ]
                             tax_isolation_source_edge = [
-                                tax_id,
-                                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                LOCATION_OF,
+                                [
+                                    tax_id,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                    LOCATION_OF,
+                                ]
                             ]
                         else:
-                            isolation_source_node = [
-                                isolation_source[ENVO_ID_COLUMN],
-                                None,
-                                isolation_source[ENVO_TERMS_COLUMN],
-                            ]
-                            tax_isolation_source_edge = [
-                                tax_id,
-                                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                isolation_source[ENVO_ID_COLUMN],
-                                LOCATION_OF,
-                            ]
+                            if "," in isolation_source[ENVO_ID_COLUMN]:
+                                curies = [
+                                    x.strip() for x in isolation_source[ENVO_ID_COLUMN].split(",")
+                                ]
+                                labels = [
+                                    x.strip()
+                                    for x in isolation_source[ENVO_TERMS_COLUMN].split(",")
+                                ]
+                                if len(labels) == 1 and len(labels) != len(curies):
+                                    labels = [labels[0] for _ in range(len(curies))]
+                                category = [ENVIRONMENT_CATEGORY for _ in range(len(curies))]
+                                preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
+                                relations = [LOCATION_OF for _ in range(len(curies))]
+                                isolation_source_node = [
+                                    list(item) for item in zip(curies, category, labels)  # noqa
+                                ]
+                                tax_id_list = [tax_id for _ in range(len(labels))]
+
+                                tax_isolation_source_edge = [
+                                    list(item)
+                                    for item in zip(curies, preds, tax_id_list, relations)  # noqa
+                                ]
+                            else:
+                                isolation_source_node = [
+                                    [
+                                        isolation_source[ENVO_ID_COLUMN],
+                                        ENVIRONMENT_CATEGORY,
+                                        isolation_source[ENVO_TERMS_COLUMN],
+                                    ]
+                                ]
+                                tax_isolation_source_edge = [
+                                    [
+                                        tax_id,
+                                        NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                        isolation_source[ENVO_ID_COLUMN],
+                                        LOCATION_OF,
+                                    ]
+                                ]
                     nodes_data_to_write = [
                         sublist
                         for sublist in [
                             tax_node,
                             cell_shape_node,
-                            isolation_source_node,
                             metabolism_node,
                         ]
                         if sublist is not None
                     ]
                     node_writer.writerows(nodes_data_to_write)
+                    if isolation_source_node:
+                        node_writer.writerows(isolation_source_node)
 
                     edges_data_to_write = [
                         sublist
                         for sublist in [
-                            tax_isolation_source_edge,
                             tax_metabolism_edge,
                             tax_to_cell_shape_edge,
                         ]
@@ -374,6 +437,8 @@ class TraitsTransform(Transform):
                     ]
                     if len(edges_data_to_write) > 0:
                         edge_writer.writerows(edges_data_to_write)
+                    if tax_isolation_source_edge:
+                        edge_writer.writerows(tax_isolation_source_edge)
 
                     progress.set_description(f"Processing taxonomy: {tax_id}")
                     # After each iteration, call the update method to advance the progress bar.
@@ -381,3 +446,6 @@ class TraitsTransform(Transform):
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
+        # dump_ont_nodes_from(
+        #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        # )

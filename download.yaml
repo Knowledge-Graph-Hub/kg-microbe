@@ -95,3 +95,54 @@
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
+
+#
+# KEGG-Compound-CHEBI
+#
+-
+  url: https://rest.kegg.jp/conv/chebi/cpd
+  local_name: kegg-cpd-chebi.tsv
+
+#
+# KEGG-Compound-Reaction
+#
+-
+  url: https://rest.kegg.jp/link/rn/cpd
+  local_name: kegg-cpd-rxn.tsv
+
+#
+# KEGG-Compound-Pathway
+#
+-
+  url: https://rest.kegg.jp/link/pathway/cpd
+  local_name: kegg-cpd-pathway.tsv
+
+#
+# KEGG-Reaction-Pathway
+#
+-
+  url: https://rest.kegg.jp/link/pathway/rn
+  local_name: kegg-rxn-pathway.tsv
+
+#
+# Uniprot
+#
+
+- base_url: https://rest.uniprot.org/uniprotkb/
+  api: rest
+  url: 'gdrive:1Ai52w4fu4XPu5w4wdE8y3rymEgN0BDqe'
+  local_name: 'Uniprot_genome_features'
+  fields: [
+    "organism_id",
+    "id", 
+    "accession",
+    "protein_name",
+    "ec",
+    "ft_binding"
+  ]
+  keywords: [
+    "Reference+proteome"
+  ]
+  size: 500
+  batch_size: 1
+  test: True

@@ -7,9 +7,9 @@ from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, OntologyTransform
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
+from kg_microbe.transform_utils.uniprot.uniprot import UniprotTransform
 
 DATA_SOURCES = {
-    "OntologyTransform": OntologyTransform,
     # "DrugCentralTransform": DrugCentralTransform,
     # "OrphanetTransform": OrphanetTransform,
     # "OMIMTransform": OMIMTransform,
@@ -21,6 +21,8 @@ DATA_SOURCES = {
     "BacDiveTransform": BacDiveTransform,
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
+    "OntologyTransform": OntologyTransform,
+    "UniprotTransform": UniprotTransform
 }
 
 

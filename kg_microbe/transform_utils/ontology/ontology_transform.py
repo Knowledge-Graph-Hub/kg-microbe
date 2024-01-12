@@ -12,7 +12,10 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_PREFIX,
     ROBOT_REMOVED_SUFFIX,
 )
-from kg_microbe.utils.robot_utils import convert_to_json, remove_convert_to_json
+from kg_microbe.utils.robot_utils import (
+    convert_to_json,
+    remove_convert_to_json,
+)
 
 from ..transform import Transform
 
@@ -21,8 +24,8 @@ ONTOLOGIES = {
     # 'GoTransform': 'go-plus.json',
     "ncbitaxon": "ncbitaxon.owl.gz",
     "chebi": "chebi.owl.gz",
-    # "EnvoTransform": "envo.json",
-    # 'GoTransform': 'go.json'
+    "envo": "envo.json",
+    "go": "go.json",
 }
 
 
@@ -62,21 +65,33 @@ class OntologyTransform(Transform):
         :return: None.
         """
         if data_file.suffixes == [".owl", ".gz"]:
-            if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
-                json_path = str(data_file).replace(".owl.gz", ROBOT_REMOVED_SUFFIX + ".json")
-                if not Path(json_path).is_file():
-                    with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
-                        terms = [
-                            line.strip() for line in f if line.lower().startswith(name.lower())
-                        ]
-                    remove_convert_to_json(str(self.input_base_dir), name, terms)
+            if NCBITAXON_PREFIX.strip(":").lower() in str(
+                data_file
+            ):  # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
+                if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
+                    json_path = str(data_file).replace(".owl.gz", ROBOT_REMOVED_SUFFIX + ".json")
+                    if not Path(json_path).is_file():
+                        self.decompress(data_file)
+                        with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
+                            terms = [
+                                line.strip() for line in f if line.lower().startswith(name.lower())
+                            ]
+                        remove_convert_to_json(str(self.input_base_dir), name, terms)
+                # elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
+                #     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
+                #     owl_path = str(data_file).strip(".gz")
+                #     # Convert CHEBI owl => JSON each time to handle varying terms (if any) in CHEBI_NODES_FILENAME
+                #     if not Path(owl_path).is_file():
+                #         self.decompress(data_file)
+                #     terms = str(self.input_base_dir / CHEBI_NODES_FILENAME)
+                #     extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
             else:
                 json_path = str(data_file).replace("owl.gz", "json")
                 if not Path(json_path).is_file():
                     # Unzip the file
                     self.decompress(data_file)
                     print(f"Converting {data_file} to obojson...")
-                    convert_to_json(str(self.input_base_dir), name)
+                convert_to_json(str(self.input_base_dir), name)
 
             data_file = json_path
 

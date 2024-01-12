@@ -69,7 +69,6 @@ def download_from_yaml(
 
         for item in tqdm(data, desc="Downloading files"):
             ###########
-            #if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
             if "url" not in item:
                 logging.error("Couldn't find url for source in {}".format(item))
                 continue
@@ -91,7 +90,6 @@ def download_from_yaml(
             
             outfile = os.path.join(output_dir, local_name)
 
-            #if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
             logging.info("Retrieving %s from %s" % (outfile, item["url"]))
 
             if "local_name" in item:
@@ -102,7 +100,6 @@ def download_from_yaml(
                     logging.info(f"Creating local directory {local_file_dir}")
                     pathlib.Path(local_file_dir).mkdir(parents=True, exist_ok=True)
             
-            #if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
             if os.path.exists(outfile):
                 if ignore_cache:
                     logging.info("Deleting cached version of {}".format(outfile))
@@ -248,11 +245,10 @@ def download_from_api(yaml_item, outfile) -> None:
         return None
     elif yaml_item["api"] == "rest":
         if yaml_item['test']:
-            ncbi_organisms = ['1591', '885', '84112', '1308']
+            ncbi_organisms = ['1','100','1000','1591', '885', '84112', '1308']
         else:
             ncbi_organisms = parse_ncbitaxon_json(outfile)
 
-        
 
         outyamls = outfile.rsplit('/', 1)[0] + '/' + yaml_item["local_name"]
         os.makedirs(outyamls, exist_ok=True)
@@ -337,29 +333,45 @@ def get_uniprot_values_organism(organism_ids,
 
     values = []
 
-    print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
-    with tqdm(total=len(organism_ids), desc="Processing files") as progress:
-        for i in (range(0, len(organism_ids), batch_size)):
-            values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls)
+    #File to keep track of organism id's with no Uniprot data
+    empty_org_file = outyamls + '/empty_organism_queries.tsv'
+    empty_org_file_header = 'Organism_ID'
+    if os.path.exists(empty_org_file):
+        df = pd.read_csv(empty_org_file)
+        empty_orgs = df[empty_org_file_header].tolist()
 
-            progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.yaml")
-            # After each iteration, call the update method to advance the progress bar.
-            progress.update()
+    elif not os.path.exists(empty_org_file):
+        empty_orgs = []
+
+    with open(empty_org_file,"w") as e:
+        org_writer = csv.writer(e, delimiter="\t")
+        org_writer.writerow([empty_org_file_header])
+        #if len(empty_orgs) > 0 : 
+        #    for i in empty_orgs:
+        #        org_writer.writerow([i])
+
+        print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
+        with tqdm(total=len(organism_ids), desc="Processing files") as progress:
+            for i in (range(0, len(organism_ids), batch_size)):
+                values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, org_writer, empty_orgs)
+
+                progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.json")
+                # After each iteration, call the update method to advance the progress bar.
+                progress.update()
         
-def check_for_file_existence_in_batch(batch,outyamls):
+def check_for_file_existence_in_batch(batch,outyamls,empty_orgs):
 
     for org in batch.copy():
         org_file = outyamls + '/' + org + ".json"
-        if os.path.exists(org_file):
+        if os.path.exists(org_file) or org in empty_orgs:
             batch.remove(org)
-
     return batch
 
-def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls):
+def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, org_writer, empty_orgs):
     '''Get batch of Uniprot data.'''
 
     batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
-    nonexistent_batch = check_for_file_existence_in_batch(batch,outyamls)
+    nonexistent_batch = check_for_file_existence_in_batch(batch,outyamls,empty_orgs)
 
     if len(nonexistent_batch) > 0:
         query = '%20OR%20'.join(['organism_id:' + organism_id for organism_id in nonexistent_batch])
@@ -376,9 +388,13 @@ def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, siz
 
         for org in nonexistent_batch:
             org_file = outyamls + '/' + org + ".json"
-            with open(org_file, "w") as f:
-                org_values = [j for j in values if j['Organism (ID)'] == org]
-                json.dump(org_values, f)
+            org_values = [j for j in values if j['Organism (ID)'] == org]
+            if len(org_values) > 0:
+                with open(org_file, "w") as f:
+                    json.dump(org_values, f)
+            #Don't write file if no content in query, keep track of which organism_id's are empty
+            elif len(org_values) == 0:
+                org_writer.writerow([org])
 
         return values
     

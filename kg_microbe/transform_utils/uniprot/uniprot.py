@@ -34,7 +34,7 @@ class UniprotTransform(Transform):
 
         self.__enz_data = {}
 
-        source_name = "Uniprot"
+        source_name = "uniprot_genome_features"
         super().__init__(source_name, input_dir, output_dir)
         
 
@@ -43,7 +43,7 @@ class UniprotTransform(Transform):
         '''Loads Uniprot data from api, then downloads after running once.'''
 
         # replace with downloaded data filename for this source
-        input_dir = str(self.input_base_dir)+"/"+self.source_name 
+        input_dir = str(self.input_base_dir)+"/"+self.source_name
         #Get all organisms downloaded into raw directory
         ncbi_organisms = []
         for f in os.listdir(input_dir):
@@ -62,7 +62,7 @@ class UniprotTransform(Transform):
             edge_writer.writerow(self.edge_header)
 
             #Generates __enz_data
-            self.add_org_to_enz(input_dir, ncbi_organisms, 'uniprot', node_writer, edge_writer)
+            self.add_org_to_enz(input_dir, ncbi_organisms,self.source_name, node_writer, edge_writer)
 
 
         drop_duplicates(self.output_node_file)
@@ -146,11 +146,11 @@ class UniprotTransform(Transform):
                 chem_list = self.parse_binding_site(entry['Binding site'])
 
             if organism_id:
-                #self.__org_enz_rels.append(['NCBITaxon:'+organism_id, 'expresses','Uniprot:'+entry['Entry'], {'source': source}])
+
                 edges_data_to_write = [
                                 'NCBITaxon:'+str(organism_id),
                                 ORGANISM_TO_ENZYME_EDGE,
-                                self.__enz_data['id'],
+                                'uniprot'+':'+self.__enz_data['id'],
                                 '',
                                 self.source_name
                             ]
@@ -163,7 +163,7 @@ class UniprotTransform(Transform):
                         edges_data_to_write = [
                             chem,
                             CHEMICAL_TO_ENZYME_EDGE,
-                            self.__enz_data['id'],
+                            'uniprot'+':'+self.__enz_data['id'],
                             '',
                             self.source_name
                         ]
@@ -172,7 +172,7 @@ class UniprotTransform(Transform):
 
 
             nodes_data_to_write = [
-                    self.__enz_data['id'], ENZYME_CATEGORY,self.__enz_data['name'],'','',self.source_name,''
+                    'uniprot'+':'+self.__enz_data['id'], ENZYME_CATEGORY,self.__enz_data['name'],'','',self.source_name,''
                     ]
 
             node_writer.writerow(nodes_data_to_write)

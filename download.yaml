@@ -131,7 +131,7 @@
 - base_url: https://rest.uniprot.org/uniprotkb/
   api: rest
   url: 'gdrive:1Ai52w4fu4XPu5w4wdE8y3rymEgN0BDqe'
-  local_name: 'Uniprot_genome_features'
+  local_name: 'uniprot_genome_features'
   fields: [
     "organism_id",
     "id", 

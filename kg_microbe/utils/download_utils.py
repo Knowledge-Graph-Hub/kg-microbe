@@ -106,11 +106,11 @@ def download_from_yaml(
                     os.remove(outfile)
                 else:
                     logging.info("Using cached version of {}".format(outfile))
-                    if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+                    if "local_name" in item and item["local_name"] != "uniprot_genome_features":
                         continue
 
             # Download file
-            if "local_name" in item and item["local_name"] != "Uniprot_genome_features":
+            if "local_name" in item and item["local_name"] != "uniprot_genome_features":
                 if "api" in item:
                     download_from_api(item, outfile)
                 if "url" in item:
@@ -161,7 +161,7 @@ def download_from_yaml(
                         except URLError:
                             logging.error(f"Failed to download: {url}")
                             raise
-            elif "local_name" in item and item["local_name"] == "Uniprot_genome_features":
+            elif "local_name" in item and item["local_name"] == "uniprot_genome_features":
                 outfile = outfile.split(item['local_name'])[0]
                 outfile = outfile + 'ncbitaxon_removed_subset.json'
                 url = parse_url(item["url"])
@@ -245,7 +245,8 @@ def download_from_api(yaml_item, outfile) -> None:
         return None
     elif yaml_item["api"] == "rest":
         if yaml_item['test']:
-            ncbi_organisms = ['1','100','1000','1591', '885', '84112', '1308']
+            print('yaml test')
+            ncbi_organisms = ['1','100','1000','1591', '885', '84112', '1308','1400591']
         else:
             ncbi_organisms = parse_ncbitaxon_json(outfile.rsplit('/', 1)[0] + '/' + 'ncbitaxon_removed_subset.json')
 
@@ -339,6 +340,7 @@ def get_uniprot_values_organism(organism_ids,
     if os.path.exists(empty_org_file):
         df = pd.read_csv(empty_org_file)
         empty_orgs = df[empty_org_file_header].tolist()
+        empty_orgs = list(map(str, empty_orgs))
 
     elif not os.path.exists(empty_org_file):
         empty_orgs = []
@@ -346,9 +348,9 @@ def get_uniprot_values_organism(organism_ids,
     with open(empty_org_file,"w") as e:
         org_writer = csv.writer(e, delimiter="\t")
         org_writer.writerow([empty_org_file_header])
-        #if len(empty_orgs) > 0 : 
-        #    for i in empty_orgs:
-        #        org_writer.writerow([i])
+        if len(empty_orgs) > 0 : 
+            for i in empty_orgs:
+                org_writer.writerow([i])
 
         print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
         with tqdm(total=len(organism_ids), desc="Processing files") as progress:

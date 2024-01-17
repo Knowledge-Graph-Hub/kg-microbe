@@ -245,7 +245,8 @@ def download_from_api(yaml_item, outfile) -> None:
         return None
     elif yaml_item["api"] == "rest":
         if yaml_item['test']:
-            ncbi_organisms = ['1','100','1000','1591', '885', '84112', '1308']
+            print('yaml test')
+            ncbi_organisms = ['1','100','1000','1591', '885', '84112', '1308','1400591']
         else:
             ncbi_organisms = parse_ncbitaxon_json(outfile.rsplit('/', 1)[0] + '/' + 'ncbitaxon_removed_subset.json')
 

@@ -339,6 +339,7 @@ def get_uniprot_values_organism(organism_ids,
     if os.path.exists(empty_org_file):
         df = pd.read_csv(empty_org_file)
         empty_orgs = df[empty_org_file_header].tolist()
+        empty_orgs = list(map(str, empty_orgs))
 
     elif not os.path.exists(empty_org_file):
         empty_orgs = []

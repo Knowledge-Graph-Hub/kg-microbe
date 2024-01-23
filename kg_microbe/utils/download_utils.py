@@ -344,22 +344,45 @@ def get_uniprot_values_organism(organism_ids,
     elif not os.path.exists(empty_org_file):
         empty_orgs = []
 
-    with open(empty_org_file,"w") as e:
-        org_writer = csv.writer(e, delimiter="\t")
-        org_writer.writerow([empty_org_file_header])
-        if len(empty_orgs) > 0 : 
-            for i in empty_orgs:
-                org_writer.writerow([i])
+    e = open(empty_org_file,"w")
+    org_writer = csv.writer(e, delimiter="\t")
+    org_writer.writerow([empty_org_file_header])
+    if len(empty_orgs) > 0 : 
+        for i in empty_orgs:
+            org_writer.writerow([i])
+    e.close()
 
-        print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
-        with tqdm(total=len(organism_ids), desc="Processing files") as progress:
-            for i in (range(0, len(organism_ids), batch_size)):
-                values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, org_writer, empty_orgs)
+    print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
+    with tqdm(total=len(organism_ids), desc="Processing files") as progress:
+        #Batch orgs to append to file
+        batch_orgs = []
+        for i in (range(0, len(organism_ids), batch_size)):
+            values,b = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, empty_orgs)
+            batch_orgs = batch_orgs + b
 
-                progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.json")
-                # After each iteration, call the update method to advance the progress bar.
-                progress.update()
+            if len(batch_orgs) > 0 and len(batch_orgs) % 100 == 0:
+                #Write to file and reset list of empty orgs
+                batch_orgs = write_to_empty_orgs(batch_orgs,empty_org_file)
+
+
+            progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.json")
+            # After each iteration, call the update method to advance the progress bar.
+            progress.update()
         
+        write_to_empty_orgs(batch_orgs,empty_org_file)
+
+def write_to_empty_orgs(batch_orgs,empty_org_file):
+
+    e = open(empty_org_file,"a")
+    org_writer = csv.writer(e, delimiter="\t")
+    for o in batch_orgs:
+        org_writer.writerow([o])
+    #Reset batch orgs to append to file
+    batch_orgs = []
+    e.close()
+
+    return batch_orgs
+
 def check_for_file_existence_in_batch(batch,outyamls,empty_orgs):
 
     for org in batch.copy():
@@ -368,9 +391,11 @@ def check_for_file_existence_in_batch(batch,outyamls,empty_orgs):
             batch.remove(org)
     return batch
 
-def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, org_writer, empty_orgs):
+def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, empty_orgs):
     '''Get batch of Uniprot data.'''
 
+    #Organisms in this batch found with empty queries
+    confirmed_empty_orgs = []
     batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
     nonexistent_batch = check_for_file_existence_in_batch(batch,outyamls,empty_orgs)
 
@@ -395,11 +420,11 @@ def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, siz
                     json.dump(org_values, f)
             #Don't write file if no content in query, keep track of which organism_id's are empty
             elif len(org_values) == 0:
-                org_writer.writerow([org])
+                confirmed_empty_orgs.append(org)
 
-        return values
-    
-    return values
+
+
+    return values,confirmed_empty_orgs
 
 def _get_uniprot_batch_reference_proteome(url):
 
@@ -444,4 +469,3 @@ def parse_response(res,values):
             values.append(res)
     
     return values
-

@@ -344,21 +344,22 @@ def get_uniprot_values_organism(organism_ids,
     elif not os.path.exists(empty_org_file):
         empty_orgs = []
 
-    with open(empty_org_file,"w") as e:
+   if len(empty_orgs) > 0 : 
+        e = open(empty_org_file,"w")
         org_writer = csv.writer(e, delimiter="\t")
         org_writer.writerow([empty_org_file_header])
-        if len(empty_orgs) > 0 : 
-            for i in empty_orgs:
-                org_writer.writerow([i])
+        for i in empty_orgs:
+            org_writer.writerow([i])
+        e.close()
 
-        print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
-        with tqdm(total=len(organism_ids), desc="Processing files") as progress:
-            for i in (range(0, len(organism_ids), batch_size)):
-                values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, org_writer, empty_orgs)
+    print('querying uniprot for enzymes per organism (' + str(len(organism_ids)) +  ') by batch size (' + str(batch_size) + ')')
+    with tqdm(total=len(organism_ids), desc="Processing files") as progress:
+        for i in (range(0, len(organism_ids), batch_size)):
+            values = _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, empty_org_file, empty_orgs)
 
-                progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.json")
-                # After each iteration, call the update method to advance the progress bar.
-                progress.update()
+            progress.set_description(f"Downloading organism data from Uniprot, final file of batch: {organism_ids[min(i + batch_size, len(organism_ids))-1]}.json")
+            # After each iteration, call the update method to advance the progress bar.
+            progress.update()
         
 def check_for_file_existence_in_batch(batch,outyamls,empty_orgs):
 
@@ -368,7 +369,7 @@ def check_for_file_existence_in_batch(batch,outyamls,empty_orgs):
             batch.remove(org)
     return batch
 
-def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, org_writer, empty_orgs):
+def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, size, batch_size, values, outyamls, empty_org_file, empty_orgs):
     '''Get batch of Uniprot data.'''
 
     batch = organism_ids[i:min(i + batch_size, len(organism_ids))]
@@ -395,7 +396,11 @@ def _get_uniprot_batch_organism(organism_ids, base_url, i, fields, keywords, siz
                     json.dump(org_values, f)
             #Don't write file if no content in query, keep track of which organism_id's are empty
             elif len(org_values) == 0:
+                e = open(empty_org_file,"a")
+                org_writer = csv.writer(e, delimiter="\t")
                 org_writer.writerow([org])
+                e.close()
+
 
         return values
     
@@ -444,4 +449,3 @@ def parse_response(res,values):
             values.append(res)
     
     return values
-

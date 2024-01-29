@@ -234,3 +234,11 @@ EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
 ENZYME_CATEGORY = "biolink:Enzyme"
 CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"
+
+#Metanetx
+REACTION_TO_CHEMICAL_EDGE = "biolink:has_active_component"
+REACTION_CATEGORY = "biolink:Reaction"
+
+#Rhea
+REACTION_TO_ENZYME_EDGE = "biolink:catalyzed_by"
+REACTION_TO_PROCESS_EDGE = "biolink:affects"

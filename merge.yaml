@@ -35,13 +35,13 @@ merged_graph:
         filename:
           - data/transformed/ontologies/envo_nodes.tsv
           - data/transformed/ontologies/envo_edges.tsv
-    go:
-      name: "GO"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/ontologies/go_nodes.tsv
-          - data/transformed/ontologies/go_edges.tsv
+    # go:
+    #   name: "GO"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/ontologies/go_nodes.tsv
+    #       - data/transformed/ontologies/go_edges.tsv
     bacdive:
       name: "BacDive"
       input:
@@ -70,6 +70,41 @@ merged_graph:
         filename:
           - data/transformed/uniprot/nodes.tsv
           - data/transformed/uniprot/edges.tsv
+    go-plus:
+      name: "GO-PLUS"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/go-plus_nodes.tsv
+          - data/transformed/ontologies/go-plus_edges.tsv
+    hp:
+     name: "HP"
+     input:
+       format: tsv
+       filename:
+         - data/transformed/ontologies/hp_nodes.tsv
+         - data/transformed/ontologies/hp_edges.tsv
+    mondo:
+     name: "MONDO"
+     input:
+       format: tsv
+       filename:
+         - data/transformed/ontologies/mondo_nodes.tsv
+         - data/transformed/ontologies/mondo_edges.tsv
+    metanetx:
+     input:
+       name: "metanetx"
+       format: tsv
+       filename:
+         - data/transformed/metanetx/nodes.tsv
+         - data/transformed/metanetx/edges.tsv
+    rhea:
+      input:
+        name: "rhea"
+        format: tsv
+        filename:
+          - data/transformed/rhea/nodes.tsv
+          - data/transformed/rhea/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:

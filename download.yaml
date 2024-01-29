@@ -51,11 +51,35 @@
   local_name: chebi.owl.gz
 
 #
-# GO
+# Go-Plus
 #
 -
-  url: http://purl.obolibrary.org/obo/go.json
-  local_name: go.json
+  url: http://purl.obolibrary.org/obo/go/extensions/go-plus.json
+  local_name: go-plus.json
+
+#
+# MONDO
+#
+-
+  url: http://purl.obolibrary.org/obo/mondo.json
+  local_name: mondo.json
+
+#
+# HPO
+#
+-
+  url: http://purl.obolibrary.org/obo/hp.json
+  local_name: hp.json
+
+
+# #
+# # GO
+# #
+# -
+#   url: http://purl.obolibrary.org/obo/go.json
+#   local_name: go.json
+
+
 # **** Data sources ****
 # ATC
 # The Anatomical Therapeutic Chemical Classification for drugs
@@ -146,3 +170,28 @@
   size: 500
   batch_size: 1
   test: True
+
+#Metanetx 
+
+-
+  url: http://metanetx.org/cgi-bin/mnxget/mnxref/chem_xref.tsv
+  local_name: chem_xref.tsv
+-
+  url: http://metanetx.org/cgi-bin/mnxget/mnxref/reac_xref.tsv
+  local_name: reac_xref.tsv
+-
+  url: http://metanetx.org/cgi-bin/mnxget/mnxref/chem_prop.tsv
+  local_name: chem_prop.tsv
+-
+  url: http://metanetx.org/cgi-bin/mnxget/mnxref/reac_prop.tsv
+  local_name: reac_prop.tsv
+
+
+#Rhea
+
+- 
+  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot%5Fsprot.tsv
+  local_name: rhea2uniprot_sprot.tsv
+- 
+  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
+  local_name: rhea2go.tsv

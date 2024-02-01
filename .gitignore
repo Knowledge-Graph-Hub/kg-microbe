@@ -132,6 +132,7 @@ dmypy.json
 # User added files
 data/raw/*.*
 data/raw/robot
+data/raw/uniprot_genome_features/*
 
 !data/raw/.keep
 !data/raw/exclusion_branches.tsv

@@ -229,8 +229,3 @@ CHEBI_MANUAL_ANNOTATION_PATH = TRAITS_DIR / "chebi_manual_annotation.tsv"
 ROBOT_REMOVED_SUFFIX = "_removed_subset"
 ROBOT_EXTRACT_SUFFIX = "_extract_subset"
 EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
-
-#Uniprot
-ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
-ENZYME_CATEGORY = "biolink:Enzyme"
-CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"

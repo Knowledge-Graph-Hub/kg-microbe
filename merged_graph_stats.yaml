@@ -1,5 +1,13 @@
 edge_stats:
   count_by_predicates:
+    biolink:binds_to:
+      count: 6350
+      provided_by:
+        Uniprot:
+          count: 6350
+      source:
+        unknown:
+          count: 6350
     biolink:capable_of:
       count: 69579
       provided_by:
@@ -8,6 +16,14 @@ edge_stats:
       source:
         unknown:
           count: 69579
+    biolink:expresses:
+      count: 50450
+      provided_by:
+        Uniprot:
+          count: 50450
+      source:
+        unknown:
+          count: 50450
     biolink:has_chemical_role:
       count: 1060
       provided_by:
@@ -41,13 +57,13 @@ edge_stats:
         unknown:
           count: 26755
     biolink:occurs_in:
-      count: 34374
+      count: 34381
       provided_by:
         unknown:
-          count: 34374
+          count: 34381
       source:
         unknown:
-          count: 34374
+          count: 34381
     biolink:related_to:
       count: 110986
       provided_by:
@@ -195,6 +211,14 @@ edge_stats:
       source:
         unknown:
           count: 4687
+    biolink:ChemicalEntity-biolink:binds_to-biolink:Enzyme:
+      count: 68
+      provided_by:
+        Uniprot:
+          count: 68
+      source:
+        unknown:
+          count: 68
     biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalRole:
       count: 1022
       provided_by:
@@ -283,6 +307,14 @@ edge_stats:
       source:
         unknown:
           count: 268
+    biolink:ChemicalSubstance-biolink:binds_to-biolink:Enzyme:
+      count: 6350
+      provided_by:
+        Uniprot:
+          count: 6350
+      source:
+        unknown:
+          count: 6350
     biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalRole:
       count: 1060
       provided_by:
@@ -715,6 +747,14 @@ edge_stats:
       source:
         unknown:
           count: 258
+    biolink:OrganismTaxon-biolink:expresses-biolink:Enzyme:
+      count: 50450
+      provided_by:
+        Uniprot:
+          count: 50450
+      source:
+        unknown:
+          count: 50450
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:AbstractEntity:
       count: 19727
       provided_by:
@@ -804,15 +844,17 @@ edge_stats:
         unknown:
           count: 815467
     unknown-biolink:occurs_in-biolink:ChemicalEntity:
-      count: 1869
+      count: 1876
       provided_by:
         unknown:
-          count: 1869
+          count: 1876
       source:
         unknown:
-          count: 1869
+          count: 1876
   predicates:
+  - biolink:binds_to
   - biolink:capable_of
+  - biolink:expresses
   - biolink:has_chemical_role
   - biolink:has_part
   - biolink:has_phenotype
@@ -822,10 +864,11 @@ edge_stats:
   - biolink:subclass_of
   - biolink:type
   provided_by:
+  - Uniprot
   - unknown
   source:
   - unknown
-  total_edges: 1495729
+  total_edges: 1552536
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -898,6 +941,11 @@ node_stats:
           count: 1
         nodes.tsv:
           count: 60
+    biolink:Enzyme:
+      count: 50450
+      provided_by:
+        Uniprot:
+          count: 50450
     biolink:MolecularActivity:
       count: 12535
       provided_by:
@@ -931,12 +979,12 @@ node_stats:
         nodes.tsv:
           count: 50371
     unknown:
-      count: 1229
+      count: 1233
       provided_by:
         nodes.tsv:
           count: 5
         unknown:
-          count: 1224
+          count: 1228
   count_by_id_prefixes:
     BFO: 34
     CARO: 3
@@ -960,7 +1008,7 @@ node_stats:
     RO: 222
     UBERON: 602
     WD_Entity: 4
-    bacdive: 1221
+    bacdive: 1225
     mediadive.ingredient: 258
     mediadive.medium: 3292
     mediadive.solution: 5381
@@ -999,6 +1047,7 @@ node_stats:
       PATO: 6
       PO: 1
       UBERON: 6
+    biolink:Enzyme: {}
     biolink:MolecularActivity:
       GO: 12535
     biolink:NamedThing:
@@ -1022,7 +1071,7 @@ node_stats:
       NCBITaxon: 815969
     unknown:
       NCBITaxon: 3
-      bacdive: 1221
+      bacdive: 1225
       traits.data_source: 5
   node_categories:
   - biolink:AbstractEntity
@@ -1034,6 +1083,7 @@ node_stats:
   - biolink:ChemicalRole
   - biolink:ChemicalSubstance
   - biolink:EnvironmentalFeature
+  - biolink:Enzyme
   - biolink:MolecularActivity
   - biolink:NamedThing
   - biolink:OntologyClass
@@ -1100,6 +1150,7 @@ node_stats:
     - PO
     - UBERON
     - FOODON
+    biolink:Enzyme: []
     biolink:MolecularActivity:
     - GO
     biolink:NamedThing:
@@ -1127,10 +1178,11 @@ node_stats:
     - traits.data_source
   provided_by:
   - Graph
+  - Uniprot
   - chebi.json
   - envo.json
   - go.json
   - ncbitaxon_removed_subset.json
   - nodes.tsv
   - unknown
-  total_nodes: 1069212
+  total_nodes: 1119666

@@ -98,7 +98,7 @@ pipeline {
         stage('Transform') {
             steps {
                 dir('./gitrepo') {
-                    sh '. venv/bin/activate && env && kg transform'
+                    sh '. venv/bin/activate && env && kg transform --no-show-status'
                 }
             }
         }

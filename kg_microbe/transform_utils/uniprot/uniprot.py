@@ -14,6 +14,7 @@ from kg_microbe.transform_utils.constants import (
     CHEMICAL_TO_ENZYME_EDGE,
     ENZYME_CATEGORY,
     ORGANISM_TO_ENZYME_EDGE,
+    UNIPROT_ORG_ID_COLUMN_NAME,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -112,7 +113,11 @@ class UniprotTransform(Transform):
     def write_to_df(self, uniprot_values, edge_writer, node_writer):
         ##To return all organism-enzyme entries
         for entry in uniprot_values:
-            organism_id = entry["Organism (ID)"] if "Organism (ID)" in entry.keys() else None
+            organism_id = (
+                entry[UNIPROT_ORG_ID_COLUMN_NAME]
+                if UNIPROT_ORG_ID_COLUMN_NAME in entry.keys()
+                else None
+            )
 
             # Use primary accession number as it's ID does not change, as opposed to Entry Name
             if "Entry" in entry.keys():

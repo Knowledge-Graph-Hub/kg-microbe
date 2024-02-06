@@ -1,4 +1,5 @@
 """Transform module."""
+
 import logging
 from pathlib import Path
 from typing import List, Optional
@@ -27,7 +28,10 @@ DATA_SOURCES = {
 
 
 def transform(
-    input_dir: Optional[Path], output_dir: Optional[Path], sources: List[str] = None
+    input_dir: Optional[Path],
+    output_dir: Optional[Path],
+    sources: List[str] = None,
+    show_status: bool = True,
 ) -> None:
     """
     Transform based on resource and class declared in DATA_SOURCES.
@@ -52,4 +56,4 @@ def transform(
             if source in ONTOLOGIES.keys():
                 t.run(ONTOLOGIES[source])
             else:
-                t.run()
+                t.run(show_status=show_status)

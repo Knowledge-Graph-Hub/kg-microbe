@@ -28,7 +28,7 @@ class UniprotTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
-        """Loads Uniprot data from api, then downloads after running once."""
+        """Load Uniprot data from api, then downloads after running once."""
         # replace with downloaded data filename for this source
         input_dir = str(self.input_base_dir) + "/" + self.source_name
         # Get all organisms downloaded into raw directory

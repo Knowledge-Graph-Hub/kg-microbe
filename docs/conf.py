@@ -8,12 +8,13 @@ import re
 import sys
 from datetime import date
 from kg_microbe import __version__
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'kg-microbe'
+project = "kg-microbe"
 copyright = f"{date.today().year}, Harshad Hegde <hhegde@lbl.gov>"
-author = 'Harshad Hegde <hhegde@lbl.gov>'
+author = "Harshad Hegde <hhegde@lbl.gov>"
 release = __version__
 
 # -- General configuration ---------------------------------------------------
@@ -25,7 +26,7 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinx_click",
     "sphinx_autodoc_typehints",
-    "myst_parser"
+    "myst_parser",
 ]
 
 # generate autosummary pages
@@ -46,13 +47,13 @@ language = "en"
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.

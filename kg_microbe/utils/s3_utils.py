@@ -20,6 +20,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_KEYWORDS,
     UNIPROT_SIZE,
 )
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
 
 ORGANISM_RESOURCE = RAW_DATA_DIR / "ncbitaxon_removed_subset.json"
 UNIPROT_RAW_DIR = RAW_DATA_DIR / "uniprot"
@@ -27,7 +28,7 @@ EMPTY_ORGANISM_OUTFILE = UNIPROT_RAW_DIR / "uniprot_empty_organism.tsv"
 UNIPROT_S3_DIR = UNIPROT_RAW_DIR / "s3"
 
 
-def run_api(api: str) -> None:
+def run_api(api: str, show_status: bool) -> None:
     """
     Upload data to S3.
 
@@ -35,12 +36,12 @@ def run_api(api: str) -> None:
     :return: None
     """
     if api == "uniprot":
-        run_uniprot_api()
+        run_uniprot_api(show_status)
     else:
         raise ValueError(f"API {api} not supported")
 
 
-def run_uniprot_api() -> None:
+def run_uniprot_api(show_status: bool) -> None:
     """
     Upload data to S3 from Uniprot.
 
@@ -74,7 +75,10 @@ def run_uniprot_api() -> None:
 
     # Process uniprot files
     total_organisms = len(organism_ids)
-    with tqdm(total=total_organisms, desc="Processing uniprot files") as progress:
+
+    # Choose the appropriate context manager based on the flag
+    progress_class = tqdm if show_status else DummyTqdm
+    with progress_class(total=total_organisms, desc="Processing uniprot files") as progress:
         for i in range(0, total_organisms, UNIPROT_BATCH_SIZE):
             _get_uniprot_batch_organism(organism_ids, i, empty_organism_list)
             progress.update(UNIPROT_BATCH_SIZE)

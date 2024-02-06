@@ -66,7 +66,6 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class TraitsTransform(Transform):
-
     """
     Ingest traits dataset (NCBI/GTDB).
 
@@ -185,9 +184,11 @@ class TraitsTransform(Transform):
         with open(input_file, "r") as f:
             total_lines = sum(1 for line in f)
 
-        with open(input_file, "r") as f, open(self.output_node_file, "w") as node, open(
-            self.output_edge_file, "w"
-        ) as edge:
+        with (
+            open(input_file, "r") as f,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+        ):
             reader = csv.DictReader(f)
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)

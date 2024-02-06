@@ -101,7 +101,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -172,11 +171,12 @@ class BacDiveTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
-        with open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1, open(
-            str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w"
-        ) as tsvfile_2, open(self.output_node_file, "w") as node, open(
-            self.output_edge_file, "w"
-        ) as edge:
+        with (
+            open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1,
+            open(str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w") as tsvfile_2,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+        ):
             writer = csv.writer(tsvfile_1, delimiter="\t")
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)

@@ -6,7 +6,6 @@ from kg_microbe import __version__
 
 
 class TestVersion(unittest.TestCase):
-
     """Test version."""
 
     def test_version_type(self):

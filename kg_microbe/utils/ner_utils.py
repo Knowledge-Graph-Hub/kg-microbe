@@ -1,4 +1,5 @@
 """NLP utilities."""
+
 import csv
 from pathlib import Path
 from typing import List

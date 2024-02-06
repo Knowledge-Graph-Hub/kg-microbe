@@ -1,4 +1,5 @@
 """Ontology transform module."""
+
 import gzip
 import shutil
 from pathlib import Path

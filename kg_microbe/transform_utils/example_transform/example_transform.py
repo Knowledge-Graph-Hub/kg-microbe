@@ -14,6 +14,7 @@ Output these two files:
 - nodes.tsv
 - edges.tsv
 """
+
 import os
 from pathlib import Path
 from typing import Optional, Union

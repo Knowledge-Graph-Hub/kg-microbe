@@ -25,7 +25,6 @@ from kg_microbe.utils.robot_utils import convert_to_json, extract_convert_to_jso
 
 
 class YourTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -42,9 +41,11 @@ class YourTransform(Transform):
         os.makedirs(self.output_dir, exist_ok=True)
 
         # transform data, something like:
-        with open(input_file, "r") as f, open(self.output_node_file, "w") as node, open(
-            self.output_edge_file, "w"
-        ) as edge:
+        with (
+            open(input_file, "r") as f,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+        ):
             # write headers (change default node/edge headers if necessary
             node.write("\t".join(self.node_header) + "\n")
             edge.write("\t".join(self.edge_header) + "\n")

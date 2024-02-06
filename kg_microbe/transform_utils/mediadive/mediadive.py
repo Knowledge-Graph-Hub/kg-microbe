@@ -100,7 +100,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -251,9 +250,11 @@ class MediaDiveTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
-        with open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as csvfile, open(
-            self.output_node_file, "w"
-        ) as node, open(self.output_edge_file, "w") as edge:
+        with (
+            open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as csvfile,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+        ):
             writer = csv.writer(csvfile, delimiter="\t")
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)

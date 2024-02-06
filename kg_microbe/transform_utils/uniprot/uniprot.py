@@ -21,7 +21,24 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class UniprotTransform(Transform):
+
+    """A class used to represent a transformation process for UniProt data."""
+
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
+        """
+        Initialize the class with optional input and output directories.
+
+        This constructor initializes the class with the provided input and output
+        directories, sets up internal data structures, and calls the superclass
+        initializer with a specific source name.
+
+        :param input_dir: The directory where input files are located.
+                          If None, a default directory may be used.
+        :type input_dir: Optional[Path]
+        :param output_dir: The directory where output files will be saved.
+                           If None, a default directory may be used.
+        :type output_dir: Optional[Path]
+        """
         self.__enz_data = {}
 
         source_name = "uniprot_genome_features"
@@ -61,6 +78,25 @@ class UniprotTransform(Transform):
         self.get_uniprot_values_from_file(input_dir, nodes, source, node_writer, edge_writer)
 
     def get_uniprot_values_from_file(self, input_dir, nodes, source, node_writer, edge_writer):
+        """
+        Process UniProt files and extract values to write to dataframes.
+
+        This method iterates over a list of node identifiers, reads corresponding
+        JSON files from the specified input directory, and extracts UniProt data.
+        The extracted data is then written to node and edge writers. If a file for
+        a given node does not exist, the program will exit with an error message.
+
+        :param input_dir: The directory where input JSON files are located.
+        :type input_dir: str
+        :param nodes: A list of node identifiers to process.
+        :type nodes: list
+        :param source: The name of the source being processed (used in superclass).
+        :type source: str
+        :param node_writer: An object responsible for writing node data.
+        :type node_writer: object
+        :param edge_writer: An object responsible for writing edge data.
+        :type edge_writer: object
+        """
         with tqdm(total=len(nodes) + 1, desc="Processing files") as progress:
             for i in tqdm(range(len(nodes))):
                 org_file = input_dir + "/" + nodes[i] + ".json"
@@ -88,6 +124,31 @@ class UniprotTransform(Transform):
         verbose=False,
         num_threads=0,
     ):
+        """
+        Query UniProt for enzymes per organism and write the results to dataframes.
+
+        This method retrieves UniProt values for a list of organism IDs in batches.
+        It then writes the retrieved values to the provided node and edge writers.
+        The retrieval process can be verbose, and it supports multithreading.
+
+        :param organism_ids: A list of organism identifiers to query.
+        :type organism_ids: list
+        :param fields: Fields to include in the UniProt query.
+        :type fields: list
+        :param keywords: Keywords to filter the UniProt query.
+        :type keywords: list
+        :param edge_writer: An object responsible for writing edge data.
+        :type edge_writer: object
+        :param node_writer: An object responsible for writing node data.
+        :type node_writer: object
+        :param batch_size: The number of organism IDs to process in each batch.
+        :type batch_size: int
+        :param verbose: If True, print additional details during processing.
+        :type verbose: bool, optional
+        :param num_threads: The number of threads to use for parallel processing.
+            If 0, multithreading is not used.
+        :type num_threads: int, optional
+        """
         values = []
 
         print(
@@ -106,11 +167,39 @@ class UniprotTransform(Transform):
             print("wrote to dataframe")
 
     def parse_binding_site(self, binding_site_entry):
+        """
+        Extract chemical identifiers from a binding site entry.
+
+        This method uses regular expressions to find all occurrences of ligand IDs
+        within a given binding site entry string. It specifically looks for ChEBI
+        identifiers and returns a list of these identifiers found in the entry.
+
+        :param binding_site_entry: A string containing the binding site information.
+        :type binding_site_entry: str
+        :return: A list of ChEBI ligand identifiers extracted from the binding site entry.
+        :rtype: list
+        """
         chem_list = re.findall(r'/ligand_id="ChEBI:(.*?)";', binding_site_entry)
 
         return chem_list
 
     def write_to_df(self, uniprot_values, edge_writer, node_writer):
+        """
+        Process UniProt entries and writes organism-enzyme relationship data to CSV files.
+
+        This method iterates over a list of UniProt entries, extracts relevant information,
+        and writes it to two separate CSV files using the provided CSV writers. One file
+        contains edges representing relationships between organisms and enzymes, and the
+        other contains nodes representing enzymes. It also handles binding site information
+        by calling `parse_binding_site` method if available in the entry.
+
+        :param uniprot_values: A list of dictionaries where each dictionary represents a UniProt entry.
+        :type uniprot_values: list
+        :param edge_writer: A CSV writer object for writing edge data.
+        :type edge_writer: _csv.writer
+        :param node_writer: A CSV writer object for writing node data.
+        :type node_writer: _csv.writer
+        """
         ##To return all organism-enzyme entries
         for entry in uniprot_values:
             organism_id = (
@@ -123,7 +212,16 @@ class UniprotTransform(Transform):
             if "Entry" in entry.keys():
                 self.__enz_data["id"] = entry["Entry"]
 
-            # example response with  multiple protein names: {'Organism (ID)': '100', 'Entry Name': 'A0A4R1H4N5_ANCAQ', 'Entry': 'A0A4R1H4N5', 'Protein names': 'Ubiquinone biosynthesis O-methyltransferase (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222) (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)', 'EC number': '2.1.1.222; 2.1.1.64'}
+            # example response with  multiple protein names:
+            # {
+            #     "Organism (ID)": "100",
+            #     "Entry Name": "A0A4R1H4N5_ANCAQ",
+            #     "Entry": "A0A4R1H4N5",
+            #     "Protein names": "Ubiquinone biosynthesis O-methyltransferase
+            #                       (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222)
+            #                       (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)",
+            #     "EC number": "2.1.1.222; 2.1.1.64",
+            # }
             if "Protein names" in entry:
                 self.__enz_data["name"] = entry["Protein names"].split("(EC")[0]
 

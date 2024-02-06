@@ -1,0 +1,32 @@
+name: Uniprot to S3
+
+on:
+#   schedule:
+#     - cron: '0 0 1 * *' # Runs on the 1st of every month at midnight
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  fetch-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests boto3
+      
+      - name: Fetch data from Uniprot API
+        run: kg get-via-api -a uniprot
+      
+      - name: Upload to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: python upload_to_s3.py

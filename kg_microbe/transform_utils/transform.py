@@ -25,6 +25,7 @@ from kg_microbe.transform_utils.constants import (
 
 
 class Transform:
+
     """Parent class for transforms, that sets up a lot of default file info."""
 
     DATA_DIR = Path(__file__).parent / "data"

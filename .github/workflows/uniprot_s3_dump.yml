@@ -17,21 +17,14 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-
       - name: Install project dependencies
-        run: |
-          poetry install --no-interaction
+        run: pip install .
 
       - name: Install additional dependencies
-        run: |
-          poetry add requests
-          poetry add boto3
-          poetry add aws
+        run: pip install requests boto3 aws
       
       # - name: Fetch data from Uniprot API
-      #   run: poetry run kg get-via-api -a uniprot
+      #   run: kg get-via-api -a uniprot
       
       - name: Upload to S3
         uses: aws-actions/configure-aws-credentials@v1
@@ -41,4 +34,4 @@ jobs:
           aws-region: us-east-1
       - name: Sync files to S3 bucket
         run: |
-          poetry run aws s3 sync data/raw/uniprot/test s3://${{ secrets.AWS_BUCKET_NAME }} --delete
+          aws s3 sync data/raw/uniprot/test s3://${{ secrets.AWS_BUCKET_NAME }} --delete

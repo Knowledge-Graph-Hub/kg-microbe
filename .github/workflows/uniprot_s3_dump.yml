@@ -23,7 +23,9 @@ jobs:
           version: '1.6.1'
 
       - name: Install project dependencies
-        run: poetry install --no-interaction
+        run: |
+          pip wheel --use-pep517 "greenlet (==2.0.1)"
+          poetry install --no-interaction
 
       - name: Install additional dependencies
         run: |

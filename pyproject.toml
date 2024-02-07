@@ -15,7 +15,7 @@ kgx = "^2.2.5"
 koza = "*"
 biolink-model = "*"
 watchdog = "<4.0.0" # ! This is a temporary fix 4.0.0 breaks on GH Actions
-oaklib = ">=0.5.20"
+oaklib = "^0.5.20"
 requests-cache = "^1.1.0"
 llm = "^0.11"
 

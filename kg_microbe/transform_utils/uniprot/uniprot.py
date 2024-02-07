@@ -128,7 +128,7 @@ class UniprotTransform(Transform):
                 self.__enz_data['id'] = entry['Entry']
 
 
-            #example response with  mulitple protein names: {'Organism (ID)': '100', 'Entry Name': 'A0A4R1H4N5_ANCAQ', 'Entry': 'A0A4R1H4N5', 'Protein names': 'Ubiquinone biosynthesis O-methyltransferase (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222) (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)', 'EC number': '2.1.1.222; 2.1.1.64'}
+            #example response with multiple protein names: {'Organism (ID)': '100', 'Entry Name': 'A0A4R1H4N5_ANCAQ', 'Entry': 'A0A4R1H4N5', 'Protein names': 'Ubiquinone biosynthesis O-methyltransferase (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222) (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)', 'EC number': '2.1.1.222; 2.1.1.64'}
             if 'Protein names' in entry:
                 self.__enz_data['name'] = entry['Protein names'].split('(EC')[0]
                 

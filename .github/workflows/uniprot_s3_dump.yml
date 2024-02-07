@@ -27,6 +27,7 @@ jobs:
         run: |
           poetry add requests
           poetry add boto3
+          poetry add aws
       
       - name: Fetch data from Uniprot API
         run: poetry run kg get-via-api -a uniprot
@@ -39,4 +40,4 @@ jobs:
           aws-region: us-east-1
       - name: Sync files to S3 bucket
         run: |
-          aws s3 sync data/raw/uniprot/test s3://${{ secrets.AWS_BUCKET_NAME }} --delete
+          poetry run aws s3 sync data/raw/uniprot/test s3://${{ secrets.AWS_BUCKET_NAME }} --delete

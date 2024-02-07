@@ -21,6 +21,7 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class UniprotTransform(Transform):
+
     """A class used to represent a transformation process for UniProt data."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

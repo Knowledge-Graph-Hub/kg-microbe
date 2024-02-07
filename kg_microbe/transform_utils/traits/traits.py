@@ -66,6 +66,7 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class TraitsTransform(Transform):
+
     """
     Ingest traits dataset (NCBI/GTDB).
 

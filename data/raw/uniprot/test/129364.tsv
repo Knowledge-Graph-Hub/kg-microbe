@@ -1,0 +1,501 @@
+Organism (ID)	Entry Name	Entry	Protein names	EC number	Binding site
+129364	A0A6A3MET5_9STRA	A0A6A3MET5	Pentafunctional AROM polypeptide [Includes: 3-dehydroquinate synthase (DHQS) (EC 4.2.3.4); 3-phosphoshikimate 1-carboxyvinyltransferase (EC 2.5.1.19); Shikimate kinase (SK) (EC 2.7.1.71); 3-dehydroquinate dehydratase (3-dehydroquinase) (EC 4.2.1.10); Shikimate dehydrogenase (EC 1.1.1.25)]	1.1.1.25; 2.5.1.19; 2.7.1.71; 4.2.1.10; 4.2.3.4	
+129364	A0A1I9RZ74_9STRA	A0A1I9RZ74	Cytochrome c oxidase subunit 1 (EC 7.1.1.9)	7.1.1.9	
+129364	A0A6A3H1L6_9STRA	A0A6A3H1L6	Adenylosuccinate synthetase (EC 6.3.4.4)	6.3.4.4	
+129364	A0A6A3I676_9STRA	A0A6A3I676	ATP-citrate synthase (EC 2.3.3.8) (ATP-citrate (pro-S-)-lyase) (Citrate cleavage enzyme)	2.3.3.8	
+129364	A0A6A3I8V6_9STRA	A0A6A3I8V6	ATP-citrate synthase (EC 2.3.3.8) (ATP-citrate (pro-S-)-lyase) (Citrate cleavage enzyme)	2.3.3.8	
+129364	A0A6A3IFW4_9STRA	A0A6A3IFW4	Ribokinase (RK) (EC 2.7.1.15)	2.7.1.15	BINDING 15..17; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 46..50; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 152; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 197; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 233..238; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 262; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 264; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 267..268; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 268; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 298; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 301; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 303; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"; BINDING 307; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /evidence="ECO:0000256|HAMAP-Rule:MF_03215"
+129364	A0A6A3IYB9_9STRA	A0A6A3IYB9	Inosine triphosphate pyrophosphatase (ITPase) (Inosine triphosphatase) (EC 3.6.1.9) (Non-canonical purine NTP pyrophosphatase) (Non-standard purine NTP pyrophosphatase) (Nucleoside-triphosphate diphosphatase) (Nucleoside-triphosphate pyrophosphatase) (NTPase)	3.6.1.9	BINDING 12..17; /ligand="ITP"; /ligand_id="ChEBI:CHEBI:61402"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 42; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 54; /ligand="ITP"; /ligand_id="ChEBI:CHEBI:61402"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 70..71; /ligand="ITP"; /ligand_id="ChEBI:CHEBI:61402"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 70; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 145..148; /ligand="ITP"; /ligand_id="ChEBI:CHEBI:61402"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 168; /ligand="ITP"; /ligand_id="ChEBI:CHEBI:61402"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"; BINDING 173..174; /ligand="ITP"; /ligand_id="ChEBI:CHEBI:61402"; /evidence="ECO:0000256|HAMAP-Rule:MF_03148"
+129364	A0A6A3J0V4_9STRA	A0A6A3J0V4	Glutathione reductase (EC 1.8.1.7)	1.8.1.7	BINDING 59; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 186..193; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 278; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 319; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"
+129364	A0A6A3J770_9STRA	A0A6A3J770	Glyceraldehyde-3-phosphate dehydrogenase (EC 1.2.1.12)	1.2.1.12	BINDING 11..12; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"; BINDING 33; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"; BINDING 120; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"; BINDING 149..151; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 180; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 209..210; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 232; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 314; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"
+129364	A0A6A3J8Y7_9STRA	A0A6A3J8Y7	Bifunctional dihydrofolate reductase-thymidylate synthase (EC 1.5.1.3) (EC 2.1.1.45)	1.5.1.3; 2.1.1.45	
+129364	A0A6A3JFB6_9STRA	A0A6A3JFB6	UMP-CMP kinase (EC 2.7.4.14) (Deoxycytidylate kinase) (CK) (dCMP kinase) (Uridine monophosphate/cytidine monophosphate kinase) (UMP/CMP kinase) (UMP/CMPK)	2.7.4.14	BINDING 17..22; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 43; /ligand="a ribonucleoside 5'-phosphate"; /ligand_id="ChEBI:CHEBI:58043"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 64..66; /ligand="a ribonucleoside 5'-phosphate"; /ligand_id="ChEBI:CHEBI:58043"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 91..94; /ligand="a ribonucleoside 5'-phosphate"; /ligand_id="ChEBI:CHEBI:58043"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 98; /ligand="CMP"; /ligand_id="ChEBI:CHEBI:60377"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 133; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 139; /ligand="a ribonucleoside 5'-phosphate"; /ligand_id="ChEBI:CHEBI:58043"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 150; /ligand="a ribonucleoside 5'-phosphate"; /ligand_id="ChEBI:CHEBI:58043"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"; BINDING 178; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03172"
+129364	A0A6A3JLR9_9STRA	A0A6A3JLR9	Fatty acid synthase subunit alpha (EC 1.1.1.100) (EC 2.3.1.86)	1.1.1.100; 2.3.1.86	
+129364	A0A6A3JYF2_9STRA	A0A6A3JYF2	Fatty acid synthase subunit alpha (EC 1.1.1.100) (EC 2.3.1.86)	1.1.1.100; 2.3.1.86	
+129364	A0A6A3K472_9STRA	A0A6A3K472	DNA repair protein RAD51 homolog		
+129364	A0A6A3KAC0_9STRA	A0A6A3KAC0	Fatty acid synthase subunit alpha (EC 1.1.1.100) (EC 2.3.1.86)	1.1.1.100; 2.3.1.86	
+129364	A0A6A3KJ11_9STRA	A0A6A3KJ11	Multifunctional fusion protein [Includes: Pectinesterase (EC 3.1.1.11); Histone H4]	3.1.1.11	
+129364	A0A6A3KL55_9STRA	A0A6A3KL55	Succinate dehydrogenase [ubiquinone] iron-sulfur subunit, mitochondrial (EC 1.3.5.1)	1.3.5.1	
+129364	A0A6A3KS23_9STRA	A0A6A3KS23	SUMO-activating enzyme subunit		BINDING 26..31; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 50; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 58..61; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 74; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 119..124; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 160; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"; BINDING 163; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"; BINDING 440; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"; BINDING 443; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"
+129364	A0A6A3KVK8_9STRA	A0A6A3KVK8	E3 ubiquitin-protein ligase HACE1 (EC 2.3.2.26) (HECT domain and ankyrin repeat-containing E3 ubiquitin-protein ligase 1) (HECT-type E3 ubiquitin transferase HACE1)	2.3.2.26	BINDING 889; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU10141"
+129364	A0A6A3L0G2_9STRA	A0A6A3L0G2	Trifunctional purine biosynthetic protein adenosine-3 (EC 2.1.2.2) (EC 6.3.3.1) (EC 6.3.4.13)	2.1.2.2; 6.3.3.1; 6.3.4.13	
+129364	A0A6A3L1J9_9STRA	A0A6A3L1J9	DNA polymerase epsilon catalytic subunit (EC 2.7.7.7)	2.7.7.7	
+129364	A0A6A3L8J8_9STRA	A0A6A3L8J8	Queuine tRNA-ribosyltransferase catalytic subunit 1 (EC 2.4.2.64) (Guanine insertion enzyme) (tRNA-guanine transglycosylase)	2.4.2.64	BINDING 98..102; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 152; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 196; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 226; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 314; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 316; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 319; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 355; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"
+129364	A0A6A3L9X7_9STRA	A0A6A3L9X7	Delta-1-pyrroline-5-carboxylate synthase [Includes: Glutamate 5-kinase (GK) (EC 2.7.2.11) (Gamma-glutamyl kinase); Gamma-glutamyl phosphate reductase (GPR) (EC 1.2.1.41) (Glutamate-5-semialdehyde dehydrogenase) (Glutamyl-gamma-semialdehyde dehydrogenase)]	1.2.1.41; 2.7.2.11	
+129364	A0A6A3LAP1_9STRA	A0A6A3LAP1	Endonuclease III homolog (EC 3.2.2.-) (EC 4.2.99.18) (Bifunctional DNA N-glycosylase/DNA-(apurinic or apyrimidinic site) lyase) (DNA glycosylase/AP lyase)	3.2.2.-; 4.2.99.18	BINDING 291; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 298; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 301; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 307; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"
+129364	A0A6A3LC47_9STRA	A0A6A3LC47	Alanine--tRNA ligase (EC 6.1.1.7) (Alanyl-tRNA synthetase) (AlaRS)	6.1.1.7	BINDING 626; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"; BINDING 630; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"; BINDING 740; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"; BINDING 744; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"
+129364	A0A6A3LDN2_9STRA	A0A6A3LDN2	Queuine tRNA-ribosyltransferase catalytic subunit 1 (EC 2.4.2.64) (Guanine insertion enzyme) (tRNA-guanine transglycosylase)	2.4.2.64	BINDING 96..100; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 150; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 194; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 224; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 312; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 314; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 317; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 353; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"
+129364	A0A6A3LFU3_9STRA	A0A6A3LFU3	Succinate--CoA ligase [ADP-forming] subunit beta, mitochondrial (EC 6.2.1.5) (Succinyl-CoA synthetase beta chain) (SCS-beta)	6.2.1.5	BINDING 74; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"; BINDING 81..83; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"; BINDING 142; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"; BINDING 234; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"; BINDING 248; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"; BINDING 299; /ligand="substrate"; /ligand_note="ligand shared with subunit alpha"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"; BINDING 356..358; /ligand="substrate"; /ligand_note="ligand shared with subunit alpha"; /evidence="ECO:0000256|HAMAP-Rule:MF_03219"
+129364	A0A6A3LG39_9STRA	A0A6A3LG39	Poly(A) polymerase (EC 2.7.7.19)	2.7.7.19	BINDING 78..80; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR018425-1"; BINDING 91..93; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR018425-1"; BINDING 91; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /ligand_note="catalytic"; /evidence="ECO:0000256|PIRSR:PIRSR018425-2"; BINDING 91; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|PIRSR:PIRSR018425-2"; BINDING 93; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /ligand_note="catalytic"; /evidence="ECO:0000256|PIRSR:PIRSR018425-2"; BINDING 93; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|PIRSR:PIRSR018425-2"; BINDING 145; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR018425-1"; BINDING 145; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|PIRSR:PIRSR018425-2"; BINDING 206; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR018425-1"; BINDING 215; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR018425-1"; BINDING 224..225; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR018425-1"
+129364	A0A6A3LI36_9STRA	A0A6A3LI36	DNA replication licensing factor MCM6 (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3LLN1_9STRA	A0A6A3LLN1	Inosine-5'-monophosphate dehydrogenase (IMP dehydrogenase) (IMPD) (IMPDH) (EC 1.1.1.205)	1.1.1.205	BINDING 272..274; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-3"; BINDING 322..324; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-3"; BINDING 324; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /ligand_note="ligand shared between two tetrameric partners"; /note="in other chain"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-4"; BINDING 326; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /ligand_note="ligand shared between two tetrameric partners"; /note="in other chain"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-4"; BINDING 327; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 329; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /ligand_note="ligand shared between two tetrameric partners"; /note="in other chain"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-4"; BINDING 362..364; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 385..386; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 409..413; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 437; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"
+129364	A0A6A3LPB9_9STRA	A0A6A3LPB9	S-adenosylmethionine decarboxylase proenzyme (EC 4.1.1.50)	4.1.1.50	BINDING 31; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001355-2"; BINDING 87; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001355-2"; BINDING 255; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001355-2"; BINDING 278; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001355-2"
+129364	A0A6A3LSU8_9STRA	A0A6A3LSU8	Inositol hexakisphosphate and diphosphoinositol-pentakisphosphate kinase (EC 2.7.4.24)	2.7.4.24	
+129364	A0A6A3M8G5_9STRA	A0A6A3M8G5	Endoplasmic reticulum oxidoreductin-1		BINDING 210; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR017205-2"; BINDING 212; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR017205-2"; BINDING 223; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR017205-2"; BINDING 255; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR017205-2"; BINDING 285; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR017205-2"
+129364	A0A6A3M933_9STRA	A0A6A3M933	Succinate dehydrogenase [ubiquinone] flavoprotein subunit, mitochondrial (EC 1.3.5.1)	1.3.5.1	BINDING 57..62; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 80..95; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 265; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 286; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 298; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 397; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 439; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 450; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"; BINDING 455..456; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR630664-51"
+129364	A0A6A3MD87_9STRA	A0A6A3MD87	Elongator complex protein 3 (EC 2.3.1.-)	2.3.1.-	BINDING 93; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|PIRSR:PIRSR005669-1"; BINDING 103; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|PIRSR:PIRSR005669-1"; BINDING 106; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|PIRSR:PIRSR005669-1"
+129364	A0A6A3MHX3_9STRA	A0A6A3MHX3	ATPase ASNA1 homolog (EC 3.6.-.-) (Arsenical pump-driving ATPase homolog) (Arsenite-stimulated ATPase)	3.6.-.-	BINDING 30..37; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03112"; BINDING 233; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03112"; BINDING 260; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03112"; BINDING 271; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_note="ligand shared between dimeric partners"; /evidence="ECO:0000256|HAMAP-Rule:MF_03112"; BINDING 274; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_note="ligand shared between dimeric partners"; /evidence="ECO:0000256|HAMAP-Rule:MF_03112"
+129364	A0A6A3MIU8_9STRA	A0A6A3MIU8	E3 ubiquitin-protein ligase listerin (EC 2.3.2.27) (RING-type E3 ubiquitin transferase listerin)	2.3.2.27	
+129364	A0A6A3MK12_9STRA	A0A6A3MK12	Katanin p60 ATPase-containing subunit A-like 2 (Katanin p60 subunit A-like 2) (EC 5.6.1.1) (p60 katanin-like 2)	5.6.1.1	BINDING 282..289; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03025"
+129364	A0A6A3MLN9_9STRA	A0A6A3MLN9	tRNA-dihydrouridine(47) synthase [NAD(P)(+)] (EC 1.3.1.-) (tRNA-dihydrouridine synthase 3)	1.3.1.-	BINDING 402; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 406; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 441; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 444; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PROSITE-ProRule:PRU00236"
+129364	A0A6A3MPY6_9STRA	A0A6A3MPY6	E3 ubiquitin-protein ligase (EC 2.3.2.27)	2.3.2.27	
+129364	A0A6A3MQ46_9STRA	A0A6A3MQ46	Methylthioribose-1-phosphate isomerase (M1Pi) (MTR-1-P isomerase) (EC 5.3.1.23) (S-methyl-5-thioribose-1-phosphate isomerase) (Translation initiation factor eIF-2B subunit alpha/beta/delta-like protein)	5.3.1.23	
+129364	A0A6A3MTV5_9STRA	A0A6A3MTV5	alpha-1,2-Mannosidase (EC 3.2.1.-)	3.2.1.-	
+129364	A0A6A3MV69_9STRA	A0A6A3MV69	DNA replication licensing factor MCM5 (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3MXR5_9STRA	A0A6A3MXR5	alpha-1,2-Mannosidase (EC 3.2.1.-)	3.2.1.-	BINDING 580; /ligand="Ca(2+)"; /ligand_id="ChEBI:CHEBI:29108"; /evidence="ECO:0000256|PIRSR:PIRSR601382-2"
+129364	A0A6A3MYI6_9STRA	A0A6A3MYI6	Elongator complex protein 3 (EC 2.3.1.-)	2.3.1.-	BINDING 93; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|PIRSR:PIRSR005669-1"; BINDING 103; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|PIRSR:PIRSR005669-1"; BINDING 106; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|PIRSR:PIRSR005669-1"
+129364	A0A6A3N0F7_9STRA	A0A6A3N0F7	aspartate-semialdehyde dehydrogenase (EC 1.2.1.11)	1.2.1.11	
+129364	A0A6A3N0P6_9STRA	A0A6A3N0P6	Endonuclease III homolog (EC 3.2.2.-) (EC 4.2.99.18) (Bifunctional DNA N-glycosylase/DNA-(apurinic or apyrimidinic site) lyase) (DNA glycosylase/AP lyase)	3.2.2.-; 4.2.99.18	BINDING 293; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 300; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 303; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 309; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"
+129364	A0A6A3N0W9_9STRA	A0A6A3N0W9	Molybdopterin synthase catalytic subunit (EC 2.8.1.12) (Molybdenum cofactor synthesis protein 2 large subunit) (Molybdenum cofactor synthesis protein 2B) (MOCS2B)	2.8.1.12	BINDING 118..119; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03052"; BINDING 134; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03052"; BINDING 141..143; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03052"
+129364	A0A6A3N222_9STRA	A0A6A3N222	Probable acetate kinase (EC 2.7.2.1) (Acetokinase)	2.7.2.1	BINDING 33; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03131"; BINDING 40; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03131"; BINDING 117; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03131"; BINDING 234..238; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03131"; BINDING 308..310; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03131"; BINDING 414; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03131"
+129364	A0A6A3N2R6_9STRA	A0A6A3N2R6	Lon protease homolog, mitochondrial (EC 3.4.21.53)	3.4.21.53	BINDING 475..482; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03120, ECO:0000256|PIRSR:PIRSR001174-2"
+129364	A0A6A3N4A7_9STRA	A0A6A3N4A7	DNA replication licensing factor MCM5 (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3N4H0_9STRA	A0A6A3N4H0	Glutathione reductase (EC 1.8.1.7)	1.8.1.7	BINDING 74; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 205..212; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 294; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 335; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"
+129364	A0A6A3N737_9STRA	A0A6A3N737	Fatty acid synthase subunit alpha (EC 1.1.1.100) (EC 2.3.1.86)	1.1.1.100; 2.3.1.86	
+129364	A0A6A3NAN7_9STRA	A0A6A3NAN7	2-methoxy-6-polyprenyl-1,4-benzoquinol methylase, mitochondrial (EC 2.1.1.201) (Ubiquinone biosynthesis methyltransferase COQ5)	2.1.1.201	BINDING 105; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03191"; BINDING 132; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03191"; BINDING 163..164; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03191"
+129364	A0A6A3NAN9_9STRA	A0A6A3NAN9	Alpha-1,3/1,6-mannosyltransferase ALG2 (EC 2.4.1.132) (EC 2.4.1.257) (GDP-Man:Man(1)GlcNAc(2)-PP-Dol alpha-1,3-mannosyltransferase)	2.4.1.132; 2.4.1.257	
+129364	A0A6A3NCP8_9STRA	A0A6A3NCP8	Alkylglycerone-phosphate synthase (Alkyl-DHAP synthase) (EC 2.5.1.26)	2.5.1.26	BINDING 274..280; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR625650-3"; BINDING 287..290; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR625650-3"; BINDING 489; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR625650-2"
+129364	A0A6A3ND60_9STRA	A0A6A3ND60	Molybdenum cofactor sulfurase (MCS) (MOS) (MoCo sulfurase) (EC 2.8.1.9) (Molybdenum cofactor sulfurtransferase)	2.8.1.9	
+129364	A0A6A3ND76_9STRA	A0A6A3ND76	RNA helicase (EC 3.6.4.13)	3.6.4.13	
+129364	A0A6A3NHS8_9STRA	A0A6A3NHS8	Molybdopterin synthase sulfur carrier subunit (Molybdenum cofactor synthesis protein 2 small subunit) (Molybdenum cofactor synthesis protein 2A) (MOCS2A) (Sulfur carrier protein MOCS2A)		
+129364	A0A6A3NIE9_9STRA	A0A6A3NIE9	Phosphomannomutase (EC 5.4.2.8)	5.4.2.8	BINDING 13; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR605002-3"; BINDING 15; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR605002-3"; BINDING 210; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR605002-3"; BINDING 222; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR605002-3"; BINDING 227; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR605002-3"
+129364	A0A6A3NJS3_9STRA	A0A6A3NJS3	Inosine-5'-monophosphate dehydrogenase (IMP dehydrogenase) (IMPD) (IMPDH) (EC 1.1.1.205)	1.1.1.205	BINDING 272..274; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-3"; BINDING 322..324; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-3"; BINDING 324; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /ligand_note="ligand shared between two tetrameric partners"; /note="in other chain"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-4"; BINDING 326; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /ligand_note="ligand shared between two tetrameric partners"; /note="in other chain"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-4"; BINDING 327; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 329; /ligand="K(+)"; /ligand_id="ChEBI:CHEBI:29103"; /ligand_note="ligand shared between two tetrameric partners"; /note="in other chain"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156, ECO:0000256|PIRSR:PIRSR000130-4"; BINDING 362..364; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 385..386; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 409..413; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"; BINDING 437; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03156"
+129364	A0A6A3NLP5_9STRA	A0A6A3NLP5	Alanine--tRNA ligase (EC 6.1.1.7) (Alanyl-tRNA synthetase) (AlaRS)	6.1.1.7	BINDING 645; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"; BINDING 649; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"; BINDING 764; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"; BINDING 768; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03133"
+129364	A0A6A3NMA8_9STRA	A0A6A3NMA8	Anamorsin homolog (Fe-S cluster assembly protein DRE2 homolog)		BINDING 196; /ligand="[2Fe-2S] cluster"; /ligand_id="ChEBI:CHEBI:190135"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 207; /ligand="[2Fe-2S] cluster"; /ligand_id="ChEBI:CHEBI:190135"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 210; /ligand="[2Fe-2S] cluster"; /ligand_id="ChEBI:CHEBI:190135"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 212; /ligand="[2Fe-2S] cluster"; /ligand_id="ChEBI:CHEBI:190135"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 235; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 238; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 246; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"; BINDING 249; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03115"
+129364	A0A6A3NMJ3_9STRA	A0A6A3NMJ3	alpha-1,2-Mannosidase (EC 3.2.1.-)	3.2.1.-	BINDING 580; /ligand="Ca(2+)"; /ligand_id="ChEBI:CHEBI:29108"; /evidence="ECO:0000256|PIRSR:PIRSR601382-2"
+129364	A0A6A3NP19_9STRA	A0A6A3NP19	O-phosphoseryl-tRNA(Sec) selenium transferase (EC 2.9.1.2) (Selenocysteine synthase) (Selenocysteinyl-tRNA(Sec) synthase) (Sep-tRNA:Sec-tRNA synthase)	2.9.1.2	BINDING 75; /ligand="pyridoxal 5'-phosphate"; /ligand_id="ChEBI:CHEBI:597326"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"; BINDING 97; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"; BINDING 98; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"; BINDING 105; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"; BINDING 278; /ligand="tRNA"; /ligand_id="ChEBI:CHEBI:17843"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"; BINDING 320; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"; BINDING 411; /ligand="tRNA"; /ligand_id="ChEBI:CHEBI:17843"; /evidence="ECO:0000256|PIRSR:PIRSR017689-1"
+129364	A0A6A3NRN9_9STRA	A0A6A3NRN9	DNA replication ATP-dependent helicase/nuclease (EC 3.1.-.-) (EC 3.6.4.12)	3.1.-.-; 3.6.4.12	
+129364	A0A6A3NTM4_9STRA	A0A6A3NTM4	Aurora kinase (EC 2.7.11.1)	2.7.11.1	BINDING 116; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR630616-2, ECO:0000256|PROSITE-ProRule:PRU10141"; BINDING 241; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR630616-2"
+129364	A0A6A3NVR7_9STRA	A0A6A3NVR7	2-methoxy-6-polyprenyl-1,4-benzoquinol methylase, mitochondrial (EC 2.1.1.201) (Ubiquinone biosynthesis methyltransferase COQ5)	2.1.1.201	BINDING 103; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03191"; BINDING 130; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03191"; BINDING 161..162; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03191"
+129364	A0A6A3NZY3_9STRA	A0A6A3NZY3	Inositol hexakisphosphate and diphosphoinositol-pentakisphosphate kinase (EC 2.7.4.24)	2.7.4.24	
+129364	A0A6A3P0I8_9STRA	A0A6A3P0I8	Succinate--CoA ligase [ADP-forming] subunit alpha, mitochondrial (EC 6.2.1.5) (Succinyl-CoA synthetase subunit alpha) (SCS-alpha)	6.2.1.5	BINDING 69..72; /ligand="CoA"; /ligand_id="ChEBI:CHEBI:57287"; /evidence="ECO:0000256|HAMAP-Rule:MF_03222"; BINDING 95; /ligand="CoA"; /ligand_id="ChEBI:CHEBI:57287"; /evidence="ECO:0000256|HAMAP-Rule:MF_03222"; BINDING 148..150; /ligand="CoA"; /ligand_id="ChEBI:CHEBI:57287"; /evidence="ECO:0000256|HAMAP-Rule:MF_03222"; BINDING 212; /ligand="substrate"; /ligand_note="ligand shared with subunit beta"; /evidence="ECO:0000256|HAMAP-Rule:MF_03222"
+129364	A0A6A3P1Z6_9STRA	A0A6A3P1Z6	Phospholipid-transporting ATPase (EC 7.6.2.1)	7.6.2.1	
+129364	A0A6A3P2M5_9STRA	A0A6A3P2M5	NAD-dependent protein deacylase (EC 2.3.1.-) (Regulatory protein SIR2 homolog)	2.3.1.-	BINDING 116..119; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161"; BINDING 142; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161, ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 145; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161, ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 206; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161, ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 209; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161, ECO:0000256|PROSITE-ProRule:PRU00236"; BINDING 246..248; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161"; BINDING 272..274; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161"; BINDING 290; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03161"
+129364	A0A6A3PAH0_9STRA	A0A6A3PAH0	Ubiquinone biosynthesis O-methyltransferase, mitochondrial (3-demethylubiquinol 3-O-methyltransferase) (EC 2.1.1.64) (Polyprenyldihydroxybenzoate methyltransferase) (EC 2.1.1.114)	2.1.1.114; 2.1.1.64	BINDING 56; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03190"; BINDING 88; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03190"; BINDING 109; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03190"; BINDING 154; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03190"
+129364	A0A6A3PDE1_9STRA	A0A6A3PDE1	DNA replication ATP-dependent helicase/nuclease (EC 3.1.-.-) (EC 3.6.4.12)	3.1.-.-; 3.6.4.12	
+129364	A0A6A4BUI2_9STRA	A0A6A4BUI2	Phosphatidylserine decarboxylase proenzyme, mitochondrial (EC 4.1.1.65) [Cleaved into: Phosphatidylserine decarboxylase beta chain; Phosphatidylserine decarboxylase alpha chain]	4.1.1.65	
+129364	A0A6A4CPC8_9STRA	A0A6A4CPC8	Queuine tRNA-ribosyltransferase catalytic subunit 1 (EC 2.4.2.64) (Guanine insertion enzyme) (tRNA-guanine transglycosylase)	2.4.2.64	BINDING 96..100; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 150; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 194; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 224; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 312; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 314; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 317; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"; BINDING 353; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|HAMAP-Rule:MF_03218"
+129364	A0A6A4CPU1_9STRA	A0A6A4CPU1	Translation factor GUF1 homolog, mitochondrial (EC 3.6.5.n1) (Elongation factor 4 homolog) (EF-4) (GTPase GUF1 homolog) (Ribosomal back-translocase)	3.6.5.n1	BINDING 64..71; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03137"; BINDING 132..136; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03137"; BINDING 186..189; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03137"
+129364	A0A6A4CYJ2_9STRA	A0A6A4CYJ2	Fatty acid synthase subunit alpha (EC 1.1.1.100) (EC 2.3.1.86)	1.1.1.100; 2.3.1.86	
+129364	A0A6A4D764_9STRA	A0A6A4D764	4-hydroxybenzoate polyprenyltransferase, mitochondrial (4-HB polyprenyltransferase) (EC 2.5.1.39) (Para-hydroxybenzoate--polyprenyltransferase) (PHB:PPT) (PHB:polyprenyltransferase)	2.5.1.39	
+129364	A0A6A4DJJ8_9STRA	A0A6A4DJJ8	Formate dehydrogenase (FDH) (EC 1.17.1.9) (NAD-dependent formate dehydrogenase)	1.17.1.9	BINDING 126; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 150; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 205..206; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 225; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 260..264; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 286; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 312; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 336..339; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"; BINDING 381; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|HAMAP-Rule:MF_03210"
+129364	A0A6A4DL75_9STRA	A0A6A4DL75	Glyceraldehyde-3-phosphate dehydrogenase (EC 1.2.1.12)	1.2.1.12	BINDING 11..12; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"; BINDING 33; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"; BINDING 120; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"; BINDING 149..151; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 180; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 209..210; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 232; /ligand="D-glyceraldehyde 3-phosphate"; /ligand_id="ChEBI:CHEBI:59776"; /evidence="ECO:0000256|PIRSR:PIRSR000149-2"; BINDING 314; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000149-3"
+129364	A0A6A4DMV3_9STRA	A0A6A4DMV3	Glutathione reductase (EC 1.8.1.7)	1.8.1.7	BINDING 59; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 186..193; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 278; /ligand="NAD(+)"; /ligand_id="ChEBI:CHEBI:57540"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"; BINDING 319; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000350-3"
+129364	A0A6A4DUC6_9STRA	A0A6A4DUC6	Fatty acid synthase subunit alpha (EC 1.1.1.100) (EC 2.3.1.86)	1.1.1.100; 2.3.1.86	
+129364	A0A6A4E7E2_9STRA	A0A6A4E7E2	Methionine aminopeptidase 2 (MAP 2) (MetAP 2) (EC 3.4.11.18) (Peptidase M)	3.4.11.18	BINDING 198; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 218; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 229; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 229; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 298; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 306; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 331; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 438; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"; BINDING 438; /ligand="a divalent metal cation"; /ligand_id="ChEBI:CHEBI:60240"; /ligand_label="2"; /ligand_note="catalytic"; /evidence="ECO:0000256|HAMAP-Rule:MF_03175"
+129364	A0A6A4EDC7_9STRA	A0A6A4EDC7	Catalase (EC 1.11.1.6)	1.11.1.6	BINDING 342; /ligand="heme"; /ligand_id="ChEBI:CHEBI:30413"; /ligand_part="Fe"; /ligand_part_id="ChEBI:CHEBI:18248"; /note="axial binding residue"; /evidence="ECO:0000256|PIRSR:PIRSR038928-2"
+129364	A0A6A4EFM0_9STRA	A0A6A4EFM0	Cyclin-dependent kinase 2 homolog (EC 2.7.11.22) (EC 2.7.11.23) (Cell division control protein 2 homolog) (cdc2-related kinase 2)	2.7.11.22; 2.7.11.23	BINDING 33; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU10141"
+129364	A0A6A4EJ67_9STRA	A0A6A4EJ67	Endonuclease III homolog (EC 3.2.2.-) (EC 4.2.99.18) (Bifunctional DNA N-glycosylase/DNA-(apurinic or apyrimidinic site) lyase) (DNA glycosylase/AP lyase)	3.2.2.-; 4.2.99.18	BINDING 280; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 287; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 290; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 296; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"
+129364	A0A6A4EQC1_9STRA	A0A6A4EQC1	Succinate dehydrogenase [ubiquinone] iron-sulfur subunit, mitochondrial (EC 1.3.5.1)	1.3.5.1	
+129364	A0A6A4ETX7_9STRA	A0A6A4ETX7	Katanin p60 ATPase-containing subunit A1 (Katanin p60 subunit A1) (EC 5.6.1.1) (p60 katanin)	5.6.1.1	BINDING 321..328; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03023"
+129364	A0A6A4F2L2_9STRA	A0A6A4F2L2	Lipoyl synthase, mitochondrial (EC 2.8.1.8) (Lipoate synthase) (LS) (Lip-syn) (Lipoic acid synthase)	2.8.1.8	BINDING 117; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"; BINDING 122; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"; BINDING 128; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"; BINDING 148; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="2"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"; BINDING 152; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="2"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"; BINDING 155; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="2"; /ligand_note="4Fe-4S-S-AdoMet"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"; BINDING 363; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /ligand_label="1"; /evidence="ECO:0000256|HAMAP-Rule:MF_03123"
+129364	A0A6A4F5G9_9STRA	A0A6A4F5G9	Adenylosuccinate synthetase (AMPSase) (AdSS) (EC 6.3.4.4) (IMP--aspartate ligase)	6.3.4.4	BINDING 151..157; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 152..155; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 152; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 177..180; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 179..181; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 179; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 268; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 282; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /ligand_note="ligand shared between dimeric partners"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 359; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 374; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 434..440; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 438; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 440; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 466..468; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 548..550; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"
+129364	A0A6A4F5H0_9STRA	A0A6A4F5H0	Adenylosuccinate synthetase (AMPSase) (AdSS) (EC 6.3.4.4) (IMP--aspartate ligase)	6.3.4.4	BINDING 135..141; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 136..139; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 136; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 161..164; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 163..165; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 163; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 252; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 266; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /ligand_note="ligand shared between dimeric partners"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 343; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 358; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 418..424; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 422; /ligand="IMP"; /ligand_id="ChEBI:CHEBI:58053"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 424; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 450..452; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"; BINDING 532..534; /ligand="GTP"; /ligand_id="ChEBI:CHEBI:37565"; /evidence="ECO:0000256|HAMAP-Rule:MF_03125"
+129364	A0A6A4F5J0_9STRA	A0A6A4F5J0	tRNA-dihydrouridine(47) synthase [NAD(P)(+)] (EC 1.3.1.-) (tRNA-dihydrouridine synthase 3)	1.3.1.-	
+129364	A0A6A4F6R8_9STRA	A0A6A4F6R8	protein-tyrosine-phosphatase (EC 3.1.3.48)	3.1.3.48	BINDING 690..691; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630564-2"; BINDING 750..756; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630564-2"
+129364	A0A6A4FB11_9STRA	A0A6A4FB11	Pre-mRNA-processing factor 19 (EC 2.3.2.27)	2.3.2.27	
+129364	A0A6A4FCE1_9STRA	A0A6A4FCE1	DNA replication licensing factor MCM6 (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A4FGS3_9STRA	A0A6A4FGS3	protein-tyrosine-phosphatase (EC 3.1.3.48)	3.1.3.48	BINDING 11..12; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630564-2"; BINDING 71..77; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630564-2"
+129364	A0A6A4FJN3_9STRA	A0A6A4FJN3	Molybdopterin synthase sulfur carrier subunit (Molybdenum cofactor synthesis protein 2 small subunit) (Molybdenum cofactor synthesis protein 2A) (MOCS2A) (Sulfur carrier protein MOCS2A)		
+129364	A0A6A4FLQ7_9STRA	A0A6A4FLQ7	Multifunctional fusion protein [Includes: Pectinesterase (EC 3.1.1.11); Histone H4]	3.1.1.11	
+129364	A0A6A4FNG4_9STRA	A0A6A4FNG4	Phosphatidylinositol-3-phosphatase		BINDING 663..664; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630564-2"; BINDING 725..731; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR630564-2"
+129364	A0A6A4FNH5_9STRA	A0A6A4FNH5	Alpha-1,3/1,6-mannosyltransferase ALG2 (EC 2.4.1.132) (EC 2.4.1.257) (GDP-Man:Man(1)GlcNAc(2)-PP-Dol alpha-1,3-mannosyltransferase)	2.4.1.132; 2.4.1.257	
+129364	A0A6A4FP38_9STRA	A0A6A4FP38	DNA replication licensing factor MCM3 (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A4FP48_9STRA	A0A6A4FP48	Katanin p60 ATPase-containing subunit A1 (Katanin p60 subunit A1) (EC 5.6.1.1) (p60 katanin)	5.6.1.1	BINDING 317..324; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03023"
+129364	A0A6A4FPV0_9STRA	A0A6A4FPV0	Arginine biosynthesis bifunctional protein ArgJ, mitochondrial [Cleaved into: Arginine biosynthesis bifunctional protein ArgJ alpha chain; Arginine biosynthesis bifunctional protein ArgJ beta chain] [Includes: Glutamate N-acetyltransferase (GAT) (EC 2.3.1.35) (Ornithine acetyltransferase) (OATase) (Ornithine transacetylase); Amino-acid acetyltransferase (EC 2.3.1.1) (N-acetylglutamate synthase) (AGS)]	2.3.1.1; 2.3.1.35	BINDING 195; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03124"; BINDING 217; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03124"; BINDING 228; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03124"; BINDING 309; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03124"; BINDING 460; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03124"; BINDING 465; /ligand="substrate"; /evidence="ECO:0000256|HAMAP-Rule:MF_03124"
+129364	A0A6A4FRQ7_9STRA	A0A6A4FRQ7	Lon protease homolog, mitochondrial (EC 3.4.21.53)	3.4.21.53	BINDING 475..482; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03120, ECO:0000256|PIRSR:PIRSR001174-2"
+129364	A0A6A4FT70_9STRA	A0A6A4FT70	alpha-1,2-Mannosidase (EC 3.2.1.-)	3.2.1.-	BINDING 580; /ligand="Ca(2+)"; /ligand_id="ChEBI:CHEBI:29108"; /evidence="ECO:0000256|PIRSR:PIRSR601382-2"
+129364	A0A6A4FTF8_9STRA	A0A6A4FTF8	Endonuclease III homolog (EC 3.2.2.-) (EC 4.2.99.18) (Bifunctional DNA N-glycosylase/DNA-(apurinic or apyrimidinic site) lyase) (DNA glycosylase/AP lyase)	3.2.2.-; 4.2.99.18	BINDING 291; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 298; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 301; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"; BINDING 307; /ligand="[4Fe-4S] cluster"; /ligand_id="ChEBI:CHEBI:49883"; /evidence="ECO:0000256|HAMAP-Rule:MF_03183"
+129364	A0A6A4FXA2_9STRA	A0A6A4FXA2	SUMO-activating enzyme subunit		BINDING 26..31; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 50; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 58..61; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 74; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 119..124; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR039133-2"; BINDING 160; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"; BINDING 163; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"; BINDING 440; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"; BINDING 443; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /evidence="ECO:0000256|PIRSR:PIRSR039133-3"
+129364	A0A6A4FXC4_9STRA	A0A6A4FXC4	DNA replication ATP-dependent helicase/nuclease (EC 3.1.-.-) (EC 3.6.4.12)	3.1.-.-; 3.6.4.12	
+129364	A0A6A4FYT4_9STRA	A0A6A4FYT4	Uridine kinase (EC 2.7.1.48)	2.7.1.48	
+129364	A0A6A4G265_9STRA	A0A6A4G265	RNA cytidine acetyltransferase (EC 2.3.1.-) (18S rRNA cytosine acetyltransferase)	2.3.1.-	BINDING 287..296; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03211"; BINDING 499; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03211"; BINDING 662..664; /ligand="acetyl-CoA"; /ligand_id="ChEBI:CHEBI:57288"; /evidence="ECO:0000256|HAMAP-Rule:MF_03211"; BINDING 669..675; /ligand="acetyl-CoA"; /ligand_id="ChEBI:CHEBI:57288"; /evidence="ECO:0000256|HAMAP-Rule:MF_03211"; BINDING 770; /ligand="acetyl-CoA"; /ligand_id="ChEBI:CHEBI:57288"; /evidence="ECO:0000256|HAMAP-Rule:MF_03211"
+129364	A0A6A4G2M8_9STRA	A0A6A4G2M8	NADPH-dependent diflavin oxidoreductase 1 (EC 1.18.1.-) (NADPH-dependent FMN and FAD-containing oxidoreductase)	1.18.1.-	BINDING 17..22; /ligand="FMN"; /ligand_id="ChEBI:CHEBI:58210"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 66..69; /ligand="FMN"; /ligand_id="ChEBI:CHEBI:58210"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 104..113; /ligand="FMN"; /ligand_id="ChEBI:CHEBI:58210"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 139; /ligand="FMN"; /ligand_id="ChEBI:CHEBI:58210"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 403..406; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 437..440; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 480; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 543..544; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 549..553; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 586; /ligand="NADP(+)"; /ligand_id="ChEBI:CHEBI:58349"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"; BINDING 624; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|HAMAP-Rule:MF_03178"
+129364	A0A6A4G5P1_9STRA	A0A6A4G5P1	Serine/threonine-protein kinase RIO1 (EC 2.7.11.1)	2.7.11.1	BINDING 90; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR038147-2"; BINDING 162; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR038147-2"; BINDING 211; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR038147-3"; BINDING 223; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR038147-3"
+129364	A0A6A4G600_9STRA	A0A6A4G600	Flap endonuclease 1 (FEN-1) (EC 3.1.-.-) (Flap structure-specific endonuclease 1)	3.1.-.-	
+129364	A0A6A4G609_9STRA	A0A6A4G609	Molybdenum cofactor sulfurase (MCS) (MOS) (MoCo sulfurase) (EC 2.8.1.9) (Molybdenum cofactor sulfurtransferase)	2.8.1.9	
+129364	A0A6A4G798_9STRA	A0A6A4G798	Imidazole glycerol phosphate synthase hisHF [Includes: Glutaminase (EC 3.5.1.2); Cyclase]	3.5.1.2	BINDING 81; /ligand="L-glutamine"; /ligand_id="ChEBI:CHEBI:58359"; /note="covalent"; /evidence="ECO:0000256|PIRSR:PIRSR036936-2"; BINDING 325; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR036936-2"; BINDING 465; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR036936-2"
+129364	A0A6A4G888_9STRA	A0A6A4G888	tRNA (guanine(37)-N1)-methyltransferase (EC 2.1.1.228) (M1G-methyltransferase) (tRNA [GM37] methyltransferase) (tRNA methyltransferase 5 homolog)	2.1.1.228	BINDING 216; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03152"; BINDING 254..255; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03152"; BINDING 282..283; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03152"; BINDING 303; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03152"
+129364	Q697P7_9STRA	Q697P7	Cytochrome c oxidase subunit 1 (EC 7.1.1.9)	7.1.1.9	
+129364	Q697P8_9STRA	Q697P8	Cytochrome c oxidase subunit 1 (EC 7.1.1.9)	7.1.1.9	
+129364	A0A0U1S6R1_9STRA	A0A0U1S6R1	NADH-ubiquinone oxidoreductase chain 1 (EC 7.1.1.2)	7.1.1.2	
+129364	A0A0U1TZL8_9STRA	A0A0U1TZL8	NADH-ubiquinone oxidoreductase chain 1 (EC 7.1.1.2)	7.1.1.2	
+129364	A0A0U1U0F0_9STRA	A0A0U1U0F0	NADH-ubiquinone oxidoreductase chain 1 (EC 7.1.1.2)	7.1.1.2	
+129364	A0A0U1U0G0_9STRA	A0A0U1U0G0	NADH-ubiquinone oxidoreductase chain 1 (EC 7.1.1.2)	7.1.1.2	
+129364	A0A0U1U0H0_9STRA	A0A0U1U0H0	NADH-ubiquinone oxidoreductase chain 1 (EC 7.1.1.2)	7.1.1.2	
+129364	A0A1I9RZF1_9STRA	A0A1I9RZF1	Tubulin beta chain		
+129364	A0A1I9RZM9_9STRA	A0A1I9RZM9	NADH-ubiquinone oxidoreductase chain 1 (EC 7.1.1.2)	7.1.1.2	
+129364	A0A288Z715_9STRA	A0A288Z715	Tubulin beta chain		
+129364	A0A288Z8X1_9STRA	A0A288Z8X1	phosphopyruvate hydratase (EC 4.2.1.11)	4.2.1.11	BINDING 135; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 144; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 278; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 305; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 357..360; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 381; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"
+129364	A0A288Z8Y6_9STRA	A0A288Z8Y6	phosphopyruvate hydratase (EC 4.2.1.11)	4.2.1.11	BINDING 135; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 144; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 278; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 305; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 357..360; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"; BINDING 381; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR001400-2"
+129364	A0A288ZAR2_9STRA	A0A288ZAR2	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A2S1B799_9STRA	A0A2S1B799	Cytochrome c oxidase subunit 1 (EC 7.1.1.9)	7.1.1.9	
+129364	A0A345F7T9_9STRA	A0A345F7T9	Tubulin beta chain		
+129364	A0A6A3G0N5_9STRA	A0A6A3G0N5	3-deoxy-8-phosphooctulonate synthase (EC 2.5.1.55)	2.5.1.55	
+129364	A0A6A3G1D8_9STRA	A0A6A3G1D8	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3G2Q8_9STRA	A0A6A3G2Q8	thioredoxin-dependent peroxiredoxin (EC 1.11.1.24)	1.11.1.24	
+129364	A0A6A3G2S2_9STRA	A0A6A3G2S2	Chromosome segregation in meiosis protein 3 domain-containing protein		
+129364	A0A6A3G3P1_9STRA	A0A6A3G3P1	glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3G3R3_9STRA	A0A6A3G3R3	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3G498_9STRA	A0A6A3G498	glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3G4B6_9STRA	A0A6A3G4B6	Myosin motor domain-containing protein		
+129364	A0A6A3G4L4_9STRA	A0A6A3G4L4	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3G4V0_9STRA	A0A6A3G4V0	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3G575_9STRA	A0A6A3G575	glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3G6D6_9STRA	A0A6A3G6D6	Protein kinase domain-containing protein		BINDING 65; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU10141"
+129364	A0A6A3G6F6_9STRA	A0A6A3G6F6	V-ATPase proteolipid subunit C-like domain-containing protein		
+129364	A0A6A3G6X3_9STRA	A0A6A3G6X3	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3G8D3_9STRA	A0A6A3G8D3	alanine transaminase (EC 2.6.1.2)	2.6.1.2	
+129364	A0A6A3G8D9_9STRA	A0A6A3G8D9	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3G8N5_9STRA	A0A6A3G8N5	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3G8V6_9STRA	A0A6A3G8V6	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3G928_9STRA	A0A6A3G928	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3G9A0_9STRA	A0A6A3G9A0	Aurora kinase (EC 2.7.11.1)	2.7.11.1	BINDING 47; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR630616-2"; BINDING 97..99; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR630616-2"
+129364	A0A6A3G9D5_9STRA	A0A6A3G9D5	nitric oxide dioxygenase (EC 1.14.12.17)	1.14.12.17	
+129364	A0A6A3G9F2_9STRA	A0A6A3G9F2	Aurora kinase (EC 2.7.11.1)	2.7.11.1	BINDING 47; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR630616-2"; BINDING 97..99; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PIRSR:PIRSR630616-2"
+129364	A0A6A3G9I9_9STRA	A0A6A3G9I9	V-ATPase proteolipid subunit C-like domain-containing protein		
+129364	A0A6A3G9J8_9STRA	A0A6A3G9J8	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3G9L9_9STRA	A0A6A3G9L9	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3G9U3_9STRA	A0A6A3G9U3	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3GAG4_9STRA	A0A6A3GAG4	RxLR effector protein		
+129364	A0A6A3GAM3_9STRA	A0A6A3GAM3	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3GAM6_9STRA	A0A6A3GAM6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GB27_9STRA	A0A6A3GB27	RxLR effector protein		
+129364	A0A6A3GB36_9STRA	A0A6A3GB36	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3GBH2_9STRA	A0A6A3GBH2	glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3GBI6_9STRA	A0A6A3GBI6	Inositol oxygenase (EC 1.13.99.1) (Myo-inositol oxygenase)	1.13.99.1	
+129364	A0A6A3GBK4_9STRA	A0A6A3GBK4	arabinan endo-1,5-alpha-L-arabinosidase (EC 3.2.1.99) (Endo-1,5-alpha-L-arabinanase A)	3.2.1.99	
+129364	A0A6A3GBM1_9STRA	A0A6A3GBM1	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3GCA9_9STRA	A0A6A3GCA9	Tubulin alpha chain		
+129364	A0A6A3GD38_9STRA	A0A6A3GD38	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GDD6_9STRA	A0A6A3GDD6	Inositol oxygenase (EC 1.13.99.1) (Myo-inositol oxygenase)	1.13.99.1	
+129364	A0A6A3GE57_9STRA	A0A6A3GE57	RxLR effector protein		
+129364	A0A6A3GEG1_9STRA	A0A6A3GEG1	Glutamine synthetase (EC 6.3.1.2)	6.3.1.2	
+129364	A0A6A3GF56_9STRA	A0A6A3GF56	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3GFP1_9STRA	A0A6A3GFP1	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3GG01_9STRA	A0A6A3GG01	Tubulin alpha chain		
+129364	A0A6A3GG76_9STRA	A0A6A3GG76	Histone H4		
+129364	A0A6A3GGE2_9STRA	A0A6A3GGE2	Histone H4		
+129364	A0A6A3GGQ4_9STRA	A0A6A3GGQ4	Elicitin		
+129364	A0A6A3GGS7_9STRA	A0A6A3GGS7	Glutamine synthetase (EC 6.3.1.2)	6.3.1.2	
+129364	A0A6A3GGV3_9STRA	A0A6A3GGV3	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3GHF5_9STRA	A0A6A3GHF5	Tubulin/FtsZ GTPase domain-containing protein		
+129364	A0A6A3GIH5_9STRA	A0A6A3GIH5	RxLR effector protein		
+129364	A0A6A3GIN9_9STRA	A0A6A3GIN9	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3GIW4_9STRA	A0A6A3GIW4	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3GJQ3_9STRA	A0A6A3GJQ3	pectin lyase (EC 4.2.2.10)	4.2.2.10	
+129364	A0A6A3GK70_9STRA	A0A6A3GK70	pectin lyase (EC 4.2.2.10)	4.2.2.10	
+129364	A0A6A3GK90_9STRA	A0A6A3GK90	ATP-dependent DNA helicase (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3GKB6_9STRA	A0A6A3GKB6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GKI2_9STRA	A0A6A3GKI2	Carbonic anhydrase (EC 4.2.1.1)	4.2.1.1	
+129364	A0A6A3GKN8_9STRA	A0A6A3GKN8	RxLR effector protein		
+129364	A0A6A3GL48_9STRA	A0A6A3GL48	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3GL49_9STRA	A0A6A3GL49	ABC transporter domain-containing protein		
+129364	A0A6A3GLH4_9STRA	A0A6A3GLH4	Pterin-binding domain-containing protein		
+129364	A0A6A3GLJ3_9STRA	A0A6A3GLJ3	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3GLM0_9STRA	A0A6A3GLM0	Pterin-binding domain-containing protein		
+129364	A0A6A3GMJ9_9STRA	A0A6A3GMJ9	RxLR effector protein		
+129364	A0A6A3GMT0_9STRA	A0A6A3GMT0	Aquaporin		
+129364	A0A6A3GMY7_9STRA	A0A6A3GMY7	Histone H4		
+129364	A0A6A3GNM0_9STRA	A0A6A3GNM0	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3GNQ2_9STRA	A0A6A3GNQ2	phosphoenolpyruvate carboxykinase (ATP) (EC 4.1.1.49)	4.1.1.49	
+129364	A0A6A3GNZ7_9STRA	A0A6A3GNZ7	N-acetylgalactosaminide beta-1,3-galactosyltransferase (EC 2.4.1.122)	2.4.1.122	
+129364	A0A6A3GP35_9STRA	A0A6A3GP35	RxLR effector protein		
+129364	A0A6A3GPJ0_9STRA	A0A6A3GPJ0	DDE Tnp4 domain-containing protein		
+129364	A0A6A3GPL8_9STRA	A0A6A3GPL8	PNPLA domain-containing protein		
+129364	A0A6A3GQ16_9STRA	A0A6A3GQ16	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3GQ50_9STRA	A0A6A3GQ50	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3GQC7_9STRA	A0A6A3GQC7	Cytochrome P450		
+129364	A0A6A3GR05_9STRA	A0A6A3GR05	fructose-bisphosphate aldolase (EC 4.1.2.13)	4.1.2.13	
+129364	A0A6A3GR55_9STRA	A0A6A3GR55	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3GR61_9STRA	A0A6A3GR61	RxLR effector protein		
+129364	A0A6A3GRQ2_9STRA	A0A6A3GRQ2	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GSG5_9STRA	A0A6A3GSG5	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3GSJ5_9STRA	A0A6A3GSJ5	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3GSQ4_9STRA	A0A6A3GSQ4	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3GT28_9STRA	A0A6A3GT28	alpha-glucosidase (EC 3.2.1.20) (Maltase)	3.2.1.20	
+129364	A0A6A3GTI4_9STRA	A0A6A3GTI4	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GU58_9STRA	A0A6A3GU58	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3GU74_9STRA	A0A6A3GU74	RxLR effector protein		
+129364	A0A6A3GU87_9STRA	A0A6A3GU87	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GUD0_9STRA	A0A6A3GUD0	alpha-glucosidase (EC 3.2.1.20) (Maltase)	3.2.1.20	
+129364	A0A6A3GUJ5_9STRA	A0A6A3GUJ5	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3GUP3_9STRA	A0A6A3GUP3	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GUY7_9STRA	A0A6A3GUY7	Peroxisomal membrane protein PEX16		
+129364	A0A6A3GV57_9STRA	A0A6A3GV57	Sugar phosphate phosphatase (EC 3.1.3.-)	3.1.3.-	
+129364	A0A6A3GV59_9STRA	A0A6A3GV59	pectate lyase (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3GV70_9STRA	A0A6A3GV70	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3GVF2_9STRA	A0A6A3GVF2	ATP-dependent DNA helicase (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3GVL2_9STRA	A0A6A3GVL2	Adenylosuccinate synthetase (EC 6.3.4.4)	6.3.4.4	
+129364	A0A6A3GW29_9STRA	A0A6A3GW29	Adenylosuccinate synthetase (EC 6.3.4.4)	6.3.4.4	
+129364	A0A6A3GWF8_9STRA	A0A6A3GWF8	ATP-dependent DNA helicase (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3GWX8_9STRA	A0A6A3GWX8	ribonuclease Z (EC 3.1.26.11)	3.1.26.11	
+129364	A0A6A3GX48_9STRA	A0A6A3GX48	Elicitin		
+129364	A0A6A3GX77_9STRA	A0A6A3GX77	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3GXK9_9STRA	A0A6A3GXK9	ribonuclease Z (EC 3.1.26.11)	3.1.26.11	
+129364	A0A6A3GXQ3_9STRA	A0A6A3GXQ3	ATP-dependent DNA helicase (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3GXZ5_9STRA	A0A6A3GXZ5	Peptidyl-prolyl cis-trans isomerase (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3GZ75_9STRA	A0A6A3GZ75	pyruvate kinase (EC 2.7.1.40)	2.7.1.40	
+129364	A0A6A3GZF0_9STRA	A0A6A3GZF0	Geranylgeranyl transferase type-2 subunit alpha (EC 2.5.1.60) (Geranylgeranyl transferase type II subunit alpha)	2.5.1.60	
+129364	A0A6A3GZH0_9STRA	A0A6A3GZH0	Intradiol ring-cleavage dioxygenases domain-containing protein		
+129364	A0A6A3H019_9STRA	A0A6A3H019	Adenylosuccinate synthetase (EC 6.3.4.4)	6.3.4.4	
+129364	A0A6A3H0B8_9STRA	A0A6A3H0B8	Sulfhydryl oxidase (EC 1.8.3.2)	1.8.3.2	
+129364	A0A6A3H0G6_9STRA	A0A6A3H0G6	Plasma membrane ATPase (EC 7.1.2.1)	7.1.2.1	
+129364	A0A6A3H0R7_9STRA	A0A6A3H0R7	Glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3H0U7_9STRA	A0A6A3H0U7	General transcription factor IIH subunit		
+129364	A0A6A3H0X6_9STRA	A0A6A3H0X6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3H1B2_9STRA	A0A6A3H1B2	Plasma membrane ATPase (EC 7.1.2.1)	7.1.2.1	
+129364	A0A6A3H1N3_9STRA	A0A6A3H1N3	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3H1T8_9STRA	A0A6A3H1T8	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3H1U4_9STRA	A0A6A3H1U4	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39) (Endo-1,3-beta-glucanase btgC) (Laminarinase btgC)	3.2.1.39	
+129364	A0A6A3H1W6_9STRA	A0A6A3H1W6	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3H245_9STRA	A0A6A3H245	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3H275_9STRA	A0A6A3H275	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3H280_9STRA	A0A6A3H280	Sugar phosphate phosphatase (EC 3.1.3.-)	3.1.3.-	
+129364	A0A6A3H2U0_9STRA	A0A6A3H2U0	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3H2W4_9STRA	A0A6A3H2W4	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3H470_9STRA	A0A6A3H470	acetyl-CoA C-acyltransferase (EC 2.3.1.16)	2.3.1.16	
+129364	A0A6A3H494_9STRA	A0A6A3H494	pectin lyase (EC 4.2.2.10)	4.2.2.10	
+129364	A0A6A3H521_9STRA	A0A6A3H521	pyruvate, phosphate dikinase (EC 2.7.9.1)	2.7.9.1	BINDING 572; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 631; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 762; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR000853-3"; BINDING 762; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 783; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 784; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 785; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 786; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR000853-3"; BINDING 786; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"
+129364	A0A6A3H5N9_9STRA	A0A6A3H5N9	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3H5T5_9STRA	A0A6A3H5T5	Pyruvate, phosphate dikinase (EC 2.7.9.1)	2.7.9.1	BINDING 572; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 631; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 762; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR000853-3"; BINDING 762; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 783; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 784; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 785; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"; BINDING 786; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR000853-3"; BINDING 786; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR000853-2"
+129364	A0A6A3H5Z9_9STRA	A0A6A3H5Z9	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3H630_9STRA	A0A6A3H630	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3H6H0_9STRA	A0A6A3H6H0	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3H6H4_9STRA	A0A6A3H6H4	cellulose 1,4-beta-cellobiosidase (non-reducing end) (EC 3.2.1.91)	3.2.1.91	
+129364	A0A6A3H6K1_9STRA	A0A6A3H6K1	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3H732_9STRA	A0A6A3H732	Putative nuclease HARBI1 (Harbinger transposase-derived nuclease)		
+129364	A0A6A3H7G5_9STRA	A0A6A3H7G5	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3H7G7_9STRA	A0A6A3H7G7	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3H7R5_9STRA	A0A6A3H7R5	N-acyl-aliphatic-L-amino acid amidohydrolase (EC 3.5.1.14) (N-acyl-L-amino-acid amidohydrolase)	3.5.1.14	BINDING 85; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 118; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 118; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 153; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 181; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 397; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"
+129364	A0A6A3H7T5_9STRA	A0A6A3H7T5	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3H879_9STRA	A0A6A3H879	Trimethylguanosine synthase		
+129364	A0A6A3H8E9_9STRA	A0A6A3H8E9	valine--tRNA ligase (EC 6.1.1.9) (Valyl-tRNA synthetase)	6.1.1.9	
+129364	A0A6A3H8G4_9STRA	A0A6A3H8G4	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3H8I7_9STRA	A0A6A3H8I7	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3H8M5_9STRA	A0A6A3H8M5	Peptidyl-prolyl cis-trans isomerase (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3H8V0_9STRA	A0A6A3H8V0	Putative nuclease HARBI1 (Harbinger transposase-derived nuclease)		
+129364	A0A6A3H8V4_9STRA	A0A6A3H8V4	Purple acid phosphatase (EC 3.1.3.2)	3.1.3.2	
+129364	A0A6A3H8W9_9STRA	A0A6A3H8W9	ATP-dependent DNA helicase (EC 3.6.4.12)	3.6.4.12	
+129364	A0A6A3H8Y2_9STRA	A0A6A3H8Y2	valine--tRNA ligase (EC 6.1.1.9) (Valyl-tRNA synthetase)	6.1.1.9	
+129364	A0A6A3H909_9STRA	A0A6A3H909	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3H9G1_9STRA	A0A6A3H9G1	Peptidase S1 domain-containing protein		
+129364	A0A6A3H9L6_9STRA	A0A6A3H9L6	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3H9P5_9STRA	A0A6A3H9P5	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HA06_9STRA	A0A6A3HA06	EF-hand domain-containing protein		
+129364	A0A6A3HA53_9STRA	A0A6A3HA53	glyceraldehyde-3-phosphate dehydrogenase (phosphorylating) (EC 1.2.1.12)	1.2.1.12	
+129364	A0A6A3HAA6_9STRA	A0A6A3HAA6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HAT3_9STRA	A0A6A3HAT3	Choline dehydrogenase (EC 1.1.99.1)	1.1.99.1	BINDING 115; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"; BINDING 123..126; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"; BINDING 251; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"
+129364	A0A6A3HAX6_9STRA	A0A6A3HAX6	Peptidase A2 domain-containing protein		
+129364	A0A6A3HBC0_9STRA	A0A6A3HBC0	Adenylate kinase isoenzyme 6 homolog (AK6) (EC 2.7.4.3) (Dual activity adenylate kinase/ATPase) (AK/ATPase)	2.7.4.3	BINDING 14..19; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03173"; BINDING 41; /ligand="AMP"; /ligand_id="ChEBI:CHEBI:456215"; /evidence="ECO:0000256|HAMAP-Rule:MF_03173"; BINDING 81; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03173"; BINDING 107; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03173"; BINDING 111; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03173"
+129364	A0A6A3HBZ8_9STRA	A0A6A3HBZ8	ADP/ATP translocase		
+129364	A0A6A3HC37_9STRA	A0A6A3HC37	Polygalacturonase		
+129364	A0A6A3HC97_9STRA	A0A6A3HC97	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HCV6_9STRA	A0A6A3HCV6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HCZ2_9STRA	A0A6A3HCZ2	Histone H4		
+129364	A0A6A3HD75_9STRA	A0A6A3HD75	GH10 domain-containing protein		
+129364	A0A6A3HDB2_9STRA	A0A6A3HDB2	Cytochrome P450		
+129364	A0A6A3HDQ1_9STRA	A0A6A3HDQ1	Elicitin		
+129364	A0A6A3HDQ6_9STRA	A0A6A3HDQ6	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3HDU7_9STRA	A0A6A3HDU7	RNA-directed DNA polymerase (EC 2.7.7.49)	2.7.7.49	
+129364	A0A6A3HDV6_9STRA	A0A6A3HDV6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HDX1_9STRA	A0A6A3HDX1	Apple domain-containing protein		
+129364	A0A6A3HDY9_9STRA	A0A6A3HDY9	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HEL1_9STRA	A0A6A3HEL1	Pre-mRNA-splicing factor		
+129364	A0A6A3HEX0_9STRA	A0A6A3HEX0	Nuclear cap-binding protein subunit 2 (20 kDa nuclear cap-binding protein)		
+129364	A0A6A3HFC8_9STRA	A0A6A3HFC8	Choline dehydrogenase (EC 1.1.99.1)	1.1.99.1	BINDING 115; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"; BINDING 123..126; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"; BINDING 251; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"
+129364	A0A6A3HFD0_9STRA	A0A6A3HFD0	2-amino-4-hydroxy-6-hydroxymethyldihydropteridine diphosphokinase (EC 2.7.6.3)	2.7.6.3	
+129364	A0A6A3HFM7_9STRA	A0A6A3HFM7	Elicitin		
+129364	A0A6A3HFX4_9STRA	A0A6A3HFX4	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3HFY4_9STRA	A0A6A3HFY4	Histone H4		
+129364	A0A6A3HGK7_9STRA	A0A6A3HGK7	Alkaline phosphatase (EC 3.1.3.1)	3.1.3.1	BINDING 51; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 51; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 146; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 148; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 281; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 286; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 290; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 328; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 329; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"; BINDING 449; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR601952-2"
+129364	A0A6A3HGU8_9STRA	A0A6A3HGU8	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HGZ8_9STRA	A0A6A3HGZ8	RxLR effector protein		
+129364	A0A6A3HH11_9STRA	A0A6A3HH11	proline--tRNA ligase (EC 6.1.1.15) (Prolyl-tRNA synthetase)	6.1.1.15	
+129364	A0A6A3HH25_9STRA	A0A6A3HH25	ABC transmembrane type-1 domain-containing protein		
+129364	A0A6A3HHX5_9STRA	A0A6A3HHX5	Peptidase C1A papain C-terminal domain-containing protein		
+129364	A0A6A3HHY1_9STRA	A0A6A3HHY1	N-acyl-aliphatic-L-amino acid amidohydrolase (EC 3.5.1.14) (N-acyl-L-amino-acid amidohydrolase)	3.5.1.14	BINDING 102; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 135; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 135; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 170; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 198; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 414; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"
+129364	A0A6A3HI23_9STRA	A0A6A3HI23	ABC transporter domain-containing protein		
+129364	A0A6A3HIA1_9STRA	A0A6A3HIA1	Nuclear cap-binding protein subunit 2 (20 kDa nuclear cap-binding protein)		
+129364	A0A6A3HJ59_9STRA	A0A6A3HJ59	ABC transporter domain-containing protein		
+129364	A0A6A3HJA4_9STRA	A0A6A3HJA4	Elicitin		
+129364	A0A6A3HJP2_9STRA	A0A6A3HJP2	Globin family profile domain-containing protein		
+129364	A0A6A3HJP6_9STRA	A0A6A3HJP6	Amino acid transporter		
+129364	A0A6A3HJR1_9STRA	A0A6A3HJR1	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HJY6_9STRA	A0A6A3HJY6	RNA-directed DNA polymerase (EC 2.7.7.49)	2.7.7.49	
+129364	A0A6A3HKD2_9STRA	A0A6A3HKD2	Eukaryotic translation initiation factor 3 subunit J (eIF3j)		
+129364	A0A6A3HKU6_9STRA	A0A6A3HKU6	AAA+ ATPase domain-containing protein		
+129364	A0A6A3HL07_9STRA	A0A6A3HL07	ABC transporter domain-containing protein		
+129364	A0A6A3HL81_9STRA	A0A6A3HL81	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HLD6_9STRA	A0A6A3HLD6	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HLT2_9STRA	A0A6A3HLT2	Fucosyltransferase (EC 2.4.1.-)	2.4.1.-	
+129364	A0A6A3HLW5_9STRA	A0A6A3HLW5	Multicopper oxidase		
+129364	A0A6A3HLZ5_9STRA	A0A6A3HLZ5	arabinogalactan endo-beta-1,4-galactanase (EC 3.2.1.89)	3.2.1.89	
+129364	A0A6A3HM09_9STRA	A0A6A3HM09	pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3HM94_9STRA	A0A6A3HM94	Elicitin		
+129364	A0A6A3HML6_9STRA	A0A6A3HML6	Phosphatidate cytidylyltransferase (EC 2.7.7.41)	2.7.7.41	
+129364	A0A6A3HMM4_9STRA	A0A6A3HMM4	Acyl-coenzyme A oxidase		BINDING 102; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000168-2"; BINDING 141; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000168-2"
+129364	A0A6A3HMT4_9STRA	A0A6A3HMT4	beta-glucosidase (EC 3.2.1.21)	3.2.1.21	
+129364	A0A6A3HMW8_9STRA	A0A6A3HMW8	Tubulin/FtsZ GTPase domain-containing protein		
+129364	A0A6A3HMZ2_9STRA	A0A6A3HMZ2	ABC transporter domain-containing protein		
+129364	A0A6A3HN15_9STRA	A0A6A3HN15	N-acyl-aliphatic-L-amino acid amidohydrolase (EC 3.5.1.14) (N-acyl-L-amino-acid amidohydrolase)	3.5.1.14	BINDING 99; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 132; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 132; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 167; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 195; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="1"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"; BINDING 410; /ligand="Zn(2+)"; /ligand_id="ChEBI:CHEBI:29105"; /ligand_label="2"; /evidence="ECO:0000256|PIRSR:PIRSR036696-2"
+129364	A0A6A3HNI4_9STRA	A0A6A3HNI4	Expansin-like EG45 domain-containing protein		
+129364	A0A6A3HNN7_9STRA	A0A6A3HNN7	Carbonic anhydrase (EC 4.2.1.1)	4.2.1.1	
+129364	A0A6A3HP61_9STRA	A0A6A3HP61	Ribonuclease T2 family protein		
+129364	A0A6A3HPL8_9STRA	A0A6A3HPL8	Cation/H+ exchanger domain-containing protein		
+129364	A0A6A3HPQ0_9STRA	A0A6A3HPQ0	Tubulin alpha chain		
+129364	A0A6A3HPR9_9STRA	A0A6A3HPR9	DDE Tnp4 domain-containing protein		
+129364	A0A6A3HPW2_9STRA	A0A6A3HPW2	Pre-mRNA-splicing factor 38		
+129364	A0A6A3HPZ2_9STRA	A0A6A3HPZ2	Pre-mRNA-splicing factor 38		
+129364	A0A6A3HQ01_9STRA	A0A6A3HQ01	Amino acid transporter		
+129364	A0A6A3HQ06_9STRA	A0A6A3HQ06	Expansin-like EG45 domain-containing protein		
+129364	A0A6A3HQ27_9STRA	A0A6A3HQ27	7-dehydrocholesterol reductase (EC 1.3.1.21) (Sterol Delta(7)-reductase)	1.3.1.21	
+129364	A0A6A3HQ55_9STRA	A0A6A3HQ55	RxLR effector protein		
+129364	A0A6A3HQB9_9STRA	A0A6A3HQB9	Alkaline ceramidase 3		
+129364	A0A6A3HQF7_9STRA	A0A6A3HQF7	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HQH5_9STRA	A0A6A3HQH5	Probable methyltransferase BMT2 homolog (EC 2.1.1.-)	2.1.1.-	BINDING 138; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03044"; BINDING 156; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|HAMAP-Rule:MF_03044"
+129364	A0A6A3HR21_9STRA	A0A6A3HR21	Triosephosphate isomerase (EC 5.3.1.1)	5.3.1.1	
+129364	A0A6A3HRE7_9STRA	A0A6A3HRE7	Peptidase C1A papain C-terminal domain-containing protein		
+129364	A0A6A3HRG0_9STRA	A0A6A3HRG0	Tubulin alpha chain		
+129364	A0A6A3HRH8_9STRA	A0A6A3HRH8	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HRI5_9STRA	A0A6A3HRI5	Retrovirus-related Pol polyprotein from transposon TNT 1-94		
+129364	A0A6A3HRT2_9STRA	A0A6A3HRT2	Luminal-binding protein 5		
+129364	A0A6A3HRU3_9STRA	A0A6A3HRU3	3-deoxy-8-phosphooctulonate synthase (EC 2.5.1.55)	2.5.1.55	
+129364	A0A6A3HS76_9STRA	A0A6A3HS76	Tubulin/FtsZ GTPase domain-containing protein		
+129364	A0A6A3HS98_9STRA	A0A6A3HS98	Alkaline ceramidase 3		
+129364	A0A6A3HSH0_9STRA	A0A6A3HSH0	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HSR5_9STRA	A0A6A3HSR5	PIPK domain-containing protein		
+129364	A0A6A3HSU2_9STRA	A0A6A3HSU2	Amino acid transporter		
+129364	A0A6A3HT89_9STRA	A0A6A3HT89	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HT90_9STRA	A0A6A3HT90	pectin lyase (EC 4.2.2.10)	4.2.2.10	
+129364	A0A6A3HTI8_9STRA	A0A6A3HTI8	Histone H4		
+129364	A0A6A3HTN1_9STRA	A0A6A3HTN1	7-dehydrocholesterol reductase (EC 1.3.1.21) (Sterol Delta(7)-reductase)	1.3.1.21	
+129364	A0A6A3HTQ1_9STRA	A0A6A3HTQ1	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3HTX8_9STRA	A0A6A3HTX8	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HU28_9STRA	A0A6A3HU28	X8 domain-containing protein		
+129364	A0A6A3HU32_9STRA	A0A6A3HU32	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3HUE9_9STRA	A0A6A3HUE9	Palmitoyltransferase (EC 2.3.1.225)	2.3.1.225	
+129364	A0A6A3HUG0_9STRA	A0A6A3HUG0	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HUJ1_9STRA	A0A6A3HUJ1	glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3HVC9_9STRA	A0A6A3HVC9	Phosphatidate cytidylyltransferase (EC 2.7.7.41)	2.7.7.41	
+129364	A0A6A3HVU3_9STRA	A0A6A3HVU3	Reverse transcriptase		
+129364	A0A6A3HW64_9STRA	A0A6A3HW64	DUF4203 domain-containing protein		
+129364	A0A6A3HWF1_9STRA	A0A6A3HWF1	RxLR effector protein		
+129364	A0A6A3HWK1_9STRA	A0A6A3HWK1	pectin lyase (EC 4.2.2.10)	4.2.2.10	
+129364	A0A6A3HWP4_9STRA	A0A6A3HWP4	arabinan endo-1,5-alpha-L-arabinosidase (EC 3.2.1.99) (Endo-1,5-alpha-L-arabinanase A)	3.2.1.99	
+129364	A0A6A3HWS1_9STRA	A0A6A3HWS1	6,7-dimethyl-8-ribityllumazine synthase (DMRL synthase) (EC 2.5.1.78)	2.5.1.78	
+129364	A0A6A3HWT2_9STRA	A0A6A3HWT2	Queuosine 5'-phosphate N-glycosylase/hydrolase (EC 3.2.2.-) (Queuosine-nucleotide N-glycosylase/hydrolase)	3.2.2.-	
+129364	A0A6A3HWU0_9STRA	A0A6A3HWU0	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3HWV4_9STRA	A0A6A3HWV4	Extradiol ring-cleavage dioxygenase class III enzyme subunit B domain-containing protein		
+129364	A0A6A3HWW1_9STRA	A0A6A3HWW1	Eukaryotic translation initiation factor 3 subunit A (eIF3a) (Eukaryotic translation initiation factor 3 subunit 10)		
+129364	A0A6A3HWZ4_9STRA	A0A6A3HWZ4	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3HX10_9STRA	A0A6A3HX10	Amino acid transporter		
+129364	A0A6A3HX54_9STRA	A0A6A3HX54	glucose-6-phosphate 1-epimerase (EC 5.1.3.15)	5.1.3.15	
+129364	A0A6A3HXA8_9STRA	A0A6A3HXA8	X8 domain-containing protein		
+129364	A0A6A3HXF9_9STRA	A0A6A3HXF9	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3HXG7_9STRA	A0A6A3HXG7	non-specific serine/threonine protein kinase (EC 2.7.11.1)	2.7.11.1	BINDING 400; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU10141"
+129364	A0A6A3HXX6_9STRA	A0A6A3HXX6	Obg-like ATPase 1		BINDING 29..34; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03167"; BINDING 227; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|HAMAP-Rule:MF_03167"
+129364	A0A6A3HY63_9STRA	A0A6A3HY63	Histone H4		
+129364	A0A6A3HYN5_9STRA	A0A6A3HYN5	sphingomyelin phosphodiesterase (EC 3.1.4.12)	3.1.4.12	
+129364	A0A6A3HYP8_9STRA	A0A6A3HYP8	dihydrolipoyllysine-residue succinyltransferase (EC 2.3.1.61) (2-oxoglutarate dehydrogenase complex component E2)	2.3.1.61	
+129364	A0A6A3HYY4_9STRA	A0A6A3HYY4	ABC transporter G family member 31		
+129364	A0A6A3HZ62_9STRA	A0A6A3HZ62	Elicitin		
+129364	A0A6A3HZZ5_9STRA	A0A6A3HZZ5	Elicitin		
+129364	A0A6A3I019_9STRA	A0A6A3I019	hydroxyacylglutathione hydrolase (EC 3.1.2.6) (Glyoxalase II)	3.1.2.6	
+129364	A0A6A3I0C7_9STRA	A0A6A3I0C7	peptidylprolyl isomerase (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3I0D6_9STRA	A0A6A3I0D6	Glucose-6-phosphate isomerase (EC 5.3.1.9)	5.3.1.9	
+129364	A0A6A3I0J9_9STRA	A0A6A3I0J9	Multidrug and toxin extrusion protein 1		
+129364	A0A6A3I0N5_9STRA	A0A6A3I0N5	Ubiquinone biosynthesis protein		
+129364	A0A6A3I0V1_9STRA	A0A6A3I0V1	phospholipase D (EC 3.1.4.4)	3.1.4.4	
+129364	A0A6A3I0X7_9STRA	A0A6A3I0X7	Histone H4		
+129364	A0A6A3I118_9STRA	A0A6A3I118	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3I181_9STRA	A0A6A3I181	Elicitin		
+129364	A0A6A3I1F4_9STRA	A0A6A3I1F4	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3I1H8_9STRA	A0A6A3I1H8	RxLR effector protein		
+129364	A0A6A3I1S2_9STRA	A0A6A3I1S2	EF-hand domain-containing protein		
+129364	A0A6A3I1V2_9STRA	A0A6A3I1V2	Diacylglycerol kinase (DAG kinase) (EC 2.7.1.107)	2.7.1.107	
+129364	A0A6A3I212_9STRA	A0A6A3I212	RxLR effector protein		
+129364	A0A6A3I2B2_9STRA	A0A6A3I2B2	Multicopper oxidase		
+129364	A0A6A3I2F3_9STRA	A0A6A3I2F3	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3I2F5_9STRA	A0A6A3I2F5	medium-chain acyl-CoA dehydrogenase (EC 1.3.8.7)	1.3.8.7	
+129364	A0A6A3I2K7_9STRA	A0A6A3I2K7	Proliferating cell nuclear antigen		
+129364	A0A6A3I2Q2_9STRA	A0A6A3I2Q2	Phospholipase A2		
+129364	A0A6A3I2V2_9STRA	A0A6A3I2V2	GTP 3',8-cyclase (EC 4.1.99.22)	4.1.99.22	
+129364	A0A6A3I2V9_9STRA	A0A6A3I2V9	RxLR effector protein		
+129364	A0A6A3I377_9STRA	A0A6A3I377	Nodulin-like domain-containing protein		
+129364	A0A6A3I3G4_9STRA	A0A6A3I3G4	Mediator of RNA polymerase II transcription subunit 7		
+129364	A0A6A3I3L9_9STRA	A0A6A3I3L9	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3I3M1_9STRA	A0A6A3I3M1	Acetohydroxy-acid reductoisomerase (Alpha-keto-beta-hydroxylacyl reductoisomerase)		BINDING 255; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000256|PROSITE-ProRule:PRU01198"; BINDING 255; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PROSITE-ProRule:PRU01198"; BINDING 259; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="1"; /evidence="ECO:0000256|PROSITE-ProRule:PRU01198"; BINDING 424; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000256|PROSITE-ProRule:PRU01198"; BINDING 428; /ligand="Mg(2+)"; /ligand_id="ChEBI:CHEBI:18420"; /ligand_label="2"; /evidence="ECO:0000256|PROSITE-ProRule:PRU01198"; BINDING 450; /ligand="substrate"; /evidence="ECO:0000256|PROSITE-ProRule:PRU01198"
+129364	A0A6A3I3W8_9STRA	A0A6A3I3W8	Nodulin-like domain-containing protein		
+129364	A0A6A3I420_9STRA	A0A6A3I420	endo-polygalacturonase (EC 3.2.1.15)	3.2.1.15	
+129364	A0A6A3I436_9STRA	A0A6A3I436	arabinogalactan endo-beta-1,4-galactanase (EC 3.2.1.89)	3.2.1.89	
+129364	A0A6A3I455_9STRA	A0A6A3I455	EF-hand domain-containing protein		
+129364	A0A6A3I4E6_9STRA	A0A6A3I4E6	Carboxypeptidase (EC 3.4.16.-)	3.4.16.-	
+129364	A0A6A3I4K3_9STRA	A0A6A3I4K3	riboflavin kinase (EC 2.7.1.26)	2.7.1.26	
+129364	A0A6A3I4P2_9STRA	A0A6A3I4P2	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39)	3.2.1.39	
+129364	A0A6A3I4Y7_9STRA	A0A6A3I4Y7	ubiquitinyl hydrolase 1 (EC 3.4.19.12)	3.4.19.12	
+129364	A0A6A3I5B5_9STRA	A0A6A3I5B5	RxLR effector protein		
+129364	A0A6A3I5N3_9STRA	A0A6A3I5N3	Peptidyl-prolyl cis-trans isomerase (PPIase) (EC 5.2.1.8)	5.2.1.8	
+129364	A0A6A3I5N5_9STRA	A0A6A3I5N5	Man1/Src1-like C-terminal domain-containing protein		
+129364	A0A6A3I5W6_9STRA	A0A6A3I5W6	Kinesin-like protein		
+129364	A0A6A3I5X0_9STRA	A0A6A3I5X0	Kinesin motor domain-containing protein		BINDING 156..163; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU00283"
+129364	A0A6A3I618_9STRA	A0A6A3I618	[histone H3]-trimethyl-L-lysine(4) demethylase (EC 1.14.11.67)	1.14.11.67	
+129364	A0A6A3I663_9STRA	A0A6A3I663	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3I6E5_9STRA	A0A6A3I6E5	Nucleolar protein 58		
+129364	A0A6A3I6W3_9STRA	A0A6A3I6W3	phosphoglycerate dehydrogenase (EC 1.1.1.95)	1.1.1.95	
+129364	A0A6A3I736_9STRA	A0A6A3I736	Elongation factor Tu		
+129364	A0A6A3I740_9STRA	A0A6A3I740	HECT-type E3 ubiquitin transferase (EC 2.3.2.26)	2.3.2.26	
+129364	A0A6A3I7I8_9STRA	A0A6A3I7I8	Fucosyltransferase (EC 2.4.1.-)	2.4.1.-	
+129364	A0A6A3I7T0_9STRA	A0A6A3I7T0	arabinan endo-1,5-alpha-L-arabinosidase (EC 3.2.1.99) (Endo-1,5-alpha-L-arabinanase A)	3.2.1.99	
+129364	A0A6A3I842_9STRA	A0A6A3I842	Digestive organ expansion factor		
+129364	A0A6A3I850_9STRA	A0A6A3I850	Kinesin-like protein		BINDING 96..103; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU00283"
+129364	A0A6A3I898_9STRA	A0A6A3I898	RxLR effector protein		
+129364	A0A6A3I8K7_9STRA	A0A6A3I8K7	DNA mismatch repair protein		
+129364	A0A6A3I8Q4_9STRA	A0A6A3I8Q4	Mediator of RNA polymerase II transcription subunit 4 (Mediator complex subunit 4)		
+129364	A0A6A3I951_9STRA	A0A6A3I951	Proteasome subunit alpha type		
+129364	A0A6A3I977_9STRA	A0A6A3I977	glutamate decarboxylase (EC 4.1.1.15)	4.1.1.15	
+129364	A0A6A3I992_9STRA	A0A6A3I992	Histone-lysine N-methyltransferase, H3 lysine-79 specific (EC 2.1.1.360) (Histone H3-K79 methyltransferase)	2.1.1.360	
+129364	A0A6A3I9F4_9STRA	A0A6A3I9F4	Apple domain-containing protein		
+129364	A0A6A3I9J9_9STRA	A0A6A3I9J9	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3I9K5_9STRA	A0A6A3I9K5	diphthine methyl ester synthase (EC 2.1.1.314)	2.1.1.314	BINDING 10; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|PIRSR:PIRSR036432-1"; BINDING 85; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|PIRSR:PIRSR036432-1"; BINDING 113..114; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|PIRSR:PIRSR036432-1"; BINDING 164; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|PIRSR:PIRSR036432-1"; BINDING 222; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|PIRSR:PIRSR036432-1"; BINDING 247; /ligand="S-adenosyl-L-methionine"; /ligand_id="ChEBI:CHEBI:59789"; /evidence="ECO:0000256|PIRSR:PIRSR036432-1"
+129364	A0A6A3I9M2_9STRA	A0A6A3I9M2	V-type proton ATPase proteolipid subunit		
+129364	A0A6A3I9N9_9STRA	A0A6A3I9N9	RNA-directed DNA polymerase (EC 2.7.7.49)	2.7.7.49	
+129364	A0A6A3I9W1_9STRA	A0A6A3I9W1	Copper transport protein		
+129364	A0A6A3I9W4_9STRA	A0A6A3I9W4	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3I9Y9_9STRA	A0A6A3I9Y9	arabinogalactan endo-beta-1,4-galactanase (EC 3.2.1.89)	3.2.1.89	
+129364	A0A6A3IA17_9STRA	A0A6A3IA17	Peroxisomal membrane protein PEX16		
+129364	A0A6A3IAA0_9STRA	A0A6A3IAA0	Peroxisomal membrane protein PEX16		
+129364	A0A6A3IAD1_9STRA	A0A6A3IAD1	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3IAG9_9STRA	A0A6A3IAG9	Pantothenate kinase		
+129364	A0A6A3IAJ6_9STRA	A0A6A3IAJ6	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3IAV9_9STRA	A0A6A3IAV9	Histone H4		
+129364	A0A6A3IAW4_9STRA	A0A6A3IAW4	Amine oxidase (EC 1.4.3.-)	1.4.3.-	
+129364	A0A6A3IAX5_9STRA	A0A6A3IAX5	Protein kinase domain-containing protein		BINDING 444; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU10141"
+129364	A0A6A3IB29_9STRA	A0A6A3IB29	Nucleotide-diphospho-sugar transferase		
+129364	A0A6A3IB62_9STRA	A0A6A3IB62	Peroxisomal membrane protein PEX16		
+129364	A0A6A3IB69_9STRA	A0A6A3IB69	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3IBE5_9STRA	A0A6A3IBE5	Hexosyltransferase (EC 2.4.1.-)	2.4.1.-	
+129364	A0A6A3IBI7_9STRA	A0A6A3IBI7	RxLR effector protein		
+129364	A0A6A3IBJ5_9STRA	A0A6A3IBJ5	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3IBL2_9STRA	A0A6A3IBL2	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3ICD1_9STRA	A0A6A3ICD1	M7GpppX diphosphatase		BINDING 170; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR028973-2"; BINDING 180; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR028973-2"; BINDING 200; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR028973-2"; BINDING 202; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR028973-2"; BINDING 264..275; /ligand="substrate"; /evidence="ECO:0000256|PIRSR:PIRSR028973-2"
+129364	A0A6A3ICF3_9STRA	A0A6A3ICF3	glycerophosphodiester phosphodiesterase (EC 3.1.4.46)	3.1.4.46	
+129364	A0A6A3ICN3_9STRA	A0A6A3ICN3	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3ICU1_9STRA	A0A6A3ICU1	non-specific serine/threonine protein kinase (EC 2.7.11.1)	2.7.11.1	BINDING 40; /ligand="ATP"; /ligand_id="ChEBI:CHEBI:30616"; /evidence="ECO:0000256|PROSITE-ProRule:PRU10141"
+129364	A0A6A3ICX1_9STRA	A0A6A3ICX1	Mannosyltransferase (EC 2.4.1.-)	2.4.1.-	
+129364	A0A6A3ID01_9STRA	A0A6A3ID01	Apple domain-containing protein		BINDING 246; /ligand="FAD"; /ligand_id="ChEBI:CHEBI:57692"; /evidence="ECO:0000256|PIRSR:PIRSR000137-2"
+129364	A0A6A3ID20_9STRA	A0A6A3ID20	Kinetochore protein SPC25		
+129364	A0A6A3IDI5_9STRA	A0A6A3IDI5	Dihydrolipoamide acetyltransferase component of pyruvate dehydrogenase complex (EC 2.3.1.-)	2.3.1.-	
+129364	A0A6A3IDQ0_9STRA	A0A6A3IDQ0	Protein kinase domain-containing protein		
+129364	A0A6A3IDR2_9STRA	A0A6A3IDR2	HECT-type E3 ubiquitin transferase (EC 2.3.2.26)	2.3.2.26	
+129364	A0A6A3IDS0_9STRA	A0A6A3IDS0	Acylamino-acid-releasing enzyme (EC 3.4.19.1)	3.4.19.1	
+129364	A0A6A3IDT4_9STRA	A0A6A3IDT4	Pectinesterase (EC 3.1.1.11)	3.1.1.11	
+129364	A0A6A3IDW0_9STRA	A0A6A3IDW0	glucan endo-1,3-beta-D-glucosidase (EC 3.2.1.39) (Endo-1,3-beta-glucanase btgC) (Laminarinase btgC)	3.2.1.39	
+129364	A0A6A3IDZ8_9STRA	A0A6A3IDZ8	Multidrug and toxin extrusion protein 1		
+129364	A0A6A3IE31_9STRA	A0A6A3IE31	glucose-6-phosphate 1-epimerase (EC 5.1.3.15)	5.1.3.15	
+129364	A0A6A3IED0_9STRA	A0A6A3IED0	Probable pectate lyase F (EC 4.2.2.2)	4.2.2.2	
+129364	A0A6A3IEI3_9STRA	A0A6A3IEI3	dolichol kinase (EC 2.7.1.108)	2.7.1.108	
+129364	A0A6A3IEV2_9STRA	A0A6A3IEV2	alpha-1,2-Mannosidase (EC 3.2.1.-)	3.2.1.-	BINDING 526; /ligand="Ca(2+)"; /ligand_id="ChEBI:CHEBI:29108"; /evidence="ECO:0000256|PIRSR:PIRSR601382-2"
+129364	A0A6A3IEW4_9STRA	A0A6A3IEW4	SCP domain-containing protein		
+129364	A0A6A3IEY8_9STRA	A0A6A3IEY8	Elicitin		
+129364	A0A6A3IFD5_9STRA	A0A6A3IFD5	RxLR effector protein		

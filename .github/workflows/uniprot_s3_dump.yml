@@ -31,8 +31,8 @@ jobs:
           poetry add boto3
           poetry add aws
       
-      - name: Fetch data from Uniprot API
-        run: poetry run kg get-via-api -a uniprot
+      # - name: Fetch data from Uniprot API
+      #   run: poetry run kg get-via-api -a uniprot
       
       - name: Upload to S3
         uses: aws-actions/configure-aws-credentials@v1

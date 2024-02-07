@@ -33,11 +33,11 @@ jobs:
       #   run: kg get-via-api -a uniprot
       
       - name: Upload to S3
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Sync files to S3 bucket
         run: |
-          aws s3 sync data/raw/uniprot/test s3://${{ secrets.AWS_BUCKET_NAME }} --delete
+          aws s3 sync data/raw/uniprot/s3 s3://${{ secrets.AWS_BUCKET_NAME }} --delete

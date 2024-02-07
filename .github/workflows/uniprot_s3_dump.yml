@@ -1,1 +1,6 @@
+name: Uniprot to S3
 
+on:
+#   schedule:
+#     - cron: '0 0 1 * *' # Runs on the 1st of every month at midnight
+  workflow_dispatch: # Allows manual triggering

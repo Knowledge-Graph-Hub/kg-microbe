@@ -41,3 +41,4 @@ jobs:
       - name: Sync files to S3 bucket
         run: |
           aws s3 sync data/raw/uniprot/s3 s3://${{ secrets.AWS_BUCKET_NAME }} --delete
+

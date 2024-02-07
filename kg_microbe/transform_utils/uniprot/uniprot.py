@@ -25,7 +25,10 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.transform_utils.constants import (
     ORGANISM_TO_ENZYME_EDGE,
     CHEMICAL_TO_ENZYME_EDGE,
-    ENZYME_CATEGORY
+    ENZYME_CATEGORY,
+    UNIPROT_GENOME_FEATURES,
+    UNIPROT_PREFIX,
+    NCBITAXON_PREFIX
 )
 
 class UniprotTransform(Transform):
@@ -34,7 +37,7 @@ class UniprotTransform(Transform):
 
         self.__enz_data = {}
 
-        source_name = "uniprot_genome_features"
+        source_name = UNIPROT_GENOME_FEATURES
         super().__init__(source_name, input_dir, output_dir)
         
 
@@ -148,9 +151,9 @@ class UniprotTransform(Transform):
             if organism_id:
 
                 edges_data_to_write = [
-                                'NCBITaxon:'+str(organism_id),
+                                NCBITAXON_PREFIX+str(organism_id),
                                 ORGANISM_TO_ENZYME_EDGE,
-                                'Uniprot'+':'+self.__enz_data['id'],
+                                UNIPROT_PREFIX+':'+self.__enz_data['id'],
                                 '',
                                 self.source_name
                             ]
@@ -163,7 +166,7 @@ class UniprotTransform(Transform):
                         edges_data_to_write = [
                             chem,
                             CHEMICAL_TO_ENZYME_EDGE,
-                            'Uniprot'+':'+self.__enz_data['id'],
+                            UNIPROT_PREFIX+':'+self.__enz_data['id'],
                             '',
                             self.source_name
                         ]
@@ -172,7 +175,7 @@ class UniprotTransform(Transform):
 
 
             nodes_data_to_write = [
-                    'Uniprot'+':'+self.__enz_data['id'], ENZYME_CATEGORY,self.__enz_data['name'],'','',self.source_name,''
+                    UNIPROT_PREFIX+':'+self.__enz_data['id'], ENZYME_CATEGORY,self.__enz_data['name'],'','',self.source_name,''
                     ]
 
             node_writer.writerow(nodes_data_to_write)

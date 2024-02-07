@@ -150,7 +150,7 @@ class UniprotTransform(Transform):
                 edges_data_to_write = [
                                 'NCBITaxon:'+str(organism_id),
                                 ORGANISM_TO_ENZYME_EDGE,
-                                'uniprot_genome_features'+':'+self.__enz_data['id'],
+                                'Uniprot'+':'+self.__enz_data['id'],
                                 '',
                                 self.source_name
                             ]
@@ -163,7 +163,7 @@ class UniprotTransform(Transform):
                         edges_data_to_write = [
                             chem,
                             CHEMICAL_TO_ENZYME_EDGE,
-                            'uniprot_genome_features'+':'+self.__enz_data['id'],
+                            'Uniprot'+':'+self.__enz_data['id'],
                             '',
                             self.source_name
                         ]
@@ -172,7 +172,7 @@ class UniprotTransform(Transform):
 
 
             nodes_data_to_write = [
-                    'uniprot_genome_features'+':'+self.__enz_data['id'], ENZYME_CATEGORY,self.__enz_data['name'],'','',self.source_name,''
+                    'Uniprot'+':'+self.__enz_data['id'], ENZYME_CATEGORY,self.__enz_data['name'],'','',self.source_name,''
                     ]
 
             node_writer.writerow(nodes_data_to_write)

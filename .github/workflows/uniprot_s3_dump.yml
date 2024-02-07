@@ -18,10 +18,12 @@ jobs:
           python-version: '3.x'
 
       - name: Install project dependencies
-        run: pip install .
+        run: |
+          pip install --upgrade pip
+          pip install .
 
       - name: Install additional dependencies
-        run: pip install requests boto3 aws
+        run: pip install boto3 aws
       
       # - name: Fetch data from Uniprot API
       #   run: kg get-via-api -a uniprot

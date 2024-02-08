@@ -15,6 +15,8 @@ from kg_microbe.transform_utils.constants import (
     ENZYME_CATEGORY,
     ORGANISM_TO_ENZYME_EDGE,
     UNIPROT_ORG_ID_COLUMN_NAME,
+    UNIPROT_PREFIX,
+    NCBITAXON_PREFIX
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -45,7 +47,7 @@ class UniprotTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
-        """Load Uniprot data from api, then downloads after running once."""
+        """Load Uniprot data from downloaded files, then transforms into graph format."""
         # replace with downloaded data filename for this source
         input_dir = str(self.input_base_dir) + "/" + self.source_name
         # Get all organisms downloaded into raw directory
@@ -63,19 +65,14 @@ class UniprotTransform(Transform):
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
 
-            # Generates __enz_data
-            self.add_org_to_enz(
+            # Create Organism and Enzyme nodes:
+            self.get_uniprot_values_from_file(
                 input_dir, ncbi_organisms, self.source_name, node_writer, edge_writer
             )
 
+
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
-
-    # Takes ncbitaxon ids as dict in kgx format
-    def add_org_to_enz(self, input_dir, nodes, source, node_writer, edge_writer):
-        """Submit data to the graph."""
-        # Create Organism and Enzyme nodes:
-        self.get_uniprot_values_from_file(input_dir, nodes, source, node_writer, edge_writer)
 
     def get_uniprot_values_from_file(self, input_dir, nodes, source, node_writer, edge_writer):
         """
@@ -112,59 +109,6 @@ class UniprotTransform(Transform):
                 progress.set_description(f"Processing Uniprot File: {nodes[i]}.yaml")
                 # After each iteration, call the update method to advance the progress bar.
                 progress.update()
-
-    def get_uniprot_values_organism(
-        self,
-        organism_ids,
-        fields,
-        keywords,
-        edge_writer,
-        node_writer,
-        batch_size,
-        verbose=False,
-        num_threads=0,
-    ):
-        """
-        Query UniProt for enzymes per organism and write the results to dataframes.
-
-        This method retrieves UniProt values for a list of organism IDs in batches.
-        It then writes the retrieved values to the provided node and edge writers.
-        The retrieval process can be verbose, and it supports multithreading.
-
-        :param organism_ids: A list of organism identifiers to query.
-        :type organism_ids: list
-        :param fields: Fields to include in the UniProt query.
-        :type fields: list
-        :param keywords: Keywords to filter the UniProt query.
-        :type keywords: list
-        :param edge_writer: An object responsible for writing edge data.
-        :type edge_writer: object
-        :param node_writer: An object responsible for writing node data.
-        :type node_writer: object
-        :param batch_size: The number of organism IDs to process in each batch.
-        :type batch_size: int
-        :param verbose: If True, print additional details during processing.
-        :type verbose: bool, optional
-        :param num_threads: The number of threads to use for parallel processing.
-            If 0, multithreading is not used.
-        :type num_threads: int, optional
-        """
-        values = []
-
-        print(
-            "querying uniprot for enzymes per organism ("
-            + str(len(organism_ids))
-            + ") by batch size ("
-            + str(batch_size)
-            + ")"
-        )
-        for i in tqdm(range(0, len(organism_ids), batch_size)):
-            values = self.get_uniprot_values_from_file(
-                organism_ids, i, batch_size, fields, keywords, values, verbose
-            )
-
-            self.write_to_df(values, edge_writer, node_writer)
-            print("wrote to dataframe")
 
     def parse_binding_site(self, binding_site_entry):
         """
@@ -243,9 +187,9 @@ class UniprotTransform(Transform):
 
             if organism_id:
                 edges_data_to_write = [
-                    "NCBITaxon:" + str(organism_id),
+                    NCBITAXON_PREFIX + str(organism_id),
                     ORGANISM_TO_ENZYME_EDGE,
-                    "uniprot_genome_features" + ":" + self.__enz_data["id"],
+                    UNIPROT_PREFIX + ":" + self.__enz_data["id"],
                     "",
                     self.source_name,
                 ]
@@ -257,7 +201,7 @@ class UniprotTransform(Transform):
                         edges_data_to_write = [
                             chem,
                             CHEMICAL_TO_ENZYME_EDGE,
-                            "uniprot_genome_features" + ":" + self.__enz_data["id"],
+                            UNIPROT_PREFIX + ":" + self.__enz_data["id"],
                             "",
                             self.source_name,
                         ]
@@ -265,7 +209,7 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
             nodes_data_to_write = [
-                "uniprot_genome_features" + ":" + self.__enz_data["id"],
+                UNIPROT_PREFIX + ":" + self.__enz_data["id"],
                 ENZYME_CATEGORY,
                 self.__enz_data["name"],
                 "",

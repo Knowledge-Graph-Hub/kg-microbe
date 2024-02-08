@@ -2,19 +2,22 @@
 
 import csv
 import json
+import multiprocessing
+from functools import partial
 from pathlib import Path
 from urllib import parse
 
 import requests
 import requests_cache
 from tqdm import tqdm
+from tqdm.contrib.concurrent import process_map
 
 from kg_microbe.transform_utils.constants import (
     NCBITAXON_PREFIX,
-    ORGANISM_ID,
+    ORGANISM_ID_MIXED_CASE,
     RAW_DATA_DIR,
+    TAXONOMY_ID_UNIPROT_PREFIX,
     UNIPROT_BASE_URL,
-    UNIPROT_BATCH_SIZE,
     UNIPROT_DESIRED_FORMAT,
     UNIPROT_FIELDS,
     UNIPROT_KEYWORDS,
@@ -26,6 +29,7 @@ ORGANISM_RESOURCE = RAW_DATA_DIR / "ncbitaxon_removed_subset.json"
 UNIPROT_RAW_DIR = RAW_DATA_DIR / "uniprot"
 EMPTY_ORGANISM_OUTFILE = UNIPROT_RAW_DIR / "uniprot_empty_organism.tsv"
 UNIPROT_S3_DIR = UNIPROT_RAW_DIR / "s3"
+UNIPROT_BAD_REQUEST_FILE = UNIPROT_RAW_DIR / "uniprot_bad_requests.tsv"
 
 
 def run_api(api: str, show_status: bool) -> None:
@@ -36,107 +40,179 @@ def run_api(api: str, show_status: bool) -> None:
     :return: None
     """
     if api == "uniprot":
-        run_uniprot_api(show_status)
+        # run_uniprot_api(show_status) # ! Single worker.
+        run_uniprot_api_parallel(show_status)  # ! Multiple workers.
     else:
         raise ValueError(f"API {api} not supported")
 
 
 def run_uniprot_api(show_status: bool) -> None:
     """
-    Upload data to S3 from Uniprot.
+    Download data from Uniprot in series.
 
+    :param show_status: Boolean flag to show progress status.
     :return: None
     """
-    # Create the directory if it doesn't exist
+    # Cache HTTP requests to avoid repeated calls
+    requests_cache.install_cache("uniprot_cache")
+
+    # Ensure the directory for storing Uniprot files exists
     Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    # Read organism resource and extract organism IDs
+    # Read organism resource file and extract organism IDs
     with open(ORGANISM_RESOURCE, "r") as f:
-        contents = json.load(f)  # Using json.load instead of json.loads(f.read())
+        contents = json.load(f)
         ncbi_prefix = NCBITAXON_PREFIX.replace(":", "_")
 
-    organism_ids = [
+    # Create a list of organism IDs after filtering and cleaning
+    organism_list = [
         i["id"].split(ncbi_prefix)[1]
         for i in contents["graphs"][0]["nodes"]
         if ncbi_prefix in i["id"] and i["id"].split(ncbi_prefix)[1].isdigit()
     ]
 
-    # Check for empty organism list and read or initialize the file accordingly
-    empty_organism_list = []
-    empty_organism_file_path = Path(EMPTY_ORGANISM_OUTFILE)
-    if empty_organism_file_path.is_file():
-        with open(empty_organism_file_path, newline="") as csvfile:
+    # Function to read organisms from a CSV file and return a set
+    def _read_organisms_from_csv(file_path):
+        with open(file_path, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
-            empty_organism_list = [str(row[ORGANISM_ID]) for row in reader]
-    else:
-        empty_organism_file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(empty_organism_file_path, "w") as tsv_file:
-            tsv_file.write(f"{ORGANISM_ID}\n")
+            return {str(row[ORGANISM_ID_MIXED_CASE]) for row in reader}
+
+    # Update organism list based on existing empty or bad request files
+    for file_path in [EMPTY_ORGANISM_OUTFILE, UNIPROT_BAD_REQUEST_FILE]:
+        if file_path.is_file():
+            no_info_organism_set = _read_organisms_from_csv(file_path)
+            organism_list = list(set(organism_list) - no_info_organism_set)
+        else:
+            # Create file and write header if it doesn't exist
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(file_path, "w") as tsv_file:
+                tsv_file.write(f"{ORGANISM_ID_MIXED_CASE}\n")
 
     # Process uniprot files
-    total_organisms = len(organism_ids)
-
-    # Choose the appropriate context manager based on the flag
+    total_organisms = len(organism_list)
     progress_class = tqdm if show_status else DummyTqdm
+
+    # Iterate over organism IDs and fetch data from Uniprot
     with progress_class(total=total_organisms, desc="Processing uniprot files") as progress:
-        for i in range(0, total_organisms, UNIPROT_BATCH_SIZE):
-            _get_uniprot_batch_organism(organism_ids, i, empty_organism_list)
-            progress.update(UNIPROT_BATCH_SIZE)
+        for organism_id in organism_list:
+            file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
+            if not file_path.exists():
+                # Construct the query URL
+                query = TAXONOMY_ID_UNIPROT_PREFIX + organism_id
+                keywords_param = (
+                    "&keywords=" + "+".join(UNIPROT_KEYWORDS) if UNIPROT_KEYWORDS else ""
+                )
+                fields_param = "&fields=" + ",".join(map(parse.quote, UNIPROT_FIELDS))
 
-    # Set final description after processing
-    last_file = f"{organism_ids[-1]}.{UNIPROT_DESIRED_FORMAT}"
-    progress.set_description(
-        f"Downloading organism data from Uniprot, final file of batch: {last_file}"
-    )
+                url = (
+                    f"{UNIPROT_BASE_URL}/search?query={query}"
+                    f"&format={UNIPROT_DESIRED_FORMAT}&size={UNIPROT_SIZE}{keywords_param}{fields_param}"
+                )
 
+                try:
+                    # Make the HTTP request to Uniprot
+                    response = requests.get(url, timeout=30)
+                    response.raise_for_status()
 
-def _get_uniprot_batch_organism(organism_ids, start_index, empty_organism_list):
-    """Get batch of Uniprot data."""
-    # Set up caching for requests
-    requests_cache.install_cache("uniprot_cache")
+                    # Write response to file if it contains data
+                    if len(response.text.strip().split("\n")) > 1:
+                        with open(file_path, "w") as file:
+                            file.write(response.text)
+                    else:
+                        # Append organism ID to the empty organisms file
+                        with open(EMPTY_ORGANISM_OUTFILE, "a") as tsv_file:
+                            tsv_file.write(f"{organism_id}\n")
 
-    confirmed_empty_orgs = []
-    end_index = min(start_index + UNIPROT_BATCH_SIZE, len(organism_ids))
-    batch = organism_ids[start_index:end_index]
-    nonexistent_batch = [
-        organism
-        for organism in batch
-        if not (Path(UNIPROT_S3_DIR) / f"{organism}.{UNIPROT_DESIRED_FORMAT}").exists()
-        and organism not in empty_organism_list
-    ]
+                except requests.exceptions.HTTPError:
+                    # Log bad requests to a separate file
+                    with open(UNIPROT_BAD_REQUEST_FILE, "a") as bad_requests_file:
+                        bad_requests_file.write(f"{organism_id}\n")
+                except requests.exceptions.Timeout:
+                    print("The request timed out")
+                except requests.exceptions.RequestException as e:
+                    print(f"An error occurred: {e}")
 
-    if nonexistent_batch:
-        query = "%20OR%20".join(["organism:" + organism_id for organism_id in nonexistent_batch])
-        keywords_param = "&keywords=" + "+".join(UNIPROT_KEYWORDS) if UNIPROT_KEYWORDS else ""
-        fields_param = "&fields=" + "%2C".join([parse.quote(field) for field in UNIPROT_FIELDS])
-
-        url = (
-            f"{UNIPROT_BASE_URL}/search?query={query}"
-            f"&format={UNIPROT_DESIRED_FORMAT}&size={UNIPROT_SIZE}"
-            f"{keywords_param}{fields_param}"
+            # Update progress bar
+            progress.update(1)
+        # Set final description for the progress bar
+        progress.set_description(
+            f"Downloading organism data from Uniprot, final file of batch: {organism_id}"
         )
 
-        try:
-            response = requests.get(url, timeout=30)
-            response.raise_for_status()
 
-            if len(response.text.strip().split("\n")) <= 1:
-                confirmed_empty_orgs.extend(nonexistent_batch)
-            else:
-                for organism_id in nonexistent_batch:
-                    with open(
-                        Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}", "w"
-                    ) as file:
-                        file.write(response.text)
+def fetch_uniprot_data(organism_id):
+    """
+    Single URL construction and request for Uniprot data.
 
-        except requests.exceptions.HTTPError as e:
-            print(f"Failed to retrieve data: {e}")
-        except requests.exceptions.Timeout:
-            print("The request timed out")
-        except requests.exceptions.RequestException as e:
-            print(f"An error occurred: {e}")
+    :param organism_id: Just if the ID of the NCBITaxon entity.
+    """
+    # Construct the query URL
+    file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
+    query = TAXONOMY_ID_UNIPROT_PREFIX + organism_id
+    keywords_param = "&keywords=" + "+".join(UNIPROT_KEYWORDS) if UNIPROT_KEYWORDS else ""
+    fields_param = "&fields=" + ",".join(map(parse.quote, UNIPROT_FIELDS))
 
-    # Stream the confirmed empty organism IDs to a TSV file
-    if confirmed_empty_orgs:
-        with open(EMPTY_ORGANISM_OUTFILE, "a") as tsv_file:
-            tsv_file.writelines(f"{org_id}\n" for org_id in confirmed_empty_orgs)
+    url = (
+        f"{UNIPROT_BASE_URL}/search?query={query}&format={UNIPROT_DESIRED_FORMAT}"
+        f"&size={UNIPROT_SIZE}{keywords_param}{fields_param}"
+    )
+
+    try:
+        # Make the HTTP request to Uniprot
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+
+        # Write response to file if it contains data
+        if len(response.text.strip().split("\n")) > 1:
+            with open(file_path, "w") as file:
+                file.write(response.text)
+        else:
+            # Append organism ID to the empty organisms file
+            with open(EMPTY_ORGANISM_OUTFILE, "a") as tsv_file:
+                tsv_file.write(f"{organism_id}\n")
+
+    except requests.exceptions.HTTPError:
+        # Log bad requests to a separate file
+        with open(UNIPROT_BAD_REQUEST_FILE, "a") as bad_requests_file:
+            bad_requests_file.write(f"{organism_id}\n")
+    except requests.exceptions.Timeout:
+        print("The request timed out")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+
+
+def run_uniprot_api_parallel(show_status: bool, workers: int = None) -> None:
+    """
+    Download data from Uniprot in parallel.
+
+    :param show_status: Boolean flag to show progress status.
+    :return: None
+    """
+    # Cache HTTP requests to avoid repeated calls
+    requests_cache.install_cache("uniprot_cache")
+
+    # Ensure the directory for storing Uniprot files exists
+    Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
+
+    # Read organism resource file and extract organism IDs
+    with open(ORGANISM_RESOURCE, "r") as f:
+        contents = json.load(f)
+        ncbi_prefix = NCBITAXON_PREFIX.replace(":", "_")
+
+    # Create a list of organism IDs after filtering and cleaning
+    organism_list = [
+        i["id"].split(ncbi_prefix)[1]
+        for i in contents["graphs"][0]["nodes"]
+        if ncbi_prefix in i["id"] and i["id"].split(ncbi_prefix)[1].isdigit()
+    ]
+    # Set up a pool of worker processes
+    with multiprocessing.Pool(processes=workers) as pool:
+        # Use partial to create a new function that has some parameters pre-filled
+        fetch_func = partial(fetch_uniprot_data)
+        # If show_status is True, use process_map to display a progress bar
+        if show_status:
+            process_map(fetch_func, organism_list, max_workers=workers)
+        else:
+            # Set up a pool of worker processes without a progress bar
+            with multiprocessing.Pool(processes=workers) as pool:
+                pool.map(fetch_func, organism_list)

@@ -14,6 +14,7 @@ Output these two files:
 - nodes.tsv
 - edges.tsv
 """
+
 import csv
 import json
 import os
@@ -90,6 +91,7 @@ from kg_microbe.transform_utils.constants import (
     UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
@@ -218,7 +220,7 @@ class MediaDiveTransform(Transform):
         #     print(f"No data was retrieved from {url}")
         return json_obj
 
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
@@ -249,9 +251,11 @@ class MediaDiveTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
-        with open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as csvfile, open(
-            self.output_node_file, "w"
-        ) as node, open(self.output_edge_file, "w") as edge:
+        with (
+            open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as csvfile,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+        ):
             writer = csv.writer(csvfile, delimiter="\t")
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
@@ -263,7 +267,11 @@ class MediaDiveTransform(Transform):
             self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
-            with tqdm(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:
+            # Choose the appropriate context manager based on the flag
+            progress_class = tqdm if show_status else DummyTqdm
+            with progress_class(
+                total=len(input_json[DATA_KEY]) + 1, desc="Processing files"
+            ) as progress:
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")

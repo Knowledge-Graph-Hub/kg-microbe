@@ -1,4 +1,5 @@
 """Merging module."""
+
 from typing import Dict
 
 import networkx as nx  # type: ignore

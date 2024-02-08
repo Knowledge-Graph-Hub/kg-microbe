@@ -1,4 +1,5 @@
 """Query module."""
+
 import logging
 
 import yaml

@@ -1,4 +1,5 @@
 """Ontology transform module."""
+
 import gzip
 import shutil
 from pathlib import Path
@@ -38,7 +39,9 @@ class OntologyTransform(Transform):
         source_name = "ontologies"
         super().__init__(source_name, input_dir, output_dir)
 
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None) -> None:
+    def run(
+        self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
+    ) -> None:
         """
         Transform an ontology.
 

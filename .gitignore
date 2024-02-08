@@ -147,5 +147,4 @@ notebooks/*.db
 kg_microbe/transform_utils/mediadive/tmp/ingredient_overlap.*
 kg_microbe/transform_utils/bacdive/tmp/bacdive_physiology_metabolism.tsv
 data/raw/uniprot/s3/*.tsv
-data/raw/uniprot/uniprot_empty_organism.tsv
 uniprot_cache.sqlite

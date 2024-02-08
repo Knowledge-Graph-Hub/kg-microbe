@@ -13,11 +13,9 @@ from tqdm import tqdm
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_TO_ENZYME_EDGE,
     ENZYME_CATEGORY,
-    UNIPROT_GENOME_FEATURES,
-    UNIPROT_PREFIX,
-    NCBITAXON_PREFIX
     NCBITAXON_PREFIX,
     ORGANISM_TO_ENZYME_EDGE,
+    UNIPROT_GENOME_FEATURES,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
 )
@@ -72,7 +70,6 @@ class UniprotTransform(Transform):
             self.get_uniprot_values_from_file(
                 input_dir, ncbi_organisms, self.source_name, node_writer, edge_writer
             )
-
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
@@ -172,17 +169,24 @@ class UniprotTransform(Transform):
             if "Protein names" in entry:
                 self.__enz_data["name"] = entry["Protein names"].split("(EC")[0]
 
-            organism_id = entry['Organism (ID)'] \
-                if 'Organism (ID)' in entry.keys() else None
+            organism_id = entry["Organism (ID)"] if "Organism (ID)" in entry.keys() else None
 
-            #Use primary accession number as it's ID does not change, as opposed to Entry Name
-            if 'Entry' in entry.keys():
-                self.__enz_data['id'] = entry['Entry']
+            # Use primary accession number as it's ID does not change, as opposed to Entry Name
+            if "Entry" in entry.keys():
+                self.__enz_data["id"] = entry["Entry"]
 
-            #example response with multiple protein names: {'Organism (ID)': '100', 'Entry Name': 'A0A4R1H4N5_ANCAQ', 'Entry': 'A0A4R1H4N5', 'Protein names': 'Ubiquinone biosynthesis O-methyltransferase (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222) (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)', 'EC number': '2.1.1.222; 2.1.1.64'}
-            if 'Protein names' in entry:
-                self.__enz_data['name'] = entry['Protein names'].split('(EC')[0]
-                
+            # example response with  multiple protein names:
+            # {
+            #     "Organism (ID)": "100",
+            #     "Entry Name": "A0A4R1H4N5_ANCAQ",
+            #     "Entry": "A0A4R1H4N5",
+            #     "Protein names": "Ubiquinone biosynthesis O-methyltransferase
+            #                       (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222)
+            #                       (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)",
+            #     "EC number": "2.1.1.222; 2.1.1.64",
+            # }
+            if "Protein names" in entry:
+                self.__enz_data["name"] = entry["Protein names"].split("(EC")[0]
 
                 ###TO DO: add synonyms here
                 # print(entry['Protein names'])

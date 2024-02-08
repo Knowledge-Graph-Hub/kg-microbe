@@ -1,4 +1,5 @@
 """Constants for transform_utilities."""
+
 from pathlib import Path
 
 BACDIVE_DIR = Path(__file__).parent / "bacdive"
@@ -9,6 +10,7 @@ MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 TRAITS_DIR = Path(__file__).parent / "traits"
+RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 
 
 # KEYS FOR JSON FILE
@@ -235,4 +237,13 @@ ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
 ENZYME_CATEGORY = "biolink:Enzyme"
 CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"
 UNIPROT_GENOME_FEATURES = "uniprot_genome_features"
+UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/"
+UNIPROT_FIELDS = ["organism_id", "id", "accession", "protein_name", "ec", "ft_binding"]
+UNIPROT_KEYWORDS = ["Reference+proteome"]
+UNIPROT_DESIRED_FORMAT = "tsv"
+UNIPROT_SIZE = 500
+ORGANISM_ID_MIXED_CASE = "Organism_ID"
+UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
+TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
+UNIPROT_REVIEWED_FLAG = "reviewed:true+"
 UNIPROT_PREFIX = "Uniprot"

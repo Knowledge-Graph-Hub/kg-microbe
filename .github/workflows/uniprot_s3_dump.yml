@@ -30,7 +30,10 @@ jobs:
         run: poetry install --with s3
 
       # - name: Fetch data from Uniprot API
-      #   run: kg get-via-api -a uniprot
+      #   run: |
+      #     kg download
+      #     kg transform -s OntologyTransform
+      #     kg get-via-api -a uniprot
       
       - name: Upload to S3
         uses: aws-actions/configure-aws-credentials@v4

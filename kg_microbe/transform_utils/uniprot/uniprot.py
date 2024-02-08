@@ -13,10 +13,10 @@ from tqdm import tqdm
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_TO_ENZYME_EDGE,
     ENZYME_CATEGORY,
+    NCBITAXON_PREFIX,
     ORGANISM_TO_ENZYME_EDGE,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
-    NCBITAXON_PREFIX
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates

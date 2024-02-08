@@ -1,4 +1,5 @@
 """Utility to implement ROBOT over ontology files."""
+
 import os
 import subprocess
 from pathlib import Path

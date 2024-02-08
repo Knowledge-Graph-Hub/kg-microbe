@@ -1,4 +1,5 @@
 """Pandas utilities."""
+
 import csv
 from itertools import combinations
 from pathlib import Path
@@ -142,9 +143,11 @@ def get_ingredients_overlap(file_path: Path, target_path: Path):
 
         # Calculate overlap percentage and round it to 2 decimal places
         overlap_percentage = round(
-            ((len(overlapping_ingredients) / total_unique_ingredients) * 100)
-            if total_unique_ingredients > 0
-            else 0,
+            (
+                ((len(overlapping_ingredients) / total_unique_ingredients) * 100)
+                if total_unique_ingredients > 0
+                else 0
+            ),
             2,
         )
 

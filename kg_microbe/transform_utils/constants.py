@@ -236,6 +236,7 @@ EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
 ENZYME_CATEGORY = "biolink:Enzyme"
 CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"
+UNIPROT_GENOME_FEATURES = "uniprot_genome_features"
 UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/"
 UNIPROT_FIELDS = ["organism_id", "id", "accession", "protein_name", "ec", "ft_binding"]
 UNIPROT_KEYWORDS = ["Reference+proteome"]

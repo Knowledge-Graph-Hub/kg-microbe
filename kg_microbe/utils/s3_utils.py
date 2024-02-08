@@ -29,7 +29,6 @@ ORGANISM_RESOURCE = RAW_DATA_DIR / "ncbitaxon_removed_subset.json"
 UNIPROT_RAW_DIR = RAW_DATA_DIR / "uniprot"
 EMPTY_ORGANISM_OUTFILE = UNIPROT_RAW_DIR / "uniprot_empty_organism.tsv"
 UNIPROT_S3_DIR = UNIPROT_RAW_DIR / "s3"
-UNIPROT_BAD_REQUEST_FILE = UNIPROT_RAW_DIR / "uniprot_bad_requests.tsv"
 
 
 def run_api(api: str, show_status: bool) -> None:
@@ -77,8 +76,8 @@ def run_uniprot_api(show_status: bool) -> None:
             reader = csv.DictReader(csvfile)
             return {str(row[ORGANISM_ID_MIXED_CASE]) for row in reader}
 
-    # Update organism list based on existing empty or bad request files
-    for file_path in [EMPTY_ORGANISM_OUTFILE, UNIPROT_BAD_REQUEST_FILE]:
+    # Update organism list based on existing empty request files
+    for file_path in [EMPTY_ORGANISM_OUTFILE]:
         if file_path.is_file():
             no_info_organism_set = _read_organisms_from_csv(file_path)
             organism_list = list(set(organism_list) - no_info_organism_set)
@@ -124,9 +123,7 @@ def run_uniprot_api(show_status: bool) -> None:
                             tsv_file.write(f"{organism_id}\n")
 
                 except requests.exceptions.HTTPError:
-                    # Log bad requests to a separate file
-                    with open(UNIPROT_BAD_REQUEST_FILE, "a") as bad_requests_file:
-                        bad_requests_file.write(f"{organism_id}\n")
+                    print(f"Bad request for organism {organism_id} - {response.status_code}")
                 except requests.exceptions.Timeout:
                     print("The request timed out")
                 except requests.exceptions.RequestException as e:
@@ -172,9 +169,7 @@ def fetch_uniprot_data(organism_id):
                 tsv_file.write(f"{organism_id}\n")
 
     except requests.exceptions.HTTPError:
-        # Log bad requests to a separate file
-        with open(UNIPROT_BAD_REQUEST_FILE, "a") as bad_requests_file:
-            bad_requests_file.write(f"{organism_id}\n")
+        print(f"Bad request for organism {organism_id} - {response.status_code}")
     except requests.exceptions.Timeout:
         print("The request timed out")
     except requests.exceptions.RequestException as e:

@@ -5,6 +5,7 @@ import json
 import multiprocessing
 from functools import partial
 from pathlib import Path
+from typing import List
 from urllib import parse
 
 import requests
@@ -29,6 +30,43 @@ ORGANISM_RESOURCE = RAW_DATA_DIR / "ncbitaxon_removed_subset.json"
 UNIPROT_RAW_DIR = RAW_DATA_DIR / "uniprot"
 EMPTY_ORGANISM_OUTFILE = UNIPROT_RAW_DIR / "uniprot_empty_organism.tsv"
 UNIPROT_S3_DIR = UNIPROT_RAW_DIR / "s3"
+
+
+# Function to read organisms from a CSV file and return a set
+def _read_organisms_from_csv(file_path):
+    with open(file_path, newline="") as csvfile:
+        reader = csv.DictReader(csvfile)
+        return {str(row[ORGANISM_ID_MIXED_CASE]) for row in reader}
+
+
+def get_organism_list() -> List[str]:
+    """
+    Update organism list based on existing empty request files.
+
+    :param organism_list: List of organism IDs.
+    """
+    # Read organism resource file and extract organism IDs
+    with open(ORGANISM_RESOURCE, "r") as f:
+        contents = json.load(f)
+        ncbi_prefix = NCBITAXON_PREFIX.replace(":", "_")
+
+    # Create a list of organism IDs after filtering and cleaning
+    organism_list = [
+        i["id"].split(ncbi_prefix)[1]
+        for i in contents["graphs"][0]["nodes"]
+        if ncbi_prefix in i["id"] and i["id"].split(ncbi_prefix)[1].isdigit()
+    ]
+    # Update organism list based on existing empty request files
+    for file_path in [EMPTY_ORGANISM_OUTFILE]:
+        if file_path.is_file():
+            no_info_organism_set = _read_organisms_from_csv(file_path)
+            organism_list = list(set(organism_list) - no_info_organism_set)
+        else:
+            # Create file and write header if it doesn't exist
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(file_path, "w") as tsv_file:
+                tsv_file.write(f"{ORGANISM_ID_MIXED_CASE}\n")
+    return organism_list
 
 
 def run_api(api: str, show_status: bool) -> None:
@@ -58,34 +96,7 @@ def run_uniprot_api(show_status: bool) -> None:
     # Ensure the directory for storing Uniprot files exists
     Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    # Read organism resource file and extract organism IDs
-    with open(ORGANISM_RESOURCE, "r") as f:
-        contents = json.load(f)
-        ncbi_prefix = NCBITAXON_PREFIX.replace(":", "_")
-
-    # Create a list of organism IDs after filtering and cleaning
-    organism_list = [
-        i["id"].split(ncbi_prefix)[1]
-        for i in contents["graphs"][0]["nodes"]
-        if ncbi_prefix in i["id"] and i["id"].split(ncbi_prefix)[1].isdigit()
-    ]
-
-    # Function to read organisms from a CSV file and return a set
-    def _read_organisms_from_csv(file_path):
-        with open(file_path, newline="") as csvfile:
-            reader = csv.DictReader(csvfile)
-            return {str(row[ORGANISM_ID_MIXED_CASE]) for row in reader}
-
-    # Update organism list based on existing empty request files
-    for file_path in [EMPTY_ORGANISM_OUTFILE]:
-        if file_path.is_file():
-            no_info_organism_set = _read_organisms_from_csv(file_path)
-            organism_list = list(set(organism_list) - no_info_organism_set)
-        else:
-            # Create file and write header if it doesn't exist
-            file_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(file_path, "w") as tsv_file:
-                tsv_file.write(f"{ORGANISM_ID_MIXED_CASE}\n")
+    organism_list = get_organism_list()
 
     # Process uniprot files
     total_organisms = len(organism_list)
@@ -189,17 +200,8 @@ def run_uniprot_api_parallel(show_status: bool, workers: int = None) -> None:
     # Ensure the directory for storing Uniprot files exists
     Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    # Read organism resource file and extract organism IDs
-    with open(ORGANISM_RESOURCE, "r") as f:
-        contents = json.load(f)
-        ncbi_prefix = NCBITAXON_PREFIX.replace(":", "_")
+    organism_list = get_organism_list()
 
-    # Create a list of organism IDs after filtering and cleaning
-    organism_list = [
-        i["id"].split(ncbi_prefix)[1]
-        for i in contents["graphs"][0]["nodes"]
-        if ncbi_prefix in i["id"] and i["id"].split(ncbi_prefix)[1].isdigit()
-    ]
     # Set up a pool of worker processes
     with multiprocessing.Pool(processes=workers) as pool:
         # Use partial to create a new function that has some parameters pre-filled

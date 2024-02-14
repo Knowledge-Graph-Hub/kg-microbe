@@ -39,14 +39,14 @@ def _read_organisms_from_csv(file_path):
         return {str(row[ORGANISM_ID_MIXED_CASE]) for row in reader}
 
 
-def _write_file(file_path, response, organism_id):
+def _write_file(file_path, response, organism_id, mode="w"):
     # Write response to file if it contains data
     if len(response.text.strip().split("\n")) > 1:
-        with open(file_path, "a") as file:
+        with open(file_path, mode) as file:
             file.write(response.text)
     else:
         # Append organism ID to the empty organisms file
-        with open(EMPTY_ORGANISM_OUTFILE, "a") as tsv_file:
+        with open(EMPTY_ORGANISM_OUTFILE, mode) as tsv_file:
             tsv_file.write(f"{organism_id}\n")
 
 
@@ -134,13 +134,13 @@ def run_uniprot_api(show_status: bool) -> None:
                     # Make the HTTP request to Uniprot
                     response = requests.get(url, timeout=30)
                     response.raise_for_status()
-                    _write_file(file_path, response, organism_id)
+                    _write_file(file_path, response, organism_id, "w")
 
                     while "next" in response.links:
                         next_url = response.links["next"]["url"]
                         response = requests.get(next_url, timeout=30)
                         response.raise_for_status()
-                        _write_file(file_path, response, organism_id)
+                        _write_file(file_path, response, organism_id, "a")
 
                 except requests.exceptions.HTTPError:
                     print(f"Bad request for organism {organism_id} - {response.status_code}")
@@ -178,13 +178,13 @@ def fetch_uniprot_data(organism_id):
         # Make the HTTP request to Uniprot
         response = requests.get(url, timeout=30)
         response.raise_for_status()
-        _write_file(file_path, response, organism_id)
+        _write_file(file_path, response, organism_id, "w")
 
         while "next" in response.links:
             next_url = response.links["next"]["url"]
             response = requests.get(next_url, timeout=30)
             response.raise_for_status()
-            _write_file(file_path, response, organism_id)
+            _write_file(file_path, response, organism_id, "a")
 
     except requests.exceptions.HTTPError:
         print(f"Bad request for organism {organism_id} - {response.status_code}")

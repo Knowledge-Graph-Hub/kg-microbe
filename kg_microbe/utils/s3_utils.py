@@ -178,15 +178,13 @@ def fetch_uniprot_data(organism_id):
         # Make the HTTP request to Uniprot
         response = requests.get(url, timeout=30)
         response.raise_for_status()
+        _write_file(file_path, response, organism_id)
 
-        # Write response to file if it contains data
-        if len(response.text.strip().split("\n")) > 1:
-            with open(file_path, "w") as file:
-                file.write(response.text)
-        else:
-            # Append organism ID to the empty organisms file
-            with open(EMPTY_ORGANISM_OUTFILE, "a") as tsv_file:
-                tsv_file.write(f"{organism_id}\n")
+        while "next" in response.links:
+            next_url = response.links["next"]["url"]
+            response = requests.get(next_url, timeout=30)
+            response.raise_for_status()
+            _write_file(file_path, response, organism_id)
 
     except requests.exceptions.HTTPError:
         print(f"Bad request for organism {organism_id} - {response.status_code}")

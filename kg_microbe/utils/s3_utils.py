@@ -42,7 +42,7 @@ def _read_organisms_from_csv(file_path):
 def _write_file(file_path, response, organism_id):
     # Write response to file if it contains data
     if len(response.text.strip().split("\n")) > 1:
-        with open(file_path, "w") as file:
+        with open(file_path, "a") as file:
             file.write(response.text)
     else:
         # Append organism ID to the empty organisms file

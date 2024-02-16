@@ -251,7 +251,7 @@ def run_uniprot_api(proteome_id_list, show_status: bool) -> None:
         for organism_id in organism_list:
             file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
             if not file_path.exists():
-  
+
                 fetch_uniprot_data(organism_id)
 
             # Update progress bar

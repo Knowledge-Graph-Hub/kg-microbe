@@ -7,7 +7,6 @@ from functools import partial
 from pathlib import Path
 from typing import List
 from urllib import parse
-from typing import Union
 
 import requests
 import requests_cache
@@ -59,7 +58,7 @@ def _build_proteome_organism_list(response,organism_ids):
         if len(line) > 0:
             s = line.split('\t')
             organism_ids.append(s[1])
-    
+
     return organism_ids
 
 def get_organism_list() -> List[str]:
@@ -119,7 +118,7 @@ def run_proteome_api(show_status: bool) -> None:
 
     # Ensure the directory for storing Uniprot files exists
     Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
-    
+
     organism_ids = fetch_uniprot_reference_proteome_data()
 
     return organism_ids
@@ -136,7 +135,6 @@ def construct_query_url(base_url, desired_format, query_terms, fields, query_siz
     :param keywords: List of desired keywords from API response, default None.
     :param organism_id: Just if the ID of the NCBITaxon entity.
     """
-
     # Construct the query URL
     keywords_param = "&keywords=" + "+".join(keywords) if keywords else ""
     fields_param = "&fields=" + ",".join(map(parse.quote, fields))
@@ -155,11 +153,15 @@ def fetch_uniprot_data(organism_id):
 
     :param organism_id: Just if the ID of the NCBITaxon entity.
     """
-
     file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
     organism_query = TAXONOMY_ID_UNIPROT_PREFIX + organism_id
 
-    url = construct_query_url(UNIPROT_BASE_URL,UNIPROT_DESIRED_FORMAT,organism_query,UNIPROT_FIELDS,UNIPROT_SIZE,UNIPROT_KEYWORDS)
+    url = construct_query_url(UNIPROT_BASE_URL,
+                                UNIPROT_DESIRED_FORMAT,
+                                organism_query,
+                                UNIPROT_FIELDS,
+                                UNIPROT_SIZE,
+                                UNIPROT_KEYWORDS)
 
     try:
         # Make the HTTP request to Uniprot
@@ -187,14 +189,17 @@ def fetch_uniprot_reference_proteome_data():
 
     :param organism_ids: List of organism IDs with reference proteomes.
     """
-
     file_path = Path(UNIPROT_S3_DIR) / f"{PROTEOMES_FILENAME}.{UNIPROT_DESIRED_FORMAT}"
     all_proteomes_query = "%28*%29"
 
-    url = construct_query_url(UNIPROT_REFERENCE_PROTEOMES_URL,UNIPROT_DESIRED_FORMAT,all_proteomes_query,UNIPROT_REFERENCE_PROTEOMES_FIELDS,UNIPROT_SIZE)
+    url = construct_query_url(UNIPROT_REFERENCE_PROTEOMES_URL,
+                                UNIPROT_DESIRED_FORMAT,
+                                all_proteomes_query,
+                                UNIPROT_REFERENCE_PROTEOMES_FIELDS,
+                                UNIPROT_SIZE)
 
     organism_ids = []
-    
+
     try:
         # Make the HTTP request to Uniprot
         response = requests.get(url, timeout=30)

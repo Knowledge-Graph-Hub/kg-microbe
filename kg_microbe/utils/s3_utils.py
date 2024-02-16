@@ -275,7 +275,6 @@ def run_uniprot_api_parallel(taxa_id_from_proteomes_set, show_status: bool, work
     organism_list = get_organism_list()
 
     taxa_id_common_with_proteomes_list = list(set(organism_list).intersection(taxa_id_from_proteomes_set))
-    taxa_id_common_with_proteomes_list = taxa_id_common_with_proteomes_list[0:5]
 
     # Set up a pool of worker processes
     with multiprocessing.Pool(processes=workers) as pool:

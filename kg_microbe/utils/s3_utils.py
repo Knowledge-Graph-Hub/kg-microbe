@@ -23,9 +23,9 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_DESIRED_FORMAT,
     UNIPROT_FIELDS,
     UNIPROT_KEYWORDS,
-    UNIPROT_SIZE,
     UNIPROT_REFERENCE_PROTEOMES_FIELDS,
-    UNIPROT_REFERENCE_PROTEOMES_URL
+    UNIPROT_REFERENCE_PROTEOMES_URL,
+    UNIPROT_SIZE,
 )
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 
@@ -52,12 +52,12 @@ def _write_file(file_path, response, organism_id, mode="w"):
         with open(EMPTY_ORGANISM_OUTFILE, mode) as tsv_file:
             tsv_file.write(f"{organism_id}\n")
 
-def _build_proteome_organism_list(response,organism_ids):
+def _build_proteome_organism_list(response,organism_ids) -> set:
     #Write response organism_ids to a list if it contains data
     for line in response.text.split('\n'):
         if len(line) > 0:
             s = line.split('\t')
-            organism_ids.append(s[1])
+            organism_ids.add(s[1])
 
     return organism_ids
 
@@ -99,14 +99,14 @@ def run_api(api: str, show_status: bool) -> None:
     :return: None
     """
     if api == "uniprot":
-        proteome_organism_list = run_proteome_api(show_status)
+        proteome_organism_set = run_proteome_api(show_status)
         # run_uniprot_api(proteome_organism_list, show_status) # ! Single worker.
-        run_uniprot_api_parallel(proteome_organism_list, show_status)  # ! Multiple workers.
+        run_uniprot_api_parallel(proteome_organism_set, show_status)  # ! Multiple workers.
     else:
         raise ValueError(f"API {api} not supported")
 
 
-def run_proteome_api(show_status: bool) -> None:
+def run_proteome_api(show_status: bool) -> set:
     """
     Download proteomes and organism_ids from Uniprot in series.
 
@@ -119,9 +119,9 @@ def run_proteome_api(show_status: bool) -> None:
     # Ensure the directory for storing Uniprot files exists
     Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    organism_ids = fetch_uniprot_reference_proteome_data()
+    organism_ids_set = fetch_uniprot_reference_proteome_data()
 
-    return organism_ids
+    return organism_ids_set
 
 def construct_query_url(base_url, desired_format, query_terms, fields, query_size, keywords = None):
     """
@@ -183,12 +183,8 @@ def fetch_uniprot_data(organism_id):
         print(f"An error occurred: {e}")
 
 
-def fetch_uniprot_reference_proteome_data():
-    """
-    Single URL request for Uniprot data.
-
-    :param organism_ids: List of organism IDs with reference proteomes.
-    """
+def fetch_uniprot_reference_proteome_data() -> set:
+    """Single URL request for Uniprot proteome data."""
     file_path = Path(UNIPROT_S3_DIR) / f"{PROTEOMES_FILENAME}.{UNIPROT_DESIRED_FORMAT}"
     all_proteomes_query = "%28*%29"
 
@@ -198,7 +194,7 @@ def fetch_uniprot_reference_proteome_data():
                                 UNIPROT_REFERENCE_PROTEOMES_FIELDS,
                                 UNIPROT_SIZE)
 
-    organism_ids = []
+    organism_ids = set()
 
     try:
         # Make the HTTP request to Uniprot
@@ -224,11 +220,11 @@ def fetch_uniprot_reference_proteome_data():
         print(f"An error occurred: {e}")
 
 
-def run_uniprot_api(proteome_id_list, show_status: bool) -> None:
+def run_uniprot_api(taxa_id_from_proteomes_set, show_status: bool) -> None:
     """
     Download data from Uniprot in series.
 
-    :param proteome_id_list: List of proteome ids from Uniprot.
+    :param taxa_id_from_proteomes_set: Set of organism ids with proteomes from Uniprot.
     :param show_status: Boolean flag to show progress status.
     :return: None
     """
@@ -238,17 +234,17 @@ def run_uniprot_api(proteome_id_list, show_status: bool) -> None:
     # Ensure the directory for storing Uniprot files exists
     #Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    ncbi_excluded_list = get_organism_list()
+    organism_list = get_organism_list()
 
-    organism_list = list(set(proteome_id_list).intersection(ncbi_excluded_list))
+    taxa_id_common_with_proteomes_list = list(set(organism_list).intersection(taxa_id_from_proteomes_set))
 
     # Process uniprot files
-    total_organisms = len(organism_list)
+    total_organisms = len(taxa_id_common_with_proteomes_list)
     progress_class = tqdm if show_status else DummyTqdm
 
     # Iterate over organism IDs and fetch data from Uniprot
     with progress_class(total=total_organisms, desc="Processing uniprot files") as progress:
-        for organism_id in organism_list:
+        for organism_id in taxa_id_common_with_proteomes_list:
             file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
             if not file_path.exists():
 
@@ -262,11 +258,11 @@ def run_uniprot_api(proteome_id_list, show_status: bool) -> None:
         )
 
 
-def run_uniprot_api_parallel(proteome_id_list, show_status: bool, workers: int = 1) -> None:
+def run_uniprot_api_parallel(taxa_id_from_proteomes_set, show_status: bool, workers: int = 1) -> None:
     """
     Download data from Uniprot in parallel.
 
-    :param proteome_id_list: List of proteome ids from Uniprot.
+    :param taxa_id_from_proteomes_set: Set of organism ids with proteomes from Uniprot.
     :param show_status: Boolean flag to show progress status.
     :return: None
     """
@@ -276,9 +272,10 @@ def run_uniprot_api_parallel(proteome_id_list, show_status: bool, workers: int =
     # Ensure the directory for storing Uniprot files exists
     #Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    ncbi_excluded_list = get_organism_list()
+    organism_list = get_organism_list()
 
-    organism_list = list(set(proteome_id_list).intersection(ncbi_excluded_list))
+    taxa_id_common_with_proteomes_list = list(set(organism_list).intersection(taxa_id_from_proteomes_set))
+    taxa_id_common_with_proteomes_list = taxa_id_common_with_proteomes_list[0:5]
 
     # Set up a pool of worker processes
     with multiprocessing.Pool(processes=workers) as pool:
@@ -286,8 +283,8 @@ def run_uniprot_api_parallel(proteome_id_list, show_status: bool, workers: int =
         fetch_func = partial(fetch_uniprot_data)
         # If show_status is True, use process_map to display a progress bar
         if show_status:
-            process_map(fetch_func, organism_list, max_workers=workers)
+            process_map(fetch_func, taxa_id_common_with_proteomes_list, max_workers=workers)
         else:
             # Set up a pool of worker processes without a progress bar
             with multiprocessing.Pool(processes=workers) as pool:
-                pool.map(fetch_func, organism_list)
+                pool.map(fetch_func, taxa_id_common_with_proteomes_list)

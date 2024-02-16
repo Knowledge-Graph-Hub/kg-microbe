@@ -57,8 +57,8 @@ def _build_proteome_organism_list(response,organism_ids):
     #Write response organism_ids to a list if it contains data
     for line in response.text.split('\n'):
         if len(line) > 0:
-            splitted = line.split('\t')
-            organism_ids.append(splitted[1])
+            s = line.split('\t')
+            organism_ids.append(s[1])
     
     return organism_ids
 

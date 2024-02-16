@@ -16,6 +16,7 @@ from tqdm.contrib.concurrent import process_map
 from kg_microbe.transform_utils.constants import (
     NCBITAXON_PREFIX,
     ORGANISM_ID_MIXED_CASE,
+    PROTEOMES_FILENAME,
     RAW_DATA_DIR,
     TAXONOMY_ID_UNIPROT_PREFIX,
     UNIPROT_BASE_URL,
@@ -23,9 +24,8 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_FIELDS,
     UNIPROT_KEYWORDS,
     UNIPROT_SIZE,
-    UNIPROT_REFERENCE_PROTEOMES_URL,
     UNIPROT_REFERENCE_PROTEOMES_FIELDS,
-    PROTEOMES_FILENAME
+    UNIPROT_REFERENCE_PROTEOMES_URL
 )
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 

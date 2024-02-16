@@ -201,14 +201,20 @@ def fetch_uniprot_reference_proteome_data() -> set:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
         organism_ids = _build_proteome_organism_list(response,organism_ids)
-        _write_file(file_path, response, PROTEOMES_FILENAME, "w")
+        # Write response to file if it contains data
+        if len(response.text.strip().split("\n")) > 1:
+            with open(file_path, "w") as file:
+                file.write(response.text)
 
         while "next" in response.links:
             next_url = response.links["next"]["url"]
             response = requests.get(next_url, timeout=30)
             response.raise_for_status()
             organism_ids = _build_proteome_organism_list(response,organism_ids)
-            _write_file(file_path, response, PROTEOMES_FILENAME, "a")
+            # Write response to file if it contains data
+            if len(response.text.strip().split("\n")) > 1:
+                with open(file_path, "a") as file:
+                    file.write(response.text)
 
         return organism_ids
 
@@ -275,6 +281,8 @@ def run_uniprot_api_parallel(taxa_id_from_proteomes_set, show_status: bool, work
     organism_list = get_organism_list()
 
     taxa_id_common_with_proteomes_list = list(set(organism_list).intersection(taxa_id_from_proteomes_set))
+    #!For testing
+    #taxa_id_common_with_proteomes_list = taxa_id_common_with_proteomes_list[0:5]
 
     # Set up a pool of worker processes
     with multiprocessing.Pool(processes=workers) as pool:

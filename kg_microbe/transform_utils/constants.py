@@ -247,3 +247,8 @@ UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
 UNIPROT_PREFIX = "Uniprot"
+UNIPROT_REFERENCE_PROTEOMES_URL = "https://rest.uniprot.org/proteomes/"
+UNIPROT_REFERENCE_PROTEOMES_FIELDS = ["upid","organism_id"]
+PROTEOMES_FILENAME = "Proteomes"
+
+

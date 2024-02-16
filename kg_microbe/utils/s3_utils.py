@@ -7,6 +7,7 @@ from functools import partial
 from pathlib import Path
 from typing import List
 from urllib import parse
+from typing import Union
 
 import requests
 import requests_cache
@@ -23,6 +24,9 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_FIELDS,
     UNIPROT_KEYWORDS,
     UNIPROT_SIZE,
+    UNIPROT_REFERENCE_PROTEOMES_URL,
+    UNIPROT_REFERENCE_PROTEOMES_FIELDS,
+    PROTEOMES_FILENAME
 )
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 
@@ -49,6 +53,14 @@ def _write_file(file_path, response, organism_id, mode="w"):
         with open(EMPTY_ORGANISM_OUTFILE, mode) as tsv_file:
             tsv_file.write(f"{organism_id}\n")
 
+def _build_proteome_organism_list(response,organism_ids):
+    #Write response organism_ids to a list if it contains data
+    for line in response.text.split('\n'):
+        if len(line) > 0:
+            splitted = line.split('\t')
+            organism_ids.append(splitted[1])
+    
+    return organism_ids
 
 def get_organism_list() -> List[str]:
     """
@@ -88,15 +100,16 @@ def run_api(api: str, show_status: bool) -> None:
     :return: None
     """
     if api == "uniprot":
-        # run_uniprot_api(show_status) # ! Single worker.
-        run_uniprot_api_parallel(show_status)  # ! Multiple workers.
+        proteome_organism_list = run_proteome_api(show_status)
+        # run_uniprot_api(proteome_organism_list, show_status) # ! Single worker.
+        run_uniprot_api_parallel(proteome_organism_list, show_status)  # ! Multiple workers.
     else:
         raise ValueError(f"API {api} not supported")
 
 
-def run_uniprot_api(show_status: bool) -> None:
+def run_proteome_api(show_status: bool) -> None:
     """
-    Download data from Uniprot in series.
+    Download proteomes and organism_ids from Uniprot in series.
 
     :param show_status: Boolean flag to show progress status.
     :return: None
@@ -106,73 +119,47 @@ def run_uniprot_api(show_status: bool) -> None:
 
     # Ensure the directory for storing Uniprot files exists
     Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
+    
+    organism_ids = fetch_uniprot_reference_proteome_data()
 
-    organism_list = get_organism_list()
+    return organism_ids
 
-    # Process uniprot files
-    total_organisms = len(organism_list)
-    progress_class = tqdm if show_status else DummyTqdm
+def construct_query_url(base_url, desired_format, query_terms, fields, query_size, keywords = None):
+    """
+    Single URL construction for Uniprot data.
 
-    # Iterate over organism IDs and fetch data from Uniprot
-    with progress_class(total=total_organisms, desc="Processing uniprot files") as progress:
-        for organism_id in organism_list:
-            file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
-            if not file_path.exists():
-                # Construct the query URL
-                query = TAXONOMY_ID_UNIPROT_PREFIX + organism_id
-                keywords_param = (
-                    "&keywords=" + "+".join(UNIPROT_KEYWORDS) if UNIPROT_KEYWORDS else ""
-                )
-                fields_param = "&fields=" + ",".join(map(parse.quote, UNIPROT_FIELDS))
+    :param base_url: Base url for query.
+    :param desired_format: Desired format of API response.
+    :param query_terms: Query terms.
+    :param fields: List of desired fields from API response.
+    :param query_size: Size of API return.
+    :param keywords: List of desired keywords from API response, default None.
+    :param organism_id: Just if the ID of the NCBITaxon entity.
+    """
 
-                url = (
-                    f"{UNIPROT_BASE_URL}/search?query={query}"
-                    f"&format={UNIPROT_DESIRED_FORMAT}&size={UNIPROT_SIZE}{keywords_param}{fields_param}"
-                )
+    # Construct the query URL
+    keywords_param = "&keywords=" + "+".join(keywords) if keywords else ""
+    fields_param = "&fields=" + ",".join(map(parse.quote, fields))
 
-                try:
-                    # Make the HTTP request to Uniprot
-                    response = requests.get(url, timeout=30)
-                    response.raise_for_status()
-                    _write_file(file_path, response, organism_id, "w")
+    url = (
+        f"{base_url}/search?query={query_terms}&format={desired_format}"
+        f"&size={query_size}{keywords_param}{fields_param}"
+    )
 
-                    while "next" in response.links:
-                        next_url = response.links["next"]["url"]
-                        response = requests.get(next_url, timeout=30)
-                        response.raise_for_status()
-                        _write_file(file_path, response, organism_id, "a")
-
-                except requests.exceptions.HTTPError:
-                    print(f"Bad request for organism {organism_id} - {response.status_code}")
-                except requests.exceptions.Timeout:
-                    print("The request timed out")
-                except requests.exceptions.RequestException as e:
-                    print(f"An error occurred: {e}")
-
-            # Update progress bar
-            progress.update(1)
-        # Set final description for the progress bar
-        progress.set_description(
-            f"Downloading organism data from Uniprot, final file of batch: {organism_id}"
-        )
+    return url
 
 
 def fetch_uniprot_data(organism_id):
     """
-    Single URL construction and request for Uniprot data.
+    Single URL request for Uniprot data.
 
     :param organism_id: Just if the ID of the NCBITaxon entity.
     """
-    # Construct the query URL
-    file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
-    query = TAXONOMY_ID_UNIPROT_PREFIX + organism_id
-    keywords_param = "&keywords=" + "+".join(UNIPROT_KEYWORDS) if UNIPROT_KEYWORDS else ""
-    fields_param = "&fields=" + ",".join(map(parse.quote, UNIPROT_FIELDS))
 
-    url = (
-        f"{UNIPROT_BASE_URL}/search?query={query}&format={UNIPROT_DESIRED_FORMAT}"
-        f"&size={UNIPROT_SIZE}{keywords_param}{fields_param}"
-    )
+    file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
+    organism_query = TAXONOMY_ID_UNIPROT_PREFIX + organism_id
+
+    url = construct_query_url(UNIPROT_BASE_URL,UNIPROT_DESIRED_FORMAT,organism_query,UNIPROT_FIELDS,UNIPROT_SIZE,UNIPROT_KEYWORDS)
 
     try:
         # Make the HTTP request to Uniprot
@@ -194,10 +181,49 @@ def fetch_uniprot_data(organism_id):
         print(f"An error occurred: {e}")
 
 
-def run_uniprot_api_parallel(show_status: bool, workers: int = None) -> None:
+def fetch_uniprot_reference_proteome_data():
     """
-    Download data from Uniprot in parallel.
+    Single URL request for Uniprot data.
 
+    :param organism_ids: List of organism IDs with reference proteomes.
+    """
+
+    file_path = Path(UNIPROT_S3_DIR) / f"{PROTEOMES_FILENAME}.{UNIPROT_DESIRED_FORMAT}"
+    all_proteomes_query = "%28*%29"
+
+    url = construct_query_url(UNIPROT_REFERENCE_PROTEOMES_URL,UNIPROT_DESIRED_FORMAT,all_proteomes_query,UNIPROT_REFERENCE_PROTEOMES_FIELDS,UNIPROT_SIZE)
+
+    organism_ids = []
+    
+    try:
+        # Make the HTTP request to Uniprot
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        organism_ids = _build_proteome_organism_list(response,organism_ids)
+        _write_file(file_path, response, PROTEOMES_FILENAME, "w")
+
+        while "next" in response.links:
+            next_url = response.links["next"]["url"]
+            response = requests.get(next_url, timeout=30)
+            response.raise_for_status()
+            organism_ids = _build_proteome_organism_list(response,organism_ids)
+            _write_file(file_path, response, PROTEOMES_FILENAME, "a")
+
+        return organism_ids
+
+    except requests.exceptions.HTTPError:
+        print(f"Bad request for {PROTEOMES_FILENAME} - {response.status_code}")
+    except requests.exceptions.Timeout:
+        print("The request timed out")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
+
+
+def run_uniprot_api(proteome_id_list, show_status: bool) -> None:
+    """
+    Download data from Uniprot in series.
+
+    :param proteome_id_list: List of proteome ids from Uniprot.
     :param show_status: Boolean flag to show progress status.
     :return: None
     """
@@ -205,9 +231,49 @@ def run_uniprot_api_parallel(show_status: bool, workers: int = None) -> None:
     requests_cache.install_cache("uniprot_cache")
 
     # Ensure the directory for storing Uniprot files exists
-    Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
+    #Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
 
-    organism_list = get_organism_list()
+    ncbi_excluded_list = get_organism_list()
+
+    organism_list = list(set(proteome_id_list).intersection(ncbi_excluded_list))
+
+    # Process uniprot files
+    total_organisms = len(organism_list)
+    progress_class = tqdm if show_status else DummyTqdm
+
+    # Iterate over organism IDs and fetch data from Uniprot
+    with progress_class(total=total_organisms, desc="Processing uniprot files") as progress:
+        for organism_id in organism_list:
+            file_path = Path(UNIPROT_S3_DIR) / f"{organism_id}.{UNIPROT_DESIRED_FORMAT}"
+            if not file_path.exists():
+                
+                fetch_uniprot_data(organism_id)
+
+            # Update progress bar
+            progress.update(1)
+        # Set final description for the progress bar
+        progress.set_description(
+            f"Downloading organism data from Uniprot, final file of batch: {organism_id}"
+        )
+
+
+def run_uniprot_api_parallel(proteome_id_list, show_status: bool, workers: int = 1) -> None:
+    """
+    Download data from Uniprot in parallel.
+
+    :param proteome_id_list: List of proteome ids from Uniprot.
+    :param show_status: Boolean flag to show progress status.
+    :return: None
+    """
+    # Cache HTTP requests to avoid repeated calls
+    requests_cache.install_cache("uniprot_cache")
+
+    # Ensure the directory for storing Uniprot files exists
+    #Path(UNIPROT_S3_DIR).mkdir(parents=True, exist_ok=True)
+
+    ncbi_excluded_list = get_organism_list()
+
+    organism_list = list(set(proteome_id_list).intersection(ncbi_excluded_list))
 
     # Set up a pool of worker processes
     with multiprocessing.Pool(processes=workers) as pool:

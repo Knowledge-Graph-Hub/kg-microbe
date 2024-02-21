@@ -33,7 +33,7 @@ URI: [bacteria-archaea-traits:cell_shape_enum](https://w3id.org/bacteria-archaea
 | spiral | spiral | http://purl.obolibrary.org/obo/UBERON_0002227 |  |
 | tailed | tailed | http://purl.obolibrary.org/obo/UBERON_0002533 |  |
 | NA | NA | http://purl.obolibrary.org/obo/CL_0000895 |  |
-| branced | branced |  |  |
+| branched | branched |  |  |
 | pleomorphic | pleomorphic | http://www.ebi.ac.uk/efo/EFO_1001972 |  |
 | vibrio | vibrio | http://purl.obolibrary.org/obo/NCBITaxon_55601 |  |
 

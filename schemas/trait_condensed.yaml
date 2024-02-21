@@ -445,8 +445,8 @@ enums:
       NA:
         description: NA
         meaning: http://purl.obolibrary.org/obo/CL_0000895
-      branced:
-        description: branced
+      branched:
+        description: branched
       pleomorphic:
         description: pleomorphic
         meaning: http://www.ebi.ac.uk/efo/EFO_1001972

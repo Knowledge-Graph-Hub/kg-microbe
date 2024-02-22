@@ -1,5 +1,7 @@
 # kg-microbe
 
+![alt text](https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/logo.png?raw=true)
+
 Knowledge graph construction for BacDive data
 
 # Setup

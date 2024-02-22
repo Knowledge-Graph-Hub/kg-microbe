@@ -2,8 +2,18 @@
 
 ![alt text](https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/kg-microbe.png?raw=true)
 
-# KG-Microbe
-Knowledge graph construction for microbial traits
+# KG-Microbe -- Knowledge graph construction for microbial traits
+
+[Conference paper](https://ceur-ws.org/Vol-3073/paper19.pdf)
+
+[Semantic Scholar](https://www.semanticscholar.org/paper/KG-Hub%E2%80%94building-and-exchanging-biological-knowledge-Caufield-Putman/4c456614394d274fea181ec858429339f61c1c2c)
+
+[Documentation]([docs/CONTRIBUTING.md](http://kghub.org/kg-microbe/index.html))
+
+[KG-Microbe @KG-Hub](https://kghub.io/kg-microbe/)
+
+[Monthly builds](https://kg-hub.berkeleybop.io/kg-microbe/)
+
 
 # Setup
  - Create a vrtual environment of your choice.

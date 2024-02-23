@@ -1065,12 +1065,12 @@ node_stats:
   - mediadive.ingredient
   - mediadive.medium
   - mediadive.solution
-  - traits.cell_shape
+  - cell_shape
   - traits.data_source
   - pathways
   node_id_prefixes_by_category:
     biolink:AbstractEntity:
-    - traits.cell_shape
+    - cell_shape
     biolink:ActivityAndBehavior:
     - ECOCORE
     biolink:AnatomicalEntity:

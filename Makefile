@@ -26,8 +26,8 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
 	echo "traits.carbon_substrate"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.carbon_substrate' | wc -l
-	echo "traits.pathways"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.pathways' | wc -l
+	echo "pathways"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
 	echo "traits.cell_shape"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.cell_shape' | wc -l
 

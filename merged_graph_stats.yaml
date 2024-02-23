@@ -1066,7 +1066,7 @@ node_stats:
   - mediadive.medium
   - mediadive.solution
   - cell_shape
-  - traits.data_source
+  - isolation_source
   - pathways
   node_id_prefixes_by_category:
     biolink:AbstractEntity:
@@ -1124,7 +1124,7 @@ node_stats:
     unknown:
     - NCBITaxon
     - bacdive
-    - traits.data_source
+    - isolation_source
   provided_by:
   - Graph
   - chebi.json

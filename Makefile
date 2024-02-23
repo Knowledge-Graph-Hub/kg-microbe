@@ -24,8 +24,8 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.medium:' | wc -l
 	echo "traits"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
-	echo "traits.carbon_substrate"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.carbon_substrate' | wc -l
+	echo "carbon_substrate"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
 	echo "pathways"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
 	echo "cell_shape"

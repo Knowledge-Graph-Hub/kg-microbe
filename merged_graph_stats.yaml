@@ -964,19 +964,19 @@ node_stats:
     mediadive.ingredient: 258
     mediadive.medium: 3292
     mediadive.solution: 5381
-    traits.cell_shape: 18
-    traits.isolation_source: 5
-    traits.pathways: 84
+    cell_shape: 18
+    isolation_source: 5
+    pathways: 84
   count_by_id_prefixes_by_category:
     biolink:AbstractEntity:
-      traits.cell_shape: 18
+      cell_shape: 18
     biolink:ActivityAndBehavior:
       ECOCORE: 6
     biolink:AnatomicalEntity:
       UBERON: 596
     biolink:BiologicalProcess:
       GO: 30608
-      traits.pathways: 84
+      pathways: 84
     biolink:CellularComponent:
       GO: 4494
     biolink:ChemicalEntity:
@@ -1023,7 +1023,7 @@ node_stats:
     unknown:
       NCBITaxon: 3
       bacdive: 1221
-      traits.isolation_source: 5
+      isolation_source: 5
   node_categories:
   - biolink:AbstractEntity
   - biolink:ActivityAndBehavior

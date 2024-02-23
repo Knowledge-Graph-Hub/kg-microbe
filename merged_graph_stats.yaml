@@ -1067,7 +1067,7 @@ node_stats:
   - mediadive.solution
   - traits.cell_shape
   - traits.data_source
-  - traits.pathways
+  - pathways
   node_id_prefixes_by_category:
     biolink:AbstractEntity:
     - traits.cell_shape
@@ -1077,7 +1077,7 @@ node_stats:
     - UBERON
     biolink:BiologicalProcess:
     - GO
-    - traits.pathways
+    - pathways
     biolink:CellularComponent:
     - GO
     biolink:ChemicalEntity:

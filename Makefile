@@ -28,8 +28,8 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.carbon_substrate' | wc -l
 	echo "pathways"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
-	echo "traits.cell_shape"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.cell_shape' | wc -l
+	echo "cell_shape"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'cell_shape' | wc -l
 
 	echo "EDGES"
 	wc -l data/merged/merged-kg_edges.tsv

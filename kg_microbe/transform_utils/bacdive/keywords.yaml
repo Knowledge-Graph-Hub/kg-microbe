@@ -210,4 +210,94 @@ metabolic_preference:
     category: "biolink:BiologicalProcess"
     relation: "biolink:has_metabolic_process"
 
+cell_shape:
+  rod_shaped:
+    curie: "cell_shape:rod"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  sphere_shaped:
+    curie: "cell_shape:sphere"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  coccus_shaped:
+    curie: "cell_shape:coccus"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  spiral_shaped:
+    curie: "cell_shape:spiral"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  ovoid_shaped:
+    curie: "cell_shape:ovoid"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  filament_shaped:
+    curie: "cell_shape:filament"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  oval_shaped:
+    curie: "cell_shape:oval"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  curved_shaped:
+    curie: "cell_shape:curved"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  pleomorphic_shaped:
+    curie: "cell_shape:pleomorphic"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  helical_shaped:
+    curie: "cell_shape:helical"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  vibrio_shaped:
+    curie: "cell_shape:vibrio"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  crescent_shaped:
+    curie: "cell_shape:crescent"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  star_shaped:
+    curie: "cell_shape:star"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  spore_shaped:
+    curie: "cell_shape:spore"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  diplococcus_shaped:
+    curie: "cell_shape:diplococcus"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  dumbbell_shaped:
+    curie: "cell_shape:dumbbell"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  ring_shaped:
+    curie: "cell_shape:ring"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
+
+  ellipsoidal:
+    curie: "cell_shape:ellipsoidal"
+    category: "biolink:Attribute"
+    relation: "biolink:has_phenotype"
 

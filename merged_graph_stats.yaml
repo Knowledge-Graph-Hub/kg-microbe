@@ -964,12 +964,12 @@ node_stats:
     mediadive.ingredient: 258
     mediadive.medium: 3292
     mediadive.solution: 5381
-    traits.cell_shape_enum: 18
-    traits.data_source: 5
+    traits.cell_shape: 18
+    traits.isolation_source: 5
     traits.pathways: 84
   count_by_id_prefixes_by_category:
     biolink:AbstractEntity:
-      traits.cell_shape_enum: 18
+      traits.cell_shape: 18
     biolink:ActivityAndBehavior:
       ECOCORE: 6
     biolink:AnatomicalEntity:
@@ -1023,7 +1023,7 @@ node_stats:
     unknown:
       NCBITaxon: 3
       bacdive: 1221
-      traits.data_source: 5
+      traits.isolation_source: 5
   node_categories:
   - biolink:AbstractEntity
   - biolink:ActivityAndBehavior
@@ -1065,12 +1065,12 @@ node_stats:
   - mediadive.ingredient
   - mediadive.medium
   - mediadive.solution
-  - traits.cell_shape_enum
+  - traits.cell_shape
   - traits.data_source
   - traits.pathways
   node_id_prefixes_by_category:
     biolink:AbstractEntity:
-    - traits.cell_shape_enum
+    - traits.cell_shape
     biolink:ActivityAndBehavior:
     - ECOCORE
     biolink:AnatomicalEntity:

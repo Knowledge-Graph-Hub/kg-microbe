@@ -1,8 +1,15 @@
 id	category	name	description	xref	provided_by	synonym	iri	object	predicate	relation	same_as	subject	subsets
+temperature:mesophilic	biolink:PhenotypicQuality	mesophilic											
+temperature:psychrophilic	biolink:PhenotypicQuality	psychrophilic											
+temperature:thermophilic	biolink:PhenotypicQuality	thermophilic											
 NCBITaxon:1955243	biolink:OrganismTaxon	Blautia sp.											
 mediadive.medium:1669	biolink:ChemicalEntity	SCHAEDLER BROTH (ROTH; 5772) (DSMZ Medium 1669)											
+oxygen:aerobe	biolink:PhenotypicQuality	aerobe											
+oxygen:anaerobe	biolink:PhenotypicQuality	anaerobe											
 NCBITaxon:1873457	biolink:OrganismTaxon	Promicromonospora sp.											
 mediadive.medium:92	biolink:ChemicalEntity	TRYPTICASE SOY YEAST EXTRACT MEDIUM (DSMZ Medium 92)											
+oxygen:obligate_aerobe	biolink:PhenotypicQuality	obligate aerobe											
+cell_shape:rod	biolink:Attribute	rod-shaped											
 NCBITaxon:1848903	biolink:OrganismTaxon	Capnocytophaga canis											
 mediadive.medium:1609	biolink:ChemicalEntity	HEART INFUSION BLOOD AGAR (DSMZ Medium 1609)											
 NCBITaxon:1978225	biolink:OrganismTaxon	Frondihabitans sp.											
@@ -11,17 +18,21 @@ NCBITaxon:1413221	biolink:OrganismTaxon	Streptomyces ferrugineus
 mediadive.medium:65	biolink:ChemicalEntity	GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)											
 NCBITaxon:1122939	biolink:OrganismTaxon	Patulibacter americanus DSM 16676											
 NCBITaxon:1931	biolink:OrganismTaxon	Streptomyces sp.											
+oxygen:microaerophile	biolink:PhenotypicQuality	microaerophile											
 NCBITaxon:56	biolink:OrganismTaxon	Sorangium cellulosum											
 mediadive.medium:9	biolink:ChemicalEntity	VY/2 AGAR (DSMZ Medium 9)											
 NCBITaxon:1797	biolink:OrganismTaxon	Mycolicibacterium thermoresistibile											
 mediadive.medium:354	biolink:ChemicalEntity	LÖWENSTEIN-JENSEN MEDIUM (DSMZ Medium 354)											
 NCBITaxon:145262	biolink:OrganismTaxon	Methanothermobacter thermautotrophicus											
 mediadive.medium:119	biolink:ChemicalEntity	METHANOBACTERIUM MEDIUM (DSMZ Medium 119)											
+cell_shape:sphere	biolink:Attribute	sphere-shaped											
 NCBITaxon:47847	biolink:OrganismTaxon	Brachybacterium nesterenkovii											
 NCBITaxon:61595	biolink:OrganismTaxon	Allochromatium warmingii											
 mediadive.medium:28	biolink:ChemicalEntity	PFENNIG'S MEDIUM I (modified 1988, for purple sulfur bacteria) (DSMZ Medium 28)											
+oxygen:facultative_anaerobe	biolink:PhenotypicQuality	facultative anaerobe											
 NCBITaxon:920	biolink:OrganismTaxon	Acidithiobacillus ferrooxidans											
 mediadive.medium:271	biolink:ChemicalEntity	ACIDITHIOBACILLUS (APH) MEDIUM (DSMZ Medium 271)											
+salinity:moderately_halophilic	biolink:PhenotypicQuality	moderately halophilic											
 NCBITaxon:1871063	biolink:OrganismTaxon	Aeromicrobium sp.											
 NCBITaxon:1387716	biolink:OrganismTaxon	Arthrobacter nanjingensis											
 NCBITaxon:1464038	biolink:OrganismTaxon	Ezakiella peruensis											
@@ -41,6 +52,7 @@ mediadive.medium:195c	biolink:ChemicalEntity	DESULFOBACTER SP. MEDIUM (LACTATE) 
 NCBITaxon:58172	biolink:OrganismTaxon	Paenibacillus sp.											
 mediadive.medium:220	biolink:ChemicalEntity	CASO AGAR (MERCK 105458) (DSMZ Medium 220)											
 NCBITaxon:184914	biolink:OrganismTaxon	Corallococcus coralloides											
+cell_shape:coccus	biolink:Attribute	coccus-shaped											
 NCBITaxon:309883	biolink:OrganismTaxon	Deinococcus hohokamensis											
 mediadive.medium:736	biolink:ChemicalEntity	RICH MEDIUM (DSMZ Medium 736)											
 NCBITaxon:394092	biolink:OrganismTaxon	Cystobacter gracilis											
@@ -75,6 +87,8 @@ mediadive.medium:1203a	biolink:ChemicalEntity	FASTIDIOUS ANAEROBE BROTH (DSMZ Me
 NCBITaxon:1940790	biolink:OrganismTaxon	Sedimentisphaera cyanobacteriorum											
 mediadive.medium:1527	biolink:ChemicalEntity	SEDIMENTISPHAERA (L21 HS) MEDIUM (DSMZ Medium 1527)											
 NCBITaxon:267	biolink:OrganismTaxon	Paracoccus sp. (in: a-proteobacteria)											
+oxygen:obligate_anaerobe	biolink:PhenotypicQuality	obligate anaerobe											
+cell_shape:spiral	biolink:Attribute	spiral-shaped											
 NCBITaxon:1086726	biolink:OrganismTaxon	Francisella persica ATCC VR-331											
 mediadive.medium:1600	biolink:ChemicalEntity	FRANCISELLA PERSICA MEDIUM (DSMZ Medium 1600)											
 NCBITaxon:1410681	biolink:OrganismTaxon	Methyloglobulus morosus											
@@ -111,15 +125,19 @@ mediadive.medium:84	biolink:ChemicalEntity	ROLLED OATS MINERAL MEDIUM (DSMZ Medi
 NCBITaxon:1564	biolink:OrganismTaxon	Desulforamulus ruminis											
 mediadive.medium:63	biolink:ChemicalEntity	DESULFOVIBRIO (POSTGATE) MEDIUM (DSMZ Medium 63)											
 NCBITaxon:1563	biolink:OrganismTaxon	Desulfosporosinus orientis											
+cell_shape:ovoid	biolink:Attribute	ovoid-shaped											
 NCBITaxon:1123375	biolink:OrganismTaxon	Thermodesulfovibrio islandicus DSM 12570											
 NCBITaxon:502025	biolink:OrganismTaxon	Haliangium ochraceum DSM 14365											
 mediadive.medium:958	biolink:ChemicalEntity	VY/4-SWS AGAR (DSMZ Medium 958)											
 NCBITaxon:995054	biolink:OrganismTaxon	Xenorhabdus magdalenensis											
 mediadive.medium:535b	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM (DSMZ Medium 535b)											
+cell_shape:filament	biolink:Attribute	filament-shaped											
 NCBITaxon:1506	biolink:OrganismTaxon	Clostridium sp.											
 NCBITaxon:459347	biolink:OrganismTaxon	Solibacillus cecembensis											
 NCBITaxon:2358141	biolink:OrganismTaxon	Anaerotignum faecicola											
 mediadive.medium:104b	biolink:ChemicalEntity	PY + X MEDIUM (DSMZ Medium 104b)											
+metabolism:chemoorganotrophy	biolink:BiologicalProcess	chemoorganotroph											
+salinity:halophilic	biolink:PhenotypicQuality	halophilic											
 NCBITaxon:1912090	biolink:OrganismTaxon	Gluceribacter canis											
 mediadive.medium:110a	biolink:ChemicalEntity	CMC MEDIUM (N2/CO2) (DSMZ Medium 110a)											
 NCBITaxon:1872086	biolink:OrganismTaxon	Ensifer sp.											
@@ -139,6 +157,7 @@ NCBITaxon:83450	biolink:OrganismTaxon	Archangium minus
 NCBITaxon:1423	biolink:OrganismTaxon	Bacillus subtilis											
 NCBITaxon:1408	biolink:OrganismTaxon	Bacillus pumilus											
 NCBITaxon:1404	biolink:OrganismTaxon	Priestia megaterium											
+salinity:non_halophilic	biolink:PhenotypicQuality	non-halophilic											
 NCBITaxon:2871696	biolink:OrganismTaxon	Hydrogenophilus sp.											
 mediadive.medium:822	biolink:ChemicalEntity	FRR-6, FRR-8 MEDIUM (DSMZ Medium 822)											
 NCBITaxon:428993	biolink:OrganismTaxon	Pseudoxanthomonas indica											
@@ -156,6 +175,7 @@ NCBITaxon:83460	biolink:OrganismTaxon	Stigmatella erecta
 NCBITaxon:173041	biolink:OrganismTaxon	Pelagirhabdus fermentum											
 mediadive.medium:931	biolink:ChemicalEntity	ALCALIPHILIC AMPHIBACILLUS STRAINS MEDIUM (DSMZ Medium 931)											
 NCBITaxon:1409	biolink:OrganismTaxon	Bacillus sp. (in: firmicutes)											
+metabolism:chemoheterotrophy	biolink:BiologicalProcess	chemoheterotroph											
 NCBITaxon:2293571	biolink:OrganismTaxon	Streptomyces inhibens											
 NCBITaxon:1134435	biolink:OrganismTaxon	Thauera humireducens											
 NCBITaxon:1268254	biolink:OrganismTaxon	Peptoniphilus timonensis											
@@ -232,6 +252,7 @@ NCBITaxon:2754899	biolink:OrganismTaxon	Goodfellowiella sp.
 NCBITaxon:121616	biolink:OrganismTaxon	Micromonospora matsumotoense											
 NCBITaxon:2527964	biolink:OrganismTaxon	Gimesia aquarii											
 mediadive.medium:1560	biolink:ChemicalEntity	PLANCTOMYCES MEDIUM (DSMZ Medium 1560)											
+metabolism:chemoorganoheterotrophy	biolink:BiologicalProcess	chemoorganoheterotroph											
 NCBITaxon:28035	biolink:OrganismTaxon	Staphylococcus lugdunensis											
 NCBITaxon:1486034	biolink:OrganismTaxon	Lacinutrix venerupis											
 NCBITaxon:338645	biolink:OrganismTaxon	Candidatus Contubernalis alkalaceticum											
@@ -306,6 +327,8 @@ NCBITaxon:147645	biolink:OrganismTaxon	Paracoccus yeei
 NCBITaxon:50741	biolink:OrganismTaxon	Marinobacter sp.											
 NCBITaxon:1871048	biolink:OrganismTaxon	Devosia sp.											
 NCBITaxon:390241	biolink:OrganismTaxon	Pedobacter rhizosphaerae											
+metabolism:heterotrophy	biolink:BiologicalProcess	heterotroph											
+cell_shape:oval	biolink:Attribute	oval-shaped											
 NCBITaxon:67304	biolink:OrganismTaxon	Streptomyces griseorubiginosus											
 NCBITaxon:51203	biolink:OrganismTaxon	Methanohalophilus euhalobius											
 mediadive.medium:713	biolink:ChemicalEntity	METHANOHALOPHILUS EUHALOBIUS MEDIUM (DSMZ Medium 713)											
@@ -368,6 +391,8 @@ mediadive.medium:1310	biolink:ChemicalEntity	BUTYRIVIBRIO M2 MEDIUM (DSMZ Medium
 NCBITaxon:77917	biolink:OrganismTaxon	Fusobacterium naviforme											
 NCBITaxon:946678	biolink:OrganismTaxon	Flavobacterium araucananum											
 NCBITaxon:1561	biolink:OrganismTaxon	Clostridium baratii											
+cell_shape:curved	biolink:Attribute	curved-shaped											
+temperature:hyperthermophilic	biolink:PhenotypicQuality	hyperthermophilic											
 NCBITaxon:1870987	biolink:OrganismTaxon	Collinsella vaginalis											
 NCBITaxon:83656	biolink:OrganismTaxon	Streptomyces tsukubensis											
 NCBITaxon:435897	biolink:OrganismTaxon	Lysobacter capsici											
@@ -423,6 +448,7 @@ NCBITaxon:1889013	biolink:OrganismTaxon	Terriglobus sp.
 NCBITaxon:66859	biolink:OrganismTaxon	Streptomyces thermoviolaceus subsp. apingens											
 NCBITaxon:418707	biolink:OrganismTaxon	Methylobacterium iners											
 NCBITaxon:464	biolink:OrganismTaxon	Fluoribacter gormanii											
+cell_shape:pleomorphic	biolink:Attribute	pleomorphic-shaped											
 NCBITaxon:1871045	biolink:OrganismTaxon	Plantibacter sp.											
 NCBITaxon:2681881	biolink:OrganismTaxon	Hahyoungchilella caricis											
 NCBITaxon:2055160	biolink:OrganismTaxon	Kyrpidia spormannii											
@@ -430,6 +456,7 @@ NCBITaxon:1871	biolink:OrganismTaxon	Actinoplanes sp.
 NCBITaxon:2608088	biolink:OrganismTaxon	Aliihoeflea sp.											
 NCBITaxon:1653476	biolink:OrganismTaxon	Caldimicrobium thiodismutans											
 mediadive.medium:1277b	biolink:ChemicalEntity	CALDIMICROBIUM THIODISMUTANS MEDIUM (DSMZ Medium 1277b)											
+metabolism:chemoautolithotrophy	biolink:BiologicalProcess	chemoautolithotroph											
 NCBITaxon:34101	biolink:OrganismTaxon	Sporosarcina limicola											
 mediadive.medium:621a	biolink:ChemicalEntity	EKHO LAKE STRAINS MEDIUM (DSMZ Medium 621a)											
 NCBITaxon:433338	biolink:OrganismTaxon	Anaerocella delicata											
@@ -590,6 +617,7 @@ NCBITaxon:33965	biolink:OrganismTaxon	Leuconostoc mesenteroides subsp. cremoris
 NCBITaxon:1121465	biolink:OrganismTaxon	Pseudodesulfovibrio tunisiensis DSM 19275											
 NCBITaxon:1502	biolink:OrganismTaxon	Clostridium perfringens											
 NCBITaxon:196024	biolink:OrganismTaxon	Aeromonas dhakensis											
+oxygen:facultative_aerobe	biolink:PhenotypicQuality	facultative aerobe											
 NCBITaxon:1486246	biolink:OrganismTaxon	Halomonas sp.											
 NCBITaxon:1931232	biolink:OrganismTaxon	Marinitenerispora sediminis											
 NCBITaxon:678	biolink:OrganismTaxon	Vibrio sp.											
@@ -602,6 +630,7 @@ NCBITaxon:600645	biolink:OrganismTaxon	Aeromonas piscicola
 NCBITaxon:694315	biolink:OrganismTaxon	Kofleria flava											
 NCBITaxon:1898978	biolink:OrganismTaxon	Hymenobacter sp.											
 NCBITaxon:84025	biolink:OrganismTaxon	Clostridium haemolyticum											
+metabolism:methylotrophy	biolink:BiologicalProcess	methylotroph											
 NCBITaxon:881260	biolink:OrganismTaxon	Enterobacter bugandensis											
 NCBITaxon:329854	biolink:OrganismTaxon	Bacteroides intestinalis											
 NCBITaxon:2047085	biolink:OrganismTaxon	Nodularia sp. (in: cyanobacteria)											
@@ -707,6 +736,7 @@ NCBITaxon:33968	biolink:OrganismTaxon	Leuconostoc pseudomesenteroides
 NCBITaxon:870482	biolink:OrganismTaxon	Algibacter pectinivorans											
 NCBITaxon:1872094	biolink:OrganismTaxon	Acetobacterium sp.											
 NCBITaxon:394090	biolink:OrganismTaxon	Cystobacter armeniaca											
+salinity:halotolerant	biolink:PhenotypicQuality	halotolerant											
 NCBITaxon:2093856	biolink:OrganismTaxon	Butyricimonas faecalis											
 NCBITaxon:2527775	biolink:OrganismTaxon	Polynucleobacter paneuropaeus											
 mediadive.medium:830c	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM 830 (DSMZ Medium 830c)											
@@ -736,8 +766,10 @@ NCBITaxon:152475	biolink:OrganismTaxon	Thioalkalivibrio thiocyanoxidans
 mediadive.medium:925	biolink:ChemicalEntity	ALKALIPHILIC SULPHUR RESPIRING STRAINS MEDIUM (DSMZ Medium 925)											
 NCBITaxon:1121484	biolink:OrganismTaxon	Dyadobacter ginsengisoli DSM 21015											
 NCBITaxon:2676123	biolink:OrganismTaxon	Galactobacter caseinivorans											
+cell_shape:helical	biolink:Attribute	helical-shaped											
 NCBITaxon:1573172	biolink:OrganismTaxon	Deferrisoma palaeochoriense											
 mediadive.medium:1210a	biolink:ChemicalEntity	THERMOSULFURIMONAS MEDIUM (DSMZ Medium 1210a)											
+metabolism:mixotrophy	biolink:BiologicalProcess	mixotroph											
 NCBITaxon:909613	biolink:OrganismTaxon	Actinokineospora spheciospongiae											
 NCBITaxon:561440	biolink:OrganismTaxon	Ureibacillus sinduriensis											
 NCBITaxon:384	biolink:OrganismTaxon	Rhizobium leguminosarum											
@@ -771,6 +803,7 @@ NCBITaxon:488485	biolink:OrganismTaxon	Luteimonas marina
 NCBITaxon:1571	biolink:OrganismTaxon	Sporosarcina ureae											
 mediadive.medium:2	biolink:ChemicalEntity	BACILLUS PASTEURII MEDIUM (DSMZ Medium 2)											
 NCBITaxon:147268	biolink:OrganismTaxon	Thiomicrospira cyclica											
+metabolism:chemolithoautotrophy	biolink:BiologicalProcess	chemolithoautotroph											
 NCBITaxon:453817	biolink:OrganismTaxon	Massilia aerilata											
 NCBITaxon:1227456	biolink:OrganismTaxon	Halococcus salifodinae DSM 8989											
 mediadive.medium:372	biolink:ChemicalEntity	HALOBACTERIA MEDIUM (DSMZ Medium 372)											
@@ -922,6 +955,7 @@ NCBITaxon:1071918	biolink:OrganismTaxon	Riemerella columbipharyngis
 mediadive.medium:382	biolink:ChemicalEntity	MINERAL MEDIUM M9 for E. coli JM strains (DSMZ Medium 382)											
 NCBITaxon:199591	biolink:OrganismTaxon	Brevibacterium luteolum											
 NCBITaxon:1962131	biolink:OrganismTaxon	Propionibacterium ruminifibrarum											
+oxygen:aerotolerant	biolink:PhenotypicQuality	aerotolerant											
 NCBITaxon:1891658	biolink:OrganismTaxon	Geobacillus sp.											
 NCBITaxon:1841861	biolink:OrganismTaxon	Mycobacterium numidiamassiliense											
 NCBITaxon:1919	biolink:OrganismTaxon	Streptomyces microflavus											
@@ -1053,6 +1087,7 @@ NCBITaxon:33898	biolink:OrganismTaxon	Streptomyces galbus
 NCBITaxon:488547	biolink:OrganismTaxon	Jhaorihella thermophila											
 NCBITaxon:200454	biolink:OrganismTaxon	Pseudomonas tremae											
 NCBITaxon:569	biolink:OrganismTaxon	Hafnia alvei											
+metabolism:lithoheterotrophy	biolink:BiologicalProcess	lithoheterotroph											
 NCBITaxon:2080740	biolink:OrganismTaxon	Corynebacterium yudongzhengii											
 NCBITaxon:995066	biolink:OrganismTaxon	Actinopolyspora mzabensis											
 NCBITaxon:1780362	biolink:OrganismTaxon	Campylobacter geochelonis											
@@ -1090,6 +1125,7 @@ NCBITaxon:56811	biolink:OrganismTaxon	Psychrobacter sp.
 NCBITaxon:152331	biolink:OrganismTaxon	Lentilactobacillus parabuchneri											
 NCBITaxon:246787	biolink:OrganismTaxon	Bacteroides cellulosilyticus											
 NCBITaxon:57	biolink:OrganismTaxon	Polyangium sp.											
+salinity:extremely_halophilic	biolink:PhenotypicQuality	extremely halophilic											
 NCBITaxon:760261	biolink:OrganismTaxon	Lactivibrio alcoholicus											
 NCBITaxon:659595	biolink:OrganismTaxon	Chiayiivirga flava											
 NCBITaxon:1508419	biolink:OrganismTaxon	Thermotoga caldifontis											
@@ -1144,6 +1180,7 @@ NCBITaxon:1796646	biolink:OrganismTaxon	Muribaculum intestinale
 NCBITaxon:1867408	biolink:OrganismTaxon	Blastomonas marina											
 NCBITaxon:1200300	biolink:OrganismTaxon	Thermogladius calderae											
 mediadive.medium:507	biolink:ChemicalEntity	CARBOXYDOTHERMUS MEDIUM (DSMZ Medium 507)											
+metabolism:organoheterotrophy	biolink:BiologicalProcess	organoheterotroph											
 NCBITaxon:396013	biolink:OrganismTaxon	Pseudooceanicola marinus											
 NCBITaxon:1437523	biolink:OrganismTaxon	Domibacillus indicus											
 NCBITaxon:720633	biolink:OrganismTaxon	Lysinibacillus composti											
@@ -1192,6 +1229,7 @@ mediadive.medium:825	biolink:ChemicalEntity	METHANOBACTERIUM II MEDIUM (DSMZ Med
 NCBITaxon:391920	biolink:OrganismTaxon	Halochromatium roseum											
 mediadive.medium:1069	biolink:ChemicalEntity	MODIFIED BIEBL AND PFENNIG'S MEDIUM (DSMZ Medium 1069)											
 NCBITaxon:1421	biolink:OrganismTaxon	Lysinibacillus sphaericus											
+cell_shape:vibrio	biolink:Attribute	vibrio-shaped											
 NCBITaxon:1874277	biolink:OrganismTaxon	Conexivisphaera calida											
 mediadive.medium:1714	biolink:ChemicalEntity	CONEXIVISPHAERA MEDIUM (DSMZ Medium 1714)											
 NCBITaxon:1307759	biolink:OrganismTaxon	Desulfohalovibrio reitneri											
@@ -1347,6 +1385,7 @@ NCBITaxon:33036	biolink:OrganismTaxon	Anaerococcus tetradius
 NCBITaxon:1887	biolink:OrganismTaxon	Streptomyces albogriseolus											
 NCBITaxon:717231	biolink:OrganismTaxon	Flexistipes sinusarabici DSM 4947											
 mediadive.medium:524	biolink:ChemicalEntity	FLEXISTIPES MEDIUM (DSMZ Medium 524)											
+metabolism:chemolithotrophy	biolink:BiologicalProcess	chemolithotroph											
 NCBITaxon:2268407	biolink:OrganismTaxon	Listeria thailandensis											
 NCBITaxon:1627895	biolink:OrganismTaxon	Hypnocyclicus thermotrophus											
 mediadive.medium:1667	biolink:ChemicalEntity	HYPNOCYCLICUS MEDIUM (DSMZ Medium 1667)											
@@ -1505,6 +1544,7 @@ NCBITaxon:199592	biolink:OrganismTaxon	Microbacterium paraoxydans
 NCBITaxon:1926648	biolink:OrganismTaxon	Nocardioides litoris											
 NCBITaxon:745820	biolink:OrganismTaxon	Alkalicoccus daliensis											
 NCBITaxon:91797	biolink:OrganismTaxon	Halobacteroides elegans											
+oxygen:microaerotolerant	biolink:PhenotypicQuality	microaerotolerant											
 NCBITaxon:1869345	biolink:OrganismTaxon	Lysinibacillus sp.											
 NCBITaxon:1481923	biolink:OrganismTaxon	Vibrio astriarenae											
 NCBITaxon:1638985	biolink:OrganismTaxon	Demequina rhizosphaerae											
@@ -1578,6 +1618,7 @@ mediadive.medium:253	biolink:ChemicalEntity	MEDIUM FOR ECTOTHIORHODOSPIRA (DSMZ 
 NCBITaxon:1495	biolink:OrganismTaxon	Clostridium cylindrosporum											
 NCBITaxon:2055844	biolink:OrganismTaxon	Kocuria uropygioeca											
 NCBITaxon:1872417	biolink:OrganismTaxon	Agrococcus sp.											
+cell_shape:crescent	biolink:Attribute	crescent-shaped											
 NCBITaxon:1542726	biolink:OrganismTaxon	Gryllotalpicola soli											
 mediadive.medium:1484	biolink:ChemicalEntity	GLYCEROL-YEAST EXTRACT-PEPTONE MEDIUM (DSMZ Medium 1484)											
 NCBITaxon:1072256	biolink:OrganismTaxon	Corynebacterium uterequi											
@@ -1765,6 +1806,7 @@ NCBITaxon:702745	biolink:OrganismTaxon	Myroides phaeus
 NCBITaxon:1008159	biolink:OrganismTaxon	Halorubrum sp. YIM 93749											
 mediadive.medium:1356	biolink:ChemicalEntity	HMD MEDIUM (DSMZ Medium 1356)											
 NCBITaxon:1166482	biolink:OrganismTaxon	Pseudomaricurvus alcaniphilus											
+metabolism:autotrophy	biolink:BiologicalProcess	autotroph											
 NCBITaxon:1905334	biolink:OrganismTaxon	Thauera sp.											
 NCBITaxon:694434	biolink:OrganismTaxon	Gracilibacter thermotolerans JW/YJL-S1											
 NCBITaxon:1123287	biolink:OrganismTaxon	Sporomusa malonica DSM 5090											
@@ -1883,6 +1925,7 @@ NCBITaxon:116188	biolink:OrganismTaxon	Streptomyces coeruleorubidus
 NCBITaxon:38289	biolink:OrganismTaxon	Corynebacterium jeikeium											
 NCBITaxon:44674	biolink:OrganismTaxon	Sulfurospirillum barnesii											
 mediadive.medium:771	biolink:ChemicalEntity	SULFUROSPIRILLUM BARNESII MEDIUM (DSMZ Medium 771)											
+salinity:slightly_halophilic	biolink:PhenotypicQuality	slightly halophilic											
 NCBITaxon:2054627	biolink:OrganismTaxon	Altererythrobacter lauratis											
 NCBITaxon:1936021	biolink:OrganismTaxon	Thermosulfuriphilus ammonigenes											
 mediadive.medium:1210c	biolink:ChemicalEntity	THERMOSULFURIPHILUS MEDIUM (DSMZ Medium 1210c)											
@@ -2171,6 +2214,7 @@ mediadive.medium:396	biolink:ChemicalEntity	METHANOSALSUM ZHILINAE MEDIUM (DSMZ 
 NCBITaxon:63612	biolink:OrganismTaxon	Sodalis glossinidius											
 mediadive.medium:1021	biolink:ChemicalEntity	SODALIS GLOSSINIDIUS MEDIUM (DSMZ Medium 1021)											
 NCBITaxon:1097	biolink:OrganismTaxon	Chlorobaculum tepidum											
+metabolism:phototrophy	biolink:BiologicalProcess	phototroph											
 NCBITaxon:1698	biolink:OrganismTaxon	Brevibacterium epidermidis											
 NCBITaxon:1648232	biolink:OrganismTaxon	Skermanella rubra											
 mediadive.medium:1342	biolink:ChemicalEntity	YIM MEDIUM WITH NACL (DSMZ Medium 1342)											
@@ -2249,6 +2293,7 @@ mediadive.medium:509a	biolink:ChemicalEntity	SPIROCHAETA RI 19.B1 MEDIUM (DSMZ M
 NCBITaxon:191768	biolink:OrganismTaxon	Plesiocystis pacifica											
 NCBITaxon:2224	biolink:OrganismTaxon	Methanothrix thermoacetophila											
 NCBITaxon:77007	biolink:OrganismTaxon	Thiorhodovibrio winogradskyi											
+metabolism:photoheterotrophy	biolink:BiologicalProcess	photoheterotroph											
 NCBITaxon:1691571	biolink:OrganismTaxon	Nocardia rhizosphaerae											
 NCBITaxon:35703	biolink:OrganismTaxon	Citrobacter amalonaticus											
 NCBITaxon:87162	biolink:OrganismTaxon	Borreliella sinica											
@@ -2326,6 +2371,7 @@ NCBITaxon:29508	biolink:OrganismTaxon	Leptospira meyeri
 NCBITaxon:591202	biolink:OrganismTaxon	Arcicella aurantiaca											
 NCBITaxon:332101	biolink:OrganismTaxon	Clostridium drakei											
 NCBITaxon:299072	biolink:OrganismTaxon	Megalodesulfovibrio paquesii											
+salinity:haloalkaliphilic	biolink:PhenotypicQuality	haloalkaliphilic											
 NCBITaxon:1516159	biolink:OrganismTaxon	Vibrio coralliirubri											
 NCBITaxon:1581193	biolink:OrganismTaxon	Nonomuraea indica											
 NCBITaxon:619730	biolink:OrganismTaxon	Terrabacter carboxydivorans											
@@ -2956,6 +3002,7 @@ NCBITaxon:595692	biolink:OrganismTaxon	Haloferula luteola
 NCBITaxon:426707	biolink:OrganismTaxon	Desulfomicrobium salsuginis											
 NCBITaxon:33936	biolink:OrganismTaxon	Aeribacillus pallidus											
 NCBITaxon:1123295	biolink:OrganismTaxon	Stella vacuolata DSM 5901 = ATCC 43931											
+cell_shape:star	biolink:Attribute	star-shaped											
 NCBITaxon:1306	biolink:OrganismTaxon	Streptococcus sp.											
 NCBITaxon:683405	biolink:OrganismTaxon	uncultured Natranaerobius sp.											
 mediadive.medium:1054	biolink:ChemicalEntity	A1-MEDIUM (DSMZ Medium 1054)											
@@ -3441,6 +3488,7 @@ NCBITaxon:1120956	biolink:OrganismTaxon	Afifella pfennigii DSM 17143
 NCBITaxon:206403	biolink:OrganismTaxon	Sulfurovum lithotrophicum											
 NCBITaxon:463301	biolink:OrganismTaxon	Halomonas korlensis											
 NCBITaxon:1121320	biolink:OrganismTaxon	Clostridium intestinale DSM 6191											
+cell_shape:ellipsoidal	biolink:Attribute	ellipsoidal											
 NCBITaxon:1796	biolink:OrganismTaxon	Mycolicibacterium senegalense											
 NCBITaxon:1924094	biolink:OrganismTaxon	Anaeromassilibacillus sp.											
 NCBITaxon:1914288	biolink:OrganismTaxon	Dyadobacter sp.											
@@ -3526,6 +3574,7 @@ mediadive.medium:697	biolink:ChemicalEntity	TODD-HEWITT MEDIUM (DSMZ Medium 697)
 NCBITaxon:1872118	biolink:OrganismTaxon	Acidithiobacillus sp.											
 NCBITaxon:203795	biolink:OrganismTaxon	Alteromonas marina											
 NCBITaxon:1765737	biolink:OrganismTaxon	Dissulfurirhabdus thermomarina											
+metabolism:lithoautotrophy	biolink:BiologicalProcess	lithoautotroph											
 NCBITaxon:1435051	biolink:OrganismTaxon	Bifidobacterium moukalabense DSM 27321											
 NCBITaxon:67277	biolink:OrganismTaxon	Streptomyces aureoversilis											
 NCBITaxon:481719	biolink:OrganismTaxon	Lentilactobacillus sunkii											
@@ -3672,6 +3721,7 @@ mediadive.medium:1250	biolink:ChemicalEntity	DESULFOSPOROSINUS ACIDIPHILUS MEDIU
 NCBITaxon:1052260	biolink:OrganismTaxon	Klenkia soli											
 NCBITaxon:727	biolink:OrganismTaxon	Haemophilus influenzae											
 NCBITaxon:86	biolink:OrganismTaxon	Hyphomonas jannaschiana											
+metabolism:diazotrophy	biolink:BiologicalProcess	diazotroph											
 NCBITaxon:1591087	biolink:OrganismTaxon	Nesterenkonia populi											
 NCBITaxon:454188	biolink:OrganismTaxon	Thermoflavifilum aggregans											
 NCBITaxon:315423	biolink:OrganismTaxon	Palleronia marisminoris											
@@ -4031,6 +4081,7 @@ mediadive.medium:457	biolink:ChemicalEntity	MINERAL MEDIUM (BRUNNER) (DSMZ Mediu
 NCBITaxon:1220571	biolink:OrganismTaxon	Alicyclobacillus kakegawensis NBRC 103104											
 NCBITaxon:1978549	biolink:OrganismTaxon	Aquidulcibacter paucihalophilus											
 NCBITaxon:1891184	biolink:OrganismTaxon	Thaumasiovibrio occultus											
+metabolism:chemolithoheterotrophy	biolink:BiologicalProcess	chemolithoheterotroph											
 NCBITaxon:1347903	biolink:OrganismTaxon	Lederbergia wuyishanensis											
 NCBITaxon:1526412	biolink:OrganismTaxon	Microbacterium endophyticum											
 NCBITaxon:1050107	biolink:OrganismTaxon	Lactobacillus delbrueckii subsp. sunkii											
@@ -4078,6 +4129,7 @@ NCBITaxon:40214	biolink:OrganismTaxon	Acinetobacter johnsonii
 mediadive.medium:681	biolink:ChemicalEntity	TGA-MEDIUM (DSMZ Medium 681)											
 NCBITaxon:49447	biolink:OrganismTaxon	Halochromatium salexigens											
 mediadive.medium:421	biolink:ChemicalEntity	CHROMATIUM SALEXIGENS MEDIUM (DSMZ Medium 421)											
+metabolism:chemotrophy	biolink:BiologicalProcess	chemotroph											
 NCBITaxon:1938889	biolink:OrganismTaxon	Agreia sp. VKM Ac-1783											
 NCBITaxon:1629062	biolink:OrganismTaxon	Antricoccus suffuscus											
 NCBITaxon:83561	biolink:OrganismTaxon	Simkania negevensis											
@@ -4821,6 +4873,7 @@ NCBITaxon:490185	biolink:OrganismTaxon	Gemmobacter aquaticus
 NCBITaxon:1290553	biolink:OrganismTaxon	Halocynthiibacter namhaensis											
 NCBITaxon:1134405	biolink:OrganismTaxon	Melioribacter roseus											
 mediadive.medium:1374	biolink:ChemicalEntity	IGNAVIBACTERIA MEDIUM (DSMZ Medium 1374)											
+metabolism:organotrophy	biolink:BiologicalProcess	organotroph											
 NCBITaxon:1423819	biolink:OrganismTaxon	Levilactobacillus koreensis JCM 16448											
 NCBITaxon:83382	biolink:OrganismTaxon	Kitasatospora xanthocidica											
 NCBITaxon:521013	biolink:OrganismTaxon	Limimaricola pyoseonensis											
@@ -4937,6 +4990,7 @@ NCBITaxon:904715	biolink:OrganismTaxon	Sphingomonas jejuensis
 NCBITaxon:1037680	biolink:OrganismTaxon	Robertmurraya kyonggiensis											
 NCBITaxon:242698	biolink:OrganismTaxon	Thermoanaerobacterium aciditolerans											
 NCBITaxon:797299	biolink:OrganismTaxon	Halostagnicola larsenii XH-48											
+cell_shape:spore	biolink:Attribute	spore-shaped											
 NCBITaxon:1464070	biolink:OrganismTaxon	Streptomyces graminilatus											
 NCBITaxon:871652	biolink:OrganismTaxon	Poseidonocella sedimentorum											
 NCBITaxon:870908	biolink:OrganismTaxon	Cognatishimia maritima											
@@ -5249,6 +5303,7 @@ NCBITaxon:980347	biolink:OrganismTaxon	Halomonas qijiaojingensis
 NCBITaxon:571933	biolink:OrganismTaxon	Piscibacillus halophilus											
 NCBITaxon:1659	biolink:OrganismTaxon	Actinomyces israelii											
 mediadive.medium:216	biolink:ChemicalEntity	BHI/1 MEDIUM (DSMZ Medium 216)											
+cell_shape:diplococcus	biolink:Attribute	diplococcus-shaped											
 NCBITaxon:1095776	biolink:OrganismTaxon	Natronorubrum texcoconense											
 NCBITaxon:971279	biolink:OrganismTaxon	Palaeococcus pacificus											
 NCBITaxon:254356	biolink:OrganismTaxon	Roseibaca ekhonensis											
@@ -5299,6 +5354,7 @@ NCBITaxon:552386	biolink:OrganismTaxon	Vibrio gallaecicus
 NCBITaxon:68222	biolink:OrganismTaxon	Streptomyces kashimirensis											
 NCBITaxon:66850	biolink:OrganismTaxon	Filomicrobium fusiforme											
 mediadive.medium:768	biolink:ChemicalEntity	M17 MEDIUM FOR FILOMICROBIUM FUSIFORME (DSMZ Medium 768)											
+metabolism:photolithotrophy	biolink:BiologicalProcess	photolithotroph											
 NCBITaxon:2316722	biolink:OrganismTaxon	Corallococcus aberystwythensis											
 NCBITaxon:1380685	biolink:OrganismTaxon	Kroppenstedtia pulmonis											
 NCBITaxon:1230456	biolink:OrganismTaxon	Halorubrum kocurii JCM 14978											
@@ -6704,6 +6760,7 @@ NCBITaxon:747365	biolink:OrganismTaxon	Thermodesulfobium narugense DSM 14796
 mediadive.medium:1005	biolink:ChemicalEntity	THERMODESULFOBIUM MEDIUM (DSMZ Medium 1005)											
 NCBITaxon:1121420	biolink:OrganismTaxon	Desulfosporosinus lacus DSM 15449											
 NCBITaxon:395930	biolink:OrganismTaxon	Devosia subaequoris											
+cell_shape:dumbbell	biolink:Attribute	dumbbell-shaped											
 NCBITaxon:39791	biolink:OrganismTaxon	Corynebacterium glucuronolyticum											
 NCBITaxon:329406	biolink:OrganismTaxon	Thiorhodococcus mannitoliphagus											
 mediadive.medium:28b	biolink:ChemicalEntity	THIORHODOCOCCUS MEDIUM II (DSMZ Medium 28b)											
@@ -7074,6 +7131,7 @@ NCBITaxon:1872530	biolink:OrganismTaxon	Anaerostipes sp.
 NCBITaxon:1227549	biolink:OrganismTaxon	Cribrihabitans marinus											
 NCBITaxon:1255043	biolink:OrganismTaxon	Thioalkalivibrio nitratireducens DSM 14787											
 NCBITaxon:241244	biolink:OrganismTaxon	Rummeliibacillus stabekisii											
+metabolism:photoorganoheterotrophy	biolink:BiologicalProcess	photoorganoheterotroph											
 NCBITaxon:1499973	biolink:OrganismTaxon	Escherichia marmotae											
 NCBITaxon:1036181	biolink:OrganismTaxon	Microlunatus flavus											
 NCBITaxon:1494959	biolink:OrganismTaxon	Pseudogracilibacillus auburnensis											
@@ -7297,6 +7355,7 @@ NCBITaxon:1914756	biolink:OrganismTaxon	Phenylobacterium deserti
 NCBITaxon:937251	biolink:OrganismTaxon	Youngiibacter multivorans											
 NCBITaxon:563996	biolink:OrganismTaxon	Sphingomonas hankookensis											
 NCBITaxon:1121293	biolink:OrganismTaxon	Clostridium akagii DSM 12554											
+metabolism:methanotrophy	biolink:BiologicalProcess	methanotroph											
 NCBITaxon:1296669	biolink:OrganismTaxon	Aquabacterium olei											
 NCBITaxon:36740	biolink:OrganismTaxon	Dermabacter hominis											
 NCBITaxon:83560	biolink:OrganismTaxon	Chlamydia muridarum											
@@ -7666,6 +7725,7 @@ NCBITaxon:1121393	biolink:OrganismTaxon	Desulfatibacillum alkenivorans DSM 16219
 NCBITaxon:908940	biolink:OrganismTaxon	Salisediminibacterium locisalis											
 mediadive.medium:1309	biolink:ChemicalEntity	BACILLUS LOCISALIS (DSMZ Medium 1309)											
 NCBITaxon:1872398	biolink:OrganismTaxon	Aerococcus sp.											
+metabolism:lithotrophy	biolink:BiologicalProcess	lithotroph											
 NCBITaxon:557451	biolink:OrganismTaxon	Symbiobacterium terraclitae											
 mediadive.medium:1509	biolink:ChemicalEntity	NB-PYRUVATE AGAR (DSMZ Medium 1509)											
 NCBITaxon:985055	biolink:OrganismTaxon	Aliiroseovarius halocynthiae											
@@ -7923,6 +7983,7 @@ mediadive.medium:1057	biolink:ChemicalEntity	ETHANOLIGENES MEDIUM (DSMZ Medium 1
 NCBITaxon:264736	biolink:OrganismTaxon	Photobacterium frigidiphilum											
 NCBITaxon:634290	biolink:OrganismTaxon	Rhizobium vallis											
 NCBITaxon:103690	biolink:OrganismTaxon	Nostoc sp. PCC 7120 = FACHB-418											
+metabolism:oligotrophy	biolink:BiologicalProcess	oligotroph											
 NCBITaxon:470150	biolink:OrganismTaxon	Pseudomonas taiwanensis											
 NCBITaxon:1123280	biolink:OrganismTaxon	Sporacetigenium mesophilum DSM 16796											
 NCBITaxon:223182	biolink:OrganismTaxon	Halobacterium noricense											
@@ -7976,6 +8037,7 @@ NCBITaxon:1002220	biolink:OrganismTaxon	Acetivibrio alkalicellulosi DSM 17461
 mediadive.medium:1036	biolink:ChemicalEntity	HUNGATEICLOSTRIDIUM ALKALICELLULOSI MEDIUM (DSMZ Medium 1036)											
 NCBITaxon:1972068	biolink:OrganismTaxon	Sulfurivermis fontis											
 NCBITaxon:1773489	biolink:OrganismTaxon	Varunaivibrio sulfuroxidans											
+metabolism:chemoautotrophy	biolink:BiologicalProcess	chemoautotroph											
 NCBITaxon:1549855	biolink:OrganismTaxon	Haematospirillum jordaniae											
 NCBITaxon:1524084	biolink:OrganismTaxon	Jiangella mangrovi											
 NCBITaxon:1231184	biolink:OrganismTaxon	Nitratireductor kimnyeongensis KY 101											
@@ -8374,6 +8436,7 @@ NCBITaxon:321266	biolink:OrganismTaxon	Halomonas kenyensis
 NCBITaxon:525886	biolink:OrganismTaxon	Mycoplasma hafezii											
 NCBITaxon:1639689	biolink:OrganismTaxon	Pontivivens insulae											
 NCBITaxon:913761	biolink:OrganismTaxon	Variovorax defluvii											
+cell_shape:ring	biolink:Attribute	ring-shaped											
 NCBITaxon:29545	biolink:OrganismTaxon	Azoarcus indigens											
 NCBITaxon:317019	biolink:OrganismTaxon	Nocardioides dubius											
 NCBITaxon:526944	biolink:OrganismTaxon	Tetragenococcus osmophilus											

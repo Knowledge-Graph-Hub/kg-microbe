@@ -301,3 +301,21 @@ cell_shape:
     category: "biolink:Attribute"
     predicate: "biolink:has_phenotype"
 
+# gram_stain:
+#   gram_positive:
+#     curie: "gram_stain:positive"
+#     category: "biolink:Attribute"
+#     predicate: "biolink:has_phenotype"
+#   gram_negative:
+#     curie: "gram_stain:negative"
+#     category: "biolink:Attribute"
+#     predicate: "biolink:has_phenotype"
+#   gram_variable:
+#     curie: "gram_stain:variable"
+#     category: "biolink:Attribute"
+#     predicate: "biolink:has_phenotype"
+#   gram_indeterminate:
+#     curie: "gram_stain:indeterminate"
+#     category: "biolink:Attribute"
+#     predicate: "biolink:has_phenotype"
+

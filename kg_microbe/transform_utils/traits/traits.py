@@ -57,6 +57,7 @@ from kg_microbe.transform_utils.constants import (
     TYPE_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.ner_utils import annotate
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
@@ -66,7 +67,6 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class TraitsTransform(Transform):
-
     """
     Ingest traits dataset (NCBI/GTDB).
 
@@ -99,7 +99,7 @@ class TraitsTransform(Transform):
         self.metabolism_map_yaml = PARENT_DIR / "metabolism_map.yaml"
         self.environments_file = self.input_base_dir / "environments.csv"
 
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """
         Call method and perform needed transformations for trait data (NCBI/GTDB).
 
@@ -197,7 +197,9 @@ class TraitsTransform(Transform):
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
             edge_writer.writerows(role_edges)
-            with tqdm(total=total_lines, desc="Processing files") as progress:
+
+            progress_class = tqdm if show_status else DummyTqdm
+            with progress_class(total=total_lines, desc="Processing files") as progress:
                 for line in reader:
                     pathway_nodes = None
                     carbon_substrate_nodes = None

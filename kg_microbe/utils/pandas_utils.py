@@ -66,14 +66,29 @@ def establish_transitive_relationship(
 
     list_of_dfs_to_append = []
 
-    for row in subject_intermediate_df.iterrows():
-        transitive_relations_df = intermediate_object_df.loc[
-            intermediate_object_df[SUBJECT_COLUMN] == row[1].object
-        ]
-        transitive_relations_df.loc[
-            transitive_relations_df[SUBJECT_COLUMN] == row[1].object, SUBJECT_COLUMN
-        ] = row[1].subject
-        list_of_dfs_to_append.append(transitive_relations_df)
+    # for row in subject_intermediate_df.iterrows():
+    #     transitive_relations_df = intermediate_object_df.loc[
+    #         intermediate_object_df[SUBJECT_COLUMN] == row[1].object
+    #     ]
+    #     transitive_relations_df.loc[
+    #         transitive_relations_df[SUBJECT_COLUMN] == row[1].object, SUBJECT_COLUMN
+    #     ] = row[1].subject
+    #     list_of_dfs_to_append.append(transitive_relations_df)
+    # Create a dictionary to map objects to subjects
+    object_to_subject = dict(
+        zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False)
+    )
+
+    # Filter the DataFrame to include only rows where the SUBJECT_COLUMN matches any object in the mapping
+    filtered_df = intermediate_object_df[
+        intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subject.keys())
+    ]
+
+    # Map the SUBJECT_COLUMN in filtered_df to the corresponding subjects using the mapping
+    filtered_df[SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
+
+    # Append the modified DataFrame to the list (assuming list_of_dfs_to_append is already defined)
+    list_of_dfs_to_append.append(filtered_df)
 
     df = pd.concat([df] + list_of_dfs_to_append).sort_values(by=[SUBJECT_COLUMN])
     df.to_csv(file_path, sep="\t", index=False)

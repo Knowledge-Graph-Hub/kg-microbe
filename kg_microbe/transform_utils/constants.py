@@ -135,6 +135,8 @@ PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 ROLE_CATEGORY = "biolink:ChemicalRole"
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
+PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
+ATTRIBUTE_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -166,6 +168,7 @@ UNIT_COLUMN = "unit"
 GRAMS_PER_LITER_COLUMN = "g_l"
 MMOL_PER_LITER_COLUMN = "mmol_l"
 RISK_ASSESSMENT_COLUMN = RISK_ASSESSMENT
+CURIE_COLUMN = "curie"
 
 BACDIVE_ID_COLUMN = "bacdive_id"
 DSM_NUMBER_COLUMN = "dsm_number"

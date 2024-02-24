@@ -108,107 +108,107 @@ metabolic_preference:
   chemoautotroph:
     curie: "metabolism:chemoautotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemoorganotroph:
     curie: "metabolism:chemoorganotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemoheterotroph:
     curie: "metabolism:chemoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemoorganoheterotroph:
     curie: "metabolism:chemoorganoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   heterotroph:
     curie: "metabolism:heterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemoautolithotroph:
     curie: "metabolism:chemoautolithotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   methylotroph:
     curie: "metabolism:methylotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   mixotroph:
     curie: "metabolism:mixotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemolithoautotroph:
     curie: "metabolism:chemolithoautotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   methanotroph:
     curie: "metabolism:methanotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   lithoheterotroph:
     curie: "metabolism:lithoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   organoheterotroph:
     curie: "metabolism:organoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemolithotroph:
     curie: "metabolism:chemolithotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   autotroph:
     curie: "metabolism:autotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   phototroph:
     curie: "metabolism:phototrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   photoheterotroph:
     curie: "metabolism:photoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   lithoautotroph:
     curie: "metabolism:lithoautotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   diazotroph:
     curie: "metabolism:diazotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemolithoheterotroph:
     curie: "metabolism:chemolithoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   chemotroph:
     curie: "metabolism:chemotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   organotroph:
     curie: "metabolism:organotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   photolithotroph:
     curie: "metabolism:photolithotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   photoautotroph:
     curie: "metabolism:photoautotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   photoorganoheterotroph:
     curie: "metabolism:photoorganoheterotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   lithotroph:
     curie: "metabolism:lithotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
   oligotroph:
     curie: "metabolism:oligotrophy"
     category: "biolink:BiologicalProcess"
-    predicate: "biolink:has_metabolic_process"
+    predicate: "biolink:capable_of"
 
 cell_shape:
   rod_shaped:

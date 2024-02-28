@@ -3,6 +3,7 @@
 import csv
 from itertools import combinations
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 
@@ -16,7 +17,11 @@ from kg_microbe.transform_utils.constants import (
 )
 
 
-def drop_duplicates(file_path: Path, sort_by: str = SUBJECT_COLUMN):
+def drop_duplicates(
+    file_path: Path,
+    sort_by: str = SUBJECT_COLUMN,
+    consolidation_columns: List = None,
+):
     """
     Read TSV, drop duplicates and export to same file.
 
@@ -24,6 +29,9 @@ def drop_duplicates(file_path: Path, sort_by: str = SUBJECT_COLUMN):
     :param file_path: file path.
     """
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
+    if consolidation_columns and all(col in list(df.columns) for col in consolidation_columns):
+        for col in consolidation_columns:
+            df[col] = df[col].str.lower()
     df = df.drop_duplicates().sort_values(by=[sort_by])
     df.to_csv(file_path, sep="\t", index=False)
     return df

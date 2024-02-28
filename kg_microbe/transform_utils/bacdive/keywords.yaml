@@ -213,109 +213,156 @@ metabolic_preference:
 cell_shape:
   rod_shaped:
     curie: "cell_shape:rod"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   sphere_shaped:
     curie: "cell_shape:sphere"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   coccus_shaped:
     curie: "cell_shape:coccus"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   spiral_shaped:
     curie: "cell_shape:spiral"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   ovoid_shaped:
     curie: "cell_shape:ovoid"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   filament_shaped:
     curie: "cell_shape:filament"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   oval_shaped:
     curie: "cell_shape:oval"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   curved_shaped:
     curie: "cell_shape:curved"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   pleomorphic_shaped:
     curie: "cell_shape:pleomorphic"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   helical_shaped:
     curie: "cell_shape:helical"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   vibrio_shaped:
     curie: "cell_shape:vibrio"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   crescent_shaped:
     curie: "cell_shape:crescent"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   star_shaped:
     curie: "cell_shape:star"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   spore_shaped:
     curie: "cell_shape:spore"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   diplococcus_shaped:
     curie: "cell_shape:diplococcus"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   dumbbell_shaped:
     curie: "cell_shape:dumbbell"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   ring_shaped:
     curie: "cell_shape:ring"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
   ellipsoidal:
     curie: "cell_shape:ellipsoidal"
-    category: "biolink:Attribute"
+    category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
-# gram_stain:
-#   gram_positive:
-#     curie: "gram_stain:positive"
-#     category: "biolink:Attribute"
-#     predicate: "biolink:has_phenotype"
-#   gram_negative:
-#     curie: "gram_stain:negative"
-#     category: "biolink:Attribute"
-#     predicate: "biolink:has_phenotype"
-#   gram_variable:
-#     curie: "gram_stain:variable"
-#     category: "biolink:Attribute"
-#     predicate: "biolink:has_phenotype"
-#   gram_indeterminate:
-#     curie: "gram_stain:indeterminate"
-#     category: "biolink:Attribute"
-#     predicate: "biolink:has_phenotype"
+gram_stain:
+  gram_positive:
+    curie: "gram_stain:positive"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  gram_negative:
+    curie: "gram_stain:negative"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  gram_variable:
+    curie: "gram_stain:variable"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  gram_indeterminate:
+    curie: "gram_stain:indeterminate"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
 
+production:
+  antibiotic_compound:
+    curie: "production:antibiotic_compound"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  alcohol:
+    curie: "production:alcohol"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  toxin:
+    curie: "production:toxin"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  amino_acid:
+    curie: "production:amino_acid"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  lactate:
+    curie: "production:lactate"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  polysaccharide:
+    curie: "production:polysaccharide"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  methane:
+    curie: "production:methane"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  pigmented:
+    curie: "production:pigmented"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+
+pathogen:
+  human:
+    curie: "pathogen:human"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  animal:
+    curie: "pathogen:animal"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  plant:
+    curie: "pathogen:plant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"

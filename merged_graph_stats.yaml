@@ -1013,7 +1013,7 @@ node_stats:
     bacdive: 1225
     cell_shape: 36
     isolation_source: 5
-    mediadive.ingredient: 258
+    ingredient: 258
     medium: 3292
     mediadive.solution: 5381
     metabolism: 25
@@ -1041,7 +1041,7 @@ node_stats:
       CHEBI: 525
       KEGG: 1
       PubChem: 20
-      mediadive.ingredient: 258
+      ingredient: 258
       medium: 3292
       mediadive.solution: 5381
     biolink:ChemicalRole:
@@ -1127,7 +1127,7 @@ node_stats:
   - bacdive
   - cell_shape
   - isolation_source
-  - mediadive.ingredient
+  - ingredient
   - medium
   - mediadive.solution
   - metabolism
@@ -1155,7 +1155,7 @@ node_stats:
     - medium
     - mediadive.solution
     - CAS-RN
-    - mediadive.ingredient
+    - ingredient
     - PubChem
     - KEGG
     biolink:ChemicalRole:

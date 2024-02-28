@@ -16,8 +16,8 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'CAS-RN:' | wc -l
 	echo "mediadive."
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.' | wc -l
-	echo "mediadive.ingredient:"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.ingredient:' | wc -l
+	echo "ingredient:"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'ingredient:' | wc -l
 	echo "mediadive.solution:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.solution:' | wc -l
 	echo "medium:"
@@ -36,15 +36,15 @@ run-summary:
 	echo "taxon -> medium"
 	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "medium-> ingredient"
-	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.ingredient' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'ingredient' | wc -l
 	echo "medium-> solution"
 	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
 	echo "ingredient -> CHEBI"
-	grep 'mediadive.ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
+	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "solution -> CHEBI"
 	grep 'mediadive.solution:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "ingredient -> solution"
-	grep 'mediadive.ingredient:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
+	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
 	echo "taxon -> CHEBI"
 	grep 'CHEBI:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "taxon -> GO"

@@ -320,31 +320,31 @@ gram_stain:
     predicate: "biolink:has_phenotype"
 
 production:
-  antibiotic_compound:
+  antibiotic_compound_production:
     curie: "production:antibiotic_compound"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
-  alcohol:
+  alcohol_production:
     curie: "production:alcohol"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
-  toxin:
+  toxin_production:
     curie: "production:toxin"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
-  amino_acid:
+  amino_acid_production:
     curie: "production:amino_acid"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
-  lactate:
+  lactate_production:
     curie: "production:lactate"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
-  polysaccharide:
+  polysaccharide_production:
     curie: "production:polysaccharide"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
-  methane:
+  methane_production:
     curie: "production:methane"
     category: "biolink:ChemicalSubstance"
     predicate: "biolink:produces"
@@ -354,15 +354,15 @@ production:
     predicate: "biolink:produces"
 
 pathogen:
-  human:
+  human_pathogen:
     curie: "pathogen:human"
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
-  animal:
+  animal_pathogen:
     curie: "pathogen:animal"
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
-  plant:
+  plant_pathogen:
     curie: "pathogen:plant"
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"

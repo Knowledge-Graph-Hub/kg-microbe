@@ -33,6 +33,7 @@ from kg_microbe.transform_utils.constants import (
     LOCATION_OF,
     METABOLISM_CATEGORY,
     METABOLISM_COLUMN,
+    NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_CHEM_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
@@ -67,7 +68,6 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class TraitsTransform(Transform):
-
     """
     Ingest traits dataset (NCBI/GTDB).
 
@@ -253,7 +253,7 @@ class TraitsTransform(Transform):
                                 [
                                     tax_id,
                                     NCBI_TO_PATHWAY_EDGE,
-                                    PATHWAY_PREFIX + item.strip(),
+                                    PATHWAY_PREFIX + item.strip().lower(),
                                     BIOLOGICAL_PROCESS,
                                 ]
                                 for item in pathways
@@ -449,8 +449,8 @@ class TraitsTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        drop_duplicates(self.output_node_file)
-        drop_duplicates(self.output_edge_file)
+        drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         # )

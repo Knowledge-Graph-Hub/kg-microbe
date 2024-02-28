@@ -1015,7 +1015,7 @@ node_stats:
     isolation_source: 5
     ingredient: 258
     medium: 3292
-    mediadive.solution: 5381
+    solution: 5381
     metabolism: 25
     oxygen: 9
     pathways: 84
@@ -1043,7 +1043,7 @@ node_stats:
       PubChem: 20
       ingredient: 258
       medium: 3292
-      mediadive.solution: 5381
+      solution: 5381
     biolink:ChemicalRole:
       CHEBI: 233
     biolink:ChemicalSubstance:
@@ -1129,7 +1129,7 @@ node_stats:
   - isolation_source
   - ingredient
   - medium
-  - mediadive.solution
+  - solution
   - metabolism
   - oxygen
   - pathways
@@ -1153,7 +1153,7 @@ node_stats:
     biolink:ChemicalEntity:
     - CHEBI
     - medium
-    - mediadive.solution
+    - solution
     - CAS-RN
     - ingredient
     - PubChem

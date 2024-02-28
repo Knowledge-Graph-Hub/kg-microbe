@@ -20,8 +20,8 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.ingredient:' | wc -l
 	echo "mediadive.solution:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.solution:' | wc -l
-	echo "mediadive.medium:"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.medium:' | wc -l
+	echo "medium:"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'medium:' | wc -l
 	echo "traits"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
 	echo "carbon_substrate"
@@ -34,11 +34,11 @@ run-summary:
 	echo "EDGES"
 	wc -l data/merged/merged-kg_edges.tsv
 	echo "taxon -> medium"
-	grep 'mediadive.medium:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "medium-> ingredient"
-	grep 'mediadive.medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.ingredient' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.ingredient' | wc -l
 	echo "medium-> solution"
-	grep 'mediadive.medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
 	echo "ingredient -> CHEBI"
 	grep 'mediadive.ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "solution -> CHEBI"

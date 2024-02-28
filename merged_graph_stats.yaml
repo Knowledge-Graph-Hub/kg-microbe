@@ -1014,7 +1014,7 @@ node_stats:
     cell_shape: 36
     isolation_source: 5
     mediadive.ingredient: 258
-    mediadive.medium: 3292
+    medium: 3292
     mediadive.solution: 5381
     metabolism: 25
     oxygen: 9
@@ -1042,7 +1042,7 @@ node_stats:
       KEGG: 1
       PubChem: 20
       mediadive.ingredient: 258
-      mediadive.medium: 3292
+      medium: 3292
       mediadive.solution: 5381
     biolink:ChemicalRole:
       CHEBI: 233
@@ -1128,7 +1128,7 @@ node_stats:
   - cell_shape
   - isolation_source
   - mediadive.ingredient
-  - mediadive.medium
+  - medium
   - mediadive.solution
   - metabolism
   - oxygen
@@ -1152,7 +1152,7 @@ node_stats:
     - GO
     biolink:ChemicalEntity:
     - CHEBI
-    - mediadive.medium
+    - medium
     - mediadive.solution
     - CAS-RN
     - mediadive.ingredient

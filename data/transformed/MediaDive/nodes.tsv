@@ -10,7 +10,7 @@ CHEBI:77746	biolink:ChemicalRole	human metabolite
 medium:1	biolink:ChemicalEntity	NUTRIENT AGAR											
 mediadive.solution:1	biolink:ChemicalEntity	Main sol. 1											
 CAS-RN:73049-73-7	biolink:ChemicalEntity	Peptone											
-mediadive.ingredient:2	biolink:ChemicalEntity	Meat extract											
+ingredient:2	biolink:ChemicalEntity	Meat extract											
 CHEBI:2509	biolink:ChemicalEntity	Agar											
 CHEBI:15377	biolink:ChemicalEntity	Distilled water											
 medium:1a	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM 1											
@@ -103,7 +103,7 @@ CHEBI:8806	biolink:ChemicalEntity	Resazurin
 CHEBI:91248	biolink:ChemicalEntity	L-Cysteine HCl x H2O											
 medium:12	biolink:ChemicalEntity	SOIL EXTRACT MEDIUM											
 mediadive.solution:15	biolink:ChemicalEntity	Main sol. 12											
-mediadive.ingredient:2083	biolink:ChemicalEntity	air-dried garden soil											
+ingredient:2083	biolink:ChemicalEntity	air-dried garden soil											
 CHEBI:15377	biolink:ChemicalEntity	Tap water											
 medium:13	biolink:ChemicalEntity	BACILLUS ACIDOCALDARIUS MEDIUM											
 mediadive.solution:16	biolink:ChemicalEntity	Main sol. 13											
@@ -211,13 +211,13 @@ CHEBI:25728	biolink:ChemicalRole	osmolyte
 CHEBI:46787	biolink:ChemicalRole	solvent											
 medium:32	biolink:ChemicalEntity	PHOTOBACTERIUM MEDIUM											
 mediadive.solution:47	biolink:ChemicalEntity	Main sol. 32											
-mediadive.ingredient:423	biolink:ChemicalEntity	Sea Salt											
+ingredient:423	biolink:ChemicalEntity	Sea Salt											
 CAS-RN:91079-40-2	biolink:ChemicalEntity	Tryptone											
 CHEBI:17754	biolink:ChemicalEntity	Glycerol											
 CHEBI:9754	biolink:ChemicalEntity	Tris											
 medium:34	biolink:ChemicalEntity	CARYOPHANON LATUM MEDIUM											
 mediadive.solution:48	biolink:ChemicalEntity	Main sol. 34											
-mediadive.ingredient:74	biolink:ChemicalEntity	Trypticase											
+ingredient:74	biolink:ChemicalEntity	Trypticase											
 CAS-RN:91079-46-8	biolink:ChemicalEntity	Soy peptone											
 CHEBI:64220	biolink:ChemicalEntity	Na glutamate											
 CAS-RN:1185-53-1	biolink:ChemicalEntity	Tris-HCl buffer											
@@ -260,7 +260,7 @@ mediadive.solution:65	biolink:ChemicalEntity	Main sol. 49
 CAS-RN:65072-00-6	biolink:ChemicalEntity	Casitone											
 medium:51	biolink:ChemicalEntity	SPHAEROTILUS MEDIUM											
 mediadive.solution:66	biolink:ChemicalEntity	Main sol. 51											
-mediadive.ingredient:85	biolink:ChemicalEntity	Beef extract											
+ingredient:85	biolink:ChemicalEntity	Beef extract											
 CHEBI:33893	biolink:ChemicalRole	reagent											
 medium:52	biolink:ChemicalEntity	CLOSTRIDIUM KLUYVERI MEDIUM											
 mediadive.solution:67	biolink:ChemicalEntity	Main sol. 52											
@@ -297,19 +297,19 @@ CHEBI:31604	biolink:ChemicalEntity	Ferric ammonium citrate
 CHEBI:28757	biolink:ChemicalEntity	Fructose											
 medium:56	biolink:ChemicalEntity	TRYPTICASE STARCH AGAR											
 mediadive.solution:78	biolink:ChemicalEntity	Main sol. 56											
-mediadive.ingredient:99	biolink:ChemicalEntity	Trypticase soy broth											
+ingredient:99	biolink:ChemicalEntity	Trypticase soy broth											
 CHEBI:28017	biolink:ChemicalEntity	Starch											
 medium:57	biolink:ChemicalEntity	AAM MEDIUM											
 mediadive.solution:79	biolink:ChemicalEntity	Main sol. 57											
-mediadive.ingredient:101	biolink:ChemicalEntity	Casamino acids											
+ingredient:101	biolink:ChemicalEntity	Casamino acids											
 medium:58	biolink:ChemicalEntity	BIFIDOBACTERIUM MEDIUM											
 mediadive.solution:80	biolink:ChemicalEntity	Main sol. 58											
 mediadive.solution:5553	biolink:ChemicalEntity	Salt solution											
-mediadive.ingredient:102	biolink:ChemicalEntity	Bacto Soytone											
+ingredient:102	biolink:ChemicalEntity	Bacto Soytone											
 medium:59	biolink:ChemicalEntity	LEUCONOSTOC OENOS MEDIUM											
 mediadive.solution:81	biolink:ChemicalEntity	Main sol. 59											
 CAS-RN:3458-72-8	biolink:ChemicalEntity	(NH4) citrate											
-mediadive.ingredient:105	biolink:ChemicalEntity	Tomato juice											
+ingredient:105	biolink:ChemicalEntity	Tomato juice											
 medium:60	biolink:ChemicalEntity	MOORELLA MEDIUM											
 mediadive.solution:82	biolink:ChemicalEntity	Main sol. 60											
 mediadive.solution:83	biolink:ChemicalEntity	Solution A											
@@ -344,7 +344,7 @@ mediadive.solution:98	biolink:ChemicalEntity	Main sol. 63b
 mediadive.solution:99	biolink:ChemicalEntity	Solution A											
 mediadive.solution:100	biolink:ChemicalEntity	Solution B											
 mediadive.solution:101	biolink:ChemicalEntity	Solution C											
-mediadive.ingredient:286	biolink:ChemicalEntity	Sea water											
+ingredient:286	biolink:ChemicalEntity	Sea water											
 CHEBI:82655	biolink:ChemicalRole	animal growth promotant											
 medium:63c	biolink:ChemicalEntity	DESULFOVIBRIO MEDIUM (CHOLINE)											
 mediadive.solution:102	biolink:ChemicalEntity	Main sol. 63c											
@@ -387,7 +387,7 @@ CAS-RN:91079-38-8	biolink:ChemicalEntity	Proteose peptone no. 3
 medium:75	biolink:ChemicalEntity	TRYPTICASE PHYTONE MEDIUM											
 mediadive.solution:120	biolink:ChemicalEntity	Main sol. 75											
 CAS-RN:91079-40-2	biolink:ChemicalEntity	Trypticase peptone											
-mediadive.ingredient:125	biolink:ChemicalEntity	Phytone peptone											
+ingredient:125	biolink:ChemicalEntity	Phytone peptone											
 medium:76	biolink:ChemicalEntity	GOTTSCHALKIA MEDIUM											
 mediadive.solution:121	biolink:ChemicalEntity	Main sol. 76											
 CHEBI:32035	biolink:ChemicalEntity	KOH											
@@ -407,11 +407,11 @@ mediadive.solution:123	biolink:ChemicalEntity	Main sol. 78
 mediadive.solution:124	biolink:ChemicalEntity	Haemin solution											
 mediadive.solution:125	biolink:ChemicalEntity	Vitamin K1 solution											
 mediadive.solution:5540	biolink:ChemicalEntity	Vitamin K3 solution											
-mediadive.ingredient:128	biolink:ChemicalEntity	Ground beef											
+ingredient:128	biolink:ChemicalEntity	Ground beef											
 CHEBI:50385	biolink:ChemicalEntity	Haemin											
 CHEBI:18067	biolink:ChemicalEntity	Vitamin K1											
 CHEBI:16236	biolink:ChemicalEntity	Ethanol											
-mediadive.ingredient:2086	biolink:ChemicalEntity	Vitamin K3											
+ingredient:2086	biolink:ChemicalEntity	Vitamin K3											
 CHEBI:15377	biolink:ChemicalEntity	Water											
 CHEBI:61908	biolink:ChemicalRole	EC 1.14.13.39 (nitric oxide synthase) inhibitor											
 CHEBI:38157	biolink:ChemicalRole	iron chelator											
@@ -439,7 +439,7 @@ mediadive.solution:209	biolink:ChemicalEntity	Fatty acid mixture
 mediadive.solution:5980	biolink:ChemicalEntity	Wolin's vitamin solution (10x)											
 CHEBI:115156	biolink:ChemicalEntity	Na-fumarate											
 CHEBI:62965	biolink:ChemicalEntity	Na-formate											
-mediadive.ingredient:146	biolink:ChemicalEntity	Horse serum											
+ingredient:146	biolink:ChemicalEntity	Horse serum											
 CHEBI:18320	biolink:ChemicalEntity	DL-Dithiothreitol											
 CHEBI:16135	biolink:ChemicalEntity	Isobutyric acid											
 CHEBI:37070	biolink:ChemicalEntity	DL-2-Methylbutyric acid											
@@ -459,7 +459,7 @@ mediadive.solution:5568	biolink:ChemicalEntity	Ascorbic acid solution 2%(w/v)
 mediadive.solution:5569	biolink:ChemicalEntity	N-acetylglucosamin- and pyruvate solution											
 mediadive.solution:5570	biolink:ChemicalEntity	Glutathione solution 14%(w/v)											
 mediadive.solution:5571	biolink:ChemicalEntity	Sugar solution											
-mediadive.ingredient:2162	biolink:ChemicalEntity	Calf serum											
+ingredient:2162	biolink:ChemicalEntity	Calf serum											
 CHEBI:15971	biolink:ChemicalEntity	L-Histidin											
 CHEBI:17115	biolink:ChemicalEntity	L-Serin											
 CHEBI:50385	biolink:ChemicalEntity	Hemin											
@@ -479,7 +479,7 @@ CAS-RN:6484-52-2	biolink:ChemicalEntity	NH4NO3
 CHEBI:131372	biolink:ChemicalEntity	Fe(III)PO4 x 4 H2O											
 medium:80	biolink:ChemicalEntity	GLYCEROL-SOIL MEDIUM											
 mediadive.solution:136	biolink:ChemicalEntity	Main sol. 80											
-mediadive.ingredient:180	biolink:ChemicalEntity	Soil extract											
+ingredient:180	biolink:ChemicalEntity	Soil extract											
 medium:81	biolink:ChemicalEntity	MINERAL MEDIUM FOR CHEMOLITHOTROPHIC GROWTH (H-3)											
 mediadive.solution:137	biolink:ChemicalEntity	Main sol. 81											
 mediadive.solution:138	biolink:ChemicalEntity	Solution A											
@@ -492,7 +492,7 @@ medium:81a	biolink:ChemicalEntity	THIOMONAS ISLANDICA MEDIUM
 mediadive.solution:142	biolink:ChemicalEntity	Main sol. 81a											
 medium:82	biolink:ChemicalEntity	BHI-GLUCOSE MEDIUM											
 mediadive.solution:144	biolink:ChemicalEntity	Main sol. 82											
-mediadive.ingredient:186	biolink:ChemicalEntity	Brain heart infusion											
+ingredient:186	biolink:ChemicalEntity	Brain heart infusion											
 medium:83	biolink:ChemicalEntity	CZAPEK PEPTONE AGAR											
 mediadive.solution:145	biolink:ChemicalEntity	Main sol. 83											
 CHEBI:59148	biolink:ChemicalEntity	NaNO3											
@@ -629,7 +629,7 @@ medium:119	biolink:ChemicalEntity	METHANOBACTERIUM MEDIUM
 mediadive.solution:207	biolink:ChemicalEntity	Main sol. 119											
 mediadive.solution:208	biolink:ChemicalEntity	Sludge fluid											
 mediadive.solution:5861	biolink:ChemicalEntity	FeSO4 x 7 H2O solution (0.1% w/v)											
-mediadive.ingredient:2084	biolink:ChemicalEntity	Sludge											
+ingredient:2084	biolink:ChemicalEntity	Sludge											
 medium:119a	biolink:ChemicalEntity	METHANOBREVIBACTER MEDIUM											
 mediadive.solution:210	biolink:ChemicalEntity	Main sol. 119a											
 CHEBI:33292	biolink:ChemicalRole	fuel											
@@ -780,7 +780,7 @@ medium:155	biolink:ChemicalEntity	BEGGIATOA MEDIUM
 mediadive.solution:269	biolink:ChemicalEntity	Main sol. 155											
 mediadive.solution:270	biolink:ChemicalEntity	Trace element solution											
 CHEBI:31346	biolink:ChemicalEntity	CaSO4											
-mediadive.ingredient:269	biolink:ChemicalEntity	Nutrient broth											
+ingredient:269	biolink:ChemicalEntity	Nutrient broth											
 CHEBI:3463	biolink:ChemicalEntity	Catalase											
 CHEBI:64755	biolink:ChemicalEntity	EDTA											
 CHEBI:86358	biolink:ChemicalEntity	MnSO4 x 4 H2O											
@@ -870,7 +870,7 @@ medium:190	biolink:ChemicalEntity	YpSs MEDIUM
 mediadive.solution:317	biolink:ChemicalEntity	Main sol. 190											
 medium:191	biolink:ChemicalEntity	CORN MEAL AGAR											
 mediadive.solution:318	biolink:ChemicalEntity	Main sol. 191											
-mediadive.ingredient:2087	biolink:ChemicalEntity	Corn meal											
+ingredient:2087	biolink:ChemicalEntity	Corn meal											
 medium:192	biolink:ChemicalEntity	PILOBOLUS MEDIUM											
 mediadive.solution:319	biolink:ChemicalEntity	Main sol. 192											
 medium:193	biolink:ChemicalEntity	DESULFOBACTER MEDIUM											
@@ -1153,7 +1153,7 @@ CHEBI:17879	biolink:ChemicalEntity	p-Hydroxybenzoate
 CAS-RN:762-04-9	biolink:ChemicalEntity	Diethyl phosphonate											
 medium:240	biolink:ChemicalEntity	CORYNEBACTERIUM MEDIUM WITH BLOOD											
 mediadive.solution:5588	biolink:ChemicalEntity	Main sol. 240											
-mediadive.ingredient:1177	biolink:ChemicalEntity	Defibrinated Blood											
+ingredient:1177	biolink:ChemicalEntity	Defibrinated Blood											
 medium:241	biolink:ChemicalEntity	GLUTAMINE MEDIUM											
 mediadive.solution:5589	biolink:ChemicalEntity	Main sol. 241											
 CHEBI:27897	biolink:ChemicalEntity	Tryptophan											
@@ -1164,7 +1164,7 @@ mediadive.solution:504	biolink:ChemicalEntity	Main sol. 243
 mediadive.solution:505	biolink:ChemicalEntity	Artificial sea water											
 medium:245	biolink:ChemicalEntity	BLOOD AGAR II											
 mediadive.solution:506	biolink:ChemicalEntity	Main sol. 245											
-mediadive.ingredient:1717	biolink:ChemicalEntity	Defibrinated sheep blood											
+ingredient:1717	biolink:ChemicalEntity	Defibrinated sheep blood											
 medium:246	biolink:ChemicalEntity	SEA WATER AGAR											
 mediadive.solution:507	biolink:ChemicalEntity	Main sol. 246											
 medium:246a	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM 246											
@@ -1214,24 +1214,24 @@ medium:262	biolink:ChemicalEntity	J - AGAR
 mediadive.solution:528	biolink:ChemicalEntity	Main sol. 262											
 medium:263	biolink:ChemicalEntity	TIBI MEDIUM											
 mediadive.solution:529	biolink:ChemicalEntity	Main sol. 263											
-mediadive.ingredient:2293	biolink:ChemicalEntity	Fig											
-mediadive.ingredient:2091	biolink:ChemicalEntity	Lemon											
+ingredient:2293	biolink:ChemicalEntity	Fig											
+ingredient:2091	biolink:ChemicalEntity	Lemon											
 medium:264	biolink:ChemicalEntity	TOMATO JUICE MEDIUM											
 mediadive.solution:530	biolink:ChemicalEntity	Main sol. 264											
 medium:265	biolink:ChemicalEntity	THERMOFILUM PENDENS MEDIUM											
 mediadive.solution:531	biolink:ChemicalEntity	Main sol. 265											
-mediadive.ingredient:2081	biolink:ChemicalEntity	Polar lipid fraction											
+ingredient:2081	biolink:ChemicalEntity	Polar lipid fraction											
 medium:266	biolink:ChemicalEntity	THERMOCOCCUS CELER MEDIUM											
 mediadive.solution:532	biolink:ChemicalEntity	Main sol. 266											
 CHEBI:33281	biolink:ChemicalRole	antimicrobial agent											
 medium:267	biolink:ChemicalEntity	GINGER BEER PLANT MEDIUM											
 mediadive.solution:533	biolink:ChemicalEntity	Main sol. 267											
-mediadive.ingredient:346	biolink:ChemicalEntity	Sugar beet molasses											
+ingredient:346	biolink:ChemicalEntity	Sugar beet molasses											
 CAS-RN:84696-15-1	biolink:ChemicalEntity	Ginger											
 CHEBI:30769	biolink:ChemicalEntity	Citric acid											
 medium:268	biolink:ChemicalEntity	TEA FUNGUS MEDIUM											
 mediadive.solution:534	biolink:ChemicalEntity	Main sol. 268											
-mediadive.ingredient:349	biolink:ChemicalEntity	Tea											
+ingredient:349	biolink:ChemicalEntity	Tea											
 medium:269	biolink:ChemicalEntity	ACIDIPHILIUM MEDIUM											
 mediadive.solution:535	biolink:ChemicalEntity	Main sol. 269											
 medium:271	biolink:ChemicalEntity	ACIDITHIOBACILLUS (APH) MEDIUM											
@@ -1250,7 +1250,7 @@ mediadive.solution:544	biolink:ChemicalEntity	Main sol. 276
 medium:277	biolink:ChemicalEntity	CHERRY AGAR (CBS formula)											
 mediadive.solution:545	biolink:ChemicalEntity	Main sol. 277											
 mediadive.solution:5596	biolink:ChemicalEntity	Cherry extract											
-mediadive.ingredient:2092	biolink:ChemicalEntity	Pulp of sour stone cherries											
+ingredient:2092	biolink:ChemicalEntity	Pulp of sour stone cherries											
 medium:280	biolink:ChemicalEntity	METHANOCOCCOIDES MEDIUM (N2/CO2)											
 mediadive.solution:546	biolink:ChemicalEntity	Main sol. 280											
 CAS-RN:593-81-7	biolink:ChemicalEntity	Trimethylamine-HCl											
@@ -1306,14 +1306,14 @@ mediadive.solution:5598	biolink:ChemicalEntity	Main sol. 300
 CHEBI:63017	biolink:ChemicalEntity	Sodium tartrate											
 medium:301	biolink:ChemicalEntity	FALCIVIBRIO MEDIUM											
 mediadive.solution:568	biolink:ChemicalEntity	Main sol. 301											
-mediadive.ingredient:2093	biolink:ChemicalEntity	Wilkins-Chalgren-Anaerobe-Broth											
+ingredient:2093	biolink:ChemicalEntity	Wilkins-Chalgren-Anaerobe-Broth											
 CHEBI:17561	biolink:ChemicalEntity	L-Cysteine											
-mediadive.ingredient:2094	biolink:ChemicalEntity	Sterile serum											
+ingredient:2094	biolink:ChemicalEntity	Sterile serum											
 medium:302	biolink:ChemicalEntity	NUTRIENT BROTH WITH 10% HORSE SERUM											
 mediadive.solution:5599	biolink:ChemicalEntity	Main sol. 302											
 medium:303	biolink:ChemicalEntity	SIMONSIELLA MEDIUM											
 mediadive.solution:570	biolink:ChemicalEntity	Main sol. 303											
-mediadive.ingredient:362	biolink:ChemicalEntity	Phytone											
+ingredient:362	biolink:ChemicalEntity	Phytone											
 medium:305	biolink:ChemicalEntity	BACILLUS THERMOGLUCOSIDASIUS MEDIUM											
 mediadive.solution:571	biolink:ChemicalEntity	Main sol. 305											
 medium:306	biolink:ChemicalEntity	NY-AGAR											
@@ -1324,10 +1324,10 @@ medium:309	biolink:ChemicalEntity	NEOMYCIN AGAR
 mediadive.solution:574	biolink:ChemicalEntity	Main sol. 309											
 medium:310	biolink:ChemicalEntity	V-8 JUICE AGAR											
 mediadive.solution:575	biolink:ChemicalEntity	Main sol. 310											
-mediadive.ingredient:363	biolink:ChemicalEntity	V-8 Juice											
+ingredient:363	biolink:ChemicalEntity	V-8 Juice											
 medium:310a	biolink:ChemicalEntity	Tomato Agar TA											
 mediadive.solution:6269	biolink:ChemicalEntity	Main sol. 310a											
-mediadive.ingredient:2371	biolink:ChemicalEntity	Tomato extract											
+ingredient:2371	biolink:ChemicalEntity	Tomato extract											
 medium:311	biolink:ChemicalEntity	SPOROMUSA MEDIUM (BETAINE)											
 mediadive.solution:576	biolink:ChemicalEntity	Main sol. 311											
 medium:311a	biolink:ChemicalEntity	SPOROMUSA MEDIUM (H2/CO2)											
@@ -1458,7 +1458,7 @@ medium:338	biolink:ChemicalEntity	CAMPYLOBACTER RECTUS MEDIUM
 mediadive.solution:650	biolink:ChemicalEntity	Main sol. 338											
 medium:339	biolink:ChemicalEntity	WILKINS-CHALGREN ANAEROBE BROTH											
 mediadive.solution:651	biolink:ChemicalEntity	Main sol. 339											
-mediadive.ingredient:2095	biolink:ChemicalEntity	dehydrated Wilkins-Chalgren medium											
+ingredient:2095	biolink:ChemicalEntity	dehydrated Wilkins-Chalgren medium											
 medium:339a	biolink:ChemicalEntity	WILKINS-CHALGREN ANAEROBE BROTH (N2/CO2)											
 mediadive.solution:5601	biolink:ChemicalEntity	Main sol. 339a											
 medium:340	biolink:ChemicalEntity	CAPNOCYTOPHAGA MEDIUM											
@@ -1531,7 +1531,7 @@ CHEBI:131389	biolink:ChemicalEntity	Mg-citrate
 CHEBI:17196	biolink:ChemicalEntity	L-Asparagin											
 CAS-RN:9005-25-8	biolink:ChemicalEntity	Potato flour											
 CHEBI:72449	biolink:ChemicalEntity	Malachite green											
-mediadive.ingredient:408	biolink:ChemicalEntity	Fresh egg mixture											
+ingredient:408	biolink:ChemicalEntity	Fresh egg mixture											
 medium:356	biolink:ChemicalEntity	THIOSPHAERA PANTOTROPHA MEDIUM											
 mediadive.solution:695	biolink:ChemicalEntity	Main sol. 356											
 medium:357	biolink:ChemicalEntity	FLEXIBACTER CANADENSIS MEDIUM											
@@ -1656,7 +1656,7 @@ CHEBI:114786	biolink:ChemicalEntity	Na2S2O5
 medium:388	biolink:ChemicalEntity	DICTYOGLOMUS MEDIUM											
 mediadive.solution:787	biolink:ChemicalEntity	Main sol. 388											
 CHEBI:35176	biolink:ChemicalEntity	ZnSO4											
-mediadive.ingredient:442	biolink:ChemicalEntity	Polypeptone											
+ingredient:442	biolink:ChemicalEntity	Polypeptone											
 medium:389	biolink:ChemicalEntity	ANNWOODIA MEDIUM											
 mediadive.solution:788	biolink:ChemicalEntity	Main sol. 389											
 mediadive.solution:789	biolink:ChemicalEntity	Solution A											
@@ -1720,14 +1720,14 @@ mediadive.solution:819	biolink:ChemicalEntity	Solution A
 mediadive.solution:820	biolink:ChemicalEntity	Solution B											
 mediadive.solution:821	biolink:ChemicalEntity	Solution C											
 mediadive.solution:822	biolink:ChemicalEntity	Solution D											
-mediadive.ingredient:1680	biolink:ChemicalEntity	CMRL 1066											
+ingredient:1680	biolink:ChemicalEntity	CMRL 1066											
 CAS-RN:91079-38-8	biolink:ChemicalEntity	Proteose peptone no. 2											
-mediadive.ingredient:460	biolink:ChemicalEntity	Proteose yeastolate											
+ingredient:460	biolink:ChemicalEntity	Proteose yeastolate											
 CHEBI:19708	biolink:ChemicalEntity	HEPES buffer											
 CHEBI:15377	biolink:ChemicalEntity	Double distilled water											
 CHEBI:5291	biolink:ChemicalEntity	Gelatine											
 CAS-RN:9048-46-8	biolink:ChemicalEntity	Bovine serum albumin											
-mediadive.ingredient:464	biolink:ChemicalEntity	Rabbit serum											
+ingredient:464	biolink:ChemicalEntity	Rabbit serum											
 medium:404	biolink:ChemicalEntity	METHANOSPHAERA CUNICULI MEDIUM											
 mediadive.solution:823	biolink:ChemicalEntity	Main sol. 404											
 medium:405	biolink:ChemicalEntity	SP2 MEDIUM											
@@ -1752,7 +1752,7 @@ mediadive.solution:839	biolink:ChemicalEntity	Solution C
 medium:411	biolink:ChemicalEntity	CLOSTRIDIUM ACETOBUTYLICUM MEDIUM											
 mediadive.solution:840	biolink:ChemicalEntity	Main sol. 411											
 mediadive.solution:841	biolink:ChemicalEntity	Milk Medium											
-mediadive.ingredient:467	biolink:ChemicalEntity	Milk											
+ingredient:467	biolink:ChemicalEntity	Milk											
 medium:412	biolink:ChemicalEntity	ACETOMICROBIUM FAECALIS MEDIUM											
 mediadive.solution:842	biolink:ChemicalEntity	Main sol. 412											
 medium:413	biolink:ChemicalEntity	BTU MEDIUM											
@@ -1767,8 +1767,8 @@ mediadive.solution:850	biolink:ChemicalEntity	Main sol. 419
 CHEBI:132764	biolink:ChemicalEntity	Na-oxalate											
 medium:420	biolink:ChemicalEntity	BLOOD AGAR I											
 mediadive.solution:851	biolink:ChemicalEntity	Main sol. 420											
-mediadive.ingredient:2111	biolink:ChemicalEntity	Blood agar No 2											
-mediadive.ingredient:724	biolink:ChemicalEntity	Horse blood											
+ingredient:2111	biolink:ChemicalEntity	Blood agar No 2											
+ingredient:724	biolink:ChemicalEntity	Horse blood											
 medium:421	biolink:ChemicalEntity	CHROMATIUM SALEXIGENS MEDIUM											
 mediadive.solution:852	biolink:ChemicalEntity	Main sol. 421											
 medium:422	biolink:ChemicalEntity	AMOEBOBACTER MEDIUM											
@@ -1804,7 +1804,7 @@ medium:429	biolink:ChemicalEntity	COLUMBIA BLOOD AGAR
 mediadive.solution:865	biolink:ChemicalEntity	Main sol. 429											
 mediadive.solution:867	biolink:ChemicalEntity	215. BHI MEDIUM											
 mediadive.solution:868	biolink:ChemicalEntity	1. NUTRIENT BROTH											
-mediadive.ingredient:2110	biolink:ChemicalEntity	Columbia agar base											
+ingredient:2110	biolink:ChemicalEntity	Columbia agar base											
 medium:429a	biolink:ChemicalEntity	COLUMBIA BLOOD AGAR WITH CHARCOAL											
 mediadive.solution:869	biolink:ChemicalEntity	Main sol. 429a											
 PubChem:5462310	biolink:ChemicalEntity	Activated charcoal											
@@ -1838,17 +1838,17 @@ CHEBI:3312	biolink:ChemicalEntity	CaCl2 x 7 H2O
 CHEBI:37070	biolink:ChemicalEntity	2-Methylbutyric acid											
 medium:437	biolink:ChemicalEntity	MITSUOKELLA DENTALIS MEDIUM											
 mediadive.solution:5609	biolink:ChemicalEntity	Main sol. 437											
-mediadive.ingredient:2098	biolink:ChemicalEntity	Bovine serum											
+ingredient:2098	biolink:ChemicalEntity	Bovine serum											
 medium:438	biolink:ChemicalEntity	BORDET-GENGOU-MEDIUM (DIFCO)											
 mediadive.solution:887	biolink:ChemicalEntity	Main sol. 438											
-mediadive.ingredient:2112	biolink:ChemicalEntity	Bordet-Gengou-Agar-Base											
+ingredient:2112	biolink:ChemicalEntity	Bordet-Gengou-Agar-Base											
 medium:439	biolink:ChemicalEntity	CASMAN-MEDIUM											
 mediadive.solution:888	biolink:ChemicalEntity	Main sol. 439											
-mediadive.ingredient:2099	biolink:ChemicalEntity	Casman-Agar-Base											
-mediadive.ingredient:2047	biolink:ChemicalEntity	Sheep blood											
+ingredient:2099	biolink:ChemicalEntity	Casman-Agar-Base											
+ingredient:2047	biolink:ChemicalEntity	Sheep blood											
 medium:440	biolink:ChemicalEntity	SKIM MILK-HORNMEAL-MINERAL AGAR											
 mediadive.solution:889	biolink:ChemicalEntity	Main sol. 440											
-mediadive.ingredient:481	biolink:ChemicalEntity	Bovine horn meal											
+ingredient:481	biolink:ChemicalEntity	Bovine horn meal											
 medium:441	biolink:ChemicalEntity	DIAZOTROPHIC MEDIUM (RBA)											
 mediadive.solution:890	biolink:ChemicalEntity	Main sol. 441											
 mediadive.solution:891	biolink:ChemicalEntity	Solution A											
@@ -1891,12 +1891,12 @@ mediadive.solution:908	biolink:ChemicalEntity	Main sol. 454
 CHEBI:76208	biolink:ChemicalEntity	Na2S											
 medium:455	biolink:ChemicalEntity	AMB MEDIUM											
 mediadive.solution:909	biolink:ChemicalEntity	Main sol. 455											
-mediadive.ingredient:491	biolink:ChemicalEntity	Meat infusion											
+ingredient:491	biolink:ChemicalEntity	Meat infusion											
 medium:456	biolink:ChemicalEntity	KPL MEDIUM											
 mediadive.solution:910	biolink:ChemicalEntity	Main sol. 456											
 mediadive.solution:911	biolink:ChemicalEntity	Lactic acid whey											
 mediadive.solution:912	biolink:ChemicalEntity	White table wine											
-mediadive.ingredient:1113	biolink:ChemicalEntity	White wine											
+ingredient:1113	biolink:ChemicalEntity	White wine											
 medium:457	biolink:ChemicalEntity	MINERAL MEDIUM (BRUNNER)											
 mediadive.solution:913	biolink:ChemicalEntity	Main sol. 457											
 mediadive.solution:4059	biolink:ChemicalEntity	Trace element solution SL-4											
@@ -1936,7 +1936,7 @@ medium:461a	biolink:ChemicalEntity	MINERAL MEDIUM WITH QUINOLINE
 mediadive.solution:928	biolink:ChemicalEntity	Main sol. 461a											
 mediadive.solution:5621	biolink:ChemicalEntity	Quinoline solution											
 CAS-RN:91-22-5	biolink:ChemicalEntity	Quinoline											
-mediadive.ingredient:625	biolink:ChemicalEntity	Phosphate buffer											
+ingredient:625	biolink:ChemicalEntity	Phosphate buffer											
 medium:461b	biolink:ChemicalEntity	MINERAL MEDIUM WITH PYRROLIC ACID											
 mediadive.solution:929	biolink:ChemicalEntity	Main sol. 461b											
 mediadive.solution:5622	biolink:ChemicalEntity	Pyrrole-2-carboxylic acid solution											
@@ -2001,7 +2001,7 @@ medium:467	biolink:ChemicalEntity	OTTOW MEDIUM
 mediadive.solution:959	biolink:ChemicalEntity	Main sol. 467											
 medium:468	biolink:ChemicalEntity	EXIGUOBACTERIUM MEDIUM											
 mediadive.solution:960	biolink:ChemicalEntity	Main sol. 468											
-mediadive.ingredient:501	biolink:ChemicalEntity	Nutrient broth No. 2											
+ingredient:501	biolink:ChemicalEntity	Nutrient broth No. 2											
 medium:469	biolink:ChemicalEntity	YM-CATALASE MEDIUM											
 mediadive.solution:961	biolink:ChemicalEntity	Main sol. 469											
 medium:470	biolink:ChemicalEntity	PSEUDOMONAS HALOPHILA MEDIUM											
@@ -2222,7 +2222,7 @@ mediadive.solution:1137	biolink:ChemicalEntity	Main sol. 514c
 mediadive.solution:1138	biolink:ChemicalEntity	514. BACTO MARINE BROTH (DIFCO 2216)											
 medium:514d	biolink:ChemicalEntity	MODIFIED BACTO MARINE BROTH											
 mediadive.solution:1139	biolink:ChemicalEntity	Main sol. 514d											
-mediadive.ingredient:530	biolink:ChemicalEntity	Difco marine broth											
+ingredient:530	biolink:ChemicalEntity	Difco marine broth											
 CAS-RN:65072-00-6	biolink:ChemicalEntity	Pancreatic digest of casein											
 medium:514e	biolink:ChemicalEntity	MARINE BROTH (ANAEROB)											
 mediadive.solution:1140	biolink:ChemicalEntity	Main sol. 514e											
@@ -2286,7 +2286,7 @@ medium:530	biolink:ChemicalEntity	THIOGLYCOLATE MEDIUM
 mediadive.solution:1175	biolink:ChemicalEntity	Main sol. 530											
 medium:531	biolink:ChemicalEntity	SPORULATION MEDIUM											
 mediadive.solution:1176	biolink:ChemicalEntity	Main sol. 531											
-mediadive.ingredient:545	biolink:ChemicalEntity	Marine Broth											
+ingredient:545	biolink:ChemicalEntity	Marine Broth											
 CHEBI:17596	biolink:ChemicalEntity	Inosin											
 medium:533	biolink:ChemicalEntity	THERMOPHILIC HYDROGEN BACTERIA MEDIUM											
 mediadive.solution:1177	biolink:ChemicalEntity	Main sol. 533											
@@ -2332,7 +2332,7 @@ mediadive.solution:1199	biolink:ChemicalEntity	Solution C
 mediadive.solution:1200	biolink:ChemicalEntity	Solution D											
 medium:542	biolink:ChemicalEntity	PENNASSAY G-THY MEDIUM											
 mediadive.solution:1201	biolink:ChemicalEntity	Main sol. 542											
-mediadive.ingredient:559	biolink:ChemicalEntity	Pennassay Broth											
+ingredient:559	biolink:ChemicalEntity	Pennassay Broth											
 CHEBI:17821	biolink:ChemicalEntity	Thymine											
 medium:544	biolink:ChemicalEntity	NZCYM-MEDIUM											
 mediadive.solution:1202	biolink:ChemicalEntity	Main sol. 544											
@@ -2394,7 +2394,7 @@ medium:569	biolink:ChemicalEntity	MEDIUM 125 WITH METHANOL
 mediadive.solution:1233	biolink:ChemicalEntity	Main sol. 569											
 medium:570	biolink:ChemicalEntity	MEDIUM FOR THERMOPHILIC ACTINOMYCETES (AGRE 1964)											
 mediadive.solution:1234	biolink:ChemicalEntity	Main sol. 570											
-mediadive.ingredient:575	biolink:ChemicalEntity	Maize extract											
+ingredient:575	biolink:ChemicalEntity	Maize extract											
 medium:572	biolink:ChemicalEntity	GYE - MEDIUM											
 mediadive.solution:1235	biolink:ChemicalEntity	Main sol. 572											
 medium:573	biolink:ChemicalEntity	THIOTHRIX MEDIUM											
@@ -2413,15 +2413,15 @@ CHEBI:26806	biolink:ChemicalEntity	Succinate
 CHEBI:35696	biolink:ChemicalEntity	CoCl2 x 2 H2O											
 medium:577	biolink:ChemicalEntity	VY MEDIUM											
 mediadive.solution:1242	biolink:ChemicalEntity	Main sol. 577											
-mediadive.ingredient:579	biolink:ChemicalEntity	Veal infusion broth											
+ingredient:579	biolink:ChemicalEntity	Veal infusion broth											
 medium:578	biolink:ChemicalEntity	TRYPTONE-YEAST EXTRACT MEDIUM											
 mediadive.solution:1243	biolink:ChemicalEntity	Main sol. 578											
 medium:579	biolink:ChemicalEntity	GEOBACTER MEDIUM											
 mediadive.solution:1244	biolink:ChemicalEntity	Main sol. 579											
-mediadive.ingredient:2378	biolink:ChemicalEntity	Ferric citrate monohydrate											
+ingredient:2378	biolink:ChemicalEntity	Ferric citrate monohydrate											
 medium:581	biolink:ChemicalEntity	GLYCEROL CORNSTEEP AGAR											
 mediadive.solution:1246	biolink:ChemicalEntity	Main sol. 581											
-mediadive.ingredient:2075	biolink:ChemicalEntity	Corn steep powder											
+ingredient:2075	biolink:ChemicalEntity	Corn steep powder											
 medium:582	biolink:ChemicalEntity	15% MH MEDIUM											
 mediadive.solution:1247	biolink:ChemicalEntity	Main sol. 582											
 medium:583	biolink:ChemicalEntity	CORYNEBACTERIUM MEDIUM CII											
@@ -2436,7 +2436,7 @@ mediadive.solution:1253	biolink:ChemicalEntity	Solution A
 mediadive.solution:1254	biolink:ChemicalEntity	Solution B											
 mediadive.solution:1255	biolink:ChemicalEntity	Solution C											
 mediadive.solution:1256	biolink:ChemicalEntity	Solution D											
-mediadive.ingredient:2125	biolink:ChemicalEntity	OXOID Legionella CYE-Agar base											
+ingredient:2125	biolink:ChemicalEntity	OXOID Legionella CYE-Agar base											
 CHEBI:65994	biolink:ChemicalEntity	ACES											
 CHEBI:132767	biolink:ChemicalEntity	Fe4(PO4)2											
 medium:585a	biolink:ChemicalEntity	BCYE alpha agar											
@@ -2575,7 +2575,7 @@ medium:621	biolink:ChemicalEntity	PYGV AGAR
 mediadive.solution:1330	biolink:ChemicalEntity	Main sol. 621											
 mediadive.solution:1331	biolink:ChemicalEntity	Mineral salt solution											
 mediadive.solution:1332	biolink:ChemicalEntity	Vitamin solution (double conc.)											
-mediadive.ingredient:615	biolink:ChemicalEntity	Metall salt sol. 44											
+ingredient:615	biolink:ChemicalEntity	Metall salt sol. 44											
 CHEBI:17015	biolink:ChemicalEntity	Riboflavine											
 medium:621a	biolink:ChemicalEntity	EKHO LAKE STRAINS MEDIUM											
 mediadive.solution:5644	biolink:ChemicalEntity	Main sol. 621a											
@@ -2614,12 +2614,12 @@ mediadive.solution:1351	biolink:ChemicalEntity	Main sol. 633
 CHEBI:91261	biolink:ChemicalEntity	Na-L-malate											
 medium:634	biolink:ChemicalEntity	RCM MEDIUM											
 mediadive.solution:1352	biolink:ChemicalEntity	Main sol. 634											
-mediadive.ingredient:2126	biolink:ChemicalEntity	dehydrated RCM medium											
+ingredient:2126	biolink:ChemicalEntity	dehydrated RCM medium											
 medium:634a	biolink:ChemicalEntity	RCM MEDIUM (with Casamino acids)											
 mediadive.solution:1353	biolink:ChemicalEntity	Main sol. 634a											
 medium:634b	biolink:ChemicalEntity	RCM MEDIUM (with Sea Salts)											
 mediadive.solution:1354	biolink:ChemicalEntity	Main sol. 634b											
-mediadive.ingredient:2367	biolink:ChemicalEntity	Sea salts											
+ingredient:2367	biolink:ChemicalEntity	Sea salts											
 medium:634c	biolink:ChemicalEntity	RCM MEDIUM (N2/CO2)											
 mediadive.solution:1355	biolink:ChemicalEntity	Main sol. 634c											
 CAS-RN:497-19-8	biolink:ChemicalEntity	Sodium carbonate											
@@ -2629,7 +2629,7 @@ medium:636	biolink:ChemicalEntity	ISP MEDIUM 2 WITH 5% NaCl
 mediadive.solution:1357	biolink:ChemicalEntity	Main sol. 636											
 medium:637	biolink:ChemicalEntity	STANDARD I + MALT AGAR											
 mediadive.solution:1358	biolink:ChemicalEntity	Main sol. 637											
-mediadive.ingredient:630	biolink:ChemicalEntity	Standard I Broth											
+ingredient:630	biolink:ChemicalEntity	Standard I Broth											
 medium:638	biolink:ChemicalEntity	LACTOBACILLUS MEDIUM III											
 mediadive.solution:1359	biolink:ChemicalEntity	Main sol. 638											
 medium:639	biolink:ChemicalEntity	MEDIUM WITH THIAZOLE											
@@ -2667,11 +2667,11 @@ CAS-RN:68551-06-4	biolink:ChemicalEntity	Bovine albumin
 medium:645a	biolink:ChemicalEntity	HEMIN MEDIUM FOR MYCOBACTERIUM											
 mediadive.solution:1372	biolink:ChemicalEntity	Main sol. 645a											
 CHEBI:2509	biolink:ChemicalEntity	Middlebrook 7H10 agar											
-mediadive.ingredient:2129	biolink:ChemicalEntity	OADC Enrichment											
+ingredient:2129	biolink:ChemicalEntity	OADC Enrichment											
 medium:646	biolink:ChemicalEntity	RABBIT BLOOD AGAR											
 mediadive.solution:1373	biolink:ChemicalEntity	Main sol. 646											
-mediadive.ingredient:2130	biolink:ChemicalEntity	Blood Agar Base											
-mediadive.ingredient:1927	biolink:ChemicalEntity	Rabbit blood											
+ingredient:2130	biolink:ChemicalEntity	Blood Agar Base											
+ingredient:1927	biolink:ChemicalEntity	Rabbit blood											
 medium:647	biolink:ChemicalEntity	DESULFUROMONAS THIOPHILA MEDIUM											
 mediadive.solution:1374	biolink:ChemicalEntity	Main sol. 647											
 medium:647a	biolink:ChemicalEntity	DESULFUROMONAS THIOPHILA MEDIUM											
@@ -2702,7 +2702,7 @@ medium:656	biolink:ChemicalEntity	YEAST-STARCH-AGAR(B)
 mediadive.solution:1387	biolink:ChemicalEntity	Main sol. 656											
 medium:657	biolink:ChemicalEntity	COW MANURE AGAR											
 mediadive.solution:1388	biolink:ChemicalEntity	Main sol. 657											
-mediadive.ingredient:2131	biolink:ChemicalEntity	Dry cow-manure											
+ingredient:2131	biolink:ChemicalEntity	Dry cow-manure											
 medium:658	biolink:ChemicalEntity	HICKEY-TRESNER-AGAR											
 mediadive.solution:1389	biolink:ChemicalEntity	Main sol. 658											
 CHEBI:28675	biolink:ChemicalEntity	Dextrin											
@@ -2755,7 +2755,7 @@ medium:671	biolink:ChemicalEntity	THERMOANAEROBACTER (BA) MEDIUM
 mediadive.solution:1420	biolink:ChemicalEntity	Main sol. 671											
 medium:672	biolink:ChemicalEntity	HALF STRENGTH NUTRIENT BROTH OR AGAR											
 mediadive.solution:1421	biolink:ChemicalEntity	Main sol. 672											
-mediadive.ingredient:2132	biolink:ChemicalEntity	Difco 0001											
+ingredient:2132	biolink:ChemicalEntity	Difco 0001											
 medium:673	biolink:ChemicalEntity	THERMOCOCCUS PROFUNDUS MEDIUM											
 mediadive.solution:5645	biolink:ChemicalEntity	Main sol. 673											
 medium:674	biolink:ChemicalEntity	MEDIUM FOR ACIDURIC, THERMOPHILIC BACILLUS STRAINS											
@@ -2783,9 +2783,9 @@ mediadive.solution:1433	biolink:ChemicalEntity	Main sol. 685
 medium:687	biolink:ChemicalEntity	COLUMBIA BLOOD AGAR											
 mediadive.solution:5646	biolink:ChemicalEntity	Main sol. 687											
 mediadive.solution:1435	biolink:ChemicalEntity	Columbia Blood Agar Base											
-mediadive.ingredient:2134	biolink:ChemicalEntity	Bacto Panton											
-mediadive.ingredient:2135	biolink:ChemicalEntity	Bacto Bitone											
-mediadive.ingredient:662	biolink:ChemicalEntity	Tryptic Digest of beef heart											
+ingredient:2134	biolink:ChemicalEntity	Bacto Panton											
+ingredient:2135	biolink:ChemicalEntity	Bacto Bitone											
+ingredient:662	biolink:ChemicalEntity	Tryptic Digest of beef heart											
 CAS-RN:9005-25-8	biolink:ChemicalEntity	Corn starch											
 medium:688	biolink:ChemicalEntity	PSEUDOTHERMOTOGA SUBTERRANEA MEDIUM											
 mediadive.solution:1436	biolink:ChemicalEntity	Main sol. 688											
@@ -2805,7 +2805,7 @@ CAS-RN:7783-13-3	biolink:ChemicalEntity	NaNH4HPO4 x 4 H2O
 CHEBI:26948	biolink:ChemicalEntity	Thiamine											
 medium:695	biolink:ChemicalEntity	MEDIUM FOR ERYTHROBACTER LONGUS											
 mediadive.solution:1446	biolink:ChemicalEntity	Main sol. 695											
-mediadive.ingredient:667	biolink:ChemicalEntity	Soytone											
+ingredient:667	biolink:ChemicalEntity	Soytone											
 medium:696	biolink:ChemicalEntity	STREPTOCOCCUS SUIS MEDIUM											
 mediadive.solution:1447	biolink:ChemicalEntity	Main sol. 696											
 medium:697	biolink:ChemicalEntity	TODD-HEWITT MEDIUM											
@@ -2814,12 +2814,12 @@ medium:698	biolink:ChemicalEntity	DOEPEL MEDIUM
 mediadive.solution:1449	biolink:ChemicalEntity	Main sol. 698											
 medium:699	biolink:ChemicalEntity	TRIPLE-SUGAR-IRON MEDIUM (Difco)											
 mediadive.solution:1450	biolink:ChemicalEntity	Main sol. 699											
-mediadive.ingredient:670	biolink:ChemicalEntity	Bacto beef extract											
+ingredient:670	biolink:ChemicalEntity	Bacto beef extract											
 medium:700	biolink:ChemicalEntity	ALKALIPHILIC SPIROCHAETE MEDIUM											
 mediadive.solution:1451	biolink:ChemicalEntity	Main sol. 700											
 medium:701	biolink:ChemicalEntity	HALOANAEROBACTER CHITINOVORANS MEDIUM											
 mediadive.solution:1452	biolink:ChemicalEntity	Main sol. 701											
-mediadive.ingredient:672	biolink:ChemicalEntity	Substrate											
+ingredient:672	biolink:ChemicalEntity	Substrate											
 medium:702	biolink:ChemicalEntity	HALOCELLA CELLULOLYTICA MEDIUM											
 mediadive.solution:5647	biolink:ChemicalEntity	Main sol. 702											
 medium:703	biolink:ChemicalEntity	SEMISOLID BRUCELLA BROTH											
@@ -2849,7 +2849,7 @@ medium:714	biolink:ChemicalEntity	GEO-MEDIUM
 mediadive.solution:1465	biolink:ChemicalEntity	Main sol. 714											
 medium:715	biolink:ChemicalEntity	COLUMBIA AGAR											
 mediadive.solution:1466	biolink:ChemicalEntity	Main sol. 715											
-mediadive.ingredient:156	biolink:ChemicalEntity	Peptone mixture											
+ingredient:156	biolink:ChemicalEntity	Peptone mixture											
 medium:716	biolink:ChemicalEntity	AMMONIFEX DEGENSII MEDIUM											
 mediadive.solution:1467	biolink:ChemicalEntity	Main sol. 716											
 medium:717	biolink:ChemicalEntity	DESULFITOBACTERIUM (PCE) MEDIUM											
@@ -2870,7 +2870,7 @@ mediadive.solution:1475	biolink:ChemicalEntity	Main sol. 726
 medium:727	biolink:ChemicalEntity	CLOSTRIDIUM ULTUNENSE MEDIUM											
 mediadive.solution:1476	biolink:ChemicalEntity	Main sol. 727											
 mediadive.solution:1494	biolink:ChemicalEntity	Trace element solution											
-mediadive.ingredient:2136	biolink:ChemicalEntity	Lab Lemco powder											
+ingredient:2136	biolink:ChemicalEntity	Lab Lemco powder											
 CHEBI:30114	biolink:ChemicalEntity	AlCl3											
 medium:728	biolink:ChemicalEntity	DESULFOBACCA MEDIUM											
 mediadive.solution:1477	biolink:ChemicalEntity	Main sol. 728											
@@ -3054,11 +3054,11 @@ medium:779	biolink:ChemicalEntity	CAPNOCYTOPHAGA II MEDIUM
 mediadive.solution:1584	biolink:ChemicalEntity	Main sol. 779											
 medium:780	biolink:ChemicalEntity	MIDDLEBROOK MEDIUM WITH MYCOBACTIN											
 mediadive.solution:1585	biolink:ChemicalEntity	Main sol. 780											
-mediadive.ingredient:2139	biolink:ChemicalEntity	Mycobactine J											
+ingredient:2139	biolink:ChemicalEntity	Mycobactine J											
 PubChem:702	biolink:ChemicalEntity	Absolute ethanol											
 medium:781	biolink:ChemicalEntity	DUNG EXTRACT AGAR											
 mediadive.solution:1586	biolink:ChemicalEntity	Main sol. 781											
-mediadive.ingredient:725	biolink:ChemicalEntity	Dung extract											
+ingredient:725	biolink:ChemicalEntity	Dung extract											
 medium:782	biolink:ChemicalEntity	OM-2 MEDIUM											
 mediadive.solution:1587	biolink:ChemicalEntity	Main sol. 782											
 CHEBI:91241	biolink:ChemicalEntity	NH4-oxalate											
@@ -3077,7 +3077,7 @@ mediadive.solution:1593	biolink:ChemicalEntity	Main sol. 788
 medium:789	biolink:ChemicalEntity	DILUTE POTATO MEDIUM											
 mediadive.solution:1594	biolink:ChemicalEntity	Main sol. 789											
 mediadive.solution:1595	biolink:ChemicalEntity	Potato decoction											
-mediadive.ingredient:728	biolink:ChemicalEntity	Diced potato											
+ingredient:728	biolink:ChemicalEntity	Diced potato											
 medium:790	biolink:ChemicalEntity	PEPTONE-YEAST MEDIUM with MgSO4											
 mediadive.solution:1596	biolink:ChemicalEntity	Main sol. 790											
 medium:791	biolink:ChemicalEntity	PORPHYROBACTER TEPIDARIUS MEDIUM											
@@ -3086,7 +3086,7 @@ mediadive.solution:1598	biolink:ChemicalEntity	Basal salts solution
 mediadive.solution:4012	biolink:ChemicalEntity	Phosphate solution											
 mediadive.solution:1600	biolink:ChemicalEntity	 Vitamin solution											
 CHEBI:132112	biolink:ChemicalEntity	Sodium thiosulphate											
-mediadive.ingredient:736	biolink:ChemicalEntity	Na2Mo4 x 2 H2O											
+ingredient:736	biolink:ChemicalEntity	Na2Mo4 x 2 H2O											
 medium:792	biolink:ChemicalEntity	PYROLOBUS FUMARII MEDIUM											
 mediadive.solution:1601	biolink:ChemicalEntity	Main sol. 792											
 mediadive.solution:1602	biolink:ChemicalEntity	Solution A											
@@ -3132,8 +3132,8 @@ medium:798	biolink:ChemicalEntity	TINDALLIA MEDIUM
 mediadive.solution:1629	biolink:ChemicalEntity	Main sol. 798											
 medium:800	biolink:ChemicalEntity	ANAEROBIOSPIRILLUM THOMASII MEDIUM											
 mediadive.solution:1630	biolink:ChemicalEntity	Main sol. 800											
-mediadive.ingredient:2140	biolink:ChemicalEntity	Wilkins Chalgrene Anaerobe Broth											
-mediadive.ingredient:744	biolink:ChemicalEntity	Fildes Enrichment											
+ingredient:2140	biolink:ChemicalEntity	Wilkins Chalgrene Anaerobe Broth											
+ingredient:744	biolink:ChemicalEntity	Fildes Enrichment											
 CHEBI:30764	biolink:ChemicalEntity	3-Hydroxybenzoic acid											
 medium:801	biolink:ChemicalEntity	MALTEXTRACT/CHARCOAL MEDIUM											
 mediadive.solution:1631	biolink:ChemicalEntity	Main sol. 801											
@@ -3146,7 +3146,7 @@ medium:803	biolink:ChemicalEntity	SPHAEROTILUS-LEPTOTHRIX MEDIUM
 mediadive.solution:1634	biolink:ChemicalEntity	Main sol. 803											
 medium:804	biolink:ChemicalEntity	HAEMOPHILUS MEDIUM											
 mediadive.solution:1635	biolink:ChemicalEntity	Main sol. 804											
-mediadive.ingredient:748	biolink:ChemicalEntity	Mueller-Hinton broth											
+ingredient:748	biolink:ChemicalEntity	Mueller-Hinton broth											
 medium:805	biolink:ChemicalEntity	METHYLOBACTERIUM THIOCYANATUM MEDIUM											
 mediadive.solution:1636	biolink:ChemicalEntity	Main sol. 805											
 CHEBI:30951	biolink:ChemicalEntity	KSCN											
@@ -3288,7 +3288,7 @@ mediadive.solution:1717	biolink:ChemicalEntity	Main sol. 838
 medium:840	biolink:ChemicalEntity	SERPULINA MURDOCHII MEDIUM											
 mediadive.solution:1718	biolink:ChemicalEntity	Liquid medium (in 5ml tube)											
 mediadive.solution:5859	biolink:ChemicalEntity	Liquid medium (in 100 ml serum bottle)											
-mediadive.ingredient:2190	biolink:ChemicalEntity	Air											
+ingredient:2190	biolink:ChemicalEntity	Air											
 medium:841	biolink:ChemicalEntity	MSV-THIOTRIX-MEDIUM											
 mediadive.solution:1719	biolink:ChemicalEntity	Main sol. 841											
 mediadive.solution:1720	biolink:ChemicalEntity	Solution I											
@@ -3399,8 +3399,8 @@ mediadive.solution:1784	biolink:ChemicalEntity	Cysteine solutions
 mediadive.solution:5663	biolink:ChemicalEntity	Titanium (III) citrate solution (Zehnder and Wuhrmann 1976)											
 mediadive.solution:5833	biolink:ChemicalEntity	Na2S Solution											
 CAS-RN:497-19-8	biolink:ChemicalEntity	Sodium carbonate solution											
-mediadive.ingredient:803	biolink:ChemicalEntity	Na2WO4 x 6 H2O											
-mediadive.ingredient:804	biolink:ChemicalEntity	Na2Se2O3											
+ingredient:803	biolink:ChemicalEntity	Na2WO4 x 6 H2O											
+ingredient:804	biolink:ChemicalEntity	Na2Se2O3											
 CAS-RN:7705-07-9	biolink:ChemicalEntity	Titanium(III) chloride											
 medium:864	biolink:ChemicalEntity	HALOTHIOBACILLUS MEDIUM											
 mediadive.solution:1785	biolink:ChemicalEntity	Main sol. 864											
@@ -3439,7 +3439,7 @@ medium:876	biolink:ChemicalEntity	DESULFOTHERMUS NAPHTHAE MEDIUM
 mediadive.solution:1815	biolink:ChemicalEntity	Main sol. 876											
 medium:877	biolink:ChemicalEntity	LUEDEMANN MEDIUM (LUEDEMANN; 1968)											
 mediadive.solution:1816	biolink:ChemicalEntity	Main sol. 877											
-mediadive.ingredient:810	biolink:ChemicalEntity	Malt extract broth											
+ingredient:810	biolink:ChemicalEntity	Malt extract broth											
 medium:878	biolink:ChemicalEntity	THERMUS 162 MEDIUM											
 mediadive.solution:1817	biolink:ChemicalEntity	Main sol. 878											
 mediadive.solution:1819	biolink:ChemicalEntity	Trace element solution											
@@ -3465,7 +3465,7 @@ mediadive.solution:1832	biolink:ChemicalEntity	Solution B
 medium:885	biolink:ChemicalEntity	PHC MEDIUM											
 mediadive.solution:1833	biolink:ChemicalEntity	Main sol. 885											
 CAS-RN:61630-98-6	biolink:ChemicalEntity	Poly hexamethylene carbonate											
-mediadive.ingredient:2141	biolink:ChemicalEntity	Surfactant											
+ingredient:2141	biolink:ChemicalEntity	Surfactant											
 medium:886	biolink:ChemicalEntity	HELIORESTIS MEDIUM											
 mediadive.solution:1834	biolink:ChemicalEntity	Main sol. 886											
 medium:887	biolink:ChemicalEntity	OS MEDIUM											
@@ -3543,7 +3543,7 @@ mediadive.solution:1868	biolink:ChemicalEntity	Main sol. 909
 mediadive.solution:1869	biolink:ChemicalEntity	Solution A											
 mediadive.solution:1870	biolink:ChemicalEntity	Solution B											
 mediadive.solution:1871	biolink:ChemicalEntity	Volatile fatty acid solution											
-mediadive.ingredient:827	biolink:ChemicalEntity	Brain heart infusion broth											
+ingredient:827	biolink:ChemicalEntity	Brain heart infusion broth											
 CHEBI:17196	biolink:ChemicalEntity	L-Asparagine											
 medium:910	biolink:ChemicalEntity	MODIFIED CM+YE MEDIUM (B)											
 mediadive.solution:1872	biolink:ChemicalEntity	Main sol. 910											
@@ -3714,7 +3714,7 @@ mediadive.solution:1974	biolink:ChemicalEntity	Main sol. 957
 medium:958	biolink:ChemicalEntity	VY/4-SWS AGAR											
 mediadive.solution:1975	biolink:ChemicalEntity	Main sol. 958											
 mediadive.solution:1976	biolink:ChemicalEntity	Sea water salts solution											
-mediadive.ingredient:2079	biolink:ChemicalEntity	Yeast cell paste											
+ingredient:2079	biolink:ChemicalEntity	Yeast cell paste											
 CHEBI:144421	biolink:ChemicalEntity	Ferric citrate											
 medium:959	biolink:ChemicalEntity	PETROTOGA OLEARIA MEDIUM											
 mediadive.solution:1979	biolink:ChemicalEntity	Main sol. 959											
@@ -3757,7 +3757,7 @@ mediadive.solution:1997	biolink:ChemicalEntity	Main sol. 972
 CHEBI:495055	biolink:ChemicalEntity	Cyclomaltoheptaose											
 medium:973	biolink:ChemicalEntity	MARINITHERMUS HYDROTHERMALIS MEDIUM											
 mediadive.solution:1998	biolink:ChemicalEntity	Main sol. 973											
-mediadive.ingredient:870	biolink:ChemicalEntity	Na2Se3 x 5 H2O											
+ingredient:870	biolink:ChemicalEntity	Na2Se3 x 5 H2O											
 medium:974	biolink:ChemicalEntity	1/2 YTSS MEDIUM											
 mediadive.solution:1999	biolink:ChemicalEntity	Main sol. 974											
 medium:975	biolink:ChemicalEntity	OCEANITHERMUS PROFUNDUS MEDIUM											
@@ -3829,7 +3829,7 @@ medium:997	biolink:ChemicalEntity	HNW MEDIUM
 mediadive.solution:2032	biolink:ChemicalEntity	Main sol. 997											
 mediadive.solution:2033	biolink:ChemicalEntity	Synthetic seawater											
 mediadive.solution:2034	biolink:ChemicalEntity	Trace mineral solution											
-mediadive.ingredient:898	biolink:ChemicalEntity	C6H9NO6											
+ingredient:898	biolink:ChemicalEntity	C6H9NO6											
 medium:998	biolink:ChemicalEntity	MEDIUM FOR ROSEOSPIRA											
 mediadive.solution:2035	biolink:ChemicalEntity	Main sol. 998											
 mediadive.solution:2036	biolink:ChemicalEntity	Trace element solution SL12											
@@ -3861,7 +3861,7 @@ CAS-RN:7772-98-7	biolink:ChemicalEntity	NaS2O3
 CHEBI:86355	biolink:ChemicalEntity	MgCl2 x H2O											
 CAS-RN:10213-10-2	biolink:ChemicalEntity	Na-tungstate x 2 H2O											
 CAS-RN:7783-08-6	biolink:ChemicalEntity	Se-acid											
-mediadive.ingredient:915	biolink:ChemicalEntity	HBO3											
+ingredient:915	biolink:ChemicalEntity	HBO3											
 medium:1004	biolink:ChemicalEntity	ANAEROLINEA MEDIUM											
 mediadive.solution:2050	biolink:ChemicalEntity	Main sol. 1004											
 medium:1005	biolink:ChemicalEntity	THERMODESULFOBIUM MEDIUM											
@@ -3874,7 +3874,7 @@ mediadive.solution:2053	biolink:ChemicalEntity	Main sol. 1007
 mediadive.solution:2054	biolink:ChemicalEntity	Trace elements											
 medium:1008	biolink:ChemicalEntity	SEDIMINISPIROCHAETA MEDIUM											
 mediadive.solution:2055	biolink:ChemicalEntity	Main sol. 1008											
-mediadive.ingredient:2142	biolink:ChemicalEntity	Charcoal-filtered, natural seawater											
+ingredient:2142	biolink:ChemicalEntity	Charcoal-filtered, natural seawater											
 medium:1009	biolink:ChemicalEntity	TCG MEDIUM											
 mediadive.solution:2056	biolink:ChemicalEntity	Main sol. 1009											
 medium:1010	biolink:ChemicalEntity	DESULFOPILA CORRODENS MEDIUM											
@@ -3930,7 +3930,7 @@ CHEBI:14258	biolink:ChemicalEntity	Sulfur powder
 medium:1025	biolink:ChemicalEntity	MARICAULIS MEDIUM											
 mediadive.solution:2083	biolink:ChemicalEntity	Main sol. 1025											
 mediadive.solution:2084	biolink:ChemicalEntity	50xPYE											
-mediadive.ingredient:925	biolink:ChemicalEntity	Sigma Sea salts											
+ingredient:925	biolink:ChemicalEntity	Sigma Sea salts											
 medium:1026	biolink:ChemicalEntity	XED-AGAR											
 mediadive.solution:2085	biolink:ChemicalEntity	Main sol. 1026											
 medium:1027	biolink:ChemicalEntity	YEAST STARCH AGAR (A)											
@@ -3941,7 +3941,7 @@ medium:1029	biolink:ChemicalEntity	BBL ACTINOMYCES BROTH
 mediadive.solution:2088	biolink:ChemicalEntity	Main sol. 1029											
 mediadive.solution:5679	biolink:ChemicalEntity	BBL Actinomyces broth (BBL 210920)											
 CHEBI:63036	biolink:ChemicalEntity	Potassium Phosphate											
-mediadive.ingredient:930	biolink:ChemicalEntity	Infusion Broth											
+ingredient:930	biolink:ChemicalEntity	Infusion Broth											
 medium:1030	biolink:ChemicalEntity	SMITHELLA MEDIUM											
 mediadive.solution:2089	biolink:ChemicalEntity	Main sol. 1030											
 medium:1031	biolink:ChemicalEntity	YMA-MEDIUM											
@@ -4081,25 +4081,25 @@ mediadive.solution:2169	biolink:ChemicalEntity	Main sol. 1075
 mediadive.solution:2170	biolink:ChemicalEntity	Artificial sea water											
 medium:1076	biolink:ChemicalEntity	SP4 MEDIUM											
 mediadive.solution:2171	biolink:ChemicalEntity	Main sol. 1076											
-mediadive.ingredient:953	biolink:ChemicalEntity	PPLO broth											
+ingredient:953	biolink:ChemicalEntity	PPLO broth											
 medium:1076a	biolink:ChemicalEntity	SP4 MEDIUM WITH GLUCOSE											
 mediadive.solution:2172	biolink:ChemicalEntity	Main sol. 1076a											
 medium:1076b	biolink:ChemicalEntity	SP4-Z MEDIUM											
 mediadive.solution:2173	biolink:ChemicalEntity	Main sol. 1076b											
 CHEBI:16991	biolink:ChemicalEntity	DNA											
-mediadive.ingredient:960	biolink:ChemicalEntity	Swine serum											
+ingredient:960	biolink:ChemicalEntity	Swine serum											
 medium:1077	biolink:ChemicalEntity	PH MEDIUM											
 mediadive.solution:2178	biolink:ChemicalEntity	Main sol. 1077											
 mediadive.solution:2179	biolink:ChemicalEntity	Solution 1											
 mediadive.solution:2180	biolink:ChemicalEntity	Solution 2											
-mediadive.ingredient:976	biolink:ChemicalEntity	Fish-Sperm DNA											
+ingredient:976	biolink:ChemicalEntity	Fish-Sperm DNA											
 medium:1078	biolink:ChemicalEntity	FRIIS MEDIUM											
 mediadive.solution:2181	biolink:ChemicalEntity	Main sol. 1078											
 mediadive.solution:2183	biolink:ChemicalEntity	Hank's BSS											
 mediadive.solution:5681	biolink:ChemicalEntity	Solution 1											
 mediadive.solution:5682	biolink:ChemicalEntity	Solution 2											
-mediadive.ingredient:965	biolink:ChemicalEntity	Bacto brain heart infusion											
-mediadive.ingredient:967	biolink:ChemicalEntity	Porcine serum											
+ingredient:965	biolink:ChemicalEntity	Bacto brain heart infusion											
+ingredient:967	biolink:ChemicalEntity	Porcine serum											
 CHEBI:36047	biolink:ChemicalRole	antibacterial drug											
 medium:1079	biolink:ChemicalEntity	MYCOPLASMA/ACHOLEPLASMA MEDIUM (CIP MEDIUM 88)											
 mediadive.solution:2184	biolink:ChemicalEntity	Main sol. 1079											
@@ -4149,7 +4149,7 @@ medium:1096	biolink:ChemicalEntity	UREAPLASMA MEDIUM
 mediadive.solution:2210	biolink:ChemicalEntity	Main sol. 1096											
 mediadive.solution:2211	biolink:ChemicalEntity	Solution A											
 mediadive.solution:2212	biolink:ChemicalEntity	Solution B											
-mediadive.ingredient:977	biolink:ChemicalEntity	Isovitalex											
+ingredient:977	biolink:ChemicalEntity	Isovitalex											
 medium:1097	biolink:ChemicalEntity	SULFUROSPIRILLUM MV MEDIUM											
 mediadive.solution:2213	biolink:ChemicalEntity	Main sol. 1097											
 medium:1098	biolink:ChemicalEntity	ARCHAEOGLOBUS INFECTUS MEDIUM											
@@ -4179,13 +4179,13 @@ medium:1107	biolink:ChemicalEntity	DIALISTER MEDIUM
 mediadive.solution:5719	biolink:ChemicalEntity	Main sol. 1107											
 mediadive.solution:2226	biolink:ChemicalEntity	DIALISTER MEDIUM											
 mediadive.solution:2227	biolink:ChemicalEntity	Vitamin K1 solution											
-mediadive.ingredient:983	biolink:ChemicalEntity	Cystein-HCl x 2 H2O											
+ingredient:983	biolink:ChemicalEntity	Cystein-HCl x 2 H2O											
 CHEBI:18320	biolink:ChemicalEntity	DTT											
 medium:1108	biolink:ChemicalEntity	CYS MEDIUM											
 mediadive.solution:2228	biolink:ChemicalEntity	Main sol. 1108											
-mediadive.ingredient:1829	biolink:ChemicalEntity	N-Z-Case											
+ingredient:1829	biolink:ChemicalEntity	N-Z-Case											
 CHEBI:85248	biolink:ChemicalEntity	Gelrite											
-mediadive.ingredient:988	biolink:ChemicalEntity	VOSO4 x H2O											
+ingredient:988	biolink:ChemicalEntity	VOSO4 x H2O											
 medium:1108a	biolink:ChemicalEntity	CYS MEDIUM WITH MODIFIED NACL CONCENTRATION											
 mediadive.solution:2229	biolink:ChemicalEntity	Main sol. 1108a											
 medium:1109	biolink:ChemicalEntity	BTT MEDIUM											
@@ -4199,8 +4199,8 @@ medium:1112	biolink:ChemicalEntity	CALDITERRIVIBRIO MEDIUM
 mediadive.solution:2233	biolink:ChemicalEntity	Main sol. 1112											
 medium:1113	biolink:ChemicalEntity	LEPTOSPIRA-MEDIUM											
 mediadive.solution:2234	biolink:ChemicalEntity	Main sol. 1113											
-mediadive.ingredient:990	biolink:ChemicalEntity	Leptospira Medium Base EMJH											
-mediadive.ingredient:992	biolink:ChemicalEntity	Leptospira Enrichment EMJH											
+ingredient:990	biolink:ChemicalEntity	Leptospira Medium Base EMJH											
+ingredient:992	biolink:ChemicalEntity	Leptospira Enrichment EMJH											
 medium:1114	biolink:ChemicalEntity	THIOFABA MEDIUM											
 mediadive.solution:2235	biolink:ChemicalEntity	Main sol. 1114											
 mediadive.solution:2236	biolink:ChemicalEntity	Solution A											
@@ -4227,7 +4227,7 @@ mediadive.solution:2251	biolink:ChemicalEntity	Main sol. 1120
 medium:1121	biolink:ChemicalEntity	MMJS MEDIUM (modified)											
 mediadive.solution:2252	biolink:ChemicalEntity	Main sol. 1121											
 mediadive.solution:2253	biolink:ChemicalEntity	Trace mineral solution											
-mediadive.ingredient:1000	biolink:ChemicalEntity	MnSO4 x n H2O											
+ingredient:1000	biolink:ChemicalEntity	MnSO4 x n H2O											
 CHEBI:36272	biolink:ChemicalEntity	H2WO4											
 medium:1122	biolink:ChemicalEntity	MEDIUM K											
 mediadive.solution:2255	biolink:ChemicalEntity	Main sol. 1122											
@@ -4308,7 +4308,7 @@ CAS-RN:7782-82-3	biolink:ChemicalEntity	NaHSeO3
 medium:1148	biolink:ChemicalEntity	TINDALLIA MEDIUM											
 mediadive.solution:2305	biolink:ChemicalEntity	Main sol. 1148											
 mediadive.solution:2306	biolink:ChemicalEntity	Trace element solution (mg per 200 ml)											
-mediadive.ingredient:1036	biolink:ChemicalEntity	Fe(NH4)2(SO4)2 x 12 H2O											
+ingredient:1036	biolink:ChemicalEntity	Fe(NH4)2(SO4)2 x 12 H2O											
 CHEBI:34887	biolink:ChemicalEntity	NiCl2											
 medium:1149	biolink:ChemicalEntity	OCEANITHERMUS MEDIUM											
 mediadive.solution:2307	biolink:ChemicalEntity	Main sol. 1149											
@@ -4435,8 +4435,8 @@ medium:1192	biolink:ChemicalEntity	BM MEDIUM
 mediadive.solution:2380	biolink:ChemicalEntity	Main sol. 1192											
 medium:1193	biolink:ChemicalEntity	CULTIVATION MEDIUM FOR CHLAMYDIAE											
 mediadive.solution:2381	biolink:ChemicalEntity	Main sol. 1193											
-mediadive.ingredient:1069	biolink:ChemicalEntity	IMDM-Medium											
-mediadive.ingredient:1070	biolink:ChemicalEntity	Aminoacids											
+ingredient:1069	biolink:ChemicalEntity	IMDM-Medium											
+ingredient:1070	biolink:ChemicalEntity	Aminoacids											
 medium:1194	biolink:ChemicalEntity	HALORUBRUM CALIFORNIENSE MEDIUM											
 mediadive.solution:2382	biolink:ChemicalEntity	Main sol. 1194											
 medium:1195	biolink:ChemicalEntity	KUSHNERIA AURANTIA MEDIUM											
@@ -4472,7 +4472,7 @@ mediadive.solution:2402	biolink:ChemicalEntity	Main sol. 1203
 CHEBI:2509	biolink:ChemicalEntity	Fastidious Anaerobe Agar											
 medium:1203a	biolink:ChemicalEntity	FASTIDIOUS ANAEROBE BROTH											
 mediadive.solution:2403	biolink:ChemicalEntity	Main sol. 1203a											
-mediadive.ingredient:1079	biolink:ChemicalEntity	Fastidious Anaerobe Basal Broth											
+ingredient:1079	biolink:ChemicalEntity	Fastidious Anaerobe Basal Broth											
 medium:1204	biolink:ChemicalEntity	SPHAEROCHAETA MEDIUM											
 mediadive.solution:2404	biolink:ChemicalEntity	Main sol. 1204											
 PubChem:23615261	biolink:ChemicalEntity	Maltose monohydrate											
@@ -4580,7 +4580,7 @@ CHEBI:55323	biolink:ChemicalRole	antidiarrhoeal drug
 medium:1245	biolink:ChemicalEntity	OTEB-MEDIUM											
 mediadive.solution:2474	biolink:ChemicalEntity	Main sol. 1245											
 mediadive.solution:5688	biolink:ChemicalEntity	Sugar Stock Solution											
-mediadive.ingredient:1104	biolink:ChemicalEntity	Heart Infusion Broth											
+ingredient:1104	biolink:ChemicalEntity	Heart Infusion Broth											
 CHEBI:26710	biolink:ChemicalEntity	Sodium Chloride											
 CHEBI:33942	biolink:ChemicalEntity	Ribose											
 CHEBI:18222	biolink:ChemicalEntity	Xylose											
@@ -4603,7 +4603,7 @@ medium:1253	biolink:ChemicalEntity	LACTOBACILLUS KEFIRANOFACIENS
 mediadive.solution:2485	biolink:ChemicalEntity	Main sol. 1253											
 mediadive.solution:2486	biolink:ChemicalEntity	Hemin solution											
 mediadive.solution:2487	biolink:ChemicalEntity	Cysteine hydrochloride solution (10%)											
-mediadive.ingredient:1112	biolink:ChemicalEntity	Man Rogosa Sharp broth											
+ingredient:1112	biolink:ChemicalEntity	Man Rogosa Sharp broth											
 medium:1255	biolink:ChemicalEntity	THERMOVENABULUM MEDIUM											
 mediadive.solution:2489	biolink:ChemicalEntity	Main sol. 1255											
 medium:1257	biolink:ChemicalEntity	METHANOCELLA MEDIUM											
@@ -4696,9 +4696,9 @@ medium:1278	biolink:ChemicalEntity	ARCHAEOGLOBUS SULFATICALLIDUS MEDIUM
 mediadive.solution:2558	biolink:ChemicalEntity	Main sol. 1278											
 medium:1279	biolink:ChemicalEntity	HELICOBACTER MEDIUM											
 mediadive.solution:2559	biolink:ChemicalEntity	Main sol. 1279											
-mediadive.ingredient:1136	biolink:ChemicalEntity	Brucella Broth											
-mediadive.ingredient:1138	biolink:ChemicalEntity	Vitox											
-mediadive.ingredient:1139	biolink:ChemicalEntity	Skirrow supplement											
+ingredient:1136	biolink:ChemicalEntity	Brucella Broth											
+ingredient:1138	biolink:ChemicalEntity	Vitox											
+ingredient:1139	biolink:ChemicalEntity	Skirrow supplement											
 CAS-RN:12633-72-6	biolink:ChemicalEntity	Amphotericin											
 medium:1280	biolink:ChemicalEntity	METHANOREGULA (PEAT) MEDIUM											
 mediadive.solution:2560	biolink:ChemicalEntity	Main sol. 1280											
@@ -4774,8 +4774,8 @@ medium:1304	biolink:ChemicalEntity	SULFURITALEA MEDIUM
 mediadive.solution:2606	biolink:ChemicalEntity	Main sol. 1304											
 medium:1305	biolink:ChemicalEntity	MMN											
 mediadive.solution:2608	biolink:ChemicalEntity	Main sol. 1305											
-mediadive.ingredient:1160	biolink:ChemicalEntity	Malt extract powder											
-mediadive.ingredient:1161	biolink:ChemicalEntity	KH2PO4 x 7 H2O											
+ingredient:1160	biolink:ChemicalEntity	Malt extract powder											
+ingredient:1161	biolink:ChemicalEntity	KH2PO4 x 7 H2O											
 medium:1306	biolink:ChemicalEntity	DEINOCOCCUS MEDIUM											
 mediadive.solution:2609	biolink:ChemicalEntity	Main sol. 1306											
 CHEBI:16811	biolink:ChemicalEntity	DL-Methionine											
@@ -4792,8 +4792,8 @@ mediadive.solution:2617	biolink:ChemicalEntity	Main sol. 1310
 medium:1311	biolink:ChemicalEntity	XTC-2 MEDIUM											
 mediadive.solution:2620	biolink:ChemicalEntity	Cultivation of Diplorickettsia massiliensis											
 mediadive.solution:5834	biolink:ChemicalEntity	Infection medium:											
-mediadive.ingredient:1941	biolink:ChemicalEntity	Leibovitz's L-15 medium											
-mediadive.ingredient:1165	biolink:ChemicalEntity	Tryptose-phosphate											
+ingredient:1941	biolink:ChemicalEntity	Leibovitz's L-15 medium											
+ingredient:1165	biolink:ChemicalEntity	Tryptose-phosphate											
 CAS-RN:6899-04-3	biolink:ChemicalEntity	Glutamine											
 medium:1312	biolink:ChemicalEntity	FRESHWATER HD MEDIUM											
 mediadive.solution:2622	biolink:ChemicalEntity	Main sol. 1312											
@@ -4904,7 +4904,7 @@ mediadive.solution:2708	biolink:ChemicalEntity	Main sol. 1347
 mediadive.solution:2709	biolink:ChemicalEntity	Trace Solution											
 medium:1348	biolink:ChemicalEntity	SYP - SW MEDIUM											
 mediadive.solution:2710	biolink:ChemicalEntity	Main sol. 1348											
-mediadive.ingredient:2146	biolink:ChemicalEntity	Artificial Sea Salt											
+ingredient:2146	biolink:ChemicalEntity	Artificial Sea Salt											
 medium:1349	biolink:ChemicalEntity	TG 408 MEDIUM											
 mediadive.solution:2712	biolink:ChemicalEntity	Main sol. 1349											
 mediadive.solution:2713	biolink:ChemicalEntity	Vitamine Solution 141											
@@ -4969,7 +4969,7 @@ mediadive.solution:2765	biolink:ChemicalEntity	Vitamin solution N1
 mediadive.solution:2766	biolink:ChemicalEntity	Trace elements solution N1											
 medium:1371	biolink:ChemicalEntity	NBRC 274 MEDIUM											
 mediadive.solution:2767	biolink:ChemicalEntity	Main sol. 1371											
-mediadive.ingredient:1216	biolink:ChemicalEntity	Bacto Tryptone											
+ingredient:1216	biolink:ChemicalEntity	Bacto Tryptone											
 medium:1372	biolink:ChemicalEntity	SUCCINATE MINIMAL SALTS MEDIUM (SMS)											
 mediadive.solution:2768	biolink:ChemicalEntity	Main sol. 1372											
 mediadive.solution:2769	biolink:ChemicalEntity	Trace elements solution											
@@ -5048,7 +5048,7 @@ CHEBI:50509	biolink:ChemicalRole	potassium channel blocker
 medium:1396	biolink:ChemicalEntity	HALOARCHAEAL MEDIUM MH-1											
 mediadive.solution:2829	biolink:ChemicalEntity	Main sol. 1396											
 mediadive.solution:2830	biolink:ChemicalEntity	Trace Element Solution											
-mediadive.ingredient:1250	biolink:ChemicalEntity	H3BO4											
+ingredient:1250	biolink:ChemicalEntity	H3BO4											
 CHEBI:86153	biolink:ChemicalEntity	BaCl2 x 2 H2O											
 medium:1397	biolink:ChemicalEntity	GS MEDIUM											
 mediadive.solution:2831	biolink:ChemicalEntity	Main sol. 1397											
@@ -5154,7 +5154,7 @@ medium:1428	biolink:ChemicalEntity	HALOMONAS MEDIUM FOR STRAIN MA-C
 mediadive.solution:2926	biolink:ChemicalEntity	Main sol. 1428											
 medium:1429	biolink:ChemicalEntity	SABOURAUD GLUCOSE MEDIUM											
 mediadive.solution:2927	biolink:ChemicalEntity	Main sol. 1429											
-mediadive.ingredient:1279	biolink:ChemicalEntity	SABOURAUD- Glucose-Bouillon											
+ingredient:1279	biolink:ChemicalEntity	SABOURAUD- Glucose-Bouillon											
 medium:1430	biolink:ChemicalEntity	GLUCONACETOBACTER MEDIUM											
 mediadive.solution:2928	biolink:ChemicalEntity	Main sol. 1430											
 medium:1431	biolink:ChemicalEntity	ALKALOPHILIC HALOPHILE MEDIUM											
@@ -5408,7 +5408,7 @@ CHEBI:17108	biolink:ChemicalEntity	D-Arabinose
 CHEBI:18287	biolink:ChemicalEntity	L-Fucose											
 CHEBI:27082	biolink:ChemicalEntity	D-Trehalose											
 CAS-RN:57-50-1	biolink:ChemicalEntity	D-Sucrose											
-mediadive.ingredient:2150	biolink:ChemicalEntity	Asialofetuin											
+ingredient:2150	biolink:ChemicalEntity	Asialofetuin											
 CHEBI:42521	biolink:ChemicalEntity	Folinic acid											
 CHEBI:16494	biolink:ChemicalEntity	DL-alpha-lipoic acid											
 CHEBI:41218	biolink:ChemicalEntity	2-Mercaptoethanol											
@@ -5451,7 +5451,7 @@ mediadive.solution:3109	biolink:ChemicalEntity	Main sol. 1502
 mediadive.solution:3110	biolink:ChemicalEntity	Trace element solution											
 medium:1503	biolink:ChemicalEntity	CULTIVATION MEDIUM FOR CHLAMYDOPHILA PECORUM											
 mediadive.solution:3111	biolink:ChemicalEntity	Main sol. 1503											
-mediadive.ingredient:1377	biolink:ChemicalEntity	MEM-Medium											
+ingredient:1377	biolink:ChemicalEntity	MEM-Medium											
 medium:1504	biolink:ChemicalEntity	CM MEDIUM											
 mediadive.solution:3112	biolink:ChemicalEntity	Main sol. 1504											
 medium:1505	biolink:ChemicalEntity	PROTEINIVORAX MEDIUM											
@@ -5466,7 +5466,7 @@ medium:1509	biolink:ChemicalEntity	NB-PYRUVATE AGAR
 mediadive.solution:3118	biolink:ChemicalEntity	Solution A											
 medium:1510	biolink:ChemicalEntity	MODIFIED MEDIUM 514 FOR HALOMONAS SP.											
 mediadive.solution:3119	biolink:ChemicalEntity	Main sol. 1510											
-mediadive.ingredient:1379	biolink:ChemicalEntity	Difco Marine Broth 2216											
+ingredient:1379	biolink:ChemicalEntity	Difco Marine Broth 2216											
 medium:1511	biolink:ChemicalEntity	PLANTOMYCETACEAE MEDIUM SBP2											
 mediadive.solution:3121	biolink:ChemicalEntity	Main sol. 1511											
 medium:1512	biolink:ChemicalEntity	SCGYEM- MEDIUM											
@@ -5479,7 +5479,7 @@ medium:1513	biolink:ChemicalEntity	SULFURIMONAS GOTLANDICA MEDIUM
 mediadive.solution:3132	biolink:ChemicalEntity	Main sol. 1513											
 medium:1514	biolink:ChemicalEntity	Grace's Insect Medium											
 mediadive.solution:3133	biolink:ChemicalEntity	Main sol. 1514											
-mediadive.ingredient:1382	biolink:ChemicalEntity	Grace's Insect Medium											
+ingredient:1382	biolink:ChemicalEntity	Grace's Insect Medium											
 medium:1515	biolink:ChemicalEntity	OCEANIRHABDUS MEDIUM											
 mediadive.solution:3138	biolink:ChemicalEntity	Main sol. 1515											
 medium:1516	biolink:ChemicalEntity	THERMOFILUM MEDIUM											
@@ -5498,7 +5498,7 @@ mediadive.solution:3147	biolink:ChemicalEntity	Main sol. 1520
 medium:1521	biolink:ChemicalEntity	ARCOBACTER ANAEROPHILUS MEDIUM											
 mediadive.solution:3148	biolink:ChemicalEntity	Main sol. 1521											
 CHEBI:24996	biolink:ChemicalEntity	Lactate											
-mediadive.ingredient:1387	biolink:ChemicalEntity	SL10											
+ingredient:1387	biolink:ChemicalEntity	SL10											
 medium:1522	biolink:ChemicalEntity	ACETOBACTER LAMBICUS MEDIUM											
 mediadive.solution:3149	biolink:ChemicalEntity	Main sol. 1522											
 medium:1523	biolink:ChemicalEntity	MODIFIED METHANOBACTERIUM MEDIUM											
@@ -5551,7 +5551,7 @@ CHEBI:55553	biolink:ChemicalEntity	Eisencitrat
 medium:1537	biolink:ChemicalEntity	SPIRIBACTER MEDIUM (830 + 12% Marine salts)											
 mediadive.solution:3185	biolink:ChemicalEntity	Main sol. 1537											
 mediadive.solution:3186	biolink:ChemicalEntity	Marine Salts 12%											
-mediadive.ingredient:1402	biolink:ChemicalEntity	R2A Broth											
+ingredient:1402	biolink:ChemicalEntity	R2A Broth											
 medium:1538	biolink:ChemicalEntity	ANAEROBACTERIUM MEDIUM											
 mediadive.solution:3187	biolink:ChemicalEntity	Main sol. 1538											
 mediadive.solution:3189	biolink:ChemicalEntity	Vitamin solution											
@@ -5596,11 +5596,11 @@ mediadive.solution:3211	biolink:ChemicalEntity	Main sol. 1553
 medium:1555	biolink:ChemicalEntity	Medium for tick cells (Rickettsia)											
 mediadive.solution:3212	biolink:ChemicalEntity	Main sol. 1555											
 CHEBI:30915	biolink:ChemicalEntity	alpha-ketoglutaric acid											
-mediadive.ingredient:2163	biolink:ChemicalEntity	Tryptose-phosphate broth											
-mediadive.ingredient:1410	biolink:ChemicalEntity	lipoprotein concentrate											
+ingredient:2163	biolink:ChemicalEntity	Tryptose-phosphate broth											
+ingredient:1410	biolink:ChemicalEntity	lipoprotein concentrate											
 medium:1556	biolink:ChemicalEntity	BM7 MEDIUM											
 mediadive.solution:3214	biolink:ChemicalEntity	Main sol. 1556											
-mediadive.ingredient:1413	biolink:ChemicalEntity	TMN-FH Medium											
+ingredient:1413	biolink:ChemicalEntity	TMN-FH Medium											
 medium:1557	biolink:ChemicalEntity	PALUDISPHAERA BOREALIS MEDIUM (PX4)											
 mediadive.solution:3215	biolink:ChemicalEntity	Main sol. 1557											
 medium:1559	biolink:ChemicalEntity	TRYPTONE-STARCH MEDIUM											
@@ -5613,7 +5613,7 @@ mediadive.solution:3222	biolink:ChemicalEntity	"""Metals 44"""
 mediadive.solution:3223	biolink:ChemicalEntity	Trace element solution											
 mediadive.solution:3224	biolink:ChemicalEntity	Vitamin solution (double conc.)											
 mediadive.solution:3220	biolink:ChemicalEntity	Artifical sea water											
-mediadive.ingredient:1416	biolink:ChemicalEntity	Na2MoO7O4 x 2 H2O											
+ingredient:1416	biolink:ChemicalEntity	Na2MoO7O4 x 2 H2O											
 CAS-RN:5064-31-3	biolink:ChemicalEntity	Na-Nitrilotriacetat											
 medium:1560a	biolink:ChemicalEntity	PLANCTOMYCES MEDIUM WITH DOUBLE CONCENTRATED ARTIFICAL SEA WATER											
 mediadive.solution:3225	biolink:ChemicalEntity	Main sol. 1560a											
@@ -5664,7 +5664,7 @@ medium:1579	biolink:ChemicalEntity	PYROBACULUM FERRIREDUCENS MEDIUM
 mediadive.solution:3266	biolink:ChemicalEntity	Main sol. 1579											
 medium:1580	biolink:ChemicalEntity	MODIFIED EGGERTH-GAGNON MEDIUM											
 mediadive.solution:3267	biolink:ChemicalEntity	Main sol. 1580											
-mediadive.ingredient:1433	biolink:ChemicalEntity	Mucin from porcine stomach Type III											
+ingredient:1433	biolink:ChemicalEntity	Mucin from porcine stomach Type III											
 medium:1581	biolink:ChemicalEntity	ALKALINE VOGESELLA MEDIUM											
 mediadive.solution:3268	biolink:ChemicalEntity	Main sol. 1581											
 medium:1582	biolink:ChemicalEntity	MELISSOCOCCUS PLUTONIUS MEDIUM											
@@ -5687,7 +5687,7 @@ mediadive.solution:3280	biolink:ChemicalEntity	Main sol. 1587
 medium:1588	biolink:ChemicalEntity	BRADYMONAS SEDIMINIS MEDIUM											
 mediadive.solution:3282	biolink:ChemicalEntity	Main sol. 1588											
 CHEBI:27082	biolink:ChemicalEntity	D(+)-Trehalose											
-mediadive.ingredient:2152	biolink:ChemicalEntity	Natural sea water											
+ingredient:2152	biolink:ChemicalEntity	Natural sea water											
 medium:1589	biolink:ChemicalEntity	modified BAP+ (GFS) MEDIUM FOR FRANKIA											
 mediadive.solution:3284	biolink:ChemicalEntity	Main sol. 1589											
 CHEBI:150903	biolink:ChemicalEntity	Sodium succinate dibasic											
@@ -5766,10 +5766,10 @@ mediadive.solution:5741	biolink:ChemicalEntity	Stock Solution B (10 ml)
 mediadive.solution:5742	biolink:ChemicalEntity	Stock Solution C (10 ml)											
 mediadive.solution:5743	biolink:ChemicalEntity	Stock Solution D (10 ml)											
 mediadive.solution:5744	biolink:ChemicalEntity	Vitamin Stock (10 ml)											
-mediadive.ingredient:2153	biolink:ChemicalEntity	L-15 powder											
+ingredient:2153	biolink:ChemicalEntity	L-15 powder											
 CHEBI:22660	biolink:ChemicalEntity	DL-aspartic acid											
 CAS-RN:133745-75-2	biolink:ChemicalEntity	FBS											
-mediadive.ingredient:1451	biolink:ChemicalEntity	cholesterol lipid concentrate											
+ingredient:1451	biolink:ChemicalEntity	cholesterol lipid concentrate											
 medium:1601	biolink:ChemicalEntity	MODIFIED M13 VERRUCOMICROBIUM MEDIUM											
 mediadive.solution:3338	biolink:ChemicalEntity	Main sol. 1601											
 medium:1602	biolink:ChemicalEntity	CY/3-SEAWATER MEDIUM											
@@ -5793,7 +5793,7 @@ mediadive.solution:3349	biolink:ChemicalEntity	Main sol. 1608
 mediadive.solution:3350	biolink:ChemicalEntity	Vitamin solution											
 medium:1609	biolink:ChemicalEntity	HEART INFUSION BLOOD AGAR											
 mediadive.solution:3351	biolink:ChemicalEntity	Main sol. 1609											
-mediadive.ingredient:1460	biolink:ChemicalEntity	Bacto Heart Infusion Broth											
+ingredient:1460	biolink:ChemicalEntity	Bacto Heart Infusion Broth											
 medium:1610	biolink:ChemicalEntity	METHYLOCEANIBACTER MEDIUM (NaCl-dANMS)											
 mediadive.solution:3352	biolink:ChemicalEntity	Main sol. 1610											
 mediadive.solution:3353	biolink:ChemicalEntity	Trace element solution											
@@ -5831,7 +5831,7 @@ medium:1618	biolink:ChemicalEntity	TRYPTONE YEAST EXTRACT GLUCOSE MEDIUM (TYG)
 mediadive.solution:3365	biolink:ChemicalEntity	Main sol. 1618											
 medium:1619	biolink:ChemicalEntity	ISP 7 MEDIUM											
 mediadive.solution:3366	biolink:ChemicalEntity	Main sol. 1619											
-mediadive.ingredient:1467	biolink:ChemicalEntity	ISP 7 Medium											
+ingredient:1467	biolink:ChemicalEntity	ISP 7 Medium											
 medium:1620	biolink:ChemicalEntity	POLYMORHOBACTER MEDIUM											
 mediadive.solution:3367	biolink:ChemicalEntity	Main sol. 1620											
 medium:1621	biolink:ChemicalEntity	MARINIBACTRUM MEDIUM											
@@ -5892,7 +5892,7 @@ medium:1639	biolink:ChemicalEntity	AZOARCUS TAIWANENSIS MEDIUM
 mediadive.solution:3403	biolink:ChemicalEntity	Main sol. 1639											
 medium:1640	biolink:ChemicalEntity	METHANOMASSILIICOCCUS ALVUS MEDIUM											
 mediadive.solution:3404	biolink:ChemicalEntity	Main sol. 1640											
-mediadive.ingredient:1473	biolink:ChemicalEntity	Anaerobe Basal Broth CM0957											
+ingredient:1473	biolink:ChemicalEntity	Anaerobe Basal Broth CM0957											
 medium:1641	biolink:ChemicalEntity	DOUBLE CONCENTRATED 830 + 0.06% SODIUM PYRUVATE											
 mediadive.solution:3406	biolink:ChemicalEntity	Main sol. 1641											
 CHEBI:35477	biolink:ChemicalRole	antimanic drug											
@@ -5960,7 +5960,7 @@ mediadive.solution:3449	biolink:ChemicalEntity	Trace element solution
 medium:1664	biolink:ChemicalEntity	Sphaerotilus natans subspec. sulfidivorans medium											
 mediadive.solution:3450	biolink:ChemicalEntity	Main sol. 1664											
 mediadive.solution:3451	biolink:ChemicalEntity	Trace element solution											
-mediadive.ingredient:1492	biolink:ChemicalEntity	Na2S2SO3											
+ingredient:1492	biolink:ChemicalEntity	Na2S2SO3											
 medium:1664a	biolink:ChemicalEntity	Modified Sphaerotilus natans ssp. sulfidivorans medium											
 mediadive.solution:3453	biolink:ChemicalEntity	Main sol. 1664a											
 medium:1665	biolink:ChemicalEntity	DESULFAMPLUS MEDIUM											
@@ -5984,7 +5984,7 @@ medium:1669	biolink:ChemicalEntity	SCHAEDLER BROTH (Roth; 5772)
 mediadive.solution:3464	biolink:ChemicalEntity	Main sol. 1669											
 medium:1670	biolink:ChemicalEntity	BME/CTVM2 cell line medium (Occidentia massiliensis)											
 mediadive.solution:3465	biolink:ChemicalEntity	Main sol. 1670											
-mediadive.ingredient:1504	biolink:ChemicalEntity	L-15 medium											
+ingredient:1504	biolink:ChemicalEntity	L-15 medium											
 medium:1671	biolink:ChemicalEntity	ACIDICAPSA MEDIUM (GYS MEDIUM)											
 mediadive.solution:3467	biolink:ChemicalEntity	Main sol. 1671											
 mediadive.solution:3468	biolink:ChemicalEntity	TRACE ELEMENT SOLUTION											
@@ -6022,7 +6022,7 @@ mediadive.solution:3472	biolink:ChemicalEntity	Solution B
 CAS-RN:1398-61-4	biolink:ChemicalEntity	Colloidal chitin											
 medium:1682	biolink:ChemicalEntity	Yeast nitrogen base glucose (YNBG)											
 mediadive.solution:3476	biolink:ChemicalEntity	Main sol. 1682											
-mediadive.ingredient:1507	biolink:ChemicalEntity	Yeast Nitrogen Base											
+ingredient:1507	biolink:ChemicalEntity	Yeast Nitrogen Base											
 medium:1683	biolink:ChemicalEntity	CM1A Halorubrum Medium											
 mediadive.solution:3477	biolink:ChemicalEntity	Main sol. 1683											
 mediadive.solution:3478	biolink:ChemicalEntity	30% Salt Water (1L)											
@@ -6030,7 +6030,7 @@ mediadive.solution:3479	biolink:ChemicalEntity	23% MGM (100mL)
 mediadive.solution:3482	biolink:ChemicalEntity	Vitamin solution 1 = Vit 1											
 mediadive.solution:3483	biolink:ChemicalEntity	Vitamin solution 2 = Vit 2											
 mediadive.solution:3484	biolink:ChemicalEntity	Vit 10											
-mediadive.ingredient:1508	biolink:ChemicalEntity	Salt water											
+ingredient:1508	biolink:ChemicalEntity	Salt water											
 medium:1684	biolink:ChemicalEntity	Alicyclobacillus cellulosilyticus Medium											
 mediadive.solution:3485	biolink:ChemicalEntity	Main sol. 1684											
 CHEBI:85146	biolink:ChemicalEntity	Carboxymethylcellulose											
@@ -6065,7 +6065,7 @@ mediadive.solution:5790	biolink:ChemicalEntity	Preparation of soil extract
 mediadive.solution:5791	biolink:ChemicalEntity	Micronutrient solution											
 mediadive.solution:5792	biolink:ChemicalEntity	Micronutrients Component 1											
 mediadive.solution:5793	biolink:ChemicalEntity	Micronutrients Component 2											
-mediadive.ingredient:2159	biolink:ChemicalEntity	Garden soil											
+ingredient:2159	biolink:ChemicalEntity	Garden soil											
 medium:1694	biolink:ChemicalEntity	Acidobacteriaceae Medium (Modified VSB Medium)											
 mediadive.solution:3505	biolink:ChemicalEntity	Main sol. 1694											
 mediadive.solution:3507	biolink:ChemicalEntity	Vitamin Mix solution											
@@ -6096,7 +6096,7 @@ mediadive.solution:3526	biolink:ChemicalEntity	Solution E
 mediadive.solution:3527	biolink:ChemicalEntity	Trace element solution SL-10											
 medium:1702	biolink:ChemicalEntity	SUPERSTESPORA MEDIUM											
 mediadive.solution:3528	biolink:ChemicalEntity	Main sol. 1702											
-mediadive.ingredient:1530	biolink:ChemicalEntity	Tropic Marine salt											
+ingredient:1530	biolink:ChemicalEntity	Tropic Marine salt											
 medium:1703	biolink:ChemicalEntity	CMKA MEDIUM (HALOACTINOMYCES MEDIUM)											
 mediadive.solution:3529	biolink:ChemicalEntity	Main sol. 1703											
 medium:1704	biolink:ChemicalEntity	YMA modified											
@@ -6131,7 +6131,7 @@ mediadive.solution:3533	biolink:ChemicalEntity	Trace metal solution
 mediadive.solution:3534	biolink:ChemicalEntity	Vitamin solution											
 mediadive.solution:5795	biolink:ChemicalEntity	Solution 1											
 mediadive.solution:5796	biolink:ChemicalEntity	Solution 2											
-mediadive.ingredient:1552	biolink:ChemicalEntity	Carbon source solution											
+ingredient:1552	biolink:ChemicalEntity	Carbon source solution											
 medium:1707	biolink:ChemicalEntity	MEDIUM FOR HJ250											
 mediadive.solution:3535	biolink:ChemicalEntity	Main sol. 1707											
 mediadive.solution:3536	biolink:ChemicalEntity	Trace element solution											
@@ -6140,7 +6140,7 @@ medium:1708	biolink:ChemicalEntity	THERMOANAEROMYCES MEDIUM
 mediadive.solution:3538	biolink:ChemicalEntity	Main sol. 1708											
 medium:1709	biolink:ChemicalEntity	MUELLER-HINTON											
 mediadive.solution:3539	biolink:ChemicalEntity	Main sol. 1709											
-mediadive.ingredient:1554	biolink:ChemicalEntity	Beef											
+ingredient:1554	biolink:ChemicalEntity	Beef											
 medium:1710	biolink:ChemicalEntity	RHODOTHERMUS MEDIUM											
 mediadive.solution:3540	biolink:ChemicalEntity	Main sol. 1710											
 mediadive.solution:5797	biolink:ChemicalEntity	Trace elements											
@@ -6156,12 +6156,12 @@ CAS-RN:10049-21-5	biolink:ChemicalEntity	Na2HPO4-NaH2PO4 buffer
 CAS-RN:532-32-1	biolink:ChemicalEntity	Sodiumbenzoate											
 medium:1713	biolink:ChemicalEntity	GAM Broth (Gifu Anaerobic Medium Broth)											
 mediadive.solution:3550	biolink:ChemicalEntity	Main sol. 1713											
-mediadive.ingredient:1563	biolink:ChemicalEntity	GAM Broth powder											
+ingredient:1563	biolink:ChemicalEntity	GAM Broth powder											
 medium:1714	biolink:ChemicalEntity	CONEXIVISPHAERA MEDIUM											
 mediadive.solution:3551	biolink:ChemicalEntity	Main sol. 1714											
 medium:1715	biolink:ChemicalEntity	GAM Broth, mod. (Gifu Anaerobic Medium Broth, modified)											
 mediadive.solution:3552	biolink:ChemicalEntity	Main sol. 1715											
-mediadive.ingredient:1564	biolink:ChemicalEntity	GAM Broth mod. powder											
+ingredient:1564	biolink:ChemicalEntity	GAM Broth mod. powder											
 medium:1716	biolink:ChemicalEntity	DILUTED TRYPTONE SOYA BROTH (TSB) 1:10											
 mediadive.solution:3553	biolink:ChemicalEntity	Main sol. 1716											
 medium:1717	biolink:ChemicalEntity	PERLABENTIMONAS MEDIUM											
@@ -6183,7 +6183,7 @@ medium:1723a	biolink:ChemicalEntity	Enriched Artificial Seawater Medium f/2 supp
 mediadive.solution:5983	biolink:ChemicalEntity	Main sol. 1723a											
 mediadive.solution:5854	biolink:ChemicalEntity	f/2 Trace Metal Mix											
 mediadive.solution:5855	biolink:ChemicalEntity	Vitamin 3 Mix											
-mediadive.ingredient:2346	biolink:ChemicalEntity	Wheat Grains											
+ingredient:2346	biolink:ChemicalEntity	Wheat Grains											
 medium:1723	biolink:ChemicalEntity	Enriched Artificial Seawater Medium f/2											
 mediadive.solution:5533	biolink:ChemicalEntity	Main sol. 1723											
 medium:1724	biolink:ChemicalEntity	NEPCC											
@@ -6326,11 +6326,11 @@ medium:1764	biolink:ChemicalEntity	ISP 1 Medium
 mediadive.solution:5501	biolink:ChemicalEntity	Main sol. 1764											
 medium:1765	biolink:ChemicalEntity	Potato Carrot Agar											
 mediadive.solution:5502	biolink:ChemicalEntity	Main sol. 1765											
-mediadive.ingredient:1612	biolink:ChemicalEntity	Carrot											
+ingredient:1612	biolink:ChemicalEntity	Carrot											
 medium:1775	biolink:ChemicalEntity	DG18 Dichloran 18 % Glycerol agar											
 mediadive.solution:5857	biolink:ChemicalEntity	Main sol. 1775											
-mediadive.ingredient:2177	biolink:ChemicalEntity	Dichloran-Glycerol-agar base											
-mediadive.ingredient:2178	biolink:ChemicalEntity	Glycerol (anhydrous)											
+ingredient:2177	biolink:ChemicalEntity	Dichloran-Glycerol-agar base											
+ingredient:2178	biolink:ChemicalEntity	Glycerol (anhydrous)											
 medium:1790	biolink:ChemicalEntity	Mucispirillum Spezial											
 mediadive.solution:5948	biolink:ChemicalEntity	Main sol. 1790											
 medium:1793	biolink:ChemicalEntity	Chlamydia serpentis & poikilotherma Medium											
@@ -6364,13 +6364,13 @@ medium:1815	biolink:ChemicalEntity	OMY
 mediadive.solution:6325	biolink:ChemicalEntity	Main sol. 1815											
 medium:1816	biolink:ChemicalEntity	MDA											
 mediadive.solution:6326	biolink:ChemicalEntity	Main sol. 1816											
-mediadive.ingredient:2375	biolink:ChemicalEntity	Desicatted Ox-bile											
+ingredient:2375	biolink:ChemicalEntity	Desicatted Ox-bile											
 CAS-RN:8001-25-0	biolink:ChemicalEntity	Olive oil											
 CAS-RN:56-75-7	biolink:ChemicalEntity	(-)-Chloramphenicol											
 medium:1817	biolink:ChemicalEntity	CC											
 mediadive.solution:6327	biolink:ChemicalEntity	Main sol. 1817											
-mediadive.ingredient:1610	biolink:ChemicalEntity	Czapek-Dox liquid medium											
-mediadive.ingredient:1627	biolink:ChemicalEntity	Cellobiose or Cellulose MN 300											
+ingredient:1610	biolink:ChemicalEntity	Czapek-Dox liquid medium											
+ingredient:1627	biolink:ChemicalEntity	Cellobiose or Cellulose MN 300											
 medium:1818	biolink:ChemicalEntity	Low Carbon Agar-LCA											
 mediadive.solution:6328	biolink:ChemicalEntity	Main sol. 1818											
 medium:1820	biolink:ChemicalEntity	Med 333											
@@ -6409,7 +6409,7 @@ medium:J19	biolink:ChemicalEntity	BIFIDOBACTERIUM MEDIUM
 mediadive.solution:3642	biolink:ChemicalEntity	Main sol. J19											
 medium:J20	biolink:ChemicalEntity	LACTOBACILLUS SAKEI MEDIUM											
 mediadive.solution:3643	biolink:ChemicalEntity	Main sol. J20											
-mediadive.ingredient:1604	biolink:ChemicalEntity	Sake											
+ingredient:1604	biolink:ChemicalEntity	Sake											
 medium:J21	biolink:ChemicalEntity	LACTOBACILLUS MEDIUM III											
 mediadive.solution:3644	biolink:ChemicalEntity	Main sol. J21											
 medium:J22	biolink:ChemicalEntity	NUTRIENT AGAR NO. 2											
@@ -6424,7 +6424,7 @@ medium:J26	biolink:ChemicalEntity	R AGAR
 mediadive.solution:3649	biolink:ChemicalEntity	Main sol. J26											
 medium:J27	biolink:ChemicalEntity	TRYPTO-SOYA AGAR											
 mediadive.solution:3650	biolink:ChemicalEntity	Main sol. J27											
-mediadive.ingredient:1617	biolink:ChemicalEntity	Trypticase soy agar											
+ingredient:1617	biolink:ChemicalEntity	Trypticase soy agar											
 medium:J28	biolink:ChemicalEntity	BRAIN HEART INFUSION AGAR											
 mediadive.solution:3651	biolink:ChemicalEntity	Main sol. J28											
 medium:J29	biolink:ChemicalEntity	CZAPEK SOLUTION AGAR (A)											
@@ -6451,7 +6451,7 @@ medium:J40	biolink:ChemicalEntity	GLUCOSE-ASPARAGINE AGAR
 mediadive.solution:3662	biolink:ChemicalEntity	Main sol. J40											
 medium:J41	biolink:ChemicalEntity	MARINE BROTH 2216											
 mediadive.solution:3663	biolink:ChemicalEntity	Main sol. J41											
-mediadive.ingredient:1607	biolink:ChemicalEntity	Marine broth 2216											
+ingredient:1607	biolink:ChemicalEntity	Marine broth 2216											
 medium:J42	biolink:ChemicalEntity	YEAST-STARCH AGAR (A)											
 mediadive.solution:3664	biolink:ChemicalEntity	Main sol. J42											
 medium:J43	biolink:ChemicalEntity	YEAST EXTRACT-MALT EXTRACT AGAR (ISP-2)											
@@ -6466,7 +6466,7 @@ medium:J47	biolink:ChemicalEntity	6 B MEDIUM
 mediadive.solution:3669	biolink:ChemicalEntity	Main sol. J47											
 medium:J48	biolink:ChemicalEntity	PEPTONE CORN AGAR											
 mediadive.solution:3670	biolink:ChemicalEntity	Main sol. J48											
-mediadive.ingredient:1609	biolink:ChemicalEntity	Corn steep liquor											
+ingredient:1609	biolink:ChemicalEntity	Corn steep liquor											
 medium:J49	biolink:ChemicalEntity	CYC AGAR											
 mediadive.solution:3671	biolink:ChemicalEntity	Main sol. J49											
 medium:J50	biolink:ChemicalEntity	OATMEAL AGAR (ISP-3)											
@@ -6508,14 +6508,14 @@ medium:J65	biolink:ChemicalEntity	CELLULOSE AGAR
 mediadive.solution:3692	biolink:ChemicalEntity	Main sol. J65											
 medium:J66	biolink:ChemicalEntity	V8 JUICE AGAR											
 mediadive.solution:3693	biolink:ChemicalEntity	Main sol. J66											
-mediadive.ingredient:1616	biolink:ChemicalEntity	V8 canned vegetable juice											
+ingredient:1616	biolink:ChemicalEntity	V8 canned vegetable juice											
 medium:J67	biolink:ChemicalEntity	TRYPTICASE SOY AGAR WITH 1% GLUCOSE											
 mediadive.solution:3694	biolink:ChemicalEntity	Main sol. J67											
 medium:J68	biolink:ChemicalEntity	GYP-SODIUM ACETATE-MINERAL SALTS BROTH											
 mediadive.solution:3695	biolink:ChemicalEntity	Main sol. J68											
 medium:J69	biolink:ChemicalEntity	JCM MEDIUM No. 69											
 mediadive.solution:3696	biolink:ChemicalEntity	Main sol. J69											
-mediadive.ingredient:1618	biolink:ChemicalEntity	GYP-sodium acetate-mineral salts broth											
+ingredient:1618	biolink:ChemicalEntity	GYP-sodium acetate-mineral salts broth											
 medium:J70	biolink:ChemicalEntity	BLOOD AGAR											
 mediadive.solution:3697	biolink:ChemicalEntity	Main sol. J70											
 medium:J72	biolink:ChemicalEntity	BRAIN HEART INFUSION WITH 5% NaCl											
@@ -6544,7 +6544,7 @@ medium:J82	biolink:ChemicalEntity	ALKALINE YEAST EXTRACT-MALT EXTRACT AGAR
 mediadive.solution:3709	biolink:ChemicalEntity	Main sol. J82											
 medium:J83	biolink:ChemicalEntity	GAM MEDIUM											
 mediadive.solution:3710	biolink:ChemicalEntity	Main sol. J83											
-mediadive.ingredient:1620	biolink:ChemicalEntity	GAM broth											
+ingredient:1620	biolink:ChemicalEntity	GAM broth											
 medium:J84	biolink:ChemicalEntity	GAM SEMISOLID											
 mediadive.solution:3711	biolink:ChemicalEntity	Main sol. J84											
 medium:J85	biolink:ChemicalEntity	2% NaCl-YPG AGAR											
@@ -6557,7 +6557,7 @@ medium:J88	biolink:ChemicalEntity	1% OGAWA MEDIUM
 mediadive.solution:3715	biolink:ChemicalEntity	Main sol. J88											
 mediadive.solution:3716	biolink:ChemicalEntity	Solution I											
 mediadive.solution:3717	biolink:ChemicalEntity	Solution II											
-mediadive.ingredient:1621	biolink:ChemicalEntity	Whole egg											
+ingredient:1621	biolink:ChemicalEntity	Whole egg											
 medium:J89	biolink:ChemicalEntity	SM MEDIUM											
 mediadive.solution:3718	biolink:ChemicalEntity	Main sol. J89											
 mediadive.solution:3719	biolink:ChemicalEntity	Trace metal solution											
@@ -6565,7 +6565,7 @@ medium:J90	biolink:ChemicalEntity	S6 MEDIUM
 mediadive.solution:3720	biolink:ChemicalEntity	Main sol. J90											
 medium:J91	biolink:ChemicalEntity	S8 MEDIUM											
 mediadive.solution:3721	biolink:ChemicalEntity	Main sol. J91											
-mediadive.ingredient:1622	biolink:ChemicalEntity	S6 medium											
+ingredient:1622	biolink:ChemicalEntity	S6 medium											
 medium:J92	biolink:ChemicalEntity	9K MEDIUM											
 mediadive.solution:3722	biolink:ChemicalEntity	Main sol. J92											
 medium:J93	biolink:ChemicalEntity	W MEDIUM											
@@ -6651,7 +6651,7 @@ medium:J125	biolink:ChemicalEntity	MALT EXTRACT AGAR WITH 15% NaCl
 mediadive.solution:3765	biolink:ChemicalEntity	Main sol. J125											
 medium:J126	biolink:ChemicalEntity	METHANOL-UTILIZING BACTERIA MEDIUM D											
 mediadive.solution:3766	biolink:ChemicalEntity	Main sol. J126											
-mediadive.ingredient:1633	biolink:ChemicalEntity	Methanol-utilizing bacteria medium B											
+ingredient:1633	biolink:ChemicalEntity	Methanol-utilizing bacteria medium B											
 medium:J127	biolink:ChemicalEntity	METHANOL-UTILIZING BACTERIA MEDIUM E											
 mediadive.solution:3767	biolink:ChemicalEntity	Main sol. J127											
 medium:J128	biolink:ChemicalEntity	HYDROGENOBACTER HALOPHILUS MEDIUM											
@@ -6669,12 +6669,12 @@ mediadive.solution:3773	biolink:ChemicalEntity	Main sol. J133
 mediadive.solution:3774	biolink:ChemicalEntity	VFA solution											
 mediadive.solution:3775	biolink:ChemicalEntity	Salt solution No. 1											
 mediadive.solution:3776	biolink:ChemicalEntity	Salt solution No. 2											
-mediadive.ingredient:1638	biolink:ChemicalEntity	Toray silicone SH 5535											
+ingredient:1638	biolink:ChemicalEntity	Toray silicone SH 5535											
 CHEBI:37070	biolink:ChemicalEntity	DL-alpha-Methyl butyric acid											
 medium:J134	biolink:ChemicalEntity	RUMEN FLUID-GLUCOSE-CELLOBIOSE AGAR											
 mediadive.solution:3777	biolink:ChemicalEntity	Main sol. J134											
 mediadive.solution:3778	biolink:ChemicalEntity	Salt solution											
-mediadive.ingredient:145	biolink:ChemicalEntity	Rumen fluid											
+ingredient:145	biolink:ChemicalEntity	Rumen fluid											
 medium:J135	biolink:ChemicalEntity	RUMEN FLUID-XYLAN-AGAR											
 mediadive.solution:3779	biolink:ChemicalEntity	Main sol. J135											
 CHEBI:31695	biolink:ChemicalEntity	Indigo carmine											
@@ -6705,7 +6705,7 @@ medium:J145	biolink:ChemicalEntity	MEDIUM FOR TREPONEMA PECTINOVORUM
 mediadive.solution:3791	biolink:ChemicalEntity	Main sol. J145											
 medium:J146	biolink:ChemicalEntity	MODIFIED OTI MEDIUM											
 mediadive.solution:3792	biolink:ChemicalEntity	Main sol. J146											
-mediadive.ingredient:1648	biolink:ChemicalEntity	Clarified rumen fluid											
+ingredient:1648	biolink:ChemicalEntity	Clarified rumen fluid											
 medium:J147	biolink:ChemicalEntity	ALKALINE MALT EXTRACT AGAR											
 mediadive.solution:3793	biolink:ChemicalEntity	Main sol. J147											
 mediadive.solution:3794	biolink:ChemicalEntity	Solution A											
@@ -6718,7 +6718,7 @@ mediadive.solution:3798	biolink:ChemicalEntity	Standard mineral base
 mediadive.solution:3799	biolink:ChemicalEntity	Hutner's vitamin free mineral base											
 mediadive.solution:3800	biolink:ChemicalEntity	Metals ''44''											
 CAS-RN:51-92-3	biolink:ChemicalEntity	Tetramethyl ammonium											
-mediadive.ingredient:1651	biolink:ChemicalEntity	Na2HPO4-KH2PO4 buffer											
+ingredient:1651	biolink:ChemicalEntity	Na2HPO4-KH2PO4 buffer											
 medium:J150	biolink:ChemicalEntity	CORN MEAL AGAR											
 mediadive.solution:3801	biolink:ChemicalEntity	Main sol. J150											
 medium:J151	biolink:ChemicalEntity	PYROCOCCUS MEDIUM											
@@ -6741,7 +6741,7 @@ medium:J156	biolink:ChemicalEntity	TRYPTICASE SOY BLOOD AGAR
 mediadive.solution:3809	biolink:ChemicalEntity	Main sol. J156											
 medium:J157	biolink:ChemicalEntity	EUBACTERIUM MEDIUM											
 mediadive.solution:3810	biolink:ChemicalEntity	Main sol. J157											
-mediadive.ingredient:1660	biolink:ChemicalEntity	Beef brain powder											
+ingredient:1660	biolink:ChemicalEntity	Beef brain powder											
 CHEBI:30066	biolink:ChemicalEntity	Thioglycolate											
 medium:J158	biolink:ChemicalEntity	TRYPTOSE PHOSPHATE AGAR											
 mediadive.solution:3811	biolink:ChemicalEntity	Main sol. J158											
@@ -6792,7 +6792,7 @@ medium:J176	biolink:ChemicalEntity	ACIDIANUS BRIERLEYI MEDIUM
 mediadive.solution:3834	biolink:ChemicalEntity	Main sol. J176											
 medium:J177	biolink:ChemicalEntity	2.5% NaCl-BPG AGAR											
 mediadive.solution:3835	biolink:ChemicalEntity	Main sol. J177											
-mediadive.ingredient:1672	biolink:ChemicalEntity	Fish meat extract											
+ingredient:1672	biolink:ChemicalEntity	Fish meat extract											
 medium:J178	biolink:ChemicalEntity	STYGIOLOBUS MEDIUM											
 mediadive.solution:3836	biolink:ChemicalEntity	Main sol. J178											
 medium:J179	biolink:ChemicalEntity	MEDIUM 10 BROTH											
@@ -6840,7 +6840,7 @@ CHEBI:66870	biolink:ChemicalEntity	Sodium dithionite
 medium:J196	biolink:ChemicalEntity	THERMOPROTEUS TENAX MEDIUM											
 mediadive.solution:3859	biolink:ChemicalEntity	Main sol. J196											
 CAS-RN:13977-65-6	biolink:ChemicalEntity	KH2PO3											
-mediadive.ingredient:1678	biolink:ChemicalEntity	Na2MoO7 x 2 H2O											
+ingredient:1678	biolink:ChemicalEntity	Na2MoO7 x 2 H2O											
 medium:J197	biolink:ChemicalEntity	JCM MEDIUM No. 197											
 mediadive.solution:3860	biolink:ChemicalEntity	Main sol. J197											
 mediadive.solution:3862	biolink:ChemicalEntity	Trace mineral solution											
@@ -6865,13 +6865,13 @@ mediadive.solution:3871	biolink:ChemicalEntity	Main sol. J206
 mediadive.solution:3872	biolink:ChemicalEntity	Salt base solution											
 medium:J207	biolink:ChemicalEntity	YEAST EXTRACT-MALT EXTRACT AGAR (ISP-2) WITH 5% NaCl											
 mediadive.solution:3873	biolink:ChemicalEntity	Main sol. J207											
-mediadive.ingredient:1682	biolink:ChemicalEntity	Yeast extract-malt extract agar											
+ingredient:1682	biolink:ChemicalEntity	Yeast extract-malt extract agar											
 medium:J208	biolink:ChemicalEntity	JCM MEDIUM No. 208											
 mediadive.solution:3874	biolink:ChemicalEntity	Main sol. J208											
-mediadive.ingredient:1683	biolink:ChemicalEntity	YM broth											
+ingredient:1683	biolink:ChemicalEntity	YM broth											
 medium:J209	biolink:ChemicalEntity	M98-5											
 mediadive.solution:3875	biolink:ChemicalEntity	Main sol. J209											
-mediadive.ingredient:1684	biolink:ChemicalEntity	Salts solution											
+ingredient:1684	biolink:ChemicalEntity	Salts solution											
 CHEBI:29377	biolink:ChemicalEntity	Na2CO3-CO2 buffer											
 medium:J210	biolink:ChemicalEntity	MODIFIED MEDIUM 10											
 mediadive.solution:3876	biolink:ChemicalEntity	Main sol. J210											
@@ -6963,7 +6963,7 @@ mediadive.solution:3926	biolink:ChemicalEntity	Synthetic seawater (2 x)
 mediadive.solution:3927	biolink:ChemicalEntity	Ni-Se-W solution											
 medium:J245	biolink:ChemicalEntity	TODD HEWITT AGAR											
 mediadive.solution:3928	biolink:ChemicalEntity	Main sol. J245											
-mediadive.ingredient:1705	biolink:ChemicalEntity	Todd Hewitt Broth											
+ingredient:1705	biolink:ChemicalEntity	Todd Hewitt Broth											
 medium:J246	biolink:ChemicalEntity	PPES-II AGAR MEDIUM											
 mediadive.solution:3929	biolink:ChemicalEntity	Main sol. J246											
 mediadive.solution:3930	biolink:ChemicalEntity	Artificial seawater											
@@ -6971,7 +6971,7 @@ medium:J247	biolink:ChemicalEntity	JCM MEDIUM No. 247
 mediadive.solution:3931	biolink:ChemicalEntity	Main sol. J247											
 medium:J248	biolink:ChemicalEntity	JCM MEDIUM No. 248											
 mediadive.solution:3932	biolink:ChemicalEntity	Main sol. J248											
-mediadive.ingredient:1707	biolink:ChemicalEntity	Cow manure											
+ingredient:1707	biolink:ChemicalEntity	Cow manure											
 medium:J249	biolink:ChemicalEntity	YEAST EXTRACT MEDIUM (YE)											
 mediadive.solution:3933	biolink:ChemicalEntity	Main sol. J249											
 medium:J250	biolink:ChemicalEntity	YEAST EXTRACT MANNITOL AGAR MEDIUM											
@@ -6991,7 +6991,7 @@ medium:J256	biolink:ChemicalEntity	COLUMBIA BLOOD AGAR WITH 5% SHEEP BLOOD
 mediadive.solution:3942	biolink:ChemicalEntity	Main sol. J256											
 medium:J257	biolink:ChemicalEntity	MRS MEDIUM WITH 10% NaCl											
 mediadive.solution:3943	biolink:ChemicalEntity	Main sol. J257											
-mediadive.ingredient:1711	biolink:ChemicalEntity	Lactobacilli MRS broth											
+ingredient:1711	biolink:ChemicalEntity	Lactobacilli MRS broth											
 medium:J258	biolink:ChemicalEntity	ME AGAR											
 mediadive.solution:3944	biolink:ChemicalEntity	Main sol. J258											
 CHEBI:2509	biolink:ChemicalEntity	Malt extract agar											
@@ -7204,7 +7204,7 @@ medium:J344	biolink:ChemicalEntity	HNW MEDIUM
 mediadive.solution:4064	biolink:ChemicalEntity	Main sol. J344											
 medium:J345	biolink:ChemicalEntity	HORIKOSHI-1 MEDIUM WITH 10% NaCl											
 mediadive.solution:4065	biolink:ChemicalEntity	Main sol. J345											
-mediadive.ingredient:1740	biolink:ChemicalEntity	Horikoshi-I medium											
+ingredient:1740	biolink:ChemicalEntity	Horikoshi-I medium											
 medium:J346	biolink:ChemicalEntity	R2A AGAR											
 mediadive.solution:4066	biolink:ChemicalEntity	Main sol. J346											
 medium:J347	biolink:ChemicalEntity	SME MEDIUM											
@@ -7235,15 +7235,15 @@ medium:J359	biolink:ChemicalEntity	1% TRYPTONE AGAR
 mediadive.solution:4080	biolink:ChemicalEntity	Main sol. J359											
 medium:J360	biolink:ChemicalEntity	MMJ MEDIUM											
 mediadive.solution:4081	biolink:ChemicalEntity	Main sol. J360											
-mediadive.ingredient:1742	biolink:ChemicalEntity	Fe(SO4)3 x n H2O											
+ingredient:1742	biolink:ChemicalEntity	Fe(SO4)3 x n H2O											
 medium:J361	biolink:ChemicalEntity	METHANOCALDOCOCCUS INDIENSIS MEDIUM											
 mediadive.solution:4082	biolink:ChemicalEntity	Main sol. J361											
 medium:J362	biolink:ChemicalEntity	MGP MEDIUM											
 mediadive.solution:4083	biolink:ChemicalEntity	Main sol. J362											
 medium:J363	biolink:ChemicalEntity	PY4S AGAR											
 mediadive.solution:4084	biolink:ChemicalEntity	Main sol. J363											
-mediadive.ingredient:1143	biolink:ChemicalEntity	Salt Solution I											
-mediadive.ingredient:1144	biolink:ChemicalEntity	Salt Solution II											
+ingredient:1143	biolink:ChemicalEntity	Salt Solution I											
+ingredient:1144	biolink:ChemicalEntity	Salt Solution II											
 medium:J364	biolink:ChemicalEntity	PY4SR AGAR											
 mediadive.solution:4085	biolink:ChemicalEntity	Main sol. J364											
 medium:J365	biolink:ChemicalEntity	DEFERRIBACTER ABYSSI MEDIUM											
@@ -7262,7 +7262,7 @@ medium:J370	biolink:ChemicalEntity	TEPIDANAEROBACTER MEDIUM
 mediadive.solution:4093	biolink:ChemicalEntity	Main sol. J370											
 medium:J371	biolink:ChemicalEntity	THERMOVIBRIO AMMONIFICANS MEDIUM											
 mediadive.solution:4094	biolink:ChemicalEntity	Main sol. J371											
-mediadive.ingredient:1743	biolink:ChemicalEntity	Na2WO2 x 2 H2O											
+ingredient:1743	biolink:ChemicalEntity	Na2WO2 x 2 H2O											
 medium:J372	biolink:ChemicalEntity	TH AGAR											
 mediadive.solution:4095	biolink:ChemicalEntity	Main sol. J372											
 medium:J373	biolink:ChemicalEntity	VY/2-SWS AGAR											
@@ -7426,7 +7426,7 @@ mediadive.solution:4183	biolink:ChemicalEntity	Main sol. J437
 medium:J438	biolink:ChemicalEntity	RT2 MEDIUM											
 mediadive.solution:4184	biolink:ChemicalEntity	Main sol. J438											
 CAS-RN:73463-39-5	biolink:ChemicalEntity	CAPSO											
-mediadive.ingredient:96	biolink:ChemicalEntity	Trace element solution											
+ingredient:96	biolink:ChemicalEntity	Trace element solution											
 medium:J439	biolink:ChemicalEntity	DESULFOVIBRIO AEROTOLERANS DVO5 MEDIUM											
 mediadive.solution:4185	biolink:ChemicalEntity	Main sol. J439											
 medium:J440	biolink:ChemicalEntity	TB2 MEDIUM											
@@ -7454,7 +7454,7 @@ mediadive.solution:4197	biolink:ChemicalEntity	Main sol. J449
 medium:J451	biolink:ChemicalEntity	ANOXIC MEDIUM FOR STRAIN AcBE2-1											
 mediadive.solution:4198	biolink:ChemicalEntity	Main sol. J451											
 mediadive.solution:4379	biolink:ChemicalEntity	7 Vitamins solution											
-mediadive.ingredient:1764	biolink:ChemicalEntity	84 g/L NaHCO3 solution											
+ingredient:1764	biolink:ChemicalEntity	84 g/L NaHCO3 solution											
 medium:J452	biolink:ChemicalEntity	JCM MEDIUM No. 452											
 mediadive.solution:4199	biolink:ChemicalEntity	Main sol. J452											
 medium:J453	biolink:ChemicalEntity	1/5 NUTRIENT AGAR NO. 2											
@@ -7523,7 +7523,7 @@ mediadive.solution:4234	biolink:ChemicalEntity	Main sol. J480
 mediadive.solution:4235	biolink:ChemicalEntity	Trace element solution											
 medium:J481	biolink:ChemicalEntity	REINFORCED CLOSTRIDIAL MEDIUM WITH 3%  SEA SALT											
 mediadive.solution:4236	biolink:ChemicalEntity	Main sol. J481											
-mediadive.ingredient:1769	biolink:ChemicalEntity	Reinforced clostridial medium											
+ingredient:1769	biolink:ChemicalEntity	Reinforced clostridial medium											
 medium:J482	biolink:ChemicalEntity	REINFORCED CLOSTRIDIAL MEDIUM WITH 4%  SEA SALT											
 mediadive.solution:4237	biolink:ChemicalEntity	Main sol. J482											
 medium:J483	biolink:ChemicalEntity	ETHANOLOGENBACTERIUM MEDIUM											
@@ -7603,7 +7603,7 @@ mediadive.solution:4285	biolink:ChemicalEntity	Main sol. J508
 mediadive.solution:4286	biolink:ChemicalEntity	Trace mineral solution											
 medium:J509	biolink:ChemicalEntity	MRS MEDIUM WITH 5% NaCl											
 mediadive.solution:4287	biolink:ChemicalEntity	Main sol. J509											
-mediadive.ingredient:1776	biolink:ChemicalEntity	Lactobacillus MRS broth											
+ingredient:1776	biolink:ChemicalEntity	Lactobacillus MRS broth											
 medium:J510	biolink:ChemicalEntity	NMS MEDIUM											
 mediadive.solution:4288	biolink:ChemicalEntity	Main sol. J510											
 mediadive.solution:4289	biolink:ChemicalEntity	Trace element solution											
@@ -7644,7 +7644,7 @@ medium:J521	biolink:ChemicalEntity	MODIFIED DESULFOGLAEBA ALKANEXEDENS MEDIUM
 mediadive.solution:4313	biolink:ChemicalEntity	Main sol. J521											
 mediadive.solution:4314	biolink:ChemicalEntity	Mineral medium											
 mediadive.solution:4315	biolink:ChemicalEntity	Reducing agent solution											
-mediadive.ingredient:1784	biolink:ChemicalEntity	Trace vitamins (see Medium No. 197)											
+ingredient:1784	biolink:ChemicalEntity	Trace vitamins (see Medium No. 197)											
 CHEBI:41808	biolink:ChemicalEntity	Decane											
 medium:J522	biolink:ChemicalEntity	XYLANOBACTER MEDIUM											
 mediadive.solution:4316	biolink:ChemicalEntity	Main sol. J522											
@@ -7691,7 +7691,7 @@ CAS-RN:57-50-1	biolink:ChemicalEntity	Sugar
 CHEBI:15846	biolink:ChemicalEntity	beta-NAD											
 medium:J538	biolink:ChemicalEntity	BRUCELLA BROTH											
 mediadive.solution:4341	biolink:ChemicalEntity	Main sol. J538											
-mediadive.ingredient:1799	biolink:ChemicalEntity	Peptic digest of animal tissue											
+ingredient:1799	biolink:ChemicalEntity	Peptic digest of animal tissue											
 CHEBI:26709	biolink:ChemicalEntity	NaHSO3											
 medium:J539	biolink:ChemicalEntity	MODIFIED SYNTHROPHOMONAS MEDIUM											
 mediadive.solution:4342	biolink:ChemicalEntity	Main sol. J539											
@@ -7798,7 +7798,7 @@ mediadive.solution:4408	biolink:ChemicalEntity	Main sol. J576
 mediadive.solution:4409	biolink:ChemicalEntity	Solution A											
 mediadive.solution:4410	biolink:ChemicalEntity	Substrate											
 mediadive.solution:4411	biolink:ChemicalEntity	Trace metal solution SL12											
-mediadive.ingredient:1812	biolink:ChemicalEntity	Trace element solution SL12											
+ingredient:1812	biolink:ChemicalEntity	Trace element solution SL12											
 CAS-RN:408-35-5	biolink:ChemicalEntity	Sodium palmitate											
 medium:J577	biolink:ChemicalEntity	DESULFATIRHABDIUM BUTYRATIVORANS MEDIUM											
 mediadive.solution:4412	biolink:ChemicalEntity	Main sol. J577											
@@ -7884,7 +7884,7 @@ medium:J604	biolink:ChemicalEntity	HALOMONAS VARIABILIS MEDIUM
 mediadive.solution:4462	biolink:ChemicalEntity	Main sol. J604											
 medium:J605	biolink:ChemicalEntity	COOKED MEAT MEDIUM											
 mediadive.solution:4463	biolink:ChemicalEntity	Main sol. J605											
-mediadive.ingredient:1824	biolink:ChemicalEntity	Cooked meat medium											
+ingredient:1824	biolink:ChemicalEntity	Cooked meat medium											
 medium:J606	biolink:ChemicalEntity	MALTOSE-YEAST EXTRACT MEDIUM											
 mediadive.solution:4464	biolink:ChemicalEntity	Main sol. J606											
 medium:J607	biolink:ChemicalEntity	HALOMONAS SUBGLACIESCOLA MEDIUM											
@@ -7895,7 +7895,7 @@ medium:J608	biolink:ChemicalEntity	HALOMONAS MEDIUM
 mediadive.solution:4468	biolink:ChemicalEntity	Main sol. J608											
 medium:J609	biolink:ChemicalEntity	MODIFIED MH MEDIUM											
 mediadive.solution:4469	biolink:ChemicalEntity	Main sol. J609											
-mediadive.ingredient:1826	biolink:ChemicalEntity	X10 Jamarin S											
+ingredient:1826	biolink:ChemicalEntity	X10 Jamarin S											
 medium:J610	biolink:ChemicalEntity	SPHAEROTILUS MEDIUM											
 mediadive.solution:4470	biolink:ChemicalEntity	Main sol. J610											
 medium:J611	biolink:ChemicalEntity	JCM MEDIUM No. 611											
@@ -7912,7 +7912,7 @@ medium:J616	biolink:ChemicalEntity	DESULFOMICROBIUM MEDIUM
 mediadive.solution:4476	biolink:ChemicalEntity	Main sol. J616											
 mediadive.solution:4477	biolink:ChemicalEntity	Trace element solution SL12B											
 mediadive.solution:4478	biolink:ChemicalEntity	Vitamin solution											
-mediadive.ingredient:1828	biolink:ChemicalEntity	MnCl4 x 4 H2O											
+ingredient:1828	biolink:ChemicalEntity	MnCl4 x 4 H2O											
 medium:J617	biolink:ChemicalEntity	MODIFIED PY4S AGAR											
 mediadive.solution:4479	biolink:ChemicalEntity	Main sol. J617											
 medium:J618	biolink:ChemicalEntity	CYS MEDIUM											
@@ -7947,7 +7947,7 @@ mediadive.solution:4497	biolink:ChemicalEntity	Bottom layer
 mediadive.solution:4498	biolink:ChemicalEntity	Top layer											
 mediadive.solution:4499	biolink:ChemicalEntity	FeS solution											
 mediadive.solution:4500	biolink:ChemicalEntity	Modified Wolfe's mineral solution											
-mediadive.ingredient:1833	biolink:ChemicalEntity	Trace minerals (see Medium No. 197											
+ingredient:1833	biolink:ChemicalEntity	Trace minerals (see Medium No. 197											
 medium:J629	biolink:ChemicalEntity	SALTWATER IRON-OXIDIZING BACTERIA MEDIUM											
 mediadive.solution:4501	biolink:ChemicalEntity	Main sol. J629											
 mediadive.solution:4502	biolink:ChemicalEntity	Artificial saltwater											
@@ -8002,7 +8002,7 @@ medium:J648	biolink:ChemicalEntity	RHODOBACTER DANGMALENSIS MEDIUM
 mediadive.solution:4534	biolink:ChemicalEntity	Main sol. J648											
 medium:J649	biolink:ChemicalEntity	RHODOVULUM KHOLENSE MEDIUM											
 mediadive.solution:4535	biolink:ChemicalEntity	Main sol. J649											
-mediadive.ingredient:1571	biolink:ChemicalEntity	micronutrient solution											
+ingredient:1571	biolink:ChemicalEntity	micronutrient solution											
 medium:J650	biolink:ChemicalEntity	THIOPHAEOCOCCUS MEDIUM											
 mediadive.solution:4536	biolink:ChemicalEntity	Main sol. J650											
 medium:J651	biolink:ChemicalEntity	SAP2 MEDIUM											
@@ -8031,7 +8031,7 @@ medium:J660	biolink:ChemicalEntity	MAGNETOSPIRILLUM GRYPHISWALDENSE MEDIUM
 mediadive.solution:4548	biolink:ChemicalEntity	Main sol. J660											
 medium:J661	biolink:ChemicalEntity	MODIFIED AM5 MEDIUM											
 mediadive.solution:4549	biolink:ChemicalEntity	Main sol. J661											
-mediadive.ingredient:1845	biolink:ChemicalEntity	Vitamin B12 solution (see Medium No. 403)											
+ingredient:1845	biolink:ChemicalEntity	Vitamin B12 solution (see Medium No. 403)											
 CHEBI:35366	biolink:ChemicalEntity	Fatty acid mixture (see Medium No. 266)											
 medium:J662	biolink:ChemicalEntity	MBG-20											
 mediadive.solution:4550	biolink:ChemicalEntity	Main sol. J662											
@@ -8079,13 +8079,13 @@ medium:J678	biolink:ChemicalEntity	HALANAEROBACULUM TUNISIENSE MEDIUM
 mediadive.solution:4575	biolink:ChemicalEntity	Main sol. J678											
 medium:J679	biolink:ChemicalEntity	DEHALOGENIMONAS MEDIUM											
 mediadive.solution:4576	biolink:ChemicalEntity	Main sol. J679											
-mediadive.ingredient:1855	biolink:ChemicalEntity	Vitamin solution (see Medium No. 403)											
-mediadive.ingredient:1856	biolink:ChemicalEntity	Thiamine solution (see Medium No. 403)											
+ingredient:1855	biolink:ChemicalEntity	Vitamin solution (see Medium No. 403)											
+ingredient:1856	biolink:ChemicalEntity	Thiamine solution (see Medium No. 403)											
 CAS-RN:1404-93-9	biolink:ChemicalEntity	Vancomycin x HCl											
 CHEBI:142468	biolink:ChemicalEntity	1,2-Dichloropropane											
 medium:J680	biolink:ChemicalEntity	DESULFOVIBRIO TUNISIENSIS MEDIUM											
 mediadive.solution:4577	biolink:ChemicalEntity	Main sol. J680											
-mediadive.ingredient:1860	biolink:ChemicalEntity	L-Cysteine x HCl x H2O solution											
+ingredient:1860	biolink:ChemicalEntity	L-Cysteine x HCl x H2O solution											
 medium:J681	biolink:ChemicalEntity	PFENNIG'S MEDIUM											
 mediadive.solution:4578	biolink:ChemicalEntity	Main sol. J681											
 medium:J682	biolink:ChemicalEntity	METHANOFOLLIS ETHANOLICUS MEDIUM											
@@ -8108,7 +8108,7 @@ medium:J687	biolink:ChemicalEntity	MB MEDIUM WITH METHANOL
 mediadive.solution:4590	biolink:ChemicalEntity	Main sol. J687											
 mediadive.solution:4591	biolink:ChemicalEntity	Solution A											
 mediadive.solution:4592	biolink:ChemicalEntity	Methanol solution											
-mediadive.ingredient:1863	biolink:ChemicalEntity	Methanol solution (see below)											
+ingredient:1863	biolink:ChemicalEntity	Methanol solution (see below)											
 medium:J688	biolink:ChemicalEntity	MB MEDIUM WITH FORMATE											
 mediadive.solution:4593	biolink:ChemicalEntity	Main sol. J688											
 mediadive.solution:4594	biolink:ChemicalEntity	Sodium format solution 136.0 g/L											
@@ -8218,8 +8218,8 @@ mediadive.solution:4655	biolink:ChemicalEntity	UBS solution
 medium:J730	biolink:ChemicalEntity	RYE-BRAN MRS											
 mediadive.solution:4656	biolink:ChemicalEntity	Main sol. J730											
 mediadive.solution:4657	biolink:ChemicalEntity	Rye-bran extract											
-mediadive.ingredient:1880	biolink:ChemicalEntity	Rye-bran											
-mediadive.ingredient:1881	biolink:ChemicalEntity	Malted wheat meal											
+ingredient:1880	biolink:ChemicalEntity	Rye-bran											
+ingredient:1881	biolink:ChemicalEntity	Malted wheat meal											
 CAS-RN:9002-07-7	biolink:ChemicalEntity	Trypsin											
 medium:J731	biolink:ChemicalEntity	SPOROMUSA MEDIUM											
 mediadive.solution:4658	biolink:ChemicalEntity	Main sol. J731											
@@ -8258,7 +8258,7 @@ mediadive.solution:4678	biolink:ChemicalEntity	Main sol. J743
 mediadive.solution:4679	biolink:ChemicalEntity	Trace element solution											
 medium:J744	biolink:ChemicalEntity	MODIFIED HB-1 MEDIUM											
 mediadive.solution:4680	biolink:ChemicalEntity	Main sol. J744											
-mediadive.ingredient:1883	biolink:ChemicalEntity	Trace minerals (see Medium No. 151											
+ingredient:1883	biolink:ChemicalEntity	Trace minerals (see Medium No. 151											
 medium:J745	biolink:ChemicalEntity	MJYP2 MEDIUM											
 mediadive.solution:4681	biolink:ChemicalEntity	Main sol. J745											
 medium:J746	biolink:ChemicalEntity	MANNITOL AGAR WITHOUT CALCIUM CARBONATE											
@@ -8267,7 +8267,7 @@ medium:J747	biolink:ChemicalEntity	FRESHWATER MEDIUM WITH TOLUENE
 mediadive.solution:4683	biolink:ChemicalEntity	Main sol. J747											
 mediadive.solution:4684	biolink:ChemicalEntity	Solution A											
 CHEBI:144421	biolink:ChemicalEntity	Iron(III) citrate											
-mediadive.ingredient:1886	biolink:ChemicalEntity	Trace element solution (see Medium No. 187											
+ingredient:1886	biolink:ChemicalEntity	Trace element solution (see Medium No. 187											
 medium:J748	biolink:ChemicalEntity	METALLOSPHAERA CUPRINA MEDIUM											
 mediadive.solution:4685	biolink:ChemicalEntity	Main sol. J748											
 mediadive.solution:4686	biolink:ChemicalEntity	Trace element solution (filter-sterilized)											
@@ -8293,7 +8293,7 @@ mediadive.solution:4696	biolink:ChemicalEntity	Main sol. J757
 mediadive.solution:4697	biolink:ChemicalEntity	Substrate solution											
 medium:J758	biolink:ChemicalEntity	DETHIOSULFOVIBRIO II MEDIUM											
 mediadive.solution:4698	biolink:ChemicalEntity	Main sol. J758											
-mediadive.ingredient:1888	biolink:ChemicalEntity	Trisodium citrate x H2O											
+ingredient:1888	biolink:ChemicalEntity	Trisodium citrate x H2O											
 medium:J759	biolink:ChemicalEntity	DETHIOSULFOVIBRIO PEPTIDOVORANS MEDIUM											
 mediadive.solution:4699	biolink:ChemicalEntity	Main sol. J759											
 medium:J760	biolink:ChemicalEntity	DESULFURISPIRILLUM ALKALIPHILUM MEDIUM											
@@ -8330,7 +8330,7 @@ medium:J771	biolink:ChemicalEntity	HALOMONAS BEIMENENSIS MEDIUM
 mediadive.solution:4718	biolink:ChemicalEntity	Main sol. J771											
 medium:J772	biolink:ChemicalEntity	SALTWATER MEDIUM WITH HYDROGEN											
 mediadive.solution:4719	biolink:ChemicalEntity	Main sol. J772											
-mediadive.ingredient:1893	biolink:ChemicalEntity	Riboflavin solution (see Medium No. 462)											
+ingredient:1893	biolink:ChemicalEntity	Riboflavin solution (see Medium No. 462)											
 medium:J773	biolink:ChemicalEntity	RUMEN FLUID MEDIUM											
 mediadive.solution:4720	biolink:ChemicalEntity	Main sol. J773											
 medium:J774	biolink:ChemicalEntity	MINERAL MEDIUM FOR HYDROGENOPHILUS ISLANDICUM											
@@ -8340,7 +8340,7 @@ mediadive.solution:4722	biolink:ChemicalEntity	Main sol. J775
 medium:J776	biolink:ChemicalEntity	MH1 MEDIUM FOR SALIARCHAEUM RUBRODURUM											
 mediadive.solution:4723	biolink:ChemicalEntity	Main sol. J776											
 mediadive.solution:4724	biolink:ChemicalEntity	Trace metal solution											
-mediadive.ingredient:1551	biolink:ChemicalEntity	Trace metal solution											
+ingredient:1551	biolink:ChemicalEntity	Trace metal solution											
 medium:J777	biolink:ChemicalEntity	MH1 MEDIUM FOR SALIARCHAEUM ACIDOPHILUM											
 mediadive.solution:4725	biolink:ChemicalEntity	Main sol. J777											
 medium:J778	biolink:ChemicalEntity	THERMOANAEROMONAS MEDIUM											
@@ -8366,7 +8366,7 @@ medium:J787	biolink:ChemicalEntity	HALOBACTERIUM TMM MEDIIUM
 mediadive.solution:4736	biolink:ChemicalEntity	Main sol. J787											
 medium:J788	biolink:ChemicalEntity	NATRONOARCHAEUM MEDIUM											
 mediadive.solution:4737	biolink:ChemicalEntity	Main sol. J788											
-mediadive.ingredient:1895	biolink:ChemicalEntity	K2HSO4											
+ingredient:1895	biolink:ChemicalEntity	K2HSO4											
 medium:J789	biolink:ChemicalEntity	MH1 MEDIUM FOR HALARCHAEUM											
 mediadive.solution:4738	biolink:ChemicalEntity	Main sol. J789											
 medium:J790	biolink:ChemicalEntity	LB (LURIA-BERTANI) AGAR WITH 10 mM GLUCOSE											
@@ -8381,7 +8381,7 @@ medium:J794	biolink:ChemicalEntity	METHANOBACTERIUM MEDIUM (III)
 mediadive.solution:4743	biolink:ChemicalEntity	Main sol. J794											
 medium:J795	biolink:ChemicalEntity	m TGE BROTH MEDIUM											
 mediadive.solution:4744	biolink:ChemicalEntity	Main sol. J795											
-mediadive.ingredient:1896	biolink:ChemicalEntity	Bacto m TGE broth											
+ingredient:1896	biolink:ChemicalEntity	Bacto m TGE broth											
 medium:J796	biolink:ChemicalEntity	DESULFITOCELLA MEDIUM											
 mediadive.solution:4745	biolink:ChemicalEntity	Main sol. J796											
 CHEBI:86477	biolink:ChemicalEntity	Sodium sulfite											
@@ -8399,7 +8399,7 @@ medium:J802	biolink:ChemicalEntity	MODIFIED CSY-3 AGAR
 mediadive.solution:4751	biolink:ChemicalEntity	Main sol. J802											
 medium:J803	biolink:ChemicalEntity	MRS MEDIUM WITH 10% TOMATO JUICE											
 mediadive.solution:4752	biolink:ChemicalEntity	Main sol. J803											
-mediadive.ingredient:1899	biolink:ChemicalEntity	MRS broth											
+ingredient:1899	biolink:ChemicalEntity	MRS broth											
 medium:J804	biolink:ChemicalEntity	1/10 R2A AGAR											
 mediadive.solution:4753	biolink:ChemicalEntity	Main sol. J804											
 medium:J805	biolink:ChemicalEntity	1/10 R2A BROTH											
@@ -8427,7 +8427,7 @@ mediadive.solution:4765	biolink:ChemicalEntity	Main sol. J815
 mediadive.solution:4766	biolink:ChemicalEntity	Trace element solution											
 mediadive.solution:4767	biolink:ChemicalEntity	Iron stock solution 4.5 g/L											
 mediadive.solution:4768	biolink:ChemicalEntity	Phosphate buffer stock solution											
-mediadive.ingredient:1900	biolink:ChemicalEntity	Phosphate buffer stock solution											
+ingredient:1900	biolink:ChemicalEntity	Phosphate buffer stock solution											
 medium:J816	biolink:ChemicalEntity	DILUTED ASM MEDIUM											
 mediadive.solution:4769	biolink:ChemicalEntity	Main sol. J816											
 medium:J817	biolink:ChemicalEntity	LOW-SALT METHANOTROPHIC MEDIUM											
@@ -8455,7 +8455,7 @@ medium:J825	biolink:ChemicalEntity	KOKO MEDIUM
 mediadive.solution:4784	biolink:ChemicalEntity	Main sol. J825											
 medium:J826	biolink:ChemicalEntity	MODIFIED CM3 MEDIUM											
 mediadive.solution:4785	biolink:ChemicalEntity	Main sol. J826											
-mediadive.ingredient:1902	biolink:ChemicalEntity	(NH4)2S4											
+ingredient:1902	biolink:ChemicalEntity	(NH4)2S4											
 CHEBI:38870	biolink:ChemicalRole	inhalation anaesthetic											
 medium:J827	biolink:ChemicalEntity	DEHALOCOCCOIDES MEDIUM											
 mediadive.solution:4786	biolink:ChemicalEntity	Main sol. J827											
@@ -8518,7 +8518,7 @@ mediadive.solution:4816	biolink:ChemicalEntity	Solution II
 mediadive.solution:4817	biolink:ChemicalEntity	100 x Vitamin mixture											
 medium:J849	biolink:ChemicalEntity	TISTLIA MEDIUM											
 mediadive.solution:4818	biolink:ChemicalEntity	Main sol. J849											
-mediadive.ingredient:1914	biolink:ChemicalEntity	Zeikus trace element solution											
+ingredient:1914	biolink:ChemicalEntity	Zeikus trace element solution											
 medium:J850	biolink:ChemicalEntity	THERMOSYNTROPHA L-60 MEDIUM											
 mediadive.solution:4819	biolink:ChemicalEntity	Main sol. J850											
 mediadive.solution:4820	biolink:ChemicalEntity	Solution A											
@@ -8616,7 +8616,7 @@ mediadive.solution:4876	biolink:ChemicalEntity	Trace element solution
 medium:J887	biolink:ChemicalEntity	NATRONOLIMNOBIUS AHT32 MEDIUM (A)											
 mediadive.solution:4877	biolink:ChemicalEntity	Main sol. J887											
 mediadive.solution:4878	biolink:ChemicalEntity	Basal minerals											
-mediadive.ingredient:1921	biolink:ChemicalEntity	Selenite-tungstate solution (see Medium No. 431)											
+ingredient:1921	biolink:ChemicalEntity	Selenite-tungstate solution (see Medium No. 431)											
 medium:J888	biolink:ChemicalEntity	SALT POTATO-DEXTROSE AGAR (SPDA)											
 mediadive.solution:4879	biolink:ChemicalEntity	Main sol. J888											
 medium:J889	biolink:ChemicalEntity	METALLIBACTERIUM MEDIUM											
@@ -8637,8 +8637,8 @@ medium:J895	biolink:ChemicalEntity	YEAST EXTRACT-MALT EXTRACT AGAR (ISP-2) (pH 8
 mediadive.solution:4889	biolink:ChemicalEntity	Main sol. J895											
 medium:J896	biolink:ChemicalEntity	MODIFIED BSK MEDIUM											
 mediadive.solution:4890	biolink:ChemicalEntity	Main sol. J896											
-mediadive.ingredient:1923	biolink:ChemicalEntity	MEM alpha Modification											
-mediadive.ingredient:1924	biolink:ChemicalEntity	Probumin Universal Grade											
+ingredient:1923	biolink:ChemicalEntity	MEM alpha Modification											
+ingredient:1924	biolink:ChemicalEntity	Probumin Universal Grade											
 medium:J897	biolink:ChemicalEntity	5% SALT WATER GROWTH MEDIUM											
 mediadive.solution:4891	biolink:ChemicalEntity	Main sol. J897											
 medium:J898	biolink:ChemicalEntity	SYPHC MEDIUM											
@@ -8759,7 +8759,7 @@ mediadive.solution:4956	biolink:ChemicalEntity	Solution B
 mediadive.solution:4957	biolink:ChemicalEntity	Solution C											
 mediadive.solution:4958	biolink:ChemicalEntity	Solution D											
 mediadive.solution:4959	biolink:ChemicalEntity	Solution E											
-mediadive.ingredient:1946	biolink:ChemicalEntity	Na2S2O4 x 2 H2O											
+ingredient:1946	biolink:ChemicalEntity	Na2S2O4 x 2 H2O											
 medium:J942	biolink:ChemicalEntity	MH1 MEDIUM FOR HALARCHAEUM-2											
 mediadive.solution:4960	biolink:ChemicalEntity	Main sol. J942											
 medium:J943	biolink:ChemicalEntity	TRYPTICASE SOY AGAR WITH 2% NaCl											
@@ -8825,12 +8825,12 @@ medium:J968	biolink:ChemicalEntity	MODIFIED CALDICELLULOSIRUPTOR MEDIUM
 mediadive.solution:4991	biolink:ChemicalEntity	Main sol. J968											
 medium:J969	biolink:ChemicalEntity	EBIOS-GLUCOSE AGAR											
 mediadive.solution:4992	biolink:ChemicalEntity	Main sol. J969											
-mediadive.ingredient:1953	biolink:ChemicalEntity	EBIOS											
+ingredient:1953	biolink:ChemicalEntity	EBIOS											
 medium:J970	biolink:ChemicalEntity	ACIDIFFEROBACTER MURCIENSIS MEDIUM											
 mediadive.solution:4993	biolink:ChemicalEntity	Main sol. J970											
 medium:J971	biolink:ChemicalEntity	1/2 SME MEDIUM FOR YA											
 mediadive.solution:4994	biolink:ChemicalEntity	Main sol. J971											
-mediadive.ingredient:1955	biolink:ChemicalEntity	Modified Wolfe's minerals											
+ingredient:1955	biolink:ChemicalEntity	Modified Wolfe's minerals											
 medium:J972	biolink:ChemicalEntity	ARTIFICIAL SEAWATER MEDIUM											
 mediadive.solution:4995	biolink:ChemicalEntity	Main sol. J972											
 medium:J973	biolink:ChemicalEntity	HALORHABDUS SEGORENSIS MEDIUM											
@@ -8849,7 +8849,7 @@ mediadive.solution:5003	biolink:ChemicalEntity	10 x CMD stock solution
 mediadive.solution:5004	biolink:ChemicalEntity	5 x CMD micronutrient solution											
 medium:J978	biolink:ChemicalEntity	THERMOCRINIS JAMIESONII  MEDIUM											
 mediadive.solution:5005	biolink:ChemicalEntity	Main sol. J978											
-mediadive.ingredient:1958	biolink:ChemicalEntity	Mineral solution (see Medium No. 976											
+ingredient:1958	biolink:ChemicalEntity	Mineral solution (see Medium No. 976											
 medium:J979	biolink:ChemicalEntity	M13 MEDIUM											
 mediadive.solution:5006	biolink:ChemicalEntity	Main sol. J979											
 medium:J980	biolink:ChemicalEntity	KUSHNERIA AURANTIA MEDIUM											
@@ -8936,7 +8936,7 @@ mediadive.solution:5054	biolink:ChemicalEntity	Main sol. J1012
 medium:J1013	biolink:ChemicalEntity	ACETIVIBRIO MEDIUM											
 mediadive.solution:5055	biolink:ChemicalEntity	Main sol. J1013											
 mediadive.solution:5056	biolink:ChemicalEntity	Basal medium											
-mediadive.ingredient:154	biolink:ChemicalEntity	Vitamin solution											
+ingredient:154	biolink:ChemicalEntity	Vitamin solution											
 medium:J1014	biolink:ChemicalEntity	NASU IRON REDUCER MEDIUM											
 mediadive.solution:5057	biolink:ChemicalEntity	Main sol. J1014											
 mediadive.solution:5058	biolink:ChemicalEntity	Modified Allen's trace metal solution											
@@ -9035,15 +9035,15 @@ mediadive.solution:5111	biolink:ChemicalEntity	Main sol. J1050
 medium:J1051	biolink:ChemicalEntity	ENDOMICROBIUM PROAVITUM RSA MEDIUM											
 mediadive.solution:5112	biolink:ChemicalEntity	Main sol. J1051											
 mediadive.solution:5113	biolink:ChemicalEntity	Aromatic fatty acids solution											
-mediadive.ingredient:1982	biolink:ChemicalEntity	Trace vitamins solution (see Medium No. 284)											
+ingredient:1982	biolink:ChemicalEntity	Trace vitamins solution (see Medium No. 284)											
 medium:J1052	biolink:ChemicalEntity	573C MEDIUM											
 mediadive.solution:5114	biolink:ChemicalEntity	Main sol. J1052											
 medium:J1053	biolink:ChemicalEntity	DEFERRISOMA PALEOCHRORII MEDIUM											
 mediadive.solution:5115	biolink:ChemicalEntity	Main sol. J1053											
 medium:J1054	biolink:ChemicalEntity	MAIZE MEAL-SARDINE AGAR											
 mediadive.solution:5116	biolink:ChemicalEntity	Main sol. J1054											
-mediadive.ingredient:1985	biolink:ChemicalEntity	Maize meal											
-mediadive.ingredient:1986	biolink:ChemicalEntity	Small dried sardine											
+ingredient:1985	biolink:ChemicalEntity	Maize meal											
+ingredient:1986	biolink:ChemicalEntity	Small dried sardine											
 medium:J1055	biolink:ChemicalEntity	MARINE AOB MEDIUM (A)											
 mediadive.solution:5117	biolink:ChemicalEntity	Main sol. J1055											
 mediadive.solution:5118	biolink:ChemicalEntity	Trace elements solution											
@@ -9088,7 +9088,7 @@ medium:J1074	biolink:ChemicalEntity	VULCANIBACILLUS B5 MEDIUM
 mediadive.solution:5139	biolink:ChemicalEntity	Main sol. J1074											
 medium:J1075	biolink:ChemicalEntity	CUNICULIPLASMA MEDIUM											
 mediadive.solution:5140	biolink:ChemicalEntity	Main sol. J1075											
-mediadive.ingredient:1988	biolink:ChemicalEntity	Kao and Michayluk vitamin solution											
+ingredient:1988	biolink:ChemicalEntity	Kao and Michayluk vitamin solution											
 medium:J1076	biolink:ChemicalEntity	ALKALIPHILUS LACT MEDIUM											
 mediadive.solution:5141	biolink:ChemicalEntity	Main sol. J1076											
 medium:J1077	biolink:ChemicalEntity	ALKALIPHILUS LACV MEDIUM											
@@ -9104,7 +9104,7 @@ mediadive.solution:5147	biolink:ChemicalEntity	Main sol. J1080
 medium:J1081	biolink:ChemicalEntity	NATRANAEROARCHAEUM MEDIUM											
 mediadive.solution:5148	biolink:ChemicalEntity	Main sol. J1081											
 mediadive.solution:5149	biolink:ChemicalEntity	Soda based mineral medium											
-mediadive.ingredient:1989	biolink:ChemicalEntity	Basal mineral NaCl medium											
+ingredient:1989	biolink:ChemicalEntity	Basal mineral NaCl medium											
 medium:J1082	biolink:ChemicalEntity	HALALKALIARCHAEUM MEDIUM											
 mediadive.solution:5150	biolink:ChemicalEntity	Main sol. J1082											
 medium:J1083	biolink:ChemicalEntity	DESULFURELLA TR1 MEDIUM											
@@ -9188,7 +9188,7 @@ medium:J1110	biolink:ChemicalEntity	METHANOSARCINA SUBTERRANEA MEDIUM
 mediadive.solution:5199	biolink:ChemicalEntity	Main sol. J1110											
 medium:J1111	biolink:ChemicalEntity	ANAEROBIC ALKALINE LB MEDIUM											
 mediadive.solution:5200	biolink:ChemicalEntity	Main sol. J1111											
-mediadive.ingredient:1999	biolink:ChemicalEntity	LB broth powder											
+ingredient:1999	biolink:ChemicalEntity	LB broth powder											
 medium:J1112	biolink:ChemicalEntity	MINERAL MEDIUM WITH GLUCOSE											
 mediadive.solution:5201	biolink:ChemicalEntity	Main sol. J1112											
 CHEBI:31346	biolink:ChemicalEntity	CaSO4 x 7 H2O											
@@ -9207,7 +9207,7 @@ mediadive.solution:5208	biolink:ChemicalEntity	Main sol. J1118
 mediadive.solution:5209	biolink:ChemicalEntity	Vitamin mixture											
 mediadive.solution:5210	biolink:ChemicalEntity	Metal mixture											
 mediadive.solution:5211	biolink:ChemicalEntity	Artificial seawater											
-mediadive.ingredient:2003	biolink:ChemicalEntity	MnCl2 x 6 H2O											
+ingredient:2003	biolink:ChemicalEntity	MnCl2 x 6 H2O											
 CHEBI:73605	biolink:ChemicalEntity	KF											
 medium:J1119	biolink:ChemicalEntity	SULFURIMONAS TB MEDIUM											
 mediadive.solution:5212	biolink:ChemicalEntity	Main sol. J1119											
@@ -9257,7 +9257,7 @@ mediadive.solution:5237	biolink:ChemicalEntity	Main sol. J1137
 mediadive.solution:5238	biolink:ChemicalEntity	5 x Salts solution											
 mediadive.solution:5239	biolink:ChemicalEntity	100 x BG-FPC solution											
 mediadive.solution:5240	biolink:ChemicalEntity	Trace element solution											
-mediadive.ingredient:2013	biolink:ChemicalEntity	Ca(NO3)2 x 6 H2O											
+ingredient:2013	biolink:ChemicalEntity	Ca(NO3)2 x 6 H2O											
 medium:J1138	biolink:ChemicalEntity	NEUTRAL OLIGOTROPHIC HALOARCHAEAL MEDIUM											
 mediadive.solution:5241	biolink:ChemicalEntity	Main sol. J1138											
 medium:J1139	biolink:ChemicalEntity	NATRONOSPIRA PROTEINIVORA MEDIUM											
@@ -9308,12 +9308,12 @@ medium:J1157	biolink:ChemicalEntity	DESULFONATRONUM PAR180 MEDIUM
 mediadive.solution:5267	biolink:ChemicalEntity	Main sol. J1157											
 medium:J1158	biolink:ChemicalEntity	GHIORSEA BIVORA MEDIUM											
 mediadive.solution:5268	biolink:ChemicalEntity	Main sol. J1158											
-mediadive.ingredient:2017	biolink:ChemicalEntity	Modified trace vitamins											
+ingredient:2017	biolink:ChemicalEntity	Modified trace vitamins											
 medium:J1159	biolink:ChemicalEntity	MOLLICUTES H-RF3 MEDIUM											
 mediadive.solution:5269	biolink:ChemicalEntity	Main sol. J1159											
 medium:J1160	biolink:ChemicalEntity	MOLLICUTES MZ-XQ MEDIUM											
 mediadive.solution:5270	biolink:ChemicalEntity	Main sol. J1160											
-mediadive.ingredient:88	biolink:ChemicalEntity	Selenite-tungstate solution											
+ingredient:88	biolink:ChemicalEntity	Selenite-tungstate solution											
 medium:J1161	biolink:ChemicalEntity	CYCLONATRUM PROTEILYTICUM MEDIUM											
 mediadive.solution:5271	biolink:ChemicalEntity	Main sol. J1161											
 medium:J1162	biolink:ChemicalEntity	NAS-02 MEDIUM											
@@ -9328,7 +9328,7 @@ medium:J1166	biolink:ChemicalEntity	DESULFOVIBRIO DECHLORACETIVORANS MEDIUM
 mediadive.solution:5276	biolink:ChemicalEntity	Main sol. J1166											
 medium:J1167	biolink:ChemicalEntity	MMFC1 MEDIUM											
 mediadive.solution:5277	biolink:ChemicalEntity	Main sol. J1167											
-mediadive.ingredient:897	biolink:ChemicalEntity	Trace mineral solution											
+ingredient:897	biolink:ChemicalEntity	Trace mineral solution											
 CHEBI:171664	biolink:ChemicalRole	antiamoebic agent											
 CHEBI:77318	biolink:ChemicalRole	pregnane X receptor agonist											
 CHEBI:35816	biolink:ChemicalRole	leprostatic drug											
@@ -9346,7 +9346,7 @@ mediadive.solution:5280	biolink:ChemicalEntity	Main sol. J1170
 mediadive.solution:5281	biolink:ChemicalEntity	Mineral solution											
 medium:J1171	biolink:ChemicalEntity	M39 METHYLOMONAS MEDIUM											
 mediadive.solution:5282	biolink:ChemicalEntity	Main sol. J1171											
-mediadive.ingredient:284	biolink:ChemicalEntity	Vitamins solution											
+ingredient:284	biolink:ChemicalEntity	Vitamins solution											
 CHEBI:35458	biolink:ChemicalEntity	CeCl3											
 medium:J1172	biolink:ChemicalEntity	MODIFIED MEDIUM FOR MARINE SPIROCHAETES											
 mediadive.solution:5283	biolink:ChemicalEntity	Main sol. J1172											
@@ -9414,7 +9414,7 @@ medium:J1198	biolink:ChemicalEntity	SALTWATER MEDIUM FOR OCEANIC AOA
 mediadive.solution:5317	biolink:ChemicalEntity	Main sol. J1198											
 medium:J1199	biolink:ChemicalEntity	MINERAL MEDIUM (BRUNNER) SUPPLEMENTED WITH TOLUENE											
 mediadive.solution:5318	biolink:ChemicalEntity	Main sol. J1199											
-mediadive.ingredient:2026	biolink:ChemicalEntity	Phosphates solution											
+ingredient:2026	biolink:ChemicalEntity	Phosphates solution											
 medium:J1200	biolink:ChemicalEntity	ELBE METHANOTROPH MEDIUM											
 mediadive.solution:5319	biolink:ChemicalEntity	Main sol. J1200											
 medium:J1201	biolink:ChemicalEntity	TREPONEMA BRYANTII MEDIUM											
@@ -9444,7 +9444,7 @@ CHEBI:37733	biolink:ChemicalRole	EC 3.1.1.8 (cholinesterase) inhibitor
 medium:J1209	biolink:ChemicalEntity	HALANAEROBIUM HYDROGENIFORMANS MEDIUM											
 mediadive.solution:5330	biolink:ChemicalEntity	Main sol. J1209											
 mediadive.solution:5331	biolink:ChemicalEntity	Basal medium salts solution											
-mediadive.ingredient:1732	biolink:ChemicalEntity	Basal salts solution											
+ingredient:1732	biolink:ChemicalEntity	Basal salts solution											
 CHEBI:6872	biolink:ChemicalEntity	Methylene blue											
 medium:J1210	biolink:ChemicalEntity	MARINITOGA HYDROGENITOLERANS MEDIUM											
 mediadive.solution:5332	biolink:ChemicalEntity	Main sol. J1210											
@@ -9493,7 +9493,7 @@ medium:J1228	biolink:ChemicalEntity	ANAEROBIC ALKALINE GLUCOSE MEDIUM
 mediadive.solution:5358	biolink:ChemicalEntity	Main sol. J1228											
 medium:J1229	biolink:ChemicalEntity	THERMODESULFOBACTERIUM AUXILIATOTRIS MEDIUM											
 mediadive.solution:5359	biolink:ChemicalEntity	Main sol. J1229											
-mediadive.ingredient:485	biolink:ChemicalEntity	Solution A											
+ingredient:485	biolink:ChemicalEntity	Solution A											
 medium:J1230	biolink:ChemicalEntity	NSY MEDIUM FOR POLYNUCLEOBACTER											
 mediadive.solution:5360	biolink:ChemicalEntity	Main sol. J1230											
 medium:J1231	biolink:ChemicalEntity	HLH MEDIUM											
@@ -9564,7 +9564,7 @@ mediadive.solution:5396	biolink:ChemicalEntity	Pyrocatechol solution
 medium:J1258	biolink:ChemicalEntity	DESULFOBACTERIUM OLEOVORANS MEDIUM											
 mediadive.solution:5397	biolink:ChemicalEntity	Main sol. J1258											
 mediadive.solution:5398	biolink:ChemicalEntity	Stearic solution											
-mediadive.ingredient:2041	biolink:ChemicalEntity	Steric solution											
+ingredient:2041	biolink:ChemicalEntity	Steric solution											
 medium:J1259	biolink:ChemicalEntity	TRYPTICASE SOY BROTH AGAR WITH 3% NaCl											
 mediadive.solution:5399	biolink:ChemicalEntity	Main sol. J1259											
 medium:J1260	biolink:ChemicalEntity	LSR1 MEDIUM											
@@ -9605,7 +9605,7 @@ CHEBI:33984	biolink:ChemicalEntity	Fucose
 medium:J1273	biolink:ChemicalEntity	0.01% LB SEAWATER MEDIUM											
 mediadive.solution:5415	biolink:ChemicalEntity	Main sol. J1273											
 CAS-RN:015375-84-5	biolink:ChemicalEntity	Mn(II) x EDTA											
-mediadive.ingredient:2052	biolink:ChemicalEntity	LB Broth											
+ingredient:2052	biolink:ChemicalEntity	LB Broth											
 medium:J1274	biolink:ChemicalEntity	BM7CO MEDIUM											
 mediadive.solution:5416	biolink:ChemicalEntity	Main sol. J1274											
 mediadive.solution:5418	biolink:ChemicalEntity	Comment											
@@ -9674,8 +9674,8 @@ medium:J1302	biolink:ChemicalEntity	SEA SALTS YTG MEDIUM
 mediadive.solution:5459	biolink:ChemicalEntity	Main sol. J1302											
 medium:J1303	biolink:ChemicalEntity	UREAPLASMA MEDIUM											
 mediadive.solution:5460	biolink:ChemicalEntity	Main sol. J1303											
-mediadive.ingredient:2060	biolink:ChemicalEntity	Hipolypepton											
-mediadive.ingredient:2061	biolink:ChemicalEntity	Bovine calf serum											
+ingredient:2060	biolink:ChemicalEntity	Hipolypepton											
+ingredient:2061	biolink:ChemicalEntity	Bovine calf serum											
 medium:J1304	biolink:ChemicalEntity	FRESHWATER MEDIUM WITH RHAMNOSE											
 mediadive.solution:5461	biolink:ChemicalEntity	Main sol. J1304											
 mediadive.solution:5462	biolink:ChemicalEntity	Modified trace element mixture											
@@ -9694,7 +9694,7 @@ medium:J1310	biolink:ChemicalEntity	THIORHODOVIBRIO MEDIUM
 mediadive.solution:5468	biolink:ChemicalEntity	Main sol. J1310											
 mediadive.solution:5469	biolink:ChemicalEntity	Trace vitamins											
 mediadive.solution:5470	biolink:ChemicalEntity	Sulfide feeding solution											
-mediadive.ingredient:2065	biolink:ChemicalEntity	Vitamins-solution											
+ingredient:2065	biolink:ChemicalEntity	Vitamins-solution											
 medium:J1311	biolink:ChemicalEntity	R2A AGAR (pH 9.0)											
 mediadive.solution:5471	biolink:ChemicalEntity	Main sol. J1311											
 CHEBI:64589	biolink:ChemicalRole	glycine receptor agonist											
@@ -9703,7 +9703,7 @@ mediadive.solution:5472	biolink:ChemicalEntity	Main sol. J1312
 CHEBI:15891	biolink:ChemicalEntity	Taurine											
 medium:J1313	biolink:ChemicalEntity	MODIFIED AM5 MEDIUM 2											
 mediadive.solution:5473	biolink:ChemicalEntity	Main sol. J1313											
-mediadive.ingredient:1853	biolink:ChemicalEntity	Menadione solution											
+ingredient:1853	biolink:ChemicalEntity	Menadione solution											
 medium:J1314	biolink:ChemicalEntity	GAM BROTH WITH SODIUM PYRUVATE											
 mediadive.solution:5474	biolink:ChemicalEntity	Main sol. J1314											
 medium:J1315	biolink:ChemicalEntity	METHANOGEN MS-I MEDIUM											
@@ -9727,7 +9727,7 @@ mediadive.solution:5483	biolink:ChemicalEntity	Main sol. J1322
 medium:J1323	biolink:ChemicalEntity	ARTIFICIAL PILOT PLANT WATER MEDIUM											
 mediadive.solution:5484	biolink:ChemicalEntity	Main sol. J1323											
 CHEBI:74779	biolink:ChemicalEntity	Al2(SO4)3 x 18 H2O											
-mediadive.ingredient:2071	biolink:ChemicalEntity	MnCl4 x 6 H2O											
+ingredient:2071	biolink:ChemicalEntity	MnCl4 x 6 H2O											
 medium:J1324	biolink:ChemicalEntity	JCM MEDIUM No. 1324											
 mediadive.solution:5485	biolink:ChemicalEntity	Main sol. J1324											
 medium:J1325	biolink:ChemicalEntity	ANAEROBIC DOUBLE-STRENGTH R2A MEDIUM											
@@ -9739,7 +9739,7 @@ mediadive.solution:5488	biolink:ChemicalEntity	Main sol. J1327
 mediadive.solution:5489	biolink:ChemicalEntity	NB Mineral elixir solution											
 medium:J1328	biolink:ChemicalEntity	PROLIXIBACTER MEDIUM											
 mediadive.solution:5490	biolink:ChemicalEntity	Main sol. J1328											
-mediadive.ingredient:1031	biolink:ChemicalEntity	Trace minerals											
+ingredient:1031	biolink:ChemicalEntity	Trace minerals											
 medium:J1329	biolink:ChemicalEntity	CORN MEAL AGAR											
 mediadive.solution:5491	biolink:ChemicalEntity	Main sol. J1329											
 medium:C1	biolink:ChemicalEntity	ABM											
@@ -9754,7 +9754,7 @@ mediadive.solution:6107	biolink:ChemicalEntity	SE2 (Soil Extract 2)
 mediadive.solution:6108	biolink:ChemicalEntity	Solution 1											
 mediadive.solution:6109	biolink:ChemicalEntity	Solution 2											
 mediadive.solution:6110	biolink:ChemicalEntity	Solution 3											
-mediadive.ingredient:2350	biolink:ChemicalEntity	Soil											
+ingredient:2350	biolink:ChemicalEntity	Soil											
 medium:C3	biolink:ChemicalEntity	ANT											
 mediadive.solution:5994	biolink:ChemicalEntity	Mail sol. C3											
 mediadive.solution:6111	biolink:ChemicalEntity	Trace metals stock solution (chelated)											
@@ -9886,8 +9886,8 @@ mediadive.solution:6030	biolink:ChemicalEntity	Mail sol. C39
 mediadive.solution:6167	biolink:ChemicalEntity	Sterile buffered saline											
 mediadive.solution:6168	biolink:ChemicalEntity	"Sterile 1% ""Marmite"" solution"											
 mediadive.solution:6169	biolink:ChemicalEntity	Rice starch suspension											
-mediadive.ingredient:2353	biolink:ChemicalEntity	Marmite											
-mediadive.ingredient:2354	biolink:ChemicalEntity	Rice starch											
+ingredient:2353	biolink:ChemicalEntity	Marmite											
+ingredient:2354	biolink:ChemicalEntity	Rice starch											
 medium:C40	biolink:ChemicalEntity	JM											
 mediadive.solution:6170	biolink:ChemicalEntity	Mail sol. C40											
 medium:C41	biolink:ChemicalEntity	JM:SE											
@@ -9949,7 +9949,7 @@ mediadive.solution:6048	biolink:ChemicalEntity	Mail sol. C57
 mediadive.solution:6200	biolink:ChemicalEntity	Stock solution 1											
 medium:C58	biolink:ChemicalEntity	MW											
 mediadive.solution:6049	biolink:ChemicalEntity	Mail sol. C58											
-mediadive.ingredient:2359	biolink:ChemicalEntity	Mineral water											
+ingredient:2359	biolink:ChemicalEntity	Mineral water											
 medium:C59	biolink:ChemicalEntity	MWC											
 mediadive.solution:6050	biolink:ChemicalEntity	Mail sol. C59											
 mediadive.solution:6201	biolink:ChemicalEntity	Combined trace elements: (x10 Concentrate)											
@@ -9957,7 +9957,7 @@ medium:C60	biolink:ChemicalEntity	MY75S
 mediadive.solution:6051	biolink:ChemicalEntity	Mail sol. C60											
 medium:C61	biolink:ChemicalEntity	N75S											
 mediadive.solution:6052	biolink:ChemicalEntity	Mail sol. C61											
-mediadive.ingredient:2360	biolink:ChemicalEntity	Cerophyll											
+ingredient:2360	biolink:ChemicalEntity	Cerophyll											
 medium:C62	biolink:ChemicalEntity	N75S:NSW											
 mediadive.solution:6053	biolink:ChemicalEntity	Mail sol. C62											
 mediadive.solution:6202	biolink:ChemicalEntity	NSW (Natural Seawater)											
@@ -9965,7 +9965,7 @@ medium:C63	biolink:ChemicalEntity	NCL
 mediadive.solution:6054	biolink:ChemicalEntity	Mail sol. C63											
 mediadive.solution:6205	biolink:ChemicalEntity	Mail sol. C76											
 mediadive.solution:6206	biolink:ChemicalEntity	Stock solution (CaCl2/KCl)											
-mediadive.ingredient:2361	biolink:ChemicalEntity	Cereal leaves											
+ingredient:2361	biolink:ChemicalEntity	Cereal leaves											
 medium:C64	biolink:ChemicalEntity	NCL:MP											
 mediadive.solution:6055	biolink:ChemicalEntity	Mail sol. C64											
 mediadive.solution:6207	biolink:ChemicalEntity	NCL (New Cereal Leaf-­Prescott Liquid)											
@@ -10002,7 +10002,7 @@ medium:C75	biolink:ChemicalEntity	PER
 mediadive.solution:6066	biolink:ChemicalEntity	Mail sol. C75											
 mediadive.solution:6219	biolink:ChemicalEntity	SES (Soil Extract with Added Salts)											
 mediadive.solution:6259	biolink:ChemicalEntity	SE1 (Soil Extract 1)											
-mediadive.ingredient:2363	biolink:ChemicalEntity	Complan											
+ingredient:2363	biolink:ChemicalEntity	Complan											
 medium:C76	biolink:ChemicalEntity	PJ											
 medium:C77	biolink:ChemicalEntity	PJ/NN											
 mediadive.solution:6068	biolink:ChemicalEntity	Mail sol. C77											
@@ -10019,7 +10019,7 @@ medium:C81	biolink:ChemicalEntity	PPY
 mediadive.solution:6072	biolink:ChemicalEntity	Mail sol. C81											
 medium:C82	biolink:ChemicalEntity	RPL											
 mediadive.solution:6073	biolink:ChemicalEntity	Mail sol. C82											
-mediadive.ingredient:2362	biolink:ChemicalEntity	Rye grass											
+ingredient:2362	biolink:ChemicalEntity	Rye grass											
 medium:C83	biolink:ChemicalEntity	RPL:MP											
 mediadive.solution:6074	biolink:ChemicalEntity	Mail sol. C83											
 medium:C84	biolink:ChemicalEntity	RPL:PJ											
@@ -10049,7 +10049,7 @@ medium:C94	biolink:ChemicalEntity	SES:PJ
 mediadive.solution:6085	biolink:ChemicalEntity	Mail sol. C94											
 medium:C95	biolink:ChemicalEntity	SNA											
 mediadive.solution:6086	biolink:ChemicalEntity	Mail sol. C95											
-mediadive.ingredient:2364	biolink:ChemicalEntity	Nutrient agar											
+ingredient:2364	biolink:ChemicalEntity	Nutrient agar											
 medium:C96	biolink:ChemicalEntity	2SNA											
 mediadive.solution:6087	biolink:ChemicalEntity	Mail sol. C96											
 medium:C97	biolink:ChemicalEntity	SNA/5											

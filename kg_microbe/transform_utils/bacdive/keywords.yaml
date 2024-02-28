@@ -1,0 +1,368 @@
+oxygen:
+  aerobe:
+    curie: "oxygen:aerobe"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  anaerobe:
+    curie: "oxygen:anaerobe"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  obligate_aerobe:
+    curie: "oxygen:obligate_aerobe"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  microaerophile:
+    curie: "oxygen:microaerophile"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  facultative_anaerobe:
+    curie: "oxygen:facultative_anaerobe"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  obligate_anaerobe:
+    curie: "oxygen:obligate_anaerobe"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  facultative_aerobe:
+    curie: "oxygen:facultative_aerobe"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  aerotolerant:
+    curie: "oxygen:aerotolerant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  microaerotolerant:
+    curie: "oxygen:microaerotolerant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+temperature:
+  psychrophilic:
+    curie: "temperature:psychrophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  psychrotrophic:
+    curie: "temperature:psychrotrophic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  psychrotolerant:
+    curie: "temperature:psychrotolerant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  mesophilic:
+    curie: "temperature:mesophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  thermotolerant:
+    curie: "temperature:thermotolerant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  thermophilic:
+    curie: "temperature:thermophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  extreme_thermophilic:
+    curie: "temperature:extreme_thermophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  hyperthermophilic:
+    curie: "temperature:hyperthermophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  extreme_hyperthermophilic:
+    curie: "temperature:extreme_hyperthermophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+salinity:
+  moderately_halophilic:
+    curie: "salinity:moderately_halophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  halophilic:
+    curie: "salinity:halophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  non_halophilic:
+    curie: "salinity:non_halophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  extremely_halophilic:
+    curie: "salinity:extremely_halophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  slightly_halophilic:
+    curie: "salinity:slightly_halophilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  haloalkaliphilic:
+    curie: "salinity:haloalkaliphilic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  halotolerant:
+    curie: "salinity:halotolerant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+metabolic:
+  chemoautotroph:
+    curie: "metabolism:chemoautotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemoorganotroph:
+    curie: "metabolism:chemoorganotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemoheterotroph:
+    curie: "metabolism:chemoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemoorganoheterotroph:
+    curie: "metabolism:chemoorganoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  heterotroph:
+    curie: "metabolism:heterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemoautolithotroph:
+    curie: "metabolism:chemoautolithotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  methylotroph:
+    curie: "metabolism:methylotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  mixotroph:
+    curie: "metabolism:mixotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemolithoautotroph:
+    curie: "metabolism:chemolithoautotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  methanotroph:
+    curie: "metabolism:methanotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  lithoheterotroph:
+    curie: "metabolism:lithoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  organoheterotroph:
+    curie: "metabolism:organoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemolithotroph:
+    curie: "metabolism:chemolithotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  autotroph:
+    curie: "metabolism:autotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  phototroph:
+    curie: "metabolism:phototrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  photoheterotroph:
+    curie: "metabolism:photoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  lithoautotroph:
+    curie: "metabolism:lithoautotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  diazotroph:
+    curie: "metabolism:diazotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemolithoheterotroph:
+    curie: "metabolism:chemolithoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  chemotroph:
+    curie: "metabolism:chemotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  organotroph:
+    curie: "metabolism:organotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  photolithotroph:
+    curie: "metabolism:photolithotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  photoautotroph:
+    curie: "metabolism:photoautotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  photoorganoheterotroph:
+    curie: "metabolism:photoorganoheterotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  lithotroph:
+    curie: "metabolism:lithotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+  oligotroph:
+    curie: "metabolism:oligotrophy"
+    category: "biolink:BiologicalProcess"
+    predicate: "biolink:capable_of"
+
+cell_shape:
+  rod_shaped:
+    curie: "cell_shape:rod"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  sphere_shaped:
+    curie: "cell_shape:sphere"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  coccus_shaped:
+    curie: "cell_shape:coccus"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  spiral_shaped:
+    curie: "cell_shape:spiral"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  ovoid_shaped:
+    curie: "cell_shape:ovoid"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  filament_shaped:
+    curie: "cell_shape:filament"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  oval_shaped:
+    curie: "cell_shape:oval"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  curved_shaped:
+    curie: "cell_shape:curved"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  pleomorphic_shaped:
+    curie: "cell_shape:pleomorphic"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  helical_shaped:
+    curie: "cell_shape:helical"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  vibrio_shaped:
+    curie: "cell_shape:vibrio"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  crescent_shaped:
+    curie: "cell_shape:crescent"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  star_shaped:
+    curie: "cell_shape:star"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  spore_shaped:
+    curie: "cell_shape:spore"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  diplococcus_shaped:
+    curie: "cell_shape:diplococcus"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  dumbbell_shaped:
+    curie: "cell_shape:dumbbell"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  ring_shaped:
+    curie: "cell_shape:ring"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+  ellipsoidal:
+    curie: "cell_shape:ellipsoidal"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+gram_stain:
+  gram_positive:
+    curie: "gram_stain:positive"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  gram_negative:
+    curie: "gram_stain:negative"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  gram_variable:
+    curie: "gram_stain:variable"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  gram_indeterminate:
+    curie: "gram_stain:indeterminate"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+
+production:
+  antibiotic_compound:
+    curie: "production:antibiotic_compound"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  alcohol:
+    curie: "production:alcohol"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  toxin:
+    curie: "production:toxin"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  amino_acid:
+    curie: "production:amino_acid"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  lactate:
+    curie: "production:lactate"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  polysaccharide:
+    curie: "production:polysaccharide"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  methane:
+    curie: "production:methane"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+  pigmented:
+    curie: "production:pigmented"
+    category: "biolink:ChemicalSubstance"
+    predicate: "biolink:produces"
+
+pathogen:
+  human:
+    curie: "pathogen:human"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  animal:
+    curie: "pathogen:animal"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"
+  plant:
+    curie: "pathogen:plant"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:has_phenotype"

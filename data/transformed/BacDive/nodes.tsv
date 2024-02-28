@@ -23,6 +23,7 @@ NCBITaxon:56	biolink:OrganismTaxon	Sorangium cellulosum
 medium:9	biolink:ChemicalEntity	VY/2 AGAR (DSMZ Medium 9)											
 NCBITaxon:1797	biolink:OrganismTaxon	Mycolicibacterium thermoresistibile											
 medium:354	biolink:ChemicalEntity	LÖWENSTEIN-JENSEN MEDIUM (DSMZ Medium 354)											
+pathogen:human	biolink:PhenotypicQuality	human pathogen											
 NCBITaxon:145262	biolink:OrganismTaxon	Methanothermobacter thermautotrophicus											
 medium:119	biolink:ChemicalEntity	METHANOBACTERIUM MEDIUM (DSMZ Medium 119)											
 cell_shape:sphere	biolink:PhenotypicQuality	sphere-shaped											
@@ -49,9 +50,11 @@ NCBITaxon:1175444	biolink:OrganismTaxon	Methanocella conradii
 medium:1318	biolink:ChemicalEntity	METHANOCELLA CONRADII MEDIUM (DSMZ Medium 1318)											
 NCBITaxon:1121391	biolink:OrganismTaxon	Desulfacinum infernum DSM 9756											
 medium:195c	biolink:ChemicalEntity	DESULFOBACTER SP. MEDIUM (LACTATE) (DSMZ Medium 195c)											
+production:antibiotic_compound	biolink:ChemicalSubstance	antibiotic compound production											
 NCBITaxon:58172	biolink:OrganismTaxon	Paenibacillus sp.											
 medium:220	biolink:ChemicalEntity	CASO AGAR (MERCK 105458) (DSMZ Medium 220)											
 NCBITaxon:184914	biolink:OrganismTaxon	Corallococcus coralloides											
+pathogen:animal	biolink:PhenotypicQuality	animal pathogen											
 cell_shape:coccus	biolink:PhenotypicQuality	coccus-shaped											
 production:pigmented	biolink:ChemicalSubstance	pigmented											
 NCBITaxon:309883	biolink:OrganismTaxon	Deinococcus hohokamensis											
@@ -107,6 +110,7 @@ NCBITaxon:2014	biolink:OrganismTaxon	Nocardiopsis dassonvillei
 NCBITaxon:1823	biolink:OrganismTaxon	Nocardia otitidiscaviarum											
 medium:426	biolink:ChemicalEntity	ORGANIC MEDIUM 79 (DSMZ Medium 426)											
 NCBITaxon:54	biolink:OrganismTaxon	Nannocystis exedens											
+pathogen:plant	biolink:PhenotypicQuality	plant pathogen											
 NCBITaxon:47715	biolink:OrganismTaxon	Lacticaseibacillus rhamnosus											
 medium:11	biolink:ChemicalEntity	MRS MEDIUM (DSMZ Medium 11)											
 NCBITaxon:83453	biolink:OrganismTaxon	Melittangium boletus											
@@ -244,6 +248,7 @@ medium:514c	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM 514 (DSMZ Med
 NCBITaxon:1443112	biolink:OrganismTaxon	Sulfitobacter mediterraneus KCTC 32188											
 NCBITaxon:645887	biolink:OrganismTaxon	Alkalibaculum bacchi											
 medium:545	biolink:ChemicalEntity	TRYPTONE SOYA BROTH (TSB) (DSMZ Medium 545)											
+production:alcohol	biolink:ChemicalSubstance	alcohol production											
 NCBITaxon:47917	biolink:OrganismTaxon	Serratia fonticola											
 NCBITaxon:2291	biolink:OrganismTaxon	Desulfobacter hydrogenophilus											
 medium:195	biolink:ChemicalEntity	DESULFOBACTER MEDIUM (DSMZ Medium 195)											
@@ -573,6 +578,7 @@ NCBITaxon:1494462	biolink:OrganismTaxon	Lactococcus hircilactis
 NCBITaxon:653357	biolink:OrganismTaxon	Streptomyces shaanxiensis											
 NCBITaxon:159723	biolink:OrganismTaxon	Thermaerobacter nagasakiensis											
 NCBITaxon:1960	biolink:OrganismTaxon	Streptomyces vinaceus											
+production:toxin	biolink:ChemicalSubstance	toxin production											
 NCBITaxon:83564	biolink:OrganismTaxon	Desulfosarcina ovata											
 medium:383	biolink:ChemicalEntity	DESULFOBACTERIUM MEDIUM (DSMZ Medium 383)											
 NCBITaxon:79879	biolink:OrganismTaxon	Evansella clarkii											
@@ -642,6 +648,7 @@ medium:1266	biolink:ChemicalEntity	MEDIUM VL55 (DSMZ Medium 1266)
 NCBITaxon:1292	biolink:OrganismTaxon	Staphylococcus warneri											
 NCBITaxon:1282	biolink:OrganismTaxon	Staphylococcus epidermidis											
 NCBITaxon:37930	biolink:OrganismTaxon	Glutamicibacter protophormiae											
+production:amino_acid	biolink:ChemicalSubstance	amino acid production											
 NCBITaxon:545696	biolink:OrganismTaxon	Holdemania filiformis DSM 12042											
 NCBITaxon:1121445	biolink:OrganismTaxon	Desulfovibrio desulfuricans DSM 642											
 NCBITaxon:380763	biolink:OrganismTaxon	Sulfurihydrogenibium rodmanii											
@@ -1306,8 +1313,10 @@ NCBITaxon:1268553	biolink:OrganismTaxon	Sphingomonas kyeonggiensis
 NCBITaxon:1141890	biolink:OrganismTaxon	Sphingomonas guangdongensis											
 NCBITaxon:1306182	biolink:OrganismTaxon	Streptomyces phaeofaciens JCM 4814											
 NCBITaxon:40318	biolink:OrganismTaxon	Streptomyces nodosus											
+production:lactate	biolink:ChemicalSubstance	lactate production											
 NCBITaxon:869212	biolink:OrganismTaxon	Turneriella parva DSM 21527											
 NCBITaxon:549	biolink:OrganismTaxon	Pantoea agglomerans											
+production:polysaccharide	biolink:ChemicalSubstance	polysaccharide production											
 NCBITaxon:1123078	biolink:OrganismTaxon	Runella zeae DSM 19591											
 NCBITaxon:935616	biolink:OrganismTaxon	Halalkalibacter alkalisediminis											
 medium:1625	biolink:ChemicalEntity	TAP WATER YEAST EXTRACT MEDIUM (TWYE) (DSMZ Medium 1625)											
@@ -2025,6 +2034,7 @@ NCBITaxon:56799	biolink:OrganismTaxon	Colwellia sp.
 NCBITaxon:68170	biolink:OrganismTaxon	Lentzea aerocolonigenes											
 NCBITaxon:264739	biolink:OrganismTaxon	Marinomonas pontica											
 NCBITaxon:47856	biolink:OrganismTaxon	Micromonospora coerulea											
+production:methane	biolink:ChemicalSubstance	methane production											
 NCBITaxon:32016	biolink:OrganismTaxon	Cupidesulfovibrio oxamicus											
 NCBITaxon:1266845	biolink:OrganismTaxon	Carnobacterium inhibens subsp. gilichinskyi											
 NCBITaxon:390880	biolink:OrganismTaxon	Roseospira visakhapatnamensis											

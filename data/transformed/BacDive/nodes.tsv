@@ -9,7 +9,7 @@ oxygen:anaerobe	biolink:PhenotypicQuality	anaerobe
 NCBITaxon:1873457	biolink:OrganismTaxon	Promicromonospora sp.											
 medium:92	biolink:ChemicalEntity	TRYPTICASE SOY YEAST EXTRACT MEDIUM (DSMZ Medium 92)											
 oxygen:obligate_aerobe	biolink:PhenotypicQuality	obligate aerobe											
-cell_shape:rod	biolink:Attribute	rod-shaped											
+cell_shape:rod	biolink:PhenotypicQuality	rod-shaped											
 NCBITaxon:1848903	biolink:OrganismTaxon	Capnocytophaga canis											
 medium:1609	biolink:ChemicalEntity	HEART INFUSION BLOOD AGAR (DSMZ Medium 1609)											
 NCBITaxon:1978225	biolink:OrganismTaxon	Frondihabitans sp.											
@@ -25,7 +25,7 @@ NCBITaxon:1797	biolink:OrganismTaxon	Mycolicibacterium thermoresistibile
 medium:354	biolink:ChemicalEntity	LÖWENSTEIN-JENSEN MEDIUM (DSMZ Medium 354)											
 NCBITaxon:145262	biolink:OrganismTaxon	Methanothermobacter thermautotrophicus											
 medium:119	biolink:ChemicalEntity	METHANOBACTERIUM MEDIUM (DSMZ Medium 119)											
-cell_shape:sphere	biolink:Attribute	sphere-shaped											
+cell_shape:sphere	biolink:PhenotypicQuality	sphere-shaped											
 NCBITaxon:47847	biolink:OrganismTaxon	Brachybacterium nesterenkovii											
 NCBITaxon:61595	biolink:OrganismTaxon	Allochromatium warmingii											
 medium:28	biolink:ChemicalEntity	PFENNIG'S MEDIUM I (modified 1988, for purple sulfur bacteria) (DSMZ Medium 28)											
@@ -52,7 +52,8 @@ medium:195c	biolink:ChemicalEntity	DESULFOBACTER SP. MEDIUM (LACTATE) (DSMZ Medi
 NCBITaxon:58172	biolink:OrganismTaxon	Paenibacillus sp.											
 medium:220	biolink:ChemicalEntity	CASO AGAR (MERCK 105458) (DSMZ Medium 220)											
 NCBITaxon:184914	biolink:OrganismTaxon	Corallococcus coralloides											
-cell_shape:coccus	biolink:Attribute	coccus-shaped											
+cell_shape:coccus	biolink:PhenotypicQuality	coccus-shaped											
+production:pigmented	biolink:ChemicalSubstance	pigmented											
 NCBITaxon:309883	biolink:OrganismTaxon	Deinococcus hohokamensis											
 medium:736	biolink:ChemicalEntity	RICH MEDIUM (DSMZ Medium 736)											
 NCBITaxon:394092	biolink:OrganismTaxon	Cystobacter gracilis											
@@ -88,7 +89,7 @@ NCBITaxon:1940790	biolink:OrganismTaxon	Sedimentisphaera cyanobacteriorum
 medium:1527	biolink:ChemicalEntity	SEDIMENTISPHAERA (L21 HS) MEDIUM (DSMZ Medium 1527)											
 NCBITaxon:267	biolink:OrganismTaxon	Paracoccus sp. (in: a-proteobacteria)											
 oxygen:obligate_anaerobe	biolink:PhenotypicQuality	obligate anaerobe											
-cell_shape:spiral	biolink:Attribute	spiral-shaped											
+cell_shape:spiral	biolink:PhenotypicQuality	spiral-shaped											
 NCBITaxon:1086726	biolink:OrganismTaxon	Francisella persica ATCC VR-331											
 medium:1600	biolink:ChemicalEntity	FRANCISELLA PERSICA MEDIUM (DSMZ Medium 1600)											
 NCBITaxon:1410681	biolink:OrganismTaxon	Methyloglobulus morosus											
@@ -125,13 +126,13 @@ medium:84	biolink:ChemicalEntity	ROLLED OATS MINERAL MEDIUM (DSMZ Medium 84)
 NCBITaxon:1564	biolink:OrganismTaxon	Desulforamulus ruminis											
 medium:63	biolink:ChemicalEntity	DESULFOVIBRIO (POSTGATE) MEDIUM (DSMZ Medium 63)											
 NCBITaxon:1563	biolink:OrganismTaxon	Desulfosporosinus orientis											
-cell_shape:ovoid	biolink:Attribute	ovoid-shaped											
+cell_shape:ovoid	biolink:PhenotypicQuality	ovoid-shaped											
 NCBITaxon:1123375	biolink:OrganismTaxon	Thermodesulfovibrio islandicus DSM 12570											
 NCBITaxon:502025	biolink:OrganismTaxon	Haliangium ochraceum DSM 14365											
 medium:958	biolink:ChemicalEntity	VY/4-SWS AGAR (DSMZ Medium 958)											
 NCBITaxon:995054	biolink:OrganismTaxon	Xenorhabdus magdalenensis											
 medium:535b	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM (DSMZ Medium 535b)											
-cell_shape:filament	biolink:Attribute	filament-shaped											
+cell_shape:filament	biolink:PhenotypicQuality	filament-shaped											
 NCBITaxon:1506	biolink:OrganismTaxon	Clostridium sp.											
 NCBITaxon:459347	biolink:OrganismTaxon	Solibacillus cecembensis											
 NCBITaxon:2358141	biolink:OrganismTaxon	Anaerotignum faecicola											
@@ -328,7 +329,7 @@ NCBITaxon:50741	biolink:OrganismTaxon	Marinobacter sp.
 NCBITaxon:1871048	biolink:OrganismTaxon	Devosia sp.											
 NCBITaxon:390241	biolink:OrganismTaxon	Pedobacter rhizosphaerae											
 metabolism:heterotrophy	biolink:BiologicalProcess	heterotroph											
-cell_shape:oval	biolink:Attribute	oval-shaped											
+cell_shape:oval	biolink:PhenotypicQuality	oval-shaped											
 NCBITaxon:67304	biolink:OrganismTaxon	Streptomyces griseorubiginosus											
 NCBITaxon:51203	biolink:OrganismTaxon	Methanohalophilus euhalobius											
 medium:713	biolink:ChemicalEntity	METHANOHALOPHILUS EUHALOBIUS MEDIUM (DSMZ Medium 713)											
@@ -391,7 +392,7 @@ medium:1310	biolink:ChemicalEntity	BUTYRIVIBRIO M2 MEDIUM (DSMZ Medium 1310)
 NCBITaxon:77917	biolink:OrganismTaxon	Fusobacterium naviforme											
 NCBITaxon:946678	biolink:OrganismTaxon	Flavobacterium araucananum											
 NCBITaxon:1561	biolink:OrganismTaxon	Clostridium baratii											
-cell_shape:curved	biolink:Attribute	curved-shaped											
+cell_shape:curved	biolink:PhenotypicQuality	curved-shaped											
 temperature:hyperthermophilic	biolink:PhenotypicQuality	hyperthermophilic											
 NCBITaxon:1870987	biolink:OrganismTaxon	Collinsella vaginalis											
 NCBITaxon:83656	biolink:OrganismTaxon	Streptomyces tsukubensis											
@@ -448,7 +449,7 @@ NCBITaxon:1889013	biolink:OrganismTaxon	Terriglobus sp.
 NCBITaxon:66859	biolink:OrganismTaxon	Streptomyces thermoviolaceus subsp. apingens											
 NCBITaxon:418707	biolink:OrganismTaxon	Methylobacterium iners											
 NCBITaxon:464	biolink:OrganismTaxon	Fluoribacter gormanii											
-cell_shape:pleomorphic	biolink:Attribute	pleomorphic-shaped											
+cell_shape:pleomorphic	biolink:PhenotypicQuality	pleomorphic-shaped											
 NCBITaxon:1871045	biolink:OrganismTaxon	Plantibacter sp.											
 NCBITaxon:2681881	biolink:OrganismTaxon	Hahyoungchilella caricis											
 NCBITaxon:2055160	biolink:OrganismTaxon	Kyrpidia spormannii											
@@ -766,7 +767,7 @@ NCBITaxon:152475	biolink:OrganismTaxon	Thioalkalivibrio thiocyanoxidans
 medium:925	biolink:ChemicalEntity	ALKALIPHILIC SULPHUR RESPIRING STRAINS MEDIUM (DSMZ Medium 925)											
 NCBITaxon:1121484	biolink:OrganismTaxon	Dyadobacter ginsengisoli DSM 21015											
 NCBITaxon:2676123	biolink:OrganismTaxon	Galactobacter caseinivorans											
-cell_shape:helical	biolink:Attribute	helical-shaped											
+cell_shape:helical	biolink:PhenotypicQuality	helical-shaped											
 NCBITaxon:1573172	biolink:OrganismTaxon	Deferrisoma palaeochoriense											
 medium:1210a	biolink:ChemicalEntity	THERMOSULFURIMONAS MEDIUM (DSMZ Medium 1210a)											
 metabolism:mixotrophy	biolink:BiologicalProcess	mixotroph											
@@ -1229,7 +1230,7 @@ medium:825	biolink:ChemicalEntity	METHANOBACTERIUM II MEDIUM (DSMZ Medium 825)
 NCBITaxon:391920	biolink:OrganismTaxon	Halochromatium roseum											
 medium:1069	biolink:ChemicalEntity	MODIFIED BIEBL AND PFENNIG'S MEDIUM (DSMZ Medium 1069)											
 NCBITaxon:1421	biolink:OrganismTaxon	Lysinibacillus sphaericus											
-cell_shape:vibrio	biolink:Attribute	vibrio-shaped											
+cell_shape:vibrio	biolink:PhenotypicQuality	vibrio-shaped											
 NCBITaxon:1874277	biolink:OrganismTaxon	Conexivisphaera calida											
 medium:1714	biolink:ChemicalEntity	CONEXIVISPHAERA MEDIUM (DSMZ Medium 1714)											
 NCBITaxon:1307759	biolink:OrganismTaxon	Desulfohalovibrio reitneri											
@@ -1618,7 +1619,7 @@ medium:253	biolink:ChemicalEntity	MEDIUM FOR ECTOTHIORHODOSPIRA (DSMZ Medium 253
 NCBITaxon:1495	biolink:OrganismTaxon	Clostridium cylindrosporum											
 NCBITaxon:2055844	biolink:OrganismTaxon	Kocuria uropygioeca											
 NCBITaxon:1872417	biolink:OrganismTaxon	Agrococcus sp.											
-cell_shape:crescent	biolink:Attribute	crescent-shaped											
+cell_shape:crescent	biolink:PhenotypicQuality	crescent-shaped											
 NCBITaxon:1542726	biolink:OrganismTaxon	Gryllotalpicola soli											
 medium:1484	biolink:ChemicalEntity	GLYCEROL-YEAST EXTRACT-PEPTONE MEDIUM (DSMZ Medium 1484)											
 NCBITaxon:1072256	biolink:OrganismTaxon	Corynebacterium uterequi											
@@ -3002,7 +3003,7 @@ NCBITaxon:595692	biolink:OrganismTaxon	Haloferula luteola
 NCBITaxon:426707	biolink:OrganismTaxon	Desulfomicrobium salsuginis											
 NCBITaxon:33936	biolink:OrganismTaxon	Aeribacillus pallidus											
 NCBITaxon:1123295	biolink:OrganismTaxon	Stella vacuolata DSM 5901 = ATCC 43931											
-cell_shape:star	biolink:Attribute	star-shaped											
+cell_shape:star	biolink:PhenotypicQuality	star-shaped											
 NCBITaxon:1306	biolink:OrganismTaxon	Streptococcus sp.											
 NCBITaxon:683405	biolink:OrganismTaxon	uncultured Natranaerobius sp.											
 medium:1054	biolink:ChemicalEntity	A1-MEDIUM (DSMZ Medium 1054)											
@@ -3488,7 +3489,7 @@ NCBITaxon:1120956	biolink:OrganismTaxon	Afifella pfennigii DSM 17143
 NCBITaxon:206403	biolink:OrganismTaxon	Sulfurovum lithotrophicum											
 NCBITaxon:463301	biolink:OrganismTaxon	Halomonas korlensis											
 NCBITaxon:1121320	biolink:OrganismTaxon	Clostridium intestinale DSM 6191											
-cell_shape:ellipsoidal	biolink:Attribute	ellipsoidal											
+cell_shape:ellipsoidal	biolink:PhenotypicQuality	ellipsoidal											
 NCBITaxon:1796	biolink:OrganismTaxon	Mycolicibacterium senegalense											
 NCBITaxon:1924094	biolink:OrganismTaxon	Anaeromassilibacillus sp.											
 NCBITaxon:1914288	biolink:OrganismTaxon	Dyadobacter sp.											
@@ -4990,7 +4991,7 @@ NCBITaxon:904715	biolink:OrganismTaxon	Sphingomonas jejuensis
 NCBITaxon:1037680	biolink:OrganismTaxon	Robertmurraya kyonggiensis											
 NCBITaxon:242698	biolink:OrganismTaxon	Thermoanaerobacterium aciditolerans											
 NCBITaxon:797299	biolink:OrganismTaxon	Halostagnicola larsenii XH-48											
-cell_shape:spore	biolink:Attribute	spore-shaped											
+cell_shape:spore	biolink:PhenotypicQuality	spore-shaped											
 NCBITaxon:1464070	biolink:OrganismTaxon	Streptomyces graminilatus											
 NCBITaxon:871652	biolink:OrganismTaxon	Poseidonocella sedimentorum											
 NCBITaxon:870908	biolink:OrganismTaxon	Cognatishimia maritima											
@@ -5303,7 +5304,7 @@ NCBITaxon:980347	biolink:OrganismTaxon	Halomonas qijiaojingensis
 NCBITaxon:571933	biolink:OrganismTaxon	Piscibacillus halophilus											
 NCBITaxon:1659	biolink:OrganismTaxon	Actinomyces israelii											
 medium:216	biolink:ChemicalEntity	BHI/1 MEDIUM (DSMZ Medium 216)											
-cell_shape:diplococcus	biolink:Attribute	diplococcus-shaped											
+cell_shape:diplococcus	biolink:PhenotypicQuality	diplococcus-shaped											
 NCBITaxon:1095776	biolink:OrganismTaxon	Natronorubrum texcoconense											
 NCBITaxon:971279	biolink:OrganismTaxon	Palaeococcus pacificus											
 NCBITaxon:254356	biolink:OrganismTaxon	Roseibaca ekhonensis											
@@ -6760,7 +6761,7 @@ NCBITaxon:747365	biolink:OrganismTaxon	Thermodesulfobium narugense DSM 14796
 medium:1005	biolink:ChemicalEntity	THERMODESULFOBIUM MEDIUM (DSMZ Medium 1005)											
 NCBITaxon:1121420	biolink:OrganismTaxon	Desulfosporosinus lacus DSM 15449											
 NCBITaxon:395930	biolink:OrganismTaxon	Devosia subaequoris											
-cell_shape:dumbbell	biolink:Attribute	dumbbell-shaped											
+cell_shape:dumbbell	biolink:PhenotypicQuality	dumbbell-shaped											
 NCBITaxon:39791	biolink:OrganismTaxon	Corynebacterium glucuronolyticum											
 NCBITaxon:329406	biolink:OrganismTaxon	Thiorhodococcus mannitoliphagus											
 medium:28b	biolink:ChemicalEntity	THIORHODOCOCCUS MEDIUM II (DSMZ Medium 28b)											
@@ -8436,7 +8437,7 @@ NCBITaxon:321266	biolink:OrganismTaxon	Halomonas kenyensis
 NCBITaxon:525886	biolink:OrganismTaxon	Mycoplasma hafezii											
 NCBITaxon:1639689	biolink:OrganismTaxon	Pontivivens insulae											
 NCBITaxon:913761	biolink:OrganismTaxon	Variovorax defluvii											
-cell_shape:ring	biolink:Attribute	ring-shaped											
+cell_shape:ring	biolink:PhenotypicQuality	ring-shaped											
 NCBITaxon:29545	biolink:OrganismTaxon	Azoarcus indigens											
 NCBITaxon:317019	biolink:OrganismTaxon	Nocardioides dubius											
 NCBITaxon:526944	biolink:OrganismTaxon	Tetragenococcus osmophilus											

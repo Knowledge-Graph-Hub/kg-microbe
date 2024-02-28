@@ -1,4 +1,4 @@
-oxygen_preference:
+oxygen:
   aerobe:
     curie: "oxygen:aerobe"
     category: "biolink:PhenotypicQuality"
@@ -36,7 +36,7 @@ oxygen_preference:
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
-temperature_preference:
+temperature:
   psychrophilic:
     curie: "temperature:psychrophilic"
     category: "biolink:PhenotypicQuality"
@@ -74,7 +74,7 @@ temperature_preference:
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
-salinity_preference:
+salinity:
   moderately_halophilic:
     curie: "salinity:moderately_halophilic"
     category: "biolink:PhenotypicQuality"
@@ -104,7 +104,7 @@ salinity_preference:
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
 
-metabolic_preference:
+metabolic:
   chemoautotroph:
     curie: "metabolism:chemoautotrophy"
     category: "biolink:BiologicalProcess"

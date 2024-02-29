@@ -110,7 +110,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -362,9 +361,9 @@ class BacDiveTransform(Transform):
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {
-                        key: keyword_map[key.replace(" ", "_").replace("-", "_")]
+                        key: keyword_map[key.lower().replace(" ", "_").replace("-", "_")]
                         for key in keywords
-                        if key.replace(" ", "_").replace("-", "_") in keyword_map
+                        if key.lower().replace(" ", "_").replace("-", "_") in keyword_map
                     }
 
                     # OBJECT PART

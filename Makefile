@@ -48,17 +48,17 @@ run-summary:
 	echo "taxon -> GO"
 	grep 'GO:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 
-	grep 'oxygen:' merged-kg_edges.tsv  |wc -l
+	grep 'oxygen:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> oxygen"
-	grep 'salinity:' merged-kg_edges.tsv  |wc -l
+	grep 'salinity:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> salinity"
-	grep 'pH:' merged-kg_edges.tsv  |wc -l
+	grep 'pH:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> pH"
-	grep 'temperature:' merged-kg_edges.tsv  |wc -l
+	grep 'temperature:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> temperature"
-	grep 'pathways:' merged-kg_edges.tsv  |wc -l
+	grep 'pathways:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> pathways"
-	grep 'pathogen:' merged-kg_edges.tsv  |wc -l
+	grep 'pathogen:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> pathogen"
 
 

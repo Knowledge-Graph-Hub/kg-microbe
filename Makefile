@@ -14,8 +14,6 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv | grep 'KEGG:' | wc -l
 	echo "CAS-RN:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'CAS-RN:' | wc -l
-	echo "mediadive."
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.' | wc -l
 	echo "ingredient:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'ingredient:' | wc -l
 	echo "solution:"
@@ -23,6 +21,10 @@ run-summary:
 	echo "medium:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'medium:' | wc -l
 	echo "traits"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
+	echo "traits.pathways"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
+	echo "traits.cell_shape_enum"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
 	echo "carbon_substrate"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
@@ -36,19 +38,32 @@ run-summary:
 	echo "taxon -> medium"
 	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "medium-> ingredient"
-	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'ingredient' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'ingredient:' | wc -l
 	echo "medium-> solution"
-	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'solution' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'solution:' | wc -l
 	echo "ingredient -> CHEBI"
 	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "solution -> CHEBI"
 	grep 'solution:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "ingredient -> solution"
-	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'solution' | wc -l
+	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'solution:' | wc -l
 	echo "taxon -> CHEBI"
 	grep 'CHEBI:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "taxon -> GO"
 	grep 'GO:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
+
+	grep 'oxygen:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> oxygen"
+	grep 'salinity:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> salinity"
+	grep 'pH:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pH"
+	grep 'temperature:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> temperature"
+	grep 'pathways:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pathways"
+	grep 'pathogen:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pathogen"
 
 
 neo4j-upload:

@@ -1,4 +1,5 @@
 """Constants for transform_utilities."""
+
 from pathlib import Path
 
 BACDIVE_DIR = Path(__file__).parent / "bacdive"
@@ -9,6 +10,7 @@ MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 TRAITS_DIR = Path(__file__).parent / "traits"
+RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 
 
 # KEYS FOR JSON FILE
@@ -91,15 +93,15 @@ BACDIVE_PREFIX = "bacdive:"
 CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
-MEDIADIVE_INGREDIENT_PREFIX = "mediadive.ingredient:"
-MEDIADIVE_SOLUTION_PREFIX = "mediadive.solution:"
-MEDIADIVE_MEDIUM_PREFIX = "mediadive.medium:"
+MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
+MEDIADIVE_SOLUTION_PREFIX = "solution:"
+MEDIADIVE_MEDIUM_PREFIX = "medium:"
 GO_PREFIX = "GO:"
 KEGG_PREFIX = "KEGG:"
-SHAPE_PREFIX = "traits.cell_shape_enum:"
-PATHWAY_PREFIX = "traits.pathways:"
-CARBON_SUBSTRATE_PREFIX = "traits.carbon_substrates:"
-ISOLATION_SOURCE_PREFIX = "traits.data_source:"
+SHAPE_PREFIX = "cell_shape:"
+PATHWAY_PREFIX = "pathways:"
+CARBON_SUBSTRATE_PREFIX = "carbon_substrates:"
+ISOLATION_SOURCE_PREFIX = "isolation_source:"
 
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
@@ -133,6 +135,8 @@ PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 ROLE_CATEGORY = "biolink:ChemicalRole"
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
+PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
+ATTRIBUTE_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -164,6 +168,7 @@ UNIT_COLUMN = "unit"
 GRAMS_PER_LITER_COLUMN = "g_l"
 MMOL_PER_LITER_COLUMN = "mmol_l"
 RISK_ASSESSMENT_COLUMN = RISK_ASSESSMENT
+CURIE_COLUMN = "curie"
 
 BACDIVE_ID_COLUMN = "bacdive_id"
 DSM_NUMBER_COLUMN = "dsm_number"
@@ -230,7 +235,18 @@ ROBOT_REMOVED_SUFFIX = "_removed_subset"
 ROBOT_EXTRACT_SUFFIX = "_extract_subset"
 EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 
-#Uniprot
+# Uniprot
 ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
 ENZYME_CATEGORY = "biolink:Enzyme"
 CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"
+UNIPROT_GENOME_FEATURES = "uniprot_genome_features"
+UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/"
+UNIPROT_FIELDS = ["organism_id", "id", "accession", "protein_name", "ec", "ft_binding"]
+UNIPROT_KEYWORDS = ["Reference+proteome"]
+UNIPROT_DESIRED_FORMAT = "tsv"
+UNIPROT_SIZE = 500
+ORGANISM_ID_MIXED_CASE = "Organism_ID"
+UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
+TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
+UNIPROT_REVIEWED_FLAG = "reviewed:true+"
+UNIPROT_PREFIX = "Uniprot"

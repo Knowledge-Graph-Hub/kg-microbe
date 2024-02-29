@@ -1,5 +1,6 @@
 """Download resources from YAML file."""
-from kg_microbe.utils.download_utils import download_from_yaml
+
+from kghub_downloader.download_utils import download_from_yaml
 
 
 def download(

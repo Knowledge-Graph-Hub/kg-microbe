@@ -10,6 +10,7 @@ Output these two files:
 - nodes.tsv
 - edges.tsv
 """
+
 import csv
 import json
 import os
@@ -17,6 +18,7 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
+import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
 
@@ -24,11 +26,15 @@ from kg_microbe.transform_utils.constants import (
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
+    ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
+    BACDIVE_DIR,
     BACDIVE_ID_COLUMN,
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
+    BIOLOGICAL_PROCESS,
+    CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     COLONY_MORPHOLOGY,
     COMPOUND_PRODUCTION,
@@ -36,6 +42,7 @@ from kg_microbe.transform_utils.constants import (
     CULTURE_LINK,
     CULTURE_MEDIUM,
     CULTURE_NAME,
+    CURIE_COLUMN,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
     ENZYMES,
@@ -46,6 +53,7 @@ from kg_microbe.transform_utils.constants import (
     GENERAL,
     GENERAL_DESCRIPTION,
     HALOPHILY,
+    HAS_PHENOTYPE,
     IS_GROWN_IN,
     ISOLATION,
     ISOLATION_COLUMN,
@@ -82,8 +90,10 @@ from kg_microbe.transform_utils.constants import (
     NUTRITION_TYPE,
     OBSERVATION,
     OXYGEN_TOLERANCE,
+    PHENOTYPIC_CATEGORY,
     PHYSIOLOGY_AND_METABOLISM,
     PIGMENTATION,
+    PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     RISK_ASSESSMENT,
@@ -95,14 +105,18 @@ from kg_microbe.transform_utils.constants import (
     TOLERANCE,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
-    def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
+    def __init__(
+        self,
+        input_dir: Optional[Path] = None,
+        output_dir: Optional[Path] = None,
+    ):
         """Instantiate part."""
         source_name = "BacDive"
         super().__init__(source_name, input_dir, output_dir)
@@ -114,7 +128,7 @@ class BacDiveTransform(Transform):
             (_, label) = list(self.ncbi_impl.labels([curie]))[0]
         return label
 
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
@@ -166,11 +180,13 @@ class BacDiveTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
-        with open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1, open(
-            str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w"
-        ) as tsvfile_2, open(self.output_node_file, "w") as node, open(
-            self.output_edge_file, "w"
-        ) as edge:
+        with (
+            open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1,
+            open(str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w") as tsvfile_2,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+            open(str(BACDIVE_DIR / "keywords.yaml"), "r") as keywords_file,
+        ):
             writer = csv.writer(tsvfile_1, delimiter="\t")
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
@@ -184,7 +200,19 @@ class BacDiveTransform(Transform):
             self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
-            with tqdm(total=len(input_json.items()) + 1, desc="Processing files") as progress:
+            keyword_data = yaml.safe_load(keywords_file)
+
+            keyword_map = {
+                second_level_key: nested_data
+                for first_level_value in keyword_data.values()
+                for second_level_key, nested_data in first_level_value.items()
+            }
+
+            # Choose the appropriate context manager based on the flag
+            progress_class = tqdm if show_status else DummyTqdm
+            with progress_class(
+                total=len(input_json.items()) + 1, desc="Processing files"
+            ) as progress:
                 for key, value in input_json.items():
                     # * Uncomment this block ONLY if you want to view the split *******
                     # * contents of the JSON file source into YAML files.
@@ -207,16 +235,14 @@ class BacDiveTransform(Transform):
                         ISOLATION_SOURCE_CATEGORIES
                     )
 
-                    if value.get(ISOLATION_SAMPLING_ENV_INFO):
-                        if set(value.get(ISOLATION_SAMPLING_ENV_INFO).keys()) - set(
-                            [
-                                ISOLATION,
-                                ISOLATION_SOURCE_CATEGORIES,
-                            ]
-                        ):
-                            import pdb
-
-                            pdb.set_trace()
+                    # if value.get(ISOLATION_SAMPLING_ENV_INFO):
+                    #     if set(value.get(ISOLATION_SAMPLING_ENV_INFO).keys()) - set(
+                    #         [
+                    #             ISOLATION,
+                    #             ISOLATION_SOURCE_CATEGORIES,
+                    #         ]
+                    #     ):
+                    # TODO: Get information from here.
                     morphology_multimedia = value.get(MORPHOLOGY, {}).get(MULTIMEDIA)
                     morphology_multicellular = value.get(MORPHOLOGY, {}).get(
                         MULTICELLULAR_MORPHOLOGY
@@ -333,7 +359,12 @@ class BacDiveTransform(Transform):
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = self._get_label_via_oak(ncbitaxon_id)
 
-                    keywords = str(general_info.get(KEYWORDS, ""))
+                    keywords = general_info.get(KEYWORDS, "")
+                    nodes_from_keywords = {
+                        key: keyword_map[key.lower().replace(" ", "_").replace("-", "_")]
+                        for key in keywords
+                        if key.lower().replace(" ", "_").replace("-", "_") in keyword_map
+                    }
 
                     # OBJECT PART
                     medium_id = None
@@ -381,7 +412,7 @@ class BacDiveTransform(Transform):
                         culture_number_from_external_links,
                         ncbitaxon_id,
                         ncbi_description,
-                        keywords,
+                        str(keywords),
                         medium_id,
                         medium_label,
                         medium_url,
@@ -441,6 +472,33 @@ class BacDiveTransform(Transform):
                         ]
 
                         edge_writer.writerow(edges_data_to_write)
+
+                    if ncbitaxon_id and nodes_from_keywords:
+                        nodes_data_to_write = [
+                            [value[CURIE_COLUMN], value[CATEGORY_COLUMN], key]
+                            for key, value in nodes_from_keywords.items()
+                        ]
+                        nodes_data_to_write = [
+                            sublist + [None] * 11 for sublist in nodes_data_to_write
+                        ]
+
+                        node_writer.writerows(nodes_data_to_write)
+
+                        for _, value in nodes_from_keywords.items():
+                            edges_data_to_write = [
+                                ncbitaxon_id,
+                                value[PREDICATE_COLUMN],
+                                value[CURIE_COLUMN],
+                                (
+                                    HAS_PHENOTYPE
+                                    if value[CATEGORY_COLUMN]
+                                    in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
+                                    else BIOLOGICAL_PROCESS
+                                ),
+                                BACDIVE_PREFIX + key,
+                            ]
+
+                            edge_writer.writerow(edges_data_to_write)
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

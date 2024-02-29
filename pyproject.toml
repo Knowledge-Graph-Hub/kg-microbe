@@ -10,23 +10,25 @@ readme = "README.md"
 python = "^3.9"
 click = "*"
 importlib-metadata = "^6.8.0"
-kghub-downloader = ">=0.3.4"
+kghub-downloader = "^0.3.5"
 kgx = "^2.2.5"
 koza = "*"
 biolink-model = "*"
-oaklib = ">=0.5.20"
+watchdog = "<4.0.0" # ! This is a temporary fix 4.0.0 breaks on GH Actions
+oaklib = ">=0.5.25"
 requests-cache = "^1.1.0"
 llm = "^0.11"
 
 [tool.poetry.group.dev.dependencies]
-pytest = {version = ">=7.1.2"}
-tox = {version = ">=3.25.1"}
-pre-commit = {version = ">=3.3.3"}
+pytest = ">=7.1.2"
+tox = ">=3.25.1"
+pre-commit = ">=3.3.3"
 parameterized = "^0.8.1"
 notebook = "^7.0.6"
 jupyter-contrib-nbextensions = "^0.7.0"
 python-sql = "^1.4.2"
 ipython-sql = "^0.5.0"
+ruff = ">=0.2.1"
 
 [tool.poetry.group.docs]
 optional = true
@@ -37,6 +39,11 @@ sphinx-rtd-theme = {version = ">=1.0.0"}
 sphinx-autodoc-typehints = "^1.24.0"
 sphinx-click = {version = ">=4.3.0"}
 myst-parser = {version = ">=0.18.1"}
+
+
+[tool.poetry.group.s3.dependencies]
+boto3 = "^1.34.37"
+aws = "^0.2.5"
 
 [tool.poetry.extras]
 docs = [
@@ -60,7 +67,7 @@ line-length = 100
 target-version = ["py38", "py39", "py310"]
 
 [tool.ruff]
-extend-ignore = [
+lint.extend-ignore = [
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
     "S301",  # `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue`
@@ -68,10 +75,10 @@ extend-ignore = [
 line-length = 120
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
+lint.fixable = ["ALL"]
 
 # Select or ignore from https://beta.ruff.rs/docs/rules/
-select = [
+lint.select = [
     "B",  # bugbear
     "D",  # pydocstyle
     "E",  # pycodestyle errors
@@ -81,10 +88,10 @@ select = [
     "W",  # Warning
 ]
 
-unfixable = []
+lint.unfixable = []
 target-version = "py310"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 

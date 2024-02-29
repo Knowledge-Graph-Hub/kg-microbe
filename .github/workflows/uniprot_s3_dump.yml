@@ -1,0 +1,47 @@
+name: Uniprot to S3
+
+on:
+#   schedule:
+#     - cron: '0 0 1 * *' # Runs on the 1st of every month at midnight
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  fetch-and-upload:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10" ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3.0.2
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Install additional dependencies
+        run: poetry install --with s3
+
+      # - name: Fetch data from Uniprot API
+      #   run: |
+      #     kg download
+      #     kg transform -s OntologyTransform
+      #     kg get-via-api -a uniprot
+      
+      - name: Upload to S3
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Sync files to S3 bucket
+        run: |
+          aws s3 sync data/raw/uniprot/s3 s3://${{ secrets.AWS_BUCKET_NAME }} --delete
+

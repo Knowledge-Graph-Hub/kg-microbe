@@ -14,41 +14,52 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv | grep 'KEGG:' | wc -l
 	echo "CAS-RN:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'CAS-RN:' | wc -l
-	echo "mediadive."
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.' | wc -l
-	echo "mediadive.ingredient:"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.ingredient:' | wc -l
-	echo "mediadive.solution:"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.solution:' | wc -l
-	echo "mediadive.medium:"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'mediadive.medium:' | wc -l
+	echo ""
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep '' | wc -l
+	echo "ingredient:"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'ingredient:' | wc -l
+	echo "solution:"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'solution:' | wc -l
+	echo "medium:"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'medium:' | wc -l
 	echo "traits"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
-	echo "traits.carbon_substrate"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.carbon_substrate' | wc -l
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
 	echo "traits.pathways"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.pathways' | wc -l
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
 	echo "traits.cell_shape_enum"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.cell_shape_enum' | wc -l
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'cell_shape' | wc -l
 
 	echo "EDGES"
 	wc -l data/merged/merged-kg_edges.tsv
 	echo "taxon -> medium"
-	grep 'mediadive.medium:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "medium-> ingredient"
-	grep 'mediadive.medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.ingredient' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'ingredient:' | wc -l
 	echo "medium-> solution"
-	grep 'mediadive.medium:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
+	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'solution:' | wc -l
 	echo "ingredient -> CHEBI"
-	grep 'mediadive.ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
+	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "solution -> CHEBI"
-	grep 'mediadive.solution:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
+	grep 'solution:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "ingredient -> solution"
-	grep 'mediadive.ingredient:' data/merged/merged-kg_edges.tsv | grep 'mediadive.solution' | wc -l
+	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'solution:' | wc -l
 	echo "taxon -> CHEBI"
 	grep 'CHEBI:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 	echo "taxon -> GO"
 	grep 'GO:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
+
+	grep 'oxygen:' merged-kg_edges.tsv  |wc -l
+	echo "taxon -> oxygen"
+	grep 'salinity:' merged-kg_edges.tsv  |wc -l
+	echo "taxon -> salinity"
+	grep 'pH:' merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pH"
+	grep 'temperature:' merged-kg_edges.tsv  |wc -l
+	echo "taxon -> temperature"
+	grep 'pathways:' merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pathways"
+	grep 'pathogen:' merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pathogen"
 
 
 neo4j-upload:

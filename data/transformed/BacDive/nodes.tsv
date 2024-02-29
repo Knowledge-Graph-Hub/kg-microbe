@@ -2,6 +2,7 @@ id	category	name	description	xref	provided_by	synonym	iri	object	predicate	relat
 temperature:mesophilic	biolink:PhenotypicQuality	mesophilic											
 temperature:psychrophilic	biolink:PhenotypicQuality	psychrophilic											
 temperature:thermophilic	biolink:PhenotypicQuality	thermophilic											
+gram_stain:negative	biolink:PhenotypicQuality	Gram-negative											
 NCBITaxon:1955243	biolink:OrganismTaxon	Blautia sp.											
 medium:1669	biolink:ChemicalEntity	SCHAEDLER BROTH (ROTH; 5772) (DSMZ Medium 1669)											
 oxygen:aerobe	biolink:PhenotypicQuality	aerobe											
@@ -17,6 +18,7 @@ medium:830	biolink:ChemicalEntity	R2A MEDIUM (DSMZ Medium 830)
 NCBITaxon:1413221	biolink:OrganismTaxon	Streptomyces ferrugineus											
 medium:65	biolink:ChemicalEntity	GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)											
 NCBITaxon:1122939	biolink:OrganismTaxon	Patulibacter americanus DSM 16676											
+gram_stain:positive	biolink:PhenotypicQuality	Gram-positive											
 NCBITaxon:1931	biolink:OrganismTaxon	Streptomyces sp.											
 oxygen:microaerophile	biolink:PhenotypicQuality	microaerophile											
 NCBITaxon:56	biolink:OrganismTaxon	Sorangium cellulosum											
@@ -82,6 +84,7 @@ medium:104c	biolink:ChemicalEntity	PY + X MEDIUM (N2/CO2) (DSMZ Medium 104c)
 NCBITaxon:78344	biolink:OrganismTaxon	Bifidobacterium pullorum subsp. gallinarum											
 medium:58	biolink:ChemicalEntity	BIFIDOBACTERIUM MEDIUM (DSMZ Medium 58)											
 NCBITaxon:33935	biolink:OrganismTaxon	Lysinibacillus macroides											
+gram_stain:variable	biolink:PhenotypicQuality	Gram-variable											
 NCBITaxon:1428	biolink:OrganismTaxon	Bacillus thuringiensis											
 NCBITaxon:194673	biolink:OrganismTaxon	Streptomyces rubrogriseus											
 NCBITaxon:853	biolink:OrganismTaxon	Faecalibacterium prausnitzii											

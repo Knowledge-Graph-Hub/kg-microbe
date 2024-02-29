@@ -25,13 +25,13 @@ edge_stats:
         unknown:
           count: 86252
     biolink:has_phenotype:
-      count: 55001
+      count: 63775
       provided_by:
         unknown:
-          count: 55001
+          count: 63775
       source:
         unknown:
-          count: 55001
+          count: 63775
     biolink:location_of:
       count: 26755
       provided_by:
@@ -49,13 +49,13 @@ edge_stats:
         unknown:
           count: 34381
     biolink:produces:
-      count: 144
+      count: 562
       provided_by:
         unknown:
-          count: 144
+          count: 562
       source:
         unknown:
-          count: 144
+          count: 562
     biolink:related_to:
       count: 110986
       provided_by:
@@ -596,13 +596,13 @@ edge_stats:
         unknown:
           count: 20047
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 42667
+      count: 51436
       provided_by:
         unknown:
-          count: 42667
+          count: 51436
       source:
         unknown:
-          count: 42667
+          count: 51436
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1753
       provided_by:
@@ -652,13 +652,13 @@ edge_stats:
         unknown:
           count: 32488
     biolink:OrganismTaxon-biolink:produces-biolink:ChemicalSubstance:
-      count: 144
+      count: 562
       provided_by:
         unknown:
-          count: 144
+          count: 562
       source:
         unknown:
-          count: 144
+          count: 562
     biolink:OrganismTaxon-biolink:subclass_of-biolink:OntologyClass:
       count: 36
       provided_by:
@@ -716,13 +716,13 @@ edge_stats:
         unknown:
           count: 122
     unknown-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 51
+      count: 56
       provided_by:
         unknown:
-          count: 51
+          count: 56
       source:
         unknown:
-          count: 51
+          count: 56
     unknown-biolink:location_of-biolink:AnatomicalEntity:
       count: 6
       provided_by:
@@ -786,7 +786,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 1515729
+  total_edges: 1524921
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -838,14 +838,14 @@ node_stats:
         nodes.tsv:
           count: 311
     biolink:ChemicalSubstance:
-      count: 185296
+      count: 185303
       provided_by:
         chebi.json:
           count: 185295
         envo.json:
           count: 930
         nodes.tsv:
-          count: 676
+          count: 683
     biolink:EnvironmentalFeature:
       count: 60
       provided_by:
@@ -882,17 +882,17 @@ node_stats:
         nodes.tsv:
           count: 56721
     biolink:PhenotypicQuality:
-      count: 38
+      count: 44
       provided_by:
         nodes.tsv:
-          count: 38
+          count: 44
     unknown:
-      count: 1506
+      count: 1507
       provided_by:
         nodes.tsv:
           count: 5
         unknown:
-          count: 1501
+          count: 1502
   count_by_id_prefixes:
     BFO: 34
     CARO: 3
@@ -905,7 +905,7 @@ node_stats:
     GO: 51325
     IAO: 28
     KEGG: 1
-    NCBITaxon: 815777
+    NCBITaxon: 815778
     OBI: 6
     OBO: 40
     OIO: 15
@@ -923,16 +923,18 @@ node_stats:
     envo: 43
     foodon: 1
     go: 17
+    gram_stain: 3
     ingredient: 258
     isolation_source: 5
     medium: 3292
     metabolism: 25
     ncbitaxon: 49156
     oxygen: 9
+    pathogen: 3
     pathways: 81
     pato: 6
     po: 1
-    production: 1
+    production: 8
     salinity: 7
     solution: 5381
     temperature: 4
@@ -965,7 +967,7 @@ node_stats:
       chebi: 96
     biolink:ChemicalSubstance:
       CHEBI: 185295
-      production: 1
+      production: 8
     biolink:EnvironmentalFeature:
       chebi: 2
       envo: 43
@@ -998,13 +1000,15 @@ node_stats:
       ncbitaxon: 49155
     biolink:PhenotypicQuality:
       cell_shape: 18
+      gram_stain: 3
       oxygen: 9
+      pathogen: 3
       salinity: 7
       temperature: 4
     unknown:
       ECOCORE: 6
       FOODON: 1
-      NCBITaxon: 267
+      NCBITaxon: 268
       UBERON: 2
       bacdive: 1225
       isolation_source: 5
@@ -1053,12 +1057,14 @@ node_stats:
   - envo
   - foodon
   - go
+  - gram_stain
   - ingredient
   - isolation_source
   - medium
   - metabolism
   - ncbitaxon
   - oxygen
+  - pathogen
   - pathways
   - pato
   - po
@@ -1128,8 +1134,10 @@ node_stats:
     - ncbitaxon
     biolink:PhenotypicQuality:
     - temperature
+    - gram_stain
     - oxygen
     - cell_shape
+    - pathogen
     - salinity
     unknown:
     - NCBITaxon
@@ -1146,4 +1154,4 @@ node_stats:
   - ncbitaxon_removed_subset.json
   - nodes.tsv
   - unknown
-  total_nodes: 1118511
+  total_nodes: 1118525

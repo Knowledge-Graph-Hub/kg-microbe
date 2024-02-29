@@ -1,4 +1,5 @@
 """NLP utilities."""
+
 import csv
 from pathlib import Path
 from typing import List
@@ -122,9 +123,10 @@ def annotate(
 
         # unique_terms_annotated.update(unique_terms_annotated_not_whole_match)
 
-    with open(str(outfile), "w", newline="") as file_1, open(
-        str(outfile_for_unmatched), "w", newline=""
-    ) as file_2:
+    with (
+        open(str(outfile), "w", newline="") as file_1,
+        open(str(outfile_for_unmatched), "w", newline="") as file_2,
+    ):
         writer_1 = csv.writer(file_1, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_2 = csv.writer(file_2, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_1.writerow(annotated_columns)

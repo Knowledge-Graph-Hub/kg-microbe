@@ -14,8 +14,6 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv | grep 'KEGG:' | wc -l
 	echo "CAS-RN:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'CAS-RN:' | wc -l
-	echo ""
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep '' | wc -l
 	echo "ingredient:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'ingredient:' | wc -l
 	echo "solution:"
@@ -27,6 +25,12 @@ run-summary:
 	echo "traits.pathways"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
 	echo "traits.cell_shape_enum"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
+	echo "carbon_substrate"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
+	echo "pathways"
+	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
+	echo "cell_shape"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'cell_shape' | wc -l
 
 	echo "EDGES"

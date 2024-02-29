@@ -2,9 +2,10 @@ name: kg-microbe QC
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,7 +31,7 @@ jobs:
       - name: Run CodeSpell
         run: poetry run tox -e codespell
 
-      - name: Check static typing with MyPy
+      - name: Linting
         run: poetry run tox -e lint
 
       - name: Test with pytest and generate coverage file

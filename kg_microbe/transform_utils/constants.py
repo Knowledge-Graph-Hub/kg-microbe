@@ -123,7 +123,10 @@ NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_sourc
 NCBI_TO_METABOLISM_EDGE = "biolink:capable_of"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
-
+NCBI_TO_METABOLITE_UTILIZATION_EDGE = "biolink:consumes"  # [org -> metabolite_utilization]
+NCBI_TO_ENZYME_EDGE = "biolink:has_phenotype"  # [org -> enzyme]
+NCBI_TO_ASSAY_EDGE = "biolink:has_phenotype"  # [org -> assay]
+NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -137,6 +140,7 @@ ROLE_CATEGORY = "biolink:ChemicalRole"
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
 PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
 ATTRIBUTE_CATEGORY = "biolink:Attribute"
+METABOLITE_CATEGORY = "biolink:ChemicalEntity"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -147,6 +151,7 @@ TROPHICALLY_INTERACTS_WITH = (
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
+HAS_PARTICIPANT = "RO:0000057"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -191,6 +196,15 @@ MORPHOLOGY_COLONY_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + COLONY_MORPHOLOGY
 MORPHOLOGY_CELL_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + CELL_MORPHOLOGY
 MORPHOLOGY_PIGMENTATION_COLUMN = MORPHOLOGY + "_" + PIGMENTATION
 API_X_COLUMN = "API_X"
+METABOLITE_CHEBI_KEY = "Chebi-ID"
+METABOLITE_KEY = "metabolite"
+PRODUCTION_KEY = "production"
+EC_PREFIX = "EC:"
+EC_KEY = "ec"
+ACTIVITY_KEY = "activity"
+UTILIZATION_TYPE_TESTED = "kind of utilization tested"
+UTILIZATION_ACTIVITY = "utilization activity"
+PLUS_SIGN = "+"
 
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"

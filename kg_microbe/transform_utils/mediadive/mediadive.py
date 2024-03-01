@@ -76,6 +76,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
+    OBJECT_ID_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
@@ -100,7 +101,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -412,8 +412,9 @@ class MediaDiveTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        drop_duplicates(self.output_node_file)
-        drop_duplicates(self.output_edge_file)
+        drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
+
         establish_transitive_relationship(
             self.output_edge_file,
             MEDIADIVE_MEDIUM_PREFIX,

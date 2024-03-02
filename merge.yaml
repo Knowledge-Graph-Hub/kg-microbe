@@ -63,13 +63,13 @@ merged_graph:
         filename:
           - data/transformed/traits/nodes.tsv
           - data/transformed/traits/edges.tsv
-    uniprot_genome_features:
-      input:
-        name: "uniprot_genome_features"
-        format: tsv
-        filename:
-          - data/transformed/uniprot_genome_features/nodes.tsv
-          - data/transformed/uniprot_genome_features/edges.tsv
+    # uniprot_genome_features:
+    #   input:
+    #     name: "uniprot_genome_features"
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/uniprot_genome_features/nodes.tsv
+    #       - data/transformed/uniprot_genome_features/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:

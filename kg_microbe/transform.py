@@ -23,7 +23,7 @@ DATA_SOURCES = {
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
     "OntologyTransform": OntologyTransform,
-    "UniprotTransform": UniprotTransform,
+    # "UniprotTransform": UniprotTransform,
 }
 
 

@@ -10,6 +10,7 @@ import pandas as pd
 from kg_microbe.transform_utils.constants import (
     CAS_RN_PREFIX,
     CHEBI_PREFIX,
+    ECOCORE_PREFIX,
     GO_PREFIX,
     ID_COLUMN,
     KEGG_PREFIX,
@@ -41,6 +42,7 @@ def drop_duplicates(
         PUBCHEM_PREFIX,
         GO_PREFIX,
         KEGG_PREFIX,
+        ECOCORE_PREFIX,
         "API_",
     ]
     df = pd.read_csv(file_path, sep="\t", low_memory=False)

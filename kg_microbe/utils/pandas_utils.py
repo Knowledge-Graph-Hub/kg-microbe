@@ -8,11 +8,17 @@ from typing import List
 import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
+    CAS_RN_PREFIX,
+    CHEBI_PREFIX,
+    GO_PREFIX,
     ID_COLUMN,
+    KEGG_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_SOLUTION_PREFIX,
+    NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
+    PUBCHEM_PREFIX,
     SUBJECT_COLUMN,
 )
 
@@ -28,10 +34,25 @@ def drop_duplicates(
     :param df: Dataframe
     :param file_path: file path.
     """
+    exclude_prefixes = [
+        NCBITAXON_PREFIX,
+        CAS_RN_PREFIX,
+        CHEBI_PREFIX,
+        PUBCHEM_PREFIX,
+        GO_PREFIX,
+        KEGG_PREFIX,
+        "API_",
+    ]
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
     if consolidation_columns and all(col in list(df.columns) for col in consolidation_columns):
         for col in consolidation_columns:
-            df[col] = df[col].str.lower()
+            df[col] = df[col].apply(
+                lambda x: (
+                    str(x).lower()
+                    if not any(str(x).startswith(prefix) for prefix in exclude_prefixes)
+                    else x
+                )
+            )
     df = df.drop_duplicates().sort_values(by=[sort_by])
     df.to_csv(file_path, sep="\t", index=False)
     return df

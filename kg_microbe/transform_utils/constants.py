@@ -93,15 +93,16 @@ BACDIVE_PREFIX = "bacdive:"
 CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
-MEDIADIVE_INGREDIENT_PREFIX = "mediadive.ingredient:"
-MEDIADIVE_SOLUTION_PREFIX = "mediadive.solution:"
-MEDIADIVE_MEDIUM_PREFIX = "mediadive.medium:"
+ECOCORE_PREFIX = "ECOCORE:"
+MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
+MEDIADIVE_SOLUTION_PREFIX = "solution:"
+MEDIADIVE_MEDIUM_PREFIX = "medium:"
 GO_PREFIX = "GO:"
 KEGG_PREFIX = "KEGG:"
-SHAPE_PREFIX = "traits.cell_shape_enum:"
-PATHWAY_PREFIX = "traits.pathways:"
-CARBON_SUBSTRATE_PREFIX = "traits.carbon_substrates:"
-ISOLATION_SOURCE_PREFIX = "traits.data_source:"
+SHAPE_PREFIX = "cell_shape:"
+PATHWAY_PREFIX = "pathways:"
+CARBON_SUBSTRATE_PREFIX = "carbon_substrates:"
+ISOLATION_SOURCE_PREFIX = "isolation_source:"
 
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
@@ -123,7 +124,10 @@ NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_sourc
 NCBI_TO_METABOLISM_EDGE = "biolink:capable_of"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
-
+NCBI_TO_METABOLITE_UTILIZATION_EDGE = "biolink:consumes"  # [org -> metabolite_utilization]
+NCBI_TO_ENZYME_EDGE = "biolink:has_phenotype"  # [org -> enzyme]
+NCBI_TO_ASSAY_EDGE = "biolink:has_phenotype"  # [org -> assay]
+NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -135,6 +139,9 @@ PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 ROLE_CATEGORY = "biolink:ChemicalRole"
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
+PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
+ATTRIBUTE_CATEGORY = "biolink:Attribute"
+METABOLITE_CATEGORY = "biolink:ChemicalEntity"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -145,6 +152,7 @@ TROPHICALLY_INTERACTS_WITH = (
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
+HAS_PARTICIPANT = "RO:0000057"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -166,6 +174,7 @@ UNIT_COLUMN = "unit"
 GRAMS_PER_LITER_COLUMN = "g_l"
 MMOL_PER_LITER_COLUMN = "mmol_l"
 RISK_ASSESSMENT_COLUMN = RISK_ASSESSMENT
+CURIE_COLUMN = "curie"
 
 BACDIVE_ID_COLUMN = "bacdive_id"
 DSM_NUMBER_COLUMN = "dsm_number"
@@ -188,6 +197,15 @@ MORPHOLOGY_COLONY_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + COLONY_MORPHOLOGY
 MORPHOLOGY_CELL_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + CELL_MORPHOLOGY
 MORPHOLOGY_PIGMENTATION_COLUMN = MORPHOLOGY + "_" + PIGMENTATION
 API_X_COLUMN = "API_X"
+METABOLITE_CHEBI_KEY = "Chebi-ID"
+METABOLITE_KEY = "metabolite"
+PRODUCTION_KEY = "production"
+EC_PREFIX = "EC:"
+EC_KEY = "ec"
+ACTIVITY_KEY = "activity"
+UTILIZATION_TYPE_TESTED = "kind of utilization tested"
+UTILIZATION_ACTIVITY = "utilization activity"
+PLUS_SIGN = "+"
 
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"

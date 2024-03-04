@@ -127,6 +127,7 @@
 #
 # Uniprot
 #
--
-  url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
-  local_name: ec2ec.zip
+# -
+#   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
+#   local_name: ec2ec.zip
+

@@ -3,27 +3,58 @@
 import csv
 from itertools import combinations
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
+    CAS_RN_PREFIX,
+    CHEBI_PREFIX,
+    ECOCORE_PREFIX,
+    GO_PREFIX,
     ID_COLUMN,
+    KEGG_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_SOLUTION_PREFIX,
+    NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
+    PUBCHEM_PREFIX,
     SUBJECT_COLUMN,
 )
 
 
-def drop_duplicates(file_path: Path, sort_by: str = SUBJECT_COLUMN):
+def drop_duplicates(
+    file_path: Path,
+    sort_by: str = SUBJECT_COLUMN,
+    consolidation_columns: List = None,
+):
     """
     Read TSV, drop duplicates and export to same file.
 
     :param df: Dataframe
     :param file_path: file path.
     """
+    exclude_prefixes = [
+        NCBITAXON_PREFIX,
+        CAS_RN_PREFIX,
+        CHEBI_PREFIX,
+        PUBCHEM_PREFIX,
+        GO_PREFIX,
+        KEGG_PREFIX,
+        ECOCORE_PREFIX,
+        "API_",
+    ]
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
+    if consolidation_columns and all(col in list(df.columns) for col in consolidation_columns):
+        for col in consolidation_columns:
+            df[col] = df[col].apply(
+                lambda x: (
+                    str(x).lower()
+                    if not any(str(x).startswith(prefix) for prefix in exclude_prefixes)
+                    else x
+                )
+            )
     df = df.drop_duplicates().sort_values(by=[sort_by])
     df.to_csv(file_path, sep="\t", index=False)
     return df
@@ -66,14 +97,29 @@ def establish_transitive_relationship(
 
     list_of_dfs_to_append = []
 
-    for row in subject_intermediate_df.iterrows():
-        transitive_relations_df = intermediate_object_df.loc[
-            intermediate_object_df[SUBJECT_COLUMN] == row[1].object
-        ]
-        transitive_relations_df.loc[
-            transitive_relations_df[SUBJECT_COLUMN] == row[1].object, SUBJECT_COLUMN
-        ] = row[1].subject
-        list_of_dfs_to_append.append(transitive_relations_df)
+    # for row in subject_intermediate_df.iterrows():
+    #     transitive_relations_df = intermediate_object_df.loc[
+    #         intermediate_object_df[SUBJECT_COLUMN] == row[1].object
+    #     ]
+    #     transitive_relations_df.loc[
+    #         transitive_relations_df[SUBJECT_COLUMN] == row[1].object, SUBJECT_COLUMN
+    #     ] = row[1].subject
+    #     list_of_dfs_to_append.append(transitive_relations_df)
+    # Create a dictionary to map objects to subjects
+    object_to_subject = dict(
+        zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False)
+    )
+
+    # Filter the DataFrame to include only rows where the SUBJECT_COLUMN matches any object in the mapping
+    filtered_df = intermediate_object_df[
+        intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subject.keys())
+    ]
+
+    # Map the SUBJECT_COLUMN in filtered_df to the corresponding subjects using the mapping
+    filtered_df[SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
+
+    # Append the modified DataFrame to the list (assuming list_of_dfs_to_append is already defined)
+    list_of_dfs_to_append.append(filtered_df)
 
     df = pd.concat([df] + list_of_dfs_to_append).sort_values(by=[SUBJECT_COLUMN])
     df.to_csv(file_path, sep="\t", index=False)

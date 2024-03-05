@@ -129,7 +129,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -548,11 +547,11 @@ class BacDiveTransform(Transform):
                             postive_activity_enzymes = [
                                 {f"{EC_PREFIX}{enzyme.get(EC_KEY)}": f"{enzyme.get('value')}"}
                                 for enzyme in phys_and_metabolism_enzymes
-                                if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN
+                                if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN and enzyme.get(EC_KEY)
                             ]
                         elif isinstance(phys_and_metabolism_enzymes, dict):
                             activity = phys_and_metabolism_enzymes.get(ACTIVITY_KEY)
-                            if activity == PLUS_SIGN:
+                            if activity == PLUS_SIGN and phys_and_metabolism_enzymes.get(EC_KEY):
                                 ec_value = f"{EC_PREFIX}{phys_and_metabolism_enzymes.get(EC_KEY)}"
                                 value = phys_and_metabolism_enzymes.get("value")
                                 postive_activity_enzymes = [{ec_value: value}]
@@ -615,7 +614,12 @@ class BacDiveTransform(Transform):
                             utilization_activity = phys_and_metabolism_metabolite_utilization.get(
                                 UTILIZATION_ACTIVITY
                             )
-                            if utilization_activity == PLUS_SIGN:
+                            if (
+                                utilization_activity == PLUS_SIGN
+                                and phys_and_metabolism_metabolite_utilization.get(
+                                    METABOLITE_CHEBI_KEY
+                                )
+                            ):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
@@ -672,7 +676,12 @@ class BacDiveTransform(Transform):
                             production = phys_and_metabolism_metabolite_production.get(
                                 PRODUCTION_KEY
                             )
-                            if production == "yes":
+                            if (
+                                production == "yes"
+                                and phys_and_metabolism_metabolite_production.get(
+                                    METABOLITE_CHEBI_KEY
+                                )
+                            ):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY)}"

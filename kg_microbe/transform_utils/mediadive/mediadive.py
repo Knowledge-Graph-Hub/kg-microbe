@@ -101,7 +101,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -288,28 +287,29 @@ class MediaDiveTransform(Transform):
                     if json_obj_medium_strain:
                         medium_strain_edge = []
                         for strain in json_obj_medium_strain:
-                            strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
-                            ncbi_strain_id = bacdive_df[bacdive_df[BACDIVE_ID_COLUMN] == strain_id][
-                                NCBITAXON_ID_COLUMN
-                            ].values
+                            if strain.get(BACDIVE_ID_COLUMN):
+                                strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
+                                ncbi_strain_id = bacdive_df[
+                                    bacdive_df[BACDIVE_ID_COLUMN] == strain_id
+                                ][NCBITAXON_ID_COLUMN].values
 
-                            if ncbi_strain_id.size > 0:
-                                ncbi_strain_id = ncbi_strain_id[0]
-                            else:
-                                ncbi_strain_id = strain_id
+                                if ncbi_strain_id.size > 0:
+                                    ncbi_strain_id = ncbi_strain_id[0]
+                                else:
+                                    ncbi_strain_id = strain_id
 
-                            medium_strain_edge.extend(
-                                [
+                                medium_strain_edge.extend(
                                     [
-                                        ncbi_strain_id,
-                                        NCBI_TO_MEDIUM_EDGE,
-                                        medium_id,
-                                        IS_GROWN_IN,
-                                        strain_id,
+                                        [
+                                            ncbi_strain_id,
+                                            NCBI_TO_MEDIUM_EDGE,
+                                            medium_id,
+                                            IS_GROWN_IN,
+                                            strain_id,
+                                        ]
                                     ]
-                                ]
-                            )
-                        edge_writer.writerows(medium_strain_edge)
+                                )
+                                edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:
                         continue

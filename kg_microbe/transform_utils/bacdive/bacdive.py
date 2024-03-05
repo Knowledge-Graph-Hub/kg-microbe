@@ -129,6 +129,7 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):
+
     """Template for how the transform class would be designed."""
 
     def __init__(

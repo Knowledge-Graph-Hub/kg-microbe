@@ -1,0 +1,370 @@
+cupule	name_bacdive	reaction_name	ID_microbiol	substrate	EC_number	ID_microbiol	ID_CHEBI	CAS	kegg_comp	CURIE	pseudo_CURIE
+1	IND	Indole production	IND_20A	L-tryptophan	4.1.99.1	IND_20A	16828.0	73-22-3	C00078	CHEBI:16828	API_20A:IND
+2	URE	Urease/urea hydrolysis	URE_20A	Urea	3.5.1.5	URE_20A	16199.0	57-13-6	C00086	CHEBI:16199	API_20A:URE
+3	GLU	Acid from D-glucose	GLU_20A	D-glucose		GLU_20A	17634.0	50-99-7	C00031	CHEBI:17634	API_20A:GLU
+4	MAN	Acid from D-mannitol	MAN_20A	D-mannitol		MAN_20A	16899.0	69-65-8	C00392	CHEBI:16899	API_20A:MAN
+5	LAC	Acid from lactose	LAC_20A	D-lactose (lactose)		LAC_20A	17716.0	63-42-3	C00243	CHEBI:17716	API_20A:LAC
+6	SAC	Acid from sucrose	SAC_20A	D-saccharose (sucrose)		SAC_20A	17992.0	57-50-1	C00089	CHEBI:17992	API_20A:SAC
+7	MAL	Acid from maltose	MAL_20A	D-maltose (maltose)		MAL_20A	17306.0	69-79-4	C00208	CHEBI:17306	API_20A:MAL
+8	SAL	Acid from salicin	SAL_20A	Salicin		SAL_20A	17814.0	138-52-3	C01451	CHEBI:17814	API_20A:SAL
+9	XYL	Acid from D-xylose	XYL_20A	D-xylose		XYL_20A	65327.0	58-86-6	C00181	CHEBI:65327	API_20A:XYL
+10	ARA	Acid from L-arabinose	ARA_20A	L-arabinose		ARA_20A	30849.0	147-81-9	C00259	CHEBI:30849	API_20A:ARA
+11	GEL	Gelatinase/gelatin hydrolysis	GEL_20A	Gelatin		GEL_20A	5291.0	9000-70-8	C01498	CHEBI:5291	API_20A:GEL
+12	ESC	Esculin hydrolysis/beta-glucosidase	ESC_20A	Esculin ferric citrate	3.2.1.21	ESC_20A	4853.0	531-75-9	C09264	CHEBI:4853	API_20A:ESC
+13	GLY	Acid from glycerol	GLY_20A	Glycerol		GLY_20A	17754.0	56-81-5	C00116	CHEBI:17754	API_20A:GLY
+14	CEL	Acid from cellobiose	CEL_20A	D-cellobiose (cellobiose)		CEL_20A	17057.0	528-50-7	C00185	CHEBI:17057	API_20A:CEL
+15	MNE	Acid from D-mannose	MNE_20A	D-mannose		MNE_20A	16024.0	3458-28-4	C00159	CHEBI:16024	API_20A:MNE
+16	MLZ	Acid from melezitose	MLZ_20A	D-melezitose (melezitose)		MLZ_20A	6731.0	0597-12-06	C08243	CHEBI:6731	API_20A:MLZ
+17	RAF	Acid from raffinose	RAF_20A	D-raffinose (raffinose)		RAF_20A	16634.0	512-69-6	C00492	CHEBI:16634	API_20A:RAF
+18	SOR	Acid from sorbitol	SOR_20A	D-sorbitol (D-glucitol)		SOR_20A	17924.0	50-70-4	C00794	CHEBI:17924	API_20A:SOR
+19	RHA	Acid from L-rhamnose	RHA_20A	L-rhamnose		RHA_20A	62345.0	73-34-7	C00507	CHEBI:62345	API_20A:RHA
+20	TRE	Acid from trehalose	TRE_20A	D-trehalose (trehalose)		TRE_20A	16551.0	99-20-7	C01083	CHEBI:16551	API_20A:TRE
+21	CAT	Catalase	CAT_20A		1.11.1.6	CAT_20A				EC:1.11.1.6	API_20A:CAT
+22	SPOR	Spores present	SPOR_20A			SPOR_20A				API_20ASPOR_20A	API_20A:SPOR
+23	GRAM	Gram	GRAM_20A			GRAM_20A				API_20AGRAM_20A	API_20A:GRAM
+24	COCC	"Morphology coccus=+"" rod=""-"""""	COCC_20A			COCC_20A				API_20ACOCC_20A	API_20A:COCC
+1	URE	Urease/urea hydrolysis	URE_rID32A	Urea	3.5.1.5	URE_rID32A	16199.0	57-13-6	C00086	CHEBI:16199	API_rID32A:URE
+2	ADH (Arg)	Arginine dihydrolase	ADH_rID32A	L-arginine	3.5.3.6	ADH_rID32A	16467.0	74-79-3 	C00062	CHEBI:16467	API_rID32A:ADH (Arg)
+3	alpha GAL	alpha-Galactosidase	alphaGAL_rID32A	4-Nitrophenyl-alpha-D-galactoside	3.2.1.22	alphaGAL_rID32A	546840.0	7493-95-0		CHEBI:54684	API_rID32A:alpha GAL
+4	beta GAL	beta-Galactosidase	betaGAL_rID32A	4-Nitrophenyl-beta-D-galactoside	3.2.1.23	betaGAL_rID32A	355715.0	3150-24-1	C04452	CHEBI:355715	API_rID32A:beta GAL
+5	beta GP	beta-Galactosidase 6-phosphate	betaGP_rID32A	4-Nitrophenyl 6-O-phosphono-beta-D-galactosid		betaGP_rID32A	90128.0			CHEBI:90128	API_rID32A:beta GP
+6	alpha GLU	alpha-Glucosidase	alphaGLU_rID32A	4-Nitrophenyl alpha-D-glucopyranoside 	3.2.1.20	alphaGLU_rID32A		3767-28-0 		CAS-RN:3767-28-0 	API_rID32A:alpha GLU
+7	beta GLU	beta-Glucosidase	betaGLU_rID32A	4-Nitrophenyl beta-D-glucopyranoside	3.2.1.21	betaGLU_rID32A		2492-87-7		CAS-RN:2492-87-7	API_rID32A:beta GLU
+8	alpha ARA	alpha-Arabinosidase	alphaARA_rID32A	4-Nitrophenyl alpha-L-arabinofuranoside 	3.2.1.55	alphaARA_rID32A		6892-58-6		CAS-RN:6892-58-6	API_rID32A:alpha ARA
+9	beta GUR	beta-Glucuronidase	betaGUR_rID32A	4-Nitrophenyl beta-D-glucuronide 	3.2.1.31	betaGUR_rID32A		10344-94-2		CAS-RN:10344-94-2	API_rID32A:beta GUR
+10	beta NAG	beta-N-Acetyl-beta-glucosaminidase	betaNAG_rID32A	4-Nitrophenyl N-acetyl-beta-D-glucosaminide	3.2.1.52	betaNAG_rID32A		3459-18-5		CAS-RN:3459-18-5	API_rID32A:beta NAG
+11	MNE	Fermentation of D-mannose	MNE_rID32A	D-mannose		MNE_rID32A	16024.0	3458-28-4	C00159	CHEBI:16024	API_rID32A:MNE
+12	RAF	Fermentation of raffinose	RAF_rID32A	D-raffinose (raffinose)		RAF_rID32A	16634.0	512-69-6	C00492	CHEBI:16634	API_rID32A:RAF
+13	GDC	Glutamate decarboxylase	GDC_rID32A	L-glutamic acid	4.1.1.15	GDC_rID32A	16015.0	56-86-0	C00025	CHEBI:16015	API_rID32A:GDC
+14	alpha FUC	alpha-Fucosidase	alphaFUC_rID32A	4-Nitrophenyl alpha-L-fucopyranoside 	3.2.1.51	alphaFUC_rID32A		10231-84-2		CAS-RN:10231-84-2	API_rID32A:alpha FUC
+15	NIT	Reduction of nitrate	NIT_rID32A	Potassium nitrate		NIT_rID32A	63043.0	7757-79-1		CHEBI:63043	API_rID32A:NIT
+16	IND	Indole production	IND_rID32A	L-tryptophan	4.1.99.1	IND_rID32A	16828.0	73-22-3	C00078	CHEBI:16828	API_rID32A:IND
+17	PAL	Alkaline phosphatase	PAL_rID32A	2-naphthyl phosphate	3.1.3.1	PAL_rID32A		14463-68-4 		CAS-RN:14463-68-4 	API_rID32A:PAL
+18	ArgA	L-arginine arylamidase	ArgA_rID32A	L-arginine beta-naphthylamide hydrochloride		ArgA_rID32A		18905-73-2		CAS-RN:18905-73-2	API_rID32A:ArgA
+19	ProA	Proline arylamidase	ProA_rID32A	L-proline beta-naphthylamide	3.4.11.5	ProA_rID32A		97216-16-5		CAS-RN:97216-16-5	API_rID32A:ProA
+20	LGA	Leucyl glycin arylamidase	LGA_rID32A	Leu-Gly beta-naphthylamide	3.4.11.1	LGA_rID32A		100930-00-5		CAS-RN:100930-00-5	API_rID32A:LGA
+21	PheA	Phenylalanine arylamidase	PheA_rID32A	L-phenylalanine beta-naphthylamide 		PheA_rID32A		740-57-8		CAS-RN:740-57-8	API_rID32A:PheA
+22	LeuA	Leucine arylamidase	LeuA_rID32A	L-Leucine beta-naphthylamide		LeuA_rID32A		732-85-4		CAS-RN:732-85-4	API_rID32A:LeuA
+23	PyrA	Pyrrolidonyl arylamidase	PyrA_rID32A	L-pyroglutamic acid 2-naphthylamide 	3.4.19.3	PyrA_rID32A		22155-91-5		CAS-RN:22155-91-5	API_rID32A:PyrA
+24	TyrA	Tyrosine arylamidase	TyrA_rID32A	L-tyrosine beta-naphthylamide 		TyrA_rID32A		4357-95-3		CAS-RN:4357-95-3	API_rID32A:TyrA
+25	AlaA	Alanine arylamidase	AlaA_rID32A	L-alanine-L-alanine beta-naphthylamide 		AlaA_rID32A				API_rID32AAlaA_rID32A	API_rID32A:AlaA
+26	GlyA	Glycin arylamidase	GlyA_rID32A	Glycine beta-naphthylamide		GlyA_rID32A		1208-12-04		CAS-RN:1208-12-04	API_rID32A:GlyA
+27	HisA	Histidine arylamidase	HisA_rID32A	L-histidine beta-naphthylamide		HisA_rID32A		7424-15-9		CAS-RN:7424-15-9	API_rID32A:HisA
+28	GGA	Glutamyl-glutamate arylamidase	GGA_rID32A	L-glutamy-L-glutamate beta-naphthylamide		GGA_rID32A				API_rID32AGGA_rID32A	API_rID32A:GGA
+29	SerA	Serine arylamidase	SerA_rID32A	L-serine beta-naphthylamide		SerA_rID32A		888-74-4		CAS-RN:888-74-4	API_rID32A:SerA
+1	URE	Urease/urea hydrolysis	URE_CAM	Urea	3.5.1.5	URE_CAM	16199.0	57-13-6	C00086	CHEBI:16199	API_CAM:URE
+2	NIT	Reduction of nitrate	NIT_CAM	Potassium nitrate		NIT_CAM	63043.0	7757-79-1		CHEBI:63043	API_CAM:NIT
+3	EST	Esterase	EST_CAM	5-bromo-4-chloro-3-indolyl acetate 		EST_CAM		3252-36-6 		CAS-RN:3252-36-6 	API_CAM:EST
+4	HIP	Hippuric acid	HIP_CAM	Hippuric acid (N-benzoylglycine)		HIP_CAM	18089.0	495-69-2	C01586	CHEBI:18089	API_CAM:HIP
+5	GGT	gamma-Glutamyl transferase	GGT_CAM	gamma-L-glutamyl-4-methoxy-2-naphthylamine	2.3.2.2	GGT_CAM		24723-50-0		CAS-RN:24723-50-0	API_CAM:GGT
+6	TTC	Reduction of Triphenyl tetrazolium chloride	TTC_CAM	2,3,5-triphenyltetrazolium chloride		TTC_CAM	78019.0	298-96-4	C11305	CHEBI:78019	API_CAM:TTC
+7	PYRA	Pyrrolidonyl arylamidase	PYRA_CAM	L-pyroglutamic acid 2-naphthylamide 	3.4.19.3	PYRA_CAM		22155-91-5		CAS-RN:22155-91-5	API_CAM:PYRA
+8	ArgA	L-arginine arylamidase	ArgA_CAM	L-arginine-4-methoxy beta-naphthylamide		ArgA_CAM		61876-75-3 		CAS-RN:61876-75-3 	API_CAM:ArgA
+9	AspA	L-aspartic acid arylamidase	AspA_CAM	L-aspartic acid beta-naphthylamide 		AspA_CAM		635-91-6 		CAS-RN:635-91-6 	API_CAM:AspA
+10	PAL	Alkaline phosphatase	PAL_CAM	2-naphthyl phosphate	3.1.3.1	PAL_CAM		14463-68-4 		CAS-RN:14463-68-4 	API_CAM:PAL
+11	H2S	H2S production	H2S_CAM			H2S_CAM				API_CAMH2S_CAM	API_CAM:H2S
+12	GLU	Assimilation of D-glucose	GLU_CAM	D-glucose		GLU_CAM	17634.0	50-99-7	C00031	CHEBI:17634	API_CAM:GLU
+13	SUT	Assimilation of succinate	SUT_CAM	Sodium succinate		SUT_CAM	63675.0	150-90-3	C00042 	CHEBI:63675	API_CAM:SUT
+14	NAL	Growth inhibition	NAL_CAM	Nalidixic acid		NAL_CAM	100147.0	0389-08-02	C05079	CHEBI:100147	API_CAM:NAL
+15	CFZ	Growth inhibition	CFZ_CAM	Cefazolin sodium		CFZ_CAM	3483.0	27164-46-1	C08098	CHEBI:3483	API_CAM:CFZ
+16	ACE	Assimilation of acetate	ACE_CAM	Sodium acetate		ACE_CAM	32954.0	0127-09-03	C00033 	CHEBI:32954	API_CAM:ACE
+17	PROP	Assimilation of propionic acid	PROP_CAM	Propionic acid		PROP_CAM	30768.0	1979-09-04	C00163	CHEBI:30768	API_CAM:PROP
+18	MLT	Assimilation of malic acid	MLT_CAM	Malic acid		MLT_CAM	6650.0	6915-15-7	C00711	CHEBI:665	API_CAM:MLT
+19	CIT	Assimilation of citric acid	CIT_CAM	Citric acid		CIT_CAM	30769.0	77-92-9	C00158	CHEBI:30769	API_CAM:CIT
+20	ERO	Erythromycin resistance (+) sensitivity (-)	ERO_CAM	Erythromycin		ERO_CAM	48923.0			CHEBI:48923	API_CAM:ERO
+21	CAT	Catalase	CAT_CAM		1.11.1.6	CAT_CAM				EC:1.11.1.6	API_CAM:CAT
+8	Cystine arylamidase		test_8_ZYM	L-cystyl-2-naphthylamide		test_8_ZYM	90426.0	65322-97-6		CHEBI:90426	API_zym:Cystine arylamidase
+9	Trypsin		test_9_ZYM	N-benzoyl-DL-arginine-2-naphthylamide	3.4.21.4	test_9_ZYM		0913-04-02		CAS-RN:0913-04-02	API_zym:Trypsin
+10	alpha- Chymotrypsin		test_10_ZYM	N-glutaryl-phenylalanine-2-naphthylamide	3.4.21.1	test_10_ZYM				EC:3.4.21.1	API_zym:alpha- Chymotrypsin
+11	Acid phosphatase		test_11_ZYM	2-naphthyl phosphate	3.1.3.2	test_11_ZYM		14463-68-4 		CAS-RN:14463-68-4 	API_zym:Acid phosphatase
+12	Naphthol-AS-BI-phosphohydrolase		test_12_ZYM	Naphthol-AS-BI-phosphate		test_12_ZYM		1919-91-1		CAS-RN:1919-91-1	API_zym:Naphthol-AS-BI-phosphohydrolase
+13	alpha- Galactosidase		test_13_ZYM	6-Br-2-naphthyl-alphaD-galactpyranoside	3.2.1.22	test_13_ZYM		25997-59-5		CAS-RN:25997-59-5	API_zym:alpha- Galactosidase
+14	beta- Galactosidase		test_14_ZYM	2-naphthyl-betaD-galactpyranoside	3.2.1.23	test_14_ZYM		312693-81-5		CAS-RN:312693-81-5	API_zym:beta- Galactosidase
+15	beta- Glucuronidase		test_15_ZYM	Naphthol-AS-BI-betaD-glucuronide	3.2.1.31	test_15_ZYM		37-87-6 		CAS-RN:37-87-6 	API_zym:beta- Glucuronidase
+16	alpha- Glucosidase		test_16_ZYM	2-naphthyl-alphaD-glucopyranoside	3.2.1.20	test_16_ZYM		25320-79-0		CAS-RN:25320-79-0	API_zym:alpha- Glucosidase
+17	beta- Glucosidase		test_17_ZYM	6-Br-2-naphthyl-betaD-glucopyranoside	3.2.1.21	test_17_ZYM		 15548-61-5 		CAS-RN: 15548-61-5 	API_zym:beta- Glucosidase
+18	N-acetyl-beta- glucosaminidase		test_18_ZYM	1-naphthyl-N-acetyl-betaD-glucosaminide	3.2.1.52	test_18_ZYM		10329-98-3		CAS-RN:10329-98-3	API_zym:N-acetyl-beta- glucosaminidase
+19	alpha- Mannosidase		test_19_ZYM	6-Br-2-naphthyl-alphaD-mannopyranoside	3.2.1.24	test_19_ZYM		15548-61-5		CAS-RN:15548-61-5	API_zym:alpha- Mannosidase
+20	alpha- Fucosidase		test_20_ZYM	2-naphthyl-alphaL-fucopyranoside	3.2.1.51	test_20_ZYM				EC:3.2.1.51	API_zym:alpha- Fucosidase
+6	Leucine arylamidase		test_6_ZYM	L-leucyl-2-naphthylamide		test_6_ZYM		732-85-4		CAS-RN:732-85-4	API_zym:Leucine arylamidase
+7	Valine arylamidase		test_7_ZYM	L-valyl-2-naphthylamide		test_7_ZYM		729-24-8 		CAS-RN:729-24-8 	API_zym:Valine arylamidase
+5	Lipase (C 14)		test_5_ZYM	2-naphthyl myristate	3.1.1.3	test_5_ZYM		7262-80-8		CAS-RN:7262-80-8	API_zym:Lipase (C 14)
+4	Esterase Lipase (C 8)		test_4_ZYM	2-naphtyl caprylate		test_4_ZYM		10251-17-9		CAS-RN:10251-17-9	API_zym:Esterase Lipase (C 8)
+3	Esterase (C 4)		test_3_ZYM	2-naphthyl butyrate	3.1.1.1	test_3_ZYM		5856-33-7		CAS-RN:5856-33-7	API_zym:Esterase (C 4)
+1	Control		test_1_ZYM			test_1_ZYM					API_zym:Control
+2	Alkaline phosphatase		test_2_ZYM	2-naphthyl phosphate	3.1.3.1	test_2_ZYM		14463-68-4 		CAS-RN:14463-68-4 	API_zym:Alkaline phosphatase
+1	ODC	Ornithine decarboxylase	ODC_ID32E	L-ornithine	4.1.1.17	ODC_ID32E	15729.0	70-26-8 	C00077	CHEBI:15729	API_ID32E:ODC
+2	ADH (Arg)	Arginine dihydrolase	ADH_ID32E	L-arginine	3.5.3.6	ADH_ID32E	16467.0	74-79-3 	C00062	CHEBI:16467	API_ID32E:ADH (Arg)
+3	LDC (Lys)	Lysine decarboxylase	LDC_ID32E	L-lysine	4.1.1.18	LDC_ID32E	18019.0	56-87-1 	C00047	CHEBI:18019	API_ID32E:LDC (Lys)
+4	URE	Urease/urea hydrolysis	URE_ID32E	Urea	3.5.1.5	URE_ID32E	16199.0	57-13-6	C00086	CHEBI:16199	API_ID32E:URE
+5	LARL	Acid from L-arabitol	LARL_ID32E	L-arabitol (L-arabinitol)		LARL_ID32E	18403.0	7643-75-6	C00532	CHEBI:18403	API_ID32E:LARL
+6	GAT	Acid from D-galacturonic acid	GAT_ID32E	D-galacturonic acid		GAT_ID32E	18024.0	685-73-4	C00333	CHEBI:18024	API_ID32E:GAT
+7	5KG	Acid from 5-Ketogluconate	5KG_ID32E	5-Ketogluconate (5-dehydro-D-gluconate)		5KG_ID32E	17426.0		C01062	CHEBI:17426	API_ID32E:5KG
+8	LIP	Lipase	LIP_ID32E	5-bromo-3-indoxyl-nonanoate		LIP_ID32E		133950-70-6		CAS-RN:133950-70-6	API_ID32E:LIP
+9	RP	Phenol red (Acidification)	RP_ID32E	Sodium pyruvate		RP_ID32E	50144.0	113-24-6		CHEBI:50144	API_ID32E:RP
+10	beta GLU	beta-Glucosidase	betaGLU_ID32E	4-Nitrophenyl beta-D-glucopyranoside	3.2.1.21	betaGLU_ID32E		2492-87-7		CAS-RN:2492-87-7	API_ID32E:beta GLU
+11	MAN	Acid from D-mannitol	MAN_ID32E	D-mannitol		MAN_ID32E	16899.0	69-65-8	C00392	CHEBI:16899	API_ID32E:MAN
+12	MAL	Acid from maltose	MAL_ID32E	D-maltose (maltose)		MAL_ID32E	17306.0	69-79-4	C00208	CHEBI:17306	API_ID32E:MAL
+13	ADO	Acid from D-adonitol	ADO_ID32E	D-adonitol (D-ribitol)		ADO_ID32E	15963.0	488-81-3	C00474	CHEBI:15963	API_ID32E:ADO
+14	PLE	Acid from palatinose	PLE_ID32E	Palatinose (6-O-alpha-D-glucopyranosyl-D-fruc		PLE_ID32E	18394.0	13718-94-0	C01742	CHEBI:18394	API_ID32E:PLE
+15	beta GUR	beta-Glucuronidase	betaGUR_ID32E	4-Nitrophenyl beta-D-glucuronide 	3.2.1.31	betaGUR_ID32E		10344-94-2 		CAS-RN:10344-94-2 	API_ID32E:beta GUR
+16	MNT	Malonate	MNT_ID32E	Sodium malonate		MNT_ID32E	62983.0	141-95-7	C00383	CHEBI:62983	API_ID32E:MNT
+17	IND	Indole production	IND_ID32E	L-tryptophan	4.1.99.1	IND_ID32E	16828.0	73-22-3	C00078	CHEBI:16828	API_ID32E:IND
+18	beta NAG	N-Acetyl-beta-Glucosaminidase	betaNAG_ID32E	5-Bromo-4-chloro-3-indolyl N-acetyl-beta-D-gl		betaNAG_ID32E	355715.0	4264-82-8 	C04452	CHEBI:355715	API_ID32E:beta NAG
+19	beta GAL	beta-Galactosidase	betaGAL_ID32E	4-Nitrophenyl-beta-D-galactoside	3.2.1.23	betaGAL_ID32E	355715.0	3150-24-1	C04452	CHEBI:355715	API_ID32E:beta GAL
+20	GLU	Acid from D-glucose	GLU_ID32E	D-glucose		GLU_ID32E	17634.0	50-99-7	C00031	CHEBI:17634	API_ID32E:GLU
+21	SAC	Acid from sucrose	SAC_ID32E	D-saccharose (sucrose)		SAC_ID32E	17992.0	57-50-1	C00089	CHEBI:17992	API_ID32E:SAC
+22	LARA	Acid from L-arabinose	LARA_ID32E	L-arabinose		LARA_ID32E	30849.0	147-81-9	C00259	CHEBI:30849	API_ID32E:LARA
+23	DARL	Acid from D-arabitol	DARL_ID32E	D-arabitol		DARL_ID32E	18333.0	488-82-4 	C01904	CHEBI:18333	API_ID32E:DARL
+24	alpha GLU	alpha-Glucosidase	alphaGLU_ID32E	4-Nitrophenyl alpha-D-glucopyranoside 	3.2.1.20	alphaGLU_ID32E	546840.0	3767-28-0 		CHEBI:54684	API_ID32E:alpha GLU
+25	alpha GAL	alpha-Galactosidase	alphaGAL_ID32E	4-Nitrophenyl-alpha-D-galactoside	3.2.1.22	alphaGAL_ID32E	546840.0	7493-95-0	C01083	CHEBI:54684	API_ID32E:alpha GAL
+26	TRE	Acid from trehalose	TRE_ID32E	D-trehalose (trehalose)		TRE_ID32E	16551.0	99-20-7	C01083	CHEBI:16551	API_ID32E:TRE
+27	RHA	Acid from L-rhamnose	RHA_ID32E	L-rhamnose		RHA_ID32E	62345.0	73-34-7	C00507	CHEBI:62345	API_ID32E:RHA
+28	INO	Acid from inositol	INO_ID32E	Inositol (myo-inositol)		INO_ID32E	17268.0	87-89-8	C00137	CHEBI:17268	API_ID32E:INO
+29	CEL	Acid from cellobiose	CEL_ID32E	D-cellobiose (cellobiose)		CEL_ID32E	17057.0	528-50-7	C00185	CHEBI:17057	API_ID32E:CEL
+30	SOR	Acid from sorbitol	SOR_ID32E	D-sorbitol (D-glucitol)		SOR_ID32E	17924.0	50-70-4	C00794	CHEBI:17924	API_ID32E:SOR
+31	alphaMAL	alpha-Maltosidase	alphaMAL_ID32E	4-Nitrophenyl alpha-D-maltoside 		alphaMAL_ID32E		17400-77-0 		CAS-RN:17400-77-0 	API_ID32E:alphaMAL
+32	AspA	L-aspartic acid arylamidase	AspA_ID32E	L-aspartic acid 4-nitroanilide		AspA_ID32E				API_ID32EAspA_ID32E	API_ID32E:AspA
+1	VP	Acetoin production (Voges Proskauer test)	VP_20STR	sodium pyruvate		VP_20STR	50144.0	113-24-6		CHEBI:50144	API_20STR:VP
+2	HIP	Hippuric acid hydrolysis	HIP_20STR	Hippuric acid (N-benzoylglycine)		HIP_20STR	18089.0	495-69-2	C01586	CHEBI:18089	API_20STR:HIP
+3	ESC	Esculin hydrolysis/beta-glucosidase	ESC_20STR	Esculin ferric citrate	3.2.1.21	ESC_20STR	4853.0	531-75-9	C09264	CHEBI:4853	API_20STR:ESC
+4	PYRA	Pyrrolidonyl arylamidase	PYRA_20STR	L-pyroglutamic acid 2-naphthylamide 	3.4.19.3	PYRA_20STR		22155-91-5		CAS-RN:22155-91-5	API_20STR:PYRA
+5	alpha GAL	alpha-Galactosidase	alphaGAL_20STR	6-Bromo-2-naphthyl-alpha-D-galactopyranoside	3.2.1.22	alphaGAL_20STR		25997-59-5		CAS-RN:25997-59-5	API_20STR:alpha GAL
+6	beta GUR	beta-Glucuronidase	betaGUR_20STR	Naphthol AS-BI beta-D-glucuronide	3.2.1.31	betaGUR_20STR		37-87-6 		CAS-RN:37-87-6 	API_20STR:beta GUR
+7	beta GAL	beta-Galactosidase	betaGAL_20STR	2-Naphthyl-beta-D-galactopyranoside	3.2.1.62	betaGAL_20STR		312693-81-5		CAS-RN:312693-81-5	API_20STR:beta GAL
+8	PAL	Alkaline phosphatase	PAL_20STR	2-naphthyl phosphate	3.1.3.1	PAL_20STR		14463-68-4 		CAS-RN:14463-68-4 	API_20STR:PAL
+9	LAP	Leucine arylamidase	LAP_20STR	L-leucine beta-naphthylamide	3.3.2.6	LAP_20STR		732-85-4		CAS-RN:732-85-4	API_20STR:LAP
+10	ADH	Arginine dihydrolase	ADH_20STR	L-arginine	3.5.3.6	ADH_20STR	16467.0	74-79-3 	C00062	CHEBI:16467	API_20STR:ADH
+11	RIB	Acid from D-ribose	RIB_20STR	D-ribose		RIB_20STR	16988.0	50-69-1	C00121	CHEBI:16988	API_20STR:RIB
+12	ARA	Acid from L-arabinose	ARA_20STR	L-arabinose		ARA_20STR	30849.0	147-81-9	C00259	CHEBI:30849	API_20STR:ARA
+13	MAN	Acid from D-mannitol	MAN_20STR	D-mannitol		MAN_20STR	16899.0	69-65-8	C00392	CHEBI:16899	API_20STR:MAN
+14	SOR	Acid from D-sorbitol	SOR_20STR	D-sorbitol (D-glucitol)		SOR_20STR	17924.0	50-70-4	C00794	CHEBI:17924	API_20STR:SOR
+15	LAC	Acid from lactose	LAC_20STR	D-lactose (lactose)		LAC_20STR	17716.0	63-42-3	C00243	CHEBI:17716	API_20STR:LAC
+16	TRE	Acid from trehalose	TRE_20STR	D-trehalose (trehalose)		TRE_20STR	16551.0	99-20-7	C01083	CHEBI:16551	API_20STR:TRE
+17	INU	Acid from inulin	INU_20STR	Inulin		INU_20STR	15443.0	9005-80-5 	C03323	CHEBI:15443	API_20STR:INU
+18	RAF	Acid from raffinose	RAF_20STR	D-raffinose (raffinose)		RAF_20STR	16634.0	512-69-6	C00492	CHEBI:16634	API_20STR:RAF
+19	AMD	Acid from starch	AMD_20STR	Amidon (starch)		AMD_20STR	28017.0	9005-25-8	C00369	CHEBI:28017	API_20STR:AMD
+20	GLYG	Acid from glycogen	GLYG_20STR	Glycogen		GLYG_20STR	28087.0	9005-79-2	C00182	CHEBI:28087	API_20STR:GLYG
+21	beta HEM	beta hemolysis present	betaHEM_20STR			betaHEM_20STR				API_20STRbetaHEM_20STR	API_20STR:beta HEM
+5	beta GUR	beta-Glucuronidase	betaGUR_COR	Naphthol AS-BI beta-D-glucuronide	3.2.1.31	betaGUR_COR		37-87-6 		CAS-RN:37-87-6 	API_coryne:beta GUR
+4	PAL	Alkaline phosphatase	PAL_COR	2-naphthyl phosphate	3.1.3.1	PAL_COR		14463-68-4 		CAS-RN:14463-68-4 	API_coryne:PAL
+3	PYRA	Pyrrolidonyl arylamidase	PYRA_COR	L-pyroglutamic acid 2-naphthylamide 	3.4.19.3	PYRA_COR		22155-91-5		CAS-RN:22155-91-5	API_coryne:PYRA
+2	PYZ	Pyrazinamidase	PYZ_COR	Pyrazinecarboxamide	3.5.1.B15	PYZ_COR	45285.0	98-96-4	C01956	CHEBI:45285	API_coryne:PYZ
+1	NIT	Reduction of nitrate	NIT_COR	Potassium nitrate		NIT_COR	63043.0	7757-79-1		CHEBI:63043	API_coryne:NIT
+6	beta GAL	beta-Galactosidase	betaGAL_COR	2-Naphthyl-beta-D-galactopyranoside	3.2.1.62	betaGAL_COR		312693-81-5		CAS-RN:312693-81-5	API_coryne:beta GAL
+7	alpha GLU	alpha-Glucosidase	alphaGLU_COR	2-Naphthyl alpha-D-glucopyranoside	3.2.1.20	alphaGLU_COR		25320-79-0		CAS-RN:25320-79-0	API_coryne:alpha GLU
+8	beta NAG	N-Acetyl-beta-Glucosidase	betaNAG_COR	1-Naphthyl-N-acetyl-beta-D-glucosaminide		betaNAG_COR		10329-98-3		CAS-RN:10329-98-3	API_coryne:beta NAG
+9	ESC	Esculin hydrolysis/beta-Glucosidase	ESC_COR	Esculin ferric citrate	3.2.1.21	ESC_COR	4853.0	531-75-9	C09264	CHEBI:4853	API_coryne:ESC
+10	URE	Urease/urea hydrolysis	URE_COR	Urea	3.5.1.5	URE_COR	16199.0	57-13-6	C00086	CHEBI:16199	API_coryne:URE
+11	GEL	Gelatinase/gelatin hydrolysis	GEL_COR	Gelatin		GEL_COR	5291.0	9000-70-8	C01498	CHEBI:5291	API_coryne:GEL
+12	Control	Control fermentation	control_COR	Control		control_COR				API_corynecontrol_COR	API_coryne:Control
+13	GLU	Fermentation of D-glucose	GLU_COR	D-glucose		GLU_COR	17634.0	50-99-7	C00031	CHEBI:17634	API_coryne:GLU
+14	RIB	Fermentation of D-ribose	RIB_COR	D-ribose		RIB_COR	16988.0	50-69-1	C00121	CHEBI:16988	API_coryne:RIB
+15	XYL	Fermentation of D-xylose	XYL_COR	D-xylose		XYL_COR	65327.0	58-86-6	C00181	CHEBI:65327	API_coryne:XYL
+16	MAN	Fermentation of D-mannitol	MAN_COR	D-mannitol		MAN_COR	16899.0	69-65-8	C00392	CHEBI:16899	API_coryne:MAN
+17	MAL	Fermentation of maltose	MAL_COR	D-maltose (maltose)		MAL_COR	17306.0	69-79-4	C00208	CHEBI:17306	API_coryne:MAL
+18	LAC	Fermentation of lactose	LAC_COR	D-lactose (lactose)		LAC_COR	17716.0	63-42-3	C00243	CHEBI:17716	API_coryne:LAC
+19	SAC	Fermentation of sucrose	SAC_COR	D-saccharose (sucrose)		SAC_COR	17992.0	57-50-1	C00089	CHEBI:17992	API_coryne:SAC
+20	GLYG	Fermentation of glycogen	GLYG_COR	Glycogen		GLYG_COR	28087.0	9005-79-2	C00182	CHEBI:28087	API_coryne:GLYG
+21	CAT	Catalase	CAT_COR		1.11.1.6	CAT_COR				EC:1.11.1.6	API_coryne:CAT
+1	URE	Urease/urea hydrolysis	URE_ID32STA	Urea	3.5.1.5	URE_ID32STA	16199.0	57-13-6	C00086	CHEBI:16199	API_ID32STA:URE
+2	ADH (Arg)	Arginine dihydrolase	ADH_ID32STA	L-arginine	3.5.3.6	ADH_ID32STA	16467.0	74-79-3 	C00062	CHEBI:16467	API_ID32STA:ADH (Arg)
+3	ODC	Ornithine decarboxylase	ODC_ID32STA	L-ornithine	4.1.1.17	ODC_ID32STA	15729.0	70-26-8 	C00077	CHEBI:15729	API_ID32STA:ODC
+4	ESC	Esculin hydrolysis	ESC_ID32STA	Esculin ferric citrate	3.2.1.21	ESC_ID32STA	4853.0	531-75-9	C09264	CHEBI:4853	API_ID32STA:ESC
+5	GLU	Fermentation of D-glucose	GLU_ID32STA	D-glucose		GLU_ID32STA	17634.0	50-99-7	C00031	CHEBI:17634	API_ID32STA:GLU
+6	FRU	Fermentation of D-fructose	FRU_ID32STA	D-fructose		FRU_ID32STA	15824.0	57-48-7 	C00095	CHEBI:15824	API_ID32STA:FRU
+7	MNE	Fermentation of D-mannose	MNE_ID32STA	D-mannose		MNE_ID32STA	16024.0	3458-28-4	C00159	CHEBI:16024	API_ID32STA:MNE
+8	MAL	Fermentation of maltose	MAL_ID32STA	D-maltose (maltose)		MAL_ID32STA	17306.0	69-79-4	C00208	CHEBI:17306	API_ID32STA:MAL
+9	LAC	Fermentation of lactose	LAC_ID32STA	D-lactose (lactose)		LAC_ID32STA	17716.0	63-42-3	C00243	CHEBI:17716	API_ID32STA:LAC
+10	TRE	Fermentation of trehalose	TRE_ID32STA	D-trehalose (trehalose)		TRE_ID32STA	16551.0	99-20-7	C01083	CHEBI:16551	API_ID32STA:TRE
+11	MAN	Fermentation of D-mannitol	MAN_ID32STA	D-mannitol		MAN_ID32STA	16899.0	69-65-8	C00392	CHEBI:16899	API_ID32STA:MAN
+12	RAF	Fermentation of raffinose	RAF_ID32STA	D-raffinose (raffinose)		RAF_ID32STA	16634.0	512-69-6	C00492	CHEBI:16634	API_ID32STA:RAF
+13	RIB	Fermentation of D-ribose	RIB_ID32STA	D-ribose		RIB_ID32STA	16988.0	50-69-1	C00121	CHEBI:16988	API_ID32STA:RIB
+14	CEL	Fermentation of cellobiose	CEL_ID32STA	D-cellobiose (cellobiose)		CEL_ID32STA	17057.0	528-50-7	C00185	CHEBI:17057	API_ID32STA:CEL
+15	NIT	Reduction of nitrate	NIT_ID32STA	Potassium nitrate		NIT_ID32STA	63043.0	7757-79-1		CHEBI:63043	API_ID32STA:NIT
+16	VP	Acetoin production (Voges Proskauer test)	VP_ID32STA	sodium pyruvate		VP_ID32STA	50144.0	113-24-6		CHEBI:50144	API_ID32STA:VP
+17	beta GAL	beta-Galactosidase	betaGAL_ID32STA	2-Naphthyl-beta-D-galactopyranoside	3.2.1.23	betaGAL_ID32STA		312693-81-5 		CAS-RN:312693-81-5 	API_ID32STA:beta GAL
+18	ArgA	L-arginine arylamidase	ArgA_ID32STA	L-arginine beta-naphthylamide hydrochloride		ArgA_ID32STA		18905-73-2 		CAS-RN:18905-73-2 	API_ID32STA:ArgA
+19	PAL	Alkaline phosphatase	PAL_ID32STA	2-naphthyl phosphate	3.1.3.1	PAL_ID32STA		14463-68-4 		CAS-RN:14463-68-4 	API_ID32STA:PAL
+20	PyrA	Pyrrolidonyl arylamidase	PyrA_ID32STA	L-pyroglutamic acid 2-naphthylamide 	3.4.19.3	PyrA_ID32STA		22155-91-5 		CAS-RN:22155-91-5 	API_ID32STA:PyrA
+21	NOVO	Novobiocin resistance	NOVO_ID32STA	Novobiocin		NOVO_ID32STA	28368.0	303-81-1	C05080	CHEBI:28368	API_ID32STA:NOVO
+22	SAC	Fermentation of sucrose	SAC_ID32STA	D-saccharose (sucrose)		SAC_ID32STA	17992.0	57-50-1	C00089	CHEBI:17992	API_ID32STA:SAC
+23	NAG	Fermentation of N-acetyl-glucosamine	NAG_ID32STA	N-acetyl-D-glucosamine		NAG_ID32STA	506227.0	7512-17-6 	C00140	CHEBI:506227	API_ID32STA:NAG
+24	TUR	Fermentation of turanose	TUR_ID32STA	D-turanose (turanose)		TUR_ID32STA	32528.0	547-25-1	C19636	CHEBI:32528	API_ID32STA:TUR
+25	ARA	Fermentation of arabinose	ARA_ID32STA	L-arabinose		ARA_ID32STA	30849.0	147-81-9	C00259	CHEBI:30849	API_ID32STA:ARA
+26	beta GUR	beta-Glucuronidase	betaGUR_ID32STA	4-Nitrophenyl beta-D-glucuronide 	3.2.1.31	betaGUR_ID32STA		10344-94-2 		CAS-RN:10344-94-2 	API_ID32STA:beta GUR
+2	GLU	Acid from D-glucose	GLU_STA	D-glucose		GLU_STA	17634.0	50-99-7	C00031	CHEBI:17634	API_STA:GLU
+3	FRU	Acid from D-fructose	FRU_STA	D-fructose		FRU_STA	15824.0	57-48-7 	C00095	CHEBI:15824	API_STA:FRU
+4	MNE	Acid from D-mannose	MNE_STA	D-mannose		MNE_STA	16024.0	3458-28-4	C00159	CHEBI:16024	API_STA:MNE
+5	MAL	Acid from maltose	MAL_STA	D-maltose (maltose)		MAL_STA	17306.0	69-79-4	C00208	CHEBI:17306	API_STA:MAL
+6	LAC	Acid from lactose	LAC_STA	D-lactose (lactose)		LAC_STA	17716.0	63-42-3	C00243	CHEBI:17716	API_STA:LAC
+7	TRE	Acid from trehalose	TRE_STA	D-trehalose (trehalose)		TRE_STA	16551.0	99-20-7	C01083	CHEBI:16551	API_STA:TRE
+8	MAN	Acid from D-mannitol	MAN_STA	D-mannitol		MAN_STA	16899.0	69-65-8	C00392	CHEBI:16899	API_STA:MAN
+9	XLT	Acid from xylitol	XLT_STA	Xylitol		XLT_STA	17151.0	149-32-6	C00503	CHEBI:17151	API_STA:XLT
+10	MEL	Acid from melibiose	MEL_STA	D-melibiose (melibiose)		MEL_STA	28053.0	585-99-9 	C05402	CHEBI:28053	API_STA:MEL
+11	NIT	Reduction of nitrate	NIT_STA	Potassium nitrate		NIT_STA	63043.0	7757-79-1		CHEBI:63043	API_STA:NIT
+12	PAL	Alkaline phosphatase	PAL_STA	2-naphthyl phosphate	3.1.3.1	PAL_STA		14463-68-4 		CAS-RN:14463-68-4 	API_STA:PAL
+13	VP	Acetoin production (Voges Proskauer test)	VP_STA	sodium pyruvate		VP_STA	50144.0	113-24-6		CHEBI:50144	API_STA:VP
+14	RAF	Acid from raffinose	RAF_STA	D-raffinose (raffinose)		RAF_STA	16634.0	512-69-6	C00492	CHEBI:16634	API_STA:RAF
+15	XYL	Acid from D-xylose	XYL_STA	D-xylose		XYL_STA	65327.0	58-86-6	C00181	CHEBI:65327	API_STA:XYL
+16	SAC	Acid from sucrose	SAC_STA	D-saccharose (sucrose)		SAC_STA	17992.0	57-50-1	C00089	CHEBI:17992	API_STA:SAC
+17	MDG	Acid from methyl-alpha-D-glucopyranoside	MDG_STA	Methyl alpha-D-glucopyranoside		MDG_STA	320061.0	709-50-2		CHEBI:320061	API_STA:MDG
+18	NAG	Acid from N-acetyl-glucosamine	NAG_STA	N-acetyl-D-glucosamine		NAG_STA	506227.0	7512-17-6 	C00140	CHEBI:506227	API_STA:NAG
+19	ADH	Arginine dihydrolase	ADH_STA	L-arginine	3.5.3.6	ADH_STA	16467.0	74-79-3 	C00062	CHEBI:16467	API_STA:ADH
+20	URE	Urease/urea hydrolysis	URE_STA	Urea	3.5.1.5	URE_STA	16199.0	57-13-6	C00086	CHEBI:16199	API_STA:URE
+21	LSTR	Resistance to lysostaphin (EC 3.4.24.75)	LSTR_STA		3.4.24.75	LSTR_STA				EC:3.4.24.75	API_STA:LSTR
+1	Control		control_STA			control_STA				API_STAcontrol_STA	API_STA:Control
+1	Q	Control	control_50CHas	Control		control_50CHas				API_50CHascontrol_50CHas	API_50CHas:Q
+2	GLY	Assimilation of glycerol	GLY_50CHas	Glycerol		GLY_50CHas	17754.0	56-81-5	C00116	CHEBI:17754	API_50CHas:GLY
+3	ERY	Assimilation of erythritol	ERY_50CHas	Erythritol		ERY_50CHas	17113.0	149-32-6	C00503	CHEBI:17113	API_50CHas:ERY
+4	DARA	Assimilation of D-arabinose	DARA_50CHas	D-arabinose		DARA_50CHas	17108.0	10323-20-3	C00216	CHEBI:17108	API_50CHas:DARA
+5	LARA	Assimilation of L-arabinose	LARA_50CHas	L-arabinose		LARA_50CHas	30849.0	147-81-9	C00259	CHEBI:30849	API_50CHas:LARA
+6	RIB	Assimilation of D-ribose	RIB_50CHas	D-ribose		RIB_50CHas	16988.0	50-69-1	C00121	CHEBI:16988	API_50CHas:RIB
+7	DXYL	Assimilation of D-xylose	DXYL_50CHas	D-xylose		DXYL_50CHas	65327.0	58-86-6	C00181	CHEBI:65327	API_50CHas:DXYL
+8	LXYL	Assimilation of L-xylose	LXYL_50CHas	L-xylose		LXYL_50CHas	65328.0	0609-06-03	C01510 	CHEBI:65328	API_50CHas:LXYL
+9	ADO	Assimilation of D-adonitol	ADO_50CHas	D-adonitol (D-ribitol)		ADO_50CHas	15963.0	488-81-3	C00474	CHEBI:15963	API_50CHas:ADO
+10	MDX	Assimilation of methyl beta-D-xylopyranoside	MDX_50CHas	Methyl beta-D-xylopyranoside		MDX_50CHas	74863.0	0612-05-05		CHEBI:74863	API_50CHas:MDX
+11	GAL	Assimilation of D-galactose	GAL_50CHas	D-galactose		GAL_50CHas	12936.0	59-23-4	C00124	CHEBI:12936	API_50CHas:GAL
+12	GLU	Assimilation of D-glucose	GLU_50CHas	D-glucose		GLU_50CHas	17634.0	50-99-7	C00031	CHEBI:17634	API_50CHas:GLU
+13	FRU	Assimilation of D-fructose	FRU_50CHas	D-fructose		FRU_50CHas	15824.0	57-48-7 	C00095	CHEBI:15824	API_50CHas:FRU
+14	MNE	Assimilation of D-mannose	MNE_50CHas	D-mannose		MNE_50CHas	16024.0	3458-28-4	C00159	CHEBI:16024	API_50CHas:MNE
+15	SBE	Assimilation of L-sorbose	SBE_50CHas	L-sorbose		SBE_50CHas	17266.0	87-79-6	C00247	CHEBI:17266	API_50CHas:SBE
+16	RHA	Assimilation of L-rhamnose	RHA_50CHas	L-rhamnose		RHA_50CHas	62345.0	73-34-7	C00507	CHEBI:62345	API_50CHas:RHA
+17	DUL	Assimilation of dulcitol	DUL_50CHas	Dulcitol (galactitol)		DUL_50CHas	16813.0	608-66-2	C01697	CHEBI:16813	API_50CHas:DUL
+18	INO	Assimilation of inositol	INO_50CHas	Inositol (myo-inositol)		INO_50CHas	17268.0	87-89-8	C00137	CHEBI:17268	API_50CHas:INO
+19	MAN	Assimilation of D-mannitol	MAN_50CHas	D-mannitol		MAN_50CHas	16899.0	69-65-8	C00392	CHEBI:16899	API_50CHas:MAN
+20	SOR	Assimilation of sorbitol	SOR_50CHas	D-sorbitol (D-glucitol)		SOR_50CHas	17924.0	50-70-4	C00794	CHEBI:17924	API_50CHas:SOR
+21	MDM	Assimilation of methyl alpha-D-mannopyranoside	MDM_50CHas	Methyl alpha-D-mannopyranoside (methyl alpha-		MDM_50CHas	43943.0	25281-48-5		CHEBI:43943	API_50CHas:MDM
+22	MDG	Assimilation of  methyl alpha-D-glucopyranoside	MDG_50CHas	Methyl alpha-D-glucopyranoside		MDG_50CHas	320061.0	709-50-2		CHEBI:320061	API_50CHas:MDG
+23	NAG	Assimilation of N-acetyl-glucosamine	NAG_50CHas	N-acetyl-D-glucosamine		NAG_50CHas	506227.0	7512-17-6 	C00140	CHEBI:506227	API_50CHas:NAG
+24	AMY	Assimilation of amygdalin	AMY_50CHas	Amygdalin		AMY_50CHas	27613.0	29883-15-6 	C08325	CHEBI:27613	API_50CHas:AMY
+25	ARB	Assimilation of arbutin	ARB_50CHas	Arbutin (hydroquinone O-beta-D-glucopyranosid		ARB_50CHas	18305.0	497-76-7	C06186	CHEBI:18305	API_50CHas:ARB
+26	ESC	Assimilation of esculin	ESC_50CHas	Esculin ferric citrate		ESC_50CHas	4853.0	531-75-9	C09264	CHEBI:4853	API_50CHas:ESC
+27	SAL	Assimilation of salicin	SAL_50CHas	Salicin		SAL_50CHas	17814.0	138-52-3	C01451	CHEBI:17814	API_50CHas:SAL
+28	CEL	Assimilation of cellobiose	CEL_50CHas	D-cellobiose (cellobiose)		CEL_50CHas	17057.0	528-50-7	C00185	CHEBI:17057	API_50CHas:CEL
+29	MAL	Assimilation of maltose	MAL_50CHas	D-maltose (maltose)		MAL_50CHas	17306.0	69-79-4	C00208	CHEBI:17306	API_50CHas:MAL
+30	LAC	Assimilation of lactose	LAC_50CHas	D-lactose (lactose)		LAC_50CHas	17716.0	63-42-3	C00243	CHEBI:17716	API_50CHas:LAC
+31	MEL	Assimilation of melibiose	MEL_50CHas	D-melibiose (melibiose)		MEL_50CHas	28053.0	585-99-9 	C05402	CHEBI:28053	API_50CHas:MEL
+32	SAC	Assimilation of sucrose	SAC_50CHas	D-saccharose (sucrose)		SAC_50CHas	17992.0	57-50-1	C00089	CHEBI:17992	API_50CHas:SAC
+33	TRE	Assimilation of trehalose	TRE_50CHas	D-trehalose (trehalose)		TRE_50CHas	16551.0	99-20-7	C01083	CHEBI:16551	API_50CHas:TRE
+34	INU	Assimilation of inulin	INU_50CHas	Inulin		INU_50CHas	15443.0	9005-80-5 	C03323	CHEBI:15443	API_50CHas:INU
+35	MLZ	Assimilation of melezitose	MLZ_50CHas	D-melezitose (melezitose)		MLZ_50CHas	6731.0	0597-12-06	C08243	CHEBI:6731	API_50CHas:MLZ
+36	RAF	Assimilation of raffinose	RAF_50CHas	D-raffinose (raffinose)		RAF_50CHas	16634.0	512-69-6	C00492	CHEBI:16634	API_50CHas:RAF
+37	AMD	Assimilation of starch	AMD_50CHas	Amidon (starch)		AMD_50CHas	28017.0	9005-25-8	C00369	CHEBI:28017	API_50CHas:AMD
+38	GLYG	Assimilation of glycogen	GLYG_50CHas	Glycogen		GLYG_50CHas	28087.0	9005-79-2	C00182	CHEBI:28087	API_50CHas:GLYG
+39	XLT	Assimilation of xylitol	XLT_50CHas	Xylitol		XLT_50CHas	17151.0	149-32-6	C00503	CHEBI:17151	API_50CHas:XLT
+40	GEN	Assimilation of gentiobiose	GEN_50CHas	Gentiobiose		GEN_50CHas	28066.0	554-91-6 	C08240	CHEBI:28066	API_50CHas:GEN
+41	TUR	Assimilation of turanose	TUR_50CHas	D-turanose (turanose)		TUR_50CHas	32528.0	547-25-1	C19636	CHEBI:32528	API_50CHas:TUR
+42	LYX	Assimilation of D-lyxose	LYX_50CHas	D-lyxose		LYX_50CHas	62318.0	65-42-9		CHEBI:62318	API_50CHas:LYX
+43	TAG	Assimilation of D-tagatose	TAG_50CHas	D-tagatose		TAG_50CHas	16443.0	87-81-1	C00796	CHEBI:16443	API_50CHas:TAG
+44	DFUC	Assimilation of D-fucose	DFUC_50CHas	D-fucose		DFUC_50CHas	28847.0			CHEBI:28847	API_50CHas:DFUC
+45	LFUC	Assimilation of L-fucose	LFUC_50CHas	L-Fucose		LFUC_50CHas	18287.0	2438-80-4		CHEBI:18287	API_50CHas:LFUC
+46	DARL	Assimilation of D-arabitol	DARL_50CHas	D-arabitol		DARL_50CHas	18333.0	488-82-4 	C01904	CHEBI:18333	API_50CHas:DARL
+47	LARL	Assimilation of L-arabitol	LARL_50CHas	L-arabitol (L-arabinitol)		LARL_50CHas	18403.0	7643-75-6	C00532	CHEBI:18403	API_50CHas:LARL
+48	GNT	Assimilation of gluconate	GNT_50CHas	Gluconate (D-gluconic acid)		GNT_50CHas	33198.0	526-95-4	C00257	CHEBI:33198	API_50CHas:GNT
+49	2KG	Assimilation of 2-Ketogluconate	2KG_50CHas	2-Ketogluconate (2-dehydro-D-gluconate)		2KG_50CHas	16808.0	669-90-9	C06473	CHEBI:16808	API_50CHas:2KG
+50	5KG	Assimilation of 5-Ketogluconate	5KG_50CHas	5-Ketogluconate (5-dehydro-D-gluconate)		5KG_50CHas	17426.0		C01062	CHEBI:17426	API_50CHas:5KG
+1	ADH (Arg)	Arginine dihydrolase	ADH_rID32STR	L-arginine	3.5.3.6	ADH_rID32STR	16467.0	74-79-3 	C00062	CHEBI:16467	API_rID32STR:ADH (Arg)
+2	beta GLU	beta-Glucosidase	betaGLU_rID32STR	Resorufin beta-D-glucopyranoside	3.2.1.21	betaGLU_rID32STR		101490-85-1		CAS-RN:101490-85-1	API_rID32STR:beta GLU
+3	beta GAR	beta-Galactosidase	betaGAR_rID32STR	Resorufin beta-D-galactopyranoside	3.2.1.23	betaGAR_rID32STR		95079-19-9		CAS-RN:95079-19-9	API_rID32STR:beta GAR
+4	beta GUR	beta-Glucuronidase	betaGUR_rID32STR	Resorufin beta-D-glucuronide	3.2.1.31	betaGUR_rID32STR		125440-91-7		CAS-RN:125440-91-7	API_rID32STR:beta GUR
+5	alpha GAL	alpha-Galactosidase	alphaGAL_rID32STR	4-Nitrophenyl-alpha-D-galactoside	3.2.1.22	alphaGAL_rID32STR	546840.0	7493-95-0		CHEBI:54684	API_rID32STR:alpha GAL
+6	PAL	Alkaline Phosphatase	PAL_rID32STR	4-nitrophenyl-beta-D-galactoside	3.1.3.1	PAL_rID32STR	355715.0	3150-24-1	C04452	CHEBI:355715	API_rID32STR:PAL
+7	RIB	Acid from D-ribose	RIB_rID32STR	D-ribose		RIB_rID32STR	16988.0	50-69-1	C00121	CHEBI:16988	API_rID32STR:RIB
+8	MAN	Acid from D-mannitol	MAN_rID32STR	D-mannitol		MAN_rID32STR	16899.0	69-65-8	C00392	CHEBI:16899	API_rID32STR:MAN
+9	SOR	Acid from sorbitol	SOR_rID32STR	D-sorbitol (D-glucitol)		SOR_rID32STR	17924.0	50-70-4	C00794	CHEBI:17924	API_rID32STR:SOR
+10	LAC	Acid from lactose	LAC_rID32STR	D-lactose (lactose)		LAC_rID32STR	17716.0	63-42-3	C00243	CHEBI:17716	API_rID32STR:LAC
+11	TRE	Acid from trehalose	TRE_rID32STR	D-trehalose (trehalose)		TRE_rID32STR	16551.0	99-20-7	C01083	CHEBI:16551	API_rID32STR:TRE
+12	RAF	Acid from raffinose	RAF_rID32STR	D-raffinose (raffinose)		RAF_rID32STR	16634.0	512-69-6	C00492	CHEBI:16634	API_rID32STR:RAF
+13	SAC	Acid from sucrose	SAC_rID32STR	D-saccharose (sucrose)		SAC_rID32STR	17992.0	57-50-1	C00089	CHEBI:17992	API_rID32STR:SAC
+14	LARA	Acid from L-arabinose	LARA_rID32STR	L-arabinose		LARA_rID32STR	30849.0	147-81-9	C00259	CHEBI:30849	API_rID32STR:LARA
+15	DARL	Acid from D-arabitol	DARL_rID32STR	D-arabitol		DARL_rID32STR	18333.0	488-82-4 	C01904	CHEBI:18333	API_rID32STR:DARL
+16	CDEX	Acid from alpha-cyclodextrin	CDEX_rID32STR	alpha-cyclodextrin		CDEX_rID32STR	40585.0	10016-20-3		CHEBI:40585	API_rID32STR:CDEX
+17	VP	Acetoin production (Voges Proskauer test)	VP_rID32STR	sodium pyruvate		VP_rID32STR	50144.0	113-24-6		CHEBI:50144	API_rID32STR:VP
+18	APPA	Alanyl-Phenylalanyl-Proline arylamidase	APPA_rID32STR	Ala-Phe-Pro beta-naphthylamide		APPA_rID32STR				API_rID32STRAPPA_rID32STR	API_rID32STR:APPA
+19	beta GAL	beta-Galactosidase	betaGAL_rID32STR	2-Naphthyl-beta-D-galactopyranoside	3.2.1.23	betaGAL_rID32STR		312693-81-5 		CAS-RN:312693-81-5 	API_rID32STR:beta GAL
+20	PyrA	Pyrrolidonyl arylamidase	PyrA_rID32STR	L-pyroglutamic acid 2-naphthylamide 	3.4.19.3	PyrA_rID32STR		22155-91-5 		CAS-RN:22155-91-5 	API_rID32STR:PyrA
+21	beta NAG	N-Acetyl-glucosaminidase	betaNAG_rID32STR	6-Bromo-2-naphthyl-N-acetyl-beta-D-glucosamin		betaNAG_rID32STR				API_rID32STRbetaNAG_rID32STR	API_rID32STR:beta NAG
+22	GTA	Glycyl-tryptophan arylamidase	GTA_rID32STR	Gly-Trp beta-naphthylamide		GTA_rID32STR				API_rID32STRGTA_rID32STR	API_rID32STR:GTA
+23	HIP	Hydrolysis of hippuric acid	HIP_rID32STR	Hippuric acid (N-benzoylglycine)		HIP_rID32STR	18089.0	495-69-2	C01586	CHEBI:18089	API_rID32STR:HIP
+24	GLYG	Acid from glycogen	GLYG_rID32STR	Glycogen		GLYG_rID32STR	28087.0	9005-79-2	C00182	CHEBI:28087	API_rID32STR:GLYG
+25	PUL	Acid from pullulan	PUL_rID32STR	Pullulan		PUL_rID32STR		2614080	C00480	kegg.compound:C00480	API_rID32STR:PUL
+26	MAL	Acid from maltose	MAL_rID32STR	D-maltose (maltose)		MAL_rID32STR	17306.0	69-79-4	C00208	CHEBI:17306	API_rID32STR:MAL
+27	MEL	Acid from melibiose	MEL_rID32STR	D-melibiose (melibiose)		MEL_rID32STR	28053.0	585-99-9 	C05402	CHEBI:28053	API_rID32STR:MEL
+28	MLZ	Acid from melezitose	MLZ_rID32STR	D-melezitose (melezitose)		MLZ_rID32STR	6731.0	0597-12-06	C08243	CHEBI:6731	API_rID32STR:MLZ
+29	Mbeta DG	Acidification of methyl beta-D-glucopyranoside	MbetaDG_rID32STR	Methyl beta-D-glucopyranoside		MbetaDG_rID32STR	320055.0	709-50-2		CHEBI:320055	API_rID32STR:Mbeta DG
+30	TAG	Acid from D-tagatose	TAG_rID32STR	D-tagatose		TAG_rID32STR	16443.0	87-81-3	C00798	CHEBI:16443	API_rID32STR:TAG
+31	beta MAN	beta-Mannosidase	betaMAN_rID32STR	4-Nitrophenyl beta-D-mannopyranoside	3.2.1.25	betaMAN_rID32STR		35599-02-1		CAS-RN:35599-02-1	API_rID32STR:beta MAN
+32	URE	Urease/urea hydrolysis	URE_rID32STR	Urea	3.5.1.5	URE_rID32STR	16199.0	57-13-6	C00086	CHEBI:16199	API_rID32STR:URE
+1	PEN	Penicillinase production	PEN_NH	Benzylpenicillin potassium	3.5.2.6	PEN_NH	7963.0	113-98-4		CHEBI:7963	API_NH:PEN
+2	GLU	Acid from D-glucose	GLU_NH	D-glucose		GLU_NH	17634.0	50-99-7	C00031	CHEBI:17634	API_NH:GLU
+3	FRU	Acid from D-fructose	FRU_NH	D-fructose		FRU_NH	15824.0	57-48-7 	C00095	CHEBI:15824	API_NH:FRU
+4	MAL	Acid from maltose	MAL_NH	D-maltose (maltose)		MAL_NH	17306.0	69-79-4	C00208	CHEBI:17306	API_NH:MAL
+5	SAC	Acid from sucrose	SAC_NH	D-saccharose (sucrose)		SAC_NH	17992.0	57-50-1	C00089	CHEBI:17992	API_NH:SAC
+6	ODC	Ornithine decarboxylase	ODC_NH	L-ornithine	4.1.1.17	ODC_NH	15729.0	70-26-8 	C00077	CHEBI:15729	API_NH:ODC
+7	URE	Urease/urea hydrolysis	URE_NH	Urea	3.5.1.5	URE_NH	16199.0	57-13-6	C00086	CHEBI:16199	API_NH:URE
+8	LIP	Lipase	LIP_NH	5-bromo-3-indolyl-decanoate	3.1.1.3	LIP_NH		133950-71-7		CAS-RN:133950-71-7	API_NH:LIP
+9	PAL	Alkaline phosphatase	PAL_NH	Para-nitrophenylphosphate (4-nitrophenyl phos	3.1.3.1	PAL_NH	17440.0	330-13-2	C03360	CHEBI:1744	API_NH:PAL
+10	beta GAL	beta-Galactosidase	betaGAL_NH	4-Nitrophenyl-beta-D-galactoside	3.2.1.23	betaGAL_NH	355715.0	3150-24-1	C04452	CHEBI:355715	API_NH:beta GAL
+11	ProA	Proline arylamidase	ProA_NH	L-proline 4-methoxy-beta-naphthylamide	3.4.11.5	ProA_NH		100930-07-2		CAS-RN:100930-07-2	API_NH:ProA
+12	GGT	gamma-Glutamyl transferase	GGT_NH	gamma-L-glutamyl-4-methoxy-2-naphthylamine	2.3.2.2	GGT_NH		24723-50-0		CAS-RN:24723-50-0	API_NH:GGT
+13	IND	Indole production	IND_NH	L-tryptophan	4.1.99.1	IND_NH	16828.0	73-22-3	C00078	CHEBI:16828	API_NH:IND
+1	DIM	Differentiation L. innocura(+)/ L.monoytogenes(-)	DIM_LIST			DIM_LIST				API_LISTDIM_LIST	API_LIST:DIM
+2	ESC	Esculin hydrolysis	ESC_LIST	Esculin ferric citrate	3.2.1.21	ESC_LIST	4853.0	531-75-9	C09264	CHEBI:4853	API_LIST:ESC
+3	alpha MAN	alpha-Mannosidase	alphaMAN_LIST	4-Nitrophenyl alpha-D-mannopyranoside 	3.2.1.24	alphaMAN_LIST		10357-27-4 		CAS-RN:10357-27-4 	API_LIST:alpha MAN
+4	DARL	Acid from D-arabitol	DARL_LIST	D-arabitol		DARL_LIST	18333.0	488-82-4 	C01904	CHEBI:18333	API_LIST:DARL
+5	XYL	Acid from D-xylose	XYL_LIST	D-xylose		XYL_LIST	65327.0	58-86-6	C00181	CHEBI:65327	API_LIST:XYL
+6	RHA	Acid from L-rhamnose	RHA_LIST	L-rhamnose		RHA_LIST	62345.0	73-34-7	C00507	CHEBI:62345	API_LIST:RHA
+7	MDG	Acid from methyl-alpha-D-glucopyranoside	MDG_LIST	Methyl alpha-D-glucopyranoside		MDG_LIST	320061.0	709-50-2		CHEBI:320061	API_LIST:MDG
+8	RIB	Acid from D-ribose	RIB_LIST	D-ribose		RIB_LIST	16988.0	50-69-1	C00121	CHEBI:16988	API_LIST:RIB
+9	G1P	Acid from alpha-D-glucose 1-phosphate	G1P_LIST	alpha-D-glucose 1-phosphate		G1P_LIST	29042.0	59-56-3	C00103	CHEBI:29042	API_LIST:G1P
+10	TAG	Acid from D-tagatose	TAG_LIST	D-tagatose		TAG_LIST	16443.0	87-81-2	C00797	CHEBI:16443	API_LIST:TAG
+11	beta HEM	beta hemolysis present	betaHEM_LIST			betaHEM_LIST				API_LISTbetaHEM_LIST	API_LIST:beta HEM
+5	CIT	Citrate utilization	CIT_20E	Citric acid		CIT_20E	30769.0	77-92-9	C00158	CHEBI:30769	API_20E:CIT
+4	ODC	Ornithine decarboxylase	ODC_20E	L-ornithine	4.1.1.17	ODC_20E	15729.0	70-26-8 	C00077	CHEBI:15729	API_20E:ODC
+3	LDC (Lys)	Lysine decarboxylase	LDC_20E	L-lysine	4.1.1.18	LDC_20E	18019.0	56-87-1 	C00047	CHEBI:18019	API_20E:LDC (Lys)
+2	ADH (Arg)	Arginine dihydrolase	ADH_20E	L-arginine	3.5.3.6	ADH_20E	16467.0	74-79-3 	C00062	CHEBI:16467	API_20E:ADH (Arg)
+1	ONPG	beta-Galactosidase	ONPG_20E	o-nitrophenyl-beta-D-galactopyranosid	3.2.1.23	ONPG_20E	90144.0	0369-07-03		CHEBI:90144	API_20E:ONPG
+6	H2S	H2S production	H2S_20E			H2S_20E				API_20EH2S_20E	API_20E:H2S
+7	URE	Urease/urea hydrolysis	URE_20E	Urea	3.5.1.5	URE_20E	16199.0	57-13-6	C00086	CHEBI:16199	API_20E:URE
+8	TDA (Trp)	Tryptophan deaminase	TDA_20E	L-tryptophan		TDA_20E	16828.0	73-22-3	C00078	CHEBI:16828	API_20E:TDA (Trp)
+9	IND	Indole production	IND_20E	L-tryptophan	4.1.99.1	IND_20E	16828.0	73-22-3	C00078	CHEBI:16828	API_20E:IND
+10	VP	Acetoin production (Voges Proskauer test)	VP_20E	sodium pyruvate		VP_20E	50144.0	113-24-6		CHEBI:50144	API_20E:VP
+11	GEL	Gelatinase/gelatin hydrolysis	GEL_20E	Gelatin		GEL_20E	5291.0	9000-70-8	C01498	CHEBI:5291	API_20E:GEL
+12	GLU	Fermentation/oxidation of D-glucose	GLU_20E	D-glucose		GLU_20E	17634.0	50-99-7	C00031	CHEBI:17634	API_20E:GLU
+13	MAN	Fermentation/oxidation of D-mannitol	MAN_20E	D-mannitol		MAN_20E	16899.0	69-65-8	C00392	CHEBI:16899	API_20E:MAN
+14	INO	Fermentation/oxidation of inositol	INO_20E	Inositol (myo-inositol)		INO_20E	17268.0	87-89-8	C00137	CHEBI:17268	API_20E:INO
+15	Sor	Fermentation/oxidation of sorbitol	SOR_20E	D-sorbitol (D-glucitol)		SOR_20E	17924.0	50-70-4	C00794	CHEBI:17924	API_20E:Sor
+16	RHA	Fermentation/oxidation of L-rhamnose	RHA_20E	L-rhamnose		RHA_20E	62345.0	73-34-7	C00507	CHEBI:62345	API_20E:RHA
+17	SAC	Fermentation/oxidation of sucrose	SAC_20E	D-saccharose (sucrose)		SAC_20E	17992.0	57-50-1	C00089	CHEBI:17992	API_20E:SAC
+18	MEL	Fermentation/oxidation of melibiose	MEL_20E	D-melibiose (melibiose)		MEL_20E	28053.0	585-99-9 	C05402	CHEBI:28053	API_20E:MEL
+19	AMY	Fermentation/oxidation of amygdalin	AMY_20E	Amygdalin		AMY_20E	27613.0	29883-15-6 	C08325	CHEBI:27613	API_20E:AMY
+20	ARA	Fermentation/oxidation of L-arabinose	ARA_20E	L-arabinose		ARA_20E	30849.0	147-81-9	C00259	CHEBI:30849	API_20E:ARA
+21	OX	Cytochrome oxidase	OX_20E	Oxygen	EC 1.9.3.1	OX_20E	26689.0			CHEBI:26689	API_20E:OX
+22	NO2	Nitrite production	NO2_20E	Potassium nitrate		NO2_20E	63043.0	7757-79-1		CHEBI:63043	API_20E:NO2
+23	N2	Reduction to N2	N2_20E	Potassium nitrate		N2_20E	63043.0	7757-79-1		CHEBI:63043	API_20E:N2
+24	MOB	Motility	MOB_20E			MOB_20E				API_20EMOB_20E	API_20E:MOB
+25	MAC	Growth on MacConkey medium	MAC_20E	MacConkey medium		MAC_20E				API_20EMAC_20E	API_20E:MAC
+26	OF-O	Oxidative catabolisation of D-glucose	OF-O_20E	D-glucose		OF-O_20E	17634.0	50-99-7	C00031	CHEBI:17634	API_20E:OF-O
+27	OF-F	Fermentation of D-glucose	OF-F_20E	D-glucose		OF-F_20E	17634.0	50-99-7	C00031	CHEBI:17634	API_20E:OF-F
+6	ESC	Esculin hydrolysis/beta-Glucosidase	ESC_20NE	Esculin ferric citrate	3.2.1.21	ESC_20NE	4853.0	531-75-9	C09264	CHEBI:4853	API_20NE:ESC
+5	URE	Urease/urea hydrolysis	URE_20NE	Urea	3.5.1.5	URE_20NE	16199.0	57-13-6	C00086	CHEBI:16199	API_20NE:URE
+4	ADH (Arg)	Arginine dihydrolase	ADH_20NE	L-arginine	3.5.3.6	ADH_20NE	16467.0	74-79-3 	C00062	CHEBI:16467	API_20NE:ADH (Arg)
+3	GLU_ Ferm	Fermentation of D-glucose	GLU_Ferm_20NE	D-glucose		GLU_Ferm_20NE	17634.0	50-99-7	C00031	CHEBI:17634	API_20NE:GLU_ Ferm
+2	TRP	Indole production	TRP_20NE	L-tryptophan	4.1.99.1	TRP_20NE	16828.0	73-22-3	C00078	CHEBI:16828	API_20NE:TRP
+1	NO3	Reduction of nitrates	NO3_20NE	Potassium nitrate		NO3_20NE	63043.0	7757-79-1		CHEBI:63043	API_20NE:NO3
+7	GEL	Gelatinase/gelatin hydrolysis	GEL_20NE	Gelatin		GEL_20NE	5291.0	9000-70-8	C01498	CHEBI:5291	API_20NE:GEL
+8	PNPG	beta-Galactosidase	PNPG_20NE	4-nitrophenyl-beta-D-galactoside	3.2.1.23	PNPG_20NE	355715.0	3150-24-1	C04452	CHEBI:355715	API_20NE:PNPG
+9	GLU_ Assim	Assimilation of D-glucose	GLU_Assim_20NE	D-glucose		GLU_Assim_20NE	17634.0	50-99-7	C00031	CHEBI:17634	API_20NE:GLU_ Assim
+10	ARA	Assimilation of L-arabinose	ARA_20NE	L-arabinose		ARA_20NE	30849.0	147-81-9	C00259	CHEBI:30849	API_20NE:ARA
+11	MNE	Assimilation of D-mannose	MNE_20NE	D-mannose		MNE_20NE	16024.0	3458-28-4	C00159	CHEBI:16024	API_20NE:MNE
+12	MAN	Assimilation of D-mannitol	MAN_20NE	D-mannitol		MAN_20NE	16899.0	69-65-8	C00392	CHEBI:16899	API_20NE:MAN
+13	NAG	Assimilation of N-acetyl-glucosamine	NAG_20NE	N-acetyl-D-glucosamine		NAG_20NE	506227.0	7512-17-6 	C00140	CHEBI:506227	API_20NE:NAG
+14	MAL	Assimilation of maltose	MAL_20NE	D-maltose (maltose)		MAL_20NE	17306.0	69-79-4	C00208	CHEBI:17306	API_20NE:MAL
+15	GNT	Assimilation of gluconate	GNT_20NE	Gluconate (D-gluconic acid)		GNT_20NE	33198.0	526-95-4	C00257	CHEBI:33198	API_20NE:GNT
+16	CAP	Assimilation of capric acid	CAP_20NE	Capric acid (decanoic acid)		CAP_20NE	30813.0	334-48-5	C01571	CHEBI:30813	API_20NE:CAP
+17	ADI	Assimilation adipic acid	ADI_20NE	Adipic acid		ADI_20NE	30832.0	0124-04-09	C06104	CHEBI:30832	API_20NE:ADI
+18	MLT	Assimilation of malic acid	MLT_20NE	Malic acid		MLT_20NE	6650.0	6915-15-7	C00711	CHEBI:665	API_20NE:MLT
+19	CIT	Assimilation of  citric acid	CIT_20NE	Citric acid		CIT_20NE	30769.0	77-92-9	C00158	CHEBI:30769	API_20NE:CIT
+20	PAC	Assimilation of phenyl-acetic acid	PAC_20NE	Phenyl-acetic acid		PAC_20NE	8082.0	122-79-2	C00548	CHEBI:8082	API_20NE:PAC
+21	OX	Cytochrome oxidase	OX_20NE	Oxygen	EC 1.9.3.1	OX_20NE	26689.0			CHEBI:26689	API_20NE:OX

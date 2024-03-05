@@ -1,12 +1,12 @@
 id	category	name	description	xref	provided_by	synonym	iri	object	predicate	relation	same_as	subject	subsets
+CHEBI:48360	biolink:ChemicalRole	amphiprotic solvent											
+CHEBI:78016	biolink:ChemicalRole	food gelling agent											
 CHEBI:84735	biolink:ChemicalRole	algal metabolite											
-CHEBI:75771	biolink:ChemicalRole	mouse metabolite											
 CHEBI:76413	biolink:ChemicalRole	greenhouse gas											
 CHEBI:77746	biolink:ChemicalRole	human metabolite											
+CHEBI:75771	biolink:ChemicalRole	mouse metabolite											
 CHEBI:75772	biolink:ChemicalRole	saccharomyces cerevisiae metabolite											
-CHEBI:78016	biolink:ChemicalRole	food gelling agent											
 CHEBI:76971	biolink:ChemicalRole	escherichia coli metabolite											
-CHEBI:48360	biolink:ChemicalRole	amphiprotic solvent											
 medium:1	biolink:ChemicalEntity	nutrient agar											
 solution:1	biolink:ChemicalEntity	main sol. 1											
 CAS-RN:73049-73-7	biolink:ChemicalEntity	peptone											
@@ -16,23 +16,23 @@ CHEBI:15377	biolink:ChemicalEntity	distilled water
 medium:1a	biolink:ChemicalEntity	reactivation with liquid medium 1											
 solution:3	biolink:ChemicalEntity	main sol. 1a											
 CHEBI:33287	biolink:ChemicalRole	fertilizer											
-CHEBI:83056	biolink:ChemicalRole	daphnia magna metabolite											
 CHEBI:64577	biolink:ChemicalRole	flour treatment agent											
+CHEBI:83056	biolink:ChemicalRole	daphnia magna metabolite											
 medium:2	biolink:ChemicalEntity	bacillus pasteurii medium											
 solution:4	biolink:ChemicalEntity	main sol. 2											
 CHEBI:16199	biolink:ChemicalEntity	urea											
-CHEBI:77960	biolink:ChemicalRole	food firming agent											
-CHEBI:64909	biolink:ChemicalRole	poison											
-CHEBI:50503	biolink:ChemicalRole	laxative											
-CHEBI:50733	biolink:ChemicalRole	nutraceutical											
 CHEBI:78675	biolink:ChemicalRole	fundamental metabolite											
-CHEBI:77182	biolink:ChemicalRole	food colouring											
 CHEBI:35225	biolink:ChemicalRole	buffer											
-CHEBI:76924	biolink:ChemicalRole	plant metabolite											
+CHEBI:77182	biolink:ChemicalRole	food colouring											
+CHEBI:50733	biolink:ChemicalRole	nutraceutical											
+CHEBI:63247	biolink:ChemicalRole	reducing agent											
+CHEBI:77960	biolink:ChemicalRole	food firming agent											
 CHEBI:65265	biolink:ChemicalRole	antacid											
 CHEBI:75325	biolink:ChemicalRole	cathartic											
+CHEBI:64909	biolink:ChemicalRole	poison											
+CHEBI:76924	biolink:ChemicalRole	plant metabolite											
+CHEBI:50503	biolink:ChemicalRole	laxative											
 CHEBI:75835	biolink:ChemicalRole	anti-anaemic agent											
-CHEBI:63247	biolink:ChemicalRole	reducing agent											
 medium:3	biolink:ChemicalEntity	azotobacter medium											
 solution:5	biolink:ChemicalEntity	main sol. 3											
 CHEBI:17234	biolink:ChemicalEntity	glucose											
@@ -71,20 +71,20 @@ CAS-RN:91079-40-2	biolink:ChemicalEntity	casein peptone
 CHEBI:53426	biolink:ChemicalEntity	tween 80											
 CHEBI:32954	biolink:ChemicalEntity	na-acetate											
 CHEBI:63037	biolink:ChemicalEntity	(nh4)3 citrate											
-CHEBI:26348	biolink:ChemicalRole	prosthetic group											
-CHEBI:23354	biolink:ChemicalRole	coenzyme											
-CHEBI:50904	biolink:ChemicalRole	allergen											
-CHEBI:50247	biolink:ChemicalRole	antidote											
-CHEBI:25212	biolink:ChemicalRole	metabolite											
-CHEBI:23357	biolink:ChemicalRole	cofactor											
-CHEBI:67079	biolink:ChemicalRole	anti-inflammatory agent											
 CHEBI:35620	biolink:ChemicalRole	vasodilator agent											
 CHEBI:47868	biolink:ChemicalRole	photosensitizing agent											
-CHEBI:33284	biolink:ChemicalRole	nutrient											
-CHEBI:35679	biolink:ChemicalRole	antilipemic drug											
+CHEBI:23357	biolink:ChemicalRole	cofactor											
+CHEBI:50904	biolink:ChemicalRole	allergen											
+CHEBI:25212	biolink:ChemicalRole	metabolite											
 CHEBI:84264	biolink:ChemicalRole	ec 3.5.1.19 (nicotinamidase) inhibitor											
-CHEBI:84087	biolink:ChemicalRole	human urinary metabolite											
+CHEBI:35679	biolink:ChemicalRole	antilipemic drug											
+CHEBI:33284	biolink:ChemicalRole	nutrient											
+CHEBI:26348	biolink:ChemicalRole	prosthetic group											
+CHEBI:50247	biolink:ChemicalRole	antidote											
 CHEBI:22586	biolink:ChemicalRole	antioxidant											
+CHEBI:23354	biolink:ChemicalRole	coenzyme											
+CHEBI:84087	biolink:ChemicalRole	human urinary metabolite											
+CHEBI:67079	biolink:ChemicalRole	anti-inflammatory agent											
 medium:11a	biolink:ChemicalEntity	modified medium 11											
 solution:13	biolink:ChemicalEntity	main sol. 11a											
 solution:5629	biolink:ChemicalEntity	vitamin solution											
@@ -110,14 +110,14 @@ solution:16	biolink:ChemicalEntity	main sol. 13
 solution:17	biolink:ChemicalEntity	solution a											
 solution:18	biolink:ChemicalEntity	solution b											
 CHEBI:62946	biolink:ChemicalEntity	(nh4)2so4											
-CHEBI:86385	biolink:ChemicalRole	ec 5.3.3.5 (cholestenol delta-isomerase) inhibitor											
-CHEBI:139492	biolink:ChemicalRole	sensitiser											
+CHEBI:38215	biolink:ChemicalRole	calcium channel blocker											
 CHEBI:38161	biolink:ChemicalRole	chelator											
 CHEBI:74783	biolink:ChemicalRole	astringent											
 CHEBI:37335	biolink:ChemicalRole	mri contrast agent											
-CHEBI:38215	biolink:ChemicalRole	calcium channel blocker											
-CHEBI:59174	biolink:ChemicalRole	hapten											
 CHEBI:50412	biolink:ChemicalRole	two-colour indicator											
+CHEBI:86385	biolink:ChemicalRole	ec 5.3.3.5 (cholestenol delta-isomerase) inhibitor											
+CHEBI:59174	biolink:ChemicalRole	hapten											
+CHEBI:139492	biolink:ChemicalRole	sensitiser											
 medium:14	biolink:ChemicalEntity	clostridium formicaceticum medium											
 solution:19	biolink:ChemicalEntity	main sol. 14											
 solution:20	biolink:ChemicalEntity	trace element solution sl-4											
@@ -134,12 +134,12 @@ CHEBI:86318	biolink:ChemicalEntity	cucl2 x 2 h2o
 CHEBI:34887	biolink:ChemicalEntity	nicl2 x 6 h2o											
 medium:21	biolink:ChemicalEntity	sarcina medium											
 solution:21	biolink:ChemicalEntity	main sol. 21											
-CHEBI:79314	biolink:ChemicalRole	flame retardant											
+CHEBI:76595	biolink:ChemicalRole	nephroprotective agent											
 CHEBI:90749	biolink:ChemicalRole	antidote to cyanide poisoning											
 CHEBI:173084	biolink:ChemicalRole	ferroptosis inhibitor											
+CHEBI:79314	biolink:ChemicalRole	flame retardant											
 CHEBI:86327	biolink:ChemicalRole	antifungal drug											
 CHEBI:149552	biolink:ChemicalRole	emetic											
-CHEBI:76595	biolink:ChemicalRole	nephroprotective agent											
 medium:25	biolink:ChemicalEntity	rhodopseudomonas globiformis medium											
 solution:22	biolink:ChemicalEntity	main sol. 25											
 solution:25	biolink:ChemicalEntity	trace element solution sl-6											
@@ -148,8 +148,8 @@ CHEBI:31206	biolink:ChemicalEntity	nh4cl
 CHEBI:26710	biolink:ChemicalEntity	nacl											
 CHEBI:144421	biolink:ChemicalEntity	fe(iii) citrate											
 CHEBI:32150	biolink:ChemicalEntity	sodium thiosulfate pentahydrate											
-CHEBI:51217	biolink:ChemicalRole	fluorochrome											
 CHEBI:64049	biolink:ChemicalRole	food acidity regulator											
+CHEBI:51217	biolink:ChemicalRole	fluorochrome											
 medium:26	biolink:ChemicalEntity	acid rhodospirillaceae medium											
 solution:5551	biolink:ChemicalEntity	main sol. 26											
 CHEBI:63675	biolink:ChemicalEntity	disodium succinate											
@@ -157,9 +157,9 @@ CHEBI:62947	biolink:ChemicalEntity	ammonium acetate
 CHEBI:52891	biolink:ChemicalEntity	l-cysteine hcl											
 medium:27	biolink:ChemicalEntity	rhodospirillaceae medium (modified)											
 solution:24	biolink:ChemicalEntity	main sol. 27											
-CHEBI:77965	biolink:ChemicalRole	food anticaking agent											
 CHEBI:39143	biolink:ChemicalRole	lewis acid											
 CHEBI:48219	biolink:ChemicalRole	disinfectant											
+CHEBI:77965	biolink:ChemicalRole	food anticaking agent											
 medium:28	biolink:ChemicalEntity	pfennig's medium i 											
 solution:26	biolink:ChemicalEntity	main sol. 28											
 solution:27	biolink:ChemicalEntity	solution a											
@@ -205,10 +205,10 @@ medium:31	biolink:ChemicalEntity	alkaline nutrient agar
 solution:5552	biolink:ChemicalEntity	main sol. 31											
 solution:46	biolink:ChemicalEntity	na-sesquicarbonate solution											
 CHEBI:29377	biolink:ChemicalEntity	na2co3 anhydrous											
-CHEBI:176497	biolink:ChemicalRole	geroprotector											
 CHEBI:46787	biolink:ChemicalRole	solvent											
-CHEBI:25728	biolink:ChemicalRole	osmolyte											
+CHEBI:176497	biolink:ChemicalRole	geroprotector											
 CHEBI:27780	biolink:ChemicalRole	detergent											
+CHEBI:25728	biolink:ChemicalRole	osmolyte											
 medium:32	biolink:ChemicalEntity	photobacterium medium											
 solution:47	biolink:ChemicalEntity	main sol. 32											
 ingredient:423	biolink:ChemicalEntity	sea salt											
@@ -319,8 +319,8 @@ solution:86	biolink:ChemicalEntity	solution d
 solution:87	biolink:ChemicalEntity	solution e											
 solution:88	biolink:ChemicalEntity	solution f											
 CAS-RN:7783-85-9	biolink:ChemicalEntity	fe(nh4)2(so4)2											
-CHEBI:50505	biolink:ChemicalRole	sweetening agent											
 CHEBI:65255	biolink:ChemicalRole	food preservative											
+CHEBI:50505	biolink:ChemicalRole	sweetening agent											
 medium:61	biolink:ChemicalEntity	thermoanaerobacter medium											
 solution:89	biolink:ChemicalEntity	main sol. 61											
 CHEBI:17992	biolink:ChemicalEntity	sucrose											
@@ -357,8 +357,8 @@ solution:106	biolink:ChemicalEntity	main sol. 65
 CAS-RN:8002-48-0	biolink:ChemicalEntity	malt extract											
 medium:67	biolink:ChemicalEntity	cy-agar											
 solution:107	biolink:ChemicalEntity	main sol. 67											
-CHEBI:37958	biolink:ChemicalRole	dye											
 CHEBI:50407	biolink:ChemicalRole	acid-base indicator											
+CHEBI:37958	biolink:ChemicalRole	dye											
 medium:68	biolink:ChemicalEntity	halothiobacillus neapolitanus medium											
 solution:108	biolink:ChemicalEntity	main sol. 68											
 solution:114	biolink:ChemicalEntity	trace element solution (vishniac and santer, 1957)											
@@ -394,14 +394,14 @@ CHEBI:32035	biolink:ChemicalEntity	koh
 CHEBI:27226	biolink:ChemicalEntity	uric acid											
 medium:77	biolink:ChemicalEntity	liver broth (oxoid cm 77)											
 solution:122	biolink:ChemicalEntity	main sol. 77											
+CHEBI:64018	biolink:ChemicalRole	protein kinase c agonist											
 CHEBI:60643	biolink:ChemicalRole	nmda receptor antagonist											
-CHEBI:50910	biolink:ChemicalRole	neurotoxin											
 CHEBI:35488	biolink:ChemicalRole	central nervous system depressant											
 CHEBI:48218	biolink:ChemicalRole	antiseptic drug											
 CHEBI:50905	biolink:ChemicalRole	teratogenic agent											
-CHEBI:48354	biolink:ChemicalRole	polar solvent											
 CHEBI:138880	biolink:ChemicalRole	autophagy inducer											
-CHEBI:64018	biolink:ChemicalRole	protein kinase c agonist											
+CHEBI:48354	biolink:ChemicalRole	polar solvent											
+CHEBI:50910	biolink:ChemicalRole	neurotoxin											
 medium:78	biolink:ChemicalEntity	chopped meat medium											
 solution:123	biolink:ChemicalEntity	main sol. 78											
 solution:124	biolink:ChemicalEntity	haemin solution											
@@ -428,10 +428,10 @@ PubChem:936	biolink:ChemicalEntity	nicotine amide
 CHEBI:16494	biolink:ChemicalEntity	alpha-lipoic acid											
 medium:78b	biolink:ChemicalEntity	chopped meat medium (n2/co2)											
 solution:129	biolink:ChemicalEntity	main sol. 78b											
-CHEBI:71692	biolink:ChemicalRole	insect repellent											
-CHEBI:27311	biolink:ChemicalRole	volatile oil component											
 CHEBI:76969	biolink:ChemicalRole	bacterial metabolite											
+CHEBI:27311	biolink:ChemicalRole	volatile oil component											
 CHEBI:75768	biolink:ChemicalRole	mammalian metabolite											
+CHEBI:71692	biolink:ChemicalRole	insect repellent											
 medium:78c	biolink:ChemicalEntity	chopped meat medium for fretibacterium sp.											
 solution:133	biolink:ChemicalEntity	main sol. 78c											
 solution:2618	biolink:ChemicalEntity	clarified rumen fluid											
@@ -448,8 +448,8 @@ CHEBI:28484	biolink:ChemicalEntity	isovaleric acid
 CHEBI:49105	biolink:ChemicalEntity	thiamine hcl											
 CHEBI:1687714	biolink:ChemicalEntity	calcium d-(+)-pantothenate											
 CHEBI:16494	biolink:ChemicalEntity	(dl)-alpha-lipoic acid											
-CHEBI:85046	biolink:ChemicalRole	skin lightening agent											
 CHEBI:78366	biolink:ChemicalRole	ec 2.7.1.1 (hexokinase) inhibitor											
+CHEBI:85046	biolink:ChemicalRole	skin lightening agent											
 medium:78d	biolink:ChemicalEntity	medium for treponema parvum											
 solution:5564	biolink:ChemicalEntity	main sol. 78d											
 solution:5565	biolink:ChemicalEntity	amino acid solution											
@@ -502,8 +502,8 @@ solution:147	biolink:ChemicalEntity	trace element solution
 CAS-RN:84012-26-0	biolink:ChemicalEntity	rolled oats											
 medium:85	biolink:ChemicalEntity	glucose peptone medium											
 solution:148	biolink:ChemicalEntity	main sol. 85											
-CHEBI:50903	biolink:ChemicalRole	carcinogenic agent											
 CHEBI:50909	biolink:ChemicalRole	nephrotoxic agent											
+CHEBI:50903	biolink:ChemicalRole	carcinogenic agent											
 medium:86	biolink:ChemicalEntity	castenholz medium											
 solution:149	biolink:ChemicalEntity	main sol. 86											
 CHEBI:44557	biolink:ChemicalEntity	nitrilotriacetic acid											
@@ -967,10 +967,10 @@ solution:403	biolink:ChemicalEntity	solution a
 solution:405	biolink:ChemicalEntity	solution b											
 solution:406	biolink:ChemicalEntity	solution c											
 CHEBI:64996	biolink:ChemicalRole	ec 1.13.11.33 (arachidonate 15-lipoxygenase) inhibitor											
-CHEBI:88188	biolink:ChemicalRole	drug allergen											
 CHEBI:65256	biolink:ChemicalRole	antimicrobial food preservative											
-CHEBI:65001	biolink:ChemicalRole	ec 3.1.1.3 (triacylglycerol lipase) inhibitor											
+CHEBI:88188	biolink:ChemicalRole	drug allergen											
 CHEBI:76967	biolink:ChemicalRole	human xenobiotic metabolite											
+CHEBI:65001	biolink:ChemicalRole	ec 3.1.1.3 (triacylglycerol lipase) inhibitor											
 medium:198	biolink:ChemicalEntity	desulfosarcina medium (brackish water)											
 solution:408	biolink:ChemicalEntity	main sol. 198											
 solution:409	biolink:ChemicalEntity	solution a											
@@ -1065,8 +1065,8 @@ medium:214	biolink:ChemicalEntity	gym+s medium
 solution:5578	biolink:ChemicalEntity	main sol. 214											
 medium:215	biolink:ChemicalEntity	bhi medium											
 solution:469	biolink:ChemicalEntity	main sol. 215											
-CHEBI:78298	biolink:ChemicalRole	environmental contaminant											
 CHEBI:35703	biolink:ChemicalRole	xenobiotic											
+CHEBI:78298	biolink:ChemicalRole	environmental contaminant											
 medium:215a	biolink:ChemicalEntity	bhi medium (modified)											
 solution:470	biolink:ChemicalEntity	main sol. 215a											
 CHEBI:48923	biolink:ChemicalEntity	erythromycin											
@@ -1116,12 +1116,12 @@ solution:5583	biolink:ChemicalEntity	main sol. 228
 CHEBI:15428	biolink:ChemicalEntity	glycine											
 medium:229	biolink:ChemicalEntity	corynebacterium medium with salt											
 solution:5584	biolink:ChemicalEntity	main sol. 229											
-CHEBI:38070	biolink:ChemicalRole	anti-arrhythmia drug											
-CHEBI:35623	biolink:ChemicalRole	anticonvulsant											
-CHEBI:35480	biolink:ChemicalRole	analgesic											
-CHEBI:66993	biolink:ChemicalRole	tocolytic agent											
 CHEBI:35554	biolink:ChemicalRole	cardiovascular drug											
+CHEBI:35623	biolink:ChemicalRole	anticonvulsant											
+CHEBI:38070	biolink:ChemicalRole	anti-arrhythmia drug											
+CHEBI:66993	biolink:ChemicalRole	tocolytic agent											
 CHEBI:38867	biolink:ChemicalRole	anaesthetic											
+CHEBI:35480	biolink:ChemicalRole	analgesic											
 medium:230	biolink:ChemicalEntity	tryptone yeast extract mineral medium											
 solution:490	biolink:ChemicalEntity	main sol. 230											
 CHEBI:32599	biolink:ChemicalEntity	mgso4											
@@ -1180,9 +1180,9 @@ medium:251	biolink:ChemicalEntity	peptone - meat extract - soil extract agar (pf
 solution:515	biolink:ChemicalEntity	main sol. 251											
 medium:252	biolink:ChemicalEntity	starch - mineral salt - agar (stms)											
 solution:516	biolink:ChemicalEntity	main sol. 252											
-CHEBI:71181	biolink:ChemicalRole	sir2 inhibitor											
-CHEBI:62913	biolink:ChemicalRole	ec 2.4.2.30 (nad(+) adp-ribosyltransferase) inhibitor											
 CHEBI:63726	biolink:ChemicalRole	neuroprotective agent											
+CHEBI:62913	biolink:ChemicalRole	ec 2.4.2.30 (nad(+) adp-ribosyltransferase) inhibitor											
+CHEBI:71181	biolink:ChemicalRole	sir2 inhibitor											
 medium:253	biolink:ChemicalEntity	medium for ectothiorhodospira											
 solution:517	biolink:ChemicalEntity	main sol. 253											
 solution:518	biolink:ChemicalEntity	trace element solution (a)											
@@ -1352,23 +1352,23 @@ solution:585	biolink:ChemicalEntity	main sol. 316
 medium:317	biolink:ChemicalEntity	methanosarcina thermophila medium											
 solution:586	biolink:ChemicalEntity	main sol. 317											
 solution:587	biolink:ChemicalEntity	minerals solution											
-CHEBI:77971	biolink:ChemicalRole	raising agent											
 CHEBI:86328	biolink:ChemicalRole	antifungal agrochemical											
+CHEBI:77971	biolink:ChemicalRole	raising agent											
 medium:318	biolink:ChemicalEntity	methanosarcina thermophila (bcyt) medium											
 solution:588	biolink:ChemicalEntity	main sol. 318											
 solution:589	biolink:ChemicalEntity	trace element solution											
 CHEBI:81862	biolink:ChemicalEntity	khco3											
-CHEBI:76976	biolink:ChemicalRole	bacterial xenobiotic metabolite											
 CHEBI:35222	biolink:ChemicalRole	inhibitor											
+CHEBI:76976	biolink:ChemicalRole	bacterial xenobiotic metabolite											
 medium:318a	biolink:ChemicalEntity	pelobacter (fuf) medium											
 solution:590	biolink:ChemicalEntity	main sol. 318a											
 CHEBI:46756	biolink:ChemicalEntity	hepes											
 CHEBI:30845	biolink:ChemicalEntity	2-furoic acid											
 medium:318b	biolink:ChemicalEntity	anaerotignum neopropionicum medium											
 solution:591	biolink:ChemicalEntity	main sol. 318b											
+CHEBI:50629	biolink:ChemicalRole	cyclooxygenase 2 inhibitor											
 CHEBI:35610	biolink:ChemicalRole	antineoplastic agent											
 CHEBI:68495	biolink:ChemicalRole	apoptosis inducer											
-CHEBI:50629	biolink:ChemicalRole	cyclooxygenase 2 inhibitor											
 medium:318c	biolink:ChemicalEntity	pelobacter acidigallici medium											
 solution:592	biolink:ChemicalEntity	main sol. 318c											
 CHEBI:115197	biolink:ChemicalEntity	na-gallate											
@@ -1552,8 +1552,8 @@ solution:5602	biolink:ChemicalEntity	main sol. 362
 CAS-RN:141-43-5	biolink:ChemicalEntity	ethanolamine											
 CHEBI:73263	biolink:ChemicalRole	cyclooxygenase 3 inhibitor											
 CHEBI:35493	biolink:ChemicalRole	antipyretic											
-CHEBI:35481	biolink:ChemicalRole	non-narcotic analgesic											
 CHEBI:35475	biolink:ChemicalRole	non-steroidal anti-inflammatory drug											
+CHEBI:35481	biolink:ChemicalRole	non-narcotic analgesic											
 medium:363	biolink:ChemicalEntity	phenylobacterium medium											
 solution:703	biolink:ChemicalEntity	main sol. 363											
 CHEBI:31225	biolink:ChemicalEntity	antipyrine											
@@ -1633,8 +1633,8 @@ solution:763	biolink:ChemicalEntity	solution a
 solution:765	biolink:ChemicalEntity	solution b											
 solution:767	biolink:ChemicalEntity	solution c											
 solution:768	biolink:ChemicalEntity	solution d											
-CHEBI:62215	biolink:ChemicalRole	allelochemical											
 CHEBI:50902	biolink:ChemicalRole	genotoxin											
+CHEBI:62215	biolink:ChemicalRole	allelochemical											
 medium:385	biolink:ChemicalEntity	desulfocastaena medium											
 solution:769	biolink:ChemicalEntity	main sol. 385											
 solution:770	biolink:ChemicalEntity	solution a											
@@ -1783,13 +1783,13 @@ medium:426	biolink:ChemicalEntity	organic medium 79
 solution:856	biolink:ChemicalEntity	main sol. 426											
 medium:427	biolink:ChemicalEntity	mykorrhiza medium											
 solution:857	biolink:ChemicalEntity	main sol. 427											
+CHEBI:78004	biolink:ChemicalRole	food bulking agent											
+CHEBI:23366	biolink:ChemicalRole	compatible osmolytes											
+CHEBI:50504	biolink:ChemicalRole	osmotic diuretic											
 CHEBI:77969	biolink:ChemicalRole	food humectant											
 CHEBI:39456	biolink:ChemicalRole	antiglaucoma drug											
-CHEBI:77966	biolink:ChemicalRole	food stabiliser											
-CHEBI:78004	biolink:ChemicalRole	food bulking agent											
-CHEBI:50504	biolink:ChemicalRole	osmotic diuretic											
-CHEBI:23366	biolink:ChemicalRole	compatible osmolytes											
 CHEBI:77970	biolink:ChemicalRole	food thickening agent											
+CHEBI:77966	biolink:ChemicalRole	food stabiliser											
 medium:428	biolink:ChemicalEntity	heterotrophic medium h3p											
 solution:858	biolink:ChemicalEntity	main sol. 428											
 solution:859	biolink:ChemicalEntity	solution a											
@@ -1914,9 +1914,9 @@ CAS-RN:625-40-1	biolink:ChemicalEntity	3-chloroacrylic acid
 medium:457d	biolink:ChemicalEntity	medium with biphenyl											
 solution:919	biolink:ChemicalEntity	main sol. 457d											
 CAS-RN:92-52-4	biolink:ChemicalEntity	biphenyl											
+CHEBI:48358	biolink:ChemicalRole	polar aprotic solvent											
 CHEBI:22333	biolink:ChemicalRole	alkylating agent											
 CHEBI:48578	biolink:ChemicalRole	radical scavenger											
-CHEBI:48358	biolink:ChemicalRole	polar aprotic solvent											
 medium:457e	biolink:ChemicalEntity	mineral medium with dibenzofuran											
 solution:920	biolink:ChemicalEntity	main sol. 457e											
 solution:5620	biolink:ChemicalEntity	dibenzofuran solution											
@@ -2207,8 +2207,8 @@ CHEBI:60720	biolink:ChemicalEntity	na-silicate
 CHEBI:34683	biolink:ChemicalEntity	na2hpo4 x 3 h2o											
 medium:513	biolink:ChemicalEntity	pp-medium											
 solution:1133	biolink:ChemicalEntity	main sol. 513											
-CHEBI:63248	biolink:ChemicalRole	oxidising agent											
 CHEBI:63490	biolink:ChemicalRole	explosive											
+CHEBI:63248	biolink:ChemicalRole	oxidising agent											
 medium:514	biolink:ChemicalEntity	bacto marine broth (difco 2216)											
 solution:1134	biolink:ChemicalEntity	main sol. 514											
 CHEBI:36383	biolink:ChemicalEntity	srcl2											
@@ -2653,8 +2653,8 @@ CAS-RN:657-27-2	biolink:ChemicalEntity	l-lysine hcl
 medium:644	biolink:ChemicalEntity	catenococcus medium											
 solution:1368	biolink:ChemicalEntity	main sol. 644											
 solution:2762	biolink:ChemicalEntity	trace elements solution (pfennig & lippert,1966)											
-CHEBI:83038	biolink:ChemicalRole	daphnia galeata metabolite											
 CHEBI:78444	biolink:ChemicalRole	ec 3.1.1.1 (carboxylesterase) inhibitor											
+CHEBI:83038	biolink:ChemicalRole	daphnia galeata metabolite											
 medium:645	biolink:ChemicalEntity	middlebrook medium											
 solution:1369	biolink:ChemicalEntity	main sol. 645											
 solution:1370	biolink:ChemicalEntity	bacto middlebrook 7h10 agar											
@@ -4673,8 +4673,8 @@ medium:1273	biolink:ChemicalEntity	methanospirillum lacunae medium
 solution:2543	biolink:ChemicalEntity	main sol. 1273											
 medium:1274	biolink:ChemicalEntity	yeast extract-starch agar (50% marine water)											
 solution:2544	biolink:ChemicalEntity	main sol. 1274											
-CHEBI:62803	biolink:ChemicalRole	fuel additive											
 CHEBI:48873	biolink:ChemicalRole	cholinergic antagonist											
+CHEBI:62803	biolink:ChemicalRole	fuel additive											
 medium:1275	biolink:ChemicalEntity	georgfuchsia medium											
 solution:2545	biolink:ChemicalEntity	main sol. 1275											
 solution:2546	biolink:ChemicalEntity	solution a											
@@ -5171,8 +5171,8 @@ solution:2935	biolink:ChemicalEntity	trace elements
 solution:2936	biolink:ChemicalEntity	vitamin b12 solution 0.001 g/l											
 medium:1435	biolink:ChemicalEntity	methylotrophes medium											
 solution:2937	biolink:ChemicalEntity	main sol. 1435											
-CHEBI:48001	biolink:ChemicalRole	protein synthesis inhibitor											
 CHEBI:149553	biolink:ChemicalRole	anticoronaviral agent											
+CHEBI:48001	biolink:ChemicalRole	protein synthesis inhibitor											
 medium:1436	biolink:ChemicalEntity	pirellula medium (m31py)											
 solution:2938	biolink:ChemicalEntity	main sol. 1436											
 solution:2939	biolink:ChemicalEntity	solution 1											
@@ -5354,12 +5354,12 @@ solution:3062	biolink:ChemicalEntity	feedta solution
 solution:3063	biolink:ChemicalEntity	trace element solution											
 CAS-RN:12007-60-2	biolink:ChemicalEntity	li2b4o7											
 CAS-RN:10102-23-5	biolink:ChemicalEntity	na2seo4 x 10 h2o											
-CHEBI:59163	biolink:ChemicalRole	biomarker											
-CHEBI:50266	biolink:ChemicalRole	prodrug											
-CHEBI:74529	biolink:ChemicalRole	antidote to paracetamol poisoning											
 CHEBI:78006	biolink:ChemicalRole	food colour retention agent											
-CHEBI:63332	biolink:ChemicalRole	ec 3.1.3.1 (alkaline phosphatase) inhibitor											
+CHEBI:74529	biolink:ChemicalRole	antidote to paracetamol poisoning											
+CHEBI:59163	biolink:ChemicalRole	biomarker											
 CHEBI:64416	biolink:ChemicalRole	ec 1.3.1.43 (arogenate dehydrogenase) inhibitor											
+CHEBI:63332	biolink:ChemicalRole	ec 3.1.3.1 (alkaline phosphatase) inhibitor											
+CHEBI:50266	biolink:ChemicalRole	prodrug											
 medium:1494	biolink:ChemicalEntity	. omiz-pat medium (modified)											
 solution:3085	biolink:ChemicalEntity	main sol. 1494											
 solution:3065	biolink:ChemicalEntity	solution a											
@@ -6102,11 +6102,11 @@ solution:3529	biolink:ChemicalEntity	main sol. 1703
 medium:1704	biolink:ChemicalEntity	yma modified											
 solution:3530	biolink:ChemicalEntity	main sol. 1704											
 CHEBI:3311	biolink:ChemicalEntity	calcium carbonate											
-CHEBI:25491	biolink:ChemicalRole	nematicide											
-CHEBI:147285	biolink:ChemicalRole	ec 3.4.22.69 (sars coronavirus main proteinase) inhibitor											
 CHEBI:48422	biolink:ChemicalRole	angiogenesis inhibitor											
-CHEBI:25442	biolink:ChemicalRole	mycotoxin											
+CHEBI:147285	biolink:ChemicalRole	ec 3.4.22.69 (sars coronavirus main proteinase) inhibitor											
 CHEBI:76956	biolink:ChemicalRole	aspergillus metabolite											
+CHEBI:25442	biolink:ChemicalRole	mycotoxin											
+CHEBI:25491	biolink:ChemicalRole	nematicide											
 medium:1705	biolink:ChemicalEntity	am5 medium (elusimicrobium medium)											
 solution:3531	biolink:ChemicalEntity	main sol. 1705											
 solution:5542	biolink:ChemicalEntity	trace element solution											
@@ -9329,12 +9329,12 @@ solution:5276	biolink:ChemicalEntity	main sol. j1166
 medium:j1167	biolink:ChemicalEntity	mmfc1 medium											
 solution:5277	biolink:ChemicalEntity	main sol. j1167											
 ingredient:897	biolink:ChemicalEntity	trace mineral solution											
-CHEBI:37416	biolink:ChemicalRole	ec 2.7.7.6 (rna polymerase) inhibitor											
+CHEBI:59517	biolink:ChemicalRole	dna synthesis inhibitor											
+CHEBI:77318	biolink:ChemicalRole	pregnane x receptor agonist											
 CHEBI:171664	biolink:ChemicalRole	antiamoebic agent											
+CHEBI:37416	biolink:ChemicalRole	ec 2.7.7.6 (rna polymerase) inhibitor											
 CHEBI:35816	biolink:ChemicalRole	leprostatic drug											
 CHEBI:33231	biolink:ChemicalRole	antitubercular agent											
-CHEBI:77318	biolink:ChemicalRole	pregnane x receptor agonist											
-CHEBI:59517	biolink:ChemicalRole	dna synthesis inhibitor											
 medium:j1168	biolink:ChemicalEntity	lb (luria-bertani) agar with kanamycin and rifampicin											
 solution:5278	biolink:ChemicalEntity	main sol. j1168											
 CHEBI:6109	biolink:ChemicalEntity	kanamycin sulfate											
@@ -9436,11 +9436,11 @@ solution:5326	biolink:ChemicalEntity	main sol. j1207
 medium:j1208	biolink:ChemicalEntity	marine tryptone yeast extract medium											
 solution:5329	biolink:ChemicalEntity	main sol. j1208											
 CHEBI:77307	biolink:ChemicalRole	cardioprotective agent											
-CHEBI:38623	biolink:ChemicalRole	ec 1.4.3.4 (monoamine oxidase) inhibitor											
-CHEBI:37733	biolink:ChemicalRole	ec 3.1.1.8 (cholinesterase) inhibitor											
-CHEBI:35208	biolink:ChemicalRole	physical tracer											
 CHEBI:78678	biolink:ChemicalRole	ec 4.6.1.2 (guanylate cyclase) inhibitor											
 CHEBI:38068	biolink:ChemicalRole	antimalarial											
+CHEBI:37733	biolink:ChemicalRole	ec 3.1.1.8 (cholinesterase) inhibitor											
+CHEBI:38623	biolink:ChemicalRole	ec 1.4.3.4 (monoamine oxidase) inhibitor											
+CHEBI:35208	biolink:ChemicalRole	physical tracer											
 medium:j1209	biolink:ChemicalEntity	halanaerobium hydrogeniformans medium											
 solution:5330	biolink:ChemicalEntity	main sol. j1209											
 solution:5331	biolink:ChemicalEntity	basal medium salts solution											

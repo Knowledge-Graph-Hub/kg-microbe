@@ -129,7 +129,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -400,6 +399,8 @@ class BacDiveTransform(Transform):
 
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = self._get_label_via_oak(ncbitaxon_id)
+                        if ncbi_label is None:
+                            ncbi_label = ncbi_description
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {
@@ -520,6 +521,7 @@ class BacDiveTransform(Transform):
                             [value[CURIE_COLUMN], value[CATEGORY_COLUMN], key]
                             for key, value in nodes_from_keywords.items()
                         ]
+                        nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
                         nodes_data_to_write = [
                             sublist + [None] * 11 for sublist in nodes_data_to_write
                         ]
@@ -565,6 +567,9 @@ class BacDiveTransform(Transform):
                                 for inner_dict in postive_activity_enzymes
                                 for k, v in inner_dict.items()
                             ]
+                            enzyme_nodes_to_write.append(
+                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label] + [None] * 11
+                            )
                             node_writer.writerows(enzyme_nodes_to_write)
 
                             for inner_dict in postive_activity_enzymes:

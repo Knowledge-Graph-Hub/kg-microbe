@@ -74,6 +74,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_TO_SOLUTION_EDGE,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
+    NCBI_CATEGORY,
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
@@ -89,6 +90,7 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_KEY,
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
+    SPECIES,
     UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -287,6 +289,7 @@ class MediaDiveTransform(Transform):
                     # Medium-Strains KG
                     if json_obj_medium_strain:
                         medium_strain_edge = []
+                        medium_strain_nodes = []
                         for strain in json_obj_medium_strain:
                             if strain.get(BACDIVE_ID_COLUMN):
                                 strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
@@ -298,6 +301,17 @@ class MediaDiveTransform(Transform):
                                     ncbi_strain_id = ncbi_strain_id[0]
                                 else:
                                     ncbi_strain_id = strain_id
+
+                                medium_strain_nodes.extend(
+                                    [
+                                        [
+                                            ncbi_strain_id,
+                                            NCBI_CATEGORY,
+                                            strain[SPECIES],
+                                        ],
+                                        [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
+                                    ]
+                                )
 
                                 medium_strain_edge.extend(
                                     [
@@ -404,6 +418,7 @@ class MediaDiveTransform(Transform):
                         [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
                         *solution_nodes,
                         *ingredient_nodes,
+                        *medium_strain_nodes,
                     ]
                     nodes_data_to_write = [sublist + [None] * 11 for sublist in nodes_data_to_write]
                     node_writer.writerows(nodes_data_to_write)

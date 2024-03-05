@@ -101,6 +101,7 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
+
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

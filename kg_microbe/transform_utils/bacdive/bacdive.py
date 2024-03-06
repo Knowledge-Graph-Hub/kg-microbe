@@ -27,6 +27,7 @@ from kg_microbe.transform_utils.constants import (
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
+    ASSAY_TO_NCBI_EDGE,
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
@@ -102,7 +103,6 @@ from kg_microbe.transform_utils.constants import (
     MUREIN,
     NAME_COLUMN,
     NCBI_CATEGORY,
-    NCBI_TO_ASSAY_EDGE,
     NCBI_TO_ENZYME_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
@@ -843,10 +843,10 @@ class BacDiveTransform(Transform):
 
                             metabolism_edges_to_write = [
                                 [
-                                    ncbitaxon_id,
-                                    NCBI_TO_ASSAY_EDGE,
                                     m,
-                                    HAS_PHENOTYPE,
+                                    ASSAY_TO_NCBI_EDGE,
+                                    ncbitaxon_id,
+                                    ASSESSED_ACTIVITY_RELATIONSHIP,
                                     BACDIVE_PREFIX + key,
                                 ]
                                 for m in meta_assay

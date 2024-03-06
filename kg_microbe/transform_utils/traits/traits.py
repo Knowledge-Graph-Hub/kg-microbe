@@ -35,7 +35,7 @@ from kg_microbe.transform_utils.constants import (
     METABOLISM_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
-    NCBI_TO_CHEM_EDGE,
+    NCBI_TO_CARBON_SUBSTRATE_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_METABOLISM_EDGE,
     NCBI_TO_PATHWAY_EDGE,
@@ -312,7 +312,7 @@ class TraitsTransform(Transform):
                             tax_carbon_substrate_edge = [
                                 [
                                     tax_id,
-                                    NCBI_TO_CHEM_EDGE,
+                                    NCBI_TO_CARBON_SUBSTRATE_EDGE,
                                     CARBON_SUBSTRATE_PREFIX + item.strip(),
                                     TROPHICALLY_INTERACTS_WITH,
                                 ]

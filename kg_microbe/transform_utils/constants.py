@@ -94,6 +94,7 @@ CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
 ECOCORE_PREFIX = "ECOCORE:"
+UBERON_PREFIX = "UBERON:"
 MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
 MEDIADIVE_SOLUTION_PREFIX = "solution:"
 MEDIADIVE_MEDIUM_PREFIX = "medium:"
@@ -119,15 +120,19 @@ MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CHEM_EDGE = "biolink:interacts_with"  # [org_name -> carbon_substrate]
+NCBI_TO_CARBON_SUBSTRATE_EDGE = "biolink:consumes"  # [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:capable_of"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
 NCBI_TO_METABOLITE_UTILIZATION_EDGE = "biolink:consumes"  # [org -> metabolite_utilization]
 NCBI_TO_ENZYME_EDGE = "biolink:has_phenotype"  # [org -> enzyme]
-NCBI_TO_ASSAY_EDGE = "biolink:has_phenotype"  # [org -> assay]
+ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay]
 NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
+ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
+SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
+SUBSTRATE_TO_ENZYME_EDGE = "biolink:is_consumed_by"  # [substrate -> enzyme]
+NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -142,6 +147,7 @@ ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
 PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
 ATTRIBUTE_CATEGORY = "biolink:Attribute"
 METABOLITE_CATEGORY = "biolink:ChemicalEntity"
+SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -153,6 +159,8 @@ LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
+PARTICIPATES_IN = "RO:0000056"
+ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -206,7 +214,13 @@ ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
 PLUS_SIGN = "+"
-
+BACDIVE_MAPPING_PSEUDO_ID_COLUMN = "pseudo_CURIE"
+BACDIVE_MAPPING_CHEBI_ID = "CHEBI_ID"
+BACDIVE_MAPPING_KEGG_ID = "KEGG_ID"
+BACDIVE_MAPPING_CAS_RN_ID = "CAS_RN_ID"
+BACDIVE_MAPPING_EC_ID = "EC_ID"
+BACDIVE_MAPPING_ENZYME_LABEL = "enzyme"
+BACDIVE_MAPPING_SUBSTRATE_LABEL = "substrate"
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"
 MEDIADIVE_COMPLEX_MEDIUM_COLUMN = "complex_medium"
@@ -265,3 +279,19 @@ UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
 UNIPROT_PREFIX = "Uniprot"
+
+BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
+
+
+DO_NOT_CHANGE_PREFIXES = [
+    NCBITAXON_PREFIX,
+    CAS_RN_PREFIX,
+    CHEBI_PREFIX,
+    PUBCHEM_PREFIX,
+    GO_PREFIX,
+    KEGG_PREFIX,
+    ECOCORE_PREFIX,
+    EC_PREFIX,
+    UBERON_PREFIX,
+    "API_",
+]

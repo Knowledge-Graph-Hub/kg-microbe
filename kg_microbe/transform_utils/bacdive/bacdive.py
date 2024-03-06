@@ -27,10 +27,20 @@ from kg_microbe.transform_utils.constants import (
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
+    ASSAY_TO_NCBI_EDGE,
+    ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
     BACDIVE_DIR,
     BACDIVE_ID_COLUMN,
+    BACDIVE_MAPPING_CAS_RN_ID,
+    BACDIVE_MAPPING_CHEBI_ID,
+    BACDIVE_MAPPING_EC_ID,
+    BACDIVE_MAPPING_ENZYME_LABEL,
+    BACDIVE_MAPPING_FILE,
+    BACDIVE_MAPPING_KEGG_ID,
+    BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
+    BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
@@ -49,6 +59,7 @@ from kg_microbe.transform_utils.constants import (
     DSM_NUMBER_COLUMN,
     EC_KEY,
     EC_PREFIX,
+    ENZYME_TO_ASSAY_EDGE,
     ENZYMES,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
@@ -92,7 +103,6 @@ from kg_microbe.transform_utils.constants import (
     MUREIN,
     NAME_COLUMN,
     NCBI_CATEGORY,
-    NCBI_TO_ASSAY_EDGE,
     NCBI_TO_ENZYME_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
@@ -105,6 +115,7 @@ from kg_microbe.transform_utils.constants import (
     OBJECT_ID_COLUMN,
     OBSERVATION,
     OXYGEN_TOLERANCE,
+    PARTICIPATES_IN,
     PHENOTYPIC_CATEGORY,
     PHYSIOLOGY_AND_METABOLISM,
     PIGMENTATION,
@@ -119,6 +130,9 @@ from kg_microbe.transform_utils.constants import (
     SPECIES,
     SPORE_FORMATION,
     STRAIN,
+    SUBSTRATE_CATEGORY,
+    SUBSTRATE_TO_ASSAY_EDGE,
+    SUBSTRATE_TO_ENZYME_EDGE,
     TOLERANCE,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
@@ -162,6 +176,30 @@ class BacDiveTransform(Transform):
         else:
             # If it's neither a list nor a dictionary, return an empty list
             return []
+
+    def _get_substrate_id(self, record):
+        # Check for 'CHEBI_ID' first
+        if record.get(BACDIVE_MAPPING_CHEBI_ID):
+            return record[BACDIVE_MAPPING_CHEBI_ID]
+
+        # If 'CHEBI_ID' is empty or not present, check 'KEGG_ID'
+        if record.get(BACDIVE_MAPPING_KEGG_ID):
+            return record[BACDIVE_MAPPING_KEGG_ID]
+
+        # If 'KEGG_ID' is empty or not present, check 'CAS_RN_ID'
+        if record.get(BACDIVE_MAPPING_CAS_RN_ID):
+            return record[BACDIVE_MAPPING_CAS_RN_ID]
+
+        # If none are present, return None or an appropriate default value
+        return None
+
+    def _get_enzyme_id(self, record):
+        # Check for 'EC_ID' first
+        if record.get(BACDIVE_MAPPING_EC_ID):
+            return record[BACDIVE_MAPPING_EC_ID]
+
+        # If none are present, return None or an appropriate default value
+        return None
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
@@ -218,6 +256,7 @@ class BacDiveTransform(Transform):
         with (
             open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1,
             open(str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w") as tsvfile_2,
+            open(str(BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE), "r") as tsvfile_3,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
             open(str(BACDIVE_DIR / "keywords.yaml"), "r") as keywords_file,
@@ -236,6 +275,70 @@ class BacDiveTransform(Transform):
             edge_writer.writerow(self.edge_header)
 
             keyword_data = yaml.safe_load(keywords_file)
+            bacdive_mappings_list_of_dicts = list(csv.DictReader(tsvfile_3, delimiter="\t"))
+
+            # ! BacDive Mapping file processing.
+            # Nodes to be written to the node file.
+            # Get substrate from the bacdive mapping file
+            assay_nodes_to_write = []
+            # Edges to be written to the edge file.
+            assay_edges_to_write = []
+            for assay in bacdive_mappings_list_of_dicts:
+                # enzyme to assay edge.
+                ec_id = self._get_enzyme_id(assay)
+                if ec_id:
+                    assay_nodes_to_write.append(
+                        [
+                            ec_id,
+                            PHENOTYPIC_CATEGORY,
+                            assay[BACDIVE_MAPPING_ENZYME_LABEL],
+                        ]
+                        + [None] * 11
+                    )
+                    assay_edges_to_write.append(
+                        [
+                            ec_id,
+                            ENZYME_TO_ASSAY_EDGE,
+                            assay[BACDIVE_MAPPING_PSEUDO_ID_COLUMN],
+                            ASSESSED_ACTIVITY_RELATIONSHIP,
+                            BACDIVE_MAPPING_FILE,
+                        ]
+                    )
+                # substrate to assay edge.
+                substrate_id = self._get_substrate_id(assay)
+                if substrate_id:
+                    assay_nodes_to_write.append(
+                        [
+                            substrate_id,
+                            SUBSTRATE_CATEGORY,
+                            assay[BACDIVE_MAPPING_SUBSTRATE_LABEL],
+                        ]
+                        + [None] * 11
+                    )
+                    assay_edges_to_write.append(
+                        [
+                            substrate_id,
+                            SUBSTRATE_TO_ASSAY_EDGE,
+                            assay[BACDIVE_MAPPING_PSEUDO_ID_COLUMN],
+                            PARTICIPATES_IN,
+                            BACDIVE_MAPPING_FILE,
+                        ]
+                    )
+                # substrate to enzyme edge
+                if ec_id and substrate_id:
+                    assay_edges_to_write.append(
+                        [
+                            substrate_id,
+                            SUBSTRATE_TO_ENZYME_EDGE,
+                            ec_id,
+                            PARTICIPATES_IN,
+                            BACDIVE_MAPPING_FILE,
+                        ]
+                    )
+                if assay_edges_to_write:
+                    edge_writer.writerows(assay_edges_to_write)
+                if assay_nodes_to_write:
+                    node_writer.writerows(assay_nodes_to_write)
 
             keyword_map = {
                 second_level_key: nested_data
@@ -400,6 +503,8 @@ class BacDiveTransform(Transform):
 
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = self._get_label_via_oak(ncbitaxon_id)
+                        if ncbi_label is None:
+                            ncbi_label = ncbi_description
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {
@@ -520,6 +625,7 @@ class BacDiveTransform(Transform):
                             [value[CURIE_COLUMN], value[CATEGORY_COLUMN], key]
                             for key, value in nodes_from_keywords.items()
                         ]
+                        nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
                         nodes_data_to_write = [
                             sublist + [None] * 11 for sublist in nodes_data_to_write
                         ]
@@ -548,11 +654,11 @@ class BacDiveTransform(Transform):
                             postive_activity_enzymes = [
                                 {f"{EC_PREFIX}{enzyme.get(EC_KEY)}": f"{enzyme.get('value')}"}
                                 for enzyme in phys_and_metabolism_enzymes
-                                if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN
+                                if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN and enzyme.get(EC_KEY)
                             ]
                         elif isinstance(phys_and_metabolism_enzymes, dict):
                             activity = phys_and_metabolism_enzymes.get(ACTIVITY_KEY)
-                            if activity == PLUS_SIGN:
+                            if activity == PLUS_SIGN and phys_and_metabolism_enzymes.get(EC_KEY):
                                 ec_value = f"{EC_PREFIX}{phys_and_metabolism_enzymes.get(EC_KEY)}"
                                 value = phys_and_metabolism_enzymes.get("value")
                                 postive_activity_enzymes = [{ec_value: value}]
@@ -565,6 +671,9 @@ class BacDiveTransform(Transform):
                                 for inner_dict in postive_activity_enzymes
                                 for k, v in inner_dict.items()
                             ]
+                            enzyme_nodes_to_write.append(
+                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label] + [None] * 11
+                            )
                             node_writer.writerows(enzyme_nodes_to_write)
 
                             for inner_dict in postive_activity_enzymes:
@@ -615,7 +724,12 @@ class BacDiveTransform(Transform):
                             utilization_activity = phys_and_metabolism_metabolite_utilization.get(
                                 UTILIZATION_ACTIVITY
                             )
-                            if utilization_activity == PLUS_SIGN:
+                            if (
+                                utilization_activity == PLUS_SIGN
+                                and phys_and_metabolism_metabolite_utilization.get(
+                                    METABOLITE_CHEBI_KEY
+                                )
+                            ):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
@@ -672,7 +786,12 @@ class BacDiveTransform(Transform):
                             production = phys_and_metabolism_metabolite_production.get(
                                 PRODUCTION_KEY
                             )
-                            if production == "yes":
+                            if (
+                                production == "yes"
+                                and phys_and_metabolism_metabolite_production.get(
+                                    METABOLITE_CHEBI_KEY
+                                )
+                            ):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY)}"
@@ -713,6 +832,7 @@ class BacDiveTransform(Transform):
                             for k, v in values[0].items()
                             if v == PLUS_SIGN
                         }
+
                         if meta_assay:
                             metabolism_nodes_to_write = [
                                 [m, PHENOTYPIC_CATEGORY, assay_name + " - " + m.split(":")[-1]]
@@ -723,14 +843,15 @@ class BacDiveTransform(Transform):
 
                             metabolism_edges_to_write = [
                                 [
-                                    ncbitaxon_id,
-                                    NCBI_TO_ASSAY_EDGE,
                                     m,
-                                    HAS_PHENOTYPE,
+                                    ASSAY_TO_NCBI_EDGE,
+                                    ncbitaxon_id,
+                                    ASSESSED_ACTIVITY_RELATIONSHIP,
                                     BACDIVE_PREFIX + key,
                                 ]
                                 for m in meta_assay
                             ]
+
                             edge_writer.writerows(metabolism_edges_to_write)
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")

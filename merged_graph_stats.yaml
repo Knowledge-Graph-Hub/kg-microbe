@@ -17,13 +17,13 @@ edge_stats:
         unknown:
           count: 70042
     biolink:consumes:
-      count: 127783
+      count: 127833
       provided_by:
         unknown:
-          count: 127783
+          count: 127833
       source:
         unknown:
-          count: 127783
+          count: 127833
     biolink:has_chemical_role:
       count: 1060
       provided_by:
@@ -56,14 +56,6 @@ edge_stats:
       source:
         unknown:
           count: 112
-    biolink:is_consumed_by:
-      count: 50
-      provided_by:
-        unknown:
-          count: 50
-      source:
-        unknown:
-          count: 50
     biolink:location_of:
       count: 26755
       provided_by:
@@ -267,14 +259,6 @@ edge_stats:
       source:
         unknown:
           count: 50254
-    biolink:ChemicalEntity-biolink:is_consumed_by-biolink:PhenotypicQuality:
-      count: 50
-      provided_by:
-        unknown:
-          count: 50
-      source:
-        unknown:
-          count: 50
     biolink:ChemicalEntity-biolink:occurs_in-biolink:PhenotypicQuality:
       count: 281
       provided_by:
@@ -371,14 +355,6 @@ edge_stats:
       source:
         unknown:
           count: 1060
-    biolink:ChemicalSubstance-biolink:is_consumed_by-biolink:PhenotypicQuality:
-      count: 14
-      provided_by:
-        unknown:
-          count: 14
-      source:
-        unknown:
-          count: 14
     biolink:ChemicalSubstance-biolink:location_of-biolink:OrganismTaxon:
       count: 59
       provided_by:
@@ -899,6 +875,22 @@ edge_stats:
       source:
         unknown:
           count: 50357
+    biolink:PhenotypicQuality-biolink:consumes-biolink:ChemicalEntity:
+      count: 50
+      provided_by:
+        unknown:
+          count: 50
+      source:
+        unknown:
+          count: 50
+    biolink:PhenotypicQuality-biolink:consumes-biolink:ChemicalSubstance:
+      count: 14
+      provided_by:
+        unknown:
+          count: 14
+      source:
+        unknown:
+          count: 14
     biolink:PhenotypicQuality-biolink:is_assessed_by-biolink:PhenotypicQuality:
       count: 98
       provided_by:
@@ -947,7 +939,6 @@ edge_stats:
   - biolink:has_part
   - biolink:has_phenotype
   - biolink:is_assessed_by
-  - biolink:is_consumed_by
   - biolink:location_of
   - biolink:occurs_in
   - biolink:produces

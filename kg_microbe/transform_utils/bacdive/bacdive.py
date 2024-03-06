@@ -132,7 +132,7 @@ from kg_microbe.transform_utils.constants import (
     STRAIN,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
-    SUBSTRATE_TO_ENZYME_EDGE,
+    ENZYME_TO_SUBSTRATE_EDGE,
     TOLERANCE,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
@@ -328,9 +328,9 @@ class BacDiveTransform(Transform):
                 if ec_id and substrate_id:
                     assay_edges_to_write.append(
                         [
-                            substrate_id,
-                            SUBSTRATE_TO_ENZYME_EDGE,
                             ec_id,
+                            ENZYME_TO_SUBSTRATE_EDGE,
+                            substrate_id,
                             PARTICIPATES_IN,
                             BACDIVE_MAPPING_FILE,
                         ]

@@ -1,4 +1,183 @@
 id	category	name	description	xref	provided_by	synonym	iri	object	predicate	relation	same_as	subject	subsets
+EC:4.1.99.1	biolink:PhenotypicQuality	tryptophanase											
+CHEBI:16828	biolink:ChemicalEntity	l-tryptophan											
+EC:3.5.1.5	biolink:PhenotypicQuality	urease											
+CHEBI:16199	biolink:ChemicalEntity	urea											
+CHEBI:17634	biolink:ChemicalEntity	d-glucose											
+CHEBI:16899	biolink:ChemicalEntity	d-mannitol											
+CHEBI:17716	biolink:ChemicalEntity	d-lactose (lactose)											
+CHEBI:17992	biolink:ChemicalEntity	d-saccharose (sucrose)											
+CHEBI:17306	biolink:ChemicalEntity	d-maltose (maltose)											
+CHEBI:17814	biolink:ChemicalEntity	salicin											
+CHEBI:65327	biolink:ChemicalEntity	d-xylose											
+CHEBI:30849	biolink:ChemicalEntity	l-arabinose											
+CHEBI:5291	biolink:ChemicalEntity	gelatin											
+EC:3.2.1.21	biolink:PhenotypicQuality	beta-glucosidase											
+CHEBI:4853	biolink:ChemicalEntity	esculin ferric citrate											
+CHEBI:17754	biolink:ChemicalEntity	glycerol											
+CHEBI:17057	biolink:ChemicalEntity	d-cellobiose (cellobiose)											
+CHEBI:16024	biolink:ChemicalEntity	d-mannose											
+CHEBI:6731	biolink:ChemicalEntity	d-melezitose (melezitose)											
+CHEBI:16634	biolink:ChemicalEntity	d-raffinose (raffinose)											
+CHEBI:17924	biolink:ChemicalEntity	d-sorbitol (d-glucitol)											
+CHEBI:62345	biolink:ChemicalEntity	l-rhamnose											
+CHEBI:16551	biolink:ChemicalEntity	d-trehalose (trehalose)											
+EC:1.11.1.6	biolink:PhenotypicQuality	catalase											
+EC:3.5.3.6	biolink:PhenotypicQuality	arginine deiminase											
+CHEBI:16467	biolink:ChemicalEntity	l-arginine											
+EC:3.2.1.22	biolink:PhenotypicQuality	alpha-galactosidase											
+CHEBI:54684	biolink:ChemicalEntity	4-nitrophenyl-alpha-d-galactoside											
+EC:3.2.1.23	biolink:PhenotypicQuality	beta-galactosidase											
+CHEBI:355715	biolink:ChemicalEntity	4-nitrophenyl-beta-d-galactoside											
+CHEBI:90128	biolink:ChemicalEntity	4-nitrophenyl 6-o-phosphono-beta-d-galactosid											
+EC:3.2.1.20	biolink:PhenotypicQuality	alpha-glucosidase											
+CAS-RN:3767-28-0 	biolink:ChemicalEntity	4-nitrophenyl alpha-d-glucopyranoside 											
+CAS-RN:2492-87-7	biolink:ChemicalEntity	4-nitrophenyl beta-d-glucopyranoside											
+EC:3.2.1.55	biolink:PhenotypicQuality	non-reducing end alpha-l-arabinofuranosidase											
+CAS-RN:6892-58-6	biolink:ChemicalEntity	4-nitrophenyl alpha-l-arabinofuranoside 											
+EC:3.2.1.31	biolink:PhenotypicQuality	beta-glucuronidase											
+CAS-RN:10344-94-2	biolink:ChemicalEntity	4-nitrophenyl beta-d-glucuronide 											
+EC:3.2.1.52	biolink:PhenotypicQuality	beta-n-acetylhexosaminidase											
+CAS-RN:3459-18-5	biolink:ChemicalEntity	4-nitrophenyl n-acetyl-beta-d-glucosaminide											
+EC:4.1.1.15	biolink:PhenotypicQuality	glutamat decarboxylase											
+CHEBI:16015	biolink:ChemicalEntity	l-glutamic acid											
+EC:3.2.1.51	biolink:PhenotypicQuality	alpha-l-fucosidase											
+CAS-RN:10231-84-2	biolink:ChemicalEntity	4-nitrophenyl alpha-l-fucopyranoside 											
+CHEBI:63043	biolink:ChemicalEntity	potassium nitrate											
+EC:3.1.3.1	biolink:PhenotypicQuality	alkaline phosphatase											
+CAS-RN:14463-68-4 	biolink:ChemicalEntity	2-naphthyl phosphate											
+CAS-RN:18905-73-2	biolink:ChemicalEntity	l-arginine beta-naphthylamide hydrochloride											
+EC:3.4.11.5	biolink:PhenotypicQuality	prolyl aminopeptidase											
+CAS-RN:97216-16-5	biolink:ChemicalEntity	l-proline beta-naphthylamide											
+EC:3.4.11.1	biolink:PhenotypicQuality	leucyl aminopeptidase											
+CAS-RN:100930-00-5	biolink:ChemicalEntity	leu-gly beta-naphthylamide											
+CAS-RN:740-57-8	biolink:ChemicalEntity	l-phenylalanine beta-naphthylamide 											
+CAS-RN:732-85-4	biolink:ChemicalEntity	l-leucine beta-naphthylamide											
+EC:3.4.19.3	biolink:PhenotypicQuality	pyroglutamyl-peptidase i											
+CAS-RN:22155-91-5	biolink:ChemicalEntity	l-pyroglutamic acid 2-naphthylamide 											
+CAS-RN:4357-95-3	biolink:ChemicalEntity	l-tyrosine beta-naphthylamide 											
+CAS-RN:1208-12-04	biolink:ChemicalEntity	glycine beta-naphthylamide											
+CAS-RN:7424-15-9	biolink:ChemicalEntity	l-histidine beta-naphthylamide											
+CAS-RN:888-74-4	biolink:ChemicalEntity	l-serine beta-naphthylamide											
+CAS-RN:3252-36-6 	biolink:ChemicalEntity	5-bromo-4-chloro-3-indolyl acetate 											
+CHEBI:18089	biolink:ChemicalEntity	hippuric acid (n-benzoylglycine)											
+EC:2.3.2.2	biolink:PhenotypicQuality	gamma-glutamyltransferase											
+CAS-RN:24723-50-0	biolink:ChemicalEntity	gamma-l-glutamyl-4-methoxy-2-naphthylamine											
+CHEBI:78019	biolink:ChemicalEntity	2,3,5-triphenyltetrazolium chloride											
+CAS-RN:61876-75-3 	biolink:ChemicalEntity	l-arginine-4-methoxy beta-naphthylamide											
+CAS-RN:635-91-6 	biolink:ChemicalEntity	l-aspartic acid beta-naphthylamide 											
+CHEBI:63675	biolink:ChemicalEntity	sodium succinate											
+CHEBI:100147	biolink:ChemicalEntity	nalidixic acid											
+CHEBI:3483	biolink:ChemicalEntity	cefazolin sodium											
+CHEBI:32954	biolink:ChemicalEntity	sodium acetate											
+CHEBI:30768	biolink:ChemicalEntity	propionic acid											
+CHEBI:665	biolink:ChemicalEntity	malic acid											
+CHEBI:30769	biolink:ChemicalEntity	citric acid											
+CHEBI:48923	biolink:ChemicalEntity	erythromycin											
+CHEBI:90426	biolink:ChemicalEntity	l-cystyl-2-naphthylamide											
+EC:3.4.21.4	biolink:PhenotypicQuality	trypsin											
+CAS-RN:0913-04-02	biolink:ChemicalEntity	n-benzoyl-dl-arginine-2-naphthylamide											
+EC:3.4.21.1	biolink:PhenotypicQuality	alpha-chymotrypsin											
+EC:3.1.3.2	biolink:PhenotypicQuality	acid phosphatase											
+CAS-RN:1919-91-1	biolink:ChemicalEntity	naphthol-as-bi-phosphate											
+CAS-RN:25997-59-5	biolink:ChemicalEntity	6-br-2-naphthyl-alphad-galactpyranoside											
+CAS-RN:312693-81-5	biolink:ChemicalEntity	2-naphthyl-betad-galactpyranoside											
+CAS-RN:37-87-6 	biolink:ChemicalEntity	naphthol-as-bi-betad-glucuronide											
+CAS-RN:25320-79-0	biolink:ChemicalEntity	2-naphthyl-alphad-glucopyranoside											
+CAS-RN: 15548-61-5 	biolink:ChemicalEntity	6-br-2-naphthyl-betad-glucopyranoside											
+EC:3.2.1.52	biolink:PhenotypicQuality	n-acetyl-beta-glucosaminidase											
+CAS-RN:10329-98-3	biolink:ChemicalEntity	1-naphthyl-n-acetyl-betad-glucosaminide											
+EC:3.2.1.24	biolink:PhenotypicQuality	alpha-mannosidase											
+CAS-RN:15548-61-5	biolink:ChemicalEntity	6-br-2-naphthyl-alphad-mannopyranoside											
+EC:3.2.1.51	biolink:PhenotypicQuality	alpha-fucosidase											
+CAS-RN:732-85-4	biolink:ChemicalEntity	l-leucyl-2-naphthylamide											
+CAS-RN:729-24-8 	biolink:ChemicalEntity	l-valyl-2-naphthylamide											
+EC:3.1.1.3	biolink:PhenotypicQuality	lipase (c 14)											
+CAS-RN:7262-80-8	biolink:ChemicalEntity	2-naphthyl myristate											
+CAS-RN:10251-17-9	biolink:ChemicalEntity	2-naphtyl caprylate											
+EC:3.1.1.1	biolink:PhenotypicQuality	esterase (c 4)											
+CAS-RN:5856-33-7	biolink:ChemicalEntity	2-naphthyl butyrate											
+EC:4.1.1.17	biolink:PhenotypicQuality	ornithine decarboxylase											
+CHEBI:15729	biolink:ChemicalEntity	l-ornithine											
+EC:4.1.1.18	biolink:PhenotypicQuality	lysine decarboxylase											
+CHEBI:18019	biolink:ChemicalEntity	l-lysine											
+CHEBI:18403	biolink:ChemicalEntity	l-arabitol (l-arabinitol)											
+CHEBI:18024	biolink:ChemicalEntity	d-galacturonic acid											
+CHEBI:17426	biolink:ChemicalEntity	5-ketogluconate (5-dehydro-d-gluconate)											
+CAS-RN:133950-70-6	biolink:ChemicalEntity	5-bromo-3-indoxyl-nonanoate											
+CHEBI:50144	biolink:ChemicalEntity	sodium pyruvate											
+CHEBI:15963	biolink:ChemicalEntity	d-adonitol (d-ribitol)											
+CHEBI:18394	biolink:ChemicalEntity	palatinose (6-o-alpha-d-glucopyranosyl-d-fruc											
+CAS-RN:10344-94-2 	biolink:ChemicalEntity	4-nitrophenyl beta-d-glucuronide 											
+CHEBI:62983	biolink:ChemicalEntity	sodium malonate											
+CHEBI:355715	biolink:ChemicalEntity	5-bromo-4-chloro-3-indolyl n-acetyl-beta-d-gl											
+CHEBI:18333	biolink:ChemicalEntity	d-arabitol											
+CHEBI:54684	biolink:ChemicalEntity	4-nitrophenyl alpha-d-glucopyranoside 											
+CHEBI:17268	biolink:ChemicalEntity	inositol (myo-inositol)											
+CAS-RN:17400-77-0 	biolink:ChemicalEntity	4-nitrophenyl alpha-d-maltoside 											
+CAS-RN:25997-59-5	biolink:ChemicalEntity	6-bromo-2-naphthyl-alpha-d-galactopyranoside											
+CAS-RN:37-87-6 	biolink:ChemicalEntity	naphthol as-bi beta-d-glucuronide											
+EC:3.2.1.62	biolink:PhenotypicQuality	glycosylceramidase											
+CAS-RN:312693-81-5	biolink:ChemicalEntity	2-naphthyl-beta-d-galactopyranoside											
+EC:3.3.2.6	biolink:PhenotypicQuality	leukotriene-a4 hydrolase											
+CHEBI:16988	biolink:ChemicalEntity	d-ribose											
+CHEBI:15443	biolink:ChemicalEntity	inulin											
+CHEBI:28017	biolink:ChemicalEntity	amidon (starch)											
+CHEBI:28087	biolink:ChemicalEntity	glycogen											
+EC:3.5.1.B15	biolink:PhenotypicQuality	pyrazinamidase											
+CHEBI:45285	biolink:ChemicalEntity	pyrazinecarboxamide											
+CAS-RN:25320-79-0	biolink:ChemicalEntity	2-naphthyl alpha-d-glucopyranoside											
+CAS-RN:10329-98-3	biolink:ChemicalEntity	1-naphthyl-n-acetyl-beta-d-glucosaminide											
+CHEBI:15824	biolink:ChemicalEntity	d-fructose											
+CAS-RN:312693-81-5 	biolink:ChemicalEntity	2-naphthyl-beta-d-galactopyranoside											
+CAS-RN:18905-73-2 	biolink:ChemicalEntity	l-arginine beta-naphthylamide hydrochloride											
+CAS-RN:22155-91-5 	biolink:ChemicalEntity	l-pyroglutamic acid 2-naphthylamide 											
+CHEBI:28368	biolink:ChemicalEntity	novobiocin											
+CHEBI:506227	biolink:ChemicalEntity	n-acetyl-d-glucosamine											
+CHEBI:32528	biolink:ChemicalEntity	d-turanose (turanose)											
+CHEBI:17151	biolink:ChemicalEntity	xylitol											
+CHEBI:28053	biolink:ChemicalEntity	d-melibiose (melibiose)											
+CHEBI:320061	biolink:ChemicalEntity	methyl alpha-d-glucopyranoside											
+EC:3.4.24.75	biolink:PhenotypicQuality	lysostaphin											
+CHEBI:17113	biolink:ChemicalEntity	erythritol											
+CHEBI:17108	biolink:ChemicalEntity	d-arabinose											
+CHEBI:65328	biolink:ChemicalEntity	l-xylose											
+CHEBI:74863	biolink:ChemicalEntity	methyl beta-d-xylopyranoside											
+CHEBI:12936	biolink:ChemicalEntity	d-galactose											
+CHEBI:17266	biolink:ChemicalEntity	l-sorbose											
+CHEBI:16813	biolink:ChemicalEntity	dulcitol (galactitol)											
+CHEBI:43943	biolink:ChemicalEntity	methyl alpha-d-mannopyranoside (methyl alpha-											
+CHEBI:27613	biolink:ChemicalEntity	amygdalin											
+CHEBI:18305	biolink:ChemicalEntity	arbutin (hydroquinone o-beta-d-glucopyranosid											
+CHEBI:28066	biolink:ChemicalEntity	gentiobiose											
+CHEBI:62318	biolink:ChemicalEntity	d-lyxose											
+CHEBI:16443	biolink:ChemicalEntity	d-tagatose											
+CHEBI:28847	biolink:ChemicalEntity	d-fucose											
+CHEBI:18287	biolink:ChemicalEntity	l-fucose											
+CHEBI:33198	biolink:ChemicalEntity	gluconate (d-gluconic acid)											
+CHEBI:16808	biolink:ChemicalEntity	2-ketogluconate (2-dehydro-d-gluconate)											
+CAS-RN:101490-85-1	biolink:ChemicalEntity	resorufin beta-d-glucopyranoside											
+CAS-RN:95079-19-9	biolink:ChemicalEntity	resorufin beta-d-galactopyranoside											
+CAS-RN:125440-91-7	biolink:ChemicalEntity	resorufin beta-d-glucuronide											
+CHEBI:40585	biolink:ChemicalEntity	alpha-cyclodextrin											
+kegg.compound:c00480	biolink:ChemicalEntity	pullulan											
+CHEBI:320055	biolink:ChemicalEntity	methyl beta-d-glucopyranoside											
+EC:3.2.1.25	biolink:PhenotypicQuality	beta-mannosidase											
+CAS-RN:35599-02-1	biolink:ChemicalEntity	4-nitrophenyl beta-d-mannopyranoside											
+EC:3.5.2.6	biolink:PhenotypicQuality	beta-lactamase											
+CHEBI:7963	biolink:ChemicalEntity	benzylpenicillin potassium											
+EC:3.1.1.3	biolink:PhenotypicQuality	triacylglycerol lipase											
+CAS-RN:133950-71-7	biolink:ChemicalEntity	5-bromo-3-indolyl-decanoate											
+CHEBI:1744	biolink:ChemicalEntity	para-nitrophenylphosphate (4-nitrophenyl phos											
+CAS-RN:100930-07-2	biolink:ChemicalEntity	l-proline 4-methoxy-beta-naphthylamide											
+CAS-RN:10357-27-4 	biolink:ChemicalEntity	4-nitrophenyl alpha-d-mannopyranoside 											
+CHEBI:29042	biolink:ChemicalEntity	alpha-d-glucose 1-phosphate											
+CHEBI:90144	biolink:ChemicalEntity	o-nitrophenyl-beta-d-galactopyranosid											
+EC:EC 1.9.3.1	biolink:PhenotypicQuality	cytochrome-c oxidase											
+CHEBI:26689	biolink:ChemicalEntity	oxygen											
+CHEBI:30813	biolink:ChemicalEntity	capric acid (decanoic acid)											
+CHEBI:30832	biolink:ChemicalEntity	adipic acid											
+CHEBI:8082	biolink:ChemicalEntity	phenyl-acetic acid											
 temperature:mesophilic	biolink:PhenotypicQuality	mesophilic											
 NCBITaxon:296	biolink:OrganismTaxon	pseudomonas fragi											
 temperature:psychrophilic	biolink:PhenotypicQuality	psychrophilic											
@@ -22,18 +201,14 @@ CHEBI:16634	biolink:ChemicalEntity	raffinose
 CHEBI:28053	biolink:ChemicalEntity	melibiose											
 CHEBI:28260	biolink:ChemicalEntity	galactose											
 CHEBI:8391	biolink:ChemicalEntity	d-gluconate											
-CHEBI:12936	biolink:ChemicalEntity	d-galactose											
-CHEBI:16024	biolink:ChemicalEntity	d-mannose											
 CHEBI:17057	biolink:ChemicalEntity	cellobiose											
 CHEBI:17716	biolink:ChemicalEntity	lactose											
-CHEBI:320055	biolink:ChemicalEntity	methyl beta-d-glucopyranoside											
 NCBITaxon:2094150	biolink:OrganismTaxon	duncaniella muris											
 EC:3.4.11.2	biolink:PhenotypicQuality	alanine arylamidase											
 EC:3.4.11.1	biolink:PhenotypicQuality	leucyl glycin arylamidase											
-EC:3.1.3.1	biolink:PhenotypicQuality	alkaline phosphatase											
-API_rID32A:AlaA	biolink:PhenotypicQuality	api rid32a - alaa											
-API_rID32A:LGA	biolink:PhenotypicQuality	api rid32a - lga											
 API_rID32A:PAL	biolink:PhenotypicQuality	api rid32a - pal											
+API_rID32A:LGA	biolink:PhenotypicQuality	api rid32a - lga											
+API_rID32A:AlaA	biolink:PhenotypicQuality	api rid32a - alaa											
 NCBITaxon:1955243	biolink:OrganismTaxon	blautia sp.											
 medium:1669	biolink:ChemicalEntity	schaedler broth (roth; 5772) (dsmz medium 1669)											
 oxygen:aerobe	biolink:PhenotypicQuality	aerobe											
@@ -43,60 +218,47 @@ NCBITaxon:84112	biolink:OrganismTaxon	eggerthella lenta
 EC:3.5.3.6	biolink:PhenotypicQuality	arginine dihydrolase											
 CHEBI:29016	biolink:ChemicalEntity	arginine											
 NCBITaxon:562	biolink:OrganismTaxon	escherichia coli											
-EC:3.2.1.22	biolink:PhenotypicQuality	alpha-galactosidase											
-EC:3.2.1.23	biolink:PhenotypicQuality	beta-galactosidase											
-EC:3.2.1.31	biolink:PhenotypicQuality	beta-glucuronidase											
-EC:4.1.1.18	biolink:PhenotypicQuality	lysine decarboxylase											
-EC:4.1.1.17	biolink:PhenotypicQuality	ornithine decarboxylase											
 CHEBI:30911	biolink:ChemicalEntity	sorbitol											
-CHEBI:62345	biolink:ChemicalEntity	l-rhamnose											
 CHEBI:27082	biolink:ChemicalEntity	trehalose											
-CHEBI:30849	biolink:ChemicalEntity	l-arabinose											
 CHEBI:17992	biolink:ChemicalEntity	sucrose											
-CHEBI:17634	biolink:ChemicalEntity	d-glucose											
 CHEBI:27897	biolink:ChemicalEntity	tryptophan											
 CHEBI:17306	biolink:ChemicalEntity	maltose											
-CHEBI:16899	biolink:ChemicalEntity	d-mannitol											
-CHEBI:18024	biolink:ChemicalEntity	d-galacturonic acid											
 CHEBI:25094	biolink:ChemicalEntity	lysine											
 CHEBI:18257	biolink:ChemicalEntity	ornithine											
 CHEBI:35581	biolink:ChemicalEntity	indole											
-API_ID32E:RHA	biolink:PhenotypicQuality	api id32e - rha											
-API_ID32E:MAN	biolink:PhenotypicQuality	api id32e - man											
-API_ID32E:beta GAL	biolink:PhenotypicQuality	api id32e - beta gal											
 API_ID32E:GAT	biolink:PhenotypicQuality	api id32e - gat											
-API_ID32E:alpha GAL	biolink:PhenotypicQuality	api id32e - alpha gal											
-API_ID32E:SOR	biolink:PhenotypicQuality	api id32e - sor											
-API_ID32E:GLU	biolink:PhenotypicQuality	api id32e - glu											
-API_ID32E:TRE	biolink:PhenotypicQuality	api id32e - tre											
-API_ID32E:MAL	biolink:PhenotypicQuality	api id32e - mal											
+API_ID32E:RHA	biolink:PhenotypicQuality	api id32e - rha											
 API_ID32E:LDC Lys	biolink:PhenotypicQuality	api id32e - ldc lys											
-API_ID32E:beta GUR	biolink:PhenotypicQuality	api id32e - beta gur											
-API_ID32E:LARA	biolink:PhenotypicQuality	api id32e - lara											
-API_ID32E:ODC	biolink:PhenotypicQuality	api id32e - odc											
-API_ID32E:RP	biolink:PhenotypicQuality	api id32e - rp											
+API_ID32E:alpha GAL	biolink:PhenotypicQuality	api id32e - alpha gal											
 API_ID32E:IND	biolink:PhenotypicQuality	api id32e - ind											
 API_ID32E:SAC	biolink:PhenotypicQuality	api id32e - sac											
+API_ID32E:SOR	biolink:PhenotypicQuality	api id32e - sor											
+API_ID32E:GLU	biolink:PhenotypicQuality	api id32e - glu											
+API_ID32E:MAL	biolink:PhenotypicQuality	api id32e - mal											
+API_ID32E:beta GUR	biolink:PhenotypicQuality	api id32e - beta gur											
+API_ID32E:ODC	biolink:PhenotypicQuality	api id32e - odc											
+API_ID32E:LARA	biolink:PhenotypicQuality	api id32e - lara											
+API_ID32E:MAN	biolink:PhenotypicQuality	api id32e - man											
+API_ID32E:beta GAL	biolink:PhenotypicQuality	api id32e - beta gal											
+API_ID32E:TRE	biolink:PhenotypicQuality	api id32e - tre											
+API_ID32E:RP	biolink:PhenotypicQuality	api id32e - rp											
 NCBITaxon:1596	biolink:OrganismTaxon	lactobacillus gasseri											
 NCBITaxon:59505	biolink:OrganismTaxon	actinotignum schaalii											
 EC:3.4.19.3	biolink:PhenotypicQuality	pyrrolidonyl arylamidase											
 EC:3.4.11.1	biolink:PhenotypicQuality	leucine arylamidase											
 EC:3.4.11.5	biolink:PhenotypicQuality	proline-arylamidase											
-EC:3.2.1.21	biolink:PhenotypicQuality	beta-glucosidase											
-EC:3.2.1.20	biolink:PhenotypicQuality	alpha-glucosidase											
-CHEBI:16988	biolink:ChemicalEntity	d-ribose											
 CHEBI:606565	biolink:ChemicalEntity	hippurate											
-API_rID32A:HisA	biolink:PhenotypicQuality	api rid32a - hisa											
-API_rID32A:ArgA	biolink:PhenotypicQuality	api rid32a - arga											
+API_rID32A:beta GLU	biolink:PhenotypicQuality	api rid32a - beta glu											
 API_rID32A:ProA	biolink:PhenotypicQuality	api rid32a - proa											
-API_rID32A:TyrA	biolink:PhenotypicQuality	api rid32a - tyra											
+API_rID32A:ArgA	biolink:PhenotypicQuality	api rid32a - arga											
+API_rID32A:HisA	biolink:PhenotypicQuality	api rid32a - hisa											
+API_rID32A:LeuA	biolink:PhenotypicQuality	api rid32a - leua											
+API_rID32A:alpha GLU	biolink:PhenotypicQuality	api rid32a - alpha glu											
 API_rID32A:GlyA	biolink:PhenotypicQuality	api rid32a - glya											
 API_rID32A:SerA	biolink:PhenotypicQuality	api rid32a - sera											
-API_rID32A:alpha GLU	biolink:PhenotypicQuality	api rid32a - alpha glu											
-API_rID32A:PyrA	biolink:PhenotypicQuality	api rid32a - pyra											
+API_rID32A:TyrA	biolink:PhenotypicQuality	api rid32a - tyra											
 API_rID32A:PheA	biolink:PhenotypicQuality	api rid32a - phea											
-API_rID32A:LeuA	biolink:PhenotypicQuality	api rid32a - leua											
-API_rID32A:beta GLU	biolink:PhenotypicQuality	api rid32a - beta glu											
+API_rID32A:PyrA	biolink:PhenotypicQuality	api rid32a - pyra											
 EC:1.9.3.1	biolink:PhenotypicQuality	cytochrome oxidase											
 NCBITaxon:287	biolink:OrganismTaxon	pseudomonas aeruginosa											
 CHEBI:25115	biolink:ChemicalEntity	malate											
@@ -106,37 +268,34 @@ CHEBI:24265	biolink:ChemicalEntity	gluconate
 CHEBI:59640	biolink:ChemicalEntity	n-acetylglucosamine											
 CHEBI:17632	biolink:ChemicalEntity	nitrate											
 API_20NE:NAG	biolink:PhenotypicQuality	api 20ne - nag											
-API_20NE:GLU_ Assim	biolink:PhenotypicQuality	api 20ne - glu_ assim											
-API_20NE:CAP	biolink:PhenotypicQuality	api 20ne - cap											
-API_20NE:CIT	biolink:PhenotypicQuality	api 20ne - cit											
-API_20NE:GNT	biolink:PhenotypicQuality	api 20ne - gnt											
-API_20NE:OX	biolink:PhenotypicQuality	api 20ne - ox											
 API_20NE:ADH Arg	biolink:PhenotypicQuality	api 20ne - adh arg											
+API_20NE:GLU_ Assim	biolink:PhenotypicQuality	api 20ne - glu_ assim											
+API_20NE:GNT	biolink:PhenotypicQuality	api 20ne - gnt											
+API_20NE:CAP	biolink:PhenotypicQuality	api 20ne - cap											
+API_20NE:ADI	biolink:PhenotypicQuality	api 20ne - adi											
 API_20NE:NO3	biolink:PhenotypicQuality	api 20ne - no3											
 API_20NE:MLT	biolink:PhenotypicQuality	api 20ne - mlt											
-API_20NE:ADI	biolink:PhenotypicQuality	api 20ne - adi											
+API_20NE:CIT	biolink:PhenotypicQuality	api 20ne - cit											
+API_20NE:OX	biolink:PhenotypicQuality	api 20ne - ox											
 EC:4.1.1.15	biolink:PhenotypicQuality	glutamate decarboxylase											
-EC:3.2.1.52	biolink:PhenotypicQuality	n-acetyl-beta-glucosaminidase											
 NCBITaxon:1502	biolink:OrganismTaxon	clostridium perfringens											
 CHEBI:29985	biolink:ChemicalEntity	l-glutamate											
-API_rID32A:GDC	biolink:PhenotypicQuality	api rid32a - gdc											
 API_rID32A:ADH Arg	biolink:PhenotypicQuality	api rid32a - adh arg											
-API_rID32A:alpha GAL	biolink:PhenotypicQuality	api rid32a - alpha gal											
-API_rID32A:MNE	biolink:PhenotypicQuality	api rid32a - mne											
-API_rID32A:NIT	biolink:PhenotypicQuality	api rid32a - nit											
-API_rID32A:RAF	biolink:PhenotypicQuality	api rid32a - raf											
 API_rID32A:beta GAL	biolink:PhenotypicQuality	api rid32a - beta gal											
-API_rID32A:beta NAG	biolink:PhenotypicQuality	api rid32a - beta nag											
+API_rID32A:MNE	biolink:PhenotypicQuality	api rid32a - mne											
+API_rID32A:RAF	biolink:PhenotypicQuality	api rid32a - raf											
 API_rID32A:beta GUR	biolink:PhenotypicQuality	api rid32a - beta gur											
-EC:3.5.1.B15	biolink:PhenotypicQuality	pyrazinamidase											
+API_rID32A:NIT	biolink:PhenotypicQuality	api rid32a - nit											
+API_rID32A:beta NAG	biolink:PhenotypicQuality	api rid32a - beta nag											
+API_rID32A:alpha GAL	biolink:PhenotypicQuality	api rid32a - alpha gal											
+API_rID32A:GDC	biolink:PhenotypicQuality	api rid32a - gdc											
 NCBITaxon:1660	biolink:OrganismTaxon	schaalia odontolytica											
-CHEBI:5291	biolink:ChemicalEntity	gelatin											
-API_coryne:GEL	biolink:PhenotypicQuality	api coryne - gel											
+API_coryne:PYZ	biolink:PhenotypicQuality	api coryne - pyz											
 API_coryne:MAL	biolink:PhenotypicQuality	api coryne - mal											
 API_coryne:GLU	biolink:PhenotypicQuality	api coryne - glu											
-API_coryne:LAC	biolink:PhenotypicQuality	api coryne - lac											
-API_coryne:PYZ	biolink:PhenotypicQuality	api coryne - pyz											
 API_coryne:SAC	biolink:PhenotypicQuality	api coryne - sac											
+API_coryne:LAC	biolink:PhenotypicQuality	api coryne - lac											
+API_coryne:GEL	biolink:PhenotypicQuality	api coryne - gel											
 NCBITaxon:1873457	biolink:OrganismTaxon	promicromonospora sp.											
 medium:92	biolink:ChemicalEntity	trypticase soy yeast extract medium (dsmz medium 92)											
 NCBITaxon:729	biolink:OrganismTaxon	haemophilus parainfluenzae											
@@ -144,7 +303,6 @@ NCBITaxon:1509	biolink:OrganismTaxon	clostridium sporogenes
 oxygen:obligate_aerobe	biolink:PhenotypicQuality	obligate aerobe											
 cell_shape:rod	biolink:PhenotypicQuality	rod-shaped											
 NCBITaxon:1714359	biolink:OrganismTaxon	luteimonas padinae											
-EC:1.11.1.6	biolink:PhenotypicQuality	catalase											
 EC:4.1.99.1	biolink:PhenotypicQuality	tryptophan deaminase											
 CHEBI:30089	biolink:ChemicalEntity	acetate											
 CHEBI:15963	biolink:ChemicalEntity	ribitol											
@@ -167,16 +325,16 @@ NCBITaxon:1931	biolink:OrganismTaxon	streptomyces sp.
 oxygen:microaerophile	biolink:PhenotypicQuality	microaerophile											
 NCBITaxon:1123301	biolink:OrganismTaxon	streptococcus didelphis dsm 15616											
 CHEBI:27941	biolink:ChemicalEntity	pullulan											
-API_rID32STR:APPA	biolink:PhenotypicQuality	api rid32str - appa											
-API_rID32STR:MAL	biolink:PhenotypicQuality	api rid32str - mal											
-API_rID32STR:RIB	biolink:PhenotypicQuality	api rid32str - rib											
-API_rID32STR:HIP	biolink:PhenotypicQuality	api rid32str - hip											
-API_rID32STR:TRE	biolink:PhenotypicQuality	api rid32str - tre											
-API_rID32STR:beta GUR	biolink:PhenotypicQuality	api rid32str - beta gur											
 API_rID32STR:SAC	biolink:PhenotypicQuality	api rid32str - sac											
-API_rID32STR:PUL	biolink:PhenotypicQuality	api rid32str - pul											
-API_rID32STR:ADH Arg	biolink:PhenotypicQuality	api rid32str - adh arg											
 API_rID32STR:PAL	biolink:PhenotypicQuality	api rid32str - pal											
+API_rID32STR:MAL	biolink:PhenotypicQuality	api rid32str - mal											
+API_rID32STR:ADH Arg	biolink:PhenotypicQuality	api rid32str - adh arg											
+API_rID32STR:PUL	biolink:PhenotypicQuality	api rid32str - pul											
+API_rID32STR:HIP	biolink:PhenotypicQuality	api rid32str - hip											
+API_rID32STR:beta GUR	biolink:PhenotypicQuality	api rid32str - beta gur											
+API_rID32STR:TRE	biolink:PhenotypicQuality	api rid32str - tre											
+API_rID32STR:APPA	biolink:PhenotypicQuality	api rid32str - appa											
+API_rID32STR:RIB	biolink:PhenotypicQuality	api rid32str - rib											
 NCBITaxon:56	biolink:OrganismTaxon	sorangium cellulosum											
 medium:9	biolink:ChemicalEntity	vy/2 agar (dsmz medium 9)											
 NCBITaxon:948756	biolink:OrganismTaxon	paenibacillus macquariensis											
@@ -187,24 +345,21 @@ NCBITaxon:145262	biolink:OrganismTaxon	methanothermobacter thermautotrophicus
 medium:119	biolink:ChemicalEntity	methanobacterium medium (dsmz medium 119)											
 cell_shape:sphere	biolink:PhenotypicQuality	sphere-shaped											
 NCBITaxon:927694	biolink:OrganismTaxon	leuconostoc inhae kctc 3774											
-CHEBI:28066	biolink:ChemicalEntity	gentiobiose											
 CHEBI:4853	biolink:ChemicalEntity	esculin											
-CHEBI:320061	biolink:ChemicalEntity	methyl alpha-d-glucopyranoside											
-CHEBI:15824	biolink:ChemicalEntity	d-fructose											
-API_50CHac:CEL	biolink:PhenotypicQuality	api 50chac - cel											
-API_50CHac:MAL	biolink:PhenotypicQuality	api 50chac - mal											
-API_50CHac:RIB	biolink:PhenotypicQuality	api 50chac - rib											
+API_50CHac:GLU	biolink:PhenotypicQuality	api 50chac - glu											
+API_50CHac:MDG	biolink:PhenotypicQuality	api 50chac - mdg											
+API_50CHac:LARA	biolink:PhenotypicQuality	api 50chac - lara											
+API_50CHac:MNE	biolink:PhenotypicQuality	api 50chac - mne											
 API_50CHac:MAN	biolink:PhenotypicQuality	api 50chac - man											
+API_50CHac:CEL	biolink:PhenotypicQuality	api 50chac - cel											
+API_50CHac:RIB	biolink:PhenotypicQuality	api 50chac - rib											
+API_50CHac:GEN	biolink:PhenotypicQuality	api 50chac - gen											
+API_50CHac:TRE	biolink:PhenotypicQuality	api 50chac - tre											
+API_50CHac:MAL	biolink:PhenotypicQuality	api 50chac - mal											
 API_50CHac:ESC	biolink:PhenotypicQuality	api 50chac - esc											
+API_50CHac:SAC	biolink:PhenotypicQuality	api 50chac - sac											
 API_50CHac:NAG	biolink:PhenotypicQuality	api 50chac - nag											
 API_50CHac:FRU	biolink:PhenotypicQuality	api 50chac - fru											
-API_50CHac:LARA	biolink:PhenotypicQuality	api 50chac - lara											
-API_50CHac:GEN	biolink:PhenotypicQuality	api 50chac - gen											
-API_50CHac:GLU	biolink:PhenotypicQuality	api 50chac - glu											
-API_50CHac:TRE	biolink:PhenotypicQuality	api 50chac - tre											
-API_50CHac:MNE	biolink:PhenotypicQuality	api 50chac - mne											
-API_50CHac:SAC	biolink:PhenotypicQuality	api 50chac - sac											
-API_50CHac:MDG	biolink:PhenotypicQuality	api 50chac - mdg											
 NCBITaxon:47847	biolink:OrganismTaxon	brachybacterium nesterenkovii											
 NCBITaxon:61595	biolink:OrganismTaxon	allochromatium warmingii											
 medium:28	biolink:ChemicalEntity	pfennig's medium i (modified 1988, for purple sulfur bacteria) (dsmz medium 28)											
@@ -212,12 +367,9 @@ NCBITaxon:1422	biolink:OrganismTaxon	geobacillus stearothermophilus
 NCBITaxon:171693	biolink:OrganismTaxon	oceanobacillus picturae											
 oxygen:facultative_anaerobe	biolink:PhenotypicQuality	facultative anaerobe											
 NCBITaxon:55565	biolink:OrganismTaxon	actinomyces graevenitzii											
-EC:3.1.3.2	biolink:PhenotypicQuality	acid phosphatase											
 EC:3.9.1.1	biolink:PhenotypicQuality	phosphoamidase											
 CHEBI:17426	biolink:ChemicalEntity	5-dehydro-d-gluconate											
-CHEBI:16443	biolink:ChemicalEntity	d-tagatose											
 CHEBI:28757	biolink:ChemicalEntity	fructose											
-CHEBI:17754	biolink:ChemicalEntity	glycerol											
 CHEBI:17268	biolink:ChemicalEntity	myo-inositol											
 CHEBI:28037	biolink:ChemicalEntity	n-acetylgalactosamine											
 CHEBI:33942	biolink:ChemicalEntity	ribose											
@@ -232,77 +384,67 @@ NCBITaxon:1968280	biolink:OrganismTaxon	spirosoma flavus
 NCBITaxon:511	biolink:OrganismTaxon	alcaligenes faecalis											
 NCBITaxon:1193105	biolink:OrganismTaxon	halarchaeum grantii											
 NCBITaxon:1955624	biolink:OrganismTaxon	propionicimonas ferrireducens											
-EC:3.5.1.5	biolink:PhenotypicQuality	urease											
-CHEBI:27613	biolink:ChemicalEntity	amygdalin											
 CHEBI:18305	biolink:ChemicalEntity	arbutin											
 CHEBI:31605	biolink:ChemicalEntity	ferric citrate											
-CHEBI:74863	biolink:ChemicalEntity	methyl beta-d-xylopyranoside											
 CHEBI:506227	biolink:ChemicalEntity	n-acetylglucosamine											
 NCBITaxon:317	biolink:OrganismTaxon	pseudomonas syringae											
 NCBITaxon:1869337	biolink:OrganismTaxon	parabacteroides sp.											
 NCBITaxon:329	biolink:OrganismTaxon	ralstonia pickettii											
-API_20NE:GLU_ Ferm	biolink:PhenotypicQuality	api 20ne - glu_ ferm											
 API_20NE:ARA	biolink:PhenotypicQuality	api 20ne - ara											
+API_20NE:GLU_ Ferm	biolink:PhenotypicQuality	api 20ne - glu_ ferm											
 NCBITaxon:293	biolink:OrganismTaxon	brevundimonas diminuta											
-EC:3.4.21.4	biolink:PhenotypicQuality	trypsin											
-API_zym:Acid phosphatase	biolink:PhenotypicQuality	api zym - acid phosphatase											
-API_zym:Esterase Lipase	biolink:PhenotypicQuality	api zym - esterase lipase											
-API_zym:Alkaline phosphatase	biolink:PhenotypicQuality	api zym - alkaline phosphatase											
-API_zym:Naphthol-AS-BI-phosphohydrolase	biolink:PhenotypicQuality	api zym - naphthol-as-bi-phosphohydrolase											
 API_zym:Trypsin	biolink:PhenotypicQuality	api zym - trypsin											
+API_zym:Naphthol-AS-BI-phosphohydrolase	biolink:PhenotypicQuality	api zym - naphthol-as-bi-phosphohydrolase											
 API_zym:Leucine arylamidase	biolink:PhenotypicQuality	api zym - leucine arylamidase											
+API_zym:Alkaline phosphatase	biolink:PhenotypicQuality	api zym - alkaline phosphatase											
+API_zym:Esterase Lipase	biolink:PhenotypicQuality	api zym - esterase lipase											
+API_zym:Acid phosphatase	biolink:PhenotypicQuality	api zym - acid phosphatase											
 NCBITaxon:71999	biolink:OrganismTaxon	kocuria palustris											
 NCBITaxon:28090	biolink:OrganismTaxon	acinetobacter lwoffii											
 NCBITaxon:1747	biolink:OrganismTaxon	cutibacterium acnes											
 NCBITaxon:571	biolink:OrganismTaxon	klebsiella oxytoca											
 EC:3.4.11.21	biolink:PhenotypicQuality	l-aspartate arylamidase											
-CHEBI:18333	biolink:ChemicalEntity	d-arabitol											
 CHEBI:15792	biolink:ChemicalEntity	malonate											
 CHEBI:18394	biolink:ChemicalEntity	palatinose											
-CHEBI:16199	biolink:ChemicalEntity	urea											
-API_ID32E:URE	biolink:PhenotypicQuality	api id32e - ure											
-API_ID32E:DARL	biolink:PhenotypicQuality	api id32e - darl											
+API_ID32E:beta GLU	biolink:PhenotypicQuality	api id32e - beta glu											
+API_ID32E:INO	biolink:PhenotypicQuality	api id32e - ino											
 API_ID32E:AspA	biolink:PhenotypicQuality	api id32e - aspa											
 API_ID32E:CEL	biolink:PhenotypicQuality	api id32e - cel											
-API_ID32E:ADO	biolink:PhenotypicQuality	api id32e - ado											
+API_ID32E:DARL	biolink:PhenotypicQuality	api id32e - darl											
 API_ID32E:PLE	biolink:PhenotypicQuality	api id32e - ple											
 API_ID32E:5KG	biolink:PhenotypicQuality	api id32e - 5kg											
-API_ID32E:beta GLU	biolink:PhenotypicQuality	api id32e - beta glu											
+API_ID32E:ADO	biolink:PhenotypicQuality	api id32e - ado											
+API_ID32E:URE	biolink:PhenotypicQuality	api id32e - ure											
 API_ID32E:MNT	biolink:PhenotypicQuality	api id32e - mnt											
-API_ID32E:INO	biolink:PhenotypicQuality	api id32e - ino											
 NCBITaxon:66228	biolink:OrganismTaxon	gleimia europaea											
-CHEBI:28087	biolink:ChemicalEntity	glycogen											
-API_coryne:GLYG	biolink:PhenotypicQuality	api coryne - glyg											
 API_coryne:alpha GLU	biolink:PhenotypicQuality	api coryne - alpha glu											
-API_coryne:ESC	biolink:PhenotypicQuality	api coryne - esc											
 API_coryne:RIB	biolink:PhenotypicQuality	api coryne - rib											
+API_coryne:GLYG	biolink:PhenotypicQuality	api coryne - glyg											
+API_coryne:ESC	biolink:PhenotypicQuality	api coryne - esc											
 API_coryne:PAL	biolink:PhenotypicQuality	api coryne - pal											
 EC:3.4.11.3	biolink:PhenotypicQuality	cystine arylamidase											
-EC:3.4.21.1	biolink:PhenotypicQuality	alpha-chymotrypsin											
 NCBITaxon:339	biolink:OrganismTaxon	xanthomonas campestris											
 API_zym:alpha- Galactosidase	biolink:PhenotypicQuality	api zym - alpha- galactosidase											
-API_zym:Valine arylamidase	biolink:PhenotypicQuality	api zym - valine arylamidase											
+API_zym:alpha- Chymotrypsin	biolink:PhenotypicQuality	api zym - alpha- chymotrypsin											
 API_zym:beta- Glucosidase	biolink:PhenotypicQuality	api zym - beta- glucosidase											
 API_zym:N-acetyl-beta- glucosaminidase	biolink:PhenotypicQuality	api zym - n-acetyl-beta- glucosaminidase											
-API_zym:Cystine arylamidase	biolink:PhenotypicQuality	api zym - cystine arylamidase											
+API_zym:Valine arylamidase	biolink:PhenotypicQuality	api zym - valine arylamidase											
 API_zym:beta- Galactosidase	biolink:PhenotypicQuality	api zym - beta- galactosidase											
-API_zym:alpha- Chymotrypsin	biolink:PhenotypicQuality	api zym - alpha- chymotrypsin											
+API_zym:Cystine arylamidase	biolink:PhenotypicQuality	api zym - cystine arylamidase											
 NCBITaxon:1197717	biolink:OrganismTaxon	cloacibacillus porcorum											
 NCBITaxon:46124	biolink:OrganismTaxon	granulicatella adiacens											
 API_rID32STR:PyrA	biolink:PhenotypicQuality	api rid32str - pyra											
 NCBITaxon:2702	biolink:OrganismTaxon	gardnerella vaginalis											
-CHEBI:40585	biolink:ChemicalEntity	alpha-cyclodextrin											
 NCBITaxon:40324	biolink:OrganismTaxon	stenotrophomonas maltophilia											
 NCBITaxon:648	biolink:OrganismTaxon	aeromonas caviae											
-API_ID32E:alphaMAL	biolink:PhenotypicQuality	api id32e - alphamal											
 API_ID32E:LIP	biolink:PhenotypicQuality	api id32e - lip											
 API_ID32E:beta NAG	biolink:PhenotypicQuality	api id32e - beta nag											
+API_ID32E:alphaMAL	biolink:PhenotypicQuality	api id32e - alphamal											
 salinity:moderately_halophilic	biolink:PhenotypicQuality	moderately halophilic											
 NCBITaxon:1935996	biolink:OrganismTaxon	spiribacter aquaticus											
 CHEBI:15361	biolink:ChemicalEntity	pyruvate											
 NCBITaxon:2026188	biolink:OrganismTaxon	bacillus tropicus											
 CHEBI:32032	biolink:ChemicalEntity	potassium gluconate											
-CHEBI:17814	biolink:ChemicalEntity	salicin											
 CHEBI:28017	biolink:ChemicalEntity	starch											
 CHEBI:16947	biolink:ChemicalEntity	citrate											
 CHEBI:85146	biolink:ChemicalEntity	carboxymethylcellulose											
@@ -345,8 +487,8 @@ NCBITaxon:184914	biolink:OrganismTaxon	corallococcus coralloides
 pathogen:animal	biolink:PhenotypicQuality	animal pathogen											
 cell_shape:coccus	biolink:PhenotypicQuality	coccus-shaped											
 NCBITaxon:386891	biolink:OrganismTaxon	moraxella bovoculi											
-API_NH:GLU	biolink:PhenotypicQuality	api nh - glu											
 API_NH:LIP	biolink:PhenotypicQuality	api nh - lip											
+API_NH:GLU	biolink:PhenotypicQuality	api nh - glu											
 production:pigmented	biolink:ChemicalSubstance	pigmented											
 NCBITaxon:465515	biolink:OrganismTaxon	micrococcus luteus nctc 2665											
 CHEBI:29991	biolink:ChemicalEntity	l-aspartate											
@@ -359,11 +501,11 @@ NCBITaxon:309883	biolink:OrganismTaxon	deinococcus hohokamensis
 medium:736	biolink:ChemicalEntity	rich medium (dsmz medium 736)											
 NCBITaxon:394092	biolink:OrganismTaxon	cystobacter gracilis											
 NCBITaxon:1218078	biolink:OrganismTaxon	paraburkholderia ginsengisoli nbrc 100965											
-API_20NE:MAN	biolink:PhenotypicQuality	api 20ne - man											
-API_20NE:MNE	biolink:PhenotypicQuality	api 20ne - mne											
 API_20NE:ESC	biolink:PhenotypicQuality	api 20ne - esc											
-API_20NE:PAC	biolink:PhenotypicQuality	api 20ne - pac											
 API_20NE:PNPG	biolink:PhenotypicQuality	api 20ne - pnpg											
+API_20NE:MAN	biolink:PhenotypicQuality	api 20ne - man											
+API_20NE:PAC	biolink:PhenotypicQuality	api 20ne - pac											
+API_20NE:MNE	biolink:PhenotypicQuality	api 20ne - mne											
 NCBITaxon:418202	biolink:OrganismTaxon	lactobacillus sp. jcm 9717											
 NCBITaxon:650366	biolink:OrganismTaxon	bifidobacterium sp. jcm 7023											
 NCBITaxon:2559916	biolink:OrganismTaxon	lactiplantibacillus daoliensis											
@@ -399,38 +541,38 @@ NCBITaxon:485	biolink:OrganismTaxon	neisseria gonorrhoeae
 API_NH:ProA	biolink:PhenotypicQuality	api nh - proa											
 NCBITaxon:1280	biolink:OrganismTaxon	staphylococcus aureus											
 CHEBI:32528	biolink:ChemicalEntity	turanose											
-API_ID32STA:MAL	biolink:PhenotypicQuality	api id32sta - mal											
-API_ID32STA:FRU	biolink:PhenotypicQuality	api id32sta - fru											
-API_ID32STA:PAL	biolink:PhenotypicQuality	api id32sta - pal											
-API_ID32STA:GLU	biolink:PhenotypicQuality	api id32sta - glu											
-API_ID32STA:VP	biolink:PhenotypicQuality	api id32sta - vp											
-API_ID32STA:ADH Arg	biolink:PhenotypicQuality	api id32sta - adh arg											
-API_ID32STA:MAN	biolink:PhenotypicQuality	api id32sta - man											
-API_ID32STA:NAG	biolink:PhenotypicQuality	api id32sta - nag											
-API_ID32STA:TUR	biolink:PhenotypicQuality	api id32sta - tur											
-API_ID32STA:LAC	biolink:PhenotypicQuality	api id32sta - lac											
-API_ID32STA:MNE	biolink:PhenotypicQuality	api id32sta - mne											
-API_ID32STA:SAC	biolink:PhenotypicQuality	api id32sta - sac											
-API_ID32STA:NIT	biolink:PhenotypicQuality	api id32sta - nit											
 API_ID32STA:TRE	biolink:PhenotypicQuality	api id32sta - tre											
+API_ID32STA:SAC	biolink:PhenotypicQuality	api id32sta - sac											
+API_ID32STA:MNE	biolink:PhenotypicQuality	api id32sta - mne											
+API_ID32STA:FRU	biolink:PhenotypicQuality	api id32sta - fru											
+API_ID32STA:MAN	biolink:PhenotypicQuality	api id32sta - man											
+API_ID32STA:NIT	biolink:PhenotypicQuality	api id32sta - nit											
+API_ID32STA:VP	biolink:PhenotypicQuality	api id32sta - vp											
+API_ID32STA:NAG	biolink:PhenotypicQuality	api id32sta - nag											
+API_ID32STA:GLU	biolink:PhenotypicQuality	api id32sta - glu											
+API_ID32STA:PAL	biolink:PhenotypicQuality	api id32sta - pal											
+API_ID32STA:TUR	biolink:PhenotypicQuality	api id32sta - tur											
+API_ID32STA:ADH Arg	biolink:PhenotypicQuality	api id32sta - adh arg											
+API_ID32STA:LAC	biolink:PhenotypicQuality	api id32sta - lac											
+API_ID32STA:MAL	biolink:PhenotypicQuality	api id32sta - mal											
 NCBITaxon:1305	biolink:OrganismTaxon	streptococcus sanguinis											
 NCBITaxon:29394	biolink:OrganismTaxon	dolosigranulum pigrum											
 NCBITaxon:43765	biolink:OrganismTaxon	corynebacterium amycolatum											
 API_coryne:CAT	biolink:PhenotypicQuality	api coryne - cat											
 NCBITaxon:238	biolink:OrganismTaxon	elizabethkingia meningoseptica											
-API_20NE:MAL	biolink:PhenotypicQuality	api 20ne - mal											
-API_20NE:TRP	biolink:PhenotypicQuality	api 20ne - trp											
 API_20NE:GEL	biolink:PhenotypicQuality	api 20ne - gel											
+API_20NE:TRP	biolink:PhenotypicQuality	api 20ne - trp											
+API_20NE:MAL	biolink:PhenotypicQuality	api 20ne - mal											
 NCBITaxon:292	biolink:OrganismTaxon	burkholderia cepacia											
 NCBITaxon:47715	biolink:OrganismTaxon	lacticaseibacillus rhamnosus											
 CHEBI:6731	biolink:ChemicalEntity	melezitose											
+API_rID32STR:LAC	biolink:PhenotypicQuality	api rid32str - lac											
 API_rID32STR:TAG	biolink:PhenotypicQuality	api rid32str - tag											
-API_rID32STR:MLZ	biolink:PhenotypicQuality	api rid32str - mlz											
-API_rID32STR:VP	biolink:PhenotypicQuality	api rid32str - vp											
-API_rID32STR:MAN	biolink:PhenotypicQuality	api rid32str - man											
 API_rID32STR:beta GAL	biolink:PhenotypicQuality	api rid32str - beta gal											
 API_rID32STR:beta GLU	biolink:PhenotypicQuality	api rid32str - beta glu											
-API_rID32STR:LAC	biolink:PhenotypicQuality	api rid32str - lac											
+API_rID32STR:MAN	biolink:PhenotypicQuality	api rid32str - man											
+API_rID32STR:VP	biolink:PhenotypicQuality	api rid32str - vp											
+API_rID32STR:MLZ	biolink:PhenotypicQuality	api rid32str - mlz											
 NCBITaxon:1530123	biolink:OrganismTaxon	acinetobacter seifertii											
 NCBITaxon:1981334	biolink:OrganismTaxon	finegoldia sp.											
 NCBITaxon:1538228	biolink:OrganismTaxon	kluyvera sp.											
@@ -452,27 +594,27 @@ NCBITaxon:34062	biolink:OrganismTaxon	moraxella osloensis
 NCBITaxon:197	biolink:OrganismTaxon	campylobacter jejuni											
 CHEBI:30031	biolink:ChemicalEntity	succinate											
 CHEBI:78019	biolink:ChemicalEntity	triphenyltetrazolium chloride											
+API_CAM:SUT	biolink:PhenotypicQuality	api cam - sut											
+API_CAM:EST	biolink:PhenotypicQuality	api cam - est											
+API_CAM:TTC	biolink:PhenotypicQuality	api cam - ttc											
+API_CAM:HIP	biolink:PhenotypicQuality	api cam - hip											
 API_CAM:PAL	biolink:PhenotypicQuality	api cam - pal											
 API_CAM:NIT	biolink:PhenotypicQuality	api cam - nit											
-API_CAM:HIP	biolink:PhenotypicQuality	api cam - hip											
-API_CAM:EST	biolink:PhenotypicQuality	api cam - est											
-API_CAM:SUT	biolink:PhenotypicQuality	api cam - sut											
-API_CAM:TTC	biolink:PhenotypicQuality	api cam - ttc											
 NCBITaxon:590593	biolink:OrganismTaxon	iodobacter arcticus											
 CHEBI:29987	biolink:ChemicalEntity	glutamate											
 CHEBI:25017	biolink:ChemicalEntity	leucine											
 NCBITaxon:614	biolink:OrganismTaxon	serratia liquefaciens											
 medium:1	biolink:ChemicalEntity	nutrient agar (dsmz medium 1)											
 CHEBI:17997	biolink:ChemicalEntity	dinitrogen											
-API_20E:RHA	biolink:PhenotypicQuality	api 20e - rha											
-API_20E:MAN	biolink:PhenotypicQuality	api 20e - man											
-API_20E:GLU	biolink:PhenotypicQuality	api 20e - glu											
-API_20E:Sor	biolink:PhenotypicQuality	api 20e - sor											
+API_20E:IND	biolink:PhenotypicQuality	api 20e - ind											
 API_20E:MEL	biolink:PhenotypicQuality	api 20e - mel											
 API_20E:ARA	biolink:PhenotypicQuality	api 20e - ara											
+API_20E:Sor	biolink:PhenotypicQuality	api 20e - sor											
 API_20E:N2	biolink:PhenotypicQuality	api 20e - n2											
-API_20E:IND	biolink:PhenotypicQuality	api 20e - ind											
+API_20E:GLU	biolink:PhenotypicQuality	api 20e - glu											
+API_20E:MAN	biolink:PhenotypicQuality	api 20e - man											
 API_20E:ONPG	biolink:PhenotypicQuality	api 20e - onpg											
+API_20E:RHA	biolink:PhenotypicQuality	api 20e - rha											
 NCBITaxon:930118	biolink:OrganismTaxon	marinobacter persicus											
 medium:514b	biolink:ChemicalEntity	medium 514 plus additional salt (dsmz medium 514b)											
 NCBITaxon:1869190	biolink:OrganismTaxon	roseomonas sp.											
@@ -495,7 +637,6 @@ CHEBI:26986	biolink:ChemicalEntity	threonine
 NCBITaxon:37328	biolink:OrganismTaxon	nocardia carnea											
 NCBITaxon:38502	biolink:OrganismTaxon	blastococcus aggregatus											
 CHEBI:17968	biolink:ChemicalEntity	butyrate											
-CHEBI:16467	biolink:ChemicalEntity	l-arginine											
 CHEBI:35418	biolink:ChemicalEntity	n-acetylneuraminate											
 CHEBI:75229	biolink:ChemicalEntity	sodium bromate											
 API_20E:LDC Lys	biolink:PhenotypicQuality	api 20e - ldc lys											
@@ -508,11 +649,6 @@ gram_stain:variable	biolink:PhenotypicQuality	gram-variable
 NCBITaxon:1428	biolink:OrganismTaxon	bacillus thuringiensis											
 NCBITaxon:2138	biolink:OrganismTaxon	spiroplasma poulsonii											
 NCBITaxon:1927958	biolink:OrganismTaxon	dyella monticola											
-EC:3.2.1.24	biolink:PhenotypicQuality	alpha-mannosidase											
-EC:3.2.1.51	biolink:PhenotypicQuality	alpha-fucosidase											
-CHEBI:65327	biolink:ChemicalEntity	d-xylose											
-CHEBI:15443	biolink:ChemicalEntity	inulin											
-CHEBI:62318	biolink:ChemicalEntity	d-lyxose											
 NCBITaxon:408	biolink:OrganismTaxon	methylorubrum extorquens											
 NCBITaxon:1080224	biolink:OrganismTaxon	hyunsoonleella pacifica											
 NCBITaxon:1236966	biolink:OrganismTaxon	iodidimonas gelatinilytica											
@@ -533,25 +669,23 @@ NCBITaxon:267	biolink:OrganismTaxon	paracoccus sp. (in: a-proteobacteria)
 NCBITaxon:36773	biolink:OrganismTaxon	burkholderia sp.											
 NCBITaxon:666	biolink:OrganismTaxon	vibrio cholerae											
 API_20E:CIT	biolink:PhenotypicQuality	api 20e - cit											
+API_20E:GEL	biolink:PhenotypicQuality	api 20e - gel											
+API_20E:SAC	biolink:PhenotypicQuality	api 20e - sac											
 API_20E:ODC	biolink:PhenotypicQuality	api 20e - odc											
 API_20E:OX	biolink:PhenotypicQuality	api 20e - ox											
-API_20E:SAC	biolink:PhenotypicQuality	api 20e - sac											
-API_20E:GEL	biolink:PhenotypicQuality	api 20e - gel											
 NCBITaxon:420953	biolink:OrganismTaxon	paraburkholderia megapolitana											
 NCBITaxon:431059	biolink:OrganismTaxon	pelomonas puraquae											
 NCBITaxon:732	biolink:OrganismTaxon	aggregatibacter aphrophilus											
-EC:2.3.2.2	biolink:PhenotypicQuality	gamma-glutamyltransferase											
-API_NH:MAL	biolink:PhenotypicQuality	api nh - mal											
-API_NH:beta GAL	biolink:PhenotypicQuality	api nh - beta gal											
-API_NH:PAL	biolink:PhenotypicQuality	api nh - pal											
 API_NH:SAC	biolink:PhenotypicQuality	api nh - sac											
 API_NH:FRU	biolink:PhenotypicQuality	api nh - fru											
+API_NH:MAL	biolink:PhenotypicQuality	api nh - mal											
 API_NH:GGT	biolink:PhenotypicQuality	api nh - ggt											
+API_NH:PAL	biolink:PhenotypicQuality	api nh - pal											
+API_NH:beta GAL	biolink:PhenotypicQuality	api nh - beta gal											
 NCBITaxon:1833	biolink:OrganismTaxon	rhodococcus erythropolis											
 API_coryne:URE	biolink:PhenotypicQuality	api coryne - ure											
 NCBITaxon:718	biolink:OrganismTaxon	actinobacillus equuli											
 API_zym:alpha- Glucosidase	biolink:PhenotypicQuality	api zym - alpha- glucosidase											
-EC:3.5.2.6	biolink:PhenotypicQuality	beta-lactamase											
 API_rID32STR:beta GAR	biolink:PhenotypicQuality	api rid32str - beta gar											
 EC:3.2.1.55	biolink:PhenotypicQuality	alpha-arabinosidase											
 NCBITaxon:419015	biolink:OrganismTaxon	alloscardovia omnicolens											
@@ -601,22 +735,21 @@ NCBITaxon:1122182	biolink:OrganismTaxon	longispora albida dsm 44784
 pathogen:plant	biolink:PhenotypicQuality	plant pathogen											
 NCBITaxon:1328864	biolink:OrganismTaxon	rathayibacter tritici ncppb 1857											
 medium:11	biolink:ChemicalEntity	mrs medium (dsmz medium 11)											
-API_50CHac:AMY	biolink:PhenotypicQuality	api 50chac - amy											
-API_50CHac:DUL	biolink:PhenotypicQuality	api 50chac - dul											
-API_50CHac:SOR	biolink:PhenotypicQuality	api 50chac - sor											
-API_50CHac:SAL	biolink:PhenotypicQuality	api 50chac - sal											
-API_50CHac:GAL	biolink:PhenotypicQuality	api 50chac - gal											
-API_50CHac:GNT	biolink:PhenotypicQuality	api 50chac - gnt											
 API_50CHac:MLZ	biolink:PhenotypicQuality	api 50chac - mlz											
-API_50CHac:RHA	biolink:PhenotypicQuality	api 50chac - rha											
-API_50CHac:ARB	biolink:PhenotypicQuality	api 50chac - arb											
+API_50CHac:DUL	biolink:PhenotypicQuality	api 50chac - dul											
 API_50CHac:LAC	biolink:PhenotypicQuality	api 50chac - lac											
+API_50CHac:SOR	biolink:PhenotypicQuality	api 50chac - sor											
+API_50CHac:GNT	biolink:PhenotypicQuality	api 50chac - gnt											
+API_50CHac:SAL	biolink:PhenotypicQuality	api 50chac - sal											
+API_50CHac:RHA	biolink:PhenotypicQuality	api 50chac - rha											
+API_50CHac:GAL	biolink:PhenotypicQuality	api 50chac - gal											
+API_50CHac:AMY	biolink:PhenotypicQuality	api 50chac - amy											
+API_50CHac:ARB	biolink:PhenotypicQuality	api 50chac - arb											
 API_50CHac:TAG	biolink:PhenotypicQuality	api 50chac - tag											
 NCBITaxon:728005	biolink:OrganismTaxon	devosia psychrophila											
 NCBITaxon:83453	biolink:OrganismTaxon	melittangium boletus											
 NCBITaxon:394506	biolink:OrganismTaxon	salirhabdus euzebyi											
 CHEBI:26271	biolink:ChemicalEntity	proline											
-CHEBI:17151	biolink:ChemicalEntity	xylitol											
 NCBITaxon:1396	biolink:OrganismTaxon	bacillus cereus											
 NCBITaxon:1591	biolink:OrganismTaxon	lactobacillus sp.											
 NCBITaxon:37326	biolink:OrganismTaxon	nocardia brasiliensis											
@@ -653,7 +786,6 @@ CHEBI:18401	biolink:ChemicalEntity	phenylacetate
 CHEBI:53258	biolink:ChemicalEntity	sodium citrate											
 NCBITaxon:1814289	biolink:OrganismTaxon	sanguibacter gelidistatuariae											
 CHEBI:17029	biolink:ChemicalEntity	chitin											
-CHEBI:17108	biolink:ChemicalEntity	d-arabinose											
 CHEBI:35026	biolink:ChemicalEntity	triethylamine											
 NCBITaxon:391	biolink:OrganismTaxon	rhizobium sp.											
 medium:98	biolink:ChemicalEntity	rhizobium medium (dsmz medium 98)											
@@ -696,8 +828,8 @@ CHEBI:58143	biolink:ChemicalEntity	5-dehydro-d-gluconate
 CHEBI:16991	biolink:ChemicalEntity	dna											
 CHEBI:495056	biolink:ChemicalEntity	gamma-cyclodextrin											
 NCBITaxon:573	biolink:OrganismTaxon	klebsiella pneumoniae											
-API_20E:INO	biolink:PhenotypicQuality	api 20e - ino											
 API_20E:AMY	biolink:PhenotypicQuality	api 20e - amy											
+API_20E:INO	biolink:PhenotypicQuality	api 20e - ino											
 NCBITaxon:1270	biolink:OrganismTaxon	micrococcus luteus											
 NCBITaxon:1442366	biolink:OrganismTaxon	massilia norwichensis											
 NCBITaxon:31973	biolink:OrganismTaxon	eggerthia catenaformis											
@@ -710,10 +842,8 @@ API_ID32E:alpha GLU	biolink:PhenotypicQuality	api id32e - alpha glu
 NCBITaxon:2027872	biolink:OrganismTaxon	nocardia cavernae											
 CHEBI:18050	biolink:ChemicalEntity	l-glutamine											
 CHEBI:15971	biolink:ChemicalEntity	l-histidine											
-CHEBI:18019	biolink:ChemicalEntity	l-lysine											
 CHEBI:16643	biolink:ChemicalEntity	l-methionine											
 CHEBI:17115	biolink:ChemicalEntity	l-serine											
-CHEBI:16828	biolink:ChemicalEntity	l-tryptophan											
 CHEBI:17895	biolink:ChemicalEntity	l-tyrosine											
 metabolism:chemoorganotrophy	biolink:BiologicalProcess	chemoorganotroph											
 salinity:halophilic	biolink:PhenotypicQuality	halophilic											
@@ -734,7 +864,6 @@ NCBITaxon:494024	biolink:OrganismTaxon	leifsonia antarctica
 NCBITaxon:1852970	biolink:OrganismTaxon	paenimyroides cloacae											
 CHEBI:28938	biolink:ChemicalEntity	ammonium											
 NCBITaxon:1888195	biolink:OrganismTaxon	streptococcus himalayensis											
-CHEBI:65328	biolink:ChemicalEntity	l-xylose											
 NCBITaxon:1872086	biolink:OrganismTaxon	ensifer sp.											
 medium:1613	biolink:ChemicalEntity	flour medium (dsmz medium 1613)											
 NCBITaxon:1076330	biolink:OrganismTaxon	amphibacillus indicireducens											
@@ -773,8 +902,8 @@ NCBITaxon:425941	biolink:OrganismTaxon	hoylesella nanceiensis
 NCBITaxon:36809	biolink:OrganismTaxon	mycobacteroides abscessus											
 NCBITaxon:1598	biolink:OrganismTaxon	limosilactobacillus reuteri											
 API_rID32STR:LARA	biolink:PhenotypicQuality	api rid32str - lara											
-API_rID32STR:alpha GAL	biolink:PhenotypicQuality	api rid32str - alpha gal											
 API_rID32STR:MEL	biolink:PhenotypicQuality	api rid32str - mel											
+API_rID32STR:alpha GAL	biolink:PhenotypicQuality	api rid32str - alpha gal											
 API_rID32STR:RAF	biolink:PhenotypicQuality	api rid32str - raf											
 NCBITaxon:516063	biolink:OrganismTaxon	gallibacterium melopsittaci											
 NCBITaxon:74703	biolink:OrganismTaxon	staphylococcus capitis subsp. urealyticus											
@@ -791,31 +920,30 @@ NCBITaxon:1849018	biolink:OrganismTaxon	octadecabacter ponticola
 CHEBI:17368	biolink:ChemicalEntity	hypoxanthine											
 CHEBI:15318	biolink:ChemicalEntity	xanthine											
 NCBITaxon:1697053	biolink:OrganismTaxon	thiopseudomonas alkaliphila											
-CHEBI:28847	biolink:ChemicalEntity	d-fucose											
 NCBITaxon:2871696	biolink:OrganismTaxon	hydrogenophilus sp.											
 medium:822	biolink:ChemicalEntity	frr-6, frr-8 medium (dsmz medium 822)											
 NCBITaxon:428993	biolink:OrganismTaxon	pseudoxanthomonas indica											
 medium:1a	biolink:ChemicalEntity	reactivation with liquid medium 1 (dsmz medium 1a)											
 NCBITaxon:1121371	biolink:OrganismTaxon	cryptosporangium japonicum dsm 44713											
 NCBITaxon:114197	biolink:OrganismTaxon	selenomonas ruminantium subsp. lactilytica											
+API_20A:SAL	biolink:PhenotypicQuality	api 20a - sal											
+API_20A:SAC	biolink:PhenotypicQuality	api 20a - sac											
+API_20A:MNE	biolink:PhenotypicQuality	api 20a - mne											
 API_20A:LAC	biolink:PhenotypicQuality	api 20a - lac											
 API_20A:ARA	biolink:PhenotypicQuality	api 20a - ara											
-API_20A:SAL	biolink:PhenotypicQuality	api 20a - sal											
-API_20A:RAF	biolink:PhenotypicQuality	api 20a - raf											
-API_20A:SAC	biolink:PhenotypicQuality	api 20a - sac											
 API_20A:MAL	biolink:PhenotypicQuality	api 20a - mal											
-API_20A:MNE	biolink:PhenotypicQuality	api 20a - mne											
-API_20A:MAN	biolink:PhenotypicQuality	api 20a - man											
 API_20A:CEL	biolink:PhenotypicQuality	api 20a - cel											
+API_20A:MAN	biolink:PhenotypicQuality	api 20a - man											
+API_20A:RAF	biolink:PhenotypicQuality	api 20a - raf											
 NCBITaxon:408067	biolink:OrganismTaxon	yinghuangia seranimata											
 NCBITaxon:1892	biolink:OrganismTaxon	streptomyces anulatus											
 NCBITaxon:68173	biolink:OrganismTaxon	kitasatospora albolonga											
 NCBITaxon:42858	biolink:OrganismTaxon	mammaliicoccus lentus											
-API_ID32STA:RIB	biolink:PhenotypicQuality	api id32sta - rib											
-API_ID32STA:NOVO	biolink:PhenotypicQuality	api id32sta - novo											
-API_ID32STA:CEL	biolink:PhenotypicQuality	api id32sta - cel											
 API_ID32STA:RAF	biolink:PhenotypicQuality	api id32sta - raf											
+API_ID32STA:CEL	biolink:PhenotypicQuality	api id32sta - cel											
 API_ID32STA:ARA	biolink:PhenotypicQuality	api id32sta - ara											
+API_ID32STA:NOVO	biolink:PhenotypicQuality	api id32sta - novo											
+API_ID32STA:RIB	biolink:PhenotypicQuality	api id32sta - rib											
 API_ID32STA:ESC	biolink:PhenotypicQuality	api id32sta - esc											
 NCBITaxon:170623	biolink:OrganismTaxon	azotobacter beijerinckii											
 NCBITaxon:43767	biolink:OrganismTaxon	prescottella equi											
@@ -855,13 +983,12 @@ NCBITaxon:2293571	biolink:OrganismTaxon	streptomyces inhibens
 CHEBI:17196	biolink:ChemicalEntity	l-asparagine											
 CHEBI:17203	biolink:ChemicalEntity	l-proline											
 NCBITaxon:1936207	biolink:OrganismTaxon	streptococcus ovuberis											
-EC:3.2.1.25	biolink:PhenotypicQuality	beta-mannosidase											
 NCBITaxon:183417	biolink:OrganismTaxon	proteus hauseri											
 NCBITaxon:544580	biolink:OrganismTaxon	actinomyces oris											
 NCBITaxon:225992	biolink:OrganismTaxon	comamonas kerstersii											
 NCBITaxon:87883	biolink:OrganismTaxon	burkholderia multivorans											
-API_rID32STR:GLYG	biolink:PhenotypicQuality	api rid32str - glyg											
 API_rID32STR:CDEX	biolink:PhenotypicQuality	api rid32str - cdex											
+API_rID32STR:GLYG	biolink:PhenotypicQuality	api rid32str - glyg											
 API_rID32A:beta GP	biolink:PhenotypicQuality	api rid32a - beta gp											
 NCBITaxon:1774	biolink:OrganismTaxon	mycobacteroides chelonae											
 NCBITaxon:36808	biolink:OrganismTaxon	corynebacterium bovis											
@@ -870,10 +997,10 @@ NCBITaxon:1376	biolink:OrganismTaxon	aerococcus urinae
 API_rID32STR:DARL	biolink:PhenotypicQuality	api rid32str - darl											
 NCBITaxon:483	biolink:OrganismTaxon	neisseria cinerea											
 NCBITaxon:1388749	biolink:OrganismTaxon	campylobacter lari nctc 11845											
-API_CAM:PROP	biolink:PhenotypicQuality	api cam - prop											
-API_CAM:AspA	biolink:PhenotypicQuality	api cam - aspa											
-API_CAM:URE	biolink:PhenotypicQuality	api cam - ure											
 API_CAM:GLU	biolink:PhenotypicQuality	api cam - glu											
+API_CAM:AspA	biolink:PhenotypicQuality	api cam - aspa											
+API_CAM:PROP	biolink:PhenotypicQuality	api cam - prop											
+API_CAM:URE	biolink:PhenotypicQuality	api cam - ure											
 NCBITaxon:28258	biolink:OrganismTaxon	cobetia marina											
 NCBITaxon:2047739	biolink:OrganismTaxon	micromonospora grosourdyae											
 NCBITaxon:1018	biolink:OrganismTaxon	capnocytophaga ochracea											
@@ -910,10 +1037,10 @@ NCBITaxon:2024551	biolink:OrganismTaxon	thiocapsa sp.
 NCBITaxon:1960309	biolink:OrganismTaxon	klenkia marina											
 NCBITaxon:1960103	biolink:OrganismTaxon	listeria sp.											
 medium:215	biolink:ChemicalEntity	bhi medium (dsmz medium 215)											
+API_LIST:ESC	biolink:PhenotypicQuality	api list - esc											
 API_LIST:XYL	biolink:PhenotypicQuality	api list - xyl											
 API_LIST:RHA	biolink:PhenotypicQuality	api list - rha											
 API_LIST:TAG	biolink:PhenotypicQuality	api list - tag											
-API_LIST:ESC	biolink:PhenotypicQuality	api list - esc											
 NCBITaxon:33014	biolink:OrganismTaxon	clavibacter michiganensis subsp. insidiosus											
 NCBITaxon:574650	biolink:OrganismTaxon	micrococcus terreus											
 NCBITaxon:1685	biolink:OrganismTaxon	bifidobacterium breve											
@@ -923,13 +1050,13 @@ NCBITaxon:69218	biolink:OrganismTaxon	enterobacter cancerogenus
 NCBITaxon:95162	biolink:OrganismTaxon	nocardia beijingensis											
 NCBITaxon:147802	biolink:OrganismTaxon	lactobacillus iners											
 NCBITaxon:102684	biolink:OrganismTaxon	streptococcus infantarius											
-API_20STR:AMD	biolink:PhenotypicQuality	api 20str - amd											
-API_20STR:LAP	biolink:PhenotypicQuality	api 20str - lap											
-API_20STR:VP	biolink:PhenotypicQuality	api 20str - vp											
 API_20STR:alpha GAL	biolink:PhenotypicQuality	api 20str - alpha gal											
+API_20STR:VP	biolink:PhenotypicQuality	api 20str - vp											
+API_20STR:AMD	biolink:PhenotypicQuality	api 20str - amd											
+API_20STR:LAC	biolink:PhenotypicQuality	api 20str - lac											
+API_20STR:LAP	biolink:PhenotypicQuality	api 20str - lap											
 API_20STR:RAF	biolink:PhenotypicQuality	api 20str - raf											
 API_20STR:beta HEM	biolink:PhenotypicQuality	api 20str - beta hem											
-API_20STR:LAC	biolink:PhenotypicQuality	api 20str - lac											
 NCBITaxon:1750	biolink:OrganismTaxon	arachnia propionica											
 NCBITaxon:28172	biolink:OrganismTaxon	vibrio metschnikovii											
 NCBITaxon:1792174	biolink:OrganismTaxon	paenibacillus apis											
@@ -987,10 +1114,10 @@ NCBITaxon:71254	biolink:OrganismTaxon	corynebacterium confusum
 NCBITaxon:28080	biolink:OrganismTaxon	campylobacter upsaliensis											
 NCBITaxon:1929438	biolink:OrganismTaxon	wautersiella sp.											
 NCBITaxon:1353	biolink:OrganismTaxon	enterococcus gallinarum											
+API_rID32STR:Mbeta DG	biolink:PhenotypicQuality	api rid32str - mbeta dg											
 API_rID32STR:beta MAN	biolink:PhenotypicQuality	api rid32str - beta man											
 API_rID32STR:GTA	biolink:PhenotypicQuality	api rid32str - gta											
 API_rID32STR:beta NAG	biolink:PhenotypicQuality	api rid32str - beta nag											
-API_rID32STR:Mbeta DG	biolink:PhenotypicQuality	api rid32str - mbeta dg											
 NCBITaxon:28251	biolink:OrganismTaxon	ornithobacterium rhinotracheale											
 NCBITaxon:446	biolink:OrganismTaxon	legionella pneumophila											
 NCBITaxon:298	biolink:OrganismTaxon	pseudomonas marginalis											
@@ -1031,8 +1158,8 @@ NCBITaxon:714549	biolink:OrganismTaxon	hydrotalea flava
 NCBITaxon:420952	biolink:OrganismTaxon	paraburkholderia bryophila											
 NCBITaxon:1284	biolink:OrganismTaxon	staphylococcus hyicus											
 NCBITaxon:1633	biolink:OrganismTaxon	limosilactobacillus vaginalis											
-API_50CHac:RAF	biolink:PhenotypicQuality	api 50chac - raf											
 API_50CHac:MEL	biolink:PhenotypicQuality	api 50chac - mel											
+API_50CHac:RAF	biolink:PhenotypicQuality	api 50chac - raf											
 NCBITaxon:1579	biolink:OrganismTaxon	lactobacillus acidophilus											
 NCBITaxon:1292	biolink:OrganismTaxon	staphylococcus warneri											
 NCBITaxon:41202	biolink:OrganismTaxon	ewingella americana											
@@ -1098,9 +1225,9 @@ CHEBI:63005	biolink:ChemicalEntity	sodium nitrate
 NCBITaxon:28035	biolink:OrganismTaxon	staphylococcus lugdunensis											
 NCBITaxon:271434	biolink:OrganismTaxon	arthrobacter parietis											
 NCBITaxon:1639	biolink:OrganismTaxon	listeria monocytogenes											
-API_LIST:DARL	biolink:PhenotypicQuality	api list - darl											
 API_LIST:alpha MAN	biolink:PhenotypicQuality	api list - alpha man											
 API_LIST:MDG	biolink:PhenotypicQuality	api list - mdg											
+API_LIST:DARL	biolink:PhenotypicQuality	api list - darl											
 API_LIST:beta HEM	biolink:PhenotypicQuality	api list - beta hem											
 NCBITaxon:431058	biolink:OrganismTaxon	pelomonas aquatica											
 NCBITaxon:67855	biolink:OrganismTaxon	muribacter muris											
@@ -1196,8 +1323,8 @@ NCBITaxon:83451	biolink:OrganismTaxon	archangium violaceum
 NCBITaxon:218139	biolink:OrganismTaxon	aeriscardovia aeriphila											
 API_50CHac:AMD	biolink:PhenotypicQuality	api 50chac - amd											
 API_50CHac:GLYG	biolink:PhenotypicQuality	api 50chac - glyg											
-API_50CHac:TUR	biolink:PhenotypicQuality	api 50chac - tur											
 API_50CHac:DXYL	biolink:PhenotypicQuality	api 50chac - dxyl											
+API_50CHac:TUR	biolink:PhenotypicQuality	api 50chac - tur											
 NCBITaxon:285544	biolink:OrganismTaxon	streptomyces sclerogranulatus											
 NCBITaxon:1945593	biolink:OrganismTaxon	oscillibacter sp.											
 NCBITaxon:341027	biolink:OrganismTaxon	sphingobacterium sp.											
@@ -1276,7 +1403,6 @@ NCBITaxon:1589	biolink:OrganismTaxon	lactiplantibacillus pentosus
 NCBITaxon:2040258	biolink:OrganismTaxon	longispora urticae											
 CHEBI:16919	biolink:ChemicalEntity	creatine											
 NCBITaxon:1775166	biolink:OrganismTaxon	croceitalea marina											
-CHEBI:17113	biolink:ChemicalEntity	erythritol											
 NCBITaxon:1642647	biolink:OrganismTaxon	proteiniphilum saccharofermentans											
 NCBITaxon:50741	biolink:OrganismTaxon	marinobacter sp.											
 NCBITaxon:1265506	biolink:OrganismTaxon	agrobacterium vitis atcc 49767											
@@ -1358,7 +1484,6 @@ NCBITaxon:1744	biolink:OrganismTaxon	propionibacterium freudenreichii
 NCBITaxon:1543381	biolink:OrganismTaxon	oleiagrimonas soli											
 CHEBI:73786	biolink:ChemicalEntity	l-alanylglycine											
 CHEBI:15603	biolink:ChemicalEntity	l-leucine											
-CHEBI:15729	biolink:ChemicalEntity	l-ornithine											
 CHEBI:17295	biolink:ChemicalEntity	l-phenylalanine											
 NCBITaxon:1978372	biolink:OrganismTaxon	citricoccus sp.											
 medium:231	biolink:ChemicalEntity	pediococcus damnosus medium (dsmz medium 231)											
@@ -1468,11 +1593,9 @@ NCBITaxon:131081	biolink:OrganismTaxon	corynebacterium capitovis
 NCBITaxon:1993874	biolink:OrganismTaxon	tetragenococcus sp.											
 NCBITaxon:68766	biolink:OrganismTaxon	fusobacterium sp.											
 NCBITaxon:29389	biolink:OrganismTaxon	streptococcus alactolyticus											
-CHEBI:18287	biolink:ChemicalEntity	l-fucose											
-CHEBI:17266	biolink:ChemicalEntity	l-sorbose											
-API_50CHac:LFUC	biolink:PhenotypicQuality	api 50chac - lfuc											
 API_50CHac:DARA	biolink:PhenotypicQuality	api 50chac - dara											
 API_50CHac:SBE	biolink:PhenotypicQuality	api 50chac - sbe											
+API_50CHac:LFUC	biolink:PhenotypicQuality	api 50chac - lfuc											
 NCBITaxon:1655	biolink:OrganismTaxon	actinomyces naeslundii											
 NCBITaxon:38286	biolink:OrganismTaxon	corynebacterium afermentans											
 NCBITaxon:630	biolink:OrganismTaxon	yersinia enterocolitica											
@@ -1743,7 +1866,6 @@ NCBITaxon:82541	biolink:OrganismTaxon	cupriavidus gilardii
 NCBITaxon:1520581	biolink:OrganismTaxon	streptomyces robefuscus											
 NCBITaxon:2594790	biolink:OrganismTaxon	lacisediminihabitans profunda											
 CHEBI:28800	biolink:ChemicalEntity	n-acetylgalactosamine											
-CHEBI:506227	biolink:ChemicalEntity	n-acetyl-d-glucosamine											
 CHEBI:64552	biolink:ChemicalEntity	alpha-hydroxybutyrate											
 NCBITaxon:83526	biolink:OrganismTaxon	companilactobacillus paralimentarius											
 NCBITaxon:61169	biolink:OrganismTaxon	alicyclobacillus sp.											
@@ -1764,7 +1886,6 @@ NCBITaxon:176292	biolink:OrganismTaxon	secundilactobacillus malefermentans
 NCBITaxon:376733	biolink:OrganismTaxon	paracoccus halophilus											
 NCBITaxon:915353	biolink:OrganismTaxon	algoriphagus namhaensis											
 NCBITaxon:1703256	biolink:OrganismTaxon	pseudoalteromonas gelatinilytica											
-CHEBI:32954	biolink:ChemicalEntity	sodium acetate											
 NCBITaxon:33964	biolink:OrganismTaxon	leuconostoc citreum											
 NCBITaxon:930117	biolink:OrganismTaxon	ornithinibacillus halophilus											
 medium:434	biolink:ChemicalEntity	marinococcus albus - medium (dsmz medium 434)											
@@ -1839,9 +1960,9 @@ medium:1267	biolink:ChemicalEntity	ferriphaselus (es) medium (dsmz medium 1267)
 NCBITaxon:1407645	biolink:OrganismTaxon	xanthomonas sp. lmg 546											
 NCBITaxon:882452	biolink:OrganismTaxon	williamsia limnetica											
 NCBITaxon:865	biolink:OrganismTaxon	pectinatus frisingensis											
+API_20A:GLY	biolink:PhenotypicQuality	api 20a - gly											
 API_20A:SOR	biolink:PhenotypicQuality	api 20a - sor											
 API_20A:RHA	biolink:PhenotypicQuality	api 20a - rha											
-API_20A:GLY	biolink:PhenotypicQuality	api 20a - gly											
 NCBITaxon:1432656	biolink:OrganismTaxon	thermococcus guaymasensis dsm 11113											
 NCBITaxon:504728	biolink:OrganismTaxon	meiothermus ruber dsm 1279											
 medium:256	biolink:ChemicalEntity	thermus ruber medium (dsmz medium 256)											
@@ -1868,10 +1989,10 @@ NCBITaxon:354243	biolink:OrganismTaxon	mycolicibacter kumamotonensis
 NCBITaxon:341722	biolink:OrganismTaxon	agrococcus lahaulensis											
 NCBITaxon:1697	biolink:OrganismTaxon	corynebacterium ammoniagenes											
 NCBITaxon:231233	biolink:OrganismTaxon	streptococcus devriesei											
-API_20STR:MAN	biolink:PhenotypicQuality	api 20str - man											
-API_20STR:SOR	biolink:PhenotypicQuality	api 20str - sor											
-API_20STR:INU	biolink:PhenotypicQuality	api 20str - inu											
 API_20STR:ESC	biolink:PhenotypicQuality	api 20str - esc											
+API_20STR:MAN	biolink:PhenotypicQuality	api 20str - man											
+API_20STR:INU	biolink:PhenotypicQuality	api 20str - inu											
+API_20STR:SOR	biolink:PhenotypicQuality	api 20str - sor											
 NCBITaxon:480	biolink:OrganismTaxon	moraxella catarrhalis											
 NCBITaxon:80842	biolink:OrganismTaxon	herbaspirillum rubrisubalbicans											
 NCBITaxon:1960874	biolink:OrganismTaxon	laceyella sp.											
@@ -2253,12 +2374,12 @@ NCBITaxon:2040332	biolink:OrganismTaxon	dorea sp.
 NCBITaxon:156978	biolink:OrganismTaxon	corynebacterium imitans											
 NCBITaxon:139021	biolink:OrganismTaxon	dietzia psychralcaliphila											
 NCBITaxon:44007	biolink:OrganismTaxon	enterococcus pseudoavium											
-API_50CHac:XLT	biolink:PhenotypicQuality	api 50chac - xlt											
-API_50CHac:DARL	biolink:PhenotypicQuality	api 50chac - darl											
-API_50CHac:LYX	biolink:PhenotypicQuality	api 50chac - lyx											
 API_50CHac:ADO	biolink:PhenotypicQuality	api 50chac - ado											
 API_50CHac:GLY	biolink:PhenotypicQuality	api 50chac - gly											
 API_50CHac:LARL	biolink:PhenotypicQuality	api 50chac - larl											
+API_50CHac:LYX	biolink:PhenotypicQuality	api 50chac - lyx											
+API_50CHac:DARL	biolink:PhenotypicQuality	api 50chac - darl											
+API_50CHac:XLT	biolink:PhenotypicQuality	api 50chac - xlt											
 NCBITaxon:243701	biolink:OrganismTaxon	pasteurella caballi											
 NCBITaxon:32023	biolink:OrganismTaxon	campylobacter sputorum subsp. bubulus											
 NCBITaxon:194702	biolink:OrganismTaxon	cardiobacterium valvarum											
@@ -2384,7 +2505,6 @@ NCBITaxon:1318	biolink:OrganismTaxon	streptococcus parasanguinis
 NCBITaxon:1803903	biolink:OrganismTaxon	actinomadura montaniterrae											
 NCBITaxon:1892865	biolink:OrganismTaxon	allostreptomyces psammosilenae											
 CHEBI:17836	biolink:ChemicalEntity	4-aminobenzoate											
-CHEBI:50144	biolink:ChemicalEntity	sodium pyruvate											
 NCBITaxon:1196095	biolink:OrganismTaxon	gilliamella apicola											
 NCBITaxon:1524338	biolink:OrganismTaxon	phytomonospora cypria											
 NCBITaxon:1262550	biolink:OrganismTaxon	brevibacterium jeotgali											
@@ -2588,7 +2708,6 @@ NCBITaxon:80867	biolink:OrganismTaxon	paracidovorax avenae
 NCBITaxon:48729	biolink:OrganismTaxon	rhabdochromatium marinum											
 NCBITaxon:1121917	biolink:OrganismTaxon	caldibacillus debilis dsm 16016											
 NCBITaxon:217031	biolink:OrganismTaxon	lederbergia galactosidilytica											
-CHEBI:90144	biolink:ChemicalEntity	o-nitrophenyl-beta-d-galactopyranosid											
 NCBITaxon:2320271	biolink:OrganismTaxon	aureimonas flava											
 CHEBI:31639	biolink:ChemicalEntity	fungichromin											
 NCBITaxon:2518644	biolink:OrganismTaxon	pseudomonas tructae											
@@ -2820,7 +2939,6 @@ NCBITaxon:29529	biolink:OrganismTaxon	chitinophaga arvensicola
 NCBITaxon:1481931	biolink:OrganismTaxon	vibrio sp. jcm 19061											
 NCBITaxon:2066697	biolink:OrganismTaxon	mangrovicella endophytica											
 CHEBI:17563	biolink:ChemicalEntity	phthalate											
-CHEBI:63675	biolink:ChemicalEntity	sodium succinate											
 NCBITaxon:555393	biolink:OrganismTaxon	acholeplasma equirhinis											
 NCBITaxon:2201189	biolink:OrganismTaxon	marinitoga lauensis											
 medium:964	biolink:ChemicalEntity	caminicella medium (dsmz medium 964)											
@@ -3610,7 +3728,6 @@ CHEBI:16632	biolink:ChemicalEntity	vanillate
 NCBITaxon:1326	biolink:OrganismTaxon	streptococcus acidominimus											
 NCBITaxon:1929416	biolink:OrganismTaxon	kocuria salina											
 CHEBI:48607	biolink:ChemicalEntity	lithium chloride											
-CHEBI:100147	biolink:ChemicalEntity	nalidixic acid											
 CHEBI:75248	biolink:ChemicalEntity	potassium tellurite											
 NCBITaxon:1840605	biolink:OrganismTaxon	microbacterium tumbae											
 NCBITaxon:652787	biolink:OrganismTaxon	mucilaginibacter mallensis											
@@ -4144,7 +4261,6 @@ NCBITaxon:37333	biolink:OrganismTaxon	nocardia transvalensis
 NCBITaxon:61645	biolink:OrganismTaxon	enterobacter asburiae											
 NCBITaxon:2049881	biolink:OrganismTaxon	streptomyces dengpaensis											
 CHEBI:62946	biolink:ChemicalEntity	ammonium sulfate											
-CHEBI:63043	biolink:ChemicalEntity	potassium nitrate											
 NCBITaxon:2054227	biolink:OrganismTaxon	sphingopyxis lindanitolerans											
 NCBITaxon:47478	biolink:OrganismTaxon	deinococcus sp.											
 NCBITaxon:145285	biolink:OrganismTaxon	nocardia ignorata											
@@ -4311,9 +4427,9 @@ NCBITaxon:2315688	biolink:OrganismTaxon	simplicispira hankyongi
 NCBITaxon:1569794	biolink:OrganismTaxon	chitinophaga qingshengii											
 NCBITaxon:1463164	biolink:OrganismTaxon	klebsiella quasipneumoniae subsp. similipneumoniae											
 NCBITaxon:67829	biolink:OrganismTaxon	citrobacter murliniae											
-API_20STR:RIB	biolink:PhenotypicQuality	api 20str - rib											
-API_20STR:ADH	biolink:PhenotypicQuality	api 20str - adh											
 API_20STR:ARA	biolink:PhenotypicQuality	api 20str - ara											
+API_20STR:ADH	biolink:PhenotypicQuality	api 20str - adh											
+API_20STR:RIB	biolink:PhenotypicQuality	api 20str - rib											
 NCBITaxon:93063	biolink:OrganismTaxon	sphingomonas aquatilis											
 NCBITaxon:53364	biolink:OrganismTaxon	brevibacterium otitidis											
 API_coryne:Control	biolink:PhenotypicQuality	api coryne - control											
@@ -4428,8 +4544,8 @@ NCBITaxon:1117318	biolink:OrganismTaxon	pseudoalteromonas rubra dsm 6842
 NCBITaxon:1123376	biolink:OrganismTaxon	thermodesulfovibrio thiophilus dsm 17215											
 CHEBI:30089	biolink:ChemicalEntity	a											
 NCBITaxon:561505	biolink:OrganismTaxon	tenacibaculum gallaicum											
-API_20A:CAT	biolink:PhenotypicQuality	api 20a - cat											
 API_20A:MLZ	biolink:PhenotypicQuality	api 20a - mlz											
+API_20A:CAT	biolink:PhenotypicQuality	api 20a - cat											
 NCBITaxon:1465530	biolink:OrganismTaxon	lactobacillus sp. jcm 8695											
 NCBITaxon:76856	biolink:OrganismTaxon	fusobacterium nucleatum subsp. nucleatum											
 NCBITaxon:1960291	biolink:OrganismTaxon	pacificimonas sp.											
@@ -5415,7 +5531,6 @@ NCBITaxon:306572	biolink:OrganismTaxon	psychrobacter celer
 NCBITaxon:1626	biolink:OrganismTaxon	lacticaseibacillus sharpeae											
 NCBITaxon:160661	biolink:OrganismTaxon	desulfogranum mediterraneum											
 NCBITaxon:2072018	biolink:OrganismTaxon	meridianimarinicoccus roseus											
-CHEBI:62983	biolink:ChemicalEntity	sodium malonate											
 NCBITaxon:1987052	biolink:OrganismTaxon	streptococcus sp. jcm 7887											
 NCBITaxon:650368	biolink:OrganismTaxon	bifidobacterium sp. jcm 7028											
 NCBITaxon:1649133	biolink:OrganismTaxon	bordetella tumulicola											
@@ -6358,10 +6473,10 @@ NCBITaxon:167644	biolink:OrganismTaxon	ilyobacter tartaricus
 NCBITaxon:205326	biolink:OrganismTaxon	clostridium estertheticum subsp. laramiense											
 NCBITaxon:584607	biolink:OrganismTaxon	gaetbulibacter jejuensis											
 NCBITaxon:2054316	biolink:OrganismTaxon	thalassotalea atypica											
-API_20E:MOB	biolink:PhenotypicQuality	api 20e - mob											
 API_20E:MAC	biolink:PhenotypicQuality	api 20e - mac											
-API_20E:OF-F	biolink:PhenotypicQuality	api 20e - of-f											
+API_20E:MOB	biolink:PhenotypicQuality	api 20e - mob											
 API_20E:OF-O	biolink:PhenotypicQuality	api 20e - of-o											
+API_20E:OF-F	biolink:PhenotypicQuality	api 20e - of-f											
 NCBITaxon:1874826	biolink:OrganismTaxon	novosphingobium sp.											
 NCBITaxon:1416969	biolink:OrganismTaxon	natrinema mahii											
 NCBITaxon:1785988	biolink:OrganismTaxon	bombella apis											
@@ -8477,7 +8592,6 @@ medium:834	biolink:ChemicalEntity	coprothermobacter platensis medium (dsmz mediu
 NCBITaxon:114683	biolink:OrganismTaxon	streptomyces albiflaviniger											
 NCBITaxon:1943	biolink:OrganismTaxon	streptomyces griseoruber											
 NCBITaxon:2041	biolink:OrganismTaxon	aeromicrobium erythreum											
-CHEBI:48923	biolink:ChemicalEntity	erythromycin											
 NCBITaxon:102618	biolink:OrganismTaxon	helicobacter pylori nctc 11637 = ccug 17874 = atcc 43504 = jcm 12093											
 NCBITaxon:115781	biolink:OrganismTaxon	desulfotignum balticum											
 NCBITaxon:1705	biolink:OrganismTaxon	corynebacterium stationis											
@@ -8490,16 +8604,16 @@ NCBITaxon:1477018	biolink:OrganismTaxon	hafnia psychrotolerans
 NCBITaxon:233502	biolink:OrganismTaxon	brevibacterium aureum											
 NCBITaxon:1348248	biolink:OrganismTaxon	siansivirga jejuensis											
 NCBITaxon:1778665	biolink:OrganismTaxon	sphingobium aromaticivastans											
-API_50CHas:LARA	biolink:PhenotypicQuality	api 50chas - lara											
-API_50CHas:MAL	biolink:PhenotypicQuality	api 50chas - mal											
-API_50CHas:SAC	biolink:PhenotypicQuality	api 50chas - sac											
-API_50CHas:GAL	biolink:PhenotypicQuality	api 50chas - gal											
-API_50CHas:RAF	biolink:PhenotypicQuality	api 50chas - raf											
-API_50CHas:DFUC	biolink:PhenotypicQuality	api 50chas - dfuc											
-API_50CHas:RHA	biolink:PhenotypicQuality	api 50chas - rha											
-API_50CHas:FRU	biolink:PhenotypicQuality	api 50chas - fru											
-API_50CHas:GLU	biolink:PhenotypicQuality	api 50chas - glu											
 API_50CHas:MNE	biolink:PhenotypicQuality	api 50chas - mne											
+API_50CHas:DFUC	biolink:PhenotypicQuality	api 50chas - dfuc											
+API_50CHas:SAC	biolink:PhenotypicQuality	api 50chas - sac											
+API_50CHas:LARA	biolink:PhenotypicQuality	api 50chas - lara											
+API_50CHas:GLU	biolink:PhenotypicQuality	api 50chas - glu											
+API_50CHas:MAL	biolink:PhenotypicQuality	api 50chas - mal											
+API_50CHas:RAF	biolink:PhenotypicQuality	api 50chas - raf											
+API_50CHas:FRU	biolink:PhenotypicQuality	api 50chas - fru											
+API_50CHas:GAL	biolink:PhenotypicQuality	api 50chas - gal											
+API_50CHas:RHA	biolink:PhenotypicQuality	api 50chas - rha											
 NCBITaxon:1531	biolink:OrganismTaxon	enterocloster clostridioformis											
 NCBITaxon:1054550	biolink:OrganismTaxon	luteimicrobium album											
 NCBITaxon:119485	biolink:OrganismTaxon	syntrophobacter pfennigii											
@@ -8645,13 +8759,13 @@ NCBITaxon:254719	biolink:OrganismTaxon	marinobacter alkaliphilus
 NCBITaxon:1872709	biolink:OrganismTaxon	allorhizocola rhizosphaerae											
 NCBITaxon:1982110	biolink:OrganismTaxon	hymenobacter profundi											
 NCBITaxon:1843236	biolink:OrganismTaxon	sphingomonas montana											
-API_50CHas:ESC	biolink:PhenotypicQuality	api 50chas - esc											
-API_50CHas:CEL	biolink:PhenotypicQuality	api 50chas - cel											
 API_50CHas:ARB	biolink:PhenotypicQuality	api 50chas - arb											
-API_50CHas:DXYL	biolink:PhenotypicQuality	api 50chas - dxyl											
+API_50CHas:CEL	biolink:PhenotypicQuality	api 50chas - cel											
 API_50CHas:GEN	biolink:PhenotypicQuality	api 50chas - gen											
 API_50CHas:SAL	biolink:PhenotypicQuality	api 50chas - sal											
 API_50CHas:MEL	biolink:PhenotypicQuality	api 50chas - mel											
+API_50CHas:DXYL	biolink:PhenotypicQuality	api 50chas - dxyl											
+API_50CHas:ESC	biolink:PhenotypicQuality	api 50chas - esc											
 NCBITaxon:1524960	biolink:OrganismTaxon	pseudofulvibacter gastropodicola											
 NCBITaxon:454602	biolink:OrganismTaxon	spongiibacter tropicus											
 NCBITaxon:209246	biolink:OrganismTaxon	nocardia inohanensis											
@@ -9523,8 +9637,8 @@ NCBITaxon:362257	biolink:OrganismTaxon	streptomyces vietnamensis
 CHEBI:5533	biolink:ChemicalEntity	granaticin											
 NCBITaxon:246201	biolink:OrganismTaxon	streptococcus mitis nctc 12261											
 NCBITaxon:260085	biolink:OrganismTaxon	novosphingobium taihuense											
-API_50CHas:AMD	biolink:PhenotypicQuality	api 50chas - amd											
 API_50CHas:MLZ	biolink:PhenotypicQuality	api 50chas - mlz											
+API_50CHas:AMD	biolink:PhenotypicQuality	api 50chas - amd											
 NCBITaxon:475255	biolink:OrganismTaxon	pedobacter nyackensis											
 NCBITaxon:103734	biolink:OrganismTaxon	saccharothrix texasensis											
 NCBITaxon:104205	biolink:OrganismTaxon	streptomonospora salina											
@@ -16156,7 +16270,6 @@ NCBITaxon:1652101	biolink:OrganismTaxon	polygonibacillus indicireducens
 NCBITaxon:926	biolink:OrganismTaxon	thiomonas intermedia											
 NCBITaxon:179995	biolink:OrganismTaxon	anaerobiospirillum thomasii											
 medium:800	biolink:ChemicalEntity	anaerobiospirillum thomasii medium (dsmz medium 800)											
-CHEBI:28368	biolink:ChemicalEntity	novobiocin											
 NCBITaxon:284039	biolink:OrganismTaxon	streptomyces spororaveus											
 NCBITaxon:1122614	biolink:OrganismTaxon	pseudooceanicola nanhaiensis dsm 18065											
 NCBITaxon:51161	biolink:OrganismTaxon	actinobacillus delphinicola											

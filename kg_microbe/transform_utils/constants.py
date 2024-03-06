@@ -131,7 +131,7 @@ ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay]
 NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
 ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
-SUBSTRATE_TO_ENZYME_EDGE = "biolink:is_consumed_by"  # [substrate -> enzyme]
+ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"

@@ -1,370 +1,370 @@
-CHEBI_ID	substrate	KEGG_ID	CAS_RN_ID	EC_ID	enzyme	pseudo_CURIE
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_20A:IND
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_20A:URE
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20A:GLU
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20A:MAN
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_20A:LAC
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_20A:SAC
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_20A:MAL
-CHEBI:17814	Salicin	kegg.compound:C01451	CAS-RN:138-52-3			API_20A:SAL
-CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_20A:XYL
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20A:ARA
-CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_20A:GEL
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_20A:ESC
-CHEBI:17754	Glycerol	kegg.compound:C00116	CAS-RN:56-81-5			API_20A:GLY
-CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_20A:CEL
-CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_20A:MNE
-CHEBI:6731	D-melezitose (melezitose)	kegg.compound:C08243	CAS-RN:0597-12-06			API_20A:MLZ
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_20A:RAF
-CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_20A:SOR
-CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_20A:RHA
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_20A:TRE
-				EC:1.11.1.6	catalase	API_20A:CAT
-						API_20A:SPOR
-						API_20A:GRAM
-						API_20A:COCC
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_rID32A:URE
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_rID32A:ADH (Arg)
-CHEBI:54684	4-Nitrophenyl-alpha-D-galactoside		CAS-RN:7493-95-0	EC:3.2.1.22	alpha-galactosidase	API_rID32A:alpha GAL
-CHEBI:355715	4-Nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_rID32A:beta GAL
-CHEBI:90128	4-Nitrophenyl 6-O-phosphono-beta-D-galactosid					API_rID32A:beta GP
-	4-Nitrophenyl alpha-D-glucopyranoside 		CAS-RN:3767-28-0 	EC:3.2.1.20	alpha-glucosidase	API_rID32A:alpha GLU
-	4-Nitrophenyl beta-D-glucopyranoside		CAS-RN:2492-87-7	EC:3.2.1.21	beta-glucosidase	API_rID32A:beta GLU
-	4-Nitrophenyl alpha-L-arabinofuranoside 		CAS-RN:6892-58-6	EC:3.2.1.55	non-reducing end alpha-L-arabinofuranosidase	API_rID32A:alpha ARA
-	4-Nitrophenyl beta-D-glucuronide 		CAS-RN:10344-94-2	EC:3.2.1.31	beta-glucuronidase	API_rID32A:beta GUR
-	4-Nitrophenyl N-acetyl-beta-D-glucosaminide		CAS-RN:3459-18-5	EC:3.2.1.52	beta-N-acetylhexosaminidase	API_rID32A:beta NAG
-CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_rID32A:MNE
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_rID32A:RAF
-CHEBI:16015	L-glutamic acid	kegg.compound:C00025	CAS-RN:56-86-0	EC:4.1.1.15	Glutamat decarboxylase	API_rID32A:GDC
-	4-Nitrophenyl alpha-L-fucopyranoside 		CAS-RN:10231-84-2	EC:3.2.1.51	alpha-L-fucosidase	API_rID32A:alpha FUC
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_rID32A:NIT
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_rID32A:IND
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_rID32A:PAL
-	L-arginine beta-naphthylamide hydrochloride		CAS-RN:18905-73-2			API_rID32A:ArgA
-	L-proline beta-naphthylamide		CAS-RN:97216-16-5	EC:3.4.11.5	prolyl aminopeptidase	API_rID32A:ProA
-	Leu-Gly beta-naphthylamide		CAS-RN:100930-00-5	EC:3.4.11.1	leucyl aminopeptidase	API_rID32A:LGA
-	L-phenylalanine beta-naphthylamide 		CAS-RN:740-57-8			API_rID32A:PheA
-	L-Leucine beta-naphthylamide		CAS-RN:732-85-4			API_rID32A:LeuA
-	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_rID32A:PyrA
-	L-tyrosine beta-naphthylamide 		CAS-RN:4357-95-3			API_rID32A:TyrA
-	L-alanine-L-alanine beta-naphthylamide 					API_rID32A:AlaA
-	Glycine beta-naphthylamide		CAS-RN:1208-12-04			API_rID32A:GlyA
-	L-histidine beta-naphthylamide		CAS-RN:7424-15-9			API_rID32A:HisA
-	L-glutamy-L-glutamate beta-naphthylamide					API_rID32A:GGA
-	L-serine beta-naphthylamide		CAS-RN:888-74-4			API_rID32A:SerA
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_CAM:URE
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_CAM:NIT
-	5-bromo-4-chloro-3-indolyl acetate 		CAS-RN:3252-36-6 			API_CAM:EST
-CHEBI:18089	Hippuric acid (N-benzoylglycine)	kegg.compound:C01586	CAS-RN:495-69-2			API_CAM:HIP
-	gamma-L-glutamyl-4-methoxy-2-naphthylamine		CAS-RN:24723-50-0	EC:2.3.2.2	gamma-glutamyltransferase	API_CAM:GGT
-CHEBI:78019	2,3,5-triphenyltetrazolium chloride	kegg.compound:C11305	CAS-RN:298-96-4			API_CAM:TTC
-	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_CAM:PYRA
-	L-arginine-4-methoxy beta-naphthylamide		CAS-RN:61876-75-3 			API_CAM:ArgA
-	L-aspartic acid beta-naphthylamide 		CAS-RN:635-91-6 			API_CAM:AspA
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_CAM:PAL
-						API_CAM:H2S
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_CAM:GLU
-CHEBI:63675	Sodium succinate	kegg.compound:C00042 	CAS-RN:150-90-3			API_CAM:SUT
-CHEBI:100147	Nalidixic acid	kegg.compound:C05079	CAS-RN:0389-08-02			API_CAM:NAL
-CHEBI:3483	Cefazolin sodium	kegg.compound:C08098	CAS-RN:27164-46-1			API_CAM:CFZ
-CHEBI:32954	Sodium acetate	kegg.compound:C00033 	CAS-RN:0127-09-03			API_CAM:ACE
-CHEBI:30768	Propionic acid	kegg.compound:C00163	CAS-RN:1979-09-04			API_CAM:PROP
-CHEBI:665	Malic acid	kegg.compound:C00711	CAS-RN:6915-15-7			API_CAM:MLT
-CHEBI:30769	Citric acid	kegg.compound:C00158	CAS-RN:77-92-9			API_CAM:CIT
-CHEBI:48923	Erythromycin					API_CAM:ERO
-				EC:1.11.1.6	catalase	API_CAM:CAT
-CHEBI:90426	L-cystyl-2-naphthylamide		CAS-RN:65322-97-6		Cystine arylamidase	API_zym:Cystine arylamidase
-	N-benzoyl-DL-arginine-2-naphthylamide		CAS-RN:0913-04-02	EC:3.4.21.4	Trypsin	API_zym:Trypsin
-	N-glutaryl-phenylalanine-2-naphthylamide			EC:3.4.21.1	alpha-Chymotrypsin	API_zym:alpha- Chymotrypsin
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.2	Acid phosphatase	API_zym:Acid phosphatase
-	Naphthol-AS-BI-phosphate		CAS-RN:1919-91-1		Naphthol-AS-BI-phosphohydrolase	API_zym:Naphthol-AS-BI-phosphohydrolase
-	6-Br-2-naphthyl-alphaD-galactpyranoside		CAS-RN:25997-59-5	EC:3.2.1.22	alpha-Galactosidase	API_zym:alpha- Galactosidase
-	2-naphthyl-betaD-galactpyranoside		CAS-RN:312693-81-5	EC:3.2.1.23	beta-Galactosidase	API_zym:beta- Galactosidase
-	Naphthol-AS-BI-betaD-glucuronide		CAS-RN:37-87-6 	EC:3.2.1.31	beta-Glucuronidase	API_zym:beta- Glucuronidase
-	2-naphthyl-alphaD-glucopyranoside		CAS-RN:25320-79-0	EC:3.2.1.20	alpha-Glucosidase	API_zym:alpha- Glucosidase
-	6-Br-2-naphthyl-betaD-glucopyranoside		CAS-RN: 15548-61-5 	EC:3.2.1.21	beta-Glucosidase	API_zym:beta- Glucosidase
-	1-naphthyl-N-acetyl-betaD-glucosaminide		CAS-RN:10329-98-3	EC:3.2.1.52	N-acetyl-beta-glucosaminidase	API_zym:N-acetyl-beta- glucosaminidase
-	6-Br-2-naphthyl-alphaD-mannopyranoside		CAS-RN:15548-61-5	EC:3.2.1.24	alpha-Mannosidase	API_zym:alpha- Mannosidase
-	2-naphthyl-alphaL-fucopyranoside			EC:3.2.1.51	alpha-Fucosidase	API_zym:alpha- Fucosidase
-	L-leucyl-2-naphthylamide		CAS-RN:732-85-4		Leucine arylamidase	API_zym:Leucine arylamidase
-	L-valyl-2-naphthylamide		CAS-RN:729-24-8 		Valine arylamidase	API_zym:Valine arylamidase
-	2-naphthyl myristate		CAS-RN:7262-80-8	EC:3.1.1.3	Lipase (C 14)	API_zym:Lipase (C 14)
-	2-naphtyl caprylate		CAS-RN:10251-17-9		Esterase Lipase (C 8)	API_zym:Esterase Lipase (C 8)
-	2-naphthyl butyrate		CAS-RN:5856-33-7	EC:3.1.1.1	Esterase (C 4)	API_zym:Esterase (C 4)
-					Control	API_zym:Control
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	Alkaline phosphatase	API_zym:Alkaline phosphatase
-CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_ID32E:ODC
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_ID32E:ADH (Arg)
-CHEBI:18019	L-lysine	kegg.compound:C00047	CAS-RN:56-87-1 	EC:4.1.1.18	Lysine decarboxylase	API_ID32E:LDC (Lys)
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_ID32E:URE
-CHEBI:18403	L-arabitol (L-arabinitol)	kegg.compound:C00532	CAS-RN:7643-75-6			API_ID32E:LARL
-CHEBI:18024	D-galacturonic acid	kegg.compound:C00333	CAS-RN:685-73-4			API_ID32E:GAT
-CHEBI:17426	5-Ketogluconate (5-dehydro-D-gluconate)	kegg.compound:C01062				API_ID32E:5KG
-	5-bromo-3-indoxyl-nonanoate		CAS-RN:133950-70-6			API_ID32E:LIP
-CHEBI:50144	Sodium pyruvate		CAS-RN:113-24-6			API_ID32E:RP
-	4-Nitrophenyl beta-D-glucopyranoside		CAS-RN:2492-87-7	EC:3.2.1.21	beta-glucosidase	API_ID32E:beta GLU
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_ID32E:MAN
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_ID32E:MAL
-CHEBI:15963	D-adonitol (D-ribitol)	kegg.compound:C00474	CAS-RN:488-81-3			API_ID32E:ADO
-CHEBI:18394	Palatinose (6-O-alpha-D-glucopyranosyl-D-fruc	kegg.compound:C01742	CAS-RN:13718-94-0			API_ID32E:PLE
-	4-Nitrophenyl beta-D-glucuronide 		CAS-RN:10344-94-2 	EC:3.2.1.31	beta-glucuronidase	API_ID32E:beta GUR
-CHEBI:62983	Sodium malonate	kegg.compound:C00383	CAS-RN:141-95-7			API_ID32E:MNT
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_ID32E:IND
-CHEBI:355715	5-Bromo-4-chloro-3-indolyl N-acetyl-beta-D-gl	kegg.compound:C04452	CAS-RN:4264-82-8 			API_ID32E:beta NAG
-CHEBI:355715	4-Nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_ID32E:beta GAL
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_ID32E:GLU
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_ID32E:SAC
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_ID32E:LARA
-CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_ID32E:DARL
-CHEBI:54684	4-Nitrophenyl alpha-D-glucopyranoside 		CAS-RN:3767-28-0 	EC:3.2.1.20	alpha-glucosidase	API_ID32E:alpha GLU
-CHEBI:54684	4-Nitrophenyl-alpha-D-galactoside	kegg.compound:C01083	CAS-RN:7493-95-0	EC:3.2.1.22	alpha-galactosidase	API_ID32E:alpha GAL
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_ID32E:TRE
-CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_ID32E:RHA
-CHEBI:17268	Inositol (myo-inositol)	kegg.compound:C00137	CAS-RN:87-89-8			API_ID32E:INO
-CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_ID32E:CEL
-CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_ID32E:SOR
-	4-Nitrophenyl alpha-D-maltoside 		CAS-RN:17400-77-0 			API_ID32E:alphaMAL
-	L-aspartic acid 4-nitroanilide					API_ID32E:AspA
-CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_20STR:VP
-CHEBI:18089	Hippuric acid (N-benzoylglycine)	kegg.compound:C01586	CAS-RN:495-69-2			API_20STR:HIP
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_20STR:ESC
-	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_20STR:PYRA
-	6-Bromo-2-naphthyl-alpha-D-galactopyranoside		CAS-RN:25997-59-5	EC:3.2.1.22	alpha-galactosidase	API_20STR:alpha GAL
-	Naphthol AS-BI beta-D-glucuronide		CAS-RN:37-87-6 	EC:3.2.1.31	beta-glucuronidase	API_20STR:beta GUR
-	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5	EC:3.2.1.62	glycosylceramidase	API_20STR:beta GAL
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_20STR:PAL
-	L-leucine beta-naphthylamide		CAS-RN:732-85-4	EC:3.3.2.6	leukotriene-A4 hydrolase	API_20STR:LAP
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_20STR:ADH
-CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_20STR:RIB
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20STR:ARA
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20STR:MAN
-CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_20STR:SOR
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_20STR:LAC
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_20STR:TRE
-CHEBI:15443	Inulin	kegg.compound:C03323	CAS-RN:9005-80-5 			API_20STR:INU
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_20STR:RAF
-CHEBI:28017	Amidon (starch)	kegg.compound:C00369	CAS-RN:9005-25-8			API_20STR:AMD
-CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_20STR:GLYG
-						API_20STR:beta HEM
-	Naphthol AS-BI beta-D-glucuronide		CAS-RN:37-87-6 	EC:3.2.1.31	beta-glucuronidase	API_coryne:beta GUR
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_coryne:PAL
-	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_coryne:PYRA
-CHEBI:45285	Pyrazinecarboxamide	kegg.compound:C01956	CAS-RN:98-96-4	EC:3.5.1.B15	pyrazinamidase	API_coryne:PYZ
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_coryne:NIT
-	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5	EC:3.2.1.62	glycosylceramidase	API_coryne:beta GAL
-	2-Naphthyl alpha-D-glucopyranoside		CAS-RN:25320-79-0	EC:3.2.1.20	alpha-glucosidase	API_coryne:alpha GLU
-	1-Naphthyl-N-acetyl-beta-D-glucosaminide		CAS-RN:10329-98-3			API_coryne:beta NAG
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_coryne:ESC
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_coryne:URE
-CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_coryne:GEL
-	Control					API_coryne:Control
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_coryne:GLU
-CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_coryne:RIB
-CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_coryne:XYL
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_coryne:MAN
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_coryne:MAL
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_coryne:LAC
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_coryne:SAC
-CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_coryne:GLYG
-				EC:1.11.1.6	catalase	API_coryne:CAT
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_ID32STA:URE
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_ID32STA:ADH (Arg)
-CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_ID32STA:ODC
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_ID32STA:ESC
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_ID32STA:GLU
-CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_ID32STA:FRU
-CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_ID32STA:MNE
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_ID32STA:MAL
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_ID32STA:LAC
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_ID32STA:TRE
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_ID32STA:MAN
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_ID32STA:RAF
-CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_ID32STA:RIB
-CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_ID32STA:CEL
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_ID32STA:NIT
-CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_ID32STA:VP
-	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5 	EC:3.2.1.23	beta-galactosidase	API_ID32STA:beta GAL
-	L-arginine beta-naphthylamide hydrochloride		CAS-RN:18905-73-2 			API_ID32STA:ArgA
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_ID32STA:PAL
-	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5 	EC:3.4.19.3	pyroglutamyl-peptidase I	API_ID32STA:PyrA
-CHEBI:28368	Novobiocin	kegg.compound:C05080	CAS-RN:303-81-1			API_ID32STA:NOVO
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_ID32STA:SAC
-CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_ID32STA:NAG
-CHEBI:32528	D-turanose (turanose)	kegg.compound:C19636	CAS-RN:547-25-1			API_ID32STA:TUR
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_ID32STA:ARA
-	4-Nitrophenyl beta-D-glucuronide 		CAS-RN:10344-94-2 	EC:3.2.1.31	beta-glucuronidase	API_ID32STA:beta GUR
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_STA:GLU
-CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_STA:FRU
-CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_STA:MNE
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_STA:MAL
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_STA:LAC
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_STA:TRE
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_STA:MAN
-CHEBI:17151	Xylitol	kegg.compound:C00503	CAS-RN:149-32-6			API_STA:XLT
-CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_STA:MEL
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_STA:NIT
-	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_STA:PAL
-CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_STA:VP
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_STA:RAF
-CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_STA:XYL
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_STA:SAC
-CHEBI:320061	Methyl alpha-D-glucopyranoside		CAS-RN:709-50-2			API_STA:MDG
-CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_STA:NAG
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_STA:ADH
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_STA:URE
-				EC:3.4.24.75	Lysostaphin	API_STA:LSTR
-						API_STA:Control
-	Control					API_50CHas:Q
-CHEBI:17754	Glycerol	kegg.compound:C00116	CAS-RN:56-81-5			API_50CHas:GLY
-CHEBI:17113	Erythritol	kegg.compound:C00503	CAS-RN:149-32-6			API_50CHas:ERY
-CHEBI:17108	D-arabinose	kegg.compound:C00216	CAS-RN:10323-20-3			API_50CHas:DARA
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_50CHas:LARA
-CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_50CHas:RIB
-CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_50CHas:DXYL
-CHEBI:65328	L-xylose	kegg.compound:C01510 	CAS-RN:0609-06-03			API_50CHas:LXYL
-CHEBI:15963	D-adonitol (D-ribitol)	kegg.compound:C00474	CAS-RN:488-81-3			API_50CHas:ADO
-CHEBI:74863	Methyl beta-D-xylopyranoside		CAS-RN:0612-05-05			API_50CHas:MDX
-CHEBI:12936	D-galactose	kegg.compound:C00124	CAS-RN:59-23-4			API_50CHas:GAL
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_50CHas:GLU
-CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_50CHas:FRU
-CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_50CHas:MNE
-CHEBI:17266	L-sorbose	kegg.compound:C00247	CAS-RN:87-79-6			API_50CHas:SBE
-CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_50CHas:RHA
-CHEBI:16813	Dulcitol (galactitol)	kegg.compound:C01697	CAS-RN:608-66-2			API_50CHas:DUL
-CHEBI:17268	Inositol (myo-inositol)	kegg.compound:C00137	CAS-RN:87-89-8			API_50CHas:INO
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_50CHas:MAN
-CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_50CHas:SOR
-CHEBI:43943	Methyl alpha-D-mannopyranoside (methyl alpha-		CAS-RN:25281-48-5			API_50CHas:MDM
-CHEBI:320061	Methyl alpha-D-glucopyranoside		CAS-RN:709-50-2			API_50CHas:MDG
-CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_50CHas:NAG
-CHEBI:27613	Amygdalin	kegg.compound:C08325	CAS-RN:29883-15-6 			API_50CHas:AMY
-CHEBI:18305	Arbutin (hydroquinone O-beta-D-glucopyranosid	kegg.compound:C06186	CAS-RN:497-76-7			API_50CHas:ARB
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9			API_50CHas:ESC
-CHEBI:17814	Salicin	kegg.compound:C01451	CAS-RN:138-52-3			API_50CHas:SAL
-CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_50CHas:CEL
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_50CHas:MAL
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_50CHas:LAC
-CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_50CHas:MEL
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_50CHas:SAC
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_50CHas:TRE
-CHEBI:15443	Inulin	kegg.compound:C03323	CAS-RN:9005-80-5 			API_50CHas:INU
-CHEBI:6731	D-melezitose (melezitose)	kegg.compound:C08243	CAS-RN:0597-12-06			API_50CHas:MLZ
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_50CHas:RAF
-CHEBI:28017	Amidon (starch)	kegg.compound:C00369	CAS-RN:9005-25-8			API_50CHas:AMD
-CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_50CHas:GLYG
-CHEBI:17151	Xylitol	kegg.compound:C00503	CAS-RN:149-32-6			API_50CHas:XLT
-CHEBI:28066	Gentiobiose	kegg.compound:C08240	CAS-RN:554-91-6 			API_50CHas:GEN
-CHEBI:32528	D-turanose (turanose)	kegg.compound:C19636	CAS-RN:547-25-1			API_50CHas:TUR
-CHEBI:62318	D-lyxose		CAS-RN:65-42-9			API_50CHas:LYX
-CHEBI:16443	D-tagatose	kegg.compound:C00796	CAS-RN:87-81-1			API_50CHas:TAG
-CHEBI:28847	D-fucose					API_50CHas:DFUC
-CHEBI:18287	L-Fucose		CAS-RN:2438-80-4			API_50CHas:LFUC
-CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_50CHas:DARL
-CHEBI:18403	L-arabitol (L-arabinitol)	kegg.compound:C00532	CAS-RN:7643-75-6			API_50CHas:LARL
-CHEBI:33198	Gluconate (D-gluconic acid)	kegg.compound:C00257	CAS-RN:526-95-4			API_50CHas:GNT
-CHEBI:16808	2-Ketogluconate (2-dehydro-D-gluconate)	kegg.compound:C06473	CAS-RN:669-90-9			API_50CHas:2KG
-CHEBI:17426	5-Ketogluconate (5-dehydro-D-gluconate)	kegg.compound:C01062				API_50CHas:5KG
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_rID32STR:ADH (Arg)
-	Resorufin beta-D-glucopyranoside		CAS-RN:101490-85-1	EC:3.2.1.21	beta-glucosidase	API_rID32STR:beta GLU
-	Resorufin beta-D-galactopyranoside		CAS-RN:95079-19-9	EC:3.2.1.23	beta-galactosidase	API_rID32STR:beta GAR
-	Resorufin beta-D-glucuronide		CAS-RN:125440-91-7	EC:3.2.1.31	beta-glucuronidase	API_rID32STR:beta GUR
-CHEBI:54684	4-Nitrophenyl-alpha-D-galactoside		CAS-RN:7493-95-0	EC:3.2.1.22	alpha-galactosidase	API_rID32STR:alpha GAL
-CHEBI:355715	4-nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.1.3.1	alkaline phosphatase	API_rID32STR:PAL
-CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_rID32STR:RIB
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_rID32STR:MAN
-CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_rID32STR:SOR
-CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_rID32STR:LAC
-CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_rID32STR:TRE
-CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_rID32STR:RAF
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_rID32STR:SAC
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_rID32STR:LARA
-CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_rID32STR:DARL
-CHEBI:40585	alpha-cyclodextrin		CAS-RN:10016-20-3			API_rID32STR:CDEX
-CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_rID32STR:VP
-	Ala-Phe-Pro beta-naphthylamide					API_rID32STR:APPA
-	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5 	EC:3.2.1.23	beta-galactosidase	API_rID32STR:beta GAL
-	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5 	EC:3.4.19.3	pyroglutamyl-peptidase I	API_rID32STR:PyrA
-	6-Bromo-2-naphthyl-N-acetyl-beta-D-glucosamin					API_rID32STR:beta NAG
-	Gly-Trp beta-naphthylamide					API_rID32STR:GTA
-CHEBI:18089	Hippuric acid (N-benzoylglycine)	kegg.compound:C01586	CAS-RN:495-69-2			API_rID32STR:HIP
-CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_rID32STR:GLYG
-	Pullulan	kegg.compound:C00480	CAS-RN:2614080			API_rID32STR:PUL
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_rID32STR:MAL
-CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_rID32STR:MEL
-CHEBI:6731	D-melezitose (melezitose)	kegg.compound:C08243	CAS-RN:0597-12-06			API_rID32STR:MLZ
-CHEBI:320055	Methyl beta-D-glucopyranoside		CAS-RN:709-50-2			API_rID32STR:Mbeta DG
-CHEBI:16443	D-tagatose	kegg.compound:C00798	CAS-RN:87-81-3			API_rID32STR:TAG
-	4-Nitrophenyl beta-D-mannopyranoside		CAS-RN:35599-02-1	EC:3.2.1.25	beta-mannosidase	API_rID32STR:beta MAN
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_rID32STR:URE
-CHEBI:7963	Benzylpenicillin potassium		CAS-RN:113-98-4	EC:3.5.2.6	beta-lactamase	API_NH:PEN
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_NH:GLU
-CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_NH:FRU
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_NH:MAL
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_NH:SAC
-CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_NH:ODC
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_NH:URE
-	5-bromo-3-indolyl-decanoate		CAS-RN:133950-71-7	EC:3.1.1.3	triacylglycerol lipase	API_NH:LIP
-CHEBI:1744	Para-nitrophenylphosphate (4-nitrophenyl phos	kegg.compound:C03360	CAS-RN:330-13-2	EC:3.1.3.1	alkaline phosphatase	API_NH:PAL
-CHEBI:355715	4-Nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_NH:beta GAL
-	L-proline 4-methoxy-beta-naphthylamide		CAS-RN:100930-07-2	EC:3.4.11.5	prolyl aminopeptidase	API_NH:ProA
-	gamma-L-glutamyl-4-methoxy-2-naphthylamine		CAS-RN:24723-50-0	EC:2.3.2.2	gamma-glutamyltransferase	API_NH:GGT
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_NH:IND
-						API_LIST:DIM
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_LIST:ESC
-	4-Nitrophenyl alpha-D-mannopyranoside 		CAS-RN:10357-27-4 	EC:3.2.1.24	alpha-mannosidase	API_LIST:alpha MAN
-CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_LIST:DARL
-CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_LIST:XYL
-CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_LIST:RHA
-CHEBI:320061	Methyl alpha-D-glucopyranoside		CAS-RN:709-50-2			API_LIST:MDG
-CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_LIST:RIB
-CHEBI:29042	alpha-D-glucose 1-phosphate	kegg.compound:C00103	CAS-RN:59-56-3			API_LIST:G1P
-CHEBI:16443	D-tagatose	kegg.compound:C00797	CAS-RN:87-81-2			API_LIST:TAG
-						API_LIST:beta HEM
-CHEBI:30769	Citric acid	kegg.compound:C00158	CAS-RN:77-92-9			API_20E:CIT
-CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_20E:ODC
-CHEBI:18019	L-lysine	kegg.compound:C00047	CAS-RN:56-87-1 	EC:4.1.1.18	Lysine decarboxylase	API_20E:LDC (Lys)
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_20E:ADH (Arg)
-CHEBI:90144	o-nitrophenyl-beta-D-galactopyranosid		CAS-RN:0369-07-03	EC:3.2.1.23	beta-galactosidase	API_20E:ONPG
-						API_20E:H2S
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_20E:URE
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3			API_20E:TDA (Trp)
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_20E:IND
-CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_20E:VP
-CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_20E:GEL
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20E:GLU
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20E:MAN
-CHEBI:17268	Inositol (myo-inositol)	kegg.compound:C00137	CAS-RN:87-89-8			API_20E:INO
-CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_20E:Sor
-CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_20E:RHA
-CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_20E:SAC
-CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_20E:MEL
-CHEBI:27613	Amygdalin	kegg.compound:C08325	CAS-RN:29883-15-6 			API_20E:AMY
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20E:ARA
-CHEBI:26689	Oxygen			EC:EC 1.9.3.1	cytochrome-c oxidase	API_20E:OX
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_20E:NO2
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_20E:N2
-						API_20E:MOB
-	MacConkey medium					API_20E:MAC
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20E:OF-O
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20E:OF-F
-CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_20NE:ESC
-CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_20NE:URE
-CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_20NE:ADH (Arg)
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20NE:GLU_ Ferm
-CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_20NE:TRP
-CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_20NE:NO3
-CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_20NE:GEL
-CHEBI:355715	4-nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_20NE:PNPG
-CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20NE:GLU_ Assim
-CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20NE:ARA
-CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_20NE:MNE
-CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20NE:MAN
-CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_20NE:NAG
-CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_20NE:MAL
-CHEBI:33198	Gluconate (D-gluconic acid)	kegg.compound:C00257	CAS-RN:526-95-4			API_20NE:GNT
-CHEBI:30813	Capric acid (decanoic acid)	kegg.compound:C01571	CAS-RN:334-48-5			API_20NE:CAP
-CHEBI:30832	Adipic acid	kegg.compound:C06104	CAS-RN:0124-04-09			API_20NE:ADI
-CHEBI:665	Malic acid	kegg.compound:C00711	CAS-RN:6915-15-7			API_20NE:MLT
-CHEBI:30769	Citric acid	kegg.compound:C00158	CAS-RN:77-92-9			API_20NE:CIT
-CHEBI:8082	Phenyl-acetic acid	kegg.compound:C00548	CAS-RN:122-79-2			API_20NE:PAC
-CHEBI:26689	Oxygen			EC:EC 1.9.3.1	cytochrome-c oxidase	API_20NE:OX
+CHEBI_ID	substrate	KEGG_ID	CAS_RN_ID	EC_ID	enzyme	pseudo_CURIE	reaction_name
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_20A:IND	Indole production
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_20A:URE	Urease/urea hydrolysis
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20A:GLU	Acid from D-glucose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20A:MAN	Acid from D-mannitol
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_20A:LAC	Acid from lactose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_20A:SAC	Acid from sucrose
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_20A:MAL	Acid from maltose
+CHEBI:17814	Salicin	kegg.compound:C01451	CAS-RN:138-52-3			API_20A:SAL	Acid from salicin
+CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_20A:XYL	Acid from D-xylose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20A:ARA	Acid from L-arabinose
+CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_20A:GEL	Gelatinase/gelatin hydrolysis
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_20A:ESC	Esculin hydrolysis/beta-glucosidase
+CHEBI:17754	Glycerol	kegg.compound:C00116	CAS-RN:56-81-5			API_20A:GLY	Acid from glycerol
+CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_20A:CEL	Acid from cellobiose
+CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_20A:MNE	Acid from D-mannose
+CHEBI:6731	D-melezitose (melezitose)	kegg.compound:C08243	CAS-RN:0597-12-06			API_20A:MLZ	Acid from melezitose
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_20A:RAF	Acid from raffinose
+CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_20A:SOR	Acid from sorbitol
+CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_20A:RHA	Acid from L-rhamnose
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_20A:TRE	Acid from trehalose
+				EC:1.11.1.6	catalase	API_20A:CAT	Catalase
+						API_20A:SPOR	Spores present
+						API_20A:GRAM	Gram
+						API_20A:COCC	"Morphology coccus=+"" rod=""-"""""
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_rID32A:URE	Urease/urea hydrolysis
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_rID32A:ADH (Arg)	Arginine dihydrolase
+CHEBI:54684	4-Nitrophenyl-alpha-D-galactoside		CAS-RN:7493-95-0	EC:3.2.1.22	alpha-galactosidase	API_rID32A:alpha GAL	alpha-Galactosidase
+CHEBI:355715	4-Nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_rID32A:beta GAL	beta-Galactosidase
+CHEBI:90128	4-Nitrophenyl 6-O-phosphono-beta-D-galactosid					API_rID32A:beta GP	beta-Galactosidase 6-phosphate
+	4-Nitrophenyl alpha-D-glucopyranoside 		CAS-RN:3767-28-0 	EC:3.2.1.20	alpha-glucosidase	API_rID32A:alpha GLU	alpha-Glucosidase
+	4-Nitrophenyl beta-D-glucopyranoside		CAS-RN:2492-87-7	EC:3.2.1.21	beta-glucosidase	API_rID32A:beta GLU	beta-Glucosidase
+	4-Nitrophenyl alpha-L-arabinofuranoside 		CAS-RN:6892-58-6	EC:3.2.1.55	non-reducing end alpha-L-arabinofuranosidase	API_rID32A:alpha ARA	alpha-Arabinosidase
+	4-Nitrophenyl beta-D-glucuronide 		CAS-RN:10344-94-2	EC:3.2.1.31	beta-glucuronidase	API_rID32A:beta GUR	beta-Glucuronidase
+	4-Nitrophenyl N-acetyl-beta-D-glucosaminide		CAS-RN:3459-18-5	EC:3.2.1.52	beta-N-acetylhexosaminidase	API_rID32A:beta NAG	beta-N-Acetyl-beta-glucosaminidase
+CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_rID32A:MNE	Fermentation of D-mannose
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_rID32A:RAF	Fermentation of raffinose
+CHEBI:16015	L-glutamic acid	kegg.compound:C00025	CAS-RN:56-86-0	EC:4.1.1.15	Glutamat decarboxylase	API_rID32A:GDC	Glutamate decarboxylase
+	4-Nitrophenyl alpha-L-fucopyranoside 		CAS-RN:10231-84-2	EC:3.2.1.51	alpha-L-fucosidase	API_rID32A:alpha FUC	alpha-Fucosidase
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_rID32A:NIT	Reduction of nitrate
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_rID32A:IND	Indole production
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_rID32A:PAL	Alkaline phosphatase
+	L-arginine beta-naphthylamide hydrochloride		CAS-RN:18905-73-2			API_rID32A:ArgA	L-arginine arylamidase
+	L-proline beta-naphthylamide		CAS-RN:97216-16-5	EC:3.4.11.5	prolyl aminopeptidase	API_rID32A:ProA	Proline arylamidase
+	Leu-Gly beta-naphthylamide		CAS-RN:100930-00-5	EC:3.4.11.1	leucyl aminopeptidase	API_rID32A:LGA	Leucyl glycin arylamidase
+	L-phenylalanine beta-naphthylamide 		CAS-RN:740-57-8			API_rID32A:PheA	Phenylalanine arylamidase
+	L-Leucine beta-naphthylamide		CAS-RN:732-85-4			API_rID32A:LeuA	Leucine arylamidase
+	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_rID32A:PyrA	Pyrrolidonyl arylamidase
+	L-tyrosine beta-naphthylamide 		CAS-RN:4357-95-3			API_rID32A:TyrA	Tyrosine arylamidase
+	L-alanine-L-alanine beta-naphthylamide 					API_rID32A:AlaA	Alanine arylamidase
+	Glycine beta-naphthylamide		CAS-RN:1208-12-04			API_rID32A:GlyA	Glycin arylamidase
+	L-histidine beta-naphthylamide		CAS-RN:7424-15-9			API_rID32A:HisA	Histidine arylamidase
+	L-glutamy-L-glutamate beta-naphthylamide					API_rID32A:GGA	Glutamyl-glutamate arylamidase
+	L-serine beta-naphthylamide		CAS-RN:888-74-4			API_rID32A:SerA	Serine arylamidase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_CAM:URE	Urease/urea hydrolysis
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_CAM:NIT	Reduction of nitrate
+	5-bromo-4-chloro-3-indolyl acetate 		CAS-RN:3252-36-6 			API_CAM:EST	Esterase
+CHEBI:18089	Hippuric acid (N-benzoylglycine)	kegg.compound:C01586	CAS-RN:495-69-2			API_CAM:HIP	Hippuric acid
+	gamma-L-glutamyl-4-methoxy-2-naphthylamine		CAS-RN:24723-50-0	EC:2.3.2.2	gamma-glutamyltransferase	API_CAM:GGT	gamma-Glutamyl transferase
+CHEBI:78019	2,3,5-triphenyltetrazolium chloride	kegg.compound:C11305	CAS-RN:298-96-4			API_CAM:TTC	Reduction of Triphenyl tetrazolium chloride
+	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_CAM:PYRA	Pyrrolidonyl arylamidase
+	L-arginine-4-methoxy beta-naphthylamide		CAS-RN:61876-75-3 			API_CAM:ArgA	L-arginine arylamidase
+	L-aspartic acid beta-naphthylamide 		CAS-RN:635-91-6 			API_CAM:AspA	L-aspartic acid arylamidase
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_CAM:PAL	Alkaline phosphatase
+						API_CAM:H2S	H2S production
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_CAM:GLU	Assimilation of D-glucose
+CHEBI:63675	Sodium succinate	kegg.compound:C00042 	CAS-RN:150-90-3			API_CAM:SUT	Assimilation of succinate
+CHEBI:100147	Nalidixic acid	kegg.compound:C05079	CAS-RN:0389-08-02			API_CAM:NAL	Growth inhibition
+CHEBI:3483	Cefazolin sodium	kegg.compound:C08098	CAS-RN:27164-46-1			API_CAM:CFZ	Growth inhibition
+CHEBI:32954	Sodium acetate	kegg.compound:C00033 	CAS-RN:0127-09-03			API_CAM:ACE	Assimilation of acetate
+CHEBI:30768	Propionic acid	kegg.compound:C00163	CAS-RN:1979-09-04			API_CAM:PROP	Assimilation of propionic acid
+CHEBI:665	Malic acid	kegg.compound:C00711	CAS-RN:6915-15-7			API_CAM:MLT	Assimilation of malic acid
+CHEBI:30769	Citric acid	kegg.compound:C00158	CAS-RN:77-92-9			API_CAM:CIT	Assimilation of citric acid
+CHEBI:48923	Erythromycin					API_CAM:ERO	Erythromycin resistance (+) sensitivity (-)
+				EC:1.11.1.6	catalase	API_CAM:CAT	Catalase
+CHEBI:90426	L-cystyl-2-naphthylamide		CAS-RN:65322-97-6		Cystine arylamidase	API_zym:Cystine arylamidase	
+	N-benzoyl-DL-arginine-2-naphthylamide		CAS-RN:0913-04-02	EC:3.4.21.4	Trypsin	API_zym:Trypsin	
+	N-glutaryl-phenylalanine-2-naphthylamide			EC:3.4.21.1	alpha-Chymotrypsin	API_zym:alpha- Chymotrypsin	
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.2	Acid phosphatase	API_zym:Acid phosphatase	
+	Naphthol-AS-BI-phosphate		CAS-RN:1919-91-1		Naphthol-AS-BI-phosphohydrolase	API_zym:Naphthol-AS-BI-phosphohydrolase	
+	6-Br-2-naphthyl-alphaD-galactpyranoside		CAS-RN:25997-59-5	EC:3.2.1.22	alpha-Galactosidase	API_zym:alpha- Galactosidase	
+	2-naphthyl-betaD-galactpyranoside		CAS-RN:312693-81-5	EC:3.2.1.23	beta-Galactosidase	API_zym:beta- Galactosidase	
+	Naphthol-AS-BI-betaD-glucuronide		CAS-RN:37-87-6 	EC:3.2.1.31	beta-Glucuronidase	API_zym:beta- Glucuronidase	
+	2-naphthyl-alphaD-glucopyranoside		CAS-RN:25320-79-0	EC:3.2.1.20	alpha-Glucosidase	API_zym:alpha- Glucosidase	
+	6-Br-2-naphthyl-betaD-glucopyranoside		CAS-RN: 15548-61-5 	EC:3.2.1.21	beta-Glucosidase	API_zym:beta- Glucosidase	
+	1-naphthyl-N-acetyl-betaD-glucosaminide		CAS-RN:10329-98-3	EC:3.2.1.52	N-acetyl-beta-glucosaminidase	API_zym:N-acetyl-beta- glucosaminidase	
+	6-Br-2-naphthyl-alphaD-mannopyranoside		CAS-RN:15548-61-5	EC:3.2.1.24	alpha-Mannosidase	API_zym:alpha- Mannosidase	
+	2-naphthyl-alphaL-fucopyranoside			EC:3.2.1.51	alpha-Fucosidase	API_zym:alpha- Fucosidase	
+	L-leucyl-2-naphthylamide		CAS-RN:732-85-4		Leucine arylamidase	API_zym:Leucine arylamidase	
+	L-valyl-2-naphthylamide		CAS-RN:729-24-8 		Valine arylamidase	API_zym:Valine arylamidase	
+	2-naphthyl myristate		CAS-RN:7262-80-8	EC:3.1.1.3	Lipase (C 14)	API_zym:Lipase (C 14)	
+	2-naphtyl caprylate		CAS-RN:10251-17-9		Esterase Lipase (C 8)	API_zym:Esterase Lipase (C 8)	
+	2-naphthyl butyrate		CAS-RN:5856-33-7	EC:3.1.1.1	Esterase (C 4)	API_zym:Esterase (C 4)	
+					Control	API_zym:Control	
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	Alkaline phosphatase	API_zym:Alkaline phosphatase	
+CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_ID32E:ODC	Ornithine decarboxylase
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_ID32E:ADH (Arg)	Arginine dihydrolase
+CHEBI:18019	L-lysine	kegg.compound:C00047	CAS-RN:56-87-1 	EC:4.1.1.18	Lysine decarboxylase	API_ID32E:LDC (Lys)	Lysine decarboxylase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_ID32E:URE	Urease/urea hydrolysis
+CHEBI:18403	L-arabitol (L-arabinitol)	kegg.compound:C00532	CAS-RN:7643-75-6			API_ID32E:LARL	Acid from L-arabitol
+CHEBI:18024	D-galacturonic acid	kegg.compound:C00333	CAS-RN:685-73-4			API_ID32E:GAT	Acid from D-galacturonic acid
+CHEBI:17426	5-Ketogluconate (5-dehydro-D-gluconate)	kegg.compound:C01062				API_ID32E:5KG	Acid from 5-Ketogluconate
+	5-bromo-3-indoxyl-nonanoate		CAS-RN:133950-70-6			API_ID32E:LIP	Lipase
+CHEBI:50144	Sodium pyruvate		CAS-RN:113-24-6			API_ID32E:RP	Phenol red (Acidification)
+	4-Nitrophenyl beta-D-glucopyranoside		CAS-RN:2492-87-7	EC:3.2.1.21	beta-glucosidase	API_ID32E:beta GLU	beta-Glucosidase
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_ID32E:MAN	Acid from D-mannitol
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_ID32E:MAL	Acid from maltose
+CHEBI:15963	D-adonitol (D-ribitol)	kegg.compound:C00474	CAS-RN:488-81-3			API_ID32E:ADO	Acid from D-adonitol
+CHEBI:18394	Palatinose (6-O-alpha-D-glucopyranosyl-D-fruc	kegg.compound:C01742	CAS-RN:13718-94-0			API_ID32E:PLE	Acid from palatinose
+	4-Nitrophenyl beta-D-glucuronide 		CAS-RN:10344-94-2 	EC:3.2.1.31	beta-glucuronidase	API_ID32E:beta GUR	beta-Glucuronidase
+CHEBI:62983	Sodium malonate	kegg.compound:C00383	CAS-RN:141-95-7			API_ID32E:MNT	Malonate
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_ID32E:IND	Indole production
+CHEBI:355715	5-Bromo-4-chloro-3-indolyl N-acetyl-beta-D-gl	kegg.compound:C04452	CAS-RN:4264-82-8 			API_ID32E:beta NAG	N-Acetyl-beta-Glucosaminidase
+CHEBI:355715	4-Nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_ID32E:beta GAL	beta-Galactosidase
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_ID32E:GLU	Acid from D-glucose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_ID32E:SAC	Acid from sucrose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_ID32E:LARA	Acid from L-arabinose
+CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_ID32E:DARL	Acid from D-arabitol
+CHEBI:54684	4-Nitrophenyl alpha-D-glucopyranoside 		CAS-RN:3767-28-0 	EC:3.2.1.20	alpha-glucosidase	API_ID32E:alpha GLU	alpha-Glucosidase
+CHEBI:54684	4-Nitrophenyl-alpha-D-galactoside	kegg.compound:C01083	CAS-RN:7493-95-0	EC:3.2.1.22	alpha-galactosidase	API_ID32E:alpha GAL	alpha-Galactosidase
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_ID32E:TRE	Acid from trehalose
+CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_ID32E:RHA	Acid from L-rhamnose
+CHEBI:17268	Inositol (myo-inositol)	kegg.compound:C00137	CAS-RN:87-89-8			API_ID32E:INO	Acid from inositol
+CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_ID32E:CEL	Acid from cellobiose
+CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_ID32E:SOR	Acid from sorbitol
+	4-Nitrophenyl alpha-D-maltoside 		CAS-RN:17400-77-0 			API_ID32E:alphaMAL	alpha-Maltosidase
+	L-aspartic acid 4-nitroanilide					API_ID32E:AspA	L-aspartic acid arylamidase
+CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_20STR:VP	Acetoin production (Voges Proskauer test)
+CHEBI:18089	Hippuric acid (N-benzoylglycine)	kegg.compound:C01586	CAS-RN:495-69-2			API_20STR:HIP	Hippuric acid hydrolysis
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_20STR:ESC	Esculin hydrolysis/beta-glucosidase
+	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_20STR:PYRA	Pyrrolidonyl arylamidase
+	6-Bromo-2-naphthyl-alpha-D-galactopyranoside		CAS-RN:25997-59-5	EC:3.2.1.22	alpha-galactosidase	API_20STR:alpha GAL	alpha-Galactosidase
+	Naphthol AS-BI beta-D-glucuronide		CAS-RN:37-87-6 	EC:3.2.1.31	beta-glucuronidase	API_20STR:beta GUR	beta-Glucuronidase
+	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5	EC:3.2.1.62	glycosylceramidase	API_20STR:beta GAL	beta-Galactosidase
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_20STR:PAL	Alkaline phosphatase
+	L-leucine beta-naphthylamide		CAS-RN:732-85-4	EC:3.3.2.6	leukotriene-A4 hydrolase	API_20STR:LAP	Leucine arylamidase
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_20STR:ADH	Arginine dihydrolase
+CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_20STR:RIB	Acid from D-ribose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20STR:ARA	Acid from L-arabinose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20STR:MAN	Acid from D-mannitol
+CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_20STR:SOR	Acid from D-sorbitol
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_20STR:LAC	Acid from lactose
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_20STR:TRE	Acid from trehalose
+CHEBI:15443	Inulin	kegg.compound:C03323	CAS-RN:9005-80-5 			API_20STR:INU	Acid from inulin
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_20STR:RAF	Acid from raffinose
+CHEBI:28017	Amidon (starch)	kegg.compound:C00369	CAS-RN:9005-25-8			API_20STR:AMD	Acid from starch
+CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_20STR:GLYG	Acid from glycogen
+						API_20STR:beta HEM	beta hemolysis present
+	Naphthol AS-BI beta-D-glucuronide		CAS-RN:37-87-6 	EC:3.2.1.31	beta-glucuronidase	API_coryne:beta GUR	beta-Glucuronidase
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_coryne:PAL	Alkaline phosphatase
+	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5	EC:3.4.19.3	pyroglutamyl-peptidase I	API_coryne:PYRA	Pyrrolidonyl arylamidase
+CHEBI:45285	Pyrazinecarboxamide	kegg.compound:C01956	CAS-RN:98-96-4	EC:3.5.1.B15	pyrazinamidase	API_coryne:PYZ	Pyrazinamidase
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_coryne:NIT	Reduction of nitrate
+	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5	EC:3.2.1.62	glycosylceramidase	API_coryne:beta GAL	beta-Galactosidase
+	2-Naphthyl alpha-D-glucopyranoside		CAS-RN:25320-79-0	EC:3.2.1.20	alpha-glucosidase	API_coryne:alpha GLU	alpha-Glucosidase
+	1-Naphthyl-N-acetyl-beta-D-glucosaminide		CAS-RN:10329-98-3			API_coryne:beta NAG	N-Acetyl-beta-Glucosidase
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_coryne:ESC	Esculin hydrolysis/beta-Glucosidase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_coryne:URE	Urease/urea hydrolysis
+CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_coryne:GEL	Gelatinase/gelatin hydrolysis
+	Control					API_coryne:Control	Control fermentation
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_coryne:GLU	Fermentation of D-glucose
+CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_coryne:RIB	Fermentation of D-ribose
+CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_coryne:XYL	Fermentation of D-xylose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_coryne:MAN	Fermentation of D-mannitol
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_coryne:MAL	Fermentation of maltose
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_coryne:LAC	Fermentation of lactose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_coryne:SAC	Fermentation of sucrose
+CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_coryne:GLYG	Fermentation of glycogen
+				EC:1.11.1.6	catalase	API_coryne:CAT	Catalase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_ID32STA:URE	Urease/urea hydrolysis
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_ID32STA:ADH (Arg)	Arginine dihydrolase
+CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_ID32STA:ODC	Ornithine decarboxylase
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_ID32STA:ESC	Esculin hydrolysis
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_ID32STA:GLU	Fermentation of D-glucose
+CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_ID32STA:FRU	Fermentation of D-fructose
+CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_ID32STA:MNE	Fermentation of D-mannose
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_ID32STA:MAL	Fermentation of maltose
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_ID32STA:LAC	Fermentation of lactose
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_ID32STA:TRE	Fermentation of trehalose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_ID32STA:MAN	Fermentation of D-mannitol
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_ID32STA:RAF	Fermentation of raffinose
+CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_ID32STA:RIB	Fermentation of D-ribose
+CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_ID32STA:CEL	Fermentation of cellobiose
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_ID32STA:NIT	Reduction of nitrate
+CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_ID32STA:VP	Acetoin production (Voges Proskauer test)
+	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5 	EC:3.2.1.23	beta-galactosidase	API_ID32STA:beta GAL	beta-Galactosidase
+	L-arginine beta-naphthylamide hydrochloride		CAS-RN:18905-73-2 			API_ID32STA:ArgA	L-arginine arylamidase
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_ID32STA:PAL	Alkaline phosphatase
+	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5 	EC:3.4.19.3	pyroglutamyl-peptidase I	API_ID32STA:PyrA	Pyrrolidonyl arylamidase
+CHEBI:28368	Novobiocin	kegg.compound:C05080	CAS-RN:303-81-1			API_ID32STA:NOVO	Novobiocin resistance
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_ID32STA:SAC	Fermentation of sucrose
+CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_ID32STA:NAG	Fermentation of N-acetyl-glucosamine
+CHEBI:32528	D-turanose (turanose)	kegg.compound:C19636	CAS-RN:547-25-1			API_ID32STA:TUR	Fermentation of turanose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_ID32STA:ARA	Fermentation of arabinose
+	4-Nitrophenyl beta-D-glucuronide 		CAS-RN:10344-94-2 	EC:3.2.1.31	beta-glucuronidase	API_ID32STA:beta GUR	beta-Glucuronidase
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_STA:GLU	Acid from D-glucose
+CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_STA:FRU	Acid from D-fructose
+CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_STA:MNE	Acid from D-mannose
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_STA:MAL	Acid from maltose
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_STA:LAC	Acid from lactose
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_STA:TRE	Acid from trehalose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_STA:MAN	Acid from D-mannitol
+CHEBI:17151	Xylitol	kegg.compound:C00503	CAS-RN:149-32-6			API_STA:XLT	Acid from xylitol
+CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_STA:MEL	Acid from melibiose
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_STA:NIT	Reduction of nitrate
+	2-naphthyl phosphate		CAS-RN:14463-68-4 	EC:3.1.3.1	alkaline phosphatase	API_STA:PAL	Alkaline phosphatase
+CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_STA:VP	Acetoin production (Voges Proskauer test)
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_STA:RAF	Acid from raffinose
+CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_STA:XYL	Acid from D-xylose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_STA:SAC	Acid from sucrose
+CHEBI:320061	Methyl alpha-D-glucopyranoside		CAS-RN:709-50-2			API_STA:MDG	Acid from methyl-alpha-D-glucopyranoside
+CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_STA:NAG	Acid from N-acetyl-glucosamine
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_STA:ADH	Arginine dihydrolase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_STA:URE	Urease/urea hydrolysis
+				EC:3.4.24.75	Lysostaphin	API_STA:LSTR	Resistance to lysostaphin (EC 3.4.24.75)
+						API_STA:Control	
+	Control					API_50CHas:Q	Control
+CHEBI:17754	Glycerol	kegg.compound:C00116	CAS-RN:56-81-5			API_50CHas:GLY	Assimilation of glycerol
+CHEBI:17113	Erythritol	kegg.compound:C00503	CAS-RN:149-32-6			API_50CHas:ERY	Assimilation of erythritol
+CHEBI:17108	D-arabinose	kegg.compound:C00216	CAS-RN:10323-20-3			API_50CHas:DARA	Assimilation of D-arabinose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_50CHas:LARA	Assimilation of L-arabinose
+CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_50CHas:RIB	Assimilation of D-ribose
+CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_50CHas:DXYL	Assimilation of D-xylose
+CHEBI:65328	L-xylose	kegg.compound:C01510 	CAS-RN:0609-06-03			API_50CHas:LXYL	Assimilation of L-xylose
+CHEBI:15963	D-adonitol (D-ribitol)	kegg.compound:C00474	CAS-RN:488-81-3			API_50CHas:ADO	Assimilation of D-adonitol
+CHEBI:74863	Methyl beta-D-xylopyranoside		CAS-RN:0612-05-05			API_50CHas:MDX	Assimilation of methyl beta-D-xylopyranoside
+CHEBI:12936	D-galactose	kegg.compound:C00124	CAS-RN:59-23-4			API_50CHas:GAL	Assimilation of D-galactose
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_50CHas:GLU	Assimilation of D-glucose
+CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_50CHas:FRU	Assimilation of D-fructose
+CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_50CHas:MNE	Assimilation of D-mannose
+CHEBI:17266	L-sorbose	kegg.compound:C00247	CAS-RN:87-79-6			API_50CHas:SBE	Assimilation of L-sorbose
+CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_50CHas:RHA	Assimilation of L-rhamnose
+CHEBI:16813	Dulcitol (galactitol)	kegg.compound:C01697	CAS-RN:608-66-2			API_50CHas:DUL	Assimilation of dulcitol
+CHEBI:17268	Inositol (myo-inositol)	kegg.compound:C00137	CAS-RN:87-89-8			API_50CHas:INO	Assimilation of inositol
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_50CHas:MAN	Assimilation of D-mannitol
+CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_50CHas:SOR	Assimilation of sorbitol
+CHEBI:43943	Methyl alpha-D-mannopyranoside (methyl alpha-		CAS-RN:25281-48-5			API_50CHas:MDM	Assimilation of methyl alpha-D-mannopyranoside
+CHEBI:320061	Methyl alpha-D-glucopyranoside		CAS-RN:709-50-2			API_50CHas:MDG	Assimilation of  methyl alpha-D-glucopyranoside
+CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_50CHas:NAG	Assimilation of N-acetyl-glucosamine
+CHEBI:27613	Amygdalin	kegg.compound:C08325	CAS-RN:29883-15-6 			API_50CHas:AMY	Assimilation of amygdalin
+CHEBI:18305	Arbutin (hydroquinone O-beta-D-glucopyranosid	kegg.compound:C06186	CAS-RN:497-76-7			API_50CHas:ARB	Assimilation of arbutin
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9			API_50CHas:ESC	Assimilation of esculin
+CHEBI:17814	Salicin	kegg.compound:C01451	CAS-RN:138-52-3			API_50CHas:SAL	Assimilation of salicin
+CHEBI:17057	D-cellobiose (cellobiose)	kegg.compound:C00185	CAS-RN:528-50-7			API_50CHas:CEL	Assimilation of cellobiose
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_50CHas:MAL	Assimilation of maltose
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_50CHas:LAC	Assimilation of lactose
+CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_50CHas:MEL	Assimilation of melibiose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_50CHas:SAC	Assimilation of sucrose
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_50CHas:TRE	Assimilation of trehalose
+CHEBI:15443	Inulin	kegg.compound:C03323	CAS-RN:9005-80-5 			API_50CHas:INU	Assimilation of inulin
+CHEBI:6731	D-melezitose (melezitose)	kegg.compound:C08243	CAS-RN:0597-12-06			API_50CHas:MLZ	Assimilation of melezitose
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_50CHas:RAF	Assimilation of raffinose
+CHEBI:28017	Amidon (starch)	kegg.compound:C00369	CAS-RN:9005-25-8			API_50CHas:AMD	Assimilation of starch
+CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_50CHas:GLYG	Assimilation of glycogen
+CHEBI:17151	Xylitol	kegg.compound:C00503	CAS-RN:149-32-6			API_50CHas:XLT	Assimilation of xylitol
+CHEBI:28066	Gentiobiose	kegg.compound:C08240	CAS-RN:554-91-6 			API_50CHas:GEN	Assimilation of gentiobiose
+CHEBI:32528	D-turanose (turanose)	kegg.compound:C19636	CAS-RN:547-25-1			API_50CHas:TUR	Assimilation of turanose
+CHEBI:62318	D-lyxose		CAS-RN:65-42-9			API_50CHas:LYX	Assimilation of D-lyxose
+CHEBI:16443	D-tagatose	kegg.compound:C00796	CAS-RN:87-81-1			API_50CHas:TAG	Assimilation of D-tagatose
+CHEBI:28847	D-fucose					API_50CHas:DFUC	Assimilation of D-fucose
+CHEBI:18287	L-Fucose		CAS-RN:2438-80-4			API_50CHas:LFUC	Assimilation of L-fucose
+CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_50CHas:DARL	Assimilation of D-arabitol
+CHEBI:18403	L-arabitol (L-arabinitol)	kegg.compound:C00532	CAS-RN:7643-75-6			API_50CHas:LARL	Assimilation of L-arabitol
+CHEBI:33198	Gluconate (D-gluconic acid)	kegg.compound:C00257	CAS-RN:526-95-4			API_50CHas:GNT	Assimilation of gluconate
+CHEBI:16808	2-Ketogluconate (2-dehydro-D-gluconate)	kegg.compound:C06473	CAS-RN:669-90-9			API_50CHas:2KG	Assimilation of 2-Ketogluconate
+CHEBI:17426	5-Ketogluconate (5-dehydro-D-gluconate)	kegg.compound:C01062				API_50CHas:5KG	Assimilation of 5-Ketogluconate
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_rID32STR:ADH (Arg)	Arginine dihydrolase
+	Resorufin beta-D-glucopyranoside		CAS-RN:101490-85-1	EC:3.2.1.21	beta-glucosidase	API_rID32STR:beta GLU	beta-Glucosidase
+	Resorufin beta-D-galactopyranoside		CAS-RN:95079-19-9	EC:3.2.1.23	beta-galactosidase	API_rID32STR:beta GAR	beta-Galactosidase
+	Resorufin beta-D-glucuronide		CAS-RN:125440-91-7	EC:3.2.1.31	beta-glucuronidase	API_rID32STR:beta GUR	beta-Glucuronidase
+CHEBI:54684	4-Nitrophenyl-alpha-D-galactoside		CAS-RN:7493-95-0	EC:3.2.1.22	alpha-galactosidase	API_rID32STR:alpha GAL	alpha-Galactosidase
+CHEBI:355715	4-nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.1.3.1	alkaline phosphatase	API_rID32STR:PAL	Alkaline Phosphatase
+CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_rID32STR:RIB	Acid from D-ribose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_rID32STR:MAN	Acid from D-mannitol
+CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_rID32STR:SOR	Acid from sorbitol
+CHEBI:17716	D-lactose (lactose)	kegg.compound:C00243	CAS-RN:63-42-3			API_rID32STR:LAC	Acid from lactose
+CHEBI:16551	D-trehalose (trehalose)	kegg.compound:C01083	CAS-RN:99-20-7			API_rID32STR:TRE	Acid from trehalose
+CHEBI:16634	D-raffinose (raffinose)	kegg.compound:C00492	CAS-RN:512-69-6			API_rID32STR:RAF	Acid from raffinose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_rID32STR:SAC	Acid from sucrose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_rID32STR:LARA	Acid from L-arabinose
+CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_rID32STR:DARL	Acid from D-arabitol
+CHEBI:40585	alpha-cyclodextrin		CAS-RN:10016-20-3			API_rID32STR:CDEX	Acid from alpha-cyclodextrin
+CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_rID32STR:VP	Acetoin production (Voges Proskauer test)
+	Ala-Phe-Pro beta-naphthylamide					API_rID32STR:APPA	Alanyl-Phenylalanyl-Proline arylamidase
+	2-Naphthyl-beta-D-galactopyranoside		CAS-RN:312693-81-5 	EC:3.2.1.23	beta-galactosidase	API_rID32STR:beta GAL	beta-Galactosidase
+	L-pyroglutamic acid 2-naphthylamide 		CAS-RN:22155-91-5 	EC:3.4.19.3	pyroglutamyl-peptidase I	API_rID32STR:PyrA	Pyrrolidonyl arylamidase
+	6-Bromo-2-naphthyl-N-acetyl-beta-D-glucosamin					API_rID32STR:beta NAG	N-Acetyl-glucosaminidase
+	Gly-Trp beta-naphthylamide					API_rID32STR:GTA	Glycyl-tryptophan arylamidase
+CHEBI:18089	Hippuric acid (N-benzoylglycine)	kegg.compound:C01586	CAS-RN:495-69-2			API_rID32STR:HIP	Hydrolysis of hippuric acid
+CHEBI:28087	Glycogen	kegg.compound:C00182	CAS-RN:9005-79-2			API_rID32STR:GLYG	Acid from glycogen
+	Pullulan	kegg.compound:C00480	CAS-RN:2614080			API_rID32STR:PUL	Acid from pullulan
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_rID32STR:MAL	Acid from maltose
+CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_rID32STR:MEL	Acid from melibiose
+CHEBI:6731	D-melezitose (melezitose)	kegg.compound:C08243	CAS-RN:0597-12-06			API_rID32STR:MLZ	Acid from melezitose
+CHEBI:320055	Methyl beta-D-glucopyranoside		CAS-RN:709-50-2			API_rID32STR:Mbeta DG	Acidification of methyl beta-D-glucopyranoside
+CHEBI:16443	D-tagatose	kegg.compound:C00798	CAS-RN:87-81-3			API_rID32STR:TAG	Acid from D-tagatose
+	4-Nitrophenyl beta-D-mannopyranoside		CAS-RN:35599-02-1	EC:3.2.1.25	beta-mannosidase	API_rID32STR:beta MAN	beta-Mannosidase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_rID32STR:URE	Urease/urea hydrolysis
+CHEBI:7963	Benzylpenicillin potassium		CAS-RN:113-98-4	EC:3.5.2.6	beta-lactamase	API_NH:PEN	Penicillinase production
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_NH:GLU	Acid from D-glucose
+CHEBI:15824	D-fructose	kegg.compound:C00095	CAS-RN:57-48-7 			API_NH:FRU	Acid from D-fructose
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_NH:MAL	Acid from maltose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_NH:SAC	Acid from sucrose
+CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_NH:ODC	Ornithine decarboxylase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_NH:URE	Urease/urea hydrolysis
+	5-bromo-3-indolyl-decanoate		CAS-RN:133950-71-7	EC:3.1.1.3	triacylglycerol lipase	API_NH:LIP	Lipase
+CHEBI:1744	Para-nitrophenylphosphate (4-nitrophenyl phos	kegg.compound:C03360	CAS-RN:330-13-2	EC:3.1.3.1	alkaline phosphatase	API_NH:PAL	Alkaline phosphatase
+CHEBI:355715	4-Nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_NH:beta GAL	beta-Galactosidase
+	L-proline 4-methoxy-beta-naphthylamide		CAS-RN:100930-07-2	EC:3.4.11.5	prolyl aminopeptidase	API_NH:ProA	Proline arylamidase
+	gamma-L-glutamyl-4-methoxy-2-naphthylamine		CAS-RN:24723-50-0	EC:2.3.2.2	gamma-glutamyltransferase	API_NH:GGT	gamma-Glutamyl transferase
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_NH:IND	Indole production
+						API_LIST:DIM	Differentiation L. innocura(+)/ L.monoytogenes(-)
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_LIST:ESC	Esculin hydrolysis
+	4-Nitrophenyl alpha-D-mannopyranoside 		CAS-RN:10357-27-4 	EC:3.2.1.24	alpha-mannosidase	API_LIST:alpha MAN	alpha-Mannosidase
+CHEBI:18333	D-arabitol	kegg.compound:C01904	CAS-RN:488-82-4 			API_LIST:DARL	Acid from D-arabitol
+CHEBI:65327	D-xylose	kegg.compound:C00181	CAS-RN:58-86-6			API_LIST:XYL	Acid from D-xylose
+CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_LIST:RHA	Acid from L-rhamnose
+CHEBI:320061	Methyl alpha-D-glucopyranoside		CAS-RN:709-50-2			API_LIST:MDG	Acid from methyl-alpha-D-glucopyranoside
+CHEBI:16988	D-ribose	kegg.compound:C00121	CAS-RN:50-69-1			API_LIST:RIB	Acid from D-ribose
+CHEBI:29042	alpha-D-glucose 1-phosphate	kegg.compound:C00103	CAS-RN:59-56-3			API_LIST:G1P	Acid from alpha-D-glucose 1-phosphate
+CHEBI:16443	D-tagatose	kegg.compound:C00797	CAS-RN:87-81-2			API_LIST:TAG	Acid from D-tagatose
+						API_LIST:beta HEM	beta hemolysis present
+CHEBI:30769	Citric acid	kegg.compound:C00158	CAS-RN:77-92-9			API_20E:CIT	Citrate utilization
+CHEBI:15729	L-ornithine	kegg.compound:C00077	CAS-RN:70-26-8 	EC:4.1.1.17	ornithine decarboxylase	API_20E:ODC	Ornithine decarboxylase
+CHEBI:18019	L-lysine	kegg.compound:C00047	CAS-RN:56-87-1 	EC:4.1.1.18	Lysine decarboxylase	API_20E:LDC (Lys)	Lysine decarboxylase
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_20E:ADH (Arg)	Arginine dihydrolase
+CHEBI:90144	o-nitrophenyl-beta-D-galactopyranosid		CAS-RN:0369-07-03	EC:3.2.1.23	beta-galactosidase	API_20E:ONPG	beta-Galactosidase
+						API_20E:H2S	H2S production
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_20E:URE	Urease/urea hydrolysis
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3			API_20E:TDA (Trp)	Tryptophan deaminase
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_20E:IND	Indole production
+CHEBI:50144	sodium pyruvate		CAS-RN:113-24-6			API_20E:VP	Acetoin production (Voges Proskauer test)
+CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_20E:GEL	Gelatinase/gelatin hydrolysis
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20E:GLU	Fermentation/oxidation of D-glucose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20E:MAN	Fermentation/oxidation of D-mannitol
+CHEBI:17268	Inositol (myo-inositol)	kegg.compound:C00137	CAS-RN:87-89-8			API_20E:INO	Fermentation/oxidation of inositol
+CHEBI:17924	D-sorbitol (D-glucitol)	kegg.compound:C00794	CAS-RN:50-70-4			API_20E:Sor	Fermentation/oxidation of sorbitol
+CHEBI:62345	L-rhamnose	kegg.compound:C00507	CAS-RN:73-34-7			API_20E:RHA	Fermentation/oxidation of L-rhamnose
+CHEBI:17992	D-saccharose (sucrose)	kegg.compound:C00089	CAS-RN:57-50-1			API_20E:SAC	Fermentation/oxidation of sucrose
+CHEBI:28053	D-melibiose (melibiose)	kegg.compound:C05402	CAS-RN:585-99-9 			API_20E:MEL	Fermentation/oxidation of melibiose
+CHEBI:27613	Amygdalin	kegg.compound:C08325	CAS-RN:29883-15-6 			API_20E:AMY	Fermentation/oxidation of amygdalin
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20E:ARA	Fermentation/oxidation of L-arabinose
+CHEBI:26689	Oxygen			EC:EC 1.9.3.1	cytochrome-c oxidase	API_20E:OX	Cytochrome oxidase
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_20E:NO2	Nitrite production
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_20E:N2	Reduction to N2
+						API_20E:MOB	Motility
+	MacConkey medium					API_20E:MAC	Growth on MacConkey medium
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20E:OF-O	Oxidative catabolisation of D-glucose
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20E:OF-F	Fermentation of D-glucose
+CHEBI:4853	Esculin ferric citrate	kegg.compound:C09264	CAS-RN:531-75-9	EC:3.2.1.21	beta-glucosidase	API_20NE:ESC	Esculin hydrolysis/beta-Glucosidase
+CHEBI:16199	Urea	kegg.compound:C00086	CAS-RN:57-13-6	EC:3.5.1.5	Urease	API_20NE:URE	Urease/urea hydrolysis
+CHEBI:16467	L-arginine	kegg.compound:C00062	CAS-RN:74-79-3 	EC:3.5.3.6	arginine deiminase	API_20NE:ADH (Arg)	Arginine dihydrolase
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20NE:GLU_ Ferm	Fermentation of D-glucose
+CHEBI:16828	L-tryptophan	kegg.compound:C00078	CAS-RN:73-22-3	EC:4.1.99.1	tryptophanase	API_20NE:TRP	Indole production
+CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			API_20NE:NO3	Reduction of nitrates
+CHEBI:5291	Gelatin	kegg.compound:C01498	CAS-RN:9000-70-8			API_20NE:GEL	Gelatinase/gelatin hydrolysis
+CHEBI:355715	4-nitrophenyl-beta-D-galactoside	kegg.compound:C04452	CAS-RN:3150-24-1	EC:3.2.1.23	beta-galactosidase	API_20NE:PNPG	beta-Galactosidase
+CHEBI:17634	D-glucose	kegg.compound:C00031	CAS-RN:50-99-7			API_20NE:GLU_ Assim	Assimilation of D-glucose
+CHEBI:30849	L-arabinose	kegg.compound:C00259	CAS-RN:147-81-9			API_20NE:ARA	Assimilation of L-arabinose
+CHEBI:16024	D-mannose	kegg.compound:C00159	CAS-RN:3458-28-4			API_20NE:MNE	Assimilation of D-mannose
+CHEBI:16899	D-mannitol	kegg.compound:C00392	CAS-RN:69-65-8			API_20NE:MAN	Assimilation of D-mannitol
+CHEBI:506227	N-acetyl-D-glucosamine	kegg.compound:C00140	CAS-RN:7512-17-6 			API_20NE:NAG	Assimilation of N-acetyl-glucosamine
+CHEBI:17306	D-maltose (maltose)	kegg.compound:C00208	CAS-RN:69-79-4			API_20NE:MAL	Assimilation of maltose
+CHEBI:33198	Gluconate (D-gluconic acid)	kegg.compound:C00257	CAS-RN:526-95-4			API_20NE:GNT	Assimilation of gluconate
+CHEBI:30813	Capric acid (decanoic acid)	kegg.compound:C01571	CAS-RN:334-48-5			API_20NE:CAP	Assimilation of capric acid
+CHEBI:30832	Adipic acid	kegg.compound:C06104	CAS-RN:0124-04-09			API_20NE:ADI	Assimilation adipic acid
+CHEBI:665	Malic acid	kegg.compound:C00711	CAS-RN:6915-15-7			API_20NE:MLT	Assimilation of malic acid
+CHEBI:30769	Citric acid	kegg.compound:C00158	CAS-RN:77-92-9			API_20NE:CIT	Assimilation of  citric acid
+CHEBI:8082	Phenyl-acetic acid	kegg.compound:C00548	CAS-RN:122-79-2			API_20NE:PAC	Assimilation of phenyl-acetic acid
+CHEBI:26689	Oxygen			EC:EC 1.9.3.1	cytochrome-c oxidase	API_20NE:OX	Cytochrome oxidase

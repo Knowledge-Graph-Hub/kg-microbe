@@ -254,6 +254,10 @@ class UniprotTransform(Transform):
 
                         edge_writer.writerow(edges_data_to_write)
 
+                #EC to Chemical (one produces and one consumes)
+                #EC 
+                #Only Uniprot to chemical if no known EC
+                        
                 # Write binding site edges
                 if len(chem_list) > 0:
                     for chem in chem_list:

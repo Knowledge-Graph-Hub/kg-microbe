@@ -270,5 +270,5 @@ ORGANISM_TO_PROTEOME_EDGE = "biolink:has_biological_sequence"
 PROTEIN_TO_PROTEOME_EDGE = "biolink:derives_from"
 PROTEOME_CATEGORY = "biolink:Genome"
 PROTEIN_TO_EC_EDGE = "biolink:participates_in"
-EC_CATEGORY = "biolink:Enzyme"
+EC_CATEGORY = "biolink:Enzyme" #or activity or reaction?
 

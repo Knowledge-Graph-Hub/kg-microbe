@@ -425,7 +425,7 @@ class MediaDiveTransform(Transform):
 
                     edge_writer.writerows(solution_ingredient_edges)
 
-                    progress.set_description(f"Processing ingredient: {medium_id}")
+                    progress.set_description(f"Processing mediadive: {medium_id}")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 

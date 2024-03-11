@@ -135,5 +135,5 @@
 # RHEA
 # 
 -
-  url: https://ftp.expasy.org/databases/rhea/rdf/rhea.rdf.gz
-  local_name: rhea.rdf.gz
+  url: https://raw.githubusercontent.com/biopragmatics/obo-db-ingest/main/export/rhea/rhea.json
+  local_name: rhea.json

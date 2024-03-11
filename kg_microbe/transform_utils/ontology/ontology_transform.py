@@ -27,6 +27,7 @@ ONTOLOGIES = {
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
     "go": "go.json",
+    "rhea": "rhea.json",
 }
 
 

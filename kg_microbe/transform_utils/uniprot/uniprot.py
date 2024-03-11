@@ -15,6 +15,7 @@ from kg_microbe.transform_utils.constants import (
     CHEMICAL_TO_PROTEIN_EDGE,
     PROTEIN_TO_EC_EDGE,
     EC_CATEGORY,
+    EC_PREFIX,
     ENZYME_CATEGORY,
     PROTEIN_TO_GO_EDGE,
     NCBITAXON_PREFIX,
@@ -320,7 +321,7 @@ class UniprotTransform(Transform):
 
                     #Unnecessary when EC is ingested
                     nodes_data_to_write = [
-                        self.__enz_data["EC number"],
+                        EC_PREFIX + ":" + self.__enz_data["EC number"],
                         EC_CATEGORY,
                         self.__enz_data["name"],
                         "",

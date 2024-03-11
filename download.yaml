@@ -131,3 +131,9 @@
 #   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
 #   local_name: ec2ec.zip
 
+# 
+# RHEA
+# 
+-
+  url: https://raw.githubusercontent.com/biopragmatics/obo-db-ingest/main/export/rhea/rhea.json
+  local_name: rhea.json

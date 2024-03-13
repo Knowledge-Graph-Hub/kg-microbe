@@ -20,18 +20,6 @@ run-summary:
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'solution:' | wc -l
 	echo "medium:"
 	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'medium:' | wc -l
-	echo "traits"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
-	echo "traits.pathways"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
-	echo "traits.cell_shape_enum"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'traits.' | wc -l
-	echo "carbon_substrate"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'carbon_substrate' | wc -l
-	echo "pathways"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'pathways' | wc -l
-	echo "cell_shape"
-	cut -f1 data/merged/merged-kg_nodes.tsv |grep 'cell_shape' | wc -l
 
 	echo "EDGES"
 	wc -l data/merged/merged-kg_edges.tsv
@@ -52,18 +40,26 @@ run-summary:
 	echo "taxon -> GO"
 	grep 'GO:' data/merged/merged-kg_edges.tsv | grep 'NCBITaxon:' | wc -l
 
-	grep 'oxygen:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> oxygen"
-	grep 'salinity:' data/merged/merged-kg_edges.tsv  |wc -l
+	grep 'oxygen:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> salinity"
-	grep 'pH:' data/merged/merged-kg_edges.tsv  |wc -l
+	grep 'salinity:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> pH"
-	grep 'temperature:' data/merged/merged-kg_edges.tsv  |wc -l
+	grep 'pH:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> temperature"
-	grep 'pathways:' data/merged/merged-kg_edges.tsv  |wc -l
+	grep 'temperature:' data/merged/merged-kg_edges.tsv  |wc -l
 	echo "taxon -> pathways"
+	grep 'pathways:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> gram_stain"
+	grep 'gram_stain:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> isolation_source"
+	grep 'isolation_source:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> carbon_substrate"
+	grep 'carbon_substrate:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> cell_shape"	
+	grep 'cell_shape:' data/merged/merged-kg_edges.tsv  |wc -l
+	echo "taxon -> pathogen"	
 	grep 'pathogen:' data/merged/merged-kg_edges.tsv  |wc -l
-	echo "taxon -> pathogen"
 
 
 neo4j-upload:

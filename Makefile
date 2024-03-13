@@ -29,8 +29,6 @@ run-summary:
 	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'ingredient:' | wc -l
 	echo "medium-> solution"
 	grep 'medium:' data/merged/merged-kg_edges.tsv | grep 'solution:' | wc -l
-	echo "ingredient -> CHEBI"
-	grep 'ingredient:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "solution -> CHEBI"
 	grep 'solution:' data/merged/merged-kg_edges.tsv | grep 'CHEBI' | wc -l
 	echo "ingredient -> solution"

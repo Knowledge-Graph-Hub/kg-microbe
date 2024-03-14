@@ -248,6 +248,7 @@ RHEA_DIRECTION_COLUMN = "direction"
 RHEA_MAPPING_ID_COLUMN = "RHEA_ID"
 RHEA_MASTER_ID_COLUMN = "MASTER_ID"
 RHEA_MAPPING_OBJECT_COLUMN = "ID"
+RHEA_TARGET_ID_COLUMN = "target_id"
 RHEA_SUBJECT_ID_COLUMN = "subject_id"
 RHEA_UNDEFINED_DIRECTION = "undefined"
 RHEA_BIDIRECTIONAL_DIRECTION = "bidirectional"
@@ -257,8 +258,21 @@ RHEA_CATEGORY_COLUMN = "category"
 RHEA_CATEGORY = "biolink:MolecularActivity"
 EC_CATEGORY = "biolink:MolecularActivity"
 GO_CATEGORY = "biolink:BiologicalProcess"
+RDFS_SUBCLASS_OF = "rdfs:subClassOf"
+SUBCLASS_PREDICATE = "biolink:subclass_of"
+SUPERCLASS_PREDICATE = "biolink:superclass_of"
 
-
+DEBIO_MAPPER = {
+    RHEA_LEFT_TO_RIGHT_DIRECTION: "debio:0000007",
+    RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",
+    RHEA_BIDIRECTIONAL_DIRECTION: "debio:0000009",
+}
+DEBIO_PREDICATE_MAPPER = {
+    RHEA_LEFT_TO_RIGHT_DIRECTION: "biolink:is_input_of",
+    RHEA_RIGHT_TO_LEFT_DIRECTION: "biolink:is_output_of",
+    RHEA_BIDIRECTIONAL_DIRECTION: "biolink:participates_in",
+}
+RHEA_DIRECTION_CATEGORY = "biolink:Activity"
 
 # Traits
 TAX_ID_COLUMN = "tax_id"
@@ -324,5 +338,5 @@ DO_NOT_CHANGE_PREFIXES = [
     UBERON_PREFIX,
     "API_",
     RHEA_NEW_PREFIX,
-    GO_PREFIX
+    GO_PREFIX,
 ]

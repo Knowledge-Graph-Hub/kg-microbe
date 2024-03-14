@@ -11,6 +11,8 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 TRAITS_DIR = Path(__file__).parent / "traits"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
+RHEA_DIR: Path = Path(__file__).parent / "rhea"
+RHEA_TMP_DIR = RHEA_DIR / "tmp"
 
 
 # KEYS FOR JSON FILE
@@ -104,6 +106,12 @@ SHAPE_PREFIX = "cell_shape:"
 PATHWAY_PREFIX = "pathways:"
 CARBON_SUBSTRATE_PREFIX = "carbon_substrates:"
 ISOLATION_SOURCE_PREFIX = "isolation_source:"
+RHEA_OLD_PREFIX = "OBO:rhea_"
+RHEA_NEW_PREFIX = "RHEA:"
+RHEA_URI = "http://purl.obolibrary.org/obo/rhea_"
+DEBIO_OLD_PREFIX = "OBO:debio_"
+DEBIO_NEW_PREFIX = "debio:"
+DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
 
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
@@ -133,6 +141,8 @@ ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
+RHEA_TO_EC_EDGE = "biolink:same_as"
+RHEA_TO_GO_EDGE = "biolink:same_as"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -161,6 +171,7 @@ HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
+EXACT_MATCH = "skos:exactMatch"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -231,6 +242,24 @@ MEDIADIVE_MAX_PH_COLUMN = "max_pH"
 MEDIADIVE_REF_COLUMN = "reference"
 MEDIADIVE_DESC_COLUMN = "description"
 
+RHEA_ID_COLUMN = "id"
+RHEA_NAME_COLUMN = "name"
+RHEA_DIRECTION_COLUMN = "direction"
+RHEA_MAPPING_ID_COLUMN = "RHEA_ID"
+RHEA_MASTER_ID_COLUMN = "MASTER_ID"
+RHEA_MAPPING_OBJECT_COLUMN = "ID"
+RHEA_SUBJECT_ID_COLUMN = "subject_id"
+RHEA_UNDEFINED_DIRECTION = "undefined"
+RHEA_BIDIRECTIONAL_DIRECTION = "bidirectional"
+RHEA_LEFT_TO_RIGHT_DIRECTION = "left-to-right"
+RHEA_RIGHT_TO_LEFT_DIRECTION = "right-to-left"
+RHEA_CATEGORY_COLUMN = "category"
+RHEA_CATEGORY = "biolink:MolecularActivity"
+EC_CATEGORY = "biolink:MolecularActivity"
+GO_CATEGORY = "biolink:BiologicalProcess"
+
+
+
 # Traits
 TAX_ID_COLUMN = "tax_id"
 CARBON_SUBSTRATES_COLUMN = "carbon_substrates"
@@ -294,4 +323,6 @@ DO_NOT_CHANGE_PREFIXES = [
     EC_PREFIX,
     UBERON_PREFIX,
     "API_",
+    RHEA_NEW_PREFIX,
+    GO_PREFIX
 ]

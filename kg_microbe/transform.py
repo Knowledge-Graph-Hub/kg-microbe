@@ -7,6 +7,7 @@ from typing import List, Optional
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, OntologyTransform
+from kg_microbe.transform_utils.rhea.rhea import RheaMappingsTransform
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
 from kg_microbe.transform_utils.uniprot.uniprot import UniprotTransform
 
@@ -19,11 +20,12 @@ DATA_SOURCES = {
     # "TCRDTransform": TCRDTransform,
     # "ProteinAtlasTransform": ProteinAtlasTransform,
     # "STRINGTransform": STRINGTransform,
+    "OntologyTransform": OntologyTransform,
     "BacDiveTransform": BacDiveTransform,
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
-    "OntologyTransform": OntologyTransform,
     "UniprotTransform": UniprotTransform,
+    "RheaMappingsTransform": RheaMappingsTransform,
 }
 
 

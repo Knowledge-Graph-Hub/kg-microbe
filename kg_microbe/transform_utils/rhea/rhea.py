@@ -10,7 +10,7 @@ from pyobo import get_id_name_mapping, get_sssom_df
 from kg_microbe.transform_utils.constants import (
     EC_CATEGORY,
     EC_PREFIX,
-    EXACT_MATCH,
+    CLOSE_MATCH,
     GO_CATEGORY,
     RHEA_BIDIRECTIONAL_DIRECTION,
     RHEA_CATEGORY,
@@ -92,7 +92,7 @@ class RheaMappingsTransform(Transform):
             pattern = f"{self.input_base_dir}/rhea2*.tsv"
             matching_files = glob(pattern)
 
-            relation = EXACT_MATCH
+            relation = CLOSE_MATCH
             ks = "Rhea"
             for file in matching_files:
                 if "rhea2ec" in file:
@@ -127,5 +127,5 @@ class RheaMappingsTransform(Transform):
                     header = next(rhea_sssom_reader)
 
                     for row in rhea_sssom_reader:
-                        
+
                         import pdb; pdb.set_trace()

@@ -9,10 +9,8 @@ from pyobo import get_id_name_mapping, get_relations_df, get_sssom_df
 from pyobo.sources.rhea import RheaGetter
 
 from kg_microbe.transform_utils.constants import (
-    CHEBI_PREFIX,
     CLOSE_MATCH,
     DEBIO_MAPPER,
-    DEBIO_PREDICATE_MAPPER,
     EC_CATEGORY,
     EC_PREFIX,
     GO_CATEGORY,
@@ -116,15 +114,27 @@ class RheaMappingsTransform(Transform):
 
             # write direction for rhea nodes
             nodes_file_writer.writerow(
-                [DEBIO_MAPPER.get(RHEA_UNDEFINED_DIRECTION), RHEA_DIRECTION_CATEGORY, RHEA_UNDEFINED_DIRECTION]
+                [
+                    DEBIO_MAPPER.get(RHEA_UNDEFINED_DIRECTION),
+                    RHEA_DIRECTION_CATEGORY,
+                    RHEA_UNDEFINED_DIRECTION,
+                ]
                 + [None] * 11
             )
             nodes_file_writer.writerow(
-                [DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION), RHEA_DIRECTION_CATEGORY, RHEA_LEFT_TO_RIGHT_DIRECTION]
+                [
+                    DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
+                    RHEA_DIRECTION_CATEGORY,
+                    RHEA_LEFT_TO_RIGHT_DIRECTION,
+                ]
                 + [None] * 11
             )
             nodes_file_writer.writerow(
-                [DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION), RHEA_DIRECTION_CATEGORY, RHEA_RIGHT_TO_LEFT_DIRECTION]
+                [
+                    DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION),
+                    RHEA_DIRECTION_CATEGORY,
+                    RHEA_RIGHT_TO_LEFT_DIRECTION,
+                ]
                 + [None] * 11
             )
 

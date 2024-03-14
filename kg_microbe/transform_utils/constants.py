@@ -141,8 +141,8 @@ ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-RHEA_TO_EC_EDGE = "biolink:same_as"
-RHEA_TO_GO_EDGE = "biolink:same_as"
+RHEA_TO_EC_EDGE = "biolink:close_match"
+RHEA_TO_GO_EDGE = "biolink:close_match"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -171,7 +171,7 @@ HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
-EXACT_MATCH = "skos:exactMatch"
+CLOSE_MATCH = "skos:closeMatch"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"

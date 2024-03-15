@@ -124,6 +124,13 @@
   url: https://rest.kegg.jp/link/pathway/rn
   local_name: kegg-rxn-pathway.tsv
 
+# 
+# EPM JSON for curies package
+#
+-
+  url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
+  local_name: epm.json
+
 #
 # Uniprot
 #

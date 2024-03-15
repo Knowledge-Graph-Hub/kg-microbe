@@ -97,6 +97,7 @@ CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
 ECOCORE_PREFIX = "ECOCORE:"
 UBERON_PREFIX = "UBERON:"
+RO_PREFIX = "RO:"
 MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
 MEDIADIVE_SOLUTION_PREFIX = "solution:"
 MEDIADIVE_MEDIUM_PREFIX = "medium:"
@@ -221,6 +222,7 @@ METABOLITE_KEY = "metabolite"
 PRODUCTION_KEY = "production"
 EC_PREFIX = "EC:"
 EC_KEY = "ec"
+EC_PYOBO_PREFIX = "eccode"
 ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
@@ -261,7 +263,8 @@ GO_CATEGORY = "biolink:BiologicalProcess"
 RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
-
+PREDICATE_ID_COLUMN = "predicate_id"
+PREDICATE_LABEL_COLUMN =  "predicate_label"
 DEBIO_MAPPER = {
     RHEA_LEFT_TO_RIGHT_DIRECTION: "debio:0000007",
     RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",
@@ -340,3 +343,9 @@ DO_NOT_CHANGE_PREFIXES = [
     RHEA_NEW_PREFIX,
     GO_PREFIX,
 ]
+
+# Create a mapping for special cases
+SPECIAL_PREFIXES = {
+    EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
+    RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
+}

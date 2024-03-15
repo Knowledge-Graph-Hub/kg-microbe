@@ -10,7 +10,7 @@ from curies import load_extended_prefix_map
 from oaklib import get_adapter
 from pyobo import get_id_name_mapping, get_relations_df, get_sssom_df
 from pyobo.sources.rhea import RheaGetter
-
+import pandas as pd
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
     CLOSE_MATCH,
@@ -19,6 +19,8 @@ from kg_microbe.transform_utils.constants import (
     EC_PREFIX,
     GO_CATEGORY,
     GO_PREFIX,
+    ID_COLUMN,
+    NAME_COLUMN,
     OBJECT_COLUMN,
     OBJECT_ID_COLUMN,
     OBJECT_LABEL_COLUMN,
@@ -90,6 +92,15 @@ class RheaMappingsTransform(Transform):
 
         return result
 
+    def _get_label_based_on_prefix(self, id):
+        if id.startswith(CHEBI_PREFIX.rstrip(":")):
+            return get_label(self.chebi_oi, id)
+        elif id.startswith(GO_PREFIX.rstrip(":")):
+            return get_label(self.go_oi, id)
+        # Add more conditions as needed
+        else:
+            return None
+
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
@@ -148,14 +159,6 @@ class RheaMappingsTransform(Transform):
             edges_file_writer.writerows(rhea_relation.values.tolist())
 
             # write direction for rhea nodes
-            nodes_file_writer.writerow(
-                [
-                    DEBIO_MAPPER.get(RHEA_UNDEFINED_DIRECTION),
-                    RHEA_DIRECTION_CATEGORY,
-                    RHEA_UNDEFINED_DIRECTION,
-                ]
-                + [None] * 11
-            )
             nodes_file_writer.writerow(
                 [
                     DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
@@ -281,13 +284,13 @@ class RheaMappingsTransform(Transform):
                                     for prefix in [CHEBI_PREFIX, EC_PREFIX, GO_PREFIX]
                                 ):
                                     if object_info[0].startswith(CHEBI_PREFIX):
-                                        object_label = get_label(self.chebi_oi, object_info[0])
+                                        category = SUBSTRATE_CATEGORY
                                     elif object_info[0].startswith(GO_PREFIX):
-                                        object_label = get_label(self.go_oi, object_info[0])
+                                        category = GO_CATEGORY
                                     else:
-                                        object_label = object_info[1]
+                                        category = EC_CATEGORY
                                     nodes_file_writer.writerow(
-                                        [object_info[0], SUBSTRATE_CATEGORY, object_label]
+                                        [object_info[0], category, object_info[1]]
                                         + [None] * 11
                                     )
                                     edges_file_writer.writerow(
@@ -299,6 +302,13 @@ class RheaMappingsTransform(Transform):
                                             "Rhea",
                                         ]
                                     )
+        # Add labels for the nodes
+        nodes_df = pd.read_csv(self.output_dir / "nodes.tsv", sep="\t", low_memory=False).drop_duplicates()
+        no_name_df = nodes_df[nodes_df[NAME_COLUMN].isna()][[ID_COLUMN, NAME_COLUMN]].drop_duplicates()
+        no_name_df[NAME_COLUMN] = no_name_df[ID_COLUMN].apply(lambda x: self._get_label_based_on_prefix(x))
+        nodes_df.update(no_name_df)
+        nodes_df.to_csv(self.output_dir / "nodes.tsv", sep="\t", index=False)
+        
 
                 # TODO: Add the sssom.tsv file to the edges.tsv file
                 # with open(RHEA_TMP_DIR / fn2) as sssom_file:

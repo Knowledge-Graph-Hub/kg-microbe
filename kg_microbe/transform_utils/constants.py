@@ -349,3 +349,15 @@ SPECIAL_PREFIXES = {
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
 }
+HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
+ENABLED_BY_PREDICATE = "biolink:enabled_by"
+HAS_INPUT_PREDICATE = "biolink:has_input"
+HAS_OUTPUT_PREDICATE = "biolink:has_output"
+
+RHEA_PREDICATE_MAPPER = {
+    "has participant": HAS_PARTICIPANT_PREDICATE,
+    "enabled by": ENABLED_BY_PREDICATE,
+    "reaction enabled by molecular function": ENABLED_BY_PREDICATE,
+    "has input": HAS_INPUT_PREDICATE,
+    "has output": HAS_OUTPUT_PREDICATE,
+}

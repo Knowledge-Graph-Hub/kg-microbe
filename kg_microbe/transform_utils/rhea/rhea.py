@@ -6,11 +6,12 @@ from glob import glob
 from pathlib import Path
 from typing import Optional, Union
 
+import pandas as pd
 from curies import load_extended_prefix_map
 from oaklib import get_adapter
 from pyobo import get_id_name_mapping, get_relations_df, get_sssom_df
 from pyobo.sources.rhea import RheaGetter
-import pandas as pd
+
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
     CLOSE_MATCH,
@@ -42,6 +43,7 @@ from kg_microbe.transform_utils.constants import (
     RHEA_MAPPING_OBJECT_COLUMN,
     RHEA_NAME_COLUMN,
     RHEA_NEW_PREFIX,
+    RHEA_PREDICATE_MAPPER,
     RHEA_RIGHT_TO_LEFT_DIRECTION,
     RHEA_SUBJECT_ID_COLUMN,
     RHEA_TARGET_ID_COLUMN,
@@ -290,30 +292,36 @@ class RheaMappingsTransform(Transform):
                                     else:
                                         category = EC_CATEGORY
                                     nodes_file_writer.writerow(
-                                        [object_info[0], category, object_info[1]]
-                                        + [None] * 11
+                                        [object_info[0], category, object_info[1]] + [None] * 11
                                     )
                                     edges_file_writer.writerow(
                                         [
                                             subject_info[0],
-                                            predicate_info[1],
+                                            RHEA_PREDICATE_MAPPER.get(
+                                                predicate_info[1], predicate_info[1]
+                                            ),
                                             object_info[0],
                                             predicate_info[0],
-                                            "Rhea",
+                                            "RheaViaPyObo",
                                         ]
                                     )
         # Add labels for the nodes
-        nodes_df = pd.read_csv(self.output_dir / "nodes.tsv", sep="\t", low_memory=False).drop_duplicates()
-        no_name_df = nodes_df[nodes_df[NAME_COLUMN].isna()][[ID_COLUMN, NAME_COLUMN]].drop_duplicates()
-        no_name_df[NAME_COLUMN] = no_name_df[ID_COLUMN].apply(lambda x: self._get_label_based_on_prefix(x))
+        nodes_df = pd.read_csv(
+            self.output_dir / "nodes.tsv", sep="\t", low_memory=False
+        ).drop_duplicates()
+        no_name_df = nodes_df[nodes_df[NAME_COLUMN].isna()][
+            [ID_COLUMN, NAME_COLUMN]
+        ].drop_duplicates()
+        no_name_df[NAME_COLUMN] = no_name_df[ID_COLUMN].apply(
+            lambda x: self._get_label_based_on_prefix(x)
+        )
         nodes_df.update(no_name_df)
         nodes_df.to_csv(self.output_dir / "nodes.tsv", sep="\t", index=False)
-        
 
-                # TODO: Add the sssom.tsv file to the edges.tsv file
-                # with open(RHEA_TMP_DIR / fn2) as sssom_file:
-                #     rhea_sssom_reader = csv.reader(sssom_file, delimiter="\t")
-                #     header = next(rhea_sssom_reader)
+        # TODO: Add the sssom.tsv file to the edges.tsv file
+        # with open(RHEA_TMP_DIR / fn2) as sssom_file:
+        #     rhea_sssom_reader = csv.reader(sssom_file, delimiter="\t")
+        #     header = next(rhea_sssom_reader)
 
-                #     for row in rhea_sssom_reader:
-                #         pass
+        #     for row in rhea_sssom_reader:
+        #         pass

@@ -1,5 +1,6 @@
 """Transform for Rhea."""
 
+from collections import defaultdict
 import csv
 from glob import glob
 from pathlib import Path
@@ -7,16 +8,24 @@ from typing import Optional, Union
 
 from pyobo import get_id_name_mapping, get_relations_df, get_sssom_df
 from pyobo.sources.rhea import RheaGetter
+from curies import load_extended_prefix_map
+from oaklib import get_adapter
 
 from kg_microbe.transform_utils.constants import (
+    CHEBI_PREFIX,
     CLOSE_MATCH,
     DEBIO_MAPPER,
     EC_CATEGORY,
     EC_PREFIX,
     GO_CATEGORY,
     OBJECT_COLUMN,
+    OBJECT_ID_COLUMN,
+    OBJECT_LABEL_COLUMN,
     PREDICATE_COLUMN,
+    PREDICATE_ID_COLUMN,
+    PREDICATE_LABEL_COLUMN,
     PROVIDED_BY_COLUMN,
+    RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
     RHEA_BIDIRECTIONAL_DIRECTION,
@@ -37,11 +46,15 @@ from kg_microbe.transform_utils.constants import (
     RHEA_TO_EC_EDGE,
     RHEA_TO_GO_EDGE,
     RHEA_UNDEFINED_DIRECTION,
+    SPECIAL_PREFIXES,
     SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
+    SUBJECT_LABEL_COLUMN,
+    SUBSTRATE_CATEGORY,
     SUPERCLASS_PREDICATE,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.oak_utils import get_label
 
 
 class RheaMappingsTransform(Transform):
@@ -56,11 +69,32 @@ class RheaMappingsTransform(Transform):
         """Instantiate part."""
         source_name = "RheaMappings"
         super().__init__(source_name, input_dir, output_dir)
+        self.converter = load_extended_prefix_map(RAW_DATA_DIR / "epm.json")
+        self.reference_cache = defaultdict(lambda: None)
+        self.chebi_oi = get_adapter("sqlite:obo:chebi")
+
+    def _reference_to_tuple(self, ref):
+        """Convert a reference to a tuple."""
+        # Check if the result is already cached
+        if ref in self.reference_cache:
+            return self.reference_cache[ref]
+    
+        # Use the mapping if the prefix is a special case, otherwise standardize it
+        prefix = SPECIAL_PREFIXES.get(ref.prefix, self.converter.standardize_prefix(ref.prefix))
+        
+        # Cache the result before returning
+        result = (f"{prefix}:{ref.identifier}", ref.name)
+        self.reference_cache[ref] = result
+        
+        return result
+    
+
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
         fn2 = "sssom.tsv"
+        
         rhea_relation = get_relations_df("rhea")
         rhea_relation[RELATION_COLUMN] = (
             rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]
@@ -91,14 +125,15 @@ class RheaMappingsTransform(Transform):
         rhea_relation = rhea_relation[self.edge_header]
 
         rhea_nodes = get_id_name_mapping("rhea")
-        if not (RHEA_TMP_DIR / fn2).exists():
+        # todo: check for other prefiexs
+        if not (RHEA_TMP_DIR / fn2).is_file():
             rhea_sssom = get_sssom_df("rhea")
             rhea_sssom[RHEA_SUBJECT_ID_COLUMN] = rhea_sssom[RHEA_SUBJECT_ID_COLUMN].str.replace(
                 r"(rhea)(:\d+)", lambda m: m.group(1).upper() + m.group(2), regex=True
             )
             rhea_sssom.to_csv(RHEA_TMP_DIR / fn2, sep="\t", index=False)
 
-        with open(RHEA_TMP_DIR / fn1, "w") as tmp_file, open(
+        with open(RHEA_TMP_DIR / f"rhea_{fn1}", "w") as tmp_file, open(
             self.output_dir / "nodes.tsv", "w"
         ) as nodes_file, open(self.output_dir / "edges.tsv", "w") as edges_file:
             tmp_file_writer = csv.writer(tmp_file, delimiter="\t")
@@ -208,16 +243,46 @@ class RheaMappingsTransform(Transform):
                     # edges = "subject	predicate	object	relation	primary_knowledge_source"
                     # nodes = "id	category	name"
                     for row in mapping_tsv_reader:
-                        subject = RHEA_NEW_PREFIX + str(row[rhea_idx])
+                        subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                         object = xref_prefix + str(row[xref_idx])
                         nodes_file_writer.writerow([object, category, None] + [None] * 11)
-                        edges_file_writer.writerow([subject, predicate, object, relation, ks])
+                        edges_file_writer.writerow([subject_info, predicate, object, relation, ks])
 
-                with open(RHEA_TMP_DIR / "all_terms.txt", "w") as test:
-                    for term in RheaGetter().iter_terms():
-                        test.write(f"{term}\n\n-------------------\n\n")
-                        # if term.reference.prefix == CHEBI_PREFIX.rstrip(":").lower():
-                        #     import pdb; pdb.set_trace()
+                with open(RHEA_TMP_DIR / "all_terms.tsv", "w", newline='') as tsvfile:
+                    all_terms_writer = csv.writer(tsvfile, delimiter='\t')
+                    # Write headers
+                    all_terms_writer.writerow(
+                        [
+                            RHEA_SUBJECT_ID_COLUMN,
+                            SUBJECT_LABEL_COLUMN,
+                            PREDICATE_ID_COLUMN,
+                            PREDICATE_LABEL_COLUMN,
+                            OBJECT_ID_COLUMN,
+                            OBJECT_LABEL_COLUMN,
+                            ]
+                        )
+                    # Create an instance of RheaGetter outside the loop to avoid repeated instantiation
+                    rhea_getter = RheaGetter()
+                    # Iterate over all terms
+                    for term in rhea_getter.iter_terms():
+                        # Extract subject information
+                        subject_info = self._reference_to_tuple(term.reference)
+                        # Iterate over relationships
+                        for predicate, objects in term.relationships.items():
+                            predicate_info = self._reference_to_tuple(predicate)
+                            for obj in objects:
+                                object_info = self._reference_to_tuple(obj)
+                                # Write the row in the specified format
+                                all_terms_writer.writerow([*subject_info, *predicate_info, *object_info])
+                                if any(object_info[0].startswith(prefix) for prefix in [CHEBI_PREFIX, EC_PREFIX]):
+                                    # edges_file_writer.writerow([subject_info[0], "related_to", object_info[0], "related_to", "Rhea"])
+                                    if object_info[0].startswith(CHEBI_PREFIX):
+                                        object_label = get_label(self.chebi_oi, object_info[0])
+                                    else:
+                                        object_label = object_info[1]
+                                    nodes_file_writer.writerow([object_info[0], SUBSTRATE_CATEGORY, object_label] + [None] * 11)
+                                    edges_file_writer.writerow([subject_info[0], predicate_info[1], object_info[0], predicate_info[0], "Rhea"])
+                        
                 # TODO: Add the sssom.tsv file to the edges.tsv file
                 # with open(RHEA_TMP_DIR / fn2) as sssom_file:
                 #     rhea_sssom_reader = csv.reader(sssom_file, delimiter="\t")

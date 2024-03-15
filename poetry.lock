@@ -1091,13 +1091,13 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "curies"
-version = "0.7.7"
+version = "0.7.8"
 description = "Idiomatic conversion between URIs and compact URIs (CURIEs)."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "curies-0.7.7-py3-none-any.whl", hash = "sha256:609de3e8cdf39f410e8f4d9f06eb7df379465860f4fb441bf0e79672430f8e2a"},
-    {file = "curies-0.7.7.tar.gz", hash = "sha256:a8d674029f906fb9c3564eafa0862ce96725932bd801fa751e076265b111cb34"},
+    {file = "curies-0.7.8-py3-none-any.whl", hash = "sha256:a60b2559f08557176b0a3df1f7c47ec7cd8ae4e0695f23fc6574825d2ccd17eb"},
+    {file = "curies-0.7.8.tar.gz", hash = "sha256:d208ad40b5e40b532285c917f116001f9e887a48dda54e6eedd10e514ea6aa1a"},
 ]
 
 [package.dependencies]
@@ -7307,4 +7307,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "0149b5d558b14858cbf700411d9b734a0a5ea596179d2f4efd4ee9d1025e7e13"
+content-hash = "2a90ae54b4123c966ce3e73a18d20e88cb58656f9851abd88305acd569b3d9ac"

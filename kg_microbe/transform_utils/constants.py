@@ -264,7 +264,7 @@ RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
 PREDICATE_ID_COLUMN = "predicate_id"
-PREDICATE_LABEL_COLUMN =  "predicate_label"
+PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {
     RHEA_LEFT_TO_RIGHT_DIRECTION: "debio:0000007",
     RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",

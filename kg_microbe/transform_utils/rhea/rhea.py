@@ -9,9 +9,9 @@ from typing import Optional, Union
 import pandas as pd
 from curies import load_extended_prefix_map
 from oaklib import get_adapter
-from pyobo import get_id_name_mapping, get_relations_df, get_sssom_df
+from pyobo import get_id_name_mapping, get_relations_df
 from pyobo.sources.rhea import RheaGetter
-import tqdm
+from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
@@ -182,55 +182,57 @@ class RheaMappingsTransform(Transform):
                 ]
                 + [None] * 11
             )
-            
-            # progress_class = tqdm if show_status else DummyTqdm
-            # with progress_class(
-            #     total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings..."
-            # ) as progress:
-            for k, v in rhea_nodes.items():
-                tmp_file_writer.writerow(
-                    [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, RHEA_UNDEFINED_DIRECTION]
-                )
-                nodes_file_writer.writerow([RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v] + [None] * 11)
 
-                tmp_file_writer.writerow(
-                    [
-                        RHEA_NEW_PREFIX + str(int(k) + 1),
-                        RHEA_CATEGORY,
-                        v,
-                        DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
-                    ]
-                )
-                nodes_file_writer.writerow(
-                    [RHEA_NEW_PREFIX + str(int(k) + 1), RHEA_CATEGORY, v] + [None] * 11
-                )
+            progress_class = tqdm if show_status else DummyTqdm
+            with progress_class(
+                total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings..."
+            ) as progress:
+                for k, v in rhea_nodes.items():
+                    tmp_file_writer.writerow(
+                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, RHEA_UNDEFINED_DIRECTION]
+                    )
+                    nodes_file_writer.writerow(
+                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v] + [None] * 11
+                    )
 
-                tmp_file_writer.writerow(
-                    [
-                        RHEA_NEW_PREFIX + str(int(k) + 2),
-                        RHEA_CATEGORY,
-                        v,
-                        DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION),
-                    ]
-                )
-                nodes_file_writer.writerow(
-                    [RHEA_NEW_PREFIX + str(int(k) + 2), RHEA_CATEGORY, v] + [None] * 11
-                )
+                    tmp_file_writer.writerow(
+                        [
+                            RHEA_NEW_PREFIX + str(int(k) + 1),
+                            RHEA_CATEGORY,
+                            v,
+                            DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
+                        ]
+                    )
+                    nodes_file_writer.writerow(
+                        [RHEA_NEW_PREFIX + str(int(k) + 1), RHEA_CATEGORY, v] + [None] * 11
+                    )
 
-                tmp_file_writer.writerow(
-                    [
-                        RHEA_NEW_PREFIX + str(int(k) + 3),
-                        RHEA_CATEGORY,
-                        v,
-                        DEBIO_MAPPER.get(RHEA_BIDIRECTIONAL_DIRECTION),
-                    ]
-                )
-                nodes_file_writer.writerow(
-                    [RHEA_NEW_PREFIX + str(int(k) + 3), RHEA_CATEGORY, v] + [None] * 11
-                )
-                    # progress.set_description(f"Processing node: {RHEA_NEW_PREFIX + k} ...")
-                    # # After each iteration, call the update method to advance the progress bar.
-                    # progress.update()
+                    tmp_file_writer.writerow(
+                        [
+                            RHEA_NEW_PREFIX + str(int(k) + 2),
+                            RHEA_CATEGORY,
+                            v,
+                            DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION),
+                        ]
+                    )
+                    nodes_file_writer.writerow(
+                        [RHEA_NEW_PREFIX + str(int(k) + 2), RHEA_CATEGORY, v] + [None] * 11
+                    )
+
+                    tmp_file_writer.writerow(
+                        [
+                            RHEA_NEW_PREFIX + str(int(k) + 3),
+                            RHEA_CATEGORY,
+                            v,
+                            DEBIO_MAPPER.get(RHEA_BIDIRECTIONAL_DIRECTION),
+                        ]
+                    )
+                    nodes_file_writer.writerow(
+                        [RHEA_NEW_PREFIX + str(int(k) + 3), RHEA_CATEGORY, v] + [None] * 11
+                    )
+                    progress.set_description(f"Processing RHEA node: {RHEA_NEW_PREFIX + k} ...")
+                    # After each iteration, call the update method to advance the progress bar.
+                    progress.update()
 
             # Get files that begin with "rhea2" and end with ".tsv" in self.input_base_dir
             pattern = f"{self.input_base_dir}/rhea2*.tsv"
@@ -238,84 +240,92 @@ class RheaMappingsTransform(Transform):
 
             relation = CLOSE_MATCH
             ks = "RheaViaPyObo"
-            for file in matching_files:
-                if "rhea2ec" in file:
-                    xref_prefix = EC_PREFIX
-                    predicate = RHEA_TO_EC_EDGE
-                    category = EC_CATEGORY
-                elif "rhea2go" in file:
-                    xref_prefix = ""  # GO prefix already in the file
-                    predicate = RHEA_TO_GO_EDGE
-                    category = GO_CATEGORY
+            with progress_class(
+                total=len(matching_files), desc="Processing Rhea mappings..."
+            ) as progress:
+                for file in matching_files:
+                    if "rhea2ec" in file:
+                        xref_prefix = EC_PREFIX
+                        predicate = RHEA_TO_EC_EDGE
+                        category = EC_CATEGORY
+                    elif "rhea2go" in file:
+                        xref_prefix = ""  # GO prefix already in the file
+                        predicate = RHEA_TO_GO_EDGE
+                        category = GO_CATEGORY
 
-                with open(file, "r") as tmp_file:
-                    mapping_tsv_reader = csv.reader(tmp_file, delimiter="\t")
-                    # Read the header
-                    header = next(mapping_tsv_reader)
-                    rhea_idx, xref_idx = (
-                        index
-                        for index, column_name in enumerate(header)
-                        if column_name in {RHEA_MAPPING_ID_COLUMN, RHEA_MAPPING_OBJECT_COLUMN}
-                    )
+                    with open(file, "r") as tmp_file:
+                        mapping_tsv_reader = csv.reader(tmp_file, delimiter="\t")
+                        # Read the header
+                        header = next(mapping_tsv_reader)
+                        rhea_idx, xref_idx = (
+                            index
+                            for index, column_name in enumerate(header)
+                            if column_name in {RHEA_MAPPING_ID_COLUMN, RHEA_MAPPING_OBJECT_COLUMN}
+                        )
 
-                    for row in mapping_tsv_reader:
-                        subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
-                        object = xref_prefix + str(row[xref_idx])
-                        nodes_file_writer.writerow([object, category, None] + [None] * 11)
-                        edges_file_writer.writerow([subject_info, predicate, object, relation, ks])
+                        for row in mapping_tsv_reader:
+                            subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
+                            object = xref_prefix + str(row[xref_idx])
+                            nodes_file_writer.writerow([object, category, None] + [None] * 11)
+                            edges_file_writer.writerow(
+                                [subject_info, predicate, object, relation, ks]
+                            )
 
-                with open(RHEA_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
-                    all_terms_writer = csv.writer(tsvfile, delimiter="\t")
-                    # Write headers
-                    all_terms_writer.writerow(
-                        [
-                            RHEA_SUBJECT_ID_COLUMN,
-                            SUBJECT_LABEL_COLUMN,
-                            PREDICATE_ID_COLUMN,
-                            PREDICATE_LABEL_COLUMN,
-                            OBJECT_ID_COLUMN,
-                            OBJECT_LABEL_COLUMN,
-                        ]
-                    )
-                    # Create an instance of RheaGetter outside the loop to avoid repeated instantiation
-                    rhea_getter = RheaGetter()
-                    # Iterate over all terms
-                    for term in rhea_getter.iter_terms():
-                        # Extract subject information
-                        subject_info = self._reference_to_tuple(term.reference)
-                        # Iterate over relationships
-                        for predicate, objects in term.relationships.items():
-                            predicate_info = self._reference_to_tuple(predicate)
-                            for obj in objects:
-                                object_info = self._reference_to_tuple(obj)
-                                # Write the row in the specified format
-                                all_terms_writer.writerow(
-                                    [*subject_info, *predicate_info, *object_info]
-                                )
-                                if any(
-                                    object_info[0].startswith(prefix)
-                                    for prefix in [CHEBI_PREFIX, EC_PREFIX, GO_PREFIX]
-                                ):
-                                    if object_info[0].startswith(CHEBI_PREFIX):
-                                        category = SUBSTRATE_CATEGORY
-                                    elif object_info[0].startswith(GO_PREFIX):
-                                        category = GO_CATEGORY
-                                    else:
-                                        category = EC_CATEGORY
-                                    nodes_file_writer.writerow(
-                                        [object_info[0], category, object_info[1]] + [None] * 11
+                    with open(RHEA_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
+                        all_terms_writer = csv.writer(tsvfile, delimiter="\t")
+                        # Write headers
+                        all_terms_writer.writerow(
+                            [
+                                RHEA_SUBJECT_ID_COLUMN,
+                                SUBJECT_LABEL_COLUMN,
+                                PREDICATE_ID_COLUMN,
+                                PREDICATE_LABEL_COLUMN,
+                                OBJECT_ID_COLUMN,
+                                OBJECT_LABEL_COLUMN,
+                            ]
+                        )
+                        # Create an instance of RheaGetter outside the loop to avoid repeated instantiation
+                        rhea_getter = RheaGetter()
+                        # Iterate over all terms
+                        for term in rhea_getter.iter_terms():
+                            # Extract subject information
+                            subject_info = self._reference_to_tuple(term.reference)
+                            # Iterate over relationships
+                            for predicate, objects in term.relationships.items():
+                                predicate_info = self._reference_to_tuple(predicate)
+                                for obj in objects:
+                                    object_info = self._reference_to_tuple(obj)
+                                    # Write the row in the specified format
+                                    all_terms_writer.writerow(
+                                        [*subject_info, *predicate_info, *object_info]
                                     )
-                                    edges_file_writer.writerow(
-                                        [
-                                            subject_info[0],
-                                            RHEA_PREDICATE_MAPPER.get(
-                                                predicate_info[1], predicate_info[1]
-                                            ),
-                                            object_info[0],
-                                            predicate_info[0],
-                                            "RheaViaPyObo",
-                                        ]
-                                    )
+                                    if any(
+                                        object_info[0].startswith(prefix)
+                                        for prefix in [CHEBI_PREFIX, EC_PREFIX, GO_PREFIX]
+                                    ):
+                                        if object_info[0].startswith(CHEBI_PREFIX):
+                                            category = SUBSTRATE_CATEGORY
+                                        elif object_info[0].startswith(GO_PREFIX):
+                                            category = GO_CATEGORY
+                                        else:
+                                            category = EC_CATEGORY
+                                        nodes_file_writer.writerow(
+                                            [object_info[0], category, object_info[1]] + [None] * 11
+                                        )
+                                        edges_file_writer.writerow(
+                                            [
+                                                subject_info[0],
+                                                RHEA_PREDICATE_MAPPER.get(
+                                                    predicate_info[1], predicate_info[1]
+                                                ),
+                                                object_info[0],
+                                                predicate_info[0],
+                                                "RheaViaPyObo",
+                                            ]
+                                        )
+                progress.set_description(f"Processing {file} ...")
+                # After each iteration, call the update method to advance the progress bar.
+                progress.update()
         # Add labels for the nodes
         nodes_df = pd.read_csv(
             self.output_dir / "nodes.tsv", sep="\t", low_memory=False
@@ -328,4 +338,3 @@ class RheaMappingsTransform(Transform):
         )
         nodes_df.update(no_name_df)
         nodes_df.to_csv(self.output_dir / "nodes.tsv", sep="\t", index=False)
-

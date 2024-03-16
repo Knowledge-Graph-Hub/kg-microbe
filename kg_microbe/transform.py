@@ -24,8 +24,8 @@ DATA_SOURCES = {
     "BacDiveTransform": BacDiveTransform,
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
-    "UniprotTransform": UniprotTransform,
     "RheaMappingsTransform": RheaMappingsTransform,
+    "UniprotTransform": UniprotTransform,
 }
 
 

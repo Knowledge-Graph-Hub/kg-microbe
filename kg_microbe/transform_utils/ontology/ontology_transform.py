@@ -1,6 +1,7 @@
 """Ontology transform module."""
 
 import gzip
+import re
 import shutil
 from pathlib import Path
 from typing import Optional, Union
@@ -12,6 +13,7 @@ from kg_microbe.transform_utils.constants import (
     EXCLUSION_TERMS_FILE,
     NCBITAXON_PREFIX,
     ROBOT_REMOVED_SUFFIX,
+    SPECIAL_PREFIXES,
 )
 from kg_microbe.utils.robot_utils import (
     convert_to_json,
@@ -27,6 +29,8 @@ ONTOLOGIES = {
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
     "go": "go.json",
+    "rhea": "rhea.json",
+    "ec": "ec.json",
 }
 
 
@@ -104,6 +108,8 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
+        if name in ["ec", "rhea"]:
+            self.post_process(name)
 
     def decompress(self, data_file):
         """Unzip file."""
@@ -111,3 +117,33 @@ class OntologyTransform(Transform):
         with gzip.open(data_file, "rb") as f_in:
             with open(data_file.parent / data_file.stem, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
+
+    import re
+    
+    def post_process(self, name: str):
+        nodes_file = self.output_dir / f"{name}_nodes.tsv"
+        edges_file = self.output_dir / f"{name}_edges.tsv"
+    
+        # Compile a regex pattern that matches any key in SPECIAL_PREFIXES
+        pattern = re.compile('|'.join(re.escape(key) for key in SPECIAL_PREFIXES.keys()))
+    
+        def replace_special_prefixes(line):
+            # Use the pattern to replace all occurrences of the keys with their values
+            return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
+    
+        # Process and write the nodes file
+        with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
+            for line in nf:
+                new_nf.write(replace_special_prefixes(line))
+    
+        # Replace the original file with the modified one
+        nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
+    
+        # Process and write the edges file
+        with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
+            for line in ef:
+                new_ef.write(replace_special_prefixes(line))
+    
+        # Replace the original file with the modified one
+        edges_file.with_suffix(".temp.tsv").replace(edges_file)
+    

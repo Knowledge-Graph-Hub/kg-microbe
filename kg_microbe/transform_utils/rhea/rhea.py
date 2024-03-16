@@ -11,6 +11,7 @@ from curies import load_extended_prefix_map
 from oaklib import get_adapter
 from pyobo import get_id_name_mapping, get_relations_df, get_sssom_df
 from pyobo.sources.rhea import RheaGetter
+import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
@@ -59,6 +60,7 @@ from kg_microbe.transform_utils.constants import (
     SUPERCLASS_PREDICATE,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 
 
@@ -78,6 +80,7 @@ class RheaMappingsTransform(Transform):
         self.reference_cache = defaultdict(lambda: None)
         self.chebi_oi = get_adapter("sqlite:obo:chebi")
         self.go_oi = get_adapter("sqlite:obo:go")
+        self.ec_oi = get_adapter("sqlite:obo:eccode")
 
     def _reference_to_tuple(self, ref):
         """Convert a reference to a tuple."""
@@ -99,6 +102,8 @@ class RheaMappingsTransform(Transform):
             return get_label(self.chebi_oi, id)
         elif id.startswith(GO_PREFIX.rstrip(":")):
             return get_label(self.go_oi, id)
+        elif id.startswith(EC_PREFIX.rstrip(":")):
+            return get_label(self.ec_oi, id)
         # Add more conditions as needed
         else:
             return None
@@ -106,7 +111,7 @@ class RheaMappingsTransform(Transform):
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
-        fn2 = "sssom.tsv"
+        # fn2 = "sssom.tsv"
 
         rhea_relation = get_relations_df("rhea")
         rhea_relation[RELATION_COLUMN] = (
@@ -138,13 +143,13 @@ class RheaMappingsTransform(Transform):
         rhea_relation = rhea_relation[self.edge_header]
 
         rhea_nodes = get_id_name_mapping("rhea")
-        # todo: check for other prefiexs
-        if not (RHEA_TMP_DIR / fn2).is_file():
-            rhea_sssom = get_sssom_df("rhea")
-            rhea_sssom[RHEA_SUBJECT_ID_COLUMN] = rhea_sssom[RHEA_SUBJECT_ID_COLUMN].str.replace(
-                r"(rhea)(:\d+)", lambda m: m.group(1).upper() + m.group(2), regex=True
-            )
-            rhea_sssom.to_csv(RHEA_TMP_DIR / fn2, sep="\t", index=False)
+        # # TODO: Add the sssom.tsv file to the edges.tsv file
+        # if not (RHEA_TMP_DIR / fn2).is_file():
+        #     rhea_sssom = get_sssom_df("rhea")
+        #     rhea_sssom[RHEA_SUBJECT_ID_COLUMN] = rhea_sssom[RHEA_SUBJECT_ID_COLUMN].str.replace(
+        #         r"(rhea)(:\d+)", lambda m: m.group(1).upper() + m.group(2), regex=True
+        #     )
+        #     rhea_sssom.to_csv(RHEA_TMP_DIR / fn2, sep="\t", index=False)
 
         with open(RHEA_TMP_DIR / f"rhea_{fn1}", "w") as tmp_file, open(
             self.output_dir / "nodes.tsv", "w"
@@ -177,7 +182,11 @@ class RheaMappingsTransform(Transform):
                 ]
                 + [None] * 11
             )
-
+            
+            # progress_class = tqdm if show_status else DummyTqdm
+            # with progress_class(
+            #     total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings..."
+            # ) as progress:
             for k, v in rhea_nodes.items():
                 tmp_file_writer.writerow(
                     [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, RHEA_UNDEFINED_DIRECTION]
@@ -219,13 +228,16 @@ class RheaMappingsTransform(Transform):
                 nodes_file_writer.writerow(
                     [RHEA_NEW_PREFIX + str(int(k) + 3), RHEA_CATEGORY, v] + [None] * 11
                 )
+                    # progress.set_description(f"Processing node: {RHEA_NEW_PREFIX + k} ...")
+                    # # After each iteration, call the update method to advance the progress bar.
+                    # progress.update()
 
             # Get files that begin with "rhea2" and end with ".tsv" in self.input_base_dir
             pattern = f"{self.input_base_dir}/rhea2*.tsv"
             matching_files = glob(pattern)
 
             relation = CLOSE_MATCH
-            ks = "Rhea"
+            ks = "RheaViaPyObo"
             for file in matching_files:
                 if "rhea2ec" in file:
                     xref_prefix = EC_PREFIX
@@ -245,8 +257,7 @@ class RheaMappingsTransform(Transform):
                         for index, column_name in enumerate(header)
                         if column_name in {RHEA_MAPPING_ID_COLUMN, RHEA_MAPPING_OBJECT_COLUMN}
                     )
-                    # edges = "subject	predicate	object	relation	primary_knowledge_source"
-                    # nodes = "id	category	name"
+
                     for row in mapping_tsv_reader:
                         subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                         object = xref_prefix + str(row[xref_idx])
@@ -318,10 +329,3 @@ class RheaMappingsTransform(Transform):
         nodes_df.update(no_name_df)
         nodes_df.to_csv(self.output_dir / "nodes.tsv", sep="\t", index=False)
 
-        # TODO: Add the sssom.tsv file to the edges.tsv file
-        # with open(RHEA_TMP_DIR / fn2) as sssom_file:
-        #     rhea_sssom_reader = csv.reader(sssom_file, delimiter="\t")
-        #     header = next(rhea_sssom_reader)
-
-        #     for row in rhea_sssom_reader:
-        #         pass

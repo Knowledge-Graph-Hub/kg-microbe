@@ -110,10 +110,10 @@ ISOLATION_SOURCE_PREFIX = "isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
 RHEA_URI = "http://purl.obolibrary.org/obo/rhea_"
-DEBIO_OLD_PREFIX = "OBO:debio_"
+DEBIO_OBO_PREFIX = "OBO:debio_"
 DEBIO_NEW_PREFIX = "debio:"
 DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
-
+RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
 
@@ -223,6 +223,8 @@ PRODUCTION_KEY = "production"
 EC_PREFIX = "EC:"
 EC_KEY = "ec"
 EC_PYOBO_PREFIX = "eccode"
+EC_OBO_PREFIX = "OBO:eccode_"
+UNIPROT_OBO_PREFIX = "OBO:uniprot_"
 ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
@@ -347,17 +349,21 @@ DO_NOT_CHANGE_PREFIXES = [
 # Create a mapping for special cases
 SPECIAL_PREFIXES = {
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
+    EC_OBO_PREFIX: EC_PREFIX,
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
+    RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
+    UNIPROT_OBO_PREFIX: UNIPROT_PREFIX+":",
+    DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
 }
 HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
 ENABLED_BY_PREDICATE = "biolink:enabled_by"
 HAS_INPUT_PREDICATE = "biolink:has_input"
 HAS_OUTPUT_PREDICATE = "biolink:has_output"
-
+CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by"
 RHEA_PREDICATE_MAPPER = {
     "has participant": HAS_PARTICIPANT_PREDICATE,
     "enabled by": ENABLED_BY_PREDICATE,
-    "reaction enabled by molecular function": ENABLED_BY_PREDICATE,
+    "reaction enabled by molecular function": CAN_BE_CARRIED_OUT_BY_PREDICATE,
     "has input": HAS_INPUT_PREDICATE,
     "has output": HAS_OUTPUT_PREDICATE,
 }

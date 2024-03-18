@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
+import requests_ftp
 from curies import load_extended_prefix_map
 from oaklib import get_adapter
 from pyobo import get_id_name_mapping, get_relations_df
@@ -112,8 +113,8 @@ class RheaMappingsTransform(Transform):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
         # fn2 = "sssom.tsv"
-
-        rhea_relation = get_relations_df("rhea")
+        requests_ftp.monkeypatch_session()
+        rhea_relation = get_relations_df("rhea", use_tqdm=show_status)
         rhea_relation[RELATION_COLUMN] = (
             rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]
         )

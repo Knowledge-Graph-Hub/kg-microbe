@@ -9,7 +9,6 @@ from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, OntologyTransform
 from kg_microbe.transform_utils.rhea.rhea import RheaMappingsTransform
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
-from kg_microbe.transform_utils.uniprot.uniprot import UniprotTransform
 
 DATA_SOURCES = {
     # "DrugCentralTransform": DrugCentralTransform,
@@ -25,7 +24,7 @@ DATA_SOURCES = {
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
     "RheaMappingsTransform": RheaMappingsTransform,
-    "UniprotTransform": UniprotTransform,
+    # "UniprotTransform": UniprotTransform,
 }
 
 

@@ -124,9 +124,24 @@
   url: https://rest.kegg.jp/link/pathway/rn
   local_name: kegg-rxn-pathway.tsv
 
+# 
+# EPM JSON for curies package
+#
+-
+  url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
+  local_name: epm.json
+
 #
 # Uniprot
 #
+-
+  url: https://w3id.org/biopragmatics/resources/uniprot/uniprot.json.gz
+  local_name: uniprot.json.gz
+
+-
+  url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
+  local_name: reference_proteomes.tar.gz
+
 # -
 #   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
 #   local_name: ec2ec.zip
@@ -135,5 +150,29 @@
 # RHEA
 # 
 -
-  url: https://raw.githubusercontent.com/biopragmatics/obo-db-ingest/main/export/rhea/rhea.json
+  url: https://w3id.org/biopragmatics/resources/rhea/rhea.json
   local_name: rhea.json
+
+# RHEA mappings
+- 
+  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
+  local_name: rhea2go.tsv
+
+-
+  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
+  local_name: rhea2ec.tsv
+
+# -
+#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot.tsv
+#   local_name: rhea2uniprot.tsv
+
+# -
+#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2xrefs.tsv
+#   local_name: rhea2xrefs.tsv
+
+# 
+# EC
+# 
+- 
+  url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
+  local_name: ec.json

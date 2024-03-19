@@ -150,3 +150,4 @@ kg_microbe/transform_utils/bacdive/tmp/bacdive_physiology_metabolism.tsv
 data/raw/uniprot/s3/*.tsv
 uniprot_cache.sqlite
 .vscode/*
+kg_microbe/transform_utils/rhea/tmp/all_terms.tsv

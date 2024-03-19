@@ -1,6 +1,7 @@
 """Ontology transform module."""
 
 import gzip
+import re
 import shutil
 from pathlib import Path
 from typing import Optional, Union
@@ -12,6 +13,7 @@ from kg_microbe.transform_utils.constants import (
     EXCLUSION_TERMS_FILE,
     NCBITAXON_PREFIX,
     ROBOT_REMOVED_SUFFIX,
+    SPECIAL_PREFIXES,
 )
 from kg_microbe.utils.robot_utils import (
     convert_to_json,
@@ -23,11 +25,13 @@ from ..transform import Transform
 ONTOLOGIES = {
     # "HpTransform": "hp.json",
     # 'GoTransform': 'go-plus.json',
-    "ncbitaxon": "ncbitaxon.owl.gz",
-    "chebi": "chebi.owl.gz",
-    "envo": "envo.json",
-    "go": "go.json",
-    "rhea": "rhea.json",
+    # "ncbitaxon": "ncbitaxon.owl.gz",
+    # "chebi": "chebi.owl.gz",
+    # "envo": "envo.json",
+    # "go": "go.json",
+    # "rhea": "rhea.json",
+    # "ec": "ec.json",
+    "uniprot": "uniprot.json.gz",
 }
 
 
@@ -99,12 +103,20 @@ class OntologyTransform(Transform):
 
             data_file = json_path
 
+        elif data_file.suffixes == [".json", ".gz"]:
+            json_path = str(data_file).replace(".json.gz", ".json")
+            if not Path(json_path).is_file():
+                self.decompress(data_file)
+            data_file = json_path
+
         transform(
             inputs=[data_file],
             input_format="obojson",
             output=self.output_dir / name,
             output_format="tsv",
         )
+        if name in ["ec", "rhea", "uniprot"]:
+            self.post_process(name)
 
     def decompress(self, data_file):
         """Unzip file."""
@@ -112,3 +124,33 @@ class OntologyTransform(Transform):
         with gzip.open(data_file, "rb") as f_in:
             with open(data_file.parent / data_file.stem, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
+
+    import re
+
+    def post_process(self, name: str):
+        """Post process specific nodes and edges files."""
+        nodes_file = self.output_dir / f"{name}_nodes.tsv"
+        edges_file = self.output_dir / f"{name}_edges.tsv"
+
+        # Compile a regex pattern that matches any key in SPECIAL_PREFIXES
+        pattern = re.compile("|".join(re.escape(key) for key in SPECIAL_PREFIXES.keys()))
+
+        def _replace_special_prefixes(line):
+            """Use the pattern to replace all occurrences of the keys with their values."""
+            return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
+
+        # Process and write the nodes file
+        with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
+            for line in nf:
+                new_nf.write(_replace_special_prefixes(line))
+
+        # Replace the original file with the modified one
+        nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
+
+        # Process and write the edges file
+        with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
+            for line in ef:
+                new_ef.write(_replace_special_prefixes(line))
+
+        # Replace the original file with the modified one
+        edges_file.with_suffix(".temp.tsv").replace(edges_file)

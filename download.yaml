@@ -137,6 +137,11 @@
 -
   url: https://w3id.org/biopragmatics/resources/uniprot/uniprot.json.gz
   local_name: uniprot.json.gz
+
+-
+  url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
+  local_name: reference_proteomes.tar.gz
+
 # -
 #   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
 #   local_name: ec2ec.zip

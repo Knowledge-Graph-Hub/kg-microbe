@@ -1,27 +1,27 @@
-- ID: ECOCORE:00000172
+- ID: oxygen:anaerobe
   ActualTerm: anaerobic
   PreferredTerm: anaerobe
 
-- ID: ECOCORE:00000172
+- ID: oxygen:anaerobe
   ActualTerm: strictly anaerobic
   PreferredTerm: anaerobe
 
-- ID: ECOCORE:00000178
+- ID: oxygen:obligate_anaerobe
   ActualTerm: obligate anaerobic
   PreferredTerm: obligate anaerobe
 
-- ID: ECOCORE:00000177
+- ID: oxygen:facultative_anaerobe
   ActualTerm: facultative
   PreferredTerm: facultative anaerobe
 
-- ID: ECOCORE:00000179
+- ID: oxygen:obligate_aerobe
   ActualTerm: obligate aerobic
   PreferredTerm: obligate aerobe
 
-- ID: ECOCORE:00000173
+- ID: oxygen:aerobe
   ActualTerm: aerobic
   PreferredTerm: aerobe
 
-- ID: ECOCORE:00000180
+- ID: oxygen:microaerophile
   ActualTerm: microaerophilic
   PreferredTerm: microaerophilic

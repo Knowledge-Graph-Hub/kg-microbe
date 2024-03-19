@@ -326,7 +326,7 @@ ORGANISM_ID_MIXED_CASE = "Organism_ID"
 UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
-UNIPROT_PREFIX = "Uniprot"
+UNIPROT_PREFIX = "uniprot"
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
 

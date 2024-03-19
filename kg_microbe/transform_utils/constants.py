@@ -11,6 +11,8 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 TRAITS_DIR = Path(__file__).parent / "traits"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
+RHEA_DIR: Path = Path(__file__).parent / "rhea"
+RHEA_TMP_DIR = RHEA_DIR / "tmp"
 
 
 # KEYS FOR JSON FILE
@@ -93,8 +95,8 @@ BACDIVE_PREFIX = "bacdive:"
 CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
-ECOCORE_PREFIX = "ECOCORE:"
 UBERON_PREFIX = "UBERON:"
+RO_PREFIX = "RO:"
 MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
 MEDIADIVE_SOLUTION_PREFIX = "solution:"
 MEDIADIVE_MEDIUM_PREFIX = "medium:"
@@ -104,7 +106,13 @@ SHAPE_PREFIX = "cell_shape:"
 PATHWAY_PREFIX = "pathways:"
 CARBON_SUBSTRATE_PREFIX = "carbon_substrates:"
 ISOLATION_SOURCE_PREFIX = "isolation_source:"
-
+RHEA_OLD_PREFIX = "OBO:rhea_"
+RHEA_NEW_PREFIX = "RHEA:"
+RHEA_URI = "http://purl.obolibrary.org/obo/rhea_"
+DEBIO_OBO_PREFIX = "OBO:debio_"
+DEBIO_NEW_PREFIX = "debio:"
+DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
+RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
 
@@ -133,6 +141,8 @@ ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
+RHEA_TO_EC_EDGE = "biolink:close_match"
+RHEA_TO_GO_EDGE = "biolink:close_match"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -161,6 +171,7 @@ HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
+CLOSE_MATCH = "skos:closeMatch"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -210,6 +221,9 @@ METABOLITE_KEY = "metabolite"
 PRODUCTION_KEY = "production"
 EC_PREFIX = "EC:"
 EC_KEY = "ec"
+EC_PYOBO_PREFIX = "eccode"
+EC_OBO_PREFIX = "OBO:eccode_"
+UNIPROT_OBO_PREFIX = "OBO:uniprot_"
 ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
@@ -230,6 +244,39 @@ MEDIADIVE_MIN_PH_COLUMN = "min_pH"
 MEDIADIVE_MAX_PH_COLUMN = "max_pH"
 MEDIADIVE_REF_COLUMN = "reference"
 MEDIADIVE_DESC_COLUMN = "description"
+
+RHEA_ID_COLUMN = "id"
+RHEA_NAME_COLUMN = "name"
+RHEA_DIRECTION_COLUMN = "direction"
+RHEA_MAPPING_ID_COLUMN = "RHEA_ID"
+RHEA_MASTER_ID_COLUMN = "MASTER_ID"
+RHEA_MAPPING_OBJECT_COLUMN = "ID"
+RHEA_TARGET_ID_COLUMN = "target_id"
+RHEA_SUBJECT_ID_COLUMN = "subject_id"
+RHEA_UNDEFINED_DIRECTION = "undefined"
+RHEA_BIDIRECTIONAL_DIRECTION = "bidirectional"
+RHEA_LEFT_TO_RIGHT_DIRECTION = "left-to-right"
+RHEA_RIGHT_TO_LEFT_DIRECTION = "right-to-left"
+RHEA_CATEGORY_COLUMN = "category"
+RHEA_CATEGORY = "biolink:MolecularActivity"
+EC_CATEGORY = "biolink:MolecularActivity"
+GO_CATEGORY = "biolink:BiologicalProcess"
+RDFS_SUBCLASS_OF = "rdfs:subClassOf"
+SUBCLASS_PREDICATE = "biolink:subclass_of"
+SUPERCLASS_PREDICATE = "biolink:superclass_of"
+PREDICATE_ID_COLUMN = "predicate_id"
+PREDICATE_LABEL_COLUMN = "predicate_label"
+DEBIO_MAPPER = {
+    RHEA_LEFT_TO_RIGHT_DIRECTION: "debio:0000007",
+    RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",
+    RHEA_BIDIRECTIONAL_DIRECTION: "debio:0000009",
+}
+DEBIO_PREDICATE_MAPPER = {
+    RHEA_LEFT_TO_RIGHT_DIRECTION: "biolink:is_input_of",
+    RHEA_RIGHT_TO_LEFT_DIRECTION: "biolink:is_output_of",
+    RHEA_BIDIRECTIONAL_DIRECTION: "biolink:participates_in",
+}
+RHEA_DIRECTION_CATEGORY = "biolink:Activity"
 
 # Traits
 TAX_ID_COLUMN = "tax_id"
@@ -278,7 +325,7 @@ ORGANISM_ID_MIXED_CASE = "Organism_ID"
 UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
-UNIPROT_PREFIX = "Uniprot"
+UNIPROT_PREFIX = "uniprot"
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
 
@@ -290,8 +337,31 @@ DO_NOT_CHANGE_PREFIXES = [
     PUBCHEM_PREFIX,
     GO_PREFIX,
     KEGG_PREFIX,
-    ECOCORE_PREFIX,
     EC_PREFIX,
     UBERON_PREFIX,
     "API_",
+    RHEA_NEW_PREFIX,
+    GO_PREFIX,
 ]
+
+# Create a mapping for special cases
+SPECIAL_PREFIXES = {
+    EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
+    EC_OBO_PREFIX: EC_PREFIX,
+    RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
+    RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
+    UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",
+    DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
+}
+HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
+ENABLED_BY_PREDICATE = "biolink:enabled_by"
+HAS_INPUT_PREDICATE = "biolink:has_input"
+HAS_OUTPUT_PREDICATE = "biolink:has_output"
+CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by"
+RHEA_PREDICATE_MAPPER = {
+    "has participant": HAS_PARTICIPANT_PREDICATE,
+    "enabled by": ENABLED_BY_PREDICATE,
+    "reaction enabled by molecular function": CAN_BE_CARRIED_OUT_BY_PREDICATE,
+    "has input": HAS_INPUT_PREDICATE,
+    "has output": HAS_OUTPUT_PREDICATE,
+}

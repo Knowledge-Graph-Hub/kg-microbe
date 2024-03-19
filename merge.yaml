@@ -42,6 +42,27 @@ merged_graph:
         filename:
           - data/transformed/ontologies/go_nodes.tsv
           - data/transformed/ontologies/go_edges.tsv
+    rhea:
+      name: "Rhea"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/rhea_nodes.tsv
+          - data/transformed/ontologies/rhea_edges.tsv
+    ec:
+      name: "EC"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/ec_nodes.tsv
+          - data/transformed/ontologies/ec_edges.tsv
+    uniprot:
+      name: "UniProt"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/uniprot_nodes.tsv
+          - data/transformed/ontologies/uniprot_edges.tsv
     bacdive:
       name: "BacDive"
       input:
@@ -56,6 +77,13 @@ merged_graph:
         filename:
           - data/transformed/MediaDive/nodes.tsv
           - data/transformed/MediaDive/edges.tsv
+    rhea_mappings:
+      name: "RheaMappings"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/RheaMappings/nodes.tsv
+          - data/transformed/RheaMappings/edges.tsv
     traits:
       input:
         name: "traits"

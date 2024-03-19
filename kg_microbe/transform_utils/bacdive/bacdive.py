@@ -139,6 +139,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
@@ -155,12 +156,6 @@ class BacDiveTransform(Transform):
         source_name = "BacDive"
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
-
-    def _get_label_via_oak(self, curie: str):
-        prefix = curie.split(":")[0]
-        if prefix.startswith("NCBI"):
-            (_, label) = list(self.ncbi_impl.labels([curie]))[0]
-        return label
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -502,7 +497,7 @@ class BacDiveTransform(Transform):
                             )
 
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
-                        ncbi_label = self._get_label_via_oak(ncbitaxon_id)
+                        ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                         if ncbi_label is None:
                             ncbi_label = ncbi_description
 

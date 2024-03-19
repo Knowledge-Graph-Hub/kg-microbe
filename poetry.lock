@@ -457,6 +457,102 @@ linkml = "*"
 prefixmaps = "*"
 
 [[package]]
+name = "bioontologies"
+version = "0.4.1"
+description = "Tools for biomedical ontologies."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "bioontologies-0.4.1-py3-none-any.whl", hash = "sha256:534c906481b09e4db070d81a6fa5927ff655a6019472c0cbc65319dbd3c7b661"},
+    {file = "bioontologies-0.4.1.tar.gz", hash = "sha256:f7eb654e3f96f5553f742d576e8bd8d866a0fbae553009ec034418743ecfeb86"},
+]
+
+[package.dependencies]
+bioregistry = ">=0.10.0"
+curies = ">=0.6.0"
+pandas = "*"
+pydantic = "*"
+pystow = "*"
+requests = "*"
+typing-extensions = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-automodapi", "sphinx-click", "sphinx-rtd-theme"]
+tests = ["coverage", "pytest"]
+
+[[package]]
+name = "bioregistry"
+version = "0.10.171"
+description = "Integrated registry of biological databases and nomenclatures"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "bioregistry-0.10.171-py3-none-any.whl", hash = "sha256:243376a3f25634ec109431a4a08317d8fe920c408819779e1df9380684798f4d"},
+    {file = "bioregistry-0.10.171.tar.gz", hash = "sha256:e9a6e79d7fbf808da68540a22f85619f2ebb06abe8ec5164f84a7e4c0bc184c4"},
+]
+
+[package.dependencies]
+beautifulsoup4 = {version = "*", optional = true, markers = "extra == \"align\""}
+class-resolver = {version = "*", optional = true, markers = "extra == \"align\""}
+click = "*"
+curies = ">=0.7.0"
+defusedxml = {version = "*", optional = true, markers = "extra == \"align\""}
+fairsharing-client = {version = ">=0.1.0", optional = true, markers = "extra == \"align\""}
+more-click = ">=0.1.2"
+pandas = {version = "*", optional = true, markers = "extra == \"align\""}
+pydantic = "*"
+pystow = ">=0.1.13"
+pyyaml = {version = "*", optional = true, markers = "extra == \"align\""}
+requests = "*"
+tabulate = {version = "*", optional = true, markers = "extra == \"align\""}
+tqdm = "*"
+
+[package.extras]
+align = ["beautifulsoup4", "class-resolver", "defusedxml", "fairsharing-client (>=0.1.0)", "pandas", "pyyaml", "tabulate"]
+charts = ["jinja2", "matplotlib", "matplotlib-venn", "pandas", "seaborn"]
+docs = ["autodoc-pydantic", "sphinx", "sphinx-automodapi", "sphinx-click", "sphinx-rtd-theme"]
+export = ["ndex2", "pyyaml", "rdflib", "rdflib-jsonld"]
+gha = ["more-itertools"]
+health = ["click-default-group", "jinja2", "pandas", "pyyaml", "tabulate"]
+tests = ["coverage", "httpx", "more-itertools", "pytest"]
+web = ["bootstrap-flask (<=2.0.0)", "curies[fastapi]", "fastapi", "flask (<2.2.4)", "markdown", "pyyaml", "rdflib", "rdflib-endpoint", "rdflib-jsonld", "uvicorn", "werkzeug (<2.3.0)"]
+
+[[package]]
+name = "bioversions"
+version = "0.5.320"
+description = "What's the current version for each biological database?"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "bioversions-0.5.320-py3-none-any.whl", hash = "sha256:4d03a4b63e70bddea8cfc6183379b53d5207db53049d66fd01c7959872d557e2"},
+    {file = "bioversions-0.5.320.tar.gz", hash = "sha256:940b4d21b12d03155b9bbc4c768c80fad57eae50fd6e03cc21e976183b93cdca"},
+]
+
+[package.dependencies]
+beautifulsoup4 = "*"
+bioregistry = {version = ">=0.10.0", extras = ["align"]}
+cachier = ">=2.2.1"
+click = "*"
+click-default-group = "*"
+dataclasses-json = "*"
+lxml = "*"
+more-click = "*"
+pandas = "*"
+psycopg2-binary = "*"
+pystow = ">=0.1.0"
+pyyaml = "*"
+requests = "*"
+requests-ftp = "*"
+tabulate = "*"
+tqdm = "*"
+
+[package.extras]
+charts = ["matplotlib", "seaborn"]
+slack = ["slack-sdk"]
+twitter = ["tweepy"]
+web = ["bootstrap-flask", "flask"]
+
+[[package]]
 name = "bleach"
 version = "6.1.0"
 description = "An easy safelist-based HTML-sanitizing tool."
@@ -552,6 +648,22 @@ files = [
     {file = "cachetools-5.3.2-py3-none-any.whl", hash = "sha256:861f35a13a451f94e301ce2bec7cac63e881232ccce7ed67fab9b5df4d3beaa1"},
     {file = "cachetools-5.3.2.tar.gz", hash = "sha256:086ee420196f7b2ab9ca2db2520aca326318b68fe5ba8bc4d49cca91add450f2"},
 ]
+
+[[package]]
+name = "cachier"
+version = "3.0.0"
+description = "Persistent, stale-free, local and cross-machine caching for Python functions."
+optional = false
+python-versions = "*"
+files = [
+    {file = "cachier-3.0.0-py3-none-any.whl", hash = "sha256:627455077d3619a27b1c63368d49533ffe6807a1b19fe6944e4c8f3ac895d1bc"},
+    {file = "cachier-3.0.0.tar.gz", hash = "sha256:f756ebeabf8b397f75fbbb9a5841972d4c85a81b7313e2812b3448e80d74c66d"},
+]
+
+[package.dependencies]
+portalocker = ">=2.3.2"
+setuptools = ">=67.6.0"
+watchdog = ">=2.3.1"
 
 [[package]]
 name = "cattrs"
@@ -788,6 +900,30 @@ files = [
 ]
 
 [[package]]
+name = "chembl-downloader"
+version = "0.4.5"
+description = "Reproducibly download, open, parse, and query ChEMBL"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "chembl_downloader-0.4.5-py3-none-any.whl", hash = "sha256:5ca7b4e60b10091dc974fdc3d10630a73fbd7f0555a9d31e7fd3aaf2c1e7d072"},
+    {file = "chembl_downloader-0.4.5.tar.gz", hash = "sha256:6f3fbfdd84594a9edfbd5bf6883b383159fcdb617066c3e2f3f93a350cf05e92"},
+]
+
+[package.dependencies]
+click = "*"
+more-click = "*"
+pystow = "*"
+tqdm = "*"
+typing-extensions = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-automodapi", "sphinx-click", "sphinx-rtd-theme"]
+pandas = ["pandas"]
+rdkit = ["rdkit-pypi"]
+tests = ["coverage", "pytest"]
+
+[[package]]
 name = "class-resolver"
 version = "0.4.2"
 description = "Lookup and instantiate classes with style."
@@ -955,13 +1091,13 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "curies"
-version = "0.7.7"
+version = "0.7.8"
 description = "Idiomatic conversion between URIs and compact URIs (CURIEs)."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "curies-0.7.7-py3-none-any.whl", hash = "sha256:609de3e8cdf39f410e8f4d9f06eb7df379465860f4fb441bf0e79672430f8e2a"},
-    {file = "curies-0.7.7.tar.gz", hash = "sha256:a8d674029f906fb9c3564eafa0862ce96725932bd801fa751e076265b111cb34"},
+    {file = "curies-0.7.8-py3-none-any.whl", hash = "sha256:a60b2559f08557176b0a3df1f7c47ec7cd8ae4e0695f23fc6574825d2ccd17eb"},
+    {file = "curies-0.7.8.tar.gz", hash = "sha256:d208ad40b5e40b532285c917f116001f9e887a48dda54e6eedd10e514ea6aa1a"},
 ]
 
 [package.dependencies]
@@ -976,6 +1112,21 @@ flask = ["defusedxml", "flask"]
 pandas = ["pandas"]
 rdflib = ["rdflib"]
 tests = ["coverage", "pytest"]
+
+[[package]]
+name = "dataclasses-json"
+version = "0.6.4"
+description = "Easily serialize dataclasses to and from JSON."
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "dataclasses_json-0.6.4-py3-none-any.whl", hash = "sha256:f90578b8a3177f7552f4e1a6e535e84293cd5da421fcce0642d49c0d7bdf8df2"},
+    {file = "dataclasses_json-0.6.4.tar.gz", hash = "sha256:73696ebf24936560cca79a2430cbc4f3dd23ac7bf46ed17f38e5e5e7657a6377"},
+]
+
+[package.dependencies]
+marshmallow = ">=3.18.0,<4.0.0"
+typing-inspect = ">=0.4.0,<1"
 
 [[package]]
 name = "debugpy"
@@ -1101,6 +1252,24 @@ files = [
 ]
 
 [[package]]
+name = "drugbank-downloader"
+version = "0.1.1"
+description = "Write scripts that can get drugbank data without redistributing it"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "drugbank_downloader-0.1.1-py3-none-any.whl", hash = "sha256:16e1e35484750da79d638c9c0318852283d4af15881d6712150542dcab4a7bf6"},
+    {file = "drugbank_downloader-0.1.1.tar.gz", hash = "sha256:3097760a454e9bf1db70cdb391ff4f28aa8763825e0b0499eaf87760b722c198"},
+]
+
+[package.dependencies]
+click = "*"
+pystow = ">=0.1.12"
+
+[package.extras]
+bioversions = ["bioversions"]
+
+[[package]]
 name = "editorconfig"
 version = "0.12.3"
 description = "EditorConfig File Locator and Interpreter for Python"
@@ -1224,6 +1393,28 @@ paramiko = ">=2.4"
 
 [package.extras]
 pytest = ["pytest (>=7)"]
+
+[[package]]
+name = "fairsharing-client"
+version = "0.1.0"
+description = "A client to the FAIRsharing API"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "fairsharing_client-0.1.0-py3-none-any.whl", hash = "sha256:3ca0ca70f6e1f6f81ebd4e68d1c59691ea272975f19d8929940e5402cfaa3644"},
+    {file = "fairsharing_client-0.1.0.tar.gz", hash = "sha256:8ee8d74d9677a489a9e757edde9447102839f2f60f6373ff3163029812b19b90"},
+]
+
+[package.dependencies]
+more-itertools = "*"
+pystow = "*"
+pyyaml = "*"
+requests = "*"
+tqdm = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-automodapi", "sphinx-rtd-theme"]
+tests = ["coverage", "pytest"]
 
 [[package]]
 name = "fastjsonschema"
@@ -1830,6 +2021,20 @@ brotli = ["brotli", "brotlicffi"]
 cli = ["click (==8.*)", "pygments (==2.*)", "rich (>=10,<14)"]
 http2 = ["h2 (>=3,<5)"]
 socks = ["socksio (==1.*)"]
+
+[[package]]
+name = "humanize"
+version = "4.9.0"
+description = "Python humanize utilities"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "humanize-4.9.0-py3-none-any.whl", hash = "sha256:ce284a76d5b1377fd8836733b983bfb0b76f1aa1c090de2566fcf008d7f6ab16"},
+    {file = "humanize-4.9.0.tar.gz", hash = "sha256:582a265c931c683a7e9b8ed9559089dea7edcf6cc95be39a3cbc2c5d5ac2bcfa"},
+]
+
+[package.extras]
+tests = ["freezegun", "pytest", "pytest-cov"]
 
 [[package]]
 name = "identify"
@@ -3147,6 +3352,25 @@ files = [
 ]
 
 [[package]]
+name = "marshmallow"
+version = "3.21.1"
+description = "A lightweight library for converting complex datatypes to and from native Python datatypes."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "marshmallow-3.21.1-py3-none-any.whl", hash = "sha256:f085493f79efb0644f270a9bf2892843142d80d7174bbbd2f3713f2a589dc633"},
+    {file = "marshmallow-3.21.1.tar.gz", hash = "sha256:4e65e9e0d80fc9e609574b9983cf32579f305c718afb30d7233ab818571768c3"},
+]
+
+[package.dependencies]
+packaging = ">=17.0"
+
+[package.extras]
+dev = ["marshmallow[tests]", "pre-commit (>=3.5,<4.0)", "tox"]
+docs = ["alabaster (==0.7.16)", "autodocsumm (==0.2.12)", "sphinx (==7.2.6)", "sphinx-issues (==4.0.0)", "sphinx-version-warning (==1.1.2)"]
+tests = ["pytest", "pytz", "simplejson"]
+
+[[package]]
 name = "matplotlib-inline"
 version = "0.1.6"
 description = "Inline Matplotlib backend for Jupyter"
@@ -3366,6 +3590,17 @@ click = "*"
 
 [package.extras]
 tests = ["coverage", "pytest"]
+
+[[package]]
+name = "more-itertools"
+version = "10.2.0"
+description = "More routines for operating on iterables, beyond itertools"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "more-itertools-10.2.0.tar.gz", hash = "sha256:8fccb480c43d3e99a00087634c06dd02b0d50fbf088b380de5a41a015ec239e1"},
+    {file = "more_itertools-10.2.0-py3-none-any.whl", hash = "sha256:686b06abe565edfab151cb8fd385a05651e1fdf8f0a14191e4439283421f8684"},
+]
 
 [[package]]
 name = "multidict"
@@ -3838,6 +4073,23 @@ gilda = ["gilda (>=1.0.0)", "urllib3 (<2)"]
 llm = ["llm"]
 
 [[package]]
+name = "obonet"
+version = "1.0.0"
+description = "Parse OBO formatted ontologies into networkx"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "obonet-1.0.0-py3-none-any.whl", hash = "sha256:8b1fe4d140953cee6ce9dc5de585cc29c76b955c7b5e9f0174961fcbaef16999"},
+    {file = "obonet-1.0.0.tar.gz", hash = "sha256:e96a69e41210b01bab2d9613b287899cd8aa61b6a32e5a2792041f76d4bf2a28"},
+]
+
+[package.dependencies]
+networkx = "*"
+
+[package.extras]
+dev = ["pre-commit", "pytest"]
+
+[[package]]
 name = "ols-client"
 version = "0.1.4"
 description = "A client to the EBI Ontology Lookup Service"
@@ -4188,6 +4440,25 @@ files = [
 ]
 
 [[package]]
+name = "portalocker"
+version = "2.8.2"
+description = "Wraps the portalocker recipe for easy usage"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "portalocker-2.8.2-py3-none-any.whl", hash = "sha256:cfb86acc09b9aa7c3b43594e19be1345b9d16af3feb08bf92f23d4dce513a28e"},
+    {file = "portalocker-2.8.2.tar.gz", hash = "sha256:2b035aa7828e46c58e9b31390ee1f169b98e1066ab10b9a6a861fe7e25ee4f33"},
+]
+
+[package.dependencies]
+pywin32 = {version = ">=226", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+docs = ["sphinx (>=1.7.1)"]
+redis = ["redis"]
+tests = ["pytest (>=5.4.1)", "pytest-cov (>=2.8.1)", "pytest-mypy (>=0.8.0)", "pytest-timeout (>=2.1.0)", "redis", "sphinx (>=6.0.0)", "types-redis"]
+
+[[package]]
 name = "pre-commit"
 version = "3.6.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
@@ -4318,6 +4589,25 @@ networkx = ">=2.3,<4.0"
 python-dateutil = ">=2.8,<3.0"
 
 [[package]]
+name = "protmapper"
+version = "0.0.29"
+description = "Map protein sites to human reference sequence."
+optional = false
+python-versions = "*"
+files = [
+    {file = "protmapper-0.0.29-py3-none-any.whl", hash = "sha256:411597039c0ea07e2c43973409ca4c5cb3da16f5eea48e1b9e6c54b0f00a9552"},
+    {file = "protmapper-0.0.29.tar.gz", hash = "sha256:d0d10198fb000401d03ba6c271869970caf8e1c8b46db686d2eed153fa8c2257"},
+]
+
+[package.dependencies]
+boto3 = "*"
+pystow = ">=0.1.0"
+requests = "*"
+
+[package.extras]
+rest-api = ["flask", "flask-cors"]
+
+[[package]]
 name = "protobuf"
 version = "4.25.2"
 description = ""
@@ -4364,6 +4654,87 @@ files = [
 
 [package.extras]
 test = ["enum34", "ipaddress", "mock", "pywin32", "wmi"]
+
+[[package]]
+name = "psycopg2-binary"
+version = "2.9.9"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "psycopg2-binary-2.9.9.tar.gz", hash = "sha256:7f01846810177d829c7692f1f5ada8096762d9172af1b1a28d4ab5b77c923c1c"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c2470da5418b76232f02a2fcd2229537bb2d5a7096674ce61859c3229f2eb202"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:c6af2a6d4b7ee9615cbb162b0738f6e1fd1f5c3eda7e5da17861eacf4c717ea7"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:75723c3c0fbbf34350b46a3199eb50638ab22a0228f93fb472ef4d9becc2382b"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:83791a65b51ad6ee6cf0845634859d69a038ea9b03d7b26e703f94c7e93dbcf9"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:0ef4854e82c09e84cc63084a9e4ccd6d9b154f1dbdd283efb92ecd0b5e2b8c84"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ed1184ab8f113e8d660ce49a56390ca181f2981066acc27cf637d5c1e10ce46e"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:d2997c458c690ec2bc6b0b7ecbafd02b029b7b4283078d3b32a852a7ce3ddd98"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:b58b4710c7f4161b5e9dcbe73bb7c62d65670a87df7bcce9e1faaad43e715245"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-musllinux_1_1_ppc64le.whl", hash = "sha256:0c009475ee389757e6e34611d75f6e4f05f0cf5ebb76c6037508318e1a1e0d7e"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:8dbf6d1bc73f1d04ec1734bae3b4fb0ee3cb2a493d35ede9badbeb901fb40f6f"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-win32.whl", hash = "sha256:3f78fd71c4f43a13d342be74ebbc0666fe1f555b8837eb113cb7416856c79682"},
+    {file = "psycopg2_binary-2.9.9-cp310-cp310-win_amd64.whl", hash = "sha256:876801744b0dee379e4e3c38b76fc89f88834bb15bf92ee07d94acd06ec890a0"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:ee825e70b1a209475622f7f7b776785bd68f34af6e7a46e2e42f27b659b5bc26"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:1ea665f8ce695bcc37a90ee52de7a7980be5161375d42a0b6c6abedbf0d81f0f"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:143072318f793f53819048fdfe30c321890af0c3ec7cb1dfc9cc87aa88241de2"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c332c8d69fb64979ebf76613c66b985414927a40f8defa16cf1bc028b7b0a7b0"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:f7fc5a5acafb7d6ccca13bfa8c90f8c51f13d8fb87d95656d3950f0158d3ce53"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:977646e05232579d2e7b9c59e21dbe5261f403a88417f6a6512e70d3f8a046be"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:b6356793b84728d9d50ead16ab43c187673831e9d4019013f1402c41b1db9b27"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:bc7bb56d04601d443f24094e9e31ae6deec9ccb23581f75343feebaf30423359"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-musllinux_1_1_ppc64le.whl", hash = "sha256:77853062a2c45be16fd6b8d6de2a99278ee1d985a7bd8b103e97e41c034006d2"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:78151aa3ec21dccd5cdef6c74c3e73386dcdfaf19bced944169697d7ac7482fc"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-win32.whl", hash = "sha256:dc4926288b2a3e9fd7b50dc6a1909a13bbdadfc67d93f3374d984e56f885579d"},
+    {file = "psycopg2_binary-2.9.9-cp311-cp311-win_amd64.whl", hash = "sha256:b76bedd166805480ab069612119ea636f5ab8f8771e640ae103e05a4aae3e417"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:8532fd6e6e2dc57bcb3bc90b079c60de896d2128c5d9d6f24a63875a95a088cf"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:b0605eaed3eb239e87df0d5e3c6489daae3f7388d455d0c0b4df899519c6a38d"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8f8544b092a29a6ddd72f3556a9fcf249ec412e10ad28be6a0c0d948924f2212"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:2d423c8d8a3c82d08fe8af900ad5b613ce3632a1249fd6a223941d0735fce493"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:2e5afae772c00980525f6d6ecf7cbca55676296b580c0e6abb407f15f3706996"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e6f98446430fdf41bd36d4faa6cb409f5140c1c2cf58ce0bbdaf16af7d3f119"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:c77e3d1862452565875eb31bdb45ac62502feabbd53429fdc39a1cc341d681ba"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:cb16c65dcb648d0a43a2521f2f0a2300f40639f6f8c1ecbc662141e4e3e1ee07"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_ppc64le.whl", hash = "sha256:911dda9c487075abd54e644ccdf5e5c16773470a6a5d3826fda76699410066fb"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:57fede879f08d23c85140a360c6a77709113efd1c993923c59fde17aa27599fe"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-win32.whl", hash = "sha256:64cf30263844fa208851ebb13b0732ce674d8ec6a0c86a4e160495d299ba3c93"},
+    {file = "psycopg2_binary-2.9.9-cp312-cp312-win_amd64.whl", hash = "sha256:81ff62668af011f9a48787564ab7eded4e9fb17a4a6a74af5ffa6a457400d2ab"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:2293b001e319ab0d869d660a704942c9e2cce19745262a8aba2115ef41a0a42a"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:03ef7df18daf2c4c07e2695e8cfd5ee7f748a1d54d802330985a78d2a5a6dca9"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:0a602ea5aff39bb9fac6308e9c9d82b9a35c2bf288e184a816002c9fae930b77"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:8359bf4791968c5a78c56103702000105501adb557f3cf772b2c207284273984"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:275ff571376626195ab95a746e6a04c7df8ea34638b99fc11160de91f2fef503"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-musllinux_1_1_aarch64.whl", hash = "sha256:f9b5571d33660d5009a8b3c25dc1db560206e2d2f89d3df1cb32d72c0d117d52"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-musllinux_1_1_i686.whl", hash = "sha256:420f9bbf47a02616e8554e825208cb947969451978dceb77f95ad09c37791dae"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-musllinux_1_1_ppc64le.whl", hash = "sha256:4154ad09dac630a0f13f37b583eae260c6aa885d67dfbccb5b02c33f31a6d420"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:a148c5d507bb9b4f2030a2025c545fccb0e1ef317393eaba42e7eabd28eb6041"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-win32.whl", hash = "sha256:68fc1f1ba168724771e38bee37d940d2865cb0f562380a1fb1ffb428b75cb692"},
+    {file = "psycopg2_binary-2.9.9-cp37-cp37m-win_amd64.whl", hash = "sha256:281309265596e388ef483250db3640e5f414168c5a67e9c665cafce9492eda2f"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:60989127da422b74a04345096c10d416c2b41bd7bf2a380eb541059e4e999980"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:246b123cc54bb5361588acc54218c8c9fb73068bf227a4a531d8ed56fa3ca7d6"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:34eccd14566f8fe14b2b95bb13b11572f7c7d5c36da61caf414d23b91fcc5d94"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:18d0ef97766055fec15b5de2c06dd8e7654705ce3e5e5eed3b6651a1d2a9a152"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d3f82c171b4ccd83bbaf35aa05e44e690113bd4f3b7b6cc54d2219b132f3ae55"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ead20f7913a9c1e894aebe47cccf9dc834e1618b7aa96155d2091a626e59c972"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-musllinux_1_1_aarch64.whl", hash = "sha256:ca49a8119c6cbd77375ae303b0cfd8c11f011abbbd64601167ecca18a87e7cdd"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-musllinux_1_1_i686.whl", hash = "sha256:323ba25b92454adb36fa425dc5cf6f8f19f78948cbad2e7bc6cdf7b0d7982e59"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-musllinux_1_1_ppc64le.whl", hash = "sha256:1236ed0952fbd919c100bc839eaa4a39ebc397ed1c08a97fc45fee2a595aa1b3"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:729177eaf0aefca0994ce4cffe96ad3c75e377c7b6f4efa59ebf003b6d398716"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-win32.whl", hash = "sha256:804d99b24ad523a1fe18cc707bf741670332f7c7412e9d49cb5eab67e886b9b5"},
+    {file = "psycopg2_binary-2.9.9-cp38-cp38-win_amd64.whl", hash = "sha256:a6cdcc3ede532f4a4b96000b6362099591ab4a3e913d70bcbac2b56c872446f7"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:72dffbd8b4194858d0941062a9766f8297e8868e1dd07a7b36212aaa90f49472"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:30dcc86377618a4c8f3b72418df92e77be4254d8f89f14b8e8f57d6d43603c0f"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:31a34c508c003a4347d389a9e6fcc2307cc2150eb516462a7a17512130de109e"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:15208be1c50b99203fe88d15695f22a5bed95ab3f84354c494bcb1d08557df67"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1873aade94b74715be2246321c8650cabf5a0d098a95bab81145ffffa4c13876"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3a58c98a7e9c021f357348867f537017057c2ed7f77337fd914d0bedb35dace7"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-musllinux_1_1_aarch64.whl", hash = "sha256:4686818798f9194d03c9129a4d9a702d9e113a89cb03bffe08c6cf799e053291"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:ebdc36bea43063116f0486869652cb2ed7032dbc59fbcb4445c4862b5c1ecf7f"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-musllinux_1_1_ppc64le.whl", hash = "sha256:ca08decd2697fdea0aea364b370b1249d47336aec935f87b8bbfd7da5b2ee9c1"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:ac05fb791acf5e1a3e39402641827780fe44d27e72567a000412c648a85ba860"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-win32.whl", hash = "sha256:9dba73be7305b399924709b91682299794887cbbd88e38226ed9f6712eabee90"},
+    {file = "psycopg2_binary-2.9.9-cp39-cp39-win_amd64.whl", hash = "sha256:f7ae5d65ccfbebdfa761585228eb4d0df3a8b15cfb53bd953e713e09fbb12957"},
+]
 
 [[package]]
 name = "ptyprocess"
@@ -4620,6 +4991,48 @@ cffi = ">=1.4.1"
 [package.extras]
 docs = ["sphinx (>=1.6.5)", "sphinx-rtd-theme"]
 tests = ["hypothesis (>=3.27.0)", "pytest (>=3.2.1,!=3.3.0)"]
+
+[[package]]
+name = "pyobo"
+version = "0.10.8"
+description = "Handling and writing OBO"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pyobo-0.10.8-py3-none-any.whl", hash = "sha256:71304a7da29d8c3c4070cb0f2e3b9d1d4577af3df932329446505c1209de4262"},
+    {file = "pyobo-0.10.8.tar.gz", hash = "sha256:baad2b016042edd5b6b33de745c084750901f36c76aedeea6d2f207a15a070e1"},
+]
+
+[package.dependencies]
+bioontologies = ">=0.4.0"
+bioregistry = ">=0.10.20"
+bioversions = ">=0.5.202"
+cachier = "*"
+chembl-downloader = "*"
+class-resolver = "*"
+click = "*"
+drugbank-downloader = "*"
+humanize = "*"
+more-click = ">=0.0.2"
+more-itertools = "*"
+obonet = ">=0.3.0"
+pandas = "*"
+protmapper = "*"
+psycopg2-binary = "*"
+pystow = ">=0.2.7"
+pyyaml = "*"
+requests = "*"
+tabulate = "*"
+tqdm = "*"
+typing-extensions = "*"
+umls-downloader = ">=0.1.2"
+zenodo-client = ">=0.0.5"
+
+[package.extras]
+agrovoc = ["rdflib"]
+docs = ["sphinx", "sphinx-automodapi", "sphinx-click", "sphinx-rtd-theme"]
+tests = ["coverage", "pytest"]
+web = ["bootstrap-flask", "flasgger", "flask", "flask-admin", "psutil"]
 
 [[package]]
 name = "pyparsing"
@@ -5193,6 +5606,19 @@ mongodb = ["pymongo (>=3)"]
 redis = ["redis (>=3)"]
 security = ["itsdangerous (>=2.0)"]
 yaml = ["pyyaml (>=5.4)"]
+
+[[package]]
+name = "requests-ftp"
+version = "0.3.1"
+description = "FTP Transport Adapter for Requests."
+optional = false
+python-versions = "*"
+files = [
+    {file = "requests-ftp-0.3.1.tar.gz", hash = "sha256:7504ceb5cba8a5c0135ed738596820a78c5f2be92d79b29f96ba99b183d8057a"},
+]
+
+[package.dependencies]
+requests = "*"
 
 [[package]]
 name = "requests-toolbelt"
@@ -6405,6 +6831,21 @@ files = [
 ]
 
 [[package]]
+name = "typing-inspect"
+version = "0.9.0"
+description = "Runtime inspection utilities for typing module."
+optional = false
+python-versions = "*"
+files = [
+    {file = "typing_inspect-0.9.0-py3-none-any.whl", hash = "sha256:9ee6fc59062311ef8547596ab6b955e1b8aa46242d854bfc78f4f6b0eff35f9f"},
+    {file = "typing_inspect-0.9.0.tar.gz", hash = "sha256:b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78"},
+]
+
+[package.dependencies]
+mypy-extensions = ">=0.3.0"
+typing-extensions = ">=3.7.4"
+
+[[package]]
 name = "tzdata"
 version = "2023.4"
 description = "Provider of IANA time zone data"
@@ -6414,6 +6855,29 @@ files = [
     {file = "tzdata-2023.4-py2.py3-none-any.whl", hash = "sha256:aa3ace4329eeacda5b7beb7ea08ece826c28d761cda36e747cfbf97996d39bf3"},
     {file = "tzdata-2023.4.tar.gz", hash = "sha256:dd54c94f294765522c77399649b4fefd95522479a664a0cec87f41bebc6148c9"},
 ]
+
+[[package]]
+name = "umls-downloader"
+version = "0.1.2"
+description = "Automate downloading UMLS data."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "umls_downloader-0.1.2-py3-none-any.whl", hash = "sha256:5a36d06562a6325e1c75fdda75b67d5a117ede88f20ecdabd6a0690b3d9e37bb"},
+    {file = "umls_downloader-0.1.2.tar.gz", hash = "sha256:0e79ef60f785c0ca51939820ffb1fb346c72fe8fccb2dcfe98133b80e09a7b12"},
+]
+
+[package.dependencies]
+beautifulsoup4 = "*"
+click = "*"
+more-click = "*"
+pystow = "*"
+requests = "*"
+
+[package.extras]
+bioversions = ["bioversions"]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-automodapi", "sphinx-click", "sphinx-rtd-theme"]
+tests = ["coverage", "pytest"]
 
 [[package]]
 name = "uri-template"
@@ -6801,6 +7265,28 @@ idna = ">=2.0"
 multidict = ">=4.0"
 
 [[package]]
+name = "zenodo-client"
+version = "0.3.2"
+description = "A wrapper for the Zenodo API."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "zenodo_client-0.3.2-py3-none-any.whl", hash = "sha256:d926fe834b570acd72c2345cc99dc0b24f3f1ecb97a178a9336bfaa5eb196bf3"},
+    {file = "zenodo_client-0.3.2.tar.gz", hash = "sha256:a6b038de7d168036d3228f218e1ab6e393a0ac9dafc2d93cc7d570b2bcfcde15"},
+]
+
+[package.dependencies]
+click = "*"
+more-click = "*"
+pydantic = "*"
+pystow = ">=0.4.9"
+requests = "*"
+typing-extensions = "*"
+
+[package.extras]
+docs = ["sphinx", "sphinx-autodoc-typehints", "sphinx-click", "sphinx-rtd-theme"]
+
+[[package]]
 name = "zipp"
 version = "3.17.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -6821,4 +7307,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "15ef99ef3b2e6bbd424ab42e5c8bde9ef720f7aa34acbd8d8285e6df6f2b63ba"
+content-hash = "2a90ae54b4123c966ce3e73a18d20e88cb58656f9851abd88305acd569b3d9ac"

@@ -25,12 +25,13 @@ from ..transform import Transform
 ONTOLOGIES = {
     # "HpTransform": "hp.json",
     # 'GoTransform': 'go-plus.json',
-    "ncbitaxon": "ncbitaxon.owl.gz",
-    "chebi": "chebi.owl.gz",
-    "envo": "envo.json",
-    "go": "go.json",
-    "rhea": "rhea.json",
-    "ec": "ec.json",
+    # "ncbitaxon": "ncbitaxon.owl.gz",
+    # "chebi": "chebi.owl.gz",
+    # "envo": "envo.json",
+    # "go": "go.json",
+    # "rhea": "rhea.json",
+    # "ec": "ec.json",
+    "uniprot": "uniprot.json.gz",
 }
 
 
@@ -102,13 +103,19 @@ class OntologyTransform(Transform):
 
             data_file = json_path
 
+        elif data_file.suffixes == [".json", ".gz"]:
+            json_path = str(data_file).replace(".json.gz", ".json")
+            if not Path(json_path).is_file():
+                self.decompress(data_file)
+            data_file = json_path
+
         transform(
             inputs=[data_file],
             input_format="obojson",
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea"]:
+        if name in ["ec", "rhea", "uniprot"]:
             self.post_process(name)
 
     def decompress(self, data_file):

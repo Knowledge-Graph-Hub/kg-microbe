@@ -1,14 +1,18 @@
 """BactoTraits transform class."""
-from kg_microbe.transform_utils.constants import BACDIVE_PREFIX, BACTOTRAITS_TMP_DIR
-from kg_microbe.transform_utils.transform import Transform
+
 import csv
 from pathlib import Path
 from typing import Optional, Union
 
+from kg_microbe.transform_utils.constants import BACDIVE_PREFIX, BACTOTRAITS_TMP_DIR
+from kg_microbe.transform_utils.transform import Transform
+
 
 class BactoTraitsTransform(Transform):
-    """BactoTraits transform.
-    
+
+    """
+    BactoTraits transform.
+
     Essentially just ingests and transforms this file:
     https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
 
@@ -121,18 +125,22 @@ class BactoTraitsTransform(Transform):
 
     """
 
-    def __init__(self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]):
+    def __init__(
+        self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]
+    ):
         """Initialize BactoTraitsTransform."""
         source_name = "BactoTraits"
         super().__init__(source_name, input_dir, output_dir)
 
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
+    def run(
+        self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
+    ) -> None:
         """Run BactoTraitsTransform."""
         if data_file is None:
             data_file = self.source_name + "_databaseV2_Jun2022.csv"
         input_file = self.input_base_dir / data_file
         # Clean the raw file
-        # - the file is a CSV file with delimeter as ";"
+        # - the file is a CSV file with delimiter as ";"
         # - many rows have empty values
         # - we just need rows with non-empty values from column 4 onwards.
         # - we also need to remove the first 2 rows, which are not needed.
@@ -141,10 +149,11 @@ class BactoTraitsTransform(Transform):
         # - second column is actually NOT BacDive ID, in spite of the header. It is actually column 3
         # - we need to convert the file to a TSV file
 
-
         BACTOTRAITS_TMP_DIR.mkdir(parents=True, exist_ok=True)
         pruned_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}.tsv"
-        with open(input_file, "r", encoding="ISO-8859-1") as infile, open(pruned_file, "w") as outfile:
+        with open(input_file, "r", encoding="ISO-8859-1") as infile, open(
+            pruned_file, "w"
+        ) as outfile:
             reader = csv.reader(infile, delimiter=";")
             writer = csv.writer(outfile, delimiter="\t")
             for i, row in enumerate(reader):
@@ -157,6 +166,5 @@ class BactoTraitsTransform(Transform):
                     # row[2] = row[2].split(", ")[0]  # Splitting the first column into Bacdive_ID and culture collection codes
                     # row.insert(3, row_3)
                     row = ["" if value == "NA" else value for value in row]
-                    row[1] = BACDIVE_PREFIX+row[1] if i > 2 else "Bacdive_ID"
+                    row[1] = BACDIVE_PREFIX + row[1] if i > 2 else "Bacdive_ID"
                     writer.writerow(row[1:])
-        

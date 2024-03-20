@@ -158,13 +158,6 @@ class BactoTraitsTransform(Transform):
             writer = csv.writer(outfile, delimiter="\t")
             for i, row in enumerate(reader):
                 if i > 1 and len(row) > 3:
-                    # Here we need to make some adjestments to the row before writing it to the file
-                    # e.g. row : DSM 3508, ATCC 15973, NCIB 8621, CCUG 18122, LMG 1261-t1, LMG 1261 1, CCTM 3043
-                    # should be written as: DSM 3508\tATCC 15973, NCIB 8621, CCUG 18122, LMG 1261-t1, LMG 1261 1, CCTM 3043 and other columns as is
-                    # i.e. the first column should be split into 2 columns: Bacdive_ID and culture collection codes (comma separated)
-                    # row_3 = ", ".join(row[2].split(", ")[1:])  # Splitting the first column into Bacdive_ID and culture collection codes
-                    # row[2] = row[2].split(", ")[0]  # Splitting the first column into Bacdive_ID and culture collection codes
-                    # row.insert(3, row_3)
                     row = ["" if value == "NA" else value for value in row]
                     row[1] = BACDIVE_PREFIX + row[1] if i > 2 else "Bacdive_ID"
                     writer.writerow(row[1:])

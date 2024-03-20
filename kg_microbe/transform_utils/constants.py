@@ -13,6 +13,8 @@ TRAITS_DIR = Path(__file__).parent / "traits"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 RHEA_DIR: Path = Path(__file__).parent / "rhea"
 RHEA_TMP_DIR = RHEA_DIR / "tmp"
+BACTOTRAITS_DIR = Path(__file__).parent / "bactotraits"
+BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
 
 
 # KEYS FOR JSON FILE

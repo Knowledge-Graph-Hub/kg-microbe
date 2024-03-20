@@ -140,7 +140,7 @@
 
 # -
 #   url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Archaea/
-#   local_name: archea
+#   local_name: archaea
 #   glob: "*.dat.gz"
 # -
 #   url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz

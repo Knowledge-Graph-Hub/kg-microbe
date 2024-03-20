@@ -2899,13 +2899,13 @@ prefixmaps = ">=0.1.5,<0.2.0"
 
 [[package]]
 name = "kghub-downloader"
-version = "0.3.5"
+version = "0.3.6"
 description = "Downloads and caches files for knowledge graph ETL"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = "<4.0,>=3.8"
 files = [
-    {file = "kghub_downloader-0.3.5-py3-none-any.whl", hash = "sha256:f1712117f1d88cf54fd6cb18dd4cf3c5f90e6d92fad27e9fa2e2e0f717254a35"},
-    {file = "kghub_downloader-0.3.5.tar.gz", hash = "sha256:0fa0bad8446dc22b907eb19b4fe5fabd381d1528c74971f8c830449af36be152"},
+    {file = "kghub_downloader-0.3.6-py3-none-any.whl", hash = "sha256:c538919c3b97fcae171cc5c1a10344a79153cb04bee12396f05637891235767d"},
+    {file = "kghub_downloader-0.3.6.tar.gz", hash = "sha256:e5ce83272f2d6d854cb28d47be0dc06ea04405df6b827c1127354b521a65633f"},
 ]
 
 [package.dependencies]
@@ -5230,6 +5230,7 @@ description = "A pure Python implementation of the trie data structure."
 optional = false
 python-versions = "*"
 files = [
+    {file = "PyTrie-0.4.0-py3-none-any.whl", hash = "sha256:f687c224ee8c66cda8e8628a903011b692635ffbb08d4b39c5f92b18eb78c950"},
     {file = "PyTrie-0.4.0.tar.gz", hash = "sha256:8f4488f402d3465993fb6b6efa09866849ed8cda7903b50647b7d0342b805379"},
 ]
 
@@ -7307,4 +7308,4 @@ docs = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "2a90ae54b4123c966ce3e73a18d20e88cb58656f9851abd88305acd569b3d9ac"
+content-hash = "ab6580d0ac950f4e6fb3bd3dfebcc67552f61ad41caf1e197fab0bd5e9375099"

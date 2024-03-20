@@ -17,13 +17,13 @@ edge_stats:
         unknown:
           count: 4413
     biolink:capable_of:
-      count: 117046
+      count: 121638
       provided_by:
         unknown:
-          count: 117046
+          count: 121638
       source:
         unknown:
-          count: 117046
+          count: 121638
     biolink:close_match:
       count: 12039
       provided_by:
@@ -980,13 +980,13 @@ edge_stats:
         unknown:
           count: 4517
     biolink:NamedThing-biolink:capable_of-biolink:PhenotypicQuality:
-      count: 7804
+      count: 7999
       provided_by:
         unknown:
-          count: 7804
+          count: 7999
       source:
         unknown:
-          count: 7804
+          count: 7999
     biolink:NamedThing-biolink:close_match-biolink:BiologicalProcess:
       count: 5
       provided_by:
@@ -1732,13 +1732,13 @@ edge_stats:
         unknown:
           count: 42068
     biolink:OrganismTaxon-biolink:capable_of-biolink:PhenotypicQuality:
-      count: 71357
+      count: 75949
       provided_by:
         unknown:
-          count: 71357
+          count: 75949
       source:
         unknown:
-          count: 71357
+          count: 75949
     biolink:OrganismTaxon-biolink:consumes-biolink:ChemicalEntity:
       count: 127783
       provided_by:
@@ -2036,7 +2036,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 4230148
+  total_edges: 4234740
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -2179,14 +2179,14 @@ node_stats:
         nodes.tsv:
           count: 55449
     biolink:PhenotypicQuality:
-      count: 483
+      count: 486
       provided_by:
         Graph:
           count: 61
         ec.json:
           count: 64
         nodes.tsv:
-          count: 483
+          count: 486
     unknown:
       count: 1492
       provided_by:
@@ -2246,15 +2246,17 @@ node_stats:
     kegg.compound: 2
     medium: 4715
     metabolism: 25
+    motility: 1
     owl: 1
     oxygen: 15
     pathogen: 3
-    pathways: 81
+    pathways: 82
     pato: 6
     po: 1
     production: 8
     salinity: 7
     solution: 5381
+    sporulation: 1
     temperature: 4
     uniprot: 570830
   count_by_id_prefixes_by_category:
@@ -2348,9 +2350,12 @@ node_stats:
       EC: 72
       cell_shape: 18
       gram_stain: 3
+      motility: 1
       oxygen: 9
       pathogen: 3
+      pathways: 1
       salinity: 7
+      sporulation: 1
       temperature: 4
     unknown:
       API_50CHas: 30
@@ -2427,6 +2432,7 @@ node_stats:
   - kegg.compound
   - medium
   - metabolism
+  - motility
   - owl
   - oxygen
   - pathogen
@@ -2436,6 +2442,7 @@ node_stats:
   - production
   - salinity
   - solution
+  - sporulation
   - temperature
   - uniprot
   node_id_prefixes_by_category:
@@ -2521,15 +2528,18 @@ node_stats:
     - API_coryne
     - cell_shape
     - API_20A
+    - motility
     - API_rID32STR
     - pathogen
     - API_50CHac
+    - sporulation
     - API_zym
     - salinity
     - API_NH
     - API_ID32STA
     - API_CAM
     - API_20E
+    - pathways
     - API_LIST
     - API_20STR
     - API_50CHas
@@ -2551,4 +2561,4 @@ node_stats:
   - nodes.tsv
   - uniprot.json
   - unknown
-  total_nodes: 1960090
+  total_nodes: 1960093

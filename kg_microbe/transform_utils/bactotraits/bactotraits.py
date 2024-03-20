@@ -157,6 +157,6 @@ class BactoTraitsTransform(Transform):
                     # row[2] = row[2].split(", ")[0]  # Splitting the first column into Bacdive_ID and culture collection codes
                     # row.insert(3, row_3)
                     row = ["" if value == "NA" else value for value in row]
-                    row[1] = BACDIVE_PREFIX+row[1]
+                    row[1] = BACDIVE_PREFIX+row[1] if i > 2 else "Bacdive_ID"
                     writer.writerow(row[1:])
         

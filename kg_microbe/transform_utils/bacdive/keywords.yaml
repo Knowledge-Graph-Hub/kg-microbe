@@ -366,3 +366,17 @@ pathogen:
     curie: "pathogen:plant"
     category: "biolink:PhenotypicQuality"
     predicate: "biolink:has_phenotype"
+
+other:
+  motile:
+    curie: "motility:motile"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:capable_of"
+  antibiotic_resistance:
+    curie: "pathways:antibiotic_resistance"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:capable_of"
+  spore_forming:
+    curie: "sporulation:spore_forming"
+    category: "biolink:PhenotypicQuality"
+    predicate: "biolink:capable_of"

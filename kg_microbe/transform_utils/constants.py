@@ -17,7 +17,8 @@ BACTOTRAITS_DIR = Path(__file__).parent / "bactotraits"
 BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
 UNIPROT_TREMBL_DIR = Path(__file__).parent / "uniprot_trembl"
 UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
-
+ONTOLOGY_DIR = Path(__file__).parent / "ontology"
+ONTOLOGY_XREFS_DIR = ONTOLOGY_DIR / "xrefs"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -231,6 +232,7 @@ EC_KEY = "ec"
 EC_PYOBO_PREFIX = "eccode"
 EC_OBO_PREFIX = "OBO:eccode_"
 UNIPROT_OBO_PREFIX = "OBO:uniprot_"
+CHEBI_CAS_PREFIX = "CAS:"
 ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
@@ -367,6 +369,7 @@ SPECIAL_PREFIXES = {
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
     UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",
     DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
+    CHEBI_CAS_PREFIX: CAS_RN_PREFIX,
 }
 HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
 ENABLED_BY_PREDICATE = "biolink:enabled_by"

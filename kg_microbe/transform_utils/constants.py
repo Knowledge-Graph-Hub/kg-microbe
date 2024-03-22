@@ -15,6 +15,8 @@ RHEA_DIR: Path = Path(__file__).parent / "rhea"
 RHEA_TMP_DIR = RHEA_DIR / "tmp"
 BACTOTRAITS_DIR = Path(__file__).parent / "bactotraits"
 BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
+UNIPROT_TREMBL_DIR = Path(__file__).parent / "uniprot_trembl"
+UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
 
 
 # KEYS FOR JSON FILE
@@ -88,6 +90,9 @@ KEGG_KEY = "KEGG-Compound"
 PUBCHEM_KEY = "PubChem"
 ACTUAL_TERM_KEY = "ActualTerm"
 PREFERRED_TERM_KEY = "PreferredTerm"
+
+ACCESSIONS_KEY = "accessions"
+FILENAME_KEY = "file_name"
 
 EXTERNAL_LINKS = "External links"
 EXTERNAL_LINKS_CULTURE_NUMBER = "culture collection no."
@@ -326,8 +331,12 @@ UNIPROT_SIZE = 500
 ORGANISM_ID_MIXED_CASE = "Organism_ID"
 UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
+TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
 UNIPROT_PREFIX = "uniprot"
+
+PROTEOME_ID_COLUMN = "proteome_id"
+PROTEOME_PREFIX = "Proteomes:"
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
 

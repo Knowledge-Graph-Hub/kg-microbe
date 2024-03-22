@@ -11,6 +11,7 @@ from os import makedirs
 from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
+    CHEBI_XREFS_FILEPATH,
     EXCLUSION_TERMS_FILE,
     NCBITAXON_PREFIX,
     ONTOLOGY_XREFS_DIR,
@@ -144,7 +145,7 @@ class OntologyTransform(Transform):
             # Get two columns from the nodes file: 'id' and 'xref'
             # The xref column is | seperated and contains different prefixes
             # We need to make a 1-to-1 mapping between the prefixes and the id
-            with open(nodes_file, "r") as nf, open(ONTOLOGY_XREFS_DIR / "chebi_xrefs.tsv", "w") as xref_file:
+            with open(nodes_file, "r") as nf, open(CHEBI_XREFS_FILEPATH, "w") as xref_file:
                 
                 for line in nf:
                     if line.startswith("id"):

@@ -19,6 +19,7 @@ UNIPROT_TREMBL_DIR = Path(__file__).parent / "uniprot_trembl"
 UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
 ONTOLOGY_DIR = Path(__file__).parent / "ontology"
 ONTOLOGY_XREFS_DIR = ONTOLOGY_DIR / "xrefs"
+CHEBI_XREFS_FILEPATH = ONTOLOGY_XREFS_DIR / "chebi_xrefs.tsv"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"

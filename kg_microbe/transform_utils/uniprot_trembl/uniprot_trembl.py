@@ -1,9 +1,10 @@
+"""Uniprot TrEMBL dat file Transform."""
+
 from os import makedirs
-import os
 from pathlib import Path
 from typing import Optional, Union
 
-from kg_microbe.transform_utils.constants import UNIPROT_TREMBL_TMP_DIR
+from kg_microbe.transform_utils.constants import UNIPROT_DATA_LIST, UNIPROT_TREMBL_TMP_DIR
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.trembl_utils import unzip_trembl_file
 
@@ -24,10 +25,7 @@ class UniprotTrEMBLTransform(Transform):
         self, file_path: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
     ) -> None:
         """Run UniprotTrEMBLTransform."""
-        data_list = [
-            "archaea",
-            "bacteria",
-        ]
+        data_list = UNIPROT_DATA_LIST
 
         for data in data_list:
             data_dir = self.input_base_dir / data
@@ -40,7 +38,4 @@ class UniprotTrEMBLTransform(Transform):
             # else:
             #     os.remove(UNIPROT_TREMBL_TMP_DIR / f"{data}.tsv")
 
-
         # ! Actual transform process begins here ...
-        
-                        

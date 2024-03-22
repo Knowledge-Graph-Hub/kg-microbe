@@ -6,7 +6,16 @@ from pathlib import Path
 
 from Bio import SwissProt
 
-from kg_microbe.transform_utils.constants import ACCESSIONS_KEY, FILENAME_KEY, NCBITAXON_PREFIX, PROTEOME_ID_COLUMN, PROTEOME_PREFIX, TAX_ID_COLUMN, TAXONOMY_ID_UNIPROT_COLUMN, UNIPROT_TREMBL_TMP_DIR
+from kg_microbe.transform_utils.constants import (
+    ACCESSIONS_KEY,
+    FILENAME_KEY,
+    NCBITAXON_PREFIX,
+    PROTEOME_ID_COLUMN,
+    PROTEOME_PREFIX,
+    TAXONOMY_ID_UNIPROT_COLUMN,
+    UNIPROT_TREMBL_TMP_DIR,
+)
+
 
 def clean_string(s):
     """
@@ -19,8 +28,11 @@ def clean_string(s):
     """
     return s.replace("\n", "").replace(";", "").strip()
 
+
 def process_value(value):
     """
+    Process the value of the record attribute.
+
     Clean strings in an input value by removing newline characters, semicolons,
     and leading/trailing whitespace. If the input is a list or tuple, clean each
     string element within it. Non-string elements are left unchanged.
@@ -59,7 +71,7 @@ def unzip_trembl_file(path: Path) -> None:
                     for attr in dir(record)
                     if not callable(getattr(record, attr)) and not attr.startswith("__")
                 ]
-                # Add an element to the beginnning of record attributes list to store the file name
+                # Add an element to the beginning of record attributes list to store the file name
                 record_attributes.insert(0, FILENAME_KEY)
                 record_attributes.insert(1, PROTEOME_ID_COLUMN)
                 # move the taxonomy_id column to position 1
@@ -68,23 +80,31 @@ def unzip_trembl_file(path: Path) -> None:
                 external_keys = [FILENAME_KEY, PROTEOME_ID_COLUMN]
 
             # Create a table of the record attributes
-            record_table = {attr: process_value(getattr(record, attr)) for attr in record_attributes if attr not in external_keys}
+            record_table = {
+                attr: process_value(getattr(record, attr))
+                for attr in record_attributes
+                if attr not in external_keys
+            }
             record_table[ACCESSIONS_KEY] = record_table[ACCESSIONS_KEY][0]
             record_table[FILENAME_KEY] = str(path).split("/")[-1]
-            record_table[PROTEOME_ID_COLUMN] = PROTEOME_PREFIX + record_table[FILENAME_KEY].split("_")[0]
-            record_table[TAXONOMY_ID_UNIPROT_COLUMN] = NCBITAXON_PREFIX + record_table[TAXONOMY_ID_UNIPROT_COLUMN][0]
+            record_table[PROTEOME_ID_COLUMN] = (
+                PROTEOME_PREFIX + record_table[FILENAME_KEY].split("_")[0]
+            )
+            record_table[TAXONOMY_ID_UNIPROT_COLUMN] = (
+                NCBITAXON_PREFIX + record_table[TAXONOMY_ID_UNIPROT_COLUMN][0]
+            )
             # Define the output file path
             output_file = UNIPROT_TREMBL_TMP_DIR / f"{str(path).split('/')[-3]}.tsv"
-            
+
             # Check if the file already exists to avoid writing headers multiple times
             file_exists = output_file.exists()
-            
-            with open(output_file, "a" if file_exists else "w", newline='') as file:
+
+            with open(output_file, "a" if file_exists else "w", newline="") as file:
                 csv_writer = csv.writer(file, delimiter="\t")
-                
+
                 # Write the header only if the file is being created
                 if not file_exists:
                     csv_writer.writerow(record_attributes)
-                
+
                 # Write the record values based on the order of the headers
                 csv_writer.writerow([record_table[attr] for attr in record_attributes])

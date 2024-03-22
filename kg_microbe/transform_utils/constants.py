@@ -337,6 +337,10 @@ UNIPROT_PREFIX = "uniprot"
 
 PROTEOME_ID_COLUMN = "proteome_id"
 PROTEOME_PREFIX = "Proteomes:"
+UNIPROT_DATA_LIST = [
+    "archaea",
+    "bacteria",
+]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
 

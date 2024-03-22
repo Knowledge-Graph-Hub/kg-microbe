@@ -27,9 +27,9 @@ DATA_SOURCES = {
     "MediaDiveTransform": MediaDiveTransform,
     "TraitsTransform": TraitsTransform,
     "RheaMappingsTransform": RheaMappingsTransform,
-    "UniprotTransform": UniprotTransform,
     "BactoTraitsTransform": BactoTraitsTransform,
     "UniprotTrEMBLTransform": UniprotTrEMBLTransform,
+    "UniprotTransform": UniprotTransform,
 }
 
 

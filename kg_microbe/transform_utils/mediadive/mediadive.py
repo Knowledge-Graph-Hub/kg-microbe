@@ -437,8 +437,15 @@ class MediaDiveTransform(Transform):
             MEDIADIVE_MEDIUM_PREFIX,
             MEDIADIVE_SOLUTION_PREFIX,
             MEDIUM_TO_INGREDIENT_EDGE,
-            MEDIADIVE_INGREDIENT_PREFIX,
+            [
+                MEDIADIVE_INGREDIENT_PREFIX,
+                CHEBI_PREFIX,
+                KEGG_PREFIX,
+                PUBCHEM_PREFIX,
+                CAS_RN_PREFIX,
+            ],
         )
+
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         # )

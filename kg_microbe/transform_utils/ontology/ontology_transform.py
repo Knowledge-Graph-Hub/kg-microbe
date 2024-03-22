@@ -5,6 +5,7 @@ import re
 import shutil
 from pathlib import Path
 from typing import Optional, Union
+from os import makedirs
 
 # from kgx.transformer import Transformer
 from kgx.cli.cli_utils import transform
@@ -12,6 +13,7 @@ from kgx.cli.cli_utils import transform
 from kg_microbe.transform_utils.constants import (
     EXCLUSION_TERMS_FILE,
     NCBITAXON_PREFIX,
+    ONTOLOGY_XREFS_DIR,
     ROBOT_REMOVED_SUFFIX,
     SPECIAL_PREFIXES,
 )
@@ -115,7 +117,7 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "uniprot"]:
+        if name in ["ec", "rhea", "uniprot", "chebi"]:
             self.post_process(name)
 
     def decompress(self, data_file):
@@ -136,19 +138,42 @@ class OntologyTransform(Transform):
         def _replace_special_prefixes(line):
             """Use the pattern to replace all occurrences of the keys with their values."""
             return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
+        
+        if name == "chebi":
+            makedirs(ONTOLOGY_XREFS_DIR , exist_ok=True)
+            # Get two columns from the nodes file: 'id' and 'xref'
+            # The xref column is | seperated and contains different prefixes
+            # We need to make a 1-to-1 mapping between the prefixes and the id
+            with open(nodes_file, "r") as nf, open(ONTOLOGY_XREFS_DIR / "chebi_xrefs.tsv", "w") as xref_file:
+                
+                for line in nf:
+                    if line.startswith("id"):
+                        # get the index for the term 'xref'
+                        xref_index = line.strip().split("\t").index("xref")
+                        xref_file.write("id\txref\n")
+                        continue
+                    line = _replace_special_prefixes(line)
+                    parts = line.strip().split("\t")
+                    subject = parts[0]
+                    xrefs = parts[xref_index].split("|") if parts[xref_index] != "" else None
+                    if xrefs and subject not in xrefs:
+                        for xref in xrefs:
+                            # Write a new tsv file with header ["id", "xref"]
+                                xref_file.write(f"{subject}\t{xref}\n")
 
-        # Process and write the nodes file
-        with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
-            for line in nf:
-                new_nf.write(_replace_special_prefixes(line))
+        else:
+            # Process and write the nodes file
+            with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
+                for line in nf:
+                    new_nf.write(_replace_special_prefixes(line))
 
-        # Replace the original file with the modified one
-        nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
+            # Replace the original file with the modified one
+            nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
 
-        # Process and write the edges file
-        with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
-            for line in ef:
-                new_ef.write(_replace_special_prefixes(line))
+            # Process and write the edges file
+            with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
+                for line in ef:
+                    new_ef.write(_replace_special_prefixes(line))
 
-        # Replace the original file with the modified one
-        edges_file.with_suffix(".temp.tsv").replace(edges_file)
+            # Replace the original file with the modified one
+            edges_file.with_suffix(".temp.tsv").replace(edges_file)

@@ -1,6 +1,7 @@
 """kg-microbe package."""
 
 from importlib import metadata
+import warnings
 
 from .download import download
 from .transform_utils import transform
@@ -12,3 +13,6 @@ except metadata.PackageNotFoundError:
     __version__ = "0.0.0"  # pragma: no cover
 
 __all__ = ["download", "transform"]
+
+# Filter out the specific warning
+warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:.*")

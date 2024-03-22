@@ -50,7 +50,7 @@ def establish_transitive_relationship(
     subject_prefix: str,
     intermediate_prefix: str,
     predicate: str,
-    object_prefix: str,
+    object_prefixes_list: List[str],
 ) -> pd.DataFrame:
     """
     Establish transitive relationship given the predicate is the same.
@@ -66,7 +66,7 @@ def establish_transitive_relationship(
     :param subject_prefix: Subject prefix (A in the example)
     :param intermediate_prefix: Intermediate prefix that connects the subject to object (B in the example).
     :param predicate: The common predicate between all relations.
-    :param object_prefix: Object prefix (C in the example)
+    :param object_prefixes_list: List of Object prefixes (C in the example)
     :return: Core dataframe with additional deduced rows.
     """
     df = drop_duplicates(file_path)
@@ -75,7 +75,9 @@ def establish_transitive_relationship(
     intermediate_subject_condition = df_relations[SUBJECT_COLUMN].str.startswith(
         intermediate_prefix
     )
-    object_condition = df_relations[OBJECT_COLUMN].str.startswith(object_prefix)
+    object_condition = df_relations[OBJECT_COLUMN].apply(
+        lambda x: any(str(x).startswith(prefix) for prefix in object_prefixes_list)
+    )
     intermediate_object_condition = df_relations[OBJECT_COLUMN].str.startswith(intermediate_prefix)
     subject_intermediate_df = df_relations[subject_condition & intermediate_object_condition]
     intermediate_object_df = df_relations[intermediate_subject_condition & object_condition]

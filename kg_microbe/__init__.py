@@ -1,7 +1,7 @@
 """kg-microbe package."""
 
-from importlib import metadata
 import warnings
+from importlib import metadata
 
 from .download import download
 from .transform_utils import transform

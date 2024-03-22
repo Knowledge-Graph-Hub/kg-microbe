@@ -25,12 +25,12 @@ from ..transform import Transform
 ONTOLOGIES = {
     # "HpTransform": "hp.json",
     # 'GoTransform': 'go-plus.json',
-    # "ncbitaxon": "ncbitaxon.owl.gz",
-    # "chebi": "chebi.owl.gz",
-    # "envo": "envo.json",
-    # "go": "go.json",
-    # "rhea": "rhea.json",
-    # "ec": "ec.json",
+    "ncbitaxon": "ncbitaxon.owl.gz",
+    "chebi": "chebi.owl.gz",
+    "envo": "envo.json",
+    "go": "go.json",
+    "rhea": "rhea.json",
+    "ec": "ec.json",
     "uniprot": "uniprot.json.gz",
 }
 
@@ -124,8 +124,6 @@ class OntologyTransform(Transform):
         with gzip.open(data_file, "rb") as f_in:
             with open(data_file.parent / data_file.stem, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
-
-    import re
 
     def post_process(self, name: str):
         """Post process specific nodes and edges files."""

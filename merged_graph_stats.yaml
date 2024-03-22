@@ -73,13 +73,13 @@ edge_stats:
         unknown:
           count: 79205
     biolink:has_part:
-      count: 86252
+      count: 123247
       provided_by:
         unknown:
-          count: 86252
+          count: 123247
       source:
         unknown:
-          count: 86252
+          count: 123247
     biolink:has_participant:
       count: 153330
       provided_by:
@@ -332,21 +332,21 @@ edge_stats:
         unknown:
           count: 1059
     biolink:ChemicalEntity-biolink:has_part-biolink:ChemicalEntity:
-      count: 82235
+      count: 104763
       provided_by:
         unknown:
-          count: 82235
+          count: 104763
       source:
         unknown:
-          count: 82235
+          count: 104763
     biolink:ChemicalEntity-biolink:has_part-biolink:ChemicalSubstance:
-      count: 50254
+      count: 69465
       provided_by:
         unknown:
-          count: 50254
+          count: 69465
       source:
         unknown:
-          count: 50254
+          count: 69465
     biolink:ChemicalEntity-biolink:occurs_in-biolink:PhenotypicQuality:
       count: 281
       provided_by:
@@ -1980,13 +1980,21 @@ edge_stats:
         unknown:
           count: 64
     unknown-biolink:has_part-biolink:ChemicalEntity:
-      count: 4017
+      count: 18484
       provided_by:
         unknown:
-          count: 4017
+          count: 18484
       source:
         unknown:
-          count: 4017
+          count: 18484
+    unknown-biolink:has_part-biolink:ChemicalSubstance:
+      count: 12749
+      provided_by:
+        unknown:
+          count: 12749
+      source:
+        unknown:
+          count: 12749
     unknown-biolink:location_of-biolink:NamedThing:
       count: 2
       provided_by:
@@ -2036,7 +2044,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 4234740
+  total_edges: 4271735
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:

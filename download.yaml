@@ -150,7 +150,7 @@
 # RHEA
 # 
 -
-  url: https://w3id.org/biopragmatics/resources/rhea/rhea.json
+  url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
   local_name: rhea.json
 
 # RHEA mappings

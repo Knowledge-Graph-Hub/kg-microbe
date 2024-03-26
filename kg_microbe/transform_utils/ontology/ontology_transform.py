@@ -32,7 +32,7 @@ ONTOLOGIES = {
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
     "go": "go.json",
-    "rhea": "rhea.json",
+    "rhea": "rhea.json.gz",
     "ec": "ec.json",
     "uniprot": "uniprot.json.gz",
 }

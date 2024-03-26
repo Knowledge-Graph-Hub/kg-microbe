@@ -13,7 +13,13 @@ TRAITS_DIR = Path(__file__).parent / "traits"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 RHEA_DIR: Path = Path(__file__).parent / "rhea"
 RHEA_TMP_DIR = RHEA_DIR / "tmp"
-
+BACTOTRAITS_DIR = Path(__file__).parent / "bactotraits"
+BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
+UNIPROT_TREMBL_DIR = Path(__file__).parent / "uniprot_trembl"
+UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
+ONTOLOGY_DIR = Path(__file__).parent / "ontology"
+ONTOLOGY_XREFS_DIR = ONTOLOGY_DIR / "xrefs"
+CHEBI_XREFS_FILEPATH = ONTOLOGY_XREFS_DIR / "chebi_xrefs.tsv"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -86,6 +92,9 @@ KEGG_KEY = "KEGG-Compound"
 PUBCHEM_KEY = "PubChem"
 ACTUAL_TERM_KEY = "ActualTerm"
 PREFERRED_TERM_KEY = "PreferredTerm"
+
+ACCESSIONS_KEY = "accessions"
+FILENAME_KEY = "file_name"
 
 EXTERNAL_LINKS = "External links"
 EXTERNAL_LINKS_CULTURE_NUMBER = "culture collection no."
@@ -224,6 +233,7 @@ EC_KEY = "ec"
 EC_PYOBO_PREFIX = "eccode"
 EC_OBO_PREFIX = "OBO:eccode_"
 UNIPROT_OBO_PREFIX = "OBO:uniprot_"
+CHEBI_CAS_PREFIX = "CAS:"
 ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
@@ -324,8 +334,16 @@ UNIPROT_SIZE = 500
 ORGANISM_ID_MIXED_CASE = "Organism_ID"
 UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
+TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
 UNIPROT_PREFIX = "uniprot"
+
+PROTEOME_ID_COLUMN = "proteome_id"
+PROTEOME_PREFIX = "Proteomes:"
+UNIPROT_DATA_LIST = [
+    "archaea",
+    "bacteria",
+]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
 
@@ -352,6 +370,7 @@ SPECIAL_PREFIXES = {
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
     UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",
     DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
+    CHEBI_CAS_PREFIX: CAS_RN_PREFIX,
 }
 HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
 ENABLED_BY_PREDICATE = "biolink:enabled_by"

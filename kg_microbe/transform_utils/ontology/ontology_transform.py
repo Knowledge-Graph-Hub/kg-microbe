@@ -3,9 +3,9 @@
 import gzip
 import re
 import shutil
+from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
-from os import makedirs
 
 # from kgx.transformer import Transformer
 from kgx.cli.cli_utils import transform
@@ -139,14 +139,14 @@ class OntologyTransform(Transform):
         def _replace_special_prefixes(line):
             """Use the pattern to replace all occurrences of the keys with their values."""
             return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
-        
+
         if name == "chebi":
-            makedirs(ONTOLOGY_XREFS_DIR , exist_ok=True)
+            makedirs(ONTOLOGY_XREFS_DIR, exist_ok=True)
             # Get two columns from the nodes file: 'id' and 'xref'
-            # The xref column is | seperated and contains different prefixes
+            # The xref column is | separated and contains different prefixes
             # We need to make a 1-to-1 mapping between the prefixes and the id
             with open(nodes_file, "r") as nf, open(CHEBI_XREFS_FILEPATH, "w") as xref_file:
-                
+
                 for line in nf:
                     if line.startswith("id"):
                         # get the index for the term 'xref'
@@ -160,11 +160,13 @@ class OntologyTransform(Transform):
                     if xrefs and subject not in xrefs:
                         for xref in xrefs:
                             # Write a new tsv file with header ["id", "xref"]
-                                xref_file.write(f"{subject}\t{xref}\n")
+                            xref_file.write(f"{subject}\t{xref}\n")
 
         else:
             # Process and write the nodes file
-            with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
+            with open(nodes_file, "r") as nf, open(
+                nodes_file.with_suffix(".temp.tsv"), "w"
+            ) as new_nf:
                 for line in nf:
                     new_nf.write(_replace_special_prefixes(line))
 
@@ -172,7 +174,9 @@ class OntologyTransform(Transform):
             nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
 
             # Process and write the edges file
-            with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
+            with open(edges_file, "r") as ef, open(
+                edges_file.with_suffix(".temp.tsv"), "w"
+            ) as new_ef:
                 for line in ef:
                     new_ef.write(_replace_special_prefixes(line))
 

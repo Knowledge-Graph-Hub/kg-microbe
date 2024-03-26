@@ -139,8 +139,17 @@
   local_name: uniprot.json.gz
 
 -
-  url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
-  local_name: reference_proteomes.tar.gz
+  url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Archaea/
+  local_name: archaea
+  glob: "*.dat.gz"
+
+-
+  url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Bacteria/
+  local_name: bacteria
+  glob: "*.dat.gz"
+# -
+#   url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
+#   local_name: reference_proteomes.tar.gz
 
 # -
 #   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
@@ -150,8 +159,8 @@
 # RHEA
 # 
 -
-  url: https://w3id.org/biopragmatics/resources/rhea/rhea.json
-  local_name: rhea.json
+  url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
+  local_name: rhea.json.gz
 
 # RHEA mappings
 - 
@@ -176,3 +185,10 @@
 - 
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
   local_name: ec.json
+
+#
+# BactoTraits
+#
+-
+  url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
+  local_name: BactoTraits_databaseV2_Jun2022.csv

@@ -134,6 +134,9 @@ data/raw/*.*
 data/raw/robot
 data/raw/uniprot_genome_features/*
 data/raw/bacdive/*.csv
+data/raw/archaea/*
+data/raw/bacteria/*
+
 
 !data/raw/.keep
 !data/raw/exclusion_branches.tsv
@@ -151,3 +154,4 @@ data/raw/uniprot/s3/*.tsv
 uniprot_cache.sqlite
 .vscode/*
 kg_microbe/transform_utils/rhea/tmp/all_terms.tsv
+kg_microbe/transform_utils/uniprot_trembl/tmp/*.tsv

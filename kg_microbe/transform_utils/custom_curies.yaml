@@ -742,37 +742,37 @@ temperature_delta:
 cell_width:
   w_<=0.5:
     curie: "cell_width:very_low"
-    name: "cell width <= 0.5µm"
+    name: "cell width <= 0.5um"
     <<: *phenotypic_quality_block
   w_0.5_to_0.65:
     curie: "cell_width:low"
-    name: "cell width 0.5µm to 0.65µm"
+    name: "cell width 0.5um to 0.65um"
     <<: *phenotypic_quality_block
   w_0.65_to_0.9:
     curie: "cell_width:mid"
-    name: "cell width 0.65µm to 0.9µm"
+    name: "cell width 0.65um to 0.9um"
     <<: *phenotypic_quality_block
   w_>0.9:
     curie: "cell_width:high"
-    name: "cell width > 0.9µm"
+    name: "cell width > 0.9um"
     <<: *phenotypic_quality_block
 
 cell_length:
   l_<=1.3:
     curie: "cell_length:very_low"
-    name: "cell length <= 1.3µm"
+    name: "cell length <= 1.3um"
     <<: *phenotypic_quality_block
   l_1.3_to_2:
     curie: "cell_length:low"
-    name: "cell length 1.3µm to 2µm"
+    name: "cell length 1.3um to 2um"
     <<: *phenotypic_quality_block
   l_2_to_3:
     curie: "cell_length:mid"
-    name: "cell length 2µm to 3µm"
+    name: "cell length 2um to 3um"
     <<: *phenotypic_quality_block
   l_>3:
     curie: "cell_length:high"
-    name: "cell length > 3µm"
+    name: "cell length > 3um"
     <<: *phenotypic_quality_block
 
 other:

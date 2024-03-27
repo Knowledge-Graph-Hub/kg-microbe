@@ -379,8 +379,8 @@ cell_shape:
     <<: *phenotypic_quality_block
 
 
-gram_stain: &gram_stain_block
-  gram_positive:
+gram_stain:
+  gram_positive: &gram_stain_block
     curie: "gram_stain:positive"
     name: "gram positive"
     <<: *phenotypic_quality_block

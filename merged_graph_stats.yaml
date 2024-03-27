@@ -1124,21 +1124,21 @@ edge_stats:
         unknown:
           count: 1069
     biolink:NamedThing-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 4669
+      count: 5928
       provided_by:
         unknown:
-          count: 4669
+          count: 5928
       source:
         unknown:
-          count: 4669
+          count: 5928
     biolink:NamedThing-biolink:has_phenotype-unknown:
-      count: 2135
+      count: 876
       provided_by:
         unknown:
-          count: 2135
+          count: 876
       source:
         unknown:
-          count: 2135
+          count: 876
     biolink:NamedThing-biolink:is_assessed_by-biolink:PhenotypicQuality:
       count: 95
       provided_by:
@@ -1940,21 +1940,21 @@ edge_stats:
         unknown:
           count: 11663
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 66249
+      count: 99563
       provided_by:
         unknown:
-          count: 66249
+          count: 99563
       source:
         unknown:
-          count: 66249
+          count: 99563
     biolink:OrganismTaxon-biolink:has_phenotype-unknown:
-      count: 71721
+      count: 38407
       provided_by:
         unknown:
-          count: 71721
+          count: 38407
       source:
         unknown:
-          count: 71721
+          count: 38407
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1759
       provided_by:
@@ -2414,12 +2414,12 @@ node_stats:
         nodes.tsv:
           count: 543
     unknown:
-      count: 249365
+      count: 249350
       provided_by:
         nodes.tsv:
           count: 5
         unknown:
-          count: 249360
+          count: 249345
   count_by_id_prefixes:
     API_20A: 24
     API_20E: 24
@@ -2461,9 +2461,6 @@ node_stats:
     PubChem: 20
     RHEA: 379733
     RO: 225
-    Temp_delta: 1
-    Temp_opt: 7
-    Temp_range: 7
     UBERON: 602
     WD_Entity: 4
     bacdive: 1224
@@ -2625,9 +2622,6 @@ node_stats:
       NaCl_opt: 4
       NaCl_range: 4
       RHEA: 247836
-      Temp_delta: 1
-      Temp_opt: 7
-      Temp_range: 7
       isolation_source: 5
       kegg.compound: 1
       medium: 1423
@@ -2691,9 +2685,6 @@ node_stats:
   - PubChem
   - RHEA
   - RO
-  - Temp_delta
-  - Temp_opt
-  - Temp_range
   - UBERON
   - WD_Entity
   - bacdive
@@ -2856,14 +2847,11 @@ node_stats:
     - isolation_source
     - FOODON
     - pH_opt
-    - Temp_opt
-    - Temp_range
     - pH_range
     - NaCl_range
     - NaCl_delta
     - NaCl_opt
     - pH_delta
-    - Temp_delta
   provided_by:
   - Graph
   - RHEA.json
@@ -2875,4 +2863,4 @@ node_stats:
   - nodes.tsv
   - uniprot.json
   - unknown
-  total_nodes: 1973945
+  total_nodes: 1973930

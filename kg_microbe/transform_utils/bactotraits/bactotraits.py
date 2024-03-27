@@ -7,6 +7,7 @@ from typing import Optional, Union
 
 import yaml
 from oaklib import get_adapter
+from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
@@ -14,10 +15,25 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
     BACTOTRAITS_TMP_DIR,
+    BIOLOGICAL_PROCESS,
+    CATEGORY_COLUMN,
+    CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
+    HAS_PHENOTYPE,
+    ID_COLUMN,
+    NAME_COLUMN,
+    NCBI_CATEGORY,
+    NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
+    OBJECT_ID_COLUMN,
+    PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.oak_utils import get_label
+from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BactoTraitsTransform(Transform):
@@ -204,42 +220,96 @@ class BactoTraitsTransform(Transform):
                     bacdive_ncbitaxon_dict[row[BACDIVE_ID_COLUMN]] = row[NCBITAXON_ID_COLUMN]
 
         pruned_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}.tsv"
-        with open(input_file, "r", encoding="ISO-8859-1") as infile, open(
-            pruned_file, "w"
-        ) as outfile, open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file:
+        with (
+            open(input_file, "r", encoding="ISO-8859-1") as infile,
+            open(pruned_file, "w") as outfile,
+            open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
+            open(self.output_node_file, "w") as node,
+            open(self.output_edge_file, "w") as edge,
+        ):
             reader = csv.reader(infile, delimiter=";")
             writer = csv.writer(outfile, delimiter="\t")
+            node_writer = csv.writer(node, delimiter="\t")
+            node_writer.writerow(self.node_header)
+            edge_writer = csv.writer(edge, delimiter="\t")
+            index = self.edge_header.index(PROVIDED_BY_COLUMN)
+            self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
+            edge_writer.writerow(self.edge_header)
             custom_curie_data = yaml.safe_load(cc_file)
             custom_curie_map = {
                 second_level_key: nested_data
                 for first_level_value in custom_curie_data.values()
                 for second_level_key, nested_data in first_level_value.items()
             }
-            for i, row in enumerate(reader):
-                if i > 1 and len(row) > 3:
-                    row = ["" if value == "NA" else value for value in row]
-                    if row[1] == "":
-                        continue
-                    else:
-                        row[1] = BACDIVE_PREFIX + row[1] if i > 2 else "Bacdive_ID"
-                    ncbitaxon_id = bacdive_ncbitaxon_dict.get(row[1], "")
-                    row.insert(2, ncbitaxon_id) if i > 2 else row.insert(2, NCBITAXON_ID_COLUMN)
-                    writer.writerow(row[1:])
-                    # Create nodes from this row
-                    if i == 2:
-                        header = row
-                        dict_keys = header[1:]
-                    elif i > 2:
-                        row_as_dict = dict(zip(dict_keys, row[1:], strict=False))
-                        row_as_dict_with_values = {
-                            k.strip(): v for k, v in row_as_dict.items() if v and v != "0"
-                        }
+            progress_class = tqdm if show_status else DummyTqdm
+            with progress_class() as progress:
+                for i, row in enumerate(reader):
+                    if i > 1 and len(row) > 3:
+                        row = ["" if value == "NA" else value for value in row]
+                        if row[1] == "":
+                            continue
+                        else:
+                            row[1] = BACDIVE_PREFIX + row[1] if i > 2 else "Bacdive_ID"
+                        ncbitaxon_id = bacdive_ncbitaxon_dict.get(row[1], "")
+                        row.insert(2, ncbitaxon_id) if i > 2 else row.insert(2, NCBITAXON_ID_COLUMN)
+                        writer.writerow(row[1:])
+                        # Create nodes from this row
+                        if i == 2:
+                            header = row
+                            dict_keys = header[1:]
+                        elif i > 2:
+                            row_as_dict = dict(zip(dict_keys, row[1:], strict=False))
+                            row_as_dict_with_values = {
+                                k.strip(): v for k, v in row_as_dict.items() if v and v != "0"
+                            }
 
-                        nodes_from_custom_curie_map = {
-                            key: custom_curie_map[key.lower().replace(" ", "_").replace("-", "_")]
-                            for key in row_as_dict_with_values.keys()
-                            if key.lower().replace(" ", "_").replace("-", "_") in custom_curie_map
-                        }
-                        print(nodes_from_custom_curie_map)
+                            nodes_from_custom_curie_map = {
+                                key: custom_curie_map[
+                                    key.lower().replace(" ", "_").replace("-", "_")
+                                ]
+                                for key in row_as_dict_with_values.keys()
+                                if key.lower().replace(" ", "_").replace("-", "_")
+                                in custom_curie_map
+                            }
 
-                    # Create edges from this row
+                            nodes_data_to_write = [
+                                [value[CURIE_COLUMN], value[CATEGORY_COLUMN], value[NAME_COLUMN]]
+                                for _, value in nodes_from_custom_curie_map.items()
+                                if value[CURIE_COLUMN]
+                            ]
+                            nodes_data_to_write.append(
+                                [
+                                    ncbitaxon_id,
+                                    NCBI_CATEGORY,
+                                    get_label(self.ncbi_impl, ncbitaxon_id),
+                                ]
+                            )
+                            nodes_data_to_write = [
+                                sublist + [None] * 11 for sublist in nodes_data_to_write
+                            ]
+                            node_writer.writerows(nodes_data_to_write)
+
+                            # Create edges from this row
+                            edges_data_to_write = [
+                                [
+                                    ncbitaxon_id,
+                                    value[PREDICATE_COLUMN],
+                                    value[CURIE_COLUMN],
+                                    (
+                                        BIOLOGICAL_PROCESS
+                                        if value[PREDICATE_COLUMN] == NCBI_TO_PATHWAY_EDGE
+                                        else HAS_PHENOTYPE
+                                    ),
+                                    "BactoTraits.csv",
+                                ]
+                                for _, value in nodes_from_custom_curie_map.items()
+                                if value[CURIE_COLUMN]
+                            ]
+
+                            edge_writer.writerows(edges_data_to_write)
+
+                    progress.set_description(f"Processing line #{i}")
+                    # After each iteration, call the update method to advance the progress bar.
+                    progress.update(1)
+            drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+            drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

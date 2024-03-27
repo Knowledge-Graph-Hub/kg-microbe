@@ -135,18 +135,9 @@
 # Uniprot
 #
 -
-  url: https://w3id.org/biopragmatics/resources/uniprot/uniprot.json.gz
-  local_name: uniprot.json.gz
+  url: https://portal.nersc.gov/project/kbase/ke/uniprot_api_tsv.tar.gz
+  local_name: uniprot_api_tsv.tar.gz
 
--
-  url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Archaea/
-  local_name: archaea
-  glob: "*.dat.gz"
-
--
-  url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Bacteria/
-  local_name: bacteria
-  glob: "*.dat.gz"
 # -
 #   url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
 #   local_name: reference_proteomes.tar.gz

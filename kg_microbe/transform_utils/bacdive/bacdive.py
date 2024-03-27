@@ -617,8 +617,8 @@ class BacDiveTransform(Transform):
 
                     if ncbitaxon_id and nodes_from_keywords:
                         nodes_data_to_write = [
-                            [value[CURIE_COLUMN], value[CATEGORY_COLUMN], key]
-                            for key, value in nodes_from_keywords.items()
+                            [value[CURIE_COLUMN], value[CATEGORY_COLUMN], value[NAME_COLUMN]]
+                            for _, value in nodes_from_keywords.items()
                         ]
                         nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
                         nodes_data_to_write = [

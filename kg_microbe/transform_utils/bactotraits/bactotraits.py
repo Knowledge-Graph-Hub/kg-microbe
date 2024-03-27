@@ -1,10 +1,22 @@
 """BactoTraits transform class."""
 
+import ast
 import csv
 from pathlib import Path
 from typing import Optional, Union
 
-from kg_microbe.transform_utils.constants import BACDIVE_PREFIX, BACTOTRAITS_TMP_DIR
+import yaml
+from oaklib import get_adapter
+
+from kg_microbe.transform_utils.constants import (
+    BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
+    BACDIVE_ID_COLUMN,
+    BACDIVE_PREFIX,
+    BACDIVE_TMP_DIR,
+    BACTOTRAITS_TMP_DIR,
+    CUSTOM_CURIES_YAML_FILE,
+    NCBITAXON_ID_COLUMN,
+)
 from kg_microbe.transform_utils.transform import Transform
 
 
@@ -18,7 +30,7 @@ class BactoTraitsTransform(Transform):
 
     Columns available in the file:
     - strain n¡
-    - ✓ Bacdive_ID
+    - Bacdive_ID
     - culture collection codes
     - Kingdom
     - Phylum
@@ -131,6 +143,11 @@ class BactoTraitsTransform(Transform):
         """Initialize BactoTraitsTransform."""
         source_name = "BactoTraits"
         super().__init__(source_name, input_dir, output_dir)
+        self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
+
+    def _strip_blanks(self, row: list) -> list:
+        """Strip blanks from row."""
+        return [value.strip() for value in row]
 
     def run(
         self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
@@ -150,14 +167,79 @@ class BactoTraitsTransform(Transform):
         # - we need to convert the file to a TSV file
 
         BACTOTRAITS_TMP_DIR.mkdir(parents=True, exist_ok=True)
+        bacdive_ncbitaxon_dict = {}
+        mapping_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}_mapping.tsv"
+        if mapping_file.exists():
+            with open(mapping_file, "r") as mapping_file:
+                mapping_reader = csv.DictReader(mapping_file, delimiter="\t")
+                for row in mapping_reader:
+                    bacdive_ncbitaxon_dict[row["Bacdive_ID"]] = row[NCBITAXON_ID_COLUMN]
+        else:
+            with open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file, open(
+                mapping_file, "w"
+            ) as mapping_file:
+                # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
+                bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
+                mapping_writer = csv.writer(mapping_file, delimiter="\t")
+                mapping_writer.writerow(
+                    ["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN]
+                )
+                for row in bacdive_reader:
+                    collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
+                    # Determine the value for the second column based on whether collection_number_list is not empty.
+                    second_column_value = (
+                        self._strip_blanks(ast.literal_eval(collection_number_list))
+                        if collection_number_list
+                        else ""
+                    )
+
+                    # Write the row with the determined values.
+                    mapping_writer.writerow(
+                        [
+                            row[BACDIVE_ID_COLUMN],
+                            second_column_value,
+                            row[NCBITAXON_ID_COLUMN],
+                        ]
+                    )
+                    bacdive_ncbitaxon_dict[row[BACDIVE_ID_COLUMN]] = row[NCBITAXON_ID_COLUMN]
+
         pruned_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}.tsv"
         with open(input_file, "r", encoding="ISO-8859-1") as infile, open(
             pruned_file, "w"
-        ) as outfile:
+        ) as outfile, open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file:
             reader = csv.reader(infile, delimiter=";")
             writer = csv.writer(outfile, delimiter="\t")
+            custom_curie_data = yaml.safe_load(cc_file)
+            custom_curie_map = {
+                second_level_key: nested_data
+                for first_level_value in custom_curie_data.values()
+                for second_level_key, nested_data in first_level_value.items()
+            }
             for i, row in enumerate(reader):
                 if i > 1 and len(row) > 3:
                     row = ["" if value == "NA" else value for value in row]
-                    row[1] = BACDIVE_PREFIX + row[1] if i > 2 else "Bacdive_ID"
+                    if row[1] == "":
+                        continue
+                    else:
+                        row[1] = BACDIVE_PREFIX + row[1] if i > 2 else "Bacdive_ID"
+                    ncbitaxon_id = bacdive_ncbitaxon_dict.get(row[1], "")
+                    row.insert(2, ncbitaxon_id) if i > 2 else row.insert(2, NCBITAXON_ID_COLUMN)
                     writer.writerow(row[1:])
+                    # Create nodes from this row
+                    if i == 2:
+                        header = row
+                        dict_keys = header[1:]
+                    elif i > 2:
+                        row_as_dict = dict(zip(dict_keys, row[1:], strict=False))
+                        row_as_dict_with_values = {
+                            k.strip(): v for k, v in row_as_dict.items() if v and v != "0"
+                        }
+
+                        nodes_from_custom_curie_map = {
+                            key: custom_curie_map[key.lower().replace(" ", "_").replace("-", "_")]
+                            for key in row_as_dict_with_values.keys()
+                            if key.lower().replace(" ", "_").replace("-", "_") in custom_curie_map
+                        }
+                        print(nodes_from_custom_curie_map)
+
+                    # Create edges from this row

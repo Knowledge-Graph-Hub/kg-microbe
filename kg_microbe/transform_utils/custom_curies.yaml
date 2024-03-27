@@ -655,87 +655,87 @@ NaCl_delta:
   
 temperature_optimal:
   to_<=10:
-    curie: "Temp_opt:very_low"
+    curie: "temp_opt:very_low"
     name: "optimal temperature <= 10°C"
     <<: *phenotypic_quality_block
   to_10_to_22:
-    curie: "Temp_opt:low"
+    curie: "temp_opt:low"
     name: "optimal temperature 10°C to 22°C"
     <<: *phenotypic_quality_block
   to_22_to_27:
-    curie: "Temp_opt:mid1"
+    curie: "temp_opt:mid1"
     name: "optimal temperature 22°C to 27°C"
     <<: *phenotypic_quality_block
   to_27_to_30:
-    curie: "Temp_opt:mid2"
+    curie: "temp_opt:mid2"
     name: "optimal temperature 27°C to 30°C"
     <<: *phenotypic_quality_block
   to_30_to_34:
-    curie: "Temp_opt:mid3"
+    curie: "temp_opt:mid3"
     name: "optimal temperature 30°C to 34°C"
     <<: *phenotypic_quality_block
   to_34_to_40:
-    curie: "Temp_opt:mid4"
+    curie: "temp_opt:mid4"
     name: "optimal temperature 34°C to 40°C"
     <<: *phenotypic_quality_block
   to_>40:
-    curie: "Temp_opt:high"
+    curie: "temp_opt:high"
     name: "optimal temperature > 40°C"
     <<: *phenotypic_quality_block
 
 temperature_range:
   tr_<=10:
-    curie: "Temp_range:very_low"
+    curie: "temp_range:very_low"
     name: "temperature range <= 10°C"
     <<: *phenotypic_quality_block
   tr_10_to_22:
-    curie: "Temp_range:low"
+    curie: "temp_range:low"
     name: "temperature range 10°C to 22°C"
     <<: *phenotypic_quality_block
   tr_22_to_27:
-    curie: "Temp_range:mid1"
+    curie: "temp_range:mid1"
     name: "temperature range 22°C to 27°C"
     <<: *phenotypic_quality_block
   tr_27_to_30:
-    curie: "Temp_range:mid2"
+    curie: "temp_range:mid2"
     name: "temperature range 27°C to 30°C"
     <<: *phenotypic_quality_block
   tr_30_to_34:
-    curie: "Temp_range:mid3"
+    curie: "temp_range:mid3"
     name: "temperature range 30°C to 34°C"
     <<: *phenotypic_quality_block
   tr_34_to_40:
-    curie: "Temp_range:mid4"
+    curie: "temp_range:mid4"
     name: "temperature range 34°C to 40°C"
     <<: *phenotypic_quality_block
   tr_>40:
-    curie: "Temp_range:high"
+    curie: "temp_range:high"
     name: "temperature range > 40°C"
     <<: *phenotypic_quality_block
 
 temperature_delta:
   td_<=1:
-    curie: "Temp_delta:very_low"
+    curie: "temp_delta:very_low"
     name: "temperature delta <= 1°C"
     <<: *phenotypic_quality_block
   td_1_to_5:
-    curie: "Temp_delta:low"
+    curie: "temp_delta:low"
     name: "temperature delta 1°C to 5°C"
     <<: *phenotypic_quality_block
   td_5_to_10:
-    curie: "Temp_delta:mid1"
+    curie: "temp_delta:mid1"
     name: "temperature delta 5°C to 10°C"
     <<: *phenotypic_quality_block
   td_10_to_20:
-    curie: "Temp_delta:mid2"
+    curie: "temp_delta:mid2"
     name: "temperature delta 10°C to 20°C"
     <<: *phenotypic_quality_block
   td_20_to_30:
-    curie: "Temp_delta:mid3"
+    curie: "temp_delta:mid3"
     name: "temperature delta 20°C to 30°C"
     <<: *phenotypic_quality_block
   td_>30:
-    curie: "Temp_delta:high"
+    curie: "temp_delta:high"
     name: "temperature delta > 30°C"
     <<: *phenotypic_quality_block
 

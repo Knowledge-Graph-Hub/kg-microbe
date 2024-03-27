@@ -775,8 +775,6 @@ cell_length:
     label: "cell length > 3µm"
     <<: *phenotypic_quality_block
 
-    
-
 other:
   antibiotic_resistance:
     curie: "pathways:antibiotic_resistance"

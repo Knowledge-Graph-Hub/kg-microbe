@@ -539,76 +539,76 @@ NaCl_delta:
       curie: "Temp_opt:high"
       <<: *phenotypic_quality_block
 
-  temperature_range:
-    tr_<=10:
-      curie: "Temp_range:very_low"
-      <<: *phenotypic_quality_block
-    tr_10_to_22:
-      curie: "Temp_range:low"
-      <<: *phenotypic_quality_block
-    tr_22_to_27:
-      curie: "Temp_range:mid1"
-      <<: *phenotypic_quality_block
-    tr_27_to_30:
-      curie: "Temp_range:mid2"
-      <<: *phenotypic_quality_block
-    tr_30_to_34:
-      curie: "Temp_range:mid3"
-      <<: *phenotypic_quality_block
-    tr_34_to_40:
-      curie: "Temp_range:mid4"
-      <<: *phenotypic_quality_block
-    tr_>40:
-      curie: "Temp_range:high"
-      <<: *phenotypic_quality_block
+temperature_range:
+  tr_<=10:
+    curie: "Temp_range:very_low"
+    <<: *phenotypic_quality_block
+  tr_10_to_22:
+    curie: "Temp_range:low"
+    <<: *phenotypic_quality_block
+  tr_22_to_27:
+    curie: "Temp_range:mid1"
+    <<: *phenotypic_quality_block
+  tr_27_to_30:
+    curie: "Temp_range:mid2"
+    <<: *phenotypic_quality_block
+  tr_30_to_34:
+    curie: "Temp_range:mid3"
+    <<: *phenotypic_quality_block
+  tr_34_to_40:
+    curie: "Temp_range:mid4"
+    <<: *phenotypic_quality_block
+  tr_>40:
+    curie: "Temp_range:high"
+    <<: *phenotypic_quality_block
 
-  temperature_delta:
-    td_<=1:
-      curie: "Temp_delta:very_low"
-      <<: *phenotypic_quality_block
-    td_1_to_5:
-      curie: "Temp_delta:low"
-      <<: *phenotypic_quality_block
-    td_5_to_10:
-      curie: "Temp_delta:mid1"
-      <<: *phenotypic_quality_block
-    td_10_to_20:
-      curie: "Temp_delta:mid2"
-      <<: *phenotypic_quality_block
-    td_20_to_30:
-      curie: "Temp_delta:mid3"
-      <<: *phenotypic_quality_block
-    td_>30:
-      curie: "Temp_delta:high"
-      <<: *phenotypic_quality_block
+temperature_delta:
+  td_<=1:
+    curie: "Temp_delta:very_low"
+    <<: *phenotypic_quality_block
+  td_1_to_5:
+    curie: "Temp_delta:low"
+    <<: *phenotypic_quality_block
+  td_5_to_10:
+    curie: "Temp_delta:mid1"
+    <<: *phenotypic_quality_block
+  td_10_to_20:
+    curie: "Temp_delta:mid2"
+    <<: *phenotypic_quality_block
+  td_20_to_30:
+    curie: "Temp_delta:mid3"
+    <<: *phenotypic_quality_block
+  td_>30:
+    curie: "Temp_delta:high"
+    <<: *phenotypic_quality_block
 
-  cell_width:
-    w_<=0.5:
-      curie: "cell_width:very_low"
-      <<: *phenotypic_quality_block
-    w_0.5_to_0.65:
-      curie: "cell_width:low"
-      <<: *phenotypic_quality_block
-    w_0.65_to_0.9:
-      curie: "cell_width:mid"
-      <<: *phenotypic_quality_block
-    w_>0.9:
-      curie: "cell_width:high"
-      <<: *phenotypic_quality_block
+cell_width:
+  w_<=0.5:
+    curie: "cell_width:very_low"
+    <<: *phenotypic_quality_block
+  w_0.5_to_0.65:
+    curie: "cell_width:low"
+    <<: *phenotypic_quality_block
+  w_0.65_to_0.9:
+    curie: "cell_width:mid"
+    <<: *phenotypic_quality_block
+  w_>0.9:
+    curie: "cell_width:high"
+    <<: *phenotypic_quality_block
 
-  cell_length:
-    l_<=1.3:
-      curie: "cell_length:very_low"
-      <<: *phenotypic_quality_block
-    l_1.3_to_2:
-      curie: "cell_length:low"
-      <<: *phenotypic_quality_block
-    l_2_to_3:
-      curie: "cell_length:mid"
-      <<: *phenotypic_quality_block
-    l_>3:
-      curie: "cell_length:high"
-      <<: *phenotypic_quality_block
+cell_length:
+  l_<=1.3:
+    curie: "cell_length:very_low"
+    <<: *phenotypic_quality_block
+  l_1.3_to_2:
+    curie: "cell_length:low"
+    <<: *phenotypic_quality_block
+  l_2_to_3:
+    curie: "cell_length:mid"
+    <<: *phenotypic_quality_block
+  l_>3:
+    curie: "cell_length:high"
+    <<: *phenotypic_quality_block
     
 
 other:

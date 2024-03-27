@@ -55,7 +55,6 @@ def transform(
 
     for source in sources:
         if source in DATA_SOURCES:
-            print(source)
             logging.info(f"Parsing {source}")
             t = DATA_SOURCES[source](input_dir, output_dir)
             if source in ONTOLOGIES.keys():

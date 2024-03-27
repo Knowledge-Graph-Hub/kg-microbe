@@ -132,19 +132,11 @@
   local_name: epm.json
 
 #
-# Uniprot
+# Uniprot ## Replace with full download once in s3 bucket from uniprot2s3
 #
 -
   url: https://portal.nersc.gov/project/kbase/ke/uniprot_api_tsv.tar.gz
   local_name: uniprot_api_tsv.tar.gz
-
-# -
-#   url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
-#   local_name: reference_proteomes.tar.gz
-
-# -
-#   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
-#   local_name: ec2ec.zip
 
 # 
 # RHEA

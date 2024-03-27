@@ -56,13 +56,6 @@ merged_graph:
         filename:
           - data/transformed/ontologies/ec_nodes.tsv
           - data/transformed/ontologies/ec_edges.tsv
-    uniprot:
-      name: "UniProt"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/ontologies/uniprot_nodes.tsv
-          - data/transformed/ontologies/uniprot_edges.tsv
     bacdive:
       name: "BacDive"
       input:

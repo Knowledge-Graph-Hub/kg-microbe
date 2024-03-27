@@ -8,28 +8,42 @@ import sys
 from pathlib import Path
 from typing import Optional, Union
 import pandas as pd
+from oaklib import get_adapter
 
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    CHEBI_PREFIX,
+    CHEMICAL_CATEGORY,
+    CHEMICAL_TO_EC_EDGE,
     CHEMICAL_TO_PROTEIN_EDGE,
     PROTEIN_TO_EC_EDGE,
     EC_CATEGORY,
+    EC_KEY,
     EC_PREFIX,
     ENZYME_CATEGORY,
-    PROTEIN_TO_GO_EDGE,
+    GO_CATEGORY,
+    GO_CELLULAR_COMPONENT_ID,
+    GO_MOLECULAR_FUNCTION_ID,
+    GO_BIOLOGICAL_PROCESS_ID,
+    GO_PREFIX,
     NCBITAXON_PREFIX,
+    PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE,
+    PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE,
+    PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE,
     PROTEIN_TO_RHEA_EDGE,
     PROTEIN_TO_ORGANISM_EDGE,
     PROTEOME_CATEGORY,
+    PROTEOME_PREFIX,
     PROTEOME_TO_ORGANISM_EDGE,
+    RHEA_KEY,
     UNIPROT_GENOME_FEATURES,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
-
+from kg_microbe.utils.oak_utils import get_label
 
 class UniprotTransform(Transform):
 
@@ -54,6 +68,9 @@ class UniprotTransform(Transform):
 
         source_name = UNIPROT_GENOME_FEATURES
         super().__init__(source_name, input_dir, output_dir)
+        self.chebi_oi = get_adapter("sqlite:obo:chebi")
+        self.go_oi = get_adapter("sqlite:obo:go")
+        self.ec_oi = get_adapter("sqlite:obo:eccode")
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
@@ -82,6 +99,32 @@ class UniprotTransform(Transform):
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
+
+    def _get_label_based_on_prefix(self, id):
+        if id.startswith(CHEBI_PREFIX.rstrip(":")):
+            return get_label(self.chebi_oi, id)
+        elif id.startswith(GO_PREFIX.rstrip(":")):
+            return get_label(self.go_oi, id)
+        elif id.startswith(EC_PREFIX.rstrip(":")):
+            return get_label(self.ec_oi, id)
+        # Add more conditions as needed
+        else:
+            return None
+        
+    def _get_go_relation(self,term_id,go_oi):
+
+        go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
+        term_ancestors = list(go_oi.ancestors(start_curies=term_id,predicates=["rdfs:subClassOf"],reflexive=False))
+        go_component = list(set(term_ancestors).intersection(go_types))[0]
+        if go_component == GO_CELLULAR_COMPONENT_ID:
+            go_relation = PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE
+        elif go_component == GO_MOLECULAR_FUNCTION_ID:
+            go_relation = PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE
+        elif go_component == GO_BIOLOGICAL_PROCESS_ID:
+            go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
+
+        return go_relation
+
 
     def get_uniprot_values_from_file(self, input_dir, nodes, source, node_writer, edge_writer):
         """
@@ -169,6 +212,21 @@ class UniprotTransform(Transform):
         rhea_list = rhea_entry.split(" ")
 
         return rhea_list
+    
+    def parse_ec(self,ec_entry):
+        """
+        Extract ec identifiers from a EC Number entry.
+
+        This method finds all EC IDs for the corresponding entry.
+
+        :param ec_entry: A string containing the ec information.
+        :type ec_entry: str
+        :return: A list of EC identifiers extracted from the EC entry.
+        :rtype: list
+        """
+        ec_list = ec_entry.split(";")
+
+        return ec_list
 
 
     def write_to_df(self, uniprot_df, edge_writer, node_writer):
@@ -203,16 +261,6 @@ class UniprotTransform(Transform):
             if "Entry" in uniprot_df.columns:
                 self.__enz_data["id"] = entry["Entry"]
 
-            # example response with  multiple protein names:
-            # {
-            #     "Organism (ID)": "100",
-            #     "Entry Name": "A0A4R1H4N5_ANCAQ",
-            #     "Entry": "A0A4R1H4N5",
-            #     "Protein names": "Ubiquinone biosynthesis O-methyltransferase
-            #                       (2-polyprenyl-6-hydroxyphenol methylase) (EC 2.1.1.222)
-            #                       (3-demethylubiquinone 3-O-methyltransferase) (EC 2.1.1.64)",
-            #     "EC number": "2.1.1.222; 2.1.1.64",
-            # }
             if "Protein names" in entry:
                 self.__enz_data["name"] = entry["Protein names"].split("(EC")[0]
 
@@ -222,17 +270,9 @@ class UniprotTransform(Transform):
             if "Entry" in uniprot_df.columns:
                 self.__enz_data["id"] = entry["Entry"]
 
-                ###TO DO: add synonyms here
-                # print(entry['Protein names'])
-                # self.__enz_data['synonyms'] = entry['Protein names'][1:].str.replace('')
-                # print(self.__enz_data['synonyms'])
-
-                # Set name as first name mentioned
-                # if 'synonyms' in entry.keys() and len :
-                #    self.__enz_data['name'] = entry['names'][0]
-
+            ec_list = []
             if "EC number" in entry:
-                self.__enz_data["EC number"] = str(entry["EC number"]).replace(";", "|")
+                ec_list = self.parse_ec(entry["EC number"])
 
             chem_list = []
             if "Binding site" in entry:
@@ -251,12 +291,23 @@ class UniprotTransform(Transform):
 
             if organism_id:
 
+                # Write protein-organism edges
+                edges_data_to_write = [
+                    UNIPROT_PREFIX + ":" + self.__enz_data["id"],
+                    PROTEIN_TO_ORGANISM_EDGE,
+                    NCBITAXON_PREFIX + str(organism_id),
+                    "",
+                    self.source_name,
+                ]
+
+                edge_writer.writerow(edges_data_to_write)
+
                 # Write GO edges
                 if len(go_list) > 0:
                     for go in go_list:
                         edges_data_to_write = [
-                            UNIPROT_PREFIX + ":" + self.__enz_data["id"],
-                            PROTEIN_TO_GO_EDGE,
+                            UNIPROT_PREFIX + self.__enz_data["id"],
+                            self._get_go_relation(self,go,self.go_oi),
                             go,
                             "",
                             self.source_name,
@@ -264,9 +315,9 @@ class UniprotTransform(Transform):
 
                         edge_writer.writerow(edges_data_to_write)
 
-                #EC to Chemical (one produces and one consumes)
-                #EC 
-                #Only Uniprot to chemical if no known EC
+                        # Write GO nodes
+                        nodes_data_to_write = [go, "", self._get_label_based_on_prefix(go),[""] * len(self.node_header-3) ]
+                        node_writer.writerow(nodes_data_to_write)
                         
                 # Write binding site edges
                 if len(chem_list) > 0:
@@ -274,12 +325,16 @@ class UniprotTransform(Transform):
                         edges_data_to_write = [
                             chem,
                             CHEMICAL_TO_PROTEIN_EDGE,
-                            UNIPROT_PREFIX + ":" + self.__enz_data["id"],
+                            UNIPROT_PREFIX + self.__enz_data["id"],
                             "",
                             self.source_name,
                         ]
 
                         edge_writer.writerow(edges_data_to_write)
+
+                        # Write CHEBI nodes
+                        nodes_data_to_write = [chem, "", self._get_label_based_on_prefix(chem),[""] * len(self.node_header-3) ]
+                        node_writer.writerow(nodes_data_to_write)
 
                 # Write rhea edges
                 if len(rhea_list) > 0:
@@ -287,17 +342,52 @@ class UniprotTransform(Transform):
                         edges_data_to_write = [
                             rhea,
                             PROTEIN_TO_RHEA_EDGE,
-                            UNIPROT_PREFIX + ":" + self.__enz_data["id"],
+                            UNIPROT_PREFIX + self.__enz_data["id"],
                             "",
                             self.source_name,
                         ]
 
                         edge_writer.writerow(edges_data_to_write)
 
+                        # Write Rhea nodes, oaklib is incomplete
+                        nodes_data_to_write = [rhea, [""] * len(self.node_header-1) ]
+                        node_writer.writerow(nodes_data_to_write)
+
+
+                # Write EC edges
+                ec_list
+                if len(ec_list) > 0:
+                    for ec in ec_list:
+                        edges_data_to_write = [
+                            UNIPROT_PREFIX + self.__enz_data["id"],
+                            PROTEIN_TO_EC_EDGE,
+                            EC_PREFIX + ec,
+                            "",
+                            self.source_name,
+                        ]
+
+                        edge_writer.writerow(edges_data_to_write)
+
+                    #Write EC nodes
+                    nodes_data_to_write = [EC_PREFIX + ec, "", self._get_label_based_on_prefix(EC_PREFIX + ec),[""] * len(self.node_header-3) ]
+                    node_writer.writerow(nodes_data_to_write)
+
+                    if len(chem_list) > 0:
+                        for chem in chem_list:
+                            edges_data_to_write = [
+                                chem,
+                                CHEMICAL_TO_EC_EDGE,
+                                EC_PREFIX + ec,
+                                "",
+                                self.source_name,
+                            ]
+
+                            edge_writer.writerow(edges_data_to_write)
+
                 if "Proteomes" in self.__enz_data.keys():
                     # Write organism-proteome edges
                     edges_data_to_write = [
-                        self.__enz_data["Proteomes"],
+                        PROTEOME_PREFIX + self.__enz_data["Proteomes"],
                         PROTEOME_TO_ORGANISM_EDGE,
                         NCBITAXON_PREFIX + str(organism_id),
                         "",
@@ -306,62 +396,28 @@ class UniprotTransform(Transform):
 
                     edge_writer.writerow(edges_data_to_write)
 
-                    # Write protein-organism edges
-                    edges_data_to_write = [
-                        UNIPROT_PREFIX + ":" + self.__enz_data["id"],
-                        PROTEIN_TO_ORGANISM_EDGE,
-                        NCBITAXON_PREFIX + str(organism_id),
-                        "",
-                        self.source_name,
-                    ]
-
-                    edge_writer.writerow(edges_data_to_write)
-
+                    #Write proteome node
                     nodes_data_to_write = [
-                        self.__enz_data["Proteomes"],
+                        PROTEOME_PREFIX + self.__enz_data["Proteomes"],
                         PROTEOME_CATEGORY,
-                        self.__enz_data["Proteomes"],
+                        PROTEOME_PREFIX + self.__enz_data["Proteomes"],
                         "",
                         "",
                         self.source_name,
-                        "",
+                        [""] * len(self.node_header-6)
                     ]
 
                     node_writer.writerow(nodes_data_to_write)
 
-                if "EC number" in self.__enz_data.keys():
-                    # Write enzyme-EC edges
-                    edges_data_to_write = [
-                        UNIPROT_PREFIX + ":" + self.__enz_data["id"],
-                        PROTEIN_TO_EC_EDGE,
-                        self.__enz_data["EC number"],
-                        "",
-                        self.source_name,
-                    ]
-
-                    edge_writer.writerow(edges_data_to_write)
-
-                    #Unnecessary when EC is ingested
-                    nodes_data_to_write = [
-                        EC_PREFIX + ":" + self.__enz_data["EC number"],
-                        EC_CATEGORY,
-                        self.__enz_data["name"],
-                        "",
-                        "",
-                        self.source_name,
-                        "",
-                    ]
-
-                    node_writer.writerow(nodes_data_to_write)
-
+            # Write protein node
             nodes_data_to_write = [
-                UNIPROT_PREFIX + ":" + self.__enz_data["id"],
+                UNIPROT_PREFIX + self.__enz_data["id"],
                 ENZYME_CATEGORY,
-                self.__enz_data["name"],
+                self.__enz_data["name"].replace('[','(').replace(']',')'),
                 "",
                 "",
                 self.source_name,
-                "",
+                [""] * len(self.node_header-6),
             ]
 
             node_writer.writerow(nodes_data_to_write)

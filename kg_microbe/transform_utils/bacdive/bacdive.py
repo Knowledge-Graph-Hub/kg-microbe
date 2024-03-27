@@ -31,7 +31,6 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
-    BACDIVE_DIR,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -55,6 +54,7 @@ from kg_microbe.transform_utils.constants import (
     CULTURE_MEDIUM,
     CULTURE_NAME,
     CURIE_COLUMN,
+    CUSTOM_CURIES_YAML_FILE,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
     EC_KEY,
@@ -254,7 +254,7 @@ class BacDiveTransform(Transform):
             open(str(BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE), "r") as tsvfile_3,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
-            open(str(BACDIVE_DIR / "keywords.yaml"), "r") as keywords_file,
+            open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
         ):
             writer = csv.writer(tsvfile_1, delimiter="\t")
             # Write the column names to the output file
@@ -269,7 +269,7 @@ class BacDiveTransform(Transform):
             self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
-            keyword_data = yaml.safe_load(keywords_file)
+            custom_curie_data = yaml.safe_load(cc_file)
             bacdive_mappings_list_of_dicts = list(csv.DictReader(tsvfile_3, delimiter="\t"))
 
             # ! BacDive Mapping file processing.
@@ -337,7 +337,7 @@ class BacDiveTransform(Transform):
 
             keyword_map = {
                 second_level_key: nested_data
-                for first_level_value in keyword_data.values()
+                for first_level_value in custom_curie_data.values()
                 for second_level_key, nested_data in first_level_value.items()
             }
 

@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Optional, Union
 import pandas as pd
 from oaklib import get_adapter
+import gzip
 
 from tqdm import tqdm
 
@@ -40,6 +41,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_GENOME_FEATURES,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
+    UNIPROT_TMP_DIR
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -68,39 +70,53 @@ class UniprotTransform(Transform):
 
         source_name = UNIPROT_GENOME_FEATURES
         super().__init__(source_name, input_dir, output_dir)
-        self.chebi_oi = get_adapter("sqlite:obo:chebi")
+        #self.chebi_oi = get_adapter("sqlite:obo:chebi")
         self.go_oi = get_adapter("sqlite:obo:go")
-        self.ec_oi = get_adapter("sqlite:obo:eccode")
+        #self.ec_oi = get_adapter("sqlite:obo:eccode")
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
         # replace with downloaded data filename for this source
         input_dir = str(self.input_base_dir) + "/" + self.source_name
-        # Get all organisms downloaded into raw directory
+        '''# Get all organisms downloaded into raw directory
         ncbi_organisms = []
         for f in os.listdir(input_dir):
             #if f.endswith(".json"):
             if f.endswith(".tsv"):
                 ncbi_organisms.append(f.split(".tsv")[0])
-
+'''
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
-        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge:
+        # get descendants of important GO categories for relationship mapping
+        go_category_trees_df = self._get_go_category_trees(UNIPROT_TMP_DIR,self.go_oi)
+
+        # file to keep track of obsolete terms from GO not included in graph
+        obsolete_terms_csv_file = UNIPROT_TMP_DIR + "/" + "go_obsolete_terms.csv"
+        obsolete_terms_csv_header = ["GO_Term","Uniprot_ID"]
+
+        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge, open(obsolete_terms_csv_file, "w") as obsolete:
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
+            obsolete_terms_csv_writer = csv.writer(obsolete,delimiter="\t")
+            obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
-            # Create Organism and Enzyme nodes:
-            self.get_uniprot_values_from_file(
-                input_dir, ncbi_organisms, self.source_name, node_writer, edge_writer
-            )
+            for file_path in input_dir.iterdir():
+                if file_path.suffix == ".gz":
+                    with gzip.open(file_path, "rt") as file:
+                        
+                        # Create Organism and Enzyme nodes:
+                        self.get_uniprot_values_from_file(
+                            file, node_writer, edge_writer, obsolete_terms_csv_writer, go_category_trees_df
+                        )
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
+        drop_duplicates(self.obsolete_terms_csv_file)
 
-    def _get_label_based_on_prefix(self, id):
+    '''def _get_label_based_on_prefix(self, id):
         if id.startswith(CHEBI_PREFIX.rstrip(":")):
             return get_label(self.chebi_oi, id)
         elif id.startswith(GO_PREFIX.rstrip(":")):
@@ -109,19 +125,45 @@ class UniprotTransform(Transform):
             return get_label(self.ec_oi, id)
         # Add more conditions as needed
         else:
-            return None
-        
-    def _get_go_relation(self,term_id,go_oi):
+            return None'''
+    
+    def _get_go_category_trees(self,tmp_dir,go_oi):
 
-        go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
-        term_ancestors = list(go_oi.ancestors(start_curies=term_id,predicates=["rdfs:subClassOf"],reflexive=False))
+        output_file = tmp_dir + "/" + "go_category_trees.csv"
+
+        # Check if the file already exists
+        file_exists = output_file.exists()
+        if not file_exists:
+
+            with open(output_file, "a" if file_exists else "w", newline="") as file:
+                csv_writer = csv.writer(file, delimiter="\t")
+                csv_writer.writerow(["GO_Category","GO_Term"])
+
+                go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
+
+                for r in go_types:
+                    term_decendants = list(go_oi.descendants(start_curies=r,predicates=["rdfs:subClassOf"],reflexive=True))
+                    for term in term_decendants:
+                        r_list = [r,term]
+                        csv_writer.writerow(r_list)
+
+            go_category_trees_df = pd.read_csv(output_file)
+        else:
+            go_category_trees_df = pd.read_csv(output_file)
+
+        return go_category_trees_df
+
+    def _get_go_relation(self,term_id,go_category_trees_df,obsolete_terms_csv_writer,uniprot_id):
+
+        #go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
+        #term_ancestors = list(go_oi.ancestors(start_curies=term_id,predicates=["rdfs:subClassOf"],reflexive=False))
 
         ## TODO Write ancestors tmp directory - /transform_utils/uniprot/tmp
         ## TODO Write obsolete terms to file in tmp
 
         #! To handle obsolete terms
         try:
-            go_component = list(set(term_ancestors).intersection(go_types))[0]
+            go_component = go_category_trees_df.loc[go_category_trees_df["GO_Term"] == term_id,"GO_Category"].values[0]
             if go_component == GO_CELLULAR_COMPONENT_ID:
                 go_relation = PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE
             elif go_component == GO_MOLECULAR_FUNCTION_ID:
@@ -129,12 +171,13 @@ class UniprotTransform(Transform):
             elif go_component == GO_BIOLOGICAL_PROCESS_ID:
                 go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
         except IndexError:
+            obsolete_terms_csv_writer.writerow([term_id,uniprot_id])
             go_relation = None
 
         return go_relation
 
 
-    def get_uniprot_values_from_file(self, input_dir, nodes, source, node_writer, edge_writer):
+    def get_uniprot_values_from_file(self, org_file, node_writer, edge_writer, obsolete_terms_csv_writer, go_category_trees_df):
         """
         Process UniProt files and extract values to write to dataframes.
 
@@ -154,22 +197,22 @@ class UniprotTransform(Transform):
         :param edge_writer: An object responsible for writing edge data.
         :type edge_writer: object
         """
-        with tqdm(total=len(nodes) + 1, desc="Processing files") as progress:
+        ''' with tqdm(total=len(nodes) + 1, desc="Processing files") as progress:
             for i in tqdm(range(len(nodes))):
-                org_file = input_dir + "/" + nodes[i] + ".tsv"
-                if not os.path.exists(org_file):
-                    print("File does not exist: ", org_file, ", exiting.")
-                    sys.exit()
+                org_file = input_dir + "/" + nodes[i] + ".tsv"'''
+        '''if not os.path.exists(org_file):
+            print("File does not exist: ", org_file, ", exiting.")
+            sys.exit()
 
-                else:
-                    df = pd.read_csv(org_file, sep="\t", low_memory=False)
-                    #Remove headers from df file based on first column name
-                    df = df[df[df.columns[0]] != df.columns[0]]
-                    self.write_to_df(df, edge_writer, node_writer)
+        else:'''
+        df = pd.read_csv(org_file, sep="\t", low_memory=False)
+        #Remove headers from df file based on first column name
+        df = df[df[df.columns[0]] != df.columns[0]]
+        self.write_to_df(df, edge_writer, node_writer, obsolete_terms_csv_writer, go_category_trees_df)
 
-                progress.set_description(f"Processing Uniprot File: {nodes[i]}.tsv")
-                # After each iteration, call the update method to advance the progress bar.
-                progress.update()
+        '''progress.set_description(f"Processing Uniprot File: {nodes[i]}.tsv")
+        # After each iteration, call the update method to advance the progress bar.
+        progress.update()'''
 
     def parse_binding_site(self, binding_site_entry):
         """
@@ -237,7 +280,7 @@ class UniprotTransform(Transform):
         return ec_list
 
 
-    def write_to_df(self, uniprot_df, edge_writer, node_writer):
+    def write_to_df(self, uniprot_df, edge_writer, node_writer, obsolete_terms_csv_writer, go_category_trees_df):
         """
         Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -313,13 +356,13 @@ class UniprotTransform(Transform):
                 # Write GO edges
                 if len(go_list) > 0:
                     for go in go_list:
-                        #! Ignoring obsolete terms
-                        pred = self._get_go_relation(go,self.go_oi)
-                        if not pred:
+                        #! Excluding obsolete terms
+                        predicate = self._get_go_relation(go,go_category_trees_df,obsolete_terms_csv_writer,UNIPROT_PREFIX + self.__enz_data["id"])
+                        if not predicate:
                             continue
                         edges_data_to_write = [
                             UNIPROT_PREFIX + self.__enz_data["id"],
-                            pred,
+                            predicate,
                             go,
                             "",
                             self.source_name,
@@ -328,7 +371,7 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                         # Write GO nodes
-                        nodes_data_to_write = [go, "", self._get_label_based_on_prefix(go)] + [""] * (len(self.node_header)-3)
+                        nodes_data_to_write = [go] + [""] * (len(self.node_header)-1)
                         node_writer.writerow(nodes_data_to_write)
                         
                 # Write binding site edges
@@ -347,7 +390,7 @@ class UniprotTransform(Transform):
                         # Write CHEBI nodes
                         ## TODO try not getting label to see if it still aligns in merge step
 
-                        nodes_data_to_write = [chem, "", self._get_label_based_on_prefix(chem)] + [""] * (len(self.node_header)-3)
+                        nodes_data_to_write = [chem] + [""] * (len(self.node_header)-1)
                         node_writer.writerow(nodes_data_to_write)
 
                 # Write rhea edges
@@ -385,7 +428,7 @@ class UniprotTransform(Transform):
                     #Write EC nodes
                     ## TODO cache node ID and labels
                     
-                    nodes_data_to_write = [EC_PREFIX + ec, "", self._get_label_based_on_prefix(EC_PREFIX + ec)] + [""] * (len(self.node_header)-3)
+                    nodes_data_to_write = [EC_PREFIX] + [""] * (len(self.node_header)-1)
                     node_writer.writerow(nodes_data_to_write)
 
                 if "Proteomes" in self.__enz_data.keys():

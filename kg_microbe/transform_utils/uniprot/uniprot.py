@@ -115,12 +115,17 @@ class UniprotTransform(Transform):
 
         go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
         term_ancestors = list(go_oi.ancestors(start_curies=term_id,predicates=["rdfs:subClassOf"],reflexive=False))
-        go_component = list(set(term_ancestors).intersection(go_types))[0]
-        if go_component == GO_CELLULAR_COMPONENT_ID:
-            go_relation = PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE
-        elif go_component == GO_MOLECULAR_FUNCTION_ID:
-            go_relation = PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE
-        elif go_component == GO_BIOLOGICAL_PROCESS_ID:
+
+        #GO:0035065 not working for some reason, handling exception for now
+        try:
+            go_component = list(set(term_ancestors).intersection(go_types))[0]
+            if go_component == GO_CELLULAR_COMPONENT_ID:
+                go_relation = PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE
+            elif go_component == GO_MOLECULAR_FUNCTION_ID:
+                go_relation = PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE
+            elif go_component == GO_BIOLOGICAL_PROCESS_ID:
+                go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
+        except IndexError:
             go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
 
         return go_relation
@@ -293,7 +298,7 @@ class UniprotTransform(Transform):
 
                 # Write protein-organism edges
                 edges_data_to_write = [
-                    UNIPROT_PREFIX + ":" + self.__enz_data["id"],
+                    UNIPROT_PREFIX + self.__enz_data["id"],
                     PROTEIN_TO_ORGANISM_EDGE,
                     NCBITAXON_PREFIX + str(organism_id),
                     "",
@@ -307,7 +312,7 @@ class UniprotTransform(Transform):
                     for go in go_list:
                         edges_data_to_write = [
                             UNIPROT_PREFIX + self.__enz_data["id"],
-                            self._get_go_relation(self,go,self.go_oi),
+                            self._get_go_relation(go,self.go_oi),
                             go,
                             "",
                             self.source_name,
@@ -316,7 +321,7 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                         # Write GO nodes
-                        nodes_data_to_write = [go, "", self._get_label_based_on_prefix(go),[""] * len(self.node_header-3) ]
+                        nodes_data_to_write = [go, "", self._get_label_based_on_prefix(go)] + [""] * (len(self.node_header)-3)
                         node_writer.writerow(nodes_data_to_write)
                         
                 # Write binding site edges
@@ -333,16 +338,16 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                         # Write CHEBI nodes
-                        nodes_data_to_write = [chem, "", self._get_label_based_on_prefix(chem),[""] * len(self.node_header-3) ]
+                        nodes_data_to_write = [chem, "", self._get_label_based_on_prefix(chem)] + [""] * (len(self.node_header)-3)
                         node_writer.writerow(nodes_data_to_write)
 
                 # Write rhea edges
                 if len(rhea_list) > 0:
                     for rhea in rhea_list:
                         edges_data_to_write = [
-                            rhea,
-                            PROTEIN_TO_RHEA_EDGE,
                             UNIPROT_PREFIX + self.__enz_data["id"],
+                            PROTEIN_TO_RHEA_EDGE,
+                            rhea,
                             "",
                             self.source_name,
                         ]
@@ -350,7 +355,7 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                         # Write Rhea nodes, oaklib is incomplete
-                        nodes_data_to_write = [rhea, [""] * len(self.node_header-1) ]
+                        nodes_data_to_write = [rhea] + [""] * (len(self.node_header)-1)
                         node_writer.writerow(nodes_data_to_write)
 
 
@@ -369,20 +374,8 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                     #Write EC nodes
-                    nodes_data_to_write = [EC_PREFIX + ec, "", self._get_label_based_on_prefix(EC_PREFIX + ec),[""] * len(self.node_header-3) ]
+                    nodes_data_to_write = [EC_PREFIX + ec, "", self._get_label_based_on_prefix(EC_PREFIX + ec)] + [""] * (len(self.node_header)-3)
                     node_writer.writerow(nodes_data_to_write)
-
-                    if len(chem_list) > 0:
-                        for chem in chem_list:
-                            edges_data_to_write = [
-                                chem,
-                                CHEMICAL_TO_EC_EDGE,
-                                EC_PREFIX + ec,
-                                "",
-                                self.source_name,
-                            ]
-
-                            edge_writer.writerow(edges_data_to_write)
 
                 if "Proteomes" in self.__enz_data.keys():
                     # Write organism-proteome edges
@@ -403,9 +396,8 @@ class UniprotTransform(Transform):
                         PROTEOME_PREFIX + self.__enz_data["Proteomes"],
                         "",
                         "",
-                        self.source_name,
-                        [""] * len(self.node_header-6)
-                    ]
+                        self.source_name] + [""] * (len(self.node_header)-6)
+                    
 
                     node_writer.writerow(nodes_data_to_write)
 
@@ -416,8 +408,6 @@ class UniprotTransform(Transform):
                 self.__enz_data["name"].replace('[','(').replace(']',')'),
                 "",
                 "",
-                self.source_name,
-                [""] * len(self.node_header-6),
-            ]
+                self.source_name] + [""] * (len(self.node_header)-6)
 
             node_writer.writerow(nodes_data_to_write)

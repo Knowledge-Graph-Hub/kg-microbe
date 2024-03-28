@@ -135,8 +135,16 @@
 # Uniprot
 #
 -
-  url: s3://kg-hub-public-data/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
-  local_name: uniprot_proteomes.tar.gz
+   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
+   local_name: uniprot_proteomes.tar.gz
+
+#
+# Unipathways
+#
+-
+  url: https://raw.githubusercontent.com/geneontology/unipathway/master/upa.json
+  local_name: upa.json
+
 # -
 #   url: https://portal.nersc.gov/project/kbase/ke/uniprot_api_tsv.tar.gz
 #   local_name: uniprot_api_tsv.tar.gz

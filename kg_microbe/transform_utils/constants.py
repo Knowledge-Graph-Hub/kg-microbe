@@ -2,24 +2,26 @@
 
 from pathlib import Path
 
-BACDIVE_DIR = Path(__file__).parent / "bacdive"
+TRANSFORM_UTILS_DIR = Path(__file__).parent
+BACDIVE_DIR = TRANSFORM_UTILS_DIR / "bacdive"
 BACDIVE_TMP_DIR = BACDIVE_DIR / "tmp"
 BACDIVE_YAML_DIR = BACDIVE_TMP_DIR / "yaml"
-MEDIADIVE_DIR = Path(__file__).parent / "mediadive"
+MEDIADIVE_DIR = TRANSFORM_UTILS_DIR / "mediadive"
 MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
-TRAITS_DIR = Path(__file__).parent / "traits"
+TRAITS_DIR = TRANSFORM_UTILS_DIR / "traits"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
-RHEA_DIR: Path = Path(__file__).parent / "rhea"
+RHEA_DIR: Path = TRANSFORM_UTILS_DIR / "rhea"
 RHEA_TMP_DIR = RHEA_DIR / "tmp"
-BACTOTRAITS_DIR = Path(__file__).parent / "bactotraits"
+BACTOTRAITS_DIR = TRANSFORM_UTILS_DIR / "bactotraits"
 BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
-UNIPROT_TREMBL_DIR = Path(__file__).parent / "uniprot_trembl"
+UNIPROT_TREMBL_DIR = TRANSFORM_UTILS_DIR / "uniprot_trembl"
 UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
-ONTOLOGY_DIR = Path(__file__).parent / "ontology"
+ONTOLOGY_DIR = TRANSFORM_UTILS_DIR / "ontology"
 ONTOLOGY_XREFS_DIR = ONTOLOGY_DIR / "xrefs"
 CHEBI_XREFS_FILEPATH = ONTOLOGY_XREFS_DIR / "chebi_xrefs.tsv"
+CUSTOM_CURIES_YAML_FILE = TRANSFORM_UTILS_DIR / "custom_curies.yaml"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -181,6 +183,7 @@ HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
+ASSOCIATED_WITH = "PATO:0001668"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -245,6 +248,7 @@ BACDIVE_MAPPING_CAS_RN_ID = "CAS_RN_ID"
 BACDIVE_MAPPING_EC_ID = "EC_ID"
 BACDIVE_MAPPING_ENZYME_LABEL = "enzyme"
 BACDIVE_MAPPING_SUBSTRATE_LABEL = "substrate"
+BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN = "culture_collection_number"
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"
 MEDIADIVE_COMPLEX_MEDIUM_COLUMN = "complex_medium"
@@ -274,6 +278,7 @@ GO_CATEGORY = "biolink:BiologicalProcess"
 RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
+ASSOCIATED_WITH_PREDICATE = "biolink:associated_with"
 PREDICATE_ID_COLUMN = "predicate_id"
 PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {
@@ -384,3 +389,19 @@ RHEA_PREDICATE_MAPPER = {
     "has input": HAS_INPUT_PREDICATE,
     "has output": HAS_OUTPUT_PREDICATE,
 }
+
+# Columns desired for the Uniprot data (from .dat files)
+UNIPROT_TREMBL_COLUMNS = [
+    "taxonomy_id",
+    "entry_name",
+    "accessions",
+    "description",
+    "comments",
+    "cross_references",
+    "proteome_id",
+    "data_class",
+]
+
+
+# BactoTraits
+COMBO_KEY = "combo"

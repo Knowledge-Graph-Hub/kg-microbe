@@ -116,7 +116,10 @@ class UniprotTransform(Transform):
         go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
         term_ancestors = list(go_oi.ancestors(start_curies=term_id,predicates=["rdfs:subClassOf"],reflexive=False))
 
-        #GO:0035065 not working for some reason, handling exception for now
+        ## TODO Write ancestors tmp directory - /transform_utils/uniprot/tmp
+        ## TODO Write obsolete terms to file in tmp
+
+        #! To handle obsolete terms
         try:
             go_component = list(set(term_ancestors).intersection(go_types))[0]
             if go_component == GO_CELLULAR_COMPONENT_ID:
@@ -126,7 +129,7 @@ class UniprotTransform(Transform):
             elif go_component == GO_BIOLOGICAL_PROCESS_ID:
                 go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
         except IndexError:
-            go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
+            go_relation = None
 
         return go_relation
 
@@ -310,9 +313,13 @@ class UniprotTransform(Transform):
                 # Write GO edges
                 if len(go_list) > 0:
                     for go in go_list:
+                        #! Ignoring obsolete terms
+                        pred = self._get_go_relation(go,self.go_oi)
+                        if not pred:
+                            continue
                         edges_data_to_write = [
                             UNIPROT_PREFIX + self.__enz_data["id"],
-                            self._get_go_relation(go,self.go_oi),
+                            pred,
                             go,
                             "",
                             self.source_name,
@@ -338,6 +345,8 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                         # Write CHEBI nodes
+                        ## TODO try not getting label to see if it still aligns in merge step
+
                         nodes_data_to_write = [chem, "", self._get_label_based_on_prefix(chem)] + [""] * (len(self.node_header)-3)
                         node_writer.writerow(nodes_data_to_write)
 
@@ -374,6 +383,8 @@ class UniprotTransform(Transform):
                         edge_writer.writerow(edges_data_to_write)
 
                     #Write EC nodes
+                    ## TODO cache node ID and labels
+                    
                     nodes_data_to_write = [EC_PREFIX + ec, "", self._get_label_based_on_prefix(EC_PREFIX + ec)] + [""] * (len(self.node_header)-3)
                     node_writer.writerow(nodes_data_to_write)
 

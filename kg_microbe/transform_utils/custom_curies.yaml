@@ -1,0 +1,784 @@
+phenotypic_quality: &phenotypic_quality_block
+  category: "biolink:PhenotypicQuality"
+  predicate: "biolink:has_phenotype"
+
+phenotypic_capability: &phenotypic_capability_block
+  <<: *phenotypic_quality_block
+  predicate: "biolink:capable_of"
+
+biological_process: &biological_process_block
+  category: "biolink:BiologicalProcess"
+  predicate: "biolink:capable_of"
+
+chemical_production: &chemical_production_block
+  category: "biolink:ChemicalSubstance"
+  predicate: "biolink:produces"
+
+oxygen:
+  aerobe: &aerobe_block
+    curie: "oxygen:aerobe"
+    name: "aerobe"
+    <<: *phenotypic_quality_block
+  Ox_aerobic: *aerobe_block
+
+  anaerobe: &anaerobe_block
+    curie: "oxygen:anaerobe"
+    name: "anaerobe"
+    <<: *phenotypic_quality_block
+  Ox_anaerobic: *anaerobe_block
+  obligate_aerobe:
+    curie: "oxygen:obligate_aerobe"
+    name: "obligate aerobe"
+    <<: *phenotypic_quality_block
+  microaerophile: &microaerophile_block
+    curie: "oxygen:microaerophile"
+    name: "microaerophile"
+    <<: *phenotypic_quality_block
+  Ox_microaerophile: *microaerophile_block
+  facultative_anaerobe:
+    curie: "oxygen:facultative_anaerobe"
+    name: "facultative anaerobe"
+    <<: *phenotypic_quality_block
+  obligate_anaerobe:
+    curie: "oxygen:obligate_anaerobe"
+    name: "obligate anaerobe"
+    <<: *phenotypic_quality_block
+  facultative_aerobe: &facultative_aerobe_block
+    curie: "oxygen:facultative_aerobe"
+    name: "facultative aerobe"
+    <<: *phenotypic_quality_block
+  Ox_facultative_aerobe: *facultative_aerobe_block
+  aerotolerant:
+    curie: "oxygen:aerotolerant"
+    name: "aerotolerant"
+    <<: *phenotypic_quality_block
+  microaerotolerant:
+    curie: "oxygen:microaerotolerant"
+    name: "microaerotolerant"
+    <<: *phenotypic_quality_block
+  facultative_aerobe_anaerobe:
+    curie: "oxygen:facultative_aerobe_anaerobe"
+    name: "facultative aerobe/anaerobe"
+    <<: *phenotypic_quality_block
+
+temperature:
+  psychrophilic:
+    curie: "temperature:psychrophilic"
+    name: "psychrophilic"
+    <<: *phenotypic_quality_block
+  psychrotrophic:
+    curie: "temperature:psychrotrophic"
+    name: "psychrotrophic"
+    <<: *phenotypic_quality_block
+  psychrotolerant:
+    curie: "temperature:psychrotolerant"
+    name: "psychrotolerant"
+    <<: *phenotypic_quality_block
+  mesophilic:
+    curie: "temperature:mesophilic"
+    name: "mesophilic"
+    <<: *phenotypic_quality_block
+  thermotolerant:
+    curie: "temperature:thermotolerant"
+    name: "thermotolerant"
+    <<: *phenotypic_quality_block
+  thermophilic:
+    curie: "temperature:thermophilic"
+    name: "thermophilic"
+    <<: *phenotypic_quality_block
+  extreme_thermophilic:
+    curie: "temperature:extreme_thermophilic"
+    name: "extreme thermophilic"
+    <<: *phenotypic_quality_block
+  hyperthermophilic:
+    curie: "temperature:hyperthermophilic"
+    name: "hyperthermophilic"
+    <<: *phenotypic_quality_block
+  extreme_hyperthermophilic:
+    curie: "temperature:extreme_hyperthermophilic"
+    name: "extreme hyperthermophilic"
+    <<: *phenotypic_quality_block
+
+salinity:
+  moderately_halophilic:
+    curie: "salinity:moderately_halophilic"
+    name: "moderately halophilic"
+    <<: *phenotypic_quality_block
+  halophilic:
+    curie: "salinity:halophilic"
+    name: "halophilic"
+    <<: *phenotypic_quality_block
+  non_halophilic:
+    curie: "salinity:non_halophilic"
+    name: "non halophilic"
+    <<: *phenotypic_quality_block
+  extremely_halophilic:
+    curie: "salinity:extremely_halophilic"
+    name: "extremely halophilic"
+    <<: *phenotypic_quality_block
+  slightly_halophilic:
+    curie: "salinity:slightly_halophilic"
+    name: "slightly halophilic"
+    <<: *phenotypic_quality_block
+  haloalkaliphilic:
+    curie: "salinity:haloalkaliphilic"
+    name: "haloalkaliphilic"
+    <<: *phenotypic_quality_block
+  halotolerant:
+    curie: "salinity:halotolerant"
+    name: "halotolerant"
+    <<: *phenotypic_quality_block
+
+trophic_type:
+  chemoautotroph:
+    curie: "trophic_type:chemoautotrophy"
+    name: "chemoautotroph"
+    <<: *biological_process_block
+  chemoorganotroph:
+    curie: "trophic_type:chemoorganotrophy"
+    name: "chemoorganotroph"
+    <<: *biological_process_block
+  chemoheterotroph:
+    curie: "trophic_type:chemoheterotrophy"
+    name: "chemoheterotroph"
+    <<: *biological_process_block
+  chemoorganoheterotroph:
+    curie: "trophic_type:chemoorganoheterotrophy"
+    name: "chemoorganoheterotroph"
+    <<: *biological_process_block
+  heterotroph: &heterotroph_block
+    curie: "trophic_type:heterotrophy"
+    name: "heterotroph"
+    <<: *biological_process_block
+  tt_heterotrph: *heterotroph_block
+  chemoautolithotroph:
+    curie: "trophic_type:chemoautolithotrophy"
+    name: "chemoautolithotroph"
+    <<: *biological_process_block
+  methylotroph: &methylotroph_block
+    curie: "trophic_type:methylotrophy"
+    name: "methylotroph"
+    <<: *biological_process_block
+  tt_methylotroph: *methylotroph_block
+  mixotroph:
+    curie: "trophic_type:mixotrophy"
+    name: "mixotroph"
+    <<: *biological_process_block
+  chemolithoautotroph:
+    curie: "trophic_type:chemolithoautotrophy"
+    name: "chemolithoautotroph"
+    <<: *biological_process_block
+  methanotroph:
+    curie: "trophic_type:methanotrophy"
+    name: "methanotroph"
+    <<: *biological_process_block
+  lithoheterotroph:
+    curie: "trophic_type:lithoheterotrophy"
+    name: "lithoheterotroph"
+    <<: *biological_process_block
+  organoheterotroph:
+    curie: "trophic_type:organoheterotrophy"
+    name: "organoheterotroph"
+    <<: *biological_process_block
+  chemolithotroph:
+    curie: "trophic_type:chemolithotrophy"
+    name: "chemolithotroph"
+    <<: *biological_process_block
+  autotroph: &autotroph_block
+    curie: "trophic_type:autotrophy"
+    name: "autotroph"
+    <<: *biological_process_block
+  tt_autotroph: *autotroph_block
+  phototroph: &phototroph_block
+    curie: "trophic_type:phototrophy"
+    name: "phototroph"
+    <<: *biological_process_block
+  tt_phototroph: *phototroph_block
+  photoheterotroph:
+    curie: "trophic_type:photoheterotrophy"
+    name: "photoheterotroph"
+    <<: *biological_process_block
+  lithoautotroph:
+    curie: "trophic_type:lithoautotrophy"
+    name: "lithoautotroph"
+    <<: *biological_process_block
+  diazotroph: &diazotroph_block
+    curie: "trophic_type:diazotrophy"
+    name: "diazotroph"
+    <<: *biological_process_block
+  tt_diazotroph: *diazotroph_block
+  chemolithoheterotroph:
+    curie: "trophic_type:chemolithoheterotrophy"
+    name: "chemolithoheterotroph"
+    <<: *biological_process_block
+  chemotroph: &chemotroph_block
+    curie: "trophic_type:chemotrophy"
+    name: "chemotroph"
+    <<: *biological_process_block
+  tt_chemotroph: *chemotroph_block
+  organotroph: &organotroph_block
+    curie: "trophic_type:organotrophy"
+    name: "organotroph"
+    <<: *biological_process_block
+  tt_organotroph: *organotroph_block
+  photolithotroph:
+    curie: "trophic_type:photolithotrophy"
+    name: "photolithotroph"
+    <<: *biological_process_block
+  photoautotroph:
+    curie: "trophic_type:photoautotrophy"
+    name: "photoautotroph"
+    <<: *biological_process_block
+  photoorganoheterotroph:
+    curie: "trophic_type:photoorganoheterotrophy"
+    name: "photoorganoheterotroph"
+    <<: *biological_process_block
+  lithotroph:
+    curie: "trophic_type:lithotrophy"
+    name: "lithotroph"
+    <<: *biological_process_block
+  oligotroph: &oligotroph_block
+    curie: "trophic_type:oligotrophy"
+    name: "oligotroph"
+    <<: *biological_process_block
+  tt_oligotroph: *oligotroph_block
+  litotroph: &litotroph_block
+    curie: "trophic_type:litotrophy"
+    name: "litotroph"
+    <<: *biological_process_block
+  tt_litotroph: *litotroph_block
+  copiotroph: &copiotroph_block
+    curie: "trophic_type:copiotrophy"
+    name: "copiotroph"
+    <<: *biological_process_block
+  tt_copiotroph: *copiotroph_block
+
+  copiotroph_diazotroph: &copiotroph_diazotroph_block
+    curie: "trophic_type:copiotroph_diazotrophy"
+    name: "copiotroph diazotroph"
+    <<: *biological_process_block
+    combo:
+      - *copiotroph_block
+      - *diazotroph_block
+  tt_copiotroph_diazotroph: *copiotroph_diazotroph_block
+
+
+cell_shape:
+  rod_shaped: &rod_shaped_block
+    curie: "cell_shape:rod"
+    name: "rod shaped cell"
+    <<: *phenotypic_quality_block
+  s_rod: *rod_shaped_block
+
+  sphere_shaped: &sphere_shaped_block
+    curie: "cell_shape:sphere"
+    name: "sphere shaped cell"
+    <<: *phenotypic_quality_block
+  s_sphere: *sphere_shaped_block
+
+  coccus_shaped:
+    curie: "cell_shape:coccus"
+    name: "coccus shaped cell"
+    <<: *phenotypic_quality_block
+
+  spiral_shaped:
+    curie: "cell_shape:spiral"
+    name: "spiral shaped cell"
+    <<: *phenotypic_quality_block
+
+  ovoid_shaped: &ovoid_shaped_block
+    curie: "cell_shape:ovoid"
+    name: "ovoid shaped cell"
+    <<: *phenotypic_quality_block
+  s_ovoid: *ovoid_shaped_block
+
+  filament_shaped: &filament_shaped_block
+    curie: "cell_shape:filament"
+    name: "filament shaped cell"
+    <<: *phenotypic_quality_block
+  s_filament: *filament_shaped_block
+
+  oval_shaped:
+    curie: "cell_shape:oval"
+    name: "oval shaped cell"
+    <<: *phenotypic_quality_block
+
+  curved_shaped: &curved_shaped_block
+    curie: "cell_shape:curved"
+    name: "curved shaped cell"
+    <<: *phenotypic_quality_block
+  
+  spiral_shaped: &spiral_shaped_block
+    curie: "cell_shape:spiral"
+    name: "spiral shaped cell"
+    <<: *phenotypic_quality_block
+
+  pleomorphic_shaped: &pleomorphic_shaped_block
+    curie: "cell_shape:pleomorphic"
+    name: "pleomorphic shaped cell"
+    <<: *phenotypic_quality_block
+
+  helical_shaped:
+    curie: "cell_shape:helical"
+    name: "helical shaped cell"
+    <<: *phenotypic_quality_block
+
+  vibrio_shaped:
+    curie: "cell_shape:vibrio"
+    name: "vibrio shaped cell"
+    <<: *phenotypic_quality_block
+
+  crescent_shaped:
+    curie: "cell_shape:crescent"
+    name: "crescent shaped cell"
+    <<: *phenotypic_quality_block
+
+  star_shaped: &star_shaped_block
+    curie: "cell_shape:star"
+    name: "star shaped cell"
+    <<: *phenotypic_quality_block
+
+  spore_shaped:
+    curie: "cell_shape:spore"
+    name: "spore shaped cell"
+    <<: *phenotypic_quality_block
+
+  diplococcus_shaped:
+    curie: "cell_shape:diplococcus"
+    name: "diplococcus shaped cell"
+    <<: *phenotypic_quality_block
+
+  dumbbell_shaped: &dumbbell_shaped_block
+    curie: "cell_shape:dumbbell"
+    name: "dumbbell shaped cell"
+    <<: *phenotypic_quality_block
+
+  ring_shaped:
+    curie: "cell_shape:ring"
+    name: "ring shaped cell"
+    <<: *phenotypic_quality_block
+
+  ellipsoidal:
+    curie: "cell_shape:ellipsoidal"
+    name: "ellipsoidal shaped cell"
+    <<: *phenotypic_quality_block
+
+  curved_spiral_shaped:
+    curie: "cell_shape:curved_spiral"
+    name: "curved spiral shaped cell"
+    <<: *phenotypic_quality_block
+    combo:
+      - *curved_shaped_block
+      - *spiral_shaped_block
+
+  s_star_dumbbell_pleomorphic:
+    curie: "cell_shape:star_dumbbell_pleomorphic"
+    name: "star dumbbell pleomorphic shaped cell"
+    <<: *phenotypic_quality_block
+    combo:
+      - *star_shaped_block
+      - *dumbbell_shaped_block
+      - *pleomorphic_shaped_block
+
+
+gram_stain:
+  gram_positive: &gram_stain_block
+    curie: "gram_stain:positive"
+    name: "gram positive"
+    <<: *phenotypic_quality_block
+  g_positive: *gram_stain_block
+  gram_negative: &gram_negative_block
+    curie: "gram_stain:negative"
+    name: "gram negative"
+    <<: *phenotypic_quality_block
+  g_negative: *gram_negative_block
+  gram_variable:
+    curie: "gram_stain:variable"
+    name: "gram variable"
+    <<: *phenotypic_quality_block
+  gram_indeterminate:
+    curie: "gram_stain:indeterminate"
+    name: "gram indeterminate"
+    <<: *phenotypic_quality_block
+
+production:
+  antibiotic_compound_production:
+    curie: "production:antibiotic_compound"
+    name: "antibiotic compound production"
+    <<: *chemical_production_block
+  alcohol_production:
+    curie: "production:alcohol"
+    name: "alcohol production"
+    <<: *chemical_production_block
+  toxin_production:
+    curie: "production:toxin"
+    name: "toxin production"
+    <<: *chemical_production_block
+  amino_acid_production:
+    curie: "production:amino_acid"
+    name: "amino acid production"
+    <<: *chemical_production_block
+  lactate_production:
+    curie: "production:lactate"
+    name: "lactate production"
+    <<: *chemical_production_block
+  polysaccharide_production:
+    curie: "production:polysaccharide"
+    name: "polysaccharide production"
+    <<: *chemical_production_block
+  methane_production:
+    curie: "production:methane"
+    name: "methane production"
+    <<: *chemical_production_block
+  pigmented:
+    curie: "production:pigmented"
+    name: "pigmented"
+    <<: *chemical_production_block
+
+pathogen:
+  human_pathogen:
+    curie: "pathogen:human"
+    name: "human pathogen"
+    <<: *phenotypic_quality_block
+  animal_pathogen:
+    curie: "pathogen:animal"
+    name: "animal pathogen"
+    <<: *phenotypic_quality_block
+  plant_pathogen:
+    curie: "pathogen:plant"
+    name: "plant pathogen"
+    <<: *phenotypic_quality_block
+
+motility:
+  motile:
+    curie: "motility:motile"
+    name: "motile"
+    <<: *phenotypic_capability_block
+  non_motile:
+    curie: "motility:non_motile"
+    name: "non-motile"
+    <<: *phenotypic_capability_block
+
+sporulation:
+  spore_forming: &spore_forming_block
+    curie: "sporulation:spore_forming"
+    name: "spore forming"
+    <<: *phenotypic_capability_block
+  spore: *spore_forming_block
+  non_spore_forming: &non_spore_forming_block
+    curie: "sporulation:non_spore_forming"
+    name: "non spore forming"
+    <<: *phenotypic_capability_block
+  no_spore: *non_spore_forming_block
+
+gc_content:
+  gc_<=42.65:
+    curie: "gc:low"
+    name: "GC content <= 42.65%"
+    <<: *phenotypic_quality_block
+  gc_42.65_57.0:
+    curie: "gc:mid1"
+    name: "GC content 42.65% - 57.0%"
+    <<: *phenotypic_quality_block
+  gc_57.0_66.3:
+    curie: "gc:mid2"
+    name: "GC content 57.0% - 66.3%"
+    <<: *phenotypic_quality_block
+  gc_>66.3:
+    curie: "gc:high"
+    name: "GC content > 66.3%"
+    <<: *phenotypic_quality_block
+
+pigment:
+  pigment_pink:
+    curie: "pigment:pink"
+    name: "pink pigment"
+    <<: *phenotypic_capability_block
+  pigment_yellow:
+    curie: "pigment:yellow"
+    name: "yellow pigment"
+    <<: *phenotypic_capability_block
+  pigment_brown:
+    curie: "pigment:brown"
+    name: "brown pigment"
+    <<: *phenotypic_capability_block
+  pigment_red:
+    curie: "pigment:red"
+    name: "red pigment"
+    <<: *phenotypic_capability_block
+  pigment_orange:
+    curie: "pigment:orange"
+    name: "orange pigment"
+    <<: *phenotypic_capability_block
+  pigment_green:
+    curie: "pigment:green"
+    name: "green pigment"
+    <<: *phenotypic_capability_block
+  pigment_black:
+    curie: "pigment:black"
+    name: "black pigment"
+    <<: *phenotypic_capability_block
+  pigment_white:
+    curie: "pigment:white"
+    name: "white pigment"
+    <<: *phenotypic_capability_block
+  pigment_cream:
+    curie: "pigment:cream"
+    name: "cream pigment"
+    <<: *phenotypic_capability_block
+  pigment_carotenoid:
+    curie: "pigment:carotenoid"
+    name: "carotenoid pigment"
+    <<: *phenotypic_capability_block
+
+pH_optimal:
+  pho_0_to_6:
+    curie: "pH_opt:low"
+    name: "optimal pH 0 to 6"
+    <<: *phenotypic_quality_block
+  pho_6_to_7:
+    curie: "pH_opt:mid1"
+    name: "optimal pH 6 to 7"
+    <<: *phenotypic_quality_block
+  pho_7_to_8:
+    curie: "pH_opt:mid2"
+    name: "optimal pH 7 to 8"
+    <<: *phenotypic_quality_block
+  pho_8_to_14:
+    curie: "pH_opt:high"
+    name: "optimal pH 8 to 14"
+    <<: *phenotypic_quality_block
+
+pH_range:
+  phr_0_to_4:
+    curie: "pH_range:low"
+    name: "pH range 0 to 4"
+    <<: *phenotypic_quality_block
+  phr_4_to_6:
+    curie: "pH_range:mid1"
+    name: "pH range 4 to 6"
+    <<: *phenotypic_quality_block
+  phr_6_to_7:
+    curie: "pH_range:mid2"
+    name: "pH range 6 to 7"
+    <<: *phenotypic_quality_block
+  phr_7_to_8:
+    curie: "pH_range:mid3"
+    name: "pH range 7 to 8"
+    <<: *phenotypic_quality_block
+  phr_8_to_10:
+    curie: "pH_range:mid4"
+    name: "pH range 8 to 10"
+    <<: *phenotypic_quality_block
+  phr_10_to_14:
+    curie: "pH_range:high"
+    name: "pH range 10 to 14"
+    <<: *phenotypic_quality_block
+
+pH_delta:
+  phd_<=1:
+    curie: "pH_delta:very_low"
+    name: "pH delta <= 1"
+    <<: *phenotypic_quality_block
+  phd_1_to_2:
+    curie: "pH_delta:low"
+    name: "pH delta 1 to 2"
+    <<: *phenotypic_quality_block
+  phd_2_to_3:
+    curie: "pH_delta:mid1"
+    name: "pH delta 2 to 3"
+    <<: *phenotypic_quality_block
+  phd_3_to_4:
+    curie: "pH_delta:mid2"
+    name: "pH delta 3 to 4"
+    <<: *phenotypic_quality_block
+  phd_4_to_5:
+    curie: "pH_delta:mid3"
+    name: "pH delta 4 to 5"
+    <<: *phenotypic_quality_block
+  phd_5_to_9:
+    curie: "pH_delta:high"
+    name: "pH delta 5 to 9"
+    <<: *phenotypic_quality_block
+  
+NaCl_optimal:
+  nao_<=1:
+    curie: "NaCl_opt:very_low"
+    name: "optimal NaCl <= 1%"
+    <<: *phenotypic_quality_block
+  nao_1_to_3:
+    curie: "NaCl_opt:low"
+    name: "optimal NaCl 1% to 3%"
+    <<: *phenotypic_quality_block
+  nao_3_to_8:
+    curie: "NaCl_opt:mid"
+    name: "optimal NaCl 3% to 8%"
+    <<: *phenotypic_quality_block
+  nao_>8:
+    curie: "NaCl_opt:high"
+    name: "optimal NaCl > 8%"
+    <<: *phenotypic_quality_block
+
+NaCl_range:
+  nar_<=1:
+    curie: "NaCl_range:very_low"
+    name: "NaCl range <= 1%"
+    <<: *phenotypic_quality_block
+  nar_1_to_3:
+    curie: "NaCl_range:low"
+    name: "NaCl range 1% to 3%"
+    <<: *phenotypic_quality_block
+  nar_3_to_8:
+    curie: "NaCl_range:mid"
+    name: "NaCl range 3% to 8%"
+    <<: *phenotypic_quality_block
+  nar_>8:
+    curie: "NaCl_range:high"
+    name: "NaCl range > 8%"
+    <<: *phenotypic_quality_block
+
+NaCl_delta:
+  nad_<=1:
+    curie: "NaCl_delta:very_low"
+    name: "NaCl delta <= 1%"
+    <<: *phenotypic_quality_block
+  nad_1_3:
+    curie: "NaCl_delta:low"
+    name: "NaCl delta 1% to 3%"
+    <<: *phenotypic_quality_block
+  nad_3_8:
+    curie: "NaCl_delta:mid"
+    name: "NaCl delta 3% to 8%"
+    <<: *phenotypic_quality_block
+  nad_>8:
+    curie: "NaCl_delta:high"
+    name: "NaCl delta > 8%"
+    <<: *phenotypic_quality_block
+  
+temperature_optimal:
+  to_<=10:
+    curie: "temp_opt:very_low"
+    name: "optimal temperature <= 10 deg C"
+    <<: *phenotypic_quality_block
+  to_10_to_22:
+    curie: "temp_opt:low"
+    name: "optimal temperature 10 deg C to 22 deg C"
+    <<: *phenotypic_quality_block
+  to_22_to_27:
+    curie: "temp_opt:mid1"
+    name: "optimal temperature 22 deg C to 27 deg C"
+    <<: *phenotypic_quality_block
+  to_27_to_30:
+    curie: "temp_opt:mid2"
+    name: "optimal temperature 27 deg C to 30 deg C"
+    <<: *phenotypic_quality_block
+  to_30_to_34:
+    curie: "temp_opt:mid3"
+    name: "optimal temperature 30 deg C to 34 deg C"
+    <<: *phenotypic_quality_block
+  to_34_to_40:
+    curie: "temp_opt:mid4"
+    name: "optimal temperature 34 deg C to 40 deg C"
+    <<: *phenotypic_quality_block
+  to_>40:
+    curie: "temp_opt:high"
+    name: "optimal temperature > 40 deg C"
+    <<: *phenotypic_quality_block
+
+temperature_range:
+  tr_<=10:
+    curie: "temp_range:very_low"
+    name: "temperature range <= 10 deg C"
+    <<: *phenotypic_quality_block
+  tr_10_to_22:
+    curie: "temp_range:low"
+    name: "temperature range 10 deg C to 22 deg C"
+    <<: *phenotypic_quality_block
+  tr_22_to_27:
+    curie: "temp_range:mid1"
+    name: "temperature range 22 deg C to 27 deg C"
+    <<: *phenotypic_quality_block
+  tr_27_to_30:
+    curie: "temp_range:mid2"
+    name: "temperature range 27 deg C to 30 deg C"
+    <<: *phenotypic_quality_block
+  tr_30_to_34:
+    curie: "temp_range:mid3"
+    name: "temperature range 30 deg C to 34 deg C"
+    <<: *phenotypic_quality_block
+  tr_34_to_40:
+    curie: "temp_range:mid4"
+    name: "temperature range 34 deg C to 40 deg C"
+    <<: *phenotypic_quality_block
+  tr_>40:
+    curie: "temp_range:high"
+    name: "temperature range > 40 deg C"
+    <<: *phenotypic_quality_block
+
+temperature_delta:
+  td_<=1:
+    curie: "temp_delta:very_low"
+    name: "temperature delta <= 1 deg C"
+    <<: *phenotypic_quality_block
+  td_1_to_5:
+    curie: "temp_delta:low"
+    name: "temperature delta 1 deg C to 5 deg C"
+    <<: *phenotypic_quality_block
+  td_5_to_10:
+    curie: "temp_delta:mid1"
+    name: "temperature delta 5 deg C to 10 deg C"
+    <<: *phenotypic_quality_block
+  td_10_to_20:
+    curie: "temp_delta:mid2"
+    name: "temperature delta 10 deg C to 20 deg C"
+    <<: *phenotypic_quality_block
+  td_20_to_30:
+    curie: "temp_delta:mid3"
+    name: "temperature delta 20 deg C to 30 deg C"
+    <<: *phenotypic_quality_block
+  td_>30:
+    curie: "temp_delta:high"
+    name: "temperature delta > 30 deg C"
+    <<: *phenotypic_quality_block
+
+cell_width:
+  w_<=0.5:
+    curie: "cell_width:very_low"
+    name: "cell width <= 0.5um"
+    <<: *phenotypic_quality_block
+  w_0.5_to_0.65:
+    curie: "cell_width:low"
+    name: "cell width 0.5um to 0.65um"
+    <<: *phenotypic_quality_block
+  w_0.65_to_0.9:
+    curie: "cell_width:mid"
+    name: "cell width 0.65um to 0.9um"
+    <<: *phenotypic_quality_block
+  w_>0.9:
+    curie: "cell_width:high"
+    name: "cell width > 0.9um"
+    <<: *phenotypic_quality_block
+
+cell_length:
+  l_<=1.3:
+    curie: "cell_length:very_low"
+    name: "cell length <= 1.3um"
+    <<: *phenotypic_quality_block
+  l_1.3_to_2:
+    curie: "cell_length:low"
+    name: "cell length 1.3um to 2um"
+    <<: *phenotypic_quality_block
+  l_2_to_3:
+    curie: "cell_length:mid"
+    name: "cell length 2um to 3um"
+    <<: *phenotypic_quality_block
+  l_>3:
+    curie: "cell_length:high"
+    name: "cell length > 3um"
+    <<: *phenotypic_quality_block
+
+other:
+  antibiotic_resistance:
+    curie: "pathways:antibiotic_resistance"
+    name: "antibiotic resistance"
+    <<: *phenotypic_capability_block

@@ -8,6 +8,14 @@ edge_stats:
       source:
         unknown:
           count: 50357
+    biolink:associated_with:
+      count: 7
+      provided_by:
+        unknown:
+          count: 7
+      source:
+        unknown:
+          count: 7
     biolink:can_be_carried_out_by:
       count: 4423
       provided_by:
@@ -89,13 +97,13 @@ edge_stats:
         unknown:
           count: 154642
     biolink:has_phenotype:
-      count: 150253
+      count: 150279
       provided_by:
         unknown:
-          count: 150253
+          count: 150279
       source:
         unknown:
-          count: 150253
+          count: 150279
     biolink:is_assessed_by:
       count: 112
       provided_by:
@@ -227,6 +235,22 @@ edge_stats:
       source:
         unknown:
           count: 2
+    biolink:BiologicalProcess-biolink:associated_with-biolink:BiologicalProcess:
+      count: 1
+      provided_by:
+        unknown:
+          count: 1
+      source:
+        unknown:
+          count: 1
+    biolink:BiologicalProcess-biolink:associated_with-unknown:
+      count: 1
+      provided_by:
+        unknown:
+          count: 1
+      source:
+        unknown:
+          count: 1
     biolink:BiologicalProcess-biolink:related_to-biolink:BiologicalProcess:
       count: 14104
       provided_by:
@@ -1124,21 +1148,13 @@ edge_stats:
         unknown:
           count: 1069
     biolink:NamedThing-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 5928
+      count: 6804
       provided_by:
         unknown:
-          count: 5928
+          count: 6804
       source:
         unknown:
-          count: 5928
-    biolink:NamedThing-biolink:has_phenotype-unknown:
-      count: 876
-      provided_by:
-        unknown:
-          count: 876
-      source:
-        unknown:
-          count: 876
+          count: 6804
     biolink:NamedThing-biolink:is_assessed_by-biolink:PhenotypicQuality:
       count: 95
       provided_by:
@@ -1940,21 +1956,13 @@ edge_stats:
         unknown:
           count: 11663
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 99563
+      count: 137996
       provided_by:
         unknown:
-          count: 99563
+          count: 137996
       source:
         unknown:
-          count: 99563
-    biolink:OrganismTaxon-biolink:has_phenotype-unknown:
-      count: 38407
-      provided_by:
-        unknown:
-          count: 38407
-      source:
-        unknown:
-          count: 38407
+          count: 137996
     biolink:OrganismTaxon-biolink:location_of-biolink:AnatomicalEntity:
       count: 1759
       provided_by:
@@ -2091,6 +2099,22 @@ edge_stats:
       source:
         unknown:
           count: 50357
+    biolink:PhenotypicQuality-biolink:associated_with-biolink:AbstractEntity:
+      count: 2
+      provided_by:
+        unknown:
+          count: 2
+      source:
+        unknown:
+          count: 2
+    biolink:PhenotypicQuality-biolink:associated_with-biolink:PhenotypicQuality:
+      count: 3
+      provided_by:
+        unknown:
+          count: 3
+      source:
+        unknown:
+          count: 3
     biolink:PhenotypicQuality-biolink:consumes-biolink:ChemicalEntity:
       count: 50
       provided_by:
@@ -2179,6 +2203,22 @@ edge_stats:
       source:
         unknown:
           count: 64
+    unknown-biolink:associated_with-biolink:AbstractEntity:
+      count: 1
+      provided_by:
+        unknown:
+          count: 1
+      source:
+        unknown:
+          count: 1
+    unknown-biolink:associated_with-biolink:PhenotypicQuality:
+      count: 2
+      provided_by:
+        unknown:
+          count: 2
+      source:
+        unknown:
+          count: 2
     unknown-biolink:has_part-biolink:ChemicalEntity:
       count: 18484
       provided_by:
@@ -2229,6 +2269,7 @@ edge_stats:
           count: 1
   predicates:
   - biolink:assesses
+  - biolink:associated_with
   - biolink:can_be_carried_out_by
   - biolink:capable_of
   - biolink:close_match
@@ -2252,7 +2293,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 5459870
+  total_edges: 5459903
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -2405,21 +2446,21 @@ node_stats:
         nodes.tsv:
           count: 55450
     biolink:PhenotypicQuality:
-      count: 543
+      count: 544
       provided_by:
         Graph:
           count: 62
         ec.json:
           count: 64
         nodes.tsv:
-          count: 543
+          count: 544
     unknown:
-      count: 249350
+      count: 249330
       provided_by:
         nodes.tsv:
           count: 5
         unknown:
-          count: 249345
+          count: 249325
   count_by_id_prefixes:
     API_20A: 24
     API_20E: 24
@@ -2465,7 +2506,7 @@ node_stats:
     WD_Entity: 4
     bacdive: 1224
     cell_length: 2
-    cell_shape: 36
+    cell_shape: 38
     cell_width: 2
     debio: 6
     envo: 43
@@ -2477,9 +2518,6 @@ node_stats:
     kegg.compound: 2
     medium: 4715
     motility: 2
-    nacl_delta: 4
-    nacl_opt: 4
-    nacl_range: 4
     owl: 1
     oxygen: 15
     pH_delta: 1
@@ -2488,9 +2526,6 @@ node_stats:
     pathogen: 3
     pathways: 82
     pato: 6
-    ph_delta: 1
-    ph_opt: 4
-    ph_range: 5
     pigment: 10
     po: 1
     production: 8
@@ -2501,7 +2536,7 @@ node_stats:
     temp_opt: 7
     temp_range: 7
     temperature: 4
-    trophic_type: 26
+    trophic_type: 27
     uniprot: 825264
   count_by_id_prefixes_by_category:
     biolink:AbstractEntity:
@@ -2592,21 +2627,21 @@ node_stats:
       API_rID32STR: 23
       API_zym: 5
       EC: 72
+      NaCl_delta: 4
+      NaCl_opt: 4
+      NaCl_range: 4
       cell_length: 2
-      cell_shape: 18
+      cell_shape: 19
       cell_width: 2
       gc: 4
       gram_stain: 3
       motility: 2
-      nacl_delta: 4
-      nacl_opt: 4
-      nacl_range: 4
       oxygen: 9
+      pH_delta: 1
+      pH_opt: 4
+      pH_range: 5
       pathogen: 3
       pathways: 1
-      ph_delta: 1
-      ph_opt: 4
-      ph_range: 5
       pigment: 10
       salinity: 7
       sporulation: 2
@@ -2618,16 +2653,12 @@ node_stats:
       API_50CHas: 30
       API_STA: 20
       FOODON: 1
-      NaCl_delta: 4
-      NaCl_opt: 4
-      NaCl_range: 4
       RHEA: 247836
+      cell_shape: 1
       isolation_source: 5
       kegg.compound: 1
       medium: 1423
-      pH_delta: 1
-      pH_opt: 4
-      pH_range: 5
+      trophic_type: 1
   node_categories:
   - biolink:AbstractEntity
   - biolink:Activity
@@ -2701,9 +2732,6 @@ node_stats:
   - kegg.compound
   - medium
   - motility
-  - nacl_delta
-  - nacl_opt
-  - nacl_range
   - owl
   - oxygen
   - pH_delta
@@ -2712,9 +2740,6 @@ node_stats:
   - pathogen
   - pathways
   - pato
-  - ph_delta
-  - ph_opt
-  - ph_range
   - pigment
   - po
   - production
@@ -2830,14 +2855,14 @@ node_stats:
     - cell_width
     - cell_length
     - temp_opt
-    - ph_range
-    - ph_opt
-    - nacl_range
-    - nacl_delta
+    - pH_range
+    - pH_opt
+    - NaCl_range
+    - NaCl_delta
     - temp_delta
     - pigment
-    - nacl_opt
-    - ph_delta
+    - NaCl_opt
+    - pH_delta
     unknown:
     - API_STA
     - API_50CHas
@@ -2846,12 +2871,8 @@ node_stats:
     - RHEA
     - isolation_source
     - FOODON
-    - pH_opt
-    - pH_range
-    - NaCl_range
-    - NaCl_delta
-    - NaCl_opt
-    - pH_delta
+    - cell_shape
+    - trophic_type
   provided_by:
   - Graph
   - RHEA.json
@@ -2863,4 +2884,4 @@ node_stats:
   - nodes.tsv
   - uniprot.json
   - unknown
-  total_nodes: 1973930
+  total_nodes: 1973911

@@ -136,6 +136,7 @@ data/raw/uniprot_genome_features/*
 data/raw/bacdive/*.csv
 data/raw/archaea/*
 data/raw/bacteria/*
+data/raw/data/*
 
 
 !data/raw/.keep

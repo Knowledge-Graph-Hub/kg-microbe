@@ -327,10 +327,10 @@ ROBOT_EXTRACT_SUFFIX = "_extract_subset"
 EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 
 # Uniprot
-ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
+# ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
 ENZYME_CATEGORY = "biolink:Enzyme"
-CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"
-UNIPROT_GENOME_FEATURES = "uniprot_genome_features"
+CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
+UNIPROT_GENOME_FEATURES = "uniprot"
 UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/"
 UNIPROT_FIELDS = ["organism_id", "id", "accession", "protein_name", "ec", "ft_binding"]
 UNIPROT_KEYWORDS = ["Reference+proteome"]
@@ -341,6 +341,12 @@ UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
+PROTEIN_TO_GO_EDGE = "biolink:participates_in"
+ORGANISM_TO_PROTEOME_EDGE = "biolink:has_biological_sequence"
+PROTEIN_TO_PROTEOME_EDGE = "biolink:derives_from"
+PROTEOME_CATEGORY = "biolink:Genome"
+PROTEIN_TO_EC_EDGE = "biolink:participates_in"
+EC_CATEGORY = "biolink:Enzyme"
 UNIPROT_PREFIX = "uniprot"
 
 PROTEOME_ID_COLUMN = "proteome_id"
@@ -351,8 +357,6 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
-
-
 DO_NOT_CHANGE_PREFIXES = [
     NCBITAXON_PREFIX,
     CAS_RN_PREFIX,

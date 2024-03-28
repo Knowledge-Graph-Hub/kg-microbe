@@ -252,13 +252,14 @@ trophic_type:
     name: "copiotroph"
     <<: *biological_process_block
   tt_copiotroph: *copiotroph_block
-  # TODO: 
-      # - *copiotroph_block.curie
-      # - *diazotroph_block.curie
+
   copiotroph_diazotroph: &copiotroph_diazotroph_block
     curie: "trophic_type:copiotroph_diazotrophy"
     name: "copiotroph diazotroph"
     <<: *biological_process_block
+    combo:
+      - *copiotroph_block
+      - *diazotroph_block
   tt_copiotroph_diazotroph: *copiotroph_diazotroph_block
 
 
@@ -312,7 +313,7 @@ cell_shape:
     name: "spiral shaped cell"
     <<: *phenotypic_quality_block
 
-  pleomorphic_shaped:
+  pleomorphic_shaped: &pleomorphic_shaped_block
     curie: "cell_shape:pleomorphic"
     name: "pleomorphic shaped cell"
     <<: *phenotypic_quality_block
@@ -332,7 +333,7 @@ cell_shape:
     name: "crescent shaped cell"
     <<: *phenotypic_quality_block
 
-  star_shaped:
+  star_shaped: &star_shaped_block
     curie: "cell_shape:star"
     name: "star shaped cell"
     <<: *phenotypic_quality_block
@@ -347,7 +348,7 @@ cell_shape:
     name: "diplococcus shaped cell"
     <<: *phenotypic_quality_block
 
-  dumbbell_shaped:
+  dumbbell_shaped: &dumbbell_shaped_block
     curie: "cell_shape:dumbbell"
     name: "dumbbell shaped cell"
     <<: *phenotypic_quality_block
@@ -361,22 +362,23 @@ cell_shape:
     curie: "cell_shape:ellipsoidal"
     name: "ellipsoidal shaped cell"
     <<: *phenotypic_quality_block
-  # TODO
-    #  - *curved_shaped_block.curie
-    #  - *spiral_shaped_block.curie
+
   curved_spiral_shaped:
     curie: "cell_shape:curved_spiral"
     name: "curved spiral shaped cell"
     <<: *phenotypic_quality_block
+    combo:
+      - *curved_shaped_block
+      - *spiral_shaped_block
 
-  # TODO
-    #  - *star_shaped.curie
-    #  - *dumbbell_shaped.curie
-    #  - *pleomorphic_shaped.curie
-  S_star_dumbbell_pleomorphic:
+  s_star_dumbbell_pleomorphic:
     curie: "cell_shape:star_dumbbell_pleomorphic"
     name: "star dumbbell pleomorphic shaped cell"
     <<: *phenotypic_quality_block
+    combo:
+      - *star_shaped_block
+      - *dumbbell_shaped_block
+      - *pleomorphic_shaped_block
 
 
 gram_stain:
@@ -656,87 +658,87 @@ NaCl_delta:
 temperature_optimal:
   to_<=10:
     curie: "temp_opt:very_low"
-    name: "optimal temperature <= 10°C"
+    name: "optimal temperature <= 10 deg C"
     <<: *phenotypic_quality_block
   to_10_to_22:
     curie: "temp_opt:low"
-    name: "optimal temperature 10°C to 22°C"
+    name: "optimal temperature 10 deg C to 22 deg C"
     <<: *phenotypic_quality_block
   to_22_to_27:
     curie: "temp_opt:mid1"
-    name: "optimal temperature 22°C to 27°C"
+    name: "optimal temperature 22 deg C to 27 deg C"
     <<: *phenotypic_quality_block
   to_27_to_30:
     curie: "temp_opt:mid2"
-    name: "optimal temperature 27°C to 30°C"
+    name: "optimal temperature 27 deg C to 30 deg C"
     <<: *phenotypic_quality_block
   to_30_to_34:
     curie: "temp_opt:mid3"
-    name: "optimal temperature 30°C to 34°C"
+    name: "optimal temperature 30 deg C to 34 deg C"
     <<: *phenotypic_quality_block
   to_34_to_40:
     curie: "temp_opt:mid4"
-    name: "optimal temperature 34°C to 40°C"
+    name: "optimal temperature 34 deg C to 40 deg C"
     <<: *phenotypic_quality_block
   to_>40:
     curie: "temp_opt:high"
-    name: "optimal temperature > 40°C"
+    name: "optimal temperature > 40 deg C"
     <<: *phenotypic_quality_block
 
 temperature_range:
   tr_<=10:
     curie: "temp_range:very_low"
-    name: "temperature range <= 10°C"
+    name: "temperature range <= 10 deg C"
     <<: *phenotypic_quality_block
   tr_10_to_22:
     curie: "temp_range:low"
-    name: "temperature range 10°C to 22°C"
+    name: "temperature range 10 deg C to 22 deg C"
     <<: *phenotypic_quality_block
   tr_22_to_27:
     curie: "temp_range:mid1"
-    name: "temperature range 22°C to 27°C"
+    name: "temperature range 22 deg C to 27 deg C"
     <<: *phenotypic_quality_block
   tr_27_to_30:
     curie: "temp_range:mid2"
-    name: "temperature range 27°C to 30°C"
+    name: "temperature range 27 deg C to 30 deg C"
     <<: *phenotypic_quality_block
   tr_30_to_34:
     curie: "temp_range:mid3"
-    name: "temperature range 30°C to 34°C"
+    name: "temperature range 30 deg C to 34 deg C"
     <<: *phenotypic_quality_block
   tr_34_to_40:
     curie: "temp_range:mid4"
-    name: "temperature range 34°C to 40°C"
+    name: "temperature range 34 deg C to 40 deg C"
     <<: *phenotypic_quality_block
   tr_>40:
     curie: "temp_range:high"
-    name: "temperature range > 40°C"
+    name: "temperature range > 40 deg C"
     <<: *phenotypic_quality_block
 
 temperature_delta:
   td_<=1:
     curie: "temp_delta:very_low"
-    name: "temperature delta <= 1°C"
+    name: "temperature delta <= 1 deg C"
     <<: *phenotypic_quality_block
   td_1_to_5:
     curie: "temp_delta:low"
-    name: "temperature delta 1°C to 5°C"
+    name: "temperature delta 1 deg C to 5 deg C"
     <<: *phenotypic_quality_block
   td_5_to_10:
     curie: "temp_delta:mid1"
-    name: "temperature delta 5°C to 10°C"
+    name: "temperature delta 5 deg C to 10 deg C"
     <<: *phenotypic_quality_block
   td_10_to_20:
     curie: "temp_delta:mid2"
-    name: "temperature delta 10°C to 20°C"
+    name: "temperature delta 10 deg C to 20 deg C"
     <<: *phenotypic_quality_block
   td_20_to_30:
     curie: "temp_delta:mid3"
-    name: "temperature delta 20°C to 30°C"
+    name: "temperature delta 20 deg C to 30 deg C"
     <<: *phenotypic_quality_block
   td_>30:
     curie: "temp_delta:high"
-    name: "temperature delta > 30°C"
+    name: "temperature delta > 30 deg C"
     <<: *phenotypic_quality_block
 
 cell_width:

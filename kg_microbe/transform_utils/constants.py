@@ -183,6 +183,7 @@ HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
+ASSOCIATED_WITH = "PATO:0001668"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -277,6 +278,7 @@ GO_CATEGORY = "biolink:BiologicalProcess"
 RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
+ASSOCIATED_WITH_PREDICATE = "biolink:associated_with"
 PREDICATE_ID_COLUMN = "predicate_id"
 PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {
@@ -402,3 +404,4 @@ UNIPROT_TREMBL_COLUMNS = [
 
 
 # BactoTraits
+COMBO_KEY = "combo"

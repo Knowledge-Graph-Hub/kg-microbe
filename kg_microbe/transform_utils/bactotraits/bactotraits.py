@@ -10,6 +10,8 @@ from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    ASSOCIATED_WITH,
+    ASSOCIATED_WITH_PREDICATE,
     BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
@@ -17,6 +19,7 @@ from kg_microbe.transform_utils.constants import (
     BACTOTRAITS_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
+    COMBO_KEY,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
@@ -241,6 +244,18 @@ class BactoTraitsTransform(Transform):
                 for first_level_value in custom_curie_data.values()
                 for second_level_key, nested_data in first_level_value.items()
             }
+            combo_curie_map = {
+                key: value for key, value in custom_curie_map.items() if COMBO_KEY in value
+            }
+            unique_combo_edge_data = [
+                (
+                    v[CURIE_COLUMN], ASSOCIATED_WITH_PREDICATE, inner_curie_map[CURIE_COLUMN], ASSOCIATED_WITH, "BactoTraits.csv"
+                )
+                for _, v in combo_curie_map.items()
+                for inner_curie_map in v[COMBO_KEY]
+            ]
+            combo_edge_data = [list(edge) for edge in unique_combo_edge_data]
+
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class() as progress:
                 for i, row in enumerate(reader):
@@ -277,39 +292,44 @@ class BactoTraitsTransform(Transform):
                                 for _, value in nodes_from_custom_curie_map.items()
                                 if value[CURIE_COLUMN]
                             ]
-                            nodes_data_to_write.append(
-                                [
-                                    ncbitaxon_id,
-                                    NCBI_CATEGORY,
-                                    get_label(self.ncbi_impl, ncbitaxon_id),
-                                ]
-                            )
+                            if ncbitaxon_id:
+                                ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
+                                if ncbi_label:
+                                    ncbi_label = str(ncbi_label).strip()
+                                nodes_data_to_write.append(
+                                    [
+                                        ncbitaxon_id,
+                                        NCBI_CATEGORY,
+                                        ncbi_label,
+                                    ]
+                                )
                             nodes_data_to_write = [
                                 sublist + [None] * 11 for sublist in nodes_data_to_write
                             ]
+
                             node_writer.writerows(nodes_data_to_write)
-
                             # Create edges from this row
-                            edges_data_to_write = [
-                                [
-                                    ncbitaxon_id,
-                                    value[PREDICATE_COLUMN],
-                                    value[CURIE_COLUMN],
-                                    (
-                                        BIOLOGICAL_PROCESS
-                                        if value[PREDICATE_COLUMN] == NCBI_TO_PATHWAY_EDGE
-                                        else HAS_PHENOTYPE
-                                    ),
-                                    "BactoTraits.csv",
+                            if ncbitaxon_id:
+                                edges_data_to_write = [
+                                    [
+                                        ncbitaxon_id,
+                                        value[PREDICATE_COLUMN],
+                                        value[CURIE_COLUMN],
+                                        (
+                                            BIOLOGICAL_PROCESS
+                                            if value[PREDICATE_COLUMN] == NCBI_TO_PATHWAY_EDGE
+                                            else HAS_PHENOTYPE
+                                        ),
+                                        "BactoTraits.csv",
+                                    ]
+                                    for _, value in nodes_from_custom_curie_map.items()
+                                    if value[CURIE_COLUMN]
                                 ]
-                                for _, value in nodes_from_custom_curie_map.items()
-                                if value[CURIE_COLUMN]
-                            ]
-
-                            edge_writer.writerows(edges_data_to_write)
+                                edge_writer.writerows(edges_data_to_write)
 
                     progress.set_description(f"Processing line #{i}")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update(1)
-            drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
-            drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
+                edge_writer.writerows(combo_edge_data)
+        drop_duplicates(self.output_node_file)
+        drop_duplicates(self.output_edge_file)

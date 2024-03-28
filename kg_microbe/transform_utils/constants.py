@@ -339,7 +339,6 @@ UNIPROT_SIZE = 500
 ORGANISM_ID_MIXED_CASE = "Organism_ID"
 UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
-TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
 UNIPROT_PREFIX = "uniprot"
 
@@ -391,15 +390,19 @@ RHEA_PREDICATE_MAPPER = {
 }
 
 # Columns desired for the Uniprot data (from .dat files)
+TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
+COMMENT_COLUMN = "comments"
+CROSS_REFERENCES_COLUMN = "cross_references"
+DATA_CLASS_COLUMN = "data_class"
+
 UNIPROT_TREMBL_COLUMNS = [
-    "taxonomy_id",
-    "entry_name",
-    "accessions",
-    "description",
-    "comments",
-    "cross_references",
-    "proteome_id",
-    "data_class",
+    TAXONOMY_ID_UNIPROT_COLUMN,
+    ACCESSIONS_KEY,
+    GENERAL_DESCRIPTION,
+    COMMENT_COLUMN,
+    CROSS_REFERENCES_COLUMN,
+    PROTEOME_ID_COLUMN,
+    DATA_CLASS_COLUMN,
 ]
 
 

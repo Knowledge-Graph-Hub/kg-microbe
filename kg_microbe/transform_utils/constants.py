@@ -2,16 +2,26 @@
 
 from pathlib import Path
 
-BACDIVE_DIR = Path(__file__).parent / "bacdive"
+TRANSFORM_UTILS_DIR = Path(__file__).parent
+BACDIVE_DIR = TRANSFORM_UTILS_DIR / "bacdive"
 BACDIVE_TMP_DIR = BACDIVE_DIR / "tmp"
 BACDIVE_YAML_DIR = BACDIVE_TMP_DIR / "yaml"
-MEDIADIVE_DIR = Path(__file__).parent / "mediadive"
+MEDIADIVE_DIR = TRANSFORM_UTILS_DIR / "mediadive"
 MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
-TRAITS_DIR = Path(__file__).parent / "traits"
+TRAITS_DIR = TRANSFORM_UTILS_DIR / "traits"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
-
+RHEA_DIR: Path = TRANSFORM_UTILS_DIR / "rhea"
+RHEA_TMP_DIR = RHEA_DIR / "tmp"
+BACTOTRAITS_DIR = TRANSFORM_UTILS_DIR / "bactotraits"
+BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
+UNIPROT_TREMBL_DIR = TRANSFORM_UTILS_DIR / "uniprot_trembl"
+UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
+ONTOLOGY_DIR = TRANSFORM_UTILS_DIR / "ontology"
+ONTOLOGY_XREFS_DIR = ONTOLOGY_DIR / "xrefs"
+CHEBI_XREFS_FILEPATH = ONTOLOGY_XREFS_DIR / "chebi_xrefs.tsv"
+CUSTOM_CURIES_YAML_FILE = TRANSFORM_UTILS_DIR / "custom_curies.yaml"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -85,6 +95,9 @@ PUBCHEM_KEY = "PubChem"
 ACTUAL_TERM_KEY = "ActualTerm"
 PREFERRED_TERM_KEY = "PreferredTerm"
 
+ACCESSIONS_KEY = "accessions"
+FILENAME_KEY = "file_name"
+
 EXTERNAL_LINKS = "External links"
 EXTERNAL_LINKS_CULTURE_NUMBER = "culture collection no."
 REF = "Reference"
@@ -93,8 +106,8 @@ BACDIVE_PREFIX = "bacdive:"
 CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
-ECOCORE_PREFIX = "ECOCORE:"
 UBERON_PREFIX = "UBERON:"
+RO_PREFIX = "RO:"
 MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
 MEDIADIVE_SOLUTION_PREFIX = "solution:"
 MEDIADIVE_MEDIUM_PREFIX = "medium:"
@@ -104,7 +117,13 @@ SHAPE_PREFIX = "cell_shape:"
 PATHWAY_PREFIX = "pathways:"
 CARBON_SUBSTRATE_PREFIX = "carbon_substrates:"
 ISOLATION_SOURCE_PREFIX = "isolation_source:"
-
+RHEA_OLD_PREFIX = "OBO:rhea_"
+RHEA_NEW_PREFIX = "RHEA:"
+RHEA_URI = "http://purl.obolibrary.org/obo/rhea_"
+DEBIO_OBO_PREFIX = "OBO:debio_"
+DEBIO_NEW_PREFIX = "debio:"
+DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
+RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
 
@@ -126,13 +145,15 @@ NCBI_TO_METABOLISM_EDGE = "biolink:capable_of"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
 NCBI_TO_METABOLITE_UTILIZATION_EDGE = "biolink:consumes"  # [org -> metabolite_utilization]
-NCBI_TO_ENZYME_EDGE = "biolink:has_phenotype"  # [org -> enzyme]
+NCBI_TO_ENZYME_EDGE = "biolink:capable_of"  # [org -> enzyme]
 ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay]
 NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
 ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
+RHEA_TO_EC_EDGE = "biolink:close_match"
+RHEA_TO_GO_EDGE = "biolink:close_match"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -161,6 +182,8 @@ HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
+CLOSE_MATCH = "skos:closeMatch"
+ASSOCIATED_WITH = "PATO:0001668"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -210,6 +233,10 @@ METABOLITE_KEY = "metabolite"
 PRODUCTION_KEY = "production"
 EC_PREFIX = "EC:"
 EC_KEY = "ec"
+EC_PYOBO_PREFIX = "eccode"
+EC_OBO_PREFIX = "OBO:eccode_"
+UNIPROT_OBO_PREFIX = "OBO:uniprot_"
+CHEBI_CAS_PREFIX = "CAS:"
 ACTIVITY_KEY = "activity"
 UTILIZATION_TYPE_TESTED = "kind of utilization tested"
 UTILIZATION_ACTIVITY = "utilization activity"
@@ -221,6 +248,7 @@ BACDIVE_MAPPING_CAS_RN_ID = "CAS_RN_ID"
 BACDIVE_MAPPING_EC_ID = "EC_ID"
 BACDIVE_MAPPING_ENZYME_LABEL = "enzyme"
 BACDIVE_MAPPING_SUBSTRATE_LABEL = "substrate"
+BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN = "culture_collection_number"
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"
 MEDIADIVE_COMPLEX_MEDIUM_COLUMN = "complex_medium"
@@ -230,6 +258,40 @@ MEDIADIVE_MIN_PH_COLUMN = "min_pH"
 MEDIADIVE_MAX_PH_COLUMN = "max_pH"
 MEDIADIVE_REF_COLUMN = "reference"
 MEDIADIVE_DESC_COLUMN = "description"
+
+RHEA_ID_COLUMN = "id"
+RHEA_NAME_COLUMN = "name"
+RHEA_DIRECTION_COLUMN = "direction"
+RHEA_MAPPING_ID_COLUMN = "RHEA_ID"
+RHEA_MASTER_ID_COLUMN = "MASTER_ID"
+RHEA_MAPPING_OBJECT_COLUMN = "ID"
+RHEA_TARGET_ID_COLUMN = "target_id"
+RHEA_SUBJECT_ID_COLUMN = "subject_id"
+RHEA_UNDEFINED_DIRECTION = "undefined"
+RHEA_BIDIRECTIONAL_DIRECTION = "bidirectional"
+RHEA_LEFT_TO_RIGHT_DIRECTION = "left-to-right"
+RHEA_RIGHT_TO_LEFT_DIRECTION = "right-to-left"
+RHEA_CATEGORY_COLUMN = "category"
+RHEA_CATEGORY = "biolink:MolecularActivity"
+EC_CATEGORY = "biolink:MolecularActivity"
+GO_CATEGORY = "biolink:BiologicalProcess"
+RDFS_SUBCLASS_OF = "rdfs:subClassOf"
+SUBCLASS_PREDICATE = "biolink:subclass_of"
+SUPERCLASS_PREDICATE = "biolink:superclass_of"
+ASSOCIATED_WITH_PREDICATE = "biolink:associated_with"
+PREDICATE_ID_COLUMN = "predicate_id"
+PREDICATE_LABEL_COLUMN = "predicate_label"
+DEBIO_MAPPER = {
+    RHEA_LEFT_TO_RIGHT_DIRECTION: "debio:0000007",
+    RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",
+    RHEA_BIDIRECTIONAL_DIRECTION: "debio:0000009",
+}
+DEBIO_PREDICATE_MAPPER = {
+    RHEA_LEFT_TO_RIGHT_DIRECTION: "biolink:is_input_of",
+    RHEA_RIGHT_TO_LEFT_DIRECTION: "biolink:is_output_of",
+    RHEA_BIDIRECTIONAL_DIRECTION: "biolink:participates_in",
+}
+RHEA_DIRECTION_CATEGORY = "biolink:Activity"
 
 # Traits
 TAX_ID_COLUMN = "tax_id"
@@ -277,14 +339,23 @@ UNIPROT_SIZE = 500
 ORGANISM_ID_MIXED_CASE = "Organism_ID"
 UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
+TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
 UNIPROT_REVIEWED_FLAG = "reviewed:true+"
-UNIPROT_PREFIX = "Uniprot"
 PROTEIN_TO_GO_EDGE = "biolink:participates_in"
 ORGANISM_TO_PROTEOME_EDGE = "biolink:has_biological_sequence"
 PROTEIN_TO_PROTEOME_EDGE = "biolink:derives_from"
 PROTEOME_CATEGORY = "biolink:Genome"
 PROTEIN_TO_EC_EDGE = "biolink:participates_in"
 EC_CATEGORY = "biolink:Enzyme"
+UNIPROT_PREFIX = "uniprot"
+
+PROTEOME_ID_COLUMN = "proteome_id"
+PROTEOME_PREFIX = "Proteomes:"
+UNIPROT_DATA_LIST = [
+    "archaea",
+    "bacteria",
+]
+
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
 DO_NOT_CHANGE_PREFIXES = [
     NCBITAXON_PREFIX,
@@ -293,8 +364,48 @@ DO_NOT_CHANGE_PREFIXES = [
     PUBCHEM_PREFIX,
     GO_PREFIX,
     KEGG_PREFIX,
-    ECOCORE_PREFIX,
     EC_PREFIX,
     UBERON_PREFIX,
     "API_",
+    RHEA_NEW_PREFIX,
+    GO_PREFIX,
 ]
+
+# Create a mapping for special cases
+SPECIAL_PREFIXES = {
+    EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
+    EC_OBO_PREFIX: EC_PREFIX,
+    RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
+    RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
+    UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",
+    DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
+    CHEBI_CAS_PREFIX: CAS_RN_PREFIX,
+}
+HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
+ENABLED_BY_PREDICATE = "biolink:enabled_by"
+HAS_INPUT_PREDICATE = "biolink:has_input"
+HAS_OUTPUT_PREDICATE = "biolink:has_output"
+CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by"
+RHEA_PREDICATE_MAPPER = {
+    "has participant": HAS_PARTICIPANT_PREDICATE,
+    "enabled by": ENABLED_BY_PREDICATE,
+    "reaction enabled by molecular function": CAN_BE_CARRIED_OUT_BY_PREDICATE,
+    "has input": HAS_INPUT_PREDICATE,
+    "has output": HAS_OUTPUT_PREDICATE,
+}
+
+# Columns desired for the Uniprot data (from .dat files)
+UNIPROT_TREMBL_COLUMNS = [
+    "taxonomy_id",
+    "entry_name",
+    "accessions",
+    "description",
+    "comments",
+    "cross_references",
+    "proteome_id",
+    "data_class",
+]
+
+
+# BactoTraits
+COMBO_KEY = "combo"

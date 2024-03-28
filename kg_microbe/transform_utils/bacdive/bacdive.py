@@ -31,7 +31,6 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
-    BACDIVE_DIR,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -55,6 +54,7 @@ from kg_microbe.transform_utils.constants import (
     CULTURE_MEDIUM,
     CULTURE_NAME,
     CURIE_COLUMN,
+    CUSTOM_CURIES_YAML_FILE,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
     EC_KEY,
@@ -139,6 +139,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
@@ -155,12 +156,6 @@ class BacDiveTransform(Transform):
         source_name = "BacDive"
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
-
-    def _get_label_via_oak(self, curie: str):
-        prefix = curie.split(":")[0]
-        if prefix.startswith("NCBI"):
-            (_, label) = list(self.ncbi_impl.labels([curie]))[0]
-        return label
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -259,7 +254,7 @@ class BacDiveTransform(Transform):
             open(str(BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE), "r") as tsvfile_3,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
-            open(str(BACDIVE_DIR / "keywords.yaml"), "r") as keywords_file,
+            open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
         ):
             writer = csv.writer(tsvfile_1, delimiter="\t")
             # Write the column names to the output file
@@ -274,7 +269,7 @@ class BacDiveTransform(Transform):
             self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
-            keyword_data = yaml.safe_load(keywords_file)
+            custom_curie_data = yaml.safe_load(cc_file)
             bacdive_mappings_list_of_dicts = list(csv.DictReader(tsvfile_3, delimiter="\t"))
 
             # ! BacDive Mapping file processing.
@@ -342,7 +337,7 @@ class BacDiveTransform(Transform):
 
             keyword_map = {
                 second_level_key: nested_data
-                for first_level_value in keyword_data.values()
+                for first_level_value in custom_curie_data.values()
                 for second_level_key, nested_data in first_level_value.items()
             }
 
@@ -502,7 +497,7 @@ class BacDiveTransform(Transform):
                             )
 
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
-                        ncbi_label = self._get_label_via_oak(ncbitaxon_id)
+                        ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                         if ncbi_label is None:
                             ncbi_label = ncbi_description
 
@@ -622,8 +617,8 @@ class BacDiveTransform(Transform):
 
                     if ncbitaxon_id and nodes_from_keywords:
                         nodes_data_to_write = [
-                            [value[CURIE_COLUMN], value[CATEGORY_COLUMN], key]
-                            for key, value in nodes_from_keywords.items()
+                            [value[CURIE_COLUMN], value[CATEGORY_COLUMN], value[NAME_COLUMN]]
+                            for _, value in nodes_from_keywords.items()
                         ]
                         nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
                         nodes_data_to_write = [

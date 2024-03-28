@@ -1,7 +1,9 @@
 """Ontology transform module."""
 
 import gzip
+import re
 import shutil
+from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
 
@@ -9,9 +11,12 @@ from typing import Optional, Union
 from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
+    CHEBI_XREFS_FILEPATH,
     EXCLUSION_TERMS_FILE,
     NCBITAXON_PREFIX,
+    ONTOLOGY_XREFS_DIR,
     ROBOT_REMOVED_SUFFIX,
+    SPECIAL_PREFIXES,
 )
 from kg_microbe.utils.robot_utils import (
     convert_to_json,
@@ -27,7 +32,9 @@ ONTOLOGIES = {
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
     "go": "go.json",
-    "rhea": "rhea.json",
+    "rhea": "rhea.json.gz",
+    "ec": "ec.json",
+    "uniprot": "uniprot.json.gz",
 }
 
 
@@ -99,12 +106,20 @@ class OntologyTransform(Transform):
 
             data_file = json_path
 
+        elif data_file.suffixes == [".json", ".gz"]:
+            json_path = str(data_file).replace(".json.gz", ".json")
+            if not Path(json_path).is_file():
+                self.decompress(data_file)
+            data_file = json_path
+
         transform(
             inputs=[data_file],
             input_format="obojson",
             output=self.output_dir / name,
             output_format="tsv",
         )
+        if name in ["ec", "rhea", "uniprot", "chebi"]:
+            self.post_process(name)
 
     def decompress(self, data_file):
         """Unzip file."""
@@ -112,3 +127,58 @@ class OntologyTransform(Transform):
         with gzip.open(data_file, "rb") as f_in:
             with open(data_file.parent / data_file.stem, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
+
+    def post_process(self, name: str):
+        """Post process specific nodes and edges files."""
+        nodes_file = self.output_dir / f"{name}_nodes.tsv"
+        edges_file = self.output_dir / f"{name}_edges.tsv"
+
+        # Compile a regex pattern that matches any key in SPECIAL_PREFIXES
+        pattern = re.compile("|".join(re.escape(key) for key in SPECIAL_PREFIXES.keys()))
+
+        def _replace_special_prefixes(line):
+            """Use the pattern to replace all occurrences of the keys with their values."""
+            return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
+
+        if name == "chebi":
+            makedirs(ONTOLOGY_XREFS_DIR, exist_ok=True)
+            # Get two columns from the nodes file: 'id' and 'xref'
+            # The xref column is | separated and contains different prefixes
+            # We need to make a 1-to-1 mapping between the prefixes and the id
+            with open(nodes_file, "r") as nf, open(CHEBI_XREFS_FILEPATH, "w") as xref_file:
+
+                for line in nf:
+                    if line.startswith("id"):
+                        # get the index for the term 'xref'
+                        xref_index = line.strip().split("\t").index("xref")
+                        xref_file.write("id\txref\n")
+                        continue
+                    line = _replace_special_prefixes(line)
+                    parts = line.strip().split("\t")
+                    subject = parts[0]
+                    xrefs = parts[xref_index].split("|") if parts[xref_index] != "" else None
+                    if xrefs and subject not in xrefs:
+                        for xref in xrefs:
+                            # Write a new tsv file with header ["id", "xref"]
+                            xref_file.write(f"{subject}\t{xref}\n")
+
+        else:
+            # Process and write the nodes file
+            with open(nodes_file, "r") as nf, open(
+                nodes_file.with_suffix(".temp.tsv"), "w"
+            ) as new_nf:
+                for line in nf:
+                    new_nf.write(_replace_special_prefixes(line))
+
+            # Replace the original file with the modified one
+            nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
+
+            # Process and write the edges file
+            with open(edges_file, "r") as ef, open(
+                edges_file.with_suffix(".temp.tsv"), "w"
+            ) as new_ef:
+                for line in ef:
+                    new_ef.write(_replace_special_prefixes(line))
+
+            # Replace the original file with the modified one
+            edges_file.with_suffix(".temp.tsv").replace(edges_file)

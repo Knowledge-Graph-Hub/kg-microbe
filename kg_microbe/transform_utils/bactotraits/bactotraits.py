@@ -23,12 +23,10 @@ from kg_microbe.transform_utils.constants import (
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
-    ID_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
-    OBJECT_ID_COLUMN,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
@@ -249,7 +247,11 @@ class BactoTraitsTransform(Transform):
             }
             unique_combo_edge_data = [
                 (
-                    v[CURIE_COLUMN], ASSOCIATED_WITH_PREDICATE, inner_curie_map[CURIE_COLUMN], ASSOCIATED_WITH, "BactoTraits.csv"
+                    v[CURIE_COLUMN],
+                    ASSOCIATED_WITH_PREDICATE,
+                    inner_curie_map[CURIE_COLUMN],
+                    ASSOCIATED_WITH,
+                    "BactoTraits.csv",
                 )
                 for _, v in combo_curie_map.items()
                 for inner_curie_map in v[COMBO_KEY]

@@ -327,7 +327,7 @@ ROBOT_EXTRACT_SUFFIX = "_extract_subset"
 EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 
 # Uniprot
-#ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
+# ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
 ENZYME_CATEGORY = "biolink:Enzyme"
 CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
 UNIPROT_GENOME_FEATURES = "uniprot"

@@ -1,27 +1,26 @@
 """Uniprot Transonform class."""
 
 import csv
-import json
 import os
 import re
 import sys
 from pathlib import Path
 from typing import Optional, Union
-import pandas as pd
 
+import pandas as pd
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_TO_PROTEIN_EDGE,
-    PROTEIN_TO_EC_EDGE,
     EC_CATEGORY,
     EC_PREFIX,
     ENZYME_CATEGORY,
-    PROTEIN_TO_GO_EDGE,
     NCBITAXON_PREFIX,
+    ORGANISM_TO_PROTEOME_EDGE,
+    PROTEIN_TO_EC_EDGE,
+    PROTEIN_TO_GO_EDGE,
     PROTEIN_TO_PROTEOME_EDGE,
     PROTEOME_CATEGORY,
-    ORGANISM_TO_PROTEOME_EDGE,
     UNIPROT_GENOME_FEATURES,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
@@ -61,7 +60,7 @@ class UniprotTransform(Transform):
         # Get all organisms downloaded into raw directory
         ncbi_organisms = []
         for f in os.listdir(input_dir):
-            #if f.endswith(".json"):
+            # if f.endswith(".json"):
             if f.endswith(".tsv"):
                 ncbi_organisms.append(f.split(".tsv")[0])
 
@@ -111,7 +110,7 @@ class UniprotTransform(Transform):
 
                 else:
                     df = pd.read_csv(org_file, sep="\t", low_memory=False)
-                    #Remove headers from df file based on first column name
+                    # Remove headers from df file based on first column name
                     df = df[df[df.columns[0]] != df.columns[0]]
                     self.write_to_df(df, edge_writer, node_writer)
 
@@ -136,7 +135,7 @@ class UniprotTransform(Transform):
 
         return chem_list
 
-    def parse_go_entry(self,go_entry):
+    def parse_go_entry(self, go_entry):
         """
         Extract chemical identifiers from a binding site entry.
 
@@ -149,7 +148,7 @@ class UniprotTransform(Transform):
         :return: A list of ChEBI ligand identifiers extracted from the binding site entry.
         :rtype: list
         """
-        go_list = re.findall("\[(.*?)\]", go_entry)
+        go_list = re.findall(r"\[(.*?)\]", go_entry)
         go_list = [i for i in go_list if "GO" in i]
 
         return go_list
@@ -174,7 +173,7 @@ class UniprotTransform(Transform):
         ##To return all organism-enzyme entries
         for i in range(len(uniprot_df)):
             entry = uniprot_df.iloc[i]
-            #Drop columns that do not have an entry
+            # Drop columns that do not have an entry
             entry = entry.dropna()
             organism_id = (
                 entry[UNIPROT_ORG_ID_COLUMN_NAME]
@@ -220,7 +219,7 @@ class UniprotTransform(Transform):
             chem_list = []
             if "Binding site" in entry:
                 chem_list = self.parse_binding_site(entry["Binding site"])
-            
+
             go_list = []
             if "Gene Ontology (GO)" in entry:
                 go_list = self.parse_go_entry(entry["Gene Ontology (GO)"])
@@ -230,8 +229,8 @@ class UniprotTransform(Transform):
 
             if organism_id:
 
-                #Only for metagenome sample
-                '''# Write organism-enzyme edges
+                # Only for metagenome sample
+                """# Write organism-enzyme edges
                 edges_data_to_write = [
                     NCBITAXON_PREFIX + str(organism_id),
                     ORGANISM_TO_ENZYME_EDGE,
@@ -240,7 +239,7 @@ class UniprotTransform(Transform):
                     self.source_name,
                 ]
 
-                edge_writer.writerow(edges_data_to_write)'''
+                edge_writer.writerow(edges_data_to_write)"""
 
                 # Write GO edges
                 if len(go_list) > 0:
@@ -255,10 +254,10 @@ class UniprotTransform(Transform):
 
                         edge_writer.writerow(edges_data_to_write)
 
-                #EC to Chemical (one produces and one consumes)
-                #EC 
-                #Only Uniprot to chemical if no known EC
-                        
+                # EC to Chemical (one produces and one consumes)
+                # EC
+                # Only Uniprot to chemical if no known EC
+
                 # Write binding site edges
                 if len(chem_list) > 0:
                     for chem in chem_list:
@@ -319,7 +318,7 @@ class UniprotTransform(Transform):
 
                     edge_writer.writerow(edges_data_to_write)
 
-                    #Unnecessary when EC is ingested
+                    # Unnecessary when EC is ingested
                     nodes_data_to_write = [
                         EC_PREFIX + ":" + self.__enz_data["EC number"],
                         EC_CATEGORY,

@@ -58,7 +58,7 @@ oxygen:
     <<: *phenotypic_quality_block
   facultative_aerobe_anaerobe:
     curie: "oxygen:facultative_aerobe_anaerobe"
-    name: "facultative aerobe anaerobe"
+    name: "facultative aerobe/anaerobe"
     <<: *phenotypic_quality_block
 
 temperature:

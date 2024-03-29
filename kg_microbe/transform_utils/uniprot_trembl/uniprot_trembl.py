@@ -45,6 +45,6 @@ class UniprotTrEMBLTransform(Transform):
                 for row in data_reader:
                     row_subset = {k: row[k] for k in UNIPROT_TREMBL_COLUMNS}
                     print(row_subset)
-                    import pdb
+                    # import pdb
 
-                    pdb.set_trace()
+                    # pdb.set_trace()

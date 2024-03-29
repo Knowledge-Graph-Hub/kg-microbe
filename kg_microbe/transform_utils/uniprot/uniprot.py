@@ -37,10 +37,12 @@ from kg_microbe.transform_utils.constants import (
     PROTEOME_CATEGORY,
     PROTEOME_PREFIX,
     PROTEOME_TO_ORGANISM_EDGE,
+    RAW_DATA_DIR,
     RHEA_KEY,
     UNIPROT_GENOME_FEATURES,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
+    UNIPROT_PROTEOMES_FILE,
     UNIPROT_TMP_DIR
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -89,10 +91,11 @@ class UniprotTransform(Transform):
         os.makedirs(self.output_dir, exist_ok=True)
 
         # get descendants of important GO categories for relationship mapping
+        os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
         go_category_trees_df = self._get_go_category_trees(UNIPROT_TMP_DIR,self.go_oi)
 
         # file to keep track of obsolete terms from GO not included in graph
-        obsolete_terms_csv_file = UNIPROT_TMP_DIR + "/" + "go_obsolete_terms.csv"
+        obsolete_terms_csv_file = UNIPROT_TMP_DIR / "go_obsolete_terms.csv"
         obsolete_terms_csv_header = ["GO_Term","Uniprot_ID"]
 
         with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge, open(obsolete_terms_csv_file, "w") as obsolete:
@@ -103,14 +106,13 @@ class UniprotTransform(Transform):
             obsolete_terms_csv_writer = csv.writer(obsolete,delimiter="\t")
             obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
-            for file_path in input_dir.iterdir():
-                if file_path.suffix == ".gz":
-                    with gzip.open(file_path, "rt") as file:
-                        
-                        # Create Organism and Enzyme nodes:
-                        self.get_uniprot_values_from_file(
-                            file, node_writer, edge_writer, obsolete_terms_csv_writer, go_category_trees_df
-                        )
+            file_path = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+            with gzip.open(file_path, "rt") as file:
+                print(file)
+                # Create Organism and Enzyme nodes:
+                self.get_uniprot_values_from_file(
+                    file, node_writer, edge_writer, obsolete_terms_csv_writer, go_category_trees_df
+                )
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
@@ -129,7 +131,7 @@ class UniprotTransform(Transform):
     
     def _get_go_category_trees(self,tmp_dir,go_oi):
 
-        output_file = tmp_dir + "/" + "go_category_trees.csv"
+        output_file = tmp_dir / "go_category_trees.csv"
 
         # Check if the file already exists
         file_exists = output_file.exists()

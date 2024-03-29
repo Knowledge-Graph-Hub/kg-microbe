@@ -329,6 +329,7 @@ EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 # Uniprot
 UNIPROT_DIR = TRANSFORM_UTILS_DIR / "uniprot"
 UNIPROT_TMP_DIR = UNIPROT_DIR / "tmp"
+UNIPROT_PROTEOMES_FILE = "uniprot_proteomes.tar.gz"
 
 ENZYME_CATEGORY = "biolink:Enzyme"
 UNIPROT_GENOME_FEATURES = "uniprot_genome_features"

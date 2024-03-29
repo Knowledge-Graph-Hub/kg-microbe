@@ -5,7 +5,11 @@ from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
 
-from kg_microbe.transform_utils.constants import FILENAME_KEY, PROTEOME_ID_COLUMN, TAXONOMY_ID_UNIPROT_COLUMN, UNIPROT_DATA_LIST, UNIPROT_TREMBL_COLUMNS, UNIPROT_TREMBL_TMP_DIR
+from kg_microbe.transform_utils.constants import (
+    UNIPROT_DATA_LIST,
+    UNIPROT_TREMBL_COLUMNS,
+    UNIPROT_TREMBL_TMP_DIR,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.trembl_utils import unzip_trembl_file
 
@@ -40,6 +44,6 @@ class UniprotTrEMBLTransform(Transform):
                 data_reader = csv.DictReader(f, delimiter="\t")
                 for row in data_reader:
                     row_subset = {k: row[k] for k in UNIPROT_TREMBL_COLUMNS}
-                    import pdb; pdb.set_trace()
+                    import pdb
 
-
+                    pdb.set_trace()

@@ -44,6 +44,7 @@ class UniprotTrEMBLTransform(Transform):
                 data_reader = csv.DictReader(f, delimiter="\t")
                 for row in data_reader:
                     row_subset = {k: row[k] for k in UNIPROT_TREMBL_COLUMNS}
+                    print(row_subset)
                     import pdb
 
                     pdb.set_trace()

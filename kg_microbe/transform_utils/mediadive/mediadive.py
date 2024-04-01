@@ -288,14 +288,14 @@ class MediaDiveTransform(Transform):
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
                             MEDIUM_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
-
-                        ]+ [None] * 11,
+                        ]
+                        + [None] * 11,
                         [
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                             MEDIUM_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
-                        ]+ [None] * 11,
-                        
+                        ]
+                        + [None] * 11,
                     ]
                 )
                 for dictionary in input_json[DATA_KEY]:

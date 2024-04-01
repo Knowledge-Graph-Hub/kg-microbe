@@ -365,6 +365,7 @@ DO_NOT_CHANGE_PREFIXES = [
     "API_",
     RHEA_NEW_PREFIX,
     GO_PREFIX,
+    MEDIADIVE_MEDIUM_PREFIX,
 ]
 
 # Create a mapping for special cases

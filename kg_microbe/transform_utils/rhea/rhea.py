@@ -116,9 +116,13 @@ class RheaMappingsTransform(Transform):
         # TODO: Remove the line below once bioversions new version is released
         requests_ftp.monkeypatch_session()
         rhea_relation = get_relations_df("rhea", use_tqdm=show_status)
+        rhea_relation["relation_ns"] = rhea_relation["relation_ns"].apply(
+            lambda x: self.converter.standardize_prefix(x)
+        )
         rhea_relation[RELATION_COLUMN] = (
             rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]
         )
+
         rhea_relation[RHEA_MAPPING_ID_COLUMN.lower()] = RHEA_NEW_PREFIX + rhea_relation[
             RHEA_MAPPING_ID_COLUMN.lower()
         ].astype(str)

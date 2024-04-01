@@ -152,8 +152,8 @@ ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-RHEA_TO_EC_EDGE = "biolink:close_match"
-RHEA_TO_GO_EDGE = "biolink:close_match"
+RHEA_TO_EC_EDGE = "biolink:enabled_by"
+RHEA_TO_GO_EDGE = "biolink:enables"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"

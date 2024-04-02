@@ -60,6 +60,10 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE_MAX_PH_COLUMN,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_MEDIUM_STRAIN_YAML_DIR,
+    MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
+    MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
+    MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
+    MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
     MEDIADIVE_MEDIUM_YAML_DIR,
     MEDIADIVE_MIN_PH_COLUMN,
     MEDIADIVE_REF_COLUMN,
@@ -72,6 +76,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_STRAINS,
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
+    MEDIUM_TYPE_CATEGORY,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
@@ -82,6 +87,7 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
+    RDFS_SUBCLASS_OF,
     RECIPE_KEY,
     ROLE_CATEGORY,
     SOLUTION,
@@ -91,6 +97,7 @@ from kg_microbe.transform_utils.constants import (
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
     SPECIES,
+    SUBCLASS_PREDICATE,
     UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -275,6 +282,23 @@ class MediaDiveTransform(Transform):
             with progress_class(
                 total=len(input_json[DATA_KEY]) + 1, desc="Processing files"
             ) as progress:
+                # medium type nodes
+                node_writer.writerows(
+                    [
+                        [
+                            MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
+                            MEDIUM_TYPE_CATEGORY,
+                            MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
+                        ]
+                        + [None] * 11,
+                        [
+                            MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
+                            MEDIUM_TYPE_CATEGORY,
+                            MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
+                        ]
+                        + [None] * 11,
+                    ]
+                )
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
@@ -285,6 +309,31 @@ class MediaDiveTransform(Transform):
                     )
 
                     medium_id = MEDIADIVE_MEDIUM_PREFIX + str(id)  # SUBJECT
+
+                    # Medium and Medium type edge
+                    medium_type_edges = []
+                    complex_medium_type = bool(dictionary[MEDIADIVE_COMPLEX_MEDIUM_COLUMN])
+                    if complex_medium_type:
+                        medium_type_edges = [
+                            [
+                                medium_id,
+                                SUBCLASS_PREDICATE,
+                                MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
+                                RDFS_SUBCLASS_OF,
+                                "MediaDive",
+                            ]
+                        ]
+                    else:
+                        medium_type_edges = [
+                            [
+                                medium_id,
+                                SUBCLASS_PREDICATE,
+                                MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
+                                RDFS_SUBCLASS_OF,
+                                "MediaDive",
+                            ]
+                        ]
+                    edge_writer.writerows(medium_type_edges)
 
                     # Medium-Strains KG
                     if json_obj_medium_strain:

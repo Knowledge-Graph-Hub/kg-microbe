@@ -115,6 +115,7 @@ def query(
     outfile = os.path.join(output_dir, os.path.splitext(os.path.basename(yaml))[0] + outfile_ext)
     result_dict_to_tsv(result_dict, outfile)
 
+
 @main.command()
 @click.option(
     "nodes",

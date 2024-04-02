@@ -77,12 +77,10 @@ class UniprotTransform(Transform):
 
         source_name = UNIPROT_GENOME_FEATURES
         super().__init__(source_name, input_dir, output_dir)
-        #self.chebi_oi = get_adapter("sqlite:obo:chebi")
         self.go_oi = get_adapter("sqlite:obo:go")
-        #self.ec_oi = get_adapter("sqlite:obo:eccode")
         # Check if the file already exists
         if not GO_CATEGORY_TREES_FILE.exists():
-            self._get_go_category_trees(UNIPROT_TMP_DIR,self.go_oi)
+            self._get_go_category_trees(self.go_oi)
         self.go_category_trees_df = pd.read_csv(GO_CATEGORY_TREES_FILE,sep='\t',low_memory=False)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -95,7 +93,7 @@ class UniprotTransform(Transform):
 
         self.write_obsolete_file_header()
 
-        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge: #, open(obsolete_terms_csv_file, "w") as obsolete:
+        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge:
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
@@ -122,7 +120,9 @@ class UniprotTransform(Transform):
         drop_duplicates(OBSOLETE_TERMS_CSV_FILE,sort_by = "GO_Term")
 
     def write_obsolete_file_header(self):
-
+        """
+        Write obsolete header to file.
+        """
         obsolete_terms_csv_header = ["GO_Term","Uniprot_ID"]
 
         with open(OBSOLETE_TERMS_CSV_FILE,'w') as f:
@@ -130,7 +130,12 @@ class UniprotTransform(Transform):
             obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
     def _get_go_category_trees(self,go_oi):
+        """
+        Extract category of all GO terms using oak, and write to file.
 
+        :param go_oi: A oaklib sql_implementation class to access GO information.
+        :type go_oi: oaklib sql_implementation class
+        """
         with open(GO_CATEGORY_TREES_FILE, "w") as file:
             csv_writer = csv.writer(file, delimiter="\t")
             csv_writer.writerow(["GO_Category","GO_Term"])
@@ -144,7 +149,16 @@ class UniprotTransform(Transform):
                     csv_writer.writerow(r_list)
 
     def _get_go_relation_and_obsolete_terms(self,term_id,uniprot_id):
+        """
+        Extract category of GO term and handle obsolete terms according to oak.
 
+        :param term_id: A string containing the GO ID.
+        :type term_id: str
+        :param uniprot_id: A string containing the Uniprot protein ID.
+        :type uniprot_id: str
+        :return: The appropriate predicate for the GO ID as it relates to the protein ID, or None if obsolete.
+        :rtype: str or None
+        """
         #! To handle obsolete terms
         try:
             go_component =  self.go_category_trees_df.loc[ self.go_category_trees_df["GO_Term"] == term_id,"GO_Category"].values[0]
@@ -236,7 +250,14 @@ class UniprotTransform(Transform):
         return ec_list
 
     def parse_organism_entries(self,entry):
+        """
+        Extract all values from each column in entry.
 
+        This method will handle existing and blank values for all columns in entry.
+
+        :param entry: A series containing all columns for the corresponding entry.
+        :type entry: series
+        """
         columns_without_floats = [UNIPROT_ORG_ID_COLUMN_NAME,UNIPROT_PROTEIN_ID_COLUMN_NAME,UNIPROT_PROTEIN_NAME_COLUMN_NAME]
         columns_with_floats = [UNIPROT_EC_ID_COLUMN_NAME,UNIPROT_BINDING_SITE_COLUMN_NAME,UNIPROT_GO_COLUMN_NAME,UNIPROT_RHEA_ID_COLUMN_NAME,UNIPROT_PROTEOME_COLUMN_NAME]
 

@@ -163,6 +163,7 @@ RHEA_TO_GO_EDGE = "biolink:enables"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
+MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalEntity"
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"
 SHAPE_CATEGORY = "biolink:AbstractEntity"

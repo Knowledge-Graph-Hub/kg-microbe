@@ -9,25 +9,19 @@ from pathlib import Path
 from typing import Optional, Union
 import pandas as pd
 from oaklib import get_adapter
-import gzip
+import tarfile
+from io import StringIO
 
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
-    CHEBI_PREFIX,
-    CHEMICAL_CATEGORY,
-    CHEMICAL_TO_EC_EDGE,
     CHEMICAL_TO_PROTEIN_EDGE,
     PROTEIN_TO_EC_EDGE,
-    EC_CATEGORY,
-    EC_KEY,
     EC_PREFIX,
     ENZYME_CATEGORY,
-    GO_CATEGORY,
     GO_CELLULAR_COMPONENT_ID,
     GO_MOLECULAR_FUNCTION_ID,
     GO_BIOLOGICAL_PROCESS_ID,
-    GO_PREFIX,
     NCBITAXON_PREFIX,
     PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE,
     PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE,
@@ -38,16 +32,27 @@ from kg_microbe.transform_utils.constants import (
     PROTEOME_PREFIX,
     PROTEOME_TO_ORGANISM_EDGE,
     RAW_DATA_DIR,
-    RHEA_KEY,
+    UNIPROT_BINDING_SITE_COLUMN_NAME,
+    UNIPROT_EC_ID_COLUMN_NAME,
     UNIPROT_GENOME_FEATURES,
+    UNIPROT_GO_COLUMN_NAME,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
+    UNIPROT_PROTEIN_ID_COLUMN_NAME,
+    UNIPROT_PROTEIN_NAME_COLUMN_NAME,
+    UNIPROT_PROTEOME_COLUMN_NAME,
     UNIPROT_PROTEOMES_FILE,
-    UNIPROT_TMP_DIR
+    UNIPROT_RHEA_ID_COLUMN_NAME,
+    UNIPROT_TMP_DIR,
 )
+
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.oak_utils import get_label
+
+# file to keep track of obsolete terms from GO not included in graph
+OBSOLETE_TERMS_CSV_FILE = UNIPROT_TMP_DIR / "go_obsolete_terms.csv"
+GO_CATEGORY_TREES_FILE = UNIPROT_TMP_DIR / "go_category_trees.csv"
 
 class UniprotTransform(Transform):
 
@@ -75,97 +80,74 @@ class UniprotTransform(Transform):
         #self.chebi_oi = get_adapter("sqlite:obo:chebi")
         self.go_oi = get_adapter("sqlite:obo:go")
         #self.ec_oi = get_adapter("sqlite:obo:eccode")
+        # Check if the file already exists
+        if not GO_CATEGORY_TREES_FILE.exists():
+            self._get_go_category_trees(UNIPROT_TMP_DIR,self.go_oi)
+        self.go_category_trees_df = pd.read_csv(GO_CATEGORY_TREES_FILE,sep='\t',low_memory=False)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
-        # replace with downloaded data filename for this source
-        input_dir = str(self.input_base_dir) + "/" + self.source_name
-        '''# Get all organisms downloaded into raw directory
-        ncbi_organisms = []
-        for f in os.listdir(input_dir):
-            #if f.endswith(".json"):
-            if f.endswith(".tsv"):
-                ncbi_organisms.append(f.split(".tsv")[0])
-'''
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
         # get descendants of important GO categories for relationship mapping
         os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
-        go_category_trees_df = self._get_go_category_trees(UNIPROT_TMP_DIR,self.go_oi)
 
-        # file to keep track of obsolete terms from GO not included in graph
-        obsolete_terms_csv_file = UNIPROT_TMP_DIR / "go_obsolete_terms.csv"
-        obsolete_terms_csv_header = ["GO_Term","Uniprot_ID"]
+        self.write_obsolete_file_header()
 
-        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge, open(obsolete_terms_csv_file, "w") as obsolete:
+        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge: #, open(obsolete_terms_csv_file, "w") as obsolete:
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
-            obsolete_terms_csv_writer = csv.writer(obsolete,delimiter="\t")
-            obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
-            file_path = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
-            with gzip.open(file_path, "rt") as file:
-                print(file)
-                # Create Organism and Enzyme nodes:
-                self.get_uniprot_values_from_file(
-                    file, node_writer, edge_writer, obsolete_terms_csv_writer, go_category_trees_df
-                )
+            tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+            with tarfile.open(tar_file,'r:gz') as tar:
+                for member in tqdm(tar):
+                    if member.name.endswith('.tsv'):
+                        with tar.extractfile(member) as f:
+                            if f is not None:
+                                file_content = f.read()
+                                s = StringIO(file_content.decode('utf-8'))
+                                # Read the TSV file into a DataFrame
+                                df = pd.read_csv(s, sep='\t')
+                                all_edges_to_write,all_nodes_to_write = self.write_to_df(df)
+                                for row in all_edges_to_write:
+                                    edge_writer.writerow(row)
+                                for row in all_nodes_to_write:
+                                    node_writer.writerow(row)
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
-        drop_duplicates(self.obsolete_terms_csv_file)
+        drop_duplicates(OBSOLETE_TERMS_CSV_FILE,sort_by = "GO_Term")
 
-    '''def _get_label_based_on_prefix(self, id):
-        if id.startswith(CHEBI_PREFIX.rstrip(":")):
-            return get_label(self.chebi_oi, id)
-        elif id.startswith(GO_PREFIX.rstrip(":")):
-            return get_label(self.go_oi, id)
-        elif id.startswith(EC_PREFIX.rstrip(":")):
-            return get_label(self.ec_oi, id)
-        # Add more conditions as needed
-        else:
-            return None'''
-    
-    def _get_go_category_trees(self,tmp_dir,go_oi):
+    def write_obsolete_file_header(self):
 
-        output_file = tmp_dir / "go_category_trees.csv"
+        obsolete_terms_csv_header = ["GO_Term","Uniprot_ID"]
 
-        # Check if the file already exists
-        file_exists = output_file.exists()
-        if not file_exists:
+        with open(OBSOLETE_TERMS_CSV_FILE,'w') as f:
+            obsolete_terms_csv_writer = csv.writer(f,delimiter="\t")
+            obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
-            with open(output_file, "a" if file_exists else "w", newline="") as file:
-                csv_writer = csv.writer(file, delimiter="\t")
-                csv_writer.writerow(["GO_Category","GO_Term"])
+    def _get_go_category_trees(self,go_oi):
 
-                go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
+        with open(GO_CATEGORY_TREES_FILE, "w") as file:
+            csv_writer = csv.writer(file, delimiter="\t")
+            csv_writer.writerow(["GO_Category","GO_Term"])
 
-                for r in go_types:
-                    term_decendants = list(go_oi.descendants(start_curies=r,predicates=["rdfs:subClassOf"],reflexive=True))
-                    for term in term_decendants:
-                        r_list = [r,term]
-                        csv_writer.writerow(r_list)
+            go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
 
-            go_category_trees_df = pd.read_csv(output_file)
-        else:
-            go_category_trees_df = pd.read_csv(output_file)
+            for r in go_types:
+                term_decendants = list(go_oi.descendants(start_curies=r,predicates=["rdfs:subClassOf"],reflexive=True))
+                for term in term_decendants:
+                    r_list = [r,term]
+                    csv_writer.writerow(r_list)
 
-        return go_category_trees_df
-
-    def _get_go_relation(self,term_id,go_category_trees_df,obsolete_terms_csv_writer,uniprot_id):
-
-        #go_types = [GO_CELLULAR_COMPONENT_ID,GO_MOLECULAR_FUNCTION_ID,GO_BIOLOGICAL_PROCESS_ID]
-        #term_ancestors = list(go_oi.ancestors(start_curies=term_id,predicates=["rdfs:subClassOf"],reflexive=False))
-
-        ## TODO Write ancestors tmp directory - /transform_utils/uniprot/tmp
-        ## TODO Write obsolete terms to file in tmp
+    def _get_go_relation_and_obsolete_terms(self,term_id,uniprot_id):
 
         #! To handle obsolete terms
         try:
-            go_component = go_category_trees_df.loc[go_category_trees_df["GO_Term"] == term_id,"GO_Category"].values[0]
+            go_component =  self.go_category_trees_df.loc[ self.go_category_trees_df["GO_Term"] == term_id,"GO_Category"].values[0]
             if go_component == GO_CELLULAR_COMPONENT_ID:
                 go_relation = PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE
             elif go_component == GO_MOLECULAR_FUNCTION_ID:
@@ -173,48 +155,12 @@ class UniprotTransform(Transform):
             elif go_component == GO_BIOLOGICAL_PROCESS_ID:
                 go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
         except IndexError:
-            obsolete_terms_csv_writer.writerow([term_id,uniprot_id])
+            with open(OBSOLETE_TERMS_CSV_FILE,'a') as f:
+                csv_writer = csv.writer(f, delimiter="\t")
+                csv_writer.writerow([term_id,uniprot_id])
             go_relation = None
 
         return go_relation
-
-
-    def get_uniprot_values_from_file(self, org_file, node_writer, edge_writer, obsolete_terms_csv_writer, go_category_trees_df):
-        """
-        Process UniProt files and extract values to write to dataframes.
-
-        This method iterates over a list of node identifiers, reads corresponding
-        JSON files from the specified input directory, and extracts UniProt data.
-        The extracted data is then written to node and edge writers. If a file for
-        a given node does not exist, the program will exit with an error message.
-
-        :param input_dir: The directory where input JSON files are located.
-        :type input_dir: str
-        :param nodes: A list of node identifiers to process.
-        :type nodes: list
-        :param source: The name of the source being processed (used in superclass).
-        :type source: str
-        :param node_writer: An object responsible for writing node data.
-        :type node_writer: object
-        :param edge_writer: An object responsible for writing edge data.
-        :type edge_writer: object
-        """
-        ''' with tqdm(total=len(nodes) + 1, desc="Processing files") as progress:
-            for i in tqdm(range(len(nodes))):
-                org_file = input_dir + "/" + nodes[i] + ".tsv"'''
-        '''if not os.path.exists(org_file):
-            print("File does not exist: ", org_file, ", exiting.")
-            sys.exit()
-
-        else:'''
-        df = pd.read_csv(org_file, sep="\t", low_memory=False)
-        #Remove headers from df file based on first column name
-        df = df[df[df.columns[0]] != df.columns[0]]
-        self.write_to_df(df, edge_writer, node_writer, obsolete_terms_csv_writer, go_category_trees_df)
-
-        '''progress.set_description(f"Processing Uniprot File: {nodes[i]}.tsv")
-        # After each iteration, call the update method to advance the progress bar.
-        progress.update()'''
 
     def parse_binding_site(self, binding_site_entry):
         """
@@ -229,7 +175,9 @@ class UniprotTransform(Transform):
         :return: A list of ChEBI ligand identifiers extracted from the binding site entry.
         :rtype: list
         """
-        chem_list = re.findall(r'/ligand_id="ChEBI:(.*?)";', binding_site_entry)
+        if len(binding_site_entry) > 0:
+            chem_list = re.findall(r'/ligand_id="ChEBI:(.*?)";', binding_site_entry)
+        else: chem_list = binding_site_entry
 
         return chem_list
 
@@ -246,8 +194,10 @@ class UniprotTransform(Transform):
         :return: A list of ChEBI ligand identifiers extracted from the binding site entry.
         :rtype: list
         """
-        go_list = re.findall("\[(.*?)\]", go_entry)
-        go_list = [i for i in go_list if "GO" in i]
+        if len(go_entry) > 0:
+            go_list = re.findall("\[(.*?)\]", go_entry)
+            go_list = [i for i in go_list if "GO" in i]
+        else: go_list = go_entry
 
         return go_list
     
@@ -262,7 +212,9 @@ class UniprotTransform(Transform):
         :return: A list of RHEA identifiers extracted from the rhea entry.
         :rtype: list
         """
-        rhea_list = rhea_entry.split(" ")
+        if len(rhea_entry) > 0:
+            rhea_list = rhea_entry.split(" ")
+        else: rhea_list = rhea_entry
 
         return rhea_list
     
@@ -277,12 +229,24 @@ class UniprotTransform(Transform):
         :return: A list of EC identifiers extracted from the EC entry.
         :rtype: list
         """
-        ec_list = ec_entry.split(";")
+        if len(ec_entry) > 0:
+            ec_list = ec_entry.split(";")
+        else: ec_list = ec_entry
 
         return ec_list
 
+    def parse_organism_entries(self,entry):
 
-    def write_to_df(self, uniprot_df, edge_writer, node_writer, obsolete_terms_csv_writer, go_category_trees_df):
+        columns_without_floats = [UNIPROT_ORG_ID_COLUMN_NAME,UNIPROT_PROTEIN_ID_COLUMN_NAME,UNIPROT_PROTEIN_NAME_COLUMN_NAME]
+        columns_with_floats = [UNIPROT_EC_ID_COLUMN_NAME,UNIPROT_BINDING_SITE_COLUMN_NAME,UNIPROT_GO_COLUMN_NAME,UNIPROT_RHEA_ID_COLUMN_NAME,UNIPROT_PROTEOME_COLUMN_NAME]
+
+        for col in columns_without_floats:
+            self.__enz_data[col] = entry[col] if entry[col] else None
+
+        for col in columns_with_floats:
+            self.__enz_data[col] = entry[col] if not isinstance(entry[col],float) else []
+
+    def write_to_df(self, uniprot_df):
         """
         Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -299,171 +263,141 @@ class UniprotTransform(Transform):
         :param node_writer: A CSV writer object for writing node data.
         :type node_writer: _csv.writer
         """
+        all_edges_to_write = []
+        all_nodes_to_write = []
         ##To return all organism-enzyme entries
-        for i in range(len(uniprot_df)):
-            entry = uniprot_df.iloc[i]
-            #Drop columns that do not have an entry
-            entry = entry.dropna()
-            organism_id = (
-                entry[UNIPROT_ORG_ID_COLUMN_NAME]
-                if UNIPROT_ORG_ID_COLUMN_NAME in uniprot_df.columns
-                else None
-            )
+        for _,entry in uniprot_df.iterrows():
 
-            # Use primary accession number as it's ID does not change, as opposed to Entry Name
-            if "Entry" in uniprot_df.columns:
-                self.__enz_data["id"] = entry["Entry"]
+            #Parse all columns, handling blank values
+            self.parse_organism_entries(entry)
 
-            if "Protein names" in entry:
-                self.__enz_data["name"] = entry["Protein names"].split("(EC")[0]
+            ec_list = self.parse_ec(self.__enz_data[UNIPROT_EC_ID_COLUMN_NAME])
 
-            organism_id = entry["Organism (ID)"] if "Organism (ID)" in uniprot_df.columns else None
-
-            # Use primary accession number as it's ID does not change, as opposed to Entry Name
-            if "Entry" in uniprot_df.columns:
-                self.__enz_data["id"] = entry["Entry"]
-
-            ec_list = []
-            if "EC number" in entry:
-                ec_list = self.parse_ec(entry["EC number"])
-
-            chem_list = []
-            if "Binding site" in entry:
-                chem_list = self.parse_binding_site(entry["Binding site"])
+            chem_list = self.parse_binding_site(self.__enz_data[UNIPROT_BINDING_SITE_COLUMN_NAME])
             
-            go_list = []
-            if "Gene Ontology (GO)" in entry:
-                go_list = self.parse_go_entry(entry["Gene Ontology (GO)"])
+            go_list = self.parse_go_entry(self.__enz_data[UNIPROT_GO_COLUMN_NAME])
 
-            if "Proteomes" in entry:
-                self.__enz_data["Proteomes"] = str(entry["Proteomes"]).split(":")[0]
+            rhea_list = self.parse_rhea_entry(self.__enz_data[UNIPROT_RHEA_ID_COLUMN_NAME])
 
-            rhea_list = []
-            if "Rhea ID" in entry:
-                rhea_list = self.parse_rhea_entry(entry["Rhea ID"])
+            #Get one protein name only
+            self.__enz_data[UNIPROT_PROTEIN_NAME_COLUMN_NAME] = self.__enz_data[UNIPROT_PROTEIN_NAME_COLUMN_NAME].split("(EC")[0].replace('[','(').replace(']',')')
 
-            if organism_id:
+            # Write protein-organism edges
+            edges_data_to_write = [
+                UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME],
+                PROTEIN_TO_ORGANISM_EDGE,
+                NCBITAXON_PREFIX + str(self.__enz_data[UNIPROT_ORG_ID_COLUMN_NAME]),
+                "",
+                self.source_name,
+            ]
 
-                # Write protein-organism edges
-                edges_data_to_write = [
-                    UNIPROT_PREFIX + self.__enz_data["id"],
-                    PROTEIN_TO_ORGANISM_EDGE,
-                    NCBITAXON_PREFIX + str(organism_id),
-                    "",
-                    self.source_name,
-                ]
+            all_edges_to_write.append(edges_data_to_write)
 
-                edge_writer.writerow(edges_data_to_write)
-
-                # Write GO edges
-                if len(go_list) > 0:
-                    for go in go_list:
-                        #! Excluding obsolete terms
-                        predicate = self._get_go_relation(go,go_category_trees_df,obsolete_terms_csv_writer,UNIPROT_PREFIX + self.__enz_data["id"])
-                        if not predicate:
-                            continue
-                        edges_data_to_write = [
-                            UNIPROT_PREFIX + self.__enz_data["id"],
-                            predicate,
-                            go,
-                            "",
-                            self.source_name,
-                        ]
-
-                        edge_writer.writerow(edges_data_to_write)
-
-                        # Write GO nodes
-                        nodes_data_to_write = [go] + [""] * (len(self.node_header)-1)
-                        node_writer.writerow(nodes_data_to_write)
-                        
-                # Write binding site edges
-                if len(chem_list) > 0:
-                    for chem in chem_list:
-                        edges_data_to_write = [
-                            chem,
-                            CHEMICAL_TO_PROTEIN_EDGE,
-                            UNIPROT_PREFIX + self.__enz_data["id"],
-                            "",
-                            self.source_name,
-                        ]
-
-                        edge_writer.writerow(edges_data_to_write)
-
-                        # Write CHEBI nodes
-                        ## TODO try not getting label to see if it still aligns in merge step
-
-                        nodes_data_to_write = [chem] + [""] * (len(self.node_header)-1)
-                        node_writer.writerow(nodes_data_to_write)
-
-                # Write rhea edges
-                if len(rhea_list) > 0:
-                    for rhea in rhea_list:
-                        edges_data_to_write = [
-                            UNIPROT_PREFIX + self.__enz_data["id"],
-                            PROTEIN_TO_RHEA_EDGE,
-                            rhea,
-                            "",
-                            self.source_name,
-                        ]
-
-                        edge_writer.writerow(edges_data_to_write)
-
-                        # Write Rhea nodes, oaklib is incomplete
-                        nodes_data_to_write = [rhea] + [""] * (len(self.node_header)-1)
-                        node_writer.writerow(nodes_data_to_write)
-
-
-                # Write EC edges
-                ec_list
-                if len(ec_list) > 0:
-                    for ec in ec_list:
-                        edges_data_to_write = [
-                            UNIPROT_PREFIX + self.__enz_data["id"],
-                            PROTEIN_TO_EC_EDGE,
-                            EC_PREFIX + ec,
-                            "",
-                            self.source_name,
-                        ]
-
-                        edge_writer.writerow(edges_data_to_write)
-
-                    #Write EC nodes
-                    ## TODO cache node ID and labels
-                    
-                    nodes_data_to_write = [EC_PREFIX] + [""] * (len(self.node_header)-1)
-                    node_writer.writerow(nodes_data_to_write)
-
-                if "Proteomes" in self.__enz_data.keys():
-                    # Write organism-proteome edges
+            # Write GO edges
+            if len(go_list) > 0:
+                for go in go_list:
+                    #! Excluding obsolete terms
+                    predicate = self._get_go_relation_and_obsolete_terms(go, UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME])
+                    if not predicate:
+                        continue
                     edges_data_to_write = [
-                        PROTEOME_PREFIX + self.__enz_data["Proteomes"],
-                        PROTEOME_TO_ORGANISM_EDGE,
-                        NCBITAXON_PREFIX + str(organism_id),
+                        UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME],
+                        predicate,
+                        go,
                         "",
                         self.source_name,
                     ]
 
-                    edge_writer.writerow(edges_data_to_write)
+                    all_edges_to_write.append(edges_data_to_write)
+                    #edge_writer.writerow(edges_data_to_write)
 
-                    #Write proteome node
-                    nodes_data_to_write = [
-                        PROTEOME_PREFIX + self.__enz_data["Proteomes"],
-                        PROTEOME_CATEGORY,
-                        PROTEOME_PREFIX + self.__enz_data["Proteomes"],
-                        "",
-                        "",
-                        self.source_name] + [""] * (len(self.node_header)-6)
+                    # Write GO nodes, excluding info other than ID
+                    nodes_data_to_write = [go] + [""] * (len(self.node_header)-1)
+                    all_nodes_to_write.append(nodes_data_to_write)
                     
+            # Write binding site edges
+            if len(chem_list) > 0:
+                for chem in chem_list:
+                    edges_data_to_write = [
+                        chem,
+                        CHEMICAL_TO_PROTEIN_EDGE,
+                        UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME],
+                        "",
+                        self.source_name,
+                    ]
 
-                    node_writer.writerow(nodes_data_to_write)
+                    all_edges_to_write.append(edges_data_to_write)
 
-            # Write protein node
-            nodes_data_to_write = [
-                UNIPROT_PREFIX + self.__enz_data["id"],
-                ENZYME_CATEGORY,
-                self.__enz_data["name"].replace('[','(').replace(']',')'),
-                "",
-                "",
-                self.source_name] + [""] * (len(self.node_header)-6)
+                    # Write CHEBI nodes, excluding info other than ID
+                    nodes_data_to_write = [chem] + [""] * (len(self.node_header)-1)
+                    all_nodes_to_write.append(nodes_data_to_write)
 
-            node_writer.writerow(nodes_data_to_write)
+            # Write rhea edges
+            if len(rhea_list) > 0:
+                for rhea in rhea_list:
+                    edges_data_to_write = [
+                        UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME],
+                        PROTEIN_TO_RHEA_EDGE,
+                        rhea,
+                        "",
+                        self.source_name,
+                    ]
+
+                    all_edges_to_write.append(edges_data_to_write)
+
+                    # Write Rhea nodes, excluding info other than ID
+                    nodes_data_to_write = [rhea] + [""] * (len(self.node_header)-1)
+                    all_nodes_to_write.append(nodes_data_to_write)
+
+            # Write EC edges
+            if len(ec_list) > 0:
+                for ec in ec_list:
+                    edges_data_to_write = [
+                        UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME],
+                        PROTEIN_TO_EC_EDGE,
+                        EC_PREFIX + ec,
+                        "",
+                        self.source_name,
+                    ]
+
+                    all_edges_to_write.append(edges_data_to_write)
+
+                #Write EC nodes, excluding info other than ID
+                nodes_data_to_write = [EC_PREFIX + ec] + [""] * (len(self.node_header)-1)
+                all_nodes_to_write.append(nodes_data_to_write)
+
+            if UNIPROT_PROTEOME_COLUMN_NAME in self.__enz_data.keys() and not isinstance(self.__enz_data[UNIPROT_PROTEOME_COLUMN_NAME],list):
+                # Write organism-proteome edges
+                edges_data_to_write = [
+                    PROTEOME_PREFIX + self.__enz_data[UNIPROT_PROTEOME_COLUMN_NAME],
+                    PROTEOME_TO_ORGANISM_EDGE,
+                    NCBITAXON_PREFIX + str(self.__enz_data[UNIPROT_ORG_ID_COLUMN_NAME]),
+                    "",
+                    self.source_name,
+                ]
+
+                all_edges_to_write.append(edges_data_to_write)
+
+                #Write proteome node
+                nodes_data_to_write = [
+                    PROTEOME_PREFIX + self.__enz_data[UNIPROT_PROTEOME_COLUMN_NAME],
+                    PROTEOME_CATEGORY,
+                    PROTEOME_PREFIX + self.__enz_data[UNIPROT_PROTEOME_COLUMN_NAME],
+                    "",
+                    "",
+                    self.source_name] + [""] * (len(self.node_header)-6)
+                
+                all_nodes_to_write.append(nodes_data_to_write)
+
+        # Write protein node
+        nodes_data_to_write = [
+            UNIPROT_PREFIX + self.__enz_data[UNIPROT_PROTEIN_ID_COLUMN_NAME],
+            ENZYME_CATEGORY,
+            self.__enz_data[UNIPROT_PROTEIN_NAME_COLUMN_NAME],
+            "",
+            "",
+            self.source_name] + [""] * (len(self.node_header)-6)
+
+        all_nodes_to_write.append(nodes_data_to_write)
+
+        return all_edges_to_write,all_nodes_to_write

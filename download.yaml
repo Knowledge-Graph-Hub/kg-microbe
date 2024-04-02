@@ -149,7 +149,7 @@
 #   glob: "*.dat.gz"
 
 -
-  url: https://kg-hub-public-data/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
+  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
   local_name: uniprot_proteomes.tar.gz
 
 # -

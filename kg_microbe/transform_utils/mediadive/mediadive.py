@@ -76,6 +76,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_STRAINS,
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
+    MEDIUM_TYPE_CATEGORY,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
@@ -286,13 +287,13 @@ class MediaDiveTransform(Transform):
                     [
                         [
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
-                            MEDIUM_CATEGORY,
+                            MEDIUM_TYPE_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
                         ]
                         + [None] * 11,
                         [
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
-                            MEDIUM_CATEGORY,
+                            MEDIUM_TYPE_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
                         ]
                         + [None] * 11,

@@ -428,13 +428,21 @@ edge_stats:
         unknown:
           count: 2555
     biolink:ChemicalEntity-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 10026
+      count: 6736
       provided_by:
         unknown:
-          count: 10026
+          count: 6736
       source:
         unknown:
-          count: 10026
+          count: 6736
+    biolink:ChemicalEntity-biolink:subclass_of-biolink:ChemicalMixture:
+      count: 3290
+      provided_by:
+        unknown:
+          count: 3290
+      source:
+        unknown:
+          count: 3290
     biolink:ChemicalEntity-biolink:subclass_of-biolink:ChemicalRole:
       count: 2
       provided_by:
@@ -2203,7 +2211,7 @@ edge_stats:
       source:
         unknown:
           count: 1
-    unknown-biolink:subclass_of-biolink:ChemicalEntity:
+    unknown-biolink:subclass_of-biolink:ChemicalMixture:
       count: 5
       provided_by:
         unknown:
@@ -2282,7 +2290,7 @@ node_stats:
         go.json:
           count: 4494
     biolink:ChemicalEntity:
-      count: 22754
+      count: 22752
       provided_by:
         Graph:
           count: 12610
@@ -2291,7 +2299,12 @@ node_stats:
         envo.json:
           count: 107
         nodes.tsv:
-          count: 22754
+          count: 22752
+    biolink:ChemicalMixture:
+      count: 2
+      provided_by:
+        nodes.tsv:
+          count: 2
     biolink:ChemicalRole:
       count: 235
       provided_by:
@@ -2506,8 +2519,9 @@ node_stats:
       ingredient: 258
       kegg.compound: 1
       medium: 3292
-      medium-type: 2
       solution: 5381
+    biolink:ChemicalMixture:
+      medium-type: 2
     biolink:ChemicalRole:
       CHEBI: 235
     biolink:ChemicalSubstance:
@@ -2613,6 +2627,7 @@ node_stats:
   - biolink:BiologicalProcess
   - biolink:CellularComponent
   - biolink:ChemicalEntity
+  - biolink:ChemicalMixture
   - biolink:ChemicalRole
   - biolink:ChemicalSubstance
   - biolink:EnvironmentalFeature
@@ -2719,11 +2734,12 @@ node_stats:
     - CAS-RN
     - kegg.compound
     - medium
-    - medium-type
     - solution
     - ingredient
     - PubChem
     - KEGG
+    biolink:ChemicalMixture:
+    - medium-type
     biolink:ChemicalRole:
     - CHEBI
     biolink:ChemicalSubstance:

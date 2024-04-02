@@ -117,7 +117,7 @@ class UniprotTransform(Transform):
         drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by="GO_Term")
 
     def write_obsolete_file_header(self):
-        """ Write obsolete header to file."""
+        """Write obsolete header to file."""
         obsolete_terms_csv_header = ["GO_Term", "Uniprot_ID"]
 
         with open(OBSOLETE_TERMS_CSV_FILE, "w") as f:

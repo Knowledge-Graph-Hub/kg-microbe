@@ -34,6 +34,7 @@ ONTOLOGIES = {
     "go": "go.json",
     "rhea": "rhea.json.gz",
     "ec": "ec.json",
+    "uniprot": "uniprot.json.gz",
 }
 
 
@@ -117,7 +118,7 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "chebi"]:
+        if name in ["ec", "rhea", "uniprot", "chebi"]:
             self.post_process(name)
 
     def decompress(self, data_file):

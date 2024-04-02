@@ -111,6 +111,7 @@ RO_PREFIX = "RO:"
 MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
 MEDIADIVE_SOLUTION_PREFIX = "solution:"
 MEDIADIVE_MEDIUM_PREFIX = "medium:"
+MEDIADIVE_MEDIUM_TYPE_PREFIX = "medium-type:"
 GO_PREFIX = "GO:"
 KEGG_PREFIX = "KEGG:"
 SHAPE_PREFIX = "cell_shape:"
@@ -126,6 +127,11 @@ DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
 RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
+
+MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"
+MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL = "Complex Medium"
+MEDIADIVE_MEDIUM_TYPE_DEFINED_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "defined"
+MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL = "Defined Medium"
 
 MEDIUM = "medium/"
 COMPOUND = "ingredient/"
@@ -152,11 +158,12 @@ ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-RHEA_TO_EC_EDGE = "biolink:close_match"
-RHEA_TO_GO_EDGE = "biolink:close_match"
+RHEA_TO_EC_EDGE = "biolink:enabled_by"
+RHEA_TO_GO_EDGE = "biolink:enables"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
+MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalEntity"
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"
 SHAPE_CATEGORY = "biolink:AbstractEntity"
@@ -389,6 +396,7 @@ DO_NOT_CHANGE_PREFIXES = [
     "API_",
     RHEA_NEW_PREFIX,
     GO_PREFIX,
+    MEDIADIVE_MEDIUM_PREFIX,
 ]
 
 # Create a mapping for special cases

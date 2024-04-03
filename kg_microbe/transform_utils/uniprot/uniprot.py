@@ -271,7 +271,7 @@ class UniprotTransform(Transform):
         return ec_list
 
     def _init_empty_dict(self, df):
-        """Initializes an empty dictionary with keys taken fro a given df."""
+        """Initializes an empty dictionary with keys taken for a given df."""
         dictionary = df.to_dict()
         dictionary = {k: None for k, _ in dictionary.items()}
 

@@ -1,4 +1,4 @@
-"""Uniprot Transonform class."""
+"""Uniprot Transform class."""
 
 import csv
 import os
@@ -15,8 +15,10 @@ from tqdm import tqdm
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_CATEGORY,
     CHEMICAL_TO_PROTEIN_EDGE,
+    DERIVES_FROM,
     EC_CATEGORY,
     EC_PREFIX,
+    ENABLES,
     GO_BIOLOGICAL_PROCESS_ID,
     GO_BIOLOGICAL_PROCESS_LABEL,
     GO_CELLULAR_COMPONENT_ID,
@@ -24,8 +26,11 @@ from kg_microbe.transform_utils.constants import (
     GO_MOLECULAR_FUNCTION_ID,
     GO_MOLECULAR_FUNCTION_LABEL,
     GO_PREFIX,
+    LOCATED_IN,
+    MOLECULARLY_INTERACTS_WITH,
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
+    PARTICIPATES_IN,
     PROTEIN_CATEGORY,
     PROTEIN_TO_EC_EDGE,
     PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE,
@@ -39,6 +44,7 @@ from kg_microbe.transform_utils.constants import (
     PROTEOME_TO_ORGANISM_EDGE,
     PROVIDED_BY_COLUMN,
     RAW_DATA_DIR,
+    RDFS_SUBCLASS_OF,
     RHEA_CATEGORY,
     UNIPROT_BINDING_SITE_COLUMN_NAME,
     UNIPROT_EC_ID_COLUMN_NAME,
@@ -56,22 +62,41 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
-RELATIONS_DICTIONARY = {
-    PROTEIN_TO_ORGANISM_EDGE: "RO:0001000",
-    PROTEOME_TO_ORGANISM_EDGE: "RO:0001000",
-    PROTEIN_TO_PROTEOME_EDGE: "RO:0001000",
-    PROTEIN_TO_EC_EDGE: "RO:0002327",
-    CHEMICAL_TO_PROTEIN_EDGE: "RO:0002436",
-    PROTEIN_TO_RHEA_EDGE: "RO:0000056",
-    PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE: "RO:0001025",
-    PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE: "RO:0000056",
-    PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE: "RO:0000056",
+RELATIONS_DICT = {
+    PROTEIN_TO_ORGANISM_EDGE: DERIVES_FROM,
+    PROTEOME_TO_ORGANISM_EDGE: DERIVES_FROM,
+    PROTEIN_TO_PROTEOME_EDGE: DERIVES_FROM,
+    PROTEIN_TO_EC_EDGE: ENABLES,
+    CHEMICAL_TO_PROTEIN_EDGE: MOLECULARLY_INTERACTS_WITH,
+    PROTEIN_TO_RHEA_EDGE: PARTICIPATES_IN,
+    PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE: LOCATED_IN,
+    PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE: PARTICIPATES_IN,
+    PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE: PARTICIPATES_IN,
 }
+
 GO_CATEGORY_DICT = {
     GO_CELLULAR_COMPONENT_ID: PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE,
     GO_MOLECULAR_FUNCTION_ID: PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE,
     GO_BIOLOGICAL_PROCESS_ID: PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE,
 }
+
+GO_TYPES_DICT = {
+    GO_CELLULAR_COMPONENT_ID: GO_CELLULAR_COMPONENT_LABEL,
+    GO_MOLECULAR_FUNCTION_ID: GO_MOLECULAR_FUNCTION_LABEL,
+    GO_BIOLOGICAL_PROCESS_ID: GO_BIOLOGICAL_PROCESS_LABEL,
+}
+
+ORGANISM_PARSED_COLUMN = "organism_parsed"
+EC_NUMBER_PARSED_COLUMN = "ec_number_parsed"
+PROTEIN_ID_PARSED_COLUMN = "protein_id_parsed"
+PROTEIN_NAME_PARSED_COLUMN = "protein_name_parsed"
+BINDING_SITE_PARSED_COLUMN = "binding_site_parsed"
+GO_PARSED_COLUMN = "go_parsed"
+RHEA_PARSED_COLUMN = "rhea_parsed"
+PROTEOME_PARSED_COLUMN = "proteome_parsed"
+GO_TERM_COLUMN = "GO_Term"
+GO_CATEGORY_COLUMN = "GO_Category"
+UNIPROT_ID_COLUMN = "Uniprot_ID"
 
 # file to keep track of obsolete terms from GO not included in graph
 OBSOLETE_TERMS_CSV_FILE = UNIPROT_TMP_DIR / "go_obsolete_terms.csv"
@@ -105,7 +130,12 @@ class UniprotTransform(Transform):
         # Check if the file already exists
         if not GO_CATEGORY_TREES_FILE.exists():
             self._get_go_category_trees(self.go_oi)
-        self.go_category_trees_df = pd.read_csv(GO_CATEGORY_TREES_FILE, sep="\t", low_memory=False)
+        # Read into a dictionary
+        self.go_category_trees_dict = {}
+        with open(GO_CATEGORY_TREES_FILE, "r") as file:
+            csv_reader = csv.DictReader(file, delimiter="\t")
+            for row in csv_reader:
+                self.go_category_trees_dict[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
@@ -116,6 +146,11 @@ class UniprotTransform(Transform):
         os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
 
         self.write_obsolete_file_header()
+        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge:
+            node_writer = csv.writer(node, delimiter="\t")
+            node_writer.writerow(self.node_header)
+            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer.writerow(self.edge_header)
 
         tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
         with tarfile.open(tar_file, "r:gz") as tar:
@@ -133,11 +168,11 @@ class UniprotTransform(Transform):
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
-        drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by="GO_Term")
+        drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by=GO_TERM_COLUMN)
 
     def write_obsolete_file_header(self):
         """Write obsolete header to file."""
-        obsolete_terms_csv_header = ["GO_Term", "Uniprot_ID"]
+        obsolete_terms_csv_header = [GO_TERM_COLUMN, UNIPROT_ID_COLUMN]
 
         with open(OBSOLETE_TERMS_CSV_FILE, "w") as f:
             obsolete_terms_csv_writer = csv.writer(f, delimiter="\t")
@@ -152,22 +187,16 @@ class UniprotTransform(Transform):
         """
         with open(GO_CATEGORY_TREES_FILE, "w") as file:
             csv_writer = csv.writer(file, delimiter="\t")
-            csv_writer.writerow(["GO_Category", "GO_Category_Label", "GO_Term"])
+            csv_writer.writerow([GO_CATEGORY_COLUMN, GO_TERM_COLUMN])
 
-            go_types_dict = {
-                GO_CELLULAR_COMPONENT_ID: GO_CELLULAR_COMPONENT_LABEL,
-                GO_MOLECULAR_FUNCTION_ID: GO_MOLECULAR_FUNCTION_LABEL,
-                GO_BIOLOGICAL_PROCESS_ID: GO_BIOLOGICAL_PROCESS_LABEL,
-            }
-
-            for id, label in go_types_dict.items():
+            for id in GO_TYPES_DICT.keys():
                 term_decendants = list(
                     go_oi.descendants(
-                        start_curies=id, predicates=["rdfs:subClassOf"], reflexive=True
+                        start_curies=id, predicates=[RDFS_SUBCLASS_OF], reflexive=True
                     )
                 )
                 for term in term_decendants:
-                    r_list = [id, label, term]
+                    r_list = [id, term]
                     csv_writer.writerow(r_list)
 
     def _get_go_relation_and_obsolete_terms(self, term_id, uniprot_id):
@@ -182,13 +211,11 @@ class UniprotTransform(Transform):
         :rtype: str or None
         """
         #! To handle obsolete terms
-
         try:
-            idx = self.go_category_trees_df["GO_Term"].eq(term_id).idxmax()
-            go_component = self.go_category_trees_df.at[idx, "GO_Category"]
-            go_component_label = self.go_category_trees_df.at[idx, "GO_Category_Label"]
+            go_component = self.go_category_trees_dict[term_id]
+            go_component_label = GO_TYPES_DICT[go_component]
             go_relation = GO_CATEGORY_DICT[go_component]
-        except IndexError:
+        except KeyError:
             with open(OBSOLETE_TERMS_CSV_FILE, "a") as f:
                 csv_writer = csv.writer(f, delimiter="\t")
                 csv_writer.writerow([term_id, uniprot_id])
@@ -197,28 +224,8 @@ class UniprotTransform(Transform):
 
         return go_relation, go_component_label
 
-        """try:
-            go_component = self.go_category_trees_df.loc[
-                self.go_category_trees_df["GO_Term"] == term_id, "GO_Category"
-            ].values[0]
-            if go_component == GO_CELLULAR_COMPONENT_ID:
-                go_relation = PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE
-            elif go_component == GO_MOLECULAR_FUNCTION_ID:
-                go_relation = PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE
-            elif go_component == GO_BIOLOGICAL_PROCESS_ID:
-                go_relation = PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE
-        except IndexError:
-            with open(OBSOLETE_TERMS_CSV_FILE, "a") as f:
-                csv_writer = csv.writer(f, delimiter="\t")
-                csv_writer.writerow([term_id, uniprot_id])
-            go_relation = None
-            go_component = None
-
-        return go_relation, go_component
-        """
-
     def _is_float(self, entry):
-
+        """Determine if value is float, returns True/False."""
         return isinstance(entry, float)
 
     def parse_binding_site(self, binding_site_entry):
@@ -336,7 +343,7 @@ class UniprotTransform(Transform):
         """
         with open(self.output_edge_file, "a") as edge:
             edge_writer = csv.writer(edge, delimiter="\t")
-            values_list = [subject, predicate, object, RELATIONS_DICTIONARY[predicate]]
+            values_list = [subject, predicate, object, RELATIONS_DICT[predicate]]
             row_list = values_list + ([None] * (len(self.edge_header) - len(values_list)))
             row_list[self.edge_header.index(PROVIDED_BY_COLUMN)] = self.source_name
             edge_writer.writerow(row_list)
@@ -355,99 +362,102 @@ class UniprotTransform(Transform):
         :type uniprot_df: dataframe
         """
         parsed_columns = [
-            "organism_parsed",
-            "ec_number_parsed",
-            "protein_parsed",
-            "binding_site_parsed",
-            "go_parsed",
-            "rhea_parsed",
+            ORGANISM_PARSED_COLUMN,
+            PROTEOME_PARSED_COLUMN,
+            EC_NUMBER_PARSED_COLUMN,
+            PROTEIN_ID_PARSED_COLUMN,
+            BINDING_SITE_PARSED_COLUMN,
+            GO_PARSED_COLUMN,
+            RHEA_PARSED_COLUMN,
         ]
         uniprot_parse_df = pd.DataFrame(columns=parsed_columns)
 
-        uniprot_parse_df["organism_parsed"] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
+        uniprot_parse_df[ORGANISM_PARSED_COLUMN] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
             lambda x: NCBITAXON_PREFIX + str(x).strip()
         )
-        uniprot_parse_df["ec_number_parsed"] = uniprot_df[UNIPROT_EC_ID_COLUMN_NAME].apply(
+        uniprot_parse_df[EC_NUMBER_PARSED_COLUMN] = uniprot_df[UNIPROT_EC_ID_COLUMN_NAME].apply(
             self.parse_ec
         )
-        uniprot_parse_df["protein_id_parsed"] = uniprot_df[UNIPROT_PROTEIN_ID_COLUMN_NAME].apply(
-            lambda x: UNIPROT_PREFIX + x.strip()
-        )
-        uniprot_parse_df["protein_name_parsed"] = uniprot_df[
+        uniprot_parse_df[PROTEIN_ID_PARSED_COLUMN] = uniprot_df[
+            UNIPROT_PROTEIN_ID_COLUMN_NAME
+        ].apply(lambda x: UNIPROT_PREFIX + x.strip())
+        uniprot_parse_df[PROTEIN_NAME_PARSED_COLUMN] = uniprot_df[
             UNIPROT_PROTEIN_NAME_COLUMN_NAME
         ].apply(lambda x: x.split("(EC")[0].replace("[", "(").replace("]", ")"))
-        uniprot_parse_df["binding_site_parsed"] = uniprot_df[
+        uniprot_parse_df[BINDING_SITE_PARSED_COLUMN] = uniprot_df[
             UNIPROT_BINDING_SITE_COLUMN_NAME
         ].apply(self.parse_binding_site)
-        uniprot_parse_df["go_parsed"] = uniprot_df[UNIPROT_GO_COLUMN_NAME].apply(
+        uniprot_parse_df[GO_PARSED_COLUMN] = uniprot_df[UNIPROT_GO_COLUMN_NAME].apply(
             self.parse_go_entry
         )
-        uniprot_parse_df["rhea_parsed"] = uniprot_df[UNIPROT_RHEA_ID_COLUMN_NAME].apply(
+        uniprot_parse_df[RHEA_PARSED_COLUMN] = uniprot_df[UNIPROT_RHEA_ID_COLUMN_NAME].apply(
             self.parse_rhea_entry
         )
-        uniprot_parse_df["proteome_parsed"] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
+        uniprot_parse_df[PROTEOME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
             lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if not self._is_float(x) else x
         )
 
-        with open(self.output_node_file, "w") as node, open(self.output_edge_file, "w") as edge:
-            node_writer = csv.writer(node, delimiter="\t")
-            node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge, delimiter="\t")
-            edge_writer.writerow(self.edge_header)
-
         for _, entry in uniprot_parse_df.iterrows():
             # Organism node
-            self._write_node(entry["organism_parsed"], NCBI_CATEGORY)
+            self._write_node(entry[ORGANISM_PARSED_COLUMN], NCBI_CATEGORY)
             # Protein node
             self._write_node(
-                entry["protein_id_parsed"], PROTEIN_CATEGORY, entry["protein_name_parsed"]
+                entry[PROTEIN_ID_PARSED_COLUMN], PROTEIN_CATEGORY, entry[PROTEIN_NAME_PARSED_COLUMN]
             )
             # Proteome node
-            self._write_node(entry["proteome_parsed"], PROTEOME_CATEGORY, entry["proteome_parsed"])
+            self._write_node(
+                entry[PROTEOME_PARSED_COLUMN], PROTEOME_CATEGORY, entry[PROTEOME_PARSED_COLUMN]
+            )
             # EC node
-            if entry["ec_number_parsed"] is None:
+            if entry[EC_NUMBER_PARSED_COLUMN] is None:
                 continue
-            for ec in entry["ec_number_parsed"]:
+            for ec in entry[EC_NUMBER_PARSED_COLUMN]:
                 self._write_node(ec, EC_CATEGORY)
                 # Protein-ec edge
-                self._write_edge(entry["protein_id_parsed"], PROTEIN_TO_EC_EDGE, ec)
+                self._write_edge(entry[PROTEIN_ID_PARSED_COLUMN], PROTEIN_TO_EC_EDGE, ec)
             # CHEBI node
-            if entry["binding_site_parsed"] is None:
+            if entry[BINDING_SITE_PARSED_COLUMN] is None:
                 continue
-            for chebi in entry["binding_site_parsed"]:
+            for chebi in entry[BINDING_SITE_PARSED_COLUMN]:
                 self._write_node(chebi, CHEMICAL_CATEGORY)
                 # Chebi-protein edge
-                self._write_edge(chebi, CHEMICAL_TO_PROTEIN_EDGE, entry["protein_id_parsed"])
+                self._write_edge(chebi, CHEMICAL_TO_PROTEIN_EDGE, entry[PROTEIN_ID_PARSED_COLUMN])
             # Rhea node
-            if entry["rhea_parsed"] is None:
+            if entry[RHEA_PARSED_COLUMN] is None:
                 continue
-            for rhea in entry["rhea_parsed"]:
+            for rhea in entry[RHEA_PARSED_COLUMN]:
                 self._write_node(rhea, RHEA_CATEGORY)
                 # Protein-rhea edge
-                self._write_edge(entry["protein_id_parsed"], PROTEIN_TO_RHEA_EDGE, rhea)
+                self._write_edge(entry[PROTEIN_ID_PARSED_COLUMN], PROTEIN_TO_RHEA_EDGE, rhea)
             # GO node
-            if entry["go_parsed"] is None:
+            if entry[GO_PARSED_COLUMN] is None:
                 continue
-            for go in entry["go_parsed"]:
+            for go in entry[GO_PARSED_COLUMN]:
                 #! Excluding obsolete terms
                 predicate, go_category = self._get_go_relation_and_obsolete_terms(
-                    go, entry["protein_id_parsed"]
+                    go, entry[PROTEIN_ID_PARSED_COLUMN]
                 )
                 self._write_node(go, go_category)
                 # Protein to go edge
                 if not predicate:
                     continue
-                self._write_edge(entry["protein_id_parsed"], predicate, go)
+                self._write_edge(entry[PROTEIN_ID_PARSED_COLUMN], predicate, go)
 
             # Protein-organism
             self._write_edge(
-                entry["protein_id_parsed"], PROTEIN_TO_ORGANISM_EDGE, entry["organism_parsed"]
+                entry[PROTEIN_ID_PARSED_COLUMN],
+                PROTEIN_TO_ORGANISM_EDGE,
+                entry[ORGANISM_PARSED_COLUMN],
             )
             # Proteome-organism
             self._write_edge(
-                entry["proteome_parsed"], PROTEOME_TO_ORGANISM_EDGE, entry["organism_parsed"]
+                entry[PROTEOME_PARSED_COLUMN],
+                PROTEOME_TO_ORGANISM_EDGE,
+                entry[ORGANISM_PARSED_COLUMN],
             )
             # Protein-proteome
             self._write_edge(
-                entry["protein_id_parsed"], PROTEIN_TO_PROTEOME_EDGE, entry["proteome_parsed"]
+                entry[PROTEIN_ID_PARSED_COLUMN],
+                PROTEIN_TO_PROTEOME_EDGE,
+                entry[PROTEOME_PARSED_COLUMN],
             )

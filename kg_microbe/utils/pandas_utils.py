@@ -48,7 +48,6 @@ def drop_duplicates(
         # replace df_copy[NAME_COLUMN] with the original values based on index match
         df_copy[NAME_COLUMN] = df.loc[df_copy.index, NAME_COLUMN]
 
-
     df_copy.to_csv(file_path, sep="\t", index=False)
     return df_copy
 

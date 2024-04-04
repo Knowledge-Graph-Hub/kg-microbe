@@ -374,7 +374,7 @@ DO_NOT_CHANGE_PREFIXES = [
     RHEA_NEW_PREFIX,
     GO_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,
-    STRAIN_PREFIX
+    STRAIN_PREFIX,
 ]
 
 # Create a mapping for special cases

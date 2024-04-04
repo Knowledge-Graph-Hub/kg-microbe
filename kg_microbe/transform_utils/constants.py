@@ -103,6 +103,7 @@ EXTERNAL_LINKS_CULTURE_NUMBER = "culture collection no."
 REF = "Reference"
 NCBITAXON_PREFIX = "NCBITaxon:"
 BACDIVE_PREFIX = "bacdive:"
+STRAIN_PREFIX = "strain:"
 CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
@@ -408,6 +409,7 @@ DO_NOT_CHANGE_PREFIXES = [
     RHEA_NEW_PREFIX,
     GO_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,
+    STRAIN_PREFIX,
 ]
 
 # Create a mapping for special cases

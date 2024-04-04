@@ -125,12 +125,15 @@ from kg_microbe.transform_utils.constants import (
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCTION_KEY,
     PROVIDED_BY_COLUMN,
+    RDFS_SUBCLASS_OF,
     RISK_ASSESSMENT,
     RISK_ASSESSMENT_COLUMN,
     SAFETY_INFO,
     SPECIES,
     SPORE_FORMATION,
     STRAIN,
+    STRAIN_PREFIX,
+    SUBCLASS_PREDICATE,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
     TOLERANCE,
@@ -288,7 +291,7 @@ class BacDiveTransform(Transform):
                             PHENOTYPIC_CATEGORY,
                             assay[BACDIVE_MAPPING_ENZYME_LABEL],
                         ]
-                        + [None] * 11
+                        + [None] * (len(self.node_header) - 3)
                     )
                     assay_edges_to_write.append(
                         [
@@ -308,7 +311,7 @@ class BacDiveTransform(Transform):
                             SUBSTRATE_CATEGORY,
                             assay[BACDIVE_MAPPING_SUBSTRATE_LABEL],
                         ]
-                        + [None] * 11
+                        + [None] * (len(self.node_header) - 3)
                     )
                     assay_edges_to_write.append(
                         [
@@ -601,7 +604,8 @@ class BacDiveTransform(Transform):
                             [medium_id, MEDIUM_CATEGORY, medium_label],
                         ]
                         nodes_data_to_write = [
-                            sublist + [None] * 11 for sublist in nodes_data_to_write
+                            sublist + [None] * (len(self.node_header) - 3)
+                            for sublist in nodes_data_to_write
                         ]
                         node_writer.writerows(nodes_data_to_write)
 
@@ -622,7 +626,8 @@ class BacDiveTransform(Transform):
                         ]
                         nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
                         nodes_data_to_write = [
-                            sublist + [None] * 11 for sublist in nodes_data_to_write
+                            sublist + [None] * (len(self.node_header) - 3)
+                            for sublist in nodes_data_to_write
                         ]
 
                         node_writer.writerows(nodes_data_to_write)
@@ -643,6 +648,24 @@ class BacDiveTransform(Transform):
 
                             edge_writer.writerow(edges_data_to_write)
 
+                    if ncbitaxon_id and culture_number_from_external_links:
+                        for culture_number in culture_number_from_external_links:
+                            culture_number_cleaned = culture_number.strip().replace(" ", "-")
+                            strain_curie = STRAIN_PREFIX + culture_number_cleaned
+                            node_writer.writerow(
+                                [strain_curie, NCBI_CATEGORY, culture_number.strip()]
+                                + [None] * (len(self.node_header) - 3)
+                            )
+                            edge_writer.writerow(
+                                [
+                                    strain_curie,
+                                    SUBCLASS_PREDICATE,
+                                    ncbitaxon_id,
+                                    RDFS_SUBCLASS_OF,
+                                    BACDIVE_PREFIX + key,
+                                ]
+                            )
+
                     if phys_and_metabolism_enzymes:
                         postive_activity_enzymes = None
                         if isinstance(phys_and_metabolism_enzymes, list):
@@ -662,12 +685,13 @@ class BacDiveTransform(Transform):
                             print(f"{phys_and_metabolism_enzymes} data not recorded.")
                         if postive_activity_enzymes:
                             enzyme_nodes_to_write = [
-                                [k, PHENOTYPIC_CATEGORY, v] + [None] * 11
+                                [k, PHENOTYPIC_CATEGORY, v] + [None] * (len(self.node_header) - 3)
                                 for inner_dict in postive_activity_enzymes
                                 for k, v in inner_dict.items()
                             ]
                             enzyme_nodes_to_write.append(
-                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label] + [None] * 11
+                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label]
+                                + [None] * (len(self.node_header) - 3)
                             )
                             node_writer.writerows(enzyme_nodes_to_write)
 
@@ -739,7 +763,8 @@ class BacDiveTransform(Transform):
                             )
                         if positive_chebi_activity:
                             meta_util_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v[0]] + [None] * 11
+                                [k, METABOLITE_CATEGORY, v[0]]
+                                + [None] * (len(self.node_header) - 3)
                                 for inner_dict in positive_chebi_activity
                                 for k, v in inner_dict.items()
                             ]
@@ -801,7 +826,7 @@ class BacDiveTransform(Transform):
 
                         if positive_chebi_production:
                             metabolite_production_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v] + [None] * 11
+                                [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
                                 for inner_dict in positive_chebi_production
                                 for k, v in inner_dict.items()
                             ]
@@ -831,7 +856,7 @@ class BacDiveTransform(Transform):
                         if meta_assay:
                             metabolism_nodes_to_write = [
                                 [m, PHENOTYPIC_CATEGORY, assay_name + " - " + m.split(":")[-1]]
-                                + [None] * 11
+                                + [None] * (len(self.node_header) - 3)
                                 for m in meta_assay
                             ]
                             node_writer.writerows(metabolism_nodes_to_write)

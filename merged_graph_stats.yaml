@@ -145,13 +145,13 @@ edge_stats:
         unknown:
           count: 1916711
     biolink:subclass_of:
-      count: 1829977
+      count: 1966291
       provided_by:
         unknown:
-          count: 1829977
+          count: 1966291
       source:
         unknown:
-          count: 1829977
+          count: 1966291
     biolink:superclass_of:
       count: 732118
       provided_by:
@@ -2028,13 +2028,13 @@ edge_stats:
         unknown:
           count: 3
     biolink:OrganismTaxon-biolink:subclass_of-biolink:NamedThing:
-      count: 35402
+      count: 77085
       provided_by:
         unknown:
-          count: 35402
+          count: 77085
       source:
         unknown:
-          count: 35402
+          count: 77085
     biolink:OrganismTaxon-biolink:subclass_of-biolink:OntologyClass:
       count: 36
       provided_by:
@@ -2044,13 +2044,21 @@ edge_stats:
         unknown:
           count: 36
     biolink:OrganismTaxon-biolink:subclass_of-biolink:OrganismTaxon:
-      count: 815467
+      count: 951777
       provided_by:
         unknown:
-          count: 815467
+          count: 951777
       source:
         unknown:
-          count: 815467
+          count: 951777
+    biolink:OrganismTaxon-biolink:subclass_of-unknown:
+      count: 4
+      provided_by:
+        unknown:
+          count: 4
+      source:
+        unknown:
+          count: 4
     biolink:PhenotypicQuality-biolink:assesses-biolink:NamedThing:
       count: 11874
       provided_by:
@@ -2245,7 +2253,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 5455570
+  total_edges: 5591884
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -2392,7 +2400,7 @@ node_stats:
         uniprot.json:
           count: 570834
     biolink:OrganismTaxon:
-      count: 817201
+      count: 953079
       provided_by:
         Graph:
           count: 4718
@@ -2401,7 +2409,7 @@ node_stats:
         ncbitaxon_removed_subset.json:
           count: 815343
         nodes.tsv:
-          count: 55450
+          count: 191328
     biolink:PhenotypicQuality:
       count: 544
       provided_by:
@@ -2412,13 +2420,14 @@ node_stats:
         nodes.tsv:
           count: 544
     unknown:
-      count: 247912
+      count: 247914
       provided_by:
         nodes.tsv:
           count: 5
         unknown:
-          count: 247907
+          count: 247909
   count_by_id_prefixes:
+    '"strain': 1
     API_20A: 24
     API_20E: 24
     API_20NE: 18
@@ -2446,7 +2455,7 @@ node_stats:
     GO: 60928
     IAO: 28
     KEGG: 1
-    NCBITaxon: 830547
+    NCBITaxon: 830549
     NaCl_delta: 4
     NaCl_opt: 4
     NaCl_range: 4
@@ -2490,6 +2499,7 @@ node_stats:
     salinity: 7
     solution: 5381
     sporulation: 2
+    strain: 135670
     temp_delta: 1
     temp_opt: 7
     temp_range: 7
@@ -2568,8 +2578,10 @@ node_stats:
       debio: 4
       uniprot: 570830
     biolink:OrganismTaxon:
+      '"strain': 1
       NCBITaxon: 815976
       bacdive: 1224
+      strain: 135670
     biolink:PhenotypicQuality:
       API_20A: 24
       API_20E: 24
@@ -2613,6 +2625,7 @@ node_stats:
       API_50CHas: 30
       API_STA: 20
       FOODON: 1
+      NCBITaxon: 2
       RHEA: 247836
       cell_shape: 1
       isolation_source: 5
@@ -2637,6 +2650,7 @@ node_stats:
   - biolink:OrganismTaxon
   - biolink:PhenotypicQuality
   node_id_prefixes:
+  - '"strain'
   - API_20A
   - API_20E
   - API_20NE
@@ -2708,6 +2722,7 @@ node_stats:
   - salinity
   - solution
   - sporulation
+  - strain
   - temp_delta
   - temp_opt
   - temp_range
@@ -2787,6 +2802,8 @@ node_stats:
     - RHEA
     biolink:OrganismTaxon:
     - NCBITaxon
+    - strain
+    - '"strain'
     - bacdive
     biolink:PhenotypicQuality:
     - EC
@@ -2831,6 +2848,7 @@ node_stats:
     - API_STA
     - API_50CHas
     - kegg.compound
+    - NCBITaxon
     - medium
     - RHEA
     - isolation_source
@@ -2848,4 +2866,4 @@ node_stats:
   - nodes.tsv
   - uniprot.json
   - unknown
-  total_nodes: 1972490
+  total_nodes: 2108370

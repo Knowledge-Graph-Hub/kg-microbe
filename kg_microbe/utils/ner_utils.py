@@ -174,5 +174,5 @@ def annotate(
                         row_to_write = [response_dict.get(col) for col in annotated_columns]
                         writer.writerow(row_to_write)
 
-    drop_duplicates(outfile, sort_by=OBJECT_ID_COLUMN)
-    drop_duplicates(outfile_for_unmatched, sort_by=OBJECT_ID_COLUMN)
+    drop_duplicates(outfile, sort_by_column=OBJECT_ID_COLUMN)
+    drop_duplicates(outfile_for_unmatched, sort_by_column=OBJECT_ID_COLUMN)

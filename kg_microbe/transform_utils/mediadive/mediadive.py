@@ -290,13 +290,13 @@ class MediaDiveTransform(Transform):
                             MEDIUM_TYPE_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
                         ]
-                        + [None] * 11,
+                        + [None] * (len(self.node_header) - 3),
                         [
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                             MEDIUM_TYPE_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
                         ]
-                        + [None] * 11,
+                        + [None] * (len(self.node_header) - 3),
                     ]
                 )
                 for dictionary in input_json[DATA_KEY]:
@@ -469,7 +469,10 @@ class MediaDiveTransform(Transform):
                         *ingredient_nodes,
                         *medium_strain_nodes,
                     ]
-                    nodes_data_to_write = [sublist + [None] * 11 for sublist in nodes_data_to_write]
+                    nodes_data_to_write = [
+                        sublist + [None] * (len(self.node_header) - 3)
+                        for sublist in nodes_data_to_write
+                    ]
                     node_writer.writerows(nodes_data_to_write)
 
                     edge_writer.writerows(solution_ingredient_edges)

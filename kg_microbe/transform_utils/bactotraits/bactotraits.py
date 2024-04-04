@@ -306,7 +306,8 @@ class BactoTraitsTransform(Transform):
                                     ]
                                 )
                             nodes_data_to_write = [
-                                sublist + [None] * (len(self.node_header) - 3) for sublist in nodes_data_to_write
+                                sublist + [None] * (len(self.node_header) - 3)
+                                for sublist in nodes_data_to_write
                             ]
 
                             node_writer.writerows(nodes_data_to_write)

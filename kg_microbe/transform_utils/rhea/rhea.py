@@ -198,7 +198,8 @@ class RheaMappingsTransform(Transform):
                         [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, RHEA_UNDEFINED_DIRECTION]
                     )
                     nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v] + [None] * (len(self.node_header) - 3)
+                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v]
+                        + [None] * (len(self.node_header) - 3)
                     )
 
                     tmp_file_writer.writerow(
@@ -210,7 +211,8 @@ class RheaMappingsTransform(Transform):
                         ]
                     )
                     nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + str(int(k) + 1), RHEA_CATEGORY, v] + [None] * (len(self.node_header) - 3)
+                        [RHEA_NEW_PREFIX + str(int(k) + 1), RHEA_CATEGORY, v]
+                        + [None] * (len(self.node_header) - 3)
                     )
 
                     tmp_file_writer.writerow(
@@ -222,7 +224,8 @@ class RheaMappingsTransform(Transform):
                         ]
                     )
                     nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + str(int(k) + 2), RHEA_CATEGORY, v] + [None] * (len(self.node_header) - 3)
+                        [RHEA_NEW_PREFIX + str(int(k) + 2), RHEA_CATEGORY, v]
+                        + [None] * (len(self.node_header) - 3)
                     )
 
                     tmp_file_writer.writerow(
@@ -234,7 +237,8 @@ class RheaMappingsTransform(Transform):
                         ]
                     )
                     nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + str(int(k) + 3), RHEA_CATEGORY, v] + [None] * (len(self.node_header) - 3)
+                        [RHEA_NEW_PREFIX + str(int(k) + 3), RHEA_CATEGORY, v]
+                        + [None] * (len(self.node_header) - 3)
                     )
                     progress.set_description(f"Processing RHEA node: {RHEA_NEW_PREFIX + k} ...")
                     # After each iteration, call the update method to advance the progress bar.
@@ -272,7 +276,9 @@ class RheaMappingsTransform(Transform):
                         for row in mapping_tsv_reader:
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
-                            nodes_file_writer.writerow([object, category, None] + [None] * (len(self.node_header) - 3))
+                            nodes_file_writer.writerow(
+                                [object, category, None] + [None] * (len(self.node_header) - 3)
+                            )
                             edges_file_writer.writerow(
                                 [subject_info, predicate, object, relation, ks]
                             )
@@ -316,7 +322,8 @@ class RheaMappingsTransform(Transform):
                                         else:
                                             category = EC_CATEGORY
                                         nodes_file_writer.writerow(
-                                            [object_info[0], category, object_info[1]] + [None] * (len(self.node_header) - 3)
+                                            [object_info[0], category, object_info[1]]
+                                            + [None] * (len(self.node_header) - 3)
                                         )
                                         edges_file_writer.writerow(
                                             [

@@ -469,7 +469,10 @@ class MediaDiveTransform(Transform):
                         *ingredient_nodes,
                         *medium_strain_nodes,
                     ]
-                    nodes_data_to_write = [sublist + [None] * (len(self.node_header) - 3) for sublist in nodes_data_to_write]
+                    nodes_data_to_write = [
+                        sublist + [None] * (len(self.node_header) - 3)
+                        for sublist in nodes_data_to_write
+                    ]
                     node_writer.writerows(nodes_data_to_write)
 
                     edge_writer.writerows(solution_ingredient_edges)

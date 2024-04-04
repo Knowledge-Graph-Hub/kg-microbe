@@ -604,7 +604,8 @@ class BacDiveTransform(Transform):
                             [medium_id, MEDIUM_CATEGORY, medium_label],
                         ]
                         nodes_data_to_write = [
-                            sublist + [None] * (len(self.node_header) - 3) for sublist in nodes_data_to_write
+                            sublist + [None] * (len(self.node_header) - 3)
+                            for sublist in nodes_data_to_write
                         ]
                         node_writer.writerows(nodes_data_to_write)
 
@@ -625,7 +626,8 @@ class BacDiveTransform(Transform):
                         ]
                         nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
                         nodes_data_to_write = [
-                            sublist + [None] * (len(self.node_header) - 3) for sublist in nodes_data_to_write
+                            sublist + [None] * (len(self.node_header) - 3)
+                            for sublist in nodes_data_to_write
                         ]
 
                         node_writer.writerows(nodes_data_to_write)
@@ -688,7 +690,8 @@ class BacDiveTransform(Transform):
                                 for k, v in inner_dict.items()
                             ]
                             enzyme_nodes_to_write.append(
-                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label] + [None] * (len(self.node_header) - 3)
+                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label]
+                                + [None] * (len(self.node_header) - 3)
                             )
                             node_writer.writerows(enzyme_nodes_to_write)
 
@@ -760,7 +763,8 @@ class BacDiveTransform(Transform):
                             )
                         if positive_chebi_activity:
                             meta_util_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v[0]] + [None] * (len(self.node_header) - 3)
+                                [k, METABOLITE_CATEGORY, v[0]]
+                                + [None] * (len(self.node_header) - 3)
                                 for inner_dict in positive_chebi_activity
                                 for k, v in inner_dict.items()
                             ]

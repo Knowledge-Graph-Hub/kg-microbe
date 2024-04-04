@@ -12,6 +12,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_SOLUTION_PREFIX,
+    NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     SUBJECT_COLUMN,
@@ -20,7 +21,7 @@ from kg_microbe.transform_utils.constants import (
 
 def drop_duplicates(
     file_path: Path,
-    sort_by: str = SUBJECT_COLUMN,
+    sort_by_column: str = SUBJECT_COLUMN,
     consolidation_columns: List = None,
 ):
     """
@@ -31,18 +32,24 @@ def drop_duplicates(
     """
     exclude_prefixes = DO_NOT_CHANGE_PREFIXES
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
-    if consolidation_columns and all(col in list(df.columns) for col in consolidation_columns):
+    df_copy = df.copy()
+    if consolidation_columns and all(col in list(df_copy.columns) for col in consolidation_columns):
         for col in consolidation_columns:
-            df[col] = df[col].apply(
+            df_copy[col] = df_copy[col].apply(
                 lambda x: (
                     str(x).lower()
                     if not any(str(x).startswith(prefix) for prefix in exclude_prefixes)
                     else x
                 )
             )
-    df = df.drop_duplicates().sort_values(by=[sort_by])
-    df.to_csv(file_path, sep="\t", index=False)
-    return df
+    df_copy = df_copy.drop_duplicates().sort_values(by=[sort_by_column])
+    # Replace the "name" column with the original values
+    if consolidation_columns and NAME_COLUMN in consolidation_columns:
+        # replace df_copy[NAME_COLUMN] with the original values based on index match
+        df_copy[NAME_COLUMN] = df.loc[df_copy.index, NAME_COLUMN]
+
+    df_copy.to_csv(file_path, sep="\t", index=False)
+    return df_copy
 
 
 def establish_transitive_relationship(

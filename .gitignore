@@ -160,3 +160,4 @@ data/raw/uniprot_proteomes/*.tsv
 kg_microbe/transform_utils/uniprot/tmp/go_obsolete_terms.csv
 data/transformed/uniprot_genome_features/*.tsv
 
+*_*.tsv

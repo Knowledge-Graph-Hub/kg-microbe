@@ -1,6 +1,7 @@
 """Uniprot Transform class."""
 
 import csv
+from functools import partial
 import os
 import re
 import tarfile
@@ -8,6 +9,7 @@ from io import StringIO
 from multiprocessing import Manager, Pool
 from pathlib import Path
 from typing import Optional, Union
+import uuid
 
 import pandas as pd
 from oaklib import get_adapter
@@ -57,6 +59,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEOMES_FILE,
     UNIPROT_RHEA_ID_COLUMN_NAME,
     UNIPROT_TMP_DIR,
+    UNIPROT_TMP_NE_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -340,7 +343,7 @@ def write_to_df(uniprot_df):
 
 
 def process_member(
-    member_content, lock, node_header_count, edge_header_count, node_file, edge_file
+    member_content, node_header, edge_header
 ):
     """
     Process a member of a tarfile containing UniProt data.
@@ -360,21 +363,30 @@ def process_member(
     df = pd.read_csv(s, sep="\t", low_memory=False)
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     node_data, edge_data = write_to_df(df)
-    if len(node_data)> 0 or len(edge_data) > 0:
-        with lock:
-            with open(node_file, "a", newline="") as nf, open(edge_file, "a", newline="") as ef:
-                node_writer = csv.writer(nf, delimiter="\t")
-                edge_writer = csv.writer(ef, delimiter="\t")
-                if len(node_data)> 0:
-                    for node in node_data:
-                        if len(node) < node_header_count:
-                            node.extend([None] * (node_header_count - len(node)))
-                        node_writer.writerow(node)
-                if len(edge_data) > 0:
-                    for edge in edge_data:
-                        if len(edge) < edge_header_count:
-                            edge.extend([None] * (edge_header_count - len(edge)))
-                        edge_writer.writerow(edge)
+    node_filename = None
+    edge_filename = None
+    # Write node and edge data to unique files
+    if len(node_data) > 0:
+        node_filename = UNIPROT_TMP_NE_DIR/f"nodes_{uuid.uuid4().hex}.tsv"
+        with open(node_filename, "w", newline="") as nf:
+            node_writer = csv.writer(nf, delimiter="\t")
+            node_writer.writerow(node_header)  # Write header
+            for node in node_data:
+                if len(node) < len(node_header):
+                    node.extend([None] * (len(node_header) - len(node)))
+                node_writer.writerow(node)
+
+    if len(edge_data) > 0:
+        edge_filename = UNIPROT_TMP_NE_DIR/f"edges_{uuid.uuid4().hex}.tsv"
+        with open(edge_filename, "w", newline="") as ef:
+            edge_writer = csv.writer(ef, delimiter="\t")
+            edge_writer.writerow(edge_header)  # Write header
+            for edge in edge_data:
+                if len(edge) < len(edge_header):
+                    edge.extend([None] * (len(edge_header) - len(edge)))
+                edge_writer.writerow(edge)
+
+    return node_filename, edge_filename
 
 
 class UniprotTransform(Transform):
@@ -408,15 +420,32 @@ class UniprotTransform(Transform):
             for row in csv_reader:
                 GO_CATEGORY_TREES_DICT[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
 
+    # def _check_string_in_tar(self, tar_file, regex_pattern  = rb'UP\d+: (Chromosome|Plasmid .+)', min_line_count=1000):
+    #     pattern = re.compile(regex_pattern)
+    #     matching_members_content = [] # list to store matching members content
+    #     with tarfile.open(tar_file, "r:gz") as tar:
+    #         for member in tar.getmembers():
+    #             if member.name.endswith(".tsv"):
+    #                 with tar.extractfile(member) as file:
+    #                     if file is not None:
+    #                         # Read the content as a text stream using decode
+    #                         content = file.read()
+    #                         # Split the content into lines and count occurrences
+    #                         count = sum(bool(pattern.findall(line)) for line in content.splitlines())
+    #                         if count > min_line_count:
+    #                             matching_members_content.append(content)  # Add the content to the list
+    #     return matching_members_content
+
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
         # make directory in data/transformed
-        node_header_count = len(self.node_header)
-        edge_header_count = len(self.edge_header)
+        # node_header_count = len(self.node_header)
+        # edge_header_count = len(self.edge_header)
         os.makedirs(self.output_dir, exist_ok=True)
 
         # get descendants of important GO categories for relationship mapping
         os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
+        os.makedirs(UNIPROT_TMP_NE_DIR, exist_ok=True)
 
         self.write_obsolete_file_header()
 
@@ -428,36 +457,78 @@ class UniprotTransform(Transform):
                 for member in tar.getmembers()
                 if member.name.endswith(".tsv") and (content := tar.extractfile(member).read())
             ]
+        # members = self._check_string_in_tar(tar_file)
+        # members = members[:100]  # ! for testing purposes
 
-        # Write nodes and edges header to file
-        with open(self.output_node_file, "w", newline="") as node_file, open(
-            self.output_edge_file, "w", newline=""
-        ) as edge_file:
-            node_writer = csv.writer(node_file, delimiter="\t")
-            node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge_file, delimiter="\t")
-            edge_writer.writerow(self.edge_header)
+        # # Write nodes and edges header to file
+        # with open(self.output_node_file, "w", newline="") as node_file, open(
+        #     self.output_edge_file, "w", newline=""
+        # ) as edge_file:
+        #     node_writer = csv.writer(node_file, delimiter="\t")
+        #     node_writer.writerow(self.node_header)
+        #     edge_writer = csv.writer(edge_file, delimiter="\t")
+        #     edge_writer.writerow(self.edge_header)
 
         # Use multiprocessing to process members
-        manager = Manager()
-        lock = manager.Lock()
+        # manager = Manager()
+        # lock = manager.Lock()
 
         with Pool(os.cpu_count()) as pool:
-            pool.starmap(
+            # pool.starmap(
+            #     process_member,
+            #     [
+            #         (
+            #             member,
+            #             # lock,
+            #             node_header_count,
+            #             edge_header_count,
+            #             self.output_node_file,
+            #             self.output_edge_file,
+            #         )
+            #         for member in members
+            #         if member
+            #     ],
+            # )
+            # Create a partial function with the additional arguments filled in
+            partial_process_member = partial(
                 process_member,
-                [
-                    (
-                        member,
-                        lock,
-                        node_header_count,
-                        edge_header_count,
-                        self.output_node_file,
-                        self.output_edge_file,
-                    )
-                    for member in members
-                    if member
-                ],
+                node_header=self.node_header,
+                edge_header=self.edge_header,
+                )
+            results = pool.map(
+                partial_process_member,
+                [member for member in members if member],
             )
+        
+        # Combine individual node and edge files
+        combined_node_filename = self.output_node_file
+        combined_edge_filename = self.output_edge_file
+
+        with open(combined_node_filename, "w", newline="") as cnf, open(combined_edge_filename, "w", newline="") as cef:
+            node_writer = csv.writer(cnf, delimiter="\t")
+            edge_writer = csv.writer(cef, delimiter="\t")
+
+            # Write headers
+            node_writer.writerow(self.node_header)
+            edge_writer.writerow(self.edge_header)
+
+            for node_file, edge_file in results:
+                # Append node data
+                if node_file:
+                    with open(node_file, "r") as nf:
+                        next(nf)  # Skip header
+                        node_writer.writerows(csv.reader(nf, delimiter="\t"))
+                os.remove(node_file)
+                
+                if edge_file:
+                    # Append edge data
+                    with open(edge_file, "r") as ef:
+                        next(ef)  # Skip header
+                        edge_writer.writerows(csv.reader(ef, delimiter="\t"))
+
+                    # Remove temporary files
+                    os.remove(edge_file)
+        
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

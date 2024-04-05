@@ -6,17 +6,33 @@ import shutil
 from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
+import pandas as pd
+from collections import defaultdict
 
 # from kgx.transformer import Transformer
 from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
+    CATEGORY_COLUMN,
     CHEBI_XREFS_FILEPATH,
+    DESCRIPTION_COLUMN,
     EXCLUSION_TERMS_FILE,
+    ID_COLUMN,
+    IRI_COLUMN,
+    NAME_COLUMN,
     NCBITAXON_PREFIX,
+    OBJECT_COLUMN,
     ONTOLOGY_XREFS_DIR,
+    PREDICATE_COLUMN,
+    PROVIDED_BY_COLUMN,
     ROBOT_REMOVED_SUFFIX,
+    SAME_AS_COLUMN,
     SPECIAL_PREFIXES,
+    SUBJECT_COLUMN,
+    SUBSETS_COLUMN,
+    SYNONYM_COLUMN,
+    UNIPATHWAYS_CATEGORIES_DICT,
+    XREF_COLUMN,
 )
 from kg_microbe.utils.robot_utils import (
     convert_to_json,
@@ -35,6 +51,7 @@ ONTOLOGIES = {
     "rhea": "rhea.json.gz",
     "ec": "ec.json",
     "uniprot": "uniprot.json.gz",
+    "unipathways": "upa.json"
 }
 
 
@@ -118,7 +135,7 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "uniprot", "chebi"]:
+        if name in ["ec", "rhea", "uniprot", "chebi","unipathways"]:
             self.post_process(name)
 
     def decompress(self, data_file):
@@ -132,6 +149,9 @@ class OntologyTransform(Transform):
         """Post process specific nodes and edges files."""
         nodes_file = self.output_dir / f"{name}_nodes.tsv"
         edges_file = self.output_dir / f"{name}_edges.tsv"
+        # TODO rewrite existing nodes and edges files, not to new file. Using this for comparison and testing
+        new_nodes_file = self.output_dir / f"{name}_transformed_nodes.tsv"
+        new_edges_file = self.output_dir / f"{name}_transformed_edges.tsv"
 
         # Compile a regex pattern that matches any key in SPECIAL_PREFIXES
         pattern = re.compile("|".join(re.escape(key) for key in SPECIAL_PREFIXES.keys()))
@@ -161,6 +181,102 @@ class OntologyTransform(Transform):
                         for xref in xrefs:
                             # Write a new tsv file with header ["id", "xref"]
                             xref_file.write(f"{subject}\t{xref}\n")
+
+        def _replace_id_with_xref(line,xref_index,id_index,category_index):
+            """Replace ID with xref."""
+            parts = line.strip().split("\t")
+            xrefs = parts[xref_index].split("|") if parts[xref_index] != "" else None
+            
+            new_lines = []
+            if xrefs:
+                for xref in xrefs:
+                    l_parts = [xref] + ([""] * (len(self.node_header) - 1))
+                    self.nodes_dictionary[parts[id_index]].append(xref)
+                    l = "\t".join(l_parts)
+                    new_lines.append(l)
+            else:
+                new_lines.append(_replace_category(line,id_index,category_index))
+            '''if len(new_lines) == 0: 
+                new_lines = line'''
+            return new_lines
+        
+        def _replace_category(line,id_index,category_index):
+            """Replace category."""
+            parts = line.strip().split("\t")
+            id_substring = parts[id_index].split('0')[0]
+            # Get defined category
+            category = UNIPATHWAYS_CATEGORIES_DICT[id_substring]
+            parts[category_index] = category
+            # Join the parts back together with a tab separator
+            new_line = "\t".join(parts)
+
+            return new_line
+        
+        def _replace_triples_with_labels(line,subject_object_indices,predicate_index):
+            """Replace triples labels."""
+            parts = line.strip().split("\t")
+            # Get new labels for subject, object
+            for i in subject_object_indices:
+                new_label = self.nodes_dictionary.get(parts[i])
+                if new_label:
+                    for lab in new_label:
+                        parts[i] = new_label
+            # Get new predicate
+            new_predicate = self.predicates_dictionary[parts[predicate_index]]
+            # Join the parts back together with a tab separator
+            new_line = "\t".join(parts)
+
+            return new_line
+            
+        if name == "unipathways":
+            # TODO finish this, waiting on relations from downloaded file
+            # New predicates for unipathways 
+            self.predicates_dictionary = {
+                "biolink:part_of"
+            }
+            # Keep track of new node IDs for edges file
+            self.nodes_dictionary = defaultdict(list)
+            with open(nodes_file, "r") as nf, open(new_nodes_file, "w") as new_nf:
+                # Write a new nodes tsv file with same node header
+                new_nf.write("\t".join(self.node_header) + "\n")
+                for line in nf:
+                    if line.startswith("id"):
+                        # get the index for the term 'id'
+                        id_index = line.strip().split("\t").index(ID_COLUMN)
+                        # get the index for the term 'xref'
+                        xref_index = line.strip().split("\t").index(XREF_COLUMN)
+                        # get the index for the term 'category'
+                        category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                    else:
+                        # For Chemicals, Reactions, and Enzymatic Reactions
+                        if any(substring in line for substring in ['OBO:UPa_UPC','OBO:UPa_UCR','OBO:UPa_UER']):
+                        #if line.contains('OBO:UPa_UPC'|'OBO:UPa_UCR'|'OBO:UPa_UER'):
+                            new_lines = _replace_id_with_xref(line,xref_index,id_index,category_index)
+                            #import pdb;pdb.set_trace()
+                            for l in new_lines:
+                                new_nf.write(l + "\n")
+                        # Add category only for nodes that are not added by another ingest
+                        elif any(substring in line for substring in ['OBO:UPa_UPA','OBO:UPa_ULS']):
+                            new_line = _replace_category(line,id_index,category_index)
+                            new_nf.write(new_line + "\n")
+                        else:
+                            new_nf.write(line + "\n")
+            with open(edges_file, "r") as ef, open(new_edges_file, "w") as new_ef:
+                # TODO finish this, waiting on relations from downloaded file
+                # Write a new edges tsv file with same edge header
+                new_ef.write("\t".join(self.edge_header) + "\n")
+                for line in ef:
+                    if line.startswith("id"):
+                        # get the index for the 'subject'
+                        subject_index = line.strip().split("\t").index(SUBJECT_COLUMN)
+                        # get the index for the 'predicate'
+                        predicate_index = line.strip().split("\t").index(PREDICATE_COLUMN)
+                        # get the index for the 'object'
+                        object_index = line.strip().split("\t").index(OBJECT_COLUMN)
+                        subject_object_indices = [subject_index,object_index]
+                    else:
+                        new_lines = _replace_triples_with_labels(line,subject_object_indices,predicate_index)
+
 
         else:
             # Process and write the nodes file

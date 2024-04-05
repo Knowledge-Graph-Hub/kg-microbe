@@ -161,6 +161,13 @@
 #   local_name: ec2ec.zip
 
 # 
+# Unipathways
+# 
+-
+  url: https://raw.githubusercontent.com/geneontology/unipathway/master/upa.json
+  local_name: upa.json
+
+# 
 # RHEA
 # 
 -

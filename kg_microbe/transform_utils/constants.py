@@ -415,3 +415,13 @@ UNIPROT_TREMBL_COLUMNS = [
 
 # BactoTraits
 COMBO_KEY = "combo"
+
+# Unipathways
+NEW_PATHWAY_CATEGORY = "biolink:Pathway"
+UNIPATHWAYS_CATEGORIES_DICT = {
+    "OBO:UPa_UPC" : MEDIUM_CATEGORY,
+    "OBO:UPa_UER" : EC_CATEGORY,
+    "OBO:UPa_UCR" : RHEA_CATEGORY,
+    "OBO:UPa_ULS" : PATHWAY_CATEGORY, # Should be renamed
+    "OBO:UPa_UPA" : NEW_PATHWAY_CATEGORY
+}

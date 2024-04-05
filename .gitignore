@@ -157,3 +157,6 @@ uniprot_cache.sqlite
 kg_microbe/transform_utils/rhea/tmp/all_terms.tsv
 kg_microbe/transform_utils/uniprot_trembl/tmp/*.tsv
 data/raw/uniprot_proteomes/*.tsv
+kg_microbe/transform_utils/uniprot/tmp/go_obsolete_terms.csv
+data/transformed/uniprot_genome_features/*.tsv
+

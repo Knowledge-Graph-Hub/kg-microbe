@@ -35,7 +35,7 @@ ONTOLOGIES = {
     "rhea": "rhea.json.gz",
     "ec": "ec.json",
     "uniprot": "uniprot.json.gz",
-    "upa": "upa.owl"
+    "upa": "upa.owl",
 }
 
 
@@ -117,6 +117,13 @@ class OntologyTransform(Transform):
             if not Path(json_path).is_file():
                 convert_to_json(str(self.input_base_dir), name)
             data_file = json_path
+        elif data_file.suffix == ".obo":
+            json_path = str(data_file).replace(".obo", ".json")
+            if not Path(json_path).is_file():
+                convert_to_json(str(self.input_base_dir), name)
+            data_file = json_path
+        else:
+            raise ValueError(f"Unsupported file format: {data_file}")
 
         transform(
             inputs=[data_file],

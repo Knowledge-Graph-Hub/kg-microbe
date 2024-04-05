@@ -6,7 +6,6 @@ import shutil
 from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
-import pandas as pd
 from collections import defaultdict
 
 # from kgx.transformer import Transformer
@@ -15,22 +14,15 @@ from kgx.cli.cli_utils import transform
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CHEBI_XREFS_FILEPATH,
-    DESCRIPTION_COLUMN,
     EXCLUSION_TERMS_FILE,
     ID_COLUMN,
-    IRI_COLUMN,
-    NAME_COLUMN,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     ONTOLOGY_XREFS_DIR,
     PREDICATE_COLUMN,
-    PROVIDED_BY_COLUMN,
     ROBOT_REMOVED_SUFFIX,
-    SAME_AS_COLUMN,
     SPECIAL_PREFIXES,
     SUBJECT_COLUMN,
-    SUBSETS_COLUMN,
-    SYNONYM_COLUMN,
     UNIPATHWAYS_CATEGORIES_DICT,
     XREF_COLUMN,
 )
@@ -51,7 +43,7 @@ ONTOLOGIES = {
     "rhea": "rhea.json.gz",
     "ec": "ec.json",
     "uniprot": "uniprot.json.gz",
-    "unipathways": "upa.json"
+    "upa": "upa.owl",
 }
 
 
@@ -128,6 +120,18 @@ class OntologyTransform(Transform):
             if not Path(json_path).is_file():
                 self.decompress(data_file)
             data_file = json_path
+        elif data_file.suffix == ".owl":
+            json_path = str(data_file).replace(".owl", ".json")
+            if not Path(json_path).is_file():
+                convert_to_json(str(self.input_base_dir), name)
+            data_file = json_path
+        elif data_file.suffix == ".obo":
+            json_path = str(data_file).replace(".obo", ".json")
+            if not Path(json_path).is_file():
+                convert_to_json(str(self.input_base_dir), name)
+            data_file = json_path
+        else:
+            raise ValueError(f"Unsupported file format: {data_file}")
 
         transform(
             inputs=[data_file],
@@ -135,7 +139,7 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "uniprot", "chebi","unipathways"]:
+        if name in ["ec", "rhea", "uniprot", "chebi", "upa"]:
             self.post_process(name)
 
     def decompress(self, data_file):
@@ -228,7 +232,7 @@ class OntologyTransform(Transform):
 
             return new_line
             
-        if name == "unipathways":
+        if name == "upa":
             # TODO finish this, waiting on relations from downloaded file
             # New predicates for unipathways 
             self.predicates_dictionary = {

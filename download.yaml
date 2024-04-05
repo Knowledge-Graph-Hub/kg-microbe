@@ -164,8 +164,8 @@
 # Unipathways
 # 
 -
-  url: https://raw.githubusercontent.com/geneontology/unipathway/master/upa.json
-  local_name: upa.json
+  url: https://github.com/geneontology/unipathway/raw/master/upa.owl
+  local_name: upa.owl
 
 # 
 # RHEA

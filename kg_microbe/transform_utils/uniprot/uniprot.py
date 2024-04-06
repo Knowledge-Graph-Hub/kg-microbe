@@ -1,18 +1,19 @@
 """Uniprot Transform class."""
 
 import csv
-from functools import partial
 import os
 import re
 import tarfile
+import uuid
+from functools import partial
 from io import StringIO
-from multiprocessing import Manager, Pool
+from multiprocessing import Pool
 from pathlib import Path
 from typing import Optional, Union
-import uuid
 
 import pandas as pd
 from oaklib import get_adapter
+from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_CATEGORY,
@@ -57,11 +58,14 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEIN_NAME_COLUMN_NAME,
     UNIPROT_PROTEOME_COLUMN_NAME,
     UNIPROT_PROTEOMES_FILE,
+    UNIPROT_RELEVANT_CONTENT_FILE,
+    UNIPROT_RELEVANT_FILE_LIST,
     UNIPROT_RHEA_ID_COLUMN_NAME,
     UNIPROT_TMP_DIR,
     UNIPROT_TMP_NE_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 RELATIONS_DICT = {
@@ -101,8 +105,8 @@ GO_CATEGORY_COLUMN = "GO_Category"
 UNIPROT_ID_COLUMN = "Uniprot_ID"
 
 # file to keep track of obsolete terms from GO not included in graph
-OBSOLETE_TERMS_CSV_FILE = UNIPROT_TMP_DIR / "go_obsolete_terms.csv"
-GO_CATEGORY_TREES_FILE = UNIPROT_TMP_DIR / "go_category_trees.csv"
+OBSOLETE_TERMS_CSV_FILE = UNIPROT_TMP_DIR / "go_obsolete_terms.tsv"
+GO_CATEGORY_TREES_FILE = UNIPROT_TMP_DIR / "go_category_trees.tsv"
 
 # Pre-compile regular expressions
 CHEBI_REGEX = re.compile(r'/ligand_id="ChEBI:(.*?)";')
@@ -243,7 +247,6 @@ def write_to_df(uniprot_df):
         RHEA_PARSED_COLUMN,
     ]
     uniprot_parse_df = pd.DataFrame(columns=parsed_columns)
-
     uniprot_parse_df[ORGANISM_PARSED_COLUMN] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
         lambda x: NCBITAXON_PREFIX + str(x).strip()
     )
@@ -342,9 +345,7 @@ def write_to_df(uniprot_df):
     return (node_data, edge_data)
 
 
-def process_member(
-    member_content, node_header, edge_header
-):
+def process_member(member_content, member_header, node_header, edge_header):
     """
     Process a member of a tarfile containing UniProt data.
 
@@ -359,32 +360,39 @@ def process_member(
     :param node_file: The path to the node CSV file.
     :param edge_file: The path to the edge CSV file.
     """
-    s = StringIO(member_content.decode("utf-8"))
-    df = pd.read_csv(s, sep="\t", low_memory=False)
+    # Assuming 'member_content' is the variable holding the content from the tar file member
+    if isinstance(member_content, bytes):
+        # If member_content is bytes, decode it to a string
+        s = StringIO(member_content.decode("utf-8"))
+    else:
+        # If member_content is already a string, use it directly with StringIO
+        s = StringIO(member_content)
+    df = pd.read_csv(s, sep="\t", low_memory=False, header=None, names=member_header)
     df = df[~(df == df.columns.to_series()).all(axis=1)]
-    node_data, edge_data = write_to_df(df)
     node_filename = None
     edge_filename = None
-    # Write node and edge data to unique files
-    if len(node_data) > 0:
-        node_filename = UNIPROT_TMP_NE_DIR/f"nodes_{uuid.uuid4().hex}.tsv"
-        with open(node_filename, "w", newline="") as nf:
-            node_writer = csv.writer(nf, delimiter="\t")
-            node_writer.writerow(node_header)  # Write header
-            for node in node_data:
-                if len(node) < len(node_header):
-                    node.extend([None] * (len(node_header) - len(node)))
-                node_writer.writerow(node)
+    if not df.empty:
+        node_data, edge_data = write_to_df(df)
+        # Write node and edge data to unique files
+        if len(node_data) > 0:
+            node_filename = UNIPROT_TMP_NE_DIR / f"nodes_{uuid.uuid4().hex}.tsv"
+            with open(node_filename, "w", newline="") as nf:
+                node_writer = csv.writer(nf, delimiter="\t")
+                node_writer.writerow(node_header)  # Write header
+                for node in node_data:
+                    if len(node) < len(node_header):
+                        node.extend([None] * (len(node_header) - len(node)))
+                    node_writer.writerow(node)
 
-    if len(edge_data) > 0:
-        edge_filename = UNIPROT_TMP_NE_DIR/f"edges_{uuid.uuid4().hex}.tsv"
-        with open(edge_filename, "w", newline="") as ef:
-            edge_writer = csv.writer(ef, delimiter="\t")
-            edge_writer.writerow(edge_header)  # Write header
-            for edge in edge_data:
-                if len(edge) < len(edge_header):
-                    edge.extend([None] * (len(edge_header) - len(edge)))
-                edge_writer.writerow(edge)
+        if len(edge_data) > 0:
+            edge_filename = UNIPROT_TMP_NE_DIR / f"edges_{uuid.uuid4().hex}.tsv"
+            with open(edge_filename, "w", newline="") as ef:
+                edge_writer = csv.writer(ef, delimiter="\t")
+                edge_writer.writerow(edge_header)  # Write header
+                for edge in edge_data:
+                    if len(edge) < len(edge_header):
+                        edge.extend([None] * (len(edge_header) - len(edge)))
+                    edge_writer.writerow(edge)
 
     return node_filename, edge_filename
 
@@ -420,27 +428,64 @@ class UniprotTransform(Transform):
             for row in csv_reader:
                 GO_CATEGORY_TREES_DICT[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
 
-    # def _check_string_in_tar(self, tar_file, regex_pattern  = rb'UP\d+: (Chromosome|Plasmid .+)', min_line_count=1000):
-    #     pattern = re.compile(regex_pattern)
-    #     matching_members_content = [] # list to store matching members content
-    #     with tarfile.open(tar_file, "r:gz") as tar:
-    #         for member in tar.getmembers():
-    #             if member.name.endswith(".tsv"):
-    #                 with tar.extractfile(member) as file:
-    #                     if file is not None:
-    #                         # Read the content as a text stream using decode
-    #                         content = file.read()
-    #                         # Split the content into lines and count occurrences
-    #                         count = sum(bool(pattern.findall(line)) for line in content.splitlines())
-    #                         if count > min_line_count:
-    #                             matching_members_content.append(content)  # Add the content to the list
-    #     return matching_members_content
+    def _check_string_in_tar(
+        self,
+        tar_file,
+        progress_class,
+        regex_pattern=r"UP\d+: (Chromosome|Plasmid .+)",
+        min_line_count=1000,
+    ):
+        # Compile the regex pattern outside of the loop for efficiency
+        pattern = re.compile(regex_pattern)
+        relevant_files = []
+        relevant_files_list_exists = False
+
+        # Check if UNIPROT_RELEVANT_CONTENT_FILE exists
+        if os.path.exists(UNIPROT_RELEVANT_CONTENT_FILE):
+            # Read the existing file and return its content as a list of lines
+            with open(UNIPROT_RELEVANT_CONTENT_FILE, "r", encoding="utf-8") as f:
+                return [line.rstrip("\n") for line in f]
+        elif os.path.exists(UNIPROT_RELEVANT_FILE_LIST):
+            # Read the existing tsv file and return its content as a list of lines
+            with open(UNIPROT_RELEVANT_FILE_LIST, "r", encoding="utf-8") as f:
+                relevant_files = [line.rstrip("\n") for line in f]
+                relevant_files_list_exists = True
+
+        # Initialize the list to store matching members' content
+        matching_members_content = []
+
+        with tarfile.open(tar_file, "r:gz") as tar:
+            for member in progress_class(tar.getmembers(), desc="Inspecting tsvs in tarfile"):
+                # Check if the member name is in the list of relevant files
+                if member.name.endswith(".tsv") and (
+                    not relevant_files_list_exists or member.name in relevant_files
+                ):
+                    with tar.extractfile(member) as file:
+                        if file is not None:
+                            # Read the content as a text stream using decode
+                            content = file.read().decode("utf-8")
+                            # Split the content into lines and count occurrences
+                            lines = content.splitlines()
+                            count = sum(bool(pattern.search(line)) for line in lines)
+                            if count > min_line_count:
+                                # Add the content to the list
+                                matching_members_content.extend(lines)
+                                # Add the member name to the list
+                                relevant_files.append(member.name)
+
+        # Write the content to the file as text
+        with open(UNIPROT_RELEVANT_CONTENT_FILE, "w", encoding="utf-8") as f:
+            f.write("\n".join(matching_members_content))
+
+        with open(UNIPROT_RELEVANT_FILE_LIST, "w", encoding="utf-8") as f:
+            f.write("\n".join(relevant_files))
+
+        # Return the list of lines
+        return matching_members_content
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
         # make directory in data/transformed
-        # node_header_count = len(self.node_header)
-        # edge_header_count = len(self.edge_header)
         os.makedirs(self.output_dir, exist_ok=True)
 
         # get descendants of important GO categories for relationship mapping
@@ -450,61 +495,31 @@ class UniprotTransform(Transform):
         self.write_obsolete_file_header()
 
         tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
-
-        with tarfile.open(tar_file, "r:gz") as tar:
-            members = [
-                content
-                for member in tar.getmembers()
-                if member.name.endswith(".tsv") and (content := tar.extractfile(member).read())
-            ]
-        # members = self._check_string_in_tar(tar_file)
-        # members = members[:100]  # ! for testing purposes
-
-        # # Write nodes and edges header to file
-        # with open(self.output_node_file, "w", newline="") as node_file, open(
-        #     self.output_edge_file, "w", newline=""
-        # ) as edge_file:
-        #     node_writer = csv.writer(node_file, delimiter="\t")
-        #     node_writer.writerow(self.node_header)
-        #     edge_writer = csv.writer(edge_file, delimiter="\t")
-        #     edge_writer.writerow(self.edge_header)
-
-        # Use multiprocessing to process members
-        # manager = Manager()
-        # lock = manager.Lock()
+        progress_class = tqdm if show_status else DummyTqdm
+        members = self._check_string_in_tar(tar_file, progress_class=progress_class)
+        member_header = members[0].split("\t")
+        # members = members[:30]  # ! for testing purposes
 
         with Pool(os.cpu_count()) as pool:
-            # pool.starmap(
-            #     process_member,
-            #     [
-            #         (
-            #             member,
-            #             # lock,
-            #             node_header_count,
-            #             edge_header_count,
-            #             self.output_node_file,
-            #             self.output_edge_file,
-            #         )
-            #         for member in members
-            #         if member
-            #     ],
-            # )
             # Create a partial function with the additional arguments filled in
             partial_process_member = partial(
                 process_member,
                 node_header=self.node_header,
                 edge_header=self.edge_header,
-                )
+                member_header=member_header,
+            )
             results = pool.map(
                 partial_process_member,
                 [member for member in members if member],
             )
-        
+
         # Combine individual node and edge files
         combined_node_filename = self.output_node_file
         combined_edge_filename = self.output_edge_file
 
-        with open(combined_node_filename, "w", newline="") as cnf, open(combined_edge_filename, "w", newline="") as cef:
+        with open(combined_node_filename, "w", newline="") as cnf, open(
+            combined_edge_filename, "w", newline=""
+        ) as cef:
             node_writer = csv.writer(cnf, delimiter="\t")
             edge_writer = csv.writer(cef, delimiter="\t")
 
@@ -518,17 +533,16 @@ class UniprotTransform(Transform):
                     with open(node_file, "r") as nf:
                         next(nf)  # Skip header
                         node_writer.writerows(csv.reader(nf, delimiter="\t"))
-                os.remove(node_file)
-                
+                    # Remove temporary files
+                    os.remove(node_file)
+
                 if edge_file:
                     # Append edge data
                     with open(edge_file, "r") as ef:
                         next(ef)  # Skip header
                         edge_writer.writerows(csv.reader(ef, delimiter="\t"))
-
                     # Remove temporary files
                     os.remove(edge_file)
-        
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

@@ -421,14 +421,14 @@ class UniprotTransform(Transform):
         self.go_oi = get_adapter("sqlite:obo:go")
         # Check if the file already exists
         if not GO_CATEGORY_TREES_FILE.exists():
-            self._get_go_category_trees(self.go_oi)
+            self.get_go_category_trees(self.go_oi)
         # Read into a dictionary
         with open(GO_CATEGORY_TREES_FILE, "r") as file:
             csv_reader = csv.DictReader(file, delimiter="\t")
             for row in csv_reader:
                 GO_CATEGORY_TREES_DICT[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
 
-    def _check_string_in_tar(
+    def check_string_in_tar(
         self,
         tar_file,
         progress_class,
@@ -496,7 +496,7 @@ class UniprotTransform(Transform):
 
         tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
         progress_class = tqdm if show_status else DummyTqdm
-        members = self._check_string_in_tar(tar_file, progress_class=progress_class)
+        members = self.check_string_in_tar(tar_file, progress_class=progress_class)
         member_header = members[0].split("\t")
         # members = members[:30]  # ! for testing purposes
 
@@ -556,7 +556,7 @@ class UniprotTransform(Transform):
             obsolete_terms_csv_writer = csv.writer(f, delimiter="\t")
             obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
-    def _get_go_category_trees(self, go_oi):
+    def get_go_category_trees(self, go_oi):
         """
         Extract category of all GO terms using oak, and write to file.
 

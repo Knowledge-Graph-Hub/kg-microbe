@@ -337,6 +337,8 @@ EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 # Uniprot
 UNIPROT_DIR = TRANSFORM_UTILS_DIR / "uniprot"
 UNIPROT_TMP_DIR = UNIPROT_DIR / "tmp"
+UNIPROT_RELEVANT_CONTENT_FILE = UNIPROT_TMP_DIR / "relevant_file_content.txt"
+UNIPROT_RELEVANT_FILE_LIST = UNIPROT_TMP_DIR / "relevant_files.tsv"
 UNIPROT_TMP_NE_DIR = UNIPROT_TMP_DIR / "ne"
 UNIPROT_PROTEOMES_FILE = "uniprot_proteomes.tar.gz"
 UNIPROT_S3_DIRECTORY = "s3"

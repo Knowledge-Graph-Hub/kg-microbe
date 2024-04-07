@@ -58,7 +58,6 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEIN_NAME_COLUMN_NAME,
     UNIPROT_PROTEOME_COLUMN_NAME,
     UNIPROT_PROTEOMES_FILE,
-    UNIPROT_RELEVANT_CONTENT_FILE,
     UNIPROT_RELEVANT_FILE_LIST,
     UNIPROT_RHEA_ID_COLUMN_NAME,
     UNIPROT_TMP_DIR,
@@ -435,6 +434,13 @@ class UniprotTransform(Transform):
         regex_pattern=r"UP\d+: (Chromosome|Plasmid .+)",
         min_line_count=1000,
     ):
+        """
+        Look for a specific string in tsvs in the tarfile and return the content of matching members.
+        :param tar_file: The path to the tarfile containing the tsv files.
+        :param progress_class: The class to use for progress tracking. (tqdm or dummy)
+        :param regex_pattern: The regex pattern to search for in the tsv files.
+        :param min_line_count: The minimum number of lines that must match the pattern.
+        """
         # Compile the regex pattern outside of the loop for efficiency
         pattern = re.compile(regex_pattern)
         relevant_files = []
@@ -533,7 +539,9 @@ class UniprotTransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 
-            for node_file, edge_file in progress_class(results, desc="Combining node and edge files"):
+            for node_file, edge_file in progress_class(
+                results, desc="Combining node and edge files"
+            ):
                 # Append node data
                 if node_file:
                     with open(node_file, "r") as nf:

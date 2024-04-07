@@ -436,6 +436,7 @@ class UniprotTransform(Transform):
     ):
         """
         Look for a specific string in tsvs in the tarfile and return the content of matching members.
+
         :param tar_file: The path to the tarfile containing the tsv files.
         :param progress_class: The class to use for progress tracking. (tqdm or dummy)
         :param regex_pattern: The regex pattern to search for in the tsv files.

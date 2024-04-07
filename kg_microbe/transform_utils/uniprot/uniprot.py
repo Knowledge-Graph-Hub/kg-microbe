@@ -440,12 +440,13 @@ class UniprotTransform(Transform):
         relevant_files = []
         relevant_files_list_exists = False
 
-        # Check if UNIPROT_RELEVANT_CONTENT_FILE exists
-        if os.path.exists(UNIPROT_RELEVANT_CONTENT_FILE):
-            # Read the existing file and return its content as a list of lines
-            with open(UNIPROT_RELEVANT_CONTENT_FILE, "r", encoding="utf-8") as f:
-                return [line.rstrip("\n") for line in f]
-        elif os.path.exists(UNIPROT_RELEVANT_FILE_LIST):
+        # ! This is shelved for now since just getting filenames from a tsv should suffice.
+        # # Check if UNIPROT_RELEVANT_CONTENT_FILE exists
+        # if os.path.exists(UNIPROT_RELEVANT_CONTENT_FILE):
+        #     # Read the existing file and return its content as a list of lines
+        #     with open(UNIPROT_RELEVANT_CONTENT_FILE, "r", encoding="utf-8") as f:
+        #         return [line.rstrip("\n") for line in f]
+        if os.path.exists(UNIPROT_RELEVANT_FILE_LIST):
             # Read the existing tsv file and return its content as a list of lines
             with open(UNIPROT_RELEVANT_FILE_LIST, "r", encoding="utf-8") as f:
                 relevant_files = [line.rstrip("\n") for line in f]
@@ -455,11 +456,13 @@ class UniprotTransform(Transform):
         matching_members_content = []
 
         with tarfile.open(tar_file, "r:gz") as tar:
-            for member in progress_class(tar.getmembers(), desc="Inspecting tsvs in tarfile"):
+            if relevant_files_list_exists:
+                members = [member for member in tar.getmembers() if member.name in relevant_files]
+            else:
+                members = tar.getmembers()
+            for member in progress_class(members, desc="Inspecting tsvs in tarfile"):
                 # Check if the member name is in the list of relevant files
-                if member.name.endswith(".tsv") and (
-                    not relevant_files_list_exists or member.name in relevant_files
-                ):
+                if member.name.endswith(".tsv"):
                     with tar.extractfile(member) as file:
                         if file is not None:
                             # Read the content as a text stream using decode
@@ -473,12 +476,13 @@ class UniprotTransform(Transform):
                                 # Add the member name to the list
                                 relevant_files.append(member.name)
 
-        # Write the content to the file as text
-        with open(UNIPROT_RELEVANT_CONTENT_FILE, "w", encoding="utf-8") as f:
-            f.write("\n".join(matching_members_content))
-
-        with open(UNIPROT_RELEVANT_FILE_LIST, "w", encoding="utf-8") as f:
-            f.write("\n".join(relevant_files))
+        # ! This is shelved for now since just getting filenames from a tsv should suffice.
+        # # Write the content to the file as text
+        # with open(UNIPROT_RELEVANT_CONTENT_FILE, "w", encoding="utf-8") as f:
+        #     f.write("\n".join(matching_members_content))
+        if not relevant_files_list_exists:
+            with open(UNIPROT_RELEVANT_FILE_LIST, "w", encoding="utf-8") as f:
+                f.write("\n".join(relevant_files))
 
         # Return the list of lines
         return matching_members_content
@@ -512,6 +516,8 @@ class UniprotTransform(Transform):
                 partial_process_member,
                 [member for member in members if member],
             )
+            # remove results that are (None, None)
+            results = [result for result in results if result != (None, None)]
 
         # Combine individual node and edge files
         combined_node_filename = self.output_node_file
@@ -527,7 +533,7 @@ class UniprotTransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 
-            for node_file, edge_file in results:
+            for node_file, edge_file in progress_class(results, desc="Combining node and edge files"):
                 # Append node data
                 if node_file:
                     with open(node_file, "r") as nf:

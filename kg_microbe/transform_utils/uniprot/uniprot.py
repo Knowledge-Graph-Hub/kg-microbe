@@ -219,7 +219,7 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id):
     return go_relation, go_component_label
 
 
-def write_to_df(uniprot_df):
+def get_nodes_and_edges(uniprot_df):
     """
     Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -365,7 +365,7 @@ def process_lines(
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     df.drop_duplicates(inplace=True)
 
-    node_data, edge_data = write_to_df(df)
+    node_data, edge_data = get_nodes_and_edges(df)
     # Write node and edge data to unique files
     if len(node_data) > 0:
         with open(node_filename, "w", newline="") as nf:

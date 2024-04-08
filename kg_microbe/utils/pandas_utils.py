@@ -110,13 +110,49 @@ def establish_transitive_relationship(
     ]
 
     # Map the SUBJECT_COLUMN in filtered_df to the corresponding subjects using the mapping
-    filtered_df[SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
+    filtered_df.loc[:, SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
 
     # Append the modified DataFrame to the list (assuming list_of_dfs_to_append is already defined)
     list_of_dfs_to_append.append(filtered_df)
 
     df = pd.concat([df] + list_of_dfs_to_append).sort_values(by=[SUBJECT_COLUMN])
     df.to_csv(file_path, sep="\t", index=False)
+    return df
+
+
+def establish_transitive_relationship_multiple(
+    file_path: Path,
+    subject_prefix: str,
+    intermediate_prefix_list: list,
+    predicate_list: list,
+    object_prefixes_lists: List[list[str]],
+) -> pd.DataFrame:
+    """
+    Establish multiple transitive relationships via the establish_transitive_relationship function. Size of intermediate_prefix_list, predicat_list, and object_prefixes_lists must be identical.
+
+    e.g.: Existent relations:
+        1. A => predicate => B
+        2. B => predicate => C
+        3. C => predicate => D
+
+    This function adds the relation A => predicate => D
+
+
+    :param file_path: Filepath of the edge file.
+    :param subject_prefix: Subject prefix (A in the example)
+    :param intermediate_prefix: Intermediate prefix that connects the subject to object ([B,C] in the example).
+    :param predicate: The common predicate between all relations.
+    :param object_prefixes_list: List of Object prefixes ([[C,D]] in the example)
+    :return: Core dataframe with additional deduced rows.
+    """
+    num_triples_in_path = len(intermediate_prefix_list)
+    for search_number in range(num_triples_in_path):
+        intermediate_prefix = intermediate_prefix_list[search_number]
+        predicate = predicate_list[search_number]
+        object_prefixes_list = object_prefixes_lists[search_number]
+        df = establish_transitive_relationship(
+            file_path, subject_prefix, intermediate_prefix, predicate, object_prefixes_list
+        )
     return df
 
 

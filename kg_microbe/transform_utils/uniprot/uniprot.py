@@ -492,6 +492,7 @@ class UniprotTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         n_workers = os.cpu_count()
+        chunk_size_denominator = 100 * n_workers
 
         # get descendants of important GO categories for relationship mapping
         os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
@@ -503,9 +504,9 @@ class UniprotTransform(Transform):
         progress_class = tqdm if show_status else DummyTqdm
         all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
         member_header = all_lines[0].split("\t")
-        chunk_size = len(all_lines) // (n_workers * 100)
+        chunk_size = len(all_lines) // (chunk_size_denominator)
         print(
-            f"Processing {len(all_lines)- 1} lines in {n_workers*100} chunks of size {chunk_size}..."
+            f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
         )
         line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
 

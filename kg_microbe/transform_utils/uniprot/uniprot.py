@@ -492,7 +492,7 @@ class UniprotTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         n_workers = os.cpu_count()
-        chunk_size_denominator = 100 * n_workers
+        chunk_size_denominator = 150 * n_workers
 
         # get descendants of important GO categories for relationship mapping
         os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)

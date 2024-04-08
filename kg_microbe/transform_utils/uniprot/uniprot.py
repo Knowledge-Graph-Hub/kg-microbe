@@ -503,8 +503,10 @@ class UniprotTransform(Transform):
         progress_class = tqdm if show_status else DummyTqdm
         all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
         member_header = all_lines[0].split("\t")
-        chunk_size = len(all_lines) // n_workers
-        print(f"Processing {len(all_lines)- 1} lines in {n_workers} chunks")
+        chunk_size = len(all_lines) // (n_workers * 100)
+        print(
+            f"Processing {len(all_lines)- 1} lines in {n_workers*100} chunks of size {chunk_size}..."
+        )
         line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
 
         with Pool(n_workers) as pool:

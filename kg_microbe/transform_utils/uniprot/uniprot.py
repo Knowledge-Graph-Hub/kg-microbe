@@ -5,8 +5,6 @@ import os
 import re
 import tarfile
 import uuid
-from functools import partial
-from io import StringIO
 from multiprocessing import Pool
 from pathlib import Path
 from typing import Optional, Union
@@ -344,7 +342,9 @@ def write_to_df(uniprot_df):
     return (node_data, edge_data)
 
 
-def process_member(member_content, member_header, node_header, edge_header):
+def process_lines(
+    all_lines, headers, node_header, edge_header, node_filename, edge_filename, progress_class
+):
     """
     Process a member of a tarfile containing UniProt data.
 
@@ -352,46 +352,38 @@ def process_member(member_content, member_header, node_header, edge_header):
     the resulting node and edge data to the provided CSV files. It uses a lock to
     ensure that the files are written to correctly and that no data is lost.
 
-    :param member_content: The content of a member file from a tarfile.
-    :param lock: A multiprocessing lock used to ensure data integrity.
-    :param node_header_count: The number of columns in the node CSV file.
-    :param edge_header_count: The number of columns in the edge CSV file.
-    :param node_file: The path to the node CSV file.
-    :param edge_file: The path to the edge CSV file.
+    :param all_lines: A list of lines from the member file.
+    :param headers: A list of headers for the data.
+    :param node_header: A list of headers for the node data.
+    :param edge_header: A list of headers for the edge data.
+    :param node_filename: The name of the file to write node data to.
+    :param edge_filename: The name of the file to write edge data to.
+    :param progress_class: The class to use for progress tracking. (tqdm or dummy)
     """
-    # Assuming 'member_content' is the variable holding the content from the tar file member
-    if isinstance(member_content, bytes):
-        # If member_content is bytes, decode it to a string
-        s = StringIO(member_content.decode("utf-8"))
-    else:
-        # If member_content is already a string, use it directly with StringIO
-        s = StringIO(member_content)
-    df = pd.read_csv(s, sep="\t", low_memory=False, header=None, names=member_header)
+    list_of_rows = [s.split("\t") for s in all_lines[1:]]
+    df = pd.DataFrame(list_of_rows, columns=headers)
     df = df[~(df == df.columns.to_series()).all(axis=1)]
-    node_filename = None
-    edge_filename = None
-    if not df.empty:
-        node_data, edge_data = write_to_df(df)
-        # Write node and edge data to unique files
-        if len(node_data) > 0:
-            node_filename = UNIPROT_TMP_NE_DIR / f"nodes_{uuid.uuid4().hex}.tsv"
-            with open(node_filename, "w", newline="") as nf:
-                node_writer = csv.writer(nf, delimiter="\t")
-                node_writer.writerow(node_header)  # Write header
-                for node in node_data:
-                    if len(node) < len(node_header):
-                        node.extend([None] * (len(node_header) - len(node)))
-                    node_writer.writerow(node)
+    df.drop_duplicates(inplace=True)
 
-        if len(edge_data) > 0:
-            edge_filename = UNIPROT_TMP_NE_DIR / f"edges_{uuid.uuid4().hex}.tsv"
-            with open(edge_filename, "w", newline="") as ef:
-                edge_writer = csv.writer(ef, delimiter="\t")
-                edge_writer.writerow(edge_header)  # Write header
-                for edge in edge_data:
-                    if len(edge) < len(edge_header):
-                        edge.extend([None] * (len(edge_header) - len(edge)))
-                    edge_writer.writerow(edge)
+    node_data, edge_data = write_to_df(df)
+    # Write node and edge data to unique files
+    if len(node_data) > 0:
+        with open(node_filename, "w", newline="") as nf:
+            node_writer = csv.writer(nf, delimiter="\t")
+            node_writer.writerow(node_header)  # Write header
+            for node in progress_class(node_data, desc="Writing node data"):
+                if len(node) < len(node_header):
+                    node.extend([None] * (len(node_header) - len(node)))
+                node_writer.writerow(node)
+
+    if len(edge_data) > 0:
+        with open(edge_filename, "w", newline="") as ef:
+            edge_writer = csv.writer(ef, delimiter="\t")
+            edge_writer.writerow(edge_header)  # Write header
+            for edge in progress_class(edge_data, desc="Writing edge data"):
+                if len(edge) < len(edge_header):
+                    edge.extend([None] * (len(edge_header) - len(edge)))
+                edge_writer.writerow(edge)
 
     return node_filename, edge_filename
 
@@ -467,6 +459,7 @@ class UniprotTransform(Transform):
                 members = [member for member in tar.getmembers() if member.name in relevant_files]
             else:
                 members = tar.getmembers()
+
             for member in progress_class(members, desc="Inspecting tsvs in tarfile"):
                 # Check if the member name is in the list of relevant files
                 if member.name.endswith(".tsv"):
@@ -478,7 +471,7 @@ class UniprotTransform(Transform):
                             lines = content.splitlines()
                             count = sum(bool(pattern.search(line)) for line in lines)
                             if count > min_line_count:
-                                # Add the content to the list
+                                # Add only unique lines to the set
                                 matching_members_content.extend(lines)
                                 # Add the member name to the list
                                 relevant_files.append(member.name)
@@ -507,23 +500,27 @@ class UniprotTransform(Transform):
 
         tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
         progress_class = tqdm if show_status else DummyTqdm
-        members = self.check_string_in_tar(tar_file, progress_class=progress_class)
-        member_header = members[0].split("\t")
-        # members = members[:30]  # ! for testing purposes
+        all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
+        member_header = all_lines[0].split("\t")
+        chunk_size = len(all_lines) // os.cpu_count()
+        line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
 
         with Pool(os.cpu_count()) as pool:
-            # Create a partial function with the additional arguments filled in
-            partial_process_member = partial(
-                process_member,
-                node_header=self.node_header,
-                edge_header=self.edge_header,
-                member_header=member_header,
+            results = pool.starmap(
+                process_lines,
+                [
+                    (
+                        line_chunk,
+                        member_header,
+                        self.node_header,
+                        self.edge_header,
+                        f"{UNIPROT_TMP_NE_DIR}/node_{uuid.uuid4()}.tsv",
+                        f"{UNIPROT_TMP_NE_DIR}/edge_{uuid.uuid4()}.tsv",
+                        progress_class,
+                    )
+                    for line_chunk in line_chunks
+                ],
             )
-            results = pool.map(
-                partial_process_member,
-                [member for member in members if member],
-            )
-            # remove results that are (None, None)
             results = [result for result in results if result != (None, None)]
 
         # Combine individual node and edge files

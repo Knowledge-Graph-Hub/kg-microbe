@@ -57,12 +57,6 @@
   url: http://purl.obolibrary.org/obo/go.json
   local_name: go.json
 # **** Data sources ****
-# ATC
-# The Anatomical Therapeutic Chemical Classification for drugs
-# Primarily for establishing hierarchical relationships of DrugCentral entries
-# -
-#   url: https://data.bioontology.org/ontologies/ATC/download?apikey=8b5b7825-538d-40e0-9e9e-5ab9274a9aeb&download_format=csv
-#   local_name: atc.csv.gz
 
 # BacDive
 # Explore Bacterial Diversity
@@ -134,31 +128,16 @@
 #
 # Uniprot
 #
-# -
-#   url: https://w3id.org/biopragmatics/resources/uniprot/uniprot.json.gz
-#   local_name: uniprot.json.gz
-
-# -
-#   url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Archaea/
-#   local_name: archaea
-#   glob: "*.dat.gz"
-
-# -
-#   url: ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Bacteria/
-#   local_name: bacteria
-#   glob: "*.dat.gz"
-
 -
   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
   local_name: uniprot_proteomes.tar.gz
 
-# -
-#   url: https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Reference_Proteomes_2024_01.tar.gz
-#   local_name: reference_proteomes.tar.gz
-
-# -
-#   url: s3://uniprot-kg-microbe/unii_micro_proteome.zip
-#   local_name: ec2ec.zip
+# 
+# Unipathways
+# 
+-
+  url: https://github.com/geneontology/unipathway/raw/master/upa.owl
+  local_name: upa.owl
 
 # 
 # RHEA

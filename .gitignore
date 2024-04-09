@@ -143,6 +143,7 @@ data/raw/data/*
 !data/raw/exclusion_branches.tsv
 !data/raw/chebi_curies.tsv
 !data/raw/nlp/*
+!kg_microbe/transform_utils/uniprot/tmp/go_category_trees.tsv
 
 kg_microbe/transform_utils/*/tmp/*/*.yaml
 data/transformed/ontologies/*.tsv
@@ -157,3 +158,7 @@ uniprot_cache.sqlite
 kg_microbe/transform_utils/rhea/tmp/all_terms.tsv
 kg_microbe/transform_utils/uniprot_trembl/tmp/*.tsv
 data/raw/uniprot_proteomes/*.tsv
+kg_microbe/transform_utils/uniprot/tmp/go_obsolete_terms.tsv
+data/transformed/uniprot_genome_features/*.tsv
+kg_microbe/transform_utils/uniprot/tmp/relevant_file_content.txt
+kg_microbe/transform_utils/uniprot/tmp/nodes_and_edges/*

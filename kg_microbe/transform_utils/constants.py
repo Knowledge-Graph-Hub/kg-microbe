@@ -335,21 +335,54 @@ ROBOT_EXTRACT_SUFFIX = "_extract_subset"
 EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 
 # Uniprot
-ORGANISM_TO_ENZYME_EDGE = "biolink:expresses"
-ENZYME_CATEGORY = "biolink:Enzyme"
-CHEMICAL_TO_ENZYME_EDGE = "biolink:binds_to"
+UNIPROT_DIR = TRANSFORM_UTILS_DIR / "uniprot"
+UNIPROT_TMP_DIR = UNIPROT_DIR / "tmp"
+UNIPROT_RELEVANT_CONTENT_FILE = UNIPROT_TMP_DIR / "relevant_file_content.txt"
+UNIPROT_RELEVANT_FILE_LIST = UNIPROT_TMP_DIR / "relevant_files.tsv"
+UNIPROT_TMP_NE_DIR = UNIPROT_TMP_DIR / "nodes_and_edges"
+UNIPROT_PROTEOMES_FILE = "uniprot_proteomes.tar.gz"
+UNIPROT_S3_DIRECTORY = "s3"
+
+PROTEIN_CATEGORY = "biolink:Enzyme"
 UNIPROT_GENOME_FEATURES = "uniprot_genome_features"
-UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/"
-UNIPROT_FIELDS = ["organism_id", "id", "accession", "protein_name", "ec", "ft_binding"]
-UNIPROT_KEYWORDS = ["Reference+proteome"]
-UNIPROT_DESIRED_FORMAT = "tsv"
-UNIPROT_SIZE = 500
 ORGANISM_ID_MIXED_CASE = "Organism_ID"
-UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
-UNIPROT_REVIEWED_FLAG = "reviewed:true+"
-UNIPROT_PREFIX = "uniprot"
+UNIPROT_ORG_ID_COLUMN_NAME = "Organism (ID)"
+UNIPROT_PROTEIN_ID_COLUMN_NAME = "Entry"
+UNIPROT_PROTEIN_NAME_COLUMN_NAME = "Protein names"
+UNIPROT_EC_ID_COLUMN_NAME = "EC number"
+UNIPROT_BINDING_SITE_COLUMN_NAME = "Binding site"
+UNIPROT_GO_COLUMN_NAME = "Gene Ontology (GO)"
+UNIPROT_RHEA_ID_COLUMN_NAME = "Rhea ID"
+UNIPROT_PROTEOME_COLUMN_NAME = "Proteomes"
+UNIPROT_PREFIX = "UniprotKB:"
+CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
+# PROTEIN_TO_GO_EDGE = "biolink:enables"
+PROTEOME_TO_ORGANISM_EDGE = "biolink:derives_from"
+PROTEIN_TO_ORGANISM_EDGE = "biolink:derives_from"
+ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
+PROTEIN_TO_PROTEOME_EDGE = "biolink:derives_from"
+PROTEOME_CATEGORY = "biolink:Genome"
+PROTEIN_TO_EC_EDGE = "biolink:enables"
+EC_CATEGORY = "biolink:Enzyme"
+PROTEIN_TO_RHEA_EDGE = "biolink:participates_in"
+RHEA_KEY = "rhea"
+CHEMICAL_CATEGORY = "biolink:ChemicalSubstance"
+CHEMICAL_TO_EC_EDGE = "biolink:participates_in"
+GO_CELLULAR_COMPONENT_ID = "GO:0005575"
+GO_MOLECULAR_FUNCTION_ID = "GO:0003674"
+GO_BIOLOGICAL_PROCESS_ID = "GO:0008150"
+GO_CELLULAR_COMPONENT_LABEL = "biolink:CellularComponent"
+GO_MOLECULAR_FUNCTION_LABEL = "biolink:MolecularActivity"
+GO_BIOLOGICAL_PROCESS_LABEL = "biolink:BiologicalProcess"
+PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE = "biolink:located_in"
+PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE = "biolink:participates_in"
+PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE = "biolink:participates_in"
+DERIVES_FROM = "RO:0001000"
+ENABLES = "RO:0002327"
+MOLECULARLY_INTERACTS_WITH = "RO:0002436"
+LOCATED_IN = "RO:0001025"
 
 PROTEOME_ID_COLUMN = "proteome_id"
 PROTEOME_PREFIX = "Proteomes:"
@@ -383,7 +416,7 @@ SPECIAL_PREFIXES = {
     EC_OBO_PREFIX: EC_PREFIX,
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
-    UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",
+    # UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",  # comment for now since we do not need obo-db-ingest for uniprot
     DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
     CHEBI_CAS_PREFIX: CAS_RN_PREFIX,
 }

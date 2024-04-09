@@ -345,11 +345,6 @@ UNIPROT_S3_DIRECTORY = "s3"
 
 PROTEIN_CATEGORY = "biolink:Enzyme"
 UNIPROT_GENOME_FEATURES = "uniprot_genome_features"
-# UNIPROT_BASE_URL = "https://rest.uniprot.org/uniprotkb/"
-# UNIPROT_FIELDS = ["organism_id", "id", "accession", "protein_name", "ec", "ft_binding"]
-# UNIPROT_KEYWORDS = ["Reference+proteome"]
-# UNIPROT_DESIRED_FORMAT = "tsv"
-# UNIPROT_SIZE = 500
 ORGANISM_ID_MIXED_CASE = "Organism_ID"
 TAXONOMY_ID_UNIPROT_PREFIX = "taxonomy_id:"
 TAXONOMY_ID_UNIPROT_COLUMN = "taxonomy_id"
@@ -421,7 +416,7 @@ SPECIAL_PREFIXES = {
     EC_OBO_PREFIX: EC_PREFIX,
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
-    UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",
+    # UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",  # comment for now since we do not need obo-db-ingest for uniprot
     DEBIO_OBO_PREFIX: DEBIO_NEW_PREFIX,
     CHEBI_CAS_PREFIX: CAS_RN_PREFIX,
 }

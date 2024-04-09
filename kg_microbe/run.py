@@ -9,7 +9,6 @@ from kg_microbe.merge_utils.merge_kg import load_and_merge
 from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query
 from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.transform import transform as kg_transform
-from kg_microbe.utils.s3_utils import run_api
 
 show_status_option = click.option("--show-status/--no-show-status", default=True)
 
@@ -115,19 +114,6 @@ def query(
         os.makedirs(output_dir)
     outfile = os.path.join(output_dir, os.path.splitext(os.path.basename(yaml))[0] + outfile_ext)
     result_dict_to_tsv(result_dict, outfile)
-
-
-@main.command("get-via-api")
-@click.option("api", "-a", required=True, default="uniprot", multiple=False)
-@show_status_option
-def get_data_via_api(api: str, show_status: bool) -> None:
-    """
-    Get data via rest API.
-
-    :param api: A string pointing to the API to upload data to.
-    :return: None
-    """
-    run_api(api, show_status)
 
 
 @main.command()

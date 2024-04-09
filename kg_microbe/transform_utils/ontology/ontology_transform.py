@@ -46,15 +46,12 @@ from kg_microbe.utils.unipathways_utils import *
 from ..transform import Transform
 
 ONTOLOGIES = {
-    # "HpTransform": "hp.json",
-    # 'GoTransform': 'go-plus.json',
-    # "ncbitaxon": "ncbitaxon.owl.gz",
-    # "chebi": "chebi.owl.gz",
-    # "envo": "envo.json",
-    # "go": "go.json",
-    # "rhea": "rhea.json.gz",
-    # "ec": "ec.json",
-    # "uniprot": "uniprot.json.gz",
+    "ncbitaxon": "ncbitaxon.owl.gz",
+    "chebi": "chebi.owl.gz",
+    "envo": "envo.json",
+    "go": "go.json",
+    "rhea": "rhea.json.gz",
+    "ec": "ec.json",
     "upa": "upa.owl",
 }
 
@@ -96,54 +93,58 @@ class OntologyTransform(Transform):
         :param source: Source name.
         :return: None.
         """
-        if data_file.suffixes == [".owl", ".gz"]:
-            if NCBITAXON_PREFIX.strip(":").lower() in str(
-                data_file
-            ):  # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
-                if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
-                    json_path = str(data_file).replace(".owl.gz", ROBOT_REMOVED_SUFFIX + ".json")
+        if not data_file.suffixes == ".json":
+            if data_file.suffixes == [".owl", ".gz"]:
+                if NCBITAXON_PREFIX.strip(":").lower() in str(
+                    data_file
+                ):  # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
+                    if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
+                        json_path = str(data_file).replace(
+                            ".owl.gz", ROBOT_REMOVED_SUFFIX + ".json"
+                        )
+                        if not Path(json_path).is_file():
+                            self.decompress(data_file)
+                            with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
+                                terms = [
+                                    line.strip()
+                                    for line in f
+                                    if line.lower().startswith(name.lower())
+                                ]
+                            remove_convert_to_json(str(self.input_base_dir), name, terms)
+                    # elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
+                    #     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
+                    #     owl_path = str(data_file).strip(".gz")
+                    #     # Convert CHEBI owl => JSON each time to handle varying terms (if any) in CHEBI_NODES_FILENAME
+                    #     if not Path(owl_path).is_file():
+                    #         self.decompress(data_file)
+                    #     terms = str(self.input_base_dir / CHEBI_NODES_FILENAME)
+                    #     extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
+                else:
+                    json_path = str(data_file).replace("owl.gz", "json")
                     if not Path(json_path).is_file():
+                        # Unzip the file
                         self.decompress(data_file)
-                        with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
-                            terms = [
-                                line.strip() for line in f if line.lower().startswith(name.lower())
-                            ]
-                        remove_convert_to_json(str(self.input_base_dir), name, terms)
-                # elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
-                #     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
-                #     owl_path = str(data_file).strip(".gz")
-                #     # Convert CHEBI owl => JSON each time to handle varying terms (if any) in CHEBI_NODES_FILENAME
-                #     if not Path(owl_path).is_file():
-                #         self.decompress(data_file)
-                #     terms = str(self.input_base_dir / CHEBI_NODES_FILENAME)
-                #     extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
-            else:
-                json_path = str(data_file).replace("owl.gz", "json")
+                        print(f"Converting {data_file} to obojson...")
+                    convert_to_json(str(self.input_base_dir), name)
+
+                data_file = json_path
+            elif data_file.suffixes == [".json", ".gz"]:
+                json_path = str(data_file).replace(".json.gz", ".json")
                 if not Path(json_path).is_file():
-                    # Unzip the file
                     self.decompress(data_file)
-                    print(f"Converting {data_file} to obojson...")
-                convert_to_json(str(self.input_base_dir), name)
-
-            data_file = json_path
-
-        elif data_file.suffixes == [".json", ".gz"]:
-            json_path = str(data_file).replace(".json.gz", ".json")
-            if not Path(json_path).is_file():
-                self.decompress(data_file)
-            data_file = json_path
-        elif data_file.suffix == ".owl":
-            json_path = str(data_file).replace(".owl", ".json")
-            if not Path(json_path).is_file():
-                convert_to_json(str(self.input_base_dir), name)
-            data_file = json_path
-        elif data_file.suffix == ".obo":
-            json_path = str(data_file).replace(".obo", ".json")
-            if not Path(json_path).is_file():
-                convert_to_json(str(self.input_base_dir), name)
-            data_file = json_path
-        else:
-            raise ValueError(f"Unsupported file format: {data_file}")
+                data_file = json_path
+            elif data_file.suffix == ".owl":
+                json_path = str(data_file).replace(".owl", ".json")
+                if not Path(json_path).is_file():
+                    convert_to_json(str(self.input_base_dir), name)
+                data_file = json_path
+            elif data_file.suffix == ".obo":
+                json_path = str(data_file).replace(".obo", ".json")
+                if not Path(json_path).is_file():
+                    convert_to_json(str(self.input_base_dir), name)
+                data_file = json_path
+            else:
+                raise ValueError(f"Unsupported file format: {data_file}")
 
         transform(
             inputs=[data_file],
@@ -151,7 +152,8 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "uniprot", "chebi", "upa"]:
+        if name in ["ec", "rhea", "upa", "chebi"]:  # removed "uniprot"
+
             self.post_process(name)
 
     def decompress(self, data_file):

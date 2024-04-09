@@ -140,13 +140,6 @@
   local_name: upa.owl
 
 # 
-# Unipathways
-# 
--
-  url: https://github.com/geneontology/unipathway/raw/master/upa.owl
-  local_name: upa.owl
-
-# 
 # RHEA
 # 
 -

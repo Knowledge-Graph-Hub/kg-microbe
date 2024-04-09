@@ -77,6 +77,13 @@ merged_graph:
         filename:
           - data/transformed/RheaMappings/nodes.tsv
           - data/transformed/RheaMappings/edges.tsv
+    upa:
+      input:
+        name: "upa"
+        format: tsv
+        filename:
+          - data/transformed/ontologies/upa_nodes.tsv
+          - data/transformed/ontologies/upa_edges.tsv
     traits:
       input:
         name: "traits"

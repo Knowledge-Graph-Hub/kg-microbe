@@ -112,6 +112,7 @@ class RheaMappingsTransform(Transform):
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
+        ks = "RheaViaPyObo"
         # fn2 = "sssom.tsv"
         # TODO: Remove the line below once bioversions new version is released
         requests_ftp.monkeypatch_session()
@@ -144,7 +145,7 @@ class RheaMappingsTransform(Transform):
                 RHEA_TARGET_ID_COLUMN: OBJECT_COLUMN,
             }
         )
-        rhea_relation[PROVIDED_BY_COLUMN] = "Rhea"
+        rhea_relation[PROVIDED_BY_COLUMN] = ks
 
         rhea_relation = rhea_relation[self.edge_header]
 
@@ -249,7 +250,6 @@ class RheaMappingsTransform(Transform):
             matching_files = glob(pattern)
 
             relation = CLOSE_MATCH
-            ks = "RheaViaPyObo"
             with progress_class(
                 total=len(matching_files), desc="Processing Rhea mappings..."
             ) as progress:
@@ -333,7 +333,7 @@ class RheaMappingsTransform(Transform):
                                                 ),
                                                 object_info[0],
                                                 predicate_info[0],
-                                                ks,
+                                                "Rhea2*",
                                             ]
                                         )
                 progress.set_description(f"Processing {file} ...")

@@ -333,7 +333,7 @@ class RheaMappingsTransform(Transform):
                                                 ),
                                                 object_info[0],
                                                 predicate_info[0],
-                                                ks,
+                                                "Rhea2*",
                                             ]
                                         )
                 progress.set_description(f"Processing {file} ...")

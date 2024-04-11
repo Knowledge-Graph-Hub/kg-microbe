@@ -41,7 +41,14 @@ from kg_microbe.utils.robot_utils import (
     convert_to_json,
     remove_convert_to_json,
 )
-from kg_microbe.utils.unipathways_utils import *
+from kg_microbe.utils.unipathways_utils import (
+    check_wanted_pairs,
+    remove_unwanted_prefixes_from_edges,
+    remove_unwanted_prefixes_from_node_xrefs,
+    replace_category,
+    replace_id_with_xref,
+    replace_triples_with_labels,
+)
 
 from ..transform import Transform
 

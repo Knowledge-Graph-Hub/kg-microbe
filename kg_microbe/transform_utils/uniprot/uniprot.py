@@ -269,10 +269,6 @@ def get_nodes_and_edges(uniprot_df):
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
-        if entry[PROTEIN_ID_PARSED_COLUMN] == "UniprotKB:A0A7L6IAM2":
-            import pdb
-
-            pdb.set_trace()
         node_data.append([entry[ORGANISM_PARSED_COLUMN], NCBI_CATEGORY])
         # Protein node
         node_data.append(
@@ -513,9 +509,6 @@ class UniprotTransform(Transform):
         with tarfile.open(tar_file, "r:gz") as tar:
             if relevant_files_list_exists:
                 members = [member for member in tar.getmembers() if member.name in relevant_files]
-                import random
-
-                members = random.sample(members, 1)
             else:
                 members = tar.getmembers()
 

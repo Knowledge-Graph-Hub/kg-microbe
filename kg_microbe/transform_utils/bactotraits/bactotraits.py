@@ -28,8 +28,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
     PREDICATE_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm

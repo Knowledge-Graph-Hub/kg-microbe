@@ -73,7 +73,7 @@ class OntologyTransform(Transform):
         :param source: Source name.
         :return: None.
         """
-        if not data_file.suffixes == ".json":
+        if not data_file.suffix == ".json":
             if data_file.suffixes == [".owl", ".gz"]:
                 if NCBITAXON_PREFIX.strip(":").lower() in str(
                     data_file

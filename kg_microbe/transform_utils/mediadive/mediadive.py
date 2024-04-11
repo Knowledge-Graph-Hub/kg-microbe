@@ -83,8 +83,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,

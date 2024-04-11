@@ -129,7 +129,6 @@ def establish_transitive_relationship_multiple(
 ) -> pd.DataFrame:
     """
     Establish multiple transitive relationships via the establish_transitive_relationship function.
-    Size of intermediate_prefix_list, predicat_list, and object_prefixes_lists must be identical.
 
     e.g.: Existent relations:
         1. A => predicate => B
@@ -141,9 +140,9 @@ def establish_transitive_relationship_multiple(
 
     :param file_path: Filepath of the edge file.
     :param subject_prefix: Subject prefix (A in the example)
-    :param intermediate_prefix: Intermediate prefix that connects the subject to object ([B,C] in the example).
-    :param predicate: The common predicate between all relations.
-    :param object_prefixes_list: List of Object prefixes ([[C,D]] in the example)
+    :param intermediate_prefix_list: List of intermediate prefixes ([B,C] in the example).
+    :param predicate_list: List of the common predicate between all relations. Len == intermediate_prefix_list.
+    :param object_prefixes_list: List of Object prefixes ([[C,D]] in the example). Len == intermediate_prefix_list.
     :return: Core dataframe with additional deduced rows.
     """
     num_triples_in_path = len(intermediate_prefix_list)

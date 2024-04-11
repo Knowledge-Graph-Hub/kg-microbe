@@ -30,7 +30,7 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_COLUMN,
     PREDICATE_ID_COLUMN,
     PREDICATE_LABEL_COLUMN,
-    PROVIDED_BY_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
@@ -145,7 +145,7 @@ class RheaMappingsTransform(Transform):
                 RHEA_TARGET_ID_COLUMN: OBJECT_COLUMN,
             }
         )
-        rhea_relation[PROVIDED_BY_COLUMN] = ks
+        rhea_relation[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = ks
 
         rhea_relation = rhea_relation[self.edge_header]
 

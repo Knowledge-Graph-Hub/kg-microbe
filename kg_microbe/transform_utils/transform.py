@@ -14,6 +14,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     RELATION_COLUMN,
     SAME_AS_COLUMN,
@@ -70,7 +71,7 @@ class Transform:
             PREDICATE_COLUMN,  # was "edge_label",
             OBJECT_COLUMN,
             RELATION_COLUMN,
-            PROVIDED_BY_COLUMN,
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
         ]
 
         # default dirs

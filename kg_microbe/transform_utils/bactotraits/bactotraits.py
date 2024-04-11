@@ -28,8 +28,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
     PREDICATE_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -233,8 +231,6 @@ class BactoTraitsTransform(Transform):
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
-            index = self.edge_header.index(PROVIDED_BY_COLUMN)
-            self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
             custom_curie_data = yaml.safe_load(cc_file)
             custom_curie_map = {

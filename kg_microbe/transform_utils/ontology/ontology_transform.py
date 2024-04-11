@@ -3,24 +3,51 @@
 import gzip
 import re
 import shutil
+from collections import defaultdict
 from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
+
+import pandas as pd
 
 # from kgx.transformer import Transformer
 from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
+    CATEGORY_COLUMN,
     CHEBI_XREFS_FILEPATH,
     EXCLUSION_TERMS_FILE,
+    ID_COLUMN,
     NCBITAXON_PREFIX,
+    OBJECT_COLUMN,
     ONTOLOGY_XREFS_DIR,
+    PART_OF_PREDICATE,
+    PREDICATE_COLUMN,
+    RELATION_COLUMN,
+    RHEA_NEW_PREFIX,
     ROBOT_REMOVED_SUFFIX,
     SPECIAL_PREFIXES,
+    SUBJECT_COLUMN,
+    UNIPATHWAYS_INCLUDE_PAIRS,
+    UNIPATHWAYS_PATHWAY_PREFIX,
+    UNIPATHWAYS_REACTION_PREFIX,
+    XREF_COLUMN,
+)
+from kg_microbe.utils.pandas_utils import (
+    drop_duplicates,
+    establish_transitive_relationship_multiple,
 )
 from kg_microbe.utils.robot_utils import (
     convert_to_json,
     remove_convert_to_json,
+)
+from kg_microbe.utils.unipathways_utils import (
+    check_wanted_pairs,
+    remove_unwanted_prefixes_from_edges,
+    remove_unwanted_prefixes_from_node_xrefs,
+    replace_category,
+    replace_id_with_xref,
+    replace_triples_with_labels,
 )
 
 from ..transform import Transform
@@ -32,7 +59,7 @@ ONTOLOGIES = {
     "go": "go.json",
     "rhea": "rhea.json.gz",
     "ec": "ec.json",
-    # "upa": "upa.owl",
+    "upa": "upa.owl",
 }
 
 
@@ -108,7 +135,6 @@ class OntologyTransform(Transform):
                     convert_to_json(str(self.input_base_dir), name)
 
                 data_file = json_path
-
             elif data_file.suffixes == [".json", ".gz"]:
                 json_path = str(data_file).replace(".json.gz", ".json")
                 if not Path(json_path).is_file():
@@ -134,6 +160,7 @@ class OntologyTransform(Transform):
             output_format="tsv",
         )
         if name in ["ec", "rhea", "upa", "chebi"]:  # removed "uniprot"
+
             self.post_process(name)
 
     def decompress(self, data_file):
@@ -176,6 +203,126 @@ class OntologyTransform(Transform):
                         for xref in xrefs:
                             # Write a new tsv file with header ["id", "xref"]
                             xref_file.write(f"{subject}\t{xref}\n")
+
+        if name == "upa":
+            # Keep track of new node IDs for edges file
+            nodes_dictionary = defaultdict(list)
+            with open(nodes_file, "r") as nf:
+                add_lines = []
+                for line in nf:
+                    if line.startswith("id"):
+                        # get the index for the term 'id'
+                        id_index = line.strip().split("\t").index(ID_COLUMN)
+                        # get the index for the term 'xref'
+                        xref_index = line.strip().split("\t").index(XREF_COLUMN)
+                        # get the index for the term 'category'
+                        category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                    else:
+                        line = remove_unwanted_prefixes_from_node_xrefs(line, xref_index)
+                        # For Reactions only
+                        if any(
+                            substring in line for substring in [UNIPATHWAYS_REACTION_PREFIX]
+                        ):  # UNIPATHWAYS_COMPOUND_PREFIX,UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX]):
+                            new_lines, nodes_dictionary = replace_id_with_xref(
+                                line,
+                                xref_index,
+                                id_index,
+                                category_index,
+                                nodes_dictionary,
+                                self.node_header,
+                            )
+                            for new_line in new_lines:
+                                if len(new_line) > 0:
+                                    new_line = _replace_special_prefixes(new_line)
+                                    add_lines.append(new_line + "\n")
+                        # Add category only for nodes that are not added by another ingest, only Pathways
+                        elif any(
+                            substring in line for substring in [UNIPATHWAYS_PATHWAY_PREFIX]
+                        ):  # ,UNIPATHWAYS_LINEAR_SUB_PATHWAY_PREFIX]):
+                            new_line = replace_category(line, id_index, category_index)
+                            if len(new_line) > 0:
+                                add_lines.append(new_line + "\n")
+                        # Not adding any other node types except what is specified
+                        # else:
+                        #    add_line = line + "\n"
+            # Rewrite nodes file
+            with open(nodes_file, "w") as new_nf:
+                new_nf.write("\t".join(self.node_header) + "\n")
+                for line in add_lines:
+                    new_nf.write(line)
+
+            edges_df = pd.DataFrame(columns=self.edge_header)
+            with open(edges_file, "r") as ef:
+                for line in ef:
+                    add_edge = []
+                    if line.startswith("id"):
+                        # get the index for the 'subject'
+                        subject_index = line.strip().split("\t").index(SUBJECT_COLUMN)
+                        # get the index for the 'predicate'
+                        predicate_index = line.strip().split("\t").index(PREDICATE_COLUMN)
+                        # get the index for the 'object'
+                        object_index = line.strip().split("\t").index(OBJECT_COLUMN)
+                        # get the index for the 'relation'
+                        relation_index = line.strip().split("\t").index(RELATION_COLUMN)
+                    else:
+                        # Remove unwanted triples
+                        line = check_wanted_pairs(line, subject_index, object_index)
+                        if line:
+                            new_lines = replace_triples_with_labels(
+                                line,
+                                subject_index,
+                                object_index,
+                                predicate_index,
+                                relation_index,
+                                nodes_dictionary,
+                            )
+                            for new_line in new_lines:
+                                add_edge.append(new_line + "\n")
+                    # new_ef.write(add_edge)
+                    if len(add_edge) > 0:
+                        for edge_line in add_edge:
+                            parts = edge_line.strip().split("\t")
+                            if len(parts) == len(self.edge_header) + 1:
+                                parts = parts[1:]
+                            df = pd.DataFrame([parts], columns=self.edge_header)
+                            # Add the list as a new row to the DataFrame
+                            edges_df = pd.concat([edges_df, df], ignore_index=True)
+            # First write existing edges to file before establishing transitive relationships
+            edges_df.to_csv(edges_file, sep="\t", index=False)
+
+            # Consolidate paths into 1 edge
+            # For triples with rhea prefix for reactions
+            transitive_df_rhea = establish_transitive_relationship_multiple(
+                edges_file,
+                RHEA_NEW_PREFIX,
+                [UNIPATHWAYS_INCLUDE_PAIRS[0][1], UNIPATHWAYS_INCLUDE_PAIRS[1][1]],
+                [PART_OF_PREDICATE, PART_OF_PREDICATE],
+                [[UNIPATHWAYS_INCLUDE_PAIRS[1][1]], [UNIPATHWAYS_INCLUDE_PAIRS[2][1]]],
+            )
+            # For triples with Unipathways reaction prefix for reactions
+            transitive_df_uni = establish_transitive_relationship_multiple(
+                edges_file,
+                UNIPATHWAYS_INCLUDE_PAIRS[0][0],
+                [UNIPATHWAYS_INCLUDE_PAIRS[0][1], UNIPATHWAYS_INCLUDE_PAIRS[1][1]],
+                [PART_OF_PREDICATE, PART_OF_PREDICATE],
+                [[UNIPATHWAYS_INCLUDE_PAIRS[1][1]], [UNIPATHWAYS_INCLUDE_PAIRS[2][1]]],
+            )
+            transitive_df = pd.concat([transitive_df_rhea, transitive_df_uni], ignore_index=True)
+            # Remove unnecessary edges between intermediate prefixes
+            transitive_df = remove_unwanted_prefixes_from_edges(transitive_df)
+            # Rewrite edges file
+            transitive_df.to_csv(edges_file, sep="\t", index=False)
+            drop_duplicates(edges_file)
+            # Rewrite prefixes
+            new_edge_lines = []
+            with open(edges_file, "r") as ef:
+                # Write a new edges tsv file with same edge header
+                for line in ef:
+                    new_edge_lines.append(_replace_special_prefixes(line))
+            # Rewrite nodes file
+            with open(edges_file, "w") as new_ef:
+                for line in new_edge_lines:
+                    new_ef.write(line)
 
         else:
             # Process and write the nodes file

@@ -269,15 +269,33 @@ def get_nodes_and_edges(uniprot_df):
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
+        if entry[PROTEIN_ID_PARSED_COLUMN] == "UniprotKB:A0A7L6IAM2":
+            import pdb
+
+            pdb.set_trace()
         node_data.append([entry[ORGANISM_PARSED_COLUMN], NCBI_CATEGORY])
         # Protein node
         node_data.append(
-            [entry[PROTEIN_ID_PARSED_COLUMN], PROTEIN_CATEGORY, entry[PROTEIN_NAME_PARSED_COLUMN]]
+            [
+                entry[PROTEIN_ID_PARSED_COLUMN],
+                PROTEIN_CATEGORY,
+                entry[PROTEIN_NAME_PARSED_COLUMN],
+                "",
+                "",
+                UNIPROT_GENOME_FEATURES,
+            ]
         )
 
         # Proteome node
         node_data.append(
-            [entry[PROTEOME_PARSED_COLUMN], PROTEOME_CATEGORY, entry[PROTEOME_PARSED_COLUMN]]
+            [
+                entry[PROTEOME_PARSED_COLUMN],
+                PROTEOME_CATEGORY,
+                entry[PROTEOME_PARSED_COLUMN],
+                "",
+                "",
+                UNIPROT_GENOME_FEATURES,
+            ]
         )
         # EC node
         if entry[EC_NUMBER_PARSED_COLUMN] is None:
@@ -285,21 +303,45 @@ def get_nodes_and_edges(uniprot_df):
         for ec in entry[EC_NUMBER_PARSED_COLUMN]:
             node_data.append([ec, EC_CATEGORY])
             # Protein-ec edge
-            edge_data.append([entry[PROTEIN_ID_PARSED_COLUMN], PROTEIN_TO_EC_EDGE, ec])
+            edge_data.append(
+                [
+                    entry[PROTEIN_ID_PARSED_COLUMN],
+                    PROTEIN_TO_EC_EDGE,
+                    ec,
+                    RELATIONS_DICT[PROTEIN_TO_EC_EDGE],
+                    UNIPROT_GENOME_FEATURES,
+                ]
+            )
         # CHEBI node
         if entry[BINDING_SITE_PARSED_COLUMN] is None:
             continue
         for chebi in entry[BINDING_SITE_PARSED_COLUMN]:
             node_data.append([chebi, CHEMICAL_CATEGORY])
             # Chebi-protein edge
-            edge_data.append([chebi, CHEMICAL_TO_PROTEIN_EDGE, entry[PROTEIN_ID_PARSED_COLUMN]])
+            edge_data.append(
+                [
+                    chebi,
+                    CHEMICAL_TO_PROTEIN_EDGE,
+                    entry[PROTEIN_ID_PARSED_COLUMN],
+                    RELATIONS_DICT[CHEMICAL_TO_PROTEIN_EDGE],
+                    UNIPROT_GENOME_FEATURES,
+                ]
+            )
         # Rhea node
         if entry[RHEA_PARSED_COLUMN] is None:
             continue
         for rhea in entry[RHEA_PARSED_COLUMN]:
             node_data.append([rhea, RHEA_CATEGORY])
             # Protein-rhea edge
-            edge_data.append([entry[PROTEIN_ID_PARSED_COLUMN], PROTEIN_TO_RHEA_EDGE, rhea])
+            edge_data.append(
+                [
+                    entry[PROTEIN_ID_PARSED_COLUMN],
+                    PROTEIN_TO_RHEA_EDGE,
+                    rhea,
+                    RELATIONS_DICT[PROTEIN_TO_RHEA_EDGE],
+                    UNIPROT_GENOME_FEATURES,
+                ]
+            )
         # GO node
         if entry[GO_PARSED_COLUMN] is None:
             continue
@@ -312,7 +354,15 @@ def get_nodes_and_edges(uniprot_df):
             # Protein to go edge
             if not predicate:
                 continue
-            edge_data.append([entry[PROTEIN_ID_PARSED_COLUMN], predicate, go])
+            edge_data.append(
+                [
+                    entry[PROTEIN_ID_PARSED_COLUMN],
+                    predicate,
+                    go,
+                    RELATIONS_DICT[predicate],
+                    UNIPROT_GENOME_FEATURES,
+                ]
+            )
 
         # Protein-organism
         edge_data.append(
@@ -320,6 +370,8 @@ def get_nodes_and_edges(uniprot_df):
                 entry[PROTEIN_ID_PARSED_COLUMN],
                 PROTEIN_TO_ORGANISM_EDGE,
                 entry[ORGANISM_PARSED_COLUMN],
+                RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
+                UNIPROT_GENOME_FEATURES,
             ]
         )
         # Proteome-organism
@@ -328,6 +380,8 @@ def get_nodes_and_edges(uniprot_df):
                 entry[PROTEOME_PARSED_COLUMN],
                 PROTEOME_TO_ORGANISM_EDGE,
                 entry[ORGANISM_PARSED_COLUMN],
+                RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
+                UNIPROT_GENOME_FEATURES,
             ]
         )
         # Protein-proteome
@@ -336,6 +390,8 @@ def get_nodes_and_edges(uniprot_df):
                 entry[PROTEIN_ID_PARSED_COLUMN],
                 PROTEIN_TO_PROTEOME_EDGE,
                 entry[PROTEOME_PARSED_COLUMN],
+                RELATIONS_DICT[PROTEIN_TO_PROTEOME_EDGE],
+                UNIPROT_GENOME_FEATURES,
             ]
         )
 
@@ -457,6 +513,9 @@ class UniprotTransform(Transform):
         with tarfile.open(tar_file, "r:gz") as tar:
             if relevant_files_list_exists:
                 members = [member for member in tar.getmembers() if member.name in relevant_files]
+                import random
+
+                members = random.sample(members, 1)
             else:
                 members = tar.getmembers()
 

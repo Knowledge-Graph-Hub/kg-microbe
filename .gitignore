@@ -162,3 +162,4 @@ kg_microbe/transform_utils/uniprot/tmp/go_obsolete_terms.tsv
 data/transformed/uniprot_genome_features/*.tsv
 kg_microbe/transform_utils/uniprot/tmp/relevant_file_content.txt
 kg_microbe/transform_utils/uniprot/tmp/nodes_and_edges/*
+data/transformed/uniprot_genome_features/uniprot_kgx.zip

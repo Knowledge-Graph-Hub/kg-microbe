@@ -204,7 +204,8 @@ def check_wanted_pairs(line, subject_index, object_index):
     :type object_index: int
     """
     parts = line.strip().split("\t")
-    # Look at prefixes in UNIPATHWAYS_INCLUDE_PAIRS in addition to pathway-pathway triples, even though not a part of the final pattern which uses UNIPATHWAYS_INCLUDE_PAIRS
+    # Look at prefixes in UNIPATHWAYS_INCLUDE_PAIRS in addition to pathway-pathway triples,
+    # even though not a part of the final pattern which uses UNIPATHWAYS_INCLUDE_PAIRS
     if [
         get_unipathways_prefix(parts[subject_index]),
         get_unipathways_prefix(parts[object_index]),

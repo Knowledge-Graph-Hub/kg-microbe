@@ -128,7 +128,8 @@ def establish_transitive_relationship_multiple(
     object_prefixes_lists: List[list[str]],
 ) -> pd.DataFrame:
     """
-    Establish multiple transitive relationships via the establish_transitive_relationship function. Size of intermediate_prefix_list, predicat_list, and object_prefixes_lists must be identical.
+    Establish multiple transitive relationships via the establish_transitive_relationship function.
+    Size of intermediate_prefix_list, predicat_list, and object_prefixes_lists must be identical.
 
     e.g.: Existent relations:
         1. A => predicate => B

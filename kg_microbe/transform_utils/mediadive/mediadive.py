@@ -83,8 +83,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
@@ -273,8 +271,6 @@ class MediaDiveTransform(Transform):
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
-            index = self.edge_header.index(PROVIDED_BY_COLUMN)
-            self.edge_header[index] = PRIMARY_KNOWLEDGE_SOURCE_COLUMN
             edge_writer.writerow(self.edge_header)
 
             # Choose the appropriate context manager based on the flag

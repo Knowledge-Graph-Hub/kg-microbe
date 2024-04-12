@@ -255,7 +255,7 @@ def get_nodes_and_edges(uniprot_df):
     )
     uniprot_parse_df[PROTEIN_NAME_PARSED_COLUMN] = uniprot_df[
         UNIPROT_PROTEIN_NAME_COLUMN_NAME
-    ].apply(lambda x: x.split("(EC")[0].replace("[", "(").replace("]", ")") if is_float(x) else x)
+    ].apply(lambda x: x.split("(EC")[0].replace("[", "(").replace("]", ")") if not is_float(x) else x)
     uniprot_parse_df[BINDING_SITE_PARSED_COLUMN] = uniprot_df[
         UNIPROT_BINDING_SITE_COLUMN_NAME
     ].apply(parse_binding_site)

@@ -128,8 +128,9 @@ def parse_ec(ec_entry):
     :rtype: list
     """
     ec_list = None
-    if not is_float(ec_entry):
-        ec_list = [EC_PREFIX + x.strip() for x in ec_entry.split(";")]
+    if len(ec_entry) > 0:
+        if not is_float(ec_entry):
+            ec_list = [EC_PREFIX + x.strip() for x in ec_entry.split(";")]
 
     return ec_list
 

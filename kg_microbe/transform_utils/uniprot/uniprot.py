@@ -128,7 +128,7 @@ def parse_ec(ec_entry):
     :rtype: list
     """
     ec_list = None
-    if len(ec_entry) > 0:
+    if len(str(ec_entry)) > 0:
         if not is_float(ec_entry):
             ec_list = [EC_PREFIX + x.strip() for x in ec_entry.split(";")]
 
@@ -169,9 +169,10 @@ def parse_go_entry(go_entry):
     :rtype: list
     """
     go_list = None
-    if not is_float(go_entry):
-        go_list = re.findall(r"\[(.*?)\]", go_entry)
-        go_list = [i for i in go_list if GO_PREFIX in i]
+    if len(str(go_entry)) > 0:
+        if not is_float(go_entry):
+            go_list = re.findall(r"\[(.*?)\]", go_entry)
+            go_list = [i for i in go_list if GO_PREFIX in i]
 
     return go_list
 
@@ -188,8 +189,9 @@ def parse_rhea_entry(rhea_entry):
     :rtype: list
     """
     rhea_list = None
-    if not is_float(rhea_entry):
-        rhea_list = rhea_entry.split(" ")
+    if len(str(rhea_entry)) > 0:
+        if not is_float(rhea_entry):
+            rhea_list = rhea_entry.split(" ")
 
     return rhea_list
 

@@ -108,7 +108,6 @@ GO_CATEGORY_TREES_FILE = UNIPROT_TMP_DIR / "go_category_trees.tsv"
 # Pre-compile regular expressions
 CHEBI_REGEX = re.compile(r'/ligand_id="ChEBI:(.*?)";')
 GO_REGEX = re.compile(r"\[(.*?)\]")
-GO_CATEGORY_TREES_DICT = {}
 
 
 def is_float(entry):
@@ -196,7 +195,7 @@ def parse_rhea_entry(rhea_entry):
     return rhea_list
 
 
-def get_go_relation_and_obsolete_terms(term_id, uniprot_id):
+def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_dictionary):
     """
     Extract category of GO term and handle obsolete terms according to oak.
 
@@ -204,12 +203,14 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id):
     :type term_id: str
     :param uniprot_id: A string containing the Uniprot protein ID.
     :type uniprot_id: str
+    :param go_category_dictionary: Dictionary of all GO Terms with their correpsonding category.
+    :type go_category_dictionary: dict
     :return: The appropriate predicate for the GO ID as it relates to the protein ID, or None if obsolete.
     :rtype: str or None
     """
     #! To handle obsolete terms
     try:
-        go_component = GO_CATEGORY_TREES_DICT[term_id]
+        go_component = go_category_trees_dictionary[term_id]
         go_component_label = GO_TYPES_DICT[go_component]
         go_relation = GO_CATEGORY_DICT[go_component]
     except KeyError:
@@ -222,7 +223,7 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id):
     return go_relation, go_component_label
 
 
-def get_nodes_and_edges(uniprot_df):
+def get_nodes_and_edges(uniprot_df,go_category_trees_dictionary):
     """
     Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -297,71 +298,67 @@ def get_nodes_and_edges(uniprot_df):
             ]
         )
         # EC node
-        if entry[EC_NUMBER_PARSED_COLUMN] is None:
-            continue
-        for ec in entry[EC_NUMBER_PARSED_COLUMN]:
-            node_data.append([ec, EC_CATEGORY])
-            # Protein-ec edge
-            edge_data.append(
-                [
-                    entry[PROTEIN_ID_PARSED_COLUMN],
-                    PROTEIN_TO_EC_EDGE,
-                    ec,
-                    RELATIONS_DICT[PROTEIN_TO_EC_EDGE],
-                    UNIPROT_GENOME_FEATURES,
-                ]
-            )
+        if entry[EC_NUMBER_PARSED_COLUMN]:
+            for ec in entry[EC_NUMBER_PARSED_COLUMN]:
+                node_data.append([ec, EC_CATEGORY])
+                # Protein-ec edge
+                edge_data.append(
+                    [
+                        entry[PROTEIN_ID_PARSED_COLUMN],
+                        PROTEIN_TO_EC_EDGE,
+                        ec,
+                        RELATIONS_DICT[PROTEIN_TO_EC_EDGE],
+                        UNIPROT_GENOME_FEATURES,
+                    ]
+                )
         # CHEBI node
-        if entry[BINDING_SITE_PARSED_COLUMN] is None:
-            continue
-        for chebi in entry[BINDING_SITE_PARSED_COLUMN]:
-            node_data.append([chebi, CHEMICAL_CATEGORY])
-            # Chebi-protein edge
-            edge_data.append(
-                [
-                    chebi,
-                    CHEMICAL_TO_PROTEIN_EDGE,
-                    entry[PROTEIN_ID_PARSED_COLUMN],
-                    RELATIONS_DICT[CHEMICAL_TO_PROTEIN_EDGE],
-                    UNIPROT_GENOME_FEATURES,
-                ]
-            )
+        if entry[BINDING_SITE_PARSED_COLUMN]:
+            for chebi in entry[BINDING_SITE_PARSED_COLUMN]:
+                node_data.append([chebi, CHEMICAL_CATEGORY])
+                # Chebi-protein edge
+                edge_data.append(
+                    [
+                        chebi,
+                        CHEMICAL_TO_PROTEIN_EDGE,
+                        entry[PROTEIN_ID_PARSED_COLUMN],
+                        RELATIONS_DICT[CHEMICAL_TO_PROTEIN_EDGE],
+                        UNIPROT_GENOME_FEATURES,
+                    ]
+                )
         # Rhea node
-        if entry[RHEA_PARSED_COLUMN] is None:
-            continue
-        for rhea in entry[RHEA_PARSED_COLUMN]:
-            node_data.append([rhea, RHEA_CATEGORY])
-            # Protein-rhea edge
-            edge_data.append(
-                [
-                    entry[PROTEIN_ID_PARSED_COLUMN],
-                    PROTEIN_TO_RHEA_EDGE,
-                    rhea,
-                    RELATIONS_DICT[PROTEIN_TO_RHEA_EDGE],
-                    UNIPROT_GENOME_FEATURES,
-                ]
-            )
+        if entry[RHEA_PARSED_COLUMN]:
+            for rhea in entry[RHEA_PARSED_COLUMN]:
+                node_data.append([rhea, RHEA_CATEGORY])
+                # Protein-rhea edge
+                edge_data.append(
+                    [
+                        entry[PROTEIN_ID_PARSED_COLUMN],
+                        PROTEIN_TO_RHEA_EDGE,
+                        rhea,
+                        RELATIONS_DICT[PROTEIN_TO_RHEA_EDGE],
+                        UNIPROT_GENOME_FEATURES,
+                    ]
+                )
         # GO node
-        if entry[GO_PARSED_COLUMN] is None:
-            continue
-        for go in entry[GO_PARSED_COLUMN]:
-            #! Excluding obsolete terms
-            predicate, go_category = get_go_relation_and_obsolete_terms(
-                go, entry[PROTEIN_ID_PARSED_COLUMN]
-            )
-            node_data.append([go, go_category])
-            # Protein to go edge
-            if not predicate:
-                continue
-            edge_data.append(
-                [
-                    entry[PROTEIN_ID_PARSED_COLUMN],
-                    predicate,
-                    go,
-                    RELATIONS_DICT[predicate],
-                    UNIPROT_GENOME_FEATURES,
-                ]
-            )
+        if entry[GO_PARSED_COLUMN]:
+            for go in entry[GO_PARSED_COLUMN]:
+                #! Excluding obsolete terms
+                predicate, go_category = get_go_relation_and_obsolete_terms(
+                    go, entry[PROTEIN_ID_PARSED_COLUMN], go_category_trees_dictionary
+                )
+                node_data.append([go, go_category])
+                # Protein to go edge
+                if not predicate:
+                    continue
+                edge_data.append(
+                    [
+                        entry[PROTEIN_ID_PARSED_COLUMN],
+                        predicate,
+                        go,
+                        RELATIONS_DICT[predicate],
+                        UNIPROT_GENOME_FEATURES,
+                    ]
+                )
 
         # Protein-organism
         edge_data.append(
@@ -398,7 +395,7 @@ def get_nodes_and_edges(uniprot_df):
 
 
 def process_lines(
-    all_lines, headers, node_header, edge_header, node_filename, edge_filename, progress_class
+    all_lines, headers, node_header, edge_header, node_filename, edge_filename, progress_class, go_category_dictionary
 ):
     """
     Process a member of a tarfile containing UniProt data.
@@ -414,31 +411,32 @@ def process_lines(
     :param node_filename: The name of the file to write node data to.
     :param edge_filename: The name of the file to write edge data to.
     :param progress_class: The class to use for progress tracking. (tqdm or dummy)
+    :param go_category_dictionary: Dictionary of all GO Terms with their correpsonding category.
     """
     list_of_rows = [s.split("\t") for s in all_lines[1:]]
     df = pd.DataFrame(list_of_rows, columns=headers)
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     df.drop_duplicates(inplace=True)
 
-    node_data, edge_data = get_nodes_and_edges(df)
+    node_data, edge_data = get_nodes_and_edges(df,go_category_dictionary)
     # Write node and edge data to unique files
-    if len(node_data) > 0:
-        with open(node_filename, "w", newline="") as nf:
-            node_writer = csv.writer(nf, delimiter="\t")
-            node_writer.writerow(node_header)  # Write header
-            for node in progress_class(node_data, desc="Writing node data"):
-                if len(node) < len(node_header):
-                    node.extend([None] * (len(node_header) - len(node)))
-                node_writer.writerow(node)
+    #if len(node_data) > 0:
+    with open(node_filename, "w", newline="") as nf:
+        node_writer = csv.writer(nf, delimiter="\t")
+        node_writer.writerow(node_header)  # Write header
+        for node in progress_class(node_data, desc="Writing node data"):
+            if len(node) < len(node_header):
+                node.extend([None] * (len(node_header) - len(node)))
+            node_writer.writerow(node)
 
-    if len(edge_data) > 0:
-        with open(edge_filename, "w", newline="") as ef:
-            edge_writer = csv.writer(ef, delimiter="\t")
-            edge_writer.writerow(edge_header)  # Write header
-            for edge in progress_class(edge_data, desc="Writing edge data"):
-                if len(edge) < len(edge_header):
-                    edge.extend([None] * (len(edge_header) - len(edge)))
-                edge_writer.writerow(edge)
+    #if len(edge_data) > 0:
+    with open(edge_filename, "w", newline="") as ef:
+        edge_writer = csv.writer(ef, delimiter="\t")
+        edge_writer.writerow(edge_header)  # Write header
+        for edge in progress_class(edge_data, desc="Writing edge data"):
+            if len(edge) < len(edge_header):
+                edge.extend([None] * (len(edge_header) - len(edge)))
+            edge_writer.writerow(edge)
 
     return node_filename, edge_filename
 
@@ -468,11 +466,6 @@ class UniprotTransform(Transform):
         # Check if the file already exists
         if not GO_CATEGORY_TREES_FILE.exists():
             self.get_go_category_trees(self.go_oi)
-        # Read into a dictionary
-        with open(GO_CATEGORY_TREES_FILE, "r") as file:
-            csv_reader = csv.DictReader(file, delimiter="\t")
-            for row in csv_reader:
-                GO_CATEGORY_TREES_DICT[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
 
     def check_string_in_tar(
         self,
@@ -544,10 +537,17 @@ class UniprotTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
+        # Read GO categories into a dictionary
+        self.go_category_trees_dict = {}
+        with open(GO_CATEGORY_TREES_FILE, "r") as file:
+            csv_reader = csv.DictReader(file, delimiter="\t")
+            for row in csv_reader:
+                self.go_category_trees_dict[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
+        
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         n_workers = os.cpu_count()
-        chunk_size_denominator = 150 * n_workers
+        chunk_size_denominator = 10 * n_workers
 
         # get descendants of important GO categories for relationship mapping
         os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
@@ -577,6 +577,7 @@ class UniprotTransform(Transform):
                         f"{UNIPROT_TMP_NE_DIR}/node_{uuid.uuid4()}.tsv",
                         f"{UNIPROT_TMP_NE_DIR}/edge_{uuid.uuid4()}.tsv",
                         progress_class,
+                        self.go_category_trees_dict,
                     )
                     for line_chunk in line_chunks
                 ],

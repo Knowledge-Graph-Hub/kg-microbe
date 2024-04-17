@@ -13,6 +13,10 @@ import pandas as pd
 from oaklib import get_adapter
 from tqdm import tqdm
 
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_CATEGORY,
     CHEMICAL_TO_PROTEIN_EDGE,
@@ -127,11 +131,15 @@ def parse_ec(ec_entry):
     :return: A list of EC identifiers extracted from the EC entry.
     :rtype: list
     """
-    ec_list = None
-    if not is_float(ec_entry):
-        ec_list = [EC_PREFIX + x.strip() for x in ec_entry.split(";")]
+    try:
+        ec_list = None
+        if not is_float(ec_entry):
+            ec_list = [EC_PREFIX + x.strip() for x in ec_entry.split(";")]
 
-    return ec_list
+        return ec_list
+    except Exception as e:
+        logging.error(f"Failed to parse EC entry: {ec_entry} with error: {e}")
+        return None
 
 
 def parse_binding_site(binding_site_entry):
@@ -147,11 +155,16 @@ def parse_binding_site(binding_site_entry):
     :return: A list of ChEBI ligand identifiers extracted from the binding site entry.
     :rtype: list
     """
-    chem_list = None
-    if not is_float(binding_site_entry):
-        chem_list = re.findall(r'/ligand_id="ChEBI:(.*?)";', binding_site_entry)
+    try:
+        chem_list = None
+        if not is_float(binding_site_entry):
+            chem_list = re.findall(r'/ligand_id="ChEBI:(.*?)";', binding_site_entry)
 
-    return chem_list
+        return chem_list
+    except Exception as e:
+        logging.error(f"Failed to parse ligand entry: {binding_site_entry} with error: {e}")
+        return None 
+
 
 
 def parse_go_entry(go_entry):
@@ -167,12 +180,17 @@ def parse_go_entry(go_entry):
     :return: A list of ChEBI ligand identifiers extracted from the binding site entry.
     :rtype: list
     """
-    go_list = None
-    if not is_float(go_entry):
-        go_list = re.findall(r"\[(.*?)\]", go_entry)
-        go_list = [i for i in go_list if GO_PREFIX in i]
+    try:
+        go_list = None
+        if not is_float(go_entry):
+            go_list = re.findall(r"\[(.*?)\]", go_entry)
+            go_list = [i for i in go_list if GO_PREFIX in i]
 
-    return go_list
+        return go_list
+    except Exception as e:
+        logging.error(f"Failed to parse GO entry: {go_entry} with error: {e}")
+        return None
+
 
 
 def parse_rhea_entry(rhea_entry):
@@ -186,11 +204,15 @@ def parse_rhea_entry(rhea_entry):
     :return: A list of RHEA identifiers extracted from the rhea entry.
     :rtype: list
     """
-    rhea_list = None
-    if not is_float(rhea_entry):
-        rhea_list = rhea_entry.split(" ")
+    try:
+        rhea_list = None
+        if not is_float(rhea_entry):
+            rhea_list = rhea_entry.split(" ")
 
-    return rhea_list
+        return rhea_list
+    except Exception as e:
+        logging.error(f"Failed to parse Rhea entry: {rhea_entry} with error: {e}")
+        return None
 
 
 def get_go_relation_and_obsolete_terms(term_id, uniprot_id):
@@ -394,50 +416,55 @@ def get_nodes_and_edges(uniprot_df):
     return (node_data, edge_data)
 
 
-def process_lines(
-    all_lines, headers, node_header, edge_header, node_filename, edge_filename, progress_class
-):
+def process_lines(all_lines, headers, node_header, edge_header, node_filename, edge_filename, progress_class):
+    try:
+        list_of_rows = [s.split("\t") for s in all_lines[1:]]
+        df = pd.DataFrame(list_of_rows, columns=headers)
+        df = df[~(df == df.columns.to_series()).all(axis=1)]
+        df.drop_duplicates(inplace=True)
+
+        node_data, edge_data = get_nodes_and_edges(df)
+        write_to_files(node_data, edge_data, node_filename, node_header, edge_filename, edge_header, progress_class)
+    except Exception as e:
+        logging.error(f"Error processing lines with exception: {e}")
+        # This will help prevent broken pipe if the exception causes process termination
+        return None, None
+    return node_filename, edge_filename
+
+
+def write_to_files(node_data, edge_data, node_filename, node_header, edge_filename, edge_header, progress_class):
     """
-    Process a member of a tarfile containing UniProt data.
-
-    This method reads the content of a member file, processes the data, and writes
-    the resulting node and edge data to the provided CSV files. It uses a lock to
-    ensure that the files are written to correctly and that no data is lost.
-
-    :param all_lines: A list of lines from the member file.
-    :param headers: A list of headers for the data.
-    :param node_header: A list of headers for the node data.
-    :param edge_header: A list of headers for the edge data.
-    :param node_filename: The name of the file to write node data to.
-    :param edge_filename: The name of the file to write edge data to.
-    :param progress_class: The class to use for progress tracking. (tqdm or dummy)
+    Writes node and edge data to their respective files.
+    
+    :param node_data: List of node data entries to write.
+    :param edge_data: List of edge data entries to write.
+    :param node_filename: Filename for the node data.
+    :param node_header: Header row for the node data file.
+    :param edge_filename: Filename for the edge data.
+    :param edge_header: Header row for the edge data file.
+    :param progress_class: Progress display class, e.g., tqdm or DummyTqdm.
     """
-    list_of_rows = [s.split("\t") for s in all_lines[1:]]
-    df = pd.DataFrame(list_of_rows, columns=headers)
-    df = df[~(df == df.columns.to_series()).all(axis=1)]
-    df.drop_duplicates(inplace=True)
-
-    node_data, edge_data = get_nodes_and_edges(df)
-    # Write node and edge data to unique files
-    if len(node_data) > 0:
-        with open(node_filename, "w", newline="") as nf:
-            node_writer = csv.writer(nf, delimiter="\t")
-            node_writer.writerow(node_header)  # Write header
+    try:
+        # Write node data
+        with open(node_filename, 'w', newline='') as node_file:
+            node_writer = csv.writer(node_file, delimiter='\t')
+            node_writer.writerow(node_header)
             for node in progress_class(node_data, desc="Writing node data"):
                 if len(node) < len(node_header):
-                    node.extend([None] * (len(node_header) - len(node)))
+                    node.extend([None] * (len(node_header) - len(node)))  # Fill missing columns
                 node_writer.writerow(node)
 
-    if len(edge_data) > 0:
-        with open(edge_filename, "w", newline="") as ef:
-            edge_writer = csv.writer(ef, delimiter="\t")
-            edge_writer.writerow(edge_header)  # Write header
+        # Write edge data
+        with open(edge_filename, 'w', newline='') as edge_file:
+            edge_writer = csv.writer(edge_file, delimiter='\t')
+            edge_writer.writerow(edge_header)
             for edge in progress_class(edge_data, desc="Writing edge data"):
                 if len(edge) < len(edge_header):
-                    edge.extend([None] * (len(edge_header) - len(edge)))
+                    edge.extend([None] * (len(edge_header) - len(edge)))  # Fill missing columns
                 edge_writer.writerow(edge)
-
-    return node_filename, edge_filename
+    except Exception as e:
+        logging.error(f"Error writing files: {e}")
+        raise  # Optionally re-raise the exception after logging it
 
 
 class UniprotTransform(Transform):
@@ -540,29 +567,19 @@ class UniprotTransform(Transform):
         return matching_members_content
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
-        """Load Uniprot data from downloaded files, then transforms into graph format."""
-        # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         n_workers = os.cpu_count()
         chunk_size_denominator = 150 * n_workers
-
-        # get descendants of important GO categories for relationship mapping
-        os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
-        os.makedirs(UNIPROT_TMP_NE_DIR, exist_ok=True)
-
-        self.write_obsolete_file_header()
 
         tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
         progress_class = tqdm if show_status else DummyTqdm
         all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
         member_header = all_lines[0].split("\t")
-        chunk_size = len(all_lines) // (chunk_size_denominator)
-        print(
-            f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
-        )
+        chunk_size = len(all_lines) // chunk_size_denominator
         line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
 
-        with Pool(n_workers) as pool:
+        pool = Pool(n_workers)
+        try:
             results = pool.starmap(
                 process_lines,
                 [
@@ -579,6 +596,9 @@ class UniprotTransform(Transform):
                 ],
             )
             results = [result for result in results if result != (None, None)]
+        finally:
+            pool.close()
+            pool.join()
 
         # Combine individual node and edge files
         combined_node_filename = self.output_node_file

@@ -1,0 +1,17 @@
+configuration:
+  output_directory: output
+  checkpoint: false
+transform:
+  source:
+    monarch-kg:
+      input:
+        name: "KG-Microbe"
+        format: tsv
+        filename:
+          - data/merged/merged-kg_edges.tsv
+          - data/merged/merged-kg_nodes.tsv
+      output:
+        format: neo4j
+        uri: neo4j://localhost:7687
+        username: neo4j
+        password: admin

@@ -203,7 +203,7 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_di
     :type term_id: str
     :param uniprot_id: A string containing the Uniprot protein ID.
     :type uniprot_id: str
-    :param go_category_dictionary: Dictionary of all GO Terms with their correpsonding category.
+    :param go_category_dictionary: Dictionary of all GO Terms with their corresponding category.
     :type go_category_dictionary: dict
     :return: The appropriate predicate for the GO ID as it relates to the protein ID, or None if obsolete.
     :rtype: str or None
@@ -223,7 +223,7 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_di
     return go_relation, go_component_label
 
 
-def get_nodes_and_edges(uniprot_df,go_category_trees_dictionary):
+def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary):
     """
     Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -259,7 +259,9 @@ def get_nodes_and_edges(uniprot_df,go_category_trees_dictionary):
     )
     uniprot_parse_df[PROTEIN_NAME_PARSED_COLUMN] = uniprot_df[
         UNIPROT_PROTEIN_NAME_COLUMN_NAME
-    ].apply(lambda x: x.split("(EC")[0].replace("[", "(").replace("]", ")") if not is_float(x) else x)
+    ].apply(
+        lambda x: x.split("(EC")[0].replace("[", "(").replace("]", ")") if not is_float(x) else x
+    )
     uniprot_parse_df[BINDING_SITE_PARSED_COLUMN] = uniprot_df[
         UNIPROT_BINDING_SITE_COLUMN_NAME
     ].apply(parse_binding_site)
@@ -371,7 +373,7 @@ def get_nodes_and_edges(uniprot_df,go_category_trees_dictionary):
         #         UNIPROT_GENOME_FEATURES,
         #     ]
         # )
-        
+
         # Proteome-organism
         edge_data.append(
             [
@@ -397,7 +399,14 @@ def get_nodes_and_edges(uniprot_df,go_category_trees_dictionary):
 
 
 def process_lines(
-    all_lines, headers, node_header, edge_header, node_filename, edge_filename, progress_class, go_category_dictionary
+    all_lines,
+    headers,
+    node_header,
+    edge_header,
+    node_filename,
+    edge_filename,
+    progress_class,
+    go_category_dictionary,
 ):
     """
     Process a member of a tarfile containing UniProt data.
@@ -413,16 +422,16 @@ def process_lines(
     :param node_filename: The name of the file to write node data to.
     :param edge_filename: The name of the file to write edge data to.
     :param progress_class: The class to use for progress tracking. (tqdm or dummy)
-    :param go_category_dictionary: Dictionary of all GO Terms with their correpsonding category.
+    :param go_category_dictionary: Dictionary of all GO Terms with their corresponding category.
     """
     list_of_rows = [s.split("\t") for s in all_lines[1:]]
     df = pd.DataFrame(list_of_rows, columns=headers)
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     df.drop_duplicates(inplace=True)
 
-    node_data, edge_data = get_nodes_and_edges(df,go_category_dictionary)
+    node_data, edge_data = get_nodes_and_edges(df, go_category_dictionary)
     # Write node and edge data to unique files
-    #if len(node_data) > 0:
+    # if len(node_data) > 0:
     with open(node_filename, "w", newline="") as nf:
         node_writer = csv.writer(nf, delimiter="\t")
         node_writer.writerow(node_header)  # Write header
@@ -431,7 +440,7 @@ def process_lines(
                 node.extend([None] * (len(node_header) - len(node)))
             node_writer.writerow(node)
 
-    #if len(edge_data) > 0:
+    # if len(edge_data) > 0:
     with open(edge_filename, "w", newline="") as ef:
         edge_writer = csv.writer(ef, delimiter="\t")
         edge_writer.writerow(edge_header)  # Write header
@@ -545,7 +554,7 @@ class UniprotTransform(Transform):
             csv_reader = csv.DictReader(file, delimiter="\t")
             for row in csv_reader:
                 self.go_category_trees_dict[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
-        
+
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         n_workers = os.cpu_count()

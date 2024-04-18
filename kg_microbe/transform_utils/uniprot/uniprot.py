@@ -360,16 +360,18 @@ def get_nodes_and_edges(uniprot_df,go_category_trees_dictionary):
                     ]
                 )
 
-        # Protein-organism
-        edge_data.append(
-            [
-                entry[PROTEIN_ID_PARSED_COLUMN],
-                PROTEIN_TO_ORGANISM_EDGE,
-                entry[ORGANISM_PARSED_COLUMN],
-                RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
-                UNIPROT_GENOME_FEATURES,
-            ]
-        )
+        # Removing protein-organism edges for now
+        # # Protein-organism
+        # edge_data.append(
+        #     [
+        #         entry[PROTEIN_ID_PARSED_COLUMN],
+        #         PROTEIN_TO_ORGANISM_EDGE,
+        #         entry[ORGANISM_PARSED_COLUMN],
+        #         RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
+        #         UNIPROT_GENOME_FEATURES,
+        #     ]
+        # )
+        
         # Proteome-organism
         edge_data.append(
             [

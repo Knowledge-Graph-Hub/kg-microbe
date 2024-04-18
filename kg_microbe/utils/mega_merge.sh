@@ -8,7 +8,6 @@ create or replace table raw_nodes as select * from read_csv('data/duckdb/*_nodes
 create or replace table raw_edges as select * from read_csv('data/duckdb/*_edges.tsv.gz', filename=true, union_by_name=true);
 
 
-
 select split_part(id, ':', 1) as prefix, count(id) as duplicates
   from
   (

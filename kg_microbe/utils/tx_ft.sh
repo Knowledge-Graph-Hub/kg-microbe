@@ -1,6 +1,10 @@
 SET temp_directory='/Users/marcin/Documents/tmp/duckdb';
 
-create or replace table edges as select * from read_csv('./merged-kg_uniprot_bacdive_edges.tsv.gz', filename=true, union_by_name=true); 
+create or replace table edges as select * from read_csv('./data/merged/uniprot_bacdive/merged_uniprot_bacdive/merged-kg_uniprot_bacdive_edges.tsv.gz', filename=true, union_by_name=true); 
+
+#NERSC
+create or replace table edges as select * from read_csv('data/merged/merged_uniprot_bacdive/merged-kg_uniprot_bacdive_edges.tsv', filename=true, union_by_name=true);
+SET temp_directory='$SCRATCH/TMP/';
 
 
 SELECT DISTINCT
@@ -62,14 +66,22 @@ WHERE e2.subject LIKE 'UniprotKB:%';
 
 DROP TABLE Step1; -- Drop as soon as it's no longer needed
 
--- Step 3: Connect UniprotKB to EC, GO, RHEA, carrying NCBITaxon forward
+-- Create a temporary table for filtered edges data
+CREATE TEMPORARY TABLE FilteredEdges AS
+SELECT subject, object
+FROM edges
+WHERE object LIKE 'EC:%'
+   OR object LIKE 'GO:%'
+   OR object LIKE 'RHEA:%';
+
+-- Reduce the size of data to be joined by filtering necessary objects first
 CREATE TEMPORARY TABLE Step3 AS
-SELECT s2.NCBITaxon, e3.subject AS UniprotKB, e3.object AS FinalObject
-FROM edges e3
-JOIN Step2 s2 ON e3.subject = s2.UniprotKB
-WHERE e3.object LIKE 'EC:%'
-   OR e3.object LIKE 'GO:%'
-   OR e3.object LIKE 'RHEA:%';
+SELECT s2.NCBITaxon, fe.subject AS UniprotKB, fe.object AS FinalObject
+FROM FilteredEdges fe
+JOIN Step2 s2 ON fe.subject = s2.UniprotKB;
+
+-- Drop the intermediate filtered table as it's no longer needed
+DROP TABLE FilteredEdges;
 
 DROP TABLE Step2; -- Drop as soon as it's no longer needed
 
@@ -83,6 +95,10 @@ FROM Step3;
 DROP TABLE Step3; -- Drop to free up memory
 
 
+COPY final_relationships TO 'uniprot_bacdive_taxa_genome_feat.tsv' (FORMAT CSV, DELIMITER '\t', HEADER);
+
 
 
 select * from final_relationships;
+
+

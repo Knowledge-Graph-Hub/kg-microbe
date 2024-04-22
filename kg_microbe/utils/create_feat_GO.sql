@@ -1,7 +1,7 @@
 -- SET temp_directory='$SCRATCH/TMP/';
 SET temp_directory='/Users/marcin/Documents/tmp/duckdb';
 -- PRAGMA memory_limit='100GB'; 
-PRAGMA memory_limit='30GB'; 
+PRAGMA memory_limit='40GB'; 
 
 CREATE OR REPLACE TABLE edges AS
 SELECT subject, object
@@ -12,6 +12,8 @@ WHERE (subject LIKE 'Proteomes:%' AND object LIKE 'NCBITaxon:%')
    AND object LIKE 'Proteomes:%')
    OR (subject LIKE 'UniprotKB:%'
    AND object LIKE 'GO:%');
+
+CREATE INDEX IF NOT EXISTS idx_edges_subject ON edges(subject);
 
 -- Step 1: Filter Proteomes to NCBITaxon directly into a temporary table
 CREATE TEMPORARY TABLE Step1 AS
@@ -28,6 +30,7 @@ WHERE subject LIKE 'UniprotKB:%';
 
 -- Add an index on `Proteomes` if possible to speed up the join
 CREATE INDEX IF NOT EXISTS idx_proteomes ON FilteredUniprotKB(Proteomes);
+-- CREATE INDEX IF NOT EXISTS idx_uniprotkb ON FilteredUniprotKB(UniprotKB);
 
 -- Perform the join only on pre-filtered and indexed data
 CREATE TEMPORARY TABLE Step2 AS
@@ -40,18 +43,28 @@ FROM
 JOIN 
     Step1 s1 ON f.Proteomes = s1.Proteomes;
 
+-- CREATE INDEX IF NOT EXISTS idx_step2_uniprotkb ON Step2(UniprotKB);
 
 -- Drop the filtered table if not needed anymore
-DROP TABLE FilteredUniprotKB;
-
 DROP TABLE Step1;
 
 CREATE TEMPORARY TABLE GO_Edges AS
-SELECT subject, object
-FROM edges
-WHERE object LIKE 'GO:%';
+SELECT e.subject, e.object
+FROM edges e
+WHERE e.object LIKE 'GO:%'
+  AND EXISTS (
+      SELECT 1
+      FROM FilteredUniprotKB f
+      WHERE f.UniprotKB = e.subject
+  );
+
+CREATE INDEX IF NOT EXISTS idx_go_edges_subject ON GO_Edges(subject);
+
+-- Drop
+DROP TABLE FilteredUniprotKB;
 
 -- Handling GO Edges
+-- Redefine GO_Joined using a proper JOIN that allows direct field access
 CREATE TEMPORARY TABLE GO_Joined AS
 SELECT DISTINCT s2.NCBITaxon, go.object AS GO
 FROM GO_Edges go
@@ -63,6 +76,4 @@ COPY GO_Joined TO 'NCBITaxon_to_GO.tsv' (FORMAT CSV, DELIMITER '\t', HEADER);
 
 DROP TABLE GO_Joined;
 DROP TABLE GO_Edges;
-
--- As Step2 is no longer needed after processing all types, it can be dropped
 DROP TABLE Step2;

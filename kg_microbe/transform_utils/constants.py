@@ -295,11 +295,11 @@ DEBIO_MAPPER = {
     RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",
     RHEA_BIDIRECTIONAL_DIRECTION: "debio:0000009",
 }
-DEBIO_PREDICATE_MAPPER = {
-    RHEA_LEFT_TO_RIGHT_DIRECTION: "biolink:is_input_of",
-    RHEA_RIGHT_TO_LEFT_DIRECTION: "biolink:is_output_of",
-    RHEA_BIDIRECTIONAL_DIRECTION: "biolink:participates_in",
-}
+# DEBIO_PREDICATE_MAPPER = {
+#     RHEA_LEFT_TO_RIGHT_DIRECTION: "biolink:is_input_of",
+#     RHEA_RIGHT_TO_LEFT_DIRECTION: "biolink:is_output_of",
+#     RHEA_BIDIRECTIONAL_DIRECTION: "biolink:participates_in",
+# }
 RHEA_DIRECTION_CATEGORY = "biolink:Activity"
 
 # Traits
@@ -415,6 +415,11 @@ HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
 ENABLED_BY_PREDICATE = "biolink:enabled_by"
 HAS_INPUT_PREDICATE = "biolink:has_input"
 HAS_OUTPUT_PREDICATE = "biolink:has_output"
+IS_INPUT_OF_PREDICATE = "biolink:is_input_of"
+IS_OUTPUT_OF_PREDICATE = "biolink:is_output_of"
+HAS_INPUT_RELATION = "RO:0002233"
+HAS_OUTPUT_RELATION = "RO:0002234"
+PARTICIPATES_IN_PREDICATE = "biolink:participates_in"
 CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by"
 RHEA_PREDICATE_MAPPER = {
     "has participant": HAS_PARTICIPANT_PREDICATE,
@@ -422,6 +427,28 @@ RHEA_PREDICATE_MAPPER = {
     "reaction enabled by molecular function": CAN_BE_CARRIED_OUT_BY_PREDICATE,
     "has input": HAS_INPUT_PREDICATE,
     "has output": HAS_OUTPUT_PREDICATE,
+}
+
+# RHEA Pyobo
+ENABLED_BY_RELATION = "RO:0002333"
+RHEA_PYOBO_RELATIONS_MAPPER = {
+    ENABLED_BY_RELATION: ENABLED_BY_PREDICATE,
+    RDFS_SUBCLASS_OF: SUBCLASS_PREDICATE,
+    HAS_INPUT_RELATION: HAS_INPUT_PREDICATE,
+    HAS_OUTPUT_RELATION: HAS_OUTPUT_PREDICATE,
+    HAS_PARTICIPANT: HAS_PARTICIPANT_PREDICATE,
+    # "debio:0000007" : SUPERCLASS_PREDICATE, # This is being ignored in RheaMapperTransform
+    # "debio:0000008" : SUPERCLASS_PREDICATE, # This is being ignored in RheaMapperTransform
+    # "debio:0000009" : SUPERCLASS_PREDICATE, # This is being ignored in RheaMapperTransform
+    "debio:0000047": RHEA_TO_GO_EDGE,
+}
+
+RHEA_PYOBO_PREFIXES_MAPPER = {
+    "chebi": CHEBI_PREFIX,
+    RHEA_KEY: RHEA_NEW_PREFIX,
+    EC_PYOBO_PREFIX: EC_PREFIX,
+    "uniprot": UNIPROT_PREFIX,
+    "go": GO_PREFIX,
 }
 
 # Columns desired for the Uniprot data (from .dat files)
@@ -455,8 +482,6 @@ UNIPATHWAYS_CATEGORIES_DICT = {
     UNIPATHWAYS_PATHWAY_PREFIX: PATHWAY_CATEGORY,
 }
 
-HAS_INPUT_RELATION = "RO:0002233"
-HAS_OUTPUT_RELATION = "RO:0002234"
 PART_OF_RELATION = "BFO:0000050"
 PART_OF_PREDICATE = "biolink:part_of"
 RELATED_TO_RELATION = "RO:0000052"
@@ -490,6 +515,7 @@ UNIPATHWAYS_INCLUDE_PAIRS = [
 SPECIAL_PREFIXES = {
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
     EC_OBO_PREFIX: EC_PREFIX,
+    UNIPROT_OBO_PREFIX: UNIPROT_PREFIX,
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
     # UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",  # comment for now since we do not need obo-db-ingest for uniprot

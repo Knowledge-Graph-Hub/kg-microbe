@@ -43,11 +43,11 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)
     else:
-        new_lines.append(replace_category(line, id_index, category_index))
+        new_lines.append(replace_category_for_unipathways(line, id_index, category_index))
     return new_lines, nodes_dictionary
 
 
-def replace_category(line, id_index, category_index):
+def replace_category_for_unipathways(line, id_index, category_index):
     """
     Replace category of a given node.
 

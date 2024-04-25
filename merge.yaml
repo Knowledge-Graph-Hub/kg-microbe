@@ -42,13 +42,13 @@ merged_graph:
         filename:
           - data/transformed/ontologies/go_nodes.tsv
           - data/transformed/ontologies/go_edges.tsv
-    rhea:
-      name: "Rhea"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/ontologies/rhea_nodes.tsv
-          - data/transformed/ontologies/rhea_edges.tsv
+    # rhea: # Redundant to RheaMappingsTransform
+    #   name: "Rhea"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/ontologies/rhea_nodes.tsv
+    #       - data/transformed/ontologies/rhea_edges.tsv
     ec:
       name: "EC"
       input:

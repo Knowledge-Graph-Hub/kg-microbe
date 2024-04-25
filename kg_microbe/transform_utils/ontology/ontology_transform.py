@@ -356,8 +356,9 @@ class OntologyTransform(Transform):
                 new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
             elif name == "rhea":
                 # Remove debio nodes that account for direction, since already there in inverse triples
-                new_nf_lines = [line for line in new_nf_lines if "debio" not in line]
-                new_ef_lines = [line for line in new_ef_lines if "debio" not in line]
+                rhea_exclusions = ["debio","uniprot"]
+                new_nf_lines = [line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)]
+                new_ef_lines = [line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)]
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:
                 new_nf.write("\t".join(self.node_header) + "\n")

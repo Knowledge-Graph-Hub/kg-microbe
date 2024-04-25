@@ -55,13 +55,13 @@ from kg_microbe.utils.unipathways_utils import (
 from ..transform import Transform
 
 ONTOLOGIES = {
-    "ncbitaxon": "ncbitaxon.owl.gz",
-    "chebi": "chebi.owl.gz",
-    "envo": "envo.json",
-    "go": "go.json",
+    # "ncbitaxon": "ncbitaxon.owl.gz",
+    # "chebi": "chebi.owl.gz",
+    # "envo": "envo.json",
+    # "go": "go.json",
     "rhea": "rhea.json.gz",
-    "ec": "ec.json",
-    "upa": "upa.owl",
+    # "ec": "ec.json",
+    # "upa": "upa.owl",
 }
 
 
@@ -356,7 +356,7 @@ class OntologyTransform(Transform):
                 new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
             elif name == "rhea":
                 # Remove debio nodes that account for direction, since already there in inverse triples
-                rhea_exclusions = ["debio","uniprot"]
+                rhea_exclusions = ["debio",UNIPROT_PREFIX]
                 new_nf_lines = [line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)]
                 new_ef_lines = [line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)]
             # Rewrite nodes file

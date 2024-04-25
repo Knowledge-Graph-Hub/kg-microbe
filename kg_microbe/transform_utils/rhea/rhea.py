@@ -208,7 +208,7 @@ class RheaMappingsTransform(Transform):
                 total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings..."
             ) as progress:
                 for k, v in rhea_nodes.items():
-                    # Get reaction identifiers corresponding to different directions (n, n+1, n+2, n+3) and associated with 1 reaction definition
+                    # Associate reaction identifiers corresponding to different directions (n, n+1, n+2, n+3)
                     tmp_file_writer.writerow(
                         [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, RHEA_UNDEFINED_DIRECTION]
                     )
@@ -290,7 +290,7 @@ class RheaMappingsTransform(Transform):
                         for row in mapping_tsv_reader:
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
-                            # Remove any rows other than Rhea-Rhea relations since those relationships accounted for elsewhere
+                            # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                             if not any(
                                 substring in object for substring in relation_types_to_remove
                             ):
@@ -353,7 +353,7 @@ class RheaMappingsTransform(Transform):
                                                 object_info[0].replace("uniprot:", UNIPROT_PREFIX),
                                             ) + object_info[1:]
 
-                                        # Remove any rows other than Rhea-Rhea relations since those relationships accounted for elsewhere
+                                        # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                                         if not any(
                                             substring in object_info[0]
                                             for substring in relation_types_to_remove

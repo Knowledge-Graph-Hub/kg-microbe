@@ -15,7 +15,9 @@ from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
+    CHEBI_PREFIX,
     CHEBI_XREFS_FILEPATH,
+    EC_PREFIX,
     EXCLUSION_TERMS_FILE,
     ID_COLUMN,
     NCBITAXON_PREFIX,
@@ -356,7 +358,8 @@ class OntologyTransform(Transform):
                 new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
             elif name == "rhea":
                 # Remove debio nodes that account for direction, since already there in inverse triples
-                rhea_exclusions = ["debio",UNIPROT_PREFIX]
+                # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
+                rhea_exclusions = ["debio",UNIPROT_PREFIX,CHEBI_PREFIX,EC_PREFIX]
                 new_nf_lines = [line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)]
                 new_ef_lines = [line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)]
             # Rewrite nodes file

@@ -3,6 +3,7 @@
 import csv
 from collections import defaultdict
 from glob import glob
+import os
 from pathlib import Path
 from typing import Optional, Union
 
@@ -113,6 +114,8 @@ class RheaMappingsTransform(Transform):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
         ks = "RheaViaPyObo"
+        # Create tmp dir
+        os.makedirs(RHEA_TMP_DIR, exist_ok=True)
         # fn2 = "sssom.tsv"
         # TODO: Remove the line below once bioversions new version is released
         requests_ftp.monkeypatch_session()
@@ -144,11 +147,11 @@ class RheaMappingsTransform(Transform):
         rhea_relation = rhea_relation[rhea_relation[PREDICATE_COLUMN].notna()]
 
         # Remove any rows other than Rhea-Rhea relations since those relationships accounted for elsewhere
-        relation_types_to_remove = [
-            UNIPROT_PREFIX
+        relation_types_to_remove_pyobo = [
+            UNIPROT_PREFIX, GO_PREFIX, EC_PREFIX
         ]  # [CHEBI_PREFIX, GO_PREFIX, UNIPROT_PREFIX, EC_PREFIX]
         rhea_relation = rhea_relation[
-            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains("|".join(relation_types_to_remove))
+            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains("|".join(relation_types_to_remove_pyobo))
         ]
 
         rhea_relation = rhea_relation.drop(columns=["relation_ns", "relation_id", "target_ns"])
@@ -263,7 +266,7 @@ class RheaMappingsTransform(Transform):
             pattern = f"{self.input_base_dir}/rhea2*.tsv"
             matching_files = glob(pattern)
 
-            relation = CLOSE_MATCH
+            #relation = CLOSE_MATCH
             with progress_class(
                 total=len(matching_files), desc="Processing Rhea mappings..."
             ) as progress:
@@ -286,19 +289,20 @@ class RheaMappingsTransform(Transform):
                             for index, column_name in enumerate(header)
                             if column_name in {RHEA_MAPPING_ID_COLUMN, RHEA_MAPPING_OBJECT_COLUMN}
                         )
-
+                        relation_types_to_remove_rhea2_files = [UNIPROT_PREFIX, CHEBI_PREFIX]
                         for row in mapping_tsv_reader:
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
+                            relation = [k for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items() if v == predicate][0] if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values() else None
                             # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                             if not any(
-                                substring in object for substring in relation_types_to_remove
+                                substring in object for substring in relation_types_to_remove_rhea2_files
                             ):
                                 nodes_file_writer.writerow(
                                     [object, category, None] + [None] * (len(self.node_header) - 3)
                                 )
                                 edges_file_writer.writerow(
-                                    [subject_info, predicate, object, relation, ks]
+                                    [subject_info, predicate, object, relation, "Rhea2*"]
                                 )
 
                     with open(RHEA_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
@@ -325,8 +329,6 @@ class RheaMappingsTransform(Transform):
                                 predicate_info = self._reference_to_tuple(predicate)
                                 for obj in objects:
                                     object_info = self._reference_to_tuple(obj)
-                                    # if 'uniprot:Q01116' in str(object_info):
-                                    #     print(object_info)
                                     # Write the row in the specified format
                                     all_terms_writer.writerow(
                                         [*subject_info, *predicate_info, *object_info]
@@ -356,7 +358,7 @@ class RheaMappingsTransform(Transform):
                                         # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                                         if not any(
                                             substring in object_info[0]
-                                            for substring in relation_types_to_remove
+                                            for substring in relation_types_to_remove_rhea2_files
                                         ):
                                             nodes_file_writer.writerow(
                                                 [object_info[0], category, object_info[1]]

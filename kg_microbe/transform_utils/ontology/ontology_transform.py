@@ -359,9 +359,13 @@ class OntologyTransform(Transform):
             elif name == "rhea":
                 # Remove debio nodes that account for direction, since already there in inverse triples
                 # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
-                rhea_exclusions = ["debio",UNIPROT_PREFIX,CHEBI_PREFIX,EC_PREFIX]
-                new_nf_lines = [line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)]
-                new_ef_lines = [line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)]
+                rhea_exclusions = ["debio", UNIPROT_PREFIX, CHEBI_PREFIX, EC_PREFIX]
+                new_nf_lines = [
+                    line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)
+                ]
+                new_ef_lines = [
+                    line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)
+                ]
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:
                 new_nf.write("\t".join(self.node_header) + "\n")

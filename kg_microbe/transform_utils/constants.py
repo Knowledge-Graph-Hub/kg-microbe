@@ -424,7 +424,7 @@ PARTICIPATES_IN_PREDICATE = "biolink:participates_in"
 RHEA_PREDICATE_MAPPER = {
     "has participant": HAS_PARTICIPANT_PREDICATE,
     "enabled by": ENABLED_BY_PREDICATE,
-    "reaction enabled by molecular function": RHEA_TO_GO_EDGE, # CAN_BE_CARRIED_OUT_BY_PREDICATE,
+    "reaction enabled by molecular function": RHEA_TO_GO_EDGE,  # CAN_BE_CARRIED_OUT_BY_PREDICATE,
     "has input": HAS_INPUT_PREDICATE,
     "has output": HAS_OUTPUT_PREDICATE,
 }

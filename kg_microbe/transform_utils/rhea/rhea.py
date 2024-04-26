@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
-    CLOSE_MATCH,
+    # CLOSE_MATCH,
     DEBIO_MAPPER,
     EC_CATEGORY,
     EC_PREFIX,
@@ -266,7 +266,7 @@ class RheaMappingsTransform(Transform):
             pattern = f"{self.input_base_dir}/rhea2*.tsv"
             matching_files = glob(pattern)
 
-            #relation = CLOSE_MATCH
+            # relation = CLOSE_MATCH
             with progress_class(
                 total=len(matching_files), desc="Processing Rhea mappings..."
             ) as progress:
@@ -293,7 +293,9 @@ class RheaMappingsTransform(Transform):
                         for row in mapping_tsv_reader:
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
-                            relation = [k for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items() if v == predicate][0] if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values() else None
+                            relation = [k for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items() if v == predicate][0] \
+                                if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values() \
+                                else None
                             # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                             if not any(
                                 substring in object for substring in relation_types_to_remove_rhea2_files

@@ -1,9 +1,9 @@
 """Transform for Rhea."""
 
 import csv
+import os
 from collections import defaultdict
 from glob import glob
-import os
 from pathlib import Path
 from typing import Optional, Union
 
@@ -147,10 +147,14 @@ class RheaMappingsTransform(Transform):
 
         # Remove any rows other than Rhea-Rhea relations since those relationships accounted for elsewhere
         relation_types_to_remove_pyobo = [
-            UNIPROT_PREFIX, GO_PREFIX, EC_PREFIX
+            UNIPROT_PREFIX,
+            GO_PREFIX,
+            EC_PREFIX,
         ]  # [CHEBI_PREFIX, GO_PREFIX, UNIPROT_PREFIX, EC_PREFIX]
         rhea_relation = rhea_relation[
-            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains("|".join(relation_types_to_remove_pyobo))
+            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains(
+                "|".join(relation_types_to_remove_pyobo)
+            )
         ]
 
         rhea_relation = rhea_relation.drop(columns=["relation_ns", "relation_id", "target_ns"])
@@ -292,12 +296,19 @@ class RheaMappingsTransform(Transform):
                         for row in mapping_tsv_reader:
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
-                            relation = [k for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items() if v == predicate][0] \
-                                if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values() \
+                            relation = (
+                                [
+                                    k
+                                    for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items()
+                                    if v == predicate
+                                ][0]
+                                if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values()
                                 else None
+                            )
                             # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                             if not any(
-                                substring in object for substring in relation_types_to_remove_rhea2_files
+                                substring in object
+                                for substring in relation_types_to_remove_rhea2_files
                             ):
                                 nodes_file_writer.writerow(
                                     [object, category, None] + [None] * (len(self.node_header) - 3)

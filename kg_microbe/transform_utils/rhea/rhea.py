@@ -17,7 +17,6 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
-    # CLOSE_MATCH,
     DEBIO_MAPPER,
     EC_CATEGORY,
     EC_PREFIX,

@@ -420,11 +420,11 @@ IS_OUTPUT_OF_PREDICATE = "biolink:is_output_of"
 HAS_INPUT_RELATION = "RO:0002233"
 HAS_OUTPUT_RELATION = "RO:0002234"
 PARTICIPATES_IN_PREDICATE = "biolink:participates_in"
-CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by"
+# CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by" # Replacing with enables
 RHEA_PREDICATE_MAPPER = {
     "has participant": HAS_PARTICIPANT_PREDICATE,
     "enabled by": ENABLED_BY_PREDICATE,
-    "reaction enabled by molecular function": CAN_BE_CARRIED_OUT_BY_PREDICATE,
+    "reaction enabled by molecular function": RHEA_TO_GO_EDGE, # CAN_BE_CARRIED_OUT_BY_PREDICATE,
     "has input": HAS_INPUT_PREDICATE,
     "has output": HAS_OUTPUT_PREDICATE,
 }

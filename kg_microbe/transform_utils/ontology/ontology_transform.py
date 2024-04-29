@@ -15,7 +15,9 @@ from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
+    CHEBI_PREFIX,
     CHEBI_XREFS_FILEPATH,
+    EC_PREFIX,
     EXCLUSION_TERMS_FILE,
     ID_COLUMN,
     NCBITAXON_PREFIX,
@@ -31,8 +33,10 @@ from kg_microbe.transform_utils.constants import (
     UNIPATHWAYS_INCLUDE_PAIRS,
     UNIPATHWAYS_PATHWAY_PREFIX,
     UNIPATHWAYS_REACTION_PREFIX,
+    UNIPROT_PREFIX,
     XREF_COLUMN,
 )
+from kg_microbe.utils.ontology_utils import replace_category_ontology
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship_multiple,
@@ -45,7 +49,7 @@ from kg_microbe.utils.unipathways_utils import (
     check_wanted_pairs,
     remove_unwanted_prefixes_from_edges,
     remove_unwanted_prefixes_from_node_xrefs,
-    replace_category,
+    replace_category_for_unipathways,
     replace_id_with_xref,
     replace_triples_with_labels,
 )
@@ -57,7 +61,7 @@ ONTOLOGIES = {
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
     "go": "go.json",
-    "rhea": "rhea.json.gz",
+    # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
     "ec": "ec.json",
     "upa": "upa.owl",
 }
@@ -239,7 +243,9 @@ class OntologyTransform(Transform):
                         elif any(
                             substring in line for substring in [UNIPATHWAYS_PATHWAY_PREFIX]
                         ):  # ,UNIPATHWAYS_LINEAR_SUB_PATHWAY_PREFIX]):
-                            new_line = replace_category(line, id_index, category_index)
+                            new_line = replace_category_for_unipathways(
+                                line, id_index, category_index
+                            )
                             if len(new_line) > 0:
                                 add_lines.append(new_line + "\n")
                         # Not adding any other node types except what is specified
@@ -319,9 +325,57 @@ class OntologyTransform(Transform):
                 # Write a new edges tsv file with same edge header
                 for line in ef:
                     new_edge_lines.append(_replace_special_prefixes(line))
-            # Rewrite nodes file
+            # Rewrite edges file
             with open(edges_file, "w") as new_ef:
                 for line in new_edge_lines:
+                    new_ef.write(line)
+
+        if name == "ec" or name == "rhea":
+            with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
+                # Update prefixes in nodes file
+                new_nf_lines = []
+                for line in nf:
+                    if line.startswith("id"):
+                        # get the index for the term 'id'
+                        id_index = line.strip().split("\t").index(ID_COLUMN)
+                        # get the index for the term 'category'
+                        category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                    else:
+                        line = _replace_special_prefixes(line)
+                        line = replace_category_ontology(line, id_index, category_index)
+                        new_nf_lines.append(line + "\n")
+                # Update prefixes in edges file
+                new_ef_lines = []
+                for line in ef:
+                    if line.startswith("id"):
+                        continue
+                    else:
+                        line = _replace_special_prefixes(line)
+                        new_ef_lines.append(line)
+            if name == "ec":
+                # Remove Uniprot nodes since accounted for elsewhere
+                new_nf_lines = [line for line in new_nf_lines if UNIPROT_PREFIX not in line]
+                new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
+            elif name == "rhea":
+                # Remove debio nodes that account for direction, since already there in inverse triples
+                # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
+                rhea_exclusions = ["debio", UNIPROT_PREFIX, CHEBI_PREFIX, EC_PREFIX]
+                new_nf_lines = [
+                    line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)
+                ]
+                new_ef_lines = [
+                    line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)
+                ]
+            # Rewrite nodes file
+            with open(nodes_file, "w") as new_nf:
+                new_nf.write("\t".join(self.node_header) + "\n")
+                for line in new_nf_lines:
+                    new_nf.write(line)
+
+            # Rewrite edges file
+            with open(edges_file, "w") as new_ef:
+                new_ef.write("\t".join(self.edge_header) + "\n")
+                for line in new_ef_lines:
                     new_ef.write(line)
 
         else:

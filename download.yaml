@@ -139,12 +139,12 @@
   url: https://github.com/geneontology/unipathway/raw/master/upa.owl
   local_name: upa.owl
 
-# 
-# RHEA
-# 
--
-  url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
-  local_name: rhea.json.gz
+# # # Redundant to RheaMappingsTransform
+# # RHEA
+# # 
+# -
+#   url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
+#   local_name: rhea.json.gz
 
 # RHEA mappings
 - 

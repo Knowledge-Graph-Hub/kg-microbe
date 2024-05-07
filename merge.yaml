@@ -42,6 +42,20 @@ merged_graph:
         filename:
           - data/transformed/ontologies/go_nodes.tsv
           - data/transformed/ontologies/go_edges.tsv
+    mondo:
+      name: "MONDO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/mondo_nodes.tsv
+          - data/transformed/ontologies/mondo_edges.tsv
+    hp:
+      name: "HP"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/hp_nodes.tsv
+          - data/transformed/ontologies/hp_edges.tsv
     # rhea: # Redundant to RheaMappingsTransform
     #   name: "Rhea"
     #   input:
@@ -105,6 +119,13 @@ merged_graph:
         filename:
           - data/transformed/uniprot_genome_features/nodes.tsv
           - data/transformed/uniprot_genome_features/edges.tsv
+    uniprot_genome_features_human:
+      input:
+        name: "uniprot_genome_features_human"
+        format: tsv
+        filename:
+          - data/transformed/uniprot_genome_features_human/nodes.tsv
+          - data/transformed/uniprot_genome_features_human/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:

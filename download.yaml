@@ -56,6 +56,19 @@
 -
   url: http://purl.obolibrary.org/obo/go.json
   local_name: go.json
+#
+# MONDO
+#
+-
+  url: https://purl.obolibrary.org/obo/mondo/mondo.json
+  local_name: mondo.json
+#
+# HP
+#
+-
+  url: https://purl.obolibrary.org/obo/mondo/hp.json
+  local_name: hp.json
+
 # **** Data sources ****
 
 # BacDive

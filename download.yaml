@@ -189,9 +189,18 @@
 -
   url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
   local_name: BactoTraits_databaseV2_Jun2022.csv
+
 #
 # CTD
 #
 -
   url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
   local_name: CTD_chemicals_diseases.tsv.gz
+
+#
+# Fermentqtion explorer
+#
+-
+  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
+  local_name: fermentation_explorer.csv
+

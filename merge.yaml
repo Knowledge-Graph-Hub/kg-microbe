@@ -112,6 +112,13 @@ merged_graph:
         filename:
           - data/transformed/BactoTraits/nodes.tsv
           - data/transformed/BactoTraits/edges.tsv
+    ctd:
+      input:
+        name: "ctd"
+        format: tsv
+        filename:
+          - data/transformed/ctd/nodes.tsv
+          - data/transformed/ctd/edges.tsv
     uniprot_genome_features:
       input:
         name: "uniprot_genome_features"

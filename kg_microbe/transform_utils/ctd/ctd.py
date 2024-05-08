@@ -2,8 +2,8 @@
 
 import csv
 import gzip
-import ossaudiodev
 from multiprocessing import Pool
+import os
 from pathlib import Path
 from typing import Optional, Union
 

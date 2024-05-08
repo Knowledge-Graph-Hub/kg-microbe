@@ -11,6 +11,7 @@ from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, O
 from kg_microbe.transform_utils.rhea.rhea import RheaMappingsTransform
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
 from kg_microbe.transform_utils.uniprot.uniprot import UniprotTransform
+from kg_microbe.transform_utils.ctd.ctd import CtdTransform
 
 DATA_SOURCES = {
     # "DrugCentralTransform": DrugCentralTransform,
@@ -28,6 +29,7 @@ DATA_SOURCES = {
     "RheaMappingsTransform": RheaMappingsTransform,
     "BactoTraitsTransform": BactoTraitsTransform,
     "UniprotTransform": UniprotTransform,
+    "CtdTransform": CtdTransform,
 }
 
 

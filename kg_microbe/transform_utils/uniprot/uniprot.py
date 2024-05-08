@@ -38,7 +38,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
     OMIM_PREFIX,
-    ONTOLOGY_DIR,
     PARTICIPATES_IN,
     PROTEIN_CATEGORY,
     PROTEIN_TO_DISEASE_EDGE,

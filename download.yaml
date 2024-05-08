@@ -189,3 +189,9 @@
 -
   url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
   local_name: BactoTraits_databaseV2_Jun2022.csv
+#
+# CTD
+#
+-
+  url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
+  local_name: CTD_chemicals_diseases.tsv.gz

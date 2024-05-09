@@ -852,21 +852,27 @@ class BacDiveTransform(Transform):
 
                         if meta_assay:
                             metabolism_nodes_to_write = [
-                                [ASSAY_PREFIX+m.replace(":","_"), PHENOTYPIC_CATEGORY, assay_name + " - " + m.split(":")[-1]]
+                                [
+                                    ASSAY_PREFIX + m.replace(":", "_"),
+                                    PHENOTYPIC_CATEGORY,
+                                    assay_name + " - " + m.split(":")[-1],
+                                ]
                                 + [None] * (len(self.node_header) - 3)
-                                for m in meta_assay if not m.startswith(ASSAY_PREFIX)
+                                for m in meta_assay
+                                if not m.startswith(ASSAY_PREFIX)
                             ]
                             node_writer.writerows(metabolism_nodes_to_write)
 
                             metabolism_edges_to_write = [
                                 [
-                                    ASSAY_PREFIX+m.replace(":","_"),
+                                    ASSAY_PREFIX + m.replace(":", "_"),
                                     ASSAY_TO_NCBI_EDGE,
                                     ncbitaxon_id,
                                     ASSESSED_ACTIVITY_RELATIONSHIP,
                                     BACDIVE_PREFIX + key,
                                 ]
-                                for m in meta_assay if not m.startswith(ASSAY_PREFIX)
+                                for m in meta_assay
+                                if not m.startswith(ASSAY_PREFIX)
                             ]
 
                             edge_writer.writerows(metabolism_edges_to_write)

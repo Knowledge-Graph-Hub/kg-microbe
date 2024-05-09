@@ -58,15 +58,15 @@ from kg_microbe.utils.unipathways_utils import (
 from ..transform import Transform
 
 ONTOLOGIES = {
-    #"ncbitaxon": "ncbitaxon.owl.gz",
+    "ncbitaxon": "ncbitaxon.owl.gz",
     "chebi": "chebi.owl.gz",
-    # "envo": "envo.json",
-    # "go": "go.json",
-    # # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
-    # "ec": "ec.json",
-    # "upa": "upa.owl",
-    # "mondo": "mondo.json",
-    # "hp": "hp.json",
+    "envo": "envo.json",
+    "go": "go.json",
+    # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
+    "ec": "ec.json",
+    "upa": "upa.owl",
+    "mondo": "mondo.json",
+    "hp": "hp.json",
 }
 
 
@@ -226,6 +226,7 @@ class OntologyTransform(Transform):
                         # get the index for the term 'category'
                         category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
                     else:
+                        line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
                         new_nf_lines.append(line + "\n")
             # Rewrite nodes file

@@ -6,7 +6,7 @@ from kg_microbe.transform_utils.constants import (
     GENE_CATEGORY,
     GO_CATEGORY,
     GO_PREFIX,
-    HGNC_PREFIX,
+    HGNC_NEW_PREFIX,
     PROTEIN_CATEGORY,
     RHEA_CATEGORY,
     RHEA_NEW_PREFIX,
@@ -34,7 +34,7 @@ def replace_category_ontology(line, id_index, category_index):
     if RHEA_NEW_PREFIX in parts[id_index]:
         new_category = RHEA_CATEGORY
         parts[category_index] = new_category
-    if HGNC_PREFIX in parts[id_index]:
+    if HGNC_NEW_PREFIX in parts[id_index]:
         new_category = GENE_CATEGORY
         parts[category_index] = new_category
     new_line = "\t".join(parts)

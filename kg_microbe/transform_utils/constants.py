@@ -122,6 +122,7 @@ CARBON_SUBSTRATE_PREFIX = "carbon_substrates:"
 ISOLATION_SOURCE_PREFIX = "isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
+ASSAY_PREFIX = "assay:"
 RHEA_URI = "http://purl.obolibrary.org/obo/rhea_"
 DEBIO_OBO_PREFIX = "OBO:debio_"
 DEBIO_NEW_PREFIX = "debio:"
@@ -404,7 +405,7 @@ DO_NOT_CHANGE_PREFIXES = [
     KEGG_PREFIX,
     EC_PREFIX,
     UBERON_PREFIX,
-    "API_",
+    ASSAY_PREFIX,
     RHEA_NEW_PREFIX,
     GO_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,

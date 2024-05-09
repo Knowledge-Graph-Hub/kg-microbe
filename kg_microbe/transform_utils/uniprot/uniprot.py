@@ -31,7 +31,7 @@ from kg_microbe.transform_utils.constants import (
     GO_MOLECULAR_FUNCTION_LABEL,
     GO_PREFIX,
     HAS_GENE_PRODUCT,
-    HGNC_PREFIX,
+    HGNC_NEW_PREFIX,
     LOCATED_IN,
     MOLECULARLY_INTERACTS_WITH,
     MONDO_XREFS_FILEPATH,
@@ -676,7 +676,7 @@ class UniprotTransform(Transform):
             with open(mondo_nodes_file, "r") as file:
                 csv_reader = csv.DictReader(file, delimiter="\t")
                 for row in csv_reader:
-                    if HGNC_PREFIX in row["id"]:
+                    if HGNC_NEW_PREFIX in row["id"]:
                         self.mondo_gene_dict[row["id"]] = row["name"]
 
         # make directory in data/transformed

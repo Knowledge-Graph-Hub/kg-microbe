@@ -340,7 +340,7 @@ CHEBI:17992	D-saccharose (sucrose)	KEGG:C00089	CAS-RN:57-50-1			assay:API_20E_SA
 CHEBI:28053	D-melibiose (melibiose)	KEGG:C05402	CAS-RN:585-99-9			assay:API_20E_MEL	Fermentation/oxidation of melibiose
 CHEBI:27613	Amygdalin	KEGG:C08325	CAS-RN:29883-15-6			assay:API_20E_AMY	Fermentation/oxidation of amygdalin
 CHEBI:30849	L-arabinose	KEGG:C00259	CAS-RN:147-81-9			assay:API_20E_ARA	Fermentation/oxidation of L-arabinose
-CHEBI:26689	Oxygen			EC:EC 1.9.3.1	cytochrome-c oxidase	assay:API_20E_OX	Cytochrome oxidase
+CHEBI:26689	Oxygen			EC:1.9.3.1	cytochrome-c oxidase	assay:API_20E_OX	Cytochrome oxidase
 CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			assay:API_20E_NO2	Nitrite production
 CHEBI:63043	Potassium nitrate		CAS-RN:7757-79-1			assay:API_20E_N2	Reduction to N2
 						assay:API_20E_MOB	Motility
@@ -367,4 +367,4 @@ CHEBI:30832	Adipic acid	KEGG:C06104	CAS-RN:0124-04-09			assay:API_20NE_ADI	Assim
 CHEBI:665	Malic acid	KEGG:C00711	CAS-RN:6915-15-7			assay:API_20NE_MLT	Assimilation of malic acid
 CHEBI:30769	Citric acid	KEGG:C00158	CAS-RN:77-92-9			assay:API_20NE_CIT	Assimilation of  citric acid
 CHEBI:8082	Phenyl-acetic acid	KEGG:C00548	CAS-RN:122-79-2			assay:API_20NE_PAC	Assimilation of phenyl-acetic acid
-CHEBI:26689	Oxygen			EC:EC 1.9.3.1	cytochrome-c oxidase	assay:API_20NE_OX	Cytochrome oxidase
+CHEBI:26689	Oxygen			EC:1.9.3.1	cytochrome-c oxidase	assay:API_20NE_OX	Cytochrome oxidase

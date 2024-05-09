@@ -113,9 +113,10 @@ class CtdTransform(Transform):
                 for row in tqdm(reader):
                     node_data, edge_data = self._get_nodes_and_edges(row)
                     if len(edge_data) > 0:
-                        ct += 1
-                        nodes_file_writer.writerow(node_data)
-                        edges_file_writer.writerow(edge_data)
+                        for nodes in node_data:
+                            nodes_file_writer.writerow(nodes)
+                        for edges in edge_data:
+                            edges_file_writer.writerow(edges)
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

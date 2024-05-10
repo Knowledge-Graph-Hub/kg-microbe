@@ -1,6 +1,7 @@
 """UniRef Transformation Module."""
 
 import csv
+import gc
 import os
 import sys
 from pathlib import Path
@@ -65,35 +66,63 @@ class UnirefTransform(Transform):
                     cluster_name = row["Cluster Name"].lstrip("Cluster:").strip()
                     ncbitaxon_ids = row["Organism IDs"].split(";")
                     ncbi_labels = row["Organisms"].split(";")
-                    nodes_data_to_write = [
-                        [NCBITAXON_PREFIX + ncbitaxon_id.strip(), NCBI_CATEGORY, ncbi_label.strip()]
-                        for ncbitaxon_id, ncbi_label in zip(
-                            ncbitaxon_ids, ncbi_labels, strict=False
-                        )
-                    ]
-                    nodes_data_to_write.append([cluster_id, CLUSTER_CATEGORY, cluster_name])
-                    nodes_data_to_write = [
-                        sublist + [None] * (len(self.node_header) - 3)
-                        for sublist in nodes_data_to_write
-                    ]
-                    node_writer.writerows(nodes_data_to_write)
+                    # nodes_data_to_write = [
+                    #     [NCBITAXON_PREFIX + ncbitaxon_id.strip(), NCBI_CATEGORY, ncbi_label.strip()]
+                    #     for ncbitaxon_id, ncbi_label in zip(
+                    #         ncbitaxon_ids, ncbi_labels, strict=False
+                    #     )
+                    # ]
+                    # nodes_data_to_write.append([cluster_id, CLUSTER_CATEGORY, cluster_name])
+                    # nodes_data_to_write = [
+                    #     sublist + [None] * (len(self.node_header) - 3)
+                    #     for sublist in nodes_data_to_write
+                    # ]
+                    # node_writer.writerows(nodes_data_to_write)
 
-                    # Write the edge for the cluster
-                    edges_data_to_write = [
-                        [
+                    # Write the nodes data directly to the file
+                    for ncbitaxon_id, ncbi_label in zip(ncbitaxon_ids, ncbi_labels):
+                        node_data_to_write = [
+                            NCBITAXON_PREFIX + ncbitaxon_id.strip(),
+                            NCBI_CATEGORY,
+                            ncbi_label.strip()
+                        ]
+                        # Extend the row to match the header length
+                        node_data_to_write.extend([None] * (len(self.node_header) - 3))
+                        node_writer.writerow(node_data_to_write)
+
+                    # Write the cluster node
+                    cluster_node_data = [cluster_id, CLUSTER_CATEGORY, cluster_name]
+                    cluster_node_data.extend([None] * (len(self.node_header) - 3))
+                    node_writer.writerow(cluster_node_data)
+
+                    # # Write the edge for the cluster
+                    # edges_data_to_write = [
+                    #     [
+                    #         NCBITAXON_PREFIX + ncbitaxon_id.strip(),
+                    #         NCBI_TO_CLUSTER_EDGE,
+                    #         cluster_id,
+                    #         OCCURS_IN,
+                    #         cluster_id.split(":")[0],
+                    #     ]
+                    #     for ncbitaxon_id in ncbitaxon_ids
+                    # ]
+                    # edge_writer.writerows(edges_data_to_write)
+                    # Write the edges for the cluster
+                    for ncbitaxon_id in ncbitaxon_ids:
+                        edge_data_to_write = [
                             NCBITAXON_PREFIX + ncbitaxon_id.strip(),
                             NCBI_TO_CLUSTER_EDGE,
                             cluster_id,
                             OCCURS_IN,
                             cluster_id.split(":")[0],
                         ]
-                        for ncbitaxon_id in ncbitaxon_ids
-                    ]
-                    edge_writer.writerows(edges_data_to_write)
+                        edge_writer.writerow(edge_data_to_write)
 
                     progress.set_description(f"Processing Cluster: {cluster_id}")
                     # After each iteration, call the update method to advance the progress bar.
-                    progress.update(1)
+                    progress.update(100)
+                    gc.collect()
+
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

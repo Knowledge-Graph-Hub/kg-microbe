@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import sys
 from typing import Optional, Union
 from kg_microbe.transform_utils.constants import CLUSTER_CATEGORY, ID_COLUMN, NAME_COLUMN, NCBI_CATEGORY, NCBI_TO_CLUSTER_EDGE, NCBITAXON_PREFIX, OBJECT_ID_COLUMN, OCCURS_IN
 from kg_microbe.transform_utils.transform import Transform
@@ -10,7 +11,7 @@ from tqdm import tqdm
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
-csv.field_size_limit(200000)  # _csv.Error: field larger than field limit (131072)
+csv.field_size_limit(sys.maxsize-1)  # _csv.Error: field larger than field limit (131072)
 
 class UnirefTransform(Transform):
     

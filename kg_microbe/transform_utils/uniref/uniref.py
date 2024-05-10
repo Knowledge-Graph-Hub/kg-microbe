@@ -80,11 +80,11 @@ class UnirefTransform(Transform):
                     # node_writer.writerows(nodes_data_to_write)
 
                     # Write the nodes data directly to the file
-                    for ncbitaxon_id, ncbi_label in zip(ncbitaxon_ids, ncbi_labels):
+                    for ncbitaxon_id, ncbi_label in zip(ncbitaxon_ids, ncbi_labels, strict=False):
                         node_data_to_write = [
                             NCBITAXON_PREFIX + ncbitaxon_id.strip(),
                             NCBI_CATEGORY,
-                            ncbi_label.strip()
+                            ncbi_label.strip(),
                         ]
                         # Extend the row to match the header length
                         node_data_to_write.extend([None] * (len(self.node_header) - 3))
@@ -122,7 +122,6 @@ class UnirefTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update(100)
                     gc.collect()
-
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

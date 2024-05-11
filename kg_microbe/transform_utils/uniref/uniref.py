@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_CLUSTER_EDGE,
     NCBITAXON_PREFIX,
     OCCURS_IN,
+    UNIREF_90_PREFIX,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -53,6 +54,7 @@ class UnirefTransform(Transform):
             tsvreader = csv.DictReader(tsvfile, delimiter="\t")
             node_writer = csv.writer(nodes_file, delimiter="\t")
             edge_writer = csv.writer(edges_file, delimiter="\t")
+            source = UNIREF_90_PREFIX.strip(":")
 
             # Write the header for the files
             node_writer.writerow(self.node_header)
@@ -86,17 +88,6 @@ class UnirefTransform(Transform):
                     node_writer.writerows(nodes_data_to_write)
                     gc.collect()
 
-                    # # Write the nodes data directly to the file
-                    # for ncbitaxon_id, ncbi_label in zip(ncbitaxon_ids, ncbi_labels, strict=False):
-                    #     node_data_to_write = [
-                    #         ncbitaxon_id,
-                    #         NCBI_CATEGORY,
-                    #         ncbi_label,
-                    #     ]
-                    #     # Extend the row to match the header length
-                    #     node_data_to_write.extend([None] * (len(self.node_header) - 3))
-                    #     node_writer.writerow(node_data_to_write)
-
                     # Write the cluster node
                     cluster_node_data = [cluster_id, CLUSTER_CATEGORY, cluster_name]
                     cluster_node_data.extend([None] * (len(self.node_header) - 3))
@@ -109,26 +100,16 @@ class UnirefTransform(Transform):
                             NCBI_TO_CLUSTER_EDGE,
                             cluster_id,
                             OCCURS_IN,
-                            cluster_id.split(":")[0],
+                            source,
                         ]
                         for ncbitaxon_id in ncbitaxon_ids
                     ]
                     edge_writer.writerows(edges_data_to_write)
-                    # # Write the edges for the cluster
-                    # for ncbitaxon_id in ncbitaxon_ids:
-                    #     edge_data_to_write = [
-                    #         NCBITAXON_PREFIX + ncbitaxon_id.strip(),
-                    #         NCBI_TO_CLUSTER_EDGE,
-                    #         cluster_id,
-                    #         OCCURS_IN,
-                    #         cluster_id.split(":")[0],
-                    #     ]
-                    #     edge_writer.writerow(edge_data_to_write)
+                    gc.collect()
 
                     progress.set_description(f"Processing Cluster: {cluster_id}")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update(2000)
-                    gc.collect()
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

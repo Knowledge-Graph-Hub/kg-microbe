@@ -127,7 +127,7 @@ class UnirefTransform(Transform):
 
                     progress.set_description(f"Processing Cluster: {cluster_id}")
                     # After each iteration, call the update method to advance the progress bar.
-                    progress.update(500)
+                    progress.update(2000)
                     gc.collect()
 
         drop_duplicates(self.output_node_file)

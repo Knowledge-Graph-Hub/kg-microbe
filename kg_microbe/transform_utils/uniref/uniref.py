@@ -105,7 +105,7 @@ class UnirefTransform(Transform):
                     # Write the edge for the cluster
                     edges_data_to_write = [
                         [
-                            NCBITAXON_PREFIX + ncbitaxon_id.strip(),
+                            ncbitaxon_id,
                             NCBI_TO_CLUSTER_EDGE,
                             cluster_id,
                             OCCURS_IN,

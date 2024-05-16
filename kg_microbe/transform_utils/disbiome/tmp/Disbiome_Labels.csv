@@ -1,0 +1,360 @@
+orig_node	new_node	entity_uri
+Hypertension	Hypertension	MONDO:0005044
+Enthesitis-related arthritis 	Enthesitis-related arthritis 	MONDO:0019437
+Prediabetes	Prediabetes	MONDO:0006920
+Cirrhosis with pneumonia	Cirrhosis with pneumonia	MONDO:0005155
+Meningococcal disease	Meningococcal disease	MONDO:0005373
+Atherosclerosis	Atherosclerosis	MONDO:0005311
+Botulism	Botulism	MONDO:0005498
+Chronic Rhinosinusitis with asthma	Chronic Rhinosinusitis with asthma	MONDO:0006031
+Aerobic vaginitis	Bacterial vaginosis	MONDO:0005316
+Primary biliary cholangitis	Primary biliary cholangitis	MONDO:0005388
+Severe fever with thrombocytopenia syndrome	Severe fever with thrombocytopenia syndrome	MONDO:0002049
+Hyper IgE syndrome	hyper-IgE syndrome	MONDO:0018037
+Osmotic diarrhea	Osmotic diarrhea	MONDO:0000250
+Graves' disease	Graves' disease	MONDO:0005364
+Traumatic Brain Injury	brain injury	MONDO:0043510
+Metabolic syndrome	Metabolic syndrome	MONDO:0004955
+Gingivitis	Gingivitis	MONDO:0002508
+Posttraumatic stress syndrome	Posttraumatic stress syndrome	MONDO:0005146
+Hepatic encephalopathy	Hepatic encephalopathy	MONDO:0001711
+Alcoholism	Alcoholism	MONDO:0007079
+Chronic kidney disease	Chronic kidney disease	MONDO:0005300
+Frailty	Frailty	MONDO:0016218
+Hirschsprung-associated enterocolitis	Hirschsprung-associated enterocolitis	MONDO:0000701
+Arsenic exposure	Arsenic exposure	MONDO:0005097
+Human papilloma virus infection	Human papilloma virus infection	MONDO:0005161
+Idiopathic central precocious puberty	Idiopathic central precocious puberty	MONDO:0015713
+Idiopathic infertility	Idiopathic infertility	MONDO:0005047
+Cystic fibrosis exacerbation	Cystic fibrosis exacerbation	MONDO:0009061
+Orofacial granulomatosis	Orofacial granulomatosis	MONDO:0019466
+Primary sclerosing cholangitis	Primary sclerosing cholangitis	MONDO:0013433
+Cytolytic vaginosis	bacterial vaginosis	MONDO:0005316
+Bacterial vaginosis	bacterial vaginosis	MONDO:0005316
+Primary biliary cirrhosis	Primary biliary cirrhosis	MONDO:0005388
+Anti-N-methyl-D-aspartate receptor encephalitis	Anti-N-methyl-D-aspartate receptor encephalitis	MONDO:0021081
+Autoimmune polyendocrine syndrome type 1	Autoimmune polyendocrine syndrome type 1	MONDO:0009411
+Chronic prostatitis / Chronic pelvic pain syndrome	Chronic prostatitis / Chronic pelvic pain syndrome	MONDO:0022103
+Seminal hyperviscosity	Seminal hyperviscosity	MONDO:0018678
+Obesity	obesity disorder	MONDO:0011122
+Normal weight obesity	obesity disorder	MONDO:0011122
+Rectal Carcinoma	Rectal Carcinoma	MONDO:0044937
+Chronic fatigue syndrome	Chronic fatigue syndrome	MONDO:0005404
+Clostridium difficile associated disease	Clostridium difficile associated disease	MONDO:0000705
+Amyotrophic lateral sclerosis	Amyotrophic lateral sclerosis	MONDO:0004976
+Ascites	chylous ascites	MONDO:0008829
+Familial adenomatous polyposis	classic familial adenomatous polyposis	MONDO:0021055
+Cancer cachexia	Cancer cachexia	HP:0004326
+Iron-deficiency anaemia	Iron-deficiency anaemia	MONDO:0001356
+Bleeding gum	Gingival disorder	MONDO:0002021
+Invasive colorectal cancer	Invasive colorectal cancer	MONDO:0005575
+Lower respiratory tract infection	lower respiratory tract disorder	MONDO:0000270
+Vulvodynia	Vulvodynia	MONDO:0021722
+Liver fibrosis	liver disease	MONDO:0005154
+Chronic liver disease	liver disease	MONDO:0005154
+Vogt-Koyagani-Harada disease	Vogt-Koyagani-Harada disease	MONDO:0018092
+Smoking	"tobacco addiction, susceptibility to"	MONDO:0008575
+Oral cancer	oral cavity cancer	MONDO:0005515
+Tuberculosis	Tuberculosis	MONDO:0018076
+Cognitive impairment	cognitive disorder	MONDO:0002039
+Migraine	Migraine	HP:0002076
+Human end-stage renal disease	Human end-stage renal disease	MONDO:0004375
+Breast cancer	Breast cancer	MONDO:0007254
+Chronic rhinosinusitis with nasal polyps	Chronic rhinosinusitis with nasal polyps	MONDO:0006031
+Alopecia universalis	Alopecia universalis	MONDO:0008757
+Coronary artery disease	Coronary artery disease	MONDO:0005010
+"Hand, foot and mouth disease"	mouth disease	MONDO:0006858
+Aphthous ulcer	Aphthous ulcer	MONDO:0004845
+Otitis Media	Otitis Media	MONDO:0005441
+Endometriosis	Endometriosis	MONDO:0005133
+Sensitive scalp	Sensitive scalp	MONDO:0006605
+Hidradenitis suppurativa	Hidradenitis suppurativa	MONDO:0006559
+Inactive Crohn's Disease	Inactive Crohn's Disease	MONDO:0005011
+Henoch-Schönlein Purpura	Henoch-Schönlein Purpura	MONDO:0006785
+Constipation	Constipation	HP:0002019
+Drug-resistant Epilepsy	epilepsy	MONDO:0005027
+Autism spectrum disorders	autism spectrum disorder	MONDO:0005258
+Autism	autism	MONDO:0005260
+Cerebral autosomal dominant arteriopathy with subcortical infarcts and leukoencephalopathy	Cerebral autosomal dominant arteriopathy with subcortical infarcts and leukoencephalopathy	MONDO:0000914
+Urolithiasis	Urolithiasis	MONDO:0024647
+Hyperthyroidism	Hyperthyroidism	MONDO:0004425
+Infant colic	Infant colic	MONDO:0004298
+COPD Exacerbation	COPD Exacerbation	MONDO:0005002
+Glycogen storage disease	Glycogen storage disease	MONDO:0002412
+Recurrent tonsillitis	Recurrent tonsillitis	MONDO:0001039
+Wilson's Disease	Wilson's Disease	MONDO:0010200
+Acute skin abscess	Acute skin abscess	MONDO:0005227
+Overactive bladder	Overactive bladder	MONDO:0006624
+Trachoma	Trachoma	MONDO:0001249
+Chronic stress	Chronic stress	MONDO:0003763
+Irritable Bowel Syndrome	Irritable Bowel Syndrome	MONDO:0005052
+Anovulation	Anovulation	MONDO:0002775
+Conjunctival scarring	Conjunctival scarring	MONDO:0001331
+Graves' orbitopathy	Graves' orbitopathy	MONDO:0018756
+E-smoking	"tobacco addiction, susceptibility to"	MONDO:0008575
+Preeclamsia	Preeclamsia	MONDO:0001072
+Diverticular disease	Diverticular disease	MONDO:0001674
+Macular degeneration	Macular degeneration	MONDO:0003004
+Hepatocellular cancer	Hepatocellular cancer	MONDO:0007256
+Cervical intraneoplasia	Cervical intraneoplasia	MONDO:0006736
+Biliary tract cancer	Biliary tract cancer	MONDO:0003060
+Seborrheic dermatitis	Seborrheic dermatitis	MONDO:0006608
+Hepatitis B associated liver failure	Hepatitis B associated liver failure	MONDO:0005366
+Alopecia areata	Alopecia areata	MONDO:0005340
+Neuromyelitis optica	Neuromyelitis optica	MONDO:0019100
+Palmoplantar pustulosis	Palmoplantar pustulosis	MONDO:0015597
+Pregnancy	female pregnancy	GO:0007565
+Pulmonary arterial hypertension	Pulmonary arterial hypertension	MONDO:0015924
+Gastrointestinal follicular lymphoma	Gastrointestinal follicular lymphoma	MONDO:0004699
+Oropharyngeal cancer	Oropharyngeal cancer	MONDO:0044926
+Colon adenomas	Colon adenomas	MONDO:0000527
+Psoriasis	Psoriasis	MONDO:0005083
+Tetratricopeptide repeat domain 7A deficiency	Tetratricopeptide repeat domain 7A deficiency	MONDO:0003783
+Mucosa-associated lymphoid tissue lymphoma	Mucosa-associated lymphoid tissue lymphoma	MONDO:0006226
+Common Variable Immunodeficieny	Common Variable Immunodeficieny	MONDO:0015517
+Urogenital Schistosomiasis	Urogenital Schistosomiasis	MONDO:0006001
+Megaesophagus	Megaesophagus	MONDO:0001656
+Reactive arthritis	Reactive arthritis	MONDO:0017376
+Genitourinary lichen sclerosus	Genitourinary lichen sclerosus	MONDO:0017376
+H7N9	H7N9	MONDO:0005812
+Laryngeal carcinoma	Laryngeal carcinoma	MONDO:0002358
+Keratitis	Keratitis	MONDO:0003085
+Chlamydia	Chlamydia	MONDO:0020776
+Halitosis	Halitosis	MONDO:0034186
+Bullous pemphigoid	Bullous pemphigoid	MONDO:0019082
+Oligoasthenoteratozoospermia	Oligoasthenoteratozoospermia	MONDO:0004983
+Laryngotracheal stenosis	tracheal stenosis	MONDO:0002568
+Blepharitis	Blepharitis	MONDO:0004785
+Shiga Toxin-producing E. coli infection	Shiga Toxin-producing E. coli infection	MONDO:0020920
+Denture Stomatitis	Denture Stomatitis	MONDO:0006723
+Periodontal abscess	Periodontal abscess	MONDO:0005906
+Clostridium difficile infection	Clostridium difficile infection	MONDO:0000705
+Hirschsprung's disease	Hirschsprung's disease	MONDO:0018309
+HIV infection	HIV infection	MONDO:0005109
+Chronic granulomatous disease	Chronic granulomatous disease	MONDO:0018305
+Appendicitis	Appendicitis	MONDO:0005649
+Cutaneous burn	Cutaneous burn	MONDO:0043519
+Tongue cancer	Tongue cancer	MONDO:0004631
+Kaposi's sarcoma	Kaposi's sarcoma	MONDO:0005055
+Asthma	Asthma	MONDO:0004979
+Primary liver cancer	Primary liver cancer	MONDO:0002691
+Antrochoanal polyps	Antrochoanal polyps	MONDO:0005079
+Chronic lung disease	lung disorder	MONDO:0005275
+Pressure ulcers	Pressure ulcers	MONDO:0001126
+Cystic Fibrosis	Cystic Fibrosis	MONDO:0009061
+Fibromyalgia	Fibromyalgia	MONDO:0005546
+Adolescent idiopathic scoliosis	Adolescent idiopathic scoliosis	MONDO:0005488
+Hashimoto's thyroiditis	Hashimoto's thyroiditis	MONDO:0007699
+Cirrhosis	"cirrhosis, familial"	MONDO:0007329
+Aggressive periodontitis	Aggressive periodontitis	MONDO:0008226
+Urgency urinary incontinence	Urgency urinary incontinence	MONDO:0024290
+Non alcoholic steatohepatitis	Non alcoholic steatohepatitis	MONDO:0007027
+Pancreatic cancer	Pancreatic cancer	MONDO:0011713
+Colorectal cancer	Colorectal cancer	MONDO:0005575
+Acute fatty liver	Acute fatty liver	MONDO:0016573
+Atopy	Atopy	MONDO:0005202
+Systemic lupus erythematosus	Systemic lupus erythematosus	MONDO:0007915
+Acquired Immunodeficiency Syndrome	Acquired Immunodeficiency Syndrome	MONDO:0012268
+Parkinson's Disease	Parkinson's Disease	MONDO:0005180
+Vulvar vestibulitis syndrome	Vulvar vestibulitis syndrome	MONDO:0021722
+Pouchitis	Pouchitis	MONDO:0005312
+Spleen deficiency syndrome	Spleen deficiency syndrome	MONDO:0002332
+Ankylosing spondylitis	Ankylosing spondylitis	MONDO:0005306
+Pancreatitis	Pancreatitis	MONDO:0004982
+Multiple system atrophy	Multiple system atrophy	MONDO:0007803
+Kidney stone with hypertension	Kidney stone with hypertension	MONDO:0008171
+Sicca syndrome	Sicca syndrome	MONDO:0010030
+Alcoholic hepatitis	Alcoholic hepatitis	MONDO:0001505
+Extrinsic black stain	Extrinsic black stain	MONDO:0006999
+Neuropathic bladder	cauda equina syndrome with neurogenic bladder	MONDO:0020767
+T2D with hypertension and hyperlipidemia	type 2 diabetes mellitus	MONDO:0005148
+Type 2 Diabetes	type 2 diabetes mellitus	MONDO:0005148
+Idiopathic REM Sleep Behavior Disorder	Idiopathic REM Sleep Behavior Disorder	MONDO:0005937
+severe skin and soft tissue infection	severe skin and soft tissue infection	MONDO:0021201
+Acute cerbral infarction	Acute cerbral infarction	MONDO:0002679
+Osteoporosis	Osteoporosis	MONDO:0005298
+Polycystic Ovary Syndrome	Polycystic Ovary Syndrome	MONDO:0008487
+Non-alcoholic fatty liver disease	Non-alcoholic fatty liver disease	MONDO:0013209
+Cardiac valve calcification	Cardiac valve calcification	HP:0005146
+Liver transplant	post-transplant lymphoproliferative disease	MONDO:0019088
+Refractory celiac disease	Refractory celiac disease	MONDO:0018353
+Aphthous stomatitis	Aphthous stomatitis	HP:0011107HP:0004395
+Bronchiectasis	Bronchiectasis	MONDO:0004822
+Covid-19	Covid-19	MONDO:0100096
+Opisthorchis felineus infection	Opisthorchis felineus infection	MONDO:0005884
+Multiple Sclerosis	Multiple Sclerosis	MONDO:0005301
+Cleft palate	Cleft palate	MONDO:0016064
+Folliculitis decalvans	Folliculitis decalvans	MONDO:0018103
+Dry eye syndrome	Dry eye syndrome	MONDO:0006733
+periodontitis	periodontitis	MONDO:0005076
+Hepatitis C	Hepatitis C	MONDO:0100371
+Barrett's oesophagus	Barrett's oesophagus	MONDO:0013662
+AA amyloidosis	AA amyloidosis	MONDO:0019439
+Recurrent aphthous stomatitis 	Recurrent aphthous stomatitis 	MONDO:0004845
+Rheumatoid Arthritis	Rheumatoid Arthritis	MONDO:0008383
+Microscopic colitis	Microscopic colitis	MONDO:0000702
+Primary sclerosing cholangitis-IBD	Primary sclerosing cholangitis-IBD	MONDO:0013433
+Protracted bacterial bronchitis	Protracted bacterial bronchitis	MONDO:0003781
+Neuro-Behcet's disease	Neuro-Behcet's disease	MONDO:0007191
+T2D with hyperlipidemia	T2D with hyperlipidemia	MONDO:0021187
+Radiation enteritis	enteritis	MONDO:0043579
+Chronic Rhinosinusitis	Chronic Rhinosinusitis	MONDO:0006031
+Gastro-oesophageal reflux disease	Gastro-oesophageal reflux disease	MONDO:0007186
+Hepatitis B	Hepatitis B	MONDO:0005344
+Kawasaki disease	mucocutaneous lymph node syndrome	MONDO:0012727
+Wiskott-Aldrich syndrome	Wiskott-Aldrich syndrome	MONDO:0010518
+Thyroid carcinoma	thyroid gland carcinoma	MONDO:0015075
+Spinal cord injury	Spinal cord injury	MONDO:0043797
+Chronic ocular graft-versus-host disease	Chronic ocular graft-versus-host disease	MONDO:0020547
+Esophageal cancer	Esophageal cancer	MONDO:0007576
+Viral respiratory tract infection	Viral respiratory tract infection	MONDO:0024352
+Neisseria gonorrhoeae infection	Neisseria gonorrhoeae infection	MONDO:0004277
+Lung cancer	Lung cancer	MONDO:0008903
+Undernourishment	Undernourishment	HP:0004395
+Pneumonia	Pneumonia	MONDO:0005249
+Fatigue	Fatigue	HP:0012378
+Crohn's Disease	Crohn's Disease	MONDO:0005011
+Azoospermia	Azoospermia	MONDO:0004983
+Pervasive developmental disorder NOS	Pervasive developmental disorder NOS	MONDO:0000594
+Chronic urticaria	chronic idiopathic urticaria	MONDO:0044212
+Diabetic nephropathy	diabetic kidney disease	MONDO:0005016
+Atopic eczema	Atopic eczema	MONDO:0004980
+Cholestasis	Cholestasis	MONDO:0001751
+Reflux esophagitis	Reflux esophagitis	MONDO:0006896
+Spondyloarthritis	Spondyloarthritis	MONDO:0005095
+Exacerbations of idiopathic pulmonary fibrosis	Exacerbations of idiopathic pulmonary fibrosis	MONDO:0002771
+Rosacea	Rosacea	MONDO:0006604
+Allergy	allergic disease	MONDO:0005271
+Head/Neck cancer	head and neck cancer	MONDO:0005627
+Primary immune thrombocytopenia	Primary immune thrombocytopenia	MONDO:0004680
+Atopic wheeze	Atopic wheeze	MONDO:0004979
+X-linked inhibitor of apoptosis deficiency	X-linked inhibitor of apoptosis deficiency	MONDO:0010385
+Generalized anxiety disorder	Generalized anxiety disorder	MONDO:0001942
+Recurrent miscarriage	"pregnancy loss, recurrent, susceptibility to, 1"	MONDO:0013727
+Giardia intestinalis infection	Giardia intestinalis infection	MONDO:0001103
+Endometrial cancer	Endometrial cancer	MONDO:0011962
+Colon polyps	Colon polyps	MONDO:0008285
+Inflammatory Bowel Disease	Inflammatory Bowel Disease	MONDO:0005265
+Idiopathic nephrotic syndrome	Idiopathic nephrotic syndrome	MONDO:0018170
+Psoriatic Arthritis	Psoriatic Arthritis	MONDO:0011849
+Nongonococcal urethritis	Nongonococcal urethritis	MONDO:0005297
+Trichomonas vaginalis infection	Trichomonas vaginalis infection	MONDO:0005993
+Intestinal metaplasia	Intestinal metaplasia	MONDO:0006254
+Short Bowel Syndrome	Short Bowel Syndrome	MONDO:0015183
+Vitiligo	Vitiligo	MONDO:0008661
+Allergic asthma	Allergic asthma	MONDO:0004784
+Osteoarthritis	Osteoarthritis	MONDO:0005178
+Kostmann syndrome	Kostmann syndrome	MONDO:0012548
+Rhinovirus infection	nasopharyngitis	MONDO:0001040
+Schizophrenia	Schizophrenia	MONDO:0005090
+Disease-free 	Disease-free 	HP:0032322
+Chronic Obstructive Pulmonary Disease	Chronic Obstructive Pulmonary Disease	MONDO:0005002
+Chronic Rhinosinusitis with cystic fibrosis	Chronic Rhinosinusitis with cystic fibrosis	MONDO:0009061
+Huntington's Disease	Huntington's Disease	MONDO:0007739
+Major depressive disorder	Major depressive disorder	MONDO:0002009
+Granulomatous mastitis	Granulomatous mastitis	MONDO:0018987
+Juvenile idiopathic arthritis	Juvenile idiopathic arthritis	MONDO:0011429
+Attention Deficit Hyperactivity Disorder	Attention Deficit Hyperactivity Disorder	MONDO:0007743
+Chronic mucocutaneous candidiasis	Chronic mucocutaneous candidiasis	MONDO:0015279
+Pancreatic head cancer	Pancreatic head cancer	MONDO:0011713
+Hyper IgE syndrome	Hyper IgE syndrome	MONDO:0007818
+Bronchiolitis	Bronchiolitis	MONDO:0002465
+Bipolar disorder	Bipolar disorder	MONDO:0004985
+Alzheimer's Disease	Alzheimer Disease	MONDO:0004975
+Obstructive sleep apnea-hypopnea syndrome	Obstructive sleep apnea-hypopnea syndrome	MONDO:0007147
+Ischemic stroke	Ischemic stroke	HP:0002140
+Acute lymphoblastic leukemia	Acute lymphoblastic leukemia	MONDO:0004967
+Stevens-Johnson syndrome	Stevens-Johnson syndrome	MONDO:0018229
+Miscarriage	Miscarriage	HP:0005268
+Primary Open-Angle Glaucoma	angle-closure glaucoma	MONDO:0001744
+Clonorchis sinensis infection	Clonorchis sinensis infection	MONDO:0017712
+Alcoholic cirrhosis	Alcoholic cirrhosis	MONDO:0006644
+Gastric carcinoma	Gastric carcinoma	MONDO:0004950
+Maturity-onset diabetes of the young 2	Maturity-onset diabetes of the young 2	MONDO:0007453
+Chronic alcoholic pancreatitis	Chronic alcoholic pancreatitis	MONDO:0003232
+Oral lichen planus	Oral lichen planus	MONDO:0043923
+Interstitial cystitis	Interstitial cystitis	MONDO:0018301
+Diaper dermatitis	Diaper dermatitis	MONDO:0002406
+Infective colitis	Infective colitis	MONDO:0006039
+Budd-Chiari syndrome	Budd-Chiari syndrome	MONDO:0010947
+Pelvic inflammatory disease	Pelvic inflammatory disease	MONDO:0000922
+Idiopathic Pulmonary Fibrosis	Idiopathic Pulmonary Fibrosis	MONDO:0008345
+Pulmonary tubercolosis	Pulmonary tubercolosis	MONDO:0020590
+Vestibulodynia	Vestibulodynia	MONDO:0002187
+Periodontal disease	Periodontal disease	MONDO:0002635
+Small intestine neoplasm	Small intestine neoplasm	MONDO:0004251
+Juvenile Idiopathic Arthritis	Juvenile Idiopathic Arthritis	MONDO:0011429
+Infantile eczema	Infantile eczema	MONDO:0004980
+Allergic rhinoconjunctivitis	Allergic rhinoconjunctivitis	HP:0003193
+Stomach cancer	Stomach cancer	MONDO:0001056
+Oral leukoplakia	Oral leukoplakia	MONDO:0004844
+Cervical cancer	Cervical cancer	MONDO:0002974
+Sarcopenia	Sarcopenia	MONDO:0006516
+H1N1 Influenza	H1N1 Influenza	MONDO:0005460
+Nasolacrimal duct obstruction	Nasolacrimal duct obstruction	MONDO:0007871
+Pediculosis	Pediculosis	MONDO:0003472
+Hutchinson-Gilford progeria syndrome	Hutchinson-Gilford progeria syndrome	MONDO:0008310
+Myasthenia gravis	Myasthenia gravis	MONDO:0009688
+Familial Mediterranean fever	Familial Mediterranean fever	MONDO:0018088
+T2D with hypertension	T2D with hypertension	MONDO:0005148
+Down syndrome	Down syndrome	MONDO:0008608
+Gestational diabetes + hyperlipidemia	Gestational diabetes + hyperlipidemia	MONDO:0005406
+Granulomatosis with polyangiitis	Granulomatosis with polyangiitis	MONDO:0012105
+Type 1 Diabetes	Type 1 Diabetes	MONDO:0005147
+Hypopharyngeal cancer	Hypopharyngeal cancer	MONDO:0005216
+Viral Diarrhea	Diarrhea	HP:0002014
+Gastroenteritis	gastroenteritis	MONDO:0002269
+Idiopathic focal epilepsy	Idiopathic focal epilepsy	MONDO:0005384
+Behcet's Disease	Behcet's Disease	MONDO:0007191
+Influenza A	Influenza A	MONDO:0005460
+Normal weight obesity	Normal weight obesity	MONDO:0011122
+Necrotizing enterocolitis	Necrotizing enterocolitis	MONDO:0005313
+Functional dyspepsia	Functional dyspepsia	MONDO:0002268
+HIV-infected pneumonia	HIV-infected pneumonia	MONDO:0005249
+Cardiovascular disease	Cardiovascular disease	MONDO:0004995
+Hyperglycemia	Hyperglycemia	MONDO:0002909
+Intrahepatic Cholangiocarcinoma	Intrahepatic Cholangiocarcinoma	MONDO:0003210
+Atopic dermatitis	"dermatitis, atopic"	MONDO:0011292
+Acne	Acne	MONDO:0011438
+"Celiac Disease, Coaliac disease"	celiac disease	MONDO:0005130
+Heart failure	Heart failure	MONDO:0005252
+Preterm birth	Preterm birth	HP:0001622
+Bladder cancer	Bladder cancer	MONDO:0001187
+Pemphigus vulgaris	Pemphigus vulgaris	MONDO:0008219
+Ulcerative Colitis	Ulcerative Colitis	MONDO:0005101
+Invasive pneumococcal disease	pneumococcal infection	MONDO:0005114
+Caries	Caries	MONDO:0005276
+Sepsis	sepsis	HP:0100806
+Oral potentially malignant disorder	Oral potentially malignant disorder	MONDO:0044925
+Chronic pancreatitis	Chronic pancreatitis	MONDO:0005003
+Hyperlipidemia	Hyperlipidemia	MONDO:0021187
+Anorexia Nervosa	Anorexia Nervosa	MONDO:0005351
+Edentulism	Edentulism	HP:0006483
+Dandruff	Dandruff	HP:0001051
+Postmenopausal	Postmenopausal	MONDO:0008159
+Biliary atresia	Biliary atresia	MONDO:0008867
+Transient Ischemic Attack	Transient Ischemic Attack	MONDO:0005264
+Rett Syndrome	Rett Syndrome	MONDO:0010726
+Sjögren Syndrome	Sjögren Syndrome	MONDO:0010030
+Systemic sclerosis	Systemic sclerosis	MONDO:0005100
+Diarrhea	Diarrhea	MONDO:0000257
+Severe congenital neutropenia	Severe congenital neutropenia	MONDO:0018542
+Coronary Heart Disease	Coronary Heart Disease	MONDO:0005010
+Collagenous colitis	Collagenous colitis	MONDO:0000703
+Cervicitis	Cervicitis	MONDO:0002345
+Silicosis	Silicosis	MONDO:0005960
+Atrial fibrillation	Atrial fibrillation	MONDO:0004981
+Helicobacter pylori infection	Helicobacter pylori infection	MONDO:0006781
+Sickle cell disease	Sickle cell disease	MONDO:0011382
+Late-onset Sepsis	Late-onset Sepsis	HP:0100806
+Excessive vomiting	Excessive vomiting	HP:0002013
+Atrophic gastritis	Atrophic gastritis	MONDO:0006665
+Kidney stone	Kidney stone	MONDO:0008171
+Eosinophilic esophagitis	Eosinophilic esophagitis	MONDO:0005361
+Gestational diabetes	Gestational diabetes	MONDO:0005406
+T2D with hypertension and hyperlipidemia	T2D with hypertension and hyperlipidemia	MONDO:0005148
+Cytolytic vaginosis	Cytolytic vaginosis	MONDO:0005316
+Prostate cancer	prostate cancer	MONDO:0008315
+Chagas' disease	Chagas disease	MONDO:0001444
+Uveitits	iridocyclitis	MONDO:0004773
+Autoimmune hepatitis	autoimmune hepatitis	MONDO:0016264

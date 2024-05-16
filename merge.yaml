@@ -119,6 +119,13 @@ merged_graph:
         filename:
           - data/transformed/ctd/nodes.tsv
           - data/transformed/ctd/edges.tsv
+    disbiome:
+      input:
+        name: "disbiome"
+        format: tsv
+        filename:
+          - data/transformed/disbiome/nodes.tsv
+          - data/transformed/disbiome/edges.tsv
     uniprot_genome_features:
       input:
         name: "uniprot_genome_features"

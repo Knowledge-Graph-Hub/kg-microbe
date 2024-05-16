@@ -204,3 +204,9 @@
   url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
   local_name: fermentation_explorer.csv
 
+#
+# Disbiome
+#
+-
+  url: https://disbiome.ugent.be:8080/experiment
+  local_name: disbiome.json

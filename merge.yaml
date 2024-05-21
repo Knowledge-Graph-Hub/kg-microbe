@@ -126,6 +126,13 @@ merged_graph:
         filename:
           - data/transformed/disbiome/nodes.tsv
           - data/transformed/disbiome/edges.tsv
+    pdmetagenomics:
+      input:
+        name: "PdMetagenomics"
+        format: tsv
+        filename:
+          - data/transformed/PdMetagenomics/nodes.tsv
+          - data/transformed/PdMetagenomics/edges.tsv
     uniprot_genome_features:
       input:
         name: "uniprot_genome_features"

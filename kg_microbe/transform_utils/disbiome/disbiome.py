@@ -5,10 +5,26 @@ import json
 import os
 from pathlib import Path
 from typing import Optional, Union
+
 import pandas as pd
 
-from kg_microbe.transform_utils.constants import ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF, ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE, ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF, ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE, CHEBI_PREFIX, DISBIOME_DISEASE_NAME, DISBIOME_ELEVATED, DISBIOME_ORGANISM_ID, DISBIOME_REDUCED, DISBIOME_TMP_DIR, DISEASE_CATEGORY, DISIOME_QUALITATIVE_OUTCOME, NCBI_CATEGORY, NCBITAXON_PREFIX
+from kg_microbe.transform_utils.constants import (
+    ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF,
+    ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE,
+    ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF,
+    ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE,
+    DISBIOME_DISEASE_NAME,
+    DISBIOME_ELEVATED,
+    DISBIOME_ORGANISM_ID,
+    DISBIOME_REDUCED,
+    DISBIOME_TMP_DIR,
+    DISEASE_CATEGORY,
+    DISIOME_QUALITATIVE_OUTCOME,
+    NCBI_CATEGORY,
+    NCBITAXON_PREFIX,
+)
 from kg_microbe.transform_utils.transform import Transform
+
 
 class DisbiomeTransform(Transform):
 
@@ -40,7 +56,7 @@ class DisbiomeTransform(Transform):
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
-        node_filename =  self.output_node_file
+        node_filename = self.output_node_file
         edge_filename = self.output_edge_file
 
         self.disease_labels_dict = {}
@@ -52,10 +68,12 @@ class DisbiomeTransform(Transform):
                     self.disease_labels_dict[row["orig_node"]] = row["entity_uri"]
 
         # Read JSON data into a pandas DataFrame
-        with open(input_file, 'r') as file:
+        with open(input_file, "r") as file:
             json_data = json.load(file)
         # Flatten JSON data into a DataFrame
-        df = pd.json_normalize(json_data)[[DISBIOME_DISEASE_NAME,DISIOME_QUALITATIVE_OUTCOME,DISBIOME_ORGANISM_ID]]
+        df = pd.json_normalize(json_data)[
+            [DISBIOME_DISEASE_NAME, DISIOME_QUALITATIVE_OUTCOME, DISBIOME_ORGANISM_ID]
+        ]
         df = df.dropna()
 
         with open(node_filename, "w") as nf, open(edge_filename, "w") as ef:
@@ -70,7 +88,7 @@ class DisbiomeTransform(Transform):
                 disease = df.iloc[i].loc[DISBIOME_DISEASE_NAME]
                 disease_id = self.disease_labels_dict[disease]
                 direction = df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
-                #print(microbe,disease_id,direction)
+                # print(microbe,disease_id,direction)
                 # Add disease
                 nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY])
                 # Add microbe
@@ -88,6 +106,6 @@ class DisbiomeTransform(Transform):
                         predicate,
                         disease_id,
                         relation,
-                        "disbiome",
+                        self.source_name,
                     ]
                 )

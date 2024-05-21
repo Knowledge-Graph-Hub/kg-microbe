@@ -2,7 +2,6 @@
 
 import csv
 import gzip
-from multiprocessing import Pool
 import os
 from pathlib import Path
 from typing import Optional, Union
@@ -25,14 +24,15 @@ from kg_microbe.transform_utils.constants import (
     MONDO_PREFIX,
     MONDO_XREFS_FILEPATH,
     NODE_NORMALIZER_URL,
-    RAW_DATA_DIR
-) 
+    RAW_DATA_DIR,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 RELATIONS_DICT = {
     CHEMICAL_TO_DISEASE_EDGE: ASSOCIATED_WITH,
 }
+
 
 class CtdTransform(Transform):
 
@@ -77,7 +77,7 @@ class CtdTransform(Transform):
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
-        node_filename =  self.output_node_file
+        node_filename = self.output_node_file
         edge_filename = self.output_edge_file
 
         with open(node_filename, "w") as nf, open(edge_filename, "w") as ef:
@@ -88,24 +88,24 @@ class CtdTransform(Transform):
             edges_file_writer.writerow(self.edge_header)
 
             ctd_tsv_file = RAW_DATA_DIR / "CTD_chemicals_diseases.tsv.gz"
-            with gzip.open(ctd_tsv_file, 'rt', encoding='utf-8') as file:
+            with gzip.open(ctd_tsv_file, "rt", encoding="utf-8") as file:
                 # Skip lines until reaching the line containing "# Fields"
                 for line in file:
-                    if line.startswith('# Fields'):
+                    if line.startswith("# Fields"):
                         # Read the next line as the header line
                         header_line = next(file)
-                        header_line = header_line.replace('# ', '')
+                        header_line = header_line.replace("# ", "")
                         break
 
                 # Skip lines until reaching the first non-comment line
                 for line in file:
-                    if not line.startswith('#'):
+                    if not line.startswith("#"):
                         # Read the rest of the lines into a list
                         all_data = list(file)
                         break
-    
+
                 # Create a reader for the TSV data starting from the header line
-                reader = csv.DictReader([header_line] + all_data, delimiter='\t')
+                reader = csv.DictReader([header_line] + all_data, delimiter="\t")
 
                 # Keep track of entities already mapped
                 self.mapped_chemicals_dict = {}
@@ -120,7 +120,6 @@ class CtdTransform(Transform):
 
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)
-
 
     def _chemical_to_chebi(self, data):
         """
@@ -137,7 +136,7 @@ class CtdTransform(Transform):
         chemical = self.mapped_chemicals_dict.get(cas_curie)
         if chemical is None:
             chemical = self.mapped_chemicals_dict.get(mesh_curie)
-        if chemical is None and data[CTD_CAS_RN_COLUMN] != '':
+        if chemical is None and data[CTD_CAS_RN_COLUMN] != "":
             chemical = self.chebi_xref_dict.get(cas_curie)
             self.mapped_chemicals_dict[cas_curie] = chemical
             self.mapped_chemicals_dict[mesh_curie] = chemical
@@ -145,9 +144,10 @@ class CtdTransform(Transform):
             chemical = self._normalize_node_api(mesh_curie)
             self.mapped_chemicals_dict[mesh_curie] = chemical
 
-        if chemical is None: chemical = mesh_curie
+        if chemical is None:
+            chemical = mesh_curie
         return chemical
-    
+
     def _disease_to_mondo(self, disease_entry):
         """
         Convert MESH ID into MONDO ID.
@@ -162,11 +162,12 @@ class CtdTransform(Transform):
             mondo_id = self.mondo_xref_dict.get(disease_entry)
             self.mapped_diseases_dict[disease_entry] = mondo_id
 
-        if mondo_id is None: mondo_id = disease_entry
+        if mondo_id is None:
+            mondo_id = disease_entry
         return mondo_id
-    
-    #Takes cure in the form PREFIX:ID
-    def _normalize_node_api(self,node_curie):
+
+    # Takes cure in the form PREFIX:ID
+    def _normalize_node_api(self, node_curie):
 
         url = NODE_NORMALIZER_URL + node_curie
 
@@ -177,15 +178,15 @@ class CtdTransform(Transform):
         # Write response to file if it contains data
         entries = response.json()[node_curie]
         try:
-            if len(entries) > 1: #.strip().split("\n")
-                for iden in entries['equivalent_identifiers']:
-                    if iden['identifier'].split(':')[0] == CHEBI_PREFIX:
-                        norm_node = iden['identifier']
+            if len(entries) > 1:  # .strip().split("\n")
+                for iden in entries["equivalent_identifiers"]:
+                    if iden["identifier"].split(":")[0] == CHEBI_PREFIX:
+                        norm_node = iden["identifier"]
                         return norm_node
-        #Handle case where node normalizer returns nothing
+        # Handle case where node normalizer returns nothing
         except TypeError:
             return node_curie
-        
+
         else:
             return node_curie
 
@@ -223,4 +224,4 @@ class CtdTransform(Transform):
                     "ctd",
                 ]
             )
-        return node_data,edge_data
+        return node_data, edge_data

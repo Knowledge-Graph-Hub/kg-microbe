@@ -208,6 +208,7 @@ def parse_rhea_entry(rhea_entry):
 
     return rhea_list
 
+
 def parse_disease(disease_entry, mondo_xref_dict):
     """
     Extract OMIM ID's from a disease entry.
@@ -221,12 +222,13 @@ def parse_disease(disease_entry, mondo_xref_dict):
     """
     omim_list = None
     if not is_float(disease_entry):
-        omim_list = re.findall(r'\[MIM:(\d+)\]', disease_entry)
-        omim_list = [f"{OMIM_PREFIX}"+omim_number for omim_number in omim_list]
+        omim_list = re.findall(r"\[MIM:(\d+)\]", disease_entry)
+        omim_list = [f"{OMIM_PREFIX}" + omim_number for omim_number in omim_list]
 
     mondo_list = convert_omim_diseases(omim_list, mondo_xref_dict)
 
     return mondo_list
+
 
 def parse_gene(gene_entry, mondo_gene_dict):
     """
@@ -246,6 +248,7 @@ def parse_gene(gene_entry, mondo_gene_dict):
 
     return gene_id
 
+
 def convert_omim_diseases(omim_list, mondo_xref_dict):
     """
     Convert OMIM ID's to a MONDO ID using MONDO xref dictionary.
@@ -260,10 +263,13 @@ def convert_omim_diseases(omim_list, mondo_xref_dict):
     :rtype: list
     """
     # Get all MONDO IDs according to OMIM xrefs
-    #mondo_list = list(filter(lambda item: item[1] in omim_list, mondo_xref_dict.items()))
-    mondo_list = [key for value in omim_list for key, val in mondo_xref_dict.items() if val == value]
+    # mondo_list = list(filter(lambda item: item[1] in omim_list, mondo_xref_dict.items()))
+    mondo_list = [
+        key for value in omim_list for key, val in mondo_xref_dict.items() if val == value
+    ]
 
     return mondo_list
+
 
 def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_dictionary):
     """
@@ -293,7 +299,9 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_di
     return go_relation, go_component_label
 
 
-def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary, mondo_xrefs_dict, mondo_gene_dict):
+def get_nodes_and_edges(
+    uniprot_df, go_category_trees_dictionary, mondo_xrefs_dict, mondo_gene_dict
+):
     """
     Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -346,9 +354,9 @@ def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary, mondo_xrefs_di
     uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
         lambda x: parse_disease(x, mondo_xrefs_dict)
     )
-    uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[UNIPROT_GENE_PRIMARY_COLUMN_NAME].apply(
-        lambda x: parse_gene(x, mondo_gene_dict)
-    )
+    uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
+        UNIPROT_GENE_PRIMARY_COLUMN_NAME
+    ].apply(lambda x: parse_gene(x, mondo_gene_dict))
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
@@ -533,7 +541,9 @@ def process_lines(
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     df.drop_duplicates(inplace=True)
 
-    node_data, edge_data = get_nodes_and_edges(df, go_category_dictionary, mondo_xrefs_dict, mondo_gene_dict)
+    node_data, edge_data = get_nodes_and_edges(
+        df, go_category_dictionary, mondo_xrefs_dict, mondo_gene_dict
+    )
     # Write node and edge data to unique files
     # if len(node_data) > 0:
     with open(node_filename, "w", newline="") as nf:
@@ -619,7 +629,9 @@ class UniprotTransform(Transform):
 
         with tarfile.open(tar_file, "r:gz") as tar:
             if relevant_files_list_exists:
-                members = [member for member in tar.getmembers()] #if member.name in relevant_files]
+                members = [
+                    member for member in tar.getmembers()
+                ]  # if member.name in relevant_files]
             else:
                 members = tar.getmembers()
 
@@ -671,7 +683,9 @@ class UniprotTransform(Transform):
         # Read MONDO nodes file for gene names
         self.mondo_gene_dict = {}
         #! TODO: Find a better way to get this path
-        mondo_nodes_file = Path(__file__).parents[3] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
+        mondo_nodes_file = (
+            Path(__file__).parents[3] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
+        )
         if mondo_nodes_file.exists():
             with open(mondo_nodes_file, "r") as file:
                 csv_reader = csv.DictReader(file, delimiter="\t")

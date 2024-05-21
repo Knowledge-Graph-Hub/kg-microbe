@@ -210,3 +210,12 @@
 -
   url: https://disbiome.ugent.be:8080/experiment
   local_name: disbiome.json
+
+#
+# PdMetagenomics
+#
+-
+  url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
+  local_name: PdMetagenomics.xlsx
+
+  

@@ -66,12 +66,12 @@ from kg_microbe.utils.unipathways_utils import (
 from ..transform import Transform
 
 ONTOLOGIES = {
-    # "ncbitaxon": "ncbitaxon.owl.gz",
-    # "chebi": "chebi.owl.gz",
-    # "envo": "envo.json",
-    # "go": "go.json",
-    # # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
-    # "ec": "ec.json",
+    "ncbitaxon": "ncbitaxon.owl.gz",
+    "chebi": "chebi.owl.gz",
+    "envo": "envo.json",
+    "go": "go.json",
+    # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
+    "ec": "ec.json",
     "upa": "upa.owl",
 }
 

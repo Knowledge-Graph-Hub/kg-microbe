@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/master/kg-microbe.png?raw=true)
 
-# KG-Microbe -- Knowledge graph construction for microbial traits
+# KG-Microbe -- Knowledge graph construction for microbial traits and beyond
 
 [Conference paper](https://ceur-ws.org/Vol-3073/paper19.pdf)
 

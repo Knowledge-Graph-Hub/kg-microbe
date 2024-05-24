@@ -18,27 +18,36 @@ from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
     CHEBI_XREFS_FILEPATH,
     EC_PREFIX,
+    ENABLED_BY_PREDICATE,
+    ENABLED_BY_RELATION,
     EXCLUSION_TERMS_FILE,
+    GO_PREFIX,
     ID_COLUMN,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     ONTOLOGY_XREFS_DIR,
     PART_OF_PREDICATE,
     PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    RELATED_TO_PREDICATE,
+    RELATED_TO_RELATION,
     RELATION_COLUMN,
     RHEA_NEW_PREFIX,
     ROBOT_REMOVED_SUFFIX,
     SPECIAL_PREFIXES,
     SUBJECT_COLUMN,
+    UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX,
     UNIPATHWAYS_INCLUDE_PAIRS,
     UNIPATHWAYS_PATHWAY_PREFIX,
     UNIPATHWAYS_REACTION_PREFIX,
+    UNIPATHWAYS_XREFS_FILEPATH,
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
 from kg_microbe.utils.ontology_utils import replace_category_ontology
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
+    establish_transitive_relationship,
     establish_transitive_relationship_multiple,
 )
 from kg_microbe.utils.robot_utils import (
@@ -186,12 +195,17 @@ class OntologyTransform(Transform):
             """Use the pattern to replace all occurrences of the keys with their values."""
             return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
 
-        if name == "chebi":
+        if name == "chebi" or name == "upa":
             makedirs(ONTOLOGY_XREFS_DIR, exist_ok=True)
             # Get two columns from the nodes file: 'id' and 'xref'
             # The xref column is | separated and contains different prefixes
             # We need to make a 1-to-1 mapping between the prefixes and the id
-            with open(nodes_file, "r") as nf, open(CHEBI_XREFS_FILEPATH, "w") as xref_file:
+            if name == "chebi":
+                xref_filepath = CHEBI_XREFS_FILEPATH
+            elif name == "upa":
+                xref_filepath = UNIPATHWAYS_XREFS_FILEPATH
+                unipathways_xref_dict = {}
+            with open(nodes_file, "r") as nf, open(xref_filepath, "w") as xref_file:
 
                 for line in nf:
                     if line.startswith("id"):
@@ -207,6 +221,9 @@ class OntologyTransform(Transform):
                         for xref in xrefs:
                             # Write a new tsv file with header ["id", "xref"]
                             xref_file.write(f"{subject}\t{xref}\n")
+                            # Use unipathways xrefs elsewhere so write to dict
+                            if name == "upa":
+                                unipathways_xref_dict[subject] = xref
 
         if name == "upa":
             # Keep track of new node IDs for edges file
@@ -296,8 +313,57 @@ class OntologyTransform(Transform):
             # First write existing edges to file before establishing transitive relationships
             edges_df.to_csv(edges_file, sep="\t", index=False)
 
+            # Add edges between GO and pathways using enzymatic reactions GO xrefs
+            transitive_df_uer_go = establish_transitive_relationship(
+                edges_file,
+                UNIPATHWAYS_INCLUDE_PAIRS[1][0],
+                UNIPATHWAYS_INCLUDE_PAIRS[1][1],
+                PART_OF_PREDICATE,
+                UNIPATHWAYS_INCLUDE_PAIRS[2][1],
+            )
+            # Replace UER with GO
+            transitive_df_uer_go = transitive_df_uer_go[
+                (
+                    transitive_df_uer_go[SUBJECT_COLUMN].str.contains(
+                        UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX
+                    )
+                )
+                & (transitive_df_uer_go[OBJECT_COLUMN].str.contains(UNIPATHWAYS_PATHWAY_PREFIX))
+            ]
+            # Replace predicate and relation
+            transitive_df_uer_go.loc[
+                transitive_df_uer_go[PREDICATE_COLUMN] == PART_OF_PREDICATE,
+                [PREDICATE_COLUMN, RELATION_COLUMN],
+            ] = [ENABLED_BY_PREDICATE, ENABLED_BY_RELATION]
+            transitive_df_uer_go = transitive_df_uer_go.map(
+                lambda x: unipathways_xref_dict.get(x, x)
+            )
+
+            # Only add GO relations, not EC
+            transitive_df_uer_go = transitive_df_uer_go[
+                transitive_df_uer_go[SUBJECT_COLUMN].str.contains(GO_PREFIX)
+            ]
+
+            # Add the list as a new row to the DataFrame
+            edges_df = pd.concat([edges_df, transitive_df_uer_go], ignore_index=True)
+
+            # Add edges between GO and pathways using patwhay GO xrefs
+            upa_go_df = pd.DataFrame(list(unipathways_xref_dict.items()), columns=["id", "xref"])
+            upa_go_df = upa_go_df.loc[
+                (upa_go_df["id"].str.contains("UPA:UPA"))
+                & (upa_go_df["xref"].str.contains(GO_PREFIX))
+            ]
+            upa_go_df.rename(columns={"xref": SUBJECT_COLUMN, "id": OBJECT_COLUMN}, inplace=True)
+            upa_go_df[PREDICATE_COLUMN] = RELATED_TO_PREDICATE
+            upa_go_df[RELATION_COLUMN] = RELATED_TO_RELATION
+            upa_go_df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = "upa.json"
+            # Add the list as a new row to the DataFrame
+            edges_df = pd.concat([edges_df, upa_go_df], ignore_index=True)
+            # Write existing edges to file before establishing more transitive relationships
+            edges_df.to_csv(edges_file, sep="\t", index=False)
+
             # Consolidate paths into 1 edge
-            # For triples with rhea prefix for reactions
+            # For triples with rhea prefix for reactions, get rhea to pathway edge
             transitive_df_rhea = establish_transitive_relationship_multiple(
                 edges_file,
                 RHEA_NEW_PREFIX,

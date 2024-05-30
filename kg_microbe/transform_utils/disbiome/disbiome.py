@@ -3,8 +3,8 @@
 import csv
 import json
 import os
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
@@ -62,12 +62,17 @@ class DisbiomeTransform(Transform):
             json_data = json.load(file)
         # Flatten JSON data into a DataFrame
         disbiome_df = pd.json_normalize(json_data)[
-            [DISBIOME_DISEASE_NAME, DISIOME_QUALITATIVE_OUTCOME, DISBIOME_ORGANISM_NAME, DISBIOME_ORGANISM_ID]
+            [
+                DISBIOME_DISEASE_NAME,
+                DISIOME_QUALITATIVE_OUTCOME,
+                DISBIOME_ORGANISM_NAME,
+                DISBIOME_ORGANISM_ID,
+            ]
         ]
         # Cast all organism IDs to str
         disbiome_df[DISBIOME_ORGANISM_ID] = disbiome_df[DISBIOME_ORGANISM_ID].apply(
-            lambda x: str(int(x)) if isinstance(x, float) 
-            and x.is_integer() else x)
+            lambda x: str(int(x)) if isinstance(x, float) and x.is_integer() else x
+        )
         # Replace na values
         disbiome_df = disbiome_df.fillna(MICROBE_NOT_FOUND_STR)
 
@@ -113,15 +118,19 @@ class DisbiomeTransform(Transform):
                     for row in csv_reader:
                         self.ncbitaxon_label_dict[row["name"]] = row["id"]
 
-            # Convert taxa names to NCBITaxon IDs 
+            # Convert taxa names to NCBITaxon IDs
             for i in range(len(disbiome_df)):
                 microbe = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
                 microbe_id = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_ID]
+                # If microbe_id is not in NCBITaxon subset, ignore
+                if NCBITAXON_PREFIX + microbe_id not in list(self.ncbitaxon_label_dict.values()):
+                    microbe_id = MICROBE_NOT_FOUND_STR
+                # Get microbe id from NCBITaxon
                 if microbe_id == MICROBE_NOT_FOUND_STR:
                     microbe_id = self.ncbitaxon_label_dict.get(microbe)
                     if not microbe_id:
                         # Try with brackets around genus name
-                        microbe_brackets = re.sub(r'^(\w+)', r'[\1]', microbe)
+                        microbe_brackets = re.sub(r"^(\w+)", r"[\1]", microbe)
                         microbe_id = self.ncbitaxon_label_dict.get(microbe_brackets)
                         if not microbe_id:
                             microbe_id = MICROBE_NOT_FOUND_STR
@@ -129,9 +138,9 @@ class DisbiomeTransform(Transform):
 
         # Write to tmp file
         os.makedirs(DISBIOME_TMP_DIR, exist_ok=True)
-        with open(DISBIOME_TMP_FILEPATH, mode='w', newline='') as file:
-            tmp_writer = csv.writer(file, delimiter = '\t')
-            tmp_writer.writerow(['orig_node', 'entity_uri'])
+        with open(DISBIOME_TMP_FILEPATH, mode="w", newline="") as file:
+            tmp_writer = csv.writer(file, delimiter="\t")
+            tmp_writer.writerow(["orig_node", "entity_uri"])
             for key, value in self.microbe_labels_dict.items():
                 tmp_writer.writerow([key, value])
 
@@ -143,9 +152,7 @@ class DisbiomeTransform(Transform):
             edges_file_writer.writerow(self.edge_header)
 
             for i in range(len(disbiome_df)):
-                microbe = self.microbe_labels_dict[
-                    disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
-                ]
+                microbe = self.microbe_labels_dict[disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]]
                 # Ignore microbes without an index
                 if MICROBE_NOT_FOUND_STR not in microbe:
                     disease = disbiome_df.iloc[i].loc[DISBIOME_DISEASE_NAME]

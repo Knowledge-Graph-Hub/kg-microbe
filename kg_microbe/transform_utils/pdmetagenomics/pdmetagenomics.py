@@ -2,8 +2,8 @@
 
 import csv
 import os
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd
@@ -27,6 +27,7 @@ PD_ABUNDANCE_COLUMN = "RA in PD"
 NHC_ABUNDANCE_COLUMN = "RA in NHC"
 MICROBE_NOT_FOUND_STR = "not_found"
 PARKINSONS_DISEASE_MONDO_ID = "MONDO:0005180"
+
 
 class PdMetagenomicsTransform(Transform):
 
@@ -56,8 +57,12 @@ class PdMetagenomicsTransform(Transform):
             data_file = "PdMetagenomics.xlsx"
         input_file = self.input_base_dir / data_file
 
-        pdmetagenomics_df = pd.read_excel(input_file, skiprows=3, sheet_name=PD_METAGENOMIC_TAB_NAME)
-        pdmetagenomics_df[FDR_COLUMN] = pd.to_numeric(pdmetagenomics_df[FDR_COLUMN], errors="coerce")
+        pdmetagenomics_df = pd.read_excel(
+            input_file, skiprows=3, sheet_name=PD_METAGENOMIC_TAB_NAME
+        )
+        pdmetagenomics_df[FDR_COLUMN] = pd.to_numeric(
+            pdmetagenomics_df[FDR_COLUMN], errors="coerce"
+        )
 
         significant_pdmetagenomics_df = pdmetagenomics_df[
             pdmetagenomics_df[FDR_COLUMN].apply(lambda x: isinstance(x, float))
@@ -102,7 +107,7 @@ class PdMetagenomicsTransform(Transform):
                 species_id = self.ncbitaxon_label_dict.get(species)
                 if not species_id:
                     # Try with brackets around genus name
-                    species_brackets = re.sub(r'^(\w+)', r'[\1]', species)
+                    species_brackets = re.sub(r"^(\w+)", r"[\1]", species)
                     species_id = self.ncbitaxon_label_dict.get(species_brackets)
                     if not species_id:
                         species_id = MICROBE_NOT_FOUND_STR
@@ -111,12 +116,12 @@ class PdMetagenomicsTransform(Transform):
 
             # Write to tmp file
             os.makedirs(PDMETAGENOMICS_TMP_DIR, exist_ok=True)
-            with open(PD_METAGENOMICS_TMP_FILEPATH, mode='w', newline='') as file:
-                tmp_writer = csv.writer(file, delimiter = '\t')
-                tmp_writer.writerow(['orig_node', 'entity_uri'])
+            with open(PD_METAGENOMICS_TMP_FILEPATH, mode="w", newline="") as file:
+                tmp_writer = csv.writer(file, delimiter="\t")
+                tmp_writer.writerow(["orig_node", "entity_uri"])
                 for key, value in self.microbe_labels_dict.items():
                     tmp_writer.writerow([key, value])
-        
+
         with open(node_filename, "w") as nf, open(edge_filename, "w") as ef:
             nodes_file_writer = csv.writer(nf, delimiter="\t")
             edges_file_writer = csv.writer(ef, delimiter="\t")

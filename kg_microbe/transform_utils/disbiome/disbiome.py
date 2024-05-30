@@ -113,19 +113,19 @@ class DisbiomeTransform(Transform):
                     for row in csv_reader:
                         self.ncbitaxon_label_dict[row["name"]] = row["id"]
 
-        # Convert taxa names to NCBITaxon IDs 
-        for i in range(len(disbiome_df)):
-            microbe = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
-            microbe_id = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_ID]
-            if microbe_id == MICROBE_NOT_FOUND_STR:
-                microbe_id = self.ncbitaxon_label_dict.get(microbe)
-                if not microbe_id:
-                    # Try with brackets around genus name
-                    microbe_brackets = re.sub(r'^(\w+)', r'[\1]', microbe)
-                    microbe_id = self.ncbitaxon_label_dict.get(microbe_brackets)
+            # Convert taxa names to NCBITaxon IDs 
+            for i in range(len(disbiome_df)):
+                microbe = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
+                microbe_id = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_ID]
+                if microbe_id == MICROBE_NOT_FOUND_STR:
+                    microbe_id = self.ncbitaxon_label_dict.get(microbe)
                     if not microbe_id:
-                        microbe_id = MICROBE_NOT_FOUND_STR
-            self.microbe_labels_dict[microbe] = NCBITAXON_PREFIX + microbe_id
+                        # Try with brackets around genus name
+                        microbe_brackets = re.sub(r'^(\w+)', r'[\1]', microbe)
+                        microbe_id = self.ncbitaxon_label_dict.get(microbe_brackets)
+                        if not microbe_id:
+                            microbe_id = MICROBE_NOT_FOUND_STR
+                self.microbe_labels_dict[microbe] = NCBITAXON_PREFIX + microbe_id
 
         # Write to tmp file
         os.makedirs(DISBIOME_TMP_DIR, exist_ok=True)

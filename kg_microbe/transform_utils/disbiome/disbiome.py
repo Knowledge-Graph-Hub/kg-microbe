@@ -146,26 +146,28 @@ class DisbiomeTransform(Transform):
                 microbe = self.microbe_labels_dict[
                     disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
                 ]
-                disease = disbiome_df.iloc[i].loc[DISBIOME_DISEASE_NAME]
-                disease_id = self.disease_labels_dict[disease]
-                direction = disbiome_df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
-                # Add disease
-                nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY])
-                # Add microbe
-                nodes_file_writer.writerow([microbe, NCBI_CATEGORY])
-                if direction == DISBIOME_ELEVATED:
-                    predicate = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE
-                    relation = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF
-                elif direction == DISBIOME_REDUCED:
-                    predicate = ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE
-                    relation = ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF
-                # microbe-disease edge
-                edges_file_writer.writerow(
-                    [
-                        microbe,
-                        predicate,
-                        disease_id,
-                        relation,
-                        self.source_name,
-                    ]
-                )
+                # Ignore microbes without an index
+                if MICROBE_NOT_FOUND_STR not in microbe:
+                    disease = disbiome_df.iloc[i].loc[DISBIOME_DISEASE_NAME]
+                    disease_id = self.disease_labels_dict[disease]
+                    direction = disbiome_df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
+                    # Add disease
+                    nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY])
+                    # Add microbe
+                    nodes_file_writer.writerow([microbe, NCBI_CATEGORY])
+                    if direction == DISBIOME_ELEVATED:
+                        predicate = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE
+                        relation = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF
+                    elif direction == DISBIOME_REDUCED:
+                        predicate = ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE
+                        relation = ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF
+                    # microbe-disease edge
+                    edges_file_writer.writerow(
+                        [
+                            microbe,
+                            predicate,
+                            disease_id,
+                            relation,
+                            self.source_name,
+                        ]
+                    )

@@ -92,7 +92,7 @@ Catonella	NCBITaxon:43996
 Aggregatibacter	NCBITaxon:416916
 Staphylococcus	NCBITaxon:29387
 Treponema	NCBITaxon:166
-Schlegelella	NCBITaxon:215579
+Schlegelella	NCBITaxon:not_found
 Moraxella	NCBITaxon:479
 Capnocytophaga	NCBITaxon:44737
 Helicobacter	NCBITaxon:218
@@ -102,7 +102,7 @@ Propionibacterium	NCBITaxon:1743
 Aeromonas	NCBITaxon:647
 Ferribacter thermoautotrophicus	NCBITaxon:416555
 Mannheimia	NCBITaxon:75984
-Lyrodus pedicellatus	NCBITaxon:457830
+Lyrodus pedicellatus	NCBITaxon:not_found
 Nitrosomonas eutropha	NCBITaxon:916
 Calyptogena magnifica	NCBITaxon:3122228
 Fucophilus fucoidanolyticus	NCBITaxon:177412
@@ -115,7 +115,7 @@ Sphingobacterium	NCBITaxon:341027
 Hymenobacter	NCBITaxon:89966
 Nodularia sphaerocarpa	NCBITaxon:137816
 Bifidobacterium thermacidophilum porcinum	NCBITaxon:212365
-Mitrastema yamamotoi	NCBITaxon:51498
+Mitrastema yamamotoi	NCBITaxon:not_found
 Symbiobacterium toebii	NCBITaxon:120580
 Sphingopyxis flavimaris	NCBITaxon:266812
 Corynebacterium jeikeium	NCBITaxon:38289
@@ -200,7 +200,7 @@ Parasutterella	NCBITaxon:577310
 Bacteroidaceae	NCBITaxon:815
 Proteobacteria	NCBITaxon:1224
 Actinobacteria	NCBITaxon:1760
-Ruminococcaceae	NCBITaxon:541000
+Ruminococcaceae	NCBITaxon:not_found
 Methanobrevibacter	NCBITaxon:2172
 Butyricimonas	NCBITaxon:574697
 Enterococcus faecalis	NCBITaxon:1351
@@ -464,7 +464,7 @@ Nocardioides	NCBITaxon:1839
 Arthrobacter	NCBITaxon:1663
 Modestobacter	NCBITaxon:88138
 Humicoccus	NCBITaxon:53460
-Thermoactinomyces	NCBITaxon:2032
+Thermoactinomyces	NCBITaxon:NCBITaxon:2023
 Centipeda	NCBITaxon:82202
 Anaerosporobacter	NCBITaxon:653683
 Balneimonas	NCBITaxon:186650
@@ -472,7 +472,7 @@ Kingella	NCBITaxon:32257
 Desulfobulbus	NCBITaxon:893
 Dysgonomonas	NCBITaxon:156973
 Clostridium group XI	NCBITaxon:1485
-Streptophyta	NCBITaxon:35493
+Streptophyta	NCBITaxon:not_found
 Enhydrobacter	NCBITaxon:212791
 "Lactobacillales	"	NCBITaxon:186826
 Globicatella	NCBITaxon:13075
@@ -614,7 +614,7 @@ Dyadobacter	NCBITaxon:120831
 Roseomonas	NCBITaxon:125216
 Cellvibrio	NCBITaxon:10
 Geminicoccus	NCBITaxon:489140
-Propionibacterium humerusii	NCBITaxon:1050843
+Propionibacterium humerusii	NCBITaxon:not_found
 Propionibacterium granulosum	NCBITaxon:33011
 Comamonadaceae	NCBITaxon:80864
 Dechloromonas	NCBITaxon:73029
@@ -781,7 +781,7 @@ Parabacteroides merdae	NCBITaxon:46503
 Alistipes finegoldii	NCBITaxon:214856
 Lachnospiraceae bacterium	NCBITaxon:1898203
 Leptotrichia buccalis	NCBITaxon:40542
-Erysipelatoclostridium	NCBITaxon:1505663
+Erysipelatoclostridium	NCBITaxon:not_found
 Cetobacterium	NCBITaxon:180162
 Synergistes	NCBITaxon:2753
 Vivictivallis	NCBITaxon:172900
@@ -816,7 +816,7 @@ Arcanobacterium	NCBITaxon:28263
 Blautia wexlerae	NCBITaxon:418240
 Blautia caecimuris	NCBITaxon:1796615
 Odoribacter laneus	NCBITaxon:626933
-Alistipes obesi	NCBITaxon:1118061
+Alistipes obesi	NCBITaxon:not_found
 Alistipes ihumii	NCBITaxon:1470347
 Mucor racemosus	NCBITaxon:4841
 Clostridiales	NCBITaxon:186802
@@ -830,7 +830,7 @@ Vampirovibrio	NCBITaxon:213484
 Acetivibrio	NCBITaxon:35829
 Fusobacteriales	NCBITaxon:203491
 Chitinophagaceae	NCBITaxon:563835
-Turicella	NCBITaxon:144193
+Turicella	NCBITaxon:not_found
 Corynebacteriaceae	NCBITaxon:1653
 Dermabacteraceae	NCBITaxon:85020
 Micromonosporaceae	NCBITaxon:28056
@@ -838,7 +838,7 @@ Paraeggerthella	NCBITaxon:651554
 Planococcaceae	NCBITaxon:186818
 Gallibacterium	NCBITaxon:155493
 Weeksella	NCBITaxon:1013
-Spirodela	NCBITaxon:4473
+Spirodela	NCBITaxon:not_found
 Lonepinella	NCBITaxon:53416
 Kineococcus	NCBITaxon:33981
 Alloscardovia	NCBITaxon:419014
@@ -925,13 +925,13 @@ Russulaceae	NCBITaxon:5401
 Inocybaceae	NCBITaxon:665596
 Lophiostomataceae	NCBITaxon:45147
 Tuberaceae	NCBITaxon:40289
-Human adenovirus	NCBITaxon:1907210
-Respiratory syncytial virus	NCBITaxon:12814
-Human coronavirus	NCBITaxon:694448
+Human adenovirus	NCBITaxon:not_found
+Respiratory syncytial virus	NCBITaxon:not_found
+Human coronavirus	NCBITaxon:not_found
 Malassezia furfur	NCBITaxon:55194
-HSV-1	NCBITaxon:10298
-EBV	NCBITaxon:10376
-CMV	NCBITaxon:10358
+HSV-1	NCBITaxon:not_found
+EBV	NCBITaxon:not_found
+CMV	NCBITaxon:not_found
 Prevotella enoeca	NCBITaxon:76123
 Actinomyces urogenitalis	NCBITaxon:103621
 Prevotella bergensis	NCBITaxon:242750
@@ -967,8 +967,8 @@ Oligella urethralis	NCBITaxon:90245
 Rubellimicrobium	NCBITaxon:295418
 Knoellia	NCBITaxon:136099
 Hyphomonas	NCBITaxon:85
-Lupinus	NCBITaxon:3869
-Oenothera	NCBITaxon:3939
+Lupinus	NCBITaxon:not_found
+Oenothera	NCBITaxon:not_found
 Pseudochrobactrum	NCBITaxon:354349
 Pseudidiomarina	NCBITaxon:135575
 Allobaculum	NCBITaxon:174708
@@ -985,11 +985,11 @@ Leucobacter	NCBITaxon:55968
 Mitsuaria	NCBITaxon:65047
 Limnohabitans	NCBITaxon:665874
 Blautia producta	NCBITaxon:33035
-Hepadnaviridae	NCBITaxon:10404
-Polydnaviridae	NCBITaxon:10482
-Tymoviridae	NCBITaxon:249184
-Hepeviridae	NCBITaxon:291484
-Virgaviridae	NCBITaxon:675071
+Hepadnaviridae	NCBITaxon:not_found
+Polydnaviridae	NCBITaxon:not_found
+Tymoviridae	NCBITaxon:not_found
+Hepeviridae	NCBITaxon:not_found
+Virgaviridae	NCBITaxon:not_found
 Lactobacillus sp. L-YJ	NCBITaxon:215530
 Wautersiella	NCBITaxon:343873
 Chryseobacterium	NCBITaxon:59732
@@ -1013,7 +1013,7 @@ Aspergillus austroafricanus	NCBITaxon:1220192
 Pseudozyma churashimaensis	NCBITaxon:745057
 Ustilaginaceae	NCBITaxon:5268
 Penicillium steckii	NCBITaxon:303698
-Leuconostocaceae	NCBITaxon:81850
+Leuconostocaceae	NCBITaxon:not_found
 Flavobacteriaceae	NCBITaxon:49546
 Agrobacterium	NCBITaxon:357
 Meiothermus	NCBITaxon:65551
@@ -1030,7 +1030,7 @@ Roseateles	NCBITaxon:93681
 Hyphomicrobium	NCBITaxon:81
 Diaphorobacter	NCBITaxon:238749
 Succiniclasticum	NCBITaxon:40840
-Candida	NCBITaxon:1535326
+Candida	NCBITaxon:NCBITaxon:5475
 Aspergillus	NCBITaxon:5052
 Filobasidium	NCBITaxon:5209
 Malassezia	NCBITaxon:55193
@@ -1060,7 +1060,7 @@ Mortierella	NCBITaxon:4855
 Rhizopus	NCBITaxon:4842
 Kluyveromyces	NCBITaxon:4910
 Embellisia	NCBITaxon:1868208
-Haematonectria	NCBITaxon:40620
+Haematonectria	NCBITaxon:not_found
 Ureaplasma parvum serovar 3	NCBITaxon:38504
 Candidatus tammella	NCBITaxon:435139
 Snowella rosea	NCBITaxon:357279
@@ -1093,7 +1093,7 @@ Chaetomiaceae	NCBITaxon:35718
 Erysiphaceae	NCBITaxon:34371
 Pseudeurotiaceae	NCBITaxon:34379
 Lipomycetaceae	NCBITaxon:29827
-Acremonium	NCBITaxon:1036680
+Acremonium	NCBITaxon:NCBITaxon:159075
 Thielaviopsis	NCBITaxon:60496
 Moniliophthora	NCBITaxon:221102
 Pisolithus	NCBITaxon:37467
@@ -1110,7 +1110,7 @@ Devosia	NCBITaxon:46913
 Ruminofilibacter	NCBITaxon:340117
 Jatrophihabitans	NCBITaxon:1434010
 Vibrio	NCBITaxon:662
-Roseolovirus	NCBITaxon:40272
+Roseolovirus	NCBITaxon:not_found
 Bacteroides clarus	NCBITaxon:626929
 Psychrobacter pulmonis	NCBITaxon:228654
 Bacteroides xylanolyticus	NCBITaxon:384636
@@ -1139,15 +1139,15 @@ Malassezia slooffiae	NCBITaxon:76776
 Naganishia diffluens	NCBITaxon:89919
 Penicillium miczynskii	NCBITaxon:36645
 Blastomonas	NCBITaxon:150203
-Microviridae	NCBITaxon:10841
-Myoviridae	NCBITaxon:10662
-Podoviridae	NCBITaxon:10744
-Pneumoviridae	NCBITaxon:11244
-Anelloviridae	NCBITaxon:687329
-Orthopneumovirus	NCBITaxon:1868215
-Coccolithovirus	NCBITaxon:346673
-Mimivirus	NCBITaxon:315393
-Orthopoxvirus	NCBITaxon:10242
+Microviridae	NCBITaxon:not_found
+Myoviridae	NCBITaxon:not_found
+Podoviridae	NCBITaxon:not_found
+Pneumoviridae	NCBITaxon:not_found
+Anelloviridae	NCBITaxon:not_found
+Orthopneumovirus	NCBITaxon:not_found
+Coccolithovirus	NCBITaxon:not_found
+Mimivirus	NCBITaxon:not_found
+Orthopoxvirus	NCBITaxon:not_found
 Exophiala	NCBITaxon:5583
 Acroconidiella	NCBITaxon:644564
 Calyptella capula	NCBITaxon:181966
@@ -1159,10 +1159,10 @@ Mycocentrospora	NCBITaxon:227733
 Pichia exigua	NCBITaxon:1171599
 Preussia tetramera	NCBITaxon:718247
 Rhizopus oryzae	NCBITaxon:64495
-Pezoloma ericae	NCBITaxon:1745343
+Pezoloma ericae	NCBITaxon:not_found
 Stagonosporopsis cucurbitacearum	NCBITaxon:749889
 Aspergillus gracilis	NCBITaxon:41958
-Issatchenkia	NCBITaxon:4908
+Issatchenkia	NCBITaxon:not_found
 Entyloma	NCBITaxon:62636
 Dipodascus	NCBITaxon:27314
 Hanseniaspora	NCBITaxon:29832
@@ -1173,7 +1173,7 @@ Leucosporidium	NCBITaxon:5277
 Deinococcus	NCBITaxon:1298
 Glaciecola	NCBITaxon:89404
 Georgenia	NCBITaxon:154116
-Sarcandra	NCBITaxon:13669
+Sarcandra	NCBITaxon:not_found
 Cellulomonas	NCBITaxon:1707
 Lampropedia	NCBITaxon:198705
 Sporosarcina	NCBITaxon:1569
@@ -1289,8 +1289,8 @@ Chaetomium	NCBITaxon:5149
 Debaryomyces	NCBITaxon:4958
 Collinsella intestinalis	NCBITaxon:147207
 Campylobacter ureolyticus	NCBITaxon:827
-Epstein-Barr virus	NCBITaxon:10376
-Human papillomavirus	NCBITaxon:10566
+Epstein-Barr virus	NCBITaxon:not_found
+Human papillomavirus	NCBITaxon:not_found
 Sutterellaceae	NCBITaxon:995019
 Stenotrophomas maltophila	NCBITaxon:40324
 Neisseria cinerea	NCBITaxon:483
@@ -1347,10 +1347,10 @@ Saccharomyces	NCBITaxon:4930
 Gemmiger formicilis	NCBITaxon:745368
 Clostridium cellulovorans	NCBITaxon:1493
 Coprobacter fastidiosus	NCBITaxon:1099853
-Rhinovirus	NCBITaxon:12059
+Rhinovirus	NCBITaxon:not_found
 Stramenopiles	NCBITaxon:33634
 Synechococcus	NCBITaxon:1129
-Byssochlamys	NCBITaxon:5092
+Byssochlamys	NCBITaxon:not_found
 Helotiales	NCBITaxon:5178
 Pusillimonas	NCBITaxon:305976
 Desemzia	NCBITaxon:82800
@@ -1363,10 +1363,10 @@ Tepidanaerobacter	NCBITaxon:499228
 Prevotella amnii	NCBITaxon:419005
 Prevotella buccalis	NCBITaxon:28127
 Variovorax guangxiensis	NCBITaxon:1775474
-Caudovirales	NCBITaxon:28883
+Caudovirales	NCBITaxon:not_found
 Shuttleworthia satelles	NCBITaxon:177972
 Mycoplasma salivarium	NCBITaxon:2124
-Circoviridae	NCBITaxon:39724
+Circoviridae	NCBITaxon:not_found
 Cronobacter muytjensii	NCBITaxon:413501
 Filobasidium floriforme	NCBITaxon:5210
 Coniochaeta velutina	NCBITaxon:177201
@@ -1409,7 +1409,7 @@ Acinetobacter lwoffii	NCBITaxon:28090
 Acinetobacter johnsonii	NCBITaxon:40214
 Eggerthellaceae	NCBITaxon:1643826
 Parabacteroides johnsonii	NCBITaxon:387661
-Phocea massiliensis	NCBITaxon:1841867
+Phocea massiliensis	NCBITaxon:not_found
 Starmerella etchellii	NCBITaxon:45547
 Hannaella luteola	NCBITaxon:1198485
 Trametes	NCBITaxon:5324
@@ -1445,28 +1445,28 @@ Ramularia collo-cygni	NCBITaxon:112498
 Candidatus Methanomethylophilus alvus	NCBITaxon:1291540
 Cyanothece	NCBITaxon:43988
 Solobacterium moorei	NCBITaxon:102148
-Orthobunyavirus	NCBITaxon:11572
-Inovirus	NCBITaxon:10861
-Tunalikevirus	NCBITaxon:187217
-Fromanvirus	NCBITaxon:186764
-Phikzvirus	NCBITaxon:680115
-Betabaculovirus	NCBITaxon:558017
-Zindervirus	NCBITaxon:542837
-Moineauvirus	NCBITaxon:1623304
-Punavirus	NCBITaxon:186789
-Lambdavirus	NCBITaxon:186765
-Ceduovirus	NCBITaxon:186532
-Muvirus	NCBITaxon:186777
-Twortvirus	NCBITaxon:1857846
-Gammasphaerolipovirus	NCBITaxon:1714270
-Circovirus	NCBITaxon:39725
-Okubovirus	NCBITaxon:1857845
-Cytomegalovirus	NCBITaxon:10358
-Uetekavirus	NCBITaxon:542960
-Ravinvirus	NCBITaxon:308911
-Phikmvvirus	NCBITaxon:477967
-Cyprinivirus	NCBITaxon:692606
-Lymphocryptovirus	NCBITaxon:10375
+Orthobunyavirus	NCBITaxon:not_found
+Inovirus	NCBITaxon:not_found
+Tunalikevirus	NCBITaxon:not_found
+Fromanvirus	NCBITaxon:not_found
+Phikzvirus	NCBITaxon:not_found
+Betabaculovirus	NCBITaxon:not_found
+Zindervirus	NCBITaxon:not_found
+Moineauvirus	NCBITaxon:not_found
+Punavirus	NCBITaxon:not_found
+Lambdavirus	NCBITaxon:not_found
+Ceduovirus	NCBITaxon:not_found
+Muvirus	NCBITaxon:not_found
+Twortvirus	NCBITaxon:not_found
+Gammasphaerolipovirus	NCBITaxon:not_found
+Circovirus	NCBITaxon:not_found
+Okubovirus	NCBITaxon:not_found
+Cytomegalovirus	NCBITaxon:not_found
+Uetekavirus	NCBITaxon:not_found
+Ravinvirus	NCBITaxon:not_found
+Phikmvvirus	NCBITaxon:not_found
+Cyprinivirus	NCBITaxon:not_found
+Lymphocryptovirus	NCBITaxon:not_found
 Clostridium celatum	NCBITaxon:36834
 Streptococcus sobrinus	NCBITaxon:1310
 Haemophilus aegyptius	NCBITaxon:197575
@@ -1485,12 +1485,12 @@ Desulfohalobium	NCBITaxon:45662
 Pseudocitrobacter	NCBITaxon:1504576
 Youngiibacter	NCBITaxon:1408818
 Carboxydothermus	NCBITaxon:129957
-Hwanghaeicola	NCBITaxon:1400058
+Hwanghaeicola	NCBITaxon:not_found
 Constrictibacter	NCBITaxon:1076933
 Nitriliruptor	NCBITaxon:596499
 Dichelobacter	NCBITaxon:869
 Hydrogenoanaerobacterium	NCBITaxon:596767
-Human herpesvirus 6	NCBITaxon:10368
+Human herpesvirus 6	NCBITaxon:not_found
 Mycoplasma pneumoniae	NCBITaxon:2104
 Pseudomonas putida	NCBITaxon:303
 Amphritea	NCBITaxon:515417
@@ -1552,7 +1552,7 @@ Toxicocladosporium strelitziae	NCBITaxon:1196441
 Clostridium paraputrificum	NCBITaxon:29363
 Cellulosilyticum ruminicola	NCBITaxon:425254
 Coprobacter	NCBITaxon:1348911
-Verticillium	NCBITaxon:264599
+Verticillium	NCBITaxon:NCBITaxon:1036719
 Dialister succinatiphilus	NCBITaxon:487173
 Sporomusa	NCBITaxon:2375
 Mycobacteriaceae	NCBITaxon:1762
@@ -1576,7 +1576,7 @@ Serratia marcescens	NCBITaxon:615
 Candida auris	NCBITaxon:498019
 Aspergillus flavus	NCBITaxon:5059
 Aspergillus niger	NCBITaxon:5061
-Catabacter	NCBITaxon:270497
+Catabacter	NCBITaxon:not_found
 Kineothrix	NCBITaxon:2163168
 Hungatella effluvii 	NCBITaxon:1096246
 Bacteroides fluxus	NCBITaxon:626930

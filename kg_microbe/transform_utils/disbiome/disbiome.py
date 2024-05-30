@@ -4,6 +4,7 @@ import csv
 import json
 import os
 from pathlib import Path
+import re
 from typing import Optional, Union
 
 import pandas as pd
@@ -16,6 +17,7 @@ from kg_microbe.transform_utils.constants import (
     DISBIOME_DISEASE_NAME,
     DISBIOME_ELEVATED,
     DISBIOME_ORGANISM_ID,
+    DISBIOME_ORGANISM_NAME,
     DISBIOME_REDUCED,
     DISBIOME_TMP_DIR,
     DISEASE_CATEGORY,
@@ -23,6 +25,7 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
 )
+from kg_microbe.transform_utils.pdmetagenomics.pdmetagenomics import MICROBE_NOT_FOUND_STR
 from kg_microbe.transform_utils.transform import Transform
 
 
@@ -54,11 +57,27 @@ class DisbiomeTransform(Transform):
             data_file = "disbiome.json"
         input_file = self.input_base_dir / data_file
 
+        # Convert Disbiome taxa names to NCBITaxon IDs
+        with open(input_file, "r") as file:
+            json_data = json.load(file)
+        # Flatten JSON data into a DataFrame
+        disbiome_df = pd.json_normalize(json_data)[
+            [DISBIOME_DISEASE_NAME, DISIOME_QUALITATIVE_OUTCOME, DISBIOME_ORGANISM_NAME, DISBIOME_ORGANISM_ID]
+        ]
+        # Cast all organism IDs to str
+        disbiome_df[DISBIOME_ORGANISM_ID] = disbiome_df[DISBIOME_ORGANISM_ID].apply(
+            lambda x: str(int(x)) if isinstance(x, float) 
+            and x.is_integer() else x)
+        # Replace na values
+        disbiome_df = disbiome_df.fillna(MICROBE_NOT_FOUND_STR)
+
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         node_filename = self.output_node_file
         edge_filename = self.output_edge_file
 
+        # Get disease ID mappings if they exist
+        #! TODO: string matching with MONDO for diseases not already mapped in Disbiome
         self.disease_labels_dict = {}
         DISEASE_LABELS_FILEPATH = DISBIOME_TMP_DIR / "Disbiome_Labels.csv"
         if DISEASE_LABELS_FILEPATH.exists():
@@ -67,14 +86,54 @@ class DisbiomeTransform(Transform):
                 for row in csv_reader:
                     self.disease_labels_dict[row["orig_node"]] = row["entity_uri"]
 
-        # Read JSON data into a pandas DataFrame
-        with open(input_file, "r") as file:
-            json_data = json.load(file)
-        # Flatten JSON data into a DataFrame
-        df = pd.json_normalize(json_data)[
-            [DISBIOME_DISEASE_NAME, DISIOME_QUALITATIVE_OUTCOME, DISBIOME_ORGANISM_ID]
-        ]
-        df = df.dropna()
+        # Get microbe ID mappings if they exist
+        self.microbe_labels_dict = {}
+        DISBIOME_TMP_FILEPATH = DISBIOME_TMP_DIR / "Disbiome_Microbe_Labels.csv"
+        if DISBIOME_TMP_FILEPATH.exists():
+            with open(DISBIOME_TMP_FILEPATH, "r") as file:
+                csv_reader = csv.DictReader(file, delimiter="\t")
+                for row in csv_reader:
+                    self.microbe_labels_dict[row["orig_node"]] = row["entity_uri"]
+
+        else:
+            # Get all NCBITaxon IDs
+            self.ncbitaxon_label_dict = {}
+            #! TODO: Find a better way to get this path
+            ncbitaxon_nodes_file = (
+                Path(__file__).parents[3]
+                / "data"
+                / "transformed"
+                / "ontologies"
+                / "ncbitaxon_nodes.tsv"
+            )
+            # Get NCBITaxon IDs from ontology nodes file
+            if ncbitaxon_nodes_file.exists():
+                with open(ncbitaxon_nodes_file, "r") as file:
+                    csv_reader = csv.DictReader(file, delimiter="\t")
+                    for row in csv_reader:
+                        self.ncbitaxon_label_dict[row["name"]] = row["id"]
+
+        # Convert taxa names to NCBITaxon IDs 
+        for i in range(len(disbiome_df)):
+            microbe = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
+            microbe_id = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_ID]
+            if microbe_id == MICROBE_NOT_FOUND_STR:
+                microbe_id = self.ncbitaxon_label_dict.get(microbe)
+                if not microbe_id:
+                    # Try with brackets around genus name
+                    microbe_brackets = re.sub(r'^(\w+)', r'[\1]', microbe)
+                    microbe_id = self.ncbitaxon_label_dict.get(microbe_brackets)
+                    if not microbe_id:
+                        microbe_id = MICROBE_NOT_FOUND_STR
+            self.microbe_labels_dict[microbe] = NCBITAXON_PREFIX + microbe_id
+
+        # Write to tmp file
+        os.makedirs(DISBIOME_TMP_DIR, exist_ok=True)
+        with open(DISBIOME_TMP_FILEPATH, mode='w', newline='') as file:
+            tmp_writer = csv.writer(file, delimiter = '\t')
+            tmp_writer.writerow(['orig_node', 'entity_uri'])
+            for key, value in self.microbe_labels_dict.items():
+                tmp_writer.writerow([key, value])
 
         with open(node_filename, "w") as nf, open(edge_filename, "w") as ef:
             nodes_file_writer = csv.writer(nf, delimiter="\t")
@@ -83,16 +142,17 @@ class DisbiomeTransform(Transform):
             nodes_file_writer.writerow(self.node_header)
             edges_file_writer.writerow(self.edge_header)
 
-            for i in range(len(df)):
-                microbe = str(int(df.iloc[i].loc[DISBIOME_ORGANISM_ID]))
-                disease = df.iloc[i].loc[DISBIOME_DISEASE_NAME]
+            for i in range(len(disbiome_df)):
+                microbe = self.microbe_labels_dict[
+                    disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
+                ]
+                disease = disbiome_df.iloc[i].loc[DISBIOME_DISEASE_NAME]
                 disease_id = self.disease_labels_dict[disease]
-                direction = df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
-                # print(microbe,disease_id,direction)
+                direction = disbiome_df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
                 # Add disease
                 nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY])
                 # Add microbe
-                nodes_file_writer.writerow([NCBITAXON_PREFIX + microbe, NCBI_CATEGORY])
+                nodes_file_writer.writerow([microbe, NCBI_CATEGORY])
                 if direction == DISBIOME_ELEVATED:
                     predicate = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE
                     relation = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF
@@ -102,7 +162,7 @@ class DisbiomeTransform(Transform):
                 # microbe-disease edge
                 edges_file_writer.writerow(
                     [
-                        NCBITAXON_PREFIX + microbe,
+                        microbe,
                         predicate,
                         disease_id,
                         relation,

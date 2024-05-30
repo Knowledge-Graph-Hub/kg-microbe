@@ -91,6 +91,31 @@ class DisbiomeTransform(Transform):
                 for row in csv_reader:
                     self.disease_labels_dict[row["orig_node"]] = row["entity_uri"]
 
+        # Get all NCBITaxon IDs
+        self.ncbitaxon_label_dict = {}
+        #! TODO: Find a better way to get this path
+        ncbitaxon_nodes_file = (
+            Path(__file__).parents[3]
+            / "data"
+            / "transformed"
+            / "ontologies"
+            / "ncbitaxon_nodes.tsv"
+        )
+        # Get NCBITaxon IDs from ontology nodes file
+        if ncbitaxon_nodes_file.exists():
+            with open(ncbitaxon_nodes_file, "r") as file:
+                csv_reader = csv.DictReader(file, delimiter="\t")
+                for row in csv_reader:
+                    self.ncbitaxon_label_dict[row["name"]] = row["id"]
+
+        # Remove microbes that are not in NCBITaxon
+        ncbitaxon_label_set = set(self.ncbitaxon_label_dict.values())
+        exclude_microbes = disbiome_df[DISBIOME_ORGANISM_ID].apply(
+            lambda x: NCBITAXON_PREFIX + x not in ncbitaxon_label_set or MICROBE_NOT_FOUND_STR in x
+        )
+        # Use the mask to set microbe_id to MICROBE_NOT_FOUND_STR where the condition is not met
+        disbiome_df = disbiome_df[~exclude_microbes]
+
         # Get microbe ID mappings if they exist
         self.microbe_labels_dict = {}
         DISBIOME_TMP_FILEPATH = DISBIOME_TMP_DIR / "Disbiome_Microbe_Labels.csv"
@@ -99,41 +124,21 @@ class DisbiomeTransform(Transform):
                 csv_reader = csv.DictReader(file, delimiter="\t")
                 for row in csv_reader:
                     self.microbe_labels_dict[row["orig_node"]] = row["entity_uri"]
-
-        else:
-            # Get all NCBITaxon IDs
-            self.ncbitaxon_label_dict = {}
-            #! TODO: Find a better way to get this path
-            ncbitaxon_nodes_file = (
-                Path(__file__).parents[3]
-                / "data"
-                / "transformed"
-                / "ontologies"
-                / "ncbitaxon_nodes.tsv"
-            )
-            # Get NCBITaxon IDs from ontology nodes file
-            if ncbitaxon_nodes_file.exists():
-                with open(ncbitaxon_nodes_file, "r") as file:
-                    csv_reader = csv.DictReader(file, delimiter="\t")
-                    for row in csv_reader:
-                        self.ncbitaxon_label_dict[row["name"]] = row["id"]
-
-            # Convert taxa names to NCBITaxon IDs
-            for i in range(len(disbiome_df)):
-                microbe = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
-                microbe_id = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_ID]
-                # If microbe_id is not in NCBITaxon subset, ignore
-                if NCBITAXON_PREFIX + microbe_id not in list(self.ncbitaxon_label_dict.values()):
-                    microbe_id = MICROBE_NOT_FOUND_STR
-                # Get microbe id from NCBITaxon
-                if microbe_id == MICROBE_NOT_FOUND_STR:
-                    microbe_id = self.ncbitaxon_label_dict.get(microbe)
+        # Convert taxa names to NCBITaxon IDs
+        for i in range(len(disbiome_df)):
+            microbe = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_NAME]
+            microbe_id = disbiome_df.iloc[i].loc[DISBIOME_ORGANISM_ID]
+            # Get microbe id from NCBITaxon
+            if microbe_id == MICROBE_NOT_FOUND_STR:
+                microbe_id = self.ncbitaxon_label_dict.get(microbe)
+                if not microbe_id:
+                    # Try with brackets around genus name
+                    microbe_brackets = re.sub(r"^(\w+)", r"[\1]", microbe)
+                    microbe_id = self.ncbitaxon_label_dict.get(microbe_brackets)
                     if not microbe_id:
-                        # Try with brackets around genus name
-                        microbe_brackets = re.sub(r"^(\w+)", r"[\1]", microbe)
-                        microbe_id = self.ncbitaxon_label_dict.get(microbe_brackets)
-                        if not microbe_id:
-                            microbe_id = MICROBE_NOT_FOUND_STR
+                        microbe_id = NCBITAXON_PREFIX + MICROBE_NOT_FOUND_STR
+                self.microbe_labels_dict[microbe] = microbe_id
+            else:
                 self.microbe_labels_dict[microbe] = NCBITAXON_PREFIX + microbe_id
 
         # Write to tmp file

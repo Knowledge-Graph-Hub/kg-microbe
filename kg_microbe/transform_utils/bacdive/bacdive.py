@@ -779,13 +779,13 @@ class BacDiveTransform(Transform):
                             for item in positive_chebi_activity:
                                 self.ncbitaxon_info[ncbitaxon_id]['assays'].add(item)
 
-                    # Also modify the corresponding code for writing nodes and edges at the end of processing
-                    if positive_chebi_activity:
-                        meta_util_nodes_to_write = [
-                            [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                            for k, v, _ in positive_chebi_activity
-                        ]
-                        node_writer.writerows(meta_util_nodes_to_write)
+                        # Also modify the corresponding code for writing nodes and edges at the end of processing
+                        if positive_chebi_activity:
+                            meta_util_nodes_to_write = [
+                                [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
+                                for k, v, _ in positive_chebi_activity
+                            ]
+                            node_writer.writerows(meta_util_nodes_to_write)
 
                         for k, _, _ in positive_chebi_activity:
                             meta_util_edges_to_write = [
@@ -901,7 +901,7 @@ class BacDiveTransform(Transform):
                 assay_curie, assay_value, utilization_type = assay_id
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_curie, HAS_PARTICIPANT, ""])
             # Repeat for other accumulated data
-            
+
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

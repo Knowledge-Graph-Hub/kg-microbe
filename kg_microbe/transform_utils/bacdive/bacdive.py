@@ -79,8 +79,10 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SAMPLING_ENV_INFO,
     ISOLATION_SOURCE_CATEGORIES,
     ISOLATION_SOURCE_CATEGORIES_COLUMN,
+    ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
+    LOCATION_OF,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
     MEDIADIVE_URL_COLUMN,
@@ -106,6 +108,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_ENZYME_EDGE,
+    NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_UTILIZATION_EDGE,
@@ -365,7 +368,7 @@ class BacDiveTransform(Transform):
                     culture_number_from_external_links = None
                     isolation = value.get(ISOLATION_SAMPLING_ENV_INFO, {}).get(ISOLATION)
                     isolation_source_categories = value.get(ISOLATION_SAMPLING_ENV_INFO, {}).get(
-                        ISOLATION_SOURCE_CATEGORIES
+                        ISOLATION_SOURCE_CATEGORIES, []
                     )
 
                     # if value.get(ISOLATION_SAMPLING_ENV_INFO):
@@ -876,6 +879,32 @@ class BacDiveTransform(Transform):
                             ]
 
                             edge_writer.writerows(metabolism_edges_to_write)
+
+                    # Uncomment and handle isolation_source code
+                    all_values = []
+                    if isinstance(isolation_source_categories, list):
+                        for category in isolation_source_categories:
+                            all_values.extend(category.values())
+                    elif isinstance(isolation_source_categories, dict):
+                        all_values.extend(category.values())
+                    all_values = [
+                        ISOLATION_SOURCE_PREFIX
+                        + i.replace(" ", "_").replace("-", "_").replace("#", "")
+                        for i in all_values
+                    ]
+                    for isol_source in all_values:
+                        node_writer.writerow(
+                            [isol_source, "", isolation] + [None] * (len(self.node_header) - 3)
+                        )
+                        edge_writer.writerow(
+                            [
+                                ncbitaxon_id,
+                                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                isol_source,
+                                LOCATION_OF,
+                                self.source_name,
+                            ]
+                        )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

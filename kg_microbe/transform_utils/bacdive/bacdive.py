@@ -747,6 +747,7 @@ class BacDiveTransform(Transform):
                             for item in postive_activity_enzymes:
                                 self.ncbitaxon_info[ncbitaxon_id]['assays'].add(item)
 
+                    # Replace this section inside the loop processing each strain:
                     if phys_and_metabolism_metabolite_utilization:
                         positive_chebi_activity = None
                         if isinstance(phys_and_metabolism_metabolite_utilization, list):
@@ -758,11 +759,7 @@ class BacDiveTransform(Transform):
                                 ):
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
                                     positive_chebi_activity.append(
-                                        (
-                                            chebi_key,
-                                            metabolite[METABOLITE_KEY],
-                                            metabolite.get(UTILIZATION_TYPE_TESTED)
-                                        )
+                                        (chebi_key, metabolite[METABOLITE_KEY], metabolite.get(UTILIZATION_TYPE_TESTED))
                                     )
 
                         elif isinstance(phys_and_metabolism_metabolite_utilization, dict):
@@ -771,39 +768,36 @@ class BacDiveTransform(Transform):
                             )
                             if (
                                 utilization_activity == PLUS_SIGN
-                                and phys_and_metabolism_metabolite_utilization.get(
-                                    METABOLITE_CHEBI_KEY
-                                )
+                                and phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)
                             ):
-                                chebi_key = (
-                                    f"{CHEBI_PREFIX}"
-                                    f"{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
-                                )
-                                metabolite_value = phys_and_metabolism_metabolite_utilization.get(
-                                    METABOLITE_KEY
-                                )
-                                positive_chebi_activity = [(chebi_key, metabolite_value)]
-                        else:
-                            print(
-                                f"{phys_and_metabolism_metabolite_utilization} data not recorded."
-                            )
-                        if positive_chebi_activity:
-                            meta_util_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v[0]]
-                                + [None] * (len(self.node_header) - 3)
-                                for k, v in positive_chebi_activity
-                            ]
-                            node_writer.writerows(meta_util_nodes_to_write)
+                                chebi_key = f"{CHEBI_PREFIX}{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
+                                metabolite_value = phys_and_metabolism_metabolite_utilization.get(METABOLITE_KEY)
+                                positive_chebi_activity = [(chebi_key, metabolite_value, phys_and_metabolism_metabolite_utilization.get(UTILIZATION_TYPE_TESTED))]
 
-                            for k, _ in positive_chebi_activity:
-                                meta_util_edges_to_write = [
-                                    ncbitaxon_id,
-                                    NCBI_TO_METABOLITE_UTILIZATION_EDGE,
-                                    k,
-                                    HAS_PARTICIPANT,
-                                    BACDIVE_PREFIX + key,
-                                ]
-                                edge_writer.writerow(meta_util_edges_to_write)
+                        else:
+                            print(f"{phys_and_metabolism_metabolite_utilization} data not recorded.")
+                        if positive_chebi_activity:
+                            for item in positive_chebi_activity:
+                                self.ncbitaxon_info[ncbitaxon_id]['assays'].add(item)
+
+                    # Also modify the corresponding code for writing nodes and edges at the end of processing
+                    if positive_chebi_activity:
+                        meta_util_nodes_to_write = [
+                            [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
+                            for k, v, _ in positive_chebi_activity
+                        ]
+                        node_writer.writerows(meta_util_nodes_to_write)
+
+                        for k, _, _ in positive_chebi_activity:
+                            meta_util_edges_to_write = [
+                                ncbitaxon_id,
+                                NCBI_TO_METABOLITE_UTILIZATION_EDGE,
+                                k,
+                                HAS_PARTICIPANT,
+                                BACDIVE_PREFIX + key,
+                            ]
+                            edge_writer.writerow(meta_util_edges_to_write)
+
 
                     if phys_and_metabolism_metabolite_production:
                         positive_chebi_production = None
@@ -899,14 +893,16 @@ class BacDiveTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        # After processing all strains, write accumulated data for each NCBITAXON
+        # At the end of the `run` method, inside the loop writing accumulated data for each NCBITAXON
         for ncbitaxon_id, info in self.ncbitaxon_info.items():
             for medium_id in info['media']:
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_MEDIUM_EDGE, medium_id, IS_GROWN_IN, ""])
             for assay_id in info['assays']:
-                assay_curie, assay_value, *assay_details = assay_id
+                # Unpacking the assay information stored as tuples
+                assay_curie, assay_value, utilization_type = assay_id
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_curie, HAS_PARTICIPANT, ""])
             # Repeat for other accumulated data
+
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

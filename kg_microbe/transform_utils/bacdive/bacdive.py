@@ -651,11 +651,12 @@ class BacDiveTransform(Transform):
                         # Repeat for other data types like assays, enzyme activities, etc.
 
                     # Uncomment and handle isolation_source code
-                    if isolation:
+                    if isolation and isinstance(isolation, str):
                         isolation_cleaned = isolation.replace(" ", "_").replace("-", "_")
                         isolation_source_curie = "environment:" + isolation_cleaned
                         node_writer.writerow([isolation_source_curie, "environment:", isolation] + [None] * (len(self.node_header) - 3))
                         edge_writer.writerow([ncbitaxon_id, "biolink:occurs_in", isolation_source_curie, "occurs_in", BACDIVE_PREFIX + key])
+
 
 
                     if ncbitaxon_id and medium_id:
@@ -925,13 +926,13 @@ class BacDiveTransform(Transform):
                     progress.update()
 
         # After processing all strains, write accumulated data for each NCBITAXON
-        # After processing all strains, write accumulated data for each NCBITAXON
         for ncbitaxon_id, info in self.ncbitaxon_info.items():
             for medium_id in info['media']:
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_MEDIUM_EDGE, medium_id, IS_GROWN_IN, ""])
             for assay_id in info['assays']:
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_id, HAS_PARTICIPANT, ""])
             # Repeat for other accumulated data
+
 
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])

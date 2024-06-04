@@ -112,7 +112,7 @@ class PdMetagenomicsTransform(Transform):
                     if not species_id:
                         species_id = MICROBE_NOT_FOUND_STR
                 self.microbe_labels_dict[species] = species_id
-                # Coverts 58 out of 79 significantly abundant microbes
+                # Converts 58 out of 79 significantly abundant microbes
 
             # Write to tmp file
             os.makedirs(PDMETAGENOMICS_TMP_DIR, exist_ok=True)
@@ -156,7 +156,7 @@ class PdMetagenomicsTransform(Transform):
 
     def get_disease_direction(self, pd_abundance, nhc_abundance):
         """
-        Determines direction of microbe-disease relationship.
+        Determine direction of microbe-disease relationship.
 
         :param pd_abundance: Abundance value in PD group.
         :type pd_abundance: float

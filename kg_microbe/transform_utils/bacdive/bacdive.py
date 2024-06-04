@@ -879,7 +879,7 @@ class BacDiveTransform(Transform):
                             ]
 
                             edge_writer.writerows(metabolism_edges_to_write)
-                    
+
                     # Uncomment and handle isolation_source code
                     all_values = []
                     if isinstance(isolation_source_categories, list):

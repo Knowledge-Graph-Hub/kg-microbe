@@ -210,7 +210,7 @@ class OntologyTransform(Transform):
                 unipathways_xref_dict = {}
             elif name == "mondo":
                 xref_filepath = MONDO_XREFS_FILEPATH
-            with open(nodes_file, "r") as nf, open(CHEBI_XREFS_FILEPATH, "w") as xref_file:
+            with open(nodes_file, "r") as nf, open(xref_filepath, "w") as xref_file:
 
                 for line in nf:
                     if line.startswith("id"):

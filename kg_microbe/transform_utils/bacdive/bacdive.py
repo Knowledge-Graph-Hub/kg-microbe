@@ -798,7 +798,6 @@ class BacDiveTransform(Transform):
                             edge_writer.writerow(meta_util_edges_to_write)
 
 
-
                     if phys_and_metabolism_metabolite_production:
                         positive_chebi_production = None
                         if isinstance(phys_and_metabolism_metabolite_production, list):
@@ -902,8 +901,7 @@ class BacDiveTransform(Transform):
                 assay_curie, assay_value, utilization_type = assay_id
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_curie, HAS_PARTICIPANT, ""])
             # Repeat for other accumulated data
-
-
+            
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

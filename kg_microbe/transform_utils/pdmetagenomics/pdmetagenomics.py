@@ -155,7 +155,14 @@ class PdMetagenomicsTransform(Transform):
                     )
 
     def get_disease_direction(self, pd_abundance, nhc_abundance):
+        """
+        Determines direction of microbe-disease relationship.
 
+        :param pd_abundance: Abundance value in PD group.
+        :type pd_abundance: float
+        :param nhc_abundance: Abundance value in NHC group.
+        :type nhc_abundance: float
+        """
         if pd_abundance > nhc_abundance:
             direction = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE
             relation = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF

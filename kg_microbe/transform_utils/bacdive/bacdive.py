@@ -749,9 +749,8 @@ class BacDiveTransform(Transform):
 
                     # Replace this section inside the loop processing each strain:
                     if phys_and_metabolism_metabolite_utilization:
-                        positive_chebi_activity = None
+                        positive_chebi_activity = []
                         if isinstance(phys_and_metabolism_metabolite_utilization, list):
-                            positive_chebi_activity = []
                             for metabolite in phys_and_metabolism_metabolite_utilization:
                                 if (
                                     METABOLITE_CHEBI_KEY in metabolite
@@ -797,6 +796,7 @@ class BacDiveTransform(Transform):
                                 BACDIVE_PREFIX + key,
                             ]
                             edge_writer.writerow(meta_util_edges_to_write)
+
 
 
                     if phys_and_metabolism_metabolite_production:
@@ -902,6 +902,7 @@ class BacDiveTransform(Transform):
                 assay_curie, assay_value, utilization_type = assay_id
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_curie, HAS_PARTICIPANT, ""])
             # Repeat for other accumulated data
+
 
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])

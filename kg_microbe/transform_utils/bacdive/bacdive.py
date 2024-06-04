@@ -615,12 +615,11 @@ class BacDiveTransform(Transform):
                                     ):
                                         chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
                                         positive_chebi_activity.append(
-                                            {
-                                                chebi_key: [
-                                                    metabolite[METABOLITE_KEY],
-                                                    metabolite.get(UTILIZATION_TYPE_TESTED),
-                                                ]
-                                            }
+                                            (
+                                                chebi_key,
+                                                metabolite[METABOLITE_KEY],
+                                                metabolite.get(UTILIZATION_TYPE_TESTED)
+                                            )
                                         )
 
                             elif isinstance(phys_and_metabolism_metabolite_utilization, dict):
@@ -640,7 +639,8 @@ class BacDiveTransform(Transform):
                                     metabolite_value = phys_and_metabolism_metabolite_utilization.get(
                                         METABOLITE_KEY
                                     )
-                                    positive_chebi_activity = [{chebi_key: metabolite_value}]
+                                    positive_chebi_activity = [(chebi_key, metabolite_value)]
+
                             else:
                                 print(
                                     f"{phys_and_metabolism_metabolite_utilization} data not recorded."
@@ -656,8 +656,6 @@ class BacDiveTransform(Transform):
                         isolation_source_curie = "environment:" + isolation_cleaned
                         node_writer.writerow([isolation_source_curie, "environment:", isolation] + [None] * (len(self.node_header) - 3))
                         edge_writer.writerow([ncbitaxon_id, "biolink:occurs_in", isolation_source_curie, "occurs_in", BACDIVE_PREFIX + key])
-
-
 
                     if ncbitaxon_id and medium_id:
                         # Combine list creation and extension
@@ -732,7 +730,7 @@ class BacDiveTransform(Transform):
                         postive_activity_enzymes = None
                         if isinstance(phys_and_metabolism_enzymes, list):
                             postive_activity_enzymes = [
-                                {f"{EC_PREFIX}{enzyme.get(EC_KEY)}": f"{enzyme.get('value')}"}
+                                (f"{EC_PREFIX}{enzyme.get(EC_KEY)}", f"{enzyme.get('value')}")
                                 for enzyme in phys_and_metabolism_enzymes
                                 if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN and enzyme.get(EC_KEY)
                             ]
@@ -741,32 +739,13 @@ class BacDiveTransform(Transform):
                             if activity == PLUS_SIGN and phys_and_metabolism_enzymes.get(EC_KEY):
                                 ec_value = f"{EC_PREFIX}{phys_and_metabolism_enzymes.get(EC_KEY)}"
                                 value = phys_and_metabolism_enzymes.get("value")
-                                postive_activity_enzymes = [{ec_value: value}]
+                                postive_activity_enzymes = [(ec_value, value)]
 
                         else:
                             print(f"{phys_and_metabolism_enzymes} data not recorded.")
                         if postive_activity_enzymes:
-                            enzyme_nodes_to_write = [
-                                [k, PHENOTYPIC_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                                for inner_dict in postive_activity_enzymes
-                                for k, v in inner_dict.items()
-                            ]
-                            enzyme_nodes_to_write.append(
-                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label]
-                                + [None] * (len(self.node_header) - 3)
-                            )
-                            node_writer.writerows(enzyme_nodes_to_write)
-
-                            for inner_dict in postive_activity_enzymes:
-                                for k, _ in inner_dict.items():
-                                    enzyme_edges_to_write = [
-                                        ncbitaxon_id,
-                                        NCBI_TO_ENZYME_EDGE,
-                                        k,
-                                        HAS_PHENOTYPE,
-                                        BACDIVE_PREFIX + key,
-                                    ]
-                                    edge_writer.writerow(enzyme_edges_to_write)
+                            for item in postive_activity_enzymes:
+                                self.ncbitaxon_info[ncbitaxon_id]['assays'].add(item)
 
                     if phys_and_metabolism_metabolite_utilization:
                         positive_chebi_activity = None
@@ -779,12 +758,11 @@ class BacDiveTransform(Transform):
                                 ):
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
                                     positive_chebi_activity.append(
-                                        {
-                                            chebi_key: [
-                                                metabolite[METABOLITE_KEY],
-                                                metabolite.get(UTILIZATION_TYPE_TESTED),
-                                            ]
-                                        }
+                                        (
+                                            chebi_key,
+                                            metabolite[METABOLITE_KEY],
+                                            metabolite.get(UTILIZATION_TYPE_TESTED)
+                                        )
                                     )
 
                         elif isinstance(phys_and_metabolism_metabolite_utilization, dict):
@@ -804,7 +782,7 @@ class BacDiveTransform(Transform):
                                 metabolite_value = phys_and_metabolism_metabolite_utilization.get(
                                     METABOLITE_KEY
                                 )
-                                positive_chebi_activity = [{chebi_key: metabolite_value}]
+                                positive_chebi_activity = [(chebi_key, metabolite_value)]
                         else:
                             print(
                                 f"{phys_and_metabolism_metabolite_utilization} data not recorded."
@@ -813,21 +791,19 @@ class BacDiveTransform(Transform):
                             meta_util_nodes_to_write = [
                                 [k, METABOLITE_CATEGORY, v[0]]
                                 + [None] * (len(self.node_header) - 3)
-                                for inner_dict in positive_chebi_activity
-                                for k, v in inner_dict.items()
+                                for k, v in positive_chebi_activity
                             ]
                             node_writer.writerows(meta_util_nodes_to_write)
 
-                            for inner_dict in positive_chebi_activity:
-                                for k, _ in inner_dict.items():
-                                    meta_util_edges_to_write = [
-                                        ncbitaxon_id,
-                                        NCBI_TO_METABOLITE_UTILIZATION_EDGE,
-                                        k,
-                                        HAS_PARTICIPANT,
-                                        BACDIVE_PREFIX + key,
-                                    ]
-                                    edge_writer.writerow(meta_util_edges_to_write)
+                            for k, _ in positive_chebi_activity:
+                                meta_util_edges_to_write = [
+                                    ncbitaxon_id,
+                                    NCBI_TO_METABOLITE_UTILIZATION_EDGE,
+                                    k,
+                                    HAS_PARTICIPANT,
+                                    BACDIVE_PREFIX + key,
+                                ]
+                                edge_writer.writerow(meta_util_edges_to_write)
 
                     if phys_and_metabolism_metabolite_production:
                         positive_chebi_production = None
@@ -840,7 +816,7 @@ class BacDiveTransform(Transform):
                                 ):
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
                                     positive_chebi_production.append(
-                                        {chebi_key: metabolite[METABOLITE_KEY]}
+                                        (chebi_key, metabolite[METABOLITE_KEY])
                                     )
 
                         elif isinstance(phys_and_metabolism_metabolite_production, dict):
@@ -860,7 +836,7 @@ class BacDiveTransform(Transform):
                                 metabolite_value = phys_and_metabolism_metabolite_production.get(
                                     METABOLITE_KEY
                                 )
-                                positive_chebi_production = [{chebi_key: metabolite_value}]
+                                positive_chebi_production = [(chebi_key, metabolite_value)]
 
                         else:
                             print(f"{phys_and_metabolism_metabolite_production} data not recorded.")
@@ -868,21 +844,19 @@ class BacDiveTransform(Transform):
                         if positive_chebi_production:
                             metabolite_production_nodes_to_write = [
                                 [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                                for inner_dict in positive_chebi_production
-                                for k, v in inner_dict.items()
+                                for k, v in positive_chebi_production
                             ]
                             node_writer.writerows(metabolite_production_nodes_to_write)
 
-                            for inner_dict in positive_chebi_production:
-                                for k, _ in inner_dict.items():
-                                    metabolite_production_edges_to_write = [
-                                        ncbitaxon_id,
-                                        NCBI_TO_METABOLITE_PRODUCTION_EDGE,
-                                        k,
-                                        BIOLOGICAL_PROCESS,
-                                        BACDIVE_PREFIX + key,
-                                    ]
-                                    edge_writer.writerow(metabolite_production_edges_to_write)
+                            for k, _ in positive_chebi_production:
+                                metabolite_production_edges_to_write = [
+                                    ncbitaxon_id,
+                                    NCBI_TO_METABOLITE_PRODUCTION_EDGE,
+                                    k,
+                                    BIOLOGICAL_PROCESS,
+                                    BACDIVE_PREFIX + key,
+                                ]
+                                edge_writer.writerow(metabolite_production_edges_to_write)
 
                     if phys_and_metabolism_API:
                         values = self._flatten_to_dicts(list(phys_and_metabolism_API.values()))
@@ -930,10 +904,9 @@ class BacDiveTransform(Transform):
             for medium_id in info['media']:
                 edge_writer.writerow([ncbitaxon_id, NCBI_TO_MEDIUM_EDGE, medium_id, IS_GROWN_IN, ""])
             for assay_id in info['assays']:
-                edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_id, HAS_PARTICIPANT, ""])
+                assay_curie, assay_value, *assay_details = assay_id
+                edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_curie, HAS_PARTICIPANT, ""])
             # Repeat for other accumulated data
-
-
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

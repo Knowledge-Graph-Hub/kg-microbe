@@ -560,8 +560,12 @@ DISBIOME_ORGANISM_NAME = "organism_name"
 DISIOME_QUALITATIVE_OUTCOME = "qualitative_outcome"
 DISBIOME_ELEVATED = "Elevated"
 DISBIOME_REDUCED = "Reduced"
-ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE = "biolink:associated_with_increased_likelihood_of"
-ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE = "biolink:associated_with_decreased_likelihood_of"
+ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE = (
+    "biolink:associated_with_increased_likelihood_of"
+)
+ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE = (
+    "biolink:associated_with_decreased_likelihood_of"
+)
 ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF = ASSOCIATED_WITH
 ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF = ASSOCIATED_WITH
 

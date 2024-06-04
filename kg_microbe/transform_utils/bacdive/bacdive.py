@@ -158,6 +158,7 @@ class BacDiveTransform(Transform):
         source_name = "BacDive"
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
+        self.ncbitaxon_info = {}  # To accumulate data for each NCBITaxon
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -594,6 +595,67 @@ class BacDiveTransform(Transform):
                     if not all(item is None for item in phys_and_meta_data[1:]):
                         writer_2.writerow(phys_and_meta_data)
 
+                    if ncbitaxon_id:
+                        if ncbitaxon_id not in self.ncbitaxon_info:
+                            self.ncbitaxon_info[ncbitaxon_id] = {
+                                'media': set(),
+                                'assays': set(),
+                                # Add other fields as necessary
+                            }
+                        if medium_id:
+                            self.ncbitaxon_info[ncbitaxon_id]['media'].add(medium_id)
+                        if phys_and_metabolism_metabolite_utilization:
+                            positive_chebi_activity = None
+                            if isinstance(phys_and_metabolism_metabolite_utilization, list):
+                                positive_chebi_activity = []
+                                for metabolite in phys_and_metabolism_metabolite_utilization:
+                                    if (
+                                        METABOLITE_CHEBI_KEY in metabolite
+                                        and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
+                                    ):
+                                        chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
+                                        positive_chebi_activity.append(
+                                            {
+                                                chebi_key: [
+                                                    metabolite[METABOLITE_KEY],
+                                                    metabolite.get(UTILIZATION_TYPE_TESTED),
+                                                ]
+                                            }
+                                        )
+
+                            elif isinstance(phys_and_metabolism_metabolite_utilization, dict):
+                                utilization_activity = phys_and_metabolism_metabolite_utilization.get(
+                                    UTILIZATION_ACTIVITY
+                                )
+                                if (
+                                    utilization_activity == PLUS_SIGN
+                                    and phys_and_metabolism_metabolite_utilization.get(
+                                        METABOLITE_CHEBI_KEY
+                                    )
+                                ):
+                                    chebi_key = (
+                                        f"{CHEBI_PREFIX}"
+                                        f"{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
+                                    )
+                                    metabolite_value = phys_and_metabolism_metabolite_utilization.get(
+                                        METABOLITE_KEY
+                                    )
+                                    positive_chebi_activity = [{chebi_key: metabolite_value}]
+                            else:
+                                print(
+                                    f"{phys_and_metabolism_metabolite_utilization} data not recorded."
+                                )
+                            if positive_chebi_activity:
+                                for item in positive_chebi_activity:
+                                    self.ncbitaxon_info[ncbitaxon_id]['assays'].add(item)
+                        # Repeat for other data types like assays, enzyme activities, etc.
+
+                    # Uncomment and handle isolation_source code
+                    if isolation:
+                        isolation_source_curie = "environment:" + isolation.replace(" ", "_")
+                        node_writer.writerow([isolation_source_curie, "environment:", isolation] + [None] * (len(self.node_header) - 3))
+                        edge_writer.writerow([ncbitaxon_id, "biolink:occurs_in", isolation_source_curie, "occurs_in", BACDIVE_PREFIX + key])
+
                     if ncbitaxon_id and medium_id:
                         # Combine list creation and extension
                         nodes_data_to_write = [
@@ -707,21 +769,7 @@ class BacDiveTransform(Transform):
                         positive_chebi_activity = None
                         if isinstance(phys_and_metabolism_metabolite_utilization, list):
                             positive_chebi_activity = []
-                            # no_chebi_activity = defaultdict(list)
                             for metabolite in phys_and_metabolism_metabolite_utilization:
-                                # ! NO CURIE associated to metabolite.
-                                # if (
-                                #     METABOLITE_CHEBI_KEY not in metabolite
-                                #     and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
-                                # ):
-                                #     no_chebi_activity.setdefault("NO_CURIE", []).append(
-                                #         [
-                                #             metabolite[METABOLITE_KEY],
-                                #             metabolite.get(UTILIZATION_TYPE_TESTED),
-                                #         ]
-                                #     )
-                                #     positive_chebi_activity.append(no_chebi_activity)
-
                                 if (
                                     METABOLITE_CHEBI_KEY in metabolite
                                     and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
@@ -782,7 +830,6 @@ class BacDiveTransform(Transform):
                         positive_chebi_production = None
                         if isinstance(phys_and_metabolism_metabolite_production, list):
                             positive_chebi_production = []
-                            # no_chebi_production = defaultdict(list)
                             for metabolite in phys_and_metabolism_metabolite_production:
                                 if (
                                     METABOLITE_CHEBI_KEY in metabolite
@@ -792,12 +839,6 @@ class BacDiveTransform(Transform):
                                     positive_chebi_production.append(
                                         {chebi_key: metabolite[METABOLITE_KEY]}
                                     )
-                                # ! NO CURIE associated to metabolite.
-                                # if (
-                                #     METABOLITE_CHEBI_KEY not in metabolite and metabolite.get(PRODUCTION_KEY) == "yes"
-                                # ):
-                                #     no_chebi_production.setdefault("NO_CURIE", []).append(metabolite[METABOLITE_KEY])
-                                #     positive_chebi_production.append(no_chebi_production)
 
                         elif isinstance(phys_and_metabolism_metabolite_production, dict):
                             production = phys_and_metabolism_metabolite_production.get(
@@ -880,6 +921,14 @@ class BacDiveTransform(Transform):
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
+
+        # After processing all strains, write accumulated data for each NCBITAXON
+        for ncbitaxon_id, info in self.ncbitaxon_info.items():
+            for medium_id in info['media']:
+                edge_writer.writerow([ncbitaxon_id, NCBI_TO_MEDIUM_EDGE, medium_id, IS_GROWN_IN, ""])
+            for assay_id in info['assays']:
+                edge_writer.writerow([ncbitaxon_id, NCBI_TO_METABOLITE_UTILIZATION_EDGE, assay_id, HAS_PARTICIPANT, ""])
+            # Repeat for other accumulated data
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

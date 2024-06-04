@@ -371,34 +371,6 @@ class BacDiveTransform(Transform):
                         ISOLATION_SOURCE_CATEGORIES, []
                     )
 
-                    # Uncomment and handle isolation_source code
-                    # if isinstance(isolation_source_categories, dict):
-                    all_values = []
-                    # print('isolation_source_categories:',isolation_source_categories)
-                    if isinstance(isolation_source_categories, list):
-                        for category in isolation_source_categories:
-                            all_values.extend(category.values())
-                    elif isinstance(isolation_source_categories, dict):
-                        all_values.extend(category.values())
-                    all_values = [
-                        ISOLATION_SOURCE_PREFIX
-                        + i.replace(" ", "_").replace("-", "_").replace("#", "")
-                        for i in all_values
-                    ]
-                    for isol_source in all_values:
-                        node_writer.writerow(
-                            [isol_source, "", isolation] + [None] * (len(self.node_header) - 3)
-                        )
-                        edge_writer.writerow(
-                            [
-                                ncbitaxon_id,
-                                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                isol_source,
-                                LOCATION_OF,
-                                self.source_name,
-                            ]
-                        )
-
                     # if value.get(ISOLATION_SAMPLING_ENV_INFO):
                     #     # TODO: Get information from here.
                     #     import pdb
@@ -907,6 +879,32 @@ class BacDiveTransform(Transform):
                             ]
 
                             edge_writer.writerows(metabolism_edges_to_write)
+                    
+                    # Uncomment and handle isolation_source code
+                    all_values = []
+                    if isinstance(isolation_source_categories, list):
+                        for category in isolation_source_categories:
+                            all_values.extend(category.values())
+                    elif isinstance(isolation_source_categories, dict):
+                        all_values.extend(category.values())
+                    all_values = [
+                        ISOLATION_SOURCE_PREFIX
+                        + i.replace(" ", "_").replace("-", "_").replace("#", "")
+                        for i in all_values
+                    ]
+                    for isol_source in all_values:
+                        node_writer.writerow(
+                            [isol_source, "", isolation] + [None] * (len(self.node_header) - 3)
+                        )
+                        edge_writer.writerow(
+                            [
+                                ncbitaxon_id,
+                                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                isol_source,
+                                LOCATION_OF,
+                                self.source_name,
+                            ]
+                        )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

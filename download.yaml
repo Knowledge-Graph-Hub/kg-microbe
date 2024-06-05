@@ -145,6 +145,13 @@
   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
   local_name: uniprot_proteomes.tar.gz
 
+#
+# Uniprot Human
+#
+-
+  url: https://drive.google.com/file/d/1XLtLV6ilFVR-sVjHRmpJ0igStI2vdUNu/view?usp=sharing 
+  local_name: uniprot_human.tar.gz
+
 # 
 # Unipathways
 # 

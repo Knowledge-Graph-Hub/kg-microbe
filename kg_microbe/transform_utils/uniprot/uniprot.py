@@ -60,6 +60,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_GENE_PRIMARY_COLUMN_NAME,
     UNIPROT_GENOME_FEATURES,
     UNIPROT_GO_COLUMN_NAME,
+    UNIPROT_HUMAN_FILE,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
     UNIPROT_PROTEIN_ID_COLUMN_NAME,
@@ -626,7 +627,6 @@ class UniprotTransform(Transform):
 
         # Initialize the list to store matching members' content
         matching_members_content = []
-
         with tarfile.open(tar_file, "r:gz") as tar:
             if relevant_files_list_exists:
                 members = [
@@ -704,73 +704,86 @@ class UniprotTransform(Transform):
 
         self.write_obsolete_file_header()
 
-        tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+        microbes_tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+        human_tar_file = RAW_DATA_DIR / UNIPROT_HUMAN_FILE
         progress_class = tqdm if show_status else DummyTqdm
-        all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
-        member_header = all_lines[0].split("\t")
-        chunk_size = len(all_lines) // (chunk_size_denominator)
-        print(
-            f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
-        )
-        line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
-
-        with Pool(n_workers) as pool:
-            results = pool.starmap(
-                process_lines,
-                [
-                    (
-                        line_chunk,
-                        member_header,
-                        self.node_header,
-                        self.edge_header,
-                        f"{UNIPROT_TMP_NE_DIR}/node_{uuid.uuid4()}.tsv",
-                        f"{UNIPROT_TMP_NE_DIR}/edge_{uuid.uuid4()}.tsv",
-                        progress_class,
-                        self.go_category_trees_dict,
-                        self.mondo_xrefs_dict,
-                        self.mondo_gene_dict,
-                    )
-                    for line_chunk in line_chunks
-                ],
+        for tar_file in [microbes_tar_file, human_tar_file]:
+            all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
+            member_header = all_lines[0].split("\t")
+            chunk_size = len(all_lines) // (chunk_size_denominator)
+            print(
+                f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
             )
-            results = [result for result in results if result != (None, None)]
+            line_chunks = [
+                all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)
+            ]
 
-        # Combine individual node and edge files
-        combined_node_filename = self.output_node_file
-        combined_edge_filename = self.output_edge_file
+            with Pool(n_workers) as pool:
+                results = pool.starmap(
+                    process_lines,
+                    [
+                        (
+                            line_chunk,
+                            member_header,
+                            self.node_header,
+                            self.edge_header,
+                            f"{UNIPROT_TMP_NE_DIR}/node_{uuid.uuid4()}.tsv",
+                            f"{UNIPROT_TMP_NE_DIR}/edge_{uuid.uuid4()}.tsv",
+                            progress_class,
+                            self.go_category_trees_dict,
+                            self.mondo_xrefs_dict,
+                            self.mondo_gene_dict,
+                        )
+                        for line_chunk in line_chunks
+                    ],
+                )
+                results = [result for result in results if result != (None, None)]
 
-        with open(combined_node_filename, "w", newline="") as cnf, open(
-            combined_edge_filename, "w", newline=""
-        ) as cef:
-            node_writer = csv.writer(cnf, delimiter="\t")
-            edge_writer = csv.writer(cef, delimiter="\t")
+            # Combine individual node and edge files
+            combined_node_filename = self.output_node_file
+            combined_edge_filename = self.output_edge_file
+            if tar_file == human_tar_file:
+                combined_node_filename = str(combined_node_filename).replace(
+                    self.source_name, self.source_name + "_human"
+                )
+                combined_edge_filename = str(combined_edge_filename).replace(
+                    self.source_name, self.source_name + "_human"
+                )
+                combined_node_filename = Path(combined_node_filename)
+                combined_edge_filename = Path(combined_edge_filename)
 
-            # Write headers
-            node_writer.writerow(self.node_header)
-            edge_writer.writerow(self.edge_header)
+            with open(combined_node_filename, "w", newline="") as cnf, open(
+                combined_edge_filename, "w", newline=""
+            ) as cef:
+                node_writer = csv.writer(cnf, delimiter="\t")
+                edge_writer = csv.writer(cef, delimiter="\t")
 
-            for node_file, edge_file in progress_class(
-                results, desc="Combining node and edge files"
-            ):
-                # Append node data
-                if node_file:
-                    with open(node_file, "r") as nf:
-                        next(nf)  # Skip header
-                        node_writer.writerows(csv.reader(nf, delimiter="\t"))
-                    # Remove temporary files
-                    os.remove(node_file)
+                # Write headers
+                node_writer.writerow(self.node_header)
+                edge_writer.writerow(self.edge_header)
 
-                if edge_file:
-                    # Append edge data
-                    with open(edge_file, "r") as ef:
-                        next(ef)  # Skip header
-                        edge_writer.writerows(csv.reader(ef, delimiter="\t"))
-                    # Remove temporary files
-                    os.remove(edge_file)
+                for node_file, edge_file in progress_class(
+                    results, desc="Combining node and edge files"
+                ):
+                    # Append node data
+                    if node_file:
+                        with open(node_file, "r") as nf:
+                            next(nf)  # Skip header
+                            node_writer.writerows(csv.reader(nf, delimiter="\t"))
+                        # Remove temporary files
+                        os.remove(node_file)
 
-        drop_duplicates(self.output_node_file)
-        drop_duplicates(self.output_edge_file)
-        drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by_column=GO_TERM_COLUMN)
+                    if edge_file:
+                        # Append edge data
+                        with open(edge_file, "r") as ef:
+                            next(ef)  # Skip header
+                            edge_writer.writerows(csv.reader(ef, delimiter="\t"))
+                        # Remove temporary files
+                        os.remove(edge_file)
+
+            drop_duplicates(self.output_node_file)
+            drop_duplicates(self.output_edge_file)
+            drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by_column=GO_TERM_COLUMN)
 
     def write_obsolete_file_header(self):
         """Write obsolete header to file."""

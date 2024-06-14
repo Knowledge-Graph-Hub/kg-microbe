@@ -138,19 +138,26 @@
   url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
   local_name: epm.json
 
-#
-# Uniprot
-#
--
-  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
-  local_name: uniprot_proteomes.tar.gz
+# #
+# # Uniprot
+# #
+# -
+#   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
+#   local_name: uniprot_proteomes.tar.gz
 
 #
 # Uniprot Human
 #
 -
-  url: https://drive.google.com/file/d/1XLtLV6ilFVR-sVjHRmpJ0igStI2vdUNu/view?usp=sharing 
+  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_human.tar.gz 
   local_name: uniprot_human.tar.gz
+
+  #
+# Uniprot Human Disease Microbes
+#
+-
+  url: https://kghub.io/frozen_incoming_data/uniprot/human_disease_uniprot.tar.gz 
+  local_name: uniprot_proteomes.tar.gz
 
 # 
 # Unipathways

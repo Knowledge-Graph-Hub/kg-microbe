@@ -274,7 +274,7 @@ class BacDiveTransform(Transform):
             FULL_SCIENTIFIC_NAME,
             STRAIN_DESIGNATION,
             TYPE_STRAIN,
-            LPSN
+            LPSN,
         ]
 
         # make directory in data/transformed

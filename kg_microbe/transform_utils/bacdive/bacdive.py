@@ -48,6 +48,7 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_PREFIX,
+    CLASS,
     COLONY_MORPHOLOGY,
     COMPOUND_PRODUCTION,
     CULTURE_AND_GROWTH_CONDITIONS,
@@ -56,6 +57,7 @@ from kg_microbe.transform_utils.constants import (
     CULTURE_NAME,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
+    DOMAIN,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
     EC_KEY,
@@ -66,9 +68,12 @@ from kg_microbe.transform_utils.constants import (
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
     EXTERNAL_LINKS_CULTURE_NUMBER_COLUMN,
+    FAMILY,
     FATTY_ACID_PROFILE,
+    FULL_SCIENTIFIC_NAME,
     GENERAL,
     GENERAL_DESCRIPTION,
+    GENUS,
     HALOPHILY,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,
@@ -106,6 +111,7 @@ from kg_microbe.transform_utils.constants import (
     MULTIMEDIA,
     MUREIN,
     NAME_COLUMN,
+    NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
     NCBI_TO_ENZYME_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
@@ -119,9 +125,11 @@ from kg_microbe.transform_utils.constants import (
     NUTRITION_TYPE,
     OBJECT_ID_COLUMN,
     OBSERVATION,
+    ORDER,
     OXYGEN_TOLERANCE,
     PARTICIPATES_IN,
     PHENOTYPIC_CATEGORY,
+    PHYLUM,
     PHYSIOLOGY_AND_METABOLISM,
     PIGMENTATION,
     PLUS_SIGN,
@@ -134,11 +142,13 @@ from kg_microbe.transform_utils.constants import (
     SPECIES,
     SPORE_FORMATION,
     STRAIN,
+    STRAIN_DESIGNATION,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
     TOLERANCE,
+    TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
 )
@@ -250,6 +260,21 @@ class BacDiveTransform(Transform):
             NUTRITION_TYPE,
         ]
 
+        NAME_TAX_CLASSIFICATION_COL_NAMES = [
+            BACDIVE_ID_COLUMN,
+            NCBITAXON_ID_COLUMN,
+            DOMAIN,
+            PHYLUM,
+            CLASS,
+            ORDER,
+            FAMILY,
+            GENUS,
+            SPECIES,
+            FULL_SCIENTIFIC_NAME,
+            STRAIN_DESIGNATION,
+            TYPE_STRAIN,
+        ]
+
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -257,6 +282,7 @@ class BacDiveTransform(Transform):
             open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1,
             open(str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w") as tsvfile_2,
             open(str(BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE), "r") as tsvfile_3,
+            open(str(BACDIVE_TMP_DIR / "bacdive_name_tax_classification.tsv"), "w") as tsvfile_4,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
             open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
@@ -266,6 +292,8 @@ class BacDiveTransform(Transform):
             writer.writerow(COLUMN_NAMES)
             writer_2 = csv.writer(tsvfile_2, delimiter="\t")
             writer_2.writerow(PHYS_AND_META_COL_NAMES)
+            writer_3 = csv.writer(tsvfile_4, delimiter="\t")
+            writer_3.writerow(NAME_TAX_CLASSIFICATION_COL_NAMES)
 
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
@@ -398,6 +426,7 @@ class BacDiveTransform(Transform):
                     phys_and_metabolism_enzymes = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
                         ENZYMES
                     )
+                    name_tax_classification = value.get(NAME_TAX_CLASSIFICATION, {})
 
                     phys_and_metabolism_metabolite_utilization = value.get(
                         PHYSIOLOGY_AND_METABOLISM, {}
@@ -596,6 +625,24 @@ class BacDiveTransform(Transform):
 
                     if not all(item is None for item in phys_and_meta_data[1:]):
                         writer_2.writerow(phys_and_meta_data)
+
+                    name_tax_classification_data = [
+                        BACDIVE_PREFIX + key,
+                        ncbitaxon_id,
+                        name_tax_classification.get(DOMAIN),
+                        name_tax_classification.get(PHYLUM),
+                        name_tax_classification.get(CLASS),
+                        name_tax_classification.get(ORDER),
+                        name_tax_classification.get(FAMILY),
+                        name_tax_classification.get(GENUS),
+                        name_tax_classification.get(SPECIES),
+                        name_tax_classification.get(FULL_SCIENTIFIC_NAME),
+                        name_tax_classification.get(STRAIN_DESIGNATION),
+                        name_tax_classification.get(TYPE_STRAIN),
+                    ]
+
+                    if not all(item is None for item in name_tax_classification_data[2:]):
+                        writer_3.writerow(name_tax_classification_data)
 
                     if ncbitaxon_id and medium_id:
                         # Combine list creation and extension

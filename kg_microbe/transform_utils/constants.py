@@ -47,6 +47,7 @@ GENUS = "genus"
 FULL_SCIENTIFIC_NAME = "full scientific name"
 STRAIN_DESIGNATION = "strain designation"
 TYPE_STRAIN = "type strain"
+LPSN = "LPSN"
 
 CULTURE_AND_GROWTH_CONDITIONS = "Culture and growth conditions"
 CULTURE_MEDIUM = "culture medium"

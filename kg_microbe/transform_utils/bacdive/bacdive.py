@@ -88,6 +88,7 @@ from kg_microbe.transform_utils.constants import (
     KEYWORDS,
     KEYWORDS_COLUMN,
     LOCATION_OF,
+    LPSN,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
     MEDIADIVE_URL_COLUMN,
@@ -273,6 +274,7 @@ class BacDiveTransform(Transform):
             FULL_SCIENTIFIC_NAME,
             STRAIN_DESIGNATION,
             TYPE_STRAIN,
+            LPSN
         ]
 
         # make directory in data/transformed
@@ -639,6 +641,7 @@ class BacDiveTransform(Transform):
                         name_tax_classification.get(FULL_SCIENTIFIC_NAME),
                         name_tax_classification.get(STRAIN_DESIGNATION),
                         name_tax_classification.get(TYPE_STRAIN),
+                        name_tax_classification.get(LPSN),
                     ]
 
                     if not all(item is None for item in name_tax_classification_data[2:]):

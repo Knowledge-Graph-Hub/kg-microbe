@@ -66,7 +66,7 @@
 # HP
 #
 -
-  url: https://purl.obolibrary.org/obo/mondo/hp.json
+  url: https://purl.obolibrary.org/obo/hp/hp.json
   local_name: hp.json
 
 # **** Data sources ****

@@ -636,7 +636,7 @@ class BacDiveTransform(Transform):
                     lpsn = name_tax_classification.get(LPSN)
                     synonyms = lpsn.get(SYNONYMS, {}) if SYNONYMS in lpsn else None
                     if isinstance(synonyms, list):
-                        synonym_parsed = ", ".join(synonym.get(SYNONYM, {}) for synonym in synonyms)
+                        synonym_parsed = " | ".join(synonym.get(SYNONYM, {}) for synonym in synonyms)
                     elif isinstance(synonyms, dict):
                         synonym_parsed = synonyms.get(SYNONYM, {})
                     else:
@@ -982,12 +982,21 @@ class BacDiveTransform(Transform):
                         curated_strain_label = re.sub(r"\s+", " ", curated_strain_label)
                         curated_strain_label = re.sub(r"<[^>]+>", "", curated_strain_label)
                         curated_strain_label = re.sub(r"\s+", " ", curated_strain_label).strip()
-                        node_writer.writerows(
-                            [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label]
-                            + [None] * (len(self.node_header) - 3)
-                            for curated_strain_id in curated_strain_ids
-                            if curated_strain_id
-                        )
+                        if synonym_parsed is None:
+                            node_writer.writerows(
+                                [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label]
+                                + [None] * (len(self.node_header) - 3)
+                                for curated_strain_id in curated_strain_ids
+                                if curated_strain_id
+                            )
+                        else:
+                            node_writer.writerows(
+                                [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label]
+                                + [None] * 3 
+                                + [synonym_parsed] + [None] * (len(self.node_header) - 7)
+                                for curated_strain_id in curated_strain_ids
+                                if curated_strain_id
+                            )
                         edge_writer.writerows(
                             [
                                 STRAIN_PREFIX + curated_strain_id,

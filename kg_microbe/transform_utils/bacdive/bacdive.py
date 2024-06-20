@@ -948,29 +948,28 @@ class BacDiveTransform(Transform):
                         name_tax_classification
                         and name_tax_classification.get(TYPE_STRAIN) == "yes"
                     ):
+                        translation_table = str.maketrans({" ": "-", '"': "", "(": "", ")": ""})
                         if "," in name_tax_classification.get(STRAIN_DESIGNATION, ""):
                             strain_designations = name_tax_classification.get(
                                 STRAIN_DESIGNATION
                             ).split(", ")
                             curated_strain_ids = [
-                                strain_designation.strip()
-                                .replace(" ", "-")
-                                .replace('"', "")
-                                .replace("(", "")
-                                .replace(")", "")
+                                strain_designation.strip().translate(translation_table)
                                 for strain_designation in strain_designations
                             ]
+
                         else:
+                            if ncbitaxon_id:
+                                curated_strain_id_suffix = ncbitaxon_id.replace(":","_")
+                            else:
+                                curated_strain_id_suffix = "NO_NCBITaxon_ID"
+                            
                             curated_strain_ids = [
-                                name_tax_classification.get(
-                                    STRAIN_DESIGNATION, f"of_{ncbitaxon_id}"
-                                )
+                                name_tax_classification.get(STRAIN_DESIGNATION, f"of_{curated_strain_id_suffix}")
                                 .strip()
-                                .replace(" ", "-")
-                                .replace('"', "")
-                                .replace("(", "")
-                                .replace(")", "")
+                                .translate(translation_table)
                             ]
+                            
                         curated_strain_label = (
                             name_tax_classification.get(
                                 FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"

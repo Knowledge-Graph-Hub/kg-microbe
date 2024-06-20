@@ -65,6 +65,7 @@ from kg_microbe.transform_utils.constants import (
     ENZYME_TO_ASSAY_EDGE,
     ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
+    EXACT_MATCH,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
     EXTERNAL_LINKS_CULTURE_NUMBER_COLUMN,
@@ -140,6 +141,7 @@ from kg_microbe.transform_utils.constants import (
     RISK_ASSESSMENT,
     RISK_ASSESSMENT_COLUMN,
     SAFETY_INFO,
+    SAME_AS_PREDICATE,
     SPECIES,
     SPORE_FORMATION,
     STRAIN,
@@ -963,6 +965,19 @@ class BacDiveTransform(Transform):
                         edge_writer.writerow(
                             [STRAIN_PREFIX + curated_strain_id, SUBCLASS_PREDICATE, ncbitaxon_id, RDFS_SUBCLASS_OF, BACDIVE_PREFIX + key] for curated_strain_id in curated_strain_ids
                         )
+                        # Equivalencies in strain IDs established as edges
+                        if len(curated_strain_ids) > 1:
+                            for i in range(len(curated_strain_ids)):
+                                for j in range(i + 1, len(curated_strain_ids)):
+                                    edge_writer.writerow(
+                                        [
+                                            STRAIN_PREFIX + curated_strain_ids[i],
+                                            SAME_AS_PREDICATE,
+                                            STRAIN_PREFIX + curated_strain_ids[j],
+                                            EXACT_MATCH,
+                                            BACDIVE_PREFIX + key,
+                                        ]
+                                    )
 
                     # Uncomment and handle isolation_source code
                     all_values = []

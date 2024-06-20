@@ -48,6 +48,8 @@ FULL_SCIENTIFIC_NAME = "full scientific name"
 STRAIN_DESIGNATION = "strain designation"
 TYPE_STRAIN = "type strain"
 LPSN = "LPSN"
+SYNONYMS = "synonyms"
+SYNONYM = "synonym"
 
 CULTURE_AND_GROWTH_CONDITIONS = "Culture and growth conditions"
 CULTURE_MEDIUM = "culture medium"

@@ -148,6 +148,8 @@ from kg_microbe.transform_utils.constants import (
     SUBCLASS_PREDICATE,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
+    SYNONYM,
+    SYNONYMS,
     TOLERANCE,
     TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
@@ -274,6 +276,7 @@ class BacDiveTransform(Transform):
             FULL_SCIENTIFIC_NAME,
             STRAIN_DESIGNATION,
             TYPE_STRAIN,
+            SYNONYMS,
             LPSN,
         ]
 
@@ -628,6 +631,16 @@ class BacDiveTransform(Transform):
                     if not all(item is None for item in phys_and_meta_data[1:]):
                         writer_2.writerow(phys_and_meta_data)
 
+                    lpsn = name_tax_classification.get(LPSN)
+                    synonyms = lpsn.get(SYNONYMS, {}) if SYNONYMS in lpsn else None
+                    if isinstance(synonyms, list):
+                        synonym_parsed = ", ".join(synonym.get(SYNONYM, {}) for synonym in synonyms)
+                    elif isinstance(synonyms, dict):
+                        synonym_parsed = synonyms.get(SYNONYM, {})
+                    else:
+                        synonym_parsed = None
+                    
+
                     name_tax_classification_data = [
                         BACDIVE_PREFIX + key,
                         ncbitaxon_id,
@@ -641,7 +654,8 @@ class BacDiveTransform(Transform):
                         name_tax_classification.get(FULL_SCIENTIFIC_NAME),
                         name_tax_classification.get(STRAIN_DESIGNATION),
                         name_tax_classification.get(TYPE_STRAIN),
-                        name_tax_classification.get(LPSN),
+                        synonym_parsed,
+                        lpsn,
                     ]
 
                     if not all(item is None for item in name_tax_classification_data[2:]):

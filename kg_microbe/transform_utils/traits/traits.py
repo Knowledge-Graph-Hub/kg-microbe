@@ -295,6 +295,7 @@ class TraitsTransform(Transform):
                     )
 
                     if carbon_substrates:
+
                         # chebi_condition_1 = chebi_result[TAX_ID_COLUMN] == tax_id
                         chebi_condition = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
                             carbon_substrates
@@ -318,6 +319,7 @@ class TraitsTransform(Transform):
                                 ]
                                 for item in carbon_substrates
                             ]
+
                         else:
                             carbon_substrate_nodes = []
                             tax_carbon_substrate_edge = []
@@ -328,7 +330,6 @@ class TraitsTransform(Transform):
                             exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
                             if not exact_match_chebi_df.empty:
                                 chebi_result_for_tax_id = exact_match_chebi_df
-
                             for row in chebi_result_for_tax_id.iterrows():
                                 carbon_substrate_nodes.append(
                                     [
@@ -340,7 +341,7 @@ class TraitsTransform(Transform):
                                 tax_carbon_substrate_edge.append(
                                     [
                                         tax_id,
-                                        NCBI_TO_PATHWAY_EDGE,
+                                        NCBI_TO_CARBON_SUBSTRATE_EDGE,
                                         row[1].object_id,
                                         BIOLOGICAL_PROCESS,
                                     ]

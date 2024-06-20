@@ -945,16 +945,23 @@ class BacDiveTransform(Transform):
                             edge_writer.writerows(metabolism_edges_to_write)
 
                     if name_tax_classification and name_tax_classification.get(TYPE_STRAIN) == "yes":
-                        curated_strain_id = name_tax_classification.get(STRAIN_DESIGNATION,f"of_{ncbitaxon_id}").strip().replace(" ", "-")
+                        if "," in  name_tax_classification.get(STRAIN_DESIGNATION,""):
+                            strain_designations = name_tax_classification.get(STRAIN_DESIGNATION).split(", ")
+                            curated_strain_ids = [
+                                strain_designation.strip().replace(" ", "-")
+                                for strain_designation in strain_designations
+                            ]
+                        else:
+                            curated_strain_ids = [name_tax_classification.get(STRAIN_DESIGNATION,f"of_{ncbitaxon_id}").strip().replace(" ", "-")]
                         curated_strain_label = name_tax_classification.get(FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}").replace("<l>", "").replace("</l>", "")
                         curated_strain_label = re.sub(r'\s+', ' ', curated_strain_label)
                         curated_strain_label = re.sub(r'<[^>]+>', '', curated_strain_label)
                         curated_strain_label = re.sub(r'\s+', ' ', curated_strain_label).strip()
                         node_writer.writerow(
-                            [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label] + [None] * (len(self.node_header) - 3)
+                            [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label] + [None] * (len(self.node_header) - 3) for curated_strain_id in curated_strain_ids  if curated_strain_id
                         )
                         edge_writer.writerow(
-                            [STRAIN_PREFIX + curated_strain_id, SUBCLASS_PREDICATE, ncbitaxon_id, RDFS_SUBCLASS_OF, BACDIVE_PREFIX + key]
+                            [STRAIN_PREFIX + curated_strain_id, SUBCLASS_PREDICATE, ncbitaxon_id, RDFS_SUBCLASS_OF, BACDIVE_PREFIX + key] for curated_strain_id in curated_strain_ids
                         )
 
                     # Uncomment and handle isolation_source code

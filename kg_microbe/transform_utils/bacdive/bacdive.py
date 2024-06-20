@@ -85,10 +85,8 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SAMPLING_ENV_INFO,
     ISOLATION_SOURCE_CATEGORIES,
     ISOLATION_SOURCE_CATEGORIES_COLUMN,
-    ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
-    LOCATION_OF,
     LPSN,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
@@ -116,7 +114,6 @@ from kg_microbe.transform_utils.constants import (
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
     NCBI_TO_ENZYME_EDGE,
-    NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_UTILIZATION_EDGE,
@@ -636,7 +633,9 @@ class BacDiveTransform(Transform):
                     lpsn = name_tax_classification.get(LPSN)
                     synonyms = lpsn.get(SYNONYMS, {}) if SYNONYMS in lpsn else None
                     if isinstance(synonyms, list):
-                        synonym_parsed = " | ".join(synonym.get(SYNONYM, {}) for synonym in synonyms)
+                        synonym_parsed = " | ".join(
+                            synonym.get(SYNONYM, {}) for synonym in synonyms
+                        )
                     elif isinstance(synonyms, dict):
                         synonym_parsed = synonyms.get(SYNONYM, {})
                     else:
@@ -984,16 +983,25 @@ class BacDiveTransform(Transform):
                         curated_strain_label = re.sub(r"\s+", " ", curated_strain_label).strip()
                         if synonym_parsed is None:
                             node_writer.writerows(
-                                [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label]
+                                [
+                                    STRAIN_PREFIX + curated_strain_id,
+                                    NCBI_CATEGORY,
+                                    curated_strain_label,
+                                ]
                                 + [None] * (len(self.node_header) - 3)
                                 for curated_strain_id in curated_strain_ids
                                 if curated_strain_id
                             )
                         else:
                             node_writer.writerows(
-                                [STRAIN_PREFIX + curated_strain_id, NCBI_CATEGORY, curated_strain_label]
-                                + [None] * 3 
-                                + [synonym_parsed] + [None] * (len(self.node_header) - 7)
+                                [
+                                    STRAIN_PREFIX + curated_strain_id,
+                                    NCBI_CATEGORY,
+                                    curated_strain_label,
+                                ]
+                                + [None] * 3
+                                + [synonym_parsed]
+                                + [None] * (len(self.node_header) - 7)
                                 for curated_strain_id in curated_strain_ids
                                 if curated_strain_id
                             )

@@ -325,8 +325,15 @@ def get_nodes_and_edges(
         BINDING_SITE_PARSED_COLUMN,
         GO_PARSED_COLUMN,
         RHEA_PARSED_COLUMN,
-        DISEASE_PARSED_COLUMN,
     ]
+    if (
+        UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
+        and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
+    ):
+        parsed_columns += [
+            DISEASE_PARSED_COLUMN,
+            GENE_PRIMARY_PARSED_COLUMN,
+        ]
     uniprot_parse_df = pd.DataFrame(columns=parsed_columns)
     uniprot_parse_df[ORGANISM_PARSED_COLUMN] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
         lambda x: NCBITAXON_PREFIX + str(x).strip()
@@ -352,12 +359,15 @@ def get_nodes_and_edges(
     uniprot_parse_df[PROTEOME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
         lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if not is_float(x) else x
     )
-    uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
-        lambda x: parse_disease(x, mondo_xrefs_dict)
-    )
-    uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
-        UNIPROT_GENE_PRIMARY_COLUMN_NAME
-    ].apply(lambda x: parse_gene(x, mondo_gene_dict))
+    # Fields only in human uniprot query
+    if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns:
+        uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
+            lambda x: parse_disease(x, mondo_xrefs_dict)
+        )
+    if UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
+        uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
+            UNIPROT_GENE_PRIMARY_COLUMN_NAME
+        ].apply(lambda x: parse_gene(x, mondo_gene_dict))
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
@@ -447,32 +457,36 @@ def get_nodes_and_edges(
                         UNIPROT_GENOME_FEATURES,
                     ]
                 )
-        # Disease node
-        if entry[DISEASE_PARSED_COLUMN]:
-            for disease in entry[DISEASE_PARSED_COLUMN]:
-                node_data.append([disease, DISEASE_CATEGORY])
-                # Protein-disease edge
+        if (
+            UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
+            and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
+        ):
+            # Disease node
+            if entry[DISEASE_PARSED_COLUMN]:
+                for disease in entry[DISEASE_PARSED_COLUMN]:
+                    node_data.append([disease, DISEASE_CATEGORY])
+                    # Protein-disease edge
+                    edge_data.append(
+                        [
+                            entry[PROTEIN_ID_PARSED_COLUMN],
+                            PROTEIN_TO_DISEASE_EDGE,
+                            disease,
+                            RELATIONS_DICT[PROTEIN_TO_DISEASE_EDGE],
+                            UNIPROT_GENOME_FEATURES,
+                        ]
+                    )
+            # Gene node
+            if entry[GENE_PRIMARY_PARSED_COLUMN]:
+                # Gene-protein edge
                 edge_data.append(
                     [
+                        entry[GENE_PRIMARY_PARSED_COLUMN],
+                        GENE_TO_PROTEIN_EDGE,
                         entry[PROTEIN_ID_PARSED_COLUMN],
-                        PROTEIN_TO_DISEASE_EDGE,
-                        disease,
-                        RELATIONS_DICT[PROTEIN_TO_DISEASE_EDGE],
+                        RELATIONS_DICT[GENE_TO_PROTEIN_EDGE],
                         UNIPROT_GENOME_FEATURES,
                     ]
                 )
-        # Gene node
-        if entry[GENE_PRIMARY_PARSED_COLUMN]:
-            # Gene-protein edge
-            edge_data.append(
-                [
-                    entry[GENE_PRIMARY_PARSED_COLUMN],
-                    GENE_TO_PROTEIN_EDGE,
-                    entry[PROTEIN_ID_PARSED_COLUMN],
-                    RELATIONS_DICT[GENE_TO_PROTEIN_EDGE],
-                    UNIPROT_GENOME_FEATURES,
-                ]
-            )
         # Removing protein-organism edges for now
         # # Protein-organism
         # edge_data.append(
@@ -645,7 +659,6 @@ class UniprotTransform(Transform):
                             # Split the content into lines and count occurrences
                             lines = content.splitlines()
                             count = sum(bool(pattern.search(line)) for line in lines)
-                            min_line_count = 5
                             if count > min_line_count:
                                 # Add only unique lines to the set
                                 matching_members_content.extend(lines)
@@ -781,8 +794,8 @@ class UniprotTransform(Transform):
                         # Remove temporary files
                         os.remove(edge_file)
 
-            drop_duplicates(self.output_node_file)
-            drop_duplicates(self.output_edge_file)
+            drop_duplicates(combined_node_filename)
+            drop_duplicates(combined_edge_filename)
             drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by_column=GO_TERM_COLUMN)
 
     def write_obsolete_file_header(self):

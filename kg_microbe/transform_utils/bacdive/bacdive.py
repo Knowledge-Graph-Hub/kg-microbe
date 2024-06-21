@@ -1049,6 +1049,26 @@ class BacDiveTransform(Transform):
                                         ]
                                     )
 
+                                    if medium_id:
+                                        edge_writer.writerows(
+                                            [
+                                                [
+                                                    STRAIN_PREFIX + curated_strain_ids[i],
+                                                    NCBI_TO_MEDIUM_EDGE,
+                                                    medium_id,
+                                                    IS_GROWN_IN,
+                                                    BACDIVE_PREFIX + key,
+                                                ],
+                                                [
+                                                    STRAIN_PREFIX + curated_strain_ids[j],
+                                                    NCBI_TO_MEDIUM_EDGE,
+                                                    medium_id,
+                                                    IS_GROWN_IN,
+                                                    BACDIVE_PREFIX + key,
+                                                ],
+                                            ]
+                                        )
+
                     # Uncomment and handle isolation_source code
                     all_values = []
                     if isinstance(isolation_source_categories, list):

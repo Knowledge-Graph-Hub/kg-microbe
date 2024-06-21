@@ -1023,13 +1023,29 @@ class BacDiveTransform(Transform):
                         if len(curated_strain_ids) > 1:
                             for i in range(len(curated_strain_ids)):
                                 for j in range(i + 1, len(curated_strain_ids)):
-                                    edge_writer.writerow(
+                                    edge_writer.writerows(
                                         [
-                                            STRAIN_PREFIX + curated_strain_ids[i],
-                                            SAME_AS_PREDICATE,
-                                            STRAIN_PREFIX + curated_strain_ids[j],
-                                            EXACT_MATCH,
-                                            BACDIVE_PREFIX + key,
+                                            [
+                                                STRAIN_PREFIX + curated_strain_ids[i],
+                                                SAME_AS_PREDICATE,
+                                                STRAIN_PREFIX + curated_strain_ids[j],
+                                                EXACT_MATCH,
+                                                BACDIVE_PREFIX + key,
+                                            ],
+                                            [
+                                                STRAIN_PREFIX + curated_strain_ids[i],
+                                                SAME_AS_PREDICATE,
+                                                BACDIVE_PREFIX + key,
+                                                EXACT_MATCH,
+                                                BACDIVE_PREFIX + key,
+                                            ],
+                                            [
+                                                STRAIN_PREFIX + curated_strain_ids[j],
+                                                SAME_AS_PREDICATE,
+                                                BACDIVE_PREFIX + key,
+                                                EXACT_MATCH,
+                                                BACDIVE_PREFIX + key,
+                                            ],
                                         ]
                                     )
 

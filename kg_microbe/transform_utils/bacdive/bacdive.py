@@ -985,30 +985,31 @@ class BacDiveTransform(Transform):
                         curated_strain_label = re.sub(r"\s+", " ", curated_strain_label)
                         curated_strain_label = re.sub(r"<[^>]+>", "", curated_strain_label)
                         curated_strain_label = re.sub(r"\s+", " ", curated_strain_label).strip()
-                        if synonym_parsed is None:
-                            node_writer.writerows(
-                                [
-                                    STRAIN_PREFIX + curated_strain_id,
-                                    NCBI_CATEGORY,
-                                    curated_strain_label,
-                                ]
-                                + [None] * (len(self.node_header) - 3)
-                                for curated_strain_id in curated_strain_ids
-                                if curated_strain_id
-                            )
-                        else:
-                            node_writer.writerows(
-                                [
-                                    STRAIN_PREFIX + curated_strain_id,
-                                    NCBI_CATEGORY,
-                                    curated_strain_label,
-                                ]
-                                + [None] * 3
-                                + [synonym_parsed]
-                                + [None] * (len(self.node_header) - 7)
-                                for curated_strain_id in curated_strain_ids
-                                if curated_strain_id
-                            )
+                        # ! Synonyms are specific to species and not the strain.
+                        # if synonym_parsed is None:
+                        node_writer.writerows(
+                            [
+                                STRAIN_PREFIX + curated_strain_id,
+                                NCBI_CATEGORY,
+                                curated_strain_label,
+                            ]
+                            + [None] * (len(self.node_header) - 3)
+                            for curated_strain_id in curated_strain_ids
+                            if curated_strain_id
+                        )
+                        # else:
+                        #     node_writer.writerows(
+                        #         [
+                        #             STRAIN_PREFIX + curated_strain_id,
+                        #             NCBI_CATEGORY,
+                        #             curated_strain_label,
+                        #         ]
+                        #         + [None] * 3
+                        #         + [synonym_parsed]
+                        #         + [None] * (len(self.node_header) - 7)
+                        #         for curated_strain_id in curated_strain_ids
+                        #         if curated_strain_id
+                        #     )
                         edge_writer.writerows(
                             [
                                 STRAIN_PREFIX + curated_strain_id,

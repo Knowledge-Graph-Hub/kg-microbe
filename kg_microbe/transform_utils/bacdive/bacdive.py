@@ -697,7 +697,9 @@ class BacDiveTransform(Transform):
                             STRAIN_PREFIX + curated_strain_id
                             for curated_strain_id in curated_strain_ids
                         ]
-                        species_with_strains = curated_strain_ids + [ncbitaxon_id]
+                        
+                        # Use just 1st strain as per Marcin.
+                        species_with_strains = [curated_strain_ids[0] ,ncbitaxon_id]
 
                         curated_strain_label = (
                             name_tax_classification.get(
@@ -773,26 +775,6 @@ class BacDiveTransform(Transform):
                                             ],
                                         ]
                                     )
-
-                                    # if medium_id:
-                                    #     edge_writer.writerows(
-                                    #         [
-                                    #             [
-                                    #                 curated_strain_ids[i],
-                                    #                 NCBI_TO_MEDIUM_EDGE,
-                                    #                 medium_id,
-                                    #                 IS_GROWN_IN,
-                                    #                 BACDIVE_PREFIX + key,
-                                    #             ],
-                                    #             [
-                                    #                 curated_strain_ids[j],
-                                    #                 NCBI_TO_MEDIUM_EDGE,
-                                    #                 medium_id,
-                                    #                 IS_GROWN_IN,
-                                    #                 BACDIVE_PREFIX + key,
-                                    #             ],
-                                    #         ]
-                                    #     )
                     # ! ----------------------------
 
                     if ncbitaxon_id and medium_id:

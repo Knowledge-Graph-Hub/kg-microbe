@@ -694,7 +694,7 @@ class BacDiveTransform(Transform):
                         ]
 
                         # Use just 1st strain as per Marcin.
-                        species_with_strains.extend(curated_strain_ids)
+                        species_with_strains.extend([curated_strain_ids[0]])
 
                         curated_strain_label = (
                             name_tax_classification.get(

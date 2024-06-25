@@ -693,7 +693,10 @@ class BacDiveTransform(Transform):
                                 .translate(translation_table)
                             ]
 
-                        curated_strain_ids = [STRAIN_PREFIX + curated_strain_id for curated_strain_id in curated_strain_ids]
+                        curated_strain_ids = [
+                            STRAIN_PREFIX + curated_strain_id
+                            for curated_strain_id in curated_strain_ids
+                        ]
                         species_with_strains = curated_strain_ids + [ncbitaxon_id]
 
                         curated_strain_label = (
@@ -810,7 +813,7 @@ class BacDiveTransform(Transform):
                                 NCBI_TO_MEDIUM_EDGE,
                                 medium_id,
                                 IS_GROWN_IN,
-                                BACDIVE_PREFIX + key
+                                BACDIVE_PREFIX + key,
                             ]
                             for organism in species_with_strains
                         ]
@@ -832,19 +835,19 @@ class BacDiveTransform(Transform):
 
                         for _, value in nodes_from_keywords.items():
                             edges_data_to_write = [
-                            [
-                                organism,
-                                value[PREDICATE_COLUMN],
-                                value[CURIE_COLUMN],
-                                (
-                                    HAS_PHENOTYPE
-                                    if value[CATEGORY_COLUMN]
-                                    in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
-                                    else BIOLOGICAL_PROCESS
-                                ),
-                                BACDIVE_PREFIX + key,
-                            ]
-                            for organism in species_with_strains
+                                [
+                                    organism,
+                                    value[PREDICATE_COLUMN],
+                                    value[CURIE_COLUMN],
+                                    (
+                                        HAS_PHENOTYPE
+                                        if value[CATEGORY_COLUMN]
+                                        in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
+                                        else BIOLOGICAL_PROCESS
+                                    ),
+                                    BACDIVE_PREFIX + key,
+                                ]
+                                for organism in species_with_strains
                             ]
 
                             edge_writer.writerows(edges_data_to_write)
@@ -983,7 +986,8 @@ class BacDiveTransform(Transform):
                                             k,
                                             HAS_PARTICIPANT,
                                             BACDIVE_PREFIX + key,
-                                        ] for organism in species_with_strains
+                                        ]
+                                        for organism in species_with_strains
                                     ]
                                     edge_writer.writerows(meta_util_edges_to_write)
 
@@ -1089,7 +1093,6 @@ class BacDiveTransform(Transform):
                             ]
 
                             edge_writer.writerows(metabolism_edges_to_write)
-
 
                     # Uncomment and handle isolation_source code
                     all_values = []

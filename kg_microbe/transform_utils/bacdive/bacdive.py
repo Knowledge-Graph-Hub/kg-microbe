@@ -32,6 +32,7 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
+    BACDIVE_CONDITION_CATEGORY,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -697,9 +698,9 @@ class BacDiveTransform(Transform):
                             STRAIN_PREFIX + curated_strain_id
                             for curated_strain_id in curated_strain_ids
                         ]
-                        
+
                         # Use just 1st strain as per Marcin.
-                        species_with_strains = [curated_strain_ids[0] ,ncbitaxon_id]
+                        species_with_strains = [curated_strain_ids[0], ncbitaxon_id]
 
                         curated_strain_label = (
                             name_tax_classification.get(
@@ -1085,6 +1086,9 @@ class BacDiveTransform(Transform):
                         all_values.extend(category.values())
                     all_values = [
                         i.replace(" ", "_").replace("-", "_").replace("#", "") for i in all_values
+                    ]
+                    all_values = [
+                        value for value in all_values if value != BACDIVE_CONDITION_CATEGORY
                     ]
                     for isol_source in all_values:
                         node_writer.writerow(

@@ -523,7 +523,7 @@ class BacDiveTransform(Transform):
                             ncbitaxon_id = NCBITAXON_PREFIX + str(
                                 general_info[NCBITAXON_ID][NCBITAXON_ID]
                             )
-
+                        species_with_strains = [ncbitaxon_id]
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                         if ncbi_label is None:
@@ -667,6 +667,12 @@ class BacDiveTransform(Transform):
                                 strain_designation.strip().translate(translation_table)
                                 for strain_designation in strain_designations
                             ]
+                        elif name_tax_classification.get(STRAIN_DESIGNATION):
+                            curated_strain_ids = [
+                                name_tax_classification.get(STRAIN_DESIGNATION)
+                                .strip()
+                                .translate(translation_table)
+                            ]
 
                         else:
                             if ncbitaxon_id:
@@ -688,7 +694,7 @@ class BacDiveTransform(Transform):
                         ]
 
                         # Use just 1st strain as per Marcin.
-                        species_with_strains = [curated_strain_ids[0], ncbitaxon_id]
+                        species_with_strains.extend(curated_strain_ids)
 
                         curated_strain_label = (
                             name_tax_classification.get(

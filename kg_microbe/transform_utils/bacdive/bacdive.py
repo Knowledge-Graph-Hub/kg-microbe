@@ -407,20 +407,6 @@ class BacDiveTransform(Transform):
                         ISOLATION_SOURCE_CATEGORIES, []
                     )
 
-                    # if value.get(ISOLATION_SAMPLING_ENV_INFO):
-                    #     # TODO: Get information from here.
-                    #     import pdb
-
-                    #     pdb.set_trace()
-                    #     if set(value.get(ISOLATION_SAMPLING_ENV_INFO).keys()) - set(
-                    #         [
-                    #             ISOLATION,
-                    #             ISOLATION_SOURCE_CATEGORIES,
-                    #         ]
-                    #     ):
-                    #         import pdb
-
-                    #         pdb.set_trace()
                     morphology_multimedia = value.get(MORPHOLOGY, {}).get(MULTIMEDIA)
                     morphology_multicellular = value.get(MORPHOLOGY, {}).get(
                         MULTICELLULAR_MORPHOLOGY
@@ -508,6 +494,8 @@ class BacDiveTransform(Transform):
                     ncbitaxon_id = None
                     ncbi_label = None
                     ncbi_description = None
+                    species_with_strains = []
+
 
                     if NCBITAXON_ID in general_info:
                         if isinstance(general_info[NCBITAXON_ID], list):
@@ -1107,7 +1095,6 @@ class BacDiveTransform(Transform):
                                 for organism in species_with_strains
                             ]
                         )
-                    species_with_strains = []
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

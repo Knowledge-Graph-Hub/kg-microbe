@@ -1107,6 +1107,7 @@ class BacDiveTransform(Transform):
                                 for organism in species_with_strains
                             ]
                         )
+                    species_with_strains = []
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

@@ -44,6 +44,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
+    BACDIVE_SAMPLE_TYPE,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
@@ -495,7 +496,6 @@ class BacDiveTransform(Transform):
                     ncbi_label = None
                     ncbi_description = None
                     species_with_strains = []
-
 
                     if NCBITAXON_ID in general_info:
                         if isinstance(general_info[NCBITAXON_ID], list):
@@ -1078,8 +1078,16 @@ class BacDiveTransform(Transform):
                             all_values.extend(category.values())
                     elif isinstance(isolation_source_categories, dict):
                         all_values.extend(category.values())
+                    if isinstance(isolation, list):
+                        for source in isolation:
+                            if BACDIVE_SAMPLE_TYPE in source.keys():
+                                all_values.append(source[BACDIVE_SAMPLE_TYPE])
+                    elif isinstance(isolation, dict):
+                        if BACDIVE_SAMPLE_TYPE in isolation.keys():
+                            all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
                     all_values = [
-                        i.replace(" ", "_").replace("-", "_").replace("#", "") for i in all_values
+                        i.replace(" ", "_").replace("-", "_").replace("#", "").replace(",", "_")
+                        for i in all_values
                     ]
                     all_values = [
                         value for value in all_values if value != BACDIVE_CONDITION_CATEGORY

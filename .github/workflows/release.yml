@@ -19,8 +19,8 @@ jobs:
       - name: Zip transformed directory
         run: zip -r transformed.zip data/transformed
 
-      - name: Copy merged-kg.tar.gz
-        run: cp data/merged/merged-kg.tar.gz .
+    #   - name: Copy merged-kg.tar.gz
+    #     run: cp data/merged/merged-kg.tar.gz .
 
       - name: Release
         uses: softprops/action-gh-release@v2

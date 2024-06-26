@@ -26,8 +26,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: |
-            transformed.zip
-            merged-kg.tar.gz
+          files: transformed.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

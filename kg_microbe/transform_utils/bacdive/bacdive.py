@@ -496,7 +496,6 @@ class BacDiveTransform(Transform):
                     ncbi_description = None
                     species_with_strains = []
 
-
                     if NCBITAXON_ID in general_info:
                         if isinstance(general_info[NCBITAXON_ID], list):
                             ncbi_of_interest = next(
@@ -537,67 +536,61 @@ class BacDiveTransform(Transform):
                     }
 
                     # OBJECT PART
-                    medium_id = None
-                    medium_label = None
-                    medium_url = None
-                    mediadive_url = None
-                    if (
-                        CULTURE_AND_GROWTH_CONDITIONS in value
-                        and value[CULTURE_AND_GROWTH_CONDITIONS]
-                    ):
-                        if (
-                            CULTURE_MEDIUM in value[CULTURE_AND_GROWTH_CONDITIONS]
-                            and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
-                        ):
-                            if (
-                                CULTURE_LINK in value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
-                                and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM][
-                                    CULTURE_LINK
-                                ]
-                            ):
-                                medium_url = str(
-                                    value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM][
-                                        CULTURE_LINK
-                                    ]
-                                )
-                                medium_id = next(
-                                    (
+                    medium_ids = []
+                    medium_labels = []
+                    medium_urls = []
+                    mediadive_urls = []
+                    
+                    if CULTURE_AND_GROWTH_CONDITIONS in value and value[CULTURE_AND_GROWTH_CONDITIONS]:
+                        if CULTURE_MEDIUM in value[CULTURE_AND_GROWTH_CONDITIONS] and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]:
+                            media = value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
+                            
+                            if not isinstance(media, list):
+                                media = [media]
+                            
+                            for medium in media:
+                                if CULTURE_LINK in medium and medium[CULTURE_LINK]:
+                                    medium_url = str(medium[CULTURE_LINK])
+                                    medium_id_list = [
                                         medium_url.replace(val, key)
                                         for key, val in BACDIVE_MEDIUM_DICT.items()
                                         if medium_url.startswith(val)
-                                    ),
-                                    None,
-                                )
-                                medium_label = value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM][
-                                    CULTURE_NAME
+                                    ]
+                                    
+                                    medium_label = medium.get(CULTURE_NAME, None)
+                                    mediadive_url = medium_url.replace(BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL)
+                    
+                                    # Store each medium's details in lists
+                                    medium_ids.extend(medium_id_list)
+                                    medium_labels.append(medium_label)
+                                    medium_urls.append(medium_url)
+                                    mediadive_urls.append(mediadive_url)
+                    
+                            # Assuming you want to write each medium's data separately
+                            for mid, mlabel, murl, mdurl in zip(medium_ids, medium_labels, medium_urls, mediadive_urls):
+                                data = [
+                                    BACDIVE_PREFIX + key,
+                                    dsm_number,
+                                    culture_number_from_external_links,
+                                    ncbitaxon_id,
+                                    ncbi_description,
+                                    str(keywords),
+                                    mid,
+                                    mlabel,
+                                    murl,
+                                    mdurl,
+                                    isolation,
+                                    isolation_source_categories,
+                                    morphology_multimedia,
+                                    morphology_multicellular,
+                                    morphology_colony,
+                                    morphology_cell,
+                                    morphology_pigmentation,
+                                    risk_assessment,
                                 ]
-
-                                mediadive_url = medium_url.replace(
-                                    BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL
-                                )
-
-                    data = [
-                        BACDIVE_PREFIX + key,
-                        dsm_number,
-                        culture_number_from_external_links,
-                        ncbitaxon_id,
-                        ncbi_description,
-                        str(keywords),
-                        medium_id,
-                        medium_label,
-                        medium_url,
-                        mediadive_url,
-                        isolation,
-                        isolation_source_categories,
-                        morphology_multimedia,
-                        morphology_multicellular,
-                        morphology_colony,
-                        morphology_cell,
-                        morphology_pigmentation,
-                        risk_assessment,
-                    ]
-
-                    writer.writerow(data)  # writing the data
+                    
+                                writer.writerow(data)  # writing the data
+                    
 
                     phys_and_meta_data = [
                         BACDIVE_PREFIX + key,
@@ -772,30 +765,33 @@ class BacDiveTransform(Transform):
                                     )
                     # ! ----------------------------
 
-                    if ncbitaxon_id and medium_id:
-                        # Combine list creation and extension
-                        nodes_data_to_write = [
-                            [ncbitaxon_id, NCBI_CATEGORY, ncbi_label],
-                            [medium_id, MEDIUM_CATEGORY, medium_label],
-                        ]
-                        nodes_data_to_write = [
-                            sublist + [None] * (len(self.node_header) - 3)
-                            for sublist in nodes_data_to_write
-                        ]
-                        node_writer.writerows(nodes_data_to_write)
-
-                        edges_data_to_write = [
-                            [
-                                organism,
-                                NCBI_TO_MEDIUM_EDGE,
-                                medium_id,
-                                IS_GROWN_IN,
-                                BACDIVE_PREFIX + key,
+                    if ncbitaxon_id and medium_ids:
+                        for mid, mlabel in zip(medium_ids, medium_labels):
+                            # Combine list creation and extension for nodes
+                            nodes_data_to_write = [
+                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label],
+                                [mid, MEDIUM_CATEGORY, mlabel],
                             ]
-                            for organism in species_with_strains
-                        ]
-
-                        edge_writer.writerows(edges_data_to_write)
+                            nodes_data_to_write = [
+                                sublist + [None] * (len(self.node_header) - 3)
+                                for sublist in nodes_data_to_write
+                            ]
+                            node_writer.writerows(nodes_data_to_write)
+                    
+                            # Combine list creation and extension for edges
+                            edges_data_to_write = [
+                                [
+                                    organism,
+                                    NCBI_TO_MEDIUM_EDGE,
+                                    mid,
+                                    IS_GROWN_IN,
+                                    BACDIVE_PREFIX + key,
+                                ]
+                                for organism in species_with_strains
+                            ]
+                    
+                            edge_writer.writerows(edges_data_to_write)
+                    
 
                     if ncbitaxon_id and nodes_from_keywords:
                         nodes_data_to_write = [

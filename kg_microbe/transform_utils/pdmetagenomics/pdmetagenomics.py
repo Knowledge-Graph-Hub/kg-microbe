@@ -18,6 +18,7 @@ from kg_microbe.transform_utils.constants import (
     PDMETAGENOMICS_TMP_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # Constants
 PD_METAGENOMIC_TAB_NAME = "Supplementary Data 1"
@@ -130,7 +131,9 @@ class PdMetagenomicsTransform(Transform):
             edges_file_writer.writerow(self.edge_header)
 
             disease_id = PARKINSONS_DISEASE_MONDO_ID
-            nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY])
+            nodes_file_writer.writerow(
+                [disease_id, DISEASE_CATEGORY] + [None] * (len(self.node_header) - 2)
+            )
 
             for i in range(len(significant_pdmetagenomics_df)):
                 microbe = self.microbe_labels_dict[
@@ -142,7 +145,9 @@ class PdMetagenomicsTransform(Transform):
                         significant_pdmetagenomics_df.iloc[i].loc[NHC_ABUNDANCE_COLUMN],
                     )
                     # Add microbe
-                    nodes_file_writer.writerow([microbe, NCBI_CATEGORY])
+                    nodes_file_writer.writerow(
+                        [microbe, NCBI_CATEGORY] + [None] * (len(self.node_header) - 2)
+                    )
                     # microbe-disease edge
                     edges_file_writer.writerow(
                         [
@@ -153,6 +158,9 @@ class PdMetagenomicsTransform(Transform):
                             self.source_name,
                         ]
                     )
+
+        drop_duplicates(node_filename)
+        drop_duplicates(edge_filename)
 
     def get_disease_direction(self, pd_abundance, nhc_abundance):
         """

@@ -662,7 +662,9 @@ class BacDiveTransform(Transform):
                         name_tax_classification
                         and name_tax_classification.get(TYPE_STRAIN) == "yes"
                     ):
-                        translation_table = str.maketrans({" ": "-", '"': "", "(": "", ")": ""})
+                        translation_table = str.maketrans(
+                            {" ": "-", '"': "", "(": "", ")": "", "#": ""}
+                        )
                         if "," in name_tax_classification.get(STRAIN_DESIGNATION, ""):
                             strain_designations = name_tax_classification.get(
                                 STRAIN_DESIGNATION
@@ -1092,8 +1094,8 @@ class BacDiveTransform(Transform):
                         if BACDIVE_SAMPLE_TYPE in isolation.keys():
                             all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
                     all_values = [
-                        i.replace(" ", "_").replace("-", "_").replace("#", "").replace(",", "_")
-                        for i in all_values
+                        value.strip().translate(translation_table).replace(",", "_")
+                        for value in all_values
                     ]
                     all_values = list(
                         filter(

@@ -27,6 +27,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.pdmetagenomics.pdmetagenomics import MICROBE_NOT_FOUND_STR
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class DisbiomeTransform(Transform):
@@ -164,9 +165,13 @@ class DisbiomeTransform(Transform):
                     disease_id = self.disease_labels_dict[disease]
                     direction = disbiome_df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
                     # Add disease
-                    nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY])
+                    nodes_file_writer.writerow(
+                        [disease_id, DISEASE_CATEGORY] + [None] * (len(self.node_header) - 2)
+                    )
                     # Add microbe
-                    nodes_file_writer.writerow([microbe, NCBI_CATEGORY])
+                    nodes_file_writer.writerow(
+                        [microbe, NCBI_CATEGORY] + [None] * (len(self.node_header) - 2)
+                    )
                     if direction == DISBIOME_ELEVATED:
                         predicate = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE
                         relation = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF
@@ -183,3 +188,6 @@ class DisbiomeTransform(Transform):
                             self.source_name,
                         ]
                     )
+
+        drop_duplicates(node_filename)
+        drop_duplicates(edge_filename)

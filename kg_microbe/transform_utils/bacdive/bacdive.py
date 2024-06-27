@@ -43,6 +43,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
     BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
+    BACDIVE_OTHER,
     BACDIVE_PREFIX,
     BACDIVE_SAMPLE_TYPE,
     BACDIVE_TMP_DIR,
@@ -1089,9 +1090,12 @@ class BacDiveTransform(Transform):
                         i.replace(" ", "_").replace("-", "_").replace("#", "").replace(",", "_")
                         for i in all_values
                     ]
-                    all_values = [
-                        value for value in all_values if value != BACDIVE_CONDITION_CATEGORY
-                    ]
+                    all_values = list(
+                        filter(
+                            lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
+                            all_values,
+                        )
+                    )
                     for isol_source in all_values:
                         node_writer.writerow(
                             [ISOLATION_SOURCE_PREFIX + isol_source, "", isol_source]

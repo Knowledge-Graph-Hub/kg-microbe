@@ -540,14 +540,20 @@ class BacDiveTransform(Transform):
                     medium_labels = []
                     medium_urls = []
                     mediadive_urls = []
-                    
-                    if CULTURE_AND_GROWTH_CONDITIONS in value and value[CULTURE_AND_GROWTH_CONDITIONS]:
-                        if CULTURE_MEDIUM in value[CULTURE_AND_GROWTH_CONDITIONS] and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]:
+
+                    if (
+                        CULTURE_AND_GROWTH_CONDITIONS in value
+                        and value[CULTURE_AND_GROWTH_CONDITIONS]
+                    ):
+                        if (
+                            CULTURE_MEDIUM in value[CULTURE_AND_GROWTH_CONDITIONS]
+                            and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
+                        ):
                             media = value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
-                            
+
                             if not isinstance(media, list):
                                 media = [media]
-                            
+
                             for medium in media:
                                 if CULTURE_LINK in medium and medium[CULTURE_LINK]:
                                     medium_url = str(medium[CULTURE_LINK])
@@ -556,18 +562,22 @@ class BacDiveTransform(Transform):
                                         for key, val in BACDIVE_MEDIUM_DICT.items()
                                         if medium_url.startswith(val)
                                     ]
-                                    
+
                                     medium_label = medium.get(CULTURE_NAME, None)
-                                    mediadive_url = medium_url.replace(BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL)
-                    
+                                    mediadive_url = medium_url.replace(
+                                        BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL
+                                    )
+
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
                                     medium_labels.append(medium_label)
                                     medium_urls.append(medium_url)
                                     mediadive_urls.append(mediadive_url)
-                    
+
                             # Assuming you want to write each medium's data separately
-                            for mid, mlabel, murl, mdurl in zip(medium_ids, medium_labels, medium_urls, mediadive_urls):
+                            for mid, mlabel, murl, mdurl in zip(
+                                medium_ids, medium_labels, medium_urls, mediadive_urls, strict=False
+                            ):
                                 data = [
                                     BACDIVE_PREFIX + key,
                                     dsm_number,
@@ -588,9 +598,8 @@ class BacDiveTransform(Transform):
                                     morphology_pigmentation,
                                     risk_assessment,
                                 ]
-                    
+
                                 writer.writerow(data)  # writing the data
-                    
 
                     phys_and_meta_data = [
                         BACDIVE_PREFIX + key,
@@ -766,7 +775,7 @@ class BacDiveTransform(Transform):
                     # ! ----------------------------
 
                     if ncbitaxon_id and medium_ids:
-                        for mid, mlabel in zip(medium_ids, medium_labels):
+                        for mid, mlabel in zip(medium_ids, medium_labels, strict=False):
                             # Combine list creation and extension for nodes
                             nodes_data_to_write = [
                                 [ncbitaxon_id, NCBI_CATEGORY, ncbi_label],
@@ -777,7 +786,7 @@ class BacDiveTransform(Transform):
                                 for sublist in nodes_data_to_write
                             ]
                             node_writer.writerows(nodes_data_to_write)
-                    
+
                             # Combine list creation and extension for edges
                             edges_data_to_write = [
                                 [
@@ -789,9 +798,8 @@ class BacDiveTransform(Transform):
                                 ]
                                 for organism in species_with_strains
                             ]
-                    
+
                             edge_writer.writerows(edges_data_to_write)
-                    
 
                     if ncbitaxon_id and nodes_from_keywords:
                         nodes_data_to_write = [

@@ -43,7 +43,9 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
     BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
+    BACDIVE_OTHER,
     BACDIVE_PREFIX,
+    BACDIVE_SAMPLE_TYPE,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
@@ -660,7 +662,9 @@ class BacDiveTransform(Transform):
                         name_tax_classification
                         and name_tax_classification.get(TYPE_STRAIN) == "yes"
                     ):
-                        translation_table = str.maketrans({" ": "-", '"': "", "(": "", ")": ""})
+                        translation_table = str.maketrans(
+                            {" ": "-", '"': "", "(": "", ")": "", "#": ""}
+                        )
                         if "," in name_tax_classification.get(STRAIN_DESIGNATION, ""):
                             strain_designations = name_tax_classification.get(
                                 STRAIN_DESIGNATION
@@ -1082,12 +1086,23 @@ class BacDiveTransform(Transform):
                             all_values.extend(category.values())
                     elif isinstance(isolation_source_categories, dict):
                         all_values.extend(category.values())
+                    if isinstance(isolation, list):
+                        for source in isolation:
+                            if BACDIVE_SAMPLE_TYPE in source.keys():
+                                all_values.append(source[BACDIVE_SAMPLE_TYPE])
+                    elif isinstance(isolation, dict):
+                        if BACDIVE_SAMPLE_TYPE in isolation.keys():
+                            all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
                     all_values = [
-                        i.replace(" ", "_").replace("-", "_").replace("#", "") for i in all_values
+                        value.strip().translate(translation_table).replace(",", "_")
+                        for value in all_values
                     ]
-                    all_values = [
-                        value for value in all_values if value != BACDIVE_CONDITION_CATEGORY
-                    ]
+                    all_values = list(
+                        filter(
+                            lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
+                            all_values,
+                        )
+                    )
                     for isol_source in all_values:
                         node_writer.writerow(
                             [ISOLATION_SOURCE_PREFIX + isol_source, "", isol_source]

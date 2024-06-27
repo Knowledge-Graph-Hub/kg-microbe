@@ -6,8 +6,11 @@ from typing import List, Optional
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
+from kg_microbe.transform_utils.ctd.ctd import CtdTransform
+from kg_microbe.transform_utils.disbiome.disbiome import DisbiomeTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, OntologyTransform
+from kg_microbe.transform_utils.pdmetagenomics.pdmetagenomics import PdMetagenomicsTransform
 from kg_microbe.transform_utils.rhea.rhea import RheaMappingsTransform
 from kg_microbe.transform_utils.traits.traits import TraitsTransform
 from kg_microbe.transform_utils.uniprot.uniprot import UniprotTransform
@@ -28,6 +31,9 @@ DATA_SOURCES = {
     "RheaMappingsTransform": RheaMappingsTransform,
     "BactoTraitsTransform": BactoTraitsTransform,
     "UniprotTransform": UniprotTransform,
+    "CtdTransform": CtdTransform,
+    "DisbiomeTransform": DisbiomeTransform,
+    "PdMetagenomicsTransform": PdMetagenomicsTransform,
 }
 
 

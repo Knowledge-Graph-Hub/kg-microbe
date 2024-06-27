@@ -23,6 +23,7 @@ from kg_microbe.transform_utils.constants import (
     EXCLUSION_TERMS_FILE,
     GO_PREFIX,
     ID_COLUMN,
+    MONDO_XREFS_FILEPATH,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     ONTOLOGY_XREFS_DIR,
@@ -73,6 +74,8 @@ ONTOLOGIES = {
     # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
     "ec": "ec.json",
     "upa": "upa.owl",
+    "mondo": "mondo.json",
+    "hp": "hp.json",
 }
 
 
@@ -172,7 +175,7 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "upa", "chebi"]:  # removed "uniprot"
+        if name in ["ec", "rhea", "upa", "chebi", "mondo"]:  # removed "uniprot"
 
             self.post_process(name)
 
@@ -195,7 +198,7 @@ class OntologyTransform(Transform):
             """Use the pattern to replace all occurrences of the keys with their values."""
             return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
 
-        if name == "chebi" or name == "upa":
+        if name == "chebi" or name == "upa" or name == "mondo":
             makedirs(ONTOLOGY_XREFS_DIR, exist_ok=True)
             # Get two columns from the nodes file: 'id' and 'xref'
             # The xref column is | separated and contains different prefixes
@@ -205,6 +208,8 @@ class OntologyTransform(Transform):
             elif name == "upa":
                 xref_filepath = UNIPATHWAYS_XREFS_FILEPATH
                 unipathways_xref_dict = {}
+            elif name == "mondo":
+                xref_filepath = MONDO_XREFS_FILEPATH
             with open(nodes_file, "r") as nf, open(xref_filepath, "w") as xref_file:
 
                 for line in nf:
@@ -224,6 +229,26 @@ class OntologyTransform(Transform):
                             # Use unipathways xrefs elsewhere so write to dict
                             if name == "upa":
                                 unipathways_xref_dict[subject] = xref
+
+        if name == "mondo":
+            with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
+                # Update prefixes in nodes file
+                new_nf_lines = []
+                for line in nf:
+                    if line.startswith("id"):
+                        # get the index for the term 'id'
+                        id_index = line.strip().split("\t").index(ID_COLUMN)
+                        # get the index for the term 'category'
+                        category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                    else:
+                        line = _replace_special_prefixes(line)
+                        line = replace_category_ontology(line, id_index, category_index)
+                        new_nf_lines.append(line + "\n")
+            # Rewrite nodes file
+            with open(nodes_file, "w") as new_nf:
+                new_nf.write("\t".join(self.node_header) + "\n")
+                for line in new_nf_lines:
+                    new_nf.write(line)
 
         if name == "upa":
             # Keep track of new node IDs for edges file

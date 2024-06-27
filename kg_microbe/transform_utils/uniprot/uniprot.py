@@ -16,10 +16,13 @@ from tqdm import tqdm
 from kg_microbe.transform_utils.constants import (
     CHEMICAL_CATEGORY,
     CHEMICAL_TO_PROTEIN_EDGE,
+    CONTRIBUTES_TO,
     DERIVES_FROM,
+    DISEASE_CATEGORY,
     EC_CATEGORY,
     EC_PREFIX,
     ENABLES,
+    GENE_TO_PROTEIN_EDGE,
     GO_BIOLOGICAL_PROCESS_ID,
     GO_BIOLOGICAL_PROCESS_LABEL,
     GO_CELLULAR_COMPONENT_ID,
@@ -27,12 +30,17 @@ from kg_microbe.transform_utils.constants import (
     GO_MOLECULAR_FUNCTION_ID,
     GO_MOLECULAR_FUNCTION_LABEL,
     GO_PREFIX,
+    HAS_GENE_PRODUCT,
+    HGNC_NEW_PREFIX,
     LOCATED_IN,
     MOLECULARLY_INTERACTS_WITH,
+    MONDO_XREFS_FILEPATH,
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
+    OMIM_PREFIX,
     PARTICIPATES_IN,
     PROTEIN_CATEGORY,
+    PROTEIN_TO_DISEASE_EDGE,
     PROTEIN_TO_EC_EDGE,
     PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE,
     PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE,
@@ -47,9 +55,12 @@ from kg_microbe.transform_utils.constants import (
     RDFS_SUBCLASS_OF,
     RHEA_CATEGORY,
     UNIPROT_BINDING_SITE_COLUMN_NAME,
+    UNIPROT_DISEASE_COLUMN_NAME,
     UNIPROT_EC_ID_COLUMN_NAME,
+    UNIPROT_GENE_PRIMARY_COLUMN_NAME,
     UNIPROT_GENOME_FEATURES,
     UNIPROT_GO_COLUMN_NAME,
+    UNIPROT_HUMAN_FILE,
     UNIPROT_ORG_ID_COLUMN_NAME,
     UNIPROT_PREFIX,
     UNIPROT_PROTEIN_ID_COLUMN_NAME,
@@ -75,6 +86,8 @@ RELATIONS_DICT = {
     PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE: LOCATED_IN,
     PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE: PARTICIPATES_IN,
     PROTEIN_TO_GO_BIOLOGICAL_PROCESS_EDGE: PARTICIPATES_IN,
+    PROTEIN_TO_DISEASE_EDGE: CONTRIBUTES_TO,
+    GENE_TO_PROTEIN_EDGE: HAS_GENE_PRODUCT,
 }
 
 GO_CATEGORY_DICT = {
@@ -97,6 +110,8 @@ BINDING_SITE_PARSED_COLUMN = "binding_site_parsed"
 GO_PARSED_COLUMN = "go_parsed"
 RHEA_PARSED_COLUMN = "rhea_parsed"
 PROTEOME_PARSED_COLUMN = "proteome_parsed"
+DISEASE_PARSED_COLUMN = "disease_parsed"
+GENE_PRIMARY_PARSED_COLUMN = "gene_primary_parsed"
 GO_TERM_COLUMN = "GO_Term"
 GO_CATEGORY_COLUMN = "GO_Category"
 UNIPROT_ID_COLUMN = "Uniprot_ID"
@@ -195,6 +210,68 @@ def parse_rhea_entry(rhea_entry):
     return rhea_list
 
 
+def parse_disease(disease_entry, mondo_xref_dict):
+    """
+    Extract OMIM ID's from a disease entry.
+
+    This method uses regular expressions to find all occurrences of OMIM IDs.
+
+    :param disease_entry: A string containing the disease information.
+    :type disease_entry: str
+    :return: A list of OMIM curies.
+    :rtype: list
+    """
+    omim_list = None
+    if not is_float(disease_entry):
+        omim_list = re.findall(r"\[MIM:(\d+)\]", disease_entry)
+        omim_list = [f"{OMIM_PREFIX}" + omim_number for omim_number in omim_list]
+
+    mondo_list = convert_omim_diseases(omim_list, mondo_xref_dict)
+
+    return mondo_list
+
+
+def parse_gene(gene_entry, mondo_gene_dict):
+    """
+    Get gene ID from gene name entry.
+
+    This method uses the MONDO ontology transform to get the HGNC id of a gene.
+
+    :param gene_entry: A string containing the gene name.
+    :type gene_entry: str
+    :return: A gene id.
+    :rtype: str
+    """
+    gene_id = None
+    if not is_float(gene_entry):
+        gene_name = gene_entry
+        gene_id = next((key for key, val in mondo_gene_dict.items() if val == gene_name), None)
+
+    return gene_id
+
+
+def convert_omim_diseases(omim_list, mondo_xref_dict):
+    """
+    Convert OMIM ID's to a MONDO ID using MONDO xref dictionary.
+
+    This method uses the MONDO ontology xrefs to convert OMIM to MONDO.
+
+    :param omim_list: A list containing OMIM IDs.
+    :type omim_list: list
+    :param mondo_xref_dict: A dictionary of MONDO IDs and their xrefs.
+    :type mondo_xref_dict: dict
+    :return: A list of MONDO curies.
+    :rtype: list
+    """
+    # Get all MONDO IDs according to OMIM xrefs
+    # mondo_list = list(filter(lambda item: item[1] in omim_list, mondo_xref_dict.items()))
+    mondo_list = [
+        key for value in omim_list for key, val in mondo_xref_dict.items() if val == value
+    ]
+
+    return mondo_list
+
+
 def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_dictionary):
     """
     Extract category of GO term and handle obsolete terms according to oak.
@@ -223,7 +300,9 @@ def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_di
     return go_relation, go_component_label
 
 
-def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary):
+def get_nodes_and_edges(
+    uniprot_df, go_category_trees_dictionary, mondo_xrefs_dict, mondo_gene_dict
+):
     """
     Process UniProt entries and writes organism-enzyme relationship data to CSV files.
 
@@ -247,6 +326,14 @@ def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary):
         GO_PARSED_COLUMN,
         RHEA_PARSED_COLUMN,
     ]
+    if (
+        UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
+        and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
+    ):
+        parsed_columns += [
+            DISEASE_PARSED_COLUMN,
+            GENE_PRIMARY_PARSED_COLUMN,
+        ]
     uniprot_parse_df = pd.DataFrame(columns=parsed_columns)
     uniprot_parse_df[ORGANISM_PARSED_COLUMN] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
         lambda x: NCBITAXON_PREFIX + str(x).strip()
@@ -272,6 +359,15 @@ def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary):
     uniprot_parse_df[PROTEOME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
         lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if not is_float(x) else x
     )
+    # Fields only in human uniprot query
+    if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns:
+        uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
+            lambda x: parse_disease(x, mondo_xrefs_dict)
+        )
+    if UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
+        uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
+            UNIPROT_GENE_PRIMARY_COLUMN_NAME
+        ].apply(lambda x: parse_gene(x, mondo_gene_dict))
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
@@ -361,7 +457,36 @@ def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary):
                         UNIPROT_GENOME_FEATURES,
                     ]
                 )
-
+        if (
+            UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
+            and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
+        ):
+            # Disease node
+            if entry[DISEASE_PARSED_COLUMN]:
+                for disease in entry[DISEASE_PARSED_COLUMN]:
+                    node_data.append([disease, DISEASE_CATEGORY])
+                    # Protein-disease edge
+                    edge_data.append(
+                        [
+                            entry[PROTEIN_ID_PARSED_COLUMN],
+                            PROTEIN_TO_DISEASE_EDGE,
+                            disease,
+                            RELATIONS_DICT[PROTEIN_TO_DISEASE_EDGE],
+                            UNIPROT_GENOME_FEATURES,
+                        ]
+                    )
+            # Gene node
+            if entry[GENE_PRIMARY_PARSED_COLUMN]:
+                # Gene-protein edge
+                edge_data.append(
+                    [
+                        entry[GENE_PRIMARY_PARSED_COLUMN],
+                        GENE_TO_PROTEIN_EDGE,
+                        entry[PROTEIN_ID_PARSED_COLUMN],
+                        RELATIONS_DICT[GENE_TO_PROTEIN_EDGE],
+                        UNIPROT_GENOME_FEATURES,
+                    ]
+                )
         # Removing protein-organism edges for now
         # # Protein-organism
         # edge_data.append(
@@ -407,6 +532,8 @@ def process_lines(
     edge_filename,
     progress_class,
     go_category_dictionary,
+    mondo_xrefs_dict,
+    mondo_gene_dict,
 ):
     """
     Process a member of a tarfile containing UniProt data.
@@ -429,7 +556,9 @@ def process_lines(
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     df.drop_duplicates(inplace=True)
 
-    node_data, edge_data = get_nodes_and_edges(df, go_category_dictionary)
+    node_data, edge_data = get_nodes_and_edges(
+        df, go_category_dictionary, mondo_xrefs_dict, mondo_gene_dict
+    )
     # Write node and edge data to unique files
     # if len(node_data) > 0:
     with open(node_filename, "w", newline="") as nf:
@@ -512,10 +641,11 @@ class UniprotTransform(Transform):
 
         # Initialize the list to store matching members' content
         matching_members_content = []
-
         with tarfile.open(tar_file, "r:gz") as tar:
             if relevant_files_list_exists:
-                members = [member for member in tar.getmembers() if member.name in relevant_files]
+                members = [
+                    member for member in tar.getmembers()
+                ]  # if member.name in relevant_files]
             else:
                 members = tar.getmembers()
 
@@ -555,6 +685,27 @@ class UniprotTransform(Transform):
             for row in csv_reader:
                 self.go_category_trees_dict[row[GO_TERM_COLUMN]] = row[GO_CATEGORY_COLUMN]
 
+        # Read MONDO xrefs file for diseases if it exists
+        self.mondo_xrefs_dict = {}
+        if MONDO_XREFS_FILEPATH.exists():
+            with open(MONDO_XREFS_FILEPATH, "r") as file:
+                csv_reader = csv.DictReader(file, delimiter="\t")
+                for row in csv_reader:
+                    if OMIM_PREFIX in row["xref"]:
+                        self.mondo_xrefs_dict[row["id"]] = row["xref"]
+        # Read MONDO nodes file for gene names
+        self.mondo_gene_dict = {}
+        #! TODO: Find a better way to get this path
+        mondo_nodes_file = (
+            Path(__file__).parents[3] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
+        )
+        if mondo_nodes_file.exists():
+            with open(mondo_nodes_file, "r") as file:
+                csv_reader = csv.DictReader(file, delimiter="\t")
+                for row in csv_reader:
+                    if HGNC_NEW_PREFIX in row["id"]:
+                        self.mondo_gene_dict[row["id"]] = row["name"]
+
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
         n_workers = os.cpu_count()
@@ -566,71 +717,86 @@ class UniprotTransform(Transform):
 
         self.write_obsolete_file_header()
 
-        tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+        microbes_tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+        human_tar_file = RAW_DATA_DIR / UNIPROT_HUMAN_FILE
         progress_class = tqdm if show_status else DummyTqdm
-        all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
-        member_header = all_lines[0].split("\t")
-        chunk_size = len(all_lines) // (chunk_size_denominator)
-        print(
-            f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
-        )
-        line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
-
-        with Pool(n_workers) as pool:
-            results = pool.starmap(
-                process_lines,
-                [
-                    (
-                        line_chunk,
-                        member_header,
-                        self.node_header,
-                        self.edge_header,
-                        f"{UNIPROT_TMP_NE_DIR}/node_{uuid.uuid4()}.tsv",
-                        f"{UNIPROT_TMP_NE_DIR}/edge_{uuid.uuid4()}.tsv",
-                        progress_class,
-                        self.go_category_trees_dict,
-                    )
-                    for line_chunk in line_chunks
-                ],
+        for tar_file in [microbes_tar_file, human_tar_file]:
+            all_lines = self.check_string_in_tar(tar_file, progress_class=progress_class)
+            member_header = all_lines[0].split("\t")
+            chunk_size = len(all_lines) // (chunk_size_denominator)
+            print(
+                f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
             )
-            results = [result for result in results if result != (None, None)]
+            line_chunks = [
+                all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)
+            ]
 
-        # Combine individual node and edge files
-        combined_node_filename = self.output_node_file
-        combined_edge_filename = self.output_edge_file
+            with Pool(n_workers) as pool:
+                results = pool.starmap(
+                    process_lines,
+                    [
+                        (
+                            line_chunk,
+                            member_header,
+                            self.node_header,
+                            self.edge_header,
+                            f"{UNIPROT_TMP_NE_DIR}/node_{uuid.uuid4()}.tsv",
+                            f"{UNIPROT_TMP_NE_DIR}/edge_{uuid.uuid4()}.tsv",
+                            progress_class,
+                            self.go_category_trees_dict,
+                            self.mondo_xrefs_dict,
+                            self.mondo_gene_dict,
+                        )
+                        for line_chunk in line_chunks
+                    ],
+                )
+                results = [result for result in results if result != (None, None)]
 
-        with open(combined_node_filename, "w", newline="") as cnf, open(
-            combined_edge_filename, "w", newline=""
-        ) as cef:
-            node_writer = csv.writer(cnf, delimiter="\t")
-            edge_writer = csv.writer(cef, delimiter="\t")
+            # Combine individual node and edge files
+            combined_node_filename = self.output_node_file
+            combined_edge_filename = self.output_edge_file
+            if tar_file == human_tar_file:
+                combined_node_filename = str(combined_node_filename).replace(
+                    self.source_name, self.source_name + "_human"
+                )
+                combined_edge_filename = str(combined_edge_filename).replace(
+                    self.source_name, self.source_name + "_human"
+                )
+                combined_node_filename = Path(combined_node_filename)
+                combined_edge_filename = Path(combined_edge_filename)
 
-            # Write headers
-            node_writer.writerow(self.node_header)
-            edge_writer.writerow(self.edge_header)
+            with open(combined_node_filename, "w", newline="") as cnf, open(
+                combined_edge_filename, "w", newline=""
+            ) as cef:
+                node_writer = csv.writer(cnf, delimiter="\t")
+                edge_writer = csv.writer(cef, delimiter="\t")
 
-            for node_file, edge_file in progress_class(
-                results, desc="Combining node and edge files"
-            ):
-                # Append node data
-                if node_file:
-                    with open(node_file, "r") as nf:
-                        next(nf)  # Skip header
-                        node_writer.writerows(csv.reader(nf, delimiter="\t"))
-                    # Remove temporary files
-                    os.remove(node_file)
+                # Write headers
+                node_writer.writerow(self.node_header)
+                edge_writer.writerow(self.edge_header)
 
-                if edge_file:
-                    # Append edge data
-                    with open(edge_file, "r") as ef:
-                        next(ef)  # Skip header
-                        edge_writer.writerows(csv.reader(ef, delimiter="\t"))
-                    # Remove temporary files
-                    os.remove(edge_file)
+                for node_file, edge_file in progress_class(
+                    results, desc="Combining node and edge files"
+                ):
+                    # Append node data
+                    if node_file:
+                        with open(node_file, "r") as nf:
+                            next(nf)  # Skip header
+                            node_writer.writerows(csv.reader(nf, delimiter="\t"))
+                        # Remove temporary files
+                        os.remove(node_file)
 
-        drop_duplicates(self.output_node_file)
-        drop_duplicates(self.output_edge_file)
-        drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by_column=GO_TERM_COLUMN)
+                    if edge_file:
+                        # Append edge data
+                        with open(edge_file, "r") as ef:
+                            next(ef)  # Skip header
+                            edge_writer.writerows(csv.reader(ef, delimiter="\t"))
+                        # Remove temporary files
+                        os.remove(edge_file)
+
+            drop_duplicates(combined_node_filename)
+            drop_duplicates(combined_edge_filename)
+            drop_duplicates(OBSOLETE_TERMS_CSV_FILE, sort_by_column=GO_TERM_COLUMN)
 
     def write_obsolete_file_header(self):
         """Write obsolete header to file."""

@@ -56,6 +56,19 @@
 -
   url: http://purl.obolibrary.org/obo/go.json
   local_name: go.json
+#
+# MONDO
+#
+-
+  url: https://purl.obolibrary.org/obo/mondo/mondo.json
+  local_name: mondo.json
+#
+# HP
+#
+-
+  url: https://purl.obolibrary.org/obo/hp/hp.json
+  local_name: hp.json
+
 # **** Data sources ****
 
 # BacDive
@@ -125,11 +138,25 @@
   url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
   local_name: epm.json
 
+# #
+# # Uniprot
+# #
+# -
+#   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
+#   local_name: uniprot_proteomes.tar.gz
+
 #
-# Uniprot
+# Uniprot Human
 #
 -
-  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
+  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_human.tar.gz 
+  local_name: uniprot_human.tar.gz
+
+  #
+# Uniprot Human Disease Microbes
+#
+-
+  url: https://kghub.io/frozen_incoming_data/uniprot/human_disease_uniprot.tar.gz 
   local_name: uniprot_proteomes.tar.gz
 
 # 
@@ -178,8 +205,31 @@
   local_name: BactoTraits_databaseV2_Jun2022.csv
 
 #
+# CTD
+#
+-
+  url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
+  local_name: CTD_chemicals_diseases.tsv.gz
+
+#
 # Fermentqtion explorer
 #
 -
   url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
   local_name: fermentation_explorer.csv
+
+#
+# Disbiome
+#
+-
+  url: https://disbiome.ugent.be:8080/experiment
+  local_name: disbiome.json
+
+#
+# PdMetagenomics
+#
+-
+  url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
+  local_name: PdMetagenomics.xlsx
+
+  

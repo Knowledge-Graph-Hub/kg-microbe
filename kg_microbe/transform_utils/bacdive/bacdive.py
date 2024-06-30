@@ -569,6 +569,8 @@ class BacDiveTransform(Transform):
                                     mediadive_url = medium_url.replace(
                                         BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL
                                     )
+                                    # Remove special characters
+                                    medium_label = medium_label.replace('\r', '').replace('\n', '')
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)

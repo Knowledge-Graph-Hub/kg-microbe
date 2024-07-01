@@ -569,6 +569,8 @@ class BacDiveTransform(Transform):
                                     mediadive_url = medium_url.replace(
                                         BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL
                                     )
+                                    # Remove special characters
+                                    medium_label = medium_label.replace('\r', '').replace('\n', '')
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
@@ -1093,16 +1095,21 @@ class BacDiveTransform(Transform):
                     elif isinstance(isolation, dict):
                         if BACDIVE_SAMPLE_TYPE in isolation.keys():
                             all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
-                    all_values = [
-                        value.strip().translate(translation_table).replace(",", "_")
-                        for value in all_values
-                    ]
-                    all_values = list(
-                        filter(
-                            lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
-                            all_values,
-                        )
-                    )
+                    # Set to track unique, case-insensitive values
+                    unique_values = set()
+                    for value in all_values:
+                        if value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER}:
+                            processed_value = re.sub(
+                                r"[^a-zA-Z0-9]",
+                                "_",
+                                re.sub(r"</?i>", "", value.strip(), flags=re.IGNORECASE)
+                                .replace("%", "p")
+                                .replace("°", "d"),
+                            ).strip("_")
+                            # Add the processed value to the set in lowercase
+                            unique_values.add(processed_value.lower())
+                    # Convert the set back to a list
+                    all_values = list(unique_values)
                     for isol_source in all_values:
                         node_writer.writerow(
                             [ISOLATION_SOURCE_PREFIX + isol_source, "", isol_source]
@@ -1113,7 +1120,7 @@ class BacDiveTransform(Transform):
                                 [
                                     organism,
                                     NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                    isol_source,
+                                    ISOLATION_SOURCE_PREFIX + isol_source,
                                     LOCATION_OF,
                                     self.source_name,
                                 ]

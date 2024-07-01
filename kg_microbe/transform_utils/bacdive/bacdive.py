@@ -18,6 +18,7 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
+import chardet
 import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
@@ -65,6 +66,7 @@ from kg_microbe.transform_utils.constants import (
     DSM_NUMBER_COLUMN,
     EC_KEY,
     EC_PREFIX,
+    ENVIRONMENT_CATEGORY,
     ENZYME_TO_ASSAY_EDGE,
     ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
@@ -164,6 +166,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.string_coding import process_and_decode_label
 
 
 class BacDiveTransform(Transform):
@@ -701,17 +704,9 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         species_with_strains.extend([curated_strain_ids[0]])
-
-                        curated_strain_label = (
-                            name_tax_classification.get(
-                                FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
-                            )
-                            .replace("<l>", "")
-                            .replace("</l>", "")
-                        )
-                        curated_strain_label = re.sub(r"\s+", " ", curated_strain_label)
-                        curated_strain_label = re.sub(r"<[^>]+>", "", curated_strain_label)
-                        curated_strain_label = re.sub(r"\s+", " ", curated_strain_label).strip()
+                        curated_strain_label = name_tax_classification.get(FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}")
+                        curated_strain_label = process_and_decode_label(curated_strain_label)
+                        
                         # ! Synonyms are specific to species and not the strain.
                         # if synonym_parsed is None:
                         node_writer.writerows(
@@ -1079,7 +1074,7 @@ class BacDiveTransform(Transform):
 
                             edge_writer.writerows(metabolism_edges_to_write)
 
-                    # Uncomment and handle isolation_source code
+                    # Handle isolation_source code
                     all_values = []
                     if isinstance(isolation_source_categories, list):
                         for category in isolation_source_categories:
@@ -1103,9 +1098,12 @@ class BacDiveTransform(Transform):
                             all_values,
                         )
                     )
+                    all_values = [
+                        process_and_decode_label(value) for value in all_values if value
+                    ]
                     for isol_source in all_values:
                         node_writer.writerow(
-                            [ISOLATION_SOURCE_PREFIX + isol_source, "", isol_source]
+                            [ISOLATION_SOURCE_PREFIX + isol_source, ENVIRONMENT_CATEGORY, isol_source]
                             + [None] * (len(self.node_header) - 3)
                         )
                         edge_writer.writerows(

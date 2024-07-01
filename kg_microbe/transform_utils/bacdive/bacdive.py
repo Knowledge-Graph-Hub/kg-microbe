@@ -32,7 +32,7 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
-    BACDIVE_CONDITION_CATEGORY,
+    BACDIVE_ENVIRONMENT_CATEGORY,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -43,9 +43,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
     BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
-    BACDIVE_OTHER,
     BACDIVE_PREFIX,
-    BACDIVE_SAMPLE_TYPE,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
@@ -219,6 +217,30 @@ class BacDiveTransform(Transform):
 
         # If none are present, return None or an appropriate default value
         return None
+    
+    def _get_isolation_edge(self,cat_dictionary):
+        """Return the lowest level environment from categories."""
+        # Replace keys with integers
+        numbered_dict = {int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, '')): value for key, value in cat_dictionary.items()}
+        # Get value with highest category integer
+        val = numbered_dict[max(numbered_dict.keys())]
+
+        return val
+    
+    def _get_cat_hierarchy(self,cat_dictionary):
+        """Return the lowest level environment from categories."""
+        edge_pairs = []
+
+        # Replace keys with integers
+        numbered_dict = {int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, '')): value for key, value in cat_dictionary.items()}
+        # Sort keys in descending order
+        sorted_keys = sorted(numbered_dict.keys(), reverse=True)
+        for i in range(len(sorted_keys) - 1):
+            key1 = sorted_keys[i]
+            key2 = sorted_keys[i + 1]
+            edge_pairs.append([numbered_dict[key1], numbered_dict[key2]])
+
+        return edge_pairs
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
@@ -570,8 +592,6 @@ class BacDiveTransform(Transform):
                                     mediadive_url = medium_url.replace(
                                         BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL
                                     )
-                                    # Remove special characters
-                                    medium_label = medium_label.replace('\r', '').replace('\n', '')
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
@@ -1084,38 +1104,62 @@ class BacDiveTransform(Transform):
 
                     # Uncomment and handle isolation_source code
                     all_values = []
+                    organism_edge_values = []
+                    isolation_source_edges = None
                     if isinstance(isolation_source_categories, list):
+                        # if len(isolation_source_categories) > 0:
+                        #     import pdb;pdb.set_trace()
                         for category in isolation_source_categories:
+                            organism_edge_value = self._get_isolation_edge(category)
+                            organism_edge_values.append(organism_edge_value)
+                            # Add all values to nodes
                             all_values.extend(category.values())
+                            isolation_source_edges = self._get_cat_hierarchy(category)
                     elif isinstance(isolation_source_categories, dict):
-                        all_values.extend(category.values())
-                    if isinstance(isolation, list):
-                        for source in isolation:
-                            if BACDIVE_SAMPLE_TYPE in source.keys():
-                                all_values.append(source[BACDIVE_SAMPLE_TYPE])
-                    elif isinstance(isolation, dict):
-                        if BACDIVE_SAMPLE_TYPE in isolation.keys():
-                            all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
-                    # Set to track unique, case-insensitive values
-                    unique_values = set()
-                    for value in all_values:
-                        if value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER}:
-                            processed_value = re.sub(
-                                r"[^a-zA-Z0-9]",
-                                "_",
-                                re.sub(r"</?i>", "", value.strip(), flags=re.IGNORECASE)
-                                .replace("%", "p")
-                                .replace("°", "d"),
-                            ).strip("_")
-                            # Add the processed value to the set in lowercase
-                            unique_values.add(processed_value.lower())
+                        organism_edge_value = self._get_isolation_edge(isolation_source_categories)
+                        organism_edge_values.append(organism_edge_value)
+                        # Add all values to nodes
+                        all_values.extend(isolation_source_categories.values())
+                        isolation_source_edges = self._get_cat_hierarchy(category)
+
+                    #   ! Not using sample type fields for now
+                    # if isinstance(isolation, list):
+                    #     for source in isolation:
+                    #         if BACDIVE_SAMPLE_TYPE in source.keys():
+                    #             all_values.append(source[BACDIVE_SAMPLE_TYPE])
+                    # elif isinstance(isolation, dict):
+                    #     if BACDIVE_SAMPLE_TYPE in isolation.keys():
+                    #         all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
+                    # # Set to track unique, case-insensitive values
+                    # unique_values = set()
+                    # for value in all_values:
+                    #     if value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER}:
+                    #         processed_value = re.sub(
+                    #             r"[^a-zA-Z0-9]",
+                    #             "_",
+                    #             re.sub(r"</?i>", "", value.strip(), flags=re.IGNORECASE)
+                    #             .replace("%", "p")
+                    #             .replace("°", "d"),
+                    #         ).strip("_")
+                    #         # Add the processed value to the set in lowercase
+                    #         unique_values.add(processed_value.lower())
                     # Convert the set back to a list
-                    all_values = list(unique_values)
+                    # all_values = list(unique_values)
+                    organism_edge_values = [
+                                isol_source.strip().translate(translation_table)
+                                for isol_source in organism_edge_values
+                            ]
+                    all_values = [
+                                isol_source.strip().translate(translation_table)
+                                for isol_source in all_values
+                            ]
+                    
                     for isol_source in all_values:
                         node_writer.writerow(
                             [ISOLATION_SOURCE_PREFIX + isol_source, ISOLATION_SOURCE_CATEGORY, isol_source]
                             + [None] * (len(self.node_header) - 3)
                         )
+                    for isol_source in organism_edge_values:
                         edge_writer.writerows(
                             [
                                 [
@@ -1128,6 +1172,24 @@ class BacDiveTransform(Transform):
                                 for organism in species_with_strains
                             ]
                         )
+                    if isolation_source_edges:
+                        isolation_source_edges = [
+                            [isol_source.strip().translate(translation_table) for isol_source in sublist]
+                            for sublist in isolation_source_edges
+                        ]
+                        # Add isolation source hierarchy as edges
+                        for pair in isolation_source_edges:
+                            edge_writer.writerows(
+                                [
+                                    [
+                                        ISOLATION_SOURCE_PREFIX + pair[0],
+                                        SUBCLASS_PREDICATE,
+                                        ISOLATION_SOURCE_PREFIX + pair[1],
+                                        RDFS_SUBCLASS_OF,
+                                        self.source_name,
+                                    ]
+                                ]
+                            )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

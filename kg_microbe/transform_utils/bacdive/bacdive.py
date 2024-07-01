@@ -217,22 +217,28 @@ class BacDiveTransform(Transform):
 
         # If none are present, return None or an appropriate default value
         return None
-    
-    def _get_isolation_edge(self,cat_dictionary):
+
+    def _get_isolation_edge(self, cat_dictionary):
         """Return the lowest level environment from categories."""
         # Replace keys with integers
-        numbered_dict = {int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, '')): value for key, value in cat_dictionary.items()}
+        numbered_dict = {
+            int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, "")): value
+            for key, value in cat_dictionary.items()
+        }
         # Get value with highest category integer
         val = numbered_dict[max(numbered_dict.keys())]
 
         return val
-    
-    def _get_cat_hierarchy(self,cat_dictionary):
+
+    def _get_cat_hierarchy(self, cat_dictionary):
         """Return the lowest level environment from categories."""
         edge_pairs = []
 
         # Replace keys with integers
-        numbered_dict = {int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, '')): value for key, value in cat_dictionary.items()}
+        numbered_dict = {
+            int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, "")): value
+            for key, value in cat_dictionary.items()
+        }
         # Sort keys in descending order
         sorted_keys = sorted(numbered_dict.keys(), reverse=True)
         for i in range(len(sorted_keys) - 1):
@@ -1146,17 +1152,21 @@ class BacDiveTransform(Transform):
                     # Convert the set back to a list
                     # all_values = list(unique_values)
                     organism_edge_values = [
-                                isol_source.strip().translate(translation_table)
-                                for isol_source in organism_edge_values
-                            ]
+                        isol_source.strip().translate(translation_table)
+                        for isol_source in organism_edge_values
+                    ]
                     all_values = [
-                                isol_source.strip().translate(translation_table)
-                                for isol_source in all_values
-                            ]
-                    
+                        isol_source.strip().translate(translation_table)
+                        for isol_source in all_values
+                    ]
+
                     for isol_source in all_values:
                         node_writer.writerow(
-                            [ISOLATION_SOURCE_PREFIX + isol_source, ISOLATION_SOURCE_CATEGORY, isol_source]
+                            [
+                                ISOLATION_SOURCE_PREFIX + isol_source,
+                                ISOLATION_SOURCE_CATEGORY,
+                                isol_source,
+                            ]
                             + [None] * (len(self.node_header) - 3)
                         )
                     for isol_source in organism_edge_values:
@@ -1174,7 +1184,10 @@ class BacDiveTransform(Transform):
                         )
                     if isolation_source_edges:
                         isolation_source_edges = [
-                            [isol_source.strip().translate(translation_table) for isol_source in sublist]
+                            [
+                                isol_source.strip().translate(translation_table)
+                                for isol_source in sublist
+                            ]
                             for sublist in isolation_source_edges
                         ]
                         # Add isolation source hierarchy as edges

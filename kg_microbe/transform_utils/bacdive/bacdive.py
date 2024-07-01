@@ -1075,49 +1075,49 @@ class BacDiveTransform(Transform):
                             edge_writer.writerows(metabolism_edges_to_write)
 
                     # Handle isolation_source code
-                    all_values = []
-                    if isinstance(isolation_source_categories, list):
-                        for category in isolation_source_categories:
-                            all_values.extend(category.values())
-                    elif isinstance(isolation_source_categories, dict):
-                        all_values.extend(category.values())
-                    if isinstance(isolation, list):
-                        for source in isolation:
-                            if BACDIVE_SAMPLE_TYPE in source.keys():
-                                all_values.append(source[BACDIVE_SAMPLE_TYPE])
-                    elif isinstance(isolation, dict):
-                        if BACDIVE_SAMPLE_TYPE in isolation.keys():
-                            all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
-                    all_values = [
-                        value.strip().translate(translation_table).replace(",", "_")
-                        for value in all_values
-                    ]
-                    all_values = list(
-                        filter(
-                            lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
-                            all_values,
-                        )
-                    )
-                    all_values = [
-                        process_and_decode_label(value) for value in all_values if value
-                    ]
-                    for isol_source in all_values:
-                        node_writer.writerow(
-                            [ISOLATION_SOURCE_PREFIX + isol_source, ENVIRONMENT_CATEGORY, isol_source]
-                            + [None] * (len(self.node_header) - 3)
-                        )
-                        edge_writer.writerows(
-                            [
-                                [
-                                    organism,
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                    isol_source,
-                                    LOCATION_OF,
-                                    self.source_name,
-                                ]
-                                for organism in species_with_strains
-                            ]
-                        )
+                    # all_values = []
+                    # if isinstance(isolation_source_categories, list):
+                    #     for category in isolation_source_categories:
+                    #         all_values.extend(category.values())
+                    # elif isinstance(isolation_source_categories, dict):
+                    #     all_values.extend(category.values())
+                    # if isinstance(isolation, list):
+                    #     for source in isolation:
+                    #         if BACDIVE_SAMPLE_TYPE in source.keys():
+                    #             all_values.append(source[BACDIVE_SAMPLE_TYPE])
+                    # elif isinstance(isolation, dict):
+                    #     if BACDIVE_SAMPLE_TYPE in isolation.keys():
+                    #         all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
+                    # all_values = [
+                    #     value.strip().translate(translation_table).replace(",", "").replace(";", "")
+                    #     for value in all_values
+                    # ]
+                    # all_values = list(
+                    #     filter(
+                    #         lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
+                    #         all_values,
+                    #     )
+                    # )
+                    # all_values = [
+                    #     process_and_decode_label(value) for value in all_values if value
+                    # ]
+                    # for isol_source in all_values:
+                    #     node_writer.writerow(
+                    #         [ISOLATION_SOURCE_PREFIX + isol_source, ENVIRONMENT_CATEGORY, isol_source]
+                    #         + [None] * (len(self.node_header) - 3)
+                    #     )
+                    #     edge_writer.writerows(
+                    #         [
+                    #             [
+                    #                 organism,
+                    #                 NCBI_TO_ISOLATION_SOURCE_EDGE,
+                    #                 ISOLATION_SOURCE_PREFIX + isol_source,
+                    #                 LOCATION_OF,
+                    #                 self.source_name,
+                    #             ]
+                    #             for organism in species_with_strains
+                    #         ]
+                    #     )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

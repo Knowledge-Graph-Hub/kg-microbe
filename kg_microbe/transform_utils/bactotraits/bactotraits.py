@@ -160,9 +160,12 @@ class BactoTraitsTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
 
-    def _strip_blanks(self, row: list) -> list:
-        """Strip blanks from row."""
-        return [value.strip() for value in row]
+    def _clean_row(self, row):
+        # Create a translation table that maps unwanted characters to None
+        translation_table = str.maketrans('', '', '"()')
+        
+        return [value.translate(translation_table).strip() for value in row]
+    
 
     def run(
         self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
@@ -203,7 +206,7 @@ class BactoTraitsTransform(Transform):
                     collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
                     # Determine the value for the second column based on whether collection_number_list is not empty.
                     second_column_value = (
-                        self._strip_blanks(ast.literal_eval(collection_number_list))
+                        self._clean_row(ast.literal_eval(collection_number_list))
                         if collection_number_list
                         else ""
                     )

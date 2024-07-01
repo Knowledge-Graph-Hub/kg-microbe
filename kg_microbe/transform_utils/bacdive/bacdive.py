@@ -88,6 +88,7 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SAMPLING_ENV_INFO,
     ISOLATION_SOURCE_CATEGORIES,
     ISOLATION_SOURCE_CATEGORIES_COLUMN,
+    ISOLATION_SOURCE_CATEGORY,
     ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
@@ -1112,7 +1113,7 @@ class BacDiveTransform(Transform):
                     all_values = list(unique_values)
                     for isol_source in all_values:
                         node_writer.writerow(
-                            [ISOLATION_SOURCE_PREFIX + isol_source, "", isol_source]
+                            [ISOLATION_SOURCE_PREFIX + isol_source, ISOLATION_SOURCE_CATEGORY, isol_source]
                             + [None] * (len(self.node_header) - 3)
                         )
                         edge_writer.writerows(

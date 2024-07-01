@@ -275,6 +275,7 @@ BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN = "culture_collection_number"
 BACDIVE_CONDITION_CATEGORY = "Condition"
 BACDIVE_SAMPLE_TYPE = "sample type"
 BACDIVE_OTHER = "Other"
+ISOLATION_SOURCE_CATEGORY = "biolink:EnvironmentalFeature"
 
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"

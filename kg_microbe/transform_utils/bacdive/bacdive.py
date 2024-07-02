@@ -32,6 +32,7 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
+    BACDIVE_ENVIRONMENT_CATEGORY,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -85,8 +86,11 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SAMPLING_ENV_INFO,
     ISOLATION_SOURCE_CATEGORIES,
     ISOLATION_SOURCE_CATEGORIES_COLUMN,
+    ISOLATION_SOURCE_CATEGORY,
+    ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
+    LOCATION_OF,
     LPSN,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
@@ -114,6 +118,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
     NCBI_TO_ENZYME_EDGE,
+    NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_UTILIZATION_EDGE,
@@ -150,6 +155,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM,
     SYNONYMS,
     TOLERANCE,
+    TRANSLATION_TABLE,
     TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
@@ -214,6 +220,36 @@ class BacDiveTransform(Transform):
         # If none are present, return None or an appropriate default value
         return None
 
+    def _get_isolation_edge(self, cat_dictionary):
+        """Return the lowest level environment from categories."""
+        # Replace keys with integers
+        numbered_dict = {
+            int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, "")): value
+            for key, value in cat_dictionary.items()
+        }
+        # Get value with highest category integer
+        val = numbered_dict[max(numbered_dict.keys())]
+
+        return val
+
+    def _get_cat_hierarchy(self, cat_dictionary):
+        """Return the lowest level environment from categories."""
+        edge_pairs = []
+
+        # Replace keys with integers
+        numbered_dict = {
+            int(key.replace(BACDIVE_ENVIRONMENT_CATEGORY, "")): value
+            for key, value in cat_dictionary.items()
+        }
+        # Sort keys in descending order
+        sorted_keys = sorted(numbered_dict.keys(), reverse=True)
+        for i in range(len(sorted_keys) - 1):
+            key1 = sorted_keys[i]
+            key2 = sorted_keys[i + 1]
+            edge_pairs.append([numbered_dict[key1], numbered_dict[key2]])
+
+        return edge_pairs
+
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # replace with downloaded data filename for this source
@@ -221,6 +257,8 @@ class BacDiveTransform(Transform):
         # Read the JSON file into the variable input_json
         with open(input_file, "r") as f:
             input_json = json.load(f)
+
+        translation_table = str.maketrans(TRANSLATION_TABLE)
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -664,9 +702,6 @@ class BacDiveTransform(Transform):
                         name_tax_classification
                         and name_tax_classification.get(TYPE_STRAIN) == "yes"
                     ):
-                        translation_table = str.maketrans(
-                            {" ": "-", '"': "", "(": "", ")": "", "#": ""}
-                        )
                         if "," in name_tax_classification.get(STRAIN_DESIGNATION, ""):
                             strain_designations = name_tax_classification.get(
                                 STRAIN_DESIGNATION
@@ -1075,50 +1110,75 @@ class BacDiveTransform(Transform):
 
                             edge_writer.writerows(metabolism_edges_to_write)
 
-                    # Handle isolation_source code
-                    # all_values = []
-                    # if isinstance(isolation_source_categories, list):
-                    #     for category in isolation_source_categories:
-                    #         all_values.extend(category.values())
-                    # elif isinstance(isolation_source_categories, dict):
-                    #     all_values.extend(category.values())
-                    # if isinstance(isolation, list):
-                    #     for source in isolation:
-                    #         if BACDIVE_SAMPLE_TYPE in source.keys():
-                    #             all_values.append(source[BACDIVE_SAMPLE_TYPE])
-                    # elif isinstance(isolation, dict):
-                    #     if BACDIVE_SAMPLE_TYPE in isolation.keys():
-                    #         all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
-                    # all_values = [
-                    #     value.strip().translate(translation_table).replace(",", "").replace(";", "")
-                    #     for value in all_values
-                    # ]
-                    # all_values = list(
-                    #     filter(
-                    #         lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
-                    #         all_values,
-                    #     )
-                    # )
-                    # all_values = [
-                    #     process_and_decode_label(value) for value in all_values if value
-                    # ]
-                    # for isol_source in all_values:
-                    #     node_writer.writerow(
-                    #         [ISOLATION_SOURCE_PREFIX + isol_source, ENVIRONMENT_CATEGORY, isol_source]
-                    #         + [None] * (len(self.node_header) - 3)
-                    #     )
-                    #     edge_writer.writerows(
-                    #         [
-                    #             [
-                    #                 organism,
-                    #                 NCBI_TO_ISOLATION_SOURCE_EDGE,
-                    #                 ISOLATION_SOURCE_PREFIX + isol_source,
-                    #                 LOCATION_OF,
-                    #                 self.source_name,
-                    #             ]
-                    #             for organism in species_with_strains
-                    #         ]
-                    #     )
+                    # Uncomment and handle isolation_source code
+                    all_values = []
+                    organism_edge_values = []
+                    isolation_source_edges = None
+                    if isinstance(isolation_source_categories, list):
+                        for category in isolation_source_categories:
+                            organism_edge_value = self._get_isolation_edge(category)
+                            organism_edge_values.append(organism_edge_value)
+                            # Add all values to nodes
+                            all_values.extend(category.values())
+                            isolation_source_edges = self._get_cat_hierarchy(category)
+                    elif isinstance(isolation_source_categories, dict):
+                        organism_edge_value = self._get_isolation_edge(isolation_source_categories)
+                        organism_edge_values.append(organism_edge_value)
+                        # Add all values to nodes
+                        all_values.extend(isolation_source_categories.values())
+                        isolation_source_edges = self._get_cat_hierarchy(category)
+                    organism_edge_values = [
+                        isol_source.strip().translate(translation_table)
+                        for isol_source in organism_edge_values
+                    ]
+                    all_values = [
+                        isol_source.strip().translate(translation_table)
+                        for isol_source in all_values
+                    ]
+
+                    for isol_source in all_values:
+                        node_writer.writerow(
+                            [
+                                ISOLATION_SOURCE_PREFIX + isol_source,
+                                ISOLATION_SOURCE_CATEGORY,
+                                isol_source,
+                            ]
+                            + [None] * (len(self.node_header) - 3)
+                        )
+                    for isol_source in organism_edge_values:
+                        edge_writer.writerows(
+                            [
+                                [
+                                    organism,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    ISOLATION_SOURCE_PREFIX + isol_source,
+                                    LOCATION_OF,
+                                    self.source_name,
+                                ]
+                                for organism in species_with_strains
+                            ]
+                        )
+                    if isolation_source_edges:
+                        isolation_source_edges = [
+                            [
+                                isol_source.strip().translate(translation_table)
+                                for isol_source in sublist
+                            ]
+                            for sublist in isolation_source_edges
+                        ]
+                        # Add isolation source hierarchy as edges
+                        for pair in isolation_source_edges:
+                            edge_writer.writerows(
+                                [
+                                    [
+                                        ISOLATION_SOURCE_PREFIX + pair[0],
+                                        SUBCLASS_PREDICATE,
+                                        ISOLATION_SOURCE_PREFIX + pair[1],
+                                        RDFS_SUBCLASS_OF,
+                                        self.source_name,
+                                    ]
+                                ]
+                            )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

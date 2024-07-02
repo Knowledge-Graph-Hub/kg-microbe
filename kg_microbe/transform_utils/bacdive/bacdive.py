@@ -18,7 +18,6 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
-import chardet
 import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
@@ -33,7 +32,6 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
-    BACDIVE_CONDITION_CATEGORY,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -44,9 +42,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
     BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
-    BACDIVE_OTHER,
     BACDIVE_PREFIX,
-    BACDIVE_SAMPLE_TYPE,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
@@ -66,7 +62,6 @@ from kg_microbe.transform_utils.constants import (
     DSM_NUMBER_COLUMN,
     EC_KEY,
     EC_PREFIX,
-    ENVIRONMENT_CATEGORY,
     ENZYME_TO_ASSAY_EDGE,
     ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
@@ -90,10 +85,8 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SAMPLING_ENV_INFO,
     ISOLATION_SOURCE_CATEGORIES,
     ISOLATION_SOURCE_CATEGORIES_COLUMN,
-    ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
-    LOCATION_OF,
     LPSN,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
@@ -121,7 +114,6 @@ from kg_microbe.transform_utils.constants import (
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
     NCBI_TO_ENZYME_EDGE,
-    NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_UTILIZATION_EDGE,
@@ -484,6 +476,13 @@ class BacDiveTransform(Transform):
                         culture_number_from_external_links = (
                             external_links[EXTERNAL_LINKS_CULTURE_NUMBER] or ""
                         ).split(",")
+                        culture_number_translation_table = str.maketrans("", "", '()"')
+                        culture_number_from_external_links = [
+                            culture_number.translate(culture_number_translation_table)
+                            .replace('""', "")
+                            .strip()
+                            for culture_number in culture_number_from_external_links
+                        ]
 
                         if dsm_number is None:
                             dsm_number = next(
@@ -704,9 +703,11 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         species_with_strains.extend([curated_strain_ids[0]])
-                        curated_strain_label = name_tax_classification.get(FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}")
+                        curated_strain_label = name_tax_classification.get(
+                            FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
+                        )
                         curated_strain_label = process_and_decode_label(curated_strain_label)
-                        
+
                         # ! Synonyms are specific to species and not the strain.
                         # if synonym_parsed is None:
                         node_writer.writerows(

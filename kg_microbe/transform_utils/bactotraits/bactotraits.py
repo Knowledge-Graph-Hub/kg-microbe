@@ -162,10 +162,9 @@ class BactoTraitsTransform(Transform):
 
     def _clean_row(self, row):
         # Create a translation table that maps unwanted characters to None
-        translation_table = str.maketrans('', '', '"()')
-        
+        translation_table = str.maketrans("", "", '"()')
+
         return [value.translate(translation_table).strip() for value in row]
-    
 
     def run(
         self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True

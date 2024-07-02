@@ -29,3 +29,16 @@ def process_and_decode_label(label):
         label = label.encode("utf-8", errors="ignore").decode("utf-8", errors="ignore")
 
     return label
+
+
+def clean_string(input_str):
+    """Clean string from punctuations and whitespaces."""
+    if not isinstance(input_str, str):
+        return input_str
+    # Remove newline characters
+    cleaned_str = input_str.replace("\n", " ")
+
+    # Remove extra spaces
+    cleaned_str = " ".join(cleaned_str.split())
+
+    return cleaned_str

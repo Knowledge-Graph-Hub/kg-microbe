@@ -158,7 +158,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
-from kg_microbe.utils.string_coding import process_and_decode_label
+from kg_microbe.utils.string_coding import clean_string, process_and_decode_label
 
 
 class BacDiveTransform(Transform):
@@ -590,7 +590,7 @@ class BacDiveTransform(Transform):
                                     ncbi_description,
                                     str(keywords),
                                     mid,
-                                    mlabel,
+                                    clean_string(mlabel),
                                     murl,
                                     mdurl,
                                     isolation,

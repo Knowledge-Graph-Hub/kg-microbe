@@ -27,7 +27,7 @@ DATA_SOURCES = {
     "TraitsTransform": TraitsTransform,
     "RheaMappingsTransform": RheaMappingsTransform,
     "BactoTraitsTransform": BactoTraitsTransform,
-    "UniprotTransform": UniprotTransform,
+    # "UniprotTransform": UniprotTransform,
 }
 
 

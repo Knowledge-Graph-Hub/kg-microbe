@@ -274,7 +274,7 @@ BACDIVE_MAPPING_SUBSTRATE_LABEL = "substrate"
 BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN = "culture_collection_number"
 BACDIVE_ENVIRONMENT_CATEGORY = "Cat"
 ISOLATION_SOURCE_CATEGORY = "biolink:EnvironmentalFeature"
-
+TRANSLATION_TABLE = {" ": "-", '"': "", "(": "", ")": "", "#": ""}
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"
 MEDIADIVE_COMPLEX_MEDIUM_COLUMN = "complex_medium"

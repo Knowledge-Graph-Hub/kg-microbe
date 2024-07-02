@@ -163,6 +163,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.string_coding import process_and_decode_label
 
 
 class BacDiveTransform(Transform):
@@ -510,6 +511,13 @@ class BacDiveTransform(Transform):
                         culture_number_from_external_links = (
                             external_links[EXTERNAL_LINKS_CULTURE_NUMBER] or ""
                         ).split(",")
+                        culture_number_translation_table = str.maketrans("", "", '()"')
+                        culture_number_from_external_links = [
+                            culture_number.translate(culture_number_translation_table)
+                            .replace('""', "")
+                            .strip()
+                            for culture_number in culture_number_from_external_links
+                        ]
 
                         if dsm_number is None:
                             dsm_number = next(
@@ -730,17 +738,11 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         species_with_strains.extend([curated_strain_ids[0]])
-
-                        curated_strain_label = (
-                            name_tax_classification.get(
-                                FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
-                            )
-                            .replace("<l>", "")
-                            .replace("</l>", "")
+                        curated_strain_label = name_tax_classification.get(
+                            FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
                         )
-                        curated_strain_label = re.sub(r"\s+", " ", curated_strain_label)
-                        curated_strain_label = re.sub(r"<[^>]+>", "", curated_strain_label)
-                        curated_strain_label = re.sub(r"\s+", " ", curated_strain_label).strip()
+                        curated_strain_label = process_and_decode_label(curated_strain_label)
+
                         # ! Synonyms are specific to species and not the strain.
                         # if synonym_parsed is None:
                         node_writer.writerows(
@@ -1113,8 +1115,6 @@ class BacDiveTransform(Transform):
                     organism_edge_values = []
                     isolation_source_edges = None
                     if isinstance(isolation_source_categories, list):
-                        # if len(isolation_source_categories) > 0:
-                        #     import pdb;pdb.set_trace()
                         for category in isolation_source_categories:
                             organism_edge_value = self._get_isolation_edge(category)
                             organism_edge_values.append(organism_edge_value)

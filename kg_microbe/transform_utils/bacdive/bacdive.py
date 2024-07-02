@@ -32,7 +32,6 @@ from kg_microbe.transform_utils.constants import (
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE_API_BASE_URL,
-    BACDIVE_CONDITION_CATEGORY,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -43,9 +42,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
     BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
-    BACDIVE_OTHER,
     BACDIVE_PREFIX,
-    BACDIVE_SAMPLE_TYPE,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
@@ -88,10 +85,8 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SAMPLING_ENV_INFO,
     ISOLATION_SOURCE_CATEGORIES,
     ISOLATION_SOURCE_CATEGORIES_COLUMN,
-    ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
-    LOCATION_OF,
     LPSN,
     MATCHING_LEVEL,
     MEDIADIVE_REST_API_BASE_URL,
@@ -119,7 +114,6 @@ from kg_microbe.transform_utils.constants import (
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
     NCBI_TO_ENZYME_EDGE,
-    NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_UTILIZATION_EDGE,
@@ -164,6 +158,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.string_coding import process_and_decode_label
 
 
 class BacDiveTransform(Transform):
@@ -481,6 +476,13 @@ class BacDiveTransform(Transform):
                         culture_number_from_external_links = (
                             external_links[EXTERNAL_LINKS_CULTURE_NUMBER] or ""
                         ).split(",")
+                        culture_number_translation_table = str.maketrans("", "", '()"')
+                        culture_number_from_external_links = [
+                            culture_number.translate(culture_number_translation_table)
+                            .replace('""', "")
+                            .strip()
+                            for culture_number in culture_number_from_external_links
+                        ]
 
                         if dsm_number is None:
                             dsm_number = next(
@@ -701,17 +703,11 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         species_with_strains.extend([curated_strain_ids[0]])
-
-                        curated_strain_label = (
-                            name_tax_classification.get(
-                                FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
-                            )
-                            .replace("<l>", "")
-                            .replace("</l>", "")
+                        curated_strain_label = name_tax_classification.get(
+                            FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
                         )
-                        curated_strain_label = re.sub(r"\s+", " ", curated_strain_label)
-                        curated_strain_label = re.sub(r"<[^>]+>", "", curated_strain_label)
-                        curated_strain_label = re.sub(r"\s+", " ", curated_strain_label).strip()
+                        curated_strain_label = process_and_decode_label(curated_strain_label)
+
                         # ! Synonyms are specific to species and not the strain.
                         # if synonym_parsed is None:
                         node_writer.writerows(
@@ -1079,47 +1075,50 @@ class BacDiveTransform(Transform):
 
                             edge_writer.writerows(metabolism_edges_to_write)
 
-                    # Uncomment and handle isolation_source code
-                    all_values = []
-                    if isinstance(isolation_source_categories, list):
-                        for category in isolation_source_categories:
-                            all_values.extend(category.values())
-                    elif isinstance(isolation_source_categories, dict):
-                        all_values.extend(category.values())
-                    if isinstance(isolation, list):
-                        for source in isolation:
-                            if BACDIVE_SAMPLE_TYPE in source.keys():
-                                all_values.append(source[BACDIVE_SAMPLE_TYPE])
-                    elif isinstance(isolation, dict):
-                        if BACDIVE_SAMPLE_TYPE in isolation.keys():
-                            all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
-                    all_values = [
-                        value.strip().translate(translation_table).replace(",", "_")
-                        for value in all_values
-                    ]
-                    all_values = list(
-                        filter(
-                            lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
-                            all_values,
-                        )
-                    )
-                    for isol_source in all_values:
-                        node_writer.writerow(
-                            [ISOLATION_SOURCE_PREFIX + isol_source, "", isol_source]
-                            + [None] * (len(self.node_header) - 3)
-                        )
-                        edge_writer.writerows(
-                            [
-                                [
-                                    organism,
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                    isol_source,
-                                    LOCATION_OF,
-                                    self.source_name,
-                                ]
-                                for organism in species_with_strains
-                            ]
-                        )
+                    # Handle isolation_source code
+                    # all_values = []
+                    # if isinstance(isolation_source_categories, list):
+                    #     for category in isolation_source_categories:
+                    #         all_values.extend(category.values())
+                    # elif isinstance(isolation_source_categories, dict):
+                    #     all_values.extend(category.values())
+                    # if isinstance(isolation, list):
+                    #     for source in isolation:
+                    #         if BACDIVE_SAMPLE_TYPE in source.keys():
+                    #             all_values.append(source[BACDIVE_SAMPLE_TYPE])
+                    # elif isinstance(isolation, dict):
+                    #     if BACDIVE_SAMPLE_TYPE in isolation.keys():
+                    #         all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
+                    # all_values = [
+                    #     value.strip().translate(translation_table).replace(",", "").replace(";", "")
+                    #     for value in all_values
+                    # ]
+                    # all_values = list(
+                    #     filter(
+                    #         lambda value: value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER},
+                    #         all_values,
+                    #     )
+                    # )
+                    # all_values = [
+                    #     process_and_decode_label(value) for value in all_values if value
+                    # ]
+                    # for isol_source in all_values:
+                    #     node_writer.writerow(
+                    #         [ISOLATION_SOURCE_PREFIX + isol_source, ENVIRONMENT_CATEGORY, isol_source]
+                    #         + [None] * (len(self.node_header) - 3)
+                    #     )
+                    #     edge_writer.writerows(
+                    #         [
+                    #             [
+                    #                 organism,
+                    #                 NCBI_TO_ISOLATION_SOURCE_EDGE,
+                    #                 ISOLATION_SOURCE_PREFIX + isol_source,
+                    #                 LOCATION_OF,
+                    #                 self.source_name,
+                    #             ]
+                    #             for organism in species_with_strains
+                    #         ]
+                    #     )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

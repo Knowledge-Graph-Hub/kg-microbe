@@ -574,7 +574,7 @@ class BacDiveTransform(Transform):
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
-                                    medium_labels.append(medium_label)
+                                    medium_labels.append(clean_string(medium_label))
                                     medium_urls.append(medium_url)
                                     mediadive_urls.append(mediadive_url)
 
@@ -590,7 +590,7 @@ class BacDiveTransform(Transform):
                                     ncbi_description,
                                     str(keywords),
                                     mid,
-                                    clean_string(mlabel),
+                                    mlabel,
                                     murl,
                                     mdurl,
                                     isolation,

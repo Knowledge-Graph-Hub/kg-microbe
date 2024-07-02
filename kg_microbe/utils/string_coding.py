@@ -1,3 +1,5 @@
+"""Decoding and encoding strings such that everything is utf8."""
+
 import re
 
 import chardet
@@ -6,6 +8,7 @@ import chardet
 def process_and_decode_label(label):
     """
     Process and decode a label string.
+
     :param label: A string to process and decode.
     :return: A processed and decoded string.
     """

@@ -1127,30 +1127,6 @@ class BacDiveTransform(Transform):
                         # Add all values to nodes
                         all_values.extend(isolation_source_categories.values())
                         isolation_source_edges = self._get_cat_hierarchy(category)
-
-                    #   ! Not using sample type fields for now
-                    # if isinstance(isolation, list):
-                    #     for source in isolation:
-                    #         if BACDIVE_SAMPLE_TYPE in source.keys():
-                    #             all_values.append(source[BACDIVE_SAMPLE_TYPE])
-                    # elif isinstance(isolation, dict):
-                    #     if BACDIVE_SAMPLE_TYPE in isolation.keys():
-                    #         all_values.append(isolation[BACDIVE_SAMPLE_TYPE])
-                    # # Set to track unique, case-insensitive values
-                    # unique_values = set()
-                    # for value in all_values:
-                    #     if value not in {BACDIVE_CONDITION_CATEGORY, BACDIVE_OTHER}:
-                    #         processed_value = re.sub(
-                    #             r"[^a-zA-Z0-9]",
-                    #             "_",
-                    #             re.sub(r"</?i>", "", value.strip(), flags=re.IGNORECASE)
-                    #             .replace("%", "p")
-                    #             .replace("°", "d"),
-                    #         ).strip("_")
-                    #         # Add the processed value to the set in lowercase
-                    #         unique_values.add(processed_value.lower())
-                    # Convert the set back to a list
-                    # all_values = list(unique_values)
                     organism_edge_values = [
                         isol_source.strip().translate(translation_table)
                         for isol_source in organism_edge_values

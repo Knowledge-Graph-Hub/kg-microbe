@@ -155,6 +155,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM,
     SYNONYMS,
     TOLERANCE,
+    TRANSLATION_TABLE,
     TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
@@ -256,6 +257,8 @@ class BacDiveTransform(Transform):
         # Read the JSON file into the variable input_json
         with open(input_file, "r") as f:
             input_json = json.load(f)
+
+        translation_table = str.maketrans(TRANSLATION_TABLE)
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -699,9 +702,6 @@ class BacDiveTransform(Transform):
                         name_tax_classification
                         and name_tax_classification.get(TYPE_STRAIN) == "yes"
                     ):
-                        translation_table = str.maketrans(
-                            {" ": "-", '"': "", "(": "", ")": "", "#": ""}
-                        )
                         if "," in name_tax_classification.get(STRAIN_DESIGNATION, ""):
                             strain_designations = name_tax_classification.get(
                                 STRAIN_DESIGNATION

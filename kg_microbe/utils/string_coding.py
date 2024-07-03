@@ -31,8 +31,8 @@ def process_and_decode_label(label):
     return label
 
 
-def clean_string(input_str):
-    """Clean string from punctuations and whitespaces."""
+def remove_nextlines(input_str):
+    """Clean string by removing nextlines."""
     if not isinstance(input_str, str):
         return input_str
     # Remove newline characters

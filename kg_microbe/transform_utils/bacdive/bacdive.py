@@ -155,7 +155,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM,
     SYNONYMS,
     TOLERANCE,
-    TRANSLATION_TABLE,
+    TRANSLATION_TABLE_FOR_IDS,
     TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
@@ -164,7 +164,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
-from kg_microbe.utils.string_coding import clean_string, process_and_decode_label
+from kg_microbe.utils.string_coding import process_and_decode_label, remove_nextlines
 
 
 class BacDiveTransform(Transform):
@@ -258,7 +258,7 @@ class BacDiveTransform(Transform):
         with open(input_file, "r") as f:
             input_json = json.load(f)
 
-        translation_table = str.maketrans(TRANSLATION_TABLE)
+        translation_table = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -612,7 +612,7 @@ class BacDiveTransform(Transform):
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
-                                    medium_labels.append(clean_string(medium_label))
+                                    medium_labels.append(remove_nextlines(medium_label))
                                     medium_urls.append(medium_url)
                                     mediadive_urls.append(mediadive_url)
 

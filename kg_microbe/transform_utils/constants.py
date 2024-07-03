@@ -135,6 +135,8 @@ ISOLATION_SOURCE_PREFIX = "isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
 ASSAY_PREFIX = "assay:"
+UNIREF_90_PREFIX = "UniRef90:"
+
 RHEA_URI = "http://purl.obolibrary.org/obo/rhea_"
 DEBIO_OBO_PREFIX = "OBO:debio_"
 DEBIO_NEW_PREFIX = "debio:"
@@ -175,6 +177,8 @@ ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
 RHEA_TO_EC_EDGE = "biolink:enabled_by"
 RHEA_TO_GO_EDGE = "biolink:enables"
+NCBI_TO_CLUSTER_EDGE = "biolink:occurs_in"
+
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 MEDIUM_CATEGORY = "biolink:ChemicalEntity"
@@ -191,6 +195,7 @@ PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
 ATTRIBUTE_CATEGORY = "biolink:Attribute"
 METABOLITE_CATEGORY = "biolink:ChemicalEntity"
 SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
+CLUSTER_CATEGORY = "biolink:ProteinFamily"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -207,6 +212,7 @@ ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
 EXACT_MATCH = "skos:exactMatch"
 ASSOCIATED_WITH = "PATO:0001668"
+OCCURS_IN = "BFO:0000066"
 
 ID_COLUMN = "id"
 NAME_COLUMN = "name"
@@ -426,6 +432,7 @@ DO_NOT_CHANGE_PREFIXES = [
     GO_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,
     STRAIN_PREFIX,
+    UNIREF_90_PREFIX,
 ]
 
 HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"

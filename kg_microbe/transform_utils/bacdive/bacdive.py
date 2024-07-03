@@ -262,7 +262,6 @@ class BacDiveTransform(Transform):
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
-
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
             DSM_NUMBER_COLUMN,
@@ -615,7 +614,11 @@ class BacDiveTransform(Transform):
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
-                                    medium_labels.append(remove_nextlines(medium_label).translate(translation_table_for_labels))
+                                    medium_labels.append(
+                                        remove_nextlines(medium_label).translate(
+                                            translation_table_for_labels
+                                        )
+                                    )
                                     medium_urls.append(medium_url)
                                     mediadive_urls.append(mediadive_url)
 

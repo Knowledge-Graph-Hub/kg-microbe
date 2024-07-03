@@ -310,7 +310,12 @@ class MediaDiveTransform(Transform):
                 )
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
-                    dictionary[NAME_COLUMN] = dictionary[NAME_COLUMN].translate(self.translation_table).replace('""', "").strip()
+                    dictionary[NAME_COLUMN] = (
+                        dictionary[NAME_COLUMN]
+                        .translate(self.translation_table)
+                        .replace('""', "")
+                        .strip()
+                    )
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
                     fn_medium_strain = Path(str(MEDIADIVE_MEDIUM_STRAIN_YAML_DIR / id) + ".yaml")
                     json_obj = self.get_json_object(fn, MEDIUM + id, MEDIADIVE_MEDIUM_YAML_DIR)

@@ -276,7 +276,16 @@ BACDIVE_ENVIRONMENT_CATEGORY = "Cat"
 ISOLATION_SOURCE_CATEGORY = "biolink:EnvironmentalFeature"
 # ! Primary differenec between the 2 below is the first key-value pair.
 # ! Whitespaces are fine for labels.
-TRANSLATION_TABLE_FOR_IDS = {" ": "-", '"': "", "(": "", ")": "", "#": "", ";": "", "{": "", "}": ""}
+TRANSLATION_TABLE_FOR_IDS = {
+    " ": "-",
+    '"': "",
+    "(": "",
+    ")": "",
+    "#": "",
+    ";": "",
+    "{": "",
+    "}": "",
+}
 TRANSLATION_TABLE_FOR_LABELS = {'"': "", "(": "", ")": "", "#": "", ";": "", "{": "", "}": ""}
 
 MEDIADIVE_ID_COLUMN = "mediadive_id"

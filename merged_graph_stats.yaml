@@ -105,13 +105,13 @@ edge_stats:
         unknown:
           count: 112
     biolink:location_of:
-      count: 26755
+      count: 98918
       provided_by:
         unknown:
-          count: 26755
+          count: 98918
       source:
         unknown:
-          count: 26755
+          count: 98918
     biolink:occurs_in:
       count: 53585
       provided_by:
@@ -153,13 +153,13 @@ edge_stats:
         unknown:
           count: 3238
     biolink:subclass_of:
-      count: 1370585
+      count: 1370902
       provided_by:
         unknown:
-          count: 1370585
+          count: 1370902
       source:
         unknown:
-          count: 1370585
+          count: 1370902
     biolink:type:
       count: 45
       provided_by:
@@ -1132,13 +1132,13 @@ edge_stats:
         unknown:
           count: 624
     biolink:OrganismTaxon-biolink:location_of-unknown:
-      count: 6775
+      count: 78938
       provided_by:
         unknown:
-          count: 6775
+          count: 78938
       source:
         unknown:
-          count: 6775
+          count: 78938
     biolink:OrganismTaxon-biolink:occurs_in-biolink:ChemicalEntity:
       count: 53242
       provided_by:
@@ -1331,6 +1331,14 @@ edge_stats:
       source:
         unknown:
           count: 5
+    unknown-biolink:subclass_of-unknown:
+      count: 317
+      provided_by:
+        unknown:
+          count: 317
+      source:
+        unknown:
+          count: 317
   predicates:
   - biolink:assesses
   - biolink:associated_with
@@ -1357,7 +1365,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 2660878
+  total_edges: 2733358
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -1429,7 +1437,7 @@ node_stats:
         nodes.tsv:
           count: 1377
     biolink:EnvironmentalFeature:
-      count: 60
+      count: 412
       provided_by:
         chebi.json:
           count: 2
@@ -1438,7 +1446,7 @@ node_stats:
         ncbitaxon_removed_subset.json:
           count: 1
         nodes.tsv:
-          count: 60
+          count: 412
     biolink:Enzyme:
       count: 7209
       provided_by:
@@ -15968,12 +15976,12 @@ node_stats:
         nodes.tsv:
           count: 543
     unknown:
-      count: 1195
+      count: 1547
       provided_by:
         nodes.tsv:
-          count: 6
+          count: 5
         unknown:
-          count: 1168
+          count: 1521
         upa_nodes.tsv:
           count: 21
   count_by_id_prefixes:
@@ -16014,7 +16022,7 @@ node_stats:
     gc: 4
     gram_stain: 3
     ingredient: 258
-    isolation_source: 5
+    isolation_source: 702
     medium: 3299
     medium-type: 2
     motility: 2
@@ -16073,6 +16081,7 @@ node_stats:
       UBERON: 6
       envo: 43
       foodon: 1
+      isolation_source: 348
       pato: 6
       po: 1
     biolink:Enzyme:
@@ -16136,7 +16145,7 @@ node_stats:
       assay: 50
       bacdive: 939
       cell_shape: 1
-      isolation_source: 5
+      isolation_source: 354
       medium: 5
       trophic_type: 1
   node_categories:
@@ -16251,6 +16260,7 @@ node_stats:
     - NCBITaxon
     - CHEBI
     - UBERON
+    - isolation_source
     - envo
     - foodon
     - po
@@ -16310,12 +16320,12 @@ node_stats:
     - pH_delta
     unknown:
     - assay
+    - isolation_source
     - bacdive
     - NCBITaxon
     - medium
     - CHEBI
     - RHEA
-    - isolation_source
     - FOODON
     - cell_shape
     - trophic_type
@@ -23504,4 +23514,4 @@ node_stats:
   - unknown
   - upa.json
   - upa_nodes.tsv
-  total_nodes: 1307893
+  total_nodes: 1308597

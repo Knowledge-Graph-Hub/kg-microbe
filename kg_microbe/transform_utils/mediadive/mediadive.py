@@ -163,10 +163,7 @@ class MediaDiveTransform(Transform):
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
                 item[SOLUTION_KEY] = (
-                    item[SOLUTION_KEY]
-                    .translate(self.translation_table)
-                    .replace('""', "")
-                    .strip()
+                    item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
                     if isinstance(item[SOLUTION_KEY], str)
                     else item[SOLUTION_KEY]
                 )

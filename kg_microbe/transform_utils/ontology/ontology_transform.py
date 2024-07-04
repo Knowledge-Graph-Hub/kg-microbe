@@ -17,6 +17,7 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CHEBI_PREFIX,
     CHEBI_XREFS_FILEPATH,
+    DESCRIPTION_COLUMN,
     EC_PREFIX,
     ENABLED_BY_PREDICATE,
     ENABLED_BY_RELATION,
@@ -67,13 +68,13 @@ from kg_microbe.utils.unipathways_utils import (
 from ..transform import Transform
 
 ONTOLOGIES = {
-    "ncbitaxon": "ncbitaxon.owl.gz",
-    "chebi": "chebi.owl.gz",
-    "envo": "envo.json",
-    "go": "go.json",
-    # "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
-    "ec": "ec.json",
-    "upa": "upa.owl",
+    # "ncbitaxon": "ncbitaxon.owl.gz",
+    # "chebi": "chebi.owl.gz",
+    # "envo": "envo.json",
+    # "go": "go.json",
+    ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
+    # "ec": "ec.json",
+    # "upa": "upa.owl",
     "mondo": "mondo.json",
     "hp": "hp.json",
 }
@@ -197,6 +198,13 @@ class OntologyTransform(Transform):
         def _replace_special_prefixes(line):
             """Use the pattern to replace all occurrences of the keys with their values."""
             return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
+        
+        def _replace_quotation_marks(line, description_index):
+            """Replace single and double quotation marks."""
+            parts = line.strip().split("\t")
+            parts[description_index] = parts[description_index].replace("\"","").replace("'","")
+            new_line = "\t".join(parts)
+            return new_line
 
         if name == "chebi" or name == "upa" or name == "mondo":
             makedirs(ONTOLOGY_XREFS_DIR, exist_ok=True)
@@ -240,9 +248,11 @@ class OntologyTransform(Transform):
                         id_index = line.strip().split("\t").index(ID_COLUMN)
                         # get the index for the term 'category'
                         category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                        description_index = line.strip().split("\t").index(DESCRIPTION_COLUMN)
                     else:
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
+                        line = _replace_quotation_marks(line,description_index)
                         new_nf_lines.append(line + "\n")
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:

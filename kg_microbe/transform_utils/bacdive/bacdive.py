@@ -738,7 +738,13 @@ class BacDiveTransform(Transform):
                             ]
 
                         curated_strain_ids = [
-                            STRAIN_PREFIX + curated_strain_id
+                            STRAIN_PREFIX
+                            + curated_strain_id
+                            + (
+                                "_of_" + ncbitaxon_id.replace(":", "_")
+                                if str(curated_strain_id).isnumeric() and ncbitaxon_id
+                                else ""
+                            )
                             for curated_strain_id in curated_strain_ids
                         ]
 

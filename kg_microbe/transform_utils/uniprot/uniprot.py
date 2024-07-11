@@ -270,7 +270,7 @@ def get_nodes_and_edges(uniprot_df, go_category_trees_dictionary):
         parse_rhea_entry
     )
     uniprot_parse_df[PROTEOME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
-        lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if not is_float(x) else x
+        lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if x and not is_float(x) and x !="" else x
     )
 
     for _, entry in uniprot_parse_df.iterrows():

@@ -155,7 +155,8 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM,
     SYNONYMS,
     TOLERANCE,
-    TRANSLATION_TABLE,
+    TRANSLATION_TABLE_FOR_IDS,
+    TRANSLATION_TABLE_FOR_LABELS,
     TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
@@ -164,7 +165,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
-from kg_microbe.utils.string_coding import clean_string, process_and_decode_label
+from kg_microbe.utils.string_coding import process_and_decode_label, remove_nextlines
 
 
 class BacDiveTransform(Transform):
@@ -258,7 +259,8 @@ class BacDiveTransform(Transform):
         with open(input_file, "r") as f:
             input_json = json.load(f)
 
-        translation_table = str.maketrans(TRANSLATION_TABLE)
+        translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
+        translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -612,7 +614,11 @@ class BacDiveTransform(Transform):
 
                                     # Store each medium's details in lists
                                     medium_ids.extend(medium_id_list)
-                                    medium_labels.append(clean_string(medium_label))
+                                    medium_labels.append(
+                                        remove_nextlines(medium_label).translate(
+                                            translation_table_for_labels
+                                        )
+                                    )
                                     medium_urls.append(medium_url)
                                     mediadive_urls.append(mediadive_url)
 
@@ -707,14 +713,14 @@ class BacDiveTransform(Transform):
                                 STRAIN_DESIGNATION
                             ).split(", ")
                             curated_strain_ids = [
-                                strain_designation.strip().translate(translation_table)
+                                strain_designation.strip().translate(translation_table_for_ids)
                                 for strain_designation in strain_designations
                             ]
                         elif name_tax_classification.get(STRAIN_DESIGNATION):
                             curated_strain_ids = [
                                 name_tax_classification.get(STRAIN_DESIGNATION)
                                 .strip()
-                                .translate(translation_table)
+                                .translate(translation_table_for_ids)
                             ]
 
                         else:
@@ -728,11 +734,17 @@ class BacDiveTransform(Transform):
                                     STRAIN_DESIGNATION, f"of_{curated_strain_id_suffix}"
                                 )
                                 .strip()
-                                .translate(translation_table)
+                                .translate(translation_table_for_ids)
                             ]
 
                         curated_strain_ids = [
-                            STRAIN_PREFIX + curated_strain_id
+                            STRAIN_PREFIX
+                            + curated_strain_id
+                            + (
+                                "_of_" + ncbitaxon_id.replace(":", "_")
+                                if str(curated_strain_id).isnumeric() and ncbitaxon_id
+                                else ""
+                            )
                             for curated_strain_id in curated_strain_ids
                         ]
 
@@ -1128,11 +1140,11 @@ class BacDiveTransform(Transform):
                         all_values.extend(isolation_source_categories.values())
                         isolation_source_edges = self._get_cat_hierarchy(category)
                     organism_edge_values = [
-                        isol_source.strip().translate(translation_table)
+                        isol_source.strip().translate(translation_table_for_ids)
                         for isol_source in organism_edge_values
                     ]
                     all_values = [
-                        isol_source.strip().translate(translation_table)
+                        isol_source.strip().translate(translation_table_for_ids)
                         for isol_source in all_values
                     ]
 
@@ -1161,7 +1173,7 @@ class BacDiveTransform(Transform):
                     if isolation_source_edges:
                         isolation_source_edges = [
                             [
-                                isol_source.strip().translate(translation_table)
+                                isol_source.strip().translate(translation_table_for_ids)
                                 for isol_source in sublist
                             ]
                             for sublist in isolation_source_edges

@@ -17,18 +17,6 @@ from kg_microbe.transform_utils.constants import (
 )
 
 
-def clean_string(s):
-    """
-    Remove newline characters, semicolons, and leading/trailing whitespace from a string.
-
-    :param s: The string to be cleaned.
-    :type s: str
-    :return: The cleaned string.
-    :rtype: str
-    """
-    return s.replace("\n", "").replace(";", "").strip()
-
-
 def process_value(value):
     """
     Process the value of the record attribute.
@@ -47,9 +35,12 @@ def process_value(value):
     :rtype: str | list
     """
     if isinstance(value, (list, tuple)):
-        return [clean_string(val) if isinstance(val, str) else val for val in value]
+        return [
+            val.replace("\n", "").replace(";", "").strip() if isinstance(val, str) else val
+            for val in value
+        ]
     elif isinstance(value, str):
-        return clean_string(value)
+        return value.replace("\n", "").replace(";", "").strip()
     return value
 
 

@@ -68,7 +68,7 @@ from kg_microbe.utils.unipathways_utils import (
 from ..transform import Transform
 
 ONTOLOGIES = {
-    # "ncbitaxon": "ncbitaxon.owl.gz",
+    "ncbitaxon": "ncbitaxon.owl.gz",
     # "chebi": "chebi.owl.gz",
     # "envo": "envo.json",
     # "go": "go.json",

@@ -96,6 +96,7 @@ from kg_microbe.transform_utils.constants import (
     SOLUTIONS_KEY,
     SPECIES,
     SUBCLASS_PREDICATE,
+    TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -117,6 +118,7 @@ class MediaDiveTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
         requests_cache.install_cache("mediadive_cache")
         self.chebi_impl = get_adapter("sqlite:obo:chebi")
+        self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
     def _get_mediadive_json(self, url: str) -> Dict[str, str]:
         """
@@ -147,6 +149,11 @@ class MediaDiveTransform(Transform):
         ingredients_dict = {}
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
+                item[COMPOUND_KEY] = (
+                    item[COMPOUND_KEY].translate(self.translation_table).replace('""', "").strip()
+                    if isinstance(item[COMPOUND_KEY], str)
+                    else item[COMPOUND_KEY]
+                )
                 ingredients_dict[item[COMPOUND_KEY]] = {
                     ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY])),
                     AMOUNT_COLUMN: item[AMOUNT_COLUMN],
@@ -155,6 +162,12 @@ class MediaDiveTransform(Transform):
                     MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
+                item[SOLUTION_KEY] = (
+                    item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
+                    if isinstance(item[SOLUTION_KEY], str)
+                    else item[SOLUTION_KEY]
+                )
+
                 ingredients_dict[item[SOLUTION_KEY]] = {
                     ID_COLUMN: MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
                     AMOUNT_COLUMN: item[AMOUNT_COLUMN],
@@ -260,11 +273,11 @@ class MediaDiveTransform(Transform):
         os.makedirs(self.output_dir, exist_ok=True)
 
         with (
-            open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as csvfile,
+            open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as tsvfile,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
         ):
-            writer = csv.writer(csvfile, delimiter="\t")
+            writer = csv.writer(tsvfile, delimiter="\t")
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
 
@@ -297,6 +310,12 @@ class MediaDiveTransform(Transform):
                 )
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
+                    dictionary[NAME_COLUMN] = (
+                        dictionary[NAME_COLUMN]
+                        .translate(self.translation_table)
+                        .replace('""', "")
+                        .strip()
+                    )
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
                     fn_medium_strain = Path(str(MEDIADIVE_MEDIUM_STRAIN_YAML_DIR / id) + ".yaml")
                     json_obj = self.get_json_object(fn, MEDIUM + id, MEDIADIVE_MEDIUM_YAML_DIR)
@@ -376,6 +395,8 @@ class MediaDiveTransform(Transform):
                     # solution_id_list = [solution[ID_COLUMN] for solution in json_obj[SOLUTIONS_KEY]]
                     solutions_dict = {
                         solution[ID_COLUMN]: solution[NAME_COLUMN]
+                        .strip()
+                        .translate(self.translation_table)
                         for solution in json_obj[SOLUTIONS_KEY]
                     }
                     ingredients_dict = {}

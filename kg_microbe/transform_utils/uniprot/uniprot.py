@@ -357,7 +357,7 @@ def get_nodes_and_edges(
         parse_rhea_entry
     )
     uniprot_parse_df[PROTEOME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
-        lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if not is_float(x) else x
+        lambda x: PROTEOME_PREFIX + x.split(":")[0].strip() if x and not is_float(x) and x !="" else x
     )
     # Fields only in human uniprot query
     if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns:

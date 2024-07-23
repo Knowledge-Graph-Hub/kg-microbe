@@ -30,12 +30,12 @@
   local_name: robot
 
 # **** Ontology files ****
-#
-# ENVO
-#
--
-  url: http://purl.obolibrary.org/obo/envo.json
-  local_name: envo.json
+# #
+# # ENVO
+# #
+# -
+#   url: http://purl.obolibrary.org/obo/envo.json
+#   local_name: envo.json
 
 # NCBITaxon
 #
@@ -43,19 +43,19 @@
   url: http://purl.obolibrary.org/obo/ncbitaxon.owl.gz
   local_name: ncbitaxon.owl.gz
 
-#
-# ChEBI
-#
--
-  url: http://purl.obolibrary.org/obo/chebi.owl.gz
-  local_name: chebi.owl.gz
+# #
+# # ChEBI
+# #
+# -
+#   url: http://purl.obolibrary.org/obo/chebi.owl.gz
+#   local_name: chebi.owl.gz
 
-#
-# GO
-#
--
-  url: http://purl.obolibrary.org/obo/go.json
-  local_name: go.json
+# #
+# # GO
+# #
+# -
+#   url: http://purl.obolibrary.org/obo/go.json
+#   local_name: go.json
 #
 # MONDO
 #
@@ -71,72 +71,72 @@
 
 # **** Data sources ****
 
-# BacDive
-# Explore Bacterial Diversity
--
-  url: gdrive:1dOquB0M6H5Vxu6cBPa4kJ7F9v44medoV
-  local_name: bacdive_strains.json
+# # BacDive
+# # Explore Bacterial Diversity
+# -
+#   url: gdrive:1dOquB0M6H5Vxu6cBPa4kJ7F9v44medoV
+#   local_name: bacdive_strains.json
 
-# MediaDive
-# Explore MediaDive data
--
-  url: https://mediadive.dsmz.de/rest/media
-  local_name: mediadive.json
+# # MediaDive
+# # Explore MediaDive data
+# -
+#   url: https://mediadive.dsmz.de/rest/media
+#   local_name: mediadive.json
 
-# Condensed-traits
-# - GTDB
-#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv?raw=true
-#  local_name: condensed_traits_GTDB.csv
-# - NCBI
-#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
--
-  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
-  local_name: traits.csv
+# # Condensed-traits
+# # - GTDB
+# #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv
+# #-
+# #  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv?raw=true
+# #  local_name: condensed_traits_GTDB.csv
+# # - NCBI
+# #   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
+# -
+#   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
+#   local_name: traits.csv
 
-# # ****Conversion Tables****
-#
-# Environment
-#
--
-  url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
-  local_name: environments.csv
+# # # ****Conversion Tables****
+# #
+# # Environment
+# #
+# -
+#   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
+#   local_name: environments.csv
 
-#
-# KEGG-Compound-CHEBI
-#
--
-  url: https://rest.kegg.jp/conv/chebi/cpd
-  local_name: kegg-cpd-chebi.tsv
+# #
+# # KEGG-Compound-CHEBI
+# #
+# -
+#   url: https://rest.kegg.jp/conv/chebi/cpd
+#   local_name: kegg-cpd-chebi.tsv
 
-#
-# KEGG-Compound-Reaction
-#
--
-  url: https://rest.kegg.jp/link/rn/cpd
-  local_name: kegg-cpd-rxn.tsv
+# #
+# # KEGG-Compound-Reaction
+# #
+# -
+#   url: https://rest.kegg.jp/link/rn/cpd
+#   local_name: kegg-cpd-rxn.tsv
 
-#
-# KEGG-Compound-Pathway
-#
--
-  url: https://rest.kegg.jp/link/pathway/cpd
-  local_name: kegg-cpd-pathway.tsv
+# #
+# # KEGG-Compound-Pathway
+# #
+# -
+#   url: https://rest.kegg.jp/link/pathway/cpd
+#   local_name: kegg-cpd-pathway.tsv
 
-#
-# KEGG-Reaction-Pathway
-#
--
-  url: https://rest.kegg.jp/link/pathway/rn
-  local_name: kegg-rxn-pathway.tsv
+# #
+# # KEGG-Reaction-Pathway
+# #
+# -
+#   url: https://rest.kegg.jp/link/pathway/rn
+#   local_name: kegg-rxn-pathway.tsv
 
-# 
-# EPM JSON for curies package
-#
--
-  url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
-  local_name: epm.json
+# # 
+# # EPM JSON for curies package
+# #
+# -
+#   url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
+#   local_name: epm.json
 
 # #
 # # Uniprot
@@ -153,56 +153,56 @@
   local_name: uniprot_human.tar.gz
 
   #
-# Uniprot Human Disease Microbes
-#
--
-  url: https://kghub.io/frozen_incoming_data/uniprot/human_disease_uniprot.tar.gz 
-  local_name: uniprot_proteomes.tar.gz
+# # Uniprot Human Disease Microbes
+# #
+# -
+#   url: https://kghub.io/frozen_incoming_data/uniprot/human_disease_uniprot.tar.gz 
+#   local_name: uniprot_proteomes.tar.gz
 
-# 
-# Unipathways
-# 
--
-  url: https://github.com/geneontology/unipathway/raw/master/upa.owl
-  local_name: upa.owl
-
-# # # Redundant to RheaMappingsTransform
-# # RHEA
+# # 
+# # Unipathways
 # # 
 # -
-#   url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
-#   local_name: rhea.json.gz
+#   url: https://github.com/geneontology/unipathway/raw/master/upa.owl
+#   local_name: upa.owl
 
-# RHEA mappings
-- 
-  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
-  local_name: rhea2go.tsv
+# # # # Redundant to RheaMappingsTransform
+# # # RHEA
+# # # 
+# # -
+# #   url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
+# #   local_name: rhea.json.gz
 
--
-  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
-  local_name: rhea2ec.tsv
+# # RHEA mappings
+# - 
+#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
+#   local_name: rhea2go.tsv
 
 # -
-#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot.tsv
-#   local_name: rhea2uniprot.tsv
+#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
+#   local_name: rhea2ec.tsv
 
+# # -
+# #   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot.tsv
+# #   local_name: rhea2uniprot.tsv
+
+# # -
+# #   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2xrefs.tsv
+# #   local_name: rhea2xrefs.tsv
+
+# # 
+# # EC
+# # 
+# - 
+#   url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
+#   local_name: ec.json
+
+# #
+# # BactoTraits
+# #
 # -
-#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2xrefs.tsv
-#   local_name: rhea2xrefs.tsv
-
-# 
-# EC
-# 
-- 
-  url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
-  local_name: ec.json
-
-#
-# BactoTraits
-#
--
-  url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
-  local_name: BactoTraits_databaseV2_Jun2022.csv
+#   url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
+#   local_name: BactoTraits_databaseV2_Jun2022.csv
 
 #
 # CTD
@@ -211,12 +211,12 @@
   url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
   local_name: CTD_chemicals_diseases.tsv.gz
 
-#
-# Fermentqtion explorer
-#
--
-  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
-  local_name: fermentation_explorer.csv
+# #
+# # Fermentqtion explorer
+# #
+# -
+#   url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
+#   local_name: fermentation_explorer.csv
 
 #
 # Disbiome

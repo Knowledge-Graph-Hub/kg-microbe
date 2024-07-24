@@ -116,6 +116,7 @@ def establish_transitive_relationship(
     list_of_dfs_to_append.append(filtered_df)
 
     df = pd.concat([df] + list_of_dfs_to_append).sort_values(by=[SUBJECT_COLUMN])
+    df = df.dropna(subset=[SUBJECT_COLUMN])
     df.to_csv(file_path, sep="\t", index=False)
     return df
 

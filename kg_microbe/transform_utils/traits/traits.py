@@ -154,7 +154,7 @@ class TraitsTransform(Transform):
 
         if not (self.nlp_output_dir / go_result_fn).is_file():
             annotate(
-                go_nlp_df, GO_PREFIX, exclusion_list, self.nlp_output_dir / go_result_fn, False
+                go_nlp_df, GO_PREFIX, exclusion_list, self.nlp_output_dir / go_result_fn, False, None
             )
             go_result = pd.read_csv(
                 str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False

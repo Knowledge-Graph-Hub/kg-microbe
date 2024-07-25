@@ -163,4 +163,6 @@ data/transformed/uniprot_genome_features/*.tsv
 kg_microbe/transform_utils/uniprot/tmp/relevant_file_content.txt
 kg_microbe/transform_utils/uniprot/tmp/nodes_and_edges/*
 data/transformed/uniprot_genome_features/uniprot_kgx.zip
-data_release.**
+data_transformed.**
+data_merged.**
+

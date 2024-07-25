@@ -80,3 +80,4 @@ feba-schema-diagram:
 	--output-file notebooks/schema.pdf
 
 
+include kg-microbe.Makefile

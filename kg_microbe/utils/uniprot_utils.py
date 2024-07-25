@@ -438,7 +438,10 @@ def get_nodes_and_edges(
             for go in entry[GO_PARSED_COLUMN]:
                 #! Excluding obsolete terms
                 predicate, go_category = get_go_relation_and_obsolete_terms(
-                    go, entry[PROTEIN_ID_PARSED_COLUMN], go_category_trees_dictionary
+                    go,
+                    entry[PROTEIN_ID_PARSED_COLUMN],
+                    go_category_trees_dictionary,
+                    obsolete_terms_csv_file,
                 )
                 node_data.append([go, go_category])
                 # Protein to go edge

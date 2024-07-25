@@ -1,4 +1,4 @@
-"""Uniprot Transform class."""
+"""UniprotHuman Transform class."""
 
 import os
 from pathlib import Path
@@ -9,11 +9,11 @@ from oaklib import get_adapter
 from kg_microbe.transform_utils.constants import (
     GO_CATEGORY_TREES_FILE,
     RAW_DATA_DIR,
-    UNIPROT_GENOME_FEATURES,
-    UNIPROT_PROTEOMES_FILE,
-    UNIPROT_RELEVANT_FILE_LIST,
-    UNIPROT_TMP_DIR,
-    UNIPROT_TMP_NE_DIR,
+    UNIPROT_GENOME_FEATURES_HUMAN,
+    UNIPROT_HUMAN_FILE,
+    UNIPROT_HUMAN_RELEVANT_FILE_LIST,
+    UNIPROT_HUMAN_TMP_DIR,
+    UNIPROT_HUMAN_TMP_NE_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.uniprot_utils import (
@@ -25,10 +25,10 @@ from kg_microbe.utils.uniprot_utils import (
 )
 
 # file to keep track of obsolete terms from GO not included in graph
-OBSOLETE_TERMS_CSV_FILE = UNIPROT_TMP_DIR / "go_obsolete_terms.tsv"
+OBSOLETE_TERMS_CSV_FILE = UNIPROT_HUMAN_TMP_DIR / "go_obsolete_terms.tsv"
 
 
-class UniprotTransform(Transform):
+class UniprotHumanTransform(Transform):
 
     """A class used to represent a transformation process for UniProt data."""
 
@@ -47,7 +47,7 @@ class UniprotTransform(Transform):
                            If None, a default directory may be used.
         :type output_dir: Optional[Path]
         """
-        source_name = UNIPROT_GENOME_FEATURES
+        source_name = UNIPROT_GENOME_FEATURES_HUMAN
         super().__init__(source_name, input_dir, output_dir)
         self.go_oi = get_adapter("sqlite:obo:go")
         # Check if the file already exists
@@ -56,9 +56,8 @@ class UniprotTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
-        # get descendants of important GO categories for relationship mapping
-        os.makedirs(UNIPROT_TMP_DIR, exist_ok=True)
-        os.makedirs(UNIPROT_TMP_NE_DIR, exist_ok=True)
+        os.makedirs(UNIPROT_HUMAN_TMP_DIR, exist_ok=True)
+        os.makedirs(UNIPROT_HUMAN_TMP_NE_DIR, exist_ok=True)
         go_category_trees_dict = prepare_go_dictionary()
         mondo_xrefs_dict, mondo_gene_dict = prepare_mondo_dictionary()
 
@@ -69,7 +68,7 @@ class UniprotTransform(Transform):
 
         write_obsolete_file_header(OBSOLETE_TERMS_CSV_FILE)
 
-        tar_file = RAW_DATA_DIR / UNIPROT_PROTEOMES_FILE
+        tar_file = RAW_DATA_DIR / UNIPROT_HUMAN_FILE
         create_pool(
             self.source_name,
             tar_file,
@@ -84,6 +83,6 @@ class UniprotTransform(Transform):
             mondo_xrefs_dict,
             mondo_gene_dict,
             OBSOLETE_TERMS_CSV_FILE,
-            UNIPROT_RELEVANT_FILE_LIST,
-            UNIPROT_TMP_NE_DIR,
+            UNIPROT_HUMAN_RELEVANT_FILE_LIST,
+            UNIPROT_HUMAN_TMP_NE_DIR,
         )

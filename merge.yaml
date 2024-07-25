@@ -21,27 +21,27 @@ merged_graph:
         filename:
           - data/transformed/ontologies/ncbitaxon_nodes.tsv
           - data/transformed/ontologies/ncbitaxon_edges.tsv
-    # chebi:
-    #   name: "CHEBI"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/chebi_nodes.tsv
-    #       - data/transformed/ontologies/chebi_edges.tsv
-    # envo:
-    #   name: "ENVO"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/envo_nodes.tsv
-    #       - data/transformed/ontologies/envo_edges.tsv
-    # go:
-    #   name: "GO"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/go_nodes.tsv
-    #       - data/transformed/ontologies/go_edges.tsv
+    chebi:
+      name: "CHEBI"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/chebi_nodes.tsv
+          - data/transformed/ontologies/chebi_edges.tsv
+    envo:
+      name: "ENVO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/envo_nodes.tsv
+          - data/transformed/ontologies/envo_edges.tsv
+    go:
+      name: "GO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/go_nodes.tsv
+          - data/transformed/ontologies/go_edges.tsv
     mondo:
       name: "MONDO"
       input:
@@ -56,62 +56,55 @@ merged_graph:
         filename:
           - data/transformed/ontologies/hp_nodes.tsv
           - data/transformed/ontologies/hp_edges.tsv
-    # rhea: # Redundant to RheaMappingsTransform
-    #   name: "Rhea"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/rhea_nodes.tsv
-    #       - data/transformed/ontologies/rhea_edges.tsv
-    # ec:
-    #   name: "EC"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/ec_nodes.tsv
-    #       - data/transformed/ontologies/ec_edges.tsv
-    # bacdive:
-    #   name: "BacDive"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/BacDive/nodes.tsv
-    #       - data/transformed/BacDive/edges.tsv
-    # mediadive:
-    #   name: "MediaDive"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/MediaDive/nodes.tsv
-    #       - data/transformed/MediaDive/edges.tsv
-    # rhea_mappings:
-    #   name: "RheaMappings"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/RheaMappings/nodes.tsv
-    #       - data/transformed/RheaMappings/edges.tsv
-    # upa:
-    #   input:
-    #     name: "upa"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/upa_nodes.tsv
-    #       - data/transformed/ontologies/upa_edges.tsv
-    # traits:
-    #   input:
-    #     name: "traits"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/traits/nodes.tsv
-    #       - data/transformed/traits/edges.tsv
-    # bactotraits:
-    #   input:
-    #     name: "BactoTraits"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/BactoTraits/nodes.tsv
-    #       - data/transformed/BactoTraits/edges.tsv
+    ec:
+      name: "EC"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/ec_nodes.tsv
+          - data/transformed/ontologies/ec_edges.tsv
+    bacdive:
+      name: "BacDive"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/BacDive/nodes.tsv
+          - data/transformed/BacDive/edges.tsv
+    mediadive:
+      name: "MediaDive"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/MediaDive/nodes.tsv
+          - data/transformed/MediaDive/edges.tsv
+    rhea_mappings:
+      name: "RheaMappings"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/RheaMappings/nodes.tsv
+          - data/transformed/RheaMappings/edges.tsv
+    upa:
+      input:
+        name: "upa"
+        format: tsv
+        filename:
+          - data/transformed/ontologies/upa_nodes.tsv
+          - data/transformed/ontologies/upa_edges.tsv
+    traits:
+      input:
+        name: "traits"
+        format: tsv
+        filename:
+          - data/transformed/traits/nodes.tsv
+          - data/transformed/traits/edges.tsv
+    bactotraits:
+      input:
+        name: "BactoTraits"
+        format: tsv
+        filename:
+          - data/transformed/BactoTraits/nodes.tsv
+          - data/transformed/BactoTraits/edges.tsv
     ctd:
       input:
         name: "ctd"
@@ -133,6 +126,7 @@ merged_graph:
         filename:
           - data/transformed/PdMetagenomics/nodes.tsv
           - data/transformed/PdMetagenomics/edges.tsv
+    # Not feasible using kgx merge process
     # uniprot_genome_features:
     #   input:
     #     name: "uniprot_genome_features"

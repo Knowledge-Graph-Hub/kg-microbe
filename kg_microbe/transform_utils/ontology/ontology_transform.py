@@ -69,12 +69,12 @@ from ..transform import Transform
 
 ONTOLOGIES = {
     "ncbitaxon": "ncbitaxon.owl.gz",
-    # "chebi": "chebi.owl.gz",
-    # "envo": "envo.json",
-    # "go": "go.json",
+    "chebi": "chebi.owl.gz",
+    "envo": "envo.json",
+    "go": "go.json",
     ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
-    # "ec": "ec.json",
-    # "upa": "upa.owl",
+    "ec": "ec.json",
+    "upa": "upa.owl",
     "mondo": "mondo.json",
     "hp": "hp.json",
 }
@@ -198,11 +198,11 @@ class OntologyTransform(Transform):
         def _replace_special_prefixes(line):
             """Use the pattern to replace all occurrences of the keys with their values."""
             return pattern.sub(lambda match: SPECIAL_PREFIXES[match.group(0)], line)
-        
+
         def _replace_quotation_marks(line, description_index):
             """Replace single and double quotation marks."""
             parts = line.strip().split("\t")
-            parts[description_index] = parts[description_index].replace("\"","").replace("'","")
+            parts[description_index] = parts[description_index].replace('"', "").replace("'", "")
             new_line = "\t".join(parts)
             return new_line
 
@@ -252,7 +252,7 @@ class OntologyTransform(Transform):
                     else:
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
-                        line = _replace_quotation_marks(line,description_index)
+                        line = _replace_quotation_marks(line, description_index)
                         new_nf_lines.append(line + "\n")
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:

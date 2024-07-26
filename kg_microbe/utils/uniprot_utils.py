@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.constants import (
     CHEMICAL_TO_PROTEIN_EDGE,
     CONTRIBUTES_TO,
     DERIVES_FROM,
+    DISEASE_CATEGORY,
     EC_CATEGORY,
     EC_PREFIX,
     ENABLES,
@@ -32,6 +33,7 @@ from kg_microbe.transform_utils.constants import (
     HGNC_NEW_PREFIX,
     LOCATED_IN,
     MOLECULARLY_INTERACTS_WITH,
+    MONDO_GENE_IDS_FILEPATH,
     MONDO_XREFS_FILEPATH,
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
@@ -456,6 +458,36 @@ def get_nodes_and_edges(
                         source_name,
                     ]
                 )
+        if (
+            UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
+            and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
+        ):
+            # Disease node
+            if entry[DISEASE_PARSED_COLUMN]:
+                for disease in entry[DISEASE_PARSED_COLUMN]:
+                    node_data.append([disease, DISEASE_CATEGORY])
+                    # Protein-disease edge
+                    edge_data.append(
+                        [
+                            entry[PROTEIN_ID_PARSED_COLUMN],
+                            PROTEIN_TO_DISEASE_EDGE,
+                            disease,
+                            RELATIONS_DICT[PROTEIN_TO_DISEASE_EDGE],
+                            source_name,
+                        ]
+                    )
+            # Gene node
+            if entry[GENE_PRIMARY_PARSED_COLUMN]:
+                # Gene-protein edge
+                edge_data.append(
+                    [
+                        entry[GENE_PRIMARY_PARSED_COLUMN],
+                        GENE_TO_PROTEIN_EDGE,
+                        entry[PROTEIN_ID_PARSED_COLUMN],
+                        RELATIONS_DICT[GENE_TO_PROTEIN_EDGE],
+                        source_name,
+                    ]
+                )
 
         # Removing protein-organism edges for now
         # # Protein-organism
@@ -519,16 +551,24 @@ def prepare_mondo_dictionary():
                     mondo_xrefs_dict[row["id"]] = row["xref"]
     # Read MONDO nodes file for gene names
     mondo_gene_dict = {}
-    #! TODO: use oak
-    mondo_nodes_file = (
-        Path(__file__).parents[3] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
-    )
-    if mondo_nodes_file.exists():
-        with open(mondo_nodes_file, "r") as file:
+    if MONDO_GENE_IDS_FILEPATH.exists():
+        with open(MONDO_GENE_IDS_FILEPATH, "r") as file:
             csv_reader = csv.DictReader(file, delimiter="\t")
             for row in csv_reader:
-                if HGNC_NEW_PREFIX in row["id"]:
-                    mondo_gene_dict[row["id"]] = row["name"]
+                mondo_gene_dict[row["id"]] = row["name"]
+    #! TODO: use oak
+    else:
+        mondo_nodes_file = (
+            Path(__file__).parents[2] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
+        )
+        if mondo_nodes_file.exists():
+            with open(mondo_nodes_file, "r") as file:
+                csv_reader = csv.DictReader(file, delimiter="\t")
+                for row in csv_reader:
+                    if HGNC_NEW_PREFIX in row["id"]:
+                        mondo_gene_dict[row["id"]] = row["name"]
+        mondo_gene_df = pd.DataFrame(list(mondo_gene_dict.items()), columns=['id', 'name'])
+        mondo_gene_df.to_csv(MONDO_GENE_IDS_FILEPATH, sep='\t', index=False)
 
     return mondo_xrefs_dict, mondo_gene_dict
 

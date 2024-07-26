@@ -567,8 +567,8 @@ def prepare_mondo_dictionary():
                 for row in csv_reader:
                     if HGNC_NEW_PREFIX in row["id"]:
                         mondo_gene_dict[row["id"]] = row["name"]
-        mondo_gene_df = pd.DataFrame(list(mondo_gene_dict.items()), columns=['id', 'name'])
-        mondo_gene_df.to_csv(MONDO_GENE_IDS_FILEPATH, sep='\t', index=False)
+        mondo_gene_df = pd.DataFrame(list(mondo_gene_dict.items()), columns=["id", "name"])
+        mondo_gene_df.to_csv(MONDO_GENE_IDS_FILEPATH, sep="\t", index=False)
 
     return mondo_xrefs_dict, mondo_gene_dict
 

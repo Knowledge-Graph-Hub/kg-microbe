@@ -256,8 +256,8 @@ NCBITaxon:217204	biolink:OrganismTaxon	Achromobacter insolitus
 NCBITaxon:217203	biolink:OrganismTaxon	Achromobacter spanius											
 NCBITaxon:1218102	biolink:OrganismTaxon	Alcaligenes faecalis subsp. faecalis NBRC 13111											
 NCBITaxon:512	biolink:OrganismTaxon	Alcaligenes sp.											
-NCBITaxon:171260	biolink:OrganismTaxon	Alcaligenes faecalis subsp. parafaecalis											
-NCBITaxon:1120962	biolink:OrganismTaxon	Alcaligenes faecalis subsp. phenolicus DSM 16503											
+NCBITaxon:171260	biolink:OrganismTaxon	Alcaligenes parafaecalis											
+NCBITaxon:1120962	biolink:OrganismTaxon	Alcaligenes phenolicus DSM 16503											
 NCBITaxon:1314749	biolink:OrganismTaxon	Azohydromonas lata NBRC 102462											
 NCBITaxon:1121118	biolink:OrganismTaxon	Brackiella oedipodis DSM 13743											
 NCBITaxon:75697	biolink:OrganismTaxon	Castellaniella defragrans											
@@ -579,7 +579,7 @@ NCBITaxon:682179	biolink:OrganismTaxon	Cytobacillus luteolus
 NCBITaxon:866780	biolink:OrganismTaxon	Sutcliffiella zhanjiangensis											
 NCBITaxon:735518	biolink:OrganismTaxon	Lederbergia graminis											
 NCBITaxon:935616	biolink:OrganismTaxon	Halalkalibacter alkalisediminis											
-NCBITaxon:251051	biolink:OrganismTaxon	Caldibacillus thermolactis											
+NCBITaxon:251051	biolink:OrganismTaxon	Pallidibacillus thermolactis											
 NCBITaxon:766895	biolink:OrganismTaxon	Shouchella xiaoxiensis											
 NCBITaxon:908940	biolink:OrganismTaxon	Salisediminibacterium locisalis											
 NCBITaxon:866786	biolink:OrganismTaxon	Shouchella rhizosphaerae											
@@ -1359,7 +1359,7 @@ NCBITaxon:1121325	biolink:OrganismTaxon	Romboutsia lituseburensis DSM 797
 NCBITaxon:1121326	biolink:OrganismTaxon	Clostridium magnum DSM 2767											
 NCBITaxon:33954	biolink:OrganismTaxon	Clostridium magnum											
 NCBITaxon:1539	biolink:OrganismTaxon	Clostridium malenominatum											
-NCBITaxon:1540	biolink:OrganismTaxon	Clostridioides mangenotii											
+NCBITaxon:1540	biolink:OrganismTaxon	Metaclostridioides mangenotii											
 NCBITaxon:500632	biolink:OrganismTaxon	[Clostridium] nexile DSM 1787											
 NCBITaxon:1543	biolink:OrganismTaxon	Clostridium oceanicum											
 NCBITaxon:1544	biolink:OrganismTaxon	Faecalicatena orotica											
@@ -1394,7 +1394,7 @@ NCBITaxon:29370	biolink:OrganismTaxon	Lacrimispora sphenoides
 NCBITaxon:428126	biolink:OrganismTaxon	Thomasclavelia spiroformis DSM 1552											
 NCBITaxon:1509	biolink:OrganismTaxon	Clostridium sporogenes											
 NCBITaxon:1491	biolink:OrganismTaxon	Clostridium botulinum											
-NCBITaxon:1121334	biolink:OrganismTaxon	[Clostridium] sporosphaeroides DSM 1294											
+NCBITaxon:1121334	biolink:OrganismTaxon	Faecalispora sporosphaeroides DSM 1294											
 NCBITaxon:499177	biolink:OrganismTaxon	Acetoanaerobium sticklandii DSM 519											
 NCBITaxon:1550	biolink:OrganismTaxon	Clostridium subterminale											
 NCBITaxon:411472	biolink:OrganismTaxon	[Clostridium] symbiosum ATCC 14940											
@@ -1419,7 +1419,7 @@ NCBITaxon:84025	biolink:OrganismTaxon	Clostridium haemolyticum
 NCBITaxon:1542	biolink:OrganismTaxon	Clostridium novyi											
 NCBITaxon:411468	biolink:OrganismTaxon	[Clostridium] scindens ATCC 35704											
 NCBITaxon:1121341	biolink:OrganismTaxon	Pseudoclostridium thermosuccinogenes DSM 5807											
-NCBITaxon:84032	biolink:OrganismTaxon	Pseudoclostridium thermosuccinogenes											
+NCBITaxon:84032	biolink:OrganismTaxon	Clostridium thermosuccinogenes											
 NCBITaxon:1121318	biolink:OrganismTaxon	Clostridium homopropionicum DSM 5847											
 NCBITaxon:36835	biolink:OrganismTaxon	[Clostridium] colinum											
 NCBITaxon:1121320	biolink:OrganismTaxon	Clostridium intestinale DSM 6191											
@@ -1437,11 +1437,11 @@ NCBITaxon:29356	biolink:OrganismTaxon	Clostridium chartatabidum
 NCBITaxon:29371	biolink:OrganismTaxon	Ruminiclostridium cellobioparum subsp. termitidis											
 NCBITaxon:36850	biolink:OrganismTaxon	Clostridium quinii											
 NCBITaxon:46867	biolink:OrganismTaxon	Clostridium chauvoei											
-NCBITaxon:1121328	biolink:OrganismTaxon	[Clostridium] paradoxum JW-YL-7 = DSM 7308											
-NCBITaxon:29346	biolink:OrganismTaxon	[Clostridium] paradoxum											
+NCBITaxon:1121328	biolink:OrganismTaxon	Alkalithermobacter thermoalcaliphilus JW-YL-7 = DSM 7308											
+NCBITaxon:29346	biolink:OrganismTaxon	Alkalithermobacter thermoalcaliphilus											
 NCBITaxon:1504	biolink:OrganismTaxon	Clostridium septicum											
 NCBITaxon:1121335	biolink:OrganismTaxon	Thermoclostridium stercorarium subsp. stercorarium DSM 8532											
-NCBITaxon:29349	biolink:OrganismTaxon	[Clostridium] thermoalcaliphilum											
+NCBITaxon:29349	biolink:OrganismTaxon	Alkalithermobacter paradoxus											
 NCBITaxon:1121316	biolink:OrganismTaxon	Clostridium grantii DSM 8605											
 NCBITaxon:238834	biolink:OrganismTaxon	Clostridium estertheticum											
 NCBITaxon:1346611	biolink:OrganismTaxon	Thermoclostridium stercorarium subsp. leptospartum DSM 9219											
@@ -1471,7 +1471,7 @@ NCBITaxon:1121323	biolink:OrganismTaxon	Anaerotignum lactatifermentans DSM 14214
 NCBITaxon:205326	biolink:OrganismTaxon	Clostridium estertheticum subsp. laramiense											
 NCBITaxon:566550	biolink:OrganismTaxon	Hungatella hathewayi DSM 13479											
 NCBITaxon:154046	biolink:OrganismTaxon	Hungatella hathewayi											
-NCBITaxon:29358	biolink:OrganismTaxon	Paeniclostridium ghonii											
+NCBITaxon:29358	biolink:OrganismTaxon	Paraclostridium ghonii											
 NCBITaxon:553973	biolink:OrganismTaxon	[Clostridium] hylemonae DSM 15053											
 NCBITaxon:182773	biolink:OrganismTaxon	Clostridium isatidis											
 NCBITaxon:1121295	biolink:OrganismTaxon	Clostridium algidicarnis DSM 15099											
@@ -1591,7 +1591,7 @@ NCBITaxon:183670	biolink:OrganismTaxon	Macromonas bipunctata
 NCBITaxon:263067	biolink:OrganismTaxon	Malikia granosa											
 NCBITaxon:1122623	biolink:OrganismTaxon	Ottowia thiooxydans DSM 14619											
 NCBITaxon:511108	biolink:OrganismTaxon	Ottowia pentelensis											
-NCBITaxon:304	biolink:OrganismTaxon	Pelomonas saccharophila											
+NCBITaxon:304	biolink:OrganismTaxon	Roseateles saccharophilus											
 NCBITaxon:216465	biolink:OrganismTaxon	Polaromonas naphthalenivorans											
 NCBITaxon:335476	biolink:OrganismTaxon	Polaromonas hydrogenivorans											
 NCBITaxon:457502	biolink:OrganismTaxon	Polaromonas jejuensis											
@@ -1617,7 +1617,7 @@ NCBITaxon:433924	biolink:OrganismTaxon	Pseudacidovorax intermedius
 NCBITaxon:1121255	biolink:OrganismTaxon	Caenimonas koreensis DSM 17982											
 NCBITaxon:255042	biolink:OrganismTaxon	Pseudorhodoferax caeni											
 NCBITaxon:545864	biolink:OrganismTaxon	Pseudorhodoferax soli											
-NCBITaxon:582607	biolink:OrganismTaxon	Kinneretia asaccharophila											
+NCBITaxon:582607	biolink:OrganismTaxon	Roseateles asaccharophilus											
 NCBITaxon:323423	biolink:OrganismTaxon	Limnohabitans curvus											
 NCBITaxon:544681	biolink:OrganismTaxon	Limnohabitans australis											
 NCBITaxon:540061	biolink:OrganismTaxon	Limnohabitans parvus											
@@ -2023,10 +2023,10 @@ NCBITaxon:453215	biolink:OrganismTaxon	Desulfocella sp. DSM 2056
 NCBITaxon:449313	biolink:OrganismTaxon	Desulfovibrio sp. DSM 9953											
 NCBITaxon:502282	biolink:OrganismTaxon	Desulfovibrio sp. NY682											
 NCBITaxon:63561	biolink:OrganismTaxon	Desulfolutivibrio sulfodismutans											
-NCBITaxon:32016	biolink:OrganismTaxon	Cupidesulfovibrio oxamicus											
-NCBITaxon:882	biolink:OrganismTaxon	Desulfovibrio vulgaris str. Hildenborough											
-NCBITaxon:881	biolink:OrganismTaxon	Desulfovibrio vulgaris											
-NCBITaxon:42252	biolink:OrganismTaxon	Cupidesulfovibrio termitidis											
+NCBITaxon:32016	biolink:OrganismTaxon	Nitratidesulfovibrio oxamicus											
+NCBITaxon:882	biolink:OrganismTaxon	Nitratidesulfovibrio vulgaris str. Hildenborough											
+NCBITaxon:881	biolink:OrganismTaxon	Nitratidesulfovibrio vulgaris											
+NCBITaxon:42252	biolink:OrganismTaxon	Nitratidesulfovibrio termitidis											
 NCBITaxon:1121438	biolink:OrganismTaxon	Solidesulfovibrio alcoholivorans DSM 5433											
 NCBITaxon:81406	biolink:OrganismTaxon	Solidesulfovibrio alcoholivorans											
 NCBITaxon:1121450	biolink:OrganismTaxon	Pseudodesulfovibrio halophilus DSM 5663											
@@ -2064,10 +2064,10 @@ NCBITaxon:295255	biolink:OrganismTaxon	Solidesulfovibrio aerotolerans
 NCBITaxon:1121457	biolink:OrganismTaxon	Halodesulfovibrio marinisediminis DSM 17456											
 NCBITaxon:345370	biolink:OrganismTaxon	Solidesulfovibrio carbinoliphilus											
 NCBITaxon:360296	biolink:OrganismTaxon	Humidesulfovibrio arcticus											
-NCBITaxon:1121442	biolink:OrganismTaxon	Paradesulfovibrio bizertensis DSM 18034											
+NCBITaxon:1121442	biolink:OrganismTaxon	Desulfobaculum bizertense DSM 18034											
 NCBITaxon:1121447	biolink:OrganismTaxon	Maridesulfovibrio frigidus DSM 17176											
 NCBITaxon:1121446	biolink:OrganismTaxon	Maridesulfovibrio ferrireducens DSM 16995											
-NCBITaxon:1121439	biolink:OrganismTaxon	Desulfohalovibrio alkalitolerans DSM 16529											
+NCBITaxon:1121439	biolink:OrganismTaxon	Alkalidesulfovibrio alkalitolerans DSM 16529											
 NCBITaxon:370038	biolink:OrganismTaxon	Oceanidesulfovibrio marinus											
 NCBITaxon:1121465	biolink:OrganismTaxon	Pseudodesulfovibrio tunisiensis DSM 19275											
 NCBITaxon:436510	biolink:OrganismTaxon	Solidesulfovibrio marrakechensis											
@@ -2200,7 +2200,7 @@ NCBITaxon:980518	biolink:OrganismTaxon	Enterobacter mori LMG 25706
 NCBITaxon:1219359	biolink:OrganismTaxon	Erwinia amylovora NBRC 12687 = CFBP 1232											
 NCBITaxon:206499	biolink:OrganismTaxon	Erwinia papayae											
 NCBITaxon:69224	biolink:OrganismTaxon	Erwinia psidii											
-NCBITaxon:92490	biolink:OrganismTaxon	Erwinia toletana											
+NCBITaxon:92490	biolink:OrganismTaxon	Winslowiella toletana											
 NCBITaxon:1161919	biolink:OrganismTaxon	Erwinia piriflorinigrans CFBP 5888											
 NCBITaxon:796334	biolink:OrganismTaxon	Erwinia oleae											
 NCBITaxon:371042	biolink:OrganismTaxon	Erwinia typographi											
@@ -2327,7 +2327,7 @@ NCBITaxon:1218087	biolink:OrganismTaxon	Enterococcus casseliflavus NBRC 100478
 NCBITaxon:1218088	biolink:OrganismTaxon	Enterococcus durans NBRC 100479 = LMG 10746											
 NCBITaxon:1201292	biolink:OrganismTaxon	Enterococcus faecalis ATCC 29212											
 NCBITaxon:1351	biolink:OrganismTaxon	Enterococcus faecalis											
-NCBITaxon:1169286	biolink:OrganismTaxon	Enterococcus faecalis ATCC 19433											
+NCBITaxon:1169286	biolink:OrganismTaxon	Enterococcus faecalis ATCC 19433 = NBRC 100480											
 NCBITaxon:1352	biolink:OrganismTaxon	Enterococcus faecium											
 NCBITaxon:1218090	biolink:OrganismTaxon	Enterococcus faecium NBRC 100486											
 NCBITaxon:1353	biolink:OrganismTaxon	Enterococcus gallinarum											
@@ -2424,7 +2424,7 @@ NCBITaxon:39490	biolink:OrganismTaxon	Eubacterium ramulus
 NCBITaxon:657318	biolink:OrganismTaxon	Agathobacter rectalis DSM 17629											
 NCBITaxon:428128	biolink:OrganismTaxon	[Eubacterium] siraeum DSM 15702											
 NCBITaxon:39493	biolink:OrganismTaxon	Clostridium tarantellae											
-NCBITaxon:1737	biolink:OrganismTaxon	[Eubacterium] tenue											
+NCBITaxon:1737	biolink:OrganismTaxon	Paraclostridium tenue											
 NCBITaxon:39494	biolink:OrganismTaxon	Absiella tortuosum											
 NCBITaxon:411463	biolink:OrganismTaxon	Eubacterium ventriosum ATCC 27560											
 NCBITaxon:81409	biolink:OrganismTaxon	Eubacterium aggregans											
@@ -2670,7 +2670,7 @@ NCBITaxon:192904	biolink:OrganismTaxon	Kriegella aquimaris
 NCBITaxon:419940	biolink:OrganismTaxon	Hyunsoonleella jejuensis											
 NCBITaxon:504488	biolink:OrganismTaxon	Muriicola jejuensis											
 NCBITaxon:619805	biolink:OrganismTaxon	Soonwooa buanensis											
-NCBITaxon:570519	biolink:OrganismTaxon	Allomuricauda flava											
+NCBITaxon:570519	biolink:OrganismTaxon	Flagellimonas flava											
 NCBITaxon:641691	biolink:OrganismTaxon	Pricia antarctica											
 NCBITaxon:1165090	biolink:OrganismTaxon	Imtechella halotolerans											
 NCBITaxon:563176	biolink:OrganismTaxon	Siphonobacter aquaeclarae											
@@ -2792,41 +2792,41 @@ NCBITaxon:332516	biolink:OrganismTaxon	Halovibrio denitrificans
 NCBITaxon:768066	biolink:OrganismTaxon	Halomonas elongata DSM 2581											
 NCBITaxon:1121941	biolink:OrganismTaxon	Halomonas halodenitrificans DSM 735											
 NCBITaxon:42565	biolink:OrganismTaxon	Halomonas salina											
-NCBITaxon:44935	biolink:OrganismTaxon	Halomonas venusta											
-NCBITaxon:86177	biolink:OrganismTaxon	Halomonas utahensis											
+NCBITaxon:44935	biolink:OrganismTaxon	Vreelandella venusta											
+NCBITaxon:86177	biolink:OrganismTaxon	Vreelandella utahensis											
 NCBITaxon:42566	biolink:OrganismTaxon	Halomonas eurihalina											
-NCBITaxon:48727	biolink:OrganismTaxon	Halomonas pantelleriensis											
+NCBITaxon:48727	biolink:OrganismTaxon	Franzmannia pantelleriensis											
 NCBITaxon:1121940	biolink:OrganismTaxon	Halomonas halocynthiae DSM 14573											
-NCBITaxon:119000	biolink:OrganismTaxon	Halomonas muralis											
+NCBITaxon:119000	biolink:OrganismTaxon	Modicisalibacter muralis											
 NCBITaxon:147248	biolink:OrganismTaxon	Halomonas alimentaria											
-NCBITaxon:74661	biolink:OrganismTaxon	Halomonas campisalis											
+NCBITaxon:74661	biolink:OrganismTaxon	Billgrantia campisalis											
 NCBITaxon:1072583	biolink:OrganismTaxon	Halomonas boliviensis LC1											
-NCBITaxon:223527	biolink:OrganismTaxon	Halomonas boliviensis											
-NCBITaxon:115551	biolink:OrganismTaxon	Halomonas neptunia											
+NCBITaxon:223527	biolink:OrganismTaxon	Vreelandella boliviensis											
+NCBITaxon:115551	biolink:OrganismTaxon	Vreelandella neptunia											
 NCBITaxon:891402	biolink:OrganismTaxon	Halomonas sulfidaeris Esulfide1											
 NCBITaxon:115555	biolink:OrganismTaxon	Halomonas axialensis											
 NCBITaxon:115561	biolink:OrganismTaxon	Halomonas hydrothermalis											
 NCBITaxon:229007	biolink:OrganismTaxon	Halomonas ventosae											
 NCBITaxon:1121939	biolink:OrganismTaxon	Halomonas anticariensis FP35 = DSM 16096											
 NCBITaxon:257772	biolink:OrganismTaxon	Halomonas organivorans											
-NCBITaxon:284577	biolink:OrganismTaxon	Halomonas taeanensis											
+NCBITaxon:284577	biolink:OrganismTaxon	Onishia taeanensis											
 NCBITaxon:213554	biolink:OrganismTaxon	Halomonas campaniensis											
 NCBITaxon:245385	biolink:OrganismTaxon	Halomonas koreensis											
 NCBITaxon:308163	biolink:OrganismTaxon	Halomonas almeriensis											
 NCBITaxon:370769	biolink:OrganismTaxon	Halomonas denitrificans											
-NCBITaxon:370767	biolink:OrganismTaxon	Halomonas janggokensis											
-NCBITaxon:370766	biolink:OrganismTaxon	Halomonas gomseomensis											
-NCBITaxon:376427	biolink:OrganismTaxon	Halomonas gudaonensis											
+NCBITaxon:370767	biolink:OrganismTaxon	Vreelandella janggokensis											
+NCBITaxon:370766	biolink:OrganismTaxon	Vreelandella gomseomensis											
+NCBITaxon:376427	biolink:OrganismTaxon	Billgrantia gudaonensis											
 NCBITaxon:419597	biolink:OrganismTaxon	Halomonas shengliensis											
-NCBITaxon:447567	biolink:OrganismTaxon	Halomonas andesensis											
+NCBITaxon:447567	biolink:OrganismTaxon	Vreelandella andesensis											
 NCBITaxon:416872	biolink:OrganismTaxon	Halomonas saccharevitans											
-NCBITaxon:416873	biolink:OrganismTaxon	Halomonas arcis											
-NCBITaxon:416874	biolink:OrganismTaxon	Halomonas subterranea											
+NCBITaxon:416873	biolink:OrganismTaxon	Vreelandella arcis											
+NCBITaxon:416874	biolink:OrganismTaxon	Vreelandella subterranea											
 NCBITaxon:463301	biolink:OrganismTaxon	Halomonas korlensis											
 NCBITaxon:356659	biolink:OrganismTaxon	Halomonas kribbensis											
 NCBITaxon:1121942	biolink:OrganismTaxon	Halomonas ilicicola DSM 19980											
 NCBITaxon:626223	biolink:OrganismTaxon	Halomonas sabkhae											
-NCBITaxon:321266	biolink:OrganismTaxon	Halomonas kenyensis											
+NCBITaxon:321266	biolink:OrganismTaxon	Billgrantia kenyensis											
 NCBITaxon:321265	biolink:OrganismTaxon	Halomonas mongoliensis											
 NCBITaxon:447424	biolink:OrganismTaxon	Halomonas cerina											
 NCBITaxon:447425	biolink:OrganismTaxon	Halomonas nitroreducens											
@@ -2834,12 +2834,12 @@ NCBITaxon:438744	biolink:OrganismTaxon	Halomonas caseinilytica
 NCBITaxon:1121943	biolink:OrganismTaxon	Halomonas lutea DSM 23508											
 NCBITaxon:232346	biolink:OrganismTaxon	Halomonas alkaliantarctica											
 NCBITaxon:574966	biolink:OrganismTaxon	Halomonas zhanjiangensis DSM 21076											
-NCBITaxon:502829	biolink:OrganismTaxon	Halomonas hamiltonii											
+NCBITaxon:502829	biolink:OrganismTaxon	Vreelandella hamiltonii											
 NCBITaxon:502832	biolink:OrganismTaxon	Halomonas johnsoniae											
-NCBITaxon:502821	biolink:OrganismTaxon	Halomonas stevensii											
-NCBITaxon:664683	biolink:OrganismTaxon	Halomonas titanicae											
-NCBITaxon:531309	biolink:OrganismTaxon	Halomonas vilamensis											
-NCBITaxon:980347	biolink:OrganismTaxon	Halomonas qijiaojingensis											
+NCBITaxon:502821	biolink:OrganismTaxon	Vreelandella stevensii											
+NCBITaxon:664683	biolink:OrganismTaxon	Vreelandella titanicae											
+NCBITaxon:531309	biolink:OrganismTaxon	Vreelandella vilamensis											
+NCBITaxon:980347	biolink:OrganismTaxon	Litchfieldella qijiaojingensis											
 NCBITaxon:430457	biolink:OrganismTaxon	Salinicola salarius											
 NCBITaxon:404433	biolink:OrganismTaxon	Salinicola socius											
 NCBITaxon:157779	biolink:OrganismTaxon	Kushneria marisflavi											
@@ -2891,7 +2891,7 @@ NCBITaxon:160660	biolink:OrganismTaxon	Acidihalobacter prosperus
 NCBITaxon:171865	biolink:OrganismTaxon	Sulfuriferula plumbiphila											
 NCBITaxon:543892	biolink:OrganismTaxon	Thiobacillus thiophilus											
 NCBITaxon:1163617	biolink:OrganismTaxon	Sulfuricella denitrificans skB26											
-NCBITaxon:217069	biolink:OrganismTaxon	Angulomicrobium amanitiforme											
+NCBITaxon:217069	biolink:OrganismTaxon	Ancylobacter amanitiformis											
 NCBITaxon:50712	biolink:OrganismTaxon	Blastochloris sulfoviridis											
 NCBITaxon:1079	biolink:OrganismTaxon	Blastochloris viridis											
 NCBITaxon:432296	biolink:OrganismTaxon	Blastochloris gulmargensis											
@@ -2973,8 +2973,8 @@ NCBITaxon:422442	biolink:OrganismTaxon	Terrabacter aerolatus
 NCBITaxon:574718	biolink:OrganismTaxon	Terrabacter terrigena											
 NCBITaxon:515662	biolink:OrganismTaxon	Terrabacter aeriphilus											
 NCBITaxon:53356	biolink:OrganismTaxon	Terracoccus luteus											
-NCBITaxon:99480	biolink:OrganismTaxon	Tetrasphaera australiensis											
-NCBITaxon:99481	biolink:OrganismTaxon	Tetrasphaera japonica											
+NCBITaxon:99480	biolink:OrganismTaxon	Nostocoides australiense											
+NCBITaxon:99481	biolink:OrganismTaxon	Nostocoides japonicum											
 NCBITaxon:101689	biolink:OrganismTaxon	Phycicoccus elongatus											
 NCBITaxon:402171	biolink:OrganismTaxon	Lapillicoccus jejuensis											
 NCBITaxon:436356	biolink:OrganismTaxon	Pedococcus aerophilus											
@@ -3025,7 +3025,7 @@ NCBITaxon:1123012	biolink:OrganismTaxon	Pseudobutyrivibrio xylanivorans DSM 1480
 NCBITaxon:301301	biolink:OrganismTaxon	Roseburia hominis											
 NCBITaxon:301302	biolink:OrganismTaxon	Roseburia faecis											
 NCBITaxon:622312	biolink:OrganismTaxon	Roseburia inulinivorans DSM 16841											
-NCBITaxon:626523	biolink:OrganismTaxon	Shuttleworthia satelles DSM 14600											
+NCBITaxon:626523	biolink:OrganismTaxon	Shuttleworthella satelles DSM 14600											
 NCBITaxon:100133	biolink:OrganismTaxon	Sporobacterium olearium											
 NCBITaxon:84037	biolink:OrganismTaxon	Syntrophococcus sucromutans											
 NCBITaxon:371674	biolink:OrganismTaxon	Moryella indoligenes											
@@ -3502,11 +3502,11 @@ NCBITaxon:1223505	biolink:OrganismTaxon	Microbacterium resistens NBRC 103078
 NCBITaxon:162393	biolink:OrganismTaxon	Microbacterium aurantiacum											
 NCBITaxon:84292	biolink:OrganismTaxon	Microbacterium chocolatum											
 NCBITaxon:1348634	biolink:OrganismTaxon	Microbacterium hominis NBRC 15708											
-NCBITaxon:92835	biolink:OrganismTaxon	Microbacterium ketosireducens											
+NCBITaxon:92835	biolink:OrganismTaxon												
 NCBITaxon:362649	biolink:OrganismTaxon	Microbacterium thalassium											
-NCBITaxon:300020	biolink:OrganismTaxon	Microbacterium maritypicum											
+NCBITaxon:300020	biolink:OrganismTaxon												
 NCBITaxon:104336	biolink:OrganismTaxon	Microbacterium foliorum											
-NCBITaxon:76884	biolink:OrganismTaxon	Microbacterium kitamiense											
+NCBITaxon:76884	biolink:OrganismTaxon												
 NCBITaxon:153731	biolink:OrganismTaxon	Microbacterium aerolatum											
 NCBITaxon:124798	biolink:OrganismTaxon	Microbacterium phyllosphaerae											
 NCBITaxon:1223529	biolink:OrganismTaxon	Microbacterium paraoxydans NBRC 103076											
@@ -3543,7 +3543,7 @@ NCBITaxon:630514	biolink:OrganismTaxon	Microbacterium agarici
 NCBITaxon:640635	biolink:OrganismTaxon	Microbacterium humi											
 NCBITaxon:640634	biolink:OrganismTaxon	Microbacterium pseudoresistens											
 NCBITaxon:582680	biolink:OrganismTaxon	Microbacterium azadirachtae											
-NCBITaxon:550448	biolink:OrganismTaxon	Microbacterium lindanitolerans											
+NCBITaxon:550448	biolink:OrganismTaxon												
 NCBITaxon:661398	biolink:OrganismTaxon	Microbacterium radiodurans											
 NCBITaxon:546115	biolink:OrganismTaxon	Microbacterium ginsengiterrae											
 NCBITaxon:664640	biolink:OrganismTaxon	Microbacterium mitrae											
@@ -4306,11 +4306,11 @@ NCBITaxon:434347	biolink:OrganismTaxon	Kribbella hippodromi
 NCBITaxon:1122138	biolink:OrganismTaxon	Kribbella catacumbae DSM 19601											
 NCBITaxon:460087	biolink:OrganismTaxon	Kribbella sancticallisti											
 NCBITaxon:996641	biolink:OrganismTaxon	Kribbella amoyensis											
-NCBITaxon:86796	biolink:OrganismTaxon	Marmoricola aurantiacus											
-NCBITaxon:397278	biolink:OrganismTaxon	Marmoricola aequoreus											
-NCBITaxon:433649	biolink:OrganismTaxon	Marmoricola bigeumensis											
-NCBITaxon:642780	biolink:OrganismTaxon	Marmoricola scoriae											
-NCBITaxon:642766	biolink:OrganismTaxon	Marmoricola korecus											
+NCBITaxon:86796	biolink:OrganismTaxon	Nocardioides aurantiacus											
+NCBITaxon:397278	biolink:OrganismTaxon	Nocardioides aequoreus											
+NCBITaxon:433649	biolink:OrganismTaxon	Nocardioides marmoribigeumensis											
+NCBITaxon:642780	biolink:OrganismTaxon	Nocardioides scoriae											
+NCBITaxon:642766	biolink:OrganismTaxon	Nocardioides korecus											
 NCBITaxon:1841	biolink:OrganismTaxon	Nocardioides albus											
 NCBITaxon:1303683	biolink:OrganismTaxon	Nocardioides jensenii JCM 1364 = NBRC 14755											
 NCBITaxon:2045	biolink:OrganismTaxon	Pimelobacter simplex											
@@ -4917,8 +4917,8 @@ NCBITaxon:1122980	biolink:OrganismTaxon	Segatella baroniae DSM 16972 = JCM 13447
 NCBITaxon:862515	biolink:OrganismTaxon	Hoylesella marshii DSM 16973 = JCM 13450											
 NCBITaxon:688246	biolink:OrganismTaxon	Hallella multisaccharivorax DSM 17128											
 NCBITaxon:585502	biolink:OrganismTaxon	Hallella bergensis DSM 17361											
-NCBITaxon:915438	biolink:OrganismTaxon	Prevotella oryzae DSM 17970											
-NCBITaxon:185293	biolink:OrganismTaxon	Prevotella oryzae											
+NCBITaxon:915438	biolink:OrganismTaxon	Xylanibacter oryzae DSM 17970											
+NCBITaxon:185293	biolink:OrganismTaxon	Xylanibacter oryzae											
 NCBITaxon:537011	biolink:OrganismTaxon	Segatella copri DSM 18205											
 NCBITaxon:1002367	biolink:OrganismTaxon	Leyella stercorea DSM 18206											
 NCBITaxon:997353	biolink:OrganismTaxon	Prevotella pallens ATCC 700821											
@@ -5209,7 +5209,7 @@ NCBITaxon:330084	biolink:OrganismTaxon	Amycolatopsis jejuensis
 NCBITaxon:1120984	biolink:OrganismTaxon	Amycolatopsis taiwanensis DSM 45107											
 NCBITaxon:546365	biolink:OrganismTaxon	Amycolatopsis regifaucium											
 NCBITaxon:369930	biolink:OrganismTaxon	Amycolatopsis echigonensis											
-NCBITaxon:369932	biolink:OrganismTaxon	Amycolatopsis niigatensis											
+NCBITaxon:369932	biolink:OrganismTaxon												
 NCBITaxon:490629	biolink:OrganismTaxon	Amycolatopsis marina											
 NCBITaxon:543629	biolink:OrganismTaxon	Amycolatopsis ultiminotia											
 NCBITaxon:401106	biolink:OrganismTaxon	Amycolatopsis tucumanensis											
@@ -5576,7 +5576,7 @@ NCBITaxon:1223802	biolink:OrganismTaxon	Sulfuritalea hydrogenivorans sk43H
 NCBITaxon:180198	biolink:OrganismTaxon	Novispirillum itersonii subsp. nipponicum											
 NCBITaxon:1122125	biolink:OrganismTaxon	Inquilinus limosus DSM 16000											
 NCBITaxon:363840	biolink:OrganismTaxon	Inquilinus ginsengisoli											
-NCBITaxon:188	biolink:OrganismTaxon	Magnetospirillum magnetotacticum											
+NCBITaxon:188	biolink:OrganismTaxon	Paramagnetospirillum magnetotacticum											
 NCBITaxon:55518	biolink:OrganismTaxon	Magnetospirillum gryphiswaldense											
 NCBITaxon:425942	biolink:OrganismTaxon	Magnetospirillum bellicum											
 NCBITaxon:1122607	biolink:OrganismTaxon	Nisaea denitrificans DSM 18348											
@@ -5689,7 +5689,7 @@ NCBITaxon:525373	biolink:OrganismTaxon	Sphingobacterium spiritivorum ATCC 33861
 NCBITaxon:1123264	biolink:OrganismTaxon	Sphingobacterium multivorum DSM 11691											
 NCBITaxon:1123265	biolink:OrganismTaxon	Sphingobacterium thalpophilum DSM 11723											
 NCBITaxon:34086	biolink:OrganismTaxon	Pedobacter antarcticus											
-NCBITaxon:415956	biolink:OrganismTaxon	Sphingobacterium composti Yoo et al. 2007 non Ten et al. 2007											
+NCBITaxon:415956	biolink:OrganismTaxon	Sphingobacterium allocomposti											
 NCBITaxon:683125	biolink:OrganismTaxon	Sphingobacterium wenxiniae											
 NCBITaxon:797292	biolink:OrganismTaxon	Sphingobacterium alimentarium											
 NCBITaxon:797291	biolink:OrganismTaxon	Sphingobacterium lactis											
@@ -5824,7 +5824,7 @@ NCBITaxon:147	biolink:OrganismTaxon	Spirochaeta aurantia
 NCBITaxon:150	biolink:OrganismTaxon	Spirochaeta isovalerica											
 NCBITaxon:151	biolink:OrganismTaxon	Oceanispirochaeta litoralis											
 NCBITaxon:152	biolink:OrganismTaxon	Zuelzera stenostrepta											
-NCBITaxon:156	biolink:OrganismTaxon	Treponema zuelzerae											
+NCBITaxon:156	biolink:OrganismTaxon	Teretinema zuelzerae											
 NCBITaxon:665571	biolink:OrganismTaxon	Spirochaeta thermophila DSM 6192											
 NCBITaxon:869211	biolink:OrganismTaxon	Spirochaeta thermophila DSM 6578											
 NCBITaxon:744872	biolink:OrganismTaxon	Gracilinema caldarium DSM 7334											
@@ -5896,7 +5896,7 @@ NCBITaxon:1123405	biolink:OrganismTaxon	Tuberibacillus calidus DSM 17572
 NCBITaxon:52763	biolink:OrganismTaxon	Pullulanibacillus naganoensis											
 NCBITaxon:492809	biolink:OrganismTaxon	Pullulanibacillus uraniitolerans											
 NCBITaxon:342944	biolink:OrganismTaxon	Sinobaca qinghaiensis											
-NCBITaxon:110845	biolink:OrganismTaxon	Jeotgalicoccus pinnipedialis											
+NCBITaxon:110845	biolink:OrganismTaxon	Phocicoccus pinnipedialis											
 NCBITaxon:157227	biolink:OrganismTaxon	Jeotgalicoccus halotolerans											
 NCBITaxon:1122129	biolink:OrganismTaxon	Jeotgalicoccus psychrophilus DSM 19085											
 NCBITaxon:1122128	biolink:OrganismTaxon	Jeotgalicoccus marinus DSM 19772											
@@ -5904,8 +5904,8 @@ NCBITaxon:589010	biolink:OrganismTaxon	Jeotgalicoccus huakuii
 NCBITaxon:709510	biolink:OrganismTaxon	Jeotgalicoccus aerolatus											
 NCBITaxon:709509	biolink:OrganismTaxon	Jeotgalicoccus coquinae											
 NCBITaxon:568603	biolink:OrganismTaxon	Jeotgalicoccus nanhaiensis											
-NCBITaxon:2233644	biolink:OrganismTaxon	Macrococcus caseolyticus subsp. caseolyticus											
-NCBITaxon:69966	biolink:OrganismTaxon	Macrococcus caseolyticus											
+NCBITaxon:2233644	biolink:OrganismTaxon	Macrococcoides caseolyticum subsp. caseolyticum											
+NCBITaxon:69966	biolink:OrganismTaxon	Macrococcoides caseolyticum											
 NCBITaxon:69968	biolink:OrganismTaxon	Macrococcus bovicus											
 NCBITaxon:69967	biolink:OrganismTaxon	Macrococcus equipercicus											
 NCBITaxon:198483	biolink:OrganismTaxon	Macrococcus brunensis											
@@ -5913,12 +5913,12 @@ NCBITaxon:198482	biolink:OrganismTaxon	Macrococcus hajekii
 NCBITaxon:198484	biolink:OrganismTaxon	Macrococcus lamae											
 NCBITaxon:157225	biolink:OrganismTaxon	Salinicoccus hispanicus											
 NCBITaxon:45670	biolink:OrganismTaxon	Salinicoccus roseus											
-NCBITaxon:1123231	biolink:OrganismTaxon	Salinicoccus alkaliphilus DSM 16010											
+NCBITaxon:1123231	biolink:OrganismTaxon	Lacicoccus alkaliphilus DSM 16010											
 NCBITaxon:365049	biolink:OrganismTaxon	Salinicoccus salsiraiae											
 NCBITaxon:381634	biolink:OrganismTaxon	Salinicoccus jeotgali											
 NCBITaxon:1123233	biolink:OrganismTaxon	Salinicoccus luteus DSM 17002											
 NCBITaxon:381830	biolink:OrganismTaxon	Salinicoccus siamensis											
-NCBITaxon:1123232	biolink:OrganismTaxon	Salinicoccus kunmingensis DSM 17847											
+NCBITaxon:1123232	biolink:OrganismTaxon	Lacicoccus kunmingensis DSM 17847											
 NCBITaxon:393538	biolink:OrganismTaxon	Salinicoccus iranensis											
 NCBITaxon:407035	biolink:OrganismTaxon	Salinicoccus halodurans											
 NCBITaxon:465561	biolink:OrganismTaxon	Salinicoccus salitudinis											
@@ -6142,7 +6142,7 @@ NCBITaxon:66894	biolink:OrganismTaxon	Streptomyces griseobrunneus
 NCBITaxon:68179	biolink:OrganismTaxon	Streptomyces bacillaris											
 NCBITaxon:1941	biolink:OrganismTaxon	Streptomyces badius											
 NCBITaxon:67345	biolink:OrganismTaxon	Streptomyces prasinus											
-NCBITaxon:66873	biolink:OrganismTaxon	Streptomyces bellus											
+NCBITaxon:66873	biolink:OrganismTaxon												
 NCBITaxon:1896	biolink:OrganismTaxon	Streptomyces bikiniensis											
 NCBITaxon:68180	biolink:OrganismTaxon	Streptomyces blastmyceticus											
 NCBITaxon:33897	biolink:OrganismTaxon	Streptomyces bluensis											
@@ -7014,8 +7014,8 @@ NCBITaxon:253547	biolink:OrganismTaxon	Labrys portucalensis
 NCBITaxon:346912	biolink:OrganismTaxon	Labrys miyagiensis											
 NCBITaxon:346911	biolink:OrganismTaxon	Labrys okinawensis											
 NCBITaxon:425677	biolink:OrganismTaxon	Labrys wisconsinensis											
-NCBITaxon:639283	biolink:OrganismTaxon	Starkeya novella DSM 506											
-NCBITaxon:266121	biolink:OrganismTaxon	Starkeya koreensis											
+NCBITaxon:639283	biolink:OrganismTaxon	Ancylobacter novellus DSM 506											
+NCBITaxon:266121	biolink:OrganismTaxon	Ancylobacter koreensis											
 NCBITaxon:280	biolink:OrganismTaxon	Xanthobacter autotrophicus											
 NCBITaxon:281	biolink:OrganismTaxon	Xanthobacter flavus											
 NCBITaxon:60216	biolink:OrganismTaxon	Xanthobacter tagetidis											
@@ -7342,7 +7342,7 @@ NCBITaxon:287488	biolink:OrganismTaxon	Eionea nigra
 NCBITaxon:398773	biolink:OrganismTaxon	Methylohalomonas lacus											
 NCBITaxon:455253	biolink:OrganismTaxon	Methylonatrum kenyense											
 NCBITaxon:354246	biolink:OrganismTaxon	Spongiibacter marinus											
-NCBITaxon:1122224	biolink:OrganismTaxon	Spongiibacter marinus DSM 19753											
+NCBITaxon:1122224	biolink:OrganismTaxon	Neomelitea salexigens DSM 19753											
 NCBITaxon:1123279	biolink:OrganismTaxon	Spongiibacter tropicus DSM 19543											
 NCBITaxon:1117647	biolink:OrganismTaxon	Simiduia agarivorans SA1 = DSM 21679											
 NCBITaxon:679260	biolink:OrganismTaxon	Simiduia areninigrae											
@@ -7365,8 +7365,8 @@ NCBITaxon:70582	biolink:OrganismTaxon	Aquabacterium citratiphilum
 NCBITaxon:70586	biolink:OrganismTaxon	Aquabacterium commune											
 NCBITaxon:450365	biolink:OrganismTaxon	Aquabacterium fontiphilum											
 NCBITaxon:708634	biolink:OrganismTaxon	Aquabacterium limnoticum											
-NCBITaxon:47994	biolink:OrganismTaxon	Leptothrix mobilis											
-NCBITaxon:270368	biolink:OrganismTaxon	Paucibacter toxinivorans											
+NCBITaxon:47994	biolink:OrganismTaxon	Sphaerotilus mobilis											
+NCBITaxon:270368	biolink:OrganismTaxon	Roseateles toxinivorans											
 NCBITaxon:28068	biolink:OrganismTaxon	Rubrivivax gelatinosus											
 NCBITaxon:522889	biolink:OrganismTaxon	Sphaerotilus montanus											
 NCBITaxon:2002775	biolink:OrganismTaxon	Tepidimonas sp.											
@@ -7734,7 +7734,7 @@ NCBITaxon:1129133	biolink:OrganismTaxon	Sphingopyxis italica
 NCBITaxon:463200	biolink:OrganismTaxon	Stakelama sediminis											
 NCBITaxon:1078469	biolink:OrganismTaxon	Sphingorhabdus planktonica											
 NCBITaxon:1125699	biolink:OrganismTaxon	Treponema maltophilum ATCC 51939											
-NCBITaxon:576118	biolink:OrganismTaxon	Salinicoccus qingdaonensis											
+NCBITaxon:576118	biolink:OrganismTaxon	Lacicoccus qingdaonensis											
 NCBITaxon:1073415	biolink:OrganismTaxon	Salinicoccus halitifaciens											
 NCBITaxon:747656	biolink:OrganismTaxon	Streptococcus danieliae											
 NCBITaxon:1111760	biolink:OrganismTaxon	Streptococcus troglodytae											
@@ -7905,7 +7905,7 @@ NCBITaxon:231048	biolink:OrganismTaxon	Allochromatium palmeri
 NCBITaxon:2250209	biolink:OrganismTaxon	Marichromatium sp.											
 NCBITaxon:316276	biolink:OrganismTaxon	Thermochromatium tepidum ATCC 43061											
 NCBITaxon:527200	biolink:OrganismTaxon	Thiorhodococcus fuscus											
-NCBITaxon:1301100	biolink:OrganismTaxon	[Clostridium] dakarense											
+NCBITaxon:1301100	biolink:OrganismTaxon	Faecalimicrobium dakarense											
 NCBITaxon:558153	biolink:OrganismTaxon	Clostridium geopurificans											
 NCBITaxon:1216932	biolink:OrganismTaxon	Clostridium bornimense											
 NCBITaxon:655338	biolink:OrganismTaxon	Fervidicella metallireducens											
@@ -7965,7 +7965,7 @@ NCBITaxon:1299340	biolink:OrganismTaxon	Flavobacterium longum
 NCBITaxon:1299341	biolink:OrganismTaxon	Flavobacterium urocaniciphilum											
 NCBITaxon:1443666	biolink:OrganismTaxon	Aquimarina megaterium											
 NCBITaxon:1038014	biolink:OrganismTaxon	Aquimarina amphilecti											
-NCBITaxon:1073328	biolink:OrganismTaxon	Allomuricauda zhangzhouensis											
+NCBITaxon:1073328	biolink:OrganismTaxon	Flagellimonas zhangzhouensis											
 NCBITaxon:1055723	biolink:OrganismTaxon												
 NCBITaxon:1150112	biolink:OrganismTaxon	Myroides guanonis											
 NCBITaxon:1073325	biolink:OrganismTaxon	Salegentibacter echinorum											
@@ -7981,7 +7981,7 @@ NCBITaxon:1334022	biolink:OrganismTaxon	Zunongwangia mangrovi
 NCBITaxon:1150368	biolink:OrganismTaxon	Sinomicrobium oceani											
 NCBITaxon:1188319	biolink:OrganismTaxon	Ferriphaselus amnicola											
 NCBITaxon:1260928	biolink:OrganismTaxon	Geobacter sulfurreducens subsp. ethanolicus											
-NCBITaxon:673521	biolink:OrganismTaxon	Blastococcus endophyticus											
+NCBITaxon:673521	biolink:OrganismTaxon	Trujillella endophytica											
 NCBITaxon:52020	biolink:OrganismTaxon	Geodermatophilus sp.											
 NCBITaxon:1137989	biolink:OrganismTaxon	Geodermatophilus normandii											
 NCBITaxon:1137993	biolink:OrganismTaxon	Geodermatophilus africanus											
@@ -7990,8 +7990,8 @@ NCBITaxon:1225127	biolink:OrganismTaxon	Klenkia taihuensis
 NCBITaxon:333142	biolink:OrganismTaxon	Klenkia brasiliensis											
 NCBITaxon:1076695	biolink:OrganismTaxon	Halanaerobium sehlinense											
 NCBITaxon:503834	biolink:OrganismTaxon	Halanaerobaculum tunisiense											
-NCBITaxon:1258546	biolink:OrganismTaxon	Halomonas nanhaiensis											
-NCBITaxon:390919	biolink:OrganismTaxon	Halomonas olivaria											
+NCBITaxon:1258546	biolink:OrganismTaxon	Vreelandella nanhaiensis											
+NCBITaxon:390919	biolink:OrganismTaxon	Vreelandella olivaria											
 NCBITaxon:459885	biolink:OrganismTaxon	Salinicola zeshunii											
 NCBITaxon:1408442	biolink:OrganismTaxon	Helicobacter pametensis ATCC 51478											
 NCBITaxon:1176482	biolink:OrganismTaxon	Sulfurimonas gotlandica											
@@ -8014,7 +8014,7 @@ NCBITaxon:1462919	biolink:OrganismTaxon	Mobilitalea sibirica
 NCBITaxon:82688	biolink:OrganismTaxon	Liquorilactobacillus nagelii											
 NCBITaxon:449659	biolink:OrganismTaxon	Ligilactobacillus pobuzihii											
 NCBITaxon:1423819	biolink:OrganismTaxon	Levilactobacillus koreensis JCM 16448											
-NCBITaxon:1050107	biolink:OrganismTaxon	Lactobacillus delbrueckii subsp. sunkii											
+NCBITaxon:1050107	biolink:OrganismTaxon	Lactobacillus delbrueckii subsp. allosunkii											
 NCBITaxon:1123687	biolink:OrganismTaxon	Lacticaseibacillus porcinae											
 NCBITaxon:1231337	biolink:OrganismTaxon	Schleiferilactobacillus shenzhenensis											
 NCBITaxon:1291742	biolink:OrganismTaxon	Paucilactobacillus hokkaidonensis JCM 18461											
@@ -8495,7 +8495,7 @@ NCBITaxon:1496996	biolink:OrganismTaxon	Stackebrandtia endophytica
 NCBITaxon:1333660	biolink:OrganismTaxon	Endozoicomonas atrinae											
 NCBITaxon:1434881	biolink:OrganismTaxon	Orenia chitinitropha											
 NCBITaxon:1494606	biolink:OrganismTaxon	Sporohalobacter salinus											
-NCBITaxon:1329370	biolink:OrganismTaxon	Halomonas qiaohouensis											
+NCBITaxon:1329370	biolink:OrganismTaxon	Franzmannia qiaohouensis											
 NCBITaxon:857417	biolink:OrganismTaxon	Janibacter indicus											
 NCBITaxon:1229621	biolink:OrganismTaxon	Anaerostipes rhamnosivorans											
 NCBITaxon:1337051	biolink:OrganismTaxon	Murimonas intestini											
@@ -8560,8 +8560,8 @@ NCBITaxon:340095	biolink:OrganismTaxon	Thermodesulfovibrio thiophilus
 NCBITaxon:1141657	biolink:OrganismTaxon	Nocardia vulneris											
 NCBITaxon:1460226	biolink:OrganismTaxon	Rhodococcus kronopolitis											
 NCBITaxon:1543852	biolink:OrganismTaxon	Prescottella soli											
-NCBITaxon:1542737	biolink:OrganismTaxon	Marmoricola solisilvae											
-NCBITaxon:1542736	biolink:OrganismTaxon	Marmoricola terrae											
+NCBITaxon:1542737	biolink:OrganismTaxon	Nocardioides marmorisolisilvae											
+NCBITaxon:1542736	biolink:OrganismTaxon	Nocardioides marmoriterrae											
 NCBITaxon:642762	biolink:OrganismTaxon	Nocardioides rubriscoriae											
 NCBITaxon:1469601	biolink:OrganismTaxon	Nocardioides daecheongensis											
 NCBITaxon:1588644	biolink:OrganismTaxon	Nocardioides deserti											
@@ -8617,7 +8617,7 @@ NCBITaxon:1368428	biolink:OrganismTaxon	Allorhizobium taibaishanense CCNWSX 0483
 NCBITaxon:1035271	biolink:OrganismTaxon	Rhizobium nepotum											
 NCBITaxon:1206817	biolink:OrganismTaxon	Rhizobium paknamense											
 NCBITaxon:451876	biolink:OrganismTaxon	Rhizobium rhizoryzae											
-NCBITaxon:1553448	biolink:OrganismTaxon	Gemmobacter intermedius											
+NCBITaxon:1553448	biolink:OrganismTaxon	Falsigemmobacter intermedius											
 NCBITaxon:1244108	biolink:OrganismTaxon	Jannaschia faecimaris											
 NCBITaxon:287098	biolink:OrganismTaxon	Yoonia rosea											
 NCBITaxon:1123755	biolink:OrganismTaxon	Yoonia litorea											
@@ -8761,7 +8761,7 @@ NCBITaxon:1461580	biolink:OrganismTaxon	Neobacillus jeddahensis
 NCBITaxon:823	biolink:OrganismTaxon	Parabacteroides distasonis											
 NCBITaxon:292800	biolink:OrganismTaxon	Flavonifractor plautii											
 NCBITaxon:1547	biolink:OrganismTaxon	Thomasclavelia ramosa											
-NCBITaxon:1505	biolink:OrganismTaxon	Paeniclostridium sordellii											
+NCBITaxon:1505	biolink:OrganismTaxon	Paraclostridium sordellii											
 NCBITaxon:1962263	biolink:OrganismTaxon	Clostridium tepidum											
 NCBITaxon:2963282	biolink:OrganismTaxon	Clostridium sp. DSM 100503											
 NCBITaxon:1512	biolink:OrganismTaxon	[Clostridium] symbiosum											
@@ -8881,7 +8881,7 @@ NCBITaxon:1323370	biolink:OrganismTaxon	Caloranaerobacter ferrireducens
 NCBITaxon:1330330	biolink:OrganismTaxon	Kosmotoga pacifica											
 NCBITaxon:993073	biolink:OrganismTaxon	Microbacterium enclense											
 NCBITaxon:1522174	biolink:OrganismTaxon	Glutamicibacter endophyticus											
-NCBITaxon:1087253	biolink:OrganismTaxon	Marmoricola aquaticus											
+NCBITaxon:1087253	biolink:OrganismTaxon	Nocardioides marmoraquaticus											
 NCBITaxon:1347903	biolink:OrganismTaxon	Lederbergia wuyishanensis											
 NCBITaxon:1347902	biolink:OrganismTaxon	Priestia taiwanensis											
 NCBITaxon:1508404	biolink:OrganismTaxon	Jeotgalibacillus malaysiensis											
@@ -8897,8 +8897,8 @@ NCBITaxon:1485585	biolink:OrganismTaxon	Cecembia rubra
 NCBITaxon:1627892	biolink:OrganismTaxon	Dokdonia pacifica											
 NCBITaxon:993690	biolink:OrganismTaxon	Algoriphagus trabzonensis											
 NCBITaxon:1505727	biolink:OrganismTaxon	Bifidobacterium commune											
-NCBITaxon:186761	biolink:OrganismTaxon	Halomonas glaciei											
-NCBITaxon:1176240	biolink:OrganismTaxon	Halomonas zhaodongensis											
+NCBITaxon:186761	biolink:OrganismTaxon	Vreelandella glaciei											
+NCBITaxon:1176240	biolink:OrganismTaxon	Vreelandella zhaodongensis											
 NCBITaxon:1382803	biolink:OrganismTaxon	Chromobacterium amazonense											
 NCBITaxon:1387275	biolink:OrganismTaxon	Chryseobacterium profundimaris											
 NCBITaxon:1505726	biolink:OrganismTaxon	Convivina intestini											
@@ -8996,7 +8996,7 @@ NCBITaxon:1676396	biolink:OrganismTaxon	Rhodococcus antrifimi
 NCBITaxon:1660195	biolink:OrganismTaxon	Rhodococcus lactis											
 NCBITaxon:1470347	biolink:OrganismTaxon	Alistipes ihumii											
 NCBITaxon:1414720	biolink:OrganismTaxon	Clostridium saudiense											
-NCBITaxon:1414721	biolink:OrganismTaxon	Clostridium jeddahense											
+NCBITaxon:1414721	biolink:OrganismTaxon	Faecalispora jeddahensis											
 NCBITaxon:1553429	biolink:OrganismTaxon	Croceifilum oryzae											
 NCBITaxon:1197861	biolink:OrganismTaxon	Paracoccus laeviglucosivorans											
 NCBITaxon:1141647	biolink:OrganismTaxon	Nocardia arizonensis											
@@ -9006,7 +9006,7 @@ NCBITaxon:1524338	biolink:OrganismTaxon	Phytomonospora cypria
 NCBITaxon:1652109	biolink:OrganismTaxon	Umboniibacter roseus											
 NCBITaxon:1540163	biolink:OrganismTaxon	Flavobacterium endophyticum											
 NCBITaxon:1323422	biolink:OrganismTaxon	Myroides indicus											
-NCBITaxon:1080225	biolink:OrganismTaxon	Allomuricauda pacifica											
+NCBITaxon:1080225	biolink:OrganismTaxon	Flagellimonas meridianipacifica											
 NCBITaxon:1872444	biolink:OrganismTaxon	Alistipes sp.											
 NCBITaxon:2963284	biolink:OrganismTaxon	Terrisporobacter muris											
 NCBITaxon:1796620	biolink:OrganismTaxon	Acutalibacter muris											
@@ -9016,7 +9016,7 @@ NCBITaxon:1796613	biolink:OrganismTaxon	Bacteroides caecimuris
 NCBITaxon:1796636	biolink:OrganismTaxon	Frisingicoccus caecimuris											
 NCBITaxon:1796622	biolink:OrganismTaxon	Extibacter muris											
 NCBITaxon:1796619	biolink:OrganismTaxon	Irregularibacter muris											
-NCBITaxon:1796644	biolink:OrganismTaxon	Pasteurella caecimuris											
+NCBITaxon:1796644	biolink:OrganismTaxon	Rodentibacter caecimuris											
 NCBITaxon:1796635	biolink:OrganismTaxon	Longicatena caecimuris											
 NCBITaxon:1796618	biolink:OrganismTaxon	Cuneatibacter caecimuris											
 NCBITaxon:1796628	biolink:OrganismTaxon	Longibaculum muris											
@@ -9332,8 +9332,8 @@ NCBITaxon:1182597	biolink:OrganismTaxon	Micromonospora mangrovi
 NCBITaxon:948519	biolink:OrganismTaxon	Aeromonas rivipollensis											
 NCBITaxon:1743263	biolink:OrganismTaxon	Microlunatus aerolatus											
 NCBITaxon:1530170	biolink:OrganismTaxon	Saccharopolyspora subtropica											
-NCBITaxon:661483	biolink:OrganismTaxon	Marmoricola ginsengisoli											
-NCBITaxon:661485	biolink:OrganismTaxon	Marmoricola pocheonensis											
+NCBITaxon:661483	biolink:OrganismTaxon	Nocardioides marmoriginsengisoli											
+NCBITaxon:661485	biolink:OrganismTaxon	Nocardioides pocheonensis											
 NCBITaxon:1630595	biolink:OrganismTaxon	Nocardioides ginkgobilobae											
 NCBITaxon:1639882	biolink:OrganismTaxon	Longimicrobium terrae											
 NCBITaxon:1742687	biolink:OrganismTaxon	Arthrobacter deserti											
@@ -9347,8 +9347,8 @@ NCBITaxon:1660341	biolink:OrganismTaxon	Peptoniphilus catoniae
 NCBITaxon:1729899	biolink:OrganismTaxon	Thermithiobacillus plumbiphilus											
 NCBITaxon:1781211	biolink:OrganismTaxon	Sulfuriferula thiophila											
 NCBITaxon:981386	biolink:OrganismTaxon	Brucella vulpis											
-NCBITaxon:1244869	biolink:OrganismTaxon	Magnetospirillum caucaseum											
-NCBITaxon:1285242	biolink:OrganismTaxon	Magnetospirillum marisnigri											
+NCBITaxon:1244869	biolink:OrganismTaxon	Paramagnetospirillum caucaseum											
+NCBITaxon:1285242	biolink:OrganismTaxon	Paramagnetospirillum marisnigri											
 NCBITaxon:1437059	biolink:OrganismTaxon	Magnetospirillum moscoviense											
 NCBITaxon:1677853	biolink:OrganismTaxon	Actinocorallia lasiicapitis											
 NCBITaxon:1642303	biolink:OrganismTaxon	Nonomuraea zeae											
@@ -9384,7 +9384,7 @@ NCBITaxon:1229656	biolink:OrganismTaxon	Acidibacter ferrireducens
 NCBITaxon:1765737	biolink:OrganismTaxon	Dissulfurirhabdus thermomarina											
 NCBITaxon:1384589	biolink:OrganismTaxon	Entomohabitans teleogrylli											
 NCBITaxon:1033741	biolink:OrganismTaxon	Microvirga massiliensis											
-NCBITaxon:1776858	biolink:OrganismTaxon	Paenibacillus cucumis Kampfer et al. 2016											
+NCBITaxon:1776858	biolink:OrganismTaxon	Paenibacillus cucumis (ex Kampfer et al. 2016)											
 NCBITaxon:1679170	biolink:OrganismTaxon	Peribacillus loiseleuriae											
 NCBITaxon:1737353	biolink:OrganismTaxon	Filimonas zeae											
 NCBITaxon:1674942	biolink:OrganismTaxon	Caenibacillus caldisaponilyticus											
@@ -9420,7 +9420,7 @@ NCBITaxon:1641992	biolink:OrganismTaxon	Mycolicibacterium lutetiense
 NCBITaxon:1641990	biolink:OrganismTaxon	Mycolicibacterium montmartrense											
 NCBITaxon:1649257	biolink:OrganismTaxon	Mycolicibacterium arcueilense											
 NCBITaxon:1737571	biolink:OrganismTaxon	Niallia oryzisoli											
-NCBITaxon:1812261	biolink:OrganismTaxon	Jeotgalicoccus schoeneichii											
+NCBITaxon:1812261	biolink:OrganismTaxon	Phocicoccus schoeneichii											
 NCBITaxon:1628085	biolink:OrganismTaxon	Agathobaculum butyriciproducens											
 NCBITaxon:1325360	biolink:OrganismTaxon	Paenibacillus segetis											
 NCBITaxon:1458336	biolink:OrganismTaxon	Brevitalea aridisoli											
@@ -9626,7 +9626,7 @@ NCBITaxon:1921566	biolink:OrganismTaxon	Nocardioides cavernae
 NCBITaxon:1645614	biolink:OrganismTaxon	Psychromicrobium silvestre											
 NCBITaxon:1522368	biolink:OrganismTaxon	Modestobacter caceresii											
 NCBITaxon:1743262	biolink:OrganismTaxon	Pseudactinotalea terrae											
-NCBITaxon:1855823	biolink:OrganismTaxon	Macrococcus canis											
+NCBITaxon:1855823	biolink:OrganismTaxon	Macrococcoides canis											
 NCBITaxon:1743235	biolink:OrganismTaxon	Chelatococcus composti											
 NCBITaxon:1920512	biolink:OrganismTaxon	Oharaeibacter diazotrophicus											
 NCBITaxon:1549637	biolink:OrganismTaxon	Caenimicrobium hargitense											
@@ -9893,7 +9893,7 @@ NCBITaxon:1704076	biolink:OrganismTaxon	Levilactobacillus cerevisiae
 NCBITaxon:1548599	biolink:OrganismTaxon	Halalkalibacter kiskunsagensis											
 NCBITaxon:932085	biolink:OrganismTaxon	Pontibacter rhizosphera											
 NCBITaxon:1035916	biolink:OrganismTaxon	Echinicola shivajiensis											
-NCBITaxon:1144478	biolink:OrganismTaxon	Halomonas lionensis											
+NCBITaxon:1144478	biolink:OrganismTaxon	Vreelandella lionensis											
 NCBITaxon:2291674	biolink:OrganismTaxon	Metabacillus iocasae											
 NCBITaxon:1714681	biolink:OrganismTaxon	Secundilactobacillus silagincola											
 NCBITaxon:1714682	biolink:OrganismTaxon	Secundilactobacillus pentosiphilus											
@@ -9930,7 +9930,7 @@ NCBITaxon:1798805	biolink:OrganismTaxon	Pararhizobium antarcticum
 NCBITaxon:1543381	biolink:OrganismTaxon	Oleiagrimonas soli											
 NCBITaxon:1871111	biolink:OrganismTaxon	Acinetobacter defluvii											
 NCBITaxon:1795308	biolink:OrganismTaxon	Pseudothioclava arenosa											
-NCBITaxon:1906744	biolink:OrganismTaxon	Rodentibacter heylii											
+NCBITaxon:1906744	biolink:OrganismTaxon												
 NCBITaxon:1850238	biolink:OrganismTaxon	Rhizorhabdus dicambivorans											
 NCBITaxon:1544413	biolink:OrganismTaxon	Corynebacterium lowii											
 NCBITaxon:1544416	biolink:OrganismTaxon	Corynebacterium oculi											

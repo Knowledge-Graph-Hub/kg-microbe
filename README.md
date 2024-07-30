@@ -31,6 +31,19 @@
 ##  Merge
  - `poetry run kg merge`: This merges all transformed graphs above.
 
+## Release
+ ### Requirements
+ In order to be able to make KG releases on this repository, you'll need:
+ - Appropriate permissions to this repository.
+ - A Github token that has permissions on this repository. [This is how you set it in GitHub](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/setting-a-personal-access-token-policy-for-your-organization#restricting-access-by-personal-access-tokens-classic). Make sure your token has access to this project.
+ - Save this token locally assigned to the environemnt variable `GH_TOKEN`
+    ```shell
+    export GH_TOKEN = XXXX
+    ```
+    or add it to your `~/.bash_profile` or `~/.bashrc` file.
+
+
+
 # Contributors
 Please remember to run `poetry run tox` before every commit to make sure the code you commit is error-free.
 

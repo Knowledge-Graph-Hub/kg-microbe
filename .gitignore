@@ -169,3 +169,6 @@ mediadive_cache.sqlite
 data/raw/.keep
 kg_microbe/transform_utils/uniprot_human/tmp/relevant_files.tsv
 kg_microbe/transform_utils/uniprot/tmp/relevant_files.tsv
+
+data_merged.**
+*.tar.gz

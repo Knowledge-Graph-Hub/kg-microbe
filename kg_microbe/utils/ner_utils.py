@@ -133,6 +133,8 @@ def annotate(
         writer_2.writerow(annotated_columns)
         if manual_annotation_path:
             manual_annotation_df = pd.read_csv(manual_annotation_path, sep="\t", low_memory=False)
+        else:
+            manual_annotation_df = pd.DataFrame()
 
         for row in df.iterrows():
             terms_split = row[1].iloc[0].split(", ")
@@ -141,9 +143,12 @@ def annotate(
                 if responses:
                     writer = writer_1
                 else:
-                    manual_annotation_row: pd.DataFrame = manual_annotation_df.loc[
-                        manual_annotation_df[TRAITS_DATASET_LABEL_COLUMN] == term
-                    ]
+                    if not manual_annotation_df.empty:
+                        manual_annotation_row: pd.DataFrame = manual_annotation_df.loc[
+                            manual_annotation_df[TRAITS_DATASET_LABEL_COLUMN] == term
+                        ]
+                    else:
+                        manual_annotation_row = pd.DataFrame()
                     responses = unique_terms_annotated_not_whole_match.get(term, None)
                     if not manual_annotation_row.empty:
                         for _, row in manual_annotation_row.iterrows():

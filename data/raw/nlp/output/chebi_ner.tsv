@@ -63,8 +63,8 @@ CHEBI:18167	alpha-maltose	maltose	True	1	7	maltose
 CHEBI:18222	xylose	xylose	True	1	6	xylose
 CHEBI:18237	glutamic acid	glutamate	True	1	9	glutamate
 CHEBI:18257	ornithine	ornithine	True	1	9	ornithine
-CHEBI:18276	dihydrogen			1	10	H2_methanol
 CHEBI:18276	dihydrogen			1	10	H2_CO2
+CHEBI:18276	dihydrogen			1	10	H2_methanol
 CHEBI:18397	2-phenylethylamine	phenethylamine	True	1	14	phenethylamine
 CHEBI:18401	phenylacetate	phenylacetate	True	1	13	phenylacetate
 CHEBI:21217	L-alaninamide	alaninamide	True	1	11	alaninamide
@@ -87,7 +87,6 @@ CHEBI:27476	beta-D-ribopyranose	ribose	True	1	6	ribose
 CHEBI:27570	histidine	histidine	True	1	9	histidine
 CHEBI:27689	decanoate	caprate	True	1	7	caprate
 CHEBI:27897	tryptophan	tryptophan	True	1	10	tryptophan
-CHEBI:28009	N-acetyl-beta-D-glucosamine	N-acetylglucosamine	True	1	19	N-acetylglucosamine
 CHEBI:28044	phenylalanine	phenylalanine	True	1	13	phenylalanine
 CHEBI:28053	melibiose	melibiose	True	1	9	melibiose
 CHEBI:28087	glycogen	glycogen	True	1	8	glycogen
@@ -159,7 +158,6 @@ CHEBI:58095	L-phenylalanine zwitterion	phenylalanine	True	1	13	phenylalanine
 CHEBI:58143	5-dehydro-D-gluconate	5-ketogluconate	True	1	15	5-ketogluconate
 CHEBI:58389	trimethylammonium	trimethylamine	True	1	14	trimethylamine
 CHEBI:59338	methylammonium	methylamine	True	1	11	methylamine
-CHEBI:59640	N-acetylglucosamine	N-acetylglucosamine	True	1	19	N-acetylglucosamine
 CHEBI:62064	butane-2,3-diol	2,3-butanediol	True	1	14	2,3-butanediol
 CHEBI:72314	aspartate salt	aspartate	True	1	9	aspartate
 CHEBI:9300	suberic acid	suberic acid	True	1	12	suberic acid

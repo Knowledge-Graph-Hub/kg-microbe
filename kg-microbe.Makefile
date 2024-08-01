@@ -28,7 +28,7 @@ generate-tarballs:
 				tarball_name=$$(basename $$dir).tar.gz; \
 				tar -czvf $$tarball_name -C $$dir .; \
 				echo "Tarball generated successfully as $$tarball_name."; \
-				$(MAKE) check-and-split TARFILE=$$tarball_name; \
+				$(MAKE) check-and-split TARFILE=$$tarball_name DIR=$$dir; \
 			else \
 				echo "Directory $$dir is empty. Skipping tarball generation."; \
 			fi \
@@ -37,7 +37,7 @@ generate-tarballs:
 	@if [ -f data/merged/merged-kg.tar.gz ]; then \
 		cp data/merged/merged-kg.tar.gz $(MERGED_TARBALL); \
 		echo "Merged tarball copied successfully."; \
-		$(MAKE) check-and-split TARFILE=$(MERGED_TARBALL); \
+		$(MAKE) check-and-split TARFILE=$(MERGED_TARBALL) DIR=data/merged; \
 	else \
 		echo "Merged tarball does not exist. Skipping."; \
 	fi
@@ -46,13 +46,20 @@ generate-tarballs:
 check-and-split:
 	@echo "Checking if $(TARFILE) needs to be split..."
 	@if [ $$(stat -f%z "$(TARFILE)") -gt 2147483648 ]; then \
-		echo "$(TARFILE) is larger than 2GB. Splitting..."; \
-		split -b $(PART_SIZE) -d -a 3 $(TARFILE) $(TARFILE).part-; \
-		for part in $(TARFILE).part-*; do \
-			mv $$part $${part}.tar.gz; \
+		echo "$(TARFILE) is larger than 2GB. Tarballing individual files..."; \
+		dirname=$$(basename $(DIR)); \
+		for file in $(DIR)/*; do \
+			if [ -f "$$file" ]; then \
+				filename=$$(basename $$file); \
+                tarball_name=$${dirname}_$${filename}.tar.gz; \
+				tar -czvf $$tarball_name -C $$(dirname $$file) $$(basename $$file); \
+				echo "Tarball generated successfully as $$tarball_name."; \
+			else \
+				echo "$$file is not a regular file. Skipping."; \
+			fi \
 		done; \
 		rm -f $(TARFILE); \
-		echo "$(TARFILE) split into smaller parts successfully."; \
+		echo "$(TARFILE) deleted after splitting."; \
 	else \
 		echo "$(TARFILE) is less than 2GB. No need to split."; \
 	fi
@@ -72,10 +79,7 @@ define create_release
 	for tarball in *.tar.gz; do \
 		gh release upload $$TAG_NAME $$tarball --repo $(REPO_OWNER)/$(REPO_NAME); \
 	done; \
-	for part in *.part-*.tar.gz; do \
-		gh release upload $$TAG_NAME $$part --repo $(REPO_OWNER)/$(REPO_NAME); \
-	done; \
-	rm -f *.tar.gz *.part-*.tar.gz; \
+	rm -f *.tar.gz; \
 	echo "$(capitalize $(1)) $$TAG_NAME created successfully."
 endef
 
@@ -89,10 +93,7 @@ define create_tag
 	for tarball in *.tar.gz; do \
 		gh release upload $$TAG $$tarball --repo $(REPO_OWNER)/$(REPO_NAME); \
 	done; \
-	for part in *.part-*.tar.gz; do \
-		gh release upload $$TAG $$part --repo $(REPO_OWNER)/$(REPO_NAME); \
-	done; \
-	rm -f *.tar.gz *.part-*.tar.gz; \
+	rm -f *.tar.gz; \
 	echo "Release $$TAG created successfully."
 endef
 

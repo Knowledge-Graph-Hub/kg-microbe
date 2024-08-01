@@ -9,7 +9,7 @@ from oaklib import get_adapter
 from kg_microbe.transform_utils.constants import (
     GO_CATEGORY_TREES_FILE,
     RAW_DATA_DIR,
-    UNIPROT_GENOME_FEATURES_HUMAN,
+    UNIPROT_HUMAN,
     UNIPROT_HUMAN_FILE,
     UNIPROT_HUMAN_RELEVANT_FILE_LIST,
     UNIPROT_HUMAN_TMP_DIR,
@@ -47,7 +47,7 @@ class UniprotHumanTransform(Transform):
                            If None, a default directory may be used.
         :type output_dir: Optional[Path]
         """
-        source_name = UNIPROT_GENOME_FEATURES_HUMAN
+        source_name = UNIPROT_HUMAN
         super().__init__(source_name, input_dir, output_dir)
         self.go_oi = get_adapter("sqlite:obo:go")
         # Check if the file already exists

@@ -42,20 +42,20 @@ merged_graph:
         filename:
           - data/transformed/ontologies/go_nodes.tsv
           - data/transformed/ontologies/go_edges.tsv
-    mondo:
-      name: "MONDO"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/ontologies/mondo_nodes.tsv
-          - data/transformed/ontologies/mondo_edges.tsv
-    hp:
-      name: "HP"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/ontologies/hp_nodes.tsv
-          - data/transformed/ontologies/hp_edges.tsv
+    # mondo:
+    #   name: "MONDO"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/ontologies/mondo_nodes.tsv
+    #       - data/transformed/ontologies/mondo_edges.tsv
+    # hp:
+    #   name: "HP"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/ontologies/hp_nodes.tsv
+    #       - data/transformed/ontologies/hp_edges.tsv
     ec:
       name: "EC"
       input:
@@ -105,27 +105,27 @@ merged_graph:
         filename:
           - data/transformed/BactoTraits/nodes.tsv
           - data/transformed/BactoTraits/edges.tsv
-    ctd:
-      input:
-        name: "ctd"
-        format: tsv
-        filename:
-          - data/transformed/ctd/nodes.tsv
-          - data/transformed/ctd/edges.tsv
-    disbiome:
-      input:
-        name: "disbiome"
-        format: tsv
-        filename:
-          - data/transformed/disbiome/nodes.tsv
-          - data/transformed/disbiome/edges.tsv
-    pdmetagenomics:
-      input:
-        name: "PdMetagenomics"
-        format: tsv
-        filename:
-          - data/transformed/PdMetagenomics/nodes.tsv
-          - data/transformed/PdMetagenomics/edges.tsv
+    # ctd:
+    #   input:
+    #     name: "ctd"
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/ctd/nodes.tsv
+    #       - data/transformed/ctd/edges.tsv
+    # disbiome:
+    #   input:
+    #     name: "disbiome"
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/disbiome/nodes.tsv
+    #       - data/transformed/disbiome/edges.tsv
+    # pdmetagenomics:
+    #   input:
+    #     name: "PdMetagenomics"
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/PdMetagenomics/nodes.tsv
+    #       - data/transformed/PdMetagenomics/edges.tsv
     # Not feasible using kgx merge process
     # uniprot_genome_features:
     #   input:
@@ -134,13 +134,13 @@ merged_graph:
     #     filename:
     #       - data/transformed/uniprot_genome_features/nodes.tsv
     #       - data/transformed/uniprot_genome_features/edges.tsv
-    uniprot_genome_features_human:
-      input:
-        name: "uniprot_genome_features_human"
-        format: tsv
-        filename:
-          - data/transformed/uniprot_genome_features_human/nodes.tsv
-          - data/transformed/uniprot_genome_features_human/edges.tsv
+    # uniprot_genome_features_human:
+    #   input:
+    #     name: "uniprot_genome_features_human"
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/uniprot_genome_features_human/nodes.tsv
+    #       - data/transformed/uniprot_genome_features_human/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:

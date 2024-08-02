@@ -56,6 +56,19 @@
 -
   url: http://purl.obolibrary.org/obo/go.json
   local_name: go.json
+#
+# MONDO
+#
+-
+  url: https://purl.obolibrary.org/obo/mondo/mondo.json
+  local_name: mondo.json
+#
+# HP
+#
+-
+  url: https://purl.obolibrary.org/obo/hp/hp.json
+  local_name: hp.json
+
 # **** Data sources ****
 
 # BacDive
@@ -71,52 +84,17 @@
   local_name: mediadive.json
 
 # Condensed-traits
-# - GTDB
-#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv
-#-
-#  url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_GTDB.csv?raw=true
-#  local_name: condensed_traits_GTDB.csv
-# - NCBI
-#   link: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/tree/master/output
 -
   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
   local_name: traits.csv
 
-# # ****Conversion Tables****
+# # # ****Conversion Tables****
 #
 # Environment
 #
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
-
-#
-# KEGG-Compound-CHEBI
-#
--
-  url: https://rest.kegg.jp/conv/chebi/cpd
-  local_name: kegg-cpd-chebi.tsv
-
-#
-# KEGG-Compound-Reaction
-#
--
-  url: https://rest.kegg.jp/link/rn/cpd
-  local_name: kegg-cpd-rxn.tsv
-
-#
-# KEGG-Compound-Pathway
-#
--
-  url: https://rest.kegg.jp/link/pathway/cpd
-  local_name: kegg-cpd-pathway.tsv
-
-#
-# KEGG-Reaction-Pathway
-#
--
-  url: https://rest.kegg.jp/link/pathway/rn
-  local_name: kegg-rxn-pathway.tsv
 
 # 
 # EPM JSON for curies package
@@ -132,19 +110,20 @@
   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
   local_name: uniprot_proteomes.tar.gz
 
+#
+# Uniprot Human
+#
+-
+  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_human.tar.gz 
+  local_name: uniprot_human.tar.gz
+
+
 # 
 # Unipathways
 # 
 -
   url: https://github.com/geneontology/unipathway/raw/master/upa.owl
   local_name: upa.owl
-
-# # # Redundant to RheaMappingsTransform
-# # RHEA
-# # 
-# -
-#   url: https://w3id.org/biopragmatics/resources/rhea/rhea.json.gz
-#   local_name: rhea.json.gz
 
 # RHEA mappings
 - 
@@ -154,14 +133,6 @@
 -
   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
   local_name: rhea2ec.tsv
-
-# -
-#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2uniprot.tsv
-#   local_name: rhea2uniprot.tsv
-
-# -
-#   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2xrefs.tsv
-#   local_name: rhea2xrefs.tsv
 
 # 
 # EC
@@ -178,8 +149,31 @@
   local_name: BactoTraits_databaseV2_Jun2022.csv
 
 #
-# Fermentqtion explorer
+# CTD
+#
+-
+  url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
+  local_name: CTD_chemicals_diseases.tsv.gz
+
+#
+# Fermentation explorer
 #
 -
   url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
   local_name: fermentation_explorer.csv
+
+#
+# Disbiome
+#
+-
+  url: https://disbiome.ugent.be:8080/experiment
+  local_name: disbiome.json
+
+#
+# PdMetagenomics
+#
+-
+  url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
+  local_name: PdMetagenomics.xlsx
+
+  

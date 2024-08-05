@@ -39,7 +39,6 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
         for xref in xrefs:
             # Writing out blank values for all other columns than id since covered by Rhea ingest
             l_parts = [xref] + ([""] * (len(node_header) - 1))
-            print(len(l_parts))
             nodes_dictionary[parts[id_index]].append(xref)
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)

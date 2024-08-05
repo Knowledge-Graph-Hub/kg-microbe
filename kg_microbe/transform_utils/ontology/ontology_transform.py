@@ -15,10 +15,8 @@ from kgx.cli.cli_utils import transform
 
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
-    CHEBI_PREFIX,
     CHEBI_XREFS_FILEPATH,
     DESCRIPTION_COLUMN,
-    EC_PREFIX,
     ENABLED_BY_PREDICATE,
     ENABLED_BY_RELATION,
     EXCLUSION_TERMS_FILE,
@@ -46,7 +44,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
-from kg_microbe.utils.ontology_utils import insert_ec_node_columns, replace_category_ontology
+from kg_microbe.utils.ontology_utils import replace_category_ontology
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
@@ -431,7 +429,7 @@ class OntologyTransform(Transform):
                 for line in new_edge_lines:
                     new_ef.write(line)
 
-        if name == "ec": # or name == "rhea":
+        if name == "ec":  # or name == "rhea":
             with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
                 # Update prefixes in nodes file
                 new_nf_lines = []
@@ -441,10 +439,10 @@ class OntologyTransform(Transform):
                         id_index = line.strip().split("\t").index(ID_COLUMN)
                         # get the index for the term 'category'
                         category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                        new_nf_lines.append(line)
                     else:
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
-                        line = insert_ec_node_columns(line, self.node_header)
                         new_nf_lines.append(line + "\n")
                 # Update prefixes in edges file
                 new_ef_lines = []
@@ -470,7 +468,6 @@ class OntologyTransform(Transform):
             #     ]
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:
-                new_nf.write("\t".join(self.node_header) + "\n")
                 for line in new_nf_lines:
                     new_nf.write(line)
 

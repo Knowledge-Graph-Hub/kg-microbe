@@ -39,15 +39,16 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
         for xref in xrefs:
             # Writing out blank values for all other columns than id since covered by Rhea ingest
             l_parts = [xref] + ([""] * (len(node_header) - 1))
+            print(len(l_parts))
             nodes_dictionary[parts[id_index]].append(xref)
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)
     else:
-        new_lines.append(replace_category_for_unipathways(line, id_index, category_index))
+        new_lines.append(replace_category_for_unipathways(line, id_index, category_index, node_header))
     return new_lines, nodes_dictionary
 
 
-def replace_category_for_unipathways(line, id_index, category_index):
+def replace_category_for_unipathways(line, id_index, category_index, node_header):
     """
     Replace category of a given node.
 
@@ -63,8 +64,9 @@ def replace_category_for_unipathways(line, id_index, category_index):
     # Get defined category
     category = UNIPATHWAYS_CATEGORIES_DICT[id_substring]
     parts[category_index] = category
+    complete_parts = parts +  ([""] * (len(node_header) - len(parts)))
     # Join the parts back together with a tab separator
-    new_line = "\t".join(parts)
+    new_line = "\t".join(complete_parts)
     return new_line
 
 

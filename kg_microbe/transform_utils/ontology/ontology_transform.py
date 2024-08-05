@@ -46,7 +46,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
-from kg_microbe.utils.ontology_utils import replace_category_ontology
+from kg_microbe.utils.ontology_utils import insert_ec_node_columns, replace_category_ontology
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
@@ -176,7 +176,7 @@ class OntologyTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "rhea", "upa", "chebi", "mondo"]:  # removed "uniprot"
+        if name in ["ec", "upa", "chebi", "mondo"]:  # removed "uniprot", "rhea"
 
             self.post_process(name)
 
@@ -431,7 +431,7 @@ class OntologyTransform(Transform):
                 for line in new_edge_lines:
                     new_ef.write(line)
 
-        if name == "ec" or name == "rhea":
+        if name == "ec": # or name == "rhea":
             with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
                 # Update prefixes in nodes file
                 new_nf_lines = []
@@ -444,6 +444,7 @@ class OntologyTransform(Transform):
                     else:
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
+                        line = insert_ec_node_columns(line, self.node_header)
                         new_nf_lines.append(line + "\n")
                 # Update prefixes in edges file
                 new_ef_lines = []
@@ -457,16 +458,16 @@ class OntologyTransform(Transform):
                 # Remove Uniprot nodes since accounted for elsewhere
                 new_nf_lines = [line for line in new_nf_lines if UNIPROT_PREFIX not in line]
                 new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
-            elif name == "rhea":
-                # Remove debio nodes that account for direction, since already there in inverse triples
-                # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
-                rhea_exclusions = ["debio", UNIPROT_PREFIX, CHEBI_PREFIX, EC_PREFIX]
-                new_nf_lines = [
-                    line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)
-                ]
-                new_ef_lines = [
-                    line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)
-                ]
+            # elif name == "rhea":
+            #     # Remove debio nodes that account for direction, since already there in inverse triples
+            #     # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
+            #     rhea_exclusions = ["debio", UNIPROT_PREFIX, CHEBI_PREFIX, EC_PREFIX]
+            #     new_nf_lines = [
+            #         line for line in new_nf_lines if not any(sub in line for sub in rhea_exclusions)
+            #     ]
+            #     new_ef_lines = [
+            #         line for line in new_ef_lines if not any(sub in line for sub in rhea_exclusions)
+            #     ]
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:
                 new_nf.write("\t".join(self.node_header) + "\n")

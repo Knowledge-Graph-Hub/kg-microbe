@@ -296,7 +296,7 @@ class OntologyTransform(Transform):
                             substring in line for substring in [UNIPATHWAYS_PATHWAY_PREFIX]
                         ):  # ,UNIPATHWAYS_LINEAR_SUB_PATHWAY_PREFIX]):
                             new_line = replace_category_for_unipathways(
-                                line, id_index, category_index
+                                line, id_index, category_index, self.node_header
                             )
                             if len(new_line) > 0:
                                 add_lines.append(new_line + "\n")

@@ -8,6 +8,7 @@ from oaklib import get_adapter
 
 from kg_microbe.transform_utils.constants import (
     GO_CATEGORY_TREES_FILE,
+    GO_SOURCE,
     RAW_DATA_DIR,
     UNIPROT_HUMAN,
     UNIPROT_HUMAN_FILE,
@@ -49,7 +50,7 @@ class UniprotHumanTransform(Transform):
         """
         source_name = UNIPROT_HUMAN
         super().__init__(source_name, input_dir, output_dir)
-        self.go_oi = get_adapter("sqlite:obo:go")
+        self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
         # Check if the file already exists
         if not GO_CATEGORY_TREES_FILE.exists():
             get_go_category_trees(self.go_oi)

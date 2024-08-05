@@ -10,7 +10,11 @@ from oaklib.datamodels.text_annotator import TextAnnotation, TextAnnotationConfi
 
 from kg_microbe.transform_utils.constants import (
     ACTION_COLUMN,
+    CHEBI_PREFIX,
+    CHEBI_SOURCE,
     END_COLUMN,
+    GO_PREFIX,
+    GO_SOURCE,
     MATCHES_WHOLE_TEXT_COLUMN,
     OBJECT_ALIASES_COLUMN,
     OBJECT_CATEGORIES_COLUMN,
@@ -26,6 +30,10 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # LLM_MODEL = "gpt-4"
 
+PREFIX_SOURCE_MAP = {
+    GO_PREFIX: GO_SOURCE,
+    CHEBI_PREFIX: CHEBI_SOURCE,
+}
 
 def _overlap(a, b):
     """Get number of characters in 2 strings that overlap."""
@@ -52,7 +60,7 @@ def annotate(
 
     if llm:
         # ! Experimental
-        oi = get_adapter(f"llm:sqlite:obo:{ontology}")
+        oi = get_adapter(f"llm:sqlite:{PREFIX_SOURCE_MAP[ontology]}")
         matches_whole_text = False
         annotated_columns = [
             OBJECT_ID_COLUMN,
@@ -65,7 +73,7 @@ def annotate(
             TRAITS_DATASET_LABEL_COLUMN,
         ]
     else:
-        oi = get_adapter(f"sqlite:obo:{ontology}")
+        oi = get_adapter(f"sqlite:{PREFIX_SOURCE_MAP[ontology]}")
         matches_whole_text = True
         annotated_columns = [
             OBJECT_ID_COLUMN,

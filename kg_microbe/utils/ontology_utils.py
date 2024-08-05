@@ -1,6 +1,7 @@
 """EC utilities."""
 
 from kg_microbe.transform_utils.constants import (
+    DESCRIPTION_COLUMN,
     EC_CATEGORY,
     EC_PREFIX,
     GENE_CATEGORY,
@@ -11,6 +12,7 @@ from kg_microbe.transform_utils.constants import (
     RHEA_CATEGORY,
     RHEA_NEW_PREFIX,
     UNIPROT_PREFIX,
+    XREF_COLUMN,
 )
 
 
@@ -38,4 +40,15 @@ def replace_category_ontology(line, id_index, category_index):
         new_category = GENE_CATEGORY
         parts[category_index] = new_category
     new_line = "\t".join(parts)
+    return new_line
+
+def insert_ec_node_columns(line, node_header):
+
+    parts = line.strip().split("\t")
+    # Description column
+    parts.insert(3, "")
+    # Xref column
+    parts.insert(4, "")
+    complete_parts = parts +  ([""] * (len(node_header) - len(parts)))
+    new_line = "\t".join(complete_parts)
     return new_line

@@ -56,6 +56,14 @@
 -
   url: http://purl.obolibrary.org/obo/go.json
   local_name: go.json
+
+#
+# GO
+#
+-
+  url: http://purl.obolibrary.org/obo/go.owl
+  local_name: go.owl
+
 #
 # MONDO
 #
@@ -140,6 +148,13 @@
 - 
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
   local_name: ec.json
+
+# 
+# EC OWL
+# 
+-
+  url: https://w3id.org/biopragmatics/resources/eccode/eccode.owl.gz
+  local_name: ec.owl.gz
 
 #
 # BactoTraits

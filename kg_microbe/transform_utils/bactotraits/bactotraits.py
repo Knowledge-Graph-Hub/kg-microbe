@@ -27,6 +27,7 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
+    NCBITAXON_SOURCE,
     PREDICATE_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -158,7 +159,7 @@ class BactoTraitsTransform(Transform):
         """Initialize BactoTraitsTransform."""
         source_name = "BactoTraits"
         super().__init__(source_name, input_dir, output_dir)
-        self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
+        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
 
     def _clean_row(self, row):
         # Create a translation table that maps unwanted characters to None

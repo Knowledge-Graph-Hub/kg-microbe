@@ -126,6 +126,7 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_ID,
     NCBITAXON_ID_COLUMN,
     NCBITAXON_PREFIX,
+    NCBITAXON_SOURCE,
     NUTRITION_TYPE,
     OBJECT_ID_COLUMN,
     OBSERVATION,
@@ -180,7 +181,7 @@ class BacDiveTransform(Transform):
         """Instantiate part."""
         source_name = "BacDive"
         super().__init__(source_name, input_dir, output_dir)
-        self.ncbi_impl = get_adapter("sqlite:obo:ncbitaxon")
+        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):

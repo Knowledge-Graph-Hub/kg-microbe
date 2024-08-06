@@ -172,3 +172,4 @@ kg_microbe/transform_utils/uniprot/tmp/relevant_files.tsv
 
 data_merged.**
 *.tar.gz
+mediadive_cache.sqlite

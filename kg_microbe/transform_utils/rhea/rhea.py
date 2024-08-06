@@ -86,7 +86,7 @@ class RheaMappingsTransform(Transform):
         self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
         if not EC_SOURCE.is_file():
             os.system(f"gzip -d {EC_SOURCE}.gz")
-            
+
         self.ec_oi = get_adapter(f"sqlite:{EC_SOURCE}")
 
     def _reference_to_tuple(self, ref):

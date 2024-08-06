@@ -35,6 +35,7 @@ PREFIX_SOURCE_MAP = {
     CHEBI_PREFIX: CHEBI_SOURCE,
 }
 
+
 def _overlap(a, b):
     """Get number of characters in 2 strings that overlap."""
     return len(set(a) & set(b))

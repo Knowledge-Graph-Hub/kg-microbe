@@ -20,6 +20,7 @@ from kg_microbe.transform_utils.constants import (
     CELL_SHAPE_COLUMN,
     CHEBI_MANUAL_ANNOTATION_PATH,
     CHEBI_PREFIX,
+    CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
     ENVIRONMENT_CATEGORY,
     ENVO_ID_COLUMN,
@@ -138,7 +139,7 @@ class TraitsTransform(Transform):
                 str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
             )
         chebi_list = chebi_result[OBJECT_ID_COLUMN].to_list()
-        oi = get_adapter("sqlite:obo:chebi")
+        oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
         roles = {x for (_, _, x) in chebi_roles}
         role_nodes = [[role, ROLE_CATEGORY, oi.label(role)] for role in roles]

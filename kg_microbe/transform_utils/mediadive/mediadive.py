@@ -38,6 +38,7 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_PREFIX,
     CHEBI_KEY,
     CHEBI_PREFIX,
+    CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
     COMPOUND,
     COMPOUND_ID_KEY,
@@ -117,7 +118,7 @@ class MediaDiveTransform(Transform):
         source_name = "MediaDive"
         super().__init__(source_name, input_dir, output_dir)
         requests_cache.install_cache("mediadive_cache")
-        self.chebi_impl = get_adapter("sqlite:obo:chebi")
+        self.chebi_impl = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
     def _get_mediadive_json(self, url: str) -> Dict[str, str]:

@@ -31,11 +31,11 @@ DATA_SOURCES = {
     "TraitsTransform": TraitsTransform,
     "RheaMappingsTransform": RheaMappingsTransform,
     "BactoTraitsTransform": BactoTraitsTransform,
-    "UniprotTransform": UniprotTransform,
     "UniprotHumanTransform": UniprotHumanTransform,
     "CtdTransform": CtdTransform,
     "DisbiomeTransform": DisbiomeTransform,
     "PdMetagenomicsTransform": PdMetagenomicsTransform,
+    "UniprotTransform": UniprotTransform,
 }
 
 

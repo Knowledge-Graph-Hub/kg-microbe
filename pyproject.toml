@@ -74,6 +74,7 @@ lint.extend-ignore = [
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
     "S301",  # `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue`
+    "S605",  # Starting a process with a shell, possible injection detected
     ]
 line-length = 120
 

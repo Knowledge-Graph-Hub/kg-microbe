@@ -21,7 +21,8 @@ def replace_category_ontology(line, id_index, category_index):
     :param line: A line from the original triples.
     :type line: str
     """
-    parts = line.strip().split("\t")
+    parts = line.split("\t")
+    parts = [i.strip() for i in parts]
     if EC_PREFIX in parts[id_index]:
         new_category = EC_CATEGORY
         parts[category_index] = new_category

@@ -43,7 +43,9 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)
     else:
-        new_lines.append(replace_category_for_unipathways(line, id_index, category_index, node_header))
+        new_lines.append(
+            replace_category_for_unipathways(line, id_index, category_index, node_header)
+        )
     return new_lines, nodes_dictionary
 
 
@@ -63,7 +65,7 @@ def replace_category_for_unipathways(line, id_index, category_index, node_header
     # Get defined category
     category = UNIPATHWAYS_CATEGORIES_DICT[id_substring]
     parts[category_index] = category
-    complete_parts = parts +  ([""] * (len(node_header) - len(parts)))
+    complete_parts = parts + ([""] * (len(node_header) - len(parts)))
     # Join the parts back together with a tab separator
     new_line = "\t".join(complete_parts)
     return new_line

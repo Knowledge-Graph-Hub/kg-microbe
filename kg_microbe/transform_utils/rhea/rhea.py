@@ -17,11 +17,14 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
+    CHEBI_SOURCE,
     DEBIO_MAPPER,
     EC_CATEGORY,
     EC_PREFIX,
+    EC_SOURCE,
     GO_CATEGORY,
     GO_PREFIX,
+    GO_SOURCE,
     ID_COLUMN,
     NAME_COLUMN,
     OBJECT_COLUMN,
@@ -79,9 +82,12 @@ class RheaMappingsTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
         self.converter = load_extended_prefix_map(RAW_DATA_DIR / "epm.json")
         self.reference_cache = defaultdict(lambda: None)
-        self.chebi_oi = get_adapter("sqlite:obo:chebi")
-        self.go_oi = get_adapter("sqlite:obo:go")
-        self.ec_oi = get_adapter("sqlite:obo:eccode")
+        self.chebi_oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+        self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
+        if not EC_SOURCE.is_file():
+            os.system(f"gzip -d {EC_SOURCE}.gz")
+
+        self.ec_oi = get_adapter(f"sqlite:{EC_SOURCE}")
 
     def _reference_to_tuple(self, ref):
         """Convert a reference to a tuple."""

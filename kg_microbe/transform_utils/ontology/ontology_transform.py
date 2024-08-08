@@ -199,7 +199,8 @@ class OntologyTransform(Transform):
 
         def _replace_quotation_marks(line, description_index):
             """Replace single and double quotation marks."""
-            parts = line.strip().split("\t")
+            parts = line.split("\t")
+            parts = [i.strip() for i in parts]
             parts[description_index] = parts[description_index].replace('"', "").replace("'", "")
             new_line = "\t".join(parts)
             return new_line
@@ -247,6 +248,7 @@ class OntologyTransform(Transform):
                         # get the index for the term 'category'
                         category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
                         description_index = line.strip().split("\t").index(DESCRIPTION_COLUMN)
+                        new_nf_lines.append(line)
                     else:
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
@@ -254,7 +256,6 @@ class OntologyTransform(Transform):
                         new_nf_lines.append(line + "\n")
             # Rewrite nodes file
             with open(nodes_file, "w") as new_nf:
-                new_nf.write("\t".join(self.node_header) + "\n")
                 for line in new_nf_lines:
                     new_nf.write(line)
 

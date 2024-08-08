@@ -3784,6 +3784,7 @@ CHEBI:6052	biolink:ChemicalSubstance
 CHEBI:20140	biolink:ChemicalSubstance												
 CHEBI:62208	biolink:ChemicalSubstance												
 CHEBI:177504	biolink:ChemicalSubstance												
+CHEBI:231487	biolink:ChemicalSubstance												
 CHEBI:34345	biolink:ChemicalSubstance												
 CHEBI:82505	biolink:ChemicalSubstance												
 CHEBI:34346	biolink:ChemicalSubstance												
@@ -4810,7 +4811,6 @@ CHEBI:47217	biolink:ChemicalSubstance
 MONDO:0043555	biolink:Disease												
 MONDO:0044989	biolink:Disease												
 MONDO:0012990	biolink:Disease												
-MONDO:0005976	biolink:Disease												
 CHEBI:18231	biolink:ChemicalSubstance												
 CHEBI:63952	biolink:ChemicalSubstance												
 CHEBI:49900	biolink:ChemicalSubstance												
@@ -4818,6 +4818,8 @@ MONDO:0006509	biolink:Disease
 MONDO:0005801	biolink:Disease												
 CHEBI:29866	biolink:ChemicalSubstance												
 MONDO:0036591	biolink:Disease												
+CHEBI:9016	biolink:ChemicalSubstance												
+MONDO:0005976	biolink:Disease												
 CHEBI:195280	biolink:ChemicalSubstance												
 MONDO:0005989	biolink:Disease												
 CHEBI:175930	biolink:ChemicalSubstance												
@@ -6882,6 +6884,7 @@ CHEBI:175181	biolink:ChemicalSubstance
 CHEBI:88294	biolink:ChemicalSubstance												
 CHEBI:30778	biolink:ChemicalSubstance												
 CHEBI:49631	biolink:ChemicalSubstance												
+CHEBI:231505	biolink:ChemicalSubstance												
 CHEBI:68330	biolink:ChemicalSubstance												
 CHEBI:34772	biolink:ChemicalSubstance												
 CHEBI:67521	biolink:ChemicalSubstance												
@@ -7003,6 +7006,7 @@ CHEBI:5520	biolink:ChemicalSubstance
 CHEBI:191178	biolink:ChemicalSubstance												
 CHEBI:5523	biolink:ChemicalSubstance												
 CHEBI:5525	biolink:ChemicalSubstance												
+CHEBI:28584	biolink:ChemicalSubstance												
 CHEBI:87784	biolink:ChemicalSubstance												
 CHEBI:28948	biolink:ChemicalSubstance												
 CHEBI:33418	biolink:ChemicalSubstance												
@@ -7413,6 +7417,7 @@ CHEBI:87060	biolink:ChemicalSubstance
 CHEBI:28113	biolink:ChemicalSubstance												
 CHEBI:16521	biolink:ChemicalSubstance												
 CHEBI:33336	biolink:ChemicalSubstance												
+CHEBI:231515	biolink:ChemicalSubstance												
 CHEBI:6377	biolink:ChemicalSubstance												
 CHEBI:6378	biolink:ChemicalSubstance												
 CHEBI:92181	biolink:ChemicalSubstance												
@@ -7525,6 +7530,7 @@ CHEBI:156095	biolink:ChemicalSubstance
 CHEBI:43661	biolink:ChemicalSubstance												
 CHEBI:36485	biolink:ChemicalSubstance												
 CHEBI:6570	biolink:ChemicalSubstance												
+CHEBI:6574	biolink:ChemicalSubstance												
 CHEBI:28838	biolink:ChemicalSubstance												
 CHEBI:15864	biolink:ChemicalSubstance												
 CHEBI:131788	biolink:ChemicalSubstance												
@@ -8348,6 +8354,7 @@ CHEBI:27827	biolink:ChemicalSubstance
 CHEBI:34905	biolink:ChemicalSubstance												
 CHEBI:75372	biolink:ChemicalSubstance												
 CHEBI:27928	biolink:ChemicalSubstance												
+CHEBI:94267	biolink:ChemicalSubstance												
 CHEBI:7930	biolink:ChemicalSubstance												
 CHEBI:7934	biolink:ChemicalSubstance												
 CHEBI:7936	biolink:ChemicalSubstance												
@@ -8962,6 +8969,7 @@ CHEBI:135586	biolink:ChemicalSubstance
 CHEBI:5105	biolink:ChemicalSubstance												
 CHEBI:8927	biolink:ChemicalSubstance												
 CHEBI:165884	biolink:ChemicalSubstance												
+CHEBI:50027	biolink:ChemicalSubstance												
 CHEBI:32111	biolink:ChemicalSubstance												
 CHEBI:16680	biolink:ChemicalSubstance												
 CHEBI:67040	biolink:ChemicalSubstance												
@@ -9457,6 +9465,7 @@ CHEBI:78887	biolink:ChemicalSubstance
 CHEBI:135853	biolink:ChemicalSubstance												
 CHEBI:33341	biolink:ChemicalSubstance												
 CHEBI:32234	biolink:ChemicalSubstance												
+CHEBI:231499	biolink:ChemicalSubstance												
 CHEBI:28864	biolink:ChemicalSubstance												
 MONDO:0043885	biolink:Disease												
 CHEBI:9611	biolink:ChemicalSubstance												
@@ -9679,6 +9688,7 @@ MONDO:0008537	biolink:Disease
 MONDO:0012275	biolink:Disease												
 CHEBI:135876	biolink:ChemicalSubstance												
 CHEBI:8985	biolink:ChemicalSubstance												
+CHEBI:9928	biolink:ChemicalSubstance												
 CHEBI:35170	biolink:ChemicalSubstance												
 CHEBI:30045	biolink:ChemicalSubstance												
 CHEBI:33146	biolink:ChemicalSubstance												
@@ -9767,6 +9777,7 @@ MONDO:0025484	biolink:Disease
 CHEBI:135357	biolink:ChemicalSubstance												
 CHEBI:30185	biolink:ChemicalSubstance												
 CHEBI:49976	biolink:ChemicalSubstance												
+CHEBI:231504	biolink:ChemicalSubstance												
 CHEBI:36560	biolink:ChemicalSubstance												
 CHEBI:28783	biolink:ChemicalSubstance												
 CHEBI:35176	biolink:ChemicalSubstance												

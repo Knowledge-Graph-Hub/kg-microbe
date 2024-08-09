@@ -24,7 +24,7 @@ from kg_microbe.transform_utils.disbiome.disbiome import DisbiomeTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
-    ONTOLOGIES_LIST,
+    ONTOLOGIES_MAP,
     OntologiesTransform,
 )
 from kg_microbe.transform_utils.rheamappings.rheamappings import RheaMappingsTransform
@@ -83,7 +83,7 @@ def transform(
         if source in DATA_SOURCES:
             logging.info(f"Parsing {source}")
             t = DATA_SOURCES[source](input_dir, output_dir)
-            if source in ONTOLOGIES_LIST.keys():
-                t.run(ONTOLOGIES_LIST[source])
+            if source in ONTOLOGIES_MAP.keys():
+                t.run(ONTOLOGIES_MAP[source])
             else:
                 t.run(show_status=show_status)

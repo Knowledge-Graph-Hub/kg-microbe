@@ -66,7 +66,7 @@ from kg_microbe.utils.unipathways_utils import (
 
 from ..transform import Transform
 
-ONTOLOGIES_LIST = {
+ONTOLOGIES_MAP = {
     "ncbitaxon": "ncbitaxon.owl.gz",
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
@@ -103,8 +103,8 @@ class OntologiesTransform(Transform):
             self.parse(k, data_file, k)
         else:
             # load all ontologies
-            for k in ONTOLOGIES_LIST.keys():
-                data_file = self.input_base_dir / ONTOLOGIES_LIST[k]
+            for k in ONTOLOGIES_MAP.keys():
+                data_file = self.input_base_dir / ONTOLOGIES_MAP[k]
                 self.parse(k, data_file, k)
 
     def parse(self, name: str, data_file: Optional[Path], source: str) -> None:

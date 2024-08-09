@@ -38,7 +38,7 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
     OMIM_PREFIX,
-    ONTOLOGY_TREES_DIR,
+    ONTOLOGIES_TREES_DIR,
     PARTICIPATES_IN,
     PROTEIN_CATEGORY,
     PROTEIN_TO_DISEASE_EDGE,
@@ -813,7 +813,7 @@ def get_go_category_trees(go_oi):
     :param go_oi: A oaklib sql_implementation class to access GO information.
     :type go_oi: oaklib sql_implementation class
     """
-    os.makedirs(ONTOLOGY_TREES_DIR, exist_ok=True)
+    os.makedirs(ONTOLOGIES_TREES_DIR, exist_ok=True)
     with open(GO_CATEGORY_TREES_FILE, "w") as file:
         csv_writer = csv.writer(file, delimiter="\t")
         csv_writer.writerow([GO_CATEGORY_COLUMN, GO_TERM_COLUMN])

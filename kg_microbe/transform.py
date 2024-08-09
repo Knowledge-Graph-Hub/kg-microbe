@@ -6,15 +6,33 @@ from typing import List, Optional
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
+from kg_microbe.transform_utils.constants import (
+    BACDIVE,
+    BACTOTRAITS,
+    CTD,
+    DISBIOME,
+    MADIN_ETAL,
+    MEDIADIVE,
+    ONTOLOGIES,
+    RHEAMAPPINGS,
+    UNIPROT_FUNCTIONAL_MICROBES,
+    UNIPROT_HUMAN,
+    WALLEN_ETAL,
+)
 from kg_microbe.transform_utils.ctd.ctd import CtdTransform
 from kg_microbe.transform_utils.disbiome.disbiome import DisbiomeTransform
+from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
-from kg_microbe.transform_utils.ontology.ontology_transform import ONTOLOGIES, OntologyTransform
-from kg_microbe.transform_utils.pdmetagenomics.pdmetagenomics import PdMetagenomicsTransform
-from kg_microbe.transform_utils.rhea.rhea import RheaMappingsTransform
-from kg_microbe.transform_utils.traits.traits import TraitsTransform
-from kg_microbe.transform_utils.uniprot.uniprot import UniprotTransform
+from kg_microbe.transform_utils.ontologies.ontologies_transform import (
+    ONTOLOGIES_LIST,
+    OntologiesTransform,
+)
+from kg_microbe.transform_utils.rheamappings.rheamappings import RheaMappingsTransform
+from kg_microbe.transform_utils.uniprot_functional_microbes.uniprot_functional_microbes import (
+    UniprotFunctionalMicrobesTransform,
+)
 from kg_microbe.transform_utils.uniprot_human.uniprot_human import UniprotHumanTransform
+from kg_microbe.transform_utils.wallen_etal.wallen_etal import WallenEtAlTransform
 
 DATA_SOURCES = {
     # "DrugCentralTransform": DrugCentralTransform,
@@ -25,17 +43,17 @@ DATA_SOURCES = {
     # "TCRDTransform": TCRDTransform,
     # "ProteinAtlasTransform": ProteinAtlasTransform,
     # "STRINGTransform": STRINGTransform,
-    "OntologyTransform": OntologyTransform,
-    "BacDiveTransform": BacDiveTransform,
-    "MediaDiveTransform": MediaDiveTransform,
-    "TraitsTransform": TraitsTransform,
-    "RheaMappingsTransform": RheaMappingsTransform,
-    "BactoTraitsTransform": BactoTraitsTransform,
-    "UniprotHumanTransform": UniprotHumanTransform,
-    "CtdTransform": CtdTransform,
-    "DisbiomeTransform": DisbiomeTransform,
-    "PdMetagenomicsTransform": PdMetagenomicsTransform,
-    "UniprotTransform": UniprotTransform,
+    ONTOLOGIES: OntologiesTransform,
+    BACDIVE: BacDiveTransform,
+    MEDIADIVE: MediaDiveTransform,
+    MADIN_ETAL: MadinEtAlTransform,
+    RHEAMAPPINGS: RheaMappingsTransform,
+    BACTOTRAITS: BactoTraitsTransform,
+    UNIPROT_HUMAN: UniprotHumanTransform,
+    CTD: CtdTransform,
+    DISBIOME: DisbiomeTransform,
+    WALLEN_ETAL: WallenEtAlTransform,
+    UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
 
 
@@ -65,7 +83,7 @@ def transform(
         if source in DATA_SOURCES:
             logging.info(f"Parsing {source}")
             t = DATA_SOURCES[source](input_dir, output_dir)
-            if source in ONTOLOGIES.keys():
-                t.run(ONTOLOGIES[source])
+            if source in ONTOLOGIES_LIST.keys():
+                t.run(ONTOLOGIES_LIST[source])
             else:
                 t.run(show_status=show_status)

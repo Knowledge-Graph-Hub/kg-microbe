@@ -466,6 +466,7 @@ NCBITaxon:2049	biolink:OrganismTaxon
 NCBITaxon:209879	biolink:OrganismTaxon												
 NCBITaxon:31957	biolink:OrganismTaxon												
 NCBITaxon:162289	biolink:OrganismTaxon												
+NCBITaxon:119541	biolink:OrganismTaxon												
 NCBITaxon:2051	biolink:OrganismTaxon												
 NCBITaxon:2052	biolink:OrganismTaxon												
 NCBITaxon:28125	biolink:OrganismTaxon												
@@ -605,6 +606,7 @@ NCBITaxon:1129771	biolink:OrganismTaxon
 NCBITaxon:2717	biolink:OrganismTaxon												
 NCBITaxon:135621	biolink:OrganismTaxon												
 NCBITaxon:1117	biolink:OrganismTaxon												
+NCBITaxon:335058	biolink:OrganismTaxon												
 NCBITaxon:47678	biolink:OrganismTaxon												
 NCBITaxon:1853231	biolink:OrganismTaxon												
 NCBITaxon:264995	biolink:OrganismTaxon												
@@ -1117,6 +1119,7 @@ MONDO:0020767	biolink:Disease
 NCBITaxon:134537	biolink:OrganismTaxon												
 MONDO:0004773	biolink:Disease												
 NCBITaxon:55968	biolink:OrganismTaxon												
+NCBITaxon:65047	biolink:OrganismTaxon												
 NCBITaxon:665874	biolink:OrganismTaxon												
 MONDO:0012105	biolink:Disease												
 MONDO:0006624	biolink:Disease												

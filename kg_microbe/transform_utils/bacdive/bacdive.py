@@ -725,14 +725,15 @@ class BacDiveTransform(Transform):
                             ]
 
                         else:
-                            if ncbitaxon_id:
-                                curated_strain_id_suffix = ncbitaxon_id.replace(":", "_")
-                            else:
-                                curated_strain_id_suffix = "NO_NCBITaxon_ID"
+                            curated_strain_id_suffix = BACDIVE_PREFIX.replace(":", "_") + key
+                            # if ncbitaxon_id:
+                            #     curated_strain_id_suffix = ncbitaxon_id.replace(":", "_")
+                            # else:
+                            #     curated_strain_id_suffix = "NO_NCBITaxon_ID"
 
                             curated_strain_ids = [
                                 name_tax_classification.get(
-                                    STRAIN_DESIGNATION, f"of_{curated_strain_id_suffix}"
+                                    STRAIN_DESIGNATION, curated_strain_id_suffix
                                 )
                                 .strip()
                                 .translate(translation_table_for_ids)
@@ -742,8 +743,9 @@ class BacDiveTransform(Transform):
                             STRAIN_PREFIX
                             + curated_strain_id
                             + (
-                                "_of_" + ncbitaxon_id.replace(":", "_")
-                                if str(curated_strain_id).isnumeric() and ncbitaxon_id
+                                # "_of_" + ncbitaxon_id.replace(":", "_")
+                                BACDIVE_PREFIX.replace(":", "_") + key
+                                if str(curated_strain_id).isnumeric()
                                 else ""
                             )
                             for curated_strain_id in curated_strain_ids

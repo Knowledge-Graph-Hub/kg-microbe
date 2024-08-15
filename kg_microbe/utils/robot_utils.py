@@ -27,7 +27,9 @@ def initialize_robot(path: str) -> list:
     # https://stackoverflow.com/questions/49962437/unrecognized-vm-option-useparnewgc-error-could-not-create-the-java-virtual) # noqa
     # env['ROBOT_JAVA_ARGS'] = '-Xmx8g -XX:+UseConcMarkSweepGC' # for JDK 9 and older
     # env["ROBOT_JAVA_ARGS"] = "-Xmx12g -XX:+UseG1GC"  # For JDK 10 and over
-    env["ROBOT_JAVA_ARGS"] = os.environ["ROBOT_JAVA_ARGS"] if "ROBOT_JAVA_ARGS" in os.environ else "-Xmx12g -XX:+UseG1GC"  # noqa
+    env["ROBOT_JAVA_ARGS"] = (
+        os.environ["ROBOT_JAVA_ARGS"] if "ROBOT_JAVA_ARGS" in os.environ else "-Xmx12g -XX:+UseG1GC"
+    )  # noqa
     env["PATH"] = os.environ["PATH"]
     env["PATH"] += os.pathsep + path
 

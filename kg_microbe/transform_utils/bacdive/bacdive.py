@@ -783,16 +783,18 @@ class BacDiveTransform(Transform):
                         #         for curated_strain_id in curated_strain_ids
                         #         if curated_strain_id
                         #     )
-                        edge_writer.writerows(
-                            [
-                                curated_strain_id,
-                                SUBCLASS_PREDICATE,
-                                ncbitaxon_id,
-                                RDFS_SUBCLASS_OF,
-                                BACDIVE_PREFIX + key,
-                            ]
-                            for curated_strain_id in curated_strain_ids
-                        )
+                        if ncbitaxon_id and curated_strain_ids:
+                            edge_writer.writerows(
+                                [
+                                    curated_strain_id,
+                                    SUBCLASS_PREDICATE,
+                                    ncbitaxon_id,
+                                    RDFS_SUBCLASS_OF,
+                                    BACDIVE_PREFIX + key,
+                                ]
+                                for curated_strain_id in curated_strain_ids
+                                if curated_strain_id
+                            )
                         # Equivalencies in strain IDs established as edges
                         if len(curated_strain_ids) > 1:
                             for i in range(len(curated_strain_ids)):

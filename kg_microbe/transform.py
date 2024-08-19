@@ -19,7 +19,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_HUMAN,
     WALLEN_ETAL,
 )
-from kg_microbe.transform_utils.ctd.ctd import CtdTransform
+from kg_microbe.transform_utils.ctd.ctd import CTDTransform
 from kg_microbe.transform_utils.disbiome.disbiome import DisbiomeTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
@@ -50,7 +50,7 @@ DATA_SOURCES = {
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
     UNIPROT_HUMAN: UniprotHumanTransform,
-    CTD: CtdTransform,
+    CTD: CTDTransform,
     DISBIOME: DisbiomeTransform,
     WALLEN_ETAL: WallenEtAlTransform,
     UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,

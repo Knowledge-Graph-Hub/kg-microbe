@@ -13,4 +13,4 @@ module load python/3.10
 cd /global/cfs/cdirs/m4689/master/kg-microbe
 source venv/bin/activate
 git checkout master
-poetry run kg transform -s UniprotTransform
+poetry run kg transform -s UniprotFunctionalMicrobesTransform

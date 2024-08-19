@@ -1,4 +1,4 @@
-"""Uniprot Transform class."""
+"""CTD Transform class."""
 
 import csv
 import gzip
@@ -34,7 +34,7 @@ RELATIONS_DICT = {
 }
 
 
-class CtdTransform(Transform):
+class CTDTransform(Transform):
 
     """A class used to represent a transformation process for UniProt data."""
 

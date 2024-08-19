@@ -1,5 +1,5 @@
-"""Ctd transform."""
+"""CTD transform."""
 
-from .ctd import CtdTransform
+from .ctd import CTDTransform
 
-__all__ = ["CtdTransform"]
+__all__ = ["CTDTransform"]

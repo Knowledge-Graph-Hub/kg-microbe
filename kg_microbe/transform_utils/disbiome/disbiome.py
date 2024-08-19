@@ -26,8 +26,8 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
 )
-from kg_microbe.transform_utils.wallen_etal.wallen_etal import MICROBE_NOT_FOUND_STR
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.transform_utils.wallen_etal.wallen_etal import MICROBE_NOT_FOUND_STR
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 

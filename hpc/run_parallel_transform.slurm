@@ -11,7 +11,7 @@
 #SBATCH --array=0-10
 #SBATCH -N 1
 
-export ROBOT_JAVA_ARGS="-Xmx64h -XX:+UseG1GC"
+export ROBOT_JAVA_ARGS="-Xmx64g -XX:+UseG1GC"
 export JAVA_OPT="-Xmx64g -XX:+UseG1GC"
 
 module use /global/common/software/m4689/public/modulefiles

@@ -723,7 +723,7 @@ class BacDiveTransform(Transform):
                             ]
 
                         else:
-                            curated_strain_id_suffix = BACDIVE_PREFIX.replace(":", "_") + key
+                            # curated_strain_id_suffix = BACDIVE_PREFIX.replace(":", "_") + key
                             # if ncbitaxon_id:
                             #     curated_strain_id_suffix = ncbitaxon_id.replace(":", "_")
                             # else:
@@ -756,7 +756,9 @@ class BacDiveTransform(Transform):
                         # species_with_strains.extend([curated_strain_ids[0]])
                         curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
                         if len(curated_strain_ids) > 0:
-                            curated_strain_label = f"{BACDIVE_PREFIX.replace(':', '_') + key} as {curated_strain_ids[0]} of {ncbitaxon_id}"
+                            curated_strain_label = f"""
+                                {BACDIVE_PREFIX.replace(':', '_') + key} as {curated_strain_ids[0]} of {ncbitaxon_id}
+                            """
                         else:
                             curated_strain_label = (
                                 f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
@@ -905,7 +907,10 @@ class BacDiveTransform(Transform):
                             strain_label = (
                                 culture_number.strip()
                                 if len(culture_number_cleaned) > 2
-                                else f"{BACDIVE_PREFIX.replace(':', '_') + key} as {culture_number.strip()} of {ncbitaxon_id}"
+                                else f"""
+                                    {BACDIVE_PREFIX.replace(':', '_') + key}
+                                    as {culture_number.strip()} of {ncbitaxon_id}
+                                    """
                             )
                             node_writer.writerow(
                                 [strain_curie, NCBI_CATEGORY, strain_label]

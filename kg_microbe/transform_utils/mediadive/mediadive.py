@@ -22,7 +22,6 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
-import pandas as pd
 import requests
 import requests_cache
 import yaml
@@ -31,8 +30,6 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     AMOUNT_COLUMN,
-    BACDIVE_ID_COLUMN,
-    BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
@@ -78,7 +75,6 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_TYPE_CATEGORY,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
-    NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
@@ -241,10 +237,10 @@ class MediaDiveTransform(Transform):
         """Run the transformation."""
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
-        bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        bacdive_df = pd.read_csv(
-            bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
-        )
+        # bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
+        # bacdive_df = pd.read_csv(
+        #     bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
+        # )
 
         # mediadive_data:List = mediadive["data"]
         # Read the JSON file into the variable input_json
@@ -348,7 +344,7 @@ class MediaDiveTransform(Transform):
 
                     # Medium-Strains KG
                     if json_obj_medium_strain:
-                        medium_strain_edge = []
+                        # medium_strain_edge = []
                         medium_strain_nodes = []
                         # ! As per Marcin, NO `bacdive:xxx` from mediadive.
                         # for strain in json_obj_medium_strain:

@@ -27,9 +27,13 @@ import requests_cache
 import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
+import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
     AMOUNT_COLUMN,
+    BACDIVE_ID_COLUMN,
+    BACDIVE_PREFIX,
+    BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CHEBI_KEY,
@@ -46,6 +50,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
+    IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
@@ -75,6 +80,9 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_TYPE_CATEGORY,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
+    NCBI_CATEGORY,
+    NCBI_TO_MEDIUM_EDGE,
+    NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
@@ -87,6 +95,7 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_KEY,
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
+    SPECIES,
     SUBCLASS_PREDICATE,
     TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,
@@ -237,10 +246,10 @@ class MediaDiveTransform(Transform):
         """Run the transformation."""
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
-        # bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        # bacdive_df = pd.read_csv(
-        #     bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
-        # )
+        bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
+        bacdive_df = pd.read_csv(
+            bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
+        )
 
         # mediadive_data:List = mediadive["data"]
         # Read the JSON file into the variable input_json
@@ -344,44 +353,43 @@ class MediaDiveTransform(Transform):
 
                     # Medium-Strains KG
                     if json_obj_medium_strain:
-                        # medium_strain_edge = []
+                        medium_strain_edge = []
                         medium_strain_nodes = []
-                        # ! As per Marcin, NO `bacdive:xxx` from mediadive.
-                        # for strain in json_obj_medium_strain:
-                        #     if strain.get(BACDIVE_ID_COLUMN):
-                        #         strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
-                        #         ncbi_strain_id = bacdive_df[
-                        #             bacdive_df[BACDIVE_ID_COLUMN] == strain_id
-                        #         ][NCBITAXON_ID_COLUMN].values
+                        for strain in json_obj_medium_strain:
+                            if strain.get(BACDIVE_ID_COLUMN):
+                                strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
+                                ncbi_strain_id = bacdive_df[
+                                    bacdive_df[BACDIVE_ID_COLUMN] == strain_id
+                                ][NCBITAXON_ID_COLUMN].values
 
-                        #         if ncbi_strain_id.size > 0:
-                        #             ncbi_strain_id = ncbi_strain_id[0]
-                        #         else:
-                        #             ncbi_strain_id = strain_id
+                                if ncbi_strain_id.size > 0:
+                                    ncbi_strain_id = ncbi_strain_id[0]
+                                else:
+                                    ncbi_strain_id = strain_id
 
-                        #         medium_strain_nodes.extend(
-                        #             [
-                        #                 [
-                        #                     ncbi_strain_id,
-                        #                     NCBI_CATEGORY,
-                        #                     strain[SPECIES],
-                        #                 ],
-                        #                 [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
-                        #             ]
-                        #         )
+                                medium_strain_nodes.extend(
+                                    [
+                                        [
+                                            ncbi_strain_id,
+                                            NCBI_CATEGORY,
+                                            strain[SPECIES],
+                                        ],
+                                        [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
+                                    ]
+                                )
 
-                        #         medium_strain_edge.extend(
-                        #             [
-                        #                 [
-                        #                     ncbi_strain_id,
-                        #                     NCBI_TO_MEDIUM_EDGE,
-                        #                     medium_id,
-                        #                     IS_GROWN_IN,
-                        #                     strain_id,
-                        #                 ]
-                        #             ]
-                        #         )
-                        #         edge_writer.writerows(medium_strain_edge)
+                                medium_strain_edge.extend(
+                                    [
+                                        [
+                                            ncbi_strain_id,
+                                            NCBI_TO_MEDIUM_EDGE,
+                                            medium_id,
+                                            IS_GROWN_IN,
+                                            strain_id,
+                                        ]
+                                    ]
+                                )
+                                edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:
                         continue
@@ -494,21 +502,21 @@ class MediaDiveTransform(Transform):
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
 
-        establish_transitive_relationship(
-            self.output_edge_file,
-            MEDIADIVE_MEDIUM_PREFIX,
-            MEDIADIVE_SOLUTION_PREFIX,
-            MEDIUM_TO_INGREDIENT_EDGE,
-            [
-                MEDIADIVE_INGREDIENT_PREFIX,
-                CHEBI_PREFIX,
-                KEGG_PREFIX,
-                PUBCHEM_PREFIX,
-                CAS_RN_PREFIX,
-            ],
-        )
-
-        # dump_ont_nodes_from(
-        #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        # establish_transitive_relationship(
+        #     self.output_edge_file,
+        #     MEDIADIVE_MEDIUM_PREFIX,
+        #     MEDIADIVE_SOLUTION_PREFIX,
+        #     MEDIUM_TO_INGREDIENT_EDGE,
+        #     [
+        #         MEDIADIVE_INGREDIENT_PREFIX,
+        #         CHEBI_PREFIX,
+        #         KEGG_PREFIX,
+        #         PUBCHEM_PREFIX,
+        #         CAS_RN_PREFIX,
+        #     ],
         # )
-        get_ingredients_overlap(self.output_edge_file, MEDIADIVE_TMP_DIR / "ingredient_overlap.tsv")
+
+        # # dump_ont_nodes_from(
+        # #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        # # )
+        # get_ingredients_overlap(self.output_edge_file, MEDIADIVE_TMP_DIR / "ingredient_overlap.tsv")

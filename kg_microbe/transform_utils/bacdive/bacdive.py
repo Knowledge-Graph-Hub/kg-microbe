@@ -905,9 +905,7 @@ class BacDiveTransform(Transform):
                                 else None
                             )
                             strain_label = (
-                                culture_number.strip()
-                                if len(culture_number_cleaned) > 3
-                                else None
+                                culture_number.strip() if len(culture_number_cleaned) > 3 else None
                             )
                             if strain_curie and strain_label:
                                 node_writer.writerow(

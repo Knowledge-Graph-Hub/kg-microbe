@@ -22,12 +22,12 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
 
+import pandas as pd
 import requests
 import requests_cache
 import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
-import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
     AMOUNT_COLUMN,
@@ -104,8 +104,6 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
-    establish_transitive_relationship,
-    get_ingredients_overlap,
 )
 
 

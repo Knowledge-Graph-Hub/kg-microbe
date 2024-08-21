@@ -897,8 +897,16 @@ class BacDiveTransform(Transform):
                     if ncbitaxon_id and culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
-                            strain_curie = STRAIN_PREFIX + culture_number_cleaned if len(culture_number_cleaned) >2 else STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
-                            strain_label = culture_number.strip() if len(culture_number_cleaned) > 2 else f"{BACDIVE_PREFIX.replace(':', '_') + key} as {culture_number.strip()} of {ncbitaxon_id}"
+                            strain_curie = (
+                                STRAIN_PREFIX + culture_number_cleaned
+                                if len(culture_number_cleaned) > 2
+                                else STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                            )
+                            strain_label = (
+                                culture_number.strip()
+                                if len(culture_number_cleaned) > 2
+                                else f"{BACDIVE_PREFIX.replace(':', '_') + key} as {culture_number.strip()} of {ncbitaxon_id}"
+                            )
                             node_writer.writerow(
                                 [strain_curie, NCBI_CATEGORY, strain_label]
                                 + [None] * (len(self.node_header) - 3)

@@ -22,17 +22,17 @@ cd kg-microbe
 
 # Array of transform names
 transforms=(
-    Ontologies
-    BacDive
-    MediaDive
-    MadinEtAl
-    RheaMappings
-    BactoTraits
-    UniprotHuman
-    CTD
-    Disbiome
-    WallenEtAl
-    UniprotFunctionalMicrobes
+    ontologies
+    bacdive
+    mediadive
+    madin_etal
+    rheamappings
+    bactotraits
+    uniprot_human
+    ctd
+    disbiome
+    wallen_etal
+    uniprot_functional_microbes
 )
 
 # Get the transform for this job array task

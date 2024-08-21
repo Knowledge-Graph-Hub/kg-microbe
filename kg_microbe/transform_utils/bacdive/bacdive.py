@@ -66,7 +66,6 @@ from kg_microbe.transform_utils.constants import (
     ENZYME_TO_ASSAY_EDGE,
     ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
-    EXACT_MATCH,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
     EXTERNAL_LINKS_CULTURE_NUMBER_COLUMN,
@@ -144,7 +143,6 @@ from kg_microbe.transform_utils.constants import (
     RISK_ASSESSMENT,
     RISK_ASSESSMENT_COLUMN,
     SAFETY_INFO,
-    SAME_AS_PREDICATE,
     SPECIES,
     SPORE_FORMATION,
     STRAIN,
@@ -166,7 +164,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
-from kg_microbe.utils.string_coding import process_and_decode_label, remove_nextlines
+from kg_microbe.utils.string_coding import remove_nextlines
 
 
 class BacDiveTransform(Transform):
@@ -725,50 +723,63 @@ class BacDiveTransform(Transform):
                             ]
 
                         else:
-                            curated_strain_id_suffix = BACDIVE_PREFIX.replace(":", "_") + key
+                            # curated_strain_id_suffix = BACDIVE_PREFIX.replace(":", "_") + key
                             # if ncbitaxon_id:
                             #     curated_strain_id_suffix = ncbitaxon_id.replace(":", "_")
                             # else:
                             #     curated_strain_id_suffix = "NO_NCBITaxon_ID"
 
-                            curated_strain_ids = [
-                                name_tax_classification.get(
-                                    STRAIN_DESIGNATION, curated_strain_id_suffix
-                                )
-                                .strip()
-                                .translate(translation_table_for_ids)
-                            ]
-
-                        curated_strain_ids = [
-                            STRAIN_PREFIX
-                            + curated_strain_id
-                            + (
-                                # "_of_" + ncbitaxon_id.replace(":", "_")
-                                BACDIVE_PREFIX.replace(":", "_") + key
-                                if str(curated_strain_id).isnumeric()
-                                else ""
+                            # ! As per Marcin, strain designation will be in label only.
+                            curated_strain_ids = (
+                                [
+                                    name_tax_classification.get(STRAIN_DESIGNATION)
+                                    .strip()
+                                    .translate(translation_table_for_ids)
+                                ]
+                                if name_tax_classification.get(STRAIN_DESIGNATION)
+                                else []
                             )
-                            for curated_strain_id in curated_strain_ids
-                        ]
+
+                        # curated_strain_ids = [
+                        #     STRAIN_PREFIX
+                        #     + curated_strain_id
+                        #     + (
+                        #         # "_of_" + ncbitaxon_id.replace(":", "_")
+                        #         BACDIVE_PREFIX.replace(":", "_") + key
+                        #         if str(curated_strain_id).isnumeric()
+                        #         else ""
+                        #     )
+                        #     for curated_strain_id in curated_strain_ids
+                        # ]
 
                         # Use just 1st strain as per Marcin.
-                        species_with_strains.extend([curated_strain_ids[0]])
-                        curated_strain_label = name_tax_classification.get(
-                            FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
-                        )
-                        curated_strain_label = process_and_decode_label(curated_strain_label)
+                        # species_with_strains.extend([curated_strain_ids[0]])
+                        curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                        if len(curated_strain_ids) > 0:
+                            curated_strain_label = f"""
+                                {BACDIVE_PREFIX.replace(':', '_') + key} as {curated_strain_ids[0]} of {ncbitaxon_id}
+                            """
+                        else:
+                            curated_strain_label = (
+                                f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
+                            )
+
+                        # curated_strain_label = name_tax_classification.get(
+                        #     FULL_SCIENTIFIC_NAME, f"strain_of {ncbi_label}"
+                        # )
+                        # curated_strain_label = process_and_decode_label(curated_strain_label)
 
                         # ! Synonyms are specific to species and not the strain.
                         # if synonym_parsed is None:
-                        node_writer.writerows(
+                        node_writer.writerow(
                             [
                                 curated_strain_id,
                                 NCBI_CATEGORY,
                                 curated_strain_label,
                             ]
                             + [None] * (len(self.node_header) - 3)
-                            for curated_strain_id in curated_strain_ids
-                            if curated_strain_id
+                            # for curated_strain_id in curated_strain_ids
+                            # if curated_strain_id
                         )
                         # else:
                         #     node_writer.writerows(
@@ -783,8 +794,8 @@ class BacDiveTransform(Transform):
                         #         for curated_strain_id in curated_strain_ids
                         #         if curated_strain_id
                         #     )
-                        if ncbitaxon_id and curated_strain_ids:
-                            edge_writer.writerows(
+                        if ncbitaxon_id and curated_strain_id:
+                            edge_writer.writerow(
                                 [
                                     curated_strain_id,
                                     SUBCLASS_PREDICATE,
@@ -792,38 +803,38 @@ class BacDiveTransform(Transform):
                                     RDFS_SUBCLASS_OF,
                                     BACDIVE_PREFIX + key,
                                 ]
-                                for curated_strain_id in curated_strain_ids
-                                if curated_strain_id
+                                # for curated_strain_id in curated_strain_ids
+                                # if curated_strain_id
                             )
                         # Equivalencies in strain IDs established as edges
-                        if len(curated_strain_ids) > 1:
-                            for i in range(len(curated_strain_ids)):
-                                for j in range(i + 1, len(curated_strain_ids)):
-                                    edge_writer.writerows(
-                                        [
-                                            [
-                                                curated_strain_ids[i],
-                                                SAME_AS_PREDICATE,
-                                                curated_strain_ids[j],
-                                                EXACT_MATCH,
-                                                BACDIVE_PREFIX + key,
-                                            ],
-                                            [
-                                                curated_strain_ids[i],
-                                                SAME_AS_PREDICATE,
-                                                BACDIVE_PREFIX + key,
-                                                EXACT_MATCH,
-                                                BACDIVE_PREFIX + key,
-                                            ],
-                                            [
-                                                curated_strain_ids[j],
-                                                SAME_AS_PREDICATE,
-                                                BACDIVE_PREFIX + key,
-                                                EXACT_MATCH,
-                                                BACDIVE_PREFIX + key,
-                                            ],
-                                        ]
-                                    )
+                        # if len(curated_strain_ids) > 1:
+                        #     for i in range(len(curated_strain_ids)):
+                        #         for j in range(i + 1, len(curated_strain_ids)):
+                        #             edge_writer.writerows(
+                        #                 [
+                        #                     [
+                        #                         curated_strain_ids[i],
+                        #                         SAME_AS_PREDICATE,
+                        #                         curated_strain_ids[j],
+                        #                         EXACT_MATCH,
+                        #                         BACDIVE_PREFIX + key,
+                        #                     ],
+                        #                     [
+                        #                         curated_strain_ids[i],
+                        #                         SAME_AS_PREDICATE,
+                        #                         BACDIVE_PREFIX + key,
+                        #                         EXACT_MATCH,
+                        #                         BACDIVE_PREFIX + key,
+                        #                     ],
+                        #                     [
+                        #                         curated_strain_ids[j],
+                        #                         SAME_AS_PREDICATE,
+                        #                         BACDIVE_PREFIX + key,
+                        #                         EXACT_MATCH,
+                        #                         BACDIVE_PREFIX + key,
+                        #                     ],
+                        #                 ]
+                        #             )
                     # ! ----------------------------
 
                     if ncbitaxon_id and medium_ids:
@@ -888,9 +899,21 @@ class BacDiveTransform(Transform):
                     if ncbitaxon_id and culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
-                            strain_curie = STRAIN_PREFIX + culture_number_cleaned
+                            strain_curie = (
+                                STRAIN_PREFIX + culture_number_cleaned
+                                if len(culture_number_cleaned) > 2
+                                else STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                            )
+                            strain_label = (
+                                culture_number.strip()
+                                if len(culture_number_cleaned) > 2
+                                else f"""
+                                    {BACDIVE_PREFIX.replace(':', '_') + key}
+                                    as {culture_number.strip()} of {ncbitaxon_id}
+                                    """
+                            )
                             node_writer.writerow(
-                                [strain_curie, NCBI_CATEGORY, culture_number.strip()]
+                                [strain_curie, NCBI_CATEGORY, strain_label]
                                 + [None] * (len(self.node_header) - 3)
                             )
                             edge_writer.writerow(

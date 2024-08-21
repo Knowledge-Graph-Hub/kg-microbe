@@ -901,30 +901,28 @@ class BacDiveTransform(Transform):
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
                             strain_curie = (
                                 STRAIN_PREFIX + culture_number_cleaned
-                                if len(culture_number_cleaned) > 2
-                                else STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                                if len(culture_number_cleaned) > 3
+                                else None
                             )
                             strain_label = (
                                 culture_number.strip()
-                                if len(culture_number_cleaned) > 2
-                                else f"""
-                                    {BACDIVE_PREFIX.replace(':', '_') + key}
-                                    as {culture_number.strip()} of {ncbitaxon_id}
-                                    """
+                                if len(culture_number_cleaned) > 3
+                                else None
                             )
-                            node_writer.writerow(
-                                [strain_curie, NCBI_CATEGORY, strain_label]
-                                + [None] * (len(self.node_header) - 3)
-                            )
-                            edge_writer.writerow(
-                                [
-                                    strain_curie,
-                                    SUBCLASS_PREDICATE,
-                                    ncbitaxon_id,
-                                    RDFS_SUBCLASS_OF,
-                                    BACDIVE_PREFIX + key,
-                                ]
-                            )
+                            if strain_curie and strain_label:
+                                node_writer.writerow(
+                                    [strain_curie, NCBI_CATEGORY, strain_label]
+                                    + [None] * (len(self.node_header) - 3)
+                                )
+                                edge_writer.writerow(
+                                    [
+                                        strain_curie,
+                                        SUBCLASS_PREDICATE,
+                                        ncbitaxon_id,
+                                        RDFS_SUBCLASS_OF,
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                )
 
                     if phys_and_metabolism_enzymes:
                         postive_activity_enzymes = None

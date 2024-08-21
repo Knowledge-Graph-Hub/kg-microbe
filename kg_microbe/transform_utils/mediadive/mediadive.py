@@ -499,7 +499,7 @@ class MediaDiveTransform(Transform):
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
-
+        # ! Commented out after discussing with Marcin. This is not needed for now.
         # establish_transitive_relationship(
         #     self.output_edge_file,
         #     MEDIADIVE_MEDIUM_PREFIX,

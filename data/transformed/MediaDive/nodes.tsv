@@ -2,13 +2,13 @@ id	category	name	description	xref	provided_by	synonym	iri	object	predicate	relat
 medium-type:complex	biolink:ChemicalMixture	Complex Medium											
 medium-type:defined	biolink:ChemicalMixture	Defined Medium											
 CHEBI:76413	biolink:ChemicalRole	greenhouse gas											
-CHEBI:75771	biolink:ChemicalRole	mouse metabolite											
+CHEBI:78016	biolink:ChemicalRole	food gelling agent											
+CHEBI:48360	biolink:ChemicalRole	amphiprotic solvent											
+CHEBI:84735	biolink:ChemicalRole	algal metabolite											
 CHEBI:76971	biolink:ChemicalRole	Escherichia coli metabolite											
 CHEBI:77746	biolink:ChemicalRole	human metabolite											
 CHEBI:75772	biolink:ChemicalRole	Saccharomyces cerevisiae metabolite											
-CHEBI:84735	biolink:ChemicalRole	algal metabolite											
-CHEBI:78016	biolink:ChemicalRole	food gelling agent											
-CHEBI:48360	biolink:ChemicalRole	amphiprotic solvent											
+CHEBI:75771	biolink:ChemicalRole	mouse metabolite											
 medium:1	biolink:ChemicalEntity	NUTRIENT AGAR											
 solution:1	biolink:ChemicalEntity	Main sol. 1											
 CAS-RN:73049-73-7	biolink:ChemicalEntity	Peptone											
@@ -77,7 +77,6 @@ NCBITaxon:31943	biolink:OrganismTaxon	Brevibacterium iodinum
 NCBITaxon:1479	biolink:OrganismTaxon	Bacillus smithii											
 NCBITaxon:1413215	biolink:OrganismTaxon	Geobacillus thermodenitrificans subsp. thermodenitrificans											
 NCBITaxon:1511749	biolink:OrganismTaxon	Geobacillus thermodenitrificans subsp. thermodenitrificans											
-NCBITaxon:1409	biolink:OrganismTaxon	Cytobacillus sp.											
 NCBITaxon:1468	biolink:OrganismTaxon	Paenibacillus macquariensis subsp. macquariensis											
 NCBITaxon:28031	biolink:OrganismTaxon	Lysinibacillus fusiformis											
 NCBITaxon:1218105	biolink:OrganismTaxon	Cupriavidus necator											
@@ -1192,17 +1191,10 @@ NCBITaxon:882378	biolink:OrganismTaxon	Mycetohabitans rhizoxinica
 NCBITaxon:417203	biolink:OrganismTaxon	Mycetohabitans endofungorum											
 NCBITaxon:82541	biolink:OrganismTaxon	Cupriavidus gilardii											
 NCBITaxon:151414	biolink:OrganismTaxon	Afipia birgiae											
-NCBITaxon:948519	biolink:OrganismTaxon	Aeromonas rivipollensis											
-NCBITaxon:1440762	biolink:OrganismTaxon	Dyella japonica											
-NCBITaxon:323621	biolink:OrganismTaxon	Shinella granuli											
-NCBITaxon:45073	biolink:OrganismTaxon	Legionella quinlivanii											
-NCBITaxon:1211579	biolink:OrganismTaxon	Pseudomonas putida											
-NCBITaxon:45056	biolink:OrganismTaxon	Legionella adelaidensis											
-NCBITaxon:248026	biolink:OrganismTaxon	Cupriavidus pinatubonensis											
-NCBITaxon:1121283	biolink:OrganismTaxon	Chromobacterium haemolyticum											
 medium:1a	biolink:ChemicalEntity	REACTIVATION WITH LIQUID MEDIUM 1											
 solution:3	biolink:ChemicalEntity	Main sol. 1a											
 NCBITaxon:1218107	biolink:OrganismTaxon	Delftia acidovorans											
+NCBITaxon:1211579	biolink:OrganismTaxon	Pseudomonas putida											
 NCBITaxon:29581	biolink:OrganismTaxon	Janthinobacterium lividum											
 NCBITaxon:1354268	biolink:OrganismTaxon	Obesumbacterium proteus											
 NCBITaxon:570012	biolink:OrganismTaxon	Shimwellia pseudoproteus											
@@ -1242,6 +1234,7 @@ NCBITaxon:1122240	biolink:OrganismTaxon	Microvirgula aerodenitrificans
 NCBITaxon:34028	biolink:OrganismTaxon	Comamonas sp.											
 NCBITaxon:1218073	biolink:OrganismTaxon	Cupriavidus numazuensis											
 NCBITaxon:216465	biolink:OrganismTaxon	Polaromonas naphthalenivorans											
+NCBITaxon:1440762	biolink:OrganismTaxon	Dyella japonica											
 NCBITaxon:187868	biolink:OrganismTaxon	Acidovorax valerianellae											
 NCBITaxon:1219035	biolink:OrganismTaxon	Caenibius tardaugens											
 NCBITaxon:160434	biolink:OrganismTaxon	Samsonia erythrinae											
@@ -1279,6 +1272,7 @@ NCBITaxon:1236960	biolink:OrganismTaxon	Stenotrophomonas pictorum
 NCBITaxon:564423	biolink:OrganismTaxon	Pseudomonas tolaasii											
 NCBITaxon:983920	biolink:OrganismTaxon	Novosphingobium nitrogenifigens											
 NCBITaxon:367825	biolink:OrganismTaxon	Cupriavidus malaysiensis											
+NCBITaxon:248026	biolink:OrganismTaxon	Cupriavidus pinatubonensis											
 NCBITaxon:86192	biolink:OrganismTaxon	Pseudomonas chlororaphis subsp. aurantiaca											
 NCBITaxon:1121484	biolink:OrganismTaxon	Dyadobacter ginsengisoli											
 NCBITaxon:523788	biolink:OrganismTaxon	Herminiimonas glaciei											
@@ -1296,6 +1290,7 @@ NCBITaxon:640205	biolink:OrganismTaxon	Pseudomonas seleniipraecipitans
 NCBITaxon:1007099	biolink:OrganismTaxon	Pseudomonas kuykendallii											
 NCBITaxon:453575	biolink:OrganismTaxon	Pusillimonas ginsengisoli											
 NCBITaxon:659013	biolink:OrganismTaxon	Castellaniella daejeonensis											
+NCBITaxon:948519	biolink:OrganismTaxon	Aeromonas rivipollensis											
 NCBITaxon:1007511	biolink:OrganismTaxon	Sphingobium limneticum											
 NCBITaxon:659014	biolink:OrganismTaxon	Dyadobacter soli											
 NCBITaxon:1273429	biolink:OrganismTaxon	Vulcaniibacterium tengchongense											
@@ -1310,27 +1305,27 @@ NCBITaxon:1041641	biolink:OrganismTaxon	Jeongeupia chitinilytica
 NCBITaxon:1055355	biolink:OrganismTaxon	Belnapia soli											
 NCBITaxon:312306	biolink:OrganismTaxon	Pseudomonas entomophila											
 NCBITaxon:1082580	biolink:OrganismTaxon	Dyadobacter jejuensis											
+CHEBI:64577	biolink:ChemicalRole	flour treatment agent											
 CHEBI:33287	biolink:ChemicalRole	fertilizer											
 CHEBI:83056	biolink:ChemicalRole	Daphnia magna metabolite											
-CHEBI:64577	biolink:ChemicalRole	flour treatment agent											
 medium:2	biolink:ChemicalEntity	BACILLUS PASTEURII MEDIUM											
 solution:4	biolink:ChemicalEntity	Main sol. 2											
 CHEBI:16199	biolink:ChemicalEntity	Urea											
 NCBITaxon:1474	biolink:OrganismTaxon	Sporosarcina pasteurii											
 NCBITaxon:1571	biolink:OrganismTaxon	Sporosarcina ureae											
 NCBITaxon:1123290	biolink:OrganismTaxon	Sporosarcina ureae											
-CHEBI:77182	biolink:ChemicalRole	food colouring											
-CHEBI:50733	biolink:ChemicalRole	nutraceutical											
-CHEBI:64909	biolink:ChemicalRole	poison											
-CHEBI:35225	biolink:ChemicalRole	buffer											
+CHEBI:77960	biolink:ChemicalRole	food firming agent											
 CHEBI:75325	biolink:ChemicalRole	cathartic											
-CHEBI:76924	biolink:ChemicalRole	plant metabolite											
 CHEBI:78675	biolink:ChemicalRole	fundamental metabolite											
+CHEBI:50733	biolink:ChemicalRole	nutraceutical											
+CHEBI:77182	biolink:ChemicalRole	food colouring											
+CHEBI:64909	biolink:ChemicalRole	poison											
+CHEBI:63247	biolink:ChemicalRole	reducing agent											
+CHEBI:35225	biolink:ChemicalRole	buffer											
 CHEBI:75835	biolink:ChemicalRole	anti-anaemic agent											
 CHEBI:50503	biolink:ChemicalRole	laxative											
-CHEBI:63247	biolink:ChemicalRole	reducing agent											
 CHEBI:65265	biolink:ChemicalRole	antacid											
-CHEBI:77960	biolink:ChemicalRole	food firming agent											
+CHEBI:76924	biolink:ChemicalRole	plant metabolite											
 medium:3	biolink:ChemicalEntity	AZOTOBACTER MEDIUM											
 solution:5	biolink:ChemicalEntity	Main sol. 3											
 CHEBI:17234	biolink:ChemicalEntity	Glucose											
@@ -1781,7 +1776,7 @@ NCBITaxon:866801	biolink:OrganismTaxon	Apilactobacillus ozensis
 NCBITaxon:1423727	biolink:OrganismTaxon	Lacticaseibacillus brantae											
 NCBITaxon:931533	biolink:OrganismTaxon	Lacticaseibacillus saniviri											
 NCBITaxon:931534	biolink:OrganismTaxon	Lentilactobacillus senioris											
-NCBITaxon:1050107	biolink:OrganismTaxon	Lactobacillus delbrueckii subsp. allosunkii											
+NCBITaxon:1050107	biolink:OrganismTaxon	Lactobacillus delbrueckii subsp. sunkii											
 NCBITaxon:910540	biolink:OrganismTaxon	Leuconostoc miyukkimchii											
 NCBITaxon:1217420	biolink:OrganismTaxon	Lactobacillus delbrueckii subsp. jakobsenii											
 NCBITaxon:1267156	biolink:OrganismTaxon	Loigolactobacillus iwatensis											
@@ -1890,20 +1885,20 @@ bacdive:169421	biolink:OrganismTaxon	Fructobacillus parabroussonetiae
 NCBITaxon:33960	biolink:OrganismTaxon	Secundilactobacillus collinoides											
 bacdive:170475	biolink:OrganismTaxon	Vagococcus intermedius											
 bacdive:170476	biolink:OrganismTaxon	Vagococcus proximus											
-CHEBI:23354	biolink:ChemicalRole	coenzyme											
-CHEBI:25212	biolink:ChemicalRole	metabolite											
-CHEBI:67079	biolink:ChemicalRole	anti-inflammatory agent											
-CHEBI:22586	biolink:ChemicalRole	antioxidant											
-CHEBI:47868	biolink:ChemicalRole	photosensitizing agent											
-CHEBI:23357	biolink:ChemicalRole	cofactor											
-CHEBI:33284	biolink:ChemicalRole	nutrient											
-CHEBI:35679	biolink:ChemicalRole	antilipemic drug											
-CHEBI:35620	biolink:ChemicalRole	vasodilator agent											
-CHEBI:84264	biolink:ChemicalRole	EC 3.5.1.19 (nicotinamidase) inhibitor											
-CHEBI:84087	biolink:ChemicalRole	human urinary metabolite											
 CHEBI:50904	biolink:ChemicalRole	allergen											
 CHEBI:50247	biolink:ChemicalRole	antidote											
 CHEBI:26348	biolink:ChemicalRole	prosthetic group											
+CHEBI:84087	biolink:ChemicalRole	human urinary metabolite											
+CHEBI:67079	biolink:ChemicalRole	anti-inflammatory agent											
+CHEBI:35679	biolink:ChemicalRole	antilipemic drug											
+CHEBI:84264	biolink:ChemicalRole	EC 3.5.1.19 (nicotinamidase) inhibitor											
+CHEBI:47868	biolink:ChemicalRole	photosensitizing agent											
+CHEBI:33284	biolink:ChemicalRole	nutrient											
+CHEBI:25212	biolink:ChemicalRole	metabolite											
+CHEBI:22586	biolink:ChemicalRole	antioxidant											
+CHEBI:35620	biolink:ChemicalRole	vasodilator agent											
+CHEBI:23357	biolink:ChemicalRole	cofactor											
+CHEBI:23354	biolink:ChemicalRole	coenzyme											
 medium:11a	biolink:ChemicalEntity	MODIFIED MEDIUM 11											
 solution:13	biolink:ChemicalEntity	Main sol. 11a											
 solution:5629	biolink:ChemicalEntity	Vitamin solution											
@@ -1957,14 +1952,14 @@ NCBITaxon:1220571	biolink:OrganismTaxon	Alicyclobacillus kakegawensis
 NCBITaxon:392015	biolink:OrganismTaxon	Alicyclobacillus macrosporangiidus											
 NCBITaxon:1220573	biolink:OrganismTaxon	Alicyclobacillus shizuokensis											
 NCBITaxon:1475485	biolink:OrganismTaxon	Alicyclobacillus dauci											
-CHEBI:37335	biolink:ChemicalRole	MRI contrast agent											
-CHEBI:74783	biolink:ChemicalRole	astringent											
 CHEBI:59174	biolink:ChemicalRole	hapten											
-CHEBI:38215	biolink:ChemicalRole	calcium channel blocker											
-CHEBI:139492	biolink:ChemicalRole	sensitiser											
 CHEBI:50412	biolink:ChemicalRole	two-colour indicator											
+CHEBI:139492	biolink:ChemicalRole	sensitiser											
 CHEBI:86385	biolink:ChemicalRole	EC 5.3.3.5 (cholestenol Delta-isomerase) inhibitor											
 CHEBI:38161	biolink:ChemicalRole	chelator											
+CHEBI:38215	biolink:ChemicalRole	calcium channel blocker											
+CHEBI:37335	biolink:ChemicalRole	MRI contrast agent											
+CHEBI:74783	biolink:ChemicalRole	astringent											
 medium:14	biolink:ChemicalEntity	CLOSTRIDIUM FORMICACETICUM MEDIUM											
 solution:19	biolink:ChemicalEntity	Main sol. 14											
 solution:20	biolink:ChemicalEntity	Trace element solution SL-4											
@@ -1984,12 +1979,12 @@ medium:21	biolink:ChemicalEntity	SARCINA MEDIUM
 solution:21	biolink:ChemicalEntity	Main sol. 21											
 NCBITaxon:1267	biolink:OrganismTaxon	Sarcina ventriculi											
 NCBITaxon:35785	biolink:OrganismTaxon	Sarcina maxima											
-CHEBI:79314	biolink:ChemicalRole	flame retardant											
+CHEBI:149552	biolink:ChemicalRole	emetic											
 CHEBI:86327	biolink:ChemicalRole	antifungal drug											
 CHEBI:76595	biolink:ChemicalRole	nephroprotective agent											
-CHEBI:173084	biolink:ChemicalRole	ferroptosis inhibitor											
-CHEBI:149552	biolink:ChemicalRole	emetic											
+CHEBI:79314	biolink:ChemicalRole	flame retardant											
 CHEBI:90749	biolink:ChemicalRole	antidote to cyanide poisoning											
+CHEBI:173084	biolink:ChemicalRole	ferroptosis inhibitor											
 medium:25	biolink:ChemicalEntity	RHODOPSEUDOMONAS GLOBIFORMIS MEDIUM											
 solution:22	biolink:ChemicalEntity	Main sol. 25											
 solution:25	biolink:ChemicalEntity	Trace element solution SL-6											
@@ -2051,12 +2046,12 @@ NCBITaxon:29408	biolink:OrganismTaxon	Rhodoplanes elegans
 NCBITaxon:1120956	biolink:OrganismTaxon	Afifella pfennigii											
 NCBITaxon:200615	biolink:OrganismTaxon	Rhodoplanes serenus											
 NCBITaxon:540251	biolink:OrganismTaxon	Rhodovulum steppense											
-NCBITaxon:200616	biolink:OrganismTaxon	Rhodoplanes sp.											
+NCBITaxon:200616	biolink:OrganismTaxon	Rhodopseudomonas cryptolactis											
 NCBITaxon:81479	biolink:OrganismTaxon	Rhodoferax antarcticus											
 NCBITaxon:2233851	biolink:OrganismTaxon	Blastochloris tepida											
-CHEBI:48219	biolink:ChemicalRole	disinfectant											
 CHEBI:39143	biolink:ChemicalRole	Lewis acid											
 CHEBI:77965	biolink:ChemicalRole	food anticaking agent											
+CHEBI:48219	biolink:ChemicalRole	disinfectant											
 medium:28	biolink:ChemicalEntity	PFENNIG'S MEDIUM I											
 solution:26	biolink:ChemicalEntity	Main sol. 28											
 solution:27	biolink:ChemicalEntity	Solution A											
@@ -2107,8 +2102,6 @@ NCBITaxon:765913	biolink:OrganismTaxon	Thiorhodococcus drewsii
 NCBITaxon:231048	biolink:OrganismTaxon	Allochromatium palmeri											
 NCBITaxon:390879	biolink:OrganismTaxon	Thiorhodococcus kakinadensis											
 NCBITaxon:504901	biolink:OrganismTaxon	Allochromatium humboldtianum											
-NCBITaxon:2250209	biolink:OrganismTaxon	Marichromatium sp.											
-NCBITaxon:140057	biolink:OrganismTaxon	Roseospira marina											
 medium:28a	biolink:ChemicalEntity	THIORHODOCOCCUS MEDIUM											
 solution:35	biolink:ChemicalEntity	Main sol. 28a											
 CHEBI:86345	biolink:ChemicalEntity	MgCl2 x 6 H2O											
@@ -2135,7 +2128,6 @@ NCBITaxon:2053530	biolink:OrganismTaxon	Chlorobaculum sp.
 NCBITaxon:1094	biolink:OrganismTaxon	Chlorobium phaeovibrioides											
 NCBITaxon:274537	biolink:OrganismTaxon	Chlorobaculum limnaeum											
 NCBITaxon:1097	biolink:OrganismTaxon	Chlorobaculum tepidum											
-NCBITaxon:290513	biolink:OrganismTaxon	Prosthecochloris sp.											
 medium:29a	biolink:ChemicalEntity	MEDIUM FOR CHLOROBIUM FERROOXIDANS											
 solution:5591	biolink:ChemicalEntity	Main sol. 29a											
 CAS-RN:71-52-3	biolink:ChemicalEntity	Bicarbonate											
@@ -2158,7 +2150,7 @@ NCBITaxon:79883	biolink:OrganismTaxon	Sutcliffiella horikoshii
 NCBITaxon:1076414	biolink:OrganismTaxon	Sutcliffiella horikoshii											
 NCBITaxon:79879	biolink:OrganismTaxon	Evansella clarkii											
 NCBITaxon:76935	biolink:OrganismTaxon	Salipaludibacillus agaradhaerens											
-NCBITaxon:79881	biolink:OrganismTaxon	Alkalicoccobacillus gibsonii											
+NCBITaxon:79881	biolink:OrganismTaxon	Shouchella gibsonii											
 NCBITaxon:79882	biolink:OrganismTaxon	Sutcliffiella halmapala											
 NCBITaxon:79884	biolink:OrganismTaxon	Alkalihalobacillus pseudalcaliphilus											
 NCBITaxon:38282	biolink:OrganismTaxon	Evansella vedderi											
@@ -2179,9 +2171,9 @@ NCBITaxon:704201	biolink:OrganismTaxon	Nesterenkonia sp.
 bacdive:169636	biolink:OrganismTaxon	Geomicrobium sediminis											
 bacdive:169705	biolink:OrganismTaxon	Polygonibacillus sp.											
 CHEBI:25728	biolink:ChemicalRole	osmolyte											
-CHEBI:27780	biolink:ChemicalRole	detergent											
 CHEBI:46787	biolink:ChemicalRole	solvent											
 CHEBI:176497	biolink:ChemicalRole	geroprotector											
+CHEBI:27780	biolink:ChemicalRole	detergent											
 medium:32	biolink:ChemicalEntity	PHOTOBACTERIUM MEDIUM											
 solution:47	biolink:ChemicalEntity	Main sol. 32											
 ingredient:423	biolink:ChemicalEntity	Sea Salt											
@@ -2218,9 +2210,9 @@ solution:56	biolink:ChemicalEntity	Main sol. 36
 CHEBI:3312	biolink:ChemicalEntity	CaCl2											
 CHEBI:86254	biolink:ChemicalEntity	FeCl3 x 6 H2O											
 NCBITaxon:1123393	biolink:OrganismTaxon	Thiobacillus thioparus											
-CHEBI:66987	biolink:ChemicalRole	radiation protective agent											
 CHEBI:49201	biolink:ChemicalRole	anti-ulcer drug											
 CHEBI:27027	biolink:ChemicalRole	micronutrient											
+CHEBI:66987	biolink:ChemicalRole	radiation protective agent											
 medium:37	biolink:ChemicalEntity	SPIRILLUM MEDIUM											
 solution:57	biolink:ChemicalEntity	Main sol. 37											
 CHEBI:15741	biolink:ChemicalEntity	Succinic acid											
@@ -2247,6 +2239,7 @@ NCBITaxon:274539	biolink:OrganismTaxon	Chlorobaculum parvum
 NCBITaxon:290318	biolink:OrganismTaxon	Chlorobium phaeovibrioides											
 NCBITaxon:319225	biolink:OrganismTaxon	Chlorobium luteolum											
 bacdive:168594	biolink:OrganismTaxon	Pelodictyon phaeum											
+NCBITaxon:290513	biolink:OrganismTaxon	Prosthecochloris sp.											
 medium:43	biolink:ChemicalEntity	PFENNIG'S MEDIUM I WITH SALT											
 solution:61	biolink:ChemicalEntity	Main sol. 43											
 medium:44	biolink:ChemicalEntity	RHODOCYCLUS PURPUREUS MEDIUM											
@@ -2406,8 +2399,8 @@ NCBITaxon:1262449	biolink:OrganismTaxon	Clostridium pasteurianum
 NCBITaxon:1501	biolink:OrganismTaxon	Clostridium pasteurianum											
 NCBITaxon:1492	biolink:OrganismTaxon	Clostridium butyricum											
 bacdive:158339	biolink:OrganismTaxon	Anoxycellum osoensis											
-CHEBI:22587	biolink:ChemicalRole	antiviral agent											
 CHEBI:173085	biolink:ChemicalRole	ferroptosis inducer											
+CHEBI:22587	biolink:ChemicalRole	antiviral agent											
 medium:55	biolink:ChemicalEntity	FRUCTOSE MINERAL MEDIUM											
 solution:74	biolink:ChemicalEntity	Main sol. 55											
 solution:75	biolink:ChemicalEntity	Solution A											
@@ -2556,7 +2549,6 @@ NCBITaxon:2661627	biolink:OrganismTaxon	Bifidobacterium saimiriisciurei
 NCBITaxon:2045439	biolink:OrganismTaxon	Bifidobacterium rousetti											
 NCBITaxon:2562524	biolink:OrganismTaxon	Bifidobacterium vespertilionis											
 NCBITaxon:2661628	biolink:OrganismTaxon	Bifidobacterium platyrrhinorum											
-NCBITaxon:41200	biolink:OrganismTaxon	Bifidobacterium longum subsp. infantis											
 NCBITaxon:2172043	biolink:OrganismTaxon	Bifidobacterium tibiigranuli											
 NCBITaxon:2675322	biolink:OrganismTaxon	Bifidobacterium oedipodis											
 NCBITaxon:2675323	biolink:OrganismTaxon	Bifidobacterium moraviense											
@@ -2578,8 +2570,6 @@ bacdive:169377	biolink:OrganismTaxon	Bifidobacterium sp.
 bacdive:168491	biolink:OrganismTaxon	Bifidobacterium pongonis											
 bacdive:169763	biolink:OrganismTaxon	Palleniella muris											
 NCBITaxon:59823	biolink:OrganismTaxon	Xylanibacter rodentium											
-bacdive:169680	biolink:OrganismTaxon	Lactococcus petauri											
-NCBITaxon:47770	biolink:OrganismTaxon	Lactobacillus crispatus											
 medium:59	biolink:ChemicalEntity	LEUCONOSTOC OENOS MEDIUM											
 solution:81	biolink:ChemicalEntity	Main sol. 59											
 CAS-RN:3458-72-8	biolink:ChemicalEntity	NH4 citrate											
@@ -2596,14 +2586,13 @@ solution:87	biolink:ChemicalEntity	Solution E
 solution:88	biolink:ChemicalEntity	Solution F											
 CAS-RN:7783-85-9	biolink:ChemicalEntity	FeNH42SO42											
 NCBITaxon:1525	biolink:OrganismTaxon	Moorella thermoacetica											
-CHEBI:50505	biolink:ChemicalRole	sweetening agent											
 CHEBI:65255	biolink:ChemicalRole	food preservative											
+CHEBI:50505	biolink:ChemicalRole	sweetening agent											
 medium:61	biolink:ChemicalEntity	THERMOANAEROBACTER MEDIUM											
 solution:89	biolink:ChemicalEntity	Main sol. 61											
 CHEBI:17992	biolink:ChemicalEntity	Sucrose											
 CHEBI:86477	biolink:ChemicalEntity	Na2SO3											
 NCBITaxon:1516	biolink:OrganismTaxon	Thermoanaerobacter thermohydrosulfuricus											
-NCBITaxon:1516	biolink:OrganismTaxon	Thermoanaerobacter sp.											
 NCBITaxon:580327	biolink:OrganismTaxon	Thermoanaerobacterium thermosaccharolyticum											
 NCBITaxon:1517	biolink:OrganismTaxon	Thermoanaerobacterium thermosaccharolyticum											
 NCBITaxon:40549	biolink:OrganismTaxon	Thermoanaerobacterium sp.											
@@ -2673,7 +2662,6 @@ NCBITaxon:1121452	biolink:OrganismTaxon	Humidesulfovibrio idahonensis
 NCBITaxon:1511599	biolink:OrganismTaxon	Desulfocurvibacter africanus subsp. uniflagellum											
 NCBITaxon:995050	biolink:OrganismTaxon	Desulfobaculum xiamenense											
 NCBITaxon:59610	biolink:OrganismTaxon	Desulforamulus reducens											
-NCBITaxon:41211	biolink:OrganismTaxon	Desulfofundulus salinus											
 NCBITaxon:2018668	biolink:OrganismTaxon	Desulfosporosinus nitroreducens											
 NCBITaxon:2718620	biolink:OrganismTaxon	Desulfovibrio subterraneus											
 NCBITaxon:2604158	biolink:OrganismTaxon	Cupidesulfovibrio liaohensis											
@@ -2925,7 +2913,7 @@ NCBITaxon:68282	biolink:OrganismTaxon	Streptomyces viridiviolaceus
 NCBITaxon:1943	biolink:OrganismTaxon	Streptomyces griseoruber											
 NCBITaxon:1306179	biolink:OrganismTaxon	Streptomyces naganishii											
 NCBITaxon:67352	biolink:OrganismTaxon	Kitasatospora purpeofusca											
-NCBITaxon:68175	biolink:OrganismTaxon	Streptomyces antimycoticus											
+NCBITaxon:68175	biolink:OrganismTaxon	Streptomyces castelarensis											
 NCBITaxon:1352941	biolink:OrganismTaxon	Streptomyces niveus											
 NCBITaxon:29301	biolink:OrganismTaxon	Streptomyces arenae											
 NCBITaxon:1348637	biolink:OrganismTaxon	Nocardiopsis listeri											
@@ -3043,7 +3031,7 @@ NCBITaxon:156648	biolink:OrganismTaxon	Streptomyces griseocarneus
 NCBITaxon:1912	biolink:OrganismTaxon	Streptomyces hygroscopicus subsp. hygroscopicus											
 NCBITaxon:1896	biolink:OrganismTaxon	Streptomyces bikiniensis											
 NCBITaxon:1873719	biolink:OrganismTaxon	Streptomyces hydrogenans											
-NCBITaxon:35621	biolink:OrganismTaxon	Streptomyces sp.											
+NCBITaxon:35621	biolink:OrganismTaxon	Streptomyces mobaraensis											
 NCBITaxon:42238	biolink:OrganismTaxon	Streptomyces neyagawaensis											
 NCBITaxon:1303692	biolink:OrganismTaxon	Streptomyces microflavus											
 NCBITaxon:47761	biolink:OrganismTaxon	Streptomyces ochraceiscleroticus											
@@ -3067,7 +3055,6 @@ NCBITaxon:132474	biolink:OrganismTaxon	Streptomyces rimosus subsp. rimosus
 NCBITaxon:67260	biolink:OrganismTaxon	Streptomyces cinereoruber subsp. fructofermentans											
 NCBITaxon:1889	biolink:OrganismTaxon	Streptomyces ambofaciens											
 NCBITaxon:33900	biolink:OrganismTaxon	Streptomyces phaeogriseichromatogenes											
-NCBITaxon:68264	biolink:OrganismTaxon	Streptomyces sp.											
 NCBITaxon:1890	biolink:OrganismTaxon	Streptomyces antibioticus											
 NCBITaxon:591159	biolink:OrganismTaxon	Streptomyces viridochromogenes											
 NCBITaxon:1134445	biolink:OrganismTaxon	Streptomyces somaliensis											
@@ -3094,7 +3081,6 @@ NCBITaxon:476551	biolink:OrganismTaxon	Streptomyces ascomycinicus
 NCBITaxon:249580	biolink:OrganismTaxon	Streptomyces platensis											
 NCBITaxon:249581	biolink:OrganismTaxon	Streptomyces hygroscopicus subsp. ossamyceticus											
 NCBITaxon:58345	biolink:OrganismTaxon	Streptomyces mauvecolor											
-NCBITaxon:68175	biolink:OrganismTaxon	Streptomyces castelarensis											
 NCBITaxon:173856	biolink:OrganismTaxon	Streptomyces luteosporeus											
 NCBITaxon:1077944	biolink:OrganismTaxon	Streptomyces muensis											
 NCBITaxon:58344	biolink:OrganismTaxon	Streptomyces celluloflavus											
@@ -3105,7 +3091,6 @@ NCBITaxon:1298930	biolink:OrganismTaxon	Streptomyces sp.
 NCBITaxon:68276	biolink:OrganismTaxon	Streptomyces torulosus											
 NCBITaxon:97400	biolink:OrganismTaxon	Streptomyces hiroshimensis											
 NCBITaxon:173776	biolink:OrganismTaxon	Streptomyces cinnamoneus subsp. cinnamoneus											
-NCBITaxon:35621	biolink:OrganismTaxon	Streptomyces mobaraensis											
 NCBITaxon:173832	biolink:OrganismTaxon	Streptomyces hiroshimensis											
 NCBITaxon:37632	biolink:OrganismTaxon	Amycolatopsis sp.											
 NCBITaxon:1956	biolink:OrganismTaxon	Streptomyces ardesiacus											
@@ -3116,7 +3101,6 @@ NCBITaxon:68191	biolink:OrganismTaxon	Streptomyces crystallinus
 NCBITaxon:47758	biolink:OrganismTaxon	Streptomyces sulphureus											
 NCBITaxon:1836	biolink:OrganismTaxon	Saccharopolyspora erythraea											
 NCBITaxon:2817710	biolink:OrganismTaxon	Streptomyces sp.											
-NCBITaxon:67263	biolink:OrganismTaxon	Streptomyces albidoflavus											
 NCBITaxon:92743	biolink:OrganismTaxon	Streptomyces paromomycinus											
 NCBITaxon:68185	biolink:OrganismTaxon	Streptomyces chrestomyceticus											
 NCBITaxon:68044	biolink:OrganismTaxon	Streptomyces libani subsp. libani											
@@ -3438,7 +3422,7 @@ NCBITaxon:103733	biolink:OrganismTaxon	Saccharothrix syringae
 NCBITaxon:78510	biolink:OrganismTaxon	Streptomyces yanii											
 NCBITaxon:65509	biolink:OrganismTaxon	Parvopolyspora pallida											
 NCBITaxon:1120930	biolink:OrganismTaxon	Actinoalloteichus cyanogriseus											
-bacdive:24855	biolink:OrganismTaxon	Streptomyces sp.											
+bacdive:24855	biolink:OrganismTaxon	Trichotomospora caesia											
 NCBITaxon:56428	biolink:OrganismTaxon	Couchioplanes caeruleus subsp. azureus											
 NCBITaxon:1871	biolink:OrganismTaxon	Actinoplanes sp.											
 NCBITaxon:47855	biolink:OrganismTaxon	Micromonospora citrea											
@@ -3660,6 +3644,7 @@ NCBITaxon:1210101	biolink:OrganismTaxon	Nocardia xishanensis
 NCBITaxon:360086	biolink:OrganismTaxon	Lentzea kentuckyensis											
 NCBITaxon:1144882	biolink:OrganismTaxon	Streptomyces polyantibioticus											
 NCBITaxon:479433	biolink:OrganismTaxon	Catenulispora acidiphila											
+NCBITaxon:280618	biolink:OrganismTaxon	Nocardia polyresistens											
 NCBITaxon:1210083	biolink:OrganismTaxon	Nocardia lijiangensis											
 NCBITaxon:1206738	biolink:OrganismTaxon	Nocardia terpenica											
 NCBITaxon:257285	biolink:OrganismTaxon	Kitasatospora recifensis											
@@ -4313,7 +4298,7 @@ NCBITaxon:1882233	biolink:OrganismTaxon	Kibdelosporangium rhizovicinum
 NCBITaxon:2144174	biolink:OrganismTaxon	Nocardia aurea											
 NCBITaxon:1348284	biolink:OrganismTaxon	Streptomyces fukangensis											
 NCBITaxon:1670832	biolink:OrganismTaxon	Nocardiopsis ansamitocini											
-NCBITaxon:2026353	biolink:OrganismTaxon	Petropleomorpha  daqingensis											
+NCBITaxon:2026353	biolink:OrganismTaxon	Geodermatophilus daqingensis											
 NCBITaxon:1764539	biolink:OrganismTaxon	Streptomyces indoligenes											
 NCBITaxon:860233	biolink:OrganismTaxon	Amycolatopsis endophytica											
 NCBITaxon:2041421	biolink:OrganismTaxon	Streptomyces canalis											
@@ -4357,7 +4342,7 @@ NCBITaxon:1488406	biolink:OrganismTaxon	Streptomyces roseifaciens
 NCBITaxon:2293571	biolink:OrganismTaxon	Streptomyces inhibens											
 NCBITaxon:2269375	biolink:OrganismTaxon	Sphaerisporangium rhizosphaerae											
 NCBITaxon:2045452	biolink:OrganismTaxon	Nocardioides houyundeii											
-NCBITaxon:2126346	biolink:OrganismTaxon	Peterkaempfera  bronchialis											
+NCBITaxon:2126346	biolink:OrganismTaxon	Streptacidiphilus bronchialis											
 NCBITaxon:1931	biolink:OrganismTaxon	Streptomyces bathyalis											
 NCBITaxon:2293568	biolink:OrganismTaxon	Streptomyces triticagri											
 NCBITaxon:2070367	biolink:OrganismTaxon	Streptomyces cahuitamycinicus											
@@ -4386,7 +4371,7 @@ NCBITaxon:981369	biolink:OrganismTaxon	Streptacidiphilus rugosus
 NCBITaxon:1530045	biolink:OrganismTaxon	Micromonospora soli											
 NCBITaxon:1970735	biolink:OrganismTaxon	Micromonospora azadirachtae											
 NCBITaxon:33914	biolink:OrganismTaxon	Saccharopolyspora gregorii											
-NCBITaxon:2495913	biolink:OrganismTaxon	Antrihabitans cavernicola											
+NCBITaxon:2495913	biolink:OrganismTaxon	Rhodococcus cavernicola											
 NCBITaxon:38502	biolink:OrganismTaxon	Blastococcus aggregatus											
 NCBITaxon:195749	biolink:OrganismTaxon	Promicromonospora aerolata											
 NCBITaxon:273676	biolink:OrganismTaxon	Nocardioides oleivorans											
@@ -4401,8 +4386,8 @@ NCBITaxon:1050153	biolink:OrganismTaxon	Ornithinimicrobium murale
 NCBITaxon:1542737	biolink:OrganismTaxon	Marmoricola solisilvae											
 NCBITaxon:1542736	biolink:OrganismTaxon	Marmoricola terrae											
 NCBITaxon:1348852	biolink:OrganismTaxon	Mumia flava											
+NCBITaxon:66896	biolink:OrganismTaxon	Streptacidiphilus griseoplanus											
 NCBITaxon:68188	biolink:OrganismTaxon	Streptomyces clavifer											
-NCBITaxon:518642	biolink:OrganismTaxon	Streptomyces sp.											
 NCBITaxon:1919	biolink:OrganismTaxon	Streptomyces sp.											
 NCBITaxon:2605714	biolink:OrganismTaxon	Pilimelia sp.											
 NCBITaxon:1449346	biolink:OrganismTaxon	Kitasatospora azatica											
@@ -4416,7 +4401,7 @@ NCBITaxon:887469	biolink:OrganismTaxon	Streptomyces staurosporininus
 NCBITaxon:945052	biolink:OrganismTaxon	Streptomyces heilongjiangensis											
 NCBITaxon:47479	biolink:OrganismTaxon	Streptosporangium album											
 NCBITaxon:53371	biolink:OrganismTaxon	Pilimelia anulata											
-NCBITaxon:1868	biolink:OrganismTaxon	Actinoplanes digitatus 											
+NCBITaxon:1868	biolink:OrganismTaxon	Actinoplanes digitatis											
 NCBITaxon:113568	biolink:OrganismTaxon	Actinoplanes lobatus											
 NCBITaxon:47864	biolink:OrganismTaxon	Micromonospora halophytica											
 NCBITaxon:58119	biolink:OrganismTaxon	Planomonospora parontospora subsp. parontospora											
@@ -4540,7 +4525,6 @@ NCBITaxon:1623582	biolink:OrganismTaxon	Streptomyces albiflavescens
 NCBITaxon:66899	biolink:OrganismTaxon	Streptomyces cinnamoneus subsp. cinnamoneus											
 bacdive:166130	biolink:OrganismTaxon	Micromonospora craterilacus											
 bacdive:134996	biolink:OrganismTaxon	Amaricoccus tamworthensis											
-bacdive:166390	biolink:OrganismTaxon	Streptomyces boluensis											
 bacdive:167904	biolink:OrganismTaxon	Lolliginicoccus suaedae											
 bacdive:168295	biolink:OrganismTaxon	Solihabitans fulvus											
 bacdive:170387	biolink:OrganismTaxon	Streptomyces phytophilus											
@@ -4548,15 +4532,12 @@ bacdive:169283	biolink:OrganismTaxon	Rhodococcus sp.
 bacdive:167833	biolink:OrganismTaxon	Lentzea tibetensis											
 bacdive:169270	biolink:OrganismTaxon	Nocardia sp.											
 bacdive:169419	biolink:OrganismTaxon	Saccharomonospora sp.											
-bacdive:158770	biolink:OrganismTaxon	Micromonospora luteiviridis											
 bacdive:169448	biolink:OrganismTaxon	Pseudonocardia sp.											
 bacdive:169265	biolink:OrganismTaxon	Mycobacterium sp.											
 bacdive:169411	biolink:OrganismTaxon	Amycolatopsis sp.											
 bacdive:169266	biolink:OrganismTaxon	Mycobacterium sp.											
 bacdive:168459	biolink:OrganismTaxon	Nonomuraea aridisoli											
 bacdive:169318	biolink:OrganismTaxon	Streptomyces sp.											
-bacdive:167972	biolink:OrganismTaxon	Streptomyces montanus											
-bacdive:166603	biolink:OrganismTaxon	Pseudonocardia pini											
 bacdive:167434	biolink:OrganismTaxon	Actinomadura lepetitiana											
 bacdive:169287	biolink:OrganismTaxon	Rhodococcus sp.											
 bacdive:166796	biolink:OrganismTaxon	Micromonospora veneta											
@@ -4566,8 +4547,6 @@ bacdive:169412	biolink:OrganismTaxon	Amycolatopsis sp.
 bacdive:169449	biolink:OrganismTaxon	Pseudonocardia sp.											
 bacdive:169714	biolink:OrganismTaxon	Nocardia albiluteola											
 bacdive:167496	biolink:OrganismTaxon	Reticulibacter  mediterranei											
-bacdive:170339	biolink:OrganismTaxon	Nocardia noduli											
-bacdive:170337	biolink:OrganismTaxon	Nocardia alni											
 bacdive:168441	biolink:OrganismTaxon	Actinomadura graeca											
 bacdive:169827	biolink:OrganismTaxon	Micromonospora sp.											
 bacdive:170378	biolink:OrganismTaxon	Streptomyces spiramenti											
@@ -4614,14 +4593,12 @@ NCBITaxon:397258	biolink:OrganismTaxon	Nocardioides hwasunensis
 NCBITaxon:1544732	biolink:OrganismTaxon	Plantactinospora soyae											
 NCBITaxon:1872643	biolink:OrganismTaxon	Asanoa sp.											
 NCBITaxon:1617087	biolink:OrganismTaxon	Streptomyces polygonati											
-bacdive:166299	biolink:OrganismTaxon	Kribbella capetownensis											
 NCBITaxon:652943	biolink:OrganismTaxon	Streptomyces lacticiproducens											
 NCBITaxon:1682732	biolink:OrganismTaxon	Nocardioides pakistanensis											
 NCBITaxon:1642303	biolink:OrganismTaxon	Nonomuraea zeae											
 NCBITaxon:1751298	biolink:OrganismTaxon	Mangrovihabitans endophyticus											
 NCBITaxon:1428626	biolink:OrganismTaxon	Streptomyces malaysiense											
 NCBITaxon:1873457	biolink:OrganismTaxon	Promicromonospora sp.											
-bacdive:167658	biolink:OrganismTaxon	Jiangella anatolica											
 NCBITaxon:1914461	biolink:OrganismTaxon	Micromonospora terminaliae											
 NCBITaxon:56438	biolink:OrganismTaxon	Couchioplanes caeruleus subsp. caeruleus											
 NCBITaxon:1463979	biolink:OrganismTaxon	Actinoplanes sp.											
@@ -4677,17 +4654,13 @@ NCBITaxon:1616787	biolink:OrganismTaxon	Nonomuraea insulae
 NCBITaxon:1848322	biolink:OrganismTaxon	Nonomuraea deserti											
 bacdive:158704	biolink:OrganismTaxon	Stackebrandtia soli											
 NCBITaxon:1926648	biolink:OrganismTaxon	Nocardioides litoris											
-bacdive:166402	biolink:OrganismTaxon	Nonomuraea basaltis											
 NCBITaxon:2316207	biolink:OrganismTaxon	Nonomuraea mangrovi											
 NCBITaxon:2248750	biolink:OrganismTaxon	Spongiactinospora rosea											
 NCBITaxon:2293569	biolink:OrganismTaxon	Jiangella rhizosphaerae											
-bacdive:167058	biolink:OrganismTaxon	Modestobacter altitudinis											
 bacdive:159102	biolink:OrganismTaxon	Streptomyces cyaneus											
 NCBITaxon:44061	biolink:OrganismTaxon	Streptomyces thermodiastaticus											
 NCBITaxon:297584	biolink:OrganismTaxon	Streptomyces sparsus											
 NCBITaxon:460257	biolink:OrganismTaxon	Aeromicrobium ponti											
-NCBITaxon:1690220	biolink:OrganismTaxon	Phycicoccus endophyticus											
-NCBITaxon:1220557	biolink:OrganismTaxon	Actinomadura formosensis											
 medium:67	biolink:ChemicalEntity	CY-AGAR											
 solution:107	biolink:ChemicalEntity	Main sol. 67											
 NCBITaxon:1337839	biolink:OrganismTaxon	Flavobacterium sp.											
@@ -4717,10 +4690,11 @@ NCBITaxon:70996	biolink:OrganismTaxon	Herpetosiphon geysericola
 NCBITaxon:1121900	biolink:OrganismTaxon	Flavobacterium swingsii											
 NCBITaxon:927083	biolink:OrganismTaxon	Sandaracinus amylolyticus											
 NCBITaxon:888830	biolink:OrganismTaxon	Aetherobacter fasciculatus											
-CHEBI:50407	biolink:ChemicalRole	acid-base indicator											
 CHEBI:37958	biolink:ChemicalRole	dye											
+CHEBI:50407	biolink:ChemicalRole	acid-base indicator											
 medium:68	biolink:ChemicalEntity	HALOTHIOBACILLUS NEAPOLITANUS MEDIUM											
 solution:108	biolink:ChemicalEntity	Main sol. 68											
+solution:114	biolink:ChemicalEntity	Trace element solution Vishniac and Santer, 1957											
 solution:114	biolink:ChemicalEntity	Trace element solution Vishniac & Santer, 1957											
 CHEBI:86154	biolink:ChemicalEntity	Bromocresol purple											
 CAS-RN:12054-85-2	biolink:ChemicalEntity	NH46Mo7O24 x 4 H2O											
@@ -4774,14 +4748,14 @@ NCBITaxon:29369	biolink:OrganismTaxon	Clostridium sardiniense
 NCBITaxon:1561	biolink:OrganismTaxon	Clostridium baratii											
 NCBITaxon:1509	biolink:OrganismTaxon	Clostridium sporogenes											
 NCBITaxon:29363	biolink:OrganismTaxon	Clostridium paraputrificum											
-CHEBI:48218	biolink:ChemicalRole	antiseptic drug											
-CHEBI:138880	biolink:ChemicalRole	autophagy inducer											
-CHEBI:50905	biolink:ChemicalRole	teratogenic agent											
-CHEBI:35488	biolink:ChemicalRole	central nervous system depressant											
-CHEBI:50910	biolink:ChemicalRole	neurotoxin											
-CHEBI:64018	biolink:ChemicalRole	protein kinase C agonist											
 CHEBI:60643	biolink:ChemicalRole	NMDA receptor antagonist											
 CHEBI:48354	biolink:ChemicalRole	polar solvent											
+CHEBI:48218	biolink:ChemicalRole	antiseptic drug											
+CHEBI:64018	biolink:ChemicalRole	protein kinase C agonist											
+CHEBI:50905	biolink:ChemicalRole	teratogenic agent											
+CHEBI:138880	biolink:ChemicalRole	autophagy inducer											
+CHEBI:50910	biolink:ChemicalRole	neurotoxin											
+CHEBI:35488	biolink:ChemicalRole	central nervous system depressant											
 medium:78	biolink:ChemicalEntity	CHOPPED MEAT MEDIUM											
 solution:123	biolink:ChemicalEntity	Main sol. 78											
 solution:124	biolink:ChemicalEntity	Haemin solution											
@@ -4798,7 +4772,7 @@ NCBITaxon:1502	biolink:OrganismTaxon	Clostridium perfringens
 NCBITaxon:1490	biolink:OrganismTaxon	Paraclostridium bifermentans											
 NCBITaxon:1494	biolink:OrganismTaxon	Clostridium cochlearium											
 NCBITaxon:1522	biolink:OrganismTaxon	Clostridium innocuum											
-NCBITaxon:1121334	biolink:OrganismTaxon	Faecalispora sporosphaeroides											
+NCBITaxon:1121334	biolink:OrganismTaxon	Clostridium sporosphaeroides											
 NCBITaxon:1496	biolink:OrganismTaxon	Clostridioides difficile											
 NCBITaxon:817	biolink:OrganismTaxon	Bacteroides fragilis											
 NCBITaxon:29374	biolink:OrganismTaxon	Filifactor villosus											
@@ -4853,6 +4827,7 @@ NCBITaxon:879243	biolink:OrganismTaxon	Porphyromonas asaccharolytica
 NCBITaxon:870	biolink:OrganismTaxon	Dichelobacter nodosus											
 NCBITaxon:1472761	biolink:OrganismTaxon	Enorma massiliensis											
 NCBITaxon:888721	biolink:OrganismTaxon	Eubacterium minutum											
+NCBITaxon:1121101	biolink:OrganismTaxon	Bacteroides salyersiae											
 NCBITaxon:537012	biolink:OrganismTaxon	Bacteroides cellulosilyticus											
 NCBITaxon:880074	biolink:OrganismTaxon	Barnesiella viscericola											
 NCBITaxon:371601	biolink:OrganismTaxon	Bacteroides xylanisolvens											
@@ -4919,7 +4894,7 @@ NCBITaxon:1796646	biolink:OrganismTaxon	Muribaculum intestinale
 NCBITaxon:1540	biolink:OrganismTaxon	Clostridioides mangenotii											
 NCBITaxon:2963284	biolink:OrganismTaxon	Terrisporobacter sp.											
 NCBITaxon:328812	biolink:OrganismTaxon	Parabacteroides goldsteinii											
-NCBITaxon:1547	biolink:OrganismTaxon	Thomasclavelia  ramosa											
+NCBITaxon:1547	biolink:OrganismTaxon	Clostridium ramosum											
 NCBITaxon:1796615	biolink:OrganismTaxon	Blautia caecimuris											
 NCBITaxon:1796610	biolink:OrganismTaxon	Adlercreutzia muris											
 NCBITaxon:1660341	biolink:OrganismTaxon	Peptoniphilus catoniae											
@@ -4995,8 +4970,8 @@ bacdive:169626	biolink:OrganismTaxon	Parabacteroides sp.
 bacdive:169200	biolink:OrganismTaxon	Bacteroides sp.											
 NCBITaxon:195103	biolink:OrganismTaxon	Clostridium perfringens											
 NCBITaxon:1121866	biolink:OrganismTaxon	Adlercreutzia mucosicola											
-CHEBI:61908	biolink:ChemicalRole	EC 1.14.13.39 (nitric oxide synthase) inhibitor											
 CHEBI:38157	biolink:ChemicalRole	iron chelator											
+CHEBI:61908	biolink:ChemicalRole	EC 1.14.13.39 (nitric oxide synthase) inhibitor											
 medium:78a	biolink:ChemicalEntity	CHOPPED MEAT MEDIUM FOR TREPONEMA SP.											
 solution:5563	biolink:ChemicalEntity	Main sol. 78a											
 solution:127	biolink:ChemicalEntity	Amino acid solution filter sterilized											
@@ -5013,9 +4988,9 @@ medium:78b	biolink:ChemicalEntity	CHOPPED MEAT MEDIUM N2/CO2
 solution:129	biolink:ChemicalEntity	Main sol. 78b											
 NCBITaxon:626937	biolink:OrganismTaxon	Christensenella minuta											
 CHEBI:71692	biolink:ChemicalRole	insect repellent											
-CHEBI:27311	biolink:ChemicalRole	volatile oil component											
 CHEBI:75768	biolink:ChemicalRole	mammalian metabolite											
 CHEBI:76969	biolink:ChemicalRole	bacterial metabolite											
+CHEBI:27311	biolink:ChemicalRole	volatile oil component											
 medium:78c	biolink:ChemicalEntity	CHOPPED MEAT MEDIUM FOR FRETIBACTERIUM SP.											
 solution:133	biolink:ChemicalEntity	Main sol. 78c											
 solution:2618	biolink:ChemicalEntity	Clarified rumen fluid											
@@ -5033,8 +5008,8 @@ CHEBI:49105	biolink:ChemicalEntity	Thiamine HCl
 CHEBI:1687714	biolink:ChemicalEntity	Calcium D-+-pantothenate											
 CHEBI:16494	biolink:ChemicalEntity	DL-alpha-Lipoic acid											
 NCBITaxon:651822	biolink:OrganismTaxon	Fretibacterium fastidiosum											
-CHEBI:78366	biolink:ChemicalRole	EC 2.7.1.1 (hexokinase) inhibitor											
 CHEBI:85046	biolink:ChemicalRole	skin lightening agent											
+CHEBI:78366	biolink:ChemicalRole	EC 2.7.1.1 (hexokinase) inhibitor											
 medium:78d	biolink:ChemicalEntity	MEDIUM FOR TREPONEMA PARVUM											
 solution:5564	biolink:ChemicalEntity	Main sol. 78d											
 solution:5565	biolink:ChemicalEntity	Amino acid solution											
@@ -5177,8 +5152,8 @@ bacdive:16606	biolink:OrganismTaxon	Streptosporangium koreanum
 NCBITaxon:502180	biolink:OrganismTaxon	Actinoallomurus oryzae											
 medium:85	biolink:ChemicalEntity	GLUCOSE PEPTONE MEDIUM											
 solution:148	biolink:ChemicalEntity	Main sol. 85											
-CHEBI:50909	biolink:ChemicalRole	nephrotoxic agent											
 CHEBI:50903	biolink:ChemicalRole	carcinogenic agent											
+CHEBI:50909	biolink:ChemicalRole	nephrotoxic agent											
 medium:86	biolink:ChemicalEntity	CASTENHOLZ MEDIUM											
 solution:149	biolink:ChemicalEntity	Main sol. 86											
 CHEBI:44557	biolink:ChemicalEntity	Nitrilotriacetic acid											
@@ -5541,7 +5516,7 @@ NCBITaxon:330943	biolink:OrganismTaxon	Kocuria aegyptia
 NCBITaxon:174038	biolink:OrganismTaxon	Luteococcus sanguinis											
 NCBITaxon:254785	biolink:OrganismTaxon	Streptococcus halichoeri											
 NCBITaxon:1349765	biolink:OrganismTaxon	Enterococcus canis											
-NCBITaxon:110845	biolink:OrganismTaxon	Phocicoccus pinnipedialis											
+NCBITaxon:110845	biolink:OrganismTaxon	Jeotgalicoccus pinnipedialis											
 NCBITaxon:218144	biolink:OrganismTaxon	Vagococcus carniphilus											
 NCBITaxon:1051981	biolink:OrganismTaxon	Streptococcus equi subsp. ruminatorum											
 NCBITaxon:28901	biolink:OrganismTaxon	Salmonella enterica subsp. enterica											
@@ -5638,6 +5613,7 @@ NCBITaxon:1121864	biolink:OrganismTaxon	Enterococcus cecorum
 NCBITaxon:44008	biolink:OrganismTaxon	Enterococcus cecorum											
 NCBITaxon:1363	biolink:OrganismTaxon	Lactococcus garvieae subsp. garvieae											
 NCBITaxon:1348632	biolink:OrganismTaxon	Lactococcus plantarum											
+NCBITaxon:1280	biolink:OrganismTaxon	Staphylococcus aureus subsp. anaerobius											
 NCBITaxon:1329	biolink:OrganismTaxon	Streptococcus canis											
 NCBITaxon:764298	biolink:OrganismTaxon	Streptococcus macacae											
 NCBITaxon:1340	biolink:OrganismTaxon	Streptococcus porcinus											
@@ -5777,8 +5753,8 @@ NCBITaxon:506594	biolink:OrganismTaxon	Brevibacterium pityocampae
 NCBITaxon:1122933	biolink:OrganismTaxon	Paraoerskovia marina											
 NCBITaxon:417368	biolink:OrganismTaxon	Enterococcus thailandicus											
 NCBITaxon:412690	biolink:OrganismTaxon	Microterricola viridarii											
-NCBITaxon:630514	biolink:OrganismTaxon	Paramicrobium agarici											
-NCBITaxon:640635	biolink:OrganismTaxon	Paramicrobacterium humi											
+NCBITaxon:630514	biolink:OrganismTaxon	Microbacterium agarici											
+NCBITaxon:640635	biolink:OrganismTaxon	Microbacterium humi											
 NCBITaxon:630515	biolink:OrganismTaxon	Microlunatus soli											
 NCBITaxon:556530	biolink:OrganismTaxon	Serinibacter salmoneus											
 NCBITaxon:548579	biolink:OrganismTaxon	Isoptericola jiangsuensis											
@@ -6093,6 +6069,7 @@ NCBITaxon:1874116	biolink:OrganismTaxon	Allobranchiibius huperziae
 NCBITaxon:1572762	biolink:OrganismTaxon	Xylanibacillus composti											
 NCBITaxon:1750644	biolink:OrganismTaxon	Aeromicrobium halotolerans											
 NCBITaxon:1161097	biolink:OrganismTaxon	Corynebacterium mucifaciens											
+NCBITaxon:1690220	biolink:OrganismTaxon	Phycicoccus endophyticus											
 NCBITaxon:1629051	biolink:OrganismTaxon	Specibacter cremeus											
 NCBITaxon:1630594	biolink:OrganismTaxon	Arthrobacter ginkgonis											
 NCBITaxon:1577474	biolink:OrganismTaxon	Raineyella antarctica											
@@ -6107,7 +6084,7 @@ NCBITaxon:2055844	biolink:OrganismTaxon	Kocuria uropygioeca
 NCBITaxon:1935379	biolink:OrganismTaxon	Leucobacter muris											
 NCBITaxon:1857024	biolink:OrganismTaxon	Brevibacterium sediminis											
 NCBITaxon:1645681	biolink:OrganismTaxon	Nakamurella silvestris											
-NCBITaxon:1812261	biolink:OrganismTaxon	Phocicoccus schoeneichii											
+NCBITaxon:1812261	biolink:OrganismTaxon	Jeotgalicoccus schoeneichii											
 NCBITaxon:1812262	biolink:OrganismTaxon	Rothia aerolata											
 NCBITaxon:1930533	biolink:OrganismTaxon	Streptococcus caviae											
 NCBITaxon:1052017	biolink:OrganismTaxon	Leucobacter margaritiformis											
@@ -6146,7 +6123,7 @@ NCBITaxon:1451356	biolink:OrganismTaxon	Streptococcus moroccensis
 NCBITaxon:1469425	biolink:OrganismTaxon	Streptococcus tangierensis											
 NCBITaxon:1451357	biolink:OrganismTaxon	Streptococcus rifensis											
 NCBITaxon:1784719	biolink:OrganismTaxon	Leucobacter triazinivorans											
-NCBITaxon:1871614	biolink:OrganismTaxon	Cellulosimicrobium funkei											
+NCBITaxon:1871614	biolink:OrganismTaxon	Cellulosimicrobium sp.											
 NCBITaxon:1986155	biolink:OrganismTaxon	Staphylococcus cornubiensis											
 NCBITaxon:2233852	biolink:OrganismTaxon	Aeromicrobium lacus											
 NCBITaxon:1036020	biolink:OrganismTaxon	Nocardioides soli											
@@ -6290,7 +6267,6 @@ NCBITaxon:1263550	biolink:OrganismTaxon	Edwardsiella piscicida
 bacdive:169488	biolink:OrganismTaxon	Kocuria sp.											
 bacdive:169285	biolink:OrganismTaxon	Rhodococcus sp.											
 bacdive:169461	biolink:OrganismTaxon	Glutamicibacter sp.											
-bacdive:166184	biolink:OrganismTaxon	Staphylococcus pseudoxylosus											
 bacdive:169617	biolink:OrganismTaxon	Wohlfahrtiimonas chitiniclastica											
 bacdive:169618	biolink:OrganismTaxon	Wohlfahrtiimonas chitiniclastica											
 bacdive:169349	biolink:OrganismTaxon	Acinetobacter radioresistens											
@@ -6302,7 +6278,6 @@ bacdive:169354	biolink:OrganismTaxon	Acinetobacter radioresistens
 bacdive:169355	biolink:OrganismTaxon	Acinetobacter radioresistens											
 bacdive:169356	biolink:OrganismTaxon	Acinetobacter radioresistens											
 bacdive:169357	biolink:OrganismTaxon	Acinetobacter radioresistens											
-bacdive:167008	biolink:OrganismTaxon	Citrobacter telavivensis											
 bacdive:168338	biolink:OrganismTaxon	Leucobacter soli											
 bacdive:169360	biolink:OrganismTaxon	Acinetobacter radioresistens											
 bacdive:169359	biolink:OrganismTaxon	Acinetobacter radioresistens											
@@ -6322,19 +6297,17 @@ bacdive:169779	biolink:OrganismTaxon	Planococcus wigleyi
 bacdive:169777	biolink:OrganismTaxon	Oerskovia merdavium											
 bacdive:169780	biolink:OrganismTaxon	Psychrobacter communis											
 bacdive:169344	biolink:OrganismTaxon	Ochrobactrum gallinarum											
-bacdive:166800	biolink:OrganismTaxon	Vibrio sp.											
-bacdive:170082	biolink:OrganismTaxon	Vibrio sp.											
 bacdive:169785	biolink:OrganismTaxon	Kaistella pullorum											
-bacdive:169657	biolink:OrganismTaxon	Microbacterium commune											
+bacdive:169657	biolink:OrganismTaxon	Microbacterium gallinarum											
 bacdive:169516	biolink:OrganismTaxon	Microbacterium pullorum											
-bacdive:169543	biolink:OrganismTaxon	Microbacterium gallinarum											
+bacdive:169543	biolink:OrganismTaxon	Microbacterium commune											
 bacdive:169462	biolink:OrganismTaxon	Arthrobacter polaris											
-bacdive:170423	biolink:OrganismTaxon	Staphylococcus shinii											
+bacdive:170423	biolink:OrganismTaxon	Staphylococcus sp.											
 bacdive:169363	biolink:OrganismTaxon	Acinetobacter radioresistens											
 bacdive:169362	biolink:OrganismTaxon	Acinetobacter radioresistens											
 bacdive:169149	biolink:OrganismTaxon	Aeromonas hydrophila											
 bacdive:170474	biolink:OrganismTaxon	Vagococcus luciliae											
-bacdive:170581	biolink:OrganismTaxon	Mergibacter septicus											
+bacdive:170581	biolink:OrganismTaxon	unclassified bacterium											
 bacdive:169345	biolink:OrganismTaxon	Luteimonas colneyensis											
 bacdive:169290	biolink:OrganismTaxon	Salmonella enterica											
 bacdive:169291	biolink:OrganismTaxon	Salmonella enterica											
@@ -6367,7 +6340,7 @@ bacdive:170330	biolink:OrganismTaxon	Corynebacterium sp.
 bacdive:170324	biolink:OrganismTaxon	Corynebacterium sp.											
 bacdive:170328	biolink:OrganismTaxon	Corynebacterium sp.											
 bacdive:170326	biolink:OrganismTaxon	Corynebacterium sp.											
-bacdive:170329	biolink:OrganismTaxon	Corynebacterium marquesiae											
+bacdive:170329	biolink:OrganismTaxon	Corynebacterium sp.											
 bacdive:170331	biolink:OrganismTaxon	Corynebacterium sp.											
 NCBITaxon:1219074	biolink:OrganismTaxon	Vibrio fluvialis											
 bacdive:170327	biolink:OrganismTaxon	Corynebacterium sp.											
@@ -6438,8 +6411,8 @@ bacdive:169168	biolink:OrganismTaxon	Bacillus licheniformis
 bacdive:169169	biolink:OrganismTaxon	Bacillus licheniformis											
 bacdive:169409	biolink:OrganismTaxon	Staphylococcus aureus											
 bacdive:169368	biolink:OrganismTaxon	Klebsiella pneumoniae											
-bacdive:169186	biolink:OrganismTaxon	Bacillus norwichensis											
-bacdive:169212	biolink:OrganismTaxon	Brevibacterium gallinarum											
+bacdive:169186	biolink:OrganismTaxon	Bacillus sp.											
+bacdive:169212	biolink:OrganismTaxon	Brevibacterium sp.											
 bacdive:169693	biolink:OrganismTaxon	Brevundimonas guildfordensis											
 bacdive:169330	biolink:OrganismTaxon	Cytobacillus stercorigallinarum											
 bacdive:169346	biolink:OrganismTaxon	Escherichia whittamii											
@@ -6449,11 +6422,11 @@ bacdive:169775	biolink:OrganismTaxon	Oerskovia douganii
 bacdive:169776	biolink:OrganismTaxon	Oerskovia gallyi											
 bacdive:169778	biolink:OrganismTaxon	Oerskovia rustica											
 bacdive:169566	biolink:OrganismTaxon	Oceanitalea stevensii											
-bacdive:169160	biolink:OrganismTaxon	Arthrobacter gallicola											
+bacdive:169160	biolink:OrganismTaxon	Arthrobacter sp.											
 bacdive:169504	biolink:OrganismTaxon	Cellulomonas avistercoris											
-bacdive:169161	biolink:OrganismTaxon	Arthrobacter pullicola											
+bacdive:169161	biolink:OrganismTaxon	Arthrobacter sp.											
 NCBITaxon:1449978	biolink:OrganismTaxon	Burkholderia vietnamiensis											
-bacdive:169340	biolink:OrganismTaxon	Acinetobacter pecorum											
+bacdive:169340	biolink:OrganismTaxon	Acinetobacter sp.											
 NCBITaxon:1977084	biolink:OrganismTaxon	Ornithinimicrobium sp.											
 NCBITaxon:291602	biolink:OrganismTaxon	Kribbella lupini											
 NCBITaxon:621	biolink:OrganismTaxon	Shigella boydii											
@@ -6484,13 +6457,6 @@ NCBITaxon:678	biolink:OrganismTaxon	Vibrio sp.
 NCBITaxon:678	biolink:OrganismTaxon	Listonella anguillarum											
 NCBITaxon:678	biolink:OrganismTaxon	Vibrio cincinnatiensis											
 NCBITaxon:2045214	biolink:OrganismTaxon	Stenotrophomonas lactitubi											
-bacdive:133650	biolink:OrganismTaxon	Klebsiella variicola subsp. variicola											
-NCBITaxon:156976	biolink:OrganismTaxon	Corynebacterium riegelii											
-NCBITaxon:1214160	biolink:OrganismTaxon	Streptococcus suis											
-NCBITaxon:301102	biolink:OrganismTaxon	Enterobacter hormaechei subsp. oharae											
-NCBITaxon:1218085	biolink:OrganismTaxon	Citrobacter rodentium											
-NCBITaxon:743972	biolink:OrganismTaxon	Actinobacillus suis											
-NCBITaxon:1027360	biolink:OrganismTaxon	Edwardsiella ictaluri											
 medium:92a	biolink:ChemicalEntity	MODIFIED MEDIUM 92											
 solution:162	biolink:ChemicalEntity	Main sol. 92a											
 NCBITaxon:88874	biolink:OrganismTaxon	Luteococcus peritonei											
@@ -6647,7 +6613,7 @@ NCBITaxon:1410665	biolink:OrganismTaxon	Mitsuokella jalaludinii
 NCBITaxon:411462	biolink:OrganismTaxon	Dorea longicatena											
 NCBITaxon:997349	biolink:OrganismTaxon	Olsenella profusa											
 NCBITaxon:649762	biolink:OrganismTaxon	Blautia luti											
-NCBITaxon:626523	biolink:OrganismTaxon	Shuttleworthella satelles											
+NCBITaxon:626523	biolink:OrganismTaxon	Shuttleworthia satelles											
 NCBITaxon:411490	biolink:OrganismTaxon	Anaerostipes caccae											
 NCBITaxon:285729	biolink:OrganismTaxon	Fusobacterium canifelinum											
 NCBITaxon:185243	biolink:OrganismTaxon	Propionicimonas paludicola											
@@ -6665,15 +6631,15 @@ NCBITaxon:880526	biolink:OrganismTaxon	Rikenella microfusus
 NCBITaxon:39490	biolink:OrganismTaxon	Eubacterium ramulus											
 NCBITaxon:1747	biolink:OrganismTaxon	Cutibacterium acnes											
 NCBITaxon:888743	biolink:OrganismTaxon	Prevotella multiformis											
-NCBITaxon:862515	biolink:OrganismTaxon	Hoylesella marshii											
-NCBITaxon:688246	biolink:OrganismTaxon	Hallella multisaccharivorax											
+NCBITaxon:862515	biolink:OrganismTaxon	Prevotella marshii											
+NCBITaxon:688246	biolink:OrganismTaxon	Prevotella multisaccharivorax											
 NCBITaxon:470145	biolink:OrganismTaxon	Phocaeicola coprocola											
 NCBITaxon:1123490	biolink:OrganismTaxon	Veillonella montpellierensis											
 NCBITaxon:206043	biolink:OrganismTaxon	Actinomyces oricola											
 NCBITaxon:679935	biolink:OrganismTaxon	Alistipes finegoldii											
 NCBITaxon:1121947	biolink:OrganismTaxon	Helcococcus sueciensis											
 NCBITaxon:237576	biolink:OrganismTaxon	Oribacterium sinus											
-NCBITaxon:585502	biolink:OrganismTaxon	Hallella bergensis											
+NCBITaxon:585502	biolink:OrganismTaxon	Prevotella bergensis											
 NCBITaxon:694427	biolink:OrganismTaxon	Paludibacter propionicigenes											
 NCBITaxon:471870	biolink:OrganismTaxon	Bacteroides intestinalis											
 NCBITaxon:134605	biolink:OrganismTaxon	Fusobacterium equinum											
@@ -6709,8 +6675,8 @@ NCBITaxon:644284	biolink:OrganismTaxon	Arcanobacterium haemolyticum
 NCBITaxon:1235809	biolink:OrganismTaxon	Bacteroides pyogenes											
 NCBITaxon:693979	biolink:OrganismTaxon	Bacteroides helcogenes											
 NCBITaxon:1122982	biolink:OrganismTaxon	Prevotella denticola											
-NCBITaxon:28126	biolink:OrganismTaxon	Segatella buccae											
-NCBITaxon:679190	biolink:OrganismTaxon	Hoylesella buccalis											
+NCBITaxon:28126	biolink:OrganismTaxon	Prevotella buccae											
+NCBITaxon:679190	biolink:OrganismTaxon	Prevotella buccalis											
 NCBITaxon:700015	biolink:OrganismTaxon	Coriobacterium glomerans											
 NCBITaxon:1123303	biolink:OrganismTaxon	Streptococcus ferus											
 NCBITaxon:49896	biolink:OrganismTaxon	Acetomicrobium flavidum											
@@ -6728,7 +6694,7 @@ NCBITaxon:52773	biolink:OrganismTaxon	Schaalia meyeri
 NCBITaxon:546271	biolink:OrganismTaxon	Selenomonas sputigena											
 NCBITaxon:1656	biolink:OrganismTaxon	Actinomyces viscosus											
 NCBITaxon:997353	biolink:OrganismTaxon	Prevotella pallens											
-NCBITaxon:1122989	biolink:OrganismTaxon	Segatella oris											
+NCBITaxon:1122989	biolink:OrganismTaxon	Prevotella oris											
 NCBITaxon:29466	biolink:OrganismTaxon	Veillonella parvula subsp. parvula											
 NCBITaxon:411469	biolink:OrganismTaxon	Anaerobutyricum hallii											
 NCBITaxon:74426	biolink:OrganismTaxon	Collinsella aerofaciens											
@@ -6741,16 +6707,16 @@ NCBITaxon:1002367	biolink:OrganismTaxon	Leyella stercorea
 NCBITaxon:387090	biolink:OrganismTaxon	Phocaeicola coprophilus											
 NCBITaxon:537006	biolink:OrganismTaxon	Parabacteroides johnsonii											
 NCBITaxon:1298595	biolink:OrganismTaxon	Veillonella rogosae											
-NCBITaxon:873513	biolink:OrganismTaxon	Segatella buccae											
+NCBITaxon:873513	biolink:OrganismTaxon	Prevotella buccae											
 NCBITaxon:1120941	biolink:OrganismTaxon	Actinomyces dentalis											
 NCBITaxon:208480	biolink:OrganismTaxon	Bowdeniella nasicola											
 NCBITaxon:202789	biolink:OrganismTaxon	Actinobaculum massiliense											
-NCBITaxon:1122988	biolink:OrganismTaxon	Hoylesella nanceiensis											
+NCBITaxon:1122988	biolink:OrganismTaxon	Prevotella nanceiensis											
 NCBITaxon:1122986	biolink:OrganismTaxon	Segatella maculosa											
 NCBITaxon:446660	biolink:OrganismTaxon	Adlercreutzia equolifaciens subsp. equolifaciens											
 NCBITaxon:445930	biolink:OrganismTaxon	Trueperella abortisuis											
 NCBITaxon:349934	biolink:OrganismTaxon	Brooklawnia cerclae											
-NCBITaxon:1122985	biolink:OrganismTaxon	Hoylesella loescheii											
+NCBITaxon:1122985	biolink:OrganismTaxon	Prevotella loescheii											
 NCBITaxon:679201	biolink:OrganismTaxon	Selenomonas infelix											
 NCBITaxon:638302	biolink:OrganismTaxon	Selenomonas flueggei											
 NCBITaxon:714315	biolink:OrganismTaxon	Pseudoleptotrichia goodfellowii											
@@ -6881,7 +6847,7 @@ NCBITaxon:1574624	biolink:OrganismTaxon	Cutibacterium namnetense
 NCBITaxon:361500	biolink:OrganismTaxon	Anaerococcus degeneri											
 NCBITaxon:1659	biolink:OrganismTaxon	Actinomyces israelii											
 NCBITaxon:1120944	biolink:OrganismTaxon	Actinomyces israelii											
-NCBITaxon:1671366	biolink:OrganismTaxon	Drancourtella massiliensis											
+NCBITaxon:1671366	biolink:OrganismTaxon	Ruminococcus sp.											
 NCBITaxon:1673725	biolink:OrganismTaxon	Peptoniphilus lacydonensis											
 NCBITaxon:1679444	biolink:OrganismTaxon	Akkermansia glycaniphila											
 NCBITaxon:907	biolink:OrganismTaxon	Megasphaera elsdenii											
@@ -6998,8 +6964,6 @@ bacdive:169764	biolink:OrganismTaxon	Muricaecibacterium torontonense
 bacdive:169759	biolink:OrganismTaxon	Streptococcus caecimuris											
 bacdive:169755	biolink:OrganismTaxon	Weizmannia agrestimuris											
 NCBITaxon:182773	biolink:OrganismTaxon	Clostridium isatidis											
-NCBITaxon:1750	biolink:OrganismTaxon	Arachnia propionica											
-NCBITaxon:411466	biolink:OrganismTaxon	Schaalia odontolytica											
 medium:104a	biolink:ChemicalEntity	ANAEROBACULUM MEDIUM											
 solution:177	biolink:ChemicalEntity	Main sol. 104a											
 CAS-RN:91079-38-8	biolink:ChemicalEntity	Meat peptone											
@@ -7063,7 +7027,7 @@ NCBITaxon:1648214	biolink:OrganismTaxon	Clostridium amazonense
 NCBITaxon:1465809	biolink:OrganismTaxon	Clostridium senegalense											
 NCBITaxon:1216932	biolink:OrganismTaxon	Clostridium bornimense											
 NCBITaxon:908809	biolink:OrganismTaxon	Caloramator mitchellensis											
-NCBITaxon:1301100	biolink:OrganismTaxon	Faecalimicrobium dakarense											
+NCBITaxon:1301100	biolink:OrganismTaxon	Clostridium dakarense											
 NCBITaxon:1121386	biolink:OrganismTaxon	Dendrosporobacter quercicolus											
 bacdive:130246	biolink:OrganismTaxon	Clostridium boliviensis											
 bacdive:130247	biolink:OrganismTaxon	Clostridium sulfatireducens											
@@ -7145,8 +7109,8 @@ NCBITaxon:433296	biolink:OrganismTaxon	Aminipila butyrica
 NCBITaxon:433287	biolink:OrganismTaxon	Anaerotignum aminivorans											
 bacdive:157754	biolink:OrganismTaxon	unclassified bacterium											
 NCBITaxon:1945634	biolink:OrganismTaxon	Butyricicoccus porcorum											
-NCBITaxon:1869227	biolink:OrganismTaxon	Waltera acetigignens											
-bacdive:157762	biolink:OrganismTaxon	Gemmiger sp.											
+NCBITaxon:1869227	biolink:OrganismTaxon	Brotolimicola acetigignens											
+bacdive:157762	biolink:OrganismTaxon	unclassified bacterium											
 bacdive:157763	biolink:OrganismTaxon	Clostridium ammoniilyticum											
 NCBITaxon:1869227	biolink:OrganismTaxon	Clostridium ammoniilyticum											
 NCBITaxon:2049024	biolink:OrganismTaxon	Coprococcus ammoniilyticus											
@@ -7172,9 +7136,6 @@ bacdive:163918	biolink:OrganismTaxon	Alkalicella caledoniensis
 NCBITaxon:1121322	biolink:OrganismTaxon	Anaerocolumna jejuensis											
 bacdive:160196	biolink:OrganismTaxon	Anaeropeptidivorans aminofermentans											
 bacdive:170414	biolink:OrganismTaxon	Clostridium folliculivorans											
-NCBITaxon:500632	biolink:OrganismTaxon	Clostridium nexile											
-NCBITaxon:84030	biolink:OrganismTaxon	Lacrimispora saccharolytica											
-NCBITaxon:1325933	biolink:OrganismTaxon	Clostridium polynesiense											
 medium:104d	biolink:ChemicalEntity	MALEDIVIBACTER MEDIUM											
 solution:180	biolink:ChemicalEntity	Main sol. 104d											
 CHEBI:17750	biolink:ChemicalEntity	Betaine x H2O											
@@ -7206,7 +7167,6 @@ NCBITaxon:1379734	biolink:OrganismTaxon	Gluconobacter cerevisiae
 NCBITaxon:33995	biolink:OrganismTaxon	Komagataeibacter europaeus											
 NCBITaxon:1876758	biolink:OrganismTaxon	Gluconobacter sp.											
 NCBITaxon:887700	biolink:OrganismTaxon	Acetobacter aceti											
-NCBITaxon:1307939	biolink:OrganismTaxon	Komagataeibacter rhaeticus											
 medium:108	biolink:ChemicalEntity	ACIDIPHILIUM ACIDOPHILUM MEDIUM											
 solution:182	biolink:ChemicalEntity	Main sol. 108											
 CHEBI:86159	biolink:ChemicalEntity	CaNO32 x 4 H2O											
@@ -7227,15 +7187,15 @@ NCBITaxon:1532	biolink:OrganismTaxon	Blautia coccoides
 NCBITaxon:1539	biolink:OrganismTaxon	Clostridium malenominatum											
 NCBITaxon:1528	biolink:OrganismTaxon	Eubacterium barkeri											
 NCBITaxon:1121297	biolink:OrganismTaxon	Anaerocolumna aminovalerica											
-NCBITaxon:1540	biolink:OrganismTaxon	Metaclostridoides mangenotii											
 NCBITaxon:1543	biolink:OrganismTaxon	Clostridium oceanicum											
 NCBITaxon:99675	biolink:OrganismTaxon	Clostridium putrefaciens											
 NCBITaxon:1530	biolink:OrganismTaxon	Clostridium carnis											
 NCBITaxon:1536	biolink:OrganismTaxon	Hathewaya limosa											
-NCBITaxon:445974	biolink:OrganismTaxon	Thomasclavelia  ramosa											
+NCBITaxon:445974	biolink:OrganismTaxon	Clostridium ramosum											
 NCBITaxon:1491	biolink:OrganismTaxon	Clostridium putrificum											
 NCBITaxon:545697	biolink:OrganismTaxon	Clostridium celatum											
 NCBITaxon:1676991	biolink:OrganismTaxon	Clostridium sp.											
+NCBITaxon:500632	biolink:OrganismTaxon	Clostridium nexile											
 NCBITaxon:29367	biolink:OrganismTaxon	Clostridium puniceum											
 NCBITaxon:649757	biolink:OrganismTaxon	Anaerostipes hadrus											
 NCBITaxon:887325	biolink:OrganismTaxon	Lachnoanaerobaculum saburreum											
@@ -7264,11 +7224,11 @@ NCBITaxon:1123404	biolink:OrganismTaxon	Tissierella praeacuta
 NCBITaxon:2741	biolink:OrganismTaxon	Peptococcus niger											
 NCBITaxon:1657	biolink:OrganismTaxon	Actinobaculum suis											
 NCBITaxon:435591	biolink:OrganismTaxon	Parabacteroides distasonis											
-NCBITaxon:873533	biolink:OrganismTaxon	Hoylesella oralis											
+NCBITaxon:873533	biolink:OrganismTaxon	Prevotella oralis											
 NCBITaxon:431947	biolink:OrganismTaxon	Porphyromonas gingivalis											
 NCBITaxon:1122974	biolink:OrganismTaxon	Porphyromonas macacae											
 NCBITaxon:709991	biolink:OrganismTaxon	Odoribacter splanchnicus											
-NCBITaxon:1414721	biolink:OrganismTaxon	Faecalispora jeddahensis											
+NCBITaxon:1414721	biolink:OrganismTaxon	Clostridium jeddahense											
 NCBITaxon:178338	biolink:OrganismTaxon	Sedimentibacter hongkongensis											
 NCBITaxon:1121021	biolink:OrganismTaxon	Adlercreutzia equolifaciens subsp. celatus											
 NCBITaxon:1122981	biolink:OrganismTaxon	Prevotella corporis											
@@ -7303,6 +7263,7 @@ NCBITaxon:1034346	biolink:OrganismTaxon	Dielma fastidiosa
 NCBITaxon:1232426	biolink:OrganismTaxon	Collinsella massiliensis											
 NCBITaxon:1232436	biolink:OrganismTaxon	Enorma timonensis											
 NCBITaxon:915173	biolink:OrganismTaxon	Faecalicoccus acidiformans											
+NCBITaxon:1325933	biolink:OrganismTaxon	Clostridium polynesiense											
 NCBITaxon:1417852	biolink:OrganismTaxon	Flintibacter butyricus											
 NCBITaxon:1414720	biolink:OrganismTaxon	Clostridium saudiense											
 NCBITaxon:837	biolink:OrganismTaxon	Porphyromonas gingivalis											
@@ -7316,7 +7277,7 @@ NCBITaxon:1884669	biolink:OrganismTaxon	Porphyromonas loveana
 NCBITaxon:1562970	biolink:OrganismTaxon	Fermentimonas caenicola											
 NCBITaxon:1157312	biolink:OrganismTaxon	Clostridium vulturis											
 NCBITaxon:416586	biolink:OrganismTaxon	Selenomonas bovis											
-NCBITaxon:2040332	biolink:OrganismTaxon	Dorea acetigenes											
+NCBITaxon:2040332	biolink:OrganismTaxon	Dorea sp.											
 NCBITaxon:1673717	biolink:OrganismTaxon	Anaeromassilibacillus senegalensis											
 NCBITaxon:29524	biolink:OrganismTaxon	Porphyromonas circumdentaria											
 NCBITaxon:1852374	biolink:OrganismTaxon	Ezakiella massiliensis											
@@ -7328,7 +7289,6 @@ NCBITaxon:853	biolink:OrganismTaxon	Faecalibacterium prausnitzii
 NCBITaxon:853	biolink:OrganismTaxon	Faecalibacterium longum											
 NCBITaxon:853	biolink:OrganismTaxon	Faecalibacterium hattorii											
 NCBITaxon:1470347	biolink:OrganismTaxon	Alistipes ihumii											
-NCBITaxon:2040332	biolink:OrganismTaxon	Dorea sp.											
 NCBITaxon:1776760	biolink:OrganismTaxon	Proteiniborus indolifex											
 NCBITaxon:1870999	biolink:OrganismTaxon	Metaprevotella massiliensis											
 NCBITaxon:74426	biolink:OrganismTaxon	Collinsella aerofaciens subsp. shenzhenensis											
@@ -7340,18 +7300,18 @@ bacdive:166743	biolink:OrganismTaxon	Megasphaera hutchinsoni
 bacdive:166921	biolink:OrganismTaxon	Megasphaera vaginalis											
 bacdive:169410	biolink:OrganismTaxon	Anaerostipes sp.											
 bacdive:169662	biolink:OrganismTaxon	Lachnospiraceae bacterium											
-bacdive:168413	biolink:OrganismTaxon	Parvimonas parva											
+bacdive:168413	biolink:OrganismTaxon	Parvimonas sp.											
 bacdive:169637	biolink:OrganismTaxon	Intestinimonas butyriciproducens											
 NCBITaxon:1658	biolink:OrganismTaxon	Actinomyces bovis											
 bacdive:165414	biolink:OrganismTaxon	Mediterraneibacter gnavus											
 bacdive:170409	biolink:OrganismTaxon	Holtiella tumoricola											
-NCBITaxon:39950	biolink:OrganismTaxon	Dialister pneumosintes											
 medium:110a	biolink:ChemicalEntity	CMC MEDIUM N2/CO2											
 solution:188	biolink:ChemicalEntity	Main sol. 110a											
 solution:189	biolink:ChemicalEntity	Meat filtrate											
 solution:6315	biolink:ChemicalEntity	Sugar mix											
 CHEBI:17306	biolink:ChemicalEntity	D-Maltose											
 NCBITaxon:1121304	biolink:OrganismTaxon	Thomasclavelia  cocleata											
+NCBITaxon:84030	biolink:OrganismTaxon	Lacrimispora saccharolytica											
 NCBITaxon:1121950	biolink:OrganismTaxon	Hespellia stercorisuis											
 NCBITaxon:445973	biolink:OrganismTaxon	Intestinibacter bartlettii											
 NCBITaxon:1115758	biolink:OrganismTaxon	Romboutsia ilealis											
@@ -7471,7 +7431,9 @@ NCBITaxon:190976	biolink:OrganismTaxon	Methanobrevibacter woesei
 NCBITaxon:190975	biolink:OrganismTaxon	Methanobrevibacter thaueri											
 NCBITaxon:242129	biolink:OrganismTaxon	Methanobacterium beijingense											
 NCBITaxon:294671	biolink:OrganismTaxon	Methanobrevibacter olleyae											
+NCBITaxon:483896	biolink:OrganismTaxon	Methanobacterium kanagiense											
 NCBITaxon:680118	biolink:OrganismTaxon	Methanothermobacter tenebrarum											
+NCBITaxon:877455	biolink:OrganismTaxon	Methanobacterium lacus											
 NCBITaxon:1045764	biolink:OrganismTaxon	Methanothermobacter crinale											
 NCBITaxon:1348249	biolink:OrganismTaxon	Methanobrevibacter boviskoreani											
 NCBITaxon:490098	biolink:OrganismTaxon	Methanobacterium flexile											
@@ -7615,7 +7577,7 @@ CHEBI:27026	biolink:ChemicalRole	toxin
 medium:135a	biolink:ChemicalEntity	ACETOBACTERIUM MEDIUM MARINE											
 solution:232	biolink:ChemicalEntity	Main sol. 135a											
 CHEBI:30742	biolink:ChemicalEntity	Ethylene glycol											
-NCBITaxon:1872094	biolink:OrganismTaxon	Salileptolyngbya sp.											
+NCBITaxon:1872094	biolink:OrganismTaxon	Acetobacterium sp.											
 medium:135b	biolink:ChemicalEntity	ACETOBACTERIUM DEHALOGENANS MEDIUM											
 solution:233	biolink:ChemicalEntity	Main sol. 135b											
 solution:6318	biolink:ChemicalEntity	Na-syringate solution 0.3 M											
@@ -7677,13 +7639,10 @@ NCBITaxon:386456	biolink:OrganismTaxon	Methanobacterium arcticum
 NCBITaxon:487686	biolink:OrganismTaxon	Methanomicrobium antiquum											
 NCBITaxon:710191	biolink:OrganismTaxon	Methanobacterium ferruginis											
 NCBITaxon:710190	biolink:OrganismTaxon	Methanobacterium petrolearium											
-NCBITaxon:483896	biolink:OrganismTaxon	Methanobacterium kanagiense											
-NCBITaxon:1077256	biolink:OrganismTaxon	Methanosphaera cuniculi											
 medium:141a	biolink:ChemicalEntity	METHANOCALDOCOCCUS LAUENSIS MEDIUM											
 solution:243	biolink:ChemicalEntity	Main sol. 141a											
 NCBITaxon:2690208	biolink:OrganismTaxon	Methanococcus sp.											
 bacdive:170862	biolink:OrganismTaxon	Methanocaldococcus lauensis											
-NCBITaxon:2082189	biolink:OrganismTaxon	Methanofervidicoccus abyssi											
 medium:141b	biolink:ChemicalEntity	METHANOCULLEUS SP. MEDIUM											
 solution:244	biolink:ChemicalEntity	Main sol. 141b											
 NCBITaxon:2196	biolink:OrganismTaxon	Methanogenium sp.											
@@ -7826,8 +7785,8 @@ NCBITaxon:273075	biolink:OrganismTaxon	Thermoplasma acidophilum
 medium:159	biolink:ChemicalEntity	TREPONEMA MEDIUM											
 solution:275	biolink:ChemicalEntity	Main sol. 159											
 NCBITaxon:163	biolink:OrganismTaxon	Treponema bryantii											
-NCBITaxon:77095	biolink:OrganismTaxon	Segatella bryantii											
-NCBITaxon:1122978	biolink:OrganismTaxon	Segatella albensis											
+NCBITaxon:77095	biolink:OrganismTaxon	Prevotella bryantii											
+NCBITaxon:1122978	biolink:OrganismTaxon	Prevotella albensis											
 NCBITaxon:114197	biolink:OrganismTaxon	Selenomonas ruminantium subsp. lactilytica											
 medium:160	biolink:ChemicalEntity	CYTOPHAGA HUTCHINSONII MEDIUM											
 solution:5576	biolink:ChemicalEntity	Main sol. 160											
@@ -7835,6 +7794,7 @@ NCBITaxon:269798	biolink:OrganismTaxon	Cytophaga hutchinsonii
 NCBITaxon:1121373	biolink:OrganismTaxon	Cytophaga aurantiaca											
 medium:161	biolink:ChemicalEntity	METHANOFOLLIS MEDIUM											
 solution:277	biolink:ChemicalEntity	Main sol. 161											
+NCBITaxon:694440	biolink:OrganismTaxon	Methanomicrobium mobile											
 NCBITaxon:2052835	biolink:OrganismTaxon	Methanofollis sp.											
 medium:162	biolink:ChemicalEntity	HYPHOMICROBIUM MEDIUM											
 solution:278	biolink:ChemicalEntity	Main sol. 162											
@@ -8098,7 +8058,7 @@ NCBITaxon:1121391	biolink:OrganismTaxon	Desulfacinum infernum
 NCBITaxon:1121434	biolink:OrganismTaxon	Halodesulfovibrio aestuarii											
 NCBITaxon:1121430	biolink:OrganismTaxon	Desulfofundulus thermocisternus											
 NCBITaxon:57320	biolink:OrganismTaxon	Pseudodesulfovibrio profundus											
-NCBITaxon:1121467	biolink:OrganismTaxon	Nitrosopumilus zosterae											
+NCBITaxon:1121467	biolink:OrganismTaxon	Desulfovibrio zosterae											
 NCBITaxon:1121418	biolink:OrganismTaxon	Desulforhopalus singaporensis											
 NCBITaxon:84974	biolink:OrganismTaxon	Desulforhopalus sp.											
 NCBITaxon:2067988	biolink:OrganismTaxon	Desulfobacterium sp.											
@@ -8136,11 +8096,11 @@ solution:403	biolink:ChemicalEntity	Solution A
 solution:405	biolink:ChemicalEntity	Solution B											
 solution:406	biolink:ChemicalEntity	Solution C											
 NCBITaxon:1167006	biolink:OrganismTaxon	Desulfocapsa sulfexigens											
-CHEBI:76967	biolink:ChemicalRole	human xenobiotic metabolite											
-CHEBI:88188	biolink:ChemicalRole	drug allergen											
 CHEBI:65001	biolink:ChemicalRole	EC 3.1.1.3 (triacylglycerol lipase) inhibitor											
 CHEBI:65256	biolink:ChemicalRole	antimicrobial food preservative											
 CHEBI:64996	biolink:ChemicalRole	EC 1.13.11.33 (arachidonate 15-lipoxygenase) inhibitor											
+CHEBI:88188	biolink:ChemicalRole	drug allergen											
+CHEBI:76967	biolink:ChemicalRole	human xenobiotic metabolite											
 medium:198	biolink:ChemicalEntity	DESULFOSARCINA MEDIUM BRACKISH WATER											
 solution:408	biolink:ChemicalEntity	Main sol. 198											
 solution:409	biolink:ChemicalEntity	Solution A											
@@ -8320,6 +8280,7 @@ NCBITaxon:1638	biolink:OrganismTaxon	Listeria ivanovii subsp. ivanovii
 NCBITaxon:1640	biolink:OrganismTaxon	Listeria seeligeri											
 NCBITaxon:1212764	biolink:OrganismTaxon	Paenibacillus popilliae											
 NCBITaxon:238877	biolink:OrganismTaxon	Streptomyces sannurensis											
+NCBITaxon:1750	biolink:OrganismTaxon	Arachnia propionica											
 NCBITaxon:1863	biolink:OrganismTaxon	Dermatophilus congolensis											
 NCBITaxon:62629	biolink:OrganismTaxon	Corynebacterium thomssenii											
 NCBITaxon:1121368	biolink:OrganismTaxon	Corynebacterium pseudodiphtheriticum											
@@ -8445,7 +8406,6 @@ NCBITaxon:230658	biolink:OrganismTaxon	Paraeggerthella hongkongensis
 NCBITaxon:1054034	biolink:OrganismTaxon	Arcobacter cloacae											
 NCBITaxon:2740577	biolink:OrganismTaxon	Streptococcus pacificus											
 bacdive:169709	biolink:OrganismTaxon	Pradoshia sp.											
-bacdive:168591	biolink:OrganismTaxon	Mumia zhuanghuii											
 bacdive:169751	biolink:OrganismTaxon	Lactococcus ileimucosae											
 bacdive:169723	biolink:OrganismTaxon	Agrobacterium burrii											
 bacdive:169724	biolink:OrganismTaxon	Agrobacterium shirazense											
@@ -8460,7 +8420,7 @@ bacdive:169757	biolink:OrganismTaxon	Veillonella intestinalis
 bacdive:169749	biolink:OrganismTaxon	Flintibacter muris											
 bacdive:169741	biolink:OrganismTaxon	Acetatifactor aquisgranensis											
 bacdive:169912	biolink:OrganismTaxon	Listeria ilorinensis											
-bacdive:169663	biolink:OrganismTaxon	Otoolea muris											
+bacdive:169663	biolink:OrganismTaxon	Lachnospiraceae bacterium											
 bacdive:169739	biolink:OrganismTaxon	Erysipelothrix urinaevulpis											
 NCBITaxon:49547	biolink:OrganismTaxon	Methanobrevibacter curvatus											
 NCBITaxon:1783498	biolink:OrganismTaxon	Phytoactinopolyspora alkaliphila											
@@ -8468,9 +8428,8 @@ NCBITaxon:1931223	biolink:OrganismTaxon	Caballeronia sp.
 NCBITaxon:1380684	biolink:OrganismTaxon	Kroppenstedtia sanguinis											
 NCBITaxon:1380685	biolink:OrganismTaxon	Kroppenstedtia pulmonis											
 NCBITaxon:2702	biolink:OrganismTaxon	Gardnerella vaginalis											
-bacdive:169743	biolink:OrganismTaxon	Adlercreutzia murintestinalis											
-CHEBI:35703	biolink:ChemicalRole	xenobiotic											
 CHEBI:78298	biolink:ChemicalRole	environmental contaminant											
+CHEBI:35703	biolink:ChemicalRole	xenobiotic											
 medium:215a	biolink:ChemicalEntity	BHI MEDIUM modified											
 solution:470	biolink:ChemicalEntity	Main sol. 215a											
 CHEBI:48923	biolink:ChemicalEntity	Erythromycin											
@@ -8486,7 +8445,7 @@ NCBITaxon:1810	biolink:OrganismTaxon	Mycobacterium vaccae
 NCBITaxon:43772	biolink:OrganismTaxon	Rhodococcus zopfii											
 NCBITaxon:1220574	biolink:OrganismTaxon	Gordonia amicalis											
 NCBITaxon:1219361	biolink:OrganismTaxon	Millisia brevis											
-NCBITaxon:161896	biolink:OrganismTaxon	Corynebacterium camporealense											
+NCBITaxon:161896	biolink:OrganismTaxon	Corynebacterium camporealensis											
 NCBITaxon:1315211	biolink:OrganismTaxon	Arcobacter aquimarinus											
 medium:215c	biolink:ChemicalEntity	BHI MEDIUM FOR STRICT ANAEROBES											
 solution:472	biolink:ChemicalEntity	Main sol. 215c											
@@ -8513,6 +8472,7 @@ NCBITaxon:1120932	biolink:OrganismTaxon	Actinotignum schaalii
 medium:218	biolink:ChemicalEntity	BHI/3 MEDIUM											
 solution:5581	biolink:ChemicalEntity	Main sol. 218											
 NCBITaxon:29317	biolink:OrganismTaxon	Actinomyces sp.											
+NCBITaxon:411466	biolink:OrganismTaxon	Schaalia odontolytica											
 NCBITaxon:1908263	biolink:OrganismTaxon	Rodentibacter trehalosifermentans											
 medium:219	biolink:ChemicalEntity	MYCOBACTERIUM MEDIUM											
 solution:476	biolink:ChemicalEntity	Main sol. 219											
@@ -8608,11 +8568,11 @@ NCBITaxon:888063	biolink:OrganismTaxon	Enterobacter hormaechei subsp. hormaechei
 NCBITaxon:81476	biolink:OrganismTaxon	Pluralibacter pyrinus											
 NCBITaxon:1609531	biolink:OrganismTaxon	Chryseobacterium rhizoplanae											
 NCBITaxon:118246	biolink:OrganismTaxon	Ureibacillus terrenus											
-NCBITaxon:292	biolink:OrganismTaxon	Paraburkholderia hospita											
 bacdive:1198	biolink:OrganismTaxon	Bacillus thermoterrestis											
 NCBITaxon:653954	biolink:OrganismTaxon	Sphingomonas haloaromaticamans											
 NCBITaxon:1236956	biolink:OrganismTaxon	Paraburkholderia kururiensis											
 NCBITaxon:1216978	biolink:OrganismTaxon	Cedecea neteri											
+NCBITaxon:1027360	biolink:OrganismTaxon	Edwardsiella ictaluri											
 NCBITaxon:1121118	biolink:OrganismTaxon	Brackiella oedipodis											
 NCBITaxon:114136	biolink:OrganismTaxon	Paenibacillus polymyxa											
 NCBITaxon:105751	biolink:OrganismTaxon	Aeromonas bestiarum											
@@ -8679,7 +8639,7 @@ NCBITaxon:135719	biolink:OrganismTaxon	Sphingobium amiense
 NCBITaxon:281375	biolink:OrganismTaxon	Acinetobacter marinus											
 NCBITaxon:281376	biolink:OrganismTaxon	Acinetobacter seohaensis											
 NCBITaxon:263475	biolink:OrganismTaxon	Viridibacillus arvi											
-NCBITaxon:263474	biolink:OrganismTaxon	Ferdinandcohnia humi											
+NCBITaxon:263474	biolink:OrganismTaxon	Fredinandcohnia humi											
 NCBITaxon:263476	biolink:OrganismTaxon	Viridibacillus arenosi											
 NCBITaxon:265948	biolink:OrganismTaxon	Anoxybacillus tepidamans											
 NCBITaxon:290109	biolink:OrganismTaxon	Xenorhabdus innexi											
@@ -8700,8 +8660,10 @@ NCBITaxon:1215105	biolink:OrganismTaxon	Pseudomonas jinjuensis
 NCBITaxon:200905	biolink:OrganismTaxon	Cellvibrio ostraviensis											
 NCBITaxon:981333	biolink:OrganismTaxon	Acinetobacter parvus											
 NCBITaxon:206506	biolink:OrganismTaxon	Kerstersia gyiorum											
+NCBITaxon:1218085	biolink:OrganismTaxon	Citrobacter rodentium											
 NCBITaxon:1208342	biolink:OrganismTaxon	Sphingobium fuliginis											
 NCBITaxon:56193	biolink:OrganismTaxon	Sphingobium chungbukense											
+NCBITaxon:301102	biolink:OrganismTaxon	Enterobacter hormaechei subsp. oharae											
 NCBITaxon:1236971	biolink:OrganismTaxon	Halalkalibacter hemicellulosilyticus											
 NCBITaxon:1348058	biolink:OrganismTaxon	Pseudomonas mediterranea											
 NCBITaxon:313007	biolink:OrganismTaxon	Ureibacillus suwonensis											
@@ -8717,7 +8679,6 @@ NCBITaxon:251747	biolink:OrganismTaxon	Chromobacterium subtsugae
 NCBITaxon:217495	biolink:OrganismTaxon	Lederbergia ruris											
 NCBITaxon:1215098	biolink:OrganismTaxon	Pseudomonas cremoricolorata											
 NCBITaxon:1218115	biolink:OrganismTaxon	Paraburkholderia caledonica											
-NCBITaxon:316	biolink:OrganismTaxon	Pseudomonas sp.											
 NCBITaxon:271417	biolink:OrganismTaxon	Aeromonas molluscorum											
 NCBITaxon:69284	biolink:OrganismTaxon	Pseudoxanthomonas japonensis											
 NCBITaxon:364098	biolink:OrganismTaxon	Sphingosinicella xenopeptidilytica											
@@ -8846,7 +8807,6 @@ NCBITaxon:582475	biolink:OrganismTaxon	Lysinibacillus xylanilyticus
 NCBITaxon:863449	biolink:OrganismTaxon	Cytobacillus purgationiresistens											
 NCBITaxon:549687	biolink:OrganismTaxon	Cytobacillus horneckiae											
 NCBITaxon:546021	biolink:OrganismTaxon	Alkalibacillus flavidus											
-NCBITaxon:1409	biolink:OrganismTaxon	Sporosarcina sp.											
 NCBITaxon:759851	biolink:OrganismTaxon	Sporosarcina newyorkensis											
 NCBITaxon:862114	biolink:OrganismTaxon	Paenibacillus faecis											
 NCBITaxon:859143	biolink:OrganismTaxon	Cytobacillus kochii											
@@ -9080,7 +9040,6 @@ bacdive:170428	biolink:OrganismTaxon	Paenibacillus piscarius
 bacdive:163942	biolink:OrganismTaxon	Acinetobacter lwoffii											
 bacdive:169658	biolink:OrganismTaxon	Acinetobacter lactucae											
 bacdive:167915	biolink:OrganismTaxon	Metabacillus schmidteae											
-NCBITaxon:351674	biolink:OrganismTaxon	Xenorhabdus miraniensis											
 medium:220a	biolink:ChemicalEntity	REACTIVATION WITH TRYPTONE SOYA BROTH											
 solution:478	biolink:ChemicalEntity	Main sol. 220a											
 solution:479	biolink:ChemicalEntity	220. CASO AGAR Merck 105458											
@@ -9128,20 +9087,20 @@ solution:5582	biolink:ChemicalEntity	Main sol. 227
 NCBITaxon:1513897	biolink:OrganismTaxon	Tetragenococcus halophilus subsp. halophilus											
 NCBITaxon:1123358	biolink:OrganismTaxon	Tetragenococcus halophilus subsp. halophilus											
 CHEBI:62868	biolink:ChemicalRole	hepatoprotective agent											
-CHEBI:64571	biolink:ChemicalRole	NMDA receptor agonist											
 CHEBI:25512	biolink:ChemicalRole	neurotransmitter											
 CHEBI:64570	biolink:ChemicalRole	EC 2.1.2.1 (glycine hydroxymethyltransferase) inhibitor											
+CHEBI:64571	biolink:ChemicalRole	NMDA receptor agonist											
 medium:228	biolink:ChemicalEntity	PEPTOCOCCUS GLYCINOPHILUS MEDIUM											
 solution:5583	biolink:ChemicalEntity	Main sol. 228											
 CHEBI:15428	biolink:ChemicalEntity	Glycine											
 medium:229	biolink:ChemicalEntity	CORYNEBACTERIUM MEDIUM WITH SALT											
 solution:5584	biolink:ChemicalEntity	Main sol. 229											
 CHEBI:66993	biolink:ChemicalRole	tocolytic agent											
-CHEBI:35554	biolink:ChemicalRole	cardiovascular drug											
 CHEBI:38070	biolink:ChemicalRole	anti-arrhythmia drug											
+CHEBI:35554	biolink:ChemicalRole	cardiovascular drug											
+CHEBI:35623	biolink:ChemicalRole	anticonvulsant											
 CHEBI:38867	biolink:ChemicalRole	anaesthetic											
 CHEBI:35480	biolink:ChemicalRole	analgesic											
-CHEBI:35623	biolink:ChemicalRole	anticonvulsant											
 medium:230	biolink:ChemicalEntity	TRYPTONE YEAST EXTRACT MINERAL MEDIUM											
 solution:490	biolink:ChemicalEntity	Main sol. 230											
 CHEBI:32599	biolink:ChemicalEntity	MgSO4											
@@ -9172,6 +9131,7 @@ NCBITaxon:1587	biolink:OrganismTaxon	Lactobacillus helveticus
 NCBITaxon:1423774	biolink:OrganismTaxon	Companilactobacillus nantensis											
 NCBITaxon:1423717	biolink:OrganismTaxon	Lactobacillus acidophilus											
 NCBITaxon:324831	biolink:OrganismTaxon	Lactobacillus gasseri											
+NCBITaxon:47770	biolink:OrganismTaxon	Lactobacillus crispatus											
 NCBITaxon:322505	biolink:OrganismTaxon	Sharpea azabuensis											
 NCBITaxon:1626	biolink:OrganismTaxon	Lacticaseibacillus sharpeae											
 NCBITaxon:1423718	biolink:OrganismTaxon	Ligilactobacillus agilis											
@@ -9271,9 +9231,9 @@ NCBITaxon:47482	biolink:OrganismTaxon	Sphaerisporangium cinnabarinum
 NCBITaxon:1882231	biolink:OrganismTaxon	Kibdelosporangium kanagawaense											
 bacdive:166286	biolink:OrganismTaxon	Streptomyces otsuchiensis											
 NCBITaxon:1872133	biolink:OrganismTaxon	Actinokineospora sp.											
-CHEBI:62913	biolink:ChemicalRole	EC 2.4.2.30 (NAD(+) ADP-ribosyltransferase) inhibitor											
 CHEBI:63726	biolink:ChemicalRole	neuroprotective agent											
 CHEBI:71181	biolink:ChemicalRole	Sir2 inhibitor											
+CHEBI:62913	biolink:ChemicalRole	EC 2.4.2.30 (NAD(+) ADP-ribosyltransferase) inhibitor											
 medium:253	biolink:ChemicalEntity	MEDIUM FOR ECTOTHIORHODOSPIRA											
 solution:517	biolink:ChemicalEntity	Main sol. 253											
 solution:518	biolink:ChemicalEntity	Trace element solution A											
@@ -9370,6 +9330,9 @@ CHEBI:39074	biolink:ChemicalEntity	MOPS
 NCBITaxon:694436	biolink:OrganismTaxon	Methanolacinia paynteri											
 medium:275	biolink:ChemicalEntity	TREPONEMA SUCCINIFACIENS MEDIUM											
 solution:540	biolink:ChemicalEntity	Main sol. 275											
+solution:541	biolink:ChemicalEntity	Solution A											
+solution:542	biolink:ChemicalEntity	Solution B											
+solution:543	biolink:ChemicalEntity	Solution C											
 NCBITaxon:869209	biolink:OrganismTaxon	Treponema succinifaciens											
 medium:276	biolink:ChemicalEntity	HALOMONAS MEDIUM											
 solution:544	biolink:ChemicalEntity	Main sol. 276											
@@ -9397,6 +9360,7 @@ NCBITaxon:213231	biolink:OrganismTaxon	Methanocaldococcus indicus
 NCBITaxon:647171	biolink:OrganismTaxon	Methanotorris formicicus											
 NCBITaxon:1330330	biolink:OrganismTaxon	Kosmotoga pacifica											
 NCBITaxon:1301915	biolink:OrganismTaxon	Methanocaldococcus bathoardescens											
+NCBITaxon:2082189	biolink:OrganismTaxon	Methanofervidicoccus abyssi											
 bacdive:167961	biolink:OrganismTaxon	Desulfomarina profundi											
 medium:282a	biolink:ChemicalEntity	METHANOCALDOCOCCUS VILLOSUS MEDIUM											
 solution:549	biolink:ChemicalEntity	Main sol. 282a											
@@ -9514,6 +9478,7 @@ NCBITaxon:2078658	biolink:OrganismTaxon	Sporomusa sp.
 NCBITaxon:2376	biolink:OrganismTaxon	Sporomusa paucivorans											
 medium:311a	biolink:ChemicalEntity	SPOROMUSA MEDIUM H2/CO2											
 solution:577	biolink:ChemicalEntity	Main sol. 311a											
+NCBITaxon:55758	biolink:OrganismTaxon	Methanobrevibacter filiformis											
 NCBITaxon:1322049	biolink:OrganismTaxon	Acetonema sp.											
 medium:311b	biolink:ChemicalEntity	SPOROMUSA MEDIUM MARINE											
 solution:578	biolink:ChemicalEntity	Main sol. 311b											
@@ -9534,7 +9499,6 @@ NCBITaxon:2696063	biolink:OrganismTaxon	Anaerocolumna sedimenticola
 NCBITaxon:316996	biolink:OrganismTaxon	Sporomusa intestinalis											
 NCBITaxon:1329262	biolink:OrganismTaxon	Mobilisporobacter senegalensis											
 NCBITaxon:2293781	biolink:OrganismTaxon	Pelosinus sp.											
-NCBITaxon:55758	biolink:OrganismTaxon	Methanobrevibacter filiformis											
 medium:312	biolink:ChemicalEntity	SCY - MEDIUM											
 solution:580	biolink:ChemicalEntity	Main sol. 312											
 NCBITaxon:1960881	biolink:OrganismTaxon	Runella sp.											
@@ -9562,8 +9526,8 @@ medium:318	biolink:ChemicalEntity	METHANOSARCINA THERMOPHILA BCYT MEDIUM
 solution:588	biolink:ChemicalEntity	Main sol. 318											
 solution:589	biolink:ChemicalEntity	Trace element solution											
 CHEBI:81862	biolink:ChemicalEntity	KHCO3											
-CHEBI:76976	biolink:ChemicalRole	bacterial xenobiotic metabolite											
 CHEBI:35222	biolink:ChemicalRole	inhibitor											
+CHEBI:76976	biolink:ChemicalRole	bacterial xenobiotic metabolite											
 medium:318a	biolink:ChemicalEntity	PELOBACTER FUF MEDIUM											
 solution:590	biolink:ChemicalEntity	Main sol. 318a											
 CHEBI:46756	biolink:ChemicalEntity	HEPES											
@@ -9572,9 +9536,9 @@ NCBITaxon:46431	biolink:OrganismTaxon	Pelobacter sp.
 medium:318b	biolink:ChemicalEntity	ANAEROTIGNUM NEOPROPIONICUM MEDIUM											
 solution:591	biolink:ChemicalEntity	Main sol. 318b											
 NCBITaxon:1121327	biolink:OrganismTaxon	Anaerotignum neopropionicum											
-CHEBI:68495	biolink:ChemicalRole	apoptosis inducer											
-CHEBI:50629	biolink:ChemicalRole	cyclooxygenase 2 inhibitor											
 CHEBI:35610	biolink:ChemicalRole	antineoplastic agent											
+CHEBI:50629	biolink:ChemicalRole	cyclooxygenase 2 inhibitor											
+CHEBI:68495	biolink:ChemicalRole	apoptosis inducer											
 medium:318c	biolink:ChemicalEntity	PELOBACTER ACIDIGALLICI MEDIUM											
 solution:592	biolink:ChemicalEntity	Main sol. 318c											
 CHEBI:115197	biolink:ChemicalEntity	Na-gallate											
@@ -9614,7 +9578,7 @@ solution:602	biolink:ChemicalEntity	Main sol. 328
 solution:603	biolink:ChemicalEntity	Mineral solution											
 solution:604	biolink:ChemicalEntity	Fatty acid mixture											
 NCBITaxon:290052	biolink:OrganismTaxon	Acetivibrio ethanolgignens											
-NCBITaxon:384636	biolink:OrganismTaxon	Lacrimispora xylanisolvens											
+NCBITaxon:384636	biolink:OrganismTaxon	Hungatella xylanolytica											
 medium:329	biolink:ChemicalEntity	METHANOHALOPHILUS HALOPHILUS MEDIUM											
 solution:605	biolink:ChemicalEntity	Main sol. 329											
 CHEBI:32036	biolink:ChemicalEntity	K2SO4											
@@ -9637,6 +9601,7 @@ medium:331	biolink:ChemicalEntity	ACETOBACTEROIDES GLYCINOPHILUS MEDIUM
 solution:609	biolink:ChemicalEntity	Main sol. 331											
 medium:332	biolink:ChemicalEntity	METHANOCULLEUS BOURGENSIS MEDIUM											
 solution:610	biolink:ChemicalEntity	Main sol. 332											
+NCBITaxon:1201294	biolink:OrganismTaxon	Methanoculleus bourgensis											
 medium:333	biolink:ChemicalEntity	THERMITHIOBACILLUS MEDIUM											
 solution:611	biolink:ChemicalEntity	Main sol. 333											
 solution:612	biolink:ChemicalEntity	Trace element solution											
@@ -9651,6 +9616,7 @@ solution:617	biolink:ChemicalEntity	Solution D
 solution:618	biolink:ChemicalEntity	Solution E											
 solution:619	biolink:ChemicalEntity	Solution F											
 solution:621	biolink:ChemicalEntity	Trace elements solution											
+NCBITaxon:301375	biolink:OrganismTaxon	Methanothrix harundinacea											
 medium:334a	biolink:ChemicalEntity	METHANOTHRIX SOEHNGENII MEDIUM											
 solution:622	biolink:ChemicalEntity	Main sol. 334a											
 solution:623	biolink:ChemicalEntity	Solution A											
@@ -9755,11 +9721,11 @@ NCBITaxon:2606709	biolink:OrganismTaxon	Baileyella intestinalis
 NCBITaxon:2023273	biolink:OrganismTaxon	Paraclostridium sp.											
 NCBITaxon:2675590	biolink:OrganismTaxon	Clostridium sp.											
 NCBITaxon:165179	biolink:OrganismTaxon	Segatella copri											
-NCBITaxon:59823	biolink:OrganismTaxon	Hallella mizrahii 											
 NCBITaxon:2606626	biolink:OrganismTaxon	Sodaliphilus pleomorphus											
 bacdive:169219	biolink:OrganismTaxon	Enterococcus avium											
 bacdive:169222	biolink:OrganismTaxon	Enterococcus gallinarum											
 bacdive:169220	biolink:OrganismTaxon	Enterococcus faecalis											
+bacdive:169680	biolink:OrganismTaxon	Lactococcus petauri											
 bacdive:169215	biolink:OrganismTaxon	Clostridium butyricum											
 bacdive:169639	biolink:OrganismTaxon	Hungatella effluvii											
 bacdive:169631	biolink:OrganismTaxon	Clostridium chromiireducens											
@@ -9810,7 +9776,6 @@ medium:343	biolink:ChemicalEntity	THERMOTOGA NEAPOLITANA MEDIUM
 solution:658	biolink:ChemicalEntity	Main sol. 343											
 solution:659	biolink:ChemicalEntity	Artificial sea water											
 NCBITaxon:2337	biolink:OrganismTaxon	Thermotoga neapolitana											
-NCBITaxon:243274	biolink:OrganismTaxon	Thermotoga maritima											
 medium:343a	biolink:ChemicalEntity	THERMOSIPHO MELANESIENSIS MEDIUM											
 solution:660	biolink:ChemicalEntity	Main sol. 343a											
 NCBITaxon:46541	biolink:OrganismTaxon	Thermosipho melanesiensis											
@@ -9870,8 +9835,8 @@ solution:692	biolink:ChemicalEntity	Main sol. 352
 CHEBI:30808	biolink:ChemicalEntity	FeCl3											
 medium:353	biolink:ChemicalEntity	TOMATO JUICE MILK Medium											
 solution:693	biolink:ChemicalEntity	Main sol. 353											
-CHEBI:33282	biolink:ChemicalRole	antibacterial agent											
 CHEBI:77178	biolink:ChemicalRole	histological dye											
+CHEBI:33282	biolink:ChemicalRole	antibacterial agent											
 medium:354	biolink:ChemicalEntity	LÖWENSTEIN-JENSEN MEDIUM											
 solution:694	biolink:ChemicalEntity	Main sol. 354											
 CHEBI:131389	biolink:ChemicalEntity	Mg-citrate											
@@ -9888,6 +9853,7 @@ NCBITaxon:1777	biolink:OrganismTaxon	Mycobacterium gastri
 NCBITaxon:59813	biolink:OrganismTaxon	Mycobacterium novocastrense											
 NCBITaxon:1791	biolink:OrganismTaxon	Mycobacterium neoaurum											
 NCBITaxon:1237860	biolink:OrganismTaxon	Mycobacterium farcinogenes											
+NCBITaxon:1773	biolink:OrganismTaxon	Mycobacterium tuberculosis											
 NCBITaxon:1776	biolink:OrganismTaxon	Mycobacterium flavescens											
 NCBITaxon:28047	biolink:OrganismTaxon	Mycobacterium confluentis											
 NCBITaxon:1797	biolink:OrganismTaxon	Mycobacterium thermoresistibile											
@@ -9959,10 +9925,10 @@ medium:362	biolink:ChemicalEntity	FLAVOBACTERIUM TIRRENICUM MEDIUM
 solution:5602	biolink:ChemicalEntity	Main sol. 362											
 CAS-RN:141-43-5	biolink:ChemicalEntity	Ethanolamine											
 bacdive:169175	biolink:OrganismTaxon	Bacillus sp.											
-CHEBI:35475	biolink:ChemicalRole	non-steroidal anti-inflammatory drug											
 CHEBI:35481	biolink:ChemicalRole	non-narcotic analgesic											
 CHEBI:35493	biolink:ChemicalRole	antipyretic											
 CHEBI:73263	biolink:ChemicalRole	cyclooxygenase 3 inhibitor											
+CHEBI:35475	biolink:ChemicalRole	non-steroidal anti-inflammatory drug											
 medium:363	biolink:ChemicalEntity	PHENYLOBACTERIUM MEDIUM											
 solution:703	biolink:ChemicalEntity	Main sol. 363											
 CHEBI:31225	biolink:ChemicalEntity	Antipyrine											
@@ -9992,7 +9958,6 @@ NCBITaxon:28064	biolink:OrganismTaxon	Heliobacillus mobilis
 NCBITaxon:2699	biolink:OrganismTaxon	Heliomicrobium gestii											
 NCBITaxon:35700	biolink:OrganismTaxon	Heliophilum fasciatum											
 NCBITaxon:121734	biolink:OrganismTaxon	Heliomicrobium undosum											
-NCBITaxon:35701	biolink:OrganismTaxon	Heliomicrobium modesticaldum											
 medium:371	biolink:ChemicalEntity	NATRONOBACTERIA MEDIUM											
 solution:711	biolink:ChemicalEntity	Main sol. 371											
 CHEBI:64220	biolink:ChemicalEntity	Na2-glutamate											
@@ -10214,7 +10179,7 @@ NCBITaxon:82367	biolink:OrganismTaxon	Paracoccus denitrificans
 NCBITaxon:574964	biolink:OrganismTaxon	Rahnella variigena											
 NCBITaxon:1239307	biolink:OrganismTaxon	Sodalis praecaptivus											
 NCBITaxon:1775911	biolink:OrganismTaxon	Corynebacterium uropygiale											
-NCBITaxon:599	biolink:OrganismTaxon	Escherichia coli											
+NCBITaxon:599	biolink:OrganismTaxon	Salmonella sp.											
 bacdive:169286	biolink:OrganismTaxon	Rhodococcus sp.											
 bacdive:169244	biolink:OrganismTaxon	Escherichia coli											
 bacdive:169224	biolink:OrganismTaxon	Escherichia coli											
@@ -10448,6 +10413,7 @@ NCBITaxon:100177	biolink:OrganismTaxon	Borrelia lusitaniae
 bacdive:167521	biolink:OrganismTaxon	Borrelia maritima											
 medium:404	biolink:ChemicalEntity	METHANOSPHAERA CUNICULI MEDIUM											
 solution:823	biolink:ChemicalEntity	Main sol. 404											
+NCBITaxon:1077256	biolink:OrganismTaxon	Methanosphaera cuniculi											
 medium:405	biolink:ChemicalEntity	SP2 MEDIUM											
 solution:826	biolink:ChemicalEntity	Main sol. 405											
 solution:827	biolink:ChemicalEntity	Artificial sea water											
@@ -10491,7 +10457,6 @@ NCBITaxon:40545	biolink:OrganismTaxon	Sutterella wadsworthensis
 NCBITaxon:1121102	biolink:OrganismTaxon	Campylobacter ureolyticus											
 NCBITaxon:762966	biolink:OrganismTaxon	Parasutterella excrementihominis											
 NCBITaxon:234908	biolink:OrganismTaxon	Sutterella stercoricanis											
-NCBITaxon:762967	biolink:OrganismTaxon	Sutterella parvirubra											
 medium:414	biolink:ChemicalEntity	ACIDAMINOCOCCUS FERMENTANS MEDIUM											
 solution:849	biolink:ChemicalEntity	Main sol. 414											
 CHEBI:27897	biolink:ChemicalEntity	DL-Tryptophan											
@@ -10508,7 +10473,6 @@ medium:421	biolink:ChemicalEntity	CHROMATIUM SALEXIGENS MEDIUM
 solution:852	biolink:ChemicalEntity	Main sol. 421											
 NCBITaxon:49447	biolink:OrganismTaxon	Halochromatium salexigens											
 NCBITaxon:85075	biolink:OrganismTaxon	Halochromatium glycolicum											
-NCBITaxon:168379	biolink:OrganismTaxon	Halorhodospira neutriphila											
 medium:422	biolink:ChemicalEntity	AMOEBOBACTER MEDIUM											
 solution:853	biolink:ChemicalEntity	Main sol. 422											
 CHEBI:26977	biolink:ChemicalEntity	Thiosulfate											
@@ -10526,13 +10490,13 @@ NCBITaxon:1210093	biolink:OrganismTaxon	Nocardia pseudovaccinii
 NCBITaxon:33008	biolink:OrganismTaxon	Rhodococcus globerulus											
 medium:427	biolink:ChemicalEntity	MYKORRHIZA MEDIUM											
 solution:857	biolink:ChemicalEntity	Main sol. 427											
-CHEBI:39456	biolink:ChemicalRole	antiglaucoma drug											
-CHEBI:77966	biolink:ChemicalRole	food stabiliser											
 CHEBI:77969	biolink:ChemicalRole	food humectant											
-CHEBI:78004	biolink:ChemicalRole	food bulking agent											
-CHEBI:77970	biolink:ChemicalRole	food thickening agent											
-CHEBI:50504	biolink:ChemicalRole	osmotic diuretic											
 CHEBI:23366	biolink:ChemicalRole	compatible osmolytes											
+CHEBI:50504	biolink:ChemicalRole	osmotic diuretic											
+CHEBI:39456	biolink:ChemicalRole	antiglaucoma drug											
+CHEBI:77970	biolink:ChemicalRole	food thickening agent											
+CHEBI:78004	biolink:ChemicalRole	food bulking agent											
+CHEBI:77966	biolink:ChemicalRole	food stabiliser											
 medium:428	biolink:ChemicalEntity	HETEROTROPHIC MEDIUM H3P											
 solution:858	biolink:ChemicalEntity	Main sol. 428											
 solution:859	biolink:ChemicalEntity	Solution A											
@@ -10804,8 +10768,8 @@ solution:919	biolink:ChemicalEntity	Main sol. 457d
 CAS-RN:92-52-4	biolink:ChemicalEntity	Biphenyl											
 NCBITaxon:1149133	biolink:OrganismTaxon	Pseudomonas furukawaii											
 CHEBI:48578	biolink:ChemicalRole	radical scavenger											
-CHEBI:22333	biolink:ChemicalRole	alkylating agent											
 CHEBI:48358	biolink:ChemicalRole	polar aprotic solvent											
+CHEBI:22333	biolink:ChemicalRole	alkylating agent											
 medium:457e	biolink:ChemicalEntity	MINERAL MEDIUM WITH DIBENZOFURAN											
 solution:920	biolink:ChemicalEntity	Main sol. 457e											
 solution:5620	biolink:ChemicalEntity	Dibenzofuran solution											
@@ -11170,8 +11134,8 @@ solution:1081	biolink:ChemicalEntity	Solution A
 solution:1085	biolink:ChemicalEntity	Solution B											
 solution:1083	biolink:ChemicalEntity	Solution C											
 solution:1086	biolink:ChemicalEntity	Solution D											
+solution:1087	biolink:ChemicalEntity	Solution E											
 solution:6400	biolink:ChemicalEntity	Solution E											
-solution:1885	biolink:ChemicalEntity	Solution F											
 NCBITaxon:1894989	biolink:OrganismTaxon	Thermodesulfitimonas autotrophica											
 medium:503f	biolink:ChemicalEntity	AMINITHIOPHILUS MEDIUM											
 solution:1088	biolink:ChemicalEntity	Main sol. 503f											
@@ -11273,8 +11237,8 @@ NCBITaxon:1288484	biolink:OrganismTaxon	Deinococcus wulumuqiensis
 NCBITaxon:2696566	biolink:OrganismTaxon	Kineococcus indalonis											
 bacdive:167593	biolink:OrganismTaxon	Miltoncostaea marina											
 NCBITaxon:1285192	biolink:OrganismTaxon	Janibacter cremeus											
-CHEBI:63248	biolink:ChemicalRole	oxidising agent											
 CHEBI:63490	biolink:ChemicalRole	explosive											
+CHEBI:63248	biolink:ChemicalRole	oxidising agent											
 medium:514	biolink:ChemicalEntity	BACTO MARINE BROTH DIFCO 2216											
 solution:1134	biolink:ChemicalEntity	Main sol. 514											
 CHEBI:36383	biolink:ChemicalEntity	SrCl2											
@@ -11714,7 +11678,7 @@ NCBITaxon:374514	biolink:OrganismTaxon	Nocardioides marinus
 NCBITaxon:386490	biolink:OrganismTaxon	Terribacillus goriensis											
 NCBITaxon:381706	biolink:OrganismTaxon	Oceanobacillus chironomi											
 NCBITaxon:372072	biolink:OrganismTaxon	Cohaesibacter gelatinilyticus											
-NCBITaxon:1122945	biolink:OrganismTaxon	Shimia litoralis											
+NCBITaxon:1122945	biolink:OrganismTaxon	Pelagicola litoralis											
 NCBITaxon:1122959	biolink:OrganismTaxon	Photobacterium halotolerans											
 NCBITaxon:311410	biolink:OrganismTaxon	Roseibium album											
 NCBITaxon:418719	biolink:OrganismTaxon	Marinobacter salsuginis											
@@ -11794,7 +11758,7 @@ NCBITaxon:453839	biolink:OrganismTaxon	Marinobacter kribbensis
 NCBITaxon:453838	biolink:OrganismTaxon	Marinobacter goseongensis											
 NCBITaxon:365049	biolink:OrganismTaxon	Salinicoccus salsiraiae											
 NCBITaxon:450804	biolink:OrganismTaxon	Oceaniserpentilla haliotis											
-bacdive:158128	biolink:OrganismTaxon	Spongiibacter sp.											
+bacdive:158128	biolink:OrganismTaxon	Gammaproteobacterium 											
 NCBITaxon:1122213	biolink:OrganismTaxon	Maritalea myrionectae											
 NCBITaxon:1121930	biolink:OrganismTaxon	Gracilimonas tropica											
 NCBITaxon:453840	biolink:OrganismTaxon	Aliihoeflea aestuarii											
@@ -12505,6 +12469,7 @@ NCBITaxon:1790137	biolink:OrganismTaxon	Wenyingzhuangia fucanilytica
 NCBITaxon:1182444	biolink:OrganismTaxon	Fulvitalea axinellae											
 NCBITaxon:1904463	biolink:OrganismTaxon	Arcobacter lekithochrous											
 NCBITaxon:1703256	biolink:OrganismTaxon	Pseudoalteromonas gelatinilytica											
+NCBITaxon:492670	biolink:OrganismTaxon	Bacillus oryzicola											
 NCBITaxon:1510457	biolink:OrganismTaxon	Litoreibacter ponti											
 NCBITaxon:1342302	biolink:OrganismTaxon	Sulfitobacter noctilucae											
 NCBITaxon:1342301	biolink:OrganismTaxon	Sulfitobacter noctilucicola											
@@ -12613,7 +12578,7 @@ NCBITaxon:985250	biolink:OrganismTaxon	Sinimarinibacterium flocculans
 NCBITaxon:2077090	biolink:OrganismTaxon	Vibrio gangliei											
 NCBITaxon:2171554	biolink:OrganismTaxon	Peribacillus acanthi											
 NCBITaxon:2291674	biolink:OrganismTaxon	Metabacillus iocasae											
-NCBITaxon:1924933	biolink:OrganismTaxon	Aliiroseovarius lamellibrachiae											
+NCBITaxon:1924933	biolink:OrganismTaxon	Planktotalea lamellibrachiae											
 NCBITaxon:1987584	biolink:OrganismTaxon	Shewanella carassii											
 NCBITaxon:762213	biolink:OrganismTaxon	Pacificibacter maritimus											
 bacdive:158089	biolink:OrganismTaxon	Marinibacterium anthonyi											
@@ -12673,8 +12638,8 @@ NCBITaxon:1034973	biolink:OrganismTaxon	Bacillus sp.
 NCBITaxon:1113	biolink:OrganismTaxon	Porphyrobacter sp.											
 NCBITaxon:1872480	biolink:OrganismTaxon	Altererythrobacter sp.											
 NCBITaxon:929097	biolink:OrganismTaxon	Arthrobacter sp.											
-bacdive:159079	biolink:OrganismTaxon	Ornithinibacillus sp.											
-bacdive:159080	biolink:OrganismTaxon	Ornithinibacillus sp.											
+bacdive:159079	biolink:OrganismTaxon	unclassified bacterium											
+bacdive:159080	biolink:OrganismTaxon	unclassified bacterium											
 NCBITaxon:1306159	biolink:OrganismTaxon	Gracilibacillus sp.											
 NCBITaxon:989403	biolink:OrganismTaxon	Pseudovibrio axinellae											
 NCBITaxon:1983407	biolink:OrganismTaxon	Paraliobacillus salinarum											
@@ -12822,8 +12787,6 @@ NCBITaxon:388746	biolink:OrganismTaxon	Puniceicoccus vermicola
 NCBITaxon:119864	biolink:OrganismTaxon	Marinomonas mediterranea											
 NCBITaxon:390883	biolink:OrganismTaxon	Salinivibrio sharmensis											
 bacdive:140862	biolink:OrganismTaxon	Microbulbifer rhizosphaerae											
-NCBITaxon:671278	biolink:OrganismTaxon	Alishewanella tabrizica											
-NCBITaxon:672	biolink:OrganismTaxon	Vibrio vulnificus											
 medium:514a	biolink:ChemicalEntity	HALF STRENGTH BACTO MARINE BROTH											
 solution:1135	biolink:ChemicalEntity	Main sol. 514a											
 NCBITaxon:1123053	biolink:OrganismTaxon	Rheinheimera baltica											
@@ -12880,7 +12843,6 @@ NCBITaxon:42565	biolink:OrganismTaxon	Halomonas salina
 NCBITaxon:1123231	biolink:OrganismTaxon	Salinicoccus alkaliphilus											
 NCBITaxon:930146	biolink:OrganismTaxon	Mesobacillus persicus											
 NCBITaxon:334253	biolink:OrganismTaxon	Gracilibacillus orientalis											
-NCBITaxon:1486246	biolink:OrganismTaxon	Vreelandella massiliensis											
 NCBITaxon:86666	biolink:OrganismTaxon	Salimicrobium halophilum											
 NCBITaxon:574966	biolink:OrganismTaxon	Halomonas zhanjiangensis											
 NCBITaxon:1872445	biolink:OrganismTaxon	Alkalibacillus aidingensis											
@@ -12925,8 +12887,10 @@ NCBITaxon:990271	biolink:OrganismTaxon	Vibrio variabilis
 NCBITaxon:990268	biolink:OrganismTaxon	Vibrio maritimus											
 NCBITaxon:679260	biolink:OrganismTaxon	Simiduia areninigrae											
 NCBITaxon:446374	biolink:OrganismTaxon	Vibrio artabrorum											
+NCBITaxon:672	biolink:OrganismTaxon	Vibrio vulnificus											
 NCBITaxon:762486	biolink:OrganismTaxon	Lutibacter oricola											
 NCBITaxon:1243002	biolink:OrganismTaxon	Vibrio olivae											
+NCBITaxon:671278	biolink:OrganismTaxon	Alishewanella tabrizica											
 NCBITaxon:1229494	biolink:OrganismTaxon	Vibrio jasicida											
 NCBITaxon:1004322	biolink:OrganismTaxon	Vibrio crosai											
 NCBITaxon:930805	biolink:OrganismTaxon	Halioglobus japonicus											
@@ -13119,7 +13083,6 @@ solution:5902	biolink:ChemicalEntity	Modified Wolin's mineral solution II
 CHEBI:63940	biolink:ChemicalEntity	Na2WO4											
 NCBITaxon:2714	biolink:OrganismTaxon	Aquifex pyrophilus											
 NCBITaxon:198703	biolink:OrganismTaxon	Persephonella hydrogeniphila											
-NCBITaxon:309805	biolink:OrganismTaxon	Persephonella marina											
 medium:535	biolink:ChemicalEntity	TRYPTICASE SOY BROTH AGAR											
 NCBITaxon:1004150	biolink:OrganismTaxon	Photorhabdus khanii											
 NCBITaxon:1354337	biolink:OrganismTaxon	Cosenzaea myxofaciens											
@@ -13176,6 +13139,7 @@ NCBITaxon:182337	biolink:OrganismTaxon	Erwinia billingiae
 NCBITaxon:1378093	biolink:OrganismTaxon	Pantoea ananatis											
 NCBITaxon:368603	biolink:OrganismTaxon	Morganella psychrotolerans											
 NCBITaxon:117506	biolink:OrganismTaxon	Comamonas denitrificans											
+NCBITaxon:351674	biolink:OrganismTaxon	Xenorhabdus miraniensis											
 NCBITaxon:351679	biolink:OrganismTaxon	Xenorhabdus hominickii											
 NCBITaxon:351614	biolink:OrganismTaxon	Xenorhabdus stockiae											
 NCBITaxon:351673	biolink:OrganismTaxon	Xenorhabdus cabanillasii											
@@ -13429,7 +13393,6 @@ NCBITaxon:1332080	biolink:OrganismTaxon	Sphingobium baderi
 NCBITaxon:1172565	biolink:OrganismTaxon	Lonsdalea populi											
 NCBITaxon:645617	biolink:OrganismTaxon	Hephaestia caeni											
 NCBITaxon:1485952	biolink:OrganismTaxon	Phytobacter massiliensis											
-NCBITaxon:208224	biolink:OrganismTaxon	Enterobacter sp.											
 NCBITaxon:1821960	biolink:OrganismTaxon	Edwardsiella anguillarum											
 NCBITaxon:1341643	biolink:OrganismTaxon	Yersinia wautersii											
 NCBITaxon:1310168	biolink:OrganismTaxon	Ralstonia syzygii subsp. celebesensis											
@@ -13470,7 +13433,7 @@ NCBITaxon:1207057	biolink:OrganismTaxon	Ottowia beijingensis
 NCBITaxon:1190415	biolink:OrganismTaxon	Pseudomonas asturiensis											
 NCBITaxon:1245526	biolink:OrganismTaxon	Pseudomonas guangdongensis											
 NCBITaxon:1194168	biolink:OrganismTaxon	Comamonas jiangduensis											
-NCBITaxon:363331	biolink:OrganismTaxon	Chryseobacterium sp.											
+NCBITaxon:363331	biolink:OrganismTaxon	Chryseobacterium taiwanense											
 NCBITaxon:1616107	biolink:OrganismTaxon	Nocardia lasii											
 NCBITaxon:1157986	biolink:OrganismTaxon	Wohlfahrtiimonas larvae											
 NCBITaxon:1073196	biolink:OrganismTaxon	Pseudoxanthomonas wuyuanensis											
@@ -13590,7 +13553,6 @@ NCBITaxon:2364647	biolink:OrganismTaxon	Kalamiella piersonii
 NCBITaxon:2675216	biolink:OrganismTaxon	Corynebacterium kalinowskii											
 NCBITaxon:2675218	biolink:OrganismTaxon	Corynebacterium comes											
 NCBITaxon:2675219	biolink:OrganismTaxon	Corynebacterium occultum											
-NCBITaxon:646	biolink:OrganismTaxon	Aeromonas allosaccharophila											
 bacdive:169512	biolink:OrganismTaxon	Janthinobacterium psychrotolerans											
 bacdive:169455	biolink:OrganismTaxon	Gordonia sp.											
 bacdive:169592	biolink:OrganismTaxon	Roseomonas sp.											
@@ -13599,7 +13561,6 @@ bacdive:141008	biolink:OrganismTaxon	Novosphingobium clariflavum
 bacdive:166480	biolink:OrganismTaxon	Filibacter tadaridae											
 bacdive:169717	biolink:OrganismTaxon	Chryseobacterium capnotolerans											
 bacdive:170893	biolink:OrganismTaxon	Corynebacterium megadyptis subsp. dunedinense											
-bacdive:170669	biolink:OrganismTaxon	Paracoccus methylovorus											
 bacdive:169282	biolink:OrganismTaxon	Rhodococcus rhodochrous											
 bacdive:166976	biolink:OrganismTaxon	Limnohabitans radicicola											
 bacdive:164079	biolink:OrganismTaxon	Chitinimonas naiadis											
@@ -13622,7 +13583,6 @@ NCBITaxon:443157	biolink:OrganismTaxon	Nocardioides hankookensis
 NCBITaxon:397278	biolink:OrganismTaxon	Marmoricola aequoreus											
 NCBITaxon:424797	biolink:OrganismTaxon	Nocardioides terrigena											
 NCBITaxon:520089	biolink:OrganismTaxon	Nocardioides hungaricus											
-NCBITaxon:1871614	biolink:OrganismTaxon	Cellulosimicrobium sp.											
 NCBITaxon:1921566	biolink:OrganismTaxon	Nocardioides cavernae											
 NCBITaxon:1776857	biolink:OrganismTaxon	Nocardioides zeicaulis											
 NCBITaxon:351659	biolink:OrganismTaxon	Xenorhabdus koppenhoeferi											
@@ -13631,8 +13591,6 @@ bacdive:166434	biolink:OrganismTaxon	Psittacicella melopsittaci
 NCBITaxon:1123269	biolink:OrganismTaxon	Sphingomonas sanxanigenens											
 NCBITaxon:1218077	biolink:OrganismTaxon	Paraburkholderia fungorum											
 NCBITaxon:63612	biolink:OrganismTaxon	Sodalis glossinidius											
-NCBITaxon:1208607	biolink:OrganismTaxon	Photorhabdus noenieputensis											
-NCBITaxon:1223573	biolink:OrganismTaxon	Dickeya zeae											
 medium:535a	biolink:ChemicalEntity	TRYPTICASE SOY BROTH AGAR+BLOOD											
 solution:1182	biolink:ChemicalEntity	Main sol. 535a											
 NCBITaxon:504474	biolink:OrganismTaxon	Corynebacterium urealyticum											
@@ -13641,6 +13599,7 @@ NCBITaxon:525260	biolink:OrganismTaxon	Corynebacterium accolens
 NCBITaxon:38284	biolink:OrganismTaxon	Corynebacterium accolens											
 NCBITaxon:548478	biolink:OrganismTaxon	Corynebacterium glucuronolyticum											
 NCBITaxon:525263	biolink:OrganismTaxon	Corynebacterium lipophiloflavum											
+NCBITaxon:156976	biolink:OrganismTaxon	Corynebacterium riegelii											
 NCBITaxon:401472	biolink:OrganismTaxon	Corynebacterium ureicelerivorans											
 NCBITaxon:662755	biolink:OrganismTaxon	Corynebacterium resistens											
 NCBITaxon:302449	biolink:OrganismTaxon	Corynebacterium tuscaniense											
@@ -13682,7 +13641,9 @@ NCBITaxon:86176	biolink:OrganismTaxon	Pseudomonas amygdali
 NCBITaxon:176598	biolink:OrganismTaxon	Pseudoxanthomonas taiwanensis											
 NCBITaxon:171438	biolink:OrganismTaxon	Photorhabdus akhurstii											
 NCBITaxon:1223572	biolink:OrganismTaxon	Dickeya dadantii											
+NCBITaxon:1223573	biolink:OrganismTaxon	Dickeya zeae											
 NCBITaxon:395600	biolink:OrganismTaxon	Pseudomonas mohnii											
+NCBITaxon:1121283	biolink:OrganismTaxon	Chromobacterium haemolyticum											
 NCBITaxon:1123020	biolink:OrganismTaxon	Pseudomonas resinovorans											
 NCBITaxon:46678	biolink:OrganismTaxon	Pseudomonas caricapapayae											
 NCBITaxon:113288	biolink:OrganismTaxon	Aeromonas salmonicida subsp. achromogenes											
@@ -13700,6 +13661,7 @@ NCBITaxon:449663	biolink:OrganismTaxon	Silvimonas amylolytica
 NCBITaxon:995054	biolink:OrganismTaxon	Xenorhabdus magdalenensis											
 NCBITaxon:658457	biolink:OrganismTaxon	Pseudomonas composti											
 NCBITaxon:674054	biolink:OrganismTaxon	Pseudomonas baetica											
+NCBITaxon:1208607	biolink:OrganismTaxon	Photorhabdus noenieputensis											
 NCBITaxon:1549888	biolink:OrganismTaxon	Thorsellia kenyensis											
 bacdive:140466	biolink:OrganismTaxon	Xenorhabdus thuongxuanensis											
 medium:535c	biolink:ChemicalEntity	TRYPTICASE SOY BROTH AGAR											
@@ -13778,6 +13740,7 @@ NCBITaxon:470028	biolink:OrganismTaxon	Devosia yakushimensis
 NCBITaxon:1121288	biolink:OrganismTaxon	Chryseobacterium palustre											
 NCBITaxon:493375	biolink:OrganismTaxon	Chryseobacterium humi											
 NCBITaxon:1121003	biolink:OrganismTaxon	Aquamicrobium aerolatum											
+NCBITaxon:645887	biolink:OrganismTaxon	Alkalibaculum bacchi											
 NCBITaxon:53254	biolink:OrganismTaxon	Bosea thiooxidans											
 NCBITaxon:198481	biolink:OrganismTaxon	Psychrobacter luti											
 NCBITaxon:198480	biolink:OrganismTaxon	Psychrobacter fozii											
@@ -13814,14 +13777,11 @@ bacdive:169216	biolink:OrganismTaxon	Kaistella zaccaria
 bacdive:139617	biolink:OrganismTaxon	Sphingobacterium zeae											
 NCBITaxon:1686310	biolink:OrganismTaxon	Bartonella apis											
 bacdive:24865	biolink:OrganismTaxon	Pseudomonas aeruginosa											
-NCBITaxon:1906745	biolink:OrganismTaxon	Rodentibacter ratti											
-NCBITaxon:546265	biolink:OrganismTaxon	Neisseria lactamica											
 medium:545a	biolink:ChemicalEntity	DILUTED TRYPTONE SOYA BROTH TSB											
 solution:1204	biolink:ChemicalEntity	Main sol. 545a											
 NCBITaxon:929562	biolink:OrganismTaxon	Emticicia oligotrophica											
 medium:545c	biolink:ChemicalEntity	TRYPTONE SOYA BROTH ANAEROB											
 solution:6398	biolink:ChemicalEntity	Main sol. 545c											
-NCBITaxon:645887	biolink:OrganismTaxon	Alkalibaculum bacchi											
 medium:546	biolink:ChemicalEntity	LC BROTH MEDIUM											
 solution:1205	biolink:ChemicalEntity	Main sol. 546											
 medium:547	biolink:ChemicalEntity	ISP MEDIUM 4											
@@ -13844,6 +13804,7 @@ NCBITaxon:1089546	biolink:OrganismTaxon	Actinopolyspora halophila
 NCBITaxon:1050202	biolink:OrganismTaxon	Actinopolyspora mortivallis											
 NCBITaxon:1245472	biolink:OrganismTaxon	Nocardiopsis halophila											
 NCBITaxon:698769	biolink:OrganismTaxon	Virgibacillus campisalis											
+NCBITaxon:33906	biolink:OrganismTaxon	Actinopolyspora algeriensis											
 NCBITaxon:995062	biolink:OrganismTaxon	Actinopolyspora saharensis											
 NCBITaxon:995066	biolink:OrganismTaxon	Actinopolyspora mzabensis											
 NCBITaxon:995059	biolink:OrganismTaxon	Actinopolyspora algeriensis											
@@ -13865,6 +13826,7 @@ NCBITaxon:1089544	biolink:OrganismTaxon	Amycolatopsis benzoatilytica
 NCBITaxon:47865	biolink:OrganismTaxon	Micromonospora inositola											
 NCBITaxon:469371	biolink:OrganismTaxon	Thermobispora bispora											
 NCBITaxon:58117	biolink:OrganismTaxon	Microbispora rosea subsp. rosea											
+NCBITaxon:1220557	biolink:OrganismTaxon	Actinomadura formosensis											
 NCBITaxon:1123025	biolink:OrganismTaxon	Pseudonocardia spinosispora											
 NCBITaxon:1120984	biolink:OrganismTaxon	Amycolatopsis taiwanensis											
 NCBITaxon:509198	biolink:OrganismTaxon	Nocardia sp.											
@@ -13923,7 +13885,6 @@ NCBITaxon:1766802	biolink:OrganismTaxon	Stackebrandtia cavernae
 NCBITaxon:1654476	biolink:OrganismTaxon	Umezawaea endophytica											
 NCBITaxon:2340917	biolink:OrganismTaxon	Amycolatopsis panacis											
 NCBITaxon:2340916	biolink:OrganismTaxon	Nocardia panacis											
-bacdive:164153	biolink:OrganismTaxon	Micromonospora sp.											
 medium:555	biolink:ChemicalEntity	SPORULATION-AGAR SA											
 solution:1217	biolink:ChemicalEntity	Main sol. 555											
 medium:557	biolink:ChemicalEntity	CLOSTRIDIUM SP. MEDIUM CREATININE											
@@ -14048,6 +14009,7 @@ NCBITaxon:1122162	biolink:OrganismTaxon	Legionella israelensis
 NCBITaxon:29422	biolink:OrganismTaxon	Legionella brunensis											
 NCBITaxon:40335	biolink:OrganismTaxon	Legionella tucsonensis											
 NCBITaxon:1122164	biolink:OrganismTaxon	Legionella lansingensis											
+NCBITaxon:45056	biolink:OrganismTaxon	Legionella adelaidensis											
 NCBITaxon:1268635	biolink:OrganismTaxon	Legionella oakridgensis											
 NCBITaxon:1122167	biolink:OrganismTaxon	Legionella quinlivanii											
 NCBITaxon:1122161	biolink:OrganismTaxon	Legionella geestiana											
@@ -14078,6 +14040,7 @@ NCBITaxon:1034943	biolink:OrganismTaxon	Legionella massiliensis
 NCBITaxon:1034944	biolink:OrganismTaxon	Legionella tunisiensis											
 NCBITaxon:1871052	biolink:OrganismTaxon	Afipia sp.											
 NCBITaxon:1498499	biolink:OrganismTaxon	Legionella norrlandica											
+NCBITaxon:45073	biolink:OrganismTaxon	Legionella quinlivanii											
 bacdive:133211	biolink:OrganismTaxon	Legionella saoudiensis											
 bacdive:169594	biolink:OrganismTaxon	Legionella sp.											
 medium:585a	biolink:ChemicalEntity	BCYE alpha agar											
@@ -14275,8 +14238,8 @@ medium:615	biolink:ChemicalEntity	DESULFOVIBRIO MG-1 MEDIUM
 solution:1321	biolink:ChemicalEntity	Main sol. 615											
 medium:616	biolink:ChemicalEntity	ALKALITHERMOBACTER MEDIUM											
 solution:1322	biolink:ChemicalEntity	Main sol. 616											
-NCBITaxon:1121328	biolink:OrganismTaxon	Alkalithermobacter paradoxus											
-NCBITaxon:29349	biolink:OrganismTaxon	Alkalithermobacter thermoalcaliphilus											
+NCBITaxon:1121328	biolink:OrganismTaxon	Clostridium paradoxum											
+NCBITaxon:29349	biolink:OrganismTaxon	Clostridium thermoalcaliphilum											
 NCBITaxon:941824	biolink:OrganismTaxon	Thermobrachium celere											
 NCBITaxon:29346	biolink:OrganismTaxon	Clostridium paradoxum											
 medium:617	biolink:ChemicalEntity	MARINOMONAS VAGA MEDIUM											
@@ -14413,7 +14376,7 @@ NCBITaxon:338193	biolink:OrganismTaxon	Clostridium aestuarii
 medium:634c	biolink:ChemicalEntity	RCM MEDIUM N2/CO2											
 solution:1355	biolink:ChemicalEntity	Main sol. 634c											
 CAS-RN:497-19-8	biolink:ChemicalEntity	Sodium carbonate											
-NCBITaxon:238834	biolink:OrganismTaxon	Clostridium estertheticum subsp. estertheticum											
+NCBITaxon:238834	biolink:OrganismTaxon	Clostridium estertheticum											
 NCBITaxon:655607	biolink:OrganismTaxon	Tepidibacter mesophilus											
 NCBITaxon:1924094	biolink:OrganismTaxon	Anaeromassilibacillus sp.											
 NCBITaxon:673271	biolink:OrganismTaxon	Catenibacillus scindens											
@@ -14514,8 +14477,8 @@ medium:644	biolink:ChemicalEntity	CATENOCOCCUS MEDIUM
 solution:1368	biolink:ChemicalEntity	Main sol. 644											
 solution:2762	biolink:ChemicalEntity	Trace elements solution Pfennig & Lippert,1966											
 NCBITaxon:94140	biolink:OrganismTaxon	Catenococcus thiocycli											
-CHEBI:78444	biolink:ChemicalRole	EC 3.1.1.1 (carboxylesterase) inhibitor											
 CHEBI:83038	biolink:ChemicalRole	Daphnia galeata metabolite											
+CHEBI:78444	biolink:ChemicalRole	EC 3.1.1.1 (carboxylesterase) inhibitor											
 medium:645	biolink:ChemicalEntity	MIDDLEBROOK MEDIUM											
 solution:1369	biolink:ChemicalEntity	Main sol. 645											
 solution:1370	biolink:ChemicalEntity	Bacto Middlebrook 7H10 agar											
@@ -14639,6 +14602,7 @@ NCBITaxon:1841861	biolink:OrganismTaxon	Mycobacterium numidiamassiliense
 NCBITaxon:1841859	biolink:OrganismTaxon	Mycobacterium terramassiliense											
 NCBITaxon:84962	biolink:OrganismTaxon	Mycobacterium botniense											
 NCBITaxon:1927124	biolink:OrganismTaxon	Mycobacterium aquaticum											
+NCBITaxon:1487726	biolink:OrganismTaxon	Mycobacterium persicum											
 NCBITaxon:2094119	biolink:OrganismTaxon	Mycobacterium basiliense											
 NCBITaxon:1908205	biolink:OrganismTaxon	Mycobacterium syngnathidarum											
 NCBITaxon:1430326	biolink:OrganismTaxon	Mycobacterium decipiens											
@@ -14699,6 +14663,7 @@ solution:1385	biolink:ChemicalEntity	Main sol. 654
 NCBITaxon:887062	biolink:OrganismTaxon	Hylemonella gracilis											
 medium:655	biolink:ChemicalEntity	PYE MEDIUM											
 solution:1386	biolink:ChemicalEntity	Main sol. 655											
+NCBITaxon:35701	biolink:OrganismTaxon	Heliomicrobium modesticaldum											
 medium:656	biolink:ChemicalEntity	YEAST-STARCH-AGARB											
 solution:1387	biolink:ChemicalEntity	Main sol. 656											
 medium:657	biolink:ChemicalEntity	COW MANURE AGAR											
@@ -14758,7 +14723,6 @@ bacdive:170402	biolink:OrganismTaxon	Aristaeella lactis
 bacdive:170401	biolink:OrganismTaxon	Aristaeella hokkaidonensis											
 medium:666b	biolink:ChemicalEntity	METHANOMICROBIUM MOBILE MEDIUM											
 solution:6394	biolink:ChemicalEntity	Main sol. 666b											
-NCBITaxon:694440	biolink:OrganismTaxon	Methanomicrobium mobile											
 medium:667	biolink:ChemicalEntity	DESULFALLAS THERMOSAPOVORANS MEDIUM											
 solution:1404	biolink:ChemicalEntity	Main sol. 667											
 solution:1405	biolink:ChemicalEntity	Solution A											
@@ -14862,6 +14826,7 @@ NCBITaxon:546262	biolink:OrganismTaxon	Neisseria cinerea
 NCBITaxon:192066	biolink:OrganismTaxon	Neisseria sp.											
 NCBITaxon:889247	biolink:OrganismTaxon	Campylobacter jejuni subsp. jejuni											
 NCBITaxon:195	biolink:OrganismTaxon	Campylobacter coli											
+NCBITaxon:546265	biolink:OrganismTaxon	Neisseria lactamica											
 NCBITaxon:525280	biolink:OrganismTaxon	Erysipelothrix rhusiopathiae											
 NCBITaxon:537971	biolink:OrganismTaxon	Helicobacter cinaedi											
 NCBITaxon:196	biolink:OrganismTaxon	Campylobacter fetus subsp. fetus											
@@ -14879,6 +14844,7 @@ NCBITaxon:1120945	biolink:OrganismTaxon	Winkia neuii subsp. neuii
 NCBITaxon:29318	biolink:OrganismTaxon	Winkia neuii subsp. anitrata											
 NCBITaxon:59561	biolink:OrganismTaxon	Trueperella bernardiae											
 NCBITaxon:131110	biolink:OrganismTaxon	Schaalia radingae											
+NCBITaxon:1214160	biolink:OrganismTaxon	Streptococcus suis											
 NCBITaxon:487	biolink:OrganismTaxon	Neisseria meningitidis											
 NCBITaxon:102619	biolink:OrganismTaxon	Helicobacter pylori											
 NCBITaxon:883114	biolink:OrganismTaxon	Helcococcus kunzii											
@@ -14939,6 +14905,7 @@ NCBITaxon:640634	biolink:OrganismTaxon	Microbacterium pseudoresistens
 NCBITaxon:182182	biolink:OrganismTaxon	Actinobacillus scotiae											
 NCBITaxon:67855	biolink:OrganismTaxon	Muribacter muris											
 NCBITaxon:216	biolink:OrganismTaxon	Helicobacter muridarum											
+NCBITaxon:743972	biolink:OrganismTaxon	Actinobacillus suis											
 NCBITaxon:671218	biolink:OrganismTaxon	Alloprevotella rava											
 NCBITaxon:507751	biolink:OrganismTaxon	Peptoniphilus koenoeneniae											
 NCBITaxon:34060	biolink:OrganismTaxon	Moraxella caviae											
@@ -14992,6 +14959,7 @@ NCBITaxon:1408442	biolink:OrganismTaxon	Helicobacter pametensis
 NCBITaxon:1528099	biolink:OrganismTaxon	Lawsonella clevelandensis											
 NCBITaxon:1414719	biolink:OrganismTaxon	Corynebacterium jeddahense											
 NCBITaxon:1267754	biolink:OrganismTaxon	Corynebacterium urealyticum											
+NCBITaxon:39950	biolink:OrganismTaxon	Dialister pneumosintes											
 NCBITaxon:755	biolink:OrganismTaxon	Avibacterium gallinarum											
 NCBITaxon:28188	biolink:OrganismTaxon	Capnocytophaga canimorsus											
 NCBITaxon:873191	biolink:OrganismTaxon	Arcobacter defluvii											
@@ -15038,6 +15006,7 @@ NCBITaxon:1460968	biolink:OrganismTaxon	Bartonella fuyuanensis
 NCBITaxon:1461000	biolink:OrganismTaxon	Bartonella heixiaziensis											
 NCBITaxon:981386	biolink:OrganismTaxon	Brucella vulpis											
 NCBITaxon:2736289	biolink:OrganismTaxon	Xylanibacter rodentium											
+NCBITaxon:1906745	biolink:OrganismTaxon	Rodentibacter ratti											
 NCBITaxon:1908258	biolink:OrganismTaxon	Rodentibacter heidelbergensis											
 NCBITaxon:1908257	biolink:OrganismTaxon	Rodentibacter mrazii											
 NCBITaxon:1908260	biolink:OrganismTaxon	Rodentibacter rarus											
@@ -15048,8 +15017,8 @@ NCBITaxon:2137581	biolink:OrganismTaxon	Ellagibacter isourolithinifaciens
 NCBITaxon:87458	biolink:OrganismTaxon	Ruoffia tabacinasalis											
 NCBITaxon:1408360	biolink:OrganismTaxon	Campylobacter jejuni subsp. doylei											
 NCBITaxon:2025884	biolink:OrganismTaxon	Aggregatibacter kilianii											
-bacdive:157755	biolink:OrganismTaxon	Aggregatibacter kilianii											
-bacdive:157035	biolink:OrganismTaxon	Helicobacter sp.											
+bacdive:157755	biolink:OrganismTaxon	unclassified bacterium											
+bacdive:157035	biolink:OrganismTaxon	unclassified bacterium											
 NCBITaxon:1266923	biolink:OrganismTaxon	Brachyspira hyodysenteriae											
 NCBITaxon:2579976	biolink:OrganismTaxon	Culicoidibacter larvae											
 NCBITaxon:2259133	biolink:OrganismTaxon	Mesosutterella multiformis											
@@ -15096,17 +15065,17 @@ bacdive:140610	biolink:OrganismTaxon	Rodentibacter myodis
 bacdive:169681	biolink:OrganismTaxon	Fenollaria timonensis											
 bacdive:169217	biolink:OrganismTaxon	Corynebacterium sp.											
 bacdive:167580	biolink:OrganismTaxon	Eikenella sp.											
-bacdive:167714	biolink:OrganismTaxon	Rodentibacter haemolyticus											
+bacdive:167714	biolink:OrganismTaxon	Rodentibacter sp.											
 bacdive:169570	biolink:OrganismTaxon	Parabacteroides goldsteinii											
 bacdive:166608	biolink:OrganismTaxon	Campylobacter sp.											
 bacdive:170544	biolink:OrganismTaxon	Helicobacter sp.											
 bacdive:170317	biolink:OrganismTaxon	Dietzia massiliensis											
 bacdive:170005	biolink:OrganismTaxon	Helicobacter sp.											
-bacdive:169788	biolink:OrganismTaxon	Arcanobacterium buesumense											
+bacdive:169788	biolink:OrganismTaxon	Arcanobacterium sp.											
 bacdive:155653	biolink:OrganismTaxon	Corynebacterium sanguinis											
 bacdive:155220	biolink:OrganismTaxon	Corynebacterium sanguinis											
 bacdive:169162	biolink:OrganismTaxon	Lagierella massiliensis											
-bacdive:170546	biolink:OrganismTaxon	Helicobacter colisuis											
+bacdive:170546	biolink:OrganismTaxon	Helicobacter sp.											
 bacdive:169447	biolink:OrganismTaxon	Streptococcus thoraltensis											
 bacdive:169223	biolink:OrganismTaxon	Enterococcus gallinarum											
 bacdive:169738	biolink:OrganismTaxon	Erysipelothrix aquatica											
@@ -15692,8 +15661,8 @@ bacdive:138198	biolink:OrganismTaxon	Actinobacillus minor
 medium:805	biolink:ChemicalEntity	METHYLOBACTERIUM THIOCYANATUM MEDIUM											
 solution:1636	biolink:ChemicalEntity	Main sol. 805											
 CHEBI:30951	biolink:ChemicalEntity	KSCN											
-CHEBI:35718	biolink:ChemicalRole	antifungal agent											
 CHEBI:33286	biolink:ChemicalRole	agrochemical											
+CHEBI:35718	biolink:ChemicalRole	antifungal agent											
 medium:806	biolink:ChemicalEntity	THERMOCOCCUS MEDIUM											
 solution:1637	biolink:ChemicalEntity	Main sol. 806											
 CHEBI:17909	biolink:ChemicalEntity	Sulphur											
@@ -15779,7 +15748,6 @@ NCBITaxon:1123403	biolink:OrganismTaxon	Tissierella creatinophila
 NCBITaxon:79681	biolink:OrganismTaxon	Tissierella creatinophila											
 medium:825	biolink:ChemicalEntity	METHANOBACTERIUM II MEDIUM											
 solution:1673	biolink:ChemicalEntity	Main sol. 825											
-NCBITaxon:877455	biolink:OrganismTaxon	Methanobacterium lacus											
 medium:825a	biolink:ChemicalEntity	METHANOBACTERIUM II MEDIUM N2/CO2											
 solution:1674	biolink:ChemicalEntity	Main sol. 825a											
 NCBITaxon:69540	biolink:OrganismTaxon	Methanobacterium oryzae											
@@ -15973,6 +15941,7 @@ NCBITaxon:362413	biolink:OrganismTaxon	Flavobacterium aquidurense
 NCBITaxon:569127	biolink:OrganismTaxon	Deinococcus caeni											
 NCBITaxon:328692	biolink:OrganismTaxon	Deinococcus aquaticus											
 NCBITaxon:926566	biolink:OrganismTaxon	Terriglobus roseus											
+NCBITaxon:323621	biolink:OrganismTaxon	Shinella granuli											
 NCBITaxon:266121	biolink:OrganismTaxon	Starkeya koreensis											
 NCBITaxon:446786	biolink:OrganismTaxon	Microlunatus aurantiacus											
 NCBITaxon:1385368	biolink:OrganismTaxon	Skermanella aerolata											
@@ -16634,7 +16603,7 @@ NCBITaxon:33027	biolink:OrganismTaxon	Sporolactobacillus nakayamae subsp. racemi
 NCBITaxon:269672	biolink:OrganismTaxon	Sporolactobacillus kofuensis											
 NCBITaxon:29544	biolink:OrganismTaxon	Aromatoleum toluolicum											
 NCBITaxon:492735	biolink:OrganismTaxon	Sporolactobacillus putidus											
-bacdive:159081	biolink:OrganismTaxon	Paenibacillus sp.											
+bacdive:159081	biolink:OrganismTaxon	unclassified bacterium											
 nan	biolink:OrganismTaxon	Baekduia sp.											
 NCBITaxon:1443800	biolink:OrganismTaxon	Oryzihumus terrae											
 bacdive:169590	biolink:OrganismTaxon	Amnibacterium sp.											
@@ -16681,7 +16650,6 @@ bacdive:169976	biolink:OrganismTaxon	Polynucleobacter arcticus
 bacdive:169978	biolink:OrganismTaxon	Polynucleobacter brandtiae											
 bacdive:169674	biolink:OrganismTaxon	Quadrisphaera sp.											
 bacdive:167099	biolink:OrganismTaxon	Aquipluma nitroreducens											
-bacdive:166300	biolink:OrganismTaxon	Kribbella speibonae											
 bacdive:166940	biolink:OrganismTaxon	Szabonella alba											
 bacdive:166574	biolink:OrganismTaxon	Fertoeibacter niger											
 bacdive:167134	biolink:OrganismTaxon	Aquirufa beregesia											
@@ -16689,11 +16657,9 @@ bacdive:169922	biolink:OrganismTaxon	Neobacillus rhizosphaerae
 bacdive:166658	biolink:OrganismTaxon	Aquirufa ecclesiirivi											
 bacdive:166894	biolink:OrganismTaxon	Usitatibacter sp.											
 bacdive:169327	biolink:OrganismTaxon	Pseudoneobacillus rhizosphaerae											
-bacdive:170688	biolink:OrganismTaxon	Roseomonas fluvialis											
 bacdive:169315	biolink:OrganismTaxon	Paenibacillus allorhizoplanae											
 bacdive:169416	biolink:OrganismTaxon	Neotabrizicola shimadae											
 bacdive:169343	biolink:OrganismTaxon	Bradyrhizobium sp.											
-bacdive:170361	biolink:OrganismTaxon	Solicola  gregarius 											
 bacdive:140482	biolink:OrganismTaxon	Noviherbaspirillum denitrificans											
 bacdive:169459	biolink:OrganismTaxon	Rhodoferax sp. 											
 bacdive:169654	biolink:OrganismTaxon	Phycicoccus sp.											
@@ -16708,7 +16674,6 @@ bacdive:166829	biolink:OrganismTaxon	Ruania rhizosphaerae
 bacdive:166381	biolink:OrganismTaxon	Sphingomonas sp.											
 bacdive:166382	biolink:OrganismTaxon	Sphingomonas sp.											
 bacdive:167046	biolink:OrganismTaxon	Usitatibacter sp.											
-bacdive:170759	biolink:OrganismTaxon	Horticoccus luteus											
 bacdive:169152	biolink:OrganismTaxon	Variovorax paradoxus											
 bacdive:169517	biolink:OrganismTaxon	Subtercola sp.											
 NCBITaxon:189966	biolink:OrganismTaxon	Rhizomicrobium palustre											
@@ -16736,9 +16701,6 @@ bacdive:166834	biolink:OrganismTaxon	Massilia rhizosphaerae
 bacdive:169983	biolink:OrganismTaxon	Polynucleobacter kasalickyi											
 bacdive:169975	biolink:OrganismTaxon	Polynucleobacter antarcticus											
 NCBITaxon:1229656	biolink:OrganismTaxon	Acidibacter ferrireducens											
-NCBITaxon:480070	biolink:OrganismTaxon	Rhizomicrobium electricum											
-NCBITaxon:386300	biolink:OrganismTaxon	Flavobacterium glaciei											
-NCBITaxon:178355	biolink:OrganismTaxon	Flavobacterium omnivorum											
 medium:830a	biolink:ChemicalEntity	MEDIUM R2A MODIFIED											
 solution:5658	biolink:ChemicalEntity	Main sol. 830a											
 NCBITaxon:70584	biolink:OrganismTaxon	Aquabacterium parvum											
@@ -17297,6 +17259,7 @@ solution:1884	biolink:ChemicalEntity	Solution B
 solution:1882	biolink:ChemicalEntity	Solution C											
 solution:1886	biolink:ChemicalEntity	Solution D											
 solution:1883	biolink:ChemicalEntity	Solution E											
+solution:1885	biolink:ChemicalEntity	Solution F											
 NCBITaxon:157842	biolink:OrganismTaxon	Desulfofaba hansenii											
 medium:917	biolink:ChemicalEntity	MODIFIED SEA WATER AGAR											
 solution:1887	biolink:ChemicalEntity	Main sol. 917											
@@ -17326,11 +17289,7 @@ NCBITaxon:369798	biolink:OrganismTaxon	Methylocystis hirsuta
 NCBITaxon:493385	biolink:OrganismTaxon	Methylogaea oryzae											
 NCBITaxon:1612308	biolink:OrganismTaxon	Methylocapsa palsarum											
 NCBITaxon:1704499	biolink:OrganismTaxon	Methylovulum psychrotolerans											
-bacdive:134145	biolink:OrganismTaxon	Methylobacter tundripaludum											
 bacdive:168939	biolink:OrganismTaxon	Methylobacter psychrophilus											
-medium:921a	biolink:ChemicalEntity	AMS medium											
-solution:6433	biolink:ChemicalEntity	Main sol. 921a											
-solution:6434	biolink:ChemicalEntity	Solution 1 10x AMS salts											
 medium:922	biolink:ChemicalEntity	METHYLOCAPSA ACIDOPHILA MEDIUM											
 solution:1896	biolink:ChemicalEntity	Main sol. 922											
 solution:1897	biolink:ChemicalEntity	Trace elements											
@@ -17574,6 +17533,7 @@ solution:1986	biolink:ChemicalEntity	Main sol. 962a
 medium:963	biolink:ChemicalEntity	THERMOANAEROMONAS MEDIUM											
 solution:1987	biolink:ChemicalEntity	Main sol. 963											
 NCBITaxon:698762	biolink:OrganismTaxon	Thermanaeromonas toyohensis											
+NCBITaxon:1226730	biolink:OrganismTaxon	Thermanaeromonas burensis											
 medium:964	biolink:ChemicalEntity	CAMINICELLA MEDIUM											
 solution:1988	biolink:ChemicalEntity	Main sol. 964											
 CAS-RN:5625-37-6	biolink:ChemicalEntity	PIPES buffer											
@@ -17672,6 +17632,7 @@ NCBITaxon:1882232	biolink:OrganismTaxon	Kibdelosporangium rhizosphaerae
 NCBITaxon:1789439	biolink:OrganismTaxon	Lentzea pudingi											
 NCBITaxon:2584121	biolink:OrganismTaxon	Antrihabitans stalactiti											
 NCBITaxon:1912961	biolink:OrganismTaxon	Actinophytocola xanthii											
+NCBITaxon:1348092	biolink:OrganismTaxon	Halopolyspora alba											
 NCBITaxon:2785916	biolink:OrganismTaxon	Nocardia bovistercoris											
 NCBITaxon:58107	biolink:OrganismTaxon	Pseudonocardia yunnanensis											
 bacdive:168165	biolink:OrganismTaxon	Ktedonospora  formicarum											
@@ -17728,6 +17689,7 @@ CAS-RN:10213-10-2	biolink:ChemicalEntity	Na2O4W x 2 H2O
 CHEBI:53472	biolink:ChemicalEntity	CuCl											
 CHEBI:53001	biolink:ChemicalEntity	NiSO4 x 6 H2O											
 CHEBI:26642	biolink:ChemicalEntity	H2SeO3											
+NCBITaxon:309805	biolink:OrganismTaxon	Persephonella marina											
 medium:997	biolink:ChemicalEntity	HNW MEDIUM											
 solution:2032	biolink:ChemicalEntity	Main sol. 997											
 solution:2033	biolink:ChemicalEntity	Synthetic seawater											
@@ -17740,8 +17702,10 @@ solution:2036	biolink:ChemicalEntity	Trace element solution SL12
 solution:5678	biolink:ChemicalEntity	Vitamins V7 solution Pfennig et Trüper, 1992											
 CHEBI:15956	biolink:ChemicalEntity	Biotine											
 PubChem:54605677	biolink:ChemicalEntity	Vitamine B12											
+NCBITaxon:140057	biolink:OrganismTaxon	Roseospira marina											
 medium:999	biolink:ChemicalEntity	HALORHODOSPIRA MEDIUM											
 solution:2037	biolink:ChemicalEntity	Main sol. 999											
+NCBITaxon:168379	biolink:OrganismTaxon	Halorhodospira neutriphila											
 medium:1000	biolink:ChemicalEntity	MJANHOX-NO3 MEDIUM WITH SUPPLEMENT											
 solution:2038	biolink:ChemicalEntity	Main sol. 1000											
 solution:2039	biolink:ChemicalEntity	Trace mineral solution											
@@ -17997,6 +17961,7 @@ NCBITaxon:583356	biolink:OrganismTaxon	Ignisphaera aggregans
 medium:1044	biolink:ChemicalEntity	GLUCONACETOBACTER RHAETICUS MEDIUM											
 solution:2112	biolink:ChemicalEntity	Main sol. 1044											
 NCBITaxon:1307943	biolink:OrganismTaxon	Komagataeibacter swingsii											
+NCBITaxon:1307939	biolink:OrganismTaxon	Komagataeibacter rhaeticus											
 medium:1045	biolink:ChemicalEntity	THERMUS SP. MEDIUM											
 solution:2113	biolink:ChemicalEntity	Main sol. 1045											
 medium:1046	biolink:ChemicalEntity	ANOXYBACILLUS AMYLOLYTICUS MEDIUM											
@@ -18107,6 +18072,7 @@ NCBITaxon:1121416	biolink:OrganismTaxon	Desulfopila aestuarii
 medium:1069	biolink:ChemicalEntity	MODIFIED BIEBL AND PFENNIG'S MEDIUM											
 solution:2158	biolink:ChemicalEntity	Main sol. 1069											
 solution:5680	biolink:ChemicalEntity	Trace element solution SL-7											
+NCBITaxon:2250209	biolink:OrganismTaxon	Marichromatium sp.											
 medium:1070	biolink:ChemicalEntity	YM MEDIUM											
 solution:2160	biolink:ChemicalEntity	Main sol. 1070											
 NCBITaxon:346912	biolink:OrganismTaxon	Labrys miyagiensis											
@@ -18392,12 +18358,14 @@ medium:1113	biolink:ChemicalEntity	LEPTOSPIRA-MEDIUM
 solution:2234	biolink:ChemicalEntity	Main sol. 1113											
 ingredient:990	biolink:ChemicalEntity	Leptospira Medium Base EMJH											
 ingredient:992	biolink:ChemicalEntity	Leptospira Enrichment EMJH											
+NCBITaxon:28182	biolink:OrganismTaxon	Leptospira noguchii											
 NCBITaxon:293075	biolink:OrganismTaxon	Leptospira terpstrae											
 bacdive:168824	biolink:OrganismTaxon	Leptospira interrogans											
 NCBITaxon:869212	biolink:OrganismTaxon	Turneriella parva											
 NCBITaxon:929563	biolink:OrganismTaxon	Leptonema illini											
 NCBITaxon:301541	biolink:OrganismTaxon	Leptospira broomii											
 NCBITaxon:29508	biolink:OrganismTaxon	Leptospira meyeri											
+NCBITaxon:48782	biolink:OrganismTaxon	Leptospira fainei											
 NCBITaxon:29506	biolink:OrganismTaxon	Leptospira inadai											
 NCBITaxon:28184	biolink:OrganismTaxon	Leptospira weilii											
 NCBITaxon:1193500	biolink:OrganismTaxon	Leptospira idonii											
@@ -18405,7 +18373,6 @@ NCBITaxon:1958811	biolink:OrganismTaxon	Leptospira venezuelensis
 bacdive:167264	biolink:OrganismTaxon	Leptospira selangorensis											
 bacdive:167246	biolink:OrganismTaxon	Leptospira ilyithenensis											
 bacdive:166670	biolink:OrganismTaxon	Leptospira ognonensis											
-bacdive:168944	biolink:OrganismTaxon	Leptospira wolbachii											
 medium:1114	biolink:ChemicalEntity	THIOFABA MEDIUM											
 solution:2235	biolink:ChemicalEntity	Main sol. 1114											
 solution:2236	biolink:ChemicalEntity	Solution A											
@@ -18483,14 +18450,16 @@ solution:2263	biolink:ChemicalEntity	Micronutrient solution SL8
 medium:1129	biolink:ChemicalEntity	PHOTOTROPHIC MEDIUM											
 solution:2264	biolink:ChemicalEntity	Main sol. 1129											
 solution:5683	biolink:ChemicalEntity	Trace element solution SL7											
-solution:6411	biolink:ChemicalEntity	NaHCO3, 10%											
 medium:1130	biolink:ChemicalEntity	RE-101/102 MEDIUM											
 solution:2266	biolink:ChemicalEntity	Main sol. 1130											
 NCBITaxon:926690	biolink:OrganismTaxon	Haloplanus natans											
 NCBITaxon:376171	biolink:OrganismTaxon	Haloplanus natans											
 medium:1131	biolink:ChemicalEntity	HYDROGENIVIRGA OKINAWENSIS MEDIUM											
 solution:2267	biolink:ChemicalEntity	Main sol. 1131											
+solution:4251	biolink:ChemicalEntity	Modified MJ synthetic seawater											
+solution:2269	biolink:ChemicalEntity	Trace element solution											
 solution:6396	biolink:ChemicalEntity	Modified MJ synthetic seawater											
+CHEBI:86463	biolink:ChemicalEntity	AlKSO42											
 NCBITaxon:345592	biolink:OrganismTaxon	Hydrogenivirga okinawensis											
 NCBITaxon:1076588	biolink:OrganismTaxon	Thiolapillus brandeum											
 medium:1132	biolink:ChemicalEntity	LC 2											
@@ -18521,9 +18490,11 @@ NCBITaxon:797210	biolink:OrganismTaxon	Halopiger xanaduensis
 medium:1139	biolink:ChemicalEntity	PYG MEDIUM B											
 solution:2286	biolink:ChemicalEntity	Main sol. 1139											
 solution:2287	biolink:ChemicalEntity	Salts solution											
+NCBITaxon:178355	biolink:OrganismTaxon	Flavobacterium omnivorum											
 NCBITaxon:1540163	biolink:OrganismTaxon	Flavobacterium endophyticum											
 medium:1140	biolink:ChemicalEntity	PYG MEDIUM E											
 solution:2288	biolink:ChemicalEntity	Main sol. 1140											
+NCBITaxon:386300	biolink:OrganismTaxon	Flavobacterium glaciei											
 medium:1141	biolink:ChemicalEntity	THERMOGYMNOMONAS MEDIUM											
 solution:2289	biolink:ChemicalEntity	Main sol. 1141											
 NCBITaxon:1295120	biolink:OrganismTaxon	Thermogymnomonas acidicola											
@@ -18817,7 +18788,8 @@ NCBITaxon:436510	biolink:OrganismTaxon	Solidesulfovibrio marrakechensis
 medium:1203	biolink:ChemicalEntity	FASTIDIOUS ANAEROBE AGAR											
 solution:2402	biolink:ChemicalEntity	Main sol. 1203											
 CHEBI:2509	biolink:ChemicalEntity	Fastidious Anaerobe Agar											
-NCBITaxon:1122980	biolink:OrganismTaxon	Segatella baroniae											
+NCBITaxon:1122980	biolink:OrganismTaxon	Prevotella baroniae											
+NCBITaxon:762967	biolink:OrganismTaxon	Sutterella parvirubra											
 NCBITaxon:1318743	biolink:OrganismTaxon	Bartonella ancashensis											
 NCBITaxon:1630135	biolink:OrganismTaxon	Dermabacter vaginalis											
 NCBITaxon:826	biolink:OrganismTaxon	Sebaldella termitidis											
@@ -18850,7 +18822,7 @@ bacdive:169559	biolink:OrganismTaxon	Bacteroides mediterraneensis
 bacdive:169378	biolink:OrganismTaxon	Enorma phocaeensis											
 bacdive:169213	biolink:OrganismTaxon	Arabiibacter massiliensis											
 bacdive:169635	biolink:OrganismTaxon	Macellibacteroides fermentans											
-bacdive:170771	biolink:OrganismTaxon	Hallella faecis											
+bacdive:169743	biolink:OrganismTaxon	Adlercreutzia murintestinalis											
 medium:1204	biolink:ChemicalEntity	SPHAEROCHAETA MEDIUM											
 solution:2404	biolink:ChemicalEntity	Main sol. 1204											
 PubChem:23615261	biolink:ChemicalEntity	Maltose monohydrate											
@@ -18963,6 +18935,7 @@ solution:2453	biolink:ChemicalEntity	Artificial seawater
 NCBITaxon:471825	biolink:OrganismTaxon	Haloplasma contractile											
 medium:1232	biolink:ChemicalEntity	THERMOTOGA TFD MEDIUM											
 solution:2454	biolink:ChemicalEntity	Main sol. 1232											
+NCBITaxon:243274	biolink:OrganismTaxon	Thermotoga maritima											
 medium:1233	biolink:ChemicalEntity	CALDICOPROBACTER MEDIUM											
 solution:2455	biolink:ChemicalEntity	Main sol. 1233											
 NCBITaxon:1304880	biolink:OrganismTaxon	Caldicoprobacter oshimai											
@@ -19057,6 +19030,7 @@ medium:1255	biolink:ChemicalEntity	THERMOVENABULUM MEDIUM
 solution:2489	biolink:ChemicalEntity	Main sol. 1255											
 medium:1257	biolink:ChemicalEntity	METHANOCELLA MEDIUM											
 solution:2490	biolink:ChemicalEntity	Main sol. 1257											
+NCBITaxon:1175445	biolink:OrganismTaxon	Methanocella arvoryzae											
 medium:1258	biolink:ChemicalEntity	NUTRIMENT AGAR WITH 150 G/L NACL											
 solution:2491	biolink:ChemicalEntity	Main sol. 1258											
 medium:1259	biolink:ChemicalEntity	NUTRIMENT AGAR											
@@ -19177,6 +19151,7 @@ ingredient:1136	biolink:ChemicalEntity	Brucella Broth
 ingredient:1138	biolink:ChemicalEntity	Vitox											
 ingredient:1139	biolink:ChemicalEntity	Skirrow supplement											
 CAS-RN:12633-72-6	biolink:ChemicalEntity	Amphotericin											
+NCBITaxon:104628	biolink:OrganismTaxon	Helicobacter suis											
 NCBITaxon:35817	biolink:OrganismTaxon	Helicobacter heilmannii											
 NCBITaxon:1578720	biolink:OrganismTaxon	Helicobacter ailurogastricus											
 medium:1280	biolink:ChemicalEntity	METHANOREGULA PEAT MEDIUM											
@@ -19243,7 +19218,6 @@ solution:2591	biolink:ChemicalEntity	Main sol. 1293
 NCBITaxon:292459	biolink:OrganismTaxon	Symbiobacterium thermophilum											
 NCBITaxon:471799	biolink:OrganismTaxon	Symbiobacterium ostreiconchae											
 NCBITaxon:557450	biolink:OrganismTaxon	Symbiobacterium turbinis											
-NCBITaxon:557451	biolink:OrganismTaxon	Symbiobacterium terraclitae											
 medium:1294	biolink:ChemicalEntity	DESULFURISPIRILLUM INDICUM MEDIUM											
 solution:2592	biolink:ChemicalEntity	Main sol. 1294											
 NCBITaxon:936456	biolink:OrganismTaxon	Desulfurispirillum indicum											
@@ -19332,7 +19306,6 @@ solution:2638	biolink:ChemicalEntity	Solution
 medium:1318	biolink:ChemicalEntity	METHANOCELLA CONRADII MEDIUM											
 solution:2639	biolink:ChemicalEntity	Main sol. 1318											
 NCBITaxon:1175444	biolink:OrganismTaxon	Methanocella conradii											
-NCBITaxon:1175445	biolink:OrganismTaxon	Methanocella arvoryzae											
 medium:1320	biolink:ChemicalEntity	HALF STRENGTH R2A MEDIUM IN 75% SEAWATER											
 solution:2640	biolink:ChemicalEntity	Main sol. 1320											
 NCBITaxon:490089	biolink:OrganismTaxon	Cerasicoccus maritimus											
@@ -19409,7 +19382,6 @@ solution:2678	biolink:ChemicalEntity	Main sol. 1337
 solution:2679	biolink:ChemicalEntity	Solution T											
 solution:2680	biolink:ChemicalEntity	Wolfe's Mineral Solution											
 CHEBI:41250	biolink:ChemicalEntity	Bis-Tris											
-CHEBI:86463	biolink:ChemicalEntity	AlKSO42											
 NCBITaxon:754476	biolink:OrganismTaxon	Methylophaga nitratireducenticrescens											
 NCBITaxon:754477	biolink:OrganismTaxon	Methylophaga frappieri											
 medium:1338	biolink:ChemicalEntity	LB MEDIUM WITH CARBONATES											
@@ -19550,8 +19522,11 @@ medium:1373	biolink:ChemicalEntity	IRD MEDIUM
 solution:2771	biolink:ChemicalEntity	Main sol. 1373											
 NCBITaxon:869279	biolink:OrganismTaxon	Thermanaerothrix daxensis											
 medium:1374	biolink:ChemicalEntity	IGNAVIBACTERIA MEDIUM											
-solution:2773	biolink:ChemicalEntity	Main sol. 1374											
+solution:2772	biolink:ChemicalEntity	Main sol. 1374											
+solution:2773	biolink:ChemicalEntity	Solution A											
+solution:2774	biolink:ChemicalEntity	Solution B											
 solution:2775	biolink:ChemicalEntity	Trace element solution											
+solution:2773	biolink:ChemicalEntity	Main sol. 1374											
 NCBITaxon:1134405	biolink:OrganismTaxon	Melioribacter roseus											
 medium:1375	biolink:ChemicalEntity	HALANAEROBACTER JERIDENSE MEDIUM											
 solution:2778	biolink:ChemicalEntity	Main sol. 1375											
@@ -19648,6 +19623,7 @@ solution:2835	biolink:ChemicalEntity	100x Vitamin solution
 solution:5698	biolink:ChemicalEntity	S I											
 solution:5699	biolink:ChemicalEntity	S II											
 CHEBI:30411	biolink:ChemicalEntity	Cobalamine											
+NCBITaxon:480070	biolink:OrganismTaxon	Rhizomicrobium electricum											
 medium:1399	biolink:ChemicalEntity	HALOPHILIC MEDIUM											
 solution:2837	biolink:ChemicalEntity	Main sol. 1399											
 solution:2838	biolink:ChemicalEntity	Total Salts											
@@ -20046,11 +20022,11 @@ solution:3063	biolink:ChemicalEntity	Trace element solution
 CAS-RN:12007-60-2	biolink:ChemicalEntity	Li2B4O7											
 CAS-RN:10102-23-5	biolink:ChemicalEntity	Na2SeO4 x 10 H2O											
 NCBITaxon:1324935	biolink:OrganismTaxon	Limisphaera ngatamarikiensis											
-CHEBI:64416	biolink:ChemicalRole	EC 1.3.1.43 (arogenate dehydrogenase) inhibitor											
 CHEBI:63332	biolink:ChemicalRole	EC 3.1.3.1 (alkaline phosphatase) inhibitor											
-CHEBI:59163	biolink:ChemicalRole	biomarker											
 CHEBI:50266	biolink:ChemicalRole	prodrug											
+CHEBI:59163	biolink:ChemicalRole	biomarker											
 CHEBI:74529	biolink:ChemicalRole	antidote to paracetamol poisoning											
+CHEBI:64416	biolink:ChemicalRole	EC 1.3.1.43 (arogenate dehydrogenase) inhibitor											
 medium:1494	biolink:ChemicalEntity	. OMIZ-PAT Medium modified											
 solution:3085	biolink:ChemicalEntity	Main sol. 1494											
 solution:3065	biolink:ChemicalEntity	Solution A											
@@ -20178,6 +20154,7 @@ solution:3116	biolink:ChemicalEntity	Main sol. 1508
 NCBITaxon:1246530	biolink:OrganismTaxon	Calderihabitans maritimus											
 medium:1509	biolink:ChemicalEntity	NB-PYRUVATE AGAR											
 solution:3118	biolink:ChemicalEntity	Solution A											
+NCBITaxon:557451	biolink:OrganismTaxon	Symbiobacterium terraclitae											
 medium:1510	biolink:ChemicalEntity	MODIFIED MEDIUM 514 FOR HALOMONAS SP.											
 solution:3119	biolink:ChemicalEntity	Main sol. 1510											
 ingredient:1379	biolink:ChemicalEntity	Difco Marine Broth 2216											
@@ -20239,7 +20216,6 @@ NCBITaxon:1122230	biolink:OrganismTaxon	Methanocorpusculum bavaricum
 NCBITaxon:72612	biolink:OrganismTaxon	Methanoculleus palmolei											
 NCBITaxon:83985	biolink:OrganismTaxon	Methanocorpusculum sinense											
 NCBITaxon:2201	biolink:OrganismTaxon	Methanofollis liminatans											
-NCBITaxon:1201294	biolink:OrganismTaxon	Methanoculleus bourgensis											
 medium:1524	biolink:ChemicalEntity	PLANCTOMYCETES MEDIUM NH11											
 solution:3151	biolink:ChemicalEntity	Main sol. 1524											
 NCBITaxon:1891926	biolink:OrganismTaxon	Fuerstiella marisgermanici											
@@ -20569,12 +20545,11 @@ CAS-RN:6132-04-3	biolink:ChemicalEntity	Na3-citrate x 2 H2O
 NCBITaxon:1167	biolink:OrganismTaxon	Anabaena sp.											
 NCBITaxon:1187	biolink:OrganismTaxon	Calothrix sp.											
 NCBITaxon:1180	biolink:OrganismTaxon	Nostoc sp.											
-nan	biolink:OrganismTaxon	Tolypothrix sp.											
+nan	biolink:OrganismTaxon	Tolipothrix sp.											
 bacdive:140170	biolink:OrganismTaxon	Aphanothece stagnina											
 bacdive:140382	biolink:OrganismTaxon	Nodularia spumigena											
 NCBITaxon:272131	biolink:OrganismTaxon	Nostoc sp.											
 NCBITaxon:272131	biolink:OrganismTaxon	Nostoc punctiforme											
-NCBITaxon:1167	biolink:OrganismTaxon	Cyanocohniella  rudolphia											
 bacdive:158949	biolink:OrganismTaxon	Myxacorys almedinensis											
 medium:1593	biolink:ChemicalEntity	Cyanobacteria Medium BG11+											
 solution:5736	biolink:ChemicalEntity	Main sol. 1593											
@@ -20597,7 +20572,6 @@ bacdive:169256	biolink:OrganismTaxon	Timaviella edaphica
 bacdive:169257	biolink:OrganismTaxon	Timaviella edaphica											
 bacdive:169255	biolink:OrganismTaxon	Crinalium magnum											
 bacdive:169472	biolink:OrganismTaxon	Cyanocohniella  rudolphia											
-NCBITaxon:1521640	biolink:OrganismTaxon	Gomphosphaeria aponina											
 medium:1593a	biolink:ChemicalEntity	Cyanobacteria Medium BG11+ TES buffered											
 solution:6270	biolink:ChemicalEntity	Main sol. 1593a											
 CHEBI:39035	biolink:ChemicalEntity	TES											
@@ -20680,7 +20654,7 @@ medium:1602	biolink:ChemicalEntity	CY/3-SEAWATER MEDIUM
 solution:3339	biolink:ChemicalEntity	Main sol. 1602											
 medium:1603	biolink:ChemicalEntity	ACETOBACTER MUSTI MEDIUM											
 solution:3343	biolink:ChemicalEntity	Main sol. 1603											
-NCBITaxon:440	biolink:OrganismTaxon	Acetobacter sp. 											
+NCBITaxon:440	biolink:OrganismTaxon	Acetobacter sp.											
 NCBITaxon:864732	biolink:OrganismTaxon	Acetobacter musti											
 medium:1604	biolink:ChemicalEntity	ATHALASSOTOGA MEDIUM											
 solution:3344	biolink:ChemicalEntity	Main sol. 1604											
@@ -20971,6 +20945,7 @@ bacdive:140201	biolink:OrganismTaxon	Lyngbya sp.
 NCBITaxon:313612	biolink:OrganismTaxon	Lyngbya sp.											
 medium:1673	biolink:ChemicalEntity	Cyanobacteria Medium ASN 3+											
 solution:5775	biolink:ChemicalEntity	Main sol. 1673											
+solution:5776	biolink:ChemicalEntity	T-Trace Metal Mix											
 solution:6384	biolink:ChemicalEntity	T-Trace Metal Mix											
 NCBITaxon:331992	biolink:OrganismTaxon	Phormidium formosum											
 bacdive:140202	biolink:OrganismTaxon	Lyngbya sp.											
@@ -20980,8 +20955,6 @@ NCBITaxon:332965	biolink:OrganismTaxon	Halospirulina sp.
 NCBITaxon:1199	biolink:OrganismTaxon	Baaleninema simplex											
 NCBITaxon:310502	biolink:OrganismTaxon	Geitlerinema sp.											
 NCBITaxon:310502	biolink:OrganismTaxon	Sodalinema stali											
-bacdive:140225	biolink:OrganismTaxon	Coleofasciculus chthonoplastes											
-bacdive:140224	biolink:OrganismTaxon	Coleofasciculus sp.											
 medium:1674	biolink:ChemicalEntity	Cyanobacteria Medium BG11- Cu											
 solution:5777	biolink:ChemicalEntity	Main sol. 1674											
 solution:5778	biolink:ChemicalEntity	Trace metal mix without CuSO4											
@@ -20991,9 +20964,7 @@ solution:3469	biolink:ChemicalEntity	Main sol. 1675
 NCBITaxon:1938353	biolink:OrganismTaxon	Desulfothermobacter acidiphilus											
 medium:1676	biolink:ChemicalEntity	Cyanobacteria Medium ASN3 -											
 solution:5780	biolink:ChemicalEntity	Main sol. 1676											
-solution:5776	biolink:ChemicalEntity	T-Trace Metal Mix											
 bacdive:140200	biolink:OrganismTaxon	Lyngbya sp.											
-NCBITaxon:1187	biolink:OrganismTaxon	Nunduva sp.											
 medium:1677	biolink:ChemicalEntity	Cyanobacteria Medium BA+											
 solution:5781	biolink:ChemicalEntity	Main sol. 1677											
 solution:6385	biolink:ChemicalEntity	T-Trace Metal Mix *											
@@ -21004,7 +20975,6 @@ bacdive:158456	biolink:OrganismTaxon	Cyanobacteria sp.
 bacdive:158457	biolink:OrganismTaxon	Cyanobacteria sp.											
 bacdive:140216	biolink:OrganismTaxon	Cyanobacteria sp.											
 bacdive:169562	biolink:OrganismTaxon	Toxifilum mysidocida											
-bacdive:140226	biolink:OrganismTaxon	Coleofasciculus sp.											
 medium:1678	biolink:ChemicalEntity	Cyanobacteria Medium BA+50+B+N/2											
 solution:5782	biolink:ChemicalEntity	Main sol. 1678											
 NCBITaxon:170616	biolink:OrganismTaxon	Halomicronema sp.											
@@ -21013,10 +20983,15 @@ medium:1679	biolink:ChemicalEntity	Cyanobacteria Medium 2xASN3
 solution:5783	biolink:ChemicalEntity	Main sol. 1679											
 medium:1680	biolink:ChemicalEntity	Cyanobacteria Medium MCL											
 solution:5531	biolink:ChemicalEntity	Main sol. 1680											
+solution:5784	biolink:ChemicalEntity	Stock Solution A											
+solution:5785	biolink:ChemicalEntity	Stock Solution B											
+solution:5786	biolink:ChemicalEntity	MCL Vitamin Stock Solution											
 solution:5784	biolink:ChemicalEntity	MCL Stock Solution A *											
 solution:5785	biolink:ChemicalEntity	MCL Stock Solution B **											
 solution:5786	biolink:ChemicalEntity	MCL Vitamin Stock Solution ***											
 bacdive:140223	biolink:OrganismTaxon	Coleofasciculus chthonoplastes											
+bacdive:140224	biolink:OrganismTaxon	Coleofasciculus sp.											
+bacdive:140226	biolink:OrganismTaxon	Coleofasciculus sp.											
 bacdive:140227	biolink:OrganismTaxon	Coleofasciculus sp.											
 medium:1680a	biolink:ChemicalEntity	PES - Provasoli´s Enriched Seawater-Medium 7 PSU at 25 °C											
 solution:6390	biolink:ChemicalEntity	Main sol. 1680a											
@@ -21119,10 +21094,10 @@ solution:3530	biolink:ChemicalEntity	Main sol. 1704
 CHEBI:3311	biolink:ChemicalEntity	Calcium Carbonate											
 bacdive:169725	biolink:OrganismTaxon	Onobrychidicola muellerharveyae											
 bacdive:169715	biolink:OrganismTaxon	Mesorhizobium onobrychidis											
-CHEBI:147285	biolink:ChemicalRole	EC 3.4.22.69 (SARS coronavirus main proteinase) inhibitor											
 CHEBI:48422	biolink:ChemicalRole	angiogenesis inhibitor											
-CHEBI:76956	biolink:ChemicalRole	Aspergillus metabolite											
 CHEBI:25491	biolink:ChemicalRole	nematicide											
+CHEBI:76956	biolink:ChemicalRole	Aspergillus metabolite											
+CHEBI:147285	biolink:ChemicalRole	EC 3.4.22.69 (SARS coronavirus main proteinase) inhibitor											
 CHEBI:25442	biolink:ChemicalRole	mycotoxin											
 medium:1705	biolink:ChemicalEntity	AM5 MEDIUM ELUSIMICROBIUM MEDIUM											
 solution:3531	biolink:ChemicalEntity	Main sol. 1705											
@@ -21148,7 +21123,6 @@ solution:3533	biolink:ChemicalEntity	Trace metal solution
 solution:3534	biolink:ChemicalEntity	Vitamin solution											
 solution:5795	biolink:ChemicalEntity	Solution 1											
 solution:5796	biolink:ChemicalEntity	Solution 2											
-solution:6419	biolink:ChemicalEntity	Solution 3											
 solution:6420	biolink:ChemicalEntity	Solution 3											
 ingredient:1552	biolink:ChemicalEntity	Carbon source solution											
 medium:1707	biolink:ChemicalEntity	MEDIUM FOR HJ250											
@@ -21248,10 +21222,12 @@ solution:5812	biolink:ChemicalEntity	Z-Micro nutrient solution Gaffron
 solution:5813	biolink:ChemicalEntity	Fe/EDTA complex											
 CHEBI:86156	biolink:ChemicalEntity	CdNO32 x 4 H2O											
 CHEBI:86206	biolink:ChemicalEntity	CrNO33 x 7 H2O											
+NCBITaxon:1521640	biolink:OrganismTaxon	Gomphosphaeria aponina											
 medium:1727	biolink:ChemicalEntity	Z45/4 Medium for Cyanobacteria											
 solution:3564	biolink:ChemicalEntity	Main sol. 1727											
-solution:6421	biolink:ChemicalEntity	Fe-EDTA complex											
+solution:3566	biolink:ChemicalEntity	Fe-EDTA complex											
 solution:5814	biolink:ChemicalEntity	Micronutrient solution after H. Gaffron											
+solution:6421	biolink:ChemicalEntity	Fe-EDTA complex											
 NCBITaxon:221294	biolink:OrganismTaxon	Stigonema ocellatum											
 medium:1728	biolink:ChemicalEntity	MMB MEDIUM ATCC 2254											
 solution:3567	biolink:ChemicalEntity	Main sol. 1728											
@@ -21273,7 +21249,6 @@ NCBITaxon:2750658	biolink:OrganismTaxon	Pontiella sulfatireligans
 NCBITaxon:2750659	biolink:OrganismTaxon	Pontiella desulfatans											
 medium:1732	biolink:ChemicalEntity	Z Medium for Cyanobacteria											
 solution:3579	biolink:ChemicalEntity	Main sol. 1732											
-solution:3566	biolink:ChemicalEntity	Fe-EDTA complex											
 NCBITaxon:59512	biolink:OrganismTaxon	Planktothrix rubescens											
 medium:1733	biolink:ChemicalEntity	MEDIUM FOR HYDROGENOPHILUS											
 solution:3581	biolink:ChemicalEntity	Main sol. 1733											
@@ -21317,8 +21292,8 @@ solution:3602	biolink:ChemicalEntity	Solution B
 solution:3603	biolink:ChemicalEntity	Solution D Alkaline Trace Elements Solution											
 solution:5824	biolink:ChemicalEntity	Solution E Wolfe's Vitamin Solution											
 solution:5825	biolink:ChemicalEntity	Solution C Acidic Trace Elements Solution											
-CHEBI:192504	biolink:ChemicalRole	elicitor											
 CHEBI:73182	biolink:ChemicalRole	plant activator											
+CHEBI:192504	biolink:ChemicalRole	elicitor											
 medium:1742	biolink:ChemicalEntity	HALOACTINOMYCES HALOPHILUS MEDIUM											
 solution:3606	biolink:ChemicalEntity	Main sol. 1742											
 CHEBI:16261	biolink:ChemicalEntity	Chitosan											
@@ -21382,9 +21357,6 @@ medium:1775	biolink:ChemicalEntity	DG18 Dichloran 18 % Glycerol agar
 solution:5857	biolink:ChemicalEntity	Main sol. 1775											
 ingredient:2177	biolink:ChemicalEntity	Dichloran-Glycerol-agar base											
 ingredient:2178	biolink:ChemicalEntity	Glycerol anhydrous											
-medium:1778a	biolink:ChemicalEntity	ANB aerobic											
-solution:6430	biolink:ChemicalEntity	Main sol. 1778a											
-ingredient:2397	biolink:ChemicalEntity	Melezitose											
 medium:1790	biolink:ChemicalEntity	Mucispirillum Spezial											
 solution:5948	biolink:ChemicalEntity	Main sol. 1790											
 bacdive:169567	biolink:OrganismTaxon	Mucispirillum schaedleri											
@@ -21402,8 +21374,6 @@ solution:6181	biolink:ChemicalEntity	Main sol. 1796
 solution:6184	biolink:ChemicalEntity	PAS Ah Stock Solution 1											
 solution:6185	biolink:ChemicalEntity	PAS Ah Stock Solution 2											
 solution:6223	biolink:ChemicalEntity	PAS Ah Stock Solution 3											
-medium:1797	biolink:ChemicalEntity	RE-103 Medium											
-solution:6263	biolink:ChemicalEntity	Main sol. 1797											
 medium:1800	biolink:ChemicalEntity	Vulcanimicrobium alpinus medium											
 solution:6285	biolink:ChemicalEntity	Main sol. 1800											
 solution:5932	biolink:ChemicalEntity	Vitamin solution A 1000 x stock											
@@ -21474,12 +21444,6 @@ CHEBI:506227	biolink:ChemicalEntity	N-Acetyl-D-glucosamine
 medium:1837	biolink:ChemicalEntity	modified Yeast nitrogen base											
 solution:6422	biolink:ChemicalEntity	Main sol. 1837											
 CAS-RN:1266615-59-1 	biolink:ChemicalEntity	MES Hydrat											
-medium:1840	biolink:ChemicalEntity	Halorutilales haloarchaeon medium											
-solution:6431	biolink:ChemicalEntity	Main sol. 1840											
-solution:6323	biolink:ChemicalEntity	alkaline trace metal solution											
-medium:1841	biolink:ChemicalEntity	Halohasta A2											
-solution:6435	biolink:ChemicalEntity	Main sol. 1841											
-ingredient:2398	biolink:ChemicalEntity	Peptone Oxoid											
 medium:J2	biolink:ChemicalEntity	XYLOSE-YP BROTH											
 solution:3628	biolink:ChemicalEntity	Main sol. J2											
 bacdive:162710	biolink:OrganismTaxon	Lacticaseibacillus											
@@ -28241,8 +28205,6 @@ medium:J491	biolink:ChemicalEntity	1/2 MRS + 1/2 BHI AGAR
 solution:4249	biolink:ChemicalEntity	Main sol. J491											
 medium:J492	biolink:ChemicalEntity	MMJ-TL MEDIUM											
 solution:4250	biolink:ChemicalEntity	Main sol. J492											
-solution:4251	biolink:ChemicalEntity	Modified MJ synthetic seawater											
-solution:2269	biolink:ChemicalEntity	Trace element solution											
 medium:J493	biolink:ChemicalEntity	MMJ-HO MEDIUM											
 solution:4252	biolink:ChemicalEntity	Main sol. J493											
 medium:J494	biolink:ChemicalEntity	MMJ-MH MEDIUM											
@@ -30561,12 +30523,12 @@ medium:J1167	biolink:ChemicalEntity	MMFC1 MEDIUM
 solution:5277	biolink:ChemicalEntity	Main sol. J1167											
 ingredient:897	biolink:ChemicalEntity	Trace mineral solution											
 bacdive:158647	biolink:OrganismTaxon	Methylomusa anaerophila											
+CHEBI:77318	biolink:ChemicalRole	pregnane X receptor agonist											
 CHEBI:171664	biolink:ChemicalRole	antiamoebic agent											
-CHEBI:59517	biolink:ChemicalRole	DNA synthesis inhibitor											
 CHEBI:37416	biolink:ChemicalRole	EC 2.7.7.6 (RNA polymerase) inhibitor											
+CHEBI:59517	biolink:ChemicalRole	DNA synthesis inhibitor											
 CHEBI:35816	biolink:ChemicalRole	leprostatic drug											
 CHEBI:33231	biolink:ChemicalRole	antitubercular agent											
-CHEBI:77318	biolink:ChemicalRole	pregnane X receptor agonist											
 medium:J1168	biolink:ChemicalEntity	LB LURIA-BERTANI AGAR WITH KANAMYCIN AND RIFAMPICIN											
 solution:5278	biolink:ChemicalEntity	Main sol. J1168											
 CHEBI:6109	biolink:ChemicalEntity	Kanamycin sulfate											
@@ -30684,12 +30646,12 @@ medium:J1208	biolink:ChemicalEntity	MARINE TRYPTONE YEAST EXTRACT MEDIUM
 solution:5329	biolink:ChemicalEntity	Main sol. J1208											
 bacdive:164274	biolink:OrganismTaxon	Labilibaculum euxinus											
 bacdive:164306	biolink:OrganismTaxon	Ancyclomarina euxinus											
-CHEBI:35208	biolink:ChemicalRole	physical tracer											
-CHEBI:77307	biolink:ChemicalRole	cardioprotective agent											
 CHEBI:38623	biolink:ChemicalRole	EC 1.4.3.4 (monoamine oxidase) inhibitor											
+CHEBI:77307	biolink:ChemicalRole	cardioprotective agent											
 CHEBI:78678	biolink:ChemicalRole	EC 4.6.1.2 (guanylate cyclase) inhibitor											
 CHEBI:37733	biolink:ChemicalRole	EC 3.1.1.8 (cholinesterase) inhibitor											
 CHEBI:38068	biolink:ChemicalRole	antimalarial											
+CHEBI:35208	biolink:ChemicalRole	physical tracer											
 medium:J1209	biolink:ChemicalEntity	HALANAEROBIUM HYDROGENIFORMANS MEDIUM											
 solution:5330	biolink:ChemicalEntity	Main sol. J1209											
 solution:5331	biolink:ChemicalEntity	Basal medium salts solution											

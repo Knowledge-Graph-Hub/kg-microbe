@@ -1215,6 +1215,24 @@ class BacDiveTransform(Transform):
                                     ]
                                 ]
                             )
+                            node_writer.writerows(
+                                [
+                                    [
+                                        ISOLATION_SOURCE_PREFIX + pair[0],
+                                        ISOLATION_SOURCE_CATEGORY,
+                                        pair[0],
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                ]+
+                                [
+                                    [
+                                        ISOLATION_SOURCE_PREFIX + pair[1],
+                                        ISOLATION_SOURCE_CATEGORY,
+                                        pair[1],
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                ],
+                            )
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

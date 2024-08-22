@@ -756,10 +756,12 @@ class BacDiveTransform(Transform):
                         # species_with_strains.extend([curated_strain_ids[0]])
                         curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
                         if len(curated_strain_ids) > 0:
-                            prefix = BACDIVE_PREFIX.replace(':', '_')
+                            prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]
-                            curated_strain_label = f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
-                        
+                            curated_strain_label = (
+                                f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
+                            )
+
                         else:
                             curated_strain_label = (
                                 f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"

@@ -756,9 +756,12 @@ class BacDiveTransform(Transform):
                         # species_with_strains.extend([curated_strain_ids[0]])
                         curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
                         if len(curated_strain_ids) > 0:
-                            curated_strain_label = f"""
-                                {BACDIVE_PREFIX.replace(':', '_') + key} as {curated_strain_ids[0]} of {ncbitaxon_id}
-                            """
+                            prefix = BACDIVE_PREFIX.replace(":", "_")
+                            strain_id = curated_strain_ids[0]
+                            curated_strain_label = (
+                                f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
+                            )
+
                         else:
                             curated_strain_label = (
                                 f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
@@ -1175,7 +1178,7 @@ class BacDiveTransform(Transform):
                     for isol_source in all_values:
                         node_writer.writerow(
                             [
-                                ISOLATION_SOURCE_PREFIX + isol_source,
+                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
                                 ISOLATION_SOURCE_CATEGORY,
                                 isol_source,
                             ]
@@ -1187,7 +1190,7 @@ class BacDiveTransform(Transform):
                                 [
                                     organism,
                                     NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                    ISOLATION_SOURCE_PREFIX + isol_source,
+                                    ISOLATION_SOURCE_PREFIX + isol_source.lower(),
                                     LOCATION_OF,
                                     self.source_name,
                                 ]
@@ -1207,9 +1210,9 @@ class BacDiveTransform(Transform):
                             edge_writer.writerows(
                                 [
                                     [
-                                        ISOLATION_SOURCE_PREFIX + pair[0],
+                                        ISOLATION_SOURCE_PREFIX + pair[0].lower(),
                                         SUBCLASS_PREDICATE,
-                                        ISOLATION_SOURCE_PREFIX + pair[1],
+                                        ISOLATION_SOURCE_PREFIX + pair[1].lower(),
                                         RDFS_SUBCLASS_OF,
                                         self.source_name,
                                     ]

@@ -105,8 +105,6 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
-    establish_transitive_relationship,
-    get_ingredients_overlap,
 )
 
 
@@ -502,22 +500,22 @@ class MediaDiveTransform(Transform):
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
-
-        establish_transitive_relationship(
-            self.output_edge_file,
-            MEDIADIVE_MEDIUM_PREFIX,
-            MEDIADIVE_SOLUTION_PREFIX,
-            MEDIUM_TO_INGREDIENT_EDGE,
-            [
-                MEDIADIVE_INGREDIENT_PREFIX,
-                CHEBI_PREFIX,
-                KEGG_PREFIX,
-                PUBCHEM_PREFIX,
-                CAS_RN_PREFIX,
-            ],
-        )
-
-        # dump_ont_nodes_from(
-        #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        # ! Commented out after discussing with Marcin. This is not needed for now.
+        # establish_transitive_relationship(
+        #     self.output_edge_file,
+        #     MEDIADIVE_MEDIUM_PREFIX,
+        #     MEDIADIVE_SOLUTION_PREFIX,
+        #     MEDIUM_TO_INGREDIENT_EDGE,
+        #     [
+        #         MEDIADIVE_INGREDIENT_PREFIX,
+        #         CHEBI_PREFIX,
+        #         KEGG_PREFIX,
+        #         PUBCHEM_PREFIX,
+        #         CAS_RN_PREFIX,
+        #     ],
         # )
-        get_ingredients_overlap(self.output_edge_file, MEDIADIVE_TMP_DIR / "ingredient_overlap.tsv")
+
+        # # dump_ont_nodes_from(
+        # #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
+        # # )
+        # get_ingredients_overlap(self.output_edge_file, MEDIADIVE_TMP_DIR / "ingredient_overlap.tsv")

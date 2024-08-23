@@ -91,10 +91,10 @@ temp_delta:high	biolink:PhenotypicQuality	temperature delta > 30 deg C
 NCBITaxon:1123064	biolink:OrganismTaxon	Roseomonas vinacea DSM 19362											
 NCBITaxon:1123062	biolink:OrganismTaxon	Falsiroseomonas stagni DSM 19981											
 NCBITaxon:1123060	biolink:OrganismTaxon	Roseomonas aerilata DSM 19363											
-pigment:pink	biolink:PhenotypicQuality	pink pigment											
+pigment:pink	biolink:ChemicalSubstance	pink pigment											
 NCBITaxon:693023	biolink:OrganismTaxon	Roseomonas pecuniae											
 NCBITaxon:209650	biolink:OrganismTaxon	Acidicaldus organivorans											
-pigment:yellow	biolink:PhenotypicQuality	yellow pigment											
+pigment:yellow	biolink:ChemicalSubstance	yellow pigment											
 NCBITaxon:364410	biolink:OrganismTaxon	Granulibacter bethesdensis											
 temp_opt:low	biolink:PhenotypicQuality	optimal temperature 10 deg C to 22 deg C											
 NCBITaxon:512382	biolink:OrganismTaxon	Acidisoma tundrae											
@@ -227,7 +227,7 @@ NCBITaxon:73010	biolink:OrganismTaxon	Aeromonas encheleia
 NCBITaxon:96473	biolink:OrganismTaxon	Aeromonas salmonicida subsp. pectinolytica											
 NCBITaxon:105751	biolink:OrganismTaxon	Aeromonas bestiarum											
 NCBITaxon:218936	biolink:OrganismTaxon	Aeromonas simiae											
-pigment:brown	biolink:PhenotypicQuality	brown pigment											
+pigment:brown	biolink:ChemicalSubstance	brown pigment											
 NCBITaxon:271417	biolink:OrganismTaxon	Aeromonas molluscorum											
 NCBITaxon:196024	biolink:OrganismTaxon	Aeromonas dhakensis											
 NCBITaxon:208958	biolink:OrganismTaxon	Aeromonas hydrophila subsp. ranae											
@@ -345,7 +345,7 @@ NCBITaxon:252514	biolink:OrganismTaxon	Microbulbifer thermotolerans
 NCBITaxon:260552	biolink:OrganismTaxon	Microbulbifer agarilyticus											
 NCBITaxon:393907	biolink:OrganismTaxon	Microbulbifer epialgicus											
 NCBITaxon:986746	biolink:OrganismTaxon	Microbulbifer taiwanensis											
-pigment:black	biolink:PhenotypicQuality	black pigment											
+pigment:black	biolink:ChemicalSubstance	black pigment											
 NCBITaxon:203122	biolink:OrganismTaxon	Saccharophagus degradans 2-40											
 NCBITaxon:1123236	biolink:OrganismTaxon	Salinimonas chungwhensis DSM 16280											
 NCBITaxon:1163748	biolink:OrganismTaxon	Marinobacter nauticus ATCC 49840											
@@ -391,7 +391,7 @@ NCBITaxon:460873	biolink:OrganismTaxon	Sulfurihydrogenibium kristjanssonii
 NCBITaxon:932678	biolink:OrganismTaxon	Thermocrinis albus DSM 12173											
 NCBITaxon:638303	biolink:OrganismTaxon	Thermocrinis albus DSM 14484											
 NCBITaxon:381751	biolink:OrganismTaxon	Thermocrinis minervae											
-pigment:carotenoid	biolink:PhenotypicQuality	carotenoid pigment											
+pigment:carotenoid	biolink:ChemicalSubstance	carotenoid pigment											
 NCBITaxon:1121027	biolink:OrganismTaxon	Aurantimonas coralicida DSM 14790											
 NCBITaxon:287752	biolink:OrganismTaxon	Aurantimonas manganoxydans SI85-9A1											
 NCBITaxon:217511	biolink:OrganismTaxon	Fulvimarina pelagi											
@@ -489,7 +489,7 @@ NCBITaxon:137993	biolink:OrganismTaxon	Ectobacillus funiculus
 NCBITaxon:85683	biolink:OrganismTaxon	Salisediminibacterium selenitireducens											
 NCBITaxon:217031	biolink:OrganismTaxon	Lederbergia galactosidilytica											
 NCBITaxon:1314752	biolink:OrganismTaxon	Neobacillus drentensis NBRC 102427											
-pigment:cream	biolink:PhenotypicQuality	cream pigment											
+pigment:cream	biolink:ChemicalSubstance	cream pigment											
 NCBITaxon:1117379	biolink:OrganismTaxon	Neobacillus bataviensis LMG 21833											
 NCBITaxon:1131730	biolink:OrganismTaxon	Neobacillus vireti LMG 21834											
 NCBITaxon:1349756	biolink:OrganismTaxon	Neobacillus novalis NBRC 102450											
@@ -514,7 +514,7 @@ NCBITaxon:200989	biolink:OrganismTaxon	Alkalicoccus saliphilus
 NCBITaxon:217495	biolink:OrganismTaxon	Lederbergia ruris											
 NCBITaxon:255247	biolink:OrganismTaxon	Fictibacillus arsenicus											
 NCBITaxon:1294265	biolink:OrganismTaxon	Mesobacillus boroniphilus JCM 21738											
-pigment:red	biolink:PhenotypicQuality	red pigment											
+pigment:red	biolink:ChemicalSubstance	red pigment											
 NCBITaxon:86663	biolink:OrganismTaxon	Bacillus carboniphilus											
 NCBITaxon:1236970	biolink:OrganismTaxon	Halalkalibacter wakoensis JCM 9140											
 NCBITaxon:1236971	biolink:OrganismTaxon	Halalkalibacter hemicellulosilyticusJCM 9152											
@@ -593,12 +593,12 @@ NCBITaxon:574376	biolink:OrganismTaxon	Bacillus manliponensis
 NCBITaxon:315749	biolink:OrganismTaxon	Bacillus cytotoxicus NVH 391-98											
 NCBITaxon:1121917	biolink:OrganismTaxon	Caldibacillus debilis DSM 16016											
 NCBITaxon:227865	biolink:OrganismTaxon	Cerasibacillus quisquiliarum											
-pigment:orange	biolink:PhenotypicQuality	orange pigment											
+pigment:orange	biolink:ChemicalSubstance	orange pigment											
 NCBITaxon:866895	biolink:OrganismTaxon	Halobacillus halophilus DSM 2266											
 NCBITaxon:1570	biolink:OrganismTaxon	Halobacillus halophilus											
 NCBITaxon:156205	biolink:OrganismTaxon	Halobacillus trueperi											
 NCBITaxon:45668	biolink:OrganismTaxon	Halobacillus litoralis											
-pigment:white	biolink:PhenotypicQuality	white pigment											
+pigment:white	biolink:ChemicalSubstance	white pigment											
 NCBITaxon:195088	biolink:OrganismTaxon	Halobacillus karajensis											
 NCBITaxon:311194	biolink:OrganismTaxon	Halobacillus yeomjeoni											
 NCBITaxon:240303	biolink:OrganismTaxon	Halobacillus aidingensis											
@@ -1194,7 +1194,7 @@ NCBITaxon:74326	biolink:OrganismTaxon	Brevundimonas staleyi
 NCBITaxon:69395	biolink:OrganismTaxon	Caulobacter henricii											
 NCBITaxon:400775	biolink:OrganismTaxon	Caulobacter ginsengisoli											
 NCBITaxon:69666	biolink:OrganismTaxon	Caulobacter mirabilis											
-pigment:green	biolink:PhenotypicQuality	green pigment											
+pigment:green	biolink:ChemicalSubstance	green pigment											
 NCBITaxon:21	biolink:OrganismTaxon	Phenylobacterium immobile											
 NCBITaxon:273793	biolink:OrganismTaxon	Phenylobacterium lituiforme											
 NCBITaxon:266125	biolink:OrganismTaxon	Phenylobacterium koreense											

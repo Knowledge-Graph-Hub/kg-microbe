@@ -755,6 +755,7 @@ class BacDiveTransform(Transform):
                         # Use just 1st strain as per Marcin.
                         # species_with_strains.extend([curated_strain_ids[0]])
                         curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                        species_with_strains.extend([curated_strain_id])
                         if len(curated_strain_ids) > 0:
                             prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]

@@ -11,13 +11,13 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH,
-    ASSOCIATED_WITH_PREDICATE,
     BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
     BACTOTRAITS_TMP_DIR,
     BIOLOGICAL_PROCESS,
+    CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     COMBO_KEY,
     CURIE_COLUMN,
@@ -247,7 +247,7 @@ class BactoTraitsTransform(Transform):
             unique_combo_edge_data = [
                 (
                     v[CURIE_COLUMN],
-                    ASSOCIATED_WITH_PREDICATE,
+                    CAPABLE_OF_PREDICATE,
                     inner_curie_map[CURIE_COLUMN],
                     ASSOCIATED_WITH,
                     "BactoTraits.csv",

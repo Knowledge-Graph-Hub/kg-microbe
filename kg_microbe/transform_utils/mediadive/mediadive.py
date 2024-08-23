@@ -364,9 +364,8 @@ class MediaDiveTransform(Transform):
                                 if ncbi_strain_id.size > 0:
                                     ncbi_strain_id = ncbi_strain_id[0]
                                 else:
-                                    ncbi_strain_id =  STRAIN_PREFIX + strain_id.replace(":","_")
+                                    ncbi_strain_id = STRAIN_PREFIX + strain_id.replace(":", "_")
 
-                                
                                 medium_strain_nodes.extend(
                                     [
                                         [

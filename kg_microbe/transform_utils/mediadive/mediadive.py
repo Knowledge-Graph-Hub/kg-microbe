@@ -17,6 +17,7 @@ Output these two files:
 
 import csv
 import json
+import math
 import os
 from pathlib import Path
 from typing import Dict, Optional, Union
@@ -363,33 +364,34 @@ class MediaDiveTransform(Transform):
                                 ][NCBITAXON_ID_COLUMN].values
 
                                 if ncbi_strain_id.size > 0:
-                                    ncbi_strain_id = ncbi_strain_id[0]
+                                    ncbi_strain_id = list(ncbi_strain_id)[0]
                                 else:
                                     ncbi_strain_id = STRAIN_PREFIX + strain_id.replace(":", "_")
 
-                                medium_strain_nodes.extend(
-                                    [
+                                if not (isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)):
+                                    medium_strain_nodes.extend(
                                         [
-                                            ncbi_strain_id,
-                                            NCBI_CATEGORY,
-                                            strain[SPECIES],
-                                        ],
-                                        [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
-                                    ]
-                                )
-
-                                medium_strain_edge.extend(
-                                    [
-                                        [
-                                            ncbi_strain_id,
-                                            NCBI_TO_MEDIUM_EDGE,
-                                            medium_id,
-                                            IS_GROWN_IN,
-                                            strain_id,
+                                            [
+                                                ncbi_strain_id,
+                                                NCBI_CATEGORY,
+                                                strain[SPECIES],
+                                            ],
+                                            [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
                                         ]
-                                    ]
-                                )
-                                edge_writer.writerows(medium_strain_edge)
+                                    )
+
+                                    medium_strain_edge.extend(
+                                        [
+                                            [
+                                                ncbi_strain_id,
+                                                NCBI_TO_MEDIUM_EDGE,
+                                                medium_id,
+                                                IS_GROWN_IN,
+                                                strain_id,
+                                            ]
+                                        ]
+                                    )
+                                    edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:
                         continue

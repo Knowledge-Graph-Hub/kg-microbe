@@ -493,43 +493,43 @@ pigment:
   pigment_pink:
     curie: "pigment:pink"
     name: "pink pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_yellow:
     curie: "pigment:yellow"
     name: "yellow pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_brown:
     curie: "pigment:brown"
     name: "brown pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_red:
     curie: "pigment:red"
     name: "red pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_orange:
     curie: "pigment:orange"
     name: "orange pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_green:
     curie: "pigment:green"
     name: "green pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_black:
     curie: "pigment:black"
     name: "black pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_white:
     curie: "pigment:white"
     name: "white pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_cream:
     curie: "pigment:cream"
     name: "cream pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
   pigment_carotenoid:
     curie: "pigment:carotenoid"
     name: "carotenoid pigment"
-    <<: *phenotypic_capability_block
+    <<: *chemical_production_block
 
 pH_optimal:
   pho_0_to_6:

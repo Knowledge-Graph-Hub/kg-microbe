@@ -366,29 +366,30 @@ class MediaDiveTransform(Transform):
                                 else:
                                     ncbi_strain_id = STRAIN_PREFIX + strain_id.replace(":", "_")
 
-                                medium_strain_nodes.extend(
-                                    [
+                                if ncbi_strain_id:
+                                    medium_strain_nodes.extend(
                                         [
-                                            ncbi_strain_id,
-                                            NCBI_CATEGORY,
-                                            strain[SPECIES],
-                                        ],
-                                        [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
-                                    ]
-                                )
-
-                                medium_strain_edge.extend(
-                                    [
-                                        [
-                                            ncbi_strain_id,
-                                            NCBI_TO_MEDIUM_EDGE,
-                                            medium_id,
-                                            IS_GROWN_IN,
-                                            strain_id,
+                                            [
+                                                ncbi_strain_id,
+                                                NCBI_CATEGORY,
+                                                strain[SPECIES],
+                                            ],
+                                            [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
                                         ]
-                                    ]
-                                )
-                                edge_writer.writerows(medium_strain_edge)
+                                    )
+
+                                    medium_strain_edge.extend(
+                                        [
+                                            [
+                                                ncbi_strain_id,
+                                                NCBI_TO_MEDIUM_EDGE,
+                                                medium_id,
+                                                IS_GROWN_IN,
+                                                strain_id,
+                                            ]
+                                        ]
+                                    )
+                                    edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:
                         continue

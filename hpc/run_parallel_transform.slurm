@@ -26,7 +26,7 @@ transforms=(
     bacdive
     mediadive
     madin_etal
-    rheamappings
+    rhea_mappings
     bactotraits
     uniprot_human
     ctd

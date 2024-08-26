@@ -31,6 +31,7 @@ from kg_microbe.transform_utils.constants import (
     ASSAY_TO_NCBI_EDGE,
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
+    BACDIVE,
     BACDIVE_API_BASE_URL,
     BACDIVE_ENVIRONMENT_CATEGORY,
     BACDIVE_ID_COLUMN,
@@ -177,7 +178,7 @@ class BacDiveTransform(Transform):
         output_dir: Optional[Path] = None,
     ):
         """Instantiate part."""
-        source_name = "BacDive"
+        source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
 

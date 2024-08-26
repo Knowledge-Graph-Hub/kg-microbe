@@ -14,6 +14,7 @@ from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE,
     ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF,
     ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE,
+    DISBIOME,
     DISBIOME_DISEASE_NAME,
     DISBIOME_ELEVATED,
     DISBIOME_ORGANISM_ID,
@@ -25,8 +26,8 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
 )
-from kg_microbe.transform_utils.pdmetagenomics.pdmetagenomics import MICROBE_NOT_FOUND_STR
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.transform_utils.wallen_etal.wallen_etal import MICROBE_NOT_FOUND_STR
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
@@ -49,13 +50,13 @@ class DisbiomeTransform(Transform):
                            If None, a default directory may be used.
         :type output_dir: Optional[Path]
         """
-        source_name = "disbiome"
+        source_name = DISBIOME
         super().__init__(source_name, input_dir, output_dir)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run DisbiomeTransform."""
         if data_file is None:
-            data_file = "disbiome.json"
+            data_file = self.source_name + ".json"
         input_file = self.input_base_dir / data_file
 
         # Convert Disbiome taxa names to NCBITaxon IDs

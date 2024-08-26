@@ -91,10 +91,10 @@
   url: https://mediadive.dsmz.de/rest/media
   local_name: mediadive.json
 
-# Condensed-traits
+# Madin et al Condensed-traits
 -
   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
-  local_name: traits.csv
+  local_name: madin_etal.csv
 
 # # # ****Conversion Tables****
 #
@@ -112,7 +112,7 @@
   local_name: epm.json
 
 #
-# Uniprot
+# Uniprot Functional Microbes
 #
 -
   url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
@@ -185,10 +185,10 @@
   local_name: disbiome.json
 
 #
-# PdMetagenomics
+# Wallen et al
 #
 -
   url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
-  local_name: PdMetagenomics.xlsx
+  local_name: wallen_etal.xlsx
 
   

@@ -1,7 +1,0 @@
-object_id	object_label	traits_dataset_term	action
-CHEBI:28885	butan-1-ol	butanol	REPLACE
-CHEBI:51850	Methyl pyruvate	pyruvic acid methyl ester	REPLACE
-CHEBI:16000	ethanolamine	2-aminethanol	REPLACE
-CHEBI:30832	adipic acid	adipate	REPLACE
-CHEBI:18276	dihydrogen	H2_CO2	SUPPLEMENT
-CHEBI:18276	dihydrogen	H2_methanol	SUPPLEMENT

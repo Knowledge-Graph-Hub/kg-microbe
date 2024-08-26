@@ -54,6 +54,7 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
+    MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
     MEDIADIVE_DESC_COLUMN,
     MEDIADIVE_ID_COLUMN,
@@ -116,7 +117,7 @@ class MediaDiveTransform(Transform):
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """Instantiate part."""
-        source_name = "MediaDive"
+        source_name = MEDIADIVE
         super().__init__(source_name, input_dir, output_dir)
         requests_cache.install_cache("mediadive_cache")
         self.chebi_impl = get_adapter(f"sqlite:{CHEBI_SOURCE}")

@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.constants import (
     CHEBI_XREFS_FILEPATH,
     CHEMICAL_CATEGORY,
     CHEMICAL_TO_DISEASE_EDGE,
+    CTD,
     CTD_CAS_RN_COLUMN,
     CTD_CHEMICAL_MESH_COLUMN,
     CTD_DISEASE_MESH_COLUMN,
@@ -53,7 +54,7 @@ class CTDTransform(Transform):
                            If None, a default directory may be used.
         :type output_dir: Optional[Path]
         """
-        source_name = "ctd"
+        source_name = CTD
         super().__init__(source_name, input_dir, output_dir)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -221,7 +222,7 @@ class CTDTransform(Transform):
                     CHEMICAL_TO_DISEASE_EDGE,
                     disease,
                     RELATIONS_DICT[CHEMICAL_TO_DISEASE_EDGE],
-                    "ctd",
+                    self.source_name,
                 ]
             )
         return node_data, edge_data

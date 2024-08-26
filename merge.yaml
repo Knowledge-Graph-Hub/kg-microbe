@@ -64,26 +64,26 @@ merged_graph:
           - data/transformed/ontologies/ec_nodes.tsv
           - data/transformed/ontologies/ec_edges.tsv
     bacdive:
-      name: "BacDive"
+      name: "bacdive"
       input:
         format: tsv
         filename:
-          - data/transformed/BacDive/nodes.tsv
-          - data/transformed/BacDive/edges.tsv
+          - data/transformed/bacdive/nodes.tsv
+          - data/transformed/bacdive/edges.tsv
     mediadive:
-      name: "MediaDive"
+      name: "mediadive"
       input:
         format: tsv
         filename:
-          - data/transformed/MediaDive/nodes.tsv
-          - data/transformed/MediaDive/edges.tsv
+          - data/transformed/mediadive/nodes.tsv
+          - data/transformed/mediadive/edges.tsv
     rhea_mappings:
-      name: "RheaMappings"
+      name: "rhea_mappings"
       input:
         format: tsv
         filename:
-          - data/transformed/RheaMappings/nodes.tsv
-          - data/transformed/RheaMappings/edges.tsv
+          - data/transformed/rhea_mappings/nodes.tsv
+          - data/transformed/rhea_mappings/edges.tsv
     upa:
       input:
         name: "upa"
@@ -91,20 +91,20 @@ merged_graph:
         filename:
           - data/transformed/ontologies/upa_nodes.tsv
           - data/transformed/ontologies/upa_edges.tsv
-    traits:
+    madin_etal:
       input:
-        name: "traits"
+        name: "madin_etal"
         format: tsv
         filename:
-          - data/transformed/traits/nodes.tsv
-          - data/transformed/traits/edges.tsv
+          - data/transformed/madin_etal/nodes.tsv
+          - data/transformed/madin_etal/edges.tsv
     bactotraits:
       input:
-        name: "BactoTraits"
+        name: "bactotraits"
         format: tsv
         filename:
-          - data/transformed/BactoTraits/nodes.tsv
-          - data/transformed/BactoTraits/edges.tsv
+          - data/transformed/bactotraits/nodes.tsv
+          - data/transformed/bactotraits/edges.tsv
     # ctd:
     #   input:
     #     name: "ctd"
@@ -119,28 +119,28 @@ merged_graph:
     #     filename:
     #       - data/transformed/disbiome/nodes.tsv
     #       - data/transformed/disbiome/edges.tsv
-    # pdmetagenomics:
+    # wallen_etal:
     #   input:
-    #     name: "PdMetagenomics"
+    #     name: "wallen_etal"
     #     format: tsv
     #     filename:
-    #       - data/transformed/PdMetagenomics/nodes.tsv
-    #       - data/transformed/PdMetagenomics/edges.tsv
+    #       - data/transformed/wallen_etal/nodes.tsv
+    #       - data/transformed/wallen_etal/edges.tsv
     # Not feasible using kgx merge process
-    # uniprot_genome_features:
+    # uniprot_functional_microbes:
     #   input:
-    #     name: "uniprot_genome_features"
+    #     name: "uniprot_functional_microbes"
     #     format: tsv
     #     filename:
-    #       - data/transformed/uniprot_genome_features/nodes.tsv
-    #       - data/transformed/uniprot_genome_features/edges.tsv
-    # uniprot_genome_features_human:
+    #       - data/transformed/uniprot_functional_microbes/nodes.tsv
+    #       - data/transformed/uniprot_functional_microbes/edges.tsv
+    # uniprot_human:
     #   input:
-    #     name: "uniprot_genome_features_human"
+    #     name: "uniprot_human"
     #     format: tsv
     #     filename:
-    #       - data/transformed/uniprot_genome_features_human/nodes.tsv
-    #       - data/transformed/uniprot_genome_features_human/edges.tsv
+    #       - data/transformed/uniprot_human/nodes.tsv
+    #       - data/transformed/uniprot_human/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:

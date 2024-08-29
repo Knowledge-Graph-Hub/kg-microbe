@@ -392,18 +392,7 @@ class MediaDiveTransform(Transform):
                                             ],
                                         ]
                                     )
-                                    if strain.get(ID_COLUMN):
-                                        medium_strain_edge.extend(
-                                            [
-                                                [
-                                                    ncbi_strain_id,
-                                                    SUBCLASS_PREDICATE,
-                                                    NCBITAXON_PREFIX+str(strain.get(ID_COLUMN)),
-                                                    RDFS_SUBCLASS_OF,
-                                                    strain_id
-                                                ],
-                                            ]
-                                        )
+
                                     edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:

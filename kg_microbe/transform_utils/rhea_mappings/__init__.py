@@ -1,5 +1,5 @@
 """RHEA mappings transform."""
 
-from .rheamappings import RheaMappingsTransform
+from .rhea_mappings import RheaMappingsTransform
 
 __all__ = ["RheaMappingsTransform"]

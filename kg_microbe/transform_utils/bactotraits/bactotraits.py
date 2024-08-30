@@ -173,7 +173,7 @@ class BactoTraitsTransform(Transform):
     ) -> None:
         """Run BactoTraitsTransform."""
         if data_file is None:
-            data_file = self.source_name + "_databaseV2_Jun2022.csv"
+            data_file = "BactoTraits_databaseV2_Jun2022.csv"
         input_file = self.input_base_dir / data_file
         # Clean the raw file
         # - the file is a CSV file with delimiter as ";"

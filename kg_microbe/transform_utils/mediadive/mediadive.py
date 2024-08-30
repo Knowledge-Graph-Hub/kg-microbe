@@ -85,7 +85,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
-    NCBITAXON_PREFIX,
     OBJECT_ID_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
@@ -369,7 +368,9 @@ class MediaDiveTransform(Transform):
                                 else:
                                     ncbi_strain_id = STRAIN_PREFIX + strain_id.replace(":", "_")
 
-                                if not (isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)):
+                                if not (
+                                    isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)
+                                ):
                                     medium_strain_nodes.extend(
                                         [
                                             [
@@ -392,18 +393,7 @@ class MediaDiveTransform(Transform):
                                             ],
                                         ]
                                     )
-                                    if strain.get(ID_COLUMN):
-                                        medium_strain_edge.extend(
-                                            [
-                                                [
-                                                    ncbi_strain_id,
-                                                    SUBCLASS_PREDICATE,
-                                                    NCBITAXON_PREFIX+str(strain.get(ID_COLUMN)),
-                                                    RDFS_SUBCLASS_OF,
-                                                    strain_id
-                                                ],
-                                            ]
-                                        )
+
                                     edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:

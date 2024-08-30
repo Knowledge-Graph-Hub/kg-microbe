@@ -27,7 +27,7 @@ from kg_microbe.transform_utils.ontologies.ontologies_transform import (
     ONTOLOGIES_MAP,
     OntologiesTransform,
 )
-from kg_microbe.transform_utils.rheamappings.rheamappings import RheaMappingsTransform
+from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
 from kg_microbe.transform_utils.uniprot_functional_microbes.uniprot_functional_microbes import (
     UniprotFunctionalMicrobesTransform,
 )
@@ -49,11 +49,11 @@ DATA_SOURCES = {
     MADIN_ETAL: MadinEtAlTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
-    UNIPROT_HUMAN: UniprotHumanTransform,
+    # UNIPROT_HUMAN: UniprotHumanTransform,
     CTD: CTDTransform,
     DISBIOME: DisbiomeTransform,
     WALLEN_ETAL: WallenEtAlTransform,
-    UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+    # UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
 
 

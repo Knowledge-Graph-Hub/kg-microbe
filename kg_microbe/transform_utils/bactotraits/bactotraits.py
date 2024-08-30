@@ -15,6 +15,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
+    BACTOTRAITS,
     BACTOTRAITS_TMP_DIR,
     BIOLOGICAL_PROCESS,
     CAPABLE_OF_PREDICATE,
@@ -157,7 +158,7 @@ class BactoTraitsTransform(Transform):
         self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]
     ):
         """Initialize BactoTraitsTransform."""
-        source_name = "BactoTraits"
+        source_name = BACTOTRAITS
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
 

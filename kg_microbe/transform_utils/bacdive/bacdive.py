@@ -584,6 +584,7 @@ class BacDiveTransform(Transform):
                     medium_labels = []
                     medium_urls = []
                     mediadive_urls = []
+                    antibiotic_resistance = []
 
                     if (
                         CULTURE_AND_GROWTH_CONDITIONS in value
@@ -622,7 +623,6 @@ class BacDiveTransform(Transform):
                                     medium_urls.append(medium_url)
                                     mediadive_urls.append(mediadive_url)
 
-                            # Assuming you want to write each medium's data separately
                             for mid, mlabel, murl, mdurl in zip(
                                 medium_ids, medium_labels, medium_urls, mediadive_urls, strict=False
                             ):

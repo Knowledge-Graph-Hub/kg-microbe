@@ -49,6 +49,7 @@ from kg_microbe.transform_utils.constants import (
     BIOLOGICAL_PROCESS,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
+    CHEBI_KEY,
     CHEBI_PREFIX,
     CLASS,
     COLONY_MORPHOLOGY,
@@ -121,6 +122,8 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
+    NCBI_TO_METABOLITE_RESISTANCE_EDGE,
+    NCBI_TO_METABOLITE_SENSITIVITY_EDGE,
     NCBI_TO_METABOLITE_UTILIZATION_EDGE,
     NCBITAXON_DESCRIPTION_COLUMN,
     NCBITAXON_ID,
@@ -141,9 +144,11 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_COLUMN,
     PRODUCTION_KEY,
     RDFS_SUBCLASS_OF,
+    RESISTANCE_KEY,
     RISK_ASSESSMENT,
     RISK_ASSESSMENT_COLUMN,
     SAFETY_INFO,
+    SENSITIVITY_KEY,
     SPECIES,
     SPORE_FORMATION,
     STRAIN,
@@ -584,7 +589,6 @@ class BacDiveTransform(Transform):
                     medium_labels = []
                     medium_urls = []
                     mediadive_urls = []
-                    antibiotic_resistance = []
 
                     if (
                         CULTURE_AND_GROWTH_CONDITIONS in value
@@ -1220,6 +1224,103 @@ class BacDiveTransform(Transform):
                                     ]
                                 ]
                             )
+                    # Anitibiotic resistance
+                    if (
+                        ncbitaxon_id
+                        and phys_and_metabolism_antibiotic_resistance
+                        and len(phys_and_metabolism_antibiotic_resistance) > 0
+                    ):
+                        ar_nodes_data_to_write = []
+                        ar_edges_data_to_write = []
+                        if isinstance(phys_and_metabolism_antibiotic_resistance, list):
+                            for item in phys_and_metabolism_antibiotic_resistance:
+                                if item.get(CHEBI_KEY):
+                                    if (
+                                        item.get(RESISTANCE_KEY)
+                                        and item.get(RESISTANCE_KEY) == "yes"
+                                    ):
+                                        antibiotic_predicate = NCBI_TO_METABOLITE_RESISTANCE_EDGE
+                                    elif (
+                                        item.get(SENSITIVITY_KEY)
+                                        and item.get(SENSITIVITY_KEY) == "yes"
+                                    ):
+                                        antibiotic_predicate = NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+                                    else:
+                                        antibiotic_predicate = None
+                                    if antibiotic_predicate:
+                                        ar_nodes_data_to_write.append(
+                                            [
+                                                CHEBI_PREFIX + str(item[CHEBI_KEY]),
+                                                METABOLITE_CATEGORY,
+                                                item[METABOLITE_KEY],
+                                            ]
+                                            + [None] * (len(self.node_header) - 3)
+                                        )
+                                        ar_edges_data_to_write.append(
+                                            [
+                                                ncbitaxon_id,
+                                                antibiotic_predicate,
+                                                CHEBI_PREFIX + str(item[CHEBI_KEY]),
+                                                None,
+                                                BACDIVE_PREFIX + key,
+                                            ]
+                                        )
+                        elif isinstance(
+                            phys_and_metabolism_antibiotic_resistance, dict
+                        ) and phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
+                            if phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
+                                if (
+                                    phys_and_metabolism_antibiotic_resistance.get(RESISTANCE_KEY)
+                                    and phys_and_metabolism_antibiotic_resistance.get(
+                                        RESISTANCE_KEY
+                                    )
+                                    == "yes"
+                                ):
+                                    antibiotic_predicate = NCBI_TO_METABOLITE_RESISTANCE_EDGE
+                                elif (
+                                    phys_and_metabolism_antibiotic_resistance.get(SENSITIVITY_KEY)
+                                    and phys_and_metabolism_antibiotic_resistance.get(
+                                        SENSITIVITY_KEY
+                                    )
+                                    == "yes"
+                                ):
+                                    antibiotic_predicate = NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+                                else:
+                                    antibiotic_predicate = None
+                                if antibiotic_predicate:
+                                    ar_nodes_data_to_write.append(
+                                        [
+                                            CHEBI_PREFIX
+                                            + str(
+                                                phys_and_metabolism_antibiotic_resistance[CHEBI_KEY]
+                                            ),
+                                            METABOLITE_CATEGORY,
+                                            phys_and_metabolism_antibiotic_resistance[
+                                                METABOLITE_KEY
+                                            ],
+                                        ]
+                                        + [None] * (len(self.node_header) - 3)
+                                    )
+                                    ar_edges_data_to_write.append(
+                                        [
+                                            ncbitaxon_id,
+                                            antibiotic_predicate,
+                                            CHEBI_PREFIX
+                                            + str(
+                                                phys_and_metabolism_antibiotic_resistance[CHEBI_KEY]
+                                            ),
+                                            None,
+                                            BACDIVE_PREFIX + key,
+                                        ]
+                                    )
+                        # else:
+                        # #{'@ref': 68378, 'metabolite': 'lysostaphin', 'is antibiotic': 'yes', 'is resistant': 'yes'}
+                        #     logging.warning(
+                        #         f"No CHEBI ID in {phys_and_metabolism_antibiotic_resistance}"
+                        #     )
+                        if len(ar_edges_data_to_write) > 0 and len(ar_nodes_data_to_write) > 0:
+                            node_writer.writerows(ar_nodes_data_to_write)
+                            edge_writer.writerows(ar_edges_data_to_write)
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

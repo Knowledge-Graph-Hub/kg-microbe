@@ -1318,8 +1318,9 @@ class BacDiveTransform(Transform):
                         #     logging.warning(
                         #         f"No CHEBI ID in {phys_and_metabolism_antibiotic_resistance}"
                         #     )
-                        node_writer.writerows(ar_nodes_data_to_write)
-                        edge_writer.writerows(ar_edges_data_to_write)
+                        if len(ar_edges_data_to_write) > 0 and len(ar_nodes_data_to_write) > 0:
+                            node_writer.writerows(ar_nodes_data_to_write)
+                            edge_writer.writerows(ar_edges_data_to_write)
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

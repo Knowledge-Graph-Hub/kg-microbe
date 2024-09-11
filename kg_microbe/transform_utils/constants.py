@@ -43,6 +43,7 @@ NCBITAXON_SOURCE = RAW_DATA_DIR / "ncbitaxon.owl"
 CHEBI_SOURCE = RAW_DATA_DIR / "chebi.owl"
 GO_SOURCE = RAW_DATA_DIR / "go.owl"
 EC_SOURCE = RAW_DATA_DIR / "ec.owl"
+METABOLITE_MAPPING_FILE = BACDIVE_DIR / "metabolite_mapping.json"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -130,6 +131,8 @@ PREFERRED_TERM_KEY = "PreferredTerm"
 
 ACCESSIONS_KEY = "accessions"
 FILENAME_KEY = "file_name"
+
+MEDIUM_KEY = "medium"
 
 EXTERNAL_LINKS = "External links"
 EXTERNAL_LINKS_CULTURE_NUMBER = "culture collection no."

@@ -175,13 +175,13 @@ from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
 
-
 # Anitibiotic resistance
 if Path(METABOLITE_MAPPING_FILE).is_file():
     with open(METABOLITE_MAPPING_FILE, "r") as f:
         METABOLITE_MAP = json.load(f)
 else:
     METABOLITE_MAP = {}
+
 
 class BacDiveTransform(Transform):
 
@@ -265,10 +265,12 @@ class BacDiveTransform(Transform):
             edge_pairs.append([numbered_dict[key1], numbered_dict[key2]])
 
         return edge_pairs
-    
+
     def _process_antibiotic_resistance(self, item, ncbitaxon_id, key):
         chebi_key = CHEBI_PREFIX + str(item[CHEBI_KEY])
-        METABOLITE_MAP[chebi_key] = item[METABOLITE_KEY] if not METABOLITE_MAP.get(chebi_key) else METABOLITE_MAP[chebi_key]
+        METABOLITE_MAP[chebi_key] = (
+            item[METABOLITE_KEY] if not METABOLITE_MAP.get(chebi_key) else METABOLITE_MAP[chebi_key]
+        )
 
         if item.get(RESISTANCE_KEY) == "yes":
             antibiotic_predicate = NCBI_TO_METABOLITE_RESISTANCE_EDGE
@@ -295,12 +297,18 @@ class BacDiveTransform(Transform):
                     BACDIVE_PREFIX + key,
                 ]
             )
-    
+
     def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
-        metabolites_with_curies = {k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()}
+        metabolites_with_curies = {
+            k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
+        }
         if metabolites_with_curies:
             for k, v in metabolites_with_curies.items():
-                antibiotic_predicate = NCBI_TO_METABOLITE_SENSITIVITY_EDGE if v.isnumeric() and int(v) == 0 else NCBI_TO_METABOLITE_RESISTANCE_EDGE
+                antibiotic_predicate = (
+                    NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+                    if v.isnumeric() and int(v) == 0
+                    else NCBI_TO_METABOLITE_RESISTANCE_EDGE
+                )
                 metabolite_id = METABOLITE_MAP.get(k)
                 if antibiotic_predicate and metabolite_id:
                     node_writer.writerow(
@@ -324,7 +332,9 @@ class BacDiveTransform(Transform):
     def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:
-            medium_id = MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
+            medium_id = (
+                MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
+            )
             edge_writer.writerow(
                 [
                     medium_id,
@@ -1303,7 +1313,6 @@ class BacDiveTransform(Transform):
                                     ]
                                 ]
                             )
-                    
 
                     if (
                         ncbitaxon_id
@@ -1319,24 +1328,41 @@ class BacDiveTransform(Transform):
                                     self._process_antibiotic_resistance(item, ncbitaxon_id, key)
                         elif isinstance(phys_and_metabolism_antibiotic_resistance, dict):
                             if phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
-                                self._process_antibiotic_resistance(phys_and_metabolism_antibiotic_resistance, ncbitaxon_id, key)
+                                self._process_antibiotic_resistance(
+                                    phys_and_metabolism_antibiotic_resistance, ncbitaxon_id, key
+                                )
 
                         if self.ar_edges_data_to_write and self.ar_nodes_data_to_write:
                             node_writer.writerows(self.ar_nodes_data_to_write)
                             edge_writer.writerows(self.ar_edges_data_to_write)
 
-                    if ncbitaxon_id and phys_and_metabolism_antibiogram and len(phys_and_metabolism_antibiogram) > 0:
+                    if (
+                        ncbitaxon_id
+                        and phys_and_metabolism_antibiogram
+                        and len(phys_and_metabolism_antibiogram) > 0
+                    ):
                         if isinstance(phys_and_metabolism_antibiogram, list):
                             for dictionary in phys_and_metabolism_antibiogram:
-                                self._process_metabolites(dictionary, ncbitaxon_id, key, node_writer, edge_writer)
+                                self._process_metabolites(
+                                    dictionary, ncbitaxon_id, key, node_writer, edge_writer
+                                )
                                 self._process_medium(dictionary, ncbitaxon_id, key, edge_writer)
                         elif isinstance(phys_and_metabolism_antibiogram, dict):
-                            self._process_metabolites(phys_and_metabolism_antibiogram, ncbitaxon_id, key, node_writer, edge_writer)
-                            self._process_medium(phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer)
+                            self._process_metabolites(
+                                phys_and_metabolism_antibiogram,
+                                ncbitaxon_id,
+                                key,
+                                node_writer,
+                                edge_writer,
+                            )
+                            self._process_medium(
+                                phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer
+                            )
                         else:
-                            import pdb; pdb.set_trace()
-                        
-                    
+                            import pdb
+
+                            pdb.set_trace()
+
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()

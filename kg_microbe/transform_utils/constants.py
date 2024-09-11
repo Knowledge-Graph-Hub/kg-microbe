@@ -43,6 +43,7 @@ NCBITAXON_SOURCE = RAW_DATA_DIR / "ncbitaxon.owl"
 CHEBI_SOURCE = RAW_DATA_DIR / "chebi.owl"
 GO_SOURCE = RAW_DATA_DIR / "go.owl"
 EC_SOURCE = RAW_DATA_DIR / "ec.owl"
+METABOLITE_MAPPING_FILE = BACDIVE_DIR / "metabolite_mapping.json"
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -131,6 +132,8 @@ PREFERRED_TERM_KEY = "PreferredTerm"
 ACCESSIONS_KEY = "accessions"
 FILENAME_KEY = "file_name"
 
+MEDIUM_KEY = "medium"
+
 EXTERNAL_LINKS = "External links"
 EXTERNAL_LINKS_CULTURE_NUMBER = "culture collection no."
 REF = "Reference"
@@ -188,6 +191,8 @@ CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
 NCBI_TO_METABOLITE_UTILIZATION_EDGE = "biolink:consumes"  # [org -> metabolite_utilization]
 NCBI_TO_ENZYME_EDGE = "biolink:capable_of"  # [org -> enzyme]
 ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay]
+MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay]
+NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay]
 NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
 ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]

@@ -324,16 +324,17 @@ class BacDiveTransform(Transform):
                     if v.isnumeric() and int(v) == 0
                     else NCBI_TO_METABOLITE_RESISTANCE_EDGE
                 )
-                metabolite_id = METABOLITE_MAP.get(k)
+                metabolite_id = [key for key, value in METABOLITE_MAP.items() if value == k][0]
                 if antibiotic_predicate and metabolite_id:
                     node_writer.writerow(
                         [
-                            CHEBI_PREFIX + k,
-                            METABOLITE_CATEGORY,
                             metabolite_id,
+                            METABOLITE_CATEGORY,
+                            k,
                         ]
                         + [None] * (len(self.node_header) - 3)
                     )
+
                     edge_writer.writerows(
                         [
                             [

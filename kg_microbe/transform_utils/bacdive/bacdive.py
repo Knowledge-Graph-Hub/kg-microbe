@@ -101,6 +101,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_ID_COLUMN,
     MEDIUM_KEY,
     MEDIUM_LABEL_COLUMN,
+    MEDIUM_TO_METABOLITE_EDGE,
     MEDIUM_URL_COLUMN,
     METABOLITE_CATEGORY,
     METABOLITE_CHEBI_KEY,
@@ -121,6 +122,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
+    NCBI_TO_ASSAY_EDGE,
     NCBI_TO_ENZYME_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
@@ -299,6 +301,19 @@ class BacDiveTransform(Transform):
             )
 
     def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
+        medium_label = dictionary.get(MEDIUM_KEY)
+        if medium_label:
+            medium_id = (
+                MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
+            )
+            node_writer.writerow(
+                [
+                    medium_id,
+                    METABOLITE_CATEGORY,
+                    medium_label,
+                ]
+                + [None] * (len(self.node_header) - 3)
+            )
         metabolites_with_curies = {
             k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
         }
@@ -319,13 +334,22 @@ class BacDiveTransform(Transform):
                         ]
                         + [None] * (len(self.node_header) - 3)
                     )
-                    edge_writer.writerow(
+                    edge_writer.writerows(
                         [
-                            ncbitaxon_id,
-                            antibiotic_predicate,
-                            metabolite_id,
-                            None,
-                            BACDIVE_PREFIX + key,
+                            [
+                                ncbitaxon_id,
+                                antibiotic_predicate,
+                                metabolite_id,
+                                None,
+                                BACDIVE_PREFIX + key,
+                            ],
+                            [
+                                medium_id,
+                                MEDIUM_TO_METABOLITE_EDGE,
+                                metabolite_id,
+                                None,
+                                BACDIVE_PREFIX + key,
+                            ],
                         ]
                     )
 
@@ -337,9 +361,9 @@ class BacDiveTransform(Transform):
             )
             edge_writer.writerow(
                 [
-                    medium_id,
-                    ASSAY_TO_NCBI_EDGE,
                     ncbitaxon_id,
+                    NCBI_TO_ASSAY_EDGE,
+                    medium_id,
                     None,
                     BACDIVE_PREFIX + key,
                 ]

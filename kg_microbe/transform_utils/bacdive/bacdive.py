@@ -47,6 +47,10 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
+    BIOSAFETY_CATEGORY,
+    BIOSAFETY_LEVEL,
+    BIOSAFETY_LEVEL_PREDICATE,
+    BIOSAFETY_LEVEL_PREFIX,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -818,6 +822,30 @@ class BacDiveTransform(Transform):
                         lpsn,
                     ]
 
+                    # Biosafety level
+                    if risk_assessment and ncbitaxon_id:
+                        if isinstance(risk_assessment, dict):
+                            biosafety_level = risk_assessment.get(BIOSAFETY_LEVEL, None)
+                        elif isinstance(risk_assessment, list):
+                            # ! Assumption is biosafety level for all items in the list are the same.
+                            biosafety_level = risk_assessment[0].get(BIOSAFETY_LEVEL, None)
+                        if biosafety_level:
+                            biosafety_level_id = f"{BIOSAFETY_LEVEL_PREFIX}{biosafety_level}"
+                            biosafety_level_label = f"{BIOSAFETY_LEVEL} {biosafety_level}"
+                        node_writer.writerow([
+                            biosafety_level_id,
+                            BIOSAFETY_CATEGORY,
+                            biosafety_level_label,
+                        ] + [None] * (len(self.node_header) - 3))
+                        edge_writer.writerow([
+                            ncbitaxon_id,
+                            BIOSAFETY_LEVEL_PREDICATE,
+                            biosafety_level_id,
+                            None,
+                            BACDIVE_PREFIX + key,
+                        ])
+                        
+
                     if not all(item is None for item in name_tax_classification_data[2:]):
                         writer_3.writerow(name_tax_classification_data)
 
@@ -1383,10 +1411,6 @@ class BacDiveTransform(Transform):
                             self._process_medium(
                                 phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer
                             )
-                        else:
-                            import pdb
-
-                            pdb.set_trace()
 
                     progress.set_description(f"Processing BacDive file: {key}.yaml")
                     # After each iteration, call the update method to advance the progress bar.

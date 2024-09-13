@@ -830,22 +830,26 @@ class BacDiveTransform(Transform):
                             # ! Assumption is biosafety level for all items in the list are the same.
                             biosafety_level = risk_assessment[0].get(BIOSAFETY_LEVEL, None)
                         if biosafety_level:
-                            biosafety_level = re.findall(r'\d+', biosafety_level)[0]
+                            biosafety_level = re.findall(r"\d+", biosafety_level)[0]
                             biosafety_level_id = f"{BIOSAFETY_LEVEL_PREFIX}{biosafety_level}"
                             biosafety_level_label = f"{BIOSAFETY_LEVEL} {biosafety_level}"
-                            node_writer.writerow([
-                                biosafety_level_id,
-                                BIOSAFETY_CATEGORY,
-                                biosafety_level_label,
-                            ] + [None] * (len(self.node_header) - 3))
-                            edge_writer.writerow([
-                                ncbitaxon_id,
-                                BIOSAFETY_LEVEL_PREDICATE,
-                                biosafety_level_id,
-                                None,
-                                BACDIVE_PREFIX + key,
-                            ])
-                        
+                            node_writer.writerow(
+                                [
+                                    biosafety_level_id,
+                                    BIOSAFETY_CATEGORY,
+                                    biosafety_level_label,
+                                ]
+                                + [None] * (len(self.node_header) - 3)
+                            )
+                            edge_writer.writerow(
+                                [
+                                    ncbitaxon_id,
+                                    BIOSAFETY_LEVEL_PREDICATE,
+                                    biosafety_level_id,
+                                    None,
+                                    BACDIVE_PREFIX + key,
+                                ]
+                            )
 
                     if not all(item is None for item in name_tax_classification_data[2:]):
                         writer_3.writerow(name_tax_classification_data)

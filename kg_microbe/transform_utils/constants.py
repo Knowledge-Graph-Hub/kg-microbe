@@ -89,6 +89,7 @@ ISOLATION_SAMPLING_ENV_INFO = "Isolation, sampling and environmental information
 SAFETY_INFO = "Safety information"
 SEQUENCE_INFO = "Sequence information"
 RISK_ASSESSMENT = "risk assessment"
+BIOSAFETY_LEVEL = "biosafety level"
 OBSERVATION = "observation"
 MULTIMEDIA = "multimedia"
 MULTICELLULAR_MORPHOLOGY = "multicellular morphology"
@@ -165,6 +166,7 @@ DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
 RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
+BIOSAFETY_LEVEL_PREFIX = "BSL:"
 
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL = "Complex Medium"
@@ -218,6 +220,7 @@ PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
 ATTRIBUTE_CATEGORY = "biolink:Attribute"
 METABOLITE_CATEGORY = "biolink:ChemicalEntity"
 SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
+BIOSAFETY_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
@@ -353,6 +356,8 @@ DEBIO_MAPPER = {
     RHEA_RIGHT_TO_LEFT_DIRECTION: "debio:0000008",
     RHEA_BIDIRECTIONAL_DIRECTION: "debio:0000009",
 }
+
+BIOSAFETY_LEVEL_PREDICATE = "biolink:associated_with"
 # DEBIO_PREDICATE_MAPPER = {
 #     RHEA_LEFT_TO_RIGHT_DIRECTION: "biolink:is_input_of",
 #     RHEA_RIGHT_TO_LEFT_DIRECTION: "biolink:is_output_of",
@@ -488,6 +493,7 @@ DO_NOT_CHANGE_PREFIXES = [
     GO_PREFIX,
     MEDIADIVE_MEDIUM_PREFIX,
     STRAIN_PREFIX,
+    BIOSAFETY_LEVEL_PREFIX,
 ]
 
 HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"

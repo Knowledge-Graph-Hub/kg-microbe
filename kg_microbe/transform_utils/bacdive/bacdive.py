@@ -830,7 +830,7 @@ class BacDiveTransform(Transform):
                             # ! Assumption is biosafety level for all items in the list are the same.
                             biosafety_level = risk_assessment[0].get(BIOSAFETY_LEVEL, None)
                         if biosafety_level:
-                            biosafety_level = re.findall(r'\d+', biosafety_level)
+                            biosafety_level = re.findall(r'\d+', biosafety_level)[0]
                             biosafety_level_id = f"{BIOSAFETY_LEVEL_PREFIX}{biosafety_level}"
                             biosafety_level_label = f"{BIOSAFETY_LEVEL} {biosafety_level}"
                             node_writer.writerow([

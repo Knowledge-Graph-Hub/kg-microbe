@@ -191,4 +191,9 @@
   url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
   local_name: wallen_etal.xlsx
 
-  
+#
+# Figshare
+#
+-
+  url: https://figshare.com/ndownloader/articles/4272392/versions/3
+  local_name: ijsem.zip

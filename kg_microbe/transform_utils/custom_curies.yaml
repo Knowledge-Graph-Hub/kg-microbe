@@ -580,23 +580,23 @@ pH_delta:
     curie: "pH_delta:very_low"
     name: "pH delta <= 1"
     <<: *phenotypic_quality_block
-  phd_1_to_2:
+  phd_1_2:
     curie: "pH_delta:low"
     name: "pH delta 1 to 2"
     <<: *phenotypic_quality_block
-  phd_2_to_3:
+  phd_2_3:
     curie: "pH_delta:mid1"
     name: "pH delta 2 to 3"
     <<: *phenotypic_quality_block
-  phd_3_to_4:
+  phd_3_4:
     curie: "pH_delta:mid2"
     name: "pH delta 3 to 4"
     <<: *phenotypic_quality_block
-  phd_4_to_5:
+  phd_4_5:
     curie: "pH_delta:mid3"
     name: "pH delta 4 to 5"
     <<: *phenotypic_quality_block
-  phd_5_to_9:
+  phd_5_9:
     curie: "pH_delta:high"
     name: "pH delta 5 to 9"
     <<: *phenotypic_quality_block
@@ -720,19 +720,19 @@ temperature_delta:
     curie: "temp_delta:very_low"
     name: "temperature delta <= 1 deg C"
     <<: *phenotypic_quality_block
-  td_1_to_5:
+  td_1_5:
     curie: "temp_delta:low"
     name: "temperature delta 1 deg C to 5 deg C"
     <<: *phenotypic_quality_block
-  td_5_to_10:
+  td_5_10:
     curie: "temp_delta:mid1"
     name: "temperature delta 5 deg C to 10 deg C"
     <<: *phenotypic_quality_block
-  td_10_to_20:
+  td_10_20:
     curie: "temp_delta:mid2"
     name: "temperature delta 10 deg C to 20 deg C"
     <<: *phenotypic_quality_block
-  td_20_to_30:
+  td_20_30:
     curie: "temp_delta:mid3"
     name: "temperature delta 20 deg C to 30 deg C"
     <<: *phenotypic_quality_block
@@ -746,11 +746,11 @@ cell_width:
     curie: "cell_width:very_low"
     name: "cell width <= 0.5um"
     <<: *phenotypic_quality_block
-  w_0.5_to_0.65:
+  w_0.5_0.65:
     curie: "cell_width:low"
     name: "cell width 0.5um to 0.65um"
     <<: *phenotypic_quality_block
-  w_0.65_to_0.9:
+  w_0.65_0.9:
     curie: "cell_width:mid"
     name: "cell width 0.65um to 0.9um"
     <<: *phenotypic_quality_block
@@ -764,11 +764,11 @@ cell_length:
     curie: "cell_length:very_low"
     name: "cell length <= 1.3um"
     <<: *phenotypic_quality_block
-  l_1.3_to_2:
+  l_1.3_2:
     curie: "cell_length:low"
     name: "cell length 1.3um to 2um"
     <<: *phenotypic_quality_block
-  l_2_to_3:
+  l_2_3:
     curie: "cell_length:mid"
     name: "cell length 2um to 3um"
     <<: *phenotypic_quality_block

@@ -8,6 +8,7 @@ NCBITaxon:438	biolink:OrganismTaxon	Acetobacter pasteurianus
 NCBITaxon:940265	biolink:OrganismTaxon	Acetobacter pasteurianus subsp. pasteurianus LMG 1262 = NBRC 106471											
 temp_range:mid1	biolink:PhenotypicQuality	temperature range 22 deg C to 27 deg C											
 temp_range:mid2	biolink:PhenotypicQuality	temperature range 27 deg C to 30 deg C											
+temp_delta:low	biolink:PhenotypicQuality	temperature delta 1 deg C to 5 deg C											
 NCBITaxon:1231342	biolink:OrganismTaxon	Acetobacter orleanensis JCM 7639											
 motility:non_motile	biolink:PhenotypicQuality	non-motile											
 cell_width:high	biolink:PhenotypicQuality	cell width > 0.9um											
@@ -15,18 +16,22 @@ cell_length:very_low	biolink:PhenotypicQuality	cell length <= 1.3um
 NCBITaxon:1307917	biolink:OrganismTaxon	Acetobacter pomorum DSM 11825											
 gram_stain:negative	biolink:PhenotypicQuality	gram negative											
 sporulation:non_spore_forming	biolink:PhenotypicQuality	non spore forming											
+cell_length:mid	biolink:PhenotypicQuality	cell length 2um to 3um											
 cell_shape:rod	biolink:PhenotypicQuality	rod shaped cell											
 NCBITaxon:1307903	biolink:OrganismTaxon	Acetobacter cerevisiae DSM 14362											
 NCBITaxon:1307910	biolink:OrganismTaxon	Acetobacter malorum DSM 14337											
 temp_opt:mid2	biolink:PhenotypicQuality	optimal temperature 27 deg C to 30 deg C											
 motility:motile	biolink:PhenotypicQuality	motile											
+cell_width:mid	biolink:PhenotypicQuality	cell width 0.65um to 0.9um											
 cell_length:high	biolink:PhenotypicQuality	cell length > 3um											
 NCBITaxon:1307912	biolink:OrganismTaxon	Acetobacter oeni LMG 21952											
 cell_width:very_low	biolink:PhenotypicQuality	cell width <= 0.5um											
+cell_length:low	biolink:PhenotypicQuality	cell length 1.3um to 2um											
 NCBITaxon:1120919	biolink:OrganismTaxon	Acetobacter nitrogenifigens DSM 23921 = NBRC 105050											
 temp_opt:mid4	biolink:PhenotypicQuality	optimal temperature 34 deg C to 40 deg C											
 temp_range:mid3	biolink:PhenotypicQuality	temperature range 30 deg C to 34 deg C											
 temp_range:mid4	biolink:PhenotypicQuality	temperature range 34 deg C to 40 deg C											
+temp_delta:mid2	biolink:PhenotypicQuality	temperature delta 10 deg C to 20 deg C											
 cell_shape:sphere	biolink:PhenotypicQuality	sphere shaped cell											
 NCBITaxon:1307918	biolink:OrganismTaxon	Acetobacter senegalensis DSM 18889											
 NCBITaxon:1307907	biolink:OrganismTaxon	Acetobacter ghanensis DSM 18895											
@@ -34,6 +39,7 @@ NCBITaxon:1307906	biolink:OrganismTaxon	Acetobacter fabarum DSM 19596
 NCBITaxon:104098	biolink:OrganismTaxon	Acetobacter peroxydans											
 pH_range:low	biolink:PhenotypicQuality	pH range 0 to 4											
 pH_range:mid1	biolink:PhenotypicQuality	pH range 4 to 6											
+pH_delta:mid2	biolink:PhenotypicQuality	pH delta 3 to 4											
 gc:high	biolink:PhenotypicQuality	GC content > 66.3%											
 NCBITaxon:524	biolink:OrganismTaxon	Acidiphilium cryptum											
 NCBITaxon:1307921	biolink:OrganismTaxon	Acidiphilium acidophilum DSM 700											
@@ -46,18 +52,22 @@ NCBITaxon:1236502	biolink:OrganismTaxon	Asaia prunellae JCM 25354
 pH_opt:mid1	biolink:PhenotypicQuality	optimal pH 6 to 7											
 pH_range:mid2	biolink:PhenotypicQuality	pH range 6 to 7											
 pH_range:mid3	biolink:PhenotypicQuality	pH range 7 to 8											
+pH_delta:low	biolink:PhenotypicQuality	pH delta 1 to 2											
 temp_opt:mid1	biolink:PhenotypicQuality	optimal temperature 22 deg C to 27 deg C											
 temp_range:low	biolink:PhenotypicQuality	temperature range 10 deg C to 22 deg C											
 NCBITaxon:1121106	biolink:OrganismTaxon	Belnapia moabensis DSM 16746											
 pH_opt:mid2	biolink:PhenotypicQuality	optimal pH 7 to 8											
+pH_delta:mid1	biolink:PhenotypicQuality	pH delta 2 to 3											
 NaCl_range:very_low	biolink:PhenotypicQuality	NaCl range <= 1%											
 NaCl_delta:very_low	biolink:PhenotypicQuality	NaCl delta <= 1%											
 NCBITaxon:938405	biolink:OrganismTaxon	Belnapia rosea											
 NCBITaxon:272568	biolink:OrganismTaxon	Gluconacetobacter diazotrophicus PA1 5											
 NCBITaxon:89584	biolink:OrganismTaxon	Gluconacetobacter liquefaciens											
 NCBITaxon:1307940	biolink:OrganismTaxon	Gluconacetobacter sacchari DSM 12717											
+cell_width:low	biolink:PhenotypicQuality	cell width 0.5um to 0.65um											
 NCBITaxon:1307932	biolink:OrganismTaxon	Gluconacetobacter azotocaptans DSM 13594											
 NCBITaxon:1307935	biolink:OrganismTaxon	Gluconacetobacter johannae DSM 13595											
+pH_delta:mid3	biolink:PhenotypicQuality	pH delta 4 to 5											
 NCBITaxon:1234672	biolink:OrganismTaxon	Komagataeibacter kakiaceti JCM 25156											
 NCBITaxon:442	biolink:OrganismTaxon	Gluconobacter oxydans											
 NCBITaxon:38308	biolink:OrganismTaxon	Gluconobacter frateurii											
@@ -83,6 +93,7 @@ pH_range:mid4	biolink:PhenotypicQuality	pH range 8 to 10
 NaCl_range:low	biolink:PhenotypicQuality	NaCl range 1% to 3%											
 NaCl_range:mid	biolink:PhenotypicQuality	NaCl range 3% to 8%											
 NaCl_delta:mid	biolink:PhenotypicQuality	NaCl delta 3% to 8%											
+temp_delta:mid3	biolink:PhenotypicQuality	temperature delta 20 deg C to 30 deg C											
 NCBITaxon:1123061	biolink:OrganismTaxon	Neoroseomonas lacus DSM 19439											
 NCBITaxon:373043	biolink:OrganismTaxon	Paeniroseomonas aquatica											
 NaCl_delta:low	biolink:PhenotypicQuality	NaCl delta 1% to 3%											
@@ -129,6 +140,7 @@ NCBITaxon:33059	biolink:OrganismTaxon	Acidithiobacillus caldus
 NCBITaxon:119978	biolink:OrganismTaxon	Acidithiobacillus albertensis											
 NCBITaxon:240015	biolink:OrganismTaxon	Acidobacterium capsulatum ATCC 51196											
 NCBITaxon:388466	biolink:OrganismTaxon	Edaphobacter modestus											
+temp_delta:mid1	biolink:PhenotypicQuality	temperature delta 5 deg C to 10 deg C											
 NCBITaxon:1121860	biolink:OrganismTaxon	Edaphobacter aggregans DSM 19364											
 NCBITaxon:926566	biolink:OrganismTaxon	Terriglobus roseus DSM 18391											
 NCBITaxon:870903	biolink:OrganismTaxon	Terriglobus saanensis											
@@ -296,6 +308,7 @@ NCBITaxon:285091	biolink:OrganismTaxon	Alloalcanivorax dieselolei
 NCBITaxon:413232	biolink:OrganismTaxon	Alloalcanivorax balearicus											
 NCBITaxon:523791	biolink:OrganismTaxon	Kangiella koreensis DSM 16069											
 NCBITaxon:1122134	biolink:OrganismTaxon	Kangiella aquimarina DSM 16071											
+pH_delta:high	biolink:PhenotypicQuality	pH delta 5 to 9											
 NCBITaxon:796379	biolink:OrganismTaxon	Kangiella spongicola											
 NCBITaxon:1450	biolink:OrganismTaxon	Alicyclobacillus acidoterrestris											
 NCBITaxon:1356854	biolink:OrganismTaxon	Alicyclobacillus acidoterrestris ATCC 49025											

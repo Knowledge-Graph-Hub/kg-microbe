@@ -10,6 +10,8 @@
 #SBATCH --error=parallel_transforms_%A_%a.err
 #SBATCH --array=0-10
 #SBATCH -N 1
+#SBATCH --mail-type=BEGIN,END
+#SBATCH --mail-user=MJoachimiak@lbl.gov
 
 export ROBOT_JAVA_ARGS="-Xmx64g -XX:+UseG1GC"
 export JAVA_OPT="-Xmx64g -XX:+UseG1GC"

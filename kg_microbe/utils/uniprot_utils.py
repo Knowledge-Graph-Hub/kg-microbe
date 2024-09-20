@@ -607,7 +607,6 @@ def process_lines(
     df = pd.DataFrame(list_of_rows, columns=headers)
     df = df[~(df == df.columns.to_series()).all(axis=1)]
     df.drop_duplicates(inplace=True)
-    # TODO: Filter df for rows with Proteomes:UPXXXX in the reference.tsv file
 
     node_data, edge_data = get_nodes_and_edges(
         source_name,

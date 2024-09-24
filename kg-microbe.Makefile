@@ -8,6 +8,13 @@ REPO_URL := https://github.com/$(REPO_OWNER)/$(REPO_NAME)
 TOKEN := $(GH_TOKEN)
 MERGED_TARBALL := data_merged.tar.gz
 PART_SIZE := 2000M  # Size of each part (less than 2GB)
+# Detect OS and set STAT_CMD accordingly
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	STAT_CMD = stat -c %s
+else ifeq ($(UNAME_S),Darwin)
+	STAT_CMD = stat -f %z
+endif
 
 .PHONY: release pre-release tag generate-tarballs check-and-split
 
@@ -45,7 +52,7 @@ generate-tarballs:
 
 check-and-split:
 	@echo "Checking if $(TARFILE) needs to be split..."
-	@if [ $$(stat -f%z "$(TARFILE)") -gt 2147483648 ]; then \
+	@if [ $$($(STAT_CMD) "$(TARFILE)") -gt 2147483648 ]; then \
 		echo "$(TARFILE) is larger than 2GB. Tarballing individual files..."; \
 		dirname=$$(basename $(DIR)); \
 		for file in $(DIR)/*; do \

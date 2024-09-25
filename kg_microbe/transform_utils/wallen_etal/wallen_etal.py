@@ -32,7 +32,6 @@ PARKINSONS_DISEASE_MONDO_ID = "MONDO:0005180"
 
 
 class WallenEtAlTransform(Transform):
-
     """A class used to represent a transformation process for PdMetagenomics data."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

@@ -10,7 +10,6 @@ from kg_microbe.utils.trembl_utils import unzip_trembl_file
 
 
 class UniprotTrEMBLTransform(Transform):
-
     """Uniprot TrEMBL transform."""
 
     def __init__(

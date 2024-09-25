@@ -38,7 +38,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BactoTraitsTransform(Transform):
-
     """
     BactoTraits transform.
 

@@ -36,7 +36,6 @@ RELATIONS_DICT = {
 
 
 class CTDTransform(Transform):
-
     """A class used to represent a transformation process for UniProt data."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

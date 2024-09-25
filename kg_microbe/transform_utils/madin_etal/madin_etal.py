@@ -70,7 +70,6 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class MadinEtAlTransform(Transform):
-
     """
     Ingest Madin et al dataset (NCBI/GTDB).
 

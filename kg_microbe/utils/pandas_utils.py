@@ -101,7 +101,7 @@ def establish_transitive_relationship(
     #     list_of_dfs_to_append.append(transitive_relations_df)
     # Create a dictionary to map objects to subjects
     object_to_subject = dict(
-        zip(subject_intermediate_df["object"], subject_intermediate_df["subject"])
+        zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False)
     )
 
     # Filter the DataFrame to include only rows where the SUBJECT_COLUMN matches any object in the mapping

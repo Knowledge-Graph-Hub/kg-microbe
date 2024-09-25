@@ -190,6 +190,7 @@ else:
 
 
 class BacDiveTransform(Transform):
+
     """Template for how the transform class would be designed."""
 
     def __init__(

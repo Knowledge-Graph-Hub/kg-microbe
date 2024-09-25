@@ -80,6 +80,7 @@ ONTOLOGIES_MAP = {
 
 
 class OntologiesTransform(Transform):
+
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

@@ -59,7 +59,7 @@ pipeline {
                             url: 'https://github.com/Knowledge-Graph-Hub/kg-microbe',
                             branch: env.BRANCH_NAME
                     )
-                    sh '/usr/bin/python3.9 -m venv venv'
+                    sh '/usr/bin/python3.10 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install .'
                     sh './venv/bin/pip install awscli pystache boto3 s3cmd multi-indexer'

@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             reuseNode false
-            image 'caufieldjh/kg-hub-3_10:1'
+            image 'caufieldjh/kg-hub-3_10:2'
         }
     }
     triggers{
@@ -62,7 +62,6 @@ pipeline {
                     sh '/usr/bin/python3.10 -m venv venv'
                     sh '. venv/bin/activate'
                     sh './venv/bin/pip install .'
-                    sh './venv/bin/pip install awscli pystache boto3 s3cmd multi-indexer'
                 }
             }
         }

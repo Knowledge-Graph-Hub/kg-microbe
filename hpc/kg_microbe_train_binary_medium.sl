@@ -8,6 +8,8 @@
 #SBATCH --array=0-19
 #SBATCH --output=%A_%a.out
 #SBATCH --error=%A_%a.err
+#SBATCH --mail-type=BEGIN,END
+#SBATCH --mail-user=MJoachimiak@lbl.gov
 
 # Load any necessary modules (e.g., Python)
 module load python/3.10

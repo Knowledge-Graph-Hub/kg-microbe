@@ -8,6 +8,8 @@
 #SBATCH -N 1
 #SBATCH --output=%j.out
 #SBATCH --error=%j.err
+#SBATCH --mail-type=BEGIN,END
+#SBATCH --mail-user=MJoachimiak@lbl.gov
 
 module load python/3.10
 cd /global/cfs/cdirs/m4689/master/kg-microbe

@@ -691,7 +691,24 @@ def check_string_in_tar(
                         # Split the content into lines and count occurrences
                         lines = content.splitlines()
                         count = sum(bool(pattern.search(line)) for line in lines)
+                        # No assembled proteomes case, otherwise only grab assembled proteomes
+                        if count == 0:
+                            count = len(lines)
                         if count > min_line_count:
+                            # Get only first proteome listed if multiple
+                            proteome_column_index = next(
+                                i
+                                for i, value in enumerate(lines[0])
+                                if UNIPROT_PROTEOME_COLUMN_NAME == value
+                            )
+                            lines = [
+                                "\t".join(
+                                    line.split("\t")[:proteome_column_index]
+                                    + [line.split("\t")[proteome_column_index].split(";")[0]]
+                                    + line.split("\t")[proteome_column_index + 1 :]
+                                )
+                                for line in lines
+                            ]
                             # Add only unique lines to the set
                             matching_members_content.extend(lines)
                             # Add the member name to the list

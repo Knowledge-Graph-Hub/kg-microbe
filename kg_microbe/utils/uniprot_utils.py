@@ -697,9 +697,12 @@ def check_string_in_tar(
                         if count > min_line_count:
                             # Get only first proteome listed if multiple
                             proteome_column_index = next(
-                                i
-                                for i, value in enumerate(lines[0])
-                                if UNIPROT_PROTEOME_COLUMN_NAME == value
+                                (
+                                    i
+                                    for i, value in enumerate(lines[0].split("\t"))
+                                    if UNIPROT_PROTEOME_COLUMN_NAME == value
+                                ),
+                                None,
                             )
                             lines = [
                                 "\t".join(

@@ -437,11 +437,8 @@ UNIPROT_GENE_PRIMARY_COLUMN_NAME = "Gene Names (primary)"
 UNIPROT_PREFIX = "UniprotKB:"
 CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
 # PROTEIN_TO_GO_EDGE = "biolink:enables"
-PROTEOME_TO_ORGANISM_EDGE = "biolink:derives_from"
 PROTEIN_TO_ORGANISM_EDGE = "biolink:derives_from"
 ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
-PROTEIN_TO_PROTEOME_EDGE = "biolink:derives_from"
-PROTEOME_CATEGORY = "biolink:Genome"
 PROTEIN_TO_EC_EDGE = "biolink:enables"
 EC_CATEGORY = "biolink:Enzyme"
 PROTEIN_TO_RHEA_EDGE = "biolink:participates_in"
@@ -470,7 +467,6 @@ HAS_GENE_PRODUCT = "RO:0002205"
 GENE_CATEGORY = "biolink:Gene"
 
 PROTEOME_ID_COLUMN = "proteome_id"
-PROTEOME_PREFIX = "Proteomes:"
 UNIPROT_DATA_LIST = [
     "archaea",
     "bacteria",

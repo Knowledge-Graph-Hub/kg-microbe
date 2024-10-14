@@ -47,11 +47,7 @@ from kg_microbe.transform_utils.constants import (
     PROTEIN_TO_GO_CELLULAR_COMPONENT_EDGE,
     PROTEIN_TO_GO_MOLECULAR_FUNCTION_EDGE,
     PROTEIN_TO_ORGANISM_EDGE,
-    PROTEIN_TO_PROTEOME_EDGE,
     PROTEIN_TO_RHEA_EDGE,
-    PROTEOME_CATEGORY,
-    PROTEOME_PREFIX,
-    PROTEOME_TO_ORGANISM_EDGE,
     RDFS_SUBCLASS_OF,
     RHEA_CATEGORY,
     UNIPROT_BINDING_SITE_COLUMN_NAME,
@@ -71,8 +67,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 RELATIONS_DICT = {
     PROTEIN_TO_ORGANISM_EDGE: DERIVES_FROM,
-    PROTEOME_TO_ORGANISM_EDGE: DERIVES_FROM,
-    PROTEIN_TO_PROTEOME_EDGE: DERIVES_FROM,
     PROTEIN_TO_EC_EDGE: ENABLES,
     CHEMICAL_TO_PROTEIN_EDGE: MOLECULARLY_INTERACTS_WITH,
     PROTEIN_TO_RHEA_EDGE: PARTICIPATES_IN,
@@ -102,7 +96,6 @@ PROTEIN_NAME_PARSED_COLUMN = "protein_name_parsed"
 BINDING_SITE_PARSED_COLUMN = "binding_site_parsed"
 GO_PARSED_COLUMN = "go_parsed"
 RHEA_PARSED_COLUMN = "rhea_parsed"
-PROTEOME_PARSED_COLUMN = "proteome_parsed"
 DISEASE_PARSED_COLUMN = "disease_parsed"
 GENE_PRIMARY_PARSED_COLUMN = "gene_primary_parsed"
 GO_TERM_COLUMN = "GO_Term"
@@ -315,7 +308,6 @@ def get_nodes_and_edges(
     edge_data = []
     parsed_columns = [
         ORGANISM_PARSED_COLUMN,
-        PROTEOME_PARSED_COLUMN,
         EC_NUMBER_PARSED_COLUMN,
         PROTEIN_ID_PARSED_COLUMN,
         BINDING_SITE_PARSED_COLUMN,
@@ -352,11 +344,6 @@ def get_nodes_and_edges(
     uniprot_parse_df[RHEA_PARSED_COLUMN] = uniprot_df[UNIPROT_RHEA_ID_COLUMN_NAME].apply(
         parse_rhea_entry
     )
-    uniprot_parse_df[PROTEOME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEOME_COLUMN_NAME].apply(
-        lambda x: (
-            PROTEOME_PREFIX + x.split(":")[0].strip() if x and not is_float(x) and x != "" else x
-        )
-    )
     # Fields only in human uniprot query
     if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns:
         uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
@@ -382,17 +369,6 @@ def get_nodes_and_edges(
             ]
         )
 
-        # Proteome node
-        node_data.append(
-            [
-                entry[PROTEOME_PARSED_COLUMN],
-                PROTEOME_CATEGORY,
-                entry[PROTEOME_PARSED_COLUMN],
-                "",
-                "",
-                source_name,
-            ]
-        )
         # EC node
         if entry[EC_NUMBER_PARSED_COLUMN]:
             for ec in entry[EC_NUMBER_PARSED_COLUMN]:
@@ -490,39 +466,16 @@ def get_nodes_and_edges(
                 )
 
         # Removing protein-organism edges for now
-        # # Protein-organism
-        # edge_data.append(
-        #     [
-        #         entry[PROTEIN_ID_PARSED_COLUMN],
-        #         PROTEIN_TO_ORGANISM_EDGE,
-        #         entry[ORGANISM_PARSED_COLUMN],
-        #         RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
-        #         source_name,
-        #     ]
-        # )
-
-        # Proteome-organism
-        if entry[PROTEOME_PARSED_COLUMN]:
-            edge_data.append(
-                [
-                    entry[PROTEOME_PARSED_COLUMN],
-                    PROTEOME_TO_ORGANISM_EDGE,
-                    entry[ORGANISM_PARSED_COLUMN],
-                    RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
-                    source_name,
-                ]
-            )
-        # Protein-proteome
-        if entry[PROTEIN_ID_PARSED_COLUMN]:
-            edge_data.append(
-                [
-                    entry[PROTEIN_ID_PARSED_COLUMN],
-                    PROTEIN_TO_PROTEOME_EDGE,
-                    entry[PROTEOME_PARSED_COLUMN],
-                    RELATIONS_DICT[PROTEIN_TO_PROTEOME_EDGE],
-                    source_name,
-                ]
-            )
+        # Protein-organism
+        edge_data.append(
+            [
+                entry[PROTEIN_ID_PARSED_COLUMN],
+                PROTEIN_TO_ORGANISM_EDGE,
+                entry[ORGANISM_PARSED_COLUMN],
+                RELATIONS_DICT[PROTEIN_TO_ORGANISM_EDGE],
+                source_name,
+            ]
+        )
 
     return (node_data, edge_data)
 

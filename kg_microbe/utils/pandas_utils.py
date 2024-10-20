@@ -25,31 +25,38 @@ def drop_duplicates(
     consolidation_columns: List = None,
 ):
     """
-    Read TSV, drop duplicates and export to same file.
+    Read TSV, drop duplicates, and export to the same file without making unnecessary copies.
 
-    :param df: Dataframe
-    :param file_path: file path.
+    :param file_path: Path to the TSV file.
+    :param sort_by_column: Column name to sort the DataFrame.
+    :param consolidation_columns: List of columns to consolidate.
     """
     exclude_prefixes = DO_NOT_CHANGE_PREFIXES
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
-    df_copy = df.copy()
-    if consolidation_columns and all(col in list(df_copy.columns) for col in consolidation_columns):
+
+    # Store the original NAME_COLUMN if it's in consolidation_columns
+    if consolidation_columns and NAME_COLUMN in consolidation_columns:
+        original_name_column = df[NAME_COLUMN].copy()
+
+    if consolidation_columns and all(col in df.columns for col in consolidation_columns):
         for col in consolidation_columns:
-            df_copy[col] = df_copy[col].apply(
+            df[col] = df[col].apply(
                 lambda x: (
                     str(x).lower()
                     if not any(str(x).startswith(prefix) for prefix in exclude_prefixes)
                     else x
                 )
             )
-    df_copy = df_copy.drop_duplicates().sort_values(by=[sort_by_column])
-    # Replace the "name" column with the original values
-    if consolidation_columns and NAME_COLUMN in consolidation_columns:
-        # replace df_copy[NAME_COLUMN] with the original values based on index match
-        df_copy[NAME_COLUMN] = df.loc[df_copy.index, NAME_COLUMN]
 
-    df_copy.to_csv(file_path, sep="\t", index=False)
-    return df_copy
+    df.drop_duplicates(inplace=True)
+    df.sort_values(by=[sort_by_column], inplace=True)
+
+    # Restore the original values of the NAME_COLUMN
+    if consolidation_columns and NAME_COLUMN in consolidation_columns:
+        df[NAME_COLUMN] = original_name_column.loc[df.index]
+
+    df.to_csv(file_path, sep="\t", index=False)
+    return df
 
 
 def establish_transitive_relationship(

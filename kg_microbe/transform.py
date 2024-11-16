@@ -11,6 +11,7 @@ from kg_microbe.transform_utils.constants import (
     BACTOTRAITS,
     CTD,
     DISBIOME,
+    IJSEM,
     MADIN_ETAL,
     MEDIADIVE,
     ONTOLOGIES,
@@ -21,6 +22,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.ctd.ctd import CTDTransform
 from kg_microbe.transform_utils.disbiome.disbiome import DisbiomeTransform
+from kg_microbe.transform_utils.ijsem.ijsem_transform import IJSEMTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
@@ -54,6 +56,7 @@ DATA_SOURCES = {
     DISBIOME: DisbiomeTransform,
     WALLEN_ETAL: WallenEtAlTransform,
     UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+    IJSEM: IJSEMTransform,
 }
 
 

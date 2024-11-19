@@ -220,52 +220,18 @@ class RheaMappingsTransform(Transform):
             with progress_class(
                 total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings..."
             ) as progress:
-                for k, v in rhea_nodes.items():
+                # Rhea hierarchy is in groups of 4
+                for i, (k, v) in enumerate(rhea_nodes.items()):
+                    if i % 4 == 0: direction = RHEA_UNDEFINED_DIRECTION
+                    if i % 4 == 1: direction = DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION)
+                    if i % 4 == 2: direction = DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION)
+                    if i % 4 == 3: direction = DEBIO_MAPPER.get(RHEA_BIDIRECTIONAL_DIRECTION)
                     # Associate reaction identifiers corresponding to different directions (n, n+1, n+2, n+3)
                     tmp_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, RHEA_UNDEFINED_DIRECTION]
+                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, direction]
                     )
                     nodes_file_writer.writerow(
                         [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v]
-                        + [None] * (len(self.node_header) - 3)
-                    )
-
-                    tmp_file_writer.writerow(
-                        [
-                            RHEA_NEW_PREFIX + str(int(k) + 1),
-                            RHEA_CATEGORY,
-                            v,
-                            DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
-                        ]
-                    )
-                    nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + str(int(k) + 1), RHEA_CATEGORY, v]
-                        + [None] * (len(self.node_header) - 3)
-                    )
-
-                    tmp_file_writer.writerow(
-                        [
-                            RHEA_NEW_PREFIX + str(int(k) + 2),
-                            RHEA_CATEGORY,
-                            v,
-                            DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION),
-                        ]
-                    )
-                    nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + str(int(k) + 2), RHEA_CATEGORY, v]
-                        + [None] * (len(self.node_header) - 3)
-                    )
-
-                    tmp_file_writer.writerow(
-                        [
-                            RHEA_NEW_PREFIX + str(int(k) + 3),
-                            RHEA_CATEGORY,
-                            v,
-                            DEBIO_MAPPER.get(RHEA_BIDIRECTIONAL_DIRECTION),
-                        ]
-                    )
-                    nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + str(int(k) + 3), RHEA_CATEGORY, v]
                         + [None] * (len(self.node_header) - 3)
                     )
                     progress.set_description(f"Processing RHEA node: {RHEA_NEW_PREFIX + k} ...")

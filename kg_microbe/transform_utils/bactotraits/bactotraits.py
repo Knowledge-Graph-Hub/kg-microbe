@@ -245,6 +245,15 @@ class BactoTraitsTransform(Transform):
             combo_curie_map = {
                 key: value for key, value in custom_curie_map.items() if COMBO_KEY in value
             }
+            unique_combo_node_data = [
+                (
+                    inner_curie_map[CURIE_COLUMN],
+                    inner_curie_map[CATEGORY_COLUMN],
+                    inner_curie_map[NAME_COLUMN]
+                )
+                for _, v in combo_curie_map.items()
+                for inner_curie_map in v[COMBO_KEY]
+            ]
             unique_combo_edge_data = [
                 (
                     v[CURIE_COLUMN],
@@ -257,6 +266,7 @@ class BactoTraitsTransform(Transform):
                 for inner_curie_map in v[COMBO_KEY]
             ]
             combo_edge_data = [list(edge) for edge in unique_combo_edge_data]
+            combo_node_data = [list(edge) for edge in unique_combo_node_data]
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class() as progress:
@@ -333,6 +343,7 @@ class BactoTraitsTransform(Transform):
                     progress.set_description(f"Processing line #{i}")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update(1)
+                node_writer.writerows(combo_node_data)
                 edge_writer.writerows(combo_edge_data)
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

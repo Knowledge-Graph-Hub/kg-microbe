@@ -150,7 +150,7 @@ trophic_type:
     curie: "trophic_type:heterotrophy"
     name: "heterotroph"
     <<: *biological_process_block
-  tt_heterotrph: *heterotroph_block
+  tt_heterotroph: *heterotroph_block
   chemoautolithotroph:
     curie: "trophic_type:chemoautolithotrophy"
     name: "chemoautolithotroph"

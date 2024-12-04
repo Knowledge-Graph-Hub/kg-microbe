@@ -49,9 +49,9 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_CATEGORY,
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
+    PHENOTYPIC_CATEGORY,
     PREFERRED_TERM_KEY,
     ROLE_CATEGORY,
-    SHAPE_CATEGORY,
     SHAPE_PREFIX,
     SUBJECT_LABEL_COLUMN,
     TAX_ID_COLUMN,
@@ -363,7 +363,11 @@ class MadinEtAlTransform(Transform):
                         else filtered_row[CELL_SHAPE_COLUMN]
                     )
                     if cell_shape:
-                        cell_shape_node = [SHAPE_PREFIX + cell_shape, SHAPE_CATEGORY, cell_shape]
+                        cell_shape_node = [
+                            SHAPE_PREFIX + cell_shape,
+                            PHENOTYPIC_CATEGORY,
+                            cell_shape,
+                        ]
                         tax_to_cell_shape_edge = [
                             tax_id,
                             NCBI_TO_SHAPE_EDGE,

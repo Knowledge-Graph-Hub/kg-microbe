@@ -249,7 +249,7 @@ class BactoTraitsTransform(Transform):
                 (
                     inner_curie_map[CURIE_COLUMN],
                     inner_curie_map[CATEGORY_COLUMN],
-                    inner_curie_map[NAME_COLUMN]
+                    inner_curie_map[NAME_COLUMN],
                 )
                 for _, v in combo_curie_map.items()
                 for inner_curie_map in v[COMBO_KEY]

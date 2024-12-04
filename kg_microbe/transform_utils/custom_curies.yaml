@@ -363,7 +363,7 @@ cell_shape:
     name: "ellipsoidal shaped cell"
     <<: *phenotypic_quality_block
 
-  s_curved_spiral_shaped:
+  s_curved_spiral:
     curie: "cell_shape:curved_spiral"
     name: "curved spiral shaped cell"
     <<: *phenotypic_quality_block

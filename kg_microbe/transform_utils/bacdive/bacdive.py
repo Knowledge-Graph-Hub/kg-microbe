@@ -796,13 +796,15 @@ class BacDiveTransform(Transform):
                         writer_2.writerow(phys_and_meta_data)
 
                     lpsn = name_tax_classification.get(LPSN)
-                    synonyms = lpsn.get(SYNONYMS, {}) if SYNONYMS in lpsn else None
+                    if isinstance(lpsn, dict) and SYNONYMS in lpsn:
+                        synonyms = lpsn[SYNONYMS]
+                    else:
+                        synonyms = None
+
                     if isinstance(synonyms, list):
-                        synonym_parsed = " | ".join(
-                            synonym.get(SYNONYM, {}) for synonym in synonyms
-                        )
+                        synonym_parsed = " | ".join(syn.get(SYNONYM, "") for syn in synonyms)
                     elif isinstance(synonyms, dict):
-                        synonym_parsed = synonyms.get(SYNONYM, {})
+                        synonym_parsed = synonyms.get(SYNONYM, "")
                     else:
                         synonym_parsed = None
 

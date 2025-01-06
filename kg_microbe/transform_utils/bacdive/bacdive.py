@@ -381,7 +381,7 @@ class BacDiveTransform(Transform):
         input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
         # Read the JSON file into the variable input_json
         with open(input_file, "r") as f:
-            input_json = json.load(f)
+            input_json = json.load(f)[0]
 
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)

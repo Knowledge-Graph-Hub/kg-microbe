@@ -67,6 +67,7 @@ from kg_microbe.transform_utils.constants import (
     DOMAIN,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
+    EC_CATEGORY,
     EC_KEY,
     EC_PREFIX,
     ENZYME_TO_ASSAY_EDGE,
@@ -484,7 +485,7 @@ class BacDiveTransform(Transform):
                     assay_nodes_to_write.append(
                         [
                             ec_id,
-                            PHENOTYPIC_CATEGORY,
+                            EC_CATEGORY,
                             assay[BACDIVE_MAPPING_ENZYME_LABEL],
                         ]
                         + [None] * (len(self.node_header) - 3)

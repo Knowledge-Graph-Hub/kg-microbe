@@ -274,7 +274,7 @@ class BacDiveTransform(Transform):
 
         return edge_pairs
 
-    def _process_antibiotic_resistance(self, item, ncbitaxon_id, key):
+    def _process_antibiotic_resistance(self, item, ncbitaxon_id, bacdive_id):
         chebi_key = CHEBI_PREFIX + str(item[CHEBI_KEY])
         METABOLITE_MAP[chebi_key] = (
             item[METABOLITE_KEY] if not METABOLITE_MAP.get(chebi_key) else METABOLITE_MAP[chebi_key]

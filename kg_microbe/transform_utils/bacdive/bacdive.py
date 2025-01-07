@@ -302,7 +302,7 @@ class BacDiveTransform(Transform):
                     antibiotic_predicate,
                     chebi_key,
                     None,
-                    BACDIVE_PREFIX + bacdive_id,
+                    BACDIVE_PREFIX + str(bacdive_id),
                 ]
             )
 
@@ -348,14 +348,14 @@ class BacDiveTransform(Transform):
                                 antibiotic_predicate,
                                 metabolite_id,
                                 None,
-                                BACDIVE_PREFIX + bacdive_id,
+                                BACDIVE_PREFIX + str(bacdive_id),
                             ],
                             [
                                 medium_id,
                                 MEDIUM_TO_METABOLITE_EDGE,
                                 metabolite_id,
                                 None,
-                                BACDIVE_PREFIX + bacdive_id,
+                                BACDIVE_PREFIX + str(bacdive_id),
                             ],
                         ]
                     )
@@ -372,7 +372,7 @@ class BacDiveTransform(Transform):
                     NCBI_TO_ASSAY_EDGE,
                     medium_id,
                     None,
-                    BACDIVE_PREFIX + bacdive_id,
+                    BACDIVE_PREFIX + str(bacdive_id),
                 ]
             )
 
@@ -750,7 +750,7 @@ class BacDiveTransform(Transform):
                                 medium_ids, medium_labels, medium_urls, mediadive_urls, strict=False
                             ):
                                 data = [
-                                    BACDIVE_PREFIX + bacdive_id,
+                                    BACDIVE_PREFIX + str(bacdive_id),
                                     dsm_number,
                                     culture_number_from_external_links,
                                     ncbitaxon_id,
@@ -773,7 +773,7 @@ class BacDiveTransform(Transform):
                                 writer.writerow(data)  # writing the data
 
                     phys_and_meta_data = [
-                        BACDIVE_PREFIX + bacdive_id,
+                        BACDIVE_PREFIX + str(bacdive_id)
                         phys_and_metabolism_observation,
                         phys_and_metabolism_enzymes,
                         phys_and_metabolism_metabolite_utilization,
@@ -809,7 +809,7 @@ class BacDiveTransform(Transform):
                         synonym_parsed = None
 
                     name_tax_classification_data = [
-                        BACDIVE_PREFIX + bacdive_id,
+                        BACDIVE_PREFIX + str(bacdive_id),
                         ncbitaxon_id,
                         name_tax_classification.get(DOMAIN),
                         name_tax_classification.get(PHYLUM),
@@ -850,7 +850,7 @@ class BacDiveTransform(Transform):
                                     BIOSAFETY_LEVEL_PREDICATE,
                                     biosafety_level_id,
                                     None,
-                                    BACDIVE_PREFIX + bacdive_id,
+                                    BACDIVE_PREFIX + str(bacdive_id),
                                 ]
                             )
 
@@ -960,7 +960,7 @@ class BacDiveTransform(Transform):
                                     SUBCLASS_PREDICATE,
                                     ncbitaxon_id,
                                     RDFS_SUBCLASS_OF,
-                                    BACDIVE_PREFIX + bacdive_id,
+                                    BACDIVE_PREFIX + str(bacdive_id),
                                 ]
                                 # for curated_strain_id in curated_strain_ids
                                 # if curated_strain_id
@@ -976,21 +976,21 @@ class BacDiveTransform(Transform):
                         #                         SAME_AS_PREDICATE,
                         #                         curated_strain_ids[j],
                         #                         EXACT_MATCH,
-                        #                         BACDIVE_PREFIX + bacdive_id,
+                        #                         BACDIVE_PREFIX + str(bacdive_id),
                         #                     ],
                         #                     [
                         #                         curated_strain_ids[i],
                         #                         SAME_AS_PREDICATE,
-                        #                         BACDIVE_PREFIX + bacdive_id,
+                        #                         BACDIVE_PREFIX + str(bacdive_id),
                         #                         EXACT_MATCH,
-                        #                         BACDIVE_PREFIX + bacdive_id,
+                        #                         BACDIVE_PREFIX + str(bacdive_id),
                         #                     ],
                         #                     [
                         #                         curated_strain_ids[j],
                         #                         SAME_AS_PREDICATE,
-                        #                         BACDIVE_PREFIX + bacdive_id,
+                        #                         BACDIVE_PREFIX + str(bacdive_id),
                         #                         EXACT_MATCH,
-                        #                         BACDIVE_PREFIX + bacdive_id,
+                        #                         BACDIVE_PREFIX + str(bacdive_id),
                         #                     ],
                         #                 ]
                         #             )
@@ -1016,7 +1016,7 @@ class BacDiveTransform(Transform):
                                     NCBI_TO_MEDIUM_EDGE,
                                     mid,
                                     IS_GROWN_IN,
-                                    BACDIVE_PREFIX + bacdive_id,
+                                    BACDIVE_PREFIX + str(bacdive_id),
                                 ]
                                 for organism in species_with_strains
                             ]
@@ -1048,7 +1048,7 @@ class BacDiveTransform(Transform):
                                         in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
                                         else BIOLOGICAL_PROCESS
                                     ),
-                                    BACDIVE_PREFIX + bacdive_id,
+                                    BACDIVE_PREFIX + str(bacdive_id),
                                 ]
                                 for organism in species_with_strains
                             ]
@@ -1077,7 +1077,7 @@ class BacDiveTransform(Transform):
                                         SUBCLASS_PREDICATE,
                                         ncbitaxon_id,
                                         RDFS_SUBCLASS_OF,
-                                        BACDIVE_PREFIX + bacdive_id,
+                                        BACDIVE_PREFIX + str(bacdive_id),
                                     ]
                                 )
 
@@ -1118,7 +1118,7 @@ class BacDiveTransform(Transform):
                                             NCBI_TO_ENZYME_EDGE,
                                             k,
                                             HAS_PHENOTYPE,
-                                            BACDIVE_PREFIX + bacdive_id,
+                                            BACDIVE_PREFIX + str(bacdive_id),
                                         ]
                                         for organism in species_with_strains
                                     ]
@@ -1196,7 +1196,7 @@ class BacDiveTransform(Transform):
                                             NCBI_TO_METABOLITE_UTILIZATION_EDGE,
                                             k,
                                             HAS_PARTICIPANT,
-                                            BACDIVE_PREFIX + bacdive_id,
+                                            BACDIVE_PREFIX + str(bacdive_id),
                                         ]
                                         for organism in species_with_strains
                                     ]
@@ -1261,7 +1261,7 @@ class BacDiveTransform(Transform):
                                             NCBI_TO_METABOLITE_PRODUCTION_EDGE,
                                             k,
                                             BIOLOGICAL_PROCESS,
-                                            BACDIVE_PREFIX + bacdive_id,
+                                            BACDIVE_PREFIX + str(bacdive_id),
                                         ]
                                         for organism in species_with_strains
                                     ]
@@ -1296,7 +1296,7 @@ class BacDiveTransform(Transform):
                                     ASSAY_TO_NCBI_EDGE,
                                     organism,
                                     ASSESSED_ACTIVITY_RELATIONSHIP,
-                                    BACDIVE_PREFIX + bacdive_id,
+                                    BACDIVE_PREFIX + str(bacdive_id),
                                 ]
                                 for m in meta_assay
                                 if not m.startswith(ASSAY_PREFIX)

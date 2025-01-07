@@ -1420,7 +1420,7 @@ class BacDiveTransform(Transform):
                                 phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer
                             )
 
-                    progress.set_description(f"Processing BacDive file: {key}.yaml")
+                    progress.set_description(f"Processing BacDive file: {bacdive_id}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
                 # Write metabolite_map to a file

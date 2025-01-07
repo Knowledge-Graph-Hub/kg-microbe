@@ -1405,19 +1405,19 @@ class BacDiveTransform(Transform):
                         if isinstance(phys_and_metabolism_antibiogram, list):
                             for dictionary in phys_and_metabolism_antibiogram:
                                 self._process_metabolites(
-                                    dictionary, ncbitaxon_id, key, node_writer, edge_writer
+                                    dictionary, ncbitaxon_id, bacdive_id, node_writer, edge_writer
                                 )
-                                self._process_medium(dictionary, ncbitaxon_id, key, edge_writer)
+                                self._process_medium(dictionary, ncbitaxon_id, bacdive_id, edge_writer)
                         elif isinstance(phys_and_metabolism_antibiogram, dict):
                             self._process_metabolites(
                                 phys_and_metabolism_antibiogram,
                                 ncbitaxon_id,
-                                key,
+                                bacdive_id,
                                 node_writer,
                                 edge_writer,
                             )
                             self._process_medium(
-                                phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer
+                                phys_and_metabolism_antibiogram, ncbitaxon_id, bacdive_id, edge_writer
                             )
 
                     progress.set_description(f"Processing BacDive file: {bacdive_id}.yaml")

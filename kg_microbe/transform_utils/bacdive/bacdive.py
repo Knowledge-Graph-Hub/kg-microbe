@@ -1386,11 +1386,11 @@ class BacDiveTransform(Transform):
                         if isinstance(phys_and_metabolism_antibiotic_resistance, list):
                             for item in phys_and_metabolism_antibiotic_resistance:
                                 if item.get(CHEBI_KEY):
-                                    self._process_antibiotic_resistance(item, ncbitaxon_id, key)
+                                    self._process_antibiotic_resistance(item, ncbitaxon_id, bacdive_id)
                         elif isinstance(phys_and_metabolism_antibiotic_resistance, dict):
                             if phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
                                 self._process_antibiotic_resistance(
-                                    phys_and_metabolism_antibiotic_resistance, ncbitaxon_id, key
+                                    phys_and_metabolism_antibiotic_resistance, ncbitaxon_id, bacdive_id
                                 )
 
                         if self.ar_edges_data_to_write and self.ar_nodes_data_to_write:

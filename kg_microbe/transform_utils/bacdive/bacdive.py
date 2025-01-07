@@ -710,14 +710,14 @@ class BacDiveTransform(Transform):
                     mediadive_urls = []
 
                     if (
-                        CULTURE_AND_GROWTH_CONDITIONS in value
-                        and value[CULTURE_AND_GROWTH_CONDITIONS]
+                        CULTURE_AND_GROWTH_CONDITIONS in record
+                        and record[CULTURE_AND_GROWTH_CONDITIONS]
                     ):
                         if (
-                            CULTURE_MEDIUM in value[CULTURE_AND_GROWTH_CONDITIONS]
-                            and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
+                            CULTURE_MEDIUM in record[CULTURE_AND_GROWTH_CONDITIONS]
+                            and record[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
                         ):
-                            media = value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
+                            media = record[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
 
                             if not isinstance(media, list):
                                 media = [media]

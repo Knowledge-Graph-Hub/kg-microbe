@@ -915,12 +915,12 @@ class BacDiveTransform(Transform):
                             prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]
                             curated_strain_label = (
-                                f"{prefix + bacdive_id} as {strain_id} of {ncbitaxon_id}"
+                                f"{prefix + str(bacdive_id)} as {strain_id} of {ncbitaxon_id}"
                             )
 
                         else:
                             curated_strain_label = (
-                                f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
+                                f"{BACDIVE_PREFIX.replace(':', '_') + str(bacdive_id)} of {ncbitaxon_id}"
                             )
 
                         # curated_strain_label = name_tax_classification.get(

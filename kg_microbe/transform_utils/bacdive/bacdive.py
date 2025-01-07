@@ -306,7 +306,7 @@ class BacDiveTransform(Transform):
                 ]
             )
 
-    def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
+    def _process_metabolites(self, dictionary, ncbitaxon_id, bacdive_id, node_writer, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:
             medium_id = (

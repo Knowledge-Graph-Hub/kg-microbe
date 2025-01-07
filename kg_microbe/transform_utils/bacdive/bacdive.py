@@ -360,7 +360,7 @@ class BacDiveTransform(Transform):
                         ]
                     )
 
-    def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
+    def _process_medium(self, dictionary, ncbitaxon_id, bacdive_id, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:
             medium_id = (

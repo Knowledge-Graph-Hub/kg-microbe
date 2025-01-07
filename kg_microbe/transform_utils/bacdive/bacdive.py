@@ -773,7 +773,7 @@ class BacDiveTransform(Transform):
                                 writer.writerow(data)  # writing the data
 
                     phys_and_meta_data = [
-                        BACDIVE_PREFIX + str(bacdive_id)
+                        BACDIVE_PREFIX + str(bacdive_id),
                         phys_and_metabolism_observation,
                         phys_and_metabolism_enzymes,
                         phys_and_metabolism_metabolite_utilization,

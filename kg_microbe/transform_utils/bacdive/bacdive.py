@@ -915,7 +915,7 @@ class BacDiveTransform(Transform):
                             prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]
                             curated_strain_label = (
-                                f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
+                                f"{prefix + bacdive_id} as {strain_id} of {ncbitaxon_id}"
                             )
 
                         else:

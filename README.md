@@ -10,7 +10,7 @@
 
 [Documentation](http://kghub.org/kg-microbe/index.html)
 
-[KG-Microbe @KG-Hub](https://kghub.io/kg-microbe/](https://kghub.org)
+[KG-Microbe @KG-Hub](https://kghub.org)
 
 [Monthly builds](https://kg-hub.berkeleybop.io/kg-microbe/)
 

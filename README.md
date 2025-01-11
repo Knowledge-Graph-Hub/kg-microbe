@@ -6,7 +6,7 @@
 
 [Conference paper](https://ceur-ws.org/Vol-3073/paper19.pdf)
 
-[Semantic Scholar]([https://www.semanticscholar.org/paper/KG-Hub%E2%80%94building-and-exchanging-biological-knowledge-Caufield-Putman/4c456614394d274fea181ec858429339f61c1c2c](https://www.semanticscholar.org/paper/KG-Microbe%3A-A-Reference-Knowledge-Graph-and-for-joachimiak-Hegde/c49a7ed4e5e1c0db815a3b185148877d914473f2))
+[Semantic Scholar]([https://www.semanticscholar.org/paper/KG-Hub%E2%80%94building-and-exchanging-biological-knowledge-Caufield-Putman/4c456614394d274fea181ec858429339f61c1c2c](https://www.semanticscholar.org/paper/KG-Microbe%3A-A-Reference-Knowledge-Graph-and-for-joachimiak-Hegde/c49a7ed4e5e1c0db815a3b185148877d914473f2)
 
 [Documentation](http://kghub.org/kg-microbe/index.html)
 

@@ -1342,9 +1342,9 @@ class BacDiveTransform(Transform):
                         edge_writer.writerows(
                             [
                                 [
-                                    organism,
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
                                     ISOLATION_SOURCE_PREFIX + isol_source.lower(),
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    organism,
                                     LOCATION_OF,
                                     self.source_name,
                                 ]

@@ -348,14 +348,7 @@ class BacDiveTransform(Transform):
                                 metabolite_id,
                                 None,
                                 BACDIVE_PREFIX + key,
-                            ],
-                            [
-                                medium_id,
-                                MEDIUM_TO_METABOLITE_EDGE,
-                                metabolite_id,
-                                None,
-                                BACDIVE_PREFIX + key,
-                            ],
+                            ]
                         ]
                     )
 
@@ -368,7 +361,7 @@ class BacDiveTransform(Transform):
             edge_writer.writerow(
                 [
                     ncbitaxon_id,
-                    NCBI_TO_ASSAY_EDGE,
+                    NCBI_TO_MEDIUM_EDGE,
                     medium_id,
                     None,
                     BACDIVE_PREFIX + key,

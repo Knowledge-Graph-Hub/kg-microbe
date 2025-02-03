@@ -1020,7 +1020,7 @@ class BacDiveTransform(Transform):
                                     (
                                         key
                                         for key, val in METABOLITE_MAP.items()
-                                        if val == value[CURIE_COLUMN]
+                                        if val == value[CURIE_COLUMN].split(":")[1]
                                     ),
                                     value[CURIE_COLUMN],
                                 ),
@@ -1047,7 +1047,7 @@ class BacDiveTransform(Transform):
                                         (
                                             key
                                             for key, val in METABOLITE_MAP.items()
-                                            if val == value[CURIE_COLUMN]
+                                            if val == value[CURIE_COLUMN].split(":")[1]
                                         ),
                                         value[CURIE_COLUMN],
                                     ),

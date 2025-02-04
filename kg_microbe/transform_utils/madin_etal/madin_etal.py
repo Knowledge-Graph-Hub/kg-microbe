@@ -387,9 +387,9 @@ class MadinEtAlTransform(Transform):
                             ]
                             tax_isolation_source_edge = [
                                 [
-                                    tax_id,
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
                                     ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    tax_id,
                                     LOCATION_OF,
                                 ]
                             ]
@@ -426,9 +426,9 @@ class MadinEtAlTransform(Transform):
                                 ]
                                 tax_isolation_source_edge = [
                                     [
-                                        tax_id,
-                                        NCBI_TO_ISOLATION_SOURCE_EDGE,
                                         isolation_source[ENVO_ID_COLUMN],
+                                        NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                        tax_id,
                                         LOCATION_OF,
                                     ]
                                 ]

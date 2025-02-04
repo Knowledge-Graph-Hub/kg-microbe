@@ -106,7 +106,6 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_ID_COLUMN,
     MEDIUM_KEY,
     MEDIUM_LABEL_COLUMN,
-    MEDIUM_TO_METABOLITE_EDGE,
     MEDIUM_URL_COLUMN,
     METABOLITE_CATEGORY,
     METABOLITE_CHEBI_KEY,
@@ -127,7 +126,6 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
-    NCBI_TO_ASSAY_EDGE,
     NCBI_TO_ENZYME_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
@@ -348,14 +346,7 @@ class BacDiveTransform(Transform):
                                 metabolite_id,
                                 None,
                                 BACDIVE_PREFIX + key,
-                            ],
-                            [
-                                medium_id,
-                                MEDIUM_TO_METABOLITE_EDGE,
-                                metabolite_id,
-                                None,
-                                BACDIVE_PREFIX + key,
-                            ],
+                            ]
                         ]
                     )
 
@@ -368,7 +359,7 @@ class BacDiveTransform(Transform):
             edge_writer.writerow(
                 [
                     ncbitaxon_id,
-                    NCBI_TO_ASSAY_EDGE,
+                    NCBI_TO_MEDIUM_EDGE,
                     medium_id,
                     None,
                     BACDIVE_PREFIX + key,
@@ -1022,8 +1013,20 @@ class BacDiveTransform(Transform):
                             edge_writer.writerows(edges_data_to_write)
 
                     if ncbitaxon_id and nodes_from_keywords:
+                        # Convert to manual CHEBI ID for keywords
                         nodes_data_to_write = [
-                            [value[CURIE_COLUMN], value[CATEGORY_COLUMN], value[NAME_COLUMN]]
+                            [
+                                next(
+                                    (
+                                        key
+                                        for key, val in METABOLITE_MAP.items()
+                                        if val == value[CURIE_COLUMN].split(":")[1]
+                                    ),
+                                    value[CURIE_COLUMN],
+                                ),
+                                value[CATEGORY_COLUMN],
+                                value[NAME_COLUMN],
+                            ]
                             for _, value in nodes_from_keywords.items()
                         ]
                         nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
@@ -1035,11 +1038,19 @@ class BacDiveTransform(Transform):
                         node_writer.writerows(nodes_data_to_write)
 
                         for _, value in nodes_from_keywords.items():
+                            # Convert to manual CHEBI ID for keywords
                             edges_data_to_write = [
                                 [
                                     organism,
                                     value[PREDICATE_COLUMN],
-                                    value[CURIE_COLUMN],
+                                    next(
+                                        (
+                                            key
+                                            for key, val in METABOLITE_MAP.items()
+                                            if val == value[CURIE_COLUMN].split(":")[1]
+                                        ),
+                                        value[CURIE_COLUMN],
+                                    ),
                                     (
                                         HAS_PHENOTYPE
                                         if value[CATEGORY_COLUMN]
@@ -1342,9 +1353,9 @@ class BacDiveTransform(Transform):
                         edge_writer.writerows(
                             [
                                 [
-                                    organism,
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
                                     ISOLATION_SOURCE_PREFIX + isol_source.lower(),
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    organism,
                                     LOCATION_OF,
                                     self.source_name,
                                 ]

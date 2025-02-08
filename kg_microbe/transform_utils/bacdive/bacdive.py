@@ -1268,23 +1268,16 @@ class BacDiveTransform(Transform):
                                     edge_writer.writerows(metabolite_production_edges_to_write)
 
                     if phys_and_metabolism_API:
-                        # First, flatten the input (whether a single dict or a list) into a list of dicts.
                         values = self._flatten_to_dicts(list(phys_and_metabolism_API.values()))
-
-                        # Get the assay name from the key of the original dict.
                         assay_name = list(phys_and_metabolism_API.keys())[0]
                         assay_name_norm = assay_name.replace(" ", "_")
-
-                        # Gather the unique assay results (prefixed with assay_name_norm) across all entries.
                         meta_assay = {
                             assay_name_norm + ":" + k
-                            for entry in values
-                            for k, v in entry.items()
+                            for k, v in values[0].items()
                             if v == PLUS_SIGN
                         }
 
                         if meta_assay:
-                            # Create a node for each unique assay result.
                             metabolism_nodes_to_write = [
                                 [
                                     ASSAY_PREFIX + m.replace(":", "_"),
@@ -1293,11 +1286,10 @@ class BacDiveTransform(Transform):
                                 ]
                                 + [None] * (len(self.node_header) - 3)
                                 for m in meta_assay
-                                if not m.startswith(ASSAY_PREFIX)  # This check prevents duplicating nodes if already prefixed.
+                                if not m.startswith(ASSAY_PREFIX)
                             ]
                             node_writer.writerows(metabolism_nodes_to_write)
 
-                            # Create an edge for each assay result node for each organism.
                             metabolism_edges_to_write = [
                                 [
                                     ASSAY_PREFIX + m.replace(":", "_"),
@@ -1310,6 +1302,7 @@ class BacDiveTransform(Transform):
                                 if not m.startswith(ASSAY_PREFIX)
                                 for organism in species_with_strains
                             ]
+
                             edge_writer.writerows(metabolism_edges_to_write)
 
                     # Uncomment and handle isolation_source code

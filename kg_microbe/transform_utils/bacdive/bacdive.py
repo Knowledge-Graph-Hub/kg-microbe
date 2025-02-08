@@ -1268,49 +1268,53 @@ class BacDiveTransform(Transform):
                                     edge_writer.writerows(metabolite_production_edges_to_write)
 
                     if phys_and_metabolism_API:
-                        # First, flatten the input (whether a single dict or a list) into a list of dicts.
-                        values = self._flatten_to_dicts(list(phys_and_metabolism_API.values()))
+                        # We have some API-based assays (e.g. "API zym", "API NH", etc.)
+                        # Process each one separately
+                        for assay_name, assay_data in phys_and_metabolism_API.items():
+                            # e.g., assay_name could be "API zym" or "API NH"
+                            assay_name_norm = assay_name.replace(" ", "_")
 
-                        # Get the assay name from the key of the original dict.
-                        assay_name = list(phys_and_metabolism_API.keys())[0]
-                        assay_name_norm = assay_name.replace(" ", "_")
+                            # Flatten the input (whether a single dict or a list) into a list of dicts.
+                            values = self._flatten_to_dicts(assay_data)
 
-                        # Gather the unique assay results (prefixed with assay_name_norm) across all entries.
-                        meta_assay = {
-                            assay_name_norm + ":" + k
-                            for entry in values if isinstance(entry, dict)
-                            for k, v in entry.items()
-                            if v == PLUS_SIGN
-                        }
+                            # Gather the unique assay results (prefixed with assay_name_norm) across all entries.
+                            meta_assay = {
+                                f"{assay_name_norm}:{k}"
+                                for entry in values if isinstance(entry, dict)
+                                for k, v in entry.items()
+                                if v == PLUS_SIGN
+                            }
 
-                        if meta_assay:
-                            # Create a node for each unique assay result.
-                            metabolism_nodes_to_write = [
-                                [
-                                    ASSAY_PREFIX + m.replace(":", "_"),
-                                    PHENOTYPIC_CATEGORY,
-                                    assay_name + " - " + m.split(":")[-1],
+                            if meta_assay:
+                                # Create a node for each unique assay result
+                                metabolism_nodes_to_write = [
+                                    [
+                                        ASSAY_PREFIX + m.replace(":", "_"),
+                                        PHENOTYPIC_CATEGORY,
+                                        # "API NH - MAL", for example, if m = "API_NH:MAL"
+                                        f"{assay_name} - {m.split(':')[-1]}"
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                    for m in meta_assay
+                                    # This check prevents duplicating nodes if they already have the ASSAY_PREFIX
+                                    if not m.startswith(ASSAY_PREFIX)
                                 ]
-                                + [None] * (len(self.node_header) - 3)
-                                for m in meta_assay
-                                if not m.startswith(ASSAY_PREFIX)  # This check prevents duplicating nodes if already prefixed.
-                            ]
-                            node_writer.writerows(metabolism_nodes_to_write)
+                                node_writer.writerows(metabolism_nodes_to_write)
 
-                            # Create an edge for each assay result node for each organism.
-                            metabolism_edges_to_write = [
-                                [
-                                    ASSAY_PREFIX + m.replace(":", "_"),
-                                    ASSAY_TO_NCBI_EDGE,
-                                    organism,
-                                    ASSESSED_ACTIVITY_RELATIONSHIP,
-                                    BACDIVE_PREFIX + str(bacdive_id),
+                                # Create an edge for each assay result node for each organism
+                                metabolism_edges_to_write = [
+                                    [
+                                        ASSAY_PREFIX + m.replace(":", "_"),
+                                        ASSAY_TO_NCBI_EDGE,
+                                        organism,
+                                        ASSESSED_ACTIVITY_RELATIONSHIP,
+                                        BACDIVE_PREFIX + str(bacdive_id),
+                                    ]
+                                    for m in meta_assay
+                                    if not m.startswith(ASSAY_PREFIX)
+                                    for organism in species_with_strains
                                 ]
-                                for m in meta_assay
-                                if not m.startswith(ASSAY_PREFIX)
-                                for organism in species_with_strains
-                            ]
-                            edge_writer.writerows(metabolism_edges_to_write)
+                                edge_writer.writerows(metabolism_edges_to_write)
 
 
 

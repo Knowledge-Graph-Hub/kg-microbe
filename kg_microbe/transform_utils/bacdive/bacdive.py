@@ -51,6 +51,7 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL,
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
+    CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -85,6 +86,7 @@ from kg_microbe.transform_utils.constants import (
     HALOPHILY,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,
+    HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
     IS_GROWN_IN,
     ISOLATION,
@@ -144,6 +146,7 @@ from kg_microbe.transform_utils.constants import (
     ORDER,
     OXYGEN_TOLERANCE,
     PARTICIPATES_IN,
+    PATHWAY_CATEGORY,
     PHENOTYPIC_CATEGORY,
     PHYLUM,
     PHYSIOLOGY_AND_METABOLISM,
@@ -1342,6 +1345,132 @@ class BacDiveTransform(Transform):
                                         for organism in species_with_strains
                                     ]
                                     edge_writer.writerows(metabolite_production_edges_to_write)
+                    ##############################################################################
+                    # In your run() method, after retrieving phys_and_metabolism_oxygen_tolerance
+                    # and near the other "if phys_and_metabolism_xyz" blocks:
+                    ##############################################################################
+                    if phys_and_metabolism_oxygen_tolerance:
+                        # Handle the case where it could be a dict or a list
+                        if isinstance(phys_and_metabolism_oxygen_tolerance, list):
+                            tolerance_records = phys_and_metabolism_oxygen_tolerance
+                        else:
+                            tolerance_records = [phys_and_metabolism_oxygen_tolerance]
+
+                        for ot_rec in tolerance_records:
+                            # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
+                            ot_label = ot_rec.get("oxygen tolerance", "").strip()
+                            if ot_label:
+                                # Create a node for this oxygen tolerance
+                                # Category is typically "biolink:PhenotypicQuality"
+                                # ID can be something like "oxygen_tolerance:microaerophile"
+                                # or any stable prefix. For demonstration, we just underscore the label.
+
+                                ot_id = f"oxygen_tolerance:{ot_label.replace(' ', '_').lower()}"  # example scheme
+                                node_writer.writerow([
+                                    ot_id,
+                                    PHENOTYPIC_CATEGORY,   # or whichever category you prefer
+                                    ot_label,
+                                    # plus any None placeholders to match your node_header columns
+                                ] + [None]*(len(self.node_header) - 3))
+
+                                # Now create an edge from each organism in species_with_strains
+                                # to this new oxygen-tolerance node. Use "biolink:has_phenotype" or similar.
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow([
+                                        organism_id,
+                                        HAS_PHENOTYPE_PREDICATE,     # or your chosen predicate
+                                        ot_id,
+                                        None,                        # relation, if you have a separate one
+                                        BACDIVE_PREFIX + key,        # provided_by
+                                    ])
+
+                    ##############################################################################
+                    # In your run() method, after retrieving phys_and_metabolism_spore_formation
+                    # e.g.:
+                    #   phys_and_metabolism_spore_formation = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(SPORE_FORMATION)
+                    # Insert this snippet near your other conditionals:
+                    ##############################################################################
+
+                    if phys_and_metabolism_spore_formation:
+                        # Could be a single dict or a list
+                        if isinstance(phys_and_metabolism_spore_formation, list):
+                            spore_records = phys_and_metabolism_spore_formation
+                        else:
+                            spore_records = [phys_and_metabolism_spore_formation]
+
+                        for sp_rec in spore_records:
+                            # e.g. sp_rec might look like {"@ref": 23028, "spore formation": "no"}
+                            raw_value = sp_rec.get("spore formation", "").strip().lower()
+                            if raw_value:
+                                # Map "yes" => "spore_forming", else "no" => "non_spore_forming"
+                                if raw_value == "yes":
+                                    node_id = "sporulation:spore_forming"
+                                    label  = "Spore forming"
+                                else:
+                                    node_id = "sporulation:non_spore_forming"
+                                    label  = "Non-spore forming"
+
+                                # Create a node for spore formation status
+                                node_writer.writerow([
+                                    node_id,
+                                    PHENOTYPIC_CATEGORY,  # or whichever category you prefer
+                                    label,
+                                ] + [None] * (len(self.node_header) - 3))
+
+                                # Now create edges from each organism (in species_with_strains)
+                                # to the spore-formation node (using "biolink:has_phenotype" or your preferred predicate).
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow([
+                                        organism_id,
+                                        CAPABLE_OF_PREDICATE,   # or your desired predicate
+                                        node_id,
+                                        None,                      # relation, if separate
+                                        BACDIVE_PREFIX + key,      # provided_by
+                                    ])
+
+                    ##############################################################################
+                    # Insert near your other conditionals in the run() method
+                    # after retrieving 'phys_and_metabolism_nutrition_type':
+                    #
+                    #   phys_and_metabolism_nutrition_type = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(NUTRITION_TYPE)
+                    ##############################################################################
+
+                    if phys_and_metabolism_nutrition_type:
+                        # Could be a single dict or a list
+                        if isinstance(phys_and_metabolism_nutrition_type, list):
+                            nutri_records = phys_and_metabolism_nutrition_type
+                        else:
+                            nutri_records = [phys_and_metabolism_nutrition_type]
+
+                        for rec in nutri_records:
+                            # For example, rec might be:
+                            # { "@ref": 65308, "type": "chemoheterotroph" }
+                            raw_value = rec.get("type", "").strip().lower()
+                            if raw_value:
+                                node_id = f"trophic_type:{raw_value}"
+                                label   = raw_value  # or e.g., raw_value.capitalize()
+
+                                # Create the node for the nutrition type
+                                node_writer.writerow(
+                                    [
+                                        node_id,
+                                        PATHWAY_CATEGORY,  # or whichever category you prefer
+                                        label,
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                )
+
+                                # Now link each organism in 'species_with_strains' to this node
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            CAPABLE_OF_PREDICATE,   # or your chosen predicate
+                                            node_id,
+                                            None,                      # relation, if separate
+                                            BACDIVE_PREFIX + key,      # provided_by
+                                        ]
+                                    )
 
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)
@@ -1388,7 +1517,7 @@ class BacDiveTransform(Transform):
                                     for organism in species_with_strains
                                 ]
                                 edge_writer.writerows(metabolism_edges_to_write)
-                                
+
                     # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
                     all_values = []

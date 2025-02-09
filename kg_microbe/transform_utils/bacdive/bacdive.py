@@ -304,51 +304,118 @@ class BacDiveTransform(Transform):
             )
 
     def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
+        """
+        Processes a single antibiotic dictionary entry (part of 'antibiogram') to map
+        medium label -> node, and antibiotic name -> node, plus the appropriate edges.
+        Includes debug print statements showing exactly which nodes and edges are written.
+        Now uses numeric thresholds:
+        * < 10 => NCBI_TO_METABOLITE_RESISTANCE_EDGE
+        * > 30 => NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+        """
+
+        def parse_numeric_value(value_str: str) -> float:
+            """
+            Parses the antibiotic value string (e.g. "30", "42-44", ">50") and returns
+            a single float. For ranges, we return the mean. For '>50', we parse as 50.
+            If parsing fails, returns None.
+            """
+            value_str = value_str.strip()
+            if not value_str:
+                return None
+            # Case: range "42-44"
+            if "-" in value_str and not value_str.startswith(">"):
+                try:
+                    lo, hi = value_str.split("-")
+                    return (float(lo) + float(hi)) / 2
+                except ValueError:
+                    return None
+            # Case: strictly ">" notation, e.g. ">50"
+            if value_str.startswith(">"):
+                # parse remainder
+                try:
+                    val = float(value_str[1:])
+                    return val  # If you want to treat >50 as "50" or "50.1" is up to you
+                except ValueError:
+                    return None
+            # Case: single numeric "30"
+            try:
+                return float(value_str)
+            except ValueError:
+                return None
+
+        print(f"\n--- DEBUG: Entering _process_metabolites ---")
+        print(f"Dictionary contents:\n{dictionary}\n")
+
+        # 1) Handle 'medium' label
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:
             medium_id = (
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
-            node_writer.writerow(
-                [
-                    medium_id,
-                    METABOLITE_CATEGORY,
-                    medium_label,
-                ]
-                + [None] * (len(self.node_header) - 3)
-            )
+            print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
+            node_row = [
+                medium_id,
+                METABOLITE_CATEGORY,
+                medium_label,
+            ] + [None] * (len(self.node_header) - 3)
+            print(f"    Writing node row for medium: {node_row}")
+            node_writer.writerow(node_row)
+        else:
+            print("--> No medium label found in this dictionary.")
+
+        # 2) Map items in 'dictionary' to METABOLITE_MAP
+        #    (K = antibiotic key, V = numeric/range/'>' string, e.g. "30-32")
         metabolites_with_curies = {
             k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
         }
         if metabolites_with_curies:
+            print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
             for k, v in metabolites_with_curies.items():
-                antibiotic_predicate = (
-                    NCBI_TO_METABOLITE_SENSITIVITY_EDGE
-                    if v.isnumeric() and int(v) == 0
-                    else NCBI_TO_METABOLITE_RESISTANCE_EDGE
-                )
-                metabolite_id = [key for key, value in METABOLITE_MAP.items() if value == k][0]
-                if antibiotic_predicate and metabolite_id:
-                    node_writer.writerow(
-                        [
-                            metabolite_id,
-                            METABOLITE_CATEGORY,
-                            k,
-                        ]
-                        + [None] * (len(self.node_header) - 3)
-                    )
+                print(f"    {k} => {v}")
+                numeric_val = parse_numeric_value(v)
+                print(f"    numeric_val = {numeric_val}")
 
-                    edge_writer.writerows(
-                        [
-                            [
-                                ncbitaxon_id,
-                                antibiotic_predicate,
-                                metabolite_id,
-                                None,
-                                BACDIVE_PREFIX + key,
-                            ]
-                        ]
-                    )
+                # Determine whether it indicates resistance (<10) or sensitivity (>30)
+                if numeric_val is not None and numeric_val < 15:
+                    antibiotic_predicate = NCBI_TO_METABOLITE_RESISTANCE_EDGE
+                elif numeric_val is not None and numeric_val > 25:
+                    antibiotic_predicate = NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+                else:
+                    # No edge if between 10 and 30 (inclusive)
+                    antibiotic_predicate = None
+
+                # Reverse lookup: which METABOLITE_MAP key gave us K?
+                metabolite_id = [key_ for key_, value_ in METABOLITE_MAP.items() if value_ == k][0]
+                print(f"    antibiotic_predicate = {antibiotic_predicate}")
+                print(f"    metabolite_id = {metabolite_id}")
+
+                # If there's a valid predicate and ID, write node & edge
+                if antibiotic_predicate and metabolite_id:
+                    node_row = [
+                        metabolite_id,
+                        METABOLITE_CATEGORY,
+                        k,
+                    ] + [None] * (len(self.node_header) - 3)
+                    print(f"    Writing node row for antibiotic: {node_row}")
+                    node_writer.writerow(node_row)
+
+                    edge_row = [
+                        ncbitaxon_id,
+                        antibiotic_predicate,
+                        metabolite_id,
+                        None,
+                        BACDIVE_PREFIX + key,
+                    ]
+                    print(f"    Writing edge row for antibiotic: {edge_row}")
+                    edge_writer.writerows([edge_row])
+                else:
+                    print("    ==> No edge created (value in [10..30] range or parse failed).")
+        else:
+            print("--> No matching antibiotics found in METABOLITE_MAP for this dictionary.")
+
+        print("--- DEBUG: Exiting _process_metabolites ---\n")
+
+
 
     def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)

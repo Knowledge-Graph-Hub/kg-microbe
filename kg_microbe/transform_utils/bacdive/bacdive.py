@@ -343,8 +343,8 @@ class BacDiveTransform(Transform):
             except ValueError:
                 return None
 
-        print(f"\n--- DEBUG: Entering _process_metabolites ---")
-        print(f"Dictionary contents:\n{dictionary}\n")
+        #print(f"\n--- DEBUG: Entering _process_metabolites ---")
+        #print(f"Dictionary contents:\n{dictionary}\n")
 
         # 1) Handle 'medium' label
         medium_label = dictionary.get(MEDIUM_KEY)
@@ -352,16 +352,16 @@ class BacDiveTransform(Transform):
             medium_id = (
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
-            print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
+        #    print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
             node_row = [
                 medium_id,
                 METABOLITE_CATEGORY,
                 medium_label,
             ] + [None] * (len(self.node_header) - 3)
-            print(f"    Writing node row for medium: {node_row}")
+            #print(f"    Writing node row for medium: {node_row}")
             node_writer.writerow(node_row)
-        else:
-            print("--> No medium label found in this dictionary.")
+        #else:
+        #    print("--> No medium label found in this dictionary.")
 
         # 2) Map items in 'dictionary' to METABOLITE_MAP
         #    (K = antibiotic key, V = numeric/range/'>' string, e.g. "30-32")
@@ -369,11 +369,11 @@ class BacDiveTransform(Transform):
             k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
         }
         if metabolites_with_curies:
-            print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
+        #    print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
             for k, v in metabolites_with_curies.items():
-                print(f"    {k} => {v}")
+        #        print(f"    {k} => {v}")
                 numeric_val = parse_numeric_value(v)
-                print(f"    numeric_val = {numeric_val}")
+        #        print(f"    numeric_val = {numeric_val}")
 
                 # Determine whether it indicates resistance (<10) or sensitivity (>30)
                 if numeric_val is not None and numeric_val < 15:
@@ -386,8 +386,8 @@ class BacDiveTransform(Transform):
 
                 # Reverse lookup: which METABOLITE_MAP key gave us K?
                 metabolite_id = [key_ for key_, value_ in METABOLITE_MAP.items() if value_ == k][0]
-                print(f"    antibiotic_predicate = {antibiotic_predicate}")
-                print(f"    metabolite_id = {metabolite_id}")
+        #        print(f"    antibiotic_predicate = {antibiotic_predicate}")
+        #        print(f"    metabolite_id = {metabolite_id}")
 
                 # If there's a valid predicate and ID, write node & edge
                 if antibiotic_predicate and metabolite_id:
@@ -396,7 +396,7 @@ class BacDiveTransform(Transform):
                         METABOLITE_CATEGORY,
                         k,
                     ] + [None] * (len(self.node_header) - 3)
-                    print(f"    Writing node row for antibiotic: {node_row}")
+        #            print(f"    Writing node row for antibiotic: {node_row}")
                     node_writer.writerow(node_row)
 
                     edge_row = [
@@ -406,14 +406,14 @@ class BacDiveTransform(Transform):
                         None,
                         BACDIVE_PREFIX + key,
                     ]
-                    print(f"    Writing edge row for antibiotic: {edge_row}")
+        #            print(f"    Writing edge row for antibiotic: {edge_row}")
                     edge_writer.writerows([edge_row])
-                else:
-                    print("    ==> No edge created (value in [10..30] range or parse failed).")
-        else:
-            print("--> No matching antibiotics found in METABOLITE_MAP for this dictionary.")
+        #        else:
+        #            print("    ==> No edge created (value in [10..30] range or parse failed).")
+        #else:
+        #    print("--> No matching antibiotics found in METABOLITE_MAP for this dictionary.")
 
-        print("--- DEBUG: Exiting _process_metabolites ---\n")
+        #print("--- DEBUG: Exiting _process_metabolites ---\n")
 
 
 
@@ -1388,34 +1388,27 @@ class BacDiveTransform(Transform):
                                     for organism in species_with_strains
                                 ]
                                 edge_writer.writerows(metabolism_edges_to_write)
+                                
+                    # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
-                    # Uncomment and handle isolation_source code
                     all_values = []
-                    organism_edge_values = []
-                    isolation_source_edges = None
+
                     if isinstance(isolation_source_categories, list):
                         for category in isolation_source_categories:
-                            organism_edge_value = self._get_isolation_edge(category)
-                            organism_edge_values.append(organism_edge_value)
-                            # Add all values to nodes
+                            # collect all Cat1, Cat2, Cat3, etc.
                             all_values.extend(category.values())
-                            isolation_source_edges = self._get_cat_hierarchy(category)
                     elif isinstance(isolation_source_categories, dict):
-                        organism_edge_value = self._get_isolation_edge(isolation_source_categories)
-                        organism_edge_values.append(organism_edge_value)
-                        # Add all values to nodes
                         all_values.extend(isolation_source_categories.values())
-                        isolation_source_edges = self._get_cat_hierarchy(category)
-                    organism_edge_values = [
-                        isol_source.strip().translate(translation_table_for_ids)
-                        for isol_source in organism_edge_values
-                    ]
+
+                    # Normalize strings (strip + translate)
                     all_values = [
-                        isol_source.strip().translate(translation_table_for_ids)
-                        for isol_source in all_values
+                        val.strip().translate(translation_table_for_ids)
+                        for val in all_values
                     ]
 
+                    # Create a node and an edge to the organism for each isolation source
                     for isol_source in all_values:
+                        # Write an isolation source node
                         node_writer.writerow(
                             [
                                 ISOLATION_SOURCE_PREFIX + isol_source.lower(),
@@ -1424,7 +1417,7 @@ class BacDiveTransform(Transform):
                             ]
                             + [None] * (len(self.node_header) - 3)
                         )
-                    for isol_source in organism_edge_values:
+                        # Write an edge from the isolation source to each organism
                         edge_writer.writerows(
                             [
                                 [
@@ -1437,27 +1430,6 @@ class BacDiveTransform(Transform):
                                 for organism in species_with_strains
                             ]
                         )
-                    if isolation_source_edges:
-                        isolation_source_edges = [
-                            [
-                                isol_source.strip().translate(translation_table_for_ids)
-                                for isol_source in sublist
-                            ]
-                            for sublist in isolation_source_edges
-                        ]
-                        # Add isolation source hierarchy as edges
-                        for pair in isolation_source_edges:
-                            edge_writer.writerows(
-                                [
-                                    [
-                                        ISOLATION_SOURCE_PREFIX + pair[0].lower(),
-                                        SUBCLASS_PREDICATE,
-                                        ISOLATION_SOURCE_PREFIX + pair[1].lower(),
-                                        RDFS_SUBCLASS_OF,
-                                        self.source_name,
-                                    ]
-                                ]
-                            )
 
                     if (
                         ncbitaxon_id

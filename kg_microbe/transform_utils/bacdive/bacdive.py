@@ -52,7 +52,7 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
     CAPABLE_OF_PREDICATE,
-    CAPABLE_OF_RELATION,
+    CAPABLE_OF,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -1197,7 +1197,7 @@ class BacDiveTransform(Transform):
                                             organism,
                                             NCBI_TO_ENZYME_EDGE,
                                             k,
-                                            CAPABLE_OF_RELATION,
+                                            CAPABLE_OF,
                                             BACDIVE_PREFIX + key,
                                         ]
                                         for organism in species_with_strains
@@ -1381,7 +1381,7 @@ class BacDiveTransform(Transform):
                                         organism_id,
                                         HAS_PHENOTYPE_PREDICATE,     
                                         ot_id,
-                                        None,                        # relation, if you have a separate one
+                                        HAS_PHENOTYPE,                        # relation, if you have a separate one
                                         BACDIVE_PREFIX + key,        # provided_by
                                     ])
 
@@ -1425,7 +1425,7 @@ class BacDiveTransform(Transform):
                                         organism_id,
                                         CAPABLE_OF_PREDICATE,   # or your desired predicate
                                         node_id,
-                                        None,                      # relation, if separate
+                                        CAPABLE_OF,                      # relation, if separate
                                         BACDIVE_PREFIX + key,      # provided_by
                                     ])
 
@@ -1468,7 +1468,7 @@ class BacDiveTransform(Transform):
                                             organism_id,
                                             CAPABLE_OF_PREDICATE,   # or your chosen predicate
                                             node_id,
-                                            None,                      # relation, if separate
+                                            CAPABLE_OF,                      # relation, if separate
                                             BACDIVE_PREFIX + key,      # provided_by
                                         ]
                                     )

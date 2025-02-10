@@ -1362,10 +1362,10 @@ class BacDiveTransform(Transform):
                             if ot_label:
                                 # Create a node for this oxygen tolerance
                                 # Category is typically "biolink:PhenotypicQuality"
-                                # ID can be something like "oxygen_tolerance:microaerophile"
+                                # ID can be something like "oxygen:microaerophile"
                                 # or any stable prefix. For demonstration, we just underscore the label.
 
-                                ot_id = f"oxygen_tolerance:{ot_label.replace(' ', '_').lower()}"  # example scheme
+                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"  # example scheme
                                 node_writer.writerow([
                                     ot_id,
                                     PHENOTYPIC_CATEGORY,   # or whichever category you prefer

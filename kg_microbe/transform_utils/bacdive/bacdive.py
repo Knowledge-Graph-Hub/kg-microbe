@@ -52,6 +52,7 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
     CAPABLE_OF_PREDICATE,
+    CAPABLE_OF_RELATION,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -431,7 +432,7 @@ class BacDiveTransform(Transform):
                     ncbitaxon_id,
                     NCBI_TO_MEDIUM_EDGE,
                     medium_id,
-                    None,
+                    IS_GROWN_IN,
                     BACDIVE_PREFIX + key,
                 ]
             )
@@ -1196,7 +1197,7 @@ class BacDiveTransform(Transform):
                                             organism,
                                             NCBI_TO_ENZYME_EDGE,
                                             k,
-                                            HAS_PHENOTYPE,
+                                            CAPABLE_OF_RELATION,
                                             BACDIVE_PREFIX + key,
                                         ]
                                         for organism in species_with_strains
@@ -1368,7 +1369,7 @@ class BacDiveTransform(Transform):
                                 ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"  # example scheme
                                 node_writer.writerow([
                                     ot_id,
-                                    PHENOTYPIC_CATEGORY,   # or whichever category you prefer
+                                    PHENOTYPIC_CATEGORY,   
                                     ot_label,
                                     # plus any None placeholders to match your node_header columns
                                 ] + [None]*(len(self.node_header) - 3))
@@ -1378,7 +1379,7 @@ class BacDiveTransform(Transform):
                                 for organism_id in species_with_strains:
                                     edge_writer.writerow([
                                         organism_id,
-                                        HAS_PHENOTYPE_PREDICATE,     # or your chosen predicate
+                                        HAS_PHENOTYPE_PREDICATE,     
                                         ot_id,
                                         None,                        # relation, if you have a separate one
                                         BACDIVE_PREFIX + key,        # provided_by

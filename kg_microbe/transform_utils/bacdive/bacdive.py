@@ -1381,7 +1381,7 @@ class BacDiveTransform(Transform):
                                         HAS_PHENOTYPE,
                                         BACDIVE_PREFIX + key,
                                     ])
-!!!
+
                     if phys_and_metabolism_spore_formation:
                         # Could be a single dict or a list
                         if isinstance(phys_and_metabolism_spore_formation, list):
@@ -1452,7 +1452,7 @@ class BacDiveTransform(Transform):
                                             BACDIVE_PREFIX + key,
                                         ]
                                     )
-!!!
+                                    
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():

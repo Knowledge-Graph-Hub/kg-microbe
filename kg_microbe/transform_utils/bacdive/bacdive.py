@@ -1346,10 +1346,7 @@ class BacDiveTransform(Transform):
                                         for organism in species_with_strains
                                     ]
                                     edge_writer.writerows(metabolite_production_edges_to_write)
-                    ##############################################################################
-                    # In your run() method, after retrieving phys_and_metabolism_oxygen_tolerance
-                    # and near the other "if phys_and_metabolism_xyz" blocks:
-                    ##############################################################################
+
                     if phys_and_metabolism_oxygen_tolerance:
                         # Handle the case where it could be a dict or a list
                         if isinstance(phys_and_metabolism_oxygen_tolerance, list):
@@ -1369,7 +1366,7 @@ class BacDiveTransform(Transform):
                                 ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"  # example scheme
                                 node_writer.writerow([
                                     ot_id,
-                                    PHENOTYPIC_CATEGORY,   
+                                    PHENOTYPIC_CATEGORY,
                                     ot_label,
                                     # plus any None placeholders to match your node_header columns
                                 ] + [None]*(len(self.node_header) - 3))
@@ -1379,19 +1376,12 @@ class BacDiveTransform(Transform):
                                 for organism_id in species_with_strains:
                                     edge_writer.writerow([
                                         organism_id,
-                                        HAS_PHENOTYPE_PREDICATE,     
+                                        HAS_PHENOTYPE_PREDICATE,
                                         ot_id,
-                                        HAS_PHENOTYPE,                        # relation, if you have a separate one
-                                        BACDIVE_PREFIX + key,        # provided_by
+                                        HAS_PHENOTYPE,
+                                        BACDIVE_PREFIX + key,
                                     ])
-
-                    ##############################################################################
-                    # In your run() method, after retrieving phys_and_metabolism_spore_formation
-                    # e.g.:
-                    #   phys_and_metabolism_spore_formation = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(SPORE_FORMATION)
-                    # Insert this snippet near your other conditionals:
-                    ##############################################################################
-
+!!!
                     if phys_and_metabolism_spore_formation:
                         # Could be a single dict or a list
                         if isinstance(phys_and_metabolism_spore_formation, list):
@@ -1414,27 +1404,18 @@ class BacDiveTransform(Transform):
                                 # Create a node for spore formation status
                                 node_writer.writerow([
                                     node_id,
-                                    PHENOTYPIC_CATEGORY,  # or whichever category you prefer
+                                    PHENOTYPIC_CATEGORY,
                                     label,
                                 ] + [None] * (len(self.node_header) - 3))
 
-                                # Now create edges from each organism (in species_with_strains)
-                                # to the spore-formation node (using "biolink:has_phenotype" or your preferred predicate).
                                 for organism_id in species_with_strains:
                                     edge_writer.writerow([
                                         organism_id,
-                                        CAPABLE_OF_PREDICATE,   # or your desired predicate
+                                        CAPABLE_OF_PREDICATE,
                                         node_id,
-                                        CAPABLE_OF,                      # relation, if separate
-                                        BACDIVE_PREFIX + key,      # provided_by
+                                        CAPABLE_OF,
+                                        BACDIVE_PREFIX + key,
                                     ])
-
-                    ##############################################################################
-                    # Insert near your other conditionals in the run() method
-                    # after retrieving 'phys_and_metabolism_nutrition_type':
-                    #
-                    #   phys_and_metabolism_nutrition_type = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(NUTRITION_TYPE)
-                    ##############################################################################
 
                     if phys_and_metabolism_nutrition_type:
                         # Could be a single dict or a list
@@ -1455,24 +1436,23 @@ class BacDiveTransform(Transform):
                                 node_writer.writerow(
                                     [
                                         node_id,
-                                        PATHWAY_CATEGORY,  # or whichever category you prefer
+                                        PATHWAY_CATEGORY,
                                         label,
                                     ]
                                     + [None] * (len(self.node_header) - 3)
                                 )
 
-                                # Now link each organism in 'species_with_strains' to this node
                                 for organism_id in species_with_strains:
                                     edge_writer.writerow(
                                         [
                                             organism_id,
-                                            CAPABLE_OF_PREDICATE,   # or your chosen predicate
+                                            CAPABLE_OF_PREDICATE,
                                             node_id,
-                                            CAPABLE_OF,                      # relation, if separate
-                                            BACDIVE_PREFIX + key,      # provided_by
+                                            CAPABLE_OF,
+                                            BACDIVE_PREFIX + key,
                                         ]
                                     )
-
+!!!
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():

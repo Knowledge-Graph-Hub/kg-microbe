@@ -223,7 +223,6 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "BAO:0002924"
-HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )
@@ -350,6 +349,7 @@ SUPERCLASS_PREDICATE = "biolink:superclass_of"
 CAPABLE_OF_PREDICATE = "biolink:capable_of"
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
+HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
 PREDICATE_ID_COLUMN = "predicate_id"
 PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {

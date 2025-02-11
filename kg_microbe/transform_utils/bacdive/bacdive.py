@@ -1346,8 +1346,7 @@ class BacDiveTransform(Transform):
                                         for organism in species_with_strains
                                     ]
                                     edge_writer.writerows(metabolite_production_edges_to_write)
-
-""""
+"""
                     if phys_and_metabolism_oxygen_tolerance:
                         # Handle the case where it could be a dict or a list
                         if isinstance(phys_and_metabolism_oxygen_tolerance, list):
@@ -1453,7 +1452,7 @@ class BacDiveTransform(Transform):
                                             BACDIVE_PREFIX + key,
                                         ]
                                     )
-""""                                    
+"""                                  
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():

@@ -1379,7 +1379,7 @@ class BacDiveTransform(Transform):
                                         HAS_PHENOTYPE,
                                         BACDIVE_PREFIX + key,
                                     ])
-                                    
+
                     if phys_and_metabolism_spore_formation:
                         # Could be a single dict or a list
                         if isinstance(phys_and_metabolism_spore_formation, list):
@@ -1414,6 +1414,48 @@ class BacDiveTransform(Transform):
                                         CAPABLE_OF,
                                         BACDIVE_PREFIX + key,
                                     ])
+
+                    if phys_and_metabolism_nutrition_type:
+                        # Could be a single dict or a list
+                        if isinstance(phys_and_metabolism_nutrition_type, list):
+                            nutri_records = phys_and_metabolism_nutrition_type
+                        else:
+                            nutri_records = [phys_and_metabolism_nutrition_type]
+
+                        for rec in nutri_records:
+                            # For example, rec might be:
+                            # { "@ref": 65308, "type": "chemoheterotroph" }
+                            raw_value = rec.get("type", "").strip().lower()
+                            if raw_value:
+                                # Ensure each raw_value ends with 'y'
+                                if not raw_value.endswith("y"):
+                                    raw_value += "y"  # e.g., "chemoheterotroph" -> "chemoheterotrophy"
+
+                                node_id = f"trophic_type:{raw_value}"
+                                label   = raw_value  # label now ends with "y"
+
+                                # Create the node for the nutrition type
+                                node_writer.writerow(
+                                    [
+                                        node_id,
+                                        PATHWAY_CATEGORY,  # or the category you prefer
+                                        label,
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                )
+
+                                # Link each organism in 'species_with_strains' to this node
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            CAPABLE_OF_PREDICATE,  # e.g. "biolink:capable_of"
+                                            node_id,
+                                            CAPABLE_OF,           # optional relation
+                                            BACDIVE_PREFIX + key, # provided_by
+                                        ]
+                                    )
+
 
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)

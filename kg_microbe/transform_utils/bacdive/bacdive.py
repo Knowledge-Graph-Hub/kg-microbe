@@ -1346,7 +1346,40 @@ class BacDiveTransform(Transform):
                                         for organism in species_with_strains
                                     ]
                                     edge_writer.writerows(metabolite_production_edges_to_write)
-                         
+
+                    if phys_and_metabolism_oxygen_tolerance:
+                        # Handle the case where it could be a dict or a list
+                        if isinstance(phys_and_metabolism_oxygen_tolerance, list):
+                            tolerance_records = phys_and_metabolism_oxygen_tolerance
+                        else:
+                            tolerance_records = [phys_and_metabolism_oxygen_tolerance]
+
+                        for ot_rec in tolerance_records:
+                            # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
+                            ot_label = ot_rec.get("oxygen tolerance", "").strip()
+                            if ot_label:
+                                # Create a node for this oxygen tolerance
+                                # Category is typically "biolink:PhenotypicQuality"
+                                # ID can be something like "oxygen:microaerophile"
+
+                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}" 
+                                node_writer.writerow([
+                                    ot_id,
+                                    PHENOTYPIC_CATEGORY,
+                                    ot_label
+                                ] + [None]*(len(self.node_header) - 3))
+
+                                # Now create an edge from each organism in species_with_strains
+                                # to this new oxygen-tolerance node. Use "biolink:has_phenotype" or similar.
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow([
+                                        organism_id,
+                                        HAS_PHENOTYPE_PREDICATE,
+                                        ot_id,
+                                        HAS_PHENOTYPE,
+                                        BACDIVE_PREFIX + key,
+                                    ])
+
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():

@@ -1379,6 +1379,41 @@ class BacDiveTransform(Transform):
                                         HAS_PHENOTYPE,
                                         BACDIVE_PREFIX + key,
                                     ])
+                                    
+                    if phys_and_metabolism_spore_formation:
+                        # Could be a single dict or a list
+                        if isinstance(phys_and_metabolism_spore_formation, list):
+                            spore_records = phys_and_metabolism_spore_formation
+                        else:
+                            spore_records = [phys_and_metabolism_spore_formation]
+
+                        for sp_rec in spore_records:
+                            # e.g. sp_rec might look like {"@ref": 23028, "spore formation": "no"}
+                            raw_value = sp_rec.get("spore formation", "").strip().lower()
+                            if raw_value:
+                                # Map "yes" => "spore_forming", else "no" => "non_spore_forming"
+                                if raw_value == "yes":
+                                    node_id = "sporulation:spore_forming"
+                                    label  = "Spore forming"
+                                else:
+                                    node_id = "sporulation:non_spore_forming"
+                                    label  = "Non-spore forming"
+
+                                # Create a node for spore formation status
+                                node_writer.writerow([
+                                    node_id,
+                                    PHENOTYPIC_CATEGORY,
+                                    label,
+                                ] + [None] * (len(self.node_header) - 3))
+
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow([
+                                        organism_id,
+                                        CAPABLE_OF_PREDICATE,
+                                        node_id,
+                                        CAPABLE_OF,
+                                        BACDIVE_PREFIX + key,
+                                    ])
 
                     if phys_and_metabolism_API:
                     # Process each API key separately (e.g. "API zym", "API NH", etc.)

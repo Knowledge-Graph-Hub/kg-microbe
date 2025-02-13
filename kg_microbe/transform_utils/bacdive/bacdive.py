@@ -1600,9 +1600,9 @@ class BacDiveTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
                 # Write metabolite_map to a file
-                #if len(METABOLITE_MAP) > 0 and not Path(METABOLITE_MAPPING_FILE).is_file():
-                #    with open(METABOLITE_MAPPING_FILE, "w") as f:
-                #        json.dump(METABOLITE_MAP, f, indent=4)
+                if len(METABOLITE_MAP) > 0 and not Path(METABOLITE_MAPPING_FILE).is_file():
+                    with open(METABOLITE_MAPPING_FILE, "w") as f:
+                        json.dump(METABOLITE_MAP, f, indent=4)
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

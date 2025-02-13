@@ -419,8 +419,6 @@ class BacDiveTransform(Transform):
 
         #print("--- DEBUG: Exiting _process_metabolites ---\n")
 
-
-
     def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:

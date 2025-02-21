@@ -51,6 +51,8 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL,
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
+    CAPABLE_OF_PREDICATE,
+    CAPABLE_OF,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -85,6 +87,7 @@ from kg_microbe.transform_utils.constants import (
     HALOPHILY,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,
+    HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
     IS_GROWN_IN,
     ISOLATION,
@@ -144,6 +147,7 @@ from kg_microbe.transform_utils.constants import (
     ORDER,
     OXYGEN_TOLERANCE,
     PARTICIPATES_IN,
+    PATHWAY_CATEGORY,
     PHENOTYPIC_CATEGORY,
     PHYLUM,
     PHYSIOLOGY_AND_METABOLISM,
@@ -304,51 +308,116 @@ class BacDiveTransform(Transform):
             )
 
     def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
+        """
+        Processes a single antibiotic dictionary entry (part of 'antibiogram') to map
+        medium label -> node, and antibiotic name -> node, plus the appropriate edges.
+        Includes debug print statements showing exactly which nodes and edges are written.
+        Now uses numeric thresholds:
+        * < 10 => NCBI_TO_METABOLITE_RESISTANCE_EDGE
+        * > 30 => NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+        """
+
+        def parse_numeric_value(value_str: str) -> float:
+            """
+            Parses the antibiotic value string (e.g. "30", "42-44", ">50") and returns
+            a single float. For ranges, we return the mean. For '>50', we parse as 50.
+            If parsing fails, returns None.
+            """
+            value_str = value_str.strip()
+            if not value_str:
+                return None
+            # Case: range "42-44"
+            if "-" in value_str and not value_str.startswith(">"):
+                try:
+                    lo, hi = value_str.split("-")
+                    return (float(lo) + float(hi)) / 2
+                except ValueError:
+                    return None
+            # Case: strictly ">" notation, e.g. ">50"
+            if value_str.startswith(">"):
+                # parse remainder
+                try:
+                    val = float(value_str[1:])
+                    return val  # If you want to treat >50 as "50" or "50.1" is up to you
+                except ValueError:
+                    return None
+            # Case: single numeric "30"
+            try:
+                return float(value_str)
+            except ValueError:
+                return None
+
+        #print(f"\n--- DEBUG: Entering _process_metabolites ---")
+        #print(f"Dictionary contents:\n{dictionary}\n")
+
+        # 1) Handle 'medium' label
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:
             medium_id = (
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
-            node_writer.writerow(
-                [
-                    medium_id,
-                    METABOLITE_CATEGORY,
-                    medium_label,
-                ]
-                + [None] * (len(self.node_header) - 3)
-            )
+        #    print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
+            node_row = [
+                medium_id,
+                METABOLITE_CATEGORY,
+                medium_label,
+            ] + [None] * (len(self.node_header) - 3)
+            #print(f"    Writing node row for medium: {node_row}")
+            node_writer.writerow(node_row)
+        #else:
+        #    print("--> No medium label found in this dictionary.")
+
+        # 2) Map items in 'dictionary' to METABOLITE_MAP
+        #    (K = antibiotic key, V = numeric/range/'>' string, e.g. "30-32")
         metabolites_with_curies = {
             k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
         }
         if metabolites_with_curies:
+        #    print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
             for k, v in metabolites_with_curies.items():
-                antibiotic_predicate = (
-                    NCBI_TO_METABOLITE_SENSITIVITY_EDGE
-                    if v.isnumeric() and int(v) == 0
-                    else NCBI_TO_METABOLITE_RESISTANCE_EDGE
-                )
-                metabolite_id = [key for key, value in METABOLITE_MAP.items() if value == k][0]
-                if antibiotic_predicate and metabolite_id:
-                    node_writer.writerow(
-                        [
-                            metabolite_id,
-                            METABOLITE_CATEGORY,
-                            k,
-                        ]
-                        + [None] * (len(self.node_header) - 3)
-                    )
+        #        print(f"    {k} => {v}")
+                numeric_val = parse_numeric_value(v)
+        #        print(f"    numeric_val = {numeric_val}")
 
-                    edge_writer.writerows(
-                        [
-                            [
-                                ncbitaxon_id,
-                                antibiotic_predicate,
-                                metabolite_id,
-                                None,
-                                BACDIVE_PREFIX + key,
-                            ]
-                        ]
-                    )
+                # Determine whether it indicates resistance (<10) or sensitivity (>30)
+                if numeric_val is not None and numeric_val < 15:
+                    antibiotic_predicate = NCBI_TO_METABOLITE_RESISTANCE_EDGE
+                elif numeric_val is not None and numeric_val > 25:
+                    antibiotic_predicate = NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+                else:
+                    # No edge if between 10 and 30 (inclusive)
+                    antibiotic_predicate = None
+
+                # Reverse lookup: which METABOLITE_MAP key gave us K?
+                metabolite_id = [key_ for key_, value_ in METABOLITE_MAP.items() if value_ == k][0]
+        #        print(f"    antibiotic_predicate = {antibiotic_predicate}")
+        #        print(f"    metabolite_id = {metabolite_id}")
+
+                # If there's a valid predicate and ID, write node & edge
+                if antibiotic_predicate and metabolite_id:
+                    node_row = [
+                        metabolite_id,
+                        METABOLITE_CATEGORY,
+                        k,
+                    ] + [None] * (len(self.node_header) - 3)
+        #            print(f"    Writing node row for antibiotic: {node_row}")
+                    node_writer.writerow(node_row)
+
+                    edge_row = [
+                        ncbitaxon_id,
+                        antibiotic_predicate,
+                        metabolite_id,
+                        None,
+                        BACDIVE_PREFIX + key,
+                    ]
+        #            print(f"    Writing edge row for antibiotic: {edge_row}")
+                    edge_writer.writerows([edge_row])
+        #        else:
+        #            print("    ==> No edge created (value in [10..30] range or parse failed).")
+        #else:
+        #    print("--> No matching antibiotics found in METABOLITE_MAP for this dictionary.")
+
+        #print("--- DEBUG: Exiting _process_metabolites ---\n")
 
     def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
@@ -361,7 +430,7 @@ class BacDiveTransform(Transform):
                     ncbitaxon_id,
                     NCBI_TO_MEDIUM_EDGE,
                     medium_id,
-                    None,
+                    IS_GROWN_IN,
                     BACDIVE_PREFIX + key,
                 ]
             )
@@ -1126,7 +1195,7 @@ class BacDiveTransform(Transform):
                                             organism,
                                             NCBI_TO_ENZYME_EDGE,
                                             k,
-                                            HAS_PHENOTYPE,
+                                            CAPABLE_OF,
                                             BACDIVE_PREFIX + key,
                                         ]
                                         for organism in species_with_strains
@@ -1276,71 +1345,188 @@ class BacDiveTransform(Transform):
                                     ]
                                     edge_writer.writerows(metabolite_production_edges_to_write)
 
-                    if phys_and_metabolism_API:
-                        values = self._flatten_to_dicts(list(phys_and_metabolism_API.values()))
-                        assay_name = list(phys_and_metabolism_API.keys())[0]
-                        assay_name_norm = assay_name.replace(" ", "_")
-                        meta_assay = {
-                            assay_name_norm + ":" + k
-                            for k, v in values[0].items()
-                            if v == PLUS_SIGN
-                        }
+                    if phys_and_metabolism_oxygen_tolerance:
+                        # Handle the case where it could be a dict or a list
+                        if isinstance(phys_and_metabolism_oxygen_tolerance, list):
+                            tolerance_records = phys_and_metabolism_oxygen_tolerance
+                        else:
+                            tolerance_records = [phys_and_metabolism_oxygen_tolerance]
 
-                        if meta_assay:
-                            metabolism_nodes_to_write = [
-                                [
-                                    ASSAY_PREFIX + m.replace(":", "_"),
+                        for ot_rec in tolerance_records:
+                            # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
+                            ot_label = ot_rec.get("oxygen tolerance", "").strip()
+                            if ot_label:
+                                # Create a node for this oxygen tolerance
+                                # Category is typically "biolink:PhenotypicQuality"
+                                # ID can be something like "oxygen:microaerophile"
+
+                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}" 
+                                node_writer.writerow([
+                                    ot_id,
                                     PHENOTYPIC_CATEGORY,
-                                    assay_name + " - " + m.split(":")[-1],
+                                    ot_label
+                                ] + [None]*(len(self.node_header) - 3))
+
+                                # Now create an edge from each organism in species_with_strains
+                                # to this new oxygen-tolerance node. Use "biolink:has_phenotype" or similar.
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow([
+                                        organism_id,
+                                        HAS_PHENOTYPE_PREDICATE,
+                                        ot_id,
+                                        HAS_PHENOTYPE,
+                                        BACDIVE_PREFIX + key,
+                                    ])
+
+                    if phys_and_metabolism_spore_formation:
+                        # Could be a single dict or a list
+                        if isinstance(phys_and_metabolism_spore_formation, list):
+                            spore_records = phys_and_metabolism_spore_formation
+                        else:
+                            spore_records = [phys_and_metabolism_spore_formation]
+
+                        for sp_rec in spore_records:
+                            # e.g. sp_rec might look like {"@ref": 23028, "spore formation": "no"}
+                            raw_value = sp_rec.get("spore formation", "").strip().lower()
+                            if raw_value:
+                                # Map "yes" => "spore_forming", else "no" => "non_spore_forming"
+                                if raw_value == "yes":
+                                    node_id = "sporulation:spore_forming"
+                                    label  = "Spore forming"
+                                else:
+                                    node_id = "sporulation:non_spore_forming"
+                                    label  = "Non-spore forming"
+
+                                # Create a node for spore formation status
+                                node_writer.writerow([
+                                    node_id,
+                                    PHENOTYPIC_CATEGORY,
+                                    label,
+                                ] + [None] * (len(self.node_header) - 3))
+
+                                for organism_id in species_with_strains:
+                                    edge_writer.writerow([
+                                        organism_id,
+                                        CAPABLE_OF_PREDICATE,
+                                        node_id,
+                                        CAPABLE_OF,
+                                        BACDIVE_PREFIX + key,
+                                    ])
+
+                    if phys_and_metabolism_nutrition_type:
+                        # Could be a single dict or a list
+                        if isinstance(phys_and_metabolism_nutrition_type, list):
+                            nutri_records = phys_and_metabolism_nutrition_type
+                        else:
+                            nutri_records = [phys_and_metabolism_nutrition_type]
+
+                        for rec in nutri_records:
+                            # For example, rec might be:
+                            # { "@ref": 65308, "type": "chemoheterotroph|diazotroph" }
+                            raw_value = rec.get("type", "").strip().lower()
+                            if raw_value:
+                                # Split on the pipe in case there are multiple values
+                                # e.g., "copiotroph|diazotrophy"
+                                splitted_values = [val.strip() for val in raw_value.split("|")]
+
+                                for val in splitted_values:
+                                    # Ensure each val ends with 'y'
+                                    if not val.endswith("y"):
+                                        val += "y"  # e.g., "copiotroph" -> "copiotrophy"
+
+                                    node_id = f"trophic_type:{val}"
+                                    label   = val  # now guaranteed to end with "y"
+
+                                    # Create the node for the nutrition type
+                                    node_writer.writerow(
+                                        [
+                                            node_id,
+                                            PATHWAY_CATEGORY,  # or your preferred category
+                                            label,
+                                        ]
+                                        + [None] * (len(self.node_header) - 3)
+                                    )
+
+                                    # Link each organism in 'species_with_strains' to this node
+                                    for organism_id in species_with_strains:
+                                        edge_writer.writerow(
+                                            [
+                                                organism_id,
+                                                CAPABLE_OF_PREDICATE,  # e.g. "biolink:capable_of"
+                                                node_id,
+                                                CAPABLE_OF,            # optional relation
+                                                BACDIVE_PREFIX + key,  # provided_by
+                                            ]
+                                        )
+
+
+
+                    if phys_and_metabolism_API:
+                    # Process each API key separately (e.g. "API zym", "API NH", etc.)
+                        for assay_name, assay_data in phys_and_metabolism_API.items():
+                            # Normalize the assay name (e.g. "API zym" -> "API_zym", "API NH" -> "API_NH")
+                            assay_name_norm = assay_name.replace(" ", "_")
+
+                            # Flatten the data in case it's a list of dicts (API NH) or a single dict (API zym)
+                            values = self._flatten_to_dicts(assay_data)
+
+                            # Collect all keys that have a "+" value across all entries
+                            meta_assay = {
+                                f"{assay_name_norm}:{k}"
+                                for entry in values if isinstance(entry, dict)
+                                for k, v in entry.items()
+                                if v == PLUS_SIGN
+                            }
+
+                            if meta_assay:
+                                # Write nodes for unique "+" results
+                                metabolism_nodes_to_write = [
+                                    [
+                                        ASSAY_PREFIX + m.replace(":", "_"),
+                                        PHENOTYPIC_CATEGORY,
+                                        f"{assay_name} - {m.split(':')[-1]}",
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                    for m in meta_assay
+                                    if not m.startswith(ASSAY_PREFIX)
                                 ]
-                                + [None] * (len(self.node_header) - 3)
-                                for m in meta_assay
-                                if not m.startswith(ASSAY_PREFIX)
-                            ]
-                            node_writer.writerows(metabolism_nodes_to_write)
+                                node_writer.writerows(metabolism_nodes_to_write)
 
-                            metabolism_edges_to_write = [
-                                [
-                                    ASSAY_PREFIX + m.replace(":", "_"),
-                                    ASSAY_TO_NCBI_EDGE,
-                                    organism,
-                                    ASSESSED_ACTIVITY_RELATIONSHIP,
-                                    BACDIVE_PREFIX + key,
+                                # Write edges for each organism linked to each assay result
+                                metabolism_edges_to_write = [
+                                    [
+                                        ASSAY_PREFIX + m.replace(":", "_"),
+                                        ASSAY_TO_NCBI_EDGE,
+                                        organism,
+                                        ASSESSED_ACTIVITY_RELATIONSHIP,
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                    for m in meta_assay
+                                    if not m.startswith(ASSAY_PREFIX)
+                                    for organism in species_with_strains
                                 ]
-                                for m in meta_assay
-                                if not m.startswith(ASSAY_PREFIX)
-                                for organism in species_with_strains
-                            ]
+                                edge_writer.writerows(metabolism_edges_to_write)
 
-                            edge_writer.writerows(metabolism_edges_to_write)
+                    # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
-                    # Uncomment and handle isolation_source code
                     all_values = []
-                    organism_edge_values = []
-                    isolation_source_edges = None
+
                     if isinstance(isolation_source_categories, list):
                         for category in isolation_source_categories:
-                            organism_edge_value = self._get_isolation_edge(category)
-                            organism_edge_values.append(organism_edge_value)
-                            # Add all values to nodes
+                            # collect all Cat1, Cat2, Cat3, etc.
                             all_values.extend(category.values())
-                            isolation_source_edges = self._get_cat_hierarchy(category)
                     elif isinstance(isolation_source_categories, dict):
-                        organism_edge_value = self._get_isolation_edge(isolation_source_categories)
-                        organism_edge_values.append(organism_edge_value)
-                        # Add all values to nodes
                         all_values.extend(isolation_source_categories.values())
-                        isolation_source_edges = self._get_cat_hierarchy(category)
-                    organism_edge_values = [
-                        isol_source.strip().translate(translation_table_for_ids)
-                        for isol_source in organism_edge_values
-                    ]
+
+                    # Normalize strings (strip + translate)
                     all_values = [
-                        isol_source.strip().translate(translation_table_for_ids)
-                        for isol_source in all_values
+                        val.strip().translate(translation_table_for_ids)
+                        for val in all_values
                     ]
 
+                    # Create a node and an edge to the organism for each isolation source
                     for isol_source in all_values:
+                        # Write an isolation source node
                         node_writer.writerow(
                             [
                                 ISOLATION_SOURCE_PREFIX + isol_source.lower(),
@@ -1349,7 +1535,7 @@ class BacDiveTransform(Transform):
                             ]
                             + [None] * (len(self.node_header) - 3)
                         )
-                    for isol_source in organism_edge_values:
+                        # Write an edge from the isolation source to each organism
                         edge_writer.writerows(
                             [
                                 [
@@ -1362,27 +1548,6 @@ class BacDiveTransform(Transform):
                                 for organism in species_with_strains
                             ]
                         )
-                    if isolation_source_edges:
-                        isolation_source_edges = [
-                            [
-                                isol_source.strip().translate(translation_table_for_ids)
-                                for isol_source in sublist
-                            ]
-                            for sublist in isolation_source_edges
-                        ]
-                        # Add isolation source hierarchy as edges
-                        for pair in isolation_source_edges:
-                            edge_writer.writerows(
-                                [
-                                    [
-                                        ISOLATION_SOURCE_PREFIX + pair[0].lower(),
-                                        SUBCLASS_PREDICATE,
-                                        ISOLATION_SOURCE_PREFIX + pair[1].lower(),
-                                        RDFS_SUBCLASS_OF,
-                                        self.source_name,
-                                    ]
-                                ]
-                            )
 
                     if (
                         ncbitaxon_id

@@ -60,7 +60,7 @@ class UniprotHumanTransform(Transform):
         os.makedirs(UNIPROT_HUMAN_TMP_DIR, exist_ok=True)
         os.makedirs(UNIPROT_HUMAN_TMP_NE_DIR, exist_ok=True)
         go_category_trees_dict = prepare_go_dictionary()
-        mondo_xrefs_dict, mondo_gene_dict = prepare_mondo_dictionary()
+        mondo_xrefs_dict = prepare_mondo_dictionary()
 
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
@@ -82,7 +82,6 @@ class UniprotHumanTransform(Transform):
             self.output_edge_file,
             go_category_trees_dict,
             mondo_xrefs_dict,
-            mondo_gene_dict,
             OBSOLETE_TERMS_CSV_FILE,
             UNIPROT_HUMAN_RELEVANT_FILE_LIST,
             UNIPROT_HUMAN_TMP_NE_DIR,

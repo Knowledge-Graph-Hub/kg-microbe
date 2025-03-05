@@ -30,7 +30,8 @@ tag: generate-tarballs
 generate-tarballs:
 	@echo "Generating tarballs of the specified directories..."
 	@for dir in data/transformed/*; do \
-		if [ -d "$$dir" ]; then \
+		# Skip the uniprot_functional_microbes directory
+		if [ -d "$$dir" ] && [ "$$(basename $$dir)" != "uniprot_functional_microbes" ]; then \
 			if [ $$(find $$dir -type f | wc -l) -gt 0 ]; then \
 				tarball_name=$$(basename $$dir).tar.gz; \
 				tar -czvf $$tarball_name -C $$dir .; \
@@ -38,8 +39,10 @@ generate-tarballs:
 				$(MAKE) check-and-split TARFILE=$$tarball_name DIR=$$dir; \
 			else \
 				echo "Directory $$dir is empty. Skipping tarball generation."; \
-			fi \
-		fi \
+			fi; \
+		else \
+			echo "Skipping directory $$dir (either not a directory or it's uniprot_functional_microbes)."; \
+		fi; \
 	done
 	@if [ -f data/merged/merged-kg.tar.gz ]; then \
 		cp data/merged/merged-kg.tar.gz $(MERGED_TARBALL); \

@@ -18,9 +18,15 @@ endif
 
 .PHONY: release pre-release tag generate-tarballs check-and-split
 
+#auth:
+#	echo "$(GH_TOKEN)" | gh auth login --with-token --hostname github.com --git-protocol https
+
+
+#release: auth generate-tarballs
 release: generate-tarballs
 	@$(call create_release,release)
 
+#pre-release: auth generate-tarballs
 pre-release: generate-tarballs
 	@$(call create_release,pre-release)
 
@@ -30,7 +36,6 @@ tag: generate-tarballs
 generate-tarballs:
 	@echo "Generating tarballs of the specified directories..."
 	@for dir in data/transformed/*; do \
-		# Skip the uniprot_functional_microbes directory
 		if [ -d "$$dir" ] && [ "$$(basename $$dir)" != "uniprot_functional_microbes" ]; then \
 			if [ $$(find $$dir -type f | wc -l) -gt 0 ]; then \
 				tarball_name=$$(basename $$dir).tar.gz; \
@@ -39,10 +44,8 @@ generate-tarballs:
 				$(MAKE) check-and-split TARFILE=$$tarball_name DIR=$$dir; \
 			else \
 				echo "Directory $$dir is empty. Skipping tarball generation."; \
-			fi; \
-		else \
-			echo "Skipping directory $$dir (either not a directory or it's uniprot_functional_microbes)."; \
-		fi; \
+			fi \
+		fi \
 	done
 	@if [ -f data/merged/merged-kg.tar.gz ]; then \
 		cp data/merged/merged-kg.tar.gz $(MERGED_TARBALL); \
@@ -79,6 +82,7 @@ define create_release
 	@read -p "Enter $(1) tag (e.g., $(shell date +%Y-%m-%d)): " TAG_NAME; \
 	read -p "Enter $(1) title: " RELEASE_TITLE; \
 	read -p "Enter $(1) notes: " RELEASE_NOTES; \
+	echo "$GH_TOKEN" | gh auth login --with-token; \
 	if git rev-parse "$$TAG_NAME" >/dev/null 2>&1; then \
 		echo "Error: Tag '$$TAG_NAME' already exists. Please choose a different tag."; \
 		exit 1; \

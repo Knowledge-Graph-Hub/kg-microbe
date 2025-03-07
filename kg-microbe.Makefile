@@ -18,17 +18,18 @@ endif
 
 .PHONY: release pre-release tag generate-tarballs check-and-split
 
-#auth:
-#	echo "$(GH_TOKEN)" | gh auth login --with-token --hostname github.com --git-protocol https
+git_remote:
+	@if [ -z "$(GH_TOKEN)" ]; then \
+	  echo "Error: GH_TOKEN is not set. Aborting."; \
+	  exit 1; \
+	fi
+	git remote set-url origin "https://$(GH_TOKEN)@github.com/Knowledge-Graph-Hub/kg-microbe.git"
 
-
-#release: auth generate-tarballs
-release: generate-tarballs
+release: git_remote generate-tarballs
 	@$(call create_release,release)
 
-#pre-release: auth generate-tarballs
-pre-release: generate-tarballs
-	@$(call create_release,pre-release)
+pre-release: git_remote generate-tarballs
+	$(call create_release,pre-release)
 
 tag: generate-tarballs
 	@$(call create_tag)
@@ -47,13 +48,25 @@ generate-tarballs:
 			fi \
 		fi \
 	done
-	@if [ -f data/merged/merged-kg.tar.gz ]; then \
-		cp data/merged/merged-kg.tar.gz $(MERGED_TARBALL); \
-		echo "Merged tarball copied successfully."; \
-		$(MAKE) check-and-split TARFILE=$(MERGED_TARBALL) DIR=data/merged; \
+
+	@if [ -d "data/merged/kg-microbe-core" ]; then \
+		echo "Tarballing data/merged/kg-microbe-core..."; \
+		tar -czvf kg-microbe-core.tar.gz -C data/merged/kg-microbe-core .; \
+		echo "Tarball generated successfully as kg-microbe-core.tar.gz."; \
+		$(MAKE) check-and-split TARFILE=kg-microbe-core.tar.gz DIR=data/merged/kg-microbe-core; \
 	else \
-		echo "Merged tarball does not exist. Skipping."; \
+		echo "Directory data/merged/kg-microbe-core does not exist. Skipping."; \
 	fi
+
+	@if [ -d "data/merged/kg-microbe-biomedical" ]; then \
+		echo "Tarballing data/merged/kg-microbe-biomedical..."; \
+		tar -czvf kg-microbe-biomedical.tar.gz -C data/merged/kg-microbe-biomedical .; \
+		echo "Tarball generated successfully as kg-microbe-biomedical.tar.gz."; \
+		$(MAKE) check-and-split TARFILE=kg-microbe-biomedical.tar.gz DIR=data/merged/kg-microbe-biomedical; \
+	else \
+		echo "Directory data/merged/kg-microbe-biomedical does not exist. Skipping."; \
+	fi
+
 	@echo "Tarballs generated successfully."
 
 check-and-split:
@@ -82,7 +95,6 @@ define create_release
 	@read -p "Enter $(1) tag (e.g., $(shell date +%Y-%m-%d)): " TAG_NAME; \
 	read -p "Enter $(1) title: " RELEASE_TITLE; \
 	read -p "Enter $(1) notes: " RELEASE_NOTES; \
-	echo "$GH_TOKEN" | gh auth login --with-token; \
 	if git rev-parse "$$TAG_NAME" >/dev/null 2>&1; then \
 		echo "Error: Tag '$$TAG_NAME' already exists. Please choose a different tag."; \
 		exit 1; \

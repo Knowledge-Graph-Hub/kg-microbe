@@ -18,11 +18,18 @@ endif
 
 .PHONY: release pre-release tag generate-tarballs check-and-split
 
-release: generate-tarballs
+git_remote:
+	@if [ -z "$(GH_TOKEN)" ]; then \
+	  echo "Error: GH_TOKEN is not set. Aborting."; \
+	  exit 1; \
+	fi
+	git remote set-url origin "https://$(GH_TOKEN)@github.com/Knowledge-Graph-Hub/kg-microbe.git"
+
+release: git_remote generate-tarballs
 	@$(call create_release,release)
 
-pre-release: generate-tarballs
-	@$(call create_release,pre-release)
+pre-release: git_remote generate-tarballs
+	$(call create_release,pre-release)
 
 tag: generate-tarballs
 	@$(call create_tag)
@@ -30,7 +37,7 @@ tag: generate-tarballs
 generate-tarballs:
 	@echo "Generating tarballs of the specified directories..."
 	@for dir in data/transformed/*; do \
-		if [ -d "$$dir" ]; then \
+		if [ -d "$$dir" ] && [ "$$(basename $$dir)" != "uniprot_functional_microbes" ]; then \
 			if [ $$(find $$dir -type f | wc -l) -gt 0 ]; then \
 				tarball_name=$$(basename $$dir).tar.gz; \
 				tar -czvf $$tarball_name -C $$dir .; \
@@ -41,13 +48,25 @@ generate-tarballs:
 			fi \
 		fi \
 	done
-	@if [ -f data/merged/merged-kg.tar.gz ]; then \
-		cp data/merged/merged-kg.tar.gz $(MERGED_TARBALL); \
-		echo "Merged tarball copied successfully."; \
-		$(MAKE) check-and-split TARFILE=$(MERGED_TARBALL) DIR=data/merged; \
+
+	@if [ -d "data/merged/kg-microbe-core" ]; then \
+		echo "Tarballing data/merged/kg-microbe-core..."; \
+		tar -czvf kg-microbe-core.tar.gz -C data/merged/kg-microbe-core .; \
+		echo "Tarball generated successfully as kg-microbe-core.tar.gz."; \
+		$(MAKE) check-and-split TARFILE=kg-microbe-core.tar.gz DIR=data/merged/kg-microbe-core; \
 	else \
-		echo "Merged tarball does not exist. Skipping."; \
+		echo "Directory data/merged/kg-microbe-core does not exist. Skipping."; \
 	fi
+
+	@if [ -d "data/merged/kg-microbe-biomedical" ]; then \
+		echo "Tarballing data/merged/kg-microbe-biomedical..."; \
+		tar -czvf kg-microbe-biomedical.tar.gz -C data/merged/kg-microbe-biomedical .; \
+		echo "Tarball generated successfully as kg-microbe-biomedical.tar.gz."; \
+		$(MAKE) check-and-split TARFILE=kg-microbe-biomedical.tar.gz DIR=data/merged/kg-microbe-biomedical; \
+	else \
+		echo "Directory data/merged/kg-microbe-biomedical does not exist. Skipping."; \
+	fi
+
 	@echo "Tarballs generated successfully."
 
 check-and-split:

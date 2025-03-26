@@ -596,6 +596,10 @@ UNIPATHWAYS_INCLUDE_PAIRS = [
 ]
 
 HGNC_OLD_PREFIX = "http://identifiers.org/hgnc/"
+HGNC_GENENAMES_PREFIX = "https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:"
+HGNC_GENETYPE_PREFIX = "http://ontology.scibite.com/ontology/hgnc/SHGNC_"
+HGNC_GENEGROUP_PREFIX = "https://www.genenames.org/data/genegroup/#!/group/"
+HGNC_GENEPROPERTY_PREFIX = "http://ontology.scibite.com/property/"
 HGNC_NEW_PREFIX = "HGNC:"
 
 # Create a mapping for special cases
@@ -611,6 +615,9 @@ SPECIAL_PREFIXES = {
     UNIPATHWAYS_REACTION_PREFIX: re.sub(r"OBO:UPa_(\w{3})", r"UPA:\1", UNIPATHWAYS_REACTION_PREFIX),
     UNIPATHWAYS_PATHWAY_PREFIX: re.sub(r"OBO:UPa_(\w{3})", r"UPA:\1", UNIPATHWAYS_PATHWAY_PREFIX),
     HGNC_OLD_PREFIX: HGNC_NEW_PREFIX,
+    HGNC_GENENAMES_PREFIX: HGNC_NEW_PREFIX,
+    HGNC_GENETYPE_PREFIX: HGNC_NEW_PREFIX,
+    HGNC_GENEGROUP_PREFIX: HGNC_NEW_PREFIX,
 }
 
 # CTD
@@ -620,7 +627,7 @@ CTD_DISEASE_MESH_COLUMN = "DiseaseID"
 CTD_DISEASE_OMIM_COLUMN = "OmimIDs"
 CHEMICAL_TO_DISEASE_EDGE = "biolink:associated_with"
 MESH_PREFIX = "MESH:"
-NODE_NORMALIZER_URL = "https://nodenormalization-sri.renci.org/1.4/get_normalized_nodes?curie="
+NODE_NORMALIZER_URL = "https://nodenormalization-sri.renci.org/1.5/get_normalized_nodes?curie="
 MONDO_PREFIX = "MONDO:"
 
 # Disbiome

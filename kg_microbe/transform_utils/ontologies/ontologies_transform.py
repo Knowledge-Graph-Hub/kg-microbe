@@ -21,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     ENABLED_BY_RELATION,
     EXCLUSION_TERMS_FILE,
     GO_PREFIX,
+    HGNC_GENEPROPERTY_PREFIX,
     ID_COLUMN,
     MONDO_XREFS_FILEPATH,
     NCBITAXON_PREFIX,
@@ -67,15 +68,16 @@ from kg_microbe.utils.unipathways_utils import (
 from ..transform import Transform
 
 ONTOLOGIES_MAP = {
-    "ncbitaxon": "ncbitaxon.owl.gz",
-    "chebi": "chebi.owl.gz",
-    "envo": "envo.json",
-    "go": "go.json",
-    ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
+    # "ncbitaxon": "ncbitaxon.owl.gz",
+    # "chebi": "chebi.owl.gz",
+    # "envo": "envo.json",
+    # "go": "go.json",
+    # ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
     "ec": "ec.json",
-    "upa": "upa.owl",
-    "mondo": "mondo.json",
-    "hp": "hp.json",
+    # "upa": "upa.owl",
+    # "mondo": "mondo.json",
+    # "hp": "hp.json",
+    "hgnc": "hgnc.owl"
 }
 
 
@@ -175,7 +177,7 @@ class OntologiesTransform(Transform):
             output=self.output_dir / name,
             output_format="tsv",
         )
-        if name in ["ec", "upa", "chebi", "mondo"]:  # removed "uniprot", "rhea"
+        if name in ["ec", "upa", "chebi", "mondo", "hgnc"]:  # removed "uniprot", "rhea"
 
             self.post_process(name)
 
@@ -431,7 +433,7 @@ class OntologiesTransform(Transform):
                 for line in new_edge_lines:
                     new_ef.write(line)
 
-        if name == "ec":  # or name == "rhea":
+        if name == "ec" or name == "hgnc":  # or name == "rhea":
             with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
                 # Update prefixes in nodes file
                 new_nf_lines = []
@@ -449,15 +451,17 @@ class OntologiesTransform(Transform):
                 # Update prefixes in edges file
                 new_ef_lines = []
                 for line in ef:
-                    if line.startswith("id"):
-                        continue
-                    else:
+                    if not line.startswith("id"):
                         line = _replace_special_prefixes(line)
-                        new_ef_lines.append(line)
+                    new_ef_lines.append(line)
             if name == "ec":
                 # Remove Uniprot nodes since accounted for elsewhere
                 new_nf_lines = [line for line in new_nf_lines if UNIPROT_PREFIX not in line]
                 new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
+            elif name == "hgnc":
+                # Remove Property nodes
+                new_nf_lines = [line for line in new_nf_lines if HGNC_GENEPROPERTY_PREFIX not in line]
+                new_ef_lines = [line for line in new_ef_lines if HGNC_GENEPROPERTY_PREFIX not in line]
             # elif name == "rhea":
             #     # Remove debio nodes that account for direction, since already there in inverse triples
             #     # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
@@ -475,7 +479,7 @@ class OntologiesTransform(Transform):
 
             # Rewrite edges file
             with open(edges_file, "w") as new_ef:
-                new_ef.write("\t".join(self.edge_header) + "\n")
+                # new_ef.write("\t".join(self.edge_header) + "\n")
                 for line in new_ef_lines:
                     new_ef.write(line)
 

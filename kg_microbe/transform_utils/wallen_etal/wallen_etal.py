@@ -61,7 +61,7 @@ class WallenEtAlTransform(Transform):
 
         wallen_etal_df = pd.read_excel(input_file, skiprows=3, sheet_name=WALLEN_ETAL_TAB_NAME)
         wallen_etal_df[FDR_COLUMN] = pd.to_numeric(wallen_etal_df[FDR_COLUMN], errors="coerce")
-
+        import pdb;pdb.set_trace()
         significant_wallenetal_df = wallen_etal_df[
             wallen_etal_df[FDR_COLUMN].apply(lambda x: isinstance(x, float))
         ]

@@ -1507,75 +1507,76 @@ class BacDiveTransform(Transform):
                                 ]
                                 edge_writer.writerows(metabolism_edges_to_write)
 
-                    # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
                     all_values = []
 
-# 1) Handle the top-level "isolation" string, if any
-if isolation:
-    iso_label = isolation.strip()
-    iso_id = (
-        iso_label.translate(translation_table_for_ids)
-        .lower()
-        .replace(" ", "_")
-        .replace("-", "_")
-    )
-    node_writer.writerow(
-        [
-            ISOLATION_SOURCE_PREFIX + iso_id,
-            ISOLATION_SOURCE_CATEGORY,
-            iso_label,
-        ]
-        + [None] * (len(self.node_header) - 3)
-    )
-    for organism in species_with_strains:
-        edge_writer.writerow(
-            [
-                ISOLATION_SOURCE_PREFIX + iso_id,
-                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                organism,
-                LOCATION_OF,
-                self.source_name,
-            ]
-        )
+                    # 1) Handle the top-level "isolation" string, if any
+                    if isolation:
+                        iso_label = isolation.strip()
+                        iso_id = (
+                            iso_label.translate(translation_table_for_ids)
+                            .lower()
+                            .replace(" ", "_")
+                            .replace("-", "_")
+                        )
+                        node_writer.writerow(
+                            [
+                                ISOLATION_SOURCE_PREFIX + iso_id,
+                                ISOLATION_SOURCE_CATEGORY,
+                                iso_label,
+                            ]
+                            + [None] * (len(self.node_header) - 3)
+                        )
+                        for organism in species_with_strains:
+                            edge_writer.writerow(
+                                [
+                                    ISOLATION_SOURCE_PREFIX + iso_id,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    organism,
+                                    LOCATION_OF,
+                                    self.source_name,
+                                ]
+                            )
 
-# 2) Gather category labels (Cat1, Cat2, Cat3...) in a list without losing originals
-cat_labels = []
-if isinstance(isolation_source_categories, list):
-    for category_dict in isolation_source_categories:
-        if isinstance(category_dict, dict):
-            cat_labels.extend(category_dict.values())
-elif isinstance(isolation_source_categories, dict):
-    cat_labels.extend(isolation_source_categories.values())
+                    # 2) Gather category labels (Cat1, Cat2, Cat3...) in a list without losing originals
+                    cat_labels = []
+                    if isinstance(isolation_source_categories, list):
+                        for category_dict in isolation_source_categories:
+                            if isinstance(category_dict, dict):
+                                cat_labels.extend(category_dict.values())
+                    elif isinstance(isolation_source_categories, dict):
+                        cat_labels.extend(isolation_source_categories.values())
 
-# 3) Create node+edge for each category label
-for cat_label in cat_labels:
-    raw_label = cat_label.strip()
-    iso_id = (
-        raw_label.translate(translation_table_for_ids)
-        .lower()
-        .replace(" ", "_")
-        .replace("-", "_")
-    )
+                    # 3) Create node+edge for each category label
+                    for cat_label in cat_labels:
+                        raw_label = cat_label.strip()
+                        iso_id = (
+                            raw_label.translate(translation_table_for_ids)
+                            .lower()
+                            .replace(" ", "_")
+                            .replace("-", "_")
+                        )
 
-    node_writer.writerow(
-        [
-            ISOLATION_SOURCE_PREFIX + iso_id,
-            ISOLATION_SOURCE_CATEGORY,
-            raw_label,
-        ]
-        + [None] * (len(self.node_header) - 3)
-    )
-    for organism in species_with_strains:
-        edge_writer.writerow(
-            [
-                ISOLATION_SOURCE_PREFIX + iso_id,
-                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                organism,
-                LOCATION_OF,
-                self.source_name,
-            ]
-        )
+                        node_writer.writerow(
+                            [
+                                ISOLATION_SOURCE_PREFIX + iso_id,
+                                ISOLATION_SOURCE_CATEGORY,
+                                raw_label,
+                            ]
+                            + [None] * (len(self.node_header) - 3)
+                        )
+                        for organism in species_with_strains:
+                            edge_writer.writerow(
+                                [
+                                    ISOLATION_SOURCE_PREFIX + iso_id,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    organism,
+                                    LOCATION_OF,
+                                    self.source_name,
+                                ]
+                            )
+
+
 
                     if (
                         ncbitaxon_id

@@ -1511,43 +1511,71 @@ class BacDiveTransform(Transform):
 
                     all_values = []
 
-                    if isinstance(isolation_source_categories, list):
-                        for category in isolation_source_categories:
-                            # collect all Cat1, Cat2, Cat3, etc.
-                            all_values.extend(category.values())
-                    elif isinstance(isolation_source_categories, dict):
-                        all_values.extend(isolation_source_categories.values())
+# 1) Handle the top-level "isolation" string, if any
+if isolation:
+    iso_label = isolation.strip()
+    iso_id = (
+        iso_label.translate(translation_table_for_ids)
+        .lower()
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
+    node_writer.writerow(
+        [
+            ISOLATION_SOURCE_PREFIX + iso_id,
+            ISOLATION_SOURCE_CATEGORY,
+            iso_label,
+        ]
+        + [None] * (len(self.node_header) - 3)
+    )
+    for organism in species_with_strains:
+        edge_writer.writerow(
+            [
+                ISOLATION_SOURCE_PREFIX + iso_id,
+                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                organism,
+                LOCATION_OF,
+                self.source_name,
+            ]
+        )
 
-                    # Normalize strings (strip + translate)
-                    all_values = [
-                        val.strip().translate(translation_table_for_ids)
-                        for val in all_values
-                    ]
+# 2) Gather category labels (Cat1, Cat2, Cat3...) in a list without losing originals
+cat_labels = []
+if isinstance(isolation_source_categories, list):
+    for category_dict in isolation_source_categories:
+        if isinstance(category_dict, dict):
+            cat_labels.extend(category_dict.values())
+elif isinstance(isolation_source_categories, dict):
+    cat_labels.extend(isolation_source_categories.values())
 
-                    # Create a node and an edge to the organism for each isolation source
-                    for isol_source in all_values:
-                        # Write an isolation source node
-                        node_writer.writerow(
-                            [
-                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
-                                ISOLATION_SOURCE_CATEGORY,
-                                isol_source,
-                            ]
-                            + [None] * (len(self.node_header) - 3)
-                        )
-                        # Write an edge from the isolation source to each organism
-                        edge_writer.writerows(
-                            [
-                                [
-                                    ISOLATION_SOURCE_PREFIX + isol_source.lower(),
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                    organism,
-                                    LOCATION_OF,
-                                    self.source_name,
-                                ]
-                                for organism in species_with_strains
-                            ]
-                        )
+# 3) Create node+edge for each category label
+for cat_label in cat_labels:
+    raw_label = cat_label.strip()
+    iso_id = (
+        raw_label.translate(translation_table_for_ids)
+        .lower()
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
+
+    node_writer.writerow(
+        [
+            ISOLATION_SOURCE_PREFIX + iso_id,
+            ISOLATION_SOURCE_CATEGORY,
+            raw_label,
+        ]
+        + [None] * (len(self.node_header) - 3)
+    )
+    for organism in species_with_strains:
+        edge_writer.writerow(
+            [
+                ISOLATION_SOURCE_PREFIX + iso_id,
+                NCBI_TO_ISOLATION_SOURCE_EDGE,
+                organism,
+                LOCATION_OF,
+                self.source_name,
+            ]
+        )
 
                     if (
                         ncbitaxon_id

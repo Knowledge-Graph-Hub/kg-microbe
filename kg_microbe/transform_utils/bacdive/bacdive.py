@@ -1510,22 +1510,14 @@ class BacDiveTransform(Transform):
 
                     all_values = []
 
-                    # 1) Handle the top-level "isolation" value (could be str, dict, etc.)
+                    # 1) Handle top-level isolation if present
                     if isolation:
                         iso_label = None
-
-                        # If it's already a string
                         if isinstance(isolation, str):
                             iso_label = isolation.strip()
-
-                        # Or if it's a dict with a 'value' key
                         elif isinstance(isolation, dict) and "value" in isolation:
-                            iso_label = str(isolation["value"]).strip()
-
-                        # Otherwise skip or provide a fallback:
-                        # (uncomment if you want a fallback)
-                        # else:
-                        #     iso_label = str(isolation)
+                            iso_label = isolation["value"].strip()
+                        # else: optionally handle fallback
 
                         if iso_label:
                             iso_id = (
@@ -1552,6 +1544,43 @@ class BacDiveTransform(Transform):
                                         self.source_name,
                                     ]
                                 )
+
+                    # 2) STILL handle Cat1, Cat2, Cat3, etc.
+                    all_values = []
+                    if isinstance(isolation_source_categories, list):
+                        for category_dict in isolation_source_categories:
+                            if isinstance(category_dict, dict):
+                                all_values.extend(category_dict.values())
+                    elif isinstance(isolation_source_categories, dict):
+                        all_values.extend(isolation_source_categories.values())
+
+                    for val in all_values:
+                        raw_label = val.strip()
+                        iso_id = (
+                            raw_label.translate(translation_table_for_ids)
+                            .lower()
+                            .replace(" ", "_")
+                            .replace("-", "_")
+                        )
+                        node_writer.writerow(
+                            [
+                                ISOLATION_SOURCE_PREFIX + iso_id,
+                                ISOLATION_SOURCE_CATEGORY,
+                                raw_label,
+                            ]
+                            + [None] * (len(self.node_header) - 3)
+                        )
+                        for organism in species_with_strains:
+                            edge_writer.writerow(
+                                [
+                                    ISOLATION_SOURCE_PREFIX + iso_id,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    organism,
+                                    LOCATION_OF,
+                                    self.source_name,
+                                ]
+                            )
+
 
 
 

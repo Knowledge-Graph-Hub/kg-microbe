@@ -53,7 +53,7 @@ DATA_SOURCES = {
     CTD: CTDTransform,
     DISBIOME: DisbiomeTransform,
     WALLEN_ETAL: WallenEtAlTransform,
-    UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+    #UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
 
 

@@ -4,7 +4,7 @@
 
 # KG-Microbe -- Knowledge graph construction for microbial traits and beyond
 
-[Conference paper](https://ceur-ws.org/Vol-3073/paper19.pdf)
+[KG-Microbe preprint](https://pmc.ncbi.nlm.nih.gov/articles/PMC10336030/)
 
 [Semantic Scholar](https://www.semanticscholar.org/paper/KG-Microbe%3A-A-Reference-Knowledge-Graph-and-for-joachimiak-Hegde/c49a7ed4e5e1c0db815a3b185148877d914473f2)
 

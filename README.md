@@ -10,9 +10,9 @@
 
 [Documentation](http://kghub.org/kg-microbe/index.html)
 
-[KG-Microbe @KG-Hub](https://kghub.org)
+[latest KG-Microbe release](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/tag/2025-03-07)
 
-[Monthly builds](https://kg-hub.berkeleybop.io/kg-microbe/)
+[KG-Microbe @KG-Hub](https://kghub.org)
 
 
 # Setup

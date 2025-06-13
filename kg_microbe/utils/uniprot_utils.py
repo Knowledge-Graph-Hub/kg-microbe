@@ -9,6 +9,7 @@ from multiprocessing import Pool
 from pathlib import Path
 
 import pandas as pd
+import requests
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -20,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     EC_CATEGORY,
     EC_PREFIX,
     ENABLES,
+    GENE_CATEGORY,
     GENE_TO_PROTEIN_EDGE,
     GO_BIOLOGICAL_PROCESS_ID,
     GO_BIOLOGICAL_PROCESS_LABEL,
@@ -37,6 +39,7 @@ from kg_microbe.transform_utils.constants import (
     MONDO_XREFS_FILEPATH,
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
+    NODE_NORMALIZER_URL,
     OMIM_PREFIX,
     ONTOLOGIES_TREES_DIR,
     PARTICIPATES_IN,
@@ -98,6 +101,7 @@ GO_PARSED_COLUMN = "go_parsed"
 RHEA_PARSED_COLUMN = "rhea_parsed"
 DISEASE_PARSED_COLUMN = "disease_parsed"
 GENE_PRIMARY_PARSED_COLUMN = "gene_primary_parsed"
+GENE_NAME_PRIMARY_PARSED_COLUMN = "gene_name_primary_parsed"
 GO_TERM_COLUMN = "GO_Term"
 GO_CATEGORY_COLUMN = "GO_Category"
 UNIPROT_ID_COLUMN = "Uniprot_ID"
@@ -106,6 +110,29 @@ UNIPROT_ID_COLUMN = "Uniprot_ID"
 CHEBI_REGEX = re.compile(r'/ligand_id="ChEBI:(.*?)";')
 GO_REGEX = re.compile(r"\[(.*?)\]")
 
+# Takes cure in the form PREFIX:ID
+def normalize_node_api(node_curie):
+
+    url = NODE_NORMALIZER_URL + node_curie
+
+    # Make the HTTP request to NodeNormalizer
+    response = requests.get(url, timeout=30)
+    response.raise_for_status()
+
+    # Write response to file if it contains data
+    entries = response.json()[node_curie]
+    try:
+        if len(entries) > 1:  # .strip().split("\n")
+            for iden in entries["equivalent_identifiers"]:
+                if iden["identifier"].split(":")[0] + ":" == HGNC_NEW_PREFIX:
+                    norm_node = iden["identifier"]
+                    return norm_node
+    # Handle case where node normalizer returns nothing
+    except TypeError:
+        return None
+
+    else:
+        return None
 
 def is_float(entry):
     """Determine if value is float, returns True/False."""
@@ -213,7 +240,7 @@ def parse_disease(disease_entry, mondo_xref_dict):
     return mondo_list
 
 
-def parse_gene(gene_entry, mondo_gene_dict):
+def parse_gene(gene_entry, protein_entry):
     """
     Get gene ID from gene name entry.
 
@@ -226,8 +253,10 @@ def parse_gene(gene_entry, mondo_gene_dict):
     """
     gene_id = None
     if not is_float(gene_entry):
-        gene_name = gene_entry
-        gene_id = next((key for key, val in mondo_gene_dict.items() if val == gene_name), None)
+        # gene_name = gene_entry
+        # gene_id = next((key for key, val in mondo_gene_dict.items() if val == gene_name), None)
+        # if not gene_id:
+        gene_id = normalize_node_api(protein_entry)
 
     return gene_id
 
@@ -289,7 +318,6 @@ def get_nodes_and_edges(
     uniprot_df,
     go_category_trees_dictionary,
     mondo_xrefs_dict,
-    mondo_gene_dict,
     obsolete_terms_csv_file,
 ):
     """
@@ -321,6 +349,7 @@ def get_nodes_and_edges(
         parsed_columns += [
             DISEASE_PARSED_COLUMN,
             GENE_PRIMARY_PARSED_COLUMN,
+            GENE_NAME_PRIMARY_PARSED_COLUMN
         ]
     uniprot_parse_df = pd.DataFrame(columns=parsed_columns)
     uniprot_parse_df[ORGANISM_PARSED_COLUMN] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
@@ -349,10 +378,20 @@ def get_nodes_and_edges(
         uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
             lambda x: parse_disease(x, mondo_xrefs_dict)
         )
+    # if UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
+    #     uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
+    #         UNIPROT_GENE_PRIMARY_COLUMN_NAME
+    #     ].apply(lambda x: parse_gene(x, mondo_gene_dict))
     if UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
-        uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
-            UNIPROT_GENE_PRIMARY_COLUMN_NAME
-        ].apply(lambda x: parse_gene(x, mondo_gene_dict))
+        uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df.apply(
+            lambda row: parse_gene(
+                    row[UNIPROT_GENE_PRIMARY_COLUMN_NAME], 
+                    UNIPROT_PREFIX + str(row[UNIPROT_PROTEIN_ID_COLUMN_NAME]
+                ) 
+                if pd.notna(row[UNIPROT_PROTEIN_ID_COLUMN_NAME]) 
+                else ""), 
+                axis=1
+        )
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
@@ -502,28 +541,28 @@ def prepare_mondo_dictionary():
             for row in csv_reader:
                 if OMIM_PREFIX in row["xref"]:
                     mondo_xrefs_dict[row["id"]] = row["xref"]
-    # Read MONDO nodes file for gene names
-    mondo_gene_dict = {}
-    if MONDO_GENE_IDS_FILEPATH.exists():
-        with open(MONDO_GENE_IDS_FILEPATH, "r") as file:
-            csv_reader = csv.DictReader(file, delimiter="\t")
-            for row in csv_reader:
-                mondo_gene_dict[row["id"]] = row["name"]
-    #! TODO: use oak
-    else:
-        mondo_nodes_file = (
-            Path(__file__).parents[2] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
-        )
-        if mondo_nodes_file.exists():
-            with open(mondo_nodes_file, "r") as file:
-                csv_reader = csv.DictReader(file, delimiter="\t")
-                for row in csv_reader:
-                    if HGNC_NEW_PREFIX in row["id"]:
-                        mondo_gene_dict[row["id"]] = row["name"]
-        mondo_gene_df = pd.DataFrame(list(mondo_gene_dict.items()), columns=["id", "name"])
-        mondo_gene_df.to_csv(MONDO_GENE_IDS_FILEPATH, sep="\t", index=False)
 
-    return mondo_xrefs_dict, mondo_gene_dict
+    return mondo_xrefs_dict
+    # # Read MONDO nodes file for gene names
+    # mondo_gene_dict = {}
+    # if MONDO_GENE_IDS_FILEPATH.exists():
+    #     with open(MONDO_GENE_IDS_FILEPATH, "r") as file:
+    #         csv_reader = csv.DictReader(file, delimiter="\t")
+    #         for row in csv_reader:
+    #             mondo_gene_dict[row["id"]] = row["name"]
+    # #! TODO: use oak
+    # else:
+    #     mondo_nodes_file = (
+    #         Path(__file__).parents[2] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
+    #     )
+    #     if mondo_nodes_file.exists():
+    #         with open(mondo_nodes_file, "r") as file:
+    #             csv_reader = csv.DictReader(file, delimiter="\t")
+    #             for row in csv_reader:
+    #                 if HGNC_NEW_PREFIX in row["id"]:
+    #                     mondo_gene_dict[row["id"]] = row["name"]
+    #     mondo_gene_df = pd.DataFrame(list(mondo_gene_dict.items()), columns=["id", "name"])
+    #     mondo_gene_df.to_csv(MONDO_GENE_IDS_FILEPATH, sep="\t", index=False)
 
 
 def process_lines(
@@ -537,7 +576,6 @@ def process_lines(
     progress_class,
     go_category_dictionary,
     mondo_xrefs_dict,
-    mondo_gene_dict,
     obsolete_terms_csv_file,
 ):
     """
@@ -566,7 +604,6 @@ def process_lines(
         df,
         go_category_dictionary,
         mondo_xrefs_dict,
-        mondo_gene_dict,
         obsolete_terms_csv_file,
     )
     # Write node and edge data to unique files
@@ -694,7 +731,6 @@ def create_pool(
     output_edge_file,
     go_category_trees_dict,
     mondo_xrefs_dict,
-    mondo_gene_dict,
     obsolete_terms_csv_file,
     uniprot_relevant_file_list,
     uniprot_tmp_ne_dir,
@@ -726,7 +762,6 @@ def create_pool(
                     progress_class,
                     go_category_trees_dict,
                     mondo_xrefs_dict,
-                    mondo_gene_dict,
                     obsolete_terms_csv_file,
                 )
                 for line_chunk in line_chunks

@@ -204,7 +204,7 @@ class BacDiveTransform(Transform):
         """Instantiate part."""
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
-        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.ncbi_impl = get_adapter(str(NCBITAXON_SOURCE))
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -438,7 +438,7 @@ class BacDiveTransform(Transform):
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # replace with downloaded data filename for this source
-        input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
+        input_file = os.path.join(self.input_base_dir, "bacdive_strains_new.json")  # must exist already
         # Read the JSON file into the variable input_json
         with open(input_file, "r") as f:
             input_json = json.load(f)
@@ -604,9 +604,9 @@ class BacDiveTransform(Transform):
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(
-                total=len(input_json.items()) + 1, desc="Processing files"
+                total=len(input_json) + 1, desc="Processing files"
             ) as progress:
-                for key, value in input_json.items():
+                for index, value in enumerate(input_json):
                     # * Uncomment this block ONLY if you want to view the split *******
                     # * contents of the JSON file source into YAML files.
                     # import yaml
@@ -810,7 +810,7 @@ class BacDiveTransform(Transform):
                                 medium_ids, medium_labels, medium_urls, mediadive_urls, strict=False
                             ):
                                 data = [
-                                    BACDIVE_PREFIX + key,
+                                    BACDIVE_PREFIX + str(index),
                                     dsm_number,
                                     culture_number_from_external_links,
                                     ncbitaxon_id,
@@ -833,7 +833,7 @@ class BacDiveTransform(Transform):
                                 writer.writerow(data)  # writing the data
 
                     phys_and_meta_data = [
-                        BACDIVE_PREFIX + key,
+                        BACDIVE_PREFIX + str(index),
                         phys_and_metabolism_observation,
                         phys_and_metabolism_enzymes,
                         phys_and_metabolism_metabolite_utilization,
@@ -867,7 +867,7 @@ class BacDiveTransform(Transform):
                         synonym_parsed = None
 
                     name_tax_classification_data = [
-                        BACDIVE_PREFIX + key,
+                        BACDIVE_PREFIX + str(index),
                         ncbitaxon_id,
                         name_tax_classification.get(DOMAIN),
                         name_tax_classification.get(PHYLUM),
@@ -908,7 +908,7 @@ class BacDiveTransform(Transform):
                                     BIOSAFETY_LEVEL_PREDICATE,
                                     biosafety_level_id,
                                     None,
-                                    BACDIVE_PREFIX + key,
+                                    BACDIVE_PREFIX + str(index),
                                 ]
                             )
 
@@ -967,18 +967,18 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         # species_with_strains.extend([curated_strain_ids[0]])
-                        curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                        curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + str(index)
                         species_with_strains.extend([curated_strain_id])
                         if len(curated_strain_ids) > 0:
                             prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]
                             curated_strain_label = (
-                                f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
+                                f"{prefix + str(index)} as {strain_id} of {ncbitaxon_id}"
                             )
 
                         else:
                             curated_strain_label = (
-                                f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
+                                f"{BACDIVE_PREFIX.replace(':', '_') + str(index)} of {ncbitaxon_id}"
                             )
 
                         # curated_strain_label = name_tax_classification.get(
@@ -1018,7 +1018,7 @@ class BacDiveTransform(Transform):
                                     SUBCLASS_PREDICATE,
                                     ncbitaxon_id,
                                     RDFS_SUBCLASS_OF,
-                                    BACDIVE_PREFIX + key,
+                                    BACDIVE_PREFIX + str(index),
                                 ]
                                 # for curated_strain_id in curated_strain_ids
                                 # if curated_strain_id
@@ -1074,7 +1074,7 @@ class BacDiveTransform(Transform):
                                     NCBI_TO_MEDIUM_EDGE,
                                     mid,
                                     IS_GROWN_IN,
-                                    BACDIVE_PREFIX + key,
+                                    BACDIVE_PREFIX + str(index),
                                 ]
                                 for organism in species_with_strains
                             ]
@@ -1126,7 +1126,7 @@ class BacDiveTransform(Transform):
                                         in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
                                         else BIOLOGICAL_PROCESS
                                     ),
-                                    BACDIVE_PREFIX + key,
+                                    BACDIVE_PREFIX + str(index),
                                 ]
                                 for organism in species_with_strains
                             ]
@@ -1155,7 +1155,7 @@ class BacDiveTransform(Transform):
                                         SUBCLASS_PREDICATE,
                                         ncbitaxon_id,
                                         RDFS_SUBCLASS_OF,
-                                        BACDIVE_PREFIX + key,
+                                        BACDIVE_PREFIX + str(index),
                                     ]
                                 )
 
@@ -1196,7 +1196,7 @@ class BacDiveTransform(Transform):
                                             NCBI_TO_ENZYME_EDGE,
                                             k,
                                             CAPABLE_OF,
-                                            BACDIVE_PREFIX + key,
+                                            BACDIVE_PREFIX + str(index),
                                         ]
                                         for organism in species_with_strains
                                     ]
@@ -1274,7 +1274,7 @@ class BacDiveTransform(Transform):
                                             NCBI_TO_METABOLITE_UTILIZATION_EDGE,
                                             k,
                                             HAS_PARTICIPANT,
-                                            BACDIVE_PREFIX + key,
+                                            BACDIVE_PREFIX + str(index),
                                         ]
                                         for organism in species_with_strains
                                     ]
@@ -1339,7 +1339,7 @@ class BacDiveTransform(Transform):
                                             NCBI_TO_METABOLITE_PRODUCTION_EDGE,
                                             k,
                                             BIOLOGICAL_PROCESS,
-                                            BACDIVE_PREFIX + key,
+                                            BACDIVE_PREFIX + str(index),
                                         ]
                                         for organism in species_with_strains
                                     ]
@@ -1375,7 +1375,7 @@ class BacDiveTransform(Transform):
                                         HAS_PHENOTYPE_PREDICATE,
                                         ot_id,
                                         HAS_PHENOTYPE,
-                                        BACDIVE_PREFIX + key,
+                                        BACDIVE_PREFIX + str(index),
                                     ])
 
                     if phys_and_metabolism_spore_formation:
@@ -1410,7 +1410,7 @@ class BacDiveTransform(Transform):
                                         CAPABLE_OF_PREDICATE,
                                         node_id,
                                         CAPABLE_OF,
-                                        BACDIVE_PREFIX + key,
+                                        BACDIVE_PREFIX + str(index),
                                     ])
 
                     if phys_and_metabolism_nutrition_type:
@@ -1455,7 +1455,7 @@ class BacDiveTransform(Transform):
                                                 CAPABLE_OF_PREDICATE,  # e.g. "biolink:capable_of"
                                                 node_id,
                                                 CAPABLE_OF,            # optional relation
-                                                BACDIVE_PREFIX + key,  # provided_by
+                                                BACDIVE_PREFIX + str(index),  # provided_by
                                             ]
                                         )
 
@@ -1499,7 +1499,7 @@ class BacDiveTransform(Transform):
                                         ASSAY_TO_NCBI_EDGE,
                                         organism,
                                         ASSESSED_ACTIVITY_RELATIONSHIP,
-                                        BACDIVE_PREFIX + key,
+                                        BACDIVE_PREFIX + str(index),
                                     ]
                                     for m in meta_assay
                                     if not m.startswith(ASSAY_PREFIX)
@@ -1560,11 +1560,11 @@ class BacDiveTransform(Transform):
                         if isinstance(phys_and_metabolism_antibiotic_resistance, list):
                             for item in phys_and_metabolism_antibiotic_resistance:
                                 if item.get(CHEBI_KEY):
-                                    self._process_antibiotic_resistance(item, ncbitaxon_id, key)
+                                    self._process_antibiotic_resistance(item, ncbitaxon_id, str(index))
                         elif isinstance(phys_and_metabolism_antibiotic_resistance, dict):
                             if phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
                                 self._process_antibiotic_resistance(
-                                    phys_and_metabolism_antibiotic_resistance, ncbitaxon_id, key
+                                    phys_and_metabolism_antibiotic_resistance, ncbitaxon_id, str(index)
                                 )
 
                         if self.ar_edges_data_to_write and self.ar_nodes_data_to_write:
@@ -1579,22 +1579,22 @@ class BacDiveTransform(Transform):
                         if isinstance(phys_and_metabolism_antibiogram, list):
                             for dictionary in phys_and_metabolism_antibiogram:
                                 self._process_metabolites(
-                                    dictionary, ncbitaxon_id, key, node_writer, edge_writer
+                                    dictionary, ncbitaxon_id, str(index), node_writer, edge_writer
                                 )
-                                self._process_medium(dictionary, ncbitaxon_id, key, edge_writer)
+                                self._process_medium(dictionary, ncbitaxon_id, str(index), edge_writer)
                         elif isinstance(phys_and_metabolism_antibiogram, dict):
                             self._process_metabolites(
                                 phys_and_metabolism_antibiogram,
                                 ncbitaxon_id,
-                                key,
+                                str(index),
                                 node_writer,
                                 edge_writer,
                             )
                             self._process_medium(
-                                phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer
+                                phys_and_metabolism_antibiogram, ncbitaxon_id, str(index), edge_writer
                             )
 
-                    progress.set_description(f"Processing BacDive file: {key}.yaml")
+                    progress.set_description(f"Processing BacDive file: {str(index)}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
                 # Write metabolite_map to a file

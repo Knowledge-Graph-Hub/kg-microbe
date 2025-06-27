@@ -204,7 +204,7 @@ class BacDiveTransform(Transform):
         """Instantiate part."""
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
-        self.ncbi_impl = get_adapter(str(NCBITAXON_SOURCE))
+        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -856,7 +856,7 @@ class BacDiveTransform(Transform):
                         writer_2.writerow(phys_and_meta_data)
 
                     lpsn = name_tax_classification.get(LPSN)
-                    synonyms = lpsn.get(SYNONYMS, {}) if SYNONYMS in lpsn else None
+                    synonyms = lpsn.get(SYNONYMS, {}) if lpsn and SYNONYMS in lpsn else None
                     if isinstance(synonyms, list):
                         synonym_parsed = " | ".join(
                             synonym.get(SYNONYM, {}) for synonym in synonyms

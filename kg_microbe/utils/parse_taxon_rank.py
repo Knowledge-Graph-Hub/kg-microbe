@@ -1,8 +1,10 @@
-import rdflib
-from rdflib import Namespace, URIRef
-import re
+"""Parse taxon rank information from NCBITaxon OWL file."""
+
 import csv
 import logging
+import re
+
+import rdflib
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -33,7 +35,7 @@ for cls in g.subjects(rdflib.RDF.type, rdflib.OWL.Class):
         # Get the rdf:about attribute
         about = cls
         about_str = str(about)
-        
+
         # Extract the identifier (e.g., NCBITaxon_100000)
         match = re.search(r'NCBITaxon_(\d+)', about_str)
         if not match:
@@ -41,7 +43,7 @@ for cls in g.subjects(rdflib.RDF.type, rdflib.OWL.Class):
             continue  # Skip if pattern does not match
         taxon_id = match.group(1)
         identifier = f"{NCBITAXON_PREFIX}{taxon_id}"
-        
+
         # Get the has_rank property
         has_rank = g.value(cls, rdflib.URIRef("http://purl.obolibrary.org/obo/ncbitaxon#has_rank"))
         if has_rank:
@@ -54,11 +56,11 @@ for cls in g.subjects(rdflib.RDF.type, rdflib.OWL.Class):
                 rank = "unknown"
         else:
             rank = "unknown"
-        
+
         # Append the result
         results.append({'identifier': identifier, 'rank': rank})
         logging.info(f"Processed identifier: {identifier}, rank: {rank}")
-        
+
     except Exception as e:
         logging.error(f"Error processing class {cls}: {e}")
 
@@ -70,14 +72,13 @@ try:
     with open(output_tsv_path, 'w', newline='', encoding='utf-8') as tsvfile:
         fieldnames = ['identifier', 'rank']
         writer = csv.DictWriter(tsvfile, fieldnames=fieldnames, delimiter='\t')
-        
+
         # Write the header
         writer.writeheader()
-        
+
         # Write each row
         for row in results:
             writer.writerow(row)
     logging.info(f"Extraction complete. Results saved to {output_tsv_path}")
 except Exception as e:
     logging.error(f"Failed to write to TSV file: {e}")
-

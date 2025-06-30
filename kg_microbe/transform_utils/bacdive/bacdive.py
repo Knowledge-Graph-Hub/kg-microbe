@@ -51,8 +51,8 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL,
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
-    CAPABLE_OF_PREDICATE,
     CAPABLE_OF,
+    CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -309,19 +309,21 @@ class BacDiveTransform(Transform):
 
     def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
         """
-        Processes a single antibiotic dictionary entry (part of 'antibiogram') to map
-        medium label -> node, and antibiotic name -> node, plus the appropriate edges.
+        Process a single antibiotic dictionary entry.
+
+        Maps medium label -> node, and antibiotic name -> node, plus the appropriate edges.
         Includes debug print statements showing exactly which nodes and edges are written.
         Now uses numeric thresholds:
         * < 10 => NCBI_TO_METABOLITE_RESISTANCE_EDGE
-        * > 30 => NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+        * > 30 => NCBI_TO_METABOLITE_SENSITIVITY_EDGE.
         """
 
         def parse_numeric_value(value_str: str) -> float:
             """
-            Parses the antibiotic value string (e.g. "30", "42-44", ">50") and returns
-            a single float. For ranges, we return the mean. For '>50', we parse as 50.
-            If parsing fails, returns None.
+            Parse the antibiotic value string and return a single float.
+
+            Handles strings like "30", "42-44", ">50". For ranges, returns the mean.
+            For '>50', parses as 50. If parsing fails, returns None.
             """
             value_str = value_str.strip()
             if not value_str:
@@ -1360,7 +1362,7 @@ class BacDiveTransform(Transform):
                                 # Category is typically "biolink:PhenotypicQuality"
                                 # ID can be something like "oxygen:microaerophile"
 
-                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}" 
+                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"
                                 node_writer.writerow([
                                     ot_id,
                                     PHENOTYPIC_CATEGORY,

@@ -47,6 +47,13 @@
 # Contributors
 Please remember to run `poetry run tox` before every commit to make sure the code you commit is error-free.
 
+## Environment Variables
+If you need to use environment variables for this project, copy `.env.example` to `.env` and set the environment variables accordingly:
+```shell
+cp .env.example .env
+```
+Then edit the `.env` file to configure the required environment variables for your setup.
+
 # Acknowledgements
 
 This [cookiecutter](https://cookiecutter.readthedocs.io/en/stable/README.html) project was developed from the [kg-cookiecutter](https://github.com/Knowledge-Graph-Hub/kg-cookiecutter) template and will be kept up-to-date using [cruft](https://cruft.github.io/cruft/).

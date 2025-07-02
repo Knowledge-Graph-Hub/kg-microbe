@@ -1,18 +1,24 @@
 """Download BacDive data using the BacDive API."""
 
 import json
+import os
 import time
 
 import bacdive
+from dotenv import load_dotenv
 
 # ------------------------------------------------------------------------
 # 1) Initialize the client with your BacDive API credentials
-#    Replace <your_email> and <your_password> with real credentials.
+#    Read credentials from environment variables loaded from .env file
 # ------------------------------------------------------------------------
-# TODO: Replace with environment variables or config file
-username = "marcinjoachimiak@gmail.com"
-password = "gimeBACDIVE1~"  # noqa: S105
+# Load environment variables from .env file
+load_dotenv()
 
+username = os.getenv("BACDIVE_USERNAME")
+password = os.getenv("BACDIVE_PASSWORD")
+
+if not username or not password:
+    raise ValueError("BACDIVE_USERNAME and BACDIVE_PASSWORD environment variables must be set")
 
 client = bacdive.BacdiveClient(username, password)
 print("-- Authentication successful --")

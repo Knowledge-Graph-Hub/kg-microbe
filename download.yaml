@@ -196,5 +196,5 @@
 # METPO
 #
 - 
-  url: https://data.bioontology.org/ontologies/METPO/submissions/7/download?apikey=8b5b7825-538d-40e0-9e9e-5ab9274a9aeb
+  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
   local_name: metpo.owl

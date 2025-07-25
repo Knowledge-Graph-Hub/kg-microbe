@@ -205,6 +205,29 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.oxygen_phenotype_mappings = self._load_oxygen_phenotype_mappings()
+
+    def _load_oxygen_phenotype_mappings(self):
+        """Load METPO oxygen phenotype mappings from TSV file."""
+        mappings = {}
+        # Look for the mapping file in the current working directory
+        mapping_file = Path("bacdive_oxygen_phenotype_mappings.tsv")
+        
+        if mapping_file.exists():
+            with open(mapping_file, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f, delimiter='\t')
+                for row in reader:
+                    bacdive_label = row.get('?bacdive_label', '').strip().strip('"')
+                    metpo_curie = row.get('?metpo_curie', '').strip().strip('"')
+                    metpo_label = row.get('?metpo_label', '').strip().strip('"')
+                    
+                    if bacdive_label and metpo_curie:
+                        mappings[bacdive_label] = {
+                            'curie': metpo_curie,
+                            'label': metpo_label
+                        }
+        
+        return mappings
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -1358,15 +1381,32 @@ class BacDiveTransform(Transform):
                             # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
                             ot_label = ot_rec.get("oxygen tolerance", "").strip()
                             if ot_label:
-                                # Create a node for this oxygen tolerance
-                                # Category is typically "biolink:PhenotypicQuality"
-                                # ID can be something like "oxygen:microaerophile"
+                                # Check if we have a METPO mapping for this oxygen tolerance term
+                                # Normalize both the label and mapping keys by replacing whitespaces with underscores
+                                ot_label_normalized = ot_label.lower().replace(' ', '_')
+                                mapping = None
+                                
+                                for map_key, map_value in self.oxygen_phenotype_mappings.items():
+                                    map_key_normalized = map_key.lower().replace(' ', '_')
+                                    if map_key_normalized == ot_label_normalized:
+                                        mapping = map_value
+                                        break
+                                
+                                if mapping:
+                                    # Use METPO term
+                                    ot_id = mapping['curie']
+                                    ot_display_label = mapping['label']
+                                    # print(f"DEBUG: Mapped '{ot_label}' -> {ot_id} ({ot_display_label})")
+                                else:
+                                    # Fallback to original behavior if no mapping found
+                                    ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"
+                                    ot_display_label = ot_label
+                                    # print(f"DEBUG: No mapping found for '{ot_label}', using fallback: {ot_id}")
 
-                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"
                                 node_writer.writerow([
                                     ot_id,
                                     PHENOTYPIC_CATEGORY,
-                                    ot_label
+                                    ot_display_label
                                 ] + [None]*(len(self.node_header) - 3))
 
                                 # Now create an edge from each organism in species_with_strains

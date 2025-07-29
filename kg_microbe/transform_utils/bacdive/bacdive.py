@@ -1362,12 +1362,10 @@ class BacDiveTransform(Transform):
                             if ot_label:
                                 # Check if we have a METPO mapping for this oxygen tolerance term
                                 mapping = None
-                                
                                 for map_key, map_value in self.oxygen_phenotype_mappings.items():
                                     if map_key == ot_label:
                                         mapping = map_value
                                         break
-                                
                                 if mapping:
                                     # Use METPO term
                                     ot_id = mapping['curie']

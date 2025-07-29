@@ -1382,13 +1382,10 @@ class BacDiveTransform(Transform):
                             ot_label = ot_rec.get("oxygen tolerance", "").strip()
                             if ot_label:
                                 # Check if we have a METPO mapping for this oxygen tolerance term
-                                # Normalize both the label and mapping keys by replacing whitespaces with underscores
-                                ot_label_normalized = ot_label.lower().replace(' ', '_')
                                 mapping = None
                                 
                                 for map_key, map_value in self.oxygen_phenotype_mappings.items():
-                                    map_key_normalized = map_key.lower().replace(' ', '_')
-                                    if map_key_normalized == ot_label_normalized:
+                                    if map_key == ot_label:
                                         mapping = map_value
                                         break
                                 
@@ -1398,10 +1395,8 @@ class BacDiveTransform(Transform):
                                     ot_display_label = mapping['label']
                                     # print(f"DEBUG: Mapped '{ot_label}' -> {ot_id} ({ot_display_label})")
                                 else:
-                                    # Fallback to original behavior if no mapping found
-                                    ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"
-                                    ot_display_label = ot_label
-                                    # print(f"DEBUG: No mapping found for '{ot_label}', using fallback: {ot_id}")
+                                    # Raise exception if no mapping found
+                                    raise ValueError(f"No METPO mapping found for oxygen tolerance term: '{ot_label}'")
 
                                 node_writer.writerow([
                                     ot_id,

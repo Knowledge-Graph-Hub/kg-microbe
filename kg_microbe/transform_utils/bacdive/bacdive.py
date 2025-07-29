@@ -180,6 +180,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.mapping_file_utils import load_oxygen_phenotype_mappings
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -205,29 +206,7 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
-        self.oxygen_phenotype_mappings = self._load_oxygen_phenotype_mappings()
-
-    def _load_oxygen_phenotype_mappings(self):
-        """Load METPO oxygen phenotype mappings from TSV file."""
-        mappings = {}
-        # Look for the mapping file in the current working directory
-        mapping_file = Path("bacdive_oxygen_phenotype_mappings.tsv")
-        
-        if mapping_file.exists():
-            with open(mapping_file, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f, delimiter='\t')
-                for row in reader:
-                    bacdive_label = row.get('?bacdive_label', '').strip().strip('"')
-                    metpo_curie = row.get('?metpo_curie', '').strip().strip('"')
-                    metpo_label = row.get('?metpo_label', '').strip().strip('"')
-                    
-                    if bacdive_label and metpo_curie:
-                        mappings[bacdive_label] = {
-                            'curie': metpo_curie,
-                            'label': metpo_label
-                        }
-        
-        return mappings
+        self.oxygen_phenotype_mappings = load_oxygen_phenotype_mappings()
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):

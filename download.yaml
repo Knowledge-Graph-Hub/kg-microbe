@@ -174,7 +174,7 @@
 # Fermentation explorer
 #
 -
-  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.csv
+  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.zip
   local_name: fermentation_explorer.csv
 
 #

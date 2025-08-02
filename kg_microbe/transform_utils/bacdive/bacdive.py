@@ -447,6 +447,9 @@ class BacDiveTransform(Transform):
 
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
+        
+        # Track non-matching media links
+        non_matching_media_links = set()
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -790,11 +793,28 @@ class BacDiveTransform(Transform):
                             for medium in media:
                                 if CULTURE_LINK in medium and medium[CULTURE_LINK]:
                                     medium_url = str(medium[CULTURE_LINK])
+                                    
+                                    # Skip URLs that are just "None" as string
+                                    if medium_url == "None":
+                                        continue
+                                        
                                     medium_id_list = [
                                         medium_url.replace(val, key)
                                         for key, val in BACDIVE_MEDIUM_DICT.items()
                                         if medium_url.startswith(val)
                                     ]
+                                    
+                                    # Handle DSMZ PDF URLs: https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium*.pdf
+                                    if not medium_id_list and "www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium" in medium_url:
+                                        match = re.search(r'DSMZ_Medium(\d+)\.pdf', medium_url)
+                                        if match:
+                                            medium_number = match.group(1)
+                                            medium_id_list = [f"medium:{medium_number}"]
+                                    
+                                    # Track non-matching URLs
+                                    if not medium_id_list:
+                                        non_matching_media_links.add(medium_url)
+                                        continue
 
                                     medium_label = medium.get(CULTURE_NAME, None)
                                     mediadive_url = medium_url.replace(
@@ -1606,6 +1626,15 @@ class BacDiveTransform(Transform):
                 if len(METABOLITE_MAP) > 0 and not Path(METABOLITE_MAPPING_FILE).is_file():
                     with open(METABOLITE_MAPPING_FILE, "w") as f:
                         json.dump(METABOLITE_MAP, f, indent=4)
+
+        # Write non-matching media links to a file
+        media_links_file = os.path.join(self.output_dir, "bacdive_media_links.txt")
+        with open(media_links_file, "w") as f:
+            f.write(f"# Non-matching media links found in BacDive data\n")
+            f.write(f"# Total unique non-matching links: {len(non_matching_media_links)}\n")
+            f.write(f"# These links do not match the https://mediadive.dsmz.de/medium/ pattern\n\n")
+            for link in sorted(non_matching_media_links):
+                f.write(f"{link}\n")
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

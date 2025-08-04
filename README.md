@@ -58,3 +58,4 @@ Then edit the `.env` file to configure the required environment variables for yo
 
 This [cookiecutter](https://cookiecutter.readthedocs.io/en/stable/README.html) project was developed from the [kg-cookiecutter](https://github.com/Knowledge-Graph-Hub/kg-cookiecutter) template and will be kept up-to-date using [cruft](https://cruft.github.io/cruft/).
  
+This resource is published in SciCrunch Registry as SCR_026589.

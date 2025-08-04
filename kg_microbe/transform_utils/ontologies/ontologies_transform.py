@@ -118,7 +118,8 @@ class OntologiesTransform(Transform):
         """
         if not data_file.suffix == ".json":
             if data_file.suffixes == [".owl", ".gz"]:
-                #if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):  # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
+                # if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
+                # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
                 if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
                     json_path = str(data_file).replace(
                         ".owl.gz", ROBOT_REMOVED_SUFFIX + ".json"

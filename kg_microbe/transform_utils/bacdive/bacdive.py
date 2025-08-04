@@ -180,6 +180,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.mapping_file_utils import load_oxygen_phenotype_mappings
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -205,6 +206,7 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.oxygen_phenotype_mappings = load_oxygen_phenotype_mappings()
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -1383,15 +1385,25 @@ class BacDiveTransform(Transform):
                             # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
                             ot_label = ot_rec.get("oxygen tolerance", "").strip()
                             if ot_label:
-                                # Create a node for this oxygen tolerance
-                                # Category is typically "biolink:PhenotypicQuality"
-                                # ID can be something like "oxygen:microaerophile"
+                                # Check if we have a METPO mapping for this oxygen tolerance term
+                                mapping = None
+                                for map_key, map_value in self.oxygen_phenotype_mappings.items():
+                                    if map_key == ot_label:
+                                        mapping = map_value
+                                        break
+                                if mapping:
+                                    # Use METPO term
+                                    ot_id = mapping['curie']
+                                    ot_display_label = mapping['label']
+                                    # print(f"DEBUG: Mapped '{ot_label}' -> {ot_id} ({ot_display_label})")
+                                else:
+                                    # Raise exception if no mapping found
+                                    raise ValueError(f"No METPO mapping found for oxygen tolerance term: '{ot_label}'")
 
-                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"
                                 node_writer.writerow([
                                     ot_id,
                                     PHENOTYPIC_CATEGORY,
-                                    ot_label
+                                    ot_display_label
                                 ] + [None]*(len(self.node_header) - 3))
 
                                 # Now create an edge from each organism in species_with_strains

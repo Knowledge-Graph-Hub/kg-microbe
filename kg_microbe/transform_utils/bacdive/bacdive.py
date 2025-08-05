@@ -364,7 +364,7 @@ class BacDiveTransform(Transform):
                 METABOLITE_CATEGORY,
                 medium_label,
             ] + [None] * (len(self.node_header) - 3)
-            #print(f"    Writing node row for medium: {node_row}")
+            #print(f"    Writing node row for MEDIADIVE_MEDIUM_PREFIX{node_row}")
             node_writer.writerow(node_row)
         #else:
         #    print("--> No medium label found in this dictionary.")
@@ -809,7 +809,7 @@ class BacDiveTransform(Transform):
                                         match = re.search(r'DSMZ_Medium(\d+)\.pdf', medium_url)
                                         if match:
                                             medium_number = match.group(1)
-                                            medium_id_list = [f"medium:{medium_number}"]
+                                            medium_id_list = [f"MEDIADIVE_MEDIUM_PREFIX{medium_number}"]
                                     
                                     # Track non-matching URLs
                                     if not medium_id_list:

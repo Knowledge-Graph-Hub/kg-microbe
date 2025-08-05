@@ -180,6 +180,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.mapping_file_utils import load_oxygen_phenotype_mappings
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -205,6 +206,7 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.oxygen_phenotype_mappings = load_oxygen_phenotype_mappings()
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -447,7 +449,7 @@ class BacDiveTransform(Transform):
 
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
-        
+
         # Track non-matching media links
         non_matching_media_links = set()
 
@@ -793,24 +795,25 @@ class BacDiveTransform(Transform):
                             for medium in media:
                                 if CULTURE_LINK in medium and medium[CULTURE_LINK]:
                                     medium_url = str(medium[CULTURE_LINK])
-                                    
+
                                     # Skip URLs that are just "None" as string
                                     if medium_url == "None":
                                         continue
-                                        
+
                                     medium_id_list = [
                                         medium_url.replace(val, key)
                                         for key, val in BACDIVE_MEDIUM_DICT.items()
                                         if medium_url.startswith(val)
                                     ]
-                                    
+
                                     # Handle DSMZ PDF URLs: https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium*.pdf
-                                    if not medium_id_list and "www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium" in medium_url:
+                                    # introducing variable below to resolve E501 (defaulting on line length limit)
+                                    dsmz_medium_pattern = "www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium"
+                                    if not medium_id_list and dsmz_medium_pattern in medium_url:
                                         match = re.search(r'DSMZ_Medium(\d+)\.pdf', medium_url)
                                         if match:
                                             medium_number = match.group(1)
-                                            medium_id_list = [f"MEDIADIVE_MEDIUM_PREFIX{medium_number}"]
-                                    
+                                            medium_id_list = [f"{MEDIADIVE_MEDIUM_PREFIX}{medium_number}"]
                                     # Track non-matching URLs
                                     if not medium_id_list:
                                         non_matching_media_links.add(medium_url)
@@ -1381,15 +1384,25 @@ class BacDiveTransform(Transform):
                             # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
                             ot_label = ot_rec.get("oxygen tolerance", "").strip()
                             if ot_label:
-                                # Create a node for this oxygen tolerance
-                                # Category is typically "biolink:PhenotypicQuality"
-                                # ID can be something like "oxygen:microaerophile"
+                                # Check if we have a METPO mapping for this oxygen tolerance term
+                                mapping = None
+                                for map_key, map_value in self.oxygen_phenotype_mappings.items():
+                                    if map_key == ot_label:
+                                        mapping = map_value
+                                        break
+                                if mapping:
+                                    # Use METPO term
+                                    ot_id = mapping['curie']
+                                    ot_display_label = mapping['label']
+                                    # print(f"DEBUG: Mapped '{ot_label}' -> {ot_id} ({ot_display_label})")
+                                else:
+                                    # Raise exception if no mapping found
+                                    raise ValueError(f"No METPO mapping found for oxygen tolerance term: '{ot_label}'")
 
-                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}"
                                 node_writer.writerow([
                                     ot_id,
                                     PHENOTYPIC_CATEGORY,
-                                    ot_label
+                                    ot_display_label
                                 ] + [None]*(len(self.node_header) - 3))
 
                                 # Now create an edge from each organism in species_with_strains
@@ -1630,9 +1643,9 @@ class BacDiveTransform(Transform):
         # Write non-matching media links to a file
         media_links_file = os.path.join(self.output_dir, "bacdive_media_links.txt")
         with open(media_links_file, "w") as f:
-            f.write(f"# Non-matching media links found in BacDive data\n")
+            f.write("# Non-matching media links found in BacDive data\n")
             f.write(f"# Total unique non-matching links: {len(non_matching_media_links)}\n")
-            f.write(f"# These links do not match the https://mediadive.dsmz.de/medium/ pattern\n\n")
+            f.write("# These links do not match the https://mediadive.dsmz.de/medium/ pattern\n\n")
             for link in sorted(non_matching_media_links):
                 f.write(f"{link}\n")
 

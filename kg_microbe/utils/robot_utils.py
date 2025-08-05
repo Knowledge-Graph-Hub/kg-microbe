@@ -150,6 +150,8 @@ def remove_convert_to_json(path: str, ont_name: str, terms: Union[List, Path]):
 
     input_file = input_owl
 
+    print(f"remove_convert_to_json {input_file}")
+
     if isinstance(terms, List):
         terms_param = [
             item for sublist in zip(["--term"] * len(terms), terms) for item in sublist  # noqa
@@ -183,6 +185,7 @@ def remove_convert_to_json(path: str, ont_name: str, terms: Union[List, Path]):
             output_json,
         ]
 
+    print(f"call {call}")
     subprocess.call(call, env=env)  # noqa
 
     return None

@@ -165,7 +165,7 @@ DEBIO_NEW_PREFIX = "debio:"
 DEBIO_URI = "http://purl.obolibrary.org/obo/debio_"
 RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
-BACDIVE_API_BASE_URL = "https://bacmedia.dsmz.de/"
+BACDIVE_API_BASE_URL = "https://mediadive.dsmz.de/"
 BIOSAFETY_LEVEL_PREFIX = "BSL:"
 
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"

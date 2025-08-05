@@ -813,7 +813,7 @@ class BacDiveTransform(Transform):
                                         match = re.search(r'DSMZ_Medium(\d+)\.pdf', medium_url)
                                         if match:
                                             medium_number = match.group(1)
-                                            medium_id_list = [f"medium:{medium_number}"]
+                                            medium_id_list = [f"MEDIADIVE_MEDIUM_PREFIX{medium_number}"]
 
                                     # Track non-matching URLs
                                     if not medium_id_list:

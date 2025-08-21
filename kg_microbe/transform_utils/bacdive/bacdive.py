@@ -623,7 +623,7 @@ class BacDiveTransform(Transform):
                 if bacdive_label in ['aerobic', 'anaerobic', 'microaerophilic', 'facultatively aerobic']:
                     ox_key = f"Ox_{bacdive_label.replace(' ', '_')}"
                     keyword_map[ox_key] = {
-                        "category": "biolink:PhenotypicQuality", 
+                        "category": "biolink:PhenotypicQuality",
                         "predicate": "biolink:has_phenotype",
                         "curie": mapping['curie'],
                         "name": mapping['label']

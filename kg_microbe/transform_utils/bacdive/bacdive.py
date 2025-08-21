@@ -608,6 +608,27 @@ class BacDiveTransform(Transform):
                 for second_level_key, nested_data in first_level_value.items()
             }
 
+            # create keyword_map with mappings from self.oxygen_phenotype_mappings
+            # instead of relying on the (now deleted) "oxygen" section of the
+            # CUSTOM_CURIES_YAML_FILE file
+            for bacdive_label, mapping in self.oxygen_phenotype_mappings.items():
+                keyword_map[bacdive_label] = {
+                    "category": "biolink:PhenotypicQuality",
+                    "predicate": "biolink:has_phenotype",
+                    "curie": mapping['curie'],
+                    "name": mapping['label']
+                }
+                # there are also mappings for the "Ox_" prefix variants in the CUSTOM_CURIES_YAML_FILE file
+                # so add those to keyword_map as well
+                if bacdive_label in ['aerobic', 'anaerobic', 'microaerophilic', 'facultatively aerobic']:
+                    ox_key = f"Ox_{bacdive_label.replace(' ', '_')}"
+                    keyword_map[ox_key] = {
+                        "category": "biolink:PhenotypicQuality", 
+                        "predicate": "biolink:has_phenotype",
+                        "curie": mapping['curie'],
+                        "name": mapping['label']
+                    }
+
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(

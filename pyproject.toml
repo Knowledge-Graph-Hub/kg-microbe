@@ -23,6 +23,8 @@ curies = ">=0.8.0"
 biopython = "^1.83"
 bacdive = "*"
 python-dotenv = "*"
+requests-ftp = "*"
+pymongo = "^4.14.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"

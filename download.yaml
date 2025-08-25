@@ -23,7 +23,7 @@
 # **** ROBOT ****
 #
 -
-  url: https://github.com/ontodev/robot/releases/download/v1.9.5/robot.jar
+  url: https://github.com/ontodev/robot/releases/latest/download/robot.jar
   local_name: robot.jar
 -
   url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 

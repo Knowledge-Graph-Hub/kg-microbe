@@ -23,7 +23,7 @@
 # **** ROBOT ****
 #
 -
-  url: https://github.com/ontodev/robot/releases/download/v1.9.5/robot.jar
+  url: https://github.com/ontodev/robot/releases/latest/download/robot.jar
   local_name: robot.jar
 -
   url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
@@ -82,7 +82,7 @@
 # BacDive
 # Explore Bacterial Diversity
 -
-  url: gdrive:1dOquB0M6H5Vxu6cBPa4kJ7F9v44medoV
+  url: gdrive:1b_UWdIvsIM81V5WdFedNoxN3R4UUf4F2
   local_name: bacdive_strains.json
 
 # MediaDive

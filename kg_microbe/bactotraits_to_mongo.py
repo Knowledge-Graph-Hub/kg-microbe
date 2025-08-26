@@ -10,17 +10,19 @@ import argparse
 import csv
 import json
 import re
+import sys
 from typing import Any, Dict, List
 
 
 def clean_field_name(name: str) -> str:
     """Convert field name to MongoDB-compatible format."""
     # Remove special characters and normalize
-    cleaned = re.sub(r'[^\w\s]', '_', name)
-    cleaned = re.sub(r'\s+', '_', cleaned)
-    cleaned = re.sub(r'_+', '_', cleaned)
-    cleaned = cleaned.strip('_').lower()
+    cleaned = re.sub(r"[^\w\s]", "_", name)
+    cleaned = re.sub(r"\s+", "_", cleaned)
+    cleaned = re.sub(r"_+", "_", cleaned)
+    cleaned = cleaned.strip("_").lower()
     return cleaned
+
 
 def forward_fill_headers(header_row: List[str]) -> List[str]:
     """Forward fill empty cells in header row."""
@@ -34,6 +36,7 @@ def forward_fill_headers(header_row: List[str]) -> List[str]:
         filled.append(last_value)
 
     return filled
+
 
 def create_field_path(category: str, field_name: str) -> str:
     """Create hierarchical field path from category and field name."""
@@ -117,18 +120,26 @@ def create_field_path(category: str, field_name: str) -> str:
 
     # Handle GC content - preserve original range names with better formatting
     if "gc" in category_clean or field_clean.startswith("gc_"):
-        # Extract the range part from field name - preserve the original format
-        if field_clean.startswith("gc_"):
-            range_part = field_name.strip()[3:]  # Use original field name, remove "GC_" prefix
+        # Extract the range part from field name - preserve operators and decimals
+        original_field = field_name.strip()
+        if original_field.startswith("GC_"):
+            range_part = original_field[3:]  # Remove "GC_" prefix from original
+        elif original_field.startswith(" GC_"):  # Handle leading space
+            range_part = original_field[4:]  # Remove " GC_" prefix from original
         else:
-            range_part = field_name.strip()  # Use original field name as-is
+            range_part = original_field  # Use as-is
 
-        # Replace comparison operators for MongoDB
-        range_clean = range_part.replace('<=', 'lte_').replace('>=', 'gte_').replace('>', 'gt_').replace('<', 'lt_')
+        # Replace comparison operators for MongoDB compatibility
+        range_clean = (
+            range_part.replace("<=", "lte_")
+            .replace(">=", "gte_")
+            .replace(">", "gt_")
+            .replace("<", "lt_")
+        )
         # Replace underscores between numbers with "to" to indicate ranges
-        range_clean = re.sub(r'(\d+\.\d+)_(\d+\.\d+)', r'\1_to_\2', range_clean)
+        range_clean = re.sub(r"(\d+\.\d+)_(\d+\.\d+)", r"\1_to_\2", range_clean)
         # Replace periods with "dot" to avoid MongoDB nesting issues
-        range_clean = range_clean.replace('.', 'dot')
+        range_clean = range_clean.replace(".", "dot")
         return f"gc_content.{range_clean}"
 
     # Handle width/length
@@ -166,29 +177,35 @@ def create_field_path(category: str, field_name: str) -> str:
     else:
         return field_clean
 
+
 def split_list_values(value: str) -> Any:
     """Split comma-separated values into arrays where appropriate."""
     if not value or not isinstance(value, str):
         return value
 
-    # Check if it looks like a list (contains commas)
-    if ',' in value and not re.match(r'^\d+([.,]\d+)*$', value):  # Not just a number with decimals
+    # Define regexes for numbers with period or comma as decimal separator
+    number_dot = re.compile(r"^\d+(\.\d+)?$")  # Numbers with period (e.g., "123.45")
+    number_comma = re.compile(r"^\d+(,\d+)?$")  # Numbers with comma (e.g., "123,45")
+
+    # Check if it looks like a list (contains commas), but is not a single number
+    if "," in value and not number_dot.fullmatch(value) and not number_comma.fullmatch(value):
         # Split and clean
-        items = [item.strip() for item in value.split(',')]
+        items = [item.strip() for item in value.split(",")]
         return [item for item in items if item]  # Remove empty items
 
     return value
 
+
 def parse_value(value: str) -> Any:
     """Parse value, converting numbers and filtering out NA/empty."""
-    if not value or value.strip() in ('NA', ''):
+    if not value or value.strip() in ("NA", ""):
         return None
 
     value = value.strip()
 
     # Try numeric conversion
     try:
-        if '.' in value:
+        if "." in value:
             num_val = float(value)
             # Skip zero values in one-hot encoding
             return num_val if num_val != 0.0 else None
@@ -199,12 +216,14 @@ def parse_value(value: str) -> Any:
     except ValueError:
         return value
 
+
 def build_nested_dict(path_parts: List[str], value: Any) -> Dict:
     """Build nested dictionary from path parts."""
     if len(path_parts) == 1:
         return {path_parts[0]: value}
 
     return {path_parts[0]: build_nested_dict(path_parts[1:], value)}
+
 
 def merge_dicts(dict1: Dict, dict2: Dict) -> Dict:
     """Deep merge two dictionaries."""
@@ -218,6 +237,7 @@ def merge_dicts(dict1: Dict, dict2: Dict) -> Dict:
 
     return result
 
+
 def parse_bactotraits_to_mongo(input_file: str) -> List[Dict[str, Any]]:
     """
     Parse BactoTraits CSV into MongoDB-compatible JSON.
@@ -229,26 +249,31 @@ def parse_bactotraits_to_mongo(input_file: str) -> List[Dict[str, Any]]:
     - Splits comma-separated values into arrays
     """
     # Try multiple encodings
-    encodings = ['utf-8', 'utf-8-sig', 'cp1252', 'latin1', 'iso-8859-1']
+    encodings = ["utf-8", "utf-8-sig", "cp1252", "latin1", "iso-8859-1"]
 
     for encoding in encodings:
         try:
-            with open(input_file, 'r', encoding=encoding) as f:
+            with open(input_file, "r", encoding=encoding) as f:
                 content = f.read()
             break
         except UnicodeDecodeError:
             continue
     else:
-        with open(input_file, 'r', encoding='latin1') as f:
+        print(
+            f"Warning: Could not decode '{input_file}' with preferred encodings "
+            f"({', '.join(encodings[:-1])}). Falling back to 'latin1', which may produce incorrect characters.",
+            file=sys.stderr,
+        )
+        with open(input_file, "r", encoding="latin1") as f:
             content = f.read()
 
     lines = content.splitlines()
-    reader = csv.reader(lines, delimiter=';')
+    reader = csv.reader(lines, delimiter=";")
 
     # Read all three header rows
     categories = next(reader)  # Row 1: categories (forward-fill these)
-    next(reader)               # Row 2: units (skip)
-    field_names = next(reader) # Row 3: actual field names
+    next(reader)  # Row 2: units (skip)
+    field_names = next(reader)  # Row 3: actual field names
 
     # Forward-fill the categories
     filled_categories = forward_fill_headers(categories)
@@ -281,8 +306,8 @@ def parse_bactotraits_to_mongo(input_file: str) -> List[Dict[str, Any]]:
             field_path = create_field_path(category, field_name)
 
             # Build nested structure
-            if '.' in field_path:
-                path_parts = field_path.split('.')
+            if "." in field_path:
+                path_parts = field_path.split(".")
                 nested_dict = build_nested_dict(path_parts, parsed_value)
                 record = merge_dicts(record, nested_dict)
             else:
@@ -293,12 +318,15 @@ def parse_bactotraits_to_mongo(input_file: str) -> List[Dict[str, Any]]:
 
     return records
 
+
 def main():
     """Convert BactoTraits CSV to MongoDB JSON format."""
-    parser = argparse.ArgumentParser(description='Convert BactoTraits CSV to MongoDB-compatible JSON')
-    parser.add_argument('-i', '--input', required=True, help='Input CSV file')
-    parser.add_argument('-o', '--output', required=True, help='Output JSON file')
-    parser.add_argument('--pretty', action='store_true', help='Pretty print JSON')
+    parser = argparse.ArgumentParser(
+        description="Convert BactoTraits CSV to MongoDB-compatible JSON"
+    )
+    parser.add_argument("-i", "--input", required=True, help="Input CSV file")
+    parser.add_argument("-o", "--output", required=True, help="Output JSON file")
+    parser.add_argument("--pretty", action="store_true", help="Pretty print JSON")
 
     args = parser.parse_args()
 
@@ -306,9 +334,9 @@ def main():
     records = parse_bactotraits_to_mongo(args.input)
 
     # Output
-    json_kwargs = {'indent': 2} if args.pretty else {}
+    json_kwargs = {"indent": 2} if args.pretty else {}
 
-    with open(args.output, 'w') as f:
+    with open(args.output, "w") as f:
         json.dump(records, f, **json_kwargs)
 
     print(f"Converted {len(records)} records to {args.output}")
@@ -318,5 +346,6 @@ def main():
         print("\nSample record structure:")
         print(json.dumps(records[0], indent=2)[:500] + "...")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

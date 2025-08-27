@@ -76,6 +76,7 @@ ONTOLOGIES_MAP = {
     "upa": "upa.owl",
     "mondo": "mondo.json",
     "hp": "hp.json",
+    "metpo": "metpo.owl"
 }
 
 
@@ -118,22 +119,21 @@ class OntologiesTransform(Transform):
         """
         if not data_file.suffix == ".json":
             if data_file.suffixes == [".owl", ".gz"]:
-                if NCBITAXON_PREFIX.strip(":").lower() in str(
-                    data_file
-                ):  # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
-                    if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
-                        json_path = str(data_file).replace(
-                            ".owl.gz", ROBOT_REMOVED_SUFFIX + ".json"
-                        )
-                        if not Path(json_path).is_file():
-                            self.decompress(data_file)
-                            with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
-                                terms = [
-                                    line.strip()
-                                    for line in f
-                                    if line.lower().startswith(name.lower())
-                                ]
-                            remove_convert_to_json(str(self.input_base_dir), name, terms)
+                # if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
+                # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
+                if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
+                    json_path = str(data_file).replace(
+                        ".owl.gz", ROBOT_REMOVED_SUFFIX + ".json"
+                    )
+                    if not Path(json_path).is_file():
+                        self.decompress(data_file)
+                        with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
+                            terms = [
+                                line.strip()
+                                for line in f
+                                if line.lower().startswith(name.lower())
+                            ]
+                        remove_convert_to_json(str(self.input_base_dir), name, terms)
                     # elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
                     #     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
                     #     owl_path = str(data_file).strip(".gz")

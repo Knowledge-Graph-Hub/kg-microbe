@@ -51,8 +51,8 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL,
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
-    CAPABLE_OF_PREDICATE,
     CAPABLE_OF,
+    CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -180,6 +180,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.mapping_file_utils import load_oxygen_phenotype_mappings
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -205,6 +206,7 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.oxygen_phenotype_mappings = load_oxygen_phenotype_mappings()
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -309,19 +311,21 @@ class BacDiveTransform(Transform):
 
     def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
         """
-        Processes a single antibiotic dictionary entry (part of 'antibiogram') to map
-        medium label -> node, and antibiotic name -> node, plus the appropriate edges.
+        Process a single antibiotic dictionary entry.
+
+        Maps medium label -> node, and antibiotic name -> node, plus the appropriate edges.
         Includes debug print statements showing exactly which nodes and edges are written.
         Now uses numeric thresholds:
         * < 10 => NCBI_TO_METABOLITE_RESISTANCE_EDGE
-        * > 30 => NCBI_TO_METABOLITE_SENSITIVITY_EDGE
+        * > 30 => NCBI_TO_METABOLITE_SENSITIVITY_EDGE.
         """
 
         def parse_numeric_value(value_str: str) -> float:
             """
-            Parses the antibiotic value string (e.g. "30", "42-44", ">50") and returns
-            a single float. For ranges, we return the mean. For '>50', we parse as 50.
-            If parsing fails, returns None.
+            Parse the antibiotic value string and return a single float.
+
+            Handles strings like "30", "42-44", ">50". For ranges, returns the mean.
+            For '>50', parses as 50. If parsing fails, returns None.
             """
             value_str = value_str.strip()
             if not value_str:
@@ -362,7 +366,7 @@ class BacDiveTransform(Transform):
                 METABOLITE_CATEGORY,
                 medium_label,
             ] + [None] * (len(self.node_header) - 3)
-            #print(f"    Writing node row for medium: {node_row}")
+            #print(f"    Writing node row for MEDIADIVE_MEDIUM_PREFIX{node_row}")
             node_writer.writerow(node_row)
         #else:
         #    print("--> No medium label found in this dictionary.")
@@ -445,6 +449,9 @@ class BacDiveTransform(Transform):
 
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
+
+        # Track non-matching media links
+        non_matching_media_links = set()
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -601,12 +608,33 @@ class BacDiveTransform(Transform):
                 for second_level_key, nested_data in first_level_value.items()
             }
 
+            # create keyword_map with mappings from self.oxygen_phenotype_mappings
+            # instead of relying on the (now deleted) "oxygen" section of the
+            # CUSTOM_CURIES_YAML_FILE file
+            for bacdive_label, mapping in self.oxygen_phenotype_mappings.items():
+                keyword_map[bacdive_label] = {
+                    "category": "biolink:PhenotypicQuality",
+                    "predicate": "biolink:has_phenotype",
+                    "curie": mapping['curie'],
+                    "name": mapping['label']
+                }
+                # there are also mappings for the "Ox_" prefix variants in the CUSTOM_CURIES_YAML_FILE file
+                # so add those to keyword_map as well
+                if bacdive_label in ['aerobic', 'anaerobic', 'microaerophilic', 'facultatively aerobic']:
+                    ox_key = f"Ox_{bacdive_label.replace(' ', '_')}"
+                    keyword_map[ox_key] = {
+                        "category": "biolink:PhenotypicQuality",
+                        "predicate": "biolink:has_phenotype",
+                        "curie": mapping['curie'],
+                        "name": mapping['label']
+                    }
+
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(
-                total=len(input_json.items()) + 1, desc="Processing files"
+                total=len(input_json) + 1, desc="Processing files"
             ) as progress:
-                for key, value in input_json.items():
+                for index, value in enumerate(input_json):
                     # * Uncomment this block ONLY if you want to view the split *******
                     # * contents of the JSON file source into YAML files.
                     # import yaml
@@ -619,6 +647,9 @@ class BacDiveTransform(Transform):
 
                     # Get "General" information
                     general_info = value.get(GENERAL, {})
+                    # Extract BacDive-ID from the new format, fallback to index if not found
+                    bacdive_id = general_info.get('BacDive-ID', index)
+                    key = str(bacdive_id)
                     # bacdive_id = general_info.get(BACDIVE_ID) # This is the same as `key`
                     dsm_number = general_info.get(DSM_NUMBER)
                     external_links = value.get(EXTERNAL_LINKS, {})
@@ -785,11 +816,29 @@ class BacDiveTransform(Transform):
                             for medium in media:
                                 if CULTURE_LINK in medium and medium[CULTURE_LINK]:
                                     medium_url = str(medium[CULTURE_LINK])
+
+                                    # Skip URLs that are just "None" as string
+                                    if medium_url == "None":
+                                        continue
+
                                     medium_id_list = [
                                         medium_url.replace(val, key)
                                         for key, val in BACDIVE_MEDIUM_DICT.items()
                                         if medium_url.startswith(val)
                                     ]
+
+                                    # Handle DSMZ PDF URLs: https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium*.pdf
+                                    # introducing variable below to resolve E501 (defaulting on line length limit)
+                                    dsmz_medium_pattern = "www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium"
+                                    if not medium_id_list and dsmz_medium_pattern in medium_url:
+                                        match = re.search(r'DSMZ_Medium(\d+)\.pdf', medium_url)
+                                        if match:
+                                            medium_number = match.group(1)
+                                            medium_id_list = [f"{MEDIADIVE_MEDIUM_PREFIX}{medium_number}"]
+                                    # Track non-matching URLs
+                                    if not medium_id_list:
+                                        non_matching_media_links.add(medium_url)
+                                        continue
 
                                     medium_label = medium.get(CULTURE_NAME, None)
                                     mediadive_url = medium_url.replace(
@@ -856,7 +905,7 @@ class BacDiveTransform(Transform):
                         writer_2.writerow(phys_and_meta_data)
 
                     lpsn = name_tax_classification.get(LPSN)
-                    synonyms = lpsn.get(SYNONYMS, {}) if SYNONYMS in lpsn else None
+                    synonyms = lpsn.get(SYNONYMS, {}) if lpsn and SYNONYMS in lpsn else None
                     if isinstance(synonyms, list):
                         synonym_parsed = " | ".join(
                             synonym.get(SYNONYM, {}) for synonym in synonyms
@@ -1356,15 +1405,25 @@ class BacDiveTransform(Transform):
                             # e.g. ot_rec might look like {"@ref": 4562, "oxygen tolerance": "microaerophile"}
                             ot_label = ot_rec.get("oxygen tolerance", "").strip()
                             if ot_label:
-                                # Create a node for this oxygen tolerance
-                                # Category is typically "biolink:PhenotypicQuality"
-                                # ID can be something like "oxygen:microaerophile"
+                                # Check if we have a METPO mapping for this oxygen tolerance term
+                                mapping = None
+                                for map_key, map_value in self.oxygen_phenotype_mappings.items():
+                                    if map_key == ot_label:
+                                        mapping = map_value
+                                        break
+                                if mapping:
+                                    # Use METPO term
+                                    ot_id = mapping['curie']
+                                    ot_display_label = mapping['label']
+                                    # print(f"DEBUG: Mapped '{ot_label}' -> {ot_id} ({ot_display_label})")
+                                else:
+                                    # Raise exception if no mapping found
+                                    raise ValueError(f"No METPO mapping found for oxygen tolerance term: '{ot_label}'")
 
-                                ot_id = f"oxygen:{ot_label.replace(' ', '_').lower()}" 
                                 node_writer.writerow([
                                     ot_id,
                                     PHENOTYPIC_CATEGORY,
-                                    ot_label
+                                    ot_display_label
                                 ] + [None]*(len(self.node_header) - 3))
 
                                 # Now create an edge from each organism in species_with_strains
@@ -1594,13 +1653,22 @@ class BacDiveTransform(Transform):
                                 phys_and_metabolism_antibiogram, ncbitaxon_id, key, edge_writer
                             )
 
-                    progress.set_description(f"Processing BacDive file: {key}.yaml")
+                    progress.set_description(f"Processing BacDive file: {str(index)}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
                 # Write metabolite_map to a file
                 if len(METABOLITE_MAP) > 0 and not Path(METABOLITE_MAPPING_FILE).is_file():
                     with open(METABOLITE_MAPPING_FILE, "w") as f:
                         json.dump(METABOLITE_MAP, f, indent=4)
+
+        # Write non-matching media links to a file
+        media_links_file = os.path.join(self.output_dir, "bacdive_media_links.txt")
+        with open(media_links_file, "w") as f:
+            f.write("# Non-matching media links found in BacDive data\n")
+            f.write(f"# Total unique non-matching links: {len(non_matching_media_links)}\n")
+            f.write("# These links do not match the https://mediadive.dsmz.de/medium/ pattern\n\n")
+            for link in sorted(non_matching_media_links):
+                f.write(f"{link}\n")
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

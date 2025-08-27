@@ -14,53 +14,6 @@ chemical_production: &chemical_production_block
   category: "biolink:ChemicalSubstance"
   predicate: "biolink:produces"
 
-oxygen:
-  aerobe: &aerobe_block
-    curie: "oxygen:aerobe"
-    name: "aerobe"
-    <<: *phenotypic_quality_block
-  Ox_aerobic: *aerobe_block
-
-  anaerobe: &anaerobe_block
-    curie: "oxygen:anaerobe"
-    name: "anaerobe"
-    <<: *phenotypic_quality_block
-  Ox_anaerobic: *anaerobe_block
-  obligate_aerobe:
-    curie: "oxygen:obligate_aerobe"
-    name: "obligate aerobe"
-    <<: *phenotypic_quality_block
-  microaerophile: &microaerophile_block
-    curie: "oxygen:microaerophile"
-    name: "microaerophile"
-    <<: *phenotypic_quality_block
-  Ox_microaerophile: *microaerophile_block
-  facultative_anaerobe:
-    curie: "oxygen:facultative_anaerobe"
-    name: "facultative anaerobe"
-    <<: *phenotypic_quality_block
-  obligate_anaerobe:
-    curie: "oxygen:obligate_anaerobe"
-    name: "obligate anaerobe"
-    <<: *phenotypic_quality_block
-  facultative_aerobe: &facultative_aerobe_block
-    curie: "oxygen:facultative_aerobe"
-    name: "facultative aerobe"
-    <<: *phenotypic_quality_block
-  Ox_facultative_aerobe: *facultative_aerobe_block
-  aerotolerant:
-    curie: "oxygen:aerotolerant"
-    name: "aerotolerant"
-    <<: *phenotypic_quality_block
-  microaerotolerant:
-    curie: "oxygen:microaerotolerant"
-    name: "microaerotolerant"
-    <<: *phenotypic_quality_block
-  facultative_aerobe_anaerobe:
-    curie: "oxygen:facultative_aerobe_anaerobe"
-    name: "facultative aerobe/anaerobe"
-    <<: *phenotypic_quality_block
-
 temperature:
   psychrophilic:
     curie: "temperature:psychrophilic"

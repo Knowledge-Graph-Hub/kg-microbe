@@ -13,18 +13,23 @@ jobs:
         python-version: [ "3.10" ]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0 # Fetch all history for accurate versioning
       
+      - name: Install Poetry
+        run: |
+          pipx install poetry
+          pipx inject poetry poetry-dynamic-versioning
+
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+          cache: "poetry"
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --all-extras --no-root
 
       - name: Install additional dependencies
         run: poetry install --with s3

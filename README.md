@@ -4,15 +4,15 @@
 
 # KG-Microbe -- Knowledge graph construction for microbial traits and beyond
 
-[Conference paper](https://ceur-ws.org/Vol-3073/paper19.pdf)
+[KG-Microbe preprint](https://pmc.ncbi.nlm.nih.gov/articles/PMC10336030/)
 
 [Semantic Scholar](https://www.semanticscholar.org/paper/KG-Microbe%3A-A-Reference-Knowledge-Graph-and-for-joachimiak-Hegde/c49a7ed4e5e1c0db815a3b185148877d914473f2)
 
 [Documentation](http://kghub.org/kg-microbe/index.html)
 
-[KG-Microbe @KG-Hub](https://kghub.org)
+[latest KG-Microbe release](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/tag/2025-03-07)
 
-[Monthly builds](https://kg-hub.berkeleybop.io/kg-microbe/)
+[KG-Microbe @KG-Hub](https://kghub.org)
 
 
 # Setup
@@ -46,6 +46,13 @@
 
 # Contributors
 Please remember to run `poetry run tox` before every commit to make sure the code you commit is error-free.
+
+## Environment Variables
+If you need to use environment variables for this project, copy `.env.example` to `.env` and set the environment variables accordingly:
+```shell
+cp .env.example .env
+```
+Then edit the `.env` file to configure the required environment variables for your setup.
 
 # Acknowledgements
 

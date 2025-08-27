@@ -1,0 +1,47 @@
+---
+configuration:
+  output_directory: data/merged
+  checkpoint: false
+  curie_map:
+    # define non-canonical CURIE to IRI mappings (for RDF)
+  node_properties:
+    # define predicates that are to be treated as direct node properties (for RDF)
+  predicate_mappings:
+    # map non-canonical predicates to a property name (for RDF)
+  property_types:
+    # define the type for non-canonical properties for RDF export
+  preserve:
+    - primary_knowledge_source
+
+merged_graph:
+  name: kg-microbe graph
+  source:           # ← Missing this level!
+    bacdive:
+      name: "bacdive"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/bacdive/nodes.tsv
+          - data/transformed/bacdive/edges.tsv
+    madin_etal:
+      name: "madin_etal"  # Note: should be under 'input:' based on line 98 in merge.yaml
+      input:
+        format: tsv
+        filename:
+          - data/transformed/madin_etal/nodes.tsv
+          - data/transformed/madin_etal/edges.tsv
+  operations:
+    - name: kgx.graph_operations.summarize_graph.generate_graph_stats
+      args:
+        graph_name: kg-microbe graph
+        filename: merged_graph_stats.yaml
+        node_facet_properties:
+          - provided_by
+        edge_facet_properties:
+          - provided_by
+          - source
+  destination:
+    merged-kg-tsv:
+      format: tsv
+      compression: tar.gz
+      filename: merged-kg

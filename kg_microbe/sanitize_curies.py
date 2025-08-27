@@ -110,7 +110,12 @@ def sanitize_tsv(input_file, output_file):
     help="Output sanitized edges TSV file (should end with _edges.tsv)"
 )
 def main(nodes, edges, nodes_fixed, edges_fixed):
-    """Sanitize (URL-encode) ALL URI content in KGX TSV files for nodes and edges, including interior path segments."""
+    """Sanitize KGX TSV files by selectively URL-encoding problematic characters in CURIE suffixes and certain fields.
+
+    Only specific fields (id, subject, object, predicate, relation, category) are sanitized, and only problematic characters
+    (such as >°<[]{}|\\^`") in CURIE suffixes and the path segment of URIs are URL-encoded. The entire URI is not encoded;
+    the structure (scheme, netloc) is preserved, and only the path portion is encoded as needed.
+    """
     click.echo(f"Sanitizing all URIs in {nodes} → {nodes_fixed}")
     sanitize_tsv(nodes, nodes_fixed)
     click.echo(f"Sanitizing all URIs in {edges} → {edges_fixed}")

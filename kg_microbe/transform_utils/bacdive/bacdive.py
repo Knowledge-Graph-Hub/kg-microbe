@@ -447,6 +447,20 @@ class BacDiveTransform(Transform):
         with open(input_file, "r") as f:
             input_json = json.load(f)
 
+        # Detect format and convert to consistent format
+        # Old format: dict with string keys, New format: list of dicts
+        if isinstance(input_json, dict):
+            # Old format: convert to list of (key, value) tuples
+            data_items = list(input_json.items())
+            is_old_format = True
+        elif isinstance(input_json, list):
+            # New format: already a list, create tuples with index as key
+            data_items = [(str(item.get('General', {}).get('BacDive-ID', idx)), item) 
+                          for idx, item in enumerate(input_json)]
+            is_old_format = False
+        else:
+            raise ValueError(f"Unexpected JSON format: expected dict or list, got {type(input_json)}")
+
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
@@ -632,9 +646,9 @@ class BacDiveTransform(Transform):
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(
-                total=len(input_json) + 1, desc="Processing files"
+                total=len(data_items) + 1, desc="Processing files"
             ) as progress:
-                for index, value in enumerate(input_json):
+                for index, (key, value) in enumerate(data_items):
                     # * Uncomment this block ONLY if you want to view the split *******
                     # * contents of the JSON file source into YAML files.
                     # import yaml
@@ -647,9 +661,9 @@ class BacDiveTransform(Transform):
 
                     # Get "General" information
                     general_info = value.get(GENERAL, {})
-                    # Extract BacDive-ID from the new format, fallback to index if not found
-                    bacdive_id = general_info.get('BacDive-ID', index)
-                    key = str(bacdive_id)
+                    # Extract BacDive-ID from the data, use key (which contains the correct ID/key)
+                    bacdive_id = general_info.get('BacDive-ID', key)
+                    # key is already the correct string ID from our preprocessing
                     # bacdive_id = general_info.get(BACDIVE_ID) # This is the same as `key`
                     dsm_number = general_info.get(DSM_NUMBER)
                     external_links = value.get(EXTERNAL_LINKS, {})

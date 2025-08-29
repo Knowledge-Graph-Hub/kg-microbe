@@ -14,44 +14,6 @@ chemical_production: &chemical_production_block
   category: "biolink:ChemicalSubstance"
   predicate: "biolink:produces"
 
-temperature:
-  psychrophilic:
-    curie: "temperature:psychrophilic"
-    name: "psychrophilic"
-    <<: *phenotypic_quality_block
-  psychrotrophic:
-    curie: "temperature:psychrotrophic"
-    name: "psychrotrophic"
-    <<: *phenotypic_quality_block
-  psychrotolerant:
-    curie: "temperature:psychrotolerant"
-    name: "psychrotolerant"
-    <<: *phenotypic_quality_block
-  mesophilic:
-    curie: "temperature:mesophilic"
-    name: "mesophilic"
-    <<: *phenotypic_quality_block
-  thermotolerant:
-    curie: "temperature:thermotolerant"
-    name: "thermotolerant"
-    <<: *phenotypic_quality_block
-  thermophilic:
-    curie: "temperature:thermophilic"
-    name: "thermophilic"
-    <<: *phenotypic_quality_block
-  extreme_thermophilic:
-    curie: "temperature:extreme_thermophilic"
-    name: "extreme thermophilic"
-    <<: *phenotypic_quality_block
-  hyperthermophilic:
-    curie: "temperature:hyperthermophilic"
-    name: "hyperthermophilic"
-    <<: *phenotypic_quality_block
-  extreme_hyperthermophilic:
-    curie: "temperature:extreme_hyperthermophilic"
-    name: "extreme hyperthermophilic"
-    <<: *phenotypic_quality_block
-
 salinity:
   moderately_halophilic:
     curie: "salinity:moderately_halophilic"

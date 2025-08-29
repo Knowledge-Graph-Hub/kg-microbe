@@ -180,7 +180,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.mapping_file_utils import load_oxygen_phenotype_mappings
+from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -206,7 +206,7 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
-        self.oxygen_phenotype_mappings = load_oxygen_phenotype_mappings()
+        self.bacdive_metpo_mappings = load_metpo_mappings('bacdive keyword synonym')
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -608,10 +608,10 @@ class BacDiveTransform(Transform):
                 for second_level_key, nested_data in first_level_value.items()
             }
 
-            # create keyword_map with mappings from self.oxygen_phenotype_mappings
+            # create keyword_map with mappings from self.bacdive_metpo_mappings
             # instead of relying on the (now deleted) "oxygen" section of the
             # CUSTOM_CURIES_YAML_FILE file
-            for bacdive_label, mapping in self.oxygen_phenotype_mappings.items():
+            for bacdive_label, mapping in self.bacdive_metpo_mappings.items():
                 keyword_map[bacdive_label] = {
                     "category": "biolink:PhenotypicQuality",
                     "predicate": "biolink:has_phenotype",
@@ -1407,7 +1407,7 @@ class BacDiveTransform(Transform):
                             if ot_label:
                                 # Check if we have a METPO mapping for this oxygen tolerance term
                                 mapping = None
-                                for map_key, map_value in self.oxygen_phenotype_mappings.items():
+                                for map_key, map_value in self.bacdive_metpo_mappings.items():
                                     if map_key == ot_label:
                                         mapping = map_value
                                         break

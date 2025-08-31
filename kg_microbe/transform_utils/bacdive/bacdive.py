@@ -1,5 +1,5 @@
 """
-BacDive KG.
+BacDive KG tranform.
 
 Input: any file in data/raw/ (that was downloaded by placing a URL in incoming.txt/yaml
 and running `run.py download`.

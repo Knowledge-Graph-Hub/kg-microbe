@@ -442,7 +442,7 @@ class BacDiveTransform(Transform):
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # replace with downloaded data filename for this source
-        input_file = os.path.join(self.input_base_dir, "bacdive_strains_new.json")  # must exist already
+        input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
         # Read the JSON file into the variable input_json
         with open(input_file, "r") as f:
             input_json = json.load(f)

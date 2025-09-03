@@ -16,16 +16,16 @@ METPO_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/
 def uri_to_curie(uri: str) -> str:
     """
     Convert a URI to a CURIE using custom prefix map.
-    
+
     :param uri: The URI to convert
     :return: The CURIE representation of the URI, or the original URI if conversion fails
     """
     with open(PREFIXMAP_JSON_FILEPATH, 'r') as f:
         prefix_map = json.load(f)
-    
+
     converter = curies.Converter.from_prefix_map(prefix_map)
     curie = converter.compress(uri)
-    
+
     return curie if curie is not None else uri
 
 
@@ -60,7 +60,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
             if synonym and metpo_iri:
                 # Convert IRI to CURIE using the uri_to_curie function
                 metpo_curie = uri_to_curie(metpo_iri)
-                
+
                 mappings[synonym] = {
                     'curie': metpo_curie,
                     'label': metpo_label

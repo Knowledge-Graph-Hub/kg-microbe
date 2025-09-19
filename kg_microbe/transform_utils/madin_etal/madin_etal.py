@@ -254,7 +254,9 @@ class MadinEtAlTransform(Transform):
                         pathways_not_in_metpo = []
                         for pathway in pathways:
                             metpo_mapping = self.madin_metpo_mappings.get(pathway.strip(), None)
+                            # print(f"Pathway: {pathway}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
+                                # create pathway node and edge to tax_id
                                 pathway_nodes.append([
                                     metpo_mapping['curie'],
                                     PATHWAY_CATEGORY,
@@ -329,7 +331,9 @@ class MadinEtAlTransform(Transform):
                         carbon_substrates_not_in_metpo = []
                         for substrate in carbon_substrates:
                             metpo_mapping = self.madin_metpo_mappings.get(substrate.strip(), None)
+                            # print(f"Substrate: {substrate}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
+                                # create carbon substrate node and edge to tax_id
                                 carbon_substrate_nodes.append([
                                     metpo_mapping['curie'],
                                     CARBON_SUBSTRATE_CATEGORY,
@@ -397,7 +401,9 @@ class MadinEtAlTransform(Transform):
                     if cell_shape:
                         # First try to find mapping in METPO
                         metpo_mapping = self.madin_metpo_mappings.get(cell_shape.strip(), None)
+                        # print(f"Cell shape: {cell_shape}, METPO mapping: {metpo_mapping}")
                         if metpo_mapping:
+                            # create cell shape node and edge to tax_id
                             cell_shape_node = [
                                 metpo_mapping['curie'],
                                 PHENOTYPIC_CATEGORY,

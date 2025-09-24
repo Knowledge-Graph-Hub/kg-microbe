@@ -158,7 +158,7 @@ merged_graph:
       format: tsv
       compression: tar.gz
       filename: merged-kg
-    # merged-kg-nt:
-    #   format: nt
-    #   compression: gz
-    #   filename: kg_microbe.nt.gz
+#    merged-kg-nt:
+#      format: nt
+#      compression: gz
+#      filename: kg_microbe.nt.gz

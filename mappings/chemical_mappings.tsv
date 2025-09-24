@@ -1326,6 +1326,7 @@ cpd:C02787	kegg_compound	CHEBI:15997	2-methylpropanamine		high
 cpd:C04807	kegg_compound	CHEBI:15998	(2-amino-4-hydroxy-7,8-dihydropteridin-6-yl)methyl trihydrogen diphosphate		high
 cpd:C01179	kegg_compound	CHEBI:15999	4-hydroxyphenylpyruvic acid		high
 cpd:C04617	kegg_compound	CHEBI:160	D-erythro-isocitric acid		high
+2-aminethanol	madin_etal_manual	CHEBI:16000	ethanolamine		high
 cpd:C00189	kegg_compound	CHEBI:16000	ethanolamine		high
 cpd:C00236	kegg_compound	CHEBI:16001	3-phospho-D-glyceroyl dihydrogen phosphate		high
 cpd:C00818	kegg_compound	CHEBI:16002	D-glucaric acid		high
@@ -1811,6 +1812,7 @@ cpd:C21980	kegg_compound	CHEBI:165481	6Z,9Z-Hexadecadienoic acid		high
 cpd:C05155	kegg_compound	CHEBI:165497	5-Amino-4-Chloro-2-(5-hydroxymuconoyl)-3(2H)-pyridazinone		high
 cpd:C05759	kegg_compound	CHEBI:1655	3-Oxotetradecanoyl-[acp]		high
 cpd:C01969	kegg_compound	CHEBI:16550	xanthommatin		high
+D-trehalose (trehalose)	bacdive_api	CHEBI:16551	alpha,alpha-trehalose		high
 cpd:C01083	kegg_compound	CHEBI:16551	alpha,alpha-trehalose		high
 trehalose	chemicals_sssom	CHEBI:16551	alpha,alpha-trehalose		medium
 cpd:C03145	kegg_compound	CHEBI:16552	N-formyl-L-methionine		high
@@ -2664,6 +2666,7 @@ cpd:C01260	kegg_compound	CHEBI:17422	P(1),P(4)-bis(5'-adenosyl) tetraphosphate		
 cpd:C05113	kegg_compound	CHEBI:174230	Pentaporphyrin I		high
 cpd:C04324	kegg_compound	CHEBI:17424	4-carboxy-2-hydroxy-cis,cis-muconic acid		high
 cpd:C03564	kegg_compound	CHEBI:17425	1-pyrroline-2-carboxylate		high
+5-Ketogluconate (5-dehydro-D-gluconate)	bacdive_api	CHEBI:17426	5-dehydro-D-gluconic acid		high
 cpd:C01062	kegg_compound	CHEBI:17426	5-dehydro-D-gluconic acid		high
 cpd:C03957	kegg_compound	CHEBI:17427	3-hydroxy-L-aspartate residue		high
 cpd:C05178	kegg_compound	CHEBI:17428	(R)-reticuline		high
@@ -3085,6 +3088,7 @@ cpd:C04652	kegg_compound	CHEBI:17787	UDP-2,3-bis(3-hydroxytetradecanoyl)-D-gluco
 cpd:C05194	kegg_compound	CHEBI:17789	dihydrochelirubine		high
 cpd:C00132	kegg_compound	CHEBI:17790	methanol		high
 methanol	chemicals_sssom	CHEBI:17790	methanol		medium
+methanol	madin_etal_manual	CHEBI:17790	methanol		high
 cpd:C18244	kegg_compound	CHEBI:177909	2,4-dichloro-3-oxoadipic acid		high
 cpd:C01943	kegg_compound	CHEBI:17791	obtusifoliol		high
 cpd:C02453	kegg_compound	CHEBI:177917	phenolic steroid		high
@@ -4675,6 +4679,7 @@ cpd:C09331	kegg_compound	CHEBI:2610	Alpinine		high
 cpd:C06817	kegg_compound	CHEBI:2611	alprazolam		high
 cpd:C09028	kegg_compound	CHEBI:2612	alstonine		high
 cpd:C11734	kegg_compound	CHEBI:2613	Altanserin		high
+pigmented	bacdive_metabolite	CHEBI:26130	biological pigment		high
 cpd:C11941	kegg_compound	CHEBI:26137	pinocarveol		high
 cpd:C10295	kegg_compound	CHEBI:2614	Alteichin		high
 cpd:C10296	kegg_compound	CHEBI:2615	Altersolanol A		high
@@ -6750,6 +6755,7 @@ cpd:C00989	kegg_compound	CHEBI:30830	4-hydroxybutyric acid		high
 cpd:C01991	kegg_compound	CHEBI:30830	4-hydroxybutyric acid		high
 cpd:C00109	kegg_compound	CHEBI:30831	2-oxobutanoic acid		high
 Adipic acid	bacdive_api	CHEBI:30832	adipic acid		high
+adipate	madin_etal_manual	CHEBI:30832	adipic acid		high
 cpd:C06104	kegg_compound	CHEBI:30832	adipic acid		high
 cpd:C18039	kegg_compound	CHEBI:30834	aldosterone hemiacetal		high
 cpd:C02225	kegg_compound	CHEBI:30836	(2R,3S)-2-methylcitric acid		high
@@ -8861,6 +8867,7 @@ cpd:C19536	kegg_compound	CHEBI:36018	1,1,2-trichloroethane		high
 cpd:C07460	kegg_compound	CHEBI:3602	chloraminophenamide		high
 cpd:C19534	kegg_compound	CHEBI:36026	1,1,2,2-tetrachloroethane		high
 cpd:C13632	kegg_compound	CHEBI:36028	4,4'-dihydroxy-alpha-methylstilbene		high
+antibiotic_compound	bacdive_metabolite	CHEBI:36047	antibacterial drug		high
 cpd:C11726	kegg_compound	CHEBI:3605	chloramphenicol palmitate		high
 cpd:C11727	kegg_compound	CHEBI:3606	Chloramphenicol succinate		high
 cpd:C13962	kegg_compound	CHEBI:3606	Chloramphenicol succinate		high
@@ -10638,6 +10645,8 @@ cpd:C18050	kegg_compound	CHEBI:51834	beta-D-fructofuranosyl alpha-D-mannopyranos
 cpd:C18013	kegg_compound	CHEBI:51836	3,3'-biflaviolin		high
 cpd:C18014	kegg_compound	CHEBI:51837	3,8'-biflaviolin		high
 methyl pyruvate	chemicals_sssom	CHEBI:51850	methyl pyruvate		medium
+pyruvic acid methyl ester	chemicals_sssom	CHEBI:51850	methyl pyruvate		medium
+pyruvic acid methyl ester	madin_etal_manual	CHEBI:51850	methyl pyruvate		high
 cpd:C08596	kegg_compound	CHEBI:5186	fucoxanthin		high
 cpd:C10304	kegg_compound	CHEBI:5187	Fulvine		high
 cpd:C19193	kegg_compound	CHEBI:51874	auramine O free base		high
@@ -12463,6 +12472,7 @@ cpd:C19176	kegg_compound	CHEBI:73755	1,2-dimethylhydrazine		high
 cpd:C05026	kegg_compound	CHEBI:7383	N3-Methyladenine		high
 cpd:C05936	kegg_compound	CHEBI:7386	4-acetamidobutanal		high
 cpd:C01623	kegg_compound	CHEBI:73886	UDP-alpha-D-apiose		high
+vibriostat	bacdive_metabolite	CHEBI:73908	2,4-diamino-6,7-diisopropylpteridine		high
 cpd:C11637	kegg_compound	CHEBI:73926	3alpha,12alpha-dihydroxy-5beta-chol-6-en-24-oic acid		high
 cpd:C17367	kegg_compound	CHEBI:73939	(3S,5S)-carbapenam-3-carboxylate		high
 cpd:C07277	kegg_compound	CHEBI:73950	dTDP-alpha-D-fucose		high

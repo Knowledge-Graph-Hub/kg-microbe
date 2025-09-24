@@ -4,19 +4,9 @@ NA	chemicals_sssom	CHEBI:29101	sodium(1+)	medium	na	sodium1
 NA	chemicals_sssom	CHEBI:33696	nucleic acid	medium	na	nucleic acid
 glucosamine	chemicals_sssom	CHEBI:17784	2-amino-2-deoxy-D-gluconic acid	medium	glucosamine	2amino2deoxydgluconic acid
 glycogen	chemicals_sssom	CHEBI:18391	D-gluconate	medium	glycogen	gluconate
-putrescine	chemicals_sssom	CHEBI:326268	1,4-butanediammonium	medium	putrescine	14butanediammonium
-pyruvic acid methyl ester	chemicals_sssom	CHEBI:51850	methyl pyruvate	medium	pyruvic acid methyl ester	methyl pyruvate
 valerate	chemicals_sssom	CHEBI:84069	pentanal	medium	valerate	pentanal
-vibriostat	bacdive_metabolite	CHEBI:73908	2,4-diamino-6,7-diisopropylpteridine	high	vibriostat	24diamino67diisopropylpteridine
 chloramphenicol	bacdive_metabolite	CHEBI:17548	alginic acid	high	chloramphenicol	alginic acid
-antibiotic_compound	bacdive_metabolite	CHEBI:36047	antibacterial drug	high	antibiotic_compound	antibacterial drug
-pigmented	bacdive_metabolite	CHEBI:26130	biological pigment	high	pigmented	biological pigment
-pyruvic acid methyl ester	madin_etal_manual	CHEBI:51850	methyl pyruvate	high	pyruvic acid methyl ester	methyl pyruvate
-2-aminethanol	madin_etal_manual	CHEBI:16000	ethanolamine	high	2aminethanol	ethanolamine
-adipate	madin_etal_manual	CHEBI:30832	adipic acid	high	adipate	adipic acid
-H2_CO2	madin_etal_manual	CHEBI:18276	dihydrogen	high	h2_co2	dihydrogen
-H2_methanol	madin_etal_manual	CHEBI:18276	dihydrogen	high	h2_methanol	dihydrogen
-D-trehalose (trehalose)	bacdive_api	CHEBI:16551	alpha,alpha-trehalose	high	trehalose trehalose	alphaalphatrehalose
-5-Ketogluconate (5-dehydro-D-gluconate)	bacdive_api	CHEBI:17426	5-dehydro-D-gluconic acid	high	5ketogluconate 5dehydrodgluconate	5dehydrodgluconic acid
 5-Bromo-4-chloro-3-indolyl N-acetyl-beta-D-gl	bacdive_api	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	high	5bromo4chloro3indolyl nacetylbetadgl	4nitrophenylbetadgalactoside
 Para-nitrophenylphosphate (4-nitrophenyl phos	bacdive_api	CHEBI:1744	4,5,6,7-Tetrachloro-2-trifluoromethylbenzimidazole	high	paranitrophenylphosphate 4nitrophenyl phos	4567tetrachloro2trifluoromethylbenzimidazole
+H2	madin_etal_manual	CHEBI:18276	dihydrogen	high	h2	dihydrogen
+CO2	madin_etal_manual	CHEBI:16526	carbon dioxide	high	co2	carbon dioxide

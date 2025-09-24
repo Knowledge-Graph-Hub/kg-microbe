@@ -222,7 +222,13 @@ def is_valid_synonym_mapping(original_term, chebi_label):
         'malate': 'malic acid',
         'putrescine': 'butanediamine',
         'alpha-ketovaleric acid': '2-oxopentanoic acid',
-        'glucosamine': 'amino-deoxy-gluconic acid'  # partial match
+        'pyruvic acid methyl ester': 'methyl pyruvate',
+        '2-aminethanol': 'ethanolamine',
+        'd-trehalose': 'alpha,alpha-trehalose',
+        'trehalose': 'alpha,alpha-trehalose',
+        '5-ketogluconate': '5-dehydro-d-gluconic acid',
+        '5-dehydro-d-gluconate': '5-dehydro-d-gluconic acid',
+        'vibriostat': '2,4-diamino-6,7-diisopropylpteridine'
     }
     
     # Check direct synonyms
@@ -231,6 +237,73 @@ def is_valid_synonym_mapping(original_term, chebi_label):
             return True
     
     return False
+
+
+def is_acceptable_broader_mapping(original_term, chebi_label):
+    """Check for mappings that are broader but still acceptable"""
+    original_lower = str(original_term).lower().strip()
+    chebi_lower = str(chebi_label).lower().strip()
+    
+    # Cases where broader mapping is acceptable for biological contexts
+    broader_mappings = {
+        'antibiotic_compound': 'antibacterial drug',
+        'antibiotic compound': 'antibacterial drug',
+        'pigmented': 'biological pigment',
+        'adipate': 'adipic acid'  # Close enough for many biological contexts
+    }
+    
+    for specific_term, broader_term in broader_mappings.items():
+        if specific_term in original_lower and broader_term in chebi_lower:
+            return True
+    
+    return False
+
+
+def handle_mixture_mappings(original_term, chebi_labels_dict):
+    """Handle mixture terms by splitting and mapping individual components"""
+    original_lower = str(original_term).lower().strip()
+    
+    # Handle underscore-separated mixtures
+    if '_' in original_term:
+        components = original_term.split('_')
+        mappings = []
+        
+        for component in components:
+            component = component.strip()
+            if not component:
+                continue
+                
+            # Map common component abbreviations to CHEBI IDs
+            component_mappings = {
+                'h2': 'CHEBI:18276',  # dihydrogen
+                'co2': 'CHEBI:16526',  # carbon dioxide
+                'methanol': 'CHEBI:17790'  # methanol
+            }
+            
+            component_lower = component.lower()
+            if component_lower in component_mappings:
+                chebi_id = component_mappings[component_lower]
+                chebi_label = chebi_labels_dict.get(chebi_id, '')
+                mappings.append({
+                    'original_term': component,
+                    'chebi_id': chebi_id,
+                    'chebi_label': chebi_label
+                })
+        
+        return mappings
+    
+    return []
+
+
+def apply_manual_corrections(original_term, chebi_id):
+    """Apply manual corrections for specific problematic mappings"""
+    corrections = {
+        # putrescine: correct to neutral form CHEBI:17148
+        ('putrescine', 'CHEBI:326268'): 'CHEBI:17148'
+    }
+    
+    key = (str(original_term).lower().strip(), str(chebi_id).strip())
+    return corrections.get(key, chebi_id)
 
 
 def terms_match(original_term, chebi_label, similarity_threshold=0.6):
@@ -248,6 +321,10 @@ def terms_match(original_term, chebi_label, similarity_threshold=0.6):
     
     # Check for known valid synonym mappings  
     if is_valid_synonym_mapping(original_term, chebi_label):
+        return True
+    
+    # Check for acceptable broader mappings
+    if is_acceptable_broader_mapping(original_term, chebi_label):
         return True
     
     norm_original = normalize_for_comparison(original_term)
@@ -360,6 +437,38 @@ def main():
     # Combine all mappings
     if all_mappings:
         combined_df = pd.concat(all_mappings, ignore_index=True)
+        
+        # Apply manual corrections
+        print("Applying manual corrections...")
+        combined_df['chebi_id'] = combined_df.apply(
+            lambda row: apply_manual_corrections(row['original_term'], row['chebi_id']), 
+            axis=1
+        )
+        
+        # Handle mixture mappings (split H2_CO2, H2_methanol, etc.)
+        print("Processing mixture mappings...")
+        mixture_mappings = []
+        rows_to_remove = []
+        
+        for idx, row in combined_df.iterrows():
+            if '_' in str(row['original_term']) and any(x in str(row['original_term']).lower() for x in ['h2_', '_co2', '_methanol']):
+                # This is a mixture term, split it
+                mixture_maps = handle_mixture_mappings(row['original_term'], chebi_labels)
+                for mapping in mixture_maps:
+                    new_row = row.copy()
+                    new_row['original_term'] = mapping['original_term']
+                    new_row['chebi_id'] = mapping['chebi_id']
+                    new_row['chebi_label'] = mapping['chebi_label']
+                    mixture_mappings.append(new_row)
+                rows_to_remove.append(idx)
+        
+        # Remove original mixture rows and add split mappings
+        if rows_to_remove:
+            combined_df = combined_df.drop(rows_to_remove)
+            if mixture_mappings:
+                mixture_df = pd.DataFrame(mixture_mappings)
+                combined_df = pd.concat([combined_df, mixture_df], ignore_index=True)
+                print(f"  Split {len(rows_to_remove)} mixture terms into {len(mixture_mappings)} individual mappings")
         
         # Add CHEBI labels
         print("Adding CHEBI labels...")

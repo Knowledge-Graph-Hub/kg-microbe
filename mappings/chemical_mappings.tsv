@@ -1789,6 +1789,7 @@ cpd:C03027	kegg_compound	CHEBI:16524	testosterone acetate		high
 cpd:C00312	kegg_compound	CHEBI:165240	Lyxulose		high
 cpd:C04188	kegg_compound	CHEBI:165241	5-Methylthioribose 1-phosphate		high
 cpd:C05465	kegg_compound	CHEBI:16525	taurochenodeoxycholic acid		high
+CO2	madin_etal_manual	CHEBI:16526	carbon dioxide		high
 cpd:C00011	kegg_compound	CHEBI:16526	carbon dioxide		high
 cpd:C03565	kegg_compound	CHEBI:16528	2''-nucleotidylgentamycin		high
 cpd:C02165	kegg_compound	CHEBI:165291	12-Keto-tetrahydro-LTB4		high
@@ -3757,6 +3758,7 @@ cpd:C20032	kegg_compound	CHEBI:182756	(1R,5R,6S,11S,12R,14R)-22-[(1S)-1-Hydroxye
 cpd:C20207	kegg_compound	CHEBI:182757	2,4,6-Trihydroxy-3-methyl-5-(3-methylbutanoyl)benzaldehyde		high
 cpd:C20548	kegg_compound	CHEBI:182758	(2S,3R,6S,8S,9R,10R,12S,13S,16S,22R,26R)-9,13-Dihydroxy-8-(2-hydroxypropan-2-yl)-2,3,23,23,25,25-hexamethyl-7,11,24-trioxa-32-azanonacyclo[16.14.0.02,16.03,13.06,12.010,12.019,31.020,28.022,26]dotriaconta-1(18),19(31),20(28),29-tetraen-27-one		high
 cpd:C19635	kegg_compound	CHEBI:182759	Scillabiose		high
+H2	madin_etal_manual	CHEBI:18276	dihydrogen		high
 cpd:C00282	kegg_compound	CHEBI:18276	dihydrogen		high
 cpd:C02513	kegg_compound	CHEBI:182760	3-Dehydroecdysone group		high
 cpd:C22122	kegg_compound	CHEBI:182761	Episterone		high

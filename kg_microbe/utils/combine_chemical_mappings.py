@@ -315,6 +315,23 @@ def terms_match(original_term, chebi_label, similarity_threshold=0.6):
     if re.match(r'^(cpd:|cas-rn:|kegg:|c\d+)', str(original_term).lower()):
         return True
     
+    # Handle exact matches for simple chemical names (H2, CO2, etc.)
+    original_clean = str(original_term).strip().lower()
+    chebi_clean = str(chebi_label).strip().lower()
+    
+    if original_clean == chebi_clean:
+        return True
+    
+    # Special cases for simple chemicals
+    simple_matches = {
+        'h2': 'dihydrogen',
+        'co2': 'carbon dioxide', 
+        'methanol': 'methanol'
+    }
+    
+    if original_clean in simple_matches and simple_matches[original_clean] in chebi_clean:
+        return True
+    
     # Check for known valid trade name mappings
     if is_known_trade_name_mapping(original_term, chebi_label):
         return True
@@ -489,17 +506,28 @@ def main():
         if not mismatch_df.empty:
             # Create a set of (original_term, chebi_id) tuples to exclude
             mismatch_keys = set(zip(mismatch_df['original_term'], mismatch_df['chebi_id']))
+            print(f"  Mismatch keys to filter: {list(mismatch_keys)[:5]}...")  # Debug
             
-            # Filter the combined_df
+            # Filter the combined_df - more robust filtering
             before_count = len(combined_df)
-            combined_df = combined_df[
-                ~combined_df.apply(
-                    lambda row: (row['original_term'], row['chebi_id']) in mismatch_keys, 
-                    axis=1
-                )
-            ]
+            
+            # Create a mask for rows to keep
+            mask = combined_df.apply(
+                lambda row: (row['original_term'], row['chebi_id']) not in mismatch_keys,
+                axis=1
+            )
+            combined_df = combined_df[mask]
+            
             after_count = len(combined_df)
             print(f"  Filtered out {before_count - after_count} mismatched mappings")
+            
+            # Double-check: verify no mismatches remain
+            remaining_keys = set(zip(combined_df['original_term'], combined_df['chebi_id']))
+            overlap = mismatch_keys.intersection(remaining_keys)
+            if overlap:
+                print(f"  WARNING: {len(overlap)} mismatches still present: {list(overlap)[:3]}...")
+            else:
+                print(f"  ✓ All mismatches successfully removed")
         
         # Sort by CHEBI ID and original term
         combined_df = combined_df.sort_values(['chebi_id', 'original_term'])

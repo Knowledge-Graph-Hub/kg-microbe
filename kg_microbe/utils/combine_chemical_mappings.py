@@ -151,9 +151,9 @@ def process_chemicals_sssom(file_path):
 
 
 def process_kegg_chebi(file_path):
-    """Process KEGG-CHEBI mappings"""
+    """Process KEGG-CHEBI mappings."""
     df = pd.read_csv(file_path, sep='\t', header=None, names=['kegg_id', 'chebi_id'])
-    
+
     mappings = []
     for _, row in df.iterrows():
         chebi_id = normalize_chebi_id(row['chebi_id'])

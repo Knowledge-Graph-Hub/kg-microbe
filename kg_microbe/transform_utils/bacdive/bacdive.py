@@ -452,12 +452,10 @@ class BacDiveTransform(Transform):
         if isinstance(input_json, dict):
             # Old format: convert to list of (key, value) tuples
             data_items = list(input_json.items())
-            is_old_format = True
         elif isinstance(input_json, list):
             # New format: already a list, create tuples with index as key
-            data_items = [(str(item.get('General', {}).get('BacDive-ID', idx)), item) 
+            data_items = [(str(item.get('General', {}).get('BacDive-ID', idx)), item)
                           for idx, item in enumerate(input_json)]
-            is_old_format = False
         else:
             raise ValueError(f"Unexpected JSON format: expected dict or list, got {type(input_json)}")
 
@@ -662,7 +660,6 @@ class BacDiveTransform(Transform):
                     # Get "General" information
                     general_info = value.get(GENERAL, {})
                     # Extract BacDive-ID from the data, use key (which contains the correct ID/key)
-                    bacdive_id = general_info.get('BacDive-ID', key)
                     # key is already the correct string ID from our preprocessing
                     # bacdive_id = general_info.get(BACDIVE_ID) # This is the same as `key`
                     dsm_number = general_info.get(DSM_NUMBER)

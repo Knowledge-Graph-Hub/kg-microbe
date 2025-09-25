@@ -16,7 +16,8 @@ METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkele
 
 
 def uri_to_curie(uri: str) -> str:
-    """Convert a URI to a CURIE using a `curies` library specified custom Prefix Map.
+    """
+    Convert a URI to a CURIE using a `curies` library specified custom Prefix Map.
 
     It also checks if the input uri is already a CURIE, in which case it returns
     the CURIE value as-is.
@@ -85,7 +86,8 @@ class MetpoTreeNode:
         self.children.append(child)
 
     def find_biolink_equivalent_parent(self) -> Optional[str]:
-        """Find the closest parent (including self) that has a biolink equivalent.
+        """
+        Find the closest parent (including self) that has a biolink equivalent.
 
         (value populated in the `biolink equivalent` column).
         """
@@ -236,7 +238,8 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
 
 
 def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
-    """Load METPO mappings from METPO classes ROBOT template file for a given synonym column.
+    """
+    Load METPO mappings from METPO classes ROBOT template file for a given synonym column.
 
     Implements the logic to find appropriate _predicates_ by traversing the parent hierarchy to find
     `biolink equivalent` and then mapping to properties.

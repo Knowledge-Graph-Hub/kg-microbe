@@ -94,7 +94,7 @@ class MadinEtAlTransform(Transform):
         :param input_dir: Input file path (str)
         :param output_dir: Output file path (str)
         """
-        
+
         source_name = MADIN_ETAL
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
         self.nlp = nlp
@@ -227,10 +227,11 @@ class MadinEtAlTransform(Transform):
                     )
                     if metabolism:
                         # create metabolism node and edge to tax_id
-                        # Use biolink equivalent for category, predicate biolink equivalent from properties
+                        # use `biolink equivalent` for 'category' and
+                        # for 'predicate', `biolink equivalent` from properties
                         category = metabolism.get("biolink_equivalent", METABOLISM_CATEGORY)
                         predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
-                        # If no biolink equivalent, fall back to biolink:has_phenotype
+                        # fallback: if no biolink equivalent use `biolink:has_phenotype`
                         if predicate_biolink:
                             predicate = predicate_biolink
                         else:
@@ -267,12 +268,13 @@ class MadinEtAlTransform(Transform):
                             # print(f"Pathway: {pathway}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
                                 # create pathway node and edge to tax_id
-                                # Use biolink equivalent for category, predicate biolink equivalent from properties
+                                # use `biolink equivalent` for 'category' and
+                                # for 'predicate', `biolink equivalent` from properties
                                 category = metpo_mapping.get("biolink_equivalent", PATHWAY_CATEGORY)
                                 predicate_biolink = metpo_mapping.get(
                                     "predicate_biolink_equivalent", ""
                                 )
-                                # If no biolink equivalent, fall back to biolink:capable_of
+                                # fallback: if no biolink equivalent use `biolink:capable_of`
                                 if predicate_biolink:
                                     predicate = predicate_biolink
                                 else:
@@ -364,14 +366,15 @@ class MadinEtAlTransform(Transform):
                             # print(f"Substrate: {substrate}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
                                 # create carbon substrate node and edge to tax_id
-                                # Use biolink equivalent for category, predicate biolink equivalent from properties
+                                # use `biolink equivalent` for 'category' and
+                                # for 'predicate', `biolink equivalent` from properties
                                 category = metpo_mapping.get(
                                     "biolink_equivalent", CARBON_SUBSTRATE_CATEGORY
                                 )
                                 predicate_biolink = metpo_mapping.get(
                                     "predicate_biolink_equivalent", ""
                                 )
-                                # If no biolink equivalent, fall back to biolink:consumes
+                                # fallback: if no biolink equivalent use `biolink:consumes`
                                 if predicate_biolink:
                                     predicate = predicate_biolink
                                 else:
@@ -460,12 +463,13 @@ class MadinEtAlTransform(Transform):
                         # print(f"Cell shape: {cell_shape}, METPO mapping: {metpo_mapping}")
                         if metpo_mapping:
                             # create cell shape node and edge to tax_id
-                            # Use biolink equivalent for category, predicate biolink equivalent from properties
+                            # use `biolink equivalent` for 'category' and
+                            # for 'predicate', `biolink equivalent` from properties
                             category = metpo_mapping.get("biolink_equivalent", PHENOTYPIC_CATEGORY)
                             predicate_biolink = metpo_mapping.get(
                                 "predicate_biolink_equivalent", ""
                             )
-                            # If no biolink equivalent, fall back to biolink:has_phenotype
+                            # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = predicate_biolink
                             else:

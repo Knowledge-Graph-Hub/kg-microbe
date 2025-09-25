@@ -45,6 +45,7 @@ def uri_to_curie(uri: str) -> str:
 
 
 class MetpoTreeNode:
+
     """
     Represents a node in the METPO class hierarchy tree.
 
@@ -61,6 +62,13 @@ class MetpoTreeNode:
     def __init__(
         self, iri: str, label: str, synonyms: List[str] = None, biolink_equivalent: str = None
     ):
+        """Initialize a MetpoTreeNode.
+
+        :param iri: The IRI or CURIE of the node
+        :param label: The human-readable label of the node
+        :param synonyms: List of synonyms for the node, defaults to None
+        :param biolink_equivalent: Biolink equivalent IRI if available, defaults to None
+        """
         self.iri = iri  # specified as CURIEs in the METPO classes/properties sheets
         self.label = label  # human-readable label
         self.synonyms = (
@@ -76,8 +84,10 @@ class MetpoTreeNode:
         self.children.append(child)
 
     def find_biolink_equivalent_parent(self) -> Optional[str]:
-        """Find the closest parent (including self) that has a biolink equivalent
-        (value populated in the `biolink equivalent` column)."""
+        """
+        Find the closest parent (including self) that has a biolink equivalent
+        (value populated in the `biolink equivalent` column).
+        """
         current = self
         while current is not None:
             if current.biolink_equivalent:
@@ -178,9 +188,9 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
     Load METPO properties and create a mapping from RANGE class labels to property info.
 
     For example, from the METPO properties sheet, we can extract:
-    | ID               | label            | RANGE                 | biolink equivalent                                          |
-    |------------------|------------------|-----------------------|-------------------------------------------------------------|
-    | METPO:2000102    | has phenotype    | phenotype             | https://biolink.github.io/biolink-model/has_phenotype       |
+    | ID            | label         | RANGE     | biolink equivalent                                    |
+    |---------------|---------------|-----------|-------------------------------------------------------|
+    | METPO:2000102 | has phenotype | phenotype | https://biolink.github.io/biolink-model/has_phenotype |
 
     This would create a mapping that looks like below:
     {
@@ -230,9 +240,10 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     Implements the logic to find appropriate _predicates_ by traversing the parent hierarchy to find
     `biolink equivalent` and then mapping to properties.
 
-    :param synonym_column: The column name to use for synonyms (e.g., 'bacdive keyword synonym', 'madin synonym or field', etc.)
+    :param synonym_column: The column name to use for synonyms 
+        (e.g., 'bacdive keyword synonym', 'madin synonym or field', etc.)
     :return: Dictionary mapping synonyms to METPO curie, label, and predicate information.
-             Format: {synonym: {'curie': metpo_curie, 'label': metpo_label, 'predicate': predicate_label}}
+        Format: {synonym: {'curie': metpo_curie, 'label': metpo_label, 'predicate': predicate_label}}
     :rtype: Dict[str, Dict[str, str]]
     :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
     :raises ValueError: If the response content is empty or invalid

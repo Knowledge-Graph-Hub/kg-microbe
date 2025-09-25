@@ -37,7 +37,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBI_TO_CARBON_SUBSTRATE_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
-    NCBI_TO_METABOLISM_EDGE,
     NCBI_TO_PATHWAY_EDGE,
     NCBI_TO_SHAPE_EDGE,
     NCBITAXON_PREFIX,
@@ -68,6 +67,7 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class MadinEtAlTransform(Transform):
+
     """
     Ingest Madin et al dataset (NCBI/GTDB).
 
@@ -94,7 +94,6 @@ class MadinEtAlTransform(Transform):
         :param input_dir: Input file path (str)
         :param output_dir: Output file path (str)
         """
-
         source_name = MADIN_ETAL
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
         self.nlp = nlp

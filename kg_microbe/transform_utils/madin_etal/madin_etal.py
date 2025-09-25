@@ -68,7 +68,6 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class MadinEtAlTransform(Transform):
-
     """
     Ingest Madin et al dataset (NCBI/GTDB).
 
@@ -95,10 +94,11 @@ class MadinEtAlTransform(Transform):
         :param input_dir: Input file path (str)
         :param output_dir: Output file path (str)
         """
+        
         source_name = MADIN_ETAL
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
         self.nlp = nlp
-        self.madin_metpo_mappings = load_metpo_mappings('madin synonym or field')
+        self.madin_metpo_mappings = load_metpo_mappings("madin synonym or field")
         self.environments_file = self.input_base_dir / "environments.csv"
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -222,18 +222,28 @@ class MadinEtAlTransform(Transform):
                     tax_node = [tax_id, NCBI_CATEGORY, tax_name]
 
                     # block handling "metabolism" column from Madin etal dataset/CSV sheet
-                    metabolism = self.madin_metpo_mappings.get(filtered_row[METABOLISM_COLUMN], None)
+                    metabolism = self.madin_metpo_mappings.get(
+                        filtered_row[METABOLISM_COLUMN], None
+                    )
                     if metabolism:
                         # create metabolism node and edge to tax_id
+                        # Use biolink equivalent for category, predicate biolink equivalent from properties
+                        category = metabolism.get("biolink_equivalent", METABOLISM_CATEGORY)
+                        predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
+                        # If no biolink equivalent, fall back to biolink:has_phenotype
+                        if predicate_biolink:
+                            predicate = predicate_biolink
+                        else:
+                            predicate = "biolink:has_phenotype"
                         metabolism_node = [
-                            metabolism['curie'],
-                            METABOLISM_CATEGORY,
-                            metabolism['label'],
+                            metabolism["curie"],
+                            category,
+                            metabolism["label"],
                         ]
                         tax_metabolism_edge = [
                             tax_id,
-                            NCBI_TO_METABOLISM_EDGE,
-                            metabolism['curie'],
+                            predicate,
+                            metabolism["curie"],
                             BIOLOGICAL_PROCESS,
                         ]
 
@@ -257,38 +267,58 @@ class MadinEtAlTransform(Transform):
                             # print(f"Pathway: {pathway}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
                                 # create pathway node and edge to tax_id
-                                pathway_nodes.append([
-                                    metpo_mapping['curie'],
-                                    PATHWAY_CATEGORY,
-                                    metpo_mapping['label'],
-                                ])
-                                tax_pathway_edge.append([
-                                    tax_id,
-                                    NCBI_TO_PATHWAY_EDGE,
-                                    metpo_mapping['curie'],
-                                    BIOLOGICAL_PROCESS,
-                                ])
+                                # Use biolink equivalent for category, predicate biolink equivalent from properties
+                                category = metpo_mapping.get("biolink_equivalent", PATHWAY_CATEGORY)
+                                predicate_biolink = metpo_mapping.get(
+                                    "predicate_biolink_equivalent", ""
+                                )
+                                # If no biolink equivalent, fall back to biolink:capable_of
+                                if predicate_biolink:
+                                    predicate = predicate_biolink
+                                else:
+                                    predicate = "biolink:capable_of"
+                                pathway_nodes.append(
+                                    [
+                                        metpo_mapping["curie"],
+                                        category,
+                                        metpo_mapping["label"],
+                                    ]
+                                )
+                                tax_pathway_edge.append(
+                                    [
+                                        tax_id,
+                                        predicate,
+                                        metpo_mapping["curie"],
+                                        BIOLOGICAL_PROCESS,
+                                    ]
+                                )
                             else:
                                 pathways_not_in_metpo.append(pathway)
 
                         # For pathways not found in METPO, fall back to NER results
                         if pathways_not_in_metpo:
-                            go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways_not_in_metpo)
+                            go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(
+                                pathways_not_in_metpo
+                            )
                             go_result_for_tax_id = go_result.loc[go_condition]
                             if go_result_for_tax_id.empty:
                                 # Use fallback naming if no NER results
                                 for item in pathways_not_in_metpo:
-                                    pathway_nodes.append([
-                                    PATHWAY_PREFIX + item.strip(),
-                                    PATHWAY_CATEGORY,
-                                    item.strip()
-                                ])
-                                    tax_pathway_edge.append([
-                                        tax_id,
-                                        NCBI_TO_PATHWAY_EDGE,
-                                        PATHWAY_PREFIX + item.strip().lower(),
-                                        BIOLOGICAL_PROCESS,
-                                    ])
+                                    pathway_nodes.append(
+                                        [
+                                            PATHWAY_PREFIX + item.strip(),
+                                            PATHWAY_CATEGORY,
+                                            item.strip(),
+                                        ]
+                                    )
+                                    tax_pathway_edge.append(
+                                        [
+                                            tax_id,
+                                            NCBI_TO_PATHWAY_EDGE,
+                                            PATHWAY_PREFIX + item.strip().lower(),
+                                            BIOLOGICAL_PROCESS,
+                                        ]
+                                    )
                             else:
                                 exact_condition_go = (
                                     go_result_for_tax_id[OBJECT_LABEL_COLUMN]
@@ -334,17 +364,33 @@ class MadinEtAlTransform(Transform):
                             # print(f"Substrate: {substrate}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
                                 # create carbon substrate node and edge to tax_id
-                                carbon_substrate_nodes.append([
-                                    metpo_mapping['curie'],
-                                    CARBON_SUBSTRATE_CATEGORY,
-                                    metpo_mapping['label'],
-                                ])
-                                tax_carbon_substrate_edge.append([
-                                    tax_id,
-                                    NCBI_TO_CARBON_SUBSTRATE_EDGE,
-                                    metpo_mapping['curie'],
-                                    TROPHICALLY_INTERACTS_WITH,
-                                ])
+                                # Use biolink equivalent for category, predicate biolink equivalent from properties
+                                category = metpo_mapping.get(
+                                    "biolink_equivalent", CARBON_SUBSTRATE_CATEGORY
+                                )
+                                predicate_biolink = metpo_mapping.get(
+                                    "predicate_biolink_equivalent", ""
+                                )
+                                # If no biolink equivalent, fall back to biolink:consumes
+                                if predicate_biolink:
+                                    predicate = predicate_biolink
+                                else:
+                                    predicate = "biolink:consumes"
+                                carbon_substrate_nodes.append(
+                                    [
+                                        metpo_mapping["curie"],
+                                        category,
+                                        metpo_mapping["label"],
+                                    ]
+                                )
+                                tax_carbon_substrate_edge.append(
+                                    [
+                                        tax_id,
+                                        predicate,
+                                        metpo_mapping["curie"],
+                                        TROPHICALLY_INTERACTS_WITH,
+                                    ]
+                                )
                             else:
                                 carbon_substrates_not_in_metpo.append(substrate)
 
@@ -357,37 +403,47 @@ class MadinEtAlTransform(Transform):
                             if chebi_result_for_tax_id.empty:
                                 # Use fallback naming if no NER results
                                 for item in carbon_substrates_not_in_metpo:
-                                    carbon_substrate_nodes.append([
-                                        CARBON_SUBSTRATE_PREFIX + item.strip(),
-                                        CARBON_SUBSTRATE_CATEGORY,
-                                        item.strip(),
-                                    ])
-                                    tax_carbon_substrate_edge.append([
-                                        tax_id,
-                                        NCBI_TO_CARBON_SUBSTRATE_EDGE,
-                                        CARBON_SUBSTRATE_PREFIX + item.strip(),
-                                        TROPHICALLY_INTERACTS_WITH,
-                                    ])
+                                    carbon_substrate_nodes.append(
+                                        [
+                                            CARBON_SUBSTRATE_PREFIX + item.strip(),
+                                            CARBON_SUBSTRATE_CATEGORY,
+                                            item.strip(),
+                                        ]
+                                    )
+                                    tax_carbon_substrate_edge.append(
+                                        [
+                                            tax_id,
+                                            NCBI_TO_CARBON_SUBSTRATE_EDGE,
+                                            CARBON_SUBSTRATE_PREFIX + item.strip(),
+                                            TROPHICALLY_INTERACTS_WITH,
+                                        ]
+                                    )
                             else:
                                 exact_condition_chebi = (
                                     chebi_result_for_tax_id[OBJECT_LABEL_COLUMN]
                                     == chebi_result_for_tax_id[SUBJECT_LABEL_COLUMN]
                                 )
-                                exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
+                                exact_match_chebi_df = chebi_result_for_tax_id[
+                                    exact_condition_chebi
+                                ]
                                 if not exact_match_chebi_df.empty:
                                     chebi_result_for_tax_id = exact_match_chebi_df
                                 for row in chebi_result_for_tax_id.iterrows():
-                                    carbon_substrate_nodes.append([
-                                        row[1].object_id,
-                                        CARBON_SUBSTRATE_CATEGORY,
-                                        row[1].object_label,
-                                    ])
-                                    tax_carbon_substrate_edge.append([
-                                        tax_id,
-                                        NCBI_TO_CARBON_SUBSTRATE_EDGE,
-                                        row[1].object_id,
-                                        BIOLOGICAL_PROCESS,
-                                    ])
+                                    carbon_substrate_nodes.append(
+                                        [
+                                            row[1].object_id,
+                                            CARBON_SUBSTRATE_CATEGORY,
+                                            row[1].object_label,
+                                        ]
+                                    )
+                                    tax_carbon_substrate_edge.append(
+                                        [
+                                            tax_id,
+                                            NCBI_TO_CARBON_SUBSTRATE_EDGE,
+                                            row[1].object_id,
+                                            BIOLOGICAL_PROCESS,
+                                        ]
+                                    )
 
                         node_writer.writerows(carbon_substrate_nodes)
                         edge_writer.writerows(tax_carbon_substrate_edge)
@@ -404,15 +460,25 @@ class MadinEtAlTransform(Transform):
                         # print(f"Cell shape: {cell_shape}, METPO mapping: {metpo_mapping}")
                         if metpo_mapping:
                             # create cell shape node and edge to tax_id
+                            # Use biolink equivalent for category, predicate biolink equivalent from properties
+                            category = metpo_mapping.get("biolink_equivalent", PHENOTYPIC_CATEGORY)
+                            predicate_biolink = metpo_mapping.get(
+                                "predicate_biolink_equivalent", ""
+                            )
+                            # If no biolink equivalent, fall back to biolink:has_phenotype
+                            if predicate_biolink:
+                                predicate = predicate_biolink
+                            else:
+                                predicate = "biolink:has_phenotype"
                             cell_shape_node = [
-                                metpo_mapping['curie'],
-                                PHENOTYPIC_CATEGORY,
-                                metpo_mapping['label'],
+                                metpo_mapping["curie"],
+                                category,
+                                metpo_mapping["label"],
                             ]
                             tax_to_cell_shape_edge = [
                                 tax_id,
-                                NCBI_TO_SHAPE_EDGE,
-                                metpo_mapping['curie'],
+                                predicate,
+                                metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
                             ]
                         else:

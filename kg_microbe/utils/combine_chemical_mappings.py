@@ -14,11 +14,12 @@ All hard-coded mapping rules and corrections are defined at the top of the file
 for easy maintenance and documentation.
 """
 
-import pandas as pd
+import difflib
 import json
 import re
 from pathlib import Path
-import difflib
+
+import pandas as pd
 
 
 # =============================================================================
@@ -92,7 +93,7 @@ MIXTURE_COMPONENT_MAPPINGS = {
 
 
 def normalize_chebi_id(chebi_id):
-    """Normalize CHEBI ID format to CHEBI:XXXXXX"""
+    """Normalize CHEBI ID format to CHEBI:XXXXXX."""
     if not chebi_id or pd.isna(chebi_id):
         return None
 
@@ -116,7 +117,7 @@ def normalize_chebi_id(chebi_id):
 
 
 def process_chemicals_sssom(file_path):
-    """Process chemicals SSSOM mappings"""
+    """Process chemicals SSSOM mappings."""
     # Skip header comments
     with open(file_path, 'r') as f:
         lines = f.readlines()
@@ -171,7 +172,7 @@ def process_kegg_chebi(file_path):
 
 
 def process_metabolite_mapping_json(file_path):
-    """Process BacDive metabolite mapping JSON"""
+    """Process BacDive metabolite mapping JSON."""
     with open(file_path, 'r') as f:
         data = json.load(f)
 
@@ -192,7 +193,7 @@ def process_metabolite_mapping_json(file_path):
 
 
 def process_chebi_manual_annotation(file_path):
-    """Process manual CHEBI annotations"""
+    """Process manual CHEBI annotations."""
     df = pd.read_csv(file_path, sep='\t')
 
     mappings = []
@@ -212,7 +213,7 @@ def process_chebi_manual_annotation(file_path):
 
 
 def process_bacdive_mappings(file_path):
-    """Process BacDive API mappings"""
+    """Process BacDive API mappings."""
     df = pd.read_csv(file_path, sep='\t')
 
     mappings = []
@@ -232,7 +233,7 @@ def process_bacdive_mappings(file_path):
 
 
 def load_chebi_labels(file_path):
-    """Load CHEBI labels from chebi_nodes.tsv"""
+    """Load CHEBI labels from chebi_nodes.tsv."""
     print("Loading CHEBI labels...")
     df = pd.read_csv(file_path, sep='\t')
 
@@ -264,7 +265,7 @@ def normalize_for_comparison(text):
 
 
 def is_known_trade_name_mapping(original_term, chebi_label):
-    """Check if this is a known valid trade name to chemical name mapping using TRADE_NAME_MAPPINGS"""
+    """Check if this is a known valid trade name to chemical name mapping using TRADE_NAME_MAPPINGS."""
     original_lower = str(original_term).lower().strip()
     chebi_lower = str(chebi_label).lower().strip()
 
@@ -277,7 +278,7 @@ def is_known_trade_name_mapping(original_term, chebi_label):
 
 
 def is_valid_synonym_mapping(original_term, chebi_label):
-    """Check for valid synonym mappings using SYNONYM_MAPPINGS"""
+    """Check for valid synonym mappings using SYNONYM_MAPPINGS."""
     original_lower = str(original_term).lower().strip()
     chebi_lower = str(chebi_label).lower().strip()
 
@@ -290,7 +291,7 @@ def is_valid_synonym_mapping(original_term, chebi_label):
 
 
 def is_acceptable_broader_mapping(original_term, chebi_label):
-    """Check for mappings that are broader but still acceptable using BROADER_MAPPINGS"""
+    """Check for mappings that are broader but still acceptable using BROADER_MAPPINGS."""
     original_lower = str(original_term).lower().strip()
     chebi_lower = str(chebi_label).lower().strip()
 
@@ -302,7 +303,7 @@ def is_acceptable_broader_mapping(original_term, chebi_label):
 
 
 def handle_mixture_mappings(original_term, chebi_labels_dict):
-    """Handle mixture terms by splitting and mapping individual components using MIXTURE_COMPONENT_MAPPINGS"""
+    """Handle mixture terms by splitting and mapping individual components using MIXTURE_COMPONENT_MAPPINGS."""
     # Handle underscore-separated mixtures
     if '_' in original_term:
         components = original_term.split('_')
@@ -329,13 +330,13 @@ def handle_mixture_mappings(original_term, chebi_labels_dict):
 
 
 def apply_manual_corrections(original_term, chebi_id):
-    """Apply manual corrections for specific problematic mappings using MANUAL_CORRECTIONS"""
+    """Apply manual corrections for specific problematic mappings using MANUAL_CORRECTIONS."""
     key = (str(original_term).lower().strip(), str(chebi_id).strip())
     return MANUAL_CORRECTIONS.get(key, chebi_id)
 
 
 def terms_match(original_term, chebi_label, similarity_threshold=0.6):
-    """Check if original term and CHEBI label are similar enough"""
+    """Check if original term and CHEBI label are similar enough."""
     if pd.isna(original_term) or pd.isna(chebi_label):
         return True  # Skip comparison if either is missing
 
@@ -386,7 +387,7 @@ def terms_match(original_term, chebi_label, similarity_threshold=0.6):
 
 
 def create_mismatch_report(df, output_dir):
-    """Create a report of term/label mismatches"""
+    """Create a report of term/label mismatches."""
     mismatches = []
 
     for _, row in df.iterrows():
@@ -411,7 +412,7 @@ def create_mismatch_report(df, output_dir):
 
         # Show some examples
         print("  Example mismatches:")
-        for i, mismatch in enumerate(mismatches[:5]):
+        for _i, mismatch in enumerate(mismatches[:5]):
             print(f"    {mismatch['original_term']} -> {mismatch['chebi_label']} ({mismatch['chebi_id']})")
 
         return mismatch_df
@@ -422,7 +423,7 @@ def create_mismatch_report(df, output_dir):
 
 def main():
     """
-    Main function to combine all mapping files into a unified chemical mappings dataset.
+    Combine all mapping files into a unified chemical mappings dataset.
 
     MAPPING STEPS AND TASKS PERFORMED:
 
@@ -544,7 +545,9 @@ def main():
         rows_to_remove = []
 
         for idx, row in combined_df.iterrows():
-            if '_' in str(row['original_term']) and any(x in str(row['original_term']).lower() for x in ['h2_', '_co2', '_methanol']):
+            mixture_indicators = ['h2_', '_co2', '_methanol']
+            if ('_' in str(row['original_term']) and 
+                any(x in str(row['original_term']).lower() for x in mixture_indicators)):
                 # This is a mixture term, split it
                 mixture_maps = handle_mixture_mappings(row['original_term'], chebi_labels)
                 for mapping in mixture_maps:
@@ -561,7 +564,8 @@ def main():
             if mixture_mappings:
                 mixture_df = pd.DataFrame(mixture_mappings)
                 combined_df = pd.concat([combined_df, mixture_df], ignore_index=True)
-                print(f"    ✓ Split {len(rows_to_remove)} mixture terms into {len(mixture_mappings)} individual mappings")
+                print(f"    ✓ Split {len(rows_to_remove)} mixture terms into "
+                      f"{len(mixture_mappings)} individual mappings")
 
         # STEP 4c: Add CHEBI labels from chebi_nodes.tsv
         print("  Adding CHEBI labels from chebi_nodes.tsv...")
@@ -589,8 +593,8 @@ def main():
         # Filter out mismatches from the final output
         if not mismatch_df.empty:
             # Create a set of (original_term, chebi_id) tuples to exclude
-            mismatch_keys = set(zip(mismatch_df['original_term'], mismatch_df['chebi_id']))
-            print(f"    Validation rules applied:")
+            mismatch_keys = set(zip(mismatch_df['original_term'], mismatch_df['chebi_id'], strict=False))
+            print("    Validation rules applied:")
             print(f"      - Trade names: {len(TRADE_NAME_MAPPINGS)} rules")
             print(f"      - Synonyms: {len(SYNONYM_MAPPINGS)} rules")
             print(f"      - Broader mappings: {len(BROADER_MAPPINGS)} rules")
@@ -607,12 +611,12 @@ def main():
             print(f"    ✓ Filtered out {before_count - after_count} mismatched mappings")
 
             # Double-check: verify no mismatches remain
-            remaining_keys = set(zip(combined_df['original_term'], combined_df['chebi_id']))
+            remaining_keys = set(zip(combined_df['original_term'], combined_df['chebi_id'], strict=False))
             overlap = mismatch_keys.intersection(remaining_keys)
             if overlap:
                 print(f"    ⚠️  WARNING: {len(overlap)} mismatches still present: {list(overlap)[:3]}...")
             else:
-                print(f"    ✓ All mismatches successfully removed")
+                print("    ✓ All mismatches successfully removed")
 
         # STEP 6: Final processing and output
         print("\n6. FINAL PROCESSING AND OUTPUT GENERATION")
@@ -628,22 +632,22 @@ def main():
         # STEP 7: Generate summary statistics
         print("\n7. FINAL SUMMARY STATISTICS")
         print("=" * 80)
-        print(f"✓ SUCCESSFULLY CREATED UNIFIED CHEMICAL MAPPINGS")
+        print("✓ SUCCESSFULLY CREATED UNIFIED CHEMICAL MAPPINGS")
         print(f"  Total mappings: {len(combined_df):,}")
         print(f"  Unique CHEBI IDs: {combined_df['chebi_id'].nunique():,}")
         print(f"  Unique original terms: {combined_df['original_term'].nunique():,}")
 
-        print(f"\nMAPPINGS BY SOURCE:")
+        print("\nMAPPINGS BY SOURCE:")
         source_counts = combined_df['term_source'].value_counts()
         for source, count in source_counts.items():
             print(f"  {source:<25}: {count:>6,} mappings")
 
-        print(f"\nMAPPINGS BY QUALITY:")
+        print("\nMAPPINGS BY QUALITY:")
         quality_counts = combined_df['mapping_quality'].value_counts()
         for quality, count in quality_counts.items():
             print(f"  {quality:<25}: {count:>6,} mappings")
 
-        print(f"\nVALIDATION RULES APPLIED:")
+        print("\nVALIDATION RULES APPLIED:")
         print(f"  Manual corrections      : {len(MANUAL_CORRECTIONS):>6} rules")
         print(f"  Trade name mappings     : {len(TRADE_NAME_MAPPINGS):>6} rules")
         print(f"  Synonym mappings        : {len(SYNONYM_MAPPINGS):>6} rules")
@@ -651,9 +655,9 @@ def main():
         print(f"  Simple chemical mappings: {len(SIMPLE_CHEMICAL_MAPPINGS):>6} rules")
         print(f"  Mixture component maps  : {len(MIXTURE_COMPONENT_MAPPINGS):>6} rules")
 
-        print(f"\nOUTPUT FILES:")
-        print(f"  Final mappings          : mappings/chemical_mappings.tsv")
-        print(f"  Mismatch report         : mappings/chemical_mappings_mismatches.tsv")
+        print("\nOUTPUT FILES:")
+        print("  Final mappings          : mappings/chemical_mappings.tsv")
+        print("  Mismatch report         : mappings/chemical_mappings_mismatches.tsv")
 
         print("=" * 80)
         print("CHEMICAL MAPPINGS UNIFICATION COMPLETED SUCCESSFULLY!")

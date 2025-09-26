@@ -1,41 +1,253 @@
 """Utilities for handling mapping files from remote sources."""
+
 import csv
 import json
-from typing import Dict
+from typing import Dict, List, Optional
 
 import curies
 import requests
 
 from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 
-# remote URL location in metpo GitHub repository for ROBOT template
-# which will be used as the source of METPO mappings
-METPO_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/src/templates/metpo_sheet.tsv"
+# remote URL location in metpo GitHub repository for METPO classes and properties
+# sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
+METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-09-23/src/templates/metpo_sheet.tsv"
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-09-23/src/templates/metpo-properties.tsv"
 
 
 def uri_to_curie(uri: str) -> str:
     """
-    Convert a URI to a CURIE using custom prefix map.
+    Convert a URI to a CURIE using a `curies` library specified custom Prefix Map.
 
-    :param uri: The URI to convert
-    :return: The CURIE representation of the URI, or the original URI if conversion fails
+    It also checks if the input uri is already a CURIE, in which case it returns
+    the CURIE value as-is.
+
+    >>> uri_to_curie("https://w3id.org/metpo/1000059")
+    'METPO:1000059'
+
+    >>> uri_to_curie("METPO:1000059")
+    'METPO:1000059'
+
+    :param uri: The URI to convert, or a CURIE that's already in the correct format
+    :return: The CURIE representation of the URI, or the original input if it's already a CURIE
     """
-    with open(PREFIXMAP_JSON_FILEPATH, 'r') as f:
+    with open(PREFIXMAP_JSON_FILEPATH, "r") as f:
         prefix_map = json.load(f)
 
     converter = curies.Converter.from_prefix_map(prefix_map)
+
+    # If it's already a CURIE, return the string as-is
+    if converter.is_curie(uri):
+        return uri
+
     curie = converter.compress(uri)
 
     return curie if curie is not None else uri
 
 
+class MetpoTreeNode:
+
+    """
+    Represents a node in the METPO class hierarchy tree.
+
+    For example, consider METPO:1000602
+    The node would have:
+        iri = "METPO:1000602"
+        label = "aerobic"
+        synonyms = ["aerobic", "aerobe", "Ox_aerobe"]
+        biolink_equivalent = ""
+        children = []
+        parent = {'iri': 'METPO:1000601', 'label': 'oxygen preference', ...}
+    """
+
+    def __init__(
+        self, iri: str, label: str, synonyms: List[str] = None, biolink_equivalent: str = None
+    ):
+        """
+        Initialize a MetpoTreeNode.
+
+        :param iri: The IRI or CURIE of the node
+        :param label: The human-readable label of the node
+        :param synonyms: List of synonyms for the node, defaults to None
+        :param biolink_equivalent: Biolink equivalent IRI if available, defaults to None
+        """
+        self.iri = iri  # specified as CURIEs in the METPO classes/properties sheets
+        self.label = label  # human-readable label
+        self.synonyms = (
+            synonyms or []
+        )  # synonyms from different data sources (ex. Madin et al, BacDive) corresponding to this class
+        self.biolink_equivalent = biolink_equivalent  # biolink equivalent URL if available
+        self.children: List["MetpoTreeNode"] = []  # list of child nodes
+        self.parent: Optional["MetpoTreeNode"] = None  # reference to parent node
+
+    def add_child(self, child: "MetpoTreeNode"):
+        """Add a child node and set its parent."""
+        child.parent = self
+        self.children.append(child)
+
+    def find_biolink_equivalent_parent(self) -> Optional[str]:
+        """
+        Find the closest parent (including self) that has a biolink equivalent.
+
+        (value populated in the `biolink equivalent` column).
+        """
+        current = self
+        while current is not None:
+            if current.biolink_equivalent:
+                return current.biolink_equivalent
+            current = current.parent
+        return None
+
+    def find_synonym_node(self, synonym: str) -> Optional["MetpoTreeNode"]:
+        """Find the node that contains the given synonym."""
+        if synonym in self.synonyms:
+            return self
+
+        for child in self.children:
+            result = child.find_synonym_node(synonym)
+            if result:
+                return result
+
+        return None
+
+
+def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
+    """
+    Build a tree structure from METPO classes based on parent-child relationships.
+
+    For example, consider the classes METPO:1000602 and METPO:1000603, which are
+    classes for "aerobic" and "anaerobic" microbial oxygen preference traits respectively.
+    Both have a parent class METPO:1000601 ("oxygen preference"). The "oxygen preference"
+    class further has a parent METPO:1000059 ("phenotype"), which also has a parent
+    METPO:1000188 ("quality").
+
+    The METPO tree structure would look like this:
+        METPO:1000188 (quality)
+            └── METPO:1000059 (phenotype)
+                └── METPO:1000601 (oxygen preference)
+                    ├── METPO:1000602 (aerobic)
+                    └── METPO:1000603 (anaerobic)
+
+    :return: Dictionary mapping IRIs/CURIEs to MetpoTreeNode objects
+    """
+    try:
+        response = requests.get(METPO_CLASSES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the metpo sheet file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        # first pass: create all nodes
+        nodes = {}
+        for row in reader:
+            iri = row.get("ID", "").strip()  # now this is a CURIE like METPO:1000059
+            label = row.get("label", "").strip()
+            madin_synonym = row.get("madin synonym or field", "").strip()
+            biolink_equivalent = row.get("biolink equivalent", "").strip()
+
+            if iri and label:
+                # handle pipe-separated synonyms
+                if madin_synonym:
+                    synonyms = [s.strip() for s in madin_synonym.split("|") if s.strip()]
+                else:
+                    synonyms = []
+                nodes[iri] = MetpoTreeNode(iri, label, synonyms, biolink_equivalent)
+
+        # second pass: establish parent-child relationships
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        roots = set(nodes.keys())
+
+        for row in reader:
+            iri = row.get("ID", "").strip()
+            parent_label = row.get("parent class", "").strip()
+
+            if iri in nodes and parent_label:
+                # find parent by label since parent class column contains labels, not CURIEs
+                parent_iri = None
+                for candidate_iri, candidate_node in nodes.items():
+                    if candidate_node.label == parent_label:
+                        parent_iri = candidate_iri
+                        break
+
+                if parent_iri and parent_iri in nodes:
+                    nodes[parent_iri].add_child(nodes[iri])
+                    roots.discard(iri)
+
+        return nodes
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO sheet URL is accessible: {e}"
+        ) from e
+
+
+def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO properties and create a mapping from RANGE class labels to property info.
+
+    For example, from the METPO properties sheet, we can extract:
+    | ID            | label         | RANGE     | biolink equivalent                                    |
+    |---------------|---------------|-----------|-------------------------------------------------------|
+    | METPO:2000102 | has phenotype | phenotype | https://biolink.github.io/biolink-model/has_phenotype |
+
+    This would create a mapping that looks like below:
+    {
+        "phenotype": {
+            "label": "has phenotype",
+            "biolink_equivalent": "https://biolink.github.io/biolink-model/has_phenotype"
+        },
+        ...
+    }
+
+    :return: Dictionary mapping RANGE class labels to property info (label and biolink_equivalent)
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the metpo properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        range_to_predicate = {}
+        for row in reader:
+            range_class = row.get("RANGE", "").strip()
+            label = row.get("label", "").strip()
+            biolink_equivalent = row.get("biolink equivalent", "").strip()
+
+            if range_class and label:
+                # Map RANGE class labels to property info
+                range_to_predicate[range_class] = {
+                    "label": label,
+                    "biolink_equivalent": biolink_equivalent,
+                }
+
+        return range_to_predicate
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
+        ) from e
+
+
 def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     """
-    Load METPO mappings from ROBOT template file (in metpo repository) for a specific synonym column.
+    Load METPO mappings from METPO classes ROBOT template file for a given synonym column.
 
-    :param synonym_column: The column name to use for synonyms (e.g., 'bacdive keyword synonym', 'madin synonym', etc.)
-    :return: Dictionary mapping synonyms to METPO curie and label information.
-             Format: {synonym: {'curie': metpo_curie, 'label': metpo_label}}
+    Implements the logic to find appropriate _predicates_ by traversing the parent hierarchy to find
+    `biolink equivalent` and then mapping to properties.
+
+    :param synonym_column: The column name to use for synonyms
+        (e.g., 'bacdive keyword synonym', 'madin synonym or field', etc.)
+    :return: Dictionary mapping synonyms to METPO curie, label, and predicate information.
+        Format: {synonym: {'curie': metpo_curie, 'label': metpo_label, 'predicate': predicate_label}}
     :rtype: Dict[str, Dict[str, str]]
     :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
     :raises ValueError: If the response content is empty or invalid
@@ -43,30 +255,67 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     mappings = {}
 
     try:
-        response = requests.get(METPO_ROBOT_TEMPLATE_URL, timeout=30)
+        nodes = _build_metpo_tree()  # build the METPO tree structure
+
+        range_to_predicate = (
+            _load_metpo_properties()
+        )  # load properties mapping (RANGE class label -> predicate label)
+
+        # load the METPO classes ROBOT template file/sheet
+        response = requests.get(METPO_CLASSES_ROBOT_TEMPLATE_URL, timeout=30)
         response.raise_for_status()
 
         if not response.text.strip():
             raise ValueError("The contents of the file at the remote URL are empty or invalid.")
 
         lines = response.text.splitlines()
-        # Skip the second header row and use the first row for column names
-        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split('\t'), delimiter='\t')
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
         for row in reader:
-            synonym = row.get(synonym_column, '').strip()
-            metpo_iri = row.get(' ID', '').strip()
-            metpo_label = row.get('label', '').strip()
+            synonym = row.get(synonym_column, "").strip()
+            metpo_curie = row.get("ID", "").strip()  # already a CURIE
+            metpo_label = row.get("label", "").strip()
+            biolink_equivalent = row.get("biolink equivalent", "").strip()
 
-            if synonym and metpo_iri:
-                # Convert IRI to CURIE using the uri_to_curie function
-                metpo_curie = uri_to_curie(metpo_iri)
+            if synonym and metpo_curie:
+                # Find the appropriate predicate using the logic:
+                # 1. find the closest parent with `biolink equivalent`
+                # 2. use the parent's label to find matching RANGE in properties sheet
+                # 3. get the predicate info for that RANGE
+                predicate_label = "has phenotype"  # default
+                predicate_biolink_equivalent = ""  # default empty
+                if metpo_curie in nodes:
+                    node = nodes[metpo_curie]
+                    # find the parent node that has a `biolink equivalent`
+                    current = node
+                    while current is not None:
+                        if current.biolink_equivalent:
+                            # use the parent's label to look up in properties RANGE
+                            parent_label = current.label
+                            if parent_label in range_to_predicate:
+                                predicate_label = range_to_predicate[parent_label]["label"]
+                                predicate_biolink_equivalent = range_to_predicate[parent_label][
+                                    "biolink_equivalent"
+                                ]
+                            break
+                        current = current.parent
 
-                mappings[synonym] = {
-                    'curie': metpo_curie,
-                    'label': metpo_label
-                }
+                # handle pipe-separated synonyms
+                synonyms = [s.strip() for s in synonym.split("|")]
+
+                for syn in synonyms:
+                    if syn:  # only add non-empty synonyms
+                        mappings[syn] = {
+                            "curie": metpo_curie,
+                            "label": metpo_label,
+                            "predicate": predicate_label,
+                            "predicate_biolink_equivalent": predicate_biolink_equivalent,
+                            "biolink_equivalent": biolink_equivalent,
+                        }
 
         return mappings
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(f"Please ensure the remote URL is accessible: {e}") from e
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the remote URL is accessible: {e}"
+        ) from e

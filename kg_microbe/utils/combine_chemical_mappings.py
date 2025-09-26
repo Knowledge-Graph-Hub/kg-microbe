@@ -17,7 +17,6 @@ for easy maintenance and documentation.
 import difflib
 import json
 import re
-
 from pathlib import Path
 
 import pandas as pd

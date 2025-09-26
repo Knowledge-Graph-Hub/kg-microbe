@@ -6,13 +6,11 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-import yaml
 from oaklib import get_adapter
 from oaklib.utilities.ner_utilities import get_exclusion_token_list
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
-    ACTUAL_TERM_KEY,
     BIOLOGICAL_PROCESS,
     CARBON_SUBSTRATE_CATEGORY,
     CARBON_SUBSTRATE_PREFIX,
@@ -50,7 +48,6 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
-    PREFERRED_TERM_KEY,
     ROLE_CATEGORY,
     SHAPE_PREFIX,
     SUBJECT_LABEL_COLUMN,
@@ -61,6 +58,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
 from kg_microbe.utils.ner_utils import annotate
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
@@ -100,7 +98,7 @@ class MadinEtAlTransform(Transform):
         source_name = MADIN_ETAL
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
         self.nlp = nlp
-        self.metabolism_map_yaml = PARENT_DIR / "metabolism_map.yaml"
+        self.madin_metpo_mappings = load_metpo_mappings('madin synonym')
         self.environments_file = self.input_base_dir / "environments.csv"
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -173,10 +171,7 @@ class MadinEtAlTransform(Transform):
                 str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False
             )
 
-        with open(self.metabolism_map_yaml, "r") as file:
-            data = yaml.safe_load(file)
-
-        metabolism_map = {item[ACTUAL_TERM_KEY]: item for item in data}
+        metabolism_map = self.madin_metpo_mappings
         envo_cols = [TYPE_COLUMN, ENVO_TERMS_COLUMN, ENVO_ID_COLUMN]
         envo_df = pd.read_csv(
             self.environments_file, low_memory=False, usecols=envo_cols
@@ -230,14 +225,14 @@ class MadinEtAlTransform(Transform):
                     metabolism = metabolism_map.get(filtered_row[METABOLISM_COLUMN], None)
                     if metabolism:
                         metabolism_node = [
-                            metabolism[ID_COLUMN.upper()],
+                            metabolism['curie'],
                             METABOLISM_CATEGORY,
-                            PREFERRED_TERM_KEY,
+                            metabolism['label'],
                         ]
                         tax_metabolism_edge = [
                             tax_id,
                             NCBI_TO_METABOLISM_EDGE,
-                            metabolism[ID_COLUMN.upper()],
+                            metabolism['curie'],
                             BIOLOGICAL_PROCESS,
                         ]
                     # Get these from NER results

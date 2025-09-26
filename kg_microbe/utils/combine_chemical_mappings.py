@@ -16,8 +16,8 @@ for easy maintenance and documentation.
 
 import difflib
 import json
-import re
 from pathlib import Path
+import re
 
 import pandas as pd
 
@@ -546,7 +546,7 @@ def main():
 
         for idx, row in combined_df.iterrows():
             mixture_indicators = ['h2_', '_co2', '_methanol']
-            if ('_' in str(row['original_term']) and 
+            if ('_' in str(row['original_term']) and
                 any(x in str(row['original_term']).lower() for x in mixture_indicators)):
                 # This is a mixture term, split it
                 mixture_maps = handle_mixture_mappings(row['original_term'], chebi_labels)

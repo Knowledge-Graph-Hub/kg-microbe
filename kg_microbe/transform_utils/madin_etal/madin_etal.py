@@ -67,6 +67,7 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class MadinEtAlTransform(Transform):
+
     """
     Ingest Madin et al dataset (NCBI/GTDB).
 
@@ -97,7 +98,6 @@ class MadinEtAlTransform(Transform):
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
         self.nlp = nlp
         self.madin_metpo_mappings = load_metpo_mappings("madin synonym or field")
-        print(self.madin_metpo_mappings)
         self.environments_file = self.input_base_dir / "environments.csv"
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):

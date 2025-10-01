@@ -226,9 +226,8 @@ class MadinEtAlTransform(Transform):
                     )
                     if metabolism:
                         # create metabolism node and edge to tax_id
-                        # use `biolink equivalent` for 'category' and
-                        # for 'predicate', `biolink equivalent` from properties
-                        category = metabolism.get("biolink_equivalent", METABOLISM_CATEGORY)
+                        # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                        category = metabolism.get("inferred_category", METABOLISM_CATEGORY)
                         predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
                         # fallback: if no biolink equivalent use `biolink:has_phenotype`
                         if predicate_biolink:
@@ -267,9 +266,8 @@ class MadinEtAlTransform(Transform):
                             # print(f"Pathway: {pathway}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
                                 # create pathway node and edge to tax_id
-                                # use `biolink equivalent` for 'category' and
-                                # for 'predicate', `biolink equivalent` from properties
-                                category = metpo_mapping.get("biolink_equivalent", PATHWAY_CATEGORY)
+                                # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                                category = metpo_mapping.get("inferred_category", PATHWAY_CATEGORY)
                                 predicate_biolink = metpo_mapping.get(
                                     "predicate_biolink_equivalent", ""
                                 )
@@ -365,10 +363,9 @@ class MadinEtAlTransform(Transform):
                             # print(f"Substrate: {substrate}, METPO mapping: {metpo_mapping}")
                             if metpo_mapping:
                                 # create carbon substrate node and edge to tax_id
-                                # use `biolink equivalent` for 'category' and
-                                # for 'predicate', `biolink equivalent` from properties
+                                # use biolink_equivalent URL from METPO tree traversal or fallback to default
                                 category = metpo_mapping.get(
-                                    "biolink_equivalent", CARBON_SUBSTRATE_CATEGORY
+                                    "inferred_category", CARBON_SUBSTRATE_CATEGORY
                                 )
                                 predicate_biolink = metpo_mapping.get(
                                     "predicate_biolink_equivalent", ""
@@ -462,9 +459,8 @@ class MadinEtAlTransform(Transform):
                         # print(f"Cell shape: {cell_shape}, METPO mapping: {metpo_mapping}")
                         if metpo_mapping:
                             # create cell shape node and edge to tax_id
-                            # use `biolink equivalent` for 'category' and
-                            # for 'predicate', `biolink equivalent` from properties
-                            category = metpo_mapping.get("biolink_equivalent", PHENOTYPIC_CATEGORY)
+                            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                            category = metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
                             predicate_biolink = metpo_mapping.get(
                                 "predicate_biolink_equivalent", ""
                             )

@@ -278,20 +278,25 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
             biolink_equivalent = row.get("biolink equivalent", "").strip()
 
             if synonym and metpo_curie:
-                # Find the appropriate predicate using the logic:
+                # Find the appropriate predicate and category using tree traversal logic:
                 # 1. find the closest parent with `biolink equivalent`
                 # 2. use the parent's label to find matching RANGE in properties sheet
                 # 3. get the predicate info for that RANGE
+                # 4. use the parent's label as the category
                 predicate_label = "has phenotype"  # default
                 predicate_biolink_equivalent = ""  # default empty
+                inferred_category = ""  # default empty, will be inferred from parent
                 if metpo_curie in nodes:
                     node = nodes[metpo_curie]
                     # find the parent node that has a `biolink equivalent`
                     current = node
                     while current is not None:
                         if current.biolink_equivalent:
-                            # use the parent's label to look up in properties RANGE
+                            # use the parent's biolink_equivalent URL as the category
                             parent_label = current.label
+                            inferred_category = (
+                                current.biolink_equivalent
+                            )  # use parent's biolink_equivalent URL as category
                             if parent_label in range_to_predicate:
                                 predicate_label = range_to_predicate[parent_label]["label"]
                                 predicate_biolink_equivalent = range_to_predicate[parent_label][
@@ -311,6 +316,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                             "predicate": predicate_label,
                             "predicate_biolink_equivalent": predicate_biolink_equivalent,
                             "biolink_equivalent": biolink_equivalent,
+                            "inferred_category": inferred_category,
                         }
 
         return mappings

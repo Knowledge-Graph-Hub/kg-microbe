@@ -180,7 +180,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
+from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, _build_metpo_tree
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -194,7 +194,6 @@ else:
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -206,7 +205,143 @@ class BacDiveTransform(Transform):
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
-        self.bacdive_metpo_mappings = load_metpo_mappings('bacdive keyword synonym')
+        self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
+        self.bacdive_metpo_tree = _build_metpo_tree()
+
+    def _extract_value_from_json_path(self, record: dict, json_path: str):
+        """
+        Extract values from a BacDive record using a JSON path.
+
+        :param record: The BacDive record dictionary
+        :param json_path: Dot-separated path like "Physiology and metabolism.oxygen tolerance.oxygen tolerance"
+        :return: List of extracted values (empty list if path not found)
+        """
+        parts = json_path.split(".")
+        current = record
+
+        # Traverse the path
+        for part in parts:
+            if isinstance(current, dict):
+                current = current.get(part)
+                if current is None:
+                    return []
+            else:
+                return []
+
+        # Handle the final value
+        if isinstance(current, list):
+            # If it's a list, extract all values
+            return [str(item).strip() for item in current if item]
+        elif isinstance(current, dict):
+            # If it's a dict, might need to extract specific keys
+            # For now, return empty - this case needs specific handling
+            return []
+        elif current is not None:
+            # It's a scalar value
+            return [str(current).strip()]
+        else:
+            return []
+
+    def _build_keyword_map_from_record(self, record: dict, custom_curie_data: dict):
+        """
+        Build a keyword map for a specific BacDive record by extracting values from JSON paths.
+
+        :param record: The BacDive record dictionary
+        :param custom_curie_data: Custom CURIE data from YAML file
+        :return: Dictionary mapping keywords to METPO information
+        """
+        # Start with the custom curie data (for non-METPO mappings)
+        keyword_map = {
+            second_level_key: nested_data
+            for first_level_value in custom_curie_data.values()
+            for second_level_key, nested_data in first_level_value.items()
+        }
+
+        # Add METPO mappings from bacdive_metpo_mappings
+        for bacdive_label, mapping in self.bacdive_metpo_mappings.items():
+            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+            category = mapping.get("inferred_category", "biolink:PhenotypicQuality")
+            predicate_biolink = mapping.get("predicate_biolink_equivalent", "")
+            # fallback: if no biolink equivalent use `biolink:has_phenotype`
+            if predicate_biolink:
+                predicate = predicate_biolink
+            else:
+                predicate = "biolink:has_phenotype"
+
+            keyword_map[bacdive_label] = {
+                "category": category,
+                "predicate": predicate,
+                "curie": mapping["curie"],
+                "name": mapping["label"],
+            }
+            # there are also mappings for the "Ox_" prefix variants in the CUSTOM_CURIES_YAML_FILE file
+            # so add those to keyword_map as well
+            if bacdive_label in [
+                "aerobic",
+                "anaerobic",
+                "microaerophilic",
+                "facultatively aerobic",
+            ]:
+                ox_key = f"Ox_{bacdive_label.replace(' ', '_')}"
+                keyword_map[ox_key] = {
+                    "category": category,
+                    "predicate": predicate,
+                    "curie": mapping["curie"],
+                    "name": mapping["label"],
+                }
+
+        # Now traverse the tree to find nodes with JSON paths and extract values from this record
+        for node in self.bacdive_metpo_tree.values():
+            if node.bacdive_json_paths:
+                # This node has JSON paths - extract values from the record
+                for json_path in node.bacdive_json_paths:
+                    extracted_values = self._extract_value_from_json_path(record, json_path)
+
+                    # For each extracted value, find matching child nodes with that synonym
+                    for value in extracted_values:
+                        # Normalize the value for lookup
+                        normalized_value = value.lower().replace(" ", "_").replace("-", "_")
+
+                        # Check if this value matches any synonyms in child nodes
+                        for child in node.children:
+                            if value in child.synonyms:
+                                # Found a match - add to keyword_map using normalized key
+                                if normalized_value not in keyword_map:
+                                    # Find the mapping by searching for a synonym that matches this value
+                                    found_mapping = False
+                                    for syn, map_info in self.bacdive_metpo_mappings.items():
+                                        if map_info["curie"] == child.iri:
+                                            category = map_info.get(
+                                                "inferred_category", "biolink:PhenotypicQuality"
+                                            )
+                                            predicate_biolink = map_info.get(
+                                                "predicate_biolink_equivalent", ""
+                                            )
+                                            predicate = (
+                                                predicate_biolink
+                                                if predicate_biolink
+                                                else "biolink:has_phenotype"
+                                            )
+
+                                            keyword_map[normalized_value] = {
+                                                "category": category,
+                                                "predicate": predicate,
+                                                "curie": child.iri,
+                                                "name": child.label,
+                                            }
+                                            found_mapping = True
+                                            break
+
+                                    # If not found in mappings, create a basic entry
+                                    if not found_mapping and child.iri:
+                                        keyword_map[normalized_value] = {
+                                            "category": "biolink:PhenotypicQuality",
+                                            "predicate": "biolink:has_phenotype",
+                                            "curie": child.iri,
+                                            "name": child.label,
+                                        }
+
+        return keyword_map
 
     def _flatten_to_dicts(self, obj):
         if isinstance(obj, dict):
@@ -351,8 +486,8 @@ class BacDiveTransform(Transform):
             except ValueError:
                 return None
 
-        #print(f"\n--- DEBUG: Entering _process_metabolites ---")
-        #print(f"Dictionary contents:\n{dictionary}\n")
+        # print(f"\n--- DEBUG: Entering _process_metabolites ---")
+        # print(f"Dictionary contents:\n{dictionary}\n")
 
         # 1) Handle 'medium' label
         medium_label = dictionary.get(MEDIUM_KEY)
@@ -360,15 +495,17 @@ class BacDiveTransform(Transform):
             medium_id = (
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
-        #    print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
+            #    print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
             node_row = [
                 medium_id,
                 METABOLITE_CATEGORY,
                 medium_label,
-            ] + [None] * (len(self.node_header) - 3)
-            #print(f"    Writing node row for MEDIADIVE_MEDIUM_PREFIX{node_row}")
+            ] + [
+                None
+            ] * (len(self.node_header) - 3)
+            # print(f"    Writing node row for MEDIADIVE_MEDIUM_PREFIX{node_row}")
             node_writer.writerow(node_row)
-        #else:
+        # else:
         #    print("--> No medium label found in this dictionary.")
 
         # 2) Map items in 'dictionary' to METABOLITE_MAP
@@ -377,11 +514,11 @@ class BacDiveTransform(Transform):
             k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
         }
         if metabolites_with_curies:
-        #    print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
+            #    print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
             for k, v in metabolites_with_curies.items():
-        #        print(f"    {k} => {v}")
+                #        print(f"    {k} => {v}")
                 numeric_val = parse_numeric_value(v)
-        #        print(f"    numeric_val = {numeric_val}")
+                #        print(f"    numeric_val = {numeric_val}")
 
                 # Determine whether it indicates resistance (<10) or sensitivity (>30)
                 if numeric_val is not None and numeric_val < 15:
@@ -394,8 +531,8 @@ class BacDiveTransform(Transform):
 
                 # Reverse lookup: which METABOLITE_MAP key gave us K?
                 metabolite_id = [key_ for key_, value_ in METABOLITE_MAP.items() if value_ == k][0]
-        #        print(f"    antibiotic_predicate = {antibiotic_predicate}")
-        #        print(f"    metabolite_id = {metabolite_id}")
+                #        print(f"    antibiotic_predicate = {antibiotic_predicate}")
+                #        print(f"    metabolite_id = {metabolite_id}")
 
                 # If there's a valid predicate and ID, write node & edge
                 if antibiotic_predicate and metabolite_id:
@@ -403,8 +540,10 @@ class BacDiveTransform(Transform):
                         metabolite_id,
                         METABOLITE_CATEGORY,
                         k,
-                    ] + [None] * (len(self.node_header) - 3)
-        #            print(f"    Writing node row for antibiotic: {node_row}")
+                    ] + [
+                        None
+                    ] * (len(self.node_header) - 3)
+                    #            print(f"    Writing node row for antibiotic: {node_row}")
                     node_writer.writerow(node_row)
 
                     edge_row = [
@@ -414,14 +553,14 @@ class BacDiveTransform(Transform):
                         None,
                         BACDIVE_PREFIX + key,
                     ]
-        #            print(f"    Writing edge row for antibiotic: {edge_row}")
+                    #            print(f"    Writing edge row for antibiotic: {edge_row}")
                     edge_writer.writerows([edge_row])
         #        else:
         #            print("    ==> No edge created (value in [10..30] range or parse failed).")
-        #else:
+        # else:
         #    print("--> No matching antibiotics found in METABOLITE_MAP for this dictionary.")
 
-        #print("--- DEBUG: Exiting _process_metabolites ---\n")
+        # print("--- DEBUG: Exiting _process_metabolites ---\n")
 
     def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
@@ -602,39 +741,12 @@ class BacDiveTransform(Transform):
                 if assay_nodes_to_write:
                     node_writer.writerows(assay_nodes_to_write)
 
-            keyword_map = {
-                second_level_key: nested_data
-                for first_level_value in custom_curie_data.values()
-                for second_level_key, nested_data in first_level_value.items()
-            }
-
-            # create keyword_map with mappings from self.bacdive_metpo_mappings
-            # instead of relying on the (now deleted) "oxygen" and "temperature" sections of the
-            # CUSTOM_CURIES_YAML_FILE file
-            for bacdive_label, mapping in self.bacdive_metpo_mappings.items():
-                keyword_map[bacdive_label] = {
-                    "category": "biolink:PhenotypicQuality",
-                    "predicate": "biolink:has_phenotype",
-                    "curie": mapping['curie'],
-                    "name": mapping['label']
-                }
-                # there are also mappings for the "Ox_" prefix variants in the CUSTOM_CURIES_YAML_FILE file
-                # so add those to keyword_map as well
-                if bacdive_label in ['aerobic', 'anaerobic', 'microaerophilic', 'facultatively aerobic']:
-                    ox_key = f"Ox_{bacdive_label.replace(' ', '_')}"
-                    keyword_map[ox_key] = {
-                        "category": "biolink:PhenotypicQuality",
-                        "predicate": "biolink:has_phenotype",
-                        "curie": mapping['curie'],
-                        "name": mapping['label']
-                    }
-
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
-            with progress_class(
-                total=len(input_json) + 1, desc="Processing files"
-            ) as progress:
+            with progress_class(total=len(input_json) + 1, desc="Processing files") as progress:
                 for index, value in enumerate(input_json):
+                    # Build keyword_map for this specific record using JSON paths
+                    keyword_map = self._build_keyword_map_from_record(value, custom_curie_data)
                     # * Uncomment this block ONLY if you want to view the split *******
                     # * contents of the JSON file source into YAML files.
                     # import yaml
@@ -648,7 +760,7 @@ class BacDiveTransform(Transform):
                     # Get "General" information
                     general_info = value.get(GENERAL, {})
                     # Extract BacDive-ID from the new format, fallback to index if not found
-                    bacdive_id = general_info.get('BacDive-ID', index)
+                    bacdive_id = general_info.get("BacDive-ID", index)
                     key = str(bacdive_id)
                     # bacdive_id = general_info.get(BACDIVE_ID) # This is the same as `key`
                     dsm_number = general_info.get(DSM_NUMBER)
@@ -829,12 +941,16 @@ class BacDiveTransform(Transform):
 
                                     # Handle DSMZ PDF URLs: https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium*.pdf
                                     # introducing variable below to resolve E501 (defaulting on line length limit)
-                                    dsmz_medium_pattern = "www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium"
+                                    dsmz_medium_pattern = (
+                                        "www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium"
+                                    )
                                     if not medium_id_list and dsmz_medium_pattern in medium_url:
-                                        match = re.search(r'DSMZ_Medium(\d+)\.pdf', medium_url)
+                                        match = re.search(r"DSMZ_Medium(\d+)\.pdf", medium_url)
                                         if match:
                                             medium_number = match.group(1)
-                                            medium_id_list = [f"{MEDIADIVE_MEDIUM_PREFIX}{medium_number}"]
+                                            medium_id_list = [
+                                                f"{MEDIADIVE_MEDIUM_PREFIX}{medium_number}"
+                                            ]
                                     # Track non-matching URLs
                                     if not medium_id_list:
                                         non_matching_media_links.add(medium_url)
@@ -1406,36 +1522,46 @@ class BacDiveTransform(Transform):
                             ot_label = ot_rec.get("oxygen tolerance", "").strip()
                             if ot_label:
                                 # Check if we have a METPO mapping for this oxygen tolerance term
-                                mapping = None
-                                for map_key, map_value in self.bacdive_metpo_mappings.items():
-                                    if map_key == ot_label:
-                                        mapping = map_value
-                                        break
-                                if mapping:
+                                metpo_mapping = self.bacdive_metpo_mappings.get(ot_label, None)
+                                if metpo_mapping:
                                     # Use METPO term
-                                    ot_id = mapping['curie']
-                                    ot_display_label = mapping['label']
-                                    # print(f"DEBUG: Mapped '{ot_label}' -> {ot_id} ({ot_display_label})")
+                                    ot_id = metpo_mapping["curie"]
+                                    ot_display_label = metpo_mapping["label"]
+                                    # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                                    category = metpo_mapping.get(
+                                        "inferred_category", PHENOTYPIC_CATEGORY
+                                    )
+                                    predicate_biolink = metpo_mapping.get(
+                                        "predicate_biolink_equivalent", ""
+                                    )
+                                    # fallback: if no biolink equivalent use `biolink:has_phenotype`
+                                    if predicate_biolink:
+                                        predicate = predicate_biolink
+                                    else:
+                                        predicate = HAS_PHENOTYPE_PREDICATE
                                 else:
                                     # Raise exception if no mapping found
-                                    raise ValueError(f"No METPO mapping found for oxygen tolerance term: '{ot_label}'")
+                                    raise ValueError(
+                                        f"No METPO mapping found for oxygen tolerance term: '{ot_label}'"
+                                    )
 
-                                node_writer.writerow([
-                                    ot_id,
-                                    PHENOTYPIC_CATEGORY,
-                                    ot_display_label
-                                ] + [None]*(len(self.node_header) - 3))
+                                node_writer.writerow(
+                                    [ot_id, category, ot_display_label]
+                                    + [None] * (len(self.node_header) - 3)
+                                )
 
                                 # Now create an edge from each organism in species_with_strains
-                                # to this new oxygen-tolerance node. Use "biolink:has_phenotype" or similar.
+                                # to this new oxygen-tolerance node.
                                 for organism_id in species_with_strains:
-                                    edge_writer.writerow([
-                                        organism_id,
-                                        HAS_PHENOTYPE_PREDICATE,
-                                        ot_id,
-                                        HAS_PHENOTYPE,
-                                        BACDIVE_PREFIX + key,
-                                    ])
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            predicate,
+                                            ot_id,
+                                            HAS_PHENOTYPE,
+                                            BACDIVE_PREFIX + key,
+                                        ]
+                                    )
 
                     if phys_and_metabolism_spore_formation:
                         # Could be a single dict or a list
@@ -1448,29 +1574,57 @@ class BacDiveTransform(Transform):
                             # e.g. sp_rec might look like {"@ref": 23028, "spore formation": "no"}
                             raw_value = sp_rec.get("spore formation", "").strip().lower()
                             if raw_value:
-                                # Map "yes" => "spore_forming", else "no" => "non_spore_forming"
-                                if raw_value == "yes":
-                                    node_id = "sporulation:spore_forming"
-                                    label  = "Spore forming"
+                                # Check if we have a METPO mapping for this spore formation term
+                                # Try to find mapping by the raw value first
+                                metpo_mapping = self.bacdive_metpo_mappings.get(raw_value, None)
+
+                                if metpo_mapping:
+                                    # Use METPO term
+                                    node_id = metpo_mapping["curie"]
+                                    label = metpo_mapping["label"]
+                                    # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                                    category = metpo_mapping.get(
+                                        "inferred_category", PHENOTYPIC_CATEGORY
+                                    )
+                                    predicate_biolink = metpo_mapping.get(
+                                        "predicate_biolink_equivalent", ""
+                                    )
+                                    # fallback: if no biolink equivalent use `biolink:capable_of`
+                                    if predicate_biolink:
+                                        predicate = predicate_biolink
+                                    else:
+                                        predicate = CAPABLE_OF_PREDICATE
                                 else:
-                                    node_id = "sporulation:non_spore_forming"
-                                    label  = "Non-spore forming"
+                                    # Fallback to original logic if not in METPO
+                                    if raw_value == "yes":
+                                        node_id = "sporulation:spore_forming"
+                                        label = "Spore forming"
+                                    else:
+                                        node_id = "sporulation:non_spore_forming"
+                                        label = "Non-spore forming"
+                                    category = PHENOTYPIC_CATEGORY
+                                    predicate = CAPABLE_OF_PREDICATE
 
                                 # Create a node for spore formation status
-                                node_writer.writerow([
-                                    node_id,
-                                    PHENOTYPIC_CATEGORY,
-                                    label,
-                                ] + [None] * (len(self.node_header) - 3))
+                                node_writer.writerow(
+                                    [
+                                        node_id,
+                                        category,
+                                        label,
+                                    ]
+                                    + [None] * (len(self.node_header) - 3)
+                                )
 
                                 for organism_id in species_with_strains:
-                                    edge_writer.writerow([
-                                        organism_id,
-                                        CAPABLE_OF_PREDICATE,
-                                        node_id,
-                                        CAPABLE_OF,
-                                        BACDIVE_PREFIX + key,
-                                    ])
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            predicate,
+                                            node_id,
+                                            CAPABLE_OF,
+                                            BACDIVE_PREFIX + key,
+                                        ]
+                                    )
 
                     if phys_and_metabolism_nutrition_type:
                         # Could be a single dict or a list
@@ -1489,18 +1643,40 @@ class BacDiveTransform(Transform):
                                 splitted_values = [val.strip() for val in raw_value.split("|")]
 
                                 for val in splitted_values:
-                                    # Ensure each val ends with 'y'
-                                    if not val.endswith("y"):
-                                        val += "y"  # e.g., "copiotroph" -> "copiotrophy"
+                                    # First try to find mapping in METPO using the original value
+                                    metpo_mapping = self.bacdive_metpo_mappings.get(val, None)
 
-                                    node_id = f"trophic_type:{val}"
-                                    label   = val  # now guaranteed to end with "y"
+                                    if metpo_mapping:
+                                        # Use METPO term
+                                        node_id = metpo_mapping["curie"]
+                                        label = metpo_mapping["label"]
+                                        # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                                        category = metpo_mapping.get(
+                                            "inferred_category", PATHWAY_CATEGORY
+                                        )
+                                        predicate_biolink = metpo_mapping.get(
+                                            "predicate_biolink_equivalent", ""
+                                        )
+                                        # fallback: if no biolink equivalent use `biolink:capable_of`
+                                        if predicate_biolink:
+                                            predicate = predicate_biolink
+                                        else:
+                                            predicate = CAPABLE_OF_PREDICATE
+                                    else:
+                                        # Fallback to original logic
+                                        # Ensure each val ends with 'y'
+                                        if not val.endswith("y"):
+                                            val += "y"  # e.g., "copiotroph" -> "copiotrophy"
+                                        node_id = f"trophic_type:{val}"
+                                        label = val  # now guaranteed to end with "y"
+                                        category = PATHWAY_CATEGORY
+                                        predicate = CAPABLE_OF_PREDICATE
 
                                     # Create the node for the nutrition type
                                     node_writer.writerow(
                                         [
                                             node_id,
-                                            PATHWAY_CATEGORY,  # or your preferred category
+                                            category,
                                             label,
                                         ]
                                         + [None] * (len(self.node_header) - 3)
@@ -1511,17 +1687,15 @@ class BacDiveTransform(Transform):
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
-                                                CAPABLE_OF_PREDICATE,  # e.g. "biolink:capable_of"
+                                                predicate,
                                                 node_id,
-                                                CAPABLE_OF,            # optional relation
+                                                CAPABLE_OF,  # optional relation
                                                 BACDIVE_PREFIX + key,  # provided_by
                                             ]
                                         )
 
-
-
                     if phys_and_metabolism_API:
-                    # Process each API key separately (e.g. "API zym", "API NH", etc.)
+                        # Process each API key separately (e.g. "API zym", "API NH", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():
                             # Normalize the assay name (e.g. "API zym" -> "API_zym", "API NH" -> "API_NH")
                             assay_name_norm = assay_name.replace(" ", "_")
@@ -1532,7 +1706,8 @@ class BacDiveTransform(Transform):
                             # Collect all keys that have a "+" value across all entries
                             meta_assay = {
                                 f"{assay_name_norm}:{k}"
-                                for entry in values if isinstance(entry, dict)
+                                for entry in values
+                                if isinstance(entry, dict)
                                 for k, v in entry.items()
                                 if v == PLUS_SIGN
                             }
@@ -1579,8 +1754,7 @@ class BacDiveTransform(Transform):
 
                     # Normalize strings (strip + translate)
                     all_values = [
-                        val.strip().translate(translation_table_for_ids)
-                        for val in all_values
+                        val.strip().translate(translation_table_for_ids) for val in all_values
                     ]
 
                     # Create a node and an edge to the organism for each isolation source

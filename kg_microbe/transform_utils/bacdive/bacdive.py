@@ -1184,14 +1184,23 @@ class BacDiveTransform(Transform):
                     if ncbitaxon_id and culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
-                            strain_curie = (
-                                STRAIN_PREFIX + culture_number_cleaned
-                                if len(culture_number_cleaned) > 3
-                                else None
-                            )
-                            strain_label = (
-                                culture_number.strip() if len(culture_number_cleaned) > 3 else None
-                            )
+                            strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
+
+                            # Extract culture collection prefix (e.g., "ATCC", "DSM", "JCM")
+                            # from culture number like "ATCC 23768" or "DSM-16663"
+                            strain_curie = None
+                            if strain_label:
+                                # Split on space or hyphen to get prefix and number
+                                parts = culture_number.strip().replace("-", " ").split()
+                                if len(parts) >= 2:
+                                    # First part is the collection prefix, rest is the number
+                                    collection_prefix = parts[0].upper()
+                                    collection_number = "-".join(parts[1:])
+                                    strain_curie = f"{collection_prefix}:{collection_number}"
+                                else:
+                                    # Fallback to old format if pattern doesn't match
+                                    strain_curie = STRAIN_PREFIX + culture_number_cleaned
+
                             if strain_curie and strain_label:
                                 node_writer.writerow(
                                     [strain_curie, NCBI_CATEGORY, strain_label]

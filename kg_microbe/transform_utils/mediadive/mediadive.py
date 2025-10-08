@@ -366,7 +366,8 @@ class MediaDiveTransform(Transform):
                                 if ncbi_strain_id.size > 0:
                                     ncbi_strain_id = list(ncbi_strain_id)[0]
                                 else:
-                                    ncbi_strain_id = STRAIN_PREFIX + strain_id.replace(":", "_")
+                                    # Use BacDive ID directly instead of strain:bacdive_ prefix
+                                    ncbi_strain_id = strain_id
 
                                 if not (
                                     isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)

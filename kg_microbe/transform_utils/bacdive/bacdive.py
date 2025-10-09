@@ -13,6 +13,7 @@ Output these two files:
 
 import csv
 import json
+import logging
 import os
 import re
 from pathlib import Path
@@ -165,7 +166,6 @@ from kg_microbe.transform_utils.constants import (
     SPORE_FORMATION,
     STRAIN,
     STRAIN_DESIGNATION,
-    STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
@@ -1016,18 +1016,17 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         # species_with_strains.extend([curated_strain_ids[0]])
-                        curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                        curated_strain_id = BACDIVE_PREFIX + key
                         species_with_strains.extend([curated_strain_id])
                         if len(curated_strain_ids) > 0:
-                            prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]
                             curated_strain_label = (
-                                f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
+                                f"{BACDIVE_PREFIX + key} as {strain_id} of {ncbitaxon_id}"
                             )
 
                         else:
                             curated_strain_label = (
-                                f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
+                                f"{BACDIVE_PREFIX + key} of {ncbitaxon_id}"
                             )
 
                         # curated_strain_label = name_tax_classification.get(
@@ -1185,14 +1184,42 @@ class BacDiveTransform(Transform):
                     if ncbitaxon_id and culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
-                            strain_curie = (
-                                STRAIN_PREFIX + culture_number_cleaned
-                                if len(culture_number_cleaned) > 3
-                                else None
-                            )
-                            strain_label = (
-                                culture_number.strip() if len(culture_number_cleaned) > 3 else None
-                            )
+                            strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
+
+                            # Extract culture collection prefix from culture number
+                            # Handles patterns like:
+                            #   "ATCC 23768" -> ATCC:23768
+                            #   "DSM-16663" -> DSM:16663
+                            #   "CRBIP6.1202" -> CRBIP:6.1202
+                            #   "UCCCB10" -> UCCCB:10
+                            #   "JCM34415T" -> JCM:34415T
+                            strain_curie = None
+                            if strain_label:
+                                # First try: space or hyphen separated (e.g., "ATCC 23768", "DSM-16663")
+                                parts = culture_number.strip().replace("-", " ").split()
+                                if len(parts) >= 2:
+                                    # First part is the collection prefix, rest is the number
+                                    collection_prefix = parts[0].upper()
+                                    collection_number = "-".join(parts[1:])
+                                    strain_curie = f"{collection_prefix}:{collection_number}"
+                                else:
+                                    # Second try: string+number+optional_string (e.g., "CRBIP6.1202", "JCM34415T")
+                                    # Match: letters, then numbers (with dots/dashes), then optional letters
+                                    match = re.match(
+                                        r'^([A-Za-z]+)(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip()
+                                    )
+                                    if match:
+                                        collection_prefix = match.group(1).upper()
+                                        collection_number = match.group(2)
+                                        strain_curie = f"{collection_prefix}:{collection_number}"
+                                    else:
+                                        # Pattern doesn't match expected format - skip and warn
+                                        logging.warning(
+                                            f"Skipping strain '{culture_number}' for BacDive ID {key}: "
+                                            f"does not match expected culture collection format"
+                                        )
+                                        continue
+
                             if strain_curie and strain_label:
                                 node_writer.writerow(
                                     [strain_curie, NCBI_CATEGORY, strain_label]

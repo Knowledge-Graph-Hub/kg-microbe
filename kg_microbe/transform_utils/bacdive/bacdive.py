@@ -166,7 +166,6 @@ from kg_microbe.transform_utils.constants import (
     SPORE_FORMATION,
     STRAIN,
     STRAIN_DESIGNATION,
-    STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
@@ -1205,8 +1204,10 @@ class BacDiveTransform(Transform):
                                     strain_curie = f"{collection_prefix}:{collection_number}"
                                 else:
                                     # Second try: string+number+optional_string (e.g., "CRBIP6.1202", "JCM34415T")
-                                    # Match pattern: letters, then numbers (with dots/dashes), then optional letters
-                                    match = re.match(r'^([A-Za-z]+)(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip())
+                                    # Match: letters, then numbers (with dots/dashes), then optional letters
+                                    match = re.match(
+                                        r'^([A-Za-z]+)(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip()
+                                    )
                                     if match:
                                         collection_prefix = match.group(1).upper()
                                         collection_number = match.group(2)

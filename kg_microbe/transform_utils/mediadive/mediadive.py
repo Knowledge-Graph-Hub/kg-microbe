@@ -98,7 +98,6 @@ from kg_microbe.transform_utils.constants import (
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
     SPECIES,
-    STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,

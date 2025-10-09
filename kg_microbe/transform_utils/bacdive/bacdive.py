@@ -1193,6 +1193,7 @@ class BacDiveTransform(Transform):
                             #   "DSM-16663" -> DSM:16663
                             #   "CRBIP6.1202" -> CRBIP:6.1202
                             #   "UCCCB10" -> UCCCB:10
+                            #   "JCM34415T" -> JCM:34415T
                             strain_curie = None
                             if strain_label:
                                 # First try: space or hyphen separated (e.g., "ATCC 23768", "DSM-16663")
@@ -1203,9 +1204,9 @@ class BacDiveTransform(Transform):
                                     collection_number = "-".join(parts[1:])
                                     strain_curie = f"{collection_prefix}:{collection_number}"
                                 else:
-                                    # Second try: string prefix + numeric suffix (e.g., "CRBIP6.1202", "UCCCB10")
-                                    # Match pattern: letters followed by numbers (with optional dots/dashes in number)
-                                    match = re.match(r'^([A-Za-z]+)(\d+(?:[.\-]\d+)*)$', culture_number.strip())
+                                    # Second try: string+number+optional_string (e.g., "CRBIP6.1202", "JCM34415T")
+                                    # Match pattern: letters, then numbers (with dots/dashes), then optional letters
+                                    match = re.match(r'^([A-Za-z]+)(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip())
                                     if match:
                                         collection_prefix = match.group(1).upper()
                                         collection_number = match.group(2)

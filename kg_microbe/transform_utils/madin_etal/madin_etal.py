@@ -57,7 +57,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
+from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.ner_utils import annotate
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
@@ -231,7 +231,7 @@ class MadinEtAlTransform(Transform):
                         predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
                         # fallback: if no biolink equivalent use `biolink:has_phenotype`
                         if predicate_biolink:
-                            predicate = predicate_biolink
+                            predicate = uri_to_curie(predicate_biolink)
                         else:
                             predicate = "biolink:has_phenotype"
                         metabolism_node = [
@@ -273,7 +273,7 @@ class MadinEtAlTransform(Transform):
                                 )
                                 # fallback: if no biolink equivalent use `biolink:capable_of`
                                 if predicate_biolink:
-                                    predicate = predicate_biolink
+                                    predicate = uri_to_curie(predicate_biolink)
                                 else:
                                     predicate = "biolink:capable_of"
                                 pathway_nodes.append(
@@ -372,7 +372,7 @@ class MadinEtAlTransform(Transform):
                                 )
                                 # fallback: if no biolink equivalent use `biolink:consumes`
                                 if predicate_biolink:
-                                    predicate = predicate_biolink
+                                    predicate = uri_to_curie(predicate_biolink)
                                 else:
                                     predicate = "biolink:consumes"
                                 carbon_substrate_nodes.append(
@@ -466,7 +466,7 @@ class MadinEtAlTransform(Transform):
                             )
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
-                                predicate = predicate_biolink
+                                predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
                             cell_shape_node = [

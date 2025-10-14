@@ -334,8 +334,15 @@ class BacDiveTransform(Transform):
         # Add METPO mappings from bacdive_metpo_mappings
         for bacdive_label, mapping in self.bacdive_metpo_mappings.items():
             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-            category = mapping.get("inferred_category", "biolink:PhenotypicQuality")
+            category_url = mapping.get("inferred_category", "")
             predicate_biolink = mapping.get("predicate_biolink_equivalent", "")
+
+            # Convert category URL to CURIE
+            if category_url:
+                category = uri_to_curie(category_url)
+            else:
+                category = "biolink:PhenotypicQuality"  # fallback default
+
             # fallback: if no biolink equivalent use `biolink:has_phenotype`
             if predicate_biolink:
                 predicate = uri_to_curie(predicate_biolink)
@@ -385,12 +392,17 @@ class BacDiveTransform(Transform):
                                     found_mapping = False
                                     for syn, map_info in self.bacdive_metpo_mappings.items():
                                         if map_info["curie"] == child.iri:
-                                            category = map_info.get(
-                                                "inferred_category", "biolink:PhenotypicQuality"
-                                            )
+                                            category_url = map_info.get("inferred_category", "")
                                             predicate_biolink = map_info.get(
                                                 "predicate_biolink_equivalent", ""
                                             )
+
+                                            # Convert category URL to CURIE
+                                            if category_url:
+                                                category = uri_to_curie(category_url)
+                                            else:
+                                                category = "biolink:PhenotypicQuality"
+
                                             predicate = (
                                                 uri_to_curie(predicate_biolink)
                                                 if predicate_biolink

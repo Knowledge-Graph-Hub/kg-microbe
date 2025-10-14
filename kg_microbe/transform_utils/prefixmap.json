@@ -1,3 +1,4 @@
 {
-    "METPO": "https://w3id.org/metpo/"
+    "METPO": "https://w3id.org/metpo/",
+    "biolink": "https://biolink.github.io/biolink-model/"
 }

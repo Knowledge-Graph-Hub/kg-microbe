@@ -284,8 +284,14 @@ class BacDiveTransform(Transform):
                     # Use METPO term
                     node_id = metpo_mapping["curie"]
                     label = metpo_mapping["label"]
-                    category = metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                    category_url = metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
                     predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
+
+                    # convert category URL to CURIE in nodes.tsv (KGX transform output)
+                    if category_url:
+                        category = uri_to_curie(category_url)
+                    else:
+                        category = "biolink:PhenotypicQuality"  # fallback default
 
                     # fallback: if no biolink equivalent use `biolink:has_phenotype`
                     if predicate_biolink:

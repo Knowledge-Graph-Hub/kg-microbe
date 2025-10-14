@@ -52,7 +52,6 @@ from kg_microbe.transform_utils.constants import (
     BIOSAFETY_LEVEL_PREDICATE,
     BIOSAFETY_LEVEL_PREFIX,
     CAPABLE_OF,
-    CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -147,7 +146,6 @@ from kg_microbe.transform_utils.constants import (
     ORDER,
     OXYGEN_TOLERANCE,
     PARTICIPATES_IN,
-    PATHWAY_CATEGORY,
     PHENOTYPIC_CATEGORY,
     PHYLUM,
     PHYSIOLOGY_AND_METABOLISM,
@@ -180,7 +178,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, _build_metpo_tree, uri_to_curie
+from kg_microbe.utils.mapping_file_utils import _build_metpo_tree, load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -194,6 +192,7 @@ else:
 
 
 class BacDiveTransform(Transform):
+
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -390,7 +389,7 @@ class BacDiveTransform(Transform):
                                 if normalized_value not in keyword_map:
                                     # Find the mapping by searching for a synonym that matches this value
                                     found_mapping = False
-                                    for syn, map_info in self.bacdive_metpo_mappings.items():
+                                    for _syn, map_info in self.bacdive_metpo_mappings.items():
                                         if map_info["curie"] == child.iri:
                                             category_url = map_info.get("inferred_category", "")
                                             predicate_biolink = map_info.get(

@@ -42,7 +42,7 @@
     ```
     or add it to your `~/.bash_profile` or `~/.bashrc` file.
 
-
+It should be noted that the KG construction process, particularly the transform step  involving trimming of NCBI Taxonomy for any KG and the steps involving the microbial UniProt dataset for KG-Microbe-Function and KG-Microbe-Biomedical-Function, is computationally intensive. Successful execution on a local machine may require significant memory resources (e.g., >500 GB of RAM), further details can be found in the project's code repository.
 
 # Contributors
 Please remember to run `poetry run tox` before every commit to make sure the code you commit is error-free.

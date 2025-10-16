@@ -354,21 +354,6 @@ class BacDiveTransform(Transform):
                 "curie": mapping["curie"],
                 "name": mapping["label"],
             }
-            # there are also mappings for the "Ox_" prefix variants in the CUSTOM_CURIES_YAML_FILE file
-            # so add those to keyword_map as well
-            if bacdive_label in [
-                "aerobic",
-                "anaerobic",
-                "microaerophilic",
-                "facultatively aerobic",
-            ]:
-                ox_key = f"Ox_{bacdive_label.replace(' ', '_')}"
-                keyword_map[ox_key] = {
-                    "category": category,
-                    "predicate": predicate,
-                    "curie": mapping["curie"],
-                    "name": mapping["label"],
-                }
 
         # Now traverse the tree to find nodes with JSON paths and extract values from this record
         for node in self.bacdive_metpo_tree.values():

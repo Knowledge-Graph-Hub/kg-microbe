@@ -17,11 +17,11 @@
 
 # Setup
  - Create a vrtual environment of your choice.
- - Install poetry using `pip install poetry`
- - `poetry install`
+ - Install poetry using `pip install poetry`\
  - `git clone https://github.com/Knowledge-Graph-Hub/kg-microbe.git`
  - `cd kg-microbe`
-
+ - `poetry install`
+   
 ## Download resources needed
  - `poetry run kg download` : This will download the resources needed for this project.
 

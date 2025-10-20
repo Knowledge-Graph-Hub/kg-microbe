@@ -16,7 +16,7 @@
 
 
 # Setup
- - Install [pipx] (https://pipx.pypa.io/stable/installation/)
+ - Install [pipx](https://pipx.pypa.io/stable/installation/)
  - Install poetry using `pipx install poetry`
  - `git clone https://github.com/Knowledge-Graph-Hub/kg-microbe.git`
  - `cd kg-microbe`

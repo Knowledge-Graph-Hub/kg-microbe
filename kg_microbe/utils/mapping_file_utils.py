@@ -55,13 +55,19 @@ class MetpoTreeNode:
         iri = "METPO:1000602"
         label = "aerobic"
         synonyms = ["aerobic", "aerobe", "Ox_aerobe"]
+        bacdive_json_paths = []
         biolink_equivalent = ""
         children = []
         parent = {'iri': 'METPO:1000601', 'label': 'oxygen preference', ...}
     """
 
     def __init__(
-        self, iri: str, label: str, synonyms: List[str] = None, biolink_equivalent: str = None
+        self,
+        iri: str,
+        label: str,
+        synonyms: List[str] = None,
+        biolink_equivalent: str = None,
+        bacdive_json_paths: List[str] = None,
     ):
         """
         Initialize a MetpoTreeNode.
@@ -70,6 +76,7 @@ class MetpoTreeNode:
         :param label: The human-readable label of the node
         :param synonyms: List of synonyms for the node, defaults to None
         :param biolink_equivalent: Biolink equivalent IRI if available, defaults to None
+        :param bacdive_json_paths: List of JSON paths for extracting values from BacDive records, defaults to None
         """
         self.iri = iri  # specified as CURIEs in the METPO classes/properties sheets
         self.label = label  # human-readable label
@@ -77,6 +84,9 @@ class MetpoTreeNode:
             synonyms or []
         )  # synonyms from different data sources (ex. Madin et al, BacDive) corresponding to this class
         self.biolink_equivalent = biolink_equivalent  # biolink equivalent URL if available
+        self.bacdive_json_paths = (
+            bacdive_json_paths or []
+        )  # JSON paths for extracting values from BacDive records
         self.children: List["MetpoTreeNode"] = []  # list of child nodes
         self.parent: Optional["MetpoTreeNode"] = None  # reference to parent node
 
@@ -146,15 +156,28 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
             iri = row.get("ID", "").strip()  # now this is a CURIE like METPO:1000059
             label = row.get("label", "").strip()
             madin_synonym = row.get("madin synonym or field", "").strip()
+            bacdive_synonym = row.get("bacdive keyword synonym", "").strip()
             biolink_equivalent = row.get("biolink equivalent", "").strip()
 
             if iri and label:
-                # handle pipe-separated synonyms
+                # handle pipe-separated synonyms from madin column
+                synonyms = []
                 if madin_synonym:
-                    synonyms = [s.strip() for s in madin_synonym.split("|") if s.strip()]
-                else:
-                    synonyms = []
-                nodes[iri] = MetpoTreeNode(iri, label, synonyms, biolink_equivalent)
+                    synonyms.extend([s.strip() for s in madin_synonym.split("|") if s.strip()])
+
+                # handle bacdive column: distinguish between JSON paths and literal values
+                bacdive_json_paths = []
+                if bacdive_synonym:
+                    bacdive_items = [s.strip() for s in bacdive_synonym.split("|") if s.strip()]
+                    for item in bacdive_items:
+                        # Check if it's a JSON path (contains a dot)
+                        if "." in item:
+                            bacdive_json_paths.append(item)
+                        else:
+                            # It's a literal value synonym
+                            synonyms.append(item)
+
+                nodes[iri] = MetpoTreeNode(iri, label, synonyms, biolink_equivalent, bacdive_json_paths)
 
         # second pass: establish parent-child relationships
         lines = response.text.splitlines()

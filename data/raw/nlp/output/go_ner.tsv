@@ -1,1 +1,16 @@
 object_id	object_label	subject_label	matches_whole_text	subject_start	subject_end	traits_dataset_term
+GO:0006032	chitin catabolic process	chitin degradation	True	1	18	chitin_degradation
+GO:0006113	fermentation	fermentation	True	1	12	fermentation
+GO:0009399	nitrogen fixation	nitrogen fixation	True	1	17	nitrogen_fixation
+GO:0015946	methanol oxidation	methanol oxidation	True	1	18	methanol_oxidation
+GO:0015948	methanogenesis	methanogenesis	True	1	14	methanogenesis
+GO:0015977	carbon fixation	autotrophy	True	1	10	autotrophy
+GO:0019332	aerobic respiration, using nitrite as electron donor	nitrite oxidation	True	1	17	nitrite_oxidation
+GO:0019412	aerobic respiration, using hydrogen as electron donor	hydrogen oxidation	True	1	18	hydrogen_oxidation
+GO:0019417	sulfur oxidation	sulfur oxidation	True	1	16	sulfur_oxidation
+GO:0019418	sulfide oxidation	sulfide oxidation	True	1	17	sulfide_oxidation
+GO:0030245	cellulose catabolic process	cellulose degradation	True	1	21	cellulose_degradation
+GO:0043419	urea catabolic process	urea degradation	True	1	16	urea_degradation
+GO:0045493	xylan catabolic process	xylan degradation	True	1	17	xylan_degradation
+GO:0046274	lignin catabolic process	lignin degradation	True	1	18	lignin_degradation
+GO:0120253	hydrocarbon catabolic process	hydrocarbon degradation	True	1	23	hydrocarbon_degradation

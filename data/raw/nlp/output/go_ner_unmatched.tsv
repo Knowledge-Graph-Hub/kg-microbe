@@ -1,1 +1,36 @@
 object_id	object_label	subject_label	matches_whole_text	subject_start	subject_end	traits_dataset_term
+GO:0004851	CobA		False	1	4	cobalt_reduction
+GO:0005826	CAR		False	1	3	carbon_monoxide_oxidation
+GO:0005826	CAR		False	1	3	carbonylsulfide_oxidation
+GO:0005826	CAR		False	1	3	carbonylsulfide_reduction
+GO:0005826	CAR		False	1	3	carbonmonoxide_oxidation
+GO:0005826	CAR		False	1	3	carbonmonoxide_reduction
+GO:0008705	MetH		False	1	4	methane_oxidation
+GO:0008705	MetH		False	1	4	methylotrophy
+GO:0009056	degradation		False	5	15	PAH_degradation
+GO:0009056	degradation		False	14	24	chlorocarbon_degradation
+GO:0009056	degradation		False	6	16	EDTA_degradation
+GO:0009056	degradation		False	12	22	cellobiose_degradation
+GO:0009056	degradation		False	9	19	plastic_degradation
+GO:0009056	degradation		False	5	15	pah_degradation
+GO:0009056	degradation		False	9	19	gelatin_degradation
+GO:0009056	degradation		False	5	15	PCB_degradation
+GO:0009056	degradation		False	9	19	polymer_degradation
+GO:0009056	degradation		False	14	24	polyisoprene_degradation
+GO:0009056	degradation		False	6	16	MTBE_degradation
+GO:0009056	degradation		False	6	16	DMSP_degradation
+GO:0009056	degradation		False	11	21	aminoacid_degradation
+GO:0009056	degradation		False	5	15	RDX_degradation
+GO:0009056	degradation		False	19	29	aromatic_compound_degradation
+GO:0015948	methanogenesis		False	1	14	methanogenesis_acetoclastic
+GO:0015948	methanogenesis		False	1	14	methanogenesis_H2CO2
+GO:0015976	heterotrophy		False	9	20	aerobic_heterotrophy
+GO:0015976	heterotrophy		False	15	26	aerobic_chemo_heterotrophy
+GO:0019412	hydrogen oxidation		False	1	18	hydrogen_oxidation_dark
+GO:0019412	hydrogen oxidation		False	28	45	anoxygenic_photoautotrophy_hydrogen_oxidation
+GO:0019417	sulfur oxidation		False	28	43	anoxygenic_photoautotrophy_sulfur_oxidation
+GO:0019417	sulfur oxidation		False	1	16	sulfur_oxidation_dark
+GO:0019418	sulfide oxidation		False	1	17	sulfide_oxidation_dark
+GO:0070914	AER		False	1	3	aerobic_anoxygenic_phototrophy
+GO:0120253	hydrocarbon degradation		False	19	41	aliphatic_non_methane_hydrocarbon_degradation
+GO:0120253	hydrocarbon degradation		False	10	32	aromatic_hydrocarbon_degradation

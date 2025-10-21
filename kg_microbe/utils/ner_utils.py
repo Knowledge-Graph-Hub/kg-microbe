@@ -33,6 +33,9 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 PREFIX_SOURCE_MAP = {
     GO_PREFIX: GO_SOURCE,
     CHEBI_PREFIX: CHEBI_SOURCE,
+    # Add stripped versions for lookup
+    GO_PREFIX.strip(":"): GO_SOURCE,
+    CHEBI_PREFIX.strip(":"): CHEBI_SOURCE,
 }
 
 

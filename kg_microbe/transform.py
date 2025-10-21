@@ -9,18 +9,11 @@ from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransf
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACTOTRAITS,
-    CTD,
-    DISBIOME,
     MADIN_ETAL,
     MEDIADIVE,
     ONTOLOGIES,
     RHEAMAPPINGS,
-    UNIPROT_FUNCTIONAL_MICROBES,
-    UNIPROT_HUMAN,
-    WALLEN_ETAL,
 )
-from kg_microbe.transform_utils.ctd.ctd import CTDTransform
-from kg_microbe.transform_utils.disbiome.disbiome import DisbiomeTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
@@ -28,11 +21,6 @@ from kg_microbe.transform_utils.ontologies.ontologies_transform import (
     OntologiesTransform,
 )
 from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
-from kg_microbe.transform_utils.uniprot_functional_microbes.uniprot_functional_microbes import (
-    UniprotFunctionalMicrobesTransform,
-)
-from kg_microbe.transform_utils.uniprot_human.uniprot_human import UniprotHumanTransform
-from kg_microbe.transform_utils.wallen_etal.wallen_etal import WallenEtAlTransform
 
 DATA_SOURCES = {
     # "DrugCentralTransform": DrugCentralTransform,
@@ -49,11 +37,11 @@ DATA_SOURCES = {
     MADIN_ETAL: MadinEtAlTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
-    UNIPROT_HUMAN: UniprotHumanTransform,
-    CTD: CTDTransform,
-    DISBIOME: DisbiomeTransform,
-    WALLEN_ETAL: WallenEtAlTransform,
-    UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+    #UNIPROT_HUMAN: UniprotHumanTransform,
+    #CTD: CTDTransform,
+    #DISBIOME: DisbiomeTransform,
+    #WALLEN_ETAL: WallenEtAlTransform,
+    #UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
 
 

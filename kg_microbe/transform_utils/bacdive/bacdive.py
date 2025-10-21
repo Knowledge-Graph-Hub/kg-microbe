@@ -254,14 +254,14 @@ class BacDiveTransform(Transform):
             return []
 
     def _process_phenotype_by_metpo_parent(
-        self, record: dict, parent_iri: str, organism_id: str, key: str, node_writer, edge_writer
+        self, record: dict, parent_iri: str, organism_ids: list, key: str, node_writer, edge_writer
     ):
         """
         Process phenotype data using METPO tree parent node to extract values dynamically.
 
         :param record: The BacDive record dictionary
         :param parent_iri: The METPO IRI of the parent node (e.g., "METPO:1000601" for oxygen preference)
-        :param organism_id: Strain organism ID to create edges for
+        :param organism_ids: List of organism IDs (strain and/or NCBITaxon) to create edges for
         :param key: BacDive ID for provenance
         :param node_writer: CSV writer for nodes
         :param edge_writer: CSV writer for edges
@@ -303,16 +303,17 @@ class BacDiveTransform(Transform):
                         [node_id, category, label] + [None] * (len(self.node_header) - 3)
                     )
 
-                    # Write edge from strain to phenotype
-                    edge_writer.writerow(
-                        [
-                            organism_id,
-                            predicate,
-                            node_id,
-                            HAS_PHENOTYPE,
-                            BACDIVE_PREFIX + key,
-                        ]
-                    )
+                    # Write edge(s) from organism(s) to phenotype
+                    for organism_id in organism_ids:
+                        edge_writer.writerow(
+                            [
+                                organism_id,
+                                predicate,
+                                node_id,
+                                HAS_PHENOTYPE,
+                                BACDIVE_PREFIX + key,
+                            ]
+                        )
 
     def _build_keyword_map_from_record(self, record: dict, custom_curie_data: dict):
         """
@@ -481,7 +482,7 @@ class BacDiveTransform(Transform):
 
         return edge_pairs
 
-    def _process_antibiotic_resistance(self, item, ncbitaxon_id, key):
+    def _process_antibiotic_resistance(self, item, organism_ids, key):
         chebi_key = CHEBI_PREFIX + str(item[CHEBI_KEY])
         METABOLITE_MAP[chebi_key] = (
             item[METABOLITE_KEY] if not METABOLITE_MAP.get(chebi_key) else METABOLITE_MAP[chebi_key]
@@ -503,17 +504,19 @@ class BacDiveTransform(Transform):
                 ]
                 + [None] * (len(self.node_header) - 3)
             )
-            self.ar_edges_data_to_write.append(
-                [
-                    ncbitaxon_id,
-                    antibiotic_predicate,
-                    chebi_key,
-                    None,
-                    BACDIVE_PREFIX + key,
-                ]
-            )
+            # Create edges from all organism targets
+            for organism_id in organism_ids:
+                self.ar_edges_data_to_write.append(
+                    [
+                        organism_id,
+                        antibiotic_predicate,
+                        chebi_key,
+                        None,
+                        BACDIVE_PREFIX + key,
+                    ]
+                )
 
-    def _process_metabolites(self, dictionary, ncbitaxon_id, key, node_writer, edge_writer):
+    def _process_metabolites(self, dictionary, organism_ids, key, node_writer, edge_writer):
         """
         Process a single antibiotic dictionary entry.
 
@@ -615,15 +618,17 @@ class BacDiveTransform(Transform):
                     #            print(f"    Writing node row for antibiotic: {node_row}")
                     node_writer.writerow(node_row)
 
-                    edge_row = [
-                        ncbitaxon_id,
-                        antibiotic_predicate,
-                        metabolite_id,
-                        None,
-                        BACDIVE_PREFIX + key,
-                    ]
-                    #            print(f"    Writing edge row for antibiotic: {edge_row}")
-                    edge_writer.writerows([edge_row])
+                    # Create edges from all organism IDs
+                    for organism_id in organism_ids:
+                        edge_row = [
+                            organism_id,
+                            antibiotic_predicate,
+                            metabolite_id,
+                            None,
+                            BACDIVE_PREFIX + key,
+                        ]
+                        #            print(f"    Writing edge row for antibiotic: {edge_row}")
+                        edge_writer.writerow(edge_row)
         #        else:
         #            print("    ==> No edge created (value in [10..30] range or parse failed).")
         # else:
@@ -631,21 +636,23 @@ class BacDiveTransform(Transform):
 
         # print("--- DEBUG: Exiting _process_metabolites ---\n")
 
-    def _process_medium(self, dictionary, ncbitaxon_id, key, edge_writer):
+    def _process_medium(self, dictionary, organism_ids, key, edge_writer):
         medium_label = dictionary.get(MEDIUM_KEY)
         if medium_label:
             medium_id = (
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
-            edge_writer.writerow(
-                [
-                    ncbitaxon_id,
-                    NCBI_TO_MEDIUM_EDGE,
-                    medium_id,
-                    IS_GROWN_IN,
-                    BACDIVE_PREFIX + key,
-                ]
-            )
+            # Create edges from all organism IDs
+            for organism_id in organism_ids:
+                edge_writer.writerow(
+                    [
+                        organism_id,
+                        NCBI_TO_MEDIUM_EDGE,
+                        medium_id,
+                        IS_GROWN_IN,
+                        BACDIVE_PREFIX + key,
+                    ]
+                )
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
@@ -945,11 +952,10 @@ class BacDiveTransform(Transform):
                     ncbitaxon_id = None
                     ncbi_label = None
                     ncbi_description = None
-                    ncbitaxon_level = None  # Track if NCBITaxon is 'strain' or 'species' level
 
                     if NCBITAXON_ID in general_info:
                         if isinstance(general_info[NCBITAXON_ID], list):
-                            # Find the best NCBITaxon match and track its level
+                            # Find the best NCBITaxon match (prefer strain-level, fall back to species-level)
                             selected_ncbi = next(
                                 (
                                     ncbi
@@ -970,23 +976,21 @@ class BacDiveTransform(Transform):
                             )
                             if selected_ncbi is not None:
                                 ncbitaxon_id = NCBITAXON_PREFIX + str(selected_ncbi[NCBITAXON_ID])
-                                ncbitaxon_level = selected_ncbi.get(MATCHING_LEVEL)  # 'strain' or 'species'
                         else:
                             ncbitaxon_id = NCBITAXON_PREFIX + str(
                                 general_info[NCBITAXON_ID][NCBITAXON_ID]
                             )
-                            # If single entry, assume it has a matching level
-                            ncbitaxon_level = general_info[NCBITAXON_ID].get(MATCHING_LEVEL)
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                         if ncbi_label is None:
                             ncbi_label = ncbi_description
 
                     # Create strain node for every BacDive record
-                    # Extract strain designation for better labeling
+                    # Extract strain designation
                     strain_designation = None
-                    if name_tax_classification and name_tax_classification.get(STRAIN_DESIGNATION):
-                        strain_designation = name_tax_classification.get(STRAIN_DESIGNATION).strip()
+                    if name_tax_classification:
+                        if name_tax_classification.get(STRAIN_DESIGNATION):
+                            strain_designation = name_tax_classification.get(STRAIN_DESIGNATION).strip()
 
                     # Construct strain ID using BacDive ID
                     organism_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
@@ -1025,15 +1029,11 @@ class BacDiveTransform(Transform):
                             ]
                         )
 
-                    # Determine which node to use for feature edges:
-                    # NO AGGREGATION: Each BacDive record links features to ONE unique node only
-                    # - If NCBITaxon is at strain level: use NCBITaxon (unique to this strain, no aggregation)
-                    # - Otherwise: use strain:bacdive_ node (unique to this strain, no aggregation)
-                    # - NEVER link to species-level NCBITaxon (would aggregate features from multiple strains)
-                    if ncbitaxon_level == STRAIN and ncbitaxon_id:
-                        feature_target_id = ncbitaxon_id  # Use strain-level NCBITaxon (no aggregation)
-                    else:
-                        feature_target_id = organism_id  # Use strain:bacdive_ node (no aggregation)
+                    # Determine which node(s) to use for feature edges:
+                    # Always link features to strain: node only (avoid duplicate edges)
+                    # The rdfs:subClassOf edge above connects strain to NCBITaxon species,
+                    # allowing graph traversal to find species features via subclass relationships
+                    feature_targets = [organism_id]
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {
@@ -1232,16 +1232,17 @@ class BacDiveTransform(Transform):
                             ]
                             node_writer.writerows(nodes_data_to_write)
 
-                            # Create edge from strain to medium
-                            edge_writer.writerow(
-                                [
-                                    feature_target_id,
-                                    NCBI_TO_MEDIUM_EDGE,
-                                    mid,
-                                    IS_GROWN_IN,
-                                    BACDIVE_PREFIX + key,
-                                ]
-                            )
+                            # Create edge(s) from organism(s) to medium
+                            for target in feature_targets:
+                                edge_writer.writerow(
+                                    [
+                                        target,
+                                        NCBI_TO_MEDIUM_EDGE,
+                                        mid,
+                                        IS_GROWN_IN,
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                )
 
                     if nodes_from_keywords:
                         # Convert to manual CHEBI ID for keywords
@@ -1270,28 +1271,29 @@ class BacDiveTransform(Transform):
                         node_writer.writerows(nodes_data_to_write)
 
                         for _, value in nodes_from_keywords.items():
-                            # Create edge from strain to keyword/CHEBI
-                            edge_writer.writerow(
-                                [
-                                    feature_target_id,
-                                    value[PREDICATE_COLUMN],
-                                    next(
-                                        (
-                                            key
-                                            for key, val in METABOLITE_MAP.items()
-                                            if val == value[CURIE_COLUMN].split(":")[1]
+                            # Create edge(s) from organism(s) to keyword/CHEBI
+                            for target in feature_targets:
+                                edge_writer.writerow(
+                                    [
+                                        target,
+                                        value[PREDICATE_COLUMN],
+                                        next(
+                                            (
+                                                key
+                                                for key, val in METABOLITE_MAP.items()
+                                                if val == value[CURIE_COLUMN].split(":")[1]
+                                            ),
+                                            value[CURIE_COLUMN],
                                         ),
-                                        value[CURIE_COLUMN],
-                                    ),
-                                    (
-                                        HAS_PHENOTYPE
-                                        if value[CATEGORY_COLUMN]
-                                        in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
-                                        else BIOLOGICAL_PROCESS
-                                    ),
-                                    BACDIVE_PREFIX + key,
-                                ]
-                            )
+                                        (
+                                            HAS_PHENOTYPE
+                                            if value[CATEGORY_COLUMN]
+                                            in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
+                                            else BIOLOGICAL_PROCESS
+                                        ),
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                )
 
                     if culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
@@ -1353,16 +1355,17 @@ class BacDiveTransform(Transform):
 
                             for inner_dict in postive_activity_enzymes:
                                 for k, _ in inner_dict.items():
-                                    # Create edge from strain to enzyme
-                                    edge_writer.writerow(
-                                        [
-                                            feature_target_id,
-                                            NCBI_TO_ENZYME_EDGE,
-                                            k,
-                                            CAPABLE_OF,
-                                            BACDIVE_PREFIX + key,
-                                        ]
-                                    )
+                                    # Create edge(s) from organism(s) to enzyme
+                                    for target in feature_targets:
+                                        edge_writer.writerow(
+                                            [
+                                                target,
+                                                NCBI_TO_ENZYME_EDGE,
+                                                k,
+                                                CAPABLE_OF,
+                                                BACDIVE_PREFIX + key,
+                                            ]
+                                        )
 
                     if phys_and_metabolism_metabolite_utilization:
                         positive_chebi_activity = None
@@ -1430,16 +1433,17 @@ class BacDiveTransform(Transform):
 
                             for inner_dict in positive_chebi_activity:
                                 for k, _ in inner_dict.items():
-                                    # Create edge from strain to metabolite
-                                    edge_writer.writerow(
-                                        [
-                                            feature_target_id,
-                                            NCBI_TO_METABOLITE_UTILIZATION_EDGE,
-                                            k,
-                                            HAS_PARTICIPANT,
-                                            BACDIVE_PREFIX + key,
-                                        ]
-                                    )
+                                    # Create edge(s) from organism(s) to metabolite
+                                    for target in feature_targets:
+                                        edge_writer.writerow(
+                                            [
+                                                target,
+                                                NCBI_TO_METABOLITE_UTILIZATION_EDGE,
+                                                k,
+                                                HAS_PARTICIPANT,
+                                                BACDIVE_PREFIX + key,
+                                            ]
+                                        )
 
                     if phys_and_metabolism_metabolite_production:
                         positive_chebi_production = None
@@ -1494,57 +1498,58 @@ class BacDiveTransform(Transform):
 
                             for inner_dict in positive_chebi_production:
                                 for k, _ in inner_dict.items():
-                                    # Create edge from strain to metabolite
-                                    edge_writer.writerow(
-                                        [
-                                            feature_target_id,
-                                            NCBI_TO_METABOLITE_PRODUCTION_EDGE,
-                                            k,
-                                            BIOLOGICAL_PROCESS,
-                                            BACDIVE_PREFIX + key,
-                                        ]
-                                    )
+                                    # Create edge(s) from organism(s) to metabolite
+                                    for target in feature_targets:
+                                        edge_writer.writerow(
+                                            [
+                                                target,
+                                                NCBI_TO_METABOLITE_PRODUCTION_EDGE,
+                                                k,
+                                                BIOLOGICAL_PROCESS,
+                                                BACDIVE_PREFIX + key,
+                                            ]
+                                        )
 
                     # Process oxygen tolerance using path-based extraction from METPO tree
                     # Parent: METPO:1000601 (oxygen preference)
                     # Path: "Physiology and metabolism.oxygen tolerance.oxygen tolerance"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000601", feature_target_id, key, node_writer, edge_writer
+                        value, "METPO:1000601", feature_targets, key, node_writer, edge_writer
                     )
 
                     # Process spore formation using path-based extraction from METPO tree
                     # Parent: METPO:1000870 (sporulation)
                     # Path: "Physiology and metabolism.spore formation.spore formation"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000870", feature_target_id, key, node_writer, edge_writer
+                        value, "METPO:1000870", feature_targets, key, node_writer, edge_writer
                     )
 
                     # Process nutrition type using path-based extraction from METPO tree
                     # Parent: METPO:1000631 (trophic type)
                     # Path: "Physiology and metabolism.nutrition type.type"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000631", feature_target_id, key, node_writer, edge_writer
+                        value, "METPO:1000631", feature_targets, key, node_writer, edge_writer
                     )
 
                     # Process cell shape using path-based extraction from METPO tree
                     # Parent: METPO:1000666 (cell shape)
                     # Path: "Morphology.cell morphology.cell shape"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000666", feature_target_id, key, node_writer, edge_writer
+                        value, "METPO:1000666", feature_targets, key, node_writer, edge_writer
                     )
 
                     # Process gram stain using path-based extraction from METPO tree
                     # Parent: METPO:1000697 (gram stain)
                     # Path: "Morphology.cell morphology.gram stain"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000697", feature_target_id, key, node_writer, edge_writer
+                        value, "METPO:1000697", feature_targets, key, node_writer, edge_writer
                     )
 
                     # Process motility using path-based extraction from METPO tree
                     # Parent: METPO:1000701 (motility)
                     # Path: "Morphology.cell morphology.motility"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000701", feature_target_id, key, node_writer, edge_writer
+                        value, "METPO:1000701", feature_targets, key, node_writer, edge_writer
                     )
 
                     if phys_and_metabolism_API:
@@ -1579,18 +1584,19 @@ class BacDiveTransform(Transform):
                                 ]
                                 node_writer.writerows(metabolism_nodes_to_write)
 
-                                # Write edges from assay to strain
+                                # Write edges from assay to organism(s)
                                 for m in meta_assay:
                                     if not m.startswith(ASSAY_PREFIX):
-                                        edge_writer.writerow(
-                                            [
-                                                ASSAY_PREFIX + m.replace(":", "_"),
-                                                ASSAY_TO_NCBI_EDGE,
-                                                feature_target_id,
-                                                ASSESSED_ACTIVITY_RELATIONSHIP,
-                                                BACDIVE_PREFIX + key,
-                                            ]
-                                        )
+                                        for target in feature_targets:
+                                            edge_writer.writerow(
+                                                [
+                                                    ASSAY_PREFIX + m.replace(":", "_"),
+                                                    ASSAY_TO_NCBI_EDGE,
+                                                    target,
+                                                    ASSESSED_ACTIVITY_RELATIONSHIP,
+                                                    BACDIVE_PREFIX + key,
+                                                ]
+                                            )
 
                     # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
@@ -1619,16 +1625,17 @@ class BacDiveTransform(Transform):
                             ]
                             + [None] * (len(self.node_header) - 3)
                         )
-                        # Write an edge from the isolation source to strain
-                        edge_writer.writerow(
-                            [
-                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
-                                NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                feature_target_id,
-                                LOCATION_OF,
-                                self.source_name,
-                            ]
-                        )
+                        # Write edge(s) from the isolation source to organism(s)
+                        for target in feature_targets:
+                            edge_writer.writerow(
+                                [
+                                    ISOLATION_SOURCE_PREFIX + isol_source.lower(),
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    target,
+                                    LOCATION_OF,
+                                    self.source_name,
+                                ]
+                            )
 
                     if (
                         phys_and_metabolism_antibiotic_resistance
@@ -1640,11 +1647,11 @@ class BacDiveTransform(Transform):
                         if isinstance(phys_and_metabolism_antibiotic_resistance, list):
                             for item in phys_and_metabolism_antibiotic_resistance:
                                 if item.get(CHEBI_KEY):
-                                    self._process_antibiotic_resistance(item, feature_target_id, key)
+                                    self._process_antibiotic_resistance(item, feature_targets, key)
                         elif isinstance(phys_and_metabolism_antibiotic_resistance, dict):
                             if phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
                                 self._process_antibiotic_resistance(
-                                    phys_and_metabolism_antibiotic_resistance, feature_target_id, key
+                                    phys_and_metabolism_antibiotic_resistance, feature_targets, key
                                 )
 
                         if self.ar_edges_data_to_write and self.ar_nodes_data_to_write:
@@ -1658,19 +1665,19 @@ class BacDiveTransform(Transform):
                         if isinstance(phys_and_metabolism_antibiogram, list):
                             for dictionary in phys_and_metabolism_antibiogram:
                                 self._process_metabolites(
-                                    dictionary, feature_target_id, key, node_writer, edge_writer
+                                    dictionary, feature_targets, key, node_writer, edge_writer
                                 )
-                                self._process_medium(dictionary, feature_target_id, key, edge_writer)
+                                self._process_medium(dictionary, feature_targets, key, edge_writer)
                         elif isinstance(phys_and_metabolism_antibiogram, dict):
                             self._process_metabolites(
                                 phys_and_metabolism_antibiogram,
-                                feature_target_id,
+                                feature_targets,
                                 key,
                                 node_writer,
                                 edge_writer,
                             )
                             self._process_medium(
-                                phys_and_metabolism_antibiogram, feature_target_id, key, edge_writer
+                                phys_and_metabolism_antibiogram, feature_targets, key, edge_writer
                             )
 
                     progress.set_description(f"Processing BacDive file: {str(index)}.yaml")

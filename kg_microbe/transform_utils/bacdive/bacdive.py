@@ -986,13 +986,11 @@ class BacDiveTransform(Transform):
                             ncbi_label = ncbi_description
 
                     # Create strain node for every BacDive record
-                    # Extract strain designation and TYPE_STRAIN status
+                    # Extract strain designation
                     strain_designation = None
-                    type_strain = None
                     if name_tax_classification:
                         if name_tax_classification.get(STRAIN_DESIGNATION):
                             strain_designation = name_tax_classification.get(STRAIN_DESIGNATION).strip()
-                        type_strain = name_tax_classification.get(TYPE_STRAIN)
 
                     # Construct strain ID using BacDive ID
                     organism_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
@@ -1031,18 +1029,12 @@ class BacDiveTransform(Transform):
                             ]
                         )
 
-                    # Determine which node(s) to use for feature edges:
-                    # TYPE_STRAIN with NCBITaxon: Link to BOTH strain AND NCBITaxon species node
-                    #   - Type strain defines the species, so duplicate edges are acceptable
-                    #   - Species-level node may aggregate features from type strains
-                    #   - Strain-level nodes provide strain-level resolution
-                    # Otherwise: Use strain:bacdive_ node only
-                    if type_strain == "yes" and ncbitaxon_id:
-                        # Type strain: create edges to both strain node and NCBITaxon species
-                        feature_targets = [organism_id, ncbitaxon_id]
-                    else:
-                        # Non-type strain or no NCBITaxon: use strain node only
-                        feature_targets = [organism_id]
+                    # Determine which node to use for feature edges:
+                    # BacDive data is strain-resolved, so always link features to strain: node only
+                    # This avoids creating species-level amalgams from BacDive data
+                    # The rdfs:subClassOf edge above connects strain to NCBITaxon species,
+                    # allowing graph traversal while maintaining strain-level resolution
+                    feature_targets = [organism_id]
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {

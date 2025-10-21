@@ -1026,12 +1026,14 @@ class BacDiveTransform(Transform):
                         )
 
                     # Determine which node to use for feature edges:
-                    # - If NCBITaxon is at strain level: use NCBITaxon directly (data is at strain level)
-                    # - Otherwise: use strain:bacdive_ node (data is strain-specific but NCBITaxon is species-level)
+                    # NO AGGREGATION: Each BacDive record links features to ONE unique node only
+                    # - If NCBITaxon is at strain level: use NCBITaxon (unique to this strain, no aggregation)
+                    # - Otherwise: use strain:bacdive_ node (unique to this strain, no aggregation)
+                    # - NEVER link to species-level NCBITaxon (would aggregate features from multiple strains)
                     if ncbitaxon_level == STRAIN and ncbitaxon_id:
-                        feature_target_id = ncbitaxon_id  # Use strain-level NCBITaxon for features
+                        feature_target_id = ncbitaxon_id  # Use strain-level NCBITaxon (no aggregation)
                     else:
-                        feature_target_id = organism_id  # Use strain:bacdive_ node for features
+                        feature_target_id = organism_id  # Use strain:bacdive_ node (no aggregation)
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {

@@ -12,7 +12,7 @@
 
 [latest KG-Microbe release](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/tag/2025-03-07)
 
-[KG-Microbe @KG-Hub](https://kghub.org)
+[KG-Microbe @KG-Registry](https://kghub.org/kg-registry/resource/kg-microbe/kg-microbe.html)
 
 
 # Setup

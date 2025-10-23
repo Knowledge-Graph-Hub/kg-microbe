@@ -5,10 +5,12 @@ import csv
 from pathlib import Path
 from typing import Optional, Union
 
+import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    ASSOCIATED_WITH,
     BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
@@ -16,10 +18,18 @@ from kg_microbe.transform_utils.constants import (
     BACTOTRAITS,
     BACTOTRAITS_TMP_DIR,
     BIOLOGICAL_PROCESS,
+    CAPABLE_OF_PREDICATE,
+    CATEGORY_COLUMN,
+    COMBO_KEY,
+    CURIE_COLUMN,
+    CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
+    NAME_COLUMN,
     NCBI_CATEGORY,
+    NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
     NCBITAXON_SOURCE,
+    PREDICATE_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -215,9 +225,32 @@ class BactoTraitsTransform(Transform):
                     bacdive_ncbitaxon_dict[row[BACDIVE_ID_COLUMN]] = row[NCBITAXON_ID_COLUMN]
 
         pruned_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}.tsv"
+
+        # Build a unified mapping dictionary that combines METPO mappings with custom YAML mappings
+        # METPO takes precedence where available
+        unified_mapping = {}
+
+        # First, load METPO mappings and convert to the expected format
+        for synonym, metpo_data in self.bactotraits_metpo_mappings.items():
+            category_url = metpo_data.get("inferred_category", "")
+            category = uri_to_curie(category_url) if category_url else "biolink:PhenotypicQuality"
+
+            predicate_biolink = metpo_data.get("predicate_biolink_equivalent", "")
+            predicate = uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
+
+            unified_mapping[synonym] = {
+                "curie": metpo_data["curie"],
+                "category": category,
+                "name": metpo_data["label"],
+                "predicate": predicate
+            }
+            # Also add lowercase version for case-insensitive matching
+            unified_mapping[synonym.lower()] = unified_mapping[synonym]
+
         with (
             open(input_file, "r", encoding="ISO-8859-1") as infile,
             open(pruned_file, "w") as outfile,
+            open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
         ):
@@ -227,6 +260,47 @@ class BactoTraitsTransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
+
+            # Load custom YAML mappings for terms not in METPO
+            custom_curie_data = yaml.safe_load(cc_file)
+            custom_curie_map = {
+                second_level_key: nested_data
+                for first_level_value in custom_curie_data.values()
+                for second_level_key, nested_data in first_level_value.items()
+            }
+
+            # Add custom mappings to unified_mapping (METPO takes precedence, so only add if not present)
+            for key, value in custom_curie_map.items():
+                if key not in unified_mapping and key.lower() not in unified_mapping:
+                    unified_mapping[key] = value
+                    unified_mapping[key.lower()] = value
+
+            # Extract combo mappings for later processing
+            combo_curie_map = {
+                key: value for key, value in custom_curie_map.items() if COMBO_KEY in value
+            }
+            unique_combo_node_data = [
+                (
+                    inner_curie_map[CURIE_COLUMN],
+                    inner_curie_map[CATEGORY_COLUMN],
+                    inner_curie_map[NAME_COLUMN],
+                )
+                for _, v in combo_curie_map.items()
+                for inner_curie_map in v[COMBO_KEY]
+            ]
+            unique_combo_edge_data = [
+                (
+                    v[CURIE_COLUMN],
+                    CAPABLE_OF_PREDICATE,
+                    inner_curie_map[CURIE_COLUMN],
+                    ASSOCIATED_WITH,
+                    "BactoTraits.csv",
+                )
+                for _, v in combo_curie_map.items()
+                for inner_curie_map in v[COMBO_KEY]
+            ]
+            combo_edge_data = [list(edge) for edge in unique_combo_edge_data]
+            combo_node_data = [list(edge) for edge in unique_combo_node_data]
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class() as progress:
@@ -250,31 +324,29 @@ class BactoTraitsTransform(Transform):
                                 k.strip(): v for k, v in row_as_dict.items() if v and v != "0"
                             }
 
-                            # Try to find mappings in METPO for each column with values
-                            nodes_from_metpo_map = {}
+                            # Find mappings from unified mapping (METPO + custom YAML)
+                            nodes_from_mapping = {}
                             for key in row_as_dict_with_values.keys():
                                 # Try exact match first, then case-insensitive match
-                                metpo_mapping = self.bactotraits_metpo_mappings.get(key.strip(), None)
-                                if not metpo_mapping:
-                                    # Try case-insensitive match (convert to lowercase)
-                                    metpo_mapping = self.bactotraits_metpo_mappings.get(key.strip().lower(), None)
-                                if metpo_mapping:
-                                    nodes_from_metpo_map[key] = metpo_mapping
+                                mapping = unified_mapping.get(key.strip(), None)
+                                if not mapping:
+                                    # Try case-insensitive match
+                                    mapping = unified_mapping.get(key.strip().lower(), None)
+                                if mapping:
+                                    nodes_from_mapping[key] = mapping
 
                             nodes_data_to_write = []
-                            for _, value in nodes_from_metpo_map.items():
-                                if value.get("curie"):
-                                    # Convert category URL to CURIE
-                                    category_url = value.get("inferred_category", "")
-                                    if category_url:
-                                        category = uri_to_curie(category_url)
-                                    else:
-                                        category = "biolink:PhenotypicQuality"  # fallback default
+                            for _, value in nodes_from_mapping.items():
+                                if value.get(CURIE_COLUMN) or value.get("curie"):
+                                    # Handle both METPO format (with "curie") and YAML format (with CURIE_COLUMN)
+                                    curie = value.get("curie") or value.get(CURIE_COLUMN)
+                                    category = value.get("category") or value.get(CATEGORY_COLUMN)
+                                    name = value.get("name") or value.get(NAME_COLUMN)
 
                                     nodes_data_to_write.append([
-                                        value["curie"],
+                                        curie,
                                         category,
-                                        value["label"]
+                                        name
                                     ])
                             if ncbitaxon_id:
                                 ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
@@ -296,17 +368,16 @@ class BactoTraitsTransform(Transform):
                             # Create edges from this row
                             if ncbitaxon_id:
                                 edges_data_to_write = []
-                                for _, value in nodes_from_metpo_map.items():
-                                    if value.get("curie"):
-                                        # Get predicate from METPO mapping
-                                        predicate_biolink = value.get("predicate_biolink_equivalent", "")
-                                        if predicate_biolink:
-                                            predicate = uri_to_curie(predicate_biolink)
-                                        else:
-                                            predicate = "biolink:has_phenotype"  # fallback default
+                                for _, value in nodes_from_mapping.items():
+                                    curie = value.get("curie") or value.get(CURIE_COLUMN)
+                                    if curie:
+                                        # Get predicate - try both METPO and YAML formats
+                                        predicate = value.get("predicate") or value.get(PREDICATE_COLUMN) or "biolink:has_phenotype"
 
                                         # Determine relationship type based on predicate
                                         if predicate == "biolink:capable_of":
+                                            relationship = BIOLOGICAL_PROCESS
+                                        elif predicate == NCBI_TO_PATHWAY_EDGE:
                                             relationship = BIOLOGICAL_PROCESS
                                         else:
                                             relationship = HAS_PHENOTYPE
@@ -314,7 +385,7 @@ class BactoTraitsTransform(Transform):
                                         edges_data_to_write.append([
                                             ncbitaxon_id,
                                             predicate,
-                                            value["curie"],
+                                            curie,
                                             relationship,
                                             "BactoTraits.csv",
                                         ])
@@ -323,5 +394,7 @@ class BactoTraitsTransform(Transform):
                     progress.set_description(f"Processing line #{i}")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update(1)
+                node_writer.writerows(combo_node_data)
+                edge_writer.writerows(combo_edge_data)
         drop_duplicates(self.output_node_file)
         drop_duplicates(self.output_edge_file)

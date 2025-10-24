@@ -1187,13 +1187,13 @@ class BacDiveTransform(Transform):
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
                             strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
 
-                            # Extract culture collection prefix from culture number
+                            # Extract culture collection identifier and create kgmicrobe: CURIE
                             # Handles patterns like:
-                            #   "ATCC 23768" -> ATCC:23768
-                            #   "DSM-16663" -> DSM:16663
-                            #   "CRBIP6.1202" -> CRBIP:6.1202
-                            #   "UCCCB10" -> UCCCB:10
-                            #   "JCM34415T" -> JCM:34415T
+                            #   "ATCC 23768" -> kgmicrobe:ATCC-23768
+                            #   "DSM-16663" -> kgmicrobe:DSM-16663
+                            #   "CRBIP6.1202" -> kgmicrobe:CRBIP-6.1202
+                            #   "UCCCB10" -> kgmicrobe:UCCCB-10
+                            #   "JCM34415T" -> kgmicrobe:JCM-34415T
                             strain_curie = None
                             if strain_label:
                                 # First try: space or hyphen separated (e.g., "ATCC 23768", "DSM-16663")
@@ -1202,7 +1202,7 @@ class BacDiveTransform(Transform):
                                     # First part is the collection prefix, rest is the number
                                     collection_prefix = parts[0].upper()
                                     collection_number = "-".join(parts[1:])
-                                    strain_curie = f"{collection_prefix}:{collection_number}"
+                                    strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
                                 else:
                                     # Second try: string+number+optional_string (e.g., "CRBIP6.1202", "JCM34415T")
                                     # Match: letters, then numbers (with dots/dashes), then optional letters
@@ -1212,7 +1212,7 @@ class BacDiveTransform(Transform):
                                     if match:
                                         collection_prefix = match.group(1).upper()
                                         collection_number = match.group(2)
-                                        strain_curie = f"{collection_prefix}:{collection_number}"
+                                        strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
                                     else:
                                         # Pattern doesn't match expected format - skip and warn
                                         logging.warning(

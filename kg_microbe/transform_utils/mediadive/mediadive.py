@@ -54,6 +54,7 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
+    KGMICROBE_PREFIX,
     MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
     MEDIADIVE_DESC_COLUMN,
@@ -357,15 +358,16 @@ class MediaDiveTransform(Transform):
                         medium_strain_nodes = []
                         for strain in json_obj_medium_strain:
                             if strain.get(BACDIVE_ID_COLUMN):
-                                strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
+                                strain_id = KGMICROBE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
+                                bacdive_lookup_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
                                 ncbi_strain_id = bacdive_df[
-                                    bacdive_df[BACDIVE_ID_COLUMN] == strain_id
+                                    bacdive_df[BACDIVE_ID_COLUMN] == bacdive_lookup_id
                                 ][NCBITAXON_ID_COLUMN].values
 
                                 if ncbi_strain_id.size > 0:
                                     ncbi_strain_id = list(ncbi_strain_id)[0]
                                 else:
-                                    # Use BacDive ID directly instead of strain:bacdive_ prefix
+                                    # Use kgmicrobe strain ID as fallback
                                     ncbi_strain_id = strain_id
 
                                 if not (

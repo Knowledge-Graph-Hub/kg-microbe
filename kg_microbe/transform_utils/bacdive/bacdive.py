@@ -100,6 +100,7 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
+    KGMICROBE_PREFIX,
     LOCATION_OF,
     LPSN,
     MATCHING_LEVEL,
@@ -1016,17 +1017,17 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         # species_with_strains.extend([curated_strain_ids[0]])
-                        curated_strain_id = BACDIVE_PREFIX + key
+                        curated_strain_id = KGMICROBE_PREFIX + key
                         species_with_strains.extend([curated_strain_id])
                         if len(curated_strain_ids) > 0:
                             strain_id = curated_strain_ids[0]
                             curated_strain_label = (
-                                f"{BACDIVE_PREFIX + key} as {strain_id} of {ncbitaxon_id}"
+                                f"{KGMICROBE_PREFIX + key} as {strain_id} of {ncbitaxon_id}"
                             )
 
                         else:
                             curated_strain_label = (
-                                f"{BACDIVE_PREFIX + key} of {ncbitaxon_id}"
+                                f"{KGMICROBE_PREFIX + key} of {ncbitaxon_id}"
                             )
 
                         # curated_strain_label = name_tax_classification.get(

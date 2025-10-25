@@ -19,6 +19,7 @@ import re
 from pathlib import Path
 from typing import Optional, Union
 
+import bioregistry
 import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
@@ -1187,13 +1188,17 @@ class BacDiveTransform(Transform):
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
                             strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
 
-                            # Extract culture collection identifier and create kgmicrobe: CURIE
+                            # Extract culture collection identifier and create CURIE
+                            # Uses bioregistry to determine if prefix is registered
+                            # Registered prefixes use official UPPERCASE format (e.g., ATCC:23768, JCM:34415T)
+                            # Unregistered prefixes use KGMICROBE: (e.g., KGMICROBE:CRBIP-1479)
+                            # Manual mappings: DSM -> DSMZ (DSM not registered, but DSMZ is)
                             # Handles patterns like:
-                            #   "ATCC 23768" -> kgmicrobe:ATCC-23768
-                            #   "DSM-16663" -> kgmicrobe:DSM-16663
-                            #   "CRBIP6.1202" -> kgmicrobe:CRBIP-6.1202
-                            #   "UCCCB10" -> kgmicrobe:UCCCB-10
-                            #   "JCM34415T" -> kgmicrobe:JCM-34415T
+                            #   "ATCC 23768" -> ATCC:23768 (registered)
+                            #   "DSM-16663" -> DSMZ:16663 (DSM mapped to DSMZ, registered)
+                            #   "CRBIP.1479" -> KGMICROBE:CRBIP-1479 (not registered)
+                            #   "CRBIP6.1202" -> KGMICROBE:CRBIP-6.1202 (not registered)
+                            #   "JCM34415T" -> JCM:34415T (registered)
                             strain_curie = None
                             if strain_label:
                                 # First try: space or hyphen separated (e.g., "ATCC 23768", "DSM-16663")
@@ -1202,17 +1207,42 @@ class BacDiveTransform(Transform):
                                     # First part is the collection prefix, rest is the number
                                     collection_prefix = parts[0].upper()
                                     collection_number = "-".join(parts[1:])
-                                    strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
+
+                                    # Manual mapping: DSM -> DSMZ (DSM is not registered but DSMZ is)
+                                    if collection_prefix == "DSM":
+                                        collection_prefix = "DSMZ"
+
+                                    # Check if prefix is registered in bioregistry
+                                    normalized_prefix = bioregistry.normalize_prefix(collection_prefix.lower())
+                                    if normalized_prefix:
+                                        # Use official uppercase prefix (e.g., ATCC:23768, DSMZ:16663)
+                                        strain_curie = f"{collection_prefix}:{collection_number}"
+                                    else:
+                                        # Use KGMICROBE: for unregistered collections
+                                        strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
                                 else:
-                                    # Second try: string+number+optional_string (e.g., "CRBIP6.1202", "JCM34415T")
-                                    # Match: letters, then numbers (with dots/dashes), then optional letters
+                                    # Second try: string+number+optional_string
+                                    # Match patterns like "CRBIP6.1202", "CRBIP.1479", "JCM34415T"
+                                    # Letters, optional dot/dash, then numbers (with dots/dashes), then optional letters
                                     match = re.match(
-                                        r'^([A-Za-z]+)(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip()
+                                        r'^([A-Za-z]+)[.\-]?(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip()
                                     )
                                     if match:
                                         collection_prefix = match.group(1).upper()
                                         collection_number = match.group(2)
-                                        strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
+
+                                        # Manual mapping: DSM -> DSMZ (DSM is not registered but DSMZ is)
+                                        if collection_prefix == "DSM":
+                                            collection_prefix = "DSMZ"
+
+                                        # Check if prefix is registered in bioregistry
+                                        normalized_prefix = bioregistry.normalize_prefix(collection_prefix.lower())
+                                        if normalized_prefix:
+                                            # Use official uppercase prefix (e.g., JCM:34415T)
+                                            strain_curie = f"{collection_prefix}:{collection_number}"
+                                        else:
+                                            # Use KGMICROBE: for unregistered collections
+                                            strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
                                     else:
                                         # Pattern doesn't match expected format - skip and warn
                                         logging.warning(

@@ -60,6 +60,14 @@ run-summary:
 	grep 'pathogen:' data/merged/merged-kg_edges.tsv  |wc -l
 
 
+test-sample:
+	poetry run python kg_microbe/eval/sample_taxa.py --source bacdive
+
+test-evaluate:
+	poetry run python kg_microbe/eval/evaluate_transform.py --source bacdive
+
+test: test-sample test-evaluate
+
 neo4j-upload:
 	kgx neo4j-upload --uri bolt://localhost:7687 \
                      --username neo4j \

@@ -13,11 +13,13 @@ Output these two files:
 
 import csv
 import json
+import logging
 import os
 import re
 from pathlib import Path
 from typing import Optional, Union
 
+import bioregistry
 import yaml
 from oaklib import get_adapter
 from tqdm import tqdm
@@ -98,6 +100,7 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
+    KGMICROBE_PREFIX,
     LOCATION_OF,
     LPSN,
     MATCHING_LEVEL,
@@ -163,7 +166,6 @@ from kg_microbe.transform_utils.constants import (
     SPORE_FORMATION,
     STRAIN,
     STRAIN_DESIGNATION,
-    STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     SUBSTRATE_CATEGORY,
     SUBSTRATE_TO_ASSAY_EDGE,
@@ -1213,18 +1215,17 @@ class BacDiveTransform(Transform):
 
                         # Use just 1st strain as per Marcin.
                         # species_with_strains.extend([curated_strain_ids[0]])
-                        curated_strain_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                        curated_strain_id = KGMICROBE_PREFIX + key
                         species_with_strains.extend([curated_strain_id])
                         if len(curated_strain_ids) > 0:
-                            prefix = BACDIVE_PREFIX.replace(":", "_")
                             strain_id = curated_strain_ids[0]
                             curated_strain_label = (
-                                f"{prefix + key} as {strain_id} of {ncbitaxon_id}"
+                                f"{KGMICROBE_PREFIX + key} as {strain_id} of {ncbitaxon_id}"
                             )
 
                         else:
                             curated_strain_label = (
-                                f"{BACDIVE_PREFIX.replace(':', '_') + key} of {ncbitaxon_id}"
+                                f"{KGMICROBE_PREFIX + key} of {ncbitaxon_id}"
                             )
 
                         # curated_strain_label = name_tax_classification.get(
@@ -1382,14 +1383,71 @@ class BacDiveTransform(Transform):
                     if ncbitaxon_id and culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
                             culture_number_cleaned = culture_number.strip().replace(" ", "-")
-                            strain_curie = (
-                                STRAIN_PREFIX + culture_number_cleaned
-                                if len(culture_number_cleaned) > 3
-                                else None
-                            )
-                            strain_label = (
-                                culture_number.strip() if len(culture_number_cleaned) > 3 else None
-                            )
+                            strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
+
+                            # Extract culture collection identifier and create CURIE
+                            # Uses bioregistry to determine if prefix is registered
+                            # Registered prefixes use official UPPERCASE format (e.g., ATCC:23768, JCM:34415T)
+                            # Unregistered prefixes use KGMICROBE: (e.g., KGMICROBE:CRBIP-1479)
+                            # Manual mappings: DSM -> DSMZ (DSM not registered, but DSMZ is)
+                            # Handles patterns like:
+                            #   "ATCC 23768" -> ATCC:23768 (registered)
+                            #   "DSM-16663" -> DSMZ:16663 (DSM mapped to DSMZ, registered)
+                            #   "CRBIP.1479" -> KGMICROBE:CRBIP-1479 (not registered)
+                            #   "CRBIP6.1202" -> KGMICROBE:CRBIP-6.1202 (not registered)
+                            #   "JCM34415T" -> JCM:34415T (registered)
+                            strain_curie = None
+                            if strain_label:
+                                # First try: space or hyphen separated (e.g., "ATCC 23768", "DSM-16663")
+                                parts = culture_number.strip().replace("-", " ").split()
+                                if len(parts) >= 2:
+                                    # First part is the collection prefix, rest is the number
+                                    collection_prefix = parts[0].upper()
+                                    collection_number = "-".join(parts[1:])
+
+                                    # Manual mapping: DSM -> DSMZ (DSM is not registered but DSMZ is)
+                                    if collection_prefix == "DSM":
+                                        collection_prefix = "DSMZ"
+
+                                    # Check if prefix is registered in bioregistry
+                                    normalized_prefix = bioregistry.normalize_prefix(collection_prefix.lower())
+                                    if normalized_prefix:
+                                        # Use official uppercase prefix (e.g., ATCC:23768, DSMZ:16663)
+                                        strain_curie = f"{collection_prefix}:{collection_number}"
+                                    else:
+                                        # Use KGMICROBE: for unregistered collections
+                                        strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
+                                else:
+                                    # Second try: string+number+optional_string
+                                    # Match patterns like "CRBIP6.1202", "CRBIP.1479", "JCM34415T"
+                                    # Letters, optional dot/dash, then numbers (with dots/dashes), then optional letters
+                                    match = re.match(
+                                        r'^([A-Za-z]+)[.\-]?(\d+(?:[.\-]\d+)*[A-Za-z]*)$', culture_number.strip()
+                                    )
+                                    if match:
+                                        collection_prefix = match.group(1).upper()
+                                        collection_number = match.group(2)
+
+                                        # Manual mapping: DSM -> DSMZ (DSM is not registered but DSMZ is)
+                                        if collection_prefix == "DSM":
+                                            collection_prefix = "DSMZ"
+
+                                        # Check if prefix is registered in bioregistry
+                                        normalized_prefix = bioregistry.normalize_prefix(collection_prefix.lower())
+                                        if normalized_prefix:
+                                            # Use official uppercase prefix (e.g., JCM:34415T)
+                                            strain_curie = f"{collection_prefix}:{collection_number}"
+                                        else:
+                                            # Use KGMICROBE: for unregistered collections
+                                            strain_curie = f"{KGMICROBE_PREFIX}{collection_prefix}-{collection_number}"
+                                    else:
+                                        # Pattern doesn't match expected format - skip and warn
+                                        logging.warning(
+                                            f"Skipping strain '{culture_number}' for BacDive ID {key}: "
+                                            f"does not match expected culture collection format"
+                                        )
+                                        continue
+
                             if strain_curie and strain_label:
                                 node_writer.writerow(
                                     [strain_curie, NCBI_CATEGORY, strain_label]

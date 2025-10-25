@@ -24,6 +24,7 @@ biopython = "^1.83"
 bacdive = "*"
 python-dotenv = "*"
 requests-ftp = "^0.3"
+bioregistry = "^0.12.45"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"

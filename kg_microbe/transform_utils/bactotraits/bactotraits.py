@@ -372,7 +372,11 @@ class BactoTraitsTransform(Transform):
                                     curie = value.get("curie") or value.get(CURIE_COLUMN)
                                     if curie:
                                         # Get predicate - try both METPO and YAML formats
-                                        predicate = value.get("predicate") or value.get(PREDICATE_COLUMN) or "biolink:has_phenotype"
+                                        predicate = (
+                                            value.get("predicate")
+                                            or value.get(PREDICATE_COLUMN)
+                                            or "biolink:has_phenotype"
+                                        )
 
                                         # Determine relationship type based on predicate
                                         if predicate == "biolink:capable_of":

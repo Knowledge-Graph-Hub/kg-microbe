@@ -47,10 +47,6 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
-    BIOSAFETY_CATEGORY,
-    BIOSAFETY_LEVEL,
-    BIOSAFETY_LEVEL_PREDICATE,
-    BIOSAFETY_LEVEL_PREFIX,
     CAPABLE_OF,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
@@ -1129,34 +1125,12 @@ class BacDiveTransform(Transform):
                         lpsn,
                     ]
 
-                    # Biosafety level
-                    if risk_assessment and ncbitaxon_id:
-                        if isinstance(risk_assessment, dict):
-                            biosafety_level = risk_assessment.get(BIOSAFETY_LEVEL, None)
-                        elif isinstance(risk_assessment, list):
-                            # ! Assumption is biosafety level for all items in the list are the same.
-                            biosafety_level = risk_assessment[0].get(BIOSAFETY_LEVEL, None)
-                        if biosafety_level:
-                            biosafety_level = re.findall(r"\d+", biosafety_level)[0]
-                            biosafety_level_id = f"{BIOSAFETY_LEVEL_PREFIX}{biosafety_level}"
-                            biosafety_level_label = f"{BIOSAFETY_LEVEL} {biosafety_level}"
-                            node_writer.writerow(
-                                [
-                                    biosafety_level_id,
-                                    BIOSAFETY_CATEGORY,
-                                    biosafety_level_label,
-                                ]
-                                + [None] * (len(self.node_header) - 3)
-                            )
-                            edge_writer.writerow(
-                                [
-                                    ncbitaxon_id,
-                                    BIOSAFETY_LEVEL_PREDICATE,
-                                    biosafety_level_id,
-                                    None,
-                                    BACDIVE_PREFIX + key,
-                                ]
-                            )
+                    # Biosafety level - using METPO mappings
+                    # Parent: METPO:1001101 (biosafety level)
+                    # Path: "Safety information.risk assessment.biosafety level"
+                    self._process_phenotype_by_metpo_parent(
+                        value, "METPO:1001101", species_with_strains, key, node_writer, edge_writer
+                    )
 
                     if not all(item is None for item in name_tax_classification_data[2:]):
                         writer_3.writerow(name_tax_classification_data)

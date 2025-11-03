@@ -12,15 +12,15 @@
 
 [latest KG-Microbe release](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/tag/2025-03-07)
 
-[KG-Microbe @KG-Registry](https://kghub.org/kg-registry/resource/kg-microbe/kg-microbe.html)
+[KG-Microbe @KG-Hub](https://kghub.org)
 
 
 # Setup
- - Install [pipx](https://pipx.pypa.io/stable/installation/)
- - Install poetry using `pipx install poetry`
+ - Create a vrtual environment of your choice.
+ - Install poetry using `pip install poetry`
+ - `poetry install`
  - `git clone https://github.com/Knowledge-Graph-Hub/kg-microbe.git`
  - `cd kg-microbe`
- - `poetry install`
 
 ## Download resources needed
  - `poetry run kg download` : This will download the resources needed for this project.
@@ -53,6 +53,7 @@ If you need to use environment variables for this project, copy `.env.example` t
 cp .env.example .env
 ```
 Then edit the `.env` file to configure the required environment variables for your setup.
+
 
 # Acknowledgements
 

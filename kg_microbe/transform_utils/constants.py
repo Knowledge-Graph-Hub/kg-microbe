@@ -465,11 +465,13 @@ MADIN_ETAL_COLUMNS = [
 
 
 def _sanitize_constant_name(col_name: str) -> str:
-    """Turn a column name like 'species_tax_id' into a valid constant name.
+    """
+    Turn a column name like 'species_tax_id' into a valid constant name.
 
     Examples:
         'species tax id' -> SPECIES_TAX_ID_COLUMN
         'rRNA16S_genes' -> RRNA16S_GENES_COLUMN
+
     """
     # Replace non-alphanumeric characters with underscore, collapse multiples
     name = re.sub(r"[^0-9A-Za-z]+", "_", col_name).strip("_")
@@ -480,7 +482,8 @@ def _sanitize_constant_name(col_name: str) -> str:
 
 
 def generate_column_constants(columns: list, overwrite: bool = False) -> None:
-    """Create module-level constants for each column name in `columns`.
+    """
+    Create module-level constants for each column name in `columns`.
 
     Each column name will become an upper-case constant with a trailing
     `_COLUMN` suffix (if not already present). For example, `tax_id` ->
@@ -502,11 +505,7 @@ def generate_column_constants(columns: list, overwrite: bool = False) -> None:
 # constants from `MADIN_ETAL_COLUMNS` at import time. This avoids surprising
 # side-effects by default while enabling quick developer ergonomics.
 if os.getenv("KG_MICROBE_AUTO_GEN_MADIN_COLUMNS", "0") == "1":
-    try:
-        generate_column_constants(MADIN_ETAL_COLUMNS)
-    except Exception:
-        # Avoid raising during import; generation is a convenience only.
-        pass
+    generate_column_constants(MADIN_ETAL_COLUMNS)
 
 CHEBI_MANUAL_ANNOTATION_PATH = MADIN_ETAL_DIR / "chebi_manual_annotation.tsv"
 

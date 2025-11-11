@@ -13,6 +13,8 @@ This module transforms the **Madin et al. bacterial and archaeal traits dataset*
 - [Architecture](#architecture)
 
 ---
+## Run transform
+'''poetry run kg transform -s madin_etal'''
 
 ## Overview
 

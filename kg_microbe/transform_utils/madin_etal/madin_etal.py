@@ -47,6 +47,7 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
+    RANGE_TMP_COLUMN,
     ROLE_CATEGORY,
     SHAPE_PREFIX,
     SUBJECT_LABEL_COLUMN,
@@ -54,36 +55,6 @@ from kg_microbe.transform_utils.constants import (
     TRAITS_DATASET_LABEL_COLUMN,
     TROPHICALLY_INTERACTS_WITH,
     TYPE_COLUMN,
-    # Madin et al additional columns
-    SPECIES_TAX_ID_COLUMN,
-    DATA_SOURCE_COLUMN,
-    SPECIES_COLUMN,
-    GENUS_COLUMN,
-    FAMILY_COLUMN,
-    ORDER_COLUMN,
-    CLASS_COLUMN,
-    PHYLUM_COLUMN,
-    SUPERKINGDOM_COLUMN,
-    GRAM_STAIN_COLUMN,
-    SPORULATION_COLUMN,
-    MOTILITY_COLUMN,
-    RANGE_TMP_COLUMN,
-    RANGE_SALINITY_COLUMN,
-    D1_LO_COLUMN,
-    D1_UP_COLUMN,
-    D2_LO_COLUMN,
-    D2_UP_COLUMN,
-    DOUBLING_H_COLUMN,
-    GENOME_SIZE_COLUMN,
-    GC_CONTENT_COLUMN,
-    CODING_GENES_COLUMN,
-    OPTIMUM_TMP_COLUMN,
-    OPTIMUM_PH_COLUMN,
-    GROWTH_TMP_COLUMN,
-    RRNA16S_GENES_COLUMN,
-    TRNA_GENES_COLUMN,
-    REF_ID_COLUMN,
-    MADIN_ETAL_COLUMNS,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -144,7 +115,7 @@ class MadinEtAlTransform(Transform):
     ) -> tuple:
         """
         Create node and edge using METPO mapping if available.
-        
+
         :param trait_value: The trait value to map
         :param tax_id: Organism taxonomy ID
         :param default_category: Default category if no METPO mapping
@@ -155,20 +126,20 @@ class MadinEtAlTransform(Transform):
         metpo_mapping = self.madin_metpo_mappings.get(trait_value.strip(), None)
         if not metpo_mapping:
             return None, None
-        
+
         # Extract category from METPO or use default
         category = uri_to_curie(metpo_mapping.get("inferred_category", default_category))
         predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
-        
+
         # Use Biolink predicate if available, otherwise use default
         if predicate_biolink:
             predicate = uri_to_curie(predicate_biolink)
         else:
             predicate = default_predicate
-        
+
         node = [metpo_mapping["curie"], category, metpo_mapping["label"]]
         edge = [tax_id, predicate, metpo_mapping["curie"], default_relation]
-        
+
         return node, edge
 
     def _process_isolation_source(
@@ -176,7 +147,7 @@ class MadinEtAlTransform(Transform):
     ) -> tuple:
         """
         Process isolation source and map to ENVO terms.
-        
+
         :param isolation_source_value: The isolation source text
         :param tax_id: Organism taxonomy ID
         :param envo_mapping: Dictionary mapping isolation sources to ENVO terms
@@ -185,7 +156,7 @@ class MadinEtAlTransform(Transform):
         isolation_source = envo_mapping.get(isolation_source_value, None)
         if not isolation_source:
             return None, None
-        
+
         # Check if ENVO mapping exists
         if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
             # No ENVO mapping, create custom node
@@ -209,15 +180,15 @@ class MadinEtAlTransform(Transform):
             if "," in isolation_source[ENVO_ID_COLUMN]:
                 curies = [x.strip() for x in isolation_source[ENVO_ID_COLUMN].split(",")]
                 labels = [x.strip() for x in isolation_source[ENVO_TERMS_COLUMN].split(",")]
-                
+
                 # Handle case where one label applies to multiple CURIEs
                 if len(labels) == 1 and len(labels) != len(curies):
                     labels = [labels[0] for _ in range(len(curies))]
-                
+
                 # Create multiple environment nodes
                 nodes = [
                     [curie, ENVIRONMENT_CATEGORY, label]
-                    for curie, label in zip(curies, labels)
+                    for curie, label in zip(curies, labels, strict=False)
                 ]
                 # Create multiple edges: environment -> location_of -> organism
                 edges = [
@@ -241,7 +212,7 @@ class MadinEtAlTransform(Transform):
                         LOCATION_OF,
                     ]
                 ]
-        
+
         return nodes, edges
 
     def _process_ner_fallback(
@@ -257,7 +228,7 @@ class MadinEtAlTransform(Transform):
     ) -> tuple:
         """
         Process items using NER results as fallback when METPO mapping not found.
-        
+
         :param items_to_process: List of items that need NER mapping
         :param ner_results: DataFrame with NER results
         :param tax_id: Organism taxonomy ID
@@ -270,11 +241,11 @@ class MadinEtAlTransform(Transform):
         """
         nodes = []
         edges = []
-        
+
         # Filter NER results to items in this organism's data
         condition = ner_results[TRAITS_DATASET_LABEL_COLUMN].isin(items_to_process)
         filtered_results = ner_results.loc[condition]
-        
+
         if filtered_results.empty:
             # No NER results found, use custom naming scheme
             for item in items_to_process:
@@ -283,35 +254,35 @@ class MadinEtAlTransform(Transform):
         else:
             # Prefer exact matches between input text and ontology term label
             filtered_results = self._filter_ner_results_exact_match(filtered_results)
-            
+
             # Create nodes and edges for NER-annotated items
             for row in filtered_results.iterrows():
                 nodes.append([row[1].object_id, category, row[1].object_label])
                 edges.append([tax_id, edge_type, row[1].object_id, relation])
-        
+
         return nodes, edges
 
     def _parse_comma_separated_values(self, value: str, na_value: str = "NA") -> list:
         """
         Parse comma-separated values from a cell, handling NA values.
-        
+
         :param value: The cell value to parse
         :param na_value: String representing NA/missing values
         :return: List of parsed values or None if all NA
         """
         if not value or value == na_value:
             return None
-        
+
         values = value.split(",")
         if values == [na_value]:
             return None
-        
+
         return [v.strip() for v in values]
 
     def _filter_ner_results_exact_match(self, ner_results: pd.DataFrame) -> pd.DataFrame:
         """
         Filter NER results to prefer exact matches between input and output labels.
-        
+
         :param ner_results: DataFrame with NER results
         :return: Filtered DataFrame with exact matches if available
         """
@@ -319,22 +290,22 @@ class MadinEtAlTransform(Transform):
             ner_results[OBJECT_LABEL_COLUMN] == ner_results[SUBJECT_LABEL_COLUMN]
         )
         exact_match_df = ner_results[exact_condition]
-        
+
         if not exact_match_df.empty:
             return exact_match_df
         return ner_results
 
     def _perform_ner_if_needed(
-        self, 
-        data_df: pd.DataFrame, 
-        prefix: str, 
+        self,
+        data_df: pd.DataFrame,
+        prefix: str,
         output_filename: str,
         exclusion_list: list,
         manual_annotation_path: Optional[Path] = None
     ) -> pd.DataFrame:
         """
         Perform NER on data if results don't already exist (caching).
-        
+
         :param data_df: DataFrame with data to annotate
         :param prefix: Ontology prefix (e.g., "CHEBI:", "GO:")
         :param output_filename: Output filename for NER results
@@ -343,7 +314,7 @@ class MadinEtAlTransform(Transform):
         :return: DataFrame with NER results
         """
         output_path = self.nlp_output_dir / output_filename
-        
+
         if not output_path.is_file():
             # Run NLP to identify entities
             annotate(
@@ -361,7 +332,7 @@ class MadinEtAlTransform(Transform):
         else:
             # Load cached results
             result = pd.read_csv(str(output_path), sep="\t", low_memory=False)
-        
+
         return result
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -375,7 +346,7 @@ class MadinEtAlTransform(Transform):
         if data_file is None:
             data_file = self.source_name + ".csv"
         input_file = self.input_base_dir / data_file
-        
+
         # Define which columns need NLP processing for entity recognition
         cols_for_nlp = [PATHWAYS_COLUMN, CARBON_SUBSTRATES_COLUMN]
         # Load only the columns that need NLP processing to save memory
@@ -384,10 +355,10 @@ class MadinEtAlTransform(Transform):
         # Separate carbon substrates (chemicals) from pathways (biological processes)
         chebi_nlp_df = nlp_df[[CARBON_SUBSTRATES_COLUMN]].dropna()
         go_nlp_df = nlp_df[[PATHWAYS_COLUMN]].dropna()
-        
+
         # Build list of words to exclude from NER (common words, stopwords)
         exclusion_list = get_exclusion_token_list([self.nlp_stopwords_dir / STOPWORDS_FN])
-        
+
         # Generate output filenames for NER results
         go_result_fn = GO_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX  # "go_ner.tsv"
         chebi_result_fn = CHEBI_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX  # "chebi_ner.tsv"
@@ -438,7 +409,7 @@ class MadinEtAlTransform(Transform):
         ).drop_duplicates()
         # Convert to dictionary for fast lookup: environment_type -> {ENVO_ID, ENVO_term}
         envo_mapping = envo_df.set_index(TYPE_COLUMN).T.to_dict()
-        
+
         # Define which trait columns to extract from the main dataset
         traits_columns_of_interest = [
             TAX_ID_COLUMN,              # Organism NCBI taxonomy ID
@@ -605,7 +576,7 @@ class MadinEtAlTransform(Transform):
                             "biolink:has_phenotype",
                             HAS_PHENOTYPE
                         )
-                        
+
                         # If no METPO mapping, create custom node
                         if not cell_shape_node:
                             cell_shape_node = [
@@ -642,14 +613,13 @@ class MadinEtAlTransform(Transform):
                                     rid = f"range_tmp:{r}"
                                     range_tmp_nodes.append([rid, PHENOTYPIC_CATEGORY, r])
                                     tax_range_tmp_edge.append([tax_id, "biolink:has_phenotype", rid, HAS_PHENOTYPE])
-                    
+
                     # Process ISOLATION_SOURCE (environment where organism was found)
                     isolation_source_node, tax_isolation_source_edge = self._process_isolation_source(
                         filtered_row[ISOLATION_SOURCE_COLUMN],
                         tax_id,
                         envo_mapping
                     )
-                    # Collect all nodes to write (filter out None values) - Question for Sujay: why are there only some trait's in the nodes?
                     nodes_data_to_write = [
                         sublist
                         for sublist in [

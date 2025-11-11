@@ -54,6 +54,36 @@ from kg_microbe.transform_utils.constants import (
     TRAITS_DATASET_LABEL_COLUMN,
     TROPHICALLY_INTERACTS_WITH,
     TYPE_COLUMN,
+    # Madin et al additional columns
+    SPECIES_TAX_ID_COLUMN,
+    DATA_SOURCE_COLUMN,
+    SPECIES_COLUMN,
+    GENUS_COLUMN,
+    FAMILY_COLUMN,
+    ORDER_COLUMN,
+    CLASS_COLUMN,
+    PHYLUM_COLUMN,
+    SUPERKINGDOM_COLUMN,
+    GRAM_STAIN_COLUMN,
+    SPORULATION_COLUMN,
+    MOTILITY_COLUMN,
+    RANGE_TMP_COLUMN,
+    RANGE_SALINITY_COLUMN,
+    D1_LO_COLUMN,
+    D1_UP_COLUMN,
+    D2_LO_COLUMN,
+    D2_UP_COLUMN,
+    DOUBLING_H_COLUMN,
+    GENOME_SIZE_COLUMN,
+    GC_CONTENT_COLUMN,
+    CODING_GENES_COLUMN,
+    OPTIMUM_TMP_COLUMN,
+    OPTIMUM_PH_COLUMN,
+    GROWTH_TMP_COLUMN,
+    RRNA16S_GENES_COLUMN,
+    TRNA_GENES_COLUMN,
+    REF_ID_COLUMN,
+    MADIN_ETAL_COLUMNS,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -446,6 +476,7 @@ class MadinEtAlTransform(Transform):
                     pathway_nodes = None
                     carbon_substrate_nodes = None
                     cell_shape_node = None
+                    range_tmp_nodes = None
                     isolation_source_node = None
                     metabolism_node = None
 
@@ -454,6 +485,7 @@ class MadinEtAlTransform(Transform):
                     tax_isolation_source_edge = None
                     tax_carbon_substrate_edge = None
                     tax_to_cell_shape_edge = None
+                    tax_range_tmp_edge = None
 
                     # Extract only the trait columns we need
                     filtered_row = {k: line[k] for k in traits_columns_of_interest}
@@ -587,6 +619,30 @@ class MadinEtAlTransform(Transform):
                                 SHAPE_PREFIX + cell_shape,
                                 HAS_PHENOTYPE,
                             ]
+                    # Process RANGE_TMP (temperature types where organism survives)
+                    # Map to METPO if possible, otherwise create custom nodes with
+                    if filtered_row.get(RANGE_TMP_COLUMN) and filtered_row[RANGE_TMP_COLUMN] != "NA":
+                        ranges = self._parse_comma_separated_values(filtered_row[RANGE_TMP_COLUMN])
+                        if ranges:
+                            range_tmp_nodes = []
+                            tax_range_tmp_edge = []
+                            for r in ranges:
+                                node, edge = self._get_metpo_node_and_edge(
+                                    r,
+                                    tax_id,
+                                    PHENOTYPIC_CATEGORY,
+                                    "biolink:has_phenotype",
+                                    HAS_PHENOTYPE,
+                                )
+                                if node and edge:
+                                    range_tmp_nodes.append(node)
+                                    tax_range_tmp_edge.append(edge)
+                                else:
+                                    # Fallback: create a custom node and edge
+                                    rid = f"range_tmp:{r}"
+                                    range_tmp_nodes.append([rid, PHENOTYPIC_CATEGORY, r])
+                                    tax_range_tmp_edge.append([tax_id, "biolink:has_phenotype", rid, HAS_PHENOTYPE])
+                    
                     # Process ISOLATION_SOURCE (environment where organism was found)
                     isolation_source_node, tax_isolation_source_edge = self._process_isolation_source(
                         filtered_row[ISOLATION_SOURCE_COLUMN],
@@ -600,6 +656,7 @@ class MadinEtAlTransform(Transform):
                             tax_node,
                             cell_shape_node,
                             metabolism_node,
+                            # include range tmp nodes (written separately below if list)
                         ]
                         if sublist is not None
                     ]
@@ -608,6 +665,9 @@ class MadinEtAlTransform(Transform):
                     # Write isolation source nodes separately (may be multiple)
                     if isolation_source_node:
                         node_writer.writerows(isolation_source_node)
+                    # Write range_tmp nodes (may be multiple)
+                    if range_tmp_nodes:
+                        node_writer.writerows(range_tmp_nodes)
 
                     # Collect all edges to write (filter out None values)
                     edges_data_to_write = [
@@ -615,6 +675,7 @@ class MadinEtAlTransform(Transform):
                         for sublist in [
                             tax_metabolism_edge,
                             tax_to_cell_shape_edge,
+                            # tax_range_tmp_edge may be a list of edges
                         ]
                         if sublist is not None
                     ]
@@ -624,6 +685,9 @@ class MadinEtAlTransform(Transform):
                     # Write isolation source edges separately (may be multiple)
                     if tax_isolation_source_edge:
                         edge_writer.writerows(tax_isolation_source_edge)
+                    # Write range_tmp edges separately (may be multiple)
+                    if tax_range_tmp_edge:
+                        edge_writer.writerows(tax_range_tmp_edge)
 
                     # Update progress bar with current organism being processed
                     progress.set_description(f"Processing taxonomy: {tax_id}")

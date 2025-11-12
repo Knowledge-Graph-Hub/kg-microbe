@@ -14,36 +14,6 @@ chemical_production: &chemical_production_block
   category: "biolink:ChemicalSubstance"
   predicate: "biolink:produces"
 
-salinity:
-  moderately_halophilic:
-    curie: "salinity:moderately_halophilic"
-    name: "moderately halophilic"
-    <<: *phenotypic_quality_block
-  halophilic:
-    curie: "salinity:halophilic"
-    name: "halophilic"
-    <<: *phenotypic_quality_block
-  non_halophilic:
-    curie: "salinity:non_halophilic"
-    name: "non halophilic"
-    <<: *phenotypic_quality_block
-  extremely_halophilic:
-    curie: "salinity:extremely_halophilic"
-    name: "extremely halophilic"
-    <<: *phenotypic_quality_block
-  slightly_halophilic:
-    curie: "salinity:slightly_halophilic"
-    name: "slightly halophilic"
-    <<: *phenotypic_quality_block
-  haloalkaliphilic:
-    curie: "salinity:haloalkaliphilic"
-    name: "haloalkaliphilic"
-    <<: *phenotypic_quality_block
-  halotolerant:
-    curie: "salinity:halotolerant"
-    name: "halotolerant"
-    <<: *phenotypic_quality_block
-
 production:
   antibiotic_compound_production:
     curie: "production:antibiotic_compound"

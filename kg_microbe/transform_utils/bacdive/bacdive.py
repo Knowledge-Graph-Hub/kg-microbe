@@ -1607,6 +1607,13 @@ class BacDiveTransform(Transform):
                         value, "METPO:1000701", species_with_strains, key, node_writer, edge_writer
                     )
 
+                    # Process halophily preference using path-based extraction from METPO tree
+                    # Parent: METPO:1000629 (halophily preference)
+                    # Paths: "Physiology and metabolism.halophily.halophily level"
+                    self._process_phenotype_by_metpo_parent(
+                        value, "METPO:1000629", species_with_strains, key, node_writer, edge_writer
+                    )
+
                     if phys_and_metabolism_API:
                         # Process each API key separately (e.g. "API zym", "API NH", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():

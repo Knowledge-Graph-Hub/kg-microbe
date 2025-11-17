@@ -24,6 +24,7 @@ from kg_microbe.transform_utils.constants import (
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
     GO_PREFIX,
+    GRAM_STAIN_COLUMN,
     HAS_PHENOTYPE,
     HAS_ROLE,
     ID_COLUMN,
@@ -33,6 +34,7 @@ from kg_microbe.transform_utils.constants import (
     MADIN_ETAL,
     METABOLISM_CATEGORY,
     METABOLISM_COLUMN,
+    MOTILITY_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_CARBON_SUBSTRATE_EDGE,
@@ -47,8 +49,10 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
+    RANGE_SALINITY_COLUMN,
     ROLE_CATEGORY,
     SHAPE_PREFIX,
+    SPORULATION_COLUMN,
     SUBJECT_LABEL_COLUMN,
     TAX_ID_COLUMN,
     TRAITS_DATASET_LABEL_COLUMN,
@@ -78,9 +82,12 @@ class MadinEtAlTransform(Transform):
         - org_name
         - metabolism
         - pathways
-        - shape
         - carbon_substrates
         - cell_shape
+        - range_salinity
+        - motility
+        - gram_stain
+        - sporulation
         - isolation_source
     Also implements:
         -   OAK to run NLP via the 'ner_utils' module and
@@ -182,6 +189,10 @@ class MadinEtAlTransform(Transform):
             PATHWAYS_COLUMN,
             CARBON_SUBSTRATES_COLUMN,
             CELL_SHAPE_COLUMN,
+            RANGE_SALINITY_COLUMN,
+            MOTILITY_COLUMN,
+            GRAM_STAIN_COLUMN,
+            SPORULATION_COLUMN,
             ISOLATION_SOURCE_COLUMN,
         ]
         with open(input_file, "r") as f:
@@ -206,6 +217,10 @@ class MadinEtAlTransform(Transform):
                     pathway_nodes = None
                     carbon_substrate_nodes = None
                     cell_shape_node = None
+                    range_salinity_node = None
+                    motility_node = None
+                    gram_stain_node = None
+                    sporulation_node = None
                     isolation_source_node = None
                     metabolism_node = None
 
@@ -214,6 +229,10 @@ class MadinEtAlTransform(Transform):
                     tax_isolation_source_edge = None
                     tax_carbon_substrate_edge = None
                     tax_to_cell_shape_edge = None
+                    tax_to_range_salinity_edge = None
+                    tax_to_motility_edge = None
+                    tax_to_gram_stain_edge = None
+                    tax_to_sporulation_edge = None
 
                     filtered_row = {k: line[k] for k in traits_columns_of_interest}
                     tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
@@ -493,6 +512,147 @@ class MadinEtAlTransform(Transform):
                                 SHAPE_PREFIX + cell_shape,
                                 HAS_PHENOTYPE,
                             ]
+
+                    # block handling "range_salinity" column from Madin etal dataset/CSV sheet
+                    range_salinity = (
+                        None
+                        if filtered_row[RANGE_SALINITY_COLUMN] == "NA"
+                        else filtered_row[RANGE_SALINITY_COLUMN]
+                    )
+                    if range_salinity:
+                        # Try to find mapping in METPO
+                        metpo_mapping = self.madin_metpo_mappings.get(range_salinity.strip(), None)
+                        if metpo_mapping:
+                            # create range_salinity node and edge to tax_id
+                            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            predicate_biolink = metpo_mapping.get(
+                                "predicate_biolink_equivalent", ""
+                            )
+                            # fallback: if no biolink equivalent use `biolink:has_phenotype`
+                            if predicate_biolink:
+                                predicate = uri_to_curie(predicate_biolink)
+                            else:
+                                predicate = "biolink:has_phenotype"
+                            range_salinity_node = [
+                                metpo_mapping["curie"],
+                                category,
+                                metpo_mapping["label"],
+                            ]
+                            tax_to_range_salinity_edge = [
+                                tax_id,
+                                predicate,
+                                metpo_mapping["curie"],
+                                HAS_PHENOTYPE,
+                            ]
+
+                    # block handling "motility" column from Madin etal dataset/CSV sheet
+                    motility = (
+                        None
+                        if filtered_row[MOTILITY_COLUMN] == "NA"
+                        else filtered_row[MOTILITY_COLUMN]
+                    )
+                    if motility:
+                        # Try to find mapping in METPO using compound key first, then simple key
+                        compound_key = f"motility.{motility.strip()}"
+                        metpo_mapping = self.madin_metpo_mappings.get(
+                            compound_key,
+                            self.madin_metpo_mappings.get(motility.strip(), None)
+                        )
+                        if metpo_mapping:
+                            # create motility node and edge to tax_id
+                            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            predicate_biolink = metpo_mapping.get(
+                                "predicate_biolink_equivalent", ""
+                            )
+                            # fallback: if no biolink equivalent use `biolink:has_phenotype`
+                            if predicate_biolink:
+                                predicate = uri_to_curie(predicate_biolink)
+                            else:
+                                predicate = "biolink:has_phenotype"
+                            motility_node = [
+                                metpo_mapping["curie"],
+                                category,
+                                metpo_mapping["label"],
+                            ]
+                            tax_to_motility_edge = [
+                                tax_id,
+                                predicate,
+                                metpo_mapping["curie"],
+                                HAS_PHENOTYPE,
+                            ]
+
+                    # block handling "gram_stain" column from Madin etal dataset/CSV sheet
+                    gram_stain = (
+                        None
+                        if filtered_row[GRAM_STAIN_COLUMN] == "NA"
+                        else filtered_row[GRAM_STAIN_COLUMN]
+                    )
+                    if gram_stain:
+                        # Try to find mapping in METPO
+                        metpo_mapping = self.madin_metpo_mappings.get(gram_stain.strip(), None)
+                        if metpo_mapping:
+                            # create gram_stain node and edge to tax_id
+                            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            predicate_biolink = metpo_mapping.get(
+                                "predicate_biolink_equivalent", ""
+                            )
+                            # fallback: if no biolink equivalent use `biolink:has_phenotype`
+                            if predicate_biolink:
+                                predicate = uri_to_curie(predicate_biolink)
+                            else:
+                                predicate = "biolink:has_phenotype"
+                            gram_stain_node = [
+                                metpo_mapping["curie"],
+                                category,
+                                metpo_mapping["label"],
+                            ]
+                            tax_to_gram_stain_edge = [
+                                tax_id,
+                                predicate,
+                                metpo_mapping["curie"],
+                                HAS_PHENOTYPE,
+                            ]
+
+                    # block handling "sporulation" column from Madin etal dataset/CSV sheet
+                    sporulation = (
+                        None
+                        if filtered_row[SPORULATION_COLUMN] == "NA"
+                        else filtered_row[SPORULATION_COLUMN]
+                    )
+                    if sporulation:
+                        # Try to find mapping in METPO using compound key first, then simple key
+                        compound_key = f"sporulation.{sporulation.strip()}"
+                        metpo_mapping = self.madin_metpo_mappings.get(
+                            compound_key,
+                            self.madin_metpo_mappings.get(sporulation.strip(), None)
+                        )
+                        if metpo_mapping:
+                            # create sporulation node and edge to tax_id
+                            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            predicate_biolink = metpo_mapping.get(
+                                "predicate_biolink_equivalent", ""
+                            )
+                            # fallback: if no biolink equivalent use `biolink:has_phenotype`
+                            if predicate_biolink:
+                                predicate = uri_to_curie(predicate_biolink)
+                            else:
+                                predicate = "biolink:has_phenotype"
+                            sporulation_node = [
+                                metpo_mapping["curie"],
+                                category,
+                                metpo_mapping["label"],
+                            ]
+                            tax_to_sporulation_edge = [
+                                tax_id,
+                                predicate,
+                                metpo_mapping["curie"],
+                                HAS_PHENOTYPE,
+                            ]
+
                     # envo_df
                     isolation_source = envo_mapping.get(filtered_row[ISOLATION_SOURCE_COLUMN], None)
                     if isolation_source:
@@ -556,6 +716,10 @@ class MadinEtAlTransform(Transform):
                         for sublist in [
                             tax_node,
                             cell_shape_node,
+                            range_salinity_node,
+                            motility_node,
+                            gram_stain_node,
+                            sporulation_node,
                             metabolism_node,
                         ]
                         if sublist is not None
@@ -569,6 +733,10 @@ class MadinEtAlTransform(Transform):
                         for sublist in [
                             tax_metabolism_edge,
                             tax_to_cell_shape_edge,
+                            tax_to_range_salinity_edge,
+                            tax_to_motility_edge,
+                            tax_to_gram_stain_edge,
+                            tax_to_sporulation_edge,
                         ]
                         if sublist is not None
                     ]

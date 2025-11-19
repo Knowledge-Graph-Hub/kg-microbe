@@ -107,6 +107,13 @@ merged_graph:
         filename:
           - data/transformed/bactotraits/nodes.tsv
           - data/transformed/bactotraits/edges.tsv
+    bakta:
+      name: "bakta"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/bakta/nodes.tsv
+          - data/transformed/bakta/edges.tsv
     # ctd:
     #   input:
     #     name: "ctd"

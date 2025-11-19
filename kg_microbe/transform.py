@@ -5,9 +5,11 @@ from pathlib import Path
 from typing import List, Optional
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
+    BAKTA,
     BACTOTRAITS,
     MADIN_ETAL,
     MEDIADIVE,
@@ -33,6 +35,7 @@ DATA_SOURCES = {
     # "STRINGTransform": STRINGTransform,
     ONTOLOGIES: OntologiesTransform,
     BACDIVE: BacDiveTransform,
+    BAKTA: BaktaTransform,
     MEDIADIVE: MediaDiveTransform,
     MADIN_ETAL: MadinEtAlTransform,
     RHEAMAPPINGS: RheaMappingsTransform,

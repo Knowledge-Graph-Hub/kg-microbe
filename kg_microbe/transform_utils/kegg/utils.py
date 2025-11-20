@@ -2,6 +2,7 @@
 
 import logging
 import time
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import requests
@@ -13,6 +14,41 @@ KEGG_REST_URL = "https://rest.kegg.jp"
 
 # Rate limiting: KEGG requests max 10 requests per second
 REQUEST_DELAY = 0.11  # seconds between requests (slightly over 0.1 for safety)
+
+
+def parse_kegg_ko_list_file(ko_list_file: Path) -> Dict[str, str]:
+    """
+    Parse KEGG KO list from downloaded file.
+
+    File format: ko:K00001<tab>description
+
+    :param ko_list_file: Path to downloaded ko_list.txt file
+    :return: Dictionary mapping KO ID to description
+    """
+    ko_dict = {}
+
+    if not ko_list_file.exists():
+        logger.error(f"KEGG KO list file not found: {ko_list_file}")
+        return ko_dict
+
+    with open(ko_list_file, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+
+            # Format: ko:K00001<tab>description
+            parts = line.split("\t", 1)
+            if len(parts) != 2:
+                continue
+
+            ko_id = parts[0].replace("ko:", "")  # Remove ko: prefix
+            description = parts[1].strip()
+
+            ko_dict[ko_id] = description
+
+    logger.info(f"Parsed {len(ko_dict)} KEGG KO entries from file")
+    return ko_dict
 
 
 def get_kegg_ko_list() -> Dict[str, str]:
@@ -125,18 +161,22 @@ def parse_kegg_entry(entry_text: str) -> Dict[str, any]:
                 # Format: ko00010  Glycolysis / Gluconeogenesis
                 pathway_parts = section_value.split(None, 1)
                 if len(pathway_parts) == 2:
-                    details["pathways"].append({
-                        "id": pathway_parts[0],
-                        "name": pathway_parts[1],
-                    })
+                    details["pathways"].append(
+                        {
+                            "id": pathway_parts[0],
+                            "name": pathway_parts[1],
+                        }
+                    )
             elif section_name == "MODULE":
                 # Format: M00001  Glycolysis
                 module_parts = section_value.split(None, 1)
                 if len(module_parts) == 2:
-                    details["modules"].append({
-                        "id": module_parts[0],
-                        "name": module_parts[1],
-                    })
+                    details["modules"].append(
+                        {
+                            "id": module_parts[0],
+                            "name": module_parts[1],
+                        }
+                    )
         else:
             # Continuation line (starts with whitespace)
             if current_section == "PATHWAY":
@@ -144,19 +184,23 @@ def parse_kegg_entry(entry_text: str) -> Dict[str, any]:
                 pathway_line = line.strip()
                 pathway_parts = pathway_line.split(None, 1)
                 if len(pathway_parts) == 2:
-                    details["pathways"].append({
-                        "id": pathway_parts[0],
-                        "name": pathway_parts[1],
-                    })
+                    details["pathways"].append(
+                        {
+                            "id": pathway_parts[0],
+                            "name": pathway_parts[1],
+                        }
+                    )
             elif current_section == "MODULE":
                 # Additional module lines
                 module_line = line.strip()
                 module_parts = module_line.split(None, 1)
                 if len(module_parts) == 2:
-                    details["modules"].append({
-                        "id": module_parts[0],
-                        "name": module_parts[1],
-                    })
+                    details["modules"].append(
+                        {
+                            "id": module_parts[0],
+                            "name": module_parts[1],
+                        }
+                    )
             elif current_section == "NAME":
                 # NAME field can continue on multiple lines
                 details["name"] += " " + line.strip()

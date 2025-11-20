@@ -208,3 +208,10 @@
 -
   url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.fun.tab
   local_name: cog/cog-24.fun.tab
+
+#
+# KEGG (Kyoto Encyclopedia of Genes and Genomes)
+#
+-
+  url: https://rest.kegg.jp/list/ko
+  local_name: kegg/ko_list.txt

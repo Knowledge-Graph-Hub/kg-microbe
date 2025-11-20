@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class COGTransform(Transform):
+
     """Transform COG functional classifications into KGX format."""
 
     def __init__(
@@ -94,6 +95,22 @@ class COGTransform(Transform):
         for cat_id, cat_data in func_cats.items():
             self.add_functional_category_node(cat_id, cat_data)
 
+        # Create group nodes and category->group edges
+        logger.info("Creating COG group hierarchy...")
+        group_ids = set(cat_data["group"] for cat_data in func_cats.values())
+        for group_id in sorted(group_ids):
+            self.add_group_node(group_id)
+
+        # Create category->group edges
+        for cat_id, cat_data in func_cats.items():
+            group_id = cat_data["group"]
+            self.add_edge(
+                f"COG_CAT:{cat_id}",
+                "biolink:subclass_of",
+                f"COG_GROUP:{group_id}",
+                "rdfs:subClassOf",
+            )
+
         # Create COG nodes and edges
         logger.info(f"Processing {len(cog_defs)} COG entries...")
         for cog_id, cog_data in cog_defs.items():
@@ -136,6 +153,31 @@ class COGTransform(Transform):
             CATEGORY_COLUMN: "biolink:OntologyClass",
             NAME_COLUMN: cat_data["description"],
             DESCRIPTION_COLUMN: f"{group_name} - {cat_data['description']}",
+            PROVIDED_BY_COLUMN: self.knowledge_source,
+        }
+
+        self.nodes.append(node)
+        self.seen_nodes.add(node_id)
+
+    def add_group_node(self, group_id: str) -> None:
+        """
+        Add a COG functional category group node.
+
+        :param group_id: Group ID (1-4)
+        """
+        node_id = f"COG_GROUP:{group_id}"
+
+        if node_id in self.seen_nodes:
+            return
+
+        # Get group name
+        group_name = get_category_group_name(group_id)
+
+        node = {
+            ID_COLUMN: node_id,
+            CATEGORY_COLUMN: "biolink:OntologyClass",
+            NAME_COLUMN: group_name,
+            DESCRIPTION_COLUMN: f"COG functional category group: {group_name}",
             PROVIDED_BY_COLUMN: self.knowledge_source,
         }
 

@@ -114,6 +114,20 @@ merged_graph:
         filename:
           - data/transformed/bakta/nodes.tsv
           - data/transformed/bakta/edges.tsv
+    cog:
+      name: "cog"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/cog/nodes.tsv
+          - data/transformed/cog/edges.tsv
+    kegg:
+      name: "kegg"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/kegg/nodes.tsv
+          - data/transformed/kegg/edges.tsv
     # ctd:
     #   input:
     #     name: "ctd"

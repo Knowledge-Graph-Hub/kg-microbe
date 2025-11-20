@@ -195,6 +195,16 @@
 #
 # METPO
 #
-- 
+-
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
   local_name: metpo.owl
+
+#
+# COG (Clusters of Orthologous Groups)
+#
+-
+  url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.def.tab
+  local_name: cog/cog-24.def.tab
+-
+  url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.fun.tab
+  local_name: cog/cog-24.fun.tab

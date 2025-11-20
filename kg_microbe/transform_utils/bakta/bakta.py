@@ -359,13 +359,13 @@ class BaktaTransform(Transform):
         for ec_id in annotations.get("ec", []):
             self.add_ec_annotation(protein_id, ec_id)
 
-        # COG groups - COMMENTED OUT
-        # for cog_id in annotations.get("cog", []):
-        #     self.add_cog_annotation(gene_id, cog_id)
+        # COG groups
+        for cog_id in annotations.get("cog", []):
+            self.add_cog_annotation(gene_id, cog_id)
 
-        # KEGG orthologs - COMMENTED OUT
-        # for kegg_id in annotations.get("kegg", []):
-        #     self.add_kegg_annotation(gene_id, kegg_id)
+        # KEGG orthologs
+        for kegg_id in annotations.get("kegg", []):
+            self.add_kegg_annotation(gene_id, kegg_id)
 
     def add_go_annotation(self, protein_id: str, go_id: str) -> None:
         """

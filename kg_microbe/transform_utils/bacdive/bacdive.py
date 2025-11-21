@@ -250,7 +250,13 @@ class BacDiveTransform(Transform):
             return []
 
     def _process_phenotype_by_metpo_parent(
-        self, record: dict, parent_iri: str, species_with_strains: list, key: str, node_writer, edge_writer
+        self,
+        record: dict,
+        parent_iri: str,
+        species_with_strains: list,
+        key: str,
+        node_writer,
+        edge_writer,
     ):
         """
         Process phenotype data using METPO tree parent node to extract values dynamically.
@@ -661,7 +667,9 @@ class BacDiveTransform(Transform):
             # New format: already a list, use as-is
             pass
         else:
-            raise ValueError(f"Unexpected JSON format: expected dict or list, got {type(input_json)}")
+            raise ValueError(
+                f"Unexpected JSON format: expected dict or list, got {type(input_json)}"
+            )
 
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)

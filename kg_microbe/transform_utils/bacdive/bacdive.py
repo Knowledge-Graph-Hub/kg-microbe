@@ -130,7 +130,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_RESISTANCE_EDGE,
     NCBI_TO_METABOLITE_SENSITIVITY_EDGE,
-    NCBI_TO_METABOLITE_UTILIZATION_EDGE,
     NCBITAXON_DESCRIPTION_COLUMN,
     NCBITAXON_ID,
     NCBITAXON_ID_COLUMN,
@@ -174,7 +173,12 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.mapping_file_utils import _build_metpo_tree, load_metpo_mappings, uri_to_curie
+from kg_microbe.utils.mapping_file_utils import (
+    _build_metpo_tree,
+    load_metpo_mappings,
+    load_metpo_metabolite_utilization_mappings,
+    uri_to_curie,
+)
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -202,6 +206,7 @@ class BacDiveTransform(Transform):
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
+        self.metpo_metabolite_utilization_mappings = load_metpo_metabolite_utilization_mappings()
 
     def _extract_value_from_json_path(self, record: dict, json_path: str):
         """
@@ -1423,48 +1428,47 @@ class BacDiveTransform(Transform):
                                     edge_writer.writerows(enzyme_edges_to_write)
 
                     if phys_and_metabolism_metabolite_utilization:
-                        positive_chebi_activity = None
+                        metabolite_activity_data = None
                         if isinstance(phys_and_metabolism_metabolite_utilization, list):
-                            positive_chebi_activity = []
-                            # no_chebi_activity = defaultdict(list)
+                            metabolite_activity_data = []
                             for metabolite in phys_and_metabolism_metabolite_utilization:
-                                # ! NO CURIE associated to metabolite.
-                                # if (
-                                #     METABOLITE_CHEBI_KEY not in metabolite
-                                #     and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
-                                # ):
-                                #     no_chebi_activity.setdefault("NO_CURIE", []).append(
-                                #         [
-                                #             metabolite[METABOLITE_KEY],
-                                #             metabolite.get(UTILIZATION_TYPE_TESTED),
-                                #         ]
-                                #     )
-                                #     positive_chebi_activity.append(no_chebi_activity)
-
-                                if (
-                                    METABOLITE_CHEBI_KEY in metabolite
-                                    and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
-                                ):
+                                # Process metabolites that have CHEBI ID
+                                if METABOLITE_CHEBI_KEY in metabolite:
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
-                                    positive_chebi_activity.append(
-                                        {
-                                            chebi_key: [
-                                                metabolite[METABOLITE_KEY],
-                                                metabolite.get(UTILIZATION_TYPE_TESTED),
-                                            ]
-                                        }
-                                    )
+                                    utilization_type = metabolite.get(UTILIZATION_TYPE_TESTED)
+                                    utilization_activity = metabolite.get(UTILIZATION_ACTIVITY)
+
+                                    # Look up METPO predicate based on utilization type and sign
+                                    metpo_predicate = None
+                                    metpo_label = None
+                                    if utilization_type and utilization_activity:
+                                        mapping = self.metpo_metabolite_utilization_mappings.get(
+                                            utilization_type
+                                        )
+                                        if mapping and utilization_activity in mapping:
+                                            metpo_predicate = mapping[utilization_activity]["curie"]
+                                            metpo_label = mapping[utilization_activity]["label"]
+
+                                    # Only add if we found a METPO predicate mapping
+                                    if metpo_predicate:
+                                        metabolite_activity_data.append(
+                                            {
+                                                "chebi_key": chebi_key,
+                                                "metabolite_name": metabolite[METABOLITE_KEY],
+                                                "utilization_type": utilization_type,
+                                                "metpo_predicate": metpo_predicate,
+                                                "metpo_label": metpo_label,
+                                            }
+                                        )
 
                         elif isinstance(phys_and_metabolism_metabolite_utilization, dict):
                             utilization_activity = phys_and_metabolism_metabolite_utilization.get(
                                 UTILIZATION_ACTIVITY
                             )
-                            if (
-                                utilization_activity == PLUS_SIGN
-                                and phys_and_metabolism_metabolite_utilization.get(
-                                    METABOLITE_CHEBI_KEY
-                                )
-                            ):
+                            utilization_type = phys_and_metabolism_metabolite_utilization.get(
+                                UTILIZATION_TYPE_TESTED
+                            )
+                            if phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
@@ -1472,33 +1476,55 @@ class BacDiveTransform(Transform):
                                 metabolite_value = phys_and_metabolism_metabolite_utilization.get(
                                     METABOLITE_KEY
                                 )
-                                positive_chebi_activity = [{chebi_key: metabolite_value}]
+
+                                # Look up METPO predicate
+                                metpo_predicate = None
+                                metpo_label = None
+                                if utilization_type and utilization_activity:
+                                    mapping = self.metpo_metabolite_utilization_mappings.get(
+                                        utilization_type
+                                    )
+                                    if mapping and utilization_activity in mapping:
+                                        metpo_predicate = mapping[utilization_activity]["curie"]
+                                        metpo_label = mapping[utilization_activity]["label"]
+
+                                if metpo_predicate:
+                                    metabolite_activity_data = [
+                                        {
+                                            "chebi_key": chebi_key,
+                                            "metabolite_name": metabolite_value,
+                                            "utilization_type": utilization_type,
+                                            "metpo_predicate": metpo_predicate,
+                                            "metpo_label": metpo_label,
+                                        }
+                                    ]
                         else:
                             print(
                                 f"{phys_and_metabolism_metabolite_utilization} data not recorded."
                             )
-                        if positive_chebi_activity:
+
+                        if metabolite_activity_data:
+                            # Write metabolite nodes
                             meta_util_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v[0]]
+                                [item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"]]
                                 + [None] * (len(self.node_header) - 3)
-                                for inner_dict in positive_chebi_activity
-                                for k, v in inner_dict.items()
+                                for item in metabolite_activity_data
                             ]
                             node_writer.writerows(meta_util_nodes_to_write)
 
-                            for inner_dict in positive_chebi_activity:
-                                for k, _ in inner_dict.items():
-                                    meta_util_edges_to_write = [
-                                        [
-                                            organism,
-                                            NCBI_TO_METABOLITE_UTILIZATION_EDGE,
-                                            k,
-                                            HAS_PARTICIPANT,
-                                            BACDIVE_PREFIX + key,
-                                        ]
-                                        for organism in species_with_strains
+                            # Write edges with METPO predicates
+                            for item in metabolite_activity_data:
+                                meta_util_edges_to_write = [
+                                    [
+                                        organism,
+                                        item["metpo_predicate"],
+                                        item["chebi_key"],
+                                        HAS_PARTICIPANT,
+                                        BACDIVE_PREFIX + key,
                                     ]
-                                    edge_writer.writerows(meta_util_edges_to_write)
+                                    for organism in species_with_strains
+                                ]
+                                edge_writer.writerows(meta_util_edges_to_write)
 
                     if phys_and_metabolism_metabolite_production:
                         positive_chebi_production = None

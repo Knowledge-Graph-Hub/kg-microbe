@@ -236,13 +236,15 @@ class BactoTraitsTransform(Transform):
             category = uri_to_curie(category_url) if category_url else "biolink:PhenotypicQuality"
 
             predicate_biolink = metpo_data.get("predicate_biolink_equivalent", "")
-            predicate = uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
+            predicate = (
+                uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
+            )
 
             unified_mapping[synonym] = {
                 "curie": metpo_data["curie"],
                 "category": category,
                 "name": metpo_data["label"],
-                "predicate": predicate
+                "predicate": predicate,
             }
             # Also add lowercase version for case-insensitive matching
             unified_mapping[synonym.lower()] = unified_mapping[synonym]
@@ -343,11 +345,7 @@ class BactoTraitsTransform(Transform):
                                     category = value.get("category") or value.get(CATEGORY_COLUMN)
                                     name = value.get("name") or value.get(NAME_COLUMN)
 
-                                    nodes_data_to_write.append([
-                                        curie,
-                                        category,
-                                        name
-                                    ])
+                                    nodes_data_to_write.append([curie, category, name])
                             if ncbitaxon_id:
                                 ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                                 if ncbi_label:
@@ -386,13 +384,15 @@ class BactoTraitsTransform(Transform):
                                         else:
                                             relationship = HAS_PHENOTYPE
 
-                                        edges_data_to_write.append([
-                                            ncbitaxon_id,
-                                            predicate,
-                                            curie,
-                                            relationship,
-                                            "BactoTraits.csv",
-                                        ])
+                                        edges_data_to_write.append(
+                                            [
+                                                ncbitaxon_id,
+                                                predicate,
+                                                curie,
+                                                relationship,
+                                                "BactoTraits.csv",
+                                            ]
+                                        )
                                 edge_writer.writerows(edges_data_to_write)
 
                     progress.set_description(f"Processing line #{i}")

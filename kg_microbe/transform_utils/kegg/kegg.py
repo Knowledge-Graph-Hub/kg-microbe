@@ -101,9 +101,9 @@ class KEGGTransform(Transform):
                     self.add_pathway_node(pathway_id, pathway_name)
                     self.add_edge(
                         f"KEGG:{ko_id}",
-                        "biolink:participates_in",
+                        "biolink:subclass_of",
                         f"KEGG:{pathway_id}",
-                        "RO:0000056",  # participates in
+                        "rdfs:subClassOf",
                     )
 
                 # Create module nodes and edges
@@ -113,9 +113,9 @@ class KEGGTransform(Transform):
                     self.add_module_node(module_id, module_name)
                     self.add_edge(
                         f"KEGG:{ko_id}",
-                        "biolink:participates_in",
+                        "biolink:subclass_of",
                         f"KEGG:{module_id}",
-                        "RO:0000056",  # participates in
+                        "rdfs:subClassOf",
                     )
 
             # Progress update every 1000 entries

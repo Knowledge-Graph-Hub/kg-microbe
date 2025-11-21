@@ -211,9 +211,9 @@ class TestKEGGTransform(unittest.TestCase):
 
         transform.add_edge(
             "KEGG:K00001",
-            "biolink:participates_in",
+            "biolink:subclass_of",
             "KEGG:ko00010",
-            "RO:0000056",
+            "rdfs:subClassOf",
         )
 
         # Check edge was added
@@ -221,9 +221,9 @@ class TestKEGGTransform(unittest.TestCase):
         edge = transform.edges[0]
 
         self.assertEqual(edge["subject"], "KEGG:K00001")
-        self.assertEqual(edge["predicate"], "biolink:participates_in")
+        self.assertEqual(edge["predicate"], "biolink:subclass_of")
         self.assertEqual(edge["object"], "KEGG:ko00010")
-        self.assertEqual(edge["relation"], "RO:0000056")
+        self.assertEqual(edge["relation"], "rdfs:subClassOf")
         self.assertEqual(edge["primary_knowledge_source"], "infores:kegg")
 
     def test_add_module_node(self):
@@ -271,9 +271,9 @@ class TestKEGGTransform(unittest.TestCase):
         # Add edge
         transform.add_edge(
             "KEGG:K00001",
-            "biolink:participates_in",
+            "biolink:subclass_of",
             "KEGG:ko00010",
-            "RO:0000056",
+            "rdfs:subClassOf",
         )
 
         # Verify
@@ -283,7 +283,7 @@ class TestKEGGTransform(unittest.TestCase):
         edge = transform.edges[0]
         self.assertEqual(edge["subject"], "KEGG:K00001")
         self.assertEqual(edge["object"], "KEGG:ko00010")
-        self.assertEqual(edge["predicate"], "biolink:participates_in")
+        self.assertEqual(edge["predicate"], "biolink:subclass_of")
 
     def test_ko_to_module_edge(self):
         """Test creating KO→Module edge."""
@@ -299,9 +299,9 @@ class TestKEGGTransform(unittest.TestCase):
         # Add edge
         transform.add_edge(
             "KEGG:K00001",
-            "biolink:participates_in",
+            "biolink:subclass_of",
             "KEGG:M00001",
-            "RO:0000056",
+            "rdfs:subClassOf",
         )
 
         # Verify
@@ -311,7 +311,7 @@ class TestKEGGTransform(unittest.TestCase):
         edge = transform.edges[0]
         self.assertEqual(edge["subject"], "KEGG:K00001")
         self.assertEqual(edge["object"], "KEGG:M00001")
-        self.assertEqual(edge["predicate"], "biolink:participates_in")
+        self.assertEqual(edge["predicate"], "biolink:subclass_of")
 
     def test_parse_kegg_ko_list_file(self):
         """Test parsing KEGG KO list from file."""

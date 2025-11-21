@@ -187,7 +187,9 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
 
         for row in reader:
             iri = row.get("ID", "").strip()
-            parent_label = row.get("parent class", "").strip()
+            parent_classes = row.get("parent classes (one strongly preferred)", "").strip()
+            # Handle pipe-separated parent classes, take the first one
+            parent_label = parent_classes.split("|")[0].strip() if parent_classes else ""
 
             if iri in nodes and parent_label:
                 # find parent by label since parent class column contains labels, not CURIEs
@@ -267,15 +269,20 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     Implements the logic to find appropriate _predicates_ by traversing the parent hierarchy to find
     `biolink equivalent` and then mapping to properties.
 
+    For ambiguous synonyms (e.g., "yes" or "no" that appear under multiple parent concepts),
+    compound keys are created using the parent label as context (e.g., "motility.yes", "sporulation.yes").
+
     :param synonym_column: The column name to use for synonyms
         (e.g., 'bacdive keyword synonym', 'madin synonym or field', etc.)
     :return: Dictionary mapping synonyms to METPO curie, label, and predicate information.
         Format: {synonym: {'curie': metpo_curie, 'label': metpo_label, 'predicate': predicate_label}}
+        For ambiguous values, also includes compound keys like "parent.synonym"
     :rtype: Dict[str, Dict[str, str]]
     :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
     :raises ValueError: If the response content is empty or invalid
     """
     mappings = {}
+    synonym_to_parents = {}  # Track which parents each synonym appears under
 
     try:
         nodes = _build_metpo_tree()  # build the METPO tree structure
@@ -294,6 +301,8 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
         lines = response.text.splitlines()
         reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
 
+        # First pass: collect all synonym -> parent relationships
+        temp_mappings = []
         for row in reader:
             synonym = row.get(synonym_column, "").strip()
             metpo_curie = row.get("ID", "").strip()  # already a CURIE
@@ -309,8 +318,14 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                 predicate_label = "has phenotype"  # default
                 predicate_biolink_equivalent = ""  # default empty
                 inferred_category = ""  # default empty, will be inferred from parent
+                immediate_parent_label = None  # Track the immediate parent for compound keys
+
                 if metpo_curie in nodes:
                     node = nodes[metpo_curie]
+                    # Get immediate parent label for compound key creation
+                    if node.parent:
+                        immediate_parent_label = node.parent.label
+
                     # find the parent node that has a `biolink equivalent`
                     current = node
                     while current is not None:
@@ -331,16 +346,37 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                 # handle pipe-separated synonyms
                 synonyms = [s.strip() for s in synonym.split("|")]
 
+                mapping_data = {
+                    "curie": metpo_curie,
+                    "label": metpo_label,
+                    "predicate": predicate_label,
+                    "predicate_biolink_equivalent": predicate_biolink_equivalent,
+                    "biolink_equivalent": biolink_equivalent,
+                    "inferred_category": inferred_category,
+                }
+
                 for syn in synonyms:
                     if syn:  # only add non-empty synonyms
-                        mappings[syn] = {
-                            "curie": metpo_curie,
-                            "label": metpo_label,
-                            "predicate": predicate_label,
-                            "predicate_biolink_equivalent": predicate_biolink_equivalent,
-                            "biolink_equivalent": biolink_equivalent,
-                            "inferred_category": inferred_category,
-                        }
+                        # Track parent relationships for ambiguity detection
+                        if syn not in synonym_to_parents:
+                            synonym_to_parents[syn] = []
+                        if immediate_parent_label:
+                            synonym_to_parents[syn].append(immediate_parent_label)
+
+                        temp_mappings.append((syn, immediate_parent_label, mapping_data))
+
+        # Second pass: create mappings with compound keys for ambiguous synonyms
+        for syn, parent_label, mapping_data in temp_mappings:
+            # Check if this synonym is ambiguous (appears under multiple parents)
+            is_ambiguous = len(synonym_to_parents.get(syn, [])) > 1
+
+            if is_ambiguous and parent_label:
+                # Create compound key: "parent.synonym" (e.g., "motility.yes")
+                compound_key = f"{parent_label}.{syn}"
+                mappings[compound_key] = mapping_data
+
+            # Always add the simple key (last occurrence wins for ambiguous cases)
+            mappings[syn] = mapping_data
 
         return mappings
 

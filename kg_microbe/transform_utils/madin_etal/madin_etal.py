@@ -420,6 +420,7 @@ class MadinEtAlTransform(Transform):
             CARBON_SUBSTRATES_COLUMN,   # Carbon sources used
             CELL_SHAPE_COLUMN,          # Morphology (rod/cocci)
             ISOLATION_SOURCE_COLUMN,    # Where organism was found
+            RANGE_TMP_COLUMN,
         ]
         # Count total lines for progress bar
         with open(input_file, "r") as f:
@@ -461,6 +462,7 @@ class MadinEtAlTransform(Transform):
 
                     # Extract only the trait columns we need
                     filtered_row = {k: line[k] for k in traits_columns_of_interest}
+                    
                     # Create standardized taxonomy ID (e.g., "NCBITaxon:562")
                     tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
                     tax_name = filtered_row[ORG_NAME_COLUMN]
@@ -593,7 +595,7 @@ class MadinEtAlTransform(Transform):
                             ]
                     # Process RANGE_TMP (temperature types where organism survives)
                     # Map to METPO if possible, otherwise create custom nodes with
-                    if filtered_row.get(RANGE_TMP_COLUMN) and filtered_row[RANGE_TMP_COLUMN] != "NA":
+                    if filtered_row[RANGE_TMP_COLUMN] != "NA":
                         ranges = self._parse_comma_separated_values(filtered_row[RANGE_TMP_COLUMN])
                         if ranges:
                             range_tmp_nodes = []
@@ -627,7 +629,6 @@ class MadinEtAlTransform(Transform):
                             tax_node,
                             cell_shape_node,
                             metabolism_node,
-                            # include range tmp nodes (written separately below if list)
                         ]
                         if sublist is not None
                     ]

@@ -32,15 +32,19 @@ def drop_duplicates(
     :param consolidation_columns: List of columns to consolidate.
     """
     exclude_prefixes = DO_NOT_CHANGE_PREFIXES
-    df = pd.read_csv(file_path, sep="\t", low_memory=False)
 
-    # Store the original NAME_COLUMN if it's in consolidation_columns
-    if consolidation_columns and NAME_COLUMN in consolidation_columns:
-        original_name_column = df[NAME_COLUMN].copy()
+    print(f"Reading {file_path}...")
+    df = pd.read_csv(file_path, sep="\t", low_memory=False)
+    print(f"Loaded {len(df)} rows")
 
     if consolidation_columns and all(col in df.columns for col in consolidation_columns):
+        # Create temporary lowercase columns for deduplication without modifying originals
+        temp_columns = []
+        print("Creating temporary columns for case-insensitive comparison...")
         for col in consolidation_columns:
-            df[col] = df[col].apply(
+            temp_col = f"__{col}_lower__"
+            temp_columns.append(temp_col)
+            df[temp_col] = df[col].apply(
                 lambda x: (
                     str(x).lower()
                     if not any(str(x).startswith(prefix) for prefix in exclude_prefixes)
@@ -48,14 +52,24 @@ def drop_duplicates(
                 )
             )
 
-    df.drop_duplicates(inplace=True)
-    df.sort_values(by=[sort_by_column], inplace=True)
+        # Drop duplicates based on temporary columns
+        print("Dropping duplicates...")
+        df = df.drop_duplicates(subset=temp_columns, keep='first')
+        print(f"Remaining rows: {len(df)}")
 
-    # Restore the original values of the NAME_COLUMN
-    if consolidation_columns and NAME_COLUMN in consolidation_columns:
-        df[NAME_COLUMN] = original_name_column.loc[df.index]
+        # Remove temporary columns
+        df = df.drop(columns=temp_columns)
+    else:
+        print("Dropping duplicates...")
+        df = df.drop_duplicates()
+        print(f"Remaining rows: {len(df)}")
 
+    print("Sorting...")
+    df = df.sort_values(by=[sort_by_column])
+
+    print(f"Writing back to {file_path}...")
     df.to_csv(file_path, sep="\t", index=False)
+    print("Done!")
     return df
 
 

@@ -71,6 +71,12 @@ class KEGGTransform(Transform):
         """
         logger.info("Starting KEGG transform")
 
+        # Check if output files already exist
+        if self.output_node_file.exists() and self.output_edge_file.exists():
+            logger.info(f"KEGG transform output already exists at {self.output_dir}")
+            logger.info("Skipping expensive API calls. Delete output files to regenerate.")
+            return
+
         # Read KO list from downloaded file
         ko_list_file = KEGG_RAW_DIR / "ko_list.txt"
         logger.info(f"Reading KEGG KO list from {ko_list_file}...")

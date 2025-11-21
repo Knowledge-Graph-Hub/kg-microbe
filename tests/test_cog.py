@@ -14,6 +14,7 @@ from kg_microbe.transform_utils.cog.utils import (
 
 
 class TestCOGUtils(unittest.TestCase):
+
     """Test COG utility functions."""
 
     def setUp(self):
@@ -92,6 +93,7 @@ class TestCOGUtils(unittest.TestCase):
 
 
 class TestCOGTransform(unittest.TestCase):
+
     """Test COG transform class."""
 
     def setUp(self):
@@ -227,6 +229,96 @@ class TestCOGTransform(unittest.TestCase):
         self.assertEqual(edge["predicate"], "biolink:has_attribute")
         self.assertEqual(edge["object"], "COG_CAT:H")
         self.assertEqual(edge["relation"], "RO:0002200")
+        self.assertEqual(edge["primary_knowledge_source"], "infores:cog")
+
+    def test_add_group_node(self):
+        """Test adding group node."""
+        transform = COGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        transform.add_group_node("1")
+
+        # Check node was added
+        self.assertEqual(len(transform.nodes), 1)
+        node = transform.nodes[0]
+
+        self.assertEqual(node["id"], "COG_GROUP:1")
+        self.assertEqual(node["category"], "biolink:OntologyClass")
+        self.assertEqual(node["name"], "Information Storage and Processing")
+        self.assertIn("Information Storage and Processing", node["description"])
+
+        # Check seen_nodes tracking
+        self.assertIn("COG_GROUP:1", transform.seen_nodes)
+
+    def test_add_group_node_deduplicate(self):
+        """Test that duplicate group nodes are not added."""
+        transform = COGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        # Add same group twice
+        transform.add_group_node("1")
+        transform.add_group_node("1")
+
+        # Should only have one node
+        self.assertEqual(len(transform.nodes), 1)
+
+    def test_add_group_node_all_groups(self):
+        """Test adding all 4 group nodes."""
+        transform = COGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        # Add all 4 groups
+        for group_id in ["1", "2", "3", "4"]:
+            transform.add_group_node(group_id)
+
+        # Should have 4 nodes
+        self.assertEqual(len(transform.nodes), 4)
+
+        # Check node IDs
+        node_ids = {node["id"] for node in transform.nodes}
+        expected_ids = {"COG_GROUP:1", "COG_GROUP:2", "COG_GROUP:3", "COG_GROUP:4"}
+        self.assertEqual(node_ids, expected_ids)
+
+    def test_hierarchy_edge_creation(self):
+        """Test that category→group hierarchy edges are created correctly."""
+        transform = COGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        # Add a group node
+        transform.add_group_node("2")
+
+        # Add a category that belongs to this group
+        cat_data = {
+            "group": "2",
+            "color": "#FF6666",
+            "description": "Energy production and conversion",
+        }
+        transform.add_functional_category_node("C", cat_data)
+
+        # Add hierarchy edge
+        transform.add_edge(
+            "COG_CAT:C",
+            "biolink:subclass_of",
+            "COG_GROUP:2",
+            "rdfs:subClassOf",
+        )
+
+        # Check edge was added
+        self.assertEqual(len(transform.edges), 1)
+        edge = transform.edges[0]
+
+        self.assertEqual(edge["subject"], "COG_CAT:C")
+        self.assertEqual(edge["predicate"], "biolink:subclass_of")
+        self.assertEqual(edge["object"], "COG_GROUP:2")
+        self.assertEqual(edge["relation"], "rdfs:subClassOf")
         self.assertEqual(edge["primary_knowledge_source"], "infores:cog")
 
 

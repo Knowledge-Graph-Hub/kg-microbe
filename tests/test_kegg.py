@@ -10,10 +10,12 @@ from kg_microbe.transform_utils.kegg.utils import (
     get_kegg_ko_details,
     get_kegg_ko_list,
     parse_kegg_entry,
+    parse_kegg_ko_list_file,
 )
 
 
 class TestKEGGUtils(unittest.TestCase):
+
     """Test KEGG utility functions."""
 
     @patch("kg_microbe.transform_utils.kegg.utils.requests.get")
@@ -113,6 +115,7 @@ DEFINITION  alcohol dehydrogenase [EC:1.1.1.1]
 
 
 class TestKEGGTransform(unittest.TestCase):
+
     """Test KEGG transform class."""
 
     def setUp(self):
@@ -222,6 +225,111 @@ class TestKEGGTransform(unittest.TestCase):
         self.assertEqual(edge["object"], "KEGG:ko00010")
         self.assertEqual(edge["relation"], "RO:0000056")
         self.assertEqual(edge["primary_knowledge_source"], "infores:kegg")
+
+    def test_add_module_node(self):
+        """Test adding KEGG module node."""
+        transform = KEGGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        transform.add_module_node("M00001", "Glycolysis (Embden-Meyerhof pathway)")
+
+        # Check node was added
+        self.assertEqual(len(transform.nodes), 1)
+        node = transform.nodes[0]
+
+        self.assertEqual(node["id"], "KEGG:M00001")
+        self.assertEqual(node["category"], "biolink:Pathway")
+        self.assertEqual(node["name"], "Glycolysis (Embden-Meyerhof pathway)")
+
+    def test_add_module_node_deduplicate(self):
+        """Test that duplicate module nodes are not added."""
+        transform = KEGGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        # Add same module twice
+        transform.add_module_node("M00001", "Glycolysis (Embden-Meyerhof pathway)")
+        transform.add_module_node("M00001", "Glycolysis (Embden-Meyerhof pathway)")
+
+        # Should only have one node
+        self.assertEqual(len(transform.nodes), 1)
+
+    def test_ko_to_pathway_edge(self):
+        """Test creating KO→Pathway edge."""
+        transform = KEGGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        # Add nodes
+        transform.add_ko_node("K00001", "alcohol dehydrogenase")
+        transform.add_pathway_node("ko00010", "Glycolysis / Gluconeogenesis")
+
+        # Add edge
+        transform.add_edge(
+            "KEGG:K00001",
+            "biolink:participates_in",
+            "KEGG:ko00010",
+            "RO:0000056",
+        )
+
+        # Verify
+        self.assertEqual(len(transform.nodes), 2)
+        self.assertEqual(len(transform.edges), 1)
+
+        edge = transform.edges[0]
+        self.assertEqual(edge["subject"], "KEGG:K00001")
+        self.assertEqual(edge["object"], "KEGG:ko00010")
+        self.assertEqual(edge["predicate"], "biolink:participates_in")
+
+    def test_ko_to_module_edge(self):
+        """Test creating KO→Module edge."""
+        transform = KEGGTransform(
+            input_dir=Path("data/raw"),
+            output_dir=Path(self.temp_output_dir),
+        )
+
+        # Add nodes
+        transform.add_ko_node("K00001", "alcohol dehydrogenase")
+        transform.add_module_node("M00001", "Glycolysis")
+
+        # Add edge
+        transform.add_edge(
+            "KEGG:K00001",
+            "biolink:participates_in",
+            "KEGG:M00001",
+            "RO:0000056",
+        )
+
+        # Verify
+        self.assertEqual(len(transform.nodes), 2)
+        self.assertEqual(len(transform.edges), 1)
+
+        edge = transform.edges[0]
+        self.assertEqual(edge["subject"], "KEGG:K00001")
+        self.assertEqual(edge["object"], "KEGG:M00001")
+        self.assertEqual(edge["predicate"], "biolink:participates_in")
+
+    def test_parse_kegg_ko_list_file(self):
+        """Test parsing KEGG KO list from file."""
+        # Create temporary test file
+        test_file = Path(self.temp_output_dir) / "test_ko_list.txt"
+        with open(test_file, "w") as f:
+            f.write("ko:K00001\talcohol dehydrogenase [EC:1.1.1.1]\n")
+            f.write("ko:K00002\talcohol dehydrogenase (NADP+) [EC:1.1.1.2]\n")
+            f.write("ko:K00003\thomoserine dehydrogenase [EC:1.1.1.3]\n")
+
+        ko_dict = parse_kegg_ko_list_file(test_file)
+
+        # Check results
+        self.assertEqual(len(ko_dict), 3)
+        self.assertIn("K00001", ko_dict)
+        self.assertEqual(ko_dict["K00001"], "alcohol dehydrogenase [EC:1.1.1.1]")
+        self.assertIn("K00002", ko_dict)
+        self.assertIn("K00003", ko_dict)
 
 
 if __name__ == "__main__":

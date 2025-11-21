@@ -68,6 +68,12 @@ class COGTransform(Transform):
         """
         logger.info("Starting COG transform")
 
+        # Check if output files already exist
+        if self.output_node_file.exists() and self.output_edge_file.exists():
+            logger.info(f"COG transform output already exists at {self.output_dir}")
+            logger.info("Skipping transform. Delete output files to regenerate.")
+            return
+
         # Define input files
         cog_def_file = COG_RAW_DIR / "cog-24.def.tab"
         cog_fun_file = COG_RAW_DIR / "cog-24.fun.tab"

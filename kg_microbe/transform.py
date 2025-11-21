@@ -5,14 +5,13 @@ from pathlib import Path
 from typing import List, Optional
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
-from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
+from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
 from kg_microbe.transform_utils.cog.cog import COGTransform
-from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
-    BAKTA,
     BACTOTRAITS,
+    BAKTA,
     COG,
     KEGG,
     MADIN_ETAL,
@@ -20,6 +19,7 @@ from kg_microbe.transform_utils.constants import (
     ONTOLOGIES,
     RHEAMAPPINGS,
 )
+from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
@@ -46,11 +46,11 @@ DATA_SOURCES = {
     MADIN_ETAL: MadinEtAlTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
-    #UNIPROT_HUMAN: UniprotHumanTransform,
-    #CTD: CTDTransform,
-    #DISBIOME: DisbiomeTransform,
-    #WALLEN_ETAL: WallenEtAlTransform,
-    #UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+    # UNIPROT_HUMAN: UniprotHumanTransform,
+    # CTD: CTDTransform,
+    # DISBIOME: DisbiomeTransform,
+    # WALLEN_ETAL: WallenEtAlTransform,
+    # UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
 
 

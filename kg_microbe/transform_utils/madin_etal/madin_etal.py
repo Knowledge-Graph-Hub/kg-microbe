@@ -49,8 +49,8 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
-    RANGE_TMP_COLUMN,
     RANGE_SALINITY_COLUMN,
+    RANGE_TMP_COLUMN,
     ROLE_CATEGORY,
     SHAPE_PREFIX,
     SPORULATION_COLUMN,
@@ -136,7 +136,7 @@ class MadinEtAlTransform(Transform):
 
         # Extract category from METPO or use default
         category = uri_to_curie(metpo_mapping.get("inferred_category", default_category))
-        # Look more into this 
+        # Look more into this
         predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
 
         # Use Biolink predicate if available, otherwise use default
@@ -481,7 +481,7 @@ class MadinEtAlTransform(Transform):
 
                     # Extract only the trait columns we need
                     filtered_row = {k: line[k] for k in traits_columns_of_interest}
-                    
+
                     # Create standardized taxonomy ID (e.g., "NCBITaxon:562")
                     tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
                     tax_name = filtered_row[ORG_NAME_COLUMN]
@@ -613,7 +613,7 @@ class MadinEtAlTransform(Transform):
                                 HAS_PHENOTYPE,
                             ]
                     # Process RANGE_TMP (temperature types where organism survives)
-                    # Map to METPO if possible, otherwise create custom nodes with
+                    # Map to METPO if possible, otherwise create custom nodes
                     if filtered_row[RANGE_TMP_COLUMN] != "NA":
                         ranges = self._parse_comma_separated_values(filtered_row[RANGE_TMP_COLUMN])
                         if ranges:
@@ -622,6 +622,19 @@ class MadinEtAlTransform(Transform):
                             for r in ranges:
                                 node, edge = self._get_metpo_node_and_edge(
                                     r,
+                                    tax_id,
+                                    PHENOTYPIC_CATEGORY,
+                                    "biolink:has_phenotype",
+                                    HAS_PHENOTYPE,
+                                )
+                                if node and edge:
+                                    range_tmp_nodes.append(node)
+                                    tax_range_tmp_edge.append(edge)
+                                else:
+                                    # Fallback: create a custom node and edge
+                                    rid = f"range_tmp:{r}"
+                                    range_tmp_nodes.append([rid, PHENOTYPIC_CATEGORY, r])
+                                    tax_range_tmp_edge.append([tax_id, "biolink:has_phenotype", rid, HAS_PHENOTYPE])
 
                     # block handling "range_salinity" column from Madin etal dataset/CSV sheet
                     range_salinity = (
@@ -762,35 +775,6 @@ class MadinEtAlTransform(Transform):
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
                             ]
-
-                    # envo_df
-                    isolation_source = envo_mapping.get(filtered_row[ISOLATION_SOURCE_COLUMN], None)
-                    if isolation_source:
-                        if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
-                            isolation_source_node = [
-                                [
-                                    ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                    None,
-                                    filtered_row[ISOLATION_SOURCE_COLUMN],
-                                ]
-                            ]
-                            tax_isolation_source_edge = [
-                                [
-                                    ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                    tax_id,
-                                    PHENOTYPIC_CATEGORY,
-                                    "biolink:has_phenotype",
-                                    HAS_PHENOTYPE,
-                                )
-                                if node and edge:
-                                    range_tmp_nodes.append(node)
-                                    tax_range_tmp_edge.append(edge)
-                                else:
-                                    # Fallback: create a custom node and edge
-                                    rid = f"range_tmp:{r}"
-                                    range_tmp_nodes.append([rid, PHENOTYPIC_CATEGORY, r])
-                                    tax_range_tmp_edge.append([tax_id, "biolink:has_phenotype", rid, HAS_PHENOTYPE])
 
                     # Process ISOLATION_SOURCE (environment where organism was found)
                     isolation_source_node, tax_isolation_source_edge = self._process_isolation_source(

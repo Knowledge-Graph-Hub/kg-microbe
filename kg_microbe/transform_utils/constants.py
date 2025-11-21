@@ -1,6 +1,5 @@
 """Constants for transform_utilities."""
 
-import os
 import re
 from pathlib import Path
 

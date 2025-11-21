@@ -129,13 +129,14 @@ class MadinEtAlTransform(Transform):
 
         # Extract category from METPO or use default
         category = uri_to_curie(metpo_mapping.get("inferred_category", default_category))
+        # Look more into this 
         predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
 
         # Use Biolink predicate if available, otherwise use default
         if predicate_biolink:
             predicate = uri_to_curie(predicate_biolink)
         else:
-            predicate = default_predicate
+            predicate = default_predicate #fallback
 
         node = [metpo_mapping["curie"], category, metpo_mapping["label"]]
         edge = [tax_id, predicate, metpo_mapping["curie"], default_relation]

@@ -122,9 +122,9 @@ class COGTransform(Transform):
                 if cat_id in func_cats:
                     self.add_edge(
                         f"COG:{cog_id}",
-                        "biolink:has_attribute",
+                        "biolink:subclass_of",
                         f"COG_CAT:{cat_id}",
-                        "RO:0002200",  # has attribute
+                        "rdfs:subClassOf",
                     )
 
         # Write output

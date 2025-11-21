@@ -216,9 +216,9 @@ class TestCOGTransform(unittest.TestCase):
 
         transform.add_edge(
             "COG:COG0001",
-            "biolink:has_attribute",
+            "biolink:subclass_of",
             "COG_CAT:H",
-            "RO:0002200",
+            "rdfs:subClassOf",
         )
 
         # Check edge was added
@@ -226,9 +226,9 @@ class TestCOGTransform(unittest.TestCase):
         edge = transform.edges[0]
 
         self.assertEqual(edge["subject"], "COG:COG0001")
-        self.assertEqual(edge["predicate"], "biolink:has_attribute")
+        self.assertEqual(edge["predicate"], "biolink:subclass_of")
         self.assertEqual(edge["object"], "COG_CAT:H")
-        self.assertEqual(edge["relation"], "RO:0002200")
+        self.assertEqual(edge["relation"], "rdfs:subClassOf")
         self.assertEqual(edge["primary_knowledge_source"], "infores:cog")
 
     def test_add_group_node(self):

@@ -11,8 +11,8 @@ from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 
 # remote URL location in metpo GitHub repository for METPO classes and properties
 # sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
-METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-10-31/src/templates/metpo_sheet.tsv"
-METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-10-31/src/templates/metpo-properties.tsv"
+METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-21/src/templates/metpo_sheet.tsv"
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-21/src/templates/metpo-properties.tsv"
 
 
 def uri_to_curie(uri: str) -> str:
@@ -383,4 +383,86 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     except requests.exceptions.HTTPError as e:
         raise requests.exceptions.HTTPError(
             f"Please ensure the remote URL is accessible: {e}"
+        ) from e
+
+
+def load_metpo_metabolite_utilization_mappings() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO metabolite utilization mappings from the METPO properties sheet.
+
+    This function parses the "synonym property and value TUPLES" and "assay outcome" columns
+    to extract mappings for metabolite utilization predicates. The mappings are used to convert
+    BacDive's "kind of utilization tested" values into appropriate METPO predicates.
+
+    For example, from the rows:
+    | ID            | label            | synonym property and value TUPLES           | assay outcome |
+    |---------------|------------------|---------------------------------------------|---------------|
+    | METPO:2000003 | builds acid from | oboInOwl:hasRelatedSynonym 'builds acid from' | +             |
+    | METPO:2000028 | does not build acid from | oboInOwl:hasRelatedSynonym 'builds acid from' | -     |
+
+    This creates mappings:
+    {
+        'builds acid from': {
+            '+': {'curie': 'METPO:2000003', 'label': 'builds acid from'},
+            '-': {'curie': 'METPO:2000028', 'label': 'does not build acid from'}
+        },
+        ...
+    }
+
+    The sign (+ or -) is now directly read from the "assay outcome" column.
+
+    :return: Dictionary mapping utilization type synonyms to sign-based predicate info
+    :rtype: Dict[str, Dict[str, Dict[str, str]]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the response content is empty or invalid
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the METPO properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        mappings = {}
+        for row in reader:
+            # Note: The header has a leading space for ID column (" ID")
+            metpo_id = row.get(" ID", "").strip() or row.get("ID", "").strip()
+            label = row.get("label", "").strip()
+            synonym_tuples = row.get("synonym property and value TUPLES", "").strip()
+            assay_outcome = row.get("assay outcome", "").strip()
+
+            # Skip rows without required fields
+            if not (metpo_id and label and synonym_tuples and assay_outcome):
+                continue
+
+            # Parse synonym tuples - format: "oboInOwl:hasRelatedSynonym 'synonym_value'"
+            # Can have multiple tuples separated by pipes
+            tuples = [t.strip() for t in synonym_tuples.split("|") if t.strip()]
+
+            for tuple_str in tuples:
+                # Extract the synonym from the tuple (text between quotes)
+                import re
+
+                match = re.search(r"'([^']+)'", tuple_str)
+                if match:
+                    synonym = match.group(1)
+
+                    # Use the sign directly from the "assay outcome" column
+                    sign = assay_outcome
+
+                    # Initialize the synonym entry if not present
+                    if synonym not in mappings:
+                        mappings[synonym] = {}
+
+                    # Add the mapping for this sign
+                    mappings[synonym][sign] = {"curie": metpo_id, "label": label}
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
         ) from e

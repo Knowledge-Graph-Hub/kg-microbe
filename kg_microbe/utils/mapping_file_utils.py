@@ -548,10 +548,10 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
     "assay outcome" column.
 
     For example, from the rows:
-    | ID            | label                      | synonym property and value TUPLES                                     | assay outcome |
-    |---------------|----------------------------|----------------------------------------------------------------------|---------------|
-    | METPO:2000302 | shows activity of          | oboInOwl:hasRelatedSynonym 'Physiology and metabolism.enzymes.[].activity' | +             |
-    | METPO:2000303 | does not show activity of  | oboInOwl:hasRelatedSynonym 'Physiology and metabolism.enzymes.[].activity' | -             |
+    | ID            | label                      | synonym TUPLES                | assay outcome |
+    |---------------|----------------------------|-------------------------------|---------------|
+    | METPO:2000302 | shows activity of          | hasRelatedSynonym 'Phys...[]' | +             |
+    | METPO:2000303 | does not show activity of  | hasRelatedSynonym 'Phys...[]' | -             |
 
     This creates mappings:
     {

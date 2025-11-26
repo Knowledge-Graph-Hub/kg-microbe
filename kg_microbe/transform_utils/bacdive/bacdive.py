@@ -174,6 +174,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
+    load_metpo_enzyme_mappings,
     load_metpo_mappings,
     load_metpo_metabolite_production_mappings,
     load_metpo_metabolite_utilization_mappings,
@@ -208,6 +209,7 @@ class BacDiveTransform(Transform):
         self.bacdive_metpo_tree = _build_metpo_tree()
         self.metpo_metabolite_utilization_mappings = load_metpo_metabolite_utilization_mappings()
         self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
+        self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
 
     def _extract_value_from_json_path(self, record: dict, json_path: str):
         """
@@ -1386,47 +1388,62 @@ class BacDiveTransform(Transform):
                                 )
 
                     if phys_and_metabolism_enzymes:
-                        postive_activity_enzymes = None
+                        # Normalize to list
+                        enzyme_list = []
                         if isinstance(phys_and_metabolism_enzymes, list):
-                            postive_activity_enzymes = [
-                                {f"{EC_PREFIX}{enzyme.get(EC_KEY)}": f"{enzyme.get('value')}"}
-                                for enzyme in phys_and_metabolism_enzymes
-                                if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN and enzyme.get(EC_KEY)
-                            ]
+                            enzyme_list = phys_and_metabolism_enzymes
                         elif isinstance(phys_and_metabolism_enzymes, dict):
-                            activity = phys_and_metabolism_enzymes.get(ACTIVITY_KEY)
-                            if activity == PLUS_SIGN and phys_and_metabolism_enzymes.get(EC_KEY):
-                                ec_value = f"{EC_PREFIX}{phys_and_metabolism_enzymes.get(EC_KEY)}"
-                                value = phys_and_metabolism_enzymes.get("value")
-                                postive_activity_enzymes = [{ec_value: value}]
-
+                            enzyme_list = [phys_and_metabolism_enzymes]
                         else:
                             print(f"{phys_and_metabolism_enzymes} data not recorded.")
-                        if postive_activity_enzymes:
-                            enzyme_nodes_to_write = [
-                                [k, PHENOTYPIC_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                                for inner_dict in postive_activity_enzymes
-                                for k, v in inner_dict.items()
-                            ]
-                            enzyme_nodes_to_write.append(
-                                [ncbitaxon_id, NCBI_CATEGORY, ncbi_label]
-                                + [None] * (len(self.node_header) - 3)
+
+                        # Process each enzyme entry
+                        enzyme_data = []
+                        for enzyme in enzyme_list:
+                            if not isinstance(enzyme, dict):
+                                continue
+
+                            activity = enzyme.get(ACTIVITY_KEY)
+                            ec_number = enzyme.get(EC_KEY)
+                            value = enzyme.get("value")
+
+                            # Only process if we have an EC number and activity mapping
+                            if not ec_number or activity not in self.metpo_enzyme_mappings:
+                                continue
+
+                            # Get METPO predicate from mapping
+                            metpo_predicate = self.metpo_enzyme_mappings[activity]["curie"]
+
+                            enzyme_data.append(
+                                {
+                                    "ec_id": f"{EC_PREFIX}{ec_number}",
+                                    "label": value,
+                                    "predicate": metpo_predicate,
+                                }
                             )
+
+                        if enzyme_data:
+                            # Write enzyme nodes (EC terms)
+                            enzyme_nodes_to_write = [
+                                [item["ec_id"], EC_CATEGORY, item["label"]]
+                                + [None] * (len(self.node_header) - 3)
+                                for item in enzyme_data
+                            ]
                             node_writer.writerows(enzyme_nodes_to_write)
 
-                            for inner_dict in postive_activity_enzymes:
-                                for k, _ in inner_dict.items():
-                                    enzyme_edges_to_write = [
-                                        [
-                                            organism,
-                                            NCBI_TO_ENZYME_EDGE,
-                                            k,
-                                            CAPABLE_OF,
-                                            BACDIVE_PREFIX + key,
-                                        ]
-                                        for organism in species_with_strains
+                            # Write edges from organisms to enzymes using METPO predicates
+                            for item in enzyme_data:
+                                enzyme_edges_to_write = [
+                                    [
+                                        organism,
+                                        item["predicate"],
+                                        item["ec_id"],
+                                        CAPABLE_OF,
+                                        BACDIVE_PREFIX + key,
                                     ]
-                                    edge_writer.writerows(enzyme_edges_to_write)
+                                    for organism in species_with_strains
+                                ]
+                                edge_writer.writerows(enzyme_edges_to_write)
 
                     if phys_and_metabolism_metabolite_utilization:
                         metabolite_activity_data = None

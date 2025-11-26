@@ -11,8 +11,8 @@ from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 
 # remote URL location in metpo GitHub repository for METPO classes and properties
 # sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
-METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-21/src/templates/metpo_sheet.tsv"
-METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-21/src/templates/metpo-properties.tsv"
+METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-24/src/templates/metpo_sheet.tsv"
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-24/src/templates/metpo-properties.tsv"
 
 
 def uri_to_curie(uri: str) -> str:
@@ -459,6 +459,77 @@ def load_metpo_metabolite_utilization_mappings() -> Dict[str, Dict[str, str]]:
 
                     # Add the mapping for this sign
                     mappings[synonym][sign] = {"curie": metpo_id, "label": label}
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
+        ) from e
+
+
+def load_metpo_metabolite_production_mappings() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO metabolite production mappings from the METPO properties sheet.
+
+    This function specifically looks for rows with the synonym 'produces' and maps
+    BacDive's "production" values ("yes"/"no") to METPO predicates based on the
+    "assay outcome" column.
+
+    For example, from the rows:
+    | ID            | label            | synonym property and value TUPLES           | assay outcome |
+    |---------------|------------------|---------------------------------------------|---------------|
+    | METPO:2000202 | produces         | oboInOwl:hasRelatedSynonym 'produces'       | +             |
+    | METPO:2000222 | does not produce | oboInOwl:hasRelatedSynonym 'produces'       | -             |
+
+    This creates mappings:
+    {
+        'yes': {'curie': 'METPO:2000202', 'label': 'produces'},
+        'no': {'curie': 'METPO:2000222', 'label': 'does not produce'}
+    }
+
+    The mapping is:
+    - "assay outcome" = "+" maps to "production" = "yes"
+    - "assay outcome" = "-" maps to "production" = "no"
+
+    :return: Dictionary mapping production values ("yes"/"no") to METPO predicate info
+    :rtype: Dict[str, Dict[str, str]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the response content is empty or invalid
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the METPO properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        mappings = {}
+        for row in reader:
+            # Note: The header has a leading space for ID column (" ID")
+            metpo_id = row.get(" ID", "").strip() or row.get("ID", "").strip()
+            label = row.get("label", "").strip()
+            synonym_tuples = row.get("synonym property and value TUPLES", "").strip()
+            assay_outcome = row.get("assay outcome", "").strip()
+
+            # Skip rows without required fields
+            if not (metpo_id and label and synonym_tuples and assay_outcome):
+                continue
+
+            # Only process rows with 'produces' synonym
+            if "'produces'" in synonym_tuples:
+                # Map assay outcome (+/-) to production value (yes/no)
+                if assay_outcome == "+":
+                    production_value = "yes"
+                elif assay_outcome == "-":
+                    production_value = "no"
+                else:
+                    continue
+
+                mappings[production_value] = {"curie": metpo_id, "label": label}
 
         return mappings
 

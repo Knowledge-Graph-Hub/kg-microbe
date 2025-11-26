@@ -537,3 +537,63 @@ def load_metpo_metabolite_production_mappings() -> Dict[str, Dict[str, str]]:
         raise requests.exceptions.HTTPError(
             f"Please ensure the METPO properties URL is accessible: {e}"
         ) from e
+
+
+def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO enzyme activity mappings from the METPO properties sheet.
+
+    This function looks for rows with the synonym 'Physiology and metabolism.enzymes.[].activity'
+    and maps BacDive's enzyme "activity" values ("+"/"-") to METPO predicates based on the
+    "assay outcome" column.
+
+    For example, from the rows:
+    | ID            | label                      | synonym TUPLES                | assay outcome |
+    |---------------|----------------------------|-------------------------------|---------------|
+    | METPO:2000302 | shows activity of          | hasRelatedSynonym 'Phys...[]' | +             |
+    | METPO:2000303 | does not show activity of  | hasRelatedSynonym 'Phys...[]' | -             |
+
+    This creates mappings:
+    {
+        '+': {'curie': 'METPO:2000302', 'label': 'shows activity of'},
+        '-': {'curie': 'METPO:2000303', 'label': 'does not show activity of'}
+    }
+
+    :return: Dictionary mapping activity values ("+"/"-") to METPO predicate info
+    :rtype: Dict[str, Dict[str, str]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the response content is empty or invalid
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the METPO properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        mappings = {}
+        for row in reader:
+            # Note: The header has a leading space for ID column (" ID")
+            metpo_id = row.get(" ID", "").strip() or row.get("ID", "").strip()
+            label = row.get("label", "").strip()
+            synonym_tuples = row.get("synonym property and value TUPLES", "").strip()
+            assay_outcome = row.get("assay outcome", "").strip()
+
+            # Skip rows without required fields
+            if not (metpo_id and label and synonym_tuples and assay_outcome):
+                continue
+
+            # Only process rows with enzyme activity synonym
+            if "'Physiology and metabolism.enzymes.[].activity'" in synonym_tuples:
+                # Map assay outcome directly to activity value
+                mappings[assay_outcome] = {"curie": metpo_id, "label": label}
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
+        ) from e

@@ -127,7 +127,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_ENZYME_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
-    NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_RESISTANCE_EDGE,
     NCBI_TO_METABOLITE_SENSITIVITY_EDGE,
     NCBITAXON_DESCRIPTION_COLUMN,
@@ -176,6 +175,7 @@ from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
     load_metpo_mappings,
+    load_metpo_metabolite_production_mappings,
     load_metpo_metabolite_utilization_mappings,
     uri_to_curie,
 )
@@ -207,6 +207,7 @@ class BacDiveTransform(Transform):
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
         self.metpo_metabolite_utilization_mappings = load_metpo_metabolite_utilization_mappings()
+        self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
 
     def _extract_value_from_json_path(self, record: dict, json_path: str):
         """
@@ -1527,36 +1528,41 @@ class BacDiveTransform(Transform):
                                 edge_writer.writerows(meta_util_edges_to_write)
 
                     if phys_and_metabolism_metabolite_production:
-                        positive_chebi_production = None
+                        metabolite_production_data = None
                         if isinstance(phys_and_metabolism_metabolite_production, list):
-                            positive_chebi_production = []
-                            # no_chebi_production = defaultdict(list)
+                            metabolite_production_data = []
                             for metabolite in phys_and_metabolism_metabolite_production:
-                                if (
-                                    METABOLITE_CHEBI_KEY in metabolite
-                                    and metabolite.get(PRODUCTION_KEY) == "yes"
-                                ):
+                                # Process metabolites that have CHEBI ID
+                                if METABOLITE_CHEBI_KEY in metabolite:
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
-                                    positive_chebi_production.append(
-                                        {chebi_key: metabolite[METABOLITE_KEY]}
-                                    )
-                                # ! NO CURIE associated to metabolite.
-                                # if (
-                                #     METABOLITE_CHEBI_KEY not in metabolite and metabolite.get(PRODUCTION_KEY) == "yes"
-                                # ):
-                                #     no_chebi_production.setdefault("NO_CURIE", []).append(metabolite[METABOLITE_KEY])
-                                #     positive_chebi_production.append(no_chebi_production)
+                                    production = metabolite.get(PRODUCTION_KEY)
+
+                                    # Look up METPO predicate directly using production value (yes/no)
+                                    metpo_predicate = None
+                                    metpo_label = None
+                                    if production and production in self.metpo_metabolite_production_mappings:
+                                        metpo_predicate = self.metpo_metabolite_production_mappings[
+                                            production
+                                        ]["curie"]
+                                        metpo_label = self.metpo_metabolite_production_mappings[production][
+                                            "label"
+                                        ]
+
+                                    # Only add if we found a METPO predicate mapping
+                                    if metpo_predicate:
+                                        metabolite_production_data.append(
+                                            {
+                                                "chebi_key": chebi_key,
+                                                "metabolite_name": metabolite[METABOLITE_KEY],
+                                                "production": production,
+                                                "metpo_predicate": metpo_predicate,
+                                                "metpo_label": metpo_label,
+                                            }
+                                        )
 
                         elif isinstance(phys_and_metabolism_metabolite_production, dict):
-                            production = phys_and_metabolism_metabolite_production.get(
-                                PRODUCTION_KEY
-                            )
-                            if (
-                                production == "yes"
-                                and phys_and_metabolism_metabolite_production.get(
-                                    METABOLITE_CHEBI_KEY
-                                )
-                            ):
+                            production = phys_and_metabolism_metabolite_production.get(PRODUCTION_KEY)
+                            if phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY)}"
@@ -1564,32 +1570,51 @@ class BacDiveTransform(Transform):
                                 metabolite_value = phys_and_metabolism_metabolite_production.get(
                                     METABOLITE_KEY
                                 )
-                                positive_chebi_production = [{chebi_key: metabolite_value}]
 
+                                # Look up METPO predicate directly using production value (yes/no)
+                                metpo_predicate = None
+                                metpo_label = None
+                                if production and production in self.metpo_metabolite_production_mappings:
+                                    metpo_predicate = self.metpo_metabolite_production_mappings[production][
+                                        "curie"
+                                    ]
+                                    metpo_label = self.metpo_metabolite_production_mappings[production]["label"]
+
+                                if metpo_predicate:
+                                    metabolite_production_data = [
+                                        {
+                                            "chebi_key": chebi_key,
+                                            "metabolite_name": metabolite_value,
+                                            "production": production,
+                                            "metpo_predicate": metpo_predicate,
+                                            "metpo_label": metpo_label,
+                                        }
+                                    ]
                         else:
                             print(f"{phys_and_metabolism_metabolite_production} data not recorded.")
 
-                        if positive_chebi_production:
+                        if metabolite_production_data:
+                            # Write metabolite nodes
                             metabolite_production_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                                for inner_dict in positive_chebi_production
-                                for k, v in inner_dict.items()
+                                [item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"]]
+                                + [None] * (len(self.node_header) - 3)
+                                for item in metabolite_production_data
                             ]
                             node_writer.writerows(metabolite_production_nodes_to_write)
 
-                            for inner_dict in positive_chebi_production:
-                                for k, _ in inner_dict.items():
-                                    metabolite_production_edges_to_write = [
-                                        [
-                                            organism,
-                                            NCBI_TO_METABOLITE_PRODUCTION_EDGE,
-                                            k,
-                                            BIOLOGICAL_PROCESS,
-                                            BACDIVE_PREFIX + key,
-                                        ]
-                                        for organism in species_with_strains
+                            # Write edges with METPO predicates
+                            for item in metabolite_production_data:
+                                metabolite_production_edges_to_write = [
+                                    [
+                                        organism,
+                                        item["metpo_predicate"],
+                                        item["chebi_key"],
+                                        BIOLOGICAL_PROCESS,
+                                        BACDIVE_PREFIX + key,
                                     ]
-                                    edge_writer.writerows(metabolite_production_edges_to_write)
+                                    for organism in species_with_strains
+                                ]
+                                edge_writer.writerows(metabolite_production_edges_to_write)
 
                     # Process oxygen tolerance using path-based extraction from METPO tree
                     # Parent: METPO:1000601 (oxygen preference)

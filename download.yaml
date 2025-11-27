@@ -87,6 +87,11 @@
 
 # MediaDive
 # Explore MediaDive data
+# NOTE: This downloads basic media list only. For complete MediaDive data (detailed
+# recipes, strain associations, solutions, compounds), run the bulk download script:
+#   poetry run python download_mediadive_bulk.py
+# This will download all MediaDive data (~60-120k API calls, takes 30-60 min first time)
+# and save to data/raw/mediadive/ to avoid API calls during transform runs.
 -
   url: https://mediadive.dsmz.de/rest/media
   local_name: mediadive.json

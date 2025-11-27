@@ -122,6 +122,70 @@ class MediaDiveTransform(Transform):
         self.chebi_impl = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
+        # Load bulk downloaded data if available
+        self.bulk_data_dir = Path("data/raw/mediadive")
+        self.media_detailed = {}
+        self.media_strains = {}
+        self.solutions_data = {}
+        self.compounds_data = {}
+        self.using_bulk_data = False
+        self.api_calls_avoided = 0
+        self.api_calls_made = 0
+
+        self._load_bulk_data()
+
+    def _load_bulk_data(self):
+        """
+        Load bulk downloaded MediaDive data if available.
+
+        This method loads pre-downloaded data files to avoid API calls during transform.
+        Files are created by running: poetry run python download_mediadive_bulk.py
+        """
+        try:
+            media_detailed_file = self.bulk_data_dir / "media_detailed.json"
+            media_strains_file = self.bulk_data_dir / "media_strains.json"
+            solutions_file = self.bulk_data_dir / "solutions.json"
+            compounds_file = self.bulk_data_dir / "compounds.json"
+
+            files_exist = all(
+                [
+                    media_detailed_file.exists(),
+                    media_strains_file.exists(),
+                    solutions_file.exists(),
+                    compounds_file.exists(),
+                ]
+            )
+
+            if files_exist:
+                print(f"Loading bulk MediaDive data from {self.bulk_data_dir}/")
+
+                with open(media_detailed_file) as f:
+                    self.media_detailed = json.load(f)
+                print(f"  Loaded {len(self.media_detailed)} detailed media recipes")
+
+                with open(media_strains_file) as f:
+                    self.media_strains = json.load(f)
+                print(f"  Loaded strain associations for {len(self.media_strains)} media")
+
+                with open(solutions_file) as f:
+                    self.solutions_data = json.load(f)
+                print(f"  Loaded {len(self.solutions_data)} solutions")
+
+                with open(compounds_file) as f:
+                    self.compounds_data = json.load(f)
+                print(f"  Loaded {len(self.compounds_data)} compounds")
+
+                self.using_bulk_data = True
+                print("  Bulk data loaded successfully - API calls will be avoided")
+            else:
+                print(f"Bulk MediaDive data not found in {self.bulk_data_dir}/")
+                print("  Transform will use API calls (may be slow)")
+                print("  To download bulk data, run: poetry run kg download")
+
+        except Exception as e:
+            print(f"Warning: Could not load bulk data: {e}")
+            print("  Transform will use API calls (may be slow)")
+
     def _get_mediadive_json(self, url: str) -> Dict[str, str]:
         """
         Use the API url to get a dict of information.
@@ -141,13 +205,22 @@ class MediaDiveTransform(Transform):
 
     def get_compounds_of_solution(self, id: str):
         """
-        Get ingredients of solutions via the MediaDive API>.
+        Get ingredients of solutions via bulk data or MediaDive API.
+
+        First checks bulk downloaded data, then makes API call if needed.
 
         :param id: ID of solution
         :return: Dictionary of {compound_name: compound_id}
         """
-        url = MEDIADIVE_REST_API_BASE_URL + SOLUTION + id
-        data = self._get_mediadive_json(url)
+        # Check bulk downloaded data first
+        if self.using_bulk_data and id in self.solutions_data:
+            self.api_calls_avoided += 1
+            data = self.solutions_data[id]
+        else:
+            self.api_calls_made += 1
+            url = MEDIADIVE_REST_API_BASE_URL + SOLUTION + id
+            data = self._get_mediadive_json(url)
+
         ingredients_dict = {}
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
@@ -183,13 +256,22 @@ class MediaDiveTransform(Transform):
 
     def standardize_compound_id(self, id: str):
         """
-        Get IDs via Metadive API.
+        Get standardized IDs via bulk data or Metadive API.
+
+        First checks bulk downloaded data, then makes API call if needed.
 
         :param id: Metadive compound ID
         :return: Standardized ID
         """
-        url = MEDIADIVE_REST_API_BASE_URL + COMPOUND + id
-        data = self._get_mediadive_json(url)
+        # Check bulk downloaded data first
+        if self.using_bulk_data and id in self.compounds_data:
+            self.api_calls_avoided += 1
+            data = self.compounds_data[id]
+        else:
+            self.api_calls_made += 1
+            url = MEDIADIVE_REST_API_BASE_URL + COMPOUND + id
+            data = self._get_mediadive_json(url)
+
         if data[CHEBI_KEY] is not None:
             return CHEBI_PREFIX + str(data[CHEBI_KEY])
         elif data[KEGG_KEY] is not None:
@@ -226,10 +308,40 @@ class MediaDiveTransform(Transform):
         """
         Download YAML file if absent and return contents as a JSON object.
 
+        First checks bulk downloaded data, then YAML cache, then makes API call.
+
         :param fn: YAML file path.
+        :param url_extension: API endpoint extension (e.g., "medium/123")
+        :param target_dir: Directory for YAML cache
         :return: Dictionary
         """
+        # Extract ID from url_extension (e.g., "medium/123" -> "123")
+        medium_id = url_extension.split("/")[-1]
+
+        # Check bulk downloaded data first
+        if self.using_bulk_data:
+            if url_extension.startswith(MEDIUM_STRAINS):
+                if medium_id in self.media_strains:
+                    self.api_calls_avoided += 1
+                    return self.media_strains[medium_id]
+            elif url_extension.startswith(MEDIUM):
+                if medium_id in self.media_detailed:
+                    self.api_calls_avoided += 1
+                    # Extract the recipe/solutions data structure to match API format
+                    detailed_data = self.media_detailed[medium_id]
+                    if RECIPE_KEY in detailed_data and SOLUTIONS_KEY in detailed_data[RECIPE_KEY]:
+                        # Convert solutions dict back to list format expected by transform
+                        solutions_dict = detailed_data[RECIPE_KEY][SOLUTIONS_KEY]
+                        solutions_list = [
+                            {ID_COLUMN: sol_id, NAME_COLUMN: sol_name}
+                            for sol_id, sol_name in solutions_dict.items()
+                        ]
+                        return {SOLUTIONS_KEY: solutions_list}
+                    return detailed_data
+
+        # Fall back to YAML cache or API call
         if not fn.is_file():
+            self.api_calls_made += 1
             url = MEDIADIVE_REST_API_BASE_URL + url_extension
             json_obj = self.download_yaml_and_get_json(url, target_dir)
         else:
@@ -239,8 +351,6 @@ class MediaDiveTransform(Transform):
                     json_obj = yaml.safe_load(f)
                 except yaml.YAMLError as exc:
                     print(exc)
-        # if json_obj is None:
-        #     print(f"No data was retrieved from {url}")
         return json_obj
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -506,6 +616,23 @@ class MediaDiveTransform(Transform):
 
         drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
+
+        # Print data source and API call statistics
+        print("\n" + "=" * 80)
+        print("MediaDive Transform Complete")
+        print("=" * 80)
+        if self.using_bulk_data:
+            print(f"Data source: Bulk downloaded files ({self.bulk_data_dir}/)")
+            print(f"API calls avoided: {self.api_calls_avoided}")
+            print(f"API calls made: {self.api_calls_made}")
+            if self.api_calls_made > 0:
+                print("  (Some API calls may have been needed for missing data in bulk files)")
+        else:
+            print("Data source: MediaDive API (slow - consider running bulk download)")
+            print(f"API calls made: {self.api_calls_made}")
+            print("To speed up future transforms, run: poetry run kg download")
+        print("=" * 80 + "\n")
+
         # ! Commented out after discussing with Marcin. This is not needed for now.
         # establish_transitive_relationship(
         #     self.output_edge_file,

@@ -200,6 +200,14 @@
 #
 # METPO
 #
-- 
+-
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
   local_name: metpo.owl
+
+#
+# MicroMediaParam Chemical Mappings
+# High confidence compound mappings from CultureBotAI
+#
+-
+  url: https://raw.githubusercontent.com/CultureBotAI/MicroMediaParam/main/pipeline_output/merge_mappings/high_confidence_compound_mappings_final.tsv
+  local_name: high_confidence_compound_mappings_final.tsv

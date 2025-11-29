@@ -209,5 +209,5 @@
 # High confidence compound mappings from CultureBotAI
 #
 -
-  url: https://raw.githubusercontent.com/CultureBotAI/MicroMediaParam/main/pipeline_output/merge_mappings/high_confidence_compound_mappings_final.tsv
-  local_name: high_confidence_compound_mappings_final.tsv
+  url: https://raw.githubusercontent.com/CultureBotAI/MicroMediaParam/main/high_confidence_compound_mappings.tsv
+  local_name: high_confidence_compound_mappings.tsv

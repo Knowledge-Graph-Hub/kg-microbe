@@ -150,6 +150,9 @@ def extract_solution_ids(detailed_media: Dict[str, Dict]) -> Set[str]:
     """
     Extract all unique solution IDs from detailed media data.
 
+    The media_detailed.json structure has solutions embedded as a list:
+    {'1': {'medium': {...}, 'solutions': [{'id': 1, 'name': '...', 'recipe': [...]}]}}
+
     Args:
     ----
         detailed_media: Dictionary of detailed medium recipes
@@ -162,11 +165,11 @@ def extract_solution_ids(detailed_media: Dict[str, Dict]) -> Set[str]:
     solution_ids = set()
 
     for medium_data in detailed_media.values():
-        if RECIPE_KEY in medium_data:
-            recipe = medium_data[RECIPE_KEY]
-            if SOLUTIONS_KEY in recipe and isinstance(recipe[SOLUTIONS_KEY], dict):
-                for sol_id in recipe[SOLUTIONS_KEY].keys():
-                    solution_ids.add(str(sol_id))
+        # Solutions are directly embedded as a list in the medium data
+        if SOLUTIONS_KEY in medium_data and isinstance(medium_data[SOLUTIONS_KEY], list):
+            for solution in medium_data[SOLUTIONS_KEY]:
+                if isinstance(solution, dict) and ID_KEY in solution:
+                    solution_ids.add(str(solution[ID_KEY]))
 
     return solution_ids
 
@@ -197,13 +200,16 @@ def download_solutions(solution_ids: Set[str]) -> Dict[str, Dict]:
     return solutions_data
 
 
-def extract_compound_ids(solutions_data: Dict[str, Dict]) -> Set[str]:
+def extract_compound_ids(detailed_media: Dict[str, Dict]) -> Set[str]:
     """
-    Extract all unique compound IDs from solution data.
+    Extract all unique compound IDs from detailed media data.
+
+    The media_detailed.json structure has compounds embedded in solution recipes:
+    {'1': {'medium': {...}, 'solutions': [{'recipe': [{'compound_id': 1, ...}]}]}}
 
     Args:
     ----
-        solutions_data: Dictionary of solution data
+        detailed_media: Dictionary of detailed medium recipes
 
     Returns:
     -------
@@ -212,15 +218,83 @@ def extract_compound_ids(solutions_data: Dict[str, Dict]) -> Set[str]:
     """
     compound_ids = set()
 
-    for solution_data in solutions_data.values():
-        if isinstance(solution_data, dict):
-            for key, value in solution_data.items():
-                if isinstance(value, dict) and COMPOUND_KEY in value:
-                    compound_id = value[COMPOUND_KEY]
-                    if compound_id:
-                        compound_ids.add(str(compound_id))
+    for medium_data in detailed_media.values():
+        # Solutions are directly embedded as a list in the medium data
+        if SOLUTIONS_KEY in medium_data and isinstance(medium_data[SOLUTIONS_KEY], list):
+            for solution in medium_data[SOLUTIONS_KEY]:
+                if isinstance(solution, dict) and RECIPE_KEY in solution:
+                    recipe = solution[RECIPE_KEY]
+                    if isinstance(recipe, list):
+                        for ingredient in recipe:
+                            if isinstance(ingredient, dict) and "compound_id" in ingredient:
+                                compound_id = ingredient["compound_id"]
+                                if compound_id:
+                                    compound_ids.add(str(compound_id))
 
     return compound_ids
+
+
+def extract_solutions_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, Dict]:
+    """
+    Extract solution data from embedded structure in detailed_media.
+
+    Instead of making API calls, extract solutions directly from media_detailed.json.
+
+    Args:
+    ----
+        detailed_media: Dictionary of detailed medium recipes
+
+    Returns:
+    -------
+        Dictionary mapping solution_id -> solution_data
+
+    """
+    solutions_data = {}
+
+    for medium_data in detailed_media.values():
+        if SOLUTIONS_KEY in medium_data and isinstance(medium_data[SOLUTIONS_KEY], list):
+            for solution in medium_data[SOLUTIONS_KEY]:
+                if isinstance(solution, dict) and ID_KEY in solution:
+                    sol_id = str(solution[ID_KEY])
+                    # Only add if not already present (avoid duplicates)
+                    if sol_id not in solutions_data:
+                        solutions_data[sol_id] = solution
+
+    return solutions_data
+
+
+def extract_compounds_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, Dict]:
+    """
+    Extract compound data from embedded structure in detailed_media.
+
+    Instead of making API calls, extract compound info directly from media_detailed.json.
+
+    Args:
+    ----
+        detailed_media: Dictionary of detailed medium recipes
+
+    Returns:
+    -------
+        Dictionary mapping compound_id -> compound_data
+
+    """
+    compounds_data = {}
+
+    for medium_data in detailed_media.values():
+        if SOLUTIONS_KEY in medium_data and isinstance(medium_data[SOLUTIONS_KEY], list):
+            for solution in medium_data[SOLUTIONS_KEY]:
+                if isinstance(solution, dict) and RECIPE_KEY in solution:
+                    recipe = solution[RECIPE_KEY]
+                    if isinstance(recipe, list):
+                        for ingredient in recipe:
+                            if isinstance(ingredient, dict) and "compound_id" in ingredient:
+                                comp_id = str(ingredient["compound_id"])
+                                # Only add if not already present (avoid duplicates)
+                                if comp_id not in compounds_data:
+                                    # Store the ingredient data (has compound, compound_id, etc.)
+                                    compounds_data[comp_id] = ingredient
+
+    return compounds_data
 
 
 def download_compounds(compound_ids: Set[str]) -> Dict[str, Dict]:
@@ -292,18 +366,20 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     media_strains = download_medium_strains(media_list)
     save_json_file(media_strains, output_path / "media_strains.json", "medium-strain associations")
 
-    # Step 4: Download solutions
-    print("\n[4/5] Extracting and downloading solutions...")
+    # Step 4: Extract solutions from embedded structure
+    print("\n[4/5] Extracting solutions from embedded structure...")
     solution_ids = extract_solution_ids(detailed_media)
     print(f"Found {len(solution_ids)} unique solution IDs")
-    solutions_data = download_solutions(solution_ids)
+    solutions_data = extract_solutions_from_media(detailed_media)
+    print(f"Extracted {len(solutions_data)} solutions from embedded data")
     save_json_file(solutions_data, output_path / "solutions.json", "solution data")
 
-    # Step 5: Download compounds
-    print("\n[5/5] Extracting and downloading compounds...")
-    compound_ids = extract_compound_ids(solutions_data)
+    # Step 5: Extract compounds from embedded structure
+    print("\n[5/5] Extracting compounds from embedded structure...")
+    compound_ids = extract_compound_ids(detailed_media)
     print(f"Found {len(compound_ids)} unique compound IDs")
-    compounds_data = download_compounds(compound_ids)
+    compounds_data = extract_compounds_from_media(detailed_media)
+    print(f"Extracted {len(compounds_data)} compounds from embedded data")
     save_json_file(compounds_data, output_path / "compounds.json", "compound data")
 
     # Summary

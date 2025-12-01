@@ -1,0 +1,57 @@
+# MediaDive Unmapped Ingredients Analysis
+# Generated: 2025-12-01
+# Total unmapped: 750 ingredients
+
+## Summary
+After upgrading to MicroMediaParam compound_name_lookup.tsv (813 mappings),
+we successfully mapped 445 ingredients to ontologies (37% of 1,195 total).
+
+The remaining 750 unmapped ingredients fall into these categories:
+
+## Categories of Unmapped Ingredients (from sample review)
+
+### 1. Complex Biological Materials (~30%)
+- Beef extract, Meat extract, Yeast extract variants
+- Peptone (Bacto peptone, Casein peptone, etc.)
+- Blood products, Serum, Tissue extracts
+- Natural product extracts
+
+### 2. Specialized/Proprietary Media Components (~20%)
+- Growth factor supplements
+- Vitamin mixtures
+- Trace element solutions
+- Commercial media supplements
+
+### 3. Chemical Compounds with Name Variants (~25%)
+- Different naming conventions
+- Synonym variations
+- Chemical formula notations not in mapping table
+- Example: "4-2-hydroxyethyl-1-piperazineethanesulfonic acid" (HEPES variant)
+
+### 4. Rare or Specialized Chemicals (~15%)
+- Less common organic acids
+- Specialized buffers
+- Research-grade chemicals
+- Novel or synthetic compounds
+
+### 5. Missing/Empty Names (~5%)
+- Ingredients with no name provided
+- Placeholder entries
+
+### 6. Other (~5%)
+- Mixtures
+- Custom formulations
+- Deprecated compound names
+
+## Recommendations for Future Mapping Improvements
+
+1. **Add synonym/alias mappings** for common biological materials
+2. **Normalize chemical nomenclature** (IUPAC vs common names)
+3. **Create mappings for proprietary products** where possible
+4. **Use ChEBI name search** to find additional mappings
+5. **Consider creating custom ontology** for complex biological materials
+
+## File Location
+Full list: unmapped_mediadive_ingredients.tsv
+Format: mediadive.ingredient:ID<TAB>Name
+

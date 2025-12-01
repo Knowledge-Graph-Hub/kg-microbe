@@ -142,7 +142,9 @@ def download_medium_strains(media_list: List[Dict]) -> Dict[str, List]:
             strain_data[medium_id] = data
 
     total_strains = sum(len(v) if isinstance(v, list) else 1 for v in strain_data.values())
-    print(f"Downloaded strain associations for {len(strain_data)} media ({total_strains} total associations)")
+    print(
+        f"Downloaded strain associations for {len(strain_data)} media ({total_strains} total associations)"
+    )
     return strain_data
 
 
@@ -374,13 +376,17 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     print(f"Extracted {len(solutions_data)} solutions from embedded data")
     save_json_file(solutions_data, output_path / "solutions.json", "solution data")
 
-    # Step 5: Extract compounds from embedded structure
-    print("\n[5/5] Extracting compounds from embedded structure...")
+    # Step 5: Note about compound data
+    # MediaDive API does not provide a compound endpoint (returns 400 "not supported")
+    # Compound mappings (ChEBI, KEGG, PubChem, CAS) are not available via API
+    # The transform will use MicroMediaParam mappings and fall back to mediadive.ingredient: prefix
+    print("\n[5/5] Compound mapping note...")
     compound_ids = extract_compound_ids(detailed_media)
-    print(f"Found {len(compound_ids)} unique compound IDs")
-    compounds_data = extract_compounds_from_media(detailed_media)
-    print(f"Extracted {len(compounds_data)} compounds from embedded data")
-    save_json_file(compounds_data, output_path / "compounds.json", "compound data")
+    print(f"Found {len(compound_ids)} unique compound IDs in recipes")
+    print("Note: MediaDive API does not provide compound ontology mappings")
+    print("Transform will use MicroMediaParam mappings + mediadive.ingredient: fallback")
+    # Save empty compounds file for consistency
+    save_json_file({}, output_path / "compounds.json", "compound data (empty - API not available)")
 
     # Summary
     print("\n" + "=" * 80)
@@ -391,6 +397,6 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     print(f"  - {len(detailed_media)} media recipes (detailed)")
     print(f"  - {len(media_strains)} media-strain associations")
     print(f"  - {len(solutions_data)} solutions")
-    print(f"  - {len(compounds_data)} compounds")
+    print("  - 0 compounds (API endpoint not available)")
     print("\nThese files will be used by the MediaDive transform to avoid API calls.")
     print("=" * 80)

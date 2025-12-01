@@ -205,9 +205,15 @@
   local_name: metpo.owl
 
 #
-# MicroMediaParam Chemical Mappings
-# High confidence compound mappings from CultureBotAI
+# MicroMediaParam Chemical Mappings - Extended
+# Comprehensive compound name to ontology ID mappings from MicroMediaParam pipeline.
+# This extended version includes:
+#   - 1,386 compound mappings (vs 1,046 in basic version) - 32% more coverage
+#   - Better handling of chemical name variants (hydrate notations: x, ·, •)
+#   - More CAS-RN identifiers for compounds without ChEBI IDs
+#   - Format: original_name, mapped_id, chebi_label, chebi_formula (TSV)
+# This file provides robust mappings to reduce reliance on custom mediadive.ingredient: prefix.
 #
 -
-  url: https://raw.githubusercontent.com/CultureBotAI/MicroMediaParam/main/high_confidence_compound_mappings.tsv
-  local_name: high_confidence_compound_mappings.tsv
+  url: file:///Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroMediaParam/MicroMediaParam/pipeline_output/merge_mappings/compound_name_lookup_extended.tsv
+  local_name: compound_name_lookup_extended.tsv

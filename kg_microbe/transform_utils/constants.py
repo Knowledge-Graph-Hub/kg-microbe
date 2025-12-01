@@ -44,7 +44,7 @@ CHEBI_SOURCE = RAW_DATA_DIR / "chebi.owl"
 GO_SOURCE = RAW_DATA_DIR / "go.owl"
 EC_SOURCE = RAW_DATA_DIR / "ec.owl"
 METABOLITE_MAPPING_FILE = BACDIVE_DIR / "metabolite_mapping.json"
-PREFIXMAP_JSON_FILEPATH = TRANSFORM_UTILS_DIR / "prefixmap.json"    # custom prefixmap file path
+PREFIXMAP_JSON_FILEPATH = TRANSFORM_UTILS_DIR / "prefixmap.json"  # custom prefixmap file path
 
 # KEYS FOR JSON FILE
 GENERAL = "General"
@@ -147,10 +147,12 @@ CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
 UBERON_PREFIX = "UBERON:"
 RO_PREFIX = "RO:"
-MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
-MEDIADIVE_SOLUTION_PREFIX = "solution:"
-MEDIADIVE_MEDIUM_PREFIX = "medium:"
-MEDIADIVE_MEDIUM_TYPE_PREFIX = "medium-type:"
+# MediaDive prefixes (Bioregistry-standard CURIEs)
+# See https://bioregistry.io/registry/mediadive.medium, mediadive.solution, mediadive.ingredient
+MEDIADIVE_INGREDIENT_PREFIX = "mediadive.ingredient:"
+MEDIADIVE_SOLUTION_PREFIX = "mediadive.solution:"
+MEDIADIVE_MEDIUM_PREFIX = "mediadive.medium:"
+MEDIADIVE_MEDIUM_TYPE_PREFIX = "mediadive.medium-type:"
 GO_PREFIX = "GO:"
 KEGG_PREFIX = "KEGG:"
 SHAPE_PREFIX = "cell_shape:"

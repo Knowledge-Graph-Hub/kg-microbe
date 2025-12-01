@@ -27,7 +27,6 @@ import pandas as pd
 import requests
 import requests_cache
 import yaml
-from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -39,15 +38,12 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_PREFIX,
     CHEBI_KEY,
     CHEBI_PREFIX,
-    CHEBI_SOURCE,
-    CHEBI_TO_ROLE_EDGE,
     COMPOUND,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
     GRAMS_PER_LITER_COLUMN,
     HAS_PART,
-    HAS_ROLE,
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
@@ -90,7 +86,6 @@ from kg_microbe.transform_utils.constants import (
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
-    ROLE_CATEGORY,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,
@@ -197,39 +192,49 @@ class MediaDiveTransform(Transform):
 
     def _load_compound_mappings(self):
         """
-        Load MicroMediaParam high confidence compound mappings.
+        Load MicroMediaParam compound name lookup table (extended version).
 
-        This provides mappings from compound names to standardized ontology IDs
-        (ChEBI, CAS-RN, etc.) to reduce use of custom ingredient: and solution: prefixes.
+        This provides mappings from compound names (including formula variants) to
+        standardized ontology IDs (ChEBI, CAS-RN, PubChem, etc.) to reduce use of
+        custom ingredient: and solution: prefixes.
+
+        The extended version (compound_name_lookup_extended.tsv) includes:
+        - 1,386 compound mappings (vs 1,046 in basic version) - 32% more coverage
+        - Better handling of chemical name variants (hydrate notations: x, ·, •)
+        - More CAS-RN identifiers for compounds without ChEBI IDs
+        - Format: original_name, mapped_id, chebi_label, chebi_formula (TSV)
         """
         try:
-            mapping_file = self.input_base_dir / "high_confidence_compound_mappings.tsv"
+            # Use the extended MicroMediaParam compound name lookup table from download.yaml
+            mapping_file = Path(self.input_base_dir) / "compound_name_lookup_extended.tsv"
 
             if not mapping_file.exists():
-                print(f"MicroMediaParam mappings not found at {mapping_file}")
+                print(f"MicroMediaParam extended mappings not found at {mapping_file}")
                 print("  Will use MediaDive API mappings only")
                 return
 
-            print(f"Loading MicroMediaParam compound mappings from {mapping_file}")
+            print(f"Loading MicroMediaParam extended compound mappings from {mapping_file}")
 
-            # Load TSV file
+            # Load TSV file (format: original_name, mapped_id, chebi_label, chebi_formula)
             df = pd.read_csv(mapping_file, sep="\t")
 
-            # Create lookup dictionary: original (normalized) -> mapped CURIE
-            # Only include mappings that are NOT ingredient: or solution: prefixes
+            # Create lookup dictionary: original_name (normalized) -> mapped_id
+            # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
             for _, row in df.iterrows():
-                original = str(row["original"]).lower().strip()
-                mapped = str(row["mapped"])
+                original = str(row["original_name"]).lower().strip()
+                mapped = str(row["mapped_id"])
 
-                # Only include if mapped to a real ontology (not ingredient: or solution:)
-                if not mapped.startswith("ingredient:") and not mapped.startswith("solution:"):
-                    # Normalize the CURIE format
-                    if mapped.startswith("CAS-RN:"):
-                        mapped = "CAS:" + mapped.replace("CAS-RN:", "")
+                # Skip if mapped to custom prefixes (we want real ontology IDs)
+                if mapped.startswith(("ingredient:", "solution:", "medium:")):
+                    continue
 
-                    # Store in lookup dict (keep the best mapping per compound)
-                    if original not in self.compound_mappings:
-                        self.compound_mappings[original] = mapped
+                # Normalize CURIE format for consistency with constants.py
+                if mapped.startswith("CAS-RN:"):
+                    mapped = "CAS:" + mapped.replace("CAS-RN:", "")
+
+                # Store in lookup dict (earlier mappings take precedence)
+                if original not in self.compound_mappings:
+                    self.compound_mappings[original] = mapped
 
             print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
 
@@ -275,6 +280,8 @@ class MediaDiveTransform(Transform):
             data = self._get_mediadive_json(url)
 
         ingredients_dict = {}
+        if RECIPE_KEY not in data:
+            return ingredients_dict
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
                 item[COMPOUND_KEY] = (
@@ -286,10 +293,10 @@ class MediaDiveTransform(Transform):
                     ID_COLUMN: self.standardize_compound_id(
                         str(item[COMPOUND_ID_KEY]), item[COMPOUND_KEY]
                     ),
-                    AMOUNT_COLUMN: item[AMOUNT_COLUMN],
-                    UNIT_COLUMN: item[UNIT_COLUMN],
-                    GRAMS_PER_LITER_COLUMN: item[GRAMS_PER_LITER_COLUMN],
-                    MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
+                    AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
+                    UNIT_COLUMN: item.get(UNIT_COLUMN),
+                    GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
+                    MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
                 item[SOLUTION_KEY] = (
@@ -300,17 +307,16 @@ class MediaDiveTransform(Transform):
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
                 solution_name_normalized = item[SOLUTION_KEY].lower().strip()
-                solution_id = (
-                    self.compound_mappings.get(solution_name_normalized)
-                    or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
-                )
+                solution_id = self.compound_mappings.get(
+                    solution_name_normalized
+                ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
 
                 ingredients_dict[item[SOLUTION_KEY]] = {
                     ID_COLUMN: solution_id,
-                    AMOUNT_COLUMN: item[AMOUNT_COLUMN],
-                    UNIT_COLUMN: item[UNIT_COLUMN],
-                    GRAMS_PER_LITER_COLUMN: item[GRAMS_PER_LITER_COLUMN],
-                    MMOL_PER_LITER_COLUMN: item[MMOL_PER_LITER_COLUMN],
+                    AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
+                    UNIT_COLUMN: item.get(UNIT_COLUMN),
+                    GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
+                    MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
                 }
             else:
                 continue
@@ -333,27 +339,42 @@ class MediaDiveTransform(Transform):
             if normalized_name in self.compound_mappings:
                 return self.compound_mappings[normalized_name]
 
-        # Check bulk downloaded data
-        if self.using_bulk_data and id in self.compounds_data:
+        # Check bulk downloaded data (or skip if using bulk mode since API doesn't exist)
+        if self.using_bulk_data:
+            # MediaDive compound API endpoint does not exist (returns 400 "not supported")
+            # Skip API calls and fall through to ingredient prefix
             self.api_calls_avoided += 1
-            data = self.compounds_data[id]
+            if id in self.compounds_data:
+                data = self.compounds_data[id]
+                # Try compound mappings if available
+                if data.get(CHEBI_KEY) is not None:
+                    return CHEBI_PREFIX + str(data[CHEBI_KEY])
+                elif data.get(KEGG_KEY) is not None:
+                    return KEGG_PREFIX + str(data[KEGG_KEY])
+                elif data.get(PUBCHEM_KEY) is not None:
+                    return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
+                elif data.get(CAS_RN_KEY) is not None:
+                    return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
+            # Fall back to custom ingredient prefix
+            return MEDIADIVE_INGREDIENT_PREFIX + id
         else:
+            # Not using bulk data - try API (though it doesn't exist)
             self.api_calls_made += 1
             url = MEDIADIVE_REST_API_BASE_URL + COMPOUND + id
             data = self._get_mediadive_json(url)
 
-        # Try MediaDive API mappings
-        if data[CHEBI_KEY] is not None:
-            return CHEBI_PREFIX + str(data[CHEBI_KEY])
-        elif data[KEGG_KEY] is not None:
-            return KEGG_PREFIX + str(data[KEGG_KEY])
-        elif data[PUBCHEM_KEY] is not None:
-            return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
-        elif data[CAS_RN_KEY] is not None:
-            return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
-        else:
-            # Fall back to custom ingredient prefix
-            return MEDIADIVE_INGREDIENT_PREFIX + id
+            # Try MediaDive API mappings
+            if data.get(CHEBI_KEY) is not None:
+                return CHEBI_PREFIX + str(data[CHEBI_KEY])
+            elif data.get(KEGG_KEY) is not None:
+                return KEGG_PREFIX + str(data[KEGG_KEY])
+            elif data.get(PUBCHEM_KEY) is not None:
+                return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
+            elif data.get(CAS_RN_KEY) is not None:
+                return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
+            else:
+                # Fall back to custom ingredient prefix
+                return MEDIADIVE_INGREDIENT_PREFIX + id
 
     def download_yaml_and_get_json(
         self,
@@ -432,6 +453,11 @@ class MediaDiveTransform(Transform):
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
         bacdive_df = pd.read_csv(
             bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
+        )
+
+        # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
+        bacdive_strain_to_ncbi = dict(
+            zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True)
         )
 
         # mediadive_data:List = mediadive["data"]
@@ -541,14 +567,10 @@ class MediaDiveTransform(Transform):
                         for strain in json_obj_medium_strain:
                             if strain.get(BACDIVE_ID_COLUMN):
                                 strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
-                                ncbi_strain_id = bacdive_df[
-                                    bacdive_df[BACDIVE_ID_COLUMN] == strain_id
-                                ][NCBITAXON_ID_COLUMN].values
-
-                                if ncbi_strain_id.size > 0:
-                                    ncbi_strain_id = list(ncbi_strain_id)[0]
-                                else:
-                                    ncbi_strain_id = STRAIN_PREFIX + strain_id.replace(":", "_")
+                                # Fast O(1) dictionary lookup instead of O(n) DataFrame filtering
+                                ncbi_strain_id = bacdive_strain_to_ncbi.get(
+                                    strain_id, STRAIN_PREFIX + strain_id.replace(":", "_")
+                                )
 
                                 if not (
                                     isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)

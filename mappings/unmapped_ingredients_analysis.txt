@@ -1,57 +1,167 @@
 # MediaDive Unmapped Ingredients Analysis
-# Generated: 2025-12-01
-# Total unmapped: 750 ingredients
+# Generated: 2025-12-01 (Updated with Extended MicroMediaParam Mappings)
+# Total unmapped: 409 ingredients
 
 ## Summary
-After upgrading to MicroMediaParam compound_name_lookup.tsv (813 mappings),
-we successfully mapped 445 ingredients to ontologies (37% of 1,195 total).
+After upgrading to MicroMediaParam compound_name_lookup_extended.tsv (1,386 total mappings,
+1,153 ontology IDs after filtering), we successfully mapped 786 ingredients to ontologies
+(66% of 1,195 total unique ingredients).
 
-The remaining 750 unmapped ingredients fall into these categories:
+**Improvement over basic mapping:**
+- **Previous unmapped**: 750 ingredients (37% mapped with basic mapping)
+- **Current unmapped**: 409 ingredients (66% mapped with extended mapping)
+- **Improvement**: 341 additional mappings = 45% reduction in unmapped ingredients!
 
-## Categories of Unmapped Ingredients (from sample review)
+The remaining 409 unmapped ingredients represent the most challenging cases that cannot be
+easily mapped with current resources. These fall into the following categories:
 
-### 1. Complex Biological Materials (~30%)
+## Categories of Unmapped Ingredients (from comprehensive review)
+
+### 1. Complex Biological Materials (~30-35%)
+Approximately 120-145 ingredients including:
 - Beef extract, Meat extract, Yeast extract variants
-- Peptone (Bacto peptone, Casein peptone, etc.)
-- Blood products, Serum, Tissue extracts
-- Natural product extracts
+- Peptone (Bacto peptone, Casein peptone, Tryptone, etc.)
+- Blood products, Serum (bovine, fetal, etc.)
+- Tissue extracts, Organ homogenates
+- Natural product extracts (plant, microbial)
+- Hydrolyzed proteins
 
-### 2. Specialized/Proprietary Media Components (~20%)
+**Examples from data:**
+- Bacto Tryptone, Bacto Panton, Bacto Bitone
+- Beef extract, Meat extract, Yeast extract
+- Blood (various types), Serum
+
+**Challenge**: These are complex mixtures without single chemical identities. Many are proprietary
+formulations (Bacto, Difco brands) with variable composition.
+
+### 2. Specialized/Proprietary Media Components (~15-20%)
+Approximately 60-80 ingredients including:
 - Growth factor supplements
-- Vitamin mixtures
-- Trace element solutions
+- Vitamin mixtures (multi-vitamin solutions)
+- Trace element solutions (custom mixtures)
 - Commercial media supplements
+- Brand-specific formulations
 
-### 3. Chemical Compounds with Name Variants (~25%)
-- Different naming conventions
-- Synonym variations
-- Chemical formula notations not in mapping table
-- Example: "4-2-hydroxyethyl-1-piperazineethanesulfonic acid" (HEPES variant)
+**Examples from data:**
+- Trace elements solution
+- Vitamin mixture
+- Growth factor supplements
+- Mineral salt solutions
 
-### 4. Rare or Specialized Chemicals (~15%)
+**Challenge**: Often proprietary mixtures or custom formulations specific to research labs.
+Composition may not be standardized or publicly documented.
+
+### 3. Chemical Compounds with Non-Standard Nomenclature (~25-30%)
+Approximately 100-125 ingredients including:
+- Non-IUPAC naming conventions
+- Uncommon synonym variations
+- Formula notations not in mapping table
+- Chemical name typos or abbreviations
+- Vendor-specific compound names
+
+**Examples from data:**
+- "4-2-hydroxyethyl-1-piperazineethanesulfonic acid" (HEPES variant spelling)
+- "2-N-Morpholinoethanesulfonic acid" (MES variant)
+- "Al2SO43 x 18 H2O" (non-standard notation)
+- "2-chloro-4ethylamino-6-isopropylamino-1,3,5-triazine" (missing hyphen)
+
+**Challenge**: Name variants and non-standard notations that differ from ChEBI preferred names.
+Some may be typos in source data. Manual curation or fuzzy matching could help.
+
+### 4. Rare or Specialized Chemicals (~10-15%)
+Approximately 40-60 ingredients including:
 - Less common organic acids
-- Specialized buffers
-- Research-grade chemicals
-- Novel or synthetic compounds
+- Specialized buffers (research-grade)
+- Novel synthetic compounds
+- Rare minerals or salts
+- Research chemicals not yet in ChEBI
 
-### 5. Missing/Empty Names (~5%)
+**Challenge**: May not be well-represented in ontologies. Some may be recent synthetic compounds
+or highly specialized research chemicals.
+
+### 5. Media Formulations and Solutions (~8-12%)
+Approximately 30-50 ingredients including:
+- Pre-mixed solutions (e.g., "84 g/L NaHCO3 solution")
+- Basal media components (e.g., "Basal mineral NaCl medium")
+- Stock solutions
+- Buffer systems
+
+**Examples from data:**
+- "84 g/L NaHCO3 solution"
+- "Basal mineral NaCl medium"
+- "Basal salts solution"
+
+**Challenge**: These are formulations or mixtures, not single chemical entities. Should potentially
+be modeled as solutions rather than compounds.
+
+### 6. Missing/Empty Names (~0.2%)
+Approximately 1 ingredient:
 - Ingredients with no name provided
-- Placeholder entries
+- Placeholder entries in source data
 
-### 6. Other (~5%)
-- Mixtures
-- Custom formulations
+**Challenge**: Cannot be mapped without a name. Requires investigation of source data.
+
+### 7. Other (~5-8%)
+Approximately 20-30 ingredients including:
+- Generic terms (e.g., "Air")
 - Deprecated compound names
+- Ambiguous entries
+- Data quality issues
 
 ## Recommendations for Future Mapping Improvements
 
+### High Priority:
 1. **Add synonym/alias mappings** for common biological materials
+   - Create mappings for common peptone, extract, and supplement brands
+   - Include vendor-specific product names
+
 2. **Normalize chemical nomenclature** (IUPAC vs common names)
-3. **Create mappings for proprietary products** where possible
-4. **Use ChEBI name search** to find additional mappings
-5. **Consider creating custom ontology** for complex biological materials
+   - Fuzzy string matching to handle typos and minor spelling variations
+   - Handle different hydrate notations (x, ·, •, ×)
+   - Normalize whitespace and punctuation
 
-## File Location
-Full list: unmapped_mediadive_ingredients.tsv
-Format: mediadive.ingredient:ID<TAB>Name
+3. **ChEBI name search integration**
+   - Use ChEBI API or SPARQL to search for name variants
+   - Implement synonym expansion for common chemicals
 
+### Medium Priority:
+4. **Create mappings for proprietary products** where possible
+   - Contact vendors for composition data
+   - Use published literature for formulations
+
+5. **Consider custom ontology** for complex biological materials
+   - Model peptones, extracts, and supplements with their own terms
+   - Link to component chemicals where known
+
+### Low Priority:
+6. **Manual curation** of remaining difficult cases
+   - Review and correct typos in source data
+   - Add custom mappings for research-specific chemicals
+
+7. **Solution/mixture modeling**
+   - Model pre-mixed solutions as separate entities
+   - Link to component chemicals with concentrations
+
+## File Locations
+- Full unmapped list: `mappings/unmapped_mediadive_ingredients.tsv`
+- Format: `mediadive.ingredient:ID<TAB>Name`
+- Transform output: `data/transformed/mediadive/nodes.tsv`
+
+## Extended Mapping Statistics
+- **Mapping file**: compound_name_lookup_extended.tsv
+- **Total entries**: 1,386 compound mappings
+- **Ontology IDs**: 1,153 (after filtering out custom prefixes)
+- **Coverage**: 66% of 1,195 unique MediaDive ingredients
+- **Unmapped**: 409 ingredients (34%)
+
+## Impact Assessment
+The extended mapping represents a significant improvement:
+- **341 additional successful mappings** (750 → 409 unmapped)
+- **45% reduction** in unmapped ingredients
+- **29% absolute improvement** in coverage (37% → 66%)
+
+The remaining 409 unmapped ingredients represent genuinely difficult cases that require:
+- Manual curation
+- New ontology terms
+- Enhanced name matching algorithms
+- Better source data quality

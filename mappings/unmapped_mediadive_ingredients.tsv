@@ -1,225 +1,87 @@
 mediadive.ingredient:1944	
 mediadive.ingredient:2191	--Chloramphenicol
 mediadive.ingredient:2391	--Quinic acid
-mediadive.ingredient:1908	1,1,2-Trichloroethane
-mediadive.ingredient:1859	1,2-Dichloropropane
-mediadive.ingredient:303	2,2,4,4,6,8,8-Heptamethylnonane
-mediadive.ingredient:360	2,3-butanediol
-mediadive.ingredient:2102	2,4-Dichlorophenoxyacetic acid
-mediadive.ingredient:2300	2,4-Dihydroxybenzoic acid
-mediadive.ingredient:2103	2-Chlorobenzoic acid
-mediadive.ingredient:372	2-Furoic acid
-mediadive.ingredient:227	2-Mercaptoethanesulfonate
-mediadive.ingredient:506	2-Mercaptoethanesulfonic acid
-mediadive.ingredient:1771	2-Mercaptoethanol
 mediadive.ingredient:973	2-N-Morpholinoethanesulfonic acid
-mediadive.ingredient:2109	2-Nitrophenol
-mediadive.ingredient:2116	2-Sulfobenzoic acid
 mediadive.ingredient:2120	2-chloro-4ethylamino-6-isopropylamino-1,3,5-triazine
-mediadive.ingredient:680	3,4,5-Trimethoxycinnamic acid
-mediadive.ingredient:2331	3,5-Dihydroxybenzoic acid
-mediadive.ingredient:2117	3-Aminophenol
-mediadive.ingredient:2104	3-Chloroacrylic acid
-mediadive.ingredient:513	3-Hydroxybenzoic acid
-mediadive.ingredient:768	3-Methylbutyric acid
 mediadive.ingredient:1566	4-2-hydroxyethyl-1-piperazineethanesulfonic acid
-mediadive.ingredient:1237	4-Aminobenzoic Acid
-mediadive.ingredient:923	4-Hydroxybenzoic acid
-mediadive.ingredient:1122	4-aminobenzoate
-mediadive.ingredient:538	5-Aminovaleric acid
-mediadive.ingredient:2119	6-methylnicotinate
 mediadive.ingredient:1764	84 g/L NaHCO3 solution
-mediadive.ingredient:1861	Acetate
-mediadive.ingredient:582	Activated charcoal
 mediadive.ingredient:2190	Air
 mediadive.ingredient:2070	Al2SO43 x 18 H2O
 mediadive.ingredient:1015	AlKSO42
 mediadive.ingredient:908	AlKSO42 x 12 H2O
-mediadive.ingredient:15	Allantoin
 mediadive.ingredient:1070	Aminoacids
-mediadive.ingredient:882	Ammonium nitrate
-mediadive.ingredient:2348	Ammonium oxalate
-mediadive.ingredient:1140	Amphotericin
-mediadive.ingredient:2063	Amphotericin B
-mediadive.ingredient:970	Ampicillin
-mediadive.ingredient:1283	Ampicillin sodium salt
-mediadive.ingredient:1473	Anaerobe Basal Broth CM0957
-mediadive.ingredient:412	Antipyrine
-mediadive.ingredient:1494	Arabinose
-mediadive.ingredient:1261	Arsenate
 mediadive.ingredient:2146	Artificial Sea Salt
 mediadive.ingredient:2150	Asialofetuin
-mediadive.ingredient:330	Asparagine
-mediadive.ingredient:1629	BCYE agar
-mediadive.ingredient:1034	BICINE buffer
-mediadive.ingredient:1757	BL Agar
 mediadive.ingredient:1251	BaCl2 x 2 H2O
 mediadive.ingredient:2135	Bacto Bitone
-mediadive.ingredient:1460	Bacto Heart Infusion Broth
-mediadive.ingredient:635	Bacto Middlebrook 7H10 agar
 mediadive.ingredient:2134	Bacto Panton
 mediadive.ingredient:1216	Bacto Tryptone
-mediadive.ingredient:965	Bacto brain heart infusion
-mediadive.ingredient:1896	Bacto m TGE broth
-mediadive.ingredient:17	Baker's yeast
 mediadive.ingredient:1989	Basal mineral NaCl medium
 mediadive.ingredient:1732	Basal salts solution
-mediadive.ingredient:1554	Beef
-mediadive.ingredient:1660	Beef brain powder
-mediadive.ingredient:2128	Benzothiazole
-mediadive.ingredient:2166	Benzylcyanide
 mediadive.ingredient:212	Betaine x H2O
-mediadive.ingredient:2090	Bicarbonate
-mediadive.ingredient:1232	Bicine
-mediadive.ingredient:2105	Biphenyl
-mediadive.ingredient:1181	Bis-Tris
-mediadive.ingredient:2130	Blood Agar Base
-mediadive.ingredient:2111	Blood agar No 2
-mediadive.ingredient:2112	Bordet-Gengou-Agar-Base
-mediadive.ingredient:618	Boric acid
 mediadive.ingredient:1681	Bovine albumin
-mediadive.ingredient:2061	Bovine calf serum
 mediadive.ingredient:481	Bovine horn meal
-mediadive.ingredient:2098	Bovine serum
-mediadive.ingredient:186	Brain heart infusion
-mediadive.ingredient:827	Brain heart infusion broth
-mediadive.ingredient:1847	Brewer anaerobic agar
-mediadive.ingredient:117	Bromocresol purple
-mediadive.ingredient:254	Bromothymol blue
-mediadive.ingredient:1136	Brucella Broth
-mediadive.ingredient:1854	Brucella agar
-mediadive.ingredient:391	Butyl vinyl ether
 mediadive.ingredient:1680	CMRL 1066
 mediadive.ingredient:781	Ca-folinate
 mediadive.ingredient:356	CaCl2 x H2O
-mediadive.ingredient:2357	CaHPO4
 mediadive.ingredient:266	CaNO32
 mediadive.ingredient:213	CaNO32 x 4 H2O
 mediadive.ingredient:2013	CaNO32 x 6 H2O
-mediadive.ingredient:268	CaSO4
 mediadive.ingredient:2000	CaSO4 x 7 H2O
-mediadive.ingredient:1532	Calcium Carbonate
 mediadive.ingredient:1512	Calcium D-+-pantothenate
-mediadive.ingredient:1585	Calcium D-Pantothenate
-mediadive.ingredient:878	Calcium panthothenate
 mediadive.ingredient:1552	Carbon source solution
-mediadive.ingredient:1515	Carboxymethylcellulose
 mediadive.ingredient:1612	Carrot
-mediadive.ingredient:329	Casein hydrolysate
-mediadive.ingredient:21	Casein peptone
 mediadive.ingredient:84	Casitone
-mediadive.ingredient:2099	Casman-Agar-Base
 mediadive.ingredient:270	Catalase
 mediadive.ingredient:1573	CdNO32 x 4 H2O
-mediadive.ingredient:2022	CeCl3
 mediadive.ingredient:1444	CeCl3 x 7 H2O
 mediadive.ingredient:1587	CeNO33 x 6 H2O
 mediadive.ingredient:1627	Cellobiose or Cellulose MN 300
-mediadive.ingredient:400	Cellulose
-mediadive.ingredient:2417	Cellulose MN 300
 mediadive.ingredient:2361	Cereal leaves
 mediadive.ingredient:2360	Cerophyll
-mediadive.ingredient:745	Charcoal
 mediadive.ingredient:2142	Charcoal-filtered, natural seawater
-mediadive.ingredient:2138	Chitin
-mediadive.ingredient:1593	Chitosan
-mediadive.ingredient:2151	Cholesterol
-mediadive.ingredient:611	Choline
 mediadive.ingredient:786	Citric acid x H2O
 mediadive.ingredient:1648	Clarified rumen fluid
-mediadive.ingredient:1040	Co-carboxylase
 mediadive.ingredient:273	CoNO32
 mediadive.ingredient:541	CoNO32 x 6 H2O
-mediadive.ingredient:2157	Cobalamin
-mediadive.ingredient:1338	Coenzym A
-mediadive.ingredient:1506	Colloidal chitin
-mediadive.ingredient:2110	Columbia agar base
-mediadive.ingredient:2046	Columbia blood agar base
 mediadive.ingredient:2363	Complan
-mediadive.ingredient:1708	Congo red
-mediadive.ingredient:1824	Cooked meat medium
 mediadive.ingredient:2087	Corn meal
 mediadive.ingredient:702	Corn meal agar
 mediadive.ingredient:1609	Corn steep liquor
 mediadive.ingredient:2075	Corn steep powder
 mediadive.ingredient:1707	Cow manure
-mediadive.ingredient:1659	Cow's milk
 mediadive.ingredient:2024	Cr2SO43 x n H2O
 mediadive.ingredient:1977	CrKSO42 x 12 H2O
 mediadive.ingredient:1574	CrNO33 x 7 H2O
-mediadive.ingredient:570	Creatinine
 mediadive.ingredient:2137	Cresol
-mediadive.ingredient:1436	Cresol red
 mediadive.ingredient:1056	CuCl2 x 6 H2O
 mediadive.ingredient:591	CuCl2 x H2O
 mediadive.ingredient:1489	CuNO32 x 3 H2O
 mediadive.ingredient:719	CuSO4 x 2 H2O
 mediadive.ingredient:1456	CuSO4 x 4 H2O
 mediadive.ingredient:509	CuSO4 x H2O
-mediadive.ingredient:847	Cyanocobalamine
-mediadive.ingredient:2118	Cyanuric acid
-mediadive.ingredient:1286	Cycloheximid
-mediadive.ingredient:869	Cyclomaltoheptaose
-mediadive.ingredient:1533	Cystein
 mediadive.ingredient:983	Cystein-HCl x 2 H2O
-mediadive.ingredient:492	Cysteine
-mediadive.ingredient:1114	Cysteine hydrochloride
-mediadive.ingredient:565	Czapek Dox agar
 mediadive.ingredient:1610	Czapek-Dox liquid medium
 mediadive.ingredient:1347	D
 mediadive.ingredient:94	D+-Glucose
 mediadive.ingredient:1437	D+-Trehalose
 mediadive.ingredient:1359	D-+-biotin
-mediadive.ingredient:1355	D-Arabinose
-mediadive.ingredient:1353	D-Maltose
-mediadive.ingredient:1354	D-Mannose
-mediadive.ingredient:1358	D-Sucrose
-mediadive.ingredient:1357	D-Trehalose
-mediadive.ingredient:1343	D-galacturonic acid
-mediadive.ingredient:1342	D-glucuronic acid
-mediadive.ingredient:223	DL-2-Methylbutyric acid
-mediadive.ingredient:1514	DL-6,8-thioctic acid
 mediadive.ingredient:1128	DL-Asparagine x H2O
 mediadive.ingredient:943	DL-Na-lactate
 mediadive.ingredient:495	DL-Na-malate
-mediadive.ingredient:1371	DL-Pantothenic acid
-mediadive.ingredient:252	DL-alpha-Lipoic acid
 mediadive.ingredient:1639	DL-alpha-Methyl butyric acid
-mediadive.ingredient:1559	DL-alpha-lipoic acid
-mediadive.ingredient:1445	DL-aspartic acid
-mediadive.ingredient:1351	DL-carnitine
 mediadive.ingredient:958	DNA
-mediadive.ingredient:984	DTT
 mediadive.ingredient:1448	Demineralized water
-mediadive.ingredient:2375	Desicatted Ox-bile
-mediadive.ingredient:454	Diaminopimelic acid
-mediadive.ingredient:2106	Dibenzofuran
 mediadive.ingredient:728	Diced potato
-mediadive.ingredient:2177	Dichloran-Glycerol-agar base
-mediadive.ingredient:2089	Diethyl phosphonate
 mediadive.ingredient:2132	Difco 0001
 mediadive.ingredient:1379	Difco Marine Broth 2216
-mediadive.ingredient:530	Difco marine broth
 mediadive.ingredient:2042	Disodium succinate x 6 H2O
-mediadive.ingredient:2148	Disodium sulfide
-mediadive.ingredient:4	Distilled water
-mediadive.ingredient:1793	Dithionite
-mediadive.ingredient:574	Dithiothreitol
 mediadive.ingredient:1021	Double distilled water
 mediadive.ingredient:2131	Dry cow-manure
 mediadive.ingredient:725	Dung extract
 mediadive.ingredient:1953	EBIOS
-mediadive.ingredient:1401	Eisencitrat
-mediadive.ingredient:1044	Elemental sulfur
 mediadive.ingredient:884	Elemental sulphur
-mediadive.ingredient:645	Enzymatic digest of casein
-mediadive.ingredient:315	Erythromycin
-mediadive.ingredient:89	Ethanol absolute
-mediadive.ingredient:2096	Ethanolamine
-mediadive.ingredient:240	Ethylene glycol
 mediadive.ingredient:1450	FBS
-mediadive.ingredient:1077	Fastidious Anaerobe Agar
-mediadive.ingredient:1079	Fastidious Anaerobe Basal Broth
 mediadive.ingredient:1846	Fatty acid mixture see Medium No. 266
 mediadive.ingredient:1418	Fe SO4 x 7 H2O
 mediadive.ingredient:2045	Fe2SO43
@@ -244,134 +106,68 @@ mediadive.ingredient:12	FeSO4 x 7 H2O
 mediadive.ingredient:1735	FeSO4 x H2O
 mediadive.ingredient:1742	FeSO43 x n H2O
 mediadive.ingredient:2378	Ferric citrate monohydrate
-mediadive.ingredient:1816	Ferrous citrate
-mediadive.ingredient:2293	Fig
 mediadive.ingredient:744	Fildes Enrichment
 mediadive.ingredient:1672	Fish meat extract
-mediadive.ingredient:1950	Fish peptone
 mediadive.ingredient:976	Fish-Sperm DNA
-mediadive.ingredient:1339	Flavin adenine dinucleotide
-mediadive.ingredient:2113	Fluoranthene
-mediadive.ingredient:1360	Folinic acid
-mediadive.ingredient:1344	Formic acid
-mediadive.ingredient:408	Fresh egg mixture
-mediadive.ingredient:2050	Fucose
-mediadive.ingredient:1564	GAM Broth mod. powder
-mediadive.ingredient:1563	GAM Broth powder
-mediadive.ingredient:1843	GAM agar
-mediadive.ingredient:1620	GAM broth
-mediadive.ingredient:1618	GYP-sodium acetate-mineral salts broth
-mediadive.ingredient:2159	Garden soil
 mediadive.ingredient:657	Gelatine
 mediadive.ingredient:1158	Gellan Gum
 mediadive.ingredient:987	Gelrite
-mediadive.ingredient:359	Gentisic acid
 mediadive.ingredient:347	Ginger
-mediadive.ingredient:1495	Gluconic acid
-mediadive.ingredient:2161	Glutamine
 mediadive.ingredient:2178	Glycerol anhydrous
-mediadive.ingredient:504	Glycerol mono-oleate
-mediadive.ingredient:1754	Glycerol-asparagine agar
 mediadive.ingredient:1928	Glycine-NaOH buffer
-mediadive.ingredient:192	Glycyl-glycine
 mediadive.ingredient:1382	Grace's Insect Medium
-mediadive.ingredient:128	Ground beef
 mediadive.ingredient:1005	H3BO2
 mediadive.ingredient:1250	H3BO4
-mediadive.ingredient:915	HBO3
 mediadive.ingredient:461	HEPES buffer
 mediadive.ingredient:1938	HOMOPIPES
-mediadive.ingredient:149	Haemin
-mediadive.ingredient:1104	Heart Infusion Broth
 mediadive.ingredient:1123	Hemicalcium D-+-pantothenate
 mediadive.ingredient:245	Hexachlorocyclo-hexane
 mediadive.ingredient:2060	Hipolypepton
-mediadive.ingredient:1141	Homo-PIPES
 mediadive.ingredient:1740	Horikoshi-I medium
 mediadive.ingredient:724	Horse blood
-mediadive.ingredient:146	Horse serum
 mediadive.ingredient:1875	Hy-Case Amino
-mediadive.ingredient:1348	Hypoxanthine
 mediadive.ingredient:1069	IMDM-Medium
 mediadive.ingredient:1467	ISP 7 Medium
-mediadive.ingredient:1641	Indigo carmine
-mediadive.ingredient:930	Infusion Broth
-mediadive.ingredient:1692	Inorganic salts-starch agar
-mediadive.ingredient:546	Inosin
 mediadive.ingredient:516	Inulin
-mediadive.ingredient:1282	Iron
-mediadive.ingredient:2069	Iron metal
-mediadive.ingredient:760	Iron powder
 mediadive.ingredient:1885	IronIII citrate
-mediadive.ingredient:2144	Isobutyramide
-mediadive.ingredient:416	Isopropyl alcohol
 mediadive.ingredient:977	Isovitalex
 mediadive.ingredient:283	K-phosphate buffer
 mediadive.ingredient:1895	K2HSO4
 mediadive.ingredient:1920	K2SO4 x 7 H2O
 mediadive.ingredient:1722	KAlSO42
 mediadive.ingredient:1677	KH2PO3
-mediadive.ingredient:11	KH2PO4
 mediadive.ingredient:1810	KH2PO4 x 2 H2O
 mediadive.ingredient:1161	KH2PO4 x 7 H2O
 mediadive.ingredient:1042	KJ
-mediadive.ingredient:1235	KNO2
-mediadive.ingredient:2020	Kanamycin sulfate
 mediadive.ingredient:1988	Kao and Michayluk vitamin solution
 mediadive.ingredient:419	L+-Tartaric acid
 mediadive.ingredient:1504	L-15 medium
 mediadive.ingredient:2153	L-15 powder
 mediadive.ingredient:770	L-Cysteine HCl x H2O
 mediadive.ingredient:1860	L-Cysteine x HCl x H2O solution
-mediadive.ingredient:2085	L-Glutathione
-mediadive.ingredient:161	L-Histidin
-mediadive.ingredient:510	L-Rhamnose
-mediadive.ingredient:162	L-Serin
 mediadive.ingredient:2082	L-α-Phosphatidylcholine
-mediadive.ingredient:2052	LB Broth
 mediadive.ingredient:1999	LB broth powder
 mediadive.ingredient:1461	LaCl3 x 7 H2O
 mediadive.ingredient:1586	LaNO33 x 6 H2O
 mediadive.ingredient:2136	Lab Lemco powder
-mediadive.ingredient:2143	Lactalbumin hydrolysate
-mediadive.ingredient:1385	Lactate
-mediadive.ingredient:1711	Lactobacilli MRS broth
-mediadive.ingredient:1776	Lactobacillus MRS broth
 mediadive.ingredient:1624	Larchwood xylan
-mediadive.ingredient:1630	Legionella agar enrichment
 mediadive.ingredient:1941	Leibovitz's L-15 medium
 mediadive.ingredient:2091	Lemon
 mediadive.ingredient:992	Leptospira Enrichment EMJH
 mediadive.ingredient:990	Leptospira Medium Base EMJH
-mediadive.ingredient:935	Liver Concentrate
-mediadive.ingredient:2352	Liver digest
-mediadive.ingredient:1600	Liver extract
-mediadive.ingredient:1599	Liver extract concentrate
 mediadive.ingredient:1923	MEM alpha Modification
 mediadive.ingredient:1377	MEM-Medium
 mediadive.ingredient:2394	MES Hydrat
 mediadive.ingredient:766	MES [2-N-morpholino ethane sulfonic acid]
 mediadive.ingredient:835	MES buffer
-mediadive.ingredient:1899	MRS broth
 mediadive.ingredient:1626	MRS medium
-mediadive.ingredient:1583	Magnesium sulfate heptahydrate
 mediadive.ingredient:575	Maize extract
 mediadive.ingredient:1985	Maize meal
-mediadive.ingredient:407	Malachite green
-mediadive.ingredient:1712	Malt extract agar
 mediadive.ingredient:810	Malt extract broth
 mediadive.ingredient:1160	Malt extract powder
 mediadive.ingredient:1881	Malted wheat meal
 mediadive.ingredient:776	Maltose x H2O
-mediadive.ingredient:1112	Man Rogosa Sharp broth
-mediadive.ingredient:545	Marine Broth
-mediadive.ingredient:1628	Marine agar 2216
-mediadive.ingredient:1607	Marine broth 2216
 mediadive.ingredient:2353	Marmite
-mediadive.ingredient:491	Meat infusion
-mediadive.ingredient:646	Meat peptone
-mediadive.ingredient:2397	Melezitose
-mediadive.ingredient:1539	Menadione
 mediadive.ingredient:1853	Menadione solution
 mediadive.ingredient:615	Metall salt sol. 44
 mediadive.ingredient:1863	Methanol solution see below
@@ -381,29 +177,21 @@ mediadive.ingredient:871	MgCl2 x 4 H2O
 mediadive.ingredient:912	MgCl2 x H2O
 mediadive.ingredient:1763	MgNO32 x 6 H2O
 mediadive.ingredient:1640	MgSO4 x H2O
-mediadive.ingredient:1748	Middlebrook 7H10 agar
-mediadive.ingredient:467	Milk
 mediadive.ingredient:1958	Mineral solution see Medium No. 976
-mediadive.ingredient:2359	Mineral water
 mediadive.ingredient:2003	MnCl2 x 6 H2O
 mediadive.ingredient:1828	MnCl4 x 4 H2O
 mediadive.ingredient:2071	MnCl4 x 6 H2O
 mediadive.ingredient:2051	MnII x EDTA
-mediadive.ingredient:2058	MnO2
 mediadive.ingredient:14	MnSO4 x H2O
 mediadive.ingredient:1000	MnSO4 x n H2O
 mediadive.ingredient:1955	Modified Wolfe's minerals
 mediadive.ingredient:2017	Modified trace vitamins
-mediadive.ingredient:340	Morpholinopropane sulfonic acid
 mediadive.ingredient:1433	Mucin from porcine stomach Type III
-mediadive.ingredient:1775	Mueller Hinton II agar
 mediadive.ingredient:748	Mueller-Hinton broth
 mediadive.ingredient:2139	Mycobactine J
 mediadive.ingredient:1350	N-2-acetamido-2-aminoethanesulfonic acid
 mediadive.ingredient:1608	N-Z amine
 mediadive.ingredient:1829	N-Z-Case
-mediadive.ingredient:1341	N-acetylmuramic acid
-mediadive.ingredient:659	N-methylhydantoin
 mediadive.ingredient:104	NH4 citrate
 mediadive.ingredient:726	NH4-oxalate
 mediadive.ingredient:327	NH42 citrate
@@ -418,7 +206,6 @@ mediadive.ingredient:24	NH43 citrate
 mediadive.ingredient:710	NH46Mo7O24
 mediadive.ingredient:120	NH46Mo7O24 x 4 H2O
 mediadive.ingredient:2365	NH4MgPO4
-mediadive.ingredient:907	NTA
 mediadive.ingredient:401	Na acetate
 mediadive.ingredient:1315	Na acetate x 3 H2O
 mediadive.ingredient:839	Na glutamate
@@ -473,7 +260,6 @@ mediadive.ingredient:1678	Na2MoO7 x 2 H2O
 mediadive.ingredient:1416	Na2MoO7O4 x 2 H2O
 mediadive.ingredient:891	Na2O4W x 2 H2O
 mediadive.ingredient:1075	Na2S x H2O
-mediadive.ingredient:653	Na2S2O4
 mediadive.ingredient:1946	Na2S2O4 x 2 H2O
 mediadive.ingredient:1492	Na2S2SO3
 mediadive.ingredient:1201	Na2SO3 x 5 H2O
@@ -486,50 +272,27 @@ mediadive.ingredient:1482	Na3-NTA x H2O
 mediadive.ingredient:205	Na3-citrate
 mediadive.ingredient:650	Na3-citrate x 3 H2O
 mediadive.ingredient:282	NaH2PO4 x H2O
-mediadive.ingredient:1800	NaHSO3
 mediadive.ingredient:175	NaSiO3 x 9 H2O
 mediadive.ingredient:182	NaVO3 x H2O
 mediadive.ingredient:700	NaVO3 x n H2O
-mediadive.ingredient:432	Naphthalene
-mediadive.ingredient:542	Naphthalene sulfonic acid
-mediadive.ingredient:2152	Natural sea water
 mediadive.ingredient:1462	NdCl3 x 6 H2O
 mediadive.ingredient:263	Neopeptone
 mediadive.ingredient:2037	NiCl2 x 5 H2O
 mediadive.ingredient:1892	NiCl2 x H2O
 mediadive.ingredient:1030	NiSO4 x 6 H2O
 mediadive.ingredient:1634	NiSO4 x 7 H2O
-mediadive.ingredient:558	Niacinamide
-mediadive.ingredient:402	Nicotinic acid amide
-mediadive.ingredient:2364	Nutrient agar
 mediadive.ingredient:269	Nutrient broth
-mediadive.ingredient:501	Nutrient broth No. 2
 mediadive.ingredient:2129	OADC Enrichment
-mediadive.ingredient:2125	OXOID Legionella CYE-Agar base
 mediadive.ingredient:471	Oatmeal
-mediadive.ingredient:1611	Oatmeal agar
-mediadive.ingredient:638	Oleic acid
-mediadive.ingredient:502	Ox-bile
 mediadive.ingredient:1656	Oxgall
 mediadive.ingredient:867	PIPES buffer
 mediadive.ingredient:953	PPLO broth
-mediadive.ingredient:531	Pancreatic digest of casein
-mediadive.ingredient:448	Pantothenate
-mediadive.ingredient:844	Para-aminobenzoic acid
-mediadive.ingredient:1108	Pectin
-mediadive.ingredient:1666	Penicillin
 mediadive.ingredient:559	Pennassay Broth
-mediadive.ingredient:2115	Pentachlorophenol
-mediadive.ingredient:1799	Peptic digest of animal tissue
 mediadive.ingredient:2398	Peptone Oxoid
 mediadive.ingredient:156	Peptone mixture
-mediadive.ingredient:296	Phenol
-mediadive.ingredient:119	Phenol red
-mediadive.ingredient:2100	Phenyl acetate
 mediadive.ingredient:625	Phosphate buffer
 mediadive.ingredient:1900	Phosphate buffer stock solution
 mediadive.ingredient:2026	Phosphates solution
-mediadive.ingredient:362	Phytone
 mediadive.ingredient:125	Phytone peptone
 mediadive.ingredient:1465	Plain flour
 mediadive.ingredient:2081	Polar lipid fraction
@@ -537,40 +300,18 @@ mediadive.ingredient:812	Poly hexamethylene carbonate
 mediadive.ingredient:2048	Poly3-hydroxybutyrate
 mediadive.ingredient:300	Poly[R-3-hydroxybutyric acid]
 mediadive.ingredient:442	Polypeptone
-mediadive.ingredient:967	Porcine serum
-mediadive.ingredient:928	Potassium Phosphate
-mediadive.ingredient:1934	Potassium iodide
 mediadive.ingredient:275	Potassium phosphate buffer
-mediadive.ingredient:1917	Potassium tetrathionate
 mediadive.ingredient:406	Potato flour
 mediadive.ingredient:1463	PrCl3 x H2O
 mediadive.ingredient:1924	Probumin Universal Grade
-mediadive.ingredient:425	Proline
 mediadive.ingredient:208	Proteose peptone
-mediadive.ingredient:458	Proteose peptone no. 2
-mediadive.ingredient:316	Proteose peptone no. 3
 mediadive.ingredient:460	Proteose yeastolate
 mediadive.ingredient:2092	Pulp of sour stone cherries
 mediadive.ingredient:1352	Putrescine 2 HCl
-mediadive.ingredient:338	Pyridoxal hydrochloride
-mediadive.ingredient:1513	Pyridoxamine hydrochloride
-mediadive.ingredient:846	Pyridoxin
 mediadive.ingredient:1148	Pyromelitic acid
-mediadive.ingredient:2108	Pyrrole-2-carboxylic acid
-mediadive.ingredient:540	Pyruvic acid
-mediadive.ingredient:59	Pyruvic acid sodium salt
-mediadive.ingredient:2107	Quinoline
-mediadive.ingredient:1619	R agar
 mediadive.ingredient:1402	R2A Broth
-mediadive.ingredient:1844	R2A agar
-mediadive.ingredient:1927	Rabbit blood
-mediadive.ingredient:464	Rabbit serum
 mediadive.ingredient:1769	Reinforced clostridial medium
 mediadive.ingredient:1893	Riboflavin solution see Medium No. 462
-mediadive.ingredient:616	Riboflavine
-mediadive.ingredient:168	Ribose
-mediadive.ingredient:2354	Rice starch
-mediadive.ingredient:2021	Rifampicin
 mediadive.ingredient:188	Rolled oats
 mediadive.ingredient:145	Rumen fluid
 mediadive.ingredient:2362	Rye grass
@@ -579,7 +320,6 @@ mediadive.ingredient:1622	S6 medium
 mediadive.ingredient:1279	SABOURAUD- Glucose-Bouillon
 mediadive.ingredient:1387	SL10
 mediadive.ingredient:1604	Sake
-mediadive.ingredient:2101	Salicylate
 mediadive.ingredient:1143	Salt Solution I
 mediadive.ingredient:1144	Salt Solution II
 mediadive.ingredient:1508	Salt water
@@ -587,7 +327,6 @@ mediadive.ingredient:1684	Salts solution
 mediadive.ingredient:914	Se-acid
 mediadive.ingredient:423	Sea Salt
 mediadive.ingredient:2367	Sea salts
-mediadive.ingredient:286	Sea water
 mediadive.ingredient:88	Selenite-tungstate solution
 mediadive.ingredient:1921	Selenite-tungstate solution see Medium No. 431
 mediadive.ingredient:2047	Sheep blood
@@ -597,67 +336,23 @@ mediadive.ingredient:1139	Skirrow supplement
 mediadive.ingredient:2084	Sludge
 mediadive.ingredient:1986	Small dried sardine
 mediadive.ingredient:1361	SnCl2 x 2 H2O
-mediadive.ingredient:1105	Sodium Chloride
 mediadive.ingredient:631	Sodium Potassium phosphate buffer
-mediadive.ingredient:1126	Sodium Thiosulfate
 mediadive.ingredient:1817	Sodium acetate x 3 H2O
-mediadive.ingredient:1949	Sodium alginate
-mediadive.ingredient:1744	Sodium beta-glycerophosphate
 mediadive.ingredient:797	Sodium carbonate solution
-mediadive.ingredient:1375	Sodium citrate dihydrate
-mediadive.ingredient:2053	Sodium crotonate
-mediadive.ingredient:2097	Sodium ferulate
-mediadive.ingredient:1291	Sodium glutamate monohydrate
-mediadive.ingredient:1801	Sodium oleate
-mediadive.ingredient:2064	Sodium perchlorate
 mediadive.ingredient:1753	Sodium phosphate buffer
-mediadive.ingredient:1778	Sodium propionate
-mediadive.ingredient:1852	Sodium resazurin
-mediadive.ingredient:1438	Sodium succinate dibasic
-mediadive.ingredient:1897	Sodium sulfite
-mediadive.ingredient:1768	Sodium thioglycollate
-mediadive.ingredient:1092	Sodium thiosulfate pentahydrate
-mediadive.ingredient:732	Sodium thiosulphate
-mediadive.ingredient:1562	Sodiumbenzoate
-mediadive.ingredient:2350	Soil
-mediadive.ingredient:180	Soil extract
 mediadive.ingredient:485	Solution A
-mediadive.ingredient:1405	Soy flour
-mediadive.ingredient:1466	Soya pepton
-mediadive.ingredient:630	Standard I Broth
 mediadive.ingredient:2041	Steric solution
-mediadive.ingredient:2094	Sterile serum
-mediadive.ingredient:2088	Streptomycin sulfate
 mediadive.ingredient:672	Substrate
-mediadive.ingredient:1795	Sugar
 mediadive.ingredient:346	Sugar beet molasses
-mediadive.ingredient:1312	Sulfur powder
-mediadive.ingredient:750	Sulphur
 mediadive.ingredient:2141	Surfactant
-mediadive.ingredient:960	Swine serum
 mediadive.ingredient:2124	Syringic  acid
-mediadive.ingredient:1083	TAPS sodium salt
 mediadive.ingredient:1413	TNM-FH Medium
 mediadive.ingredient:322	Tap water
-mediadive.ingredient:1188	Taps
-mediadive.ingredient:2066	Taurine
 mediadive.ingredient:349	Tea
-mediadive.ingredient:720	Tetramethyl ammonium chloride
-mediadive.ingredient:1307	Thiamin
-mediadive.ingredient:1337	Thiamin pyrophosphate
-mediadive.ingredient:1147	Thiamine hydrochloride
 mediadive.ingredient:1856	Thiamine solution see Medium No. 403
 mediadive.ingredient:77	Thiamine-HCl x 2 H2O
-mediadive.ingredient:1814	Thioglycollic acid
-mediadive.ingredient:1862	Thiosulfate
-mediadive.ingredient:455	Thymidine
-mediadive.ingredient:560	Thymine
-mediadive.ingredient:1142	TiCl3
-mediadive.ingredient:1909	Titanium chloride
 mediadive.ingredient:805	TitaniumIII chloride
 mediadive.ingredient:1590	Titriplex1
-mediadive.ingredient:1705	Todd Hewitt Broth
-mediadive.ingredient:2371	Tomato extract
 mediadive.ingredient:105	Tomato juice
 mediadive.ingredient:1638	Toray silicone SH 5535
 mediadive.ingredient:96	Trace element solution
@@ -670,79 +365,43 @@ mediadive.ingredient:1883	Trace minerals see Medium No. 151
 mediadive.ingredient:1833	Trace minerals see Medium No. 197
 mediadive.ingredient:1784	Trace vitamins see Medium No. 197
 mediadive.ingredient:1982	Trace vitamins solution see Medium No. 284
-mediadive.ingredient:777	Trehalose
-mediadive.ingredient:1904	Trichloroethylene
-mediadive.ingredient:2349	Tricine
-mediadive.ingredient:1975	Trimethylamine
-mediadive.ingredient:253	Trimethylammonium chloride
-mediadive.ingredient:1101	Tris buffer
 mediadive.ingredient:1849	Trishydroxymethylaminomethane
-mediadive.ingredient:331	Trishydroxymethylmethylamine
 mediadive.ingredient:1997	Trisodium citrate x 3 H2O
 mediadive.ingredient:1888	Trisodium citrate x H2O
 mediadive.ingredient:1530	Tropic Marine salt
 mediadive.ingredient:1882	Trypsin
 mediadive.ingredient:662	Tryptic Digest of beef heart
 mediadive.ingredient:124	Trypticase peptone
-mediadive.ingredient:1617	Trypticase soy agar
 mediadive.ingredient:99	Trypticase soy broth
 mediadive.ingredient:164	Tryptone peptone
-mediadive.ingredient:566	Tryptophan
 mediadive.ingredient:819	Tryptose
 mediadive.ingredient:1165	Tryptose-phosphate
-mediadive.ingredient:2163	Tryptose-phosphate broth
-mediadive.ingredient:1293	Tungstate
 mediadive.ingredient:318	Tween
-mediadive.ingredient:503	Tween 40
 mediadive.ingredient:341	Universal peptone
-mediadive.ingredient:127	Uric acid
 mediadive.ingredient:363	V-8 Juice
 mediadive.ingredient:1616	V8 canned vegetable juice
 mediadive.ingredient:988	VOSO4 x H2O
 mediadive.ingredient:1062	VOSO4 x n H2O
 mediadive.ingredient:1858	Vancomycin x HCl
-mediadive.ingredient:579	Veal infusion broth
 mediadive.ingredient:1845	Vitamin B12 solution see Medium No. 403
-mediadive.ingredient:150	Vitamin K1
-mediadive.ingredient:2086	Vitamin K3
 mediadive.ingredient:154	Vitamin solution
 mediadive.ingredient:1855	Vitamin solution see Medium No. 403
-mediadive.ingredient:900	Vitamine B12
 mediadive.ingredient:284	Vitamins solution
 mediadive.ingredient:2065	Vitamins-solution
 mediadive.ingredient:1138	Vitox
-mediadive.ingredient:754	Water
 mediadive.ingredient:2346	Wheat Grains
 mediadive.ingredient:1113	White wine
-mediadive.ingredient:1621	Whole egg
-mediadive.ingredient:2140	Wilkins Chalgrene Anaerobe Broth
-mediadive.ingredient:2093	Wilkins-Chalgren-Anaerobe-Broth
 mediadive.ingredient:1826	X10 Jamarin S
-mediadive.ingredient:2049	Xylitol
-mediadive.ingredient:1683	YM broth
 mediadive.ingredient:1507	Yeast Nitrogen Base
-mediadive.ingredient:2079	Yeast cell paste
-mediadive.ingredient:1682	Yeast extract-malt extract agar
 mediadive.ingredient:1914	Zeikus trace element solution
 mediadive.ingredient:2351	ZnCl2 x 6 H2O
 mediadive.ingredient:2114	[1,1′-Biphenyl]-2-ol
-mediadive.ingredient:2083	air-dried garden soil
-mediadive.ingredient:1322	alpha-D-Glucose
-mediadive.ingredient:1543	alpha-Methylbutyric acid
 mediadive.ingredient:2384	alpha-ketoglutamate
-mediadive.ingredient:1408	alpha-ketoglutaric acid
-mediadive.ingredient:141	alpha-lipoic acid
-mediadive.ingredient:1798	beta-NAD
 mediadive.ingredient:1451	cholesterol lipid concentrate
 mediadive.ingredient:2126	dehydrated RCM medium
 mediadive.ingredient:2095	dehydrated Wilkins-Chalgren medium
-mediadive.ingredient:355	gamma-Aminobutyric acid
-mediadive.ingredient:1963	glycerin
 mediadive.ingredient:1410	lipoprotein concentrate
-mediadive.ingredient:302	m-Xylene
 mediadive.ingredient:1571	micronutrient solution
-mediadive.ingredient:497	p-Aminobenzoate
-mediadive.ingredient:332	p-Hydroxybenzoate
 mediadive.ingredient:2121	poly-ß-hydroxybutyric acid
 mediadive.ingredient:2389	water distilled or tapwater
 mediadive.ingredient:782	ß-NAD

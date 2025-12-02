@@ -192,37 +192,46 @@ class MediaDiveTransform(Transform):
 
     def _load_compound_mappings(self):
         """
-        Load MicroMediaParam compound name lookup table (extended version).
+        Load MicroMediaParam high-confidence compound mappings.
 
         This provides mappings from compound names (including formula variants) to
         standardized ontology IDs (ChEBI, CAS-RN, PubChem, etc.) to reduce use of
         custom ingredient: and solution: prefixes.
 
-        The extended version (compound_name_lookup_extended.tsv) includes:
-        - 1,386 compound mappings (vs 1,046 in basic version) - 32% more coverage
-        - Better handling of chemical name variants (hydrate notations: x, ·, •)
-        - More CAS-RN identifiers for compounds without ChEBI IDs
-        - Format: original_name, mapped_id, chebi_label, chebi_formula (TSV)
+        The high-confidence version (high_confidence_compound_mappings.tsv) includes:
+        - 17,786 compound mapping entries with rich metadata
+        - Hydration state information (base compound, water molecules, formulas)
+        - Concentration data (value, unit, mmol_l, corrected_mmol_l)
+        - Match confidence scores and quality indicators
+        - ChEBI IDs, CAS-RN identifiers, and molecular weights
+        - Format: medium_id, original, mapped, value, concentration, unit, mmol_l, optional,
+                 source, normalized_compound, hydration_number, chebi_match, chebi_id,
+                 chebi_original_name, similarity_score, match_confidence, matching_method,
+                 mapping_status, mapping_quality, base_compound, base_formula, water_molecules,
+                 hydrate_formula, base_chebi_id, base_chebi_label, base_chebi_formula,
+                 hydration_state, hydration_parsing_method, hydration_confidence,
+                 base_compound_for_mapping, base_molecular_weight, water_molecular_weight,
+                 hydrated_molecular_weight, corrected_mmol_l (TSV)
         """
         try:
-            # Use the extended MicroMediaParam compound name lookup table from download.yaml
-            mapping_file = Path(self.input_base_dir) / "compound_name_lookup_extended.tsv"
+            # Use the high-confidence MicroMediaParam compound mappings from download.yaml
+            mapping_file = Path(self.input_base_dir) / "high_confidence_compound_mappings.tsv"
 
             if not mapping_file.exists():
-                print(f"MicroMediaParam extended mappings not found at {mapping_file}")
+                print(f"MicroMediaParam high-confidence mappings not found at {mapping_file}")
                 print("  Will use MediaDive API mappings only")
                 return
 
-            print(f"Loading MicroMediaParam extended compound mappings from {mapping_file}")
+            print(f"Loading MicroMediaParam high-confidence compound mappings from {mapping_file}")
 
-            # Load TSV file (format: original_name, mapped_id, chebi_label, chebi_formula)
+            # Load TSV file (format: medium_id, original, mapped, ...)
             df = pd.read_csv(mapping_file, sep="\t")
 
-            # Create lookup dictionary: original_name (normalized) -> mapped_id
+            # Create lookup dictionary: original (normalized) -> mapped
             # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
             for _, row in df.iterrows():
-                original = str(row["original_name"]).lower().strip()
-                mapped = str(row["mapped_id"])
+                original = str(row["original"]).lower().strip()
+                mapped = str(row["mapped"])
 
                 # Skip if mapped to custom prefixes (we want real ontology IDs)
                 if mapped.startswith(("ingredient:", "solution:", "medium:")):

@@ -205,15 +205,25 @@
   local_name: metpo.owl
 
 #
-# MicroMediaParam Chemical Mappings - Extended
+# MicroMediaParam Chemical Mappings - High Confidence
 # Comprehensive compound name to ontology ID mappings from MicroMediaParam pipeline.
-# This extended version includes:
-#   - 1,386 compound mappings (vs 1,046 in basic version) - 32% more coverage
-#   - Better handling of chemical name variants (hydrate notations: x, ·, •)
-#   - More CAS-RN identifiers for compounds without ChEBI IDs
-#   - Format: original_name, mapped_id, chebi_label, chebi_formula (TSV)
-# This file provides robust mappings to reduce reliance on custom mediadive.ingredient: prefix.
+# This high-confidence version includes:
+#   - 17,786 compound mapping entries with rich metadata
+#   - Hydration state information (base compound, water molecules, formulas)
+#   - Concentration data (value, unit, mmol_l, corrected_mmol_l)
+#   - Match confidence scores and quality indicators
+#   - ChEBI IDs, CAS-RN identifiers, and molecular weights
+#   - Format: medium_id, original, mapped, value, concentration, unit, mmol_l, optional,
+#            source, normalized_compound, hydration_number, chebi_match, chebi_id,
+#            chebi_original_name, similarity_score, match_confidence, matching_method,
+#            mapping_status, mapping_quality, base_compound, base_formula, water_molecules,
+#            hydrate_formula, base_chebi_id, base_chebi_label, base_chebi_formula,
+#            hydration_state, hydration_parsing_method, hydration_confidence,
+#            base_compound_for_mapping, base_molecular_weight, water_molecular_weight,
+#            hydrated_molecular_weight, corrected_mmol_l (TSV)
+# This file provides robust mappings with detailed chemical metadata to reduce reliance
+# on custom mediadive.ingredient: prefix.
 #
 -
-  url: file:///Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroMediaParam/MicroMediaParam/pipeline_output/merge_mappings/compound_name_lookup_extended.tsv
-  local_name: compound_name_lookup_extended.tsv
+  url: file:///Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroMediaParam/MicroMediaParam/pipeline_output/merge_mappings/high_confidence_compound_mappings.tsv
+  local_name: high_confidence_compound_mappings.tsv

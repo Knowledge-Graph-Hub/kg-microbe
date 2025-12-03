@@ -14,6 +14,9 @@ from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-24/src/templates/metpo_sheet.tsv"
 METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-24/src/templates/metpo-properties.tsv"
 
+# Remote URL for assay kits mapping (used for API keys from BacDive)
+ASSAY_KITS_SIMPLE_JSON_URL = "https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json"
+
 
 def uri_to_curie(uri: str) -> str:
     """
@@ -597,3 +600,100 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
         raise requests.exceptions.HTTPError(
             f"Please ensure the METPO properties URL is accessible: {e}"
         ) from e
+
+
+def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
+    """
+    Load assay kit mappings from the remote assay_kits_simple.json file.
+
+    This function processes API kit data (e.g., "API zym", "API coryne") from BacDive
+    and creates mappings for enzyme and substrate tests.
+
+    For example, from the "API zym" kit:
+    - Well "Esterase" with type "enzyme" and ec_number "3.1.1.1" or go_terms "GO:0004806"
+    - Well "GLY" with type "substrate" and chebi_id "CHEBI:17754"
+
+    The structure of the returned mapping is:
+    {
+        "api zym": {  # kit_name (lowercase)
+            "Esterase": {  # label from well
+                "type": "enzyme",
+                "go_terms": ["GO:0004806"],
+                "ec_number": ["3.1.1.1"],
+                "chebi_id": []
+            },
+            ...
+        },
+        "api 50chac": {
+            "GLY": {
+                "type": "substrate",
+                "chebi_id": ["CHEBI:17754"],
+                "go_terms": [],
+                "ec_number": []
+            },
+            ...
+        }
+    }
+
+    :return: Dictionary mapping kit names to well labels to their properties
+    :rtype: Dict[str, Dict[str, Dict]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the JSON content is invalid
+    """
+    try:
+        response = requests.get(ASSAY_KITS_SIMPLE_JSON_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the assay kits JSON file are empty or invalid.")
+
+        data = response.json()
+
+        mappings = {}
+
+        for kit in data.get("api_kits", []):
+            kit_name = kit.get("kit_name", "").lower()  # normalize to lowercase
+            if not kit_name:
+                continue
+
+            kit_mappings = {}
+
+            for well in kit.get("wells", []):
+                # Get the first label as the key
+                labels = well.get("label", [])
+                if not labels:
+                    continue
+
+                label = labels[0]  # Use the first label as the key
+                well_type = well.get("type", [])
+
+                # Determine the type (enzyme or substrate)
+                if not well_type:
+                    continue
+
+                # Get the first type as the main type
+                main_type = well_type[0]
+
+                # Skip control wells and phenotypic tests
+                if main_type not in ["enzyme", "substrate"]:
+                    continue
+
+                # Build the mapping for this well
+                kit_mappings[label] = {
+                    "type": main_type,
+                    "go_terms": well.get("go_terms", []),
+                    "ec_number": well.get("ec_number", []),
+                    "chebi_id": well.get("chebi_id", []),
+                }
+
+            if kit_mappings:
+                mappings[kit_name] = kit_mappings
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the assay kits JSON URL is accessible: {e}"
+        ) from e
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in assay kits response: {e}") from e

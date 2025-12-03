@@ -77,7 +77,6 @@ from kg_microbe.transform_utils.constants import (
     GENERAL,
     GENERAL_DESCRIPTION,
     GENUS,
-    GO_PREFIX,
     HALOPHILY,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,

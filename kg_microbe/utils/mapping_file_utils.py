@@ -607,31 +607,55 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
     Load assay kit mappings from the remote assay_kits_simple.json file.
 
     This function processes API kit data (e.g., "API zym", "API coryne") from BacDive
-    and creates mappings for enzyme and substrate tests.
+    and creates mappings for enzyme and chemical tests.
 
     For example, from the "API zym" kit:
     - Well "Esterase" with type "enzyme" and ec_number "3.1.1.1" or go_terms "GO:0004806"
-    - Well "GLY" with type "substrate" and chebi_id "CHEBI:17754"
+    - Well "GLY" with type "chemical" and chebi_id "CHEBI:17754"
 
     The structure of the returned mapping is:
     {
-        "api zym": {  # kit_name (lowercase)
-            "Esterase": {  # label from well
-                "type": "enzyme",
-                "go_terms": ["GO:0004806"],
-                "ec_number": ["3.1.1.1"],
-                "chebi_id": []
+        "API zym": {  # kit_name (exact match from JSON)
+            "wells": {  # well-specific mappings
+                "Esterase": {  # name from well (matches BacDive API keys)
+                    "type": "enzyme",
+                    "go_terms": ["GO:0004806"],
+                    "ec_number": ["3.1.1.1"],
+                    "chebi_id": []
+                },
+                ...
             },
-            ...
+            "metpo_predicates": {  # kit-level predicates
+                "positive": {
+                    "id": "METPO:2000302",
+                    "label": "shows activity of"
+                },
+                "negative": {
+                    "id": "METPO:2000303",
+                    "label": "does not show activity of"
+                }
+            }
         },
-        "api 50chac": {
-            "GLY": {
-                "type": "substrate",
-                "chebi_id": ["CHEBI:17754"],
-                "go_terms": [],
-                "ec_number": []
+        "API 50CHac": {
+            "wells": {
+                "GLY": {  # name from well (matches BacDive API keys like "GLY", "ERY")
+                    "type": "chemical",
+                    "chebi_id": ["CHEBI:17754"],
+                    "go_terms": [],
+                    "ec_number": []
+                },
+                ...
             },
-            ...
+            "metpo_predicates": {
+                "positive": {
+                    "id": "METPO:2000011",
+                    "label": "ferments"
+                },
+                "negative": {
+                    "id": "METPO:2000037",
+                    "label": "does not ferment"
+                }
+            }
         }
     }
 
@@ -652,22 +676,22 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
         mappings = {}
 
         for kit in data.get("api_kits", []):
-            kit_name = kit.get("kit_name", "").lower()  # normalize to lowercase
+            kit_name = kit.get("kit_name", "")
             if not kit_name:
                 continue
 
             kit_mappings = {}
 
             for well in kit.get("wells", []):
-                # Get the first label as the key
-                labels = well.get("label", [])
-                if not labels:
+                # Get the well name as the key (this matches BacDive data structure)
+                # BacDive uses short names like "GLY", "ERY", etc. in the API data
+                well_name = well.get("name", "")
+                if not well_name:
                     continue
 
-                label = labels[0]  # Use the first label as the key
                 well_type = well.get("type", [])
 
-                # Determine the type (enzyme or substrate)
+                # Determine the type (enzyme or chemical)
                 if not well_type:
                     continue
 
@@ -675,11 +699,11 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
                 main_type = well_type[0]
 
                 # Skip control wells and phenotypic tests
-                if main_type not in ["enzyme", "substrate"]:
+                if main_type not in ["enzyme", "chemical"]:
                     continue
 
-                # Build the mapping for this well
-                kit_mappings[label] = {
+                # Build the mapping for this well using 'name' as the key
+                kit_mappings[well_name] = {
                     "type": main_type,
                     "go_terms": well.get("go_terms", []),
                     "ec_number": well.get("ec_number", []),
@@ -687,7 +711,11 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
                 }
 
             if kit_mappings:
-                mappings[kit_name] = kit_mappings
+                # Store both the well mappings and the metpo_predicates
+                mappings[kit_name] = {
+                    "wells": kit_mappings,
+                    "metpo_predicates": kit.get("metpo_predicates", {}),
+                }
 
         return mappings
 

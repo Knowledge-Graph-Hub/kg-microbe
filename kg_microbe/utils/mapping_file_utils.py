@@ -177,7 +177,9 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
                             # It's a literal value synonym
                             synonyms.append(item)
 
-                nodes[iri] = MetpoTreeNode(iri, label, synonyms, biolink_equivalent, bacdive_json_paths)
+                nodes[iri] = MetpoTreeNode(
+                    iri, label, synonyms, biolink_equivalent, bacdive_json_paths
+                )
 
         # second pass: establish parent-child relationships
         lines = response.text.splitlines()

@@ -215,7 +215,7 @@ class MediaDiveTransform(Transform):
         """
         try:
             # Use the high-confidence MicroMediaParam compound mappings from download.yaml
-            mapping_file = Path(self.input_base_dir) / "high_confidence_compound_mappings.tsv"
+            mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"
 
             if not mapping_file.exists():
                 print(f"MicroMediaParam high-confidence mappings not found at {mapping_file}")

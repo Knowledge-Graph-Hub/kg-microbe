@@ -257,7 +257,13 @@ class BacDiveTransform(Transform):
             return []
 
     def _process_phenotype_by_metpo_parent(
-        self, record: dict, parent_iri: str, species_with_strains: list, key: str, node_writer, edge_writer
+        self,
+        record: dict,
+        parent_iri: str,
+        species_with_strains: list,
+        key: str,
+        node_writer,
+        edge_writer,
     ):
         """
         Process phenotype data using METPO tree parent node to extract values dynamically.
@@ -668,7 +674,9 @@ class BacDiveTransform(Transform):
             # New format: already a list, use as-is
             pass
         else:
-            raise ValueError(f"Unexpected JSON format: expected dict or list, got {type(input_json)}")
+            raise ValueError(
+                f"Unexpected JSON format: expected dict or list, got {type(input_json)}"
+            )
 
         translation_table_for_ids = str.maketrans(TRANSLATION_TABLE_FOR_IDS)
         translation_table_for_labels = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
@@ -1556,13 +1564,16 @@ class BacDiveTransform(Transform):
                                     # Look up METPO predicate directly using production value (yes/no)
                                     metpo_predicate = None
                                     metpo_label = None
-                                    if production and production in self.metpo_metabolite_production_mappings:
+                                    if (
+                                        production
+                                        and production in self.metpo_metabolite_production_mappings
+                                    ):
                                         metpo_predicate = self.metpo_metabolite_production_mappings[
                                             production
                                         ]["curie"]
-                                        metpo_label = self.metpo_metabolite_production_mappings[production][
-                                            "label"
-                                        ]
+                                        metpo_label = self.metpo_metabolite_production_mappings[
+                                            production
+                                        ]["label"]
 
                                     # Only add if we found a METPO predicate mapping
                                     if metpo_predicate:
@@ -1577,7 +1588,9 @@ class BacDiveTransform(Transform):
                                         )
 
                         elif isinstance(phys_and_metabolism_metabolite_production, dict):
-                            production = phys_and_metabolism_metabolite_production.get(PRODUCTION_KEY)
+                            production = phys_and_metabolism_metabolite_production.get(
+                                PRODUCTION_KEY
+                            )
                             if phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
@@ -1590,11 +1603,16 @@ class BacDiveTransform(Transform):
                                 # Look up METPO predicate directly using production value (yes/no)
                                 metpo_predicate = None
                                 metpo_label = None
-                                if production and production in self.metpo_metabolite_production_mappings:
-                                    metpo_predicate = self.metpo_metabolite_production_mappings[production][
-                                        "curie"
-                                    ]
-                                    metpo_label = self.metpo_metabolite_production_mappings[production]["label"]
+                                if (
+                                    production
+                                    and production in self.metpo_metabolite_production_mappings
+                                ):
+                                    metpo_predicate = self.metpo_metabolite_production_mappings[
+                                        production
+                                    ]["curie"]
+                                    metpo_label = self.metpo_metabolite_production_mappings[
+                                        production
+                                    ]["label"]
 
                                 if metpo_predicate:
                                     metabolite_production_data = [

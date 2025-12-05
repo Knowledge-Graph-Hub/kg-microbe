@@ -225,5 +225,5 @@
 # on custom mediadive.ingredient: prefix.
 #
 -
-  url: file:///Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroMediaParam/MicroMediaParam/pipeline_output/merge_mappings/high_confidence_compound_mappings.tsv
-  local_name: high_confidence_compound_mappings.tsv
+  url: file:///Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroMediaParam/MicroMediaParam/pipeline_output/merge_mappings/compound_mappings_strict.tsv
+  local_name: compound_mappings_strict.tsv

@@ -1683,94 +1683,112 @@ class BacDiveTransform(Transform):
                     if phys_and_metabolism_API:
                         # Process each API key separately (e.g. "API zym", "API coryne", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():
-                            # Normalize the assay name for lookup (e.g. "API zym" -> "api zym")
-                            # We are doing this because the keys in self.assay_kit_mappings dictionary
-                            # are all lowercase
-                            assay_name_lower = assay_name.lower()
-
                             # Check if we have mapping data for this kit
-                            if assay_name_lower not in self.assay_kit_mappings:
+                            if assay_name not in self.assay_kit_mappings:
                                 # Skip unmapped API kits
                                 continue
 
                             # Use the new assay kit mappings
-                            kit_mappings = self.assay_kit_mappings[assay_name_lower]
-                            values = self._flatten_to_dicts(assay_data)
+                            kit_data = self.assay_kit_mappings[assay_name]
+                            kit_mappings = kit_data.get("wells", {})
+                            metpo_predicates = kit_data.get("metpo_predicates", {})
 
-                            # Process each well/test result
-                            for entry in values:
-                                if not isinstance(entry, dict):
+                            # Process each well/test result directly from assay_data
+                            # assay_data is a dict like {"GLY": "+", "ERY": "-", "@ref": 117142, ...}
+                            if not isinstance(assay_data, dict):
+                                continue
+
+                            for test_label, test_result in assay_data.items():
+                                # Skip metadata fields like "@ref"
+                                if test_label.startswith("@"):
                                     continue
 
-                                for test_label, test_result in entry.items():
-                                    # Skip if not in the mapping or if no result
-                                    if test_label not in kit_mappings:
+                                # Skip if not in the mapping or if no result
+                                if test_label not in kit_mappings:
+                                    continue
+
+                                # Get the mapping info for this test
+                                test_info = kit_mappings[test_label]
+                                test_type = test_info["type"]
+
+                                if test_type == "enzyme":
+                                    # Use METPO enzyme activity mapping
+                                    if test_result not in self.metpo_enzyme_mappings:
                                         continue
 
-                                    # Get the mapping info for this test
-                                    test_info = kit_mappings[test_label]
-                                    test_type = test_info["type"]
+                                    metpo_predicate_info = self.metpo_enzyme_mappings[test_result]
+                                    metpo_predicate = metpo_predicate_info["curie"]
 
-                                    # Only process enzyme types for now
-                                    # TODO: Add substrate handling once METPO properties are defined
-                                    if test_type == "enzyme":
-                                        # Use METPO enzyme activity mapping
-                                        if test_result not in self.metpo_enzyme_mappings:
-                                            continue
+                                    # Create edges for both GO terms and EC numbers
+                                    go_terms = test_info.get("go_terms", [])
+                                    ec_numbers = test_info.get("ec_number", [])
 
-                                        metpo_predicate_info = self.metpo_enzyme_mappings[test_result]
-                                        metpo_predicate = metpo_predicate_info["curie"]
-
-                                        # Create edges for both GO terms and EC numbers
-                                        go_terms = test_info.get("go_terms", [])
-                                        ec_numbers = test_info.get("ec_number", [])
-
-                                        # Process GO terms
-                                        if go_terms:
-                                            for go_term in go_terms:
-                                                # Write GO term node
-                                                node_writer.writerow(
-                                                    [go_term, "biolink:MolecularActivity", test_label]
-                                                    + [None] * (len(self.node_header) - 3)
+                                    # Process GO terms
+                                    if go_terms:
+                                        for go_term in go_terms:
+                                            # Write edges from organisms to GO term
+                                            for organism in species_with_strains:
+                                                edge_writer.writerow(
+                                                    [
+                                                        organism,
+                                                        metpo_predicate,
+                                                        go_term,
+                                                        CAPABLE_OF,
+                                                        BACDIVE_PREFIX + key,
+                                                    ]
                                                 )
 
-                                                # Write edges from organisms to GO term
-                                                for organism in species_with_strains:
-                                                    edge_writer.writerow(
-                                                        [
-                                                            organism,
-                                                            metpo_predicate,
-                                                            go_term,
-                                                            CAPABLE_OF,
-                                                            BACDIVE_PREFIX + key,
-                                                        ]
-                                                    )
-
-                                        # Process EC numbers
-                                        if ec_numbers:
-                                            for ec_number in ec_numbers:
-                                                ec_id = f"{EC_PREFIX}{ec_number}"
-                                                # Write EC number node
-                                                node_writer.writerow(
-                                                    [ec_id, EC_CATEGORY, test_label]
-                                                    + [None] * (len(self.node_header) - 3)
+                                    # Process EC numbers
+                                    if ec_numbers:
+                                        for ec_number in ec_numbers:
+                                            ec_id = f"{EC_PREFIX}{ec_number}"
+                                            # Write edges from organisms to EC number
+                                            for organism in species_with_strains:
+                                                edge_writer.writerow(
+                                                    [
+                                                        organism,
+                                                        metpo_predicate,
+                                                        ec_id,
+                                                        CAPABLE_OF,
+                                                        BACDIVE_PREFIX + key,
+                                                    ]
                                                 )
 
-                                                # Write edges from organisms to EC number
-                                                for organism in species_with_strains:
-                                                    edge_writer.writerow(
-                                                        [
-                                                            organism,
-                                                            metpo_predicate,
-                                                            ec_id,
-                                                            CAPABLE_OF,
-                                                            BACDIVE_PREFIX + key,
-                                                        ]
-                                                    )
+                                    # Skip if neither GO terms nor EC numbers are available
+                                    if not go_terms and not ec_numbers:
+                                        continue
 
-                                        # Skip if neither GO terms nor EC numbers are available
-                                        if not go_terms and not ec_numbers:
-                                            continue
+                                elif test_type == "chemical":
+                                    # Handle chemical substrates using METPO predicates
+                                    # Map the test result sign ("+", "-") to the appropriate predicate
+                                    if test_result == "+":
+                                        predicate_info = metpo_predicates.get("positive", {})
+                                    elif test_result == "-":
+                                        predicate_info = metpo_predicates.get("negative", {})
+                                    else:
+                                        # Skip unknown results
+                                        continue
+
+                                    metpo_predicate = predicate_info.get("id")
+                                    if not metpo_predicate:
+                                        continue
+
+                                    # Get ChEBI IDs for this chemical
+                                    chebi_ids = test_info.get("chebi_id", [])
+
+                                    if chebi_ids:
+                                        for chebi_id in chebi_ids:
+                                            # Write edges from organisms to ChEBI chemical
+                                            for organism in species_with_strains:
+                                                edge_writer.writerow(
+                                                    [
+                                                        organism,
+                                                        metpo_predicate,
+                                                        chebi_id,
+                                                        "biolink:interacts_with",
+                                                        BACDIVE_PREFIX + key,
+                                                    ]
+                                                )
 
                     # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 

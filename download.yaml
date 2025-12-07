@@ -115,7 +115,7 @@
 # Uniprot Functional Microbes
 #
 -
-  url: https://kghub.io/frozen_incoming_data/uniprot/uniprot_proteomes.tar.gz
+  url: https://drive.google.com/file/d/1-aFVHE54t8HvcV4Z32hyTkmlXci07Y9g/view?usp=drive_link
   local_name: uniprot_proteomes.tar.gz
 
 #

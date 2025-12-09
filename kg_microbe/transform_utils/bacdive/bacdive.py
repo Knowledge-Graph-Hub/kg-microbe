@@ -1211,7 +1211,7 @@ class BacDiveTransform(Transform):
                     )
 
                     # Pathogenicity - extracted from Safety information.risk assessment
-                    # Paths: 
+                    # Paths:
                     #   - "Safety information.risk assessment.pathogenicity human"
                     #   - "Safety information.risk assessment.pathogenicity animal"
                     #   - "Safety information.risk assessment.pathogenicity plant"

@@ -1215,7 +1215,7 @@ class BacDiveTransform(Transform):
                     #   - "Safety information.risk assessment.pathogenicity human"
                     #   - "Safety information.risk assessment.pathogenicity animal"
                     #   - "Safety information.risk assessment.pathogenicity plant"
-                    # Note: Information from the above paths in being pulled in in a "harcoded"
+                    # Note: Information from the above paths in being pulled in in a "hardcoded"
                     # manner and not by referencing any mapping column values from the METPO
                     # sheet. In the future we will be moving away from this behavior and making
                     # sure we appropriately use mappings from a decided sheet called

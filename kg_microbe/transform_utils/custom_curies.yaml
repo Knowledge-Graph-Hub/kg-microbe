@@ -48,20 +48,6 @@ production:
     name: "pigmented"
     <<: *chemical_production_block
 
-pathogen:
-  human_pathogen:
-    curie: "pathogen:human"
-    name: "human pathogen"
-    <<: *phenotypic_quality_block
-  animal_pathogen:
-    curie: "pathogen:animal"
-    name: "animal pathogen"
-    <<: *phenotypic_quality_block
-  plant_pathogen:
-    curie: "pathogen:plant"
-    name: "plant pathogen"
-    <<: *phenotypic_quality_block
-
 gc_content:
   gc_<=42.65:
     curie: "gc:low"

@@ -12,6 +12,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_SOLUTION_PREFIX,
+    NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     SUBJECT_COLUMN,

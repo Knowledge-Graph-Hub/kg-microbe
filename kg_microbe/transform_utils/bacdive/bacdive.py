@@ -1270,7 +1270,7 @@ class BacDiveTransform(Transform):
                     # Parent: METPO:1001101 (biosafety level)
                     # Path: "Safety information.risk assessment.biosafety level"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1001101", species_with_strains, key, node_writer, edge_writer
+                        value, "METPO:1001101", feature_targets, key, node_writer, edge_writer
                     )
 
                     # Pathogenicity - extracted from Safety information.risk assessment
@@ -1284,7 +1284,7 @@ class BacDiveTransform(Transform):
                     # sure we appropriately use mappings from a decided sheet called
                     # "source_mappings" sheet
                     self._process_pathogenicity(
-                        value, species_with_strains, key, node_writer, edge_writer
+                        value, feature_targets, key, node_writer, edge_writer
                     )
 
                     if not all(item is None for item in name_tax_classification_data[2:]):
@@ -1689,7 +1689,7 @@ class BacDiveTransform(Transform):
                     # Parent: METPO:1000629 (halophily preference)
                     # Paths: "Physiology and metabolism.halophily.halophily level"
                     self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000629", species_with_strains, key, node_writer, edge_writer
+                        value, "METPO:1000629", feature_targets, key, node_writer, edge_writer
                     )
 
                     if phys_and_metabolism_API:

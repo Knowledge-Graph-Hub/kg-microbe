@@ -650,6 +650,78 @@ class BacDiveTransform(Transform):
                 ]
             )
 
+    def _process_pathogenicity(
+        self, record: dict, species_with_strains: list, key: str, node_writer, edge_writer
+    ):
+        """
+        Process pathogenicity information from Safety information.risk assessment.
+
+        Extracts pathogenicity for human, animal, and plant from the risk_assessment
+        field. The values can be "yes" or "yes, in single cases".
+
+        :param record: The BacDive record dictionary
+        :param species_with_strains: List of organism IDs to create edges for
+        :param key: BacDive ID for provenance
+        :param node_writer: CSV writer for nodes
+        :param edge_writer: CSV writer for edges
+        """
+        # Define pathogenicity mappings: JSON key -> (node_id, label)
+        pathogenicity_mappings = {
+            "pathogenicity human": ("METPO:1004004", "human pathogen"),
+            "pathogenicity animal": ("METPO:1004002", "animal pathogen"),
+            "pathogenicity plant": ("METPO:1004003", "plant pathogen"),
+        }
+
+        # Get risk assessment data
+        safety_info = record.get(SAFETY_INFO, {})
+        risk_assessment = safety_info.get(RISK_ASSESSMENT)
+
+        if not risk_assessment:
+            return
+
+        # Normalize to list (can be dict or list)
+        if isinstance(risk_assessment, dict):
+            risk_assessment_list = [risk_assessment]
+        elif isinstance(risk_assessment, list):
+            risk_assessment_list = risk_assessment
+        else:
+            return
+
+        # Track which pathogenicity types we've already processed to avoid duplicates
+        processed_pathogenicity = set()
+
+        for assessment in risk_assessment_list:
+            if not isinstance(assessment, dict):
+                continue
+
+            for pathogen_key, (node_id, label) in pathogenicity_mappings.items():
+                pathogen_value = assessment.get(pathogen_key)
+
+                # Check for positive pathogenicity values
+                if pathogen_value and pathogen_value.lower() in ["yes", "yes, in single cases"]:
+                    # Skip if already processed this pathogenicity type
+                    if pathogen_key in processed_pathogenicity:
+                        continue
+                    processed_pathogenicity.add(pathogen_key)
+
+                    # Write node
+                    node_writer.writerow(
+                        [node_id, PHENOTYPIC_CATEGORY, label]
+                        + [None] * (len(self.node_header) - 3)
+                    )
+
+                    # Write edges for each organism
+                    for organism_id in species_with_strains:
+                        edge_writer.writerow(
+                            [
+                                organism_id,
+                                HAS_PHENOTYPE_PREDICATE,
+                                node_id,
+                                HAS_PHENOTYPE,
+                                BACDIVE_PREFIX + key,
+                            ]
+                        )
+
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # replace with downloaded data filename for this source
@@ -1136,6 +1208,20 @@ class BacDiveTransform(Transform):
                     # Path: "Safety information.risk assessment.biosafety level"
                     self._process_phenotype_by_metpo_parent(
                         value, "METPO:1001101", species_with_strains, key, node_writer, edge_writer
+                    )
+
+                    # Pathogenicity - extracted from Safety information.risk assessment
+                    # Paths:
+                    #   - "Safety information.risk assessment.pathogenicity human"
+                    #   - "Safety information.risk assessment.pathogenicity animal"
+                    #   - "Safety information.risk assessment.pathogenicity plant"
+                    # Note: Information from the above paths in being pulled in in a "hardcoded"
+                    # manner and not by referencing any mapping column values from the METPO
+                    # sheet. In the future we will be moving away from this behavior and making
+                    # sure we appropriately use mappings from a decided sheet called
+                    # "source_mappings" sheet
+                    self._process_pathogenicity(
+                        value, species_with_strains, key, node_writer, edge_writer
                     )
 
                     if not all(item is None for item in name_tax_classification_data[2:]):

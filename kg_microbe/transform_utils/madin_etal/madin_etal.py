@@ -136,7 +136,7 @@ class MadinEtAlTransform(Transform):
 
         # Extract category from METPO or use default
         category = uri_to_curie(metpo_mapping.get("inferred_category", default_category))
-        # Look more into this
+        
         predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
 
         # Use Biolink predicate if available, otherwise use default

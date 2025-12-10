@@ -162,7 +162,7 @@ class BactoTraitsTransform(Transform):
         source_name = BACTOTRAITS
         super().__init__(source_name, input_dir, output_dir)
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
-        self.bactotraits_metpo_mappings = load_metpo_mappings("bactotraits synonym")
+        self.bactotraits_metpo_mappings = load_metpo_mappings("bactotraits related synonym")
 
     def _clean_row(self, row):
         # Create a translation table that maps unwanted characters to None

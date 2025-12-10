@@ -50,6 +50,7 @@ from kg_microbe.transform_utils.constants import (
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
     RANGE_SALINITY_COLUMN,
+    RANGE_TMP_COLUMN,
     ROLE_CATEGORY,
     SHAPE_PREFIX,
     SPORULATION_COLUMN,
@@ -194,6 +195,7 @@ class MadinEtAlTransform(Transform):
             GRAM_STAIN_COLUMN,
             SPORULATION_COLUMN,
             ISOLATION_SOURCE_COLUMN,
+            RANGE_TMP_COLUMN,
         ]
         with open(input_file, "r") as f:
             total_lines = sum(1 for line in f)
@@ -223,6 +225,7 @@ class MadinEtAlTransform(Transform):
                     sporulation_node = None
                     isolation_source_node = None
                     metabolism_node = None
+                    range_tmp_node = None
 
                     tax_pathway_edge = None
                     tax_metabolism_edge = None
@@ -233,6 +236,7 @@ class MadinEtAlTransform(Transform):
                     tax_to_motility_edge = None
                     tax_to_gram_stain_edge = None
                     tax_to_sporulation_edge = None
+                    tax_to_range_tmp_edge = None
 
                     filtered_row = {k: line[k] for k in traits_columns_of_interest}
                     tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
@@ -582,7 +586,42 @@ class MadinEtAlTransform(Transform):
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
                             ]
-
+                    # block handling "range_tmp" column from Madin etal dataset/CSV sheet
+                    range_tmp = (
+                        None
+                        if filtered_row[RANGE_TMP_COLUMN] == "NA"
+                        else filtered_row[RANGE_TMP_COLUMN]
+                    )
+                    if range_tmp:
+                        # Try to find mapping in METPO using compound key first, then simple key
+                        compound_key = f"range_tmp.{range_tmp.strip()}"
+                        metpo_mapping = self.madin_metpo_mappings.get(
+                            compound_key,
+                            self.madin_metpo_mappings.get(range_tmp.strip(), None)
+                        )
+                        if metpo_mapping:
+                            # create range_tmp node and edge to tax_id
+                            # use biolink_equivalent URL from METPO tree traversal or fallback to default
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            predicate_biolink = metpo_mapping.get(
+                                "predicate_biolink_equivalent", ""
+                            )
+                            # fallback: if no biolink equivalent use `biolink:has_phenotype`
+                            if predicate_biolink:
+                                predicate = uri_to_curie(predicate_biolink)
+                            else:
+                                predicate = "biolink:has_phenotype"
+                            range_tmp_node = [
+                                metpo_mapping["curie"],
+                                category,
+                                metpo_mapping["label"],
+                            ]
+                            tax_to_range_tmp_edge = [
+                                tax_id,
+                                predicate,
+                                metpo_mapping["curie"],
+                                HAS_PHENOTYPE,
+                            ]
                     # block handling "gram_stain" column from Madin etal dataset/CSV sheet
                     gram_stain = (
                         None
@@ -721,6 +760,7 @@ class MadinEtAlTransform(Transform):
                             gram_stain_node,
                             sporulation_node,
                             metabolism_node,
+                            range_tmp_node,
                         ]
                         if sublist is not None
                     ]
@@ -737,6 +777,7 @@ class MadinEtAlTransform(Transform):
                             tax_to_motility_edge,
                             tax_to_gram_stain_edge,
                             tax_to_sporulation_edge,
+                            tax_to_range_tmp_edge,
                         ]
                         if sublist is not None
                     ]

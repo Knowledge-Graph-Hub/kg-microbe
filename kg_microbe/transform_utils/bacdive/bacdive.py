@@ -27,8 +27,6 @@ from kg_microbe.transform_utils.constants import (
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
-    ASSAY_PREFIX,
-    ASSAY_TO_NCBI_EDGE,
     ASSESSED_ACTIVITY_RELATIONSHIP,
     ATTRIBUTE_CATEGORY,
     BACDIVE,
@@ -47,10 +45,6 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
     BIOLOGICAL_PROCESS,
-    BIOSAFETY_CATEGORY,
-    BIOSAFETY_LEVEL,
-    BIOSAFETY_LEVEL_PREDICATE,
-    BIOSAFETY_LEVEL_PREFIX,
     CAPABLE_OF,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
@@ -128,13 +122,10 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NAME_TAX_CLASSIFICATION,
     NCBI_CATEGORY,
-    NCBI_TO_ENZYME_EDGE,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
-    NCBI_TO_METABOLITE_PRODUCTION_EDGE,
     NCBI_TO_METABOLITE_RESISTANCE_EDGE,
     NCBI_TO_METABOLITE_SENSITIVITY_EDGE,
-    NCBI_TO_METABOLITE_UTILIZATION_EDGE,
     NCBITAXON_DESCRIPTION_COLUMN,
     NCBITAXON_ID,
     NCBITAXON_ID_COLUMN,
@@ -150,7 +141,6 @@ from kg_microbe.transform_utils.constants import (
     PHYLUM,
     PHYSIOLOGY_AND_METABOLISM,
     PIGMENTATION,
-    PLUS_SIGN,
     PREDICATE_COLUMN,
     PRODUCTION_KEY,
     RDFS_SUBCLASS_OF,
@@ -178,7 +168,15 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.mapping_file_utils import _build_metpo_tree, load_metpo_mappings, uri_to_curie
+from kg_microbe.utils.mapping_file_utils import (
+    _build_metpo_tree,
+    load_assay_kit_mappings,
+    load_metpo_enzyme_mappings,
+    load_metpo_mappings,
+    load_metpo_metabolite_production_mappings,
+    load_metpo_metabolite_utilization_mappings,
+    uri_to_curie,
+)
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
@@ -206,6 +204,10 @@ class BacDiveTransform(Transform):
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
+        self.metpo_metabolite_utilization_mappings = load_metpo_metabolite_utilization_mappings()
+        self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
+        self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
+        self.assay_kit_mappings = load_assay_kit_mappings()
 
     def _extract_value_from_json_path(self, record: dict, json_path: str):
         """
@@ -653,6 +655,78 @@ class BacDiveTransform(Transform):
                         BACDIVE_PREFIX + key,
                     ]
                 )
+
+    def _process_pathogenicity(
+        self, record: dict, species_with_strains: list, key: str, node_writer, edge_writer
+    ):
+        """
+        Process pathogenicity information from Safety information.risk assessment.
+
+        Extracts pathogenicity for human, animal, and plant from the risk_assessment
+        field. The values can be "yes" or "yes, in single cases".
+
+        :param record: The BacDive record dictionary
+        :param species_with_strains: List of organism IDs to create edges for
+        :param key: BacDive ID for provenance
+        :param node_writer: CSV writer for nodes
+        :param edge_writer: CSV writer for edges
+        """
+        # Define pathogenicity mappings: JSON key -> (node_id, label)
+        pathogenicity_mappings = {
+            "pathogenicity human": ("METPO:1004004", "human pathogen"),
+            "pathogenicity animal": ("METPO:1004002", "animal pathogen"),
+            "pathogenicity plant": ("METPO:1004003", "plant pathogen"),
+        }
+
+        # Get risk assessment data
+        safety_info = record.get(SAFETY_INFO, {})
+        risk_assessment = safety_info.get(RISK_ASSESSMENT)
+
+        if not risk_assessment:
+            return
+
+        # Normalize to list (can be dict or list)
+        if isinstance(risk_assessment, dict):
+            risk_assessment_list = [risk_assessment]
+        elif isinstance(risk_assessment, list):
+            risk_assessment_list = risk_assessment
+        else:
+            return
+
+        # Track which pathogenicity types we've already processed to avoid duplicates
+        processed_pathogenicity = set()
+
+        for assessment in risk_assessment_list:
+            if not isinstance(assessment, dict):
+                continue
+
+            for pathogen_key, (node_id, label) in pathogenicity_mappings.items():
+                pathogen_value = assessment.get(pathogen_key)
+
+                # Check for positive pathogenicity values
+                if pathogen_value and pathogen_value.lower() in ["yes", "yes, in single cases"]:
+                    # Skip if already processed this pathogenicity type
+                    if pathogen_key in processed_pathogenicity:
+                        continue
+                    processed_pathogenicity.add(pathogen_key)
+
+                    # Write node
+                    node_writer.writerow(
+                        [node_id, PHENOTYPIC_CATEGORY, label]
+                        + [None] * (len(self.node_header) - 3)
+                    )
+
+                    # Write edges for each organism
+                    for organism_id in species_with_strains:
+                        edge_writer.writerow(
+                            [
+                                organism_id,
+                                HAS_PHENOTYPE_PREDICATE,
+                                node_id,
+                                HAS_PHENOTYPE,
+                                BACDIVE_PREFIX + key,
+                            ]
+                        )
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
@@ -1192,34 +1266,26 @@ class BacDiveTransform(Transform):
                         lpsn,
                     ]
 
-                    # Biosafety level
-                    if risk_assessment and ncbitaxon_id:
-                        if isinstance(risk_assessment, dict):
-                            biosafety_level = risk_assessment.get(BIOSAFETY_LEVEL, None)
-                        elif isinstance(risk_assessment, list):
-                            # ! Assumption is biosafety level for all items in the list are the same.
-                            biosafety_level = risk_assessment[0].get(BIOSAFETY_LEVEL, None)
-                        if biosafety_level:
-                            biosafety_level = re.findall(r"\d+", biosafety_level)[0]
-                            biosafety_level_id = f"{BIOSAFETY_LEVEL_PREFIX}{biosafety_level}"
-                            biosafety_level_label = f"{BIOSAFETY_LEVEL} {biosafety_level}"
-                            node_writer.writerow(
-                                [
-                                    biosafety_level_id,
-                                    BIOSAFETY_CATEGORY,
-                                    biosafety_level_label,
-                                ]
-                                + [None] * (len(self.node_header) - 3)
-                            )
-                            edge_writer.writerow(
-                                [
-                                    ncbitaxon_id,
-                                    BIOSAFETY_LEVEL_PREDICATE,
-                                    biosafety_level_id,
-                                    None,
-                                    BACDIVE_PREFIX + key,
-                                ]
-                            )
+                    # Biosafety level - using METPO mappings
+                    # Parent: METPO:1001101 (biosafety level)
+                    # Path: "Safety information.risk assessment.biosafety level"
+                    self._process_phenotype_by_metpo_parent(
+                        value, "METPO:1001101", species_with_strains, key, node_writer, edge_writer
+                    )
+
+                    # Pathogenicity - extracted from Safety information.risk assessment
+                    # Paths:
+                    #   - "Safety information.risk assessment.pathogenicity human"
+                    #   - "Safety information.risk assessment.pathogenicity animal"
+                    #   - "Safety information.risk assessment.pathogenicity plant"
+                    # Note: Information from the above paths in being pulled in in a "hardcoded"
+                    # manner and not by referencing any mapping column values from the METPO
+                    # sheet. In the future we will be moving away from this behavior and making
+                    # sure we appropriately use mappings from a decided sheet called
+                    # "source_mappings" sheet
+                    self._process_pathogenicity(
+                        value, species_with_strains, key, node_writer, edge_writer
+                    )
 
                     if not all(item is None for item in name_tax_classification_data[2:]):
                         writer_3.writerow(name_tax_classification_data)
@@ -1332,92 +1398,105 @@ class BacDiveTransform(Transform):
                                     )
 
                     if phys_and_metabolism_enzymes:
-                        postive_activity_enzymes = None
+                        # Normalize to list
+                        enzyme_list = []
                         if isinstance(phys_and_metabolism_enzymes, list):
-                            postive_activity_enzymes = [
-                                {f"{EC_PREFIX}{enzyme.get(EC_KEY)}": f"{enzyme.get('value')}"}
-                                for enzyme in phys_and_metabolism_enzymes
-                                if enzyme.get(ACTIVITY_KEY) == PLUS_SIGN and enzyme.get(EC_KEY)
-                            ]
+                            enzyme_list = phys_and_metabolism_enzymes
                         elif isinstance(phys_and_metabolism_enzymes, dict):
-                            activity = phys_and_metabolism_enzymes.get(ACTIVITY_KEY)
-                            if activity == PLUS_SIGN and phys_and_metabolism_enzymes.get(EC_KEY):
-                                ec_value = f"{EC_PREFIX}{phys_and_metabolism_enzymes.get(EC_KEY)}"
-                                value = phys_and_metabolism_enzymes.get("value")
-                                postive_activity_enzymes = [{ec_value: value}]
-
+                            enzyme_list = [phys_and_metabolism_enzymes]
                         else:
                             print(f"{phys_and_metabolism_enzymes} data not recorded.")
-                        if postive_activity_enzymes:
+
+                        # Process each enzyme entry
+                        enzyme_data = []
+                        for enzyme in enzyme_list:
+                            if not isinstance(enzyme, dict):
+                                continue
+
+                            activity = enzyme.get(ACTIVITY_KEY)
+                            ec_number = enzyme.get(EC_KEY)
+                            value = enzyme.get("value")
+
+                            # Only process if we have an EC number and activity mapping
+                            if not ec_number or activity not in self.metpo_enzyme_mappings:
+                                continue
+
+                            # Get METPO predicate from mapping
+                            metpo_predicate = self.metpo_enzyme_mappings[activity]["curie"]
+
+                            enzyme_data.append(
+                                {
+                                    "ec_id": f"{EC_PREFIX}{ec_number}",
+                                    "label": value,
+                                    "predicate": metpo_predicate,
+                                }
+                            )
+
+                        if enzyme_data:
+                            # Write enzyme nodes (EC terms)
                             enzyme_nodes_to_write = [
-                                [k, PHENOTYPIC_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                                for inner_dict in postive_activity_enzymes
-                                for k, v in inner_dict.items()
+                                [item["ec_id"], EC_CATEGORY, item["label"]]
+                                + [None] * (len(self.node_header) - 3)
+                                for item in enzyme_data
                             ]
-                            if ncbitaxon_id:
-                                enzyme_nodes_to_write.append(
-                                    [ncbitaxon_id, NCBI_CATEGORY, ncbi_label]
-                                    + [None] * (len(self.node_header) - 3)
-                                )
                             node_writer.writerows(enzyme_nodes_to_write)
 
-                            for inner_dict in postive_activity_enzymes:
-                                for k, _ in inner_dict.items():
-                                    # Create edge(s) from organism(s) to enzyme
-                                    for target in feature_targets:
-                                        edge_writer.writerow(
-                                            [
-                                                target,
-                                                NCBI_TO_ENZYME_EDGE,
-                                                k,
-                                                CAPABLE_OF,
-                                                BACDIVE_PREFIX + key,
-                                            ]
-                                        )
+                            # Write edges from organisms to enzymes using METPO predicates
+                            for item in enzyme_data:
+                                enzyme_edges_to_write = [
+                                    [
+                                        organism,
+                                        item["predicate"],
+                                        item["ec_id"],
+                                        CAPABLE_OF,
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                    for organism in feature_targets
+                                ]
+                                edge_writer.writerows(enzyme_edges_to_write)
 
                     if phys_and_metabolism_metabolite_utilization:
-                        positive_chebi_activity = None
+                        metabolite_activity_data = None
                         if isinstance(phys_and_metabolism_metabolite_utilization, list):
-                            positive_chebi_activity = []
-                            # no_chebi_activity = defaultdict(list)
+                            metabolite_activity_data = []
                             for metabolite in phys_and_metabolism_metabolite_utilization:
-                                # ! NO CURIE associated to metabolite.
-                                # if (
-                                #     METABOLITE_CHEBI_KEY not in metabolite
-                                #     and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
-                                # ):
-                                #     no_chebi_activity.setdefault("NO_CURIE", []).append(
-                                #         [
-                                #             metabolite[METABOLITE_KEY],
-                                #             metabolite.get(UTILIZATION_TYPE_TESTED),
-                                #         ]
-                                #     )
-                                #     positive_chebi_activity.append(no_chebi_activity)
-
-                                if (
-                                    METABOLITE_CHEBI_KEY in metabolite
-                                    and metabolite.get(UTILIZATION_ACTIVITY) == PLUS_SIGN
-                                ):
+                                # Process metabolites that have CHEBI ID
+                                if METABOLITE_CHEBI_KEY in metabolite:
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
-                                    positive_chebi_activity.append(
-                                        {
-                                            chebi_key: [
-                                                metabolite[METABOLITE_KEY],
-                                                metabolite.get(UTILIZATION_TYPE_TESTED),
-                                            ]
-                                        }
-                                    )
+                                    utilization_type = metabolite.get(UTILIZATION_TYPE_TESTED)
+                                    utilization_activity = metabolite.get(UTILIZATION_ACTIVITY)
+
+                                    # Look up METPO predicate based on utilization type and sign
+                                    metpo_predicate = None
+                                    metpo_label = None
+                                    if utilization_type and utilization_activity:
+                                        mapping = self.metpo_metabolite_utilization_mappings.get(
+                                            utilization_type
+                                        )
+                                        if mapping and utilization_activity in mapping:
+                                            metpo_predicate = mapping[utilization_activity]["curie"]
+                                            metpo_label = mapping[utilization_activity]["label"]
+
+                                    # Only add if we found a METPO predicate mapping
+                                    if metpo_predicate:
+                                        metabolite_activity_data.append(
+                                            {
+                                                "chebi_key": chebi_key,
+                                                "metabolite_name": metabolite[METABOLITE_KEY],
+                                                "utilization_type": utilization_type,
+                                                "metpo_predicate": metpo_predicate,
+                                                "metpo_label": metpo_label,
+                                            }
+                                        )
 
                         elif isinstance(phys_and_metabolism_metabolite_utilization, dict):
                             utilization_activity = phys_and_metabolism_metabolite_utilization.get(
                                 UTILIZATION_ACTIVITY
                             )
-                            if (
-                                utilization_activity == PLUS_SIGN
-                                and phys_and_metabolism_metabolite_utilization.get(
-                                    METABOLITE_CHEBI_KEY
-                                )
-                            ):
+                            utilization_type = phys_and_metabolism_metabolite_utilization.get(
+                                UTILIZATION_TYPE_TESTED
+                            )
+                            if phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_utilization.get(METABOLITE_CHEBI_KEY)}"
@@ -1425,65 +1504,92 @@ class BacDiveTransform(Transform):
                                 metabolite_value = phys_and_metabolism_metabolite_utilization.get(
                                     METABOLITE_KEY
                                 )
-                                positive_chebi_activity = [{chebi_key: metabolite_value}]
+
+                                # Look up METPO predicate
+                                metpo_predicate = None
+                                metpo_label = None
+                                if utilization_type and utilization_activity:
+                                    mapping = self.metpo_metabolite_utilization_mappings.get(
+                                        utilization_type
+                                    )
+                                    if mapping and utilization_activity in mapping:
+                                        metpo_predicate = mapping[utilization_activity]["curie"]
+                                        metpo_label = mapping[utilization_activity]["label"]
+
+                                if metpo_predicate:
+                                    metabolite_activity_data = [
+                                        {
+                                            "chebi_key": chebi_key,
+                                            "metabolite_name": metabolite_value,
+                                            "utilization_type": utilization_type,
+                                            "metpo_predicate": metpo_predicate,
+                                            "metpo_label": metpo_label,
+                                        }
+                                    ]
                         else:
                             print(
                                 f"{phys_and_metabolism_metabolite_utilization} data not recorded."
                             )
-                        if positive_chebi_activity:
+
+                        if metabolite_activity_data:
+                            # Write metabolite nodes
                             meta_util_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v[0]]
+                                [item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"]]
                                 + [None] * (len(self.node_header) - 3)
-                                for inner_dict in positive_chebi_activity
-                                for k, v in inner_dict.items()
+                                for item in metabolite_activity_data
                             ]
                             node_writer.writerows(meta_util_nodes_to_write)
 
-                            for inner_dict in positive_chebi_activity:
-                                for k, _ in inner_dict.items():
-                                    # Create edge(s) from organism(s) to metabolite
-                                    for target in feature_targets:
-                                        edge_writer.writerow(
-                                            [
-                                                target,
-                                                NCBI_TO_METABOLITE_UTILIZATION_EDGE,
-                                                k,
-                                                HAS_PARTICIPANT,
-                                                BACDIVE_PREFIX + key,
-                                            ]
-                                        )
+                            # Write edges with METPO predicates
+                            for item in metabolite_activity_data:
+                                meta_util_edges_to_write = [
+                                    [
+                                        organism,
+                                        item["metpo_predicate"],
+                                        item["chebi_key"],
+                                        HAS_PARTICIPANT,
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                    for organism in feature_targets
+                                ]
+                                edge_writer.writerows(meta_util_edges_to_write)
 
                     if phys_and_metabolism_metabolite_production:
-                        positive_chebi_production = None
+                        metabolite_production_data = None
                         if isinstance(phys_and_metabolism_metabolite_production, list):
-                            positive_chebi_production = []
-                            # no_chebi_production = defaultdict(list)
+                            metabolite_production_data = []
                             for metabolite in phys_and_metabolism_metabolite_production:
-                                if (
-                                    METABOLITE_CHEBI_KEY in metabolite
-                                    and metabolite.get(PRODUCTION_KEY) == "yes"
-                                ):
+                                # Process metabolites that have CHEBI ID
+                                if METABOLITE_CHEBI_KEY in metabolite:
                                     chebi_key = f"{CHEBI_PREFIX}{metabolite[METABOLITE_CHEBI_KEY]}"
-                                    positive_chebi_production.append(
-                                        {chebi_key: metabolite[METABOLITE_KEY]}
-                                    )
-                                # ! NO CURIE associated to metabolite.
-                                # if (
-                                #     METABOLITE_CHEBI_KEY not in metabolite and metabolite.get(PRODUCTION_KEY) == "yes"
-                                # ):
-                                #     no_chebi_production.setdefault("NO_CURIE", []).append(metabolite[METABOLITE_KEY])
-                                #     positive_chebi_production.append(no_chebi_production)
+                                    production = metabolite.get(PRODUCTION_KEY)
+
+                                    # Look up METPO predicate directly using production value (yes/no)
+                                    metpo_predicate = None
+                                    metpo_label = None
+                                    if production and production in self.metpo_metabolite_production_mappings:
+                                        metpo_predicate = self.metpo_metabolite_production_mappings[
+                                            production
+                                        ]["curie"]
+                                        metpo_label = self.metpo_metabolite_production_mappings[production][
+                                            "label"
+                                        ]
+
+                                    # Only add if we found a METPO predicate mapping
+                                    if metpo_predicate:
+                                        metabolite_production_data.append(
+                                            {
+                                                "chebi_key": chebi_key,
+                                                "metabolite_name": metabolite[METABOLITE_KEY],
+                                                "production": production,
+                                                "metpo_predicate": metpo_predicate,
+                                                "metpo_label": metpo_label,
+                                            }
+                                        )
 
                         elif isinstance(phys_and_metabolism_metabolite_production, dict):
-                            production = phys_and_metabolism_metabolite_production.get(
-                                PRODUCTION_KEY
-                            )
-                            if (
-                                production == "yes"
-                                and phys_and_metabolism_metabolite_production.get(
-                                    METABOLITE_CHEBI_KEY
-                                )
-                            ):
+                            production = phys_and_metabolism_metabolite_production.get(PRODUCTION_KEY)
+                            if phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY):
                                 chebi_key = (
                                     f"{CHEBI_PREFIX}"
                                     f"{phys_and_metabolism_metabolite_production.get(METABOLITE_CHEBI_KEY)}"
@@ -1491,32 +1597,51 @@ class BacDiveTransform(Transform):
                                 metabolite_value = phys_and_metabolism_metabolite_production.get(
                                     METABOLITE_KEY
                                 )
-                                positive_chebi_production = [{chebi_key: metabolite_value}]
 
+                                # Look up METPO predicate directly using production value (yes/no)
+                                metpo_predicate = None
+                                metpo_label = None
+                                if production and production in self.metpo_metabolite_production_mappings:
+                                    metpo_predicate = self.metpo_metabolite_production_mappings[production][
+                                        "curie"
+                                    ]
+                                    metpo_label = self.metpo_metabolite_production_mappings[production]["label"]
+
+                                if metpo_predicate:
+                                    metabolite_production_data = [
+                                        {
+                                            "chebi_key": chebi_key,
+                                            "metabolite_name": metabolite_value,
+                                            "production": production,
+                                            "metpo_predicate": metpo_predicate,
+                                            "metpo_label": metpo_label,
+                                        }
+                                    ]
                         else:
                             print(f"{phys_and_metabolism_metabolite_production} data not recorded.")
 
-                        if positive_chebi_production:
+                        if metabolite_production_data:
+                            # Write metabolite nodes
                             metabolite_production_nodes_to_write = [
-                                [k, METABOLITE_CATEGORY, v] + [None] * (len(self.node_header) - 3)
-                                for inner_dict in positive_chebi_production
-                                for k, v in inner_dict.items()
+                                [item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"]]
+                                + [None] * (len(self.node_header) - 3)
+                                for item in metabolite_production_data
                             ]
                             node_writer.writerows(metabolite_production_nodes_to_write)
 
-                            for inner_dict in positive_chebi_production:
-                                for k, _ in inner_dict.items():
-                                    # Create edge(s) from organism(s) to metabolite
-                                    for target in feature_targets:
-                                        edge_writer.writerow(
-                                            [
-                                                target,
-                                                NCBI_TO_METABOLITE_PRODUCTION_EDGE,
-                                                k,
-                                                BIOLOGICAL_PROCESS,
-                                                BACDIVE_PREFIX + key,
-                                            ]
-                                        )
+                            # Write edges with METPO predicates
+                            for item in metabolite_production_data:
+                                metabolite_production_edges_to_write = [
+                                    [
+                                        organism,
+                                        item["metpo_predicate"],
+                                        item["chebi_key"],
+                                        BIOLOGICAL_PROCESS,
+                                        BACDIVE_PREFIX + key,
+                                    ]
+                                    for organism in feature_targets
+                                ]
+                                edge_writer.writerows(metabolite_production_edges_to_write)
 
                     # Process oxygen tolerance using path-based extraction from METPO tree
                     # Parent: METPO:1000601 (oxygen preference)
@@ -1560,51 +1685,122 @@ class BacDiveTransform(Transform):
                         value, "METPO:1000701", feature_targets, key, node_writer, edge_writer
                     )
 
+                    # Process halophily preference using path-based extraction from METPO tree
+                    # Parent: METPO:1000629 (halophily preference)
+                    # Paths: "Physiology and metabolism.halophily.halophily level"
+                    self._process_phenotype_by_metpo_parent(
+                        value, "METPO:1000629", species_with_strains, key, node_writer, edge_writer
+                    )
+
                     if phys_and_metabolism_API:
-                        # Process each API key separately (e.g. "API zym", "API NH", etc.)
+                        # Process each API key separately (e.g. "API zym", "API coryne", etc.)
                         for assay_name, assay_data in phys_and_metabolism_API.items():
-                            # Normalize the assay name (e.g. "API zym" -> "API_zym", "API NH" -> "API_NH")
-                            assay_name_norm = assay_name.replace(" ", "_")
+                            # Check if we have mapping data for this kit
+                            if assay_name not in self.assay_kit_mappings:
+                                # Skip unmapped API kits
+                                continue
 
-                            # Flatten the data in case it's a list of dicts (API NH) or a single dict (API zym)
-                            values = self._flatten_to_dicts(assay_data)
+                            # Use the new assay kit mappings
+                            kit_data = self.assay_kit_mappings[assay_name]
+                            kit_mappings = kit_data.get("wells", {})
+                            metpo_predicates = kit_data.get("metpo_predicates", {})
 
-                            # Collect all keys that have a "+" value across all entries
-                            meta_assay = {
-                                f"{assay_name_norm}:{k}"
-                                for entry in values
-                                if isinstance(entry, dict)
-                                for k, v in entry.items()
-                                if v == PLUS_SIGN
-                            }
+                            # Process each well/test result directly from assay_data
+                            # assay_data is a dict like {"GLY": "+", "ERY": "-", "@ref": 117142, ...}
+                            if not isinstance(assay_data, dict):
+                                continue
 
-                            if meta_assay:
-                                # Write nodes for unique "+" results
-                                metabolism_nodes_to_write = [
-                                    [
-                                        ASSAY_PREFIX + m.replace(":", "_"),
-                                        PHENOTYPIC_CATEGORY,
-                                        f"{assay_name} - {m.split(':')[-1]}",
-                                    ]
-                                    + [None] * (len(self.node_header) - 3)
-                                    for m in meta_assay
-                                    if not m.startswith(ASSAY_PREFIX)
-                                ]
-                                node_writer.writerows(metabolism_nodes_to_write)
+                            for test_label, test_result in assay_data.items():
+                                # Skip metadata fields like "@ref"
+                                if test_label.startswith("@"):
+                                    continue
 
-                                # Write edges from assay to organism(s)
-                                for m in meta_assay:
-                                    if not m.startswith(ASSAY_PREFIX):
-                                        for target in feature_targets:
-                                            edge_writer.writerow(
-                                                [
-                                                    ASSAY_PREFIX + m.replace(":", "_"),
-                                                    ASSAY_TO_NCBI_EDGE,
-                                                    target,
-                                                    ASSESSED_ACTIVITY_RELATIONSHIP,
-                                                    BACDIVE_PREFIX + key,
-                                                ]
-                                            )
+                                # Skip if not in the mapping or if no result
+                                if test_label not in kit_mappings:
+                                    continue
+
+                                # Get the mapping info for this test
+                                test_info = kit_mappings[test_label]
+                                test_type = test_info["type"]
+
+                                if test_type == "enzyme":
+                                    # Use METPO enzyme activity mapping
+                                    if test_result not in self.metpo_enzyme_mappings:
+                                        continue
+
+                                    metpo_predicate_info = self.metpo_enzyme_mappings[test_result]
+                                    metpo_predicate = metpo_predicate_info["curie"]
+
+                                    # Create edges for both GO terms and EC numbers
+                                    go_terms = test_info.get("go_terms", [])
+                                    ec_numbers = test_info.get("ec_number", [])
+
+                                    # Process GO terms
+                                    if go_terms:
+                                        for go_term in go_terms:
+                                            # Write edges from organisms to GO term
+                                            for organism in feature_targets:
+                                                edge_writer.writerow(
+                                                    [
+                                                        organism,
+                                                        metpo_predicate,
+                                                        go_term,
+                                                        CAPABLE_OF,
+                                                        BACDIVE_PREFIX + key,
+                                                    ]
+                                                )
+
+                                    # Process EC numbers
+                                    if ec_numbers:
+                                        for ec_number in ec_numbers:
+                                            ec_id = f"{EC_PREFIX}{ec_number}"
+                                            # Write edges from organisms to EC number
+                                            for organism in feature_targets:
+                                                edge_writer.writerow(
+                                                    [
+                                                        organism,
+                                                        metpo_predicate,
+                                                        ec_id,
+                                                        CAPABLE_OF,
+                                                        BACDIVE_PREFIX + key,
+                                                    ]
+                                                )
+
+                                    # Skip if neither GO terms nor EC numbers are available
+                                    if not go_terms and not ec_numbers:
+                                        continue
+
+                                elif test_type == "chemical":
+                                    # Handle chemical substrates using METPO predicates
+                                    # Map the test result sign ("+", "-") to the appropriate predicate
+                                    if test_result == "+":
+                                        predicate_info = metpo_predicates.get("positive", {})
+                                    elif test_result == "-":
+                                        predicate_info = metpo_predicates.get("negative", {})
+                                    else:
+                                        # Skip unknown results
+                                        continue
+
+                                    metpo_predicate = predicate_info.get("id")
+                                    if not metpo_predicate:
+                                        continue
+
+                                    # Get ChEBI IDs for this chemical
+                                    chebi_ids = test_info.get("chebi_id", [])
+
+                                    if chebi_ids:
+                                        for chebi_id in chebi_ids:
+                                            # Write edges from organisms to ChEBI chemical
+                                            for organism in feature_targets:
+                                                edge_writer.writerow(
+                                                    [
+                                                        organism,
+                                                        metpo_predicate,
+                                                        chebi_id,
+                                                        "biolink:interacts_with",
+                                                        BACDIVE_PREFIX + key,
+                                                    ]
+                                                )
 
                     # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 

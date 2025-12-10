@@ -11,8 +11,11 @@ from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 
 # remote URL location in metpo GitHub repository for METPO classes and properties
 # sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
-METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-09-23/src/templates/metpo_sheet.tsv"
-METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-09-23/src/templates/metpo-properties.tsv"
+METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-24/src/templates/metpo_sheet.tsv"
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-11-24/src/templates/metpo-properties.tsv"
+
+# Remote URL for assay kits mapping (used for API keys from BacDive)
+ASSAY_KITS_SIMPLE_JSON_URL = "https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json"
 
 
 def uri_to_curie(uri: str) -> str:
@@ -187,7 +190,9 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
 
         for row in reader:
             iri = row.get("ID", "").strip()
-            parent_label = row.get("parent class", "").strip()
+            parent_classes = row.get("parent classes (one strongly preferred)", "").strip()
+            # Handle pipe-separated parent classes, take the first one
+            parent_label = parent_classes.split("|")[0].strip() if parent_classes else ""
 
             if iri in nodes and parent_label:
                 # find parent by label since parent class column contains labels, not CURIEs
@@ -267,15 +272,20 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     Implements the logic to find appropriate _predicates_ by traversing the parent hierarchy to find
     `biolink equivalent` and then mapping to properties.
 
+    For ambiguous synonyms (e.g., "yes" or "no" that appear under multiple parent concepts),
+    compound keys are created using the parent label as context (e.g., "motility.yes", "sporulation.yes").
+
     :param synonym_column: The column name to use for synonyms
         (e.g., 'bacdive keyword synonym', 'madin synonym or field', etc.)
     :return: Dictionary mapping synonyms to METPO curie, label, and predicate information.
         Format: {synonym: {'curie': metpo_curie, 'label': metpo_label, 'predicate': predicate_label}}
+        For ambiguous values, also includes compound keys like "parent.synonym"
     :rtype: Dict[str, Dict[str, str]]
     :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
     :raises ValueError: If the response content is empty or invalid
     """
     mappings = {}
+    synonym_to_parents = {}  # Track which parents each synonym appears under
 
     try:
         nodes = _build_metpo_tree()  # build the METPO tree structure
@@ -294,6 +304,8 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
         lines = response.text.splitlines()
         reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
 
+        # First pass: collect all synonym -> parent relationships
+        temp_mappings = []
         for row in reader:
             synonym = row.get(synonym_column, "").strip()
             metpo_curie = row.get("ID", "").strip()  # already a CURIE
@@ -309,8 +321,14 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                 predicate_label = "has phenotype"  # default
                 predicate_biolink_equivalent = ""  # default empty
                 inferred_category = ""  # default empty, will be inferred from parent
+                immediate_parent_label = None  # Track the immediate parent for compound keys
+
                 if metpo_curie in nodes:
                     node = nodes[metpo_curie]
+                    # Get immediate parent label for compound key creation
+                    if node.parent:
+                        immediate_parent_label = node.parent.label
+
                     # find the parent node that has a `biolink equivalent`
                     current = node
                     while current is not None:
@@ -331,16 +349,37 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                 # handle pipe-separated synonyms
                 synonyms = [s.strip() for s in synonym.split("|")]
 
+                mapping_data = {
+                    "curie": metpo_curie,
+                    "label": metpo_label,
+                    "predicate": predicate_label,
+                    "predicate_biolink_equivalent": predicate_biolink_equivalent,
+                    "biolink_equivalent": biolink_equivalent,
+                    "inferred_category": inferred_category,
+                }
+
                 for syn in synonyms:
                     if syn:  # only add non-empty synonyms
-                        mappings[syn] = {
-                            "curie": metpo_curie,
-                            "label": metpo_label,
-                            "predicate": predicate_label,
-                            "predicate_biolink_equivalent": predicate_biolink_equivalent,
-                            "biolink_equivalent": biolink_equivalent,
-                            "inferred_category": inferred_category,
-                        }
+                        # Track parent relationships for ambiguity detection
+                        if syn not in synonym_to_parents:
+                            synonym_to_parents[syn] = []
+                        if immediate_parent_label:
+                            synonym_to_parents[syn].append(immediate_parent_label)
+
+                        temp_mappings.append((syn, immediate_parent_label, mapping_data))
+
+        # Second pass: create mappings with compound keys for ambiguous synonyms
+        for syn, parent_label, mapping_data in temp_mappings:
+            # Check if this synonym is ambiguous (appears under multiple parents)
+            is_ambiguous = len(synonym_to_parents.get(syn, [])) > 1
+
+            if is_ambiguous and parent_label:
+                # Create compound key: "parent.synonym" (e.g., "motility.yes")
+                compound_key = f"{parent_label}.{syn}"
+                mappings[compound_key] = mapping_data
+
+            # Always add the simple key (last occurrence wins for ambiguous cases)
+            mappings[syn] = mapping_data
 
         return mappings
 
@@ -348,3 +387,341 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
         raise requests.exceptions.HTTPError(
             f"Please ensure the remote URL is accessible: {e}"
         ) from e
+
+
+def load_metpo_metabolite_utilization_mappings() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO metabolite utilization mappings from the METPO properties sheet.
+
+    This function parses the "synonym property and value TUPLES" and "assay outcome" columns
+    to extract mappings for metabolite utilization predicates. The mappings are used to convert
+    BacDive's "kind of utilization tested" values into appropriate METPO predicates.
+
+    For example, from the rows:
+    | ID            | label            | synonym property and value TUPLES           | assay outcome |
+    |---------------|------------------|---------------------------------------------|---------------|
+    | METPO:2000003 | builds acid from | oboInOwl:hasRelatedSynonym 'builds acid from' | +             |
+    | METPO:2000028 | does not build acid from | oboInOwl:hasRelatedSynonym 'builds acid from' | -     |
+
+    This creates mappings:
+    {
+        'builds acid from': {
+            '+': {'curie': 'METPO:2000003', 'label': 'builds acid from'},
+            '-': {'curie': 'METPO:2000028', 'label': 'does not build acid from'}
+        },
+        ...
+    }
+
+    The sign (+ or -) is now directly read from the "assay outcome" column.
+
+    :return: Dictionary mapping utilization type synonyms to sign-based predicate info
+    :rtype: Dict[str, Dict[str, Dict[str, str]]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the response content is empty or invalid
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the METPO properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        mappings = {}
+        for row in reader:
+            # Note: The header has a leading space for ID column (" ID")
+            metpo_id = row.get(" ID", "").strip() or row.get("ID", "").strip()
+            label = row.get("label", "").strip()
+            synonym_tuples = row.get("synonym property and value TUPLES", "").strip()
+            assay_outcome = row.get("assay outcome", "").strip()
+
+            # Skip rows without required fields
+            if not (metpo_id and label and synonym_tuples and assay_outcome):
+                continue
+
+            # Parse synonym tuples - format: "oboInOwl:hasRelatedSynonym 'synonym_value'"
+            # Can have multiple tuples separated by pipes
+            tuples = [t.strip() for t in synonym_tuples.split("|") if t.strip()]
+
+            for tuple_str in tuples:
+                # Extract the synonym from the tuple (text between quotes)
+                import re
+
+                match = re.search(r"'([^']+)'", tuple_str)
+                if match:
+                    synonym = match.group(1)
+
+                    # Use the sign directly from the "assay outcome" column
+                    sign = assay_outcome
+
+                    # Initialize the synonym entry if not present
+                    if synonym not in mappings:
+                        mappings[synonym] = {}
+
+                    # Add the mapping for this sign
+                    mappings[synonym][sign] = {"curie": metpo_id, "label": label}
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
+        ) from e
+
+
+def load_metpo_metabolite_production_mappings() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO metabolite production mappings from the METPO properties sheet.
+
+    This function specifically looks for rows with the synonym 'produces' and maps
+    BacDive's "production" values ("yes"/"no") to METPO predicates based on the
+    "assay outcome" column.
+
+    For example, from the rows:
+    | ID            | label            | synonym property and value TUPLES           | assay outcome |
+    |---------------|------------------|---------------------------------------------|---------------|
+    | METPO:2000202 | produces         | oboInOwl:hasRelatedSynonym 'produces'       | +             |
+    | METPO:2000222 | does not produce | oboInOwl:hasRelatedSynonym 'produces'       | -             |
+
+    This creates mappings:
+    {
+        'yes': {'curie': 'METPO:2000202', 'label': 'produces'},
+        'no': {'curie': 'METPO:2000222', 'label': 'does not produce'}
+    }
+
+    The mapping is:
+    - "assay outcome" = "+" maps to "production" = "yes"
+    - "assay outcome" = "-" maps to "production" = "no"
+
+    :return: Dictionary mapping production values ("yes"/"no") to METPO predicate info
+    :rtype: Dict[str, Dict[str, str]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the response content is empty or invalid
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the METPO properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        mappings = {}
+        for row in reader:
+            # Note: The header has a leading space for ID column (" ID")
+            metpo_id = row.get(" ID", "").strip() or row.get("ID", "").strip()
+            label = row.get("label", "").strip()
+            synonym_tuples = row.get("synonym property and value TUPLES", "").strip()
+            assay_outcome = row.get("assay outcome", "").strip()
+
+            # Skip rows without required fields
+            if not (metpo_id and label and synonym_tuples and assay_outcome):
+                continue
+
+            # Only process rows with 'produces' synonym
+            if "'produces'" in synonym_tuples:
+                # Map assay outcome (+/-) to production value (yes/no)
+                if assay_outcome == "+":
+                    production_value = "yes"
+                elif assay_outcome == "-":
+                    production_value = "no"
+                else:
+                    continue
+
+                mappings[production_value] = {"curie": metpo_id, "label": label}
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
+        ) from e
+
+
+def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
+    """
+    Load METPO enzyme activity mappings from the METPO properties sheet.
+
+    This function looks for rows with the synonym 'Physiology and metabolism.enzymes.[].activity'
+    and maps BacDive's enzyme "activity" values ("+"/"-") to METPO predicates based on the
+    "assay outcome" column.
+
+    For example, from the rows:
+    | ID            | label                      | synonym TUPLES                | assay outcome |
+    |---------------|----------------------------|-------------------------------|---------------|
+    | METPO:2000302 | shows activity of          | hasRelatedSynonym 'Phys...[]' | +             |
+    | METPO:2000303 | does not show activity of  | hasRelatedSynonym 'Phys...[]' | -             |
+
+    This creates mappings:
+    {
+        '+': {'curie': 'METPO:2000302', 'label': 'shows activity of'},
+        '-': {'curie': 'METPO:2000303', 'label': 'does not show activity of'}
+    }
+
+    :return: Dictionary mapping activity values ("+"/"-") to METPO predicate info
+    :rtype: Dict[str, Dict[str, str]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the response content is empty or invalid
+    """
+    try:
+        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the METPO properties file are empty or invalid.")
+
+        lines = response.text.splitlines()
+        reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
+
+        mappings = {}
+        for row in reader:
+            # Note: The header has a leading space for ID column (" ID")
+            metpo_id = row.get(" ID", "").strip() or row.get("ID", "").strip()
+            label = row.get("label", "").strip()
+            synonym_tuples = row.get("synonym property and value TUPLES", "").strip()
+            assay_outcome = row.get("assay outcome", "").strip()
+
+            # Skip rows without required fields
+            if not (metpo_id and label and synonym_tuples and assay_outcome):
+                continue
+
+            # Only process rows with enzyme activity synonym
+            if "'Physiology and metabolism.enzymes.[].activity'" in synonym_tuples:
+                # Map assay outcome directly to activity value
+                mappings[assay_outcome] = {"curie": metpo_id, "label": label}
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the METPO properties URL is accessible: {e}"
+        ) from e
+
+
+def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
+    """
+    Load assay kit mappings from the remote assay_kits_simple.json file.
+
+    This function processes API kit data (e.g., "API zym", "API coryne") from BacDive
+    and creates mappings for enzyme and chemical tests.
+
+    For example, from the "API zym" kit:
+    - Well "Esterase" with type "enzyme" and ec_number "3.1.1.1" or go_terms "GO:0004806"
+    - Well "GLY" with type "chemical" and chebi_id "CHEBI:17754"
+
+    The structure of the returned mapping is:
+    {
+        "API zym": {  # kit_name (exact match from JSON)
+            "wells": {  # well-specific mappings
+                "Esterase": {  # name from well (matches BacDive API keys)
+                    "type": "enzyme",
+                    "go_terms": ["GO:0004806"],
+                    "ec_number": ["3.1.1.1"],
+                    "chebi_id": []
+                },
+                ...
+            },
+            "metpo_predicates": {  # kit-level predicates
+                "positive": {
+                    "id": "METPO:2000302",
+                    "label": "shows activity of"
+                },
+                "negative": {
+                    "id": "METPO:2000303",
+                    "label": "does not show activity of"
+                }
+            }
+        },
+        "API 50CHac": {
+            "wells": {
+                "GLY": {  # name from well (matches BacDive API keys like "GLY", "ERY")
+                    "type": "chemical",
+                    "chebi_id": ["CHEBI:17754"],
+                    "go_terms": [],
+                    "ec_number": []
+                },
+                ...
+            },
+            "metpo_predicates": {
+                "positive": {
+                    "id": "METPO:2000011",
+                    "label": "ferments"
+                },
+                "negative": {
+                    "id": "METPO:2000037",
+                    "label": "does not ferment"
+                }
+            }
+        }
+    }
+
+    :return: Dictionary mapping kit names to well labels to their properties
+    :rtype: Dict[str, Dict[str, Dict]]
+    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises ValueError: If the JSON content is invalid
+    """
+    try:
+        response = requests.get(ASSAY_KITS_SIMPLE_JSON_URL, timeout=30)
+        response.raise_for_status()
+
+        if not response.text.strip():
+            raise ValueError("The contents of the assay kits JSON file are empty or invalid.")
+
+        data = response.json()
+
+        mappings = {}
+
+        for kit in data.get("api_kits", []):
+            kit_name = kit.get("kit_name", "")
+            if not kit_name:
+                continue
+
+            kit_mappings = {}
+
+            for well in kit.get("wells", []):
+                # Get the well name as the key (this matches BacDive data structure)
+                # BacDive uses short names like "GLY", "ERY", etc. in the API data
+                well_name = well.get("name", "")
+                if not well_name:
+                    continue
+
+                well_type = well.get("type", [])
+
+                # Determine the type (enzyme or chemical)
+                if not well_type:
+                    continue
+
+                # Get the first type as the main type
+                main_type = well_type[0]
+
+                # Skip control wells and phenotypic tests
+                if main_type not in ["enzyme", "chemical"]:
+                    continue
+
+                # Build the mapping for this well using 'name' as the key
+                kit_mappings[well_name] = {
+                    "type": main_type,
+                    "go_terms": well.get("go_terms", []),
+                    "ec_number": well.get("ec_number", []),
+                    "chebi_id": well.get("chebi_id", []),
+                }
+
+            if kit_mappings:
+                # Store both the well mappings and the metpo_predicates
+                mappings[kit_name] = {
+                    "wells": kit_mappings,
+                    "metpo_predicates": kit.get("metpo_predicates", {}),
+                }
+
+        return mappings
+
+    except requests.exceptions.HTTPError as e:
+        raise requests.exceptions.HTTPError(
+            f"Please ensure the assay kits JSON URL is accessible: {e}"
+        ) from e
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in assay kits response: {e}") from e

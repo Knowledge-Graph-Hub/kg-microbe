@@ -1071,10 +1071,6 @@ class BacDiveTransform(Transform):
                                 if results:
                                     ncbitaxon_id = results[0]
                                     ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
-                                    print(
-                                        f"INFO: BacDive {key} - found NCBITaxon {ncbitaxon_id} "
-                                        f"via {rank_field}: {search_name}"
-                                    )
                                     break
 
                         if ncbitaxon_id is None:

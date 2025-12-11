@@ -152,8 +152,20 @@ def extract_solution_ids(detailed_media: Dict[str, Dict]) -> Set[str]:
     """
     Extract all unique solution IDs from detailed media data.
 
-    The media_detailed.json structure has solutions embedded as a list:
-    {'1': {'medium': {...}, 'solutions': [{'id': 1, 'name': '...', 'recipe': [...]}]}}
+    The structure of each medium's data in `detailed_media` is expected to include a key (typically 'solutions')
+    containing a list of solution dicts, each with an 'id' field. For example:
+        {
+            '1': {
+                'medium': {...},
+                'solutions': [
+                    {'id': 1, 'name': '...', 'recipe': [...]},
+                    ...
+                ]
+            },
+            ...
+        }
+    However, the actual structure may vary depending on the MediaDive API response format.
+    This function checks for the presence of the solutions key and that it is a list.
 
     Args:
     ----

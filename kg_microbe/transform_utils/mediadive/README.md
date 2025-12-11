@@ -60,7 +60,7 @@ Transform → nodes.tsv, edges.tsv
 ```
 poetry run kg download
     ↓
-Automatic bulk download hook (_post_download_mediadive_bulk)
+Automatic bulk download hook (`_post_download_mediadive_bulk`)
     ↓
 data/raw/mediadive/*.json (all data pre-downloaded)
     ↓

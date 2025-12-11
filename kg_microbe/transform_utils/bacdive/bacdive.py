@@ -177,7 +177,7 @@ from kg_microbe.utils.mapping_file_utils import (
     load_metpo_metabolite_utilization_mappings,
     uri_to_curie,
 )
-from kg_microbe.utils.oak_utils import get_label
+from kg_microbe.utils.oak_utils import get_label, search_by_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
 
@@ -1058,6 +1058,28 @@ class BacDiveTransform(Transform):
                         ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                         if ncbi_label is None:
                             ncbi_label = ncbi_description
+
+                    # If no NCBITaxon ID from BacDive API, try searching by name
+                    if ncbitaxon_id is None and name_tax_classification:
+                        # Try ranks in order: species → genus → family → order → class → phylum → domain
+                        rank_fields = [SPECIES, GENUS, FAMILY, ORDER, CLASS, PHYLUM, DOMAIN]
+
+                        for rank_field in rank_fields:
+                            search_name = name_tax_classification.get(rank_field)
+                            if search_name:
+                                results = search_by_label(self.ncbi_impl, search_name, limit=1)
+                                if results:
+                                    ncbitaxon_id = results[0]
+                                    ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
+                                    print(
+                                        f"INFO: BacDive {key} - found NCBITaxon {ncbitaxon_id} "
+                                        f"via {rank_field}: {search_name}"
+                                    )
+                                    break
+
+                        if ncbitaxon_id is None:
+                            full_name = name_tax_classification.get(FULL_SCIENTIFIC_NAME, "unknown")
+                            print(f"WARNING: BacDive {key} - no NCBITaxon match found for: {full_name}")
 
                     # Create strain node for every BacDive record
                     # Extract strain designation and TYPE_STRAIN status

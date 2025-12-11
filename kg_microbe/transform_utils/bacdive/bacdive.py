@@ -1105,17 +1105,9 @@ class BacDiveTransform(Transform):
                             ]
                         )
 
-                    # Determine which node(s) to use for feature edges:
-                    # TYPE_STRAIN case: If BacDive strain matches NCBITaxon species, create edges to BOTH
-                    #   - The type strain defines the species, so both strain: and NCBITaxon nodes get edges
-                    #   - This is not aggregation; the type strain IS the species representative
-                    # Non-type strain case: Link only to strain: node to maintain strain-level resolution
-                    if type_strain == "yes" and ncbitaxon_id:
-                        # Type strain matches NCBITaxon: link to both strain: node and NCBITaxon species node
-                        feature_targets = [organism_id, ncbitaxon_id]
-                    else:
-                        # Not a type strain or no NCBITaxon match: link only to strain: node
-                        feature_targets = [organism_id]
+                    # Always use only the strain node for feature edges
+                    # NCBITaxon relationship is preserved via subclass edge (strain -> NCBITaxon)
+                    feature_targets = [organism_id]
 
                     keywords = general_info.get(KEYWORDS, "")
                     nodes_from_keywords = {

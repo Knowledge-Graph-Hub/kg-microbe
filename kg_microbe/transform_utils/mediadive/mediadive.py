@@ -233,7 +233,7 @@ class MediaDiveTransform(Transform):
                 original = str(row["original"]).lower().strip()
                 mapped = str(row["mapped"])
 
-                # Skip if mapped to custom prefixes (we want real ontology IDs)
+                # Skip if mapped to custom prefixes (we want real ontology IDs like CHEBI, CAS)
                 if mapped.startswith(("ingredient:", "solution:", "medium:")):
                     continue
 

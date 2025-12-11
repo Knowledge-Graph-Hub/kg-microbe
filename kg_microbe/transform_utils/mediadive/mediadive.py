@@ -429,17 +429,10 @@ class MediaDiveTransform(Transform):
             elif url_extension.startswith(MEDIUM):
                 if medium_id in self.media_detailed:
                     self.api_calls_avoided += 1
-                    # Extract the recipe/solutions data structure to match API format
-                    detailed_data = self.media_detailed[medium_id]
-                    if RECIPE_KEY in detailed_data and SOLUTIONS_KEY in detailed_data[RECIPE_KEY]:
-                        # Convert solutions dict back to list format expected by transform
-                        solutions_dict = detailed_data[RECIPE_KEY][SOLUTIONS_KEY]
-                        solutions_list = [
-                            {ID_COLUMN: sol_id, NAME_COLUMN: sol_name}
-                            for sol_id, sol_name in solutions_dict.items()
-                        ]
-                        return {SOLUTIONS_KEY: solutions_list}
-                    return detailed_data
+                    # Return bulk-downloaded detailed data directly
+                    # Structure: {"medium": {...}, "solutions": [{id, name, ...}, ...]}
+                    # This matches the expected format with SOLUTIONS_KEY at top level
+                    return self.media_detailed[medium_id]
 
         # Fall back to YAML cache or API call
         if not fn.is_file():

@@ -37,11 +37,11 @@ DATA_SOURCES = {
     MADIN_ETAL: MadinEtAlTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
-    #UNIPROT_HUMAN: UniprotHumanTransform,
-    #CTD: CTDTransform,
-    #DISBIOME: DisbiomeTransform,
-    #WALLEN_ETAL: WallenEtAlTransform,
-    #UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+    # UNIPROT_HUMAN: UniprotHumanTransform,
+    # CTD: CTDTransform,
+    # DISBIOME: DisbiomeTransform,
+    # WALLEN_ETAL: WallenEtAlTransform,
+    # UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
 
 

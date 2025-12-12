@@ -44,7 +44,7 @@ CHEBI_SOURCE = RAW_DATA_DIR / "chebi.owl"
 GO_SOURCE = RAW_DATA_DIR / "go.owl"
 EC_SOURCE = RAW_DATA_DIR / "ec.owl"
 METABOLITE_MAPPING_FILE = BACDIVE_DIR / "metabolite_mapping.json"
-PREFIXMAP_JSON_FILEPATH = TRANSFORM_UTILS_DIR / "prefixmap.json"    # custom prefixmap file path
+PREFIXMAP_JSON_FILEPATH = TRANSFORM_UTILS_DIR / "prefixmap.json"  # custom prefixmap file path
 
 # KEYS FOR JSON FILE
 GENERAL = "General"

@@ -263,7 +263,7 @@ class BacDiveTransform(Transform):
 
         :param record: The BacDive record dictionary
         :param parent_iri: The METPO IRI of the parent node (e.g., "METPO:1000601" for oxygen preference)
-        :param organism_ids: List of organism IDs (strain and/or NCBITaxon) to create edges for
+        :param organism_ids: List of strain IDs to create edges for
         :param key: BacDive ID for provenance
         :param node_writer: CSV writer for nodes
         :param edge_writer: CSV writer for edges
@@ -1059,7 +1059,7 @@ class BacDiveTransform(Transform):
                         if ncbi_label is None:
                             ncbi_label = ncbi_description
 
-                    # If no NCBITaxon ID from BacDive API, try searching by name
+                    # If no NCBITaxon ID from BacDive JSON, try searching by name
                     if ncbitaxon_id is None and name_tax_classification:
                         # Try ranks in order: species → genus → family → order → class → phylum → domain
                         rank_fields = [SPECIES, GENUS, FAMILY, ORDER, CLASS, PHYLUM, DOMAIN]

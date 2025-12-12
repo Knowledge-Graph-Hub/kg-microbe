@@ -1078,13 +1078,11 @@ class BacDiveTransform(Transform):
                             print(f"WARNING: BacDive {key} - no NCBITaxon match found for: {full_name}")
 
                     # Create strain node for every BacDive record
-                    # Extract strain designation and TYPE_STRAIN status
+                    # Extract strain designation
                     strain_designation = None
-                    type_strain = None
                     if name_tax_classification:
                         if name_tax_classification.get(STRAIN_DESIGNATION):
                             strain_designation = name_tax_classification.get(STRAIN_DESIGNATION).strip()
-                        type_strain = name_tax_classification.get(TYPE_STRAIN)
 
                     # Construct strain ID using BacDive ID
                     organism_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key

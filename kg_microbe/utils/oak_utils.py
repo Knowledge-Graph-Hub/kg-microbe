@@ -27,6 +27,7 @@ def search_by_label(oi, label: str, limit: int = 5) -> List[str]:
 
     Returns:
         List of CURIEs matching the search
+
     """
     config = SearchConfiguration(
         properties=[SearchProperty.LABEL],

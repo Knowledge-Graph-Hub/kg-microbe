@@ -198,26 +198,11 @@ class MediaDiveTransform(Transform):
 
     def _load_micromediaparam_mappings(self):
         """
-        Load MicroMediaParam high-confidence compound mappings.
+        Load MicroMediaParam compound mappings for chemical name to ontology ID mapping.
 
-        This provides mappings from compound names (including formula variants) to
-        standardized ontology IDs (ChEBI, CAS-RN, PubChem, etc.) to reduce use of
-        custom ingredient: and solution: prefixes.
-
-        The high-confidence version (compound_mappings_strict.tsv) includes:
-        - 17,786 compound mapping entries with rich metadata
-        - Hydration state information (base compound, water molecules, formulas)
-        - Concentration data (value, unit, mmol_l, corrected_mmol_l)
-        - Match confidence scores and quality indicators
-        - ChEBI IDs, CAS-RN identifiers, and molecular weights
-        - Format: medium_id, original, mapped, value, concentration, unit, mmol_l, optional,
-                 source, normalized_compound, hydration_number, chebi_match, chebi_id,
-                 chebi_original_name, similarity_score, match_confidence, matching_method,
-                 mapping_status, mapping_quality, base_compound, base_formula, water_molecules,
-                 hydrate_formula, base_chebi_id, base_chebi_label, base_chebi_formula,
-                 hydration_state, hydration_parsing_method, hydration_confidence,
-                 base_compound_for_mapping, base_molecular_weight, water_molecular_weight,
-                 hydrated_molecular_weight, corrected_mmol_l (TSV)
+        Maps compound names to standardized IDs (ChEBI, CAS-RN, PubChem, etc.)
+        to reduce use of custom ingredient: and solution: prefixes.
+        See download.yaml for file format details.
         """
         # Use the high-confidence MicroMediaParam compound mappings from download.yaml
         mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"

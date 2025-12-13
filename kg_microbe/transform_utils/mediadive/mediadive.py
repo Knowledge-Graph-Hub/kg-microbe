@@ -219,10 +219,10 @@ class MediaDiveTransform(Transform):
                  base_compound_for_mapping, base_molecular_weight, water_molecular_weight,
                  hydrated_molecular_weight, corrected_mmol_l (TSV)
         """
-        try:
-            # Use the high-confidence MicroMediaParam compound mappings from download.yaml
-            mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"
+        # Use the high-confidence MicroMediaParam compound mappings from download.yaml
+        mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"
 
+        try:
             if not mapping_file.exists():
                 print(f"MicroMediaParam high-confidence mappings not found at {mapping_file}")
                 print("  Will use MediaDive API mappings only")
@@ -253,8 +253,17 @@ class MediaDiveTransform(Transform):
             self.compound_mappings.update(df.set_index("original_normalized")["mapped"].to_dict())
             print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
 
+        except KeyError as e:
+            print(f"Warning: Could not load MicroMediaParam mappings from {mapping_file}")
+            print(f"  KeyError (possibly missing required column): {e}")
+            print("  Will use MediaDive API mappings only")
+        except pd.errors.ParserError as e:
+            print(f"Warning: Could not parse MicroMediaParam mappings from {mapping_file}")
+            print(f"  Parser error: {e}")
+            print("  Will use MediaDive API mappings only")
         except Exception as e:
-            print(f"Warning: Could not load MicroMediaParam mappings: {e}")
+            print(f"Warning: Could not load MicroMediaParam mappings from {mapping_file}")
+            print(f"  Error type: {type(e).__name__}, Details: {e}")
             print("  Will use MediaDive API mappings only")
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:

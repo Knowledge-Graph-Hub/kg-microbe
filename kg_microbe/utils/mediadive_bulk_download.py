@@ -67,7 +67,6 @@ def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0) 
             else:
                 print(f"  Failed after {retry_count} attempts: {e}")
                 return {}
-    return {}
 
 
 def load_basic_media_list(basic_file: str) -> List[Dict]:
@@ -213,41 +212,6 @@ def download_solutions(solution_ids: Set[str]) -> Dict[str, Dict]:
     print(f"Downloaded {len(solutions_data)} solutions")
     return solutions_data
 
-
-def extract_compound_ids(detailed_media: Dict[str, Dict]) -> Set[str]:
-    """
-    Extract all unique compound IDs from detailed media data.
-
-    The media_detailed.json structure has compounds embedded in solution recipes:
-    {'1': {'medium': {...}, 'solutions': [{'recipe': [{'compound_id': 1, ...}]}]}}
-
-    Args:
-    ----
-        detailed_media: Dictionary of detailed medium recipes
-
-    Returns:
-    -------
-        Set of unique compound IDs
-
-    """
-    compound_ids = set()
-
-    for medium_data in detailed_media.values():
-        # Solutions are directly embedded as a list in the medium data
-        if SOLUTIONS_KEY in medium_data and isinstance(medium_data[SOLUTIONS_KEY], list):
-            for solution in medium_data[SOLUTIONS_KEY]:
-                if isinstance(solution, dict) and RECIPE_KEY in solution:
-                    recipe = solution[RECIPE_KEY]
-                    if isinstance(recipe, list):
-                        for ingredient in recipe:
-                            if isinstance(ingredient, dict) and "compound_id" in ingredient:
-                                compound_id = ingredient["compound_id"]
-                                if compound_id:
-                                    compound_ids.add(str(compound_id))
-
-    return compound_ids
-
-
 def extract_solutions_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, Dict]:
     """
     Extract solution data from embedded structure in detailed_media.
@@ -311,32 +275,6 @@ def extract_compounds_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, D
     return compounds_data
 
 
-def download_compounds(compound_ids: Set[str]) -> Dict[str, Dict]:
-    """
-    Download compound mapping data for all compound IDs.
-
-    Args:
-    ----
-        compound_ids: Set of compound IDs to download
-
-    Returns:
-    -------
-        Dictionary mapping compound_id -> compound_data
-
-    """
-    print(f"\nDownloading {len(compound_ids)} unique compounds...")
-    compounds_data = {}
-
-    for compound_id in tqdm(sorted(compound_ids), desc="Downloading compounds"):
-        url = MEDIADIVE_REST_API_BASE_URL + COMPOUND_ENDPOINT + compound_id
-        data = get_json_from_api(url)
-        if data:
-            compounds_data[compound_id] = data
-
-    print(f"Downloaded {len(compounds_data)} compounds")
-    return compounds_data
-
-
 def save_json_file(data: Dict, filepath: Path, description: str):
     """Save data to JSON file with logging."""
     filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -388,17 +326,13 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     print(f"Extracted {len(solutions_data)} solutions from embedded data")
     save_json_file(solutions_data, output_path / "solutions.json", "solution data")
 
-    # Step 5: Note about compound data
-    # MediaDive API does not provide a compound endpoint (returns 400 "not supported")
-    # Compound mappings (ChEBI, KEGG, PubChem, CAS) are not available via API
+    # Step 5: Extract compounds from embedded structure
+    # Compound data is embedded in the recipe structure of detailed media
     # The transform will use MicroMediaParam mappings and fall back to mediadive.ingredient: prefix
-    print("\n[5/5] Compound mapping note...")
-    compound_ids = extract_compound_ids(detailed_media)
-    print(f"Found {len(compound_ids)} unique compound IDs in recipes")
-    print("Note: MediaDive API does not provide compound ontology mappings")
-    print("Transform will use MicroMediaParam mappings + mediadive.ingredient: fallback")
-    # Save empty compounds file for consistency
-    save_json_file({}, output_path / "compounds.json", "compound data (empty - API not available)")
+    print("\n[5/5] Extracting compounds from embedded structure...")
+    compounds_data = extract_compounds_from_media(detailed_media)
+    print(f"Extracted {len(compounds_data)} compounds from embedded data")
+    save_json_file(compounds_data, output_path / "compounds.json", "compound data")
 
     # Summary
     print("\n" + "=" * 80)
@@ -409,6 +343,6 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     print(f"  - {len(detailed_media)} media recipes (detailed)")
     print(f"  - {len(media_strains)} media-strain associations")
     print(f"  - {len(solutions_data)} solutions")
-    print("  - 0 compounds (API endpoint not available)")
+    print(f"  - {len(compounds_data)} compounds")
     print("\nThese files will be used by the MediaDive transform to avoid API calls.")
     print("=" * 80)

@@ -147,8 +147,10 @@ CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
 UBERON_PREFIX = "UBERON:"
 RO_PREFIX = "RO:"
-# MediaDive prefixes (Bioregistry-standard CURIEs)
-# See https://bioregistry.io/registry/mediadive.medium, mediadive.solution, mediadive.ingredient
+# MediaDive prefixes (registered in Bioregistry)
+# See: https://bioregistry.io/registry/mediadive.medium
+#      https://bioregistry.io/registry/mediadive.solution
+#      https://bioregistry.io/registry/mediadive.ingredient
 MEDIADIVE_INGREDIENT_PREFIX = "mediadive.ingredient:"
 MEDIADIVE_SOLUTION_PREFIX = "mediadive.solution:"
 MEDIADIVE_MEDIUM_PREFIX = "mediadive.medium:"

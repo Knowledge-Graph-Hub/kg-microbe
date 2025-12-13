@@ -143,7 +143,7 @@ class MediaDiveTransform(Transform):
         Load bulk downloaded MediaDive data if available.
 
         This method loads pre-downloaded data files to avoid API calls during transform.
-        Files are created by running: poetry run python download_mediadive_bulk.py.
+        Files are created by running: poetry run kg download.
         """
         try:
             media_detailed_file = self.bulk_data_dir / "media_detailed.json"

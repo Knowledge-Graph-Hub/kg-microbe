@@ -8,7 +8,7 @@ to avoid repeated API calls during transforms.
 import json
 import time
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List
 
 import requests
 import requests_cache
@@ -20,9 +20,7 @@ MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 # API endpoints
 MEDIA_ENDPOINT = "media"
 MEDIUM_ENDPOINT = "medium/"
-MEDIUM_STRAINS_ENDPOINT = "medium_strains/"
-SOLUTION_ENDPOINT = "solution/"
-COMPOUND_ENDPOINT = "compound/"
+MEDIUM_STRAINS_ENDPOINT = "medium-strains/"  # Note: hyphen, not underscore
 
 # Keys in JSON responses
 DATA_KEY = "data"
@@ -147,71 +145,6 @@ def download_medium_strains(media_list: List[Dict]) -> Dict[str, List]:
     return strain_data
 
 
-def extract_solution_ids(detailed_media: Dict[str, Dict]) -> Set[str]:
-    """
-    Extract all unique solution IDs from detailed media data.
-
-    The structure of each medium's data in `detailed_media` is expected to include a key (typically 'solutions')
-    containing a list of solution dicts, each with an 'id' field. For example:
-        {
-            '1': {
-                'medium': {...},
-                'solutions': [
-                    {'id': 1, 'name': '...', 'recipe': [...]},
-                    ...
-                ]
-            },
-            ...
-        }
-    However, the actual structure may vary depending on the MediaDive API response format.
-    This function checks for the presence of the solutions key and that it is a list.
-
-    Args:
-    ----
-        detailed_media: Dictionary of detailed medium recipes
-
-    Returns:
-    -------
-        Set of unique solution IDs
-
-    """
-    solution_ids = set()
-
-    for medium_data in detailed_media.values():
-        # Solutions are directly embedded as a list in the medium data
-        if SOLUTIONS_KEY in medium_data and isinstance(medium_data[SOLUTIONS_KEY], list):
-            for solution in medium_data[SOLUTIONS_KEY]:
-                if isinstance(solution, dict) and ID_KEY in solution:
-                    solution_ids.add(str(solution[ID_KEY]))
-
-    return solution_ids
-
-
-def download_solutions(solution_ids: Set[str]) -> Dict[str, Dict]:
-    """
-    Download solution ingredient data for all solution IDs.
-
-    Args:
-    ----
-        solution_ids: Set of solution IDs to download
-
-    Returns:
-    -------
-        Dictionary mapping solution_id -> solution_data
-
-    """
-    print(f"\nDownloading {len(solution_ids)} unique solutions...")
-    solutions_data = {}
-
-    for solution_id in tqdm(sorted(solution_ids), desc="Downloading solutions"):
-        url = MEDIADIVE_REST_API_BASE_URL + SOLUTION_ENDPOINT + solution_id
-        data = get_json_from_api(url)
-        if data:
-            solutions_data[solution_id] = data
-
-    print(f"Downloaded {len(solutions_data)} solutions")
-    return solutions_data
-
 def extract_solutions_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, Dict]:
     """
     Extract solution data from embedded structure in detailed_media.
@@ -320,10 +253,8 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
 
     # Step 4: Extract solutions from embedded structure
     print("\n[4/5] Extracting solutions from embedded structure...")
-    solution_ids = extract_solution_ids(detailed_media)
-    print(f"Found {len(solution_ids)} unique solution IDs")
     solutions_data = extract_solutions_from_media(detailed_media)
-    print(f"Extracted {len(solutions_data)} solutions from embedded data")
+    print(f"Extracted {len(solutions_data)} unique solutions from embedded data")
     save_json_file(solutions_data, output_path / "solutions.json", "solution data")
 
     # Step 5: Extract compounds from embedded structure

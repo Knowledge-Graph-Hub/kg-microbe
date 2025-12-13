@@ -89,7 +89,7 @@ This automatically triggers the bulk download after downloading `mediadive.json`
 
 The download is skipped if bulk files already exist (use `--ignore-cache` to force re-download).
 
-### Note on Manual Invocation
+### Note on Manual Bulk Download
 
 The bulk download is integrated into `kg_microbe.utils.mediadive_bulk_download` and is called automatically by the `kg download` command. There is no standalone script for manual invocation.
 
@@ -204,6 +204,7 @@ The transform interacts with the following MediaDive REST API endpoints:
 **Note:** There is no `/rest/compound/{id}` endpoint. Compound mappings are obtained via MicroMediaParam mappings, not via a dedicated compound endpoint. See code comments in `mediadive_bulk_download.py` and `mediadive.py` for details.
 
 **Total**: ~17,000-22,000 API calls per transform run (without caching)
+
 ## Transform Statistics
 
 During the transform, you'll see statistics about data sources:

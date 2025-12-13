@@ -263,6 +263,7 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
     logger.addHandler(file_handler)
     logger.setLevel(logging.DEBUG)
+    logger.propagate = False  # Prevent propagation to root logger and stdout
     print(f"API warnings will be logged to: {log_file}")
 
     # Set up HTTP caching

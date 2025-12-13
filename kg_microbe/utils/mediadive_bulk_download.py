@@ -67,10 +67,10 @@ def get_json_from_api(
             return result
         except requests.exceptions.RequestException as e:
             if attempt < retry_count - 1:
-                print(f"  Retry {attempt + 1}/{retry_count} after error: {e}")
+                print(f"  Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
                 time.sleep(retry_delay)
             else:
-                print(f"  Request failed after {retry_count} attempts: {e}")
+                print(f"  Request failed after {retry_count} attempts: {e} (URL: {url})")
                 return {}
 
 

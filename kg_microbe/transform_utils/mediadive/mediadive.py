@@ -134,7 +134,7 @@ class MediaDiveTransform(Transform):
 
         # Load MicroMediaParam chemical mappings
         self.compound_mappings = {}
-        self._load_compound_mappings()
+        self._load_micromediaparam_mappings()
 
         self._load_bulk_data()
 
@@ -196,7 +196,7 @@ class MediaDiveTransform(Transform):
             print(f"    - {self.bulk_data_dir / 'compounds.json'}")
             print("  Transform will use API calls (may be slow)")
 
-    def _load_compound_mappings(self):
+    def _load_micromediaparam_mappings(self):
         """
         Load MicroMediaParam high-confidence compound mappings.
 

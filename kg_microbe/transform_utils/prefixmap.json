@@ -4,5 +4,6 @@
     "mediadive.medium": "https://mediadive.dsmz.de/medium/",
     "mediadive.solution": "https://mediadive.dsmz.de/solution/",
     "mediadive.ingredient": "https://mediadive.dsmz.de/ingredient/",
-    "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/"
+    "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/",
+    "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/"
 }

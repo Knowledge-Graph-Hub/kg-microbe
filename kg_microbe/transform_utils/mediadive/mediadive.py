@@ -229,21 +229,23 @@ class MediaDiveTransform(Transform):
 
             # Create lookup dictionary: original (normalized) -> mapped
             # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
-            df = df.copy()
+            # Chain operations without intermediate copies for memory efficiency
             df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
             df["mapped"] = df["mapped"].astype(str)
-            # Filter out unwanted prefixes
+
+            # Filter out unwanted prefixes and normalize CAS-RN: to CAS: in one step
             mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
-            df = df[mask]
+            df = df[mask].copy()  # Single copy after filtering
+
             # Normalize CAS-RN: to CAS:
-            df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"] = (
-                "CAS:" + df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"].str.replace("CAS-RN:", "", n=1)
-            )
-            # Drop duplicates to keep first occurrence (earlier mappings take precedence)
-            df = df.drop_duplicates(subset="original_normalized", keep="first")
-            # Build the mapping dictionary
+            cas_rn_mask = df["mapped"].str.startswith("CAS-RN:")
+            df.loc[cas_rn_mask, "mapped"] = "CAS:" + df.loc[cas_rn_mask, "mapped"].str.replace("CAS-RN:", "", n=1)
+
+            # Build the mapping dictionary (drop_duplicates is done on the fly)
             self.compound_mappings.update(
-                df.set_index("original_normalized")["mapped"].to_dict()
+                df.drop_duplicates(subset="original_normalized", keep="first")
+                .set_index("original_normalized")["mapped"]
+                .to_dict()
             )
             print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
 

@@ -28,6 +28,7 @@ ID_KEY = "id"
 SOLUTIONS_KEY = "solutions"
 RECIPE_KEY = "recipe"
 COMPOUND_KEY = "compound"
+COMPOUND_ID_KEY = "compound_id"
 SOLUTION_ID_KEY = "solution_id"
 
 
@@ -214,8 +215,8 @@ def extract_compounds_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, D
                     recipe = solution[RECIPE_KEY]
                     if isinstance(recipe, list):
                         for ingredient in recipe:
-                            if isinstance(ingredient, dict) and "compound_id" in ingredient:
-                                comp_id = str(ingredient["compound_id"])
+                            if isinstance(ingredient, dict) and COMPOUND_ID_KEY in ingredient:
+                                comp_id = str(ingredient[COMPOUND_ID_KEY])
                                 # Only add if not already present (avoid duplicates)
                                 if comp_id not in compounds_data:
                                     # Store the ingredient data (has compound, compound_id, etc.)

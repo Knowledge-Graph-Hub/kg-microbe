@@ -3,7 +3,7 @@
 # Total unmapped: 409 ingredients
 
 ## Summary
-After upgrading to MicroMediaParam compound_name_lookup_extended.tsv (1,386 total mappings,
+After upgrading to MicroMediaParam compound_mappings_strict.tsv (1,386 total mappings,
 1,153 ontology IDs after filtering), we successfully mapped 786 ingredients to ontologies
 (66% of 1,195 total unique ingredients).
 
@@ -148,7 +148,7 @@ Approximately 20-30 ingredients including:
 - Transform output: `data/transformed/mediadive/nodes.tsv`
 
 ## Extended Mapping Statistics
-- **Mapping file**: compound_name_lookup_extended.tsv
+- **Mapping file**: compound_mappings_strict.tsv
 - **Total entries**: 1,386 compound mappings
 - **Ontology IDs**: 1,153 (after filtering out custom prefixes)
 - **Coverage**: 66% of 1,195 unique MediaDive ingredients

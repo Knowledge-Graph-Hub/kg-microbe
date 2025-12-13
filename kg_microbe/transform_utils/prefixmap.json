@@ -1,4 +1,5 @@
 {
     "METPO": "https://w3id.org/metpo/",
-    "biolink": "https://biolink.github.io/biolink-model/"
+    "biolink": "https://biolink.github.io/biolink-model/",
+    "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/"
 }

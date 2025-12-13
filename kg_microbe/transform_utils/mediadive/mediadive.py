@@ -249,7 +249,7 @@ class MediaDiveTransform(Transform):
 
         except KeyError as e:
             print(f"Warning: Could not load MicroMediaParam mappings from {mapping_file}")
-            print(f"  Missing required column: {e}")
+            print(f"  KeyError (possibly missing required column): {e}")
             print("  Will use MediaDive API mappings only")
         except pd.errors.ParserError as e:
             print(f"Warning: Could not parse MicroMediaParam mappings from {mapping_file}")

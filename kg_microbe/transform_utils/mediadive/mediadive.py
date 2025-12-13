@@ -301,7 +301,7 @@ class MediaDiveTransform(Transform):
             data = self._get_mediadive_json(url)
 
         ingredients_dict = {}
-        if RECIPE_KEY not in data:
+        if RECIPE_KEY not in data or not isinstance(data[RECIPE_KEY], list):
             return ingredients_dict
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
@@ -445,8 +445,16 @@ class MediaDiveTransform(Transform):
                 if medium_id in self.media_detailed:
                     self.api_calls_avoided += 1
                     # Return bulk-downloaded detailed data directly
-                    # Structure: {"medium": {...}, "solutions": [{id, name, ...}, ...]}
-                    # This matches the expected format with SOLUTIONS_KEY at top level
+                    # Structure from media_detailed.json:
+                    #   {
+                    #     "medium": {...},
+                    #     "solutions": [
+                    #       {"id": 1, "name": "...", "recipe": [...], "steps": [...]},
+                    #       ...
+                    #     ]
+                    #   }
+                    # Note: SOLUTIONS_KEY ("solutions") is at the top level, not RECIPE_KEY.
+                    # The "recipe" key is nested within each solution object.
                     return self.media_detailed[medium_id]
 
         # Fall back to YAML cache or API call

@@ -107,7 +107,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -135,7 +134,7 @@ class MediaDiveTransform(Transform):
 
         # Load MicroMediaParam chemical mappings
         self.compound_mappings = {}
-        self._load_compound_mappings()
+        self._load_micromediaparam_mappings()
 
         self._load_bulk_data()
 
@@ -144,7 +143,7 @@ class MediaDiveTransform(Transform):
         Load bulk downloaded MediaDive data if available.
 
         This method loads pre-downloaded data files to avoid API calls during transform.
-        Files are created by running: poetry run python download_mediadive_bulk.py
+        Files are created by running: poetry run python download_mediadive_bulk.py.
         """
         try:
             media_detailed_file = self.bulk_data_dir / "media_detailed.json"
@@ -188,10 +187,16 @@ class MediaDiveTransform(Transform):
                 print("  To download bulk data, run: poetry run kg download")
 
         except Exception as e:
-            print(f"Warning: Could not load bulk data: {e}")
+            print(f"Warning: Could not load bulk data from {self.bulk_data_dir}/. "
+                  f"Error type: {type(e).__name__}, details: {e}")
+            print("  Attempted to load the following files:")
+            print(f"    - {self.bulk_data_dir / 'media_detailed.json'}")
+            print(f"    - {self.bulk_data_dir / 'media_strains.json'}")
+            print(f"    - {self.bulk_data_dir / 'solutions.json'}")
+            print(f"    - {self.bulk_data_dir / 'compounds.json'}")
             print("  Transform will use API calls (may be slow)")
 
-    def _load_compound_mappings(self):
+    def _load_micromediaparam_mappings(self):
         """
         Load MicroMediaParam high-confidence compound mappings.
 
@@ -236,10 +241,6 @@ class MediaDiveTransform(Transform):
             # Filter out unwanted prefixes
             mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
             df = df[mask]
-            # Normalize CAS-RN: to CAS:
-            df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"] = "CAS:" + df.loc[
-                df["mapped"].str.startswith("CAS-RN:"), "mapped"
-            ].str.replace("CAS-RN:", "", n=1)
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
             # Build the mapping dictionary
@@ -287,8 +288,8 @@ class MediaDiveTransform(Transform):
 
         First checks bulk downloaded data, then makes API call if needed.
 
-        :param id: ID of solution
-        :return: Dictionary of {compound_name: compound_id}
+        :param id: ID of solution.
+        :return: Dictionary of {compound_name: compound_id}.
         """
         # Check bulk downloaded data first
         if self.using_bulk_data and id in self.solutions_data:
@@ -326,7 +327,10 @@ class MediaDiveTransform(Transform):
                 )
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
-                solution_name_normalized = item[SOLUTION_KEY].lower().strip()
+                if isinstance(item[SOLUTION_KEY], str):
+                    solution_name_normalized = item[SOLUTION_KEY].lower().strip()
+                else:
+                    solution_name_normalized = str(item[SOLUTION_KEY]) if item[SOLUTION_KEY] is not None else ""
                 solution_id = self.compound_mappings.get(
                     solution_name_normalized
                 ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
@@ -349,9 +353,9 @@ class MediaDiveTransform(Transform):
         First checks MicroMediaParam mappings by compound name, then bulk downloaded data,
         then makes API call if needed.
 
-        :param id: MediaDive compound ID
-        :param compound_name: Compound name for mapping lookup
-        :return: Standardized ID
+        :param id: MediaDive compound ID.
+        :param compound_name: Compound name for mapping lookup.
+        :return: Standardized ID.
         """
         # First, check MicroMediaParam mappings by compound name
         if compound_name:
@@ -424,9 +428,9 @@ class MediaDiveTransform(Transform):
         First checks bulk downloaded data, then YAML cache, then makes API call.
 
         :param fn: YAML file path.
-        :param url_extension: API endpoint extension (e.g., "medium/123")
-        :param target_dir: Directory for YAML cache
-        :return: Dictionary
+        :param url_extension: API endpoint extension (e.g., "medium/123").
+        :param target_dir: Directory for YAML cache.
+        :return: Dictionary.
         """
         # Extract ID from url_extension (e.g., "medium/123" -> "123")
         medium_id = url_extension.split("/")[-1]

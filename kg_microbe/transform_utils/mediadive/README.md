@@ -89,7 +89,7 @@ This automatically triggers the bulk download after downloading `mediadive.json`
 
 The download is skipped if bulk files already exist (use `--ignore-cache` to force re-download).
 
-### Note on Manual Invocation
+### Note on Manual Bulk Download
 
 The bulk download is integrated into `kg_microbe.utils.mediadive_bulk_download` and is called automatically by the `kg download` command. There is no standalone script for manual invocation.
 

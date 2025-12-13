@@ -106,7 +106,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -241,16 +240,10 @@ class MediaDiveTransform(Transform):
             # Filter out unwanted prefixes
             mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
             df = df[mask]
-            # Normalize CAS-RN: to CAS:
-            df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"] = (
-                "CAS:" + df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"].str.replace("CAS-RN:", "", n=1)
-            )
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
             # Build the mapping dictionary
-            self.compound_mappings.update(
-                df.set_index("original_normalized")["mapped"].to_dict()
-            )
+            self.compound_mappings.update(df.set_index("original_normalized")["mapped"].to_dict())
             print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
 
         except Exception as e:

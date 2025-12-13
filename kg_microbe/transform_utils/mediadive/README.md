@@ -17,7 +17,7 @@ poetry run kg transform -s mediadive
 
 The bulk download runs automatically as part of `kg download` and downloads all MediaDive data to `data/raw/mediadive/`. On subsequent runs, it skips the bulk download if files already exist (use `--ignore-cache` to force re-download).
 
-### Note on Manual Bulk Download
+### Note: No Manual Download Required
 
 The bulk download is integrated into the `kg download` command and runs automatically. There is no standalone script to run it manually. If you need to re-download the bulk data, use:
 
@@ -89,7 +89,7 @@ This automatically triggers the bulk download after downloading `mediadive.json`
 
 The download is skipped if bulk files already exist (use `--ignore-cache` to force re-download).
 
-### Note on Manual Invocation
+### Note on Manual Bulk Download
 
 The bulk download is integrated into `kg_microbe.utils.mediadive_bulk_download` and is called automatically by the `kg download` command. There is no standalone script for manual invocation.
 

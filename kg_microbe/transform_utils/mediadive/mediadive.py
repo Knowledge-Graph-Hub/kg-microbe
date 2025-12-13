@@ -133,7 +133,7 @@ class MediaDiveTransform(Transform):
 
         # Load MicroMediaParam chemical mappings
         self.compound_mappings = {}
-        self._load_compound_mappings()
+        self._load_micromediaparam_mappings()
 
         self._load_bulk_data()
 
@@ -142,7 +142,7 @@ class MediaDiveTransform(Transform):
         Load bulk downloaded MediaDive data if available.
 
         This method loads pre-downloaded data files to avoid API calls during transform.
-        Files are created by running: poetry run python download_mediadive_bulk.py
+        Files are created by running: poetry run python download_mediadive_bulk.py.
         """
         try:
             media_detailed_file = self.bulk_data_dir / "media_detailed.json"
@@ -186,10 +186,16 @@ class MediaDiveTransform(Transform):
                 print("  To download bulk data, run: poetry run kg download")
 
         except Exception as e:
-            print(f"Warning: Could not load bulk data: {e}")
+            print(f"Warning: Could not load bulk data from {self.bulk_data_dir}/. "
+                  f"Error type: {type(e).__name__}, details: {e}")
+            print("  Attempted to load the following files:")
+            print(f"    - {self.bulk_data_dir / 'media_detailed.json'}")
+            print(f"    - {self.bulk_data_dir / 'media_strains.json'}")
+            print(f"    - {self.bulk_data_dir / 'solutions.json'}")
+            print(f"    - {self.bulk_data_dir / 'compounds.json'}")
             print("  Transform will use API calls (may be slow)")
 
-    def _load_compound_mappings(self):
+    def _load_micromediaparam_mappings(self):
         """
         Load MicroMediaParam high-confidence compound mappings.
 
@@ -308,7 +314,10 @@ class MediaDiveTransform(Transform):
                 )
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
-                solution_name_normalized = item[SOLUTION_KEY].lower().strip()
+                if isinstance(item[SOLUTION_KEY], str):
+                    solution_name_normalized = item[SOLUTION_KEY].lower().strip()
+                else:
+                    solution_name_normalized = str(item[SOLUTION_KEY]) if item[SOLUTION_KEY] is not None else ""
                 solution_id = self.compound_mappings.get(
                     solution_name_normalized
                 ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])

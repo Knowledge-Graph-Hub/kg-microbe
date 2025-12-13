@@ -19,6 +19,7 @@ import csv
 import json
 import math
 import os
+import time
 from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
@@ -250,16 +251,28 @@ class MediaDiveTransform(Transform):
             print(f"Warning: Could not load MicroMediaParam mappings: {e}")
             print("  Will use MediaDive API mappings only")
 
-    def _get_mediadive_json(self, url: str) -> Dict[str, str]:
+    def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
         Use the API url to get a dict of information.
 
-        :param url: Path provided by MetaDive API.
+        :param url: Path provided by MediaDive API.
+        :param retry_count: Number of retry attempts on failure.
+        :param retry_delay: Delay in seconds between retries.
         :return: JSON response as a Dict.
         """
-        r = requests.get(url, timeout=30)
-        data_json = r.json()
-        return data_json.get(DATA_KEY)
+        for attempt in range(retry_count):
+            try:
+                r = requests.get(url, timeout=30)
+                r.raise_for_status()
+                data_json = r.json()
+                return data_json.get(DATA_KEY, {})
+            except requests.exceptions.RequestException as e:
+                if attempt < retry_count - 1:
+                    print(f"  Retry {attempt + 1}/{retry_count} after error: {e}")
+                    time.sleep(retry_delay)
+                else:
+                    print(f"  Failed after {retry_count} attempts: {e}")
+                    return {}
 
     # Disabled: Get labels from ChEBI via OAK
     # Re-enable if needed for role prediction

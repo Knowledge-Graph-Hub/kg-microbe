@@ -250,9 +250,7 @@ class MediaDiveTransform(Transform):
             print(f"Warning: Could not load MicroMediaParam mappings: {e}")
             print("  Will use MediaDive API mappings only")
 
-    def _get_mediadive_json(
-        self, url: str, retry_count: int = 3, retry_delay: int = 5
-    ) -> Dict[str, str]:
+    def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 5.0) -> Dict:
         """
         Use the API url to get a dict of information.
 

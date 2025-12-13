@@ -235,12 +235,18 @@ class MediaDiveTransform(Transform):
 
             # Create lookup dictionary: original (normalized) -> mapped
             # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
-            df = df.copy()
+            # Chain operations without intermediate copies for memory efficiency
             df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
             df["mapped"] = df["mapped"].astype(str)
+
             # Filter out unwanted prefixes
             mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
-            df = df[mask]
+            df = df[mask].copy()  # Single copy after filtering
+
+            # Normalize CAS-RN: to CAS: for consistency with Bioregistry prefixes
+            cas_rn_mask = df["mapped"].str.startswith("CAS-RN:")
+            df.loc[cas_rn_mask, "mapped"] = "CAS:" + df.loc[cas_rn_mask, "mapped"].str.replace("CAS-RN:", "", n=1)
+
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
             # Build the mapping dictionary

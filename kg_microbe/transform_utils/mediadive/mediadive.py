@@ -363,31 +363,16 @@ class MediaDiveTransform(Transform):
             if normalized_name in self.compound_mappings:
                 return self.compound_mappings[normalized_name]
 
-        # Check bulk downloaded data (or skip if using bulk mode since API doesn't exist)
+        # Check bulk downloaded data for embedded compound mappings
+        # Note: MediaDive compound API endpoint does not exist (returns 400 "not supported")
+        # Compound mappings are extracted from embedded recipe data in media_detailed.json
         if self.using_bulk_data:
-            # MediaDive compound API endpoint does not exist (returns 400 "not supported")
-            # Skip API calls and fall through to ingredient prefix
             self.api_calls_avoided += 1
-            if id in self.compounds_data:
-                data = self.compounds_data[id]
-                # Try compound mappings if available
-                if data.get(CHEBI_KEY) is not None:
-                    return CHEBI_PREFIX + str(data[CHEBI_KEY])
-                elif data.get(KEGG_KEY) is not None:
-                    return KEGG_PREFIX + str(data[KEGG_KEY])
-                elif data.get(PUBCHEM_KEY) is not None:
-                    return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
-                elif data.get(CAS_RN_KEY) is not None:
-                    return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
-            # Fall back to custom ingredient prefix
-            return MEDIADIVE_INGREDIENT_PREFIX + id
-        else:
-            # Not using bulk data - try API (though it doesn't exist)
-            self.api_calls_made += 1
-            url = MEDIADIVE_REST_API_BASE_URL + COMPOUND + id
-            data = self._get_mediadive_json(url)
+        # No API call path - endpoint doesn't exist, so we always use embedded data or fallback
 
-            # Try MediaDive API mappings
+        if id in self.compounds_data:
+            data = self.compounds_data[id]
+            # Try compound mappings from embedded data
             if data.get(CHEBI_KEY) is not None:
                 return CHEBI_PREFIX + str(data[CHEBI_KEY])
             elif data.get(KEGG_KEY) is not None:
@@ -396,9 +381,9 @@ class MediaDiveTransform(Transform):
                 return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
             elif data.get(CAS_RN_KEY) is not None:
                 return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
-            else:
-                # Fall back to custom ingredient prefix
-                return MEDIADIVE_INGREDIENT_PREFIX + id
+
+        # Fall back to custom ingredient prefix
+        return MEDIADIVE_INGREDIENT_PREFIX + id
 
     def download_yaml_and_get_json(
         self,

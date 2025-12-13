@@ -254,7 +254,7 @@ class MediaDiveTransform(Transform):
         """
         Use the API url to get a dict of information.
 
-        :param url: Path provided by MetaDive API.
+        :param url: Path provided by MediaDive API.
         :param retry_count: Number of retry attempts on failure.
         :param retry_delay: Delay in seconds between retries.
         :return: JSON response as a Dict.

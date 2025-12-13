@@ -37,7 +37,9 @@ def setup_cache(cache_name: str = "mediadive_bulk_cache"):
     print(f"HTTP cache enabled: {cache_name}.sqlite")
 
 
-def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
+def get_json_from_api(
+    url: str, retry_count: int = 3, retry_delay: float = 2.0, verbose: bool = False
+) -> Dict:
     """
     Get JSON data from MediaDive API with retry logic.
 
@@ -46,10 +48,11 @@ def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0) 
         url: Full API URL to fetch
         retry_count: Number of retries on failure
         retry_delay: Delay in seconds between retries
+        verbose: If True, log empty responses (useful for debugging)
 
     Returns:
     -------
-        Dictionary with API response data
+        Dictionary with API response data (empty dict on failure or empty response)
 
     """
     for attempt in range(retry_count):
@@ -57,13 +60,17 @@ def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0) 
             r = requests.get(url, timeout=30)
             r.raise_for_status()
             data_json = r.json()
-            return data_json.get(DATA_KEY, {})
+            result = data_json.get(DATA_KEY, {})
+            # Distinguish empty API response from failure (for debugging)
+            if not result and verbose:
+                print(f"  Empty response from API: {url}")
+            return result
         except requests.exceptions.RequestException as e:
             if attempt < retry_count - 1:
                 print(f"  Retry {attempt + 1}/{retry_count} after error: {e}")
                 time.sleep(retry_delay)
             else:
-                print(f"  Failed after {retry_count} attempts: {e}")
+                print(f"  Request failed after {retry_count} attempts: {e}")
                 return {}
 
 

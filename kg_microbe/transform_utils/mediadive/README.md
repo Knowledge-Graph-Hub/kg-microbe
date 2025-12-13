@@ -298,6 +298,18 @@ Each compound is mapped to standard identifiers:
 - **PubChem**
 - **CAS Registry Number**
 
+### Compound Mapping Priority
+
+The transform uses MicroMediaParam compound mappings to standardize ingredient names to ontology IDs. Mappings are loaded in priority order:
+
+1. **Hydrate mappings** (`compound_mappings_strict_hydrate.tsv`) - Takes precedence
+   - Maps hydrated compound names (e.g., "calcium chloride dihydrate") to their base (anhydrous) ChEBI IDs
+   - Ensures consistent chemical identity regardless of hydration state
+
+2. **Strict mappings** (`compound_mappings_strict.tsv`) - Fallback
+   - Standard compound name to ontology ID mappings
+   - Only used for compounds not found in hydrate mappings
+
 ## Integration with KG-Microbe
 
 The MediaDive transform integrates with:

@@ -274,10 +274,10 @@ class MediaDiveTransform(Transform):
                 return data_json.get(DATA_KEY, {})
             except requests.exceptions.RequestException as e:
                 if attempt < retry_count - 1:
-                    print(f"  Retry {attempt + 1}/{retry_count} after error: {e}")
+                    print(f"  Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
                     time.sleep(retry_delay)
                 else:
-                    print(f"  Failed after {retry_count} attempts: {e}")
+                    print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
 
     # Disabled: Get labels from ChEBI via OAK

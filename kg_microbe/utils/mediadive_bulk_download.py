@@ -59,7 +59,10 @@ def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0) 
             r = requests.get(url, timeout=30)
             r.raise_for_status()
             data_json = r.json()
-            return data_json.get(DATA_KEY, {})
+            data = data_json.get(DATA_KEY, {})
+            if not data:
+                print(f"  Empty response received from API for {url}")
+            return data
         except requests.exceptions.RequestException as e:
             if attempt < retry_count - 1:
                 print(f"  Retry {attempt + 1}/{retry_count} after error: {e}")
@@ -211,6 +214,7 @@ def download_solutions(solution_ids: Set[str]) -> Dict[str, Dict]:
 
     print(f"Downloaded {len(solutions_data)} solutions")
     return solutions_data
+
 
 def extract_solutions_from_media(detailed_media: Dict[str, Dict]) -> Dict[str, Dict]:
     """

@@ -116,12 +116,7 @@ class MediaDiveTransform(Transform):
         source_name = MEDIADIVE
         super().__init__(source_name, input_dir, output_dir)
         requests_cache.install_cache("mediadive_cache")
-
-        # Disabled: ChEBI adapter for role relationships
-        # The full ChEBI ontology (including roles) is already ingested via ontologies transform
-        # This code can be re-enabled for role prediction or filtering specific compound roles
-        # self.chebi_impl = get_adapter(f"sqlite:{CHEBI_SOURCE}")
-
+        self.chebi_impl = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
         # Load bulk downloaded data if available
@@ -324,13 +319,11 @@ class MediaDiveTransform(Transform):
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
 
-    # Disabled: Get labels from ChEBI via OAK
-    # Re-enable if needed for role prediction
-    # def _get_label_via_oak(self, curie: str):
-    #     prefix = curie.split(":")[0]
-    #     if prefix.startswith(CHEBI_KEY):
-    #         (_, label) = list(self.chebi_impl.labels([curie]))[0]
-    #     return label
+    def _get_label_via_oak(self, curie: str):
+        prefix = curie.split(":")[0]
+        if prefix.startswith(CHEBI_KEY):
+            (_, label) = list(self.chebi_impl.labels([curie]))[0]
+        return label
 
     def get_compounds_of_solution(self, id: str):
         """
@@ -718,35 +711,32 @@ class MediaDiveTransform(Transform):
                         for k, v in solutions_dict.items()
                     ]
 
-                    # Disabled: ChEBI role relationship querying
-                    # The full ChEBI ontology (including roles) is already ingested via ontologies transform
-                    # This code can be re-enabled for role prediction or filtering specific compound roles
-                    # chebi_list = [
-                    #     v[ID_COLUMN]
-                    #     for _, v in ingredients_dict.items()
-                    #     if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
-                    # ]
-                    # if len(chebi_list) > 0:
-                    #     chebi_roles = set(
-                    #         self.chebi_impl.relationships(
-                    #             subjects=set(chebi_list), predicates=[HAS_ROLE]
-                    #         )
-                    #     )
-                    #     roles = {x for (_, _, x) in chebi_roles}
-                    #     role_nodes = [
-                    #         [role, ROLE_CATEGORY, self.chebi_impl.label(role)] for role in roles
-                    #     ]
-                    #     node_writer.writerows(role_nodes)
-                    #     role_edges = [
-                    #         [
-                    #             subject,
-                    #             CHEBI_TO_ROLE_EDGE,
-                    #             object,
-                    #             predicate,
-                    #         ]
-                    #         for (subject, predicate, object) in chebi_roles
-                    #     ]
-                    #     edge_writer.writerows(role_edges)
+                    chebi_list = [
+                        v[ID_COLUMN]
+                        for _, v in ingredients_dict.items()
+                        if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
+                    ]
+                    if len(chebi_list) > 0:
+                        chebi_roles = set(
+                            self.chebi_impl.relationships(
+                                subjects=set(chebi_list), predicates=[HAS_ROLE]
+                            )
+                        )
+                        roles = {x for (_, _, x) in chebi_roles}
+                        role_nodes = [
+                            [role, ROLE_CATEGORY, self.chebi_impl.label(role)] for role in roles
+                        ]
+                        node_writer.writerows(role_nodes)
+                        role_edges = [
+                            [
+                                subject,
+                                CHEBI_TO_ROLE_EDGE,
+                                object,
+                                predicate,
+                            ]
+                            for (subject, predicate, object) in chebi_roles
+                        ]
+                        edge_writer.writerows(role_edges)
 
                     data = [
                         medium_id,

@@ -238,9 +238,8 @@ class MediaDiveTransform(Transform):
             # Normalize CAS-RN: to CAS: for consistency with Bioregistry prefixes
             # CAS: is the Bioregistry standard prefix for Chemical Abstracts Service identifiers
             cas_rn_mask = df["mapped"].str.startswith(CAS_RN_PREFIX)
-            df.loc[cas_rn_mask, "mapped"] = (
-                "CAS:" + df.loc[cas_rn_mask, "mapped"].str.replace(CAS_RN_PREFIX, "", n=1)
-            )
+            # Use string slicing to safely remove prefix (avoids regex edge cases)
+            df.loc[cas_rn_mask, "mapped"] = "CAS:" + df.loc[cas_rn_mask, "mapped"].str[len(CAS_RN_PREFIX):]
 
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")

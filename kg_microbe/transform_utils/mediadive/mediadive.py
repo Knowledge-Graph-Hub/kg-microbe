@@ -39,7 +39,6 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_PREFIX,
     CHEBI_KEY,
     CHEBI_PREFIX,
-    COMPOUND,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
@@ -108,6 +107,7 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
+
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -220,13 +220,19 @@ class MediaDiveTransform(Transform):
             df = pd.read_csv(mapping_file, sep="\t")
 
             # Create lookup dictionary: original (normalized) -> mapped
-            # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
+            # Only include mappings that are NOT custom MediaDive prefixes (we want real ontology IDs)
+            # Filter both old-style (ingredient:, solution:, medium:) and
+            # Bioregistry-style (mediadive.ingredient:, mediadive.solution:, mediadive.medium:) prefixes
             # Chain operations without intermediate copies for memory efficiency
             df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
             df["mapped"] = df["mapped"].astype(str)
 
-            # Filter out unwanted prefixes
-            mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
+            # Filter out unwanted prefixes (both old-style and Bioregistry-style)
+            unwanted_prefixes = (
+                "ingredient:", "solution:", "medium:",
+                MEDIADIVE_INGREDIENT_PREFIX, MEDIADIVE_SOLUTION_PREFIX, MEDIADIVE_MEDIUM_PREFIX
+            )
+            mask = ~df["mapped"].str.startswith(unwanted_prefixes)
             df = df[mask].copy()  # Single copy after filtering
 
             # Normalize CAS-RN: to CAS: for consistency with Bioregistry prefixes

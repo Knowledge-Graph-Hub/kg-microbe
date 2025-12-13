@@ -204,7 +204,7 @@ class MediaDiveTransform(Transform):
         standardized ontology IDs (ChEBI, CAS-RN, PubChem, etc.) to reduce use of
         custom ingredient: and solution: prefixes.
 
-        The high-confidence version (high_confidence_compound_mappings.tsv) includes:
+        The high-confidence version (compound_mappings_strict.tsv) includes:
         - 17,786 compound mapping entries with rich metadata
         - Hydration state information (base compound, water molecules, formulas)
         - Concentration data (value, unit, mmol_l, corrected_mmol_l)

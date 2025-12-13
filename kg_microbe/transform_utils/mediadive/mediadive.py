@@ -276,8 +276,8 @@ class MediaDiveTransform(Transform):
 
         First checks bulk downloaded data, then makes API call if needed.
 
-        :param id: ID of solution
-        :return: Dictionary of {compound_name: compound_id}
+        :param id: ID of solution.
+        :return: Dictionary of {compound_name: compound_id}.
         """
         # Check bulk downloaded data first
         if self.using_bulk_data and id in self.solutions_data:

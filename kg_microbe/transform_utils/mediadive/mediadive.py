@@ -187,7 +187,13 @@ class MediaDiveTransform(Transform):
                 print("  To download bulk data, run: poetry run kg download")
 
         except Exception as e:
-            print(f"Warning: Could not load bulk data: {e}")
+            print(f"Warning: Could not load bulk data from {self.bulk_data_dir}/. "
+                  f"Error type: {type(e).__name__}, details: {e}")
+            print("  Attempted to load the following files:")
+            print(f"    - {self.bulk_data_dir / 'media_detailed.json'}")
+            print(f"    - {self.bulk_data_dir / 'media_strains.json'}")
+            print(f"    - {self.bulk_data_dir / 'solutions.json'}")
+            print(f"    - {self.bulk_data_dir / 'compounds.json'}")
             print("  Transform will use API calls (may be slow)")
 
     def _load_compound_mappings(self):

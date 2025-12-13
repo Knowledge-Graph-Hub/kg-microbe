@@ -225,5 +225,5 @@
 # on custom mediadive.ingredient: prefix.
 #
 -
-  url: https://raw.githubusercontent.com/CultureBotAI/MicroMediaParam/main/pipeline_output/merge_mappings/compound_mappings_strict_final.tsv
+  url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final.tsv
   local_name: compound_mappings_strict.tsv

@@ -17,11 +17,13 @@ poetry run kg transform -s mediadive
 
 The bulk download runs automatically as part of `kg download` and downloads all MediaDive data to `data/raw/mediadive/`. On subsequent runs, it skips the bulk download if files already exist (use `--ignore-cache` to force re-download).
 
-### Alternative: Manual Bulk Download
+### Note on Manual Bulk Download
+
+The bulk download is integrated into the `kg download` command and runs automatically. There is no standalone script to run it manually. If you need to re-download the bulk data, use:
 
 ```bash
-# Manually trigger bulk download without running full kg download
-poetry run python download_mediadive_bulk.py
+# Force re-download of bulk data
+poetry run kg download --ignore-cache
 
 # Run transform
 poetry run kg transform -s mediadive
@@ -87,13 +89,9 @@ This automatically triggers the bulk download after downloading `mediadive.json`
 
 The download is skipped if bulk files already exist (use `--ignore-cache` to force re-download).
 
-### Manual Bulk Download (Alternative)
+### Note on Manual Invocation
 
-You can also run the bulk download manually:
-
-```bash
-poetry run python download_mediadive_bulk.py
-```
+The bulk download is integrated into `kg_microbe.utils.mediadive_bulk_download` and is called automatically by the `kg download` command. There is no standalone script for manual invocation.
 
 ### Output Files
 
@@ -119,11 +117,8 @@ poetry run kg download --ignore-cache
 # Remove old MediaDive bulk data
 rm -rf data/raw/mediadive/
 
-# Re-download (automatic when running kg download)
+# Re-download (happens automatically with kg download)
 poetry run kg download
-
-# Or manually trigger bulk download
-poetry run python download_mediadive_bulk.py
 ```
 
 ## Caching System
@@ -132,7 +127,7 @@ The transform uses a **three-tier caching strategy**:
 
 ### 1. Bulk Downloaded Files (Tier 1 - Fastest)
 - **Location**: `data/raw/mediadive/*.json`
-- **Created by**: Automatic post-download hook in `kg download` (or manual via `download_mediadive_bulk.py`)
+- **Created by**: Automatic post-download hook in `kg download`
 - **Purpose**: Pre-download all data to avoid API calls
 - **Cache hit**: ~100% (if files exist)
 
@@ -176,8 +171,8 @@ rm -rf kg_microbe/transform_utils/mediadive/tmp/medium_strain_yaml/
 # Remove bulk downloaded data
 rm -rf data/raw/mediadive/
 
-# Then re-run bulk download or transform
-poetry run python download_mediadive_bulk.py
+# Then re-run download to regenerate bulk data
+poetry run kg download
 ```
 
 ### Partial Cache Clear
@@ -243,11 +238,7 @@ To speed up future transforms, run: poetry run kg download
 
 **Solution**: Download bulk data (happens automatically with `kg download`)
 ```bash
-# Automatic approach (recommended)
 poetry run kg download
-
-# Or manual approach
-poetry run python download_mediadive_bulk.py
 ```
 
 ### Bulk download fails partway
@@ -256,11 +247,7 @@ poetry run python download_mediadive_bulk.py
 
 **Solution**: Re-run the download - it will use HTTP cache to skip already downloaded data
 ```bash
-# Automatic approach
 poetry run kg download
-
-# Or manual approach
-poetry run python download_mediadive_bulk.py
 ```
 
 ### Missing or incomplete data in transform output
@@ -272,11 +259,8 @@ poetry run python download_mediadive_bulk.py
 rm -rf data/raw/mediadive/
 rm mediadive_cache.sqlite
 
-# Automatic re-download
+# Re-download
 poetry run kg download
-
-# Or manual re-download
-poetry run python download_mediadive_bulk.py
 ```
 
 ### API rate limiting
@@ -285,11 +269,7 @@ poetry run python download_mediadive_bulk.py
 
 **Solution**: Use bulk download to avoid API calls
 ```bash
-# Automatic bulk download
 poetry run kg download
-
-# Or manual bulk download
-poetry run python download_mediadive_bulk.py
 ```
 
 ## Data Structure

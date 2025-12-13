@@ -483,6 +483,11 @@ class MediaDiveTransform(Transform):
                 if medium_id in self.media_strains:
                     self.api_calls_avoided += 1
                     return self.media_strains[medium_id]
+                else:
+                    # Medium has no strain associations in bulk data (empty response during download)
+                    # Return empty list instead of falling back to API
+                    self.api_calls_avoided += 1
+                    return []
             elif url_extension.startswith(MEDIUM):
                 if medium_id in self.media_detailed:
                     self.api_calls_avoided += 1

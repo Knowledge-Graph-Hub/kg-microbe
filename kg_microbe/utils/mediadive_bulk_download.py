@@ -6,6 +6,7 @@ to avoid repeated API calls during transforms.
 """
 
 import json
+import logging
 import time
 from pathlib import Path
 from typing import Dict, List
@@ -13,6 +14,9 @@ from typing import Dict, List
 import requests
 import requests_cache
 from tqdm import tqdm
+
+# Set up logging for API warnings (written to file, not stdout)
+logger = logging.getLogger(__name__)
 
 # MediaDive REST API base URL
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
@@ -68,10 +72,11 @@ def get_json_from_api(
             return result
         except requests.exceptions.RequestException as e:
             if attempt < retry_count - 1:
-                print(f"  Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
+                logger.debug(f"Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
                 time.sleep(retry_delay)
             else:
-                print(f"  Request failed after {retry_count} attempts: {e} (URL: {url})")
+                # Log to file instead of stdout - 404s are expected for media without strains
+                logger.warning(f"Request failed after {retry_count} attempts: {e} (URL: {url})")
                 return {}
 
 
@@ -248,11 +253,20 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     """
     output_path = Path(output_dir)
 
-    # Set up HTTP caching
-    setup_cache()
-
     # Create output directory
     output_path.mkdir(parents=True, exist_ok=True)
+
+    # Set up file logging for API warnings (not printed to stdout)
+    log_file = output_path / "mediadive_download.log"
+    file_handler = logging.FileHandler(log_file, mode="w")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    logger.addHandler(file_handler)
+    logger.setLevel(logging.DEBUG)
+    print(f"API warnings will be logged to: {log_file}")
+
+    # Set up HTTP caching
+    setup_cache()
 
     # Step 1: Load basic media list
     print("\n[1/5] Loading basic media list...")
@@ -292,5 +306,6 @@ def download_mediadive_bulk(basic_file: str, output_dir: str):
     print(f"  - {len(media_strains)} media-strain associations")
     print(f"  - {len(solutions_data)} solutions")
     print(f"  - {len(compounds_data)} compounds")
-    print("\nThese files will be used by the MediaDive transform to avoid API calls.")
+    print(f"\nAPI warnings logged to: {output_path / 'mediadive_download.log'}")
+    print("These files will be used by the MediaDive transform to avoid API calls.")
     print("=" * 80)

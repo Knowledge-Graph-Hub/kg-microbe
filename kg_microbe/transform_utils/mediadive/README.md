@@ -198,7 +198,7 @@ The transform interacts with the following MediaDive REST API endpoints:
 |----------|---------|---------------------|
 | `/rest/media` | Get basic media list | 1 |
 | `/rest/medium/{id}` | Get detailed recipe | 3,326 |
-| `/rest/medium_strains/{id}` | Get strain associations | 3,326 |
+| `/rest/medium-strains/{id}` | Get strain associations | 3,326 |
 | `/rest/solution/{id}` | Get solution ingredients | ~10,000-15,000 |
 
 **Note:** There is no `/rest/compound/{id}` endpoint. Compound mappings are obtained via MicroMediaParam mappings, not via a dedicated compound endpoint. See code comments in `mediadive_bulk_download.py` and `mediadive.py` for details.

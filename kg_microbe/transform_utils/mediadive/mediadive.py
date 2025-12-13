@@ -320,17 +320,18 @@ class MediaDiveTransform(Transform):
                     MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
-                item[SOLUTION_KEY] = (
-                    item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
-                    if isinstance(item[SOLUTION_KEY], str)
-                    else item[SOLUTION_KEY]
-                )
+                # Normalize solution name for display and mapping lookup
+                if isinstance(item[SOLUTION_KEY], str):
+                    item[SOLUTION_KEY] = (
+                        item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
+                    )
+                    solution_name_normalized = item[SOLUTION_KEY].lower()
+                elif item[SOLUTION_KEY] is not None:
+                    solution_name_normalized = str(item[SOLUTION_KEY])
+                else:
+                    solution_name_normalized = ""
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
-                if isinstance(item[SOLUTION_KEY], str):
-                    solution_name_normalized = item[SOLUTION_KEY].lower().strip()
-                else:
-                    solution_name_normalized = str(item[SOLUTION_KEY]) if item[SOLUTION_KEY] is not None else ""
                 solution_id = self.compound_mappings.get(
                     solution_name_normalized
                 ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])

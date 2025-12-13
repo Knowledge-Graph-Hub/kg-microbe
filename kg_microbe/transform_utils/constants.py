@@ -484,6 +484,7 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
+MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE = "compound_mappings_strict.tsv"
 
 # not used anywhere except in DO_NOT_CHANGE_PREFIXES list below
 METPO_PREFIX = "METPO:"

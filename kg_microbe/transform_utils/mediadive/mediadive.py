@@ -19,6 +19,7 @@ import csv
 import json
 import math
 import os
+import time
 from pathlib import Path
 from typing import Dict, Optional, Union
 from urllib.parse import urlparse
@@ -106,7 +107,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -134,7 +134,7 @@ class MediaDiveTransform(Transform):
 
         # Load MicroMediaParam chemical mappings
         self.compound_mappings = {}
-        self._load_compound_mappings()
+        self._load_micromediaparam_mappings()
 
         self._load_bulk_data()
 
@@ -143,7 +143,7 @@ class MediaDiveTransform(Transform):
         Load bulk downloaded MediaDive data if available.
 
         This method loads pre-downloaded data files to avoid API calls during transform.
-        Files are created by running: poetry run python download_mediadive_bulk.py
+        Files are created by running: poetry run kg download.
         """
         try:
             media_detailed_file = self.bulk_data_dir / "media_detailed.json"
@@ -187,10 +187,16 @@ class MediaDiveTransform(Transform):
                 print("  To download bulk data, run: poetry run kg download")
 
         except Exception as e:
-            print(f"Warning: Could not load bulk data: {e}")
+            print(f"Warning: Could not load bulk data from {self.bulk_data_dir}/. "
+                  f"Error type: {type(e).__name__}, details: {e}")
+            print("  Attempted to load the following files:")
+            print(f"    - {self.bulk_data_dir / 'media_detailed.json'}")
+            print(f"    - {self.bulk_data_dir / 'media_strains.json'}")
+            print(f"    - {self.bulk_data_dir / 'solutions.json'}")
+            print(f"    - {self.bulk_data_dir / 'compounds.json'}")
             print("  Transform will use API calls (may be slow)")
 
-    def _load_compound_mappings(self):
+    def _load_micromediaparam_mappings(self):
         """
         Load MicroMediaParam high-confidence compound mappings.
 
@@ -198,7 +204,7 @@ class MediaDiveTransform(Transform):
         standardized ontology IDs (ChEBI, CAS-RN, PubChem, etc.) to reduce use of
         custom ingredient: and solution: prefixes.
 
-        The high-confidence version (high_confidence_compound_mappings.tsv) includes:
+        The high-confidence version (compound_mappings_strict.tsv) includes:
         - 17,786 compound mapping entries with rich metadata
         - Hydration state information (base compound, water molecules, formulas)
         - Concentration data (value, unit, mmol_l, corrected_mmol_l)
@@ -229,22 +235,22 @@ class MediaDiveTransform(Transform):
 
             # Create lookup dictionary: original (normalized) -> mapped
             # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
-            df = df.copy()
+            # Chain operations without intermediate copies for memory efficiency
             df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
             df["mapped"] = df["mapped"].astype(str)
+
             # Filter out unwanted prefixes
             mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
-            df = df[mask]
-            # Normalize CAS-RN: to CAS:
-            df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"] = (
-                "CAS:" + df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"].str.replace("CAS-RN:", "", n=1)
-            )
+            df = df[mask].copy()  # Single copy after filtering
+
+            # Normalize CAS-RN: to CAS: for consistency with Bioregistry prefixes
+            cas_rn_mask = df["mapped"].str.startswith("CAS-RN:")
+            df.loc[cas_rn_mask, "mapped"] = "CAS:" + df.loc[cas_rn_mask, "mapped"].str.replace("CAS-RN:", "", n=1)
+
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
             # Build the mapping dictionary
-            self.compound_mappings.update(
-                df.set_index("original_normalized")["mapped"].to_dict()
-            )
+            self.compound_mappings.update(df.set_index("original_normalized")["mapped"].to_dict())
             print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
 
         except KeyError as e:
@@ -260,16 +266,28 @@ class MediaDiveTransform(Transform):
             print(f"  Error type: {type(e).__name__}, Details: {e}")
             print("  Will use MediaDive API mappings only")
 
-    def _get_mediadive_json(self, url: str) -> Dict[str, str]:
+    def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
         Use the API url to get a dict of information.
 
-        :param url: Path provided by MetaDive API.
+        :param url: Path provided by MediaDive API.
+        :param retry_count: Number of retry attempts on failure.
+        :param retry_delay: Delay in seconds between retries.
         :return: JSON response as a Dict.
         """
-        r = requests.get(url, timeout=30)
-        data_json = r.json()
-        return data_json.get(DATA_KEY)
+        for attempt in range(retry_count):
+            try:
+                r = requests.get(url, timeout=30)
+                r.raise_for_status()
+                data_json = r.json()
+                return data_json.get(DATA_KEY, {})
+            except requests.exceptions.RequestException as e:
+                if attempt < retry_count - 1:
+                    print(f"  Retry {attempt + 1}/{retry_count} after error: {e}")
+                    time.sleep(retry_delay)
+                else:
+                    print(f"  Failed after {retry_count} attempts: {e}")
+                    return {}
 
     # Disabled: Get labels from ChEBI via OAK
     # Re-enable if needed for role prediction
@@ -285,8 +303,8 @@ class MediaDiveTransform(Transform):
 
         First checks bulk downloaded data, then makes API call if needed.
 
-        :param id: ID of solution
-        :return: Dictionary of {compound_name: compound_id}
+        :param id: ID of solution.
+        :return: Dictionary of {compound_name: compound_id}.
         """
         # Check bulk downloaded data first
         if self.using_bulk_data and id in self.solutions_data:
@@ -298,7 +316,7 @@ class MediaDiveTransform(Transform):
             data = self._get_mediadive_json(url)
 
         ingredients_dict = {}
-        if RECIPE_KEY not in data:
+        if RECIPE_KEY not in data or not isinstance(data[RECIPE_KEY], list):
             return ingredients_dict
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
@@ -317,17 +335,18 @@ class MediaDiveTransform(Transform):
                     MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
-                item[SOLUTION_KEY] = (
-                    item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
-                    if isinstance(item[SOLUTION_KEY], str)
-                    else item[SOLUTION_KEY]
-                )
+                # Normalize solution name for display and mapping lookup
+                if isinstance(item[SOLUTION_KEY], str):
+                    item[SOLUTION_KEY] = (
+                        item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
+                    )
+                    solution_name_normalized = item[SOLUTION_KEY].lower()
+                elif item[SOLUTION_KEY] is not None:
+                    solution_name_normalized = str(item[SOLUTION_KEY])
+                else:
+                    solution_name_normalized = ""
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
-                if isinstance(item[SOLUTION_KEY], str):
-                    solution_name_normalized = item[SOLUTION_KEY].lower().strip()
-                else:
-                    solution_name_normalized = str(item[SOLUTION_KEY]) if item[SOLUTION_KEY] is not None else ""
                 solution_id = self.compound_mappings.get(
                     solution_name_normalized
                 ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
@@ -350,9 +369,9 @@ class MediaDiveTransform(Transform):
         First checks MicroMediaParam mappings by compound name, then bulk downloaded data,
         then makes API call if needed.
 
-        :param id: MediaDive compound ID
-        :param compound_name: Compound name for mapping lookup
-        :return: Standardized ID
+        :param id: MediaDive compound ID.
+        :param compound_name: Compound name for mapping lookup.
+        :return: Standardized ID.
         """
         # First, check MicroMediaParam mappings by compound name
         if compound_name:
@@ -360,31 +379,16 @@ class MediaDiveTransform(Transform):
             if normalized_name in self.compound_mappings:
                 return self.compound_mappings[normalized_name]
 
-        # Check bulk downloaded data (or skip if using bulk mode since API doesn't exist)
+        # Check bulk downloaded data for embedded compound mappings
+        # Note: MediaDive compound API endpoint does not exist (returns 400 "not supported")
+        # Compound mappings are extracted from embedded recipe data in media_detailed.json
         if self.using_bulk_data:
-            # MediaDive compound API endpoint does not exist (returns 400 "not supported")
-            # Skip API calls and fall through to ingredient prefix
             self.api_calls_avoided += 1
-            if id in self.compounds_data:
-                data = self.compounds_data[id]
-                # Try compound mappings if available
-                if data.get(CHEBI_KEY) is not None:
-                    return CHEBI_PREFIX + str(data[CHEBI_KEY])
-                elif data.get(KEGG_KEY) is not None:
-                    return KEGG_PREFIX + str(data[KEGG_KEY])
-                elif data.get(PUBCHEM_KEY) is not None:
-                    return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
-                elif data.get(CAS_RN_KEY) is not None:
-                    return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
-            # Fall back to custom ingredient prefix
-            return MEDIADIVE_INGREDIENT_PREFIX + id
-        else:
-            # Not using bulk data - try API (though it doesn't exist)
-            self.api_calls_made += 1
-            url = MEDIADIVE_REST_API_BASE_URL + COMPOUND + id
-            data = self._get_mediadive_json(url)
+        # No API call path - endpoint doesn't exist, so we always use embedded data or fallback
 
-            # Try MediaDive API mappings
+        if id in self.compounds_data:
+            data = self.compounds_data[id]
+            # Try compound mappings from embedded data
             if data.get(CHEBI_KEY) is not None:
                 return CHEBI_PREFIX + str(data[CHEBI_KEY])
             elif data.get(KEGG_KEY) is not None:
@@ -393,9 +397,9 @@ class MediaDiveTransform(Transform):
                 return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
             elif data.get(CAS_RN_KEY) is not None:
                 return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
-            else:
-                # Fall back to custom ingredient prefix
-                return MEDIADIVE_INGREDIENT_PREFIX + id
+
+        # Fall back to custom ingredient prefix
+        return MEDIADIVE_INGREDIENT_PREFIX + id
 
     def download_yaml_and_get_json(
         self,
@@ -425,9 +429,9 @@ class MediaDiveTransform(Transform):
         First checks bulk downloaded data, then YAML cache, then makes API call.
 
         :param fn: YAML file path.
-        :param url_extension: API endpoint extension (e.g., "medium/123")
-        :param target_dir: Directory for YAML cache
-        :return: Dictionary
+        :param url_extension: API endpoint extension (e.g., "medium/123").
+        :param target_dir: Directory for YAML cache.
+        :return: Dictionary.
         """
         # Extract ID from url_extension (e.g., "medium/123" -> "123")
         medium_id = url_extension.split("/")[-1]
@@ -442,8 +446,16 @@ class MediaDiveTransform(Transform):
                 if medium_id in self.media_detailed:
                     self.api_calls_avoided += 1
                     # Return bulk-downloaded detailed data directly
-                    # Structure: {"medium": {...}, "solutions": [{id, name, ...}, ...]}
-                    # This matches the expected format with SOLUTIONS_KEY at top level
+                    # Structure from media_detailed.json:
+                    #   {
+                    #     "medium": {...},
+                    #     "solutions": [
+                    #       {"id": 1, "name": "...", "recipe": [...], "steps": [...]},
+                    #       ...
+                    #     ]
+                    #   }
+                    # Note: SOLUTIONS_KEY ("solutions") is at the top level, not RECIPE_KEY.
+                    # The "recipe" key is nested within each solution object.
                     return self.media_detailed[medium_id]
 
         # Fall back to YAML cache or API call

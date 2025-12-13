@@ -193,9 +193,10 @@ class MediaDiveTransform(Transform):
             print("  Transform will use API calls (may be slow)")
             print("  To download bulk data, run: poetry run kg download")
         except json.JSONDecodeError as e:
-            print(f"Warning: Invalid JSON in bulk data file: {e.msg} at line {e.lineno}")
+            print(f"Warning: A bulk data file contains invalid JSON (line {e.lineno}: {e.msg})")
+            print("  This usually means the file was corrupted during download.")
             print("  Transform will use API calls (may be slow)")
-            print("  Consider re-downloading bulk data: poetry run kg download --ignore-cache")
+            print("  To fix, re-download: poetry run kg download --ignore-cache")
         except OSError as e:
             print(f"Warning: Could not read bulk data file: {e}")
             print("  Transform will use API calls (may be slow)")

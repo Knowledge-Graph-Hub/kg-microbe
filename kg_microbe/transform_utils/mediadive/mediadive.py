@@ -188,14 +188,16 @@ class MediaDiveTransform(Transform):
                 print("  Transform will use API calls (may be slow)")
                 print("  To download bulk data, run: poetry run kg download")
 
-        except Exception as e:
-            print(f"Warning: Could not load bulk data from {self.bulk_data_dir}/. "
-                  f"Error type: {type(e).__name__}, details: {e}")
-            print("  Attempted to load the following files:")
-            print(f"    - {self.bulk_data_dir / 'media_detailed.json'}")
-            print(f"    - {self.bulk_data_dir / 'media_strains.json'}")
-            print(f"    - {self.bulk_data_dir / 'solutions.json'}")
-            print(f"    - {self.bulk_data_dir / 'compounds.json'}")
+        except FileNotFoundError as e:
+            print(f"Warning: Bulk data file not found: {e.filename}")
+            print("  Transform will use API calls (may be slow)")
+            print("  To download bulk data, run: poetry run kg download")
+        except json.JSONDecodeError as e:
+            print(f"Warning: Invalid JSON in bulk data file: {e.msg} at line {e.lineno}")
+            print("  Transform will use API calls (may be slow)")
+            print("  Consider re-downloading bulk data: poetry run kg download --ignore-cache")
+        except OSError as e:
+            print(f"Warning: Could not read bulk data file: {e}")
             print("  Transform will use API calls (may be slow)")
 
     def _load_mapping_file(self, mapping_file: Path, description: str) -> Dict[str, str]:
@@ -232,8 +234,12 @@ class MediaDiveTransform(Transform):
 
             # Filter out unwanted prefixes (both old-style and Bioregistry-style)
             unwanted_prefixes = (
-                "ingredient:", "solution:", "medium:",
-                MEDIADIVE_INGREDIENT_PREFIX, MEDIADIVE_SOLUTION_PREFIX, MEDIADIVE_MEDIUM_PREFIX
+                "ingredient:",
+                "solution:",
+                "medium:",
+                MEDIADIVE_INGREDIENT_PREFIX,
+                MEDIADIVE_SOLUTION_PREFIX,
+                MEDIADIVE_MEDIUM_PREFIX,
             )
             mask = ~df["mapped"].str.startswith(unwanted_prefixes)
             df = df[mask].copy()  # Single copy after filtering
@@ -290,7 +296,9 @@ class MediaDiveTransform(Transform):
         print(f"    From strict mappings: {new_from_strict} (fallback)")
 
         if not self.compound_mappings:
-            print("  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only")
+            print(
+                "  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only"
+            )
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
@@ -364,7 +372,10 @@ class MediaDiveTransform(Transform):
                 # Normalize solution name for display and mapping lookup
                 if isinstance(item[SOLUTION_KEY], str):
                     item[SOLUTION_KEY] = (
-                        item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
+                        item[SOLUTION_KEY]
+                        .translate(self.translation_table)
+                        .replace('""', "")
+                        .strip()
                     )
                     solution_name_normalized = item[SOLUTION_KEY].lower()
                 elif item[SOLUTION_KEY] is not None:

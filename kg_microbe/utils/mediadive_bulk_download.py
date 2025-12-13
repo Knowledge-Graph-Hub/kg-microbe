@@ -67,7 +67,6 @@ def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0) 
             else:
                 print(f"  Failed after {retry_count} attempts: {e}")
                 return {}
-    return {}
 
 
 def load_basic_media_list(basic_file: str) -> List[Dict]:

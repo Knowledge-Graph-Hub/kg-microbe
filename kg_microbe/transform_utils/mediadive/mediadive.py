@@ -253,6 +253,9 @@ class MediaDiveTransform(Transform):
             print(f"Warning: Could not parse MicroMediaParam mappings from {mapping_file}")
             print(f"  Parser error: {e}")
             print("  Will use MediaDive API mappings only")
+        except pd.errors.EmptyDataError:
+            print(f"Warning: MicroMediaParam mappings file is empty: {mapping_file}")
+            print("  Will use MediaDive API mappings only")
         except Exception as e:
             print(f"Warning: Could not load MicroMediaParam mappings from {mapping_file}")
             print(f"  Error type: {type(e).__name__}, Details: {e}")

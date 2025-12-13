@@ -28,6 +28,7 @@ import pandas as pd
 import requests
 import requests_cache
 import yaml
+from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -39,11 +40,14 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_PREFIX,
     CHEBI_KEY,
     CHEBI_PREFIX,
+    CHEBI_SOURCE,
+    CHEBI_TO_ROLE_EDGE,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
     GRAMS_PER_LITER_COLUMN,
     HAS_PART,
+    HAS_ROLE,
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
@@ -88,6 +92,7 @@ from kg_microbe.transform_utils.constants import (
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
+    ROLE_CATEGORY,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,

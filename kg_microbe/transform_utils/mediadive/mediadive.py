@@ -77,6 +77,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
     MEDIUM_TYPE_CATEGORY,
+    MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
@@ -205,7 +206,7 @@ class MediaDiveTransform(Transform):
         See download.yaml for file format details.
         """
         # Use the high-confidence MicroMediaParam compound mappings from download.yaml
-        mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"
+        mapping_file = Path(self.input_base_dir) / MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE
 
         try:
             if not mapping_file.exists():

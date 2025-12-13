@@ -213,10 +213,10 @@ class MediaDiveTransform(Transform):
                  base_compound_for_mapping, base_molecular_weight, water_molecular_weight,
                  hydrated_molecular_weight, corrected_mmol_l (TSV)
         """
-        try:
-            # Use the high-confidence MicroMediaParam compound mappings from download.yaml
-            mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"
+        # Use the high-confidence MicroMediaParam compound mappings from download.yaml
+        mapping_file = Path(self.input_base_dir) / "compound_mappings_strict.tsv"
 
+        try:
             if not mapping_file.exists():
                 print(f"MicroMediaParam high-confidence mappings not found at {mapping_file}")
                 print("  Will use MediaDive API mappings only")

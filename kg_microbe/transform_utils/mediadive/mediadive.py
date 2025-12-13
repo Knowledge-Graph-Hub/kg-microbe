@@ -229,22 +229,22 @@ class MediaDiveTransform(Transform):
 
             # Create lookup dictionary: original (normalized) -> mapped
             # Only include mappings that are NOT ingredient:, solution:, or medium: prefixes
-            for _, row in df.iterrows():
-                original = str(row["original"]).lower().strip()
-                mapped = str(row["mapped"])
-
-                # Skip if mapped to custom prefixes (we want real ontology IDs like CHEBI, CAS)
-                if mapped.startswith(("ingredient:", "solution:", "medium:")):
-                    continue
-
-                # Normalize CURIE format for consistency with constants.py
-                if mapped.startswith("CAS-RN:"):
-                    mapped = "CAS:" + mapped.replace("CAS-RN:", "")
-
-                # Store in lookup dict (earlier mappings take precedence)
-                if original not in self.compound_mappings:
-                    self.compound_mappings[original] = mapped
-
+            df = df.copy()
+            df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
+            df["mapped"] = df["mapped"].astype(str)
+            # Filter out unwanted prefixes
+            mask = ~df["mapped"].str.startswith(("ingredient:", "solution:", "medium:"))
+            df = df[mask]
+            # Normalize CAS-RN: to CAS:
+            df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"] = (
+                "CAS:" + df.loc[df["mapped"].str.startswith("CAS-RN:"), "mapped"].str.replace("CAS-RN:", "", n=1)
+            )
+            # Drop duplicates to keep first occurrence (earlier mappings take precedence)
+            df = df.drop_duplicates(subset="original_normalized", keep="first")
+            # Build the mapping dictionary
+            self.compound_mappings.update(
+                df.set_index("original_normalized")["mapped"].to_dict()
+            )
             print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
 
         except Exception as e:

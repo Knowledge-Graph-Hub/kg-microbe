@@ -200,10 +200,10 @@ The transform interacts with the following MediaDive REST API endpoints:
 | `/rest/medium/{id}` | Get detailed recipe | 3,326 |
 | `/rest/medium_strains/{id}` | Get strain associations | 3,326 |
 | `/rest/solution/{id}` | Get solution ingredients | ~10,000-15,000 |
-| `/rest/compound/{id}` | Get compound mappings | ~50,000-100,000 |
 
-**Total**: ~60,000-120,000 API calls per transform run (without caching)
+**Note:** There is no `/rest/compound/{id}` endpoint. Compound mappings are obtained via MicroMediaParam mappings, not via a dedicated compound endpoint. See code comments in `mediadive_bulk_download.py` and `mediadive.py` for details.
 
+**Total**: ~17,000-22,000 API calls per transform run (without caching)
 ## Transform Statistics
 
 During the transform, you'll see statistics about data sources:

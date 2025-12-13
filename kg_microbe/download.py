@@ -4,6 +4,8 @@ from pathlib import Path
 
 from kghub_downloader.download_utils import download_from_yaml
 
+from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
+
 
 def download(
     yaml_file: str, output_dir: str, snippet_only: bool, ignore_cache: bool = False
@@ -44,9 +46,6 @@ def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -
     :param output_dir: Output directory where data is downloaded
     :param ignore_cache: If True, re-download even if bulk files exist
     """
-    # Import inside function to avoid potential circular dependency
-    from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
-
     mediadive_basic_file = Path(output_dir) / "mediadive.json"
     mediadive_bulk_dir = Path(output_dir) / "mediadive"
 

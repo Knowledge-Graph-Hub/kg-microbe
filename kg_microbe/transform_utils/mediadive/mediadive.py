@@ -275,8 +275,8 @@ class MediaDiveTransform(Transform):
 
         First checks bulk downloaded data, then makes API call if needed.
 
-        :param id: ID of solution
-        :return: Dictionary of {compound_name: compound_id}
+        :param id: ID of solution.
+        :return: Dictionary of {compound_name: compound_id}.
         """
         # Check bulk downloaded data first
         if self.using_bulk_data and id in self.solutions_data:
@@ -340,9 +340,9 @@ class MediaDiveTransform(Transform):
         First checks MicroMediaParam mappings by compound name, then bulk downloaded data,
         then makes API call if needed.
 
-        :param id: MediaDive compound ID
-        :param compound_name: Compound name for mapping lookup
-        :return: Standardized ID
+        :param id: MediaDive compound ID.
+        :param compound_name: Compound name for mapping lookup.
+        :return: Standardized ID.
         """
         # First, check MicroMediaParam mappings by compound name
         if compound_name:
@@ -415,9 +415,9 @@ class MediaDiveTransform(Transform):
         First checks bulk downloaded data, then YAML cache, then makes API call.
 
         :param fn: YAML file path.
-        :param url_extension: API endpoint extension (e.g., "medium/123")
-        :param target_dir: Directory for YAML cache
-        :return: Dictionary
+        :param url_extension: API endpoint extension (e.g., "medium/123").
+        :param target_dir: Directory for YAML cache.
+        :return: Dictionary.
         """
         # Extract ID from url_extension (e.g., "medium/123" -> "123")
         medium_id = url_extension.split("/")[-1]

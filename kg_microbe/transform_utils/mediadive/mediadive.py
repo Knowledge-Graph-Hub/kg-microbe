@@ -370,25 +370,27 @@ class MediaDiveTransform(Transform):
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
                 # Normalize solution name for display and mapping lookup
+                # Ensure consistent string handling for both dict key and mapping lookup
                 if isinstance(item[SOLUTION_KEY], str):
-                    item[SOLUTION_KEY] = (
+                    solution_name = (
                         item[SOLUTION_KEY]
                         .translate(self.translation_table)
                         .replace('""', "")
                         .strip()
                     )
-                    solution_name_normalized = item[SOLUTION_KEY].lower()
                 elif item[SOLUTION_KEY] is not None:
-                    solution_name_normalized = str(item[SOLUTION_KEY])
+                    solution_name = str(item[SOLUTION_KEY])
                 else:
-                    solution_name_normalized = ""
+                    solution_name = ""
+
+                solution_name_normalized = solution_name.lower()
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
                 solution_id = self.compound_mappings.get(
                     solution_name_normalized
                 ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
 
-                ingredients_dict[item[SOLUTION_KEY]] = {
+                ingredients_dict[solution_name] = {
                     ID_COLUMN: solution_id,
                     AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
                     UNIT_COLUMN: item.get(UNIT_COLUMN),
@@ -419,11 +421,12 @@ class MediaDiveTransform(Transform):
         # Check bulk downloaded data for embedded compound mappings
         # Note: MediaDive compound API endpoint does not exist (returns 400 "not supported")
         # Compound mappings are extracted from embedded recipe data in media_detailed.json
-        if self.using_bulk_data:
-            self.api_calls_avoided += 1
         # No API call path - endpoint doesn't exist, so we always use embedded data or fallback
 
         if id in self.compounds_data:
+            # Only count as avoided API call when data is actually found in bulk data
+            if self.using_bulk_data:
+                self.api_calls_avoided += 1
             data = self.compounds_data[id]
             # Try compound mappings from embedded data
             if data.get(CHEBI_KEY) is not None:

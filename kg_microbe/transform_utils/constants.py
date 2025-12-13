@@ -147,10 +147,14 @@ CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
 UBERON_PREFIX = "UBERON:"
 RO_PREFIX = "RO:"
-MEDIADIVE_INGREDIENT_PREFIX = "ingredient:"
-MEDIADIVE_SOLUTION_PREFIX = "solution:"
-MEDIADIVE_MEDIUM_PREFIX = "medium:"
-MEDIADIVE_MEDIUM_TYPE_PREFIX = "medium-type:"
+# MediaDive prefixes (registered in Bioregistry)
+# See: https://bioregistry.io/registry/mediadive.medium
+#      https://bioregistry.io/registry/mediadive.solution
+#      https://bioregistry.io/registry/mediadive.ingredient
+MEDIADIVE_INGREDIENT_PREFIX = "mediadive.ingredient:"
+MEDIADIVE_SOLUTION_PREFIX = "mediadive.solution:"
+MEDIADIVE_MEDIUM_PREFIX = "mediadive.medium:"
+MEDIADIVE_MEDIUM_TYPE_PREFIX = "mediadive.medium-type:"
 GO_PREFIX = "GO:"
 KEGG_PREFIX = "KEGG:"
 SHAPE_PREFIX = "cell_shape:"
@@ -480,6 +484,8 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
+MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE = "compound_mappings_strict.tsv"
+MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE = "compound_mappings_strict_hydrate.tsv"
 
 # not used anywhere except in DO_NOT_CHANGE_PREFIXES list below
 METPO_PREFIX = "METPO:"

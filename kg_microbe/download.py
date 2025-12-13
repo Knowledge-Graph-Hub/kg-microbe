@@ -54,6 +54,7 @@ def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -
         return  # MediaDive not being downloaded, skip bulk download
 
     # Check if bulk data already exists (unless ignore_cache is True)
+    # Also verify files are not empty (> 10 bytes to account for "{}" or "[]")
     if not ignore_cache and mediadive_bulk_dir.exists():
         required_files = [
             "media_detailed.json",
@@ -61,8 +62,11 @@ def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -
             "solutions.json",
             "compounds.json",
         ]
-        all_exist = all((mediadive_bulk_dir / f).exists() for f in required_files)
-        if all_exist:
+        all_valid = all(
+            (mediadive_bulk_dir / f).exists() and (mediadive_bulk_dir / f).stat().st_size > 10
+            for f in required_files
+        )
+        if all_valid:
             print(f"MediaDive bulk data already exists in {mediadive_bulk_dir}/")
             print("  Skipping bulk download (use --ignore-cache to force re-download)")
             return

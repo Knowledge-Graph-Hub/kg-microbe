@@ -227,3 +227,13 @@
 -
   url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final.tsv
   local_name: compound_mappings_strict.tsv
+
+#
+# MicroMediaParam Chemical Mappings - Hydrate (Takes Precedence)
+# Maps hydrated compound names to their base ChEBI IDs.
+# This file takes precedence over compound_mappings_strict.tsv because hydrate
+# compounds should map to their base (anhydrous) form for proper chemical identity.
+#
+-
+  url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final_hydrate.tsv
+  local_name: compound_mappings_strict_hydrate.tsv

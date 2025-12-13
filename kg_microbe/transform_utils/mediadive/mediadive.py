@@ -77,6 +77,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_TO_SOLUTION_EDGE,
     MEDIUM_TYPE_CATEGORY,
     MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE,
+    MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE,
     MMOL_PER_LITER_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
@@ -197,24 +198,27 @@ class MediaDiveTransform(Transform):
             print(f"    - {self.bulk_data_dir / 'compounds.json'}")
             print("  Transform will use API calls (may be slow)")
 
-    def _load_micromediaparam_mappings(self):
+    def _load_mapping_file(self, mapping_file: Path, description: str) -> Dict[str, str]:
         """
-        Load MicroMediaParam compound mappings for chemical name to ontology ID mapping.
+        Load a single MicroMediaParam mapping file and return filtered mappings.
 
-        Maps compound names to standardized IDs (ChEBI, CAS-RN, PubChem, etc.)
-        to reduce use of custom ingredient: and solution: prefixes.
-        See download.yaml for file format details.
+        Args:
+        ----
+            mapping_file: Path to the TSV mapping file.
+            description: Human-readable description for logging.
+
+        Returns:
+        -------
+            Dictionary mapping normalized compound names to ontology IDs.
+
         """
-        # Use the high-confidence MicroMediaParam compound mappings from download.yaml
-        mapping_file = Path(self.input_base_dir) / MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE
-
+        mappings = {}
         try:
             if not mapping_file.exists():
-                print(f"MicroMediaParam high-confidence mappings not found at {mapping_file}")
-                print("  Will use MediaDive API mappings only")
-                return
+                print(f"  {description} not found at {mapping_file}")
+                return mappings
 
-            print(f"Loading MicroMediaParam high-confidence compound mappings from {mapping_file}")
+            print(f"  Loading {description} from {mapping_file}")
 
             # Load TSV file (format: medium_id, original, mapped, ...)
             df = pd.read_csv(mapping_file, sep="\t")
@@ -223,7 +227,6 @@ class MediaDiveTransform(Transform):
             # Only include mappings that are NOT custom MediaDive prefixes (we want real ontology IDs)
             # Filter both old-style (ingredient:, solution:, medium:) and
             # Bioregistry-style (mediadive.ingredient:, mediadive.solution:, mediadive.medium:) prefixes
-            # Chain operations without intermediate copies for memory efficiency
             df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
             df["mapped"] = df["mapped"].astype(str)
 
@@ -237,25 +240,57 @@ class MediaDiveTransform(Transform):
 
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
-            # Build the mapping dictionary
-            self.compound_mappings.update(df.set_index("original_normalized")["mapped"].to_dict())
-            print(f"  Loaded {len(self.compound_mappings)} compound name -> ontology ID mappings")
+            mappings = df.set_index("original_normalized")["mapped"].to_dict()
+            print(f"    Loaded {len(mappings)} mappings from {description}")
 
         except KeyError as e:
-            print(f"Warning: Could not load MicroMediaParam mappings from {mapping_file}")
-            print(f"  KeyError (possibly missing required column): {e}")
-            print("  Will use MediaDive API mappings only")
+            print(f"  Warning: Could not load {description}: KeyError {e}")
         except pd.errors.ParserError as e:
-            print(f"Warning: Could not parse MicroMediaParam mappings from {mapping_file}")
-            print(f"  Parser error: {e}")
-            print("  Will use MediaDive API mappings only")
+            print(f"  Warning: Could not parse {description}: {e}")
         except pd.errors.EmptyDataError:
-            print(f"Warning: MicroMediaParam mappings file is empty: {mapping_file}")
-            print("  Will use MediaDive API mappings only")
+            print(f"  Warning: {description} file is empty")
         except Exception as e:
-            print(f"Warning: Could not load MicroMediaParam mappings from {mapping_file}")
-            print(f"  Error type: {type(e).__name__}, Details: {e}")
-            print("  Will use MediaDive API mappings only")
+            print(f"  Warning: Could not load {description}: {type(e).__name__}: {e}")
+
+        return mappings
+
+    def _load_micromediaparam_mappings(self):
+        """
+        Load MicroMediaParam compound mappings for chemical name to ontology ID mapping.
+
+        Loads mappings in priority order:
+        1. Hydrate mappings (highest priority) - maps hydrated compounds to base ChEBI IDs
+        2. Strict mappings (fallback) - standard compound name to ontology ID mappings
+
+        Maps compound names to standardized IDs (ChEBI, CAS-RN, PubChem, etc.)
+        to reduce use of custom ingredient: and solution: prefixes.
+        See download.yaml for file format details.
+        """
+        print("Loading MicroMediaParam compound mappings...")
+
+        # Step 1: Load hydrate mappings first (these take precedence)
+        # Hydrate mappings map hydrated compound names to their base (anhydrous) ChEBI IDs
+        hydrate_file = Path(self.input_base_dir) / MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE
+        hydrate_mappings = self._load_mapping_file(hydrate_file, "hydrate mappings")
+        self.compound_mappings.update(hydrate_mappings)
+
+        # Step 2: Load strict mappings for compounds not in hydrate mappings
+        strict_file = Path(self.input_base_dir) / MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE
+        strict_mappings = self._load_mapping_file(strict_file, "strict mappings")
+
+        # Only add strict mappings for compounds NOT already in hydrate mappings
+        new_from_strict = 0
+        for key, value in strict_mappings.items():
+            if key not in self.compound_mappings:
+                self.compound_mappings[key] = value
+                new_from_strict += 1
+
+        print(f"  Total compound mappings: {len(self.compound_mappings)}")
+        print(f"    From hydrate mappings: {len(hydrate_mappings)} (precedence)")
+        print(f"    From strict mappings: {new_from_strict} (fallback)")
+
+        if not self.compound_mappings:
+            print("  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only")
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """

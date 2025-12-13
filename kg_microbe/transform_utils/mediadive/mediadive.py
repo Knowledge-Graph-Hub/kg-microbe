@@ -315,7 +315,10 @@ class MediaDiveTransform(Transform):
                 )
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
-                solution_name_normalized = item[SOLUTION_KEY].lower().strip()
+                if isinstance(item[SOLUTION_KEY], str):
+                    solution_name_normalized = item[SOLUTION_KEY].lower().strip()
+                else:
+                    solution_name_normalized = str(item[SOLUTION_KEY]) if item[SOLUTION_KEY] is not None else ""
                 solution_id = self.compound_mappings.get(
                     solution_name_normalized
                 ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])

@@ -121,7 +121,10 @@ class MediaDiveTransform(Transform):
         requests_cache.install_cache("mediadive_cache")
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
-        # Load ChEBI role relationships from ontologies transform output (fast TSV lookup)
+        # Load ChEBI role relationships from ontologies transform output (fast TSV lookup).
+        # NOTE: This depends on TSV files produced by the ontologies transform being present.
+        # If the required files are missing, _load_chebi_roles() will silently skip loading,
+        # and self.chebi_roles and self.chebi_labels will remain empty.
         self.chebi_roles: Dict[str, list] = {}  # {chebi_id: [role_ids]}
         self.chebi_labels: Dict[str, str] = {}  # {chebi_id: label}
         self._load_chebi_roles()

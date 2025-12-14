@@ -185,7 +185,7 @@ MEDIUM_STRAINS = "medium-strains/"
 
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
-NCBI_TO_MEDIUM_EDGE = "biolink:occurs_in"
+NCBI_TO_MEDIUM_EDGE = "METPO:2000517"  # grows in (organism -> medium)
 MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
@@ -227,7 +227,7 @@ SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 BIOSAFETY_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
-IS_GROWN_IN = "BAO:0002924"
+IS_GROWN_IN = "METPO:2000517"  # grows in (organism -> growth medium)
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )

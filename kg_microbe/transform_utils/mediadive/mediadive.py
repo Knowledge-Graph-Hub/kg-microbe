@@ -226,8 +226,7 @@ class MediaDiveTransform(Transform):
                             subject = parts[1]
                             relation = parts[4]
                             obj = parts[3]
-                            # RO:0000087 = has_role
-                            if relation == "RO:0000087" and subject.startswith("CHEBI:"):
+                            if relation == HAS_ROLE and subject.startswith("CHEBI:"):
                                 if subject not in self.chebi_roles:
                                     self.chebi_roles[subject] = []
                                 self.chebi_roles[subject].append(obj)

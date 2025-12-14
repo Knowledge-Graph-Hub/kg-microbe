@@ -400,11 +400,11 @@ class MadinEtAlTransform(Transform):
                                 predicate_biolink = metpo_mapping.get(
                                     "predicate_biolink_equivalent", ""
                                 )
-                                # fallback: if no biolink equivalent use `biolink:consumes`
+                                # fallback: if no biolink equivalent use METPO:2000006 "uses as carbon source"
                                 if predicate_biolink:
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
-                                    predicate = "biolink:consumes"
+                                    predicate = "METPO:2000006"  # "uses as carbon source"
                                 carbon_substrate_nodes.append(
                                     [
                                         metpo_mapping["curie"],

@@ -190,7 +190,7 @@ MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = "biolink:consumes"  # [org_name -> carbon_substrate]
+NCBI_TO_CARBON_SUBSTRATE_EDGE = "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
@@ -228,6 +228,7 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "METPO:2000517"  # grows in (organism -> growth medium)
+USES_AS_CARBON_SOURCE = "METPO:2000006"  # uses as carbon source (organism -> carbon substrate)
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )

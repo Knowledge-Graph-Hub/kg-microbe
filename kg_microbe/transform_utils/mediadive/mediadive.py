@@ -376,7 +376,10 @@ class MediaDiveTransform(Transform):
 
     def _get_label_via_oak(self, curie: str) -> str:
         """
-        Get label for a CURIE using TSV-based lookup.
+        Look up the label for a CURIE from preloaded ChEBI labels.
+
+        Only supports CURIEs with the CHEBI prefix. For other prefixes,
+        returns an empty string.
 
         Args:
         ----
@@ -384,7 +387,7 @@ class MediaDiveTransform(Transform):
 
         Returns:
         -------
-            Label for the CURIE, or empty string if not found.
+            The label for the CHEBI CURIE if found, otherwise an empty string.
 
         """
         prefix = curie.split(":")[0]

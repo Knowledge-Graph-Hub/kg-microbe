@@ -374,7 +374,7 @@ class MediaDiveTransform(Transform):
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
 
-    def _get_label_via_oak(self, curie: str) -> str:
+    def _get_chebi_label(self, curie: str) -> str:
         """
         Look up the label for a CURIE from preloaded ChEBI labels.
 

@@ -16,7 +16,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 import yaml
 from oaklib import get_adapter
@@ -177,7 +177,8 @@ from kg_microbe.utils.mapping_file_utils import (
     load_metpo_metabolite_utilization_mappings,
     uri_to_curie,
 )
-from kg_microbe.utils.oak_utils import get_label, search_by_label
+
+# Note: get_label and search_by_label are imported lazily in fallback methods
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
 
@@ -208,6 +209,94 @@ class BacDiveTransform(Transform):
         self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
         self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
         self.assay_kit_mappings = load_assay_kit_mappings()
+
+        # Load NCBITaxon labels from ontologies transform output (fast TSV lookup).
+        # NOTE: This depends on TSV files produced by the ontologies transform being present.
+        # If the required files are missing, _load_ncbitaxon_labels() will silently skip loading,
+        # and self.ncbitaxon_labels and self.ncbitaxon_name_to_id will remain empty.
+        self.ncbitaxon_labels: Dict[str, str] = {}  # {ncbitaxon_id: label}
+        self.ncbitaxon_name_to_id: Dict[str, str] = {}  # {label: ncbitaxon_id} for reverse lookup
+        self._load_ncbitaxon_labels()
+
+    def _load_ncbitaxon_labels(self):
+        """
+        Load NCBITaxon labels from ontologies transform output.
+
+        This is much faster than querying the NCBITaxon SQLite database via OakLib
+        for each record. Creates both id->label and label->id mappings.
+        """
+        ncbitaxon_nodes_file = Path("data/transformed/ontologies/NCBITaxon_nodes.tsv")
+
+        if ncbitaxon_nodes_file.exists():
+            try:
+                print("Loading NCBITaxon labels from ontologies transform output...")
+                with open(ncbitaxon_nodes_file) as f:
+                    f.readline()  # skip header
+                    for line in f:
+                        parts = line.strip().split("\t")
+                        if len(parts) >= 3:
+                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
+                            node_id = parts[0]
+                            name = parts[2]
+                            if node_id.startswith("NCBITaxon:") and name:
+                                self.ncbitaxon_labels[node_id] = name
+                                # Also store reverse mapping (lowercase for case-insensitive search)
+                                self.ncbitaxon_name_to_id[name.lower()] = node_id
+                print(f"  Loaded {len(self.ncbitaxon_labels)} NCBITaxon labels")
+            except Exception as e:
+                print(f"Warning: Could not load NCBITaxon labels: {e}")
+        else:
+            print(f"Warning: NCBITaxon nodes file not found at {ncbitaxon_nodes_file}")
+            print("  Will fall back to OakLib queries (slower)")
+
+    def _get_ncbitaxon_label(self, ncbitaxon_id: str) -> Optional[str]:
+        """
+        Look up the label for an NCBITaxon ID from preloaded labels.
+
+        Falls back to OakLib query if not found in preloaded data.
+
+        Args:
+        ----
+            ncbitaxon_id: NCBITaxon CURIE (e.g., "NCBITaxon:9606").
+
+        Returns:
+        -------
+            The label for the NCBITaxon ID, or None if not found.
+
+        """
+        # Try fast dictionary lookup first
+        label = self.ncbitaxon_labels.get(ncbitaxon_id)
+        if label:
+            return label
+        # Fall back to OakLib if not in preloaded data
+        from kg_microbe.utils.oak_utils import get_label
+
+        return get_label(self.ncbi_impl, ncbitaxon_id)
+
+    def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
+        """
+        Search for an NCBITaxon ID by label using preloaded reverse mapping.
+
+        Falls back to OakLib query if not found in preloaded data.
+
+        Args:
+        ----
+            search_name: The taxon name to search for.
+
+        Returns:
+        -------
+            The NCBITaxon ID if found, or None if not found.
+
+        """
+        # Try fast dictionary lookup first (case-insensitive)
+        ncbitaxon_id = self.ncbitaxon_name_to_id.get(search_name.lower())
+        if ncbitaxon_id:
+            return ncbitaxon_id
+        # Fall back to OakLib if not in preloaded data
+        from kg_microbe.utils.oak_utils import search_by_label
+
+        results = search_by_label(self.ncbi_impl, search_name, limit=1)
+        return results[0] if results else None
 
     def _extract_value_from_json_path(self, record: dict, json_path: str):
         """
@@ -1051,7 +1140,7 @@ class BacDiveTransform(Transform):
                                 general_info[NCBITAXON_ID][NCBITAXON_ID]
                             )
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
-                        ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
+                        ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
                         if ncbi_label is None:
                             ncbi_label = ncbi_description
 
@@ -1063,10 +1152,9 @@ class BacDiveTransform(Transform):
                         for rank_field in rank_fields:
                             search_name = name_tax_classification.get(rank_field)
                             if search_name:
-                                results = search_by_label(self.ncbi_impl, search_name, limit=1)
-                                if results:
-                                    ncbitaxon_id = results[0]
-                                    ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
+                                ncbitaxon_id = self._search_ncbitaxon_by_label(search_name)
+                                if ncbitaxon_id:
+                                    ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
                                     break
 
                         if ncbitaxon_id is None:

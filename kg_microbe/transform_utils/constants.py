@@ -228,7 +228,7 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
-USES_AS_CARBON_SOURCE = "METPO:2000006"  # uses as carbon source (organism -> carbon substrate)
+USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )

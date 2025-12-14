@@ -794,7 +794,13 @@ class MediaDiveTransform(Transform):
                                 for role_id in self.chebi_roles[chebi_id]:
                                     role_set.add(role_id)
                                     role_edges_data.append(
-                                        [chebi_id, CHEBI_TO_ROLE_EDGE, role_id, HAS_ROLE]
+                                        [
+                                            chebi_id,
+                                            CHEBI_TO_ROLE_EDGE,
+                                            role_id,
+                                            HAS_ROLE,
+                                            "infores:chebi",
+                                        ]
                                     )
                         # Write role nodes with labels
                         role_nodes = [

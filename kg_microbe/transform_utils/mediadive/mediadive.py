@@ -390,7 +390,9 @@ class MediaDiveTransform(Transform):
             The label for the CHEBI CURIE if found, otherwise an empty string.
 
         """
-        prefix = curie.split(":")[0]
+        if ":" not in curie:
+            return ""
+        prefix = curie.split(":", 1)[0]
         if prefix.startswith(CHEBI_KEY):
             return self.chebi_labels.get(curie, "")
         return ""

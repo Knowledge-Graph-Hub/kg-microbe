@@ -218,7 +218,7 @@ class MediaDiveTransform(Transform):
             try:
                 print("Loading ChEBI roles from ontologies transform output...")
                 with open(chebi_edges_file) as f:
-                    header = f.readline()  # skip header
+                    f.readline()  # skip header
                     for line in f:
                         parts = line.strip().split("\t")
                         if len(parts) >= 5:

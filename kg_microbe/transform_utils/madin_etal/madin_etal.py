@@ -155,6 +155,7 @@ class MadinEtAlTransform(Transform):
                 CHEBI_TO_ROLE_EDGE,
                 object,
                 predicate,
+                "infores:chebi",
             ]
             for (subject, predicate, object) in chebi_roles
         ]

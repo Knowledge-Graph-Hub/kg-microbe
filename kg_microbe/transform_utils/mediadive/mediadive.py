@@ -239,7 +239,7 @@ class MediaDiveTransform(Transform):
         if chebi_nodes_file.exists():
             try:
                 with open(chebi_nodes_file) as f:
-                    header = f.readline()  # skip header
+                    f.readline()  # skip header
                     for line in f:
                         parts = line.strip().split("\t")
                         if len(parts) >= 3:

@@ -242,9 +242,9 @@ class MediaDiveTransform(Transform):
                     for line in f:
                         parts = line.strip().split("\t")
                         if len(parts) >= 3:
-                            # Format: id, category, name, ...
+                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
                             node_id = parts[0]
-                            name = parts[2] if len(parts) > 2 else ""
+                            name = parts[2]
                             if node_id.startswith("CHEBI:") and name:
                                 self.chebi_labels[node_id] = name
                 print(f"  Loaded {len(self.chebi_labels)} ChEBI labels")

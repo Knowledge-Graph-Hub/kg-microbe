@@ -39,11 +39,13 @@ from kg_microbe.transform_utils.constants import (
     CAS_RN_PREFIX,
     CHEBI_KEY,
     CHEBI_PREFIX,
+    CHEBI_TO_ROLE_EDGE,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
     GRAMS_PER_LITER_COLUMN,
     HAS_PART,
+    HAS_ROLE,
     ID_COLUMN,
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
@@ -88,6 +90,7 @@ from kg_microbe.transform_utils.constants import (
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
+    ROLE_CATEGORY,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,
@@ -116,8 +119,15 @@ class MediaDiveTransform(Transform):
         source_name = MEDIADIVE
         super().__init__(source_name, input_dir, output_dir)
         requests_cache.install_cache("mediadive_cache")
-        self.chebi_impl = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
+
+        # Load ChEBI role relationships from ontologies transform output (fast TSV lookup).
+        # NOTE: This depends on TSV files produced by the ontologies transform being present.
+        # If the required files are missing, _load_chebi_roles() will silently skip loading,
+        # and self.chebi_roles and self.chebi_labels will remain empty.
+        self.chebi_roles: Dict[str, list] = {}  # {chebi_id: [role_ids]}
+        self.chebi_labels: Dict[str, str] = {}  # {chebi_id: label}
+        self._load_chebi_roles()
 
         # Load bulk downloaded data if available
         self.bulk_data_dir = Path("data/raw/mediadive")
@@ -195,6 +205,54 @@ class MediaDiveTransform(Transform):
         except OSError as e:
             print(f"Warning: Could not read bulk data file: {e}")
             print("  Transform will use API calls (may be slow)")
+
+    def _load_chebi_roles(self):
+        """
+        Load ChEBI role relationships from ontologies transform output.
+
+        This is much faster than querying the ChEBI SQLite database via OakLib.
+        Loads roles and labels from chebi_edges.tsv and chebi_nodes.tsv.
+        """
+        chebi_edges_file = Path("data/transformed/ontologies/chebi_edges.tsv")
+        chebi_nodes_file = Path("data/transformed/ontologies/chebi_nodes.tsv")
+
+        # Load role relationships from edges file
+        if chebi_edges_file.exists():
+            try:
+                print("Loading ChEBI roles from ontologies transform output...")
+                with open(chebi_edges_file) as f:
+                    f.readline()  # skip header
+                    for line in f:
+                        parts = line.strip().split("\t")
+                        if len(parts) >= 5:
+                            # KGX edges.tsv columns: [0]=id, [1]=subject, [2]=predicate, [3]=object, [4]=relation
+                            subject = parts[1]   # ChEBI compound ID
+                            obj = parts[3]       # ChEBI role ID
+                            relation = parts[4]  # RO relation (looking for HAS_ROLE)
+                            if relation == HAS_ROLE and subject.startswith("CHEBI:"):
+                                if subject not in self.chebi_roles:
+                                    self.chebi_roles[subject] = []
+                                self.chebi_roles[subject].append(obj)
+                print(f"  Loaded {len(self.chebi_roles)} ChEBI compounds with roles")
+            except Exception as e:
+                print(f"Warning: Could not load ChEBI roles: {e}")
+
+        # Load labels from nodes file
+        if chebi_nodes_file.exists():
+            try:
+                with open(chebi_nodes_file) as f:
+                    f.readline()  # skip header
+                    for line in f:
+                        parts = line.strip().split("\t")
+                        if len(parts) >= 3:
+                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
+                            node_id = parts[0]
+                            name = parts[2]
+                            if node_id.startswith("CHEBI:") and name:
+                                self.chebi_labels[node_id] = name
+                print(f"  Loaded {len(self.chebi_labels)} ChEBI labels")
+            except Exception as e:
+                print(f"Warning: Could not load ChEBI labels: {e}")
 
     def _load_mapping_file(self, mapping_file: Path, description: str) -> Dict[str, str]:
         """
@@ -319,11 +377,28 @@ class MediaDiveTransform(Transform):
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
 
-    def _get_label_via_oak(self, curie: str):
-        prefix = curie.split(":")[0]
+    def _get_chebi_label(self, curie: str) -> str:
+        """
+        Look up the label for a CURIE from preloaded ChEBI labels.
+
+        Only supports CURIEs with the CHEBI prefix. For other prefixes,
+        returns an empty string.
+
+        Args:
+        ----
+            curie: CURIE identifier (e.g., "CHEBI:12345").
+
+        Returns:
+        -------
+            The label for the CHEBI CURIE if found, otherwise an empty string.
+
+        """
+        if ":" not in curie:
+            return ""
+        prefix = curie.split(":", 1)[0]
         if prefix.startswith(CHEBI_KEY):
-            (_, label) = list(self.chebi_impl.labels([curie]))[0]
-        return label
+            return self.chebi_labels.get(curie, "")
+        return ""
 
     def get_compounds_of_solution(self, id: str):
         """
@@ -711,32 +786,36 @@ class MediaDiveTransform(Transform):
                         for k, v in solutions_dict.items()
                     ]
 
+                    # Get ChEBI role relationships using fast TSV lookup
                     chebi_list = [
                         v[ID_COLUMN]
                         for _, v in ingredients_dict.items()
                         if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
                     ]
-                    if len(chebi_list) > 0:
-                        chebi_roles = set(
-                            self.chebi_impl.relationships(
-                                subjects=set(chebi_list), predicates=[HAS_ROLE]
-                            )
-                        )
-                        roles = {x for (_, _, x) in chebi_roles}
+                    if len(chebi_list) > 0 and self.chebi_roles:
+                        # Collect all role relationships for these compounds
+                        role_set = set()
+                        role_edges_data = []
+                        for chebi_id in chebi_list:
+                            if chebi_id in self.chebi_roles:
+                                for role_id in self.chebi_roles[chebi_id]:
+                                    role_set.add(role_id)
+                                    role_edges_data.append(
+                                        [
+                                            chebi_id,
+                                            CHEBI_TO_ROLE_EDGE,
+                                            role_id,
+                                            HAS_ROLE,
+                                            "infores:chebi",
+                                        ]
+                                    )
+                        # Write role nodes with labels
                         role_nodes = [
-                            [role, ROLE_CATEGORY, self.chebi_impl.label(role)] for role in roles
+                            [role, ROLE_CATEGORY, self.chebi_labels.get(role, "")]
+                            for role in role_set
                         ]
                         node_writer.writerows(role_nodes)
-                        role_edges = [
-                            [
-                                subject,
-                                CHEBI_TO_ROLE_EDGE,
-                                object,
-                                predicate,
-                            ]
-                            for (subject, predicate, object) in chebi_roles
-                        ]
-                        edge_writer.writerows(role_edges)
+                        edge_writer.writerows(role_edges_data)
 
                     data = [
                         medium_id,

@@ -185,12 +185,12 @@ MEDIUM_STRAINS = "medium-strains/"
 
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
-NCBI_TO_MEDIUM_EDGE = "biolink:occurs_in"
+NCBI_TO_MEDIUM_EDGE = "METPO:2000517"  # grows in (organism -> medium)
 MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = "biolink:consumes"  # [org_name -> carbon_substrate]
+NCBI_TO_CARBON_SUBSTRATE_EDGE = "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
@@ -227,7 +227,8 @@ SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 BIOSAFETY_CATEGORY = "biolink:Attribute"
 
 HAS_PART = "BFO:0000051"
-IS_GROWN_IN = "BAO:0002924"
+IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
+USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )

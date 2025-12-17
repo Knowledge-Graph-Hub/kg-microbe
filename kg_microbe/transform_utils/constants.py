@@ -211,7 +211,7 @@ NCBI_TO_METABOLITE_RESISTANCE_EDGE = "biolink:associated_with_resistance_to"
 NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
-MEDIUM_CATEGORY = "biolink:ChemicalMixture"
+MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalEntity"
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"

@@ -46,15 +46,15 @@ Growth media are currently categorized as `biolink:ChemicalEntity`, but they are
 
 ## Recommendation
 
-### Proposed Change
+### Implemented Change
 
-**Change `MEDIUM_CATEGORY` from `biolink:ChemicalEntity` to `biolink:ChemicalMixture`**
+**Changed `MEDIUM_CATEGORY` from `biolink:ChemicalEntity` to `METPO:1004005` (growth medium)**
 
 #### Rationale:
-1. **Semantic accuracy**: Growth media are mixtures of multiple chemicals
-2. **Biolink compliance**: Matches Biolink model definition of ChemicalMixture
-3. **Consistency**: Aligns with medium-type classifications already using ChemicalMixture
-4. **Ontological correctness**: Media cannot be reduced to single molecular entities
+1. **Domain-specific**: METPO:1004005 is specifically defined for microbial growth media
+2. **Semantic accuracy**: More precise than generic biolink:ChemicalMixture
+3. **Ontological grounding**: METPO ontology provides formal definition
+4. **METPO definition**: "A processed material that provides the nutrients and environmental conditions necessary for the cultivation of microorganisms in vitro"
 
 #### Impact:
 - **Low risk**: ChemicalMixture is a subclass of ChemicalEntity in Biolink
@@ -63,11 +63,11 @@ Growth media are currently categorized as `biolink:ChemicalEntity`, but they are
 
 ### Implementation
 
-#### Step 1: Update Constants
+#### Step 1: Update Constants ✅ DONE
 ```python
 # kg_microbe/transform_utils/constants.py
 - MEDIUM_CATEGORY = "biolink:ChemicalEntity"
-+ MEDIUM_CATEGORY = "biolink:ChemicalMixture"
++ MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
 ```
 
 #### Step 2: Verify Transforms
@@ -122,11 +122,12 @@ Total nodes: 32,468
 └── biolink:ChemicalRole: 180
 ```
 
-**After proposed change**:
+**After implemented change**:
 ```
 Total nodes: 32,468
 ├── biolink:ChemicalEntity: ~2 (pure chemicals only)
-├── biolink:ChemicalMixture: ~9,918 (media + medium types)
+├── METPO:1004005: ~9,916 (growth media)
+├── biolink:ChemicalMixture: 2 (medium types only)
 ├── biolink:OrganismTaxon: 22,367
 └── biolink:ChemicalRole: 180
 ```

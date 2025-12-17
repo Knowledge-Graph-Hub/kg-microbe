@@ -546,6 +546,7 @@ RHEA_PYOBO_PREFIXES_MAPPER = {
     "chebi": CHEBI_PREFIX,
     RHEA_KEY: RHEA_NEW_PREFIX,
     EC_PYOBO_PREFIX: EC_PREFIX,
+    "ec": EC_PREFIX,  # Alias for raw Rhea data that uses "ec" instead of "eccode"
     "uniprot": UNIPROT_PREFIX,
     "go": GO_PREFIX,
 }

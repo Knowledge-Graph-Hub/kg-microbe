@@ -12,7 +12,7 @@ biological_process: &biological_process_block
 
 chemical_production: &chemical_production_block
   category: "biolink:ChemicalSubstance"
-  predicate: "biolink:produces"
+  predicate: "METPO:2000202"  # "produces"
 
 production:
   antibiotic_compound_production:

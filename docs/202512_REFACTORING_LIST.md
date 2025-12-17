@@ -51,7 +51,8 @@ AFTER:  METPO:1004005 (domain-specific - growth medium)
 
 Applied to:
 - MEDIUM_CATEGORY
-- ~9,916 media nodes from MediaDive and BacDive
+- 3,317 media nodes from MediaDive (all with mediadive.medium: prefix)
+- Note: BacDive references these media nodes but does not create its own
 ```
 
 ### Generic Chemicals
@@ -111,7 +112,7 @@ STATUS: Now included in merge.yaml
 | Enzyme→Substrate | `biolink:consumes` | `biolink:has_input` | All enzyme-substrate edges |
 | **Categories** | | | |
 | EC nodes | `biolink:Enzyme` | `biolink:MolecularActivity` | All EC nodes |
-| Growth media | `biolink:ChemicalEntity` | `METPO:1004005` | ~9,916 nodes |
+| Growth media | `biolink:ChemicalEntity` | `METPO:1004005` | 3,317 nodes |
 | Generic chemicals | `biolink:ChemicalSubstance` | `biolink:ChemicalEntity` | All generic chemical nodes |
 | **CURIEs** | | | |
 | EC identifiers | IntEnz URLs | `EC:*` | All EC nodes |

@@ -106,9 +106,10 @@ MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
 **METPO Definition**: "A processed material that provides the nutrients and environmental conditions necessary for the cultivation of microorganisms in vitro. Growth media may be liquid (broth) or solid (agar-based) and are formulated to support the growth of specific types of organisms."
 
 **Impact**:
-- ~9,916 media nodes (MediaDive, BacDive) now use domain-specific METPO category
+- 3,317 media nodes (MediaDive) now use domain-specific METPO category
 - More precise than generic biolink:ChemicalMixture
 - Formal ontological grounding from METPO ontology
+- Note: BacDive references these media nodes but does not create its own
 
 #### Generic Chemicals: ChemicalSubstance → ChemicalEntity (commit: 28d6a9c0)
 
@@ -182,7 +183,7 @@ RHEA_PYOBO_PREFIXES_MAPPER = {
 | Category Change | Count | Source |
 |-----------------|-------|--------|
 | EC: `biolink:Enzyme` → `MolecularActivity` | All EC nodes | Ontologies transform |
-| Media: `ChemicalEntity` → `METPO:1004005` | ~9,916 nodes | MediaDive, BacDive |
+| Media: `ChemicalEntity` → `METPO:1004005` | 3,317 nodes | MediaDive |
 | Generic: `ChemicalSubstance` → `ChemicalEntity` | All generic chemical nodes | Various transforms |
 
 ### New Nodes Added

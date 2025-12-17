@@ -292,6 +292,8 @@ EC_PREFIX = "EC:"
 EC_KEY = "ec"
 EC_PYOBO_PREFIX = "eccode"
 EC_OBO_PREFIX = "OBO:eccode_"
+EC_INTENZ_URL_PREFIX = "https://www.ebi.ac.uk/intenz/query?cmd=SearchEC&ec="
+EC_EXPASY_URL_PREFIX = "https://enzyme.expasy.org/EC/"
 UNIPROT_OBO_PREFIX = "OBO:uniprot_"
 CHEBI_CAS_PREFIX = "CAS:"
 ACTIVITY_KEY = "activity"
@@ -452,7 +454,7 @@ CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
 PROTEIN_TO_ORGANISM_EDGE = "biolink:derives_from"
 ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
 PROTEIN_TO_EC_EDGE = "biolink:enables"
-EC_CATEGORY = "biolink:Enzyme"
+# EC_CATEGORY is defined earlier as "biolink:MolecularActivity"
 PROTEIN_TO_RHEA_EDGE = "biolink:participates_in"
 RHEA_KEY = "rhea"
 CHEMICAL_CATEGORY = "biolink:ChemicalSubstance"
@@ -617,6 +619,7 @@ HGNC_NEW_PREFIX = "HGNC:"
 
 # Create a mapping for special cases
 SPECIAL_PREFIXES = {
+    EC_INTENZ_URL_PREFIX: EC_PREFIX,  # Convert IntEnz URLs to EC: CURIEs
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
     EC_OBO_PREFIX: EC_PREFIX,
     UNIPROT_OBO_PREFIX: UNIPROT_PREFIX,

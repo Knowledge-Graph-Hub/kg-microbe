@@ -190,7 +190,9 @@ MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
+NCBI_TO_CARBON_SUBSTRATE_EDGE = (
+    "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
+)
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
@@ -201,7 +203,7 @@ MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay]
 NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay]
 ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
-ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
+ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
 RHEA_TO_EC_EDGE = "biolink:enabled_by"
 RHEA_TO_GO_EDGE = "biolink:enables"

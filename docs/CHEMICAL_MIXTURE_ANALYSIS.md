@@ -14,9 +14,11 @@ MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"     # Used for medium type clas
 
 | Node Type | Count | Current Category | Example |
 |-----------|-------|------------------|---------|
-| Growth media | ~9,916 | biolink:ChemicalEntity | mediadive.medium:1 "NUTRIENT AGAR" |
-| Ingredients | ~572 | biolink:ChemicalEntity | mediadive.ingredient:4 "Distilled water" |
-| ChEBI chemicals | ~572 | biolink:ChemicalEntity | CHEBI:2509 "Agar" |
+| Growth media | 3,317 | biolink:ChemicalEntity | mediadive.medium:1 "NUTRIENT AGAR" |
+| Solutions | 5,403 | biolink:ChemicalEntity | mediadive.solution:1 "Main sol. 1" |
+| Ingredients | 732 | biolink:ChemicalEntity | mediadive.ingredient:4 "Distilled water" |
+| ChEBI chemicals | 392 | biolink:ChemicalEntity | CHEBI:2509 "Agar" |
+| Other chemicals | 74 | biolink:ChemicalEntity | PubChem, CAS-RN, foodon, etc. |
 | Medium types | 2 | biolink:ChemicalMixture | mediadive.medium-type:complex, :defined |
 
 ## Biolink Model Definitions
@@ -116,7 +118,11 @@ Some ingredients are themselves mixtures:
 From MediaDive transform:
 ```
 Total nodes: 32,468
-├── biolink:ChemicalEntity: 9,918 (includes ~9,916 media)
+├── biolink:ChemicalEntity: 9,918 breakdown:
+│   ├── Solutions: 5,403 (mediadive.solution:)
+│   ├── Growth media: 3,317 (mediadive.medium:)
+│   ├── Ingredients: 732 (mediadive.ingredient:)
+│   └── Other chemicals: 466 (CHEBI, PubChem, CAS-RN, etc.)
 ├── biolink:ChemicalMixture: 2 (medium types only)
 ├── biolink:OrganismTaxon: 22,367
 └── biolink:ChemicalRole: 180
@@ -125,8 +131,11 @@ Total nodes: 32,468
 **After implemented change**:
 ```
 Total nodes: 32,468
-├── biolink:ChemicalEntity: ~2 (pure chemicals only)
-├── METPO:1004005: ~9,916 (growth media)
+├── biolink:ChemicalEntity: 6,601 (solutions + ingredients + chemicals)
+│   ├── Solutions: 5,403 (mediadive.solution:)
+│   ├── Ingredients: 732 (mediadive.ingredient:)
+│   └── Other chemicals: 466 (CHEBI, PubChem, CAS-RN, etc.)
+├── METPO:1004005: 3,317 (growth media)
 ├── biolink:ChemicalMixture: 2 (medium types only)
 ├── biolink:OrganismTaxon: 22,367
 └── biolink:ChemicalRole: 180

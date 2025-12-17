@@ -230,59 +230,6 @@ HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
-# =============================================================================
-# METPO Predicates (Microbial Ecophysiological Trait and Phenotype Ontology)
-# Source: https://github.com/berkeleybop/metpo
-# =============================================================================
-# Chemical interaction predicates (METPO:2000001-2000020, positive)
-METPO_ORGANISM_INTERACTS_WITH_CHEMICAL = "METPO:2000001"  # organism interacts with chemical
-METPO_ASSIMILATES = "METPO:2000002"  # assimilates
-METPO_BUILDS_ACID_FROM = "METPO:2000003"  # builds acid from
-METPO_BUILDS_BASE_FROM = "METPO:2000004"  # builds base from
-METPO_BUILDS_GAS_FROM = "METPO:2000005"  # builds gas from
-METPO_USES_AS_CARBON_SOURCE = "METPO:2000006"  # uses as carbon source
-METPO_DEGRADES = "METPO:2000007"  # degrades
-METPO_USES_AS_ELECTRON_ACCEPTOR = "METPO:2000008"  # uses as electron acceptor
-METPO_USES_AS_ELECTRON_DONOR = "METPO:2000009"  # uses as electron donor
-METPO_USES_AS_ENERGY_SOURCE = "METPO:2000010"  # uses as energy source
-METPO_FERMENTS = "METPO:2000011"  # ferments
-METPO_USES_FOR_GROWTH = "METPO:2000012"  # uses for growth
-METPO_HYDROLYZES = "METPO:2000013"  # hydrolyzes
-METPO_USES_AS_NITROGEN_SOURCE = "METPO:2000014"  # uses as nitrogen source
-METPO_USES_IN_OTHER_WAY = "METPO:2000015"  # uses in other way
-METPO_OXIDIZES = "METPO:2000016"  # oxidizes
-METPO_REDUCES = "METPO:2000017"  # reduces
-METPO_REQUIRES_FOR_GROWTH = "METPO:2000018"  # requires for growth
-METPO_USES_FOR_RESPIRATION = "METPO:2000019"  # uses for respiration
-METPO_USES_AS_SULFUR_SOURCE = "METPO:2000020"  # uses as sulfur source
-
-# Chemical interaction predicates (METPO:2000021-2000051, negative/conditional)
-METPO_DOES_NOT_ASSIMILATE = "METPO:2000027"  # does not assimilate
-METPO_DOES_NOT_BUILD_ACID_FROM = "METPO:2000028"  # does not build acid from
-METPO_DOES_NOT_USE_AS_CARBON_SOURCE = "METPO:2000031"  # does not use as carbon source
-METPO_DOES_NOT_FERMENT = "METPO:2000037"  # does not ferment
-METPO_DOES_NOT_USE_FOR_GROWTH = "METPO:2000038"  # does not use for growth
-METPO_DOES_NOT_HYDROLYZE = "METPO:2000039"  # does not hydrolyze
-METPO_DOES_NOT_REDUCE = "METPO:2000044"  # does not reduce
-METPO_DOES_NOT_USE_FOR_RESPIRATION = "METPO:2000046"  # does not use for respiration
-
-# Capability/phenotype predicates
-METPO_HAS_QUALITY = "METPO:2000101"  # has quality
-METPO_HAS_PHENOTYPE = "METPO:2000102"  # has phenotype
-METPO_CAPABLE_OF = "METPO:2000103"  # capable of
-
-# Production predicates
-METPO_PRODUCES = "METPO:2000202"  # produces
-METPO_DOES_NOT_PRODUCE = "METPO:2000222"  # does not produce
-
-# Enzyme activity predicates
-METPO_SHOWS_ACTIVITY_OF = "METPO:2000302"  # shows activity of (positive enzyme activity)
-METPO_DOES_NOT_SHOW_ACTIVITY_OF = "METPO:2000303"  # does not show activity of (negative)
-
-# Growth medium predicates
-METPO_GROWS_IN = "METPO:2000517"  # grows in (organism -> growth medium)
-METPO_DOES_NOT_GROW_IN = "METPO:2000518"  # does not grow in
-
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )

@@ -1,0 +1,243 @@
+id,category,name,description,xref,provided_by,synonym,deprecated,iri,object,predicate,relation,same_as,subject,subsets,hop
+EC:3.5.1.5,biolink:Enzyme|biolink:PhenotypicQuality,urease,,,Graph,,,http://purl.obolibrary.org/obo/EC_3.5.1.5,,,,,,,1.0
+CHEBI:16199,biolink:ChemicalEntity|biolink:ChemicalSubstance,Urea,A carbonyl group with two C-bound amine groups. The commercially available fertilizer has an analysis of 46-0-0 (N-P2O5-K2O).,CAS-RN:57-13-6|DrugBank:DB03904|Drug_Central:4264|ECMDB:ECMDB04172|Gmelin:1378|HMDB:HMDB0000294|KEGG:C00086|KEGG:D00023|KNApSAcK:C00007314|MetaCyc:UREA|PDBeChem:URE|PMID:18037357|PMID:22770225|PPDB:1728|Reaxys:635724|UM-BBD_compID:c0165|Wikipedia:Urea|YMDB:YMDB00003,Graph,1728|Carbamide|E927b|H2NC(O)NH2|Harnstoff|Karbamid|UREA|Urea|carbamide|carbonyldiamide|ur|urea|uree,,http://purl.obolibrary.org/obo/CHEBI_16199|http://purl.obolibrary.org/obo/CHEBI_16199,,,,,,3_STAR,1.0
+CHEBI:17634,biolink:ChemicalEntity|biolink:ChemicalSubstance,(-)-D-glucose,A glucose with D-configuration.,CAS-RN:50-99-7,Graph,D(+)-glucose|D-(+)-glucose|D-gluco-hexose|D-glucose|Traubenzucker|dextrose|grape sugar,,http://purl.obolibrary.org/obo/CHEBI_17634,,,,,,3_STAR,1.0
+CHEBI:17992,biolink:ChemicalEntity|biolink:ChemicalSubstance,sucrose,A glycosyl glycoside formed by glucose and fructose units joined by an acetal oxygen bridge from hemiacetal of glucose to the hemiketal of the fructose.,CAS-RN:57-50-1|DrugBank:DB02772|Drug_Central:4610|Gmelin:97695|HMDB:HMDB0000258|KEGG:C00089|KEGG:D00025|KEGG:D06533|KEGG:G00370|KNApSAcK:C00001151|MetaCyc:SUCROSE|PDBeChem:SUC|PMID:11021636|PMID:11093712|PMID:11111003|PMID:12065720|PMID:12706980|PMID:13508893|PMID:15291457|PMID:15660210|PMID:15792978|PMID:15845855|PMID:16228482|PMID:16304615|PMID:16313996|PMID:16525719|PMID:16660545|PMID:16663947|PMID:16665852|PMID:17233733|PMID:17439666|PMID:17597061|PMID:18625236|PMID:19199566|PMID:19726178|PMID:21703290|PMID:21972845|PMID:22085755|PMID:22311778|PMID:22404833|PMID:22751876|Reaxys:1435311|Reaxys:90825|Wikipedia:Sucrose,Graph,1-alpha-D-Glucopyranosyl-2-beta-D-fructofuranoside|Cane sugar|SUCROSE|Saccharose|Sacharose|Sucrose|White sugar|beta-D-Fruf-(2<->1)-alpha-D-Glcp|beta-D-fructofuranosyl alpha-D-glucopyranoside|sacarosa|sucrose|table sugar,,http://purl.obolibrary.org/obo/CHEBI_17992,,,,,,3_STAR,1.0
+CHEBI:17306,biolink:ChemicalEntity|biolink:ChemicalSubstance,m,A glycosylglucose consisting of two D-glucopyranose units connected by an alpha-(1->4)-linkage.,CAS-RN:69-79-4|DrugBank:DB03323|KEGG:C00208|KEGG:D00044|KEGG:G00275|KNApSAcK:C00001140|PMID:16332759|PMID:17723085|PMID:22094343|PMID:22185612|PMID:22246222|PMID:22252265|PMID:22411612|PMID:22424089|PMID:22451670|PMID:22469630|PMID:22529943|PMID:22573161|PMID:22669197|Reaxys:1292747|Wikipedia:Maltose,Graph,1-alpha-D-Glucopyranosyl-4-alpha-D-glucopyranose|4-(alpha-D-glucopyranosido)-alpha-glucopyranose|4-(alpha-D-glucosido)-D-glucose|4-O-alpha-D-glucopyranosyl-D-glucopyranose|4-O-alpha-D-glucopyranosyl-D-glucose|Cextromaltose|D-(+)-maltose|D-maltose|Malt sugar|Maltose|Malzzucker|alpha-D-Glcp-(1->4)-D-Glcp|alpha-D-Glucopyranosyl-(1->4)-D-glucopyranose|alpha-D-glucopyranosyl-(1->4)-D-glucopyranose|alpha-D-glucopyranosyl-(1->4)-D-glucose|alpha-malt sugar|maltobiose,,http://purl.obolibrary.org/obo/CHEBI_17306,,,,,,3_STAR,1.0
+CHEBI:16024,biolink:ChemicalEntity|biolink:ChemicalSubstance,D-mannose,A mannose with D-configuration.,,Graph,D-manno-hexose|D-mannose,,http://purl.obolibrary.org/obo/CHEBI_16024,,,,,,3_STAR,1.0
+EC:1.11.1.6,biolink:Enzyme|biolink:PhenotypicQuality,catalase,,,Graph,,,http://purl.obolibrary.org/obo/EC_1.11.1.6,,,,,,,1.0
+EC:3.5.3.6,biolink:Enzyme|biolink:PhenotypicQuality,arginine dihydrolase,,,Graph,arginine dihydrolase,,http://purl.obolibrary.org/obo/EC_3.5.3.6,,,,,,,1.0
+EC:3.4.11.1,biolink:Enzyme|biolink:PhenotypicQuality,leucine arylamidase,,,Graph,cytosol aminopeptidase|leucine aminopeptidase|peptidase S,,http://purl.obolibrary.org/obo/EC_3.4.11.1,,,,,,,1.0
+CHEBI:16988,biolink:ChemicalEntity|biolink:ChemicalSubstance,(-)-D-ribose,A ribose in which the chiral carbon atom furthest away from the aldehyde group (C4') has the same configuration as in D-glyceraldehyde.,DrugBank:DB01936|PMID:24404872|PMID:24752650,Graph,D-Rib|D-ribo-pentose|D-ribose,,http://purl.obolibrary.org/obo/CHEBI_16988,,,,,,3_STAR,1.0
+EC:3.5.1.B15,biolink:PhenotypicQuality,pyrazinamidase,,,Graph,,,,,,,,,,1.0
+BSL:1,biolink:Attribute,biosafety level 1,,,Graph,,,,,,,,,,1.0
+temperature:mesophilic,biolink:PhenotypicQuality,mesophilic,,,Graph,,,,,,,,,,1.0
+isolation_source:host,biolink:EnvironmentalFeature,Host,,,Graph,,,,,,,,,,1.0
+isolation_source:engineered,biolink:EnvironmentalFeature,Engineered,,,Graph,,,,,,,,,,1.0
+isolation_source:microbial,biolink:EnvironmentalFeature,Microbial,,,Graph,,,,,,,,,,1.0
+oxygen:aerobe,biolink:ActivityAndBehavior|biolink:PhenotypicQuality,aerobe,,,Graph,,,,,,,,,,1.0
+isolation_source:environmental,biolink:EnvironmentalFeature,Environmental,,,Graph,,,,,,,,,,1.0
+isolation_source:aquatic,biolink:EnvironmentalFeature,Aquatic,,,Graph,,,,,,,,,,1.0
+isolation_source:marine,biolink:EnvironmentalFeature,Marine,,,Graph,,,,,,,,,,1.0
+isolation_source:terrestrial,biolink:EnvironmentalFeature,Terrestrial,,,Graph,,,,,,,,,,1.0
+CHEBI:29016,biolink:ChemicalEntity|biolink:ChemicalSubstance,a,An alpha-amino acid that is glycine in which the alpha-is substituted by a 3-guanidinopropyl group.,CAS-RN:7200-25-1|KEGG:C02385|PMID:10848923|Reaxys:1725411|Wikipedia:L-Arginine,Graph,2-Amino-5-guanidinovaleric acid|2-amino-5-(carbamimidamido)pentanoic acid|2-amino-5-guanidinopentanoic acid|Arginin|Arginine|Harg|arginine,,http://purl.obolibrary.org/obo/CHEBI_29016,,,,,,3_STAR,1.0
+CHEBI:24265,biolink:ChemicalEntity|biolink:ChemicalSubstance,gluconate,,,Graph,gluconate,,http://purl.obolibrary.org/obo/CHEBI_24265,,,,,,3_STAR,1.0
+CHEBI:17632,biolink:ChemicalEntity|biolink:ChemicalSubstance,n,A nitrogen oxoanion formed by loss of a proton from nitric acid. Principal species present at pH 7.3.,Beilstein:3587575|CAS-RN:14797-55-8|Gmelin:1574|MetaCyc:NITRATE|PDBeChem:NO3|Wikipedia:Nitrate,Graph,NITRATE ION|NO3|NO3(-)|[NO3](-)|nitrate|nitrate(1-)|trioxidonitrate(1-)|trioxonitrate(1-)|trioxonitrate(V),,http://purl.obolibrary.org/obo/CHEBI_17632,,,,,,3_STAR,1.0
+assay:API_20NE_NO3,biolink:PhenotypicQuality,API 20NE - NO3,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_GLU_ Assim,biolink:PhenotypicQuality,API 20NE - GLU_ Assim,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_CIT,biolink:PhenotypicQuality,API 20NE - CIT,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_ADH Arg,biolink:PhenotypicQuality,API 20NE - ADH Arg,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_GNT,biolink:PhenotypicQuality,API 20NE - GNT,,,Graph,,,,,,,,,,1.0
+CHEBI:29985,biolink:ChemicalEntity|biolink:ChemicalSubstance,L-glutamate,"An alpha-amino-acid anion that is the conjugate base of L-glutamic acid, having anionic carboxy groups and a cationic amino group",CAS-RN:11070-68-1|Gmelin:936654|MetaCyc:GLT,Graph,"(2S)-2-ammoniopentanedioate|L-glutamate|L-glutamate(1-)|L-glutamic acid monoanion|L-glutamic acid, ion(1-)|hydrogen L-glutamate",,http://purl.obolibrary.org/obo/CHEBI_29985,,,,,,3_STAR,1.0
+assay:API_coryne_SAC,biolink:PhenotypicQuality,API coryne - SAC,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_MAL,biolink:PhenotypicQuality,API coryne - MAL,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_PYZ,biolink:PhenotypicQuality,API coryne - PYZ,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_GLU,biolink:PhenotypicQuality,API coryne - GLU,,,Graph,,,,,,,,,,1.0
+medium:535,biolink:ChemicalEntity,TRYPTICASE SOY BROTH AGAR DSMZ Medium 535,,,Graph,,,,,,,,,,1.0
+medium:693,biolink:ChemicalEntity,COLUMBIA BLOOD MEDIUM DSMZ Medium 693,,,Graph,,,,,,,,,,1.0
+isolation_source:soil,biolink:EnvironmentalFeature,Soil,,,Graph,,,,,,,,,,1.0
+oxygen:facultative_anaerobe,biolink:ActivityAndBehavior|biolink:PhenotypicQuality,facultative anaerobe,,,Graph,,,,,,,,,,1.0
+assay:API_zym_Leucine arylamidase,biolink:PhenotypicQuality,API zym - Leucine arylamidase,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_RIB,biolink:PhenotypicQuality,API coryne - RIB,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_MNE,biolink:PhenotypicQuality,API 20NE - MNE,,,Graph,,,,,,,,,,1.0
+isolation_source:waste,biolink:EnvironmentalFeature,Waste,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_CAT,biolink:PhenotypicQuality,API coryne - CAT,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_MAL,biolink:PhenotypicQuality,API 20NE - MAL,,,Graph,,,,,,,,,,1.0
+isolation_source:bacteria,biolink:EnvironmentalFeature,Bacteria,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_URE,biolink:PhenotypicQuality,API coryne - URE,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_NIT,biolink:PhenotypicQuality,API coryne - NIT,,,Graph,,,,,,,,,,1.0
+isolation_source:wastewater,biolink:EnvironmentalFeature,Wastewater,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_URE,biolink:PhenotypicQuality,API 20NE - URE,,,Graph,,,,,,,,,,1.0
+medium:53,biolink:ChemicalEntity,CORYNEBACTERIUM AGAR DSMZ Medium 53,,,Graph,,,,,,,,,,1.0
+strain:bacdive_10825,biolink:OrganismTaxon,bacdive_10825 of NCBITaxon:648753,,,Graph,,,,,,,,,,2.0
+strain:bacdive_166288,biolink:OrganismTaxon,bacdive_166288 of NCBITaxon:2219059,,,Graph,,,,,,,,,,2.0
+strain:bacdive_166383,biolink:OrganismTaxon,bacdive_166383 of NCBITaxon:2495496,,,Graph,,,,,,,,,,2.0
+CHEBI:33709,biolink:ChemicalEntity|biolink:ChemicalSubstance,amino acid,A carboxylic acid containing one or more amino groups.,Wikipedia:Amino_acid,Graph,Aminocarbonsaeure|Aminokarbonsaeure|Aminosaeure|amino acids,,http://purl.obolibrary.org/obo/CHEBI_33709,,,,,,3_STAR,1.0
+medium:535a,biolink:ChemicalEntity,TRYPTICASE SOY BROTH AGAR+BLOOD DSMZ Medium 535a,,,Graph,,,,,,,,,,1.0
+strain:IMET-7162,biolink:OrganismTaxon,IMET 7162,,,Graph,,,,,,,,,,1.0
+strain:bacdive_2614,biolink:OrganismTaxon,bacdive_2614 as A25K of NCBITaxon:1121325,,,Graph,,,,,,,,,,2.0
+NCBITaxon:394090,biolink:OrganismTaxon,Cystobacter armeniaca,,GC_ID:11|PMID:17473228,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_394090,,,,,,,2.0
+NCBITaxon:2051041,biolink:OrganismTaxon,Ravibacter arvi,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_2051041,,,,,,,2.0
+strain:IMET-7265,biolink:OrganismTaxon,IMET 7265,,,Graph,,,,,,,,,,1.0
+NCBITaxon:2749,biolink:OrganismTaxon,Carnobacterium gallinarum,,GC_ID:11,Graph,Carnibacterium gallinarum,,http://purl.obolibrary.org/obo/NCBITaxon_2749,,,,,,,2.0
+strain:bacdive_8164,biolink:OrganismTaxon,bacdive_8164 of NCBITaxon:1349775,,,Graph,,,,,,,,,,2.0
+NCBITaxon:1495,biolink:OrganismTaxon,Clostridium cylindrosporum,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1495,,,,,,,2.0
+NCBITaxon:1121457,biolink:OrganismTaxon,Halodesulfovibrio marinisediminis DSM 17456,,GC_ID:11,Graph,Desulfovibrio marinisediminis C/L2|Desulfovibrio marinisediminis DSM 17456|Desulfovibrio marinisediminis JCM 14577|Desulfovibrio sp. C/L2|Desulfovibrio sp. JCM 14577|Halodesulfovibrio marinisediminis JCM 14577,,http://purl.obolibrary.org/obo/NCBITaxon_1121457,,,,,,,2.0
+NCBITaxon:1718,biolink:OrganismTaxon,Corynebacterium glutamicum,,GC_ID:11|PMID:10220171|PMID:11988527|PMID:1713055,Graph,Brevibacterium chang-fua|Brevibacterium divaricatum|Brevibacterium glutamigenes|Brevibacterium lactofermentum|Brevibacterium saccharolyticum|Brevibacterium seonmiso|Brevibacterium taipei|Brevibacterium thiogenitalis|Corynebacterium crenatum|Corynebacterium lactofermentum|Corynebacterium lilium|Micrococcus glutamicus|Micrococcus maripuniceus,,http://purl.obolibrary.org/obo/NCBITaxon_1718,,,,,,,0.0
+strain:DSM-20301,biolink:OrganismTaxon,DSM 20301,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13868,biolink:OrganismTaxon,ATCC 13868,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9694,biolink:OrganismTaxon,NCIB 9694,,,Graph,,,,,,,,,,1.0
+strain:bacdive_11914,biolink:OrganismTaxon,bacdive_11914 as 4B of NCBITaxon:1123517,,,Graph,,,,,,,,,,2.0
+strain:bacdive_158604,biolink:OrganismTaxon,bacdive_158604 as 4M3-2 of NCBITaxon:1701758,,,Graph,,,,,,,,,,2.0
+strain:bacdive_133843,biolink:OrganismTaxon,bacdive_133843 as HL-12 of NCBITaxon:764842,,,Graph,,,,,,,,,,2.0
+strain:DSM-20412,biolink:OrganismTaxon,DSM 20412,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13655,biolink:OrganismTaxon,ATCC 13655,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9662,biolink:OrganismTaxon,NCIB 9662,,,Graph,,,,,,,,,,1.0
+strain:bacdive_14741,biolink:OrganismTaxon,bacdive_14741 as 60B of NCBITaxon:1123313,,,Graph,,,,,,,,,,2.0
+NCBITaxon:1591105,biolink:OrganismTaxon,Devosia humi,,GC_ID:11|PMID:26514816,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1591105,,,,,,,2.0
+strain:bacdive_132931,biolink:OrganismTaxon,bacdive_132931 as OP3H of NCBITaxon:1481663,,,Graph,,,,,,,,,,2.0
+strain:DSM-102070,biolink:OrganismTaxon,DSM 102070,,,Graph,,,,,,,,,,1.0
+strain:bacdive_14793,biolink:OrganismTaxon,bacdive_14793 as MFe28 of NCBITaxon:764290,,,Graph,,,,,,,,,,2.0
+NCBITaxon:1006155,biolink:OrganismTaxon,Listeria weihenstephanensis,,GC_ID:11|PMID:28919887,Graph,Paenilisteria weihenstephanensis,,http://purl.obolibrary.org/obo/NCBITaxon_1006155,,,,,,,2.0
+strain:bacdive_166181,biolink:OrganismTaxon,bacdive_166181 as HLT2-9 of NCBITaxon:1168729,,,Graph,,,,,,,,,,2.0
+strain:bacdive_131290,biolink:OrganismTaxon,bacdive_131290 as SS12 of NCBITaxon:1168039,,,Graph,,,,,,,,,,2.0
+strain:DSM-5403,biolink:OrganismTaxon,DSM 5403,,,Graph,,,,,,,,,,1.0
+strain:ATCC-21677,biolink:OrganismTaxon,ATCC 21677,,,Graph,,,,,,,,,,1.0
+NCBITaxon:481719,biolink:OrganismTaxon,Lentilactobacillus sunkii,,GC_ID:11|PMID:19329601,Graph,Lactobacillus sunkii,,http://purl.obolibrary.org/obo/NCBITaxon_481719,,,,,,,2.0
+strain:bacdive_133435,biolink:OrganismTaxon,bacdive_133435 as CL-UU02 of NCBITaxon:374515,,,Graph,,,,,,,,,,2.0
+strain:DSM-20137,biolink:OrganismTaxon,DSM 20137,,,Graph,,,,,,,,,,1.0
+strain:ATCC-15990,biolink:OrganismTaxon,ATCC 15990,,,Graph,,,,,,,,,,1.0
+strain:NCIB-10337,biolink:OrganismTaxon,NCIB 10337,,,Graph,,,,,,,,,,1.0
+strain:NRRL-B-2243,biolink:OrganismTaxon,NRRL B-2243,,,Graph,,,,,,,,,,1.0
+strain:JCM-1321,biolink:OrganismTaxon,JCM 1321,,,Graph,,,,,,,,,,1.0
+strain:BCRC-11669,biolink:OrganismTaxon,BCRC 11669,,,Graph,,,,,,,,,,1.0
+strain:CGMCC-1.1888,biolink:OrganismTaxon,CGMCC 1.1888,,,Graph,,,,,,,,,,1.0
+strain:IAM-12434,biolink:OrganismTaxon,IAM 12434,,,Graph,,,,,,,,,,1.0
+strain:IMET-11081,biolink:OrganismTaxon,IMET 11081,,,Graph,,,,,,,,,,1.0
+strain:KCTC-1448,biolink:OrganismTaxon,KCTC 1448,,,Graph,,,,,,,,,,1.0
+strain:LMG-3654,biolink:OrganismTaxon,LMG 3654,,,Graph,,,,,,,,,,1.0
+strain:NCIMB-10337,biolink:OrganismTaxon,NCIMB 10337,,,Graph,,,,,,,,,,1.0
+NCBITaxon:225422,biolink:OrganismTaxon,Sulfitobacter indolifex,,GC_ID:11|PMID:15280288|PMID:28693681,Graph,Oceanibulbus indolifex,,http://purl.obolibrary.org/obo/NCBITaxon_225422,,,,,,,2.0
+NCBITaxon:160689,biolink:OrganismTaxon,Nonomuraea roseoviolacea subsp. carminata,,GC_ID:11|PMID:11411710|PMID:4776400,Graph,Actinomadura carminata,,http://purl.obolibrary.org/obo/NCBITaxon_160689,,,,,,,2.0
+strain:bacdive_17838,biolink:OrganismTaxon,bacdive_17838 as RODXS3 of NCBITaxon:431489,,,Graph,,,,,,,,,,2.0
+strain:bacdive_141075,biolink:OrganismTaxon,bacdive_141075 as G16-7 of NCBITaxon:1767027,,,Graph,,,,,,,,,,2.0
+strain:DSM-20297,biolink:OrganismTaxon,DSM 20297,,,Graph,,,,,,,,,,1.0
+strain:ATCC-14020,biolink:OrganismTaxon,ATCC 14020,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9379,biolink:OrganismTaxon,NCIB 9379,,,Graph,,,,,,,,,,1.0
+strain:JCM-1307,biolink:OrganismTaxon,JCM 1307,,,Graph,,,,,,,,,,1.0
+strain:BCRC-11631,biolink:OrganismTaxon,BCRC 11631,,,Graph,,,,,,,,,,1.0
+strain:CGMCC-1.1884,biolink:OrganismTaxon,CGMCC 1.1884,,,Graph,,,,,,,,,,1.0
+strain:IAM-12432,biolink:OrganismTaxon,IAM 12432,,,Graph,,,,,,,,,,1.0
+strain:IMET-11073,biolink:OrganismTaxon,IMET 11073,,,Graph,,,,,,,,,,1.0
+strain:KCTC-3253,biolink:OrganismTaxon,KCTC 3253,,,Graph,,,,,,,,,,1.0
+strain:NCCB-71034,biolink:OrganismTaxon,NCCB 71034,,,Graph,,,,,,,,,,1.0
+strain:NCIMB-9379,biolink:OrganismTaxon,NCIMB 9379,,,Graph,,,,,,,,,,1.0
+strain:NRRL-B-2312,biolink:OrganismTaxon,NRRL B-2312,,,Graph,,,,,,,,,,1.0
+NCBITaxon:1077946,biolink:OrganismTaxon,Streptomyces hundungensis,,GC_ID:11|PMID:23340665,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1077946,,,,,,,2.0
+strain:JCM-18229,biolink:OrganismTaxon,JCM 18229,,,Graph,,,,,,,,,,1.0
+strain:DSM-46307,biolink:OrganismTaxon,DSM 46307,,,Graph,,,,,,,,,,1.0
+strain:IMET-11022,biolink:OrganismTaxon,IMET 11022,,,Graph,,,,,,,,,,1.0
+strain:NCMB-2026,biolink:OrganismTaxon,NCMB 2026,,,Graph,,,,,,,,,,1.0
+strain:SN-130,biolink:OrganismTaxon,SN 130,,,Graph,,,,,,,,,,1.0
+NCBITaxon:2306636,biolink:OrganismTaxon,Cellulomonas telluris,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_2306636,,,,,,,2.0
+NCBITaxon:1123299,biolink:OrganismTaxon,Streptococcus castoreus DSM 17536,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1123299,,,,,,,2.0
+NCBITaxon:525897,biolink:OrganismTaxon,Desulfomicrobium baculatum DSM 4028,,GC_ID:11,Graph,Desulfomicrobium baculatum str. DSM 4028|Desulfomicrobium baculatum strain DSM 4028,,http://purl.obolibrary.org/obo/NCBITaxon_525897,,,,,,,2.0
+strain:DSM-1412,biolink:OrganismTaxon,DSM 1412,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13869,biolink:OrganismTaxon,ATCC 13869,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9567,biolink:OrganismTaxon,NCIB 9567,,,Graph,,,,,,,,,,1.0
+NCBITaxon:68252,biolink:OrganismTaxon,Streptomyces parvisporogenes,,GC_ID:11,Graph,Streptoverticillium parvisporogenes|Streptoverticillium parvisporogenum,,http://purl.obolibrary.org/obo/NCBITaxon_68252,,,,,,,2.0
+NCBITaxon:47479,biolink:OrganismTaxon,Streptosporangium album,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_47479,,,,,,,2.0
+NCBITaxon:1130726,biolink:OrganismTaxon,Defluviimonas aestuarii,,GC_ID:11|PMID:23334880,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1130726,,,,,,,2.0
+strain:DSM-10150,biolink:OrganismTaxon,DSM 10150,,,Graph,,,,,,,,,,1.0
+strain:ATCC-39021,biolink:OrganismTaxon,ATCC 39021,,,Graph,,,,,,,,,,1.0
+strain:DSM-20163,biolink:OrganismTaxon,DSM 20163,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13745,biolink:OrganismTaxon,ATCC 13745,,,Graph,,,,,,,,,,1.0
+strain:CIP-102670,biolink:OrganismTaxon,CIP 102670,,,Graph,,,,,,,,,,1.0
+strain:DSM-20156,biolink:OrganismTaxon,DSM 20156,,,Graph,,,,,,,,,,1.0
+strain:ATCC-15354,biolink:OrganismTaxon,ATCC 15354,,,Graph,,,,,,,,,,1.0
+strain:NCIB-10335,biolink:OrganismTaxon,NCIB 10335,,,Graph,,,,,,,,,,1.0
+NCBITaxon:69666,biolink:OrganismTaxon,Caulobacter mirabilis,,GC_ID:11|PMID:18676485,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_69666,,,,,,,2.0
+NCBITaxon:761193,biolink:OrganismTaxon,Runella slithyformis DSM 19594,,GC_ID:11,Graph,Runella slithyformis str. DSM 19594|Runella slithyformis strain DSM 19594,,http://purl.obolibrary.org/obo/NCBITaxon_761193,,,,,,,2.0
+NCBITaxon:393006,biolink:OrganismTaxon,Tamlana crocina,,GC_ID:11|PMID:17392203,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_393006,,,,,,,2.0
+strain:DSM-44475,biolink:OrganismTaxon,DSM 44475,,,Graph,,,,,,,,,,1.0
+strain:bacdive_3080,biolink:OrganismTaxon,bacdive_3080 as 9.6 of NCBITaxon:649754,,,Graph,,,,,,,,,,2.0
+strain:bacdive_140861,biolink:OrganismTaxon,bacdive_140861 as SMJ19 of NCBITaxon:1792290,,,Graph,,,,,,,,,,2.0
+strain:bacdive_14301,biolink:OrganismTaxon,bacdive_14301 as D-427 of NCBITaxon:307497,,,Graph,,,,,,,,,,2.0
+strain:DSM-20598,biolink:OrganismTaxon,DSM 20598,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13825,biolink:OrganismTaxon,ATCC 13825,,,Graph,,,,,,,,,,1.0
+strain:CCUG-23601,biolink:OrganismTaxon,CCUG 23601,,,Graph,,,,,,,,,,1.0
+NCBITaxon:196627,biolink:OrganismTaxon,Corynebacterium glutamicum ATCC 13032,,GC_ID:11|PMID:12743753|PMID:12948626,Graph,Corynebacterium glutamicum str. ATCC 13032|Corynebacterium glutamicum strain ATCC 13032,,http://purl.obolibrary.org/obo/NCBITaxon_196627,,,,,,,1.0
+NCBITaxon:580033,biolink:OrganismTaxon,Campylobacter volucris LMG 24379,,GC_ID:11,Graph,Campylobacter sp. LMG 24379|Campylobacter volucris str. LMG 24379|Campylobacter volucris strain LMG 24379,,http://purl.obolibrary.org/obo/NCBITaxon_580033,,,,,,,2.0
+strain:bacdive_5705,biolink:OrganismTaxon,bacdive_5705 as ECP37 of NCBITaxon:493375,,,Graph,,,,,,,,,,2.0
+NCBITaxon:229204,biolink:OrganismTaxon,Flavobacterium frigoris,,GC_ID:11|PMID:14742463,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_229204,,,,,,,2.0
+strain:bacdive_12522,biolink:OrganismTaxon,bacdive_12522 as MT01 of NCBITaxon:1121129,,,Graph,,,,,,,,,,2.0
+strain:IMET-07015,biolink:OrganismTaxon,IMET 07015,,,Graph,,,,,,,,,,1.0
+strain:IMET-7015,biolink:OrganismTaxon,IMET 7015,,,Graph,,,,,,,,,,1.0
+NCBITaxon:2164084,biolink:OrganismTaxon,Streptomyces manganisoli,,GC_ID:11|PMID:29648527,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_2164084,,,,,,,2.0
+NCBITaxon:374858,biolink:OrganismTaxon,Zoogloea caeni,,GC_ID:11|PMID:19244434,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_374858,,,,,,,2.0
+strain:bacdive_13916,biolink:OrganismTaxon,bacdive_13916 as TL1 of NCBITaxon:82788,,,Graph,,,,,,,,,,2.0
+strain:bacdive_10176,biolink:OrganismTaxon,bacdive_10176 as SHK-1 of NCBITaxon:215803,,,Graph,,,,,,,,,,2.0
+NCBITaxon:56426,biolink:OrganismTaxon,Bartonella clarridgeiae,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_56426,,,,,,,2.0
+NCBITaxon:1550566,biolink:OrganismTaxon,Methanoculleus sediminis,,GC_ID:11|PMID:25855623,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1550566,,,,,,,2.0
+NCBITaxon:1476466,biolink:OrganismTaxon,Croceibacterium xixiisoli,,GC_ID:11|PMID:28879849,Graph,Altererythrobacter xixiisoli,,http://purl.obolibrary.org/obo/NCBITaxon_1476466,,,,,,,2.0
+strain:DSM-102071,biolink:OrganismTaxon,DSM 102071,,,Graph,,,,,,,,,,1.0
+NCBITaxon:285563,biolink:OrganismTaxon,Streptomyces coeruleoprunus,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_285563,,,,,,,2.0
+NCBITaxon:1129133,biolink:OrganismTaxon,Sphingopyxis italica,,GC_ID:11|PMID:23264504,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1129133,,,,,,,2.0
+NCBITaxon:110937,biolink:OrganismTaxon,Rathayibacter festucae,,GC_ID:11|PMID:12508848,Graph,Rathayibacter festuci,,http://purl.obolibrary.org/obo/NCBITaxon_110937,,,,,,,2.0
+NCBITaxon:1526571,biolink:OrganismTaxon,Lacimicrobium alkaliphilum,,GC_ID:11|PMID:26537772,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1526571,,,,,,,2.0
+NCBITaxon:198347,biolink:OrganismTaxon,Clostridium algoriphilum,,GC_ID:11|PMID:15844014,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_198347,,,,,,,2.0
+NCBITaxon:490093,biolink:OrganismTaxon,Haloferula rosea,,GC_ID:11|PMID:18984682,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_490093,,,,,,,2.0
+strain:bacdive_1768,biolink:OrganismTaxon,bacdive_1768 as BLAPIII-AGV of NCBITaxon:686666,,,Graph,,,,,,,,,,2.0
+strain:bacdive_14263,biolink:OrganismTaxon,bacdive_14263 as C16y of NCBITaxon:658225,,,Graph,,,,,,,,,,2.0
+NCBITaxon:1079988,biolink:OrganismTaxon,Corynebacterium glutamicum ATCC 14067,,GC_ID:11,Graph,Brevibacterium flavum ATCC 14067|Corynebacterium glutamicum str. ATCC 14067|Corynebacterium glutamicum strain ATCC 14067,,http://purl.obolibrary.org/obo/NCBITaxon_1079988,,,,,,,1.0
+strain:CCUG-27703,biolink:OrganismTaxon,CCUG 27703,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13059,biolink:OrganismTaxon,ATCC 13059,,,Graph,,,,,,,,,,1.0
+strain:CCTM-La-3704,biolink:OrganismTaxon,CCTM La 3704,,,Graph,,,,,,,,,,1.0
+NCBITaxon:945550,biolink:OrganismTaxon,Vibrio sinaloensis DSM 21326,,GC_ID:11,Graph,Vibrio sinaloensis CAIM 648|Vibrio sinaloensis str. DSM 21326|Vibrio sinaloensis strain DSM 21326,,http://purl.obolibrary.org/obo/NCBITaxon_945550,,,,,,,2.0
+strain:bacdive_134347,biolink:OrganismTaxon,bacdive_134347 as SY1 of NCBITaxon:459529,,,Graph,,,,,,,,,,2.0
+strain:bacdive_24170,biolink:OrganismTaxon,bacdive_24170 as SMA-21 of NCBITaxon:1036677,,,Graph,,,,,,,,,,2.0
+strain:DSM-5426,biolink:OrganismTaxon,DSM 5426,,,Graph,,,,,,,,,,1.0
+strain:ATCC-21668,biolink:OrganismTaxon,ATCC 21668,,,Graph,,,,,,,,,,1.0
+strain:KY-10407,biolink:OrganismTaxon,KY 10407,,,Graph,,,,,,,,,,1.0
+NCBITaxon:563170,biolink:OrganismTaxon,Ferruginibacter alkalilentus,,GC_ID:11|PMID:19620358|PMID:25957051,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_563170,,,,,,,2.0
+NCBITaxon:157227,biolink:OrganismTaxon,Jeotgalicoccus halotolerans,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_157227,,,,,,,2.0
+strain:CIP-78.11,biolink:OrganismTaxon,CIP 78.11,,,Graph,,,,,,,,,,1.0
+strain:bacdive_133744,biolink:OrganismTaxon,bacdive_133744 as K8617-1--1b of NCBITaxon:1017181,,,Graph,,,,,,,,,,2.0
+strain:bacdive_12645,biolink:OrganismTaxon,bacdive_12645 of NCBITaxon:1160719,,,Graph,,,,,,,,,,2.0
+strain:bacdive_1585,biolink:OrganismTaxon,bacdive_1585 as EN-2 of NCBITaxon:272559,,,Graph,,,,,,,,,,2.0
+NCBITaxon:857227,biolink:OrganismTaxon,Halopseudomonas gallaeciensis,,GC_ID:11,Graph,Pseudomonas gallaeciensis,,http://purl.obolibrary.org/obo/NCBITaxon_857227,,,,,,,2.0
+strain:bacdive_166151,biolink:OrganismTaxon,bacdive_166151 as PRB40 of NCBITaxon:2056873,,,Graph,,,,,,,,,,2.0
+NCBITaxon:1075088,biolink:OrganismTaxon,Corynebacterium glutamicum S9114,,GC_ID:11,Graph,Corynebacterium glutamicum str. S9114|Corynebacterium glutamicum strain S9114,,http://purl.obolibrary.org/obo/NCBITaxon_1075088,,,,,,,1.0
+NCBITaxon:1079753,biolink:OrganismTaxon,Neisseria meningitidis Nm2732,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1079753,,,,,,,2.0
+NCBITaxon:112140,biolink:OrganismTaxon,Gluconacetobacter johannae,,GC_ID:11|PMID:11491326,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_112140,,,,,,,2.0
+NCBITaxon:1151422,biolink:OrganismTaxon,Clostridioides difficile P46,,GC_ID:11,Graph,Clostridium difficile P46|Peptoclostridium difficile P46,,http://purl.obolibrary.org/obo/NCBITaxon_1151422,,,,,,,2.0
+NCBITaxon:1169410,biolink:OrganismTaxon,Pasteurella multocida subsp. gallicida X73,,GC_ID:11,Graph,Pasteurella multocida subsp. gallicida str. X73|Pasteurella multocida subsp. gallicida strain X73,,http://purl.obolibrary.org/obo/NCBITaxon_1169410,,,,,,,2.0
+NCBITaxon:1182695,biolink:OrganismTaxon,Klebsiella sp. KTE92,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1182695,,,,,,,2.0
+NCBITaxon:1198672,biolink:OrganismTaxon,Corynebacterium glutamicum Z188,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1198672,,,,,,,1.0
+NCBITaxon:1204414,biolink:OrganismTaxon,Corynebacterium glutamicum K051,,GC_ID:11,Graph,Corynebacterium glutamicum str. K051|Corynebacterium glutamicum strain K051,,http://purl.obolibrary.org/obo/NCBITaxon_1204414,,,,,,,1.0
+NCBITaxon:1232381,biolink:OrganismTaxon,Corynebacterium glutamicum SCgG1,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232381,,,,,,,1.0
+NCBITaxon:1232382,biolink:OrganismTaxon,Corynebacterium glutamicum ZL-5,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232382,,,,,,,1.0
+NCBITaxon:1232383,biolink:OrganismTaxon,Corynebacterium glutamicum SCgG2,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232383,,,,,,,1.0
+NCBITaxon:1232384,biolink:OrganismTaxon,Corynebacterium glutamicum ZL-6,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232384,,,,,,,1.0
+NCBITaxon:1265827,biolink:OrganismTaxon,Listeria grayi FSL F6-1183,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1265827,,,,,,,2.0
+NCBITaxon:1281158,biolink:OrganismTaxon,Escherichia coli KOEGE 33 (68a),,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1281158,,,,,,,2.0
+NCBITaxon:1304280,biolink:OrganismTaxon,Corynebacterium glutamicum ZL-2,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1304280,,,,,,,1.0
+NCBITaxon:1310161,biolink:OrganismTaxon,Corynebacterium glutamicum MB001,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1310161,,,,,,,1.0
+NCBITaxon:1310164,biolink:OrganismTaxon,Corynebacterium glutamicum MT,,GC_ID:11,Graph,Corynebacterium crenatum str. AS 1.542 substr. MT,,http://purl.obolibrary.org/obo/NCBITaxon_1310164,,,,,,,1.0
+NCBITaxon:1353261,biolink:OrganismTaxon,Mariprofundus sp. DIS-1,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1353261,,,,,,,2.0
+NCBITaxon:1357277,biolink:OrganismTaxon,Pseudomonas syringae CC1543,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1357277,,,,,,,2.0
+NCBITaxon:1435373,biolink:OrganismTaxon,Burkholderia pseudomallei MSHR7504,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1435373,,,,,,,2.0
+NCBITaxon:1716,biolink:OrganismTaxon,Corynebacterium,,GC_ID:11|PMID:10425754|PMID:19661509|PMID:29760685|PMID:30186281|PMID:7547284|PMID:7547291|PMID:7547293|PMID:8186090,Graph,Turicella,,http://purl.obolibrary.org/obo/NCBITaxon_1716,,,,,,,1.0
+NCBITaxon:198252,biolink:OrganismTaxon,Candidatus Pelagibacter ubique,,GC_ID:11|PMID:12167859|PMID:7857801|PMID:8123559,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_198252,,,,,,,2.0
+NCBITaxon:301388,biolink:OrganismTaxon,Cellulomonas bogoriensis,,GC_ID:11|PMID:16014506,Graph,Actinotalea bogoriensis,,http://purl.obolibrary.org/obo/NCBITaxon_301388,,,,,,,2.0
+NCBITaxon:340322,biolink:OrganismTaxon,Corynebacterium glutamicum R,,GC_ID:11,Graph,Corynebacterium glutamicum str. R|Corynebacterium glutamicum strain R,,http://purl.obolibrary.org/obo/NCBITaxon_340322,,,,,,,1.0
+NCBITaxon:418136,biolink:OrganismTaxon,Francisella tularensis subsp. tularensis WY96-3418,,GC_ID:11,Graph,Francisella tularensis subsp. tularensis str. WY96-3418|Francisella tularensis subsp. tularensis strain WY96-3418,,http://purl.obolibrary.org/obo/NCBITaxon_418136,,,,,,,2.0
+NCBITaxon:425104,biolink:OrganismTaxon,Shewanella sediminis HAW-EB3,,GC_ID:11,Graph,Shewanella sediminis str. HAW-EB3|Shewanella sediminis strain HAW-EB3,,http://purl.obolibrary.org/obo/NCBITaxon_425104,,,,,,,2.0
+NCBITaxon:426117,biolink:OrganismTaxon,Methylobacterium sp. 4-46,,GC_ID:11|PMID:22887658,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_426117,,,,,,,2.0
+NCBITaxon:53461,biolink:OrganismTaxon,Nakamurella multipartita,,GC_ID:11|PMID:15143055,Graph,Microsphaera multipartita,,http://purl.obolibrary.org/obo/NCBITaxon_53461,,,,,,,2.0
+NCBITaxon:565655,biolink:OrganismTaxon,Enterococcus casseliflavus EC20,,GC_ID:11|PMID:20207762,Graph,Enterococcus casseliflavus 899205|Enterococcus casseliflavus str. EC20|Enterococcus casseliflavus strain EC20,,http://purl.obolibrary.org/obo/NCBITaxon_565655,,,,,,,2.0
+NCBITaxon:629268,biolink:OrganismTaxon,Pseudomonas syringae pv. aptata str. DSM 50252,,GC_ID:11,Graph,Pseudomonas syringae pv. aptata strain DSM 50252,,http://purl.obolibrary.org/obo/NCBITaxon_629268,,,,,,,2.0
+NCBITaxon:696865,biolink:OrganismTaxon,Salmonella enterica subsp. enterica serovar Enteritidis str. SE10,,GC_ID:11,Graph,Salmonella enterica subsp. enterica serovar Enteritidis SE10|Salmonella enterica subsp. enterica serovar Enteritidis strain SE10,,http://purl.obolibrary.org/obo/NCBITaxon_696865,,,,,,,2.0
+NCBITaxon:702984,biolink:OrganismTaxon,Salmonella enterica subsp. enterica serovar Paratyphi B str. SARA61,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_702984,,,,,,,2.0
+NCBITaxon:74311,biolink:OrganismTaxon,Brevundimonas bacteroides,,GC_ID:11|PMID:10425763|PMID:14220656,Graph,Caulobacter bacteroides,,http://purl.obolibrary.org/obo/NCBITaxon_74311,,,,,,,2.0
+NCBITaxon:746707,biolink:OrganismTaxon,Mycobacterium tuberculosis LAM7,,GC_ID:11,Graph,Mycobacterium tuberculosis str. LAM7|Mycobacterium tuberculosis strain LAM7,,http://purl.obolibrary.org/obo/NCBITaxon_746707,,,,,,,2.0
+NCBITaxon:76588,biolink:OrganismTaxon,Acidiphilium acidophilum,,GC_ID:11|PMID:234784|PMID:9828441,Graph,Acidiphilum acidophilum|Thiobacillus acidiphilus|Thiobacillus acidophilus,,http://purl.obolibrary.org/obo/NCBITaxon_76588,,,,,,,2.0
+ENVO:00001998,biolink:OntologyClass,soil,"An environmental material which is primarily composed of minerals, varying proportions of sand, silt, and clay, organic material such as humus, interstitial gases, liquids, and a broad range of resident micro- and macroorganisms.",LTER:535|SPIRE:Soil|SWEETRealm:Soil|https://en.wikipedia.org/wiki/Soil,Graph,regolith,,http://purl.obolibrary.org/obo/ENVO_00001998,,,,,,EnvO-Lite-GSC,1.0
+ENVO:00002001,biolink:OntologyClass,waste water,Water that has been adversely affected in quality by anthropogenic influence.,EcoLexicon:waste_water|SWEETRealm:Wastewater|https://en.wikipedia.org/wiki/Waste_water,Graph,,,http://purl.obolibrary.org/obo/ENVO_00002001,,,,,,EnvO-Lite-GSC,1.0
+UBERON:0000468,biolink:AnatomicalEntity|biolink:EnvironmentalFeature,multicellular organism,Anatomical structure that is an individual member of a species and consists of more than one cell.,,Graph,Koerper|body|multi-cellular organism|organism|whole body|whole organism,,http://purl.obolibrary.org/obo/UBERON_0000468,,,,,,,1.0
+strain:bacdive_169531,biolink:OrganismTaxon,Segatella copri,,,Graph,,,,,,,,,,2.0
+medium:J22,biolink:ChemicalEntity,NUTRIENT AGAR NO. 2,,,Graph,,,,,,,,,,1.0
+strain:bacdive_164851,biolink:OrganismTaxon,Xanthomonas,,,Graph,,,,,,,,,,2.0
+strain:bacdive_165432,biolink:OrganismTaxon,Tsukamurella,,,Graph,,,,,,,,,,2.0
+medium:J26,biolink:ChemicalEntity,R AGAR,,,Graph,,,,,,,,,,1.0
+medium:J475,biolink:ChemicalEntity,TRYPTICASE SOY BROTH AGAR,,,Graph,,,,,,,,,,1.0
+RHEA:12813,biolink:MolecularActivity,L-glutamate = D-glutamate,,,Graph,,,,,,,,,,2.0
+RHEA:25154,biolink:MolecularActivity,3-phenylpyruvate + L-glutamate => L-phenylalanine + 2-oxoglutarate,,,Graph,,,,,,,,,,2.0
+RHEA:33795,biolink:MolecularActivity,sucrose + H2O = beta-D-fructose + alpha-D-glucose,,,Graph,,,,,,,,,,2.0
+RHEA:49144,biolink:MolecularActivity,"dTDP-4-amino-2,3,4,6-tetradeoxy-alpha-D-erythro-hexopyranose + 2-oxoglutarate = dTDP-4-dehydro-2,3,6-trideoxy-alpha-D-hexopyranose + L-glutamate",,,Graph,,,,,,,,,,2.0
+RHEA:57928,biolink:MolecularActivity,"beta-D-GlcNAc-(1->4)-Mur2Ac(oyl-L-Ala-gamma-D-Glu-L-Lys-D-Ala-D-Ala)-di-trans,octa-cis-undecaprenyl diphosphate + L-glutamine + ATP + H2O = beta-D-GlcNAc-(1->4)-Mur2Ac(oyl-L-Ala-D-isoglutaminyl-L-Lys-D-Ala-D-Ala)-di-trans,octa-cis-undecaprenyl diphosphate + L-glutamate + ADP + phosphate + H(+)",,,Graph,,,,,,,,,,2.0
+pathways:nitrate_reduction,biolink:BiologicalProcess,nitrate_reduction,,,Graph,,,,,,,,,,1.0
+cell_shape:bacillus,biolink:PhenotypicQuality,bacillus,,,Graph,,,,,,,,,,1.0
+cell_shape:coccobacillus,biolink:PhenotypicQuality,coccobacillus,,,Graph,,,,,,,,,,1.0
+NCBITaxon:667585,biolink:OrganismTaxon,Burkholderia sp. JPY251,,,Graph,,,,,,,,,,2.0
+gc:mid1,biolink:PhenotypicQuality,GC content 42.65% - 57.0%,,,Graph,,,,,,,,,,1.0

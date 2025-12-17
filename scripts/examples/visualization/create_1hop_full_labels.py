@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -7,10 +8,13 @@ import math
 
 def create_1hop_full_labels():
     """Create 1-hop visualization with full node labels"""
-    
+
+    # Get script directory for relative paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
     # Load data
-    nodes_df = pd.read_csv('/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroGrowLink/evaluation_results/corynebacterium_glutamicum_1hop_subgraph_nodes.csv')
-    edges_df = pd.read_csv('/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroGrowLink/evaluation_results/corynebacterium_glutamicum_1hop_subgraph_edges.csv')
+    nodes_df = pd.read_csv(os.path.join(script_dir, 'corynebacterium_glutamicum_1hop_subgraph_nodes.csv'))
+    edges_df = pd.read_csv(os.path.join(script_dir, 'corynebacterium_glutamicum_1hop_subgraph_edges.csv'))
     
     center_id = "NCBITaxon:1718"
     
@@ -145,10 +149,10 @@ def create_1hop_full_labels():
     
     # Adjust layout and save
     plt.tight_layout()
-    output_file = '/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroGrowLink/evaluation_results/corynebacterium_glutamicum_1hop_subgraph_full_labels.png'
+    output_file = os.path.join(script_dir, 'corynebacterium_glutamicum_1hop_subgraph_full_labels.png')
     plt.savefig(output_file, dpi=300, bbox_inches='tight', facecolor='white')
     plt.show()
-    
+
     print(f"1-hop visualization with complete full labels saved to {output_file}")
     print(f"Total labels shown: {len(labels)}")
     print(f"Categories represented: {list(category_groups.keys())}")

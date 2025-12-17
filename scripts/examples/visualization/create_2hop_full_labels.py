@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
+import os
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
 def create_2hop_full_labels():
     """Create 2-hop visualization with full labels for 1-hop neighbors"""
-    
+
+    # Get script directory for relative paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
     # Load data
-    nodes_df = pd.read_csv('/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroGrowLink/evaluation_results/corynebacterium_glutamicum_2hop_subgraph_nodes.csv')
-    edges_df = pd.read_csv('/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroGrowLink/evaluation_results/corynebacterium_glutamicum_2hop_subgraph_edges.csv')
+    nodes_df = pd.read_csv(os.path.join(script_dir, 'corynebacterium_glutamicum_2hop_subgraph_nodes.csv'))
+    edges_df = pd.read_csv(os.path.join(script_dir, 'corynebacterium_glutamicum_2hop_subgraph_edges.csv'))
     
     center_id = "NCBITaxon:1718"
     
@@ -133,11 +137,11 @@ def create_2hop_full_labels():
     
     plt.axis('off')
     plt.tight_layout()
-    
-    output_file = '/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/MicroGrowLink/evaluation_results/corynebacterium_glutamicum_2hop_subgraph_full_labels.png'
+
+    output_file = os.path.join(script_dir, 'corynebacterium_glutamicum_2hop_subgraph_full_labels.png')
     plt.savefig(output_file, dpi=300, bbox_inches='tight', facecolor='white')
     plt.show()
-    
+
     print(f"2-hop visualization with full 1-hop labels saved to {output_file}")
     print(f"Labels shown: Center + {len(neighbors)} 1-hop neighbors + {len(important_hop2)} top 2-hop neighbors")
 

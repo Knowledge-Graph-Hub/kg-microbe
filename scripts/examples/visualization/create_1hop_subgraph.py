@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import os
+import sys
+import argparse
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -185,22 +188,50 @@ def create_1hop_visualization(nodes_df, edges_df, center_id, output_file):
     print(f"1-hop visualization saved to {output_file}")
 
 def main():
-    # File paths
-    nodes_file = "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/merged/20250222/merged-kg_nodes.tsv"
-    edges_file = "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/merged/20250222/merged-kg_edges.tsv"
-    
+    parser = argparse.ArgumentParser(description='Create 1-hop subgraph visualization from knowledge graph')
+    parser.add_argument('--nodes', type=str, help='Path to merged-kg_nodes.tsv file')
+    parser.add_argument('--edges', type=str, help='Path to merged-kg_edges.tsv file')
+    parser.add_argument('--center-id', type=str, default="NCBITaxon:1718", help='Center node ID (default: NCBITaxon:1718)')
+    parser.add_argument('--output', type=str, help='Output prefix for generated files (default: script directory)')
+
+    args = parser.parse_args()
+
+    # Get script directory for default paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Use provided paths or defaults
+    if args.nodes and args.edges:
+        nodes_file = args.nodes
+        edges_file = args.edges
+    else:
+        # Try to find in repo structure (../../data/merged/)
+        repo_root = os.path.abspath(os.path.join(script_dir, '../../../'))
+        nodes_file = os.path.join(repo_root, 'data/merged/merged-kg_nodes.tsv')
+        edges_file = os.path.join(repo_root, 'data/merged/merged-kg_edges.tsv')
+
+        if not os.path.exists(nodes_file) or not os.path.exists(edges_file):
+            print("ERROR: Could not find merged KG files.")
+            print("Please specify --nodes and --edges paths.")
+            print(f"Looked for: {nodes_file}")
+            print(f"Looked for: {edges_file}")
+            sys.exit(1)
+
     # Load data
     nodes_df, edges_df = load_data(nodes_file, edges_file)
-    
-    # Find 1-hop subgraph around Corynebacterium glutamicum
-    center_id = "NCBITaxon:1718"
+
+    # Find 1-hop subgraph
+    center_id = args.center_id
     subgraph_nodes, subgraph_edges = find_1hop_subgraph(nodes_df, edges_df, center_id)
-    
+
     if subgraph_nodes is None:
         return
-    
-    # Export subgraph data
-    output_prefix = "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/neo4j/corynebacterium_glutamicum_1hop"
+
+    # Set output prefix
+    if args.output:
+        output_prefix = args.output
+    else:
+        center_name_safe = center_id.replace(':', '_')
+        output_prefix = os.path.join(script_dir, f"{center_name_safe}_1hop")
     
     subgraph_nodes.to_csv(f"{output_prefix}_subgraph_nodes.csv", index=False)
     subgraph_edges.to_csv(f"{output_prefix}_subgraph_edges.csv", index=False)

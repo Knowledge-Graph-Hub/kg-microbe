@@ -155,7 +155,7 @@ def create_1hop_visualization(nodes_df, edges_df, center_id, output_file):
     
     # Add title
     center_name_full = str(G.nodes[center_id]['name']) if G.nodes[center_id]['name'] else center_id
-    plt.title(f'1-Hop Subgraph around {center_name_full}\\n({len(G.nodes)} nodes, {len(G.edges)} edges)', 
+    plt.title(f'1-Hop Subgraph around {center_name_full}\n({len(G.nodes)} nodes, {len(G.edges)} edges)',
               fontsize=20, fontweight='bold', pad=40)
     
     # Add legend with better positioning
@@ -241,7 +241,7 @@ def main():
     create_1hop_visualization(subgraph_nodes, subgraph_edges, center_id, visualization_file)
     
     # Print summary
-    print("\\n1-Hop Subgraph Summary:")
+    print("\n1-Hop Subgraph Summary:")
     print(f"Center node: {center_id}")
     center_name = subgraph_nodes[subgraph_nodes['id'] == center_id]['name'].iloc[0]
     print(f"Center name: {center_name}")
@@ -252,9 +252,9 @@ def main():
     for hop in [0, 1]:
         hop_count = len(subgraph_nodes[subgraph_nodes['hop'] == hop])
         print(f"Hop {hop} nodes: {hop_count}")
-    
+
     # Print top categories
-    print("\\nTop node categories:")
+    print("\nTop node categories:")
     categories = subgraph_nodes['category'].value_counts().head(10)
     for category, count in categories.items():
         print(f"  {category}: {count}")
@@ -272,8 +272,8 @@ def main():
     
     with open(f"{output_prefix}_stats.json", 'w') as f:
         json.dump(stats, f, indent=2)
-    
-    print(f"\\nFiles created:")
+
+    print(f"\nFiles created:")
     print(f"- {output_prefix}_subgraph_nodes.csv")
     print(f"- {output_prefix}_subgraph_edges.csv")
     print(f"- {output_prefix}_subgraph.png")

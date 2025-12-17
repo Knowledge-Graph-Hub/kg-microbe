@@ -68,6 +68,7 @@ def create_1hop_full_labels():
         'biolink:OrganismTaxon': '#FF6B6B',
         'biolink:ChemicalEntity': '#4ECDC4',
         'biolink:ChemicalMixture': '#45B7D1',
+        'METPO:1004005': '#45B7D1',  # growth medium
         'biolink:Enzyme': '#96CEB4',
         'biolink:PhenotypicQuality': '#FFEAA7',
         'biolink:EnvironmentalFeature': '#DDA0DD',

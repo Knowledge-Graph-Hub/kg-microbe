@@ -299,11 +299,11 @@ class MadinEtAlTransform(Transform):
                                 predicate_biolink = metpo_mapping.get(
                                     "predicate_biolink_equivalent", ""
                                 )
-                                # fallback: if no biolink equivalent use `biolink:capable_of`
+                                # fallback: if no biolink equivalent use METPO:2000103 (capable of)
                                 if predicate_biolink:
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
-                                    predicate = "biolink:capable_of"
+                                    predicate = "METPO:2000103"  # capable of
                                 pathway_nodes.append(
                                     [
                                         metpo_mapping["curie"],

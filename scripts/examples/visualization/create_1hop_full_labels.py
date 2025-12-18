@@ -4,7 +4,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
-from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, OUTPUT_DPI
+from config import CATEGORY_COLORS
 
 def create_1hop_full_labels():
     """Create 1-hop visualization with full node labels"""

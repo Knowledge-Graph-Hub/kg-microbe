@@ -30277,3 +30277,6 @@ kg_microbe/merge_utils/duckdb/data/duckdb/merged-kg_edges.tsv.gz
 kg_microbe/merge_utils/duckdb/data/duckdb/merged-kg_nodes.tsv.gz
 kg_microbe/merge_utils/duckdb/data/duckdb/uniprot_edges.tsv.gz
 kg_microbe/merge_utils/duckdb/data/duckdb/uniprot_nodes.tsv.gz
+
+# Visualization script outputs (generated PNG files)
+scripts/examples/visualization/*.png

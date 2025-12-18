@@ -90,5 +90,6 @@ Visualizations use the following color scheme:
 
 - All scripts use relative paths based on script location
 - PNG outputs are high-resolution (300 DPI) suitable for publications
+- **Output files (*.png) are not committed to the repository** - they are generated locally when you run the scripts
 - Visualization layout algorithms may vary between runs due to randomization
 - For large subgraphs (>100 nodes), consider limiting labels or using interactive tools

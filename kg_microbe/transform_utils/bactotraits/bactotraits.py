@@ -377,7 +377,7 @@ class BactoTraitsTransform(Transform):
                                         )
 
                                         # Determine relationship type based on predicate
-                                        if predicate == "biolink:capable_of":
+                                        if predicate == "METPO:2000103":  # capable of
                                             relationship = BIOLOGICAL_PROCESS
                                         elif predicate == NCBI_TO_PATHWAY_EDGE:
                                             relationship = BIOLOGICAL_PROCESS

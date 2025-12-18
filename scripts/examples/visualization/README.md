@@ -76,7 +76,7 @@ pip install pandas networkx matplotlib numpy
 
 ## Node Category Colors
 
-Visualizations use the following color scheme:
+Visualizations use the following color scheme (defined in `config.py`):
 
 - **OrganismTaxon**: Red (#FF6B6B)
 - **ChemicalEntity**: Teal (#4ECDC4)
@@ -85,6 +85,8 @@ Visualizations use the following color scheme:
 - **PhenotypicQuality**: Yellow (#FFEAA7)
 - **EnvironmentalFeature**: Purple (#DDA0DD)
 - **ActivityAndBehavior**: Orange (#FFB347)
+
+All scripts import these colors from `config.py` to ensure consistency across visualizations.
 
 ## Notes
 

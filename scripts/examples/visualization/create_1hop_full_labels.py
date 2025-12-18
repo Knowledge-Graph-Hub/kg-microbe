@@ -5,6 +5,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, OUTPUT_DPI
 
 def create_1hop_full_labels():
     """Create 1-hop visualization with full node labels"""
@@ -66,18 +67,9 @@ def create_1hop_full_labels():
     
     # Create very large figure to accommodate full labels
     plt.figure(figsize=(40, 40))
-    
-    # Define colors for different categories
-    category_colors = {
-        'biolink:OrganismTaxon': '#FF6B6B',
-        'biolink:ChemicalEntity': '#4ECDC4',
-        'biolink:ChemicalMixture': '#45B7D1',
-        'METPO:1004005': '#45B7D1',  # growth medium
-        'biolink:Enzyme': '#96CEB4',
-        'biolink:PhenotypicQuality': '#FFEAA7',
-        'biolink:EnvironmentalFeature': '#DDA0DD',
-        'biolink:ActivityAndBehavior': '#FFB347'
-    }
+
+    # Use shared category color configuration
+    category_colors = CATEGORY_COLORS
 
     # Draw center node
     center_categories = str(G.nodes[center_id]['category']).split('|') if G.nodes[center_id]['category'] else ['unknown']

@@ -320,13 +320,13 @@ class RheaMappingsTransform(Transform):
                                     all_terms_writer.writerow(
                                         [*subject_info, *predicate_info, *object_info]
                                     )
+                                    # Filter out TrEMBL/UniProt entries - they should not be added
                                     if any(
                                         object_info[0].startswith(prefix)
                                         for prefix in [
                                             CHEBI_PREFIX,
                                             EC_PREFIX,
                                             GO_PREFIX,
-                                            "uniprot",
                                         ]
                                     ):
                                         if object_info[0].startswith(CHEBI_PREFIX):
@@ -335,12 +335,6 @@ class RheaMappingsTransform(Transform):
                                             category = GO_CATEGORY
                                         elif object_info[0].startswith(EC_PREFIX):
                                             category = EC_CATEGORY
-                                        elif object_info[0].startswith("uniprot"):
-                                            category = PROTEIN_CATEGORY
-                                            # Update the first object of the tuple
-                                            object_info = (
-                                                object_info[0].replace("uniprot:", UNIPROT_PREFIX),
-                                            ) + object_info[1:]
 
                                         # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                                         if not any(

@@ -10,6 +10,10 @@ biological_process: &biological_process_block
   category: "biolink:BiologicalProcess"
   predicate: "METPO:2000103"  # capable of
 
+chemical_production: &chemical_production_block
+  category: "biolink:ChemicalSubstance"
+  predicate: "METPO:2000202"  # produces
+
 gc_content:
   gc_<=42.65:
     curie: "gc:low"

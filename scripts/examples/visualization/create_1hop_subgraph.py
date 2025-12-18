@@ -6,6 +6,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
+from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, OUTPUT_DPI
 
 def load_data(nodes_file, edges_file):
     """Load nodes and edges from TSV files"""
@@ -90,19 +91,10 @@ def create_1hop_visualization(nodes_df, edges_df, center_id, output_file):
     
     # Create figure
     plt.figure(figsize=(20, 20))
-    
-    # Define colors for different categories
-    category_colors = {
-        'biolink:OrganismTaxon': '#FF6B6B',
-        'biolink:ChemicalEntity': '#4ECDC4',
-        'biolink:ChemicalMixture': '#45B7D1',
-        'METPO:1004005': '#45B7D1',  # growth medium
-        'biolink:Enzyme': '#96CEB4',
-        'biolink:PhenotypicQuality': '#FFEAA7',
-        'biolink:EnvironmentalFeature': '#DDA0DD',
-        'biolink:ActivityAndBehavior': '#FFB347'
-    }
-    
+
+    # Use shared category color configuration
+    category_colors = CATEGORY_COLORS
+
     # Draw center node
     center_categories = str(G.nodes[center_id]['category']).split('|') if G.nodes[center_id]['category'] else ['unknown']
     center_color = category_colors.get(center_categories[0], '#CCCCCC')

@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+from config import CATEGORY_COLORS, FIGURE_SIZE_2HOP, OUTPUT_DPI
 
 def create_2hop_full_labels():
     """Create 2-hop visualization with full labels for 1-hop neighbors"""
@@ -39,20 +40,11 @@ def create_2hop_full_labels():
     pos = nx.spring_layout(G, k=5, iterations=100, seed=42)
     
     # Create large figure
-    plt.figure(figsize=(35, 30))
-    
-    # Define colors
-    category_colors = {
-        'biolink:OrganismTaxon': '#FF6B6B',
-        'biolink:ChemicalEntity': '#4ECDC4',
-        'biolink:ChemicalMixture': '#45B7D1',
-        'METPO:1004005': '#45B7D1',  # growth medium
-        'biolink:Enzyme': '#96CEB4',
-        'biolink:PhenotypicQuality': '#FFEAA7',
-        'biolink:EnvironmentalFeature': '#DDA0DD',
-        'biolink:ActivityAndBehavior': '#FFB347'
-    }
-    
+    plt.figure(figsize=FIGURE_SIZE_2HOP)
+
+    # Use shared category color configuration
+    category_colors = CATEGORY_COLORS
+
     # Draw nodes by hop
     for hop in [0, 1, 2]:
         hop_nodes = [node for node, data in G.nodes(data=True) if data.get('hop') == hop]

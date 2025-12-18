@@ -4,6 +4,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, FIGURE_SIZE_2HOP, OUTPUT_DPI
 
 def create_1hop_full_labels():
     """Create 1-hop visualization with full node labels"""
@@ -64,19 +65,10 @@ def create_1hop_full_labels():
                 pos[neighbor] = (radius * math.cos(angle), radius * math.sin(angle))
     
     # Create larger figure to accommodate full labels
-    plt.figure(figsize=(30, 30))
-    
-    # Define colors for different categories
-    category_colors = {
-        'biolink:OrganismTaxon': '#FF6B6B',
-        'biolink:ChemicalEntity': '#4ECDC4',
-        'biolink:ChemicalMixture': '#45B7D1',
-        'METPO:1004005': '#45B7D1',  # growth medium
-        'biolink:Enzyme': '#96CEB4',
-        'biolink:PhenotypicQuality': '#FFEAA7',
-        'biolink:EnvironmentalFeature': '#DDA0DD',
-        'biolink:ActivityAndBehavior': '#FFB347'
-    }
+    plt.figure(figsize=FIGURE_SIZE_1HOP)
+
+    # Use shared category color configuration
+    category_colors = CATEGORY_COLORS
 
     # Draw center node
     center_categories = str(G.nodes[center_id]['category']).split('|') if G.nodes[center_id]['category'] else ['unknown']
@@ -193,19 +185,10 @@ def create_2hop_full_labels():
     pos = nx.spring_layout(G, k=4, iterations=150, seed=42)
     
     # Create larger figure
-    plt.figure(figsize=(35, 30))
-    
-    # Define colors for different categories
-    category_colors = {
-        'biolink:OrganismTaxon': '#FF6B6B',
-        'biolink:ChemicalEntity': '#4ECDC4',
-        'biolink:ChemicalMixture': '#45B7D1',
-        'METPO:1004005': '#45B7D1',  # growth medium
-        'biolink:Enzyme': '#96CEB4',
-        'biolink:PhenotypicQuality': '#FFEAA7',
-        'biolink:EnvironmentalFeature': '#DDA0DD',
-        'biolink:ActivityAndBehavior': '#FFB347'
-    }
+    plt.figure(figsize=FIGURE_SIZE_2HOP)
+
+    # Use shared category color configuration
+    category_colors = CATEGORY_COLORS
 
     # Draw nodes by hop
     for hop in [0, 1, 2]:

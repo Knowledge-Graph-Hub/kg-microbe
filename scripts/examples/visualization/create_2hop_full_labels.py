@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-from config import CATEGORY_COLORS, FIGURE_SIZE_2HOP, OUTPUT_DPI
+from config import CATEGORY_COLORS, FIGURE_SIZE_2HOP
 
 def create_2hop_full_labels():
     """Create 2-hop visualization with full labels for 1-hop neighbors"""

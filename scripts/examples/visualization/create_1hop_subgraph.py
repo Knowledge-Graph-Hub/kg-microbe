@@ -6,7 +6,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
-from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, OUTPUT_DPI
+from config import CATEGORY_COLORS
 
 def load_data(nodes_file, edges_file):
     """Load nodes and edges from TSV files"""

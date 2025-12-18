@@ -78,6 +78,7 @@ from kg_microbe.transform_utils.constants import (
     GENERAL_DESCRIPTION,
     GENUS,
     HALOPHILY,
+    HAS_INPUT_RELATION,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
@@ -971,14 +972,14 @@ class BacDiveTransform(Transform):
                             BACDIVE_MAPPING_FILE,
                         ]
                     )
-                # substrate to enzyme edge
+                # enzyme to substrate edge (enzyme has_input substrate)
                 if ec_id and substrate_id:
                     assay_edges_to_write.append(
                         [
                             ec_id,
                             ENZYME_TO_SUBSTRATE_EDGE,
                             substrate_id,
-                            PARTICIPATES_IN,
+                            HAS_INPUT_RELATION,
                             BACDIVE_MAPPING_FILE,
                         ]
                     )

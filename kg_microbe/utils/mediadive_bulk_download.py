@@ -159,7 +159,9 @@ def download_medium_strains(media_list: List[Dict]) -> Dict[str, List]:
         elif isinstance(v, dict):
             total_strains += len(v)
         else:
-            print(f"Warning: Unexpected strain data type for medium {medium_id}: {type(v).__name__}")
+            print(
+                f"Warning: Unexpected strain data type for medium {medium_id}: {type(v).__name__}"
+            )
 
     print(
         f"Downloaded strain associations for {len(strain_data)} media ({total_strains} total associations)"

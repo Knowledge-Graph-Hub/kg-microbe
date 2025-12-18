@@ -65,6 +65,13 @@ merged_graph:
         filename:
           - data/transformed/ontologies/ec_nodes.tsv
           - data/transformed/ontologies/ec_edges.tsv
+    metpo:
+      name: "METPO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/metpo_nodes.tsv
+          - data/transformed/ontologies/metpo_edges.tsv
     bacdive:
       name: "bacdive"
       input:

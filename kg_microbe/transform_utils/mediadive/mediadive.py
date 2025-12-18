@@ -226,8 +226,8 @@ class MediaDiveTransform(Transform):
                         parts = line.strip().split("\t")
                         if len(parts) >= 5:
                             # KGX edges.tsv columns: [0]=id, [1]=subject, [2]=predicate, [3]=object, [4]=relation
-                            subject = parts[1]   # ChEBI compound ID
-                            obj = parts[3]       # ChEBI role ID
+                            subject = parts[1]  # ChEBI compound ID
+                            obj = parts[3]  # ChEBI role ID
                             relation = parts[4]  # RO relation (looking for HAS_ROLE)
                             if relation == HAS_ROLE and subject.startswith("CHEBI:"):
                                 if subject not in self.chebi_roles:

@@ -1,0 +1,143 @@
+id,category,name,description,xref,provided_by,synonym,deprecated,iri,object,predicate,relation,same_as,subject,subsets,hop
+EC:3.5.1.5,biolink:Enzyme|biolink:PhenotypicQuality,urease,,,Graph,,,http://purl.obolibrary.org/obo/EC_3.5.1.5,,,,,,,1.0
+CHEBI:16199,biolink:ChemicalEntity|biolink:ChemicalSubstance,Urea,A carbonyl group with two C-bound amine groups. The commercially available fertilizer has an analysis of 46-0-0 (N-P2O5-K2O).,CAS-RN:57-13-6|DrugBank:DB03904|Drug_Central:4264|ECMDB:ECMDB04172|Gmelin:1378|HMDB:HMDB0000294|KEGG:C00086|KEGG:D00023|KNApSAcK:C00007314|MetaCyc:UREA|PDBeChem:URE|PMID:18037357|PMID:22770225|PPDB:1728|Reaxys:635724|UM-BBD_compID:c0165|Wikipedia:Urea|YMDB:YMDB00003,Graph,1728|Carbamide|E927b|H2NC(O)NH2|Harnstoff|Karbamid|UREA|Urea|carbamide|carbonyldiamide|ur|urea|uree,,http://purl.obolibrary.org/obo/CHEBI_16199|http://purl.obolibrary.org/obo/CHEBI_16199,,,,,,3_STAR,1.0
+CHEBI:17634,biolink:ChemicalEntity|biolink:ChemicalSubstance,(-)-D-glucose,A glucose with D-configuration.,CAS-RN:50-99-7,Graph,D(+)-glucose|D-(+)-glucose|D-gluco-hexose|D-glucose|Traubenzucker|dextrose|grape sugar,,http://purl.obolibrary.org/obo/CHEBI_17634,,,,,,3_STAR,1.0
+CHEBI:17992,biolink:ChemicalEntity|biolink:ChemicalSubstance,sucrose,A glycosyl glycoside formed by glucose and fructose units joined by an acetal oxygen bridge from hemiacetal of glucose to the hemiketal of the fructose.,CAS-RN:57-50-1|DrugBank:DB02772|Drug_Central:4610|Gmelin:97695|HMDB:HMDB0000258|KEGG:C00089|KEGG:D00025|KEGG:D06533|KEGG:G00370|KNApSAcK:C00001151|MetaCyc:SUCROSE|PDBeChem:SUC|PMID:11021636|PMID:11093712|PMID:11111003|PMID:12065720|PMID:12706980|PMID:13508893|PMID:15291457|PMID:15660210|PMID:15792978|PMID:15845855|PMID:16228482|PMID:16304615|PMID:16313996|PMID:16525719|PMID:16660545|PMID:16663947|PMID:16665852|PMID:17233733|PMID:17439666|PMID:17597061|PMID:18625236|PMID:19199566|PMID:19726178|PMID:21703290|PMID:21972845|PMID:22085755|PMID:22311778|PMID:22404833|PMID:22751876|Reaxys:1435311|Reaxys:90825|Wikipedia:Sucrose,Graph,1-alpha-D-Glucopyranosyl-2-beta-D-fructofuranoside|Cane sugar|SUCROSE|Saccharose|Sacharose|Sucrose|White sugar|beta-D-Fruf-(2<->1)-alpha-D-Glcp|beta-D-fructofuranosyl alpha-D-glucopyranoside|sacarosa|sucrose|table sugar,,http://purl.obolibrary.org/obo/CHEBI_17992,,,,,,3_STAR,1.0
+CHEBI:17306,biolink:ChemicalEntity|biolink:ChemicalSubstance,m,A glycosylglucose consisting of two D-glucopyranose units connected by an alpha-(1->4)-linkage.,CAS-RN:69-79-4|DrugBank:DB03323|KEGG:C00208|KEGG:D00044|KEGG:G00275|KNApSAcK:C00001140|PMID:16332759|PMID:17723085|PMID:22094343|PMID:22185612|PMID:22246222|PMID:22252265|PMID:22411612|PMID:22424089|PMID:22451670|PMID:22469630|PMID:22529943|PMID:22573161|PMID:22669197|Reaxys:1292747|Wikipedia:Maltose,Graph,1-alpha-D-Glucopyranosyl-4-alpha-D-glucopyranose|4-(alpha-D-glucopyranosido)-alpha-glucopyranose|4-(alpha-D-glucosido)-D-glucose|4-O-alpha-D-glucopyranosyl-D-glucopyranose|4-O-alpha-D-glucopyranosyl-D-glucose|Cextromaltose|D-(+)-maltose|D-maltose|Malt sugar|Maltose|Malzzucker|alpha-D-Glcp-(1->4)-D-Glcp|alpha-D-Glucopyranosyl-(1->4)-D-glucopyranose|alpha-D-glucopyranosyl-(1->4)-D-glucopyranose|alpha-D-glucopyranosyl-(1->4)-D-glucose|alpha-malt sugar|maltobiose,,http://purl.obolibrary.org/obo/CHEBI_17306,,,,,,3_STAR,1.0
+CHEBI:16024,biolink:ChemicalEntity|biolink:ChemicalSubstance,D-mannose,A mannose with D-configuration.,,Graph,D-manno-hexose|D-mannose,,http://purl.obolibrary.org/obo/CHEBI_16024,,,,,,3_STAR,1.0
+EC:1.11.1.6,biolink:Enzyme|biolink:PhenotypicQuality,catalase,,,Graph,,,http://purl.obolibrary.org/obo/EC_1.11.1.6,,,,,,,1.0
+EC:3.5.3.6,biolink:Enzyme|biolink:PhenotypicQuality,arginine dihydrolase,,,Graph,arginine dihydrolase,,http://purl.obolibrary.org/obo/EC_3.5.3.6,,,,,,,1.0
+EC:3.4.11.1,biolink:Enzyme|biolink:PhenotypicQuality,leucine arylamidase,,,Graph,cytosol aminopeptidase|leucine aminopeptidase|peptidase S,,http://purl.obolibrary.org/obo/EC_3.4.11.1,,,,,,,1.0
+CHEBI:16988,biolink:ChemicalEntity|biolink:ChemicalSubstance,(-)-D-ribose,A ribose in which the chiral carbon atom furthest away from the aldehyde group (C4') has the same configuration as in D-glyceraldehyde.,DrugBank:DB01936|PMID:24404872|PMID:24752650,Graph,D-Rib|D-ribo-pentose|D-ribose,,http://purl.obolibrary.org/obo/CHEBI_16988,,,,,,3_STAR,1.0
+EC:3.5.1.B15,biolink:PhenotypicQuality,pyrazinamidase,,,Graph,,,,,,,,,,1.0
+BSL:1,biolink:Attribute,biosafety level 1,,,Graph,,,,,,,,,,1.0
+temperature:mesophilic,biolink:PhenotypicQuality,mesophilic,,,Graph,,,,,,,,,,1.0
+isolation_source:host,biolink:EnvironmentalFeature,Host,,,Graph,,,,,,,,,,1.0
+isolation_source:engineered,biolink:EnvironmentalFeature,Engineered,,,Graph,,,,,,,,,,1.0
+isolation_source:microbial,biolink:EnvironmentalFeature,Microbial,,,Graph,,,,,,,,,,1.0
+oxygen:aerobe,biolink:ActivityAndBehavior|biolink:PhenotypicQuality,aerobe,,,Graph,,,,,,,,,,1.0
+isolation_source:environmental,biolink:EnvironmentalFeature,Environmental,,,Graph,,,,,,,,,,1.0
+isolation_source:aquatic,biolink:EnvironmentalFeature,Aquatic,,,Graph,,,,,,,,,,1.0
+isolation_source:marine,biolink:EnvironmentalFeature,Marine,,,Graph,,,,,,,,,,1.0
+isolation_source:terrestrial,biolink:EnvironmentalFeature,Terrestrial,,,Graph,,,,,,,,,,1.0
+CHEBI:29016,biolink:ChemicalEntity|biolink:ChemicalSubstance,a,An alpha-amino acid that is glycine in which the alpha-is substituted by a 3-guanidinopropyl group.,CAS-RN:7200-25-1|KEGG:C02385|PMID:10848923|Reaxys:1725411|Wikipedia:L-Arginine,Graph,2-Amino-5-guanidinovaleric acid|2-amino-5-(carbamimidamido)pentanoic acid|2-amino-5-guanidinopentanoic acid|Arginin|Arginine|Harg|arginine,,http://purl.obolibrary.org/obo/CHEBI_29016,,,,,,3_STAR,1.0
+CHEBI:24265,biolink:ChemicalEntity|biolink:ChemicalSubstance,gluconate,,,Graph,gluconate,,http://purl.obolibrary.org/obo/CHEBI_24265,,,,,,3_STAR,1.0
+CHEBI:17632,biolink:ChemicalEntity|biolink:ChemicalSubstance,n,A nitrogen oxoanion formed by loss of a proton from nitric acid. Principal species present at pH 7.3.,Beilstein:3587575|CAS-RN:14797-55-8|Gmelin:1574|MetaCyc:NITRATE|PDBeChem:NO3|Wikipedia:Nitrate,Graph,NITRATE ION|NO3|NO3(-)|[NO3](-)|nitrate|nitrate(1-)|trioxidonitrate(1-)|trioxonitrate(1-)|trioxonitrate(V),,http://purl.obolibrary.org/obo/CHEBI_17632,,,,,,3_STAR,1.0
+assay:API_20NE_NO3,biolink:PhenotypicQuality,API 20NE - NO3,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_GLU_ Assim,biolink:PhenotypicQuality,API 20NE - GLU_ Assim,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_CIT,biolink:PhenotypicQuality,API 20NE - CIT,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_ADH Arg,biolink:PhenotypicQuality,API 20NE - ADH Arg,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_GNT,biolink:PhenotypicQuality,API 20NE - GNT,,,Graph,,,,,,,,,,1.0
+CHEBI:29985,biolink:ChemicalEntity|biolink:ChemicalSubstance,L-glutamate,"An alpha-amino-acid anion that is the conjugate base of L-glutamic acid, having anionic carboxy groups and a cationic amino group",CAS-RN:11070-68-1|Gmelin:936654|MetaCyc:GLT,Graph,"(2S)-2-ammoniopentanedioate|L-glutamate|L-glutamate(1-)|L-glutamic acid monoanion|L-glutamic acid, ion(1-)|hydrogen L-glutamate",,http://purl.obolibrary.org/obo/CHEBI_29985,,,,,,3_STAR,1.0
+assay:API_coryne_SAC,biolink:PhenotypicQuality,API coryne - SAC,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_MAL,biolink:PhenotypicQuality,API coryne - MAL,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_PYZ,biolink:PhenotypicQuality,API coryne - PYZ,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_GLU,biolink:PhenotypicQuality,API coryne - GLU,,,Graph,,,,,,,,,,1.0
+medium:535,biolink:ChemicalEntity,TRYPTICASE SOY BROTH AGAR DSMZ Medium 535,,,Graph,,,,,,,,,,1.0
+medium:693,biolink:ChemicalEntity,COLUMBIA BLOOD MEDIUM DSMZ Medium 693,,,Graph,,,,,,,,,,1.0
+isolation_source:soil,biolink:EnvironmentalFeature,Soil,,,Graph,,,,,,,,,,1.0
+oxygen:facultative_anaerobe,biolink:ActivityAndBehavior|biolink:PhenotypicQuality,facultative anaerobe,,,Graph,,,,,,,,,,1.0
+assay:API_zym_Leucine arylamidase,biolink:PhenotypicQuality,API zym - Leucine arylamidase,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_RIB,biolink:PhenotypicQuality,API coryne - RIB,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_MNE,biolink:PhenotypicQuality,API 20NE - MNE,,,Graph,,,,,,,,,,1.0
+isolation_source:waste,biolink:EnvironmentalFeature,Waste,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_CAT,biolink:PhenotypicQuality,API coryne - CAT,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_MAL,biolink:PhenotypicQuality,API 20NE - MAL,,,Graph,,,,,,,,,,1.0
+isolation_source:bacteria,biolink:EnvironmentalFeature,Bacteria,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_URE,biolink:PhenotypicQuality,API coryne - URE,,,Graph,,,,,,,,,,1.0
+assay:API_coryne_NIT,biolink:PhenotypicQuality,API coryne - NIT,,,Graph,,,,,,,,,,1.0
+isolation_source:wastewater,biolink:EnvironmentalFeature,Wastewater,,,Graph,,,,,,,,,,1.0
+assay:API_20NE_URE,biolink:PhenotypicQuality,API 20NE - URE,,,Graph,,,,,,,,,,1.0
+medium:53,biolink:ChemicalEntity,CORYNEBACTERIUM AGAR DSMZ Medium 53,,,Graph,,,,,,,,,,1.0
+CHEBI:33709,biolink:ChemicalEntity|biolink:ChemicalSubstance,amino acid,A carboxylic acid containing one or more amino groups.,Wikipedia:Amino_acid,Graph,Aminocarbonsaeure|Aminokarbonsaeure|Aminosaeure|amino acids,,http://purl.obolibrary.org/obo/CHEBI_33709,,,,,,3_STAR,1.0
+medium:535a,biolink:ChemicalEntity,TRYPTICASE SOY BROTH AGAR+BLOOD DSMZ Medium 535a,,,Graph,,,,,,,,,,1.0
+strain:IMET-7162,biolink:OrganismTaxon,IMET 7162,,,Graph,,,,,,,,,,1.0
+strain:IMET-7265,biolink:OrganismTaxon,IMET 7265,,,Graph,,,,,,,,,,1.0
+NCBITaxon:1718,biolink:OrganismTaxon,Corynebacterium glutamicum,,GC_ID:11|PMID:10220171|PMID:11988527|PMID:1713055,Graph,Brevibacterium chang-fua|Brevibacterium divaricatum|Brevibacterium glutamigenes|Brevibacterium lactofermentum|Brevibacterium saccharolyticum|Brevibacterium seonmiso|Brevibacterium taipei|Brevibacterium thiogenitalis|Corynebacterium crenatum|Corynebacterium lactofermentum|Corynebacterium lilium|Micrococcus glutamicus|Micrococcus maripuniceus,,http://purl.obolibrary.org/obo/NCBITaxon_1718,,,,,,,0.0
+strain:DSM-20301,biolink:OrganismTaxon,DSM 20301,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13868,biolink:OrganismTaxon,ATCC 13868,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9694,biolink:OrganismTaxon,NCIB 9694,,,Graph,,,,,,,,,,1.0
+strain:DSM-20412,biolink:OrganismTaxon,DSM 20412,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13655,biolink:OrganismTaxon,ATCC 13655,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9662,biolink:OrganismTaxon,NCIB 9662,,,Graph,,,,,,,,,,1.0
+strain:DSM-102070,biolink:OrganismTaxon,DSM 102070,,,Graph,,,,,,,,,,1.0
+strain:DSM-5403,biolink:OrganismTaxon,DSM 5403,,,Graph,,,,,,,,,,1.0
+strain:ATCC-21677,biolink:OrganismTaxon,ATCC 21677,,,Graph,,,,,,,,,,1.0
+strain:DSM-20137,biolink:OrganismTaxon,DSM 20137,,,Graph,,,,,,,,,,1.0
+strain:ATCC-15990,biolink:OrganismTaxon,ATCC 15990,,,Graph,,,,,,,,,,1.0
+strain:NCIB-10337,biolink:OrganismTaxon,NCIB 10337,,,Graph,,,,,,,,,,1.0
+strain:NRRL-B-2243,biolink:OrganismTaxon,NRRL B-2243,,,Graph,,,,,,,,,,1.0
+strain:JCM-1321,biolink:OrganismTaxon,JCM 1321,,,Graph,,,,,,,,,,1.0
+strain:BCRC-11669,biolink:OrganismTaxon,BCRC 11669,,,Graph,,,,,,,,,,1.0
+strain:CGMCC-1.1888,biolink:OrganismTaxon,CGMCC 1.1888,,,Graph,,,,,,,,,,1.0
+strain:IAM-12434,biolink:OrganismTaxon,IAM 12434,,,Graph,,,,,,,,,,1.0
+strain:IMET-11081,biolink:OrganismTaxon,IMET 11081,,,Graph,,,,,,,,,,1.0
+strain:KCTC-1448,biolink:OrganismTaxon,KCTC 1448,,,Graph,,,,,,,,,,1.0
+strain:LMG-3654,biolink:OrganismTaxon,LMG 3654,,,Graph,,,,,,,,,,1.0
+strain:NCIMB-10337,biolink:OrganismTaxon,NCIMB 10337,,,Graph,,,,,,,,,,1.0
+strain:DSM-20297,biolink:OrganismTaxon,DSM 20297,,,Graph,,,,,,,,,,1.0
+strain:ATCC-14020,biolink:OrganismTaxon,ATCC 14020,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9379,biolink:OrganismTaxon,NCIB 9379,,,Graph,,,,,,,,,,1.0
+strain:JCM-1307,biolink:OrganismTaxon,JCM 1307,,,Graph,,,,,,,,,,1.0
+strain:BCRC-11631,biolink:OrganismTaxon,BCRC 11631,,,Graph,,,,,,,,,,1.0
+strain:CGMCC-1.1884,biolink:OrganismTaxon,CGMCC 1.1884,,,Graph,,,,,,,,,,1.0
+strain:IAM-12432,biolink:OrganismTaxon,IAM 12432,,,Graph,,,,,,,,,,1.0
+strain:IMET-11073,biolink:OrganismTaxon,IMET 11073,,,Graph,,,,,,,,,,1.0
+strain:KCTC-3253,biolink:OrganismTaxon,KCTC 3253,,,Graph,,,,,,,,,,1.0
+strain:NCCB-71034,biolink:OrganismTaxon,NCCB 71034,,,Graph,,,,,,,,,,1.0
+strain:NCIMB-9379,biolink:OrganismTaxon,NCIMB 9379,,,Graph,,,,,,,,,,1.0
+strain:NRRL-B-2312,biolink:OrganismTaxon,NRRL B-2312,,,Graph,,,,,,,,,,1.0
+strain:JCM-18229,biolink:OrganismTaxon,JCM 18229,,,Graph,,,,,,,,,,1.0
+strain:DSM-46307,biolink:OrganismTaxon,DSM 46307,,,Graph,,,,,,,,,,1.0
+strain:IMET-11022,biolink:OrganismTaxon,IMET 11022,,,Graph,,,,,,,,,,1.0
+strain:NCMB-2026,biolink:OrganismTaxon,NCMB 2026,,,Graph,,,,,,,,,,1.0
+strain:SN-130,biolink:OrganismTaxon,SN 130,,,Graph,,,,,,,,,,1.0
+strain:DSM-1412,biolink:OrganismTaxon,DSM 1412,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13869,biolink:OrganismTaxon,ATCC 13869,,,Graph,,,,,,,,,,1.0
+strain:NCIB-9567,biolink:OrganismTaxon,NCIB 9567,,,Graph,,,,,,,,,,1.0
+strain:DSM-10150,biolink:OrganismTaxon,DSM 10150,,,Graph,,,,,,,,,,1.0
+strain:ATCC-39021,biolink:OrganismTaxon,ATCC 39021,,,Graph,,,,,,,,,,1.0
+strain:DSM-20163,biolink:OrganismTaxon,DSM 20163,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13745,biolink:OrganismTaxon,ATCC 13745,,,Graph,,,,,,,,,,1.0
+strain:CIP-102670,biolink:OrganismTaxon,CIP 102670,,,Graph,,,,,,,,,,1.0
+strain:DSM-20156,biolink:OrganismTaxon,DSM 20156,,,Graph,,,,,,,,,,1.0
+strain:ATCC-15354,biolink:OrganismTaxon,ATCC 15354,,,Graph,,,,,,,,,,1.0
+strain:NCIB-10335,biolink:OrganismTaxon,NCIB 10335,,,Graph,,,,,,,,,,1.0
+strain:DSM-44475,biolink:OrganismTaxon,DSM 44475,,,Graph,,,,,,,,,,1.0
+strain:DSM-20598,biolink:OrganismTaxon,DSM 20598,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13825,biolink:OrganismTaxon,ATCC 13825,,,Graph,,,,,,,,,,1.0
+strain:CCUG-23601,biolink:OrganismTaxon,CCUG 23601,,,Graph,,,,,,,,,,1.0
+NCBITaxon:196627,biolink:OrganismTaxon,Corynebacterium glutamicum ATCC 13032,,GC_ID:11|PMID:12743753|PMID:12948626,Graph,Corynebacterium glutamicum str. ATCC 13032|Corynebacterium glutamicum strain ATCC 13032,,http://purl.obolibrary.org/obo/NCBITaxon_196627,,,,,,,1.0
+strain:IMET-07015,biolink:OrganismTaxon,IMET 07015,,,Graph,,,,,,,,,,1.0
+strain:IMET-7015,biolink:OrganismTaxon,IMET 7015,,,Graph,,,,,,,,,,1.0
+strain:DSM-102071,biolink:OrganismTaxon,DSM 102071,,,Graph,,,,,,,,,,1.0
+NCBITaxon:1079988,biolink:OrganismTaxon,Corynebacterium glutamicum ATCC 14067,,GC_ID:11,Graph,Brevibacterium flavum ATCC 14067|Corynebacterium glutamicum str. ATCC 14067|Corynebacterium glutamicum strain ATCC 14067,,http://purl.obolibrary.org/obo/NCBITaxon_1079988,,,,,,,1.0
+strain:CCUG-27703,biolink:OrganismTaxon,CCUG 27703,,,Graph,,,,,,,,,,1.0
+strain:ATCC-13059,biolink:OrganismTaxon,ATCC 13059,,,Graph,,,,,,,,,,1.0
+strain:CCTM-La-3704,biolink:OrganismTaxon,CCTM La 3704,,,Graph,,,,,,,,,,1.0
+strain:DSM-5426,biolink:OrganismTaxon,DSM 5426,,,Graph,,,,,,,,,,1.0
+strain:ATCC-21668,biolink:OrganismTaxon,ATCC 21668,,,Graph,,,,,,,,,,1.0
+strain:KY-10407,biolink:OrganismTaxon,KY 10407,,,Graph,,,,,,,,,,1.0
+strain:CIP-78.11,biolink:OrganismTaxon,CIP 78.11,,,Graph,,,,,,,,,,1.0
+NCBITaxon:1075088,biolink:OrganismTaxon,Corynebacterium glutamicum S9114,,GC_ID:11,Graph,Corynebacterium glutamicum str. S9114|Corynebacterium glutamicum strain S9114,,http://purl.obolibrary.org/obo/NCBITaxon_1075088,,,,,,,1.0
+NCBITaxon:1198672,biolink:OrganismTaxon,Corynebacterium glutamicum Z188,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1198672,,,,,,,1.0
+NCBITaxon:1204414,biolink:OrganismTaxon,Corynebacterium glutamicum K051,,GC_ID:11,Graph,Corynebacterium glutamicum str. K051|Corynebacterium glutamicum strain K051,,http://purl.obolibrary.org/obo/NCBITaxon_1204414,,,,,,,1.0
+NCBITaxon:1232381,biolink:OrganismTaxon,Corynebacterium glutamicum SCgG1,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232381,,,,,,,1.0
+NCBITaxon:1232382,biolink:OrganismTaxon,Corynebacterium glutamicum ZL-5,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232382,,,,,,,1.0
+NCBITaxon:1232383,biolink:OrganismTaxon,Corynebacterium glutamicum SCgG2,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232383,,,,,,,1.0
+NCBITaxon:1232384,biolink:OrganismTaxon,Corynebacterium glutamicum ZL-6,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1232384,,,,,,,1.0
+NCBITaxon:1304280,biolink:OrganismTaxon,Corynebacterium glutamicum ZL-2,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1304280,,,,,,,1.0
+NCBITaxon:1310161,biolink:OrganismTaxon,Corynebacterium glutamicum MB001,,GC_ID:11,Graph,,,http://purl.obolibrary.org/obo/NCBITaxon_1310161,,,,,,,1.0
+NCBITaxon:1310164,biolink:OrganismTaxon,Corynebacterium glutamicum MT,,GC_ID:11,Graph,Corynebacterium crenatum str. AS 1.542 substr. MT,,http://purl.obolibrary.org/obo/NCBITaxon_1310164,,,,,,,1.0
+NCBITaxon:1716,biolink:OrganismTaxon,Corynebacterium,,GC_ID:11|PMID:10425754|PMID:19661509|PMID:29760685|PMID:30186281|PMID:7547284|PMID:7547291|PMID:7547293|PMID:8186090,Graph,Turicella,,http://purl.obolibrary.org/obo/NCBITaxon_1716,,,,,,,1.0
+NCBITaxon:340322,biolink:OrganismTaxon,Corynebacterium glutamicum R,,GC_ID:11,Graph,Corynebacterium glutamicum str. R|Corynebacterium glutamicum strain R,,http://purl.obolibrary.org/obo/NCBITaxon_340322,,,,,,,1.0
+ENVO:00001998,biolink:OntologyClass,soil,"An environmental material which is primarily composed of minerals, varying proportions of sand, silt, and clay, organic material such as humus, interstitial gases, liquids, and a broad range of resident micro- and macroorganisms.",LTER:535|SPIRE:Soil|SWEETRealm:Soil|https://en.wikipedia.org/wiki/Soil,Graph,regolith,,http://purl.obolibrary.org/obo/ENVO_00001998,,,,,,EnvO-Lite-GSC,1.0
+ENVO:00002001,biolink:OntologyClass,waste water,Water that has been adversely affected in quality by anthropogenic influence.,EcoLexicon:waste_water|SWEETRealm:Wastewater|https://en.wikipedia.org/wiki/Waste_water,Graph,,,http://purl.obolibrary.org/obo/ENVO_00002001,,,,,,EnvO-Lite-GSC,1.0
+UBERON:0000468,biolink:AnatomicalEntity|biolink:EnvironmentalFeature,multicellular organism,Anatomical structure that is an individual member of a species and consists of more than one cell.,,Graph,Koerper|body|multi-cellular organism|organism|whole body|whole organism,,http://purl.obolibrary.org/obo/UBERON_0000468,,,,,,,1.0
+medium:J22,biolink:ChemicalEntity,NUTRIENT AGAR NO. 2,,,Graph,,,,,,,,,,1.0
+medium:J26,biolink:ChemicalEntity,R AGAR,,,Graph,,,,,,,,,,1.0
+medium:J475,biolink:ChemicalEntity,TRYPTICASE SOY BROTH AGAR,,,Graph,,,,,,,,,,1.0
+pathways:nitrate_reduction,biolink:BiologicalProcess,nitrate_reduction,,,Graph,,,,,,,,,,1.0
+cell_shape:bacillus,biolink:PhenotypicQuality,bacillus,,,Graph,,,,,,,,,,1.0
+cell_shape:coccobacillus,biolink:PhenotypicQuality,coccobacillus,,,Graph,,,,,,,,,,1.0
+gc:mid1,biolink:PhenotypicQuality,GC content 42.65% - 57.0%,,,Graph,,,,,,,,,,1.0

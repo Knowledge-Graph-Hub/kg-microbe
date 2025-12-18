@@ -17,6 +17,8 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CHEBI_XREFS_FILEPATH,
     DESCRIPTION_COLUMN,
+    EC_EXPASY_URL_PREFIX,
+    EC_PREFIX,
     ENABLED_BY_PREDICATE,
     ENABLED_BY_RELATION,
     EXCLUSION_TERMS_FILE,
@@ -428,19 +430,36 @@ class OntologiesTransform(Transform):
                     new_ef.write(line)
 
         if name == "ec":  # or name == "rhea":
+
+            def _fix_ec_iri(line, iri_index):
+                """Convert EC: CURIE in IRI column to expasy URL."""
+                parts = line.split("\t")
+                if len(parts) > iri_index and parts[iri_index].startswith(EC_PREFIX):
+                    ec_number = parts[iri_index].replace(EC_PREFIX, "")
+                    parts[iri_index] = EC_EXPASY_URL_PREFIX + ec_number
+                return "\t".join(parts)
+
             with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
                 # Update prefixes in nodes file
                 new_nf_lines = []
+                iri_index = None
                 for line in nf:
                     if line.startswith("id"):
                         # get the index for the term 'id'
                         id_index = line.strip().split("\t").index(ID_COLUMN)
                         # get the index for the term 'category'
                         category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                        # get the index for the term 'iri'
+                        header_parts = line.strip().split("\t")
+                        if "iri" in header_parts:
+                            iri_index = header_parts.index("iri")
                         new_nf_lines.append(line)
                     else:
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
+                        # Fix IRI column to use expasy URL instead of EC: CURIE
+                        if iri_index is not None:
+                            line = _fix_ec_iri(line, iri_index)
                         new_nf_lines.append(line + "\n")
                 # Update prefixes in edges file
                 new_ef_lines = []

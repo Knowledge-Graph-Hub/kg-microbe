@@ -4,49 +4,15 @@ phenotypic_quality: &phenotypic_quality_block
 
 phenotypic_capability: &phenotypic_capability_block
   <<: *phenotypic_quality_block
-  predicate: "biolink:capable_of"
+  predicate: "METPO:2000103"  # capable of
 
 biological_process: &biological_process_block
   category: "biolink:BiologicalProcess"
-  predicate: "biolink:capable_of"
+  predicate: "METPO:2000103"  # capable of
 
 chemical_production: &chemical_production_block
   category: "biolink:ChemicalSubstance"
-  predicate: "biolink:produces"
-
-production:
-  antibiotic_compound_production:
-    curie: "production:antibiotic_compound"
-    name: "antibiotic compound production"
-    <<: *chemical_production_block
-  alcohol_production:
-    curie: "production:alcohol"
-    name: "alcohol production"
-    <<: *chemical_production_block
-  toxin_production:
-    curie: "production:toxin"
-    name: "toxin production"
-    <<: *chemical_production_block
-  amino_acid_production:
-    curie: "production:amino_acid"
-    name: "amino acid production"
-    <<: *chemical_production_block
-  lactate_production:
-    curie: "production:lactate"
-    name: "lactate production"
-    <<: *chemical_production_block
-  polysaccharide_production:
-    curie: "production:polysaccharide"
-    name: "polysaccharide production"
-    <<: *chemical_production_block
-  methane_production:
-    curie: "production:methane"
-    name: "methane production"
-    <<: *chemical_production_block
-  pigmented:
-    curie: "production:pigmented"
-    name: "pigmented"
-    <<: *chemical_production_block
+  predicate: "METPO:2000202"  # produces
 
 gc_content:
   gc_<=42.65:
@@ -177,7 +143,7 @@ pH_delta:
     curie: "pH_delta:high"
     name: "pH delta 5 to 9"
     <<: *phenotypic_quality_block
-  
+
 NaCl_optimal:
   nao_<=1:
     curie: "NaCl_opt:very_low"
@@ -231,7 +197,7 @@ NaCl_delta:
     curie: "NaCl_delta:high"
     name: "NaCl delta > 8%"
     <<: *phenotypic_quality_block
-  
+
 temperature_optimal:
   to_<=10:
     curie: "temp_opt:very_low"

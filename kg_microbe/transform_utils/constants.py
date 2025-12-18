@@ -190,20 +190,20 @@ MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
+NCBI_TO_CARBON_SUBSTRATE_EDGE = (
+    "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
+)
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
-NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # # [org -> pathway]
+NCBI_TO_PATHWAY_EDGE = "METPO:2000103"  # capable of [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
-NCBI_TO_METABOLITE_UTILIZATION_EDGE = "biolink:consumes"  # [org -> metabolite_utilization]
-NCBI_TO_ENZYME_EDGE = "biolink:capable_of"  # [org -> enzyme]
+NCBI_TO_ENZYME_EDGE = "METPO:2000103"  # capable of [org -> enzyme]
 ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay]
 MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay]
 NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay]
-NCBI_TO_METABOLITE_PRODUCTION_EDGE = "biolink:produces"
 ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
-ENZYME_TO_SUBSTRATE_EDGE = "biolink:consumes"  # [substrate -> enzyme]
+ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
 RHEA_TO_EC_EDGE = "biolink:enabled_by"
 RHEA_TO_GO_EDGE = "biolink:enables"
@@ -211,7 +211,7 @@ NCBI_TO_METABOLITE_RESISTANCE_EDGE = "biolink:associated_with_resistance_to"
 NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
 NCBI_CATEGORY = "biolink:OrganismTaxon"
-MEDIUM_CATEGORY = "biolink:ChemicalEntity"
+MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalEntity"
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"
@@ -229,6 +229,7 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
+
 TROPHICALLY_INTERACTS_WITH = (
     "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 )
@@ -292,6 +293,8 @@ EC_PREFIX = "EC:"
 EC_KEY = "ec"
 EC_PYOBO_PREFIX = "eccode"
 EC_OBO_PREFIX = "OBO:eccode_"
+EC_INTENZ_URL_PREFIX = "https://www.ebi.ac.uk/intenz/query?cmd=SearchEC&ec="
+EC_EXPASY_URL_PREFIX = "https://enzyme.expasy.org/EC/"
 UNIPROT_OBO_PREFIX = "OBO:uniprot_"
 CHEBI_CAS_PREFIX = "CAS:"
 ACTIVITY_KEY = "activity"
@@ -352,7 +355,7 @@ GO_CATEGORY = "biolink:BiologicalProcess"
 RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
-CAPABLE_OF_PREDICATE = "biolink:capable_of"
+CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolink:capable_of)
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
 HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
@@ -452,10 +455,9 @@ CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
 PROTEIN_TO_ORGANISM_EDGE = "biolink:derives_from"
 ORGANISM_TO_PROTEIN_EDGE = "biolink:expresses"
 PROTEIN_TO_EC_EDGE = "biolink:enables"
-EC_CATEGORY = "biolink:Enzyme"
 PROTEIN_TO_RHEA_EDGE = "biolink:participates_in"
 RHEA_KEY = "rhea"
-CHEMICAL_CATEGORY = "biolink:ChemicalSubstance"
+CHEMICAL_CATEGORY = "biolink:ChemicalEntity"
 CHEMICAL_TO_EC_EDGE = "biolink:participates_in"
 GO_CELLULAR_COMPONENT_ID = "GO:0005575"
 GO_MOLECULAR_FUNCTION_ID = "GO:0003674"
@@ -546,6 +548,7 @@ RHEA_PYOBO_PREFIXES_MAPPER = {
     "chebi": CHEBI_PREFIX,
     RHEA_KEY: RHEA_NEW_PREFIX,
     EC_PYOBO_PREFIX: EC_PREFIX,
+    "ec": EC_PREFIX,  # Alias for raw Rhea data that uses "ec" instead of "eccode"
     "uniprot": UNIPROT_PREFIX,
     "go": GO_PREFIX,
 }
@@ -616,6 +619,7 @@ HGNC_NEW_PREFIX = "HGNC:"
 
 # Create a mapping for special cases
 SPECIAL_PREFIXES = {
+    EC_INTENZ_URL_PREFIX: EC_PREFIX,  # Convert IntEnz URLs to EC: CURIEs
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
     EC_OBO_PREFIX: EC_PREFIX,
     UNIPROT_OBO_PREFIX: UNIPROT_PREFIX,

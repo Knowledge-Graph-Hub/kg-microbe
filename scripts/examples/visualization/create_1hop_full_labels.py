@@ -3,7 +3,6 @@ import os
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-import numpy as np
 import math
 from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, OUTPUT_DPI
 

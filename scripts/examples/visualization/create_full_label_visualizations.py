@@ -3,7 +3,6 @@ import os
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-import numpy as np
 from config import CATEGORY_COLORS, FIGURE_SIZE_1HOP, FIGURE_SIZE_2HOP, OUTPUT_DPI
 
 def create_1hop_full_labels():

@@ -79,6 +79,8 @@ ONTOLOGIES_MAP = {
     "mondo": "mondo.json",
     "hp": "hp.json",
     "metpo": "metpo.owl",
+    "ro": "ro.owl",
+    "uberon": "uberon.owl",
     "foodon": "foodon.owl",
 }
 

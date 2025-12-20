@@ -77,6 +77,13 @@
   url: https://purl.obolibrary.org/obo/hp/hp.json
   local_name: hp.json
 
+#
+# FOODON
+#
+-
+  url: https://data.bioontology.org/ontologies/FOODON/submissions/109/download?apikey=8b5b7825-538d-40e0-9e9e-5ab9274a9aeb
+  local_name: foodon.owl
+
 # **** Data sources ****
 
 # BacDive

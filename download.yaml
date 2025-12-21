@@ -78,13 +78,6 @@
   local_name: hp.json
 
 #
-# RO (Relations Ontology)
-#
--
-  url: https://purl.obolibrary.org/obo/ro.owl
-  local_name: ro.owl
-
-#
 # UBERON (Uber Anatomy Ontology)
 #
 -

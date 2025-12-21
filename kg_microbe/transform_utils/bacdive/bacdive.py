@@ -226,7 +226,7 @@ class BacDiveTransform(Transform):
         This is much faster than querying the NCBITaxon SQLite database via OakLib
         for each record. Creates both id->label and label->id mappings.
         """
-        ncbitaxon_nodes_file = Path("data/transformed/ontologies/NCBITaxon_nodes.tsv")
+        ncbitaxon_nodes_file = Path("data/transformed/ontologies/ncbitaxon_nodes.tsv")
 
         if ncbitaxon_nodes_file.exists():
             try:

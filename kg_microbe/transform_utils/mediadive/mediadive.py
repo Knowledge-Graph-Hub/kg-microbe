@@ -622,10 +622,14 @@ class MediaDiveTransform(Transform):
         # make directory in data/transformed
         os.makedirs(self.output_dir, exist_ok=True)
 
+        # Concentration file path
+        concentration_file = os.path.join(self.output_dir, "ingredient_concentrations.tsv")
+
         with (
             open(str(MEDIADIVE_TMP_DIR / "mediadive.tsv"), "w") as tsvfile,
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
+            open(concentration_file, "w") as conc,
         ):
             writer = csv.writer(tsvfile, delimiter="\t")
             # Write the column names to the output file
@@ -635,6 +639,18 @@ class MediaDiveTransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
+
+            # Concentration writer with header
+            concentration_writer = csv.writer(conc, delimiter="\t")
+            concentration_writer.writerow([
+                "medium_id",
+                "medium_label",
+                "ingredient_id",
+                "ingredient_label",
+                "conc_value",
+                "conc_units",
+                "media_volume"
+            ])
 
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
@@ -754,7 +770,48 @@ class MediaDiveTransform(Transform):
 
                     for solution_id in solutions_dict.keys():
                         solution_curie = MEDIADIVE_SOLUTION_PREFIX + str(solution_id)
-                        ingredients_dict.update(self.get_compounds_of_solution(str(solution_id)))
+
+                        # Get ingredients for this specific solution
+                        solution_ingredients = self.get_compounds_of_solution(str(solution_id))
+
+                        # Get solution volume (default 1000 mL)
+                        solution_volume = 1000
+                        if self.using_bulk_data and str(solution_id) in self.solutions_data:
+                            solution_volume = self.solutions_data[str(solution_id)].get("volume", 1000)
+
+                        # Write concentration data for each ingredient in this solution
+                        for ingredient_label, ingredient_data in solution_ingredients.items():
+                            ingredient_id = ingredient_data.get(ID_COLUMN, "")
+
+                            # Determine concentration value and units
+                            # Priority: 1) g_l, 2) mmol_l, 3) amount+unit, 4) empty
+                            if ingredient_data.get(GRAMS_PER_LITER_COLUMN) is not None:
+                                conc_value = ingredient_data[GRAMS_PER_LITER_COLUMN]
+                                conc_units = "g/L"
+                            elif ingredient_data.get(MMOL_PER_LITER_COLUMN) is not None:
+                                conc_value = ingredient_data[MMOL_PER_LITER_COLUMN]
+                                conc_units = "mmol/L"
+                            elif ingredient_data.get(AMOUNT_COLUMN) is not None:
+                                conc_value = ingredient_data[AMOUNT_COLUMN]
+                                conc_units = ingredient_data.get(UNIT_COLUMN, "")
+                            else:
+                                conc_value = ""
+                                conc_units = ""
+
+                            # Write concentration row
+                            concentration_writer.writerow([
+                                medium_id,
+                                dictionary[NAME_COLUMN],
+                                ingredient_id,
+                                ingredient_label,
+                                conc_value,
+                                conc_units,
+                                solution_volume
+                            ])
+
+                        # Update accumulated ingredients dict (keep existing behavior)
+                        ingredients_dict.update(solution_ingredients)
+
                         solution_ingredient_edges.extend(
                             [
                                 [
@@ -764,7 +821,7 @@ class MediaDiveTransform(Transform):
                                     HAS_PART,
                                     MEDIADIVE_REST_API_BASE_URL + SOLUTION + str(solution_id),
                                 ]
-                                for _, v in ingredients_dict.items()
+                                for _, v in solution_ingredients.items()
                             ]
                         )
                         solution_ingredient_edges.append(

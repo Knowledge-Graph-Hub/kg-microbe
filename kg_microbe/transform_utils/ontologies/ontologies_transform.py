@@ -45,6 +45,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPATHWAYS_REACTION_PREFIX,
     UNIPATHWAYS_XREFS_FILEPATH,
     UNIPROT_PREFIX,
+    TREMBL_PREFIX,
     XREF_COLUMN,
 )
 from kg_microbe.utils.ontology_utils import replace_category_ontology
@@ -473,7 +474,7 @@ class OntologiesTransform(Transform):
                         new_ef_lines.append(line)
             if name == "ec":
                 # Remove UniProt and TrEMBL nodes since accounted for elsewhere
-                protein_prefixes = [UNIPROT_PREFIX, "TrEMBL:"]
+                protein_prefixes = [UNIPROT_PREFIX, TREMBL_PREFIX]
                 new_nf_lines = [line for line in new_nf_lines if not any(prefix in line for prefix in protein_prefixes)]
                 new_ef_lines = [line for line in new_ef_lines if not any(prefix in line for prefix in protein_prefixes)]
             # elif name == "rhea":

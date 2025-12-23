@@ -319,7 +319,7 @@ class RheaMappingsTransform(Transform):
                                     all_terms_writer.writerow(
                                         [*subject_info, *predicate_info, *object_info]
                                     )
-                                    # Filter out TrEMBL/UniProt entries - they should not be added
+                                    # Only include CHEBI, EC, and GO entries (filter out UniProt entries)
                                     if any(
                                         object_info[0].startswith(prefix)
                                         for prefix in [

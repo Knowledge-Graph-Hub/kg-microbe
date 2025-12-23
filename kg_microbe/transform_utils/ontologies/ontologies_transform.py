@@ -472,9 +472,10 @@ class OntologiesTransform(Transform):
                         line = _replace_special_prefixes(line)
                         new_ef_lines.append(line)
             if name == "ec":
-                # Remove Uniprot nodes since accounted for elsewhere
-                new_nf_lines = [line for line in new_nf_lines if UNIPROT_PREFIX not in line]
-                new_ef_lines = [line for line in new_ef_lines if UNIPROT_PREFIX not in line]
+                # Remove UniProt and TrEMBL nodes since accounted for elsewhere
+                protein_prefixes = [UNIPROT_PREFIX, "TrEMBL:"]
+                new_nf_lines = [line for line in new_nf_lines if not any(prefix in line for prefix in protein_prefixes)]
+                new_ef_lines = [line for line in new_ef_lines if not any(prefix in line for prefix in protein_prefixes)]
             # elif name == "rhea":
             #     # Remove debio nodes that account for direction, since already there in inverse triples
             #     # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them

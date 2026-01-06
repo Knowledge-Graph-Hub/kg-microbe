@@ -135,6 +135,13 @@ merged_graph:
         filename:
           - data/transformed/kegg/nodes.tsv
           - data/transformed/kegg/edges.tsv
+    cmm-ai:
+      name: "cmm-ai"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/cmm-ai/cmm-ai_nodes.tsv
+          - data/transformed/cmm-ai/cmm-ai_edges.tsv
     # ctd:
     #   input:
     #     name: "ctd"

@@ -119,8 +119,8 @@ merged_graph:
       input:
         format: tsv
         filename:
-          - data/transformed/bakta/nodes.tsv
-          - data/transformed/bakta/edges.tsv
+          - data/transformed/bakta/*/nodes.tsv
+          - data/transformed/bakta/*/edges.tsv
     cog:
       name: "cog"
       input:

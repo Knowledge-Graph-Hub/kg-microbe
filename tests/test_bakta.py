@@ -101,7 +101,7 @@ class TestBaktaUtils(unittest.TestCase):
 
     def test_parse_bakta_tsv(self):
         """Test parsing Bakta TSV file."""
-        test_file = Path("tests/resources/bakta/SAMN_test.bakta.tsv")
+        test_file = Path("tests/resources/bakta/test_dataset/bakta/SAMN_test/SAMN_test.bakta.tsv")
 
         if not test_file.exists():
             self.skipTest(f"Test file not found: {test_file}")

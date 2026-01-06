@@ -174,18 +174,21 @@ def get_go_aspect(go_id: str, go_adapter) -> str:
         return "molecular_function"
 
     try:
-        # Get the term from the ontology
-        term = go_adapter.get_entity(go_id)
-        if term:
-            # Try to get namespace/aspect from metadata
-            metadata = go_adapter.entity_metadata_map(go_id)
-            if metadata and "namespace" in metadata:
-                return metadata["namespace"]
+        # Try to get namespace/aspect from entity metadata
+        metadata = go_adapter.entity_metadata_map(go_id)
+        if metadata and "namespace" in metadata:
+            return metadata["namespace"]
 
-            # Fallback: query for namespace property
-            for stmt in go_adapter.query([go_id], predicates=["oio:hasOBONamespace"]):
-                if stmt.value:
-                    return stmt.value
+        # Fallback: Try getting label to check if term exists
+        label = go_adapter.label(go_id)
+        if not label:
+            # Term doesn't exist in ontology, use default
+            return "molecular_function"
+
+        # If metadata didn't have namespace, try getting subset/category info
+        # Many GO terms should have namespace in metadata, so if we get here
+        # just use the default
+        logger.debug(f"No namespace found in metadata for {go_id}, using default")
 
     except Exception as e:
         logger.warning(f"Could not determine aspect for {go_id}: {e}")

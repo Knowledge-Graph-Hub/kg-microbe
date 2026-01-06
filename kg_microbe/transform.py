@@ -6,14 +6,20 @@ from typing import List, Optional
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
+from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
+from kg_microbe.transform_utils.cog.cog import COGTransform
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACTOTRAITS,
+    BAKTA,
+    COG,
+    KEGG,
     MADIN_ETAL,
     MEDIADIVE,
     ONTOLOGIES,
     RHEAMAPPINGS,
 )
+from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
@@ -33,6 +39,9 @@ DATA_SOURCES = {
     # "STRINGTransform": STRINGTransform,
     ONTOLOGIES: OntologiesTransform,
     BACDIVE: BacDiveTransform,
+    BAKTA: BaktaTransform,
+    COG: COGTransform,
+    KEGG: KEGGTransform,
     MEDIADIVE: MediaDiveTransform,
     MADIN_ETAL: MadinEtAlTransform,
     RHEAMAPPINGS: RheaMappingsTransform,

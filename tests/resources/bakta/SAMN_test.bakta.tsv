@@ -1,0 +1,10 @@
+##gff-version 3
+##feature-ontology https://github.com/The-Sequence-Ontology/SO-Ontologies/blob/v3.1/so.obo
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=0
+##genome-build
+##sequence-region
+#Sequence Id	Type	Start	Stop	Strand	Locus Tag	Gene	Product	DbXrefs
+SAMN_test.contig00001	cds	1000	2000	+	TEST_00001	tatA	Sec-independent protein translocase protein TatA	COG:COG1826, GO:0006605, GO:0008320, RefSeq:WP_015261910.1, SO:0001217, UniParc:UPI0002497F11, UniRef:UniRef100_Q6EXA0, UniRef:UniRef50_Q6EXA0, UniRef:UniRef90_Q6EXA0
+SAMN_test.contig00001	cds	2100	3200	+	TEST_00002	uvrA	Excinuclease ABC subunit UvrA	COG:COG0178, EC:3.1.25.-, GO:0003677, GO:0005524, GO:0006289, GO:0016887, RefSeq:WP_016449348.1, SO:0001217, UniParc:UPI0002D4BAF4, UniRef:UniRef100_A0A7U9E7C5, UniRef:UniRef50_Q8EUL1, UniRef:UniRef90_A0A031HEP6
+SAMN_test.contig00001	cds	3300	4500	+	TEST_00003	dadA	Glycine/D-amino acid oxidase	COG:COG0665, EC:1.4.99.6, KEGG:K19746, RefSeq:WP_016449349.1, SO:0001217, UniParc:UPI000352B28F, UniRef:UniRef100_A0A7U9E8S7, UniRef:UniRef50_A0A7U9E8S7, UniRef:UniRef90_A0A7U9E8S7
+SAMN_test.contig00001	cds	4600	5500	+	TEST_00004		hypothetical protein	RefSeq:WP_016449350.1, SO:0001217, UniParc:UPI000352B290, UniRef:UniRef100_A0A7U9E8S8, UniRef:UniRef50_A0A7U9E8S8, UniRef:UniRef90_A0A7U9E8S8

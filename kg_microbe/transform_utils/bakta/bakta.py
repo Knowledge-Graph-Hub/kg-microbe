@@ -95,35 +95,70 @@ class BaktaTransform(Transform):
         """
         Run the Bakta transform.
 
+        Processes all dataset subdirectories in data/raw/bakta/ (e.g., pfas_bakta, cmm_bakta)
+        and outputs to data/transformed/bakta/[dataset_name]/ for each.
+
         :param data_file: Not used (kept for API compatibility)
         :param show_status: Show progress bar (default: True)
         """
         logger.info("Starting Bakta transform")
 
-        # Get all SAMN directories
-        samn_dirs = get_all_samn_directories(BAKTA_RAW_DIR)
+        # Use input_base_dir instead of constant to support testing
+        bakta_raw_dir = self.input_base_dir / "bakta"
 
-        if not samn_dirs:
-            logger.error(f"No SAMN directories found in {BAKTA_RAW_DIR}")
+        if not bakta_raw_dir.exists():
+            logger.error(f"Bakta raw directory does not exist: {bakta_raw_dir}")
             return
 
-        logger.info(f"Processing {len(samn_dirs)} genomes")
+        # Find all dataset subdirectories (e.g., pfas_bakta, cmm_bakta)
+        dataset_dirs = [d for d in bakta_raw_dir.iterdir() if d.is_dir()]
 
-        # Progress bar
-        progress_bar = tqdm(samn_dirs) if show_status else DummyTqdm(samn_dirs)
+        if not dataset_dirs:
+            logger.error(f"No dataset directories found in {bakta_raw_dir}")
+            return
 
-        # Process each genome
-        for samn_dir in progress_bar:
-            samn_id = extract_samn_from_path(samn_dir)
+        logger.info(f"Found {len(dataset_dirs)} dataset directories: {[d.name for d in dataset_dirs]}")
 
-            if show_status:
-                progress_bar.set_description(f"Processing {samn_id}")
+        # Process each dataset directory
+        for dataset_dir in dataset_dirs:
+            dataset_name = dataset_dir.name
+            logger.info(f"Processing dataset: {dataset_name}")
 
-            self.process_genome(samn_dir, samn_id)
+            # Reset collections for each dataset
+            self.nodes = []
+            self.edges = []
+            self.seen_nodes = set()
 
-        # Write output files
-        logger.info(f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges")
-        self.write_output()
+            # Look for 'bakta' subdirectory within dataset directory
+            bakta_subdir = dataset_dir / "bakta"
+            if not bakta_subdir.exists():
+                logger.warning(f"No 'bakta' subdirectory found in {dataset_dir}, skipping")
+                continue
+
+            # Get all SAMN directories in this dataset
+            samn_dirs = get_all_samn_directories(bakta_subdir)
+
+            if not samn_dirs:
+                logger.warning(f"No SAMN directories found in {bakta_subdir}, skipping")
+                continue
+
+            logger.info(f"Processing {len(samn_dirs)} genomes for {dataset_name}")
+
+            # Progress bar
+            progress_bar = tqdm(samn_dirs, desc=f"Processing {dataset_name}") if show_status else DummyTqdm(samn_dirs)
+
+            # Process each genome
+            for samn_dir in progress_bar:
+                samn_id = extract_samn_from_path(samn_dir)
+
+                if show_status:
+                    progress_bar.set_description(f"Processing {dataset_name}: {samn_id}")
+
+                self.process_genome(samn_dir, samn_id)
+
+            # Write output files for this dataset
+            logger.info(f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges for {dataset_name}")
+            self.write_output(dataset_name)
 
         logger.info("Bakta transform complete")
 
@@ -492,8 +527,20 @@ class BaktaTransform(Transform):
 
         self.edges.append(edge)
 
-    def write_output(self) -> None:
-        """Write nodes and edges to TSV files."""
+    def write_output(self, dataset_name: str) -> None:
+        """
+        Write nodes and edges to TSV files for a specific dataset.
+
+        :param dataset_name: Name of the dataset (e.g., 'pfas_bakta', 'cmm_bakta')
+        """
+        # Create dataset-specific output directory
+        dataset_output_dir = self.output_dir / dataset_name
+        dataset_output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Define output file paths
+        output_node_file = dataset_output_dir / "nodes.tsv"
+        output_edge_file = dataset_output_dir / "edges.tsv"
+
         # Convert to DataFrames
         nodes_df = pd.DataFrame(self.nodes, columns=self.node_header)
         edges_df = pd.DataFrame(self.edges, columns=self.edge_header)
@@ -503,8 +550,8 @@ class BaktaTransform(Transform):
         edges_df = edges_df.drop_duplicates()
 
         # Write to TSV
-        nodes_df.to_csv(self.output_node_file, sep="\t", index=False)
-        edges_df.to_csv(self.output_edge_file, sep="\t", index=False)
+        nodes_df.to_csv(output_node_file, sep="\t", index=False)
+        edges_df.to_csv(output_edge_file, sep="\t", index=False)
 
-        logger.info(f"Wrote {len(nodes_df)} nodes to {self.output_node_file}")
-        logger.info(f"Wrote {len(edges_df)} edges to {self.output_edge_file}")
+        logger.info(f"Wrote {len(nodes_df)} nodes to {output_node_file}")
+        logger.info(f"Wrote {len(edges_df)} edges to {output_edge_file}")

@@ -114,13 +114,20 @@ merged_graph:
         filename:
           - data/transformed/bactotraits/nodes.tsv
           - data/transformed/bactotraits/edges.tsv
-    bakta:
-      name: "bakta"
+    bakta_cmm:
+      name: "bakta_cmm"
       input:
         format: tsv
         filename:
-          - data/transformed/bakta/*/nodes.tsv
-          - data/transformed/bakta/*/edges.tsv
+          - data/transformed/bakta/cmm_bakta/nodes.tsv
+          - data/transformed/bakta/cmm_bakta/edges.tsv
+    # bakta_pfas:
+    #   name: "bakta_pfas"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/bakta/pfas_bakta/nodes.tsv
+    #       - data/transformed/bakta/pfas_bakta/edges.tsv
     cog:
       name: "cog"
       input:
@@ -128,13 +135,13 @@ merged_graph:
         filename:
           - data/transformed/cog/nodes.tsv
           - data/transformed/cog/edges.tsv
-    kegg:
-      name: "kegg"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/kegg/nodes.tsv
-          - data/transformed/kegg/edges.tsv
+    # kegg:
+    #   name: "kegg"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/kegg/nodes.tsv
+    #       - data/transformed/kegg/edges.tsv
     # ctd:
     #   input:
     #     name: "ctd"

@@ -272,3 +272,12 @@
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
+
+#
+# Biolink Model
+# The standard schema for biological knowledge graphs
+# Version 3.6.0
+#
+-
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v3.6.0/biolink-model.yaml
+  local_name: biolink-model.yaml

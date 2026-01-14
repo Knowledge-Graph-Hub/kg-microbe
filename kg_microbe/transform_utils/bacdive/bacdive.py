@@ -24,11 +24,9 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ACTIVITY_KEY,
-    AGENT_TYPE_COLUMN,
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
-    ASSESSED_ACTIVITY_RELATIONSHIP,
     ASSAY_HAS_INPUT_PREDICATE,
     ASSAY_INPUT_RELATION,
     ASSAY_PREFIX,
@@ -41,11 +39,8 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
     BACDIVE_MAPPING_EC_ID,
-    BACDIVE_MAPPING_ENZYME_LABEL,
     BACDIVE_MAPPING_FILE,
     BACDIVE_MAPPING_KEGG_ID,
-    BACDIVE_MAPPING_PSEUDO_ID_COLUMN,
-    BACDIVE_MAPPING_SUBSTRATE_LABEL,
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
@@ -70,8 +65,6 @@ from kg_microbe.transform_utils.constants import (
     EC_CATEGORY,
     EC_KEY,
     EC_PREFIX,
-    ENZYME_TO_ASSAY_EDGE,
-    ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
@@ -83,7 +76,6 @@ from kg_microbe.transform_utils.constants import (
     GENERAL_DESCRIPTION,
     GENUS,
     HALOPHILY,
-    HAS_INPUT_RELATION,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
@@ -100,7 +92,6 @@ from kg_microbe.transform_utils.constants import (
     KEYWORDS,
     KEYWORDS_COLUMN,
     KNOWLEDGE_ASSERTION,
-    KNOWLEDGE_LEVEL_COLUMN,
     LOCATION_OF,
     LPSN,
     MANUAL_AGENT,
@@ -146,7 +137,6 @@ from kg_microbe.transform_utils.constants import (
     OBSERVATION,
     ORDER,
     OXYGEN_TOLERANCE,
-    PARTICIPATES_IN,
     PHENOTYPIC_CATEGORY,
     PHYLUM,
     PHYSIOLOGY_AND_METABOLISM,
@@ -167,8 +157,6 @@ from kg_microbe.transform_utils.constants import (
     STRAIN_DESIGNATION,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
-    SUBSTRATE_CATEGORY,
-    SUBSTRATE_TO_ASSAY_EDGE,
     SYNONYM,
     SYNONYMS,
     TOLERANCE,
@@ -412,7 +400,7 @@ class BacDiveTransform(Transform):
             match = re.match(pattern, full_name, re.IGNORECASE)
             if match:
                 taxon_name = match.group(1).strip()
-                print(f"  Detected '(not further classified)' pattern")
+                print("  Detected '(not further classified)' pattern")
                 print(f"  Extracted taxon name: {taxon_name}")
                 return taxon_name, True
 
@@ -420,7 +408,7 @@ class BacDiveTransform(Transform):
         unidentified_match = re.match(r"^Unidentified\s+(.+?)$", full_name, re.IGNORECASE)
         if unidentified_match:
             taxon_name = unidentified_match.group(1).strip()
-            print(f"  Detected 'Unidentified [taxon]' pattern")
+            print("  Detected 'Unidentified [taxon]' pattern")
             print(f"  Extracted taxon name: {taxon_name}")
             return taxon_name, True
 
@@ -1182,6 +1170,7 @@ class BacDiveTransform(Transform):
             if self.assay_kit_mappings:
                 try:
                     import requests
+
                     from kg_microbe.utils.mapping_file_utils import (
                         ASSAY_KITS_SIMPLE_JSON_URL,
                         generate_assay_entity_edges,
@@ -1596,7 +1585,8 @@ class BacDiveTransform(Transform):
                                         ]
                                     )
                                     print(
-                                        f"  Created edges: {organism_id} -> {provisional_species_id} -> {genus_ncbitaxon_id}"
+                                        f"  Created edges: {organism_id} -> "
+                                        f"{provisional_species_id} -> {genus_ncbitaxon_id}"
                                     )
                                 else:
                                     # Single-word name (genus only)
@@ -1697,7 +1687,8 @@ class BacDiveTransform(Transform):
                                             ]
                                         )
                                         print(
-                                            f"  Created chain: {organism_id} -> species -> genus -> {higher_ncbitaxon_id}"
+                                            f"  Created chain: {organism_id} -> species -> genus -> "
+                                            f"{higher_ncbitaxon_id}"
                                         )
                                     else:
                                         # Genus-only: strain -> genus -> higher rank

@@ -745,7 +745,8 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
         id: assay:API_zym_alkaline_phosphatase
         category: biolink:Procedure
         name: API zym - Alkaline phosphatase
-        description: Tests for Alkaline phosphatase activity using chromogenic substrate. Kit: API zym, Well: Alkaline phosphatase, Type: enzyme
+        description: Tests for Alkaline phosphatase activity using chromogenic substrate.
+                     Kit: API zym, Well: Alkaline phosphatase, Type: enzyme
     """
     from kg_microbe.transform_utils.constants import (
         ASSAY_CATEGORY,
@@ -856,8 +857,14 @@ def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> Lis
     predicate_idx = edge_header.index(PREDICATE_COLUMN)
     object_idx = edge_header.index(OBJECT_COLUMN)
     relation_idx = edge_header.index(RELATION_COLUMN) if RELATION_COLUMN in edge_header else None
-    pks_idx = edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN) if PRIMARY_KNOWLEDGE_SOURCE_COLUMN in edge_header else None
-    knowledge_level_idx = edge_header.index(KNOWLEDGE_LEVEL_COLUMN) if KNOWLEDGE_LEVEL_COLUMN in edge_header else None
+    pks_idx = (
+        edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN)
+        if PRIMARY_KNOWLEDGE_SOURCE_COLUMN in edge_header
+        else None
+    )
+    knowledge_level_idx = (
+        edge_header.index(KNOWLEDGE_LEVEL_COLUMN) if KNOWLEDGE_LEVEL_COLUMN in edge_header else None
+    )
     agent_type_idx = edge_header.index(AGENT_TYPE_COLUMN) if AGENT_TYPE_COLUMN in edge_header else None
 
     for kit in assay_data.get("api_kits", []):

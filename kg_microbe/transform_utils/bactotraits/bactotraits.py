@@ -24,6 +24,7 @@ from kg_microbe.transform_utils.constants import (
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
+    ID_COLUMN,
     MANUAL_AGENT,
     NAME_COLUMN,
     NCBI_CATEGORY,

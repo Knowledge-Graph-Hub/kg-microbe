@@ -1,6 +1,5 @@
 """Test the parent Transform class."""
 
-import os
 from pathlib import Path
 from unittest import TestCase
 
@@ -54,7 +53,6 @@ class TestTransform(TestCase):
     )
     def test_attributes(self, attr, default):
         """Test the attributes of a Transform instance."""
-        self.transform_instance
         self.assertTrue(hasattr(self.transform_instance, attr))
         self.assertEqual(getattr(self.transform_instance, attr), default)
 

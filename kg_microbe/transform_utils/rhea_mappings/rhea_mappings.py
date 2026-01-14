@@ -16,8 +16,6 @@ from pyobo import get_id_name_mapping, get_relations_df
 from pyobo.sources.rhea import RheaGetter
 from tqdm import tqdm
 
-logger = logging.getLogger(__name__)
-
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CHEBI_PREFIX,
@@ -73,6 +71,8 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
+
+logger = logging.getLogger(__name__)
 
 
 class RheaMappingsTransform(Transform):

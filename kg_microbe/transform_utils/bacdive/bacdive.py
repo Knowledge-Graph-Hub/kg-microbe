@@ -204,12 +204,21 @@ class BacDiveTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
         self.knowledge_source = "infores:bacdive"  # InforES standard knowledge source
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+
+        # Initialize ontology adapters for reuse
+        self.go_adapter = None
+        self.chebi_adapter = None
+        self._init_ontology_adapters()
+
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
         self.metpo_metabolite_utilization_mappings = load_metpo_metabolite_utilization_mappings()
         self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
         self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
         self.assay_kit_mappings = load_assay_kit_mappings()
+
+        # Build reverse index for O(1) METPO mapping lookups
+        self.metpo_iri_to_mapping = self._build_metpo_iri_index()
 
         # Assay data will be fetched and processed in run() to generate nodes and edges
         self.assay_raw_data: Optional[dict] = None  # Raw JSON from assay_kits_simple.json
@@ -222,7 +231,37 @@ class BacDiveTransform(Transform):
         # and self.ncbitaxon_labels and self.ncbitaxon_name_to_id will remain empty.
         self.ncbitaxon_labels: Dict[str, str] = {}  # {ncbitaxon_id: label}
         self.ncbitaxon_name_to_id: Dict[str, str] = {}  # {label: ncbitaxon_id} for reverse lookup
+        self.ncbitaxon_fallback_cache: Dict[str, Optional[str]] = {}  # Cache for fallback lookups
         self._load_ncbitaxon_labels()
+
+    def _build_metpo_iri_index(self) -> Dict[str, dict]:
+        """
+        Build reverse index from IRI to mapping info for O(1) lookup.
+
+        Eliminates O(n) search through bacdive_metpo_mappings in
+        _build_keyword_map_from_record() (previously at line 705).
+
+        Returns:
+            Dictionary mapping IRI (CURIE) to mapping metadata
+        """
+        iri_index = {}
+        for synonym, map_info in self.bacdive_metpo_mappings.items():
+            iri = map_info.get("curie")
+            if iri:
+                iri_index[iri] = map_info
+        return iri_index
+
+    def _init_ontology_adapters(self):
+        """Initialize GO and ChEBI adapters once for reuse."""
+        try:
+            from oaklib import get_adapter
+            from kg_microbe.transform_utils.constants import GO_SOURCE, CHEBI_SOURCE
+
+            self.go_adapter = get_adapter(f"sqlite:{GO_SOURCE}")
+            self.chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+            logger.info("Initialized GO and ChEBI adapters")
+        except Exception as e:
+            logger.warning(f"Could not initialize adapters: {e}")
 
     def _create_node_row(
         self,
@@ -700,38 +739,34 @@ class BacDiveTransform(Transform):
                             if value in child.synonyms:
                                 # Found a match - add to keyword_map using normalized key
                                 if normalized_value not in keyword_map:
-                                    # Find the mapping by searching for a synonym that matches this value
-                                    found_mapping = False
-                                    for _syn, map_info in self.bacdive_metpo_mappings.items():
-                                        if map_info["curie"] == child.iri:
-                                            category_url = map_info.get("inferred_category", "")
-                                            predicate_biolink = map_info.get(
-                                                "predicate_biolink_equivalent", ""
-                                            )
+                                    # Use O(1) lookup instead of O(n) search
+                                    map_info = self.metpo_iri_to_mapping.get(child.iri)
+                                    if map_info:
+                                        category_url = map_info.get("inferred_category", "")
+                                        predicate_biolink = map_info.get(
+                                            "predicate_biolink_equivalent", ""
+                                        )
 
-                                            # Convert category URL to CURIE
-                                            if category_url:
-                                                category = uri_to_curie(category_url)
-                                            else:
-                                                category = "biolink:PhenotypicQuality"
+                                        # Convert category URL to CURIE
+                                        if category_url:
+                                            category = uri_to_curie(category_url)
+                                        else:
+                                            category = "biolink:PhenotypicQuality"
 
-                                            predicate = (
-                                                uri_to_curie(predicate_biolink)
-                                                if predicate_biolink
-                                                else "biolink:has_phenotype"
-                                            )
+                                        predicate = (
+                                            uri_to_curie(predicate_biolink)
+                                            if predicate_biolink
+                                            else "biolink:has_phenotype"
+                                        )
 
-                                            keyword_map[normalized_value] = {
-                                                "category": category,
-                                                "predicate": predicate,
-                                                "curie": child.iri,
-                                                "name": child.label,
-                                            }
-                                            found_mapping = True
-                                            break
-
-                                    # If not found in mappings, create a basic entry
-                                    if not found_mapping and child.iri:
+                                        keyword_map[normalized_value] = {
+                                            "category": category,
+                                            "predicate": predicate,
+                                            "curie": child.iri,
+                                            "name": child.label,
+                                        }
+                                    elif child.iri:
+                                        # No mapping found, create basic entry
                                         keyword_map[normalized_value] = {
                                             "category": "biolink:PhenotypicQuality",
                                             "predicate": "biolink:has_phenotype",
@@ -1312,80 +1347,59 @@ class BacDiveTransform(Transform):
                     key = str(bacdive_id)
 
                     dsm_number = general_info.get(DSM_NUMBER)
+
+                    # Extract parent dictionaries ONCE to avoid repeated .get() calls
                     external_links = value.get(EXTERNAL_LINKS, {})
+                    isolation_dict = value.get(ISOLATION_SAMPLING_ENV_INFO, {})
+                    morphology_dict = value.get(MORPHOLOGY, {})
+                    physiology_dict = value.get(PHYSIOLOGY_AND_METABOLISM, {})
+                    safety_dict = value.get(SAFETY_INFO, {})
+                    name_tax_classification = value.get(NAME_TAX_CLASSIFICATION, {})
+
                     culture_number_from_external_links = None
-                    isolation = value.get(ISOLATION_SAMPLING_ENV_INFO, {}).get(ISOLATION)
-                    isolation_source_categories = value.get(ISOLATION_SAMPLING_ENV_INFO, {}).get(
+                    isolation = isolation_dict.get(ISOLATION)
+                    isolation_source_categories = isolation_dict.get(
                         ISOLATION_SOURCE_CATEGORIES, []
                     )
 
-                    morphology_multimedia = value.get(MORPHOLOGY, {}).get(MULTIMEDIA)
-                    morphology_multicellular = value.get(MORPHOLOGY, {}).get(
+                    morphology_multimedia = morphology_dict.get(MULTIMEDIA)
+                    morphology_multicellular = morphology_dict.get(
                         MULTICELLULAR_MORPHOLOGY
                     )
-                    morphology_colony = value.get(MORPHOLOGY, {}).get(COLONY_MORPHOLOGY)
-                    morphology_cell = value.get(MORPHOLOGY, {}).get(CELL_MORPHOLOGY)
-                    morphology_pigmentation = value.get(MORPHOLOGY, {}).get(PIGMENTATION)
-                    phys_and_metabolism_observation = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                    morphology_colony = morphology_dict.get(COLONY_MORPHOLOGY)
+                    morphology_cell = morphology_dict.get(CELL_MORPHOLOGY)
+                    morphology_pigmentation = morphology_dict.get(PIGMENTATION)
+                    phys_and_metabolism_observation = physiology_dict.get(
                         OBSERVATION
                     )
-                    phys_and_metabolism_enzymes = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
+                    phys_and_metabolism_enzymes = physiology_dict.get(
                         ENZYMES
                     )
-                    name_tax_classification = value.get(NAME_TAX_CLASSIFICATION, {})
 
-                    phys_and_metabolism_metabolite_utilization = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(METABOLITE_UTILIZATION)
-                    phys_and_metabolism_metabolite_production = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(METABOLITE_PRODUCTION)
-                    phys_and_metabolism_metabolite_tests = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(METABOLITE_TESTS)
+                    phys_and_metabolism_metabolite_utilization = physiology_dict.get(METABOLITE_UTILIZATION)
+                    phys_and_metabolism_metabolite_production = physiology_dict.get(METABOLITE_PRODUCTION)
+                    phys_and_metabolism_metabolite_tests = physiology_dict.get(METABOLITE_TESTS)
                     phys_and_metabolism_API = (
                         {
                             k: v
-                            for k, v in value.get(PHYSIOLOGY_AND_METABOLISM, {}).items()
+                            for k, v in physiology_dict.items()
                             if k.startswith("API ")
                         }
-                        if any(
-                            k.startswith("API ") for k in value.get(PHYSIOLOGY_AND_METABOLISM, {})
-                        )
+                        if any(k.startswith("API ") for k in physiology_dict)
                         else None
                     )
-                    phys_and_metabolism_oxygen_tolerance = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(OXYGEN_TOLERANCE)
-                    phys_and_metabolism_spore_formation = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(SPORE_FORMATION)
-                    phys_and_metabolism_halophily = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
-                        HALOPHILY
-                    )
-                    phys_and_metabolism_antibiotic_resistance = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(ANTIBIOTIC_RESISTANCE)
-                    phys_and_metabolism_murein_type = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
-                        MUREIN
-                    )
-                    phys_and_metabolism_compound_production = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(COMPOUND_PRODUCTION)
-                    phys_and_metabolism_fatty_acid_profile = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(FATTY_ACID_PROFILE)
-                    phys_and_metabolism_tolerance = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
-                        TOLERANCE
-                    )
-                    phys_and_metabolism_antibiogram = value.get(PHYSIOLOGY_AND_METABOLISM, {}).get(
-                        ANTIBIOGRAM
-                    )
-                    phys_and_metabolism_nutrition_type = value.get(
-                        PHYSIOLOGY_AND_METABOLISM, {}
-                    ).get(NUTRITION_TYPE)
+                    phys_and_metabolism_oxygen_tolerance = physiology_dict.get(OXYGEN_TOLERANCE)
+                    phys_and_metabolism_spore_formation = physiology_dict.get(SPORE_FORMATION)
+                    phys_and_metabolism_halophily = physiology_dict.get(HALOPHILY)
+                    phys_and_metabolism_antibiotic_resistance = physiology_dict.get(ANTIBIOTIC_RESISTANCE)
+                    phys_and_metabolism_murein_type = physiology_dict.get(MUREIN)
+                    phys_and_metabolism_compound_production = physiology_dict.get(COMPOUND_PRODUCTION)
+                    phys_and_metabolism_fatty_acid_profile = physiology_dict.get(FATTY_ACID_PROFILE)
+                    phys_and_metabolism_tolerance = physiology_dict.get(TOLERANCE)
+                    phys_and_metabolism_antibiogram = physiology_dict.get(ANTIBIOGRAM)
+                    phys_and_metabolism_nutrition_type = physiology_dict.get(NUTRITION_TYPE)
 
-                    risk_assessment = value.get(SAFETY_INFO, {}).get(RISK_ASSESSMENT)
+                    risk_assessment = safety_dict.get(RISK_ASSESSMENT)
 
                     if EXTERNAL_LINKS_CULTURE_NUMBER in external_links:
                         culture_number_from_external_links = (
@@ -1448,19 +1462,29 @@ class BacDiveTransform(Transform):
 
                     # If no NCBITaxon ID from BacDive JSON, try searching by name
                     if ncbitaxon_id is None and name_tax_classification:
-                        # Try ranks in order: species → genus → family → order → class → phylum → domain
-                        rank_fields = [SPECIES, GENUS, FAMILY, ORDER, CLASS, PHYLUM, DOMAIN]
+                        full_name = name_tax_classification.get(FULL_SCIENTIFIC_NAME, "unknown")
 
-                        for rank_field in rank_fields:
-                            search_name = name_tax_classification.get(rank_field)
-                            if search_name:
-                                ncbitaxon_id = self._search_ncbitaxon_by_label(search_name)
-                                if ncbitaxon_id:
-                                    ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
-                                    break
+                        # Check cache first
+                        if full_name in self.ncbitaxon_fallback_cache:
+                            ncbitaxon_id = self.ncbitaxon_fallback_cache[full_name]
+                            if ncbitaxon_id:
+                                ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
+                        else:
+                            # Try ranks in order: species → genus → family → order → class → phylum → domain
+                            rank_fields = [SPECIES, GENUS, FAMILY, ORDER, CLASS, PHYLUM, DOMAIN]
+
+                            for rank_field in rank_fields:
+                                search_name = name_tax_classification.get(rank_field)
+                                if search_name:
+                                    ncbitaxon_id = self._search_ncbitaxon_by_label(search_name)
+                                    if ncbitaxon_id:
+                                        ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
+                                        break
+
+                            # Cache result (even if None) to avoid repeated searches
+                            self.ncbitaxon_fallback_cache[full_name] = ncbitaxon_id
 
                         if ncbitaxon_id is None:
-                            full_name = name_tax_classification.get(FULL_SCIENTIFIC_NAME, "unknown")
                             print(
                                 f"WARNING: BacDive {key} - no NCBITaxon match found for: {full_name}"
                             )

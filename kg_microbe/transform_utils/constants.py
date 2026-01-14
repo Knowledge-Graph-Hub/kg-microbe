@@ -239,8 +239,9 @@ MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Default for simple ingredients
-COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"  # For complex ingredients (peptone, yeast extract, etc.)
-SMALL_MOLECULE_CATEGORY = "biolink:SmallMolecule"  # Current Biolink standard for chemical compounds
+# For complex ingredients (peptone, yeast extract, etc.)
+COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"
+SMALL_MOLECULE_CATEGORY = "biolink:SmallMolecule"  # Current Biolink standard
 MACROMOLECULE_CATEGORY = "biolink:Macromolecule"  # For proteins, nucleic acids, polysaccharides
 METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"

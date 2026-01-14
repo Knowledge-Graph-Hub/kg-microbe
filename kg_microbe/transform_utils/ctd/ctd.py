@@ -21,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     CTD_CHEMICAL_MESH_COLUMN,
     CTD_DISEASE_MESH_COLUMN,
     DISEASE_CATEGORY,
+    ID_COLUMN,
     MESH_PREFIX,
     MONDO_PREFIX,
     MONDO_XREFS_FILEPATH,

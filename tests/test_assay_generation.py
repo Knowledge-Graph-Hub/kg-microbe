@@ -36,6 +36,7 @@ from kg_microbe.utils.mapping_file_utils import (
 
 
 class TestAssayGeneration(unittest.TestCase):
+
     """Tests for assay node and edge generation functions."""
 
     def setUp(self) -> None:
@@ -149,7 +150,7 @@ class TestAssayGeneration(unittest.TestCase):
         self.assertEqual(len(first_node), len(self.node_header))
 
         # Check that ID starts with assay prefix
-        node_dict = dict(zip(self.node_header, first_node))
+        node_dict = dict(zip(self.node_header, first_node, strict=False))
         self.assertTrue(node_dict[ID_COLUMN].startswith(ASSAY_PREFIX))
 
         # Check category is correct
@@ -173,7 +174,7 @@ class TestAssayGeneration(unittest.TestCase):
         # Find the specific node by ID
         target_node = None
         for node in nodes:
-            node_dict = dict(zip(self.node_header, node))
+            node_dict = dict(zip(self.node_header, node, strict=False))
             if node_dict[ID_COLUMN] == f"{ASSAY_PREFIX}{node_id}":
                 target_node = node_dict
                 break
@@ -210,7 +211,7 @@ class TestAssayGeneration(unittest.TestCase):
         self.assertEqual(len(first_edge), len(self.edge_header))
 
         # Check that subject starts with assay prefix
-        edge_dict = dict(zip(self.edge_header, first_edge))
+        edge_dict = dict(zip(self.edge_header, first_edge, strict=False))
         self.assertTrue(edge_dict[SUBJECT_COLUMN].startswith(ASSAY_PREFIX))
 
     def test_generate_assay_entity_edges_enzyme_predicates(self):
@@ -220,7 +221,7 @@ class TestAssayGeneration(unittest.TestCase):
         # Find edges from enzyme tests (ONPG and ADH)
         enzyme_edges = []
         for edge in edges:
-            edge_dict = dict(zip(self.edge_header, edge))
+            edge_dict = dict(zip(self.edge_header, edge, strict=False))
             # Check if object is GO or EC
             if edge_dict[OBJECT_COLUMN].startswith("GO:") or edge_dict[OBJECT_COLUMN].startswith("EC:"):
                 enzyme_edges.append(edge_dict)
@@ -240,7 +241,7 @@ class TestAssayGeneration(unittest.TestCase):
         # Find edges from chemical tests (GLU, GLC, FRU)
         chemical_edges = []
         for edge in edges:
-            edge_dict = dict(zip(self.edge_header, edge))
+            edge_dict = dict(zip(self.edge_header, edge, strict=False))
             # Check if object is ChEBI
             if edge_dict[OBJECT_COLUMN].startswith("CHEBI:"):
                 chemical_edges.append(edge_dict)
@@ -259,7 +260,7 @@ class TestAssayGeneration(unittest.TestCase):
 
         # All edges should have infores:assay-metadata as primary knowledge source
         for edge in edges:
-            edge_dict = dict(zip(self.edge_header, edge))
+            edge_dict = dict(zip(self.edge_header, edge, strict=False))
             self.assertEqual(edge_dict[PRIMARY_KNOWLEDGE_SOURCE_COLUMN], "infores:assay-metadata")
             self.assertEqual(edge_dict[KNOWLEDGE_LEVEL_COLUMN], "knowledge_assertion")
             self.assertEqual(edge_dict[AGENT_TYPE_COLUMN], "manual_agent")
@@ -280,7 +281,7 @@ class TestAssayGeneration(unittest.TestCase):
         # Find edges from this assay
         assay_edges = []
         for edge in edges:
-            edge_dict = dict(zip(self.edge_header, edge))
+            edge_dict = dict(zip(self.edge_header, edge, strict=False))
             if edge_dict[SUBJECT_COLUMN] == f"{ASSAY_PREFIX}{assay_id}":
                 assay_edges.append(edge_dict[OBJECT_COLUMN])
 
@@ -301,7 +302,7 @@ class TestAssayGeneration(unittest.TestCase):
         nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
 
         for node in nodes:
-            node_dict = dict(zip(self.node_header, node))
+            node_dict = dict(zip(self.node_header, node, strict=False))
             node_id = node_dict[ID_COLUMN]
 
             # Should match pattern: assay:{kit_name}_{well_name}
@@ -316,7 +317,7 @@ class TestAssayGeneration(unittest.TestCase):
         nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
 
         for node in nodes:
-            node_dict = dict(zip(self.node_header, node))
+            node_dict = dict(zip(self.node_header, node, strict=False))
             name = node_dict[NAME_COLUMN]
 
             # Name should contain kit name and dash separator
@@ -327,6 +328,7 @@ class TestAssayGeneration(unittest.TestCase):
 
 
 class TestECSubstrateEdges(unittest.TestCase):
+
     """Tests for EC→substrate edge generation from bacdive_mappings.tsv."""
 
     def setUp(self) -> None:
@@ -342,12 +344,15 @@ class TestECSubstrateEdges(unittest.TestCase):
         ]
 
         # Mock bacdive_mappings.tsv data
-        self.mock_mappings_tsv = """CHEBI_ID\tsubstrate\tKEGG_ID\tCAS_RN_ID\tEC_ID\tenzyme\tpseudo_CURIE\treaction_name
+        self.mock_mappings_tsv = (
+            """CHEBI_ID\tsubstrate\tKEGG_ID\tCAS_RN_ID\tEC_ID\tenzyme\tpseudo_CURIE\treaction_name
 CHEBI:16828\tL-tryptophan\tKEGG:C00078\tCAS-RN:73-22-3\tEC:4.1.99.1\ttryptophanase\tassay:API_20A_IND\tIndole production
 CHEBI:16199\tUrea\tKEGG:C00086\tCAS-RN:57-13-6\tEC:3.5.1.5\tUrease\tassay:API_20A_URE\tUrease/urea hydrolysis
 CHEBI:17634\tD-glucose\tKEGG:C00031\tCAS-RN:50-99-7\t\t\tassay:API_20A_GLU\tAcid from D-glucose
 \t\t\t\tEC:1.11.1.6\tcatalase\tassay:API_20A_CAT\tCatalase
-CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\tEC:3.2.1.21\tbeta-glucosidase\tassay:API_20A_ESC\tEsculin hydrolysis"""
+CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\tEC:3.2.1.21\t"""
+            """beta-glucosidase\tassay:API_20A_ESC\tEsculin hydrolysis"""
+        )
 
     def test_ec_substrate_edges_count(self):
         """Test that correct number of EC→substrate edges are generated."""
@@ -406,7 +411,7 @@ CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\tEC:3.2.1.21\tb
         self.assertEqual(len(first_edge), len(self.edge_header))
 
         # Check that edge has correct components
-        edge_dict = dict(zip(self.edge_header, first_edge))
+        edge_dict = dict(zip(self.edge_header, first_edge, strict=False))
         self.assertTrue(edge_dict[SUBJECT_COLUMN].startswith("EC:"))
         self.assertTrue(edge_dict[OBJECT_COLUMN].startswith("CHEBI:"))
         self.assertEqual(edge_dict[PREDICATE_COLUMN], ASSAY_HAS_INPUT_PREDICATE)
@@ -445,7 +450,7 @@ CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\tEC:3.2.1.21\tb
         # Find the edge
         found = False
         for edge in ec_substrate_edges:
-            edge_dict = dict(zip(self.edge_header, edge))
+            edge_dict = dict(zip(self.edge_header, edge, strict=False))
             if (
                 edge_dict[SUBJECT_COLUMN] == expected_ec
                 and edge_dict[OBJECT_COLUMN] == expected_chebi

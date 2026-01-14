@@ -1,5 +1,6 @@
 """Utility functions for KEGG transform."""
 
+import json
 import logging
 import time
 from pathlib import Path
@@ -209,6 +210,44 @@ def parse_kegg_entry(entry_text: str) -> Dict[str, any]:
                 details["definition"] += " " + line.strip()
 
     return details
+
+
+def load_kegg_ko_details_from_cache(cache_file: Path) -> Dict[str, Dict]:
+    """
+    Load KEGG KO details from cached JSON file.
+
+    :param cache_file: Path to ko_details.json file
+    :return: Dictionary mapping KO ID to details
+    """
+    if not cache_file.exists():
+        logger.warning(f"KEGG KO details cache file not found: {cache_file}")
+        logger.warning("Run 'python scripts/download_kegg_bulk.py' to create cache")
+        return {}
+
+    logger.info(f"Loading KEGG KO details from cache: {cache_file}")
+
+    with open(cache_file, "r") as f:
+        cached_data = json.load(f)
+
+    # Parse cached entry text into structured details
+    ko_details = {}
+    for ko_id, entry_data in cached_data.items():
+        entry_text = entry_data.get("entry_text")
+        if entry_text:
+            ko_details[ko_id] = parse_kegg_entry(entry_text)
+        else:
+            # Entry failed to download, create empty details
+            ko_details[ko_id] = {
+                "entry": ko_id,
+                "name": "",
+                "definition": "",
+                "pathways": [],
+                "modules": [],
+                "genes": [],
+            }
+
+    logger.info(f"Loaded {len(ko_details)} KO entries from cache")
+    return ko_details
 
 
 def extract_ko_ids_from_list(ko_ids: List[str], max_fetch: Optional[int] = None) -> Dict[str, Dict]:

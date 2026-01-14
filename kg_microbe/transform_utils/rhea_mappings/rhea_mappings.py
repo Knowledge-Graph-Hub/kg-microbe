@@ -1,6 +1,7 @@
 """Transform for Rhea."""
 
 import csv
+import logging
 import os
 from collections import defaultdict
 from glob import glob
@@ -14,6 +15,8 @@ from oaklib import get_adapter
 from pyobo import get_id_name_mapping, get_relations_df
 from pyobo.sources.rhea import RheaGetter
 from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
@@ -84,7 +87,14 @@ class RheaMappingsTransform(Transform):
         """Instantiate part."""
         source_name = RHEAMAPPINGS
         super().__init__(source_name, input_dir, output_dir)
-        self.converter = load_extended_prefix_map(RAW_DATA_DIR / "epm.json")
+        try:
+            self.converter = load_extended_prefix_map(RAW_DATA_DIR / "epm.json")
+        except FileNotFoundError:
+            logger.warning(
+                f"Could not load extended prefix map from {RAW_DATA_DIR / 'epm.json'}. "
+                "Prefix standardization will not be available."
+            )
+            self.converter = None
         self.reference_cache = defaultdict(lambda: None)
         self.chebi_oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         self.knowledge_source = "infores:rhea"  # InforES standard knowledge source
@@ -138,7 +148,13 @@ class RheaMappingsTransform(Transform):
             return self.reference_cache[ref]
 
         # Use the mapping if the prefix is a special case, otherwise standardize it
-        prefix = SPECIAL_PREFIXES.get(ref.prefix, self.converter.standardize_prefix(ref.prefix))
+        if ref.prefix in SPECIAL_PREFIXES:
+            prefix = SPECIAL_PREFIXES[ref.prefix]
+        elif self.converter:
+            prefix = self.converter.standardize_prefix(ref.prefix)
+        else:
+            # If converter not available, use original prefix
+            prefix = ref.prefix
 
         # Cache the result before returning
         result = (f"{prefix}:{ref.identifier}", ref.name)
@@ -167,9 +183,11 @@ class RheaMappingsTransform(Transform):
         # TODO: Remove the line below once bioversions new version is released
         requests_ftp.monkeypatch_session()
         rhea_relation = get_relations_df("rhea", use_tqdm=show_status)
-        rhea_relation["relation_ns"] = rhea_relation["relation_ns"].apply(
-            lambda x: self.converter.standardize_prefix(x)
-        )
+        if self.converter:
+            rhea_relation["relation_ns"] = rhea_relation["relation_ns"].apply(
+                lambda x: self.converter.standardize_prefix(x)
+            )
+        # else: keep original relation_ns values
         # Combines relation_ns with relation_id to get full curie
         rhea_relation[RELATION_COLUMN] = (
             rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]

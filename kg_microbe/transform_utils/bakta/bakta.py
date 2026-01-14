@@ -90,6 +90,9 @@ class BaktaTransform(Transform):
         # Track seen entities to avoid duplicates
         self.seen_nodes: Set[str] = set()
 
+        # Cache for GO aspect lookups to avoid repeated OakLib queries
+        self.go_aspect_cache: Dict[str, str] = {}
+
         # Knowledge source
         self.knowledge_source = "infores:bakta"
 
@@ -419,8 +422,8 @@ class BaktaTransform(Transform):
         :param protein_id: Protein identifier
         :param go_id: GO identifier (e.g., 'GO:0003677')
         """
-        # Determine GO aspect
-        aspect = get_go_aspect(go_id, self.go_adapter)
+        # Determine GO aspect (with caching to avoid repeated queries)
+        aspect = get_go_aspect(go_id, self.go_adapter, self.go_aspect_cache)
 
         # Get Biolink category and predicate
         category = get_biolink_category_for_go(aspect)

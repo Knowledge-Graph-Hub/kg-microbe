@@ -387,8 +387,6 @@ class BacDiveTransform(Transform):
             - is_special_case: True if this was a special case pattern
 
         """
-        import re
-
         # Pattern 1: "(not further classified)" or ", not further classified"
         # Extract the taxon name before these phrases
         not_classified_patterns = [
@@ -1232,8 +1230,8 @@ class BacDiveTransform(Transform):
                             chebi_id,  # object (substrate)
                             ASSAY_INPUT_RELATION,  # RO:0002233 (has input)
                             self.knowledge_source,  # infores:bacdive
-                            "knowledge_assertion",
-                            "manual_agent",
+                            KNOWLEDGE_ASSERTION,
+                            MANUAL_AGENT,
                         ]
                     )
 

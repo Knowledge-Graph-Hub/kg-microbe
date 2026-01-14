@@ -16,6 +16,7 @@ from pyobo.sources.rhea import RheaGetter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     DEBIO_MAPPER,
@@ -26,6 +27,9 @@ from kg_microbe.transform_utils.constants import (
     GO_PREFIX,
     GO_SOURCE,
     ID_COLUMN,
+    KNOWLEDGE_LEVEL_COLUMN,
+    LOGICAL_ENTAILMENT,
+    MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
     NAME_COLUMN,
     OBJECT_COLUMN,
     OBJECT_ID_COLUMN,
@@ -83,11 +87,49 @@ class RheaMappingsTransform(Transform):
         self.converter = load_extended_prefix_map(RAW_DATA_DIR / "epm.json")
         self.reference_cache = defaultdict(lambda: None)
         self.chebi_oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+        self.knowledge_source = "infores:rhea"  # InforES standard knowledge source
         self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
         if not EC_SOURCE.is_file():
             os.system(f"gzip -d {EC_SOURCE}.gz")
 
         self.ec_oi = get_adapter(f"sqlite:{EC_SOURCE}")
+
+    def _create_node_row(
+        self,
+        node_id: str,
+        category: str,
+        name: str,
+        description: str = None,
+        xref: str = None,
+        synonym: str = None,
+        same_as: str = None,
+    ) -> list:
+        """
+        Create a properly formatted node row with all columns.
+
+        Automatically populates the provided_by field with self.knowledge_source.
+
+        :param node_id: Node ID (CURIE format)
+        :param category: Biolink category
+        :param name: Node name/label
+        :param description: Optional description
+        :param xref: Optional cross-references (pipe-separated string)
+        :param synonym: Optional synonyms (pipe-separated string)
+        :param same_as: Optional equivalent identifiers (pipe-separated string)
+        :return: List representing a complete node row matching node_header
+        """
+        # Node header structure:
+        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        node_row = [None] * len(self.node_header)
+        node_row[0] = node_id  # ID_COLUMN
+        node_row[1] = category  # CATEGORY_COLUMN
+        node_row[2] = name  # NAME_COLUMN
+        node_row[3] = description  # DESCRIPTION_COLUMN
+        node_row[4] = xref  # XREF_COLUMN
+        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
+        node_row[6] = synonym  # SYNONYM_COLUMN
+        node_row[7] = same_as  # SAME_AS_COLUMN
+        return node_row
 
     def _reference_to_tuple(self, ref):
         """Convert a reference to a tuple."""
@@ -118,7 +160,7 @@ class RheaMappingsTransform(Transform):
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         fn1 = "id_label_mapping.tsv"
-        ks = "RheaViaPyObo"
+        ks = self.knowledge_source  # Use InforES standard knowledge source
         # Create tmp dir
         os.makedirs(RHEAMAPPINGS_TMP_DIR, exist_ok=True)
         # fn2 = "sssom.tsv"
@@ -171,6 +213,8 @@ class RheaMappingsTransform(Transform):
             }
         )
         rhea_relation[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = ks
+        rhea_relation[KNOWLEDGE_LEVEL_COLUMN] = LOGICAL_ENTAILMENT
+        rhea_relation[AGENT_TYPE_COLUMN] = MANUAL_VALIDATION_OF_AUTOMATED_AGENT
 
         rhea_relation = rhea_relation[self.edge_header]
 
@@ -199,20 +243,18 @@ class RheaMappingsTransform(Transform):
 
             # write direction for rhea nodes # Not including reaction direction for now
             # nodes_file_writer.writerow(
-            #     [
+            #     self._create_node_row(
             #         DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
             #         RHEA_DIRECTION_CATEGORY,
             #         RHEA_LEFT_TO_RIGHT_DIRECTION,
-            #     ]
-            #     + [None] * (len(self.node_header) - 3)
+            #     )
             # )
             # nodes_file_writer.writerow(
-            #     [
+            #     self._create_node_row(
             #         DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION),
             #         RHEA_DIRECTION_CATEGORY,
             #         RHEA_RIGHT_TO_LEFT_DIRECTION,
-            #     ]
-            #     + [None] * (len(self.node_header) - 3)
+            #     )
             # )
 
             progress_class = tqdm if show_status else DummyTqdm
@@ -232,8 +274,7 @@ class RheaMappingsTransform(Transform):
                     # Associate reaction identifiers corresponding to different directions (n, n+1, n+2, n+3)
                     tmp_file_writer.writerow([RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, direction])
                     nodes_file_writer.writerow(
-                        [RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v]
-                        + [None] * (len(self.node_header) - 3)
+                        self._create_node_row(RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v)
                     )
                     progress.set_description(f"Processing RHEA node: {RHEA_NEW_PREFIX + k} ...")
                     # After each iteration, call the update method to advance the progress bar.
@@ -285,10 +326,18 @@ class RheaMappingsTransform(Transform):
                                 for substring in relation_types_to_remove_rhea2_files
                             ):
                                 nodes_file_writer.writerow(
-                                    [object, category, None] + [None] * (len(self.node_header) - 3)
+                                    self._create_node_row(object, category, None)
                                 )
                                 edges_file_writer.writerow(
-                                    [subject_info, predicate, object, relation, "Rhea2*"]
+                                    [
+                                        subject_info,
+                                        predicate,
+                                        object,
+                                        relation,
+                                        "Rhea2*",
+                                        LOGICAL_ENTAILMENT,
+                                        MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
+                                    ]
                                 )
 
                     with open(RHEAMAPPINGS_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
@@ -341,8 +390,7 @@ class RheaMappingsTransform(Transform):
                                             for substring in relation_types_to_remove_rhea2_files
                                         ):
                                             nodes_file_writer.writerow(
-                                                [object_info[0], category, object_info[1]]
-                                                + [None] * (len(self.node_header) - 3)
+                                                self._create_node_row(object_info[0], category, object_info[1])
                                             )
 
                                             edges_file_writer.writerow(
@@ -354,6 +402,8 @@ class RheaMappingsTransform(Transform):
                                                     object_info[0],
                                                     predicate_info[0],
                                                     "Rhea2*",
+                                                    LOGICAL_ENTAILMENT,
+                                                    MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
                                                 ]
                                             )
                 progress.set_description(f"Processing {file} ...")

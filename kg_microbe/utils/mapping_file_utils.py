@@ -606,7 +606,7 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
 
 def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
     """
-    Load assay kit mappings from the remote assay_kits_simple.json file.
+    Load assay kit mappings from the local assay_kits_simple.json file.
 
     This function processes API kit data (e.g., "API zym", "API coryne") from BacDive
     and creates mappings for enzyme and chemical tests.
@@ -663,17 +663,23 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
 
     :return: Dictionary mapping kit names to well labels to their properties
     :rtype: Dict[str, Dict[str, Dict]]
-    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises FileNotFoundError: If the assay kits file is not found
     :raises ValueError: If the JSON content is invalid
     """
     try:
-        response = requests.get(ASSAY_KITS_SIMPLE_JSON_URL, timeout=30)
-        response.raise_for_status()
+        from kg_microbe.transform_utils.constants import ASSAY_KITS_FILE
 
-        if not response.text.strip():
+        if not ASSAY_KITS_FILE.exists():
+            raise FileNotFoundError(
+                f"Assay metadata file not found at {ASSAY_KITS_FILE}. "
+                "Run 'poetry run kg download' to download it."
+            )
+
+        with open(ASSAY_KITS_FILE, "r") as f:
+            data = json.load(f)
+
+        if not data:
             raise ValueError("The contents of the assay kits JSON file are empty or invalid.")
-
-        data = response.json()
 
         mappings = {}
 
@@ -721,12 +727,11 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
 
         return mappings
 
-    except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the assay kits JSON URL is accessible: {e}"
-        ) from e
+    except FileNotFoundError:
+        # Re-raise with clear message
+        raise
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in assay kits response: {e}") from e
+        raise ValueError(f"Invalid JSON in assay kits file: {e}") from e
 
 
 def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]:

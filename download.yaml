@@ -99,6 +99,12 @@
   url: gdrive:1b_UWdIvsIM81V5WdFedNoxN3R4UUf4F2
   local_name: bacdive_strains.json
 
+# BacDive Assay Metadata
+# Assay kit metadata for API and BiOLOG assay systems
+-
+  url: https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json
+  local_name: assay_kits_simple.json
+
 # MediaDive
 # Explore MediaDive data
 # NOTE: This downloads the basic media list. Complete MediaDive data (detailed

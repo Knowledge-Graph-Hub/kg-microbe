@@ -4,10 +4,10 @@ import os
 import unittest
 
 import pandas as pd
-from kg_microbe.transform_utils.traits.traits import parse_line
 from parameterized import parameterized
 
 from kg_microbe.transform_utils.traits import TraitsTransform
+from kg_microbe.transform_utils.traits.traits import parse_line
 from kg_microbe.utils.transform_utils import parse_header
 
 

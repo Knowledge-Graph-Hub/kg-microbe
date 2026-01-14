@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
+from kg_microbe.transform_utils.constants import INVOLVED_IN
+
 logger = logging.getLogger(__name__)
 
 
@@ -221,7 +223,7 @@ def get_biolink_predicate_for_go(aspect: str) -> Tuple[str, str]:
     :return: Tuple of (predicate, relation)
     """
     predicate_map = {
-        "biological_process": ("biolink:involved_in", "RO:0002331"),
+        "biological_process": ("biolink:involved_in", INVOLVED_IN),
         "molecular_function": ("biolink:enables", "RO:0002327"),
         "cellular_component": ("biolink:located_in", "RO:0001025"),
     }

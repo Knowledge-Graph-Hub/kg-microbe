@@ -24,13 +24,15 @@ from kg_microbe.transform_utils.bakta.utils import (
 from kg_microbe.transform_utils.constants import (
     BAKTA,
     BAKTA_DIR,
-    BAKTA_RAW_DIR,
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
     GO_SOURCE,
+    HAS_GENE,
     ID_COLUMN,
+    MEMBER_OF,
     NAME_COLUMN,
     OBJECT_COLUMN,
+    ORTHOLOGOUS_TO,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
@@ -117,7 +119,9 @@ class BaktaTransform(Transform):
             logger.error(f"No dataset directories found in {bakta_raw_dir}")
             return
 
-        logger.info(f"Found {len(dataset_dirs)} dataset directories: {[d.name for d in dataset_dirs]}")
+        logger.info(
+            f"Found {len(dataset_dirs)} dataset directories: {[d.name for d in dataset_dirs]}"
+        )
 
         # Process each dataset directory
         for dataset_dir in dataset_dirs:
@@ -145,7 +149,11 @@ class BaktaTransform(Transform):
             logger.info(f"Processing {len(samn_dirs)} genomes for {dataset_name}")
 
             # Progress bar
-            progress_bar = tqdm(samn_dirs, desc=f"Processing {dataset_name}") if show_status else DummyTqdm(samn_dirs)
+            progress_bar = (
+                tqdm(samn_dirs, desc=f"Processing {dataset_name}")
+                if show_status
+                else DummyTqdm(samn_dirs)
+            )
 
             # Process each genome
             for samn_dir in progress_bar:
@@ -157,7 +165,9 @@ class BaktaTransform(Transform):
                 self.process_genome(samn_dir, samn_id)
 
             # Write output files for this dataset
-            logger.info(f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges for {dataset_name}")
+            logger.info(
+                f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges for {dataset_name}"
+            )
             self.write_output(dataset_name)
 
         logger.info("Bakta transform complete")
@@ -293,7 +303,7 @@ class BaktaTransform(Transform):
                 organism_id,
                 "biolink:has_gene",
                 gene_id,
-                "RO:0002551",  # has gene
+                HAS_GENE,
             )
 
         # Add protein node and gene -> protein edge
@@ -479,7 +489,7 @@ class BaktaTransform(Transform):
             gene_id,
             "biolink:member_of",
             cog_id,
-            "RO:0002350",  # member of
+            MEMBER_OF,
         )
 
     def add_kegg_annotation(self, gene_id: str, kegg_id: str) -> None:
@@ -505,7 +515,7 @@ class BaktaTransform(Transform):
             gene_id,
             "biolink:orthologous_to",
             kegg_id,
-            "RO:HOM0000017",  # orthologous to
+            ORTHOLOGOUS_TO,
         )
 
     def add_edge(self, subject: str, predicate: str, obj: str, relation: str) -> None:

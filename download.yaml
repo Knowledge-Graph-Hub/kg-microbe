@@ -219,6 +219,14 @@
   local_name: metpo.owl
 
 #
+# RO (Relations Ontology)
+# Standard ontology for biological and biomedical relations
+#
+-
+  url: http://purl.obolibrary.org/obo/ro.owl
+  local_name: ro.owl
+
+#
 # MicroMediaParam Chemical Mappings - High Confidence
 # Comprehensive compound name to ontology ID mappings from MicroMediaParam pipeline.
 # This high-confidence version includes:
@@ -276,8 +284,17 @@
 #
 # Biolink Model
 # The standard schema for biological knowledge graphs
-# Version 3.6.0
+# Version 4.3.6 (latest as of Dec 2024)
+# NOTE: is_assessed_by predicate was removed after v3.6.0
 #
 -
-  url: https://raw.githubusercontent.com/biolink/biolink-model/v3.6.0/biolink-model.yaml
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.3.6/biolink-model.yaml
   local_name: biolink-model.yaml
+
+#
+# KGX Format Specification
+# Specification for Knowledge Graph Exchange format (TSV/CSV/JSON serialization)
+#
+-
+  url: https://raw.githubusercontent.com/biolink/kgx/master/docs/kgx_format.md
+  local_name: kgx-format.md

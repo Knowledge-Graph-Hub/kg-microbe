@@ -52,6 +52,8 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
+    KNOWLEDGE_ASSERTION,
+    MANUAL_AGENT,
     MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
     MEDIADIVE_DESC_COLUMN,
@@ -86,6 +88,7 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_MEDIUM_EDGE,
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
+    OBSERVATION,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
@@ -143,7 +146,47 @@ class MediaDiveTransform(Transform):
         self.compound_mappings = {}
         self._load_micromediaparam_mappings()
 
+        # Set knowledge source for MediaDive edges
+        self.knowledge_source = "infores:mediadive"  # InforES standard knowledge source
+
         self._load_bulk_data()
+
+    def _create_node_row(
+        self,
+        node_id: str,
+        category: str,
+        name: str,
+        description: str = None,
+        xref: str = None,
+        synonym: str = None,
+        same_as: str = None,
+    ) -> list:
+        """
+        Create a properly formatted node row with all columns.
+
+        Automatically populates the provided_by field with self.knowledge_source.
+
+        :param node_id: Node ID (CURIE format)
+        :param category: Biolink category
+        :param name: Node name/label
+        :param description: Optional description
+        :param xref: Optional cross-references (pipe-separated string)
+        :param synonym: Optional synonyms (pipe-separated string)
+        :param same_as: Optional equivalent identifiers (pipe-separated string)
+        :return: List representing a complete node row matching node_header
+        """
+        # Node header structure:
+        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        node_row = [None] * len(self.node_header)
+        node_row[0] = node_id  # ID_COLUMN
+        node_row[1] = category  # CATEGORY_COLUMN
+        node_row[2] = name  # NAME_COLUMN
+        node_row[3] = description  # DESCRIPTION_COLUMN
+        node_row[4] = xref  # XREF_COLUMN
+        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
+        node_row[6] = synonym  # SYNONYM_COLUMN
+        node_row[7] = same_as  # SAME_AS_COLUMN
+        return node_row
 
     def _load_bulk_data(self):
         """
@@ -510,6 +553,70 @@ class MediaDiveTransform(Transform):
         # Fall back to custom ingredient prefix
         return MEDIADIVE_INGREDIENT_PREFIX + id
 
+    def _classify_ingredient_category(self, ingredient_id: str, ingredient_name: str) -> str:
+        """
+        Classify ingredient category based on ID mapping and name patterns.
+
+        Ingredients mapped to ontologies (ChEBI, KEGG, PubChem, CAS-RN) are categorized
+        as simple ChemicalEntity. Unmapped ingredients are checked against a pattern list
+        to identify complex ingredients (peptone, yeast extract, etc.) which are categorized
+        as ComplexMolecularMixture.
+
+        Args:
+        ----
+            ingredient_id: Standardized ingredient ID (ChEBI:, KEGG:, mediadive.ingredient:, etc.)
+            ingredient_name: Human-readable ingredient name
+
+        Returns:
+        -------
+            Biolink category (ChemicalEntity or ComplexMolecularMixture)
+
+        """
+        from kg_microbe.transform_utils.constants import (
+            COMPLEX_INGREDIENT_CATEGORY,
+            INGREDIENT_CATEGORY,
+        )
+
+        # If mapped to ontology, use simple ChemicalEntity
+        if not ingredient_id.startswith(MEDIADIVE_INGREDIENT_PREFIX):
+            return INGREDIENT_CATEGORY
+
+        # Check name patterns for complex ingredients
+        ingredient_name_lower = ingredient_name.lower()
+
+        # Patterns indicating complex biological mixtures
+        complex_patterns = [
+            "peptone",
+            "yeast extract",
+            "meat extract",
+            "beef extract",
+            "casein",
+            "casitone",
+            "tryptone",
+            "soytone",
+            "proteose peptone",
+            "trypticase",
+            "nutrient broth",
+            "agar",
+            "gelatin",
+            "blood",
+            "serum",
+            "brain heart infusion",
+            "malt extract",
+            "soy",
+            "corn steep",
+            "peptide",
+            "hydrolysate",
+            "infusion",
+        ]
+
+        for pattern in complex_patterns:
+            if pattern in ingredient_name_lower:
+                return COMPLEX_INGREDIENT_CATEGORY
+
+        # Default to simple ChemicalEntity
+        return INGREDIENT_CATEGORY
+
     def download_yaml_and_get_json(
         self,
         url: str,
@@ -644,18 +751,16 @@ class MediaDiveTransform(Transform):
                 # medium type nodes
                 node_writer.writerows(
                     [
-                        [
+                        self._create_node_row(
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
                             MEDIUM_TYPE_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
-                        ]
-                        + [None] * (len(self.node_header) - 3),
-                        [
+                        ),
+                        self._create_node_row(
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                             MEDIUM_TYPE_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
-                        ]
-                        + [None] * (len(self.node_header) - 3),
+                        ),
                     ]
                 )
                 for dictionary in input_json[DATA_KEY]:
@@ -686,6 +791,8 @@ class MediaDiveTransform(Transform):
                                 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
                                 RDFS_SUBCLASS_OF,
                                 "MediaDive",
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
                         ]
                     else:
@@ -696,6 +803,8 @@ class MediaDiveTransform(Transform):
                                 MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                                 RDFS_SUBCLASS_OF,
                                 "MediaDive",
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
                         ]
                     edge_writer.writerows(medium_type_edges)
@@ -717,12 +826,14 @@ class MediaDiveTransform(Transform):
                                 ):
                                     medium_strain_nodes.extend(
                                         [
-                                            [
+                                            self._create_node_row(
                                                 ncbi_strain_id,
                                                 NCBI_CATEGORY,
                                                 strain[SPECIES],
-                                            ],
-                                            [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
+                                            ),
+                                            self._create_node_row(
+                                                medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]
+                                            ),
                                         ]
                                     )
 
@@ -734,6 +845,8 @@ class MediaDiveTransform(Transform):
                                                 medium_id,
                                                 IS_GROWN_IN,
                                                 strain_id,
+                                                OBSERVATION,
+                                                MANUAL_AGENT,
                                             ],
                                         ]
                                     )
@@ -762,7 +875,9 @@ class MediaDiveTransform(Transform):
                                     MEDIUM_TO_INGREDIENT_EDGE,
                                     v[ID_COLUMN],
                                     HAS_PART,
-                                    MEDIADIVE_REST_API_BASE_URL + SOLUTION + str(solution_id),
+                                    self.knowledge_source,  # Use infores:mediadive
+                                    OBSERVATION,
+                                    MANUAL_AGENT,
                                 ]
                                 for _, v in ingredients_dict.items()
                             ]
@@ -774,15 +889,22 @@ class MediaDiveTransform(Transform):
                                 MEDIUM_TO_SOLUTION_EDGE,
                                 solution_curie,
                                 HAS_PART,
-                                MEDIADIVE_REST_API_BASE_URL + SOLUTION + str(solution_id),
+                                self.knowledge_source,  # Use infores:mediadive
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
                         )
 
                     ingredient_nodes = [
-                        [v[ID_COLUMN], INGREDIENT_CATEGORY, k] for k, v in ingredients_dict.items()
+                        self._create_node_row(
+                            v[ID_COLUMN],
+                            self._classify_ingredient_category(v[ID_COLUMN], k),
+                            k,
+                        )
+                        for k, v in ingredients_dict.items()
                     ]
                     solution_nodes = [
-                        [MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v]
+                        self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()
                     ]
 
@@ -807,11 +929,13 @@ class MediaDiveTransform(Transform):
                                             role_id,
                                             HAS_ROLE,
                                             "infores:chebi",
+                                            OBSERVATION,
+                                            MANUAL_AGENT,
                                         ]
                                     )
                         # Write role nodes with labels
                         role_nodes = [
-                            [role, ROLE_CATEGORY, self.chebi_labels.get(role, "")]
+                            self._create_node_row(role, ROLE_CATEGORY, self.chebi_labels.get(role, ""))
                             for role in role_set
                         ]
                         node_writer.writerows(role_nodes)
@@ -833,16 +957,25 @@ class MediaDiveTransform(Transform):
 
                     writer.writerow(data)  # writing the data
 
+                    # Create type/class edge from medium to METPO:1004005 concept
+                    # This makes explicit that the medium is an instance of the "growth medium" ontology class
+                    medium_type_edge = [
+                        medium_id,  # subject: the medium node
+                        "biolink:category",  # predicate: category relationship
+                        "METPO:1004005",  # object: growth medium ontology class
+                        "rdf:type",  # relation: RDF semantics
+                        "infores:metpo",  # knowledge source: METPO ontology
+                        KNOWLEDGE_ASSERTION,  # knowledge_level: definitional assertion
+                        MANUAL_AGENT,  # agent_type: manually curated ontology
+                    ]
+                    edge_writer.writerow(medium_type_edge)
+
                     # Combine list creation and extension
                     nodes_data_to_write = [
-                        [medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]],
+                        self._create_node_row(medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]),
                         *solution_nodes,
                         *ingredient_nodes,
                         *medium_strain_nodes,
-                    ]
-                    nodes_data_to_write = [
-                        sublist + [None] * (len(self.node_header) - 3)
-                        for sublist in nodes_data_to_write
                     ]
                     node_writer.writerows(nodes_data_to_write)
 
@@ -852,7 +985,7 @@ class MediaDiveTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
 
         # Print data source and API call statistics

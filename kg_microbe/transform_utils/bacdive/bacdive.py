@@ -16,7 +16,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import yaml
 from oaklib import get_adapter
@@ -24,10 +24,15 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ACTIVITY_KEY,
+    AGENT_TYPE_COLUMN,
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
     ASSESSED_ACTIVITY_RELATIONSHIP,
+    ASSAY_HAS_INPUT_PREDICATE,
+    ASSAY_INPUT_RELATION,
+    ASSAY_PREFIX,
+    ASSOCIATED_WITH,
     ATTRIBUTE_CATEGORY,
     BACDIVE,
     BACDIVE_API_BASE_URL,
@@ -83,6 +88,7 @@ from kg_microbe.transform_utils.constants import (
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
+    INFERRED_SUBCLASS_RELATION,
     IS_GROWN_IN,
     ISOLATION,
     ISOLATION_COLUMN,
@@ -93,8 +99,11 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SOURCE_PREFIX,
     KEYWORDS,
     KEYWORDS_COLUMN,
+    KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
     LOCATION_OF,
     LPSN,
+    MANUAL_AGENT,
     MATCHING_LEVEL,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_REST_API_BASE_URL,
@@ -144,6 +153,8 @@ from kg_microbe.transform_utils.constants import (
     PIGMENTATION,
     PREDICATE_COLUMN,
     PRODUCTION_KEY,
+    PROVISIONAL_GENUS_PREFIX,
+    PROVISIONAL_SPECIES_PREFIX,
     RDFS_SUBCLASS_OF,
     RESISTANCE_KEY,
     RISK_ASSESSMENT,
@@ -203,6 +214,7 @@ class BacDiveTransform(Transform):
         """Instantiate part."""
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
+        self.knowledge_source = "infores:bacdive"  # InforES standard knowledge source
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
@@ -211,6 +223,11 @@ class BacDiveTransform(Transform):
         self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
         self.assay_kit_mappings = load_assay_kit_mappings()
 
+        # Assay data will be fetched and processed in run() to generate nodes and edges
+        self.assay_raw_data: Optional[dict] = None  # Raw JSON from assay_kits_simple.json
+        self.assay_nodes_generated: Optional[List] = None  # Generated assay node rows
+        self.assay_edges_generated: Optional[List] = None  # Generated assay→entity edge rows
+
         # Load NCBITaxon labels from ontologies transform output (fast TSV lookup).
         # NOTE: This depends on TSV files produced by the ontologies transform being present.
         # If the required files are missing, _load_ncbitaxon_labels() will silently skip loading,
@@ -218,6 +235,43 @@ class BacDiveTransform(Transform):
         self.ncbitaxon_labels: Dict[str, str] = {}  # {ncbitaxon_id: label}
         self.ncbitaxon_name_to_id: Dict[str, str] = {}  # {label: ncbitaxon_id} for reverse lookup
         self._load_ncbitaxon_labels()
+
+    def _create_node_row(
+        self,
+        node_id: str,
+        category: str,
+        name: str,
+        description: str = None,
+        xref: str = None,
+        synonym: str = None,
+        same_as: str = None,
+    ) -> list:
+        """
+        Create a properly formatted node row with all columns.
+
+        Automatically populates the provided_by field with self.knowledge_source.
+
+        :param node_id: Node ID (CURIE format)
+        :param category: Biolink category
+        :param name: Node name/label
+        :param description: Optional description
+        :param xref: Optional cross-references (pipe-separated string)
+        :param synonym: Optional synonyms (pipe-separated string)
+        :param same_as: Optional equivalent identifiers (pipe-separated string)
+        :return: List representing a complete node row matching node_header
+        """
+        # Node header structure:
+        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        node_row = [None] * len(self.node_header)
+        node_row[0] = node_id  # ID_COLUMN
+        node_row[1] = category  # CATEGORY_COLUMN
+        node_row[2] = name  # NAME_COLUMN
+        node_row[3] = description  # DESCRIPTION_COLUMN
+        node_row[4] = xref  # XREF_COLUMN
+        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
+        node_row[6] = synonym  # SYNONYM_COLUMN
+        node_row[7] = same_as  # SAME_AS_COLUMN
+        return node_row
 
     def _load_ncbitaxon_labels(self):
         """
@@ -249,6 +303,32 @@ class BacDiveTransform(Transform):
         else:
             print(f"Warning: NCBITaxon nodes file not found at {ncbitaxon_nodes_file}")
             print("  Will fall back to OakLib queries (slower)")
+
+    def _add_edge_metadata(
+        self, predicate: str, relation: str, object_id: str
+    ) -> tuple[str, str]:
+        """
+        Return appropriate knowledge_level and agent_type for an edge.
+
+        All BacDive edges are observations from manual curation, including:
+        - Taxonomic assignments (curated lookups in NCBITaxon)
+        - Phenotype data (experimental observations)
+        - Growth media (observed growth conditions)
+        - Metabolites (observed interactions)
+
+        Args:
+        ----
+            predicate: The predicate for the edge (e.g., biolink:subclass_of)
+            relation: The relation for the edge (e.g., rdfs:subClassOf)
+            object_id: The object ID for the edge (e.g., NCBITaxon:1234)
+
+        Returns:
+        -------
+            Tuple of (knowledge_level, agent_type)
+
+        """
+        # All edges are observations with manual curation
+        return OBSERVATION, MANUAL_AGENT
 
     def _get_ncbitaxon_label(self, ncbitaxon_id: str) -> Optional[str]:
         """
@@ -298,6 +378,172 @@ class BacDiveTransform(Transform):
 
         results = search_by_label(self.ncbi_impl, search_name, limit=1)
         return results[0] if results else None
+
+    def _normalize_special_taxon_names(self, full_name: str) -> tuple[Optional[str], bool]:
+        """
+        Handle special taxonomic name patterns.
+
+        Patterns handled:
+        - "Rhizobiales (not further classified)" -> "Rhizobiales unclassified"
+        - "Planctomycetia, not further classified" -> "Planctomycetia unclassified"
+        - "Unidentified actinobacterium" -> "actinobacterium unclassified"
+
+        Args:
+        ----
+            full_name: The full scientific name string
+
+        Returns:
+        -------
+            Tuple of (normalized_name, is_special_case)
+            - normalized_name: The taxon name to look up (e.g., "Rhizobiales", "Actinobacteria")
+            - is_special_case: True if this was a special case pattern
+
+        """
+        import re
+
+        # Pattern 1: "(not further classified)" or ", not further classified"
+        # Extract the taxon name before these phrases
+        not_classified_patterns = [
+            r"^(.+?)\s*\(not further classified\)",  # Rhizobiales (not further classified)
+            r"^(.+?),\s*not further classified",  # Planctomycetia, not further classified
+        ]
+
+        for pattern in not_classified_patterns:
+            match = re.match(pattern, full_name, re.IGNORECASE)
+            if match:
+                taxon_name = match.group(1).strip()
+                print(f"  Detected '(not further classified)' pattern")
+                print(f"  Extracted taxon name: {taxon_name}")
+                return taxon_name, True
+
+        # Pattern 2: "Unidentified [taxon]" -> "[taxon] unclassified"
+        unidentified_match = re.match(r"^Unidentified\s+(.+?)$", full_name, re.IGNORECASE)
+        if unidentified_match:
+            taxon_name = unidentified_match.group(1).strip()
+            print(f"  Detected 'Unidentified [taxon]' pattern")
+            print(f"  Extracted taxon name: {taxon_name}")
+            return taxon_name, True
+
+        return None, False
+
+    def _parse_genus_from_scientific_name(self, scientific_name: str) -> Optional[str]:
+        """
+        Extract genus name from binomial nomenclature.
+
+        Handles: single words, strain designations, subspecies, qualifiers, HTML tags, punctuation
+
+        :param scientific_name: Full scientific name (e.g., "Proactinomyces roseus")
+        :return: Genus name (first word) or None if invalid
+        """
+        if not scientific_name or not scientific_name.strip():
+            return None
+
+        # Remove HTML tags (e.g., <I>Kiloninella</I> sp. -> Kiloninella sp.)
+        cleaned_name = re.sub(r'<[^>]+>', '', scientific_name)
+
+        # Split on whitespace and take first word (genus)
+        words = cleaned_name.strip().split()
+        if not words:
+            return None
+
+        genus = words[0]
+
+        # Strip trailing punctuation (e.g., "Planctomycetia," -> "Planctomycetia")
+        genus = genus.rstrip('.,;:')
+
+        # Validate: genus should start with uppercase letter
+        if not genus or not genus[0].isupper():
+            return None
+
+        # Validate: should be alphabetic (allowing hyphens for some genera)
+        if not all(c.isalpha() or c == '-' for c in genus):
+            print(f"  WARNING: Genus '{genus}' contains non-alphabetic characters, skipping")
+            return None
+
+        return genus
+
+    def _create_provisional_species_node(
+        self,
+        genus: str,
+        species: str,
+        node_writer,
+    ) -> str:
+        """
+        Create a provisional species node for unmapped taxa.
+
+        :param genus: Genus name (e.g., "Proactinomyces")
+        :param species: Species epithet (e.g., "roseus")
+        :param node_writer: CSV writer for nodes
+        :return: Provisional species node ID
+        """
+        species_id = f"{PROVISIONAL_SPECIES_PREFIX}{genus}_{species}"
+        species_label = f"{genus} {species}"
+
+        node_writer.writerow(
+            self._create_node_row(
+                species_id,
+                NCBI_CATEGORY,
+                species_label,
+                description=f"Provisional species node for {species_label} (inferred from BacDive)",
+            )
+        )
+
+        print(f"  Created provisional species node: {species_id}")
+        return species_id
+
+    def _create_provisional_genus_node(
+        self,
+        genus: str,
+        node_writer,
+    ) -> str:
+        """
+        Create a provisional genus node for unmapped taxa.
+
+        :param genus: Genus name (e.g., "Proactinomyces")
+        :param node_writer: CSV writer for nodes
+        :return: Provisional genus node ID
+        """
+        genus_id = f"{PROVISIONAL_GENUS_PREFIX}{genus}"
+
+        node_writer.writerow(
+            self._create_node_row(
+                genus_id,
+                NCBI_CATEGORY,
+                genus,
+                description=f"Provisional genus node for {genus} (inferred from BacDive)",
+            )
+        )
+
+        print(f"  Created provisional genus node: {genus_id}")
+        return genus_id
+
+    def _search_higher_ranks_in_ncbitaxon(
+        self,
+        name_tax_classification: dict,
+    ) -> Optional[tuple[str, str]]:
+        """
+        Search BacDive's higher taxonomic ranks in NCBITaxon.
+
+        Searches: family → order → class → phylum → domain
+
+        :param name_tax_classification: Dict with taxonomic hierarchy from BacDive
+        :return: Tuple of (ncbitaxon_id, rank_name) if found, None otherwise
+        """
+        higher_rank_fields = [FAMILY, ORDER, CLASS, PHYLUM, DOMAIN]
+
+        for rank_field in higher_rank_fields:
+            rank_name = name_tax_classification.get(rank_field)
+
+            # Skip empty values or "Not assigned" placeholders
+            if not rank_name or rank_name.startswith("Not assigned"):
+                continue
+
+            ncbitaxon_id = self._search_ncbitaxon_by_label(rank_name)
+            if ncbitaxon_id:
+                print(f"  Found higher rank '{rank_name}' ({rank_field}) in NCBITaxon: {ncbitaxon_id}")
+                return (ncbitaxon_id, rank_field)
+
+        return None
 
     def _extract_value_from_json_path(self, record: dict, json_path: str):
         """
@@ -392,17 +638,22 @@ class BacDiveTransform(Transform):
 
                     # Write node
                     node_writer.writerow(
-                        [node_id, category, label] + [None] * (len(self.node_header) - 3)
+                        self._create_node_row(node_id, category, label)
                     )
 
                     # Write edge from organism to phenotype
+                    knowledge_level, agent_type = self._add_edge_metadata(
+                        predicate, HAS_PHENOTYPE, node_id
+                    )
                     edge_writer.writerow(
                         [
                             organism_id,
                             predicate,
                             node_id,
                             HAS_PHENOTYPE,
-                            BACDIVE_PREFIX + key,
+                            self.knowledge_source,
+                            knowledge_level,
+                            agent_type,
                         ]
                     )
 
@@ -588,12 +839,11 @@ class BacDiveTransform(Transform):
 
         if antibiotic_predicate:
             self.ar_nodes_data_to_write.append(
-                [
+                self._create_node_row(
                     chebi_key,
                     METABOLITE_CATEGORY,
                     item[METABOLITE_KEY],
-                ]
-                + [None] * (len(self.node_header) - 3)
+                )
             )
             # Create edge from organism to metabolite
             self.ar_edges_data_to_write.append(
@@ -601,8 +851,10 @@ class BacDiveTransform(Transform):
                     organism_id,
                     antibiotic_predicate,
                     chebi_key,
-                    None,
-                    BACDIVE_PREFIX + key,
+                    ASSOCIATED_WITH,
+                    self.knowledge_source,  # Use infores:bacdive
+                    OBSERVATION,
+                    MANUAL_AGENT,
                 ]
             )
 
@@ -658,15 +910,9 @@ class BacDiveTransform(Transform):
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
             #    print(f"--> Found medium_label: '{medium_label}' => medium_id: '{medium_id}'")
-            node_row = [
-                medium_id,
-                METABOLITE_CATEGORY,
-                medium_label,
-            ] + [
-                None
-            ] * (len(self.node_header) - 3)
-            # print(f"    Writing node row for MEDIADIVE_MEDIUM_PREFIX{node_row}")
-            node_writer.writerow(node_row)
+            node_writer.writerow(
+                self._create_node_row(medium_id, METABOLITE_CATEGORY, medium_label)
+            )
         # else:
         #    print("--> No medium label found in this dictionary.")
 
@@ -698,23 +944,23 @@ class BacDiveTransform(Transform):
 
                 # If there's a valid predicate and ID, write node & edge
                 if antibiotic_predicate and metabolite_id:
-                    node_row = [
-                        metabolite_id,
-                        METABOLITE_CATEGORY,
-                        k,
-                    ] + [
-                        None
-                    ] * (len(self.node_header) - 3)
-                    #            print(f"    Writing node row for antibiotic: {node_row}")
-                    node_writer.writerow(node_row)
+                    #            print(f"    Writing node row for antibiotic: {metabolite_id}")
+                    node_writer.writerow(
+                        self._create_node_row(metabolite_id, METABOLITE_CATEGORY, k)
+                    )
 
                     # Create edge from organism to metabolite
+                    knowledge_level, agent_type = self._add_edge_metadata(
+                        antibiotic_predicate, ASSOCIATED_WITH, metabolite_id
+                    )
                     edge_row = [
                         organism_id,
                         antibiotic_predicate,
                         metabolite_id,
-                        None,
-                        BACDIVE_PREFIX + key,
+                        ASSOCIATED_WITH,
+                        self.knowledge_source,
+                        knowledge_level,
+                        agent_type,
                     ]
                     #            print(f"    Writing edge row for antibiotic: {edge_row}")
                     edge_writer.writerow(edge_row)
@@ -732,13 +978,18 @@ class BacDiveTransform(Transform):
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
             # Create edge from organism to medium
+            knowledge_level, agent_type = self._add_edge_metadata(
+                NCBI_TO_MEDIUM_EDGE, IS_GROWN_IN, medium_id
+            )
             edge_writer.writerow(
                 [
                     organism_id,
                     NCBI_TO_MEDIUM_EDGE,
                     medium_id,
                     IS_GROWN_IN,
-                    BACDIVE_PREFIX + key,
+                    self.knowledge_source,
+                    knowledge_level,
+                    agent_type,
                 ]
             )
 
@@ -798,17 +1049,22 @@ class BacDiveTransform(Transform):
 
                     # Write node
                     node_writer.writerow(
-                        [node_id, PHENOTYPIC_CATEGORY, label] + [None] * (len(self.node_header) - 3)
+                        self._create_node_row(node_id, PHENOTYPIC_CATEGORY, label)
                     )
 
                     # Write edge from organism to pathogenicity phenotype
+                    knowledge_level, agent_type = self._add_edge_metadata(
+                        HAS_PHENOTYPE_PREDICATE, HAS_PHENOTYPE, node_id
+                    )
                     edge_writer.writerow(
                         [
                             organism_id,
                             HAS_PHENOTYPE_PREDICATE,
                             node_id,
                             HAS_PHENOTYPE,
-                            BACDIVE_PREFIX + key,
+                            self.knowledge_source,
+                            knowledge_level,
+                            agent_type,
                         ]
                     )
 
@@ -922,71 +1178,125 @@ class BacDiveTransform(Transform):
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
 
+            # Generate and write assay nodes and edges upfront (before processing organisms)
+            if self.assay_kit_mappings:
+                try:
+                    import requests
+                    from kg_microbe.utils.mapping_file_utils import (
+                        ASSAY_KITS_SIMPLE_JSON_URL,
+                        generate_assay_entity_edges,
+                        generate_assay_nodes,
+                    )
+
+                    # Fetch raw assay data if not already loaded
+                    if self.assay_raw_data is None:
+                        print("Fetching assay metadata from remote source...")
+                        response = requests.get(ASSAY_KITS_SIMPLE_JSON_URL, timeout=30)
+                        response.raise_for_status()
+                        self.assay_raw_data = response.json()
+
+                    # Generate assay nodes
+                    if self.assay_nodes_generated is None:
+                        print("Generating assay nodes...")
+                        self.assay_nodes_generated = generate_assay_nodes(
+                            self.assay_raw_data, self.node_header
+                        )
+
+                    # Generate assay→entity edges (methodological reference)
+                    if self.assay_edges_generated is None:
+                        print("Generating assay→entity edges...")
+                        self.assay_edges_generated = generate_assay_entity_edges(
+                            self.assay_raw_data, self.edge_header
+                        )
+
+                    # Write assay nodes
+                    if self.assay_nodes_generated:
+                        print(f"Writing {len(self.assay_nodes_generated)} assay nodes...")
+                        node_writer.writerows(self.assay_nodes_generated)
+
+                    # Write assay→entity edges
+                    if self.assay_edges_generated:
+                        print(f"Writing {len(self.assay_edges_generated)} assay→entity edges...")
+                        edge_writer.writerows(self.assay_edges_generated)
+
+                except Exception as e:
+                    print(f"Warning: Failed to generate assay nodes/edges: {e}")
+                    # Continue with transform even if assay generation fails
+
             custom_curie_data = yaml.safe_load(cc_file)
             bacdive_mappings_list_of_dicts = list(csv.DictReader(tsvfile_3, delimiter="\t"))
 
-            # ! BacDive Mapping file processing.
-            # Nodes to be written to the node file.
-            # Get substrate from the bacdive mapping file
-            assay_nodes_to_write = []
-            # Edges to be written to the edge file.
-            assay_edges_to_write = []
-            for assay in bacdive_mappings_list_of_dicts:
-                # enzyme to assay edge.
-                ec_id = self._get_enzyme_id(assay)
-                if ec_id:
-                    assay_nodes_to_write.append(
+            # Generate EC→substrate edges from bacdive_mappings.tsv
+            # These represent enzymatic reactions where an enzyme (EC number) acts on a substrate (ChEBI)
+            # Note: EC and ChEBI nodes are created by the ontologies transform
+            ec_substrate_edges = []
+            for mapping in bacdive_mappings_list_of_dicts:
+                ec_id = mapping.get("EC_ID", "").strip()
+                chebi_id = mapping.get("CHEBI_ID", "").strip()
+
+                # Only create edge if both EC and ChEBI IDs are present
+                if ec_id and chebi_id:
+                    ec_substrate_edges.append(
                         [
-                            ec_id,
-                            EC_CATEGORY,
-                            assay[BACDIVE_MAPPING_ENZYME_LABEL],
-                        ]
-                        + [None] * (len(self.node_header) - 3)
-                    )
-                    assay_edges_to_write.append(
-                        [
-                            ec_id,
-                            ENZYME_TO_ASSAY_EDGE,
-                            assay[BACDIVE_MAPPING_PSEUDO_ID_COLUMN],
-                            ASSESSED_ACTIVITY_RELATIONSHIP,
-                            BACDIVE_MAPPING_FILE,
+                            ec_id,  # subject (enzyme)
+                            ASSAY_HAS_INPUT_PREDICATE,  # biolink:has_input
+                            chebi_id,  # object (substrate)
+                            ASSAY_INPUT_RELATION,  # RO:0002233 (has input)
+                            self.knowledge_source,  # infores:bacdive
+                            "knowledge_assertion",
+                            "manual_agent",
                         ]
                     )
-                # substrate to assay edge.
-                substrate_id = self._get_substrate_id(assay)
-                if substrate_id:
-                    assay_nodes_to_write.append(
-                        [
-                            substrate_id,
-                            SUBSTRATE_CATEGORY,
-                            assay[BACDIVE_MAPPING_SUBSTRATE_LABEL],
-                        ]
-                        + [None] * (len(self.node_header) - 3)
-                    )
-                    assay_edges_to_write.append(
-                        [
-                            substrate_id,
-                            SUBSTRATE_TO_ASSAY_EDGE,
-                            assay[BACDIVE_MAPPING_PSEUDO_ID_COLUMN],
-                            PARTICIPATES_IN,
-                            BACDIVE_MAPPING_FILE,
-                        ]
-                    )
-                # enzyme to substrate edge (enzyme has_input substrate)
-                if ec_id and substrate_id:
-                    assay_edges_to_write.append(
-                        [
-                            ec_id,
-                            ENZYME_TO_SUBSTRATE_EDGE,
-                            substrate_id,
-                            HAS_INPUT_RELATION,
-                            BACDIVE_MAPPING_FILE,
-                        ]
-                    )
-                if assay_edges_to_write:
-                    edge_writer.writerows(assay_edges_to_write)
-                if assay_nodes_to_write:
-                    node_writer.writerows(assay_nodes_to_write)
+
+            # Write EC→substrate edges
+            if ec_substrate_edges:
+                print(f"Writing {len(ec_substrate_edges)} EC→substrate edges from bacdive_mappings.tsv...")
+                edge_writer.writerows(ec_substrate_edges)
+
+            # ! DEPRECATED 2026-01-12: Old BacDive Mapping file processing.
+            # This section has been replaced with comprehensive assay metadata from
+            # assay_kits_simple.json which provides:
+            # - 503 complete assay nodes (vs 349 incomplete nodes from mappings file)
+            # - Rich metadata (names, descriptions, kit info, test types)
+            # - Complete coverage of all API kits including growth tests
+            # - Proper Biolink v4.3.6 compliant predicates
+            #
+            # The old approach created:
+            # - EC nodes (now created by ontologies transform)
+            # - Substrate nodes (now created by ontologies transform)
+            # - EC→assay edges using ENZYME_TO_ASSAY_EDGE (deprecated pattern)
+            # - Substrate→assay edges
+            # - EC→substrate edges
+            #
+            # New approach (implemented above in lines 1154-1197):
+            # - Assay nodes created from assay_kits_simple.json with full metadata
+            # - Assay→GO/EC edges (has_output) for enzyme tests
+            # - Assay→ChEBI edges (has_input) for chemical tests
+            # - Organism→assay edges created in API kit processing loop (lines 2447-2528)
+            #
+            # Keeping bacdive_mappings.tsv variable for potential future use, but not
+            # processing it for assay-related edges/nodes anymore.
+            #
+            # OLD CODE COMMENTED OUT:
+            # assay_nodes_to_write = []
+            # assay_edges_to_write = []
+            # for assay in bacdive_mappings_list_of_dicts:
+            #     ec_id = self._get_enzyme_id(assay)
+            #     if ec_id:
+            #         ec_id = ec_id.replace(" ", "_")
+            #         assay_nodes_to_write.append([...])
+            #         assay_edges_to_write.append([...])  # EC→assay edge (deprecated)
+            #     substrate_id = self._get_substrate_id(assay)
+            #     if substrate_id:
+            #         substrate_id = substrate_id.replace(" ", "_")
+            #         assay_nodes_to_write.append([...])
+            #         assay_edges_to_write.append([...])  # substrate→assay edge
+            #     if ec_id and substrate_id:
+            #         assay_edges_to_write.append([...])  # EC→substrate edge
+            #     if assay_edges_to_write:
+            #         edge_writer.writerows(assay_edges_to_write)
+            #     if assay_nodes_to_write:
+            #         node_writer.writerows(assay_nodes_to_write)
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(total=len(input_json) + 1, desc="Processing files") as progress:
@@ -1192,25 +1502,268 @@ class BacDiveTransform(Transform):
 
                     # Write strain node
                     node_writer.writerow(
-                        [
+                        self._create_node_row(
                             organism_id,
                             NCBI_CATEGORY,
                             organism_label,
-                        ]
-                        + [None] * (len(self.node_header) - 3)
+                        )
                     )
 
-                    # Write subClassOf edge to NCBITaxon (if available)
+                    # Write subClassOf edge to NCBITaxon (if available) or infer taxonomic hierarchy
                     if ncbitaxon_id:
+                        # Direct NCBITaxon match found - create standard edge
+                        knowledge_level, agent_type = self._add_edge_metadata(
+                            SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, ncbitaxon_id
+                        )
                         edge_writer.writerow(
                             [
                                 organism_id,
                                 SUBCLASS_PREDICATE,
                                 ncbitaxon_id,
                                 RDFS_SUBCLASS_OF,
-                                BACDIVE_PREFIX + key,
+                                self.knowledge_source,
+                                knowledge_level,
+                                agent_type,
                             ]
                         )
+                    elif name_tax_classification:
+                        # No NCBITaxon match - attempt taxonomic inference
+                        full_name = name_tax_classification.get(FULL_SCIENTIFIC_NAME, "unknown")
+                        print(f"  Attempting taxonomic inference for: {full_name}")
+
+                        # Check for special patterns first (e.g., "(not further classified)", "Unidentified")
+                        normalized_name, is_special = self._normalize_special_taxon_names(full_name)
+                        if is_special:
+                            print(f"  Using normalized name for lookup: {normalized_name}")
+                            full_name = normalized_name
+
+                        # Step 1: Parse genus from scientific name
+                        genus = self._parse_genus_from_scientific_name(full_name)
+
+                        if genus:
+                            print(f"  Extracted genus: {genus}")
+
+                            # Step 2: Search for genus in NCBITaxon
+                            genus_ncbitaxon_id = self._search_ncbitaxon_by_label(genus)
+
+                            if genus_ncbitaxon_id:
+                                # CASE 1: Genus exists in NCBITaxon
+                                print(f"  Genus '{genus}' found in NCBITaxon: {genus_ncbitaxon_id}")
+
+                                # Parse species epithet (second word)
+                                words = full_name.strip().split()
+                                if len(words) >= 2:
+                                    species_epithet = words[1]
+
+                                    # Create provisional species node
+                                    provisional_species_id = self._create_provisional_species_node(
+                                        genus, species_epithet, node_writer
+                                    )
+
+                                    # Edge: strain -> provisional species (INFERRED)
+                                    knowledge_level, agent_type = self._add_edge_metadata(
+                                        SUBCLASS_PREDICATE,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        provisional_species_id,
+                                    )
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            SUBCLASS_PREDICATE,
+                                            provisional_species_id,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            self.knowledge_source,
+                                            knowledge_level,
+                                            agent_type,
+                                        ]
+                                    )
+
+                                    # Edge: provisional species -> NCBITaxon genus (INFERRED)
+                                    knowledge_level, agent_type = self._add_edge_metadata(
+                                        SUBCLASS_PREDICATE,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        genus_ncbitaxon_id,
+                                    )
+                                    edge_writer.writerow(
+                                        [
+                                            provisional_species_id,
+                                            SUBCLASS_PREDICATE,
+                                            genus_ncbitaxon_id,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            self.knowledge_source,
+                                            knowledge_level,
+                                            agent_type,
+                                        ]
+                                    )
+                                    print(
+                                        f"  Created edges: {organism_id} -> {provisional_species_id} -> {genus_ncbitaxon_id}"
+                                    )
+                                else:
+                                    # Single-word name (genus only)
+                                    knowledge_level, agent_type = self._add_edge_metadata(
+                                        SUBCLASS_PREDICATE,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        genus_ncbitaxon_id,
+                                    )
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            SUBCLASS_PREDICATE,
+                                            genus_ncbitaxon_id,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            self.knowledge_source,
+                                            knowledge_level,
+                                            agent_type,
+                                        ]
+                                    )
+                                    print(
+                                        f"  Created edge (genus-only): {organism_id} -> {genus_ncbitaxon_id}"
+                                    )
+                            else:
+                                # CASE 2: Genus NOT in NCBITaxon - search higher ranks
+                                print(f"  Genus '{genus}' NOT found in NCBITaxon")
+                                print("  Searching higher taxonomic ranks...")
+
+                                higher_rank_result = self._search_higher_ranks_in_ncbitaxon(
+                                    name_tax_classification
+                                )
+
+                                if higher_rank_result:
+                                    # Found family/order/class/phylum/domain
+                                    higher_ncbitaxon_id, rank_name = higher_rank_result
+
+                                    # Create provisional genus node
+                                    provisional_genus_id = self._create_provisional_genus_node(
+                                        genus, node_writer
+                                    )
+
+                                    # Parse species if available
+                                    words = full_name.strip().split()
+                                    if len(words) >= 2:
+                                        species_epithet = words[1]
+
+                                        # Create provisional species node
+                                        provisional_species_id = self._create_provisional_species_node(
+                                            genus, species_epithet, node_writer
+                                        )
+
+                                        # Chain: strain -> species -> genus -> higher rank
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            SUBCLASS_PREDICATE,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            provisional_species_id,
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                organism_id,
+                                                SUBCLASS_PREDICATE,
+                                                provisional_species_id,
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            SUBCLASS_PREDICATE,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            provisional_genus_id,
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                provisional_species_id,
+                                                SUBCLASS_PREDICATE,
+                                                provisional_genus_id,
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            SUBCLASS_PREDICATE,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            higher_ncbitaxon_id,
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                provisional_genus_id,
+                                                SUBCLASS_PREDICATE,
+                                                higher_ncbitaxon_id,
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
+                                        print(
+                                            f"  Created chain: {organism_id} -> species -> genus -> {higher_ncbitaxon_id}"
+                                        )
+                                    else:
+                                        # Genus-only: strain -> genus -> higher rank
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            SUBCLASS_PREDICATE,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            provisional_genus_id,
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                organism_id,
+                                                SUBCLASS_PREDICATE,
+                                                provisional_genus_id,
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            SUBCLASS_PREDICATE,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            higher_ncbitaxon_id,
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                provisional_genus_id,
+                                                SUBCLASS_PREDICATE,
+                                                higher_ncbitaxon_id,
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
+                                        print(
+                                            f"  Created chain: {organism_id} -> genus -> {higher_ncbitaxon_id}"
+                                        )
+                                else:
+                                    # FALLBACK: No higher ranks found
+                                    print("  No higher ranks found in NCBITaxon")
+
+                                    # Create provisional genus (orphaned)
+                                    provisional_genus_id = self._create_provisional_genus_node(
+                                        genus, node_writer
+                                    )
+
+                                    # Link: strain -> provisional genus
+                                    knowledge_level, agent_type = self._add_edge_metadata(
+                                        SUBCLASS_PREDICATE, INFERRED_SUBCLASS_RELATION, provisional_genus_id
+                                    )
+                                    edge_writer.writerow(
+                                        [
+                                            organism_id,
+                                            SUBCLASS_PREDICATE,
+                                            provisional_genus_id,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            self.knowledge_source,
+                                            knowledge_level,
+                                            agent_type,
+                                        ]
+                                    )
+                                    print(f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}")
+                        else:
+                            print(f"  Could not parse genus from: {full_name}")
+                            print("  Strain will remain unmapped")
 
                     # All feature edges now target the strain node directly (organism_id)
                     # NCBITaxon relationship is preserved via subclass edge (strain -> NCBITaxon)
@@ -1391,34 +1944,48 @@ class BacDiveTransform(Transform):
                         for mid, mlabel in zip(medium_ids, medium_labels, strict=False):
                             # Create nodes for medium and NCBITaxon (if available)
                             nodes_data_to_write = [
-                                [mid, MEDIUM_CATEGORY, mlabel],
+                                self._create_node_row(mid, MEDIUM_CATEGORY, mlabel),
                             ]
                             if ncbitaxon_id:
                                 nodes_data_to_write.append(
-                                    [ncbitaxon_id, NCBI_CATEGORY, ncbi_label]
+                                    self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label)
                                 )
 
-                            nodes_data_to_write = [
-                                sublist + [None] * (len(self.node_header) - 3)
-                                for sublist in nodes_data_to_write
-                            ]
                             node_writer.writerows(nodes_data_to_write)
 
+                            # Create type/class edge from medium to METPO:1004005 concept
+                            # This makes explicit that the medium is an instance of the "growth medium" ontology class
+                            medium_type_edge = [
+                                mid,  # subject: the medium node
+                                "biolink:category",  # predicate: category relationship
+                                "METPO:1004005",  # object: growth medium ontology class
+                                "rdf:type",  # relation: RDF semantics
+                                "infores:metpo",  # knowledge source: METPO ontology
+                                KNOWLEDGE_ASSERTION,  # knowledge_level: definitional assertion
+                                MANUAL_AGENT,  # agent_type: manually curated ontology
+                            ]
+                            edge_writer.writerow(medium_type_edge)
+
                             # Create edge from organism to medium
+                            knowledge_level, agent_type = self._add_edge_metadata(
+                                NCBI_TO_MEDIUM_EDGE, IS_GROWN_IN, mid
+                            )
                             edge_writer.writerow(
                                 [
                                     organism_id,
                                     NCBI_TO_MEDIUM_EDGE,
                                     mid,
                                     IS_GROWN_IN,
-                                    BACDIVE_PREFIX + key,
+                                    self.knowledge_source,
+                                    knowledge_level,
+                                    agent_type,
                                 ]
                             )
 
                     if nodes_from_keywords:
                         # Convert to manual CHEBI ID for keywords
                         nodes_data_to_write = [
-                            [
+                            self._create_node_row(
                                 next(
                                     (
                                         key
@@ -1429,45 +1996,53 @@ class BacDiveTransform(Transform):
                                 ),
                                 value[CATEGORY_COLUMN],
                                 value[NAME_COLUMN],
-                            ]
+                            )
                             for _, value in nodes_from_keywords.items()
                         ]
                         if ncbitaxon_id:
-                            nodes_data_to_write.append([ncbitaxon_id, NCBI_CATEGORY, ncbi_label])
-                        nodes_data_to_write = [
-                            sublist + [None] * (len(self.node_header) - 3)
-                            for sublist in nodes_data_to_write
-                        ]
+                            nodes_data_to_write.append(
+                                self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label)
+                            )
 
                         node_writer.writerows(nodes_data_to_write)
 
                         for _, value in nodes_from_keywords.items():
                             # Create edge from organism to keyword/CHEBI
+                            object_id = next(
+                                (
+                                    key
+                                    for key, val in METABOLITE_MAP.items()
+                                    if val == value[CURIE_COLUMN].split(":")[1]
+                                ),
+                                value[CURIE_COLUMN],
+                            )
+                            relation = (
+                                HAS_PHENOTYPE
+                                if value[CATEGORY_COLUMN] in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
+                                else BIOLOGICAL_PROCESS
+                            )
+                            knowledge_level, agent_type = self._add_edge_metadata(
+                                value[PREDICATE_COLUMN], relation, object_id
+                            )
                             edge_writer.writerow(
                                 [
                                     organism_id,
                                     value[PREDICATE_COLUMN],
-                                    next(
-                                        (
-                                            key
-                                            for key, val in METABOLITE_MAP.items()
-                                            if val == value[CURIE_COLUMN].split(":")[1]
-                                        ),
-                                        value[CURIE_COLUMN],
-                                    ),
-                                    (
-                                        HAS_PHENOTYPE
-                                        if value[CATEGORY_COLUMN]
-                                        in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
-                                        else BIOLOGICAL_PROCESS
-                                    ),
-                                    BACDIVE_PREFIX + key,
+                                    object_id,
+                                    relation,
+                                    self.knowledge_source,
+                                    knowledge_level,
+                                    agent_type,
                                 ]
                             )
 
                     if culture_number_from_external_links:
                         for culture_number in culture_number_from_external_links:
-                            culture_number_cleaned = culture_number.strip().replace(" ", "-")
+                            # Clean culture number: replace spaces with hyphens and remove colons
+                            # to avoid malformed CURIEs like "strain:NRRL-:-NRS-341"
+                            culture_number_cleaned = (
+                                culture_number.strip().replace(" ", "-").replace(":", "-")
+                            )
                             strain_curie = (
                                 STRAIN_PREFIX + culture_number_cleaned
                                 if len(culture_number_cleaned) > 3
@@ -1478,18 +2053,22 @@ class BacDiveTransform(Transform):
                             )
                             if strain_curie and strain_label:
                                 node_writer.writerow(
-                                    [strain_curie, NCBI_CATEGORY, strain_label]
-                                    + [None] * (len(self.node_header) - 3)
+                                    self._create_node_row(strain_curie, NCBI_CATEGORY, strain_label)
                                 )
                                 # Link culture collection strain to NCBITaxon (if available)
                                 if ncbitaxon_id:
+                                    knowledge_level, agent_type = self._add_edge_metadata(
+                                        SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, ncbitaxon_id
+                                    )
                                     edge_writer.writerow(
                                         [
                                             strain_curie,
                                             SUBCLASS_PREDICATE,
                                             ncbitaxon_id,
                                             RDFS_SUBCLASS_OF,
-                                            BACDIVE_PREFIX + key,
+                                            self.knowledge_source,
+                                            knowledge_level,
+                                            agent_type,
                                         ]
                                     )
 
@@ -1531,21 +2110,25 @@ class BacDiveTransform(Transform):
                         if enzyme_data:
                             # Write enzyme nodes (EC terms)
                             enzyme_nodes_to_write = [
-                                [item["ec_id"], EC_CATEGORY, item["label"]]
-                                + [None] * (len(self.node_header) - 3)
+                                self._create_node_row(item["ec_id"], EC_CATEGORY, item["label"])
                                 for item in enzyme_data
                             ]
                             node_writer.writerows(enzyme_nodes_to_write)
 
                             # Write edges from organism to enzymes using METPO predicates
                             for item in enzyme_data:
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    item["predicate"], CAPABLE_OF, item["ec_id"]
+                                )
                                 edge_writer.writerow(
                                     [
                                         organism_id,
                                         item["predicate"],
                                         item["ec_id"],
                                         CAPABLE_OF,
-                                        BACDIVE_PREFIX + key,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
                                     ]
                                 )
 
@@ -1628,21 +2211,25 @@ class BacDiveTransform(Transform):
                         if metabolite_activity_data:
                             # Write metabolite nodes
                             meta_util_nodes_to_write = [
-                                [item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"]]
-                                + [None] * (len(self.node_header) - 3)
+                                self._create_node_row(item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"])
                                 for item in metabolite_activity_data
                             ]
                             node_writer.writerows(meta_util_nodes_to_write)
 
                             # Write edges with METPO predicates
                             for item in metabolite_activity_data:
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    item["metpo_predicate"], HAS_PARTICIPANT, item["chebi_key"]
+                                )
                                 edge_writer.writerow(
                                     [
                                         organism_id,
                                         item["metpo_predicate"],
                                         item["chebi_key"],
                                         HAS_PARTICIPANT,
-                                        BACDIVE_PREFIX + key,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
                                     ]
                                 )
 
@@ -1725,21 +2312,25 @@ class BacDiveTransform(Transform):
                         if metabolite_production_data:
                             # Write metabolite nodes
                             metabolite_production_nodes_to_write = [
-                                [item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"]]
-                                + [None] * (len(self.node_header) - 3)
+                                self._create_node_row(item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"])
                                 for item in metabolite_production_data
                             ]
                             node_writer.writerows(metabolite_production_nodes_to_write)
 
                             # Write edges with METPO predicates
                             for item in metabolite_production_data:
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    item["metpo_predicate"], BIOLOGICAL_PROCESS, item["chebi_key"]
+                                )
                                 edge_writer.writerow(
                                     [
                                         organism_id,
                                         item["metpo_predicate"],
                                         item["chebi_key"],
                                         BIOLOGICAL_PROCESS,
-                                        BACDIVE_PREFIX + key,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
                                     ]
                                 )
 
@@ -1839,13 +2430,18 @@ class BacDiveTransform(Transform):
                                     if go_terms:
                                         for go_term in go_terms:
                                             # Write edge from organism to GO term
+                                            knowledge_level, agent_type = self._add_edge_metadata(
+                                                metpo_predicate, CAPABLE_OF, go_term
+                                            )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     go_term,
                                                     CAPABLE_OF,
-                                                    BACDIVE_PREFIX + key,
+                                                    self.knowledge_source,
+                                                    knowledge_level,
+                                                    agent_type,
                                                 ]
                                             )
 
@@ -1854,15 +2450,42 @@ class BacDiveTransform(Transform):
                                         for ec_number in ec_numbers:
                                             ec_id = f"{EC_PREFIX}{ec_number}"
                                             # Write edge from organism to EC number
+                                            knowledge_level, agent_type = self._add_edge_metadata(
+                                                metpo_predicate, CAPABLE_OF, ec_id
+                                            )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     ec_id,
                                                     CAPABLE_OF,
-                                                    BACDIVE_PREFIX + key,
+                                                    self.knowledge_source,
+                                                    knowledge_level,
+                                                    agent_type,
                                                 ]
                                             )
+
+                                    # NEW: Add organism → assay edge (dual-edge pattern)
+                                    # This is in addition to the direct organism→GO/EC edges above
+                                    if go_terms or ec_numbers:
+                                        # Build assay ID: assay:{kit_name}_{well_name}
+                                        assay_id = f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(" ", "_")
+
+                                        # Write organism→assay edge using same METPO predicate
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            metpo_predicate, CAPABLE_OF, assay_id
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                organism_id,
+                                                metpo_predicate,
+                                                assay_id,
+                                                CAPABLE_OF,
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
 
                                     # Skip if neither GO terms nor EC numbers are available
                                     if not go_terms and not ec_numbers:
@@ -1889,15 +2512,41 @@ class BacDiveTransform(Transform):
                                     if chebi_ids:
                                         for chebi_id in chebi_ids:
                                             # Write edge from organism to ChEBI chemical
+                                            knowledge_level, agent_type = self._add_edge_metadata(
+                                                metpo_predicate, "biolink:interacts_with", chebi_id
+                                            )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     chebi_id,
                                                     "biolink:interacts_with",
-                                                    BACDIVE_PREFIX + key,
+                                                    self.knowledge_source,
+                                                    knowledge_level,
+                                                    agent_type,
                                                 ]
                                             )
+
+                                        # NEW: Add organism → assay edge (dual-edge pattern)
+                                        # This is in addition to the direct organism→ChEBI edges above
+                                        # Build assay ID: assay:{kit_name}_{well_name}
+                                        assay_id = f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(" ", "_")
+
+                                        # Write organism→assay edge using same METPO predicate
+                                        knowledge_level, agent_type = self._add_edge_metadata(
+                                            metpo_predicate, "biolink:interacts_with", assay_id
+                                        )
+                                        edge_writer.writerow(
+                                            [
+                                                organism_id,
+                                                metpo_predicate,
+                                                assay_id,
+                                                "biolink:interacts_with",
+                                                self.knowledge_source,
+                                                knowledge_level,
+                                                agent_type,
+                                            ]
+                                        )
 
                     # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
@@ -1919,14 +2568,16 @@ class BacDiveTransform(Transform):
                     for isol_source in all_values:
                         # Write an isolation source node
                         node_writer.writerow(
-                            [
+                            self._create_node_row(
                                 ISOLATION_SOURCE_PREFIX + isol_source.lower(),
                                 ISOLATION_SOURCE_CATEGORY,
                                 isol_source,
-                            ]
-                            + [None] * (len(self.node_header) - 3)
+                            )
                         )
                         # Write edge from the isolation source to organism
+                        knowledge_level, agent_type = self._add_edge_metadata(
+                            NCBI_TO_ISOLATION_SOURCE_EDGE, LOCATION_OF, organism_id
+                        )
                         edge_writer.writerow(
                             [
                                 ISOLATION_SOURCE_PREFIX + isol_source.lower(),
@@ -1934,6 +2585,8 @@ class BacDiveTransform(Transform):
                                 organism_id,
                                 LOCATION_OF,
                                 self.source_name,
+                                knowledge_level,
+                                agent_type,
                             ]
                         )
 
@@ -1994,5 +2647,5 @@ class BacDiveTransform(Transform):
             for link in sorted(non_matching_media_links):
                 f.write(f"{link}\n")
 
-        drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

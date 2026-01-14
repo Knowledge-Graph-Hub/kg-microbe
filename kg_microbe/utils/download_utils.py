@@ -1,3 +1,11 @@
+"""
+Download utilities for KG-Microbe data sources.
+
+This module provides functions for downloading files from various sources
+including YAML-configured downloads, API-based downloads, and mirroring to
+cloud storage buckets.
+"""
+
 import csv
 import json
 import logging
@@ -24,12 +32,6 @@ from tqdm.auto import tqdm  # type: ignore
 
 GDOWN_MAP = {"gdrive": "https://drive.google.com/uc?id="}
 
-""",
-    fields: Optional[List] = None,
-    keywords: Optional[List] = None,
-    size: Optional[int] = None,
-    batch_size: Optional[int] = None"""
-
 
 def download_from_yaml(
     yaml_file: str,
@@ -40,23 +42,25 @@ def download_from_yaml(
     mirror: Optional[str] = None,
 ) -> None:
     """
-    Download files listed in a download.yaml file
+    Download files listed in a download.yaml file.
 
     Args:
     ----
         yaml_file: A string pointing to the download.yaml file, to be parsed for things to download.
         output_dir: A string pointing to where to write out downloaded files.
-        ignore_cache: Ignore cache and download files even if they exist [false]
-        snippet_only: Downloads only the first 5 kB of each uncompressed source, for testing and file checks
-        tags: Limit to only downloads with this tag
-        mirror: Optional remote storage URL to mirror download to. Supported buckets: Google Cloud Storage
+        ignore_cache: Ignore cache and download files even if they exist [false].
+        snippet_only: Downloads only the first 5 kB of each uncompressed source, for testing and file checks.
+        tags: Limit to only downloads with this tag.
+        mirror: Optional remote storage URL to mirror download to. Supported buckets: Google Cloud Storage.
+
     Returns:
+    -------
         None.
 
     """
     pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
     with open(yaml_file) as f:
-        data = yaml.load(f, Loader=yaml.FullLoader)
+        data = yaml.safe_load(f)
         # Limit to only tagged downloads, if tags are passed in
         if tags:
             data = [item for item in data if "tag" in item and item["tag"] and item["tag"] in tags]
@@ -126,16 +130,16 @@ def download_from_yaml(
                             # If the loop completes without breaking (i.e., no match found), throw an error
                             raise ValueError("Invalid URL")
                     else:
-                        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})  # noqa: S310
                         try:
-                            with urlopen(req) as response, open(outfile, "wb") as out_file:  # type: ignore
+                            with urlopen(req) as response, open(outfile, "wb") as out_file:  # type: ignore  # noqa: S310
                                 if snippet_only:
                                     data = response.read(5120)  # first 5 kB of a `bytes` object
                                 else:
                                     data = response.read()  # a `bytes` object
                                 out_file.write(data)
                                 if snippet_only:  # Need to clean up the outfile
-                                    in_file = open(outfile, "r+")
+                                    in_file = open(outfile, "r+")  # nosec
                                     in_lines = in_file.read()
                                     in_file.close()
                                     splitlines = in_lines.split("\n")
@@ -163,6 +167,16 @@ def download_from_yaml(
 
 
 def mirror_to_bucket(local_file, bucket_url, remote_file) -> None:
+    """
+    Mirror a local file to a remote cloud storage bucket.
+
+    Args:
+    ----
+        local_file: Path to the local file to upload.
+        bucket_url: URL of the remote storage bucket (gs:// for Google Cloud Storage).
+        remote_file: Name for the file in the remote bucket.
+
+    """
     with open(local_file, "rb"):
         if bucket_url.startswith("gs://"):
 
@@ -206,14 +220,12 @@ def mirror_to_bucket(local_file, bucket_url, remote_file) -> None:
 
 def download_from_api(yaml_item, outfile) -> None:
     """
+    Download data from an API based on YAML configuration.
 
     Args:
     ----
-        yaml_item: item to be download, parsed from yaml
-        outfile: where to write out file
-
-    Returns:
-    -------
+        yaml_item: Item to be downloaded, parsed from YAML.
+        outfile: Path where to write out the downloaded file.
 
     """
     if yaml_item["api"] == "elasticsearch":
@@ -257,18 +269,20 @@ def elastic_search_query(
     preserve_order: bool = True,
 ):
     """
-    Fetch records from the given URL and query parameters.
+    Fetch records from Elasticsearch using the given query parameters.
 
     Args:
     ----
-        es_connection: elastic search connection
-        index: the elastic search index for query
-        query: query
-        scroll: scroll parameter passed to elastic search
-        request_timeout: timeout parameter passed to elastic search
-        preserve_order: preserve order param passed to elastic search
+        es_connection: Elasticsearch connection.
+        index: The Elasticsearch index for query.
+        query: Query to execute.
+        scroll: Scroll parameter passed to Elasticsearch.
+        request_timeout: Timeout parameter passed to Elasticsearch.
+        preserve_order: Preserve order parameter passed to Elasticsearch.
+
     Returns:
-        All records for query
+    -------
+        All records for query.
 
     """
     records = []
@@ -288,7 +302,7 @@ def elastic_search_query(
 
 
 def parse_url(url: str):
-    """Parses a URL for any environment variables enclosed in {curly braces}"""
+    """Parse a URL for any environment variables enclosed in {curly braces}."""
     pattern = r".*?\{(.*?)\}"
     match = re.findall(pattern, url)
     for i in match:
@@ -302,7 +316,18 @@ def parse_url(url: str):
 
 
 def parse_ncbitaxon_json(input_file):
+    """
+    Parse NCBITaxon organism IDs from a JSON file.
 
+    Args:
+    ----
+        input_file: Path to the JSON file containing NCBITaxon nodes.
+
+    Returns:
+    -------
+        List of organism IDs extracted from the NCBITaxon nodes.
+
+    """
     with open(input_file, "r") as f:
         contents = json.loads(f.read())
 
@@ -318,7 +343,20 @@ def parse_ncbitaxon_json(input_file):
 def get_uniprot_values_organism(
     organism_ids, base_url, fields, keywords, size, batch_size, outyamls
 ):
+    """
+    Query UniProt for enzyme data per organism in batches.
 
+    Args:
+    ----
+        organism_ids: List of NCBI Taxon organism IDs to query.
+        base_url: Base URL for the UniProt API.
+        fields: List of fields to retrieve from UniProt.
+        keywords: List of keywords to filter results.
+        size: Maximum number of results per query.
+        batch_size: Number of organisms to query in each batch.
+        outyamls: Output directory path for storing results.
+
+    """
     values = []
 
     # File to keep track of organism id's with no Uniprot data
@@ -370,7 +408,20 @@ def get_uniprot_values_organism(
 
 
 def check_for_file_existence_in_batch(batch, outyamls, empty_orgs):
+    """
+    Check which organisms in a batch already have downloaded files.
 
+    Args:
+    ----
+        batch: List of organism IDs to check.
+        outyamls: Output directory path where files are stored.
+        empty_orgs: List of organism IDs known to have no data.
+
+    Returns:
+    -------
+        Updated batch list with existing organisms removed.
+
+    """
     for org in batch.copy():
         org_file = outyamls + "/" + org + ".json"
         if os.path.exists(org_file) or org in empty_orgs:
@@ -444,20 +495,28 @@ def _get_uniprot_batch_reference_proteome(url):
 
 
 def get_jobs(url, values):
+    """
+    Fetch all paginated results from a UniProt query URL.
 
+    Args:
+    ----
+        url: The UniProt query URL.
+        values: List to append results to.
+
+    """
     session = requests.Session()
 
     paging = True
 
     first_page = session.get(url)
-    first_response = parse_response(first_page, values)
+    parse_response(first_page, values)
 
-    while paging == True:
+    while paging:
 
         if "next" in first_page.links:
             next_url = first_page.links["next"]["url"]
             next_page = session.get(next_url)
-            next_response = parse_response(next_page, values)
+            parse_response(next_page, values)
             first_page = next_page
         else:
             paging = False
@@ -465,7 +524,19 @@ def get_jobs(url, values):
 
 
 def parse_response(res, values):
+    """
+    Parse a TSV response from UniProt and append to values list.
 
+    Args:
+    ----
+        res: Response object from requests.
+        values: List to append parsed records to.
+
+    Returns:
+    -------
+        Updated values list.
+
+    """
     headers = None
 
     for line in res.iter_lines():

@@ -18,8 +18,6 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CHEBI_XREFS_FILEPATH,
     DESCRIPTION_COLUMN,
-    EC_EXPASY_URL_PREFIX,
-    EC_PREFIX,
     ENABLED_BY_PREDICATE,
     ENABLED_BY_RELATION,
     EXCLUSION_TERMS_FILE,
@@ -260,6 +258,7 @@ class OntologiesTransform(Transform):
 
             # Create GO adapter once to avoid file descriptor leaks
             from oaklib import get_adapter
+
             from kg_microbe.transform_utils.constants import GO_SOURCE
 
             try:
@@ -284,6 +283,7 @@ class OntologiesTransform(Transform):
 
             # Create ChEBI adapter once to avoid file descriptor leaks
             from oaklib import get_adapter
+
             from kg_microbe.transform_utils.constants import CHEBI_SOURCE
 
             try:
@@ -691,8 +691,10 @@ class OntologiesTransform(Transform):
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
         """Convert URL-formatted node IDs to CURIEs in both nodes and edges files."""
-        import pandas as pd
         import re
+
+        import pandas as pd
+
         from kg_microbe.utils.mapping_file_utils import uri_to_curie
 
         url_pattern = re.compile(r'^https?://')

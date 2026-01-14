@@ -1167,20 +1167,24 @@ class BacDiveTransform(Transform):
             # Generate and write assay nodes and edges upfront (before processing organisms)
             if self.assay_kit_mappings:
                 try:
-                    import requests
-
+                    from kg_microbe.transform_utils.constants import ASSAY_KITS_FILE
                     from kg_microbe.utils.mapping_file_utils import (
-                        ASSAY_KITS_SIMPLE_JSON_URL,
                         generate_assay_entity_edges,
                         generate_assay_nodes,
                     )
 
-                    # Fetch raw assay data if not already loaded
+                    # Load raw assay data from downloaded file if not already loaded
                     if self.assay_raw_data is None:
-                        print("Fetching assay metadata from remote source...")
-                        response = requests.get(ASSAY_KITS_SIMPLE_JSON_URL, timeout=30)
-                        response.raise_for_status()
-                        self.assay_raw_data = response.json()
+                        print("Loading assay metadata from local file...")
+                        if ASSAY_KITS_FILE.exists():
+                            with open(ASSAY_KITS_FILE, "r") as f:
+                                self.assay_raw_data = json.load(f)
+                        else:
+                            print(
+                                f"Warning: Assay metadata file not found at {ASSAY_KITS_FILE}. "
+                                "Run 'poetry run kg download' to download it. Skipping assay generation."
+                            )
+                            self.assay_raw_data = None
 
                     # Generate assay nodes
                     if self.assay_nodes_generated is None:

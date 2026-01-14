@@ -11,7 +11,6 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
     ID_COLUMN,
-    IRI_COLUMN,
     KNOWLEDGE_LEVEL_COLUMN,
     NAME_COLUMN,
     OBJECT_COLUMN,

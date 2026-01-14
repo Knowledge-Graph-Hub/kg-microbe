@@ -574,7 +574,6 @@ class MediaDiveTransform(Transform):
         """
         from kg_microbe.transform_utils.constants import (
             COMPLEX_INGREDIENT_CATEGORY,
-            INGREDIENT_CATEGORY,
         )
 
         # If mapped to ontology, use simple ChemicalEntity

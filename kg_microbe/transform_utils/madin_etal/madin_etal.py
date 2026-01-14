@@ -835,7 +835,7 @@ class MadinEtAlTransform(Transform):
                                 agent_types = [MANUAL_AGENT for _ in range(len(curies))]
                                 isolation_source_node = [
                                     self._create_node_row(curie, cat, label)
-                                    for curie, cat, label in zip(curies, category, labels)
+                                    for curie, cat, label in zip(curies, category, labels, strict=False)
                                 ]
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 

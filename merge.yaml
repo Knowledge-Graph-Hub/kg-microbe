@@ -2,6 +2,11 @@
 configuration:
   output_directory: data/merged
   checkpoint: false
+  # Allow domain-specific categories from METPO ontology
+  # METPO:1004005 represents the "growth medium" ontology class
+  # This preserves semantic precision for microbial growth media
+  category_allowlist:
+    - "METPO:1004005"  # growth medium
   curie_map:
     # define non-canonical CURIE to IRI mappings (for RDF)
   node_properties:

@@ -158,7 +158,7 @@ class TestAssayGeneration(unittest.TestCase):
 
         # Check that description field exists and is populated
         self.assertIsNotNone(node_dict[DESCRIPTION_COLUMN])
-        self.assertTrue(len(node_dict[DESCRIPTION_COLUMN]) > 0)
+        self.assertGreater(len(node_dict[DESCRIPTION_COLUMN]), 0)
 
     @parameterized.expand(
         [

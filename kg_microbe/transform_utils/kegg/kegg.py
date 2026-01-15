@@ -78,14 +78,26 @@ class KEGGTransform(Transform):
             logger.error("Please run 'poetry run kg download' first")
             return
 
-        # Load KO details from cache (downloaded via bulk script)
-        ko_details_file = KEGG_RAW_DIR / "ko_details.json"
-        logger.info(f"Loading KEGG KO details from cache: {ko_details_file}")
-        ko_details_cache = load_kegg_ko_details_from_cache(ko_details_file)
+        # Load KO details from cache (prefer minimal format)
+        ko_minimal_file = KEGG_RAW_DIR / "ko_minimal.json"
+        ko_full_file = KEGG_RAW_DIR / "ko_details.json"
+
+        # Try minimal file first (recommended, ~30MB)
+        if ko_minimal_file.exists():
+            logger.info(f"Loading KEGG KO details from minimal cache: {ko_minimal_file}")
+            ko_details_cache = load_kegg_ko_details_from_cache(ko_minimal_file)
+        # Fall back to full file if available (~894MB)
+        elif ko_full_file.exists():
+            logger.info(f"Loading KEGG KO details from full cache: {ko_full_file}")
+            ko_details_cache = load_kegg_ko_details_from_cache(ko_full_file)
+        else:
+            logger.error("No KEGG KO details cache file found")
+            logger.error("Run 'python scripts/download_kegg_minimal.py' to download cache (~30MB)")
+            logger.error("Or run 'python scripts/download_kegg_bulk.py' for full data (~894MB)")
+            return
 
         if not ko_details_cache:
             logger.error("Failed to load KEGG KO details from cache")
-            logger.error("Run 'python scripts/download_kegg_bulk.py' to download cache")
             return
 
         # Create KO nodes and edges using cached data

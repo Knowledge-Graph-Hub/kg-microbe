@@ -282,14 +282,20 @@
 
 #
 # KEGG (Kyoto Encyclopedia of Genes and Genomes)
-# NOTE: After running 'poetry run kg download', you must also run:
-#       python scripts/download_kegg_bulk.py
-# This downloads detailed KO entries (~50 min) to data/raw/kegg/ko_details.json
-# Required for KEGG transform to work without API calls during transform.
 #
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
+
+#
+# KEGG KO Details (bulk cache)
+# Pre-downloaded KO details to avoid ~25k API calls during transform
+# Generated via: python scripts/download_kegg_bulk.py
+# Updated: 2025-01-14
+#
+-
+  url: https://drive.google.com/file/d/11SeYNy4f6kfTtdelfqklUNPQCnJ1-DhP/view?usp=drive_link
+  local_name: kegg/ko_details.json
 
 #
 # Biolink Model

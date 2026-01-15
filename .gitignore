@@ -30282,3 +30282,4 @@ kg_microbe/merge_utils/duckdb/data/duckdb/uniprot_nodes.tsv.gz
 scripts/examples/visualization/*.png
 # KEGG KO details (must not be redistributed per KEGG license)
 data/raw/kegg/ko_details.json
+data/raw/kegg/ko_minimal.json

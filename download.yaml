@@ -284,10 +284,14 @@
 # KEGG (Kyoto Encyclopedia of Genes and Genomes)
 # NOTE: KEGG requires individual users to query the REST API directly.
 # Bulk downloads and redistribution require a paid Service Provider License.
+#
 # To use KEGG transform:
 #   1. Run: poetry run kg download (gets ko_list.txt)
-#   2. Run: python scripts/download_kegg_bulk.py (~50 min, one-time)
+#   2. Run: python scripts/download_kegg_minimal.py (~50 min, creates ~30MB cache)
+#      - Downloads only pathways and modules (97% smaller than full data)
+#      - Alternative: python scripts/download_kegg_bulk.py (creates ~894MB cache)
 #   3. Run: poetry run kg transform -s kegg
+#
 # See: https://www.kegg.jp/kegg/legal.html for licensing terms
 #
 -

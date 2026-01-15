@@ -282,20 +282,17 @@
 
 #
 # KEGG (Kyoto Encyclopedia of Genes and Genomes)
+# NOTE: KEGG requires individual users to query the REST API directly.
+# Bulk downloads and redistribution require a paid Service Provider License.
+# To use KEGG transform:
+#   1. Run: poetry run kg download (gets ko_list.txt)
+#   2. Run: python scripts/download_kegg_bulk.py (~50 min, one-time)
+#   3. Run: poetry run kg transform -s kegg
+# See: https://www.kegg.jp/kegg/legal.html for licensing terms
 #
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
-
-#
-# KEGG KO Details (bulk cache)
-# Pre-downloaded KO details to avoid ~25k API calls during transform
-# Generated via: python scripts/download_kegg_bulk.py
-# Updated: 2025-01-14
-#
--
-  url: https://drive.google.com/file/d/11SeYNy4f6kfTtdelfqklUNPQCnJ1-DhP/view?usp=drive_link
-  local_name: kegg/ko_details.json
 
 #
 # Biolink Model

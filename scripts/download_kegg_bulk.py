@@ -5,11 +5,23 @@ Bulk download KEGG KO details to avoid API calls during transform.
 This script downloads detailed information for all KEGG KO entries
 and saves them to a JSON file for offline use during transforms.
 
+LICENSING NOTICE:
+    This script uses the KEGG REST API which is free for academic use
+    by individual users. Each user should run this script themselves.
+
+    DO NOT redistribute the resulting ko_details.json file.
+
+    Bulk redistribution requires a KEGG Service Provider License.
+    See: https://www.kegg.jp/kegg/legal.html
+
+    The KEGG REST API has rate limiting (max 10 requests/sec).
+    This script respects that limit and takes ~50 minutes to complete.
+
 Usage:
     python scripts/download_kegg_bulk.py
 
 Output:
-    data/raw/kegg/ko_details.json
+    data/raw/kegg/ko_details.json (for local use only)
 """
 
 import json

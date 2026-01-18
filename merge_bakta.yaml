@@ -1,8 +1,10 @@
 ---
-# Standard merge configuration (Bakta and COG excluded)
-# For Bakta-enabled merge, use merge_bakta.yaml instead
+# Merge configuration WITH Bakta sources enabled
+# Use this configuration when Bakta transform outputs are available:
+#   - data/transformed/bakta/cmm_bakta/nodes.tsv + edges.tsv
+#   - data/transformed/bakta/pfas_bakta/nodes.tsv + edges.tsv
 #
-# Usage: poetry run kg merge -y merge.yaml
+# Usage: poetry run kg merge -y merge_bakta.yaml
 #
 configuration:
   output_directory: data/merged
@@ -124,20 +126,20 @@ merged_graph:
         filename:
           - data/transformed/bactotraits/nodes.tsv
           - data/transformed/bactotraits/edges.tsv
-    # bakta_cmm:
-    #   name: "bakta_cmm"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/bakta/cmm_bakta/nodes.tsv
-    #       - data/transformed/bakta/cmm_bakta/edges.tsv
-    # bakta_pfas:
-    #   name: "bakta_pfas"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/bakta/pfas_bakta/nodes.tsv
-    #       - data/transformed/bakta/pfas_bakta/edges.tsv
+    bakta_cmm:
+      name: "bakta_cmm"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/bakta/cmm_bakta/nodes.tsv
+          - data/transformed/bakta/cmm_bakta/edges.tsv
+    bakta_pfas:
+      name: "bakta_pfas"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/bakta/pfas_bakta/nodes.tsv
+          - data/transformed/bakta/pfas_bakta/edges.tsv
     # cog:
     #   name: "cog"
     #   input:

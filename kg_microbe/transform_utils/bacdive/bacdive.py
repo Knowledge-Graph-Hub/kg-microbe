@@ -13,6 +13,7 @@ Output these two files:
 
 import csv
 import json
+import logging
 import os
 import re
 from pathlib import Path
@@ -54,6 +55,7 @@ from kg_microbe.transform_utils.constants import (
     COLONY_MORPHOLOGY,
     COMPOUND_PRODUCTION,
     CULTURE_AND_GROWTH_CONDITIONS,
+    CULTURE_GROWTH,
     CULTURE_LINK,
     CULTURE_MEDIUM,
     CULTURE_NAME,
@@ -82,6 +84,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     INFERRED_SUBCLASS_RELATION,
     IS_GROWN_IN,
+    DOES_NOT_GROW_IN,
     ISOLATION,
     ISOLATION_COLUMN,
     ISOLATION_SAMPLING_ENV_INFO,
@@ -125,6 +128,7 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBI_TO_ISOLATION_SOURCE_EDGE,
     NCBI_TO_MEDIUM_EDGE,
+    NCBI_TO_MEDIUM_NEGATIVE_EDGE,
     NCBI_TO_METABOLITE_RESISTANCE_EDGE,
     NCBI_TO_METABOLITE_SENSITIVITY_EDGE,
     NCBITAXON_DESCRIPTION_COLUMN,
@@ -188,6 +192,9 @@ if Path(METABOLITE_MAPPING_FILE).is_file():
         METABOLITE_MAP = json.load(f)
 else:
     METABOLITE_MAP = {}
+
+# Initialize logger
+logger = logging.getLogger(__name__)
 
 
 class BacDiveTransform(Transform):
@@ -998,21 +1005,38 @@ class BacDiveTransform(Transform):
             medium_id = (
                 MEDIADIVE_MEDIUM_PREFIX + medium_label.replace(" ", "_").replace("-", "_").lower()
             )
-            # Create edge from organism to medium
-            knowledge_level, agent_type = self._add_edge_metadata(
-                NCBI_TO_MEDIUM_EDGE, IS_GROWN_IN, medium_id
-            )
-            edge_writer.writerow(
-                [
-                    organism_id,
-                    NCBI_TO_MEDIUM_EDGE,
-                    medium_id,
-                    IS_GROWN_IN,
-                    self.knowledge_source,
-                    knowledge_level,
-                    agent_type,
-                ]
-            )
+
+            # Check growth value to determine edge type
+            growth = dictionary.get(CULTURE_GROWTH)
+            if growth and isinstance(growth, str):
+                growth_lower = growth.lower()
+                if growth_lower == "yes":
+                    # Positive growth: organism grows in this medium
+                    predicate = NCBI_TO_MEDIUM_EDGE
+                    relation = IS_GROWN_IN
+                elif growth_lower == "no":
+                    # Negative growth: organism does not grow in this medium
+                    predicate = NCBI_TO_MEDIUM_NEGATIVE_EDGE
+                    relation = DOES_NOT_GROW_IN
+                else:
+                    # Skip ambiguous cases (inconsistent, etc.)
+                    return
+
+                # Create edge from organism to medium
+                knowledge_level, agent_type = self._add_edge_metadata(
+                    predicate, relation, medium_id
+                )
+                edge_writer.writerow(
+                    [
+                        organism_id,
+                        predicate,
+                        medium_id,
+                        relation,
+                        self.knowledge_source,
+                        knowledge_level,
+                        agent_type,
+                    ]
+                )
 
     def _process_pathogenicity(
         self, record: dict, organism_id: str, key: str, node_writer, edge_writer
@@ -1797,6 +1821,7 @@ class BacDiveTransform(Transform):
                     medium_labels = []
                     medium_urls = []
                     mediadive_urls = []
+                    growth_values = []
 
                     if (
                         CULTURE_AND_GROWTH_CONDITIONS in value
@@ -1846,19 +1871,26 @@ class BacDiveTransform(Transform):
                                     mediadive_url = medium_url.replace(
                                         BACDIVE_API_BASE_URL, MEDIADIVE_REST_API_BASE_URL
                                     )
+                                    # Extract growth value (yes/no/inconsistent/etc.)
+                                    growth_value = medium.get(CULTURE_GROWTH, None)
 
                                     # Store each medium's details in lists
+                                    # Note: medium_ids.extend() can add multiple IDs for one medium
+                                    # so we need to duplicate growth_value for each ID
+                                    num_medium_ids = len(medium_id_list)
                                     medium_ids.extend(medium_id_list)
-                                    medium_labels.append(
-                                        remove_nextlines(medium_label).translate(
-                                            translation_table_for_labels
+                                    for _ in range(num_medium_ids):
+                                        medium_labels.append(
+                                            remove_nextlines(medium_label).translate(
+                                                translation_table_for_labels
+                                            )
                                         )
-                                    )
-                                    medium_urls.append(medium_url)
-                                    mediadive_urls.append(mediadive_url)
+                                        medium_urls.append(medium_url)
+                                        mediadive_urls.append(mediadive_url)
+                                        growth_values.append(growth_value)
 
-                            for mid, mlabel, murl, mdurl in zip(
-                                medium_ids, medium_labels, medium_urls, mediadive_urls, strict=False
+                            for mid, mlabel, murl, mdurl, growth in zip(
+                                medium_ids, medium_labels, medium_urls, mediadive_urls, growth_values, strict=False
                             ):
                                 data = [
                                     BACDIVE_PREFIX + key,
@@ -1958,7 +1990,7 @@ class BacDiveTransform(Transform):
 
                     # Medium edges - link to strain organism_id, create NCBITaxon node if needed
                     if medium_ids:
-                        for mid, mlabel in zip(medium_ids, medium_labels, strict=False):
+                        for mid, mlabel, growth in zip(medium_ids, medium_labels, growth_values, strict=False):
                             # Create nodes for medium and NCBITaxon (if available)
                             nodes_data_to_write = [
                                 self._create_node_row(mid, MEDIUM_CATEGORY, mlabel),
@@ -1983,21 +2015,36 @@ class BacDiveTransform(Transform):
                             ]
                             edge_writer.writerow(medium_type_edge)
 
-                            # Create edge from organism to medium
-                            knowledge_level, agent_type = self._add_edge_metadata(
-                                NCBI_TO_MEDIUM_EDGE, IS_GROWN_IN, mid
-                            )
-                            edge_writer.writerow(
-                                [
-                                    organism_id,
-                                    NCBI_TO_MEDIUM_EDGE,
-                                    mid,
-                                    IS_GROWN_IN,
-                                    self.knowledge_source,
-                                    knowledge_level,
-                                    agent_type,
-                                ]
-                            )
+                            # Create edge from organism to medium based on growth value
+                            # Only create edges for clear yes/no growth results
+                            if growth and isinstance(growth, str):
+                                growth_lower = growth.lower()
+                                if growth_lower == "yes":
+                                    # Positive growth: organism grows in this medium
+                                    predicate = NCBI_TO_MEDIUM_EDGE
+                                    relation = IS_GROWN_IN
+                                elif growth_lower == "no":
+                                    # Negative growth: organism does not grow in this medium
+                                    predicate = NCBI_TO_MEDIUM_NEGATIVE_EDGE
+                                    relation = DOES_NOT_GROW_IN
+                                else:
+                                    # Skip ambiguous cases (inconsistent, etc.)
+                                    continue
+
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    predicate, relation, mid
+                                )
+                                edge_writer.writerow(
+                                    [
+                                        organism_id,
+                                        predicate,
+                                        mid,
+                                        relation,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
+                                    ]
+                                )
 
                     if nodes_from_keywords:
                         # Convert to manual CHEBI ID for keywords

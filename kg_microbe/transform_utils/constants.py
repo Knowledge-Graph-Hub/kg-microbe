@@ -200,6 +200,7 @@ MEDIUM_STRAINS = "medium-strains/"
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
 NCBI_TO_MEDIUM_EDGE = "METPO:2000517"  # grows in (organism -> medium)
+NCBI_TO_MEDIUM_NEGATIVE_EDGE = "METPO:2000518"  # does not grow in (organism -> medium)
 MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
@@ -259,6 +260,7 @@ ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
+DOES_NOT_GROW_IN = NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
 TROPHICALLY_INTERACTS_WITH = (

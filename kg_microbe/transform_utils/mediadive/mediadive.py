@@ -50,6 +50,7 @@ from kg_microbe.transform_utils.constants import (
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
     IS_GROWN_IN,
+    DOES_NOT_GROW_IN,
     KEGG_KEY,
     KEGG_PREFIX,
     KNOWLEDGE_ASSERTION,
@@ -86,6 +87,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_MEDIUM_EDGE,
+    NCBI_TO_MEDIUM_NEGATIVE_EDGE,
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
     OBSERVATION,
@@ -823,34 +825,49 @@ class MediaDiveTransform(Transform):
                                 if not (
                                     isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)
                                 ):
-                                    medium_strain_nodes.extend(
-                                        [
-                                            self._create_node_row(
-                                                ncbi_strain_id,
-                                                NCBI_CATEGORY,
-                                                strain[SPECIES],
-                                            ),
-                                            self._create_node_row(
-                                                medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]
-                                            ),
-                                        ]
-                                    )
+                                    # Check growth value to determine edge type
+                                    # MediaDive uses: growth=1 (positive), growth=0 (negative)
+                                    growth_value = strain.get('growth')
 
-                                    medium_strain_edge.extend(
-                                        [
+                                    # Only create edge if growth value is explicitly 0 or 1
+                                    if growth_value in [0, 1]:
+                                        if growth_value == 1:
+                                            # Positive growth: organism grows in this medium
+                                            predicate = NCBI_TO_MEDIUM_EDGE
+                                            relation = IS_GROWN_IN
+                                        else:  # growth_value == 0
+                                            # Negative growth: organism does not grow in this medium
+                                            predicate = NCBI_TO_MEDIUM_NEGATIVE_EDGE
+                                            relation = DOES_NOT_GROW_IN
+
+                                        medium_strain_nodes.extend(
                                             [
-                                                ncbi_strain_id,
-                                                NCBI_TO_MEDIUM_EDGE,
-                                                medium_id,
-                                                IS_GROWN_IN,
-                                                strain_id,
-                                                OBSERVATION,
-                                                MANUAL_AGENT,
-                                            ],
-                                        ]
-                                    )
+                                                self._create_node_row(
+                                                    ncbi_strain_id,
+                                                    NCBI_CATEGORY,
+                                                    strain[SPECIES],
+                                                ),
+                                                self._create_node_row(
+                                                    medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]
+                                                ),
+                                            ]
+                                        )
 
-                                    edge_writer.writerows(medium_strain_edge)
+                                        medium_strain_edge.extend(
+                                            [
+                                                [
+                                                    ncbi_strain_id,
+                                                    predicate,
+                                                    medium_id,
+                                                    relation,
+                                                    strain_id,
+                                                    OBSERVATION,
+                                                    MANUAL_AGENT,
+                                                ],
+                                            ]
+                                        )
+
+                                        edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:
                         continue

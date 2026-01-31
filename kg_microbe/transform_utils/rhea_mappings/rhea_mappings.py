@@ -352,7 +352,7 @@ class RheaMappingsTransform(Transform):
                                         predicate,
                                         object,
                                         relation,
-                                        "Rhea2*",
+                                        ks,
                                         LOGICAL_ENTAILMENT,
                                         MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
                                     ]
@@ -419,7 +419,7 @@ class RheaMappingsTransform(Transform):
                                                     ),
                                                     object_info[0],
                                                     predicate_info[0],
-                                                    "Rhea2*",
+                                                    ks,
                                                     LOGICAL_ENTAILMENT,
                                                     MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
                                                 ]

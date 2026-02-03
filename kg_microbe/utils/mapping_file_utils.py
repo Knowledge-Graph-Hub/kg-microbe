@@ -606,7 +606,7 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
 
 def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
     """
-    Load assay kit mappings from the remote assay_kits_simple.json file.
+    Load assay kit mappings from the local assay_kits_simple.json file.
 
     This function processes API kit data (e.g., "API zym", "API coryne") from BacDive
     and creates mappings for enzyme and chemical tests.
@@ -663,17 +663,23 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
 
     :return: Dictionary mapping kit names to well labels to their properties
     :rtype: Dict[str, Dict[str, Dict]]
-    :raises requests.exceptions.HTTPError: If unable to fetch from remote URL
+    :raises FileNotFoundError: If the assay kits file is not found
     :raises ValueError: If the JSON content is invalid
     """
     try:
-        response = requests.get(ASSAY_KITS_SIMPLE_JSON_URL, timeout=30)
-        response.raise_for_status()
+        from kg_microbe.transform_utils.constants import ASSAY_KITS_FILE
 
-        if not response.text.strip():
+        if not ASSAY_KITS_FILE.exists():
+            raise FileNotFoundError(
+                f"Assay metadata file not found at {ASSAY_KITS_FILE}. "
+                "Run 'poetry run kg download' to download it."
+            )
+
+        with open(ASSAY_KITS_FILE, "r") as f:
+            data = json.load(f)
+
+        if not data:
             raise ValueError("The contents of the assay kits JSON file are empty or invalid.")
-
-        data = response.json()
 
         mappings = {}
 
@@ -721,9 +727,220 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
 
         return mappings
 
-    except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the assay kits JSON URL is accessible: {e}"
-        ) from e
+    except FileNotFoundError:
+        # Re-raise with clear message
+        raise
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON in assay kits response: {e}") from e
+        raise ValueError(f"Invalid JSON in assay kits file: {e}") from e
+
+
+def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]:
+    """
+    Generate assay node rows from assay_kits_simple.json data.
+
+    Creates one node per well/test component across all API kits, with rich metadata
+    combined into the description field (kit name, well name, test type, and original description).
+
+    :param assay_data: Dictionary loaded from assay_kits_simple.json
+    :param node_header: List of column names for node rows (from Transform base class)
+    :return: List of node rows formatted for writerows(), each row matching node_header length
+    :rtype: List[List]
+
+    Example node structure:
+        id: assay:API_zym_alkaline_phosphatase
+        category: biolink:Procedure
+        name: API zym - Alkaline phosphatase
+        description: Tests for Alkaline phosphatase activity using chromogenic substrate.
+                     Kit: API zym, Well: Alkaline phosphatase, Type: enzyme
+    """
+    from kg_microbe.transform_utils.constants import (
+        ASSAY_CATEGORY,
+        ASSAY_PREFIX,
+        CATEGORY_COLUMN,
+        DESCRIPTION_COLUMN,
+        ID_COLUMN,
+        NAME_COLUMN,
+    )
+
+    nodes = []
+
+    # Find column indices in the node header
+    id_idx = node_header.index(ID_COLUMN)
+    category_idx = node_header.index(CATEGORY_COLUMN)
+    name_idx = node_header.index(NAME_COLUMN)
+    description_idx = node_header.index(DESCRIPTION_COLUMN) if DESCRIPTION_COLUMN in node_header else None
+
+    for kit in assay_data.get("api_kits", []):
+        kit_name = kit.get("kit_name", "")
+        if not kit_name:
+            continue
+
+        for well in kit.get("wells", []):
+            # Skip if no type or unsupported type
+            well_type = well.get("type", [])
+            if not well_type or well_type[0] not in ["enzyme", "chemical"]:
+                continue
+
+            well_name = well.get("name", "")
+            if not well_name:
+                continue
+
+            # Build node ID: assay:API_{kit_name}_{well_name}
+            # Replace spaces with underscores for consistent IDs
+            node_id = f"{ASSAY_PREFIX}{kit_name}_{well_name}".replace(" ", "_")
+
+            # Get labels and description from JSON
+            label = well.get("label", [well_name])[0] if well.get("label") else well_name
+            json_description = well.get("description", [""])[0] if well.get("description") else ""
+            test_type = well_type[0]
+
+            # Build combined description with kit, well, and test type metadata
+            # Format: "[JSON description]. Kit: [kit_name], Well: [well_name], Type: [test_type]"
+            metadata_str = f"Kit: {kit_name}, Well: {well_name}, Type: {test_type}"
+            if json_description:
+                combined_description = f"{json_description}. {metadata_str}"
+            else:
+                combined_description = metadata_str
+
+            # Create node row with None for all columns initially
+            node_row = [None] * len(node_header)
+
+            # Fill in the known columns
+            node_row[id_idx] = node_id
+            node_row[category_idx] = ASSAY_CATEGORY
+            node_row[name_idx] = f"{kit_name} - {label}"
+
+            if description_idx is not None:
+                node_row[description_idx] = combined_description
+
+            nodes.append(node_row)
+
+    return nodes
+
+
+def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> List[List]:
+    """
+    Generate assay→entity edges from assay_kits_simple.json data.
+
+    Creates methodological reference edges showing what each assay tests:
+    - Enzyme assays → GO terms (has_output)
+    - Enzyme assays → EC numbers (has_output)
+    - Chemical assays → ChEBI entities (has_input)
+
+    These edges are created once upfront, independent of organism data.
+
+    :param assay_data: Dictionary loaded from assay_kits_simple.json
+    :param edge_header: List of column names for edge rows (from Transform base class)
+    :return: List of edge rows formatted for writerows(), each row matching edge_header length
+    :rtype: List[List]
+
+    Example edges:
+        assay:API_zym_alkaline_phosphatase → biolink:has_output → GO:0004035
+        assay:API_zym_alkaline_phosphatase → biolink:has_output → EC:3.1.3.1
+        assay:API_50CHac_ERY → biolink:has_input → CHEBI:17113
+    """
+    from kg_microbe.transform_utils.constants import (
+        AGENT_TYPE_COLUMN,
+        ASSAY_HAS_INPUT_PREDICATE,
+        ASSAY_HAS_OUTPUT_PREDICATE,
+        ASSAY_INPUT_RELATION,
+        ASSAY_OUTPUT_RELATION,
+        ASSAY_PREFIX,
+        EC_PREFIX,
+        KNOWLEDGE_LEVEL_COLUMN,
+        OBJECT_COLUMN,
+        PREDICATE_COLUMN,
+        PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+        RELATION_COLUMN,
+        SUBJECT_COLUMN,
+    )
+
+    edges = []
+
+    # Find column indices in the edge header
+    subject_idx = edge_header.index(SUBJECT_COLUMN)
+    predicate_idx = edge_header.index(PREDICATE_COLUMN)
+    object_idx = edge_header.index(OBJECT_COLUMN)
+    relation_idx = edge_header.index(RELATION_COLUMN) if RELATION_COLUMN in edge_header else None
+    pks_idx = (
+        edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN)
+        if PRIMARY_KNOWLEDGE_SOURCE_COLUMN in edge_header
+        else None
+    )
+    knowledge_level_idx = (
+        edge_header.index(KNOWLEDGE_LEVEL_COLUMN) if KNOWLEDGE_LEVEL_COLUMN in edge_header else None
+    )
+    agent_type_idx = edge_header.index(AGENT_TYPE_COLUMN) if AGENT_TYPE_COLUMN in edge_header else None
+
+    for kit in assay_data.get("api_kits", []):
+        kit_name = kit.get("kit_name", "")
+        if not kit_name:
+            continue
+
+        for well in kit.get("wells", []):
+            # Skip if no type or unsupported type
+            well_type = well.get("type", [])
+            if not well_type or well_type[0] not in ["enzyme", "chemical"]:
+                continue
+
+            well_name = well.get("name", "")
+            if not well_name:
+                continue
+
+            # Build assay node ID (same as in generate_assay_nodes)
+            assay_id = f"{ASSAY_PREFIX}{kit_name}_{well_name}".replace(" ", "_")
+
+            test_type = well_type[0]
+
+            if test_type == "enzyme":
+                # Assay → GO terms (enzyme activity output)
+                for go_term in well.get("go_terms", []):
+                    edge_row = [None] * len(edge_header)
+                    edge_row[subject_idx] = assay_id
+                    edge_row[predicate_idx] = ASSAY_HAS_OUTPUT_PREDICATE
+                    edge_row[object_idx] = go_term
+                    if relation_idx is not None:
+                        edge_row[relation_idx] = ASSAY_OUTPUT_RELATION
+                    if pks_idx is not None:
+                        edge_row[pks_idx] = "infores:assay-metadata"
+                    if knowledge_level_idx is not None:
+                        edge_row[knowledge_level_idx] = "knowledge_assertion"
+                    if agent_type_idx is not None:
+                        edge_row[agent_type_idx] = "manual_agent"
+                    edges.append(edge_row)
+
+                # Assay → EC numbers (enzyme classification output)
+                for ec_number in well.get("ec_number", []):
+                    ec_id = f"{EC_PREFIX}{ec_number}"
+                    edge_row = [None] * len(edge_header)
+                    edge_row[subject_idx] = assay_id
+                    edge_row[predicate_idx] = ASSAY_HAS_OUTPUT_PREDICATE
+                    edge_row[object_idx] = ec_id
+                    if relation_idx is not None:
+                        edge_row[relation_idx] = ASSAY_OUTPUT_RELATION
+                    if pks_idx is not None:
+                        edge_row[pks_idx] = "infores:assay-metadata"
+                    if knowledge_level_idx is not None:
+                        edge_row[knowledge_level_idx] = "knowledge_assertion"
+                    if agent_type_idx is not None:
+                        edge_row[agent_type_idx] = "manual_agent"
+                    edges.append(edge_row)
+
+            elif test_type == "chemical":
+                # Assay → ChEBI entities (substrate input)
+                for chebi_id in well.get("chebi_id", []):
+                    edge_row = [None] * len(edge_header)
+                    edge_row[subject_idx] = assay_id
+                    edge_row[predicate_idx] = ASSAY_HAS_INPUT_PREDICATE
+                    edge_row[object_idx] = chebi_id
+                    if relation_idx is not None:
+                        edge_row[relation_idx] = ASSAY_INPUT_RELATION
+                    if pks_idx is not None:
+                        edge_row[pks_idx] = "infores:assay-metadata"
+                    if knowledge_level_idx is not None:
+                        edge_row[knowledge_level_idx] = "knowledge_assertion"
+                    if agent_type_idx is not None:
+                        edge_row[agent_type_idx] = "manual_agent"
+                    edges.append(edge_row)
+
+    return edges

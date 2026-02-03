@@ -37,12 +37,15 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
+    CHEBI_EDGES_FILE,
     CHEBI_KEY,
+    CHEBI_NODES_FILE,
     CHEBI_PREFIX,
     CHEBI_TO_ROLE_EDGE,
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
+    DOES_NOT_GROW_IN,
     GRAMS_PER_LITER_COLUMN,
     HAS_PART,
     HAS_ROLE,
@@ -50,7 +53,6 @@ from kg_microbe.transform_utils.constants import (
     INGREDIENT_CATEGORY,
     INGREDIENTS_COLUMN,
     IS_GROWN_IN,
-    DOES_NOT_GROW_IN,
     KEGG_KEY,
     KEGG_PREFIX,
     KNOWLEDGE_ASSERTION,
@@ -132,7 +134,9 @@ class MediaDiveTransform(Transform):
         # and self.chebi_roles and self.chebi_labels will remain empty.
         self.chebi_roles: Dict[str, list] = {}  # {chebi_id: [role_ids]}
         self.chebi_labels: Dict[str, str] = {}  # {chebi_id: label}
+        self.chebi_categories: Dict[str, str] = {}  # {chebi_id: category} for category alignment
         self._load_chebi_roles()
+        self._load_chebi_categories()
 
         # Load bulk downloaded data if available
         self.bulk_data_dir = Path("data/raw/mediadive")
@@ -258,8 +262,8 @@ class MediaDiveTransform(Transform):
         This is much faster than querying the ChEBI SQLite database via OakLib.
         Loads roles and labels from chebi_edges.tsv and chebi_nodes.tsv.
         """
-        chebi_edges_file = Path("data/transformed/ontologies/chebi_edges.tsv")
-        chebi_nodes_file = Path("data/transformed/ontologies/chebi_nodes.tsv")
+        chebi_edges_file = CHEBI_EDGES_FILE
+        chebi_nodes_file = CHEBI_NODES_FILE
 
         # Load role relationships from edges file
         if chebi_edges_file.exists():
@@ -298,6 +302,50 @@ class MediaDiveTransform(Transform):
                 print(f"  Loaded {len(self.chebi_labels)} ChEBI labels")
             except Exception as e:
                 print(f"Warning: Could not load ChEBI labels: {e}")
+
+    def _load_chebi_categories(self):
+        """
+        Load CHEBI categories from ontologies transform output.
+
+        This ensures MediaDive uses the same categories assigned by the ontologies transform,
+        preventing multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
+        Falls back to INGREDIENT_CATEGORY if CHEBI ID not found in ontologies.
+        """
+        chebi_nodes_file = CHEBI_NODES_FILE
+
+        if chebi_nodes_file.exists():
+            try:
+                print("Loading CHEBI categories from ontologies transform output...")
+                with open(chebi_nodes_file) as f:
+                    f.readline()  # skip header
+                    for line in f:
+                        parts = line.strip().split("\t")
+                        if len(parts) >= 2:
+                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
+                            node_id = parts[0]
+                            category = parts[1]
+                            if node_id.startswith("CHEBI:") and category:
+                                self.chebi_categories[node_id] = category
+                print(f"  Loaded {len(self.chebi_categories)} CHEBI categories")
+            except Exception as e:
+                print(f"Warning: Could not load CHEBI categories: {e}")
+        else:
+            print(f"Warning: CHEBI nodes file not found at {chebi_nodes_file}")
+            print("  Will fall back to INGREDIENT_CATEGORY (biolink:ChemicalEntity)")
+
+    def _get_chebi_category(self, chebi_id: str) -> str:
+        """
+        Get the category for a CHEBI ID from preloaded categories.
+
+        Args:
+            chebi_id: CHEBI CURIE (e.g., "CHEBI:16828")
+
+        Returns:
+            The Biolink category for the CHEBI ID (e.g., "biolink:SmallMolecule"),
+            or INGREDIENT_CATEGORY (biolink:ChemicalEntity) if not found
+
+        """
+        return self.chebi_categories.get(chebi_id, INGREDIENT_CATEGORY)
 
     def _load_mapping_file(self, mapping_file: Path, description: str) -> Dict[str, str]:
         """
@@ -578,8 +626,12 @@ class MediaDiveTransform(Transform):
             COMPLEX_INGREDIENT_CATEGORY,
         )
 
-        # If mapped to ontology, use simple ChemicalEntity
+        # If mapped to ontology, get category from ontologies transform (for CHEBI)
         if not ingredient_id.startswith(MEDIADIVE_INGREDIENT_PREFIX):
+            # For CHEBI IDs, use category from ontologies transform to prevent multi-category issues
+            if ingredient_id.startswith("CHEBI:"):
+                return self._get_chebi_category(ingredient_id)
+            # For other ontology IDs (KEGG, PubChem, CAS-RN), use generic ChemicalEntity
             return INGREDIENT_CATEGORY
 
         # Check name patterns for complex ingredients

@@ -224,7 +224,14 @@ class BacDiveTransform(Transform):
         self.metpo_metabolite_utilization_mappings = load_metpo_metabolite_utilization_mappings()
         self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
         self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
-        self.assay_kit_mappings = load_assay_kit_mappings()
+        try:
+            self.assay_kit_mappings = load_assay_kit_mappings()
+        except FileNotFoundError:
+            logger.warning(
+                "Assay metadata file not found. Assay generation will be skipped. "
+                "Run 'poetry run kg download' to download it."
+            )
+            self.assay_kit_mappings = {}
 
         # Build reverse index for O(1) METPO mapping lookups
         self.metpo_iri_to_mapping = self._build_metpo_iri_index()

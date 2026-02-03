@@ -50,6 +50,7 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
+    CHEBI_NODES_FILE,
     CHEBI_PREFIX,
     CLASS,
     COLONY_MORPHOLOGY,
@@ -61,6 +62,7 @@ from kg_microbe.transform_utils.constants import (
     CULTURE_NAME,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
+    DOES_NOT_GROW_IN,
     DOMAIN,
     DSM_NUMBER,
     DSM_NUMBER_COLUMN,
@@ -84,7 +86,6 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     INFERRED_SUBCLASS_RELATION,
     IS_GROWN_IN,
-    DOES_NOT_GROW_IN,
     ISOLATION,
     ISOLATION_COLUMN,
     ISOLATION_SAMPLING_ENV_INFO,
@@ -134,6 +135,7 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_DESCRIPTION_COLUMN,
     NCBITAXON_ID,
     NCBITAXON_ID_COLUMN,
+    NCBITAXON_NODES_FILE,
     NCBITAXON_PREFIX,
     NCBITAXON_SOURCE,
     NUTRITION_TYPE,
@@ -241,6 +243,12 @@ class BacDiveTransform(Transform):
         self.ncbitaxon_fallback_cache: Dict[str, Optional[str]] = {}  # Cache for fallback lookups
         self._load_ncbitaxon_labels()
 
+        # Load CHEBI categories from ontologies transform output (for category alignment).
+        # This ensures BacDive uses the same categories as the ontologies transform,
+        # preventing multi-category issues during merge (e.g., ChemicalEntity|SmallMolecule).
+        self.chebi_categories: Dict[str, str] = {}  # {chebi_id: category}
+        self._load_chebi_categories()
+
     def _build_metpo_iri_index(self) -> Dict[str, dict]:
         """
         Build reverse index from IRI to mapping info for O(1) lookup.
@@ -250,9 +258,10 @@ class BacDiveTransform(Transform):
 
         Returns:
             Dictionary mapping IRI (CURIE) to mapping metadata
+
         """
         iri_index = {}
-        for synonym, map_info in self.bacdive_metpo_mappings.items():
+        for _synonym, map_info in self.bacdive_metpo_mappings.items():
             iri = map_info.get("curie")
             if iri:
                 iri_index[iri] = map_info
@@ -262,7 +271,8 @@ class BacDiveTransform(Transform):
         """Initialize GO and ChEBI adapters once for reuse."""
         try:
             from oaklib import get_adapter
-            from kg_microbe.transform_utils.constants import GO_SOURCE, CHEBI_SOURCE
+
+            from kg_microbe.transform_utils.constants import CHEBI_SOURCE, GO_SOURCE
 
             self.go_adapter = get_adapter(f"sqlite:{GO_SOURCE}")
             self.chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
@@ -314,7 +324,7 @@ class BacDiveTransform(Transform):
         This is much faster than querying the NCBITaxon SQLite database via OakLib
         for each record. Creates both id->label and label->id mappings.
         """
-        ncbitaxon_nodes_file = Path("data/transformed/ontologies/ncbitaxon_nodes.tsv")
+        ncbitaxon_nodes_file = NCBITAXON_NODES_FILE
 
         if ncbitaxon_nodes_file.exists():
             try:
@@ -337,6 +347,50 @@ class BacDiveTransform(Transform):
         else:
             print(f"Warning: NCBITaxon nodes file not found at {ncbitaxon_nodes_file}")
             print("  Will fall back to OakLib queries (slower)")
+
+    def _load_chebi_categories(self):
+        """
+        Load CHEBI categories from ontologies transform output.
+
+        This ensures BacDive uses the same categories assigned by the ontologies transform,
+        preventing multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
+        Falls back to METABOLITE_CATEGORY if CHEBI ID not found in ontologies.
+        """
+        chebi_nodes_file = CHEBI_NODES_FILE
+
+        if chebi_nodes_file.exists():
+            try:
+                print("Loading CHEBI categories from ontologies transform output...")
+                with open(chebi_nodes_file) as f:
+                    f.readline()  # skip header
+                    for line in f:
+                        parts = line.strip().split("\t")
+                        if len(parts) >= 2:
+                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
+                            node_id = parts[0]
+                            category = parts[1]
+                            if node_id.startswith("CHEBI:") and category:
+                                self.chebi_categories[node_id] = category
+                print(f"  Loaded {len(self.chebi_categories)} CHEBI categories")
+            except Exception as e:
+                print(f"Warning: Could not load CHEBI categories: {e}")
+        else:
+            print(f"Warning: CHEBI nodes file not found at {chebi_nodes_file}")
+            print("  Will fall back to METABOLITE_CATEGORY (biolink:ChemicalEntity)")
+
+    def _get_chebi_category(self, chebi_id: str) -> str:
+        """
+        Get the category for a CHEBI ID from preloaded categories.
+
+        Args:
+            chebi_id: CHEBI CURIE (e.g., "CHEBI:16828")
+
+        Returns:
+            The Biolink category for the CHEBI ID (e.g., "biolink:SmallMolecule"),
+            or METABOLITE_CATEGORY (biolink:ChemicalEntity) if not found
+
+        """
+        return self.chebi_categories.get(chebi_id, METABOLITE_CATEGORY)
 
     def _add_edge_metadata(
         self, predicate: str, relation: str, object_id: str
@@ -869,7 +923,7 @@ class BacDiveTransform(Transform):
             self.ar_nodes_data_to_write.append(
                 self._create_node_row(
                     chebi_key,
-                    METABOLITE_CATEGORY,
+                    self._get_chebi_category(chebi_key),
                     item[METABOLITE_KEY],
                 )
             )
@@ -973,8 +1027,9 @@ class BacDiveTransform(Transform):
                 # If there's a valid predicate and ID, write node & edge
                 if antibiotic_predicate and metabolite_id:
                     #            print(f"    Writing node row for antibiotic: {metabolite_id}")
+                    # Use category from ontologies transform for CHEBI IDs
                     node_writer.writerow(
-                        self._create_node_row(metabolite_id, METABOLITE_CATEGORY, k)
+                        self._create_node_row(metabolite_id, self._get_chebi_category(metabolite_id), k)
                     )
 
                     # Create edge from organism to metabolite
@@ -1889,7 +1944,7 @@ class BacDiveTransform(Transform):
                                         mediadive_urls.append(mediadive_url)
                                         growth_values.append(growth_value)
 
-                            for mid, mlabel, murl, mdurl, growth in zip(
+                            for mid, mlabel, murl, mdurl, _growth in zip(
                                 medium_ids, medium_labels, medium_urls, mediadive_urls, growth_values, strict=False
                             ):
                                 data = [
@@ -2275,7 +2330,11 @@ class BacDiveTransform(Transform):
                         if metabolite_activity_data:
                             # Write metabolite nodes
                             meta_util_nodes_to_write = [
-                                self._create_node_row(item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"])
+                                self._create_node_row(
+                                    item["chebi_key"],
+                                    self._get_chebi_category(item["chebi_key"]),
+                                    item["metabolite_name"],
+                                )
                                 for item in metabolite_activity_data
                             ]
                             node_writer.writerows(meta_util_nodes_to_write)
@@ -2376,7 +2435,11 @@ class BacDiveTransform(Transform):
                         if metabolite_production_data:
                             # Write metabolite nodes
                             metabolite_production_nodes_to_write = [
-                                self._create_node_row(item["chebi_key"], METABOLITE_CATEGORY, item["metabolite_name"])
+                                self._create_node_row(
+                                    item["chebi_key"],
+                                    self._get_chebi_category(item["chebi_key"]),
+                                    item["metabolite_name"],
+                                )
                                 for item in metabolite_production_data
                             ]
                             node_writer.writerows(metabolite_production_nodes_to_write)

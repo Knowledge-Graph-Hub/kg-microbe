@@ -29,6 +29,7 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
+TRANSFORMED_DATA_DIR = Path(__file__).parents[2] / "data" / "transformed"
 RHEAMAPPINGS_DIR: Path = TRANSFORM_UTILS_DIR / RHEAMAPPINGS
 RHEAMAPPINGS_TMP_DIR = RHEAMAPPINGS_DIR / "tmp"
 BACTOTRAITS_DIR = TRANSFORM_UTILS_DIR / "bactotraits"
@@ -46,6 +47,7 @@ UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
 ONTOLOGIES_DIR = TRANSFORM_UTILS_DIR / ONTOLOGIES
 ONTOLOGIES_XREFS_DIR = ONTOLOGIES_DIR / "xrefs"
 ONTOLOGIES_TREES_DIR = ONTOLOGIES_DIR / "trees"
+ONTOLOGIES_TRANSFORMED_DIR = TRANSFORMED_DATA_DIR / ONTOLOGIES
 CHEBI_XREFS_FILEPATH = ONTOLOGIES_XREFS_DIR / "chebi_xrefs.tsv"
 MONDO_XREFS_FILEPATH = ONTOLOGIES_XREFS_DIR / "mondo_xrefs.tsv"
 MONDO_GENE_IDS_FILEPATH = ONTOLOGIES_XREFS_DIR / "mondo_gene_ids.tsv"
@@ -54,6 +56,12 @@ NCBITAXON_SOURCE = RAW_DATA_DIR / "ncbitaxon.owl"
 CHEBI_SOURCE = RAW_DATA_DIR / "chebi.owl"
 GO_SOURCE = RAW_DATA_DIR / "go.owl"
 EC_SOURCE = RAW_DATA_DIR / "ec.owl"
+BIOLINK_MODEL_FILE = RAW_DATA_DIR / "biolink-model.yaml"
+# Transformed ontology output files (for category alignment across transforms)
+CHEBI_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "chebi_nodes.tsv"
+CHEBI_EDGES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "chebi_edges.tsv"
+NCBITAXON_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "ncbitaxon_nodes.tsv"
+GO_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "go_nodes.tsv"
 METABOLITE_MAPPING_FILE = BACDIVE_DIR / "metabolite_mapping.json"
 PREFIXMAP_JSON_FILEPATH = TRANSFORM_UTILS_DIR / "prefixmap.json"  # custom prefixmap file path
 
@@ -236,27 +244,48 @@ RHEA_TO_GO_EDGE = "biolink:enables"
 NCBI_TO_METABOLITE_RESISTANCE_EDGE = "biolink:associated_with_resistance_to"
 NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
+# Taxonomy and organism categories
 NCBI_CATEGORY = "biolink:OrganismTaxon"
-MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
+
+# Growth media categories (Biolink Model v4.3.6)
+MEDIUM_CATEGORY = "METPO:1004005"  # growth medium (domain-specific METPO category)
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
-INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Default for simple ingredients
-# For complex ingredients (peptone, yeast extract, etc.)
-COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"
-SMALL_MOLECULE_CATEGORY = "biolink:SmallMolecule"  # Current Biolink standard
-MACROMOLECULE_CATEGORY = "biolink:Macromolecule"  # For proteins, nucleic acids, polysaccharides
+
+# Chemical entity categories (Biolink Model v4.3.6)
+# IMPORTANT: For CHEBI-mapped chemicals, transforms should use categories from ontologies transform
+# to prevent multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
+# See BacDive and MediaDive transforms for examples using _get_chebi_category().
+INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
+COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
+SMALL_MOLECULE_CATEGORY = "biolink:SmallMolecule"  # CHEBI default (replaces deprecated ChemicalSubstance)
+# DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
+MACROMOLECULE_CATEGORY = "biolink:Macromolecule"
+# Valid in Biolink v4.3.6 (proteins, nucleic acids, polymers)
+MACROMOLECULAR_COMPLEX_CATEGORY = "biolink:MacromolecularComplex"
+ROLE_CATEGORY = "biolink:ChemicalRole"  # CHEBI functional roles (inhibitor, agonist, etc.)
+METABOLITE_CATEGORY = "biolink:ChemicalEntity"  # Generic metabolite, prefer CHEBI category if available
+SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
+CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
+
+# Biological process and activity categories
 METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
-CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
-ROLE_CATEGORY = "biolink:ChemicalRole"
+
+# Anatomical and environmental categories
 ANATOMICAL_ENTITY_CATEGORY = "biolink:AnatomicalEntity"  # For UBERON anatomical terms
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
+
+# Phenotype and attribute categories
 PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
 ATTRIBUTE_CATEGORY = "biolink:Attribute"
-METABOLITE_CATEGORY = "biolink:ChemicalEntity"
-SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 BIOSAFETY_CATEGORY = "biolink:Attribute"
+
+# Procedure categories
 ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
+
+# Deprecated categories (Biolink v2.x) - do not use
+# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Replaced by SmallMolecule in Biolink v3+
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)

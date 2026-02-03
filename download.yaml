@@ -99,6 +99,12 @@
   url: gdrive:1b_UWdIvsIM81V5WdFedNoxN3R4UUf4F2
   local_name: bacdive_strains.json
 
+# BacDive Assay Metadata
+# Assay kit metadata for API and BiOLOG assay systems
+-
+  url: https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json
+  local_name: assay_kits_simple.json
+
 # MediaDive
 # Explore MediaDive data
 # NOTE: This downloads the basic media list. Complete MediaDive data (detailed
@@ -219,6 +225,14 @@
   local_name: metpo.owl
 
 #
+# RO (Relations Ontology)
+# Standard ontology for biological and biomedical relations
+#
+-
+  url: http://purl.obolibrary.org/obo/ro.owl
+  local_name: ro.owl
+
+#
 # MicroMediaParam Chemical Mappings - High Confidence
 # Comprehensive compound name to ontology ID mappings from MicroMediaParam pipeline.
 # This high-confidence version includes:
@@ -268,7 +282,36 @@
 
 #
 # KEGG (Kyoto Encyclopedia of Genes and Genomes)
+# NOTE: KEGG requires individual users to query the REST API directly.
+# Bulk downloads and redistribution require a paid Service Provider License.
+#
+# To use KEGG transform:
+#   1. Run: poetry run kg download (gets ko_list.txt)
+#   2. Run: python scripts/download_kegg_minimal.py (~50 min, creates ~30MB cache)
+#      - Downloads only pathways and modules (97% smaller than full data)
+#      - Alternative: python scripts/download_kegg_bulk.py (creates ~894MB cache)
+#   3. Run: poetry run kg transform -s kegg
+#
+# See: https://www.kegg.jp/kegg/legal.html for licensing terms
 #
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
+
+#
+# Biolink Model
+# The standard schema for biological knowledge graphs
+# Version 4.3.6 (latest as of Dec 2024)
+# NOTE: is_assessed_by predicate was removed after v3.6.0
+#
+-
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.3.6/biolink-model.yaml
+  local_name: biolink-model.yaml
+
+#
+# KGX Format Specification
+# Specification for Knowledge Graph Exchange format (TSV/CSV/JSON serialization)
+#
+-
+  url: https://raw.githubusercontent.com/biolink/kgx/master/docs/kgx_format.md
+  local_name: kgx-format.md

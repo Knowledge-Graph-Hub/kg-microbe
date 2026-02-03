@@ -29,6 +29,7 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
+TRANSFORMED_DATA_DIR = Path(__file__).parents[2] / "data" / "transformed"
 RHEAMAPPINGS_DIR: Path = TRANSFORM_UTILS_DIR / RHEAMAPPINGS
 RHEAMAPPINGS_TMP_DIR = RHEAMAPPINGS_DIR / "tmp"
 BACTOTRAITS_DIR = TRANSFORM_UTILS_DIR / "bactotraits"
@@ -36,6 +37,7 @@ BACTOTRAITS_TMP_DIR = BACTOTRAITS_DIR / "tmp"
 BAKTA_DIR = TRANSFORM_UTILS_DIR / BAKTA
 BAKTA_TMP_DIR = BAKTA_DIR / "tmp"
 BAKTA_RAW_DIR = RAW_DATA_DIR / "bakta"
+ASSAY_KITS_FILE = RAW_DATA_DIR / "assay_kits_simple.json"
 COG_DIR = TRANSFORM_UTILS_DIR / COG
 COG_RAW_DIR = RAW_DATA_DIR / COG
 KEGG_DIR = TRANSFORM_UTILS_DIR / KEGG
@@ -45,6 +47,7 @@ UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
 ONTOLOGIES_DIR = TRANSFORM_UTILS_DIR / ONTOLOGIES
 ONTOLOGIES_XREFS_DIR = ONTOLOGIES_DIR / "xrefs"
 ONTOLOGIES_TREES_DIR = ONTOLOGIES_DIR / "trees"
+ONTOLOGIES_TRANSFORMED_DIR = TRANSFORMED_DATA_DIR / ONTOLOGIES
 CHEBI_XREFS_FILEPATH = ONTOLOGIES_XREFS_DIR / "chebi_xrefs.tsv"
 MONDO_XREFS_FILEPATH = ONTOLOGIES_XREFS_DIR / "mondo_xrefs.tsv"
 MONDO_GENE_IDS_FILEPATH = ONTOLOGIES_XREFS_DIR / "mondo_gene_ids.tsv"
@@ -53,6 +56,12 @@ NCBITAXON_SOURCE = RAW_DATA_DIR / "ncbitaxon.owl"
 CHEBI_SOURCE = RAW_DATA_DIR / "chebi.owl"
 GO_SOURCE = RAW_DATA_DIR / "go.owl"
 EC_SOURCE = RAW_DATA_DIR / "ec.owl"
+BIOLINK_MODEL_FILE = RAW_DATA_DIR / "biolink-model.yaml"
+# Transformed ontology output files (for category alignment across transforms)
+CHEBI_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "chebi_nodes.tsv"
+CHEBI_EDGES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "chebi_edges.tsv"
+NCBITAXON_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "ncbitaxon_nodes.tsv"
+GO_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "go_nodes.tsv"
 METABOLITE_MAPPING_FILE = BACDIVE_DIR / "metabolite_mapping.json"
 PREFIXMAP_JSON_FILEPATH = TRANSFORM_UTILS_DIR / "prefixmap.json"  # custom prefixmap file path
 
@@ -152,6 +161,9 @@ REF = "Reference"
 NCBITAXON_PREFIX = "NCBITaxon:"
 BACDIVE_PREFIX = "bacdive:"
 STRAIN_PREFIX = "kgmicrobe.strain:"
+# Provisional taxonomic node prefixes for unmapped taxa
+PROVISIONAL_SPECIES_PREFIX = "kgmicrobe.species:"
+PROVISIONAL_GENUS_PREFIX = "kgmicrobe.genus:"
 CHEBI_PREFIX = "CHEBI:"
 CAS_RN_PREFIX = "CAS-RN:"
 PUBCHEM_PREFIX = "PubChem:"
@@ -196,6 +208,7 @@ MEDIUM_STRAINS = "medium-strains/"
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
 NCBI_TO_MEDIUM_EDGE = "METPO:2000517"  # grows in (organism -> medium)
+NCBI_TO_MEDIUM_NEGATIVE_EDGE = "METPO:2000518"  # does not grow in (organism -> medium)
 MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
@@ -208,36 +221,75 @@ NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "METPO:2000103"  # capable of [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
 NCBI_TO_ENZYME_EDGE = "METPO:2000103"  # capable of [org -> enzyme]
-ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay]
-MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay]
-NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay]
-ENZYME_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [enzyme -> assay]
+# DEPRECATED v2026.1 - unused constants with deprecated predicates - will be removed in future version
+# ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
+# MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
+# NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay] - UNUSED
+ENZYME_TO_ASSAY_EDGE = (
+    "biolink:related_to_at_instance_level"  # [enzyme -> assay] - methodological reference
+)
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
 RHEA_TO_EC_EDGE = "biolink:enabled_by"
+
+# Assay → Entity predicates (methodological reference edges)
+ASSAY_HAS_OUTPUT_PREDICATE = "biolink:has_output"  # [assay -> GO/EC]
+ASSAY_HAS_INPUT_PREDICATE = "biolink:has_input"  # [assay -> ChEBI]
+
+# Assay → Entity relations
+ASSAY_OUTPUT_RELATION = "NCIT:C25284"  # output
+ASSAY_INPUT_RELATION = "RO:0002233"  # has input (already defined as HAS_INPUT_RELATION)
 RHEA_TO_GO_EDGE = "biolink:enables"
 NCBI_TO_METABOLITE_RESISTANCE_EDGE = "biolink:associated_with_resistance_to"
 NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
+# Taxonomy and organism categories
 NCBI_CATEGORY = "biolink:OrganismTaxon"
-MEDIUM_CATEGORY = "METPO:1004005"  # growth medium
+
+# Growth media categories (Biolink Model v4.3.6)
+MEDIUM_CATEGORY = "METPO:1004005"  # growth medium (domain-specific METPO category)
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
-SOLUTION_CATEGORY = "biolink:ChemicalEntity"
-INGREDIENT_CATEGORY = "biolink:ChemicalEntity"
+SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
+
+# Chemical entity categories (Biolink Model v4.3.6)
+# IMPORTANT: For CHEBI-mapped chemicals, transforms should use categories from ontologies transform
+# to prevent multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
+# See BacDive and MediaDive transforms for examples using _get_chebi_category().
+INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
+COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
+SMALL_MOLECULE_CATEGORY = "biolink:SmallMolecule"  # CHEBI default (replaces deprecated ChemicalSubstance)
+# DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
+MACROMOLECULE_CATEGORY = "biolink:Macromolecule"
+# Valid in Biolink v4.3.6 (proteins, nucleic acids, polymers)
+MACROMOLECULAR_COMPLEX_CATEGORY = "biolink:MacromolecularComplex"
+ROLE_CATEGORY = "biolink:ChemicalRole"  # CHEBI functional roles (inhibitor, agonist, etc.)
+METABOLITE_CATEGORY = "biolink:ChemicalEntity"  # Generic metabolite, prefer CHEBI category if available
+SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
+CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
+
+# Biological process and activity categories
 METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
-CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
-ROLE_CATEGORY = "biolink:ChemicalRole"
+
+# Anatomical and environmental categories
+ANATOMICAL_ENTITY_CATEGORY = "biolink:AnatomicalEntity"  # For UBERON anatomical terms
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
+
+# Phenotype and attribute categories
 PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
 ATTRIBUTE_CATEGORY = "biolink:Attribute"
-METABOLITE_CATEGORY = "biolink:ChemicalEntity"
-SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 BIOSAFETY_CATEGORY = "biolink:Attribute"
+
+# Procedure categories
+ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
+
+# Deprecated categories (Biolink v2.x) - do not use
+# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Replaced by SmallMolecule in Biolink v3+
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
+DOES_NOT_GROW_IN = NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
 TROPHICALLY_INTERACTS_WITH = (
@@ -248,6 +300,11 @@ BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
+# Additional RO relations for Bakta transform
+HAS_GENE = "RO:0002551"  # organism has gene
+MEMBER_OF = "RO:0002350"  # member of (for GO integration)
+INVOLVED_IN = "RO:0002331"  # involved in (biological process)
+ORTHOLOGOUS_TO = "RO:HOM0000017"  # orthologous to (homology)
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
 EXACT_MATCH = "skos:exactMatch"
@@ -262,12 +319,38 @@ OBJECT_COLUMN = "object"
 RELATION_COLUMN = "relation"
 PROVIDED_BY_COLUMN = "provided_by"
 PRIMARY_KNOWLEDGE_SOURCE_COLUMN = "primary_knowledge_source"
+KNOWLEDGE_LEVEL_COLUMN = "knowledge_level"
+AGENT_TYPE_COLUMN = "agent_type"
+
+# Knowledge level values (Biolink Model KnowledgeLevelEnum)
+KNOWLEDGE_ASSERTION = "knowledge_assertion"
+LOGICAL_ENTAILMENT = "logical_entailment"
+PREDICTION = "prediction"
+STATISTICAL_ASSOCIATION = "statistical_association"
+OBSERVATION = "observation"
+KNOWLEDGE_LEVEL_NOT_PROVIDED = "not_provided"
+
+# Agent type values (Biolink Model AgentTypeEnum)
+MANUAL_AGENT = "manual_agent"
+AUTOMATED_AGENT = "automated_agent"
+DATA_ANALYSIS_PIPELINE = "data_analysis_pipeline"
+COMPUTATIONAL_MODEL = "computational_model"
+TEXT_MINING_AGENT = "text_mining_agent"
+IMAGE_PROCESSING_AGENT = "image_processing_agent"
+MANUAL_VALIDATION_OF_AUTOMATED_AGENT = "manual_validation_of_automated_agent"
+AGENT_TYPE_NOT_PROVIDED = "not_provided"
+
 DESCRIPTION_COLUMN = "description"
 XREF_COLUMN = "xref"
 SYNONYM_COLUMN = "synonym"
-IRI_COLUMN = "iri"
+IRI_COLUMN = "iri"  # DEPRECATED - No longer used in transform outputs
 SAME_AS_COLUMN = "same_as"
 SUBSETS_COLUMN = "subsets"
+
+# Assay node metadata fields
+ASSAY_KIT_NAME_COLUMN = "kit_name"
+ASSAY_WELL_NAME_COLUMN = "well_name"
+ASSAY_TEST_TYPE_COLUMN = "test_type"
 AMOUNT_COLUMN = "amount"
 UNIT_COLUMN = "unit"
 GRAMS_PER_LITER_COLUMN = "g_l"
@@ -362,7 +445,12 @@ RHEA_CATEGORY_COLUMN = "category"
 RHEA_CATEGORY = "biolink:MolecularActivity"
 EC_CATEGORY = "biolink:MolecularActivity"
 GO_CATEGORY = "biolink:BiologicalProcess"
+MOLECULAR_ACTIVITY_CATEGORY = "biolink:MolecularActivity"  # For GO molecular function terms
+BIOLOGICAL_PROCESS_CATEGORY = "biolink:BiologicalProcess"  # For GO biological process terms
+CELLULAR_COMPONENT_CATEGORY = "biolink:CellularComponent"  # For GO cellular component terms
 RDFS_SUBCLASS_OF = "rdfs:subClassOf"
+# Relation for inferred taxonomic relationships
+INFERRED_SUBCLASS_RELATION = "kgmicrobe:inferred_subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
 CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolink:capable_of)

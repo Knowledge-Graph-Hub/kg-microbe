@@ -7,10 +7,11 @@ from typing import Optional, Union
 import yaml
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
     ID_COLUMN,
-    IRI_COLUMN,
+    KNOWLEDGE_LEVEL_COLUMN,
     NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
@@ -19,7 +20,6 @@ from kg_microbe.transform_utils.constants import (
     RELATION_COLUMN,
     SAME_AS_COLUMN,
     SUBJECT_COLUMN,
-    SUBSETS_COLUMN,
     SYNONYM_COLUMN,
     XREF_COLUMN,
 )
@@ -58,13 +58,12 @@ class Transform:
             XREF_COLUMN,
             PROVIDED_BY_COLUMN,
             SYNONYM_COLUMN,
-            IRI_COLUMN,
-            OBJECT_COLUMN,
-            PREDICATE_COLUMN,
-            RELATION_COLUMN,
+            # IRI_COLUMN removed - no longer included in transform outputs
+            # Edge columns (OBJECT, PREDICATE, RELATION, SUBJECT) removed - belong only in edges
             SAME_AS_COLUMN,
-            SUBJECT_COLUMN,
-            SUBSETS_COLUMN,
+            # Note: Assay-specific metadata (kit_name, well_name, test_type) are combined
+            # into the description field for assay nodes
+            # Note: SUBSETS_COLUMN removed - was never populated by any transform
         ]
         self.edge_header = [
             SUBJECT_COLUMN,
@@ -72,6 +71,8 @@ class Transform:
             OBJECT_COLUMN,
             RELATION_COLUMN,
             PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+            KNOWLEDGE_LEVEL_COLUMN,
+            AGENT_TYPE_COLUMN,
         ]
 
         # default dirs

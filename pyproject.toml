@@ -73,30 +73,35 @@ line-length = 100
 target-version = ["py38", "py39", "py310"]
 
 [tool.ruff]
-lint.extend-ignore = [
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+extend-ignore = [
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
     "S301",  # `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue`
     "S605",  # Starting a process with a shell, possible injection detected
+    "S202",  # Uses of `tarfile.extractall()` - needed for KGX merge workflow
     ]
-line-length = 120
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-lint.fixable = ["ALL"]
+fixable = ["ALL"]
+unfixable = []
 
 # Select or ignore from https://beta.ruff.rs/docs/rules/
-lint.select = [
+select = [
     "B",  # bugbear
     "D",  # pydocstyle
     "E",  # pycodestyle errors
     "F",  # Pyflakes
-    "I",  # isort 
+    "I",  # isort
     "S",  # flake8-bandit
     "W",  # Warning
 ]
 
-lint.unfixable = []
-target-version = "py310"
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]  # Allow assert in test files
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

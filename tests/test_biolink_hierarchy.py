@@ -1,5 +1,7 @@
 """Unit tests for BiolinkHierarchy utility."""
 
+from pathlib import Path
+
 import pytest
 
 from kg_microbe.utils.biolink_hierarchy import BiolinkHierarchy
@@ -8,6 +10,9 @@ from kg_microbe.utils.biolink_hierarchy import BiolinkHierarchy
 @pytest.fixture
 def hierarchy():
     """Fixture to create BiolinkHierarchy instance for all tests."""
+    biolink_yaml = Path("data/raw/biolink-model.yaml")
+    if not biolink_yaml.exists():
+        pytest.skip("Biolink Model YAML not available - run 'poetry run kg download' first")
     return BiolinkHierarchy()
 
 

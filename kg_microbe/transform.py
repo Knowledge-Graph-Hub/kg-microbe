@@ -8,7 +8,6 @@ from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
 from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
 from kg_microbe.transform_utils.cog.cog import COGTransform
-from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACTOTRAITS,
@@ -21,6 +20,7 @@ from kg_microbe.transform_utils.constants import (
     ONTOLOGIES,
     RHEAMAPPINGS,
 )
+from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform

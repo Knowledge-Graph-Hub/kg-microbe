@@ -41,9 +41,18 @@ from kg_microbe.transform_utils.transform import Transform
 
 
 class GTDBTransform(Transform):
+
     """Transform GTDB taxonomy and genome data into KGX format."""
 
     def __init__(self, input_dir=None, output_dir=None):
+        """
+        Initialize GTDB transform.
+
+        Args:
+            input_dir: Input directory path (optional)
+            output_dir: Output directory path (optional)
+
+        """
         source_name = GTDB
         super().__init__(source_name, input_dir, output_dir)
         self.nodes = []
@@ -64,7 +73,7 @@ class GTDBTransform(Transform):
 
     def run(self, data_file=None, show_status=True):
         """
-        Main transform logic.
+        Run the GTDB transform.
 
         Process:
         1. Load and parse taxonomy files
@@ -73,20 +82,20 @@ class GTDBTransform(Transform):
         4. Create genome nodes
         5. Write output files
         """
-        print(f"Starting GTDB transform...")
+        print("Starting GTDB transform...")
         print(f"Input directory: {self.input_dir}")
 
         # Step 1: Parse taxonomy files
-        print(f"Parsing bacterial taxonomy...")
+        print("Parsing bacterial taxonomy...")
         bac_taxa = self._parse_taxonomy_file(GTDB_BAC120_TAXONOMY)
         print(f"  Found {len(bac_taxa)} bacterial genomes")
 
-        print(f"Parsing archaeal taxonomy...")
+        print("Parsing archaeal taxonomy...")
         ar_taxa = self._parse_taxonomy_file(GTDB_AR53_TAXONOMY)
         print(f"  Found {len(ar_taxa)} archaeal genomes")
 
         # Step 2: Build taxonomy tree and create nodes/edges
-        print(f"Building taxonomy hierarchy...")
+        print("Building taxonomy hierarchy...")
         all_taxa = bac_taxa + ar_taxa
         self._build_taxonomy_hierarchy(all_taxa)
         print(f"  Created {len(self.taxon_to_id)} unique GTDB taxa")
@@ -94,30 +103,30 @@ class GTDBTransform(Transform):
         # Step 3: Parse metadata for genomes and mappings (if files exist)
         bac_metadata_path = self.input_dir / GTDB_BAC120_METADATA
         if bac_metadata_path.exists():
-            print(f"Parsing bacterial metadata...")
+            print("Parsing bacterial metadata...")
             self._parse_metadata_file(GTDB_BAC120_METADATA, bac_taxa)
         else:
-            print(f"Bacterial metadata not found, creating genomes without NCBI mappings...")
+            print("Bacterial metadata not found, creating genomes without NCBI mappings...")
             self._create_genomes_from_taxonomy(bac_taxa)
 
         ar_metadata_path = self.input_dir / GTDB_AR53_METADATA
         if ar_metadata_path.exists():
-            print(f"Parsing archaeal metadata...")
+            print("Parsing archaeal metadata...")
             self._parse_metadata_file(GTDB_AR53_METADATA, ar_taxa)
         else:
-            print(f"Archaeal metadata not found, creating genomes without NCBI mappings...")
+            print("Archaeal metadata not found, creating genomes without NCBI mappings...")
             self._create_genomes_from_taxonomy(ar_taxa)
 
         print(f"  Total nodes: {len(self.nodes)}")
         print(f"  Total edges: {len(self.edges)}")
 
         # Step 4: Write output
-        print(f"Writing output files...")
+        print("Writing output files...")
         self._write_tsv_files()
-        print(f"GTDB transform complete!")
+        print("GTDB transform complete!")
 
     def _parse_taxonomy_file(self, filename: str) -> List[Tuple[str, List[str]]]:
-        """
+        r"""
         Parse GTDB taxonomy file.
 
         Format: accession\tgtdb_taxonomy
@@ -170,7 +179,7 @@ class GTDBTransform(Transform):
         parent_map = {}  # child -> parent
 
         # Step 1: Collect unique taxa and build parent map
-        for accession, taxa_list in all_taxa:
+        for _accession, taxa_list in all_taxa:
             for i, taxon in enumerate(taxa_list):
                 # Clean taxon name
                 taxon = clean_taxon_name(taxon)
@@ -255,6 +264,7 @@ class GTDBTransform(Transform):
 
         Returns:
             GTDB prefixed ID: e.g., "GTDB:1"
+
         """
         if taxon_name not in self.taxon_to_id:
             taxon_id = f"{GTDB_PREFIX}{self.taxon_id_counter}"
@@ -279,6 +289,7 @@ class GTDBTransform(Transform):
             accession: "GCF_000005845.2"
             gtdb_taxon: "s__Escherichia_coli"
             ncbi_taxid: "562" (optional)
+
         """
         # Create genome node
         base_accession, version = extract_accession_type(accession)

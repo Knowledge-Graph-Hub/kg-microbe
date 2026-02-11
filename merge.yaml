@@ -138,13 +138,13 @@ merged_graph:
     #     filename:
     #       - data/transformed/bakta/pfas_bakta/nodes.tsv
     #       - data/transformed/bakta/pfas_bakta/edges.tsv
-    cog:
-      name: "cog"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/cog/nodes.tsv
-          - data/transformed/cog/edges.tsv
+    # cog:
+    #   name: "cog"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/cog/nodes.tsv
+    #       - data/transformed/cog/edges.tsv
     gtdb:
       name: "GTDB Taxonomy"
       input:

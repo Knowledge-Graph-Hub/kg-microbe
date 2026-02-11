@@ -272,3 +272,19 @@
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
+
+#
+# GTDB (Genome Taxonomy Database)
+#
+-
+  url: https://data.gtdb.ecogenomic.org/releases/latest/bac120_taxonomy.tsv
+  local_name: gtdb/bac120_taxonomy.tsv
+-
+  url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv
+  local_name: gtdb/ar53_taxonomy.tsv
+-
+  url: https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz
+  local_name: gtdb/bac120_metadata.tsv.gz
+-
+  url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz
+  local_name: gtdb/ar53_metadata.tsv.gz

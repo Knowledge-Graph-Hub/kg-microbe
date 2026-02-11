@@ -135,6 +135,13 @@ merged_graph:
         filename:
           - data/transformed/cog/nodes.tsv
           - data/transformed/cog/edges.tsv
+    gtdb:
+      name: "GTDB Taxonomy"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/gtdb/nodes.tsv
+          - data/transformed/gtdb/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

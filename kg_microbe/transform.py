@@ -8,11 +8,13 @@ from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
 from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
 from kg_microbe.transform_utils.cog.cog import COGTransform
+from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACTOTRAITS,
     BAKTA,
     COG,
+    GTDB,
     KEGG,
     MADIN_ETAL,
     MEDIADIVE,
@@ -41,6 +43,7 @@ DATA_SOURCES = {
     BACDIVE: BacDiveTransform,
     BAKTA: BaktaTransform,
     COG: COGTransform,
+    GTDB: GTDBTransform,
     KEGG: KEGGTransform,
     MEDIADIVE: MediaDiveTransform,
     MADIN_ETAL: MadinEtAlTransform,

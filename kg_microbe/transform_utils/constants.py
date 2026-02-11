@@ -18,6 +18,7 @@ CTD = "ctd"
 DISBIOME = "disbiome"
 UNIPROT_FUNCTIONAL_MICROBES = "uniprot_functional_microbes"
 UNIPROT_HUMAN = "uniprot_human"
+GTDB = "gtdb"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -182,6 +183,8 @@ RHEA_OBO_PREFIX = "OBO:rhea_"
 MEDIADIVE_REST_API_BASE_URL = "https://mediadive.dsmz.de/rest/"
 BACDIVE_API_BASE_URL = "https://mediadive.dsmz.de/"
 BIOSAFETY_LEVEL_PREFIX = "BSL:"
+GTDB_PREFIX = "GTDB:"
+GENBANK_PREFIX = "GenBank:"
 
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL = "Complex Medium"
@@ -235,6 +238,7 @@ ATTRIBUTE_CATEGORY = "biolink:Attribute"
 METABOLITE_CATEGORY = "biolink:ChemicalEntity"
 SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 BIOSAFETY_CATEGORY = "biolink:Attribute"
+GENOME_CATEGORY = "biolink:Genome"
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
@@ -250,6 +254,8 @@ HAS_PARTICIPANT = "RO:0000057"
 PARTICIPATES_IN = "RO:0000056"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
+CLOSE_MATCH_PREDICATE = "biolink:close_match"
+CLOSE_MATCH_RELATION = "skos:closeMatch"
 EXACT_MATCH = "skos:exactMatch"
 ASSOCIATED_WITH = "PATO:0001668"
 
@@ -436,6 +442,17 @@ UNIPROT_HUMAN_DIR = TRANSFORM_UTILS_DIR / "uniprot_human"
 UNIPROT_HUMAN_TMP_DIR = UNIPROT_HUMAN_DIR / "tmp"
 UNIPROT_HUMAN_RELEVANT_FILE_LIST = UNIPROT_HUMAN_TMP_DIR / "relevant_files.tsv"
 UNIPROT_HUMAN_TMP_NE_DIR = UNIPROT_HUMAN_TMP_DIR / "nodes_and_edges"
+
+# GTDB-specific paths
+GTDB_DIR: Path = TRANSFORM_UTILS_DIR / GTDB
+GTDB_TMP_DIR = GTDB_DIR / "tmp"
+GTDB_RAW_DIR = RAW_DATA_DIR / GTDB
+
+# GTDB files
+GTDB_BAC120_TAXONOMY = "bac120_taxonomy.tsv"
+GTDB_AR53_TAXONOMY = "ar53_taxonomy.tsv"
+GTDB_BAC120_METADATA = "bac120_metadata.tsv.gz"
+GTDB_AR53_METADATA = "ar53_metadata.tsv.gz"
 
 # All Uniprot
 UNIPROT_PROTEOMES_FILE = "uniprot_proteomes.tar.gz"

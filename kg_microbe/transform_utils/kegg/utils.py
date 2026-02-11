@@ -1,5 +1,6 @@
 """Utility functions for KEGG transform."""
 
+import json
 import logging
 import time
 from pathlib import Path
@@ -209,6 +210,61 @@ def parse_kegg_entry(entry_text: str) -> Dict[str, any]:
                 details["definition"] += " " + line.strip()
 
     return details
+
+
+def load_kegg_ko_details_from_cache(cache_file: Path) -> Dict[str, Dict]:
+    """
+    Load KEGG KO details from cached JSON file.
+
+    Supports two formats:
+    1. Minimal format (ko_minimal.json): Only pathways and modules (~30MB)
+    2. Full format (ko_details.json): Full entry text (~894MB)
+
+    :param cache_file: Path to ko_minimal.json or ko_details.json file
+    :return: Dictionary mapping KO ID to details
+    """
+    if not cache_file.exists():
+        logger.warning(f"KEGG KO details cache file not found: {cache_file}")
+        logger.warning("Run 'python scripts/download_kegg_minimal.py' to create cache")
+        logger.warning("Or run 'python scripts/download_kegg_bulk.py' for full data")
+        return {}
+
+    logger.info(f"Loading KEGG KO details from cache: {cache_file}")
+
+    with open(cache_file, "r") as f:
+        cached_data = json.load(f)
+
+    ko_details = {}
+    for ko_id, entry_data in cached_data.items():
+        # Check if this is minimal format (has pathways/modules directly)
+        if "pathways" in entry_data and "modules" in entry_data:
+            # Minimal format - use directly
+            ko_details[ko_id] = entry_data
+        elif "entry_text" in entry_data:
+            # Full format - parse entry text
+            entry_text = entry_data.get("entry_text")
+            if entry_text:
+                ko_details[ko_id] = parse_kegg_entry(entry_text)
+            else:
+                # Entry failed to download, create empty details
+                ko_details[ko_id] = {
+                    "entry": ko_id,
+                    "name": "",
+                    "definition": "",
+                    "pathways": [],
+                    "modules": [],
+                    "genes": [],
+                }
+        else:
+            # Unknown format, create empty
+            logger.warning(f"Unknown format for {ko_id}, creating empty entry")
+            ko_details[ko_id] = {
+                "pathways": [],
+                "modules": [],
+            }
+
+    logger.info(f"Loaded {len(ko_details)} KO entries from cache")
+    return ko_details
 
 
 def extract_ko_ids_from_list(ko_ids: List[str], max_fetch: Optional[int] = None) -> Dict[str, Dict]:

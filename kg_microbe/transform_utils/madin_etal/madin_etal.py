@@ -11,6 +11,7 @@ from oaklib.utilities.ner_utilities import get_exclusion_token_list
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AUTOMATED_AGENT,
     BIOLOGICAL_PROCESS,
     CARBON_SUBSTRATE_CATEGORY,
     CARBON_SUBSTRATE_PREFIX,
@@ -31,7 +32,9 @@ from kg_microbe.transform_utils.constants import (
     ISOLATION_SOURCE_COLUMN,
     ISOLATION_SOURCE_PREFIX,
     LOCATION_OF,
+    LOGICAL_ENTAILMENT,
     MADIN_ETAL,
+    MANUAL_AGENT,
     METABOLISM_CATEGORY,
     METABOLISM_COLUMN,
     MOTILITY_COLUMN,
@@ -44,6 +47,7 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_PREFIX,
     OBJECT_ID_COLUMN,
     OBJECT_LABEL_COLUMN,
+    OBSERVATION,
     ORG_NAME_COLUMN,
     PATHWAY_CATEGORY,
     PATHWAY_PREFIX,
@@ -105,8 +109,46 @@ class MadinEtAlTransform(Transform):
         source_name = MADIN_ETAL
         super().__init__(source_name, input_dir, output_dir, nlp)  # set some variables
         self.nlp = nlp
+        self.knowledge_source = "infores:madin_etal"  # InforES standard knowledge source
         self.madin_metpo_mappings = load_metpo_mappings("madin synonym or field")
         self.environments_file = self.input_base_dir / "environments.csv"
+
+    def _create_node_row(
+        self,
+        node_id: str,
+        category: str,
+        name: str,
+        description: str = None,
+        xref: str = None,
+        synonym: str = None,
+        same_as: str = None,
+    ) -> list:
+        """
+        Create a properly formatted node row with all columns.
+
+        Automatically populates the provided_by field with self.knowledge_source.
+
+        :param node_id: Node ID (CURIE format)
+        :param category: Biolink category
+        :param name: Node name/label
+        :param description: Optional description
+        :param xref: Optional cross-references (pipe-separated string)
+        :param synonym: Optional synonyms (pipe-separated string)
+        :param same_as: Optional equivalent identifiers (pipe-separated string)
+        :return: List representing a complete node row matching node_header
+        """
+        # Node header structure:
+        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        node_row = [None] * len(self.node_header)
+        node_row[0] = node_id  # ID_COLUMN
+        node_row[1] = category  # CATEGORY_COLUMN
+        node_row[2] = name  # NAME_COLUMN
+        node_row[3] = description  # DESCRIPTION_COLUMN
+        node_row[4] = xref  # XREF_COLUMN
+        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
+        node_row[6] = synonym  # SYNONYM_COLUMN
+        node_row[7] = same_as  # SAME_AS_COLUMN
+        return node_row
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """
@@ -148,7 +190,7 @@ class MadinEtAlTransform(Transform):
         oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
         roles = {x for (_, _, x) in chebi_roles}
-        role_nodes = [[role, ROLE_CATEGORY, oi.label(role)] for role in roles]
+        role_nodes = [self._create_node_row(role, ROLE_CATEGORY, oi.label(role)) for role in roles]
         role_edges = [
             [
                 subject,
@@ -156,6 +198,8 @@ class MadinEtAlTransform(Transform):
                 object,
                 predicate,
                 "infores:chebi",
+                LOGICAL_ENTAILMENT,
+                AUTOMATED_AGENT,
             ]
             for (subject, predicate, object) in chebi_roles
         ]
@@ -242,7 +286,7 @@ class MadinEtAlTransform(Transform):
                     filtered_row = {k: line[k] for k in traits_columns_of_interest}
                     tax_id = NCBITAXON_PREFIX + str(filtered_row[TAX_ID_COLUMN])
                     tax_name = filtered_row[ORG_NAME_COLUMN]
-                    tax_node = [tax_id, NCBI_CATEGORY, tax_name]
+                    tax_node = self._create_node_row(tax_id, NCBI_CATEGORY, tax_name)
 
                     # block handling "metabolism" column from Madin etal dataset/CSV sheet
                     metabolism = self.madin_metpo_mappings.get(
@@ -260,16 +304,19 @@ class MadinEtAlTransform(Transform):
                             predicate = uri_to_curie(predicate_biolink)
                         else:
                             predicate = "biolink:has_phenotype"
-                        metabolism_node = [
+                        metabolism_node = self._create_node_row(
                             metabolism["curie"],
                             category,
                             metabolism["label"],
-                        ]
+                        )
                         tax_metabolism_edge = [
                             tax_id,
                             predicate,
                             metabolism["curie"],
                             BIOLOGICAL_PROCESS,
+                            self.knowledge_source,  # Use infores:madin_etal
+                            OBSERVATION,
+                            MANUAL_AGENT,
                         ]
 
                     # block handling "pathways" column from Madin etal dataset/CSV sheet
@@ -305,11 +352,11 @@ class MadinEtAlTransform(Transform):
                                 else:
                                     predicate = "METPO:2000103"  # capable of
                                 pathway_nodes.append(
-                                    [
+                                    self._create_node_row(
                                         metpo_mapping["curie"],
                                         category,
                                         metpo_mapping["label"],
-                                    ]
+                                    )
                                 )
                                 tax_pathway_edge.append(
                                     [
@@ -317,6 +364,9 @@ class MadinEtAlTransform(Transform):
                                         predicate,
                                         metpo_mapping["curie"],
                                         BIOLOGICAL_PROCESS,
+                                        self.knowledge_source,  # Use infores:madin_etal
+                                        OBSERVATION,
+                                        MANUAL_AGENT,
                                     ]
                                 )
                             else:
@@ -332,11 +382,11 @@ class MadinEtAlTransform(Transform):
                                 # Use fallback naming if no NER results
                                 for item in pathways_not_in_metpo:
                                     pathway_nodes.append(
-                                        [
+                                        self._create_node_row(
                                             PATHWAY_PREFIX + item.strip(),
                                             PATHWAY_CATEGORY,
                                             item.strip(),
-                                        ]
+                                        )
                                     )
                                     tax_pathway_edge.append(
                                         [
@@ -344,6 +394,9 @@ class MadinEtAlTransform(Transform):
                                             NCBI_TO_PATHWAY_EDGE,
                                             PATHWAY_PREFIX + item.strip().lower(),
                                             BIOLOGICAL_PROCESS,
+                                            self.knowledge_source,  # Use infores:madin_etal
+                                            OBSERVATION,
+                                            MANUAL_AGENT,
                                         ]
                                     )
                             else:
@@ -356,7 +409,7 @@ class MadinEtAlTransform(Transform):
                                     go_result_for_tax_id = exact_match_go_df
                                 for row in go_result_for_tax_id.iterrows():
                                     pathway_nodes.append(
-                                        [row[1].object_id, PATHWAY_CATEGORY, row[1].object_label]
+                                        self._create_node_row(row[1].object_id, PATHWAY_CATEGORY, row[1].object_label)
                                     )
                                     tax_pathway_edge.append(
                                         [
@@ -364,6 +417,9 @@ class MadinEtAlTransform(Transform):
                                             NCBI_TO_PATHWAY_EDGE,
                                             row[1].object_id,
                                             BIOLOGICAL_PROCESS,
+                                            self.knowledge_source,  # Use infores:madin_etal
+                                            OBSERVATION,
+                                            MANUAL_AGENT,
                                         ]
                                     )
 
@@ -406,11 +462,11 @@ class MadinEtAlTransform(Transform):
                                 else:
                                     predicate = "METPO:2000006"  # "uses as carbon source"
                                 carbon_substrate_nodes.append(
-                                    [
+                                    self._create_node_row(
                                         metpo_mapping["curie"],
                                         category,
                                         metpo_mapping["label"],
-                                    ]
+                                    )
                                 )
                                 tax_carbon_substrate_edge.append(
                                     [
@@ -418,6 +474,9 @@ class MadinEtAlTransform(Transform):
                                         predicate,
                                         metpo_mapping["curie"],
                                         TROPHICALLY_INTERACTS_WITH,
+                                        self.knowledge_source,  # Use infores:madin_etal
+                                        OBSERVATION,
+                                        MANUAL_AGENT,
                                     ]
                                 )
                             else:
@@ -433,11 +492,11 @@ class MadinEtAlTransform(Transform):
                                 # Use fallback naming if no NER results
                                 for item in carbon_substrates_not_in_metpo:
                                     carbon_substrate_nodes.append(
-                                        [
+                                        self._create_node_row(
                                             CARBON_SUBSTRATE_PREFIX + item.strip(),
                                             CARBON_SUBSTRATE_CATEGORY,
                                             item.strip(),
-                                        ]
+                                        )
                                     )
                                     tax_carbon_substrate_edge.append(
                                         [
@@ -445,6 +504,9 @@ class MadinEtAlTransform(Transform):
                                             NCBI_TO_CARBON_SUBSTRATE_EDGE,
                                             CARBON_SUBSTRATE_PREFIX + item.strip(),
                                             TROPHICALLY_INTERACTS_WITH,
+                                            self.knowledge_source,  # Use infores:madin_etal
+                                            OBSERVATION,
+                                            MANUAL_AGENT,
                                         ]
                                     )
                             else:
@@ -459,11 +521,11 @@ class MadinEtAlTransform(Transform):
                                     chebi_result_for_tax_id = exact_match_chebi_df
                                 for row in chebi_result_for_tax_id.iterrows():
                                     carbon_substrate_nodes.append(
-                                        [
+                                        self._create_node_row(
                                             row[1].object_id,
                                             CARBON_SUBSTRATE_CATEGORY,
                                             row[1].object_label,
-                                        ]
+                                        )
                                     )
                                     tax_carbon_substrate_edge.append(
                                         [
@@ -471,6 +533,9 @@ class MadinEtAlTransform(Transform):
                                             NCBI_TO_CARBON_SUBSTRATE_EDGE,
                                             row[1].object_id,
                                             BIOLOGICAL_PROCESS,
+                                            self.knowledge_source,  # Use infores:madin_etal
+                                            OBSERVATION,
+                                            MANUAL_AGENT,
                                         ]
                                     )
 
@@ -501,29 +566,35 @@ class MadinEtAlTransform(Transform):
                                 predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
-                            cell_shape_node = [
+                            cell_shape_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
                                 metpo_mapping["label"],
-                            ]
+                            )
                             tax_to_cell_shape_edge = [
                                 tax_id,
                                 predicate,
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
                         else:
                             # Fall back to original logic
-                            cell_shape_node = [
+                            cell_shape_node = self._create_node_row(
                                 SHAPE_PREFIX + cell_shape,
                                 PHENOTYPIC_CATEGORY,
                                 cell_shape,
-                            ]
+                            )
                             tax_to_cell_shape_edge = [
                                 tax_id,
                                 NCBI_TO_SHAPE_EDGE,
                                 SHAPE_PREFIX + cell_shape,
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
 
                     # block handling "range_salinity" column from Madin etal dataset/CSV sheet
@@ -549,16 +620,19 @@ class MadinEtAlTransform(Transform):
                                 predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
-                            range_salinity_node = [
+                            range_salinity_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
                                 metpo_mapping["label"],
-                            ]
+                            )
                             tax_to_range_salinity_edge = [
                                 tax_id,
                                 predicate,
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
 
                     # block handling "motility" column from Madin etal dataset/CSV sheet
@@ -587,16 +661,19 @@ class MadinEtAlTransform(Transform):
                                 predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
-                            motility_node = [
+                            motility_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
                                 metpo_mapping["label"],
-                            ]
+                            )
                             tax_to_motility_edge = [
                                 tax_id,
                                 predicate,
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
                     # block handling "range_tmp" column from Madin etal dataset/CSV sheet
                     range_tmp = (
@@ -624,16 +701,19 @@ class MadinEtAlTransform(Transform):
                                 predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
-                            range_tmp_node = [
+                            range_tmp_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
                                 metpo_mapping["label"],
-                            ]
+                            )
                             tax_to_range_tmp_edge = [
                                 tax_id,
                                 predicate,
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
                     # block handling "gram_stain" column from Madin etal dataset/CSV sheet
                     gram_stain = (
@@ -658,16 +738,19 @@ class MadinEtAlTransform(Transform):
                                 predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
-                            gram_stain_node = [
+                            gram_stain_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
                                 metpo_mapping["label"],
-                            ]
+                            )
                             tax_to_gram_stain_edge = [
                                 tax_id,
                                 predicate,
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
 
                     # block handling "sporulation" column from Madin etal dataset/CSV sheet
@@ -696,16 +779,19 @@ class MadinEtAlTransform(Transform):
                                 predicate = uri_to_curie(predicate_biolink)
                             else:
                                 predicate = "biolink:has_phenotype"
-                            sporulation_node = [
+                            sporulation_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
                                 metpo_mapping["label"],
-                            ]
+                            )
                             tax_to_sporulation_edge = [
                                 tax_id,
                                 predicate,
                                 metpo_mapping["curie"],
                                 HAS_PHENOTYPE,
+                                self.knowledge_source,  # Use infores:madin_etal
+                                OBSERVATION,
+                                MANUAL_AGENT,
                             ]
 
                     # envo_df
@@ -713,11 +799,11 @@ class MadinEtAlTransform(Transform):
                     if isolation_source:
                         if isolation_source[ENVO_TERMS_COLUMN] is np.NAN:
                             isolation_source_node = [
-                                [
+                                self._create_node_row(
                                     ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
                                     None,
                                     filtered_row[ISOLATION_SOURCE_COLUMN],
-                                ]
+                                )
                             ]
                             tax_isolation_source_edge = [
                                 [
@@ -725,6 +811,9 @@ class MadinEtAlTransform(Transform):
                                     NCBI_TO_ISOLATION_SOURCE_EDGE,
                                     tax_id,
                                     LOCATION_OF,
+                                    self.knowledge_source,  # Use infores:madin_etal
+                                    OBSERVATION,
+                                    MANUAL_AGENT,
                                 ]
                             ]
                         else:
@@ -741,22 +830,26 @@ class MadinEtAlTransform(Transform):
                                 category = [ENVIRONMENT_CATEGORY for _ in range(len(curies))]
                                 preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
                                 relations = [LOCATION_OF for _ in range(len(curies))]
+                                sources = [self.knowledge_source for _ in range(len(curies))]  # Use infores:madin_etal
+                                knowledge_levels = [OBSERVATION for _ in range(len(curies))]
+                                agent_types = [MANUAL_AGENT for _ in range(len(curies))]
                                 isolation_source_node = [
-                                    list(item) for item in zip(curies, category, labels)  # noqa
+                                    self._create_node_row(curie, cat, label)
+                                    for curie, cat, label in zip(curies, category, labels, strict=False)
                                 ]
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 
                                 tax_isolation_source_edge = [
                                     list(item)
-                                    for item in zip(curies, preds, tax_id_list, relations)  # noqa
+                                    for item in zip(curies, preds, tax_id_list, relations, sources, knowledge_levels, agent_types)  # noqa
                                 ]
                             else:
                                 isolation_source_node = [
-                                    [
+                                    self._create_node_row(
                                         isolation_source[ENVO_ID_COLUMN],
                                         ENVIRONMENT_CATEGORY,
                                         isolation_source[ENVO_TERMS_COLUMN],
-                                    ]
+                                    )
                                 ]
                                 tax_isolation_source_edge = [
                                     [
@@ -764,6 +857,9 @@ class MadinEtAlTransform(Transform):
                                         NCBI_TO_ISOLATION_SOURCE_EDGE,
                                         tax_id,
                                         LOCATION_OF,
+                                        self.knowledge_source,  # Use infores:madin_etal
+                                        OBSERVATION,
+                                        MANUAL_AGENT,
                                     ]
                                 ]
                     nodes_data_to_write = [
@@ -806,7 +902,7 @@ class MadinEtAlTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        drop_duplicates(self.output_node_file, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX

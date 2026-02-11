@@ -24,11 +24,14 @@ from kg_microbe.transform_utils.constants import (
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
+    ID_COLUMN,
+    MANUAL_AGENT,
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
     NCBITAXON_SOURCE,
+    OBSERVATION,
     PREDICATE_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -161,8 +164,46 @@ class BactoTraitsTransform(Transform):
         """Initialize BactoTraitsTransform."""
         source_name = BACTOTRAITS
         super().__init__(source_name, input_dir, output_dir)
+        self.knowledge_source = "infores:bactotraits"  # InforES standard knowledge source
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
         self.bactotraits_metpo_mappings = load_metpo_mappings("bactotraits related synonym")
+
+    def _create_node_row(
+        self,
+        node_id: str,
+        category: str,
+        name: str,
+        description: str = None,
+        xref: str = None,
+        synonym: str = None,
+        same_as: str = None,
+    ) -> list:
+        """
+        Create a properly formatted node row with all columns.
+
+        Automatically populates the provided_by field with self.knowledge_source.
+
+        :param node_id: Node ID (CURIE format)
+        :param category: Biolink category
+        :param name: Node name/label
+        :param description: Optional description
+        :param xref: Optional cross-references (pipe-separated string)
+        :param synonym: Optional synonyms (pipe-separated string)
+        :param same_as: Optional equivalent identifiers (pipe-separated string)
+        :return: List representing a complete node row matching node_header
+        """
+        # Node header structure:
+        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        node_row = [None] * len(self.node_header)
+        node_row[0] = node_id  # ID_COLUMN
+        node_row[1] = category  # CATEGORY_COLUMN
+        node_row[2] = name  # NAME_COLUMN
+        node_row[3] = description  # DESCRIPTION_COLUMN
+        node_row[4] = xref  # XREF_COLUMN
+        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
+        node_row[6] = synonym  # SYNONYM_COLUMN
+        node_row[7] = same_as  # SAME_AS_COLUMN
+        return node_row
 
     def _clean_row(self, row):
         # Create a translation table that maps unwanted characters to None
@@ -282,7 +323,7 @@ class BactoTraitsTransform(Transform):
                 key: value for key, value in custom_curie_map.items() if COMBO_KEY in value
             }
             unique_combo_node_data = [
-                (
+                self._create_node_row(
                     inner_curie_map[CURIE_COLUMN],
                     inner_curie_map[CATEGORY_COLUMN],
                     inner_curie_map[NAME_COLUMN],
@@ -296,13 +337,15 @@ class BactoTraitsTransform(Transform):
                     CAPABLE_OF_PREDICATE,
                     inner_curie_map[CURIE_COLUMN],
                     ASSOCIATED_WITH,
-                    "BactoTraits.csv",
+                    self.knowledge_source,  # Use infores:bactotraits
+                    OBSERVATION,
+                    MANUAL_AGENT,
                 )
                 for _, v in combo_curie_map.items()
                 for inner_curie_map in v[COMBO_KEY]
             ]
             combo_edge_data = [list(edge) for edge in unique_combo_edge_data]
-            combo_node_data = [list(edge) for edge in unique_combo_node_data]
+            combo_node_data = unique_combo_node_data  # Already full node rows from _create_node_row()
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class() as progress:
@@ -345,22 +388,16 @@ class BactoTraitsTransform(Transform):
                                     category = value.get("category") or value.get(CATEGORY_COLUMN)
                                     name = value.get("name") or value.get(NAME_COLUMN)
 
-                                    nodes_data_to_write.append([curie, category, name])
+                                    nodes_data_to_write.append(
+                                        self._create_node_row(curie, category, name)
+                                    )
                             if ncbitaxon_id:
                                 ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                                 if ncbi_label:
                                     ncbi_label = str(ncbi_label).strip()
                                 nodes_data_to_write.append(
-                                    [
-                                        ncbitaxon_id,
-                                        NCBI_CATEGORY,
-                                        ncbi_label,
-                                    ]
+                                    self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label)
                                 )
-                            nodes_data_to_write = [
-                                sublist + [None] * (len(self.node_header) - 3)
-                                for sublist in nodes_data_to_write
-                            ]
 
                             node_writer.writerows(nodes_data_to_write)
                             # Create edges from this row
@@ -390,7 +427,9 @@ class BactoTraitsTransform(Transform):
                                                 predicate,
                                                 curie,
                                                 relationship,
-                                                "BactoTraits.csv",
+                                                self.knowledge_source,  # Use infores:bactotraits
+                                                OBSERVATION,
+                                                MANUAL_AGENT,
                                             ]
                                         )
                                 edge_writer.writerows(edges_data_to_write)
@@ -400,5 +439,5 @@ class BactoTraitsTransform(Transform):
                     progress.update(1)
                 node_writer.writerows(combo_node_data)
                 edge_writer.writerows(combo_edge_data)
-        drop_duplicates(self.output_node_file)
+        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN)
         drop_duplicates(self.output_edge_file)

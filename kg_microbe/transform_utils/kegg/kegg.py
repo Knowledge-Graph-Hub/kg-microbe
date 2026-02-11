@@ -20,7 +20,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.transform_utils.kegg.utils import (
-    get_kegg_ko_details,
+    load_kegg_ko_details_from_cache,
     parse_kegg_ko_list_file,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -60,22 +60,13 @@ class KEGGTransform(Transform):
         """
         Run the KEGG transform.
 
-        Reads KEGG KO list from downloaded file, fetches detailed entries via REST API,
+        Reads KEGG KO list and details from cached files (downloaded via bulk script),
         and creates nodes and edges for KO entries, pathways, and modules.
-
-        Note: This transform uses the KEGG REST API and may take several minutes
-        due to rate limiting.
 
         :param data_file: Not used (kept for API compatibility)
         :param show_status: Show progress messages (default: True)
         """
         logger.info("Starting KEGG transform")
-
-        # Check if output files already exist
-        if self.output_node_file.exists() and self.output_edge_file.exists():
-            logger.info(f"KEGG transform output already exists at {self.output_dir}")
-            logger.info("Skipping expensive API calls. Delete output files to regenerate.")
-            return
 
         # Read KO list from downloaded file
         ko_list_file = KEGG_RAW_DIR / "ko_list.txt"
@@ -87,17 +78,38 @@ class KEGGTransform(Transform):
             logger.error("Please run 'poetry run kg download' first")
             return
 
-        # Create KO nodes and fetch details to create edges
+        # Load KO details from cache (prefer minimal format)
+        ko_minimal_file = KEGG_RAW_DIR / "ko_minimal.json"
+        ko_full_file = KEGG_RAW_DIR / "ko_details.json"
+
+        # Try minimal file first (recommended, ~30MB)
+        if ko_minimal_file.exists():
+            logger.info(f"Loading KEGG KO details from minimal cache: {ko_minimal_file}")
+            ko_details_cache = load_kegg_ko_details_from_cache(ko_minimal_file)
+        # Fall back to full file if available (~894MB)
+        elif ko_full_file.exists():
+            logger.info(f"Loading KEGG KO details from full cache: {ko_full_file}")
+            ko_details_cache = load_kegg_ko_details_from_cache(ko_full_file)
+        else:
+            logger.error("No KEGG KO details cache file found")
+            logger.error("Run 'python scripts/download_kegg_minimal.py' to download cache (~30MB)")
+            logger.error("Or run 'python scripts/download_kegg_bulk.py' for full data (~894MB)")
+            return
+
+        if not ko_details_cache:
+            logger.error("Failed to load KEGG KO details from cache")
+            return
+
+        # Create KO nodes and edges using cached data
         total_kos = len(ko_dict)
-        logger.info(f"Processing {total_kos} KEGG KO entries...")
-        logger.info("This will take ~50 minutes due to KEGG API rate limiting")
+        logger.info(f"Processing {total_kos} KEGG KO entries from cache...")
 
         for i, (ko_id, description) in enumerate(ko_dict.items(), 1):
             # Create KO node
             self.add_ko_node(ko_id, description)
 
-            # Fetch detailed entry for pathway and module relationships
-            details = get_kegg_ko_details(ko_id)
+            # Get detailed entry from cache for pathway and module relationships
+            details = ko_details_cache.get(ko_id)
 
             if details:
                 # Create pathway nodes and edges

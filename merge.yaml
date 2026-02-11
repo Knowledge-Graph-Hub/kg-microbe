@@ -1,7 +1,17 @@
 ---
+# Standard merge configuration (Bakta and COG excluded)
+# For Bakta-enabled merge, use merge_bakta.yaml instead
+#
+# Usage: poetry run kg merge -y merge.yaml
+#
 configuration:
   output_directory: data/merged
   checkpoint: false
+  # Allow domain-specific categories from METPO ontology
+  # METPO:1004005 represents the "growth medium" ontology class
+  # This preserves semantic precision for microbial growth media
+  category_allowlist:
+    - "METPO:1004005"  # growth medium
   curie_map:
     # define non-canonical CURIE to IRI mappings (for RDF)
   node_properties:
@@ -114,13 +124,13 @@ merged_graph:
         filename:
           - data/transformed/bactotraits/nodes.tsv
           - data/transformed/bactotraits/edges.tsv
-    bakta_cmm:
-      name: "bakta_cmm"
-      input:
-        format: tsv
-        filename:
-          - data/transformed/bakta/cmm_bakta/nodes.tsv
-          - data/transformed/bakta/cmm_bakta/edges.tsv
+    # bakta_cmm:
+    #   name: "bakta_cmm"
+    #   input:
+    #     format: tsv
+    #     filename:
+    #       - data/transformed/bakta/cmm_bakta/nodes.tsv
+    #       - data/transformed/bakta/cmm_bakta/edges.tsv
     # bakta_pfas:
     #   name: "bakta_pfas"
     #   input:

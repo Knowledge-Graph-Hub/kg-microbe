@@ -5,5 +5,10 @@
     "mediadive.solution": "https://mediadive.dsmz.de/solution/",
     "mediadive.ingredient": "https://mediadive.dsmz.de/ingredient/",
     "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/",
-    "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/"
+    "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/",
+    "NCBIGene": "http://identifiers.org/ncbigene/",
+    "chemrof": "https://w3id.org/chemrof/",
+    "orcid": "https://orcid.org/",
+    "schema": "http://schema.org/",
+    "doap": "http://usefulinc.com/ns/doap#"
 }

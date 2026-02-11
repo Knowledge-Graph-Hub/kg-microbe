@@ -1,0 +1,4 @@
+accession	ncbi_taxid	gtdb_genome_representative	checkm_completeness	checkm_contamination
+GCF_000005845.2	562	GCF_000005845.2	100.0	0.0
+GCA_000008865.2	1423	GCA_000008865.2	100.0	0.0
+GCF_000006945.2	28901	GCF_000006945.2	100.0	0.0

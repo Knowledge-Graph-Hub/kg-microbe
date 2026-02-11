@@ -18,7 +18,10 @@ class TestGTDBUtils(unittest.TestCase):
 
     def test_parse_taxonomy_string(self):
         """Test parsing GTDB taxonomy string."""
-        taxonomy_str = "d__Bacteria;p__Proteobacteria;c__Gammaproteobacteria;o__Enterobacterales;f__Enterobacteriaceae;g__Escherichia;s__Escherichia coli"
+        taxonomy_str = (
+            "d__Bacteria;p__Proteobacteria;c__Gammaproteobacteria;"
+            "o__Enterobacterales;f__Enterobacteriaceae;g__Escherichia;s__Escherichia coli"
+        )
         taxa = parse_taxonomy_string(taxonomy_str)
 
         self.assertEqual(len(taxa), 7)
@@ -139,14 +142,6 @@ class TestGTDBTransform(unittest.TestCase):
         id1_a = transform1._get_or_create_taxon_id("s__Escherichia_coli")
         id1_b = transform1._get_or_create_taxon_id("d__Bacteria")
         id1_c = transform1._get_or_create_taxon_id("p__Pseudomonadota")
-
-        # Create same taxa in different order
-        transform2 = GTDBTransform(
-            input_dir=str(self.test_input_dir), output_dir=self.output_dir
-        )
-        id2_a = transform2._get_or_create_taxon_id("d__Bacteria")
-        id2_b = transform2._get_or_create_taxon_id("p__Pseudomonadota")
-        id2_c = transform2._get_or_create_taxon_id("s__Escherichia_coli")
 
         # The IDs depend on creation order, but this test verifies they're consistent
         # within the same transform instance

@@ -26,6 +26,7 @@ from kg_microbe.transform_utils.constants import (
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
     RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
     SUBCLASS_PREDICATE,
@@ -53,9 +54,13 @@ class GTDBTransform(Transform):
         # Mappings for efficient lookup
         self.taxon_to_id = {}  # "d__Bacteria" -> "GTDB:1"
         self.taxon_id_counter = 1
+        self._created_mappings = set()  # Track GTDB->NCBI mappings to avoid duplicates
 
-        # Set input directory to GTDB raw data directory
-        self.input_dir = GTDB_RAW_DIR
+        # Resolve input directory: prefer CLI-provided base dir, fall back to global default
+        if self.input_base_dir:
+            self.input_dir = Path(self.input_base_dir) / GTDB
+        else:
+            self.input_dir = GTDB_RAW_DIR
 
     def run(self, data_file=None, show_status=True):
         """
@@ -119,6 +124,13 @@ class GTDBTransform(Transform):
         Returns: List[(accession, [taxa_list])]
         """
         filepath = self.input_dir / filename
+
+        if not filepath.exists():
+            raise FileNotFoundError(
+                f"GTDB taxonomy file not found at '{filepath}'. "
+                "Please run the GTDB downloader to fetch the required taxonomy files."
+            )
+
         taxa_list = []
 
         with open(filepath, 'r') as f:
@@ -169,8 +181,8 @@ class GTDBTransform(Transform):
                     parent = clean_taxon_name(taxa_list[i - 1])
                     parent_map[taxon] = parent
 
-        # Step 2: Create nodes for all unique taxa
-        for taxon in unique_taxa:
+        # Step 2: Create nodes for all unique taxa in deterministic order
+        for taxon in sorted(unique_taxa):
             self._get_or_create_taxon_id(taxon)
 
         # Step 3: Create hierarchy edges
@@ -290,13 +302,9 @@ class GTDBTransform(Transform):
             )
 
         # Create GTDB -> NCBI mapping edge (if available)
-        # Only create one mapping per GTDB taxon (avoid duplicates)
+        # Dedup on (gtdb_taxon_id, ncbi_taxid) to allow multiple NCBI IDs per GTDB taxon
         if ncbi_taxid and gtdb_taxon_id:
-            # Check if we've already created this mapping
             mapping_key = (gtdb_taxon_id, ncbi_taxid)
-            if not hasattr(self, '_created_mappings'):
-                self._created_mappings = set()
-
             if mapping_key not in self._created_mappings:
                 ncbi_id = f"{NCBITAXON_PREFIX}{ncbi_taxid}"
                 self._add_edge(
@@ -316,7 +324,7 @@ class GTDBTransform(Transform):
                     CATEGORY_COLUMN: category,
                     NAME_COLUMN: name,
                     DESCRIPTION_COLUMN: description,
-                    PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+                    PROVIDED_BY_COLUMN: self.knowledge_source,
                 }
             )
             self.seen_nodes.add(node_id)
@@ -341,7 +349,7 @@ class GTDBTransform(Transform):
             CATEGORY_COLUMN,
             NAME_COLUMN,
             DESCRIPTION_COLUMN,
-            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+            PROVIDED_BY_COLUMN,
         ]
 
         # Write nodes

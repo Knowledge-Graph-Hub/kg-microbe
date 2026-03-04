@@ -29,7 +29,7 @@ jobs:
           cache: "poetry"
 
       - name: Install dependencies
-        run: poetry install --no-interaction --all-extras --no-root
+        run: poetry config virtualenvs.in-project true && poetry install --no-interaction --all-extras --no-root
 
       - name: Install additional dependencies
         run: poetry install --with s3

@@ -1,138 +1,92 @@
-"""Transform utility module."""
+"""Transform module."""
 
-import shutil
+import logging
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional
 
-import yaml
-
+from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
+from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
+from kg_microbe.transform_utils.cog.cog import COGTransform
 from kg_microbe.transform_utils.constants import (
-    AGENT_TYPE_COLUMN,
-    CATEGORY_COLUMN,
-    DESCRIPTION_COLUMN,
-    ID_COLUMN,
-    KNOWLEDGE_LEVEL_COLUMN,
-    NAME_COLUMN,
-    OBJECT_COLUMN,
-    PREDICATE_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
-    RELATION_COLUMN,
-    SAME_AS_COLUMN,
-    SUBJECT_COLUMN,
-    SYNONYM_COLUMN,
-    XREF_COLUMN,
+    BACDIVE,
+    BACTOTRAITS,
+    BAKTA,
+    COG,
+    GTDB,
+    KEGG,
+    MADIN_ETAL,
+    MEDIADIVE,
+    METATRAITS,
+    ONTOLOGIES,
+    RHEAMAPPINGS,
 )
+from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
+from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
+from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
+from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
+from kg_microbe.transform_utils.metatraits.metatraits import MetatraitsTransform
+from kg_microbe.transform_utils.ontologies.ontologies_transform import (
+    ONTOLOGIES_MAP,
+    OntologiesTransform,
+)
+from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
+
+DATA_SOURCES = {
+    # "DrugCentralTransform": DrugCentralTransform,
+    # "OrphanetTransform": OrphanetTransform,
+    # "OMIMTransform": OMIMTransform,
+    # "ReactomeTransform": ReactomeTransform,
+    # "GOCAMTransform": GOCAMTransform,
+    # "TCRDTransform": TCRDTransform,
+    # "ProteinAtlasTransform": ProteinAtlasTransform,
+    # "STRINGTransform": STRINGTransform,
+    ONTOLOGIES: OntologiesTransform,
+    BACDIVE: BacDiveTransform,
+    BAKTA: BaktaTransform,
+    COG: COGTransform,
+    GTDB: GTDBTransform,
+    KEGG: KEGGTransform,
+    MEDIADIVE: MediaDiveTransform,
+    MADIN_ETAL: MadinEtAlTransform,
+    METATRAITS: MetatraitsTransform,
+    RHEAMAPPINGS: RheaMappingsTransform,
+    BACTOTRAITS: BactoTraitsTransform,
+    # UNIPROT_HUMAN: UniprotHumanTransform,
+    # CTD: CTDTransform,
+    # DISBIOME: DisbiomeTransform,
+    # WALLEN_ETAL: WallenEtAlTransform,
+    # UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
+}
 
 
-class Transform:
+def transform(
+    input_dir: Optional[Path],
+    output_dir: Optional[Path],
+    sources: List[str] = None,
+    show_status: bool = True,
+) -> None:
+    """
+    Transform based on resource and class declared in DATA_SOURCES.
 
-    """Parent class for transforms, that sets up a lot of default file info."""
+    Call scripts in kg_microbe/transform/[source name]/ to
+    transform each source into a graph format that
+    KGX can ingest directly, in either TSV or JSON format:
+    https://github.com/biolink/kgx/blob/master/data-preparation.md
 
-    DATA_DIR = Path(__file__).parent / "data"
-    DEFAULT_INPUT_DIR = DATA_DIR / "raw"
-    DEFAULT_OUTPUT_DIR = DATA_DIR / "transformed"
+    :param input_dir: A string pointing to the directory to import data from.
+    :param output_dir: A string pointing to the directory to output data to.
+    :param sources: A list of sources to transform.
+    """
+    if not sources:
+        # run all sources
+        sources = list(DATA_SOURCES.keys())
 
-    def __init__(
-        self,
-        source_name,
-        input_dir: Optional[Path] = None,
-        output_dir: Optional[Path] = None,
-        nlp: bool = False,
-    ):
-        """
-        Instantiate Transform object.
-
-        :param source_name: Name of resource.
-        :param input_dir: Location of input directory, defaults to None
-        :param output_dir: Location of output directory, defaults to None
-        :param nlp: Boolean for possibility of using NLP or not, defaults to False
-        """
-        # default columns, can be appended to or overwritten as necessary
-        self.source_name = source_name
-        self.node_header = [
-            ID_COLUMN,
-            CATEGORY_COLUMN,
-            NAME_COLUMN,
-            DESCRIPTION_COLUMN,
-            XREF_COLUMN,
-            PROVIDED_BY_COLUMN,
-            SYNONYM_COLUMN,
-            # IRI_COLUMN removed - no longer included in transform outputs
-            # Edge columns (OBJECT, PREDICATE, RELATION, SUBJECT) removed - belong only in edges
-            SAME_AS_COLUMN,
-            # Note: Assay-specific metadata (kit_name, well_name, test_type) are combined
-            # into the description field for assay nodes
-            # Note: SUBSETS_COLUMN removed - was never populated by any transform
-        ]
-        self.edge_header = [
-            SUBJECT_COLUMN,
-            PREDICATE_COLUMN,  # was "edge_label",
-            OBJECT_COLUMN,
-            RELATION_COLUMN,
-            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-            KNOWLEDGE_LEVEL_COLUMN,
-            AGENT_TYPE_COLUMN,
-        ]
-
-        # default dirs
-        self.input_base_dir = Path(input_dir) if input_dir else self.DEFAULT_INPUT_DIR
-        self.output_base_dir = Path(output_dir) if output_dir else self.DEFAULT_OUTPUT_DIR
-        self.output_dir = self.output_base_dir / source_name
-
-        # default filenames
-        self.output_node_file = self.output_dir / "nodes.tsv"
-        self.output_edge_file = self.output_dir / "edges.tsv"
-        self.output_json_file = self.output_dir / "nodes_edges.json"
-        self.subset_terms_file = self.input_base_dir / "subset_terms.tsv"
-
-        Path.mkdir(self.output_dir, exist_ok=True, parents=True)
-
-        if nlp:
-            self.nlp_dir = self.input_base_dir / "nlp"
-            self.nlp_input_dir = self.nlp_dir / "input"
-            self.nlp_output_dir = self.nlp_dir / "output"
-            self.nlp_terms_dir = self.nlp_dir / "terms"
-            self.nlp_stopwords_dir = self.nlp_dir / "stopwords"
-
-            # Delete previously developed files
-            if Path.exists(self.nlp_input_dir):
-                shutil.rmtree(self.nlp_input_dir)
-                shutil.rmtree(self.nlp_stopwords_dir)
-
-            Path.mkdir(self.nlp_dir, exist_ok=True, parents=True)
-            Path.mkdir(self.nlp_input_dir, exist_ok=True, parents=True)
-            Path.mkdir(self.nlp_output_dir, exist_ok=True, parents=True)
-            Path.mkdir(self.nlp_terms_dir, exist_ok=True, parents=True)
-            Path.mkdir(self.nlp_stopwords_dir, exist_ok=True, parents=True)
-
-            with open("stopwords.yaml", "r") as stop_list:
-                doc = yaml.safe_load(stop_list)  # , Loader=yaml.FullLoader)
-                stop_words = doc["English"]
-
-            with open(self.nlp_stopwords_dir / "stopWords.txt", "w") as stop_terms:
-                # stop_terms.write(stop_words)
-                for word in stop_words.split(" "):
-                    stop_terms.write(word + "\n")
-
-            self.output_nlp_file = self.nlp_output_dir / "nlpOutput.tsv"
-
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None):
-        """
-        Run the transform.
-
-        :param data_file: Input data file, defaults to None
-        """
-        pass
-
-    def pass_through(self, nodes_file: str, edges_file: str) -> None:
-        """
-        Copy nodes and edges files to output directory.
-
-        :param nodes_file: nodes files to take from raw directory and put in transform
-                directory
-        :param edges_file: edges files to take from raw directory and put in transform
-                directory
-        """
-        for f in [nodes_file, edges_file]:
-            shutil.copy(f, self.output_dir)
+    for source in sources:
+        if source in DATA_SOURCES:
+            logging.info(f"Parsing {source}")
+            t = DATA_SOURCES[source](input_dir, output_dir)
+            if source in ONTOLOGIES_MAP.keys():
+                t.run(ONTOLOGIES_MAP[source])
+            else:
+                t.run(show_status=show_status)

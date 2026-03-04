@@ -28,6 +28,7 @@ requests-ftp = "^0.3"
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
 tox = ">=3.25.1"
+tox-current-env = ">=0.0.6"
 pre-commit = ">=3.3.3"
 parameterized = "^0.8.1"
 notebook = "^7.0.6"
@@ -110,6 +111,9 @@ max-complexity = 10
 [tool.ruff.lint.isort]
 # Configure known first-party modules for correct import sorting
 known-first-party = ["kg_microbe"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.codespell]
 skip = "*.po,*.ts,.git,pyproject.toml"

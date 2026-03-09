@@ -117,7 +117,7 @@ known-first-party = ["kg_microbe"]
 testpaths = ["tests"]
 
 [tool.codespell]
-skip = "*.po,*.ts,.git,pyproject.toml"
+skip = "*.po,*.ts,.git,pyproject.toml,tests/resources/nlp/stopwords/stopWords.txt"
 count = ""
 quiet-level = 3
 # ignore-words-list = ""

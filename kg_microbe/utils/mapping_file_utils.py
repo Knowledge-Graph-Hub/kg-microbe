@@ -768,7 +768,9 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
     id_idx = node_header.index(ID_COLUMN)
     category_idx = node_header.index(CATEGORY_COLUMN)
     name_idx = node_header.index(NAME_COLUMN)
-    description_idx = node_header.index(DESCRIPTION_COLUMN) if DESCRIPTION_COLUMN in node_header else None
+    description_idx = (
+        node_header.index(DESCRIPTION_COLUMN) if DESCRIPTION_COLUMN in node_header else None
+    )
 
     for kit in assay_data.get("api_kits", []):
         kit_name = kit.get("kit_name", "")
@@ -870,7 +872,9 @@ def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> Lis
     knowledge_level_idx = (
         edge_header.index(KNOWLEDGE_LEVEL_COLUMN) if KNOWLEDGE_LEVEL_COLUMN in edge_header else None
     )
-    agent_type_idx = edge_header.index(AGENT_TYPE_COLUMN) if AGENT_TYPE_COLUMN in edge_header else None
+    agent_type_idx = (
+        edge_header.index(AGENT_TYPE_COLUMN) if AGENT_TYPE_COLUMN in edge_header else None
+    )
 
     for kit in assay_data.get("api_kits", []):
         kit_name = kit.get("kit_name", "")

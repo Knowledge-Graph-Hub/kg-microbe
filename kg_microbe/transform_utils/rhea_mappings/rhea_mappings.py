@@ -408,7 +408,9 @@ class RheaMappingsTransform(Transform):
                                             for substring in relation_types_to_remove_rhea2_files
                                         ):
                                             nodes_file_writer.writerow(
-                                                self._create_node_row(object_info[0], category, object_info[1])
+                                                self._create_node_row(
+                                                    object_info[0], category, object_info[1]
+                                                )
                                             )
 
                                             edges_file_writer.writerow(

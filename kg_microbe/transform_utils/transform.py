@@ -98,7 +98,8 @@ class Transform:
             # Delete previously developed files
             if Path.exists(self.nlp_input_dir):
                 shutil.rmtree(self.nlp_input_dir)
-            shutil.rmtree(self.nlp_stopwords_dir)
+            if Path.exists(self.nlp_stopwords_dir):
+                shutil.rmtree(self.nlp_stopwords_dir)
 
             Path.mkdir(self.nlp_dir, exist_ok=True, parents=True)
             Path.mkdir(self.nlp_input_dir, exist_ok=True, parents=True)

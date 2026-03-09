@@ -109,7 +109,8 @@ class MetatraitsTransform(Transform):
         self.knowledge_source = "infores:metatraits"
         self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("madin synonym or field")
-        self.ncbi_impl = _get_ncbitaxon_adapter()
+        # Defer adapter creation until first cache miss (avoids ~2GB download when ncbitaxon_nodes.tsv has full coverage)
+        self._ncbi_adapter = None
 
         # Taxon name -> NCBITaxon ID cache
         self.ncbitaxon_name_to_id: Dict[str, str] = {}
@@ -142,13 +143,19 @@ class MetatraitsTransform(Transform):
                 except Exception as e:
                     print(f"Warning: Could not load NCBITaxon labels from {path}: {e}")
 
+    def _get_ncbitaxon_impl(self):
+        """Return OAK adapter for NCBITaxon, creating it on first use."""
+        if self._ncbi_adapter is None:
+            self._ncbi_adapter = _get_ncbitaxon_adapter()
+        return self._ncbi_adapter
+
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
         """Resolve taxon name to NCBITaxon ID. Caches OAK results to avoid repeated lookups."""
         key = search_name.lower()
         ncbitaxon_id = self.ncbitaxon_name_to_id.get(key)
         if ncbitaxon_id:
             return ncbitaxon_id
-        results = search_by_label(self.ncbi_impl, search_name, limit=1)
+        results = search_by_label(self._get_ncbitaxon_impl(), search_name, limit=1)
         if results:
             ncbitaxon_id = results[0]
             self.ncbitaxon_name_to_id[key] = ncbitaxon_id

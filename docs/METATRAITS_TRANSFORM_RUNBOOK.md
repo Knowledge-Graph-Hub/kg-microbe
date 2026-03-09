@@ -52,7 +52,7 @@ poetry run kg transform -s ontologies
 
 **Option B:** Manually place `ncbitaxon_nodes.tsv` in `data/raw/` (TSV format: `id`, `category`, `name`, ...).
 
-Without this, the transform falls back to OAK's `sqlite:obo:ncbitaxon`, which may download a large database on first use.
+With `ncbitaxon_nodes.tsv` in place, the transform uses only the cache for taxon resolution—no OAK adapter is created and no download occurs. The OAK adapter (and potential ~2GB download) is created only when a taxon is not found in the cache (first cache miss).
 
 ## Running the Transform
 

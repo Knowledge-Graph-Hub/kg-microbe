@@ -4,9 +4,11 @@
 
 The metatraits transform resolves taxon names (e.g. `"Euryarchaeota archaeon"`) to NCBITaxon IDs. It uses the [OAK](https://github.com/INCATools/ontology-access-kit) library for ontology lookups.
 
-**Flow:**
-1. **`_get_ncbitaxon_adapter()`** (line 48–57) tries the local source first: `sqlite:data/raw/ncbitaxon.owl`
-2. The local `ncbitaxon.db` was empty or invalid (no `statements` table), so the adapter failed
+**Lazy adapter creation:** The OAK adapter is now created only on the first cache miss. If `ncbitaxon_nodes.tsv` provides full coverage for your input taxa, the adapter is never created and no download occurs.
+
+**When a download does occur (first cache miss):**
+1. **`_get_ncbitaxon_adapter()`** tries the local source first: `sqlite:data/raw/ncbitaxon.owl`
+2. The local file is missing or invalid, so the adapter fails
 3. On exception, it falls back to **`sqlite:obo:ncbitaxon`**
 4. OAK’s `sqlite:obo:ncbitaxon` downloads a pre-built NCBITaxon SQLite database (~2GB compressed) from a central repository and caches it locally
 5. That download is what you saw as `ncbitaxon.db.gz`
@@ -31,7 +33,7 @@ The progress bar shows **file-level** progress (0/3 = first of three files). The
 | 2 | Line 243–244 | `for input_path in iterable` → opens first file (e.g. `ncbi_species_summary.jsonl.gz`) |
 | 3 | Line 245 | `for line in f` – iterates over **each line** (54,654+ lines in species file) |
 | 4 | Line 257 | `tax_id = self._search_ncbitaxon_by_label(tax_name)` – **OAK lookup per line** |
-| 5 | Line 124–129 | `_search_ncbitaxon_by_label`: cache miss → `search_by_label(self.ncbi_impl, ...)` |
+| 5 | `_search_ncbitaxon_by_label` | Cache miss → `_get_ncbitaxon_impl()` creates adapter → `search_by_label(...)` |
 
 ### Root cause (when cache is empty)
 

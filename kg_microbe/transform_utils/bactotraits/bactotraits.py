@@ -345,7 +345,9 @@ class BactoTraitsTransform(Transform):
                 for inner_curie_map in v[COMBO_KEY]
             ]
             combo_edge_data = [list(edge) for edge in unique_combo_edge_data]
-            combo_node_data = unique_combo_node_data  # Already full node rows from _create_node_row()
+            combo_node_data = (
+                unique_combo_node_data  # Already full node rows from _create_node_row()
+            )
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class() as progress:

@@ -8,6 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+setuptools = "<82"  # pkg_resources required by eutils (oaklib dep); removed in setuptools 82+
 click = "*"
 importlib-metadata = "^6.8.0"
 kghub-downloader = "^0.3.7"

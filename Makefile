@@ -1,4 +1,4 @@
-.PHONY: run-summary
+.PHONY: run-summary process-metatraits-unmapped
 .SILENT:
 
 run-summary:
@@ -79,5 +79,19 @@ feba-schema-diagram:
 	--infer-extension-tables  \
 	--output-file notebooks/schema.pdf
 
+process-metatraits-unmapped:
+	@echo "Processing metatraits unmapped data..."
+	@if [ ! -f data/transformed/metatraits/unmapped_traits.tsv ]; then \
+		echo "Error: data/transformed/metatraits/unmapped_traits.tsv not found"; \
+		exit 1; \
+	fi
+	@echo "Extracting unique trait IDs..."
+	cut -f1 data/transformed/metatraits/unmapped_traits.tsv | sort | uniq > data/transformed/metatraits/unmapped_traits_unique.tsv
+	@echo "Extracting unique relation prefixes..."
+	cut -f1 -d ':' data/transformed/metatraits/unmapped_traits_unique.tsv | sort | uniq > data/transformed/metatraits/unmapped_traits_unique_relations.tsv
+	@echo "Metatraits unmapped data processing complete"
+	@echo "Generated files:"
+	@wc -l data/transformed/metatraits/unmapped_traits_unique.tsv
+	@wc -l data/transformed/metatraits/unmapped_traits_unique_relations.tsv
 
 include kg-microbe.Makefile

@@ -32,7 +32,6 @@ PARKINSONS_DISEASE_MONDO_ID = "MONDO:0005180"
 
 
 class WallenEtAlTransform(Transform):
-
     """A class used to represent a transformation process for PdMetagenomics data."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -62,9 +61,7 @@ class WallenEtAlTransform(Transform):
         wallen_etal_df = pd.read_excel(input_file, skiprows=3, sheet_name=WALLEN_ETAL_TAB_NAME)
         wallen_etal_df[FDR_COLUMN] = pd.to_numeric(wallen_etal_df[FDR_COLUMN], errors="coerce")
 
-        significant_wallenetal_df = wallen_etal_df[
-            wallen_etal_df[FDR_COLUMN].apply(lambda x: isinstance(x, float))
-        ]
+        significant_wallenetal_df = wallen_etal_df[wallen_etal_df[FDR_COLUMN].apply(lambda x: isinstance(x, float))]
         significant_wallenetal_df = significant_wallenetal_df.dropna(subset=[FDR_COLUMN])
         significant_wallenetal_df = wallen_etal_df[(wallen_etal_df[FDR_COLUMN] < 0.05)]
 
@@ -86,11 +83,7 @@ class WallenEtAlTransform(Transform):
             self.ncbitaxon_label_dict = {}
             #! TODO: Find a better way to get this path
             ncbitaxon_nodes_file = (
-                Path(__file__).parents[3]
-                / "data"
-                / "transformed"
-                / "ontologies"
-                / "ncbitaxon_nodes.tsv"
+                Path(__file__).parents[3] / "data" / "transformed" / "ontologies" / "ncbitaxon_nodes.tsv"
             )
             # Get NCBITaxon IDs from ontology nodes file
             if ncbitaxon_nodes_file.exists():
@@ -128,23 +121,17 @@ class WallenEtAlTransform(Transform):
             edges_file_writer.writerow(self.edge_header)
 
             disease_id = PARKINSONS_DISEASE_MONDO_ID
-            nodes_file_writer.writerow(
-                [disease_id, DISEASE_CATEGORY] + [None] * (len(self.node_header) - 2)
-            )
+            nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY] + [None] * (len(self.node_header) - 2))
 
             for i in range(len(significant_wallenetal_df)):
-                microbe = self.microbe_labels_dict[
-                    significant_wallenetal_df.iloc[i].loc[SPECIES_COLUMN]
-                ]
+                microbe = self.microbe_labels_dict[significant_wallenetal_df.iloc[i].loc[SPECIES_COLUMN]]
                 if microbe != MICROBE_NOT_FOUND_STR:
                     predicate, relation = self.get_disease_direction(
                         significant_wallenetal_df.iloc[i].loc[PD_ABUNDANCE_COLUMN],
                         significant_wallenetal_df.iloc[i].loc[NHC_ABUNDANCE_COLUMN],
                     )
                     # Add microbe
-                    nodes_file_writer.writerow(
-                        [microbe, NCBI_CATEGORY] + [None] * (len(self.node_header) - 2)
-                    )
+                    nodes_file_writer.writerow([microbe, NCBI_CATEGORY] + [None] * (len(self.node_header) - 2))
                     # microbe-disease edge
                     edges_file_writer.writerow(
                         [

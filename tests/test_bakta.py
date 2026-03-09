@@ -16,7 +16,6 @@ from kg_microbe.transform_utils.bakta.utils import (
 
 
 class TestBaktaUtils(unittest.TestCase):
-
     """Test Bakta utility functions."""
 
     def test_parse_dbxrefs(self):
@@ -119,7 +118,6 @@ class TestBaktaUtils(unittest.TestCase):
 
 
 class TestBaktaTransform(unittest.TestCase):
-
     """Test BaktaTransform class."""
 
     def setUp(self):
@@ -146,9 +144,7 @@ class TestBaktaTransform(unittest.TestCase):
         """Test adding gene node."""
         annotations = {"refseq": ["WP_016449348.1"], "uniparc": ["UPI0002D4BAF4"]}
 
-        self.transform.add_gene_node(
-            "SAMN00139461:TEST_00001", "uvrA", "Excinuclease ABC subunit UvrA", annotations
-        )
+        self.transform.add_gene_node("SAMN00139461:TEST_00001", "uvrA", "Excinuclease ABC subunit UvrA", annotations)
 
         self.assertEqual(len(self.transform.nodes), 1)
         node = self.transform.nodes[0]
@@ -163,9 +159,7 @@ class TestBaktaTransform(unittest.TestCase):
             "uniref": ["UniRef50_Q8EUL1", "UniRef90_A0A031HEP6"],
         }
 
-        self.transform.add_protein_node(
-            "RefSeq:WP_016449348.1", "Excinuclease ABC subunit UvrA", annotations
-        )
+        self.transform.add_protein_node("RefSeq:WP_016449348.1", "Excinuclease ABC subunit UvrA", annotations)
 
         self.assertEqual(len(self.transform.nodes), 1)
         node = self.transform.nodes[0]

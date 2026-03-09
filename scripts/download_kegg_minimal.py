@@ -202,9 +202,7 @@ def download_all_ko_minimal(ko_ids: list, output_file: Path, resume: bool = True
         if ko_id in existing_data:
             skipped += 1
             if i % 1000 == 0:
-                logger.info(
-                    f"Progress: {i}/{total} ({downloaded} new, {skipped} skipped, {failed} failed)"
-                )
+                logger.info(f"Progress: {i}/{total} ({downloaded} new, {skipped} skipped, {failed} failed)")
             continue
 
         # Fetch minimal data
@@ -218,9 +216,7 @@ def download_all_ko_minimal(ko_ids: list, output_file: Path, resume: bool = True
 
         # Progress update every 100 entries
         if i % 100 == 0:
-            logger.info(
-                f"Progress: {i}/{total} ({downloaded} new, {skipped} skipped, {failed} failed)"
-            )
+            logger.info(f"Progress: {i}/{total} ({downloaded} new, {skipped} skipped, {failed} failed)")
 
             # Save checkpoint every 1000 entries
             if i % 1000 == 0:
@@ -234,9 +230,7 @@ def download_all_ko_minimal(ko_ids: list, output_file: Path, resume: bool = True
     with open(output_file, "w") as f:
         json.dump(all_data, f, indent=2)
 
-    logger.info(
-        f"Complete! Downloaded {downloaded} new entries, skipped {skipped}, failed {failed}"
-    )
+    logger.info(f"Complete! Downloaded {downloaded} new entries, skipped {skipped}, failed {failed}")
     logger.info(f"Total entries in file: {len(all_data)}")
     logger.info(f"Saved to: {output_file}")
 

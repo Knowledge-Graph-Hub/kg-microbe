@@ -28,12 +28,28 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_NODES_FILE,
     NCBITAXON_SOURCE,
     OBSERVATION,
+    PRODUCES_RELATION,
     RAW_DATA_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
+from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
 from kg_microbe.utils.oak_utils import search_by_label
 from kg_microbe.utils.pandas_utils import drop_duplicates
+
+# METPO predicate -> biolink predicate (for relation lookup)
+METPO_TO_BIOLINK_PREDICATE = {
+    "METPO:2000103": "biolink:capable_of",  # capable of
+    "METPO:2000202": "biolink:produces",  # produces
+    "METPO:2000222": "biolink:produces",  # does not produce (negative)
+}
+
+# Biolink predicate -> RO relation
+PREDICATE_TO_RELATION = {
+    "biolink:produces": PRODUCES_RELATION,
+    "biolink:capable_of": BIOLOGICAL_PROCESS,
+    "biolink:has_phenotype": HAS_PHENOTYPE,
+}
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
 METATRAITS_INPUT_FILES = [
@@ -76,7 +92,6 @@ def _open_jsonl(path: Path):
 
 
 class MetatraitsTransform(Transform):
-
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
     def __init__(
@@ -92,6 +107,7 @@ class MetatraitsTransform(Transform):
         """
         super().__init__(METATRAITS, input_dir, output_dir)
         self.knowledge_source = "infores:metatraits"
+        self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("madin synonym or field")
         self.ncbi_impl = _get_ncbitaxon_adapter()
 
@@ -99,7 +115,7 @@ class MetatraitsTransform(Transform):
         self.ncbitaxon_name_to_id: Dict[str, str] = {}
         self._load_ncbitaxon_labels()
 
-        # Trait name -> (curie, category, predicate) from METPO + custom_curies
+        # Trait name -> (curie, category, predicate) from METPO + custom_curies (fallback)
         self.trait_mapping: Dict[str, dict] = {}
         self._build_trait_mapping()
 
@@ -145,9 +161,7 @@ class MetatraitsTransform(Transform):
             category_url = metpo_data.get("inferred_category", "")
             category = uri_to_curie(category_url) if category_url else "biolink:PhenotypicQuality"
             predicate_biolink = metpo_data.get("predicate_biolink_equivalent", "")
-            predicate = (
-                uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
-            )
+            predicate = uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
             self.trait_mapping[synonym] = {
                 "curie": metpo_data["curie"],
                 "category": category,
@@ -160,10 +174,7 @@ class MetatraitsTransform(Transform):
             with open(CUSTOM_CURIES_YAML_FILE) as f:
                 custom_data = yaml.safe_load(f)
             custom_map = {
-                k: v
-                for first in (custom_data or {}).values()
-                if isinstance(first, dict)
-                for k, v in first.items()
+                k: v for first in (custom_data or {}).values() if isinstance(first, dict) for k, v in first.items()
             }
             for key, value in custom_map.items():
                 if not isinstance(value, dict):
@@ -201,11 +212,16 @@ class MetatraitsTransform(Transform):
         node_row[7] = same_as
         return node_row
 
+    def _to_biolink_predicate(self, predicate: str) -> str:
+        """Map METPO or other predicate to biolink predicate for relation lookup."""
+        if predicate.startswith("biolink:"):
+            return predicate
+        return METPO_TO_BIOLINK_PREDICATE.get(predicate, "biolink:has_phenotype")
+
     def _get_relation_for_predicate(self, predicate: str) -> str:
-        """Return RO relation for a given predicate."""
-        if predicate == CAPABLE_OF_PREDICATE:
-            return BIOLOGICAL_PROCESS
-        return HAS_PHENOTYPE
+        """Return RO relation for a given predicate (preserves produces/capable_of/has_phenotype)."""
+        biolink_pred = self._to_biolink_predicate(predicate)
+        return PREDICATE_TO_RELATION.get(biolink_pred, HAS_PHENOTYPE)
 
     def run(
         self,
@@ -237,8 +253,7 @@ class MetatraitsTransform(Transform):
 
         if not input_files:
             raise FileNotFoundError(
-                f"No metatraits JSONL files found in {input_base}. "
-                f"Expected one of: {METATRAITS_INPUT_FILES}"
+                f"No metatraits JSONL files found in {input_base}. Expected one of: {METATRAITS_INPUT_FILES}"
             )
 
         seen_taxon_nodes: Set[str] = set()
@@ -285,25 +300,32 @@ class MetatraitsTransform(Transform):
                         if pct_true <= 0:
                             continue
 
-                        # Look up trait mapping (exact then lowercase)
-                        mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
+                        # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
+                        micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
                             trait_name.lower()
                         )
-                        if not mapping:
-                            unmapped_traits.append(
-                                (
-                                    trait_name,
-                                    tax_name,
-                                    majority_label,
-                                    s.get("num_observations", 0),
+                        if micro_mapping:
+                            curie = micro_mapping["object_id"]
+                            category = micro_mapping["object_category"]
+                            pred = micro_mapping["biolink_predicate"]
+                            label = micro_mapping["object_label"]
+                        else:
+                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
+                            if not mapping:
+                                unmapped_traits.append(
+                                    (
+                                        trait_name,
+                                        tax_name,
+                                        majority_label,
+                                        s.get("num_observations", 0),
+                                    )
                                 )
-                            )
-                            continue
-
-                        curie = mapping["curie"]
-                        category = mapping["category"]
-                        pred = mapping["predicate"]
-                        label = mapping["name"]
+                                continue
+                            curie = mapping["curie"]
+                            category = mapping["category"]
+                            # Use biolink predicate for KGX compliance
+                            pred = self._to_biolink_predicate(mapping["predicate"])
+                            label = mapping["name"]
 
                         if tax_id not in seen_taxon_nodes:
                             seen_taxon_nodes.add(tax_id)

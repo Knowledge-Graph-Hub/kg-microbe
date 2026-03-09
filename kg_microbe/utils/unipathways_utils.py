@@ -43,9 +43,7 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)
     else:
-        new_lines.append(
-            replace_category_for_unipathways(line, id_index, category_index, node_header)
-        )
+        new_lines.append(replace_category_for_unipathways(line, id_index, category_index, node_header))
     return new_lines, nodes_dictionary
 
 
@@ -71,9 +69,7 @@ def replace_category_for_unipathways(line, id_index, category_index, node_header
     return new_line
 
 
-def replace_triples_with_labels(
-    line, subject_index, object_index, predicate_index, relation_index, nodes_dictionary
-):
+def replace_triples_with_labels(line, subject_index, object_index, predicate_index, relation_index, nodes_dictionary):
     """
     Replace triples labels according to a dictionary lookup. Also replace the predicate and relation.
 
@@ -161,9 +157,7 @@ def remove_unwanted_prefixes_from_edges(df):
     """
     # Boolean mask to filter rows
     mask = df.apply(
-        lambda row: not any(
-            substring in str(cell) for substring in UNIPATHWAYS_IGNORE_PREFIXES for cell in row
-        ),
+        lambda row: not any(substring in str(cell) for substring in UNIPATHWAYS_IGNORE_PREFIXES for cell in row),
         axis=1,
     )
 
@@ -230,11 +224,7 @@ def create_df_from_pair(df, pair, subject_node=None):
     :type subject_node: str
     """
     if subject_node:
-        new_df = df[
-            (df[SUBJECT_COLUMN] == subject_node) & (df[OBJECT_COLUMN].str.contains(pair[1]))
-        ]
+        new_df = df[(df[SUBJECT_COLUMN] == subject_node) & (df[OBJECT_COLUMN].str.contains(pair[1]))]
     else:
-        new_df = df[
-            (df[SUBJECT_COLUMN].str.contains(pair[0])) & df[OBJECT_COLUMN].str.contains(pair[1])
-        ]
+        new_df = df[(df[SUBJECT_COLUMN].str.contains(pair[0])) & df[OBJECT_COLUMN].str.contains(pair[1])]
     return new_df

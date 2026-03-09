@@ -13,7 +13,6 @@ from kg_microbe.transform_utils.gtdb.utils import (
 
 
 class TestGTDBUtils(unittest.TestCase):
-
     """Test GTDB utility functions."""
 
     def test_parse_taxonomy_string(self):
@@ -75,16 +74,13 @@ class TestGTDBUtils(unittest.TestCase):
 
 
 class TestGTDBTransform(unittest.TestCase):
-
     """Test GTDBTransform class."""
 
     def setUp(self):
         """Set up test fixtures."""
         self.output_dir = tempfile.mkdtemp()
         self.test_input_dir = Path("tests/resources")
-        self.transform = GTDBTransform(
-            input_dir=str(self.test_input_dir), output_dir=self.output_dir
-        )
+        self.transform = GTDBTransform(input_dir=str(self.test_input_dir), output_dir=self.output_dir)
 
     def test_init(self):
         """Test GTDBTransform initialization."""

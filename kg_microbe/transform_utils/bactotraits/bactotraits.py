@@ -42,7 +42,6 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
 class BactoTraitsTransform(Transform):
-
     """
     BactoTraits transform.
 
@@ -158,9 +157,7 @@ class BactoTraitsTransform(Transform):
 
     """
 
-    def __init__(
-        self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]
-    ):
+    def __init__(self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]):
         """Initialize BactoTraitsTransform."""
         source_name = BACTOTRAITS
         super().__init__(source_name, input_dir, output_dir)
@@ -211,9 +208,7 @@ class BactoTraitsTransform(Transform):
 
         return [value.translate(translation_table).strip() for value in row]
 
-    def run(
-        self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
-    ) -> None:
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """Run BactoTraitsTransform."""
         if data_file is None:
             data_file = "BactoTraits_databaseV2_Jun2022.csv"
@@ -237,22 +232,16 @@ class BactoTraitsTransform(Transform):
                 for row in mapping_reader:
                     bacdive_ncbitaxon_dict[row["Bacdive_ID"]] = row[NCBITAXON_ID_COLUMN]
         else:
-            with open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file, open(
-                mapping_file, "w"
-            ) as mapping_file:
+            with open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file, open(mapping_file, "w") as mapping_file:
                 # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
                 bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
                 mapping_writer = csv.writer(mapping_file, delimiter="\t")
-                mapping_writer.writerow(
-                    ["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN]
-                )
+                mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
                 for row in bacdive_reader:
                     collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
                     # Determine the value for the second column based on whether collection_number_list is not empty.
                     second_column_value = (
-                        self._clean_row(ast.literal_eval(collection_number_list))
-                        if collection_number_list
-                        else ""
+                        self._clean_row(ast.literal_eval(collection_number_list)) if collection_number_list else ""
                     )
 
                     # Write the row with the determined values.
@@ -277,9 +266,7 @@ class BactoTraitsTransform(Transform):
             category = uri_to_curie(category_url) if category_url else "biolink:PhenotypicQuality"
 
             predicate_biolink = metpo_data.get("predicate_biolink_equivalent", "")
-            predicate = (
-                uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
-            )
+            predicate = uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
 
             unified_mapping[synonym] = {
                 "curie": metpo_data["curie"],
@@ -319,9 +306,7 @@ class BactoTraitsTransform(Transform):
                     unified_mapping[key.lower()] = value
 
             # Extract combo mappings for later processing
-            combo_curie_map = {
-                key: value for key, value in custom_curie_map.items() if COMBO_KEY in value
-            }
+            combo_curie_map = {key: value for key, value in custom_curie_map.items() if COMBO_KEY in value}
             unique_combo_node_data = [
                 self._create_node_row(
                     inner_curie_map[CURIE_COLUMN],
@@ -365,9 +350,7 @@ class BactoTraitsTransform(Transform):
                             dict_keys = header[1:]
                         elif i > 2:
                             row_as_dict = dict(zip(dict_keys, row[1:], strict=False))
-                            row_as_dict_with_values = {
-                                k.strip(): v for k, v in row_as_dict.items() if v and v != "0"
-                            }
+                            row_as_dict_with_values = {k.strip(): v for k, v in row_as_dict.items() if v and v != "0"}
 
                             # Find mappings from unified mapping (METPO + custom YAML)
                             nodes_from_mapping = {}
@@ -388,9 +371,7 @@ class BactoTraitsTransform(Transform):
                                     category = value.get("category") or value.get(CATEGORY_COLUMN)
                                     name = value.get("name") or value.get(NAME_COLUMN)
 
-                                    nodes_data_to_write.append(
-                                        self._create_node_row(curie, category, name)
-                                    )
+                                    nodes_data_to_write.append(self._create_node_row(curie, category, name))
                             if ncbitaxon_id:
                                 ncbi_label = get_label(self.ncbi_impl, ncbitaxon_id)
                                 if ncbi_label:

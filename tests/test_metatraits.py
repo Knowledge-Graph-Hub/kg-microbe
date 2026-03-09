@@ -5,9 +5,44 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from parameterized import parameterized
+
 from kg_microbe.transform_utils.metatraits.metatraits import MetatraitsTransform
+from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
+
+# Truth table from microbial-trait-mappings test_round_trip.py
+EXPECTED_EDGES = [
+    ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalEntity"),
+    ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalEntity"),
+    ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalEntity"),
+    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalEntity"),
+    (
+        "enzyme activity: catalase (EC1.11.1.6)",
+        "biolink:capable_of",
+        "EC:1.11.1.6",
+        "biolink:MolecularActivity",
+    ),
+    (
+        "enzyme activity: urease (EC3.5.1.5)",
+        "biolink:capable_of",
+        "EC:3.5.1.5",
+        "biolink:MolecularActivity",
+    ),
+    (
+        "enzyme activity: oxidase",
+        "biolink:capable_of",
+        "GO:0016491",
+        "biolink:MolecularActivity",
+    ),
+    ("fermentation", "biolink:capable_of", "GO:0006113", "biolink:BiologicalProcess"),
+    ("nitrogen fixation", "biolink:capable_of", "GO:0009399", "biolink:BiologicalProcess"),
+    ("gram positive", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicFeature"),
+    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicFeature"),
+    ("thermophilic", "biolink:has_phenotype", "METPO:1000656", "biolink:PhenotypicFeature"),
+]
 
 
+@patch("kg_microbe.transform_utils.metatraits.metatraits._get_ncbitaxon_adapter")
 class TestMetatraitsTransform(unittest.TestCase):
 
     """Test MetatraitsTransform class."""
@@ -18,7 +53,7 @@ class TestMetatraitsTransform(unittest.TestCase):
         self.temp_output_dir = Path(tempfile.mkdtemp())
         self.fixture_file = self.test_resources_dir / "metatraits_fixture.jsonl"
 
-    def test_transform_initialization(self):
+    def test_transform_initialization(self, mock_adapter):
         """Test MetatraitsTransform initialization."""
         transform = MetatraitsTransform(
             input_dir=Path("data/raw"),
@@ -29,7 +64,7 @@ class TestMetatraitsTransform(unittest.TestCase):
         self.assertIsNotNone(transform.trait_mapping)
         self.assertIsNotNone(transform.ncbitaxon_name_to_id)
 
-    def test_create_node_row(self):
+    def test_create_node_row(self, mock_adapter):
         """Test _create_node_row produces correct structure."""
         transform = MetatraitsTransform(
             input_dir=Path("data/raw"),
@@ -46,7 +81,7 @@ class TestMetatraitsTransform(unittest.TestCase):
         self.assertEqual(row[2], "Escherichia coli")
         self.assertEqual(row[5], "infores:metatraits")
 
-    def test_get_relation_for_predicate(self):
+    def test_get_relation_for_predicate(self, mock_adapter):
         """Test _get_relation_for_predicate returns correct RO terms."""
         transform = MetatraitsTransform(
             input_dir=Path("data/raw"),
@@ -56,6 +91,7 @@ class TestMetatraitsTransform(unittest.TestCase):
             BIOLOGICAL_PROCESS,
             CAPABLE_OF_PREDICATE,
             HAS_PHENOTYPE,
+            PRODUCES_RELATION,
         )
 
         self.assertEqual(
@@ -66,9 +102,72 @@ class TestMetatraitsTransform(unittest.TestCase):
             transform._get_relation_for_predicate("biolink:has_phenotype"),
             HAS_PHENOTYPE,
         )
+        self.assertEqual(
+            transform._get_relation_for_predicate("biolink:produces"),
+            PRODUCES_RELATION,
+        )
+        self.assertEqual(
+            transform._get_relation_for_predicate("METPO:2000202"),
+            PRODUCES_RELATION,
+        )
+
+    def test_to_biolink_predicate(self, mock_adapter):
+        """Test _to_biolink_predicate maps METPO to biolink."""
+        transform = MetatraitsTransform(
+            input_dir=Path("data/raw"),
+            output_dir=self.temp_output_dir,
+        )
+        self.assertEqual(
+            transform._to_biolink_predicate("METPO:2000202"),
+            "biolink:produces",
+        )
+        self.assertEqual(
+            transform._to_biolink_predicate("METPO:2000103"),
+            "biolink:capable_of",
+        )
+        self.assertEqual(
+            transform._to_biolink_predicate("biolink:has_phenotype"),
+            "biolink:has_phenotype",
+        )
+
+    def test_produces_ethanol_is_not_has_phenotype(self, mock_adapter):
+        """Test produces: ethanol resolves to biolink:produces, not has_phenotype."""
+        mappings = load_microbial_trait_mappings()
+        if not mappings:
+            self.skipTest("mappings/metatraits/ not found")
+        match = mappings.get("produces: ethanol") or mappings.get("produces: ethanol".lower())
+        self.assertIsNotNone(match, "'produces: ethanol' should be in microbial mappings")
+        self.assertEqual(
+            match["biolink_predicate"],
+            "biolink:produces",
+            "'produces: ethanol' must NOT resolve to has_phenotype",
+        )
+
+    def test_collapse_detection(self, mock_adapter):
+        """Test that not all predicates resolve to has_phenotype."""
+        mappings = load_microbial_trait_mappings()
+        if not mappings:
+            self.skipTest("mappings/metatraits/ not found")
+        predicates = {m["biolink_predicate"] for m in mappings.values()}
+        self.assertGreater(len(predicates), 1, "Multiple predicate types required")
+        self.assertIn("biolink:produces", predicates)
+        self.assertIn("biolink:capable_of", predicates)
+        self.assertIn("biolink:has_phenotype", predicates)
+
+    @parameterized.expand(EXPECTED_EDGES)
+    def test_edge_resolution_round_trip(self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat):
+        """Verify each trait resolves to correct (predicate, object_id, object_category)."""
+        mappings = load_microbial_trait_mappings()
+        if not mappings:
+            self.skipTest("mappings/metatraits/ not found")
+        match = mappings.get(subject_label) or mappings.get(subject_label.lower())
+        self.assertIsNotNone(match, f"No mapping for '{subject_label}'")
+        self.assertEqual(match["object_id"], expected_obj)
+        self.assertEqual(match["biolink_predicate"], expected_pred)
+        self.assertEqual(match["object_category"], expected_cat)
 
     @patch.object(MetatraitsTransform, "_search_ncbitaxon_by_label")
-    def test_run_with_fixture(self, mock_search):
+    def test_run_with_fixture(self, mock_search, mock_adapter):
         """Test run() with fixture produces nodes and edges."""
         mock_search.return_value = "NCBITaxon:562"
 
@@ -110,7 +209,7 @@ class TestMetatraitsTransform(unittest.TestCase):
             if fixture_path.exists():
                 fixture_path.unlink()
 
-    def test_run_without_input_files_raises(self):
+    def test_run_without_input_files_raises(self, mock_adapter):
         """Test run() raises FileNotFoundError when no input files exist."""
         empty_dir = Path(tempfile.mkdtemp())
         transform = MetatraitsTransform(

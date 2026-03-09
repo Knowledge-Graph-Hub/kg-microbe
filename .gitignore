@@ -193,6 +193,7 @@ kg_microbe/transform_utils/*/tmp/*.csv
 
 # Mappings and notebook outputs
 mappings/*.tsv
+!mappings/metatraits/*.tsv
 notebooks/*/data/*.tsv.gz
 notebooks/*/data/*.tsv
 notebooks/*.png

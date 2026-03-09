@@ -15,7 +15,6 @@ from kg_microbe.transform_utils.kegg.utils import (
 
 
 class TestKEGGUtils(unittest.TestCase):
-
     """Test KEGG utility functions."""
 
     @patch("kg_microbe.transform_utils.kegg.utils.requests.get")
@@ -115,7 +114,6 @@ DEFINITION  alcohol dehydrogenase [EC:1.1.1.1]
 
 
 class TestKEGGTransform(unittest.TestCase):
-
     """Test KEGG transform class."""
 
     def setUp(self):

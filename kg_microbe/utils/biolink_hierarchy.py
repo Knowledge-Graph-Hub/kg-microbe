@@ -11,7 +11,6 @@ from kg_microbe.transform_utils.constants import BIOLINK_MODEL_FILE
 
 
 class BiolinkHierarchy:
-
     """
     Utility for Biolink Model category hierarchy operations.
 

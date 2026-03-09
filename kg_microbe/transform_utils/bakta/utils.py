@@ -11,9 +11,7 @@ from kg_microbe.transform_utils.constants import INVOLVED_IN
 logger = logging.getLogger(__name__)
 
 
-def parse_bakta_tsv(
-    tsv_file: Path, feature_types: Optional[Set[str]] = None
-) -> List[Dict[str, str]]:
+def parse_bakta_tsv(tsv_file: Path, feature_types: Optional[Set[str]] = None) -> List[Dict[str, str]]:
     """
     Parse a Bakta TSV annotation file.
 

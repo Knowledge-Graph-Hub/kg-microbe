@@ -20,9 +20,7 @@ def main():
 
 
 @main.command()
-@click.option(
-    "yaml_file", "-y", required=True, default="download.yaml", type=click.Path(exists=True)
-)
+@click.option("yaml_file", "-y", required=True, default="download.yaml", type=click.Path(exists=True))
 @click.option("output_dir", "-o", required=True, default="data/raw")
 @click.option(
     "snippet_only",
@@ -131,9 +129,7 @@ def query(
     default="data/merged/edges.tsv",
     type=click.Path(exists=True),
 )
-@click.option(
-    "output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path()
-)
+@click.option("output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path())
 @click.option(
     "train_fraction",
     "-t",

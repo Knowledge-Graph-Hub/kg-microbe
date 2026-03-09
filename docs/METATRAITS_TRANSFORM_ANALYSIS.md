@@ -33,18 +33,12 @@ The progress bar shows **file-level** progress (0/3 = first of three files). The
 | 4 | Line 257 | `tax_id = self._search_ncbitaxon_by_label(tax_name)` – **OAK lookup per line** |
 | 5 | Line 124–129 | `_search_ncbitaxon_by_label`: cache miss → `search_by_label(self.ncbi_impl, ...)` |
 
-### Root cause: OAK results not cached
+### Root cause (when cache is empty)
 
-- `ncbitaxon_name_to_id` is filled only from `NCBITAXON_NODES_FILE` (ontologies output)
+- `ncbitaxon_name_to_id` is filled from `NCBITAXON_NODES_FILE` (ontologies output) or `data/raw/ncbitaxon_nodes.tsv`
 - If that file is missing, the cache is empty
 - Each `_search_ncbitaxon_by_label` call that misses the cache triggers an OAK `basic_search` on the 2GB SQLite DB
-- **OAK lookup results are never written back into `ncbitaxon_name_to_id`**
-- The same taxon (e.g. `"Euryarchaeota archaeon"`) can appear many times → repeated OAK lookups for the same name
 
-With ~54k lines in the species file and many unique taxa, this leads to tens of thousands of slow OAK lookups. The bar stays at 0/3 because it only advances when the **entire first file** is finished.
+**Update:** OAK lookup results are now cached in `ncbitaxon_name_to_id` (see `_search_ncbitaxon_by_label`). The first occurrence of each taxon triggers an OAK lookup; subsequent occurrences reuse the cached ID. This reduces repeated lookups when the same taxon appears many times across lines.
 
----
-
-## Fix: Cache OAK lookup results
-
-When `_search_ncbitaxon_by_label` gets a result from OAK, it should store it in `ncbitaxon_name_to_id` so later lines with the same taxon name reuse the cached ID instead of querying OAK again.
+The bar still advances only when the entire first file is finished, so with many unique taxa and no preloaded NCBITaxon labels, the first file can remain slow until all unique taxa have been resolved and cached.

@@ -19,6 +19,7 @@ DISBIOME = "disbiome"
 UNIPROT_FUNCTIONAL_MICROBES = "uniprot_functional_microbes"
 UNIPROT_HUMAN = "uniprot_human"
 GTDB = "gtdb"
+METATRAITS = "metatraits"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -216,9 +217,7 @@ MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = (
-    "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
-)
+NCBI_TO_CARBON_SUBSTRATE_EDGE = "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
 NCBI_TO_PATHWAY_EDGE = "METPO:2000103"  # capable of [org -> pathway]
@@ -228,9 +227,7 @@ NCBI_TO_ENZYME_EDGE = "METPO:2000103"  # capable of [org -> enzyme]
 # ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
 # MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
 # NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay] - UNUSED
-ENZYME_TO_ASSAY_EDGE = (
-    "biolink:related_to_at_instance_level"  # [enzyme -> assay] - methodological reference
-)
+ENZYME_TO_ASSAY_EDGE = "biolink:related_to_at_instance_level"  # [enzyme -> assay] - methodological reference
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
@@ -296,9 +293,7 @@ IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medi
 DOES_NOT_GROW_IN = NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
-TROPHICALLY_INTERACTS_WITH = (
-    "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
-)
+TROPHICALLY_INTERACTS_WITH = "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
@@ -463,6 +458,8 @@ CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolin
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
 HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
+PRODUCES_PREDICATE = "biolink:produces"
+PRODUCES_RELATION = "RO:0002215"  # capable_of / has_output for metabolic production
 PREDICATE_ID_COLUMN = "predicate_id"
 PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {
@@ -520,9 +517,7 @@ EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 # Uniprot
 UNIPROT_FUNCTIONAL_MICROBES_DIR = TRANSFORM_UTILS_DIR / UNIPROT_FUNCTIONAL_MICROBES
 UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR = UNIPROT_FUNCTIONAL_MICROBES_DIR / "tmp"
-UNIPROT_FUNCTIONAL_MICROBES_RELEVANT_FILE_LIST = (
-    UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR / "relevant_files.tsv"
-)
+UNIPROT_FUNCTIONAL_MICROBES_RELEVANT_FILE_LIST = UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR / "relevant_files.tsv"
 UNIPROT_FUNCTIONAL_MICROBES_TMP_NE_DIR = UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR / "nodes_and_edges"
 
 # UniprotHuman
@@ -705,9 +700,7 @@ PART_OF_RELATION = "BFO:0000050"
 PART_OF_PREDICATE = "biolink:part_of"
 RELATED_TO_RELATION = "RO:0000052"
 RELATED_TO_PREDICATE = "biolink:related_to"
-HAS_ALTERNATE_ENZYMATIC_REACTION_RELATION = (
-    "OBO:upa#has_alternate_enzymatic_reaction"  # TODO explore other relation
-)
+HAS_ALTERNATE_ENZYMATIC_REACTION_RELATION = "OBO:upa#has_alternate_enzymatic_reaction"  # TODO explore other relation
 UNIPATHWAYS_RELATIONS_DICT = {
     HAS_INPUT_PREDICATE: HAS_INPUT_RELATION,
     HAS_OUTPUT_PREDICATE: HAS_OUTPUT_RELATION,
@@ -768,12 +761,8 @@ DISBIOME_ORGANISM_NAME = "organism_name"
 DISIOME_QUALITATIVE_OUTCOME = "qualitative_outcome"
 DISBIOME_ELEVATED = "Elevated"
 DISBIOME_REDUCED = "Reduced"
-ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE = (
-    "biolink:associated_with_increased_likelihood_of"
-)
-ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE = (
-    "biolink:associated_with_decreased_likelihood_of"
-)
+ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE = "biolink:associated_with_increased_likelihood_of"
+ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE = "biolink:associated_with_decreased_likelihood_of"
 ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF = ASSOCIATED_WITH
 ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF = ASSOCIATED_WITH
 

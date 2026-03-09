@@ -113,9 +113,7 @@ class OntologiesTransform(Transform):
         source_name = ONTOLOGIES
         super().__init__(source_name, input_dir, output_dir)
 
-    def run(
-        self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
-    ) -> None:
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
         Transform an ontology.
 
@@ -150,9 +148,7 @@ class OntologiesTransform(Transform):
                     if not Path(json_path).is_file():
                         self.decompress(data_file)
                         with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
-                            terms = [
-                                line.strip() for line in f if line.lower().startswith(name.lower())
-                            ]
+                            terms = [line.strip() for line in f if line.lower().startswith(name.lower())]
                         remove_convert_to_json(str(self.input_base_dir), name, terms)
                     # elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
                     #     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
@@ -329,9 +325,7 @@ class OntologiesTransform(Transform):
         else:
             # For other ontologies, just replace deprecated categories
             print(f"  Replacing deprecated categories in {ontology_name}...")
-            df["category"] = df["category"].apply(
-                lambda x: replace_deprecated_categories(str(x)) if pd.notna(x) else x
-            )
+            df["category"] = df["category"].apply(lambda x: replace_deprecated_categories(str(x)) if pd.notna(x) else x)
 
         # Write back
         df.to_csv(nodes_file_path, sep="\t", index=False)
@@ -377,7 +371,6 @@ class OntologiesTransform(Transform):
             elif name == "mondo":
                 xref_filepath = MONDO_XREFS_FILEPATH
             with open(nodes_file, "r") as nf, open(xref_filepath, "w") as xref_file:
-
                 for line in nf:
                     if line.startswith("id"):
                         # get the index for the term 'xref'
@@ -516,11 +509,7 @@ class OntologiesTransform(Transform):
             )
             # Replace UER with GO
             transitive_df_uer_go = transitive_df_uer_go[
-                (
-                    transitive_df_uer_go[SUBJECT_COLUMN].str.contains(
-                        UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX
-                    )
-                )
+                (transitive_df_uer_go[SUBJECT_COLUMN].str.contains(UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX))
                 & (transitive_df_uer_go[OBJECT_COLUMN].str.contains(UNIPATHWAYS_PATHWAY_PREFIX))
             ]
             # Replace predicate and relation
@@ -528,14 +517,10 @@ class OntologiesTransform(Transform):
                 transitive_df_uer_go[PREDICATE_COLUMN] == PART_OF_PREDICATE,
                 [PREDICATE_COLUMN, RELATION_COLUMN],
             ] = [ENABLED_BY_PREDICATE, ENABLED_BY_RELATION]
-            transitive_df_uer_go = transitive_df_uer_go.map(
-                lambda x: unipathways_xref_dict.get(x, x)
-            )
+            transitive_df_uer_go = transitive_df_uer_go.map(lambda x: unipathways_xref_dict.get(x, x))
 
             # Only add GO relations, not EC
-            transitive_df_uer_go = transitive_df_uer_go[
-                transitive_df_uer_go[SUBJECT_COLUMN].str.contains(GO_PREFIX)
-            ]
+            transitive_df_uer_go = transitive_df_uer_go[transitive_df_uer_go[SUBJECT_COLUMN].str.contains(GO_PREFIX)]
 
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, transitive_df_uer_go], ignore_index=True)
@@ -543,16 +528,13 @@ class OntologiesTransform(Transform):
             # Add edges between GO and pathways using patwhay GO xrefs
             upa_go_df = pd.DataFrame(list(unipathways_xref_dict.items()), columns=["id", "xref"])
             upa_go_df = upa_go_df.loc[
-                (upa_go_df["id"].str.contains("UPA:UPA"))
-                & (upa_go_df["xref"].str.contains(GO_PREFIX))
+                (upa_go_df["id"].str.contains("UPA:UPA")) & (upa_go_df["xref"].str.contains(GO_PREFIX))
             ]
             upa_go_df.rename(columns={"xref": SUBJECT_COLUMN, "id": OBJECT_COLUMN}, inplace=True)
             upa_go_df[PREDICATE_COLUMN] = RELATED_TO_PREDICATE
             upa_go_df[RELATION_COLUMN] = RELATED_TO_RELATION
             # Use InforES standard knowledge source instead of filename
-            upa_go_df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get(
-                "upa", "infores:upa"
-            )
+            upa_go_df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get("upa", "infores:upa")
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, upa_go_df], ignore_index=True)
             # Write existing edges to file before establishing more transitive relationships
@@ -593,7 +575,6 @@ class OntologiesTransform(Transform):
                     new_ef.write(line)
 
         if name == "ec":  # or name == "rhea":
-
             with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
                 # Update prefixes in nodes file
                 new_nf_lines = []
@@ -619,16 +600,8 @@ class OntologiesTransform(Transform):
             if name == "ec":
                 # Remove UniProt and TrEMBL nodes since accounted for elsewhere
                 protein_prefixes = [UNIPROT_PREFIX, TREMBL_PREFIX]
-                new_nf_lines = [
-                    line
-                    for line in new_nf_lines
-                    if not any(prefix in line for prefix in protein_prefixes)
-                ]
-                new_ef_lines = [
-                    line
-                    for line in new_ef_lines
-                    if not any(prefix in line for prefix in protein_prefixes)
-                ]
+                new_nf_lines = [line for line in new_nf_lines if not any(prefix in line for prefix in protein_prefixes)]
+                new_ef_lines = [line for line in new_ef_lines if not any(prefix in line for prefix in protein_prefixes)]
             # elif name == "rhea":
             #     # Remove debio nodes that account for direction, since already there in inverse triples
             #     # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
@@ -652,9 +625,7 @@ class OntologiesTransform(Transform):
 
         else:
             # Process and write the nodes file
-            with open(nodes_file, "r") as nf, open(
-                nodes_file.with_suffix(".temp.tsv"), "w"
-            ) as new_nf:
+            with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
                 for line in nf:
                     new_nf.write(_replace_special_prefixes(line))
 
@@ -662,9 +633,7 @@ class OntologiesTransform(Transform):
             nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
 
             # Process and write the edges file
-            with open(edges_file, "r") as ef, open(
-                edges_file.with_suffix(".temp.tsv"), "w"
-            ) as new_ef:
+            with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
                 for line in ef:
                     new_ef.write(_replace_special_prefixes(line))
 
@@ -682,12 +651,12 @@ class OntologiesTransform(Transform):
         import pandas as pd
 
         # Read nodes file
-        df = pd.read_csv(nodes_file, sep='\t', low_memory=False)
+        df = pd.read_csv(nodes_file, sep="\t", low_memory=False)
 
         # Remove IRI column if it exists (KGX may auto-generate it)
-        if 'iri' in df.columns:
-            df = df.drop(columns=['iri'])
-            df.to_csv(nodes_file, sep='\t', index=False)
+        if "iri" in df.columns:
+            df = df.drop(columns=["iri"])
+            df.to_csv(nodes_file, sep="\t", index=False)
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
         """Convert URL-formatted node IDs to CURIEs in both nodes and edges files."""
@@ -697,35 +666,35 @@ class OntologiesTransform(Transform):
 
         from kg_microbe.utils.mapping_file_utils import uri_to_curie
 
-        url_pattern = re.compile(r'^https?://')
+        url_pattern = re.compile(r"^https?://")
 
         # Process nodes file
-        df_nodes = pd.read_csv(nodes_file, sep='\t', low_memory=False)
+        df_nodes = pd.read_csv(nodes_file, sep="\t", low_memory=False)
 
         # Track URL to CURIE mappings for updating edges
         url_to_curie_map = {}
 
         # Convert URL IDs to CURIEs
-        if 'id' in df_nodes.columns:
-            for idx, node_id in df_nodes['id'].items():
+        if "id" in df_nodes.columns:
+            for idx, node_id in df_nodes["id"].items():
                 if isinstance(node_id, str) and url_pattern.match(node_id):
                     curie = uri_to_curie(node_id)
                     url_to_curie_map[node_id] = curie
-                    df_nodes.at[idx, 'id'] = curie
+                    df_nodes.at[idx, "id"] = curie
 
         # Save updated nodes file
-        df_nodes.to_csv(nodes_file, sep='\t', index=False)
+        df_nodes.to_csv(nodes_file, sep="\t", index=False)
 
         # Process edges file if there were any URL conversions
         if url_to_curie_map:
-            df_edges = pd.read_csv(edges_file, sep='\t', low_memory=False)
+            df_edges = pd.read_csv(edges_file, sep="\t", low_memory=False)
 
             # Update subject and object columns
-            for col in ['subject', 'object']:
+            for col in ["subject", "object"]:
                 if col in df_edges.columns:
                     df_edges[col] = df_edges[col].apply(
                         lambda x: url_to_curie_map.get(x, x) if isinstance(x, str) else x
                     )
 
             # Save updated edges file
-            df_edges.to_csv(edges_file, sep='\t', index=False)
+            df_edges.to_csv(edges_file, sep="\t", index=False)

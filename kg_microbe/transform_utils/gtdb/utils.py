@@ -12,7 +12,7 @@ def parse_taxonomy_string(taxonomy_str):
         List of taxon names: ["d__Bacteria", "p__Proteobacteria", ...]
 
     """
-    return [t.strip() for t in taxonomy_str.split(';') if t.strip()]
+    return [t.strip() for t in taxonomy_str.split(";") if t.strip()]
 
 
 def extract_accession_type(accession):
@@ -27,10 +27,10 @@ def extract_accession_type(accession):
 
     """
     # Remove GTDB prefix if present (RS_ or GB_)
-    if accession.startswith('RS_') or accession.startswith('GB_'):
+    if accession.startswith("RS_") or accession.startswith("GB_"):
         accession = accession[3:]
 
-    parts = accession.split('.')
+    parts = accession.split(".")
     base = parts[0]
     version = parts[1] if len(parts) > 1 else "1"
     return base, version
@@ -49,4 +49,4 @@ def clean_taxon_name(taxon_name):
         "s__Escherichia_coli"
 
     """
-    return taxon_name.replace(' ', '_')
+    return taxon_name.replace(" ", "_")

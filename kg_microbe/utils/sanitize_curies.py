@@ -89,9 +89,7 @@ def sanitize_tsv(input_file, output_file):
 
     with open(output_file, "w", newline="\n") as outfile:
         reader = csv.DictReader(content_io, delimiter="\t")
-        writer = csv.DictWriter(
-            outfile, fieldnames=reader.fieldnames, delimiter="\t", lineterminator="\n"
-        )
+        writer = csv.DictWriter(outfile, fieldnames=reader.fieldnames, delimiter="\t", lineterminator="\n")
         writer.writeheader()
         for row in reader:
             row = sanitize_row(row)

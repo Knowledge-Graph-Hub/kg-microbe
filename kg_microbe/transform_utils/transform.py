@@ -29,7 +29,7 @@ class Transform:
 
     """Parent class for transforms, that sets up a lot of default file info."""
 
-    DATA_DIR = Path(__file__).parent / "data"
+    DATA_DIR = Path(__file__).parent.parent.parent / "data"
     DEFAULT_INPUT_DIR = DATA_DIR / "raw"
     DEFAULT_OUTPUT_DIR = DATA_DIR / "transformed"
 
@@ -98,6 +98,7 @@ class Transform:
             # Delete previously developed files
             if Path.exists(self.nlp_input_dir):
                 shutil.rmtree(self.nlp_input_dir)
+            if Path.exists(self.nlp_stopwords_dir):
                 shutil.rmtree(self.nlp_stopwords_dir)
 
             Path.mkdir(self.nlp_dir, exist_ok=True, parents=True)
@@ -107,11 +108,10 @@ class Transform:
             Path.mkdir(self.nlp_stopwords_dir, exist_ok=True, parents=True)
 
             with open("stopwords.yaml", "r") as stop_list:
-                doc = yaml.safe_load(stop_list)  # , Loader=yaml.FullLoader)
-                stop_words = doc["English"]
+                doc = yaml.safe_load(stop_list)
+            stop_words = doc["English"]
 
             with open(self.nlp_stopwords_dir / "stopWords.txt", "w") as stop_terms:
-                # stop_terms.write(stop_words)
                 for word in stop_words.split(" "):
                     stop_terms.write(word + "\n")
 
@@ -130,9 +130,9 @@ class Transform:
         Copy nodes and edges files to output directory.
 
         :param nodes_file: nodes files to take from raw directory and put in transform
-                directory
+        directory
         :param edges_file: edges files to take from raw directory and put in transform
-                directory
+        directory
         """
         for f in [nodes_file, edges_file]:
             shutil.copy(f, self.output_dir)

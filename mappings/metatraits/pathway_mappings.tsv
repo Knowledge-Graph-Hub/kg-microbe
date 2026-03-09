@@ -1,0 +1,5 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	predicate_id	confidence	mapping_justification	curator	source_dataset	notes	verified_date
+fermentation	fermentation	GO:0006113	fermentation	GO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:capable_of; base process, no substrate	
+nitrogen fixation	nitrogen fixation	GO:0009399	nitrogen fixation	GO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:capable_of	
+denitrification pathway	denitrification pathway	GO:0019333	denitrification pathway	GO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:capable_of	
+nitrification	nitrification	GO:0019329	ammonia oxidation to nitrite	GO	skos:closeMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:capable_of; nitrification is broader than this single GO term	

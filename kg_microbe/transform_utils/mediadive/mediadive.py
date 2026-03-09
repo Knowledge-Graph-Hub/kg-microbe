@@ -443,9 +443,7 @@ class MediaDiveTransform(Transform):
         print(f"    From strict mappings: {new_from_strict} (fallback)")
 
         if not self.compound_mappings:
-            print(
-                "  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only"
-            )
+            print("  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only")
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
@@ -522,9 +520,7 @@ class MediaDiveTransform(Transform):
                     else item[COMPOUND_KEY]
                 )
                 ingredients_dict[item[COMPOUND_KEY]] = {
-                    ID_COLUMN: self.standardize_compound_id(
-                        str(item[COMPOUND_ID_KEY]), item[COMPOUND_KEY]
-                    ),
+                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), item[COMPOUND_KEY]),
                     AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
                     UNIT_COLUMN: item.get(UNIT_COLUMN),
                     GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
@@ -534,12 +530,7 @@ class MediaDiveTransform(Transform):
                 # Normalize solution name for display and mapping lookup
                 # Ensure consistent string handling for both dict key and mapping lookup
                 if isinstance(item[SOLUTION_KEY], str):
-                    solution_name = (
-                        item[SOLUTION_KEY]
-                        .translate(self.translation_table)
-                        .replace('""', "")
-                        .strip()
-                    )
+                    solution_name = item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
                 elif item[SOLUTION_KEY] is not None:
                     solution_name = str(item[SOLUTION_KEY])
                 else:
@@ -548,9 +539,9 @@ class MediaDiveTransform(Transform):
                 solution_name_normalized = solution_name.lower()
 
                 # Check if solution name can be mapped to ontology via MicroMediaParam
-                solution_id = self.compound_mappings.get(
-                    solution_name_normalized
-                ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
+                solution_id = self.compound_mappings.get(solution_name_normalized) or MEDIADIVE_SOLUTION_PREFIX + str(
+                    item[SOLUTION_ID_KEY]
+                )
 
                 ingredients_dict[solution_name] = {
                     ID_COLUMN: solution_id,
@@ -689,9 +680,7 @@ class MediaDiveTransform(Transform):
                     f.write(yaml.dump(data_json))
         return data_json
 
-    def get_json_object(
-        self, fn: Union[Path, str], url_extension: str, target_dir: Path
-    ) -> Dict[str, str]:
+    def get_json_object(self, fn: Union[Path, str], url_extension: str, target_dir: Path) -> Dict[str, str]:
         """
         Download YAML file if absent and return contents as a JSON object.
 
@@ -751,14 +740,10 @@ class MediaDiveTransform(Transform):
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        bacdive_df = pd.read_csv(
-            bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
-        )
+        bacdive_df = pd.read_csv(bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
-        bacdive_strain_to_ncbi = dict(
-            zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True)
-        )
+        bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))
 
         # mediadive_data:List = mediadive["data"]
         # Read the JSON file into the variable input_json
@@ -798,9 +783,7 @@ class MediaDiveTransform(Transform):
 
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
-            with progress_class(
-                total=len(input_json[DATA_KEY]) + 1, desc="Processing files"
-            ) as progress:
+            with progress_class(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:
                 # medium type nodes
                 node_writer.writerows(
                     [
@@ -819,10 +802,7 @@ class MediaDiveTransform(Transform):
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
                     dictionary[NAME_COLUMN] = (
-                        dictionary[NAME_COLUMN]
-                        .translate(self.translation_table)
-                        .replace('""', "")
-                        .strip()
+                        dictionary[NAME_COLUMN].translate(self.translation_table).replace('""', "").strip()
                     )
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
                     fn_medium_strain = Path(str(MEDIADIVE_MEDIUM_STRAIN_YAML_DIR / id) + ".yaml")
@@ -874,12 +854,10 @@ class MediaDiveTransform(Transform):
                                     strain_id, STRAIN_PREFIX + strain_id.replace(":", "_")
                                 )
 
-                                if not (
-                                    isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)
-                                ):
+                                if not (isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)):
                                     # Check growth value to determine edge type
                                     # MediaDive uses: growth=1 (positive), growth=0 (negative)
-                                    growth_value = strain.get('growth')
+                                    growth_value = strain.get("growth")
 
                                     # Only create edge if growth value is explicitly 0 or 1
                                     if growth_value in [0, 1]:
@@ -925,9 +903,7 @@ class MediaDiveTransform(Transform):
                         continue
                     # solution_id_list = [solution[ID_COLUMN] for solution in json_obj[SOLUTIONS_KEY]]
                     solutions_dict = {
-                        solution[ID_COLUMN]: solution[NAME_COLUMN]
-                        .strip()
-                        .translate(self.translation_table)
+                        solution[ID_COLUMN]: solution[NAME_COLUMN].strip().translate(self.translation_table)
                         for solution in json_obj[SOLUTIONS_KEY]
                     }
                     ingredients_dict = {}
@@ -978,9 +954,7 @@ class MediaDiveTransform(Transform):
 
                     # Get ChEBI role relationships using fast TSV lookup
                     chebi_list = [
-                        v[ID_COLUMN]
-                        for _, v in ingredients_dict.items()
-                        if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
+                        v[ID_COLUMN] for _, v in ingredients_dict.items() if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
                     ]
                     if len(chebi_list) > 0 and self.chebi_roles:
                         # Collect all role relationships for these compounds

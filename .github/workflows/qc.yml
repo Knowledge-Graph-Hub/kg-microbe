@@ -32,7 +32,7 @@ jobs:
           cache: "poetry"
 
       - name: Install dependencies
-        run: poetry install --no-interaction --all-extras --no-root
+        run: poetry config virtualenvs.in-project true && poetry install --no-interaction --no-root
 
       - name: Run CodeSpell
         run: poetry run tox -e codespell

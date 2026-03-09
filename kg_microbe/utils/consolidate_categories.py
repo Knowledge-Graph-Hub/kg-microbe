@@ -88,12 +88,14 @@ def consolidate_node_categories(
                 # Check if this is a special case with resolution notes
                 node_id = row.get("id", "")
                 if node_id in resolution_notes:
-                    special_cases.append({
-                        "id": node_id,
-                        "name": row.get("name", ""),
-                        "original_pattern": category,
-                        "note": resolution_notes[node_id],
-                    })
+                    special_cases.append(
+                        {
+                            "id": node_id,
+                            "name": row.get("name", ""),
+                            "original_pattern": category,
+                            "note": resolution_notes[node_id],
+                        }
+                    )
 
                 # Apply rule if exists
                 if sorted_pattern in rules:
@@ -113,7 +115,7 @@ def consolidate_node_categories(
             f.write("=" * 80 + "\n\n")
             f.write(f"Total nodes processed: {total_nodes:,}\n")
             f.write(f"Multi-category nodes found: {multi_category_nodes:,}\n")
-            f.write(f"Multi-category percentage: {(multi_category_nodes/total_nodes)*100:.2f}%\n")
+            f.write(f"Multi-category percentage: {(multi_category_nodes / total_nodes) * 100:.2f}%\n")
             f.write(f"Unknown patterns (no rule): {len(unknown_patterns)}\n\n")
 
             f.write("Consolidation Method: Explicit verified rules\n")
@@ -158,7 +160,7 @@ def consolidate_node_categories(
 
     print(f"✓ Consolidated {multi_category_nodes:,} multi-category nodes")
     print(f"✓ Total nodes: {total_nodes:,}")
-    print(f"✓ Multi-category percentage: {(multi_category_nodes/total_nodes)*100:.2f}%")
+    print(f"✓ Multi-category percentage: {(multi_category_nodes / total_nodes) * 100:.2f}%")
     print(f"✓ Output written to: {output_file}")
     if report_file:
         print(f"✓ Report written to: {report_file}")

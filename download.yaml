@@ -121,6 +121,14 @@
   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
   local_name: madin_etal.csv
 
+#
+# Metatraits species/genus/family summaries (manual placement)
+# Place the following JSONL files in data/raw/ for the metatraits transform:
+#   - ncbi_species_summary.jsonl.gz (or metatraits_species_summary.jsonl.gz)
+#   - ncbi_genus_summary.jsonl.gz (or metatraits_genus_summary.jsonl.gz)
+#   - ncbi_family_summary.jsonl.gz (or metatraits_family_summary.jsonl.gz)
+# Files may be gzipped or plain JSONL. Run: poetry run kg transform -s metatraits
+
 # # # ****Conversion Tables****
 #
 # Environment

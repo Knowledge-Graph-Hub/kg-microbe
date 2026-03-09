@@ -451,10 +451,7 @@ CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\tEC:3.2.1.21\t"
         found = False
         for edge in ec_substrate_edges:
             edge_dict = dict(zip(self.edge_header, edge, strict=False))
-            if (
-                edge_dict[SUBJECT_COLUMN] == expected_ec
-                and edge_dict[OBJECT_COLUMN] == expected_chebi
-            ):
+            if edge_dict[SUBJECT_COLUMN] == expected_ec and edge_dict[OBJECT_COLUMN] == expected_chebi:
                 found = True
                 break
 

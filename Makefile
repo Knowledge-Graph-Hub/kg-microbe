@@ -1,4 +1,4 @@
-.PHONY: run-summary
+.PHONY: run-summary process-metatraits-unmapped
 .SILENT:
 
 run-summary:

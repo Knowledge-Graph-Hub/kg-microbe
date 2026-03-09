@@ -18,7 +18,6 @@ from tqdm import tqdm
 from kg_microbe.transform_utils.constants import (
     AUTOMATED_AGENT,
     BIOLOGICAL_PROCESS,
-    CAPABLE_OF_PREDICATE,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
@@ -75,7 +74,8 @@ def _get_ncbitaxon_adapter():
 
 
 def _open_jsonl(path: Path):
-    """Open JSONL file; use gzip for .gz files, plain text otherwise.
+    """
+    Open JSONL file; use gzip for .gz files, plain text otherwise.
 
     If a .gz file is not actually gzip-compressed (e.g. misnamed plain JSON),
     falls back to plain text.
@@ -92,6 +92,7 @@ def _open_jsonl(path: Path):
 
 
 class MetatraitsTransform(Transform):
+
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
     def __init__(
@@ -109,7 +110,8 @@ class MetatraitsTransform(Transform):
         self.knowledge_source = "infores:metatraits"
         self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("madin synonym or field")
-        # Defer adapter creation until first cache miss (avoids ~2GB download when ncbitaxon_nodes.tsv has full coverage)
+        # Defer adapter creation until first cache miss (avoids ~2GB download when
+        # ncbitaxon_nodes.tsv has full coverage)
         self._ncbi_adapter = None
 
         # Taxon name -> NCBITaxon ID cache

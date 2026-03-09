@@ -89,6 +89,7 @@ ONTOLOGIES_MAP = {
 
 
 class OntologiesTransform(Transform):
+
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
 
     # Mapping of ontology names to InforES standard knowledge sources

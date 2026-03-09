@@ -36,6 +36,7 @@ from kg_microbe.utils.mapping_file_utils import (
 
 
 class TestAssayGeneration(unittest.TestCase):
+
     """Tests for assay node and edge generation functions."""
 
     def setUp(self) -> None:
@@ -327,6 +328,7 @@ class TestAssayGeneration(unittest.TestCase):
 
 
 class TestECSubstrateEdges(unittest.TestCase):
+
     """Tests for EC→substrate edge generation from bacdive_mappings.tsv."""
 
     def setUp(self) -> None:

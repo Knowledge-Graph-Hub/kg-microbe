@@ -55,6 +55,7 @@ def uri_to_curie(uri: str) -> str:
 
 
 class MetpoTreeNode:
+
     """
     Represents a node in the METPO class hierarchy tree.
 

@@ -28,7 +28,8 @@ _ENTITY_CATEGORY_OVERRIDE = {
 
 
 def _resolve_biolink_predicate(subject_label: str, notes: str, entity_category: str = "") -> str:
-    """Derive biolink predicate from notes or subject_label pattern.
+    """
+    Derive biolink predicate from notes or subject_label pattern.
 
     :param subject_label: Full trait label (e.g. 'produces: ethanol')
     :param notes: Notes column from mapping TSV
@@ -47,7 +48,8 @@ def _resolve_biolink_predicate(subject_label: str, notes: str, entity_category: 
 
 
 def _resolve_object_category(object_source: str, entity_category: str = "") -> str:
-    """Derive KGX object category from object_source and entity category.
+    """
+    Derive KGX object category from object_source and entity category.
 
     :param object_source: CHEBI, EC, METPO, GO
     :param entity_category: Entity category (chemicals, enzymes, pathways, phenotypes)
@@ -63,7 +65,8 @@ def _resolve_object_category(object_source: str, entity_category: str = "") -> s
 def load_microbial_trait_mappings(
     mappings_dir: Optional[Path] = None,
 ) -> Dict[str, Dict[str, str]]:
-    """Load all positive mapping TSVs from mappings/metatraits/.
+    """
+    Load all positive mapping TSVs from mappings/metatraits/.
 
     Excludes *_negative_mappings.tsv files.
 

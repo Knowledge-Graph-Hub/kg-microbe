@@ -14,6 +14,7 @@ from kg_microbe.transform_utils.cog.utils import (
 
 
 class TestCOGUtils(unittest.TestCase):
+
     """Test COG utility functions."""
 
     def setUp(self):
@@ -92,6 +93,7 @@ class TestCOGUtils(unittest.TestCase):
 
 
 class TestCOGTransform(unittest.TestCase):
+
     """Test COG transform class."""
 
     def setUp(self):

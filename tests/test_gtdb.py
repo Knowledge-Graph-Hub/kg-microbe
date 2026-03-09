@@ -13,6 +13,7 @@ from kg_microbe.transform_utils.gtdb.utils import (
 
 
 class TestGTDBUtils(unittest.TestCase):
+
     """Test GTDB utility functions."""
 
     def test_parse_taxonomy_string(self):
@@ -74,6 +75,7 @@ class TestGTDBUtils(unittest.TestCase):
 
 
 class TestGTDBTransform(unittest.TestCase):
+
     """Test GTDBTransform class."""
 
     def setUp(self):

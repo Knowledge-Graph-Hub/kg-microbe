@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 class COGTransform(Transform):
+
     """Transform COG functional classifications into KGX format."""
 
     def __init__(

@@ -17,6 +17,7 @@ def hierarchy():
 
 
 class TestBiolinkHierarchy:
+
     """Test BiolinkHierarchy class methods."""
 
     def test_initialization(self, hierarchy):

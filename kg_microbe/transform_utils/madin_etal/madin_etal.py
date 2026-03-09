@@ -76,6 +76,7 @@ PARENT_DIR = Path(__file__).resolve().parent
 
 
 class MadinEtAlTransform(Transform):
+
     """
     Ingest Madin et al dataset (NCBI/GTDB).
 
@@ -759,8 +760,9 @@ class MadinEtAlTransform(Transform):
                                 tax_isolation_source_edge = [
                                     list(item)
                                     for item in zip(
-                                        curies, preds, tax_id_list, relations, sources, knowledge_levels, agent_types
-                                    )  # noqa
+                                        curies, preds, tax_id_list, relations, sources, knowledge_levels, agent_types,
+                                        strict=True,
+                                    )
                                 ]
                             else:
                                 isolation_source_node = [

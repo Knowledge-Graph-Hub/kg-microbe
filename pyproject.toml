@@ -24,6 +24,7 @@ biopython = "^1.83"
 bacdive = "*"
 python-dotenv = "*"
 requests-ftp = "^0.3"
+pandas = ">=2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
@@ -35,6 +36,7 @@ jupyter-contrib-nbextensions = "^0.7.0"
 python-sql = "^1.4.2"
 ipython-sql = "^0.5.0"
 ruff = ">=0.2.1"
+deptry = ">=0.16.0"
 
 [tool.poetry.group.docs]
 optional = true
@@ -110,6 +112,9 @@ max-complexity = 10
 [tool.ruff.lint.isort]
 # Configure known first-party modules for correct import sorting
 known-first-party = ["kg_microbe"]
+
+[tool.deptry]
+extend_exclude = ["notebooks", "docs"]
 
 [tool.codespell]
 skip = "*.po,*.ts,.git,pyproject.toml"

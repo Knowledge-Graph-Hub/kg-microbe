@@ -45,7 +45,7 @@ METPO_TO_BIOLINK_PREDICATE = {
 
 # Biolink predicate -> RO relation
 PREDICATE_TO_RELATION = {
-    "biolink:produces": PRODUCES_RELATION,
+    "biolink:produces": "RO:0002234",
     "biolink:capable_of": BIOLOGICAL_PROCESS,
     "biolink:has_phenotype": HAS_PHENOTYPE,
 }

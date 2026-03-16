@@ -19,6 +19,7 @@ DISBIOME = "disbiome"
 UNIPROT_FUNCTIONAL_MICROBES = "uniprot_functional_microbes"
 UNIPROT_HUMAN = "uniprot_human"
 GTDB = "gtdb"
+METATRAITS = "metatraits"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -463,6 +464,8 @@ CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolin
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
 HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
+PRODUCES_PREDICATE = "biolink:produces"
+PRODUCES_RELATION = "RO:0002215"  # capable_of / has_output for metabolic production
 PREDICATE_ID_COLUMN = "predicate_id"
 PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {

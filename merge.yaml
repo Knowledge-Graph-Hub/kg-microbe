@@ -117,6 +117,13 @@ merged_graph:
         filename:
           - data/transformed/madin_etal/nodes.tsv
           - data/transformed/madin_etal/edges.tsv
+    metatraits:
+      input:
+        name: "metatraits"
+        format: tsv
+        filename:
+          - data/transformed/metatraits/nodes.tsv
+          - data/transformed/metatraits/edges.tsv
     bactotraits:
       input:
         name: "bactotraits"

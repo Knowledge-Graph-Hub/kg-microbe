@@ -409,7 +409,9 @@ class MadinEtAlTransform(Transform):
                                     go_result_for_tax_id = exact_match_go_df
                                 for row in go_result_for_tax_id.iterrows():
                                     pathway_nodes.append(
-                                        self._create_node_row(row[1].object_id, PATHWAY_CATEGORY, row[1].object_label)
+                                        self._create_node_row(
+                                            row[1].object_id, PATHWAY_CATEGORY, row[1].object_label
+                                        )
                                     )
                                     tax_pathway_edge.append(
                                         [
@@ -830,18 +832,30 @@ class MadinEtAlTransform(Transform):
                                 category = [ENVIRONMENT_CATEGORY for _ in range(len(curies))]
                                 preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
                                 relations = [LOCATION_OF for _ in range(len(curies))]
-                                sources = [self.knowledge_source for _ in range(len(curies))]  # Use infores:madin_etal
+                                sources = [
+                                    self.knowledge_source for _ in range(len(curies))
+                                ]  # Use infores:madin_etal
                                 knowledge_levels = [OBSERVATION for _ in range(len(curies))]
                                 agent_types = [MANUAL_AGENT for _ in range(len(curies))]
                                 isolation_source_node = [
                                     self._create_node_row(curie, cat, label)
-                                    for curie, cat, label in zip(curies, category, labels, strict=False)
+                                    for curie, cat, label in zip(
+                                        curies, category, labels, strict=False
+                                    )
                                 ]
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 
                                 tax_isolation_source_edge = [
                                     list(item)
-                                    for item in zip(curies, preds, tax_id_list, relations, sources, knowledge_levels, agent_types)  # noqa
+                                    for item in zip(
+                                        curies,
+                                        preds,
+                                        tax_id_list,
+                                        relations,
+                                        sources,
+                                        knowledge_levels,
+                                        agent_types,
+                                    )  # noqa
                                 ]
                             else:
                                 isolation_source_node = [
@@ -902,7 +916,11 @@ class MadinEtAlTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(
+            self.output_node_file,
+            sort_by_column=ID_COLUMN,
+            consolidation_columns=[ID_COLUMN, NAME_COLUMN],
+        )
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX

@@ -6,18 +6,7 @@ This directory contains a curated list of unique unmapped relationship types fro
 
 - **unmapped_traits.tsv** — traits that could not be mapped to ontology terms
 - **unresolved_taxa.tsv** — taxa that could not be resolved
-- **Location**: `data/transformed/metatraits/` (created when running the metatraits transform)
-
-## Downloading Data Files
-
-The large TSV files (`unmapped_traits.tsv`, `unresolved_taxa.tsv`, `edges.tsv`, `nodes.tsv`) are not stored in version control due to their size.
-
-To download these files:
-
-1. Visit the Google Drive folder: https://drive.google.com/drive/folders/1oOqxKWnpue15QHvI3Viqk7mPag7E4jHY
-2. Download the required files to `data/transformed/metatraits/`
-
-**Note**: This Google Drive folder is currently not world-writable. If you need access or have permission issues, please contact Anthea at antheaguo@berkeley.edu.
+- **Location**: `data/transformed/metatraits/` (created when running `poetry run kg transform -s metatraits`)
 
 ## Regeneration (Optional)
 

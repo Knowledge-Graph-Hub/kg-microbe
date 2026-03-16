@@ -88,12 +88,14 @@ def consolidate_node_categories(
                 # Check if this is a special case with resolution notes
                 node_id = row.get("id", "")
                 if node_id in resolution_notes:
-                    special_cases.append({
-                        "id": node_id,
-                        "name": row.get("name", ""),
-                        "original_pattern": category,
-                        "note": resolution_notes[node_id],
-                    })
+                    special_cases.append(
+                        {
+                            "id": node_id,
+                            "name": row.get("name", ""),
+                            "original_pattern": category,
+                            "note": resolution_notes[node_id],
+                        }
+                    )
 
                 # Apply rule if exists
                 if sorted_pattern in rules:
@@ -102,7 +104,9 @@ def consolidate_node_categories(
                     # No rule found - log as unknown pattern and use first category
                     unknown_patterns[sorted_pattern] += 1
                     row["category"] = categories[0]  # Fallback to first category
-                    print(f"WARNING: Unknown pattern '{sorted_pattern}' for node {node_id} - using {categories[0]}")
+                    print(
+                        f"WARNING: Unknown pattern '{sorted_pattern}' for node {node_id} - using {categories[0]}"
+                    )
 
             writer.writerow(row)
 
@@ -143,7 +147,9 @@ def consolidate_node_categories(
                 for pattern, count in unknown_patterns.most_common():
                     f.write(f"\n{pattern}: {count} nodes\n")
                     f.write("  Action: Used first category as fallback\n")
-                    f.write("  Recommendation: Add explicit rule to category_consolidation_rules.yaml\n")
+                    f.write(
+                        "  Recommendation: Add explicit rule to category_consolidation_rules.yaml\n"
+                    )
 
             # Report special cases
             if special_cases:

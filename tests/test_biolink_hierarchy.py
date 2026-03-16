@@ -107,12 +107,18 @@ class TestBiolinkHierarchy:
 
     def test_is_more_specific_false(self, hierarchy):
         """Test is_more_specific returns False for shallower category."""
-        assert hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:SmallMolecule") is False
+        assert (
+            hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:SmallMolecule") is False
+        )
 
     def test_is_more_specific_invalid_categories(self, hierarchy):
         """Test is_more_specific with invalid categories."""
-        assert hierarchy.is_more_specific("biolink:InvalidCategory", "biolink:ChemicalEntity") is False
-        assert hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:InvalidCategory") is False
+        assert (
+            hierarchy.is_more_specific("biolink:InvalidCategory", "biolink:ChemicalEntity") is False
+        )
+        assert (
+            hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:InvalidCategory") is False
+        )
 
     def test_get_ancestors_small_molecule(self, hierarchy):
         """Test get_ancestors for SmallMolecule."""
@@ -190,9 +196,9 @@ class TestBiolinkHierarchy:
             child_depth = hierarchy.depth_map.get(child)
             parent_depth = hierarchy.depth_map.get(parent)
             if child_depth is not None and parent_depth is not None:
-                assert child_depth > parent_depth, (
-                    f"{child} (depth {child_depth}) should be deeper than {parent} (depth {parent_depth})"
-                )
+                assert (
+                    child_depth > parent_depth
+                ), f"{child} (depth {child_depth}) should be deeper than {parent} (depth {parent_depth})"
 
     def test_multiple_categories_deterministic(self, hierarchy):
         """Test that multiple calls with same input return same result."""

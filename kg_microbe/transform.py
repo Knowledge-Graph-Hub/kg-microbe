@@ -22,10 +22,10 @@ from kg_microbe.transform_utils.constants import (
     RHEAMAPPINGS,
 )
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
-from kg_microbe.transform_utils.metatraits.metatraits import MetatraitsTransform
 from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
+from kg_microbe.transform_utils.metatraits.metatraits import MetatraitsTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
     ONTOLOGIES_MAP,
     OntologiesTransform,

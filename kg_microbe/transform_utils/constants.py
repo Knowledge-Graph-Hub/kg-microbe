@@ -546,6 +546,13 @@ GTDB_AR53_TAXONOMY = "ar53_taxonomy.tsv"
 GTDB_BAC120_METADATA = "bac120_metadata.tsv.gz"
 GTDB_AR53_METADATA = "ar53_metadata.tsv.gz"
 
+# Metatraits-specific paths
+METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
+METATRAITS_RAW_DIR = RAW_DATA_DIR / METATRAITS
+
+# Metatraits files
+METATRAITS_DATA_FILE = "metatraits.tsv"
+
 # All Uniprot
 UNIPROT_PROTEOMES_FILE = "uniprot_proteomes.tar.gz"
 UNIPROT_HUMAN_FILE = "uniprot_human.tar.gz"

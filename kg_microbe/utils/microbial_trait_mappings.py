@@ -9,8 +9,10 @@ import csv
 from pathlib import Path
 from typing import Dict, Optional
 
+from kg_microbe.transform_utils.constants import METATRAITS_MAPPINGS_DIR
+
 # Mappings dir: project_root/mappings/metatraits/
-_MAPPINGS_DIR = Path(__file__).parents[2] / "mappings" / "metatraits"
+_MAPPINGS_DIR = METATRAITS_MAPPINGS_DIR
 
 # Object source -> Biolink category
 _OBJECT_SOURCE_TO_CATEGORY = {

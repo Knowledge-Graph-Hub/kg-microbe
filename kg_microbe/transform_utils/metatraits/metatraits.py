@@ -27,7 +27,6 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_NODES_FILE,
     NCBITAXON_SOURCE,
     OBSERVATION,
-    PRODUCES_RELATION,
     RAW_DATA_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform

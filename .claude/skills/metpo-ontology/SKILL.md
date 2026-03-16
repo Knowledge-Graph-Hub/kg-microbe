@@ -13,7 +13,7 @@ Find patterns so metatraits output follows KGX format and METPO semantics. Do **
 
 1. **Allowed ontologies**: Metatraits should express traits using **GO, CHEBI, EC, METPO, and RHEA** only.
 
-2. **Ontology data location**: `data/transformed/ontologies/` (nodes/edges for these ontologies).
+2. **Ontology data location**: `data/transformed/ontologies/` (GO, CHEBI, EC, METPO nodes/edges) and `data/transformed/rhea_mappings/` (RHEA mappings).
 
 3. **Known unmapped relationship types**: Reference `docs/metatraits/unmapped_traits_unique.tsv` for relationship types derived from `unmapped_traits.tsv` and taxa in `data/transformed/metatraits/`.
 
@@ -24,6 +24,6 @@ Find patterns so metatraits output follows KGX format and METPO semantics. Do **
 ## Reference Material
 
 - **Metatraits traits browser**: [https://metatraits.embl.de/traits](https://metatraits.embl.de/traits) — label-to-CURIE mappings for chemicals, enzymes, and other terms (use when resolving unmapped traits)
-- **Ontology data**: `data/transformed/ontologies/` (GO, CHEBI, EC, METPO, RHEA)
+- **Ontology data**: `data/transformed/ontologies/` (GO, CHEBI, EC, METPO) and `data/transformed/rhea_mappings/` (RHEA)
 - **METPO**: [https://github.com/berkeleybop/metpo](https://github.com/berkeleybop/metpo) — Microbial Ecophysiological Trait and Phenotype Ontology (Berkeley BOP)
 - **OMP**: Ontology of Microbial Phenotypes (related, broader)

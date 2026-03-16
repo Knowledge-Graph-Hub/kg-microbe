@@ -879,7 +879,7 @@ class MediaDiveTransform(Transform):
                                 ):
                                     # Check growth value to determine edge type
                                     # MediaDive uses: growth=1 (positive), growth=0 (negative)
-                                    growth_value = strain.get('growth')
+                                    growth_value = strain.get("growth")
 
                                     # Only create edge if growth value is explicitly 0 or 1
                                     if growth_value in [0, 1]:
@@ -900,7 +900,9 @@ class MediaDiveTransform(Transform):
                                                     strain[SPECIES],
                                                 ),
                                                 self._create_node_row(
-                                                    medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]
+                                                    medium_id,
+                                                    MEDIUM_CATEGORY,
+                                                    dictionary[NAME_COLUMN],
                                                 ),
                                             ]
                                         )
@@ -972,7 +974,9 @@ class MediaDiveTransform(Transform):
                         for k, v in ingredients_dict.items()
                     ]
                     solution_nodes = [
-                        self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
+                        self._create_node_row(
+                            MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v
+                        )
                         for k, v in solutions_dict.items()
                     ]
 
@@ -1003,7 +1007,9 @@ class MediaDiveTransform(Transform):
                                     )
                         # Write role nodes with labels
                         role_nodes = [
-                            self._create_node_row(role, ROLE_CATEGORY, self.chebi_labels.get(role, ""))
+                            self._create_node_row(
+                                role, ROLE_CATEGORY, self.chebi_labels.get(role, "")
+                            )
                             for role in role_set
                         ]
                         node_writer.writerows(role_nodes)
@@ -1053,7 +1059,11 @@ class MediaDiveTransform(Transform):
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
 
-        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(
+            self.output_node_file,
+            sort_by_column=ID_COLUMN,
+            consolidation_columns=[ID_COLUMN, NAME_COLUMN],
+        )
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
 
         # Print data source and API call statistics

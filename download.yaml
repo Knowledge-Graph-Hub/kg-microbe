@@ -333,6 +333,16 @@
 #   local_name: metatraits/metatraits.tsv
 
 #
+# MetaTraits
+# Microbial trait data from the MetaTraits database (https://metatraits.embl.de/)
+# mapped to ontology terms (METPO, GO, ChEBI, EC, RHEA).
+# NOTE: Access requires permission from antheaguo@berkeley.edu
+#
+# -
+#   url: gdrive:<metatraits_folder_id>
+#   local_name: metatraits/metatraits.tsv
+
+#
 # Biolink Model
 # The standard schema for biological knowledge graphs
 # Version 4.3.6 (latest as of Dec 2024)

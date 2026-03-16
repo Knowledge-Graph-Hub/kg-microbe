@@ -136,9 +136,7 @@ class TestGTDBTransform(unittest.TestCase):
     def test_get_or_create_taxon_id_deterministic(self):
         """Test taxon IDs are assigned deterministically."""
         # Create taxa in different order
-        transform1 = GTDBTransform(
-            input_dir=str(self.test_input_dir), output_dir=self.output_dir
-        )
+        transform1 = GTDBTransform(input_dir=str(self.test_input_dir), output_dir=self.output_dir)
         id1_a = transform1._get_or_create_taxon_id("s__Escherichia_coli")
         id1_b = transform1._get_or_create_taxon_id("d__Bacteria")
         id1_c = transform1._get_or_create_taxon_id("p__Pseudomonadota")

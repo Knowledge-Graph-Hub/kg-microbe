@@ -315,6 +315,18 @@
   local_name: gtdb/ar53_metadata.tsv.gz
 
 #
+# MetaTraits
+# Microbial trait data from the MetaTraits database (https://metatraits.embl.de/)
+# mapped to ontology terms (METPO, GO, ChEBI, EC, RHEA).
+# NOTE: Access requires permission from antheaguo@berkeley.edu
+# Alternatively, download manually from:
+# https://drive.google.com/drive/folders/1oOqxKWnpue15QHvI3Viqk7mPag7E4jHY
+#
+# -
+#   url: gdrive:<metatraits_folder_id>
+#   local_name: metatraits/metatraits.tsv
+
+#
 # Biolink Model
 # The standard schema for biological knowledge graphs
 # Version 4.3.6 (latest as of Dec 2024)

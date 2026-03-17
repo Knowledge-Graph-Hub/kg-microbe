@@ -347,7 +347,7 @@ class ChemicalMappingConsolidator:
         print(f"  Merged {merged_count} duplicate entries")
 
     def export_unified_mapping(self, output_path: Path):
-        """Export unified mapping to TSV."""
+        """Export unified mapping to gzipped TSV."""
         print(f"\nExporting unified mapping to {output_path}...")
 
         records = []
@@ -378,7 +378,9 @@ class ChemicalMappingConsolidator:
             )
 
         df = pd.DataFrame(records)
-        df.to_csv(output_path, sep="\t", index=False)
+
+        # Export as gzipped TSV
+        df.to_csv(output_path, sep="\t", index=False, compression='gzip')
 
         print(f"  Exported {len(records)} unique chemicals")
         print(f"  Total synonyms: {sum(len(r['synonyms'].split('|')) for r in records if r['synonyms'])}")
@@ -412,11 +414,12 @@ def main():
     # Merge duplicates
     consolidator.merge_duplicates_by_name()
 
-    # Export unified mapping
-    output_path = base_dir / "mappings" / "unified_chemical_mappings.tsv"
+    # Export unified mapping (gzipped)
+    output_path = base_dir / "mappings" / "unified_chemical_mappings.tsv.gz"
     consolidator.export_unified_mapping(output_path)
 
     print(f"\n✓ Unified chemical mapping created: {output_path}")
+    print(f"  To use: gunzip -c {output_path.name} | head")
 
 
 if __name__ == "__main__":

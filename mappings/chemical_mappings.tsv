@@ -17292,3 +17292,4 @@ cpd:C10196	kegg_compound	CHEBI:9992	violanthin		high
 cpd:C08989	kegg_compound	CHEBI:9996	Virgaureasaponin I		high
 cpd:C11299	kegg_compound	CHEBI:9997	pristinamycin IIA		high
 cpd:C09587	kegg_compound	CHEBI:9999	Viscidulin B		high
+produces: siderophore	metatraits	CHEBI:26672	siderophore		high

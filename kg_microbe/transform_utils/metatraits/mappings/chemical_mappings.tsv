@@ -1,0 +1,8 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	predicate_id	confidence	mapping_justification	curator	source_dataset	notes	verified_date
+produces: ethanol	produces: ethanol	CHEBI:16236	ethanol	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	object of biolink:produces edge	
+produces: hydrogen sulfide	produces: hydrogen sulfide	CHEBI:16136	hydrogen sulfide	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	object of biolink:produces edge	
+produces: indole	produces: indole	CHEBI:16881	indole	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	object of biolink:produces edge	
+produces: methane from acetate	produces: methane from acetate	CHEBI:16183	methane	CHEBI	skos:closeMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate acetate (CHEBI:30089) not captured in single object	
+produces: siderophore	produces: siderophore	CHEBI:26672	siderophore	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	object of biolink:produces edge	
+carbon source: acetate	carbon source: acetate	CHEBI:30089	acetate	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate in biolink:capable_of edge via GO carbon utilization	
+carbon source: ethanol	carbon source: ethanol	CHEBI:16236	ethanol	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate in biolink:capable_of edge via GO carbon utilization	

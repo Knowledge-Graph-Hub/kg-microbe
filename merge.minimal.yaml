@@ -30,6 +30,13 @@ merged_graph:
         filename:
           - data/transformed/madin_etal/nodes.tsv
           - data/transformed/madin_etal/edges.tsv
+    metatraits:
+      name: "metatraits"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/metatraits/nodes.tsv
+          - data/transformed/metatraits/edges.tsv
   operations:
     - name: kgx.graph_operations.summarize_graph.generate_graph_stats
       args:

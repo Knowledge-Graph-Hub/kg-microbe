@@ -91,6 +91,7 @@ def _open_jsonl(path: Path):
 
 
 class _StreamingRowWriter:
+
     """Streaming TSV writer that writes rows incrementally to avoid memory accumulation."""
 
     def __init__(self, output_file: Path, header: List[str]):

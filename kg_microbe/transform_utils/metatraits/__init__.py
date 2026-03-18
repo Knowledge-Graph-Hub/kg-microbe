@@ -1,5 +1,5 @@
 """Metatraits transform package."""
 
-from kg_microbe.transform_utils.metatraits.metatraits import MetatraitsTransform
+from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 
-__all__ = ["MetatraitsTransform"]
+__all__ = ["MetaTraitsTransform"]

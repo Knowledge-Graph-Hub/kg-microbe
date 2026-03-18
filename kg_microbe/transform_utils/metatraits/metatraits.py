@@ -90,7 +90,7 @@ def _open_jsonl(path: Path):
     return open(path, "r", encoding="utf-8")
 
 
-class MetatraitsTransform(Transform):
+class MetaTraitsTransform(Transform):
 
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
@@ -100,7 +100,7 @@ class MetatraitsTransform(Transform):
         output_dir: Optional[Union[str, Path]] = None,
     ):
         """
-        Initialize MetatraitsTransform.
+        Initialize MetaTraitsTransform.
 
         :param input_dir: Input directory (default: data/raw)
         :param output_dir: Output directory (default: data/transformed)
@@ -139,7 +139,9 @@ class MetatraitsTransform(Transform):
                                 name = parts[2]
                                 if node_id.startswith("NCBITaxon:") and name:
                                     self.ncbitaxon_name_to_id[name.lower()] = node_id
-                    print(f"  Loaded {len(self.ncbitaxon_name_to_id)} NCBITaxon labels from {path.name}")
+                    print(
+                        f"  Loaded {len(self.ncbitaxon_name_to_id)} NCBITaxon labels from {path.name}"
+                    )
                     return
                 except Exception as e:
                     print(f"Warning: Could not load NCBITaxon labels from {path}: {e}")
@@ -169,7 +171,9 @@ class MetatraitsTransform(Transform):
             category_url = metpo_data.get("inferred_category", "")
             category = uri_to_curie(category_url) if category_url else "biolink:PhenotypicQuality"
             predicate_biolink = metpo_data.get("predicate_biolink_equivalent", "")
-            predicate = uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
+            predicate = (
+                uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
+            )
             self.trait_mapping[synonym] = {
                 "curie": metpo_data["curie"],
                 "category": category,
@@ -182,7 +186,10 @@ class MetatraitsTransform(Transform):
             with open(CUSTOM_CURIES_YAML_FILE) as f:
                 custom_data = yaml.safe_load(f)
             custom_map = {
-                k: v for first in (custom_data or {}).values() if isinstance(first, dict) for k, v in first.items()
+                k: v
+                for first in (custom_data or {}).values()
+                if isinstance(first, dict)
+                for k, v in first.items()
             }
             for key, value in custom_map.items():
                 if not isinstance(value, dict):
@@ -237,7 +244,7 @@ class MetatraitsTransform(Transform):
         show_status: bool = True,
     ) -> None:
         """
-        Run MetatraitsTransform.
+        Run MetaTraitsTransform.
 
         :param data_file: Ignored; uses configured input file list.
         :param show_status: Whether to show progress bar.
@@ -309,16 +316,18 @@ class MetatraitsTransform(Transform):
                             continue
 
                         # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
-                        micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
-                            trait_name.lower()
-                        )
+                        micro_mapping = self.microbial_mappings.get(
+                            trait_name
+                        ) or self.microbial_mappings.get(trait_name.lower())
                         if micro_mapping:
                             curie = micro_mapping["object_id"]
                             category = micro_mapping["object_category"]
                             pred = micro_mapping["biolink_predicate"]
                             label = micro_mapping["object_label"]
                         else:
-                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
+                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
+                                trait_name.lower()
+                            )
                             if not mapping:
                                 unmapped_traits.append(
                                     (

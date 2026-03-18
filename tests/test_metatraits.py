@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from parameterized import parameterized
 
-from kg_microbe.transform_utils.metatraits.metatraits import MetatraitsTransform
+from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
 
 # Truth table from microbial-trait-mappings test_round_trip.py
@@ -43,9 +43,9 @@ EXPECTED_EDGES = [
 
 
 @patch("kg_microbe.transform_utils.metatraits.metatraits._get_ncbitaxon_adapter")
-class TestMetatraitsTransform(unittest.TestCase):
+class TestMetaTraitsTransform(unittest.TestCase):
 
-    """Test MetatraitsTransform class."""
+    """Test MetaTraitsTransform class."""
 
     def setUp(self):
         """Set up test fixtures."""
@@ -54,8 +54,8 @@ class TestMetatraitsTransform(unittest.TestCase):
         self.fixture_file = self.test_resources_dir / "metatraits_fixture.jsonl"
 
     def test_transform_initialization(self, mock_adapter):
-        """Test MetatraitsTransform initialization."""
-        transform = MetatraitsTransform(
+        """Test MetaTraitsTransform initialization."""
+        transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
             output_dir=self.temp_output_dir,
         )
@@ -66,7 +66,7 @@ class TestMetatraitsTransform(unittest.TestCase):
 
     def test_create_node_row(self, mock_adapter):
         """Test _create_node_row produces correct structure."""
-        transform = MetatraitsTransform(
+        transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
             output_dir=self.temp_output_dir,
         )
@@ -83,7 +83,7 @@ class TestMetatraitsTransform(unittest.TestCase):
 
     def test_get_relation_for_predicate(self, mock_adapter):
         """Test _get_relation_for_predicate returns correct RO terms."""
-        transform = MetatraitsTransform(
+        transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
             output_dir=self.temp_output_dir,
         )
@@ -113,7 +113,7 @@ class TestMetatraitsTransform(unittest.TestCase):
 
     def test_to_biolink_predicate(self, mock_adapter):
         """Test _to_biolink_predicate maps METPO to biolink."""
-        transform = MetatraitsTransform(
+        transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
             output_dir=self.temp_output_dir,
         )
@@ -155,7 +155,9 @@ class TestMetatraitsTransform(unittest.TestCase):
         self.assertIn("biolink:has_phenotype", predicates)
 
     @parameterized.expand(EXPECTED_EDGES)
-    def test_edge_resolution_round_trip(self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat):
+    def test_edge_resolution_round_trip(
+        self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat
+    ):
         """Verify each trait resolves to correct (predicate, object_id, object_category)."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -166,7 +168,7 @@ class TestMetatraitsTransform(unittest.TestCase):
         self.assertEqual(match["biolink_predicate"], expected_pred)
         self.assertEqual(match["object_category"], expected_cat)
 
-    @patch.object(MetatraitsTransform, "_search_ncbitaxon_by_label")
+    @patch.object(MetaTraitsTransform, "_search_ncbitaxon_by_label")
     def test_run_with_fixture(self, mock_search, mock_adapter):
         """Test run() with fixture produces nodes and edges."""
         mock_search.return_value = "NCBITaxon:562"
@@ -178,7 +180,7 @@ class TestMetatraitsTransform(unittest.TestCase):
         shutil.copy(self.fixture_file, fixture_path)
 
         try:
-            transform = MetatraitsTransform(
+            transform = MetaTraitsTransform(
                 input_dir=self.test_resources_dir,
                 output_dir=self.temp_output_dir,
             )
@@ -212,7 +214,7 @@ class TestMetatraitsTransform(unittest.TestCase):
     def test_run_without_input_files_raises(self, mock_adapter):
         """Test run() raises FileNotFoundError when no input files exist."""
         empty_dir = Path(tempfile.mkdtemp())
-        transform = MetatraitsTransform(
+        transform = MetaTraitsTransform(
             input_dir=empty_dir,
             output_dir=self.temp_output_dir,
         )

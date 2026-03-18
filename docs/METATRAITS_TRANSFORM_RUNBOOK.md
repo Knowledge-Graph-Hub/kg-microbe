@@ -164,7 +164,7 @@ See [METATRAITS_TRANSFORM_ANALYSIS.md](METATRAITS_TRANSFORM_ANALYSIS.md) for:
 The metatraits transform is registered in `kg_microbe/transform.py` under `DATA_SOURCES`. If you cloned before this was added, ensure your `transform.py` includes:
 
 ```python
-METATRAITS: MetatraitsTransform,
+METATRAITS: MetaTraitsTransform,
 ```
 
 **Recent updates (predicate resolution):**

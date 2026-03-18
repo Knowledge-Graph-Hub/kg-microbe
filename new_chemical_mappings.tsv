@@ -1,0 +1,2 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	predicate_id	confidence	mapping_justification	curator	source_dataset	notes	verified_date
+produces: siderophore	produces: siderophore	CHEBI:26672	siderophore	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	object of biolink:produces edge

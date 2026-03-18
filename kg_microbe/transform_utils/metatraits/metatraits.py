@@ -90,6 +90,40 @@ def _open_jsonl(path: Path):
     return open(path, "r", encoding="utf-8")
 
 
+class _StreamingRowWriter:
+    """Streaming TSV writer that writes rows incrementally to avoid memory accumulation."""
+
+    def __init__(self, output_file: Path, header: List[str]):
+        """
+        Initialize streaming writer.
+
+        :param output_file: Path to output TSV file
+        :param header: Column header list
+        """
+        self.output_file = output_file
+        self.header = header
+        self.file_handle = None
+        self.writer = None
+
+    def __enter__(self):
+        """Open file and write header."""
+        self.output_file.parent.mkdir(exist_ok=True, parents=True)
+        self.file_handle = open(self.output_file, "w", newline="", encoding="utf-8")
+        self.writer = csv.writer(self.file_handle, delimiter="\t")
+        self.writer.writerow(self.header)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Close file handle."""
+        if self.file_handle:
+            self.file_handle.close()
+
+    def write_row(self, row: List):
+        """Write a single row to the TSV file."""
+        if self.writer:
+            self.writer.writerow(row)
+
+
 class MetaTraitsTransform(Transform):
 
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
@@ -273,116 +307,111 @@ class MetaTraitsTransform(Transform):
 
         seen_taxon_nodes: Set[str] = set()
         seen_trait_nodes: Set[str] = set()
-        node_rows: List[List] = []
-        edge_rows: List[List] = []
         unmapped_traits: List[Tuple[str, str, str, int]] = []
         unresolved_taxa: List[str] = []
 
-        iterable = tqdm(input_files, desc="Processing files") if show_status else input_files
+        # Create output directory
+        Path.mkdir(self.output_dir, exist_ok=True, parents=True)
 
-        for input_path in iterable:
-            with _open_jsonl(input_path) as f:
-                line_iter = tqdm(f, desc=f"  {input_path.name}", leave=False) if show_status else f
-                for line in line_iter:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        obj = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
+        # Use streaming writers to avoid memory accumulation
+        with _StreamingRowWriter(self.output_node_file, self.node_header) as node_writer, \
+             _StreamingRowWriter(self.output_edge_file, self.edge_header) as edge_writer:
 
-                    tax_name = obj.get("tax_name")
-                    if not tax_name:
-                        continue
+            iterable = tqdm(input_files, desc="Processing files") if show_status else input_files
 
-                    tax_id = self._search_ncbitaxon_by_label(tax_name)
-                    if not tax_id:
-                        unresolved_taxa.append(tax_name)
-                        continue
-
-                    summaries = obj.get("summaries", [])
-                    for s in summaries:
-                        trait_name = s.get("name", "").strip()
-                        if not trait_name:
+            for input_path in iterable:
+                with _open_jsonl(input_path) as f:
+                    line_iter = tqdm(f, desc=f"  {input_path.name}", leave=False) if show_status else f
+                    for line in line_iter:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            obj = json.loads(line)
+                        except json.JSONDecodeError:
                             continue
 
-                        # Skip explicit negative (false: 100%)
-                        majority_label = s.get("majority_label", "")
-                        percentages = s.get("percentages", {}) or {}
-                        pct_true = percentages.get("true", 0) or 0
-
-                        if pct_true <= 0:
+                        tax_name = obj.get("tax_name")
+                        if not tax_name:
                             continue
 
-                        # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
-                        micro_mapping = self.microbial_mappings.get(
-                            trait_name
-                        ) or self.microbial_mappings.get(trait_name.lower())
-                        if micro_mapping:
-                            curie = micro_mapping["object_id"]
-                            category = micro_mapping["object_category"]
-                            pred = micro_mapping["biolink_predicate"]
-                            label = micro_mapping["object_label"]
-                        else:
-                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
-                                trait_name.lower()
-                            )
-                            if not mapping:
-                                unmapped_traits.append(
-                                    (
-                                        trait_name,
+                        tax_id = self._search_ncbitaxon_by_label(tax_name)
+                        if not tax_id:
+                            unresolved_taxa.append(tax_name)
+                            continue
+
+                        summaries = obj.get("summaries", [])
+                        for s in summaries:
+                            trait_name = s.get("name", "").strip()
+                            if not trait_name:
+                                continue
+
+                            # Skip explicit negative (false: 100%)
+                            majority_label = s.get("majority_label", "")
+                            percentages = s.get("percentages", {}) or {}
+                            pct_true = percentages.get("true", 0) or 0
+
+                            if pct_true <= 0:
+                                continue
+
+                            # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
+                            micro_mapping = self.microbial_mappings.get(
+                                trait_name
+                            ) or self.microbial_mappings.get(trait_name.lower())
+                            if micro_mapping:
+                                curie = micro_mapping["object_id"]
+                                category = micro_mapping["object_category"]
+                                pred = micro_mapping["biolink_predicate"]
+                                label = micro_mapping["object_label"]
+                            else:
+                                mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
+                                    trait_name.lower()
+                                )
+                                if not mapping:
+                                    unmapped_traits.append(
+                                        (
+                                            trait_name,
+                                            tax_name,
+                                            majority_label,
+                                            s.get("num_observations", 0),
+                                        )
+                                    )
+                                    continue
+                                curie = mapping["curie"]
+                                category = mapping["category"]
+                                # Use biolink predicate for KGX compliance
+                                pred = self._to_biolink_predicate(mapping["predicate"])
+                                label = mapping["name"]
+
+                            if tax_id not in seen_taxon_nodes:
+                                seen_taxon_nodes.add(tax_id)
+                                node_writer.write_row(
+                                    self._create_node_row(
+                                        tax_id,
+                                        NCBI_CATEGORY,
                                         tax_name,
-                                        majority_label,
-                                        s.get("num_observations", 0),
                                     )
                                 )
-                                continue
-                            curie = mapping["curie"]
-                            category = mapping["category"]
-                            # Use biolink predicate for KGX compliance
-                            pred = self._to_biolink_predicate(mapping["predicate"])
-                            label = mapping["name"]
 
-                        if tax_id not in seen_taxon_nodes:
-                            seen_taxon_nodes.add(tax_id)
-                            node_rows.append(
-                                self._create_node_row(
+                            if curie not in seen_trait_nodes:
+                                seen_trait_nodes.add(curie)
+                                node_writer.write_row(self._create_node_row(curie, category, label))
+
+                            relation = self._get_relation_for_predicate(pred)
+                            edge_writer.write_row(
+                                [
                                     tax_id,
-                                    NCBI_CATEGORY,
-                                    tax_name,
-                                )
+                                    pred,
+                                    curie,
+                                    relation,
+                                    self.knowledge_source,
+                                    OBSERVATION,
+                                    AUTOMATED_AGENT,
+                                ]
                             )
 
-                        if curie not in seen_trait_nodes:
-                            seen_trait_nodes.add(curie)
-                            node_rows.append(self._create_node_row(curie, category, label))
-
-                        relation = self._get_relation_for_predicate(pred)
-                        edge_rows.append(
-                            [
-                                tax_id,
-                                pred,
-                                curie,
-                                relation,
-                                self.knowledge_source,
-                                OBSERVATION,
-                                AUTOMATED_AGENT,
-                            ]
-                        )
-
-        # Write nodes and edges
-        Path.mkdir(self.output_dir, exist_ok=True, parents=True)
-        with open(self.output_node_file, "w", newline="") as nf:
-            nw = csv.writer(nf, delimiter="\t")
-            nw.writerow(self.node_header)
-            nw.writerows(node_rows)
-
-        with open(self.output_edge_file, "w", newline="") as ef:
-            ew = csv.writer(ef, delimiter="\t")
-            ew.writerow(self.edge_header)
-            ew.writerows(edge_rows)
-
+        # Streaming writers close when exiting context manager
+        # Run deduplication on the output files
         drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN)
         drop_duplicates(self.output_edge_file)
 

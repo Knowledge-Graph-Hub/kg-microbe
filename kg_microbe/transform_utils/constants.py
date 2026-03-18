@@ -502,6 +502,20 @@ PATHWAYS_COLUMN = "pathways"
 OBJECT_ID_COLUMN = "object_id"
 OBJECT_LABEL_COLUMN = "object_label"
 OBJECT_CATEGORIES_COLUMN = "object_categories"
+
+# METPO Phenotype Trait Mappings
+# Maps trait names to METPO IDs for common phenotypic characteristics
+METPO_PHENOTYPE_MAPPINGS = {
+    "gram positive": "METPO:1000606",  # Gram-positive
+    "gram negative": "METPO:1000607",  # Gram-negative
+    "sporulation": "METPO:1000614",  # endospore-forming
+    "obligate aerobic": "METPO:1000616",  # obligately aerobic
+    "obligate anaerobic": "METPO:1000870",  # obligately anaerobic
+    "presence of motility": "METPO:1002005",  # motile
+    "voges-proskauer test": "METPO:1005017",  # Voges-Proskauer test positive
+    "psychrophilic": "METPO:1000660",  # psychrophilic
+    "thermophilic": "METPO:1000656",  # thermophilic
+}
 OBJECT_ALIASES_COLUMN = "object_aliases"
 MATCHES_WHOLE_TEXT_COLUMN = "matches_whole_text"
 SUBJECT_LABEL_COLUMN = "subject_label"

@@ -50,6 +50,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         self.test_resources_dir = Path(__file__).parent / "resources"
+        self.temp_input_dir = Path(tempfile.mkdtemp())
         self.temp_output_dir = Path(tempfile.mkdtemp())
         self.fixture_file = self.test_resources_dir / "metatraits_fixture.jsonl"
 
@@ -173,15 +174,15 @@ class TestMetaTraitsTransform(unittest.TestCase):
         """Test run() with fixture produces nodes and edges."""
         mock_search.return_value = "NCBITaxon:562"
 
-        # Copy fixture to expected input filename (plain JSONL)
+        # Copy fixture to temporary input directory with expected filename
         import shutil
 
-        fixture_path = self.test_resources_dir / "ncbi_species_summary.jsonl"
+        fixture_path = self.temp_input_dir / "ncbi_species_summary.jsonl"
         shutil.copy(self.fixture_file, fixture_path)
 
         try:
             transform = MetaTraitsTransform(
-                input_dir=self.test_resources_dir,
+                input_dir=self.temp_input_dir,
                 output_dir=self.temp_output_dir,
             )
             transform._search_ncbitaxon_by_label = mock_search
@@ -208,8 +209,11 @@ class TestMetaTraitsTransform(unittest.TestCase):
             self.assertIn("predicate", edges[0])
             self.assertIn("object", edges[0])
         finally:
-            if fixture_path.exists():
-                fixture_path.unlink()
+            # Cleanup temporary input directory
+            import shutil
+
+            if self.temp_input_dir.exists():
+                shutil.rmtree(self.temp_input_dir)
 
     def test_run_without_input_files_raises(self, mock_adapter):
         """Test run() raises FileNotFoundError when no input files exist."""

@@ -855,7 +855,8 @@ class MadinEtAlTransform(Transform):
                                         sources,
                                         knowledge_levels,
                                         agent_types,
-                                    )  # noqa
+                                        strict=True,
+                                    )
                                 ]
                             else:
                                 isolation_source_node = [

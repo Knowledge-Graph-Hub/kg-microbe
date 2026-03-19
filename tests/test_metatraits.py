@@ -208,6 +208,11 @@ class TestMetaTraitsTransform(unittest.TestCase):
             self.assertIn("subject", edges[0])
             self.assertIn("predicate", edges[0])
             self.assertIn("object", edges[0])
+            self.assertIn("has_percentage", edges[0])
+
+            # Verify that a 0% pct_true trait (gram positive) is included in edges
+            edge_data = "\n".join(edges[1:])  # skip header
+            self.assertIn("0.0", edge_data, "0% pct_true trait should be included in edges")
         finally:
             # Cleanup temporary input directory
             import shutil

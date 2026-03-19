@@ -329,13 +329,13 @@
 #
 -
   url: gdrive:1vL9wujvty4Xh2ZG2HHquX0RE7968Dkbm
-  local_name: metatraits/ncbi_species_summary.jsonl.gz
+  local_name: ncbi_species_summary.jsonl.gz
 -
   url: gdrive:1WL6VhD2I6MGuI3iHKbCQYTncG1UB-u6e
-  local_name: metatraits/ncbi_genus_summary.jsonl.gz
+  local_name: ncbi_genus_summary.jsonl.gz
 -
   url: gdrive:1pgOugA5jQG96GbCktkTJN9FGn6rypTOI
-  local_name: metatraits/ncbi_family_summary.jsonl.gz
+  local_name: ncbi_family_summary.jsonl.gz
 
 #
 # Biolink Model

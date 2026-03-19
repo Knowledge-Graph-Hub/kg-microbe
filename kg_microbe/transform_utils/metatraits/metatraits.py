@@ -350,7 +350,12 @@ class MetaTraitsTransform(Transform):
 
                             majority_label = s.get("majority_label", "")
                             percentages = s.get("percentages", {}) or {}
-                            pct_true = percentages.get("true", 0) or 0
+                            # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
+                            pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
+
+                            # No filtering by pct_true - emit all traits and let downstream
+                            # consumers apply their own thresholds using has_percentage column
+                            # Note: 0% consensus may indicate explicit negation (e.g. "gram positive: 0% true")
 
                             # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
                             micro_mapping = self.microbial_mappings.get(

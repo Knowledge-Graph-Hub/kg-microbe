@@ -8,12 +8,15 @@ to avoid repeated API calls during transforms.
 import json
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List
 
 import requests
 import requests_cache
 from tqdm import tqdm
+
+MAX_WORKERS = 20
 
 # Set up logging for API warnings (written to file, not stdout)
 logger = logging.getLogger(__name__)
@@ -101,6 +104,20 @@ def load_basic_media_list(basic_file: str) -> List[Dict]:
         return media_list
 
 
+def _fetch_medium_detail(medium: Dict) -> tuple:
+    """Fetch detailed recipe for a single medium. Returns (medium_id, data)."""
+    medium_id = str(medium.get(ID_KEY))
+    url = MEDIADIVE_REST_API_BASE_URL + MEDIUM_ENDPOINT + medium_id
+    return medium_id, get_json_from_api(url)
+
+
+def _fetch_medium_strains(medium: Dict) -> tuple:
+    """Fetch strain associations for a single medium. Returns (medium_id, data)."""
+    medium_id = str(medium.get(ID_KEY))
+    url = MEDIADIVE_REST_API_BASE_URL + MEDIUM_STRAINS_ENDPOINT + medium_id
+    return medium_id, get_json_from_api(url)
+
+
 def download_detailed_media(media_list: List[Dict]) -> Dict[str, Dict]:
     """
     Download detailed recipe information for all media.
@@ -117,12 +134,12 @@ def download_detailed_media(media_list: List[Dict]) -> Dict[str, Dict]:
     print(f"\nDownloading detailed recipes for {len(media_list)} media...")
     detailed_data = {}
 
-    for medium in tqdm(media_list, desc="Downloading medium details"):
-        medium_id = str(medium.get(ID_KEY))
-        url = MEDIADIVE_REST_API_BASE_URL + MEDIUM_ENDPOINT + medium_id
-        data = get_json_from_api(url)
-        if data:
-            detailed_data[medium_id] = data
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(_fetch_medium_detail, m): m for m in media_list}
+        for future in tqdm(as_completed(futures), total=len(futures), desc="Downloading medium details"):
+            medium_id, data = future.result()
+            if data:
+                detailed_data[medium_id] = data
 
     print(f"Downloaded {len(detailed_data)} detailed medium recipes")
     return detailed_data
@@ -144,12 +161,12 @@ def download_medium_strains(media_list: List[Dict]) -> Dict[str, List]:
     print(f"\nDownloading strain associations for {len(media_list)} media...")
     strain_data = {}
 
-    for medium in tqdm(media_list, desc="Downloading medium-strain associations"):
-        medium_id = str(medium.get(ID_KEY))
-        url = MEDIADIVE_REST_API_BASE_URL + MEDIUM_STRAINS_ENDPOINT + medium_id
-        data = get_json_from_api(url)
-        if data:
-            strain_data[medium_id] = data
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(_fetch_medium_strains, m): m for m in media_list}
+        for future in tqdm(as_completed(futures), total=len(futures), desc="Downloading medium-strain associations"):
+            medium_id, data = future.result()
+            if data:
+                strain_data[medium_id] = data
 
     # Count total strain associations, handling different data types
     total_strains = 0

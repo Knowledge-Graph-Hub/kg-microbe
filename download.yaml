@@ -138,17 +138,19 @@
 
 #
 # Uniprot Functional Microbes
+# NOTE: Commented out — UniprotFunctionalMicrobesTransform is not active in DATA_SOURCES
 #
--
-  url: https://drive.google.com/file/d/1-aFVHE54t8HvcV4Z32hyTkmlXci07Y9g/view?usp=drive_link
-  local_name: uniprot_proteomes.tar.gz
+# -
+#   url: https://drive.google.com/file/d/1-aFVHE54t8HvcV4Z32hyTkmlXci07Y9g/view?usp=drive_link
+#   local_name: uniprot_proteomes.tar.gz
 
 #
 # Uniprot Human
+# NOTE: Commented out — UniprotHumanTransform is not active in DATA_SOURCES
 #
--
-  url: https://drive.google.com/file/d/1PkqAp5v0IKs9qwu9mbK7gVeNaO-p3HsI/view?usp=drive_link 
-  local_name: uniprot_human.tar.gz
+# -
+#   url: https://drive.google.com/file/d/1PkqAp5v0IKs9qwu9mbK7gVeNaO-p3HsI/view?usp=drive_link
+#   local_name: uniprot_human.tar.gz
 
 
 # 
@@ -190,31 +192,35 @@
 
 #
 # CTD
+# NOTE: Commented out — CTDTransform is not active in DATA_SOURCES
 #
--
-  url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
-  local_name: CTD_chemicals_diseases.tsv.gz
+# -
+#   url: https://ctdbase.org/reports/CTD_chemicals_diseases.tsv.gz
+#   local_name: CTD_chemicals_diseases.tsv.gz
 
 #
 # Fermentation explorer
+# NOTE: Commented out — no active transform uses this file
 #
--
-  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.zip
-  local_name: fermentation_explorer.csv
+# -
+#   url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.zip
+#   local_name: fermentation_explorer.csv
 
 #
 # Disbiome
+# NOTE: Commented out — DisbiomeTransform is not active in DATA_SOURCES
 #
--
-  url: https://disbiome.ugent.be:8080/experiment
-  local_name: disbiome.json
+# -
+#   url: https://disbiome.ugent.be:8080/experiment
+#   local_name: disbiome.json
 
 #
 # Wallen et al
+# NOTE: Commented out — WallenEtAlTransform is not active in DATA_SOURCES
 #
--
-  url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
-  local_name: wallen_etal.xlsx
+# -
+#   url: https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-022-34667-x/MediaObjects/41467_2022_34667_MOESM4_ESM.xlsx
+#   local_name: wallen_etal.xlsx
 
 
 #
@@ -314,33 +320,22 @@
   url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz
   local_name: gtdb/ar53_metadata.tsv.gz
 
-# Place the following JSONL files in data/raw/ for the metatraits transform:
-#   - ncbi_species_summary.jsonl.gz (or metatraits_species_summary.jsonl.gz)
-#   - ncbi_genus_summary.jsonl.gz (or metatraits_genus_summary.jsonl.gz)
-#   - ncbi_family_summary.jsonl.gz (or metatraits_family_summary.jsonl.gz)
-# Files may be gzipped or plain JSONL. Run: poetry run kg transform -s metatraits
-
 #
 # MetaTraits
 # Microbial trait data from the MetaTraits database (https://metatraits.embl.de/)
-# mapped to ontology terms (METPO, GO, ChEBI, EC, RHEA).
-# NOTE: Access requires permission from antheaguo@berkeley.edu
-# Alternatively, download manually from:
-# https://drive.google.com/drive/folders/1oOqxKWnpue15QHvI3Viqk7mPag7E4jHY
-#
-# -
-#   url: gdrive:<metatraits_folder_id>
-#   local_name: metatraits/metatraits.tsv
-
-#
-# MetaTraits
-# Microbial trait data from the MetaTraits database (https://metatraits.embl.de/)
-# mapped to ontology terms (METPO, GO, ChEBI, EC, RHEA).
+# summarized per taxon across NCBI taxonomy ranks (species, genus, family).
+# Raw data is in JSONL format (one JSON object per taxon per line).
 # NOTE: Access requires permission from antheaguo@berkeley.edu
 #
-# -
-#   url: gdrive:<metatraits_folder_id>
-#   local_name: metatraits/metatraits.tsv
+-
+  url: gdrive:1vL9wujvty4Xh2ZG2HHquX0RE7968Dkbm
+  local_name: metatraits/ncbi_species_summary.jsonl.gz
+-
+  url: gdrive:1WL6VhD2I6MGuI3iHKbCQYTncG1UB-u6e
+  local_name: metatraits/ncbi_genus_summary.jsonl.gz
+-
+  url: gdrive:1pgOugA5jQG96GbCktkTJN9FGn6rypTOI
+  local_name: metatraits/ncbi_family_summary.jsonl.gz
 
 #
 # Biolink Model

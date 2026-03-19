@@ -284,7 +284,7 @@ class MetaTraitsTransform(Transform):
         :param data_file: Ignored; uses configured input file list.
         :param show_status: Whether to show progress bar.
         """
-        input_base = Path(self.input_base_dir)
+        input_base = Path(self.input_base_dir) / "metatraits"
 
         # Find which input files exist
         input_files: List[Path] = []

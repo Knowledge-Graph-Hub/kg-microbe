@@ -177,7 +177,9 @@ class TestMetaTraitsTransform(unittest.TestCase):
         # Copy fixture to temporary input directory with expected filename
         import shutil
 
-        fixture_path = self.temp_input_dir / "ncbi_species_summary.jsonl"
+        metatraits_subdir = self.temp_input_dir / "metatraits"
+        metatraits_subdir.mkdir(exist_ok=True)
+        fixture_path = metatraits_subdir / "ncbi_species_summary.jsonl"
         shutil.copy(self.fixture_file, fixture_path)
 
         try:

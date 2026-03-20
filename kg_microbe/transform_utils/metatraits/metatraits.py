@@ -141,6 +141,7 @@ class MetaTraitsTransform(Transform):
         :param output_dir: Output directory (default: data/transformed)
         """
         super().__init__(METATRAITS, input_dir, output_dir)
+        self.edge_header = self.edge_header + ["has_percentage"]
         self.knowledge_source = "infores:metatraits"
         self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("madin synonym or field")
@@ -347,13 +348,14 @@ class MetaTraitsTransform(Transform):
                             if not trait_name:
                                 continue
 
-                            # Skip explicit negative (false: 100%)
                             majority_label = s.get("majority_label", "")
                             percentages = s.get("percentages", {}) or {}
-                            pct_true = percentages.get("true", 0) or 0
+                            # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
+                            pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
 
-                            if pct_true <= 0:
-                                continue
+                            # No filtering by pct_true - emit all traits and let downstream
+                            # consumers apply their own thresholds using has_percentage column
+                            # Note: 0% consensus may indicate explicit negation (e.g. "gram positive: 0% true")
 
                             # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
                             micro_mapping = self.microbial_mappings.get(
@@ -408,6 +410,7 @@ class MetaTraitsTransform(Transform):
                                     self.knowledge_source,
                                     OBSERVATION,
                                     AUTOMATED_AGENT,
+                                    pct_true,
                                 ]
                             )
 

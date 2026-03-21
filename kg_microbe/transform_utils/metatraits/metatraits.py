@@ -62,14 +62,24 @@ METATRAITS_INPUT_FILES = [
 
 def _get_ncbitaxon_adapter():
     """Get OAK adapter for NCBITaxon; use pre-built sqlite:obo:ncbitaxon if local source invalid."""
-    local_path = f"sqlite:{NCBITAXON_SOURCE}"
-    try:
-        adapter = get_adapter(local_path)
-        # Verify adapter works (e.g. has statements table)
-        list(adapter.basic_search("Bacteria", limit=1))
-        return adapter
-    except Exception:
-        return get_adapter("sqlite:obo:ncbitaxon")
+    # Use .db file instead of .owl (NCBITAXON_SOURCE points to .owl)
+    local_db = NCBITAXON_SOURCE.parent / "ncbitaxon.db"
+
+    # Try local database first, fall back to remote if corrupted/missing
+    if local_db.exists():
+        local_path = f"sqlite:{local_db}"
+        try:
+            adapter = get_adapter(local_path)
+            # Verify adapter works (e.g. has statements table)
+            list(adapter.basic_search("Bacteria", limit=1))
+            print(f"  Using local NCBITaxon database: {local_db}")
+            return adapter
+        except Exception as e:
+            print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), using remote fallback")
+
+    # Fallback: download pre-built OBO database (~2GB)
+    print("  Downloading NCBITaxon database from OBO library (this may take a few minutes)...")
+    return get_adapter("sqlite:obo:ncbitaxon")
 
 
 def _open_jsonl(path: Path):

@@ -30,6 +30,7 @@ from kg_microbe.transform_utils.constants import (
     RAW_DATA_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
 from kg_microbe.utils.oak_utils import search_by_label
@@ -37,9 +38,35 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # METPO predicate -> biolink predicate (for relation lookup)
 METPO_TO_BIOLINK_PREDICATE = {
+    # Capability and phenotype
+    "METPO:2000102": "biolink:has_phenotype",  # has phenotype
     "METPO:2000103": "biolink:capable_of",  # capable of
+    # Chemical interactions (positive)
+    "METPO:2000001": "biolink:interacts_with",  # organism interacts with chemical
+    "METPO:2000002": "biolink:interacts_with",  # assimilates
+    "METPO:2000006": "biolink:capable_of",  # uses as carbon source
+    "METPO:2000007": "biolink:capable_of",  # degrades
+    "METPO:2000011": "biolink:capable_of",  # ferments
+    "METPO:2000012": "biolink:capable_of",  # uses for growth
+    "METPO:2000013": "biolink:capable_of",  # hydrolyzes
+    "METPO:2000016": "biolink:capable_of",  # oxidizes
+    "METPO:2000017": "biolink:capable_of",  # reduces
+    "METPO:2000018": "biolink:capable_of",  # requires for growth
+    # Chemical interactions (negative)
+    "METPO:2000027": "biolink:interacts_with",  # does not assimilate
+    "METPO:2000031": "biolink:capable_of",  # does not use as carbon source
+    "METPO:2000037": "biolink:capable_of",  # does not ferment
+    "METPO:2000038": "biolink:capable_of",  # does not use for growth
+    "METPO:2000039": "biolink:capable_of",  # does not hydrolyze
+    # Production
     "METPO:2000202": "biolink:produces",  # produces
-    "METPO:2000222": "biolink:produces",  # does not produce (negative)
+    "METPO:2000222": "biolink:produces",  # does not produce
+    # Enzyme activity
+    "METPO:2000302": "biolink:capable_of",  # shows activity of
+    "METPO:2000303": "biolink:capable_of",  # does not show activity of
+    # Growth medium
+    "METPO:2000517": "biolink:capable_of",  # grows in
+    "METPO:2000518": "biolink:capable_of",  # does not grow in
 }
 
 # Biolink predicate -> RO relation
@@ -47,6 +74,7 @@ PREDICATE_TO_RELATION = {
     "biolink:produces": "RO:0002234",
     "biolink:capable_of": BIOLOGICAL_PROCESS,
     "biolink:has_phenotype": HAS_PHENOTYPE,
+    "biolink:interacts_with": "RO:0002434",  # interacts with
 }
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
@@ -75,7 +103,9 @@ def _get_ncbitaxon_adapter():
             print(f"  Using local NCBITaxon database: {local_db}")
             return adapter
         except Exception as e:
-            print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), using remote fallback")
+            print(
+                f"  Local NCBITaxon database invalid ({e.__class__.__name__}), using remote fallback"
+            )
 
     # Fallback: download pre-built OBO database (~2GB)
     print("  Downloading NCBITaxon database from OBO library (this may take a few minutes)...")
@@ -155,6 +185,14 @@ class MetaTraitsTransform(Transform):
         self.knowledge_source = "infores:metatraits"
         self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("madin synonym or field")
+
+        # Initialize unified chemical mapping loader for ChEBI lookups
+        try:
+            self.chemical_loader = ChemicalMappingLoader()
+        except (FileNotFoundError, ImportError) as e:
+            print(f"  Warning: Could not load unified chemical mappings: {e}")
+            self.chemical_loader = None
+
         # Defer adapter creation until first cache miss (avoids ~2GB download when
         # ncbitaxon_nodes.tsv has full coverage)
         self._ncbi_adapter = None
@@ -251,6 +289,51 @@ class MetaTraitsTransform(Transform):
                         }
                         self.trait_mapping[key.lower()] = self.trait_mapping[key]
 
+    def _resolve_chemical_trait(self, trait_name: str) -> Optional[dict]:
+        """
+        Resolve chemical-related trait names to ChEBI IDs using unified mappings.
+
+        Handles patterns like:
+        - "carbon source: glucose" -> CHEBI:17234
+        - "produces: ethanol" -> CHEBI:16236
+        - "ferments: lactose" -> CHEBI:17716
+
+        :param trait_name: The trait name to resolve
+        :return: dict with curie, category, name, predicate or None if no match
+        """
+        if not self.chemical_loader:
+            return None
+
+        import re
+
+        # Extract chemical name and predicate from common patterns
+        patterns = [
+            (r"^carbon source:\s*(.+)$", "METPO:2000006"),  # uses as carbon source
+            (r"^produces:\s*(.+)$", "METPO:2000202"),  # produces
+            (r"^ferments:\s*(.+)$", "METPO:2000011"),  # ferments
+            (r"^hydrolyzes:\s*(.+)$", "METPO:2000013"),  # hydrolyzes
+            (r"^oxidizes:\s*(.+)$", "METPO:2000016"),  # oxidizes
+            (r"^reduces:\s*(.+)$", "METPO:2000017"),  # reduces
+            (r"^degrades:\s*(.+)$", "METPO:2000007"),  # degrades
+            (r"^utilizes:\s*(.+)$", "METPO:2000001"),  # organism interacts with chemical
+        ]
+
+        for pattern, metpo_predicate in patterns:
+            match = re.match(pattern, trait_name.lower())
+            if match:
+                chemical_name = match.group(1).strip()
+                chebi_id = self.chemical_loader.find_chebi_by_name(chemical_name)
+                if chebi_id:
+                    canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
+                    return {
+                        "curie": chebi_id,
+                        "category": "biolink:ChemicalEntity",
+                        "name": canonical_name or chemical_name,
+                        "predicate": metpo_predicate,
+                    }
+
+        return None
+
     def _create_node_row(
         self,
         node_id: str,
@@ -326,14 +409,19 @@ class MetaTraitsTransform(Transform):
         Path.mkdir(self.output_dir, exist_ok=True, parents=True)
 
         # Use streaming writers to avoid memory accumulation
-        with _StreamingRowWriter(self.output_node_file, self.node_header) as node_writer, \
-             _StreamingRowWriter(self.output_edge_file, self.edge_header) as edge_writer:
+        with _StreamingRowWriter(
+            self.output_node_file, self.node_header
+        ) as node_writer, _StreamingRowWriter(
+            self.output_edge_file, self.edge_header
+        ) as edge_writer:
 
             iterable = tqdm(input_files, desc="Processing files") if show_status else input_files
 
             for input_path in iterable:
                 with _open_jsonl(input_path) as f:
-                    line_iter = tqdm(f, desc=f"  {input_path.name}", leave=False) if show_status else f
+                    line_iter = (
+                        tqdm(f, desc=f"  {input_path.name}", leave=False) if show_status else f
+                    )
                     for line in line_iter:
                         line = line.strip()
                         if not line:
@@ -361,13 +449,18 @@ class MetaTraitsTransform(Transform):
                             majority_label = s.get("majority_label", "")
                             percentages = s.get("percentages", {}) or {}
                             # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
-                            pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
+                            pct_true = float(
+                                percentages.get("true")
+                                if percentages.get("true") is not None
+                                else 0
+                            )
 
                             # No filtering by pct_true - emit all traits and let downstream
                             # consumers apply their own thresholds using has_percentage column
                             # Note: 0% consensus may indicate explicit negation (e.g. "gram positive: 0% true")
 
-                            # Lookup order: microbial-trait-mappings first, then METPO/custom_curies
+                            # Lookup order: microbial-trait-mappings first (Tier 1),
+                            # then chemical resolver (Tier 1.5), then METPO/custom_curies (Tier 2/3)
                             micro_mapping = self.microbial_mappings.get(
                                 trait_name
                             ) or self.microbial_mappings.get(trait_name.lower())
@@ -377,24 +470,34 @@ class MetaTraitsTransform(Transform):
                                 pred = micro_mapping["biolink_predicate"]
                                 label = micro_mapping["object_label"]
                             else:
-                                mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
-                                    trait_name.lower()
-                                )
-                                if not mapping:
-                                    unmapped_traits.append(
-                                        (
-                                            trait_name,
-                                            tax_name,
-                                            majority_label,
-                                            s.get("num_observations", 0),
+                                # Try chemical resolver before METPO/custom_curies (Tier 1.5)
+                                chemical_mapping = self._resolve_chemical_trait(trait_name)
+                                if chemical_mapping:
+                                    curie = chemical_mapping["curie"]
+                                    category = chemical_mapping["category"]
+                                    # Convert METPO predicate to biolink for KGX compliance
+                                    pred = self._to_biolink_predicate(chemical_mapping["predicate"])
+                                    label = chemical_mapping["name"]
+                                else:
+                                    # Fallback to METPO/custom_curies (Tier 2/3)
+                                    mapping = self.trait_mapping.get(
+                                        trait_name
+                                    ) or self.trait_mapping.get(trait_name.lower())
+                                    if not mapping:
+                                        unmapped_traits.append(
+                                            (
+                                                trait_name,
+                                                tax_name,
+                                                majority_label,
+                                                s.get("num_observations", 0),
+                                            )
                                         )
-                                    )
-                                    continue
-                                curie = mapping["curie"]
-                                category = mapping["category"]
-                                # Use biolink predicate for KGX compliance
-                                pred = self._to_biolink_predicate(mapping["predicate"])
-                                label = mapping["name"]
+                                        continue
+                                    curie = mapping["curie"]
+                                    category = mapping["category"]
+                                    # Use biolink predicate for KGX compliance
+                                    pred = self._to_biolink_predicate(mapping["predicate"])
+                                    label = mapping["name"]
 
                             if tax_id not in seen_taxon_nodes:
                                 seen_taxon_nodes.add(tax_id)

@@ -13,7 +13,6 @@ from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH,
     CAS_RN_PREFIX,
     CHEBI_PREFIX,
-    CHEBI_XREFS_FILEPATH,
     CHEMICAL_CATEGORY,
     CHEMICAL_TO_DISEASE_EDGE,
     CTD,
@@ -29,6 +28,7 @@ from kg_microbe.transform_utils.constants import (
     RAW_DATA_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 RELATIONS_DICT = {
@@ -60,14 +60,8 @@ class CTDTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Load Uniprot data from downloaded files, then transforms into graph format."""
-        # Read CHEBI xrefs file for chemicals
-        self.chebi_xref_dict = {}
-        if CHEBI_XREFS_FILEPATH.exists():
-            with open(CHEBI_XREFS_FILEPATH, "r") as file:
-                csv_reader = csv.DictReader(file, delimiter="\t")
-                for row in csv_reader:
-                    if CAS_RN_PREFIX in row["xref"]:
-                        self.chebi_xref_dict[row["xref"]] = row["id"]
+        # Load unified chemical mappings for CAS-RN to ChEBI lookups
+        self.chemical_mapper = ChemicalMappingLoader()
         # Read MONDO xrefs file for diseases if it exists
         self.mondo_xref_dict = {}
         if MONDO_XREFS_FILEPATH.exists():
@@ -139,7 +133,9 @@ class CTDTransform(Transform):
         if chemical is None:
             chemical = self.mapped_chemicals_dict.get(mesh_curie)
         if chemical is None and data[CTD_CAS_RN_COLUMN] != "":
-            chemical = self.chebi_xref_dict.get(cas_curie)
+            # Convert CAS-RN:xxx to cas:xxx format for unified mappings lookup
+            cas_xref = "cas:" + data[CTD_CAS_RN_COLUMN]
+            chemical = self.chemical_mapper.find_chebi_by_xref(cas_xref)
             self.mapped_chemicals_dict[cas_curie] = chemical
             self.mapped_chemicals_dict[mesh_curie] = chemical
         elif chemical is None:

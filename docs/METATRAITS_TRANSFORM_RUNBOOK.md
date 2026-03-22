@@ -25,7 +25,7 @@ poetry run pip install "setuptools<82"
 
 ### 2. Input Files
 
-Place one or more metatraits JSONL files in `data/raw/`. Supported filenames:
+Place one or more metatraits JSONL files in `data/raw/metatraits/`. Supported filenames:
 
 | Convention | Species | Genus | Family |
 |------------|---------|-------|--------|
@@ -112,7 +112,7 @@ cat data/transformed/metatraits/unresolved_taxa.tsv
 To verify the transform without full production data:
 
 ```bash
-cp tests/resources/metatraits_fixture.jsonl data/raw/ncbi_species_summary.jsonl
+cp tests/resources/metatraits_fixture.jsonl data/raw/metatraits/ncbi_species_summary.jsonl
 poetry run kg transform -s metatraits
 ```
 

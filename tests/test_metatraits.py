@@ -177,7 +177,9 @@ class TestMetaTraitsTransform(unittest.TestCase):
         # Copy fixture to temporary input directory with expected filename
         import shutil
 
-        fixture_path = self.temp_input_dir / "ncbi_species_summary.jsonl"
+        metatraits_subdir = self.temp_input_dir / "metatraits"
+        metatraits_subdir.mkdir(exist_ok=True)
+        fixture_path = metatraits_subdir / "ncbi_species_summary.jsonl"
         shutil.copy(self.fixture_file, fixture_path)
 
         try:
@@ -208,6 +210,26 @@ class TestMetaTraitsTransform(unittest.TestCase):
             self.assertIn("subject", edges[0])
             self.assertIn("predicate", edges[0])
             self.assertIn("object", edges[0])
+            self.assertIn("has_percentage", edges[0])
+
+            # Verify that a 0% pct_true trait (gram positive) is included in edges
+            # Parse TSV to check exact has_percentage value for gram positive trait
+            header = edges[0].split("\t")
+            pct_col_idx = header.index("has_percentage")
+            obj_col_idx = header.index("object")
+
+            found_zero_pct = False
+            for edge_line in edges[1:]:
+                cols = edge_line.split("\t")
+                if len(cols) > max(pct_col_idx, obj_col_idx):
+                    # Look for gram positive trait (METPO:1000606)
+                    if "METPO:1000606" in cols[obj_col_idx]:
+                        pct_value = cols[pct_col_idx]
+                        self.assertEqual(pct_value, "0.0", "Gram positive trait should have 0.0 percentage")
+                        found_zero_pct = True
+                        break
+
+            self.assertTrue(found_zero_pct, "0% pct_true trait (gram positive) should be included in edges")
         finally:
             # Cleanup temporary input directory
             import shutil

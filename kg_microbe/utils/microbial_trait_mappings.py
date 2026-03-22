@@ -16,7 +16,7 @@ _MAPPINGS_DIR = METATRAITS_MAPPINGS_DIR
 
 # Object source -> Biolink category
 _OBJECT_SOURCE_TO_CATEGORY = {
-    "CHEBI": "biolink:ChemicalEntity",
+    "CHEBI": "biolink:ChemicalSubstance",  # Use ChemicalSubstance for all CHEBI entities
     "EC": "biolink:MolecularActivity",
     "METPO": "biolink:PhenotypicFeature",
     "GO": "biolink:BiologicalProcess",
@@ -104,7 +104,9 @@ def load_microbial_trait_mappings(
                     if not object_id or not object_source:
                         continue
 
-                    biolink_predicate = _resolve_biolink_predicate(subject_label, notes, entity_category)
+                    biolink_predicate = _resolve_biolink_predicate(
+                        subject_label, notes, entity_category
+                    )
                     object_category = _resolve_object_category(object_source, entity_category)
 
                     result[subject_label] = {

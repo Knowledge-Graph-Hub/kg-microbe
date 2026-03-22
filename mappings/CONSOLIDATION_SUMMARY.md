@@ -6,7 +6,7 @@
 
 ## Overview
 
-Consolidated 6 disparate chemical mapping sources into a single unified resource at `mappings/unified_chemical_mappings.tsv`.
+Consolidated 6 disparate chemical mapping sources into a single unified resource at `mappings/unified_chemical_mappings.tsv.gz` (gzipped TSV).
 
 ## Statistics
 
@@ -149,25 +149,25 @@ The consolidation script:
 ### Find chemical by name
 
 ```bash
-grep -i "ciprofloxacin" mappings/unified_chemical_mappings.tsv
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep -i "ciprofloxacin"
 ```
 
 ### Get all synonyms for ChEBI ID
 
 ```bash
-awk -F'\t' '$1=="CHEBI:42758" {print $4}' mappings/unified_chemical_mappings.tsv
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1=="CHEBI:42758" {print $4}'
 ```
 
 ### Find chemicals with KEGG xrefs
 
 ```bash
-grep "kegg.compound" mappings/unified_chemical_mappings.tsv | head -10
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep "kegg.compound" | head -10
 ```
 
 ### Count chemicals from each source
 
 ```bash
-cut -f6 mappings/unified_chemical_mappings.tsv | \
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | cut -f6 | \
   tr '|' '\n' | \
   sort | uniq -c | sort -rn
 ```
@@ -193,7 +193,7 @@ The unified mapping can be used by transform classes to:
 
 ## Files Modified
 
-- ✅ `mappings/unified_chemical_mappings.tsv` - New unified mapping (164,702 chemicals)
+- ✅ `mappings/unified_chemical_mappings.tsv.gz` - New unified mapping (164,702 chemicals, gzipped)
 - ✅ `mappings/README.md` - Documentation for mapping files
 - ✅ `scripts/consolidate_chemical_mappings.py` - Consolidation script
 - ✅ `mappings/CONSOLIDATION_SUMMARY.md` - This summary document

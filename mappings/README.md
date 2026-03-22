@@ -4,7 +4,7 @@ This directory contains unified chemical mapping resources for KG-Microbe.
 
 ## Unified Chemical Mappings
 
-**`unified_chemical_mappings.tsv`** - Consolidated chemical mappings from all KG-Microbe sources
+**`unified_chemical_mappings.tsv.gz`** - Consolidated chemical mappings from all KG-Microbe sources (gzipped TSV)
 
 ### File Structure
 
@@ -59,17 +59,17 @@ This directory contains unified chemical mapping resources for KG-Microbe.
 
 #### Find a chemical by name
 ```bash
-grep -i "glucose" mappings/unified_chemical_mappings.tsv
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep -i "glucose"
 ```
 
 #### Get all synonyms for a ChEBI ID
 ```bash
-awk -F'\t' '$1=="CHEBI:42758" {print $4}' mappings/unified_chemical_mappings.tsv
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1=="CHEBI:42758" {print $4}'
 ```
 
 #### Find chemicals with KEGG cross-references
 ```bash
-grep "kegg.compound" mappings/unified_chemical_mappings.tsv
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep "kegg.compound"
 ```
 
 ### Regenerating the Unified Mapping
@@ -85,7 +85,7 @@ This will:
 2. Merge entries by ChEBI ID
 3. Consolidate synonyms and cross-references
 4. Deduplicate by normalized chemical name
-5. Export to `mappings/unified_chemical_mappings.tsv`
+5. Export to `mappings/unified_chemical_mappings.tsv.gz` (gzipped)
 
 ### Notes
 

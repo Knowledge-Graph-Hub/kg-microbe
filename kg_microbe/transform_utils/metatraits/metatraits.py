@@ -327,7 +327,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalEntity",
+                        "category": "biolink:ChemicalSubstance",
                         "name": canonical_name or chemical_name,
                         "predicate": metpo_predicate,
                     }

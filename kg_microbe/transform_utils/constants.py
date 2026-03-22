@@ -259,8 +259,8 @@ MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 
 # Chemical entity categories (Biolink Model v4.3.6)
-# IMPORTANT: For CHEBI-mapped chemicals, transforms should use categories from ontologies transform
-# to prevent multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
+# IMPORTANT: For CHEBI-mapped chemicals, use ChemicalSubstance category.
+# SmallMolecule should be normalized to ChemicalSubstance for consistency.
 # See BacDive and MediaDive transforms for examples using _get_chebi_category().
 INGREDIENT_CATEGORY = (
     "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
@@ -268,8 +268,10 @@ INGREDIENT_CATEGORY = (
 COMPLEX_INGREDIENT_CATEGORY = (
     "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
 )
+CHEBI_CATEGORY = "biolink:ChemicalSubstance"  # CHEBI default for all chemical entities
+# Deprecated: Use CHEBI_CATEGORY instead
 SMALL_MOLECULE_CATEGORY = (
-    "biolink:SmallMolecule"  # CHEBI default (replaces deprecated ChemicalSubstance)
+    "biolink:ChemicalSubstance"  # Normalized to ChemicalSubstance (SmallMolecule deprecated)
 )
 # DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
 MACROMOLECULE_CATEGORY = "biolink:Macromolecule"
@@ -301,8 +303,9 @@ GENOME_CATEGORY = "biolink:Genome"
 # Procedure categories
 ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
-# Deprecated categories (Biolink v2.x) - do not use
-# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Replaced by SmallMolecule in Biolink v3+
+# Deprecated categories - do not use
+# Note: SmallMolecule should be normalized to ChemicalSubstance for consistency
+# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Use CHEBI_CATEGORY instead
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)

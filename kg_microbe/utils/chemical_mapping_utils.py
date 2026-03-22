@@ -293,6 +293,7 @@ def get_formula(chebi_id: str) -> Optional[str]:
 
 
 class ChemicalMappingLoader:
+
     """
     Loader class for unified chemical mappings.
 

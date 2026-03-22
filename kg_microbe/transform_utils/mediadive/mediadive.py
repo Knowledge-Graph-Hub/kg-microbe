@@ -111,6 +111,7 @@ from kg_microbe.transform_utils.constants import (
     UNIT_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
@@ -148,7 +149,10 @@ class MediaDiveTransform(Transform):
         self.api_calls_avoided = 0
         self.api_calls_made = 0
 
-        # Load MicroMediaParam chemical mappings
+        # Load unified chemical mappings (replaces compound_mappings_strict*.tsv)
+        self.chemical_loader = ChemicalMappingLoader()
+
+        # Load MicroMediaParam chemical mappings (kept as legacy fallback during testing)
         self.compound_mappings = {}
         self._load_micromediaparam_mappings()
 
@@ -547,10 +551,12 @@ class MediaDiveTransform(Transform):
 
                 solution_name_normalized = solution_name.lower()
 
-                # Check if solution name can be mapped to ontology via MicroMediaParam
-                solution_id = self.compound_mappings.get(
-                    solution_name_normalized
-                ) or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
+                # Check if solution name can be mapped to ontology via unified or legacy mappings
+                solution_id = (
+                    self.chemical_loader.find_chebi_by_name(solution_name)
+                    or self.compound_mappings.get(solution_name_normalized)
+                    or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
+                )
 
                 ingredients_dict[solution_name] = {
                     ID_COLUMN: solution_id,
@@ -565,17 +571,25 @@ class MediaDiveTransform(Transform):
 
     def standardize_compound_id(self, id: str, compound_name: str = None):
         """
-        Get standardized IDs via MicroMediaParam mappings, bulk data, or MediaDive API.
+        Get standardized IDs via unified chemical mappings, bulk data, or legacy mappings.
 
-        First checks MicroMediaParam mappings by compound name, then bulk downloaded data,
-        then makes API call if needed.
+        Lookup order:
+        1. Unified chemical mappings by compound name (ChemicalMappingLoader)
+        2. Legacy MicroMediaParam mappings by compound name (fallback during transition)
+        3. Bulk downloaded data (embedded ChEBI/KEGG/PubChem/CAS-RN)
+        4. Custom ingredient prefix (last resort)
 
         :param id: MediaDive compound ID.
         :param compound_name: Compound name for mapping lookup.
         :return: Standardized ID.
         """
-        # First, check MicroMediaParam mappings by compound name
         if compound_name:
+            # First, check unified chemical mappings by compound name
+            chebi_id = self.chemical_loader.find_chebi_by_name(compound_name)
+            if chebi_id:
+                return chebi_id
+
+            # Fallback: check legacy MicroMediaParam mappings by compound name
             normalized_name = compound_name.lower().strip()
             if normalized_name in self.compound_mappings:
                 return self.compound_mappings[normalized_name]

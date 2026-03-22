@@ -16,7 +16,6 @@ from kgx.cli.cli_utils import transform
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
-    CHEBI_XREFS_FILEPATH,
     DESCRIPTION_COLUMN,
     ENABLED_BY_PREDICATE,
     ENABLED_BY_RELATION,
@@ -368,14 +367,16 @@ class OntologiesTransform(Transform):
             new_line = "\t".join(parts)
             return new_line
 
-        if name == "chebi" or name == "upa" or name == "mondo":
+        # NOTE: ChEBI xref generation was removed here. ChEBI xrefs are now provided
+        # by the unified chemical mappings file (unified_chemical_mappings.tsv.gz)
+        # managed via the mappings/ directory and used by transforms through
+        # ChemicalMappingLoader. See mappings/README.md for details.
+        if name == "upa" or name == "mondo":
             makedirs(ONTOLOGIES_XREFS_DIR, exist_ok=True)
             # Get two columns from the nodes file: 'id' and 'xref'
             # The xref column is | separated and contains different prefixes
             # We need to make a 1-to-1 mapping between the prefixes and the id
-            if name == "chebi":
-                xref_filepath = CHEBI_XREFS_FILEPATH
-            elif name == "upa":
+            if name == "upa":
                 xref_filepath = UNIPATHWAYS_XREFS_FILEPATH
                 unipathways_xref_dict = {}
             elif name == "mondo":

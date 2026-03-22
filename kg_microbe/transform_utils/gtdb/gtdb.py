@@ -142,10 +142,10 @@ class GTDBTransform(Transform):
 
         taxa_list = []
 
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             # Skip header if present
             header = f.readline()
-            if not header.startswith('accession'):
+            if not header.startswith("accession"):
                 # No header, rewind
                 f.seek(0)
 
@@ -154,7 +154,7 @@ class GTDBTransform(Transform):
                 if not line:
                     continue
 
-                parts = line.split('\t')
+                parts = line.split("\t")
                 if len(parts) < 2:
                     continue
 
@@ -221,15 +221,15 @@ class GTDBTransform(Transform):
         accession_to_taxa = {acc: taxa for acc, taxa in taxa_list}
 
         # Determine if file is gzipped
-        open_func = gzip.open if filename.endswith('.gz') else open
-        mode = 'rt' if filename.endswith('.gz') else 'r'
+        open_func = gzip.open if filename.endswith(".gz") else open
+        mode = "rt" if filename.endswith(".gz") else "r"
 
         with open_func(filepath, mode) as f:
-            reader = csv.DictReader(f, delimiter='\t')
+            reader = csv.DictReader(f, delimiter="\t")
 
             for row in reader:
-                accession = row.get('accession', '').strip()
-                ncbi_taxid = row.get('ncbi_taxid', '').strip()
+                accession = row.get("accession", "").strip()
+                ncbi_taxid = row.get("ncbi_taxid", "").strip()
 
                 # Get taxonomy for this accession
                 taxa = accession_to_taxa.get(accession)
@@ -364,13 +364,13 @@ class GTDBTransform(Transform):
         ]
 
         # Write nodes
-        with open(self.output_node_file, 'w') as nf:
-            writer = csv.DictWriter(nf, fieldnames=node_fields, delimiter='\t')
+        with open(self.output_node_file, "w") as nf:
+            writer = csv.DictWriter(nf, fieldnames=node_fields, delimiter="\t")
             writer.writeheader()
             writer.writerows(self.nodes)
 
         # Write edges
-        with open(self.output_edge_file, 'w') as ef:
-            writer = csv.DictWriter(ef, fieldnames=self.edge_header, delimiter='\t')
+        with open(self.output_edge_file, "w") as ef:
+            writer = csv.DictWriter(ef, fieldnames=self.edge_header, delimiter="\t")
             writer.writeheader()
             writer.writerows(self.edges)

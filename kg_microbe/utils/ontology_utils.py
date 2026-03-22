@@ -227,7 +227,9 @@ def get_chebi_category(
 
             # Only categorize as role if it's a close descendant of specific role classes
             # (not just any distant ancestor)
-            parents = list(chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"]))
+            parents = list(
+                chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"])
+            )
             parent_ids = [str(p[2]) for p in parents]
 
             if any(role_parent in parent_ids for role_parent in specific_role_parents):

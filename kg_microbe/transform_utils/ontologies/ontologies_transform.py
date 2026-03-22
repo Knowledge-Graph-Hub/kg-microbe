@@ -266,6 +266,7 @@ class OntologiesTransform(Transform):
                 go_adapter = get_adapter("sqlite:data/raw/go.db")
 
             def fix_go_category(row):
+                """Fix GO category based on aspect (namespace)."""
                 go_id = row["id"]
                 if pd.notna(go_id) and go_id.startswith("GO:"):
                     # Pass the adapter to avoid creating new connections
@@ -291,6 +292,7 @@ class OntologiesTransform(Transform):
                 chebi_adapter = get_adapter("sqlite:data/raw/chebi.db")
 
             def fix_chebi_category(row):
+                """Fix ChEBI category (SmallMolecule/ChemicalRole) and replace deprecated categories."""
                 chebi_id = row["id"]
                 if pd.notna(chebi_id) and chebi_id.startswith("CHEBI:"):
                     # Get appropriate category (SmallMolecule or ChemicalRole)
@@ -306,6 +308,7 @@ class OntologiesTransform(Transform):
             print("  Fixing UBERON categories (all terms → AnatomicalEntity)...")
 
             def fix_uberon_category(row):
+                """Fix UBERON category (all terms should be AnatomicalEntity)."""
                 uberon_id = row["id"]
                 if pd.notna(uberon_id) and uberon_id.startswith("UBERON:"):
                     return get_uberon_category(uberon_id)
@@ -318,6 +321,7 @@ class OntologiesTransform(Transform):
             print("  Fixing NCBITaxon categories (all terms → OrganismTaxon)...")
 
             def fix_ncbitaxon_category(row):
+                """Fix NCBITaxon category (all terms should be OrganismTaxon)."""
                 ncbitaxon_id = row["id"]
                 if pd.notna(ncbitaxon_id) and ncbitaxon_id.startswith("NCBITaxon:"):
                     return get_ncbitaxon_category(ncbitaxon_id)

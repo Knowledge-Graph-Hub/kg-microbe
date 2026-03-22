@@ -1,0 +1,6 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	predicate_id	confidence	mapping_justification	curator	source_dataset	notes	verified_date
+enzyme activity: catalase (EC1.11.1.6)	enzyme activity: catalase (ec1.11.1.6)	EC:1.11.1.6	catalase	EC	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	EC number extracted from trait name; biolink:capable_of	
+enzyme activity: beta-galactosidase (EC3.2.1.23)	enzyme activity: beta-galactosidase (ec3.2.1.23)	EC:3.2.1.23	beta-galactosidase	EC	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	EC number extracted from trait name; biolink:capable_of	
+enzyme activity: urease (EC3.5.1.5)	enzyme activity: urease (ec3.5.1.5)	EC:3.5.1.5	urease	EC	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	EC number extracted from trait name; biolink:capable_of	
+enzyme activity: oxidase	enzyme activity: oxidase	GO:0016491	oxidoreductase activity	GO	skos:closeMatch	medium	semapv:ManualMappingCuration	turbomam	metatraits	no EC in trait name; broad GO MF; biolink:capable_of	
+enzyme activity: lipase	enzyme activity: lipase	EC:3.1.1.3	triacylglycerol lipase	EC	skos:closeMatch	medium	semapv:ManualMappingCuration	turbomam	metatraits	no EC in trait name; inferred EC; biolink:capable_of	

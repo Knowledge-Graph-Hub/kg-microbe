@@ -167,7 +167,9 @@ class TestAssayGeneration(unittest.TestCase):
             ("API_50CH_GLC", "API 50CH", "GLC", "chemical"),
         ]
     )
-    def test_generate_assay_nodes_description_metadata(self, node_id, expected_kit, expected_well, expected_type):
+    def test_generate_assay_nodes_description_metadata(
+        self, node_id, expected_kit, expected_well, expected_type
+    ):
         """Test that assay node description contains kit, well, and test type metadata."""
         nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
 
@@ -223,7 +225,9 @@ class TestAssayGeneration(unittest.TestCase):
         for edge in edges:
             edge_dict = dict(zip(self.edge_header, edge, strict=False))
             # Check if object is GO or EC
-            if edge_dict[OBJECT_COLUMN].startswith("GO:") or edge_dict[OBJECT_COLUMN].startswith("EC:"):
+            if edge_dict[OBJECT_COLUMN].startswith("GO:") or edge_dict[OBJECT_COLUMN].startswith(
+                "EC:"
+            ):
                 enzyme_edges.append(edge_dict)
 
         # Should have 4 enzyme edges (2 from ONPG + 2 from ADH)

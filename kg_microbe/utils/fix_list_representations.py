@@ -135,16 +135,16 @@ def fix_tsv(
     fixed_rows = 0
     list_format_rows = 0
 
-    with open(input_file, 'rb') as infile_bin, open(output_file, "wb") as outfile_bin:
+    with open(input_file, "rb") as infile_bin, open(output_file, "wb") as outfile_bin:
         # Read header line manually preserving exact bytes
         header_bytes = infile_bin.readline()
-        header = header_bytes.decode('utf-8').rstrip('\r\n')
-        outfile_bin.write((header + '\n').encode('utf-8'))
+        header = header_bytes.decode("utf-8").rstrip("\r\n")
+        outfile_bin.write((header + "\n").encode("utf-8"))
 
         # Parse header to find column indices for list-valued fields
         # Note: Some headers may have embedded \r characters
         headers = header.split(delimiter)
-        headers = [h.replace('\r', '') for h in headers]
+        headers = [h.replace("\r", "") for h in headers]
         list_field_indices = {}
         for i, h in enumerate(headers):
             if h in LIST_VALUED_FIELDS:
@@ -153,7 +153,7 @@ def fix_tsv(
         # Process data rows
         for line_bytes in infile_bin:
             total_rows += 1
-            line = line_bytes.decode('utf-8').rstrip('\r\n')
+            line = line_bytes.decode("utf-8").rstrip("\r\n")
             fields = line.split(delimiter)
             row_had_list_format = False
             row_was_fixed = False
@@ -175,7 +175,7 @@ def fix_tsv(
             if row_was_fixed:
                 fixed_rows += 1
 
-            outfile_bin.write((delimiter.join(fields) + '\n').encode('utf-8'))
+            outfile_bin.write((delimiter.join(fields) + "\n").encode("utf-8"))
 
     print(f"✓ Processed {total_rows:,} rows")
     print(f"✓ Found {list_format_rows:,} rows with Python list format")

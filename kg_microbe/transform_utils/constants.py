@@ -19,6 +19,7 @@ DISBIOME = "disbiome"
 UNIPROT_FUNCTIONAL_MICROBES = "uniprot_functional_microbes"
 UNIPROT_HUMAN = "uniprot_human"
 GTDB = "gtdb"
+METATRAITS = "metatraits"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -29,6 +30,8 @@ MEDIADIVE_TMP_DIR = MEDIADIVE_DIR / "tmp"
 MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
+METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
+METATRAITS_MAPPINGS_DIR = METATRAITS_DIR / "mappings"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 TRANSFORMED_DATA_DIR = Path(__file__).parents[2] / "data" / "transformed"
 RHEAMAPPINGS_DIR: Path = TRANSFORM_UTILS_DIR / RHEAMAPPINGS
@@ -475,6 +478,7 @@ CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolin
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
 HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
+PRODUCES_PREDICATE = "biolink:produces"
 PREDICATE_ID_COLUMN = "predicate_id"
 PREDICATE_LABEL_COLUMN = "predicate_label"
 DEBIO_MAPPER = {
@@ -498,6 +502,20 @@ PATHWAYS_COLUMN = "pathways"
 OBJECT_ID_COLUMN = "object_id"
 OBJECT_LABEL_COLUMN = "object_label"
 OBJECT_CATEGORIES_COLUMN = "object_categories"
+
+# METPO Phenotype Trait Mappings
+# Maps trait names to METPO IDs for common phenotypic characteristics
+METPO_PHENOTYPE_MAPPINGS = {
+    "gram positive": "METPO:1000606",  # Gram-positive
+    "gram negative": "METPO:1000607",  # Gram-negative
+    "sporulation": "METPO:1000614",  # endospore-forming
+    "obligate aerobic": "METPO:1000616",  # obligately aerobic
+    "obligate anaerobic": "METPO:1000870",  # obligately anaerobic
+    "presence of motility": "METPO:1002005",  # motile
+    "voges-proskauer test": "METPO:1005017",  # Voges-Proskauer test positive
+    "psychrophilic": "METPO:1000660",  # psychrophilic
+    "thermophilic": "METPO:1000656",  # thermophilic
+}
 OBJECT_ALIASES_COLUMN = "object_aliases"
 MATCHES_WHOLE_TEXT_COLUMN = "matches_whole_text"
 SUBJECT_LABEL_COLUMN = "subject_label"
@@ -553,6 +571,13 @@ GTDB_BAC120_TAXONOMY = "bac120_taxonomy.tsv"
 GTDB_AR53_TAXONOMY = "ar53_taxonomy.tsv"
 GTDB_BAC120_METADATA = "bac120_metadata.tsv.gz"
 GTDB_AR53_METADATA = "ar53_metadata.tsv.gz"
+
+# Metatraits-specific paths
+METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
+METATRAITS_RAW_DIR = RAW_DATA_DIR / METATRAITS
+
+# Metatraits files
+METATRAITS_DATA_FILE = "metatraits.tsv"
 
 # All Uniprot
 UNIPROT_PROTEOMES_FILE = "uniprot_proteomes.tar.gz"
@@ -647,6 +672,7 @@ IS_INPUT_OF_PREDICATE = "biolink:is_input_of"
 IS_OUTPUT_OF_PREDICATE = "biolink:is_output_of"
 HAS_INPUT_RELATION = "RO:0002233"
 HAS_OUTPUT_RELATION = "RO:0002234"
+PRODUCES_RELATION = HAS_OUTPUT_RELATION  # has_output for metabolic production
 PARTICIPATES_IN_PREDICATE = "biolink:participates_in"
 SAME_AS_PREDICATE = "biolink:same_as"
 # CAN_BE_CARRIED_OUT_BY_PREDICATE = "biolink:can_be_carried_out_by" # Replacing with enables

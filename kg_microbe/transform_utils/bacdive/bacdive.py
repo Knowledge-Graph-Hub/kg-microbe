@@ -201,7 +201,6 @@ logger = logging.getLogger(__name__)
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(
@@ -2152,11 +2151,16 @@ class BacDiveTransform(Transform):
                                 )
 
                     if nodes_from_keywords:
-                        # Convert to manual CHEBI ID for keywords
+                        # Convert to manual CHEBI ID for keywords (cache lookups to avoid duplicates)
+                        keyword_to_chebi = {}
+                        for _, value in nodes_from_keywords.items():
+                            keyword = value[CURIE_COLUMN].split(":")[1]
+                            chebi_id = self._lookup_chebi_by_name(keyword) or value[CURIE_COLUMN]
+                            keyword_to_chebi[value[CURIE_COLUMN]] = chebi_id
+
                         nodes_data_to_write = [
                             self._create_node_row(
-                                self._lookup_chebi_by_name(value[CURIE_COLUMN].split(":")[1])
-                                or value[CURIE_COLUMN],
+                                keyword_to_chebi[value[CURIE_COLUMN]],
                                 value[CATEGORY_COLUMN],
                                 value[NAME_COLUMN],
                             )
@@ -2171,10 +2175,7 @@ class BacDiveTransform(Transform):
 
                         for _, value in nodes_from_keywords.items():
                             # Create edge from organism to keyword/CHEBI
-                            object_id = (
-                                self._lookup_chebi_by_name(value[CURIE_COLUMN].split(":")[1])
-                                or value[CURIE_COLUMN]
-                            )
+                            object_id = keyword_to_chebi[value[CURIE_COLUMN]]
                             relation = (
                                 HAS_PHENOTYPE
                                 if value[CATEGORY_COLUMN]

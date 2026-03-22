@@ -10,7 +10,7 @@ Consolidates:
 5. kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv - ChEBI xrefs
 6. kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv - Manual annotations
 
-Output: mappings/unified_chemical_mappings.tsv
+Output: mappings/unified_chemical_mappings.tsv.gz (gzipped TSV)
 """
 
 import json
@@ -28,8 +28,8 @@ def normalize_name(name: str) -> str:
         return ""
     # Convert to lowercase, remove extra spaces, punctuation
     normalized = str(name).lower().strip()
-    normalized = re.sub(r'[^\w\s-]', '', normalized)
-    normalized = re.sub(r'\s+', ' ', normalized)
+    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
 
@@ -43,7 +43,7 @@ def extract_chebi_id(value: str) -> str:
     if value.startswith("chebi:"):
         return "CHEBI:" + value[6:]
     # Try to extract number
-    match = re.search(r'(\d+)', value)
+    match = re.search(r"(\d+)", value)
     if match:
         return f"CHEBI:{match.group(1)}"
     return ""
@@ -138,7 +138,7 @@ class ChemicalMappingConsolidator:
                 original_term = str(original_term)
                 # Check if it's an external reference
                 if original_term.startswith("cpd:"):
-                    xrefs.append(f"kegg.compound:{original_term}")
+                    xrefs.append(f"kegg.compound:{original_term[4:]}")
                 else:
                     synonyms.append(original_term)
 
@@ -185,7 +185,7 @@ class ChemicalMappingConsolidator:
             if "hydrate" in str(filepath):
                 hydrated_chebi = extract_chebi_id(row.get("hydrated_chebi_id", ""))
                 if hydrated_chebi and hydrated_chebi != chebi_id:
-                    xrefs.append(f"CHEBI:{hydrated_chebi}")
+                    xrefs.append(hydrated_chebi)
 
             self.add_chemical(
                 chebi_id=chebi_id,
@@ -231,9 +231,7 @@ class ChemicalMappingConsolidator:
             if not chebi_id:
                 continue
 
-            self.add_chemical(
-                chebi_id=chebi_id, xrefs=xref_list, source="chebi_xrefs"
-            )
+            self.add_chemical(chebi_id=chebi_id, xrefs=xref_list, source="chebi_xrefs")
 
         print(f"  Loaded {len(grouped)} ChEBI IDs with xrefs")
 
@@ -270,6 +268,7 @@ class ChemicalMappingConsolidator:
             try:
                 from oaklib import get_adapter
                 from kg_microbe.transform_utils.constants import CHEBI_SOURCE
+
                 self.chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
                 print("  Initialized ChEBI adapter")
             except Exception as e:
@@ -342,6 +341,9 @@ class ChemicalMappingConsolidator:
                     # Add other ChEBI ID as xref
                     primary["xrefs"].add(other_id)
 
+                    # Delete the merged entry
+                    del self.chemicals[other_id]
+
                     merged_count += 1
 
         print(f"  Merged {merged_count} duplicate entries")
@@ -380,10 +382,12 @@ class ChemicalMappingConsolidator:
         df = pd.DataFrame(records)
 
         # Export as gzipped TSV
-        df.to_csv(output_path, sep="\t", index=False, compression='gzip')
+        df.to_csv(output_path, sep="\t", index=False, compression="gzip")
 
         print(f"  Exported {len(records)} unique chemicals")
-        print(f"  Total synonyms: {sum(len(r['synonyms'].split('|')) for r in records if r['synonyms'])}")
+        print(
+            f"  Total synonyms: {sum(len(r['synonyms'].split('|')) for r in records if r['synonyms'])}"
+        )
         print(f"  Total xrefs: {sum(len(r['xrefs'].split('|')) for r in records if r['xrefs'])}")
 
 

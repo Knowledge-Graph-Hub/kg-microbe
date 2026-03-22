@@ -12,6 +12,7 @@ _UNIFIED_MAPPINGS: Optional[pd.DataFrame] = None
 _NAME_INDEX: Optional[Dict[str, str]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
+_CACHED_PATH: Optional[Path] = None
 
 
 def normalize_name(name: str) -> str:
@@ -40,16 +41,16 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
                           If None, uses default path relative to this file
     :return: DataFrame with columns: chebi_id, canonical_name, formula, synonyms, xrefs, sources
     """
-    global _UNIFIED_MAPPINGS, _NAME_INDEX, _FORMULA_INDEX, _XREF_INDEX
-
-    # Return cached mappings if already loaded
-    if _UNIFIED_MAPPINGS is not None:
-        return _UNIFIED_MAPPINGS
+    global _UNIFIED_MAPPINGS, _NAME_INDEX, _FORMULA_INDEX, _XREF_INDEX, _CACHED_PATH
 
     # Default path: mappings/unified_chemical_mappings.tsv.gz
     if mappings_path is None:
         base_dir = Path(__file__).parent.parent.parent
         mappings_path = base_dir / "mappings" / "unified_chemical_mappings.tsv.gz"
+
+    # Return cached mappings if already loaded from the same path
+    if _UNIFIED_MAPPINGS is not None and _CACHED_PATH == mappings_path:
+        return _UNIFIED_MAPPINGS
 
     if not mappings_path.exists():
         raise FileNotFoundError(f"Unified mappings file not found: {mappings_path}")
@@ -60,6 +61,9 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
 
     # Fill NaN with empty strings
     _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.fillna("")
+
+    # Cache the path
+    _CACHED_PATH = mappings_path
 
     # Build indices for fast lookup
     _build_indices()
@@ -205,9 +209,10 @@ def get_canonical_name(chebi_id: str) -> Optional[str]:
         load_unified_mappings()
 
     if _UNIFIED_MAPPINGS is not None:
-        row = _UNIFIED_MAPPINGS[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id]
-        if not row.empty:
-            name = row.iloc[0]["canonical_name"]
+        # Use .loc for O(1) lookup instead of filtering
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "canonical_name"]
+        if not matches.empty:
+            name = matches.iloc[0]
             return name if name else None
 
     return None
@@ -228,9 +233,10 @@ def get_synonyms(chebi_id: str) -> List[str]:
         load_unified_mappings()
 
     if _UNIFIED_MAPPINGS is not None:
-        row = _UNIFIED_MAPPINGS[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id]
-        if not row.empty:
-            synonyms_str = row.iloc[0]["synonyms"]
+        # Use .loc for O(1) lookup instead of filtering
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "synonyms"]
+        if not matches.empty:
+            synonyms_str = matches.iloc[0]
             if synonyms_str:
                 return synonyms_str.split("|")
 
@@ -252,9 +258,10 @@ def get_xrefs(chebi_id: str) -> List[str]:
         load_unified_mappings()
 
     if _UNIFIED_MAPPINGS is not None:
-        row = _UNIFIED_MAPPINGS[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id]
-        if not row.empty:
-            xrefs_str = row.iloc[0]["xrefs"]
+        # Use .loc for O(1) lookup instead of filtering
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "xrefs"]
+        if not matches.empty:
+            xrefs_str = matches.iloc[0]
             if xrefs_str:
                 return xrefs_str.split("|")
 
@@ -276,16 +283,16 @@ def get_formula(chebi_id: str) -> Optional[str]:
         load_unified_mappings()
 
     if _UNIFIED_MAPPINGS is not None:
-        row = _UNIFIED_MAPPINGS[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id]
-        if not row.empty:
-            formula = row.iloc[0]["formula"]
+        # Use .loc for O(1) lookup instead of filtering
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "formula"]
+        if not matches.empty:
+            formula = matches.iloc[0]
             return formula if formula else None
 
     return None
 
 
 class ChemicalMappingLoader:
-
     """
     Loader class for unified chemical mappings.
 

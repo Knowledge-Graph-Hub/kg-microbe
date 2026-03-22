@@ -49,7 +49,7 @@ ONTOLOGIES_DIR = TRANSFORM_UTILS_DIR / ONTOLOGIES
 ONTOLOGIES_XREFS_DIR = ONTOLOGIES_DIR / "xrefs"
 ONTOLOGIES_TREES_DIR = ONTOLOGIES_DIR / "trees"
 ONTOLOGIES_TRANSFORMED_DIR = TRANSFORMED_DATA_DIR / ONTOLOGIES
-CHEBI_XREFS_FILEPATH = ONTOLOGIES_XREFS_DIR / "chebi_xrefs.tsv"
+# CHEBI_XREFS_FILEPATH removed: ChEBI xrefs now in unified_chemical_mappings.tsv.gz
 MONDO_XREFS_FILEPATH = ONTOLOGIES_XREFS_DIR / "mondo_xrefs.tsv"
 MONDO_GENE_IDS_FILEPATH = ONTOLOGIES_XREFS_DIR / "mondo_gene_ids.tsv"
 CUSTOM_CURIES_YAML_FILE = TRANSFORM_UTILS_DIR / "custom_curies.yaml"
@@ -259,16 +259,26 @@ SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 # IMPORTANT: For CHEBI-mapped chemicals, transforms should use categories from ontologies transform
 # to prevent multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
 # See BacDive and MediaDive transforms for examples using _get_chebi_category().
-INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
-COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
-SMALL_MOLECULE_CATEGORY = "biolink:SmallMolecule"  # CHEBI default (replaces deprecated ChemicalSubstance)
+INGREDIENT_CATEGORY = (
+    "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
+)
+COMPLEX_INGREDIENT_CATEGORY = (
+    "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
+)
+SMALL_MOLECULE_CATEGORY = (
+    "biolink:SmallMolecule"  # CHEBI default (replaces deprecated ChemicalSubstance)
+)
 # DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
 MACROMOLECULE_CATEGORY = "biolink:Macromolecule"
 # Valid in Biolink v4.3.6 (proteins, nucleic acids, polymers)
 MACROMOLECULAR_COMPLEX_CATEGORY = "biolink:MacromolecularComplex"
 ROLE_CATEGORY = "biolink:ChemicalRole"  # CHEBI functional roles (inhibitor, agonist, etc.)
-METABOLITE_CATEGORY = "biolink:ChemicalEntity"  # Generic metabolite, prefer CHEBI category if available
-SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
+METABOLITE_CATEGORY = (
+    "biolink:ChemicalEntity"  # Generic metabolite, prefer CHEBI category if available
+)
+SUBSTRATE_CATEGORY = (
+    "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
+)
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 
 # Biological process and activity categories
@@ -293,7 +303,9 @@ ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
-DOES_NOT_GROW_IN = NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
+DOES_NOT_GROW_IN = (
+    NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
+)
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
 TROPHICALLY_INTERACTS_WITH = (

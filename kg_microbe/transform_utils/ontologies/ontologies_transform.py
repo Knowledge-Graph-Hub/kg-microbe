@@ -16,7 +16,6 @@ from kgx.cli.cli_utils import transform
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
-    CHEBI_XREFS_FILEPATH,
     DESCRIPTION_COLUMN,
     ENABLED_BY_PREDICATE,
     ENABLED_BY_RELATION,
@@ -364,14 +363,16 @@ class OntologiesTransform(Transform):
             new_line = "\t".join(parts)
             return new_line
 
-        if name == "chebi" or name == "upa" or name == "mondo":
+        # NOTE: ChEBI xref generation was removed here. ChEBI xrefs are now provided
+        # by the unified chemical mappings file (unified_chemical_mappings.tsv.gz)
+        # managed via the mappings/ directory and used by transforms through
+        # ChemicalMappingLoader. See mappings/README.md for details.
+        if name == "upa" or name == "mondo":
             makedirs(ONTOLOGIES_XREFS_DIR, exist_ok=True)
             # Get two columns from the nodes file: 'id' and 'xref'
             # The xref column is | separated and contains different prefixes
             # We need to make a 1-to-1 mapping between the prefixes and the id
-            if name == "chebi":
-                xref_filepath = CHEBI_XREFS_FILEPATH
-            elif name == "upa":
+            if name == "upa":
                 xref_filepath = UNIPATHWAYS_XREFS_FILEPATH
                 unipathways_xref_dict = {}
             elif name == "mondo":
@@ -682,12 +683,12 @@ class OntologiesTransform(Transform):
         import pandas as pd
 
         # Read nodes file
-        df = pd.read_csv(nodes_file, sep='\t', low_memory=False)
+        df = pd.read_csv(nodes_file, sep="\t", low_memory=False)
 
         # Remove IRI column if it exists (KGX may auto-generate it)
-        if 'iri' in df.columns:
-            df = df.drop(columns=['iri'])
-            df.to_csv(nodes_file, sep='\t', index=False)
+        if "iri" in df.columns:
+            df = df.drop(columns=["iri"])
+            df.to_csv(nodes_file, sep="\t", index=False)
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
         """Convert URL-formatted node IDs to CURIEs in both nodes and edges files."""
@@ -697,35 +698,35 @@ class OntologiesTransform(Transform):
 
         from kg_microbe.utils.mapping_file_utils import uri_to_curie
 
-        url_pattern = re.compile(r'^https?://')
+        url_pattern = re.compile(r"^https?://")
 
         # Process nodes file
-        df_nodes = pd.read_csv(nodes_file, sep='\t', low_memory=False)
+        df_nodes = pd.read_csv(nodes_file, sep="\t", low_memory=False)
 
         # Track URL to CURIE mappings for updating edges
         url_to_curie_map = {}
 
         # Convert URL IDs to CURIEs
-        if 'id' in df_nodes.columns:
-            for idx, node_id in df_nodes['id'].items():
+        if "id" in df_nodes.columns:
+            for idx, node_id in df_nodes["id"].items():
                 if isinstance(node_id, str) and url_pattern.match(node_id):
                     curie = uri_to_curie(node_id)
                     url_to_curie_map[node_id] = curie
-                    df_nodes.at[idx, 'id'] = curie
+                    df_nodes.at[idx, "id"] = curie
 
         # Save updated nodes file
-        df_nodes.to_csv(nodes_file, sep='\t', index=False)
+        df_nodes.to_csv(nodes_file, sep="\t", index=False)
 
         # Process edges file if there were any URL conversions
         if url_to_curie_map:
-            df_edges = pd.read_csv(edges_file, sep='\t', low_memory=False)
+            df_edges = pd.read_csv(edges_file, sep="\t", low_memory=False)
 
             # Update subject and object columns
-            for col in ['subject', 'object']:
+            for col in ["subject", "object"]:
                 if col in df_edges.columns:
                     df_edges[col] = df_edges[col].apply(
                         lambda x: url_to_curie_map.get(x, x) if isinstance(x, str) else x
                     )
 
             # Save updated edges file
-            df_edges.to_csv(edges_file, sep='\t', index=False)
+            df_edges.to_csv(edges_file, sep="\t", index=False)

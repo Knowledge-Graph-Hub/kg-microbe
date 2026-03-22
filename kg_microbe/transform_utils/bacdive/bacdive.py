@@ -173,6 +173,7 @@ from kg_microbe.transform_utils.constants import (
     UTILIZATION_TYPE_TESTED,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
@@ -256,6 +257,17 @@ class BacDiveTransform(Transform):
         self.chebi_categories: Dict[str, str] = {}  # {chebi_id: category}
         self._load_chebi_categories()
 
+        # Initialize unified chemical mapping loader for ChEBI lookups.
+        # This replaces the old metabolite_mapping.json-based reverse lookups.
+        try:
+            self.chemical_loader = ChemicalMappingLoader()
+        except FileNotFoundError:
+            logger.warning(
+                "Unified chemical mappings file not found. "
+                "Falling back to legacy METABOLITE_MAP for chemical lookups."
+            )
+            self.chemical_loader = None
+
     def _build_metpo_iri_index(self) -> Dict[str, dict]:
         """
         Build reverse index from IRI to mapping info for O(1) lookup.
@@ -273,6 +285,28 @@ class BacDiveTransform(Transform):
             if iri:
                 iri_index[iri] = map_info
         return iri_index
+
+    def _lookup_chebi_by_name(self, name: str) -> Optional[str]:
+        """
+        Look up ChEBI ID by chemical name using unified chemical mappings.
+
+        Falls back to legacy METABOLITE_MAP reverse lookup if the unified
+        loader is unavailable or returns no result.
+
+        :param name: Chemical/metabolite name to look up
+        :return: ChEBI ID (e.g., "CHEBI:12345") or None if not found
+        """
+        # Try unified chemical mappings first
+        if self.chemical_loader is not None:
+            result = self.chemical_loader.find_chebi_by_name(name)
+            if result:
+                return result
+
+        # Fall back to legacy METABOLITE_MAP reverse lookup
+        for key, value in METABOLITE_MAP.items():
+            if value == name:
+                return key
+        return None
 
     def _init_ontology_adapters(self):
         """Initialize GO and ChEBI adapters once for reuse."""
@@ -399,9 +433,7 @@ class BacDiveTransform(Transform):
         """
         return self.chebi_categories.get(chebi_id, METABOLITE_CATEGORY)
 
-    def _add_edge_metadata(
-        self, predicate: str, relation: str, object_id: str
-    ) -> tuple[str, str]:
+    def _add_edge_metadata(self, predicate: str, relation: str, object_id: str) -> tuple[str, str]:
         """
         Return appropriate knowledge_level and agent_type for an edge.
 
@@ -532,7 +564,7 @@ class BacDiveTransform(Transform):
             return None
 
         # Remove HTML tags (e.g., <I>Kiloninella</I> sp. -> Kiloninella sp.)
-        cleaned_name = re.sub(r'<[^>]+>', '', scientific_name)
+        cleaned_name = re.sub(r"<[^>]+>", "", scientific_name)
 
         # Split on whitespace and take first word (genus)
         words = cleaned_name.strip().split()
@@ -542,14 +574,14 @@ class BacDiveTransform(Transform):
         genus = words[0]
 
         # Strip trailing punctuation (e.g., "Planctomycetia," -> "Planctomycetia")
-        genus = genus.rstrip('.,;:')
+        genus = genus.rstrip(".,;:")
 
         # Validate: genus should start with uppercase letter
         if not genus or not genus[0].isupper():
             return None
 
         # Validate: should be alphabetic (allowing hyphens for some genera)
-        if not all(c.isalpha() or c == '-' for c in genus):
+        if not all(c.isalpha() or c == "-" for c in genus):
             print(f"  WARNING: Genus '{genus}' contains non-alphabetic characters, skipping")
             return None
 
@@ -633,7 +665,9 @@ class BacDiveTransform(Transform):
 
             ncbitaxon_id = self._search_ncbitaxon_by_label(rank_name)
             if ncbitaxon_id:
-                print(f"  Found higher rank '{rank_name}' ({rank_field}) in NCBITaxon: {ncbitaxon_id}")
+                print(
+                    f"  Found higher rank '{rank_name}' ({rank_field}) in NCBITaxon: {ncbitaxon_id}"
+                )
                 return (ncbitaxon_id, rank_field)
 
         return None
@@ -730,9 +764,7 @@ class BacDiveTransform(Transform):
                         predicate = HAS_PHENOTYPE_PREDICATE
 
                     # Write node
-                    node_writer.writerow(
-                        self._create_node_row(node_id, category, label)
-                    )
+                    node_writer.writerow(self._create_node_row(node_id, category, label))
 
                     # Write edge from organism to phenotype
                     knowledge_level, agent_type = self._add_edge_metadata(
@@ -1005,17 +1037,15 @@ class BacDiveTransform(Transform):
         # else:
         #    print("--> No medium label found in this dictionary.")
 
-        # 2) Map items in 'dictionary' to METABOLITE_MAP
+        # 2) Map items in 'dictionary' to known metabolites
         #    (K = antibiotic key, V = numeric/range/'>' string, e.g. "30-32")
+        #    Use unified chemical mappings (with METABOLITE_MAP fallback) for name->ID lookup
         metabolites_with_curies = {
-            k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
+            k: v for k, v in dictionary.items() if self._lookup_chebi_by_name(k) is not None
         }
         if metabolites_with_curies:
-            #    print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
             for k, v in metabolites_with_curies.items():
-                #        print(f"    {k} => {v}")
                 numeric_val = parse_numeric_value(v)
-                #        print(f"    numeric_val = {numeric_val}")
 
                 # Determine whether it indicates resistance (<10) or sensitivity (>30)
                 if numeric_val is not None and numeric_val < 15:
@@ -1026,8 +1056,8 @@ class BacDiveTransform(Transform):
                     # No edge if between 10 and 30 (inclusive)
                     antibiotic_predicate = None
 
-                # Reverse lookup: which METABOLITE_MAP key gave us K?
-                metabolite_id = [key_ for key_, value_ in METABOLITE_MAP.items() if value_ == k][0]
+                # Lookup ChEBI ID by name using unified chemical mappings
+                metabolite_id = self._lookup_chebi_by_name(k)
                 #        print(f"    antibiotic_predicate = {antibiotic_predicate}")
                 #        print(f"    metabolite_id = {metabolite_id}")
 
@@ -1036,7 +1066,9 @@ class BacDiveTransform(Transform):
                     #            print(f"    Writing node row for antibiotic: {metabolite_id}")
                     # Use category from ontologies transform for CHEBI IDs
                     node_writer.writerow(
-                        self._create_node_row(metabolite_id, self._get_chebi_category(metabolite_id), k)
+                        self._create_node_row(
+                            metabolite_id, self._get_chebi_category(metabolite_id), k
+                        )
                     )
 
                     # Create edge from organism to metabolite
@@ -1155,9 +1187,7 @@ class BacDiveTransform(Transform):
                     processed_pathogenicity.add(pathogen_key)
 
                     # Write node
-                    node_writer.writerow(
-                        self._create_node_row(node_id, PHENOTYPIC_CATEGORY, label)
-                    )
+                    node_writer.writerow(self._create_node_row(node_id, PHENOTYPIC_CATEGORY, label))
 
                     # Write edge from organism to pathogenicity phenotype
                     knowledge_level, agent_type = self._add_edge_metadata(
@@ -1362,7 +1392,9 @@ class BacDiveTransform(Transform):
 
             # Write EC→substrate edges
             if ec_substrate_edges:
-                print(f"Writing {len(ec_substrate_edges)} EC→substrate edges from bacdive_mappings.tsv...")
+                print(
+                    f"Writing {len(ec_substrate_edges)} EC→substrate edges from bacdive_mappings.tsv..."
+                )
                 edge_writer.writerows(ec_substrate_edges)
 
             # ! DEPRECATED 2026-01-12: Old BacDive Mapping file processing.
@@ -1449,37 +1481,35 @@ class BacDiveTransform(Transform):
                     )
 
                     morphology_multimedia = morphology_dict.get(MULTIMEDIA)
-                    morphology_multicellular = morphology_dict.get(
-                        MULTICELLULAR_MORPHOLOGY
-                    )
+                    morphology_multicellular = morphology_dict.get(MULTICELLULAR_MORPHOLOGY)
                     morphology_colony = morphology_dict.get(COLONY_MORPHOLOGY)
                     morphology_cell = morphology_dict.get(CELL_MORPHOLOGY)
                     morphology_pigmentation = morphology_dict.get(PIGMENTATION)
-                    phys_and_metabolism_observation = physiology_dict.get(
-                        OBSERVATION
-                    )
-                    phys_and_metabolism_enzymes = physiology_dict.get(
-                        ENZYMES
-                    )
+                    phys_and_metabolism_observation = physiology_dict.get(OBSERVATION)
+                    phys_and_metabolism_enzymes = physiology_dict.get(ENZYMES)
 
-                    phys_and_metabolism_metabolite_utilization = physiology_dict.get(METABOLITE_UTILIZATION)
-                    phys_and_metabolism_metabolite_production = physiology_dict.get(METABOLITE_PRODUCTION)
+                    phys_and_metabolism_metabolite_utilization = physiology_dict.get(
+                        METABOLITE_UTILIZATION
+                    )
+                    phys_and_metabolism_metabolite_production = physiology_dict.get(
+                        METABOLITE_PRODUCTION
+                    )
                     phys_and_metabolism_metabolite_tests = physiology_dict.get(METABOLITE_TESTS)
                     phys_and_metabolism_API = (
-                        {
-                            k: v
-                            for k, v in physiology_dict.items()
-                            if k.startswith("API ")
-                        }
+                        {k: v for k, v in physiology_dict.items() if k.startswith("API ")}
                         if any(k.startswith("API ") for k in physiology_dict)
                         else None
                     )
                     phys_and_metabolism_oxygen_tolerance = physiology_dict.get(OXYGEN_TOLERANCE)
                     phys_and_metabolism_spore_formation = physiology_dict.get(SPORE_FORMATION)
                     phys_and_metabolism_halophily = physiology_dict.get(HALOPHILY)
-                    phys_and_metabolism_antibiotic_resistance = physiology_dict.get(ANTIBIOTIC_RESISTANCE)
+                    phys_and_metabolism_antibiotic_resistance = physiology_dict.get(
+                        ANTIBIOTIC_RESISTANCE
+                    )
                     phys_and_metabolism_murein_type = physiology_dict.get(MUREIN)
-                    phys_and_metabolism_compound_production = physiology_dict.get(COMPOUND_PRODUCTION)
+                    phys_and_metabolism_compound_production = physiology_dict.get(
+                        COMPOUND_PRODUCTION
+                    )
                     phys_and_metabolism_fatty_acid_profile = physiology_dict.get(FATTY_ACID_PROFILE)
                     phys_and_metabolism_tolerance = physiology_dict.get(TOLERANCE)
                     phys_and_metabolism_antibiogram = physiology_dict.get(ANTIBIOGRAM)
@@ -1745,8 +1775,10 @@ class BacDiveTransform(Transform):
                                         species_epithet = words[1]
 
                                         # Create provisional species node
-                                        provisional_species_id = self._create_provisional_species_node(
-                                            genus, species_epithet, node_writer
+                                        provisional_species_id = (
+                                            self._create_provisional_species_node(
+                                                genus, species_epithet, node_writer
+                                            )
                                         )
 
                                         # Chain: strain -> species -> genus -> higher rank
@@ -1850,7 +1882,9 @@ class BacDiveTransform(Transform):
 
                                     # Link: strain -> provisional genus
                                     knowledge_level, agent_type = self._add_edge_metadata(
-                                        SUBCLASS_PREDICATE, INFERRED_SUBCLASS_RELATION, provisional_genus_id
+                                        SUBCLASS_PREDICATE,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        provisional_genus_id,
                                     )
                                     edge_writer.writerow(
                                         [
@@ -1863,7 +1897,9 @@ class BacDiveTransform(Transform):
                                             agent_type,
                                         ]
                                     )
-                                    print(f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}")
+                                    print(
+                                        f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}"
+                                    )
                         else:
                             print(f"  Could not parse genus from: {full_name}")
                             print("  Strain will remain unmapped")
@@ -1952,7 +1988,12 @@ class BacDiveTransform(Transform):
                                         growth_values.append(growth_value)
 
                             for mid, mlabel, murl, mdurl, _growth in zip(
-                                medium_ids, medium_labels, medium_urls, mediadive_urls, growth_values, strict=False
+                                medium_ids,
+                                medium_labels,
+                                medium_urls,
+                                mediadive_urls,
+                                growth_values,
+                                strict=False,
                             ):
                                 data = [
                                     BACDIVE_PREFIX + key,
@@ -2052,7 +2093,9 @@ class BacDiveTransform(Transform):
 
                     # Medium edges - link to strain organism_id, create NCBITaxon node if needed
                     if medium_ids:
-                        for mid, mlabel, growth in zip(medium_ids, medium_labels, growth_values, strict=False):
+                        for mid, mlabel, growth in zip(
+                            medium_ids, medium_labels, growth_values, strict=False
+                        ):
                             # Create nodes for medium and NCBITaxon (if available)
                             nodes_data_to_write = [
                                 self._create_node_row(mid, MEDIUM_CATEGORY, mlabel),
@@ -2112,14 +2155,8 @@ class BacDiveTransform(Transform):
                         # Convert to manual CHEBI ID for keywords
                         nodes_data_to_write = [
                             self._create_node_row(
-                                next(
-                                    (
-                                        key
-                                        for key, val in METABOLITE_MAP.items()
-                                        if val == value[CURIE_COLUMN].split(":")[1]
-                                    ),
-                                    value[CURIE_COLUMN],
-                                ),
+                                self._lookup_chebi_by_name(value[CURIE_COLUMN].split(":")[1])
+                                or value[CURIE_COLUMN],
                                 value[CATEGORY_COLUMN],
                                 value[NAME_COLUMN],
                             )
@@ -2134,17 +2171,14 @@ class BacDiveTransform(Transform):
 
                         for _, value in nodes_from_keywords.items():
                             # Create edge from organism to keyword/CHEBI
-                            object_id = next(
-                                (
-                                    key
-                                    for key, val in METABOLITE_MAP.items()
-                                    if val == value[CURIE_COLUMN].split(":")[1]
-                                ),
-                                value[CURIE_COLUMN],
+                            object_id = (
+                                self._lookup_chebi_by_name(value[CURIE_COLUMN].split(":")[1])
+                                or value[CURIE_COLUMN]
                             )
                             relation = (
                                 HAS_PHENOTYPE
-                                if value[CATEGORY_COLUMN] in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
+                                if value[CATEGORY_COLUMN]
+                                in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
                                 else BIOLOGICAL_PROCESS
                             )
                             knowledge_level, agent_type = self._add_edge_metadata(
@@ -2603,7 +2637,11 @@ class BacDiveTransform(Transform):
                                     # This is in addition to the direct organism→GO/EC edges above
                                     if go_terms or ec_numbers:
                                         # Build assay ID: assay:{kit_name}_{well_name}
-                                        assay_id = f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(" ", "_")
+                                        assay_id = (
+                                            f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(
+                                                " ", "_"
+                                            )
+                                        )
 
                                         # Write organism→assay edge using same METPO predicate
                                         knowledge_level, agent_type = self._add_edge_metadata(
@@ -2664,7 +2702,11 @@ class BacDiveTransform(Transform):
                                         # NEW: Add organism → assay edge (dual-edge pattern)
                                         # This is in addition to the direct organism→ChEBI edges above
                                         # Build assay ID: assay:{kit_name}_{well_name}
-                                        assay_id = f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(" ", "_")
+                                        assay_id = (
+                                            f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(
+                                                " ", "_"
+                                            )
+                                        )
 
                                         # Write organism→assay edge using same METPO predicate
                                         knowledge_level, agent_type = self._add_edge_metadata(
@@ -2781,5 +2823,9 @@ class BacDiveTransform(Transform):
             for link in sorted(non_matching_media_links):
                 f.write(f"{link}\n")
 
-        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN, consolidation_columns=[ID_COLUMN, NAME_COLUMN])
+        drop_duplicates(
+            self.output_node_file,
+            sort_by_column=ID_COLUMN,
+            consolidation_columns=[ID_COLUMN, NAME_COLUMN],
+        )
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])

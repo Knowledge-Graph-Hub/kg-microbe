@@ -30283,3 +30283,4 @@ scripts/examples/visualization/*.png
 # KEGG KO details (must not be redistributed per KEGG license)
 data/raw/kegg/ko_details.json
 data/raw/kegg/ko_minimal.json
+mappings/unified_chemical_mappings.tsv

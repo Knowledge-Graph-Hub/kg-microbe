@@ -173,6 +173,7 @@ from kg_microbe.transform_utils.constants import (
     UTILIZATION_TYPE_TESTED,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
@@ -256,6 +257,17 @@ class BacDiveTransform(Transform):
         self.chebi_categories: Dict[str, str] = {}  # {chebi_id: category}
         self._load_chebi_categories()
 
+        # Initialize unified chemical mapping loader for ChEBI lookups.
+        # This replaces the old metabolite_mapping.json-based reverse lookups.
+        try:
+            self.chemical_loader = ChemicalMappingLoader()
+        except FileNotFoundError:
+            logger.warning(
+                "Unified chemical mappings file not found. "
+                "Falling back to legacy METABOLITE_MAP for chemical lookups."
+            )
+            self.chemical_loader = None
+
     def _build_metpo_iri_index(self) -> Dict[str, dict]:
         """
         Build reverse index from IRI to mapping info for O(1) lookup.
@@ -273,6 +285,28 @@ class BacDiveTransform(Transform):
             if iri:
                 iri_index[iri] = map_info
         return iri_index
+
+    def _lookup_chebi_by_name(self, name: str) -> Optional[str]:
+        """
+        Look up ChEBI ID by chemical name using unified chemical mappings.
+
+        Falls back to legacy METABOLITE_MAP reverse lookup if the unified
+        loader is unavailable or returns no result.
+
+        :param name: Chemical/metabolite name to look up
+        :return: ChEBI ID (e.g., "CHEBI:12345") or None if not found
+        """
+        # Try unified chemical mappings first
+        if self.chemical_loader is not None:
+            result = self.chemical_loader.find_chebi_by_name(name)
+            if result:
+                return result
+
+        # Fall back to legacy METABOLITE_MAP reverse lookup
+        for key, value in METABOLITE_MAP.items():
+            if value == name:
+                return key
+        return None
 
     def _init_ontology_adapters(self):
         """Initialize GO and ChEBI adapters once for reuse."""
@@ -1003,17 +1037,15 @@ class BacDiveTransform(Transform):
         # else:
         #    print("--> No medium label found in this dictionary.")
 
-        # 2) Map items in 'dictionary' to METABOLITE_MAP
+        # 2) Map items in 'dictionary' to known metabolites
         #    (K = antibiotic key, V = numeric/range/'>' string, e.g. "30-32")
+        #    Use unified chemical mappings (with METABOLITE_MAP fallback) for name->ID lookup
         metabolites_with_curies = {
-            k: v for k, v in dictionary.items() if k in METABOLITE_MAP.values()
+            k: v for k, v in dictionary.items() if self._lookup_chebi_by_name(k) is not None
         }
         if metabolites_with_curies:
-            #    print(f"--> Found {len(metabolites_with_curies)} items that match METABOLITE_MAP.values():")
             for k, v in metabolites_with_curies.items():
-                #        print(f"    {k} => {v}")
                 numeric_val = parse_numeric_value(v)
-                #        print(f"    numeric_val = {numeric_val}")
 
                 # Determine whether it indicates resistance (<10) or sensitivity (>30)
                 if numeric_val is not None and numeric_val < 15:
@@ -1024,8 +1056,8 @@ class BacDiveTransform(Transform):
                     # No edge if between 10 and 30 (inclusive)
                     antibiotic_predicate = None
 
-                # Reverse lookup: which METABOLITE_MAP key gave us K?
-                metabolite_id = [key_ for key_, value_ in METABOLITE_MAP.items() if value_ == k][0]
+                # Lookup ChEBI ID by name using unified chemical mappings
+                metabolite_id = self._lookup_chebi_by_name(k)
                 #        print(f"    antibiotic_predicate = {antibiotic_predicate}")
                 #        print(f"    metabolite_id = {metabolite_id}")
 
@@ -2120,17 +2152,16 @@ class BacDiveTransform(Transform):
                                 )
 
                     if nodes_from_keywords:
-                        # Convert to manual CHEBI ID for keywords
+                        # Convert to manual CHEBI ID for keywords (cache lookups to avoid duplicates)
+                        keyword_to_chebi = {}
+                        for _, value in nodes_from_keywords.items():
+                            keyword = value[CURIE_COLUMN].split(":")[1]
+                            chebi_id = self._lookup_chebi_by_name(keyword) or value[CURIE_COLUMN]
+                            keyword_to_chebi[value[CURIE_COLUMN]] = chebi_id
+
                         nodes_data_to_write = [
                             self._create_node_row(
-                                next(
-                                    (
-                                        key
-                                        for key, val in METABOLITE_MAP.items()
-                                        if val == value[CURIE_COLUMN].split(":")[1]
-                                    ),
-                                    value[CURIE_COLUMN],
-                                ),
+                                keyword_to_chebi[value[CURIE_COLUMN]],
                                 value[CATEGORY_COLUMN],
                                 value[NAME_COLUMN],
                             )
@@ -2145,14 +2176,7 @@ class BacDiveTransform(Transform):
 
                         for _, value in nodes_from_keywords.items():
                             # Create edge from organism to keyword/CHEBI
-                            object_id = next(
-                                (
-                                    key
-                                    for key, val in METABOLITE_MAP.items()
-                                    if val == value[CURIE_COLUMN].split(":")[1]
-                                ),
-                                value[CURIE_COLUMN],
-                            )
+                            object_id = keyword_to_chebi[value[CURIE_COLUMN]]
                             relation = (
                                 HAS_PHENOTYPE
                                 if value[CATEGORY_COLUMN]

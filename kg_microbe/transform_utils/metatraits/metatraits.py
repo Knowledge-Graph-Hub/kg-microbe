@@ -107,11 +107,12 @@ METATRAITS_INPUT_FILES = [
 
 
 def _get_ncbitaxon_adapter():
-    """Get OAK adapter for NCBITaxon; use pre-built sqlite:obo:ncbitaxon if local source invalid."""
+    """Get OAK adapter for NCBITaxon; creates symlink to OAK cache if available."""
     # Use .db file instead of .owl (NCBITAXON_SOURCE points to .owl)
     local_db = NCBITAXON_SOURCE.parent / "ncbitaxon.db"
+    oak_cache = Path.home() / ".data" / "oaklib" / "ncbitaxon.db"
 
-    # Try local database first, fall back to remote if corrupted/missing
+    # Try local database first (could be file or symlink)
     if local_db.exists():
         local_path = f"sqlite:{local_db}"
         try:
@@ -121,12 +122,37 @@ def _get_ncbitaxon_adapter():
             print(f"  Using local NCBITaxon database: {local_db}")
             return adapter
         except Exception as e:
-            print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), using remote fallback")
+            print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), trying fallback")
+            # Remove invalid file/symlink
+            local_db.unlink()
 
-    # Fallback: download pre-built OBO database (~2GB)
-    print("  NCBITaxon database not found locally - downloading from OBO library for taxon name resolution...")
-    print("  (This is a one-time download, ~2GB, may take a few minutes)")
-    return get_adapter("sqlite:obo:ncbitaxon")
+    # If OAK cache exists but no local symlink, create it
+    if oak_cache.exists() and not local_db.exists():
+        try:
+            print(f"  Creating symlink to cached database: {local_db} -> {oak_cache}")
+            local_db.symlink_to(oak_cache)
+            print(f"  Using cached NCBITaxon database from OAK")
+            return get_adapter(f"sqlite:{local_db}")
+        except Exception as e:
+            print(f"  Failed to create symlink ({e}), using remote adapter")
+
+    # Fallback: use OAK remote adapter (downloads to cache if not present)
+    if oak_cache.exists():
+        print("  Using cached NCBITaxon database from OAK")
+    else:
+        print("  Downloading NCBITaxon database from OBO library (~2GB, one-time download)...")
+
+    adapter = get_adapter("sqlite:obo:ncbitaxon")
+
+    # After first download, create symlink for future runs
+    if oak_cache.exists() and not local_db.exists():
+        try:
+            local_db.symlink_to(oak_cache)
+            print(f"  Created symlink for future use: {local_db}")
+        except Exception:
+            pass  # Symlink creation is optional, don't fail if it doesn't work
+
+    return adapter
 
 
 def _open_jsonl(path: Path):

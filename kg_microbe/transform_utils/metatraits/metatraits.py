@@ -124,7 +124,8 @@ def _get_ncbitaxon_adapter():
             print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), using remote fallback")
 
     # Fallback: download pre-built OBO database (~2GB)
-    print("  Downloading NCBITaxon database from OBO library (this may take a few minutes)...")
+    print("  NCBITaxon database not found locally - downloading from OBO library for taxon name resolution...")
+    print("  (This is a one-time download, ~2GB, may take a few minutes)")
     return get_adapter("sqlite:obo:ncbitaxon")
 
 

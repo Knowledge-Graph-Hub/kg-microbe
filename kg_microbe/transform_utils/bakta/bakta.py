@@ -122,9 +122,7 @@ class BaktaTransform(Transform):
             logger.error(f"No dataset directories found in {bakta_raw_dir}")
             return
 
-        logger.info(
-            f"Found {len(dataset_dirs)} dataset directories: {[d.name for d in dataset_dirs]}"
-        )
+        logger.info(f"Found {len(dataset_dirs)} dataset directories: {[d.name for d in dataset_dirs]}")
 
         # Process each dataset directory
         for dataset_dir in dataset_dirs:
@@ -152,11 +150,7 @@ class BaktaTransform(Transform):
             logger.info(f"Processing {len(samn_dirs)} genomes for {dataset_name}")
 
             # Progress bar
-            progress_bar = (
-                tqdm(samn_dirs, desc=f"Processing {dataset_name}")
-                if show_status
-                else DummyTqdm(samn_dirs)
-            )
+            progress_bar = tqdm(samn_dirs, desc=f"Processing {dataset_name}") if show_status else DummyTqdm(samn_dirs)
 
             # Process each genome
             for samn_dir in progress_bar:
@@ -168,9 +162,7 @@ class BaktaTransform(Transform):
                 self.process_genome(samn_dir, samn_id)
 
             # Write output files for this dataset
-            logger.info(
-                f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges for {dataset_name}"
-            )
+            logger.info(f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges for {dataset_name}")
             self.write_output(dataset_name)
 
         logger.info("Bakta transform complete")
@@ -269,9 +261,7 @@ class BaktaTransform(Transform):
                 "rdfs:subClassOf",
             )
 
-    def process_gene(
-        self, gene_data: Dict[str, str], samn_id: str, organism_id: Optional[str]
-    ) -> None:
+    def process_gene(self, gene_data: Dict[str, str], samn_id: str, organism_id: Optional[str]) -> None:
         """
         Process a single gene annotation.
 
@@ -322,9 +312,7 @@ class BaktaTransform(Transform):
             # Add protein functional annotations
             self.add_functional_annotations(protein_id, gene_id, annotations)
 
-    def add_gene_node(
-        self, gene_id: str, gene_symbol: str, product: str, annotations: Dict[str, List[str]]
-    ) -> None:
+    def add_gene_node(self, gene_id: str, gene_symbol: str, product: str, annotations: Dict[str, List[str]]) -> None:
         """
         Add a gene node.
 
@@ -355,9 +343,7 @@ class BaktaTransform(Transform):
         self.nodes.append(node)
         self.seen_nodes.add(gene_id)
 
-    def add_protein_node(
-        self, protein_id: str, product: str, annotations: Dict[str, List[str]]
-    ) -> None:
+    def add_protein_node(self, protein_id: str, product: str, annotations: Dict[str, List[str]]) -> None:
         """
         Add a protein node.
 
@@ -389,9 +375,7 @@ class BaktaTransform(Transform):
         self.nodes.append(node)
         self.seen_nodes.add(protein_id)
 
-    def add_functional_annotations(
-        self, protein_id: str, gene_id: str, annotations: Dict[str, List[str]]
-    ) -> None:
+    def add_functional_annotations(self, protein_id: str, gene_id: str, annotations: Dict[str, List[str]]) -> None:
         """
         Add functional annotation nodes and edges.
 

@@ -107,18 +107,12 @@ class TestBiolinkHierarchy:
 
     def test_is_more_specific_false(self, hierarchy):
         """Test is_more_specific returns False for shallower category."""
-        assert (
-            hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:SmallMolecule") is False
-        )
+        assert hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:SmallMolecule") is False
 
     def test_is_more_specific_invalid_categories(self, hierarchy):
         """Test is_more_specific with invalid categories."""
-        assert (
-            hierarchy.is_more_specific("biolink:InvalidCategory", "biolink:ChemicalEntity") is False
-        )
-        assert (
-            hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:InvalidCategory") is False
-        )
+        assert hierarchy.is_more_specific("biolink:InvalidCategory", "biolink:ChemicalEntity") is False
+        assert hierarchy.is_more_specific("biolink:ChemicalEntity", "biolink:InvalidCategory") is False
 
     def test_get_ancestors_small_molecule(self, hierarchy):
         """Test get_ancestors for SmallMolecule."""
@@ -171,21 +165,15 @@ class TestBiolinkHierarchy:
     def test_actual_multi_category_patterns(self, hierarchy):
         """Test actual multi-category patterns from the merged graph analysis."""
         # Pattern 1: ChemicalEntity|SmallMolecule (1,138 occurrences)
-        result1 = hierarchy.get_most_specific_category(
-            ["biolink:ChemicalEntity", "biolink:SmallMolecule"]
-        )
+        result1 = hierarchy.get_most_specific_category(["biolink:ChemicalEntity", "biolink:SmallMolecule"])
         assert result1 == "biolink:SmallMolecule"
 
         # Pattern 2: ChemicalRole|SmallMolecule (88 occurrences)
-        result2 = hierarchy.get_most_specific_category(
-            ["biolink:ChemicalRole", "biolink:SmallMolecule"]
-        )
+        result2 = hierarchy.get_most_specific_category(["biolink:ChemicalRole", "biolink:SmallMolecule"])
         assert result2 == "biolink:SmallMolecule"
 
         # Pattern 3: BiologicalProcess|MolecularActivity (from GO conflicts)
-        result3 = hierarchy.get_most_specific_category(
-            ["biolink:BiologicalProcess", "biolink:MolecularActivity"]
-        )
+        result3 = hierarchy.get_most_specific_category(["biolink:BiologicalProcess", "biolink:MolecularActivity"])
         # Both at depth 3, should be deterministic
         assert result3 in ["biolink:BiologicalProcess", "biolink:MolecularActivity"]
 
@@ -196,9 +184,9 @@ class TestBiolinkHierarchy:
             child_depth = hierarchy.depth_map.get(child)
             parent_depth = hierarchy.depth_map.get(parent)
             if child_depth is not None and parent_depth is not None:
-                assert (
-                    child_depth > parent_depth
-                ), f"{child} (depth {child_depth}) should be deeper than {parent} (depth {parent_depth})"
+                assert child_depth > parent_depth, (
+                    f"{child} (depth {child_depth}) should be deeper than {parent} (depth {parent_depth})"
+                )
 
     def test_multiple_categories_deterministic(self, hierarchy):
         """Test that multiple calls with same input return same result."""
@@ -209,11 +197,7 @@ class TestBiolinkHierarchy:
 
     def test_biolink_prefix_handling(self, hierarchy):
         """Test that categories with and without biolink: prefix work."""
-        result_with_prefix = hierarchy.get_most_specific_category(
-            ["biolink:ChemicalEntity", "biolink:SmallMolecule"]
-        )
-        result_without_prefix = hierarchy.get_most_specific_category(
-            ["ChemicalEntity", "SmallMolecule"]
-        )
+        result_with_prefix = hierarchy.get_most_specific_category(["biolink:ChemicalEntity", "biolink:SmallMolecule"])
+        result_without_prefix = hierarchy.get_most_specific_category(["ChemicalEntity", "SmallMolecule"])
         # Both should return the same category with biolink: prefix
         assert result_with_prefix == result_without_prefix == "biolink:SmallMolecule"

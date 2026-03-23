@@ -338,6 +338,33 @@
   local_name: ncbi_family_summary.jsonl.gz
 
 #
+# MetaTraits GTDB
+# Microbial trait data from MetaTraits organized by GTDB taxonomy (R220)
+# Enables genome-level trait associations via GTDB taxonomy
+# NOTE: Requires overlap analysis to assess value vs NCBITaxon metatraits
+#
+-
+  url: https://metatraits.embl.de/static/downloads/gtdb_species_summary.jsonl.gz
+  local_name: gtdb_species_summary.jsonl.gz
+-
+  url: https://metatraits.embl.de/static/downloads/gtdb_genus_summary.jsonl.gz
+  local_name: gtdb_genus_summary.jsonl.gz
+-
+  url: https://metatraits.embl.de/static/downloads/gtdb_family_summary.jsonl.gz
+  local_name: gtdb_family_summary.jsonl.gz
+
+#
+# GTDB-NCBITaxon Mappings (for overlap analysis)
+# Maps between GTDB R220 and NCBITaxon taxonomies
+#
+-
+  url: https://metatraits.embl.de/static/downloads/GTDB2NCBI.tsv.gz
+  local_name: GTDB2NCBI.tsv.gz
+-
+  url: https://metatraits.embl.de/static/downloads/NCBI2GTDB.tsv.gz
+  local_name: NCBI2GTDB.tsv.gz
+
+#
 # Biolink Model
 # The standard schema for biological knowledge graphs
 # Version 4.3.6 (latest as of Dec 2024)

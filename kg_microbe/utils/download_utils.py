@@ -79,9 +79,7 @@ def download_from_yaml(
                 continue
 
             local_name = (
-                item["local_name"]
-                if "local_name" in item and item["local_name"]
-                else item["url"].split("/")[-1]
+                item["local_name"] if "local_name" in item and item["local_name"] else item["url"].split("/")[-1]
             )
 
             outfile = os.path.join(output_dir, local_name)
@@ -111,10 +109,7 @@ def download_from_yaml(
                     url = parse_url(item["url"])
                     if url.startswith("gs://"):
                         Blob.from_string(url, client=storage.Client()).download_to_filename(outfile)
-                    elif any(
-                        url.startswith(str(i))
-                        for i in list(GDOWN_MAP.keys()) + list(GDOWN_MAP.values())
-                    ):
+                    elif any(url.startswith(str(i)) for i in list(GDOWN_MAP.keys()) + list(GDOWN_MAP.values())):
                         # Check if url starts with a key or a value
                         for key, value in GDOWN_MAP.items():
                             if url.startswith(str(value)):
@@ -179,7 +174,6 @@ def mirror_to_bucket(local_file, bucket_url, remote_file) -> None:
     """
     with open(local_file, "rb"):
         if bucket_url.startswith("gs://"):
-
             # Remove any trailing slashes (Google gets confused)
             bucket_url = bucket_url.rstrip("/")
 
@@ -198,11 +192,7 @@ def mirror_to_bucket(local_file, bucket_url, remote_file) -> None:
             print(f"Bucket name: {bucket_name}")
             print(f"Bucket filepath: {bucket_path}")
 
-            blob = (
-                bucket.blob(f"{bucket_path}/{remote_file}")
-                if bucket_path
-                else bucket.blob(remote_file)
-            )
+            blob = bucket.blob(f"{bucket_path}/{remote_file}") if bucket_path else bucket.blob(remote_file)
 
             print(f"Uploading {local_file} to remote mirror: gs://{blob.name}/")
             blob.upload_from_filename(local_file)
@@ -239,9 +229,7 @@ def download_from_api(yaml_item, outfile) -> None:
         if yaml_item["test"]:
             ncbi_organisms = ["1", "100", "1000", "1591", "885", "84112", "1308"]
         else:
-            ncbi_organisms = parse_ncbitaxon_json(
-                outfile.rsplit("/", 1)[0] + "/" + "ncbitaxon_removed_subset.json"
-            )
+            ncbi_organisms = parse_ncbitaxon_json(outfile.rsplit("/", 1)[0] + "/" + "ncbitaxon_removed_subset.json")
 
         outyamls = outfile.rsplit("/", 1)[0] + "/" + yaml_item["local_name"]
         os.makedirs(outyamls, exist_ok=True)
@@ -332,17 +320,13 @@ def parse_ncbitaxon_json(input_file):
         contents = json.loads(f.read())
 
         organism_ids = [
-            i["id"].split("NCBITaxon_")[1]
-            for i in contents["graphs"][0]["nodes"]
-            if "NCBITaxon_" in i["id"]
+            i["id"].split("NCBITaxon_")[1] for i in contents["graphs"][0]["nodes"] if "NCBITaxon_" in i["id"]
         ]
 
     return organism_ids
 
 
-def get_uniprot_values_organism(
-    organism_ids, base_url, fields, keywords, size, batch_size, outyamls
-):
+def get_uniprot_values_organism(organism_ids, base_url, fields, keywords, size, batch_size, outyamls):
     """
     Query UniProt for enzyme data per organism in batches.
 
@@ -512,7 +496,6 @@ def get_jobs(url, values):
     parse_response(first_page, values)
 
     while paging:
-
         if "next" in first_page.links:
             next_url = first_page.links["next"]["url"]
             next_page = session.get(next_url)

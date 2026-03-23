@@ -51,9 +51,7 @@ def replace_category_ontology(line, id_index, category_index):
     return new_line
 
 
-def get_go_category_by_aspect(
-    go_term_id: str, go_adapter: Optional[OboGraphInterface] = None
-) -> str:
+def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInterface] = None) -> str:
     """
     Return Biolink category based on GO aspect (namespace).
 
@@ -116,9 +114,7 @@ def get_go_category_by_aspect(
     return BIOLOGICAL_PROCESS_CATEGORY
 
 
-def get_chebi_category(
-    chebi_term_id: str, chebi_adapter: Optional[OboGraphInterface] = None
-) -> str:
+def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInterface] = None) -> str:
     """
     Return appropriate Biolink category for ChEBI term.
 
@@ -227,9 +223,7 @@ def get_chebi_category(
 
             # Only categorize as role if it's a close descendant of specific role classes
             # (not just any distant ancestor)
-            parents = list(
-                chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"])
-            )
+            parents = list(chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"]))
             parent_ids = [str(p[2]) for p in parents]
 
             if any(role_parent in parent_ids for role_parent in specific_role_parents):

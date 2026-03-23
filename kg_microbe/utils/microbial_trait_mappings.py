@@ -104,9 +104,7 @@ def load_microbial_trait_mappings(
                     if not object_id or not object_source:
                         continue
 
-                    biolink_predicate = _resolve_biolink_predicate(
-                        subject_label, notes, entity_category
-                    )
+                    biolink_predicate = _resolve_biolink_predicate(subject_label, notes, entity_category)
                     object_category = _resolve_object_category(object_source, entity_category)
 
                     result[subject_label] = {

@@ -104,9 +104,7 @@ def consolidate_node_categories(
                     # No rule found - log as unknown pattern and use first category
                     unknown_patterns[sorted_pattern] += 1
                     row["category"] = categories[0]  # Fallback to first category
-                    print(
-                        f"WARNING: Unknown pattern '{sorted_pattern}' for node {node_id} - using {categories[0]}"
-                    )
+                    print(f"WARNING: Unknown pattern '{sorted_pattern}' for node {node_id} - using {categories[0]}")
 
             writer.writerow(row)
 
@@ -117,7 +115,7 @@ def consolidate_node_categories(
             f.write("=" * 80 + "\n\n")
             f.write(f"Total nodes processed: {total_nodes:,}\n")
             f.write(f"Multi-category nodes found: {multi_category_nodes:,}\n")
-            f.write(f"Multi-category percentage: {(multi_category_nodes/total_nodes)*100:.2f}%\n")
+            f.write(f"Multi-category percentage: {(multi_category_nodes / total_nodes) * 100:.2f}%\n")
             f.write(f"Unknown patterns (no rule): {len(unknown_patterns)}\n\n")
 
             f.write("Consolidation Method: Explicit verified rules\n")
@@ -147,9 +145,7 @@ def consolidate_node_categories(
                 for pattern, count in unknown_patterns.most_common():
                     f.write(f"\n{pattern}: {count} nodes\n")
                     f.write("  Action: Used first category as fallback\n")
-                    f.write(
-                        "  Recommendation: Add explicit rule to category_consolidation_rules.yaml\n"
-                    )
+                    f.write("  Recommendation: Add explicit rule to category_consolidation_rules.yaml\n")
 
             # Report special cases
             if special_cases:
@@ -164,7 +160,7 @@ def consolidate_node_categories(
 
     print(f"✓ Consolidated {multi_category_nodes:,} multi-category nodes")
     print(f"✓ Total nodes: {total_nodes:,}")
-    print(f"✓ Multi-category percentage: {(multi_category_nodes/total_nodes)*100:.2f}%")
+    print(f"✓ Multi-category percentage: {(multi_category_nodes / total_nodes) * 100:.2f}%")
     print(f"✓ Output written to: {output_file}")
     if report_file:
         print(f"✓ Report written to: {report_file}")

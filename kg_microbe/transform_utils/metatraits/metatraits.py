@@ -184,8 +184,9 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
     """
     input_file, temp_dir, shared_init, show_status = args
 
-    # Reconstruct transform instance in worker process
-    transform = MetaTraitsTransform.__new__(MetaTraitsTransform)
+    # Reconstruct transform instance in worker process using correct class
+    transform_class = shared_init.get("transform_class", MetaTraitsTransform)
+    transform = transform_class.__new__(transform_class)
     transform._init_from_shared_data(shared_init)
 
     # Process file
@@ -755,6 +756,7 @@ class MetaTraitsTransform(Transform):
         :return: Dictionary with shared initialization data
         """
         return {
+            "transform_class": self.__class__,  # Pass actual class for worker instantiation
             "input_base_dir": str(self.input_base_dir),
             "output_dir": str(self.output_dir),
             "knowledge_source": self.knowledge_source,

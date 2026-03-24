@@ -123,6 +123,23 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         print(f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon mappings")
 
+    def _get_shared_init_data(self) -> dict:
+        """Override to include GTDB-specific data for workers."""
+        shared_data = super()._get_shared_init_data()
+        shared_data["gtdb_to_ncbi"] = dict(self.gtdb_to_ncbi)  # Convert defaultdict to dict for pickling
+        return shared_data
+
+    def _init_from_shared_data(self, shared_data: dict) -> None:
+        """Override to restore GTDB-specific data in workers."""
+        super()._init_from_shared_data(shared_data)
+
+        # Restore GTDB-specific state
+        self.gtdb_to_ncbi = defaultdict(set, shared_data.get("gtdb_to_ncbi", {}))
+
+        # Disable OAK adapter in worker (GTDB uses metadata mapping only)
+        self.ncbitaxon_name_to_id.clear()
+        self._ncbi_adapter = "DISABLED"
+
     def _get_ncbitaxon_impl(self):
         """Override parent method - GTDB transform doesn't use OAK adapter."""
         raise NotImplementedError(

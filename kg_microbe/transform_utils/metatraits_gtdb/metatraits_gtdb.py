@@ -59,6 +59,11 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self.gtdb_to_ncbi: Dict[str, Set[str]] = defaultdict(set)
         self._load_gtdb_to_ncbi_mapping()
 
+        # GTDB transform uses GTDB metadata mapping, not OAK adapter
+        # Clear the parent's ncbitaxon cache and prevent adapter initialization
+        self.ncbitaxon_name_to_id.clear()  # Not needed - we use GTDB mapping
+        self._ncbi_adapter = "DISABLED"  # Prevent lazy init - GTDB doesn't need OAK
+
     def _load_gtdb_to_ncbi_mapping(self) -> None:
         """Load GTDB species name to NCBITaxon ID mapping from GTDB metadata files."""
         gtdb_dir = RAW_DATA_DIR / "gtdb"
@@ -118,16 +123,24 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         print(f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon mappings")
 
+    def _get_ncbitaxon_impl(self):
+        """Override parent method - GTDB transform doesn't use OAK adapter."""
+        raise NotImplementedError(
+            "GTDB transform uses GTDB metadata mapping, not OAK adapter. "
+            "This method should never be called."
+        )
+
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
         """
         Resolve GTDB taxon name to NCBITaxon ID using GTDB metadata mapping.
 
         Overrides parent class method to use GTDB-specific mapping instead of label search.
+        Uses only local GTDB metadata dictionary - no OAK API calls.
 
         :param search_name: GTDB species/genus/family name (e.g., "Escherichia coli")
         :return: NCBITaxon ID (e.g., "NCBITaxon:562") or None
         """
-        # Try direct lookup in GTDB mapping
+        # Try direct lookup in GTDB mapping (O(1) dictionary lookup - no OAK)
         ncbi_ids = self.gtdb_to_ncbi.get(search_name)
         if ncbi_ids:
             # If multiple NCBITaxon IDs map to same GTDB name, return first one

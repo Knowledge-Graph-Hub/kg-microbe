@@ -704,6 +704,50 @@ class MetaTraitsTransform(Transform):
         biolink_pred = self._to_biolink_predicate(predicate)
         return PREDICATE_TO_RELATION.get(biolink_pred, HAS_PHENOTYPE)
 
+    def _calculate_optimal_workers_for_chunking(self) -> int:
+        """
+        Calculate optimal worker count for chunked processing (single file split into chunks).
+
+        Unlike _calculate_optimal_workers, this doesn't limit by file count.
+
+        :return: Optimal number of workers
+        """
+        # Check environment variable override first
+        if os.environ.get("METATRAITS_WORKERS"):
+            try:
+                workers = int(os.environ["METATRAITS_WORKERS"])
+                print(f"  Using METATRAITS_WORKERS environment variable: {workers} workers")
+                return workers
+            except ValueError:
+                print("  Warning: Invalid METATRAITS_WORKERS value, using auto-detection")
+
+        try:
+            import psutil
+
+            cpu_cores = multiprocessing.cpu_count()
+            max_cpu_workers = max(1, cpu_cores - 1)
+
+            # Estimate 3GB per worker (OAK adapter ~2GB + overhead)
+            available_memory_gb = psutil.virtual_memory().available / (1024**3)
+            max_memory_workers = max(1, int(available_memory_gb / 3))
+
+            # For chunking, don't limit by file count (we're splitting 1 file)
+            optimal = min(max_cpu_workers, max_memory_workers)
+
+            print("  Resource-aware worker selection (chunked mode):")
+            print(f"    CPU cores: {cpu_cores} → max {max_cpu_workers} workers")
+            print(f"    Available memory: {available_memory_gb:.1f}GB → max {max_memory_workers} workers")
+            print(f"    Selected: {optimal} parallel workers for chunking")
+
+            return optimal
+
+        except ImportError:
+            print("  Warning: psutil not installed, using CPU count only")
+            cpu_cores = multiprocessing.cpu_count()
+            optimal = max(1, cpu_cores - 1)
+            print(f"    CPU cores: {cpu_cores} → using {optimal} workers")
+            return optimal
+
     def _calculate_optimal_workers(self, input_files: List[Path]) -> int:
         """
         Calculate optimal number of workers based on system resources.
@@ -990,8 +1034,8 @@ class MetaTraitsTransform(Transform):
 
         nodes_df = pd.concat(all_nodes, ignore_index=True)
 
-        # Deduplicate nodes
-        nodes_df = drop_duplicates(nodes_df, subset=[ID_COLUMN], sort_by=ID_COLUMN)
+        # Deduplicate nodes using pandas native method
+        nodes_df = nodes_df.drop_duplicates(subset=[ID_COLUMN]).sort_values(by=ID_COLUMN)
 
         # Write final output
         nodes_df.to_csv(self.output_node_file, sep="\t", index=False)
@@ -1004,8 +1048,8 @@ class MetaTraitsTransform(Transform):
 
         edges_df = pd.concat(all_edges, ignore_index=True)
 
-        # Deduplicate edges
-        edges_df = drop_duplicates(edges_df)
+        # Deduplicate edges using pandas native method
+        edges_df = edges_df.drop_duplicates()
 
         # Write final output
         edges_df.to_csv(self.output_edge_file, sep="\t", index=False)
@@ -1107,7 +1151,9 @@ class MetaTraitsTransform(Transform):
         :param num_workers: Number of workers (None = auto-detect)
         """
         if num_workers is None:
-            num_workers = self._calculate_optimal_workers([input_file])
+            # For chunked processing, don't limit by file count (we're splitting 1 file)
+            # Pass a dummy list to avoid file count limitation
+            num_workers = self._calculate_optimal_workers_for_chunking()
 
         # Setup: create temp output directory
         temp_dir = self.output_dir / "temp"

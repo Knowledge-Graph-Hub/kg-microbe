@@ -13,11 +13,12 @@ from typing import Dict, Optional, Set, Union
 from kg_microbe.transform_utils.constants import METATRAITS_GTDB, RAW_DATA_DIR
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 
-# Input file names for GTDB metatraits
+# Input file names for GTDB metatraits (species-level only)
 METATRAITS_GTDB_INPUT_FILES = [
     "gtdb_species_summary.jsonl.gz",
-    "gtdb_genus_summary.jsonl.gz",
-    "gtdb_family_summary.jsonl.gz",
+    # Genus and family level commented out - only processing species-level traits
+    # "gtdb_genus_summary.jsonl.gz",
+    # "gtdb_family_summary.jsonl.gz",
 ]
 
 

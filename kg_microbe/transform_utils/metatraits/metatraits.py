@@ -1032,6 +1032,96 @@ class MetaTraitsTransform(Transform):
         shutil.rmtree(temp_dir)
         print("  Merge complete.")
 
+    def _split_file_into_chunks(self, input_file: Path, num_chunks: int, temp_dir: Path) -> List[Path]:
+        """
+        Split a single JSONL file into multiple chunk files for parallel processing.
+
+        :param input_file: Input JSONL file to split
+        :param num_chunks: Number of chunks to create
+        :param temp_dir: Directory to write chunk files
+        :return: List of chunk file paths
+        """
+        # Count total items first
+        print(f"  Counting items in {input_file.name}...")
+        with _open_jsonl(input_file) as f:
+            total_items = sum(1 for line in f if line.strip())
+
+        chunk_size = (total_items + num_chunks - 1) // num_chunks  # Ceiling division
+        print(f"  Splitting {total_items} items into {num_chunks} chunks (~{chunk_size} items each)...")
+
+        # Create chunk files
+        chunk_files = []
+        chunk_dir = temp_dir / "chunks"
+        chunk_dir.mkdir(exist_ok=True, parents=True)
+
+        current_chunk = 0
+        items_in_chunk = 0
+        chunk_file = None
+        chunk_handle = None
+
+        try:
+            with _open_jsonl(input_file) as f:
+                for line in tqdm(f, total=total_items, desc="  Creating chunks"):
+                    line = line.strip()
+                    if not line:
+                        continue
+
+                    # Start new chunk if needed
+                    if items_in_chunk == 0:
+                        if chunk_handle:
+                            chunk_handle.close()
+                        chunk_file = chunk_dir / f"chunk_{current_chunk:04d}.jsonl"
+                        chunk_files.append(chunk_file)
+                        chunk_handle = open(chunk_file, "w")
+
+                    # Write to current chunk
+                    chunk_handle.write(line + "\n")
+                    items_in_chunk += 1
+
+                    # Move to next chunk if full
+                    if items_in_chunk >= chunk_size:
+                        items_in_chunk = 0
+                        current_chunk += 1
+
+            if chunk_handle:
+                chunk_handle.close()
+
+        except Exception:
+            if chunk_handle:
+                chunk_handle.close()
+            raise
+
+        print(f"  Created {len(chunk_files)} chunk files")
+        return chunk_files
+
+    def _run_parallel_chunked(
+        self, input_file: Path, show_status: bool = True, num_workers: Optional[int] = None
+    ) -> None:
+        """
+        Process a single file in parallel by splitting into chunks.
+
+        :param input_file: Input file to process
+        :param show_status: Whether to show progress bars
+        :param num_workers: Number of workers (None = auto-detect)
+        """
+        if num_workers is None:
+            num_workers = self._calculate_optimal_workers([input_file])
+
+        # Setup: create temp output directory
+        temp_dir = self.output_dir / "temp"
+        temp_dir.mkdir(exist_ok=True, parents=True)
+
+        # Split file into chunks
+        chunk_files = self._split_file_into_chunks(input_file, num_workers, temp_dir)
+
+        # Process chunks using existing parallel infrastructure
+        self._run_parallel(chunk_files, show_status, num_workers)
+
+        # Cleanup chunk files
+        chunk_dir = temp_dir / "chunks"
+        if chunk_dir.exists():
+            shutil.rmtree(chunk_dir)
+
     def _run_parallel(
         self, input_files: List[Path], show_status: bool = True, num_workers: Optional[int] = None
     ) -> None:
@@ -1268,8 +1358,12 @@ class MetaTraitsTransform(Transform):
 
         # Decide whether to use parallel or sequential processing
         if use_mp and len(input_files) > 1:
+            # Multiple files: distribute files across workers
             self._run_parallel(input_files, show_status, self.num_workers)
+        elif use_mp and len(input_files) == 1:
+            # Single file: split into chunks for parallel processing
+            print(f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)")
+            self._run_parallel_chunked(input_files[0], show_status, self.num_workers)
         else:
-            if use_mp and len(input_files) == 1:
-                print("  Using sequential processing (only 1 input file)")
+            # No multiprocessing: sequential
             self._run_sequential(input_files, show_status)

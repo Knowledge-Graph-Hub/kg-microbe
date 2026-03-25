@@ -1,10 +1,10 @@
 subject_label	subject_label_normalized	object_id	object_label	object_source	predicate_id	confidence	mapping_justification	curator	source_dataset	notes	verified_date
-gram positive	gram positive	METPO:1000606	Gram-positive	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
-gram negative	gram negative	METPO:1000607	Gram-negative	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
-sporulation	sporulation	METPO:1000614	endospore-forming	METPO	skos:closeMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; sporulation implies endospore-forming	
-obligate aerobic	obligate aerobic	METPO:1000616	obligately aerobic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
-obligate anaerobic	obligate anaerobic	METPO:1000870	obligately anaerobic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
-presence of motility	presence of motility	METPO:1002005	motile	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
-voges-proskauer test	voges-proskauer test	METPO:1005017	Voges-Proskauer test positive	METPO	skos:closeMatch	medium	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; only when pct_true > threshold	
-psychrophilic	psychrophilic	METPO:1000660	psychrophilic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
-thermophilic	thermophilic	METPO:1000656	thermophilic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype	
+gram positive	gram positive	METPO:1000698	gram positive	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1000606
+gram negative	gram negative	METPO:1000699	gram negative	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1000607
+sporulation	sporulation	METPO:1000870	sporulation	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED label from endospore-forming
+obligate aerobic	obligate aerobic	METPO:1000606	obligately aerobic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1000616
+obligate anaerobic	obligate anaerobic	METPO:1000607	obligately anaerobic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1000870
+presence of motility	presence of motility	METPO:1000702	motile	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1002005
+psychrophilic	psychrophilic	METPO:1000614	psychrophilic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1000660
+thermophilic	thermophilic	METPO:1000616	thermophilic	METPO	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; CORRECTED from METPO:1000656
+voges-proskauer test	voges-proskauer test	KGM:voges_proskauer_test_positive	Voges-Proskauer test positive	KGM	skos:closeMatch	medium	semapv:ManualMappingCuration	turbomam	metatraits	biolink:has_phenotype; NOT IN METPO, using custom KGM term

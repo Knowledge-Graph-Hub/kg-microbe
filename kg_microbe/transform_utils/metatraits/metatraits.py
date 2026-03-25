@@ -909,65 +909,67 @@ class MetaTraitsTransform(Transform):
                         # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
                         pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
 
-                        # Lookup order (Tier 1-2.0):
-                        # Tier 1: Curated microbial-trait-mappings
-                        # Tier 1.5: Chemical trait resolver (produces, ferments, carbon source, etc.)
-                        # Tier 1.6: Metabolic process resolver (electron acceptor, respiration, oxidation)
-                        # Tier 1.7: Growth substrate resolver (growth: X, builds acid from: X)
-                        # Tier 1.8: Trophic mode resolver (phototrophy, aerobic/anaerobic)
-                        # Tier 1.9: Enzyme activity resolver (enzyme activity with EC numbers)
-                        # Tier 2.0: Phenotype resolver (aerotolerant, facultative, acidophilic)
-                        # Tier 2/3: METPO mappings + custom_curies (fallback)
+                        # Lookup order (METPO-first priority):
+                        # Tier 1: METPO ontology mappings (HIGHEST PRIORITY - authoritative source)
+                        # Tier 2: Curated external ontology mappings (ChEBI, GO, EC only)
+                        # Tier 3: Pattern-based resolvers (chemical, metabolic, growth, trophic, enzyme, phenotype)
 
-                        micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
-                            trait_name.lower()
-                        )
-                        if micro_mapping:
-                            # Tier 1: Curated mappings
-                            curie = micro_mapping["object_id"]
-                            category = micro_mapping["object_category"]
-                            pred = micro_mapping["biolink_predicate"]
-                            label = micro_mapping["object_label"]
-                        elif chemical_mapping := self._resolve_chemical_trait(trait_name):
-                            # Tier 1.5: Chemical resolver (produces, ferments, carbon source, etc.)
-                            curie = chemical_mapping["curie"]
-                            category = chemical_mapping["category"]
-                            pred = self._to_biolink_predicate(chemical_mapping["predicate"])
-                            label = chemical_mapping["name"]
-                        elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
-                            # Tier 1.6: Metabolic processes (electron acceptors, respiration, oxidation, reduction)
-                            curie = metabolic_mapping["curie"]
-                            category = metabolic_mapping["category"]
-                            pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
-                            label = metabolic_mapping["name"]
-                        elif growth_mapping := self._resolve_growth_substrate(trait_name):
-                            # Tier 1.7: Growth substrates (growth: X, builds acid from: X)
-                            curie = growth_mapping["curie"]
-                            category = growth_mapping["category"]
-                            pred = self._to_biolink_predicate(growth_mapping["predicate"])
-                            label = growth_mapping["name"]
-                        elif trophic_mapping := self._resolve_trophic_mode(trait_name):
-                            # Tier 1.8: Trophic modes (phototrophy, chemoheterotrophy, aerobic/anaerobic)
-                            curie = trophic_mapping["curie"]
-                            category = trophic_mapping["category"]
-                            pred = self._to_biolink_predicate(trophic_mapping["predicate"])
-                            label = trophic_mapping["name"]
-                        elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
-                            # Tier 1.9: Enzyme activities with EC numbers
-                            curie = enzyme_mapping["curie"]
-                            category = enzyme_mapping["category"]
-                            pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
-                            label = enzyme_mapping["name"]
-                        elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
-                            # Tier 2.0: Simple phenotypes (aerotolerant, facultative, acidophilic)
-                            curie = phenotype_mapping["curie"]
-                            category = phenotype_mapping["category"]
-                            pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
-                            label = phenotype_mapping["name"]
+                        # Tier 1: METPO ontology mappings (FIRST)
+                        mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
+                        if mapping:
+                            curie = mapping["curie"]
+                            category = mapping["category"]
+                            pred = self._to_biolink_predicate(mapping["predicate"])
+                            label = mapping["name"]
                         else:
-                            # Tier 2/3: Fallback to METPO/custom_curies
-                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
-                            if not mapping:
+                            # Tier 2: Manual external ontology mappings (skip METPO duplicates)
+                            micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
+                                trait_name.lower()
+                            )
+                            if micro_mapping and not micro_mapping.get("object_id", "").startswith("METPO:"):
+                                # External ontology mapping (ChEBI, GO, EC)
+                                curie = micro_mapping["object_id"]
+                                category = micro_mapping["object_category"]
+                                pred = micro_mapping["biolink_predicate"]
+                                label = micro_mapping["object_label"]
+                            elif chemical_mapping := self._resolve_chemical_trait(trait_name):
+                                # Tier 3.1: Chemical resolver (produces, ferments, carbon source, etc.)
+                                curie = chemical_mapping["curie"]
+                                category = chemical_mapping["category"]
+                                pred = self._to_biolink_predicate(chemical_mapping["predicate"])
+                                label = chemical_mapping["name"]
+                            elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
+                                # Tier 3.2: Metabolic processes (electron acceptors, respiration, oxidation, reduction)
+                                curie = metabolic_mapping["curie"]
+                                category = metabolic_mapping["category"]
+                                pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
+                                label = metabolic_mapping["name"]
+                            elif growth_mapping := self._resolve_growth_substrate(trait_name):
+                                # Tier 3.3: Growth substrates (growth: X, builds acid from: X)
+                                curie = growth_mapping["curie"]
+                                category = growth_mapping["category"]
+                                pred = self._to_biolink_predicate(growth_mapping["predicate"])
+                                label = growth_mapping["name"]
+                            elif trophic_mapping := self._resolve_trophic_mode(trait_name):
+                                # Tier 3.4: Trophic modes (phototrophy, chemoheterotrophy, aerobic/anaerobic)
+                                curie = trophic_mapping["curie"]
+                                category = trophic_mapping["category"]
+                                pred = self._to_biolink_predicate(trophic_mapping["predicate"])
+                                label = trophic_mapping["name"]
+                            elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
+                                # Tier 3.5: Enzyme activities with EC numbers
+                                curie = enzyme_mapping["curie"]
+                                category = enzyme_mapping["category"]
+                                pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
+                                label = enzyme_mapping["name"]
+                            elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
+                                # Tier 3.6: Simple phenotypes (aerotolerant, facultative, acidophilic)
+                                curie = phenotype_mapping["curie"]
+                                category = phenotype_mapping["category"]
+                                pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
+                                label = phenotype_mapping["name"]
+                            else:
+                                # No mapping found - mark as unmapped
                                 unmapped_traits.append(
                                     (
                                         trait_name,
@@ -977,10 +979,6 @@ class MetaTraitsTransform(Transform):
                                     )
                                 )
                                 continue
-                            curie = mapping["curie"]
-                            category = mapping["category"]
-                            pred = self._to_biolink_predicate(mapping["predicate"])
-                            label = mapping["name"]
 
                         if tax_id not in seen_taxon_nodes:
                             seen_taxon_nodes.add(tax_id)
@@ -1262,50 +1260,56 @@ class MetaTraitsTransform(Transform):
                             # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
                             pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
 
-                            # Lookup order (Tier 1-2.0):
-                            micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
-                                trait_name.lower()
-                            )
-                            if micro_mapping:
-                                curie = micro_mapping["object_id"]
-                                category = micro_mapping["object_category"]
-                                pred = micro_mapping["biolink_predicate"]
-                                label = micro_mapping["object_label"]
-                            elif chemical_mapping := self._resolve_chemical_trait(trait_name):
-                                curie = chemical_mapping["curie"]
-                                category = chemical_mapping["category"]
-                                pred = self._to_biolink_predicate(chemical_mapping["predicate"])
-                                label = chemical_mapping["name"]
-                            elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
-                                curie = metabolic_mapping["curie"]
-                                category = metabolic_mapping["category"]
-                                pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
-                                label = metabolic_mapping["name"]
-                            elif growth_mapping := self._resolve_growth_substrate(trait_name):
-                                curie = growth_mapping["curie"]
-                                category = growth_mapping["category"]
-                                pred = self._to_biolink_predicate(growth_mapping["predicate"])
-                                label = growth_mapping["name"]
-                            elif trophic_mapping := self._resolve_trophic_mode(trait_name):
-                                curie = trophic_mapping["curie"]
-                                category = trophic_mapping["category"]
-                                pred = self._to_biolink_predicate(trophic_mapping["predicate"])
-                                label = trophic_mapping["name"]
-                            elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
-                                curie = enzyme_mapping["curie"]
-                                category = enzyme_mapping["category"]
-                                pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
-                                label = enzyme_mapping["name"]
-                            elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
-                                curie = phenotype_mapping["curie"]
-                                category = phenotype_mapping["category"]
-                                pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
-                                label = phenotype_mapping["name"]
+                            # Lookup order (METPO-first priority):
+                            # Tier 1: METPO ontology mappings (FIRST)
+                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
+                            if mapping:
+                                curie = mapping["curie"]
+                                category = mapping["category"]
+                                pred = self._to_biolink_predicate(mapping["predicate"])
+                                label = mapping["name"]
                             else:
-                                mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
+                                # Tier 2: Manual external ontology mappings (skip METPO duplicates)
+                                micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
                                     trait_name.lower()
                                 )
-                                if not mapping:
+                                if micro_mapping and not micro_mapping.get("object_id", "").startswith("METPO:"):
+                                    curie = micro_mapping["object_id"]
+                                    category = micro_mapping["object_category"]
+                                    pred = micro_mapping["biolink_predicate"]
+                                    label = micro_mapping["object_label"]
+                                elif chemical_mapping := self._resolve_chemical_trait(trait_name):
+                                    curie = chemical_mapping["curie"]
+                                    category = chemical_mapping["category"]
+                                    pred = self._to_biolink_predicate(chemical_mapping["predicate"])
+                                    label = chemical_mapping["name"]
+                                elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
+                                    curie = metabolic_mapping["curie"]
+                                    category = metabolic_mapping["category"]
+                                    pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
+                                    label = metabolic_mapping["name"]
+                                elif growth_mapping := self._resolve_growth_substrate(trait_name):
+                                    curie = growth_mapping["curie"]
+                                    category = growth_mapping["category"]
+                                    pred = self._to_biolink_predicate(growth_mapping["predicate"])
+                                    label = growth_mapping["name"]
+                                elif trophic_mapping := self._resolve_trophic_mode(trait_name):
+                                    curie = trophic_mapping["curie"]
+                                    category = trophic_mapping["category"]
+                                    pred = self._to_biolink_predicate(trophic_mapping["predicate"])
+                                    label = trophic_mapping["name"]
+                                elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
+                                    curie = enzyme_mapping["curie"]
+                                    category = enzyme_mapping["category"]
+                                    pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
+                                    label = enzyme_mapping["name"]
+                                elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
+                                    curie = phenotype_mapping["curie"]
+                                    category = phenotype_mapping["category"]
+                                    pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
+                                    label = phenotype_mapping["name"]
+                                else:
+                                    # No mapping found - mark as unmapped
                                     unmapped_traits.append(
                                         (
                                             trait_name,
@@ -1315,10 +1319,6 @@ class MetaTraitsTransform(Transform):
                                         )
                                     )
                                     continue
-                                curie = mapping["curie"]
-                                category = mapping["category"]
-                                pred = self._to_biolink_predicate(mapping["predicate"])
-                                label = mapping["name"]
 
                             if tax_id not in seen_taxon_nodes:
                                 seen_taxon_nodes.add(tax_id)

@@ -47,7 +47,8 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         # Update transform-specific attributes
         self.name = METATRAITS_GTDB
-        self.output_dir = Path(output_dir) if output_dir else Path("data/transformed") / METATRAITS_GTDB
+        self.output_dir = Path(output_dir) if output_dir else self.output_base_dir / METATRAITS_GTDB
+        Path.mkdir(self.output_dir, exist_ok=True, parents=True)
         self.output_node_file = self.output_dir / "nodes.tsv"
         self.output_edge_file = self.output_dir / "edges.tsv"
         self.unmapped_traits_file = self.output_dir / "unmapped_traits.tsv"

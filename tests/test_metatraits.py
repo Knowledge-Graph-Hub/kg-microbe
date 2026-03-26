@@ -36,9 +36,9 @@ EXPECTED_EDGES = [
     ),
     ("fermentation", "biolink:capable_of", "GO:0006113", "biolink:BiologicalProcess"),
     ("nitrogen fixation", "biolink:capable_of", "GO:0009399", "biolink:BiologicalProcess"),
-    ("gram positive", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicFeature"),
-    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicFeature"),
-    ("thermophilic", "biolink:has_phenotype", "METPO:1000656", "biolink:PhenotypicFeature"),
+    ("gram positive", "biolink:has_phenotype", "METPO:1000698", "biolink:PhenotypicFeature"),
+    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicFeature"),
+    ("thermophilic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicFeature"),
 ]
 
 
@@ -220,8 +220,8 @@ class TestMetaTraitsTransform(unittest.TestCase):
             for edge_line in edges[1:]:
                 cols = edge_line.split("\t")
                 if len(cols) > max(pct_col_idx, obj_col_idx):
-                    # Look for gram positive trait (METPO:1000606)
-                    if "METPO:1000606" in cols[obj_col_idx]:
+                    # Look for gram positive trait (METPO:1000698)
+                    if "METPO:1000698" in cols[obj_col_idx]:
                         pct_value = cols[pct_col_idx]
                         self.assertEqual(pct_value, "0.0", "Gram positive trait should have 0.0 percentage")
                         found_zero_pct = True

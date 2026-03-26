@@ -12,10 +12,10 @@ from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 # remote URL location in metpo GitHub repository for METPO classes and properties
 # sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
 METPO_CLASSES_ROBOT_TEMPLATE_URL = (
-    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-12-12/src/templates/metpo_sheet.tsv"
+    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo_sheet.tsv"
 )
 METPO_PROPERTIES_ROBOT_TEMPLATE_URL = (
-    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-12-12/src/templates/metpo-properties.tsv"
+    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo-properties.tsv"
 )
 
 # Remote URL for assay kits mapping (used for API keys from BacDive)

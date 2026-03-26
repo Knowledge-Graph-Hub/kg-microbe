@@ -253,7 +253,7 @@ class MetaTraitsTransform(Transform):
         self.edge_header = self.edge_header + ["has_percentage"]
         self.knowledge_source = "infores:metatraits"
         self.microbial_mappings = load_microbial_trait_mappings()
-        self.metpo_mappings = load_metpo_mappings("madin synonym or field")
+        self.metpo_mappings = load_metpo_mappings("metatraits synonym")
 
         # Initialize unified chemical mapping loader for ChEBI lookups
         try:

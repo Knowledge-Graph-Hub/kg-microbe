@@ -42,9 +42,7 @@ def setup_cache(cache_name: str = "mediadive_bulk_cache"):
     print(f"HTTP cache enabled: {cache_name}.sqlite")
 
 
-def get_json_from_api(
-    url: str, retry_count: int = 3, retry_delay: float = 2.0, verbose: bool = False
-) -> Dict:
+def get_json_from_api(url: str, retry_count: int = 3, retry_delay: float = 2.0, verbose: bool = False) -> Dict:
     """
     Get JSON data from MediaDive API with retry logic.
 
@@ -159,13 +157,9 @@ def download_medium_strains(media_list: List[Dict]) -> Dict[str, List]:
         elif isinstance(v, dict):
             total_strains += len(v)
         else:
-            print(
-                f"Warning: Unexpected strain data type for medium {medium_id}: {type(v).__name__}"
-            )
+            print(f"Warning: Unexpected strain data type for medium {medium_id}: {type(v).__name__}")
 
-    print(
-        f"Downloaded strain associations for {len(strain_data)} media ({total_strains} total associations)"
-    )
+    print(f"Downloaded strain associations for {len(strain_data)} media ({total_strains} total associations)")
     return strain_data
 
 

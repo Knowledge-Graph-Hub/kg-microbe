@@ -1,8 +1,13 @@
 """Drive KG download, transform, merge steps."""
 
 import os
+import warnings
 
 import click
+
+# Suppress deprecated pkg_resources warning from eutils (transitive dependency via oaklib)
+# eutils is unmaintained and uses deprecated API, but doesn't affect functionality
+warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
 
 from kg_microbe import download as kg_download
 from kg_microbe.merge_utils.merge_kg import load_and_merge
@@ -20,9 +25,7 @@ def main():
 
 
 @main.command()
-@click.option(
-    "yaml_file", "-y", required=True, default="download.yaml", type=click.Path(exists=True)
-)
+@click.option("yaml_file", "-y", required=True, default="download.yaml", type=click.Path(exists=True))
 @click.option("output_dir", "-o", required=True, default="data/raw")
 @click.option(
     "snippet_only",
@@ -131,9 +134,7 @@ def query(
     default="data/merged/edges.tsv",
     type=click.Path(exists=True),
 )
-@click.option(
-    "output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path()
-)
+@click.option("output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path())
 @click.option(
     "train_fraction",
     "-t",

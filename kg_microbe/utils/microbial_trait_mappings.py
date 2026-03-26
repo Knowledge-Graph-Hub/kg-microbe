@@ -16,7 +16,7 @@ _MAPPINGS_DIR = METATRAITS_MAPPINGS_DIR
 
 # Object source -> Biolink category
 _OBJECT_SOURCE_TO_CATEGORY = {
-    "CHEBI": "biolink:ChemicalEntity",
+    "CHEBI": "biolink:ChemicalSubstance",  # Use ChemicalSubstance for all CHEBI entities
     "EC": "biolink:MolecularActivity",
     "METPO": "biolink:PhenotypicFeature",
     "GO": "biolink:BiologicalProcess",

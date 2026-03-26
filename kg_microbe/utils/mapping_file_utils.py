@@ -11,11 +11,17 @@ from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
 
 # remote URL location in metpo GitHub repository for METPO classes and properties
 # sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
-METPO_CLASSES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-12-12/src/templates/metpo_sheet.tsv"
-METPO_PROPERTIES_ROBOT_TEMPLATE_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2025-12-12/src/templates/metpo-properties.tsv"
+METPO_CLASSES_ROBOT_TEMPLATE_URL = (
+    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo_sheet.tsv"
+)
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = (
+    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo-properties.tsv"
+)
 
 # Remote URL for assay kits mapping (used for API keys from BacDive)
-ASSAY_KITS_SIMPLE_JSON_URL = "https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json"
+ASSAY_KITS_SIMPLE_JSON_URL = (
+    "https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json"
+)
 
 
 def uri_to_curie(uri: str) -> str:
@@ -87,9 +93,7 @@ class MetpoTreeNode:
             synonyms or []
         )  # synonyms from different data sources (ex. Madin et al, BacDive) corresponding to this class
         self.biolink_equivalent = biolink_equivalent  # biolink equivalent URL if available
-        self.bacdive_json_paths = (
-            bacdive_json_paths or []
-        )  # JSON paths for extracting values from BacDive records
+        self.bacdive_json_paths = bacdive_json_paths or []  # JSON paths for extracting values from BacDive records
         self.children: List["MetpoTreeNode"] = []  # list of child nodes
         self.parent: Optional["MetpoTreeNode"] = None  # reference to parent node
 
@@ -180,9 +184,7 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
                             # It's a literal value synonym
                             synonyms.append(item)
 
-                nodes[iri] = MetpoTreeNode(
-                    iri, label, synonyms, biolink_equivalent, bacdive_json_paths
-                )
+                nodes[iri] = MetpoTreeNode(iri, label, synonyms, biolink_equivalent, bacdive_json_paths)
 
         # second pass: establish parent-child relationships
         lines = response.text.splitlines()
@@ -211,9 +213,7 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
         return nodes
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the METPO sheet URL is accessible: {e}"
-        ) from e
+        raise requests.exceptions.HTTPError(f"Please ensure the METPO sheet URL is accessible: {e}") from e
 
 
 def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
@@ -262,9 +262,7 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
         return range_to_predicate
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the METPO properties URL is accessible: {e}"
-        ) from e
+        raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
 def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
@@ -292,9 +290,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     try:
         nodes = _build_metpo_tree()  # build the METPO tree structure
 
-        range_to_predicate = (
-            _load_metpo_properties()
-        )  # load properties mapping (RANGE class label -> predicate label)
+        range_to_predicate = _load_metpo_properties()  # load properties mapping (RANGE class label -> predicate label)
 
         # load the METPO classes ROBOT template file/sheet
         response = requests.get(METPO_CLASSES_ROBOT_TEMPLATE_URL, timeout=30)
@@ -342,9 +338,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                             )  # use parent's biolink_equivalent URL as category
                             if parent_label in range_to_predicate:
                                 predicate_label = range_to_predicate[parent_label]["label"]
-                                predicate_biolink_equivalent = range_to_predicate[parent_label][
-                                    "biolink_equivalent"
-                                ]
+                                predicate_biolink_equivalent = range_to_predicate[parent_label]["biolink_equivalent"]
                             break
                         current = current.parent
 
@@ -386,9 +380,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
         return mappings
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the remote URL is accessible: {e}"
-        ) from e
+        raise requests.exceptions.HTTPError(f"Please ensure the remote URL is accessible: {e}") from e
 
 
 def load_metpo_metabolite_utilization_mappings() -> Dict[str, Dict[str, str]]:
@@ -468,9 +460,7 @@ def load_metpo_metabolite_utilization_mappings() -> Dict[str, Dict[str, str]]:
         return mappings
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the METPO properties URL is accessible: {e}"
-        ) from e
+        raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
 def load_metpo_metabolite_production_mappings() -> Dict[str, Dict[str, str]]:
@@ -539,9 +529,7 @@ def load_metpo_metabolite_production_mappings() -> Dict[str, Dict[str, str]]:
         return mappings
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the METPO properties URL is accessible: {e}"
-        ) from e
+        raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
 def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
@@ -599,9 +587,7 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
         return mappings
 
     except requests.exceptions.HTTPError as e:
-        raise requests.exceptions.HTTPError(
-            f"Please ensure the METPO properties URL is accessible: {e}"
-        ) from e
+        raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
 def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
@@ -671,8 +657,7 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
 
         if not ASSAY_KITS_FILE.exists():
             raise FileNotFoundError(
-                f"Assay metadata file not found at {ASSAY_KITS_FILE}. "
-                "Run 'poetry run kg download' to download it."
+                f"Assay metadata file not found at {ASSAY_KITS_FILE}. Run 'poetry run kg download' to download it."
             )
 
         with open(ASSAY_KITS_FILE, "r") as f:
@@ -768,9 +753,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
     id_idx = node_header.index(ID_COLUMN)
     category_idx = node_header.index(CATEGORY_COLUMN)
     name_idx = node_header.index(NAME_COLUMN)
-    description_idx = (
-        node_header.index(DESCRIPTION_COLUMN) if DESCRIPTION_COLUMN in node_header else None
-    )
+    description_idx = node_header.index(DESCRIPTION_COLUMN) if DESCRIPTION_COLUMN in node_header else None
 
     for kit in assay_data.get("api_kits", []):
         kit_name = kit.get("kit_name", "")
@@ -865,16 +848,10 @@ def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> Lis
     object_idx = edge_header.index(OBJECT_COLUMN)
     relation_idx = edge_header.index(RELATION_COLUMN) if RELATION_COLUMN in edge_header else None
     pks_idx = (
-        edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN)
-        if PRIMARY_KNOWLEDGE_SOURCE_COLUMN in edge_header
-        else None
+        edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN) if PRIMARY_KNOWLEDGE_SOURCE_COLUMN in edge_header else None
     )
-    knowledge_level_idx = (
-        edge_header.index(KNOWLEDGE_LEVEL_COLUMN) if KNOWLEDGE_LEVEL_COLUMN in edge_header else None
-    )
-    agent_type_idx = (
-        edge_header.index(AGENT_TYPE_COLUMN) if AGENT_TYPE_COLUMN in edge_header else None
-    )
+    knowledge_level_idx = edge_header.index(KNOWLEDGE_LEVEL_COLUMN) if KNOWLEDGE_LEVEL_COLUMN in edge_header else None
+    agent_type_idx = edge_header.index(AGENT_TYPE_COLUMN) if AGENT_TYPE_COLUMN in edge_header else None
 
     for kit in assay_data.get("api_kits", []):
         kit_name = kit.get("kit_name", "")

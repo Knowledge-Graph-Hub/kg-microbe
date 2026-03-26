@@ -12,10 +12,10 @@ from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappi
 
 # Truth table from microbial-trait-mappings test_round_trip.py
 EXPECTED_EDGES = [
-    ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalEntity"),
-    ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalEntity"),
-    ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalEntity"),
-    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalEntity"),
+    ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalSubstance"),
+    ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalSubstance"),
+    ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalSubstance"),
+    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalSubstance"),
     (
         "enzyme activity: catalase (EC1.11.1.6)",
         "biolink:capable_of",
@@ -36,9 +36,9 @@ EXPECTED_EDGES = [
     ),
     ("fermentation", "biolink:capable_of", "GO:0006113", "biolink:BiologicalProcess"),
     ("nitrogen fixation", "biolink:capable_of", "GO:0009399", "biolink:BiologicalProcess"),
-    ("gram positive", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicFeature"),
-    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicFeature"),
-    ("thermophilic", "biolink:has_phenotype", "METPO:1000656", "biolink:PhenotypicFeature"),
+    ("gram positive", "biolink:has_phenotype", "METPO:1000698", "biolink:PhenotypicFeature"),
+    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicFeature"),
+    ("thermophilic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicFeature"),
 ]
 
 
@@ -156,9 +156,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertIn("biolink:has_phenotype", predicates)
 
     @parameterized.expand(EXPECTED_EDGES)
-    def test_edge_resolution_round_trip(
-        self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat
-    ):
+    def test_edge_resolution_round_trip(self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat):
         """Verify each trait resolves to correct (predicate, object_id, object_category)."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -184,7 +182,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
 
         try:
             transform = MetaTraitsTransform(
-                input_dir=self.temp_input_dir,
+                input_dir=metatraits_subdir,
                 output_dir=self.temp_output_dir,
             )
             transform._search_ncbitaxon_by_label = mock_search
@@ -222,8 +220,8 @@ class TestMetaTraitsTransform(unittest.TestCase):
             for edge_line in edges[1:]:
                 cols = edge_line.split("\t")
                 if len(cols) > max(pct_col_idx, obj_col_idx):
-                    # Look for gram positive trait (METPO:1000606)
-                    if "METPO:1000606" in cols[obj_col_idx]:
+                    # Look for gram positive trait (METPO:1000698)
+                    if "METPO:1000698" in cols[obj_col_idx]:
                         pct_value = cols[pct_col_idx]
                         self.assertEqual(pct_value, "0.0", "Gram positive trait should have 0.0 percentage")
                         found_zero_pct = True

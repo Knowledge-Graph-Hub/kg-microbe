@@ -41,11 +41,7 @@ def drop_duplicates(
     if consolidation_columns and all(col in df.columns for col in consolidation_columns):
         for col in consolidation_columns:
             df[col] = df[col].apply(
-                lambda x: (
-                    str(x).lower()
-                    if not any(str(x).startswith(prefix) for prefix in exclude_prefixes)
-                    else x
-                )
+                lambda x: str(x).lower() if not any(str(x).startswith(prefix) for prefix in exclude_prefixes) else x
             )
 
     df.drop_duplicates(inplace=True)
@@ -86,9 +82,7 @@ def establish_transitive_relationship(
     df = drop_duplicates(file_path)
     df_relations = df.loc[df[PREDICATE_COLUMN] == predicate]
     subject_condition = df_relations[SUBJECT_COLUMN].str.startswith(subject_prefix)
-    intermediate_subject_condition = df_relations[SUBJECT_COLUMN].str.startswith(
-        intermediate_prefix
-    )
+    intermediate_subject_condition = df_relations[SUBJECT_COLUMN].str.startswith(intermediate_prefix)
     object_condition = df_relations[OBJECT_COLUMN].apply(
         lambda x: any(str(x).startswith(prefix) for prefix in object_prefixes_list)
     )
@@ -107,14 +101,10 @@ def establish_transitive_relationship(
     #     ] = row[1].subject
     #     list_of_dfs_to_append.append(transitive_relations_df)
     # Create a dictionary to map objects to subjects
-    object_to_subject = dict(
-        zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False)
-    )
+    object_to_subject = dict(zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False))
 
     # Filter the DataFrame to include only rows where the SUBJECT_COLUMN matches any object in the mapping
-    filtered_df = intermediate_object_df[
-        intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subject.keys())
-    ]
+    filtered_df = intermediate_object_df[intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subject.keys())]
 
     # Map the SUBJECT_COLUMN in filtered_df to the corresponding subjects using the mapping
     filtered_df.loc[:, SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
@@ -174,20 +164,14 @@ def dump_ont_nodes_from(nodes_filepath: Path, target_path: Path, prefix: str):
     """
     df = pd.read_csv(nodes_filepath, sep="\t", low_memory=False)
     all_ont_nodes = (
-        df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]]
-        .drop_duplicates()
-        .sort_values(by=[ID_COLUMN])
+        df.loc[df[ID_COLUMN].str.startswith(prefix)][[ID_COLUMN]].drop_duplicates().sort_values(by=[ID_COLUMN])
     )
     if target_path.is_file():
         try:
-            captured_chebi = pd.read_csv(
-                target_path, sep="\t", low_memory=False, names=all_ont_nodes.columns
-            )
+            captured_chebi = pd.read_csv(target_path, sep="\t", low_memory=False, names=all_ont_nodes.columns)
         except pd.errors.EmptyDataError:
             captured_chebi = pd.DataFrame(columns=all_ont_nodes.columns)
-        all_ont_nodes = (
-            pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates().sort_values(by=[ID_COLUMN])
-        )
+        all_ont_nodes = pd.concat([all_ont_nodes, captured_chebi]).drop_duplicates().sort_values(by=[ID_COLUMN])
     all_ont_nodes.to_csv(target_path, sep="\t", index=False, header=None)
 
 
@@ -204,15 +188,12 @@ def get_ingredients_overlap(file_path: Path, target_path: Path):
 
     # Filter rows where subject starts with the desired prefixes
     solution_medium_df = edges_df[
-        edges_df[SUBJECT_COLUMN].str.startswith(
-            (MEDIADIVE_MEDIUM_PREFIX, MEDIADIVE_SOLUTION_PREFIX)
-        )
+        edges_df[SUBJECT_COLUMN].str.startswith((MEDIADIVE_MEDIUM_PREFIX, MEDIADIVE_SOLUTION_PREFIX))
     ]
 
     # Create a dictionary to store ingredients for each solution/medium
     ingredients_dict = {
-        sol_med: set(group_df[OBJECT_COLUMN])
-        for sol_med, group_df in solution_medium_df.groupby(SUBJECT_COLUMN)
+        sol_med: set(group_df[OBJECT_COLUMN]) for sol_med, group_df in solution_medium_df.groupby(SUBJECT_COLUMN)
     }
 
     # Prepare the list to hold all rows for the CSV file
@@ -227,19 +208,13 @@ def get_ingredients_overlap(file_path: Path, target_path: Path):
 
         # Calculate overlap percentage and round it to 2 decimal places
         overlap_percentage = round(
-            (
-                ((len(overlapping_ingredients) / total_unique_ingredients) * 100)
-                if total_unique_ingredients > 0
-                else 0
-            ),
+            (((len(overlapping_ingredients) / total_unique_ingredients) * 100) if total_unique_ingredients > 0 else 0),
             2,
         )
 
         # Add the current row to the list if there is an overlap
         if overlap_percentage > 0.0:
-            rows_to_write.append(
-                [sol_med_1, sol_med_2, ", ".join(overlapping_ingredients), overlap_percentage]
-            )
+            rows_to_write.append([sol_med_1, sol_med_2, ", ".join(overlapping_ingredients), overlap_percentage])
 
     # Sort the rows by overlap percentage in descending order
     rows_to_write.sort(key=lambda x: x[3], reverse=True)
@@ -247,7 +222,5 @@ def get_ingredients_overlap(file_path: Path, target_path: Path):
     # Write the sorted rows to the CSV file
     with open(target_path, "w", newline="") as f:
         writer = csv.writer(f, delimiter="\t")
-        writer.writerow(
-            ["Solution_medium_1", "Solution_medium_2", "Overlapping_ingredients", "Overlap_%"]
-        )
+        writer.writerow(["Solution_medium_1", "Solution_medium_2", "Overlapping_ingredients", "Overlap_%"])
         writer.writerows(rows_to_write)

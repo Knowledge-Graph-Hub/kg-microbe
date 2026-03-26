@@ -102,9 +102,7 @@ def query_ncbi_for_taxon(samn_id: str, email: str = "your_email@example.com") ->
         return None
 
 
-def create_mapping_file(
-    samn_ids: list, output_file: Path, email: str, delay: float = 0.4
-) -> Dict[str, str]:
+def create_mapping_file(samn_ids: list, output_file: Path, email: str, delay: float = 0.4) -> Dict[str, str]:
     """
     Create SAMN to NCBITaxon mapping file by querying NCBI.
 
@@ -164,9 +162,7 @@ def load_existing_mapping(mapping_file: Path) -> Dict[str, str]:
 
 def main():
     """Run the SAMN to NCBITaxon mapping creation process."""
-    parser = argparse.ArgumentParser(
-        description="Create SAMN to NCBITaxon mapping file for Bakta transform"
-    )
+    parser = argparse.ArgumentParser(description="Create SAMN to NCBITaxon mapping file for Bakta transform")
     parser.add_argument(
         "--input",
         "-i",

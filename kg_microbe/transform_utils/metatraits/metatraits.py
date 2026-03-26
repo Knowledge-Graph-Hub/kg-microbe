@@ -189,10 +189,19 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
     transform = transform_class.__new__(transform_class)
     transform._init_from_shared_data(shared_init)
 
-    # Process file
-    result = transform._process_single_file(input_file, temp_dir, show_status)
-
-    return result
+    try:
+        # Process file
+        result = transform._process_single_file(input_file, temp_dir, show_status)
+        return result
+    finally:
+        # Clean up OAK adapter resources to prevent semaphore leaks
+        try:
+            if hasattr(transform, '_ncbi_adapter') and transform._ncbi_adapter is not None:
+                if hasattr(transform._ncbi_adapter, 'engine') and transform._ncbi_adapter.engine is not None:
+                    transform._ncbi_adapter.engine.dispose()
+            transform._ncbi_adapter = None
+        except Exception:
+            pass  # Ignore cleanup errors
 
 
 class _StreamingRowWriter:
@@ -1406,13 +1415,23 @@ class MetaTraitsTransform(Transform):
             print("  Multiprocessing disabled via METATRAITS_MULTIPROCESSING environment variable")
 
         # Decide whether to use parallel or sequential processing
-        if use_mp and len(input_files) > 1:
-            # Multiple files: distribute files across workers
-            self._run_parallel(input_files, show_status, self.num_workers)
-        elif use_mp and len(input_files) == 1:
-            # Single file: split into chunks for parallel processing
-            print(f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)")
-            self._run_parallel_chunked(input_files[0], show_status, self.num_workers)
-        else:
-            # No multiprocessing: sequential
-            self._run_sequential(input_files, show_status)
+        try:
+            if use_mp and len(input_files) > 1:
+                # Multiple files: distribute files across workers
+                self._run_parallel(input_files, show_status, self.num_workers)
+            elif use_mp and len(input_files) == 1:
+                # Single file: split into chunks for parallel processing
+                print(f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)")
+                self._run_parallel_chunked(input_files[0], show_status, self.num_workers)
+            else:
+                # No multiprocessing: sequential
+                self._run_sequential(input_files, show_status)
+        finally:
+            # Clean up OAK adapter resources
+            try:
+                if hasattr(self, '_ncbi_adapter') and self._ncbi_adapter is not None:
+                    if hasattr(self._ncbi_adapter, 'engine') and self._ncbi_adapter.engine is not None:
+                        self._ncbi_adapter.engine.dispose()
+                self._ncbi_adapter = None
+            except Exception:
+                pass  # Ignore cleanup errors

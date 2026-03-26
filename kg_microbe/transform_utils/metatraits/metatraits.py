@@ -922,12 +922,12 @@ class MetaTraitsTransform(Transform):
                             pred = self._to_biolink_predicate(mapping["predicate"])
                             label = mapping["name"]
                         else:
-                            # Tier 2: Manual external ontology mappings (skip METPO duplicates)
+                            # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
                             micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
                                 trait_name.lower()
                             )
-                            if micro_mapping and not micro_mapping.get("object_id", "").startswith("METPO:"):
-                                # External ontology mapping (ChEBI, GO, EC)
+                            if micro_mapping:
+                                # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
                                 curie = micro_mapping["object_id"]
                                 category = micro_mapping["object_category"]
                                 pred = micro_mapping["biolink_predicate"]
@@ -1269,11 +1269,12 @@ class MetaTraitsTransform(Transform):
                                 pred = self._to_biolink_predicate(mapping["predicate"])
                                 label = mapping["name"]
                             else:
-                                # Tier 2: Manual external ontology mappings (skip METPO duplicates)
+                                # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
                                 micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
                                     trait_name.lower()
                                 )
-                                if micro_mapping and not micro_mapping.get("object_id", "").startswith("METPO:"):
+                                if micro_mapping:
+                                    # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
                                     curie = micro_mapping["object_id"]
                                     category = micro_mapping["object_category"]
                                     pred = micro_mapping["biolink_predicate"]

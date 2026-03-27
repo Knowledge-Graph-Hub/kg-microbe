@@ -76,7 +76,7 @@ def get_json_from_api(
         retry_count: Number of retries on failure
         retry_delay: Delay in seconds between retries (overridden by Retry-After on 429)
         verbose: If True, log empty responses (useful for debugging)
-        session: Optional requests Session to reuse (uses module-level session if None)
+        session: Optional requests Session to reuse (creates a new session per call if None)
 
     Returns:
     -------
@@ -96,10 +96,17 @@ def get_json_from_api(
             return result
         except requests.exceptions.HTTPError as e:
             if e.response is not None and e.response.status_code == 429:
-                wait = float(e.response.headers.get("Retry-After", retry_delay))
+                retry_after = e.response.headers.get("Retry-After", retry_delay)
+                try:
+                    wait = float(retry_after)
+                except (ValueError, TypeError):
+                    wait = retry_delay  # Retry-After was an HTTP-date, fall back to default
                 logger.debug(f"429 Too Many Requests — waiting {wait}s (URL: {url})")
                 time.sleep(wait)
-                continue
+                if attempt < retry_count - 1:
+                    continue
+                logger.warning(f"Request failed after {retry_count} 429 responses: {e} (URL: {url})")
+                return {}
             if attempt < retry_count - 1:
                 logger.debug(f"Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
                 time.sleep(retry_delay)
@@ -170,7 +177,6 @@ def download_detailed_media(
     max_workers: int = DEFAULT_MAX_WORKERS,
     retry_count: int = 3,
     retry_delay: float = 2.0,
-    requests_per_second: float = 10.0,
 ) -> Dict[str, Dict]:
     """
     Download detailed recipe information for all media.
@@ -181,7 +187,6 @@ def download_detailed_media(
         max_workers: Number of parallel download threads
         retry_count: Number of retries on request failure
         retry_delay: Seconds between retries (overridden by Retry-After on 429)
-        requests_per_second: Maximum sustained request rate (smooths bursts)
 
     Returns:
     -------
@@ -214,7 +219,6 @@ def download_medium_strains(
     max_workers: int = DEFAULT_MAX_WORKERS,
     retry_count: int = 3,
     retry_delay: float = 2.0,
-    requests_per_second: float = 10.0,
 ) -> Dict[str, List]:
     """
     Download strain associations for all media.
@@ -225,7 +229,6 @@ def download_medium_strains(
         max_workers: Number of parallel download threads
         retry_count: Number of retries on request failure
         retry_delay: Seconds between retries (overridden by Retry-After on 429)
-        requests_per_second: Maximum sustained request rate (smooths bursts)
 
     Returns:
     -------

@@ -5,4 +5,6 @@ produces: indole	produces: indole	CHEBI:16881	indole	CHEBI	skos:exactMatch	high	
 produces: methane from acetate	produces: methane from acetate	CHEBI:16183	methane	CHEBI	skos:closeMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate acetate (CHEBI:30089) not captured in single object	
 produces: siderophore	produces: siderophore	CHEBI:26672	siderophore	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	object of biolink:produces edge	
 carbon source: acetate	carbon source: acetate	CHEBI:30089	acetate	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate in biolink:capable_of edge via GO carbon utilization	
-carbon source: ethanol	carbon source: ethanol	CHEBI:16236	ethanol	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate in biolink:capable_of edge via GO carbon utilization	
+carbon source: ethanol	carbon source: ethanol	CHEBI:16236	ethanol	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	turbomam	metatraits	substrate in biolink:capable_of edge via GO carbon utilization
+fermentation: glucose	fermentation: glucose	CHEBI:17234	glucose	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	claude-code	metatraits	high-frequency trait (1.49M obs); METPO:2000011 (ferments)	2026-03-26
+assimilation: citrate	assimilation: citrate	CHEBI:30769	citrate	CHEBI	skos:exactMatch	high	semapv:ManualMappingCuration	claude-code	metatraits	high-frequency trait (4K obs); METPO:2000002 (assimilates)	2026-03-26

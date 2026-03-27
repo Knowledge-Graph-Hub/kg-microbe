@@ -12,6 +12,10 @@ from typing import Dict, Optional, Set, Union
 
 from kg_microbe.transform_utils.constants import METATRAITS_GTDB, RAW_DATA_DIR
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
+from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
+from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
+from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
 
 # Input file names for GTDB metatraits (species-level only)
 METATRAITS_GTDB_INPUT_FILES = [
@@ -41,20 +45,43 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         :param use_multiprocessing: Enable parallel processing (default: True)
         :param num_workers: Number of workers (default: auto-detect from resources)
         """
-        # Initialize parent class (but override transform name)
-        # Temporarily set transform name to METATRAITS_GTDB for output directory
-        super().__init__(input_dir, output_dir, use_multiprocessing, num_workers)
+        # Call parent's parent (Transform) with correct source name to set output directory properly
+        # This ensures output goes to data/transformed/metatraits_gtdb/ not data/transformed/
+        Transform.__init__(self, METATRAITS_GTDB, input_dir, output_dir)
 
-        # Update transform-specific attributes
-        self.name = METATRAITS_GTDB
-        self.output_dir = Path(output_dir) if output_dir else self.output_base_dir / METATRAITS_GTDB
-        Path.mkdir(self.output_dir, exist_ok=True, parents=True)
-        self.output_node_file = self.output_dir / "nodes.tsv"
-        self.output_edge_file = self.output_dir / "edges.tsv"
+        # Initialize MetaTraitsTransform-specific attributes (from parent class)
+        self.edge_header = self.edge_header + ["has_percentage"]
+        self.knowledge_source = "infores:gtdb-metatraits"
+
+        # Load mappings (from parent class)
+        self.microbial_mappings = load_microbial_trait_mappings()
+        self.metpo_mappings = load_metpo_mappings("metatraits synonym")
+
+        # Initialize chemical mapping loader (from parent class)
+        try:
+            self.chemical_loader = ChemicalMappingLoader()
+        except (FileNotFoundError, ImportError) as e:
+            print(f"  Warning: Could not load unified chemical mappings: {e}")
+            self.chemical_loader = None
+
+        # Defer adapter creation (from parent class)
+        self._ncbi_adapter = None
+
+        # NCBITaxon name cache (from parent class)
+        self.ncbitaxon_name_to_id: Dict[str, str] = {}
+
+        # Multiprocessing configuration (from parent class)
+        self.use_multiprocessing = use_multiprocessing
+        self.num_workers = num_workers
+
+        # Trait name -> (curie, category, predicate) from METPO + custom_curies (from parent class)
+        self.trait_mapping: Dict[str, dict] = {}
+        self._build_trait_mapping()
+
+        # Output file paths (from parent class)
         self.unmapped_traits_file = self.output_dir / "unmapped_traits.tsv"
         self.unresolved_taxa_file = self.output_dir / "unresolved_taxa.tsv"
-
-        self.knowledge_source = "infores:gtdb-metatraits"
+        self.measurement_traits_file = self.output_dir / "measurement_traits.tsv"
 
         # GTDB species name -> set of NCBITaxon IDs mapping
         self.gtdb_to_ncbi: Dict[str, Set[str]] = defaultdict(set)
@@ -144,8 +171,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
     def _get_ncbitaxon_impl(self):
         """Override parent method - GTDB transform doesn't use OAK adapter."""
         raise NotImplementedError(
-            "GTDB transform uses GTDB metadata mapping, not OAK adapter. "
-            "This method should never be called."
+            "GTDB transform uses GTDB metadata mapping, not OAK adapter. This method should never be called."
         )
 
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:

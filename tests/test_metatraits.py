@@ -36,9 +36,19 @@ EXPECTED_EDGES = [
     ),
     ("fermentation", "biolink:capable_of", "GO:0006113", "biolink:BiologicalProcess"),
     ("nitrogen fixation", "biolink:capable_of", "GO:0009399", "biolink:BiologicalProcess"),
-    ("gram positive", "biolink:has_phenotype", "METPO:1000698", "biolink:PhenotypicFeature"),
-    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicFeature"),
-    ("thermophilic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicFeature"),
+    ("gram positive", "biolink:has_phenotype", "METPO:1000698", "biolink:PhenotypicQuality"),
+    ("obligate aerobic", "biolink:has_phenotype", "METPO:1000606", "biolink:PhenotypicQuality"),
+    ("thermophilic", "biolink:has_phenotype", "METPO:1000616", "biolink:PhenotypicQuality"),
+]
+
+# Additional test cases for Phase 6: Expanded coverage
+# These test additional phenotype traits from phenotype_mappings.tsv
+ADDITIONAL_TEST_CASES = [
+    ("gram negative", "biolink:has_phenotype", "METPO:1000699", "biolink:PhenotypicQuality"),
+    ("sporulation", "biolink:has_phenotype", "METPO:1000870", "biolink:PhenotypicQuality"),
+    ("obligate anaerobic", "biolink:has_phenotype", "METPO:1000607", "biolink:PhenotypicQuality"),
+    ("presence of motility", "biolink:has_phenotype", "METPO:1000702", "biolink:PhenotypicQuality"),
+    ("psychrophilic", "biolink:has_phenotype", "METPO:1000614", "biolink:PhenotypicQuality"),
 ]
 
 
@@ -166,6 +176,18 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertEqual(match["object_id"], expected_obj)
         self.assertEqual(match["biolink_predicate"], expected_pred)
         self.assertEqual(match["object_category"], expected_cat)
+
+    @parameterized.expand(ADDITIONAL_TEST_CASES)
+    def test_additional_edge_resolution(self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat):
+        """Verify additional trait patterns resolve correctly (Phase 6 expanded coverage)."""
+        mappings = load_microbial_trait_mappings()
+        if not mappings:
+            self.skipTest("mappings/metatraits/ not found")
+        match = mappings.get(subject_label) or mappings.get(subject_label.lower())
+        self.assertIsNotNone(match, f"No mapping for '{subject_label}'")
+        self.assertEqual(match["object_id"], expected_obj, f"Wrong object_id for '{subject_label}'")
+        self.assertEqual(match["biolink_predicate"], expected_pred, f"Wrong predicate for '{subject_label}'")
+        self.assertEqual(match["object_category"], expected_cat, f"Wrong category for '{subject_label}'")
 
     @patch.object(MetaTraitsTransform, "_search_ncbitaxon_by_label")
     def test_run_with_fixture(self, mock_search, mock_adapter):

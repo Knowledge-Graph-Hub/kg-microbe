@@ -13,19 +13,32 @@ _NAME_INDEX: Optional[Dict[str, str]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
+_NEGATIVE_LOOKUP_CACHE: set = set()  # Cache for names that failed lookup
 
 
-def normalize_name(name: str) -> str:
+def normalize_name(name: str, strip_stereochemistry: bool = False) -> str:
     """
     Normalize chemical name for comparison.
 
     :param name: Chemical name to normalize
+    :param strip_stereochemistry: If True, remove stereochemistry prefixes like (R)-, (S)-, D-, L-, (+)-, (-)-
     :return: Normalized name (lowercase, no punctuation)
     """
     if pd.isna(name) or not name:
         return ""
-    # Convert to lowercase, remove extra spaces, punctuation
+    # Convert to lowercase first
     normalized = str(name).lower().strip()
+
+    if strip_stereochemistry:
+        # Strip common stereochemistry prefixes BEFORE general punctuation removal
+        # Match: (+)-, (-)-, (R)-, (S)-, D-, L- at start of string
+        # Include the dash and any following spaces in the removal
+        normalized = re.sub(r"^\([+-]\)-?\s*", "", normalized)  # (+)- or (-)- (with optional dash)
+        normalized = re.sub(r"^\([rs]\)-?\s*", "", normalized)  # (r)- or (s)- (lowercase after .lower())
+        normalized = re.sub(r"^[dl]-\s*", "", normalized)  # d- or l- (lowercase after .lower())
+        normalized = normalized.strip()
+
+    # Remove extra punctuation and normalize spaces
     normalized = re.sub(r"[^\w\s-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
@@ -116,15 +129,18 @@ def _build_indices():
                         _XREF_INDEX[norm_xref] = chebi_id
 
 
-def find_chebi_by_name(name: str, synonyms: bool = True) -> Optional[str]:
+def find_chebi_by_name(name: str, synonyms: bool = True, fuzzy_stereochemistry: bool = False) -> Optional[str]:
     """
     Lookup ChEBI ID by chemical name.
 
     :param name: Chemical name to search for
     :param synonyms: If True, search both canonical names and synonyms
                      If False, only search canonical names
+    :param fuzzy_stereochemistry: If True and exact match fails, retry with stereochemistry prefixes removed
     :return: ChEBI ID (e.g., "CHEBI:12345") or None if not found
     """
+    global _NEGATIVE_LOOKUP_CACHE
+
     if not name:
         return None
 
@@ -132,21 +148,46 @@ def find_chebi_by_name(name: str, synonyms: bool = True) -> Optional[str]:
     if _UNIFIED_MAPPINGS is None:
         load_unified_mappings()
 
+    # Try exact match first
     norm_name = normalize_name(name)
     if not norm_name:
         return None
 
+    # Check negative lookup cache - skip if we've already failed to find this name
+    cache_key = (norm_name, synonyms, fuzzy_stereochemistry)
+    if cache_key in _NEGATIVE_LOOKUP_CACHE:
+        return None
+
     # Search in name index (includes synonyms by default)
+    result = None
     if synonyms and _NAME_INDEX:
-        return _NAME_INDEX.get(norm_name)
+        result = _NAME_INDEX.get(norm_name)
 
     # Search only canonical names (no synonyms)
-    if _UNIFIED_MAPPINGS is not None:
+    if result is None and _UNIFIED_MAPPINGS is not None:
         for _, row in _UNIFIED_MAPPINGS.iterrows():
             if normalize_name(row["canonical_name"]) == norm_name:
-                return row["chebi_id"]
+                result = row["chebi_id"]
+                break
 
-    return None
+    # If no exact match and fuzzy mode enabled, try stripping stereochemistry
+    if result is None and fuzzy_stereochemistry:
+        norm_name_fuzzy = normalize_name(name, strip_stereochemistry=True)
+        if norm_name_fuzzy and norm_name_fuzzy != norm_name:  # Only retry if stripped version differs
+            if synonyms and _NAME_INDEX:
+                result = _NAME_INDEX.get(norm_name_fuzzy)
+
+            if result is None and _UNIFIED_MAPPINGS is not None:
+                for _, row in _UNIFIED_MAPPINGS.iterrows():
+                    if normalize_name(row["canonical_name"]) == norm_name_fuzzy:
+                        result = row["chebi_id"]
+                        break
+
+    # If lookup failed, add to negative cache to avoid retrying
+    if result is None:
+        _NEGATIVE_LOOKUP_CACHE.add(cache_key)
+
+    return result
 
 
 def find_chebi_by_formula(formula: str) -> List[str]:
@@ -312,15 +353,16 @@ class ChemicalMappingLoader:
         # Load mappings on initialization
         load_unified_mappings(self.mappings_path)
 
-    def find_chebi_by_name(self, name: str, synonyms: bool = True) -> Optional[str]:
+    def find_chebi_by_name(self, name: str, synonyms: bool = True, fuzzy_stereochemistry: bool = False) -> Optional[str]:
         """
         Lookup ChEBI ID by chemical name.
 
         :param name: Chemical name to search for
         :param synonyms: If True, search both canonical names and synonyms
+        :param fuzzy_stereochemistry: If True, retry with stereochemistry prefixes removed
         :return: ChEBI ID or None if not found
         """
-        return find_chebi_by_name(name, synonyms)
+        return find_chebi_by_name(name, synonyms, fuzzy_stereochemistry)
 
     def find_chebi_by_formula(self, formula: str) -> List[str]:
         """

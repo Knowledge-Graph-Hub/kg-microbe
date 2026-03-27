@@ -325,3 +325,48 @@ other:
     curie: "pathways:antibiotic_resistance"
     name: "antibiotic resistance"
     <<: *phenotypic_capability_block
+
+KGM:
+  # Enzyme activities not in GO/EC
+  coagulase_activity:
+    label: "coagulase activity"
+    description: "The catalytic activity of coagulase enzyme that causes blood plasma to clot"
+    category: "biolink:MolecularActivity"
+
+  # Growth media traits not in ENVO/FOODON
+  macconkey_agar_growth:
+    label: "growth on MacConkey agar"
+    description: "Ability to grow on MacConkey agar selective media"
+    category: "biolink:PhenotypicQuality"
+
+  blood_agar_growth:
+    label: "growth on blood agar"
+    description: "Ability to grow on blood agar enriched media"
+    category: "biolink:PhenotypicQuality"
+
+  bile_susceptible:
+    label: "bile acid susceptible"
+    description: "Growth inhibited by bile acids"
+    category: "biolink:PhenotypicQuality"
+
+  # Biochemical test results
+  voges_proskauer_test_positive:
+    label: "Voges-Proskauer test positive"
+    description: "Positive result in Voges-Proskauer biochemical test"
+    category: "biolink:PhenotypicQuality"
+
+  # Chemical substances without ChEBI IDs
+  capnophilic:
+    label: "capnophilic"
+    description: "Requires elevated CO2 levels for growth"
+    category: "biolink:PhenotypicQuality"
+
+  casein:
+    label: "casein"
+    description: "Casein protein mixture"
+    category: "biolink:ChemicalSubstance"
+
+  gelatin:
+    label: "gelatin"
+    description: "Gelatin protein mixture"
+    category: "biolink:ChemicalSubstance"

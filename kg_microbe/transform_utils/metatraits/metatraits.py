@@ -11,6 +11,11 @@ import json
 import multiprocessing
 import os
 import shutil
+import warnings
+
+# Suppress pkg_resources deprecation warning from eutils (via oaklib)
+# eutils is unmaintained but required by oaklib; warning doesn't affect functionality
+warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
@@ -26,12 +31,16 @@ from kg_microbe.transform_utils.constants import (
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
     ID_COLUMN,
+    INFERRED_SUBCLASS_RELATION,
     METATRAITS,
     NCBI_CATEGORY,
     NCBITAXON_NODES_FILE,
     NCBITAXON_SOURCE,
     OBSERVATION,
+    PROVISIONAL_SPECIES_PREFIX,
     RAW_DATA_DIR,
+    STRAIN_PREFIX,
+    SUBCLASS_PREDICATE,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
@@ -96,13 +105,10 @@ PREDICATE_TO_RELATION = {
 }
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
+# NOTE: Only process species-level files, not genus or family summaries
 METATRAITS_INPUT_FILES = [
     "ncbi_species_summary.jsonl.gz",
-    "ncbi_genus_summary.jsonl.gz",
-    "ncbi_family_summary.jsonl.gz",
     "metatraits_species_summary.jsonl.gz",
-    "metatraits_genus_summary.jsonl.gz",
-    "metatraits_family_summary.jsonl.gz",
 ]
 
 
@@ -131,8 +137,14 @@ def _get_ncbitaxon_adapter():
         try:
             print(f"  Creating symlink to cached database: {local_db} -> {oak_cache}")
             local_db.symlink_to(oak_cache)
-            print(f"  Using cached NCBITaxon database from OAK")
+            print("  Using cached NCBITaxon database from OAK")
             return get_adapter(f"sqlite:{local_db}")
+        except FileExistsError:
+            # Another worker created the symlink - verify and use it
+            if local_db.exists() and local_db.is_symlink():
+                return get_adapter(f"sqlite:{local_db}")
+            else:
+                print(f"  Symlink race condition - file exists but invalid, using remote adapter")
         except Exception as e:
             print(f"  Failed to create symlink ({e}), using remote adapter")
 
@@ -149,6 +161,8 @@ def _get_ncbitaxon_adapter():
         try:
             local_db.symlink_to(oak_cache)
             print(f"  Created symlink for future use: {local_db}")
+        except FileExistsError:
+            pass  # Another worker already created it - no need to log
         except Exception:
             pass  # Symlink creation is optional, don't fail if it doesn't work
 
@@ -196,8 +210,8 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
     finally:
         # Clean up OAK adapter resources to prevent semaphore leaks
         try:
-            if hasattr(transform, '_ncbi_adapter') and transform._ncbi_adapter is not None:
-                if hasattr(transform._ncbi_adapter, 'engine') and transform._ncbi_adapter.engine is not None:
+            if hasattr(transform, "_ncbi_adapter") and transform._ncbi_adapter is not None:
+                if hasattr(transform._ncbi_adapter, "engine") and transform._ncbi_adapter.engine is not None:
                     transform._ncbi_adapter.engine.dispose()
             transform._ncbi_adapter = None
         except Exception:
@@ -243,6 +257,29 @@ class MetaTraitsTransform(Transform):
 
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
+    # Measurement traits that should be excluded from unmapped_traits.tsv
+    # These represent quantitative measurements, not ontology classes
+    MEASUREMENT_TRAITS = {
+        "temperature growth",
+        "temperature minimum",
+        "temperature maximum",
+        "ph minimum",
+        "ph maximum",
+        "ph growth",
+        "salinity growth",
+        "salinity minimum",
+        "salinity maximum",
+        "genome size",
+        "gene count",
+        "estimated genome size",
+        "estimated gene count",
+        "coding density",
+        "cell length minimum",
+        "cell length maximum",
+        "cell width minimum",
+        "cell width maximum",
+    }
+
     def __init__(
         self,
         input_dir: Optional[Union[str, Path]] = None,
@@ -285,6 +322,7 @@ class MetaTraitsTransform(Transform):
 
         self.unmapped_traits_file = self.output_dir / "unmapped_traits.tsv"
         self.unresolved_taxa_file = self.output_dir / "unresolved_taxa.tsv"
+        self.measurement_traits_file = self.output_dir / "measurement_traits.tsv"
 
         # Multiprocessing configuration
         self.use_multiprocessing = use_multiprocessing
@@ -327,6 +365,161 @@ class MetaTraitsTransform(Transform):
             ncbitaxon_id = results[0]
             self.ncbitaxon_name_to_id[key] = ncbitaxon_id
             return ncbitaxon_id
+        return None
+
+    def _parse_taxonomic_components(self, tax_name: str) -> dict:
+        """
+        Parse taxonomic components from strain-level names.
+
+        Handles patterns:
+        - "Genus sp. STRAIN_ID" → genus only
+        - "Genus species STRAIN_ID" → genus + species
+        - "Family bacterium STRAIN_ID" → family only
+        - "Candidatus Genus species" → genus + species
+        - "uncultured Genus sp." → genus only
+
+        :param tax_name: Taxon name to parse
+        :return: dict with 'genus', 'species', 'strain_id', 'type' keys
+        """
+        import re
+
+        # Remove prefixes
+        cleaned = re.sub(r'^(uncultured|Candidatus)\s+', '', tax_name, flags=re.IGNORECASE)
+
+        # Pattern 1: "Genus sp. STRAIN_ID"
+        match = re.match(r'^([A-Z][a-z]+)\s+sp\.\s+(.+)$', cleaned)
+        if match:
+            return {
+                'genus': match.group(1),
+                'species': None,
+                'strain_id': match.group(2),
+                'type': 'strain'
+            }
+
+        # Pattern 2: "Family/Genus bacterium STRAIN_ID"
+        match = re.match(r'^([A-Z][a-z]+)\s+bacterium\s+(.+)$', cleaned)
+        if match:
+            return {
+                'genus': match.group(1),  # Could be family
+                'species': None,
+                'strain_id': match.group(2),
+                'type': 'bacterium'
+            }
+
+        # Pattern 3: "Genus species" (valid binomial)
+        match = re.match(r'^([A-Z][a-z]+)\s+([a-z]+)$', cleaned)
+        if match:
+            return {
+                'genus': match.group(1),
+                'species': match.group(2),
+                'strain_id': None,
+                'type': 'species'
+            }
+
+        # Pattern 4: "Genus species STRAIN_ID" (three words)
+        match = re.match(r'^([A-Z][a-z]+)\s+([a-z]+)\s+(.+)$', cleaned)
+        if match:
+            return {
+                'genus': match.group(1),
+                'species': match.group(2),
+                'strain_id': match.group(3),
+                'type': 'strain'
+            }
+
+        return {'genus': None, 'species': None, 'strain_id': None, 'type': 'unknown'}
+
+    def _create_provisional_strain_node(
+        self,
+        tax_name: str,
+        genus: str,
+        species: Optional[str],
+        strain_id: str,
+        node_writer
+    ) -> str:
+        """
+        Create provisional strain node.
+
+        :param tax_name: Original taxon name
+        :param genus: Genus name
+        :param species: Species epithet (optional)
+        :param strain_id: Strain identifier
+        :param node_writer: Streaming node writer
+        :return: Strain node CURIE (e.g., "kgmicrobe.strain:Genus_sp_STRAIN")
+        """
+        # Create strain ID from components
+        if species:
+            strain_curie = f"{STRAIN_PREFIX}{genus}_{species}_{strain_id}".replace(" ", "_")
+        else:
+            strain_curie = f"{STRAIN_PREFIX}{genus}_sp_{strain_id}".replace(" ", "_")
+
+        # Create node
+        node_writer.write_row(
+            self._create_node_row(
+                strain_curie,
+                NCBI_CATEGORY,
+                tax_name,  # Use original name as label
+                description=f"Provisional strain node for {tax_name}"
+            )
+        )
+
+        return strain_curie
+
+    def _create_provisional_species_node(
+        self,
+        genus: str,
+        species: str,
+        node_writer
+    ) -> str:
+        """
+        Create provisional species node (reuses BacDive pattern).
+
+        :param genus: Genus name
+        :param species: Species epithet
+        :param node_writer: Streaming node writer
+        :return: Species node CURIE (e.g., "kgmicrobe.species:Genus_species")
+        """
+        species_curie = f"{PROVISIONAL_SPECIES_PREFIX}{genus}_{species}"
+        species_name = f"{genus} {species}"
+
+        node_writer.write_row(
+            self._create_node_row(
+                species_curie,
+                NCBI_CATEGORY,
+                species_name,
+                description=f"Provisional species node for {species_name}"
+            )
+        )
+
+        return species_curie
+
+    def _search_higher_ranks_in_ncbitaxon(self, genus: str) -> Optional[tuple]:
+        """
+        Search for genus or higher ranks (family, order, class) in NCBITaxon.
+
+        Follows BacDive strategy: try genus → family → order → class → phylum.
+
+        :param genus: Genus name to search
+        :return: (ncbitaxon_id, rank_name) or None
+        """
+        # Try genus first
+        genus_id = self._search_ncbitaxon_by_label(genus)
+        if genus_id:
+            return (genus_id, "genus")
+
+        # Try adding common suffixes for higher ranks
+        rank_suffixes = {
+            'aceae': 'family',      # Pseudomonadaceae
+            'ales': 'order',        # Pseudomonadales
+            'ia': 'class',          # Gammaproteobacteria
+            'ota': 'phylum',        # Pseudomonadota
+        }
+
+        for suffix, rank in rank_suffixes.items():
+            test_name = genus + suffix
+            taxon_id = self._search_ncbitaxon_by_label(test_name)
+            if taxon_id:
+                return (taxon_id, rank)
+
         return None
 
     def _build_trait_mapping(self) -> None:
@@ -384,6 +577,7 @@ class MetaTraitsTransform(Transform):
         # Extract chemical name and predicate from common patterns
         patterns = [
             (r"^carbon source:\s*(.+)$", "METPO:2000006"),  # uses as carbon source
+            (r"^assimilation:\s*(.+)$", "METPO:2000002"),  # assimilates
             (r"^produces:\s*(.+)$", "METPO:2000202"),  # produces
             (r"^ferments:\s*(.+)$", "METPO:2000011"),  # ferments
             (r"^hydrolyzes:\s*(.+)$", "METPO:2000013"),  # hydrolyzes
@@ -435,6 +629,8 @@ class MetaTraitsTransform(Transform):
         patterns = [
             # Electron acceptors → METPO:2000008 (uses as electron acceptor)
             (r"^electron acceptor:\s*(.+)$", "METPO:2000008", "chemical"),
+            # Electron donors → METPO:2000009 (uses as electron donor)
+            (r"^electron donor:\s*(.+)$", "METPO:2000009", "chemical"),
             # Respiration → METPO:2000008 (respiration uses electron acceptor)
             (r"^respiration:\s*(.+)$", "METPO:2000008", "chemical"),
             # Reduction → METPO:2000017 (reduces)
@@ -680,6 +876,105 @@ class MetaTraitsTransform(Transform):
 
         return None
 
+    def _resolve_energy_source(self, trait_name: str) -> Optional[dict]:
+        """
+        Resolve energy source patterns: energy source: [compound].
+
+        Handles patterns like:
+        - "energy source: glucose" -> CHEBI:17234
+
+        :param trait_name: The trait name to resolve
+        :return: dict with curie, category, name, predicate or None if no match
+        """
+        if not self.chemical_loader:
+            return None
+
+        import re
+
+        match = re.match(r"^energy source:\s*(.+)$", trait_name.lower())
+        if match:
+            compound = match.group(1).strip()
+            chebi_id = self.chemical_loader.find_chebi_by_name(compound)
+            if chebi_id:
+                canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
+                return {
+                    "curie": chebi_id,
+                    "category": "biolink:ChemicalSubstance",
+                    "name": canonical_name or compound,
+                    "predicate": "METPO:2000010",  # uses as energy source
+                }
+        return None
+
+    def _resolve_nitrogen_source(self, trait_name: str) -> Optional[dict]:
+        """
+        Resolve nitrogen source patterns: nitrogen source: [compound].
+
+        Handles patterns like:
+        - "nitrogen source: ammonia" -> CHEBI:16134
+
+        :param trait_name: The trait name to resolve
+        :return: dict with curie, category, name, predicate or None if no match
+        """
+        if not self.chemical_loader:
+            return None
+
+        import re
+
+        match = re.match(r"^nitrogen source:\s*(.+)$", trait_name.lower())
+        if match:
+            compound = match.group(1).strip()
+            chebi_id = self.chemical_loader.find_chebi_by_name(compound)
+            if chebi_id:
+                canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
+                return {
+                    "curie": chebi_id,
+                    "category": "biolink:ChemicalSubstance",
+                    "name": canonical_name or compound,
+                    "predicate": "METPO:2000014",  # uses as nitrogen source
+                }
+        return None
+
+    def _resolve_sulfur_source(self, trait_name: str) -> Optional[dict]:
+        """
+        Resolve sulfur source patterns: sulfur source: [compound].
+
+        Handles patterns like:
+        - "sulfur source: sulfate" -> CHEBI:16189
+
+        :param trait_name: The trait name to resolve
+        :return: dict with curie, category, name, predicate or None if no match
+        """
+        if not self.chemical_loader:
+            return None
+
+        import re
+
+        match = re.match(r"^sulfur source:\s*(.+)$", trait_name.lower())
+        if match:
+            compound = match.group(1).strip()
+            chebi_id = self.chemical_loader.find_chebi_by_name(compound)
+            if chebi_id:
+                canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
+                return {
+                    "curie": chebi_id,
+                    "category": "biolink:ChemicalSubstance",
+                    "name": canonical_name or compound,
+                    "predicate": "METPO:2000020",  # uses as sulfur source
+                }
+        return None
+
+    def _is_measurement_trait(self, trait_name: str) -> bool:
+        """
+        Check if trait is a measurement (quantitative value, not ontology class).
+
+        Measurement traits include temperature, pH, salinity, genome size, etc.
+        These should be excluded from unmapped_traits.tsv and logged separately.
+
+        :param trait_name: The trait name to check
+        :return: True if this is a measurement trait
+        """
+        return trait_name.lower().strip() in self.MEASUREMENT_TRAITS
+
     def _create_node_row(
         self,
         node_id: str,
@@ -880,6 +1175,7 @@ class MetaTraitsTransform(Transform):
         seen_taxon_nodes: Set[str] = set()
         seen_trait_nodes: Set[str] = set()
         unmapped_traits: List[Tuple[str, str, str, int]] = []
+        measurement_traits: List[Tuple[str, str, str, int]] = []
         unresolved_taxa: List[str] = []
 
         # Process file with streaming writers
@@ -903,9 +1199,105 @@ class MetaTraitsTransform(Transform):
                         continue
 
                     tax_id = self._search_ncbitaxon_by_label(tax_name)
+
                     if not tax_id:
-                        unresolved_taxa.append(tax_name)
-                        continue
+                        # Try strain resolution strategy
+                        components = self._parse_taxonomic_components(tax_name)
+                        genus = components['genus']
+                        species = components['species']
+                        strain_id = components['strain_id']
+
+                        if genus and strain_id:
+                            # CASE 1: Strain-level name (e.g., "Arthrobacter sp. SF27")
+                            # Create provisional strain node
+                            tax_id = self._create_provisional_strain_node(
+                                tax_name, genus, species, strain_id, node_writer
+                            )
+
+                            # Link to parent taxon
+                            if species:
+                                # Try exact species match
+                                species_name = f"{genus} {species}"
+                                species_id = self._search_ncbitaxon_by_label(species_name)
+
+                                if species_id:
+                                    # strain → NCBITaxon:species
+                                    parent_id = species_id
+                                    relation = "rdfs:subClassOf"
+                                else:
+                                    # Create provisional species → search genus
+                                    parent_id = self._create_provisional_species_node(genus, species, node_writer)
+                                    relation = INFERRED_SUBCLASS_RELATION
+
+                                    # Link provisional species → NCBITaxon:genus or higher
+                                    genus_id = self._search_ncbitaxon_by_label(genus)
+                                    if genus_id:
+                                        edge_writer.write_row([
+                                            parent_id, SUBCLASS_PREDICATE, genus_id,
+                                            INFERRED_SUBCLASS_RELATION,
+                                            self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                        ])
+                                    else:
+                                        # Search higher ranks
+                                        higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
+                                        if higher_rank:
+                                            edge_writer.write_row([
+                                                parent_id, SUBCLASS_PREDICATE, higher_rank[0],
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                            ])
+                            else:
+                                # Only genus available - search genus
+                                genus_id = self._search_ncbitaxon_by_label(genus)
+                                if genus_id:
+                                    parent_id = genus_id
+                                    relation = INFERRED_SUBCLASS_RELATION
+                                else:
+                                    # Search higher ranks
+                                    higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
+                                    if higher_rank:
+                                        parent_id = higher_rank[0]
+                                        relation = INFERRED_SUBCLASS_RELATION
+                                    else:
+                                        # Still can't resolve - mark as unresolved
+                                        unresolved_taxa.append(tax_name)
+                                        continue
+
+                            # Create strain → parent edge
+                            edge_writer.write_row([
+                                tax_id, SUBCLASS_PREDICATE, parent_id, relation,
+                                self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                            ])
+
+                        elif genus and species:
+                            # CASE 2: Valid species name without NCBITaxon match (e.g., "Algoriphagus aquimaris")
+                            # Create provisional species
+                            tax_id = self._create_provisional_species_node(genus, species, node_writer)
+
+                            # Link to genus or higher rank
+                            genus_id = self._search_ncbitaxon_by_label(genus)
+                            if genus_id:
+                                edge_writer.write_row([
+                                    tax_id, SUBCLASS_PREDICATE, genus_id,
+                                    INFERRED_SUBCLASS_RELATION,
+                                    self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                ])
+                            else:
+                                higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
+                                if higher_rank:
+                                    edge_writer.write_row([
+                                        tax_id, SUBCLASS_PREDICATE, higher_rank[0],
+                                        INFERRED_SUBCLASS_RELATION,
+                                        self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                    ])
+                                else:
+                                    # Can't resolve genus - still mark as unresolved
+                                    unresolved_taxa.append(tax_name)
+                                    continue
+                        else:
+                            # CASE 3: Cannot parse - keep as unresolved
+                            unresolved_taxa.append(tax_name)
+                            continue
 
                     summaries = obj.get("summaries", [])
                     for s in summaries:
@@ -977,16 +1369,46 @@ class MetaTraitsTransform(Transform):
                                 category = phenotype_mapping["category"]
                                 pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
                                 label = phenotype_mapping["name"]
+                            elif energy_mapping := self._resolve_energy_source(trait_name):
+                                # Tier 3.7: Energy sources (energy source: glucose)
+                                curie = energy_mapping["curie"]
+                                category = energy_mapping["category"]
+                                pred = self._to_biolink_predicate(energy_mapping["predicate"])
+                                label = energy_mapping["name"]
+                            elif nitrogen_mapping := self._resolve_nitrogen_source(trait_name):
+                                # Tier 3.8: Nitrogen sources (nitrogen source: ammonia)
+                                curie = nitrogen_mapping["curie"]
+                                category = nitrogen_mapping["category"]
+                                pred = self._to_biolink_predicate(nitrogen_mapping["predicate"])
+                                label = nitrogen_mapping["name"]
+                            elif sulfur_mapping := self._resolve_sulfur_source(trait_name):
+                                # Tier 3.9: Sulfur sources (sulfur source: sulfate)
+                                curie = sulfur_mapping["curie"]
+                                category = sulfur_mapping["category"]
+                                pred = self._to_biolink_predicate(sulfur_mapping["predicate"])
+                                label = sulfur_mapping["name"]
                             else:
-                                # No mapping found - mark as unmapped
-                                unmapped_traits.append(
-                                    (
-                                        trait_name,
-                                        tax_name,
-                                        majority_label,
-                                        s.get("num_observations", 0),
+                                # No mapping found - check if measurement trait or unmapped
+                                if self._is_measurement_trait(trait_name):
+                                    # Measurement trait - log separately
+                                    measurement_traits.append(
+                                        (
+                                            trait_name,
+                                            tax_name,
+                                            majority_label,
+                                            s.get("num_observations", 0),
+                                        )
                                     )
-                                )
+                                else:
+                                    # Unmapped trait (not a measurement)
+                                    unmapped_traits.append(
+                                        (
+                                            trait_name,
+                                            tax_name,
+                                            majority_label,
+                                            s.get("num_observations", 0),
+                                        )
+                                    )
                                 continue
 
                         if tax_id not in seen_taxon_nodes:
@@ -1021,6 +1443,7 @@ class MetaTraitsTransform(Transform):
             "nodes_file": temp_nodes_file,
             "edges_file": temp_edges_file,
             "unmapped_traits": unmapped_traits,
+            "measurement_traits": measurement_traits,
             "unresolved_taxa": unresolved_taxa,
         }
 
@@ -1061,11 +1484,13 @@ class MetaTraitsTransform(Transform):
         # Write final output
         edges_df.to_csv(self.output_edge_file, sep="\t", index=False)
 
-        # Merge unmapped traits and unresolved taxa lists
+        # Merge unmapped traits, measurement traits, and unresolved taxa lists
         all_unmapped = []
+        all_measurements = []
         all_unresolved = set()
         for result in results:
             all_unmapped.extend(result["unmapped_traits"])
+            all_measurements.extend(result["measurement_traits"])
             all_unresolved.update(result["unresolved_taxa"])
 
         # Write unmapped traits
@@ -1073,6 +1498,12 @@ class MetaTraitsTransform(Transform):
             uw = csv.writer(uf, delimiter="\t")
             uw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             uw.writerows(all_unmapped)
+
+        # Write measurement traits
+        with open(self.measurement_traits_file, "w", newline="") as mf:
+            mw = csv.writer(mf, delimiter="\t")
+            mw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
+            mw.writerows(all_measurements)
 
         # Write unresolved taxa
         with open(self.unresolved_taxa_file, "w", newline="") as rf:
@@ -1225,6 +1656,7 @@ class MetaTraitsTransform(Transform):
         seen_taxon_nodes: Set[str] = set()
         seen_trait_nodes: Set[str] = set()
         unmapped_traits: List[Tuple[str, str, str, int]] = []
+        measurement_traits: List[Tuple[str, str, str, int]] = []
         unresolved_taxa: List[str] = []
 
         # Create output directory
@@ -1254,9 +1686,105 @@ class MetaTraitsTransform(Transform):
                             continue
 
                         tax_id = self._search_ncbitaxon_by_label(tax_name)
+
                         if not tax_id:
-                            unresolved_taxa.append(tax_name)
-                            continue
+                            # Try strain resolution strategy
+                            components = self._parse_taxonomic_components(tax_name)
+                            genus = components['genus']
+                            species = components['species']
+                            strain_id = components['strain_id']
+
+                            if genus and strain_id:
+                                # CASE 1: Strain-level name (e.g., "Arthrobacter sp. SF27")
+                                # Create provisional strain node
+                                tax_id = self._create_provisional_strain_node(
+                                    tax_name, genus, species, strain_id, node_writer
+                                )
+
+                                # Link to parent taxon
+                                if species:
+                                    # Try exact species match
+                                    species_name = f"{genus} {species}"
+                                    species_id = self._search_ncbitaxon_by_label(species_name)
+
+                                    if species_id:
+                                        # strain → NCBITaxon:species
+                                        parent_id = species_id
+                                        relation = "rdfs:subClassOf"
+                                    else:
+                                        # Create provisional species → search genus
+                                        parent_id = self._create_provisional_species_node(genus, species, node_writer)
+                                        relation = INFERRED_SUBCLASS_RELATION
+
+                                        # Link provisional species → NCBITaxon:genus or higher
+                                        genus_id = self._search_ncbitaxon_by_label(genus)
+                                        if genus_id:
+                                            edge_writer.write_row([
+                                                parent_id, SUBCLASS_PREDICATE, genus_id,
+                                                INFERRED_SUBCLASS_RELATION,
+                                                self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                            ])
+                                        else:
+                                            # Search higher ranks
+                                            higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
+                                            if higher_rank:
+                                                edge_writer.write_row([
+                                                    parent_id, SUBCLASS_PREDICATE, higher_rank[0],
+                                                    INFERRED_SUBCLASS_RELATION,
+                                                    self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                                ])
+                                else:
+                                    # Only genus available - search genus
+                                    genus_id = self._search_ncbitaxon_by_label(genus)
+                                    if genus_id:
+                                        parent_id = genus_id
+                                        relation = INFERRED_SUBCLASS_RELATION
+                                    else:
+                                        # Search higher ranks
+                                        higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
+                                        if higher_rank:
+                                            parent_id = higher_rank[0]
+                                            relation = INFERRED_SUBCLASS_RELATION
+                                        else:
+                                            # Still can't resolve - mark as unresolved
+                                            unresolved_taxa.append(tax_name)
+                                            continue
+
+                                # Create strain → parent edge
+                                edge_writer.write_row([
+                                    tax_id, SUBCLASS_PREDICATE, parent_id, relation,
+                                    self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                ])
+
+                            elif genus and species:
+                                # CASE 2: Valid species name without NCBITaxon match (e.g., "Algoriphagus aquimaris")
+                                # Create provisional species
+                                tax_id = self._create_provisional_species_node(genus, species, node_writer)
+
+                                # Link to genus or higher rank
+                                genus_id = self._search_ncbitaxon_by_label(genus)
+                                if genus_id:
+                                    edge_writer.write_row([
+                                        tax_id, SUBCLASS_PREDICATE, genus_id,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                    ])
+                                else:
+                                    higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
+                                    if higher_rank:
+                                        edge_writer.write_row([
+                                            tax_id, SUBCLASS_PREDICATE, higher_rank[0],
+                                            INFERRED_SUBCLASS_RELATION,
+                                            self.knowledge_source, OBSERVATION, AUTOMATED_AGENT
+                                        ])
+                                    else:
+                                        # Can't resolve genus - still mark as unresolved
+                                        unresolved_taxa.append(tax_name)
+                                        continue
+                            else:
+                                # CASE 3: Cannot parse - keep as unresolved
+                                unresolved_taxa.append(tax_name)
+                                continue
 
                         summaries = obj.get("summaries", [])
                         for s in summaries:
@@ -1318,9 +1846,36 @@ class MetaTraitsTransform(Transform):
                                     category = phenotype_mapping["category"]
                                     pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
                                     label = phenotype_mapping["name"]
+                                elif energy_mapping := self._resolve_energy_source(trait_name):
+                                    curie = energy_mapping["curie"]
+                                    category = energy_mapping["category"]
+                                    pred = self._to_biolink_predicate(energy_mapping["predicate"])
+                                    label = energy_mapping["name"]
+                                elif nitrogen_mapping := self._resolve_nitrogen_source(trait_name):
+                                    curie = nitrogen_mapping["curie"]
+                                    category = nitrogen_mapping["category"]
+                                    pred = self._to_biolink_predicate(nitrogen_mapping["predicate"])
+                                    label = nitrogen_mapping["name"]
+                                elif sulfur_mapping := self._resolve_sulfur_source(trait_name):
+                                    curie = sulfur_mapping["curie"]
+                                    category = sulfur_mapping["category"]
+                                    pred = self._to_biolink_predicate(sulfur_mapping["predicate"])
+                                    label = sulfur_mapping["name"]
                                 else:
-                                    # No mapping found - mark as unmapped
-                                    unmapped_traits.append(
+                                    # No mapping found - check if measurement trait or unmapped
+                                    if self._is_measurement_trait(trait_name):
+                                        # Measurement trait - log separately
+                                        measurement_traits.append(
+                                            (
+                                                trait_name,
+                                                tax_name,
+                                                majority_label,
+                                                s.get("num_observations", 0),
+                                            )
+                                        )
+                                    else:
+                                        # Unmapped trait (not a measurement)
+                                        unmapped_traits.append(
                                         (
                                             trait_name,
                                             tax_name,
@@ -1363,11 +1918,16 @@ class MetaTraitsTransform(Transform):
         drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN)
         drop_duplicates(self.output_edge_file)
 
-        # Write unmapped traits and unresolved taxa
+        # Write unmapped traits, measurement traits, and unresolved taxa
         with open(self.unmapped_traits_file, "w", newline="") as uf:
             uw = csv.writer(uf, delimiter="\t")
             uw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             uw.writerows(unmapped_traits)
+
+        with open(self.measurement_traits_file, "w", newline="") as mf:
+            mw = csv.writer(mf, delimiter="\t")
+            mw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
+            mw.writerows(measurement_traits)
 
         with open(self.unresolved_taxa_file, "w", newline="") as rf:
             rw = csv.writer(rf, delimiter="\t")
@@ -1421,7 +1981,9 @@ class MetaTraitsTransform(Transform):
                 self._run_parallel(input_files, show_status, self.num_workers)
             elif use_mp and len(input_files) == 1:
                 # Single file: split into chunks for parallel processing
-                print(f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)")
+                print(
+                    f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)"
+                )
                 self._run_parallel_chunked(input_files[0], show_status, self.num_workers)
             else:
                 # No multiprocessing: sequential
@@ -1429,8 +1991,8 @@ class MetaTraitsTransform(Transform):
         finally:
             # Clean up OAK adapter resources
             try:
-                if hasattr(self, '_ncbi_adapter') and self._ncbi_adapter is not None:
-                    if hasattr(self._ncbi_adapter, 'engine') and self._ncbi_adapter.engine is not None:
+                if hasattr(self, "_ncbi_adapter") and self._ncbi_adapter is not None:
+                    if hasattr(self._ncbi_adapter, "engine") and self._ncbi_adapter.engine is not None:
                         self._ncbi_adapter.engine.dispose()
                 self._ncbi_adapter = None
             except Exception:

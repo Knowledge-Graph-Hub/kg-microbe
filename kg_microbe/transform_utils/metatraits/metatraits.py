@@ -131,7 +131,7 @@ def _get_ncbitaxon_adapter():
         try:
             print(f"  Creating symlink to cached database: {local_db} -> {oak_cache}")
             local_db.symlink_to(oak_cache)
-            print(f"  Using cached NCBITaxon database from OAK")
+            print("  Using cached NCBITaxon database from OAK")
             return get_adapter(f"sqlite:{local_db}")
         except Exception as e:
             print(f"  Failed to create symlink ({e}), using remote adapter")
@@ -149,7 +149,7 @@ def _get_ncbitaxon_adapter():
         try:
             local_db.symlink_to(oak_cache)
             print(f"  Created symlink for future use: {local_db}")
-        except Exception:
+        except Exception:  # noqa: S110
             pass  # Symlink creation is optional, don't fail if it doesn't work
 
     return adapter
@@ -200,7 +200,7 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
                 if hasattr(transform._ncbi_adapter, 'engine') and transform._ncbi_adapter.engine is not None:
                     transform._ncbi_adapter.engine.dispose()
             transform._ncbi_adapter = None
-        except Exception:
+        except Exception:  # noqa: S110
             pass  # Ignore cleanup errors
 
 
@@ -1421,7 +1421,8 @@ class MetaTraitsTransform(Transform):
                 self._run_parallel(input_files, show_status, self.num_workers)
             elif use_mp and len(input_files) == 1:
                 # Single file: split into chunks for parallel processing
-                print(f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)")
+                workers_desc = self.num_workers or 'auto'
+                print(f"  Using parallel chunked processing (splitting 1 file across {workers_desc} workers)")
                 self._run_parallel_chunked(input_files[0], show_status, self.num_workers)
             else:
                 # No multiprocessing: sequential
@@ -1433,5 +1434,5 @@ class MetaTraitsTransform(Transform):
                     if hasattr(self._ncbi_adapter, 'engine') and self._ncbi_adapter.engine is not None:
                         self._ncbi_adapter.engine.dispose()
                 self._ncbi_adapter = None
-            except Exception:
+            except Exception:  # noqa: S110
                 pass  # Ignore cleanup errors

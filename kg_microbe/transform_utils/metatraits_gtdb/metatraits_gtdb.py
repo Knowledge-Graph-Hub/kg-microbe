@@ -318,11 +318,11 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
             ID_COLUMN,
             NAME_COLUMN,
             OBJECT_COLUMN,
-            OWL_SAME_AS,
             PREDICATE_COLUMN,
             PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
             RDFS_SUBCLASS_OF,
             RELATION_COLUMN,
+            SAME_AS_PREDICATE,
             SUBCLASS_PREDICATE,
             SUBJECT_COLUMN,
         )
@@ -381,9 +381,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                 hierarchical_edges.append(
                     {
                         SUBJECT_COLUMN: node_id,
-                        PREDICATE_COLUMN: "biolink:same_as",
+                        PREDICATE_COLUMN: SAME_AS_PREDICATE,
                         OBJECT_COLUMN: ncbi_taxon,
-                        RELATION_COLUMN: OWL_SAME_AS,
+                        RELATION_COLUMN: "owl:sameAs",
                         PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
                     }
                 )

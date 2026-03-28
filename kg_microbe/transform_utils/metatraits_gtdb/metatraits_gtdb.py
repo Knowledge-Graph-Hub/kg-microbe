@@ -85,7 +85,14 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         # GTDB species name -> set of NCBITaxon IDs mapping
         self.gtdb_to_ncbi: Dict[str, Set[str]] = defaultdict(set)
+        # Genome accession -> NCBITaxon ID mapping (for equivalence links)
+        self.accession_to_ncbi: Dict[str, str] = {}
+        # Genome accession -> current GTDB species name (for hierarchical links)
+        self.accession_to_gtdb_species: Dict[str, str] = {}
+        # Track synthetic nodes that need hierarchical edges
+        self.synthetic_nodes_metadata: Dict[str, Dict[str, str]] = {}
         self._load_gtdb_to_ncbi_mapping()
+        self._load_gtdb_taxonomy()
 
         # GTDB transform uses GTDB metadata mapping, not OAK adapter
         # Clear the parent's ncbitaxon cache and prevent adapter initialization
@@ -93,7 +100,11 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self._ncbi_adapter = "DISABLED"  # Prevent lazy init - GTDB doesn't need OAK
 
     def _load_gtdb_to_ncbi_mapping(self) -> None:
-        """Load GTDB species name to NCBITaxon ID mapping from GTDB metadata files."""
+        """
+        Load GTDB species name to NCBITaxon ID mapping from GTDB metadata files.
+
+        Also builds accession-based mapping to resolve species with renamed taxonomy.
+        """
         gtdb_dir = RAW_DATA_DIR / "gtdb"
 
         # Process both bacterial and archaeal metadata
@@ -111,6 +122,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
                 # Find column indices
                 try:
+                    accession_idx = 0  # First column is always genome accession
                     taxonomy_idx = header.index("gtdb_taxonomy")
                     taxid_idx = header.index("ncbi_taxid")
                 except ValueError as e:
@@ -120,41 +132,98 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                 for line in f:
                     parts = line.strip().split("\t")
                     if len(parts) > max(taxonomy_idx, taxid_idx):
+                        accession = parts[accession_idx]
                         gtdb_taxonomy = parts[taxonomy_idx]
                         ncbi_taxid = parts[taxid_idx]
 
                         # Extract species name from taxonomy string
                         # Format: d__Bacteria;p__...;s__Species_name
                         if gtdb_taxonomy and ncbi_taxid and ncbi_taxid not in ("none", "NA", ""):
+                            ncbi_id = f"NCBITaxon:{ncbi_taxid}"
                             tax_parts = gtdb_taxonomy.split(";")
 
                             # Extract species (index 6), genus (index 5), family (index 4)
                             if len(tax_parts) >= 7:
                                 species = tax_parts[6].replace("s__", "")  # Remove 's__' prefix
                                 if species:
-                                    ncbi_id = f"NCBITaxon:{ncbi_taxid}"
                                     self.gtdb_to_ncbi[species].add(ncbi_id)
 
                             # Also map genus level (for gtdb_genus_summary.jsonl.gz)
                             if len(tax_parts) >= 6:
                                 genus = tax_parts[5].replace("g__", "")
                                 if genus:
-                                    ncbi_id = f"NCBITaxon:{ncbi_taxid}"
                                     self.gtdb_to_ncbi[genus].add(ncbi_id)
 
                             # Also map family level (for gtdb_family_summary.jsonl.gz)
                             if len(tax_parts) >= 5:
                                 family = tax_parts[4].replace("f__", "")
                                 if family:
-                                    ncbi_id = f"NCBITaxon:{ncbi_taxid}"
                                     self.gtdb_to_ncbi[family].add(ncbi_id)
 
-        print(f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon mappings")
+                            # Map genome accession to NCBITaxon for fallback lookup
+                            # Accession format: GB_GCA_001788565.1 or RS_GCF_001788565.1
+                            # Extract numeric part: 001788565
+                            if accession:
+                                # Remove prefix (GB_GCA_ or RS_GCF_) and version (.1)
+                                acc_parts = accession.replace("GB_GCA_", "").replace("RS_GCF_", "").split(".")[0]
+                                # Store with 'sp' prefix for matching metatraits format
+                                self.accession_to_ncbi[f"sp{acc_parts}"] = ncbi_id
+
+        print(
+            f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon name mappings"
+        )
+        print(
+            f"  Loaded {len(self.accession_to_ncbi)} unique accession → NCBITaxon mappings"
+        )
+
+    def _load_gtdb_taxonomy(self) -> None:
+        """
+        Load GTDB taxonomy to map genome accessions to current species names.
+
+        This enables hierarchical linking of synthetic nodes to GTDB taxonomy.
+        """
+        gtdb_dir = RAW_DATA_DIR / "gtdb"
+
+        # Process both bacterial and archaeal taxonomy
+        for taxonomy_file in ["bac120_taxonomy.tsv", "ar53_taxonomy.tsv"]:
+            filepath = gtdb_dir / taxonomy_file
+
+            if not filepath.exists():
+                print(f"  Warning: {filepath} not found")
+                continue
+
+            print(f"  Loading GTDB taxonomy from {filepath.name}...")
+
+            with open(filepath, "r") as f:
+                for line in f:
+                    parts = line.strip().split("\t")
+                    if len(parts) >= 2:
+                        accession = parts[0]  # e.g., GB_GCA_001788565.1
+                        taxonomy = parts[1]  # e.g., d__Bacteria;...;s__MGCX01 sp001788565
+
+                        # Extract species name from taxonomy string
+                        tax_parts = taxonomy.split(";")
+                        if len(tax_parts) >= 7:
+                            species = tax_parts[6].replace("s__", "")  # Remove 's__' prefix
+                            if species:
+                                # Extract numeric accession: GB_GCA_001788565.1 → sp001788565
+                                acc_parts = (
+                                    accession.replace("GB_GCA_", "")
+                                    .replace("RS_GCF_", "")
+                                    .split(".")[0]
+                                )
+                                self.accession_to_gtdb_species[f"sp{acc_parts}"] = species
+
+        print(
+            f"  Loaded {len(self.accession_to_gtdb_species)} unique accession → GTDB species mappings"
+        )
 
     def _get_shared_init_data(self) -> dict:
         """Override to include GTDB-specific data for workers."""
         shared_data = super()._get_shared_init_data()
         shared_data["gtdb_to_ncbi"] = dict(self.gtdb_to_ncbi)  # Convert defaultdict to dict for pickling
+        shared_data["accession_to_ncbi"] = self.accession_to_ncbi  # Already a dict
+        shared_data["accession_to_gtdb_species"] = self.accession_to_gtdb_species  # Already a dict
         return shared_data
 
     def _init_from_shared_data(self, shared_data: dict) -> None:
@@ -163,6 +232,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         # Restore GTDB-specific state
         self.gtdb_to_ncbi = defaultdict(set, shared_data.get("gtdb_to_ncbi", {}))
+        self.accession_to_ncbi = shared_data.get("accession_to_ncbi", {})
+        self.accession_to_gtdb_species = shared_data.get("accession_to_gtdb_species", {})
+        self.synthetic_nodes_metadata = {}  # Will be populated during processing
 
         # Disable OAK adapter in worker (GTDB uses metadata mapping only)
         self.ncbitaxon_name_to_id.clear()
@@ -176,30 +248,164 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
         """
-        Resolve GTDB taxon name to NCBITaxon ID using GTDB metadata mapping.
+        Create GTDB synthetic node and track metadata for hierarchical linking.
 
-        Overrides parent class method to use GTDB-specific mapping instead of label search.
-        Uses only local GTDB metadata dictionary - no OAK API calls.
+        Overrides parent class method. Instead of returning NCBITaxon IDs,
+        creates synthetic GTDB: nodes and stores metadata for creating:
+        - rdfs:subClassOf edges to GTDB taxonomy (via genome accession)
+        - owl:sameAs edges to NCBITaxon (when available)
 
-        :param search_name: GTDB species/genus/family name (e.g., "Escherichia coli")
-        :return: NCBITaxon ID (e.g., "NCBITaxon:562") or None
+        Strategy:
+        1. Try direct lookup by current taxonomy name → use if matches
+        2. Otherwise, create synthetic GTDB: node
+        3. Extract accession and lookup GTDB species + NCBITaxon for edge creation
+        4. Store metadata for post-processing
+
+        :param search_name: GTDB species/genus/family name (e.g., "2-01-FULL-49-22 sp001788565")
+        :return: GTDB synthetic node ID or NCBITaxon ID if current name matches
         """
-        # Try direct lookup in GTDB mapping (O(1) dictionary lookup - no OAK)
+        import re
+
+        # Try direct lookup - if current taxonomy name matches, use NCBITaxon
         ncbi_ids = self.gtdb_to_ncbi.get(search_name)
         if ncbi_ids:
-            # If multiple NCBITaxon IDs map to same GTDB name, return first one
-            # (In practice, GTDB species usually map to a single representative NCBITaxon)
+            # Current taxonomy - use NCBITaxon directly (no synthetic node needed)
             return list(ncbi_ids)[0]
 
-        # For GTDB-only taxa (no NCBITaxon mapping), create GTDB: namespace node
-        # This preserves all data including uncultured/MAG organisms
-        if search_name and not search_name.startswith("NCBITaxon:"):
-            # Create GTDB namespace CURIE
-            # Replace spaces with underscores, keep alphanumeric and hyphens
-            gtdb_id = search_name.replace(" ", "_")
-            return f"GTDB:{gtdb_id}"
+        # Create synthetic GTDB: node for historical/renamed taxonomy
+        if not search_name or search_name.startswith("NCBITaxon:"):
+            return None
 
-        return None
+        gtdb_id = search_name.replace(" ", "_")
+        synthetic_node_id = f"GTDB:{gtdb_id}"
+
+        # Extract accession for hierarchical linking
+        accession_match = re.search(r"\bsp\d{9}\b", search_name)
+        if accession_match:
+            accession = accession_match.group(0)
+
+            # Look up current GTDB species name and NCBITaxon ID
+            current_gtdb_species = self.accession_to_gtdb_species.get(accession)
+            ncbi_id = self.accession_to_ncbi.get(accession)
+
+            # Store metadata for creating hierarchical edges later
+            self.synthetic_nodes_metadata[synthetic_node_id] = {
+                "original_name": search_name,
+                "accession": accession,
+                "current_gtdb_species": current_gtdb_species,  # For subClassOf edge
+                "ncbi_taxon": ncbi_id,  # For sameAs edge
+            }
+
+        return synthetic_node_id
+
+    def _create_hierarchical_edges(self) -> None:
+        """
+        Create hierarchical edges for synthetic GTDB nodes.
+
+        For each synthetic node, creates:
+        1. rdfs:subClassOf edge to current GTDB species (via genome accession)
+        2. owl:sameAs edge to NCBITaxon (if available)
+
+        These edges enable graph traversal from historical taxonomy to current
+        taxonomy and cross-database integration.
+
+        Note: Reads synthetic nodes from output file since worker metadata is not
+        available in main process after multiprocessing.
+        """
+        import csv
+        import re
+        from kg_microbe.transform_utils.constants import (
+            ID_COLUMN,
+            NAME_COLUMN,
+            OBJECT_COLUMN,
+            OWL_SAME_AS,
+            PREDICATE_COLUMN,
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+            RDFS_SUBCLASS_OF,
+            RELATION_COLUMN,
+            SUBCLASS_PREDICATE,
+            SUBJECT_COLUMN,
+        )
+
+        print("\n  Creating hierarchical edges for synthetic GTDB nodes...")
+
+        # Read synthetic nodes from output file (since worker metadata not available)
+        synthetic_nodes = []
+        with open(self.output_node_file, "r") as f:
+            reader = csv.DictReader(f, delimiter="\t")
+            for row in reader:
+                node_id = row[ID_COLUMN]
+                if node_id.startswith("GTDB:"):
+                    # Extract original name from node
+                    name = row.get(NAME_COLUMN, node_id.replace("GTDB:", "").replace("_", " "))
+                    synthetic_nodes.append({"id": node_id, "name": name})
+
+        if not synthetic_nodes:
+            print("  No synthetic nodes found (all resolved to current taxonomy)")
+            return
+
+        print(f"  Found {len(synthetic_nodes)} synthetic GTDB nodes")
+
+        hierarchical_edges = []
+
+        # Create edges for each synthetic node
+        for node_info in synthetic_nodes:
+            node_id = node_info["id"]
+            name = node_info["name"]
+
+            # Extract accession from name
+            accession_match = re.search(r"\bsp\d{9}\b", name)
+            if not accession_match:
+                continue
+
+            accession = accession_match.group(0)
+
+            # Look up current GTDB species and NCBITaxon
+            current_species = self.accession_to_gtdb_species.get(accession)
+            ncbi_taxon = self.accession_to_ncbi.get(accession)
+
+            # Edge 1: rdfs:subClassOf to current GTDB species
+            if current_species:
+                hierarchical_edges.append(
+                    {
+                        SUBJECT_COLUMN: node_id,
+                        PREDICATE_COLUMN: SUBCLASS_PREDICATE,
+                        OBJECT_COLUMN: f"GTDB:{current_species.replace(' ', '_')}",
+                        RELATION_COLUMN: RDFS_SUBCLASS_OF,
+                        PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
+                    }
+                )
+
+            # Edge 2: owl:sameAs to NCBITaxon (equivalence)
+            if ncbi_taxon:
+                hierarchical_edges.append(
+                    {
+                        SUBJECT_COLUMN: node_id,
+                        PREDICATE_COLUMN: "biolink:same_as",
+                        OBJECT_COLUMN: ncbi_taxon,
+                        RELATION_COLUMN: OWL_SAME_AS,
+                        PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
+                    }
+                )
+
+        print(f"  Created {len(hierarchical_edges)} hierarchical edges:")
+        print(f"    - {sum(1 for e in hierarchical_edges if 'subClassOf' in e[RELATION_COLUMN])} subClassOf edges")
+        print(f"    - {sum(1 for e in hierarchical_edges if 'sameAs' in e[RELATION_COLUMN])} sameAs edges")
+
+        # Append to existing edge file
+        if hierarchical_edges:
+            with open(self.output_edge_file, "a") as f:
+                writer = csv.DictWriter(f, fieldnames=self.edge_header, delimiter="\t")
+                for edge in hierarchical_edges:
+                    # Fill in missing columns with empty strings
+                    for col in self.edge_header:
+                        if col not in edge:
+                            edge[col] = ""
+                    writer.writerow(edge)
+
+            print(f"  ✅ Appended {len(hierarchical_edges)} edges to {self.output_edge_file.name}")
+        else:
+            print("  No hierarchical edges created (no accessions found)")
 
     def run(
         self,
@@ -255,6 +461,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         try:
             # Call parent run() method
             super().run(data_file=data_file, show_status=show_status)
+
+            # Create hierarchical edges for synthetic GTDB nodes
+            self._create_hierarchical_edges()
         finally:
             # Restore original file list
             METATRAITS_INPUT_FILES.clear()

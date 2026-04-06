@@ -65,6 +65,13 @@
   local_name: go.owl
 
 #
+# EC to GO mappings (Gene Ontology Consortium)
+#
+-
+  url: https://current.geneontology.org/ontology/external2go/ec2go
+  local_name: ec2go.txt
+
+#
 # MONDO
 #
 -
@@ -90,6 +97,13 @@
 -
   url: https://purl.obolibrary.org/obo/foodon.owl
   local_name: foodon.owl
+
+#
+# PATO (Phenotype And Trait Ontology)
+#
+-
+  url: http://purl.obolibrary.org/obo/pato.owl
+  local_name: pato.owl
 
 # **** Data sources ****
 

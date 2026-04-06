@@ -1,0 +1,36 @@
+trait_pattern	chemical_name	ontology_id	ontology_name	predicate	category	notes
+electron acceptor: sulfur compounds	sulfur compounds	CHEBI:26833	sulfur molecular entity	METPO:2000008	biolink:ChemicalEntity	Parent class for all sulfur compounds; covers sulfate, sulfite, thiosulfate, elemental sulfur
+electron acceptor: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:82594	iron(III) oxide	METPO:2000008	biolink:ChemicalEntity	Specific form of iron oxide used as electron acceptor in dissimilatory iron reduction
+electron acceptor: ethylenediaminetetraacetatoferrate	ethylenediaminetetraacetatoferrate	CHEBI:42191	ferric-EDTA complex	METPO:2000008	biolink:ChemicalEntity	Fe(III)-EDTA complex used in electron transport studies
+electron acceptor: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:82594	iron(III) oxide	METPO:2000008	biolink:ChemicalEntity	Variant spelling of iron(III) oxyhydroxide
+oxidation in darkness: sulfur compounds	sulfur compounds	CHEBI:26833	sulfur molecular entity	METPO:2000605	biolink:ChemicalEntity	METPO:2000605 (oxidizes in darkness) predicate already exists
+degradation: plastic	plastic	ENVO:01000970	plastic material	METPO:2000007	biolink:EnvironmentalMaterial	Use ENVO for synthetic materials; plastic biodegradation pathway
+degradation: aromatic compound	aromatic compound	CHEBI:33655	aromatic compound	METPO:2000007	biolink:ChemicalEntity	Parent class for benzene ring-containing compounds
+degradation: hydrocarbon	hydrocarbon	CHEBI:24632	hydrocarbon	METPO:2000007	biolink:ChemicalEntity	Parent class for aliphatic and aromatic hydrocarbons
+degradation: aromatic hydrocarbon	aromatic hydrocarbon	CHEBI:33848	aromatic hydrocarbon	METPO:2000007	biolink:ChemicalEntity	More specific than general aromatic compound; includes PAHs, BTEX compounds
+degradation: elastin	elastin	CHEBI:53248	elastin	METPO:2000007	biolink:ChemicalEntity	Protein degradation; extracellular protease activity
+degradation: egg yolk	egg yolk	FOODON:00001274	egg yolk	METPO:2000007	biolink:Food	Use FOODON for food substances; lecithinase activity
+degradation: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:52701	4-nitrophenyl beta-D-galactopyranoside	METPO:2000007	biolink:ChemicalEntity	Chromogenic substrate for beta-galactosidase; also appears in hydrolysis patterns
+produces: methane from formate	methane	CHEBI:16183	methane	METPO:2000202	biolink:ChemicalEntity	Parse "from formate" separately; methanogenesis pathway from formate oxidation
+produces: DL-lactate	lactate	CHEBI:422	(R,S)-lactate	METPO:2000202	biolink:ChemicalEntity	Racemic lactate; fermentation product
+reduction: arsenate detoxification	arsenate	CHEBI:29242	arsenate	METPO:2000017	biolink:ChemicalEntity	Dissimilatory arsenate reduction; detoxification context
+reduction: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:82594	iron(III) oxide	METPO:2000017	biolink:ChemicalEntity	Dissimilatory iron reduction to Fe(II)
+reduction: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:82594	iron(III) oxide	METPO:2000017	biolink:ChemicalEntity	Variant spelling of iron(III) oxyhydroxide
+reduction: glutathione oxidized	glutathione oxidized	CHEBI:17858	glutathione disulfide	METPO:2000017	biolink:ChemicalEntity	Reduction of oxidized glutathione (GSSG) to reduced form (GSH)
+reduction: 3-O-methylgallate	3-O-methylgallate	CHEBI:68499	3-O-methylgallic acid	METPO:2000017	biolink:ChemicalEntity	Polyphenol reduction
+hydrolysis: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:52701	4-nitrophenyl beta-D-galactopyranoside	METPO:2000013	biolink:ChemicalEntity	Beta-galactosidase substrate; chromogenic assay
+hydrolysis: casein hydrolysate	casein	CHEBI:17895	casein	METPO:2000013	biolink:ChemicalEntity	Map to parent protein casein; hydrolysate is product
+hydrolysis: cationic chitosan	chitosan	CHEBI:16261	chitosan	METPO:2000013	biolink:ChemicalEntity	Cationic = positively charged; chitosan is the base polymer
+hydrolysis: crab shell chitin	chitin	CHEBI:17029	chitin	METPO:2000013	biolink:ChemicalEntity	Chitin from crab shells; chitinase activity
+hydrolysis: milk	milk	FOODON:03301422	milk	METPO:2000013	biolink:Food	Lactose or protein hydrolysis; use FOODON for food substances
+hydrolysis: 4-nitrophenyl-alpha-D-maltopyranoside	4-nitrophenyl-alpha-D-maltopyranoside	CHEBI:87626	4-nitrophenyl alpha-D-maltopyranoside	METPO:2000013	biolink:ChemicalEntity	Alpha-glucosidase substrate
+aerobic catabolization: dihydrogen	dihydrogen	CHEBI:29356	dihydrogen	METPO:2000032	biolink:ChemicalEntity	H2 oxidation under aerobic conditions; METPO:2000032 predicate exists
+aerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000032	biolink:ChemicalEntity	Aerobic acetate oxidation via TCA cycle
+anaerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000048	biolink:ChemicalEntity	Anaerobic acetate oxidation; METPO:2000048 predicate exists
+utilizes: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:52701	4-nitrophenyl beta-D-galactopyranoside	METPO:2000001	biolink:ChemicalEntity	Generic utilization
+utilizes: 1,2-propandiol	1,2-propandiol	CHEBI:16240	propane-1,2-diol	METPO:2000001	biolink:ChemicalEntity	Propylene glycol utilization
+hydrolysis: urea	urea	CHEBI:16199	urea	METPO:2000013	biolink:ChemicalEntity	Urease activity; common material fallback
+degradation: gelatin	gelatin	FOODON:03311170	gelatin	METPO:2000007	biolink:Food	Protein degradation; gelatinase activity; use FOODON for food-derived proteins
+hydrolysis: gelatin	gelatin	FOODON:03311170	gelatin	METPO:2000013	biolink:Food	Protein hydrolysis; gelatinase activity
+hydrolysis: esculin	esculin	CHEBI:4806	aesculin	METPO:2000013	biolink:ChemicalEntity	Beta-glucosidase substrate; coumarin derivative
+degradation: starch	starch	CHEBI:28017	starch	METPO:2000007	biolink:ChemicalEntity	Amylase activity; polysaccharide degradation

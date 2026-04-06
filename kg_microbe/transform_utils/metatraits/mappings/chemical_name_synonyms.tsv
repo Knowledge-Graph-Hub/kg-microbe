@@ -1,0 +1,12 @@
+metatraits_name	chebi_search_name	chebi_id	chebi_label	notes
+bromosuccinate	bromosuccinic acid	CHEBI:73712	bromosuccinic acid	Add "acid" suffix
+beta-hydroxybutyrate	3-hydroxybutyrate	CHEBI:37054	3-hydroxybutyrate	Use "3-hydroxybutyrate" instead of "beta"
+galacturonate	D-galacturonate	CHEBI:12952	aldehydo-D-galacturonate	Add "D-" prefix
+glucose 1-phosphate	alpha-D-glucose 1-phosphate	CHEBI:29042	alpha-D-glucose 1-phosphate	Add "alpha-D-" prefix
+(-)-D-fructose	D-fructose	CHEBI:15824	D-fructose	Remove stereochemistry notation
+2-oxogluconate	2-oxogluconic acid	CHEBI:27469	2-dehydro-D-gluconic acid	Add "acid" suffix
+polyhydroxybutyrate	poly(3-hydroxybutyrate)	CHEBI:53389	poly(3-hydroxybutyrate)	Use standard polymer notation
+bacteriochlorophyll alpha	bacteriochlorophyll a	CHEBI:30033	bacteriochlorophyll a	Use "a" instead of "alpha"
+4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl-beta-D-galactoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	Use "-galactoside" instead of "-galactopyranoside"
+3-O-methyl alpha-D-glucopyranoside	3-O-methylglucose	CHEBI:73918	3-O-methyl-D-glucose	Simplified name
+galactonate	D-galactonate	CHEBI:12931	D-galactonate	Add "D-" prefix

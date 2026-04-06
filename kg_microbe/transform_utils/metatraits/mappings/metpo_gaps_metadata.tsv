@@ -1,0 +1,4 @@
+ID	label	gap_type	observations_affected	priority	workaround	status	notes
+METPO:1003XXX	alkaliphilic	missing_class	5,576	HIGH	Using placeholder KGM:alkaliphilic	PROPOSED	Only remaining hardcoded mapping in metatraits transform. Plain alkaliphilic needed (METPO only has haloalkaliphilic for salt-tolerant alkaliphiles). Sibling to existing acidophilic/neutrophilic terms.
+METPO:2000XXX	has growth organic acid observation	missing_predicate	31	LOW	Skipping these observations	PROPOSED	Predicate for growth with organic acids like sodium lactate at specific concentrations. Similar pattern to existing has growth NaCl observation (2000508).
+METPO:1003XXX	non-pigmented	missing_class	1,453,581	MEDIUM	Skipping negative pigmentation	PROPOSED	Companion negative term for pigmentation classes (1003022-1003031). Low utility as most observations are negative assertions which add limited value to KG.

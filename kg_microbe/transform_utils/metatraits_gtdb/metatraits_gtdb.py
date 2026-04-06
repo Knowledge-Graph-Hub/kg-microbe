@@ -56,6 +56,18 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         # Load mappings (from parent class)
         self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("metatraits synonym")
+        self.special_chemical_mappings = self._load_special_chemical_mappings()
+        self.chemical_name_synonyms = self._load_chemical_name_synonyms()
+        self.ncbi_to_gtdb_mappings = self._load_ncbi_gtdb_mappings()
+
+        # Load METPO binned range classes for data-driven classification (from parent class)
+        self.metpo_binned_ranges = self._load_metpo_binned_ranges()
+
+        # Load comprehensive METPO class/predicate lookups from ontology (from parent class)
+        self.metpo_label_to_class = {}
+        self.metpo_synonym_to_class = {}
+        self.metpo_pattern_to_predicate = {}
+        self._load_metpo_lookups()
 
         # Initialize chemical mapping loader (from parent class)
         try:

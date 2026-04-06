@@ -10,3 +10,14 @@ bacteriochlorophyll alpha	bacteriochlorophyll a	CHEBI:30033	bacteriochlorophyll 
 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl-beta-D-galactoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	Use "-galactoside" instead of "-galactopyranoside"
 3-O-methyl alpha-D-glucopyranoside	3-O-methylglucose	CHEBI:73918	3-O-methyl-D-glucose	Simplified name
 galactonate	D-galactonate	CHEBI:12931	D-galactonate	Add "D-" prefix
+(+)-D-glycogen	glycogen	CHEBI:28087	glycogen	Remove stereochemistry notation
+(+)-D-glucose	D-glucose	CHEBI:4167	D-glucose	Remove stereochemistry notation
+(+)-D-fucose	D-fucose	CHEBI:42589	D-fucose	Remove stereochemistry notation
+(+)-D-arabitol	D-arabitol	CHEBI:15963	D-arabitol	Remove stereochemistry notation
+(-)-D-ribose	D-ribose	CHEBI:47013	D-ribose	Remove stereochemistry notation
+(-)-L-xylose	L-xylose	CHEBI:23039	L-xylose	Remove stereochemistry notation
+(-)-L-sorbose	L-sorbose	CHEBI:17792	L-sorbose	Remove stereochemistry notation
+4-nitrophenyl beta-D-galactopyranoside hydrolysate	4-nitrophenyl-beta-D-galactoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	Strip "hydrolysate" suffix
+1 % sodium lactate	sodium lactate	CHEBI:86354	sodium L-lactate	Strip concentration prefix
+2-deoxythymidine-5'-4-nitrophenyl phosphate	2'-deoxythymidine 5'-monophosphate	CHEBI:63528	2'-deoxythymidine 5'-monophosphate	Simplified name for chromogenic substrate
+glutamyl-glutamic acid	glutamylglutamate	CHEBI:18232	gamma-Glu-Glu	Remove spaces, use gamma form

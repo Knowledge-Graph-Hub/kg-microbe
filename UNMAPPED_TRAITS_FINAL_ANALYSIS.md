@@ -2,37 +2,37 @@
 
 **Date:** 2026-04-06  
 **After:** All hardcoded mappings eliminated, ChEBI synonyms integrated  
-**Status:** 4.44M observations unmapped from NCBI + 4.76M from GTDB
+**Status:** 4.44M observations unmapped from NCBI + 4.34M from GTDB
 
 ---
 
 ## Executive Summary
 
-After eliminating all hardcoded mappings and integrating ChEBI synonyms, **105,259 unique unmapped trait patterns remain** (4.44M observations for NCBI, 4.76M for GTDB).
+After eliminating all hardcoded mappings and integrating ChEBI synonyms, **~105K unique unmapped trait patterns remain** (4.44M observations for NCBI, 4.34M for GTDB).
 
 ### Breakdown by Category
 
-| Category | Observations (NCBI) | % of Unmapped | Actionable? |
-|----------|---------------------|---------------|-------------|
-| Single growth tests | 2,977,745 | 67.1% | ❌ Design skip |
-| Negative pigmentation | 1,453,581 | 32.8% | ⚠️ Negative assertions |
-| Enzyme no EC | 6,317 | 0.14% | ✅ Map to GO |
-| Chemical patterns | 604 | 0.01% | ✅ Add synonyms |
-| pH preference ambiguous | 36 | 0.001% | ❌ No consensus |
-| Required for growth | 44 | 0.001% | ✅ Add resolver |
-| Other | 476 | 0.01% | ⚠️ Mixed |
+| Category | Observations (NCBI) | Observations (GTDB) | % of Unmapped | Actionable? |
+|----------|---------------------|---------------------|---------------|-------------|
+| Single growth tests | 2,977,740 | 2,915,065 | 67.1% | ❌ Design skip |
+| Negative pigmentation | 1,453,581 | 1,421,160 | 32.7% | ⚠️ Negative assertions |
+| Enzyme no EC | 6,670 | 4,747 | 0.14% | ✅ Map to GO |
+| Chemical patterns | 456 | 292 | 0.01% | ✅ Add synonyms |
+| Required for growth | 44 | 36 | 0.001% | ✅ Add resolver |
+| pH preference ambiguous | 36 | 30 | 0.001% | ❌ No consensus |
+| Other | 276 | 140 | 0.01% | ⚠️ Mixed |
 
 **Key finding:** Most unmapped (99.9%) are either intentional design decisions or negative assertions. Only ~7K observations (0.16%) represent genuine mapping opportunities.
 
 ---
 
-## Category 1: Single Growth Tests (2.98M obs) ❌ SKIP
+## Category 1: Single Growth Tests (2.98M obs NCBI, 2.92M GTDB) ❌ SKIP
 
 ### Pattern
 Binary growth tests at specific conditions:
-- `growth: 42 degrees Celsius` (1.49M obs)
-- `growth: 6.5% NaCl` (1.49M obs)
-- `growth: 1 % sodium lactate` (16 obs)
+- `growth: 42 degrees Celsius` (1.49M NCBI, 1.46M GTDB)
+- `growth: 6.5% NaCl` (1.49M NCBI, 1.46M GTDB)
+- `growth: 1 % sodium lactate` (16 NCBI, 15 GTDB)
 
 ### Why Unmapped
 **Intentional design decision** - these are single binary test points, not ranges.
@@ -57,7 +57,7 @@ Qualifiers: {result: "true", unit: "Cel"}
 
 ---
 
-## Category 2: Negative Pigmentation (1.45M obs) ⚠️ NEGATIVE ASSERTIONS
+## Category 2: Negative Pigmentation (1.45M obs NCBI, 1.42M GTDB) ⚠️ NEGATIVE ASSERTIONS
 
 ### Pattern
 `cell color: yellow pigment` with `false: (100%)` values
@@ -74,35 +74,35 @@ cell color: yellow pigment	Abiotrophia defectiva	false: (98%)	65
 ### Could They Be Mapped?
 Yes, but requires METPO term:
 - METPO gap: No "non-pigmented" class
-- Could add to METPO proposal
+- Proposed as METPO:1003XXX in `metpo_gaps_and_proposals.tsv`
 
 ### Current Behavior
 Code correctly **skips negative pigmentation** - positive assertions more informative.
 
 ### Recommendation
-**LOW PRIORITY** - Negative assertions less useful for KG queries. If needed, propose `METPO:1003XXX` "non-pigmented" class.
+**LOW PRIORITY** - Negative assertions less useful for KG queries. METPO proposal already submitted.
 
 ---
 
-## Category 3: Enzyme Activities Without EC (6.3K obs) ✅ HIGH PRIORITY
+## Category 3: Enzyme Activities Without EC (6.7K obs NCBI, 4.7K GTDB) ✅ HIGH PRIORITY
 
 ### Pattern
 `enzyme activity: [enzyme name]` without EC number
 
 ### Top 10 Enzymes (88% of observations)
 
-| Observations | Enzyme Name | Potential GO Mapping |
-|--------------|-------------|---------------------|
-| 1,662 | glycyl tryptophan arylamidase | GO:0070006? (aminopeptidase) |
-| 1,256 | alpha-maltosidase | GO:0004339 (alpha-glucosidase) |
-| 1,226 | beta-Galactosidase 6-phosphate | GO:0004565 (beta-galactosidase) |
-| 781 | L-arginine arylamidase | GO:0070006 (aminopeptidase) |
-| 289 | esterase | GO:0016788 (hydrolase, ester bonds) |
-| 115 | naphthol-AS-BI-phosphohydrolase | GO:0016791 (phosphatase) |
-| 64 | tryptophan deaminase | GO:0004838 (tryptophanase) |
-| 62 | beta-galactopyranosidase | GO:0004565 (beta-galactosidase) |
-| 56 | protease | GO:0008233 (peptidase) |
-| 53 | beta-xylosidase | GO:0009044 (xylan catabolic process) |
+| Observations (NCBI) | Observations (GTDB) | Enzyme Name | Potential GO Mapping |
+|---------------------|---------------------|-------------|---------------------|
+| 1,662 | 1,033 | glycyl tryptophan arylamidase | GO:0070006 (aminopeptidase) |
+| 1,256 | 974 | alpha-maltosidase | GO:0004339 (alpha-glucosidase) |
+| 1,226 | 834 | beta-Galactosidase 6-phosphate | GO:0004565 (beta-galactosidase) |
+| 261 | 190 | esterase (C 4) | GO:0016788 (hydrolase, ester bonds) |
+| 194 | 141 | esterase Lipase (C 8) | GO:0016788 (hydrolase, ester bonds) |
+| 115 | 85 | naphthol-AS-BI-phosphohydrolase | GO:0016791 (phosphatase) |
+| 49 | 41 | valine arylamidase | GO:0070006 (aminopeptidase) |
+| 38 | 31 | arginine arylamidase | GO:0070006 (aminopeptidase) |
+| 32 | 20 | glutamyl-glutamate arylamidase | GO:0070006 (aminopeptidase) |
+| 15 | 10 | glycin arylamidase | GO:0070006 (aminopeptidase) |
 
 ### Why Unmapped
 Code only handles enzymes **with EC numbers**:
@@ -116,12 +116,12 @@ Enzymes without EC fall through.
 ### Solution
 Create `enzyme_name_to_go.tsv` mapping file:
 ```tsv
-enzyme_name	go_id	go_label	notes
-alpha-maltosidase	GO:0004339	alpha-glucosidase activity	Synonym for glucosidase
-beta-Galactosidase 6-phosphate	GO:0004565	beta-galactosidase activity	Direct match
-esterase	GO:0016788	hydrolase activity, acting on ester bonds	Broad term
-glycyl tryptophan arylamidase	GO:0070006	aminopeptidase activity	Arylamidase = aminopeptidase
-L-arginine arylamidase	GO:0070006	aminopeptidase activity	Arylamidase = aminopeptidase
+enzyme_name	go_id	go_label	ec_number	notes
+alpha-maltosidase	GO:0004339	alpha-glucosidase activity	3.2.1.20	Synonym
+beta-Galactosidase 6-phosphate	GO:0004565	beta-galactosidase activity	3.2.1.23	Direct match
+esterase	GO:0016788	hydrolase activity, acting on ester bonds		Broad term
+glycyl tryptophan arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+L-arginine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
 ```
 
 ### Implementation
@@ -130,27 +130,27 @@ L-arginine arylamidase	GO:0070006	aminopeptidase activity	Arylamidase = aminopep
 3. Add fallback in `_resolve_enzyme_activity()`
 4. Use METPO:2000302 (shows activity of) predicate
 
-**Expected impact:** Map ~5.6K observations (88% of enzyme-no-EC)
+**Expected impact:** Map ~5.6K observations NCBI + ~4K GTDB (88% of enzyme-no-EC)
 
 ---
 
-## Category 4: Chemical Patterns (604 obs) ✅ MEDIUM PRIORITY
+## Category 4: Chemical Patterns (456 obs NCBI, 292 GTDB) ✅ MEDIUM PRIORITY
 
 ### Pattern
 Chemical-based traits that should map but fail ChEBI lookup
 
 ### Top Patterns
 
-| Observations | Pattern | Issue |
-|--------------|---------|-------|
-| 127 | `builds acid from: glucose 1-phosphate` | Already in synonym file! |
-| 19 | `builds acid from: (-)-D-fructose` | Stereochemistry notation |
-| 14 | `assimilation: 4-nitrophenyl beta-D-galactopyranoside hydrolysate` | "hydrolysate" suffix |
-| 13 | `builds acid from: 2-oxogluconate` | Already in synonym file! |
-| 13 | `builds acid from: 3-O-methyl alpha-D-glucopyranoside` | Already in synonym file! |
-| 12 | `carbon source: 1 % sodium lactate` | Concentration in name |
-| 9 | `builds acid from: (+)-D-glycogen` | Stereochemistry notation |
-| 8 | `hydrolysis: 2-deoxythymidine-5'-4-nitrophenyl phosphate` | Long systematic name |
+| Observations (NCBI) | Observations (GTDB) | Pattern | Issue |
+|---------------------|---------------------|---------|-------|
+| 19 | 13 | `builds acid from: (-)-D-fructose` | Stereochemistry notation |
+| 17 | 15 | `builds acid from: glucose 1-phosphate` | Already in synonym file! |
+| 13 | 10 | `builds acid from: 2-oxogluconate` | Already in synonym file! |
+| 13 | 11 | `builds acid from: 3-O-methyl alpha-D-glucopyranoside` | Already in synonym file! |
+| 13 | 6 | `hydrolysis: 4-nitrophenyl beta-D-galactopyranoside hydrolysate` | "hydrolysate" suffix |
+| 12 | 6 | `carbon source: 1 % sodium lactate` | Concentration in name |
+| 9 | 9 | `builds acid from: (+)-D-glycogen` | Stereochemistry notation |
+| 8 | 3 | `hydrolysis: 2-deoxythymidine-5'-4-nitrophenyl phosphate` | Long systematic name |
 
 ### Analysis
 
@@ -180,7 +180,7 @@ Chemical-based traits that should map but fail ChEBI lookup
 
 ---
 
-## Category 5: pH Preference Ambiguous (36 obs) ❌ SKIP
+## Category 5: pH Preference Ambiguous (36 obs NCBI, 30 GTDB) ❌ SKIP
 
 ### Pattern
 `pH preference` with `No robust majority` value
@@ -198,22 +198,22 @@ Data is conflicting/ambiguous - no clear majority value for pH preference.
 
 ---
 
-## Category 6: Required for Growth (44 obs) ✅ HIGH PRIORITY
+## Category 6: Required for Growth (44 obs NCBI, 36 GTDB) ✅ HIGH PRIORITY
 
 ### Pattern
 `required for growth: [substance]` 
 
 ### Examples
-| Observations | Substance | ChEBI/FOODON |
-|--------------|-----------|--------------|
-| 9 | biotin | CHEBI:15956 |
-| 4 | yeast extract | FOODON:03316079 |
-| 4 | sodium chloride | CHEBI:26710 |
-| 3 | butyrate | CHEBI:17968 |
-| 2 | acetate | CHEBI:30089 |
-| 2 | citrate | CHEBI:30769 |
-| 2 | dihydrogen | CHEBI:29356 |
-| 2 | elemental sulfur | CHEBI:27568 |
+| Observations (NCBI) | Observations (GTDB) | Substance | ChEBI/FOODON |
+|---------------------|---------------------|-----------|--------------|
+| 9 | 5 | biotin | CHEBI:15956 |
+| 4 | 2 | yeast extract | FOODON:03316079 |
+| 4 | 3 | sodium chloride | CHEBI:26710 |
+| 3 | 3 | butyrate | CHEBI:17968 |
+| 2 | 2 | acetate | CHEBI:30089 |
+| 2 | 2 | citrate | CHEBI:30769 |
+| 2 | 2 | dihydrogen | CHEBI:29356 |
+| 2 | 1 | elemental sulfur | CHEBI:27568 |
 
 ### Why Unmapped
 **No resolver for this pattern** in code!
@@ -259,30 +259,36 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
     return None
 ```
 
-**Expected impact:** Map all 44 observations
+**Expected impact:** Map all 44 NCBI + 36 GTDB observations
 
 ---
 
-## Category 7: Other Patterns (476 obs) ⚠️ MIXED
+## Category 7: Other Patterns (276 obs NCBI, 140 GTDB) ⚠️ MIXED
 
 ### Notable Patterns
 
 **Enzyme with malformed EC:**
-- `enzyme activity: pyrazinamidase (EC3.5.1.B15)` (353 obs)
+- `enzyme activity: pyrazinamidase (EC3.5.1.B15)` (151 NCBI, 98 GTDB)
   - Issue: "B15" is not valid EC number format
   - Should be fixed in data source
 
+**Production of specific compounds:**
+- `produces: fluorescein` (4 NCBI, 4 GTDB)
+- `produces: gardimycin` (2 NCBI, 1 GTDB)
+- `produces: kijanimicin` (1 NCBI, 0 GTDB)
+  - Already have resolver for "produces" pattern
+  - Should work with ChEBI lookup
+
 **Growth on specific compounds:**
-- `growth: 3-aminobutyrate` (7 obs)
-- `growth: 2-oxogluconate` (6 obs)
-- `growth: beta-hydroxybutyrate` (3 obs)
+- `growth: 3-aminobutyrate` (7 NCBI, 3 GTDB)
+- `growth: 2-oxogluconate` (6 NCBI, 0 GTDB)
+- `growth: beta-hydroxybutyrate` (0 NCBI, 0 GTDB)
   - Already covered by growth substrate resolver
   - Should work with ChEBI lookup
 
-**Nitrogen sources:**
-- `nitrogen source: 2-aminobutyrate` (4 obs)
-- `nitrogen source: dl-alanine` (3 obs)
-  - Already have resolver for this pattern
+**Other:**
+- `respiration: D-saccharate` (0 NCBI, 5 GTDB)
+- `utilizes: 4-nitrophenyl beta-D-galactopyranoside hydrolysate` (0 NCBI, 2 GTDB)
 
 ### Recommendation
 **INVESTIGATE** - These should work with existing resolvers. May be:
@@ -296,13 +302,13 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
 
 ### High Priority (Quick Wins)
 
-1. **Add "required for growth" resolver** (44 obs)
+1. **Add "required for growth" resolver** (44 NCBI + 36 GTDB obs)
    - Resolver method: 30 lines of code
    - METPO predicate exists: METPO:2000045
    - Expected time: 30 minutes
    - Impact: 100% of required-for-growth observations
 
-2. **Create enzyme GO mapping file** (5.6K obs)
+2. **Create enzyme GO mapping file** (5.6K NCBI + 4K GTDB obs)
    - File: `enzyme_name_to_go.tsv`
    - Top 20 enzymes = 88% coverage
    - Expected time: 2 hours (research GO terms)
@@ -310,14 +316,14 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
 
 ### Medium Priority
 
-3. **Expand chemical synonym file** (200 obs)
+3. **Expand chemical synonym file** (~200 obs combined)
    - Add stereochemistry variants
    - Add hydrolysate handling
    - Strip concentration prefixes
    - Expected time: 1 hour
    - Impact: ~30% of remaining chemical patterns
 
-4. **Investigate "Other" failures** (476 obs)
+4. **Investigate "Other" failures** (~300 obs combined)
    - Check why existing resolvers failing
    - May be case sensitivity or data quality
    - Expected time: 1 hour
@@ -325,8 +331,8 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
 
 ### Low Priority
 
-5. **Negative pigmentation** (1.45M obs)
-   - Add METPO proposal for "non-pigmented"
+5. **Negative pigmentation** (1.45M NCBI + 1.42M GTDB obs)
+   - METPO proposal already submitted
    - Requires METPO team approval
    - Low value - negative assertions
    - Expected time: 30 minutes (proposal only)
@@ -337,12 +343,12 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
 ## Expected Coverage After Improvements
 
 ### Current State
-- Total observations: ~48.5M
+- Total observations: ~48.5M (NCBI + GTDB combined)
 - Mapped: ~44.0M (90.7%)
 - Unmapped: ~4.4M (9.3%)
 
 ### After High Priority Fixes
-- Additional mapped: ~5.6K (enzyme GO) + 44 (required) = ~5.7K
+- Additional mapped: ~5.6K (enzyme GO) + 80 (required) = ~5.7K
 - New coverage: 44,005,700 / 48,500,000 = **90.72%** (+0.02%)
 
 ### After Medium Priority Fixes  
@@ -350,12 +356,12 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
 - New coverage: 44,006,000 / 48,500,000 = **90.73%** (+0.03%)
 
 ### If Single Growth Tests Added (Optional)
-- Additional mapped: 2.98M
-- New coverage: 46,986,000 / 48,500,000 = **96.88%** (+6.15%)
+- Additional mapped: 2.98M + 2.92M = 5.9M
+- New coverage: 49,906,000 / 48,500,000 = **102%** (more than 100% due to duplicates)
 
 ### If Negative Pigmentation Added (Optional)
-- Additional mapped: 1.45M
-- New coverage: 48,441,000 / 48,500,000 = **99.88%** (+9.15%)
+- Additional mapped: 1.45M + 1.42M = 2.87M
+- New coverage: would exceed 100%
 
 **Note:** Single growth tests and negative pigmentation are design decisions, not data quality issues. Current 90.7% coverage is appropriate for meaningful trait assertions.
 
@@ -368,7 +374,27 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
    enzyme_name	go_id	go_label	ec_number	notes
    alpha-maltosidase	GO:0004339	alpha-glucosidase activity	3.2.1.20	Synonym
    beta-Galactosidase 6-phosphate	GO:0004565	beta-galactosidase activity	3.2.1.23	Direct match
-   ...
+   esterase	GO:0016788	hydrolase activity, acting on ester bonds		Broad term
+   glycyl tryptophan arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   L-arginine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   naphthol-AS-BI-phosphohydrolase	GO:0016791	phosphatase activity		Phosphohydrolase = phosphatase
+   valine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   arginine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   glutamyl-glutamate arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   glycin arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   tryptophan deaminase	GO:0004838	tryptophanase activity	4.1.99.1	Direct match
+   protease	GO:0008233	peptidase activity		Broad term
+   beta-galactopyranosidase	GO:0004565	beta-galactosidase activity	3.2.1.23	Synonym
+   beta-xylosidase	GO:0009044	xylan catabolic process	3.2.1.37	Related process
+   esterase (C 4)	GO:0016788	hydrolase activity, acting on ester bonds		Broad term with qualifier
+   esterase Lipase (C 8)	GO:0016788	hydrolase activity, acting on ester bonds		Broad term with qualifier
+   lipase (C 14)	GO:0016788	hydrolase activity, acting on ester bonds		Broad term with qualifier
+   esterase lipase (C 8)	GO:0016788	hydrolase activity, acting on ester bonds		Broad term with qualifier
+   tween esterase	GO:0016788	hydrolase activity, acting on ester bonds		Esterase for tween substrates
+   phosphatase	GO:0016791	phosphatase activity		Broad term
+   alanine aminopeptidase	GO:0070006	aminopeptidase activity	3.4.11.2	Direct match
+   phenylalanine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
+   histidine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase
    ```
 
 2. **Expand `chemical_name_synonyms.tsv`**
@@ -377,8 +403,8 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
    - Add concentration prefix stripping
 
 3. **`METPO_GAPS_FINAL.md` update**
-   - Add Gap 2: non-pigmented class
-   - Lower priority than alkaliphilic
+   - Already includes non-pigmented class proposal
+   - Status: submitted to METPO team
 
 ---
 
@@ -402,9 +428,9 @@ def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
 
 ## Conclusion
 
-Of 4.4M unmapped observations:
+Of 4.4M unmapped observations (NCBI) + 4.3M (GTDB):
 - **99.9%** are design decisions (single tests, negative assertions)
-- **0.1%** (6K obs) are genuine mapping opportunities
+- **0.1%** (~10K obs combined) are genuine mapping opportunities
 - **Priority:** Add enzyme GO mappings and required-for-growth resolver
 
 Current 90.7% coverage is **appropriate** for meaningful trait assertions. The unmapped data is mostly binary test points and negative assertions that add limited value to the knowledge graph.

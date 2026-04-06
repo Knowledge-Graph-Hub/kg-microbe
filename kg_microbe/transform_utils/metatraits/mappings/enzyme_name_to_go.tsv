@@ -1,0 +1,24 @@
+enzyme_name	go_id	go_label	ec_number	notes
+glycyl tryptophan arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, cleaves amino acids from peptides
+alpha-maltosidase	GO:0004339	alpha-glucosidase activity	3.2.1.20	Maltosidase is a type of glucosidase that hydrolyzes maltose
+beta-Galactosidase 6-phosphate	GO:0004565	beta-galactosidase activity	3.2.1.23	Phosphorylated beta-galactosidase variant
+esterase (C 4)	GO:0016788	hydrolase activity, acting on ester bonds		C4 indicates chain length specificity
+esterase Lipase (C 8)	GO:0016788	hydrolase activity, acting on ester bonds		C8 indicates medium chain specificity
+L-arginine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, arginine-specific
+naphthol-AS-BI-phosphohydrolase	GO:0016791	phosphatase activity		Phosphohydrolase = phosphatase, naphthol substrate
+valine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, valine-specific
+lipase (C 14)	GO:0016788	hydrolase activity, acting on ester bonds		C14 indicates long chain specificity (lipase)
+arginine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, arginine-specific
+esterase lipase (C 8)	GO:0016788	hydrolase activity, acting on ester bonds		C8 indicates medium chain specificity
+glutamyl-glutamate arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, glutamyl-glutamate-specific
+esterase	GO:0016788	hydrolase activity, acting on ester bonds		Broad esterase activity without chain length specification
+glycin arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, glycine-specific
+tryptophan deaminase	GO:0004838	tryptophanase activity	4.1.99.1	Deaminates tryptophan to indole, pyruvate, and ammonia
+protease	GO:0008233	peptidase activity		Broad term for enzymes that hydrolyze peptide bonds
+beta-galactopyranosidase	GO:0004565	beta-galactosidase activity	3.2.1.23	Synonym for beta-galactosidase (pyranose form)
+beta-xylosidase	GO:0009044	xylan 1,4-beta-xylosidase activity	3.2.1.37	Hydrolyzes beta-1,4-xylosidic linkages in xylans
+tween esterase	GO:0016788	hydrolase activity, acting on ester bonds		Esterase specific for Tween substrates (polysorbates)
+phosphatase	GO:0016791	phosphatase activity		Broad term for enzymes that hydrolyze phosphate ester bonds
+alanine aminopeptidase	GO:0070006	aminopeptidase activity	3.4.11.2	Aminopeptidase with preference for alanine
+phenylalanine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, phenylalanine-specific
+histidine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, histidine-specific

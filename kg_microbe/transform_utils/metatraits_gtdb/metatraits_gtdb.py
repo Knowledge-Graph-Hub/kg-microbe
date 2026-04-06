@@ -58,6 +58,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self.metpo_mappings = load_metpo_mappings("metatraits synonym")
         self.special_chemical_mappings = self._load_special_chemical_mappings()
         self.chemical_name_synonyms = self._load_chemical_name_synonyms()
+        self.enzyme_name_to_go = self._load_enzyme_name_to_go()
         self.ncbi_to_gtdb_mappings = self._load_ncbi_gtdb_mappings()
 
         # Load METPO binned range classes for data-driven classification (from parent class)

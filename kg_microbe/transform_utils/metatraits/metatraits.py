@@ -315,6 +315,9 @@ class MetaTraitsTransform(Transform):
         # Load chemical name synonyms for ChEBI lookup fallback
         self.chemical_name_synonyms = self._load_chemical_name_synonyms()
 
+        # Load enzyme name to GO mappings for enzymes without EC numbers
+        self.enzyme_name_to_go = self._load_enzyme_name_to_go()
+
         # Load NCBI to GTDB taxon mappings for unresolved taxa fallback
         self.ncbi_to_gtdb_mappings = self._load_ncbi_gtdb_mappings()
 
@@ -609,6 +612,39 @@ class MetaTraitsTransform(Transform):
             print(f"  Warning: Could not load chemical name synonyms: {e}")
 
         return synonyms
+
+    def _load_enzyme_name_to_go(self) -> Dict[str, dict]:
+        """
+        Load enzyme name to GO term mappings for enzymes without EC numbers.
+
+        Maps enzyme names (e.g., "glycyl tryptophan arylamidase") to GO molecular
+        function terms for enzymes that don't have EC numbers in MetaTraits data.
+
+        :return: Dictionary mapping enzyme_name (lowercase) -> {go_id, go_label, ec_number, notes}
+        """
+        mappings_file = Path(__file__).parent / "mappings" / "enzyme_name_to_go.tsv"
+        enzyme_mappings = {}
+
+        if not mappings_file.exists():
+            print(f"  Warning: Enzyme name to GO mappings file not found: {mappings_file}")
+            return enzyme_mappings
+
+        try:
+            with open(mappings_file, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f, delimiter="\t")
+                for row in reader:
+                    enzyme_name = row["enzyme_name"].strip().lower()
+                    enzyme_mappings[enzyme_name] = {
+                        "go_id": row["go_id"].strip(),
+                        "go_label": row["go_label"].strip(),
+                        "ec_number": row.get("ec_number", "").strip(),
+                        "notes": row.get("notes", "").strip(),
+                    }
+            print(f"  Loaded {len(enzyme_mappings)} enzyme name to GO mappings")
+        except Exception as e:
+            print(f"  Warning: Could not load enzyme name to GO mappings: {e}")
+
+        return enzyme_mappings
 
     def _load_ncbi_gtdb_mappings(self) -> Dict[str, dict]:
         """
@@ -1251,8 +1287,83 @@ class MetaTraitsTransform(Transform):
             }
 
         # Pattern: enzyme activity: [name] (without EC number)
+        # Try GO mapping fallback for enzymes without EC numbers
+        no_ec_match = re.match(r"^enzyme activity:\s*(.+)$", trait_name, re.IGNORECASE)
+        if no_ec_match:
+            enzyme_name = no_ec_match.group(1).strip().lower()
+
+            # Check enzyme_name_to_go mapping
+            if enzyme_name in self.enzyme_name_to_go:
+                go_mapping = self.enzyme_name_to_go[enzyme_name]
+
+                # Get predicate from METPO lookups
+                predicate_data = self.metpo_pattern_to_predicate.get("shows activity of")
+                predicate = predicate_data["positive"] if predicate_data else "biolink:capable_of"
+
+                return {
+                    "curie": go_mapping["go_id"],
+                    "category": "biolink:MolecularActivity",
+                    "name": go_mapping["go_label"],
+                    "predicate": predicate,
+                }
+
         # Let this fall through to trait_mapping or return None
-        # This allows METPO mappings to handle non-EC enzyme activities
+        # This allows METPO mappings to handle other non-EC enzyme activities
+        return None
+
+    def _resolve_required_for_growth(self, trait_name: str) -> Optional[dict]:
+        """
+        Resolve 'required for growth: [substance]' patterns.
+
+        Handles patterns like:
+        - "required for growth: biotin" -> CHEBI:15956
+        - "required for growth: sodium chloride" -> CHEBI:26710
+        - "required for growth: yeast extract" -> FOODON:03316079
+
+        :param trait_name: The trait name to resolve
+        :return: dict with curie, category, name, predicate or None if no match
+        """
+        if not self.chemical_loader:
+            return None
+
+        import re
+
+        match = re.match(r"^required for growth:\s*(.+)$", trait_name.lower())
+        if match:
+            substance = match.group(1).strip()
+
+            # Try ChEBI lookup first
+            chebi_id = self.chemical_loader.find_chebi_by_name(substance)
+            canonical_name = None
+
+            # Fallback to synonym mapping
+            if not chebi_id and substance in self.chemical_name_synonyms:
+                synonym_data = self.chemical_name_synonyms[substance]
+                chebi_id = synonym_data["chebi_id"]
+                canonical_name = synonym_data["chebi_label"]
+
+            # Fallback to special chemical mappings
+            if not chebi_id and substance in self.special_chemical_mappings:
+                special_mapping = self.special_chemical_mappings[substance]
+                chebi_id = special_mapping["curie"]
+                canonical_name = special_mapping["name"]
+
+            if chebi_id:
+                # Get predicate from METPO lookups
+                predicate_data = self.metpo_pattern_to_predicate.get("required for growth")
+                predicate = predicate_data["positive"] if predicate_data else "biolink:capable_of"
+
+                # Get canonical name if not already set
+                if not canonical_name and self.chemical_loader:
+                    canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
+
+                return {
+                    "curie": chebi_id,
+                    "category": "biolink:ChemicalSubstance",
+                    "name": canonical_name or substance,
+                    "predicate": predicate,
+                }
+
         return None
 
     def _resolve_phenotype_trait(self, trait_name: str) -> Optional[dict]:
@@ -2465,11 +2576,17 @@ class MetaTraitsTransform(Transform):
                                 pred = self._to_biolink_predicate(trophic_mapping["predicate"])
                                 label = trophic_mapping["name"]
                             elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
-                                # Tier 3.5: Enzyme activities with EC numbers
+                                # Tier 3.5: Enzyme activities with EC numbers or GO mappings
                                 curie = enzyme_mapping["curie"]
                                 category = enzyme_mapping["category"]
                                 pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
                                 label = enzyme_mapping["name"]
+                            elif required_mapping := self._resolve_required_for_growth(trait_name):
+                                # Tier 3.55: Required for growth (required for growth: biotin)
+                                curie = required_mapping["curie"]
+                                category = required_mapping["category"]
+                                pred = self._to_biolink_predicate(required_mapping["predicate"])
+                                label = required_mapping["name"]
                             elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                 # Tier 3.6: Simple phenotypes (aerotolerant, facultative, acidophilic)
                                 curie = phenotype_mapping["curie"]
@@ -3017,6 +3134,11 @@ class MetaTraitsTransform(Transform):
                                     category = enzyme_mapping["category"]
                                     pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
                                     label = enzyme_mapping["name"]
+                                elif required_mapping := self._resolve_required_for_growth(trait_name):
+                                    curie = required_mapping["curie"]
+                                    category = required_mapping["category"]
+                                    pred = self._to_biolink_predicate(required_mapping["predicate"])
+                                    label = required_mapping["name"]
                                 elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                     curie = phenotype_mapping["curie"]
                                     category = phenotype_mapping["category"]

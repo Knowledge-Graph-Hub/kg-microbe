@@ -2059,6 +2059,7 @@ class MetaTraitsTransform(Transform):
             "metpo_pattern_to_predicate": self.metpo_pattern_to_predicate,
             "special_chemical_mappings": self.special_chemical_mappings,
             "chemical_name_synonyms": self.chemical_name_synonyms,
+            "enzyme_name_to_go": self.enzyme_name_to_go,
             "ncbi_to_gtdb_mappings": self.ncbi_to_gtdb_mappings,
             # Note: chemical_loader not included (too large, reconstruct in worker)
         }
@@ -2082,6 +2083,7 @@ class MetaTraitsTransform(Transform):
         self.metpo_pattern_to_predicate = shared_data["metpo_pattern_to_predicate"]
         self.special_chemical_mappings = shared_data["special_chemical_mappings"]
         self.chemical_name_synonyms = shared_data["chemical_name_synonyms"]
+        self.enzyme_name_to_go = shared_data["enzyme_name_to_go"]
         self.ncbi_to_gtdb_mappings = shared_data["ncbi_to_gtdb_mappings"]
 
         # Reconstruct chemical loader (too large to pickle efficiently)

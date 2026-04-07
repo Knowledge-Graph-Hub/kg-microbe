@@ -20,6 +20,7 @@ _OBJECT_SOURCE_TO_CATEGORY = {
     "EC": "biolink:MolecularActivity",
     "METPO": "biolink:PhenotypicQuality",  # Changed from PhenotypicFeature per Biolink Model
     "GO": "biolink:BiologicalProcess",
+    "KGM": "biolink:PhenotypicQuality",  # Custom KG-Microbe terms for phenotypes not in METPO
 }
 
 # Category override: GO terms in enzyme_mappings.tsv are molecular functions

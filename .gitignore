@@ -168,6 +168,8 @@ data/transformed/uniprot_functional_microbes/uniprot_kgx.zip
 
 data/transformed/ontologies/.Rapp.history
 mediadive_cache.sqlite
+mediadive_bulk_cache.sqlite
+data/raw/mediadive/
 data/raw/.keep
 kg_microbe/transform_utils/uniprot_human/tmp/relevant_files.tsv
 kg_microbe/transform_utils/uniprot/tmp/relevant_files.tsv

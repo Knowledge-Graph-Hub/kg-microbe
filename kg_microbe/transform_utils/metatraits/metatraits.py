@@ -129,8 +129,18 @@ def _get_ncbitaxon_adapter():
             return adapter
         except Exception as e:
             print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), trying fallback")
-            # Remove invalid file/symlink
-            local_db.unlink()
+            # Remove invalid symlink, or quarantine regular file to avoid data loss
+            try:
+                if local_db.is_symlink():
+                    local_db.unlink()
+                    print(f"  Removed invalid symlink: {local_db}")
+                else:
+                    quarantine_path = local_db.with_suffix(local_db.suffix + ".quarantine")
+                    local_db.rename(quarantine_path)
+                    print(f"  Quarantined potentially corrupted database: {quarantine_path}")
+            except OSError as unlink_err:
+                # If cleanup fails, continue to fallback mechanisms
+                print(f"  Could not remove/quarantine database ({unlink_err}), continuing to fallback")
 
     # If OAK cache exists but no local symlink, create it
     if oak_cache.exists() and not local_db.exists():
@@ -352,6 +362,17 @@ class MetaTraitsTransform(Transform):
         # Multiprocessing configuration
         self.use_multiprocessing = use_multiprocessing
         self.num_workers = num_workers
+
+    def _get_input_file_names(self) -> List[str]:
+        """
+        Get list of expected input file names.
+
+        Subclasses can override this to use different input files
+        without mutating module-level globals.
+
+        :return: List of input file names to search for
+        """
+        return METATRAITS_INPUT_FILES
 
     def _load_metpo_binned_ranges(self) -> Dict[str, List[dict]]:
         """
@@ -2753,40 +2774,85 @@ class MetaTraitsTransform(Transform):
 
     def _merge_worker_outputs(self, results: List[Dict[str, Any]], temp_dir: Path) -> None:
         """
-        Merge temporary output files from parallel workers.
+        Merge temporary output files from parallel workers using chunked processing.
+
+        Uses chunked reading and writing to keep peak memory bounded even for
+        large outputs. Deduplication is done in a final pass.
 
         :param results: List of result dictionaries from workers
         :param temp_dir: Temporary directory containing worker output files
         """
         print("  Merging worker outputs...")
 
-        # Concatenate all temp node files
-        all_nodes = []
+        # Process nodes: concatenate with chunked reading, then deduplicate
+        print("    Concatenating node files...")
+        first_file = True
         for result in results:
-            nodes_df = pd.read_csv(result["nodes_file"], sep="\t", dtype=str)
-            all_nodes.append(nodes_df)
+            # Read in chunks to reduce peak memory
+            for chunk in pd.read_csv(result["nodes_file"], sep="\t", dtype=str, chunksize=50000):
+                chunk.to_csv(
+                    self.output_node_file,
+                    sep="\t",
+                    index=False,
+                    mode="w" if first_file else "a",
+                    header=first_file,
+                )
+                first_file = False
 
-        nodes_df = pd.concat(all_nodes, ignore_index=True)
+        # Deduplicate nodes in chunks
+        print("    Deduplicating nodes...")
+        temp_dedup = temp_dir / "nodes_dedup.tsv"
+        seen_ids = set()
+        first_chunk = True
+        for chunk in pd.read_csv(self.output_node_file, sep="\t", dtype=str, chunksize=50000):
+            # Filter out duplicates within and across chunks
+            chunk = chunk[~chunk[ID_COLUMN].isin(seen_ids)]
+            chunk = chunk.drop_duplicates(subset=[ID_COLUMN])
+            seen_ids.update(chunk[ID_COLUMN])
 
-        # Deduplicate nodes using pandas native method
-        nodes_df = nodes_df.drop_duplicates(subset=[ID_COLUMN]).sort_values(by=ID_COLUMN)
+            chunk.to_csv(temp_dedup, sep="\t", index=False, mode="w" if first_chunk else "a", header=first_chunk)
+            first_chunk = False
 
-        # Write final output
+        # Replace with deduplicated file and sort
+        temp_dedup.replace(self.output_node_file)
+        print("    Sorting nodes...")
+        nodes_df = pd.read_csv(self.output_node_file, sep="\t", dtype=str)
+        nodes_df = nodes_df.sort_values(by=ID_COLUMN)
         nodes_df.to_csv(self.output_node_file, sep="\t", index=False)
 
-        # Same for edges
-        all_edges = []
+        # Process edges: concatenate with chunked reading, then deduplicate
+        print("    Concatenating edge files...")
+        first_file = True
         for result in results:
-            edges_df = pd.read_csv(result["edges_file"], sep="\t", dtype=str)
-            all_edges.append(edges_df)
+            for chunk in pd.read_csv(result["edges_file"], sep="\t", dtype=str, chunksize=50000):
+                chunk.to_csv(
+                    self.output_edge_file,
+                    sep="\t",
+                    index=False,
+                    mode="w" if first_file else "a",
+                    header=first_file,
+                )
+                first_file = False
 
-        edges_df = pd.concat(all_edges, ignore_index=True)
+        # Deduplicate edges in chunks
+        print("    Deduplicating edges...")
+        temp_dedup_edges = temp_dir / "edges_dedup.tsv"
+        seen_edges = set()
+        first_chunk = True
+        for chunk in pd.read_csv(self.output_edge_file, sep="\t", dtype=str, chunksize=50000):
+            # Create tuple key for each edge row
+            chunk_tuples = chunk.apply(tuple, axis=1)
+            mask = ~chunk_tuples.isin(seen_edges)
+            chunk = chunk[mask]
+            seen_edges.update(chunk_tuples[mask])
 
-        # Deduplicate edges using pandas native method
-        edges_df = edges_df.drop_duplicates()
+            chunk.to_csv(
+                temp_dedup_edges, sep="\t", index=False, mode="w" if first_chunk else "a", header=first_chunk
+            )
+            first_chunk = False
 
-        # Write final output
-        edges_df.to_csv(self.output_edge_file, sep="\t", index=False)
+        # Replace with deduplicated file
+        temp_dedup_edges.replace(self.output_edge_file)
 
         # Merge unmapped traits, measurement traits, and unresolved taxa lists
         all_unmapped = []
@@ -3331,7 +3397,7 @@ class MetaTraitsTransform(Transform):
         # Find which input files exist
         input_files: List[Path] = []
         seen: Set[str] = set()
-        for name in METATRAITS_INPUT_FILES:
+        for name in self._get_input_file_names():
             p = input_base / name
             if p.exists() and str(p) not in seen:
                 input_files.append(p)
@@ -3345,7 +3411,7 @@ class MetaTraitsTransform(Transform):
 
         if not input_files:
             raise FileNotFoundError(
-                f"No metatraits JSONL files found in {input_base}. Expected one of: {METATRAITS_INPUT_FILES}"
+                f"No metatraits JSONL files found in {input_base}. Expected one of: {self._get_input_file_names()}"
             )
 
         # Check environment variable for disabling multiprocessing

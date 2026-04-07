@@ -152,7 +152,7 @@ Successful execution may require significant memory resources (e.g., >500 GB RAM
 - **Parallel mode**: 1.5-2.5 hours (2-3x speedup)
 
 **Configuration:**
-- **Auto-enabled**: Multiprocessing is ON by default when 2+ input files exist
+- **Auto-enabled**: Multiprocessing is ON by default when either (a) 2+ input files exist, or (b) a single large input file is internally chunk-split
 - **Auto-scaled**: Worker count automatically adjusted based on CPU cores and available memory (3GB per worker)
 - **Environment variables**:
   ```bash

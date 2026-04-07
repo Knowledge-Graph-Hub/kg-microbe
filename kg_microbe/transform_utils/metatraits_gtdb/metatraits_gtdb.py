@@ -113,6 +113,14 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self.ncbitaxon_name_to_id.clear()  # Not needed - we use GTDB mapping
         self._ncbi_adapter = "DISABLED"  # Prevent lazy init - GTDB doesn't need OAK
 
+    def _get_input_file_names(self):
+        """
+        Override parent to return GTDB-specific input file names.
+
+        :return: List of GTDB metatraits input file names
+        """
+        return METATRAITS_GTDB_INPUT_FILES
+
     def _load_gtdb_to_ncbi_mapping(self) -> None:
         """
         Load GTDB species name to NCBITaxon ID mapping from GTDB metadata files.
@@ -461,27 +469,14 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         for f in input_files:
             print(f"  - {f.name}")
 
-        # Call parent class run() method with GTDB-specific file list
-        # The parent class handles the actual processing logic
-        # We've overridden _search_ncbitaxon_by_label() to use GTDB mapping
+        # Call parent class run() method
+        # The parent class will use our overridden _get_input_file_names()
+        # to get the GTDB-specific file list without mutating module-level globals
+        # We've also overridden _search_ncbitaxon_by_label() to use GTDB mapping
+        super().run(data_file=data_file, show_status=show_status)
 
-        # Temporarily replace parent's input file list with GTDB files
-        from kg_microbe.transform_utils.metatraits.metatraits import METATRAITS_INPUT_FILES
-
-        original_files = METATRAITS_INPUT_FILES.copy()
-        METATRAITS_INPUT_FILES.clear()
-        METATRAITS_INPUT_FILES.extend(METATRAITS_GTDB_INPUT_FILES)
-
-        try:
-            # Call parent run() method
-            super().run(data_file=data_file, show_status=show_status)
-
-            # Create hierarchical edges for synthetic GTDB nodes
-            self._create_hierarchical_edges()
-        finally:
-            # Restore original file list
-            METATRAITS_INPUT_FILES.clear()
-            METATRAITS_INPUT_FILES.extend(original_files)
+        # Create hierarchical edges for synthetic GTDB nodes
+        self._create_hierarchical_edges()
 
         print("\n✅ GTDB metatraits transform complete!")
         print(f"   Output: {self.output_dir}")

@@ -315,7 +315,10 @@ class MetaTraitsTransform(Transform):
         # Load chemical name synonyms for ChEBI lookup fallback
         self.chemical_name_synonyms = self._load_chemical_name_synonyms()
 
-        # Load enzyme name to GO mappings for enzymes without EC numbers
+        # Load EC to GO mappings (primary source for enzyme activities with EC numbers)
+        self.ec_to_go = self._load_ec_to_go()
+
+        # Load enzyme name to GO mappings (fallback for enzymes without EC numbers)
         self.enzyme_name_to_go = self._load_enzyme_name_to_go()
 
         # Load NCBI to GTDB taxon mappings for unresolved taxa fallback
@@ -612,6 +615,47 @@ class MetaTraitsTransform(Transform):
             print(f"  Warning: Could not load chemical name synonyms: {e}")
 
         return synonyms
+
+    def _load_ec_to_go(self) -> Dict[str, dict]:
+        """
+        Load EC to GO mappings from ec2go.txt.
+
+        Maps EC numbers to GO molecular function terms.
+        Format: EC:1.1.1.1 > GO:alcohol dehydrogenase (NAD+) activity ; GO:0004022
+
+        :return: Dictionary mapping ec_number (e.g., "1.1.1.1") -> {go_id, go_label}
+        """
+        ec2go_file = RAW_DATA_DIR / "ec2go.txt"
+        ec_mappings = {}
+
+        if not ec2go_file.exists():
+            print(f"  Warning: EC to GO mappings file not found: {ec2go_file}")
+            return ec_mappings
+
+        try:
+            import re
+
+            with open(ec2go_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    # Skip comments and empty lines
+                    if line.startswith("!") or not line:
+                        continue
+
+                    # Parse format: EC:1.1.1.1 > GO:label ; GO:0004022
+                    match = re.match(r"^EC:([\d.-]+)\s*>\s*GO:(.+?)\s*;\s*(GO:\d+)\s*$", line)
+                    if match:
+                        ec_number = match.group(1).strip()
+                        go_label = match.group(2).strip()
+                        go_id = match.group(3).strip()
+
+                        ec_mappings[ec_number] = {"go_id": go_id, "go_label": go_label}
+
+            print(f"  Loaded {len(ec_mappings)} EC to GO mappings")
+        except Exception as e:
+            print(f"  Warning: Could not load EC to GO mappings: {e}")
+
+        return ec_mappings
 
     def _load_enzyme_name_to_go(self) -> Dict[str, dict]:
         """
@@ -1141,6 +1185,19 @@ class MetaTraitsTransform(Transform):
 
                 # Try ChEBI lookup
                 chebi_id = self.chemical_loader.find_chebi_by_name(substrate_name)
+
+                # If direct lookup fails, try synonym mapping
+                if not chebi_id and substrate_name in self.chemical_name_synonyms:
+                    synonym_data = self.chemical_name_synonyms[substrate_name]
+                    chebi_id = synonym_data["chebi_id"]
+                    canonical_name = synonym_data["chebi_label"]
+                    return {
+                        "curie": chebi_id,
+                        "category": "biolink:ChemicalSubstance",
+                        "name": canonical_name,
+                        "predicate": metpo_predicate,
+                    }
+
                 if chebi_id:
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
@@ -1258,47 +1315,66 @@ class MetaTraitsTransform(Transform):
         """
         Resolve enzyme activity patterns with or without EC numbers.
 
+        Resolution strategy:
+        1. Extract EC number and lookup in ec2go (primary source)
+        2. If no EC or lookup fails, try enzyme_name_to_go (curated fallback)
+        3. If both fail, return None (allows trait_mapping fallback)
+
         Handles patterns like:
-        - "enzyme activity: alkaline phosphatase (EC3.1.3.1)" -> EC:3.1.3.1
-        - "enzyme activity: DNase" -> lookup by name (fallback to trait mapping)
+        - "enzyme activity: alkaline phosphatase (EC3.1.3.1)" -> GO via ec2go
+        - "enzyme activity: glycyl tryptophan arylamidase" -> GO via enzyme_name_to_go
+        - "enzyme activity: DNase" -> None (trait_mapping handles it)
 
         :param trait_name: The trait name to resolve
         :return: dict with curie, category, name, predicate or None if no match
         """
         import re
 
+        # Get predicate from METPO lookups (used for all enzyme mappings)
+        predicate_data = self.metpo_pattern_to_predicate.get("shows activity of")
+        predicate = predicate_data["positive"] if predicate_data else "biolink:capable_of"
+
         # Pattern: enzyme activity: [name] (EC[number])
         ec_match = re.match(
-            r"^enzyme activity:\s*(.+?)\s*\(EC\s*([\d.]+)\)\s*$", trait_name, re.IGNORECASE
+            r"^enzyme activity:\s*(.+?)\s*\(EC\s*([\d.BbXx-]+)\)\s*$", trait_name, re.IGNORECASE
         )
         if ec_match:
             enzyme_name = ec_match.group(1).strip()
-            ec_number = ec_match.group(2).strip()
+            ec_number = ec_match.group(2).strip().upper()
 
-            # Get predicate from METPO lookups
-            predicate_data = self.metpo_pattern_to_predicate.get("shows activity of")
-            predicate = predicate_data["positive"] if predicate_data else "biolink:capable_of"
+            # Try EC to GO lookup (primary)
+            # Normalize EC number (remove "EC" prefix if present, handle malformed like B15)
+            ec_normalized = ec_number.replace("EC", "").strip()
 
-            return {
-                "curie": f"EC:{ec_number}",
-                "category": "biolink:MolecularActivity",
-                "name": enzyme_name,
-                "predicate": predicate,
-            }
+            if ec_normalized in self.ec_to_go:
+                go_mapping = self.ec_to_go[ec_normalized]
+                return {
+                    "curie": go_mapping["go_id"],
+                    "category": "biolink:MolecularActivity",
+                    "name": go_mapping["go_label"],
+                    "predicate": predicate,
+                }
+
+            # EC lookup failed, fall back to using EC number directly
+            # (for cases where EC is valid but not in ec2go mapping)
+            # Only use if EC number looks valid (digits and dots/dashes)
+            if re.match(r"^[\d.-]+$", ec_normalized):
+                return {
+                    "curie": f"EC:{ec_normalized}",
+                    "category": "biolink:MolecularActivity",
+                    "name": enzyme_name,
+                    "predicate": predicate,
+                }
 
         # Pattern: enzyme activity: [name] (without EC number)
-        # Try GO mapping fallback for enzymes without EC numbers
+        # Try curated enzyme_name_to_go mapping
         no_ec_match = re.match(r"^enzyme activity:\s*(.+)$", trait_name, re.IGNORECASE)
         if no_ec_match:
             enzyme_name = no_ec_match.group(1).strip().lower()
 
-            # Check enzyme_name_to_go mapping
+            # Check curated enzyme_name_to_go mapping
             if enzyme_name in self.enzyme_name_to_go:
                 go_mapping = self.enzyme_name_to_go[enzyme_name]
-
-                # Get predicate from METPO lookups
-                predicate_data = self.metpo_pattern_to_predicate.get("shows activity of")
-                predicate = predicate_data["positive"] if predicate_data else "biolink:capable_of"
 
                 return {
                     "curie": go_mapping["go_id"],
@@ -2059,6 +2135,7 @@ class MetaTraitsTransform(Transform):
             "metpo_pattern_to_predicate": self.metpo_pattern_to_predicate,
             "special_chemical_mappings": self.special_chemical_mappings,
             "chemical_name_synonyms": self.chemical_name_synonyms,
+            "ec_to_go": self.ec_to_go,
             "enzyme_name_to_go": self.enzyme_name_to_go,
             "ncbi_to_gtdb_mappings": self.ncbi_to_gtdb_mappings,
             # Note: chemical_loader not included (too large, reconstruct in worker)
@@ -2083,6 +2160,7 @@ class MetaTraitsTransform(Transform):
         self.metpo_pattern_to_predicate = shared_data["metpo_pattern_to_predicate"]
         self.special_chemical_mappings = shared_data["special_chemical_mappings"]
         self.chemical_name_synonyms = shared_data["chemical_name_synonyms"]
+        self.ec_to_go = shared_data["ec_to_go"]
         self.enzyme_name_to_go = shared_data["enzyme_name_to_go"]
         self.ncbi_to_gtdb_mappings = shared_data["ncbi_to_gtdb_mappings"]
 

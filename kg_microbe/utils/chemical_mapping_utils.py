@@ -353,7 +353,9 @@ class ChemicalMappingLoader:
         # Load mappings on initialization
         load_unified_mappings(self.mappings_path)
 
-    def find_chebi_by_name(self, name: str, synonyms: bool = True, fuzzy_stereochemistry: bool = False) -> Optional[str]:
+    def find_chebi_by_name(
+        self, name: str, synonyms: bool = True, fuzzy_stereochemistry: bool = False
+    ) -> Optional[str]:
         """
         Lookup ChEBI ID by chemical name.
 

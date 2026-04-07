@@ -83,6 +83,7 @@ ONTOLOGIES_MAP = {
     "metpo": "metpo.owl",
     "uberon": "uberon.owl",
     "foodon": "foodon.owl",
+    "pato": "pato.owl",
     "ro": "ro.owl",
 }
 
@@ -104,6 +105,7 @@ class OntologiesTransform(Transform):
         "ec": "infores:ec",
         "metpo": "infores:metpo",
         "foodon": "infores:foodon",
+        "pato": "infores:pato",
         "ro": "infores:ro",
     }
 

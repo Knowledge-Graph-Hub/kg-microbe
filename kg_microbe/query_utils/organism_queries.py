@@ -1,6 +1,6 @@
 """Organism-specific query functions for KG-Microbe."""
 
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import duckdb
 import pandas as pd
@@ -33,8 +33,7 @@ def resolve_organism_name(conn: duckdb.DuckDBPyConnection, name: str) -> Dict[st
 
     if not result:
         raise ValueError(
-            f"No organism found matching '{name}'. "
-            f"Try checking NCBITaxon directly or using a different spelling."
+            f"No organism found matching '{name}'. Try checking NCBITaxon directly or using a different spelling."
         )
 
     if len(result) > 1:
@@ -50,9 +49,7 @@ def resolve_organism_name(conn: duckdb.DuckDBPyConnection, name: str) -> Dict[st
     }
 
 
-def get_organism_traits(
-    conn: duckdb.DuckDBPyConnection, taxon_id: str
-) -> pd.DataFrame:
+def get_organism_traits(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> pd.DataFrame:
     """
     Get all direct trait edges from organism (1-hop).
 
@@ -77,9 +74,7 @@ def get_organism_traits(
     return conn.execute(query, [taxon_id]).df()
 
 
-def get_media_preferences(
-    conn: duckdb.DuckDBPyConnection, taxon_id: str
-) -> Dict[str, List[Dict]]:
+def get_media_preferences(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> Dict[str, List[Dict]]:
     """
     Get growth media preferences (grows in / doesn't grow in).
 
@@ -120,9 +115,7 @@ def get_media_preferences(
     return {"grows_in": grows_in, "no_growth": no_growth}
 
 
-def get_media_composition(
-    conn: duckdb.DuckDBPyConnection, medium_ids: List[str]
-) -> pd.DataFrame:
+def get_media_composition(conn: duckdb.DuckDBPyConnection, medium_ids: List[str]) -> pd.DataFrame:
     """
     Get chemical composition of growth media (2-hop: medium → solution → chemical).
 
@@ -131,11 +124,10 @@ def get_media_composition(
     :return: DataFrame with medium_id, chemical_count, chemicals columns
     """
     if not medium_ids:
-        return pd.DataFrame(
-            columns=["medium_id", "chemical_count", "chemicals"]
-        )
+        return pd.DataFrame(columns=["medium_id", "chemical_count", "chemicals"])
 
     # Convert list to SQL array format
+    # Safe: medium_ids are CURIEs from database nodes, not user input
     medium_list = ", ".join([f"'{mid}'" for mid in medium_ids])
 
     query = f"""
@@ -193,9 +185,7 @@ def get_strain_info(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> pd.DataFr
     return conn.execute(query, [taxon_id]).df()
 
 
-def query_organism_full(
-    conn: duckdb.DuckDBPyConnection, organism_name: str
-) -> Dict:
+def query_organism_full(conn: duckdb.DuckDBPyConnection, organism_name: str) -> Dict:
     """
     Execute comprehensive organism query and return all information.
 

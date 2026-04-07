@@ -191,12 +191,8 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                                 # Store with 'sp' prefix for matching metatraits format
                                 self.accession_to_ncbi[f"sp{acc_parts}"] = ncbi_id
 
-        print(
-            f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon name mappings"
-        )
-        print(
-            f"  Loaded {len(self.accession_to_ncbi)} unique accession → NCBITaxon mappings"
-        )
+        print(f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon name mappings")
+        print(f"  Loaded {len(self.accession_to_ncbi)} unique accession → NCBITaxon mappings")
 
     def _load_gtdb_taxonomy(self) -> None:
         """
@@ -229,16 +225,10 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                             species = tax_parts[6].replace("s__", "")  # Remove 's__' prefix
                             if species:
                                 # Extract numeric accession: GB_GCA_001788565.1 → sp001788565
-                                acc_parts = (
-                                    accession.replace("GB_GCA_", "")
-                                    .replace("RS_GCF_", "")
-                                    .split(".")[0]
-                                )
+                                acc_parts = accession.replace("GB_GCA_", "").replace("RS_GCF_", "").split(".")[0]
                                 self.accession_to_gtdb_species[f"sp{acc_parts}"] = species
 
-        print(
-            f"  Loaded {len(self.accession_to_gtdb_species)} unique accession → GTDB species mappings"
-        )
+        print(f"  Loaded {len(self.accession_to_gtdb_species)} unique accession → GTDB species mappings")
 
     def _get_shared_init_data(self) -> dict:
         """Override to include GTDB-specific data for workers."""
@@ -336,6 +326,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         """
         import csv
         import re
+
         from kg_microbe.transform_utils.constants import (
             ID_COLUMN,
             NAME_COLUMN,

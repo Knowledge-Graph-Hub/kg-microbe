@@ -106,6 +106,7 @@ select = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]  # Allow assert in test files
+"kg_microbe/query_utils/*" = ["S608"]  # DuckDB queries use database CURIEs, not user input
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

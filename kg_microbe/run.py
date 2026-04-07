@@ -9,11 +9,11 @@ import click
 # eutils is unmaintained and uses deprecated API, but doesn't affect functionality
 warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
 
-from kg_microbe import download as kg_download
-from kg_microbe.merge_utils.merge_kg import load_and_merge
-from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query
-from kg_microbe.transform import DATA_SOURCES
-from kg_microbe.transform import transform as kg_transform
+from kg_microbe import download as kg_download  # noqa: E402
+from kg_microbe.merge_utils.merge_kg import load_and_merge  # noqa: E402
+from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query  # noqa: E402
+from kg_microbe.transform import DATA_SOURCES  # noqa: E402
+from kg_microbe.transform import transform as kg_transform  # noqa: E402
 
 show_status_option = click.option("--show-status/--no-show-status", default=True)
 

@@ -36,7 +36,7 @@ def get_or_create_database(
     needs_rebuild = force_reload or not db_path.exists()
 
     if needs_rebuild:
-        print(f"  Building DuckDB database from TSV files...")
+        print("  Building DuckDB database from TSV files...")
         print(f"    - Nodes: {nodes_path}")
         print(f"    - Edges: {edges_path}")
 
@@ -64,9 +64,7 @@ def get_or_create_database(
     return conn
 
 
-def _create_database_from_tsv(
-    nodes_path: Path, edges_path: Path, db_path: Path
-) -> duckdb.DuckDBPyConnection:
+def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path) -> duckdb.DuckDBPyConnection:
     """
     Create DuckDB database from TSV files with indexes.
 

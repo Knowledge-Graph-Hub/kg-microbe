@@ -58,7 +58,7 @@ def format_organism_report(query_result: Dict) -> str:
                 report.append(f"| {category} | {trait_name} | {predicate} | {source} |\n")
 
     # Growth Media Preferences section
-    report.append(f"\n## Growth Media Preferences\n")
+    report.append("\n## Growth Media Preferences\n")
 
     grows_in = media["grows_in"]
     no_growth = media["no_growth"]

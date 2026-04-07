@@ -1699,16 +1699,19 @@ class MetaTraitsTransform(Transform):
                         )
             elif ph_min > 8.5:
                 # Only grows in alkaline conditions
-                # METPO gap - no plain alkaliphilic, only haloalkaliphilic
-                phenotypes.append(
-                    {
-                        "curie": "KGM:alkaliphilic",  # Placeholder
-                        "category": "biolink:PhenotypicQuality",
-                        "name": "alkaliphilic",
-                        "predicate": "biolink:has_phenotype",
-                        "metpo_gap": "METPO lacks plain alkaliphilic class",
-                    }
-                )
+                # Use METPO:1003002 (alkaphilic) with synonym "alkaliphilic"
+                metpo_class = self.metpo_label_to_class.get("alkaliphilic")
+                if not metpo_class:
+                    metpo_class = self.metpo_synonym_to_class.get("alkaliphilic")
+                if metpo_class:
+                    phenotypes.append(
+                        {
+                            "curie": metpo_class["curie"],
+                            "category": metpo_class["category"],
+                            "name": metpo_class["name"],
+                            "predicate": "biolink:has_phenotype",
+                        }
+                    )
             elif ph_min >= 5.5 and ph_max <= 8.5:
                 # Grows in neutral range
                 metpo_class = self.metpo_label_to_class.get("neutrophilic")
@@ -1824,14 +1827,17 @@ class MetaTraitsTransform(Transform):
 
         # Map pH preference values to METPO classes using lookups
         if "alkaliphile" in majority_label.lower():
-            # NOTE: METPO gap - only has haloalkaliphilic, not plain alkaliphilic
-            return {
-                "curie": "KGM:alkaliphilic",  # Placeholder - METPO lacks this
-                "category": "biolink:PhenotypicQuality",
-                "name": "alkaliphilic",
-                "predicate": "biolink:has_phenotype",
-                "metpo_gap": "METPO lacks plain alkaliphilic class (only haloalkaliphilic)",
-            }
+            # Use METPO:1003002 (alkaphilic) with synonym "alkaliphilic"
+            metpo_class = self.metpo_label_to_class.get("alkaliphilic")
+            if not metpo_class:
+                metpo_class = self.metpo_synonym_to_class.get("alkaliphilic")
+            if metpo_class:
+                return {
+                    "curie": metpo_class["curie"],
+                    "category": metpo_class["category"],
+                    "name": metpo_class["name"],
+                    "predicate": "biolink:has_phenotype",
+                }
         elif "acidophile" in majority_label.lower() or "acidophil" in majority_label.lower():
             # Use METPO lookup for acidophilic
             metpo_class = self.metpo_label_to_class.get("acidophilic")

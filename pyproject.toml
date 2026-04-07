@@ -122,7 +122,7 @@ extend_exclude = ["notebooks", "docs"]
 skip = "*.po,*.ts,.git,pyproject.toml"
 count = ""
 quiet-level = 3
-# ignore-words-list = ""
+ignore-words-list = "NiFe,formate"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]

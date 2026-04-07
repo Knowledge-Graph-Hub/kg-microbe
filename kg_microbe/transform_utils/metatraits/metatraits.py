@@ -16,15 +16,15 @@ import warnings
 # Suppress pkg_resources deprecation warning from eutils (via oaklib)
 # eutils is unmaintained but required by oaklib; warning doesn't affect functionality
 warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from pathlib import Path  # noqa: E402
+from typing import Any, Dict, List, Optional, Set, Tuple, Union  # noqa: E402
 
-import pandas as pd
-import yaml
-from oaklib import get_adapter
-from tqdm import tqdm
+import pandas as pd  # noqa: E402
+import yaml  # noqa: E402
+from oaklib import get_adapter  # noqa: E402
+from tqdm import tqdm  # noqa: E402
 
-from kg_microbe.transform_utils.constants import (
+from kg_microbe.transform_utils.constants import (  # noqa: E402
     AUTOMATED_AGENT,
     BIOLOGICAL_PROCESS,
     CURIE_COLUMN,
@@ -42,12 +42,12 @@ from kg_microbe.transform_utils.constants import (
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
 )
-from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
-from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
-from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
-from kg_microbe.utils.oak_utils import search_by_label
-from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.transform_utils.transform import Transform  # noqa: E402
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
+from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
+from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings  # noqa: E402
+from kg_microbe.utils.oak_utils import search_by_label  # noqa: E402
+from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
 
 # METPO predicate -> biolink predicate (for relation lookup)
 METPO_TO_BIOLINK_PREDICATE = {
@@ -154,7 +154,7 @@ def _get_ncbitaxon_adapter():
             if local_db.exists() and local_db.is_symlink():
                 return get_adapter(f"sqlite:{local_db}")
             else:
-                print(f"  Symlink race condition - file exists but invalid, using remote adapter")
+                print("  Symlink race condition - file exists but invalid, using remote adapter")
         except Exception as e:
             print(f"  Failed to create symlink ({e}), using remote adapter")
 
@@ -173,7 +173,7 @@ def _get_ncbitaxon_adapter():
             print(f"  Created symlink for future use: {local_db}")
         except FileExistsError:
             pass  # Another worker already created it - no need to log
-        except Exception:
+        except Exception:  # noqa: S110
             pass  # Symlink creation is optional, don't fail if it doesn't work
 
     return adapter
@@ -221,17 +221,15 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
         # Clean up OAK adapter resources to prevent semaphore leaks
         try:
             if hasattr(transform, "_ncbi_adapter") and transform._ncbi_adapter is not None:
-                if (
-                    hasattr(transform._ncbi_adapter, "engine")
-                    and transform._ncbi_adapter.engine is not None
-                ):
+                if hasattr(transform._ncbi_adapter, "engine") and transform._ncbi_adapter.engine is not None:
                     transform._ncbi_adapter.engine.dispose()
             transform._ncbi_adapter = None
-        except Exception:
+        except Exception:  # noqa: S110
             pass  # Ignore cleanup errors
 
 
 class _StreamingRowWriter:
+
     """Streaming TSV writer that writes rows incrementally to avoid memory accumulation."""
 
     def __init__(self, output_file: Path, header: List[str]):
@@ -266,6 +264,7 @@ class _StreamingRowWriter:
 
 
 class MetaTraitsTransform(Transform):
+
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
     # Measurement traits that should be excluded from unmapped_traits.tsv
@@ -400,10 +399,7 @@ class MetaTraitsTransform(Transform):
                 label = node.get("lbl", "")
 
                 # Extract range properties
-                props = {
-                    p["pred"]: p["val"]
-                    for p in node.get("meta", {}).get("basicPropertyValues", [])
-                }
+                props = {p["pred"]: p["val"] for p in node.get("meta", {}).get("basicPropertyValues", [])}
 
                 range_min = props.get("https://w3id.org/metpo/range_min")
                 range_max = props.get("https://w3id.org/metpo/range_max")
@@ -414,9 +410,7 @@ class MetaTraitsTransform(Transform):
                     unit = props.get("http://qudt.org/schema/qudt/ucumCode", "")
 
                     # Extract synonyms
-                    synonyms = [
-                        s["val"] for s in node.get("meta", {}).get("synonyms", [])
-                    ]
+                    synonyms = [s["val"] for s in node.get("meta", {}).get("synonyms", [])]
 
                     # Determine parameter type
                     param_type = None
@@ -435,12 +429,8 @@ class MetaTraitsTransform(Transform):
                             {
                                 "curie": curie,
                                 "label": label,
-                                "range_min": (
-                                    float(range_min) if range_min is not None else None
-                                ),
-                                "range_max": (
-                                    float(range_max) if range_max is not None else None
-                                ),
+                                "range_min": (float(range_min) if range_min is not None else None),
+                                "range_max": (float(range_max) if range_max is not None else None),
                                 "unit": unit,
                                 "synonyms": synonyms,
                             }
@@ -448,9 +438,7 @@ class MetaTraitsTransform(Transform):
 
             # Sort by range_min for each parameter (None values last)
             for param_type in binned_classes:
-                binned_classes[param_type].sort(
-                    key=lambda x: x["range_min"] if x["range_min"] is not None else -999
-                )
+                binned_classes[param_type].sort(key=lambda x: x["range_min"] if x["range_min"] is not None else -999)
 
             print(
                 f"  Loaded METPO binned ranges: "
@@ -511,10 +499,7 @@ class MetaTraitsTransform(Transform):
 
                         # Initialize dict if not exists
                         if pattern_key not in self.metpo_pattern_to_predicate:
-                            self.metpo_pattern_to_predicate[pattern_key] = {
-                                "positive": None,
-                                "negative": None
-                            }
+                            self.metpo_pattern_to_predicate[pattern_key] = {"positive": None, "negative": None}
 
                         # Store as positive or negative
                         if is_negative:
@@ -565,9 +550,7 @@ class MetaTraitsTransform(Transform):
                                 name = parts[2]
                                 if node_id.startswith("NCBITaxon:") and name:
                                     self.ncbitaxon_name_to_id[name.lower()] = node_id
-                    print(
-                        f"  Loaded {len(self.ncbitaxon_name_to_id)} NCBITaxon labels from {path.name}"
-                    )
+                    print(f"  Loaded {len(self.ncbitaxon_name_to_id)} NCBITaxon labels from {path.name}")
                     return
                 except Exception as e:
                     print(f"Warning: Could not load NCBITaxon labels from {path}: {e}")
@@ -954,9 +937,7 @@ class MetaTraitsTransform(Transform):
             category_url = metpo_data.get("inferred_category", "")
             category = uri_to_curie(category_url) if category_url else "biolink:PhenotypicQuality"
             predicate_biolink = metpo_data.get("predicate_biolink_equivalent", "")
-            predicate = (
-                uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
-            )
+            predicate = uri_to_curie(predicate_biolink) if predicate_biolink else "biolink:has_phenotype"
             self.trait_mapping[synonym] = {
                 "curie": metpo_data["curie"],
                 "category": category,
@@ -969,10 +950,7 @@ class MetaTraitsTransform(Transform):
             with open(CUSTOM_CURIES_YAML_FILE) as f:
                 custom_data = yaml.safe_load(f)
             custom_map = {
-                k: v
-                for first in (custom_data or {}).values()
-                if isinstance(first, dict)
-                for k, v in first.items()
+                k: v for first in (custom_data or {}).values() if isinstance(first, dict) for k, v in first.items()
             }
             for key, value in custom_map.items():
                 if not isinstance(value, dict):
@@ -1105,7 +1083,7 @@ class MetaTraitsTransform(Transform):
             ("hydrolysis", "material"),
         ]
 
-        for keyword, lookup_type in pattern_configs:
+        for keyword, _lookup_type in pattern_configs:
             # Create pattern: "keyword: [substance]"
             pattern = rf"^{re.escape(keyword)}:\s*(.+)$"
             match = re.match(pattern, trait_name.lower())
@@ -1356,9 +1334,7 @@ class MetaTraitsTransform(Transform):
         predicate = predicate_data["positive"] if predicate_data else "biolink:capable_of"
 
         # Pattern: enzyme activity: [name] (EC[number])
-        ec_match = re.match(
-            r"^enzyme activity:\s*(.+?)\s*\(EC\s*([\d.BbXx-]+)\)\s*$", trait_name, re.IGNORECASE
-        )
+        ec_match = re.match(r"^enzyme activity:\s*(.+?)\s*\(EC\s*([\d.BbXx-]+)\)\s*$", trait_name, re.IGNORECASE)
         if ec_match:
             enzyme_name = ec_match.group(1).strip()
             ec_number = ec_match.group(2).strip().upper()
@@ -1521,9 +1497,7 @@ class MetaTraitsTransform(Transform):
                 return None
         return None
 
-    def _classify_into_binned_range(
-        self, value: Optional[float], param_type: str
-    ) -> Optional[dict]:
+    def _classify_into_binned_range(self, value: Optional[float], param_type: str) -> Optional[dict]:
         """
         Classify a value into appropriate METPO binned range class.
 
@@ -1573,9 +1547,7 @@ class MetaTraitsTransform(Transform):
         """
         return self._classify_into_binned_range(temp_opt, "temperature")
 
-    def _classify_temperature_phenotypes(
-        self, temp_min: Optional[float], temp_max: Optional[float]
-    ) -> List[dict]:
+    def _classify_temperature_phenotypes(self, temp_min: Optional[float], temp_max: Optional[float]) -> List[dict]:
         """
         Classify temperature phenotypes based on min/max values.
 
@@ -1638,9 +1610,7 @@ class MetaTraitsTransform(Transform):
         """
         return self._classify_into_binned_range(nacl_opt, "NaCl")
 
-    def _classify_salinity_phenotypes(
-        self, sal_min: Optional[float], sal_max: Optional[float]
-    ) -> List[dict]:
+    def _classify_salinity_phenotypes(self, sal_min: Optional[float], sal_max: Optional[float]) -> List[dict]:
         """
         Classify salinity/halophily phenotypes based on min/max NaCl values.
 
@@ -1689,9 +1659,7 @@ class MetaTraitsTransform(Transform):
         """
         return self._classify_into_binned_range(ph_opt, "pH")
 
-    def _classify_ph_phenotypes(
-        self, ph_min: Optional[float], ph_max: Optional[float]
-    ) -> List[dict]:
+    def _classify_ph_phenotypes(self, ph_min: Optional[float], ph_max: Optional[float]) -> List[dict]:
         """
         Classify pH preference phenotypes based on min/max pH values.
 
@@ -1757,9 +1725,7 @@ class MetaTraitsTransform(Transform):
 
         return phenotypes
 
-    def _resolve_pigmentation_trait(
-        self, trait_name: str, majority_label: str
-    ) -> Optional[dict]:
+    def _resolve_pigmentation_trait(self, trait_name: str, majority_label: str) -> Optional[dict]:
         """
         Resolve pigmentation/cell color traits using METPO pigmentation classes.
 
@@ -1778,9 +1744,7 @@ class MetaTraitsTransform(Transform):
         has_pigment = "true" in majority_label.lower()
 
         # Pattern: cell color: yellow pigment
-        color_match = re.match(
-            r"^cell\s+color:\s*(\w+)\s+pigment$", trait_name.lower()
-        )
+        color_match = re.match(r"^cell\s+color:\s*(\w+)\s+pigment$", trait_name.lower())
         if color_match:
             color = color_match.group(1)
 
@@ -1798,9 +1762,7 @@ class MetaTraitsTransform(Transform):
 
         return None
 
-    def _resolve_fermentation_trait(
-        self, trait_name: str, majority_label: str
-    ) -> Optional[dict]:
+    def _resolve_fermentation_trait(self, trait_name: str, majority_label: str) -> Optional[dict]:
         """
         Resolve fermentation capability traits.
 
@@ -1845,9 +1807,7 @@ class MetaTraitsTransform(Transform):
 
         return None
 
-    def _resolve_ph_preference_trait(
-        self, trait_name: str, majority_label: str
-    ) -> Optional[dict]:
+    def _resolve_ph_preference_trait(self, trait_name: str, majority_label: str) -> Optional[dict]:
         """
         Resolve pH preference categorical traits.
 
@@ -2074,9 +2034,7 @@ class MetaTraitsTransform(Transform):
 
             print("  Resource-aware worker selection (chunked mode):")
             print(f"    CPU cores: {cpu_cores} → max {max_cpu_workers} workers")
-            print(
-                f"    Available memory: {available_memory_gb:.1f}GB → max {max_memory_workers} workers"
-            )
+            print(f"    Available memory: {available_memory_gb:.1f}GB → max {max_memory_workers} workers")
             print(f"    Selected: {optimal} parallel workers for chunking")
 
             return optimal
@@ -2120,9 +2078,7 @@ class MetaTraitsTransform(Transform):
 
             print("  Resource-aware worker selection:")
             print(f"    CPU cores: {cpu_cores} → max {max_cpu_workers} workers")
-            print(
-                f"    Available memory: {available_memory_gb:.1f}GB → max {max_memory_workers} workers"
-            )
+            print(f"    Available memory: {available_memory_gb:.1f}GB → max {max_memory_workers} workers")
             print(f"    Input files: {max_file_workers}")
             print(f"    Selected: {optimal} parallel workers")
 
@@ -2216,9 +2172,7 @@ class MetaTraitsTransform(Transform):
             "has_percentage",
         ]
 
-    def _process_single_file(
-        self, input_file: Path, temp_output_dir: Path, show_status: bool = True
-    ) -> Dict[str, Any]:
+    def _process_single_file(self, input_file: Path, temp_output_dir: Path, show_status: bool = True) -> Dict[str, Any]:
         """
         Process a single JSONL file and write to temporary output files.
 
@@ -2284,9 +2238,7 @@ class MetaTraitsTransform(Transform):
                                     relation = "rdfs:subClassOf"
                                 else:
                                     # Create provisional species → search genus
-                                    parent_id = self._create_provisional_species_node(
-                                        genus, species, node_writer
-                                    )
+                                    parent_id = self._create_provisional_species_node(genus, species, node_writer)
                                     relation = INFERRED_SUBCLASS_RELATION
 
                                     # Link provisional species → NCBITaxon:genus or higher
@@ -2351,9 +2303,7 @@ class MetaTraitsTransform(Transform):
                         elif genus and species:
                             # CASE 2: Valid species name without NCBITaxon match (e.g., "Algoriphagus aquimaris")
                             # Create provisional species
-                            tax_id = self._create_provisional_species_node(
-                                genus, species, node_writer
-                            )
+                            tax_id = self._create_provisional_species_node(genus, species, node_writer)
 
                             # Link to genus or higher rank
                             genus_id = self._search_ncbitaxon_by_label(genus)
@@ -2441,9 +2391,7 @@ class MetaTraitsTransform(Transform):
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
                             node_writer.write_row(
-                                self._create_node_row(
-                                    curie, temp_opt_bin["category"], temp_opt_bin["name"]
-                                )
+                                self._create_node_row(curie, temp_opt_bin["category"], temp_opt_bin["name"])
                             )
                         edge_writer.write_row(
                             [
@@ -2465,9 +2413,7 @@ class MetaTraitsTransform(Transform):
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
                             node_writer.write_row(
-                                self._create_node_row(
-                                    curie, nacl_opt_bin["category"], nacl_opt_bin["name"]
-                                )
+                                self._create_node_row(curie, nacl_opt_bin["category"], nacl_opt_bin["name"])
                             )
                         edge_writer.write_row(
                             [
@@ -2489,9 +2435,7 @@ class MetaTraitsTransform(Transform):
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
                             node_writer.write_row(
-                                self._create_node_row(
-                                    curie, ph_opt_bin["category"], ph_opt_bin["name"]
-                                )
+                                self._create_node_row(curie, ph_opt_bin["category"], ph_opt_bin["name"])
                             )
                         edge_writer.write_row(
                             [
@@ -2515,9 +2459,7 @@ class MetaTraitsTransform(Transform):
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
                             node_writer.write_row(
-                                self._create_node_row(
-                                    curie, phenotype["category"], phenotype["name"]
-                                )
+                                self._create_node_row(curie, phenotype["category"], phenotype["name"])
                             )
                         edge_writer.write_row(
                             [
@@ -2532,17 +2474,13 @@ class MetaTraitsTransform(Transform):
                             ]
                         )
 
-                    sal_phenotypes = self._classify_salinity_phenotypes(
-                        quant_data["sal_min"], quant_data["sal_max"]
-                    )
+                    sal_phenotypes = self._classify_salinity_phenotypes(quant_data["sal_min"], quant_data["sal_max"])
                     for phenotype in sal_phenotypes:
                         curie = phenotype["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
                             node_writer.write_row(
-                                self._create_node_row(
-                                    curie, phenotype["category"], phenotype["name"]
-                                )
+                                self._create_node_row(curie, phenotype["category"], phenotype["name"])
                             )
                         edge_writer.write_row(
                             [
@@ -2557,17 +2495,13 @@ class MetaTraitsTransform(Transform):
                             ]
                         )
 
-                    ph_phenotypes = self._classify_ph_phenotypes(
-                        quant_data["ph_min"], quant_data["ph_max"]
-                    )
+                    ph_phenotypes = self._classify_ph_phenotypes(quant_data["ph_min"], quant_data["ph_max"])
                     for phenotype in ph_phenotypes:
                         curie = phenotype["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
                             node_writer.write_row(
-                                self._create_node_row(
-                                    curie, phenotype["category"], phenotype["name"]
-                                )
+                                self._create_node_row(curie, phenotype["category"], phenotype["name"])
                             )
                         edge_writer.write_row(
                             [
@@ -2605,9 +2539,7 @@ class MetaTraitsTransform(Transform):
                         majority_label = s.get("majority_label", "")
                         percentages = s.get("percentages", {}) or {}
                         # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
-                        pct_true = float(
-                            percentages.get("true") if percentages.get("true") is not None else 0
-                        )
+                        pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
 
                         # Lookup order (METPO-first priority):
                         # Tier 1: METPO ontology mappings (HIGHEST PRIORITY - authoritative source)
@@ -2615,9 +2547,7 @@ class MetaTraitsTransform(Transform):
                         # Tier 3: Pattern-based resolvers (chemical, metabolic, growth, trophic, enzyme, phenotype)
 
                         # Tier 1: METPO ontology mappings (FIRST)
-                        mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
-                            trait_name.lower()
-                        )
+                        mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
                         if mapping:
                             curie = mapping["curie"]
                             category = mapping["category"]
@@ -2625,9 +2555,9 @@ class MetaTraitsTransform(Transform):
                             label = mapping["name"]
                         else:
                             # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
-                            micro_mapping = self.microbial_mappings.get(
-                                trait_name
-                            ) or self.microbial_mappings.get(trait_name.lower())
+                            micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
+                                trait_name.lower()
+                            )
                             if micro_mapping:
                                 # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
                                 curie = micro_mapping["object_id"]
@@ -2846,9 +2776,7 @@ class MetaTraitsTransform(Transform):
             chunk = chunk[mask]
             seen_edges.update(chunk_tuples[mask])
 
-            chunk.to_csv(
-                temp_dedup_edges, sep="\t", index=False, mode="w" if first_chunk else "a", header=first_chunk
-            )
+            chunk.to_csv(temp_dedup_edges, sep="\t", index=False, mode="w" if first_chunk else "a", header=first_chunk)
             first_chunk = False
 
         # Replace with deduplicated file
@@ -2886,9 +2814,7 @@ class MetaTraitsTransform(Transform):
         shutil.rmtree(temp_dir)
         print("  Merge complete.")
 
-    def _split_file_into_chunks(
-        self, input_file: Path, num_chunks: int, temp_dir: Path
-    ) -> List[Path]:
+    def _split_file_into_chunks(self, input_file: Path, num_chunks: int, temp_dir: Path) -> List[Path]:
         """
         Split a single JSONL file into multiple chunk files for parallel processing.
 
@@ -2903,9 +2829,7 @@ class MetaTraitsTransform(Transform):
             total_items = sum(1 for line in f if line.strip())
 
         chunk_size = (total_items + num_chunks - 1) // num_chunks  # Ceiling division
-        print(
-            f"  Splitting {total_items} items into {num_chunks} chunks (~{chunk_size} items each)..."
-        )
+        print(f"  Splitting {total_items} items into {num_chunks} chunks (~{chunk_size} items each)...")
 
         # Create chunk files
         chunk_files = []
@@ -3045,9 +2969,7 @@ class MetaTraitsTransform(Transform):
 
             for input_path in iterable:
                 with _open_jsonl(input_path) as f:
-                    line_iter = (
-                        tqdm(f, desc=f"  {input_path.name}", leave=False) if show_status else f
-                    )
+                    line_iter = tqdm(f, desc=f"  {input_path.name}", leave=False) if show_status else f
                     for line in line_iter:
                         line = line.strip()
                         if not line:
@@ -3089,9 +3011,7 @@ class MetaTraitsTransform(Transform):
                                         relation = "rdfs:subClassOf"
                                     else:
                                         # Create provisional species → search genus
-                                        parent_id = self._create_provisional_species_node(
-                                            genus, species, node_writer
-                                        )
+                                        parent_id = self._create_provisional_species_node(genus, species, node_writer)
                                         relation = INFERRED_SUBCLASS_RELATION
 
                                         # Link provisional species → NCBITaxon:genus or higher
@@ -3110,9 +3030,7 @@ class MetaTraitsTransform(Transform):
                                             )
                                         else:
                                             # Search higher ranks
-                                            higher_rank = self._search_higher_ranks_in_ncbitaxon(
-                                                genus
-                                            )
+                                            higher_rank = self._search_higher_ranks_in_ncbitaxon(genus)
                                             if higher_rank:
                                                 edge_writer.write_row(
                                                     [
@@ -3158,9 +3076,7 @@ class MetaTraitsTransform(Transform):
                             elif genus and species:
                                 # CASE 2: Valid species name without NCBITaxon match (e.g., "Algoriphagus aquimaris")
                                 # Create provisional species
-                                tax_id = self._create_provisional_species_node(
-                                    genus, species, node_writer
-                                )
+                                tax_id = self._create_provisional_species_node(genus, species, node_writer)
 
                                 # Link to genus or higher rank
                                 genus_id = self._search_ncbitaxon_by_label(genus)
@@ -3208,17 +3124,11 @@ class MetaTraitsTransform(Transform):
                             majority_label = s.get("majority_label", "")
                             percentages = s.get("percentages", {}) or {}
                             # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
-                            pct_true = float(
-                                percentages.get("true")
-                                if percentages.get("true") is not None
-                                else 0
-                            )
+                            pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
 
                             # Lookup order (METPO-first priority):
                             # Tier 1: METPO ontology mappings (FIRST)
-                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
-                                trait_name.lower()
-                            )
+                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
                             if mapping:
                                 curie = mapping["curie"]
                                 category = mapping["category"]
@@ -3226,9 +3136,9 @@ class MetaTraitsTransform(Transform):
                                 label = mapping["name"]
                             else:
                                 # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
-                                micro_mapping = self.microbial_mappings.get(
-                                    trait_name
-                                ) or self.microbial_mappings.get(trait_name.lower())
+                                micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
+                                    trait_name.lower()
+                                )
                                 if micro_mapping:
                                     # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
                                     curie = micro_mapping["object_id"]
@@ -3261,9 +3171,7 @@ class MetaTraitsTransform(Transform):
                                 elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
                                     curie = metabolic_mapping["curie"]
                                     category = metabolic_mapping["category"]
-                                    pred = self._to_biolink_predicate(
-                                        metabolic_mapping["predicate"]
-                                    )
+                                    pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
                                     label = metabolic_mapping["name"]
                                 elif growth_mapping := self._resolve_growth_substrate(trait_name):
                                     curie = growth_mapping["curie"]
@@ -3288,9 +3196,7 @@ class MetaTraitsTransform(Transform):
                                 elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                     curie = phenotype_mapping["curie"]
                                     category = phenotype_mapping["category"]
-                                    pred = self._to_biolink_predicate(
-                                        phenotype_mapping["predicate"]
-                                    )
+                                    pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
                                     label = phenotype_mapping["name"]
                                 elif energy_mapping := self._resolve_energy_source(trait_name):
                                     curie = energy_mapping["curie"]
@@ -3427,9 +3333,8 @@ class MetaTraitsTransform(Transform):
                 self._run_parallel(input_files, show_status, self.num_workers)
             elif use_mp and len(input_files) == 1:
                 # Single file: split into chunks for parallel processing
-                print(
-                    f"  Using parallel chunked processing (splitting 1 file across {self.num_workers or 'auto'} workers)"
-                )
+                workers = self.num_workers or "auto"
+                print(f"  Using parallel chunked processing (splitting 1 file across {workers} workers)")
                 self._run_parallel_chunked(input_files[0], show_status, self.num_workers)
             else:
                 # No multiprocessing: sequential
@@ -3438,11 +3343,8 @@ class MetaTraitsTransform(Transform):
             # Clean up OAK adapter resources
             try:
                 if hasattr(self, "_ncbi_adapter") and self._ncbi_adapter is not None:
-                    if (
-                        hasattr(self._ncbi_adapter, "engine")
-                        and self._ncbi_adapter.engine is not None
-                    ):
+                    if hasattr(self._ncbi_adapter, "engine") and self._ncbi_adapter.engine is not None:
                         self._ncbi_adapter.engine.dispose()
                 self._ncbi_adapter = None
-            except Exception:
+            except Exception:  # noqa: S110
                 pass  # Ignore cleanup errors

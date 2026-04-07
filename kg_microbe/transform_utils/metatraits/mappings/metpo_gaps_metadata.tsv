@@ -1,4 +1,4 @@
 ID	label	gap_type	observations_affected	priority	workaround	status	notes
-METPO:1003XXX	alkaliphilic	missing_class	5,576	HIGH	Using placeholder KGM:alkaliphilic	PROPOSED	Only remaining hardcoded mapping in metatraits transform. Plain alkaliphilic needed (METPO only has haloalkaliphilic for salt-tolerant alkaliphiles). Sibling to existing acidophilic/neutrophilic terms.
+METPO:1003002	alkaliphilic	FOUND_AS_SYNONYM	5,576	N/A	N/A - using METPO:1003002	RESOLVED	✅ Term exists as METPO:1003002 with primary label "alkaphilic" (non-standard spelling). Has "alkaliphilic" as exact synonym. This was a false positive gap - no term proposal needed.
 METPO:2000XXX	has growth organic acid observation	missing_predicate	31	LOW	Skipping these observations	PROPOSED	Predicate for growth with organic acids like sodium lactate at specific concentrations. Similar pattern to existing has growth NaCl observation (2000508).
 METPO:1003XXX	non-pigmented	missing_class	1,453,581	MEDIUM	Skipping negative pigmentation	PROPOSED	Companion negative term for pigmentation classes (1003022-1003031). Low utility as most observations are negative assertions which add limited value to KG.

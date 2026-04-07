@@ -21,3 +21,25 @@ galactonate	D-galactonate	CHEBI:12931	D-galactonate	Add "D-" prefix
 1 % sodium lactate	sodium lactate	CHEBI:86354	sodium L-lactate	Strip concentration prefix
 2-deoxythymidine-5'-4-nitrophenyl phosphate	2'-deoxythymidine 5'-monophosphate	CHEBI:63528	2'-deoxythymidine 5'-monophosphate	Simplified name for chromogenic substrate
 glutamyl-glutamic acid	glutamylglutamate	CHEBI:18232	gamma-Glu-Glu	Remove spaces, use gamma form
+3-aminobutyrate	3-aminobutyric acid	CHEBI:18309	3-aminobutyric acid	Add "acid" suffix
+2-aminobutyrate	2-aminobutyric acid	CHEBI:16865	2-aminobutyric acid	Add "acid" suffix
+1,2-propandiol	propane-1,2-diol	CHEBI:16189	propane-1,2-diol	Fix typo (propandiol → propanediol)
+d-salicin	salicin	CHEBI:17992	salicin	Remove "D-" prefix
+beta lactose	lactose	CHEBI:17716	lactose	Remove "beta" prefix
+dl-alanine	alanine	CHEBI:16449	alanine	Remove racemic prefix
+d-galactonic acid lactone	D-galactono-1,4-lactone	CHEBI:28761	D-galactono-1,4-lactone	Full systematic name
+(+)-l-ornithine	L-ornithine	CHEBI:16176	L-ornithine	Remove stereochemistry notation
+(+)-d-galactose	D-galactose	CHEBI:4139	D-galactose	Remove stereochemistry notation
+(+)-l-rhamnose	L-rhamnose	CHEBI:16988	L-rhamnose	Remove stereochemistry notation
+(+)-d-mannose	D-mannose	CHEBI:4208	D-mannose	Remove stereochemistry notation
+(+)-l-aspartate	L-aspartate	CHEBI:29991	L-aspartate	Remove stereochemistry notation
+(+)-d-xylose	D-xylose	CHEBI:17140	D-xylose	Remove stereochemistry notation
+(+)-d-glucosamine	D-glucosamine	CHEBI:5417	D-glucosamine	Remove stereochemistry notation
+(+)-l-glutamate	L-glutamate	CHEBI:29985	L-glutamate	Remove stereochemistry notation
+(+)-l-lyxitol	L-lyxitol	CHEBI:25064	L-lyxitol	Remove stereochemistry notation
+(2)-d-fructose	D-fructose	CHEBI:15824	D-fructose	Fix typo in stereochemistry notation
+(-)-d-rhamnose	L-rhamnose	CHEBI:16988	L-rhamnose	Stereochemistry inversion
+aconitate	cis-aconitate	CHEBI:32805	cis-aconitate	Use cis isomer (most common)
+maltose hydrate	maltose	CHEBI:17306	maltose	Remove "hydrate"
+3-dehydro-d-gluconate	3-dehydro-D-gluconate	CHEBI:29042	3-dehydro-D-gluconate	Add "D-" prefix
+glycerol 3-phosphate	sn-glycerol 3-phosphate	CHEBI:15978	sn-glycerol 3-phosphate	Add stereochemistry prefix

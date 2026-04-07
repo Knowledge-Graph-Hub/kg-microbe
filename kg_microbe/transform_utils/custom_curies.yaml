@@ -370,3 +370,100 @@ KGM:
     label: "gelatin"
     description: "Gelatin protein mixture"
     category: "biolink:ChemicalSubstance"
+
+  # Obscure secondary metabolites and antibiotics (not in ChEBI)
+  gardimycin:
+    label: "gardimycin"
+    description: "Antibiotic glycopeptide produced by Actinoplanes spp."
+    category: "biolink:ChemicalSubstance"
+
+  setamycin:
+    label: "setamycin"
+    description: "Antibiotic compound produced by Streptomyces spp."
+    category: "biolink:ChemicalSubstance"
+
+  kijanimicin:
+    label: "kijanimicin"
+    description: "Spirotetronate antibiotic produced by Actinomadura spp."
+    category: "biolink:ChemicalSubstance"
+
+  candiplanecin:
+    label: "candiplanecin"
+    description: "Glycopeptide antibiotic produced by Actinoplanes spp."
+    category: "biolink:ChemicalSubstance"
+
+  nocamycin:
+    label: "nocamycin"
+    description: "Antibiotic produced by Nocardia spp."
+    category: "biolink:ChemicalSubstance"
+
+  decaplanin:
+    label: "decaplanin"
+    description: "Glycopeptide antibiotic produced by Actinoplanes spp."
+    category: "biolink:ChemicalSubstance"
+
+  ristocetin_a:
+    label: "ristocetin A"
+    description: "Glycopeptide antibiotic component produced by Amycolatopsis orientalis"
+    category: "biolink:ChemicalSubstance"
+
+  ristocetin_b:
+    label: "ristocetin B"
+    description: "Glycopeptide antibiotic component produced by Amycolatopsis orientalis"
+    category: "biolink:ChemicalSubstance"
+
+  cetocycline:
+    label: "cetocycline"
+    description: "Tetracycline antibiotic derivative"
+    category: "biolink:ChemicalSubstance"
+
+  indochrome:
+    label: "indochrome"
+    description: "Indole-derived pigment compound"
+    category: "biolink:ChemicalSubstance"
+
+  butyricin_7423:
+    label: "butyricin 7423"
+    description: "Bacteriocin produced by Clostridium butyricum"
+    category: "biolink:ChemicalSubstance"
+
+  dopsisamine:
+    label: "dopsisamine"
+    description: "Aminoglycoside antibiotic derivative"
+    category: "biolink:ChemicalSubstance"
+
+  hitachimycin:
+    label: "hitachimycin"
+    description: "Antibiotic compound produced by Streptomyces spp."
+    category: "biolink:ChemicalSubstance"
+
+  ardacin_b:
+    label: "ardacin B"
+    description: "Peptide antibiotic produced by Arthrobacter spp."
+    category: "biolink:ChemicalSubstance"
+
+  ethylenediamine_n_n_prime_disuccinic_acid:
+    label: "ethylenediamine-N,N'-disuccinic acid"
+    description: "Chelating agent compound"
+    category: "biolink:ChemicalSubstance"
+
+  # Complex biological materials (protein hydrolysates and extracts)
+  casein_hydrolysate:
+    label: "casein hydrolysate"
+    description: "Enzymatic or acid hydrolysate of casein protein"
+    category: "biolink:ChemicalMixture"
+
+  yeast_extract:
+    label: "yeast extract"
+    description: "Complex mixture of amino acids, peptides, vitamins from autolyzed yeast"
+    category: "biolink:ChemicalMixture"
+
+  skimmed_milk:
+    label: "skimmed milk"
+    description: "Milk with fat removed, used as protein source in microbial culture"
+    category: "biolink:ChemicalMixture"
+
+  esculin_hydrolysate:
+    label: "esculin hydrolysate"
+    description: "Hydrolysis products of esculin (glucose and esculetin)"
+    category: "biolink:ChemicalMixture"

@@ -1825,6 +1825,11 @@ class MetaTraitsTransform(Transform):
         if trait_name.lower() != "ph preference":
             return None
 
+        # Check if majority_label is empty or no robust majority
+        if not majority_label or "no robust majority" in majority_label.lower():
+            # Cannot determine pH preference without clear majority value
+            return None
+
         # Map pH preference values to METPO classes using lookups
         if "alkaliphile" in majority_label.lower():
             # Use METPO:1003002 (alkaphilic) with synonym "alkaliphilic"
@@ -1962,6 +1967,89 @@ class MetaTraitsTransform(Transform):
                     "predicate": predicate,
                 }
         return None
+
+    def _resolve_growth_temperature_observation(
+        self, trait_name: str, majority_label: str
+    ) -> Optional[dict]:
+        """
+        Resolve specific growth temperature observations.
+
+        Handles patterns like:
+        - "growth: 42 degrees Celsius" (true/false)
+        - "growth: 37 degrees celsius" (true/false)
+
+        Uses METPO:2000054 (has growth temperature observation) as predicate.
+        Returns a dict marking this as a known pattern with the observation details.
+
+        :param trait_name: The trait name to resolve
+        :param majority_label: The majority boolean value (e.g., "true: (92%)")
+        :return: dict with observation details or None if no match
+        """
+        import re
+
+        # Pattern: growth: <number> degrees Celsius/celsius
+        match = re.match(r"^growth:\s*(\d+(?:\.\d+)?)\s*degrees?\s*celsius$", trait_name.lower())
+        if not match:
+            return None
+
+        temp_value = float(match.group(1))
+        can_grow = "true" in majority_label.lower()
+
+        # Use METPO observation predicate
+        # Note: This is a known pattern but we defer quantitative observation modeling
+        # Return marker dict to indicate pattern was recognized
+        return {
+            "observation_type": "growth_temperature",
+            "predicate": "METPO:2000054",  # has growth temperature observation
+            "value": temp_value,
+            "unit": "Cel",
+            "can_grow": can_grow,
+            "deferred": True,  # Mark as recognized but not yet modeled
+        }
+
+    def _resolve_growth_nacl_observation(self, trait_name: str, majority_label: str) -> Optional[dict]:
+        """
+        Resolve specific growth NaCl/salinity observations.
+
+        Handles patterns like:
+        - "growth: 6.5% NaCl" (true/false)
+        - "growth: 10% NaCl" (true/false)
+        - "growth: 1% sodium chloride" (true/false)
+
+        Uses METPO:2000508 (has growth NaCl observation) as predicate.
+        Returns a dict marking this as a known pattern with the observation details.
+
+        :param trait_name: The trait name to resolve
+        :param majority_label: The majority boolean value
+        :return: dict with observation details or None if no match
+        """
+        import re
+
+        # Pattern 1: growth: <number>% NaCl
+        match = re.match(r"^growth:\s*(\d+(?:\.\d+)?)\s*%\s*nacl$", trait_name.lower())
+
+        # Pattern 2: growth: <number>% sodium chloride
+        if not match:
+            match = re.match(
+                r"^growth:\s*(\d+(?:\.\d+)?)\s*%\s*sodium\s+chloride$", trait_name.lower()
+            )
+
+        if not match:
+            return None
+
+        nacl_percent = float(match.group(1))
+        can_grow = "true" in majority_label.lower()
+
+        # Use METPO observation predicate
+        # Note: This is a known pattern but we defer quantitative observation modeling
+        return {
+            "observation_type": "growth_nacl",
+            "predicate": "METPO:2000508",  # has growth NaCl observation
+            "value": nacl_percent,
+            "unit": "%",
+            "can_grow": can_grow,
+            "deferred": True,  # Mark as recognized but not yet modeled
+        }
 
     def _is_measurement_trait(self, trait_name: str) -> bool:
         """
@@ -2570,20 +2658,40 @@ class MetaTraitsTransform(Transform):
                                 category = micro_mapping["object_category"]
                                 pred = micro_mapping["biolink_predicate"]
                                 label = micro_mapping["object_label"]
+                            elif temp_obs := self._resolve_growth_temperature_observation(trait_name, majority_label):
+                                # Tier 3.0a: Growth temperature observations (growth: 42 degrees Celsius)
+                                # Known pattern but deferred - skip without adding to unmapped
+                                if temp_obs.get("deferred"):
+                                    continue
+                                # If not deferred (future implementation), create edge
+                                curie = f"kgmicrobe.observation:{tax_id}_{trait_name}"
+                                category = "biolink:Attribute"
+                                pred = "biolink:has_attribute"
+                                label = f"Growth at {temp_obs['value']} {temp_obs['unit']}"
+                            elif nacl_obs := self._resolve_growth_nacl_observation(trait_name, majority_label):
+                                # Tier 3.0b: Growth NaCl observations (growth: 6.5% NaCl)
+                                # Known pattern but deferred - skip without adding to unmapped
+                                if nacl_obs.get("deferred"):
+                                    continue
+                                # If not deferred (future implementation), create edge
+                                curie = f"kgmicrobe.observation:{tax_id}_{trait_name}"
+                                category = "biolink:Attribute"
+                                pred = "biolink:has_attribute"
+                                label = f"Growth at {nacl_obs['value']}{nacl_obs['unit']} NaCl"
                             elif pigmentation := self._resolve_pigmentation_trait(trait_name, majority_label):
-                                # Tier 3.0b: Pigmentation (cell color: yellow pigment)
+                                # Tier 3.0c: Pigmentation (cell color: yellow pigment)
                                 curie = pigmentation["curie"]
                                 category = pigmentation["category"]
                                 pred = pigmentation["predicate"]
                                 label = pigmentation["name"]
                             elif fermentation := self._resolve_fermentation_trait(trait_name, majority_label):
-                                # Tier 3.0c: Fermentation (fermentation: D-glucose)
+                                # Tier 3.0d: Fermentation (fermentation: D-glucose)
                                 curie = fermentation["curie"]
                                 category = fermentation["category"]
                                 pred = self._to_biolink_predicate(fermentation["predicate"])
                                 label = fermentation["name"]
                             elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
-                                # Tier 3.0d: pH preference (pH preference: alkaliphile)
+                                # Tier 3.0e: pH preference (pH preference: alkaliphile)
                                 curie = ph_pref["curie"]
                                 category = ph_pref["category"]
                                 pred = ph_pref["predicate"]

@@ -1061,6 +1061,13 @@ class MetaTraitsTransform(Transform):
             if match:
                 substance_name = match.group(1).strip()
 
+                # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
+                # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
+                substance_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', substance_name)
+
+                # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
+                substance_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', substance_name).strip()
+
                 # Lookup predicate from METPO (use positive predicate)
                 predicate_data = self.metpo_pattern_to_predicate.get(keyword.lower())
                 if not predicate_data or not predicate_data.get("positive"):
@@ -1126,6 +1133,13 @@ class MetaTraitsTransform(Transform):
             match = re.match(pattern, trait_name.lower())
             if match:
                 substrate_name = match.group(1).strip()
+
+                # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
+                # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
+                substrate_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', substrate_name)
+
+                # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
+                substrate_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', substrate_name).strip()
 
                 # Skip non-chemical growth patterns (trophic modes)
                 non_chemical_patterns = [

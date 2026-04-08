@@ -62,3 +62,20 @@ alpha-hydroxyglutarate-gamma-lactone	2-hydroxyglutarate gamma-lactone	CHEBI:9083
 casein hydrolysate	casein	CHEBI:80130	casein	Protein mixture - use parent term
 1,4-propandiol	propane-1,3-diol	CHEBI:16277	propane-1,3-diol	Likely typo in data (1,4 → 1,3)
 2,4-butanediol	butane-2,3-diol	CHEBI:16982	butane-2,3-diol	Likely typo in data (2,4 → 2,3)
+fluorescein	fluorescein	CHEBI:31624	fluorescein	Fluorescent dye, commonly produced secondary metabolite
+actinomycin X	actinomycin D	CHEBI:27666	actinomycin D	Actinomycin family - use D as representative
+actinomycin B	actinomycin D	CHEBI:27666	actinomycin D	Actinomycin family - use D as representative
+carbomycin	carbomycin A	CHEBI:3393	carbomycin A	Macrolide antibiotic
+cephamycin B	cephamycin B	CHEBI:28792	cephamycin B	Beta-lactam antibiotic
+bottromycin	bottromycin A2	CHEBI:80108	bottromycin A2	Thiazole antibiotic (use A2 as representative)
+poly(L-lysine) polymer	poly-L-lysine	CHEBI:46850	poly-L-lysine	Polycationic polypeptide
+phenazines	phenazine	CHEBI:37766	phenazine	Heterocyclic compound class (use parent)
+demecycline	demeclocycline	CHEBI:4387	demeclocycline	Tetracycline antibiotic
+tetrabromopyrrole	tetrabromopyrrole	CHEBI:75259	tetrabromopyrrole	Halogenated pyrrole antimicrobial
+streptovaricin	streptovaricin A	CHEBI:9677	streptovaricin A	Ansamycin antibiotic
+ristocetin A	ristocetin A	CHEBI:8870	ristocetin A	Glycopeptide antibiotic
+netropsin	netropsin	CHEBI:7524	netropsin	DNA-binding antibiotic
+abyssomicin C	abyssomicin C	CHEBI:65956	abyssomicin C	Polyketide antibiotic
+actinomycin C	actinomycin C3	CHEBI:27668	actinomycin C3	Actinomycin family member
+carbapenem	carbapenem	CHEBI:46633	carbapenem	Beta-lactam antibiotic class
+anthracycline antibiotic	anthracycline	CHEBI:48120	anthracycline	Anticancer/antibiotic compound class

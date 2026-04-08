@@ -33,3 +33,13 @@ n-acetyl-glucosidase	GO:0004563	beta-N-acetylhexosaminidase activity	3.2.1.52	N-
 beta-fucosidase	GO:0004560	alpha-L-fucosidase activity	3.2.1.51	Hydrolyzes fucosidic linkages
 acc deaminase	GO:0019131	1-aminocyclopropane-1-carboxylate deaminase activity	3.5.99.7	Degrades ACC (ethylene precursor)
 peptide synthetase	GO:0016874	ligase activity		Peptide bond formation enzyme
+tyrosine arylamidase	GO:0070006	aminopeptidase activity		Arylamidase = aminopeptidase, tyrosine-specific
+alanine phenylalanin proline arylamidase	GO:0070006	aminopeptidase activity		Multi-substrate arylamidase (aminopeptidase)
+lipase (Tween 80)	GO:0016788	hydrolase activity, acting on ester bonds		Lipase tested with Tween 80 substrate (polysorbate)
+phenylalaninase	GO:0070006	aminopeptidase activity		Phenylalanine-specific aminopeptidase
+skimmed milk protease	GO:0008233	peptidase activity		Protease tested with skimmed milk substrate
+beta-alanine arylamidase pNA	GO:0070006	aminopeptidase activity		Beta-alanine specific arylamidase with pNA chromogen
+deaminases	GO:0019239	deaminase activity		Broad term for deamination enzymes
+glutamyl arylamidase pNA	GO:0070006	aminopeptidase activity		Glutamate-specific arylamidase with pNA chromogen
+glu–gly–arg-arylamidase	GO:0070006	aminopeptidase activity		Tripeptide-specific arylamidase
+lactosidase	GO:0004565	beta-galactosidase activity	3.2.1.23	Synonym for beta-galactosidase (lactose-specific)

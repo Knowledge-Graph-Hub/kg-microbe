@@ -43,3 +43,22 @@ aconitate	cis-aconitate	CHEBI:32805	cis-aconitate	Use cis isomer (most common)
 maltose hydrate	maltose	CHEBI:17306	maltose	Remove "hydrate"
 3-dehydro-d-gluconate	3-dehydro-D-gluconate	CHEBI:29042	3-dehydro-D-gluconate	Add "D-" prefix
 glycerol 3-phosphate	sn-glycerol 3-phosphate	CHEBI:15978	sn-glycerol 3-phosphate	Add stereochemistry prefix
+D-saccharate	D-saccharate	CHEBI:16659	D-saccharate	Oxidized form of D-galactose
+2,3-butanone	butane-2,3-dione	CHEBI:16583	butane-2,3-dione	Systematic name (common: diacetyl)
+L-tartrate	L-tartrate	CHEBI:30956	L-tartrate(1-)	Use tartrate anion form
+coumarate	4-coumarate	CHEBI:32374	4-coumarate	Most common isomer (para)
+3-coumarate	3-coumarate	CHEBI:18392	3-coumarate	Meta isomer
+D-sorbose	D-sorbose	CHEBI:17266	D-sorbose	Ketohexose sugar
+(-)-D-sorbitol	D-glucitol	CHEBI:17924	D-glucitol	Remove stereochemistry notation
+3-nitropropanoate	3-nitropropanoic acid	CHEBI:77041	3-nitropropanoic acid	Add 'acid' suffix
+3-hydroxy 2-butanone	acetoin	CHEBI:15688	acetoin	Common name: acetoin
+5-aminovalerate	5-aminopentanoate	CHEBI:17431	5-aminopentanoate	IUPAC systematic name
+glycine-proline	Gly-Pro	CHEBI:73390	Gly-Pro	Dipeptide
+glycyl L-aspartic acid	Gly-Asp	CHEBI:73394	Gly-Asp	Dipeptide
+potassium 5-dehydro-D-gluconate	5-dehydro-D-gluconate	CHEBI:17659	5-dehydro-D-gluconate	Strip potassium salt prefix
+3-O-methylgallate	3-O-methylgallic acid	CHEBI:68483	3-O-methylgallic acid	Add 'acid' suffix
+4,4-dihydroxy-biphenyl	4,4'-dihydroxybiphenyl	CHEBI:34283	4,4'-dihydroxybiphenyl	Add prime notation for symmetry
+alpha-hydroxyglutarate-gamma-lactone	2-hydroxyglutarate gamma-lactone	CHEBI:90836	(2S)-2-hydroxyglutarate gamma-lactone	Use systematic numbering (alpha=2)
+casein hydrolysate	casein	CHEBI:80130	casein	Protein mixture - use parent term
+1,4-propandiol	propane-1,3-diol	CHEBI:16277	propane-1,3-diol	Likely typo in data (1,4 → 1,3)
+2,4-butanediol	butane-2,3-diol	CHEBI:16982	butane-2,3-diol	Likely typo in data (2,4 → 2,3)

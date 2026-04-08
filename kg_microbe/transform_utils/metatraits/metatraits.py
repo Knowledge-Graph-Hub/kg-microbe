@@ -321,8 +321,8 @@ class MetaTraitsTransform(Transform):
         # Load special chemical mappings for high-frequency unmapped traits
         self.special_chemical_mappings = self._load_special_chemical_mappings()
 
-        # Load chemical name synonyms for ChEBI lookup fallback
-        self.chemical_name_synonyms = self._load_chemical_name_synonyms()
+        # Chemical name synonyms migrated to unified_chemical_mappings.tsv.gz (Phase 2, 2026-04-07)
+        # Lookups now handled by self.chemical_loader.find_chebi_by_name()
 
         # Load EC to GO mappings (primary source for enzyme activities with EC numbers)
         self.ec_to_go = self._load_ec_to_go()
@@ -588,37 +588,9 @@ class MetaTraitsTransform(Transform):
 
         return special_mappings
 
-    def _load_chemical_name_synonyms(self) -> Dict[str, dict]:
-        """
-        Load chemical name synonyms for ChEBI lookup fallback.
-
-        Maps MetaTraits simplified names to correct ChEBI search names
-        for chemicals that fail direct lookup due to name normalization issues.
-
-        :return: Dictionary mapping metatraits_name (lowercase) -> {chebi_id, chebi_label, chebi_search_name}
-        """
-        mappings_file = Path(__file__).parent / "mappings" / "chemical_name_synonyms.tsv"
-        synonyms = {}
-
-        if not mappings_file.exists():
-            print(f"  Warning: Chemical name synonyms file not found: {mappings_file}")
-            return synonyms
-
-        try:
-            with open(mappings_file, "r", encoding="utf-8") as f:
-                reader = csv.DictReader(f, delimiter="\t")
-                for row in reader:
-                    metatraits_name = row["metatraits_name"].strip().lower()
-                    synonyms[metatraits_name] = {
-                        "chebi_id": row["chebi_id"].strip(),
-                        "chebi_label": row["chebi_label"].strip(),
-                        "chebi_search_name": row["chebi_search_name"].strip(),
-                    }
-            print(f"  Loaded {len(synonyms)} chemical name synonyms")
-        except Exception as e:
-            print(f"  Warning: Could not load chemical name synonyms: {e}")
-
-        return synonyms
+    # DEPRECATED: _load_chemical_name_synonyms() removed in Phase 2 migration (2026-04-07)
+    # Chemical synonyms are now loaded from unified_chemical_mappings.tsv.gz
+    # via ChemicalMappingLoader.find_chebi_by_name() which includes synonym search
 
     def _load_ec_to_go(self) -> Dict[str, dict]:
         """
@@ -1016,20 +988,8 @@ class MetaTraitsTransform(Transform):
 
                 metpo_predicate = predicate_data["positive"]
 
-                # Lookup chemical
+                # Lookup chemical via unified mappings (includes synonyms)
                 chebi_id = self.chemical_loader.find_chebi_by_name(chemical_name)
-
-                # If direct lookup fails, try synonym mapping
-                if not chebi_id and chemical_name in self.chemical_name_synonyms:
-                    synonym_data = self.chemical_name_synonyms[chemical_name]
-                    chebi_id = synonym_data["chebi_id"]
-                    canonical_name = synonym_data["chebi_label"]
-                    return {
-                        "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
-                        "name": canonical_name,
-                        "predicate": metpo_predicate,
-                    }
 
                 if chebi_id:
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
@@ -1099,18 +1059,7 @@ class MetaTraitsTransform(Transform):
 
                 # Try ChEBI lookup first
                 chebi_id = self.chemical_loader.find_chebi_by_name(substance_name)
-
-                # If direct lookup fails, try synonym mapping
-                if not chebi_id and substance_name in self.chemical_name_synonyms:
-                    synonym_data = self.chemical_name_synonyms[substance_name]
-                    chebi_id = synonym_data["chebi_id"]
-                    canonical_name = synonym_data["chebi_label"]
-                    return {
-                        "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
-                        "name": canonical_name,
-                        "predicate": metpo_predicate,
-                    }
+                # Synonyms now handled by find_chebi_by_name() via unified chemical mappings
 
                 if chebi_id:
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
@@ -1184,18 +1133,7 @@ class MetaTraitsTransform(Transform):
 
                 # Try ChEBI lookup
                 chebi_id = self.chemical_loader.find_chebi_by_name(substrate_name)
-
-                # If direct lookup fails, try synonym mapping
-                if not chebi_id and substrate_name in self.chemical_name_synonyms:
-                    synonym_data = self.chemical_name_synonyms[substrate_name]
-                    chebi_id = synonym_data["chebi_id"]
-                    canonical_name = synonym_data["chebi_label"]
-                    return {
-                        "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
-                        "name": canonical_name,
-                        "predicate": metpo_predicate,
-                    }
+                # Synonyms now handled by find_chebi_by_name() via unified chemical mappings
 
                 if chebi_id:
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
@@ -1408,12 +1346,7 @@ class MetaTraitsTransform(Transform):
             # Try ChEBI lookup first
             chebi_id = self.chemical_loader.find_chebi_by_name(substance)
             canonical_name = None
-
-            # Fallback to synonym mapping
-            if not chebi_id and substance in self.chemical_name_synonyms:
-                synonym_data = self.chemical_name_synonyms[substance]
-                chebi_id = synonym_data["chebi_id"]
-                canonical_name = synonym_data["chebi_label"]
+            # Chemical synonyms now handled by self.chemical_loader.find_chebi_by_name()
 
             # Fallback to special chemical mappings
             if not chebi_id and substance in self.special_chemical_mappings:
@@ -2205,7 +2138,7 @@ class MetaTraitsTransform(Transform):
             "metpo_synonym_to_class": self.metpo_synonym_to_class,
             "metpo_pattern_to_predicate": self.metpo_pattern_to_predicate,
             "special_chemical_mappings": self.special_chemical_mappings,
-            "chemical_name_synonyms": self.chemical_name_synonyms,
+            # chemical_name_synonyms removed - now in unified file (Phase 2, 2026-04-07)
             "ec_to_go": self.ec_to_go,
             "enzyme_name_to_go": self.enzyme_name_to_go,
             "ncbi_to_gtdb_mappings": self.ncbi_to_gtdb_mappings,
@@ -2230,7 +2163,7 @@ class MetaTraitsTransform(Transform):
         self.metpo_synonym_to_class = shared_data["metpo_synonym_to_class"]
         self.metpo_pattern_to_predicate = shared_data["metpo_pattern_to_predicate"]
         self.special_chemical_mappings = shared_data["special_chemical_mappings"]
-        self.chemical_name_synonyms = shared_data["chemical_name_synonyms"]
+        # chemical_name_synonyms removed - now in unified file (Phase 2, 2026-04-07)
         self.ec_to_go = shared_data["ec_to_go"]
         self.enzyme_name_to_go = shared_data["enzyme_name_to_go"]
         self.ncbi_to_gtdb_mappings = shared_data["ncbi_to_gtdb_mappings"]

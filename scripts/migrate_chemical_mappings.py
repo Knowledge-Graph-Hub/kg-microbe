@@ -67,18 +67,28 @@ class ChemicalMapping:
 def load_existing_unified_file(path: Path) -> Dict[str, ChemicalMapping]:
     """Load existing unified chemical mappings file."""
     mappings = {}
+    skipped = 0
+    line_num = 0
 
     print(f"Loading existing unified file: {path}")
 
     with gzip.open(path, 'rt') as f:
         header = f.readline().strip().split('\t')
+        line_num = 1
 
         for line in f:
+            line_num += 1
             parts = line.strip().split('\t')
             if len(parts) < 6:
                 parts.extend([''] * (6 - len(parts)))
 
             chebi_id, canonical_name, formula, synonyms_str, xrefs_str, sources_str = parts[:6]
+
+            # Validate that first column is a CHEBI ID
+            if not chebi_id.startswith('CHEBI:'):
+                print(f"  WARNING: Skipping malformed row {line_num} (no CHEBI ID): {chebi_id[:50]}...")
+                skipped += 1
+                continue
 
             synonyms = set(synonyms_str.split('|')) if synonyms_str else set()
             xrefs = set(xrefs_str.split('|')) if xrefs_str else set()
@@ -94,6 +104,8 @@ def load_existing_unified_file(path: Path) -> Dict[str, ChemicalMapping]:
             )
 
     print(f"  Loaded {len(mappings):,} existing mappings")
+    if skipped > 0:
+        print(f"  Skipped {skipped} malformed rows")
     return mappings
 
 

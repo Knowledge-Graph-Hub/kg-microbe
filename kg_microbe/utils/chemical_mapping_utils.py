@@ -69,8 +69,9 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
         raise FileNotFoundError(f"Unified mappings file not found: {mappings_path}")
 
     # Load gzipped TSV
+    # Use quoting=3 (QUOTE_NONE) to handle chemical names with quote characters
     with gzip.open(mappings_path, "rt") as f:
-        _UNIFIED_MAPPINGS = pd.read_csv(f, sep="\t", dtype=str)
+        _UNIFIED_MAPPINGS = pd.read_csv(f, sep="\t", dtype=str, quoting=3)
 
     # Fill NaN with empty strings
     _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.fillna("")

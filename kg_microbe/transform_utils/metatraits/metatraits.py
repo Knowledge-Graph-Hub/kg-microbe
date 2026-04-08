@@ -981,6 +981,13 @@ class MetaTraitsTransform(Transform):
             if match:
                 chemical_name = match.group(1).strip()
 
+                # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
+                # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
+                chemical_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', chemical_name)
+
+                # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
+                chemical_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', chemical_name).strip()
+
                 # Lookup predicate from METPO (use positive predicate)
                 predicate_data = self.metpo_pattern_to_predicate.get(keyword.lower())
                 if not predicate_data or not predicate_data.get("positive"):
@@ -989,7 +996,11 @@ class MetaTraitsTransform(Transform):
                 metpo_predicate = predicate_data["positive"]
 
                 # Lookup chemical via unified mappings (includes synonyms)
-                chebi_id = self.chemical_loader.find_chebi_by_name(chemical_name)
+                # Enable fuzzy stereochemistry matching to handle variants like "(-)-D-glucose"
+                chebi_id = self.chemical_loader.find_chebi_by_name(
+                    chemical_name,
+                    fuzzy_stereochemistry=True
+                )
 
                 if chebi_id:
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
@@ -1057,8 +1068,11 @@ class MetaTraitsTransform(Transform):
 
                 metpo_predicate = predicate_data["positive"]
 
-                # Try ChEBI lookup first
-                chebi_id = self.chemical_loader.find_chebi_by_name(substance_name)
+                # Try ChEBI lookup first (with fuzzy stereochemistry matching)
+                chebi_id = self.chemical_loader.find_chebi_by_name(
+                    substance_name,
+                    fuzzy_stereochemistry=True
+                )
                 # Synonyms now handled by find_chebi_by_name() via unified chemical mappings
 
                 if chebi_id:
@@ -1131,8 +1145,11 @@ class MetaTraitsTransform(Transform):
                     continue
                 metpo_predicate = predicate_data["positive"]
 
-                # Try ChEBI lookup
-                chebi_id = self.chemical_loader.find_chebi_by_name(substrate_name)
+                # Try ChEBI lookup (with fuzzy stereochemistry matching)
+                chebi_id = self.chemical_loader.find_chebi_by_name(
+                    substrate_name,
+                    fuzzy_stereochemistry=True
+                )
                 # Synonyms now handled by find_chebi_by_name() via unified chemical mappings
 
                 if chebi_id:
@@ -1343,8 +1360,11 @@ class MetaTraitsTransform(Transform):
         if match:
             substance = match.group(1).strip()
 
-            # Try ChEBI lookup first
-            chebi_id = self.chemical_loader.find_chebi_by_name(substance)
+            # Try ChEBI lookup first (with fuzzy stereochemistry matching)
+            chebi_id = self.chemical_loader.find_chebi_by_name(
+                substance,
+                fuzzy_stereochemistry=True
+            )
             canonical_name = None
             # Chemical synonyms now handled by self.chemical_loader.find_chebi_by_name()
 
@@ -1753,15 +1773,15 @@ class MetaTraitsTransform(Transform):
 
         :param trait_name: The trait name to resolve
         :param majority_label: The categorical value
-        :return: dict with pH preference phenotype or None if no match
+        :return: dict with pH preference phenotype, {"deferred": True} to skip, or None if no match
         """
         if trait_name.lower() != "ph preference":
             return None
 
         # Check if majority_label is empty or no robust majority
         if not majority_label or "no robust majority" in majority_label.lower():
-            # Cannot determine pH preference without clear majority value
-            return None
+            # Cannot determine pH preference without clear majority value - skip without adding to unmapped
+            return {"deferred": True}
 
         # Map pH preference values to METPO classes using lookups
         if "alkaliphile" in majority_label.lower():
@@ -2625,6 +2645,9 @@ class MetaTraitsTransform(Transform):
                                 label = fermentation["name"]
                             elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
                                 # Tier 3.0e: pH preference (pH preference: alkaliphile)
+                                # Known pattern but skip if no robust majority
+                                if ph_pref.get("deferred"):
+                                    continue
                                 curie = ph_pref["curie"]
                                 category = ph_pref["category"]
                                 pred = ph_pref["predicate"]
@@ -3206,6 +3229,9 @@ class MetaTraitsTransform(Transform):
                                     label = fermentation["name"]
                                 elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
                                     # Tier 3.0d: pH preference
+                                    # Known pattern but skip if no robust majority
+                                    if ph_pref.get("deferred"):
+                                        continue
                                     curie = ph_pref["curie"]
                                     category = ph_pref["category"]
                                     pred = ph_pref["predicate"]

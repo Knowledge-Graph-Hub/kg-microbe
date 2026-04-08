@@ -985,6 +985,9 @@ class MetaTraitsTransform(Transform):
                 # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
                 chemical_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', chemical_name)
 
+                # Strip concentration suffixes (e.g., "glycine 1%" → "glycine")
+                chemical_name = re.sub(r'\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$', '', chemical_name)
+
                 # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
                 chemical_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', chemical_name).strip()
 
@@ -1065,6 +1068,9 @@ class MetaTraitsTransform(Transform):
                 # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
                 substance_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', substance_name)
 
+                # Strip concentration suffixes (e.g., "glycine 1%" → "glycine")
+                substance_name = re.sub(r'\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$', '', substance_name)
+
                 # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
                 substance_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', substance_name).strip()
 
@@ -1137,6 +1143,9 @@ class MetaTraitsTransform(Transform):
                 # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
                 # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
                 substrate_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', substrate_name)
+
+                # Strip concentration suffixes (e.g., "glycine 1%" → "glycine")
+                substrate_name = re.sub(r'\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$', '', substrate_name)
 
                 # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
                 substrate_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', substrate_name).strip()

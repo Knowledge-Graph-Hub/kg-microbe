@@ -1,0 +1,300 @@
+chebi_id	stored_name	ols_name	label_status	spurious_synonyms	ols_only_synonyms	source
+CHEBI:0000178		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:0001970		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:0001977		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:01000492		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:02020929		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:03301056		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:03302071		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:03302088		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:03309991		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:03315424		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:07755		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:1000		CHEBI_1000	EMPTY_STORED	MnSO4 x X H2O	CHEBI_1000	mediadive_compounds
+CHEBI:101		CHEBI_101	EMPTY_STORED	Casamino acids (BD)	CHEBI_101	mediadive_compounds
+CHEBI:102		CHEBI_102	EMPTY_STORED	S77 + vitamins	CHEBI_102	mediadive_compounds
+CHEBI:103		CHEBI_103	EMPTY_STORED	S88 + Vitamins	CHEBI_103	mediadive_compounds
+CHEBI:10716816		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:1079		CHEBI_1079	EMPTY_STORED	Fastidious Anaerobe Basal Broth (OXOID)	CHEBI_1079	mediadive_compounds
+CHEBI:1111		CHEBI_1111	EMPTY_STORED	Carboxymethyl cellulose, sodium salt	CHEBI_1111	mediadive_compounds
+CHEBI:1143		CHEBI_1143	EMPTY_STORED	Salt Solution I	CHEBI_1143	mediadive_compounds
+CHEBI:11545		CHEBI_11545	EMPTY_STORED	Betaine Hydrochloride	CHEBI_11545	mediadive_compounds
+CHEBI:1161		CHEBI_1161	EMPTY_STORED	KH2PO4|KH2PO4 x 7 H2O	CHEBI_1161	mediadive_compounds
+CHEBI:1185531		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:12		CHEBI_12	EMPTY_STORED	B12	CHEBI_12	mediadive_compounds
+CHEBI:12054		CHEBI_12054	EMPTY_STORED	(NH4)6Mo7O24|(NH4)6Mo7O24 x 4 H2O|(NH4)6Mo7O24·4H2O|(NH4)6Mo7O4|(NH4)6Mo7O4 x 24 H2O|(NH4)6MoO24·4H2O|(NH4)6MoO7O24|(NH4)6MoO7O24 x 4 H2O|(NH4)Mo7O24·4H2O|(NH4)MoO7O24|(NH4)MoO7O24 x 4 H2O	CHEBI_12054	mediadive_compounds
+CHEBI:1250		CHEBI_1250	EMPTY_STORED	H3BO4	CHEBI_1250	mediadive_compounds
+CHEBI:12598458		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:1260		CHEBI_1260	EMPTY_STORED	Bacto Tryptic Soy Broth without Dextrose	CHEBI_1260	mediadive_compounds
+CHEBI:12931	D-galactonate	D-galactonate	OK	galactonate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:12936	D-galactose	D-galactose	OK	D-Gal|D-galacto-hexose		mediadive_compounds|primary_mappings[bacdive_api]
+CHEBI:12952	aldehydo-D-galacturonate	aldehydo-D-galacturonate	OK	D-Galacturonate|D-galacturonate|galacturonate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:129630846		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:129831233		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:1329		CHEBI_1329	EMPTY_STORED	Corn meal agar	CHEBI_1329	mediadive_compounds
+CHEBI:132943	aspartate	aspartate	OK	aspartate anion|aspartic acid anion		primary_mappings[chemicals_sssom]
+CHEBI:133748	citrate anion	citrate anion	OK	citrate|citrate anions		primary_mappings[chemicals_sssom]
+CHEBI:1344098		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:134447	glycerol 1-monomycolate (C80) (Mycobacterium phlei)	glycerol 1-monomycolate (C80) (Mycobacterium phlei)	OK	"1-O-{(21E)-3-hydroxy-35-[(icosan-2-yl)oxy]-35-oxo-2-pentacosylpentatriacont-21-enoyl}glycerol|1-{(21E)-3-hydroxy-35-[(icosan-2-yl)oxy]-35-oxo-2-pentacosylpentatriacont-21-enoyl}glycerol|35-(2,3-dihydroxypropyl) 1-icosan-2-yl (14E)-33-hydroxy-34-pentacosylpentatriacont-14-enedioate|Glycerol	glycerol 1-monomycolate (C80) (Mycobacterium phlei)	
+CHEBI:136689		CHEBI_136689	EMPTY_STORED		CHEBI_136689	primary_mappings[kegg_compound]
+CHEBI:136912	1,2-diacyl-sn-glycero-3-phospholipid	1,2-diacyl-sn-glycero-3-phospholipid	OK	1,2-diacyl-sn-glycero-3-phospholipids|a 1,2-diacyl-sn-glycero-3-phospholipid		primary_mappings[kegg_compound]
+CHEBI:14258		CHEBI_14258	EMPTY_STORED	Sulfur (powder)	CHEBI_14258	mediadive_compounds
+CHEBI:14754		CHEBI_14754	EMPTY_STORED	Na-glycerol phosphate|Na-glycerophosphate|Na2-ß-glycerolphosphate|Sodium glycerophosphate|Sodium β-glycerophosphate	CHEBI_14754	mediadive_compounds
+CHEBI:1507		CHEBI_1507	EMPTY_STORED	Yeast Nitrogen Base	CHEBI_1507	mediadive_compounds
+CHEBI:1530		CHEBI_1530	EMPTY_STORED	Tropic Marine salt	CHEBI_1530	mediadive_compounds
+CHEBI:156		CHEBI_156	EMPTY_STORED	Peptone mixture	CHEBI_156	mediadive_compounds
+CHEBI:15688	acetoin	acetoin	OK	(S)-2-Acetoin|1-Hydroxyethyl methyl ketone|2,3-Butanolone|2-Acetoin|2-Hydroxy-3-butanone|3-Hydroxy-2-butanone|3-Hydroxybutan-2-one|3-hydroxy 2-butanone|3-hydroxybutan-2-one|Acetyl methyl carbinol|Dimethylketol|gamma-Hydroxy-beta-oxobutane		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:15824	D-fructose	D-fructose	OK	(-)-D-fructose|(2)-d-fructose|D-Fru|D-arabino-Hexulose|D-arabino-hex-2-ulose|D-laevulose|Fruit sugar|Laevulose|Levulose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:159480023		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:15963	ribitol	ribitol	OK	(+)-D-arabitol|(2R,3s,4S)-pentane-1,2,3,4,5-pentol|Adonitol|D-Adonitol|D-Ribitol|D-adonitol (D-ribitol)|L-ribitol|adonitol|meso-ribitol		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:15978	sn-glycerol 3-phosphate	sn-glycerol 3-phosphate	OK	(2R)-2,3-dihydroxypropyl dihydrogen phosphate|(R)-glycerol 1-phosphate|D-(glycerol 1-phosphate)|D-Glycerol 1-phosphate|G Glycerol|Glycerol|Glycerol-3-phosphate|Glycerophosphoric acid|L-(glycerol 3-phosphate)|Phosphorsaeure-mono-((R)-2,3-dihydroxy-propylester)|SN-GLYCEROL-3-PHOSPHATE|glycerol 3-phosphate|phosphoric acid mono-((R)-2,3-dihydroxy-propyl) ester|sn-Gro-1-P|sn-glycerol 3-(dihydrogen phosphate)		chebi_xrefs|mediadive_compounds|metatraits_chemical_synonyms[manual_2026-04-07]|
+CHEBI:16024	D-mannose	D-mannose	OK	D-manno-hexose		primary_mappings[bacdive_api]
+CHEBI:16176	D-ornithine	D-ornithine	OK	(+)-l-ornithine|(2R)-2,5-diaminopentanoic acid|(R)-ornithine		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:16183	methane	methane	OK	CH4|Methan|marsh gas|metano|methyl hydride|tetrahydridocarbon		bacdive_metabolites|chebi_xrefs|metatraits_special_chemicals[manual_2026-04-07]|
+CHEBI:16189	sulfate	sulfate	OK	1,2-propandiol|SO4(2-)|SULFATE ION|Sulfate anion(2-)|Sulfate dianion|Sulfate(2-)|Sulfuric acid ion(2-)|[SO4](2-)|sulphate|sulphate ion|tetraoxidosulfate(2-)|tetraoxosulfate(2-)|tetraoxosulfate(VI)		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|chebi_xrefs|metatraits_
+CHEBI:16199	urea	urea	OK	1728|Carbamide|E927b|H2NC(O)NH2|Harnstoff|Karbamid|carbamide|carbonyldiamide|ur|uree		chebi_xrefs|mediadive_compounds|metatraits_special_chemicals[manual_2026-04-07]|
+CHEBI:16211214		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:16218438		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:16240	hydrogen peroxide	hydrogen peroxide	OK	H(2)O(2)|H2O2|HOOH|Oxydol|[OH(OH)]|bis(hydridooxygen)(O--O)|dihydrogen dioxide|dihydrogen peroxide|dihydrogen(peroxide)|dioxidane|perhydrol		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]|primary_mappings[
+CHEBI:16261	chitosan	chitosan	OK	(1->4)-2-amino-2-deoxy-beta-D-glucan|Deacetylchitin|[4)-beta-D-GlcpN(1->]n|beta-1,4-Poly-D-glucosamine|poliglusam		chebi_xrefs|metatraits_special_chemicals[manual_2026-04-07]|primary_mappings[keg
+CHEBI:1627		CHEBI_1627	EMPTY_STORED	Cellobiose or Cellulose MN 300	CHEBI_1627	mediadive_compounds
+CHEBI:16277	haloacetic acid	haloacetic acid	OK	1,4-propandiol		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:16449	alanine	alanine	OK	2-Aminopropanoic acid|2-Aminopropionic acid|2-aminopropanoic acid|A|ALA|Alanin|alanina|dl-alanine		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[che
+CHEBI:16583	butane-2,3-dione	butane-2,3-dione	OK	2,3-Butadione|2,3-Butanedione|2,3-Diketobutane|2,3-Dioxobutane|2,3-butandione|2,3-butanone|Biacetyl|Diacetyl|Dimethyl glyoxal|Dimethylglyoxal|diacetyl		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:16659	D-glycerate	D-glycerate	OK	(2R)-2,3-dihydroxypropanoate|(R)-glycerate|(R)-glycerate anion|D-saccharate|alpha,beta-Hydroxypropionate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:1672		CHEBI_1672	EMPTY_STORED	Fish meat extract	CHEBI_1672	mediadive_compounds
+CHEBI:167265	PE(18:1_20:4)	PE(18:1_20:4)	OK	Fe2(SO4)3 x H2O|Fe2(SO4)3 x X H2O|PE 18:1_20:4|phosphatidylethanolamine 18:1_20:4|phosphatidylethanolamine(18:1_20:4)		mediadive_compounds
+CHEBI:167312532		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:167312535		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:167312541		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:16865	gamma-aminobutyric acid	gamma-aminobutyric acid	OK	2-aminobutyrate|4-Aminobutanoic acid|4-Aminobutyric acid|4-aminobutanoic acid|4-aminobutyric acid|4Abu|GABA|GAMMA-AMINO-BUTANOIC ACID|gamma-Aminobuttersaeure|gamma-amino-n-butyric acid|gamma-aminobutanoic acid|omega-aminobutyric acid|piperidic acid|piperidinic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[che
+CHEBI:1687714		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:16982	(R,R)-butane-2,3-diol	(R,R)-butane-2,3-diol	OK	(2R,3R)-butane-2,3-diol|(R,R)-(-)-butane-2,3-diol|(R,R)-2,3-BUTANEDIOL|(R,R)-2,3-Butanediol|(R,R)-2,3-Butylene glycol|2,4-butanediol		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:16988	D-ribose	D-ribose	OK	(+)-l-rhamnose|(-)-d-rhamnose|D-Rib|D-ribo-pentose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:16997	propane-1,2-diol	propane-1,2-diol	OK	1,2-Propanediol|1,2-Propylenglykol|1,2-dihydroxypropane|2-hydroxypropanol|CH3CH(OH)CH2OH|HOCH2CH(OH)CH3|HOCH2CH(OH)Me|MeCH(OH)CH2OH|PPD|Propylene glycol|alpha-propyleneglycol|isopropylene glycol|methyl glycol|methylethyl glycol|methylethylene glycol|monopropylene glycol|1,2-propandiol		chebi_xrefs|primary_mappings[kegg_compound]|metatraits_special_chemicals[correct
+CHEBI:17029	chitin	chitin	OK	(1->4)-2-acetamido-2-deoxy-beta-D-glucan|[1,4-(N-Acetyl-beta-D-glucosaminyl)]n|[4)-beta-D-GlcpNAc(1->]n|beta-1,4-Poly-N-acetyl-D-glucosamine		chebi_xrefs|metatraits_special_chemicals[manual_2026-04-07]|primary_mappings[keg
+CHEBI:17140	D-xylulose	D-xylulose	OK	(+)-d-xylose|D-Lyxulose|D-Xul|D-threo-Pentulose|D-threo-pent-2-ulose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:172122	21-Hydroxy-5b-pregnane-3,11,20-trione	CHEBI_172122	MISMATCH		CHEBI_172122	primary_mappings[kegg_compound]
+CHEBI:17266	L-sorbose	L-sorbose	OK	(3S,4R,5S)-1,3,4,5,6-pentahydroxyhexan-2-one|D-sorbose|L-Sor|L-xylo-hex-2-ulose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:17306	maltose	maltose	OK	1-alpha-D-Glucopyranosyl-4-alpha-D-glucopyranose|4-(alpha-D-glucopyranosido)-alpha-glucopyranose|4-(alpha-D-glucosido)-D-glucose|4-O-alpha-D-glucopyranosyl-D-glucopyranose|4-O-alpha-D-glucopyranosyl-D-glucose|Cextromaltose|D-(+)-maltose|D-maltose|D-maltose (maltose)|Malt sugar|Malzzucker|alpha-D-Glcp-(1->4)-D-Glcp|alpha-D-Glucopyranosyl-(1->4)-D-glucopyranose|alpha-D-glucopyranosyl-(1->4)-D-glucopyranose|alpha-D-glucopyranosyl-(1->4)-D-glucose|alpha-malt sugar|maltobiose|maltose hydrate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:1732		CHEBI_1732	EMPTY_STORED	Basal salts solution	CHEBI_1732	mediadive_compounds
+CHEBI:17431	agmatine	agmatine	OK	(4-Aminobutyl) guanidine|(4-aminobutyl)guanidine|1-(4-aminobutyl)guanidine|5-aminovalerate|N-(4-aminobutyl)guanidine		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:175452	3a,21-Dihydroxy-5b-pregnane-11,20-dione	CHEBI_175452	MISMATCH		CHEBI_175452	primary_mappings[kegg_compound]
+CHEBI:176		CHEBI_176	EMPTY_STORED	Glacial acetic acid	CHEBI_176	mediadive_compounds
+CHEBI:17659	UDP	UDP	OK	Uridine 5'-diphosphate|Uridine diphosphate|potassium 5-dehydro-D-gluconate|uridine 5'-(trihydrogen diphosphate)		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:176839	vitamin B3	vitamin B3	OK	Vitamin 3|vitamin B-3|vitamin B3 vitamer|vitamin B3 vitamers|vitamins B3		mediadive_compounds
+CHEBI:176843	vitamin B12	vitamin B12	OK	VitaminB12|Vitamin B12  (4)|Vitamin B12  (8)|Vitamin B12  (9)|vitamin B-12|vitamin B12 vitamer|vitamin B12 vitamers|vitamins B12		mediadive_compounds
+CHEBI:17716	lactose	lactose	OK	(+)-lactose|(Gal)1 (Glc)1|1-beta-D-Galactopyranosyl-4-D-glucopyranose|4-(beta-D-galactosido)-D-glucose|4-O-beta-D-galactopyranosyl-D-glucose|D-lactose|D-lactose (lactose)|Galbeta1-4Glc|Lac|Laktobiose|Laktose|Milchzucker|Milk sugar|beta lactose|beta-D-Gal-(1->4)-D-Glc|beta-D-Galp-(1->4)-D-Glcp|beta-D-galactopyranosyl-(1->4)-D-glucopyranose|beta-Gal1,4-Glc|lactobiose|milk sugar		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:17792	organohalogen compound	organohalogen compound	OK	(-)-L-sorbose|RX|organic halide|organic halides|organohalogen compounds		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:17858	glutathione disulfide	glutathione disulfide	OK	(2S,2'S)-5,5'-[disulfanediylbis({(2R)-3-[(carboxymethyl)amino]-3-oxopropane-1,2-diyl}imino)]bis(2-amino-5-oxopentanoic acid)|GSSG|OXIDIZED GLUTATHIONE DISULFIDE|Oxidized glutathione|Oxiglutatione|glutathione disulphide|glutathione oxidized|oxidised glutathione		chebi_xrefs|metatraits_special_chemicals[manual_2026-04-07]|primary_mappings[keg
+CHEBI:17895	L-tyrosine	L-tyrosine	OK	(-)-alpha-amino-p-hydroxyhydrocinnamic acid|(2S)-2-amino-3-(4-hydroxyphenyl)propanoic acid|(S)-(-)-Tyrosine|(S)-2-Amino-3-(p-hydroxyphenyl)propionic acid|(S)-3-(p-Hydroxyphenyl)alanine|(S)-Tyrosine|(S)-alpha-amino-4-hydroxybenzenepropanoic acid|4-hydroxy-L-phenylalanine|L-Tyrosin|TYROSINE|Tyr|Tyrosine|Y		chebi_xrefs|mediadive_compounds|metatraits_special_chemicals[corrected_2026-04-0
+CHEBI:17924	D-glucitol	D-glucitol	OK	(-)-D-sorbitol|(-)-sorbitol|(2R,3R,4R,5S)-hexane-1,2,3,4,5,6-hexol|D-(-)-sorbitol|D-SORBITOL|D-Sorbit|D-Sorbitol|D-sorbitol|D-sorbitol (D-glucitol)|E 420|E-420|E420|G-ol|Glc-ol|L-Gulitol|sorbitol		chebi_xrefs|mediadive_compounds|metatraits_chemical_synonyms[manual_2026-04-07]|
+CHEBI:17992	sucrose	sucrose	OK	1-alpha-D-Glucopyranosyl-2-beta-D-fructofuranoside|Cane sugar|D-saccharose (sucrose)|Saccharose|Sacharose|White sugar|beta-D-Fruf-(2<->1)-alpha-D-Glcp|beta-D-fructofuranosyl alpha-D-glucopyranoside|d-salicin|sacarosa|table sugar		chebi_xrefs|mediadive_compounds|metatraits_chemical_synonyms[manual_2026-04-07]|
+CHEBI:1812		CHEBI_1812	EMPTY_STORED	Trace element solution SL12	CHEBI_1812	mediadive_compounds
+CHEBI:18232	D-galactosamine 6-phosphate	D-galactosamine 6-phosphate	OK	2-amino-2-deoxy-6-O-phosphono-D-galactopyranose|2-amino-2-deoxy-D-galactopyranose 6-(dihydrogen phosphate)|glutamyl-glutamic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:1828		CHEBI_1828	EMPTY_STORED	MnCl4·4H2O	CHEBI_1828	mediadive_compounds
+CHEBI:18309	3-aminobutyric acid	CHEBI_18309	MISMATCH	3-aminobutyrate	CHEBI_18309	metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:1833		CHEBI_1833	EMPTY_STORED	Trace minerals (see Medium No.197|Trace minerals (see Medium No.243)|Trace minerals (see Medium No.324)	CHEBI_1833	mediadive_compounds
+CHEBI:18392	bis(beta-glucosyluronic acid)bilirubin	bis(beta-glucosyluronic acid)bilirubin	OK	1,1'-di-O-{3,3'-[8-(carboxyethyl)-2,17-diethenyl-2,7,13,18-tetramethyl-1,19-dioxo-21,24-dihydrobila-4,15-diene-8,12-diyl]dipropanoyl}bis(beta-D-glucopyranuronic acid)|3-coumarate|Bilirubin beta-diglucuronide|Bilirubin-bisglucuronoside		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:1855		CHEBI_1855	EMPTY_STORED	Vitamin solution (see Medium No.197)|Vitamin solution (see Medium No.221)|Vitamin solution (see Medium No.304)|Vitamin solution (see Medium No.403)|Vitamin solution (see Medium No.403)*|Vitamin solution (see Medium No.602)|Vitamin solution (see Medium No.979)|Vitamin solution* (see Medium No.1157)|Vitamin solution* (see Medium No.197)|Vitamin solution* (see Medium No.403)|Vitamin solution* (see Medium No.556)|Vitamin solution* (see Medium No.915)|Vitamin solution* (see Medium No.923)|Vitamin solution* (see Medium No.944)	CHEBI_1855	mediadive_compounds
+CHEBI:1856		CHEBI_1856	EMPTY_STORED	Thiamine solution (see Medium No.403)|Thiamine solution (see Medium No.403)*|Thiamine solution* (see Medium No.403)	CHEBI_1856	mediadive_compounds
+CHEBI:1860		CHEBI_1860	EMPTY_STORED	L-Cysteine·HCl·H2O solution*	CHEBI_1860	mediadive_compounds
+CHEBI:1863		CHEBI_1863	EMPTY_STORED	Metal solution (see below)|Methanol solution (see below)*|MnCl2 solution see below	CHEBI_1863	mediadive_compounds
+CHEBI:1880		CHEBI_1880	EMPTY_STORED	Rye-bran	CHEBI_1880	mediadive_compounds
+CHEBI:1886		CHEBI_1886	EMPTY_STORED	SL-6 trace element solution (see Medium No.167)|Trace element solution (see Medium No. 1079])|Trace element solution (see Medium No.1079)|Trace element solution (see Medium No.128)|Trace element solution (see Medium No.167)|Trace element solution (see Medium No.187|Trace element solution (see Medium No.187)|Trace element solution (see Medium No.231)|Trace element solution (see Medium No.243)|Trace element solution (see Medium No.284)|Trace element solution (see Medium No.294)|Trace element solution (see Medium No.301)|Trace element solution (see Medium No.439)|Trace element solution (see Medium No.483)|Trace element solution (see Medium No.741)|Trace element solution (see Medium No.748)|Trace element solution (see Medium No.899)|Trace element solution SL7 (see Medium No.516)|Trace element solution SL8 (see Medium No.190)|Trace element solution(see Medium No.187)|Trace elements solution (see Medium No.1030)|Trace elements solution (see Medium No.1182)|Trace elements solution (see Medium No.310)	CHEBI_1886	mediadive_compounds
+CHEBI:1893	4-methyl-L-glutamate(1-)	4-methyl-L-glutamate(1-)	OK	(2S)-2-ammonio-4-methylpentanedioate|(2S)-2-azaniumyl-4-methylpentanedioate|Riboflavin solution (see Medium No.462)*		mediadive_compounds
+CHEBI:1900		CHEBI_1900	EMPTY_STORED	Phosphate buffer stock solution	CHEBI_1900	mediadive_compounds
+CHEBI:192761	ferrihydrite	ferrihydrite	OK	Fe(III)-oxyhydroxide|Fh|ferric hydroxide oxide|ferric oxy-hydroxide|ferric oxyhydroxide|iron hydroxide oxide|iron(III) oxyhydroxide|amorphous iron (iii) oxide|amorphous fe(iii) oxyhydroxid		chebi_xrefs|mediadive_compounds|metatraits_special_chemicals[corrected_2026-04-0
+CHEBI:1946		CHEBI_1946	EMPTY_STORED	Na2S2O4·2H2O	CHEBI_1946	mediadive_compounds
+CHEBI:1982		CHEBI_1982	EMPTY_STORED	Trace minerals solution (see Medium No.228)|Trace vitamins solution (see Medium No.284)|Trace vitamins solution (see Medium No.284)*|Trace vitamins solution (see Medium No.682)	CHEBI_1982	mediadive_compounds
+CHEBI:1985		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:1986		CHEBI_1986	EMPTY_STORED	Small dried sardine	CHEBI_1986	mediadive_compounds
+CHEBI:1999		CHEBI_1999	EMPTY_STORED	LB broth powder	CHEBI_1999	mediadive_compounds
+CHEBI:2		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:2026		CHEBI_2026	EMPTY_STORED	Phosphates solution	CHEBI_2026	mediadive_compounds
+CHEBI:2060		CHEBI_2060	EMPTY_STORED	Hipolypepton	CHEBI_2060	mediadive_compounds
+CHEBI:2142		CHEBI_2142	EMPTY_STORED	Charcoal-filtered, natural seawater	CHEBI_2142	mediadive_compounds
+CHEBI:2152		CHEBI_2152	EMPTY_STORED	Natural seawater	CHEBI_2152	mediadive_compounds
+CHEBI:21806	N(2),N(5)-diacyl-L-ornithine	N(2),N(5)-diacyl-L-ornithine	OK	N(2),N(5)-diacyl-L-ornithines|Na-aspartate		mediadive_compounds
+CHEBI:21868242		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:22507	aminoglycoside antibiotic	aminoglycoside antibiotic	OK	aminoglycoside antibiotics		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|primary_mappings[bacdiv
+CHEBI:22652	ascorbic acid	ascorbic acid	OK			mediadive_compounds
+CHEBI:23039	L-xylose	NOT_FOUND	NOT_FOUND			metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:23495	cyclopentanols	cyclopentanols	OK	cyclopentanol		primary_mappings[chemicals_sssom]
+CHEBI:23615261		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:23652		CHEBI_23652	EMPTY_STORED	dextrin	CHEBI_23652	primary_mappings[chemicals_sssom]
+CHEBI:23669629		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:23695977		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:23982	ethanols	ethanols	OK	ethanol		primary_mappings[chemicals_sssom]
+CHEBI:24265	gluconate	gluconate	OK	Na gluconate		mediadive_compounds
+CHEBI:24271	glucosamines	glucosamines	OK	glucosamine		primary_mappings[chemicals_sssom]
+CHEBI:24384	glycogens	glycogens	OK	glycogen		primary_mappings[chemicals_sssom]
+CHEBI:24596		CHEBI_24596	EMPTY_STORED	CrK(SO4)2·12H2O	CHEBI_24596	mediadive_compounds
+CHEBI:24632	hydrocarbon	hydrocarbon	OK			metatraits_special_chemicals[manual_2026-04-07]
+CHEBI:24753	hygromycin	hygromycin	OK	hygromycins		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|primary_mappings[bacdiv
+CHEBI:24844	inosines	inosines	OK	inosine		primary_mappings[chemicals_sssom]
+CHEBI:24848	inositol	inositol	OK	1,2,3,4,5,6-cyclohexanehexol|inositols		mediadive_compounds
+CHEBI:24934		CHEBI_24934	EMPTY_STORED	Na2Se3|Na2Se3 x 5 H2O	CHEBI_24934	mediadive_compounds
+CHEBI:24997	lactate salt	lactate salt	OK	2-hydroxypropanoate salt|2-hydroxypropanoate salts|2-hydroxypropionate salt|2-hydroxypropionate salts|lactate|lactate salts|lactates		primary_mappings[chemicals_sssom]
+CHEBI:25064	lipoyl group	lipoyl group	OK	(+)-l-lyxitol|1,2-dithiolane-3-pentanoyl group|5-(1,2-dithiolan-3-yl)pentanoyl		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:25105	macrolide antibiotic	macrolide antibiotic	OK	Makrolidantibiotika|macrolide antibiotics		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|primary_mappings[bacdiv
+CHEBI:25115	malate	malate	OK	malate anion|malates|malic acid anion		mediadive_compounds|primary_mappings[chemicals_sssom]
+CHEBI:25274	methylamines	methylamines	OK	methylamine|methylated amines		primary_mappings[chemicals_sssom]
+CHEBI:26052		CHEBI_26052	EMPTY_STORED	Na2O4W|Na2O4W x 2 H2O	CHEBI_26052	mediadive_compounds
+CHEBI:26130	pigmented	biological pigment	MISMATCH	pigmented|pigments		bacdive_metabolites|primary_mappings[bacdive_metabolite]
+CHEBI:26406	N-substituted putrescine	N-substituted putrescine	OK	N-substituted putrescines|putrescine|putrescines		primary_mappings[chemicals_sssom]
+CHEBI:26806	succinate	succinate	OK	Na Succinate|Na-succinate|succinate anion|succinates|succinic acid anion		mediadive_compounds|primary_mappings[chemicals_sssom]
+CHEBI:26833	sulfur atom	sulfur atom	OK	16S|Elemental sulfur|S|Schwefel|Sulfur|azufre|soufre|sulfur|sulphur|theion		chebi_xrefs|mediadive_compounds|metatraits_special_chemicals[corrected_2026-04-0
+CHEBI:26835	sulfur molecular entity	sulfur molecular entity	OK	sulfur compounds	sulfur molecular entity	metatraits_special_chemicals[corrected_2026-04-08]
+CHEBI:27		CHEBI_27	EMPTY_STORED	EG:JM	CHEBI_27	mediadive_compounds
+CHEBI:27082	trehalose	trehalose	OK			primary_mappings[chemicals_sssom]
+CHEBI:27242	uridines	uridines	OK	uridine		primary_mappings[chemicals_sssom]
+CHEBI:27469	2-dehydro-D-gluconic acid	2-dehydro-D-gluconic acid	OK	2-Dehydro-D-gluconate|2-Keto-D-gluconic acid|2-Oxogluconic acid|2-ketogluconic acid|2-oxogluconate|D-arabino-hex-2-ulosonic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:27613	amygdalin	amygdalin	OK	[(6-O-beta-D-glucopyranosyl-beta-D-glucopyranosyl)oxy](phenyl)acetonitrile|amygdaloside|mandelonitrile-beta-gentiobioside		primary_mappings[bacdive_api]
+CHEBI:27666	actinomycin D	actinomycin D	OK	2-amino-4,6-dimethyl-3-oxo-1-N,9-N-bis-[(18aS)-10c,14,17-trimethyl-5,8,12,15,18-pentaoxo-6c,13t-di(propan-2-yl)-18ar-hexadecahydro-1H-pyrrolo[2,1-i][1,4,7,10,13]oxatetraazacyclohexadecin-9c-yl]-3H-phenoxazine-1,9-dicarboxamide|2-amino-N,N'-bis(hexadecahydro-2,5,9-trimethyl-6,13-bis(1-methylethyl)-1,4,7,11,14-pentaoxo-1H-pyrrolo(2,1-i)(1,4,7,10,13)oxatetra-azacyclohexadecin-10-yl)-4,6-dimethyl-3-oxo-3H-phenoxazine-1,9-dicarboxamide|ActD|Dactinomycin|actinomycin B|actinomycin C1|actinomycin IV|actinomycin X		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|chebi_xrefs|metatraits_
+CHEBI:27668	(S)-3-hydroxylauroyl-CoA	(S)-3-hydroxylauroyl-CoA	OK	(S)-3-Hydroxydodecanoyl-CoA|(S)-3-hydroxydodecanoyl-coenzyme A|(S)-3-hydroxylauroyl-coenzyme A|3'-phosphoadenosine 5'-{3-[(3R)-3-hydroxy-4-({3-[(2-{[(3S)-3-hydroxydodecanoyl]sulfanyl}ethyl)amino]-3-oxopropyl}amino)-2,2-dimethyl-4-oxobutyl] dihydrogen diphosphate}|actinomycin C		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:28017	starch	starch	OK	Amidon (starch)|Corn starch|Rice starch|Staerke|amidon|amylum		chebi_xrefs|mediadive_compounds|metatraits_special_chemicals[manual_2026-04-07]|
+CHEBI:28087	glycogen	glycogen	OK	(+)-D-glycogen|animal starch|liver starch		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:28647	3-O-methylgallic acid	3-O-methylgallic acid	OK	3,4-dihydroxy-5-methoxybenzoic acid|4,5-Dihydroxy-m-anisic acid|gallic acid 3-methyl ether|3-O-methylgallate		chebi_xrefs|primary_mappings[kegg_compound]|metatraits_special_chemicals[correct
+CHEBI:28761	N-acetyl-D-galactosaminide	N-acetyl-D-galactosaminide	OK	N-acetyl-D-galactosaminides|d-galactonic acid lactone		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:28792	erucic acid	erucic acid	OK	(13Z)-13-docosenoic acid|(13Z)-Docosenoic acid|(13Z)-docos-13-enoic acid|(Z)-13-docosenoic acid|(Z)-docos-13-enoic acid|13-cis-docosenoic acid|22:1omega9|C22:1n-9|Erucasaeure|cephamycin B|cis-13-Docosenoic acid|cis-Delta(13)-docosenoic acid|cis-eruic acid|docos-13c-enoic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:28847	D-fucose	D-fucose	OK	6-deoxy-D-galactose|D-Fuc		primary_mappings[bacdive_api]
+CHEBI:29042	alpha-D-glucose 1-phosphate	alpha-D-glucose 1-phosphate	OK	1-O-phosphono-alpha-D-glucopyranose|3-dehydro-d-gluconate|ALPHA-D-GLUCOSE-1-PHOSPHATE|Cori ester|D-Glucose 1-phosphate|D-Glucose alpha-1-phosphate|alpha-D-Glucose-1-phosphate|alpha-D-glucopyranose 1-(dihydrogen phosphate)|alpha-D-glucopyranosyl phosphate|glucose 1-phosphate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:29242	arsenate	arsenite(1-)	MISMATCH	arsenate	arsenite(1-)	metatraits_special_chemicals[manual_2026-04-07]
+CHEBI:29356	dihydrogen	oxide(2-)	MISMATCH	dihydrogen	oxide(2-)	metatraits_special_chemicals[manual_2026-04-07]
+CHEBI:29985	L-glutamate(1-)	L-glutamate(1-)	OK	(+)-l-glutamate|(2S)-2-ammoniopentanedioate|L-glutamate|L-glutamic acid monoanion|L-glutamic acid, ion(1-)|hydrogen L-glutamate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:29991	L-aspartate(1-)	L-aspartate(1-)	OK	(+)-l-aspartate|(2S)-2-ammoniobutanedioate|(2S)-2-ammoniosuccinate|L-aspartate|L-aspartic acid monoanion|hydrogen L-aspartate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:29995	aspartate(2-)	aspartate(2-)	OK	2-aminobutanedioate|2-aminosuccinate|aspartate|aspartic acid dianion		primary_mappings[chemicals_sssom]
+CHEBI:30033	bacteriochlorophyll a	bacteriochlorophyll a	OK	Bacterio-chlorophyll a|[methyl (3S,4S,13R,14R,21R)-9-acetyl-14-ethyl-4,8,13,18-tetramethyl-20-oxo-3-(3-oxo-3-{[(2E,7R,11R)-3,7,11,15-tetramethylhexadec-2-en-1-yl]oxy}propyl)-13,14-dihydrophorbine-21-carboxylatato(2-)-kappa4N(23),N(24),N(25),N(26)]magnesium|bacteriochlorophyll alpha		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:30089	acetate	acetate	OK	ACETATE ION|Azetat|CH3-COO(-)|Ethanoat|MeCO2 anion|acetic acid, ion(1-)|ethanoate		chebi_xrefs|metatraits_special_chemicals[manual_2026-04-07]|primary_mappings[che
+CHEBI:30729	ethylenediaminetetraacetatoferrate(1-)	ethylenediaminetetraacetatoferrate(1-)	OK	(ethane-1,2-diyldinitrilo)tetraacetatoferrate(1-)|(ethane-1,2-diyldinitrilo)tetraacetatoferrate(III)|Fe(III)-EDTA|Fe(III)-Edta|Fe(III)·EDTA|Iron(III)-edta|[Fe(edta)](-)|[FeEdta](-)|ethylenediaminetetraacetatoferrate		chebi_xrefs|mediadive_compounds|metatraits_special_chemicals[corrected_2026-04-0
+CHEBI:3084026		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:30956	trichloroacetic acid	trichloroacetic acid	OK	L-tartrate|TCA|Trichloressigsaeure|trichloracetic acid|trichloroethanoic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:31624	fluorescein (lactone form)	fluorescein (lactone form)	OK	3',6'-dihydroxy-3H-spiro[2-benzofuran-1,9'-xanthen]-3-one|3',6'-dihydroxyfluoran|3,6-fluorandiol|9-(o-carboxyphenyl)-6-hydroxy-3-isoxanthenone|9-(o-carboxyphenyl)-6-hydroxy-3H-xanthen-3-one|C.I. 45350|C.I. Solvent Yellow 94|D and C Yellow No. 7|D&C Yellow No. 7|Fluoreszein|Japan Yellow 201|Solvent Yellow 94|Yellow fluorescein|fluorescein|fluorescein lactone|fluoresceine|resorcinolphthalein		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:32374	trans-4-coumaric acid	trans-4-coumaric acid	OK	(2E)-3-(4-hydroxyphenyl)acrylic acid|(2E)-3-(4-hydroxyphenyl)prop-2-enoic acid|(E)-3-(4-hydroxyphenyl)-2-propenoic acid|(E)-p-coumaric acid|(E)-p-hydroxycinnamic acid|4'-HYDROXYCINNAMIC ACID|4-Hydroxycinnamic acid|coumarate|naringeninic acid|p-Coumaric acid|trans-4-hydroxycinnamic acid|trans-p-Hydroxycinnamate|trans-p-coumaric acid|trans-p-coumarinic acid|trans-p-hydroxycinnamic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:32530	histidinate(2-)	histidinate(2-)	OK	2-amino-3-imidazol-1-id-4-ylpropanoate|histidinate|histidine|histidine dianion		primary_mappings[chemicals_sssom]
+CHEBI:32805	cis-aconitic acid	cis-aconitic acid	OK	(1Z)-prop-1-ene-1,2,3-tricarboxylic acid|(Z)-1-propene-1,2,3-tricarboxylic acid|aconitate|cis-1-propene-1,2,3-tricarboxylic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:32832	threoninate	threoninate	OK	rel-(2R,3S)-2-amino-3-hydroxybutanoate|threonine|threonine anion		primary_mappings[chemicals_sssom]
+CHEBI:33284	nutrient	nutrient	OK	Nutrients|nutrients		mediadive_compounds
+CHEBI:33403	elemental sulfur	elemental sulfur	OK	elemental sulphur		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|primary_mappings[bacdiv
+CHEBI:33655	aromatic compound	aromatic compound	OK			metatraits_special_chemicals[manual_2026-04-07]
+CHEBI:33848	polycyclic arene	polycyclic arene	OK	PAH|PAHs|aromatic hydrocarbon|polycyclic arenes|polycyclic aromatic hydrocarbons		chebi_xrefs|metatraits_special_chemicals[manual_2026-04-07]
+CHEBI:33895	cis-bis(mu-acetato)[bis(acetonitrile)]tetraaquadirhodium(Rh--Rh)(2+)	cis-bis(mu-acetato)[bis(acetonitrile)]tetraaquadirhodium(Rh--Rh)(2+)	OK	Fe2(SO4)3 x n H2O|cis-[Rh2(mu-O2CCH3)2(CH3CN)2(H2O)4](2+)|cis-[{Rh(NCMe)(OH2)2}2(mu-O2CMe)2](2+)|cis-bis(mu-acetato-kappaO:kappaO')[bis(acetonitrile)]tetraaquadirhodium(Rh--Rh)(2+)|cis-bis(mu-acetato-kappaO:kappaO')bis[(acetonitrile)diaquarhodium](Rh--Rh)(2+)		mediadive_compounds
+CHEBI:3393	carbenicillin	carbenicillin	OK	(2S,5R,6R)-6-{[carboxy(phenyl)acetyl]amino}-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo[3.2.0]heptane-2-carboxylic acid|6beta-(2-carboxy-2-phenylacetamido)-2,2-dimethylpenam-3alpha-carboxylic acid|CBPC|N-(2-carboxy-3,3-dimethyl-7-oxo-4-thia-1-azabicyclo(3.2.0)hept-6-yl)-2-phenylmalonamic acid|alpha-carboxybenzylpencillin|alpha-phenyl(carboxymethylpenicillin)|carbenicilina|carbenicilline|carbenicillinum|carbomycin|carboxybenzylpenicillin		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|chebi_xrefs|metatraits_
+CHEBI:33942	ribose	ribose	OK	Rib|ribo-pentose		primary_mappings[chemicals_sssom]
+CHEBI:34283	oxybenzone	oxybenzone	OK	(2-hydroxy-4-methoxyphenyl)(phenyl)methanone|2-Benzoyl-5-methoxyphenol|2-Hydroxy-4-methoxybenzophenone|4,4-dihydroxy-biphenyl|4-Methoxy-2-hydroxybenzophenone|Benzophenone-3|oxibenzona|oxybenzonum		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:3448		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:35225	buffer	buffer	OK	Buffers|buffer compound|buffer compounds		mediadive_compounds
+CHEBI:355715	4-nitrophenyl-beta-D-galactoside	4-nitrophenyl-beta-D-galactoside	OK	1-O-(4-nitrophenyl)-beta-D-galactopyranose|1-O-(4-nitrophenyl)-beta-D-galactose|1-O-(p-nitrophenyl)-beta-D-galactopyranose|1-O-(p-nitrophenyl)-beta-D-galactose|1-O-[P-NITROPHENYL]-BETA-D-GALACTOPYRANOSE|1-O-[P-Nitrophenyl]-Beta-D-Galactopyranose|4-Nitrophenyl-beta-D-galactopyranoside|4-Nitrophenylgalactoside|4-nitrophenyl beta-D-galactopyranoside|4-nitrophenyl beta-D-galactopyranoside hydrolysate|4-nitrophenyl-beta-D-galactopyranoside|p-Nitrophenyl beta-D-galactopyranoside|p-Nitrophenyl-beta-D-galactoside		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[bac
+CHEBI:37054	3-hydroxybutyrate	3-hydroxybutyrate	OK	3-OH butyrate|3-OH-butyrate|3-hydroxybutanoate|DL-3-hydroxybutyrate|Na-3-hydroxybutyrate|beta-hydroxy-n-butyrate|beta-hydroxybutanoate|beta-hydroxybutyrate		chebi_xrefs|mediadive_compounds|metatraits_chemical_synonyms[manual_2026-04-07]|
+CHEBI:37766	phenazine	azinic acid	MISMATCH	phenazines	azinic acid	metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:38083	malonate ester	malonate ester	OK	malonate|malonate esters|malonates		primary_mappings[chemicals_sssom]
+CHEBI:39010	MES	MES	OK			mediadive_compounds
+CHEBI:39033	PIPES	PIPES	OK			mediadive_compounds
+CHEBI:39035	TES	TES	OK	TES buffer		mediadive_compounds
+CHEBI:39061	ACES	ACES	OK			mediadive_compounds
+CHEBI:39074	MOPS	MOPS	OK			mediadive_compounds
+CHEBI:4139	D-galactopyranose	D-galactopyranose	OK	(+)-d-galactose|D-galactose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:4167	D-glucopyranose	D-glucopyranose	OK	(+)-D-glucose|D-Glc|D-Glcp|D-Glucose|D-glucose|Dextrose|Glc-OH|Glucose|Grape sugar|glucose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[che
+CHEBI:4208	D-mannopyranose	D-mannopyranose	OK	(+)-d-mannose|(3S,4S,5R,6R)-6-(hydroxymethyl)oxane-2,3,4,5-tetrol|(3S,4S,5R,6R)-6-(hydroxymethyl)tetrahydropyran-2,3,4,5-tetrol|(3S,4S,5R,6R)-6-methyloltetrahydropyran-2,3,4,5-tetrol|(3S,4S,5S,6R)-6-(hydroxymethyl)oxane-2,3,4,5-tetrol|Carubinose|D-Mannose|D-mannose|Seminose|mannopyranose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:42191	EDTA(4-)	EDTA(4-)	OK	(ethane-1,2-diyldinitrilo)tetraacetate|(ethylenedinitrilo)tetraacetic acid, ion(4-)|2,2',2'',2'''-(ethane-1,2-diyldinitrilo)tetraacetate|EDTA tetraanion|EDTA, ion(4-)|ethylenediamine tetraacetic acid tetraanion|ethylenediaminetetraacetate|ethylenediaminetetraacetate tetraanion		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]
+CHEBI:422	(S)-lactic acid	(S)-lactic acid	OK	(+)-lactic acid|(2S)-2-hydroxypropanoic acid|(S)-(+)-lactic acid|(S)-2-hydroxypropanoic acid|(S)-2-hydroxypropionic acid|L-(+)-alpha-hydroxypropionic acid|L-(+)-lactic acid|L-Lactic acid|L-Milchsaeure		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]|primary_mappings[
+CHEBI:42589	beta-L-fucose	beta-L-fucose	OK	(+)-D-fucose|6-deoxy-beta-L-galactopyranose|beta-L-Fuc|beta-L-fucopyranose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:4387	deltaline	deltaline	OK	20-ethyl-10-hydroxy-1alpha,14alpha,16beta-trimethoxy-4-methyl-7,8-[methylenebis(oxy)]aconitan-6beta-yl acetate|Aconitane-6,10-diol, 20-ethyl-4-methyl-7,8-(methylenebis(oxy))-, 1,14,16-trimethoxy-, 6-acetate, (1-alpha,6-beta,14-alpha,16-beta)-|Delphelatine|Deltamine 6-acetate|Eldeline|demecycline		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:46633	carbapenems	carbapenems	OK	carbapenem		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:46756	HEPES	HEPES	OK			mediadive_compounds
+CHEBI:46850	poly-L-lysine	organoammonium salt	MISMATCH	poly(L-lysine) polymer	organoammonium salt	metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:47013	D-ribofuranose	D-ribofuranose	OK	(-)-D-ribose|(3R,4S,5R)-5-(hydroxymethyl)tetrahydrofuran-2,3,4-triol|D-Ribose|D-ribose|ribose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[che
+CHEBI:474		CHEBI_474	EMPTY_STORED	Freshwater medium	CHEBI_474	mediadive_compounds
+CHEBI:4767	Elastin	Elastin	OK			metatraits_special_chemicals[corrected_2026-04-08]
+CHEBI:47857	ureas	ureas	OK	urea|urea derivatives		primary_mappings[chemicals_sssom]
+CHEBI:4806	(-)-epigallocatechin 3-gallate	(-)-epigallocatechin 3-gallate	OK	(-)-epigallocatechin 3-O-gallate|(-)-epigallocatechin gallate|(-)-epigallocatechin-3-O-gallate|(-)-epigallocatechol gallate|(2R,3R)-5,7-dihydroxy-2-(3,4,5-trihydroxyphenyl)-3,4-dihydro-2H-chromen-3-yl 3,4,5-trihydroxybenzoate|3-O-galloyl-(-)-epigallocatechin|EGCG|L-epigallocatechin gallate|NVP-XAA 723|[(2R,3R)-5,7-dihydroxy-2-(3,4,5-trihydroxyphenyl)-3,4-dihydro-2H-chromen-3-yl] 3,4,5-trihydroxybenzoate|epigallocatechin 3-O-gallate|epigallocatechin 3-gallate|epigallocatechin gallate		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]|primary_mappings[
+CHEBI:48120	anthracycline	anthracycline	OK	anthracycline antibiotic	anthracycline	metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:485		CHEBI_485	EMPTY_STORED	SOLUTION A|Solution :|Solution A|Solution A:	CHEBI_485	mediadive_compounds
+CHEBI:501520		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:503742		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:50453	desferrioxamine	desferrioxamine	OK	desferrioxamines		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|primary_mappings[bacdiv
+CHEBI:50744	citrate salt	citrate salt	OK	citrate|citrate salts|citrates		primary_mappings[chemicals_sssom]
+CHEBI:51142	amino groups	amino groups	OK	Bacto Peptone|Bacto peptone|Bacto-Peptone|Bacto-peptone|Bactopeptone|G Bacto Peptone|amine groups		mediadive_compounds
+CHEBI:516951		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:5234		CHEBI_5234	EMPTY_STORED	Sea Salt	CHEBI_5234	mediadive_compounds
+CHEBI:52701	1-hydroxy-1,3-dioxobenziodoxole	1-hydroxy-1,3-dioxobenziodoxole	OK	1-Hydroxy-1,2-benziodoxol-3-on-1-oxid|1-hydroxy-1,2-benziodoxol-3(1H)-one 1-oxide|1-hydroxy-1,2-benziodoxole-3(1H)-one 1-oxide|1-hydroxy-1,3-dioxo-3H-benz[d][1,2]iodoxol|1-hydroxy-1-oxo-1lambda(5),2-benziodoxol-3-one|1-hydroxy-1lambda(3),2-benziodoxol-3(1H)-one 1-oxide|1-hydroxy-1lambda(5),2-benziodoxole-1,3(1H)-dione|1-hydroxy-1lambda(5),2-benziodoxole-1,3-dione|1-hydroxy-3H-benz[d][1,2]iodoxol-1,3-dione|1-hydroxyl-2-benziodoxol-3(1H)-one 1-oxide|IBX|SIBX|stabilized IBX		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]
+CHEBI:53248	poly(vinylpyrrolidone)	poly(vinylpyrrolidone)	OK	1-Ethenyl-2-pyrrolidinone homopolymer|1-Ethenyl-2-pyrrolidinone polymers|1-Vinyl-2-pyrrolidinone homopolymer|1-Vinyl-2-pyrrolidinone polymer|1-Vinyl-2-pyrrolidone polymer|Crospovidonum|N-Vinyl-2-pyrrolidone polymer|N-Vinylbutyrolactam polymer|N-Vinylpyrrolidinone polymer|N-Vinylpyrrolidone polymer|PVP|PVPON|Polividona|Polividone|Poly(1-(2-oxo-1-pyrrolidinyl)ethylene)|Poly(1-ethenyl-2-pyrrolidinone)|Poly(1-vinyl-2-pyrrolidinone)|Poly(1-vinyl-2-pyrrolidinone) homopolymer|Poly(1-vinyl-2-pyrrolidone)|Poly(1-vinylpyrrolidinone)|Poly(N-vinyl-2-pyrrolidinone)|Poly(N-vinyl-2-pyrrolidone)|Poly(N-vinylbutyrolactam)|Poly(N-vinylpyrrolidinone)|Poly-N-vinyl pyrrolidone|Polyvidonum|Polyvinylpyrrolidone|Povidone|Vinylpyrrolidinone polymer|Vinylpyrrolidone polymer|poly(N-vinyl pyrrolidone)|poly(N-vinylpyrrolidone)|poly[1-(2-oxopyrrolidin-1-yl)ethylene]|polyvinylpyrrolidone		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]|primary_mappings[
+CHEBI:53389	poly(3-hydroxybutyrate)	poly(3-hydroxybutyrate)	OK	3-Hydroxybutanoic acid homopolymer|P3HB|Poly-beta-hydroxybutyrate|poly(3-hydroxy butyrate)|poly-3-hydroxy butyrate|poly-3-hydroxybutyrate|poly[oxy(1-methyl-3-oxopropane-1,3-diyl)]|polyhydroxybutyrate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:54		CHEBI_54	EMPTY_STORED	MErds / MY75S	CHEBI_54	mediadive_compounds
+CHEBI:5417	glucosamine	glucosamine	OK	(+)-d-glucosamine|2-Amino-2-deoxy-glucose|2-amino-2-deoxyglucose|GlcN|Glucosamin|Glukosamin		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[che
+CHEBI:5462224		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:5462310		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:54684		NOT_FOUND	NOT_FOUND			primary_mappings[bacdive_api]
+CHEBI:559		CHEBI_559	EMPTY_STORED	Pennassay Broth	CHEBI_559	mediadive_compounds
+CHEBI:56924540		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:575		CHEBI_575	EMPTY_STORED	Maize extract	CHEBI_575	mediadive_compounds
+CHEBI:58143	5-dehydro-D-gluconate	5-dehydro-D-gluconate	OK	5-dehydro-D-gluconate anion|5-dehydro-D-gluconate(1-)|5-ketogluconate|5-ketolactonate|D-xylo-hex-5-ulosonate		primary_mappings[chemicals_sssom]
+CHEBI:59062	polymyxin	polymyxin	OK	polymixin|polymycin|polymyxins		bacdive_antibiotics[manual_pre-2026]|bacdive_metabolites|primary_mappings[bacdiv
+CHEBI:59769	acetal	acetal	OK	acetals|acetate		primary_mappings[chemicals_sssom]
+CHEBI:60721	all-trans-decaprenyl diphosphate(3-)	all-trans-decaprenyl diphosphate(3-)	OK	(2E,6E,10E,14E,18E,22E,26E,30E,34E)-3,7,11,15,19,23,27,31,35,39-decamethyltetraconta-2,6,10,14,18,22,26,30,34,38-decaen-1-yl diphosphate|all-trans-decaprenyl diphosphate		primary_mappings[kegg_compound]
+CHEBI:61495	beta-D-ManNAcA-(1->4)-alpha-D-GlcNAc-1-diphospho-ditrans,polycis-undecaprenol(3-)	beta-D-ManNAcA-(1->4)-alpha-D-GlcNAc-1-diphospho-ditrans,polycis-undecaprenol(3-)	OK	2-acetamido-2-deoxy-beta-D-mannopyranuronosyl-(1->4)-2-acetamido-2-deoxy-1-O-{[({[(2Z,6Z,10Z,14Z,18Z,22Z,26Z,30Z,34E,38E)-3,7,11,15,19,23,27,31,35,39,43-undecamethyltetratetraconta-2,6,10,14,18,22,26,30,34,38,42-undecaen-1-yl]oxy}phosphinato)oxy]phosphinato}-alpha-D-glucopyranose|C55-PP-GlcNAc-ManNAcA(3-)|ManNAcA-GlcNAc-PP-lipid(3-)|ManNAcA-GlcNAc-pyrophosphorylundecaprenol(3-)|N-acetyl-beta-D-mannosaminouronyl-(1->4)-N-acetyl-alpha-D-glucosaminyl-diphospho-di-trans,octa-cis-undecaprenol(3-)|N-acetyl-glucosaminyl-N-acetyl-mannosaminuronate undecaprenyl pyrophosphate(3-)|Na2SO3 x 5 H20|Undecaprenyl-diphospho-N-acetylglucosamine-N-acetylmannosaminuronate(3-)|beta-D-ManNAcA-(1->4)-D-GlcNAc-undecaprenyl diphosphate(3-)|beta-D-ManNAcA-(1->4)-alpha-D-GlcNAc-di-trans,octa-cis-undecaprenyl diphosphate|lipid II(3-)		mediadive_compounds
+CHEBI:61630		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:62318	D-lyxose	D-lyxose	OK	D-lyxoses		primary_mappings[bacdive_api]
+CHEBI:63528	dTMP(2-)	dTMP(2-)	OK	2-deoxythymidine-5'-4-nitrophenyl phosphate|5'-O-phosphonatothymidine|5-methyluridine 5'-phosphate|TMP dianion|dTMP|ribothymidine 5'-monophosphate anion|thymidine 5'-monophosphate|thymidine 5'-phosphate|thymidine 5'-phosphate(2-)		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:65068	6'''-oxoneomycin C(5+)	6'''-oxoneomycin C(5+)	OK	(1R,2R,3S,4R,6S)-4,6-diammonio-2-{[3-O-(2-ammonio-2-deoxy-alpha-D-gluco-hexodialdo-1,5-pyranosyl)-beta-D-ribofuranosyl]oxy}-3-hydroxycyclohexyl 2,6-diammonio-2,6-dideoxy-alpha-D-glucopyranoside|6'''-deamino-6'''-oxoneomycin C		primary_mappings[kegg_compound]
+CHEBI:65285	aliphatic primary amide	aliphatic primary amide	OK	an aliphatic primary amide|primary aliphatic amide		primary_mappings[kegg_compound]
+CHEBI:65328	L-xylose	L-xylose	OK			primary_mappings[bacdive_api]
+CHEBI:65956	gelomulide M	gelomulide M	OK	(1beta,5beta,7beta,9beta,10alpha,12beta,14beta)-16-oxo-8,14:12,16-diepoxyabieta-2,13(15)-diene-1,7-diyl diacetate|1beta,7beta-diacetoxy-8beta,14beta-epoxy-ent-abieta-2(3),13(15)-diene-16,12-olide|abyssomicin C		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:66		CHEBI_66	EMPTY_STORED	NCL/0.01% NPA	CHEBI_66	mediadive_compounds
+CHEBI:662		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:665		CHEBI_665	EMPTY_STORED	Malic acid	CHEBI_665	primary_mappings[bacdive_api]
+CHEBI:68483	UDP-N-acetyl-3-O-(1-carboxylatovinyl)-alpha-D-glucosamine(3-)	UDP-N-acetyl-3-O-(1-carboxylatovinyl)-alpha-D-glucosamine(3-)	OK	3-O-methylgallate|UDP-GlcNAc-enolpyruvate|UDP-GlcNAc-pyruvate enol ether|UDP-N-acetyl-3-(1-carboxyvinyl)-D-glucosamine|UDP-N-acetyl-3-O-(1-carboxyvinyl)-alpha-D-glucosamine|UDP-N-acetylglucosamine-3-O-pyruvate ether|uridine 5'-{3-[2-acetamido-3-O-(1-carboxylatoethenyl)-2-deoxy-alpha-D-glucopyranosyl] diphosphate}		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:68499	3-methylcrotonyl glycine	3-methylcrotonyl glycine	OK	N-(3-methylbut-2-enoyl)glycine|beta-Methylcrotonylglycine		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]
+CHEBI:702		CHEBI_702	EMPTY_STORED	Absolute ethanol	CHEBI_702	mediadive_compounds
+CHEBI:71586907		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:72314	aspartate salt	aspartate salt	OK	L-aspartate salt|aspartate		primary_mappings[chemicals_sssom]
+CHEBI:725		CHEBI_725	EMPTY_STORED	Dung extract	CHEBI_725	mediadive_compounds
+CHEBI:73390	promegestone	promegestone	OK	(17beta)-17-methyl-17-propionylestra-4,9-dien-3-one|17,21-dimethyl-19-norpregna-4,9(10)-diene-3,20-dione|17alpha-methyl-17-propionylestra-4,9-dien-3-one|R 5020|RU5020|glycine-proline|promegestona|promegestonum		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:73394	Ala-Ser	Ala-Ser	OK	A-S|AS|Alanylserine|L-Ala-L-Ser|L-alanyl-L-serine|glycyl L-aspartic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:73418	1-(1-hydroxyalkyl)-sn-glycerol	1-(1-hydroxyalkyl)-sn-glycerol	OK	1-(1-hydroxyalkyl)-sn-glycerols|a 1-(1-hydroxyalkyl)-sn-glycerol		primary_mappings[kegg_compound]
+CHEBI:736		CHEBI_736	EMPTY_STORED	Na2O4W|Na2O4W x 2 H2O|Na2WO4 x 2 H20	CHEBI_736	mediadive_compounds
+CHEBI:73712	bromosuccinic acid	bromosuccinic acid	OK	(+-)-bromosuccinic acid|2-bromobutanedioic acid|2-bromosuccinic acid|DL-bromosuccinic acid|Monobromosuccinic acid|RS-bromosuccinic acid|bromobutanedioic acid|bromosuccinate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:73918	3-O-methyl-D-glucose	3-O-methyl-D-glucose	OK	3-O-methyl alpha-D-glucopyranoside|3-O-methylglucose|3-methyl-D-glucose|3-methylglucose|O(3)-methyl-D-glucose		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:7524	nerolidol	nerolidol	OK	3,7,11-trimethyl-1,6,10-dodecatrien-3-ol|3,7,11-trimethyldodeca-1,6,10-trien-3-ol|3-hydroxy-3,7,11-trimethyl-1,6,10-dodecatriene|FEMA 2772|Stirrup|netropsin		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:75259	tetrabromopyrrole	CHEBI_75259	MISMATCH	tetrabromopyrrole	CHEBI_75259	metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:76533	NDP-alpha-D-glucose(2-)	NDP-alpha-D-glucose(2-)	OK	an NDP-alpha-D-glucose		primary_mappings[kegg_compound]
+CHEBI:76654	(3R,15Z,18Z,21Z,24Z,27Z)-3-hydroxytriacontapentaenoyl-CoA	(3R,15Z,18Z,21Z,24Z,27Z)-3-hydroxytriacontapentaenoyl-CoA	OK	(3R,15Z,18Z,21Z,24Z,27Z)-3-hydroxytriacontapentaenoyl-coenzyme A|(R)-3-hydroxy-(15Z,18Z,21Z,24Z,27Z)-triacontapentaenoyl-CoA|(R)-3-hydroxy-(15Z,18Z,21Z,24Z,27Z)-triacontapentaenoyl-coenzyme A|3'-phosphoadenosine 5'-{3-[(3R)-3-hydroxy-4-({3-[(2-{[(3R,15Z,18Z,21Z,24Z,27Z)-3-hydroxytriaconta-15,18,21,24,27-pentaenoyl]sulfanyl}ethyl)amino]-3-oxopropyl}amino)-2,2-dimethyl-4-oxobutyl] dihydrogen diphosphate}|L-Ornithine HCl		mediadive_compounds
+CHEBI:77041	3-nitropropanoic acid	3-oxotetradecanedioyl-CoA(5-)	MISMATCH	3-nitropropanoate	3-oxotetradecanedioyl-CoA(5-)	metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:7773015		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:78717	UDP-alpha-D-galactosamine(1-)	UDP-alpha-D-galactosamine(1-)	OK	UDP-alpha-D-galactosamine		primary_mappings[kegg_compound]
+CHEBI:78718	UDP-alpha-D-glucosamine(1-)	UDP-alpha-D-glucosamine(1-)	OK	UDP-alpha-D-glucosamine		primary_mappings[kegg_compound]
+CHEBI:79972		CHEBI_79972	EMPTY_STORED		CHEBI_79972	primary_mappings[kegg_compound]
+CHEBI:80108	Progeldanamycin	Progeldanamycin	OK	bottromycin		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:8013		CHEBI_8013	EMPTY_STORED	G Yeast Extract|Yeast Extract|Yeast extract|Yeast extrakt|Yeast extract|yeast extract	CHEBI_8013	mediadive_compounds
+CHEBI:80130	N-(4-Aminobutylidene)-[eIF5A-precursor]-lysine	N-(4-Aminobutylidene)-[eIF5A-precursor]-lysine	OK	N-(4-Aminobutylidene)-[enzyme]-lysine|casein hydrolysate		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:80548		CHEBI_80548	EMPTY_STORED		CHEBI_80548	primary_mappings[kegg_compound]
+CHEBI:80962		CHEBI_80962	EMPTY_STORED		CHEBI_80962	primary_mappings[kegg_compound]
+CHEBI:81184		CHEBI_81184	EMPTY_STORED		CHEBI_81184	primary_mappings[kegg_compound]
+CHEBI:81191		CHEBI_81191	EMPTY_STORED		CHEBI_81191	primary_mappings[kegg_compound]
+CHEBI:8150		CHEBI_8150	EMPTY_STORED	Bacto Soytone|Soytone	CHEBI_8150	mediadive_compounds
+CHEBI:82594	Ferritin	Ferritin	OK			chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]|primary_mappings[
+CHEBI:839		CHEBI_839	EMPTY_STORED	R2A Broth	CHEBI_839	mediadive_compounds
+CHEBI:85		CHEBI_85	EMPTY_STORED	RPL/0.01% RPA	CHEBI_85	mediadive_compounds
+CHEBI:86254	iron trichloride hexahydrate	iron trichloride hexahydrate	OK	"FeCl3|FeCl3 x 6 H2O	iron trichloride hexahydrate	
+CHEBI:86278167		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:86354	2-hydroxyacrylic acid	2-hydroxyacrylic acid	OK	1 % sodium lactate|2-hydroxyprop-2-enoic acid		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:86473	sodium molybdate heptahydrate	sodium molybdate heptahydrate	OK	Na2MoO4|Na2MoO4 x 7 H2O|Na2MoO4.7H2O|sodium dioxido(dioxo)molybdenum--water (1/7)		mediadive_compounds
+CHEBI:867561		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:870		CHEBI_870	EMPTY_STORED	Na2Se3|Na2Se3 x 5 H2O|Na2SeO3 5 H2O	CHEBI_870	mediadive_compounds
+CHEBI:87626	6beta-hydroxyestrone	6beta-hydroxyestrone	OK	(6beta)-3,6-dihydroxyestra-1,3,5(10)-trien-17-one|3,6beta-dihydroxy-estra-1,3,5(10)-trien-17-one		chebi_xrefs|metatraits_special_chemicals[corrected_2026-04-08]
+CHEBI:8870	Rishitin	Rishitin	OK	ristocetin A		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:9005		CHEBI_9005	EMPTY_STORED	Na-Caseinate|Na-caseinate	CHEBI_9005	mediadive_compounds
+CHEBI:90128	4-nitrophenyl 6-O-phosphono-beta-D-galactoside	4-nitrophenyl 6-O-phosphono-beta-D-galactoside	OK	4-Nitrophenyl 6-O-phosphono-beta-D-galactosid|4-nitrophenyl 6-O-phosphono-beta-D-galactopyranoside|4-nitrophenyl beta-D-galactoside 6-phosphate		primary_mappings[bacdive_api]
+CHEBI:90836	cangrelor tetrasodium	cangrelor tetrasodium	OK	KENGREAL|alpha-hydroxyglutarate-gamma-lactone|tetrasodium 5'-O-[({[dichloro(phosphonato)methyl]phosphinato}oxy)phosphinato]-N-[2-(methylsulfanyl)ethyl]-2-[(3,3,3-trifluoropropyl)sulfanyl]adenosine		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]
+CHEBI:91245	copper(II) chloride pentahydrate	copper(II) chloride pentahydrate	OK	CuCl2|CuCl2 x 5 H2O|CuCl2.5H2O|copper chloride pentahydrate|copper dichloride--water (1/5)|copper(2+) chloride pentahydrate|copper(2+) dichloride --water (1/5)|copper(II) chloride--water (1/5)|cupric chloride pentahydrate		mediadive_compounds
+CHEBI:925		CHEBI_925	EMPTY_STORED	Sigma Sea salts	CHEBI_925	mediadive_compounds
+CHEBI:936		CHEBI_936	EMPTY_STORED	Nicotine amide	CHEBI_936	mediadive_compounds
+CHEBI:962		CHEBI_962	EMPTY_STORED	Deionized water	CHEBI_962	mediadive_compounds
+CHEBI:9677	Triazolidinonethione	Triazolidinonethione	OK	4-Bromophenyl-1,2-tetramethylene-1,2,4-triazolidin-3-one-5-thione|streptovaricin		chebi_xrefs|metatraits_chemical_synonyms[manual_2026-04-07]|primary_mappings[keg
+CHEBI:977046		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:9784		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:9815330		NOT_FOUND	NOT_FOUND			mediadive_compounds
+CHEBI:983		CHEBI_983	EMPTY_STORED	L-Cystein·HCl·H2O	CHEBI_983	mediadive_compounds
+CHEBI:992		CHEBI_992	EMPTY_STORED	Leptospira Enrichment EMJH	CHEBI_992	mediadive_compounds
+CHEBI:999999		NOT_FOUND	NOT_FOUND			mediadive_compounds

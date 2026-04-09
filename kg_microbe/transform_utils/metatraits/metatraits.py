@@ -2084,6 +2084,37 @@ class MetaTraitsTransform(Transform):
         biolink_pred = self._to_biolink_predicate(predicate)
         return PREDICATE_TO_RELATION.get(biolink_pred, HAS_PHENOTYPE)
 
+    def _get_negative_predicate(self, positive_pred_id: str) -> Optional[str]:
+        """Return the negative METPO predicate ID for a given positive predicate ID, or None."""
+        for pair in self.metpo_pattern_to_predicate.values():
+            if pair.get("positive") == positive_pred_id:
+                return pair.get("negative")
+        return None
+
+    def _apply_majority_label_to_predicate(
+        self, mapping: dict, majority_label: str
+    ) -> Optional[str]:
+        """
+        Return the correct METPO/biolink predicate for a mapping given the majority_label.
+
+        If majority_label is false and a negative predicate exists, returns it.
+        If majority_label is false and no negative predicate exists, returns None (caller should skip).
+        If majority_label is true (or empty/unknown), returns the positive predicate.
+
+        :param mapping: Resolver result dict with 'predicate' key (METPO ID or biolink string)
+        :param majority_label: 'true' / 'false' string from input data
+        :return: Predicate string to use, or None to skip this observation
+        """
+        pos_pred = mapping["predicate"]
+        is_positive = "true" in majority_label.lower() if majority_label else True
+        if is_positive:
+            return self._to_biolink_predicate(pos_pred)
+        # Negative case: look up the negative METPO predicate
+        neg_pred = self._get_negative_predicate(pos_pred)
+        if neg_pred:
+            return self._to_biolink_predicate(neg_pred)
+        return None  # no negative form — caller should skip
+
     def _calculate_optimal_workers_for_chunking(self) -> int:
         """
         Calculate optimal worker count for chunked processing (single file split into chunks).
@@ -2689,21 +2720,36 @@ class MetaTraitsTransform(Transform):
                                 label = ph_pref["name"]
                             elif chemical_mapping := self._resolve_chemical_trait(trait_name):
                                 # Tier 3.1: Chemical resolver (produces, ferments, carbon source, etc.)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    chemical_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = chemical_mapping["curie"]
                                 category = chemical_mapping["category"]
-                                pred = self._to_biolink_predicate(chemical_mapping["predicate"])
+                                pred = resolved_pred
                                 label = chemical_mapping["name"]
                             elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
                                 # Tier 3.2: Metabolic processes (electron acceptors, respiration, oxidation, reduction)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    metabolic_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = metabolic_mapping["curie"]
                                 category = metabolic_mapping["category"]
-                                pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
+                                pred = resolved_pred
                                 label = metabolic_mapping["name"]
                             elif growth_mapping := self._resolve_growth_substrate(trait_name):
                                 # Tier 3.3: Growth substrates (growth: X, builds acid from: X)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    growth_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = growth_mapping["curie"]
                                 category = growth_mapping["category"]
-                                pred = self._to_biolink_predicate(growth_mapping["predicate"])
+                                pred = resolved_pred
                                 label = growth_mapping["name"]
                             elif trophic_mapping := self._resolve_trophic_mode(trait_name):
                                 # Tier 3.4: Trophic modes (phototrophy, chemoheterotrophy, aerobic/anaerobic)
@@ -2713,15 +2759,25 @@ class MetaTraitsTransform(Transform):
                                 label = trophic_mapping["name"]
                             elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                 # Tier 3.5: Enzyme activities with EC numbers or GO mappings
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    enzyme_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = enzyme_mapping["curie"]
                                 category = enzyme_mapping["category"]
-                                pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
+                                pred = resolved_pred
                                 label = enzyme_mapping["name"]
                             elif required_mapping := self._resolve_required_for_growth(trait_name):
                                 # Tier 3.55: Required for growth (required for growth: biotin)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    required_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = required_mapping["curie"]
                                 category = required_mapping["category"]
-                                pred = self._to_biolink_predicate(required_mapping["predicate"])
+                                pred = resolved_pred
                                 label = required_mapping["name"]
                             elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                 # Tier 3.6: Simple phenotypes (aerotolerant, facultative, acidophilic)
@@ -2731,21 +2787,36 @@ class MetaTraitsTransform(Transform):
                                 label = phenotype_mapping["name"]
                             elif energy_mapping := self._resolve_energy_source(trait_name):
                                 # Tier 3.7: Energy sources (energy source: glucose)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    energy_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = energy_mapping["curie"]
                                 category = energy_mapping["category"]
-                                pred = self._to_biolink_predicate(energy_mapping["predicate"])
+                                pred = resolved_pred
                                 label = energy_mapping["name"]
                             elif nitrogen_mapping := self._resolve_nitrogen_source(trait_name):
                                 # Tier 3.8: Nitrogen sources (nitrogen source: ammonia)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    nitrogen_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = nitrogen_mapping["curie"]
                                 category = nitrogen_mapping["category"]
-                                pred = self._to_biolink_predicate(nitrogen_mapping["predicate"])
+                                pred = resolved_pred
                                 label = nitrogen_mapping["name"]
                             elif sulfur_mapping := self._resolve_sulfur_source(trait_name):
                                 # Tier 3.9: Sulfur sources (sulfur source: sulfate)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    sulfur_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = sulfur_mapping["curie"]
                                 category = sulfur_mapping["category"]
-                                pred = self._to_biolink_predicate(sulfur_mapping["predicate"])
+                                pred = resolved_pred
                                 label = sulfur_mapping["name"]
                             else:
                                 # No mapping found - check if measurement trait or unmapped
@@ -3272,19 +3343,34 @@ class MetaTraitsTransform(Transform):
                                     pred = ph_pref["predicate"]
                                     label = ph_pref["name"]
                                 elif chemical_mapping := self._resolve_chemical_trait(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        chemical_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = chemical_mapping["curie"]
                                     category = chemical_mapping["category"]
-                                    pred = self._to_biolink_predicate(chemical_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = chemical_mapping["name"]
                                 elif metabolic_mapping := self._resolve_metabolic_trait(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        metabolic_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = metabolic_mapping["curie"]
                                     category = metabolic_mapping["category"]
-                                    pred = self._to_biolink_predicate(metabolic_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = metabolic_mapping["name"]
                                 elif growth_mapping := self._resolve_growth_substrate(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        growth_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = growth_mapping["curie"]
                                     category = growth_mapping["category"]
-                                    pred = self._to_biolink_predicate(growth_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = growth_mapping["name"]
                                 elif trophic_mapping := self._resolve_trophic_mode(trait_name):
                                     curie = trophic_mapping["curie"]
@@ -3292,14 +3378,24 @@ class MetaTraitsTransform(Transform):
                                     pred = self._to_biolink_predicate(trophic_mapping["predicate"])
                                     label = trophic_mapping["name"]
                                 elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        enzyme_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = enzyme_mapping["curie"]
                                     category = enzyme_mapping["category"]
-                                    pred = self._to_biolink_predicate(enzyme_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = enzyme_mapping["name"]
                                 elif required_mapping := self._resolve_required_for_growth(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        required_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = required_mapping["curie"]
                                     category = required_mapping["category"]
-                                    pred = self._to_biolink_predicate(required_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = required_mapping["name"]
                                 elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                     curie = phenotype_mapping["curie"]
@@ -3307,19 +3403,34 @@ class MetaTraitsTransform(Transform):
                                     pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
                                     label = phenotype_mapping["name"]
                                 elif energy_mapping := self._resolve_energy_source(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        energy_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = energy_mapping["curie"]
                                     category = energy_mapping["category"]
-                                    pred = self._to_biolink_predicate(energy_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = energy_mapping["name"]
                                 elif nitrogen_mapping := self._resolve_nitrogen_source(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        nitrogen_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = nitrogen_mapping["curie"]
                                     category = nitrogen_mapping["category"]
-                                    pred = self._to_biolink_predicate(nitrogen_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = nitrogen_mapping["name"]
                                 elif sulfur_mapping := self._resolve_sulfur_source(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        sulfur_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = sulfur_mapping["curie"]
                                     category = sulfur_mapping["category"]
-                                    pred = self._to_biolink_predicate(sulfur_mapping["predicate"])
+                                    pred = resolved_pred
                                     label = sulfur_mapping["name"]
                                 else:
                                     # No mapping found - check if measurement trait or unmapped

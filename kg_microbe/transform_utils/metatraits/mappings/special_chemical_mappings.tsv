@@ -33,3 +33,34 @@ degradation: gelatin	gelatin	FOODON:03544158	gelatine (efsa foodex2)	METPO:20000
 hydrolysis: gelatin	gelatin	FOODON:03544158	gelatine (efsa foodex2)	METPO:2000013	biolink:Food	Protein hydrolysis; gelatinase activity; FOODON:03311170 was "rosemary (ground, dried)" (completely wrong)
 hydrolysis: esculin	esculin	CHEBI:4853	esculin	METPO:2000013	biolink:ChemicalEntity	Beta-glucosidase substrate; coumarin glycoside; CHEBI:4806 was (-)-epigallocatechin 3-gallate (EGCG, green tea polyphenol), completely wrong; CHEBI:4853 confirmed as esculin
 degradation: starch	starch	CHEBI:28017	starch	METPO:2000007	biolink:ChemicalEntity	Amylase activity; polysaccharide degradation
+hydrolysis: casein	casein	FOODON:03420180	casein	METPO:2000013	biolink:Food	Protease activity on casein; high-frequency trait (1.16M true obs); casein is a food protein not in CHEBI; FOODON:03420180 confirmed as casein
+degradation: casein	casein	FOODON:03420180	casein	METPO:2000007	biolink:Food	Casein degradation; protease activity; FOODON:03420180 (casein)
+utilizes: casein	casein	FOODON:03420180	casein	METPO:2000001	biolink:Food	Generic casein utilization; FOODON:03420180 (casein)
+assimilation: casein	casein	FOODON:03420180	casein	METPO:2000002	biolink:Food	Casein assimilation; FOODON:03420180 (casein)
+carbon source: casein	casein	FOODON:03420180	casein	METPO:2000006	biolink:Food	Casein as carbon source; FOODON:03420180 (casein)
+growth: casein	casein	FOODON:03420180	casein	METPO:2000012	biolink:Food	Growth on casein; FOODON:03420180 (casein)
+growth: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000012	biolink:Food	Growth on casein hydrolysate; maps to parent protein casein; FOODON:03420180
+fermentation: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000011	biolink:Food	Fermentation of casein hydrolysate; maps to parent protein casein; FOODON:03420180
+nitrogen source: casein	casein	FOODON:03420180	casein	METPO:2000014	biolink:Food	Casein as nitrogen source; FOODON:03420180 (casein)
+nitrogen source: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000014	biolink:Food	Casein hydrolysate as nitrogen source; maps to parent protein casein; FOODON:03420180
+carbon source: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000006	biolink:Food	Casein hydrolysate as carbon source; maps to parent protein casein; FOODON:03420180
+energy source: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000010	biolink:Food	Casein hydrolysate as energy source; maps to parent protein casein; FOODON:03420180
+required for growth: casein	casein	FOODON:03420180	casein	METPO:2000018	biolink:Food	Casein required as growth factor; FOODON:03420180 (casein)
+builds acid from: casein	casein	FOODON:03420180	casein	METPO:2000003	biolink:Food	Acid production from casein proteolysis; FOODON:03420180 (casein)
+oxidation: casein	casein	FOODON:03420180	casein	METPO:2000016	biolink:Food	Oxidative casein catabolism; FOODON:03420180 (casein)
+assimilation: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000002	biolink:Food	Casein hydrolysate assimilation; maps to parent protein casein; FOODON:03420180
+hydrolysis: skimmed milk	skimmed milk	FOODON:03301484	skim milk food product	METPO:2000013	biolink:Food	Hydrolysis of skimmed milk proteins/lactose; FOODON:03301484 (skim milk food product)
+degradation: skimmed milk	skimmed milk	FOODON:03301484	skim milk food product	METPO:2000007	biolink:Food	Skimmed milk degradation; FOODON:03301484 (skim milk food product)
+degradation: milk	milk	UBERON:0001913	milk	METPO:2000007	biolink:Food	Milk degradation; UBERON:0001913 confirmed as milk
+utilizes: milk	milk	UBERON:0001913	milk	METPO:2000001	biolink:Food	Generic milk utilization; UBERON:0001913 (milk)
+assimilation: milk	milk	UBERON:0001913	milk	METPO:2000002	biolink:Food	Milk assimilation; UBERON:0001913 (milk)
+carbon source: yeast extract	yeast extract	FOODON:03315426	yeast extract	METPO:2000006	biolink:Food	Yeast extract as carbon source; FOODON:03315426 confirmed as yeast extract
+growth: yeast extract	yeast extract	FOODON:03315426	yeast extract	METPO:2000012	biolink:Food	Growth on yeast extract; FOODON:03315426 (yeast extract)
+growth: yeast extract (0.01 %, w/v)	yeast extract	FOODON:03315426	yeast extract	METPO:2000012	biolink:Food	Growth on dilute yeast extract (0.01% w/v); maps to FOODON:03315426 (yeast extract)
+required for growth: yeast extract	yeast extract	FOODON:03315426	yeast extract	METPO:2000018	biolink:Food	Yeast extract required for growth; FOODON:03315426 (yeast extract)
+energy source: yeast extract	yeast extract	FOODON:03315426	yeast extract	METPO:2000010	biolink:Food	Yeast extract as energy source; FOODON:03315426 (yeast extract)
+electron donor: yeast extract	yeast extract	FOODON:03315426	yeast extract	METPO:2000009	biolink:Food	Yeast extract as electron donor (complex organic mix); FOODON:03315426 (yeast extract)
+nitrogen source: yeast extract	yeast extract	FOODON:03315426	yeast extract	METPO:2000014	biolink:Food	Yeast extract as nitrogen source; FOODON:03315426 (yeast extract)
+assimilation: meat extract	meat extract	FOODON:03315424	meat extract	METPO:2000002	biolink:Food	Meat extract assimilation; FOODON:03315424 confirmed as meat extract
+growth: meat extract	meat extract	FOODON:03315424	meat extract	METPO:2000012	biolink:Food	Growth on meat extract; FOODON:03315424 (meat extract)
+growth: casitone	casein	FOODON:03420180	casein	METPO:2000012	biolink:Food	Casitone = tryptic digest of casein (BD brand); maps to parent protein casein; FOODON:03420180

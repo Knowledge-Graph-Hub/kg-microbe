@@ -31,7 +31,7 @@ EXPECTED_EDGES = [
     (
         "enzyme activity: oxidase",
         "biolink:capable_of",
-        "GO:0016491",
+        "GO:0004129",
         "biolink:MolecularActivity",
     ),
     ("fermentation", "biolink:capable_of", "GO:0006113", "biolink:BiologicalProcess"),

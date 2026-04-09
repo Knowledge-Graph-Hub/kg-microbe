@@ -1,36 +1,35 @@
 trait_pattern	chemical_name	ontology_id	ontology_name	predicate	category	notes
-electron acceptor: sulfur compounds	sulfur compounds	CHEBI:26833	sulfur molecular entity	METPO:2000008	biolink:ChemicalEntity	Parent class for all sulfur compounds; covers sulfate, sulfite, thiosulfate, elemental sulfur
-electron acceptor: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:82594	iron(III) oxide	METPO:2000008	biolink:ChemicalEntity	Specific form of iron oxide used as electron acceptor in dissimilatory iron reduction
-electron acceptor: ethylenediaminetetraacetatoferrate	ethylenediaminetetraacetatoferrate	CHEBI:42191	ferric-EDTA complex	METPO:2000008	biolink:ChemicalEntity	Fe(III)-EDTA complex used in electron transport studies
-electron acceptor: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:82594	iron(III) oxide	METPO:2000008	biolink:ChemicalEntity	Variant spelling of iron(III) oxyhydroxide
-oxidation in darkness: sulfur compounds	sulfur compounds	CHEBI:26833	sulfur molecular entity	METPO:2000605	biolink:ChemicalEntity	METPO:2000605 (oxidizes in darkness) predicate already exists
-degradation: plastic	plastic	ENVO:01000970	plastic material	METPO:2000007	biolink:EnvironmentalMaterial	Use ENVO for synthetic materials; plastic biodegradation pathway
+electron acceptor: sulfur compounds	sulfur compounds	CHEBI:26835	sulfur molecular entity	METPO:2000008	biolink:ChemicalEntity	Parent class for all sulfur compounds; covers sulfate, sulfite, thiosulfate, elemental sulfur; CHEBI:26833 (sulfur atom) was wrong, CHEBI:26835 confirmed as sulfur molecular entity
+electron acceptor: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:192761	ferrihydrite	METPO:2000008	biolink:ChemicalEntity	Amorphous iron oxide = ferrihydrite (CHEBI:192761); CHEBI:82594 was Ferritin (a protein), completely wrong; CHEBI:50819 (ferric oxide) is crystalline hematite, not amorphous
+electron acceptor: ethylenediaminetetraacetatoferrate	ethylenediaminetetraacetatoferrate	CHEBI:30729	ethylenediaminetetraacetatoferrate(1-)	METPO:2000008	biolink:ChemicalEntity	Fe(III)-EDTA complex used in electron transport studies; CHEBI:42191 was EDTA(4-) (free ligand, no iron), wrong; CHEBI:30729 confirmed as the iron complex
+electron acceptor: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:192761	ferrihydrite	METPO:2000008	biolink:ChemicalEntity	Variant spelling of iron(III) oxyhydroxide; ferrihydrite = amorphous Fe(III) oxyhydroxide; CHEBI:82594 was Ferritin (wrong)
+oxidation in darkness: sulfur compounds	sulfur compounds	CHEBI:26835	sulfur molecular entity	METPO:2000605	biolink:ChemicalEntity	METPO:2000605 (oxidizes in darkness) predicate confirmed in metpo.owl; CHEBI:26833 (sulfur atom) was wrong, CHEBI:26835 is sulfur molecular entity
+degradation: plastic	plastic	ENVO:06105101	plastic	METPO:2000007	biolink:EnvironmentalMaterial	Use ENVO for synthetic materials; plastic biodegradation pathway; ENVO:01000970 was "delicatessen" (completely wrong), ENVO:06105101 confirmed as "plastic"
 degradation: aromatic compound	aromatic compound	CHEBI:33655	aromatic compound	METPO:2000007	biolink:ChemicalEntity	Parent class for benzene ring-containing compounds
 degradation: hydrocarbon	hydrocarbon	CHEBI:24632	hydrocarbon	METPO:2000007	biolink:ChemicalEntity	Parent class for aliphatic and aromatic hydrocarbons
-degradation: aromatic hydrocarbon	aromatic hydrocarbon	CHEBI:33848	aromatic hydrocarbon	METPO:2000007	biolink:ChemicalEntity	More specific than general aromatic compound; includes PAHs, BTEX compounds
-degradation: elastin	elastin	CHEBI:53248	elastin	METPO:2000007	biolink:ChemicalEntity	Protein degradation; extracellular protease activity
-degradation: egg yolk	egg yolk	FOODON:00001274	egg yolk	METPO:2000007	biolink:Food	Use FOODON for food substances; lecithinase activity
-degradation: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:52701	4-nitrophenyl beta-D-galactopyranoside	METPO:2000007	biolink:ChemicalEntity	Chromogenic substrate for beta-galactosidase; also appears in hydrolysis patterns
+degradation: aromatic hydrocarbon	aromatic hydrocarbon	CHEBI:33848	polycyclic arene	METPO:2000007	biolink:ChemicalEntity	CHEBI:33848 canonical label is "polycyclic arene" (PAHs); covers BTEX and other monoaromatics only as subsets; label corrected from "aromatic hydrocarbon" to canonical
+degradation: elastin	elastin	CHEBI:4767	Elastin	METPO:2000007	biolink:ChemicalEntity	Protein degradation; extracellular protease activity; CHEBI:53248 was poly(vinylpyrrolidone) (PVP, a synthetic polymer), completely wrong; CHEBI:4767 confirmed as Elastin
+degradation: egg yolk	egg yolk	FOODON:03315772	chicken egg yolk food product	METPO:2000007	biolink:Food	Use FOODON for food substances; lecithinase activity; FOODON:00001274 was "egg food product" (too broad), FOODON:03315772 confirmed as "chicken egg yolk food product"
+degradation: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	METPO:2000007	biolink:ChemicalEntity	Chromogenic substrate for beta-galactosidase; CHEBI:52701 was 1-hydroxy-1,3-dioxobenziodoxole (IBX reagent), completely wrong; CHEBI:355715 confirmed as 4-nitrophenyl-beta-D-galactoside
 produces: methane from formate	methane	CHEBI:16183	methane	METPO:2000202	biolink:ChemicalEntity	Parse "from formate" separately; methanogenesis pathway from formate oxidation
-produces: DL-lactate	lactate	CHEBI:422	(R,S)-lactate	METPO:2000202	biolink:ChemicalEntity	Racemic lactate; fermentation product
+produces: DL-lactate	lactate	CHEBI:16651	lactate	METPO:2000202	biolink:ChemicalEntity	Generic lactate (unspecified stereochemistry); CHEBI:422 was (S)-lactic acid (only L-form), wrong for racemic DL mixture; CHEBI:16651 is the generic lactate anion
 reduction: arsenate detoxification	arsenate	CHEBI:29242	arsenate	METPO:2000017	biolink:ChemicalEntity	Dissimilatory arsenate reduction; detoxification context
-reduction: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:82594	iron(III) oxide	METPO:2000017	biolink:ChemicalEntity	Dissimilatory iron reduction to Fe(II)
-reduction: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:82594	iron(III) oxide	METPO:2000017	biolink:ChemicalEntity	Variant spelling of iron(III) oxyhydroxide
+reduction: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:192761	ferrihydrite	METPO:2000017	biolink:ChemicalEntity	Dissimilatory iron reduction to Fe(II); CHEBI:82594 was Ferritin (wrong); ferrihydrite is the amorphous Fe(III) oxyhydroxide used in iron reduction experiments
+reduction: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:192761	ferrihydrite	METPO:2000017	biolink:ChemicalEntity	Variant spelling; CHEBI:82594 was Ferritin (wrong)
 reduction: glutathione oxidized	glutathione oxidized	CHEBI:17858	glutathione disulfide	METPO:2000017	biolink:ChemicalEntity	Reduction of oxidized glutathione (GSSG) to reduced form (GSH)
-reduction: 3-O-methylgallate	3-O-methylgallate	CHEBI:68499	3-O-methylgallic acid	METPO:2000017	biolink:ChemicalEntity	Polyphenol reduction
-hydrolysis: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:52701	4-nitrophenyl beta-D-galactopyranoside	METPO:2000013	biolink:ChemicalEntity	Beta-galactosidase substrate; chromogenic assay
-hydrolysis: casein hydrolysate	casein	CHEBI:17895	casein	METPO:2000013	biolink:ChemicalEntity	Map to parent protein casein; hydrolysate is product
+reduction: 3-O-methylgallate	3-O-methylgallate	CHEBI:28647	3-O-methylgallic acid	METPO:2000017	biolink:ChemicalEntity	Polyphenol reduction; CHEBI:68499 was 3-methylcrotonyl glycine (completely wrong); CHEBI:28647 confirmed as 3-O-methylgallic acid
+hydrolysis: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	METPO:2000013	biolink:ChemicalEntity	Beta-galactosidase substrate; chromogenic assay; CHEBI:52701 was IBX reagent (wrong)
+hydrolysis: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000013	biolink:Food	Map to parent protein casein; hydrolysate is product; CHEBI:17895 was L-tyrosine (completely wrong); FOODON:03420180 suggested for casein (verify via FOODON); category changed to biolink:Food
 hydrolysis: cationic chitosan	chitosan	CHEBI:16261	chitosan	METPO:2000013	biolink:ChemicalEntity	Cationic = positively charged; chitosan is the base polymer
 hydrolysis: crab shell chitin	chitin	CHEBI:17029	chitin	METPO:2000013	biolink:ChemicalEntity	Chitin from crab shells; chitinase activity
-hydrolysis: milk	milk	FOODON:03301422	milk	METPO:2000013	biolink:Food	Lactose or protein hydrolysis; use FOODON for food substances
-hydrolysis: 4-nitrophenyl-alpha-D-maltopyranoside	4-nitrophenyl-alpha-D-maltopyranoside	CHEBI:87626	4-nitrophenyl alpha-D-maltopyranoside	METPO:2000013	biolink:ChemicalEntity	Alpha-glucosidase substrate
-aerobic catabolization: dihydrogen	dihydrogen	CHEBI:29356	dihydrogen	METPO:2000032	biolink:ChemicalEntity	H2 oxidation under aerobic conditions; METPO:2000032 predicate exists
+hydrolysis: milk	milk	UBERON:0001913	milk	METPO:2000013	biolink:Food	Lactose or protein hydrolysis; FOODON:03301422 was "sweet corn kernel (raw)" (completely wrong); UBERON:0001913 confirmed as "milk"
+aerobic catabolization: dihydrogen	dihydrogen	CHEBI:29356	dihydrogen	METPO:2000032	biolink:ChemicalEntity	H2 oxidation under aerobic conditions; METPO:2000032 predicate confirmed in metpo.owl
 aerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000032	biolink:ChemicalEntity	Aerobic acetate oxidation via TCA cycle
-anaerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000048	biolink:ChemicalEntity	Anaerobic acetate oxidation; METPO:2000048 predicate exists
-utilizes: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:52701	4-nitrophenyl beta-D-galactopyranoside	METPO:2000001	biolink:ChemicalEntity	Generic utilization
-utilizes: 1,2-propandiol	1,2-propandiol	CHEBI:16240	propane-1,2-diol	METPO:2000001	biolink:ChemicalEntity	Propylene glycol utilization
+anaerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000048	biolink:ChemicalEntity	Anaerobic acetate oxidation; METPO:2000048 predicate confirmed in metpo.owl
+utilizes: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	METPO:2000001	biolink:ChemicalEntity	Generic utilization; CHEBI:52701 was IBX reagent (wrong)
+utilizes: 1,2-propandiol	1,2-propandiol	CHEBI:16997	propane-1,2-diol	METPO:2000001	biolink:ChemicalEntity	Propylene glycol utilization; CHEBI:16240 was hydrogen peroxide (completely wrong); CHEBI:16997 confirmed as propane-1,2-diol
 hydrolysis: urea	urea	CHEBI:16199	urea	METPO:2000013	biolink:ChemicalEntity	Urease activity; common material fallback
-degradation: gelatin	gelatin	FOODON:03311170	gelatin	METPO:2000007	biolink:Food	Protein degradation; gelatinase activity; use FOODON for food-derived proteins
-hydrolysis: gelatin	gelatin	FOODON:03311170	gelatin	METPO:2000013	biolink:Food	Protein hydrolysis; gelatinase activity
-hydrolysis: esculin	esculin	CHEBI:4806	aesculin	METPO:2000013	biolink:ChemicalEntity	Beta-glucosidase substrate; coumarin derivative
+degradation: gelatin	gelatin	FOODON:03544158	gelatine (efsa foodex2)	METPO:2000007	biolink:Food	Protein degradation; gelatinase activity; FOODON:03311170 was "rosemary (ground, dried)" (completely wrong); FOODON:03544158 confirmed as gelatine
+hydrolysis: gelatin	gelatin	FOODON:03544158	gelatine (efsa foodex2)	METPO:2000013	biolink:Food	Protein hydrolysis; gelatinase activity; FOODON:03311170 was "rosemary (ground, dried)" (completely wrong)
+hydrolysis: esculin	esculin	CHEBI:4853	esculin	METPO:2000013	biolink:ChemicalEntity	Beta-glucosidase substrate; coumarin glycoside; CHEBI:4806 was (-)-epigallocatechin 3-gallate (EGCG, green tea polyphenol), completely wrong; CHEBI:4853 confirmed as esculin
 degradation: starch	starch	CHEBI:28017	starch	METPO:2000007	biolink:ChemicalEntity	Amylase activity; polysaccharide degradation

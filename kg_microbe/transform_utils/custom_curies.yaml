@@ -467,3 +467,543 @@ KGM:
     label: "esculin hydrolysate"
     description: "Hydrolysis products of esculin (glucose and esculetin)"
     category: "biolink:ChemicalMixture"
+
+  halomicin:
+    label: "halomicin"
+    description: "Macrolide antibiotic produced by Micromonospora halophytica"
+    category: "biolink:ChemicalEntity"
+
+  mycobacidin:
+    label: "mycobacidin"
+    description: "Siderophore/antibiotic produced by Mycobacterium and Nocardia spp."
+    category: "biolink:ChemicalEntity"
+
+  geomycin:
+    label: "geomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  aburamycin_a:
+    label: "aburamycin A"
+    description: "Polyene macrolide antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  poly_l_lysine_polymer:
+    label: "poly(L-lysine) polymer"
+    description: "Cationic polypeptide biopolymer (epsilon-poly-L-lysine) produced by Streptomyces albulus and related species"
+    category: "biolink:ChemicalEntity"
+
+  monazomycin:
+    label: "monazomycin"
+    description: "Polyene antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  azureomycin:
+    label: "azureomycin"
+    description: "Chromopeptide antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  avoparcin:
+    label: "avoparcin"
+    description: "Glycopeptide antibiotic produced by Streptomyces candidus; formerly used as growth promoter"
+    category: "biolink:ChemicalEntity"
+
+  actinohivin:
+    label: "actinohivin"
+    description: "Lectin-like antiviral protein produced by Longispora albida (Actinomycetes)"
+    category: "biolink:ChemicalEntity"
+
+  dynemicin:
+    label: "dynemicin"
+    description: "Enediyne antibiotic produced by Micromonospora chersina"
+    category: "biolink:ChemicalEntity"
+
+  abyssomicin_b:
+    label: "abyssomicin B"
+    description: "Spirotetronic acid antibiotic (abyssomicin family) produced by Verrucosispora spp."
+    category: "biolink:ChemicalEntity"
+
+  abyssomicin_g:
+    label: "abyssomicin G"
+    description: "Spirotetronic acid antibiotic (abyssomicin family) produced by Verrucosispora spp."
+    category: "biolink:ChemicalEntity"
+
+  atrop_abyssomicin_c:
+    label: "atrop-abyssomicin C"
+    description: "Atropisomeric form of abyssomicin C; spirotetronic acid antibiotic"
+    category: "biolink:ChemicalEntity"
+
+  abyssomicin_h:
+    label: "abyssomicin H"
+    description: "Spirotetronic acid antibiotic (abyssomicin family) produced by Verrucosispora spp."
+    category: "biolink:ChemicalEntity"
+
+  abyssomicin_d:
+    label: "abyssomicin D"
+    description: "Spirotetronic acid antibiotic (abyssomicin family) produced by Verrucosispora spp."
+    category: "biolink:ChemicalEntity"
+
+  actinotiocin:
+    label: "actinotiocin"
+    description: "Thiopeptide antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  sporangiomycin:
+    label: "sporangiomycin"
+    description: "Lipopeptide antibiotic produced by Planomonospora spp."
+    category: "biolink:ChemicalEntity"
+
+  chlororaphin:
+    label: "chlororaphin"
+    description: "Phenazine derivative antibiotic produced by Pseudomonas chlororaphis"
+    category: "biolink:ChemicalEntity"
+
+  sarcidin:
+    label: "sarcidin"
+    description: "Antibiotic produced by Sarcina spp."
+    category: "biolink:ChemicalEntity"
+
+  achromoviromycin:
+    label: "achromoviromycin"
+    description: "Antiviral antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  primocarcin:
+    label: "primocarcin"
+    description: "Anthracycline antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  alanosine:
+    label: "alanosine"
+    description: "Amino acid analogue antibiotic and antitumor agent produced by Streptomyces alanosinicus"
+    category: "biolink:ChemicalEntity"
+
+  danomycin:
+    label: "danomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  actinomycetin:
+    label: "actinomycetin"
+    description: "Bacteriocin-like protein produced by Actinomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  champamycin_b:
+    label: "champamycin B"
+    description: "Polyene antibiotic (champamycin family) produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  ascosin:
+    label: "ascosin"
+    description: "Polyene macrolide antifungal produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  limocrocin:
+    label: "limocrocin"
+    description: "Polyene chromophore antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  eurocidin:
+    label: "eurocidin"
+    description: "Polyene macrolide antifungal produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  pamamycin:
+    label: "pamamycin"
+    description: "Macrolide signaling molecule and antibiotic produced by Streptomyces alboniger"
+    category: "biolink:ChemicalEntity"
+
+  angustmycin:
+    label: "angustmycin"
+    description: "Nucleoside antibiotic produced by Streptomyces hygroscopicus"
+    category: "biolink:ChemicalEntity"
+
+  camphomycin:
+    label: "camphomycin"
+    description: "Polypeptide antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  cinerubin_a:
+    label: "cinerubin A"
+    description: "Anthracycline antibiotic produced by Streptomyces violaceus"
+    category: "biolink:ChemicalEntity"
+
+  canarius:
+    label: "canarius"
+    description: "Antibiotic produced by Streptomyces canarius"
+    category: "biolink:ChemicalEntity"
+
+  rhodomycin_a:
+    label: "rhodomycin A"
+    description: "Anthracycline antibiotic produced by Streptomyces purpurascens"
+    category: "biolink:ChemicalEntity"
+
+  durhamycin:
+    label: "durhamycin"
+    description: "Antibiotic produced by Streptomyces hygroscopicus subsp. durhamensis"
+    category: "biolink:ChemicalEntity"
+
+  angolamycin:
+    label: "angolamycin"
+    description: "Macrolide antibiotic produced by Streptomyces hygroscopicus"
+    category: "biolink:ChemicalEntity"
+
+  flavofungin:
+    label: "flavofungin"
+    description: "Polyene macrolide antifungal produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  glebomycin:
+    label: "glebomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  dihydro_azathymidine:
+    label: "5,6-dihydro-5-azathymidine"
+    description: "Nucleoside analogue produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  bandamycin:
+    label: "bandamycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  minimycin:
+    label: "minimycin"
+    description: "Nucleoside antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  vulgamycin:
+    label: "vulgamycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  trans_styrylacetic_acid:
+    label: "trans-styrylacetic acid"
+    description: "Aromatic carboxylic acid secondary metabolite produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  phoslactomycin:
+    label: "phoslactomycin"
+    description: "Polyketide phosphate ester antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  amphotericin_a:
+    label: "amphotericin A"
+    description: "Minor polyene macrolide component (less active isomer of amphotericin B) produced by Streptomyces nodosus"
+    category: "biolink:ChemicalEntity"
+
+  synergistin_a:
+    label: "synergistin A"
+    description: "Streptogramin A component antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  staphylomycin_m1:
+    label: "staphylomycin M1"
+    description: "Streptogramin B component antibiotic produced by Streptomyces virginiae"
+    category: "biolink:ChemicalEntity"
+
+  plicacetin:
+    label: "plicacetin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  pluramycin_a:
+    label: "pluramycin A"
+    description: "Antitumor antibiotic produced by Streptomyces pluricolorescens"
+    category: "biolink:ChemicalEntity"
+
+  fradicin:
+    label: "fradicin"
+    description: "Polyene antifungal antibiotic produced by Streptomyces fradiae"
+    category: "biolink:ChemicalEntity"
+
+  rubradirin:
+    label: "rubradirin"
+    description: "Antibiotic produced by Streptomyces achromogenes subsp. rubradiris"
+    category: "biolink:ChemicalEntity"
+
+  ardacin_c:
+    label: "ardacin C"
+    description: "Glycopeptide antibiotic component (ardacin family) produced by Kibdelosporangium spp."
+    category: "biolink:ChemicalEntity"
+
+  ardacin_a:
+    label: "ardacin A"
+    description: "Glycopeptide antibiotic component (ardacin family) produced by Kibdelosporangium spp."
+    category: "biolink:ChemicalEntity"
+
+  venturicidin_b:
+    label: "venturicidin B"
+    description: "Macrolide ATP synthase inhibitor antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  cystargin:
+    label: "cystargin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  xanthocidin:
+    label: "xanthocidin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  transvalencin_a:
+    label: "transvalencin A"
+    description: "Antibiotic produced by Streptomyces transvalensis"
+    category: "biolink:ChemicalEntity"
+
+  hydro_methylpteroylglutamylglutamic_acid:
+    label: "7-Hydro-8-methylpteroylglutamylglutamic acid"
+    description: "Pteroyl-amino acid secondary metabolite"
+    category: "biolink:ChemicalEntity"
+
+  bacteriocin_isk_1:
+    label: "bacteriocin ISK-1"
+    description: "Bacteriocin produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  phyllomycin:
+    label: "phyllomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  grisamine:
+    label: "grisamine"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  carcinomycin:
+    label: "carcinomycin"
+    description: "Anthracycline antitumor antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  exfoliatin:
+    label: "exfoliatin"
+    description: "Exfoliative toxin (serine protease) produced by Staphylococcus aureus"
+    category: "biolink:ChemicalEntity"
+
+  tertiomycin_b:
+    label: "tertiomycin B"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  tertiomycin_a:
+    label: "tertiomycin A"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  congocidin:
+    label: "congocidin"
+    description: "Antibiotic produced by Streptomyces ambofaciens (synonym: distamycin-related compound)"
+    category: "biolink:ChemicalEntity"
+
+  ketomycin:
+    label: "ketomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  actinomycin_a:
+    label: "actinomycin A"
+    description: "Chromodepsipeptide antibiotic (actinomycin family, less active than actinomycin D) produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  flavensomycin:
+    label: "flavensomycin"
+    description: "Polyene antifungal antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  cellostatin:
+    label: "cellostatin"
+    description: "Antifungal antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  tuberactinamine_a:
+    label: "tuberactinamine A"
+    description: "Cyclic peptide antibiotic component (tuberactinomycin family) produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  azacolutin:
+    label: "azacolutin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  tuberactinomycin:
+    label: "tuberactinomycin"
+    description: "Cyclic peptide antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  collinomycin:
+    label: "collinomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  etamycin:
+    label: "etamycin"
+    description: "Thiodepsipeptide antibiotic produced by Streptomyces griseoviridus"
+    category: "biolink:ChemicalEntity"
+
+  destomycin:
+    label: "destomycin"
+    description: "Aminoglycoside antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  candimycin:
+    label: "candimycin"
+    description: "Polyene macrolide antifungal produced by Streptomyces viridoflavus"
+    category: "biolink:ChemicalEntity"
+
+  caryomycin:
+    label: "caryomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  ferroverdin:
+    label: "ferroverdin"
+    description: "Iron-containing green pigment antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  racemomycin_e:
+    label: "racemomycin E"
+    description: "Aminoglycoside antibiotic component produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  alboverticillin:
+    label: "alboverticillin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  adenomycin:
+    label: "adenomycin"
+    description: "Nucleoside antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  griseolutein_a:
+    label: "griseolutein A"
+    description: "Pyridazine antibiotic produced by Streptomyces griseoluteus"
+    category: "biolink:ChemicalEntity"
+
+  griseolutein_b:
+    label: "griseolutein B"
+    description: "Pyridazine antibiotic produced by Streptomyces griseoluteus"
+    category: "biolink:ChemicalEntity"
+
+  viridogrisein:
+    label: "viridogrisein"
+    description: "Streptogramin B-type antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  noformicin:
+    label: "noformicin"
+    description: "Antibiotic produced by Nocardia spp."
+    category: "biolink:ChemicalEntity"
+
+  danubomycin:
+    label: "danubomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  cladomycin:
+    label: "cladomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  grasseriomycin:
+    label: "grasseriomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  levorin:
+    label: "levorin"
+    description: "Polyene macrolide antifungal produced by Streptomyces levoris"
+    category: "biolink:ChemicalEntity"
+
+  bafilomycin:
+    label: "bafilomycin"
+    description: "Macrolide antibiotic and V-ATPase inhibitor produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  lydimycin:
+    label: "lydimycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  chaninin:
+    label: "chaninin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  miharamycin_a:
+    label: "miharamycin A"
+    description: "Nucleoside antibiotic produced by Streptomyces miharaensis"
+    category: "biolink:ChemicalEntity"
+
+  stallimycin:
+    label: "stallimycin"
+    description: "Oligopeptide antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  cytovirin:
+    label: "cytovirin"
+    description: "Antitumor antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  pactamycin:
+    label: "pactamycin"
+    description: "Aminocyclitol antibiotic and translation inhibitor produced by Streptomyces pactum"
+    category: "biolink:ChemicalEntity"
+
+  etabetacin:
+    label: "etabetacin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  cephamycin_a:
+    label: "cephamycin A"
+    description: "Beta-lactam cephamycin antibiotic produced by Streptomyces clavuligerus and related species"
+    category: "biolink:ChemicalEntity"
+
+  plumbemycin_a:
+    label: "plumbemycin A"
+    description: "Phosphonate antibiotic produced by Streptomyces plumbeus"
+    category: "biolink:ChemicalEntity"
+
+  plumbemycin_b:
+    label: "plumbemycin B"
+    description: "Phosphonate antibiotic produced by Streptomyces plumbeus"
+    category: "biolink:ChemicalEntity"
+
+  o_carbamyl_d_serine:
+    label: "O-carbamyl-D-serine"
+    description: "Amino acid analogue secondary metabolite produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  steffimycin:
+    label: "steffimycin"
+    description: "Anthracycline antibiotic produced by Streptomyces steffisburgensis"
+    category: "biolink:ChemicalEntity"
+
+  beta_lipomycin:
+    label: "beta-Lipomycin"
+    description: "Lipophilic antibiotic (lipomycin family) produced by Streptomyces aureofaciens"
+    category: "biolink:ChemicalEntity"
+
+  kanchanomycin:
+    label: "kanchanomycin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  e_4_aminostyryl_acetate:
+    label: "(E)-4-Aminostyryl acetate"
+    description: "Aromatic amine secondary metabolite produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  hortesin:
+    label: "hortesin"
+    description: "Antibiotic produced by Streptomyces spp."
+    category: "biolink:ChemicalEntity"
+
+  piericidin:
+    label: "piericidin"
+    description: "Pyridine-quinone electron transport inhibitor produced by Streptomyces mobaraensis"
+    category: "biolink:ChemicalEntity"

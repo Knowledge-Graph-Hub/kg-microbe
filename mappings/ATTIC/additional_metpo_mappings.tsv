@@ -1,0 +1,55 @@
+trait_name	suggested_mapping_type	notes	frequency	example_traits
+biosafety level	METPO	Phenotypic quality - biosafety level classification (BSL-1 to BSL-4)	1	biosafety level
+cell color	METPO	Phenotypic quality - cell pigmentation	2	cell color; cell color: yellow pigment
+cell length	METPO	Phenotypic quality - cell morphology measurement	3	cell length; cell length maximum; cell length minimum
+cell shape	METPO	Phenotypic quality - cell morphology (rod, coccus, spiral, filamentous, etc.)	1	cell shape
+cell width	METPO	Phenotypic quality - cell morphology measurement	3	cell width; cell width maximum; cell width minimum
+coding density	METPO	Genomic quality - percentage of genome that codes for proteins	1	coding density
+estimated gene count	METPO	Genomic quality - predicted number of genes in genome	1	estimated gene count
+estimated genome size	METPO	Genomic quality - predicted genome size in base pairs	1	estimated genome size
+flagellum arrangement	METPO	Phenotypic quality - flagellar arrangement (peritrichous, monotrichous, amphitrichous, lophotrichous, etc.)	1	flagellum arrangement
+GC percentage	METPO	Genomic quality - GC content percentage (key taxonomic marker)	1	GC percentage
+gene count	METPO	Genomic quality - total number of genes in genome	1	gene count
+genome size	METPO	Genomic quality - total genome size in base pairs	1	genome size
+growth: selective media	METPO	Phenotypic quality - ability to grow on selective/differential media	3	growth: MacConkey agar; growth: blood agar; growth: bile acid susceptible
+growth: temperature	METPO	Phenotypic quality - growth at specific temperature	1	growth: 42 degrees Celsius
+growth: salinity	METPO	Phenotypic quality - growth at specific salinity	1	growth: 6.5% NaCl
+indole test	METPO	Phenotypic quality - indole production test (tryptophanase activity)	1	indole test
+methyl red test	METPO	Phenotypic quality - methyl red test result (mixed acid fermentation)	1	methyl red test
+oxygen preference	METPO	Phenotypic quality - oxygen requirement classification (aerobic, anaerobic, facultative, microaerophilic)	1	oxygen preference
+pH growth	METPO	Environmental quality - pH range for growth	1	pH growth
+pH maximum	METPO	Environmental quality - maximum pH for growth	1	pH maximum
+pH minimum	METPO	Environmental quality - minimum pH for growth	1	pH minimum
+pH preference	METPO	Environmental quality - optimal pH for growth	1	pH preference
+presence of hemolysis	METPO	Phenotypic quality - hemolytic activity (alpha, beta, gamma hemolysis)	1	presence of hemolysis
+salinity growth	METPO	Environmental quality - salinity range for growth	1	salinity growth
+salinity maximum	METPO	Environmental quality - maximum salinity for growth	1	salinity maximum
+salinity minimum	METPO	Environmental quality - minimum salinity for growth	1	salinity minimum
+salinity preference	METPO	Environmental quality - optimal salinity for growth	1	salinity preference
+temperature growth	METPO	Environmental quality - temperature range for growth	1	temperature growth
+temperature maximum	METPO	Environmental quality - maximum temperature for growth	1	temperature maximum
+temperature minimum	METPO	Environmental quality - minimum temperature for growth	1	temperature minimum
+temperature preference	METPO	Environmental quality - optimal temperature for growth	1	temperature preference
+assimilation	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "assimilates" + ChEBI lookup	266	assimilation: glucose; assimilation: acetate; assimilation: glycerol
+energy source	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "uses as energy source" + ChEBI lookup	97	energy source: acetate; energy source: glucose; energy source: citrate
+nitrogen source	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs METPO predicate for "uses as nitrogen source" (possibly METPO:2000014) + ChEBI lookup	57	nitrogen source: ammonia; nitrogen source: nitrate; nitrogen source: glutamate
+electron donor	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "uses as electron donor" + ChEBI lookup (complement to METPO:2000008 electron acceptor)	53	electron donor: dihydrogen; electron donor: acetate; electron donor: sulfide
+builds acid from	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "produces acid from" + ChEBI lookup	28	builds acid from: glucose; builds acid from: lactose; builds acid from: fructose
+required for growth	METPO_PREDICATE_NEEDED	Chemical/complex requirement - needs new METPO predicate for "requires for growth"; chemical lookup varies (ChEBI for vitamins, METPO for complex media)	22	required for growth: biotin; required for growth: cobalamin; required for growth: yeast extract
+growth: chemical	METPO_PREDICATE_NEEDED	Chemical metabolic trait - growth on/with specific chemical substrate; needs predicate + ChEBI lookup	20	growth: 1% sodium lactate; growth: 1,2-propandiol; growth: acetate
+builds gas from	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "produces gas from" + ChEBI lookup	16	builds gas from: glucose; builds gas from: nitrate; builds gas from: cellobiose
+aerobic catabolization	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "aerobically catabolizes" + ChEBI lookup	9	aerobic catabolization: 2-oxoglutarate; aerobic catabolization: glucose; aerobic catabolization: acetate
+builds base from	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "produces base from" + ChEBI lookup	7	builds base from: acetate; builds base from: gluconate; builds base from: adipate
+anaerobic catabolization	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "anaerobically catabolizes" + ChEBI lookup	4	anaerobic catabolization: acetate; anaerobic catabolization: cellobiose; anaerobic catabolization: fructose
+sulfur source	METPO_PREDICATE_NEEDED	Chemical metabolic trait - needs new METPO predicate for "uses as sulfur source" + ChEBI lookup	2	sulfur source: cysteine; sulfur source: elemental sulfur
+carbon source	CHEBI	Pattern resolver exists (METPO:2000006) but ChEBI lookup fails for these compounds	27	carbon source: 1,2-propandiol; carbon source: beta-hydroxybutyrate; carbon source: bromosuccinate
+produces	CHEBI	Pattern resolver exists (METPO:2000202) but ChEBI lookup fails for these compounds	79	produces: poly-beta-hydroxyalkanoate; produces: fluorescein; produces: phenazines
+fermentation	CHEBI	Pattern resolver exists (METPO:2000011) but ChEBI lookup fails for these compounds	77	fermentation: arabinogalactan; fermentation: myo-inositol; fermentation: casein hydrolysate
+degradation	CHEBI/ENVO	Pattern resolver exists (METPO:2000007) but ChEBI/ENVO lookup fails; some are materials (plastic) vs chemicals	12	degradation: plastic; degradation: aromatic compound; degradation: hydrocarbon
+hydrolysis	CHEBI	Pattern resolver exists (METPO:2000013) but ChEBI lookup fails for these compounds	9	hydrolysis: casein hydrolysate; hydrolysis: cationic chitosan; hydrolysis: crab shell chitin
+respiration	CHEBI	Pattern resolver exists (METPO:2000008) but ChEBI lookup fails for these compounds	6	respiration: 1% sodium lactate; respiration: beta-hydroxybutyrate; respiration: bromosuccinate
+oxidation	CHEBI	Pattern resolver exists (METPO:2000016) but ChEBI lookup fails for these compounds	5	oxidation: sulfur compounds; oxidation: beta-hydroxybutyrate; oxidation in darkness: sulfur compounds
+reduction	CHEBI	Pattern resolver exists (METPO:2000017) but ChEBI lookup fails for these compounds	5	reduction: arsenate detoxification; reduction: amorphous iron (iii) oxide; reduction: esculin hydrolysate
+utilizes	CHEBI	Pattern resolver exists (METPO:2000001) but ChEBI lookup fails for these compounds	4	utilizes: 1,2-propandiol; utilizes: 2-oxogluconate; utilizes: 4-nitrophenyl beta-D-galactopyranoside
+electron acceptor	CHEBI	Pattern resolver exists (METPO:2000008) but ChEBI lookup fails for these compounds	4	electron acceptor: amorphous iron (iii) oxide; electron acceptor: ethylenediaminetetraacetatoferrate; electron acceptor: sulfur compounds
+enzyme activity	EC/GO	Map to EC numbers when present in trait name; otherwise map to GO molecular function; some need enzyme name resolution	53	enzyme activity: catalase; enzyme activity: lipase; enzyme activity: alanine aminopeptidase

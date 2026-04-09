@@ -670,12 +670,12 @@ class MetaTraitsTransform(Transform):
         """
         Load NCBI to GTDB taxon mappings for unresolved taxa fallback.
 
-        Maps unresolved NCBI taxa to GTDB genera/species where possible.
-        Enables trait ingestion for organisms not in NCBITaxon.
+        Loads from the downloaded NCBI2GTDB.tsv.gz file (metatraits.embl.de).
+        Maps NCBI species names to GTDB equivalents for taxa that fail NCBITaxon lookup.
 
         :return: Dictionary mapping ncbi_name (lowercase) -> {gtdb_genus, gtdb_species, mapping_type, confidence}
         """
-        mappings_file = Path(__file__).parent / "mappings" / "ncbi_to_gtdb_taxa.tsv"
+        mappings_file = RAW_DATA_DIR / "NCBI2GTDB.tsv.gz"
         gtdb_mappings = {}
 
         if not mappings_file.exists():
@@ -683,16 +683,26 @@ class MetaTraitsTransform(Transform):
             return gtdb_mappings
 
         try:
-            with open(mappings_file, "r", encoding="utf-8") as f:
+            with gzip.open(mappings_file, "rt", encoding="utf-8") as f:
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
-                    ncbi_name = row["ncbi_name"].strip().lower()
-                    gtdb_mappings[ncbi_name] = {
-                        "gtdb_genus": row["gtdb_genus"].strip(),
-                        "gtdb_species": row["gtdb_species"].strip(),
-                        "mapping_type": row["mapping_type"].strip(),
-                        "confidence": row["confidence"].strip(),
-                    }
+                    ncbi_species = row.get("species (NCBI)", "").strip()
+                    if not ncbi_species:
+                        continue
+                    gtdb_genus = row.get("genus (GTDB)", "").strip()
+                    gtdb_species = row.get("species (GTDB)", "").strip()
+                    if not gtdb_genus:
+                        continue
+                    ncbi_name = ncbi_species.lower()
+                    # Only store first mapping encountered (highest genome count rows come first)
+                    if ncbi_name not in gtdb_mappings:
+                        mapping_type = "exact_species" if gtdb_species else "genus_level"
+                        gtdb_mappings[ncbi_name] = {
+                            "gtdb_genus": gtdb_genus,
+                            "gtdb_species": gtdb_species,
+                            "mapping_type": mapping_type,
+                            "confidence": "high",
+                        }
             print(f"  Loaded {len(gtdb_mappings)} NCBI to GTDB taxon mappings")
         except Exception as e:
             print(f"  Warning: Could not load NCBI to GTDB mappings: {e}")
@@ -1053,6 +1063,8 @@ class MetaTraitsTransform(Transform):
             ("oxidation in darkness", "chemical"),
             ("denitrification", "chemical"),
             ("ammonification", "chemical"),
+            ("aerobic catabolization", "chemical"),
+            ("anaerobic catabolization", "chemical"),
             ("degradation", "material"),
             ("hydrolysis", "material"),
         ]

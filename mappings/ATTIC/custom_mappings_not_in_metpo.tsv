@@ -1,0 +1,58 @@
+source_tier	trait_pattern	metpo_curie	predicate	in_metpo	metpo_info	notes
+Tier 1 (manual)	produces: ethanol	CHEBI:16236	skos:exactMatch	FALSE	External ontology: CHEBI	object of biolink:produces edge
+Tier 1 (manual)	produces: hydrogen sulfide	CHEBI:16136	skos:exactMatch	FALSE	External ontology: CHEBI	object of biolink:produces edge
+Tier 1 (manual)	produces: indole	CHEBI:16881	skos:exactMatch	FALSE	External ontology: CHEBI	object of biolink:produces edge
+Tier 1 (manual)	produces: methane from acetate	CHEBI:16183	skos:closeMatch	FALSE	External ontology: CHEBI	substrate acetate (CHEBI:30089) not captured in single object
+Tier 1 (manual)	produces: siderophore	CHEBI:26672	skos:exactMatch	FALSE	External ontology: CHEBI	object of biolink:produces edge
+Tier 1 (manual)	carbon source: acetate	CHEBI:30089	skos:exactMatch	FALSE	External ontology: CHEBI	substrate in biolink:capable_of edge via GO carbon utilization
+Tier 1 (manual)	carbon source: ethanol	CHEBI:16236	skos:exactMatch	FALSE	External ontology: CHEBI	substrate in biolink:capable_of edge via GO carbon utilization
+Tier 1 (manual)	enzyme activity: catalase (EC1.11.1.6)	EC:1.11.1.6	skos:exactMatch	FALSE	External ontology: EC	EC number extracted from trait name; biolink:capable_of
+Tier 1 (manual)	enzyme activity: beta-galactosidase (EC3.2.1.23)	EC:3.2.1.23	skos:exactMatch	FALSE	External ontology: EC	EC number extracted from trait name; biolink:capable_of
+Tier 1 (manual)	enzyme activity: urease (EC3.5.1.5)	EC:3.5.1.5	skos:exactMatch	FALSE	External ontology: EC	EC number extracted from trait name; biolink:capable_of
+Tier 1 (manual)	enzyme activity: oxidase	GO:0016491	skos:closeMatch	FALSE	External ontology: GO	no EC in trait name; broad GO MF; biolink:capable_of
+Tier 1 (manual)	enzyme activity: lipase	EC:3.1.1.3	skos:closeMatch	FALSE	External ontology: EC	no EC in trait name; inferred EC; biolink:capable_of
+Tier 1 (manual)	fermentation	GO:0006113	skos:exactMatch	FALSE	External ontology: GO	biolink:capable_of; base process, no substrate
+Tier 1 (manual)	nitrogen fixation	GO:0009399	skos:exactMatch	FALSE	External ontology: GO	biolink:capable_of
+Tier 1 (manual)	denitrification pathway	GO:0019333	skos:exactMatch	FALSE	External ontology: GO	biolink:capable_of
+Tier 1 (manual)	nitrification	GO:0019329	skos:closeMatch	FALSE	External ontology: GO	biolink:capable_of; nitrification is broader than this single GO term
+Tier 1 (manual)	gram positive	METPO:1000606	skos:exactMatch	TRUE	Class: obligately aerobic	biolink:has_phenotype
+Tier 1 (manual)	gram negative	METPO:1000607	skos:exactMatch	TRUE	Class: obligately anaerobic	biolink:has_phenotype
+Tier 1 (manual)	sporulation	METPO:1000614	skos:closeMatch	TRUE	Class: psychrophilic	biolink:has_phenotype; sporulation implies endospore-forming
+Tier 1 (manual)	obligate aerobic	METPO:1000616	skos:exactMatch	TRUE	Class: thermophilic	biolink:has_phenotype
+Tier 1 (manual)	obligate anaerobic	METPO:1000870	skos:exactMatch	TRUE	Class: sporulation	biolink:has_phenotype
+Tier 1 (manual)	presence of motility	METPO:1002005	skos:exactMatch	TRUE	Class: Fermentation	biolink:has_phenotype
+Tier 1 (manual)	voges-proskauer test	METPO:1005017	skos:closeMatch	FALSE	Not found in METPO	biolink:has_phenotype; only when pct_true > threshold
+Tier 1 (manual)	psychrophilic	METPO:1000660	skos:exactMatch	TRUE	Class: phototrophic	biolink:has_phenotype
+Tier 1 (manual)	thermophilic	METPO:1000656	skos:exactMatch	TRUE	Class: photoautotrophic	biolink:has_phenotype
+Tier 1.5 (chemical)	carbon source: *	METPO:2000006	METPO:2000006	TRUE	Object: Property: uses as carbon source; Predicate: Property: uses as carbon source	uses as carbon source; ChEBI lookup
+Tier 1.5 (chemical)	produces: *	METPO:2000202	METPO:2000202	TRUE	Object: Property: produces; Predicate: Property: produces	produces; ChEBI lookup
+Tier 1.5 (chemical)	ferments: *	METPO:2000011	METPO:2000011	TRUE	Object: Property: ferments; Predicate: Property: ferments	ferments; ChEBI lookup
+Tier 1.5 (chemical)	hydrolyzes: *	METPO:2000013	METPO:2000013	TRUE	Object: Property: hydrolyzes; Predicate: Property: hydrolyzes	hydrolyzes; ChEBI lookup
+Tier 1.5 (chemical)	oxidizes: *	METPO:2000016	METPO:2000016	TRUE	Object: Property: oxidizes; Predicate: Property: oxidizes	oxidizes; ChEBI lookup
+Tier 1.5 (chemical)	reduces: *	METPO:2000017	METPO:2000017	TRUE	Object: Property: reduces; Predicate: Property: reduces	reduces; ChEBI lookup
+Tier 1.5 (chemical)	degrades: *	METPO:2000007	METPO:2000007	TRUE	Object: Property: degrades; Predicate: Property: degrades	degrades; ChEBI lookup
+Tier 1.5 (chemical)	utilizes: *	METPO:2000001	METPO:2000001	TRUE	Object: Property: organism interacts with chemical; Predicate: Property: organism interacts with chemical	organism interacts with chemical; ChEBI lookup
+Tier 1.6 (metabolic)	electron acceptor: *	METPO:2000008	METPO:2000008	TRUE	Object: Property: uses as electron acceptor; Predicate: Property: uses as electron acceptor	uses as electron acceptor; ChEBI lookup
+Tier 1.6 (metabolic)	respiration: *	METPO:2000008	METPO:2000008	TRUE	Object: Property: uses as electron acceptor; Predicate: Property: uses as electron acceptor	respiration uses electron acceptor; ChEBI lookup
+Tier 1.6 (metabolic)	reduction: *	METPO:2000017	METPO:2000017	TRUE	Object: Property: reduces; Predicate: Property: reduces	reduces; ChEBI lookup
+Tier 1.6 (metabolic)	oxidation: *	METPO:2000016	METPO:2000016	TRUE	Object: Property: oxidizes; Predicate: Property: oxidizes	oxidizes; ChEBI lookup
+Tier 1.6 (metabolic)	oxidation in darkness: *	METPO:2000016	METPO:2000016	TRUE	Object: Property: oxidizes; Predicate: Property: oxidizes	oxidizes; ChEBI lookup
+Tier 1.6 (metabolic)	denitrification: *	METPO:2000017	METPO:2000017	TRUE	Object: Property: reduces; Predicate: Property: reduces	reduces nitrate/nitrite/N2O; ChEBI lookup
+Tier 1.6 (metabolic)	ammonification: *	METPO:2000014	METPO:2000014	TRUE	Object: Property: uses as nitrogen source; Predicate: Property: uses as nitrogen source	uses as nitrogen source; ChEBI lookup
+Tier 1.6 (metabolic)	degradation: *	METPO:2000007	METPO:2000007	TRUE	Object: Property: degrades; Predicate: Property: degrades	degrades; ChEBI or ENVO lookup
+Tier 1.6 (metabolic)	hydrolysis: *	METPO:2000013	METPO:2000013	TRUE	Object: Property: hydrolyzes; Predicate: Property: hydrolyzes	hydrolyzes; ChEBI or ENVO lookup
+Tier 1.7 (growth)	growth: *	METPO:2000012	METPO:2000012	TRUE	Object: Property: uses for growth; Predicate: Property: uses for growth	uses for growth; ChEBI lookup (excludes trophic modes)
+Tier 1.7 (growth)	builds acid from: *	METPO:2000003	METPO:2000003	TRUE	Object: Property: builds acid from; Predicate: Property: builds acid from	builds acid from; ChEBI lookup
+Tier 1.8 (trophic)	growth: phototrophy	GO:0009579	METPO:2000103	TRUE	Object: External ontology: GO; Predicate: Property: capable of	phototrophic process; GO BP
+Tier 1.8 (trophic)	growth: chemoheterotrophy	GO:0044281	METPO:2000103	TRUE	Object: External ontology: GO; Predicate: Property: capable of	small molecule metabolic process; GO BP
+Tier 1.8 (trophic)	growth: photoautotrophy	GO:0009541	METPO:2000103	TRUE	Object: External ontology: GO; Predicate: Property: capable of	photoautotrophic process; GO BP
+Tier 1.8 (trophic)	growth: photoheterotrophy	GO:0009581	METPO:2000103	TRUE	Object: External ontology: GO; Predicate: Property: capable of	photoheterotrophic process; GO BP
+Tier 1.8 (trophic)	growth: anoxygenic photoautotrophy	GO:0019685	METPO:2000103	TRUE	Object: External ontology: GO; Predicate: Property: capable of	photosynthesis, anoxygenic; GO BP
+Tier 1.8 (trophic)	growth: anoxygenic phototrophy	GO:0019685	METPO:2000103	TRUE	Object: External ontology: GO; Predicate: Property: capable of	photosynthesis, anoxygenic; GO BP
+Tier 1.8 (trophic)	aerobic growth: *	METPO:1001003	METPO:2000102	TRUE	Object: Class: temperature range observation; Predicate: Property: has phenotype	aerobe; METPO phenotype
+Tier 1.8 (trophic)	anaerobic growth: *	METPO:1001004	METPO:2000102	TRUE	Object: Class: temperature delta observation; Predicate: Property: has phenotype	anaerobe; METPO phenotype
+Tier 1.9 (enzyme)	enzyme activity: * (EC*)	EC:*	METPO:2000302	TRUE	Object: External ontology: EC; Predicate: Property: shows activity of	EC number extraction; shows activity of
+Tier 2.0 (phenotype)	aerotolerant	METPO:1001025	METPO:2000102	TRUE	Object: Not found in METPO; Predicate: Property: has phenotype	aerotolerant; has phenotype
+Tier 2.0 (phenotype)	facultative anaerobe	METPO:1001026	METPO:2000102	TRUE	Object: Not found in METPO; Predicate: Property: has phenotype	facultative anaerobe; has phenotype
+Tier 2.0 (phenotype)	acidophilic	METPO:1001015	METPO:2000102	TRUE	Object: Class: pH range observation; Predicate: Property: has phenotype	acidophile; has phenotype
+Tier 2.0 (phenotype)	capnophilic	KGM:capnophilic	METPO:2000102	TRUE	Object: External ontology: KGM; Predicate: Property: has phenotype	capnophilic; has phenotype

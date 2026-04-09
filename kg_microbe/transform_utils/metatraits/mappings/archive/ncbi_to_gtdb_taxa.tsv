@@ -1,0 +1,18 @@
+ncbi_name	gtdb_genus	gtdb_species	mapping_type	confidence	notes
+Allisonella histaminiformans	Allisonella	Allisonella_histaminiformans	exact_species	high	Exact match in GTDB; 31 genomes
+Massilibacillus massiliensis	Massilibacillus	Massilibacillus_massiliensis	exact_species	high	Exact match in GTDB; 2 genomes
+Selenobaculum gibii	Selenobaculum	Selenobaculum_gibii	exact_species	high	Exact match in GTDB; 7 genomes
+Stella humosa	Stella	Stella_humosa	exact_species	high	Exact match in GTDB; 5 genomes
+Stella vacuolata	Stella	Stella_humosa	exact_species	high	Maps to S. humosa in GTDB (likely synonym); 5 genomes
+Candidatus Eremiobacter sp. RRmetagenome_bin22	Eremiobacter	NA	genus_level	medium	Genus in GTDB but different species; 39 genomes
+Candidatus Neptunochlamydia vexilliferae	Neptunochlamydia	NA	genus_level	medium	Genus in GTDB but different species; 15 genomes
+Candidatus Nitrosocosmicus sp. SS	Nitrosocosmicus	NA	genus_level	medium	Genus in GTDB (archaea); 37 genomes
+Candidatus Pristimantibacillus lignocellulolyticus	Pristimantibacillus	NA	genus_level	medium	Genus in GTDB but different species; 78 genomes
+Planococcus sp. MSAK28401	Planococcus	NA	genus_level	medium	Strain-level NCBI name; map to genus; 118 genomes
+Stella sp. ATCC 35155	Stella	NA	genus_level	medium	Strain-level NCBI name; map to genus; 5 genomes
+uncultured Allisonella sp.	Allisonella	NA	genus_level	low	Uncultured isolate; map to genus; 31 genomes
+uncultured Anaeroglobus sp.	Anaeroglobus	NA	genus_level	low	Uncultured isolate; map to genus; 61 genomes
+[Pseudomonas] boreopolis	Pseudomonas	NA	genus_level	medium	Deprecated NCBI name; map to Pseudomonas genus; 19,457 genomes
+[Pseudomonas] carboxydohydrogena	Pseudomonas	NA	genus_level	medium	Deprecated NCBI name; map to Pseudomonas genus; 19,457 genomes
+Anaeroglobus geminatus	Anaeroglobus	NA	genus_level	medium	Species not exact match in GTDB; map to genus; 61 genomes
+Rhodobacteraceae bacterium W635	Rhodobacteraceae	NA	family_level	low	Family-level taxon; 6,260 genomes in Rhodobacteraceae

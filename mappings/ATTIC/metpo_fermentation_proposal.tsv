@@ -1,0 +1,47 @@
+proposed_id	label	substrate	chebi_id	parent_class	occurrences	go_xref	notes
+METPO:3001001	glucose fermentation	D-glucose	CHEBI:17234	METPO:3001010	3,896	GO:0019660	Substrate: D-glucose
+METPO:3001002	ribose fermentation	D-ribose	CHEBI:47013	METPO:3001010	1,546		Substrate: D-ribose
+METPO:3001003	xylose fermentation	D-xylose	CHEBI:18222	METPO:3001010	1,329		Substrate: D-xylose
+METPO:3001004	mannose fermentation	D-mannose	CHEBI:4208	METPO:3001010	1,057		Substrate: D-mannose
+METPO:3001005	fructose fermentation	D-fructose	CHEBI:28757	METPO:3001010	106		Substrate: D-fructose
+METPO:3001006	arabinose fermentation	L-arabinose	CHEBI:17553	METPO:3001010	143		Substrate: L-arabinose
+METPO:3001007	rhamnose fermentation	L-rhamnose	CHEBI:27907	METPO:3001010	141		Substrate: L-rhamnose
+METPO:3001008	galactose fermentation	D-galactose	CHEBI:28061	METPO:3001010	85	GO:0005989	Substrate: D-galactose
+METPO:3001009	fucose fermentation	L-fucose	CHEBI:42548	METPO:3001010	18		Substrate: L-fucose
+METPO:3001010	sorbose fermentation	L-sorbose	CHEBI:17262	METPO:3001010	14		Substrate: L-sorbose
+METPO:3001011	tagatose fermentation	D-tagatose	CHEBI:36291	METPO:3001010	12		Substrate: D-tagatose
+METPO:3001012	lyxose fermentation	D-lyxose	CHEBI:33124	METPO:3001010	8		Substrate: D-lyxose
+METPO:3001013	allose fermentation	D-allose	CHEBI:28980	METPO:3001010	6		Substrate: D-allose
+METPO:3001014	threose fermentation	D-threose	CHEBI:26986	METPO:3001010	4		Substrate: D-threose
+METPO:3001015	erythrose fermentation	D-erythrose	CHEBI:42382	METPO:3001010	3		Substrate: D-erythrose
+METPO:3001020	lactose fermentation	lactose	CHEBI:17716	METPO:3001020	321	GO:0005989	Substrate: lactose
+METPO:3001021	maltose fermentation	maltose	CHEBI:17306	METPO:3001020	208	GO:0000023	Substrate: maltose
+METPO:3001022	cellobiose fermentation	cellobiose	CHEBI:17057	METPO:3001020	126		Substrate: cellobiose
+METPO:3001023	sucrose fermentation	sucrose	CHEBI:17992	METPO:3001020	50		Substrate: sucrose
+METPO:3001024	melibiose fermentation	melibiose	CHEBI:28053	METPO:3001020	119		Substrate: melibiose
+METPO:3001025	raffinose fermentation	raffinose	CHEBI:16634	METPO:3001020	247		Substrate: raffinose
+METPO:3001026	trehalose fermentation	trehalose	CHEBI:16551	METPO:3001020	38		Substrate: trehalose
+METPO:3001027	gentiobiose fermentation	gentiobiose	CHEBI:18296	METPO:3001020	15		Substrate: gentiobiose
+METPO:3001028	turanose fermentation	turanose	CHEBI:28816	METPO:3001020	8		Substrate: turanose
+METPO:3001029	lactulose fermentation	lactulose	CHEBI:6359	METPO:3001000	6		Substrate: lactulose
+METPO:3001030	melezitose fermentation	melezitose	CHEBI:6704	METPO:3001020	4		Substrate: melezitose
+METPO:3001031	amygdalin fermentation	amygdalin	CHEBI:17019	METPO:3001000	354		Substrate: amygdalin
+METPO:3001040	glycogen fermentation	glycogen	CHEBI:28087	METPO:3001030	251	GO:0005977	Substrate: glycogen
+METPO:3001041	starch fermentation	starch	CHEBI:28017	METPO:3001030	42		Substrate: starch
+METPO:3001042	inulin fermentation	inulin	CHEBI:15443	METPO:3001030	18		Substrate: inulin
+METPO:3001043	dextrin fermentation	dextrin	CHEBI:23849	METPO:3001000	12		Substrate: dextrin
+METPO:3001044	pullulan fermentation	pullulan	CHEBI:61266	METPO:3001000	6		Substrate: pullulan
+METPO:3001050	mannitol fermentation	D-mannitol	CHEBI:16899	METPO:3001040	2,087	GO:0019400	Substrate: D-mannitol
+METPO:3001051	sorbitol fermentation	D-sorbitol	CHEBI:17924	METPO:3001040	156		Substrate: D-sorbitol
+METPO:3001052	inositol fermentation	myo-inositol	CHEBI:17268	METPO:3001040	25		Substrate: myo-inositol
+METPO:3001053	glycerol fermentation	glycerol	CHEBI:17754	METPO:3001040	84		Substrate: glycerol
+METPO:3001054	xylitol fermentation	xylitol	CHEBI:17151	METPO:3001040	32		Substrate: xylitol
+METPO:3001055	dulcitol fermentation	dulcitol	CHEBI:42976	METPO:3001040	28		Substrate: dulcitol
+METPO:3001056	adonitol fermentation	adonitol	CHEBI:15963	METPO:3001040	22		Substrate: adonitol
+METPO:3001057	erythritol fermentation	erythritol	CHEBI:16219	METPO:3001040	18		Substrate: erythritol
+METPO:3001058	arabitol fermentation	D-arabitol	CHEBI:22599	METPO:3001040	14		Substrate: D-arabitol
+METPO:3001059	ribitol fermentation	ribitol	CHEBI:27476	METPO:3001040	11		Substrate: ribitol
+METPO:3001060	lactitol fermentation	lactitol	CHEBI:6359	METPO:3001040	8		Substrate: lactitol
+METPO:3001061	maltitol fermentation	maltitol	CHEBI:25140	METPO:3001040	6		Substrate: maltitol
+METPO:3001062	isomalt fermentation	isomalt	CHEBI:63438	METPO:3001040	4		Substrate: isomalt
+METPO:3001063	threitol fermentation	threitol	CHEBI:27454	METPO:3001000	3		Substrate: threitol

@@ -123,6 +123,23 @@ STANDARD_PREFIXES = {
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
     "OMP", "MOP", "KEGG", "COG", "GTDB", "skos", "owl", "rdf",
     "rdfs", "xsd", "oboInOwl", "dcterms", "schema",
+    # lowercase aliases used by madin_etal NER fallback
+    "envo", "foodon", "pato", "po",
+    # madin_etal provisional node prefixes (fallback when no ontology term found)
+    "pathways", "carbon_substrates",
+    # bacdive / mediadive domain-specific prefixes
+    "bacdive.isolation_source",
+    # mediadive prefixes
+    "mediadive.medium", "mediadive.ingredient", "mediadive.solution", "mediadive.medium-type",
+    "CAS-RN", "PubChem", "pubchem.compound", "PUBCHEM.COMPOUND",
+    # bacdive / metatraits provisional organism prefixes
+    "kgmicrobe.strain", "kgmicrobe.species", "kgmicrobe.genus",
+    # bacdive assay prefix
+    "assay",
+    # COG functional categories
+    "COG_CAT", "COG_GROUP",
+    # foodon lowercase (from madin_etal)
+    "foodon",
 }
 
 

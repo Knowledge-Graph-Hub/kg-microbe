@@ -97,11 +97,11 @@ class TestKGMTermValidation(unittest.TestCase):
 
     def test_load_kgm_terms_from_custom_file(self):
         """Test loading KGM terms from a custom YAML file."""
-        # Create temporary YAML file
+        # Create temporary YAML file using the new kgmicrobe.* prefix sections
         with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write(
                 """
-KGM:
+"kgmicrobe.trait":
   voges_proskauer_test_positive:
     label: "Voges-Proskauer test positive"
     description: "Test result positive"
@@ -116,17 +116,17 @@ KGM:
             kgm_terms = load_valid_kgm_terms(temp_path)
             self.assertEqual(len(kgm_terms), 2)
             self.assertIn("kgmicrobe.trait:voges_proskauer_test_positive", kgm_terms)
-            self.assertIn("KGM:citrate_utilization_positive", kgm_terms)
+            self.assertIn("kgmicrobe.trait:citrate_utilization_positive", kgm_terms)
         finally:
             temp_path.unlink()
 
     def test_validate_kgm_term(self):
         """Test KGM term validation."""
         # Create a small set of valid terms
-        valid_terms = {"kgmicrobe.trait:voges_proskauer_test_positive", "KGM:citrate_utilization_positive"}
+        valid_terms = {"kgmicrobe.trait:voges_proskauer_test_positive", "kgmicrobe.trait:citrate_utilization_positive"}
 
         self.assertTrue(validate_kgm_term("kgmicrobe.trait:voges_proskauer_test_positive", valid_terms))
-        self.assertTrue(validate_kgm_term("KGM:citrate_utilization_positive", valid_terms))
+        self.assertTrue(validate_kgm_term("kgmicrobe.trait:citrate_utilization_positive", valid_terms))
         self.assertFalse(validate_kgm_term("KGM:unknown_term", valid_terms))
         self.assertFalse(validate_kgm_term("CHEBI:12345", valid_terms))
         self.assertFalse(validate_kgm_term("", valid_terms))

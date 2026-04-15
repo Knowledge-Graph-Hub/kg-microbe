@@ -326,14 +326,14 @@ other:
     name: "antibiotic resistance"
     <<: *phenotypic_capability_block
 
-KGM:
-  # Enzyme activities not in GO/EC
+"kgmicrobe.activity":
   coagulase_activity:
     label: "coagulase activity"
     description: "The catalytic activity of coagulase enzyme that causes blood plasma to clot"
     category: "biolink:MolecularActivity"
 
-  # Growth media traits not in ENVO/FOODON
+
+"kgmicrobe.trait":
   macconkey_agar_growth:
     label: "growth on MacConkey agar"
     description: "Ability to grow on MacConkey agar selective media"
@@ -349,18 +349,18 @@ KGM:
     description: "Growth inhibited by bile acids"
     category: "biolink:PhenotypicQuality"
 
-  # Biochemical test results
   voges_proskauer_test_positive:
     label: "Voges-Proskauer test positive"
     description: "Positive result in Voges-Proskauer biochemical test"
     category: "biolink:PhenotypicQuality"
 
-  # Chemical substances without ChEBI IDs
   capnophilic:
     label: "capnophilic"
     description: "Requires elevated CO2 levels for growth"
     category: "biolink:PhenotypicQuality"
 
+
+"kgmicrobe.compound":
   casein:
     label: "casein"
     description: "Casein protein mixture"
@@ -371,7 +371,6 @@ KGM:
     description: "Gelatin protein mixture"
     category: "biolink:ChemicalSubstance"
 
-  # Obscure secondary metabolites and antibiotics (not in ChEBI)
   gardimycin:
     label: "gardimycin"
     description: "Antibiotic glycopeptide produced by Actinoplanes spp."
@@ -447,7 +446,6 @@ KGM:
     description: "Chelating agent compound"
     category: "biolink:ChemicalSubstance"
 
-  # Complex biological materials (protein hydrolysates and extracts)
   casein_hydrolysate:
     label: "casein hydrolysate"
     description: "Enzymatic or acid hydrolysate of casein protein"
@@ -1007,3 +1005,4 @@ KGM:
     label: "piericidin"
     description: "Pyridine-quinone electron transport inhibitor produced by Streptomyces mobaraensis"
     category: "biolink:ChemicalEntity"
+

@@ -118,7 +118,8 @@ VALID_PREDICATES = {
 STANDARD_PREFIXES = {
     "NCBITaxon", "CHEBI", "GO", "EC", "RO", "METPO", "biolink",
     "FOODON", "UBERON", "HP", "MONDO", "ENVO", "infores", "semapv",
-    "KGM", "UniProtKB", "PR", "SO", "RHEA", "OBI", "IAO", "BFO",
+    "kgmicrobe.activity", "kgmicrobe.trait", "kgmicrobe.compound",
+    "UniProtKB", "PR", "SO", "RHEA", "OBI", "IAO", "BFO",
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
     "OMP", "MOP", "KEGG", "COG", "GTDB", "skos", "owl", "rdf",
     "rdfs", "xsd", "oboInOwl", "dcterms", "schema",

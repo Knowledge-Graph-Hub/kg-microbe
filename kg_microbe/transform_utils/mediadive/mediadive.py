@@ -1015,19 +1015,6 @@ class MediaDiveTransform(Transform):
 
                     writer.writerow(data)  # writing the data
 
-                    # Create type/class edge from medium to METPO:1004005 concept
-                    # This makes explicit that the medium is an instance of the "growth medium" ontology class
-                    medium_type_edge = [
-                        medium_id,  # subject: the medium node
-                        "biolink:category",  # predicate: category relationship
-                        "METPO:1004005",  # object: growth medium ontology class
-                        "rdf:type",  # relation: RDF semantics
-                        "infores:metpo",  # knowledge source: METPO ontology
-                        KNOWLEDGE_ASSERTION,  # knowledge_level: definitional assertion
-                        MANUAL_AGENT,  # agent_type: manually curated ontology
-                    ]
-                    edge_writer.writerow(medium_type_edge)
-
                     # Combine list creation and extension
                     nodes_data_to_write = [
                         self._create_node_row(medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]),

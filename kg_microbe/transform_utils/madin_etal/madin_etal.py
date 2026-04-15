@@ -248,6 +248,8 @@ class MadinEtAlTransform(Transform):
             edge_writer.writerow(self.edge_header)
             edge_writer.writerows(role_edges)
 
+            seen_nodes: set = set()
+
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(total=total_lines, desc="Processing files") as progress:
                 for line in reader:
@@ -326,11 +328,11 @@ class MadinEtAlTransform(Transform):
                                 # use biolink_equivalent URL from METPO tree traversal or fallback to default
                                 category = uri_to_curie(metpo_mapping.get("inferred_category", PATHWAY_CATEGORY))
                                 predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
-                                # fallback: if no biolink equivalent use METPO:2000103 (capable of)
+                                # fallback: if no biolink equivalent use biolink:capable_of
                                 if predicate_biolink:
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
-                                    predicate = "METPO:2000103"  # capable of
+                                    predicate = "biolink:capable_of"
                                 pathway_nodes.append(
                                     self._create_node_row(
                                         metpo_mapping["curie"],
@@ -401,7 +403,10 @@ class MadinEtAlTransform(Transform):
                                         ]
                                     )
 
-                        node_writer.writerows(pathway_nodes)
+                        for _nr in pathway_nodes:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
                         edge_writer.writerows(tax_pathway_edge)
 
                     # block handling "carbon substrates" column from Madin etal dataset/CSV sheet
@@ -427,11 +432,11 @@ class MadinEtAlTransform(Transform):
                                     metpo_mapping.get("inferred_category", CARBON_SUBSTRATE_CATEGORY)
                                 )
                                 predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
-                                # fallback: if no biolink equivalent use METPO:2000006 "uses as carbon source"
+                                # fallback: if no biolink equivalent use biolink:consumes ("uses as carbon source")
                                 if predicate_biolink:
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
-                                    predicate = "METPO:2000006"  # "uses as carbon source"
+                                    predicate = "biolink:consumes"
                                 carbon_substrate_nodes.append(
                                     self._create_node_row(
                                         metpo_mapping["curie"],
@@ -508,7 +513,10 @@ class MadinEtAlTransform(Transform):
                                         ]
                                     )
 
-                        node_writer.writerows(carbon_substrate_nodes)
+                        for _nr in carbon_substrate_nodes:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
                         edge_writer.writerows(tax_carbon_substrate_edge)
 
                     # block handling "cell shape" column from Madin etal dataset/CSV sheet
@@ -803,9 +811,15 @@ class MadinEtAlTransform(Transform):
                         ]
                         if sublist is not None
                     ]
-                    node_writer.writerows(nodes_data_to_write)
+                    for _nr in nodes_data_to_write:
+                        if _nr[0] not in seen_nodes:
+                            seen_nodes.add(_nr[0])
+                            node_writer.writerow(_nr)
                     if isolation_source_node:
-                        node_writer.writerows(isolation_source_node)
+                        for _nr in isolation_source_node:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
 
                     edges_data_to_write = [
                         sublist

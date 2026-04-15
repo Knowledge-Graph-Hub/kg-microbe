@@ -214,18 +214,18 @@ MEDIUM_STRAINS = "medium-strains/"
 
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
-NCBI_TO_MEDIUM_EDGE = "METPO:2000517"  # grows in (organism -> medium)
-NCBI_TO_MEDIUM_NEGATIVE_EDGE = "METPO:2000518"  # does not grow in (organism -> medium)
+NCBI_TO_MEDIUM_EDGE = "biolink:located_in"  # grows in (organism -> medium)
+NCBI_TO_MEDIUM_NEGATIVE_EDGE = "biolink:related_to"  # does not grow in (organism -> medium)
 MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
+NCBI_TO_CARBON_SUBSTRATE_EDGE = "biolink:consumes"  # "uses as carbon source" [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
-NCBI_TO_PATHWAY_EDGE = "METPO:2000103"  # capable of [org -> pathway]
+NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # capable of [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
-NCBI_TO_ENZYME_EDGE = "METPO:2000103"  # capable of [org -> enzyme]
+NCBI_TO_ENZYME_EDGE = "biolink:capable_of"  # capable of [org -> enzyme]
 # DEPRECATED v2026.1 - unused constants with deprecated predicates - will be removed in future version
 # ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
 # MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
@@ -251,7 +251,7 @@ NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 
 # Growth media categories (Biolink Model v4.3.6)
-MEDIUM_CATEGORY = "METPO:1004005"  # growth medium (domain-specific METPO category)
+MEDIUM_CATEGORY = "biolink:GrowthMedium"  # growth medium (KG-Microbe Biolink extension)
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 
@@ -295,8 +295,8 @@ ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 # CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Use CHEBI_CATEGORY instead
 
 HAS_PART = "BFO:0000051"
-IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
-DOES_NOT_GROW_IN = NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
+IS_GROWN_IN = "METPO:2000517"  # RO relation for grows in (organism -> growth medium), used in relation column
+DOES_NOT_GROW_IN = "METPO:2000518"  # RO relation for does not grow in, used in relation column
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
 TROPHICALLY_INTERACTS_WITH = "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
@@ -460,7 +460,7 @@ RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 INFERRED_SUBCLASS_RELATION = "kgmicrobe:inferred_subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
-CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolink:capable_of)
+CAPABLE_OF_PREDICATE = "biolink:capable_of"  # biolink predicate for capable of
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
 HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]

@@ -97,11 +97,15 @@ METPO_TO_BIOLINK_PREDICATE = {
 
 # Biolink predicate -> RO relation
 PREDICATE_TO_RELATION = {
-    "biolink:produces": "RO:0002234",
-    "biolink:capable_of": BIOLOGICAL_PROCESS,
-    "biolink:has_phenotype": HAS_PHENOTYPE,
+    "biolink:produces": "RO:0002234",  # has output
+    "biolink:capable_of": BIOLOGICAL_PROCESS,  # RO:0002215
+    "biolink:has_phenotype": HAS_PHENOTYPE,  # RO:0002200
     "biolink:has_attribute": "RO:0000086",  # has quality
     "biolink:interacts_with": "RO:0002434",  # interacts with
+    "biolink:consumes": "RO:0002233",  # has input
+    "biolink:located_in": "RO:0001025",  # located in
+    "biolink:related_to": "RO:0000091",  # has disposition (generic fallback)
+    "biolink:associated_with": "RO:0000091",
 }
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)

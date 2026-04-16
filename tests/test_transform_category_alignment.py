@@ -32,6 +32,8 @@ class TestTransformCategoryAlignment:
 
     def test_bacdive_loads_chebi_categories(self):
         """Test that BacDive transform loads CHEBI categories from ontologies."""
+        if not CHEBI_NODES_FILE.exists():
+            pytest.skip("CHEBI nodes file not found - ontologies transform not run")
         bacdive = BacDiveTransform()
 
         # Check that categories were loaded
@@ -40,6 +42,8 @@ class TestTransformCategoryAlignment:
 
     def test_mediadive_loads_chebi_categories(self):
         """Test that MediaDive transform loads CHEBI categories from ontologies."""
+        if not CHEBI_NODES_FILE.exists():
+            pytest.skip("CHEBI nodes file not found - ontologies transform not run")
         mediadive = MediaDiveTransform()
 
         # Check that categories were loaded

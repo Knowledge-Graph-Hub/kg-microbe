@@ -116,6 +116,9 @@ max-complexity = 10
 # Configure known first-party modules for correct import sorting
 known-first-party = ["kg_microbe"]
 
+[tool.pytest.ini_options]
+norecursedirs = ["scripts", "notebooks", "docs", ".git"]
+
 [tool.deptry]
 extend_exclude = ["notebooks", "docs"]
 

@@ -63,6 +63,7 @@ class TestRetryAfter:
         call_times = []
 
         def fake_get(url, timeout=30):
+            """Simulate a session.get that raises 429 on the first call, then succeeds."""
             call_times.append(time.monotonic())
             if len(call_times) == 1:
                 raise http_error
@@ -87,6 +88,7 @@ class TestRetryParameters:
         calls = []
 
         def fake_api(url, retry_count=3, retry_delay=2.0, verbose=False, session=None):
+            """Capture retry_count passed through from download_detailed_media."""
             calls.append(retry_count)
             return {}
 
@@ -101,6 +103,7 @@ class TestRetryParameters:
         delays = []
 
         def fake_api(url, retry_count=3, retry_delay=2.0, verbose=False, session=None):
+            """Capture retry_delay passed through from download_medium_strains."""
             delays.append(retry_delay)
             return {}
 
@@ -123,6 +126,7 @@ class TestRateLimiter:
         lock = threading.Lock()
 
         def fake_api(url, retry_count=3, retry_delay=2.0, verbose=False, session=None):
+            """Simulate a slow API call to allow measuring peak concurrency."""
             with lock:
                 active.append(1)
                 peak.append(len(active))

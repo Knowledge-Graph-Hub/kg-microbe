@@ -194,6 +194,7 @@ def download_detailed_media(
     rate_limiter = threading.Semaphore(max_workers)
 
     def fetch(medium: Dict) -> tuple[str, dict]:
+        """Fetch detail for a single medium using the shared session and rate limiter."""
         return _fetch_medium_detail(medium, session, rate_limiter, retry_count, retry_delay)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -238,6 +239,7 @@ def download_medium_strains(
     rate_limiter = threading.Semaphore(max_workers)
 
     def fetch(medium: Dict) -> tuple[str, dict]:
+        """Fetch strain associations for a single medium using the shared session and rate limiter."""
         return _fetch_medium_strains(medium, session, rate_limiter, retry_count, retry_delay)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:

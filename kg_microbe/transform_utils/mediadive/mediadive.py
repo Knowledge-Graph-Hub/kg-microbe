@@ -55,7 +55,6 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
-    KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
     MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,

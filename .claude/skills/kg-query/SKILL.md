@@ -31,7 +31,7 @@ poetry run kg query-organism "Corynebacterium glutamicum" -o report.md
 1. **Name Resolution**: Fuzzy matching on organism names and synonyms
 2. **Taxonomy**: Species classification hierarchy
 3. **Phenotypic Traits**: Oxygen preference, metabolism, morphology, Gram stain
-4. **Media Preferences**: Growth media with METPO:2000517 (grows in) and METPO:2000518 (doesn't grow in)
+4. **Media Preferences**: Growth media edges use a Biolink predicate (e.g. `biolink:located_in`) and carry the METPO semantics in the `relation` column — `METPO:2000517` (grows in) and `METPO:2000518` (doesn't grow in). Filter on `relation` when querying.
 5. **Media Composition**: 2-hop traversal (organism → media → solutions → chemicals)
 6. **Strain Information**: All strain records linked to species
 

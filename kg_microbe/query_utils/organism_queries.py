@@ -1,19 +1,26 @@
 """Organism-specific query functions for KG-Microbe."""
 
+import logging
 from typing import Dict, List
 
 import duckdb
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 def resolve_organism_name(conn: duckdb.DuckDBPyConnection, name: str) -> Dict[str, str]:
     """
     Resolve organism name to NCBITaxon ID using fuzzy matching.
 
+    When multiple organisms match, the best-ranked candidate (exact name match,
+    then synonym match, then substring match) is returned; remaining candidates
+    are logged as a warning so callers can refine the search term.
+
     :param conn: DuckDB connection
     :param name: Organism name to search
     :return: Dict with 'id', 'name', 'synonym' keys
-    :raises ValueError: If no organism found or multiple matches
+    :raises ValueError: If no organism is found
     """
     query = """
     SELECT id, name, synonym
@@ -37,10 +44,14 @@ def resolve_organism_name(conn: duckdb.DuckDBPyConnection, name: str) -> Dict[st
         )
 
     if len(result) > 1:
-        print("Multiple matches found:")
-        for row in result[:5]:
-            print(f"  - {row[1]} ({row[0]})")
-        print(f"\nUsing first match: {result[0][1]} ({result[0][0]})")
+        candidates = ", ".join(f"{row[1]} ({row[0]})" for row in result[:5])
+        logger.warning(
+            "Multiple organisms matched '%s': %s. Using first match: %s (%s).",
+            name,
+            candidates,
+            result[0][1],
+            result[0][0],
+        )
 
     return {
         "id": result[0][0],
@@ -78,21 +89,27 @@ def get_media_preferences(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> Dic
     """
     Get growth media preferences (grows in / doesn't grow in).
 
+    Growth media edges use Biolink predicates (e.g. ``biolink:located_in``) and
+    encode the METPO "grows in" / "does not grow in" semantics in the
+    ``relation`` column (``METPO:2000517`` / ``METPO:2000518``), matching the
+    transform output produced by BacDive and MediaDive. Filtering on
+    ``relation`` keeps the query aligned with that KGX encoding.
+
     :param conn: DuckDB connection
     :param taxon_id: NCBITaxon ID
     :return: Dict with 'grows_in' and 'no_growth' lists
     """
     query = """
     SELECT
-        e.predicate,
+        e.relation,
         e.object AS medium_id,
         n.name AS medium_name,
         e.primary_knowledge_source
     FROM edges e
     JOIN nodes n ON e.object = n.id
     WHERE e.subject = ?
-      AND e.predicate IN ('METPO:2000517', 'METPO:2000518')
-    ORDER BY e.predicate, n.name;
+      AND e.relation IN ('METPO:2000517', 'METPO:2000518')
+    ORDER BY e.relation, n.name;
     """
 
     result = conn.execute(query, [taxon_id]).fetchall()
@@ -100,16 +117,16 @@ def get_media_preferences(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> Dic
     grows_in = []
     no_growth = []
 
-    for predicate, medium_id, medium_name, source in result:
+    for relation, medium_id, medium_name, source in result:
         media_entry = {
             "medium_id": medium_id,
             "medium_name": medium_name,
             "source": source,
         }
 
-        if predicate == "METPO:2000517":  # grows in
+        if relation == "METPO:2000517":  # grows in
             grows_in.append(media_entry)
-        elif predicate == "METPO:2000518":  # doesn't grow in
+        elif relation == "METPO:2000518":  # doesn't grow in
             no_growth.append(media_entry)
 
     return {"grows_in": grows_in, "no_growth": no_growth}
@@ -126,17 +143,16 @@ def get_media_composition(conn: duckdb.DuckDBPyConnection, medium_ids: List[str]
     if not medium_ids:
         return pd.DataFrame(columns=["medium_id", "chemical_count", "chemicals"])
 
-    # Convert list to SQL array format
-    # Safe: medium_ids are CURIEs from database nodes, not user input
-    medium_list = ", ".join([f"'{mid}'" for mid in medium_ids])
-
+    # Parameterized IN-list via a single list parameter + UNNEST; keeps the
+    # query safe even if medium_ids ever contain unexpected characters.
+    placeholders = ", ".join(["?"] * len(medium_ids))
     query = f"""
     WITH media_solutions AS (
         SELECT
             e.subject AS medium_id,
             e.object AS solution_id
         FROM edges e
-        WHERE e.subject IN ({medium_list})
+        WHERE e.subject IN ({placeholders})
           AND e.predicate = 'biolink:has_part'
           AND e.object LIKE 'mediadive.solution:%'
     ),
@@ -159,7 +175,7 @@ def get_media_composition(conn: duckdb.DuckDBPyConnection, medium_ids: List[str]
     GROUP BY medium_id;
     """
 
-    return conn.execute(query).df()
+    return conn.execute(query, list(medium_ids)).df()
 
 
 def get_strain_info(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> pd.DataFrame:

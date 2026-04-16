@@ -64,7 +64,9 @@ def get_or_create_database(
     return conn
 
 
-def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path) -> duckdb.DuckDBPyConnection:
+def _create_database_from_tsv(
+    nodes_path: Path, edges_path: Path, db_path: Path
+) -> duckdb.DuckDBPyConnection:
     """
     Create DuckDB database from TSV files with indexes.
 
@@ -103,13 +105,13 @@ def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path)
 
         # Load edges table via Pandas
         print("    Loading edges table...")
-        # Read raw file and preprocess to remove embedded \r characters
-        with open(edges_path, "r", newline="\n") as f:
-            # Read first line (header) with embedded \r removed
-            header_line = f.readline().replace("\r", "").strip()
+        # Read header separately so we can deduplicate column names before parsing.
+        # Use default newline handling ("\r\n" or "\n") so a trailing \r never
+        # leaks into field values on CRLF files.
+        with open(edges_path, "r") as f:
+            header_line = f.readline().rstrip("\r\n")
             raw_header = header_line.split("\t")
 
-            # Deduplicate column names by adding suffix
             cleaned_header = []
             seen = {}
             for col in raw_header:
@@ -123,7 +125,8 @@ def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path)
 
         print(f"      Detected {len(cleaned_header)} columns in edges file")
 
-        # Load with cleaned header and explicit line terminator
+        # Let pandas handle CRLF/LF line endings normally; passing a custom
+        # lineterminator would leave \r at the end of each row's last field.
         edges_df = pd.read_csv(
             edges_path,
             sep="\t",
@@ -133,7 +136,6 @@ def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path)
             low_memory=False,
             names=cleaned_header,
             skiprows=1,  # Skip original header
-            lineterminator="\n",  # Use only \n as line terminator, ignore \r
         )
         conn.execute("CREATE TABLE edges AS SELECT * FROM edges_df;")
         print(f"      Loaded {len(edges_df):,} edges")

@@ -265,7 +265,7 @@ CHEBI_CATEGORY = "biolink:ChemicalSubstance"  # CHEBI default for all chemical e
 # Deprecated: Use CHEBI_CATEGORY instead
 SMALL_MOLECULE_CATEGORY = "biolink:ChemicalSubstance"  # Normalized to ChemicalSubstance (SmallMolecule deprecated)
 # DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
-MACROMOLECULE_CATEGORY = "biolink:Macromolecule"
+MACROMOLECULE_CATEGORY = "biolink:MacromolecularComplex"  # was biolink:Macromolecule (deprecated in v4.3.6)
 # Valid in Biolink v4.3.6 (proteins, nucleic acids, polymers)
 MACROMOLECULAR_COMPLEX_CATEGORY = "biolink:MacromolecularComplex"
 ROLE_CATEGORY = "biolink:ChemicalRole"  # CHEBI functional roles (inhibitor, agonist, etc.)

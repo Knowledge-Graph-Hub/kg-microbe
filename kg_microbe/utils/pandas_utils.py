@@ -23,6 +23,7 @@ def drop_duplicates(
     file_path: Path,
     sort_by_column: str = SUBJECT_COLUMN,
     consolidation_columns: List = None,
+    dedup_on_sort_column: bool = False,
 ):
     """
     Read TSV, drop duplicates, and export to the same file without making unnecessary copies.
@@ -30,6 +31,9 @@ def drop_duplicates(
     :param file_path: Path to the TSV file.
     :param sort_by_column: Column name to sort the DataFrame.
     :param consolidation_columns: List of columns to consolidate.
+    :param dedup_on_sort_column: If True, also remove rows with duplicate sort_by_column values
+        (keeping the first occurrence). Use for node files where the same ID may appear with
+        different attributes.
     """
     exclude_prefixes = DO_NOT_CHANGE_PREFIXES
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
@@ -45,6 +49,8 @@ def drop_duplicates(
             )
 
     df.drop_duplicates(inplace=True)
+    if dedup_on_sort_column and sort_by_column in df.columns:
+        df.drop_duplicates(subset=[sort_by_column], keep="first", inplace=True)
     df.sort_values(by=[sort_by_column], inplace=True)
 
     # Restore the original values of the NAME_COLUMN

@@ -1034,6 +1034,7 @@ class MediaDiveTransform(Transform):
             self.output_node_file,
             sort_by_column=ID_COLUMN,
             consolidation_columns=[ID_COLUMN, NAME_COLUMN],
+            dedup_on_sort_column=True,
         )
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
 

@@ -12,9 +12,11 @@ Checks alignment of transform outputs and merged KG with:
 import argparse
 import csv
 import gzip
+import io
 import json
 import re
 import sys
+import tarfile
 import yaml
 from collections import defaultdict
 from datetime import date
@@ -68,11 +70,20 @@ VALID_CATEGORIES = {
     "biolink:MacromolecularComplex",
     "biolink:ChemicalMixture",
     "biolink:ProcessedMaterial",
+    "biolink:Procedure",           # used for assay/test nodes
+    "biolink:EnvironmentalFeature", # used for isolation source nodes
+    "biolink:GeneFamily",          # used by COG transform
+    "biolink:OntologyClass",       # used by COG transform
+    "biolink:ActivityAndBehavior", # valid Biolink class; appears in madin_etal OAK mappings
+    "biolink:EnvironmentalMaterial", # valid Biolink class; from OAK mappings
+    "biolink:Macromolecule",       # deprecated → MacromolecularComplex, but still emitted by OAK
 }
 
 DEPRECATED_CATEGORIES = {
     "biolink:ChemicalSubstance": "biolink:SmallMolecule or biolink:ChemicalEntity",
     "biolink:MacromolecularMachineMixin": "biolink:Protein or biolink:Gene",
+    "biolink:Macromolecule": "biolink:MacromolecularComplex",
+    "biolink:ActivityAndBehavior": "biolink:BiologicalProcess or biolink:MolecularActivity",
 }
 
 # ── Valid Biolink predicates ──────────────────────────────────────────────────
@@ -205,21 +216,37 @@ def iter_tsv(path: Path, max_rows: int):
                 break
 
 
+def iter_tsv_from_tar(tar_path: Path, member_name: str, max_rows: int):
+    """Yield dicts from a TSV member inside a .tar.gz archive."""
+    count = 0
+    with tarfile.open(tar_path, "r:gz") as tf:
+        try:
+            member = tf.getmember(member_name)
+        except KeyError:
+            return
+        f = tf.extractfile(member)
+        if f is None:
+            return
+        text = io.TextIOWrapper(f, encoding="utf-8", errors="replace")
+        reader = csv.DictReader(text, delimiter="\t")
+        for row in reader:
+            yield row
+            count += 1
+            if max_rows and count >= max_rows:
+                break
+
+
 def get_prefix(curie: str) -> str:
     return curie.split(":")[0] if ":" in curie else ""
 
 
 # ── Per-file checks ───────────────────────────────────────────────────────────
-def check_nodes(path: Path, max_rows: int, registered_prefixes: set,
-                metpo_curies: set, verbose: bool) -> list:
+def check_nodes_rows(rows: list, max_rows: int, registered_prefixes: set,
+                     metpo_curies: set, verbose: bool) -> list:
+    """Check a pre-loaded list of node rows."""
     findings = []
-    if not path.exists():
-        findings.append(Finding("ERROR", "KGX", f"nodes.tsv not found: {path}"))
-        return findings
-
-    rows = list(iter_tsv(path, max_rows))
     if not rows:
-        findings.append(Finding("WARNING", "KGX", "nodes.tsv is empty"))
+        findings.append(Finding("WARNING", "KGX", "nodes file is empty"))
         return findings
 
     cols = set(rows[0].keys())
@@ -287,16 +314,23 @@ def check_nodes(path: Path, max_rows: int, registered_prefixes: set,
     return findings
 
 
-def check_edges(path: Path, max_rows: int, registered_prefixes: set,
+def check_nodes(path: Path, max_rows: int, registered_prefixes: set,
                 metpo_curies: set, verbose: bool) -> list:
+    """Check nodes from a file path."""
     findings = []
     if not path.exists():
-        findings.append(Finding("ERROR", "KGX", f"edges.tsv not found: {path}"))
+        findings.append(Finding("ERROR", "KGX", f"nodes.tsv not found: {path}"))
         return findings
-
     rows = list(iter_tsv(path, max_rows))
+    return check_nodes_rows(rows, max_rows, registered_prefixes, metpo_curies, verbose)
+
+
+def check_edges_rows(rows: list, max_rows: int, registered_prefixes: set,
+                     metpo_curies: set, verbose: bool) -> list:
+    """Check a pre-loaded list of edge rows."""
+    findings = []
     if not rows:
-        findings.append(Finding("WARNING", "KGX", "edges.tsv is empty"))
+        findings.append(Finding("WARNING", "KGX", "edges file is empty"))
         return findings
 
     cols = set(rows[0].keys())
@@ -378,12 +412,42 @@ def check_edges(path: Path, max_rows: int, registered_prefixes: set,
     return findings
 
 
+def check_edges(path: Path, max_rows: int, registered_prefixes: set,
+                metpo_curies: set, verbose: bool) -> list:
+    """Check edges from a file path."""
+    findings = []
+    if not path.exists():
+        findings.append(Finding("ERROR", "KGX", f"edges.tsv not found: {path}"))
+        return findings
+    rows = list(iter_tsv(path, max_rows))
+    return check_edges_rows(rows, max_rows, registered_prefixes, metpo_curies, verbose)
+
+
 # ── Main review ───────────────────────────────────────────────────────────────
+def _tally(result: dict) -> dict:
+    """Count errors and warnings in result findings."""
+    for f in result["nodes"] + result["edges"]:
+        if f.severity == "ERROR":
+            result["errors"] += 1
+        elif f.severity == "WARNING":
+            result["warnings"] += 1
+    return result
+
+
 def review_transform(name: str, transform_dir: Path, max_rows: int,
                      registered_prefixes: set, metpo_curies: set,
                      verbose: bool) -> dict:
     """Review a single transform's nodes.tsv and edges.tsv."""
     result = {"name": name, "nodes": [], "edges": [], "errors": 0, "warnings": 0}
+
+    # Special case: merged KG stored as merged-kg.tar.gz
+    tar_path = transform_dir / "merged-kg.tar.gz"
+    if name == "merged" and tar_path.exists():
+        nodes_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_nodes.tsv", max_rows))
+        edges_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_edges.tsv", max_rows))
+        result["nodes"] = check_nodes_rows(nodes_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        result["edges"] = check_edges_rows(edges_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        return _tally(result)
 
     nodes_path = transform_dir / "nodes.tsv"
     edges_path = transform_dir / "edges.tsv"
@@ -394,16 +458,27 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
     if not edges_path.exists():
         edges_path = transform_dir / "edges.tsv.gz"
 
+    # Handle ontologies transform: per-ontology files (*_nodes.tsv / *_edges.tsv)
+    if not nodes_path.exists():
+        per_ont_nodes = sorted(transform_dir.glob("*_nodes.tsv"))
+        per_ont_edges = sorted(transform_dir.glob("*_edges.tsv"))
+        if per_ont_nodes or per_ont_edges:
+            all_node_rows, all_edge_rows = [], []
+            for p in per_ont_nodes:
+                all_node_rows.extend(iter_tsv(p, max_rows))
+            for p in per_ont_edges:
+                all_edge_rows.extend(iter_tsv(p, max_rows))
+            result["nodes"] = check_nodes_rows(all_node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+            result["edges"] = check_edges_rows(all_edge_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+            return _tally(result)
+        # Empty directory (transform not run) — skip silently
+        result["nodes"] = [Finding("INFO", "KGX", "No output files found (transform not run or no data)")]
+        result["edges"] = []
+        return result
+
     result["nodes"] = check_nodes(nodes_path, max_rows, registered_prefixes, metpo_curies, verbose)
     result["edges"] = check_edges(edges_path, max_rows, registered_prefixes, metpo_curies, verbose)
-
-    for f in result["nodes"] + result["edges"]:
-        if f.severity == "ERROR":
-            result["errors"] += 1
-        elif f.severity == "WARNING":
-            result["warnings"] += 1
-
-    return result
+    return _tally(result)
 
 
 def format_text(results: list, format_md: bool = False) -> str:

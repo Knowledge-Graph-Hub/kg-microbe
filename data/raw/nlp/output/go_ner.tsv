@@ -6,6 +6,7 @@ GO:0015946	methanol oxidation	methanol oxidation	True	1	18	methanol_oxidation
 GO:0015948	methanogenesis	methanogenesis	True	1	14	methanogenesis
 GO:0015977	carbon fixation	autotrophy	True	1	10	autotrophy
 GO:0019332	aerobic respiration, using nitrite as electron donor	nitrite oxidation	True	1	17	nitrite_oxidation
+GO:0019409	aerobic respiration, using ammonia as electron donor	nitrification	True	1	13	nitrification
 GO:0019412	aerobic respiration, using hydrogen as electron donor	hydrogen oxidation	True	1	18	hydrogen_oxidation
 GO:0019417	sulfur oxidation	sulfur oxidation	True	1	16	sulfur_oxidation
 GO:0019418	sulfide oxidation	sulfide oxidation	True	1	17	sulfide_oxidation

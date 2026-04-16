@@ -285,7 +285,7 @@ class MadinEtAlTransform(Transform):
                     if metabolism:
                         # create metabolism node and edge to tax_id
                         # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                        category = uri_to_curie(metabolism.get("inferred_category", METABOLISM_CATEGORY))
+                        category = uri_to_curie(metabolism.get("inferred_category", METABOLISM_CATEGORY)) or METABOLISM_CATEGORY
                         predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
                         # fallback: if no biolink equivalent use `biolink:has_phenotype`
                         if predicate_biolink:
@@ -326,7 +326,7 @@ class MadinEtAlTransform(Transform):
                             if metpo_mapping:
                                 # create pathway node and edge to tax_id
                                 # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                                category = uri_to_curie(metpo_mapping.get("inferred_category", PATHWAY_CATEGORY))
+                                category = uri_to_curie(metpo_mapping.get("inferred_category", PATHWAY_CATEGORY)) or PATHWAY_CATEGORY
                                 predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                                 # fallback: if no biolink equivalent use biolink:capable_of
                                 if predicate_biolink:
@@ -430,7 +430,7 @@ class MadinEtAlTransform(Transform):
                                 # use biolink_equivalent URL from METPO tree traversal or fallback to default
                                 category = uri_to_curie(
                                     metpo_mapping.get("inferred_category", CARBON_SUBSTRATE_CATEGORY)
-                                )
+                                ) or CARBON_SUBSTRATE_CATEGORY
                                 predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                                 # fallback: if no biolink equivalent use biolink:consumes ("uses as carbon source")
                                 if predicate_biolink:
@@ -528,7 +528,7 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create cell shape node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)) or PHENOTYPIC_CATEGORY
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
@@ -576,7 +576,7 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create range_salinity node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)) or PHENOTYPIC_CATEGORY
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
@@ -609,7 +609,7 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create motility node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)) or PHENOTYPIC_CATEGORY
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
@@ -641,7 +641,7 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create range_tmp node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)) or PHENOTYPIC_CATEGORY
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
@@ -670,7 +670,7 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create gram_stain node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)) or PHENOTYPIC_CATEGORY
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
@@ -703,7 +703,7 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create sporulation node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                            category = uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)) or PHENOTYPIC_CATEGORY
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:

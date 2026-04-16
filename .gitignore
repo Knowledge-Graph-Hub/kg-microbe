@@ -30286,3 +30286,7 @@ scripts/examples/visualization/*.png
 data/raw/kegg/ko_details.json
 data/raw/kegg/ko_minimal.json
 mappings/unified_chemical_mappings.tsv
+
+# Archived mapping files — not part of the active transform inputs.
+kg_microbe/transform_utils/metatraits/mappings/archive/
+mappings/ATTIC/

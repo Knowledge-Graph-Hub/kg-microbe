@@ -30290,3 +30290,10 @@ mappings/unified_chemical_mappings.tsv
 # Archived mapping files — not part of the active transform inputs.
 kg_microbe/transform_utils/metatraits/mappings/archive/
 mappings/ATTIC/
+
+# One-time mapping migration/fix scripts. Keep locally if still useful,
+# but don't ship them — they target specific dated issues (e.g. tag
+# rewrites from 2026-04-07 to 2026-04-08). Reusable QA/validator
+# scripts (e.g. mappings/validate_manual_mappings.py) stay tracked.
+mappings/fix_*.py
+mappings/add_*.py

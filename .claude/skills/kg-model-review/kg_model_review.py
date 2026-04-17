@@ -28,7 +28,7 @@ REPO_ROOT = HERE.parent.parent.parent  # .claude/skills/kg-model-review → repo
 TRANSFORMS_DIR = REPO_ROOT / "data" / "transformed"
 MERGED_DIR = REPO_ROOT / "data" / "merged"
 CUSTOM_CURIES_FILE = REPO_ROOT / "kg_microbe" / "transform_utils" / "custom_curies.yaml"
-ONTOLOGIES_NODES = TRANSFORMS_DIR / "ontologies" / "nodes.tsv"
+ONTOLOGIES_DIR = TRANSFORMS_DIR / "ontologies"
 
 # ── KGX spec ─────────────────────────────────────────────────────────────────
 NODES_REQUIRED = {"id", "category", "name"}
@@ -77,6 +77,10 @@ VALID_CATEGORIES = {
     "biolink:ActivityAndBehavior", # valid Biolink class; appears in madin_etal OAK mappings
     "biolink:EnvironmentalMaterial", # valid Biolink class; from OAK mappings
     "biolink:Macromolecule",       # deprecated → MacromolecularComplex, but still emitted by OAK
+    # Additional valid Biolink classes surfaced by the ontologies transform (OAK output)
+    "biolink:PhenotypicFeature",
+    "biolink:Cell",
+    "biolink:SequenceFeature",
 }
 
 DEPRECATED_CATEGORIES = {
@@ -151,6 +155,16 @@ STANDARD_PREFIXES = {
     "COG_CAT", "COG_GROUP",
     # foodon lowercase (from madin_etal)
     "foodon",
+    # OBO imports reachable through NCBITaxon / MONDO / CHEBI OWL closure
+    "AGRO", "BSPO", "BTO", "CARO", "CEPH", "CHR", "DRON", "ECOCORE",
+    "FAO", "FLOPO", "GAZ", "GENEPIO", "HGNC", "MF", "MFOMD", "MOD",
+    "NBO", "NCBIGene", "OBO", "OGMS", "OIO", "PCO", "UO",
+    "UPA",  # UniPathway
+    "UPHENO", "WD_Entity",
+    # Namespaces carried through by OAK
+    "dc", "dcterms", "doap", "foaf", "pav",
+    # URL-style ids that occasionally leak through
+    "http", "https", "urn", "orcid",
 }
 
 
@@ -190,10 +204,21 @@ def load_registered_prefixes() -> set:
 
 
 def load_metpo_curies() -> set:
-    """Load all METPO CURIEs from ontologies transform output."""
+    """Load all METPO CURIEs from ontologies transform output.
+
+    The ontologies transform emits per-ontology files (e.g. ``metpo_nodes.tsv``),
+    not a single ``nodes.tsv``. Prefer the dedicated METPO file when present and
+    fall back to any ``*_nodes.tsv`` that contains METPO ids.
+    """
     curies = set()
-    if ONTOLOGIES_NODES.exists():
-        with open(ONTOLOGIES_NODES) as f:
+    if not ONTOLOGIES_DIR.exists():
+        return curies
+
+    metpo_file = ONTOLOGIES_DIR / "metpo_nodes.tsv"
+    candidates = [metpo_file] if metpo_file.exists() else sorted(ONTOLOGIES_DIR.glob("*_nodes.tsv"))
+
+    for path in candidates:
+        with open(path, encoding="utf-8", errors="replace") as f:
             reader = csv.DictReader(f, delimiter="\t")
             for row in reader:
                 nid = row.get("id", "")

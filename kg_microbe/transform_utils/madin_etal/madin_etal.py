@@ -757,7 +757,7 @@ class MadinEtAlTransform(Transform):
                             isolation_source_node = [
                                 self._create_node_row(
                                     ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                    None,
+                                    ENVIRONMENT_CATEGORY,
                                     filtered_row[ISOLATION_SOURCE_COLUMN],
                                 )
                             ]

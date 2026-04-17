@@ -4,14 +4,11 @@ import threading
 import time
 from unittest.mock import MagicMock, patch
 
-import pytest
 import requests
 
 from kg_microbe.utils.mediadive_bulk_download import (
     DEFAULT_MAX_WORKERS,
     USER_AGENT,
-    _fetch_medium_detail,
-    _fetch_medium_strains,
     download_detailed_media,
     download_medium_strains,
     get_json_from_api,
@@ -19,6 +16,7 @@ from kg_microbe.utils.mediadive_bulk_download import (
 
 
 class TestDefaults:
+
     """Verify that DEFAULT_MAX_WORKERS and USER_AGENT are sensible values."""
 
     def test_default_max_workers_is_polite(self):
@@ -47,6 +45,7 @@ class TestDefaults:
 
 
 class TestRetryAfter:
+
     """Verify that 429 responses with Retry-After headers are honoured."""
 
     def test_respects_retry_after_header(self):
@@ -80,6 +79,7 @@ class TestRetryAfter:
 
 
 class TestRetryParameters:
+
     """Verify retry_count and retry_delay flow from download functions into get_json_from_api."""
 
     def test_retry_count_is_configurable(self):
@@ -112,6 +112,7 @@ class TestRetryParameters:
 
 
 class TestRateLimiter:
+
     """Verify the Semaphore rate limiter bounds concurrency."""
 
     def test_concurrency_bounded_by_max_workers(self):

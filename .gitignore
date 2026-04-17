@@ -30297,3 +30297,59 @@ mappings/ATTIC/
 # scripts (e.g. mappings/validate_manual_mappings.py) stay tracked.
 mappings/fix_*.py
 mappings/add_*.py
+
+# Ephemeral PR/work-log markdown. These are useful locally while an
+# iteration is in flight but become stale as soon as the work lands —
+# the code, tests, and commit messages are the durable record.
+# Genuine reference docs (METPO_*PROPOSAL*, *_EXPLAINED, lowercase
+# review notes, etc.) stay tracked in notes/ and docs/.
+notes/*_IMPLEMENTATION_COMPLETE.md
+notes/*_IMPLEMENTATION_SUMMARY.md
+notes/*_MIGRATION_COMPLETE.md
+notes/*_MIGRATION_PLAN.md
+notes/*_MIGRATION_SUMMARY.md
+notes/*_COMPLETE.md
+notes/*_FINAL_*.md
+notes/*_PROGRESS.md
+notes/*_STATUS.md
+notes/*_AUDIT.md
+notes/*_AUDIT_FINAL.md
+notes/PHASE[0-9]*.md
+notes/PRIORITY[0-9]*.md
+notes/ROUND[0-9]*.md
+notes/*_ROUND[0-9]*.md
+notes/HARDCODED_MAPPINGS_*.md
+notes/UNMAPPED_TRAITS_*.md
+notes/UNMAPPED_ANALYSIS_*.md
+notes/CHEBI_*_ANALYSIS.md
+notes/CHEBI_*_FINDINGS.md
+notes/CHEBI_*_SUMMARY.md
+notes/METATRAITS_*_SUMMARY.md
+notes/METATRAITS_*_IMPLEMENTATION.md
+notes/METATRAITS_*_UPDATED.md
+notes/METATRAITS_*_EXAMPLES.md
+notes/GTDB_*_IMPLEMENTATION_COMPLETE.md
+notes/GTDB_*_QC_REPORT.md
+notes/GTDB_IMPLEMENTATION_SUMMARY.md
+notes/MAPPING_AUDIT_REPORT.md
+notes/MIGRATION_VERIFICATION.md
+notes/MULTIPROCESSING_IMPLEMENTATION_SUMMARY.md
+notes/OPTIONS_A_B_IMPLEMENTATION_SUMMARY.md
+notes/QUICK_WINS_*.md
+notes/PROVENANCE_WORK_SUMMARY.md
+notes/POST_MIGRATION_UNMAPPED_ANALYSIS.md
+notes/PREDICATE_PROPOSAL_COMPARISON.md
+notes/SPECIAL_CHEMICAL_MAPPINGS_ASSESSMENT.md
+notes/TAXA_RESOLUTION_STRATEGY_ANALYSIS.md
+notes/CATEGORY_FIXES_IMPLEMENTATION.md
+notes/EXTERNAL_MAPPING_FILES_REPORT.md
+notes/ANALYSIS_COMPLETE_SUMMARY.md
+notes/IMPLEMENTATION_COMPLETE.md
+notes/IMPLEMENTATION_SUMMARY.md
+notes/organism_comparison_*.md
+notes/releases_comparison_*.md
+
+docs/COPILOT_*.md
+docs/202[0-9][0-9][0-9]_*.md
+docs/*_IMPLEMENTATION_SUMMARY.md
+docs/*_FIX.md

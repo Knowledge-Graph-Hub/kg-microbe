@@ -33,6 +33,10 @@ updates:
       - "dependencies"
       - "github-actions"
     groups:
+      # Only group minor/patch Actions updates; majors stay as individual PRs.
       actions:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"

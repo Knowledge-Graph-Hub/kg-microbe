@@ -2566,14 +2566,14 @@ class BacDiveTransform(Transform):
                                         for chebi_id in chebi_ids:
                                             # Write edge from organism to ChEBI chemical
                                             knowledge_level, agent_type = self._add_edge_metadata(
-                                                metpo_predicate, "biolink:interacts_with", chebi_id
+                                                metpo_predicate, "RO:0002434", chebi_id
                                             )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     chebi_id,
-                                                    "biolink:interacts_with",
+                                                    "RO:0002434",
                                                     self.knowledge_source,
                                                     knowledge_level,
                                                     agent_type,
@@ -2587,14 +2587,14 @@ class BacDiveTransform(Transform):
 
                                         # Write organism→assay edge using same METPO predicate
                                         knowledge_level, agent_type = self._add_edge_metadata(
-                                            metpo_predicate, "biolink:interacts_with", assay_id
+                                            metpo_predicate, "RO:0002434", assay_id
                                         )
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
                                                 metpo_predicate,
                                                 assay_id,
-                                                "biolink:interacts_with",
+                                                "RO:0002434",
                                                 self.knowledge_source,
                                                 knowledge_level,
                                                 agent_type,

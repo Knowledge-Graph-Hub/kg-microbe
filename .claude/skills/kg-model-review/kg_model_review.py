@@ -40,7 +40,7 @@ CURIE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_\-.]*:.+")
 VALID_CATEGORIES = {
     "biolink:OrganismTaxon",
     "biolink:ChemicalEntity",
-    "biolink:ChemicalSubstance",  # deprecated but still used
+    "biolink:ChemicalSubstance",  # KG-Microbe convention: normalization target for CHEBI-mapped chemicals (see constants.CHEBI_CATEGORY)
     "biolink:SmallMolecule",
     "biolink:MolecularMixture",
     "biolink:ComplexMolecularMixture",
@@ -86,7 +86,8 @@ VALID_CATEGORIES = {
 }
 
 DEPRECATED_CATEGORIES = {
-    "biolink:ChemicalSubstance": "biolink:SmallMolecule or biolink:ChemicalEntity",
+    # NOTE: biolink:ChemicalSubstance is deprecated upstream but is the KG-Microbe
+    # normalization target for CHEBI chemicals. Intentionally NOT flagged here.
     "biolink:MacromolecularMachineMixin": "biolink:Protein or biolink:Gene",
     "biolink:Macromolecule": "biolink:MacromolecularComplex",
     "biolink:ActivityAndBehavior": "biolink:BiologicalProcess or biolink:MolecularActivity",

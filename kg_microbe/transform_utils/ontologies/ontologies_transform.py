@@ -227,7 +227,8 @@ class OntologiesTransform(Transform):
         Fix node categories for specific ontologies.
 
         - GO: Apply aspect-based categorization (MF/BP/CC)
-        - ChEBI: Replace deprecated ChemicalSubstance with SmallMolecule and detect roles
+        - ChEBI: Detect roles/macromolecules; default small molecules to CHEBI_CATEGORY
+          (biolink:ChemicalSubstance — KG-Microbe project convention, see constants.py)
         - UBERON: Ensure all terms are AnatomicalEntity
         - NCBITaxon: Ensure all terms are OrganismTaxon
 
@@ -274,10 +275,9 @@ class OntologiesTransform(Transform):
             df["category"] = df.apply(fix_go_category, axis=1)
 
         elif ontology_name == "chebi":
-            # Fix ChEBI categories: deprecated ChemicalSubstance → SmallMolecule
-            # Also detect roles
-            print("  Fixing ChEBI categories (deprecated ChemicalSubstance → SmallMolecule)...")
-            print("  Detecting ChEBI roles...")
+            # Fix ChEBI categories: detect roles/macromolecules;
+            # small molecules default to CHEBI_CATEGORY (biolink:ChemicalSubstance)
+            print("  Fixing ChEBI categories (detecting roles/macromolecules; default → CHEBI_CATEGORY)...")
 
             # Create ChEBI adapter once to avoid file descriptor leaks
             from oaklib import get_adapter

@@ -74,16 +74,39 @@ METPO_TO_BIOLINK_PREDICATE = {
     "METPO:2000016": "biolink:capable_of",  # oxidizes
     "METPO:2000017": "biolink:capable_of",  # reduces
     "METPO:2000018": "biolink:capable_of",  # requires for growth
+    "METPO:2000019": "biolink:capable_of",  # uses for respiration
     "METPO:2000020": "biolink:capable_of",  # uses as sulfur source
+    # Aerobic/anaerobic catabolization and growth (positive)
+    "METPO:2000032": "biolink:capable_of",  # uses for aerobic catabolization
+    "METPO:2000043": "biolink:capable_of",  # uses for aerobic growth
+    "METPO:2000048": "biolink:capable_of",  # uses for anaerobic catabolization
+    "METPO:2000049": "biolink:capable_of",  # uses for anaerobic growth
+    "METPO:2000051": "biolink:capable_of",  # uses for anaerobic growth with light
     # Chemical interactions (negative)
+    "METPO:2000021": "biolink:capable_of",  # does not use for aerobic catabolization
+    "METPO:2000022": "biolink:capable_of",  # does not use for aerobic growth
+    "METPO:2000024": "biolink:capable_of",  # does not use for anaerobic growth
+    "METPO:2000025": "biolink:capable_of",  # does not use for anaerobic growth in the dark
+    "METPO:2000026": "biolink:capable_of",  # does not use for anaerobic growth with light
     "METPO:2000027": "biolink:interacts_with",  # does not assimilate
     "METPO:2000028": "biolink:produces",  # does not build acid from
+    "METPO:2000029": "biolink:produces",  # does not build base from
+    "METPO:2000030": "biolink:produces",  # does not build gas from
     "METPO:2000031": "biolink:capable_of",  # does not use as carbon source
+    "METPO:2000033": "biolink:capable_of",  # does not degrade
+    "METPO:2000034": "biolink:capable_of",  # does not use as electron acceptor
+    "METPO:2000035": "biolink:capable_of",  # does not use as electron donor
+    "METPO:2000036": "biolink:capable_of",  # does not use as energy source
     "METPO:2000037": "biolink:capable_of",  # does not ferment
     "METPO:2000038": "biolink:capable_of",  # does not use for growth
     "METPO:2000039": "biolink:capable_of",  # does not hydrolyze
+    "METPO:2000040": "biolink:capable_of",  # does not use as nitrogen source
+    "METPO:2000041": "biolink:interacts_with",  # does not use in other way
+    "METPO:2000042": "biolink:capable_of",  # does not oxidize
     "METPO:2000044": "biolink:capable_of",  # does not reduce
+    "METPO:2000045": "biolink:capable_of",  # is not required for growth
     "METPO:2000046": "biolink:capable_of",  # does not use for respiration
+    "METPO:2000047": "biolink:capable_of",  # does not use as sulfur source
     # Production
     "METPO:2000202": "biolink:produces",  # produces
     "METPO:2000222": "biolink:produces",  # does not produce

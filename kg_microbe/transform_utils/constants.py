@@ -353,6 +353,7 @@ SYNONYM_COLUMN = "synonym"
 IRI_COLUMN = "iri"  # DEPRECATED - No longer used in transform outputs
 SAME_AS_COLUMN = "same_as"
 SUBSETS_COLUMN = "subsets"
+DEPRECATED_COLUMN = "deprecated"
 
 # Assay node metadata fields
 ASSAY_KIT_NAME_COLUMN = "kit_name"

@@ -997,13 +997,13 @@ class MetaTraitsTransform(Transform):
 
                 # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
                 # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
-                chemical_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', chemical_name)
+                chemical_name = re.sub(r"^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+", "", chemical_name)
 
                 # Strip concentration suffixes (e.g., "glycine 1%" → "glycine")
-                chemical_name = re.sub(r'\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$', '', chemical_name)
+                chemical_name = re.sub(r"\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$", "", chemical_name)
 
                 # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
-                chemical_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', chemical_name).strip()
+                chemical_name = re.sub(r"\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*", " ", chemical_name).strip()
 
                 # Lookup predicate from METPO (use positive predicate)
                 predicate_data = self.metpo_pattern_to_predicate.get(keyword.lower())
@@ -1014,10 +1014,7 @@ class MetaTraitsTransform(Transform):
 
                 # Lookup chemical via unified mappings (includes synonyms)
                 # Enable fuzzy stereochemistry matching to handle variants like "(-)-D-glucose"
-                chebi_id = self.chemical_loader.find_chebi_by_name(
-                    chemical_name,
-                    fuzzy_stereochemistry=True
-                )
+                chebi_id = self.chemical_loader.find_chebi_by_name(chemical_name, fuzzy_stereochemistry=True)
 
                 if chebi_id:
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
@@ -1082,13 +1079,13 @@ class MetaTraitsTransform(Transform):
 
                 # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
                 # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
-                substance_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', substance_name)
+                substance_name = re.sub(r"^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+", "", substance_name)
 
                 # Strip concentration suffixes (e.g., "glycine 1%" → "glycine")
-                substance_name = re.sub(r'\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$', '', substance_name)
+                substance_name = re.sub(r"\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$", "", substance_name)
 
                 # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
-                substance_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', substance_name).strip()
+                substance_name = re.sub(r"\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*", " ", substance_name).strip()
 
                 # Lookup predicate from METPO (use positive predicate)
                 predicate_data = self.metpo_pattern_to_predicate.get(keyword.lower())
@@ -1098,10 +1095,7 @@ class MetaTraitsTransform(Transform):
                 metpo_predicate = predicate_data["positive"]
 
                 # Try ChEBI lookup first (with fuzzy stereochemistry matching)
-                chebi_id = self.chemical_loader.find_chebi_by_name(
-                    substance_name,
-                    fuzzy_stereochemistry=True
-                )
+                chebi_id = self.chemical_loader.find_chebi_by_name(substance_name, fuzzy_stereochemistry=True)
                 # Synonyms now handled by find_chebi_by_name() via unified chemical mappings
 
                 if chebi_id:
@@ -1158,13 +1152,13 @@ class MetaTraitsTransform(Transform):
 
                 # Strip concentration prefixes (e.g., "1 %", "0.01 %", "10 mM")
                 # This allows "1 % sodium lactate" to match "sodium lactate" in unified file
-                substrate_name = re.sub(r'^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+', '', substrate_name)
+                substrate_name = re.sub(r"^\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)\s+", "", substrate_name)
 
                 # Strip concentration suffixes (e.g., "glycine 1%" → "glycine")
-                substrate_name = re.sub(r'\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$', '', substrate_name)
+                substrate_name = re.sub(r"\s+\d+(\.\d+)?\s*(%|mM|µM|μM|mg/ml|g/l|M)$", "", substrate_name)
 
                 # Remove parenthetical concentrations (e.g., "yeast extract (0.01 %, w/v)")
-                substrate_name = re.sub(r'\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*', ' ', substrate_name).strip()
+                substrate_name = re.sub(r"\s*\([^)]*(%|w/v|v/v)[^)]*\)\s*", " ", substrate_name).strip()
 
                 # Skip non-chemical growth patterns (trophic modes)
                 non_chemical_patterns = [
@@ -1185,10 +1179,7 @@ class MetaTraitsTransform(Transform):
                 metpo_predicate = predicate_data["positive"]
 
                 # Try ChEBI lookup (with fuzzy stereochemistry matching)
-                chebi_id = self.chemical_loader.find_chebi_by_name(
-                    substrate_name,
-                    fuzzy_stereochemistry=True
-                )
+                chebi_id = self.chemical_loader.find_chebi_by_name(substrate_name, fuzzy_stereochemistry=True)
                 # Synonyms now handled by find_chebi_by_name() via unified chemical mappings
 
                 if chebi_id:
@@ -1400,10 +1391,7 @@ class MetaTraitsTransform(Transform):
             substance = match.group(1).strip()
 
             # Try ChEBI lookup first (with fuzzy stereochemistry matching)
-            chebi_id = self.chemical_loader.find_chebi_by_name(
-                substance,
-                fuzzy_stereochemistry=True
-            )
+            chebi_id = self.chemical_loader.find_chebi_by_name(substance, fuzzy_stereochemistry=True)
             canonical_name = None
             # Chemical synonyms now handled by self.chemical_loader.find_chebi_by_name()
 
@@ -1960,9 +1948,7 @@ class MetaTraitsTransform(Transform):
                 }
         return None
 
-    def _resolve_growth_temperature_observation(
-        self, trait_name: str, majority_label: str
-    ) -> Optional[dict]:
+    def _resolve_growth_temperature_observation(self, trait_name: str, majority_label: str) -> Optional[dict]:
         """
         Resolve specific growth temperature observations.
 
@@ -2022,9 +2008,7 @@ class MetaTraitsTransform(Transform):
 
         # Pattern 2: growth: <number>% sodium chloride
         if not match:
-            match = re.match(
-                r"^growth:\s*(\d+(?:\.\d+)?)\s*%\s*sodium\s+chloride$", trait_name.lower()
-            )
+            match = re.match(r"^growth:\s*(\d+(?:\.\d+)?)\s*%\s*sodium\s+chloride$", trait_name.lower())
 
         if not match:
             return None
@@ -2095,9 +2079,7 @@ class MetaTraitsTransform(Transform):
                 return pair.get("negative")
         return None
 
-    def _apply_majority_label_to_predicate(
-        self, mapping: dict, majority_label: str
-    ) -> Optional[str]:
+    def _apply_majority_label_to_predicate(self, mapping: dict, majority_label: str) -> Optional[str]:
         """
         Return the correct METPO/biolink predicate for a mapping given the majority_label.
 
@@ -2276,6 +2258,7 @@ class MetaTraitsTransform(Transform):
             "xref",
             "provided_by",
             "synonym",
+            "deprecated",
             "same_as",
         ]
         self.edge_header = [
@@ -2746,9 +2729,7 @@ class MetaTraitsTransform(Transform):
                                 label = metabolic_mapping["name"]
                             elif growth_mapping := self._resolve_growth_substrate(trait_name):
                                 # Tier 3.3: Growth substrates (growth: X, builds acid from: X)
-                                resolved_pred = self._apply_majority_label_to_predicate(
-                                    growth_mapping, majority_label
-                                )
+                                resolved_pred = self._apply_majority_label_to_predicate(growth_mapping, majority_label)
                                 if resolved_pred is None:
                                     continue
                                 curie = growth_mapping["curie"]
@@ -2763,9 +2744,7 @@ class MetaTraitsTransform(Transform):
                                 label = trophic_mapping["name"]
                             elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                 # Tier 3.5: Enzyme activities with EC numbers or GO mappings
-                                resolved_pred = self._apply_majority_label_to_predicate(
-                                    enzyme_mapping, majority_label
-                                )
+                                resolved_pred = self._apply_majority_label_to_predicate(enzyme_mapping, majority_label)
                                 if resolved_pred is None:
                                     continue
                                 curie = enzyme_mapping["curie"]
@@ -2791,9 +2770,7 @@ class MetaTraitsTransform(Transform):
                                 label = phenotype_mapping["name"]
                             elif energy_mapping := self._resolve_energy_source(trait_name):
                                 # Tier 3.7: Energy sources (energy source: glucose)
-                                resolved_pred = self._apply_majority_label_to_predicate(
-                                    energy_mapping, majority_label
-                                )
+                                resolved_pred = self._apply_majority_label_to_predicate(energy_mapping, majority_label)
                                 if resolved_pred is None:
                                     continue
                                 curie = energy_mapping["curie"]
@@ -2813,9 +2790,7 @@ class MetaTraitsTransform(Transform):
                                 label = nitrogen_mapping["name"]
                             elif sulfur_mapping := self._resolve_sulfur_source(trait_name):
                                 # Tier 3.9: Sulfur sources (sulfur source: sulfate)
-                                resolved_pred = self._apply_majority_label_to_predicate(
-                                    sulfur_mapping, majority_label
-                                )
+                                resolved_pred = self._apply_majority_label_to_predicate(sulfur_mapping, majority_label)
                                 if resolved_pred is None:
                                     continue
                                 curie = sulfur_mapping["curie"]

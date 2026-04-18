@@ -81,6 +81,8 @@ VALID_CATEGORIES = {
     "biolink:PhenotypicFeature",
     "biolink:Cell",
     "biolink:SequenceFeature",
+    "biolink:Genome",          # NCBITaxon genomes; large use in merged KG
+    "biolink:TaxonomicRank",   # NCBITaxon rank terms
 }
 
 DEPRECATED_CATEGORIES = {
@@ -161,6 +163,12 @@ STANDARD_PREFIXES = {
     "NBO", "NCBIGene", "OBO", "OGMS", "OIO", "PCO", "UO",
     "UPA",  # UniPathway
     "UPHENO", "WD_Entity",
+    "PO",        # Plant Ontology (OBO; reachable via ENVO/FOODON closure)
+    "TAXRANK",   # Taxonomic Rank vocabulary (OBO; from NCBITaxon)
+    "GenBank",   # GenBank sequence accessions (from NCBITaxon xrefs)
+    "chemrof",   # chemical role framework (CHEBI-adjacent)
+    "debio",     # domain entity for biology (Rhea-adjacent)
+    "kgmicrobe", # KG-Microbe native prefix (bare form; dotted variants also registered)
     # Namespaces carried through by OAK
     "dc", "dcterms", "doap", "foaf", "pav",
     # URL-style ids that occasionally leak through

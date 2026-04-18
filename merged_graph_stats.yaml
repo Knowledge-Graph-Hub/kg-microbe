@@ -65,13 +65,13 @@ edge_stats:
         unknown:
           count: 4431
     biolink:has_chemical_role:
-      count: 1138
+      count: 357
       provided_by:
         unknown:
-          count: 1138
+          count: 357
       source:
         unknown:
-          count: 1138
+          count: 357
     biolink:has_input:
       count: 89411
       provided_by:
@@ -308,21 +308,21 @@ edge_stats:
         unknown:
           count: 469
     biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalRole:
-      count: 242
+      count: 236
       provided_by:
         unknown:
-          count: 242
+          count: 236
       source:
         unknown:
-          count: 242
+          count: 236
     biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalSubstance:
-      count: 222
+      count: 217
       provided_by:
         unknown:
-          count: 222
+          count: 217
       source:
         unknown:
-          count: 222
+          count: 217
     biolink:ChemicalEntity-biolink:has_part-biolink:ChemicalEntity:
       count: 5
       provided_by:
@@ -372,13 +372,13 @@ edge_stats:
         unknown:
           count: 7
     biolink:ChemicalEntity-biolink:related_to-biolink:ChemicalRole:
-      count: 263
+      count: 260
       provided_by:
         unknown:
-          count: 263
+          count: 260
       source:
         unknown:
-          count: 263
+          count: 260
     biolink:ChemicalEntity-biolink:related_to-biolink:ChemicalSubstance:
       count: 364
       provided_by:
@@ -387,7 +387,7 @@ edge_stats:
       source:
         unknown:
           count: 364
-    biolink:ChemicalEntity-biolink:related_to-biolink:Macromolecule:
+    biolink:ChemicalEntity-biolink:related_to-biolink:MacromolecularComplex:
       count: 3
       provided_by:
         unknown:
@@ -419,7 +419,7 @@ edge_stats:
       source:
         unknown:
           count: 205
-    biolink:ChemicalEntity-biolink:subclass_of-biolink:Macromolecule:
+    biolink:ChemicalEntity-biolink:subclass_of-biolink:MacromolecularComplex:
       count: 7
       provided_by:
         unknown:
@@ -491,7 +491,7 @@ edge_stats:
       source:
         unknown:
           count: 2725
-    biolink:ChemicalMixture-biolink:has_part-biolink:Macromolecule:
+    biolink:ChemicalMixture-biolink:has_part-biolink:MacromolecularComplex:
       count: 1929
       provided_by:
         unknown:
@@ -508,13 +508,13 @@ edge_stats:
         unknown:
           count: 129
     biolink:ChemicalRole-biolink:related_to-biolink:ChemicalRole:
-      count: 127
+      count: 116
       provided_by:
         unknown:
-          count: 127
+          count: 116
       source:
         unknown:
-          count: 127
+          count: 116
     biolink:ChemicalRole-biolink:related_to-biolink:ChemicalSubstance:
       count: 56
       provided_by:
@@ -524,37 +524,37 @@ edge_stats:
         unknown:
           count: 56
     biolink:ChemicalRole-biolink:subclass_of-biolink:ChemicalRole:
-      count: 1316
+      count: 1233
       provided_by:
         unknown:
-          count: 1316
+          count: 1233
       source:
         unknown:
-          count: 1316
+          count: 1233
     biolink:ChemicalRole-biolink:subclass_of-biolink:ChemicalSubstance:
-      count: 992
+      count: 894
       provided_by:
         unknown:
-          count: 992
+          count: 894
       source:
         unknown:
-          count: 992
+          count: 894
     biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalRole:
-      count: 1137
+      count: 357
       provided_by:
         unknown:
-          count: 1137
+          count: 357
       source:
         unknown:
-          count: 1137
+          count: 357
     biolink:ChemicalSubstance-biolink:has_chemical_role-biolink:ChemicalSubstance:
-      count: 958
+      count: 330
       provided_by:
         unknown:
-          count: 958
+          count: 330
       source:
         unknown:
-          count: 958
+          count: 330
     biolink:ChemicalSubstance-biolink:location_of-biolink:OrganismTaxon:
       count: 910
       provided_by:
@@ -572,13 +572,13 @@ edge_stats:
         unknown:
           count: 1016
     biolink:ChemicalSubstance-biolink:related_to-biolink:ChemicalRole:
-      count: 39173
+      count: 33835
       provided_by:
         unknown:
-          count: 39173
+          count: 33835
       source:
         unknown:
-          count: 39173
+          count: 33835
     biolink:ChemicalSubstance-biolink:related_to-biolink:ChemicalSubstance:
       count: 80461
       provided_by:
@@ -595,7 +595,7 @@ edge_stats:
       source:
         unknown:
           count: 5
-    biolink:ChemicalSubstance-biolink:related_to-biolink:Macromolecule:
+    biolink:ChemicalSubstance-biolink:related_to-biolink:MacromolecularComplex:
       count: 43
       provided_by:
         unknown:
@@ -612,13 +612,13 @@ edge_stats:
         unknown:
           count: 359
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalRole:
-      count: 579
+      count: 522
       provided_by:
         unknown:
-          count: 579
+          count: 522
       source:
         unknown:
-          count: 579
+          count: 522
     biolink:ChemicalSubstance-biolink:subclass_of-biolink:ChemicalSubstance:
       count: 278582
       provided_by:
@@ -635,7 +635,7 @@ edge_stats:
       source:
         unknown:
           count: 107
-    biolink:ChemicalSubstance-biolink:subclass_of-biolink:Macromolecule:
+    biolink:ChemicalSubstance-biolink:subclass_of-biolink:MacromolecularComplex:
       count: 77
       provided_by:
         unknown:
@@ -652,13 +652,13 @@ edge_stats:
         unknown:
           count: 2
     biolink:EnvironmentalFeature-biolink:location_of-biolink:OrganismTaxon:
-      count: 235804
+      count: 242579
       provided_by:
         unknown:
-          count: 235804
+          count: 242579
       source:
         unknown:
-          count: 235804
+          count: 242579
     biolink:EnvironmentalFeature-biolink:related_to-biolink:AnatomicalEntity:
       count: 6
       provided_by:
@@ -771,55 +771,7 @@ edge_stats:
       source:
         unknown:
           count: 3323
-    biolink:Macromolecule-biolink:has_chemical_role-biolink:ChemicalRole:
-      count: 30
-      provided_by:
-        unknown:
-          count: 30
-      source:
-        unknown:
-          count: 30
-    biolink:Macromolecule-biolink:has_chemical_role-biolink:ChemicalSubstance:
-      count: 24
-      provided_by:
-        unknown:
-          count: 24
-      source:
-        unknown:
-          count: 24
-    biolink:Macromolecule-biolink:related_to-biolink:ChemicalEntity:
-      count: 7
-      provided_by:
-        unknown:
-          count: 7
-      source:
-        unknown:
-          count: 7
-    biolink:Macromolecule-biolink:related_to-biolink:ChemicalRole:
-      count: 477
-      provided_by:
-        unknown:
-          count: 477
-      source:
-        unknown:
-          count: 477
-    biolink:Macromolecule-biolink:related_to-biolink:ChemicalSubstance:
-      count: 637
-      provided_by:
-        unknown:
-          count: 637
-      source:
-        unknown:
-          count: 637
-    biolink:Macromolecule-biolink:related_to-biolink:Macromolecule:
-      count: 521
-      provided_by:
-        unknown:
-          count: 521
-      source:
-        unknown:
-          count: 521
-    biolink:Macromolecule-biolink:subclass_of-biolink:ChemicalEntity:
+    biolink:MacromolecularComplex-biolink:has_chemical_role-biolink:ChemicalRole:
       count: 5
       provided_by:
         unknown:
@@ -827,7 +779,55 @@ edge_stats:
       source:
         unknown:
           count: 5
-    biolink:Macromolecule-biolink:subclass_of-biolink:ChemicalSubstance:
+    biolink:MacromolecularComplex-biolink:has_chemical_role-biolink:ChemicalSubstance:
+      count: 4
+      provided_by:
+        unknown:
+          count: 4
+      source:
+        unknown:
+          count: 4
+    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalEntity:
+      count: 7
+      provided_by:
+        unknown:
+          count: 7
+      source:
+        unknown:
+          count: 7
+    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalRole:
+      count: 452
+      provided_by:
+        unknown:
+          count: 452
+      source:
+        unknown:
+          count: 452
+    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalSubstance:
+      count: 637
+      provided_by:
+        unknown:
+          count: 637
+      source:
+        unknown:
+          count: 637
+    biolink:MacromolecularComplex-biolink:related_to-biolink:MacromolecularComplex:
+      count: 521
+      provided_by:
+        unknown:
+          count: 521
+      source:
+        unknown:
+          count: 521
+    biolink:MacromolecularComplex-biolink:subclass_of-biolink:ChemicalEntity:
+      count: 5
+      provided_by:
+        unknown:
+          count: 5
+      source:
+        unknown:
+          count: 5
+    biolink:MacromolecularComplex-biolink:subclass_of-biolink:ChemicalSubstance:
       count: 2974
       provided_by:
         unknown:
@@ -835,7 +835,7 @@ edge_stats:
       source:
         unknown:
           count: 2974
-    biolink:Macromolecule-biolink:subclass_of-biolink:Macromolecule:
+    biolink:MacromolecularComplex-biolink:subclass_of-biolink:MacromolecularComplex:
       count: 4377
       provided_by:
         unknown:
@@ -899,7 +899,7 @@ edge_stats:
       source:
         unknown:
           count: 87860
-    biolink:MolecularActivity-biolink:has_input-biolink:Macromolecule:
+    biolink:MolecularActivity-biolink:has_input-biolink:MacromolecularComplex:
       count: 302
       provided_by:
         unknown:
@@ -939,7 +939,7 @@ edge_stats:
       source:
         unknown:
           count: 87846
-    biolink:MolecularActivity-biolink:has_output-biolink:Macromolecule:
+    biolink:MolecularActivity-biolink:has_output-biolink:MacromolecularComplex:
       count: 302
       provided_by:
         unknown:
@@ -1036,13 +1036,13 @@ edge_stats:
         unknown:
           count: 33
     biolink:OntologyClass-biolink:related_to-biolink:ChemicalRole:
-      count: 4
+      count: 3
       provided_by:
         unknown:
-          count: 4
+          count: 3
       source:
         unknown:
-          count: 4
+          count: 3
     biolink:OntologyClass-biolink:related_to-biolink:ChemicalSubstance:
       count: 184
       provided_by:
@@ -1075,7 +1075,7 @@ edge_stats:
       source:
         unknown:
           count: 1
-    biolink:OntologyClass-biolink:related_to-biolink:Macromolecule:
+    biolink:OntologyClass-biolink:related_to-biolink:MacromolecularComplex:
       count: 7
       provided_by:
         unknown:
@@ -1124,13 +1124,13 @@ edge_stats:
         unknown:
           count: 58
     biolink:OntologyClass-biolink:subclass_of-biolink:ChemicalRole:
-      count: 2
+      count: 1
       provided_by:
         unknown:
-          count: 2
+          count: 1
       source:
         unknown:
-          count: 2
+          count: 1
     biolink:OntologyClass-biolink:subclass_of-biolink:ChemicalSubstance:
       count: 8
       provided_by:
@@ -1147,7 +1147,7 @@ edge_stats:
       source:
         unknown:
           count: 3
-    biolink:OntologyClass-biolink:subclass_of-biolink:Macromolecule:
+    biolink:OntologyClass-biolink:subclass_of-biolink:MacromolecularComplex:
       count: 3
       provided_by:
         unknown:
@@ -1203,7 +1203,7 @@ edge_stats:
       source:
         unknown:
           count: 1501158
-    biolink:OrganismTaxon-None-biolink:Macromolecule:
+    biolink:OrganismTaxon-None-biolink:MacromolecularComplex:
       count: 101823
       provided_by:
         unknown:
@@ -1259,7 +1259,7 @@ edge_stats:
       source:
         unknown:
           count: 10354
-    biolink:OrganismTaxon-biolink:associated_with_resistance_to-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:associated_with_resistance_to-biolink:MacromolecularComplex:
       count: 291
       provided_by:
         unknown:
@@ -1283,7 +1283,7 @@ edge_stats:
       source:
         unknown:
           count: 12575
-    biolink:OrganismTaxon-biolink:associated_with_sensitivity_to-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:associated_with_sensitivity_to-biolink:MacromolecularComplex:
       count: 232
       provided_by:
         unknown:
@@ -1347,7 +1347,7 @@ edge_stats:
       source:
         unknown:
           count: 73744
-    biolink:OrganismTaxon-biolink:capable_of-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:capable_of-biolink:MacromolecularComplex:
       count: 79514
       provided_by:
         unknown:
@@ -1411,7 +1411,7 @@ edge_stats:
       source:
         unknown:
           count: 36816
-    biolink:OrganismTaxon-biolink:consumes-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:consumes-biolink:MacromolecularComplex:
       count: 1190
       provided_by:
         unknown:
@@ -1491,7 +1491,7 @@ edge_stats:
       source:
         unknown:
           count: 56
-    biolink:OrganismTaxon-biolink:has_phenotype-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:has_phenotype-biolink:MacromolecularComplex:
       count: 75090
       provided_by:
         unknown:
@@ -1555,7 +1555,7 @@ edge_stats:
       source:
         unknown:
           count: 14
-    biolink:OrganismTaxon-biolink:interacts_with-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:interacts_with-biolink:MacromolecularComplex:
       count: 335
       provided_by:
         unknown:
@@ -1603,7 +1603,7 @@ edge_stats:
       source:
         unknown:
           count: 2
-    biolink:OrganismTaxon-biolink:produces-biolink:Macromolecule:
+    biolink:OrganismTaxon-biolink:produces-biolink:MacromolecularComplex:
       count: 887
       provided_by:
         unknown:
@@ -1691,7 +1691,7 @@ edge_stats:
       source:
         unknown:
           count: 281
-    biolink:Procedure-biolink:has_input-biolink:Macromolecule:
+    biolink:Procedure-biolink:has_input-biolink:MacromolecularComplex:
       count: 18
       provided_by:
         unknown:
@@ -1756,13 +1756,13 @@ edge_stats:
         unknown:
           count: 3
     unknown-biolink:location_of-biolink:OrganismTaxon:
-      count: 6779
+      count: 4
       provided_by:
         unknown:
-          count: 6779
+          count: 4
       source:
         unknown:
-          count: 6779
+          count: 4
     unknown-biolink:part_of-biolink:BiologicalProcess:
       count: 9
       provided_by:
@@ -1805,7 +1805,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 11729846
+  total_edges: 11729065
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -1877,16 +1877,16 @@ node_stats:
         infores:mediadive:
           count: 5420
     biolink:ChemicalRole:
-      count: 1494
+      count: 1410
       provided_by:
         chebi.json:
-          count: 1494
+          count: 1410
         envo.json:
-          count: 92
+          count: 81
         infores:madin_etal:
           count: 95
         infores:mediadive:
-          count: 235
+          count: 2
     biolink:ChemicalSubstance:
       count: 219037
       provided_by:
@@ -1899,7 +1899,7 @@ node_stats:
         infores:madin_etal:
           count: 175
         infores:mediadive:
-          count: 635
+          count: 486
         infores:metatraits:
           count: 754
     biolink:ComplexMolecularMixture:
@@ -1908,7 +1908,7 @@ node_stats:
         infores:mediadive:
           count: 69
     biolink:EnvironmentalFeature:
-      count: 413
+      count: 418
       provided_by:
         chebi.json:
           count: 2
@@ -1917,7 +1917,7 @@ node_stats:
         infores:bacdive:
           count: 353
         infores:madin_etal:
-          count: 60
+          count: 65
         infores:mediadive:
           count: 1
         infores:metatraits:
@@ -1952,7 +1952,7 @@ node_stats:
           count: 1575
         infores:mediadive:
           count: 3323
-    biolink:Macromolecule:
+    biolink:MacromolecularComplex:
       count: 4265
       provided_by:
         chebi.json:
@@ -2057,10 +2057,8 @@ node_stats:
         ncbitaxon_removed_subset.json:
           count: 51
     unknown:
-      count: 423
+      count: 418
       provided_by:
-        infores:madin_etal:
-          count: 5
         unknown:
           count: 397
         upa_nodes.tsv:
@@ -2068,7 +2066,7 @@ node_stats:
   count_by_id_prefixes:
     BFO: 34
     CAS-RN: 3
-    CHEBI: 224936
+    CHEBI: 224852
     EC: 8848
     ENVO: 4367
     FAO: 1
@@ -2147,7 +2145,7 @@ node_stats:
       mediadive.medium-type: 2
       mediadive.solution: 5418
     biolink:ChemicalRole:
-      CHEBI: 1494
+      CHEBI: 1410
     biolink:ChemicalSubstance:
       CHEBI: 219037
     biolink:ComplexMolecularMixture:
@@ -2156,7 +2154,7 @@ node_stats:
       CHEBI: 2
       NCBITaxon: 1
       UBERON: 6
-      bacdive.isolation_source: 349
+      bacdive.isolation_source: 354
       envo: 43
       foodon: 1
       pato: 6
@@ -2170,7 +2168,7 @@ node_stats:
       GenBank: 732475
     biolink:GrowthMedium:
       mediadive.medium: 3339
-    biolink:Macromolecule:
+    biolink:MacromolecularComplex:
       CHEBI: 4265
     biolink:MolecularActivity:
       EC: 8847
@@ -2226,7 +2224,6 @@ node_stats:
       NCBITaxon: 369
       PUBCHEM.COMPOUND: 1
       RHEA: 21
-      bacdive.isolation_source: 5
       carbon_substrates: 1
       kgmicrobe.genus: 6
       mediadive.medium: 10
@@ -2244,7 +2241,7 @@ node_stats:
   - biolink:Food
   - biolink:Genome
   - biolink:GrowthMedium
-  - biolink:Macromolecule
+  - biolink:MacromolecularComplex
   - biolink:MolecularActivity
   - biolink:NamedThing
   - biolink:OntologyClass
@@ -2357,7 +2354,7 @@ node_stats:
     - GenBank
     biolink:GrowthMedium:
     - mediadive.medium
-    biolink:Macromolecule:
+    biolink:MacromolecularComplex:
     - CHEBI
     biolink:MolecularActivity:
     - EC
@@ -2415,7 +2412,6 @@ node_stats:
     - FOODON
     - PUBCHEM.COMPOUND
     - RHEA
-    - bacdive.isolation_source
     - carbon_substrates
   provided_by:
   - Graph

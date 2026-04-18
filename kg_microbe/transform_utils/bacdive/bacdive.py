@@ -62,6 +62,7 @@ from kg_microbe.transform_utils.constants import (
     CULTURE_NAME,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
+    DESCRIPTION_COLUMN,
     DOES_NOT_GROW_IN,
     DOMAIN,
     DSM_NUMBER,
@@ -149,6 +150,7 @@ from kg_microbe.transform_utils.constants import (
     PIGMENTATION,
     PREDICATE_COLUMN,
     PRODUCTION_KEY,
+    PROVIDED_BY_COLUMN,
     PROVISIONAL_GENUS_PREFIX,
     PROVISIONAL_SPECIES_PREFIX,
     RDFS_SUBCLASS_OF,
@@ -156,6 +158,7 @@ from kg_microbe.transform_utils.constants import (
     RISK_ASSESSMENT,
     RISK_ASSESSMENT_COLUMN,
     SAFETY_INFO,
+    SAME_AS_COLUMN,
     SENSITIVITY_KEY,
     SPECIES,
     SPORE_FORMATION,
@@ -164,6 +167,7 @@ from kg_microbe.transform_utils.constants import (
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     SYNONYM,
+    SYNONYM_COLUMN,
     SYNONYMS,
     TOLERANCE,
     TRANSLATION_TABLE_FOR_IDS,
@@ -171,6 +175,7 @@ from kg_microbe.transform_utils.constants import (
     TYPE_STRAIN,
     UTILIZATION_ACTIVITY,
     UTILIZATION_TYPE_TESTED,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
@@ -344,17 +349,17 @@ class BacDiveTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def _load_ncbitaxon_labels(self):

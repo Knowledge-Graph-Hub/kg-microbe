@@ -37,6 +37,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
+    CATEGORY_COLUMN,
     CHEBI_EDGES_FILE,
     CHEBI_KEY,
     CHEBI_NODES_FILE,
@@ -45,6 +46,7 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
+    DESCRIPTION_COLUMN,
     DOES_NOT_GROW_IN,
     GRAMS_PER_LITER_COLUMN,
     HAS_PART,
@@ -92,11 +94,13 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
     OBSERVATION,
+    PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
     ROLE_CATEGORY,
+    SAME_AS_COLUMN,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,
@@ -106,8 +110,10 @@ from kg_microbe.transform_utils.constants import (
     SPECIES,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
+    SYNONYM_COLUMN,
     TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
@@ -184,17 +190,17 @@ class MediaDiveTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def _load_bulk_data(self):

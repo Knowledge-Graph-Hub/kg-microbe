@@ -18,9 +18,11 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
+    CATEGORY_COLUMN,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     DEBIO_MAPPER,
+    DESCRIPTION_COLUMN,
     EC_CATEGORY,
     EC_PREFIX,
     EC_SOURCE,
@@ -39,6 +41,7 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_ID_COLUMN,
     PREDICATE_LABEL_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
     RAW_DATA_DIR,
     RELATION_COLUMN,
     RHEA_BIDIRECTIONAL_DIRECTION,
@@ -62,11 +65,14 @@ from kg_microbe.transform_utils.constants import (
     RHEA_UNDEFINED_DIRECTION,
     RHEAMAPPINGS,
     RHEAMAPPINGS_TMP_DIR,
+    SAME_AS_COLUMN,
     SPECIAL_PREFIXES,
     SUBJECT_COLUMN,
     SUBJECT_LABEL_COLUMN,
     SUBSTRATE_CATEGORY,
+    SYNONYM_COLUMN,
     UNIPROT_PREFIX,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -128,17 +134,17 @@ class RheaMappingsTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def _reference_to_tuple(self, ref):

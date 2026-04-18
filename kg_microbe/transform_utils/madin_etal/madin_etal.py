@@ -16,11 +16,13 @@ from kg_microbe.transform_utils.constants import (
     CARBON_SUBSTRATE_CATEGORY,
     CARBON_SUBSTRATE_PREFIX,
     CARBON_SUBSTRATES_COLUMN,
+    CATEGORY_COLUMN,
     CELL_SHAPE_COLUMN,
     CHEBI_MANUAL_ANNOTATION_PATH,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
+    DESCRIPTION_COLUMN,
     ENVIRONMENT_CATEGORY,
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
@@ -53,16 +55,20 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
+    PROVIDED_BY_COLUMN,
     RANGE_SALINITY_COLUMN,
     RANGE_TMP_COLUMN,
     ROLE_CATEGORY,
+    SAME_AS_COLUMN,
     SHAPE_PREFIX,
     SPORULATION_COLUMN,
     SUBJECT_LABEL_COLUMN,
+    SYNONYM_COLUMN,
     TAX_ID_COLUMN,
     TRAITS_DATASET_LABEL_COLUMN,
     TROPHICALLY_INTERACTS_WITH,
     TYPE_COLUMN,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -137,17 +143,17 @@ class MadinEtAlTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):

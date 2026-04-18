@@ -653,6 +653,9 @@ class OntologiesTransform(Transform):
         # Convert URL-formatted node IDs to CURIEs
         self._convert_urls_to_curies(nodes_file, edges_file)
 
+        # Normalize schema to canonical node_header / edge_header shape
+        self._normalize_schema(nodes_file, edges_file)
+
     def _remove_iri_column(self, nodes_file: Path) -> None:
         """Remove IRI column from nodes file since it's not used downstream."""
         import pandas as pd
@@ -664,6 +667,75 @@ class OntologiesTransform(Transform):
         if "iri" in df.columns:
             df = df.drop(columns=["iri"])
             df.to_csv(nodes_file, sep="\t", index=False)
+
+    def _normalize_schema(self, nodes_file: Path, edges_file: Path) -> None:
+        """
+        Enforce canonical KGX-TSV schema on KGX-generated ontology outputs.
+
+        Why this step exists: `kgx.cli.cli_utils.transform(obojson -> tsv)`
+        passes obograph artifacts through its TsvSink unchanged. This leaks
+        three categories of columns that are not part of the KGX-TSV spec
+        (https://github.com/biolink/kgx/blob/master/specification/kgx-format.md):
+
+          * Nodes: `subsets`, `meta` (obograph-only), `iri` (RDF roundtrip)
+          * Edges: `id` (biolink 3.x optional; not emitted by other KG-Microbe
+            transforms), `meta` (obograph-only), and the deprecated
+            `knowledge_source` column (superseded by `primary_knowledge_source`
+            in biolink 3.x).
+
+        Fixing this upstream would require replacing KGX's TsvSink or
+        bypassing `kgx.cli.cli_utils.transform` entirely. The normalization
+        below is the least-invasive option and is intentionally idempotent:
+        if KGX stops leaking these columns, the step becomes a no-op.
+
+        Resulting shape:
+          * nodes: exactly `self.node_header` (base Transform canonical shape)
+          * edges: exactly `self.edge_header` (renames knowledge_source →
+            primary_knowledge_source when only the former is present)
+        """
+        if nodes_file.is_file():
+            df = pd.read_csv(nodes_file, sep="\t", low_memory=False)
+            dropped_node_cols = [c for c in ("subsets", "meta", "iri") if c in df.columns]
+            added_node_cols = [c for c in self.node_header if c not in df.columns]
+            for extra in dropped_node_cols:
+                df = df.drop(columns=[extra])
+            for col in added_node_cols:
+                df[col] = ""
+            df = df[self.node_header]
+            df.to_csv(nodes_file, sep="\t", index=False)
+            if dropped_node_cols or added_node_cols:
+                print(
+                    f"  [_normalize_schema] {nodes_file.name}: "
+                    f"dropped={dropped_node_cols} added={added_node_cols}"
+                )
+
+        if edges_file.is_file():
+            df = pd.read_csv(edges_file, sep="\t", low_memory=False)
+            dropped_edge_cols = []
+            renamed = False
+            if "id" in df.columns:
+                df = df.drop(columns=["id"])
+                dropped_edge_cols.append("id")
+            if "meta" in df.columns:
+                df = df.drop(columns=["meta"])
+                dropped_edge_cols.append("meta")
+            if "knowledge_source" in df.columns and PRIMARY_KNOWLEDGE_SOURCE_COLUMN not in df.columns:
+                df = df.rename(columns={"knowledge_source": PRIMARY_KNOWLEDGE_SOURCE_COLUMN})
+                renamed = True
+            elif "knowledge_source" in df.columns:
+                df = df.drop(columns=["knowledge_source"])
+                dropped_edge_cols.append("knowledge_source")
+            added_edge_cols = [c for c in self.edge_header if c not in df.columns]
+            for col in added_edge_cols:
+                df[col] = ""
+            df = df[self.edge_header]
+            df.to_csv(edges_file, sep="\t", index=False)
+            if dropped_edge_cols or added_edge_cols or renamed:
+                rename_note = " rename(knowledge_source→primary_knowledge_source)" if renamed else ""
+                print(
+                    f"  [_normalize_schema] {edges_file.name}: "
+                    f"dropped={dropped_edge_cols} added={added_edge_cols}{rename_note}"
+                )
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
         """Convert URL-formatted node IDs to CURIEs in both nodes and edges files."""

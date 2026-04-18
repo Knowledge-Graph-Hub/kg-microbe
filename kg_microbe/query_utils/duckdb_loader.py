@@ -64,9 +64,7 @@ def get_or_create_database(
     return conn
 
 
-def _create_database_from_tsv(
-    nodes_path: Path, edges_path: Path, db_path: Path
-) -> duckdb.DuckDBPyConnection:
+def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path) -> duckdb.DuckDBPyConnection:
     """
     Create DuckDB database from TSV files with indexes.
 

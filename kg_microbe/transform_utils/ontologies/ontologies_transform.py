@@ -704,10 +704,7 @@ class OntologiesTransform(Transform):
             df = df[self.node_header]
             df.to_csv(nodes_file, sep="\t", index=False)
             if dropped_node_cols or added_node_cols:
-                print(
-                    f"  [_normalize_schema] {nodes_file.name}: "
-                    f"dropped={dropped_node_cols} added={added_node_cols}"
-                )
+                print(f"  [_normalize_schema] {nodes_file.name}: dropped={dropped_node_cols} added={added_node_cols}")
 
         if edges_file.is_file():
             df = pd.read_csv(edges_file, sep="\t", low_memory=False)

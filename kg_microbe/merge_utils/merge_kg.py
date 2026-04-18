@@ -178,10 +178,7 @@ def _log_schema_diff(kind: str, path: Path, in_header: List[str], out_header: Li
     if not (dropped or added or duplicates) and in_header == out_header:
         print(f"[merge-cleanup] {kind} {path.name}: schema already canonical (no-op)")
         return
-    print(
-        f"[merge-cleanup] {kind} {path.name}: "
-        f"dropped={dropped} added={added} deduped={duplicates}"
-    )
+    print(f"[merge-cleanup] {kind} {path.name}: dropped={dropped} added={added} deduped={duplicates}")
 
 
 def _normalize_nodes_tsv(path: Path) -> None:
@@ -264,6 +261,7 @@ def _resolve_column_plan(
     used = set()
 
     def add_column(name: str):
+        """Append column ``name`` (with all source indices) to the output plan."""
         indices = [i for i, h in enumerate(header) if h == name]
         if not indices:
             return

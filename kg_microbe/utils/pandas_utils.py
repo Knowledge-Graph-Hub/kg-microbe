@@ -50,7 +50,24 @@ def drop_duplicates(
 
     df.drop_duplicates(inplace=True)
     if dedup_on_sort_column and sort_by_column in df.columns:
+        # Make retention deterministic: rank rows by data completeness so the
+        # most-populated row wins regardless of input file order. Prefer a
+        # non-empty NAME_COLUMN, then a non-empty description, then the row
+        # with the most non-empty fields overall.
+        rank_cols: List[str] = []
+        if NAME_COLUMN in df.columns:
+            df["_has_name_value"] = df[NAME_COLUMN].fillna("").astype(str).str.strip().ne("")
+            rank_cols.append("_has_name_value")
+        if "description" in df.columns:
+            df["_has_description_value"] = df["description"].fillna("").astype(str).str.strip().ne("")
+            rank_cols.append("_has_description_value")
+        df["_non_empty_field_count"] = (
+            df.fillna("").astype(str).apply(lambda col: col.str.strip().ne(""), axis=0).sum(axis=1)
+        )
+        rank_cols.append("_non_empty_field_count")
+        df.sort_values(by=rank_cols, ascending=[False] * len(rank_cols), kind="mergesort", inplace=True)
         df.drop_duplicates(subset=[sort_by_column], keep="first", inplace=True)
+        df.drop(columns=[c for c in rank_cols if c.startswith("_")], inplace=True)
     df.sort_values(by=[sort_by_column], inplace=True)
 
     # Restore the original values of the NAME_COLUMN

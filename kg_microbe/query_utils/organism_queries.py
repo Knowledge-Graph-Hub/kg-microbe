@@ -22,10 +22,14 @@ def resolve_organism_name(conn: duckdb.DuckDBPyConnection, name: str) -> Dict[st
     :return: Dict with 'id', 'name', 'synonym' keys
     :raises ValueError: If no organism is found
     """
+    # Use a containment check rather than an equality filter because KGX
+    # merges can serialize multi-valued categories as pipe-delimited strings
+    # (e.g. "biolink:OrganismTaxon|biolink:NamedThing"); an equality check
+    # would miss those rows.
     query = """
     SELECT id, name, synonym
     FROM nodes
-    WHERE category = 'biolink:OrganismTaxon'
+    WHERE category LIKE '%biolink:OrganismTaxon%'
       AND id LIKE 'NCBITaxon:%'
       AND (LOWER(name) LIKE '%' || LOWER(?) || '%'
            OR LOWER(synonym) LIKE '%' || LOWER(?) || '%')

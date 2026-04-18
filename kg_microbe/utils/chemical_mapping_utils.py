@@ -2,6 +2,7 @@
 
 import gzip
 import re
+from collections import OrderedDict
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -10,10 +11,26 @@ import pandas as pd
 # Module-level cache (loaded once per process)
 _UNIFIED_MAPPINGS: Optional[pd.DataFrame] = None
 _NAME_INDEX: Optional[Dict[str, str]] = None
+_CANONICAL_NAME_INDEX: Optional[Dict[str, str]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
-_NEGATIVE_LOOKUP_CACHE: set = set()  # Cache for names that failed lookup
+
+# Bounded LRU-style negative-lookup cache. Evicts oldest entry when full so
+# memory cannot grow without bound in long-running processes. Cleared on
+# mapping reload so stale misses cannot survive a mappings update.
+_NEGATIVE_CACHE_MAX_SIZE = 100_000
+_NEGATIVE_LOOKUP_CACHE: "OrderedDict[tuple, None]" = OrderedDict()
+
+
+def _negative_cache_add(key: tuple) -> None:
+    """Add a miss to the bounded negative cache, evicting oldest if full."""
+    if key in _NEGATIVE_LOOKUP_CACHE:
+        _NEGATIVE_LOOKUP_CACHE.move_to_end(key)
+        return
+    _NEGATIVE_LOOKUP_CACHE[key] = None
+    if len(_NEGATIVE_LOOKUP_CACHE) > _NEGATIVE_CACHE_MAX_SIZE:
+        _NEGATIVE_LOOKUP_CACHE.popitem(last=False)
 
 
 def normalize_name(name: str, strip_stereochemistry: bool = False) -> str:
@@ -79,6 +96,9 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
     # Cache the path
     _CACHED_PATH = mappings_path
 
+    # Clear negative cache on reload so stale misses cannot survive a mappings update.
+    _NEGATIVE_LOOKUP_CACHE.clear()
+
     # Build indices for fast lookup
     _build_indices()
 
@@ -87,25 +107,29 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
 
 def _build_indices():
     """Build lookup indices from loaded mappings."""
-    global _NAME_INDEX, _FORMULA_INDEX, _XREF_INDEX
+    global _NAME_INDEX, _CANONICAL_NAME_INDEX, _FORMULA_INDEX, _XREF_INDEX
 
     if _UNIFIED_MAPPINGS is None:
         return
 
     _NAME_INDEX = {}
+    _CANONICAL_NAME_INDEX = {}
     _FORMULA_INDEX = {}
     _XREF_INDEX = {}
 
     for _, row in _UNIFIED_MAPPINGS.iterrows():
         chebi_id = row["chebi_id"]
 
-        # Index canonical name
+        # Index canonical name (both full name index and canonical-only index)
         if row["canonical_name"]:
             norm_name = normalize_name(row["canonical_name"])
-            if norm_name and norm_name not in _NAME_INDEX:
-                _NAME_INDEX[norm_name] = chebi_id
+            if norm_name:
+                if norm_name not in _NAME_INDEX:
+                    _NAME_INDEX[norm_name] = chebi_id
+                if norm_name not in _CANONICAL_NAME_INDEX:
+                    _CANONICAL_NAME_INDEX[norm_name] = chebi_id
 
-        # Index synonyms
+        # Index synonyms (name index only)
         if row["synonyms"]:
             for synonym in row["synonyms"].split("|"):
                 if synonym:
@@ -157,36 +181,27 @@ def find_chebi_by_name(name: str, synonyms: bool = True, fuzzy_stereochemistry: 
     # Check negative lookup cache - skip if we've already failed to find this name
     cache_key = (norm_name, synonyms, fuzzy_stereochemistry)
     if cache_key in _NEGATIVE_LOOKUP_CACHE:
+        _NEGATIVE_LOOKUP_CACHE.move_to_end(cache_key)  # LRU touch
         return None
 
-    # Search in name index (includes synonyms by default)
+    # Select index: full (with synonyms) or canonical-only.
+    # Both are dicts, giving O(1) lookups and eliminating the prior iterrows scan.
+    primary_index = _NAME_INDEX if synonyms else _CANONICAL_NAME_INDEX
+
     result = None
-    if synonyms and _NAME_INDEX:
-        result = _NAME_INDEX.get(norm_name)
+    if primary_index:
+        result = primary_index.get(norm_name)
 
-    # Search only canonical names (no synonyms)
-    if result is None and _UNIFIED_MAPPINGS is not None:
-        for _, row in _UNIFIED_MAPPINGS.iterrows():
-            if normalize_name(row["canonical_name"]) == norm_name:
-                result = row["chebi_id"]
-                break
-
-    # If no exact match and fuzzy mode enabled, try stripping stereochemistry
+    # If no exact match and fuzzy mode enabled, try stripping stereochemistry.
+    # Only retry if the stripped form actually differs from the exact form.
     if result is None and fuzzy_stereochemistry:
         norm_name_fuzzy = normalize_name(name, strip_stereochemistry=True)
-        if norm_name_fuzzy and norm_name_fuzzy != norm_name:  # Only retry if stripped version differs
-            if synonyms and _NAME_INDEX:
-                result = _NAME_INDEX.get(norm_name_fuzzy)
+        if norm_name_fuzzy and norm_name_fuzzy != norm_name and primary_index:
+            result = primary_index.get(norm_name_fuzzy)
 
-            if result is None and _UNIFIED_MAPPINGS is not None:
-                for _, row in _UNIFIED_MAPPINGS.iterrows():
-                    if normalize_name(row["canonical_name"]) == norm_name_fuzzy:
-                        result = row["chebi_id"]
-                        break
-
-    # If lookup failed, add to negative cache to avoid retrying
+    # If lookup failed, add to bounded negative cache to avoid retrying
     if result is None:
-        _NEGATIVE_LOOKUP_CACHE.add(cache_key)
+        _negative_cache_add(cache_key)
 
     return result
 

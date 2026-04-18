@@ -16,6 +16,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlencode
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
@@ -29,7 +30,7 @@ def ols_fetch(chebi_id: str) -> dict | None:
     """Fetch OLS4 term data for a CHEBI ID. Returns None on failure."""
     num = chebi_id.replace("CHEBI:", "")
     iri = f"http://purl.obolibrary.org/obo/CHEBI_{num}"
-    url = f"{OLS_BASE}?iri={iri}"
+    url = f"{OLS_BASE}?{urlencode({'iri': iri})}"
     try:
         req = Request(url, headers={"Accept": "application/json"})
         with urlopen(req, timeout=15) as resp:

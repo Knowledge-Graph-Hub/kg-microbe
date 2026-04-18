@@ -7,9 +7,7 @@ from kghub_downloader.download_utils import download_from_yaml
 from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
 
 
-def download(
-    yaml_file: str, output_dir: str, snippet_only: bool, ignore_cache: bool = False
-) -> None:
+def download(yaml_file: str, output_dir: str, snippet_only: bool, ignore_cache: bool = False) -> None:
     """
     Download data files from list of URLs.
 
@@ -63,8 +61,7 @@ def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -
             "compounds.json",
         ]
         all_valid = all(
-            (mediadive_bulk_dir / f).exists() and (mediadive_bulk_dir / f).stat().st_size > 10
-            for f in required_files
+            (mediadive_bulk_dir / f).exists() and (mediadive_bulk_dir / f).stat().st_size > 10 for f in required_files
         )
         if all_valid:
             print(f"MediaDive bulk data already exists in {mediadive_bulk_dir}/")

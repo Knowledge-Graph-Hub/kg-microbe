@@ -4,14 +4,11 @@ import threading
 import time
 from unittest.mock import MagicMock, patch
 
-import pytest
 import requests
 
 from kg_microbe.utils.mediadive_bulk_download import (
     DEFAULT_MAX_WORKERS,
     USER_AGENT,
-    _fetch_medium_detail,
-    _fetch_medium_strains,
     download_detailed_media,
     download_medium_strains,
     get_json_from_api,
@@ -19,6 +16,7 @@ from kg_microbe.utils.mediadive_bulk_download import (
 
 
 class TestDefaults:
+
     """Verify that DEFAULT_MAX_WORKERS and USER_AGENT are sensible values."""
 
     def test_default_max_workers_is_polite(self):
@@ -47,6 +45,7 @@ class TestDefaults:
 
 
 class TestRetryAfter:
+
     """Verify that 429 responses with Retry-After headers are honoured."""
 
     def test_respects_retry_after_header(self):
@@ -64,6 +63,7 @@ class TestRetryAfter:
         call_times = []
 
         def fake_get(url, timeout=30):
+            """Simulate a session.get that raises 429 on the first call, then succeeds."""
             call_times.append(time.monotonic())
             if len(call_times) == 1:
                 raise http_error
@@ -80,6 +80,7 @@ class TestRetryAfter:
 
 
 class TestRetryParameters:
+
     """Verify retry_count and retry_delay flow from download functions into get_json_from_api."""
 
     def test_retry_count_is_configurable(self):
@@ -87,6 +88,7 @@ class TestRetryParameters:
         calls = []
 
         def fake_api(url, retry_count=3, retry_delay=2.0, verbose=False, session=None):
+            """Capture retry_count passed through from download_detailed_media."""
             calls.append(retry_count)
             return {}
 
@@ -101,6 +103,7 @@ class TestRetryParameters:
         delays = []
 
         def fake_api(url, retry_count=3, retry_delay=2.0, verbose=False, session=None):
+            """Capture retry_delay passed through from download_medium_strains."""
             delays.append(retry_delay)
             return {}
 
@@ -112,6 +115,7 @@ class TestRetryParameters:
 
 
 class TestRateLimiter:
+
     """Verify the Semaphore rate limiter bounds concurrency."""
 
     def test_concurrency_bounded_by_max_workers(self):
@@ -122,6 +126,7 @@ class TestRateLimiter:
         lock = threading.Lock()
 
         def fake_api(url, retry_count=3, retry_delay=2.0, verbose=False, session=None):
+            """Simulate a slow API call to allow measuring peak concurrency."""
             with lock:
                 active.append(1)
                 peak.append(len(active))

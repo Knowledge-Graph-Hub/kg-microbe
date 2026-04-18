@@ -130,12 +130,7 @@ def create_field_path(category: str, field_name: str) -> str:
             range_part = original_field  # Use as-is
 
         # Replace comparison operators for MongoDB compatibility
-        range_clean = (
-            range_part.replace("<=", "lte_")
-            .replace(">=", "gte_")
-            .replace(">", "gt_")
-            .replace("<", "lt_")
-        )
+        range_clean = range_part.replace("<=", "lte_").replace(">=", "gte_").replace(">", "gt_").replace("<", "lt_")
         # Replace underscores between numbers with "to" to indicate ranges
         range_clean = re.sub(r"(\d+\.\d+)_(\d+\.\d+)", r"\1_to_\2", range_clean)
         # Replace periods with "dot" to avoid MongoDB nesting issues
@@ -321,9 +316,7 @@ def parse_bactotraits_to_mongo(input_file: str) -> List[Dict[str, Any]]:
 
 def main():
     """Convert BactoTraits CSV to MongoDB JSON format."""
-    parser = argparse.ArgumentParser(
-        description="Convert BactoTraits CSV to MongoDB-compatible JSON"
-    )
+    parser = argparse.ArgumentParser(description="Convert BactoTraits CSV to MongoDB-compatible JSON")
     parser.add_argument("-i", "--input", required=True, help="Input CSV file")
     parser.add_argument("-o", "--output", required=True, help="Output JSON file")
     parser.add_argument("--pretty", action="store_true", help="Pretty print JSON")

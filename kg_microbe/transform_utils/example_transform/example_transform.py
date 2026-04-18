@@ -73,6 +73,4 @@ class YourTransform(Transform):
         #   - TOP
         #   - BOT
         #   - MIREOT
-        extract_convert_to_json(
-            self.input_base_dir, "NAME_OF_ONTOLOGY", self.subset_terms_file, "ROBOT_METHOD"
-        )
+        extract_convert_to_json(self.input_base_dir, "NAME_OF_ONTOLOGY", self.subset_terms_file, "ROBOT_METHOD")

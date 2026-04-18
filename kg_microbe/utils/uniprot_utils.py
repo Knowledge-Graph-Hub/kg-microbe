@@ -247,16 +247,12 @@ def convert_omim_diseases(omim_list, mondo_xref_dict):
     """
     # Get all MONDO IDs according to OMIM xrefs
     # mondo_list = list(filter(lambda item: item[1] in omim_list, mondo_xref_dict.items()))
-    mondo_list = [
-        key for value in omim_list for key, val in mondo_xref_dict.items() if val == value
-    ]
+    mondo_list = [key for value in omim_list for key, val in mondo_xref_dict.items() if val == value]
 
     return mondo_list
 
 
-def get_go_relation_and_obsolete_terms(
-    term_id, uniprot_id, go_category_trees_dictionary, obsolete_terms_csv_file
-):
+def get_go_relation_and_obsolete_terms(term_id, uniprot_id, go_category_trees_dictionary, obsolete_terms_csv_file):
     """
     Extract category of GO term and handle obsolete terms according to oak.
 
@@ -314,10 +310,7 @@ def get_nodes_and_edges(
         GO_PARSED_COLUMN,
         RHEA_PARSED_COLUMN,
     ]
-    if (
-        UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
-        and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
-    ):
+    if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
         parsed_columns += [
             DISEASE_PARSED_COLUMN,
             GENE_PRIMARY_PARSED_COLUMN,
@@ -326,33 +319,27 @@ def get_nodes_and_edges(
     uniprot_parse_df[ORGANISM_PARSED_COLUMN] = uniprot_df[UNIPROT_ORG_ID_COLUMN_NAME].apply(
         lambda x: NCBITAXON_PREFIX + str(x).strip()
     )
-    uniprot_parse_df[EC_NUMBER_PARSED_COLUMN] = uniprot_df[UNIPROT_EC_ID_COLUMN_NAME].apply(
-        parse_ec
-    )
+    uniprot_parse_df[EC_NUMBER_PARSED_COLUMN] = uniprot_df[UNIPROT_EC_ID_COLUMN_NAME].apply(parse_ec)
     uniprot_parse_df[PROTEIN_ID_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEIN_ID_COLUMN_NAME].apply(
         lambda x: UNIPROT_PREFIX + x.strip()
     )
-    uniprot_parse_df[PROTEIN_NAME_PARSED_COLUMN] = uniprot_df[
-        UNIPROT_PROTEIN_NAME_COLUMN_NAME
-    ].apply(
+    uniprot_parse_df[PROTEIN_NAME_PARSED_COLUMN] = uniprot_df[UNIPROT_PROTEIN_NAME_COLUMN_NAME].apply(
         lambda x: x.split("(EC")[0].replace("[", "(").replace("]", ")") if not is_float(x) else x
     )
-    uniprot_parse_df[BINDING_SITE_PARSED_COLUMN] = uniprot_df[
-        UNIPROT_BINDING_SITE_COLUMN_NAME
-    ].apply(parse_binding_site)
-    uniprot_parse_df[GO_PARSED_COLUMN] = uniprot_df[UNIPROT_GO_COLUMN_NAME].apply(parse_go_entry)
-    uniprot_parse_df[RHEA_PARSED_COLUMN] = uniprot_df[UNIPROT_RHEA_ID_COLUMN_NAME].apply(
-        parse_rhea_entry
+    uniprot_parse_df[BINDING_SITE_PARSED_COLUMN] = uniprot_df[UNIPROT_BINDING_SITE_COLUMN_NAME].apply(
+        parse_binding_site
     )
+    uniprot_parse_df[GO_PARSED_COLUMN] = uniprot_df[UNIPROT_GO_COLUMN_NAME].apply(parse_go_entry)
+    uniprot_parse_df[RHEA_PARSED_COLUMN] = uniprot_df[UNIPROT_RHEA_ID_COLUMN_NAME].apply(parse_rhea_entry)
     # Fields only in human uniprot query
     if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns:
         uniprot_parse_df[DISEASE_PARSED_COLUMN] = uniprot_df[UNIPROT_DISEASE_COLUMN_NAME].apply(
             lambda x: parse_disease(x, mondo_xrefs_dict)
         )
     if UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
-        uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[
-            UNIPROT_GENE_PRIMARY_COLUMN_NAME
-        ].apply(lambda x: parse_gene(x, mondo_gene_dict))
+        uniprot_parse_df[GENE_PRIMARY_PARSED_COLUMN] = uniprot_df[UNIPROT_GENE_PRIMARY_COLUMN_NAME].apply(
+            lambda x: parse_gene(x, mondo_gene_dict)
+        )
 
     for _, entry in uniprot_parse_df.iterrows():
         # Organism node
@@ -434,10 +421,7 @@ def get_nodes_and_edges(
                         source_name,
                     ]
                 )
-        if (
-            UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns
-            and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns
-        ):
+        if UNIPROT_DISEASE_COLUMN_NAME in uniprot_df.columns and UNIPROT_GENE_PRIMARY_COLUMN_NAME in uniprot_df.columns:
             # Disease node
             if entry[DISEASE_PARSED_COLUMN]:
                 for disease in entry[DISEASE_PARSED_COLUMN]:
@@ -511,9 +495,7 @@ def prepare_mondo_dictionary():
                 mondo_gene_dict[row["id"]] = row["name"]
     #! TODO: use oak
     else:
-        mondo_nodes_file = (
-            Path(__file__).parents[2] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
-        )
+        mondo_nodes_file = Path(__file__).parents[2] / "data" / "transformed" / "ontologies" / "mondo_nodes.tsv"
         if mondo_nodes_file.exists():
             with open(mondo_nodes_file, "r") as file:
                 csv_reader = csv.DictReader(file, delimiter="\t")
@@ -701,14 +683,10 @@ def create_pool(
 ):
     """Process tar file in parallel threads."""
     progress_class = tqdm if show_status else DummyTqdm
-    all_lines = check_string_in_tar(
-        tar_file, uniprot_relevant_file_list, progress_class=progress_class
-    )
+    all_lines = check_string_in_tar(tar_file, uniprot_relevant_file_list, progress_class=progress_class)
     member_header = all_lines[0].split("\t")
     chunk_size = len(all_lines) // (chunk_size_denominator)
-    print(
-        f"Processing {len(all_lines)- 1} lines in {chunk_size_denominator} chunks of size {chunk_size}..."
-    )
+    print(f"Processing {len(all_lines) - 1} lines in {chunk_size_denominator} chunks of size {chunk_size}...")
     line_chunks = [all_lines[i : i + chunk_size] for i in range(0, len(all_lines), chunk_size)]
 
     with Pool(n_workers) as pool:
@@ -738,9 +716,7 @@ def create_pool(
     combined_node_filename = output_node_file
     combined_edge_filename = output_edge_file
 
-    with open(combined_node_filename, "w", newline="") as cnf, open(
-        combined_edge_filename, "w", newline=""
-    ) as cef:
+    with open(combined_node_filename, "w", newline="") as cnf, open(combined_edge_filename, "w", newline="") as cef:
         node_writer = csv.writer(cnf, delimiter="\t")
         edge_writer = csv.writer(cef, delimiter="\t")
 
@@ -792,9 +768,7 @@ def get_go_category_trees(go_oi):
         csv_writer.writerow([GO_CATEGORY_COLUMN, GO_TERM_COLUMN])
 
         for id in GO_TYPES_DICT.keys():
-            term_decendants = list(
-                go_oi.descendants(start_curies=id, predicates=[RDFS_SUBCLASS_OF], reflexive=True)
-            )
+            term_decendants = list(go_oi.descendants(start_curies=id, predicates=[RDFS_SUBCLASS_OF], reflexive=True))
             for term in term_decendants:
                 r_list = [id, term]
                 csv_writer.writerow(r_list)

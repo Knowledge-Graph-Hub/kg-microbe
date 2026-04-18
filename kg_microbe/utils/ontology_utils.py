@@ -51,9 +51,7 @@ def replace_category_ontology(line, id_index, category_index):
     return new_line
 
 
-def get_go_category_by_aspect(
-    go_term_id: str, go_adapter: Optional[OboGraphInterface] = None
-) -> str:
+def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInterface] = None) -> str:
     """
     Return Biolink category based on GO aspect (namespace).
 
@@ -116,16 +114,14 @@ def get_go_category_by_aspect(
     return BIOLOGICAL_PROCESS_CATEGORY
 
 
-def get_chebi_category(
-    chebi_term_id: str, chebi_adapter: Optional[OboGraphInterface] = None
-) -> str:
+def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInterface] = None) -> str:
     """
     Return appropriate Biolink category for ChEBI term.
 
     ChEBI terms can be:
     - Macromolecules (proteins, nucleic acids, polysaccharides) → biolink:Macromolecule
     - Roles (e.g., "antioxidant", "inhibitor") → biolink:ChemicalRole
-    - Small molecules (default) → biolink:SmallMolecule
+    - Small molecules (default) → CHEBI_CATEGORY (biolink:ChemicalSubstance, see constants.py)
 
     Args:
     ----
@@ -227,9 +223,7 @@ def get_chebi_category(
 
             # Only categorize as role if it's a close descendant of specific role classes
             # (not just any distant ancestor)
-            parents = list(
-                chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"])
-            )
+            parents = list(chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"]))
             parent_ids = [str(p[2]) for p in parents]
 
             if any(role_parent in parent_ids for role_parent in specific_role_parents):
@@ -303,8 +297,9 @@ def replace_deprecated_categories(category_str: str) -> str:
     """
     Replace deprecated Biolink categories with current equivalents.
 
-    Deprecated categories:
-    - biolink:ChemicalSubstance → biolink:SmallMolecule
+    NOTE: biolink:ChemicalSubstance is deprecated in Biolink but is the
+    KG-Microbe normalization target for CHEBI-mapped chemicals (see
+    constants.CHEBI_CATEGORY). It is intentionally NOT remapped here.
 
     Args:
     ----
@@ -314,24 +309,14 @@ def replace_deprecated_categories(category_str: str) -> str:
     -------
         Updated category string with deprecated categories replaced
 
-    Examples:
-    --------
-        >>> replace_deprecated_categories("biolink:ChemicalSubstance")
-        'biolink:SmallMolecule'
-
-        >>> replace_deprecated_categories("biolink:ChemicalEntity|biolink:ChemicalSubstance")
-        'biolink:ChemicalEntity|biolink:SmallMolecule'
-
     """
     if not category_str or category_str == "":
         return category_str
 
-    # Map of deprecated → current categories
-    deprecated_map = {
-        "biolink:ChemicalSubstance": "biolink:SmallMolecule",
-    }
+    # Map of deprecated → current categories.
+    # ChemicalSubstance is intentionally omitted; it is our CHEBI normalization target.
+    deprecated_map: dict = {}
 
-    # Replace each deprecated category
     updated_category = category_str
     for old_cat, new_cat in deprecated_map.items():
         updated_category = updated_category.replace(old_cat, new_cat)

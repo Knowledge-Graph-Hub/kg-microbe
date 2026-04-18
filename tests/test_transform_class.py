@@ -34,6 +34,7 @@ class TestTransform(TestCase):
                     "xref",
                     "provided_by",
                     "synonym",
+                    "deprecated",
                     "same_as",
                 ],
             ),

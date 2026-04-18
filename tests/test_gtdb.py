@@ -82,9 +82,7 @@ class TestGTDBTransform(unittest.TestCase):
         """Set up test fixtures."""
         self.output_dir = tempfile.mkdtemp()
         self.test_input_dir = Path("tests/resources")
-        self.transform = GTDBTransform(
-            input_dir=str(self.test_input_dir), output_dir=self.output_dir
-        )
+        self.transform = GTDBTransform(input_dir=str(self.test_input_dir), output_dir=self.output_dir)
 
     def test_init(self):
         """Test GTDBTransform initialization."""

@@ -1,14 +1,19 @@
 """Drive KG download, transform, merge steps."""
 
 import os
+import warnings
 
 import click
 
-from kg_microbe import download as kg_download
-from kg_microbe.merge_utils.merge_kg import load_and_merge
-from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query
-from kg_microbe.transform import DATA_SOURCES
-from kg_microbe.transform import transform as kg_transform
+# Suppress deprecated pkg_resources warning from eutils (transitive dependency via oaklib)
+# eutils is unmaintained and uses deprecated API, but doesn't affect functionality
+warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
+
+from kg_microbe import download as kg_download  # noqa: E402
+from kg_microbe.merge_utils.merge_kg import load_and_merge  # noqa: E402
+from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query  # noqa: E402
+from kg_microbe.transform import DATA_SOURCES  # noqa: E402
+from kg_microbe.transform import transform as kg_transform  # noqa: E402
 
 show_status_option = click.option("--show-status/--no-show-status", default=True)
 
@@ -20,9 +25,7 @@ def main():
 
 
 @main.command()
-@click.option(
-    "yaml_file", "-y", required=True, default="download.yaml", type=click.Path(exists=True)
-)
+@click.option("yaml_file", "-y", required=True, default="download.yaml", type=click.Path(exists=True))
 @click.option("output_dir", "-o", required=True, default="data/raw")
 @click.option(
     "snippet_only",
@@ -88,6 +91,75 @@ def merge(yaml: str, processes: int) -> None:
     load_and_merge(yaml, processes)
 
 
+@main.command(name="query-organism")
+@click.argument("organism_name", required=True)
+@click.option(
+    "--db-path",
+    "-d",
+    default="data/merged/kg-microbe.duckdb",
+    help="DuckDB database path",
+)
+@click.option(
+    "--nodes-path",
+    "-n",
+    default="data/merged/merged-kg_default_nodes.tsv",
+    help="Nodes TSV path",
+)
+@click.option(
+    "--edges-path",
+    "-e",
+    default="data/merged/merged-kg_default_edges.tsv",
+    help="Edges TSV path",
+)
+@click.option("--output", "-o", default=None, help="Output markdown file")
+@click.option("--force-reload", is_flag=True, help="Force database reload")
+def query_organism(
+    organism_name: str,
+    db_path: str,
+    nodes_path: str,
+    edges_path: str,
+    output: str,
+    force_reload: bool,
+) -> None:
+    """Query organism information and media preferences from KG-Microbe."""
+    from kg_microbe.query_utils.duckdb_loader import get_or_create_database
+    from kg_microbe.query_utils.organism_queries import query_organism_full
+    from kg_microbe.query_utils.utils import format_organism_report
+
+    # Connect to database (creates if needed)
+    click.echo("Loading KG-Microbe database...")
+    try:
+        conn = get_or_create_database(nodes_path, edges_path, db_path, force_reload)
+    except Exception as e:
+        click.echo(f"❌ Error loading database: {e}", err=True)
+        return
+
+    # Query organism
+    click.echo(f"Querying organism: {organism_name}")
+    try:
+        result = query_organism_full(conn, organism_name)
+    except ValueError as e:
+        click.echo(f"❌ Error: {e}", err=True)
+        conn.close()
+        return
+    except Exception as e:
+        click.echo(f"❌ Query failed: {e}", err=True)
+        conn.close()
+        return
+
+    # Format output
+    report = format_organism_report(result)
+
+    if output:
+        with open(output, "w") as f:
+            f.write(report)
+        click.echo(f"✅ Report saved to {output}")
+    else:
+        click.echo("\n" + report)
+
+    conn.close()
+
+
 @main.command()
 @click.option("yaml", "-y", required=True, default=None, multiple=False)
 @click.option("output_dir", "-o", default="data/queries/")
@@ -131,9 +203,7 @@ def query(
     default="data/merged/edges.tsv",
     type=click.Path(exists=True),
 )
-@click.option(
-    "output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path()
-)
+@click.option("output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path())
 @click.option(
     "train_fraction",
     "-t",

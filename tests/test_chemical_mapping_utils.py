@@ -68,14 +68,20 @@ def reset_cache():
     """Reset module-level cache before each test."""
     chemical_mapping_utils._UNIFIED_MAPPINGS = None
     chemical_mapping_utils._NAME_INDEX = None
+    chemical_mapping_utils._CANONICAL_NAME_INDEX = None
     chemical_mapping_utils._FORMULA_INDEX = None
     chemical_mapping_utils._XREF_INDEX = None
+    chemical_mapping_utils._CACHED_PATH = None
+    chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
     yield
     # Reset after test too
     chemical_mapping_utils._UNIFIED_MAPPINGS = None
     chemical_mapping_utils._NAME_INDEX = None
+    chemical_mapping_utils._CANONICAL_NAME_INDEX = None
     chemical_mapping_utils._FORMULA_INDEX = None
     chemical_mapping_utils._XREF_INDEX = None
+    chemical_mapping_utils._CACHED_PATH = None
+    chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
 
 
 class TestNormalizeName:
@@ -379,3 +385,122 @@ class TestChemicalMappingLoader:
         """Test loader get_formula method."""
         loader = ChemicalMappingLoader(mock_mappings_file)
         assert loader.get_formula("CHEBI:15377") == "H2O"
+
+
+class TestStripStereochemistry:
+
+    """Test stereochemistry prefix normalization."""
+
+    def test_r_prefix(self):
+        """Test (R)- prefix removal."""
+        assert normalize_name("(R)-lactate", strip_stereochemistry=True) == "lactate"
+
+    def test_s_prefix(self):
+        """Test (S)- prefix removal."""
+        assert normalize_name("(S)-lactate", strip_stereochemistry=True) == "lactate"
+
+    def test_d_prefix(self):
+        """Test D- prefix removal."""
+        assert normalize_name("D-glucose", strip_stereochemistry=True) == "glucose"
+
+    def test_l_prefix(self):
+        """Test L- prefix removal."""
+        assert normalize_name("L-alanine", strip_stereochemistry=True) == "alanine"
+
+    def test_plus_prefix(self):
+        """Test (+)- prefix removal."""
+        assert normalize_name("(+)-lactate", strip_stereochemistry=True) == "lactate"
+
+    def test_minus_prefix(self):
+        """Test (-)- prefix removal."""
+        assert normalize_name("(-)-lactate", strip_stereochemistry=True) == "lactate"
+
+    def test_no_prefix_unchanged(self):
+        """Names without stereochemistry prefixes are only lowercased/cleaned."""
+        assert normalize_name("water", strip_stereochemistry=True) == "water"
+
+    def test_strip_off_preserves_original(self):
+        """Without strip_stereochemistry the prefixes survive (hyphens preserved)."""
+        # (+)/(-) parentheses are stripped by general punctuation rules but hyphens remain.
+        assert normalize_name("D-glucose") == "d-glucose"
+        assert normalize_name("(R)-lactate") == "r-lactate"
+
+
+class TestFuzzyStereochemistry:
+
+    """Test fuzzy stereochemistry retry behavior in find_chebi_by_name."""
+
+    def test_fuzzy_retry_finds_match(self, mock_mappings_file):
+        """Fuzzy mode finds canonical after stripping stereochemistry prefix."""
+        chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        # "(R)-lactate" normalizes to "r-lactate" (miss); stripping yields "lactate" (hit)
+        assert find_chebi_by_name("(R)-lactate", fuzzy_stereochemistry=True) == "CHEBI:17925"
+
+    def test_fuzzy_off_does_not_retry(self, mock_mappings_file):
+        """Stereochemistry-prefixed miss stays a miss when fuzzy is off."""
+        chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        # "(R)-lactate" is not in canonical names or synonyms; normal mode misses.
+        assert find_chebi_by_name("(R)-lactate", fuzzy_stereochemistry=False) is None
+
+    def test_fuzzy_retry_skipped_when_normalized_forms_equal(self, mock_mappings_file):
+        """
+        If the stripped form is identical to the unstripped form, no extra retry is done.
+
+        We verify behavior: a plain name with no stereochemistry prefix still
+        returns the canonical match — the fuzzy path short-circuits rather
+        than double-looking-up.
+        """
+        chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        # "water" has no stereochemistry prefix so strip == noop; result is still a hit.
+        assert find_chebi_by_name("water", fuzzy_stereochemistry=True) == "CHEBI:15377"
+        # And for a definite miss, fuzzy_off and fuzzy_on behave the same.
+        assert find_chebi_by_name("nonexistent", fuzzy_stereochemistry=True) is None
+        assert find_chebi_by_name("nonexistent", fuzzy_stereochemistry=False) is None
+
+
+class TestNegativeCache:
+
+    """Test bounded negative-lookup cache behavior."""
+
+    def test_miss_is_cached(self, mock_mappings_file):
+        """Failed lookup is stored in the negative cache."""
+        chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        assert find_chebi_by_name("not_a_real_chemical") is None
+        norm = chemical_mapping_utils.normalize_name("not_a_real_chemical")
+        assert (norm, True, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
+
+    def test_cache_cleared_on_reload(self, mock_mappings_file, tmp_path):
+        """Reloading from a new mappings path clears the negative cache."""
+        # First load, populate a miss.
+        chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        assert find_chebi_by_name("not_a_real_chemical") is None
+        assert len(chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE) >= 1
+
+        # Build a second mappings file at a different path so the path-equality
+        # short-circuit in load_unified_mappings does not skip the reload.
+        other = tmp_path / "other.tsv.gz"
+        df = pd.DataFrame(
+            {
+                "chebi_id": ["CHEBI:99999"],
+                "canonical_name": ["not_a_real_chemical"],
+                "formula": [""],
+                "synonyms": [""],
+                "xrefs": [""],
+                "sources": ["test"],
+            }
+        )
+        with gzip.open(other, "wt") as f:
+            df.to_csv(f, sep="\t", index=False)
+
+        chemical_mapping_utils.load_unified_mappings(other)
+        # Cache is cleared on reload, and the previously-missing name now resolves.
+        assert len(chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE) == 0
+        assert find_chebi_by_name("not_a_real_chemical") == "CHEBI:99999"
+
+    def test_cache_is_bounded(self, mock_mappings_file, monkeypatch):
+        """Negative cache never exceeds the configured max size."""
+        monkeypatch.setattr(chemical_mapping_utils, "_NEGATIVE_CACHE_MAX_SIZE", 5)
+        chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        for i in range(20):
+            find_chebi_by_name(f"no_such_chemical_{i}")
+        assert len(chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE) <= 5

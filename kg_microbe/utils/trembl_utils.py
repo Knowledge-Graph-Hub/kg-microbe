@@ -35,10 +35,7 @@ def process_value(value):
     :rtype: str | list
     """
     if isinstance(value, (list, tuple)):
-        return [
-            val.replace("\n", "").replace(";", "").strip() if isinstance(val, str) else val
-            for val in value
-        ]
+        return [val.replace("\n", "").replace(";", "").strip() if isinstance(val, str) else val for val in value]
     elif isinstance(value, str):
         return value.replace("\n", "").replace(";", "").strip()
     return value
@@ -58,9 +55,7 @@ def unzip_trembl_file(path: Path) -> None:
             if not record_attributes:
                 # For each record. get all attributes of the record object
                 record_attributes = [
-                    attr
-                    for attr in dir(record)
-                    if not callable(getattr(record, attr)) and not attr.startswith("__")
+                    attr for attr in dir(record) if not callable(getattr(record, attr)) and not attr.startswith("__")
                 ]
                 # Add an element to the beginning of record attributes list to store the file name
                 record_attributes.insert(0, FILENAME_KEY)
@@ -72,18 +67,12 @@ def unzip_trembl_file(path: Path) -> None:
 
             # Create a table of the record attributes
             record_table = {
-                attr: process_value(getattr(record, attr))
-                for attr in record_attributes
-                if attr not in external_keys
+                attr: process_value(getattr(record, attr)) for attr in record_attributes if attr not in external_keys
             }
             record_table[ACCESSIONS_KEY] = record_table[ACCESSIONS_KEY][0]
             record_table[FILENAME_KEY] = str(path).split("/")[-1]
-            record_table[PROTEOME_ID_COLUMN] = (
-                PROTEOME_PREFIX + record_table[FILENAME_KEY].split("_")[0]
-            )
-            record_table[TAXONOMY_ID_UNIPROT_COLUMN] = (
-                NCBITAXON_PREFIX + record_table[TAXONOMY_ID_UNIPROT_COLUMN][0]
-            )
+            record_table[PROTEOME_ID_COLUMN] = PROTEOME_PREFIX + record_table[FILENAME_KEY].split("_")[0]
+            record_table[TAXONOMY_ID_UNIPROT_COLUMN] = NCBITAXON_PREFIX + record_table[TAXONOMY_ID_UNIPROT_COLUMN][0]
             # Define the output file path
             output_file = UNIPROT_TREMBL_TMP_DIR / f"{str(path).split('/')[-3]}.tsv"
 

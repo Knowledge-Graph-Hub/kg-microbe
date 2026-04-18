@@ -16,11 +16,13 @@ from kg_microbe.transform_utils.constants import (
     CARBON_SUBSTRATE_CATEGORY,
     CARBON_SUBSTRATE_PREFIX,
     CARBON_SUBSTRATES_COLUMN,
+    CATEGORY_COLUMN,
     CELL_SHAPE_COLUMN,
     CHEBI_MANUAL_ANNOTATION_PATH,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
+    DESCRIPTION_COLUMN,
     ENVIRONMENT_CATEGORY,
     ENVO_ID_COLUMN,
     ENVO_TERMS_COLUMN,
@@ -53,16 +55,20 @@ from kg_microbe.transform_utils.constants import (
     PATHWAY_PREFIX,
     PATHWAYS_COLUMN,
     PHENOTYPIC_CATEGORY,
+    PROVIDED_BY_COLUMN,
     RANGE_SALINITY_COLUMN,
     RANGE_TMP_COLUMN,
     ROLE_CATEGORY,
+    SAME_AS_COLUMN,
     SHAPE_PREFIX,
     SPORULATION_COLUMN,
     SUBJECT_LABEL_COLUMN,
+    SYNONYM_COLUMN,
     TAX_ID_COLUMN,
     TRAITS_DATASET_LABEL_COLUMN,
     TROPHICALLY_INTERACTS_WITH,
     TYPE_COLUMN,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -137,17 +143,17 @@ class MadinEtAlTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -177,15 +183,11 @@ class MadinEtAlTransform(Transform):
                 False,
                 CHEBI_MANUAL_ANNOTATION_PATH,
             )
-            chebi_result = pd.read_csv(
-                str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
-            )
+            chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
             chebi_result = chebi_result.drop_duplicates()
             chebi_result.to_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", index=False)
         else:
-            chebi_result = pd.read_csv(
-                str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False
-            )
+            chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
         chebi_list = chebi_result[OBJECT_ID_COLUMN].to_list()
         oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
@@ -213,20 +215,14 @@ class MadinEtAlTransform(Transform):
                 False,
                 None,
             )
-            go_result = pd.read_csv(
-                str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False
-            )
+            go_result = pd.read_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False)
             go_result = go_result.drop_duplicates()
             go_result.to_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", index=False)
         else:
-            go_result = pd.read_csv(
-                str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False
-            )
+            go_result = pd.read_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False)
 
         envo_cols = [TYPE_COLUMN, ENVO_TERMS_COLUMN, ENVO_ID_COLUMN]
-        envo_df = pd.read_csv(
-            self.environments_file, low_memory=False, usecols=envo_cols
-        ).drop_duplicates()
+        envo_df = pd.read_csv(self.environments_file, low_memory=False, usecols=envo_cols).drop_duplicates()
         envo_mapping = envo_df.set_index(TYPE_COLUMN).T.to_dict()
         traits_columns_of_interest = [
             TAX_ID_COLUMN,
@@ -257,6 +253,8 @@ class MadinEtAlTransform(Transform):
             edge_writer = csv.writer(edge, delimiter="\t")
             edge_writer.writerow(self.edge_header)
             edge_writer.writerows(role_edges)
+
+            seen_nodes: set = set()
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(total=total_lines, desc="Processing files") as progress:
@@ -289,14 +287,13 @@ class MadinEtAlTransform(Transform):
                     tax_node = self._create_node_row(tax_id, NCBI_CATEGORY, tax_name)
 
                     # block handling "metabolism" column from Madin etal dataset/CSV sheet
-                    metabolism = self.madin_metpo_mappings.get(
-                        filtered_row[METABOLISM_COLUMN], None
-                    )
+                    metabolism = self.madin_metpo_mappings.get(filtered_row[METABOLISM_COLUMN], None)
                     if metabolism:
                         # create metabolism node and edge to tax_id
                         # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                        category = uri_to_curie(
-                            metabolism.get("inferred_category", METABOLISM_CATEGORY)
+                        category = (
+                            uri_to_curie(metabolism.get("inferred_category", METABOLISM_CATEGORY))
+                            or METABOLISM_CATEGORY
                         )
                         predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
                         # fallback: if no biolink equivalent use `biolink:has_phenotype`
@@ -324,9 +321,7 @@ class MadinEtAlTransform(Transform):
                     pathways = (
                         None
                         if filtered_row[PATHWAYS_COLUMN].split(",") == ["NA"]
-                        else [
-                            pathway.strip() for pathway in filtered_row[PATHWAYS_COLUMN].split(",")
-                        ]
+                        else [pathway.strip() for pathway in filtered_row[PATHWAYS_COLUMN].split(",")]
                     )
                     if pathways:
                         pathway_nodes = []
@@ -340,17 +335,16 @@ class MadinEtAlTransform(Transform):
                             if metpo_mapping:
                                 # create pathway node and edge to tax_id
                                 # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                                category = uri_to_curie(
-                                    metpo_mapping.get("inferred_category", PATHWAY_CATEGORY)
+                                category = (
+                                    uri_to_curie(metpo_mapping.get("inferred_category", PATHWAY_CATEGORY))
+                                    or PATHWAY_CATEGORY
                                 )
-                                predicate_biolink = metpo_mapping.get(
-                                    "predicate_biolink_equivalent", ""
-                                )
-                                # fallback: if no biolink equivalent use METPO:2000103 (capable of)
+                                predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
+                                # fallback: if no biolink equivalent use biolink:capable_of
                                 if predicate_biolink:
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
-                                    predicate = "METPO:2000103"  # capable of
+                                    predicate = "biolink:capable_of"
                                 pathway_nodes.append(
                                     self._create_node_row(
                                         metpo_mapping["curie"],
@@ -374,9 +368,7 @@ class MadinEtAlTransform(Transform):
 
                         # For pathways not found in METPO, fall back to NER results
                         if pathways_not_in_metpo:
-                            go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(
-                                pathways_not_in_metpo
-                            )
+                            go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways_not_in_metpo)
                             go_result_for_tax_id = go_result.loc[go_condition]
                             if go_result_for_tax_id.empty:
                                 # Use fallback naming if no NER results
@@ -409,9 +401,7 @@ class MadinEtAlTransform(Transform):
                                     go_result_for_tax_id = exact_match_go_df
                                 for row in go_result_for_tax_id.iterrows():
                                     pathway_nodes.append(
-                                        self._create_node_row(
-                                            row[1].object_id, PATHWAY_CATEGORY, row[1].object_label
-                                        )
+                                        self._create_node_row(row[1].object_id, PATHWAY_CATEGORY, row[1].object_label)
                                     )
                                     tax_pathway_edge.append(
                                         [
@@ -425,17 +415,17 @@ class MadinEtAlTransform(Transform):
                                         ]
                                     )
 
-                        node_writer.writerows(pathway_nodes)
+                        for _nr in pathway_nodes:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
                         edge_writer.writerows(tax_pathway_edge)
 
                     # block handling "carbon substrates" column from Madin etal dataset/CSV sheet
                     carbon_substrates = (
                         None
                         if filtered_row[CARBON_SUBSTRATES_COLUMN].split(",") == ["NA"]
-                        else [
-                            substrate.strip()
-                            for substrate in filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")
-                        ]
+                        else [substrate.strip() for substrate in filtered_row[CARBON_SUBSTRATES_COLUMN].split(",")]
                     )
 
                     if carbon_substrates:
@@ -450,19 +440,16 @@ class MadinEtAlTransform(Transform):
                             if metpo_mapping:
                                 # create carbon substrate node and edge to tax_id
                                 # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                                category = uri_to_curie(
-                                    metpo_mapping.get(
-                                        "inferred_category", CARBON_SUBSTRATE_CATEGORY
-                                    )
+                                category = (
+                                    uri_to_curie(metpo_mapping.get("inferred_category", CARBON_SUBSTRATE_CATEGORY))
+                                    or CARBON_SUBSTRATE_CATEGORY
                                 )
-                                predicate_biolink = metpo_mapping.get(
-                                    "predicate_biolink_equivalent", ""
-                                )
-                                # fallback: if no biolink equivalent use METPO:2000006 "uses as carbon source"
+                                predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
+                                # fallback: if no biolink equivalent use biolink:consumes ("uses as carbon source")
                                 if predicate_biolink:
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
-                                    predicate = "METPO:2000006"  # "uses as carbon source"
+                                    predicate = "biolink:consumes"
                                 carbon_substrate_nodes.append(
                                     self._create_node_row(
                                         metpo_mapping["curie"],
@@ -516,9 +503,7 @@ class MadinEtAlTransform(Transform):
                                     chebi_result_for_tax_id[OBJECT_LABEL_COLUMN]
                                     == chebi_result_for_tax_id[SUBJECT_LABEL_COLUMN]
                                 )
-                                exact_match_chebi_df = chebi_result_for_tax_id[
-                                    exact_condition_chebi
-                                ]
+                                exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
                                 if not exact_match_chebi_df.empty:
                                     chebi_result_for_tax_id = exact_match_chebi_df
                                 for row in chebi_result_for_tax_id.iterrows():
@@ -541,15 +526,14 @@ class MadinEtAlTransform(Transform):
                                         ]
                                     )
 
-                        node_writer.writerows(carbon_substrate_nodes)
+                        for _nr in carbon_substrate_nodes:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
                         edge_writer.writerows(tax_carbon_substrate_edge)
 
                     # block handling "cell shape" column from Madin etal dataset/CSV sheet
-                    cell_shape = (
-                        None
-                        if filtered_row[CELL_SHAPE_COLUMN] == "NA"
-                        else filtered_row[CELL_SHAPE_COLUMN]
-                    )
+                    cell_shape = None if filtered_row[CELL_SHAPE_COLUMN] == "NA" else filtered_row[CELL_SHAPE_COLUMN]
                     if cell_shape:
                         # First try to find mapping in METPO
                         metpo_mapping = self.madin_metpo_mappings.get(cell_shape.strip(), None)
@@ -557,12 +541,11 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create cell shape node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(
-                                metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                            category = (
+                                uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                                or PHENOTYPIC_CATEGORY
                             )
-                            predicate_biolink = metpo_mapping.get(
-                                "predicate_biolink_equivalent", ""
-                            )
+                            predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = uri_to_curie(predicate_biolink)
@@ -601,9 +584,7 @@ class MadinEtAlTransform(Transform):
 
                     # block handling "range_salinity" column from Madin etal dataset/CSV sheet
                     range_salinity = (
-                        None
-                        if filtered_row[RANGE_SALINITY_COLUMN] == "NA"
-                        else filtered_row[RANGE_SALINITY_COLUMN]
+                        None if filtered_row[RANGE_SALINITY_COLUMN] == "NA" else filtered_row[RANGE_SALINITY_COLUMN]
                     )
                     if range_salinity:
                         # Try to find mapping in METPO
@@ -611,12 +592,11 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create range_salinity node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(
-                                metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                            category = (
+                                uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                                or PHENOTYPIC_CATEGORY
                             )
-                            predicate_biolink = metpo_mapping.get(
-                                "predicate_biolink_equivalent", ""
-                            )
+                            predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = uri_to_curie(predicate_biolink)
@@ -638,11 +618,7 @@ class MadinEtAlTransform(Transform):
                             ]
 
                     # block handling "motility" column from Madin etal dataset/CSV sheet
-                    motility = (
-                        None
-                        if filtered_row[MOTILITY_COLUMN] == "NA"
-                        else filtered_row[MOTILITY_COLUMN]
-                    )
+                    motility = None if filtered_row[MOTILITY_COLUMN] == "NA" else filtered_row[MOTILITY_COLUMN]
                     if motility:
                         # Try to find mapping in METPO using compound key first, then simple key
                         compound_key = f"motility.{motility.strip()}"
@@ -652,12 +628,11 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create motility node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(
-                                metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                            category = (
+                                uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                                or PHENOTYPIC_CATEGORY
                             )
-                            predicate_biolink = metpo_mapping.get(
-                                "predicate_biolink_equivalent", ""
-                            )
+                            predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = uri_to_curie(predicate_biolink)
@@ -678,11 +653,7 @@ class MadinEtAlTransform(Transform):
                                 MANUAL_AGENT,
                             ]
                     # block handling "range_tmp" column from Madin etal dataset/CSV sheet
-                    range_tmp = (
-                        None
-                        if filtered_row[RANGE_TMP_COLUMN] == "NA"
-                        else filtered_row[RANGE_TMP_COLUMN]
-                    )
+                    range_tmp = None if filtered_row[RANGE_TMP_COLUMN] == "NA" else filtered_row[RANGE_TMP_COLUMN]
                     if range_tmp:
                         # Try to find mapping in METPO using compound key first, then simple key
                         compound_key = f"range_tmp.{range_tmp.strip()}"
@@ -692,12 +663,11 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create range_tmp node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(
-                                metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                            category = (
+                                uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                                or PHENOTYPIC_CATEGORY
                             )
-                            predicate_biolink = metpo_mapping.get(
-                                "predicate_biolink_equivalent", ""
-                            )
+                            predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = uri_to_curie(predicate_biolink)
@@ -718,23 +688,18 @@ class MadinEtAlTransform(Transform):
                                 MANUAL_AGENT,
                             ]
                     # block handling "gram_stain" column from Madin etal dataset/CSV sheet
-                    gram_stain = (
-                        None
-                        if filtered_row[GRAM_STAIN_COLUMN] == "NA"
-                        else filtered_row[GRAM_STAIN_COLUMN]
-                    )
+                    gram_stain = None if filtered_row[GRAM_STAIN_COLUMN] == "NA" else filtered_row[GRAM_STAIN_COLUMN]
                     if gram_stain:
                         # Try to find mapping in METPO
                         metpo_mapping = self.madin_metpo_mappings.get(gram_stain.strip(), None)
                         if metpo_mapping:
                             # create gram_stain node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(
-                                metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                            category = (
+                                uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                                or PHENOTYPIC_CATEGORY
                             )
-                            predicate_biolink = metpo_mapping.get(
-                                "predicate_biolink_equivalent", ""
-                            )
+                            predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = uri_to_curie(predicate_biolink)
@@ -756,11 +721,7 @@ class MadinEtAlTransform(Transform):
                             ]
 
                     # block handling "sporulation" column from Madin etal dataset/CSV sheet
-                    sporulation = (
-                        None
-                        if filtered_row[SPORULATION_COLUMN] == "NA"
-                        else filtered_row[SPORULATION_COLUMN]
-                    )
+                    sporulation = None if filtered_row[SPORULATION_COLUMN] == "NA" else filtered_row[SPORULATION_COLUMN]
                     if sporulation:
                         # Try to find mapping in METPO using compound key first, then simple key
                         compound_key = f"sporulation.{sporulation.strip()}"
@@ -770,12 +731,11 @@ class MadinEtAlTransform(Transform):
                         if metpo_mapping:
                             # create sporulation node and edge to tax_id
                             # use biolink_equivalent URL from METPO tree traversal or fallback to default
-                            category = uri_to_curie(
-                                metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY)
+                            category = (
+                                uri_to_curie(metpo_mapping.get("inferred_category", PHENOTYPIC_CATEGORY))
+                                or PHENOTYPIC_CATEGORY
                             )
-                            predicate_biolink = metpo_mapping.get(
-                                "predicate_biolink_equivalent", ""
-                            )
+                            predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
                             if predicate_biolink:
                                 predicate = uri_to_curie(predicate_biolink)
@@ -803,7 +763,7 @@ class MadinEtAlTransform(Transform):
                             isolation_source_node = [
                                 self._create_node_row(
                                     ISOLATION_SOURCE_PREFIX + filtered_row[ISOLATION_SOURCE_COLUMN],
-                                    None,
+                                    ENVIRONMENT_CATEGORY,
                                     filtered_row[ISOLATION_SOURCE_COLUMN],
                                 )
                             ]
@@ -820,28 +780,19 @@ class MadinEtAlTransform(Transform):
                             ]
                         else:
                             if "," in isolation_source[ENVO_ID_COLUMN]:
-                                curies = [
-                                    x.strip() for x in isolation_source[ENVO_ID_COLUMN].split(",")
-                                ]
-                                labels = [
-                                    x.strip()
-                                    for x in isolation_source[ENVO_TERMS_COLUMN].split(",")
-                                ]
+                                curies = [x.strip() for x in isolation_source[ENVO_ID_COLUMN].split(",")]
+                                labels = [x.strip() for x in isolation_source[ENVO_TERMS_COLUMN].split(",")]
                                 if len(labels) == 1 and len(labels) != len(curies):
                                     labels = [labels[0] for _ in range(len(curies))]
                                 category = [ENVIRONMENT_CATEGORY for _ in range(len(curies))]
                                 preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
                                 relations = [LOCATION_OF for _ in range(len(curies))]
-                                sources = [
-                                    self.knowledge_source for _ in range(len(curies))
-                                ]  # Use infores:madin_etal
+                                sources = [self.knowledge_source for _ in range(len(curies))]  # Use infores:madin_etal
                                 knowledge_levels = [OBSERVATION for _ in range(len(curies))]
                                 agent_types = [MANUAL_AGENT for _ in range(len(curies))]
                                 isolation_source_node = [
                                     self._create_node_row(curie, cat, label)
-                                    for curie, cat, label in zip(
-                                        curies, category, labels, strict=False
-                                    )
+                                    for curie, cat, label in zip(curies, category, labels, strict=False)
                                 ]
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 
@@ -891,9 +842,15 @@ class MadinEtAlTransform(Transform):
                         ]
                         if sublist is not None
                     ]
-                    node_writer.writerows(nodes_data_to_write)
+                    for _nr in nodes_data_to_write:
+                        if _nr[0] not in seen_nodes:
+                            seen_nodes.add(_nr[0])
+                            node_writer.writerow(_nr)
                     if isolation_source_node:
-                        node_writer.writerows(isolation_source_node)
+                        for _nr in isolation_source_node:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
 
                     edges_data_to_write = [
                         sublist

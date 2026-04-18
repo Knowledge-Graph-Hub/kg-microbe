@@ -152,9 +152,11 @@ def remove_convert_to_json(path: str, ont_name: str, terms: Union[List, Path]):
 
     print(f"remove_convert_to_json {input_file}")
 
-    if isinstance(terms, List):
+    if isinstance(terms, list):
         terms_param = [
-            item for sublist in zip(["--term"] * len(terms), terms) for item in sublist  # noqa
+            item
+            for sublist in zip(["--term"] * len(terms), terms, strict=True)
+            for item in sublist  # noqa
         ]
         call = [
             "bash",

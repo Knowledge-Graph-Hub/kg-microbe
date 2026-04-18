@@ -96,13 +96,7 @@ class DisbiomeTransform(Transform):
         # Get all NCBITaxon IDs
         self.ncbitaxon_label_dict = {}
         #! TODO: Find a better way to get this path
-        ncbitaxon_nodes_file = (
-            Path(__file__).parents[3]
-            / "data"
-            / "transformed"
-            / "ontologies"
-            / "ncbitaxon_nodes.tsv"
-        )
+        ncbitaxon_nodes_file = Path(__file__).parents[3] / "data" / "transformed" / "ontologies" / "ncbitaxon_nodes.tsv"
         # Get NCBITaxon IDs from ontology nodes file
         if ncbitaxon_nodes_file.exists():
             with open(ncbitaxon_nodes_file, "r") as file:
@@ -166,13 +160,9 @@ class DisbiomeTransform(Transform):
                     disease_id = self.disease_labels_dict[disease]
                     direction = disbiome_df.iloc[i].loc[DISIOME_QUALITATIVE_OUTCOME]
                     # Add disease
-                    nodes_file_writer.writerow(
-                        [disease_id, DISEASE_CATEGORY] + [None] * (len(self.node_header) - 2)
-                    )
+                    nodes_file_writer.writerow([disease_id, DISEASE_CATEGORY] + [None] * (len(self.node_header) - 2))
                     # Add microbe
-                    nodes_file_writer.writerow(
-                        [microbe, NCBI_CATEGORY] + [None] * (len(self.node_header) - 2)
-                    )
+                    nodes_file_writer.writerow([microbe, NCBI_CATEGORY] + [None] * (len(self.node_header) - 2))
                     if direction == DISBIOME_ELEVATED:
                         predicate = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE
                         relation = ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF

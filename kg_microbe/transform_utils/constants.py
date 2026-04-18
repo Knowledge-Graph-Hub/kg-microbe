@@ -20,6 +20,7 @@ UNIPROT_FUNCTIONAL_MICROBES = "uniprot_functional_microbes"
 UNIPROT_HUMAN = "uniprot_human"
 GTDB = "gtdb"
 METATRAITS = "metatraits"
+METATRAITS_GTDB = "metatraits_gtdb"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -213,27 +214,23 @@ MEDIUM_STRAINS = "medium-strains/"
 
 BACDIVE_MEDIUM_DICT = {MEDIADIVE_MEDIUM_PREFIX: BACDIVE_API_BASE_URL + MEDIUM}
 
-NCBI_TO_MEDIUM_EDGE = "METPO:2000517"  # grows in (organism -> medium)
-NCBI_TO_MEDIUM_NEGATIVE_EDGE = "METPO:2000518"  # does not grow in (organism -> medium)
+NCBI_TO_MEDIUM_EDGE = "biolink:located_in"  # grows in (organism -> medium)
+NCBI_TO_MEDIUM_NEGATIVE_EDGE = "biolink:related_to"  # does not grow in (organism -> medium)
 MEDIUM_TO_NCBI_EDGE = "biolink:contains_process"
 MEDIUM_TO_INGREDIENT_EDGE = "biolink:has_part"  # Could also be has_constituent/has_participant
 MEDIUM_TO_SOLUTION_EDGE = "biolink:has_part"
 NCBI_TO_SHAPE_EDGE = "biolink:has_phenotype"  # [org_name -> cell_shape, metabolism]
-NCBI_TO_CARBON_SUBSTRATE_EDGE = (
-    "METPO:2000006"  # "uses as carbon source" [org_name -> carbon_substrate]
-)
+NCBI_TO_CARBON_SUBSTRATE_EDGE = "biolink:consumes"  # "uses as carbon source" [org_name -> carbon_substrate]
 NCBI_TO_ISOLATION_SOURCE_EDGE = "biolink:location_of"  # [org -> isolation_source]
 NCBI_TO_METABOLISM_EDGE = "biolink:has_phenotype"  # [org -> metabolism]
-NCBI_TO_PATHWAY_EDGE = "METPO:2000103"  # capable of [org -> pathway]
+NCBI_TO_PATHWAY_EDGE = "biolink:capable_of"  # capable of [org -> pathway]
 CHEBI_TO_ROLE_EDGE = "biolink:has_chemical_role"
-NCBI_TO_ENZYME_EDGE = "METPO:2000103"  # capable of [org -> enzyme]
+NCBI_TO_ENZYME_EDGE = "biolink:capable_of"  # capable of [org -> enzyme]
 # DEPRECATED v2026.1 - unused constants with deprecated predicates - will be removed in future version
 # ASSAY_TO_NCBI_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
 # MEDIUM_TO_METABOLITE_EDGE = "biolink:assesses"  # [org -> assay] - UNUSED
 # NCBI_TO_ASSAY_EDGE = "biolink:is_assessed_by"  # [org -> assay] - UNUSED
-ENZYME_TO_ASSAY_EDGE = (
-    "biolink:related_to_at_instance_level"  # [enzyme -> assay] - methodological reference
-)
+ENZYME_TO_ASSAY_EDGE = "biolink:related_to_at_instance_level"  # [enzyme -> assay] - methodological reference
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
@@ -254,34 +251,26 @@ NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 
 # Growth media categories (Biolink Model v4.3.6)
-MEDIUM_CATEGORY = "METPO:1004005"  # growth medium (domain-specific METPO category)
+MEDIUM_CATEGORY = "biolink:GrowthMedium"  # growth medium (KG-Microbe Biolink extension)
 MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 
 # Chemical entity categories (Biolink Model v4.3.6)
-# IMPORTANT: For CHEBI-mapped chemicals, transforms should use categories from ontologies transform
-# to prevent multi-category conflicts during merge (e.g., ChemicalEntity|SmallMolecule).
+# IMPORTANT: For CHEBI-mapped chemicals, use ChemicalSubstance category.
+# SmallMolecule should be normalized to ChemicalSubstance for consistency.
 # See BacDive and MediaDive transforms for examples using _get_chebi_category().
-INGREDIENT_CATEGORY = (
-    "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
-)
-COMPLEX_INGREDIENT_CATEGORY = (
-    "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
-)
-SMALL_MOLECULE_CATEGORY = (
-    "biolink:SmallMolecule"  # CHEBI default (replaces deprecated ChemicalSubstance)
-)
+INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
+COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
+CHEBI_CATEGORY = "biolink:ChemicalSubstance"  # CHEBI default for all chemical entities
+# Deprecated: Use CHEBI_CATEGORY instead
+SMALL_MOLECULE_CATEGORY = "biolink:ChemicalSubstance"  # Normalized to ChemicalSubstance (SmallMolecule deprecated)
 # DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
-MACROMOLECULE_CATEGORY = "biolink:Macromolecule"
+MACROMOLECULE_CATEGORY = "biolink:MacromolecularComplex"  # was biolink:Macromolecule (deprecated in v4.3.6)
 # Valid in Biolink v4.3.6 (proteins, nucleic acids, polymers)
 MACROMOLECULAR_COMPLEX_CATEGORY = "biolink:MacromolecularComplex"
 ROLE_CATEGORY = "biolink:ChemicalRole"  # CHEBI functional roles (inhibitor, agonist, etc.)
-METABOLITE_CATEGORY = (
-    "biolink:ChemicalEntity"  # Generic metabolite, prefer CHEBI category if available
-)
-SUBSTRATE_CATEGORY = (
-    "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
-)
+METABOLITE_CATEGORY = "biolink:ChemicalEntity"  # Generic metabolite, prefer CHEBI category if available
+SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 
 # Biological process and activity categories
@@ -301,19 +290,16 @@ GENOME_CATEGORY = "biolink:Genome"
 # Procedure categories
 ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
-# Deprecated categories (Biolink v2.x) - do not use
-# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Replaced by SmallMolecule in Biolink v3+
+# Deprecated categories - do not use
+# Note: SmallMolecule should be normalized to ChemicalSubstance for consistency
+# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Use CHEBI_CATEGORY instead
 
 HAS_PART = "BFO:0000051"
-IS_GROWN_IN = NCBI_TO_MEDIUM_EDGE  # Alias for grows in (organism -> growth medium)
-DOES_NOT_GROW_IN = (
-    NCBI_TO_MEDIUM_NEGATIVE_EDGE  # Alias for does not grow in (organism -> growth medium)
-)
+IS_GROWN_IN = "METPO:2000517"  # RO relation for grows in (organism -> growth medium), used in relation column
+DOES_NOT_GROW_IN = "METPO:2000518"  # RO relation for does not grow in, used in relation column
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
 
-TROPHICALLY_INTERACTS_WITH = (
-    "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
-)
+TROPHICALLY_INTERACTS_WITH = "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
@@ -367,6 +353,7 @@ SYNONYM_COLUMN = "synonym"
 IRI_COLUMN = "iri"  # DEPRECATED - No longer used in transform outputs
 SAME_AS_COLUMN = "same_as"
 SUBSETS_COLUMN = "subsets"
+DEPRECATED_COLUMN = "deprecated"
 
 # Assay node metadata fields
 ASSAY_KIT_NAME_COLUMN = "kit_name"
@@ -474,7 +461,7 @@ RDFS_SUBCLASS_OF = "rdfs:subClassOf"
 INFERRED_SUBCLASS_RELATION = "kgmicrobe:inferred_subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"
 SUPERCLASS_PREDICATE = "biolink:superclass_of"
-CAPABLE_OF_PREDICATE = "METPO:2000103"  # capable of (METPO equivalent of biolink:capable_of)
+CAPABLE_OF_PREDICATE = "biolink:capable_of"  # biolink predicate for capable of
 CAPABLE_OF = "RO:0002215"
 HAS_PHENOTYPE_PREDICATE = "biolink:has_phenotype"
 HAS_PHENOTYPE = "RO:0002200"  # [org_name -> has phenotype -> cell_shape, metabolism]
@@ -550,9 +537,7 @@ EXCLUSION_TERMS_FILE = "exclusion_branches.tsv"
 # Uniprot
 UNIPROT_FUNCTIONAL_MICROBES_DIR = TRANSFORM_UTILS_DIR / UNIPROT_FUNCTIONAL_MICROBES
 UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR = UNIPROT_FUNCTIONAL_MICROBES_DIR / "tmp"
-UNIPROT_FUNCTIONAL_MICROBES_RELEVANT_FILE_LIST = (
-    UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR / "relevant_files.tsv"
-)
+UNIPROT_FUNCTIONAL_MICROBES_RELEVANT_FILE_LIST = UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR / "relevant_files.tsv"
 UNIPROT_FUNCTIONAL_MICROBES_TMP_NE_DIR = UNIPROT_FUNCTIONAL_MICROBES_TMP_DIR / "nodes_and_edges"
 
 # UniprotHuman
@@ -743,9 +728,7 @@ PART_OF_RELATION = "BFO:0000050"
 PART_OF_PREDICATE = "biolink:part_of"
 RELATED_TO_RELATION = "RO:0000052"
 RELATED_TO_PREDICATE = "biolink:related_to"
-HAS_ALTERNATE_ENZYMATIC_REACTION_RELATION = (
-    "OBO:upa#has_alternate_enzymatic_reaction"  # TODO explore other relation
-)
+HAS_ALTERNATE_ENZYMATIC_REACTION_RELATION = "OBO:upa#has_alternate_enzymatic_reaction"  # TODO explore other relation
 UNIPATHWAYS_RELATIONS_DICT = {
     HAS_INPUT_PREDICATE: HAS_INPUT_RELATION,
     HAS_OUTPUT_PREDICATE: HAS_OUTPUT_RELATION,
@@ -806,12 +789,8 @@ DISBIOME_ORGANISM_NAME = "organism_name"
 DISIOME_QUALITATIVE_OUTCOME = "qualitative_outcome"
 DISBIOME_ELEVATED = "Elevated"
 DISBIOME_REDUCED = "Reduced"
-ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE = (
-    "biolink:associated_with_increased_likelihood_of"
-)
-ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE = (
-    "biolink:associated_with_decreased_likelihood_of"
-)
+ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF_PREDICATE = "biolink:associated_with_increased_likelihood_of"
+ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF_PREDICATE = "biolink:associated_with_decreased_likelihood_of"
 ASSOCIATED_WITH_INCREASED_LIKELIHOOD_OF = ASSOCIATED_WITH
 ASSOCIATED_WITH_DECREASED_LIKELIHOOD_OF = ASSOCIATED_WITH
 

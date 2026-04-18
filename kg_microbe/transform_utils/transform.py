@@ -9,6 +9,7 @@ import yaml
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
+    DEPRECATED_COLUMN,
     DESCRIPTION_COLUMN,
     ID_COLUMN,
     KNOWLEDGE_LEVEL_COLUMN,
@@ -58,12 +59,8 @@ class Transform:
             XREF_COLUMN,
             PROVIDED_BY_COLUMN,
             SYNONYM_COLUMN,
-            # IRI_COLUMN removed - no longer included in transform outputs
-            # Edge columns (OBJECT, PREDICATE, RELATION, SUBJECT) removed - belong only in edges
+            DEPRECATED_COLUMN,
             SAME_AS_COLUMN,
-            # Note: Assay-specific metadata (kit_name, well_name, test_type) are combined
-            # into the description field for assay nodes
-            # Note: SUBSETS_COLUMN removed - was never populated by any transform
         ]
         self.edge_header = [
             SUBJECT_COLUMN,

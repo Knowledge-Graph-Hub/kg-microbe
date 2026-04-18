@@ -18,9 +18,11 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
+    CATEGORY_COLUMN,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     DEBIO_MAPPER,
+    DESCRIPTION_COLUMN,
     EC_CATEGORY,
     EC_PREFIX,
     EC_SOURCE,
@@ -39,6 +41,7 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_ID_COLUMN,
     PREDICATE_LABEL_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
     RAW_DATA_DIR,
     RELATION_COLUMN,
     RHEA_BIDIRECTIONAL_DIRECTION,
@@ -62,11 +65,14 @@ from kg_microbe.transform_utils.constants import (
     RHEA_UNDEFINED_DIRECTION,
     RHEAMAPPINGS,
     RHEAMAPPINGS_TMP_DIR,
+    SAME_AS_COLUMN,
     SPECIAL_PREFIXES,
     SUBJECT_COLUMN,
     SUBJECT_LABEL_COLUMN,
     SUBSTRATE_CATEGORY,
+    SYNONYM_COLUMN,
     UNIPROT_PREFIX,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -128,17 +134,17 @@ class RheaMappingsTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def _reference_to_tuple(self, ref):
@@ -189,16 +195,12 @@ class RheaMappingsTransform(Transform):
             )
         # else: keep original relation_ns values
         # Combines relation_ns with relation_id to get full curie
-        rhea_relation[RELATION_COLUMN] = (
-            rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]
-        )
+        rhea_relation[RELATION_COLUMN] = rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]
         rhea_relation[RHEA_MAPPING_ID_COLUMN.lower()] = RHEA_NEW_PREFIX + rhea_relation[
             RHEA_MAPPING_ID_COLUMN.lower()
         ].astype(str)
         # Update prefixes
-        rhea_relation["target_ns"] = rhea_relation["target_ns"].apply(
-            lambda x: (RHEA_PYOBO_PREFIXES_MAPPER[x])
-        )
+        rhea_relation["target_ns"] = rhea_relation["target_ns"].apply(lambda x: RHEA_PYOBO_PREFIXES_MAPPER[x])
         # Add correct prefix to target
         rhea_relation[RHEA_TARGET_ID_COLUMN] = rhea_relation.agg(
             lambda x: x["target_ns"] + str(x[RHEA_TARGET_ID_COLUMN]), axis=1
@@ -206,7 +208,7 @@ class RheaMappingsTransform(Transform):
 
         # Get corresponding prefixes if they exist, otherwise exclude (debio for now)
         rhea_relation[PREDICATE_COLUMN] = rhea_relation[RELATION_COLUMN].apply(
-            lambda x: (RHEA_PYOBO_RELATIONS_MAPPER.get(x))
+            lambda x: RHEA_PYOBO_RELATIONS_MAPPER.get(x)
         )
         # Filter rows where the predicate column is not None (debio for now)
         rhea_relation = rhea_relation[rhea_relation[PREDICATE_COLUMN].notna()]
@@ -218,9 +220,7 @@ class RheaMappingsTransform(Transform):
             EC_PREFIX,
         ]  # [CHEBI_PREFIX, GO_PREFIX, UNIPROT_PREFIX, EC_PREFIX]
         rhea_relation = rhea_relation[
-            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains(
-                "|".join(relation_types_to_remove_pyobo)
-            )
+            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains("|".join(relation_types_to_remove_pyobo))
         ]
 
         rhea_relation = rhea_relation.drop(columns=["relation_ns", "relation_id", "target_ns"])
@@ -245,16 +245,16 @@ class RheaMappingsTransform(Transform):
         #     )
         #     rhea_sssom.to_csv(RHEA_TMP_DIR / fn2, sep="\t", index=False)
 
-        with open(RHEAMAPPINGS_TMP_DIR / f"rhea_{fn1}", "w") as tmp_file, open(
-            self.output_dir / "nodes.tsv", "w"
-        ) as nodes_file, open(self.output_dir / "edges.tsv", "w") as edges_file:
+        with (
+            open(RHEAMAPPINGS_TMP_DIR / f"rhea_{fn1}", "w") as tmp_file,
+            open(self.output_dir / "nodes.tsv", "w") as nodes_file,
+            open(self.output_dir / "edges.tsv", "w") as edges_file,
+        ):
             tmp_file_writer = csv.writer(tmp_file, delimiter="\t")
             nodes_file_writer = csv.writer(nodes_file, delimiter="\t")
             edges_file_writer = csv.writer(edges_file, delimiter="\t")
 
-            tmp_file_writer.writerow(
-                [RHEA_ID_COLUMN, RHEA_CATEGORY_COLUMN, RHEA_NAME_COLUMN, RHEA_DIRECTION_COLUMN]
-            )
+            tmp_file_writer.writerow([RHEA_ID_COLUMN, RHEA_CATEGORY_COLUMN, RHEA_NAME_COLUMN, RHEA_DIRECTION_COLUMN])
             nodes_file_writer.writerow(self.node_header)
             edges_file_writer.writerow(self.edge_header)
             edges_file_writer.writerows(rhea_relation.values.tolist())
@@ -276,9 +276,7 @@ class RheaMappingsTransform(Transform):
             # )
 
             progress_class = tqdm if show_status else DummyTqdm
-            with progress_class(
-                total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings..."
-            ) as progress:
+            with progress_class(total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings...") as progress:
                 # Rhea hierarchy is in groups of 4
                 for i, (k, v) in enumerate(rhea_nodes.items()):
                     if i % 4 == 0:
@@ -291,9 +289,7 @@ class RheaMappingsTransform(Transform):
                         direction = DEBIO_MAPPER.get(RHEA_BIDIRECTIONAL_DIRECTION)
                     # Associate reaction identifiers corresponding to different directions (n, n+1, n+2, n+3)
                     tmp_file_writer.writerow([RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, direction])
-                    nodes_file_writer.writerow(
-                        self._create_node_row(RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v)
-                    )
+                    nodes_file_writer.writerow(self._create_node_row(RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v))
                     progress.set_description(f"Processing RHEA node: {RHEA_NEW_PREFIX + k} ...")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
@@ -303,9 +299,7 @@ class RheaMappingsTransform(Transform):
             matching_files = glob(pattern)
 
             # relation = CLOSE_MATCH
-            with progress_class(
-                total=len(matching_files), desc="Processing Rhea mappings..."
-            ) as progress:
+            with progress_class(total=len(matching_files), desc="Processing Rhea mappings...") as progress:
                 for file in matching_files:
                     if "rhea2ec" in file:
                         xref_prefix = EC_PREFIX
@@ -330,22 +324,13 @@ class RheaMappingsTransform(Transform):
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
                             relation = (
-                                [
-                                    k
-                                    for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items()
-                                    if v == predicate
-                                ][0]
+                                [k for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items() if v == predicate][0]
                                 if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values()
                                 else None
                             )
                             # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
-                            if not any(
-                                substring in object
-                                for substring in relation_types_to_remove_rhea2_files
-                            ):
-                                nodes_file_writer.writerow(
-                                    self._create_node_row(object, category, None)
-                                )
+                            if not any(substring in object for substring in relation_types_to_remove_rhea2_files):
+                                nodes_file_writer.writerow(self._create_node_row(object, category, None))
                                 edges_file_writer.writerow(
                                     [
                                         subject_info,
@@ -383,9 +368,7 @@ class RheaMappingsTransform(Transform):
                                 for obj in objects:
                                     object_info = self._reference_to_tuple(obj)
                                     # Write the row in the specified format
-                                    all_terms_writer.writerow(
-                                        [*subject_info, *predicate_info, *object_info]
-                                    )
+                                    all_terms_writer.writerow([*subject_info, *predicate_info, *object_info])
                                     # Only include CHEBI, EC, and GO entries (filter out UniProt entries)
                                     if any(
                                         object_info[0].startswith(prefix)
@@ -408,17 +391,13 @@ class RheaMappingsTransform(Transform):
                                             for substring in relation_types_to_remove_rhea2_files
                                         ):
                                             nodes_file_writer.writerow(
-                                                self._create_node_row(
-                                                    object_info[0], category, object_info[1]
-                                                )
+                                                self._create_node_row(object_info[0], category, object_info[1])
                                             )
 
                                             edges_file_writer.writerow(
                                                 [
                                                     subject_info[0],
-                                                    RHEA_PREDICATE_MAPPER.get(
-                                                        predicate_info[1], predicate_info[1]
-                                                    ),
+                                                    RHEA_PREDICATE_MAPPER.get(predicate_info[1], predicate_info[1]),
                                                     object_info[0],
                                                     predicate_info[0],
                                                     ks,
@@ -430,14 +409,8 @@ class RheaMappingsTransform(Transform):
                 # After each iteration, call the update method to advance the progress bar.
                 progress.update()
         # Add labels for the nodes
-        nodes_df = pd.read_csv(
-            self.output_dir / "nodes.tsv", sep="\t", low_memory=False
-        ).drop_duplicates()
-        no_name_df = nodes_df[nodes_df[NAME_COLUMN].isna()][
-            [ID_COLUMN, NAME_COLUMN]
-        ].drop_duplicates()
-        no_name_df[NAME_COLUMN] = no_name_df[ID_COLUMN].apply(
-            lambda x: self._get_label_based_on_prefix(x)
-        )
+        nodes_df = pd.read_csv(self.output_dir / "nodes.tsv", sep="\t", low_memory=False).drop_duplicates()
+        no_name_df = nodes_df[nodes_df[NAME_COLUMN].isna()][[ID_COLUMN, NAME_COLUMN]].drop_duplicates()
+        no_name_df[NAME_COLUMN] = no_name_df[ID_COLUMN].apply(lambda x: self._get_label_based_on_prefix(x))
         nodes_df.update(no_name_df)
         nodes_df.to_csv(self.output_dir / "nodes.tsv", sep="\t", index=False)

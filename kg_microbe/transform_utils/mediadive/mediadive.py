@@ -37,6 +37,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_TMP_DIR,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
+    CATEGORY_COLUMN,
     CHEBI_EDGES_FILE,
     CHEBI_KEY,
     CHEBI_NODES_FILE,
@@ -45,6 +46,7 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_ID_KEY,
     COMPOUND_KEY,
     DATA_KEY,
+    DESCRIPTION_COLUMN,
     DOES_NOT_GROW_IN,
     GRAMS_PER_LITER_COLUMN,
     HAS_PART,
@@ -55,7 +57,6 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
-    KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
     MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
@@ -93,11 +94,13 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_ID_COLUMN,
     OBJECT_ID_COLUMN,
     OBSERVATION,
+    PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
     ROLE_CATEGORY,
+    SAME_AS_COLUMN,
     SOLUTION,
     SOLUTION_CATEGORY,
     SOLUTION_ID_KEY,
@@ -107,8 +110,10 @@ from kg_microbe.transform_utils.constants import (
     SPECIES,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
+    SYNONYM_COLUMN,
     TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
@@ -185,17 +190,17 @@ class MediaDiveTransform(Transform):
         :param same_as: Optional equivalent identifiers (pipe-separated string)
         :return: List representing a complete node row matching node_header
         """
-        # Node header structure:
-        # [id, category, name, description, xref, provided_by, synonym, same_as]
+        # Positions follow base Transform.node_header:
+        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
         node_row = [None] * len(self.node_header)
-        node_row[0] = node_id  # ID_COLUMN
-        node_row[1] = category  # CATEGORY_COLUMN
-        node_row[2] = name  # NAME_COLUMN
-        node_row[3] = description  # DESCRIPTION_COLUMN
-        node_row[4] = xref  # XREF_COLUMN
-        node_row[5] = self.knowledge_source  # PROVIDED_BY_COLUMN
-        node_row[6] = synonym  # SYNONYM_COLUMN
-        node_row[7] = same_as  # SAME_AS_COLUMN
+        node_row[self.node_header.index(ID_COLUMN)] = node_id
+        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
+        node_row[self.node_header.index(NAME_COLUMN)] = name
+        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        node_row[self.node_header.index(XREF_COLUMN)] = xref
+        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
+        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
 
     def _load_bulk_data(self):
@@ -447,9 +452,7 @@ class MediaDiveTransform(Transform):
         print(f"    From strict mappings: {new_from_strict} (fallback)")
 
         if not self.compound_mappings:
-            print(
-                "  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only"
-            )
+            print("  Warning: No MicroMediaParam mappings loaded, will use MediaDive API mappings only")
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
@@ -526,9 +529,7 @@ class MediaDiveTransform(Transform):
                     else item[COMPOUND_KEY]
                 )
                 ingredients_dict[item[COMPOUND_KEY]] = {
-                    ID_COLUMN: self.standardize_compound_id(
-                        str(item[COMPOUND_ID_KEY]), item[COMPOUND_KEY]
-                    ),
+                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), item[COMPOUND_KEY]),
                     AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
                     UNIT_COLUMN: item.get(UNIT_COLUMN),
                     GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
@@ -538,12 +539,7 @@ class MediaDiveTransform(Transform):
                 # Normalize solution name for display and mapping lookup
                 # Ensure consistent string handling for both dict key and mapping lookup
                 if isinstance(item[SOLUTION_KEY], str):
-                    solution_name = (
-                        item[SOLUTION_KEY]
-                        .translate(self.translation_table)
-                        .replace('""', "")
-                        .strip()
-                    )
+                    solution_name = item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
                 elif item[SOLUTION_KEY] is not None:
                     solution_name = str(item[SOLUTION_KEY])
                 else:
@@ -703,9 +699,7 @@ class MediaDiveTransform(Transform):
                     f.write(yaml.dump(data_json))
         return data_json
 
-    def get_json_object(
-        self, fn: Union[Path, str], url_extension: str, target_dir: Path
-    ) -> Dict[str, str]:
+    def get_json_object(self, fn: Union[Path, str], url_extension: str, target_dir: Path) -> Dict[str, str]:
         """
         Download YAML file if absent and return contents as a JSON object.
 
@@ -765,14 +759,10 @@ class MediaDiveTransform(Transform):
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        bacdive_df = pd.read_csv(
-            bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN]
-        )
+        bacdive_df = pd.read_csv(bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
-        bacdive_strain_to_ncbi = dict(
-            zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True)
-        )
+        bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))
 
         # mediadive_data:List = mediadive["data"]
         # Read the JSON file into the variable input_json
@@ -812,9 +802,7 @@ class MediaDiveTransform(Transform):
 
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
-            with progress_class(
-                total=len(input_json[DATA_KEY]) + 1, desc="Processing files"
-            ) as progress:
+            with progress_class(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:
                 # medium type nodes
                 node_writer.writerows(
                     [
@@ -833,10 +821,7 @@ class MediaDiveTransform(Transform):
                 for dictionary in input_json[DATA_KEY]:
                     id = str(dictionary[ID_COLUMN])
                     dictionary[NAME_COLUMN] = (
-                        dictionary[NAME_COLUMN]
-                        .translate(self.translation_table)
-                        .replace('""', "")
-                        .strip()
+                        dictionary[NAME_COLUMN].translate(self.translation_table).replace('""', "").strip()
                     )
                     fn: Path = Path(str(MEDIADIVE_MEDIUM_YAML_DIR / id) + ".yaml")
                     fn_medium_strain = Path(str(MEDIADIVE_MEDIUM_STRAIN_YAML_DIR / id) + ".yaml")
@@ -888,9 +873,7 @@ class MediaDiveTransform(Transform):
                                     strain_id, STRAIN_PREFIX + strain_id.replace(":", "_")
                                 )
 
-                                if not (
-                                    isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)
-                                ):
+                                if not (isinstance(ncbi_strain_id, float) and math.isnan(ncbi_strain_id)):
                                     # Check growth value to determine edge type
                                     # MediaDive uses: growth=1 (positive), growth=0 (negative)
                                     growth_value = strain.get("growth")
@@ -941,9 +924,7 @@ class MediaDiveTransform(Transform):
                         continue
                     # solution_id_list = [solution[ID_COLUMN] for solution in json_obj[SOLUTIONS_KEY]]
                     solutions_dict = {
-                        solution[ID_COLUMN]: solution[NAME_COLUMN]
-                        .strip()
-                        .translate(self.translation_table)
+                        solution[ID_COLUMN]: solution[NAME_COLUMN].strip().translate(self.translation_table)
                         for solution in json_obj[SOLUTIONS_KEY]
                     }
                     ingredients_dict = {}
@@ -988,17 +969,13 @@ class MediaDiveTransform(Transform):
                         for k, v in ingredients_dict.items()
                     ]
                     solution_nodes = [
-                        self._create_node_row(
-                            MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v
-                        )
+                        self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()
                     ]
 
                     # Get ChEBI role relationships using fast TSV lookup
                     chebi_list = [
-                        v[ID_COLUMN]
-                        for _, v in ingredients_dict.items()
-                        if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
+                        v[ID_COLUMN] for _, v in ingredients_dict.items() if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
                     ]
                     if len(chebi_list) > 0 and self.chebi_roles:
                         # Collect all role relationships for these compounds
@@ -1021,9 +998,7 @@ class MediaDiveTransform(Transform):
                                     )
                         # Write role nodes with labels
                         role_nodes = [
-                            self._create_node_row(
-                                role, ROLE_CATEGORY, self.chebi_labels.get(role, "")
-                            )
+                            self._create_node_row(role, ROLE_CATEGORY, self.chebi_labels.get(role, ""))
                             for role in role_set
                         ]
                         node_writer.writerows(role_nodes)
@@ -1045,19 +1020,6 @@ class MediaDiveTransform(Transform):
 
                     writer.writerow(data)  # writing the data
 
-                    # Create type/class edge from medium to METPO:1004005 concept
-                    # This makes explicit that the medium is an instance of the "growth medium" ontology class
-                    medium_type_edge = [
-                        medium_id,  # subject: the medium node
-                        "biolink:category",  # predicate: category relationship
-                        "METPO:1004005",  # object: growth medium ontology class
-                        "rdf:type",  # relation: RDF semantics
-                        "infores:metpo",  # knowledge source: METPO ontology
-                        KNOWLEDGE_ASSERTION,  # knowledge_level: definitional assertion
-                        MANUAL_AGENT,  # agent_type: manually curated ontology
-                    ]
-                    edge_writer.writerow(medium_type_edge)
-
                     # Combine list creation and extension
                     nodes_data_to_write = [
                         self._create_node_row(medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]),
@@ -1077,6 +1039,7 @@ class MediaDiveTransform(Transform):
             self.output_node_file,
             sort_by_column=ID_COLUMN,
             consolidation_columns=[ID_COLUMN, NAME_COLUMN],
+            dedup_on_sort_column=True,
         )
         drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
 

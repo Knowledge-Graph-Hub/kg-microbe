@@ -97,14 +97,11 @@ def annotate(
     )
 
     unique_terms_set = {
-        item.strip()
-        for sublist in df.iloc[:, 0].drop_duplicates().to_list()
-        for item in sublist.split(", ")
+        item.strip() for sublist in df.iloc[:, 0].drop_duplicates().to_list() for item in sublist.split(", ")
     }
 
     unique_terms_annotated = {
-        term: list(oi.annotate_text(term.replace("_", " "), configuration))
-        for term in unique_terms_set
+        term: list(oi.annotate_text(term.replace("_", " "), configuration)) for term in unique_terms_set
     }
     terms_not_annotated = {k: v for k, v in unique_terms_annotated.items() if v == []}
     # The annotations upto this point is matches_whole_text = True.
@@ -114,11 +111,7 @@ def annotate(
         configuration.matches_whole_text = False
         unique_terms_not_annotated_set = set(terms_not_annotated.keys())
         unique_terms_annotated_not_whole_match = {
-            term: [
-                x
-                for x in oi.annotate_text(term.replace("_", " "), configuration)
-                if len(x.object_label) > 2
-            ]
+            term: [x for x in oi.annotate_text(term.replace("_", " "), configuration) if len(x.object_label) > 2]
             for term in unique_terms_not_annotated_set
         }
 

@@ -25,6 +25,8 @@ bacdive = "*"
 python-dotenv = "*"
 requests-ftp = "^0.3"
 pandas = ">=2.0.0"
+psutil = "^5.9.0"
+duckdb = "^1.5.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.1.2"
@@ -104,6 +106,7 @@ select = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]  # Allow assert in test files
+"kg_microbe/query_utils/*" = ["S608"]  # DuckDB queries use database CURIEs, not user input
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
@@ -113,6 +116,9 @@ max-complexity = 10
 # Configure known first-party modules for correct import sorting
 known-first-party = ["kg_microbe"]
 
+[tool.pytest.ini_options]
+norecursedirs = ["scripts", "notebooks", "docs", ".git"]
+
 [tool.deptry]
 extend_exclude = ["notebooks", "docs"]
 
@@ -120,7 +126,7 @@ extend_exclude = ["notebooks", "docs"]
 skip = "*.po,*.ts,.git,pyproject.toml"
 count = ""
 quiet-level = 3
-# ignore-words-list = ""
+ignore-words-list = "NiFe,formate"
 
 [build-system]
 requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]

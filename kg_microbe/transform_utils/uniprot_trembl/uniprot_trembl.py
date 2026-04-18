@@ -13,17 +13,13 @@ class UniprotTrEMBLTransform(Transform):
 
     """Uniprot TrEMBL transform."""
 
-    def __init__(
-        self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]
-    ):
+    def __init__(self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]):
         """Initialize UniprotTrEMBLTransform."""
         source_name = "UniprotTrEMBLTransform"
         super().__init__(source_name, input_dir, output_dir)
         makedirs(UNIPROT_TREMBL_TMP_DIR, exist_ok=True)
 
-    def run(
-        self, file_path: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
-    ) -> None:
+    def run(self, file_path: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """Run UniprotTrEMBLTransform."""
         data_list = UNIPROT_DATA_LIST
 

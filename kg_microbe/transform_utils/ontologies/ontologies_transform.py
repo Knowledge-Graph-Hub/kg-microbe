@@ -83,6 +83,7 @@ ONTOLOGIES_MAP = {
     "metpo": "metpo.owl",
     "uberon": "uberon.owl",
     "foodon": "foodon.owl",
+    "pato": "pato.owl",
     "ro": "ro.owl",
 }
 
@@ -104,6 +105,7 @@ class OntologiesTransform(Transform):
         "ec": "infores:ec",
         "metpo": "infores:metpo",
         "foodon": "infores:foodon",
+        "pato": "infores:pato",
         "ro": "infores:ro",
     }
 
@@ -112,9 +114,7 @@ class OntologiesTransform(Transform):
         source_name = ONTOLOGIES
         super().__init__(source_name, input_dir, output_dir)
 
-    def run(
-        self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True
-    ) -> None:
+    def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
         Transform an ontology.
 
@@ -149,9 +149,7 @@ class OntologiesTransform(Transform):
                     if not Path(json_path).is_file():
                         self.decompress(data_file)
                         with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
-                            terms = [
-                                line.strip() for line in f if line.lower().startswith(name.lower())
-                            ]
+                            terms = [line.strip() for line in f if line.lower().startswith(name.lower())]
                         remove_convert_to_json(str(self.input_base_dir), name, terms)
                     # elif CHEBI_PREFIX.strip(":").lower() in str(data_file):
                     #     json_path = str(data_file).replace(".owl.gz", ROBOT_EXTRACT_SUFFIX + ".json")
@@ -229,7 +227,8 @@ class OntologiesTransform(Transform):
         Fix node categories for specific ontologies.
 
         - GO: Apply aspect-based categorization (MF/BP/CC)
-        - ChEBI: Replace deprecated ChemicalSubstance with SmallMolecule and detect roles
+        - ChEBI: Detect roles/macromolecules; default small molecules to CHEBI_CATEGORY
+          (biolink:ChemicalSubstance — KG-Microbe project convention, see constants.py)
         - UBERON: Ensure all terms are AnatomicalEntity
         - NCBITaxon: Ensure all terms are OrganismTaxon
 
@@ -276,10 +275,9 @@ class OntologiesTransform(Transform):
             df["category"] = df.apply(fix_go_category, axis=1)
 
         elif ontology_name == "chebi":
-            # Fix ChEBI categories: deprecated ChemicalSubstance → SmallMolecule
-            # Also detect roles
-            print("  Fixing ChEBI categories (deprecated ChemicalSubstance → SmallMolecule)...")
-            print("  Detecting ChEBI roles...")
+            # Fix ChEBI categories: detect roles/macromolecules;
+            # small molecules default to CHEBI_CATEGORY (biolink:ChemicalSubstance)
+            print("  Fixing ChEBI categories (detecting roles/macromolecules; default → CHEBI_CATEGORY)...")
 
             # Create ChEBI adapter once to avoid file descriptor leaks
             from oaklib import get_adapter
@@ -332,9 +330,7 @@ class OntologiesTransform(Transform):
         else:
             # For other ontologies, just replace deprecated categories
             print(f"  Replacing deprecated categories in {ontology_name}...")
-            df["category"] = df["category"].apply(
-                lambda x: replace_deprecated_categories(str(x)) if pd.notna(x) else x
-            )
+            df["category"] = df["category"].apply(lambda x: replace_deprecated_categories(str(x)) if pd.notna(x) else x)
 
         # Write back
         df.to_csv(nodes_file_path, sep="\t", index=False)
@@ -382,7 +378,6 @@ class OntologiesTransform(Transform):
             elif name == "mondo":
                 xref_filepath = MONDO_XREFS_FILEPATH
             with open(nodes_file, "r") as nf, open(xref_filepath, "w") as xref_file:
-
                 for line in nf:
                     if line.startswith("id"):
                         # get the index for the term 'xref'
@@ -521,11 +516,7 @@ class OntologiesTransform(Transform):
             )
             # Replace UER with GO
             transitive_df_uer_go = transitive_df_uer_go[
-                (
-                    transitive_df_uer_go[SUBJECT_COLUMN].str.contains(
-                        UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX
-                    )
-                )
+                (transitive_df_uer_go[SUBJECT_COLUMN].str.contains(UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX))
                 & (transitive_df_uer_go[OBJECT_COLUMN].str.contains(UNIPATHWAYS_PATHWAY_PREFIX))
             ]
             # Replace predicate and relation
@@ -533,14 +524,10 @@ class OntologiesTransform(Transform):
                 transitive_df_uer_go[PREDICATE_COLUMN] == PART_OF_PREDICATE,
                 [PREDICATE_COLUMN, RELATION_COLUMN],
             ] = [ENABLED_BY_PREDICATE, ENABLED_BY_RELATION]
-            transitive_df_uer_go = transitive_df_uer_go.map(
-                lambda x: unipathways_xref_dict.get(x, x)
-            )
+            transitive_df_uer_go = transitive_df_uer_go.map(lambda x: unipathways_xref_dict.get(x, x))
 
             # Only add GO relations, not EC
-            transitive_df_uer_go = transitive_df_uer_go[
-                transitive_df_uer_go[SUBJECT_COLUMN].str.contains(GO_PREFIX)
-            ]
+            transitive_df_uer_go = transitive_df_uer_go[transitive_df_uer_go[SUBJECT_COLUMN].str.contains(GO_PREFIX)]
 
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, transitive_df_uer_go], ignore_index=True)
@@ -548,16 +535,13 @@ class OntologiesTransform(Transform):
             # Add edges between GO and pathways using patwhay GO xrefs
             upa_go_df = pd.DataFrame(list(unipathways_xref_dict.items()), columns=["id", "xref"])
             upa_go_df = upa_go_df.loc[
-                (upa_go_df["id"].str.contains("UPA:UPA"))
-                & (upa_go_df["xref"].str.contains(GO_PREFIX))
+                (upa_go_df["id"].str.contains("UPA:UPA")) & (upa_go_df["xref"].str.contains(GO_PREFIX))
             ]
             upa_go_df.rename(columns={"xref": SUBJECT_COLUMN, "id": OBJECT_COLUMN}, inplace=True)
             upa_go_df[PREDICATE_COLUMN] = RELATED_TO_PREDICATE
             upa_go_df[RELATION_COLUMN] = RELATED_TO_RELATION
             # Use InforES standard knowledge source instead of filename
-            upa_go_df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get(
-                "upa", "infores:upa"
-            )
+            upa_go_df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get("upa", "infores:upa")
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, upa_go_df], ignore_index=True)
             # Write existing edges to file before establishing more transitive relationships
@@ -598,7 +582,6 @@ class OntologiesTransform(Transform):
                     new_ef.write(line)
 
         if name == "ec":  # or name == "rhea":
-
             with open(nodes_file, "r") as nf, open(edges_file, "r") as ef:
                 # Update prefixes in nodes file
                 new_nf_lines = []
@@ -624,16 +607,8 @@ class OntologiesTransform(Transform):
             if name == "ec":
                 # Remove UniProt and TrEMBL nodes since accounted for elsewhere
                 protein_prefixes = [UNIPROT_PREFIX, TREMBL_PREFIX]
-                new_nf_lines = [
-                    line
-                    for line in new_nf_lines
-                    if not any(prefix in line for prefix in protein_prefixes)
-                ]
-                new_ef_lines = [
-                    line
-                    for line in new_ef_lines
-                    if not any(prefix in line for prefix in protein_prefixes)
-                ]
+                new_nf_lines = [line for line in new_nf_lines if not any(prefix in line for prefix in protein_prefixes)]
+                new_ef_lines = [line for line in new_ef_lines if not any(prefix in line for prefix in protein_prefixes)]
             # elif name == "rhea":
             #     # Remove debio nodes that account for direction, since already there in inverse triples
             #     # Note that CHEBI and EC predicates do not match Rhea pyobo, so removing them
@@ -657,9 +632,7 @@ class OntologiesTransform(Transform):
 
         else:
             # Process and write the nodes file
-            with open(nodes_file, "r") as nf, open(
-                nodes_file.with_suffix(".temp.tsv"), "w"
-            ) as new_nf:
+            with open(nodes_file, "r") as nf, open(nodes_file.with_suffix(".temp.tsv"), "w") as new_nf:
                 for line in nf:
                     new_nf.write(_replace_special_prefixes(line))
 
@@ -667,9 +640,7 @@ class OntologiesTransform(Transform):
             nodes_file.with_suffix(".temp.tsv").replace(nodes_file)
 
             # Process and write the edges file
-            with open(edges_file, "r") as ef, open(
-                edges_file.with_suffix(".temp.tsv"), "w"
-            ) as new_ef:
+            with open(edges_file, "r") as ef, open(edges_file.with_suffix(".temp.tsv"), "w") as new_ef:
                 for line in ef:
                     new_ef.write(_replace_special_prefixes(line))
 
@@ -682,6 +653,9 @@ class OntologiesTransform(Transform):
         # Convert URL-formatted node IDs to CURIEs
         self._convert_urls_to_curies(nodes_file, edges_file)
 
+        # Normalize schema to canonical node_header / edge_header shape
+        self._normalize_schema(nodes_file, edges_file)
+
     def _remove_iri_column(self, nodes_file: Path) -> None:
         """Remove IRI column from nodes file since it's not used downstream."""
         import pandas as pd
@@ -693,6 +667,72 @@ class OntologiesTransform(Transform):
         if "iri" in df.columns:
             df = df.drop(columns=["iri"])
             df.to_csv(nodes_file, sep="\t", index=False)
+
+    def _normalize_schema(self, nodes_file: Path, edges_file: Path) -> None:
+        """
+        Enforce canonical KGX-TSV schema on KGX-generated ontology outputs.
+
+        Why this step exists: `kgx.cli.cli_utils.transform(obojson -> tsv)`
+        passes obograph artifacts through its TsvSink unchanged. This leaks
+        three categories of columns that are not part of the KGX-TSV spec
+        (https://github.com/biolink/kgx/blob/master/specification/kgx-format.md):
+
+          * Nodes: `subsets`, `meta` (obograph-only), `iri` (RDF roundtrip)
+          * Edges: `id` (biolink 3.x optional; not emitted by other KG-Microbe
+            transforms), `meta` (obograph-only), and the deprecated
+            `knowledge_source` column (superseded by `primary_knowledge_source`
+            in biolink 3.x).
+
+        Fixing this upstream would require replacing KGX's TsvSink or
+        bypassing `kgx.cli.cli_utils.transform` entirely. The normalization
+        below is the least-invasive option and is intentionally idempotent:
+        if KGX stops leaking these columns, the step becomes a no-op.
+
+        Resulting shape:
+          * nodes: exactly `self.node_header` (base Transform canonical shape)
+          * edges: exactly `self.edge_header` (renames knowledge_source →
+            primary_knowledge_source when only the former is present)
+        """
+        if nodes_file.is_file():
+            df = pd.read_csv(nodes_file, sep="\t", low_memory=False)
+            dropped_node_cols = [c for c in ("subsets", "meta", "iri") if c in df.columns]
+            added_node_cols = [c for c in self.node_header if c not in df.columns]
+            for extra in dropped_node_cols:
+                df = df.drop(columns=[extra])
+            for col in added_node_cols:
+                df[col] = ""
+            df = df[self.node_header]
+            df.to_csv(nodes_file, sep="\t", index=False)
+            if dropped_node_cols or added_node_cols:
+                print(f"  [_normalize_schema] {nodes_file.name}: dropped={dropped_node_cols} added={added_node_cols}")
+
+        if edges_file.is_file():
+            df = pd.read_csv(edges_file, sep="\t", low_memory=False)
+            dropped_edge_cols = []
+            renamed = False
+            if "id" in df.columns:
+                df = df.drop(columns=["id"])
+                dropped_edge_cols.append("id")
+            if "meta" in df.columns:
+                df = df.drop(columns=["meta"])
+                dropped_edge_cols.append("meta")
+            if "knowledge_source" in df.columns and PRIMARY_KNOWLEDGE_SOURCE_COLUMN not in df.columns:
+                df = df.rename(columns={"knowledge_source": PRIMARY_KNOWLEDGE_SOURCE_COLUMN})
+                renamed = True
+            elif "knowledge_source" in df.columns:
+                df = df.drop(columns=["knowledge_source"])
+                dropped_edge_cols.append("knowledge_source")
+            added_edge_cols = [c for c in self.edge_header if c not in df.columns]
+            for col in added_edge_cols:
+                df[col] = ""
+            df = df[self.edge_header]
+            df.to_csv(edges_file, sep="\t", index=False)
+            if dropped_edge_cols or added_edge_cols or renamed:
+                rename_note = " rename(knowledge_source→primary_knowledge_source)" if renamed else ""
+                print(
+                    f"  [_normalize_schema] {edges_file.name}: "
+                    f"dropped={dropped_edge_cols} added={added_edge_cols}{rename_note}"
+                )
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
         """Convert URL-formatted node IDs to CURIEs in both nodes and edges files."""

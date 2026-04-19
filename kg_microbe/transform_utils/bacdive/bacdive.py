@@ -555,6 +555,61 @@ class BacDiveTransform(Transform):
 
         return None, False
 
+    # Common-noun → NCBI-taxon-label translations for BacDive's "Unidentified
+    # [foo]" naming. BacDive uses singular bacterial common nouns (all lowercase),
+    # but NCBI stores the class/phylum form. Keys are the singular common-noun;
+    # values are ordered candidates to try against NCBITaxon label search.
+    _UNIDENTIFIED_TAXON_MAP = {
+        "actinobacterium": ("Actinobacteria", "Actinomycetia", "Actinomycetota"),
+        "proteobacterium": ("Proteobacteria", "Pseudomonadota"),
+        "alphaproteobacterium": ("Alphaproteobacteria",),
+        "betaproteobacterium": ("Betaproteobacteria",),
+        "gammaproteobacterium": ("Gammaproteobacteria",),
+        "deltaproteobacterium": ("Deltaproteobacteria",),
+        "epsilonproteobacterium": ("Epsilonproteobacteria", "Campylobacterota"),
+        "zetaproteobacterium": ("Zetaproteobacteria",),
+        "cyanobacterium": ("Cyanobacteria", "Cyanobacteriota"),
+        "firmicute": ("Firmicutes", "Bacillota"),
+        "bacteroidete": ("Bacteroidetes", "Bacteroidota"),
+        "spirochete": ("Spirochaetes", "Spirochaetota"),
+        "planctomycete": ("Planctomycetes", "Planctomycetota"),
+        "verrucomicrobium": ("Verrucomicrobia", "Verrucomicrobiota"),
+        "archaeon": ("Archaea",),
+        "eubacterium": ("Bacteria",),
+        "bacterium": ("Bacteria",),
+    }
+
+    def _higher_rank_candidates(self, extracted: str) -> List[str]:
+        """
+        Yield NCBITaxon-label candidates to try for a special-pattern extract.
+
+        The extract may be: the as-is token, a title-cased form, or one of the
+        explicit mappings in ``_UNIDENTIFIED_TAXON_MAP`` (BacDive's singular
+        common nouns like "actinobacterium" → NCBI's "Actinobacteria"). Returned
+        in order of specificity — callers stop at the first hit.
+        """
+        candidates: List[str] = []
+        stripped = extracted.strip()
+        if not stripped:
+            return candidates
+        candidates.append(stripped)
+        # Title-case variant covers lowercase singletons that match NCBI directly
+        # (rare, but cheap to try).
+        titled = stripped[:1].upper() + stripped[1:]
+        if titled != stripped:
+            candidates.append(titled)
+        mapped = self._UNIDENTIFIED_TAXON_MAP.get(stripped.lower())
+        if mapped:
+            candidates.extend(mapped)
+        # Deduplicate while preserving order.
+        seen = set()
+        out = []
+        for c in candidates:
+            if c not in seen:
+                seen.add(c)
+                out.append(c)
+        return out
+
     def _parse_genus_from_scientific_name(self, scientific_name: str) -> Optional[str]:
         """
         Extract genus name from binomial nomenclature.
@@ -1647,7 +1702,11 @@ class BacDiveTransform(Transform):
                         # higher-rank tokens like "actinobacterium".
                         higher_rank_ncbitaxon_id = None
                         if is_special:
-                            higher_rank_ncbitaxon_id = self._search_ncbitaxon_by_label(full_name)
+                            for candidate in self._higher_rank_candidates(full_name):
+                                higher_rank_ncbitaxon_id = self._search_ncbitaxon_by_label(candidate)
+                                if higher_rank_ncbitaxon_id:
+                                    full_name = candidate
+                                    break
                             if higher_rank_ncbitaxon_id:
                                 print(
                                     f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}"

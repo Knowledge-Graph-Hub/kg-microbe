@@ -82,6 +82,10 @@ def reset_cache():
         chemical_mapping_utils._FORMULA_INDEX = None
         chemical_mapping_utils._XREF_INDEX = None
         chemical_mapping_utils._CATEGORY_INDEX = None
+        chemical_mapping_utils._PRIMARY_NAME_INDEX = None
+        chemical_mapping_utils._PRIMARY_SYNONYMS_INDEX = None
+        chemical_mapping_utils._PRIMARY_XREFS_INDEX = None
+        chemical_mapping_utils._PRIMARY_FORMULA_INDEX = None
         chemical_mapping_utils._CACHED_PATH = None
         chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
 

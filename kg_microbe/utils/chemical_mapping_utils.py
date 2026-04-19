@@ -16,6 +16,14 @@ _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
 _CATEGORY_INDEX: Optional[Dict[str, str]] = None
+# Primary-CURIE-keyed indices. Without these the hot-path getters
+# (get_canonical_name / get_synonyms / get_xrefs / get_formula) fall back to
+# scanning the 119k-row DataFrame on every call, which destroys throughput in
+# any transform (e.g. bacdive) that enriches thousands of nodes per run.
+_PRIMARY_NAME_INDEX: Optional[Dict[str, str]] = None
+_PRIMARY_SYNONYMS_INDEX: Optional[Dict[str, List[str]]] = None
+_PRIMARY_XREFS_INDEX: Optional[Dict[str, List[str]]] = None
+_PRIMARY_FORMULA_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
 
 # Matches a trailing hydrate specifier:
@@ -176,6 +184,8 @@ def _build_indices():
     """Build lookup indices from loaded mappings."""
     global _NAME_INDEX, _CANONICAL_NAME_INDEX, _HYDRATE_FREE_NAME_INDEX
     global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX
+    global _PRIMARY_NAME_INDEX, _PRIMARY_SYNONYMS_INDEX
+    global _PRIMARY_XREFS_INDEX, _PRIMARY_FORMULA_INDEX
 
     if _UNIFIED_MAPPINGS is None:
         return
@@ -186,6 +196,10 @@ def _build_indices():
     _FORMULA_INDEX = {}
     _XREF_INDEX = {}
     _CATEGORY_INDEX = {}
+    _PRIMARY_NAME_INDEX = {}
+    _PRIMARY_SYNONYMS_INDEX = {}
+    _PRIMARY_XREFS_INDEX = {}
+    _PRIMARY_FORMULA_INDEX = {}
 
     for _, row in _UNIFIED_MAPPINGS.iterrows():
         curie = row["id"]
@@ -194,6 +208,21 @@ def _build_indices():
         category = row.get("category", "")
         if curie and category:
             _CATEGORY_INDEX[curie] = category
+
+        # Primary-key indices: O(1) lookups for the hot-path getters below.
+        if curie:
+            if row["canonical_name"]:
+                _PRIMARY_NAME_INDEX[curie] = row["canonical_name"]
+            if row["synonyms"]:
+                _PRIMARY_SYNONYMS_INDEX[curie] = [
+                    s for s in row["synonyms"].split("|") if s
+                ]
+            if row["xrefs"]:
+                _PRIMARY_XREFS_INDEX[curie] = [
+                    x for x in row["xrefs"].split("|") if x
+                ]
+            if row["formula"]:
+                _PRIMARY_FORMULA_INDEX[curie] = row["formula"]
 
         # Index canonical name (both full name index and canonical-only index)
         if row["canonical_name"]:
@@ -362,100 +391,68 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
 
 def get_canonical_name(chebi_id: str) -> Optional[str]:
     """
-    Get canonical ChEBI name for a given ChEBI ID.
+    Get canonical name for a given CURIE.
 
-    :param chebi_id: ChEBI ID (e.g., "CHEBI:12345")
+    :param chebi_id: Primary CURIE (e.g., "CHEBI:12345", "FOODON:00002441")
     :return: Canonical name or None if not found
     """
     if not chebi_id:
         return None
-
-    # Ensure mappings are loaded
     if _UNIFIED_MAPPINGS is None:
         load_unified_mappings()
-
-    if _UNIFIED_MAPPINGS is not None:
-        # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "canonical_name"]
-        if not matches.empty:
-            name = matches.iloc[0]
-            return name if name else None
-
-    return None
+    if _PRIMARY_NAME_INDEX is None:
+        return None
+    name = _PRIMARY_NAME_INDEX.get(chebi_id)
+    return name if name else None
 
 
 def get_synonyms(chebi_id: str) -> List[str]:
     """
-    Get all synonyms for a given ChEBI ID.
+    Get all synonyms for a given CURIE.
 
-    :param chebi_id: ChEBI ID (e.g., "CHEBI:12345")
+    :param chebi_id: Primary CURIE (e.g., "CHEBI:12345")
     :return: List of synonyms (may be empty)
     """
     if not chebi_id:
         return []
-
-    # Ensure mappings are loaded
     if _UNIFIED_MAPPINGS is None:
         load_unified_mappings()
-
-    if _UNIFIED_MAPPINGS is not None:
-        # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "synonyms"]
-        if not matches.empty:
-            synonyms_str = matches.iloc[0]
-            if synonyms_str:
-                return synonyms_str.split("|")
-
-    return []
+    if _PRIMARY_SYNONYMS_INDEX is None:
+        return []
+    return list(_PRIMARY_SYNONYMS_INDEX.get(chebi_id, ()))
 
 
 def get_xrefs(chebi_id: str) -> List[str]:
     """
-    Get all cross-references for a given ChEBI ID.
+    Get all cross-references for a given CURIE.
 
-    :param chebi_id: ChEBI ID (e.g., "CHEBI:12345")
+    :param chebi_id: Primary CURIE (e.g., "CHEBI:12345")
     :return: List of xrefs (e.g., ["cas:50-00-0", "kegg.compound:C00001"])
     """
     if not chebi_id:
         return []
-
-    # Ensure mappings are loaded
     if _UNIFIED_MAPPINGS is None:
         load_unified_mappings()
-
-    if _UNIFIED_MAPPINGS is not None:
-        # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "xrefs"]
-        if not matches.empty:
-            xrefs_str = matches.iloc[0]
-            if xrefs_str:
-                return xrefs_str.split("|")
-
-    return []
+    if _PRIMARY_XREFS_INDEX is None:
+        return []
+    return list(_PRIMARY_XREFS_INDEX.get(chebi_id, ()))
 
 
 def get_formula(chebi_id: str) -> Optional[str]:
     """
-    Get molecular formula for a given ChEBI ID.
+    Get molecular formula for a given CURIE.
 
-    :param chebi_id: ChEBI ID (e.g., "CHEBI:12345")
+    :param chebi_id: Primary CURIE (e.g., "CHEBI:12345")
     :return: Molecular formula or None if not found
     """
     if not chebi_id:
         return None
-
-    # Ensure mappings are loaded
     if _UNIFIED_MAPPINGS is None:
         load_unified_mappings()
-
-    if _UNIFIED_MAPPINGS is not None:
-        # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "formula"]
-        if not matches.empty:
-            formula = matches.iloc[0]
-            return formula if formula else None
-
-    return None
+    if _PRIMARY_FORMULA_INDEX is None:
+        return None
+    formula = _PRIMARY_FORMULA_INDEX.get(chebi_id)
+    return formula if formula else None
 
 
 def get_category(curie: str) -> Optional[str]:

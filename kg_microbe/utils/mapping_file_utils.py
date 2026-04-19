@@ -23,6 +23,26 @@ ASSAY_KITS_SIMPLE_JSON_URL = (
     "https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json"
 )
 
+# Biolink category normalizations applied to METPO `biolink_equivalent` URIs
+# inherited from parent classes. Keys and values are CURIE-form; keys may
+# also appear as full Biolink-vocab URIs. ``biolink:ActivityAndBehavior`` is
+# deprecated-style and surfaces on METPO oxygen-tolerance classes whose
+# nearest ``biolink_equivalent`` ancestor carries that legacy value — remap
+# to ``biolink:BiologicalProcess`` so emitted node categories stay aligned
+# with current Biolink recommendations.
+_BIOLINK_VOCAB_URI_PREFIX = "http://w3id.org/biolink/vocab/"
+BIOLINK_CATEGORY_ALIASES: Dict[str, str] = {
+    "biolink:ActivityAndBehavior": "biolink:BiologicalProcess",
+    f"{_BIOLINK_VOCAB_URI_PREFIX}ActivityAndBehavior": f"{_BIOLINK_VOCAB_URI_PREFIX}BiologicalProcess",
+}
+
+
+def normalize_biolink_category(category: str) -> str:
+    """Map a deprecated Biolink category URI/CURIE to its recommended replacement."""
+    if not category:
+        return category
+    return BIOLINK_CATEGORY_ALIASES.get(category, category)
+
 
 def uri_to_curie(uri: str) -> str:
     """
@@ -333,9 +353,9 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                         if current.biolink_equivalent:
                             # use the parent's biolink_equivalent URL as the category
                             parent_label = current.label
-                            inferred_category = (
+                            inferred_category = normalize_biolink_category(
                                 current.biolink_equivalent
-                            )  # use parent's biolink_equivalent URL as category
+                            )
                             if parent_label in range_to_predicate:
                                 predicate_label = range_to_predicate[parent_label]["label"]
                                 predicate_biolink_equivalent = range_to_predicate[parent_label]["biolink_equivalent"]

@@ -273,8 +273,12 @@ METABOLITE_CATEGORY = "biolink:ChemicalEntity"  # Generic metabolite, prefer CHE
 SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 
-# Biological process and activity categories
-METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
+# Biological process and activity categories.
+# Metabolism traits (oxygen tolerance, energy source use, etc.) are biological
+# processes at the organism level. ``biolink:ActivityAndBehavior`` was used
+# previously but is deprecated-style upstream; ``biolink:BiologicalProcess``
+# is the Biolink-recommended replacement.
+METABOLISM_CATEGORY = "biolink:BiologicalProcess"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 
 # Anatomical and environmental categories

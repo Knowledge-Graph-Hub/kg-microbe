@@ -4,7 +4,14 @@ This directory contains unified chemical mapping resources for KG-Microbe.
 
 ## Unified Chemical Mappings
 
-**`unified_chemical_mappings.tsv.gz`** — Consolidated ingredient mappings from all KG-Microbe sources (gzipped TSV). Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments) in a single file — there is no sibling table. Consumed in-process by `kg_microbe.utils.chemical_mapping_utils`.
+The consolidator now writes two complementary artifacts from the same run:
+
+| File | Role |
+|---|---|
+| `unified_ingredient_mappings.sssom.tsv` | **Primary, standards-compliant mapping product.** One row per `xref-CURIE → primary-CURIE` equivalence. Validated with the `sssom` Python package on every write (LinkML JSON-schema + `check_all_prefixes_in_curie_map`). Shared with external consumers who expect SSSOM. |
+| `unified_chemical_mappings.tsv.gz` | **In-process runtime index** used by transforms via `kg_microbe.utils.chemical_mapping_utils`. Entity-centric: one row per primary CURIE with accumulated canonical name, formula, synonyms, and xrefs. Needed because plain-string synonyms ("yeast extract", "agar") cannot be represented in SSSOM without synthetic subject IRIs. |
+
+Both files are rebuilt by the same `scripts/consolidate_chemical_mappings.py` run and cover CHEBI chemicals plus non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments).
 
 ### File Structure
 
@@ -57,10 +64,11 @@ Pipeline order:
 1. Seed from the existing `mappings/unified_chemical_mappings.tsv.gz` (priority reconstructed per row from source labels).
 2. Layer in any still-present legacy inputs (absent ones are skipped).
 3. Load `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
-4. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11).
+4. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11) — parsed and validated with the `sssom` Python package before any row is ingested.
 5. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
 6. Merge duplicate-name records (highest priority wins).
-7. Write the gzipped unified TSV.
+7. Write `unified_chemical_mappings.tsv.gz` (runtime index).
+8. Write `unified_ingredient_mappings.sssom.tsv` and round-trip-validate it with the `sssom` package.
 
 ### Usage Examples
 

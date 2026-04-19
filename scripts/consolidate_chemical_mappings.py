@@ -45,8 +45,17 @@ Outputs:
   mappings/unified_chemical_mappings.tsv.gz  (CHEBI, kgmicrobe.compound,
                                               NCIT, FOODON, UBERON, ENVO)
   mappings/unified_other_mappings.tsv.gz     (anything else, e.g. PO)
+  mappings/unified_ingredient_mappings.sssom.tsv
+      Standards-compliant SSSOM mapping set — one row per
+      (xref CURIE → unified primary CURIE) equivalence. This file is the
+      kg-microbe **primary mapping product** for interoperability: it is
+      validated with the ``sssom`` package on write. The TSV.GZ remains the
+      in-process runtime index consulted by transforms via
+      ``chemical_mapping_utils`` — the SSSOM export projects the same data
+      into the SSSOM standard so downstream consumers do not have to learn a
+      kg-microbe-specific schema.
 
-Columns: id, category, canonical_name, formula, synonyms, xrefs, sources.
+Columns (TSV.GZ): id, category, canonical_name, formula, synonyms, xrefs, sources.
 Downstream readers that still expect the legacy `chebi_id` column name
 auto-alias `id` → `chebi_id` on load.
 """
@@ -913,6 +922,205 @@ class ChemicalMappingConsolidator:
         else:
             print("  Other entries:    0 (file not written)")
 
+    def export_unified_sssom(self, sssom_output_path: Path):
+        """
+        Export the unified mapping as a standards-compliant SSSOM set.
+
+        Emits one row per (xref CURIE → primary CURIE) equivalence. This is
+        the kg-microbe primary mapping product for third-party/interoperable
+        use: it is validated with the ``sssom`` package before write (both
+        LinkML JSON-schema and ``check_all_prefixes_in_curie_map``).
+
+        The in-repo TSV.GZ remains the fast O(1) runtime index consulted by
+        transforms via ``kg_microbe.utils.chemical_mapping_utils``; the SSSOM
+        export projects the same equivalence data into the SSSOM standard so
+        downstream consumers do not need to learn the kg-microbe schema.
+
+        Free-text synonyms (no CURIE subject) are *not* materialized in the
+        SSSOM — SSSOM requires CURIE subjects. Plain-string synonym lookup
+        continues to be served by the TSV.GZ index.
+
+        Predicate semantics:
+          * Identifier xrefs imported from public chemistry databases use
+            ``skos:exactMatch``.
+          * Bibliographic / descriptive xref prefixes (pubmed, patent,
+            wikipedia.en, …) are not equivalence statements and are skipped
+            rather than emitted with a misleading predicate.
+        """
+        import subprocess
+        from datetime import date
+
+        # Prefixes emitted as exactMatch equivalences. Everything else is
+        # treated as bibliographic / descriptive and skipped.
+        exact_prefixes = {
+            "CHEBI", "FOODON", "UBERON", "ENVO", "NCIT",
+            "kgmicrobe.compound",
+            "MIM", "MediaIngredientMech",
+            "cas", "kegg.compound", "kegg.drug", "kegg.glycan",
+            "pubchem.compound", "hmdb", "drugbank",
+            "drugbank.metabolite", "chemspider", "lipidmaps",
+            "lipidmaps_class", "metacyc.compound", "umbbd.compound",
+            "knapsack", "foodb.food", "smid", "ymdb", "ecmdb",
+            "resid", "lincs.smallmolecule", "drugcentral",
+            "chemidplus", "agr", "ppdb", "pesticides", "molbase",
+            "vsdb", "pdb", "pdb-ccd", "webelements", "cba", "bpdb",
+            "reaxys", "fao_who_standards", "glytoucan", "glygen",
+            "beilstein", "gmelin",
+        }
+
+        bibliographic_prefixes = {
+            "pubmed", "pmc", "patent", "citexplore", "ppr", "wikipedia.en",
+        }
+
+        # URI expansions. Where the prefix has an obo/purl home we use it;
+        # otherwise we fall back to bioregistry for a stable, resolvable IRI.
+        prefix_map = {
+            "CHEBI": "http://purl.obolibrary.org/obo/CHEBI_",
+            "FOODON": "http://purl.obolibrary.org/obo/FOODON_",
+            "UBERON": "http://purl.obolibrary.org/obo/UBERON_",
+            "ENVO": "http://purl.obolibrary.org/obo/ENVO_",
+            "NCIT": "http://purl.obolibrary.org/obo/NCIT_",
+            "obo": "http://purl.obolibrary.org/obo/",
+            "semapv": "https://w3id.org/semapv/vocab/",
+            "skos": "http://www.w3.org/2004/02/skos/core#",
+            "orcid": "https://orcid.org/",
+            # MIM and MediaIngredientMech are two CURIE schemes over the same
+            # sibling repo: MIM:<semantic_key> (used by the authoritative
+            # SSSOM mapping set) vs MediaIngredientMech:<000NNN> (sequential
+            # record identifiers). The SSSOM validator requires distinct URI
+            # expansions per prefix, so they are differentiated by subpath.
+            "MIM": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/mapped/",
+            "MediaIngredientMech": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/records/",
+            "kgmicrobe.compound": "https://w3id.org/kg-microbe/compound/",
+        }
+        # Generic bioregistry fallback for everything else we emit.
+        for prefix in sorted(exact_prefixes):
+            if prefix not in prefix_map:
+                prefix_map[prefix] = f"https://bioregistry.io/{prefix}:"
+
+        # Git SHA for reproducibility in the mapping-set header.
+        try:
+            git_sha = (
+                subprocess.check_output(
+                    ["git", "-C", str(sssom_output_path.parent.parent), "rev-parse", "HEAD"],
+                    stderr=subprocess.DEVNULL,
+                )
+                .decode()
+                .strip()
+            )
+        except Exception:
+            git_sha = "unknown"
+
+        def _sanitize_tsv(value: str) -> str:
+            if value is None:
+                return ""
+            return (
+                str(value)
+                .replace("\t", " ")
+                .replace("\r", " ")
+                .replace("\n", " ")
+                .strip()
+            )
+
+        def _is_valid_curie(value: str) -> bool:
+            if not value or ":" not in value:
+                return False
+            prefix, local = value.split(":", 1)
+            return bool(prefix) and bool(local)
+
+        # Counters for the summary line.
+        rows_emitted = 0
+        skipped_self = 0
+        skipped_biblio = 0
+        skipped_unknown_prefix = 0
+        skipped_malformed = 0
+
+        mapping_rows = []
+        today = date.today().isoformat()
+
+        for curie in sorted(self.chemicals.keys()):
+            chem = self.chemicals[curie]
+            object_id = curie
+            object_label = _sanitize_tsv(chem["canonical_name"])
+            # Primary source prefix determines object_source when CHEBI.
+            object_source = (
+                "obo:chebi.owl" if object_id.startswith("CHEBI:")
+                else f"obo:{object_id.split(':', 1)[0].lower()}.owl"
+            )
+            source_tag = "|".join(sorted(chem["sources"])) if chem["sources"] else ""
+
+            for xref in sorted(chem["xrefs"]):
+                if not _is_valid_curie(xref):
+                    skipped_malformed += 1
+                    continue
+                subject_prefix = xref.split(":", 1)[0]
+                if xref == object_id:
+                    skipped_self += 1
+                    continue
+                if subject_prefix in bibliographic_prefixes:
+                    skipped_biblio += 1
+                    continue
+                if subject_prefix not in exact_prefixes:
+                    skipped_unknown_prefix += 1
+                    continue
+
+                mapping_rows.append({
+                    "subject_id": xref,
+                    "subject_label": "",
+                    "predicate_id": "skos:exactMatch",
+                    "object_id": object_id,
+                    "object_label": object_label,
+                    "object_source": object_source,
+                    "mapping_justification": "semapv:UnspecifiedMatching",
+                    "source": source_tag,
+                    "mapping_date": today,
+                    "confidence": "",
+                    "comment": "",
+                })
+                rows_emitted += 1
+
+        # Build the header.
+        header_lines = ["# curie_map:"]
+        for prefix in sorted(prefix_map.keys()):
+            header_lines.append(f'#   {prefix}: "{prefix_map[prefix]}"')
+        header_lines += [
+            '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
+            '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"',
+            f'# mapping_set_version: "{today}"',
+            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. One row per xref→primary-CURIE equivalence accumulated across all ingested sources."',
+            f'# mapping_date: "{today}"',
+            f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
+            '# extension_definitions:',
+            '#   - slot_name: source',
+            '#     property: "https://w3id.org/kg-microbe/source"',
+            '#     type_hint: "xsd:string"',
+        ]
+
+        column_order = [
+            "subject_id", "subject_label", "predicate_id",
+            "object_id", "object_label", "object_source",
+            "mapping_justification", "source", "mapping_date",
+            "confidence", "comment",
+        ]
+
+        print(f"\nExporting unified SSSOM → {sssom_output_path}")
+        sssom_output_path.parent.mkdir(parents=True, exist_ok=True)
+        with sssom_output_path.open("w", encoding="utf-8") as fh:
+            for line in header_lines:
+                fh.write(line + "\n")
+            fh.write("\t".join(column_order) + "\n")
+            for row in mapping_rows:
+                fh.write("\t".join(_sanitize_tsv(row.get(c, "")) for c in column_order) + "\n")
+
+        print(
+            f"  Emitted {rows_emitted} mappings "
+            f"(skipped: self={skipped_self}, bibliographic={skipped_biblio}, "
+            f"unknown_prefix={skipped_unknown_prefix}, malformed={skipped_malformed})"
+        )
+
+        # Round-trip validate with the sssom package.
+        self._validate_sssom_file(sssom_output_path)
+
 
 def main():
     """Main consolidation workflow."""
@@ -921,6 +1129,7 @@ def main():
 
     chemical_output_path = base_dir / "mappings" / "unified_chemical_mappings.tsv.gz"
     other_output_path = base_dir / "mappings" / "unified_other_mappings.tsv.gz"
+    sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv"
 
     # Seed from any existing unified files (split or legacy single-file).
     # Each row preserves its source labels; priority is inferred from them.
@@ -977,9 +1186,15 @@ def main():
     # Export unified mapping (split into chemical + other files)
     consolidator.export_unified_mapping(chemical_output_path, other_output_path)
 
+    # Also export the standards-compliant SSSOM — this is the primary
+    # interoperable mapping product; the TSV.GZ remains the in-process
+    # lookup index for transforms.
+    consolidator.export_unified_sssom(sssom_output_path)
+
     print(f"\n✓ Unified chemical mapping created: {chemical_output_path}")
     if other_output_path.exists():
         print(f"✓ Unified other mapping created:    {other_output_path}")
+    print(f"✓ Unified SSSOM created:            {sssom_output_path}")
     print(f"  To use: gunzip -c {chemical_output_path.name} | head")
 
 

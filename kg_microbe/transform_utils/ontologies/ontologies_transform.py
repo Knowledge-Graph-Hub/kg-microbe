@@ -726,6 +726,32 @@ class OntologiesTransform(Transform):
             for col in added_edge_cols:
                 df[col] = ""
             df = df[self.edge_header]
+
+            # KGX/obograph emits OWL/RDF meta-predicates under the `biolink:`
+            # namespace by default (e.g. `biolink:subPropertyOf`). Those are
+            # not valid biolink predicates. Remap to their proper namespaces
+            # in both the `predicate` and `relation` columns so the output
+            # validates cleanly and round-trips back to OWL semantics.
+            owl_meta_predicate_map = {
+                "biolink:subPropertyOf": "rdfs:subPropertyOf",
+                "biolink:inverseOf": "owl:inverseOf",
+                "biolink:type": "rdf:type",
+            }
+            # Bare tokens that may appear in the `relation` column (OAK emits
+            # just the local name when it cannot find an RO mapping).
+            owl_meta_relation_map = {
+                "subPropertyOf": "rdfs:subPropertyOf",
+                "inverseOf": "owl:inverseOf",
+                "type": "rdf:type",
+            }
+            if "predicate" in df.columns:
+                df["predicate"] = df["predicate"].replace(owl_meta_predicate_map)
+            if "relation" in df.columns:
+                df["relation"] = df["relation"].replace(owl_meta_relation_map)
+                # Also catch cases where `relation` mistakenly got the biolink
+                # prefix too (belt-and-braces — same-row consistency).
+                df["relation"] = df["relation"].replace(owl_meta_predicate_map)
+
             df.to_csv(edges_file, sep="\t", index=False)
             if dropped_edge_cols or added_edge_cols or renamed:
                 rename_note = " rename(knowledge_source→primary_knowledge_source)" if renamed else ""

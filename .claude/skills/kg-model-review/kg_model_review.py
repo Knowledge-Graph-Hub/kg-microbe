@@ -130,6 +130,13 @@ VALID_PREDICATES = {
     "biolink:positively_regulates",
     "biolink:negatively_regulates",
     "biolink:expressed_in",
+    # Non-biolink OWL/RDFS structural predicates used by the ontologies
+    # transform for meta-axioms (property hierarchies, inverses, type
+    # assertions). These are legitimately non-biolink; they round-trip back
+    # to OWL semantics downstream.
+    "rdfs:subPropertyOf",
+    "owl:inverseOf",
+    "rdf:type",
 }
 
 # ── Standard known CURIE prefixes ─────────────────────────────────────────────
@@ -149,7 +156,7 @@ STANDARD_PREFIXES = {
     "bacdive.isolation_source",
     # mediadive prefixes
     "mediadive.medium", "mediadive.ingredient", "mediadive.solution", "mediadive.medium-type",
-    "CAS-RN", "PubChem", "pubchem.compound", "PUBCHEM.COMPOUND",
+    "CAS-RN", "cas", "PubChem", "pubchem.compound", "PUBCHEM.COMPOUND",
     # bacdive / metatraits provisional organism prefixes
     "kgmicrobe.strain", "kgmicrobe.species", "kgmicrobe.genus",
     # bacdive assay prefix
@@ -492,14 +499,24 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
     if not edges_path.exists():
         edges_path = transform_dir / "edges.tsv.gz"
 
-    # Handle ontologies transform: per-ontology files (*_nodes.tsv / *_edges.tsv)
+    # Handle ontologies transform: per-ontology files (*_nodes.tsv / *_edges.tsv).
+    # Cross-file id overlap is expected here — each ontology's KGX output
+    # includes imports/axiom-references from other ontologies (e.g. HP
+    # references MONDO classes). These duplicates are resolved at merge
+    # time, so for duplicate-id checking we dedupe by id across files.
     if not nodes_path.exists():
         per_ont_nodes = sorted(transform_dir.glob("*_nodes.tsv"))
         per_ont_edges = sorted(transform_dir.glob("*_edges.tsv"))
         if per_ont_nodes or per_ont_edges:
             all_node_rows, all_edge_rows = [], []
+            seen_ids = set()
             for p in per_ont_nodes:
-                all_node_rows.extend(iter_tsv(p, max_rows))
+                for r in iter_tsv(p, max_rows):
+                    nid = r.get("id", "")
+                    if nid in seen_ids:
+                        continue
+                    seen_ids.add(nid)
+                    all_node_rows.append(r)
             for p in per_ont_edges:
                 all_edge_rows.extend(iter_tsv(p, max_rows))
             result["nodes"] = check_nodes_rows(all_node_rows, max_rows, registered_prefixes, metpo_curies, verbose)

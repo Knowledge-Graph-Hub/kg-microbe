@@ -955,11 +955,18 @@ class BacDiveTransform(Transform):
             antibiotic_predicate = None
 
         if antibiotic_predicate:
+            ar_enrich = (
+                self.chemical_loader.get_node_enrichment(chebi_key)
+                if self.chemical_loader is not None
+                else {"xref": "", "synonym": ""}
+            )
             self.ar_nodes_data_to_write.append(
                 self._create_node_row(
                     chebi_key,
                     self._get_chebi_category(chebi_key),
                     item[METABOLITE_KEY],
+                    xref=ar_enrich["xref"] or None,
+                    synonym=ar_enrich["synonym"] or None,
                 )
             )
             # Create edge from organism to metabolite
@@ -1055,8 +1062,19 @@ class BacDiveTransform(Transform):
                 if antibiotic_predicate and metabolite_id:
                     #            print(f"    Writing node row for antibiotic: {metabolite_id}")
                     # Use category from ontologies transform for CHEBI IDs
+                    met_enrich = (
+                        self.chemical_loader.get_node_enrichment(metabolite_id)
+                        if self.chemical_loader is not None
+                        else {"xref": "", "synonym": ""}
+                    )
                     node_writer.writerow(
-                        self._create_node_row(metabolite_id, self._get_chebi_category(metabolite_id), k)
+                        self._create_node_row(
+                            metabolite_id,
+                            self._get_chebi_category(metabolite_id),
+                            k,
+                            xref=met_enrich["xref"] or None,
+                            synonym=met_enrich["synonym"] or None,
+                        )
                     )
 
                     # Create edge from organism to metabolite
@@ -2273,14 +2291,22 @@ class BacDiveTransform(Transform):
 
                         if metabolite_activity_data:
                             # Write metabolite nodes
-                            meta_util_nodes_to_write = [
-                                self._create_node_row(
-                                    item["chebi_key"],
-                                    self._get_chebi_category(item["chebi_key"]),
-                                    item["metabolite_name"],
+                            meta_util_nodes_to_write = []
+                            for item in metabolite_activity_data:
+                                util_enrich = (
+                                    self.chemical_loader.get_node_enrichment(item["chebi_key"])
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
                                 )
-                                for item in metabolite_activity_data
-                            ]
+                                meta_util_nodes_to_write.append(
+                                    self._create_node_row(
+                                        item["chebi_key"],
+                                        self._get_chebi_category(item["chebi_key"]),
+                                        item["metabolite_name"],
+                                        xref=util_enrich["xref"] or None,
+                                        synonym=util_enrich["synonym"] or None,
+                                    )
+                                )
                             node_writer.writerows(meta_util_nodes_to_write)
 
                             # Write edges with METPO predicates
@@ -2360,14 +2386,22 @@ class BacDiveTransform(Transform):
 
                         if metabolite_production_data:
                             # Write metabolite nodes
-                            metabolite_production_nodes_to_write = [
-                                self._create_node_row(
-                                    item["chebi_key"],
-                                    self._get_chebi_category(item["chebi_key"]),
-                                    item["metabolite_name"],
+                            metabolite_production_nodes_to_write = []
+                            for item in metabolite_production_data:
+                                prod_enrich = (
+                                    self.chemical_loader.get_node_enrichment(item["chebi_key"])
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
                                 )
-                                for item in metabolite_production_data
-                            ]
+                                metabolite_production_nodes_to_write.append(
+                                    self._create_node_row(
+                                        item["chebi_key"],
+                                        self._get_chebi_category(item["chebi_key"]),
+                                        item["metabolite_name"],
+                                        xref=prod_enrich["xref"] or None,
+                                        synonym=prod_enrich["synonym"] or None,
+                                    )
+                                )
                             node_writer.writerows(metabolite_production_nodes_to_write)
 
                             # Write edges with METPO predicates

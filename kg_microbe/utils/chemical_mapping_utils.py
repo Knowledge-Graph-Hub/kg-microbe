@@ -12,9 +12,21 @@ import pandas as pd
 _UNIFIED_MAPPINGS: Optional[pd.DataFrame] = None
 _NAME_INDEX: Optional[Dict[str, str]] = None
 _CANONICAL_NAME_INDEX: Optional[Dict[str, str]] = None
+_HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
+_CATEGORY_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
+
+# Matches a trailing hydrate specifier:
+#   " x n H2O", " · 6 H2O", " . 2H2O", " x 12H2O", etc.
+# Separator can be "x", "X", "·", ".", "*", or the literal " times "/" times".
+# Count can be a digit sequence or the literal "n" (variable stoichiometry,
+# common in MediaDive entries). Case-insensitive; anchored at end of string.
+_HYDRATE_SUFFIX_RE = re.compile(
+    r"\s*[x·*.]\s*(?:\d+|n)\s*h2o\s*$",
+    re.IGNORECASE,
+)
 
 # Bounded LRU-style negative-lookup cache. Evicts oldest entry when full so
 # memory cannot grow without bound in long-running processes. Cleared on
@@ -33,12 +45,17 @@ def _negative_cache_add(key: tuple) -> None:
         _NEGATIVE_LOOKUP_CACHE.popitem(last=False)
 
 
-def normalize_name(name: str, strip_stereochemistry: bool = False) -> str:
+def normalize_name(
+    name: str,
+    strip_stereochemistry: bool = False,
+    strip_hydrate: bool = False,
+) -> str:
     """
     Normalize chemical name for comparison.
 
     :param name: Chemical name to normalize
     :param strip_stereochemistry: If True, remove stereochemistry prefixes like (R)-, (S)-, D-, L-, (+)-, (-)-
+    :param strip_hydrate: If True, strip trailing hydrate suffixes like " x n H2O", " · 6 H2O", " . 2H2O"
     :return: Normalized name (lowercase, no punctuation)
     """
     if pd.isna(name) or not name:
@@ -55,23 +72,59 @@ def normalize_name(name: str, strip_stereochemistry: bool = False) -> str:
         normalized = re.sub(r"^[dl]-\s*", "", normalized)  # d- or l- (lowercase after .lower())
         normalized = normalized.strip()
 
+    if strip_hydrate:
+        # Strip trailing hydrate suffix BEFORE general punctuation removal
+        # so separators like "·", "*", "." are still present to match.
+        normalized = _HYDRATE_SUFFIX_RE.sub("", normalized).strip()
+
     # Remove extra punctuation and normalize spaces
     normalized = re.sub(r"[^\w\s-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
 
+def _read_unified_tsv_gz(path: Path) -> pd.DataFrame:
+    """Read one unified mapping TSV.GZ into a DataFrame (schema-tolerant)."""
+    # quoting=3 (QUOTE_NONE) handles chemical names with quote characters.
+    # on_bad_lines="skip" tolerates rare legacy rows with embedded tabs.
+    with gzip.open(path, "rt") as f:
+        df = pd.read_csv(
+            f,
+            sep="\t",
+            dtype=str,
+            quoting=3,
+            engine="python",
+            on_bad_lines="skip",
+        )
+    return df.fillna("")
+
+
 def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
     """
-    Load unified chemical mappings file (gzipped TSV).
+    Load unified chemical mappings file(s) (gzipped TSV).
+
+    The unified mapping is split across two files:
+
+      - ``unified_chemical_mappings.tsv.gz`` — chemicals, compounds, and
+        media-ingredient prefixes (CHEBI, kgmicrobe.compound, NCIT, FOODON,
+        UBERON, ENVO).
+      - ``unified_other_mappings.tsv.gz`` — reserved for non-chemical,
+        non-ingredient mappings. Optional; loaded if present.
+
+    Both files share the same schema; this function concatenates them into
+    a single in-memory DataFrame so downstream lookup APIs are unchanged.
 
     Uses module-level caching to avoid reloading on multiple calls.
 
-    :param mappings_path: Path to unified_chemical_mappings.tsv.gz
-                          If None, uses default path relative to this file
-    :return: DataFrame with columns: chebi_id, canonical_name, formula, synonyms, xrefs, sources
+    :param mappings_path: Path to unified_chemical_mappings.tsv.gz. If None,
+        uses the default path relative to this file and also looks for the
+        sibling ``unified_other_mappings.tsv.gz`` in the same directory.
+    :return: DataFrame with columns: id, category, canonical_name, formula,
+             synonyms, xrefs, sources. Legacy baselines using ``chebi_id`` as
+             the primary column are silently upgraded to ``id`` in memory.
     """
-    global _UNIFIED_MAPPINGS, _NAME_INDEX, _FORMULA_INDEX, _XREF_INDEX, _CACHED_PATH
+    global _UNIFIED_MAPPINGS, _NAME_INDEX, _HYDRATE_FREE_NAME_INDEX
+    global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX, _CACHED_PATH
 
     # Default path: mappings/unified_chemical_mappings.tsv.gz
     if mappings_path is None:
@@ -85,20 +138,27 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
     if not mappings_path.exists():
         raise FileNotFoundError(f"Unified mappings file not found: {mappings_path}")
 
-    # Load gzipped TSV
-    # Use quoting=3 (QUOTE_NONE) to handle chemical names with quote characters
-    with gzip.open(mappings_path, "rt") as f:
-        _UNIFIED_MAPPINGS = pd.read_csv(f, sep="\t", dtype=str, quoting=3)
+    # Always load the chemical file.
+    frames = [_read_unified_tsv_gz(mappings_path)]
 
-    # Fill NaN with empty strings
-    _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.fillna("")
+    # Optionally load the sibling "other" file, if it lives alongside the
+    # chemical file. Missing is fine — that file is only written when it has
+    # at least one row.
+    other_path = mappings_path.with_name("unified_other_mappings.tsv.gz")
+    if other_path.exists() and other_path != mappings_path:
+        frames.append(_read_unified_tsv_gz(other_path))
 
-    # Schema-compat: the consolidator now emits `id` as the primary key
-    # column (to accommodate non-CHEBI prefixes like FOODON/UBERON/ENVO).
-    # Alias back to the legacy `chebi_id` name so downstream readers do not
-    # need to change.
-    if "chebi_id" not in _UNIFIED_MAPPINGS.columns and "id" in _UNIFIED_MAPPINGS.columns:
-        _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.rename(columns={"id": "chebi_id"})
+    _UNIFIED_MAPPINGS = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
+
+    # Upgrade legacy baselines that used `chebi_id` as the primary column.
+    if "id" not in _UNIFIED_MAPPINGS.columns and "chebi_id" in _UNIFIED_MAPPINGS.columns:
+        _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.rename(columns={"chebi_id": "id"})
+    if "category" not in _UNIFIED_MAPPINGS.columns:
+        # Legacy files omit category. Default to ChemicalSubstance for CHEBI
+        # entries, empty otherwise — downstream code must tolerate empty.
+        _UNIFIED_MAPPINGS["category"] = _UNIFIED_MAPPINGS["id"].map(
+            lambda x: "biolink:ChemicalSubstance" if str(x).startswith("CHEBI:") else ""
+        )
 
     # Cache the path
     _CACHED_PATH = mappings_path
@@ -114,27 +174,40 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
 
 def _build_indices():
     """Build lookup indices from loaded mappings."""
-    global _NAME_INDEX, _CANONICAL_NAME_INDEX, _FORMULA_INDEX, _XREF_INDEX
+    global _NAME_INDEX, _CANONICAL_NAME_INDEX, _HYDRATE_FREE_NAME_INDEX
+    global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX
 
     if _UNIFIED_MAPPINGS is None:
         return
 
     _NAME_INDEX = {}
     _CANONICAL_NAME_INDEX = {}
+    _HYDRATE_FREE_NAME_INDEX = {}
     _FORMULA_INDEX = {}
     _XREF_INDEX = {}
+    _CATEGORY_INDEX = {}
 
     for _, row in _UNIFIED_MAPPINGS.iterrows():
-        chebi_id = row["chebi_id"]
+        curie = row["id"]
+
+        # Index category so downstream transforms can classify without prefix routing.
+        category = row.get("category", "")
+        if curie and category:
+            _CATEGORY_INDEX[curie] = category
 
         # Index canonical name (both full name index and canonical-only index)
         if row["canonical_name"]:
             norm_name = normalize_name(row["canonical_name"])
             if norm_name:
                 if norm_name not in _NAME_INDEX:
-                    _NAME_INDEX[norm_name] = chebi_id
+                    _NAME_INDEX[norm_name] = curie
                 if norm_name not in _CANONICAL_NAME_INDEX:
-                    _CANONICAL_NAME_INDEX[norm_name] = chebi_id
+                    _CANONICAL_NAME_INDEX[norm_name] = curie
+            # Hydrate-free index: only add if stripping actually changed the name,
+            # so lookups with a hydrate suffix can reach the anhydrous entry.
+            norm_hydrate_free = normalize_name(row["canonical_name"], strip_hydrate=True)
+            if norm_hydrate_free and norm_hydrate_free != norm_name:
+                _HYDRATE_FREE_NAME_INDEX.setdefault(norm_hydrate_free, curie)
 
         # Index synonyms (name index only)
         if row["synonyms"]:
@@ -142,14 +215,17 @@ def _build_indices():
                 if synonym:
                     norm_syn = normalize_name(synonym)
                     if norm_syn and norm_syn not in _NAME_INDEX:
-                        _NAME_INDEX[norm_syn] = chebi_id
+                        _NAME_INDEX[norm_syn] = curie
+                    norm_syn_hydrate_free = normalize_name(synonym, strip_hydrate=True)
+                    if norm_syn_hydrate_free and norm_syn_hydrate_free != norm_syn:
+                        _HYDRATE_FREE_NAME_INDEX.setdefault(norm_syn_hydrate_free, curie)
 
         # Index formula
         if row["formula"]:
             formula = row["formula"]
             if formula not in _FORMULA_INDEX:
                 _FORMULA_INDEX[formula] = []
-            _FORMULA_INDEX[formula].append(chebi_id)
+            _FORMULA_INDEX[formula].append(curie)
 
         # Index xrefs
         if row["xrefs"]:
@@ -158,18 +234,32 @@ def _build_indices():
                     # Normalize xref format
                     norm_xref = xref.lower().strip()
                     if norm_xref and norm_xref not in _XREF_INDEX:
-                        _XREF_INDEX[norm_xref] = chebi_id
+                        _XREF_INDEX[norm_xref] = curie
 
 
-def find_chebi_by_name(name: str, synonyms: bool = True, fuzzy_stereochemistry: bool = False) -> Optional[str]:
+def find_chebi_by_name(
+    name: str,
+    synonyms: bool = True,
+    fuzzy_stereochemistry: bool = False,
+    fuzzy_hydrate: bool = False,
+) -> Optional[str]:
     """
-    Lookup ChEBI ID by chemical name.
+    Lookup entry CURIE by ingredient name.
 
-    :param name: Chemical name to search for
+    The unified mapping is keyed on a generic CURIE (`id`), so this function
+    returns any supported ontology CURIE — CHEBI for chemicals, or
+    FOODON/UBERON/ENVO for food/anatomy/environment ingredients — when the
+    name matches. The legacy function name is retained for API stability.
+
+    :param name: Ingredient name to search for
     :param synonyms: If True, search both canonical names and synonyms
                      If False, only search canonical names
     :param fuzzy_stereochemistry: If True and exact match fails, retry with stereochemistry prefixes removed
-    :return: ChEBI ID (e.g., "CHEBI:12345") or None if not found
+    :param fuzzy_hydrate: If True and exact match fails, retry with trailing hydrate suffixes
+                          (e.g. " x n H2O", " · 6 H2O") stripped from the query and also check
+                          a hydrate-free index of canonical/synonym names. Useful for MediaDive
+                          inorganic-hydrate ingredient names.
+    :return: CURIE (e.g., "CHEBI:12345", "FOODON:00002441") or None if not found
     """
     global _NEGATIVE_LOOKUP_CACHE
 
@@ -186,7 +276,7 @@ def find_chebi_by_name(name: str, synonyms: bool = True, fuzzy_stereochemistry: 
         return None
 
     # Check negative lookup cache - skip if we've already failed to find this name
-    cache_key = (norm_name, synonyms, fuzzy_stereochemistry)
+    cache_key = (norm_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
     if cache_key in _NEGATIVE_LOOKUP_CACHE:
         _NEGATIVE_LOOKUP_CACHE.move_to_end(cache_key)  # LRU touch
         return None
@@ -205,6 +295,18 @@ def find_chebi_by_name(name: str, synonyms: bool = True, fuzzy_stereochemistry: 
         norm_name_fuzzy = normalize_name(name, strip_stereochemistry=True)
         if norm_name_fuzzy and norm_name_fuzzy != norm_name and primary_index:
             result = primary_index.get(norm_name_fuzzy)
+
+    # Hydrate fallback:
+    #   1) Strip trailing hydrate suffix from the query and retry against the
+    #      primary index (handles query "CaCl2 x 2 H2O" → entry "calcium chloride").
+    #   2) Look up the un-stripped query in the hydrate-free index (handles the
+    #      reverse: query "calcium chloride" → canonical "calcium chloride x n H2O").
+    if result is None and fuzzy_hydrate:
+        norm_name_no_hydrate = normalize_name(name, strip_hydrate=True)
+        if norm_name_no_hydrate and norm_name_no_hydrate != norm_name and primary_index:
+            result = primary_index.get(norm_name_no_hydrate)
+        if result is None and _HYDRATE_FREE_NAME_INDEX:
+            result = _HYDRATE_FREE_NAME_INDEX.get(norm_name)
 
     # If lookup failed, add to bounded negative cache to avoid retrying
     if result is None:
@@ -274,7 +376,7 @@ def get_canonical_name(chebi_id: str) -> Optional[str]:
 
     if _UNIFIED_MAPPINGS is not None:
         # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "canonical_name"]
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "canonical_name"]
         if not matches.empty:
             name = matches.iloc[0]
             return name if name else None
@@ -298,7 +400,7 @@ def get_synonyms(chebi_id: str) -> List[str]:
 
     if _UNIFIED_MAPPINGS is not None:
         # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "synonyms"]
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "synonyms"]
         if not matches.empty:
             synonyms_str = matches.iloc[0]
             if synonyms_str:
@@ -323,7 +425,7 @@ def get_xrefs(chebi_id: str) -> List[str]:
 
     if _UNIFIED_MAPPINGS is not None:
         # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "xrefs"]
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "xrefs"]
         if not matches.empty:
             xrefs_str = matches.iloc[0]
             if xrefs_str:
@@ -348,12 +450,62 @@ def get_formula(chebi_id: str) -> Optional[str]:
 
     if _UNIFIED_MAPPINGS is not None:
         # Use .loc for O(1) lookup instead of filtering
-        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["chebi_id"] == chebi_id, "formula"]
+        matches = _UNIFIED_MAPPINGS.loc[_UNIFIED_MAPPINGS["id"] == chebi_id, "formula"]
         if not matches.empty:
             formula = matches.iloc[0]
             return formula if formula else None
 
     return None
+
+
+def get_category(curie: str) -> Optional[str]:
+    """
+    Get the biolink category stored for a CURIE in the unified mapping.
+
+    Category is a data column on each row of the unified mapping — there is
+    no prefix-to-category table in code. Returns None if the CURIE is not
+    present or has no category recorded.
+
+    :param curie: Primary CURIE (e.g. "CHEBI:15377", "FOODON:00002441")
+    :return: Biolink category (e.g. "biolink:ChemicalSubstance",
+             "biolink:Food") or None if not found.
+    """
+    if not curie:
+        return None
+    if _UNIFIED_MAPPINGS is None:
+        load_unified_mappings()
+    if _CATEGORY_INDEX:
+        return _CATEGORY_INDEX.get(curie)
+    return None
+
+
+def get_node_enrichment(curie: str) -> Dict[str, str]:
+    """
+    Return KGX enrichment fields for a chemical/ingredient CURIE.
+
+    Returns a dict with keys ``xref``, ``synonym``, ``name`` suitable for
+    populating the corresponding KGX node columns. Values are pipe-joined
+    strings (KGX multivalued convention) or empty strings when absent.
+
+    - ``xref``: equivalent CURIEs from the unified mapping's ``xrefs`` column.
+      Under KGX semantics these are cross-references (CURIE-shaped), not names.
+    - ``synonym``: alternative free-text names from the ``synonyms`` column.
+    - ``name``: canonical name for the CURIE, or empty string when unknown.
+
+    :param curie: Primary CURIE (e.g. "CHEBI:15377", "FOODON:00002441").
+    :return: Dict with ``xref``, ``synonym``, ``name`` keys.
+    """
+    empty = {"xref": "", "synonym": "", "name": ""}
+    if not curie:
+        return empty
+    xrefs = get_xrefs(curie)
+    synonyms = get_synonyms(curie)
+    name = get_canonical_name(curie) or ""
+    return {
+        "xref": "|".join(xrefs) if xrefs else "",
+        "synonym": "|".join(synonyms) if synonyms else "",
+        "name": name,
+    }
 
 
 class ChemicalMappingLoader:
@@ -377,7 +529,11 @@ class ChemicalMappingLoader:
         load_unified_mappings(self.mappings_path)
 
     def find_chebi_by_name(
-        self, name: str, synonyms: bool = True, fuzzy_stereochemistry: bool = False
+        self,
+        name: str,
+        synonyms: bool = True,
+        fuzzy_stereochemistry: bool = False,
+        fuzzy_hydrate: bool = False,
     ) -> Optional[str]:
         """
         Lookup ChEBI ID by chemical name.
@@ -385,9 +541,10 @@ class ChemicalMappingLoader:
         :param name: Chemical name to search for
         :param synonyms: If True, search both canonical names and synonyms
         :param fuzzy_stereochemistry: If True, retry with stereochemistry prefixes removed
+        :param fuzzy_hydrate: If True, retry with trailing hydrate suffixes stripped
         :return: ChEBI ID or None if not found
         """
-        return find_chebi_by_name(name, synonyms, fuzzy_stereochemistry)
+        return find_chebi_by_name(name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
 
     def find_chebi_by_formula(self, formula: str) -> List[str]:
         """
@@ -442,3 +599,21 @@ class ChemicalMappingLoader:
         :return: Molecular formula or None if not found
         """
         return get_formula(chebi_id)
+
+    def get_category(self, curie: str) -> Optional[str]:
+        """
+        Get the biolink category recorded for a CURIE.
+
+        :param curie: Primary CURIE.
+        :return: Biolink category string or None.
+        """
+        return get_category(curie)
+
+    def get_node_enrichment(self, curie: str) -> Dict[str, str]:
+        """
+        Get KGX node enrichment fields (xref, synonym, name) for a CURIE.
+
+        :param curie: Primary CURIE.
+        :return: Dict with ``xref``, ``synonym``, ``name`` keys.
+        """
+        return get_node_enrichment(curie)

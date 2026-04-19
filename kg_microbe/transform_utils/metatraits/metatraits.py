@@ -2856,7 +2856,20 @@ class MetaTraitsTransform(Transform):
 
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
-                            node_writer.write_row(self._create_node_row(curie, category, label))
+                            trait_enrich = (
+                                self.chemical_loader.get_node_enrichment(curie)
+                                if self.chemical_loader is not None
+                                else {"xref": "", "synonym": ""}
+                            )
+                            node_writer.write_row(
+                                self._create_node_row(
+                                    curie,
+                                    category,
+                                    label,
+                                    xref=trait_enrich["xref"] or None,
+                                    synonym=trait_enrich["synonym"] or None,
+                                )
+                            )
 
                         relation = self._get_relation_for_predicate(pred)
                         edge_writer.write_row(
@@ -3470,7 +3483,20 @@ class MetaTraitsTransform(Transform):
 
                             if curie not in seen_trait_nodes:
                                 seen_trait_nodes.add(curie)
-                                node_writer.write_row(self._create_node_row(curie, category, label))
+                                trait_enrich = (
+                                    self.chemical_loader.get_node_enrichment(curie)
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
+                                )
+                                node_writer.write_row(
+                                    self._create_node_row(
+                                        curie,
+                                        category,
+                                        label,
+                                        xref=trait_enrich["xref"] or None,
+                                        synonym=trait_enrich["synonym"] or None,
+                                    )
+                                )
 
                             relation = self._get_relation_for_predicate(pred)
                             edge_writer.write_row(

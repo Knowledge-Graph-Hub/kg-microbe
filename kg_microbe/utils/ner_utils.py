@@ -9,7 +9,6 @@ from oaklib import get_adapter
 from oaklib.datamodels.text_annotator import TextAnnotation, TextAnnotationConfiguration
 
 from kg_microbe.transform_utils.constants import (
-    ACTION_COLUMN,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     END_COLUMN,
@@ -20,12 +19,11 @@ from kg_microbe.transform_utils.constants import (
     OBJECT_CATEGORIES_COLUMN,
     OBJECT_ID_COLUMN,
     OBJECT_LABEL_COLUMN,
-    REPLACEMENT,
     START_COLUMN,
     SUBJECT_LABEL_COLUMN,
-    SUPPLEMENT,
     TRAITS_DATASET_LABEL_COLUMN,
 )
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # LLM_MODEL = "gpt-4"
@@ -44,13 +42,24 @@ def _overlap(a, b):
     return len(set(a) & set(b))
 
 
+def _lookup_in_unified(term: str, loader):
+    """Resolve a term via the unified chemical mapping; return (id, label) or None."""
+    if loader is None or not term:
+        return None
+    curie = loader.find_chebi_by_name(term, fuzzy_stereochemistry=True)
+    if not curie:
+        return None
+    label = loader.get_canonical_name(curie) or term
+    return curie, label
+
+
 def annotate(
     df: pd.DataFrame,
     prefix: str,
     exclusion_list: List,
     outfile: Path,
     llm: bool = False,
-    manual_annotation_path: Path = None,
+    chemical_loader: "ChemicalMappingLoader" = None,
 ):
     """
     Annotate dataframe column text using oaklib + llm.
@@ -58,6 +67,9 @@ def annotate(
     :param df: Input DataFrame
     :param prefix: Ontology to be used.
     :param exclusion_list: Tokens that can be ignored.
+    :param chemical_loader: Optional ChemicalMappingLoader used as a CHEBI fallback
+        when OAK annotation fails. Consults the unified chemical mappings
+        (which already contain the curated chebi_manual_annotation.tsv rows).
     """
     ontology = prefix.strip(":")
     outfile_for_unmatched = outfile.with_name(outfile.stem + "_unmatched" + outfile.suffix)
@@ -136,10 +148,6 @@ def annotate(
         writer_2 = csv.writer(file_2, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_1.writerow(annotated_columns)
         writer_2.writerow(annotated_columns)
-        if manual_annotation_path:
-            manual_annotation_df = pd.read_csv(manual_annotation_path, sep="\t", low_memory=False)
-        else:
-            manual_annotation_df = pd.DataFrame()
 
         for row in df.iterrows():
             terms_split = row[1].iloc[0].split(", ")
@@ -148,36 +156,28 @@ def annotate(
                 if responses:
                     writer = writer_1
                 else:
-                    if not manual_annotation_df.empty:
-                        manual_annotation_row: pd.DataFrame = manual_annotation_df.loc[
-                            manual_annotation_df[TRAITS_DATASET_LABEL_COLUMN] == term
-                        ]
-                    else:
-                        manual_annotation_row = pd.DataFrame()
                     responses = unique_terms_annotated_not_whole_match.get(term, None)
-                    if not manual_annotation_row.empty:
-                        for _, row in manual_annotation_row.iterrows():
-                            if row[ACTION_COLUMN] == REPLACEMENT:
-                                responses[0].object_id = row[OBJECT_ID_COLUMN]
-                                responses[0].object_label = row[OBJECT_LABEL_COLUMN]
-                            elif row[ACTION_COLUMN] == SUPPLEMENT:
-                                tmp_response = TextAnnotation(
-                                    object_id=row[OBJECT_ID_COLUMN],
-                                    object_label=row[OBJECT_LABEL_COLUMN],
+                    unified_hit = _lookup_in_unified(term, chemical_loader)
+                    if unified_hit is not None:
+                        hit_id, hit_label = unified_hit
+                        if responses:
+                            responses[0].object_id = hit_id
+                            responses[0].object_label = hit_label
+                        else:
+                            responses = [
+                                TextAnnotation(
+                                    object_id=hit_id,
+                                    object_label=hit_label,
                                     subject_start=1,
-                                    subject_end=len(row[OBJECT_LABEL_COLUMN]),
+                                    subject_end=len(hit_label) if hit_label else 1,
                                 )
-
-                                responses.append(tmp_response)
-                            else:
-                                print(f"{row[ACTION_COLUMN]} has no action implemented.")
+                            ]
                         writer = writer_1
                     else:
                         writer = writer_2
                 if responses:
                     for response in responses:
                         response_dict = response.__dict__
-                        # response_dict[TAX_ID_COLUMN] = row[1].iloc[0]
                         response_dict[TRAITS_DATASET_LABEL_COLUMN] = term
 
                         # Ensure the order of columns matches the header

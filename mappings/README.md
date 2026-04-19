@@ -13,11 +13,24 @@ The consolidator now writes two complementary artifacts from the same run:
 
 The synonym rows use a synthetic `kgm.name:<slug>` subject namespace so that free-text names have a CURIE subject (SSSOM requires this). Slugs are deterministic via `normalize_name` with spaces → `_`. Both files are rebuilt by the same `scripts/consolidate_chemical_mappings.py` run and cover CHEBI chemicals plus non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments).
 
+### Primary-ID Prefix Preference
+
+When an entity could be keyed by multiple CURIEs, the consolidator picks the highest-ranked prefix (see `_PRIMARY_PREFIX_RANK` in `scripts/consolidate_chemical_mappings.py`):
+
+```
+CHEBI = FOODON = ENVO = UBERON  (ontology-scoped, tied top)
+  > PubChem                      (structured public registry)
+  > CAS-RN = mediadive.ingredient (flat registry + mediadive fallback)
+  > kgmicrobe.compound           (last-resort in-house mint)
+```
+
+The ontology tier is tied because the four prefixes cover disjoint scopes (chemicals, foods, anatomy, environments). `pubchem.compound:*` is preferred over `cas:*` because PubChem CIDs resolve to a structured chemistry record; CAS-RN is a flat registry code. `mediadive.ingredient:N` is the fallback minted by the MediaDive transform when nothing else resolves; `kgmicrobe.compound:*` is reserved for secondary metabolites and antibiotics with no public ID. See `best_primary()` in the consolidator for the exact selection logic.
+
 ### File Structure
 
 | Column | Description |
 |--------|-------------|
-| `id` | Primary key — any supported ontology CURIE. `CHEBI:*` is preferred for chemicals; `FOODON:*`, `UBERON:*`, `ENVO:*` are used for foods, anatomy, and environmental substrates. |
+| `id` | Primary key — picked from the per-row candidates using the prefix preference above. `CHEBI:*` for chemicals; `FOODON:*`, `UBERON:*`, `ENVO:*` for foods, anatomy, and environmental substrates; `pubchem.compound:*` / `cas:*` / `mediadive.ingredient:*` / `kgmicrobe.compound:*` as progressively lower-ranked fallbacks. |
 | `category` | Biolink category stored as a data column so downstream transforms read it instead of deriving it from the CURIE prefix. Values: `biolink:ChemicalSubstance`, `biolink:Food`, `biolink:AnatomicalEntity`, `biolink:EnvironmentalFeature`, etc. |
 | `canonical_name` | Preferred name; wins are decided by the **priority system** below |
 | `formula` | Chemical formula when available (chemicals only); priority-gated |

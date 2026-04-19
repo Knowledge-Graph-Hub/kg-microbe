@@ -580,10 +580,16 @@ class MediaDiveTransform(Transform):
         :return: Standardized ID.
         """
         if compound_name:
-            # First, check unified chemical mappings by compound name
-            chebi_id = self.chemical_loader.find_chebi_by_name(compound_name)
-            if chebi_id:
-                return chebi_id
+            # Check unified chemical mappings by compound name. The unified
+            # mapping is not restricted to CHEBI — it also holds FOODON
+            # foods, UBERON anatomy, and ENVO environments for ingredients
+            # like "Yeast extract", "Defibrinated sheep blood", "Natural
+            # seawater". fuzzy_hydrate=True lets MediaDive names carrying
+            # trailing hydrate specifiers (e.g. "MgCl2 x 6 H2O") resolve to
+            # the anhydrous entry when no exact hydrate-form entry exists.
+            mapped_id = self.chemical_loader.find_chebi_by_name(compound_name, fuzzy_hydrate=True)
+            if mapped_id:
+                return mapped_id
 
             # Fallback: check legacy MicroMediaParam mappings by compound name
             normalized_name = compound_name.lower().strip()
@@ -632,16 +638,20 @@ class MediaDiveTransform(Transform):
             Biolink category (ChemicalEntity or ComplexMolecularMixture)
 
         """
-        from kg_microbe.transform_utils.constants import (
-            COMPLEX_INGREDIENT_CATEGORY,
-        )
+        from kg_microbe.transform_utils.constants import COMPLEX_INGREDIENT_CATEGORY
 
-        # If mapped to ontology, get category from ontologies transform (for CHEBI)
+        # If mapped to ontology, derive the category from the unified
+        # mapping's `category` data column — no prefix routing in code.
         if not ingredient_id.startswith(MEDIADIVE_INGREDIENT_PREFIX):
-            # For CHEBI IDs, use category from ontologies transform to prevent multi-category issues
+            # CHEBI keeps a dedicated path to stay in sync with the
+            # ontologies transform (multi-category reconciliation).
             if ingredient_id.startswith("CHEBI:"):
                 return self._get_chebi_category(ingredient_id)
-            # For other ontology IDs (KEGG, PubChem, CAS-RN), use generic ChemicalEntity
+            # Any other ontology CURIE: read category from the unified file.
+            category = self.chemical_loader.get_category(ingredient_id)
+            if category:
+                return category
+            # Non-ontology IDs (KEGG, PubChem, CAS-RN): generic chemical.
             return INGREDIENT_CATEGORY
 
         # Check name patterns for complex ingredients
@@ -960,14 +970,19 @@ class MediaDiveTransform(Transform):
                             ]
                         )
 
-                    ingredient_nodes = [
-                        self._create_node_row(
-                            v[ID_COLUMN],
-                            self._classify_ingredient_category(v[ID_COLUMN], k),
-                            k,
+                    ingredient_nodes = []
+                    for k, v in ingredients_dict.items():
+                        ingredient_id = v[ID_COLUMN]
+                        enrichment = self.chemical_loader.get_node_enrichment(ingredient_id)
+                        ingredient_nodes.append(
+                            self._create_node_row(
+                                ingredient_id,
+                                self._classify_ingredient_category(ingredient_id, k),
+                                k,
+                                xref=enrichment["xref"] or None,
+                                synonym=enrichment["synonym"] or None,
+                            )
                         )
-                        for k, v in ingredients_dict.items()
-                    ]
                     solution_nodes = [
                         self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()
@@ -997,10 +1012,18 @@ class MediaDiveTransform(Transform):
                                         ]
                                     )
                         # Write role nodes with labels
-                        role_nodes = [
-                            self._create_node_row(role, ROLE_CATEGORY, self.chebi_labels.get(role, ""))
-                            for role in role_set
-                        ]
+                        role_nodes = []
+                        for role in role_set:
+                            role_enrich = self.chemical_loader.get_node_enrichment(role)
+                            role_nodes.append(
+                                self._create_node_row(
+                                    role,
+                                    ROLE_CATEGORY,
+                                    self.chebi_labels.get(role, ""),
+                                    xref=role_enrich["xref"] or None,
+                                    synonym=role_enrich["synonym"] or None,
+                                )
+                            )
                         node_writer.writerows(role_nodes)
                         edge_writer.writerows(role_edges_data)
 

@@ -31,19 +31,28 @@ primary sources 1). Matches can be direct (CURIE xref) or via a synonym.
 Synonyms and xrefs always accumulate (set union) regardless of priority.
 
 The unified mapping keys on a generic CURIE (`id`) rather than just ChEBI.
-Chemicals proper plus ontologies used as media ingredients — CHEBI,
-kgmicrobe.compound, NCIT, FOODON foods, UBERON anatomical ingredients
-(e.g. "beef heart", "sheep blood"), ENVO media components (e.g.
-"seawater") — are written to ``mappings/unified_chemical_mappings.tsv.gz``.
-Any other CURIE prefix (reserved for future non-ingredient mappings such
-as PO plant structures not used as media) goes to the sibling file
+Primary-id prefixes are ranked so that higher-ranked prefixes win when
+multiple candidates exist for the same entity:
+
+    CHEBI = FOODON = ENVO = UBERON   (ontology-scoped, tied top)
+  > PubChem                          (structured public registry)
+  > CAS-RN = mediadive.ingredient    (flat registry + minted fallback)
+  > kgmicrobe.compound               (last-resort in-house mint)
+
+See ``_PRIMARY_PREFIX_RANK`` and ``best_primary()``. Chemicals proper plus
+ontologies used as media ingredients are written to
+``mappings/unified_chemical_mappings.tsv.gz``; any other CURIE prefix
+(reserved for future non-ingredient mappings such as PO plant structures
+not used as media) goes to the sibling file
 ``mappings/unified_other_mappings.tsv.gz``. Both files share the same
 schema; `category` stores the biolink class so downstream transforms can
 classify without hardcoded prefix routing.
 
 Outputs:
-  mappings/unified_chemical_mappings.tsv.gz  (CHEBI, kgmicrobe.compound,
-                                              NCIT, FOODON, UBERON, ENVO)
+  mappings/unified_chemical_mappings.tsv.gz  (CHEBI, FOODON, UBERON, ENVO,
+                                              NCIT, PubChem, CAS,
+                                              mediadive.ingredient,
+                                              kgmicrobe.compound)
   mappings/unified_other_mappings.tsv.gz     (anything else, e.g. PO)
   mappings/unified_ingredient_mappings.sssom.tsv.gz
       Standards-compliant SSSOM mapping set — one row per
@@ -106,8 +115,20 @@ _CATEGORY_BY_PREFIX: Dict[str, str] = {
     "ENVO": "biolink:EnvironmentalFeature",
     "NCIT": "biolink:ChemicalSubstance",
     "PO": "biolink:AnatomicalEntity",
+    # PubChem CID — used as primary when no ontology (CHEBI/FOODON/UBERON/ENVO)
+    # match exists for an ingredient. Ranks above CAS-RN / mediadive.ingredient.
+    "pubchem.compound": "biolink:ChemicalEntity",
+    # CAS registry number — flat registry code, used as primary only when no
+    # higher-ranked prefix resolves (tied with mediadive.ingredient).
+    "cas": "biolink:ChemicalEntity",
+    # MediaDive-minted fallback id for unresolved ingredients. Emitted directly
+    # by the mediadive transform; accepted here so the unified file can carry
+    # curated names/synonyms for these ingredients when no ontology mapping
+    # exists yet (tied with CAS-RN).
+    "mediadive.ingredient": "biolink:ChemicalEntity",
     # KG-Microbe native prefix for chemicals with no public ontology ID
-    # (antibiotics / secondary metabolites minted from metatraits).
+    # (antibiotics / secondary metabolites minted from metatraits). Last-resort
+    # mint — ranks below every other accepted prefix.
     "kgmicrobe.compound": "biolink:ChemicalEntity",
 }
 
@@ -115,12 +136,35 @@ _CATEGORY_BY_PREFIX: Dict[str, str] = {
 # are treated as xrefs (see loaders).
 _ACCEPTED_PREFIXES = tuple(f"{p}:" for p in _CATEGORY_BY_PREFIX.keys())
 
+# Prefix preference for the primary `id` column. Higher rank wins when
+# multiple candidate CURIEs exist for the same entity. Ordering per
+# KG-Microbe convention:
+#     CHEBI = FOODON = ENVO = UBERON   (ontology-scoped, top tier)
+#   > PubChem                          (structured public registry)
+#   > CAS-RN = mediadive.ingredient    (flat registry + minted fallback)
+#   > kgmicrobe.compound               (last-resort in-house mint)
+# Equal-rank entries are only realistic for the tied-ontology tier (scopes
+# are disjoint so collisions rarely materialise) and the CAS/mediadive tier.
+_PRIMARY_PREFIX_RANK: Dict[str, int] = {
+    "CHEBI": 100,
+    "FOODON": 100,
+    "UBERON": 100,
+    "ENVO": 100,
+    "NCIT": 100,
+    "PO": 100,
+    "pubchem.compound": 80,
+    "cas": 60,
+    "mediadive.ingredient": 60,
+    "kgmicrobe.compound": 40,
+}
+
 # Prefixes routed to the unified *chemical* file. Covers chemicals proper
-# (CHEBI, kgmicrobe.compound, NCIT) *and* ontologies used for media
-# ingredients (FOODON foods, UBERON anatomical ingredients like "beef heart"
-# or "sheep blood", ENVO media components like "seawater"). Anything not
-# listed here goes to the unified *other* file — reserved for future
-# non-ingredient mappings (e.g. PO plant structures not used as media).
+# (CHEBI, PubChem, CAS, kgmicrobe.compound, NCIT) *and* ontologies used for
+# media ingredients (FOODON foods, UBERON anatomical ingredients like "beef
+# heart" or "sheep blood", ENVO media components like "seawater"), plus the
+# mediadive-minted fallback (mediadive.ingredient). Anything not listed here
+# goes to the unified *other* file — reserved for future non-ingredient
+# mappings (e.g. PO plant structures not used as media).
 _CHEMICAL_PREFIXES = {
     "CHEBI",
     "kgmicrobe.compound",
@@ -128,6 +172,9 @@ _CHEMICAL_PREFIXES = {
     "FOODON",
     "UBERON",
     "ENVO",
+    "pubchem.compound",
+    "cas",
+    "mediadive.ingredient",
 }
 
 
@@ -142,6 +189,34 @@ def category_for(curie: str) -> str:
 def is_accepted_primary(curie: str) -> bool:
     """Return True if the CURIE is a supported primary key for the unified file."""
     return bool(curie) and curie.startswith(_ACCEPTED_PREFIXES)
+
+
+def prefix_rank(curie: str) -> int:
+    """Return the primary-prefix rank of a CURIE (higher = preferred)."""
+    if not curie or ":" not in curie:
+        return 0
+    return _PRIMARY_PREFIX_RANK.get(curie.split(":", 1)[0], 0)
+
+
+def best_primary(candidates) -> str:
+    """Return the highest-ranked accepted primary CURIE from candidates, or ''.
+
+    Candidates may be any iterable of CURIE strings; non-accepted prefixes and
+    empty strings are discarded before ranking. Within a tied rank, the first
+    candidate in iteration order wins — callers that care about a deterministic
+    tiebreak should pass candidates in their preferred order.
+    """
+    best = ""
+    best_rank = -1
+    for c in candidates:
+        c = (c or "").strip()
+        if not is_accepted_primary(c):
+            continue
+        r = prefix_rank(c)
+        if r > best_rank:
+            best = c
+            best_rank = r
+    return best
 
 
 def is_chemical_curie(curie: str) -> bool:
@@ -234,10 +309,15 @@ class ChemicalMappingConsolidator:
 
         # Update indices. Both canonical_name and any provided synonyms
         # feed the name lookup index so downstream lookups by ingredient
-        # name can resolve through either. When the same name would map
-        # to different CURIEs from different sources, the higher-priority
-        # source wins the lookup — MIM (priority 11) overrides
-        # CultureBotAI (10) which overrides primary sources (priority 1).
+        # name can resolve through either. Tiebreak order when the same
+        # name would map to different CURIEs:
+        #   1. higher *source* priority wins (MIM 11 > CultureBotAI 10 >
+        #      manual 5 > chebi_xrefs 2 > primary 1)
+        #   2. at equal source priority, higher *prefix* rank wins
+        #      (CHEBI/FOODON/UBERON/ENVO > PubChem > CAS/mediadive >
+        #      kgmicrobe.compound) — prevents a cas:* or mediadive.ingredient
+        #      synonym added at priority=1 from clobbering an already-indexed
+        #      CHEBI entry at priority=1.
         def _set_name_index(name: str) -> None:
             norm_name = normalize_name(name)
             if not norm_name:
@@ -248,7 +328,10 @@ class ChemicalMappingConsolidator:
                 return
             if existing_id == id:
                 return
-            if priority > self.chemicals[existing_id]["priority"]:
+            existing_priority = self.chemicals[existing_id]["priority"]
+            if priority > existing_priority:
+                self.name_index[norm_name] = id
+            elif priority == existing_priority and prefix_rank(id) > prefix_rank(existing_id):
                 self.name_index[norm_name] = id
 
         if canonical_name:
@@ -588,11 +671,23 @@ class ChemicalMappingConsolidator:
 
         Columns consumed:
           - ingredient_name     → canonical_name (and added as synonym)
-          - chebi_id            → primary key when present
-          - culturemech_term_id → primary key fallback for FOODON/UBERON/ENVO
+          - chebi_id            → primary key candidate (top-ranked prefix)
+          - culturemech_term_id → primary key candidate for FOODON/UBERON/ENVO
                                   ingredients (meat extract, beef heart,
                                   defibrinated sheep blood, seawater, …)
-          - cas_rn              → xref (`cas:<number>`)
+          - mim_id              → primary key candidate — MediaIngredientMech's
+                                  preferred CURIE, typically FOODON/UBERON/ENVO
+                                  for non-chemical ingredients
+          - kg_microbe_node_id  → primary key candidate — curator's intended
+                                  final primary; usually CHEBI
+          - cas_rn              → primary key candidate (last-resort via
+                                  ``cas:<number>``) when no ontology id
+                                  resolves; also always added as xref
+
+        Primary selection follows the unified prefix ranking
+        (``best_primary``): ontology CURIEs win over PubChem/CAS/mediadive
+        over kgmicrobe.compound. ``cas_rn`` is always recorded as an xref
+        even when a higher-ranked primary is chosen.
         """
         print(f"Loading {filepath}...")
         df = pd.read_csv(filepath, sep="\t", dtype=str).fillna("")
@@ -603,12 +698,21 @@ class ChemicalMappingConsolidator:
             ingredient_name = row.get("ingredient_name", "").strip()
             cas_rn = row.get("cas_rn", "").strip()
             culturemech_term = row.get("culturemech_term_id", "").strip()
+            mim_id = row.get("mim_id", "").strip()
+            kg_node_id = row.get("kg_microbe_node_id", "").strip()
             chebi_id = extract_chebi_id(row.get("chebi_id", ""))
+            cas_curie = f"cas:{cas_rn}" if cas_rn else ""
 
-            # Prefer CHEBI as primary when available; fall back to a non-CHEBI
-            # CURIE in culturemech_term_id for food/anatomy/environment items.
-            primary_id = chebi_id or (
-                culturemech_term if is_accepted_primary(culturemech_term) else ""
+            # Pick the best available primary using the unified prefix rank:
+            # CHEBI/FOODON/UBERON/ENVO/NCIT > PubChem > CAS > mediadive.ingredient
+            # > kgmicrobe.compound. mim_id and kg_microbe_node_id are included
+            # because they routinely carry FOODON/UBERON/ENVO when chebi_id and
+            # culturemech_term_id are empty (e.g. "Yeast extract (BD-Difco)"
+            # has mim_id=FOODON:03315426 but chebi_id/culturemech_term_id blank).
+            # ``cas_curie`` is a last-resort candidate so cas-only rows get a
+            # primary id instead of being dropped.
+            primary_id = best_primary(
+                [chebi_id, culturemech_term, mim_id, kg_node_id, cas_curie]
             )
             if not primary_id:
                 skipped += 1
@@ -616,10 +720,13 @@ class ChemicalMappingConsolidator:
 
             synonyms = [ingredient_name] if ingredient_name else []
             xrefs = []
-            if cas_rn:
-                xrefs.append(f"cas:{cas_rn}")
-            if culturemech_term and culturemech_term != primary_id:
-                xrefs.append(culturemech_term)
+            for candidate in (cas_curie, culturemech_term, mim_id, kg_node_id, chebi_id):
+                if candidate and candidate != primary_id and is_accepted_primary(candidate):
+                    xrefs.append(candidate)
+            # cas_curie may not be an accepted primary on older configs, but we
+            # always want it as an xref when present (independent of primary).
+            if cas_curie and cas_curie != primary_id and cas_curie not in xrefs:
+                xrefs.append(cas_curie)
 
             self.add_chemical(
                 id=primary_id,
@@ -968,6 +1075,7 @@ class ChemicalMappingConsolidator:
         exact_prefixes = {
             "CHEBI", "FOODON", "UBERON", "ENVO", "NCIT",
             "kgmicrobe.compound",
+            "mediadive.ingredient",
             "MIM", "MediaIngredientMech",
             "cas", "kegg.compound", "kegg.drug", "kegg.glycan",
             "pubchem.compound", "hmdb", "drugbank",
@@ -1005,6 +1113,9 @@ class ChemicalMappingConsolidator:
             "MIM": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/mapped/",
             "MediaIngredientMech": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/records/",
             "kgmicrobe.compound": "https://w3id.org/kg-microbe/compound/",
+            # MediaDive-minted fallback id. No upstream resolver; give it a
+            # kg-microbe-scoped IRI so the SSSOM curie_map is complete.
+            "mediadive.ingredient": "https://w3id.org/kg-microbe/mediadive/ingredient/",
             # kgm.name is a synthetic namespace minted by this exporter to
             # give free-text names/synonyms CURIE subjects so they can be
             # expressed as SSSOM mappings. Slugs are deterministic (see

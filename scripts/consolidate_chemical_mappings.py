@@ -11,15 +11,18 @@ disagree about canonical_name/formula for the same entry):
 5. kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv - ChEBI xrefs (priority=2)
 6. kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv         (priority=5)
 7. mappings/culturebotai_reviewed_ingredients.tsv - CultureBotAI reviewed    (priority=10)
-8. mappings/mediaingredientmech_reviewed_ingredients.csv - MediaIngredientMech (priority=11)
+8. mappings/ingredient_mappings.sssom.tsv - MediaIngredientMech SSSOM         (priority=11)
 
 The CultureBotAI and MediaIngredientMech reviewed mappings are
 evidence-based and manually curated. MediaIngredientMech is the
-authoritative canonical-naming source (priority=11): its preferred_term
-becomes the canonical_name shown in kg-microbe. The names actually
-encountered in kg-microbe source data (BacDive, MediaDive, KEGG, …) that
-map to the same CURIE are retained as synonyms, along with CultureBotAI
-and MIM's own preferred_term.
+authoritative canonical-naming source (priority=11): its subject_label
+becomes the canonical_name shown in kg-microbe for symmetric matches
+(``skos:exactMatch``, ``skos:closeMatch``). For asymmetric matches
+(``skos:narrowMatch``, ``skos:broadMatch``) the MIM term is added only
+as a synonym and the ontology's own label is kept canonical. The names
+actually encountered in kg-microbe source data (BacDive, MediaDive,
+KEGG, …) that map to the same CURIE are retained as synonyms, along
+with CultureBotAI and MIM's own subject_label.
 
 Name lookup respects priority: when two sources map the same ingredient
 name to different CURIEs, priority decides the winner
@@ -621,61 +624,77 @@ class ChemicalMappingConsolidator:
 
         print(f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE)")
 
-    def load_mediaingredientmech_reviewed(self, filepath: Path):
+    def load_mediaingredientmech_sssom(self, filepath: Path):
         """
-        Load mappings/mediaingredientmech_reviewed_ingredients.csv.
+        Load mappings/ingredient_mappings.sssom.tsv.
 
         Authoritative: expert-curated media-ingredient → ontology mappings
-        from the MediaIngredientMech project (sibling repo of kg-microbe).
-        The file is an export of
-        ``MediaIngredientMech/data/curated/mapped_ingredients_index.csv``.
+        from the MediaIngredientMech project (sibling repo of kg-microbe),
+        delivered as a standard SSSOM mapping set.
 
-        Columns consumed (CSV, comma-separated):
-          - preferred_term   → canonical_name (and added as synonym)
-          - ontology_id      → primary key (CHEBI/FOODON/UBERON/ENVO/…)
-          - ontology_source  → prefix (informational; prefix is derived from
-                               ontology_id)
-          - mapping_status   → filter: only MAPPED rows are kept
-          - occurrences      → informational only
-          - id (MediaIngredientMech:NNNNNN) → xref
+        SSSOM format:
+          - YAML-style comment header (lines starting with ``#``): curie_map,
+            license, mapping_set_id, mapping_set_version, etc. Skipped by
+            pandas via ``comment='#'``.
+          - One row per MIM → ontology mapping.
 
-        REJECTED / NEEDS_EXPERT / ARCHIVED rows are skipped. Rows whose
-        ``ontology_id`` prefix is not in the consolidator's accepted set
-        are also skipped.
+        Columns consumed:
+          - subject_id        → MIM CURIE; emitted as xref
+          - subject_label     → MIM's curated preferred term for the ingredient.
+                                For symmetric matches (exactMatch, closeMatch)
+                                this becomes the canonical_name. For asymmetric
+                                matches it is added as a synonym only.
+          - predicate_id      → skos predicate; decides symmetric vs asymmetric
+          - object_id         → primary key (CHEBI/FOODON/UBERON/ENVO/…)
+          - object_label      → ontology's canonical name; becomes canonical
+                                for asymmetric matches, added as a synonym in
+                                all cases.
+          - other             → pipe-delimited list of additional MIM-curated
+                                synonyms harvested from the ingredient evidence
+          - confidence        → informational only (all rows kept)
+
+        Rows whose ``object_id`` prefix is not in the consolidator's accepted
+        set are skipped.
         """
         print(f"Loading {filepath}...")
-        df = pd.read_csv(filepath, dtype=str).fillna("")
+        df = pd.read_csv(filepath, sep="\t", dtype=str, comment="#").fillna("")
+
+        symmetric = {"skos:exactMatch", "skos:closeMatch"}
 
         added = 0
         skipped_unsupported = 0
-        skipped_not_mapped = 0
         for _, row in df.iterrows():
-            if row.get("mapping_status", "").strip() != "MAPPED":
-                skipped_not_mapped += 1
-                continue
-
-            ontology_id = row.get("ontology_id", "").strip()
-            if not is_accepted_primary(ontology_id):
-                # Try to recover CHEBI from numeric-only values.
-                recovered = extract_chebi_id(ontology_id)
+            object_id = row.get("object_id", "").strip()
+            if not is_accepted_primary(object_id):
+                recovered = extract_chebi_id(object_id)
                 if not recovered:
                     skipped_unsupported += 1
                     continue
-                ontology_id = recovered
+                object_id = recovered
 
-            preferred_term = row.get("preferred_term", "").strip()
-            mim_id = row.get("id", "").strip()
+            predicate = row.get("predicate_id", "").strip()
+            subject_id = row.get("subject_id", "").strip()
+            subject_label = row.get("subject_label", "").strip()
+            object_label = row.get("object_label", "").strip()
+            other = row.get("other", "").strip()
 
-            synonyms = [preferred_term] if preferred_term else []
-            xrefs = [mim_id] if mim_id.startswith("MediaIngredientMech:") else []
+            # Symmetric matches: MIM's curated term wins canonical naming.
+            # Asymmetric (narrow/broad): ontology label stays canonical; MIM
+            # term is still captured as a synonym.
+            if predicate in symmetric:
+                canonical = subject_label
+            else:
+                canonical = object_label
 
-            # MIM is the canonical naming source for kg-microbe: its
-            # preferred_term becomes the canonical_name for the resolved
-            # CURIE, and kg-microbe source data terms that map to the same
-            # CURIE (loaded at priority=1) are retained in the synonyms set.
+            synonyms = [s for s in (subject_label, object_label) if s]
+            if other:
+                synonyms.extend(s.strip() for s in other.split("|") if s.strip())
+
+            xrefs = [subject_id] if subject_id.startswith("MIM:") else []
+
             self.add_chemical(
-                id=ontology_id,
-                canonical_name=preferred_term,
+                id=object_id,
+                canonical_name=canonical,
                 synonyms=synonyms,
                 xrefs=xrefs,
                 source="mediaingredientmech_reviewed",
@@ -684,9 +703,8 @@ class ChemicalMappingConsolidator:
             added += 1
 
         print(
-            f"  Loaded {added} MIM reviewed entries "
-            f"(skipped {skipped_unsupported} unsupported prefix, "
-            f"{skipped_not_mapped} not-MAPPED)"
+            f"  Loaded {added} MIM SSSOM entries "
+            f"(skipped {skipped_unsupported} unsupported object_id prefix)"
         )
 
     def _get_chebi_adapter(self):
@@ -917,9 +935,9 @@ def main():
         base_dir / "mappings" / "culturebotai_reviewed_ingredients.tsv"
     )
 
-    # Authoritative MediaIngredientMech reviewed mappings (required).
-    consolidator.load_mediaingredientmech_reviewed(
-        base_dir / "mappings" / "mediaingredientmech_reviewed_ingredients.csv"
+    # Authoritative MediaIngredientMech SSSOM mapping set (required).
+    consolidator.load_mediaingredientmech_sssom(
+        base_dir / "mappings" / "ingredient_mappings.sssom.tsv"
     )
 
     # Enrich with ChEBI synonyms

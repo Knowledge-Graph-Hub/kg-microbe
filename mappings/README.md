@@ -4,111 +4,104 @@ This directory contains unified chemical mapping resources for KG-Microbe.
 
 ## Unified Chemical Mappings
 
-**`unified_chemical_mappings.tsv.gz`** - Consolidated chemical mappings from all KG-Microbe sources (gzipped TSV)
+**`unified_chemical_mappings.tsv.gz`** — Consolidated ingredient mappings from all KG-Microbe sources (gzipped TSV). Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments) in a single file — there is no sibling table. Consumed in-process by `kg_microbe.utils.chemical_mapping_utils`.
 
 ### File Structure
 
 | Column | Description |
 |--------|-------------|
-| `chebi_id` | Canonical ChEBI identifier (e.g., CHEBI:42758) |
-| `canonical_name` | Preferred chemical name from ChEBI |
-| `formula` | Chemical formula (when available) |
-| `synonyms` | Pipe-delimited list of alternative names |
-| `xrefs` | Pipe-delimited list of external database references |
-| `sources` | Pipe-delimited list of source mapping files |
+| `id` | Primary key — any supported ontology CURIE. `CHEBI:*` is preferred for chemicals; `FOODON:*`, `UBERON:*`, `ENVO:*` are used for foods, anatomy, and environmental substrates. |
+| `category` | Biolink category stored as a data column so downstream transforms read it instead of deriving it from the CURIE prefix. Values: `biolink:ChemicalSubstance`, `biolink:Food`, `biolink:AnatomicalEntity`, `biolink:EnvironmentalFeature`, etc. |
+| `canonical_name` | Preferred name; wins are decided by the **priority system** below |
+| `formula` | Chemical formula when available (chemicals only); priority-gated |
+| `synonyms` | Pipe-delimited union across all sources |
+| `xrefs` | Pipe-delimited union — `cas:*`, `kegg.compound:*`, `pubchem.compound:*`, `MediaIngredientMech:*`, etc. |
+| `sources` | Pipe-delimited provenance tags (one per contributing loader) |
 
-### Statistics
+### Priority System
 
-- **Total chemicals**: 164,702 unique ChEBI IDs
-- **Chemicals with synonyms**: 1,596
-- **Total cross-references**: 405,564
-- **Sources consolidated**: 6 mapping files
+Multiple sources may assert a name or formula for the same `id`. Higher priority wins outright; within the same priority band, the first-loaded non-empty value is retained. Synonyms, xrefs, and sources **always** accumulate (set union).
+
+| Priority | Source tag(s) | Meaning |
+|---|---|---|
+| 11 | `mediaingredientmech_reviewed` | Expert-curated MIM → ontology SSSOM from the MediaIngredientMech sibling repo. MIM is the authoritative canonical-naming source: for symmetric matches (`skos:exactMatch`, `skos:closeMatch`) the MIM `subject_label` becomes the canonical name; for `skos:narrowMatch`/`broadMatch` the ontology label stays canonical and the MIM term becomes a synonym. MIM `subject_id` emitted as xref. |
+| 10 | `culturebotai_reviewed` | Evidence-based, manually reviewed media-ingredient mappings from the CultureBotAI project. |
+| 5 | `manual_annotation*`, `manual_corrections*`, `metatraits_manual*`, `metatraits_chemical_synonyms*`, `metatraits_special_chemicals*` | Expert in-repo curation. |
+| 2 | `chebi_xrefs` | ChEBI ontology's own xref table. Authoritative for xrefs but not preferred for names. |
+| 1 | Everything else (BacDive, MediaDive, KEGG, etc.) | Automatic mappings. |
+
+Duplicate-name resolution (when two different ChEBI IDs carry the same normalized name): highest priority wins; ties break by lowest ChEBI ID. Non-CHEBI categories are ontologically disjoint from CHEBI and from each other, so duplicate-name merging is skipped for them — a FOODON food and a CHEBI chemical with the same label remain distinct rows.
 
 ### Source Files Consolidated
 
-1. **`chemical_mappings.tsv`** - KEGG/BacDive to ChEBI mappings
-   - Original KEGG compound IDs
-   - BacDive API terms
-   - BacDive metabolite names
+| # | Source | Priority | Present on disk? | Notes |
+|---|---|---|---|---|
+| 1 | `mappings/chemical_mappings.tsv` | 1 | removed (seeded from unified baseline) | Legacy KEGG/BacDive primary mappings. |
+| 2 | `data/raw/compound_mappings_strict.tsv` | 1 | present | MediaDive ingredient compound table. |
+| 3 | `data/raw/compound_mappings_strict_hydrate.tsv` | 1 | present | Hydrate/anhydrous cross-links. |
+| 4 | `kg_microbe/transform_utils/bacdive/metabolite_mapping.json` | 1 | present | BacDive antibiotic/metabolite mappings (~197). |
+| 5 | `kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv` | 2 | removed (seeded from unified baseline) | ChEBI xref table (CAS, KEGG, PubChem, …). |
+| 6 | `kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv` | 5 | present | Trait-dataset expert corrections. |
+| 7 | `mappings/culturebotai_reviewed_ingredients.tsv` | 10 | present | **Authoritative.** CultureBotAI reviewed ingredients. |
+| 8 | `mappings/ingredient_mappings.sssom.tsv` | 11 | present | **Authoritative.** MediaIngredientMech SSSOM mapping set (sibling repo export of `MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv`). Contains 1,090 MIM→ontology rows with predicate-typed matches (exactMatch / closeMatch / narrowMatch). |
 
-2. **`data/raw/compound_mappings_strict.tsv`** - MediaDive ingredient mappings
-   - Growth medium ingredients
-   - Complex ingredients (peptone, yeast extract)
-   - Concentration and unit metadata
+Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `unified_chemical_mappings.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `sources` column.
 
-3. **`data/raw/compound_mappings_strict_hydrate.tsv`** - Hydrated compound mappings
-   - Hydrated forms (e.g., CuSO4.5H2O)
-   - Base compound identification
-   - Corrected molar concentrations
+### Regenerating
 
-4. **`kg_microbe/transform_utils/bacdive/metabolite_mapping.json`** - BacDive metabolites
-   - Antibiotics and resistance markers
-   - 197 manually curated mappings
+```bash
+poetry run python scripts/consolidate_chemical_mappings.py
+```
 
-5. **`kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv`** - ChEBI cross-references
-   - CAS Registry Numbers
-   - KEGG Compound IDs
-   - PubChem IDs
-   - Other database identifiers
-
-6. **`kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv`** - Expert annotations
-   - Manually curated corrections
-   - Trait dataset mappings
+Pipeline order:
+1. Seed from the existing `mappings/unified_chemical_mappings.tsv.gz` (priority reconstructed per row from source labels).
+2. Layer in any still-present legacy inputs (absent ones are skipped).
+3. Load `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
+4. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11).
+5. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
+6. Merge duplicate-name records (highest priority wins).
+7. Write the gzipped unified TSV.
 
 ### Usage Examples
 
-#### Find a chemical by name
 ```bash
+# Find an ingredient by name
 gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep -i "glucose"
+
+# All synonyms for an id
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1=="CHEBI:42758" {print $5}'
+
+# Ingredients carrying the MediaIngredientMech tag
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep mediaingredientmech_reviewed | head
+
+# All FOODON foods
+gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1 ~ /^FOODON:/'
 ```
 
-#### Get all synonyms for a ChEBI ID
+Prefer the Python reader API (`kg_microbe.utils.chemical_mapping_utils.find_chebi_by_name`, `find_chebi_by_xref`, `find_chebi_by_formula`, `get_canonical_name`, `get_category`) inside transforms — it loads the file once per process and serves O(1) lookups. `find_chebi_by_name` is a legacy name; it returns any supported CURIE, including FOODON / UBERON / ENVO.
+
+### Known Limitations
+
+- **CAS format.** Stored as `cas:<dash-separated>` xrefs (e.g. `cas:7647-14-5`). Consumers must include the `cas:` prefix.
+- **MIM schema** carries no CAS RN column, so CAS coverage for MIM-only ChEBI IDs comes from the ChEBI xref table (priority=2), not MIM itself.
+- **Priority inference on baseline reseed**: when `load_existing_unified` re-ingests the current `.tsv.gz`, the priority field is reconstructed from source-label prefixes. A brand-new priority tier also requires updating `priority_for` inside that loader.
+
+### Validation
+
 ```bash
-gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1=="CHEBI:42758" {print $4}'
+poetry run python mappings/validate_manual_mappings.py
 ```
 
-#### Find chemicals with KEGG cross-references
-```bash
-gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep "kegg.compound"
-```
+Checks every manually curated ChEBI ID (priority-5 and priority-10 rows that are not `chebi_xrefs`) against OLS4 labels. Output: `mappings/manual_mapping_audit_report.tsv`.
 
-### Regenerating the Unified Mapping
+### Skill
 
-To regenerate the unified mapping file after updating source files:
-
-```bash
-python scripts/consolidate_chemical_mappings.py
-```
-
-This will:
-1. Load all source mapping files
-2. Merge entries by ChEBI ID
-3. Consolidate synonyms and cross-references
-4. Deduplicate by normalized chemical name
-5. Export to `mappings/unified_chemical_mappings.tsv.gz` (gzipped)
-
-### Notes
-
-- **Deduplication**: Entries with the same normalized chemical name are merged, with the lowest ChEBI ID retained as primary
-- **Synonyms**: All variant names from different sources are collected (case variations, alternative names)
-- **Cross-references**: External database IDs are preserved with their source prefix (e.g., `kegg.compound:C00031`)
-- **Hydrates**: Hydrated forms are linked to their anhydrous base compounds via cross-references
-
-### Data Quality
-
-- **High-confidence mappings**: KEGG and ChEBI cross-references are well-established
-- **Medium-confidence**: MediaDive ingredient mappings may have complex/mixture compounds
-- **Manual curation**: Expert annotations provide corrections for trait dataset terms
-
-### Related Files
-
-- **`chemical_mappings_mismatches.tsv`** - Compounds that couldn't be mapped to ChEBI
-- **Original source files** - Preserved in their original locations for reference
+A Claude Code skill (`.claude/skills/chemical-mapping/SKILL.md`) documents the full process — sources, priority system, reader API, common debugging tasks, and regeneration — and is invoked automatically when the relevant files are touched.
 
 ## Maintenance
 
-Last updated: 2026-03-16
+Last updated: 2026-04-18
 
 Maintainer: KG-Microbe team
 
-For questions or to report mapping errors, please open an issue on the KG-Microbe GitHub repository.
+For mapping errors or questions, open an issue on the KG-Microbe GitHub repository.

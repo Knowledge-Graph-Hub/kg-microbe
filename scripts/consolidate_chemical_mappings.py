@@ -28,18 +28,24 @@ primary sources 1). Matches can be direct (CURIE xref) or via a synonym.
 Synonyms and xrefs always accumulate (set union) regardless of priority.
 
 The unified mapping keys on a generic CURIE (`id`) rather than just ChEBI.
-Chemical entries (CHEBI, kgmicrobe.compound, NCIT) are written to
-``mappings/unified_chemical_mappings.tsv.gz``; non-chemical ingredients
-(FOODON foods, UBERON anatomy, ENVO environments, PO) are written to the
-sibling file ``mappings/unified_other_mappings.tsv.gz``. Both files share
-the same schema; `category` stores the biolink class so downstream
-transforms can classify without hardcoded prefix routing.
+Chemicals proper plus ontologies used as media ingredients — CHEBI,
+kgmicrobe.compound, NCIT, FOODON foods, UBERON anatomical ingredients
+(e.g. "beef heart", "sheep blood"), ENVO media components (e.g.
+"seawater") — are written to ``mappings/unified_chemical_mappings.tsv.gz``.
+Any other CURIE prefix (reserved for future non-ingredient mappings such
+as PO plant structures not used as media) goes to the sibling file
+``mappings/unified_other_mappings.tsv.gz``. Both files share the same
+schema; `category` stores the biolink class so downstream transforms can
+classify without hardcoded prefix routing.
 
 Outputs:
-  mappings/unified_chemical_mappings.tsv.gz  (CHEBI, kgmicrobe.compound, NCIT)
-  mappings/unified_other_mappings.tsv.gz     (FOODON, UBERON, ENVO, PO)
+  mappings/unified_chemical_mappings.tsv.gz  (CHEBI, kgmicrobe.compound,
+                                              NCIT, FOODON, UBERON, ENVO)
+  mappings/unified_other_mappings.tsv.gz     (anything else, e.g. PO)
 
-Columns: id, category, canonical_name, formula, synonyms, xrefs, sources
+Columns: id, category, canonical_name, formula, synonyms, xrefs, sources.
+Downstream readers that still expect the legacy `chebi_id` column name
+auto-alias `id` → `chebi_id` on load.
 """
 
 import json
@@ -479,8 +485,8 @@ class ChemicalMappingConsolidator:
         without losing prior content.
 
         Priority is inferred from the ``sources`` column:
+          - mediaingredientmech_reviewed → 11
           - culturebotai_reviewed        → 10
-          - mediaingredientmech_reviewed → 10
           - manual_annotation*           → 5
           - chebi_xrefs                  → 2
           - everything else              → 1
@@ -492,8 +498,8 @@ class ChemicalMappingConsolidator:
             df = pd.read_csv(f, sep="\t", dtype=str).fillna("")
 
         priority_for = {
+            "mediaingredientmech_reviewed": 11,
             "culturebotai_reviewed": 10,
-            "mediaingredientmech_reviewed": 10,
             "manual_annotation": 5,
             "manual_corrections": 5,
             "metatraits_manual": 5,
@@ -788,18 +794,27 @@ class ChemicalMappingConsolidator:
         for curie in sorted(self.chemicals.keys(), key=_sort_key):
             chem = self.chemicals[curie]
 
-            # Sort and join synonyms (filter out None values)
-            synonyms_list = sorted(
-                {_sanitize(s) for s in chem["synonyms"] if s is not None and _sanitize(s)}
-            )
+            # Sort and join synonyms/xrefs/sources. Sanitize each value
+            # exactly once per element — earlier versions sanitized twice
+            # (once in the `if` clause and once in the set comprehension),
+            # which is measurable overhead on large synonym sets.
+            def _clean_set(values):
+                out = set()
+                for v in values:
+                    if v is None:
+                        continue
+                    cleaned = _sanitize(v)
+                    if cleaned:
+                        out.add(cleaned)
+                return sorted(out)
+
+            synonyms_list = _clean_set(chem["synonyms"])
             synonyms_str = "|".join(synonyms_list) if synonyms_list else ""
 
-            # Sort and join xrefs
-            xrefs_list = sorted({_sanitize(x) for x in chem["xrefs"] if _sanitize(x)})
+            xrefs_list = _clean_set(chem["xrefs"])
             xrefs_str = "|".join(xrefs_list) if xrefs_list else ""
 
-            # Sort and join sources
-            sources_list = sorted({_sanitize(s) for s in chem["sources"] if _sanitize(s)})
+            sources_list = _clean_set(chem["sources"])
             sources_str = "|".join(sources_list) if sources_list else ""
 
             record = {
@@ -823,11 +838,15 @@ class ChemicalMappingConsolidator:
         )
 
         # Other file is only written if there are rows to put in it — avoids
-        # littering the repo with an empty placeholder.
+        # littering the repo with an empty placeholder. If a stale file from
+        # a prior run would otherwise be re-ingested as baseline next time,
+        # remove it so the export state matches the current split.
         if other_records:
             pd.DataFrame(other_records).to_csv(
                 other_output_path, sep="\t", index=False, compression="gzip"
             )
+        elif other_output_path.exists():
+            other_output_path.unlink()
 
         def _syn_xref_totals(records):
             syns = sum(len(r["synonyms"].split("|")) for r in records if r["synonyms"])

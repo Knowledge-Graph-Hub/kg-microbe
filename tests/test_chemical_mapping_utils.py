@@ -24,9 +24,17 @@ from kg_microbe.utils.chemical_mapping_utils import (
 @pytest.fixture
 def mock_mappings_file():
     """Create a temporary mock unified mappings file."""
-    # Create mock data
+    # Current schema: `id` primary key with optional `category`. `chebi_id` is
+    # accepted as a legacy alias by ``load_unified_mappings`` but all new
+    # fixtures should use the canonical column name.
     data = {
-        "chebi_id": ["CHEBI:15377", "CHEBI:17234", "CHEBI:16240", "CHEBI:17925"],
+        "id": ["CHEBI:15377", "CHEBI:17234", "CHEBI:16240", "CHEBI:17925"],
+        "category": [
+            "biolink:ChemicalSubstance",
+            "biolink:ChemicalSubstance",
+            "biolink:ChemicalSubstance",
+            "biolink:ChemicalSubstance",
+        ],
         "canonical_name": ["water", "glucose", "hydrogen peroxide", "lactate"],
         "formula": ["H2O", "C6H12O6", "H2O2", "C3H6O3"],
         "synonyms": [
@@ -66,22 +74,20 @@ def mock_mappings_file():
 @pytest.fixture(autouse=True)
 def reset_cache():
     """Reset module-level cache before each test."""
-    chemical_mapping_utils._UNIFIED_MAPPINGS = None
-    chemical_mapping_utils._NAME_INDEX = None
-    chemical_mapping_utils._CANONICAL_NAME_INDEX = None
-    chemical_mapping_utils._FORMULA_INDEX = None
-    chemical_mapping_utils._XREF_INDEX = None
-    chemical_mapping_utils._CACHED_PATH = None
-    chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
+    def _reset():
+        chemical_mapping_utils._UNIFIED_MAPPINGS = None
+        chemical_mapping_utils._NAME_INDEX = None
+        chemical_mapping_utils._CANONICAL_NAME_INDEX = None
+        chemical_mapping_utils._HYDRATE_FREE_NAME_INDEX = None
+        chemical_mapping_utils._FORMULA_INDEX = None
+        chemical_mapping_utils._XREF_INDEX = None
+        chemical_mapping_utils._CATEGORY_INDEX = None
+        chemical_mapping_utils._CACHED_PATH = None
+        chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
+
+    _reset()
     yield
-    # Reset after test too
-    chemical_mapping_utils._UNIFIED_MAPPINGS = None
-    chemical_mapping_utils._NAME_INDEX = None
-    chemical_mapping_utils._CANONICAL_NAME_INDEX = None
-    chemical_mapping_utils._FORMULA_INDEX = None
-    chemical_mapping_utils._XREF_INDEX = None
-    chemical_mapping_utils._CACHED_PATH = None
-    chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
+    _reset()
 
 
 class TestNormalizeName:
@@ -119,7 +125,8 @@ class TestLoadUnifiedMappings:
         df = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
         assert df is not None
         assert len(df) == 4
-        assert "chebi_id" in df.columns
+        assert "id" in df.columns
+        assert "category" in df.columns
         assert "canonical_name" in df.columns
 
     def test_load_caching(self, mock_mappings_file):
@@ -467,7 +474,8 @@ class TestNegativeCache:
         chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
         assert find_chebi_by_name("not_a_real_chemical") is None
         norm = chemical_mapping_utils.normalize_name("not_a_real_chemical")
-        assert (norm, True, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
+        # Cache key is (normalized_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate).
+        assert (norm, True, False, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
 
     def test_cache_cleared_on_reload(self, mock_mappings_file, tmp_path):
         """Reloading from a new mappings path clears the negative cache."""
@@ -481,7 +489,8 @@ class TestNegativeCache:
         other = tmp_path / "other.tsv.gz"
         df = pd.DataFrame(
             {
-                "chebi_id": ["CHEBI:99999"],
+                "id": ["CHEBI:99999"],
+                "category": ["biolink:ChemicalSubstance"],
                 "canonical_name": ["not_a_real_chemical"],
                 "formula": [""],
                 "synonyms": [""],
@@ -504,3 +513,110 @@ class TestNegativeCache:
         for i in range(20):
             find_chebi_by_name(f"no_such_chemical_{i}")
         assert len(chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE) <= 5
+
+
+def _write_gzipped_tsv(path: Path, data: dict) -> None:
+    """Write a dict-of-columns as a gzipped TSV."""
+    df = pd.DataFrame(data)
+    with gzip.open(path, "wt") as f:
+        df.to_csv(f, sep="\t", index=False)
+
+
+class TestSchemaUpgrade:
+
+    """Legacy ``chebi_id`` column still loads; canonical schema is ``id``."""
+
+    def test_legacy_chebi_id_column_loads(self, tmp_path):
+        """A fixture written with the old ``chebi_id`` column still resolves lookups."""
+        legacy_path = tmp_path / "legacy.tsv.gz"
+        _write_gzipped_tsv(
+            legacy_path,
+            {
+                # No `id` column; legacy alias only.
+                "chebi_id": ["CHEBI:15377"],
+                "canonical_name": ["water"],
+                "formula": ["H2O"],
+                "synonyms": ["H2O|oxidane"],
+                "xrefs": ["cas:7732-18-5"],
+                "sources": ["legacy_test"],
+            },
+        )
+        chemical_mapping_utils.load_unified_mappings(legacy_path)
+        assert find_chebi_by_name("water") == "CHEBI:15377"
+        assert find_chebi_by_name("oxidane") == "CHEBI:15377"
+
+
+class TestFuzzyHydrate:
+
+    """Hydrate-suffix retry behavior in ``find_chebi_by_name``."""
+
+    @pytest.fixture
+    def hydrate_mappings_file(self, tmp_path):
+        """Build mappings where one entry carries an explicit hydrate suffix in its canonical name."""
+        path = tmp_path / "hydrate.tsv.gz"
+        _write_gzipped_tsv(
+            path,
+            {
+                # Entry 1: canonical has no hydrate; users may query with one.
+                # Entry 2: canonical has an explicit hydrate suffix; users may query without.
+                "id": ["CHEBI:3312", "KGM:calcium-chloride-nhydrate"],
+                "category": [
+                    "biolink:ChemicalSubstance",
+                    "biolink:ChemicalSubstance",
+                ],
+                "canonical_name": [
+                    "calcium chloride",
+                    "calcium chloride x n H2O",
+                ],
+                "formula": ["CaCl2", ""],
+                "synonyms": ["", ""],
+                "xrefs": ["cas:10043-52-4", ""],
+                "sources": ["hydrate_test", "hydrate_test"],
+            },
+        )
+        return path
+
+    def test_query_with_hydrate_finds_anhydrous_canonical(self, hydrate_mappings_file):
+        """Query "CaCl2 x 2 H2O" → hits entry whose canonical is "calcium chloride" (hydrate stripped from query)."""
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        # Stereochemistry-stripped form of "calcium chloride · 2 H2O" is "calcium chloride".
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
+            == "CHEBI:3312"
+        )
+
+    def test_query_without_hydrate_finds_hydrated_canonical(self, hydrate_mappings_file):
+        """Query without hydrate resolves via the hydrate-free canonical index."""
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        # "calcium chloride" alone should resolve via the hydrate-free canonical
+        # index to the first matching entry. We accept either entry — both are
+        # valid calcium chloride rows — but the lookup must not return None.
+        result = find_chebi_by_name("calcium chloride", fuzzy_hydrate=True)
+        assert result in {"CHEBI:3312", "KGM:calcium-chloride-nhydrate"}
+
+    def test_fuzzy_hydrate_off_does_not_retry(self, hydrate_mappings_file):
+        """A query with a hydrate suffix misses when ``fuzzy_hydrate=False``."""
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False)
+            is None
+        )
+
+    def test_fuzzy_hydrate_cache_key_is_distinct(self, hydrate_mappings_file):
+        """
+        Verify that ``fuzzy_hydrate`` is part of the negative-cache key.
+
+        A miss cached with ``fuzzy_hydrate=False`` must not prevent a retry
+        under ``fuzzy_hydrate=True`` from reaching the hydrate fallback path.
+        """
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        # First call: misses and caches under fuzzy_hydrate=False.
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False)
+            is None
+        )
+        # Second call: same name, fuzzy_hydrate=True — different cache key → hits.
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
+            == "CHEBI:3312"
+        )

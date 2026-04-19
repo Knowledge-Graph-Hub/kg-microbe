@@ -148,7 +148,7 @@ from kg_microbe.utils.chemical_mapping_utils import (
 )
 df = load_unified_mappings()                           # 164k+ rows
 print(normalize_name("Yeast Extract"))                 # → "yeast extract"
-print(df[df["synonyms"].str.contains("yeast extract", case=False, na=False)][["chebi_id","canonical_name","synonyms","sources"]].head())
+print(df[df["synonyms"].str.contains("yeast extract", case=False, na=False)][["id","canonical_name","synonyms","sources"]].head())
 ```
 
 If a name should map but doesn't:
@@ -159,7 +159,7 @@ If a name should map but doesn't:
 
 ## Known limitations
 
-- **CHEBI-keyed only**: `unified_chemical_mappings.tsv.gz` is keyed on ChEBI. Non-chemical ingredients in CultureBotAI (FOODON food items, UBERON anatomy — e.g. "meat extract", "beef heart", "defibrinated sheep blood") have no ChEBI ID and are dropped at ingest. The consolidator prints the skipped count. Extending the schema to accept non-ChEBI primary keys is a follow-up.
+- **Not ChEBI-only anymore**: `unified_chemical_mappings.tsv.gz` and the consolidator now support non-ChEBI primary IDs, including FOODON, UBERON, ENVO, NCIT, `pubchem.compound`, `cas`, `mediadive.ingredient`, and `kgmicrobe.compound`. Some downstream helpers and workflows are still ChEBI-oriented (for example `find_chebi_*` utilities), so callers that assume every row resolves to a ChEBI ID should handle non-ChEBI primary IDs explicitly.
 - **CAS RN format**: stored as `cas:<dash-separated>` xrefs (e.g. `cas:7647-14-5`). Consumers must include the `cas:` prefix when calling `find_chebi_by_xref`.
 - **Priority inference on baseline reseed**: when `load_existing_unified` re-ingests the current `.tsv.gz`, the priority field is reconstructed from the `sources` column via prefix matching. A brand-new priority tier requires updating `priority_for` in that loader as well.
 - **ChEBI enrichment cost**: `enrich_with_chebi_synonyms` iterates every entry through an OAK adapter; it is the slowest step (~165k entries × label + aliases). If `data/raw/chebi.db` is absent, the enrichment is silently skipped.

@@ -20,7 +20,7 @@ _CACHED_PATH: Optional[Path] = None
 
 # Matches a trailing hydrate specifier:
 #   " x n H2O", " · 6 H2O", " . 2H2O", " x 12H2O", etc.
-# Separator can be "x", "X", "·", ".", "*", or the literal " times "/" times".
+# Separator can be "x"/"X" (via IGNORECASE), "·", ".", or "*".
 # Count can be a digit sequence or the literal "n" (variable stoichiometry,
 # common in MediaDive entries). Case-insensitive; anchored at end of string.
 _HYDRATE_SUFFIX_RE = re.compile(

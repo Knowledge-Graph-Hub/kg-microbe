@@ -185,7 +185,7 @@ class MadinEtAlTransform(Transform):
                 exclusion_list,
                 self.nlp_output_dir / chebi_result_fn,
                 False,
-                chemical_loader=ChemicalMappingLoader(),
+                chemical_loader=self.chemical_loader,
             )
             chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
             chebi_result = chebi_result.drop_duplicates()

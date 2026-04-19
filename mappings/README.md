@@ -50,7 +50,7 @@ Multiple sources may assert a name or formula for the same `id`. Higher priority
 | 2 | `chebi_xrefs` | ChEBI ontology's own xref table. Authoritative for xrefs but not preferred for names. |
 | 1 | Everything else (BacDive, MediaDive, KEGG, etc.) | Automatic mappings. |
 
-Duplicate-name resolution (when two different ChEBI IDs carry the same normalized name): highest priority wins; ties break by lowest ChEBI ID. Non-CHEBI categories are ontologically disjoint from CHEBI and from each other, so duplicate-name merging is skipped for them — a FOODON food and a CHEBI chemical with the same label remain distinct rows.
+Normalized-name collisions do not merge records by name; instead, the name lookup index chooses a single winner deterministically. The winner is picked by highest source priority, then by the primary-ID prefix rank described above, and if still tied, by first insertion. Non-CHEBI categories are ontologically disjoint from CHEBI and from each other, so a FOODON food and a CHEBI chemical with the same label remain distinct rows.
 
 ### Source Files Consolidated
 
@@ -80,7 +80,7 @@ Pipeline order:
 4. **Sync MIM SSSOM from sibling repo** (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. If the sibling repo is absent, the vendored copy is used with a warning.
 5. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11) — parsed and validated with the `sssom` Python package before any row is ingested.
 6. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
-7. Merge duplicate-name records (highest priority wins).
+7. Resolve name-index conflicts by priority (highest-priority name mapping wins); no cross-CURIE merge pass is performed.
 8. Write `unified_chemical_mappings.tsv.gz` (runtime index).
 9. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
 

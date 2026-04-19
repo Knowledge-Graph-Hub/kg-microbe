@@ -981,6 +981,111 @@ class ChemicalMappingConsolidator:
 
         print(f"  Enriched {enriched_count} chemicals with {synonym_count} ChEBI synonyms")
 
+    def enrich_with_chebi_xref_labels(self):
+        """
+        Harvest labels/aliases for CHEBI xrefs that don't have their own record.
+
+        Covers the case where a primary record (e.g. a non-CHEBI ingredient,
+        or another CHEBI entry) carries a CHEBI xref that no loader ever
+        promoted to its own row — so the cross-record propagation pass has
+        nothing to pull from. For each such xref we look up its label and
+        aliases via the ChEBI OAK adapter and merge them into the owning
+        record's synonyms.
+        """
+        print("\nEnriching CHEBI xref labels via OAK...")
+        adapter = self._get_chebi_adapter()
+        if not adapter:
+            print("  Skipped - ChEBI adapter not available")
+            return
+
+        primaries = set(self.chemicals.keys())
+        records_augmented = 0
+        synonyms_added = 0
+        for chem in self.chemicals.values():
+            chebi_xrefs = [
+                x for x in chem["xrefs"]
+                if x.startswith("CHEBI:") and x not in primaries
+            ]
+            if not chebi_xrefs:
+                continue
+            added_here: Set[str] = set()
+            for xref in chebi_xrefs:
+                try:
+                    label = adapter.label(xref)
+                    if label:
+                        added_here.add(label)
+                    aliases = adapter.entity_aliases(xref)
+                    added_here.update(a for a in aliases if a)
+                except Exception:  # noqa: S110 - obsolete CHEBI ids are expected to miss
+                    pass
+            # Do not pollute synonyms with this record's own canonical.
+            added_here.discard(chem["canonical_name"])
+            new_syns = added_here - chem["synonyms"]
+            if new_syns:
+                chem["synonyms"].update(new_syns)
+                records_augmented += 1
+                synonyms_added += len(new_syns)
+
+        print(
+            f"  Augmented {records_augmented} records with "
+            f"{synonyms_added} synonyms harvested from CHEBI xrefs"
+        )
+
+    def propagate_synonyms_via_xrefs(self):
+        """
+        Pull names across equivalent-CURIE records into each primary's synonyms.
+
+        When one loader keys an entity by its top-ranked CURIE (e.g., a
+        CHEBI-primary record with ``xrefs=[pubchem.compound:Y, cas:Z]``) and
+        another loader independently created a record keyed by one of those
+        xrefs, the two are semantically the same entity but live as separate
+        rows. This pass reads each record's xrefs, looks up any that are
+        themselves primary keys of other records, and merges the other
+        record's ``canonical_name`` + ``synonyms`` into this record's
+        synonyms. The operation is symmetric — the other record's xrefs
+        typically include the first record's primary CURIE, so both sides
+        pick up each other's names in a single pass.
+
+        The name snapshot is taken up front so newly-added synonyms can't
+        feed back and amplify. Canonical names are never reassigned — only
+        the synonym set accumulates. No records are merged or deleted.
+        """
+        print("\nPropagating synonyms across equivalent-CURIE records via xrefs...")
+        # Snapshot names by primary CURIE before mutation so propagation
+        # uses a fixed input set (no feedback).
+        name_snapshot: Dict[str, Set[str]] = {}
+        for curie, chem in self.chemicals.items():
+            names: Set[str] = set()
+            if chem["canonical_name"]:
+                names.add(chem["canonical_name"])
+            names.update(s for s in chem["synonyms"] if s)
+            if names:
+                name_snapshot[curie] = names
+
+        records_augmented = 0
+        synonyms_added = 0
+        for chem in self.chemicals.values():
+            added_here: Set[str] = set()
+            for xref in chem["xrefs"]:
+                other_names = name_snapshot.get(xref)
+                if not other_names:
+                    continue
+                # Exclude this record's own canonical name from the incoming
+                # set — otherwise it would show up in synonyms.
+                incoming = other_names - {chem["canonical_name"]}
+                new_syns = incoming - chem["synonyms"]
+                if new_syns:
+                    added_here.update(new_syns)
+            if added_here:
+                chem["synonyms"].update(added_here)
+                records_augmented += 1
+                synonyms_added += len(added_here)
+
+        print(
+            f"  Augmented {records_augmented} records with "
+            f"{synonyms_added} cross-CURIE synonyms"
+        )
+
     def export_unified_mapping(
         self,
         chemical_output_path: Path,
@@ -1475,6 +1580,13 @@ def main():
 
     # Enrich with ChEBI synonyms
     consolidator.enrich_with_chebi_synonyms()
+
+    # Harvest labels for CHEBI xrefs that never got their own primary row.
+    consolidator.enrich_with_chebi_xref_labels()
+
+    # Propagate names across equivalent-CURIE records via xrefs so losing
+    # candidates' labels end up on the primary node as synonyms.
+    consolidator.propagate_synonyms_via_xrefs()
 
     # Export unified mapping (split into chemical + other files)
     consolidator.export_unified_mapping(chemical_output_path, other_output_path)

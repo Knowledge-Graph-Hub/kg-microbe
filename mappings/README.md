@@ -80,9 +80,11 @@ Pipeline order:
 4. **Sync MIM SSSOM from sibling repo** (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. If the sibling repo is absent, the vendored copy is used with a warning.
 5. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11) — parsed and validated with the `sssom` Python package before any row is ingested.
 6. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
-7. Resolve name-index conflicts by priority (highest-priority name mapping wins); no cross-CURIE merge pass is performed.
-8. Write `unified_chemical_mappings.tsv.gz` (runtime index).
-9. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
+7. **Harvest CHEBI xref labels via OAK** — for every CHEBI CURIE that appears as an xref but has no primary row of its own, pull its label + aliases into the owning record's synonyms. Closes the gap where a non-CHEBI primary (or a secondary CHEBI ID) carries an xref whose preferred term would otherwise be lost.
+8. **Propagate names across equivalent-CURIE records via xrefs** — for every record, any xref that is itself a primary key of another record contributes that record's `canonical_name` + synonyms into this record's synonyms. Symmetric (both sides pick up each other's names), snapshot-based (no feedback), no record merge or deletion.
+9. Resolve name-index conflicts by priority (highest-priority name mapping wins); no cross-CURIE merge pass is performed.
+10. Write `unified_chemical_mappings.tsv.gz` (runtime index).
+11. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
 
 ### Usage Examples
 

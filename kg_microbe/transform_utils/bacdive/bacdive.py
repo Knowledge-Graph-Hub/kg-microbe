@@ -1640,8 +1640,41 @@ class BacDiveTransform(Transform):
                             print(f"  Using normalized name for lookup: {normalized_name}")
                             full_name = normalized_name
 
-                        # Step 1: Parse genus from scientific name
-                        genus = self._parse_genus_from_scientific_name(full_name)
+                        # Higher-rank direct-lookup shortcut for special patterns
+                        # ("Unidentified actinobacterium", "Rhizobiales (not further classified)", ...).
+                        # The extracted token is itself a class/order/phylum, not a binomial.
+                        # Try NCBITaxon directly before genus parsing, which rejects lowercase
+                        # higher-rank tokens like "actinobacterium".
+                        higher_rank_ncbitaxon_id = None
+                        if is_special:
+                            higher_rank_ncbitaxon_id = self._search_ncbitaxon_by_label(full_name)
+                            if higher_rank_ncbitaxon_id:
+                                print(
+                                    f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}"
+                                )
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    SUBCLASS_PREDICATE,
+                                    INFERRED_SUBCLASS_RELATION,
+                                    higher_rank_ncbitaxon_id,
+                                )
+                                edge_writer.writerow(
+                                    [
+                                        organism_id,
+                                        SUBCLASS_PREDICATE,
+                                        higher_rank_ncbitaxon_id,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
+                                    ]
+                                )
+
+                        # Step 1: Parse genus from scientific name (skipped if higher-rank matched)
+                        genus = (
+                            None
+                            if higher_rank_ncbitaxon_id
+                            else self._parse_genus_from_scientific_name(full_name)
+                        )
 
                         if genus:
                             print(f"  Extracted genus: {genus}")
@@ -1858,7 +1891,7 @@ class BacDiveTransform(Transform):
                                         ]
                                     )
                                     print(f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}")
-                        else:
+                        elif not higher_rank_ncbitaxon_id:
                             print(f"  Could not parse genus from: {full_name}")
                             print("  Strain will remain unmapped")
 

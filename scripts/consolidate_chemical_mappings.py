@@ -624,6 +624,36 @@ class ChemicalMappingConsolidator:
 
         print(f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE)")
 
+    @staticmethod
+    def _validate_sssom_file(filepath: Path) -> None:
+        """
+        Validate an SSSOM mapping set with the ``sssom`` package.
+
+        Runs two checks:
+          1. LinkML JSON-Schema validation against ``sssom-schema`` via
+             ``sssom.validators.validate`` (with ``fail_on_error=True`` so
+             any schema violation raises).
+          2. ``check_all_prefixes_in_curie_map`` — every CURIE prefix used
+             in the data rows must be declared in the file's ``curie_map``
+             header.
+
+        Raises the underlying exception from ``sssom`` on any failure;
+        the consolidator should abort rather than ingest an invalid set.
+        """
+        from sssom.parsers import parse_sssom_table
+        from sssom.validators import (
+            SchemaValidationType,
+            check_all_prefixes_in_curie_map,
+            validate,
+        )
+
+        print(f"Validating SSSOM file {filepath}...")
+        msdf = parse_sssom_table(str(filepath))
+        validate(msdf, [SchemaValidationType.JsonSchema], fail_on_error=True)
+        check_all_prefixes_in_curie_map(msdf)
+        print(f"  ✓ SSSOM validation passed ({len(msdf.df)} rows, "
+              f"{len(msdf.prefix_map)} prefixes)")
+
     def load_mediaingredientmech_sssom(self, filepath: Path):
         """
         Load mappings/ingredient_mappings.sssom.tsv.
@@ -632,11 +662,11 @@ class ChemicalMappingConsolidator:
         from the MediaIngredientMech project (sibling repo of kg-microbe),
         delivered as a standard SSSOM mapping set.
 
-        SSSOM format:
-          - YAML-style comment header (lines starting with ``#``): curie_map,
-            license, mapping_set_id, mapping_set_version, etc. Skipped by
-            pandas via ``comment='#'``.
-          - One row per MIM → ontology mapping.
+        The file is parsed and validated by the ``sssom`` package against
+        the published ``sssom-schema`` (LinkML JSON Schema) and its curie
+        map is cross-checked before any row is consumed. Validation errors
+        abort the consolidator rather than silently contaminating the
+        unified mapping.
 
         Columns consumed:
           - subject_id        → MIM CURIE; emitted as xref
@@ -656,6 +686,7 @@ class ChemicalMappingConsolidator:
         Rows whose ``object_id`` prefix is not in the consolidator's accepted
         set are skipped.
         """
+        self._validate_sssom_file(filepath)
         print(f"Loading {filepath}...")
         df = pd.read_csv(filepath, sep="\t", dtype=str, comment="#").fillna("")
 

@@ -93,6 +93,13 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
     # Fill NaN with empty strings
     _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.fillna("")
 
+    # Schema-compat: the consolidator now emits `id` as the primary key
+    # column (to accommodate non-CHEBI prefixes like FOODON/UBERON/ENVO).
+    # Alias back to the legacy `chebi_id` name so downstream readers do not
+    # need to change.
+    if "chebi_id" not in _UNIFIED_MAPPINGS.columns and "id" in _UNIFIED_MAPPINGS.columns:
+        _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.rename(columns={"id": "chebi_id"})
+
     # Cache the path
     _CACHED_PATH = mappings_path
 

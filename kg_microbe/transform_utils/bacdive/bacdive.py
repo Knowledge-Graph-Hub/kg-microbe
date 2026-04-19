@@ -1702,11 +1702,20 @@ class BacDiveTransform(Transform):
                         # higher-rank tokens like "actinobacterium".
                         higher_rank_ncbitaxon_id = None
                         if is_special:
+                            # Fast path: check the preloaded name→id dict for each
+                            # candidate (O(1) per try) before any OAK fallback.
+                            # A full OAK search per candidate is too expensive here:
+                            # 5 candidates × obscure tokens × 99k strains adds up.
                             for candidate in self._higher_rank_candidates(full_name):
-                                higher_rank_ncbitaxon_id = self._search_ncbitaxon_by_label(candidate)
-                                if higher_rank_ncbitaxon_id:
+                                dict_hit = self.ncbitaxon_name_to_id.get(candidate.lower())
+                                if dict_hit:
+                                    higher_rank_ncbitaxon_id = dict_hit
                                     full_name = candidate
                                     break
+                            # Single OAK fallback on the original extract if nothing
+                            # in the candidate list was preloaded.
+                            if not higher_rank_ncbitaxon_id:
+                                higher_rank_ncbitaxon_id = self._search_ncbitaxon_by_label(full_name)
                             if higher_rank_ncbitaxon_id:
                                 print(
                                     f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}"

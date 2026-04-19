@@ -12,6 +12,10 @@ disagree about canonical_name/formula for the same entry):
 6. kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv         (priority=5)
 7. mappings/culturebotai_reviewed_ingredients.tsv - CultureBotAI reviewed    (priority=10)
 8. mappings/ingredient_mappings.sssom.tsv - MediaIngredientMech SSSOM         (priority=11)
+   Auto-synced from the MediaIngredientMech sibling repo
+   (../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv) on every run
+   via ``sync_mim_sssom``. The sibling repo is the source of truth; the
+   vendored copy is refreshed in place whenever its content hash diverges.
 
 The CultureBotAI and MediaIngredientMech reviewed mappings are
 evidence-based and manually curated. MediaIngredientMech is the
@@ -69,13 +73,80 @@ Downstream readers that still expect the legacy `chebi_id` column name
 auto-alias `id` → `chebi_id` on load.
 """
 
+import hashlib
 import json
 import re
+import shutil
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Set
 
 import pandas as pd
+
+# Path (relative to kg-microbe repo root) where the sibling MediaIngredientMech
+# checkout is expected to live. The MIM repo is the source of truth for the
+# ingredient SSSOM mapping set and is synced into ``mappings/`` on every run.
+_MIM_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "mappings" / "ingredient_mappings.sssom.tsv"
+_MIM_VENDORED_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
+
+
+def _file_sha256(path: Path) -> str:
+    """Compute SHA-256 of a file (streaming; safe for large files)."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def sync_mim_sssom(base_dir: Path) -> Path:
+    """
+    Sync the vendored MIM SSSOM mapping from the sibling repo if present.
+
+    The MediaIngredientMech repo is the authoritative source of truth for
+    ingredient → ontology SSSOM mappings and is updated regularly. When
+    checked out as a sibling of kg-microbe, this function refreshes the
+    vendored copy at ``mappings/ingredient_mappings.sssom.tsv`` so the
+    consolidator always ingests the latest curations.
+
+    Behaviour:
+      - sibling present, content differs → overwrite vendored (sibling wins)
+      - sibling present, content matches → no copy, just confirm up-to-date
+      - sibling absent, vendored present → warn and continue with vendored
+      - neither present → raise FileNotFoundError
+
+    Returns the path to use (always the vendored path, which is authoritative
+    once synced).
+    """
+    vendored = (base_dir / _MIM_VENDORED_RELPATH).resolve()
+    sibling = (base_dir / _MIM_SIBLING_RELPATH).resolve()
+
+    if sibling.exists():
+        if not vendored.exists():
+            print(f"Syncing MIM SSSOM (vendored copy missing): {sibling} → {vendored}")
+            shutil.copy2(sibling, vendored)
+        elif _file_sha256(sibling) != _file_sha256(vendored):
+            print(f"Syncing MIM SSSOM from source of truth: {sibling} → {vendored}")
+            shutil.copy2(sibling, vendored)
+        else:
+            print(f"MIM SSSOM up-to-date with sibling repo ({sibling})")
+        return vendored
+
+    if vendored.exists():
+        print(
+            f"Warning: MediaIngredientMech sibling repo not found at {sibling};\n"
+            f"  using vendored copy {vendored} (may be stale — "
+            "clone/pull MediaIngredientMech as a sibling of kg-microbe and re-run)"
+        )
+        return vendored
+
+    raise FileNotFoundError(
+        "MIM SSSOM mapping not found. Expected either:\n"
+        f"  sibling repo: {sibling}\n"
+        f"  vendored copy: {vendored}\n"
+        "Clone MediaIngredientMech (https://github.com/KG-Hub/MediaIngredientMech) "
+        "as a sibling of kg-microbe, or restore the vendored copy."
+    )
 
 
 def normalize_name(name: str) -> str:
@@ -199,7 +270,8 @@ def prefix_rank(curie: str) -> int:
 
 
 def best_primary(candidates) -> str:
-    """Return the highest-ranked accepted primary CURIE from candidates, or ''.
+    """
+    Return the highest-ranked accepted primary CURIE from candidates, or ''.
 
     Candidates may be any iterable of CURIE strings; non-accepted prefixes and
     empty strings are discarded before ranking. Within a tied rank, the first
@@ -498,7 +570,8 @@ class ChemicalMappingConsolidator:
         print(f"  Loaded {len(df)} entries")
 
     def load_metatraits_chemical_mappings(self, filepath: Path):
-        """Load kg_microbe/transform_utils/metatraits/mappings/chemical_mappings.tsv.
+        """
+        Load kg_microbe/transform_utils/metatraits/mappings/chemical_mappings.tsv.
 
         SSSOM-style table mapping metatraits trait phrases (subject_label,
         e.g. "produces: ethanol") to ontology IDs. The subject_label is added
@@ -532,7 +605,8 @@ class ChemicalMappingConsolidator:
         print(f"  Loaded {loaded} entries")
 
     def load_metatraits_special_chemicals(self, filepath: Path):
-        """Load kg_microbe/transform_utils/metatraits/mappings/special_chemical_mappings.tsv.
+        """
+        Load kg_microbe/transform_utils/metatraits/mappings/special_chemical_mappings.tsv.
 
         Manually corrected trait-pattern → ontology-ID overrides for high-frequency
         phrasings the NLP/synonym pipeline gets wrong (e.g. "electron acceptor:
@@ -1395,9 +1469,9 @@ def main():
     )
 
     # Authoritative MediaIngredientMech SSSOM mapping set (required).
-    consolidator.load_mediaingredientmech_sssom(
-        base_dir / "mappings" / "ingredient_mappings.sssom.tsv"
-    )
+    # MIM sibling repo is the source of truth — sync the vendored copy first.
+    mim_sssom_path = sync_mim_sssom(base_dir)
+    consolidator.load_mediaingredientmech_sssom(mim_sssom_path)
 
     # Enrich with ChEBI synonyms
     consolidator.enrich_with_chebi_synonyms()

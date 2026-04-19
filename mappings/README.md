@@ -63,7 +63,7 @@ Duplicate-name resolution (when two different ChEBI IDs carry the same normalize
 | 5 | `kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv` | 2 | removed (seeded from unified baseline) | ChEBI xref table (CAS, KEGG, PubChem, …). |
 | 6 | `kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv` | 5 | present | Trait-dataset expert corrections. |
 | 7 | `mappings/culturebotai_reviewed_ingredients.tsv` | 10 | present | **Authoritative.** CultureBotAI reviewed ingredients. |
-| 8 | `mappings/ingredient_mappings.sssom.tsv` | 11 | present | **Authoritative.** MediaIngredientMech SSSOM mapping set (sibling repo export of `MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv`). Contains 1,090 MIM→ontology rows with predicate-typed matches (exactMatch / closeMatch / narrowMatch). |
+| 8 | `mappings/ingredient_mappings.sssom.tsv` | 11 | present | **Authoritative.** MediaIngredientMech SSSOM mapping set. **Auto-synced on every consolidation run** from the MediaIngredientMech sibling repo (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv`) — MIM is the source of truth; the vendored copy is refreshed when its content hash diverges. Contains 1,090 MIM→ontology rows with predicate-typed matches (exactMatch / closeMatch / narrowMatch). |
 
 Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `unified_chemical_mappings.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `sources` column.
 
@@ -77,11 +77,12 @@ Pipeline order:
 1. Seed from the existing `mappings/unified_chemical_mappings.tsv.gz` (priority reconstructed per row from source labels).
 2. Layer in any still-present legacy inputs (absent ones are skipped).
 3. Load `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
-4. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11) — parsed and validated with the `sssom` Python package before any row is ingested.
-5. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
-6. Merge duplicate-name records (highest priority wins).
-7. Write `unified_chemical_mappings.tsv.gz` (runtime index).
-8. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
+4. **Sync MIM SSSOM from sibling repo** (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. If the sibling repo is absent, the vendored copy is used with a warning.
+5. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11) — parsed and validated with the `sssom` Python package before any row is ingested.
+6. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
+7. Merge duplicate-name records (highest priority wins).
+8. Write `unified_chemical_mappings.tsv.gz` (runtime index).
+9. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
 
 ### Usage Examples
 

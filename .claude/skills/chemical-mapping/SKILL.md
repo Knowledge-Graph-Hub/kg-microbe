@@ -23,7 +23,7 @@ win tie-breaks during duplicate-name merging.
 
 | Path | Role |
 |---|---|
-| `mappings/unified_ingredient_mappings.sssom.tsv` | **Primary mapping product.** Standards-compliant SSSOM mapping set: one row per `xref-CURIE → primary-CURIE` equivalence. Validated with the `sssom` Python package on every write. |
+| `mappings/unified_ingredient_mappings.sssom.tsv.gz` | **Primary mapping product.** Standards-compliant SSSOM mapping set covering xrefs (`skos:exactMatch`) + canonical names + free-text synonyms via synthetic `kgm.name:<slug>` subjects (`skos:exactMatch` / `skos:closeMatch`, justification `semapv:LexicalMatching`). Validated with the `sssom` Python package on every write. |
 | `mappings/unified_chemical_mappings.tsv.gz` | **In-process runtime index.** 7-col gzipped TSV consumed by all transforms. Entity-centric (one row per primary CURIE). Needed because plain-string synonyms cannot be represented as SSSOM subjects. Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments) in a single file. |
 | `scripts/dump_unmapped_mediadive_ingredients.py` | Emits a MIM-compatible TSV of MediaDive ingredients still unmapped after the current mappings + `fuzzy_hydrate` retry, for curator review. |
 | `mappings/culturebotai_reviewed_ingredients.tsv` | Authoritative reviewed source from CultureBotAI (priority=10). |

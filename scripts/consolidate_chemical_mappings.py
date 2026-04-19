@@ -45,7 +45,7 @@ Outputs:
   mappings/unified_chemical_mappings.tsv.gz  (CHEBI, kgmicrobe.compound,
                                               NCIT, FOODON, UBERON, ENVO)
   mappings/unified_other_mappings.tsv.gz     (anything else, e.g. PO)
-  mappings/unified_ingredient_mappings.sssom.tsv
+  mappings/unified_ingredient_mappings.sssom.tsv.gz
       Standards-compliant SSSOM mapping set — one row per
       (xref CURIE → unified primary CURIE) equivalence. This file is the
       kg-microbe **primary mapping product** for interoperability: it is
@@ -933,19 +933,32 @@ class ChemicalMappingConsolidator:
 
         The in-repo TSV.GZ remains the fast O(1) runtime index consulted by
         transforms via ``kg_microbe.utils.chemical_mapping_utils``; the SSSOM
-        export projects the same equivalence data into the SSSOM standard so
-        downstream consumers do not need to learn the kg-microbe schema.
+        export projects the same mapping data — xrefs **and** free-text
+        synonyms — into the SSSOM standard so downstream consumers do not
+        need to learn the kg-microbe schema.
 
-        Free-text synonyms (no CURIE subject) are *not* materialized in the
-        SSSOM — SSSOM requires CURIE subjects. Plain-string synonym lookup
-        continues to be served by the TSV.GZ index.
+        Free-text synonyms are materialised by minting a synthetic
+        ``kgm.name:<slug>`` subject per normalised name. ``slug`` is the
+        output of ``normalize_name`` with spaces replaced by ``_``. Multiple
+        entries can share the same slug (name collisions across chemicals
+        are rare but valid — SSSOM supports many-to-one / one-to-many
+        mappings natively).
 
         Predicate semantics:
           * Identifier xrefs imported from public chemistry databases use
             ``skos:exactMatch``.
+          * Canonical name → primary CURIE via ``kgm.name:`` uses
+            ``skos:exactMatch`` with ``semapv:LexicalMatching``.
+          * Free-text synonym → primary CURIE via ``kgm.name:`` uses
+            ``skos:closeMatch`` with ``semapv:LexicalMatching`` (synonyms
+            are textually close but not formally equivalent identifiers).
           * Bibliographic / descriptive xref prefixes (pubmed, patent,
             wikipedia.en, …) are not equivalence statements and are skipped
             rather than emitted with a misleading predicate.
+
+        Formula and biolink category are **not** convertible to SSSOM —
+        they are per-entity attributes, not mappings. They stay only in
+        the TSV.GZ runtime index.
         """
         import subprocess
         from datetime import date
@@ -992,6 +1005,11 @@ class ChemicalMappingConsolidator:
             "MIM": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/mapped/",
             "MediaIngredientMech": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/records/",
             "kgmicrobe.compound": "https://w3id.org/kg-microbe/compound/",
+            # kgm.name is a synthetic namespace minted by this exporter to
+            # give free-text names/synonyms CURIE subjects so they can be
+            # expressed as SSSOM mappings. Slugs are deterministic (see
+            # normalize_name) so regenerations stay stable.
+            "kgm.name": "https://w3id.org/kg-microbe/name/",
         }
         # Generic bioregistry fallback for everything else we emit.
         for prefix in sorted(exact_prefixes):
@@ -1028,12 +1046,37 @@ class ChemicalMappingConsolidator:
             prefix, local = value.split(":", 1)
             return bool(prefix) and bool(local)
 
+        def _slugify_name(name: str) -> str:
+            """
+            Produce a CURIE-safe slug from a free-text name.
+
+            ``normalize_name`` lowercases and strips punctuation but keeps
+            unicode letters (β/α/ζ/þ/υ/…) that the SSSOM validator rejects
+            as invalid CURIE local IDs. Fold those to ASCII via NFKD
+            decomposition + drop remaining non-ASCII, then substitute
+            underscores for spaces. If folding empties the string, return
+            "" so the caller can skip the row.
+            """
+            import unicodedata
+            norm = normalize_name(name)
+            if not norm:
+                return ""
+            folded = unicodedata.normalize("NFKD", norm).encode("ascii", "ignore").decode("ascii")
+            folded = folded.replace(" ", "_")
+            # Keep only CURIE-safe chars (pchar-ish: alnum, underscore, hyphen,
+            # dot). Everything else collapses away.
+            folded = re.sub(r"[^A-Za-z0-9_.\-]", "", folded)
+            return folded.strip("_.-")
+
         # Counters for the summary line.
-        rows_emitted = 0
+        xref_rows = 0
+        name_rows = 0
+        synonym_rows = 0
         skipped_self = 0
         skipped_biblio = 0
         skipped_unknown_prefix = 0
         skipped_malformed = 0
+        skipped_empty_slug = 0
 
         mapping_rows = []
         today = date.today().isoformat()
@@ -1077,7 +1120,59 @@ class ChemicalMappingConsolidator:
                     "confidence": "",
                     "comment": "",
                 })
-                rows_emitted += 1
+                xref_rows += 1
+
+            # Emit the canonical name as an exactMatch row via kgm.name:.
+            # Skip if there's no canonical name (e.g. CHEBI:2 has no label).
+            if chem["canonical_name"]:
+                slug = _slugify_name(chem["canonical_name"])
+                if slug:
+                    mapping_rows.append({
+                        "subject_id": f"kgm.name:{slug}",
+                        "subject_label": _sanitize_tsv(chem["canonical_name"]),
+                        "predicate_id": "skos:exactMatch",
+                        "object_id": object_id,
+                        "object_label": object_label,
+                        "object_source": object_source,
+                        "mapping_justification": "semapv:LexicalMatching",
+                        "source": source_tag,
+                        "mapping_date": today,
+                        "confidence": "",
+                        "comment": "canonical_name",
+                    })
+                    name_rows += 1
+                else:
+                    skipped_empty_slug += 1
+
+            # Emit every synonym as a closeMatch row via kgm.name:. Avoid
+            # duplicating the canonical slug — the canonical row already
+            # carries exactMatch for that subject.
+            canonical_slug = _slugify_name(chem["canonical_name"]) if chem["canonical_name"] else ""
+            seen_synonym_slugs = {canonical_slug} if canonical_slug else set()
+            for syn in sorted(chem["synonyms"]):
+                slug = _slugify_name(syn)
+                if not slug:
+                    skipped_empty_slug += 1
+                    continue
+                if slug in seen_synonym_slugs:
+                    continue
+                seen_synonym_slugs.add(slug)
+                mapping_rows.append({
+                    "subject_id": f"kgm.name:{slug}",
+                    "subject_label": _sanitize_tsv(syn),
+                    "predicate_id": "skos:closeMatch",
+                    "object_id": object_id,
+                    "object_label": object_label,
+                    "object_source": object_source,
+                    "mapping_justification": "semapv:LexicalMatching",
+                    "source": source_tag,
+                    "mapping_date": today,
+                    "confidence": "",
+                    "comment": "synonym",
+                })
+                synonym_rows += 1
+
+        rows_emitted = xref_rows + name_rows + synonym_rows
 
         # Build the header.
         header_lines = ["# curie_map:"]
@@ -1087,7 +1182,7 @@ class ChemicalMappingConsolidator:
             '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
             '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"',
             f'# mapping_set_version: "{today}"',
-            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. One row per xref→primary-CURIE equivalence accumulated across all ingested sources."',
+            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching. Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows."',
             f'# mapping_date: "{today}"',
             f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
             '# extension_definitions:',
@@ -1105,7 +1200,16 @@ class ChemicalMappingConsolidator:
 
         print(f"\nExporting unified SSSOM → {sssom_output_path}")
         sssom_output_path.parent.mkdir(parents=True, exist_ok=True)
-        with sssom_output_path.open("w", encoding="utf-8") as fh:
+        # Gzip if the output path ends in .gz — the sssom parser accepts
+        # gzipped input transparently. Uncompressed the file is ~150 MB
+        # (over GitHub's 100 MB per-file limit); compressed it is ~18 MB.
+        import gzip
+        open_fn = (
+            (lambda p: gzip.open(p, "wt", encoding="utf-8"))
+            if str(sssom_output_path).endswith(".gz")
+            else (lambda p: p.open("w", encoding="utf-8"))
+        )
+        with open_fn(sssom_output_path) as fh:
             for line in header_lines:
                 fh.write(line + "\n")
             fh.write("\t".join(column_order) + "\n")
@@ -1114,8 +1218,12 @@ class ChemicalMappingConsolidator:
 
         print(
             f"  Emitted {rows_emitted} mappings "
-            f"(skipped: self={skipped_self}, bibliographic={skipped_biblio}, "
-            f"unknown_prefix={skipped_unknown_prefix}, malformed={skipped_malformed})"
+            f"(xrefs={xref_rows}, names={name_rows}, synonyms={synonym_rows})"
+        )
+        print(
+            f"  Skipped: self={skipped_self}, bibliographic={skipped_biblio}, "
+            f"unknown_prefix={skipped_unknown_prefix}, malformed={skipped_malformed}, "
+            f"empty_slug={skipped_empty_slug}"
         )
 
         # Round-trip validate with the sssom package.
@@ -1129,7 +1237,7 @@ def main():
 
     chemical_output_path = base_dir / "mappings" / "unified_chemical_mappings.tsv.gz"
     other_output_path = base_dir / "mappings" / "unified_other_mappings.tsv.gz"
-    sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv"
+    sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
 
     # Seed from any existing unified files (split or legacy single-file).
     # Each row preserves its source labels; priority is inferred from them.

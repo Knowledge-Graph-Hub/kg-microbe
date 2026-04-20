@@ -139,71 +139,105 @@ METATRAITS_INPUT_FILES = [
 ]
 
 
-def _get_ncbitaxon_adapter():
-    """Get OAK adapter for NCBITaxon; creates symlink to OAK cache if available."""
-    # Use .db file instead of .owl (NCBITAXON_SOURCE points to .owl)
-    local_db = NCBITAXON_SOURCE.parent / "ncbitaxon.db"
-    oak_cache = Path.home() / ".data" / "oaklib" / "ncbitaxon.db"
+# Minimum plausible size for a healthy NCBITaxon OAK DB. Full file is ~12 GB;
+# any smaller and it's a partial extract/download, regardless of SQLite header.
+_NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
 
-    # Try local database first (could be file or symlink)
-    if local_db.exists():
-        local_path = f"sqlite:{local_db}"
-        try:
-            adapter = get_adapter(local_path)
-            # Verify adapter works (e.g. has statements table)
-            list(adapter.basic_search("Bacteria", limit=1))
-            print(f"  Using local NCBITaxon database: {local_db}")
-            return adapter
-        except Exception as e:
-            print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), trying fallback")
-            # Remove invalid symlink, or quarantine regular file to avoid data loss
-            try:
-                if local_db.is_symlink():
-                    local_db.unlink()
-                    print(f"  Removed invalid symlink: {local_db}")
-                else:
-                    quarantine_path = local_db.with_suffix(local_db.suffix + ".quarantine")
-                    local_db.rename(quarantine_path)
-                    print(f"  Quarantined potentially corrupted database: {quarantine_path}")
-            except OSError as unlink_err:
-                # If cleanup fails, continue to fallback mechanisms
-                print(f"  Could not remove/quarantine database ({unlink_err}), continuing to fallback")
 
-    # If OAK cache exists but no local symlink, create it
-    if oak_cache.exists() and not local_db.exists():
-        try:
-            print(f"  Creating symlink to cached database: {local_db} -> {oak_cache}")
-            local_db.symlink_to(oak_cache)
-            print("  Using cached NCBITaxon database from OAK")
-            return get_adapter(f"sqlite:{local_db}")
-        except FileExistsError:
-            # Another worker created the symlink - verify and use it
-            if local_db.exists() and local_db.is_symlink():
-                return get_adapter(f"sqlite:{local_db}")
-            else:
-                print("  Symlink race condition - file exists but invalid, using remote adapter")
-        except Exception as e:
-            print(f"  Failed to create symlink ({e}), using remote adapter")
+def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
+    """Return (local_db, oak_cache) paths for the NCBITaxon OAK DB."""
+    return (
+        NCBITAXON_SOURCE.parent / "ncbitaxon.db",
+        Path.home() / ".data" / "oaklib" / "ncbitaxon.db",
+    )
 
-    # Fallback: use OAK remote adapter (downloads to cache if not present)
+
+def _validate_ncbitaxon_db(db_path: Path) -> Tuple[bool, str]:
+    """
+    Validate that db_path is a healthy NCBITaxon SQLite DB.
+
+    Checks file size (guards against truncated extractions), then issues a
+    single label lookup via OAK. Returns (ok, reason); reason is empty on success.
+    """
+    try:
+        resolved = db_path.resolve()
+    except OSError as e:
+        return False, f"cannot resolve path: {e}"
+    if not resolved.exists():
+        return False, f"missing: {resolved}"
+    size = resolved.stat().st_size
+    if size < _NCBITAXON_DB_MIN_SIZE:
+        return False, f"too small ({size / 1e6:.1f} MB < {_NCBITAXON_DB_MIN_SIZE / 1e9:.0f} GB)"
+    try:
+        adapter = get_adapter(f"sqlite:{db_path}")
+        list(adapter.basic_search("Bacteria"))
+    except Exception as e:  # noqa: BLE001
+        return False, f"{e.__class__.__name__}: {e}"
+    return True, ""
+
+
+def _ensure_ncbitaxon_db_ready() -> None:
+    """
+    Pre-flight check the NCBITaxon OAK DB (parent-only, before workers fork).
+
+    Guarantees that when workers call :func:`_get_ncbitaxon_adapter` they find a
+    valid DB via the ``data/raw/ncbitaxon.db`` symlink and never need to heal the
+    cache themselves. Healing concurrently across workers is what corrupted the
+    cache in the first place (multiple overlapping downloads to the same path).
+
+    Raises RuntimeError with remediation steps if no valid DB can be found.
+    """
+    local_db, oak_cache = _ncbitaxon_db_paths()
+
+    # Happy path: symlink resolves to a valid DB.
+    ok, reason = _validate_ncbitaxon_db(local_db)
+    if ok:
+        print(f"  NCBITaxon DB validated: {local_db} -> {local_db.resolve()}")
+        return
+
+    print(f"  NCBITaxon DB at {local_db} invalid ({reason}); attempting repair")
+
+    # Attempt repair from OAK cache.
     if oak_cache.exists():
-        print("  Using cached NCBITaxon database from OAK")
-    else:
-        print("  Downloading NCBITaxon database from OBO library (~2GB, one-time download)...")
-
-    adapter = get_adapter("sqlite:obo:ncbitaxon")
-
-    # After first download, create symlink for future runs
-    if oak_cache.exists() and not local_db.exists():
-        try:
+        cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
+        if cache_ok:
+            if local_db.exists() or local_db.is_symlink():
+                local_db.unlink()
             local_db.symlink_to(oak_cache)
-            print(f"  Created symlink for future use: {local_db}")
-        except FileExistsError:
-            pass  # Another worker already created it - no need to log
-        except Exception:  # noqa: S110
-            pass  # Symlink creation is optional, don't fail if it doesn't work
+            print(f"  Repaired symlink: {local_db} -> {oak_cache}")
+            return
+        print(f"  OAK cache also invalid ({cache_reason})")
 
-    return adapter
+    # No valid DB anywhere. Fail fast with remediation rather than triggering
+    # concurrent downloads across workers.
+    raise RuntimeError(
+        "NCBITaxon OAK database is missing or corrupt.\n"
+        f"  local: {local_db} ({reason})\n"
+        f"  cache: {oak_cache} ({'missing' if not oak_cache.exists() else 'invalid'})\n"
+        "Remediation:\n"
+        "  1. Remove corrupt cache: rm ~/.data/oaklib/ncbitaxon.db\n"
+        "  2. Re-download sequentially (not in parallel):\n"
+        "     poetry run python -c 'from oaklib import get_adapter; "
+        "get_adapter(\"sqlite:obo:ncbitaxon\")'\n"
+        "  3. Re-run the transform."
+    )
+
+
+def _get_ncbitaxon_adapter():
+    """
+    Get OAK adapter for NCBITaxon. Assumes the DB was validated in the parent.
+
+    Workers MUST NOT attempt cache repair or remote downloads — concurrent heals
+    corrupt the shared cache. If the symlink resolves to a bad DB here, it means
+    parent validation was skipped; raise with a clear message.
+    """
+    local_db, _ = _ncbitaxon_db_paths()
+    if not local_db.exists():
+        raise RuntimeError(
+            f"NCBITaxon DB missing at {local_db}. "
+            "Parent process must call _ensure_ncbitaxon_db_ready() before spawning workers."
+        )
+    return get_adapter(f"sqlite:{local_db}")
 
 
 def _open_jsonl(path: Path):
@@ -1762,9 +1796,13 @@ class MetaTraitsTransform(Transform):
             if has_pigment and metpo_class:
                 return metpo_class
             elif not has_pigment:
-                # Non-pigmented - no specific METPO class for this
-                # Skip for now - negative assertions less informative
-                return None
+                # Negative pigmentation assertion: recognized trait but no
+                # METPO term for the negation (METPO:100302x are positive
+                # classes only). Mark as deferred so the caller skips this
+                # row *without* logging to unmapped_traits.tsv — otherwise
+                # "cell color: yellow pigment → false" drowns the unmapped
+                # report with ~1.45M rows of expected negatives.
+                return {"deferred": True}
 
         return None
 
@@ -2709,6 +2747,10 @@ class MetaTraitsTransform(Transform):
                                 label = f"Growth at {nacl_obs['value']}{nacl_obs['unit']} NaCl"
                             elif pigmentation := self._resolve_pigmentation_trait(trait_name, majority_label):
                                 # Tier 3.0c: Pigmentation (cell color: yellow pigment)
+                                # Deferred = recognized but negative (no METPO
+                                # negation class); skip without logging unmapped.
+                                if pigmentation.get("deferred"):
+                                    continue
                                 curie = pigmentation["curie"]
                                 category = pigmentation["category"]
                                 pred = pigmentation["predicate"]
@@ -3572,6 +3614,10 @@ class MetaTraitsTransform(Transform):
         if os.environ.get("METATRAITS_MULTIPROCESSING", "").lower() in ("false", "0", "no"):
             use_mp = False
             print("  Multiprocessing disabled via METATRAITS_MULTIPROCESSING environment variable")
+
+        # Pre-flight check the NCBITaxon DB in the parent. Workers must never
+        # attempt cache repair — concurrent heals corrupt the shared cache.
+        _ensure_ncbitaxon_db_ready()
 
         # Decide whether to use parallel or sequential processing
         try:

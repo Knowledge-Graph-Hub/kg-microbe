@@ -71,6 +71,16 @@ def normalize_name(
     # Convert to lowercase first
     normalized = str(name).lower().strip()
 
+    # Normalize Greek letters to their spelled-out ASCII equivalents so that
+    # e.g. "4-nitrophenyl β-D-glucopyranoside" (ChEBI label form) matches
+    # "4-nitrophenyl beta-D-glucopyranoside" (user-provided form). Must run
+    # BEFORE the non-word-char strip below, which would otherwise drop Greek
+    # letters entirely and merge both forms onto a lossy "-d-..." key.
+    _GREEK_MAP = {"α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "μ": "mu"}
+    for greek, ascii_form in _GREEK_MAP.items():
+        if greek in normalized:
+            normalized = normalized.replace(greek, ascii_form)
+
     if strip_stereochemistry:
         # Strip common stereochemistry prefixes BEFORE general punctuation removal
         # Match: (+)-, (-)-, (R)-, (S)-, D-, L- at start of string

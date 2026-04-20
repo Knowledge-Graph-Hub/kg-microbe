@@ -187,3 +187,9 @@ produces: (E)-4-Aminostyryl acetate	(E)-4-Aminostyryl acetate	kgmicrobe.compound
 produces: hortesin	hortesin	kgmicrobe.compound:hortesin	hortesin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: piericidin	piericidin	kgmicrobe.compound:piericidin	piericidin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: casein	casein	FOODON:03420180	casein	METPO:2000202	biolink:Food	Producing casein protein; FOODON:03420180
+oxidation: pyrite	pyrite	CHEBI:86471	pyrite	METPO:2000016	biolink:ChemicalEntity	Iron disulfide (FeS2) oxidation; acidophilic iron/sulfur oxidizers; CHEBI:86471 confirmed as pyrite in chebi.db; metatraits_unmapped[2026-04-19]
+electron donor: pyrite	pyrite	CHEBI:86471	pyrite	METPO:2000009	biolink:ChemicalEntity	FeS2 as electron donor in chemolithotrophs; CHEBI:86471 confirmed; metatraits_unmapped[2026-04-19]
+growth: goethite	goethite	CHEBI:192761	ferrihydrite	METPO:2000012	biolink:ChemicalEntity	Approximate: ChEBI has no exact goethite (alpha-FeO(OH)) term; ferrihydrite is the closest iron(III) oxyhydroxide; flagged as approximation; metatraits_unmapped[2026-04-19]
+growth: soyton	soyton	FOODON:03302071	proteose peptone	METPO:2000012	biolink:Food	Soyton = brand/variant spelling of soya peptone (also "soytone"); maps to proteose peptone; metatraits_unmapped[2026-04-19]
+growth: proteose	proteose	FOODON:03302071	proteose peptone	METPO:2000012	biolink:Food	Generic short form of proteose peptone in media descriptions; FOODON:03302071; metatraits_unmapped[2026-04-19]
+required for growth: serum	serum	UBERON:0001977	blood serum	METPO:2000018	biolink:AnatomicalEntity	Blood serum required as growth factor (e.g. Mycoplasma); UBERON:0001977 already in unified but canonical was renamed to "Digested serum", hence plain "serum" trait_pattern needed; metatraits_unmapped[2026-04-19]

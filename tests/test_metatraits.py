@@ -167,7 +167,15 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertIn("biolink:has_phenotype", predicates)
 
     @parameterized.expand(EXPECTED_EDGES)
-    def test_edge_resolution_round_trip(self, mock_adapter, mock_ensure, subject_label, expected_pred, expected_obj, expected_cat):
+    def test_edge_resolution_round_trip(
+        self,
+        mock_adapter,
+        mock_ensure,
+        subject_label,
+        expected_pred,
+        expected_obj,
+        expected_cat,
+    ):
         """Verify each trait resolves to correct (predicate, object_id, object_category)."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -179,7 +187,15 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertEqual(match["object_category"], expected_cat)
 
     @parameterized.expand(ADDITIONAL_TEST_CASES)
-    def test_additional_edge_resolution(self, mock_adapter, mock_ensure, subject_label, expected_pred, expected_obj, expected_cat):
+    def test_additional_edge_resolution(
+        self,
+        mock_adapter,
+        mock_ensure,
+        subject_label,
+        expected_pred,
+        expected_obj,
+        expected_cat,
+    ):
         """Verify additional trait patterns resolve correctly (Phase 6 expanded coverage)."""
         mappings = load_microbial_trait_mappings()
         if not mappings:

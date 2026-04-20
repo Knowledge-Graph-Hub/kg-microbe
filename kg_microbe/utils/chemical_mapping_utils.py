@@ -42,6 +42,10 @@ _HYDRATE_SUFFIX_RE = re.compile(
 _NEGATIVE_CACHE_MAX_SIZE = 100_000
 _NEGATIVE_LOOKUP_CACHE: "OrderedDict[tuple, None]" = OrderedDict()
 
+# Module-level Greek-letter → ASCII map used by ``normalize_name``. Kept
+# module-scope so it is allocated once, not rebuilt on every call (hot path).
+_GREEK_MAP = {"α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "μ": "mu"}
+
 
 def _negative_cache_add(key: tuple) -> None:
     """Add a miss to the bounded negative cache, evicting oldest if full."""
@@ -76,7 +80,6 @@ def normalize_name(
     # "4-nitrophenyl beta-D-glucopyranoside" (user-provided form). Must run
     # BEFORE the non-word-char strip below, which would otherwise drop Greek
     # letters entirely and merge both forms onto a lossy "-d-..." key.
-    _GREEK_MAP = {"α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "μ": "mu"}
     for greek, ascii_form in _GREEK_MAP.items():
         if greek in normalized:
             normalized = normalized.replace(greek, ascii_form)

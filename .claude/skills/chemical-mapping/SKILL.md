@@ -119,9 +119,12 @@ Behaviour:
 1. Seeds from the existing `mappings/unified_chemical_mappings.tsv.gz` (priority inferred per row from source labels).
 2. Layers in any still-present legacy source files (absent ones are skipped).
 3. Always loads `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
-4. Enriches from `data/raw/chebi.db` via OAK (labels fill only when no higher-priority name is present; aliases always accumulate).
-5. Merges duplicate-name records (highest priority wins).
-6. Writes `mappings/unified_chemical_mappings.tsv.gz`.
+4. Syncs + loads `mappings/ingredient_mappings.sssom.tsv` from the MIM sibling repo (priority=11).
+5. Enriches from `data/raw/chebi.db` via OAK (labels fill only when no higher-priority name is present; aliases always accumulate).
+6. Harvests CHEBI xref labels via OAK into owning-record synonyms.
+7. Propagates names across equivalent-CURIE records via xrefs (symmetric snapshot; no record merge).
+8. Resolves name-index conflicts by source priority (no cross-CURIE merge pass).
+9. Writes `mappings/unified_chemical_mappings.tsv.gz` and the SSSOM mapping product.
 
 ### Add a new mapping source
 

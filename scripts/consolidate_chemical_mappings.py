@@ -357,7 +357,12 @@ class ChemicalMappingConsolidator:
             elif priority == chem["priority"] and not chem["canonical_name"]:
                 chem["canonical_name"] = canonical_name
 
-        # Formula: higher-priority wins, same-priority keeps first non-empty.
+        # Formula: higher-priority wins outright; empty formula is also
+        # fillable from any priority (missing-data fill, not a conflict).
+        # Unlike canonical_name we do not require same-or-higher priority for
+        # empty-fill because formulas are objective chemistry — if one source
+        # has a formula and higher-priority sources simply omit the field,
+        # keeping the formula available is strictly better than dropping it.
         if formula and not pd.isna(formula):
             formula = str(formula)
             if priority > chem["priority"] or not chem["formula"]:

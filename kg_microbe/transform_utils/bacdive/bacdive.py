@@ -2157,7 +2157,7 @@ class BacDiveTransform(Transform):
                             # This makes explicit that the medium is an instance of the "growth medium" ontology class
                             medium_type_edge = [
                                 mid,  # subject: the medium node
-                                "biolink:category",  # predicate: category relationship
+                                SUBCLASS_PREDICATE,  # predicate: instance/subclass of ontology class
                                 "METPO:1004005",  # object: growth medium ontology class
                                 "rdf:type",  # relation: RDF semantics
                                 "infores:metpo",  # knowledge source: METPO ontology

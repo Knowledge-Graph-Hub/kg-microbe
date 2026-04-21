@@ -26,7 +26,6 @@ from tqdm import tqdm  # noqa: E402
 
 from kg_microbe.transform_utils.constants import (  # noqa: E402
     AUTOMATED_AGENT,
-    BIOLOGICAL_PROCESS,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
@@ -45,91 +44,14 @@ from kg_microbe.transform_utils.constants import (  # noqa: E402
 from kg_microbe.transform_utils.transform import Transform  # noqa: E402
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
+from kg_microbe.utils.metpo_predicates import (  # noqa: E402
+    METPO_TO_BIOLINK_PREDICATE,
+    PREDICATE_TO_RELATION,
+    to_biolink_predicate,
+)
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings  # noqa: E402
 from kg_microbe.utils.oak_utils import search_by_label  # noqa: E402
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
-
-# METPO predicate -> biolink predicate (for relation lookup)
-METPO_TO_BIOLINK_PREDICATE = {
-    # Capability and phenotype
-    "METPO:2000101": "biolink:has_attribute",  # has quality
-    "METPO:2000102": "biolink:has_phenotype",  # has phenotype
-    "METPO:2000103": "biolink:capable_of",  # capable of
-    # Chemical interactions (positive)
-    "METPO:2000001": "biolink:interacts_with",  # organism interacts with chemical
-    "METPO:2000002": "biolink:interacts_with",  # assimilates
-    "METPO:2000003": "biolink:produces",  # builds acid from
-    "METPO:2000004": "biolink:produces",  # builds base from
-    "METPO:2000005": "biolink:produces",  # builds gas from
-    "METPO:2000006": "biolink:capable_of",  # uses as carbon source
-    "METPO:2000007": "biolink:capable_of",  # degrades
-    "METPO:2000008": "biolink:capable_of",  # uses as electron acceptor
-    "METPO:2000009": "biolink:capable_of",  # uses as electron donor
-    "METPO:2000010": "biolink:capable_of",  # uses as energy source
-    "METPO:2000011": "biolink:capable_of",  # ferments
-    "METPO:2000012": "biolink:capable_of",  # uses for growth
-    "METPO:2000013": "biolink:capable_of",  # hydrolyzes
-    "METPO:2000014": "biolink:capable_of",  # uses as nitrogen source
-    "METPO:2000015": "biolink:interacts_with",  # uses in other way
-    "METPO:2000016": "biolink:capable_of",  # oxidizes
-    "METPO:2000017": "biolink:capable_of",  # reduces
-    "METPO:2000018": "biolink:capable_of",  # requires for growth
-    "METPO:2000019": "biolink:capable_of",  # uses for respiration
-    "METPO:2000020": "biolink:capable_of",  # uses as sulfur source
-    # Aerobic/anaerobic catabolization and growth (positive)
-    "METPO:2000032": "biolink:capable_of",  # uses for aerobic catabolization
-    "METPO:2000043": "biolink:capable_of",  # uses for aerobic growth
-    "METPO:2000048": "biolink:capable_of",  # uses for anaerobic catabolization
-    "METPO:2000049": "biolink:capable_of",  # uses for anaerobic growth
-    "METPO:2000051": "biolink:capable_of",  # uses for anaerobic growth with light
-    # Chemical interactions (negative)
-    "METPO:2000021": "biolink:capable_of",  # does not use for aerobic catabolization
-    "METPO:2000022": "biolink:capable_of",  # does not use for aerobic growth
-    "METPO:2000024": "biolink:capable_of",  # does not use for anaerobic growth
-    "METPO:2000025": "biolink:capable_of",  # does not use for anaerobic growth in the dark
-    "METPO:2000026": "biolink:capable_of",  # does not use for anaerobic growth with light
-    "METPO:2000027": "biolink:interacts_with",  # does not assimilate
-    "METPO:2000028": "biolink:produces",  # does not build acid from
-    "METPO:2000029": "biolink:produces",  # does not build base from
-    "METPO:2000030": "biolink:produces",  # does not build gas from
-    "METPO:2000031": "biolink:capable_of",  # does not use as carbon source
-    "METPO:2000033": "biolink:capable_of",  # does not degrade
-    "METPO:2000034": "biolink:capable_of",  # does not use as electron acceptor
-    "METPO:2000035": "biolink:capable_of",  # does not use as electron donor
-    "METPO:2000036": "biolink:capable_of",  # does not use as energy source
-    "METPO:2000037": "biolink:capable_of",  # does not ferment
-    "METPO:2000038": "biolink:capable_of",  # does not use for growth
-    "METPO:2000039": "biolink:capable_of",  # does not hydrolyze
-    "METPO:2000040": "biolink:capable_of",  # does not use as nitrogen source
-    "METPO:2000041": "biolink:interacts_with",  # does not use in other way
-    "METPO:2000042": "biolink:capable_of",  # does not oxidize
-    "METPO:2000044": "biolink:capable_of",  # does not reduce
-    "METPO:2000045": "biolink:capable_of",  # is not required for growth
-    "METPO:2000046": "biolink:capable_of",  # does not use for respiration
-    "METPO:2000047": "biolink:capable_of",  # does not use as sulfur source
-    # Production
-    "METPO:2000202": "biolink:produces",  # produces
-    "METPO:2000222": "biolink:produces",  # does not produce
-    # Enzyme activity
-    "METPO:2000302": "biolink:capable_of",  # shows activity of
-    "METPO:2000303": "biolink:capable_of",  # does not show activity of
-    # Growth medium
-    "METPO:2000517": "biolink:capable_of",  # grows in
-    "METPO:2000518": "biolink:capable_of",  # does not grow in
-}
-
-# Biolink predicate -> RO relation
-PREDICATE_TO_RELATION = {
-    "biolink:produces": "RO:0002234",  # has output
-    "biolink:capable_of": BIOLOGICAL_PROCESS,  # RO:0002215
-    "biolink:has_phenotype": HAS_PHENOTYPE,  # RO:0002200
-    "biolink:has_attribute": "RO:0000086",  # has quality
-    "biolink:interacts_with": "RO:0002434",  # interacts with
-    "biolink:consumes": "RO:0002233",  # has input
-    "biolink:located_in": "RO:0001025",  # located in
-    "biolink:related_to": "RO:0000091",  # has disposition (generic fallback)
-    "biolink:associated_with": "RO:0000091",
-}
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
 # NOTE: Only process species-level files, not genus or family summaries
@@ -2124,9 +2046,7 @@ class MetaTraitsTransform(Transform):
 
     def _to_biolink_predicate(self, predicate: str) -> str:
         """Map METPO or other predicate to biolink predicate for relation lookup."""
-        if predicate.startswith("biolink:"):
-            return predicate
-        return METPO_TO_BIOLINK_PREDICATE.get(predicate, "biolink:has_phenotype")
+        return to_biolink_predicate(predicate)
 
     def _get_relation_for_predicate(self, predicate: str) -> str:
         """Return RO relation for a given predicate (preserves produces/capable_of/has_phenotype)."""
@@ -2155,11 +2075,11 @@ class MetaTraitsTransform(Transform):
         pos_pred = mapping["predicate"]
         is_positive = "true" in majority_label.lower() if majority_label else True
         if is_positive:
-            return self._to_biolink_predicate(pos_pred)
+            return pos_pred
         # Negative case: look up the negative METPO predicate
         neg_pred = self._get_negative_predicate(pos_pred)
         if neg_pred:
-            return self._to_biolink_predicate(neg_pred)
+            return neg_pred
         return None  # no negative form — caller should skip
 
     def _calculate_optimal_workers_for_chunking(self) -> int:
@@ -2712,7 +2632,7 @@ class MetaTraitsTransform(Transform):
                         if mapping:
                             curie = mapping["curie"]
                             category = mapping["category"]
-                            pred = self._to_biolink_predicate(mapping["predicate"])
+                            pred = mapping["predicate"]
                             label = mapping["name"]
                         else:
                             # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
@@ -2759,7 +2679,7 @@ class MetaTraitsTransform(Transform):
                                 # Tier 3.0d: Fermentation (fermentation: D-glucose)
                                 curie = fermentation["curie"]
                                 category = fermentation["category"]
-                                pred = self._to_biolink_predicate(fermentation["predicate"])
+                                pred = fermentation["predicate"]
                                 label = fermentation["name"]
                             elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
                                 # Tier 3.0e: pH preference (pH preference: alkaliphile)
@@ -2805,7 +2725,7 @@ class MetaTraitsTransform(Transform):
                                 # Tier 3.4: Trophic modes (phototrophy, chemoheterotrophy, aerobic/anaerobic)
                                 curie = trophic_mapping["curie"]
                                 category = trophic_mapping["category"]
-                                pred = self._to_biolink_predicate(trophic_mapping["predicate"])
+                                pred = trophic_mapping["predicate"]
                                 label = trophic_mapping["name"]
                             elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                 # Tier 3.5: Enzyme activities with EC numbers or GO mappings
@@ -2831,7 +2751,7 @@ class MetaTraitsTransform(Transform):
                                 # Tier 3.6: Simple phenotypes (aerotolerant, facultative, acidophilic)
                                 curie = phenotype_mapping["curie"]
                                 category = phenotype_mapping["category"]
-                                pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
+                                pred = phenotype_mapping["predicate"]
                                 label = phenotype_mapping["name"]
                             elif energy_mapping := self._resolve_energy_source(trait_name):
                                 # Tier 3.7: Energy sources (energy source: glucose)
@@ -3365,7 +3285,7 @@ class MetaTraitsTransform(Transform):
                             if mapping:
                                 curie = mapping["curie"]
                                 category = mapping["category"]
-                                pred = self._to_biolink_predicate(mapping["predicate"])
+                                pred = mapping["predicate"]
                                 label = mapping["name"]
                             else:
                                 # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
@@ -3388,7 +3308,7 @@ class MetaTraitsTransform(Transform):
                                     # Tier 3.0c: Fermentation
                                     curie = fermentation["curie"]
                                     category = fermentation["category"]
-                                    pred = self._to_biolink_predicate(fermentation["predicate"])
+                                    pred = fermentation["predicate"]
                                     label = fermentation["name"]
                                 elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
                                     # Tier 3.0d: pH preference
@@ -3432,7 +3352,7 @@ class MetaTraitsTransform(Transform):
                                 elif trophic_mapping := self._resolve_trophic_mode(trait_name):
                                     curie = trophic_mapping["curie"]
                                     category = trophic_mapping["category"]
-                                    pred = self._to_biolink_predicate(trophic_mapping["predicate"])
+                                    pred = trophic_mapping["predicate"]
                                     label = trophic_mapping["name"]
                                 elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                     resolved_pred = self._apply_majority_label_to_predicate(
@@ -3457,7 +3377,7 @@ class MetaTraitsTransform(Transform):
                                 elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                     curie = phenotype_mapping["curie"]
                                     category = phenotype_mapping["category"]
-                                    pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
+                                    pred = phenotype_mapping["predicate"]
                                     label = phenotype_mapping["name"]
                                 elif energy_mapping := self._resolve_energy_source(trait_name):
                                     resolved_pred = self._apply_majority_label_to_predicate(

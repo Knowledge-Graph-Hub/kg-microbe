@@ -139,6 +139,16 @@ VALID_PREDICATES = {
     "rdf:type",
 }
 
+# METPO:2000xxx predicates are domain-specific refinements of biolink predicates
+# (e.g. METPO:2000003 "builds acid from" is more specific than biolink:produces).
+# Treat any predicate listed in METPO_TO_BIOLINK_PREDICATE as valid — the mapping
+# itself is the registration.
+try:
+    from kg_microbe.utils.metpo_predicates import METPO_TO_BIOLINK_PREDICATE
+    VALID_PREDICATES |= set(METPO_TO_BIOLINK_PREDICATE.keys())
+except ImportError:
+    pass
+
 # ── Standard known CURIE prefixes ─────────────────────────────────────────────
 STANDARD_PREFIXES = {
     "NCBITaxon", "CHEBI", "GO", "EC", "RO", "METPO", "biolink",
@@ -481,7 +491,9 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
     """Review a single transform's nodes.tsv and edges.tsv."""
     result = {"name": name, "nodes": [], "edges": [], "errors": 0, "warnings": 0}
 
-    # Special case: merged KG stored as merged-kg.tar.gz
+    # Special case: merged KG stored as merged-kg.tar.gz in data/merged/, with
+    # merged-kg_{nodes,edges}.tsv at the archive root (per _rewrite_tarball in
+    # kg_microbe/merge_utils/merge_kg.py, which uses arcname=f.name).
     tar_path = transform_dir / "merged-kg.tar.gz"
     if name == "merged" and tar_path.exists():
         nodes_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_nodes.tsv", max_rows))

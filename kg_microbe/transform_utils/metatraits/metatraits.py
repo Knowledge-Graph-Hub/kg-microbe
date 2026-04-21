@@ -999,7 +999,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
+                        "category": "biolink:ChemicalEntity",
                         "name": canonical_name or chemical_name,
                         "predicate": metpo_predicate,
                     }
@@ -1081,7 +1081,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
+                        "category": "biolink:ChemicalEntity",
                         "name": canonical_name or substance_name,
                         "predicate": metpo_predicate,
                     }
@@ -1165,7 +1165,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
+                        "category": "biolink:ChemicalEntity",
                         "name": canonical_name or substrate_name,
                         "predicate": metpo_predicate,
                     }
@@ -1391,7 +1391,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or substance,
                     "predicate": predicate,
                 }
@@ -1857,7 +1857,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or compound,
                     "predicate": predicate,
                 }
@@ -1891,7 +1891,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or compound,
                     "predicate": predicate,
                 }
@@ -1925,7 +1925,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or compound,
                     "predicate": predicate,
                 }

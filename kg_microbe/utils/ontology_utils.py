@@ -119,9 +119,9 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
     Return appropriate Biolink category for ChEBI term.
 
     ChEBI terms can be:
-    - Macromolecules (proteins, nucleic acids, polysaccharides) → biolink:Macromolecule
+    - Macromolecules (proteins, nucleic acids, polysaccharides) → biolink:MacromolecularComplex
     - Roles (e.g., "antioxidant", "inhibitor") → biolink:ChemicalRole
-    - Small molecules (default) → CHEBI_CATEGORY (biolink:ChemicalSubstance, see constants.py)
+    - Small molecules (default) → CHEBI_CATEGORY (biolink:ChemicalEntity, see constants.py)
 
     Args:
     ----
@@ -297,10 +297,6 @@ def replace_deprecated_categories(category_str: str) -> str:
     """
     Replace deprecated Biolink categories with current equivalents.
 
-    NOTE: biolink:ChemicalSubstance is deprecated in Biolink but is the
-    KG-Microbe normalization target for CHEBI-mapped chemicals (see
-    constants.CHEBI_CATEGORY). It is intentionally NOT remapped here.
-
     Args:
     ----
         category_str: Category string (may be pipe-delimited)
@@ -313,9 +309,11 @@ def replace_deprecated_categories(category_str: str) -> str:
     if not category_str or category_str == "":
         return category_str
 
-    # Map of deprecated → current categories.
-    # ChemicalSubstance is intentionally omitted; it is our CHEBI normalization target.
-    deprecated_map: dict = {}
+    # Map of deprecated → current categories (removed in biolink 4.x).
+    deprecated_map: dict = {
+        "biolink:ChemicalSubstance": "biolink:ChemicalEntity",
+        "biolink:Macromolecule": "biolink:MacromolecularComplex",
+    }
 
     updated_category = category_str
     for old_cat, new_cat in deprecated_map.items():

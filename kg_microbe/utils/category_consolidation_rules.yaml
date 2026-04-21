@@ -1,0 +1,59 @@
+# Multi-category consolidation rules
+# Verified 2026-01-22 by examining actual node examples from merged graph
+# Format: "CategoryA|CategoryB|..." → "SelectedCategory"
+# Rules are sorted by frequency (most common first)
+
+rules:
+  # Chemical entity patterns (most common)
+  "biolink:ChemicalEntity|biolink:SmallMolecule": "biolink:SmallMolecule"
+  "biolink:ChemicalRole|biolink:SmallMolecule": "biolink:ChemicalRole"
+  "biolink:ChemicalEntity|biolink:ChemicalRole": "biolink:ChemicalRole"
+  "biolink:ChemicalEntity|biolink:ChemicalRole|biolink:SmallMolecule": "biolink:ChemicalRole"
+  "biolink:ChemicalEntity|biolink:MacromolecularComplex": "biolink:MacromolecularComplex"
+
+  # Special case: CHEBI:33290 "food" is EnvironmentalFeature (microbial growth substrate)
+  "biolink:ChemicalEntity|biolink:EnvironmentalFeature|biolink:SmallMolecule": "biolink:EnvironmentalFeature"
+
+  # METPO/phenotype patterns
+  "biolink:OntologyClass|biolink:PhenotypicQuality": "biolink:PhenotypicQuality"
+  "biolink:Attribute|biolink:PhenotypicQuality": "biolink:PhenotypicQuality"
+
+  # METPO cell measurements are phenotypic qualities
+  "biolink:EnvironmentalFeature|biolink:PhenotypicQuality": "biolink:PhenotypicQuality"
+
+  # GO/process patterns
+  "biolink:BiologicalProcess|biolink:OntologyClass": "biolink:BiologicalProcess"
+
+  # Anatomical/environmental patterns
+  "biolink:AnatomicalEntity|biolink:EnvironmentalFeature": "biolink:AnatomicalEntity"
+  "biolink:AnatomicalEntity|biolink:ChemicalEntity|biolink:EnvironmentalFeature": "biolink:AnatomicalEntity"
+  "biolink:AnatomicalEntity|biolink:ChemicalEntity": "biolink:AnatomicalEntity"
+
+  # Taxonomy
+  "biolink:EnvironmentalFeature|biolink:OrganismTaxon": "biolink:OrganismTaxon"
+
+# Resolution notes for special cases
+resolution_notes:
+  "CHEBI:33290":
+    name: "food"
+    original_pattern: "biolink:ChemicalEntity|biolink:EnvironmentalFeature|biolink:SmallMolecule"
+    selected: "biolink:EnvironmentalFeature"
+    rationale: "Food serves as microbial growth substrate/environmental context"
+
+  "METPO:1000885":
+    name: "cell length medium"
+    original_pattern: "biolink:OntologyClass|biolink:PhenotypicQuality"
+    selected: "biolink:PhenotypicQuality"
+    rationale: "Cell measurements are phenotypic qualities. Fixed in METPO transform by adding cell measurement keywords."
+
+  "METPO:1000889":
+    name: "cell width medium"
+    original_pattern: "biolink:OntologyClass|biolink:PhenotypicQuality"
+    selected: "biolink:PhenotypicQuality"
+    rationale: "Cell measurements are phenotypic qualities. Fixed in METPO transform by adding cell measurement keywords."
+
+  "CHEBI:18154":
+    name: "polysaccharide"
+    original_pattern: "biolink:ChemicalEntity|biolink:MacromolecularComplex"
+    selected: "biolink:MacromolecularComplex"
+    rationale: "Polysaccharides are macromolecules (>900 Da), not small molecules. CHEBI:33839 ancestry check is authoritative."

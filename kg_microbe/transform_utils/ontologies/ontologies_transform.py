@@ -228,7 +228,7 @@ class OntologiesTransform(Transform):
 
         - GO: Apply aspect-based categorization (MF/BP/CC)
         - ChEBI: Detect roles/macromolecules; default small molecules to CHEBI_CATEGORY
-          (biolink:ChemicalSubstance — KG-Microbe project convention, see constants.py)
+          (biolink:ChemicalEntity — KG-Microbe project convention, see constants.py)
         - UBERON: Ensure all terms are AnatomicalEntity
         - NCBITaxon: Ensure all terms are OrganismTaxon
 
@@ -276,7 +276,7 @@ class OntologiesTransform(Transform):
 
         elif ontology_name == "chebi":
             # Fix ChEBI categories: detect roles/macromolecules;
-            # small molecules default to CHEBI_CATEGORY (biolink:ChemicalSubstance)
+            # small molecules default to CHEBI_CATEGORY (biolink:ChemicalEntity)
             print("  Fixing ChEBI categories (detecting roles/macromolecules; default → CHEBI_CATEGORY)...")
 
             # Create ChEBI adapter once to avoid file descriptor leaks

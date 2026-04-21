@@ -11,7 +11,7 @@ biological_process: &biological_process_block
   predicate: "METPO:2000103"  # capable of
 
 chemical_production: &chemical_production_block
-  category: "biolink:ChemicalSubstance"
+  category: "biolink:ChemicalEntity"
   predicate: "METPO:2000202"  # produces
 
 gc_content:
@@ -364,87 +364,87 @@ other:
   casein:
     label: "casein"
     description: "Casein protein mixture"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   gelatin:
     label: "gelatin"
     description: "Gelatin protein mixture"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   gardimycin:
     label: "gardimycin"
     description: "Antibiotic glycopeptide produced by Actinoplanes spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   setamycin:
     label: "setamycin"
     description: "Antibiotic compound produced by Streptomyces spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   kijanimicin:
     label: "kijanimicin"
     description: "Spirotetronate antibiotic produced by Actinomadura spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   candiplanecin:
     label: "candiplanecin"
     description: "Glycopeptide antibiotic produced by Actinoplanes spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   nocamycin:
     label: "nocamycin"
     description: "Antibiotic produced by Nocardia spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   decaplanin:
     label: "decaplanin"
     description: "Glycopeptide antibiotic produced by Actinoplanes spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   ristocetin_a:
     label: "ristocetin A"
     description: "Glycopeptide antibiotic component produced by Amycolatopsis orientalis"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   ristocetin_b:
     label: "ristocetin B"
     description: "Glycopeptide antibiotic component produced by Amycolatopsis orientalis"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   cetocycline:
     label: "cetocycline"
     description: "Tetracycline antibiotic derivative"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   indochrome:
     label: "indochrome"
     description: "Indole-derived pigment compound"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   butyricin_7423:
     label: "butyricin 7423"
     description: "Bacteriocin produced by Clostridium butyricum"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   dopsisamine:
     label: "dopsisamine"
     description: "Aminoglycoside antibiotic derivative"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   hitachimycin:
     label: "hitachimycin"
     description: "Antibiotic compound produced by Streptomyces spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   ardacin_b:
     label: "ardacin B"
     description: "Peptide antibiotic produced by Arthrobacter spp."
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   ethylenediamine_n_n_prime_disuccinic_acid:
     label: "ethylenediamine-N,N'-disuccinic acid"
     description: "Chelating agent compound"
-    category: "biolink:ChemicalSubstance"
+    category: "biolink:ChemicalEntity"
 
   casein_hydrolysate:
     label: "casein hydrolysate"

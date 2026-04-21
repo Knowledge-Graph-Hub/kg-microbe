@@ -45,19 +45,16 @@ CURIE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_\-.]*:.+")
 # (e.g. biolink:ChemicalSubstance for CHEBI normalization), and (c) non-biolink
 # OWL/RDFS structural predicates used by the ontologies transform.
 
-# Categories we emit that are NOT biolink descendants of `named thing` — each
-# with a short justification. Flag via INFO, not WARNING, since intentional.
+# Categories we emit that are NOT covered by `bmt.get_all_classes`.
+# Most "unusual" biolink classes (TaxonomicRank, OntologyClass,
+# MacromolecularMachineMixin, GenomicEntity, ActivityAndBehavior) ARE defined
+# in biolink — they just aren't `named thing` descendants — so `get_all_classes`
+# below captures them without a whitelist entry. A few classes were removed
+# upstream but still flow through via OAK/ontology import closures.
 KGMICROBE_EXTENSION_CATEGORIES = {
-    "biolink:GrowthMedium",         # KG-Microbe native extension
-    "biolink:ChemicalSubstance",    # deprecated upstream; CHEBI normalization target
-    "biolink:Macromolecule",        # deprecated upstream; still emitted by OAK
-    "biolink:MacromolecularMachineMixin",  # abstract mixin; OAK output
-    "biolink:ActivityAndBehavior",  # deprecated upstream; madin_etal OAK mappings
-    "biolink:EnvironmentalMaterial",  # removed upstream; OAK output
-    "biolink:GenomicEntity",        # abstract in newer biolink; OAK output
-    "biolink:OntologyClass",        # used by COG transform
-    "biolink:SequenceFeature",      # OAK output (ncbitaxon, go)
-    "biolink:TaxonomicRank",        # NCBITaxon rank terms
+    "biolink:GrowthMedium",           # KG-Microbe native extension
+    "biolink:SequenceFeature",        # removed upstream; OAK output (NCBITaxon, GO)
+    "biolink:EnvironmentalMaterial",  # removed upstream; OAK output (ENVO)
 }
 
 # Predicates we emit that are NOT biolink slots — structural/OWL predicates.
@@ -84,7 +81,13 @@ def _load_biolink_sets():
     try:
         import bmt
         t = bmt.Toolkit()
-        cats = set(t.get_descendants("named thing", formatted=True, reflexive=True))
+        # Union of (a) concrete classes via get_all_classes — includes things
+        # like TaxonomicRank, OntologyClass, SequenceFeature that aren't
+        # `named thing` descendants, and (b) descendants(named thing) for
+        # completeness. get_all_classes alone can miss some mixin-derived
+        # classes depending on bmt version.
+        cats = set(t.get_all_classes(formatted=True))
+        cats |= set(t.get_descendants("named thing", formatted=True, reflexive=True))
         # get_all_slots is broader than descendants(related_to) — covers
         # has_attribute, xxx_match, etc. that aren't in the related_to tree.
         preds = set(t.get_all_slots(formatted=True))
@@ -108,11 +111,12 @@ else:
                         "biolink:same_as"} | STRUCTURAL_PREDICATES | KGMICROBE_EXTENSION_PREDICATES
 
 # Deprecated categories — INFO-level flag to encourage migration where
-# practical. biolink:ChemicalSubstance intentionally NOT flagged (it's our
-# CHEBI normalization target by design).
+# practical. KG-Microbe transforms now emit the replacements directly;
+# `replace_deprecated_categories` normalizes any stragglers.
 DEPRECATED_CATEGORIES = {
-    "biolink:MacromolecularMachineMixin": "biolink:Protein or biolink:Gene",
+    "biolink:ChemicalSubstance": "biolink:ChemicalEntity",
     "biolink:Macromolecule": "biolink:MacromolecularComplex",
+    "biolink:MacromolecularMachineMixin": "biolink:Protein or biolink:Gene",
     "biolink:ActivityAndBehavior": "biolink:BiologicalProcess or biolink:MolecularActivity",
 }
 
@@ -314,8 +318,10 @@ def check_nodes_rows(rows: list, max_rows: int, registered_prefixes: set,
     if empty_cats:
         findings.append(Finding("WARNING", "Biolink", f"{empty_cats} rows with empty category"))
 
-    unknown_cats = {c: n for c, n in cat_counts.items() if c not in VALID_CATEGORIES}
     deprecated_cats = {c: n for c, n in cat_counts.items() if c in DEPRECATED_CATEGORIES}
+    # Deprecated categories are surfaced separately; don't double-flag them as "unknown".
+    unknown_cats = {c: n for c, n in cat_counts.items()
+                    if c not in VALID_CATEGORIES and c not in DEPRECATED_CATEGORIES}
     if unknown_cats:
         examples = [f"{c} ({n}x)" for c, n in sorted(unknown_cats.items(), key=lambda x: -x[1])[:5]]
         findings.append(Finding("WARNING", "Biolink", f"{len(unknown_cats)} unknown/unrecognized categories",

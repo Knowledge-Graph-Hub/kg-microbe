@@ -36,113 +36,88 @@ EDGES_REQUIRED = {"subject", "predicate", "object", "relation"}
 
 CURIE_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_\-.]*:.+")
 
-# ── Valid Biolink categories ──────────────────────────────────────────────────
-VALID_CATEGORIES = {
-    "biolink:OrganismTaxon",
-    "biolink:ChemicalEntity",
-    "biolink:ChemicalSubstance",  # KG-Microbe convention: normalization target for CHEBI-mapped chemicals (see constants.CHEBI_CATEGORY)
-    "biolink:SmallMolecule",
-    "biolink:MolecularMixture",
-    "biolink:ComplexMolecularMixture",
-    "biolink:Food",
-    "biolink:MacromolecularMachineMixin",
-    "biolink:Protein",
-    "biolink:Gene",
-    "biolink:MolecularActivity",
-    "biolink:BiologicalProcess",
-    "biolink:CellularComponent",
-    "biolink:PhenotypicQuality",
-    "biolink:Attribute",
-    "biolink:NamedThing",
-    "biolink:GrossAnatomicalStructure",
-    "biolink:AnatomicalEntity",
-    "biolink:EnvironmentalProcess",
-    "biolink:PathologicalProcess",
-    "biolink:Disease",
-    "biolink:GrowthMedium",
-    "biolink:Polypeptide",
-    "biolink:NucleicAcidEntity",
-    "biolink:GenomicEntity",
-    "biolink:ChemicalRole",
-    "biolink:InformationContentEntity",
-    "biolink:Pathway",
-    "biolink:PhysiologicalProcess",
-    "biolink:MacromolecularComplex",
-    "biolink:ChemicalMixture",
-    "biolink:ProcessedMaterial",
-    "biolink:Procedure",           # used for assay/test nodes
-    "biolink:EnvironmentalFeature", # used for isolation source nodes
-    "biolink:GeneFamily",          # used by COG transform
-    "biolink:OntologyClass",       # used by COG transform
-    "biolink:ActivityAndBehavior", # valid Biolink class; appears in madin_etal OAK mappings
-    "biolink:EnvironmentalMaterial", # valid Biolink class; from OAK mappings
-    "biolink:Macromolecule",       # deprecated → MacromolecularComplex, but still emitted by OAK
-    # Additional valid Biolink classes surfaced by the ontologies transform (OAK output)
-    "biolink:PhenotypicFeature",
-    "biolink:Cell",
-    "biolink:SequenceFeature",
-    "biolink:Genome",          # NCBITaxon genomes; large use in merged KG
-    "biolink:TaxonomicRank",   # NCBITaxon rank terms
+# ── Biolink Model (authoritative) ─────────────────────────────────────────────
+# Source of truth: the `bmt` (Biolink Model Toolkit) package, which loads the
+# published biolink-model YAML schema. Previously these were hand-maintained
+# lists that drifted from the model. We still layer a small KG-Microbe
+# extension whitelist on top for (a) KG-Microbe-specific classes that aren't
+# in upstream biolink, (b) deprecated classes we intentionally still emit
+# (e.g. biolink:ChemicalSubstance for CHEBI normalization), and (c) non-biolink
+# OWL/RDFS structural predicates used by the ontologies transform.
+
+# Categories we emit that are NOT biolink descendants of `named thing` — each
+# with a short justification. Flag via INFO, not WARNING, since intentional.
+KGMICROBE_EXTENSION_CATEGORIES = {
+    "biolink:GrowthMedium",         # KG-Microbe native extension
+    "biolink:ChemicalSubstance",    # deprecated upstream; CHEBI normalization target
+    "biolink:Macromolecule",        # deprecated upstream; still emitted by OAK
+    "biolink:MacromolecularMachineMixin",  # abstract mixin; OAK output
+    "biolink:ActivityAndBehavior",  # deprecated upstream; madin_etal OAK mappings
+    "biolink:EnvironmentalMaterial",  # removed upstream; OAK output
+    "biolink:GenomicEntity",        # abstract in newer biolink; OAK output
+    "biolink:OntologyClass",        # used by COG transform
+    "biolink:SequenceFeature",      # OAK output (ncbitaxon, go)
+    "biolink:TaxonomicRank",        # NCBITaxon rank terms
 }
 
-DEPRECATED_CATEGORIES = {
-    # NOTE: biolink:ChemicalSubstance is deprecated upstream but is the KG-Microbe
-    # normalization target for CHEBI chemicals. Intentionally NOT flagged here.
-    "biolink:MacromolecularMachineMixin": "biolink:Protein or biolink:Gene",
-    "biolink:Macromolecule": "biolink:MacromolecularComplex",
-    "biolink:ActivityAndBehavior": "biolink:BiologicalProcess or biolink:MolecularActivity",
-}
-
-# ── Valid Biolink predicates ──────────────────────────────────────────────────
-VALID_PREDICATES = {
-    "biolink:has_phenotype",
-    "biolink:capable_of",
-    "biolink:produces",
-    "biolink:consumes",
-    "biolink:located_in",
-    "biolink:location_of",
-    "biolink:has_part",
-    "biolink:subclass_of",
-    "biolink:related_to",
-    "biolink:associated_with",
-    "biolink:enabled_by",
-    "biolink:enables",
-    "biolink:has_chemical_role",
-    "biolink:has_input",
-    "biolink:has_output",
-    "biolink:occurs_in",
-    "biolink:associated_with_resistance_to",
-    "biolink:associated_with_sensitivity_to",
-    "biolink:related_to_at_instance_level",
-    "biolink:contains_process",
-    "biolink:same_as",
-    "biolink:close_match",
-    "biolink:broad_match",
-    "biolink:narrow_match",
-    "biolink:exact_match",
-    "biolink:overlaps",
-    "biolink:part_of",
-    "biolink:has_attribute",
-    "biolink:actively_involved_in",
-    "biolink:participates_in",
-    "biolink:interacts_with",
-    "biolink:regulates",
-    "biolink:positively_regulates",
-    "biolink:negatively_regulates",
-    "biolink:expressed_in",
-    # Non-biolink OWL/RDFS structural predicates used by the ontologies
-    # transform for meta-axioms (property hierarchies, inverses, type
-    # assertions). These are legitimately non-biolink; they round-trip back
-    # to OWL semantics downstream.
+# Predicates we emit that are NOT biolink slots — structural/OWL predicates.
+STRUCTURAL_PREDICATES = {
     "rdfs:subPropertyOf",
     "owl:inverseOf",
     "rdf:type",
 }
 
+# KG-Microbe-only predicates absent from upstream biolink (intentional emits).
+KGMICROBE_EXTENSION_PREDICATES = {
+    "biolink:positively_regulates",  # emitted by some transforms; not in current biolink
+    "biolink:negatively_regulates",
+}
+
+
+def _load_biolink_sets():
+    """Load authoritative biolink category + predicate sets from bmt.
+
+    Returns (categories, predicates, biolink_version). If bmt is unavailable,
+    returns (None, None, None) and the caller falls back to a minimal
+    hardcoded set.
+    """
+    try:
+        import bmt
+        t = bmt.Toolkit()
+        cats = set(t.get_descendants("named thing", formatted=True, reflexive=True))
+        # get_all_slots is broader than descendants(related_to) — covers
+        # has_attribute, xxx_match, etc. that aren't in the related_to tree.
+        preds = set(t.get_all_slots(formatted=True))
+        return cats, preds, t.get_model_version()
+    except Exception:
+        return None, None, None
+
+
+_BIOLINK_CATS, _BIOLINK_PREDS, BIOLINK_VERSION = _load_biolink_sets()
+
+if _BIOLINK_CATS is not None:
+    VALID_CATEGORIES = _BIOLINK_CATS | KGMICROBE_EXTENSION_CATEGORIES
+    VALID_PREDICATES = _BIOLINK_PREDS | STRUCTURAL_PREDICATES | KGMICROBE_EXTENSION_PREDICATES
+else:
+    # Minimal fallback — bmt missing; the skill still runs but with a small
+    # curated set. This path should be rare (bmt is in project deps).
+    VALID_CATEGORIES = {"biolink:NamedThing", "biolink:OrganismTaxon", "biolink:ChemicalEntity",
+                        "biolink:Attribute", "biolink:BiologicalProcess"} | KGMICROBE_EXTENSION_CATEGORIES
+    VALID_PREDICATES = {"biolink:related_to", "biolink:has_phenotype", "biolink:capable_of",
+                        "biolink:produces", "biolink:subclass_of",
+                        "biolink:same_as"} | STRUCTURAL_PREDICATES | KGMICROBE_EXTENSION_PREDICATES
+
+# Deprecated categories — INFO-level flag to encourage migration where
+# practical. biolink:ChemicalSubstance intentionally NOT flagged (it's our
+# CHEBI normalization target by design).
+DEPRECATED_CATEGORIES = {
+    "biolink:MacromolecularMachineMixin": "biolink:Protein or biolink:Gene",
+    "biolink:Macromolecule": "biolink:MacromolecularComplex",
+    "biolink:ActivityAndBehavior": "biolink:BiologicalProcess or biolink:MolecularActivity",
+}
+
 # METPO:2000xxx predicates are domain-specific refinements of biolink predicates
 # (e.g. METPO:2000003 "builds acid from" is more specific than biolink:produces).
-# Treat any predicate listed in METPO_TO_BIOLINK_PREDICATE as valid — the mapping
-# itself is the registration.
 try:
     from kg_microbe.utils.metpo_predicates import METPO_TO_BIOLINK_PREDICATE
     VALID_PREDICATES |= set(METPO_TO_BIOLINK_PREDICATE.keys())
@@ -487,7 +462,7 @@ def _tally(result: dict) -> dict:
 
 def review_transform(name: str, transform_dir: Path, max_rows: int,
                      registered_prefixes: set, metpo_curies: set,
-                     verbose: bool) -> dict:
+                     verbose: bool, strict_kgx: bool = False) -> dict:
     """Review a single transform's nodes.tsv and edges.tsv."""
     result = {"name": name, "nodes": [], "edges": [], "errors": 0, "warnings": 0}
 
@@ -500,6 +475,14 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
         edges_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_edges.tsv", max_rows))
         result["nodes"] = check_nodes_rows(nodes_rows, max_rows, registered_prefixes, metpo_curies, verbose)
         result["edges"] = check_edges_rows(edges_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        if strict_kgx:
+            # Strict validation runs against a loose TSV — extract if needed
+            for kind, member in (("nodes", "merged-kg_nodes.tsv"), ("edges", "merged-kg_edges.tsv")):
+                extracted = transform_dir / member
+                if not extracted.exists():
+                    with tarfile.open(tar_path, "r:gz") as tf:
+                        tf.extract(member, transform_dir)
+                result[kind].extend(run_kgx_strict(extracted, kind, max_rows))
         return _tally(result)
 
     nodes_path = transform_dir / "nodes.tsv"
@@ -541,6 +524,11 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
 
     result["nodes"] = check_nodes(nodes_path, max_rows, registered_prefixes, metpo_curies, verbose)
     result["edges"] = check_edges(edges_path, max_rows, registered_prefixes, metpo_curies, verbose)
+    if strict_kgx:
+        if nodes_path.exists():
+            result["nodes"].extend(run_kgx_strict(nodes_path, "nodes", max_rows))
+        if edges_path.exists():
+            result["edges"].extend(run_kgx_strict(edges_path, "edges", max_rows))
     return _tally(result)
 
 
@@ -582,6 +570,80 @@ def format_text(results: list, format_md: bool = False) -> str:
     return "\n".join(lines)
 
 
+_KGX_MULTIVALUED_NODE_FIELDS = {"category", "synonym", "xref", "provided_by"}
+_KGX_MULTIVALUED_EDGE_FIELDS = {"category", "publications", "provided_by"}
+
+
+def _prepare_kgx_row(row: dict, multi_fields: set) -> dict:
+    """Convert pipe-separated string fields to lists as kgx.Validator expects."""
+    out = dict(row)
+    for k in multi_fields:
+        v = out.get(k)
+        if isinstance(v, str) and v:
+            out[k] = [x.strip() for x in v.split("|") if x.strip()]
+    return out
+
+
+def run_kgx_strict(path: Path, kind: str, max_rows: int) -> list:
+    """Run authoritative KGX validation against a TSV using kgx.validator.
+
+    Uses kgx's `Validator` on per-row dicts (analyse_node / analyse_edge).
+    Returns aggregated Finding list. Only invoked under --strict-kgx because
+    it's slower and requires the kgx package.
+    """
+    findings = []
+    try:
+        from kgx.validator import Validator  # lazy import
+    except ImportError:
+        findings.append(Finding("INFO", "KGX-strict",
+                                "--strict-kgx requested but `kgx` package not installed"))
+        return findings
+    v = Validator()
+    v.clear_errors()
+    multi_fields = _KGX_MULTIVALUED_NODE_FIELDS if kind == "nodes" else _KGX_MULTIVALUED_EDGE_FIELDS
+    sample_count = 0
+    for row in iter_tsv(path, max_rows):
+        prepared = _prepare_kgx_row(row, multi_fields)
+        if kind == "nodes":
+            v.analyse_node(prepared.get("id", ""), prepared)
+        else:
+            v.analyse_edge(prepared.get("subject", ""),
+                           prepared.get("object", ""),
+                           None, prepared)
+        sample_count += 1
+
+    # kgx Validator.get_errors() returns nested dict:
+    #   {severity: {error_type: {message: [offending_ids]}}}
+    err_tree = v.get_errors() or {}
+    any_found = False
+    for severity, types in err_tree.items():
+        for err_type, msgs in (types or {}).items():
+            # Aggregate across all messages under this (severity, error_type)
+            total = sum(len(ids) for ids in msgs.values())
+            if total == 0:
+                continue
+            any_found = True
+            # Pick up to 3 example (message, id) pairs for context
+            examples = []
+            for msg, ids in msgs.items():
+                for ident in ids[:2]:
+                    examples.append(f"{msg} [{ident}]")
+                    if len(examples) >= 3:
+                        break
+                if len(examples) >= 3:
+                    break
+            findings.append(Finding(
+                "WARNING" if severity == "WARNING" else "ERROR",
+                "KGX-strict",
+                f"{total} {err_type} ({kind})",
+                examples,
+            ))
+    if not any_found:
+        findings.append(Finding("INFO", "KGX-strict",
+                                f"kgx.Validator clean ({sample_count:,} {kind} rows)"))
+    return findings
+
+
 def main():
     parser = argparse.ArgumentParser(description="KG-Microbe knowledge modeling review")
     parser.add_argument("--transform", help="Review specific transform (default: all)")
@@ -590,12 +652,22 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="Show example violations")
     parser.add_argument("--max-rows", type=int, default=100_000,
                         help="Max rows to sample per file (0=all)")
+    parser.add_argument("--strict-kgx", action="store_true",
+                        help="Additionally run kgx.validator.Validator (authoritative KGX spec check)")
     args = parser.parse_args()
 
     max_rows = args.max_rows  # 0 means unlimited (iter_tsv handles 0 as no limit)
 
     registered_prefixes = load_registered_prefixes()
     metpo_curies = load_metpo_curies()
+
+    if BIOLINK_VERSION:
+        print(f"  Biolink Model {BIOLINK_VERSION} loaded "
+              f"({len(_BIOLINK_CATS)} categories, {len(_BIOLINK_PREDS)} predicates) "
+              f"+ {len(KGMICROBE_EXTENSION_CATEGORIES)} KG-Microbe extensions",
+              file=sys.stderr)
+    else:
+        print("  Warning: bmt unavailable — using fallback biolink set", file=sys.stderr)
 
     if metpo_curies:
         print(f"  Loaded {len(metpo_curies)} METPO CURIEs from ontologies output", file=sys.stderr)
@@ -616,7 +688,8 @@ def main():
 
     for name, path in targets:
         print(f"  Reviewing {name}...", file=sys.stderr)
-        result = review_transform(name, path, max_rows, registered_prefixes, metpo_curies, args.verbose)
+        result = review_transform(name, path, max_rows, registered_prefixes, metpo_curies,
+                                  args.verbose, strict_kgx=args.strict_kgx)
         results.append(result)
 
     if args.format == "json":

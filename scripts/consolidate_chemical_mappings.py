@@ -1031,8 +1031,15 @@ class ChemicalMappingConsolidator:
 
         symmetric = {"skos:exactMatch", "skos:closeMatch"}
 
+        # Track MIM:* subject → current object_id. After loading, anything
+        # in the baseline that points elsewhere is stale and must be swept
+        # (fixes STALE_IN_KGM + CHEBI_DIVERGED regressions where baseline
+        # seeding carried forward obsolete MIM xrefs).
+        current_mim_subjects: dict[str, str] = {}
+
         added = 0
         skipped_unsupported = 0
+        curator_tags_seen: set[str] = set()
         for _, row in df.iterrows():
             object_id = row.get("object_id", "").strip()
             if not is_accepted_primary(object_id):
@@ -1047,6 +1054,7 @@ class ChemicalMappingConsolidator:
             subject_label = row.get("subject_label", "").strip()
             object_label = row.get("object_label", "").strip()
             other = row.get("other", "").strip()
+            mim_source = row.get("source", "").strip()
 
             # Symmetric matches: MIM's curated term wins canonical naming.
             # Asymmetric (narrow/broad): ontology label stays canonical; MIM
@@ -1062,6 +1070,21 @@ class ChemicalMappingConsolidator:
 
             xrefs = [subject_id] if subject_id.startswith("MIM:") else []
 
+            # Preserve MIM curator provenance: MIM's `source` column carries
+            # pipe-delimited `MIM:curator=<name>` tags identifying which
+            # MIM curation pass authored the row. Extract them as additional
+            # (priority-11) source labels so kg-microbe's emitted SSSOM
+            # doesn't flatten the provenance to a single bucket.
+            extra_sources: list[str] = []
+            for part in mim_source.split("|"):
+                part = part.strip()
+                if part.startswith("MIM:curator="):
+                    curator_name = part.split("=", 1)[1].strip()
+                    if curator_name:
+                        tag = f"mediaingredientmech_reviewed[curator={curator_name}]"
+                        extra_sources.append(tag)
+                        curator_tags_seen.add(tag)
+
             self.add_chemical(
                 id=object_id,
                 canonical_name=canonical,
@@ -1070,12 +1093,124 @@ class ChemicalMappingConsolidator:
                 source="mediaingredientmech_reviewed",
                 priority=11,
             )
+            # MIM is the canonical-naming authority: its subject_label
+            # (for symmetric matches) or object_label (for asymmetric)
+            # MUST win even when a prior priority-11 baseline row already
+            # set a different value. add_chemical's first-seed tiebreaker
+            # can't see "MIM this run is fresher than MIM last run", so we
+            # force the overwrite here after the call returned.
+            if canonical and subject_id.startswith("MIM:"):
+                self.chemicals[object_id]["canonical_name"] = canonical
+            # Emit curator-specific sub-tags alongside the flat label.
+            if extra_sources:
+                self.chemicals[object_id]["sources"].update(extra_sources)
+            if subject_id.startswith("MIM:"):
+                current_mim_subjects[subject_id] = object_id
             added += 1
+
+        # Sweep stale MIM: and MediaIngredientMech: xrefs. Any xref in the
+        # MIM namespace that isn't in current_mim_subjects is stale (MIM
+        # has merged or dropped the record). Any MediaIngredientMech: xref
+        # is legacy namespace — MIM has migrated to MIM:<slug>.
+        swept_stale = 0
+        swept_diverged = 0
+        swept_legacy = 0
+        for cid, chem in self.chemicals.items():
+            new_xrefs = set()
+            for xref in chem["xrefs"]:
+                if xref.startswith("MediaIngredientMech:"):
+                    swept_legacy += 1
+                    continue
+                if xref.startswith("MIM:"):
+                    target = current_mim_subjects.get(xref)
+                    if target is None:
+                        swept_stale += 1
+                        continue
+                    if target != cid:
+                        swept_diverged += 1
+                        continue
+                new_xrefs.add(xref)
+            chem["xrefs"] = new_xrefs
 
         print(
             f"  Loaded {added} MIM SSSOM entries "
             f"(skipped {skipped_unsupported} unsupported object_id prefix)"
         )
+        if curator_tags_seen:
+            print(
+                f"  Preserved {len(curator_tags_seen)} distinct MIM curator "
+                f"provenance tag(s)"
+            )
+        if swept_stale or swept_diverged or swept_legacy:
+            print(
+                f"  Swept stale MIM xrefs: {swept_stale} stale, "
+                f"{swept_diverged} diverged, {swept_legacy} legacy "
+                f"(MediaIngredientMech: namespace)"
+            )
+
+    def load_complex_ingredients(self, filepath: Path):
+        """
+        Load mappings/complex_ingredients.tsv.gz.
+
+        MIM's FOODON/ENVO companion artifact — covers the ingredient
+        records whose ontology_id is not a CHEBI (Bacto-tryptone, Beef
+        extract, Seawater, Yeast extract, Vermont Soil, etc.) and
+        therefore cannot ride in the CHEBI-only SSSOM.
+
+        Schema mirrors `unified_chemical_mappings.tsv.gz`:
+          id, category, canonical_name, formula, synonyms, xrefs, sources
+
+        Rows are added at priority 11 (same as mediaingredientmech_reviewed)
+        so MIM's canonical names take precedence over any lower-priority
+        source that also touched the FOODON/ENVO term.
+        """
+        import gzip as _gzip
+
+        print(f"Loading {filepath}...")
+        added = 0
+        with _gzip.open(filepath, "rt", encoding="utf-8") as f:
+            header = f.readline().rstrip("\n").split("\t")
+            col = {name: i for i, name in enumerate(header)}
+            for raw in f:
+                parts = raw.rstrip("\n").split("\t")
+                if len(parts) < len(header):
+                    parts += [""] * (len(header) - len(parts))
+                row = dict(zip(header, parts))
+                primary = (row.get("id") or "").strip()
+                if not primary or not is_accepted_primary(primary):
+                    continue
+                canonical = (row.get("canonical_name") or "").strip()
+                category = (row.get("category") or "").strip()
+                formula = (row.get("formula") or "").strip()
+                synonyms = [
+                    s.strip()
+                    for s in (row.get("synonyms") or "").split("|")
+                    if s.strip()
+                ]
+                xrefs = [
+                    x.strip()
+                    for x in (row.get("xrefs") or "").split("|")
+                    if x.strip()
+                ]
+
+                self.add_chemical(
+                    id=primary,
+                    canonical_name=canonical,
+                    formula=formula,
+                    synonyms=synonyms,
+                    xrefs=xrefs,
+                    source="mediaingredientmech_reviewed",
+                    priority=11,
+                )
+                # Force MIM's canonical name (same tiebreaker-bypass rule
+                # as load_mediaingredientmech_sssom).
+                if canonical:
+                    self.chemicals[primary]["canonical_name"] = canonical
+                if category:
+                    self.chemicals[primary]["category"] = category
+                added += 1
+
+        print(f"  Loaded {added} complex-ingredient entries")
 
     def _get_chebi_adapter(self):
         """Get or create ChEBI adapter."""
@@ -1632,6 +1767,25 @@ def main():
     # MIM sibling repo is the source of truth — sync the vendored copy first.
     mim_sssom_path = sync_mim_sssom(base_dir)
     consolidator.load_mediaingredientmech_sssom(mim_sssom_path)
+
+    # Optional complementary MIM artifact: complex_ingredients.tsv.gz
+    # covers the FOODON/ENVO records that the CHEBI-scoped SSSOM cannot
+    # carry. Published by MIM alongside the SSSOM — vendored here if
+    # available, otherwise we try the sibling repo's mappings/ folder.
+    complex_path = base_dir / "mappings" / "complex_ingredients.tsv.gz"
+    if not complex_path.exists():
+        sibling_complex = (
+            base_dir.parent / "MediaIngredientMech" / "mappings"
+            / "complex_ingredients.tsv.gz"
+        )
+        if sibling_complex.exists():
+            import shutil as _shutil
+            _shutil.copy2(sibling_complex, complex_path)
+            print(f"Synced complex_ingredients.tsv.gz: {sibling_complex} → {complex_path}")
+    if complex_path.exists():
+        consolidator.load_complex_ingredients(complex_path)
+    else:
+        print("Skipping complex_ingredients.tsv.gz: not present")
 
     # Enrich with ChEBI synonyms
     consolidator.enrich_with_chebi_synonyms()

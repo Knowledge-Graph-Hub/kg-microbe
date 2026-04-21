@@ -21,53 +21,169 @@ from kg_microbe.utils.chemical_mapping_utils import (
 )
 
 
+_SSSOM_COLUMNS = [
+    "subject_id", "subject_label", "predicate_id",
+    "object_id", "object_label", "object_source",
+    "mapping_justification", "source", "mapping_date",
+    "confidence", "comment",
+    "object_formula", "object_category",
+]
+
+
+def _write_mock_sssom(entries, path: Path):
+    """
+    Serialise a list of entity dicts into a minimal SSSOM mapping set.
+
+    Each entry is a dict with keys ``id``, ``category``, ``canonical_name``,
+    ``formula``, ``synonyms`` (pipe-delimited), ``xrefs`` (pipe-delimited),
+    ``sources`` (pipe-delimited). The exporter mirrors ``export_unified_sssom``
+    (see scripts/consolidate_chemical_mappings.py): one row per xref, one
+    canonical-name row via ``kgm.name:<slug>``, one synonym row per synonym.
+    """
+    header = [
+        "# curie_map:",
+        '#   CHEBI: "http://purl.obolibrary.org/obo/CHEBI_"',
+        '#   cas: "https://bioregistry.io/cas:"',
+        '#   kegg.compound: "https://bioregistry.io/kegg.compound:"',
+        '#   pubchem.compound: "https://bioregistry.io/pubchem.compound:"',
+        '#   obo: "http://purl.obolibrary.org/obo/"',
+        '#   skos: "http://www.w3.org/2004/02/skos/core#"',
+        '#   semapv: "https://w3id.org/semapv/vocab/"',
+        '#   kgm.name: "https://w3id.org/kg-microbe/name/"',
+        '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
+        '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients_test"',
+        '# mapping_set_version: "2026-04-20"',
+        '# mapping_date: "2026-04-20"',
+    ]
+
+    def _slug(name: str) -> str:
+        return name.lower().replace(" ", "_").replace("-", "_")
+
+    rows = []
+    for entry in entries:
+        obj_id = entry["id"]
+        obj_label = entry.get("canonical_name", "")
+        obj_formula = entry.get("formula", "")
+        obj_category = entry.get("category", "")
+        obj_source = (
+            "obo:chebi.owl" if obj_id.startswith("CHEBI:")
+            else f"obo:{obj_id.split(':', 1)[0].lower()}.owl"
+        )
+        source_tag = entry.get("sources", "")
+
+        for xref in entry.get("xrefs", "").split("|"):
+            if not xref:
+                continue
+            rows.append({
+                "subject_id": xref,
+                "subject_label": "",
+                "predicate_id": "skos:exactMatch",
+                "object_id": obj_id,
+                "object_label": obj_label,
+                "object_source": obj_source,
+                "mapping_justification": "semapv:UnspecifiedMatching",
+                "source": source_tag,
+                "mapping_date": "2026-04-20",
+                "confidence": "",
+                "comment": "",
+                "object_formula": obj_formula,
+                "object_category": obj_category,
+            })
+
+        if obj_label:
+            rows.append({
+                "subject_id": f"kgm.name:{_slug(obj_label)}",
+                "subject_label": obj_label,
+                "predicate_id": "skos:exactMatch",
+                "object_id": obj_id,
+                "object_label": obj_label,
+                "object_source": obj_source,
+                "mapping_justification": "semapv:LexicalMatching",
+                "source": source_tag,
+                "mapping_date": "2026-04-20",
+                "confidence": "",
+                "comment": "canonical_name",
+                "object_formula": obj_formula,
+                "object_category": obj_category,
+            })
+
+        for syn in entry.get("synonyms", "").split("|"):
+            syn = syn.strip()
+            if not syn or syn == obj_label:
+                continue
+            rows.append({
+                "subject_id": f"kgm.name:{_slug(syn)}",
+                "subject_label": syn,
+                "predicate_id": "skos:closeMatch",
+                "object_id": obj_id,
+                "object_label": obj_label,
+                "object_source": obj_source,
+                "mapping_justification": "semapv:LexicalMatching",
+                "source": source_tag,
+                "mapping_date": "2026-04-20",
+                "confidence": "",
+                "comment": "synonym",
+                "object_formula": obj_formula,
+                "object_category": obj_category,
+            })
+
+    with gzip.open(path, "wt", encoding="utf-8") as fh:
+        for line in header:
+            fh.write(line + "\n")
+        fh.write("\t".join(_SSSOM_COLUMNS) + "\n")
+        for row in rows:
+            fh.write("\t".join(str(row.get(c, "")) for c in _SSSOM_COLUMNS) + "\n")
+
+
 @pytest.fixture
 def mock_mappings_file():
-    """Create a temporary mock unified mappings file."""
-    # Current schema: `id` primary key with optional `category`. `chebi_id` is
-    # accepted as a legacy alias by ``load_unified_mappings`` but all new
-    # fixtures should use the canonical column name.
-    data = {
-        "id": ["CHEBI:15377", "CHEBI:17234", "CHEBI:16240", "CHEBI:17925"],
-        "category": [
-            "biolink:ChemicalSubstance",
-            "biolink:ChemicalSubstance",
-            "biolink:ChemicalSubstance",
-            "biolink:ChemicalSubstance",
-        ],
-        "canonical_name": ["water", "glucose", "hydrogen peroxide", "lactate"],
-        "formula": ["H2O", "C6H12O6", "H2O2", "C3H6O3"],
-        "synonyms": [
-            "H2O|dihydrogen oxide|oxidane",
-            "D-glucose|dextrose|grape sugar",
-            "hydrogen peroxide|peroxide",
-            "lactic acid|2-hydroxypropanoic acid",
-        ],
-        "xrefs": [
-            "cas:7732-18-5|kegg.compound:C00001",
-            "cas:50-99-7|kegg.compound:C00031|pubchem.compound:5793",
-            "cas:7722-84-1|kegg.compound:C00027",
-            "cas:79-33-4|kegg.compound:C00186",
-        ],
-        "sources": [
-            "chebi_xrefs|mediadive_compounds",
-            "chebi_xrefs|primary_mappings[kegg_compound]",
-            "chebi_xrefs",
-            "bacdive_metabolites|chebi_xrefs",
-        ],
-    }
+    """Create a temporary mock unified SSSOM mappings file."""
+    entries = [
+        {
+            "id": "CHEBI:15377",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "water",
+            "formula": "H2O",
+            "synonyms": "H2O|dihydrogen oxide|oxidane",
+            "xrefs": "cas:7732-18-5|kegg.compound:C00001",
+            "sources": "chebi_xrefs|mediadive_compounds",
+        },
+        {
+            "id": "CHEBI:17234",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "glucose",
+            "formula": "C6H12O6",
+            "synonyms": "D-glucose|dextrose|grape sugar",
+            "xrefs": "cas:50-99-7|kegg.compound:C00031|pubchem.compound:5793",
+            "sources": "chebi_xrefs|primary_mappings[kegg_compound]",
+        },
+        {
+            "id": "CHEBI:16240",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "hydrogen peroxide",
+            "formula": "H2O2",
+            "synonyms": "peroxide",
+            "xrefs": "cas:7722-84-1|kegg.compound:C00027",
+            "sources": "chebi_xrefs",
+        },
+        {
+            "id": "CHEBI:17925",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "lactate",
+            "formula": "C3H6O3",
+            "synonyms": "lactic acid|2-hydroxypropanoic acid",
+            "xrefs": "cas:79-33-4|kegg.compound:C00186",
+            "sources": "bacdive_metabolites|chebi_xrefs",
+        },
+    ]
 
-    df = pd.DataFrame(data)
-
-    # Create temporary gzipped TSV
-    with tempfile.NamedTemporaryFile(mode="wb", suffix=".tsv.gz", delete=False) as tmp:
-        with gzip.open(tmp.name, "wt") as f:
-            df.to_csv(f, sep="\t", index=False)
+    with tempfile.NamedTemporaryFile(mode="wb", suffix=".sssom.tsv.gz", delete=False) as tmp:
         tmp_path = Path(tmp.name)
+
+    _write_mock_sssom(entries, tmp_path)
 
     yield tmp_path
 
-    # Cleanup
     tmp_path.unlink()
 
 
@@ -75,7 +191,8 @@ def mock_mappings_file():
 def reset_cache():
     """Reset module-level cache before each test."""
     def _reset():
-        chemical_mapping_utils._UNIFIED_MAPPINGS = None
+        chemical_mapping_utils._LOADED = False
+        chemical_mapping_utils._ENTITY_COUNT = 0
         chemical_mapping_utils._NAME_INDEX = None
         chemical_mapping_utils._CANONICAL_NAME_INDEX = None
         chemical_mapping_utils._HYDRATE_FREE_NAME_INDEX = None

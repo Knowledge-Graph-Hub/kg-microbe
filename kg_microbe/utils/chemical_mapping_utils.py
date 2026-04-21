@@ -1,5 +1,14 @@
-"""Utilities for chemical mapping lookups using unified chemical mappings file."""
+"""Utilities for chemical mapping lookups.
 
+Reads the unified ingredient SSSOM mapping set
+(``mappings/unified_ingredient_mappings.sssom.tsv.gz``) and reconstructs an
+entity-centric in-memory index grouped on ``object_id``. The SSSOM carries
+the per-entity attributes (``canonical_name`` via ``object_label``,
+``formula``/``category`` via extension columns) as well as the mappings
+themselves (xrefs, canonical-name rows, synonym rows).
+"""
+
+import csv
 import gzip
 import re
 from collections import OrderedDict
@@ -8,8 +17,12 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-# Module-level cache (loaded once per process)
-_UNIFIED_MAPPINGS: Optional[pd.DataFrame] = None
+# Module-level cache (loaded once per process). We no longer store a
+# DataFrame — the SSSOM is parsed row-streamed and aggregated into the
+# per-entity indices below. ``_ENTITY_COUNT`` is exposed for diagnostics
+# in place of the old ``_UNIFIED_MAPPINGS`` DataFrame.
+_LOADED: bool = False
+_ENTITY_COUNT: int = 0
 _NAME_INDEX: Optional[Dict[str, str]] = None
 _CANONICAL_NAME_INDEX: Optional[Dict[str, str]] = None
 _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
@@ -18,8 +31,8 @@ _XREF_INDEX: Optional[Dict[str, str]] = None
 _CATEGORY_INDEX: Optional[Dict[str, str]] = None
 # Primary-CURIE-keyed indices. Without these the hot-path getters
 # (get_canonical_name / get_synonyms / get_xrefs / get_formula) fall back to
-# scanning the 119k-row DataFrame on every call, which destroys throughput in
-# any transform (e.g. bacdive) that enriches thousands of nodes per run.
+# scanning the full mapping on every call, which destroys throughput in any
+# transform (e.g. bacdive) that enriches thousands of nodes per run.
 _PRIMARY_NAME_INDEX: Optional[Dict[str, str]] = None
 _PRIMARY_SYNONYMS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_XREFS_INDEX: Optional[Dict[str, List[str]]] = None
@@ -104,104 +117,80 @@ def normalize_name(
     return normalized
 
 
-def _read_unified_tsv_gz(path: Path) -> pd.DataFrame:
-    """Read one unified mapping TSV.GZ into a DataFrame (schema-tolerant)."""
-    # quoting=3 (QUOTE_NONE) handles chemical names with quote characters.
-    # on_bad_lines="skip" tolerates rare legacy rows with embedded tabs.
-    with gzip.open(path, "rt") as f:
-        df = pd.read_csv(
-            f,
-            sep="\t",
-            dtype=str,
-            quoting=3,
-            engine="python",
-            on_bad_lines="skip",
-        )
-    return df.fillna("")
-
-
-def load_unified_mappings(mappings_path: Optional[Path] = None) -> pd.DataFrame:
+def _iter_sssom_rows(path: Path):
     """
-    Load unified chemical mappings file(s) (gzipped TSV).
+    Stream SSSOM data rows from a (possibly gzipped) mapping set.
 
-    The unified mapping is split across two files:
+    Yields ``dict`` rows. Comment/metadata lines starting with ``#`` are
+    skipped; the first non-comment line is the column header.
+    """
+    open_fn = (
+        (lambda p: gzip.open(p, "rt", encoding="utf-8", newline=""))
+        if str(path).endswith(".gz")
+        else (lambda p: open(p, "r", encoding="utf-8", newline=""))
+    )
+    with open_fn(path) as fh:
+        data_lines = (line for line in fh if not line.startswith("#"))
+        reader = csv.DictReader(data_lines, delimiter="\t")
+        yield from reader
 
-      - ``unified_chemical_mappings.tsv.gz`` — chemicals, compounds, and
-        media-ingredient prefixes (CHEBI, kgmicrobe.compound, NCIT, FOODON,
-        UBERON, ENVO).
-      - ``unified_other_mappings.tsv.gz`` — reserved for non-chemical,
-        non-ingredient mappings. Optional; loaded if present.
 
-    Both files share the same schema; this function concatenates them into
-    a single in-memory DataFrame so downstream lookup APIs are unchanged.
+def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
+    """
+    Load the unified ingredient SSSOM mapping set.
+
+    Reads ``mappings/unified_ingredient_mappings.sssom.tsv.gz`` (or the
+    explicit path given) and builds the in-memory per-entity indices used
+    by the lookup API (``find_chebi_by_name``, ``get_canonical_name``, …).
+    Per-entity attributes that SSSOM cannot express natively —
+    ``object_formula`` and ``object_category`` — are read from the SSSOM
+    extension columns emitted by ``scripts/consolidate_chemical_mappings.py``.
+
+    Row-shape semantics (matches ``export_unified_sssom``):
+      - ``kgm.name:`` subject + ``comment == "canonical_name"`` →
+        contributes the canonical name via ``subject_label`` /
+        ``object_label``.
+      - ``kgm.name:`` subject + ``comment == "synonym"`` → ``subject_label``
+        is added as an entity synonym.
+      - other CURIE subject (not equal to object) → xref.
+      - subject == object (attribute_carrier) → no-op mapping; used only
+        to carry extension columns for entities with no other rows.
 
     Uses module-level caching to avoid reloading on multiple calls.
 
-    :param mappings_path: Path to unified_chemical_mappings.tsv.gz. If None,
-        uses the default path relative to this file and also looks for the
-        sibling ``unified_other_mappings.tsv.gz`` in the same directory.
-    :return: DataFrame with columns: id, category, canonical_name, formula,
-             synonyms, xrefs, sources. Legacy baselines using ``chebi_id`` as
-             the primary column are silently upgraded to ``id`` in memory.
+    :param mappings_path: Path to the unified SSSOM. If None, uses the
+        default path relative to this file.
+    :return: Number of distinct entities loaded (zero before first load).
     """
-    global _UNIFIED_MAPPINGS, _NAME_INDEX, _HYDRATE_FREE_NAME_INDEX
-    global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX, _CACHED_PATH
+    global _LOADED, _ENTITY_COUNT, _CACHED_PATH
 
-    # Default path: mappings/unified_chemical_mappings.tsv.gz
     if mappings_path is None:
         base_dir = Path(__file__).parent.parent.parent
-        mappings_path = base_dir / "mappings" / "unified_chemical_mappings.tsv.gz"
+        mappings_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
 
-    # Return cached mappings if already loaded from the same path
-    if _UNIFIED_MAPPINGS is not None and _CACHED_PATH == mappings_path:
-        return _UNIFIED_MAPPINGS
+    if _LOADED and _CACHED_PATH == mappings_path:
+        return _ENTITY_COUNT
 
     if not mappings_path.exists():
         raise FileNotFoundError(f"Unified mappings file not found: {mappings_path}")
 
-    # Always load the chemical file.
-    frames = [_read_unified_tsv_gz(mappings_path)]
-
-    # Optionally load the sibling "other" file, if it lives alongside the
-    # chemical file. Missing is fine — that file is only written when it has
-    # at least one row.
-    other_path = mappings_path.with_name("unified_other_mappings.tsv.gz")
-    if other_path.exists() and other_path != mappings_path:
-        frames.append(_read_unified_tsv_gz(other_path))
-
-    _UNIFIED_MAPPINGS = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
-
-    # Upgrade legacy baselines that used `chebi_id` as the primary column.
-    if "id" not in _UNIFIED_MAPPINGS.columns and "chebi_id" in _UNIFIED_MAPPINGS.columns:
-        _UNIFIED_MAPPINGS = _UNIFIED_MAPPINGS.rename(columns={"chebi_id": "id"})
-    if "category" not in _UNIFIED_MAPPINGS.columns:
-        # Legacy files omit category. Default to ChemicalSubstance for CHEBI
-        # entries, empty otherwise — downstream code must tolerate empty.
-        _UNIFIED_MAPPINGS["category"] = _UNIFIED_MAPPINGS["id"].map(
-            lambda x: "biolink:ChemicalSubstance" if str(x).startswith("CHEBI:") else ""
-        )
-
-    # Cache the path
     _CACHED_PATH = mappings_path
 
     # Clear negative cache on reload so stale misses cannot survive a mappings update.
     _NEGATIVE_LOOKUP_CACHE.clear()
 
-    # Build indices for fast lookup
-    _build_indices()
+    _build_indices(mappings_path)
+    _LOADED = True
+    return _ENTITY_COUNT
 
-    return _UNIFIED_MAPPINGS
 
-
-def _build_indices():
-    """Build lookup indices from loaded mappings."""
+def _build_indices(mappings_path: Path):
+    """Build lookup indices directly from the SSSOM file (streaming)."""
     global _NAME_INDEX, _CANONICAL_NAME_INDEX, _HYDRATE_FREE_NAME_INDEX
     global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX
     global _PRIMARY_NAME_INDEX, _PRIMARY_SYNONYMS_INDEX
     global _PRIMARY_XREFS_INDEX, _PRIMARY_FORMULA_INDEX
-
-    if _UNIFIED_MAPPINGS is None:
-        return
+    global _ENTITY_COUNT
 
     _NAME_INDEX = {}
     _CANONICAL_NAME_INDEX = {}
@@ -214,69 +203,77 @@ def _build_indices():
     _PRIMARY_XREFS_INDEX = {}
     _PRIMARY_FORMULA_INDEX = {}
 
-    for _, row in _UNIFIED_MAPPINGS.iterrows():
-        curie = row["id"]
+    primary_synonyms_sets: Dict[str, set] = {}
+    primary_xrefs_sets: Dict[str, set] = {}
 
-        # Index category so downstream transforms can classify without prefix routing.
-        category = row.get("category", "")
-        if curie and category:
-            _CATEGORY_INDEX[curie] = category
+    def _index_name(curie: str, name: str):
+        norm = normalize_name(name)
+        if norm:
+            _NAME_INDEX.setdefault(norm, curie)
+            norm_hf = normalize_name(name, strip_hydrate=True)
+            if norm_hf and norm_hf != norm:
+                _HYDRATE_FREE_NAME_INDEX.setdefault(norm_hf, curie)
+        return norm
 
-        # Primary-key indices: O(1) lookups for the hot-path getters below.
-        if curie:
-            if row["canonical_name"]:
-                _PRIMARY_NAME_INDEX[curie] = row["canonical_name"]
-            if row["synonyms"]:
-                _PRIMARY_SYNONYMS_INDEX[curie] = [
-                    s for s in row["synonyms"].split("|") if s
-                ]
-            if row["xrefs"]:
-                _PRIMARY_XREFS_INDEX[curie] = [
-                    x for x in row["xrefs"].split("|") if x
-                ]
-            if row["formula"]:
-                _PRIMARY_FORMULA_INDEX[curie] = row["formula"]
+    for row in _iter_sssom_rows(mappings_path):
+        curie = (row.get("object_id") or "").strip()
+        if not curie:
+            continue
 
-        # Index canonical name (both full name index and canonical-only index)
-        if row["canonical_name"]:
-            norm_name = normalize_name(row["canonical_name"])
-            if norm_name:
-                if norm_name not in _NAME_INDEX:
-                    _NAME_INDEX[norm_name] = curie
-                if norm_name not in _CANONICAL_NAME_INDEX:
-                    _CANONICAL_NAME_INDEX[norm_name] = curie
-            # Hydrate-free index: only add if stripping actually changed the name,
-            # so lookups with a hydrate suffix can reach the anhydrous entry.
-            norm_hydrate_free = normalize_name(row["canonical_name"], strip_hydrate=True)
-            if norm_hydrate_free and norm_hydrate_free != norm_name:
-                _HYDRATE_FREE_NAME_INDEX.setdefault(norm_hydrate_free, curie)
+        # First non-empty extension attributes win per object.
+        if curie not in _PRIMARY_FORMULA_INDEX:
+            formula = (row.get("object_formula") or "").strip()
+            if formula:
+                _PRIMARY_FORMULA_INDEX[curie] = formula
+                _FORMULA_INDEX.setdefault(formula, []).append(curie)
 
-        # Index synonyms (name index only)
-        if row["synonyms"]:
-            for synonym in row["synonyms"].split("|"):
-                if synonym:
-                    norm_syn = normalize_name(synonym)
-                    if norm_syn and norm_syn not in _NAME_INDEX:
-                        _NAME_INDEX[norm_syn] = curie
-                    norm_syn_hydrate_free = normalize_name(synonym, strip_hydrate=True)
-                    if norm_syn_hydrate_free and norm_syn_hydrate_free != norm_syn:
-                        _HYDRATE_FREE_NAME_INDEX.setdefault(norm_syn_hydrate_free, curie)
+        if curie not in _CATEGORY_INDEX:
+            category = (row.get("object_category") or "").strip()
+            if category:
+                _CATEGORY_INDEX[curie] = category
 
-        # Index formula
-        if row["formula"]:
-            formula = row["formula"]
-            if formula not in _FORMULA_INDEX:
-                _FORMULA_INDEX[formula] = []
-            _FORMULA_INDEX[formula].append(curie)
+        # Canonical name: first non-empty ``object_label`` per object wins.
+        if curie not in _PRIMARY_NAME_INDEX:
+            obj_label = (row.get("object_label") or "").strip()
+            if obj_label:
+                _PRIMARY_NAME_INDEX[curie] = obj_label
+                norm = _index_name(curie, obj_label)
+                if norm:
+                    _CANONICAL_NAME_INDEX.setdefault(norm, curie)
 
-        # Index xrefs
-        if row["xrefs"]:
-            for xref in row["xrefs"].split("|"):
-                if xref:
-                    # Normalize xref format
-                    norm_xref = xref.lower().strip()
-                    if norm_xref and norm_xref not in _XREF_INDEX:
-                        _XREF_INDEX[norm_xref] = curie
+        subject = (row.get("subject_id") or "").strip()
+        if not subject:
+            continue
+
+        if subject.startswith("kgm.name:"):
+            comment = (row.get("comment") or "").strip()
+            if comment == "synonym":
+                syn = (row.get("subject_label") or "").strip()
+                if syn:
+                    primary_synonyms_sets.setdefault(curie, set()).add(syn)
+                    _index_name(curie, syn)
+            # canonical_name rows already handled via object_label above.
+        elif subject != curie:
+            # xref row: ``subject_id`` is an equivalent CURIE.
+            primary_xrefs_sets.setdefault(curie, set()).add(subject)
+            norm_xref = subject.lower()
+            _XREF_INDEX.setdefault(norm_xref, curie)
+
+    # Freeze accumulated sets into deterministic lists.
+    for curie, syns in primary_synonyms_sets.items():
+        _PRIMARY_SYNONYMS_INDEX[curie] = sorted(syns)
+    for curie, xrefs in primary_xrefs_sets.items():
+        _PRIMARY_XREFS_INDEX[curie] = sorted(xrefs)
+
+    # Count of distinct entities: any object_id that appears in at least
+    # one index. Use the union of keys to avoid double-counting.
+    _ENTITY_COUNT = len(
+        set(_PRIMARY_NAME_INDEX)
+        | set(_PRIMARY_SYNONYMS_INDEX)
+        | set(_PRIMARY_XREFS_INDEX)
+        | set(_PRIMARY_FORMULA_INDEX)
+        | set(_CATEGORY_INDEX)
+    )
 
 
 def find_chebi_by_name(
@@ -309,7 +306,7 @@ def find_chebi_by_name(
         return None
 
     # Ensure mappings are loaded
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
 
     # Try exact match first
@@ -370,7 +367,7 @@ def find_chebi_by_formula(formula: str) -> List[str]:
         return []
 
     # Ensure mappings are loaded
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
 
     if _FORMULA_INDEX:
@@ -390,7 +387,7 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
         return None
 
     # Ensure mappings are loaded
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
 
     # Normalize xref format
@@ -411,7 +408,7 @@ def get_canonical_name(chebi_id: str) -> Optional[str]:
     """
     if not chebi_id:
         return None
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
     if _PRIMARY_NAME_INDEX is None:
         return None
@@ -428,7 +425,7 @@ def get_synonyms(chebi_id: str) -> List[str]:
     """
     if not chebi_id:
         return []
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
     if _PRIMARY_SYNONYMS_INDEX is None:
         return []
@@ -444,7 +441,7 @@ def get_xrefs(chebi_id: str) -> List[str]:
     """
     if not chebi_id:
         return []
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
     if _PRIMARY_XREFS_INDEX is None:
         return []
@@ -460,7 +457,7 @@ def get_formula(chebi_id: str) -> Optional[str]:
     """
     if not chebi_id:
         return None
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
     if _PRIMARY_FORMULA_INDEX is None:
         return None
@@ -477,12 +474,12 @@ def get_category(curie: str) -> Optional[str]:
     present or has no category recorded.
 
     :param curie: Primary CURIE (e.g. "CHEBI:15377", "FOODON:00002441")
-    :return: Biolink category (e.g. "biolink:ChemicalSubstance",
+    :return: Biolink category (e.g. "biolink:ChemicalEntity",
              "biolink:Food") or None if not found.
     """
     if not curie:
         return None
-    if _UNIFIED_MAPPINGS is None:
+    if not _LOADED:
         load_unified_mappings()
     if _CATEGORY_INDEX:
         return _CATEGORY_INDEX.get(curie)

@@ -43,34 +43,18 @@ multiple candidates exist for the same entity:
   > CAS-RN = mediadive.ingredient    (flat registry + minted fallback)
   > kgmicrobe.compound               (last-resort in-house mint)
 
-See ``_PRIMARY_PREFIX_RANK`` and ``best_primary()``. Chemicals proper plus
-ontologies used as media ingredients are written to
-``mappings/unified_chemical_mappings.tsv.gz``; any other CURIE prefix
-(reserved for future non-ingredient mappings such as PO plant structures
-not used as media) goes to the sibling file
-``mappings/unified_other_mappings.tsv.gz``. Both files share the same
-schema; `category` stores the biolink class so downstream transforms can
-classify without hardcoded prefix routing.
+See ``_PRIMARY_PREFIX_RANK`` and ``best_primary()``.
 
-Outputs:
-  mappings/unified_chemical_mappings.tsv.gz  (CHEBI, FOODON, UBERON, ENVO,
-                                              NCIT, PubChem, CAS,
-                                              mediadive.ingredient,
-                                              kgmicrobe.compound)
-  mappings/unified_other_mappings.tsv.gz     (anything else, e.g. PO)
+Output:
   mappings/unified_ingredient_mappings.sssom.tsv.gz
-      Standards-compliant SSSOM mapping set — one row per
-      (xref CURIE → unified primary CURIE) equivalence. This file is the
-      kg-microbe **primary mapping product** for interoperability: it is
-      validated with the ``sssom`` package on write. The TSV.GZ remains the
-      in-process runtime index consulted by transforms via
-      ``chemical_mapping_utils`` — the SSSOM export projects the same data
-      into the SSSOM standard so downstream consumers do not have to learn a
-      kg-microbe-specific schema.
-
-Columns (TSV.GZ): id, category, canonical_name, formula, synonyms, xrefs, sources.
-Downstream readers that still expect the legacy `chebi_id` column name
-auto-alias `id` → `chebi_id` on load.
+      The single unified mapping product, in SSSOM format (validated with
+      the ``sssom`` package on write). Per-entity attributes that SSSOM
+      cannot express natively — ``formula``, ``category`` (biolink class) —
+      travel as SSSOM extension columns ``object_formula`` /
+      ``object_category``, declared in the mapping-set header's
+      ``extension_definitions``. Runtime transforms read this same file via
+      ``kg_microbe.utils.chemical_mapping_utils``, which reconstructs the
+      entity-centric view in memory by grouping rows on ``object_id``.
 """
 
 import hashlib
@@ -88,6 +72,102 @@ import pandas as pd
 # ingredient SSSOM mapping set and is synced into ``mappings/`` on every run.
 _MIM_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "mappings" / "ingredient_mappings.sssom.tsv"
 _MIM_VENDORED_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
+
+
+def _read_sssom_records(filepath: Path) -> dict:
+    """
+    Read a unified SSSOM file (plain or gzipped) into per-entity records.
+
+    Groups rows on ``object_id`` and reconstructs the entity-centric view
+    that the TSV index used to hold: ``canonical_name``, ``formula``,
+    ``category``, pipe-joinable ``synonyms`` / ``xrefs`` / ``sources``.
+
+    Row classification (matches ``export_unified_sssom``):
+      - subject starts with ``kgm.name:`` and ``comment == "canonical_name"``
+        → entity's canonical name (from ``subject_label``).
+      - subject starts with ``kgm.name:`` and ``comment == "synonym"``
+        → synonym (added to the entity's synonym set).
+      - subject is any other CURIE → xref (added to the entity's xref set);
+        unless subject == object (attribute_carrier row, skipped as a no-op
+        equivalence, formula/category still picked up from its columns).
+
+    Extension columns ``object_formula`` / ``object_category`` ride on every
+    row — the first non-empty value wins per ``object_id``.
+
+    Returns: ``{curie: {"canonical_name": str, "formula": str, "category": str,
+    "synonyms": set, "xrefs": set, "sources": set}}``.
+    """
+    import csv
+    import gzip as _gzip
+
+    open_fn = (
+        (lambda p: _gzip.open(p, "rt", encoding="utf-8", newline=""))
+        if str(filepath).endswith(".gz")
+        else (lambda p: open(p, "r", encoding="utf-8", newline=""))
+    )
+
+    records: dict = {}
+
+    with open_fn(filepath) as fh:
+        # Skip comment/metadata lines (start with '#'); the header is the
+        # first non-comment line.
+        reader_iter = (line for line in fh if not line.startswith("#"))
+        reader = csv.DictReader(reader_iter, delimiter="\t")
+        for row in reader:
+            obj = (row.get("object_id") or "").strip()
+            if not obj:
+                continue
+
+            rec = records.get(obj)
+            if rec is None:
+                rec = {
+                    "canonical_name": "",
+                    "formula": "",
+                    "category": "",
+                    "synonyms": set(),
+                    "xrefs": set(),
+                    "sources": set(),
+                }
+                records[obj] = rec
+
+            # First non-empty extension attributes win per object.
+            if not rec["formula"]:
+                form = (row.get("object_formula") or "").strip()
+                if form:
+                    rec["formula"] = form
+            if not rec["category"]:
+                cat = (row.get("object_category") or "").strip()
+                if cat:
+                    rec["category"] = cat
+
+            # Accumulate source labels from every row.
+            src = (row.get("source") or "").strip()
+            if src:
+                for part in src.split("|"):
+                    p = part.strip()
+                    if p:
+                        rec["sources"].add(p)
+
+            subj = (row.get("subject_id") or "").strip()
+            comment = (row.get("comment") or "").strip()
+            subj_label = (row.get("subject_label") or "").strip()
+            obj_label = (row.get("object_label") or "").strip()
+
+            if not rec["canonical_name"] and obj_label:
+                rec["canonical_name"] = obj_label
+
+            if subj.startswith("kgm.name:"):
+                # Either canonical_name or synonym row; canonical is already
+                # captured via object_label above. Synonyms are captured from
+                # subject_label here.
+                if comment == "synonym" and subj_label:
+                    rec["synonyms"].add(subj_label)
+                # canonical_name rows: subject_label matches canonical; no-op.
+            elif subj and subj != obj:
+                rec["xrefs"].add(subj)
+            # subj == obj is the attribute_carrier case — no xref/synonym.
+
+    return records
 
 
 def _file_sha256(path: Path) -> str:
@@ -644,30 +724,20 @@ class ChemicalMappingConsolidator:
 
         print(f"  Loaded {loaded} entries")
 
-    def load_existing_unified(self, filepath: Path):
+    def load_existing_unified_tsv(self, filepath: Path):
         """
-        Load an existing unified mappings TSV.GZ as a baseline.
+        Load a legacy unified TSV.GZ baseline (migration fallback only).
 
-        Accepts either ``unified_chemical_mappings.tsv.gz`` or
-        ``unified_other_mappings.tsv.gz`` — the schema is identical and rows
-        are filtered by their CURIE prefix on export, so the in-memory bag
-        of entries is shared between the two files.
-
-        The unified files are the source of truth once legacy per-source
-        inputs have been archived. This loader re-ingests every row so that
-        the consolidator can layer additional sources on top (via priority)
-        without losing prior content.
-
-        Priority is inferred from the ``sources`` column:
-          - mediaingredientmech_reviewed → 11
-          - culturebotai_reviewed        → 10
-          - manual_annotation*           → 5
-          - chebi_xrefs                  → 2
-          - everything else              → 1
+        The TSV outputs have been retired in favour of SSSOM-with-extension-
+        columns; this method exists only so the first consolidator run after
+        the switch can pick up ``formula`` and ``category`` values from the
+        old file before it is deleted. Delete this method and the matching
+        main() call once the SSSOM baseline reliably carries the extension
+        columns.
         """
         import gzip as _gzip
 
-        print(f"Loading existing unified mapping from {filepath}...")
+        print(f"Loading legacy TSV baseline from {filepath}...")
         with _gzip.open(filepath, "rt") as f:
             df = pd.read_csv(f, sep="\t", dtype=str).fillna("")
 
@@ -692,17 +762,7 @@ class ChemicalMappingConsolidator:
                         best = max(best, pri)
             return best
 
-        # Legacy baselines used `chebi_id` as the key column. Accept either.
         id_column = "id" if "id" in df.columns else "chebi_id"
-
-        # Guard against previously-polluted baselines: a single CURIE should
-        # never legitimately have thousands of synonyms/xrefs. If a row is
-        # visibly poisoned (past merge bugs concatenated many CHEBI entries
-        # into one), drop those fields rather than carrying the damage
-        # forward. Authoritative sources will re-supply the real values.
-        POLLUTION_CAP = 500
-        pollution_skipped = 0
-
         for _, row in df.iterrows():
             curie = row.get(id_column, "")
             if not is_accepted_primary(curie):
@@ -710,6 +770,90 @@ class ChemicalMappingConsolidator:
             synonyms = [s for s in row.get("synonyms", "").split("|") if s]
             xrefs = [x for x in row.get("xrefs", "").split("|") if x]
             sources = [s for s in row.get("sources", "").split("|") if s]
+            priority = infer_priority(row.get("sources", ""))
+
+            self.add_chemical(
+                id=curie,
+                canonical_name=row.get("canonical_name", ""),
+                formula=row.get("formula", ""),
+                synonyms=synonyms,
+                xrefs=xrefs,
+                source="",
+                priority=priority,
+            )
+            self.chemicals[curie]["sources"].update(sources)
+
+        print(f"  Loaded {len(df)} legacy baseline entries")
+
+    def load_existing_unified(self, filepath: Path):
+        """
+        Load an existing unified SSSOM file as a baseline.
+
+        Reads ``unified_ingredient_mappings.sssom.tsv.gz`` (the primary and
+        only unified output) and reconstructs per-entity records by grouping
+        rows on ``object_id``.
+
+        The unified SSSOM is the source of truth once legacy per-source
+        inputs have been archived. This loader re-ingests every row so that
+        the consolidator can layer additional sources on top (via priority)
+        without losing prior content.
+
+        Priority is inferred per row from the ``source`` column:
+          - mediaingredientmech_reviewed → 11
+          - culturebotai_reviewed        → 10
+          - manual_annotation*           → 5
+          - chebi_xrefs                  → 2
+          - everything else              → 1
+
+        Row-shape semantics (produced by ``export_unified_sssom``):
+          - xref rows: subject is a plain CURIE (not ``kgm.name:``), carries
+            an equivalent identifier for the object.
+          - canonical_name rows: subject is ``kgm.name:<slug>`` with
+            ``comment == "canonical_name"``; the ``subject_label`` and
+            ``object_label`` both hold the entity's canonical name.
+          - synonym rows: subject is ``kgm.name:<slug>`` with
+            ``comment == "synonym"``; ``subject_label`` is the synonym text.
+          - attribute_carrier rows: subject equals object; emitted only when
+            an entity has extension attributes but no other mapping rows.
+
+        Extension columns ``object_formula`` and ``object_category`` ride on
+        every row as per-entity attributes; the loader takes the first
+        non-empty value per ``object_id``.
+        """
+        print(f"Loading existing unified SSSOM from {filepath}...")
+        records = _read_sssom_records(filepath)
+
+        priority_for = {
+            "mediaingredientmech_reviewed": 11,
+            "culturebotai_reviewed": 10,
+            "manual_annotation": 5,
+            "manual_corrections": 5,
+            "metatraits_manual": 5,
+            "metatraits_chemical_synonyms": 5,
+            "metatraits_special_chemicals": 5,
+            "metatraits_chemical_mappings": 5,
+            "chebi_xrefs": 2,
+        }
+
+        def infer_priority(sources_str: str) -> int:
+            parts = [p.strip() for p in sources_str.split("|") if p.strip()]
+            best = 1
+            for src in parts:
+                for prefix, pri in priority_for.items():
+                    if src.startswith(prefix):
+                        best = max(best, pri)
+            return best
+
+        # Guard against previously-polluted baselines.
+        POLLUTION_CAP = 500
+        pollution_skipped = 0
+
+        for curie, rec in records.items():
+            if not is_accepted_primary(curie):
+                continue
+            synonyms = list(rec["synonyms"])
+            xrefs = list(rec["xrefs"])
+            sources = list(rec["sources"])
             if len(synonyms) > POLLUTION_CAP or len(xrefs) > POLLUTION_CAP:
                 print(
                     f"  WARN: {curie} has {len(synonyms)} synonyms / "
@@ -718,12 +862,12 @@ class ChemicalMappingConsolidator:
                 synonyms = []
                 xrefs = []
                 pollution_skipped += 1
-            priority = infer_priority(row.get("sources", ""))
+            priority = infer_priority("|".join(sources))
 
             self.add_chemical(
                 id=curie,
-                canonical_name=row.get("canonical_name", ""),
-                formula=row.get("formula", ""),
+                canonical_name=rec["canonical_name"],
+                formula=rec["formula"],
                 synonyms=synonyms,
                 xrefs=xrefs,
                 source="",  # use explicit add below to preserve all source labels
@@ -737,7 +881,7 @@ class ChemicalMappingConsolidator:
                 f"  Dropped polluted synonyms/xrefs from "
                 f"{pollution_skipped} baseline row(s)"
             )
-        print(f"  Loaded {len(df)} baseline entries")
+        print(f"  Loaded {len(records)} baseline entries")
 
     def load_culturebotai_reviewed(self, filepath: Path):
         """
@@ -1091,142 +1235,16 @@ class ChemicalMappingConsolidator:
             f"{synonyms_added} cross-CURIE synonyms"
         )
 
-    def export_unified_mapping(
-        self,
-        chemical_output_path: Path,
-        other_output_path: Path,
-    ):
-        """
-        Export the unified mapping, split across two files by CURIE prefix.
-
-        Chemical/ingredient entries (see ``_CHEMICAL_PREFIXES``) go to
-        ``chemical_output_path``; everything else goes to
-        ``other_output_path``. The "other" file is only written if there is
-        at least one qualifying row (empty files are left alone rather than
-        created with just a header).
-        """
-        print(
-            f"\nExporting unified mapping split:\n"
-            f"  chemical → {chemical_output_path}\n"
-            f"  other    → {other_output_path}"
-        )
-
-        def _sanitize(value):
-            """
-            Strip tab/newline/pipe characters from a single field value.
-
-            Needed because ChEBI aliases occasionally contain literal tabs or
-            newlines (e.g. IUPAC names with embedded whitespace) which would
-            otherwise corrupt the TSV and break downstream pandas parsing.
-            """
-            if value is None:
-                return ""
-            return (
-                str(value)
-                .replace("\t", " ")
-                .replace("\r", " ")
-                .replace("\n", " ")
-                .replace("|", ";")
-                .strip()
-            )
-
-        def _sort_key(curie: str):
-            """Sort: prefix alphabetically, numeric local ID ascending when numeric."""
-            prefix, _, local = curie.partition(":")
-            try:
-                return (prefix, 0, int(local))
-            except ValueError:
-                return (prefix, 1, local)
-
-        chemical_records = []
-        other_records = []
-        for curie in sorted(self.chemicals.keys(), key=_sort_key):
-            chem = self.chemicals[curie]
-
-            # Sort and join synonyms/xrefs/sources. Sanitize each value
-            # exactly once per element — earlier versions sanitized twice
-            # (once in the `if` clause and once in the set comprehension),
-            # which is measurable overhead on large synonym sets.
-            def _clean_set(values):
-                out = set()
-                for v in values:
-                    if v is None:
-                        continue
-                    cleaned = _sanitize(v)
-                    if cleaned:
-                        out.add(cleaned)
-                return sorted(out)
-
-            synonyms_list = _clean_set(chem["synonyms"])
-            synonyms_str = "|".join(synonyms_list) if synonyms_list else ""
-
-            xrefs_list = _clean_set(chem["xrefs"])
-            xrefs_str = "|".join(xrefs_list) if xrefs_list else ""
-
-            sources_list = _clean_set(chem["sources"])
-            sources_str = "|".join(sources_list) if sources_list else ""
-
-            record = {
-                "id": curie,
-                "category": _sanitize(chem["category"]),
-                "canonical_name": _sanitize(chem["canonical_name"]),
-                "formula": _sanitize(chem["formula"]),
-                "synonyms": synonyms_str,
-                "xrefs": xrefs_str,
-                "sources": sources_str,
-            }
-            if is_chemical_curie(curie):
-                chemical_records.append(record)
-            else:
-                other_records.append(record)
-
-        # Chemical file is always written (even if empty, so downstream
-        # consumers have a stable path).
-        pd.DataFrame(chemical_records).to_csv(
-            chemical_output_path, sep="\t", index=False, compression="gzip"
-        )
-
-        # Other file is only written if there are rows to put in it — avoids
-        # littering the repo with an empty placeholder. If a stale file from
-        # a prior run would otherwise be re-ingested as baseline next time,
-        # remove it so the export state matches the current split.
-        if other_records:
-            pd.DataFrame(other_records).to_csv(
-                other_output_path, sep="\t", index=False, compression="gzip"
-            )
-        elif other_output_path.exists():
-            other_output_path.unlink()
-
-        def _syn_xref_totals(records):
-            syns = sum(len(r["synonyms"].split("|")) for r in records if r["synonyms"])
-            xs = sum(len(r["xrefs"].split("|")) for r in records if r["xrefs"])
-            return syns, xs
-
-        chem_syn, chem_xref = _syn_xref_totals(chemical_records)
-        other_syn, other_xref = _syn_xref_totals(other_records)
-
-        print(f"  Chemical entries: {len(chemical_records)} "
-              f"(synonyms: {chem_syn}, xrefs: {chem_xref})")
-        if other_records:
-            print(f"  Other entries:    {len(other_records)} "
-                  f"(synonyms: {other_syn}, xrefs: {other_xref})")
-        else:
-            print("  Other entries:    0 (file not written)")
-
     def export_unified_sssom(self, sssom_output_path: Path):
         """
         Export the unified mapping as a standards-compliant SSSOM set.
 
-        Emits one row per (xref CURIE → primary CURIE) equivalence. This is
-        the kg-microbe primary mapping product for third-party/interoperable
-        use: it is validated with the ``sssom`` package before write (both
-        LinkML JSON-schema and ``check_all_prefixes_in_curie_map``).
-
-        The in-repo TSV.GZ remains the fast O(1) runtime index consulted by
-        transforms via ``kg_microbe.utils.chemical_mapping_utils``; the SSSOM
-        export projects the same mapping data — xrefs **and** free-text
-        synonyms — into the SSSOM standard so downstream consumers do not
-        need to learn the kg-microbe schema.
+        This is the single unified mapping product for kg-microbe. It is
+        validated with the ``sssom`` package before write (both LinkML
+        JSON-schema and ``check_all_prefixes_in_curie_map``). The runtime
+        loader in ``kg_microbe.utils.chemical_mapping_utils`` reads this
+        same file and reconstructs the entity-centric index in memory by
+        grouping rows on ``object_id``.
 
         Free-text synonyms are materialised by minting a synthetic
         ``kgm.name:<slug>`` subject per normalised name. ``slug`` is the
@@ -1247,9 +1265,12 @@ class ChemicalMappingConsolidator:
             wikipedia.en, …) are not equivalence statements and are skipped
             rather than emitted with a misleading predicate.
 
-        Formula and biolink category are **not** convertible to SSSOM —
-        they are per-entity attributes, not mappings. They stay only in
-        the TSV.GZ runtime index.
+        Formula and biolink category are per-entity attributes, not
+        mappings. They are carried as SSSOM extension columns
+        ``object_formula`` and ``object_category`` — declared in the
+        mapping-set ``extension_definitions`` header — so the runtime
+        loader can reconstruct the entity-centric view directly from
+        this file without a separate TSV index.
         """
         import subprocess
         from datetime import date
@@ -1380,12 +1401,31 @@ class ChemicalMappingConsolidator:
             chem = self.chemicals[curie]
             object_id = curie
             object_label = _sanitize_tsv(chem["canonical_name"])
+            object_formula = _sanitize_tsv(chem.get("formula", ""))
+            object_category = _sanitize_tsv(chem.get("category", ""))
             # Primary source prefix determines object_source when CHEBI.
             object_source = (
                 "obo:chebi.owl" if object_id.startswith("CHEBI:")
                 else f"obo:{object_id.split(':', 1)[0].lower()}.owl"
             )
             source_tag = "|".join(sorted(chem["sources"])) if chem["sources"] else ""
+
+            def _row(subject_id, subject_label, predicate, justification, comment):
+                return {
+                    "subject_id": subject_id,
+                    "subject_label": subject_label,
+                    "predicate_id": predicate,
+                    "object_id": object_id,
+                    "object_label": object_label,
+                    "object_source": object_source,
+                    "mapping_justification": justification,
+                    "source": source_tag,
+                    "mapping_date": today,
+                    "confidence": "",
+                    "comment": comment,
+                    "object_formula": object_formula,
+                    "object_category": object_category,
+                }
 
             for xref in sorted(chem["xrefs"]):
                 if not _is_valid_curie(xref):
@@ -1402,19 +1442,10 @@ class ChemicalMappingConsolidator:
                     skipped_unknown_prefix += 1
                     continue
 
-                mapping_rows.append({
-                    "subject_id": xref,
-                    "subject_label": "",
-                    "predicate_id": "skos:exactMatch",
-                    "object_id": object_id,
-                    "object_label": object_label,
-                    "object_source": object_source,
-                    "mapping_justification": "semapv:UnspecifiedMatching",
-                    "source": source_tag,
-                    "mapping_date": today,
-                    "confidence": "",
-                    "comment": "",
-                })
+                mapping_rows.append(_row(
+                    xref, "", "skos:exactMatch",
+                    "semapv:UnspecifiedMatching", "",
+                ))
                 xref_rows += 1
 
             # Emit the canonical name as an exactMatch row via kgm.name:.
@@ -1422,19 +1453,13 @@ class ChemicalMappingConsolidator:
             if chem["canonical_name"]:
                 slug = _slugify_name(chem["canonical_name"])
                 if slug:
-                    mapping_rows.append({
-                        "subject_id": f"kgm.name:{slug}",
-                        "subject_label": _sanitize_tsv(chem["canonical_name"]),
-                        "predicate_id": "skos:exactMatch",
-                        "object_id": object_id,
-                        "object_label": object_label,
-                        "object_source": object_source,
-                        "mapping_justification": "semapv:LexicalMatching",
-                        "source": source_tag,
-                        "mapping_date": today,
-                        "confidence": "",
-                        "comment": "canonical_name",
-                    })
+                    mapping_rows.append(_row(
+                        f"kgm.name:{slug}",
+                        _sanitize_tsv(chem["canonical_name"]),
+                        "skos:exactMatch",
+                        "semapv:LexicalMatching",
+                        "canonical_name",
+                    ))
                     name_rows += 1
                 else:
                     skipped_empty_slug += 1
@@ -1452,20 +1477,28 @@ class ChemicalMappingConsolidator:
                 if slug in seen_synonym_slugs:
                     continue
                 seen_synonym_slugs.add(slug)
-                mapping_rows.append({
-                    "subject_id": f"kgm.name:{slug}",
-                    "subject_label": _sanitize_tsv(syn),
-                    "predicate_id": "skos:closeMatch",
-                    "object_id": object_id,
-                    "object_label": object_label,
-                    "object_source": object_source,
-                    "mapping_justification": "semapv:LexicalMatching",
-                    "source": source_tag,
-                    "mapping_date": today,
-                    "confidence": "",
-                    "comment": "synonym",
-                })
+                mapping_rows.append(_row(
+                    f"kgm.name:{slug}",
+                    _sanitize_tsv(syn),
+                    "skos:closeMatch",
+                    "semapv:LexicalMatching",
+                    "synonym",
+                ))
                 synonym_rows += 1
+
+            # If this entity has formula or category but no xref/name/synonym
+            # row was emitted (rare — e.g. CHEBI with only a formula, no
+            # label/xrefs/synonyms), emit a self-row so the extension
+            # attributes survive the round trip. Uses skos:exactMatch on
+            # (object_id, object_id) with justification SemanticSimilarityMatching
+            # would be wrong; instead we use MatchingProcess=unspecified and
+            # mark it "attribute_carrier" so the loader knows not to treat
+            # it as a mapping edge.
+            if not chem["canonical_name"] and not chem["synonyms"] and not chem["xrefs"] and (object_formula or object_category):
+                mapping_rows.append(_row(
+                    object_id, "", "skos:exactMatch",
+                    "semapv:UnspecifiedMatching", "attribute_carrier",
+                ))
 
         rows_emitted = xref_rows + name_rows + synonym_rows
 
@@ -1484,6 +1517,12 @@ class ChemicalMappingConsolidator:
             '#   - slot_name: source',
             '#     property: "https://w3id.org/kg-microbe/source"',
             '#     type_hint: "xsd:string"',
+            '#   - slot_name: object_formula',
+            '#     property: "https://w3id.org/kg-microbe/object_formula"',
+            '#     type_hint: "xsd:string"',
+            '#   - slot_name: object_category',
+            '#     property: "https://w3id.org/kg-microbe/object_category"',
+            '#     type_hint: "xsd:string"',
         ]
 
         column_order = [
@@ -1491,6 +1530,7 @@ class ChemicalMappingConsolidator:
             "object_id", "object_label", "object_source",
             "mapping_justification", "source", "mapping_date",
             "confidence", "comment",
+            "object_formula", "object_category",
         ]
 
         print(f"\nExporting unified SSSOM → {sssom_output_path}")
@@ -1530,15 +1570,25 @@ def main():
     base_dir = Path(__file__).parent.parent
     consolidator = ChemicalMappingConsolidator()
 
-    chemical_output_path = base_dir / "mappings" / "unified_chemical_mappings.tsv.gz"
-    other_output_path = base_dir / "mappings" / "unified_other_mappings.tsv.gz"
     sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
+    # Legacy TSV baselines. Read before the SSSOM baseline so the SSSOM
+    # (the new source of truth) can overlay/supersede any stale values.
+    # These paths are retired outputs — kept as read-only migration
+    # fallbacks and deleted after the first SSSOM regeneration that
+    # carries the extension columns forward.
+    legacy_tsv_paths = [
+        base_dir / "mappings" / "unified_chemical_mappings.tsv.gz",
+        base_dir / "mappings" / "unified_other_mappings.tsv.gz",
+    ]
+    for legacy in legacy_tsv_paths:
+        if legacy.exists():
+            consolidator.load_existing_unified_tsv(legacy)
 
-    # Seed from any existing unified files (split or legacy single-file).
-    # Each row preserves its source labels; priority is inferred from them.
-    for baseline in (chemical_output_path, other_output_path):
-        if baseline.exists():
-            consolidator.load_existing_unified(baseline)
+    # Seed from the existing unified SSSOM (single source of truth going
+    # forward). Each row's sources contribute to the accumulated per-entity
+    # source set; priority is inferred from the source labels.
+    if sssom_output_path.exists():
+        consolidator.load_existing_unified(sssom_output_path)
 
     # Load any legacy source files that still exist. Missing inputs are
     # silently skipped; their content is assumed to already be folded into
@@ -1593,19 +1643,14 @@ def main():
     # candidates' labels end up on the primary node as synonyms.
     consolidator.propagate_synonyms_via_xrefs()
 
-    # Export unified mapping (split into chemical + other files)
-    consolidator.export_unified_mapping(chemical_output_path, other_output_path)
-
-    # Also export the standards-compliant SSSOM — this is the primary
-    # interoperable mapping product; the TSV.GZ remains the in-process
-    # lookup index for transforms.
+    # Export the standards-compliant SSSOM — the single unified mapping
+    # product. Runtime transforms read this same file via
+    # ``kg_microbe.utils.chemical_mapping_utils``; the entity-centric TSV
+    # index has been retired in favour of SSSOM-with-extension-columns.
     consolidator.export_unified_sssom(sssom_output_path)
 
-    print(f"\n✓ Unified chemical mapping created: {chemical_output_path}")
-    if other_output_path.exists():
-        print(f"✓ Unified other mapping created:    {other_output_path}")
-    print(f"✓ Unified SSSOM created:            {sssom_output_path}")
-    print(f"  To use: gunzip -c {chemical_output_path.name} | head")
+    print(f"\n✓ Unified SSSOM created: {sssom_output_path}")
+    print(f"  To inspect: gunzip -c {sssom_output_path.name} | head")
 
 
 if __name__ == "__main__":

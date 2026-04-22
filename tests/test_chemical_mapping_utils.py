@@ -472,8 +472,8 @@ class TestChemicalMappingLoader:
         """Test loader initializes correctly."""
         loader = ChemicalMappingLoader(mock_mappings_file)
         assert loader.mappings_path == mock_mappings_file
-        # Check that mappings are loaded
-        assert chemical_mapping_utils._UNIFIED_MAPPINGS is not None
+        assert chemical_mapping_utils._LOADED is True
+        assert chemical_mapping_utils._ENTITY_COUNT > 0
 
     def test_loader_find_by_name(self, mock_mappings_file):
         """Test loader find_chebi_by_name method."""
@@ -607,20 +607,21 @@ class TestNegativeCache:
 
         # Build a second mappings file at a different path so the path-equality
         # short-circuit in load_unified_mappings does not skip the reload.
-        other = tmp_path / "other.tsv.gz"
-        df = pd.DataFrame(
-            {
-                "id": ["CHEBI:99999"],
-                "category": ["biolink:ChemicalSubstance"],
-                "canonical_name": ["not_a_real_chemical"],
-                "formula": [""],
-                "synonyms": [""],
-                "xrefs": [""],
-                "sources": ["test"],
-            }
+        other = tmp_path / "other.sssom.tsv.gz"
+        _write_mock_sssom(
+            [
+                {
+                    "id": "CHEBI:99999",
+                    "category": "biolink:ChemicalEntity",
+                    "canonical_name": "not_a_real_chemical",
+                    "formula": "",
+                    "synonyms": "",
+                    "xrefs": "",
+                    "sources": "test",
+                }
+            ],
+            other,
         )
-        with gzip.open(other, "wt") as f:
-            df.to_csv(f, sep="\t", index=False)
 
         chemical_mapping_utils.load_unified_mappings(other)
         # Cache is cleared on reload, and the previously-missing name now resolves.
@@ -636,37 +637,6 @@ class TestNegativeCache:
         assert len(chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE) <= 5
 
 
-def _write_gzipped_tsv(path: Path, data: dict) -> None:
-    """Write a dict-of-columns as a gzipped TSV."""
-    df = pd.DataFrame(data)
-    with gzip.open(path, "wt") as f:
-        df.to_csv(f, sep="\t", index=False)
-
-
-class TestSchemaUpgrade:
-
-    """Legacy ``chebi_id`` column still loads; canonical schema is ``id``."""
-
-    def test_legacy_chebi_id_column_loads(self, tmp_path):
-        """A fixture written with the old ``chebi_id`` column still resolves lookups."""
-        legacy_path = tmp_path / "legacy.tsv.gz"
-        _write_gzipped_tsv(
-            legacy_path,
-            {
-                # No `id` column; legacy alias only.
-                "chebi_id": ["CHEBI:15377"],
-                "canonical_name": ["water"],
-                "formula": ["H2O"],
-                "synonyms": ["H2O|oxidane"],
-                "xrefs": ["cas:7732-18-5"],
-                "sources": ["legacy_test"],
-            },
-        )
-        chemical_mapping_utils.load_unified_mappings(legacy_path)
-        assert find_chebi_by_name("water") == "CHEBI:15377"
-        assert find_chebi_by_name("oxidane") == "CHEBI:15377"
-
-
 class TestFuzzyHydrate:
 
     """Hydrate-suffix retry behavior in ``find_chebi_by_name``."""
@@ -674,26 +644,31 @@ class TestFuzzyHydrate:
     @pytest.fixture
     def hydrate_mappings_file(self, tmp_path):
         """Build mappings where one entry carries an explicit hydrate suffix in its canonical name."""
-        path = tmp_path / "hydrate.tsv.gz"
-        _write_gzipped_tsv(
-            path,
-            {
+        path = tmp_path / "hydrate.sssom.tsv.gz"
+        _write_mock_sssom(
+            [
                 # Entry 1: canonical has no hydrate; users may query with one.
+                {
+                    "id": "CHEBI:3312",
+                    "category": "biolink:ChemicalEntity",
+                    "canonical_name": "calcium chloride",
+                    "formula": "CaCl2",
+                    "synonyms": "",
+                    "xrefs": "cas:10043-52-4",
+                    "sources": "hydrate_test",
+                },
                 # Entry 2: canonical has an explicit hydrate suffix; users may query without.
-                "id": ["CHEBI:3312", "KGM:calcium-chloride-nhydrate"],
-                "category": [
-                    "biolink:ChemicalSubstance",
-                    "biolink:ChemicalSubstance",
-                ],
-                "canonical_name": [
-                    "calcium chloride",
-                    "calcium chloride x n H2O",
-                ],
-                "formula": ["CaCl2", ""],
-                "synonyms": ["", ""],
-                "xrefs": ["cas:10043-52-4", ""],
-                "sources": ["hydrate_test", "hydrate_test"],
-            },
+                {
+                    "id": "KGM:calcium-chloride-nhydrate",
+                    "category": "biolink:ChemicalEntity",
+                    "canonical_name": "calcium chloride x n H2O",
+                    "formula": "",
+                    "synonyms": "",
+                    "xrefs": "",
+                    "sources": "hydrate_test",
+                },
+            ],
+            path,
         )
         return path
 

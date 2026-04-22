@@ -45,7 +45,6 @@ from kg_microbe.transform_utils.transform import Transform  # noqa: E402
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
 from kg_microbe.utils.metpo_predicates import (  # noqa: E402
-    METPO_TO_BIOLINK_PREDICATE,
     PREDICATE_TO_RELATION,
     to_biolink_predicate,
 )

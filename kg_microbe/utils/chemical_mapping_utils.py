@@ -1,4 +1,5 @@
-"""Utilities for chemical mapping lookups.
+"""
+Utilities for chemical mapping lookups.
 
 Reads the unified ingredient SSSOM mapping set
 (``mappings/unified_ingredient_mappings.sssom.tsv.gz``) and reconstructs an

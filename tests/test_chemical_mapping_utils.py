@@ -20,7 +20,6 @@ from kg_microbe.utils.chemical_mapping_utils import (
     normalize_name,
 )
 
-
 _SSSOM_COLUMNS = [
     "subject_id", "subject_label", "predicate_id",
     "object_id", "object_label", "object_source",

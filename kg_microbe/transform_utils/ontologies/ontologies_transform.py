@@ -270,7 +270,7 @@ class OntologiesTransform(Transform):
                 if pd.notna(go_id) and go_id.startswith("GO:"):
                     # Pass the adapter to avoid creating new connections
                     return get_go_category_by_aspect(go_id, go_adapter)
-                return row["category"]
+                return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_go_category, axis=1)
 
@@ -310,7 +310,7 @@ class OntologiesTransform(Transform):
                 uberon_id = row["id"]
                 if pd.notna(uberon_id) and uberon_id.startswith("UBERON:"):
                     return get_uberon_category(uberon_id)
-                return row["category"]
+                return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_uberon_category, axis=1)
 
@@ -323,7 +323,7 @@ class OntologiesTransform(Transform):
                 ncbitaxon_id = row["id"]
                 if pd.notna(ncbitaxon_id) and ncbitaxon_id.startswith("NCBITaxon:"):
                     return get_ncbitaxon_category(ncbitaxon_id)
-                return row["category"]
+                return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_ncbitaxon_category, axis=1)
 
@@ -344,8 +344,11 @@ class OntologiesTransform(Transform):
         # Add knowledge_level and agent_type columns to edge files
         self._add_kgx_metadata_to_edges(edges_file)
 
-        # Fix node categories (GO aspect-based, ChEBI deprecated categories, UBERON, NCBITaxon)
-        if name in ["go", "chebi", "uberon", "ncbitaxon"]:
+        # Fix node categories: specialized handlers for go/chebi/uberon/ncbitaxon,
+        # and a generic deprecated-category scrub for every other ontology so
+        # imported xref rows (e.g. FOODON referencing CHEBI) don't leak
+        # biolink:ChemicalSubstance/Macromolecule through to the merged KG.
+        if nodes_file.exists():
             self._fix_node_categories(nodes_file, name)
 
         # Compile a regex pattern that matches any key in SPECIAL_PREFIXES

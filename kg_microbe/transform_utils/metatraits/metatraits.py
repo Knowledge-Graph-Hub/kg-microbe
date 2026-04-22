@@ -3534,9 +3534,12 @@ class MetaTraitsTransform(Transform):
             use_mp = False
             print("  Multiprocessing disabled via METATRAITS_MULTIPROCESSING environment variable")
 
-        # Pre-flight check the NCBITaxon DB in the parent. Workers must never
-        # attempt cache repair — concurrent heals corrupt the shared cache.
-        _ensure_ncbitaxon_db_ready()
+        # Pre-flight check the NCBITaxon DB in the parent only when using
+        # multiprocessing. Workers must never attempt cache repair —
+        # concurrent heals corrupt the shared cache. Sequential runs should
+        # retain the existing lazy OAK download/refresh behavior.
+        if use_mp:
+            _ensure_ncbitaxon_db_ready()
 
         # Decide whether to use parallel or sequential processing
         try:

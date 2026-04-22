@@ -10,9 +10,13 @@ description: Work with KG-Microbe's unified chemical mapping system (`mappings/u
 KG-Microbe resolves free-text chemical names from many source transforms
 (BacDive metabolites, MediaDive ingredients, metatraits, manual curation,
 etc.) to canonical **ChEBI** identifiers via a single consolidated
-lookup table. All transforms that need "name → ChEBI" go through
+mapping set. All transforms that need "name → ChEBI" go through
 `kg_microbe.utils.chemical_mapping_utils`, which reads
-`mappings/unified_chemical_mappings.tsv.gz` once per process.
+`mappings/unified_ingredient_mappings.sssom.tsv.gz` once per process
+and reconstructs the in-memory name/xref/formula/category indices from
+the SSSOM rows. The `unified_chemical_mappings.tsv.gz` TSV is retained
+only as a complementary entity-centric export for external consumers —
+the reader no longer loads it.
 
 The unified file is built by `scripts/consolidate_chemical_mappings.py`
 from multiple source files with a **priority system** — higher-priority

@@ -8,10 +8,10 @@ The consolidator now writes two complementary artifacts from the same run:
 
 | File | Role |
 |---|---|
-| `unified_ingredient_mappings.sssom.tsv.gz` | **Primary, standards-compliant mapping product.** Row types: (1) xref-CURIE → primary-CURIE (`skos:exactMatch`); (2) canonical-name → primary-CURIE via `kgm.name:<slug>` (`skos:exactMatch`, `semapv:LexicalMatching`); (3) free-text synonym → primary-CURIE via `kgm.name:<slug>` (`skos:closeMatch`, `semapv:LexicalMatching`). Validated with the `sssom` Python package on every write (LinkML JSON-schema + `check_all_prefixes_in_curie_map`). |
-| `unified_chemical_mappings.tsv.gz` | **In-process runtime index** used by transforms via `kg_microbe.utils.chemical_mapping_utils`. Entity-centric: one row per primary CURIE with accumulated canonical name, formula, synonyms, and xrefs. Retains the per-entity attributes (formula, biolink category) that SSSOM cannot express (SSSOM covers mappings, not attributes). |
+| `unified_ingredient_mappings.sssom.tsv.gz` | **Primary, standards-compliant mapping product and the default file read by transforms via `kg_microbe.utils.chemical_mapping_utils`.** Row types: (1) xref-CURIE → primary-CURIE (`skos:exactMatch`); (2) canonical-name → primary-CURIE via `kgm.name:<slug>` (`skos:exactMatch`, `semapv:LexicalMatching`); (3) free-text synonym → primary-CURIE via `kgm.name:<slug>` (`skos:closeMatch`, `semapv:LexicalMatching`). Validated with the `sssom` Python package on every write (LinkML JSON-schema + `check_all_prefixes_in_curie_map`). |
+| `unified_chemical_mappings.tsv.gz` | **Complementary entity-centric index.** One row per primary CURIE with accumulated canonical name, formula, synonyms, and xrefs. Retains per-entity attributes (for example `formula` and biolink `category`) that SSSOM does not express directly, so it remains useful for downstream consumers that need a denormalized per-entity view. |
 
-The synonym rows use a synthetic `kgm.name:<slug>` subject namespace so that free-text names have a CURIE subject (SSSOM requires this). Slugs are deterministic via `normalize_name` with spaces → `_`. Both files are rebuilt by the same `scripts/consolidate_chemical_mappings.py` run and cover CHEBI chemicals plus non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments).
+In the SSSOM file, synonym rows use a synthetic `kgm.name:<slug>` subject namespace so that free-text names have a CURIE subject (SSSOM requires this). Slugs are deterministic via `normalize_name` with spaces → `_`. Both files are rebuilt by the same `scripts/consolidate_chemical_mappings.py` run and cover CHEBI chemicals plus non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments).
 
 ### Primary-ID Prefix Preference
 

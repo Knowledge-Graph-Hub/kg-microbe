@@ -241,21 +241,22 @@ class TestLoadUnifiedMappings:
     """Test loading unified mappings file."""
 
     def test_load_with_path(self, mock_mappings_file):
-        """Test loading with explicit path."""
-        df = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
-        assert df is not None
-        assert len(df) == 4
-        assert "id" in df.columns
-        assert "category" in df.columns
-        assert "canonical_name" in df.columns
+        """Loader returns the distinct entity count and populates lookup indices."""
+        count = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        assert count == 4
+        # Public API confirms indices are built
+        assert find_chebi_by_name("water") == "CHEBI:15377"
+        assert get_canonical_name("CHEBI:17234") == "glucose"
+        assert get_formula("CHEBI:16240") == "H2O2"
 
     def test_load_caching(self, mock_mappings_file):
-        """Test that mappings are cached."""
-        # First load
-        df1 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
-        # Second load should return cached version
-        df2 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
-        assert df1 is df2  # Same object reference
+        """Repeated loads reuse the cached indices and skip re-parsing the file."""
+        count1 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        index_ref = chemical_mapping_utils._CANONICAL_NAME_INDEX
+        count2 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        assert count1 == count2 == 4
+        # Index object identity proves the second call hit the cache path
+        assert chemical_mapping_utils._CANONICAL_NAME_INDEX is index_ref
 
     def test_load_file_not_found(self):
         """Test error when file doesn't exist."""

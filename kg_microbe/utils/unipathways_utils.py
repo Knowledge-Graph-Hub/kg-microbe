@@ -5,6 +5,8 @@ import re
 from kg_microbe.transform_utils.constants import (
     GO_PREFIX,
     OBJECT_COLUMN,
+    RHEA_CATEGORY,
+    RHEA_NEW_PREFIX,
     SUBJECT_COLUMN,
     UNIPATHWAYS_CATEGORIES_DICT,
     UNIPATHWAYS_IGNORE_PREFIXES,
@@ -37,8 +39,14 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
         # Avoid reactions that are given GO xrefs, use Unipathways prefix instead
         xrefs = [xref for xref in xrefs if GO_PREFIX not in xref]
         for xref in xrefs:
-            # Writing out blank values for all other columns than id since covered by Rhea ingest
+            # Stub node covered authoritatively by the Rhea ingest — emit an
+            # empty row except for id. Set category on Rhea stubs so downstream
+            # category-aware consumers (and validators) don't see an empty
+            # category column (biolink:MolecularActivity matches the
+            # rhea_mappings transform's own RHEA category).
             l_parts = [xref] + ([""] * (len(node_header) - 1))
+            if xref.startswith(RHEA_NEW_PREFIX):
+                l_parts[category_index] = RHEA_CATEGORY
             nodes_dictionary[parts[id_index]].append(xref)
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)

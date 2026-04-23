@@ -228,7 +228,7 @@ class OntologiesTransform(Transform):
 
         - GO: Apply aspect-based categorization (MF/BP/CC)
         - ChEBI: Detect roles/macromolecules; default small molecules to CHEBI_CATEGORY
-          (biolink:ChemicalSubstance — KG-Microbe project convention, see constants.py)
+          (biolink:ChemicalEntity — KG-Microbe project convention, see constants.py)
         - UBERON: Ensure all terms are AnatomicalEntity
         - NCBITaxon: Ensure all terms are OrganismTaxon
 
@@ -270,13 +270,13 @@ class OntologiesTransform(Transform):
                 if pd.notna(go_id) and go_id.startswith("GO:"):
                     # Pass the adapter to avoid creating new connections
                     return get_go_category_by_aspect(go_id, go_adapter)
-                return row["category"]
+                return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_go_category, axis=1)
 
         elif ontology_name == "chebi":
             # Fix ChEBI categories: detect roles/macromolecules;
-            # small molecules default to CHEBI_CATEGORY (biolink:ChemicalSubstance)
+            # small molecules default to CHEBI_CATEGORY (biolink:ChemicalEntity)
             print("  Fixing ChEBI categories (detecting roles/macromolecules; default → CHEBI_CATEGORY)...")
 
             # Create ChEBI adapter once to avoid file descriptor leaks
@@ -310,7 +310,7 @@ class OntologiesTransform(Transform):
                 uberon_id = row["id"]
                 if pd.notna(uberon_id) and uberon_id.startswith("UBERON:"):
                     return get_uberon_category(uberon_id)
-                return row["category"]
+                return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_uberon_category, axis=1)
 
@@ -323,7 +323,7 @@ class OntologiesTransform(Transform):
                 ncbitaxon_id = row["id"]
                 if pd.notna(ncbitaxon_id) and ncbitaxon_id.startswith("NCBITaxon:"):
                     return get_ncbitaxon_category(ncbitaxon_id)
-                return row["category"]
+                return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_ncbitaxon_category, axis=1)
 
@@ -344,8 +344,11 @@ class OntologiesTransform(Transform):
         # Add knowledge_level and agent_type columns to edge files
         self._add_kgx_metadata_to_edges(edges_file)
 
-        # Fix node categories (GO aspect-based, ChEBI deprecated categories, UBERON, NCBITaxon)
-        if name in ["go", "chebi", "uberon", "ncbitaxon"]:
+        # Fix node categories: specialized handlers for go/chebi/uberon/ncbitaxon,
+        # and a generic deprecated-category scrub for every other ontology so
+        # imported xref rows (e.g. FOODON referencing CHEBI) don't leak
+        # biolink:ChemicalSubstance/Macromolecule through to the merged KG.
+        if nodes_file.exists():
             self._fix_node_categories(nodes_file, name)
 
         # Compile a regex pattern that matches any key in SPECIAL_PREFIXES
@@ -726,6 +729,32 @@ class OntologiesTransform(Transform):
             for col in added_edge_cols:
                 df[col] = ""
             df = df[self.edge_header]
+
+            # KGX/obograph emits OWL/RDF meta-predicates under the `biolink:`
+            # namespace by default (e.g. `biolink:subPropertyOf`). Those are
+            # not valid biolink predicates. Remap to their proper namespaces
+            # in both the `predicate` and `relation` columns so the output
+            # validates cleanly and round-trips back to OWL semantics.
+            owl_meta_predicate_map = {
+                "biolink:subPropertyOf": "rdfs:subPropertyOf",
+                "biolink:inverseOf": "owl:inverseOf",
+                "biolink:type": "rdf:type",
+            }
+            # Bare tokens that may appear in the `relation` column (OAK emits
+            # just the local name when it cannot find an RO mapping).
+            owl_meta_relation_map = {
+                "subPropertyOf": "rdfs:subPropertyOf",
+                "inverseOf": "owl:inverseOf",
+                "type": "rdf:type",
+            }
+            if "predicate" in df.columns:
+                df["predicate"] = df["predicate"].replace(owl_meta_predicate_map)
+            if "relation" in df.columns:
+                df["relation"] = df["relation"].replace(owl_meta_relation_map)
+                # Also catch cases where `relation` mistakenly got the biolink
+                # prefix too (belt-and-braces — same-row consistency).
+                df["relation"] = df["relation"].replace(owl_meta_predicate_map)
+
             df.to_csv(edges_file, sep="\t", index=False)
             if dropped_edge_cols or added_edge_cols or renamed:
                 rename_note = " rename(knowledge_source→primary_knowledge_source)" if renamed else ""

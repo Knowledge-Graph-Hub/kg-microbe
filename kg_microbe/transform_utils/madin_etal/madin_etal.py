@@ -18,7 +18,6 @@ from kg_microbe.transform_utils.constants import (
     CARBON_SUBSTRATES_COLUMN,
     CATEGORY_COLUMN,
     CELL_SHAPE_COLUMN,
-    CHEBI_MANUAL_ANNOTATION_PATH,
     CHEBI_PREFIX,
     CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
@@ -71,6 +70,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.ner_utils import annotate
@@ -118,6 +118,10 @@ class MadinEtAlTransform(Transform):
         self.knowledge_source = "infores:madin_etal"  # InforES standard knowledge source
         self.madin_metpo_mappings = load_metpo_mappings("madin synonym or field")
         self.environments_file = self.input_base_dir / "environments.csv"
+        try:
+            self.chemical_loader = ChemicalMappingLoader()
+        except FileNotFoundError:
+            self.chemical_loader = None
 
     def _create_node_row(
         self,
@@ -181,7 +185,7 @@ class MadinEtAlTransform(Transform):
                 exclusion_list,
                 self.nlp_output_dir / chebi_result_fn,
                 False,
-                CHEBI_MANUAL_ANNOTATION_PATH,
+                chemical_loader=self.chemical_loader,
             )
             chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
             chebi_result = chebi_result.drop_duplicates()
@@ -192,7 +196,22 @@ class MadinEtAlTransform(Transform):
         oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
         chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
         roles = {x for (_, _, x) in chebi_roles}
-        role_nodes = [self._create_node_row(role, ROLE_CATEGORY, oi.label(role)) for role in roles]
+        role_nodes = []
+        for role in roles:
+            role_enrich = (
+                self.chemical_loader.get_node_enrichment(role)
+                if self.chemical_loader is not None
+                else {"xref": "", "synonym": ""}
+            )
+            role_nodes.append(
+                self._create_node_row(
+                    role,
+                    ROLE_CATEGORY,
+                    oi.label(role),
+                    xref=role_enrich["xref"] or None,
+                    synonym=role_enrich["synonym"] or None,
+                )
+            )
         role_edges = [
             [
                 subject,
@@ -450,11 +469,18 @@ class MadinEtAlTransform(Transform):
                                     predicate = uri_to_curie(predicate_biolink)
                                 else:
                                     predicate = "biolink:consumes"
+                                cs_enrich = (
+                                    self.chemical_loader.get_node_enrichment(metpo_mapping["curie"])
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
+                                )
                                 carbon_substrate_nodes.append(
                                     self._create_node_row(
                                         metpo_mapping["curie"],
                                         category,
                                         metpo_mapping["label"],
+                                        xref=cs_enrich["xref"] or None,
+                                        synonym=cs_enrich["synonym"] or None,
                                     )
                                 )
                                 tax_carbon_substrate_edge.append(
@@ -507,11 +533,18 @@ class MadinEtAlTransform(Transform):
                                 if not exact_match_chebi_df.empty:
                                     chebi_result_for_tax_id = exact_match_chebi_df
                                 for row in chebi_result_for_tax_id.iterrows():
+                                    cs_chebi_enrich = (
+                                        self.chemical_loader.get_node_enrichment(row[1].object_id)
+                                        if self.chemical_loader is not None
+                                        else {"xref": "", "synonym": ""}
+                                    )
                                     carbon_substrate_nodes.append(
                                         self._create_node_row(
                                             row[1].object_id,
                                             CARBON_SUBSTRATE_CATEGORY,
                                             row[1].object_label,
+                                            xref=cs_chebi_enrich["xref"] or None,
+                                            synonym=cs_chebi_enrich["synonym"] or None,
                                         )
                                     )
                                     tax_carbon_substrate_edge.append(
@@ -790,10 +823,22 @@ class MadinEtAlTransform(Transform):
                                 sources = [self.knowledge_source for _ in range(len(curies))]  # Use infores:madin_etal
                                 knowledge_levels = [OBSERVATION for _ in range(len(curies))]
                                 agent_types = [MANUAL_AGENT for _ in range(len(curies))]
-                                isolation_source_node = [
-                                    self._create_node_row(curie, cat, label)
-                                    for curie, cat, label in zip(curies, category, labels, strict=False)
-                                ]
+                                isolation_source_node = []
+                                for curie, cat, label in zip(curies, category, labels, strict=False):
+                                    env_enrich = (
+                                        self.chemical_loader.get_node_enrichment(curie)
+                                        if self.chemical_loader is not None
+                                        else {"xref": "", "synonym": ""}
+                                    )
+                                    isolation_source_node.append(
+                                        self._create_node_row(
+                                            curie,
+                                            cat,
+                                            label,
+                                            xref=env_enrich["xref"] or None,
+                                            synonym=env_enrich["synonym"] or None,
+                                        )
+                                    )
                                 tax_id_list = [tax_id for _ in range(len(labels))]
 
                                 tax_isolation_source_edge = [
@@ -810,11 +855,18 @@ class MadinEtAlTransform(Transform):
                                     )
                                 ]
                             else:
+                                env_single_enrich = (
+                                    self.chemical_loader.get_node_enrichment(isolation_source[ENVO_ID_COLUMN])
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
+                                )
                                 isolation_source_node = [
                                     self._create_node_row(
                                         isolation_source[ENVO_ID_COLUMN],
                                         ENVIRONMENT_CATEGORY,
                                         isolation_source[ENVO_TERMS_COLUMN],
+                                        xref=env_single_enrich["xref"] or None,
+                                        synonym=env_single_enrich["synonym"] or None,
                                     )
                                 ]
                                 tax_isolation_source_edge = [

@@ -20,68 +20,194 @@ from kg_microbe.utils.chemical_mapping_utils import (
     normalize_name,
 )
 
+_SSSOM_COLUMNS = [
+    "subject_id", "subject_label", "predicate_id",
+    "object_id", "object_label", "object_source",
+    "mapping_justification", "source", "mapping_date",
+    "confidence", "comment",
+    "object_formula", "object_category",
+]
+
+
+def _write_mock_sssom(entries, path: Path):
+    """
+    Serialise a list of entity dicts into a minimal SSSOM mapping set.
+
+    Each entry is a dict with keys ``id``, ``category``, ``canonical_name``,
+    ``formula``, ``synonyms`` (pipe-delimited), ``xrefs`` (pipe-delimited),
+    ``sources`` (pipe-delimited). The exporter mirrors ``export_unified_sssom``
+    (see scripts/consolidate_chemical_mappings.py): one row per xref, one
+    canonical-name row via ``kgm.name:<slug>``, one synonym row per synonym.
+    """
+    header = [
+        "# curie_map:",
+        '#   CHEBI: "http://purl.obolibrary.org/obo/CHEBI_"',
+        '#   cas: "https://bioregistry.io/cas:"',
+        '#   kegg.compound: "https://bioregistry.io/kegg.compound:"',
+        '#   pubchem.compound: "https://bioregistry.io/pubchem.compound:"',
+        '#   obo: "http://purl.obolibrary.org/obo/"',
+        '#   skos: "http://www.w3.org/2004/02/skos/core#"',
+        '#   semapv: "https://w3id.org/semapv/vocab/"',
+        '#   kgm.name: "https://w3id.org/kg-microbe/name/"',
+        '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
+        '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients_test"',
+        '# mapping_set_version: "2026-04-20"',
+        '# mapping_date: "2026-04-20"',
+    ]
+
+    def _slug(name: str) -> str:
+        return name.lower().replace(" ", "_").replace("-", "_")
+
+    rows = []
+    for entry in entries:
+        obj_id = entry["id"]
+        obj_label = entry.get("canonical_name", "")
+        obj_formula = entry.get("formula", "")
+        obj_category = entry.get("category", "")
+        obj_source = (
+            "obo:chebi.owl" if obj_id.startswith("CHEBI:")
+            else f"obo:{obj_id.split(':', 1)[0].lower()}.owl"
+        )
+        source_tag = entry.get("sources", "")
+
+        for xref in entry.get("xrefs", "").split("|"):
+            if not xref:
+                continue
+            rows.append({
+                "subject_id": xref,
+                "subject_label": "",
+                "predicate_id": "skos:exactMatch",
+                "object_id": obj_id,
+                "object_label": obj_label,
+                "object_source": obj_source,
+                "mapping_justification": "semapv:UnspecifiedMatching",
+                "source": source_tag,
+                "mapping_date": "2026-04-20",
+                "confidence": "",
+                "comment": "",
+                "object_formula": obj_formula,
+                "object_category": obj_category,
+            })
+
+        if obj_label:
+            rows.append({
+                "subject_id": f"kgm.name:{_slug(obj_label)}",
+                "subject_label": obj_label,
+                "predicate_id": "skos:exactMatch",
+                "object_id": obj_id,
+                "object_label": obj_label,
+                "object_source": obj_source,
+                "mapping_justification": "semapv:LexicalMatching",
+                "source": source_tag,
+                "mapping_date": "2026-04-20",
+                "confidence": "",
+                "comment": "canonical_name",
+                "object_formula": obj_formula,
+                "object_category": obj_category,
+            })
+
+        for syn in entry.get("synonyms", "").split("|"):
+            syn = syn.strip()
+            if not syn or syn == obj_label:
+                continue
+            rows.append({
+                "subject_id": f"kgm.name:{_slug(syn)}",
+                "subject_label": syn,
+                "predicate_id": "skos:closeMatch",
+                "object_id": obj_id,
+                "object_label": obj_label,
+                "object_source": obj_source,
+                "mapping_justification": "semapv:LexicalMatching",
+                "source": source_tag,
+                "mapping_date": "2026-04-20",
+                "confidence": "",
+                "comment": "synonym",
+                "object_formula": obj_formula,
+                "object_category": obj_category,
+            })
+
+    with gzip.open(path, "wt", encoding="utf-8") as fh:
+        for line in header:
+            fh.write(line + "\n")
+        fh.write("\t".join(_SSSOM_COLUMNS) + "\n")
+        for row in rows:
+            fh.write("\t".join(str(row.get(c, "")) for c in _SSSOM_COLUMNS) + "\n")
+
 
 @pytest.fixture
 def mock_mappings_file():
-    """Create a temporary mock unified mappings file."""
-    # Create mock data
-    data = {
-        "chebi_id": ["CHEBI:15377", "CHEBI:17234", "CHEBI:16240", "CHEBI:17925"],
-        "canonical_name": ["water", "glucose", "hydrogen peroxide", "lactate"],
-        "formula": ["H2O", "C6H12O6", "H2O2", "C3H6O3"],
-        "synonyms": [
-            "H2O|dihydrogen oxide|oxidane",
-            "D-glucose|dextrose|grape sugar",
-            "hydrogen peroxide|peroxide",
-            "lactic acid|2-hydroxypropanoic acid",
-        ],
-        "xrefs": [
-            "cas:7732-18-5|kegg.compound:C00001",
-            "cas:50-99-7|kegg.compound:C00031|pubchem.compound:5793",
-            "cas:7722-84-1|kegg.compound:C00027",
-            "cas:79-33-4|kegg.compound:C00186",
-        ],
-        "sources": [
-            "chebi_xrefs|mediadive_compounds",
-            "chebi_xrefs|primary_mappings[kegg_compound]",
-            "chebi_xrefs",
-            "bacdive_metabolites|chebi_xrefs",
-        ],
-    }
+    """Create a temporary mock unified SSSOM mappings file."""
+    entries = [
+        {
+            "id": "CHEBI:15377",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "water",
+            "formula": "H2O",
+            "synonyms": "H2O|dihydrogen oxide|oxidane",
+            "xrefs": "cas:7732-18-5|kegg.compound:C00001",
+            "sources": "chebi_xrefs|mediadive_compounds",
+        },
+        {
+            "id": "CHEBI:17234",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "glucose",
+            "formula": "C6H12O6",
+            "synonyms": "D-glucose|dextrose|grape sugar",
+            "xrefs": "cas:50-99-7|kegg.compound:C00031|pubchem.compound:5793",
+            "sources": "chebi_xrefs|primary_mappings[kegg_compound]",
+        },
+        {
+            "id": "CHEBI:16240",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "hydrogen peroxide",
+            "formula": "H2O2",
+            "synonyms": "peroxide",
+            "xrefs": "cas:7722-84-1|kegg.compound:C00027",
+            "sources": "chebi_xrefs",
+        },
+        {
+            "id": "CHEBI:17925",
+            "category": "biolink:ChemicalSubstance",
+            "canonical_name": "lactate",
+            "formula": "C3H6O3",
+            "synonyms": "lactic acid|2-hydroxypropanoic acid",
+            "xrefs": "cas:79-33-4|kegg.compound:C00186",
+            "sources": "bacdive_metabolites|chebi_xrefs",
+        },
+    ]
 
-    df = pd.DataFrame(data)
-
-    # Create temporary gzipped TSV
-    with tempfile.NamedTemporaryFile(mode="wb", suffix=".tsv.gz", delete=False) as tmp:
-        with gzip.open(tmp.name, "wt") as f:
-            df.to_csv(f, sep="\t", index=False)
+    with tempfile.NamedTemporaryFile(mode="wb", suffix=".sssom.tsv.gz", delete=False) as tmp:
         tmp_path = Path(tmp.name)
+
+    _write_mock_sssom(entries, tmp_path)
 
     yield tmp_path
 
-    # Cleanup
     tmp_path.unlink()
 
 
 @pytest.fixture(autouse=True)
 def reset_cache():
     """Reset module-level cache before each test."""
-    chemical_mapping_utils._UNIFIED_MAPPINGS = None
-    chemical_mapping_utils._NAME_INDEX = None
-    chemical_mapping_utils._CANONICAL_NAME_INDEX = None
-    chemical_mapping_utils._FORMULA_INDEX = None
-    chemical_mapping_utils._XREF_INDEX = None
-    chemical_mapping_utils._CACHED_PATH = None
-    chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
+    def _reset():
+        chemical_mapping_utils._LOADED = False
+        chemical_mapping_utils._ENTITY_COUNT = 0
+        chemical_mapping_utils._NAME_INDEX = None
+        chemical_mapping_utils._CANONICAL_NAME_INDEX = None
+        chemical_mapping_utils._HYDRATE_FREE_NAME_INDEX = None
+        chemical_mapping_utils._FORMULA_INDEX = None
+        chemical_mapping_utils._XREF_INDEX = None
+        chemical_mapping_utils._CATEGORY_INDEX = None
+        chemical_mapping_utils._PRIMARY_NAME_INDEX = None
+        chemical_mapping_utils._PRIMARY_SYNONYMS_INDEX = None
+        chemical_mapping_utils._PRIMARY_XREFS_INDEX = None
+        chemical_mapping_utils._PRIMARY_FORMULA_INDEX = None
+        chemical_mapping_utils._CACHED_PATH = None
+        chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
+
+    _reset()
     yield
-    # Reset after test too
-    chemical_mapping_utils._UNIFIED_MAPPINGS = None
-    chemical_mapping_utils._NAME_INDEX = None
-    chemical_mapping_utils._CANONICAL_NAME_INDEX = None
-    chemical_mapping_utils._FORMULA_INDEX = None
-    chemical_mapping_utils._XREF_INDEX = None
-    chemical_mapping_utils._CACHED_PATH = None
-    chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE.clear()
+    _reset()
 
 
 class TestNormalizeName:
@@ -115,20 +241,22 @@ class TestLoadUnifiedMappings:
     """Test loading unified mappings file."""
 
     def test_load_with_path(self, mock_mappings_file):
-        """Test loading with explicit path."""
-        df = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
-        assert df is not None
-        assert len(df) == 4
-        assert "chebi_id" in df.columns
-        assert "canonical_name" in df.columns
+        """Loader returns the distinct entity count and populates lookup indices."""
+        count = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        assert count == 4
+        # Public API confirms indices are built
+        assert find_chebi_by_name("water") == "CHEBI:15377"
+        assert get_canonical_name("CHEBI:17234") == "glucose"
+        assert get_formula("CHEBI:16240") == "H2O2"
 
     def test_load_caching(self, mock_mappings_file):
-        """Test that mappings are cached."""
-        # First load
-        df1 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
-        # Second load should return cached version
-        df2 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
-        assert df1 is df2  # Same object reference
+        """Repeated loads reuse the cached indices and skip re-parsing the file."""
+        count1 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        index_ref = chemical_mapping_utils._CANONICAL_NAME_INDEX
+        count2 = chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
+        assert count1 == count2 == 4
+        # Index object identity proves the second call hit the cache path
+        assert chemical_mapping_utils._CANONICAL_NAME_INDEX is index_ref
 
     def test_load_file_not_found(self):
         """Test error when file doesn't exist."""
@@ -344,8 +472,8 @@ class TestChemicalMappingLoader:
         """Test loader initializes correctly."""
         loader = ChemicalMappingLoader(mock_mappings_file)
         assert loader.mappings_path == mock_mappings_file
-        # Check that mappings are loaded
-        assert chemical_mapping_utils._UNIFIED_MAPPINGS is not None
+        assert chemical_mapping_utils._LOADED is True
+        assert chemical_mapping_utils._ENTITY_COUNT > 0
 
     def test_loader_find_by_name(self, mock_mappings_file):
         """Test loader find_chebi_by_name method."""
@@ -467,7 +595,8 @@ class TestNegativeCache:
         chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
         assert find_chebi_by_name("not_a_real_chemical") is None
         norm = chemical_mapping_utils.normalize_name("not_a_real_chemical")
-        assert (norm, True, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
+        # Cache key is (normalized_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate).
+        assert (norm, True, False, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
 
     def test_cache_cleared_on_reload(self, mock_mappings_file, tmp_path):
         """Reloading from a new mappings path clears the negative cache."""
@@ -478,19 +607,21 @@ class TestNegativeCache:
 
         # Build a second mappings file at a different path so the path-equality
         # short-circuit in load_unified_mappings does not skip the reload.
-        other = tmp_path / "other.tsv.gz"
-        df = pd.DataFrame(
-            {
-                "chebi_id": ["CHEBI:99999"],
-                "canonical_name": ["not_a_real_chemical"],
-                "formula": [""],
-                "synonyms": [""],
-                "xrefs": [""],
-                "sources": ["test"],
-            }
+        other = tmp_path / "other.sssom.tsv.gz"
+        _write_mock_sssom(
+            [
+                {
+                    "id": "CHEBI:99999",
+                    "category": "biolink:ChemicalEntity",
+                    "canonical_name": "not_a_real_chemical",
+                    "formula": "",
+                    "synonyms": "",
+                    "xrefs": "",
+                    "sources": "test",
+                }
+            ],
+            other,
         )
-        with gzip.open(other, "wt") as f:
-            df.to_csv(f, sep="\t", index=False)
 
         chemical_mapping_utils.load_unified_mappings(other)
         # Cache is cleared on reload, and the previously-missing name now resolves.
@@ -504,3 +635,84 @@ class TestNegativeCache:
         for i in range(20):
             find_chebi_by_name(f"no_such_chemical_{i}")
         assert len(chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE) <= 5
+
+
+class TestFuzzyHydrate:
+
+    """Hydrate-suffix retry behavior in ``find_chebi_by_name``."""
+
+    @pytest.fixture
+    def hydrate_mappings_file(self, tmp_path):
+        """Build mappings where one entry carries an explicit hydrate suffix in its canonical name."""
+        path = tmp_path / "hydrate.sssom.tsv.gz"
+        _write_mock_sssom(
+            [
+                # Entry 1: canonical has no hydrate; users may query with one.
+                {
+                    "id": "CHEBI:3312",
+                    "category": "biolink:ChemicalEntity",
+                    "canonical_name": "calcium chloride",
+                    "formula": "CaCl2",
+                    "synonyms": "",
+                    "xrefs": "cas:10043-52-4",
+                    "sources": "hydrate_test",
+                },
+                # Entry 2: canonical has an explicit hydrate suffix; users may query without.
+                {
+                    "id": "KGM:calcium-chloride-nhydrate",
+                    "category": "biolink:ChemicalEntity",
+                    "canonical_name": "calcium chloride x n H2O",
+                    "formula": "",
+                    "synonyms": "",
+                    "xrefs": "",
+                    "sources": "hydrate_test",
+                },
+            ],
+            path,
+        )
+        return path
+
+    def test_query_with_hydrate_finds_anhydrous_canonical(self, hydrate_mappings_file):
+        """Query "CaCl2 x 2 H2O" → hits entry whose canonical is "calcium chloride" (hydrate stripped from query)."""
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        # Stereochemistry-stripped form of "calcium chloride · 2 H2O" is "calcium chloride".
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
+            == "CHEBI:3312"
+        )
+
+    def test_query_without_hydrate_finds_hydrated_canonical(self, hydrate_mappings_file):
+        """Query without hydrate resolves via the hydrate-free canonical index."""
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        # "calcium chloride" alone should resolve via the hydrate-free canonical
+        # index to the first matching entry. We accept either entry — both are
+        # valid calcium chloride rows — but the lookup must not return None.
+        result = find_chebi_by_name("calcium chloride", fuzzy_hydrate=True)
+        assert result in {"CHEBI:3312", "KGM:calcium-chloride-nhydrate"}
+
+    def test_fuzzy_hydrate_off_does_not_retry(self, hydrate_mappings_file):
+        """A query with a hydrate suffix misses when ``fuzzy_hydrate=False``."""
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False)
+            is None
+        )
+
+    def test_fuzzy_hydrate_cache_key_is_distinct(self, hydrate_mappings_file):
+        """
+        Verify that ``fuzzy_hydrate`` is part of the negative-cache key.
+
+        A miss cached with ``fuzzy_hydrate=False`` must not prevent a retry
+        under ``fuzzy_hydrate=True`` from reaching the hydrate fallback path.
+        """
+        chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
+        # First call: misses and caches under fuzzy_hydrate=False.
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False)
+            is None
+        )
+        # Second call: same name, fuzzy_hydrate=True — different cache key → hits.
+        assert (
+            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
+            == "CHEBI:3312"
+        )

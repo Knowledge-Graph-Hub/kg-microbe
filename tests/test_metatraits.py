@@ -12,10 +12,10 @@ from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappi
 
 # Truth table from microbial-trait-mappings test_round_trip.py
 EXPECTED_EDGES = [
-    ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalSubstance"),
-    ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalSubstance"),
-    ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalSubstance"),
-    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalSubstance"),
+    ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalEntity"),
+    ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalEntity"),
+    ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalEntity"),
+    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalEntity"),
     (
         "enzyme activity: catalase (EC1.11.1.6)",
         "biolink:capable_of",
@@ -52,6 +52,7 @@ ADDITIONAL_TEST_CASES = [
 ]
 
 
+@patch("kg_microbe.transform_utils.metatraits.metatraits._ensure_ncbitaxon_db_ready")
 @patch("kg_microbe.transform_utils.metatraits.metatraits._get_ncbitaxon_adapter")
 class TestMetaTraitsTransform(unittest.TestCase):
 
@@ -64,7 +65,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.temp_output_dir = Path(tempfile.mkdtemp())
         self.fixture_file = self.test_resources_dir / "metatraits_fixture.jsonl"
 
-    def test_transform_initialization(self, mock_adapter):
+    def test_transform_initialization(self, mock_adapter, mock_ensure):
         """Test MetaTraitsTransform initialization."""
         transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
@@ -75,7 +76,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertIsNotNone(transform.trait_mapping)
         self.assertIsNotNone(transform.ncbitaxon_name_to_id)
 
-    def test_create_node_row(self, mock_adapter):
+    def test_create_node_row(self, mock_adapter, mock_ensure):
         """Test _create_node_row produces correct structure."""
         transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
@@ -92,7 +93,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertEqual(row[2], "Escherichia coli")
         self.assertEqual(row[5], "infores:metatraits")
 
-    def test_get_relation_for_predicate(self, mock_adapter):
+    def test_get_relation_for_predicate(self, mock_adapter, mock_ensure):
         """Test _get_relation_for_predicate returns correct RO terms."""
         transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
@@ -122,7 +123,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
             PRODUCES_RELATION,
         )
 
-    def test_to_biolink_predicate(self, mock_adapter):
+    def test_to_biolink_predicate(self, mock_adapter, mock_ensure):
         """Test _to_biolink_predicate maps METPO to biolink."""
         transform = MetaTraitsTransform(
             input_dir=Path("data/raw"),
@@ -141,7 +142,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
             "biolink:has_phenotype",
         )
 
-    def test_produces_ethanol_is_not_has_phenotype(self, mock_adapter):
+    def test_produces_ethanol_is_not_has_phenotype(self, mock_adapter, mock_ensure):
         """Test produces: ethanol resolves to biolink:produces, not has_phenotype."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -154,7 +155,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
             "'produces: ethanol' must NOT resolve to has_phenotype",
         )
 
-    def test_collapse_detection(self, mock_adapter):
+    def test_collapse_detection(self, mock_adapter, mock_ensure):
         """Test that not all predicates resolve to has_phenotype."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -166,7 +167,15 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertIn("biolink:has_phenotype", predicates)
 
     @parameterized.expand(EXPECTED_EDGES)
-    def test_edge_resolution_round_trip(self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat):
+    def test_edge_resolution_round_trip(
+        self,
+        mock_adapter,
+        mock_ensure,
+        subject_label,
+        expected_pred,
+        expected_obj,
+        expected_cat,
+    ):
         """Verify each trait resolves to correct (predicate, object_id, object_category)."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -178,7 +187,15 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertEqual(match["object_category"], expected_cat)
 
     @parameterized.expand(ADDITIONAL_TEST_CASES)
-    def test_additional_edge_resolution(self, mock_adapter, subject_label, expected_pred, expected_obj, expected_cat):
+    def test_additional_edge_resolution(
+        self,
+        mock_adapter,
+        mock_ensure,
+        subject_label,
+        expected_pred,
+        expected_obj,
+        expected_cat,
+    ):
         """Verify additional trait patterns resolve correctly (Phase 6 expanded coverage)."""
         mappings = load_microbial_trait_mappings()
         if not mappings:
@@ -190,7 +207,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
         self.assertEqual(match["object_category"], expected_cat, f"Wrong category for '{subject_label}'")
 
     @patch.object(MetaTraitsTransform, "_search_ncbitaxon_by_label")
-    def test_run_with_fixture(self, mock_search, mock_adapter):
+    def test_run_with_fixture(self, mock_search, mock_adapter, mock_ensure):
         """Test run() with fixture produces nodes and edges."""
         mock_search.return_value = "NCBITaxon:562"
 
@@ -257,7 +274,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
             if self.temp_input_dir.exists():
                 shutil.rmtree(self.temp_input_dir)
 
-    def test_run_without_input_files_raises(self, mock_adapter):
+    def test_run_without_input_files_raises(self, mock_adapter, mock_ensure):
         """Test run() raises FileNotFoundError when no input files exist."""
         empty_dir = Path(tempfile.mkdtemp())
         transform = MetaTraitsTransform(

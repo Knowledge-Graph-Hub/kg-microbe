@@ -43,7 +43,22 @@ When this skill is invoked, run `kg_model_review.py` with the specified scope an
 - `relation` is a RO or METPO term CURIE
 
 #### Biolink Model Alignment
-Valid categories (non-exhaustive — flag anything not in this list):
+
+**Reference data source**: `bmt` (Biolink Model Toolkit) loads the authoritative
+published biolink-model YAML at runtime. The skill prints the loaded version
+(e.g. `Biolink Model 4.2.2 loaded (154 categories, 469 predicates)`) so you can
+see what reference data you validated against.
+
+On top of `bmt`, the skill layers a small `KGMICROBE_EXTENSION_CATEGORIES` /
+`KGMICROBE_EXTENSION_PREDICATES` whitelist for:
+- KG-Microbe native extensions (e.g. `biolink:GrowthMedium`)
+- Deprecated upstream classes we still emit intentionally (e.g.
+  `biolink:ChemicalSubstance` as the CHEBI normalization target,
+  `biolink:Macromolecule` from OAK output)
+
+If `bmt` is unavailable, the skill falls back to a minimal curated set.
+
+Partial list of recognized categories (full list comes from `bmt`):
 ```
 biolink:OrganismTaxon
 biolink:ChemicalEntity
@@ -139,6 +154,11 @@ biolink:contains_process
 - `--format {text,md,json}` — output format (default: text)
 - `--verbose` — show up to 5 example violating rows per check
 - `--max-rows N` — limit rows sampled per file (default: 100000; use 0 for all)
+- `--strict-kgx` — additionally run `kgx.validator.Validator` for authoritative
+  KGX-spec checking (row-level property types, edge `id` requirement, biolink
+  JSON-LD CURIE context). Off by default because it surfaces deviations we
+  accept by design (e.g. KG-Microbe prefixes not in biolink's JSON-LD context,
+  edges without `id` column). Use before a release to see the full gap list.
 
 ## Output Format
 

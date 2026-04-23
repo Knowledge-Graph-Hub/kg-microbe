@@ -253,7 +253,9 @@ class BacDiveTransform(Transform):
         # and self.ncbitaxon_labels and self.ncbitaxon_name_to_id will remain empty.
         self.ncbitaxon_labels: Dict[str, str] = {}  # {ncbitaxon_id: label}
         self.ncbitaxon_name_to_id: Dict[str, str] = {}  # {label: ncbitaxon_id} for reverse lookup
+        self.ncbitaxon_synonyms: Dict[str, frozenset] = {}  # {ncbitaxon_id: frozenset(lowercased synonyms)}
         self.ncbitaxon_fallback_cache: Dict[str, Optional[str]] = {}  # Cache for fallback lookups
+        self._ncbitaxon_rank_cache: Dict[str, Optional[str]] = {}  # {ncbitaxon_id: rank_name}
         self._load_ncbitaxon_labels()
 
         # Load CHEBI categories from ontologies transform output (for category alignment).
@@ -375,9 +377,10 @@ class BacDiveTransform(Transform):
             try:
                 print("Loading NCBITaxon labels from ontologies transform output...")
                 with open(ncbitaxon_nodes_file) as f:
-                    f.readline()  # skip header
+                    header = f.readline().rstrip("\n").split("\t")
+                    syn_col = header.index("synonym") if "synonym" in header else 6
                     for line in f:
-                        parts = line.strip().split("\t")
+                        parts = line.rstrip("\n").split("\t")
                         if len(parts) >= 3:
                             # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
                             node_id = parts[0]
@@ -386,6 +389,12 @@ class BacDiveTransform(Transform):
                                 self.ncbitaxon_labels[node_id] = name
                                 # Also store reverse mapping (lowercase for case-insensitive search)
                                 self.ncbitaxon_name_to_id[name.lower()] = node_id
+                                if len(parts) > syn_col and parts[syn_col]:
+                                    self.ncbitaxon_synonyms[node_id] = frozenset(
+                                        s.strip().lower()
+                                        for s in parts[syn_col].split("|")
+                                        if s.strip()
+                                    )
                 print(f"  Loaded {len(self.ncbitaxon_labels)} NCBITaxon labels")
             except Exception as e:
                 print(f"Warning: Could not load NCBITaxon labels: {e}")
@@ -554,6 +563,107 @@ class BacDiveTransform(Transform):
             return taxon_name, True
 
         return None, False
+
+    # Common-noun → NCBI-taxon-label translations for BacDive's "Unidentified
+    # [foo]" naming. BacDive uses singular bacterial common nouns (all lowercase),
+    # but NCBI stores the class/phylum form. Keys are the singular common-noun;
+    # values are ordered candidates to try against NCBITaxon label search.
+    _UNIDENTIFIED_TAXON_MAP = {
+        "actinobacterium": ("Actinobacteria", "Actinomycetia", "Actinomycetota"),
+        "proteobacterium": ("Proteobacteria", "Pseudomonadota"),
+        "alphaproteobacterium": ("Alphaproteobacteria",),
+        "betaproteobacterium": ("Betaproteobacteria",),
+        "gammaproteobacterium": ("Gammaproteobacteria",),
+        "deltaproteobacterium": ("Deltaproteobacteria",),
+        "epsilonproteobacterium": ("Epsilonproteobacteria", "Campylobacterota"),
+        "zetaproteobacterium": ("Zetaproteobacteria",),
+        "cyanobacterium": ("Cyanobacteria", "Cyanobacteriota"),
+        "firmicute": ("Firmicutes", "Bacillota"),
+        "bacteroidete": ("Bacteroidetes", "Bacteroidota"),
+        "spirochete": ("Spirochaetes", "Spirochaetota"),
+        "planctomycete": ("Planctomycetes", "Planctomycetota"),
+        "verrucomicrobium": ("Verrucomicrobia", "Verrucomicrobiota"),
+        "archaeon": ("Archaea",),
+        "eubacterium": ("Bacteria",),
+        "bacterium": ("Bacteria",),
+    }
+
+    def _higher_rank_candidates(self, extracted: str) -> List[str]:
+        """
+        Yield NCBITaxon-label candidates to try for a special-pattern extract.
+
+        The extract may be: the as-is token, a title-cased form, or one of the
+        explicit mappings in ``_UNIDENTIFIED_TAXON_MAP`` (BacDive's singular
+        common nouns like "actinobacterium" → NCBI's "Actinobacteria"). Returned
+        in order of specificity — callers stop at the first hit.
+        """
+        candidates: List[str] = []
+        stripped = extracted.strip()
+        if not stripped:
+            return candidates
+        candidates.append(stripped)
+        # Title-case variant covers lowercase singletons that match NCBI directly
+        # (rare, but cheap to try).
+        titled = stripped[:1].upper() + stripped[1:]
+        if titled != stripped:
+            candidates.append(titled)
+        mapped = self._UNIDENTIFIED_TAXON_MAP.get(stripped.lower())
+        if mapped:
+            candidates.extend(mapped)
+        # Deduplicate while preserving order.
+        seen = set()
+        out = []
+        for c in candidates:
+            if c not in seen:
+                seen.add(c)
+                out.append(c)
+        return out
+
+    _VALID_HIGHER_RANKS = frozenset({"phylum", "class", "order", "family"})
+    _MIN_SHARED_PREFIX = 8  # chars required for fuzzy prefix agreement
+
+    def _get_ncbitaxon_rank(self, ncbitaxon_id: str) -> Optional[str]:
+        """Return taxonomic rank name (e.g. ``'phylum'``) for an NCBITaxon CURIE, or None."""
+        if ncbitaxon_id in self._ncbitaxon_rank_cache:
+            return self._ncbitaxon_rank_cache[ncbitaxon_id]
+        rank: Optional[str] = None
+        try:
+            for _, _, obj in self.ncbi_impl.relationships(
+                subjects=[ncbitaxon_id], predicates=["obo:ncbitaxon#has_rank"]
+            ):
+                rank = obj.split(":", 1)[-1].lower() if obj else None
+                break
+        except Exception:
+            rank = None
+        self._ncbitaxon_rank_cache[ncbitaxon_id] = rank
+        return rank
+
+    def _validate_higher_rank_match(self, ncbitaxon_id: str, original_token: str) -> bool:
+        """
+        Confirm a dict-hit NCBITaxon id is plausibly the rank-ancestor of ``original_token``.
+
+        Two cheap guards against a bad curator mapping in ``_UNIDENTIFIED_TAXON_MAP``:
+        (1) the matched term's rank is phylum/class/order/family; (2) the label or a
+        synonym shares either case-insensitive substring containment or a prefix of
+        ≥8 chars with the token (covers ``actinobacterium``↔``Actinobacteria`` while
+        rejecting unrelated mappings).
+        """
+        rank = self._get_ncbitaxon_rank(ncbitaxon_id)
+        if rank not in self._VALID_HIGHER_RANKS:
+            return False
+        token = (original_token or "").strip().lower()
+        if not token:
+            return False
+        names = {self.ncbitaxon_labels.get(ncbitaxon_id, "").lower()}
+        names |= self.ncbitaxon_synonyms.get(ncbitaxon_id, frozenset())
+        names.discard("")
+        for name in names:
+            if token in name or name in token:
+                return True
+            n = min(len(token), len(name))
+            if n >= self._MIN_SHARED_PREFIX and token[: self._MIN_SHARED_PREFIX] == name[: self._MIN_SHARED_PREFIX]:
+                return True
+        return False
 
     def _parse_genus_from_scientific_name(self, scientific_name: str) -> Optional[str]:
         """
@@ -955,11 +1065,18 @@ class BacDiveTransform(Transform):
             antibiotic_predicate = None
 
         if antibiotic_predicate:
+            ar_enrich = (
+                self.chemical_loader.get_node_enrichment(chebi_key)
+                if self.chemical_loader is not None
+                else {"xref": "", "synonym": ""}
+            )
             self.ar_nodes_data_to_write.append(
                 self._create_node_row(
                     chebi_key,
                     self._get_chebi_category(chebi_key),
                     item[METABOLITE_KEY],
+                    xref=ar_enrich["xref"] or None,
+                    synonym=ar_enrich["synonym"] or None,
                 )
             )
             # Create edge from organism to metabolite
@@ -1055,8 +1172,19 @@ class BacDiveTransform(Transform):
                 if antibiotic_predicate and metabolite_id:
                     #            print(f"    Writing node row for antibiotic: {metabolite_id}")
                     # Use category from ontologies transform for CHEBI IDs
+                    met_enrich = (
+                        self.chemical_loader.get_node_enrichment(metabolite_id)
+                        if self.chemical_loader is not None
+                        else {"xref": "", "synonym": ""}
+                    )
                     node_writer.writerow(
-                        self._create_node_row(metabolite_id, self._get_chebi_category(metabolite_id), k)
+                        self._create_node_row(
+                            metabolite_id,
+                            self._get_chebi_category(metabolite_id),
+                            k,
+                            xref=met_enrich["xref"] or None,
+                            synonym=met_enrich["synonym"] or None,
+                        )
                     )
 
                     # Create edge from organism to metabolite
@@ -1622,8 +1750,60 @@ class BacDiveTransform(Transform):
                             print(f"  Using normalized name for lookup: {normalized_name}")
                             full_name = normalized_name
 
-                        # Step 1: Parse genus from scientific name
-                        genus = self._parse_genus_from_scientific_name(full_name)
+                        # Higher-rank direct-lookup shortcut for special patterns
+                        # ("Unidentified actinobacterium", "Rhizobiales (not further classified)", ...).
+                        # The extracted token is itself a class/order/phylum, not a binomial.
+                        # Try NCBITaxon directly before genus parsing, which rejects lowercase
+                        # higher-rank tokens like "actinobacterium".
+                        higher_rank_ncbitaxon_id = None
+                        if is_special:
+                            # Keep the original extracted token (e.g. "actinobacterium")
+                            # for post-hit validation; ``full_name`` gets overwritten
+                            # with the matched candidate label below.
+                            original_token = full_name
+                            # Fast path: check the preloaded name→id dict for each
+                            # candidate (O(1) per try) before any OAK fallback.
+                            # A full OAK search per candidate is too expensive here:
+                            # 5 candidates × obscure tokens × 99k strains adds up.
+                            for candidate in self._higher_rank_candidates(full_name):
+                                dict_hit = self.ncbitaxon_name_to_id.get(candidate.lower())
+                                if dict_hit and self._validate_higher_rank_match(dict_hit, original_token):
+                                    higher_rank_ncbitaxon_id = dict_hit
+                                    full_name = candidate
+                                    break
+                            # Single OAK fallback on the original extract if nothing
+                            # in the candidate list was preloaded and validated.
+                            if not higher_rank_ncbitaxon_id:
+                                fallback_id = self._search_ncbitaxon_by_label(original_token)
+                                if fallback_id and self._validate_higher_rank_match(fallback_id, original_token):
+                                    higher_rank_ncbitaxon_id = fallback_id
+                            if higher_rank_ncbitaxon_id:
+                                print(
+                                    f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}"
+                                )
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    SUBCLASS_PREDICATE,
+                                    INFERRED_SUBCLASS_RELATION,
+                                    higher_rank_ncbitaxon_id,
+                                )
+                                edge_writer.writerow(
+                                    [
+                                        organism_id,
+                                        SUBCLASS_PREDICATE,
+                                        higher_rank_ncbitaxon_id,
+                                        INFERRED_SUBCLASS_RELATION,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
+                                    ]
+                                )
+
+                        # Step 1: Parse genus from scientific name (skipped if higher-rank matched)
+                        genus = (
+                            None
+                            if higher_rank_ncbitaxon_id
+                            else self._parse_genus_from_scientific_name(full_name)
+                        )
 
                         if genus:
                             print(f"  Extracted genus: {genus}")
@@ -1840,7 +2020,7 @@ class BacDiveTransform(Transform):
                                         ]
                                     )
                                     print(f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}")
-                        else:
+                        elif not higher_rank_ncbitaxon_id:
                             print(f"  Could not parse genus from: {full_name}")
                             print("  Strain will remain unmapped")
 
@@ -2038,7 +2218,7 @@ class BacDiveTransform(Transform):
                             # This makes explicit that the medium is an instance of the "growth medium" ontology class
                             medium_type_edge = [
                                 mid,  # subject: the medium node
-                                "biolink:category",  # predicate: category relationship
+                                SUBCLASS_PREDICATE,  # predicate: instance/subclass of ontology class
                                 "METPO:1004005",  # object: growth medium ontology class
                                 "rdf:type",  # relation: RDF semantics
                                 "infores:metpo",  # knowledge source: METPO ontology
@@ -2273,14 +2453,22 @@ class BacDiveTransform(Transform):
 
                         if metabolite_activity_data:
                             # Write metabolite nodes
-                            meta_util_nodes_to_write = [
-                                self._create_node_row(
-                                    item["chebi_key"],
-                                    self._get_chebi_category(item["chebi_key"]),
-                                    item["metabolite_name"],
+                            meta_util_nodes_to_write = []
+                            for item in metabolite_activity_data:
+                                util_enrich = (
+                                    self.chemical_loader.get_node_enrichment(item["chebi_key"])
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
                                 )
-                                for item in metabolite_activity_data
-                            ]
+                                meta_util_nodes_to_write.append(
+                                    self._create_node_row(
+                                        item["chebi_key"],
+                                        self._get_chebi_category(item["chebi_key"]),
+                                        item["metabolite_name"],
+                                        xref=util_enrich["xref"] or None,
+                                        synonym=util_enrich["synonym"] or None,
+                                    )
+                                )
                             node_writer.writerows(meta_util_nodes_to_write)
 
                             # Write edges with METPO predicates
@@ -2360,14 +2548,22 @@ class BacDiveTransform(Transform):
 
                         if metabolite_production_data:
                             # Write metabolite nodes
-                            metabolite_production_nodes_to_write = [
-                                self._create_node_row(
-                                    item["chebi_key"],
-                                    self._get_chebi_category(item["chebi_key"]),
-                                    item["metabolite_name"],
+                            metabolite_production_nodes_to_write = []
+                            for item in metabolite_production_data:
+                                prod_enrich = (
+                                    self.chemical_loader.get_node_enrichment(item["chebi_key"])
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
                                 )
-                                for item in metabolite_production_data
-                            ]
+                                metabolite_production_nodes_to_write.append(
+                                    self._create_node_row(
+                                        item["chebi_key"],
+                                        self._get_chebi_category(item["chebi_key"]),
+                                        item["metabolite_name"],
+                                        xref=prod_enrich["xref"] or None,
+                                        synonym=prod_enrich["synonym"] or None,
+                                    )
+                                )
                             node_writer.writerows(metabolite_production_nodes_to_write)
 
                             # Write edges with METPO predicates

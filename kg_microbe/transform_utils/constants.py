@@ -256,16 +256,16 @@ MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 
 # Chemical entity categories (Biolink Model v4.3.6)
-# IMPORTANT: For CHEBI-mapped chemicals, use ChemicalSubstance category.
-# SmallMolecule should be normalized to ChemicalSubstance for consistency.
+# IMPORTANT: For CHEBI-mapped chemicals, use ChemicalEntity category.
+# biolink:ChemicalSubstance was removed upstream in biolink 4.x; we normalize
+# to biolink:ChemicalEntity (the supertype of SmallMolecule and others).
 # See BacDive and MediaDive transforms for examples using _get_chebi_category().
 INGREDIENT_CATEGORY = "biolink:ChemicalEntity"  # Generic chemical, use only when ontology ID unknown
 COMPLEX_INGREDIENT_CATEGORY = "biolink:ComplexMolecularMixture"  # Complex ingredients (peptone, yeast extract, etc.)
-CHEBI_CATEGORY = "biolink:ChemicalSubstance"  # CHEBI default for all chemical entities
+CHEBI_CATEGORY = "biolink:ChemicalEntity"  # CHEBI default for all chemical entities
 # Deprecated: Use CHEBI_CATEGORY instead
-SMALL_MOLECULE_CATEGORY = "biolink:ChemicalSubstance"  # Normalized to ChemicalSubstance (SmallMolecule deprecated)
-# DEPRECATED: Not in Biolink v4.3.6! Use MACROMOLECULAR_COMPLEX_CATEGORY
-MACROMOLECULE_CATEGORY = "biolink:MacromolecularComplex"  # was biolink:Macromolecule (deprecated in v4.3.6)
+SMALL_MOLECULE_CATEGORY = "biolink:ChemicalEntity"  # Normalized to ChemicalEntity (ChemicalSubstance removed upstream)
+MACROMOLECULE_CATEGORY = "biolink:MacromolecularComplex"  # was biolink:Macromolecule (removed in biolink 4.x)
 # Valid in Biolink v4.3.6 (proteins, nucleic acids, polymers)
 MACROMOLECULAR_COMPLEX_CATEGORY = "biolink:MacromolecularComplex"
 ROLE_CATEGORY = "biolink:ChemicalRole"  # CHEBI functional roles (inhibitor, agonist, etc.)
@@ -273,8 +273,12 @@ METABOLITE_CATEGORY = "biolink:ChemicalEntity"  # Generic metabolite, prefer CHE
 SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"  # Generic substrate, prefer CHEBI category if available
 CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 
-# Biological process and activity categories
-METABOLISM_CATEGORY = "biolink:ActivityAndBehavior"
+# Biological process and activity categories.
+# Metabolism traits (oxygen tolerance, energy source use, etc.) are biological
+# processes at the organism level. ``biolink:ActivityAndBehavior`` was used
+# previously but is deprecated-style upstream; ``biolink:BiologicalProcess``
+# is the Biolink-recommended replacement.
+METABOLISM_CATEGORY = "biolink:BiologicalProcess"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 
 # Anatomical and environmental categories
@@ -291,8 +295,7 @@ GENOME_CATEGORY = "biolink:Genome"
 ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
 # Deprecated categories - do not use
-# Note: SmallMolecule should be normalized to ChemicalSubstance for consistency
-# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # Use CHEBI_CATEGORY instead
+# CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # removed from biolink; use CHEBI_CATEGORY
 
 HAS_PART = "BFO:0000051"
 IS_GROWN_IN = "METPO:2000517"  # RO relation for grows in (organism -> growth medium), used in relation column

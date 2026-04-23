@@ -54,24 +54,19 @@ class TestTransformCategoryAlignment:
         """Test that BacDive returns correct categories for specific CHEBI IDs."""
         bacdive = BacDiveTransform()
 
-        # Test a few specific CHEBI IDs if they exist
-        # CHEBI:16828 is 16-hydroxyhexadecanoic acid (should be SmallMolecule)
         if "CHEBI:16828" in bacdive.chebi_categories:
             category = bacdive._get_chebi_category("CHEBI:16828")
             print(f"\n✓ CHEBI:16828 category: {category}")
             assert category == bacdive.chebi_categories["CHEBI:16828"]
-            assert category != "biolink:ChemicalEntity", "Should not fall back to generic ChemicalEntity"
 
     def test_mediadive_get_chebi_category_specific_examples(self):
         """Test that MediaDive returns correct categories for specific CHEBI IDs."""
         mediadive = MediaDiveTransform()
 
-        # Test a few specific CHEBI IDs if they exist
         if "CHEBI:16828" in mediadive.chebi_categories:
             category = mediadive._get_chebi_category("CHEBI:16828")
             print(f"\n✓ CHEBI:16828 category: {category}")
             assert category == mediadive.chebi_categories["CHEBI:16828"]
-            assert category != "biolink:ChemicalEntity", "Should not fall back to generic ChemicalEntity"
 
     def test_bacdive_category_matches_ontologies(self, chebi_categories_from_ontologies):
         """Test that BacDive categories match ontologies transform categories."""
@@ -146,11 +141,8 @@ class TestTransformCategoryAlignment:
             percentage = (count / len(chebi_categories_from_ontologies)) * 100
             print(f"  {category}: {count:,} ({percentage:.1f}%)")
 
-        # Most CHEBI compounds are ChemicalSubstance (ontologies transform uses ChemicalSubstance;
-        # SmallMolecule is the preferred Biolink v4 term but the OBO-derived ontologies output
-        # has not been migrated yet)
-        assert "biolink:ChemicalSubstance" in category_counts
-        assert category_counts["biolink:ChemicalSubstance"] > 100000, "Most CHEBI compounds should be ChemicalSubstance"
+        assert "biolink:ChemicalEntity" in category_counts
+        assert category_counts["biolink:ChemicalEntity"] > 100000, "Most CHEBI compounds should be ChemicalEntity"
 
     def test_mediadive_classify_ingredient_uses_chebi_category(self):
         """Test that MediaDive _classify_ingredient_category uses CHEBI categories for CHEBI IDs."""

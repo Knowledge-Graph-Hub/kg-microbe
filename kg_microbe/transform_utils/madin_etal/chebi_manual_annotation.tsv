@@ -5,3 +5,16 @@ CHEBI:16000	ethanolamine	2-aminethanol	REPLACE
 CHEBI:30832	adipic acid	adipate	REPLACE
 CHEBI:18276	dihydrogen	H2_CO2	SUPPLEMENT
 CHEBI:18276	dihydrogen	H2_methanol	SUPPLEMENT
+CHEBI:90259	4-nitrophenyl beta-D-glucoside	4-nitrophenyl beta-D-glucopyranoside	SUPPLEMENT
+CHEBI:91122	4-nitrophenyl alpha-D-glucoside	4-nitrophenyl alpha-D-glucopyranoside	SUPPLEMENT
+CHEBI:90146	4-nitrophenyl beta-D-glucuronide	4-nitrophenyl beta-D-glucuronide	SUPPLEMENT
+CHEBI:90148	4-nitrophenyl beta-D-xyloside	4-nitrophenyl beta-D-xylopyranoside	SUPPLEMENT
+CHEBI:90343	4-nitrophenyl N-acetyl-beta-D-glucosaminide	4-nitrophenyl N-acetyl-beta-D-glucosaminide	SUPPLEMENT
+CHEBI:90144	2-nitrophenyl beta-D-galactoside	2-nitrophenyl beta-D-galactopyranoside	SUPPLEMENT
+CHEBI:90144	2-nitrophenyl beta-D-galactoside	O-nitrophenyl-beta-D-galactopyranoside	SUPPLEMENT
+CHEBI:90144	2-nitrophenyl beta-D-galactoside	O-nitrophenyl-beta-D-galactopyranosid	SUPPLEMENT
+CHEBI:90253	4-nitrophenyl alpha-L-fucoside	4-nitrophenyl alpha-L-fucoside	SUPPLEMENT
+CHEBI:90128	4-nitrophenyl 6-O-phosphono-beta-D-galactopyranoside	4-nitrophenyl 6-O-phosphono-beta-D-galactoside	SUPPLEMENT
+CHEBI:90350	L-arginine 2-naphthylamide	L-arginine-2-naphthylamide	SUPPLEMENT
+CHEBI:90249	2-naphthyl tetradecanoate	2-naphthyl tetradecanoate	SUPPLEMENT
+CHEBI:91043	2-naphthyl dihydrogen phosphate	2-naphthyl dihydrogen phosphate	SUPPLEMENT

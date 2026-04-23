@@ -26,7 +26,6 @@ from tqdm import tqdm  # noqa: E402
 
 from kg_microbe.transform_utils.constants import (  # noqa: E402
     AUTOMATED_AGENT,
-    BIOLOGICAL_PROCESS,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
     HAS_PHENOTYPE,
@@ -45,91 +44,13 @@ from kg_microbe.transform_utils.constants import (  # noqa: E402
 from kg_microbe.transform_utils.transform import Transform  # noqa: E402
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
+from kg_microbe.utils.metpo_predicates import (  # noqa: E402
+    PREDICATE_TO_RELATION,
+    to_biolink_predicate,
+)
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings  # noqa: E402
 from kg_microbe.utils.oak_utils import search_by_label  # noqa: E402
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
-
-# METPO predicate -> biolink predicate (for relation lookup)
-METPO_TO_BIOLINK_PREDICATE = {
-    # Capability and phenotype
-    "METPO:2000101": "biolink:has_attribute",  # has quality
-    "METPO:2000102": "biolink:has_phenotype",  # has phenotype
-    "METPO:2000103": "biolink:capable_of",  # capable of
-    # Chemical interactions (positive)
-    "METPO:2000001": "biolink:interacts_with",  # organism interacts with chemical
-    "METPO:2000002": "biolink:interacts_with",  # assimilates
-    "METPO:2000003": "biolink:produces",  # builds acid from
-    "METPO:2000004": "biolink:produces",  # builds base from
-    "METPO:2000005": "biolink:produces",  # builds gas from
-    "METPO:2000006": "biolink:capable_of",  # uses as carbon source
-    "METPO:2000007": "biolink:capable_of",  # degrades
-    "METPO:2000008": "biolink:capable_of",  # uses as electron acceptor
-    "METPO:2000009": "biolink:capable_of",  # uses as electron donor
-    "METPO:2000010": "biolink:capable_of",  # uses as energy source
-    "METPO:2000011": "biolink:capable_of",  # ferments
-    "METPO:2000012": "biolink:capable_of",  # uses for growth
-    "METPO:2000013": "biolink:capable_of",  # hydrolyzes
-    "METPO:2000014": "biolink:capable_of",  # uses as nitrogen source
-    "METPO:2000015": "biolink:interacts_with",  # uses in other way
-    "METPO:2000016": "biolink:capable_of",  # oxidizes
-    "METPO:2000017": "biolink:capable_of",  # reduces
-    "METPO:2000018": "biolink:capable_of",  # requires for growth
-    "METPO:2000019": "biolink:capable_of",  # uses for respiration
-    "METPO:2000020": "biolink:capable_of",  # uses as sulfur source
-    # Aerobic/anaerobic catabolization and growth (positive)
-    "METPO:2000032": "biolink:capable_of",  # uses for aerobic catabolization
-    "METPO:2000043": "biolink:capable_of",  # uses for aerobic growth
-    "METPO:2000048": "biolink:capable_of",  # uses for anaerobic catabolization
-    "METPO:2000049": "biolink:capable_of",  # uses for anaerobic growth
-    "METPO:2000051": "biolink:capable_of",  # uses for anaerobic growth with light
-    # Chemical interactions (negative)
-    "METPO:2000021": "biolink:capable_of",  # does not use for aerobic catabolization
-    "METPO:2000022": "biolink:capable_of",  # does not use for aerobic growth
-    "METPO:2000024": "biolink:capable_of",  # does not use for anaerobic growth
-    "METPO:2000025": "biolink:capable_of",  # does not use for anaerobic growth in the dark
-    "METPO:2000026": "biolink:capable_of",  # does not use for anaerobic growth with light
-    "METPO:2000027": "biolink:interacts_with",  # does not assimilate
-    "METPO:2000028": "biolink:produces",  # does not build acid from
-    "METPO:2000029": "biolink:produces",  # does not build base from
-    "METPO:2000030": "biolink:produces",  # does not build gas from
-    "METPO:2000031": "biolink:capable_of",  # does not use as carbon source
-    "METPO:2000033": "biolink:capable_of",  # does not degrade
-    "METPO:2000034": "biolink:capable_of",  # does not use as electron acceptor
-    "METPO:2000035": "biolink:capable_of",  # does not use as electron donor
-    "METPO:2000036": "biolink:capable_of",  # does not use as energy source
-    "METPO:2000037": "biolink:capable_of",  # does not ferment
-    "METPO:2000038": "biolink:capable_of",  # does not use for growth
-    "METPO:2000039": "biolink:capable_of",  # does not hydrolyze
-    "METPO:2000040": "biolink:capable_of",  # does not use as nitrogen source
-    "METPO:2000041": "biolink:interacts_with",  # does not use in other way
-    "METPO:2000042": "biolink:capable_of",  # does not oxidize
-    "METPO:2000044": "biolink:capable_of",  # does not reduce
-    "METPO:2000045": "biolink:capable_of",  # is not required for growth
-    "METPO:2000046": "biolink:capable_of",  # does not use for respiration
-    "METPO:2000047": "biolink:capable_of",  # does not use as sulfur source
-    # Production
-    "METPO:2000202": "biolink:produces",  # produces
-    "METPO:2000222": "biolink:produces",  # does not produce
-    # Enzyme activity
-    "METPO:2000302": "biolink:capable_of",  # shows activity of
-    "METPO:2000303": "biolink:capable_of",  # does not show activity of
-    # Growth medium
-    "METPO:2000517": "biolink:capable_of",  # grows in
-    "METPO:2000518": "biolink:capable_of",  # does not grow in
-}
-
-# Biolink predicate -> RO relation
-PREDICATE_TO_RELATION = {
-    "biolink:produces": "RO:0002234",  # has output
-    "biolink:capable_of": BIOLOGICAL_PROCESS,  # RO:0002215
-    "biolink:has_phenotype": HAS_PHENOTYPE,  # RO:0002200
-    "biolink:has_attribute": "RO:0000086",  # has quality
-    "biolink:interacts_with": "RO:0002434",  # interacts with
-    "biolink:consumes": "RO:0002233",  # has input
-    "biolink:located_in": "RO:0001025",  # located in
-    "biolink:related_to": "RO:0000091",  # has disposition (generic fallback)
-    "biolink:associated_with": "RO:0000091",
-}
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
 # NOTE: Only process species-level files, not genus or family summaries
@@ -139,71 +60,105 @@ METATRAITS_INPUT_FILES = [
 ]
 
 
-def _get_ncbitaxon_adapter():
-    """Get OAK adapter for NCBITaxon; creates symlink to OAK cache if available."""
-    # Use .db file instead of .owl (NCBITAXON_SOURCE points to .owl)
-    local_db = NCBITAXON_SOURCE.parent / "ncbitaxon.db"
-    oak_cache = Path.home() / ".data" / "oaklib" / "ncbitaxon.db"
+# Minimum plausible size for a healthy NCBITaxon OAK DB. Full file is ~12 GB;
+# any smaller and it's a partial extract/download, regardless of SQLite header.
+_NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
 
-    # Try local database first (could be file or symlink)
-    if local_db.exists():
-        local_path = f"sqlite:{local_db}"
-        try:
-            adapter = get_adapter(local_path)
-            # Verify adapter works (e.g. has statements table)
-            list(adapter.basic_search("Bacteria", limit=1))
-            print(f"  Using local NCBITaxon database: {local_db}")
-            return adapter
-        except Exception as e:
-            print(f"  Local NCBITaxon database invalid ({e.__class__.__name__}), trying fallback")
-            # Remove invalid symlink, or quarantine regular file to avoid data loss
-            try:
-                if local_db.is_symlink():
-                    local_db.unlink()
-                    print(f"  Removed invalid symlink: {local_db}")
-                else:
-                    quarantine_path = local_db.with_suffix(local_db.suffix + ".quarantine")
-                    local_db.rename(quarantine_path)
-                    print(f"  Quarantined potentially corrupted database: {quarantine_path}")
-            except OSError as unlink_err:
-                # If cleanup fails, continue to fallback mechanisms
-                print(f"  Could not remove/quarantine database ({unlink_err}), continuing to fallback")
 
-    # If OAK cache exists but no local symlink, create it
-    if oak_cache.exists() and not local_db.exists():
-        try:
-            print(f"  Creating symlink to cached database: {local_db} -> {oak_cache}")
-            local_db.symlink_to(oak_cache)
-            print("  Using cached NCBITaxon database from OAK")
-            return get_adapter(f"sqlite:{local_db}")
-        except FileExistsError:
-            # Another worker created the symlink - verify and use it
-            if local_db.exists() and local_db.is_symlink():
-                return get_adapter(f"sqlite:{local_db}")
-            else:
-                print("  Symlink race condition - file exists but invalid, using remote adapter")
-        except Exception as e:
-            print(f"  Failed to create symlink ({e}), using remote adapter")
+def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
+    """Return (local_db, oak_cache) paths for the NCBITaxon OAK DB."""
+    return (
+        NCBITAXON_SOURCE.parent / "ncbitaxon.db",
+        Path.home() / ".data" / "oaklib" / "ncbitaxon.db",
+    )
 
-    # Fallback: use OAK remote adapter (downloads to cache if not present)
+
+def _validate_ncbitaxon_db(db_path: Path) -> Tuple[bool, str]:
+    """
+    Validate that db_path is a healthy NCBITaxon SQLite DB.
+
+    Checks file size (guards against truncated extractions), then issues a
+    single label lookup via OAK. Returns (ok, reason); reason is empty on success.
+    """
+    try:
+        resolved = db_path.resolve()
+    except OSError as e:
+        return False, f"cannot resolve path: {e}"
+    if not resolved.exists():
+        return False, f"missing: {resolved}"
+    size = resolved.stat().st_size
+    if size < _NCBITAXON_DB_MIN_SIZE:
+        return False, f"too small ({size / 1e6:.1f} MB < {_NCBITAXON_DB_MIN_SIZE / 1e9:.0f} GB)"
+    try:
+        adapter = get_adapter(f"sqlite:{db_path}")
+        list(adapter.basic_search("Bacteria"))
+    except Exception as e:  # noqa: BLE001
+        return False, f"{e.__class__.__name__}: {e}"
+    return True, ""
+
+
+def _ensure_ncbitaxon_db_ready() -> None:
+    """
+    Pre-flight check the NCBITaxon OAK DB (parent-only, before workers fork).
+
+    Guarantees that when workers call :func:`_get_ncbitaxon_adapter` they find a
+    valid DB via the ``data/raw/ncbitaxon.db`` symlink and never need to heal the
+    cache themselves. Healing concurrently across workers is what corrupted the
+    cache in the first place (multiple overlapping downloads to the same path).
+
+    Raises RuntimeError with remediation steps if no valid DB can be found.
+    """
+    local_db, oak_cache = _ncbitaxon_db_paths()
+
+    # Happy path: symlink resolves to a valid DB.
+    ok, reason = _validate_ncbitaxon_db(local_db)
+    if ok:
+        print(f"  NCBITaxon DB validated: {local_db} -> {local_db.resolve()}")
+        return
+
+    print(f"  NCBITaxon DB at {local_db} invalid ({reason}); attempting repair")
+
+    # Attempt repair from OAK cache.
     if oak_cache.exists():
-        print("  Using cached NCBITaxon database from OAK")
-    else:
-        print("  Downloading NCBITaxon database from OBO library (~2GB, one-time download)...")
-
-    adapter = get_adapter("sqlite:obo:ncbitaxon")
-
-    # After first download, create symlink for future runs
-    if oak_cache.exists() and not local_db.exists():
-        try:
+        cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
+        if cache_ok:
+            if local_db.exists() or local_db.is_symlink():
+                local_db.unlink()
             local_db.symlink_to(oak_cache)
-            print(f"  Created symlink for future use: {local_db}")
-        except FileExistsError:
-            pass  # Another worker already created it - no need to log
-        except Exception:  # noqa: S110
-            pass  # Symlink creation is optional, don't fail if it doesn't work
+            print(f"  Repaired symlink: {local_db} -> {oak_cache}")
+            return
+        print(f"  OAK cache also invalid ({cache_reason})")
 
-    return adapter
+    # No valid DB anywhere. Fail fast with remediation rather than triggering
+    # concurrent downloads across workers.
+    raise RuntimeError(
+        "NCBITaxon OAK database is missing or corrupt.\n"
+        f"  local: {local_db} ({reason})\n"
+        f"  cache: {oak_cache} ({'missing' if not oak_cache.exists() else 'invalid'})\n"
+        "Remediation:\n"
+        "  1. Remove corrupt cache: rm ~/.data/oaklib/ncbitaxon.db\n"
+        "  2. Re-download sequentially (not in parallel):\n"
+        "     poetry run python -c 'from oaklib import get_adapter; "
+        "get_adapter(\"sqlite:obo:ncbitaxon\")'\n"
+        "  3. Re-run the transform."
+    )
+
+
+def _get_ncbitaxon_adapter():
+    """
+    Get OAK adapter for NCBITaxon. Assumes the DB was validated in the parent.
+
+    Workers MUST NOT attempt cache repair or remote downloads — concurrent heals
+    corrupt the shared cache. If the symlink resolves to a bad DB here, it means
+    parent validation was skipped; raise with a clear message.
+    """
+    local_db, _ = _ncbitaxon_db_paths()
+    if not local_db.exists():
+        raise RuntimeError(
+            f"NCBITaxon DB missing at {local_db}. "
+            "Parent process must call _ensure_ncbitaxon_db_ready() before spawning workers."
+        )
+    return get_adapter(f"sqlite:{local_db}")
 
 
 def _open_jsonl(path: Path):
@@ -1043,7 +998,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
+                        "category": "biolink:ChemicalEntity",
                         "name": canonical_name or chemical_name,
                         "predicate": metpo_predicate,
                     }
@@ -1125,7 +1080,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
+                        "category": "biolink:ChemicalEntity",
                         "name": canonical_name or substance_name,
                         "predicate": metpo_predicate,
                     }
@@ -1209,7 +1164,7 @@ class MetaTraitsTransform(Transform):
                     canonical_name = self.chemical_loader.get_canonical_name(chebi_id)
                     return {
                         "curie": chebi_id,
-                        "category": "biolink:ChemicalSubstance",
+                        "category": "biolink:ChemicalEntity",
                         "name": canonical_name or substrate_name,
                         "predicate": metpo_predicate,
                     }
@@ -1435,7 +1390,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or substance,
                     "predicate": predicate,
                 }
@@ -1762,9 +1717,13 @@ class MetaTraitsTransform(Transform):
             if has_pigment and metpo_class:
                 return metpo_class
             elif not has_pigment:
-                # Non-pigmented - no specific METPO class for this
-                # Skip for now - negative assertions less informative
-                return None
+                # Negative pigmentation assertion: recognized trait but no
+                # METPO term for the negation (METPO:100302x are positive
+                # classes only). Mark as deferred so the caller skips this
+                # row *without* logging to unmapped_traits.tsv — otherwise
+                # "cell color: yellow pigment → false" drowns the unmapped
+                # report with ~1.45M rows of expected negatives.
+                return {"deferred": True}
 
         return None
 
@@ -1897,7 +1856,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or compound,
                     "predicate": predicate,
                 }
@@ -1931,7 +1890,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or compound,
                     "predicate": predicate,
                 }
@@ -1965,7 +1924,7 @@ class MetaTraitsTransform(Transform):
 
                 return {
                     "curie": chebi_id,
-                    "category": "biolink:ChemicalSubstance",
+                    "category": "biolink:ChemicalEntity",
                     "name": canonical_name or compound,
                     "predicate": predicate,
                 }
@@ -2086,9 +2045,7 @@ class MetaTraitsTransform(Transform):
 
     def _to_biolink_predicate(self, predicate: str) -> str:
         """Map METPO or other predicate to biolink predicate for relation lookup."""
-        if predicate.startswith("biolink:"):
-            return predicate
-        return METPO_TO_BIOLINK_PREDICATE.get(predicate, "biolink:has_phenotype")
+        return to_biolink_predicate(predicate)
 
     def _get_relation_for_predicate(self, predicate: str) -> str:
         """Return RO relation for a given predicate (preserves produces/capable_of/has_phenotype)."""
@@ -2117,11 +2074,11 @@ class MetaTraitsTransform(Transform):
         pos_pred = mapping["predicate"]
         is_positive = "true" in majority_label.lower() if majority_label else True
         if is_positive:
-            return self._to_biolink_predicate(pos_pred)
+            return pos_pred
         # Negative case: look up the negative METPO predicate
         neg_pred = self._get_negative_predicate(pos_pred)
         if neg_pred:
-            return self._to_biolink_predicate(neg_pred)
+            return neg_pred
         return None  # no negative form — caller should skip
 
     def _calculate_optimal_workers_for_chunking(self) -> int:
@@ -2674,7 +2631,7 @@ class MetaTraitsTransform(Transform):
                         if mapping:
                             curie = mapping["curie"]
                             category = mapping["category"]
-                            pred = self._to_biolink_predicate(mapping["predicate"])
+                            pred = mapping["predicate"]
                             label = mapping["name"]
                         else:
                             # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
@@ -2709,6 +2666,10 @@ class MetaTraitsTransform(Transform):
                                 label = f"Growth at {nacl_obs['value']}{nacl_obs['unit']} NaCl"
                             elif pigmentation := self._resolve_pigmentation_trait(trait_name, majority_label):
                                 # Tier 3.0c: Pigmentation (cell color: yellow pigment)
+                                # Deferred = recognized but negative (no METPO
+                                # negation class); skip without logging unmapped.
+                                if pigmentation.get("deferred"):
+                                    continue
                                 curie = pigmentation["curie"]
                                 category = pigmentation["category"]
                                 pred = pigmentation["predicate"]
@@ -2717,7 +2678,7 @@ class MetaTraitsTransform(Transform):
                                 # Tier 3.0d: Fermentation (fermentation: D-glucose)
                                 curie = fermentation["curie"]
                                 category = fermentation["category"]
-                                pred = self._to_biolink_predicate(fermentation["predicate"])
+                                pred = fermentation["predicate"]
                                 label = fermentation["name"]
                             elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
                                 # Tier 3.0e: pH preference (pH preference: alkaliphile)
@@ -2763,7 +2724,7 @@ class MetaTraitsTransform(Transform):
                                 # Tier 3.4: Trophic modes (phototrophy, chemoheterotrophy, aerobic/anaerobic)
                                 curie = trophic_mapping["curie"]
                                 category = trophic_mapping["category"]
-                                pred = self._to_biolink_predicate(trophic_mapping["predicate"])
+                                pred = trophic_mapping["predicate"]
                                 label = trophic_mapping["name"]
                             elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                 # Tier 3.5: Enzyme activities with EC numbers or GO mappings
@@ -2789,7 +2750,7 @@ class MetaTraitsTransform(Transform):
                                 # Tier 3.6: Simple phenotypes (aerotolerant, facultative, acidophilic)
                                 curie = phenotype_mapping["curie"]
                                 category = phenotype_mapping["category"]
-                                pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
+                                pred = phenotype_mapping["predicate"]
                                 label = phenotype_mapping["name"]
                             elif energy_mapping := self._resolve_energy_source(trait_name):
                                 # Tier 3.7: Energy sources (energy source: glucose)
@@ -2856,7 +2817,20 @@ class MetaTraitsTransform(Transform):
 
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
-                            node_writer.write_row(self._create_node_row(curie, category, label))
+                            trait_enrich = (
+                                self.chemical_loader.get_node_enrichment(curie)
+                                if self.chemical_loader is not None
+                                else {"xref": "", "synonym": ""}
+                            )
+                            node_writer.write_row(
+                                self._create_node_row(
+                                    curie,
+                                    category,
+                                    label,
+                                    xref=trait_enrich["xref"] or None,
+                                    synonym=trait_enrich["synonym"] or None,
+                                )
+                            )
 
                         relation = self._get_relation_for_predicate(pred)
                         edge_writer.write_row(
@@ -3310,7 +3284,7 @@ class MetaTraitsTransform(Transform):
                             if mapping:
                                 curie = mapping["curie"]
                                 category = mapping["category"]
-                                pred = self._to_biolink_predicate(mapping["predicate"])
+                                pred = mapping["predicate"]
                                 label = mapping["name"]
                             else:
                                 # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
@@ -3333,7 +3307,7 @@ class MetaTraitsTransform(Transform):
                                     # Tier 3.0c: Fermentation
                                     curie = fermentation["curie"]
                                     category = fermentation["category"]
-                                    pred = self._to_biolink_predicate(fermentation["predicate"])
+                                    pred = fermentation["predicate"]
                                     label = fermentation["name"]
                                 elif ph_pref := self._resolve_ph_preference_trait(trait_name, majority_label):
                                     # Tier 3.0d: pH preference
@@ -3377,7 +3351,7 @@ class MetaTraitsTransform(Transform):
                                 elif trophic_mapping := self._resolve_trophic_mode(trait_name):
                                     curie = trophic_mapping["curie"]
                                     category = trophic_mapping["category"]
-                                    pred = self._to_biolink_predicate(trophic_mapping["predicate"])
+                                    pred = trophic_mapping["predicate"]
                                     label = trophic_mapping["name"]
                                 elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                     resolved_pred = self._apply_majority_label_to_predicate(
@@ -3402,7 +3376,7 @@ class MetaTraitsTransform(Transform):
                                 elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                     curie = phenotype_mapping["curie"]
                                     category = phenotype_mapping["category"]
-                                    pred = self._to_biolink_predicate(phenotype_mapping["predicate"])
+                                    pred = phenotype_mapping["predicate"]
                                     label = phenotype_mapping["name"]
                                 elif energy_mapping := self._resolve_energy_source(trait_name):
                                     resolved_pred = self._apply_majority_label_to_predicate(
@@ -3470,7 +3444,20 @@ class MetaTraitsTransform(Transform):
 
                             if curie not in seen_trait_nodes:
                                 seen_trait_nodes.add(curie)
-                                node_writer.write_row(self._create_node_row(curie, category, label))
+                                trait_enrich = (
+                                    self.chemical_loader.get_node_enrichment(curie)
+                                    if self.chemical_loader is not None
+                                    else {"xref": "", "synonym": ""}
+                                )
+                                node_writer.write_row(
+                                    self._create_node_row(
+                                        curie,
+                                        category,
+                                        label,
+                                        xref=trait_enrich["xref"] or None,
+                                        synonym=trait_enrich["synonym"] or None,
+                                    )
+                                )
 
                             relation = self._get_relation_for_predicate(pred)
                             edge_writer.write_row(
@@ -3546,6 +3533,13 @@ class MetaTraitsTransform(Transform):
         if os.environ.get("METATRAITS_MULTIPROCESSING", "").lower() in ("false", "0", "no"):
             use_mp = False
             print("  Multiprocessing disabled via METATRAITS_MULTIPROCESSING environment variable")
+
+        # Pre-flight check the NCBITaxon DB in the parent only when using
+        # multiprocessing. Workers must never attempt cache repair —
+        # concurrent heals corrupt the shared cache. Sequential runs should
+        # retain the existing lazy OAK download/refresh behavior.
+        if use_mp:
+            _ensure_ncbitaxon_db_ready()
 
         # Decide whether to use parallel or sequential processing
         try:

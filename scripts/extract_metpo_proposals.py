@@ -202,124 +202,27 @@ PHASE_1: List[Term] = [
 ]
 
 
-# Phase 2: core metabolic object properties (4)
-PHASE_2: List[Term] = [
-    Term(
-        proposed_id="METPO:2000021",
-        term_type="ObjectProperty",
-        label="assimilates",
-        definition=(
-            "A relation between an organism and a chemical entity, where the organism takes up "
-            "and incorporates the chemical into its biomass or metabolic intermediates."
-        ),
-        parent_or_subproperty="METPO:2000001|RO:0002590",
-        domain=ORG,
-        range=CHEM,
-        xrefs=["GO:0006091"],
-        synonyms=["assimilation", "utilizes"],
-        phase=2,
-        priority="CRITICAL",
-        traits_addressed="266",
-        observations="41000+",
-    ),
-    Term(
-        proposed_id="METPO:2000022",
-        term_type="ObjectProperty",
-        label="uses as energy source",
-        definition=(
-            "A relation between an organism and a chemical entity, where the organism oxidizes or "
-            "otherwise catabolizes the chemical primarily for energy (ATP) generation rather than "
-            "for carbon or other biosynthetic building blocks."
-        ),
-        parent_or_subproperty="METPO:2000001",
-        domain=ORG,
-        range=CHEM,
-        xrefs=["GO:0006091"],
-        synonyms=["energy source", "uses for energy generation"],
-        phase=2,
-        priority="CRITICAL",
-        traits_addressed="97",
-        observations="41000+",
-    ),
-    Term(
-        proposed_id="METPO:2000023",
-        term_type="ObjectProperty",
-        label="uses as nitrogen source",
-        definition=(
-            "A relation between an organism and a chemical entity containing nitrogen, where the "
-            "organism assimilates the nitrogen for biosynthesis of amino acids, nucleotides, and "
-            "other nitrogenous compounds."
-        ),
-        parent_or_subproperty="METPO:2000001",
-        domain=ORG,
-        range=NITRO,
-        xrefs=["GO:0006807"],
-        synonyms=["nitrogen source", "uses for nitrogen assimilation"],
-        phase=2,
-        priority="HIGH",
-        traits_addressed="57",
-        observations="41000+",
-    ),
-    Term(
-        proposed_id="METPO:2000024",
-        term_type="ObjectProperty",
-        label="uses as electron donor",
-        definition=(
-            "A relation between an organism and a chemical entity, where the organism oxidizes "
-            "the chemical to obtain electrons for energy metabolism, respiration, or photosynthesis."
-        ),
-        parent_or_subproperty="METPO:2000001",
-        domain=ORG,
-        range=CHEM,
-        xrefs=["GO:0022900"],
-        synonyms=["electron donor", "oxidizes as electron donor"],
-        phase=2,
-        priority="HIGH",
-        traits_addressed="53",
-        observations="41000+",
-    ),
-]
+# Phase 2: DROPPED. All four proposed trophic-relation object properties already exist in METPO.
+# Transforms should use the existing IDs instead of minting new ones:
+#   - "assimilates"            -> METPO:2000002 (existing)
+#   - "uses as energy source"  -> METPO:2000010 (existing)
+#   - "uses as nitrogen source"-> METPO:2000014 (existing)
+#   - "uses as electron donor" -> METPO:2000009 (existing)
+# The previously-proposed IDs METPO:2000021/2000022/2000024 also COLLIDE with existing METPO
+# terms ("does not use for aerobic catabolization", "does not use for aerobic growth", "does
+# not use for anaerobic growth").
+PHASE_2: List[Term] = []
 
 
-# Phase 3: extended metabolic object properties (3) - produces acid/gas/base from
-PHASE_3: List[Term] = [
-    Term(
-        proposed_id="METPO:2000025",
-        term_type="ObjectProperty",
-        label="produces acid from",
-        definition="Organism produces acid from substrate via fermentation or metabolism.",
-        parent_or_subproperty="METPO:2000202",
-        domain=ORG,
-        range=CHEM,
-        phase=3,
-        priority="HIGH",
-        traits_addressed="28",
-    ),
-    Term(
-        proposed_id="METPO:2000026",
-        term_type="ObjectProperty",
-        label="produces gas from",
-        definition="Organism produces gas (CO2, H2, CH4, etc.) from substrate.",
-        parent_or_subproperty="METPO:2000202",
-        domain=ORG,
-        range=CHEM,
-        phase=3,
-        priority="HIGH",
-        traits_addressed="16",
-    ),
-    Term(
-        proposed_id="METPO:2000027",
-        term_type="ObjectProperty",
-        label="produces base from",
-        definition="Organism produces base/alkaline products from substrate.",
-        parent_or_subproperty="METPO:2000202",
-        domain=ORG,
-        range=CHEM,
-        phase=3,
-        priority="HIGH",
-        traits_addressed="7",
-    ),
-]
+# Phase 3: DROPPED. The three "produces X from" concepts already exist in METPO as "builds X from":
+#   - "produces acid from" -> METPO:2000003 ("builds acid from")       [add synonym "produces acid from"]
+#   - "produces gas from"  -> METPO:2000005 ("builds gas from")        [add synonym "produces gas from"]
+#   - "produces base from" -> METPO:2000004 ("builds base from")       [add synonym "produces base from"]
+# The previously-proposed IDs METPO:2000025/2000026/2000027 also COLLIDE with existing METPO
+# terms ("does not use for anaerobic growth in the dark", "... with light", "does not assimilate").
+# ACTION: add "produces X from" as a synonym on each existing "builds X from" term in the METPO
+# ontology repo; until that lands, transforms should hard-code the mapping to the existing IDs.
+PHASE_3: List[Term] = []
 
 
 # Phase 4: phenotypic quality classes (31 = 5 + 4 + 13 + 3 + 3 + 3 extras per unified doc)
@@ -846,14 +749,14 @@ def main() -> None:
     )
     print(f"[ok] metpo_predicate_based_proposal.tsv  ({len(PHASE_1)} terms, Phase 1)")
 
-    phases_1_2_4 = PHASE_1 + PHASE_2 + PHASE_4
+    phases_1_4 = PHASE_1 + PHASE_2 + PHASE_4
     write_tsv(
         output_dir / "metpo_phases_1_2_3_terms.tsv",
-        phases_1_2_4,
+        phases_1_4,
     )
     print(
-        f"[ok] metpo_phases_1_2_3_terms.tsv         ({len(phases_1_2_4)} terms, "
-        f"Phase 1 + 2 + 4)"
+        f"[ok] metpo_phases_1_2_3_terms.tsv         ({len(phases_1_4)} terms, "
+        f"Phase 1 + 4; Phases 2 & 3 dropped — see script comments)"
     )
 
     unified = PHASE_1 + PHASE_2 + PHASE_3 + PHASE_4 + PHASE_6
@@ -863,7 +766,7 @@ def main() -> None:
     )
     print(
         f"[ok] metpo_unified_all_phases.tsv         ({len(unified)} terms, "
-        f"Phases 1-6; Phase 5 is code-only)"
+        f"Phases 1+4+6; Phase 2 & 3 concepts already in METPO, Phase 5 is code-only)"
     )
     print()
     print(PHASE_5_NOTE)

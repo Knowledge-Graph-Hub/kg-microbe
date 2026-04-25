@@ -4,8 +4,8 @@ Emit METPO proposal TSVs in the predicate-based format (2026-04-03 plan).
 
 Writes:
     mappings/metpo_predicate_based_proposal.tsv  - Phase 1 only (9 data properties)
-    mappings/metpo_phases_1_2_3_terms.tsv        - Phases 1 + 2 + 4 (44 terms)
-    mappings/metpo_unified_all_phases.tsv        - Phases 1-6 (59 terms)
+    mappings/metpo_phases_1_and_4_terms.tsv      - Phases 1 + 4 (40 terms)
+    mappings/metpo_unified_all_phases.tsv        - Phases 1, 4, 6 (52 terms)
 
 Replaces the pre-April class-based extractor. Source of truth for term
 content is notes/METPO_UNIFIED_PROPOSAL_5_PHASES.md and
@@ -749,13 +749,13 @@ def main() -> None:
     )
     print(f"[ok] metpo_predicate_based_proposal.tsv  ({len(PHASE_1)} terms, Phase 1)")
 
-    phases_1_4 = PHASE_1 + PHASE_2 + PHASE_4
+    phases_1_4 = PHASE_1 + PHASE_4
     write_tsv(
-        output_dir / "metpo_phases_1_2_3_terms.tsv",
+        output_dir / "metpo_phases_1_and_4_terms.tsv",
         phases_1_4,
     )
     print(
-        f"[ok] metpo_phases_1_2_3_terms.tsv         ({len(phases_1_4)} terms, "
+        f"[ok] metpo_phases_1_and_4_terms.tsv       ({len(phases_1_4)} terms, "
         f"Phase 1 + 4; Phases 2 & 3 dropped — see script comments)"
     )
 

@@ -403,7 +403,7 @@ class MadinEtAlTransform(Transform):
                                         [
                                             tax_id,
                                             NCBI_TO_PATHWAY_EDGE,
-                                            PATHWAY_PREFIX + item.strip().lower(),
+                                            PATHWAY_PREFIX + item.strip(),
                                             BIOLOGICAL_PROCESS,
                                             self.knowledge_source,  # Use infores:madin_etal
                                             OBSERVATION,

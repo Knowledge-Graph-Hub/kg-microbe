@@ -322,7 +322,7 @@ cell_length:
 
 other:
   antibiotic_resistance:
-    curie: "pathways:antibiotic_resistance"
+    curie: "kgmicrobe.pathway:antibiotic_resistance"
     name: "antibiotic resistance"
     <<: *phenotypic_capability_block
 

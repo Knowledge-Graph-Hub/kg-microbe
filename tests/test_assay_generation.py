@@ -305,7 +305,7 @@ class TestAssayGeneration(unittest.TestCase):
             node_dict = dict(zip(self.node_header, node, strict=False))
             node_id = node_dict[ID_COLUMN]
 
-            # Should match pattern: assay:{kit_name}_{well_name}
+            # Should match pattern: {ASSAY_PREFIX}{kit_name}_{well_name}
             self.assertTrue(node_id.startswith(ASSAY_PREFIX))
 
             # Should contain underscore separator
@@ -344,15 +344,19 @@ class TestECSubstrateEdges(unittest.TestCase):
         ]
 
         # Mock bacdive_mappings.tsv data
-        self.mock_mappings_tsv = (
-            """CHEBI_ID\tsubstrate\tKEGG_ID\tCAS_RN_ID\tEC_ID\tenzyme\tpseudo_CURIE\treaction_name
-CHEBI:16828\tL-tryptophan\tKEGG:C00078\tCAS-RN:73-22-3\tEC:4.1.99.1\ttryptophanase\tassay:API_20A_IND\tIndole production
-CHEBI:16199\tUrea\tKEGG:C00086\tCAS-RN:57-13-6\tEC:3.5.1.5\tUrease\tassay:API_20A_URE\tUrease/urea hydrolysis
-CHEBI:17634\tD-glucose\tKEGG:C00031\tCAS-RN:50-99-7\t\t\tassay:API_20A_GLU\tAcid from D-glucose
-\t\t\t\tEC:1.11.1.6\tcatalase\tassay:API_20A_CAT\tCatalase
-CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\tEC:3.2.1.21\t"""
-            """beta-glucosidase\tassay:API_20A_ESC\tEsculin hydrolysis"""
-        )
+        _mock_mappings_rows = [
+            "CHEBI_ID\tsubstrate\tKEGG_ID\tCAS_RN_ID\tEC_ID\tenzyme\tpseudo_CURIE\treaction_name",
+            "CHEBI:16828\tL-tryptophan\tKEGG:C00078\tCAS-RN:73-22-3\tEC:4.1.99.1\t"
+            "tryptophanase\tkgmicrobe.assay:API_20A_IND\tIndole production",
+            "CHEBI:16199\tUrea\tKEGG:C00086\tCAS-RN:57-13-6\tEC:3.5.1.5\t"
+            "Urease\tkgmicrobe.assay:API_20A_URE\tUrease/urea hydrolysis",
+            "CHEBI:17634\tD-glucose\tKEGG:C00031\tCAS-RN:50-99-7\t\t\t"
+            "kgmicrobe.assay:API_20A_GLU\tAcid from D-glucose",
+            "\t\t\t\tEC:1.11.1.6\tcatalase\tkgmicrobe.assay:API_20A_CAT\tCatalase",
+            "CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\t"
+            "EC:3.2.1.21\tbeta-glucosidase\tkgmicrobe.assay:API_20A_ESC\tEsculin hydrolysis",
+        ]
+        self.mock_mappings_tsv = "\n".join(_mock_mappings_rows)
 
     def test_ec_substrate_edges_count(self):
         """Test that correct number of EC→substrate edges are generated."""

@@ -2640,9 +2640,14 @@ class MetaTraitsTransform(Transform):
                             )
                             if micro_mapping:
                                 # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    {"predicate": micro_mapping["biolink_predicate"]}, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = micro_mapping["object_id"]
                                 category = micro_mapping["object_category"]
-                                pred = micro_mapping["biolink_predicate"]
+                                pred = resolved_pred
                                 label = micro_mapping["object_label"]
                             elif temp_obs := self._resolve_growth_temperature_observation(trait_name, majority_label):
                                 # Tier 3.0a: Growth temperature observations (growth: 42 degrees Celsius)
@@ -3293,9 +3298,14 @@ class MetaTraitsTransform(Transform):
                                 )
                                 if micro_mapping:
                                     # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        {"predicate": micro_mapping["biolink_predicate"]}, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = micro_mapping["object_id"]
                                     category = micro_mapping["object_category"]
-                                    pred = micro_mapping["biolink_predicate"]
+                                    pred = resolved_pred
                                     label = micro_mapping["object_label"]
                                 elif pigmentation := self._resolve_pigmentation_trait(trait_name, majority_label):
                                     # Tier 3.0b: Pigmentation

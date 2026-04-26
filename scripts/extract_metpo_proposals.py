@@ -1,26 +1,39 @@
 #!/usr/bin/env python3
 """
-Emit METPO proposal TSVs in the predicate-based format (2026-04-03 plan).
+Emit METPO proposal TSVs containing only terms that do not already exist in METPO.
 
-Writes:
-    mappings/metpo_predicate_based_proposal.tsv  - Phase 1 only (9 data properties)
-    mappings/metpo_phases_1_and_4_terms.tsv      - Phases 1 + 4 (40 terms)
-    mappings/metpo_unified_all_phases.tsv        - Phases 1, 4, 6 (52 terms)
+The proposal lists below are validated at generation time against the local METPO
+snapshot (``data/transformed/ontologies/metpo_nodes.tsv``) so that we do not propose
+classes or properties that already exist by label or synonym. Concepts that *did*
+collide during the 2026-04 audit are recorded in ``EXISTING_METPO_ALIASES`` and
+written to ``mappings/metpo_existing_aliases.tsv`` so downstream transforms can
+adopt the existing METPO IDs instead of minting new ones.
 
-Replaces the pre-April class-based extractor. Source of truth for term
-content is notes/METPO_UNIFIED_PROPOSAL_5_PHASES.md and
-notes/METPO_FORMAL_PROPOSAL_PHASES_1_2_3.md.
+Outputs:
+    mappings/metpo_proposal_quantitative.tsv     - datatype properties + numeric
+                                                   tolerance class forms (min/max)
+    mappings/metpo_proposal_categorical.tsv      - parent classes + categorical children
+    mappings/metpo_existing_aliases.tsv          - proposed concept -> existing METPO ID
+    kg_microbe/transform_utils/metatraits/mappings/metpo_alias_mappings.tsv
+        Tier-2 override file consumed by metatraits transform.
+
+Source of truth for term content: notes/METPO_UNIFIED_PROPOSAL_5_PHASES.md and
+notes/METPO_FORMAL_PROPOSAL_PHASES_1_2_3.md plus the 2026-04 audit against
+``data/transformed/ontologies/metpo_nodes.tsv`` and ``data/raw/bacdive_strains.json``.
 """
 
 from __future__ import annotations
 
 import csv
+import re
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List
+from typing import Dict, Iterable, List, Set, Tuple
 
 HEADER = [
     "proposed_id",
+    "scope",
     "term_type",
     "label",
     "definition",
@@ -29,27 +42,60 @@ HEADER = [
     "range",
     "xrefs",
     "synonyms",
-    "phase",
     "priority",
     "traits_addressed",
     "observations",
 ]
 
+ALIAS_HEADER = [
+    "proposed_label",
+    "proposed_synonyms",
+    "existing_metpo_id",
+    "existing_metpo_label",
+    "existing_metpo_synonyms",
+    "match_kind",
+    "notes",
+]
+
+# Schema used by kg_microbe.utils.microbial_trait_mappings.load_microbial_trait_mappings()
+TRAIT_MAPPINGS_HEADER = [
+    "subject_label",
+    "subject_label_normalized",
+    "object_id",
+    "object_label",
+    "object_source",
+    "predicate_id",
+    "confidence",
+    "mapping_justification",
+    "curator",
+    "source_dataset",
+    "notes",
+    "verified_date",
+]
+
+METATRAITS_MAPPINGS_DIR = Path("kg_microbe/transform_utils/metatraits/mappings")
+
 
 @dataclass
 class Term:
-    """One proposed METPO term."""
+
+    """
+    One proposed METPO term.
+
+    `scope` selects the output TSV: 'quantitative' (numeric value or numeric
+    tolerance class) vs. 'categorical' (parent class or enumerated child).
+    """
 
     proposed_id: str
     term_type: str
     label: str
     definition: str
+    scope: str = "categorical"
     parent_or_subproperty: str = ""
     domain: str = ""
     range: str = ""
     xrefs: List[str] = field(default_factory=list)
     synonyms: List[str] = field(default_factory=list)
-    phase: int = 0
     priority: str = ""
     traits_addressed: str = ""
     observations: str = ""
@@ -58,6 +104,7 @@ class Term:
         """Return the row in TSV column order."""
         return [
             self.proposed_id,
+            self.scope,
             self.term_type,
             self.label,
             self.definition,
@@ -66,22 +113,231 @@ class Term:
             self.range,
             "|".join(self.xrefs),
             "|".join(self.synonyms),
-            str(self.phase),
             self.priority,
             self.traits_addressed,
             self.observations,
         ]
 
 
+@dataclass
+class Alias:
+
+    """A proposed concept that already exists in METPO under a different ID."""
+
+    proposed_label: str
+    proposed_synonyms: List[str]
+    existing_metpo_id: str
+    existing_metpo_label: str
+    match_kind: str  # "label", "synonym", "concept"
+    notes: str = ""
+
+
 ORG = "biolink:OrganismTaxon"
 CHEM = "CHEBI:24431"  # chemical entity
 NITRO = "CHEBI:51143"  # nitrogen molecular entity
 
+METPO_SNAPSHOT = Path("data/transformed/ontologies/metpo_nodes.tsv")
+_PHENO_PARENT = "METPO:1000000"
 
-# Phase 1: quantitative growth data properties (9)
-PHASE_1: List[Term] = [
+# BacDive raw data — used by `compute_bacdive_observations` to validate the hardcoded
+# `observations` counts on the categorical child Terms. The keys are child Term labels
+# and the values are the expected occurrence counts from BacDive at the time the
+# proposal was authored. The `BACDIVE_RULES` dict describes how to derive each count.
+BACDIVE_SNAPSHOT = Path("data/raw/bacdive_strains.json")
+
+# Metatraits transform output. Used by `validate_metatraits_placeholder_coverage`
+# to scan emitted edges for `kgmicrobe.{trait,activity}:*` placeholder objects
+# and confirm every one has a proposed METPO term in this proposal. Compounds
+# (`kgmicrobe.compound:*`) are out of METPO scope (they are chemicals → CHEBI)
+# and are intentionally excluded from the gap check.
+METATRAITS_EDGES_PATH = Path("data/transformed/metatraits/edges.tsv")
+
+# Migration map from `kgmicrobe.*` placeholder CURIEs to the proposed METPO IDs
+# defined in PHASE_4_TERMS (categorical). Every key MUST appear as an `object`
+# in metatraits edges; every value MUST be a Term in PHASE_4_TERMS. The
+# extractor cross-checks both directions on each run.
+KGMICROBE_PLACEHOLDER_MIGRATION: Dict[str, str] = {
+    "kgmicrobe.trait:macconkey_agar_growth": "METPO:1007053",
+    "kgmicrobe.trait:blood_agar_growth": "METPO:1007054",
+    "kgmicrobe.trait:bile_susceptible": "METPO:1007056",
+    "kgmicrobe.activity:coagulase_activity": "METPO:1007089",
+}
+
+BACDIVE_BASELINE_COUNTS: Dict[str, int] = {
+    # Flagellum arrangement — comma-separated values; match by token presence.
+    "polytrichous flagellation": 4,
+    # Colony shape — exact value match. 'circular colony' aggregates BacDive
+    # 'circular' (2436) + 'round' (213) since 'round colony' is its synonym.
+    "circular colony": 2649,
+    "irregular colony": 148,
+    "filamentous colony": 16,
+    "punctiform colony": 11,
+    "rhizoid colony": 8,
+    "fried-egg-shaped colony": 6,
+}
+
+# How to extract each count from BacDive: (json_path, list of acceptable values, match_kind).
+# match_kind="exact": value (lowercased, stripped) must equal one of the tokens.
+# match_kind="token": split on comma; any part (lowercased, stripped) must equal a token.
+_BACDIVE_RULES: Dict[str, Tuple[Tuple[str, ...], Tuple[str, ...], str]] = {
+    "polytrichous flagellation": (
+        ("Morphology", "cell morphology", "flagellum arrangement"),
+        ("polytrichous",),
+        "token",
+    ),
+    "circular colony": (
+        ("Morphology", "colony morphology", "colony shape"),
+        ("circular", "round"),
+        "exact",
+    ),
+    "irregular colony": (
+        ("Morphology", "colony morphology", "colony shape"),
+        ("irregular",),
+        "exact",
+    ),
+    "filamentous colony": (
+        ("Morphology", "colony morphology", "colony shape"),
+        ("filamentous",),
+        "exact",
+    ),
+    "punctiform colony": (
+        ("Morphology", "colony morphology", "colony shape"),
+        ("punctiform",),
+        "exact",
+    ),
+    "rhizoid colony": (
+        ("Morphology", "colony morphology", "colony shape"),
+        ("rhizoid",),
+        "exact",
+    ),
+    "fried-egg-shaped colony": (
+        ("Morphology", "colony morphology", "colony shape"),
+        ("fried-egg-shaped",),
+        "exact",
+    ),
+}
+
+
+# --------------------------------------------------------------------------- #
+# Concepts that already exist in METPO. Audit on 2026-04-23 against
+# data/transformed/ontologies/metpo_nodes.tsv (432 rows). Downstream transforms
+# (metatraits, bacdive, ...) MUST resolve these labels to the existing METPO IDs
+# rather than emitting `METPO:1007*` placeholders.
+# --------------------------------------------------------------------------- #
+EXISTING_METPO_ALIASES: List[Alias] = [
+    # Phase 1: temperature/pH/salinity min & max -> existing datatype properties
+    Alias("has growth temperature minimum", [],
+          "METPO:2000702", "has minimum temperature value", "concept",
+          "Phase 1 datatype property already exists; reuse for min growth temperature."),
+    Alias("has growth temperature maximum", [],
+          "METPO:2000703", "has maximum temperature value", "concept",
+          "Phase 1 datatype property already exists; reuse for max growth temperature."),
+    Alias("has NaCl concentration minimum", [],
+          "METPO:2000708", "has minimum salinity value", "concept",
+          "Phase 1 datatype property already exists; reuse for min NaCl concentration."),
+    Alias("has NaCl concentration maximum", [],
+          "METPO:2000709", "has maximum salinity value", "concept",
+          "Phase 1 datatype property already exists; reuse for max NaCl concentration."),
+    Alias("has pH minimum", [],
+          "METPO:2000705", "has minimum pH value", "concept",
+          "Phase 1 datatype property already exists; reuse for min growth pH."),
+    Alias("has pH maximum", [],
+          "METPO:2000706", "has maximum pH value", "concept",
+          "Phase 1 datatype property already exists; reuse for max growth pH."),
+
+    # Phase 4: morphology / genomics / tolerances / biochemical tests
+    Alias("cell shape", ["cellular morphology", "rod-shaped", "coccus", "spiral", "filamentous"],
+          "METPO:1000666", "cell shape", "label",
+          "Existing class with rich children (rod shaped, coccus shaped, spiral shaped, ...)."),
+    Alias("cell length", ["cellular length"],
+          "METPO:1000881", "cell length", "label",
+          "Existing class. Datatype property METPO:2000721 'has cell length value' "
+          "covers the numeric value."),
+    Alias("cell width", ["cellular width", "cell diameter"],
+          "METPO:1000882", "cell width", "label",
+          "Existing class. Datatype property METPO:2000722 'has cell width value' "
+          "covers the numeric value."),
+    Alias("cell color", ["cell pigmentation", "colony color"],
+          "METPO:1003021", "pigmentation", "synonym",
+          "'cell color' is already a synonym of METPO:1003021 'pigmentation'."),
+    Alias("GC content percentage", ["GC%", "mol% G+C", "genomic GC content"],
+          "METPO:1000127", "GC content", "synonym",
+          "'GC percentage' is already a synonym of METPO:1000127. Datatype property "
+          "METPO:2000715 'has GC percentage value' covers the numeric value."),
+    Alias("genome size", ["genome length", "genomic size"],
+          "METPO:2000711", "has genome size value", "synonym",
+          "'genome size' is already a synonym of the datatype property METPO:2000711."),
+    Alias("gene count", ["number of genes", "total gene count"],
+          "METPO:2000713", "has gene count value", "synonym",
+          "'gene count' is already a synonym of the datatype property METPO:2000713."),
+    Alias("coding density", ["coding sequence percentage", "protein-coding percentage"],
+          "METPO:2000716", "has coding density value", "synonym",
+          "'coding density' is already a synonym of the datatype property METPO:2000716."),
+    Alias("oxygen requirement",
+          ["aerobic", "anaerobic", "facultative anaerobic", "microaerophilic", "aerotolerant"],
+          "METPO:1000601", "oxygen preference", "concept",
+          "Existing parent class with full oxygen-requirement child set "
+          "(METPO:1000602-1000612)."),
+    Alias("pH tolerance range", [],
+          "METPO:1000332", "pH range", "concept",
+          "METPO:1000332 'pH range' already models the tolerated pH window."),
+    Alias("pH optimum", [],
+          "METPO:1000331", "pH optimum", "label",
+          "Exact label match."),
+    Alias("temperature tolerance range", [],
+          "METPO:1000306", "temperature range", "concept",
+          "METPO:1000306 'temperature range' already models the tolerated temperature window."),
+    Alias("temperature optimum", [],
+          "METPO:1000304", "temperature optimum", "label",
+          "Exact label match."),
+    Alias("salinity tolerance range", [],
+          "METPO:1000334", "NaCl range", "concept",
+          "METPO:1000334 'NaCl range' already models the tolerated salinity window."),
+    Alias("salinity optimum", [],
+          "METPO:1000333", "NaCl optimum", "concept",
+          "METPO:1000333 'NaCl optimum' already models the optimal salinity."),
+    Alias("indole production capability", ["indole test positive"],
+          "METPO:1005011", "indole test positive", "synonym",
+          "'indole test positive' is the existing label."),
+    Alias("methyl red test positive", ["MR test positive"],
+          "METPO:1005014", "methyl red test positive", "label",
+          "Exact label match."),
+    Alias("hemolytic activity", ["hemolysis", "alpha-hemolysis", "beta-hemolysis", "gamma-hemolysis"],
+          "METPO:1005025", "hemolysis", "synonym",
+          "'hemolysis' is the existing METPO label."),
+    Alias("biosafety level classification", ["BSL classification", "BSL-1", "BSL-2", "BSL-3", "BSL-4"],
+          "METPO:1001101", "biosafety level", "concept",
+          "Existing parent class with BSL-1..BSL-5 children (METPO:1001102-1001106)."),
+    Alias("colony pigmentation", [],
+          "METPO:1003021", "pigmentation", "concept",
+          "Same concept as METPO:1003021 'pigmentation' (children: black, brown, "
+          "cream, green, orange, pink, red, white, yellow, carotenoid)."),
+    Alias("motility phenotype", ["motile", "non-motile"],
+          "METPO:1000701", "motility", "concept",
+          "Existing parent class with motile/non-motile/flagellated/gliding children."),
+
+    # Phase 6
+    Alias("spore formation capability", [],
+          "METPO:1000870", "sporulation", "synonym",
+          "'spore formation' is already a synonym of METPO:1000870; children "
+          "spore-forming/non-spore-forming exist."),
+    Alias("denitrification capability", [],
+          "METPO:1005038", "denitrification", "concept",
+          "Existing class. Predicate METPO:2000601 'denitrifies' / 2000602 "
+          "'does not denitrify' for capability assertions."),
+]
+
+
+# --------------------------------------------------------------------------- #
+# QUANTITATIVE: numeric values (datatype properties) + class forms for numeric
+# tolerance limits (min/max). Companion to existing METPO datatype properties
+# METPO:2000702/2000703/2000705/2000706/2000708/2000709.
+# --------------------------------------------------------------------------- #
+QUANTITATIVE_TERMS: List[Term] = [
+    # Datatype properties — only "optimum" form is missing in METPO.
     Term(
         proposed_id="METPO:has_growth_temperature_optimum",
+        scope="quantitative",
         term_type="DatatypeProperty",
         label="has growth temperature optimum",
         definition=(
@@ -91,39 +347,13 @@ PHASE_1: List[Term] = [
         domain=ORG,
         range="xsd:decimal",
         xrefs=["UO:0000027"],
-        phase=1,
         priority="CRITICAL",
         traits_addressed="1",
         observations="85311",
     ),
     Term(
-        proposed_id="METPO:has_growth_temperature_minimum",
-        term_type="DatatypeProperty",
-        label="has growth temperature minimum",
-        definition=(
-            "The minimum temperature at which an organism can grow, measured in degrees Celsius."
-        ),
-        domain=ORG,
-        range="xsd:decimal",
-        xrefs=["UO:0000027"],
-        phase=1,
-        priority="CRITICAL",
-    ),
-    Term(
-        proposed_id="METPO:has_growth_temperature_maximum",
-        term_type="DatatypeProperty",
-        label="has growth temperature maximum",
-        definition=(
-            "The maximum temperature at which an organism can grow, measured in degrees Celsius."
-        ),
-        domain=ORG,
-        range="xsd:decimal",
-        xrefs=["UO:0000027"],
-        phase=1,
-        priority="CRITICAL",
-    ),
-    Term(
         proposed_id="METPO:has_NaCl_concentration_optimum",
+        scope="quantitative",
         term_type="DatatypeProperty",
         label="has NaCl concentration optimum",
         definition=(
@@ -133,600 +363,750 @@ PHASE_1: List[Term] = [
         domain=ORG,
         range="xsd:decimal",
         xrefs=["UO:0000187", "CHEBI:26710"],
-        phase=1,
         priority="CRITICAL",
         traits_addressed="1",
         observations="85311",
     ),
     Term(
-        proposed_id="METPO:has_NaCl_concentration_minimum",
-        term_type="DatatypeProperty",
-        label="has NaCl concentration minimum",
-        definition=(
-            "The minimum sodium chloride (NaCl) concentration tolerated for growth, "
-            "expressed as weight/volume percentage."
-        ),
-        domain=ORG,
-        range="xsd:decimal",
-        xrefs=["UO:0000187"],
-        phase=1,
-        priority="CRITICAL",
-    ),
-    Term(
-        proposed_id="METPO:has_NaCl_concentration_maximum",
-        term_type="DatatypeProperty",
-        label="has NaCl concentration maximum",
-        definition=(
-            "The maximum sodium chloride (NaCl) concentration tolerated for growth, "
-            "expressed as weight/volume percentage."
-        ),
-        domain=ORG,
-        range="xsd:decimal",
-        xrefs=["UO:0000187"],
-        phase=1,
-        priority="CRITICAL",
-    ),
-    Term(
         proposed_id="METPO:has_pH_optimum",
+        scope="quantitative",
         term_type="DatatypeProperty",
         label="has pH optimum",
-        definition="The optimal pH value for growth on the pH scale (0-14).",
+        definition=(
+            "The optimal pH value for growth on the pH scale (0-14). Note: METPO:1000331 "
+            "models pH optimum as a *class*; this datatype property carries the numeric value."
+        ),
         domain=ORG,
         range="xsd:decimal",
         xrefs=["PATO:0001842"],
-        phase=1,
         priority="HIGH",
         traits_addressed="1",
         observations="5479",
     ),
-    Term(
-        proposed_id="METPO:has_pH_minimum",
-        term_type="DatatypeProperty",
-        label="has pH minimum",
-        definition="The minimum pH value at which growth can occur.",
-        domain=ORG,
-        range="xsd:decimal",
-        phase=1,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:has_pH_maximum",
-        term_type="DatatypeProperty",
-        label="has pH maximum",
-        definition="The maximum pH value at which growth can occur.",
-        domain=ORG,
-        range="xsd:decimal",
-        phase=1,
-        priority="HIGH",
-    ),
-]
-
-
-# Phase 2: DROPPED. All four proposed trophic-relation object properties already exist in METPO.
-# Transforms should use the existing IDs instead of minting new ones:
-#   - "assimilates"            -> METPO:2000002 (existing)
-#   - "uses as energy source"  -> METPO:2000010 (existing)
-#   - "uses as nitrogen source"-> METPO:2000014 (existing)
-#   - "uses as electron donor" -> METPO:2000009 (existing)
-# The previously-proposed IDs METPO:2000021/2000022/2000024 also COLLIDE with existing METPO
-# terms ("does not use for aerobic catabolization", "does not use for aerobic growth", "does
-# not use for anaerobic growth").
-PHASE_2: List[Term] = []
-
-
-# Phase 3: DROPPED. The three "produces X from" concepts already exist in METPO as "builds X from":
-#   - "produces acid from" -> METPO:2000003 ("builds acid from")       [add synonym "produces acid from"]
-#   - "produces gas from"  -> METPO:2000005 ("builds gas from")        [add synonym "produces gas from"]
-#   - "produces base from" -> METPO:2000004 ("builds base from")       [add synonym "produces base from"]
-# The previously-proposed IDs METPO:2000025/2000026/2000027 also COLLIDE with existing METPO
-# terms ("does not use for anaerobic growth in the dark", "... with light", "does not assimilate").
-# ACTION: add "produces X from" as a synonym on each existing "builds X from" term in the METPO
-# ontology repo; until that lands, transforms should hard-code the mapping to the existing IDs.
-PHASE_3: List[Term] = []
-
-
-# Phase 4: phenotypic quality classes (31 = 5 + 4 + 13 + 3 + 3 + 3 extras per unified doc)
-# The unified doc lists 31; formal doc enumerates 28 distinct IDs. Using the enumerated set
-# and matching the unified count by including three extras (1007033 gc%, 1007060 selective-color,
-# 1007061 motility-trait).
-_METPO_PHENO_PARENT = "METPO:1000000"
-
-
-PHASE_4: List[Term] = [
-    # 4.1 Morphological (5)
-    Term(
-        proposed_id="METPO:1007001",
-        term_type="Class",
-        label="cell shape",
-        definition="A phenotypic quality that describes the geometric shape of a bacterial or archaeal cell.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["PATO:0000052"],
-        synonyms=["cellular morphology", "rod-shaped", "coccus", "spiral", "filamentous"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007002",
-        term_type="Class",
-        label="cell length",
-        definition=(
-            "A phenotypic quality that describes the length of a bacterial or archaeal cell, "
-            "typically measured in micrometers."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["PATO:0000122", "UO:0000017"],
-        synonyms=["cellular length"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007003",
-        term_type="Class",
-        label="cell width",
-        definition="A phenotypic quality that describes the width or diameter of a bacterial or archaeal cell.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["PATO:0000921", "UO:0000017"],
-        synonyms=["cellular width", "cell diameter"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007004",
-        term_type="Class",
-        label="cell color",
-        definition="A phenotypic quality that describes the color or pigmentation of bacterial or archaeal cells.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["PATO:0000014"],
-        synonyms=["cell pigmentation", "colony color"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007005",
-        term_type="Class",
-        label="flagellar arrangement",
-        definition=(
-            "A phenotypic quality that describes the arrangement pattern of flagella on a "
-            "bacterial or archaeal cell."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["GO:0001539"],
-        synonyms=[
-            "flagellation pattern",
-            "peritrichous",
-            "monotrichous",
-            "amphitrichous",
-            "lophotrichous",
-            "polar flagellation",
-        ],
-        phase=4,
-        priority="HIGH",
-    ),
-    # 4.2 Genomic (4)
-    Term(
-        proposed_id="METPO:1007010",
-        term_type="Class",
-        label="GC content percentage",
-        definition="A genomic quality that describes the percentage of guanine-cytosine base pairs in the genome.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["SO:0001026", "UO:0000187"],
-        synonyms=["GC%", "mol% G+C", "genomic GC content"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007011",
-        term_type="Class",
-        label="genome size",
-        definition="A genomic quality that describes the total size of the genome in base pairs or megabase pairs.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["SO:0001026", "UO:0000329"],
-        synonyms=["genome length", "genomic size"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007012",
-        term_type="Class",
-        label="gene count",
-        definition=(
-            "A genomic quality that describes the total number of genes in the genome, "
-            "either annotated or predicted."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["SO:0000704"],
-        synonyms=["number of genes", "total gene count"],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007013",
-        term_type="Class",
-        label="coding density",
-        definition="A genomic quality that describes the percentage of the genome that codes for proteins.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["UO:0000187"],
-        synonyms=["coding sequence percentage", "protein-coding percentage"],
-        phase=4,
-        priority="HIGH",
-    ),
-    # 4.3 Environmental tolerances (13)
-    Term(
-        proposed_id="METPO:1007020",
-        term_type="Class",
-        label="oxygen requirement",
-        definition="A phenotypic quality that describes the oxygen requirement for growth.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["CHEBI:15379"],
-        synonyms=[
-            "aerobic",
-            "anaerobic",
-            "facultative anaerobic",
-            "microaerophilic",
-            "aerotolerant",
-        ],
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007021",
-        term_type="Class",
-        label="pH tolerance range",
-        definition="An environmental quality that describes the range of pH values that support growth.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        phase=4,
-        priority="HIGH",
-    ),
+    # Class forms for tolerance min/max (companion to existing datatype properties).
     Term(
         proposed_id="METPO:1007022",
+        scope="quantitative",
         term_type="Class",
         label="pH minimum tolerance",
-        definition="An environmental quality that describes the minimum pH value that supports growth.",
-        parent_or_subproperty="METPO:1007021",
-        phase=4,
+        definition=(
+            "An environmental quality (class form) that describes the minimum pH value "
+            "supporting growth. Companion to datatype property METPO:2000705."
+        ),
+        parent_or_subproperty="METPO:1000332",
         priority="HIGH",
     ),
     Term(
         proposed_id="METPO:1007023",
+        scope="quantitative",
         term_type="Class",
         label="pH maximum tolerance",
-        definition="An environmental quality that describes the maximum pH value that supports growth.",
-        parent_or_subproperty="METPO:1007021",
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007024",
-        term_type="Class",
-        label="pH optimum",
-        definition="An environmental quality that describes the optimal pH value for growth.",
-        parent_or_subproperty="METPO:1007021",
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007025",
-        term_type="Class",
-        label="temperature tolerance range",
-        definition="An environmental quality that describes the range of temperatures that support growth.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        phase=4,
+        definition=(
+            "An environmental quality (class form) that describes the maximum pH value "
+            "supporting growth. Companion to datatype property METPO:2000706."
+        ),
+        parent_or_subproperty="METPO:1000332",
         priority="HIGH",
     ),
     Term(
         proposed_id="METPO:1007026",
+        scope="quantitative",
         term_type="Class",
         label="temperature minimum tolerance",
-        definition="An environmental quality that describes the minimum temperature that supports growth.",
-        parent_or_subproperty="METPO:1007025",
-        phase=4,
+        definition=(
+            "An environmental quality (class form) that describes the minimum temperature "
+            "supporting growth. Companion to datatype property METPO:2000702."
+        ),
+        parent_or_subproperty="METPO:1000306",
         priority="HIGH",
     ),
     Term(
         proposed_id="METPO:1007027",
+        scope="quantitative",
         term_type="Class",
         label="temperature maximum tolerance",
-        definition="An environmental quality that describes the maximum temperature that supports growth.",
-        parent_or_subproperty="METPO:1007025",
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007028",
-        term_type="Class",
-        label="temperature optimum",
-        definition="An environmental quality that describes the optimal temperature for growth.",
-        parent_or_subproperty="METPO:1007025",
-        phase=4,
-        priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007029",
-        term_type="Class",
-        label="salinity tolerance range",
-        definition="An environmental quality that describes the range of salt concentrations that support growth.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        phase=4,
+        definition=(
+            "An environmental quality (class form) that describes the maximum temperature "
+            "supporting growth. Companion to datatype property METPO:2000703."
+        ),
+        parent_or_subproperty="METPO:1000306",
         priority="HIGH",
     ),
     Term(
         proposed_id="METPO:1007030",
+        scope="quantitative",
         term_type="Class",
         label="salinity minimum tolerance",
         definition=(
-            "An environmental quality that describes the minimum salinity/NaCl "
-            "concentration that supports growth."
+            "An environmental quality (class form) that describes the minimum salinity/NaCl "
+            "concentration supporting growth. Companion to datatype property METPO:2000708."
         ),
-        parent_or_subproperty="METPO:1007029",
-        phase=4,
+        parent_or_subproperty="METPO:1000334",
         priority="HIGH",
     ),
     Term(
         proposed_id="METPO:1007031",
+        scope="quantitative",
         term_type="Class",
         label="salinity maximum tolerance",
         definition=(
-            "An environmental quality that describes the maximum salinity/NaCl "
-            "concentration that supports growth."
+            "An environmental quality (class form) that describes the maximum salinity/NaCl "
+            "concentration supporting growth. Companion to datatype property METPO:2000709."
         ),
-        parent_or_subproperty="METPO:1007029",
-        phase=4,
+        parent_or_subproperty="METPO:1000334",
         priority="HIGH",
-    ),
-    Term(
-        proposed_id="METPO:1007032",
-        term_type="Class",
-        label="salinity optimum",
-        definition="An environmental quality that describes the optimal salinity/NaCl concentration for growth.",
-        parent_or_subproperty="METPO:1007029",
-        phase=4,
-        priority="HIGH",
-    ),
-    # 4.4 Biochemical tests (3)
-    Term(
-        proposed_id="METPO:1007040",
-        term_type="Class",
-        label="indole production capability",
-        definition="A phenotypic capability describing the production of indole from tryptophan via tryptophanase.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["CHEBI:16881", "GO:0050048"],
-        synonyms=["indole test positive"],
-        phase=4,
-        priority="MEDIUM",
-    ),
-    Term(
-        proposed_id="METPO:1007041",
-        term_type="Class",
-        label="methyl red test positive",
-        definition=(
-            "A phenotypic quality indicating a positive methyl red test, demonstrating "
-            "mixed acid fermentation with stable acid production."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["GO:0019660"],
-        synonyms=["MR test positive"],
-        phase=4,
-        priority="MEDIUM",
-    ),
-    Term(
-        proposed_id="METPO:1007042",
-        term_type="Class",
-        label="hemolytic activity",
-        definition=(
-            "A phenotypic quality describing the ability to lyse red blood cells, "
-            "classified as alpha (partial), beta (complete), or gamma (no hemolysis)."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["GO:0044179"],
-        synonyms=["hemolysis", "alpha-hemolysis", "beta-hemolysis", "gamma-hemolysis"],
-        phase=4,
-        priority="MEDIUM",
-    ),
-    # 4.5 Growth characteristics (3)
-    Term(
-        proposed_id="METPO:1007050",
-        term_type="Class",
-        label="selective media growth capability",
-        definition="A phenotypic capability describing the ability to grow on selective or differential media.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        synonyms=["grows on MacConkey agar", "grows on blood agar", "grows on EMB agar"],
-        phase=4,
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007051",
-        term_type="Class",
-        label="bile resistance",
-        definition="A phenotypic quality describing the ability to grow in the presence of bile acids or bile salts.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["CHEBI:3098"],
-        synonyms=["bile tolerance"],
-        phase=4,
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007052",
-        term_type="Class",
-        label="biosafety level classification",
-        definition="A risk assessment quality describing the biosafety level (BSL-1 to BSL-4) assigned to an organism.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        synonyms=["BSL classification", "BSL-1", "BSL-2", "BSL-3", "BSL-4"],
-        phase=4,
-        priority="LOW",
-    ),
-    # 4.6 Additional phenotypes (3 extras to reach 31 per unified doc)
-    Term(
-        proposed_id="METPO:1007060",
-        term_type="Class",
-        label="colony pigmentation",
-        definition="A phenotypic quality describing the pigmentation of colonies grown on solid media.",
-        parent_or_subproperty="METPO:1007004",
-        xrefs=["PATO:0000014"],
-        phase=4,
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007061",
-        term_type="Class",
-        label="motility phenotype",
-        definition="A phenotypic quality describing whether an organism is motile or non-motile.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["GO:0001539"],
-        synonyms=["motile", "non-motile"],
-        phase=4,
-        priority="MEDIUM",
-    ),
-    Term(
-        proposed_id="METPO:1007062",
-        term_type="Class",
-        label="colony morphology",
-        definition=(
-            "A phenotypic quality describing macroscopic colony characteristics "
-            "(shape, margin, elevation, surface)."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["PATO:0000052"],
-        phase=4,
-        priority="LOW",
     ),
 ]
 
 
-# Phase 5: infrastructure only — recorded for provenance; no rows emitted into term TSVs
-PHASE_5_NOTE = (
-    "Phase 5 covers ChEBI lookup infrastructure improvements in KG-Microbe code; "
-    "it introduces no new METPO terms. Addressed in docs/METPO_NEW_TERMS_PROPOSAL.md."
-)
+# --------------------------------------------------------------------------- #
+# CATEGORICAL: parent classes + enumerated children sourced from BacDive
+# (data/raw/bacdive_strains.json) and existing kgmicrobe.trait:* placeholders
+# in kg_microbe/transform_utils/metatraits/mappings/phenotype_mappings.tsv.
+# --------------------------------------------------------------------------- #
+CATEGORICAL_TERMS: List[Term] = [
+    # ----- Flagellar arrangement -----
+    # Parent class. METPO already has 7 children (METPO:1005031-1005037);
+    # they currently lack a shared parent.
+    Term(
+        proposed_id="METPO:1007005",
+        scope="categorical",
+        term_type="Class",
+        label="flagellar arrangement",
+        definition=(
+            "A phenotypic quality describing the arrangement pattern of flagella on a "
+            "bacterial or archaeal cell. Parent class for METPO:1005031-1005037 "
+            "(peritrichous, polar, amphitrichous, lophotrichous, monotrichous, lateral, "
+            "subpolar)."
+        ),
+        parent_or_subproperty=_PHENO_PARENT,
+        xrefs=["GO:0001539"],
+        synonyms=["flagellation pattern"],
+        priority="HIGH",
+    ),
+    # Polytrichous is the only flagellation child not yet in METPO. BacDive
+    # uses 'polytrichous, monopolar' (4 strains) — 'monopolar' is treated as a
+    # synonym of polar (METPO:1005032), so only 'polytrichous flagellation' is added.
+    Term(
+        proposed_id="METPO:1007006",
+        scope="categorical",
+        term_type="Class",
+        label="polytrichous flagellation",
+        definition="Multiple flagella per cell (typically a tuft); often combined with polar attachment.",
+        parent_or_subproperty="METPO:1007005",
+        synonyms=["polytrichous"],
+        priority="MEDIUM",
+        observations="4",
+    ),
 
+    # ----- Selective media growth capability -----
+    # Parent + children migrating placeholders kgmicrobe.trait:macconkey_agar_growth /
+    # kgmicrobe.trait:blood_agar_growth / kgmicrobe.trait:bile_susceptible from
+    # phenotype_mappings.tsv into METPO.
+    Term(
+        proposed_id="METPO:1007050",
+        scope="categorical",
+        term_type="Class",
+        label="selective media growth capability",
+        definition="A phenotypic capability describing the ability to grow on selective or differential media.",
+        parent_or_subproperty=_PHENO_PARENT,
+        priority="LOW",
+    ),
+    Term(
+        proposed_id="METPO:1007053",
+        scope="categorical",
+        term_type="Class",
+        label="growth on MacConkey agar",
+        definition=(
+            "Capability to grow on MacConkey agar; differential medium typically used to "
+            "distinguish lactose-fermenting Gram-negative bacteria."
+        ),
+        parent_or_subproperty="METPO:1007050",
+        synonyms=["MacConkey agar growth", "grows on MacConkey agar"],
+        priority="LOW",
+    ),
+    Term(
+        proposed_id="METPO:1007054",
+        scope="categorical",
+        term_type="Class",
+        label="growth on blood agar",
+        definition=(
+            "Capability to grow on blood agar; enriched medium typically used for fastidious "
+            "organisms and hemolysis assessment."
+        ),
+        parent_or_subproperty="METPO:1007050",
+        synonyms=["blood agar growth", "grows on blood agar"],
+        priority="LOW",
+    ),
+    Term(
+        proposed_id="METPO:1007055",
+        scope="categorical",
+        term_type="Class",
+        label="growth on EMB agar",
+        definition=(
+            "Capability to grow on Eosin Methylene Blue (EMB) agar; selective and "
+            "differential medium for Gram-negative enteric bacteria."
+        ),
+        parent_or_subproperty="METPO:1007050",
+        synonyms=["EMB agar growth", "Eosin Methylene Blue agar growth"],
+        priority="LOW",
+    ),
+    Term(
+        proposed_id="METPO:1007056",
+        scope="categorical",
+        term_type="Class",
+        label="bile acid susceptible",
+        definition="Phenotype where growth is inhibited by bile acids or bile salts.",
+        parent_or_subproperty="METPO:1007050",
+        xrefs=["CHEBI:3098"],
+        synonyms=["growth: bile acid susceptible"],
+        priority="LOW",
+    ),
+    # Independent bile-tolerance class (positive counterpart of bile susceptibility).
+    Term(
+        proposed_id="METPO:1007051",
+        scope="categorical",
+        term_type="Class",
+        label="bile resistance",
+        definition="A phenotypic quality describing the ability to grow in the presence of bile acids or bile salts.",
+        parent_or_subproperty=_PHENO_PARENT,
+        xrefs=["CHEBI:3098"],
+        synonyms=["bile tolerance"],
+        priority="LOW",
+    ),
 
-# Phase 6: optional remaining phenotype classes (12)
-PHASE_6: List[Term] = [
+    # ----- Colony morphology -----
+    # Parent + colony-shape children sourced from BacDive (15 distinct colony
+    # shape values; 6 cover >99% of observations: circular, irregular,
+    # filamentous, punctiform, rhizoid, fried-egg).
+    Term(
+        proposed_id="METPO:1007062",
+        scope="categorical",
+        term_type="Class",
+        label="colony morphology",
+        definition=(
+            "A phenotypic quality describing macroscopic colony characteristics "
+            "(shape, margin, elevation, surface, color, size)."
+        ),
+        parent_or_subproperty=_PHENO_PARENT,
+        xrefs=["PATO:0000052"],
+        priority="LOW",
+    ),
+    Term(
+        proposed_id="METPO:1007063",
+        scope="categorical",
+        term_type="Class",
+        label="colony shape",
+        definition=(
+            "Subaspect of colony morphology describing the overall macroscopic colony "
+            "outline as observed on solid medium."
+        ),
+        parent_or_subproperty="METPO:1007062",
+        xrefs=["PATO:0000052"],
+        priority="LOW",
+    ),
+    Term(
+        proposed_id="METPO:1007064",
+        scope="categorical",
+        term_type="Class",
+        label="circular colony",
+        definition="Colony with a regular round outline.",
+        parent_or_subproperty="METPO:1007063",
+        synonyms=["round colony"],
+        priority="LOW",
+        observations="2649",
+    ),
+    Term(
+        proposed_id="METPO:1007065",
+        scope="categorical",
+        term_type="Class",
+        label="irregular colony",
+        definition="Colony with an irregular (non-round, non-rhizoid) outline.",
+        parent_or_subproperty="METPO:1007063",
+        priority="LOW",
+        observations="148",
+    ),
+    Term(
+        proposed_id="METPO:1007066",
+        scope="categorical",
+        term_type="Class",
+        label="filamentous colony",
+        definition="Colony with thread-like or filamentous outline.",
+        parent_or_subproperty="METPO:1007063",
+        priority="LOW",
+        observations="16",
+    ),
+    Term(
+        proposed_id="METPO:1007067",
+        scope="categorical",
+        term_type="Class",
+        label="punctiform colony",
+        definition="Very small (pinpoint) colony, typically <1 mm diameter.",
+        parent_or_subproperty="METPO:1007063",
+        priority="LOW",
+        observations="11",
+    ),
+    Term(
+        proposed_id="METPO:1007068",
+        scope="categorical",
+        term_type="Class",
+        label="rhizoid colony",
+        definition="Colony with branching, root-like outline.",
+        parent_or_subproperty="METPO:1007063",
+        priority="LOW",
+        observations="8",
+    ),
+    Term(
+        proposed_id="METPO:1007069",
+        scope="categorical",
+        term_type="Class",
+        label="fried-egg-shaped colony",
+        definition="Colony with raised opaque centre and translucent peripheral zone, resembling a fried egg.",
+        parent_or_subproperty="METPO:1007063",
+        synonyms=["fried-egg colony"],
+        priority="LOW",
+        observations="6",
+    ),
+
+    # ----- Phase 6: tolerances + biochemical activities -----
     Term(
         proposed_id="METPO:1007070",
+        scope="categorical",
         term_type="Class",
         label="pressure tolerance",
         definition="A phenotypic quality describing the ability to grow under elevated hydrostatic pressure.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         synonyms=["barophile", "piezophile"],
-        phase=6,
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007071",
+        scope="categorical",
         term_type="Class",
         label="barophile phenotype",
         definition="An organism that requires or tolerates elevated hydrostatic pressure for growth.",
         parent_or_subproperty="METPO:1007070",
-        phase=6,
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007072",
+        scope="categorical",
         term_type="Class",
         label="radiation tolerance",
         definition="A phenotypic quality describing the ability to withstand ionizing or UV radiation.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         synonyms=["radioresistant"],
-        phase=6,
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007073",
+        scope="categorical",
         term_type="Class",
         label="osmotic tolerance",
         definition="A phenotypic quality describing the ability to grow under high osmotic pressure (non-NaCl).",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         synonyms=["osmophile"],
-        phase=6,
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007074",
+        scope="categorical",
         term_type="Class",
         label="metal tolerance",
         definition=(
             "A phenotypic quality describing the ability to grow in the presence of "
             "elevated metal concentrations."
         ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         synonyms=["metallophile"],
-        phase=6,
-        priority="MEDIUM",
-    ),
-    Term(
-        proposed_id="METPO:1007075",
-        term_type="Class",
-        label="spore formation capability",
-        definition="A phenotypic capability describing the ability to form endospores or exospores.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["GO:0030435"],
-        phase=6,
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007076",
+        scope="categorical",
         term_type="Class",
         label="capsule presence",
         definition="A phenotypic quality describing the presence of an extracellular polysaccharide capsule.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0042597"],
-        phase=6,
         priority="LOW",
     ),
     Term(
         proposed_id="METPO:1007077",
+        scope="categorical",
         term_type="Class",
         label="biofilm formation capability",
         definition="A phenotypic capability describing the ability to form surface-attached biofilms.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0042710"],
-        phase=6,
         priority="MEDIUM",
     ),
+    # Catalase/oxidase/urease activity — parents + positive/negative children
+    # following METPO's biochemical-test pattern (e.g. METPO:1005010-1005018
+    # for indole/MR/VP).
     Term(
         proposed_id="METPO:1007080",
+        scope="categorical",
         term_type="Class",
         label="catalase activity",
         definition="A phenotypic quality describing catalase enzyme activity (H2O2 decomposition).",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0004096"],
-        phase=6,
+        synonyms=["catalase test"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007083",
+        scope="categorical",
+        term_type="Class",
+        label="catalase positive",
+        definition="Phenotype where the catalase test yields a positive result (visible bubbling on H2O2).",
+        parent_or_subproperty="METPO:1007080",
+        synonyms=["catalase test positive", "catalase +"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007084",
+        scope="categorical",
+        term_type="Class",
+        label="catalase negative",
+        definition="Phenotype where the catalase test yields a negative result (no bubbling on H2O2).",
+        parent_or_subproperty="METPO:1007080",
+        synonyms=["catalase test negative", "catalase -"],
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007081",
+        scope="categorical",
         term_type="Class",
         label="oxidase activity",
         definition="A phenotypic quality describing cytochrome c oxidase activity detected in the oxidase test.",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0004129"],
-        phase=6,
+        synonyms=["oxidase test"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007085",
+        scope="categorical",
+        term_type="Class",
+        label="oxidase positive",
+        definition="Phenotype where the oxidase test yields a positive result.",
+        parent_or_subproperty="METPO:1007081",
+        synonyms=["oxidase test positive", "oxidase +"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007086",
+        scope="categorical",
+        term_type="Class",
+        label="oxidase negative",
+        definition="Phenotype where the oxidase test yields a negative result.",
+        parent_or_subproperty="METPO:1007081",
+        synonyms=["oxidase test negative", "oxidase -"],
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007082",
+        scope="categorical",
         term_type="Class",
         label="urease activity",
         definition="A phenotypic quality describing urease enzyme activity (urea hydrolysis).",
-        parent_or_subproperty=_METPO_PHENO_PARENT,
+        parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0009039"],
-        phase=6,
+        synonyms=["urease test"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007087",
+        scope="categorical",
+        term_type="Class",
+        label="urease positive",
+        definition="Phenotype where the urease test yields a positive result.",
+        parent_or_subproperty="METPO:1007082",
+        synonyms=["urease test positive", "urease +"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007088",
+        scope="categorical",
+        term_type="Class",
+        label="urease negative",
+        definition="Phenotype where the urease test yields a negative result.",
+        parent_or_subproperty="METPO:1007082",
+        synonyms=["urease test negative", "urease -"],
+        priority="MEDIUM",
+    ),
+    # Coagulase activity — migrates kgmicrobe.activity:coagulase_activity placeholder
+    # currently emitted by metatraits transform (36,343 edges in
+    # data/transformed/metatraits/edges.tsv). No EC/GO term exists for the
+    # bacteriological coagulase test at the appropriate granularity.
+    Term(
+        proposed_id="METPO:1007089",
+        scope="categorical",
+        term_type="Class",
+        label="coagulase activity",
+        definition=(
+            "A phenotypic quality describing coagulase enzyme activity (clotting of "
+            "blood plasma). Diagnostic marker, e.g. for Staphylococcus aureus."
+        ),
+        parent_or_subproperty=_PHENO_PARENT,
+        synonyms=["coagulase test"],
         priority="MEDIUM",
     ),
     Term(
         proposed_id="METPO:1007090",
+        scope="categorical",
         term_type="Class",
-        label="denitrification capability",
-        definition=(
-            "A phenotypic capability describing the ability to reduce nitrate or "
-            "nitrite to gaseous nitrogen species."
-        ),
-        parent_or_subproperty=_METPO_PHENO_PARENT,
-        xrefs=["GO:0019333"],
-        phase=6,
+        label="coagulase positive",
+        definition="Phenotype where the coagulase test yields a positive result (plasma clotting).",
+        parent_or_subproperty="METPO:1007089",
+        synonyms=["coagulase test positive", "coagulase +"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007091",
+        scope="categorical",
+        term_type="Class",
+        label="coagulase negative",
+        definition="Phenotype where the coagulase test yields a negative result.",
+        parent_or_subproperty="METPO:1007089",
+        synonyms=["coagulase test negative", "coagulase -"],
         priority="MEDIUM",
     ),
 ]
+
+
+# Phase 5: infrastructure only — recorded for provenance; no rows emitted.
+PHASE_5_NOTE = (
+    "Phase 5 covers ChEBI lookup infrastructure improvements in KG-Microbe code; "
+    "it introduces no new METPO terms. Addressed in docs/METPO_NEW_TERMS_PROPOSAL.md."
+)
+
+
+# --------------------------------------------------------------------------- #
+# Validation against the local METPO snapshot
+# --------------------------------------------------------------------------- #
+
+
+_NORM_RE = re.compile(r"[\s_\-]+")
+
+
+def _norm(s: str) -> str:
+    """Normalize a label/synonym for collision detection."""
+    return _NORM_RE.sub(" ", (s or "").strip().lower()).strip()
+
+
+def _load_metpo_index(snapshot: Path) -> Tuple[Dict[str, Tuple[str, str]], Dict[str, Tuple[str, str]]]:
+    """Return (label_index, synonym_index): normalized text -> (id, original_text)."""
+    if not snapshot.exists():
+        raise FileNotFoundError(
+            f"METPO snapshot not found at {snapshot}. Run "
+            "`poetry run kg transform -s ontologies` first, or download metpo.json."
+        )
+    label_index: Dict[str, Tuple[str, str]] = {}
+    synonym_index: Dict[str, Tuple[str, str]] = {}
+    with open(snapshot, newline="") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            mid = row.get("id", "")
+            if not mid.startswith("METPO:"):
+                continue
+            name = (row.get("name") or "").strip()
+            if name:
+                label_index.setdefault(_norm(name), (mid, name))
+            for syn in (row.get("synonym") or "").split("|"):
+                syn = syn.strip()
+                if syn:
+                    synonym_index.setdefault(_norm(syn), (mid, syn))
+    return label_index, synonym_index
+
+
+def _alias_proposed_keys() -> Set[str]:
+    """Return normalized labels + synonyms explicitly declared as duplicates."""
+    keys: Set[str] = set()
+    for alias in EXISTING_METPO_ALIASES:
+        keys.add(_norm(alias.proposed_label))
+        for syn in alias.proposed_synonyms:
+            keys.add(_norm(syn))
+    return keys
+
+
+def validate_against_metpo(
+    terms: Iterable[Term],
+    snapshot: Path = METPO_SNAPSHOT,
+) -> None:
+    """
+    Fail if any kept Term collides with an existing METPO label or synonym.
+
+    A collision is allowed only when the colliding label/synonym is also
+    declared in EXISTING_METPO_ALIASES (i.e. we have explicitly accepted that
+    this concept is being modeled by an existing METPO ID).
+    """
+    label_index, synonym_index = _load_metpo_index(snapshot)
+    alias_keys = _alias_proposed_keys()
+
+    collisions: List[str] = []
+    for term in terms:
+        candidates = [(term.label, "label")] + [(s, "synonym") for s in term.synonyms]
+        for text, source in candidates:
+            key = _norm(text)
+            if not key:
+                continue
+            if key in alias_keys:
+                continue
+            hit = label_index.get(key)
+            if hit:
+                collisions.append(
+                    f"{term.proposed_id} ({source}={text!r}) collides with "
+                    f"{hit[0]} {hit[1]!r} (existing label)"
+                )
+                continue
+            hit = synonym_index.get(key)
+            if hit:
+                collisions.append(
+                    f"{term.proposed_id} ({source}={text!r}) collides with "
+                    f"{hit[0]} {hit[1]!r} (existing synonym)"
+                )
+
+    if collisions:
+        msg = (
+            "Refusing to emit METPO proposals: the following terms already exist in "
+            f"{snapshot} and are not declared in EXISTING_METPO_ALIASES.\n"
+            "Either (a) drop the duplicate Term entry and add an Alias, or "
+            "(b) reword the proposal so it no longer collides.\n\n"
+            + "\n".join(f"  - {c}" for c in collisions)
+        )
+        raise SystemExit(msg)
+
+
+def compute_bacdive_observations(snapshot: Path = BACDIVE_SNAPSHOT) -> Dict[str, int]:
+    """
+    Tally per-child observation counts from BacDive raw JSON.
+
+    Returns a dict keyed by child label (matching BACDIVE_BASELINE_COUNTS) with
+    integer counts. Walks `data/raw/bacdive_strains.json` once, applying the
+    rules in `_BACDIVE_RULES` to each strain's Morphology fields.
+    """
+    import json
+
+    with open(snapshot) as f:
+        data = json.load(f)
+    if not isinstance(data, list):
+        raise SystemExit(f"Unexpected BacDive structure in {snapshot}: {type(data).__name__}")
+
+    counts: Dict[str, int] = {label: 0 for label in _BACDIVE_RULES}
+    for strain in data:
+        for label, (path, tokens, kind) in _BACDIVE_RULES.items():
+            morph = strain.get(path[0]) or {}
+            sub = morph.get(path[1]) if isinstance(morph, dict) else None
+            if sub is None:
+                continue
+            entries = sub if isinstance(sub, list) else [sub]
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                raw = entry.get(path[2])
+                if not isinstance(raw, str):
+                    continue
+                value = raw.strip().lower()
+                if not value:
+                    continue
+                if kind == "exact":
+                    if value in tokens:
+                        counts[label] += 1
+                elif kind == "token":
+                    parts = [p.strip() for p in value.split(",")]
+                    if any(t in parts for t in tokens):
+                        counts[label] += 1
+    return counts
+
+
+def validate_bacdive_observation_counts(snapshot: Path = BACDIVE_SNAPSHOT) -> None:
+    """
+    Compare BacDive-derived counts to the hardcoded baseline.
+
+    Skipped (warning only) if `data/raw/bacdive_strains.json` is absent so the
+    extractor remains runnable without raw data. When the file is present, any
+    divergence from `BACDIVE_BASELINE_COUNTS` raises SystemExit so a stale or
+    drifted proposal cannot be regenerated silently.
+    """
+    if not snapshot.exists():
+        print(f"[skip] {snapshot} not present — observation counts not validated")
+        return
+    actual = compute_bacdive_observations(snapshot)
+    mismatches = [
+        f"  - {label}: baseline={BACDIVE_BASELINE_COUNTS[label]} actual={actual[label]}"
+        for label in BACDIVE_BASELINE_COUNTS
+        if actual.get(label) != BACDIVE_BASELINE_COUNTS[label]
+    ]
+    if mismatches:
+        msg = (
+            "BacDive observation counts have drifted from the proposal baseline. "
+            "Either update BACDIVE_BASELINE_COUNTS and the matching Term.observations "
+            "fields, or revert the source data.\n\n" + "\n".join(mismatches)
+        )
+        raise SystemExit(msg)
+    print(f"[ok] BacDive observation counts match baseline ({len(actual)} children)")
+
+
+def validate_metatraits_placeholder_coverage(
+    edges_path: Path = METATRAITS_EDGES_PATH,
+    terms: List[Term] = None,
+) -> None:
+    """
+    Assert every kgmicrobe.{trait,activity}:* placeholder is migrated.
+
+    Scans `data/transformed/metatraits/edges.tsv` for objects with prefix
+    `kgmicrobe.trait:` or `kgmicrobe.activity:` (the metatraits transform's
+    placeholder CURIEs for unmapped traits) and exits non-zero if any are
+    missing from `KGMICROBE_PLACEHOLDER_MIGRATION`. Also verifies that every
+    target METPO ID in the migration map exists as a Term in the proposal.
+
+    Skipped (warning only) when `data/transformed/metatraits/edges.tsv` is
+    absent so the extractor remains runnable on machines that have not yet
+    run the metatraits transform.
+    """
+    proposed_ids = {t.proposed_id for t in (terms or [])}
+    missing_terms = sorted(
+        target
+        for target in KGMICROBE_PLACEHOLDER_MIGRATION.values()
+        if target not in proposed_ids
+    )
+    if missing_terms:
+        raise SystemExit(
+            "KGMICROBE_PLACEHOLDER_MIGRATION targets missing from proposal: "
+            + ", ".join(missing_terms)
+        )
+
+    if not edges_path.exists():
+        print(f"[skip] {edges_path} not present — placeholder coverage not validated")
+        return
+
+    placeholders: Set[str] = set()
+    with edges_path.open() as f:
+        f.readline()
+        for line in f:
+            cols = line.rstrip("\n").split("\t")
+            if len(cols) < 3:
+                continue
+            obj = cols[2]
+            if obj.startswith(("kgmicrobe.trait:", "kgmicrobe.activity:")):
+                placeholders.add(obj)
+
+    uncovered = sorted(p for p in placeholders if p not in KGMICROBE_PLACEHOLDER_MIGRATION)
+    if uncovered:
+        lines = "\n".join(f"  - {p}" for p in uncovered)
+        raise SystemExit(
+            "Uncovered kgmicrobe.{trait,activity}:* placeholders in metatraits edges:\n"
+            + lines
+            + "\n\nAdd each to KGMICROBE_PLACEHOLDER_MIGRATION and add a Term to "
+            + "PHASE_4_TERMS in scripts/extract_metpo_proposals.py."
+        )
+    print(
+        f"[ok] {len(placeholders)} kgmicrobe.{{trait,activity}}:* placeholder(s) "
+        f"in metatraits edges — all covered by proposal."
+    )
 
 
 def write_tsv(path: Path, terms: List[Term]) -> None:
@@ -738,39 +1118,150 @@ def write_tsv(path: Path, terms: List[Term]) -> None:
             writer.writerow(term.as_row())
 
 
-def main() -> None:
-    """Generate the three predicate-based proposal TSVs."""
-    output_dir = Path("mappings")
-    output_dir.mkdir(exist_ok=True)
+def write_metatraits_alias_overrides(path: Path, aliases: List[Alias]) -> int:
+    """
+    Emit a Tier-2 override TSV that load_microbial_trait_mappings() will ingest.
 
-    write_tsv(
-        output_dir / "metpo_predicate_based_proposal.tsv",
-        PHASE_1,
+    For each alias, emit rows keyed by `proposed_label` and each `proposed_synonym`,
+    pointing at the existing METPO ID. This guards against cases where source-data
+    labels do not appear in METPO's `metatraits synonym` column and would otherwise
+    fall through to "unmapped".
+    """
+    rows: List[List[str]] = []
+    today = "2026-04-25"
+    seen_subjects: Set[str] = set()
+    for alias in aliases:
+        candidates = [alias.proposed_label] + list(alias.proposed_synonyms)
+        for subject in candidates:
+            subject = subject.strip()
+            if not subject:
+                continue
+            key = subject.lower()
+            if key in seen_subjects:
+                continue
+            seen_subjects.add(key)
+            rows.append([
+                subject,
+                key,
+                alias.existing_metpo_id,
+                alias.existing_metpo_label,
+                "METPO",
+                "skos:closeMatch" if alias.match_kind == "concept" else "skos:exactMatch",
+                "high",
+                "semapv:ManualMappingCuration",
+                "extract_metpo_proposals",
+                "metpo_proposal_audit",
+                f"biolink:has_phenotype; {alias.notes}",
+                today,
+            ])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(TRAIT_MAPPINGS_HEADER)
+        writer.writerows(rows)
+    return len(rows)
+
+
+def write_alias_tsv(path: Path, aliases: List[Alias]) -> None:
+    """Write the proposed-concept -> existing-METPO-ID alias map."""
+    # Build a one-shot METPO row index so we can pull synonyms per existing_id.
+    metpo_rows: Dict[str, Dict[str, str]] = {}
+    with open(METPO_SNAPSHOT, newline="") as fh:
+        reader = csv.DictReader(fh, delimiter="\t")
+        for row in reader:
+            if row.get("id", "").startswith("METPO:"):
+                metpo_rows[row["id"]] = row
+
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(ALIAS_HEADER)
+        for alias in aliases:
+            row = metpo_rows.get(alias.existing_metpo_id, {})
+            existing_syns = [
+                s.strip()
+                for s in (row.get("synonym") or "").split("|")
+                if s.strip()
+            ]
+            writer.writerow([
+                alias.proposed_label,
+                "|".join(alias.proposed_synonyms),
+                alias.existing_metpo_id,
+                alias.existing_metpo_label,
+                "|".join(existing_syns),
+                alias.match_kind,
+                alias.notes,
+            ])
+
+
+# --------------------------------------------------------------------------- #
+# Cleanup of obsolete proposal TSVs (replaced by the quantitative/categorical pair)
+# --------------------------------------------------------------------------- #
+OBSOLETE_OUTPUTS = [
+    "metpo_predicate_based_proposal.tsv",
+    "metpo_phases_1_and_4_terms.tsv",
+    "metpo_unified_all_phases.tsv",
+]
+
+
+def remove_obsolete_outputs(output_dir: Path) -> None:
+    """Delete TSVs replaced by the quantitative/categorical split."""
+    for name in OBSOLETE_OUTPUTS:
+        p = output_dir / name
+        if p.exists():
+            p.unlink()
+            print(f"[rm] {p}")
+
+
+def main(
+    output_dir: Path = Path("mappings"),
+    metatraits_dir: Path = METATRAITS_MAPPINGS_DIR,
+) -> None:
+    """Generate the METPO proposal TSVs after collision check."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    metatraits_dir.mkdir(parents=True, exist_ok=True)
+
+    all_terms = QUANTITATIVE_TERMS + CATEGORICAL_TERMS
+    validate_against_metpo(all_terms)
+    print(f"[ok] collision check passed for {len(all_terms)} proposed terms")
+
+    validate_bacdive_observation_counts()
+
+    validate_metatraits_placeholder_coverage(terms=CATEGORICAL_TERMS)
+
+    remove_obsolete_outputs(output_dir)
+
+    write_tsv(output_dir / "metpo_proposal_quantitative.tsv", QUANTITATIVE_TERMS)
+    print(
+        f"[ok] metpo_proposal_quantitative.tsv      ({len(QUANTITATIVE_TERMS)} terms: "
+        f"datatype properties + numeric tolerance class forms)"
     )
-    print(f"[ok] metpo_predicate_based_proposal.tsv  ({len(PHASE_1)} terms, Phase 1)")
 
-    phases_1_4 = PHASE_1 + PHASE_4
-    write_tsv(
-        output_dir / "metpo_phases_1_and_4_terms.tsv",
-        phases_1_4,
+    write_tsv(output_dir / "metpo_proposal_categorical.tsv", CATEGORICAL_TERMS)
+    n_parents = sum(1 for t in CATEGORICAL_TERMS if t.parent_or_subproperty == _PHENO_PARENT)
+    n_children = len(CATEGORICAL_TERMS) - n_parents
+    print(
+        f"[ok] metpo_proposal_categorical.tsv       ({len(CATEGORICAL_TERMS)} terms: "
+        f"{n_parents} top-level + {n_children} children)"
+    )
+
+    write_alias_tsv(output_dir / "metpo_existing_aliases.tsv", EXISTING_METPO_ALIASES)
+    print(
+        f"[ok] metpo_existing_aliases.tsv           ({len(EXISTING_METPO_ALIASES)} concepts "
+        f"already in METPO; downstream transforms must reuse the existing IDs)"
+    )
+
+    n_rows = write_metatraits_alias_overrides(
+        metatraits_dir / "metpo_alias_mappings.tsv",
+        EXISTING_METPO_ALIASES,
     )
     print(
-        f"[ok] metpo_phases_1_and_4_terms.tsv       ({len(phases_1_4)} terms, "
-        f"Phase 1 + 4; Phases 2 & 3 dropped — see script comments)"
+        f"[ok] metpo_alias_mappings.tsv             ({n_rows} subject_label rows wired "
+        f"into metatraits Tier-2 lookup)"
     )
 
-    unified = PHASE_1 + PHASE_2 + PHASE_3 + PHASE_4 + PHASE_6
-    write_tsv(
-        output_dir / "metpo_unified_all_phases.tsv",
-        unified,
-    )
-    print(
-        f"[ok] metpo_unified_all_phases.tsv         ({len(unified)} terms, "
-        f"Phases 1+4+6; Phase 2 & 3 concepts already in METPO, Phase 5 is code-only)"
-    )
     print()
     print(PHASE_5_NOTE)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

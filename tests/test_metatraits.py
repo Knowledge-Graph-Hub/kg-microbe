@@ -15,7 +15,7 @@ EXPECTED_EDGES = [
     ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalEntity"),
     ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalEntity"),
     ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalEntity"),
-    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalEntity"),
+    ("carbon source: acetate", "METPO:2000006", "CHEBI:30089", "biolink:ChemicalEntity"),
     (
         "enzyme activity: catalase (EC1.11.1.6)",
         "biolink:capable_of",

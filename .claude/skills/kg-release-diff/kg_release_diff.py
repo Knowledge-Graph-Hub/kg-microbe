@@ -140,11 +140,13 @@ def scan_nodes(release: ReleaseStats, max_rows: int) -> None:
             nid = (row.get("id") or "").strip()
             cat = (row.get("category") or "").strip()
             prov = (row.get("provided_by") or "").strip()
-            if not cat:
+            cats = [c.strip() for c in cat.split("|") if c.strip()] if cat else []
+            if not cats:
                 ns.empty_category_rows += 1
             else:
-                ns.category_counts[cat] += 1
-                if cat in BIOLINK_DEPRECATED_CATEGORIES:
+                for c in cats:
+                    ns.category_counts[c] += 1
+                if any(c in BIOLINK_DEPRECATED_CATEGORIES for c in cats):
                     ns.deprecated_category_rows += 1
             if nid:
                 ns.prefix_counts[_prefix_of(nid)] += 1
@@ -152,8 +154,8 @@ def scan_nodes(release: ReleaseStats, max_rows: int) -> None:
                     ns.duplicate_ids += 1
                 else:
                     seen_ids.add(nid)
-                    if cat:
-                        ns.id_to_category[nid] = cat
+                    if cats:
+                        ns.id_to_category[nid] = cats[0]
             for src in prov.split("|"):
                 src = src.strip()
                 if src:

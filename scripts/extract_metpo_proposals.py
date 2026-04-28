@@ -10,12 +10,25 @@ written to ``mappings/metpo_existing_aliases.tsv`` so downstream transforms can
 adopt the existing METPO IDs instead of minting new ones.
 
 Outputs:
-    mappings/metpo_proposal_quantitative.tsv     - datatype properties + numeric
-                                                   tolerance class forms (min/max)
-    mappings/metpo_proposal_categorical.tsv      - parent classes + categorical children
-    mappings/metpo_existing_aliases.tsv          - proposed concept -> existing METPO ID
+    mappings/metpo_proposal_quantitative.tsv         - datatype properties + numeric
+                                                       tolerance class forms (min/max)
+    mappings/metpo_proposal_categorical.tsv          - parent classes + categorical children
+    mappings/metpo_existing_aliases.tsv              - proposed concept -> existing METPO ID
+    mappings/metpo_proposal_classes_robot.tsv        - ROBOT template (OWL classes) for
+                                                       upstream submission
+    mappings/metpo_proposal_properties_robot.tsv     - ROBOT template (OWL properties) for
+                                                       upstream submission
     kg_microbe/transform_utils/metatraits/mappings/metpo_alias_mappings.tsv
         Tier-2 override file consumed by metatraits transform.
+
+Validation:
+    1. ``validate_against_metpo`` rejects label/synonym collisions with the existing METPO.
+    2. ``validate_bacdive_observation_counts`` checks hardcoded ``observations`` against
+       ``data/raw/bacdive_strains.json``.
+    3. ``validate_metatraits_placeholder_coverage`` ensures every kgmicrobe.* placeholder
+       in metatraits edges is covered by a proposed Term.
+    4. ``validate_with_robot`` runs ``robot template`` + ``robot merge`` +
+       ``robot reason --reasoner ELK`` to catch OWL-level errors and unsatisfiable classes.
 
 Source of truth for term content: notes/METPO_UNIFIED_PROPOSAL_5_PHASES.md and
 notes/METPO_FORMAL_PROPOSAL_PHASES_1_2_3.md plus the 2026-04 audit against
@@ -133,8 +146,6 @@ class Alias:
 
 
 ORG = "biolink:OrganismTaxon"
-CHEM = "CHEBI:24431"  # chemical entity
-NITRO = "CHEBI:51143"  # nitrogen molecular entity
 
 METPO_SNAPSHOT = Path("data/transformed/ontologies/metpo_nodes.tsv")
 _PHENO_PARENT = "METPO:1000000"

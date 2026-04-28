@@ -821,6 +821,15 @@ def main():
 
     max_rows = args.max_rows  # 0 means unlimited (iter_tsv handles 0 as no limit)
 
+    if args.merged and max_rows == 0:
+        print(
+            "  Error: --max-rows 0 with --merged would materialize the full nodes+edges "
+            "tarball in memory and is likely to OOM on real releases. "
+            "Specify a finite --max-rows (e.g. 1000000) for merged review.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
     registered_prefixes = load_registered_prefixes()
     metpo_curies = load_metpo_curies()
 

@@ -1162,6 +1162,122 @@ def write_metatraits_alias_overrides(path: Path, aliases: List[Alias]) -> int:
     return len(rows)
 
 
+SUBSET_TAG = "metpo_proposal_2026_04"
+
+
+def write_robot_template_classes(path: Path, terms: List[Term]) -> int:
+    """
+    Emit a ROBOT template TSV for OWL class declarations.
+
+    Two header rows: human-readable column names then ROBOT directives.
+    Filters terms to Class declarations only.
+    """
+    header = [
+        "proposed_id", "label", "definition", "definition_source",
+        "parent", "synonyms", "xrefs", "subset",
+        "priority", "observations", "traits_addressed",
+    ]
+    directives = [
+        "ID", "LABEL", "A IAO:0000115", ">A IAO:0000119",
+        "SC %", "A oboInOwl:hasExactSynonym SPLIT=|",
+        "A oboInOwl:hasDbXref SPLIT=|", "A oboInOwl:inSubset",
+        "", "", "",
+    ]
+    classes = [t for t in terms if t.term_type == "Class"]
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(header)
+        writer.writerow(directives)
+        for t in classes:
+            writer.writerow([
+                t.proposed_id, t.label, t.definition, "TODO:add_citation",
+                t.parent_or_subproperty, "|".join(t.synonyms),
+                "|".join(t.xrefs), SUBSET_TAG,
+                t.priority, t.observations, t.traits_addressed,
+            ])
+    return len(classes)
+
+
+def write_robot_template_properties(path: Path, terms: List[Term]) -> int:
+    """Emit a ROBOT template TSV for property declarations."""
+    header = [
+        "proposed_id", "label", "definition", "definition_source",
+        "type", "domain", "range", "xrefs", "subset",
+        "priority", "traits_addressed", "observations",
+    ]
+    directives = [
+        "ID", "LABEL", "A IAO:0000115", ">A IAO:0000119",
+        "TYPE", "DOMAIN", "RANGE",
+        "A oboInOwl:hasDbXref SPLIT=|", "A oboInOwl:inSubset",
+        "", "", "",
+    ]
+    props = [t for t in terms if t.term_type in ("DatatypeProperty", "ObjectProperty", "AnnotationProperty")]
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(header)
+        writer.writerow(directives)
+        for t in props:
+            owl_type = f"owl:{t.term_type}"
+            writer.writerow([
+                t.proposed_id, t.label, t.definition, "TODO:add_citation",
+                owl_type, t.domain, t.range,
+                "|".join(t.xrefs), SUBSET_TAG,
+                t.priority, t.traits_addressed, t.observations,
+            ])
+    return len(props)
+
+
+def validate_with_robot(classes_path: Path, properties_path: Path) -> None:
+    """
+    Compile both ROBOT templates, merge, and run ELK reasoner.
+
+    Best-effort: prints a skip notice and returns 0 if `robot` is not on PATH.
+    Raises on validation failure (non-zero exit from any robot subcommand).
+    """
+    import shutil
+    import subprocess
+    import tempfile
+
+    if not shutil.which("robot"):
+        print("[skip] robot binary not on PATH — skipping ROBOT template + ELK validation")
+        return
+
+    prefixes = [
+        "--prefix", "METPO: http://purl.obolibrary.org/obo/METPO_",
+        "--prefix", "biolink: https://w3id.org/biolink/vocab/",
+    ]
+    with tempfile.TemporaryDirectory() as td:
+        td_path = Path(td)
+        classes_owl = td_path / "classes.owl"
+        props_owl = td_path / "props.owl"
+        merged_owl = td_path / "merged.owl"
+        reasoned_owl = td_path / "reasoned.owl"
+
+        subprocess.run(
+            ["robot", "template", "--template", str(classes_path),
+             *prefixes, "--output", str(classes_owl)],
+            check=True,
+        )
+        subprocess.run(
+            ["robot", "template", "--template", str(properties_path),
+             *prefixes, "--output", str(props_owl)],
+            check=True,
+        )
+        subprocess.run(
+            ["robot", "merge", "--input", str(classes_owl),
+             "--input", str(props_owl), "--output", str(merged_owl)],
+            check=True,
+        )
+        subprocess.run(
+            ["robot", "reason", "--reasoner", "ELK",
+             "--input", str(merged_owl),
+             "--axiom-generators", "SubClass EquivalentClass",
+             "--output", str(reasoned_owl)],
+            check=True,
+        )
+        print("[ok] ROBOT template + ELK reason passed (no UNSAT classes)")
+
+
 def write_alias_tsv(path: Path, aliases: List[Alias]) -> None:
     """Write the proposed-concept -> existing-METPO-ID alias map."""
     # Build a one-shot METPO row index so we can pull synonyms per existing_id.
@@ -1258,6 +1374,15 @@ def main(
         f"[ok] metpo_alias_mappings.tsv             ({n_rows} subject_label rows wired "
         f"into metatraits Tier-2 lookup)"
     )
+
+    classes_robot_path = output_dir / "metpo_proposal_classes_robot.tsv"
+    props_robot_path = output_dir / "metpo_proposal_properties_robot.tsv"
+    n_classes = write_robot_template_classes(classes_robot_path, all_terms)
+    n_props = write_robot_template_properties(props_robot_path, all_terms)
+    print(f"[ok] metpo_proposal_classes_robot.tsv     ({n_classes} OWL class rows, ROBOT template)")
+    print(f"[ok] metpo_proposal_properties_robot.tsv  ({n_props} OWL property rows, ROBOT template)")
+
+    validate_with_robot(classes_robot_path, props_robot_path)
 
     print()
     print(PHASE_5_NOTE)

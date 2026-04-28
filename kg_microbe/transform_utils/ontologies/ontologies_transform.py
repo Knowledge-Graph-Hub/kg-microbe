@@ -17,8 +17,6 @@ from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
-    ENABLED_BY_PREDICATE,
-    ENABLED_BY_RELATION,
     EXCLUSION_TERMS_FILE,
     GO_PREFIX,
     ID_COLUMN,
@@ -251,25 +249,14 @@ class OntologiesTransform(Transform):
         df = pd.read_csv(nodes_file_path, sep="\t", low_memory=False)
 
         if ontology_name == "go":
-            # Apply GO aspect-based categorization
+            # Apply GO aspect-based categorization (cached in-memory dict, no OAK).
             print("  Applying GO aspect-based categorization...")
-
-            # Create GO adapter once to avoid file descriptor leaks
-            from oaklib import get_adapter
-
-            from kg_microbe.transform_utils.constants import GO_SOURCE
-
-            try:
-                go_adapter = get_adapter(f"sqlite:{GO_SOURCE}")
-            except Exception:
-                go_adapter = get_adapter("sqlite:data/raw/go.db")
 
             def fix_go_category(row):
                 """Fix GO category based on aspect (namespace)."""
                 go_id = row["id"]
                 if pd.notna(go_id) and go_id.startswith("GO:"):
-                    # Pass the adapter to avoid creating new connections
-                    return get_go_category_by_aspect(go_id, go_adapter)
+                    return get_go_category_by_aspect(go_id)
                 return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_go_category, axis=1)
@@ -517,16 +504,14 @@ class OntologiesTransform(Transform):
                 PART_OF_PREDICATE,
                 UNIPATHWAYS_INCLUDE_PAIRS[2][1],
             )
-            # Replace UER with GO
+            # Replace UER with GO. Keep PART_OF — after substitution the edge
+            # reads "GO molecular function part_of UPA pathway", which respects
+            # biolink domain/range. Using ENABLED_BY here was wrong: enabled_by
+            # expects Protein/Gene as object, not a pathway.
             transitive_df_uer_go = transitive_df_uer_go[
                 (transitive_df_uer_go[SUBJECT_COLUMN].str.contains(UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX))
                 & (transitive_df_uer_go[OBJECT_COLUMN].str.contains(UNIPATHWAYS_PATHWAY_PREFIX))
             ]
-            # Replace predicate and relation
-            transitive_df_uer_go.loc[
-                transitive_df_uer_go[PREDICATE_COLUMN] == PART_OF_PREDICATE,
-                [PREDICATE_COLUMN, RELATION_COLUMN],
-            ] = [ENABLED_BY_PREDICATE, ENABLED_BY_RELATION]
             transitive_df_uer_go = transitive_df_uer_go.map(lambda x: unipathways_xref_dict.get(x, x))
 
             # Only add GO relations, not EC

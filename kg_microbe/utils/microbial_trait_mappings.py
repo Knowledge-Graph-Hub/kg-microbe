@@ -30,23 +30,58 @@ _ENTITY_CATEGORY_OVERRIDE = {
 }
 
 
+_SUBJECT_PREFIX_TO_PREDICATE = (
+    ("produces:", "biolink:produces"),
+    ("carbon source:", "METPO:2000006"),
+    ("enzyme activity:", "biolink:capable_of"),
+    ("fermentation:", "METPO:2000011"),
+    ("ferments:", "METPO:2000011"),
+    ("assimilation:", "METPO:2000002"),
+    ("assimilates:", "METPO:2000002"),
+    ("hydrolyzes:", "METPO:2000013"),
+    ("hydrolysis:", "METPO:2000013"),
+    ("degrades:", "METPO:2000007"),
+    ("degradation:", "METPO:2000007"),
+    ("oxidizes:", "biolink:consumes"),
+    ("oxidation:", "biolink:consumes"),
+    ("reduces:", "biolink:consumes"),
+    ("reduction:", "biolink:consumes"),
+    ("electron acceptor:", "biolink:consumes"),
+    ("electron donor:", "METPO:2000009"),
+    ("energy source:", "METPO:2000010"),
+    ("nitrogen source:", "METPO:2000014"),
+    ("sulfur source:", "biolink:consumes"),
+    ("respiration:", "biolink:consumes"),
+    ("denitrification:", "biolink:consumes"),
+    ("ammonification:", "biolink:consumes"),
+    ("builds acid from:", "METPO:2000003"),
+    ("builds base from:", "METPO:2000004"),
+    ("builds gas from:", "METPO:2000005"),
+)
+
+
 def _resolve_biolink_predicate(subject_label: str, notes: str, entity_category: str = "") -> str:
     """
-    Derive biolink predicate from notes or subject_label pattern.
+    Derive biolink (or METPO:2000xxx) predicate from notes or subject_label pattern.
+
+    Order: explicit biolink: token in notes, then explicit METPO:2000xxx token in
+    notes, then subject_label prefix lookup, then default biolink:has_phenotype.
 
     :param subject_label: Full trait label (e.g. 'produces: ethanol')
     :param notes: Notes column from mapping TSV
     :param entity_category: Entity category (chemicals, enzymes, pathways, phenotypes)
-    :return: Biolink predicate CURIE
+    :return: Predicate CURIE (biolink: or METPO:2000xxx)
     """
-    for token in notes.replace(";", " ").split():
+    for token in notes.replace(";", " ").replace(",", " ").replace("(", " ").replace(")", " ").split():
         if token.startswith("biolink:"):
             return token
-    # Fallback heuristics from subject_label pattern
-    if subject_label.startswith("produces:"):
-        return "biolink:produces"
-    if subject_label.startswith("carbon source:") or subject_label.startswith("enzyme activity:"):
-        return "biolink:capable_of"
+    for token in notes.replace(";", " ").replace(",", " ").replace("(", " ").replace(")", " ").split():
+        if token.startswith("METPO:2000"):
+            return token
+    label_lower = subject_label.lower()
+    for prefix, predicate in _SUBJECT_PREFIX_TO_PREDICATE:
+        if label_lower.startswith(prefix):
+            return predicate
     return "biolink:has_phenotype"
 
 

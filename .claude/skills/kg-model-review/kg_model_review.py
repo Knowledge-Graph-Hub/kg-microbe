@@ -155,7 +155,7 @@ PREDICATE_DOMAIN_RANGE = {
     "METPO:2000004": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds base from
     "METPO:2000005": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds gas from
     "METPO:2000006": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as carbon source
-    "METPO:2000007": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # degrades
+    "METPO:2000007": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:EnvironmentalMaterial"}),  # degrades — covers crude oil and other ENVO materials
     "METPO:2000009": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as electron donor
     "METPO:2000010": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as energy source
     "METPO:2000011": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # ferments
@@ -171,6 +171,7 @@ STANDARD_PREFIXES = {
     "NCBITaxon", "CHEBI", "GO", "EC", "RO", "METPO", "biolink",
     "FOODON", "UBERON", "HP", "MONDO", "ENVO", "infores", "semapv",
     "kgmicrobe.activity", "kgmicrobe.trait", "kgmicrobe.compound",
+    "kgmicrobe.assay", "kgmicrobe.pathway", "kgmicrobe.carbon_substrate",
     "UniProtKB", "PR", "SO", "RHEA", "OBI", "IAO", "BFO",
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
     "OMP", "MOP", "KEGG", "COG", "GTDB", "skos", "owl", "rdf",

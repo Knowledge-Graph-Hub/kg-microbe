@@ -1,0 +1,28 @@
+# Registry of kgmicrobe.* placeholder CURIEs that stand in for proposed (not yet minted)
+# METPO terms in transform output.
+#
+# POLICY: Until a METPO term is officially minted in the upstream
+# berkeleybop/metpo ontology release, KG-Microbe transforms MUST NOT emit the
+# proposed METPO ID. Use a kgmicrobe.<sub>:<local_id> CURIE here instead. Once
+# the term is published in METPO, swap this row's transform_object_id back to
+# the METPO ID and mark status=accepted.
+#
+# kgmicrobe.* sub-prefixes in use (see kg_microbe/transform_utils/custom_curies.yaml
+# for the per-CURIE label/category definitions consumed by transforms):
+#   kgmicrobe.activity:* — molecular activities not yet in GO/EC/METPO
+#   kgmicrobe.trait:*    — phenotypic qualities not yet in METPO
+#   kgmicrobe.compound:* — chemical entities not yet in CHEBI
+#   kgmicrobe.pathway:*  — biological processes not yet in GO/METPO
+#
+# Columns:
+#   kgmicrobe_curie        — placeholder CURIE actually emitted by the transform
+#   label                  — human-readable label
+#   biolink_category       — biolink category emitted on the node
+#   proposed_metpo_id      — METPO ID this placeholder will swap to (mappings/metpo_proposal_*.tsv)
+#   proposed_metpo_label   — label of the proposed METPO term
+#   used_by                — transform/mapping file that emits this CURIE
+#   status                 — placeholder | proposal_filed | accepted
+#   notes                  — context, citation, swap instructions
+#
+kgmicrobe_curie	label	biolink_category	proposed_metpo_id	proposed_metpo_label	used_by	status	notes
+kgmicrobe.activity:coagulase_activity	coagulase activity	biolink:MolecularActivity	METPO:1007089	coagulase activity	kg_microbe/transform_utils/metatraits/mappings/enzyme_mappings.tsv	placeholder	1.49M observations in metatraits; bacterial coagulase test; no public GO/EC term covers the bacterial coagulase phenotype directly. Swap to METPO:1007089 once berkeleybop/metpo accepts the proposal in mappings/metpo_proposal_categorical.tsv.

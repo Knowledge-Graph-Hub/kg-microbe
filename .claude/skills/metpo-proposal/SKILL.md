@@ -26,8 +26,29 @@ Produce a clean, ROBOT-validated, ELK-coherent METPO term proposal that can be f
 | `mappings/metpo_proposal_classes_robot.tsv` | **ROBOT template** (two header rows) | Class declarations submittable to METPO maintainers |
 | `mappings/metpo_proposal_properties_robot.tsv` | ROBOT template | Property declarations submittable to METPO maintainers |
 | `kg_microbe/transform_utils/metatraits/mappings/metpo_alias_mappings.tsv` | Tier-2 override | Consumed by metatraits transform to use existing METPO IDs |
+| `mappings/kgmicrobe_proposal_placeholders.tsv` | curation TSV | Registry of `kgmicrobe.*:*` placeholder CURIEs that transforms emit while a METPO term is still under proposal — see "Placeholder policy" below |
 
 The `*_robot.tsv` files are the upstream-submittable artifacts. The plain `metpo_proposal_*.tsv` files are the curation/audit ledger.
+
+## Placeholder policy (transforms must not emit unminted METPO IDs)
+
+Until a proposed METPO term is officially minted in the upstream
+`berkeleybop/metpo` release, KG-Microbe transforms MUST NOT emit the proposed
+METPO ID into `nodes.tsv` / `edges.tsv`. Instead the transform mapping points at
+a `kgmicrobe.<sub>:<local_id>` placeholder CURIE.
+
+- Per-CURIE label / category / description live in
+  `kg_microbe/transform_utils/custom_curies.yaml` under one of the
+  `kgmicrobe.activity` / `kgmicrobe.trait` / `kgmicrobe.compound` /
+  `kgmicrobe.pathway` blocks.
+- The placeholder ↔ proposed-METPO swap table lives in
+  `mappings/kgmicrobe_proposal_placeholders.tsv`. Every kgmicrobe.* CURIE that
+  *does* correspond to a row in `mappings/metpo_proposal_*.tsv` MUST be listed
+  there with `status`, `used_by`, and target `proposed_metpo_id`.
+
+When a proposal lands upstream and the METPO ID is minted, swap the
+transform-side `object_id` from the kgmicrobe.* placeholder back to the METPO
+ID and update `status=accepted` in the placeholder registry.
 
 ## Workflow
 

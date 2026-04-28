@@ -1,3 +1,18 @@
+# Custom CURIE registry consumed by KG-Microbe transforms.
+#
+# kgmicrobe.* sub-prefixes:
+#   kgmicrobe.activity:* — molecular activities not yet in GO/EC/METPO
+#   kgmicrobe.trait:*    — phenotypic qualities not yet in METPO
+#   kgmicrobe.compound:* — chemical entities not yet in CHEBI
+#   kgmicrobe.pathway:*  — biological processes not yet in GO/METPO
+#
+# Any kgmicrobe.* CURIE that exists as a placeholder for a proposed METPO term
+# (i.e. one that appears in mappings/metpo_proposal_*.tsv and will be swapped to
+# the official METPO ID once minted upstream) MUST also be listed in
+# mappings/kgmicrobe_proposal_placeholders.tsv with status, transform usage, and
+# the target METPO ID. That TSV is the swap table; this YAML is the
+# label/category/predicate registry consumed by metatraits._build_trait_mapping.
+#
 phenotypic_quality: &phenotypic_quality_block
   category: "biolink:PhenotypicQuality"
   predicate: "biolink:has_phenotype"

@@ -23,10 +23,13 @@ _OBJECT_SOURCE_TO_CATEGORY = {
     "KGM": "biolink:PhenotypicQuality",  # Custom KG-Microbe terms for phenotypes not in METPO
 }
 
-# Category override: GO terms in enzyme_mappings.tsv are molecular functions
+# Category override: GO terms in enzyme_mappings.tsv are molecular functions.
+# KGM (kgmicrobe.activity:* placeholders for not-yet-minted METPO activity terms)
+# also resolves to MolecularActivity in the enzyme context — see
+# mappings/kgmicrobe_proposal_placeholders.tsv for the registry of these placeholders.
 _ENTITY_CATEGORY_OVERRIDE = {
-    "enzyme": {"GO": "biolink:MolecularActivity"},
-    "enzymes": {"GO": "biolink:MolecularActivity"},
+    "enzyme": {"GO": "biolink:MolecularActivity", "KGM": "biolink:MolecularActivity"},
+    "enzymes": {"GO": "biolink:MolecularActivity", "KGM": "biolink:MolecularActivity"},
 }
 
 

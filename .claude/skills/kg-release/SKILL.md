@@ -15,7 +15,9 @@ Cut an official GitHub release for a merged KG. One command produces:
 - `release_notes_<release>.md` — review verdicts + key signature deltas
 - `MANIFEST_<release>.json` — every asset's sha256 + reassembly recipe for split parts
 
-The skill **gates the release on a review verdict**. It looks for a recent artifact from `kg-model-review`, `kg-path-review`, and `kg-release-diff`, and runs whatever's missing. A `needs-attention` verdict blocks the release unless `--ignore-review` is passed.
+The skill **gates the release on review verdicts produced by Claude Code**. It looks for a recent artifact from `kg-model-review` and `kg-path-review` under each skill's `reviews/` dir. The kg-release script does **not** spawn reviews on its own — that's Claude Code's job via the `/kg-model-review` and `/kg-path-review` skills. If a required artifact is missing or stale, the script aborts with instructions to run the relevant Claude Code skill first. A `needs-attention` verdict (`Total ERRORs > 0` for kg-model-review, any `CRITICAL` finding for kg-path-review) blocks the release unless `--ignore-review` is passed.
+
+> The kg-release skill never invokes the codex plugin or any external review tool. The two review gates are the in-tree, Claude-driven `kg-model-review` and `kg-path-review` skills.
 
 ## Why this needs Plan B
 
@@ -104,7 +106,7 @@ poetry run python .claude/skills/kg-release/kg_release.py \
 ## Workflow
 
 1. **Pre-flight** — verify `gh auth status`, working tree clean, master/release branch, tag does not exist.
-2. **Review gate** — collect most recent artifact from each review skill. If older than `--review-max-age-days` or missing, run the review. Block on `needs-attention` unless `--ignore-review`.
+2. **Review gate** — load the most recent artifact from each review skill's `reviews/` dir. If older than `--review-max-age-days` or missing, **abort** and tell the user to run `/kg-model-review` and `/kg-path-review` via Claude Code first. Block on `needs-attention` (kg-model-review error count > 0, or kg-path-review CRITICAL findings) unless `--ignore-review`.
 3. **Stage assets** in `<out-dir>`:
    - `merged-kg_<release>.tar.gz` — recompress from `<merged-dir>` (always rebuild for reproducibility).
    - `data_transformed_<release>.tar.gz` — `tar c -I 'gzip -1' data/transformed`.

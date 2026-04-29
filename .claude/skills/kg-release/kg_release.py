@@ -131,8 +131,52 @@ def replace_existing_release(repo: str, tag: str) -> None:
 # -----------------------------------------------------------------------------
 
 
+REQUIRED_REVIEW_SKILLS = ("kg-model-review", "kg-path-review")
+
+
+def _classify_verdict(skill: str, text: str) -> str:
+    """Classify a review artifact as 'ok' or 'needs-attention'.
+
+    Each review skill emits its own format; check by skill name rather than
+    by hunting for codex-style "needs-attention" strings.
+
+    - kg-model-review:  text/md output ends with `Total ERRORs: N`. N>0 => bad.
+                        json output has `summary.total_errors`. Same rule.
+    - kg-path-review:   archetype reports include severity rows; any `CRITICAL`
+                        finding fails the gate. WARNING/INFO are advisory.
+    """
+    if skill == "kg-model-review":
+        # Look for "Total ERRORs: N" (text/md) or '"total_errors": N' (json).
+        for line in text.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("Total ERRORs:") or stripped.startswith("- Total ERRORs:"):
+                try:
+                    n = int(stripped.split(":", 1)[1].strip().split()[0])
+                except (ValueError, IndexError):
+                    continue
+                return "needs-attention" if n > 0 else "ok"
+            if '"total_errors"' in stripped:
+                try:
+                    n = int(stripped.split(":", 1)[1].strip().rstrip(","))
+                except (ValueError, IndexError):
+                    continue
+                return "needs-attention" if n > 0 else "ok"
+        return "unknown"
+    if skill == "kg-path-review":
+        # CRITICAL findings are hard fails per the skill's own contract.
+        for line in text.splitlines():
+            if "CRITICAL" in line and not line.lstrip().startswith("#"):
+                return "needs-attention"
+        return "ok"
+    return "unknown"
+
+
 def find_recent_review(skill: str, max_age_days: int) -> Optional[ReviewArtifact]:
-    """Return the newest review artifact from <skill>/reviews/ within max_age_days."""
+    """Return the newest review artifact from <skill>/reviews/ within max_age_days.
+
+    Reviews are produced by the user invoking the review skill in Claude Code;
+    this script never spawns the review itself.
+    """
     review_dir = SKILLS_DIR / skill / "reviews"
     if not review_dir.is_dir():
         return None
@@ -148,49 +192,45 @@ def find_recent_review(skill: str, max_age_days: int) -> Optional[ReviewArtifact
     if not candidates:
         return None
     mtime, path = max(candidates)
-    text = path.read_text(encoding="utf-8", errors="replace").lower()
-    verdict = "ok"
-    if "needs-attention" in text or "no-ship" in text or "[error]" in text:
-        verdict = "needs-attention"
+    text = path.read_text(encoding="utf-8", errors="replace")
+    verdict = _classify_verdict(skill, text)
     return ReviewArtifact(skill=skill, path=path, mtime=mtime, verdict=verdict)
 
 
-def run_review(skill: str, args_extra: list[str]) -> Optional[ReviewArtifact]:
-    """Invoke a review skill's CLI and pick up the artifact it just wrote."""
-    script = SKILLS_DIR / skill / f"{skill.replace('-', '_')}.py"
-    if not script.is_file():
-        log(f"skill script not found: {script}; skipping {skill}")
-        return None
-    log(f"running {skill}")
-    proc = subprocess.run(
-        ["poetry", "run", "python", str(script), *args_extra],
-        capture_output=True, text=True, cwd=REPO_ROOT,
-    )
-    if proc.returncode != 0:
-        log(f"WARN: {skill} exited {proc.returncode}; stderr tail: {proc.stderr[-400:]}")
-    # Skills save with default-on; we just look up the newest artifact under reviews/.
-    return find_recent_review(skill, max_age_days=1)
-
-
-def gate_on_reviews(merged_dir: Path, max_age_days: int, ignore: bool,
+def gate_on_reviews(max_age_days: int, ignore: bool,
                     skip_review: bool) -> list[ReviewArtifact]:
-    """Run/load the three review skills and return their artifacts.
+    """Load review artifacts produced by the review skills via Claude Code.
 
-    Aborts when any verdict is `needs-attention` and `--ignore-review` is not set.
+    The kg-release skill does not run reviews itself — that's Claude Code's
+    job through `/kg-model-review` and `/kg-path-review`. This function only
+    looks for artifacts the user has already produced.
+
+    Aborts when any verdict is `needs-attention` (unless `--ignore-review`)
+    or any required artifact is missing/stale (unless `--skip-review`).
     """
     if skip_review:
-        log("--skip-review set: not running or loading review artifacts")
+        log("--skip-review set: not loading review artifacts")
         return []
     artifacts: list[ReviewArtifact] = []
-    for skill, extra in (
-        ("kg-model-review", ["--merged-dir", str(merged_dir), "--format", "md"]),
-        ("kg-path-review", ["archetype", "self-loops"]),
-    ):
+    missing: list[str] = []
+    for skill in REQUIRED_REVIEW_SKILLS:
         art = find_recent_review(skill, max_age_days)
         if art is None:
-            art = run_review(skill, extra)
-        if art:
+            missing.append(skill)
+        else:
             artifacts.append(art)
+    if missing:
+        cmds = "\n".join(
+            f"  /{s}" for s in missing
+        )
+        sys.exit(
+            f"[kg-release] missing/stale review artifacts (older than "
+            f"{max_age_days} days) for: {', '.join(missing)}.\n"
+            f"Run the review skill(s) via Claude Code first, e.g.:\n"
+            f"{cmds}\n"
+            f"Then re-run this script. Pass --skip-review to override "
+            f"(not recommended for official releases)."
+        )
     bad = [a for a in artifacts if a.verdict == "needs-attention"]
     if bad and not ignore:
         names = ", ".join(a.skill for a in bad)
@@ -486,9 +526,9 @@ def main() -> int:
     elif not args.dry_run:
         check_tag_unused(repo, args.release)
 
-    # Review gate
+    # Review gate — consumes artifacts produced by Claude Code via the
+    # /kg-model-review and /kg-path-review skills. Never spawns reviews itself.
     artifacts = gate_on_reviews(
-        merged_dir=args.merged_dir,
         max_age_days=args.review_max_age_days,
         ignore=args.ignore_review,
         skip_review=args.skip_review,

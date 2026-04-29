@@ -56,9 +56,10 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
         finally:
             conn.close()
         return _GO_NAMESPACE_CACHE
-    except Exception:
+    except Exception as exc:
+        print(f"Warning: failed to load GO namespace map from {go_db_path}: {exc}")
         _GO_NAMESPACE_LOAD_FAILED = True
-        raise
+        return {}
 
 
 def replace_category_ontology(line, id_index, category_index):

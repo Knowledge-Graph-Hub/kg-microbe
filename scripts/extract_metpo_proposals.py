@@ -562,27 +562,37 @@ CATEGORICAL_TERMS: List[Term] = [
         synonyms=["EMB agar growth", "Eosin Methylene Blue agar growth"],
         priority="LOW",
     ),
+    # Bile-acid response hierarchy: a neutral parent (METPO:1007051) groups
+    # the assay outcomes for bile-acid challenge. Susceptibility (growth
+    # inhibited) lives under the neutral response parent — NOT under a
+    # "selective media growth" parent, which would imply the opposite
+    # polarity (i.e. that susceptible taxa can grow on the selective
+    # medium).
+    Term(
+        proposed_id="METPO:1007051",
+        scope="categorical",
+        term_type="Class",
+        label="bile acid response",
+        definition=(
+            "A phenotypic quality describing the organism's growth response when "
+            "challenged with bile acids or bile salts. Encompasses both "
+            "tolerance/resistance (growth proceeds) and susceptibility (growth "
+            "is inhibited); the specific outcome is asserted by child classes."
+        ),
+        parent_or_subproperty=_PHENO_PARENT,
+        xrefs=["CHEBI:3098"],
+        synonyms=["bile resistance", "bile tolerance", "bile salt response"],
+        priority="LOW",
+    ),
     Term(
         proposed_id="METPO:1007056",
         scope="categorical",
         term_type="Class",
         label="bile acid susceptible",
         definition="Phenotype where growth is inhibited by bile acids or bile salts.",
-        parent_or_subproperty="METPO:1007050",
+        parent_or_subproperty="METPO:1007051",
         xrefs=["CHEBI:3098"],
         synonyms=["growth: bile acid susceptible"],
-        priority="LOW",
-    ),
-    # Independent bile-tolerance class (positive counterpart of bile susceptibility).
-    Term(
-        proposed_id="METPO:1007051",
-        scope="categorical",
-        term_type="Class",
-        label="bile resistance",
-        definition="A phenotypic quality describing the ability to grow in the presence of bile acids or bile salts.",
-        parent_or_subproperty=_PHENO_PARENT,
-        xrefs=["CHEBI:3098"],
-        synonyms=["bile tolerance"],
         priority="LOW",
     ),
 
@@ -752,18 +762,27 @@ CATEGORICAL_TERMS: List[Term] = [
         xrefs=["GO:0042710"],
         priority="MEDIUM",
     ),
-    # Catalase/oxidase/urease activity — parents + positive/negative children
-    # following METPO's biochemical-test pattern (e.g. METPO:1005010-1005018
-    # for indole/MR/VP).
+    # Catalase/oxidase/urease tests — neutral assay-result parents (NOT
+    # subclasses of "X activity") with positive/negative children. A "negative"
+    # result is the absence of detectable activity, so subclassing it under an
+    # activity parent would be polarity-inverted (catalase-negative organisms
+    # would roll up as "has catalase activity"). The parent here is the test/
+    # assay itself; its children are the observed test outcomes. Pattern
+    # matches METPO's existing biochemical-test classes (e.g.
+    # METPO:1005010-1005018 for indole/MR/VP).
     Term(
         proposed_id="METPO:1007080",
         scope="categorical",
         term_type="Class",
-        label="catalase activity",
-        definition="A phenotypic quality describing catalase enzyme activity (H2O2 decomposition).",
+        label="catalase test",
+        definition=(
+            "A biochemical test that detects catalase enzyme activity by exposing "
+            "cells to hydrogen peroxide and observing for visible bubbling. The "
+            "test outcome (positive or negative) is captured by its child classes; "
+            "this class itself does not assert that the organism has catalase activity."
+        ),
         parent_or_subproperty=_PHENO_PARENT,
-        xrefs=["GO:0004096"],
-        synonyms=["catalase test"],
+        synonyms=["catalase activity test", "catalase assay"],
         priority="MEDIUM",
     ),
     Term(
@@ -771,8 +790,13 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="catalase positive",
-        definition="Phenotype where the catalase test yields a positive result (visible bubbling on H2O2).",
+        definition=(
+            "Phenotype where the catalase test yields a positive result (visible "
+            "bubbling on H2O2), indicating that the organism has detectable "
+            "catalase activity (GO:0004096)."
+        ),
         parent_or_subproperty="METPO:1007080",
+        xrefs=["GO:0004096"],
         synonyms=["catalase test positive", "catalase +"],
         priority="MEDIUM",
     ),
@@ -781,7 +805,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="catalase negative",
-        definition="Phenotype where the catalase test yields a negative result (no bubbling on H2O2).",
+        definition=(
+            "Phenotype where the catalase test yields a negative result (no "
+            "bubbling on H2O2), indicating absence of detectable catalase activity."
+        ),
         parent_or_subproperty="METPO:1007080",
         synonyms=["catalase test negative", "catalase -"],
         priority="MEDIUM",
@@ -790,11 +817,14 @@ CATEGORICAL_TERMS: List[Term] = [
         proposed_id="METPO:1007081",
         scope="categorical",
         term_type="Class",
-        label="oxidase activity",
-        definition="A phenotypic quality describing cytochrome c oxidase activity detected in the oxidase test.",
+        label="oxidase test",
+        definition=(
+            "A biochemical test that detects cytochrome c oxidase activity using a "
+            "redox indicator. The test outcome (positive or negative) is captured "
+            "by its child classes; this class itself does not assert oxidase activity."
+        ),
         parent_or_subproperty=_PHENO_PARENT,
-        xrefs=["GO:0004129"],
-        synonyms=["oxidase test"],
+        synonyms=["oxidase activity test", "cytochrome oxidase test"],
         priority="MEDIUM",
     ),
     Term(
@@ -802,8 +832,12 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="oxidase positive",
-        definition="Phenotype where the oxidase test yields a positive result.",
+        definition=(
+            "Phenotype where the oxidase test yields a positive result, indicating "
+            "detectable cytochrome c oxidase activity (GO:0004129)."
+        ),
         parent_or_subproperty="METPO:1007081",
+        xrefs=["GO:0004129"],
         synonyms=["oxidase test positive", "oxidase +"],
         priority="MEDIUM",
     ),
@@ -812,7 +846,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="oxidase negative",
-        definition="Phenotype where the oxidase test yields a negative result.",
+        definition=(
+            "Phenotype where the oxidase test yields a negative result, indicating "
+            "absence of detectable cytochrome c oxidase activity."
+        ),
         parent_or_subproperty="METPO:1007081",
         synonyms=["oxidase test negative", "oxidase -"],
         priority="MEDIUM",
@@ -821,11 +858,15 @@ CATEGORICAL_TERMS: List[Term] = [
         proposed_id="METPO:1007082",
         scope="categorical",
         term_type="Class",
-        label="urease activity",
-        definition="A phenotypic quality describing urease enzyme activity (urea hydrolysis).",
+        label="urease test",
+        definition=(
+            "A biochemical test that detects urease enzyme activity by observing "
+            "urea hydrolysis (typically via a pH-indicator color change). The test "
+            "outcome (positive or negative) is captured by its child classes; this "
+            "class itself does not assert urease activity."
+        ),
         parent_or_subproperty=_PHENO_PARENT,
-        xrefs=["GO:0009039"],
-        synonyms=["urease test"],
+        synonyms=["urease activity test", "urea hydrolysis test"],
         priority="MEDIUM",
     ),
     Term(
@@ -833,8 +874,12 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="urease positive",
-        definition="Phenotype where the urease test yields a positive result.",
+        definition=(
+            "Phenotype where the urease test yields a positive result, indicating "
+            "detectable urease activity (GO:0009039)."
+        ),
         parent_or_subproperty="METPO:1007082",
+        xrefs=["GO:0009039"],
         synonyms=["urease test positive", "urease +"],
         priority="MEDIUM",
     ),
@@ -843,7 +888,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="urease negative",
-        definition="Phenotype where the urease test yields a negative result.",
+        definition=(
+            "Phenotype where the urease test yields a negative result, indicating "
+            "absence of detectable urease activity."
+        ),
         parent_or_subproperty="METPO:1007082",
         synonyms=["urease test negative", "urease -"],
         priority="MEDIUM",

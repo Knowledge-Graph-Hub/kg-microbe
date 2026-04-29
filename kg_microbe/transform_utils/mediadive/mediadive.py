@@ -92,7 +92,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_MEDIUM_NEGATIVE_EDGE,
     NCBITAXON_ID_COLUMN,
-    OBJECT_ID_COLUMN,
     OBSERVATION,
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
@@ -131,6 +130,10 @@ class MediaDiveTransform(Transform):
         """Instantiate part."""
         source_name = MEDIADIVE
         super().__init__(source_name, input_dir, output_dir)
+        # Extend edge schema with `value`/`unit` so solution→ingredient edges
+        # can carry the recipe's amount + unit (g/l, mmol/l, ml/l, ...).
+        # Other edge sites in this transform leave both columns empty.
+        self.edge_header = self.edge_header + ["value", "unit"]
         requests_cache.install_cache("mediadive_cache")
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
@@ -942,7 +945,14 @@ class MediaDiveTransform(Transform):
 
                     for solution_id in solutions_dict.keys():
                         solution_curie = MEDIADIVE_SOLUTION_PREFIX + str(solution_id)
-                        ingredients_dict.update(self.get_compounds_of_solution(str(solution_id)))
+                        # Per-solution ingredients drive edge emission so a solution
+                        # only links to its own recipe items. ingredients_dict still
+                        # accumulates across the medium for downstream node creation
+                        # and CHEBI role enrichment; using it for edges produced
+                        # cross-solution leakage (e.g. medium 92a's solution:161
+                        # inherited solution:5629's vitamins).
+                        solution_ingredients = self.get_compounds_of_solution(str(solution_id))
+                        ingredients_dict.update(solution_ingredients)
                         solution_ingredient_edges.extend(
                             [
                                 [
@@ -953,8 +963,10 @@ class MediaDiveTransform(Transform):
                                     self.knowledge_source,  # Use infores:mediadive
                                     OBSERVATION,
                                     MANUAL_AGENT,
+                                    v.get(AMOUNT_COLUMN) if v.get(AMOUNT_COLUMN) is not None else "",
+                                    v.get(UNIT_COLUMN) if v.get(UNIT_COLUMN) is not None else "",
                                 ]
-                                for _, v in ingredients_dict.items()
+                                for _, v in solution_ingredients.items()
                             ]
                         )
                         solution_ingredient_edges.append(
@@ -1061,10 +1073,9 @@ class MediaDiveTransform(Transform):
         drop_duplicates(
             self.output_node_file,
             sort_by_column=ID_COLUMN,
-            consolidation_columns=[ID_COLUMN, NAME_COLUMN],
             dedup_on_sort_column=True,
         )
-        drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
+        drop_duplicates(self.output_edge_file)
 
         # Print data source and API call statistics
         print("\n" + "=" * 80)

@@ -19,8 +19,19 @@ import sys
 import tarfile
 import yaml
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+
+
+def _save_review_artifact(content: str, scope: str, ext: str = "txt") -> Path:
+    """Save review output to <skill_dir>/reviews/<YYYYMMDD_HHMMSS>_<scope>.<ext>."""
+    out_dir = Path(__file__).parent / "reviews"
+    out_dir.mkdir(exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe = re.sub(r"[^\w.-]+", "_", scope).strip("_") or "review"
+    path = out_dir / f"{ts}_{safe}.{ext}"
+    path.write_text(content, encoding="utf-8")
+    return path
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 HERE = Path(__file__).parent
@@ -362,12 +373,13 @@ def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
     if not edge_rows:
         return findings
 
-    id_to_cat: dict = {}
+    id_to_cats: dict = {}
     for r in node_rows:
         nid = r.get("id", "")
-        cat = (r.get("category") or "").split("|")[0].strip()
-        if nid and cat:
-            id_to_cat[nid] = cat
+        raw = r.get("category") or ""
+        cats = tuple(c.strip() for c in raw.split("|") if c.strip())
+        if nid and cats:
+            id_to_cats[nid] = cats
 
     # group violations: (predicate, side, observed_cat) -> [example subject→object strings]
     violations: dict = defaultdict(list)
@@ -384,13 +396,17 @@ def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
 
         subj = e.get("subject", "")
         obj = e.get("object", "")
-        subj_cat = id_to_cat.get(subj)
-        obj_cat = id_to_cat.get(obj)
+        subj_cats = id_to_cats.get(subj)
+        obj_cats = id_to_cats.get(obj)
 
-        if subj_cat and subj_cat not in domain_ok:
-            violations[(pred, "subject", subj_cat)].append(f"{subj} → {obj}")
-        if obj_cat and obj_cat not in range_ok:
-            violations[(pred, "object", obj_cat)].append(f"{subj} → {obj}")
+        # An edge is compliant if ANY of the node's categories is in the allowed
+        # set (categories are pipe-delimited; we expand each side via bmt
+        # descendants in _expand_allowed). Report against the primary (first)
+        # category for grouping purposes.
+        if subj_cats and not any(c in domain_ok for c in subj_cats):
+            violations[(pred, "subject", subj_cats[0])].append(f"{subj} → {obj}")
+        if obj_cats and not any(c in range_ok for c in obj_cats):
+            violations[(pred, "object", obj_cats[0])].append(f"{subj} → {obj}")
 
     if not checked_edges:
         return findings  # nothing constrained in this batch
@@ -817,6 +833,8 @@ def main():
                         help="Max rows to sample per file (0=all)")
     parser.add_argument("--strict-kgx", action="store_true",
                         help="Additionally run kgx.validator.Validator (authoritative KGX spec check)")
+    parser.add_argument("--no-save", action="store_true",
+                        help="Skip writing a timestamped artifact under <skill>/reviews/")
     args = parser.parse_args()
 
     max_rows = args.max_rows  # 0 means unlimited (iter_tsv handles 0 as no limit)
@@ -877,11 +895,25 @@ def main():
                 "edges": [{"severity": f.severity, "check": f.check, "message": f.message}
                           for f in r["edges"]],
             })
-        print(json.dumps(output, indent=2))
+        rendered = json.dumps(output, indent=2)
+        ext = "json"
     elif args.format == "md":
-        print(format_text(results, format_md=True))
+        rendered = format_text(results, format_md=True)
+        ext = "md"
     else:
-        print(format_text(results, format_md=False))
+        rendered = format_text(results, format_md=False)
+        ext = "txt"
+    print(rendered)
+
+    if not args.no_save:
+        if args.merged:
+            scope = "merged"
+        elif args.transform:
+            scope = args.transform
+        else:
+            scope = "all-transforms"
+        saved = _save_review_artifact(rendered, scope, ext=ext)
+        print(f"  Saved review to {saved}", file=sys.stderr)
 
 
 if __name__ == "__main__":

@@ -21,7 +21,6 @@ from kg_microbe.transform_utils.constants import (
 def drop_duplicates(
     file_path: Path,
     sort_by_column: str = SUBJECT_COLUMN,
-    consolidation_columns: List = None,
     dedup_on_sort_column: bool = False,
 ):
     """
@@ -29,7 +28,6 @@ def drop_duplicates(
 
     :param file_path: Path to the TSV file.
     :param sort_by_column: Column name to sort the DataFrame.
-    :param consolidation_columns: List of columns to consolidate.
     :param dedup_on_sort_column: If True, also remove rows with duplicate sort_by_column values
         (keeping the first occurrence). Use for node files where the same ID may appear with
         different attributes.

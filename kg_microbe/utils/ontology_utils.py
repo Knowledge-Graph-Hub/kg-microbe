@@ -1,6 +1,7 @@
 """Ontology utilities for category assignment and term processing."""
 
-from typing import Optional
+import sqlite3
+from typing import Dict, Optional
 
 from oaklib.interfaces import OboGraphInterface
 
@@ -21,6 +22,44 @@ from kg_microbe.transform_utils.constants import (
     SMALL_MOLECULE_CATEGORY,
     UNIPROT_PREFIX,
 )
+
+_GO_NAMESPACE_CACHE: Optional[Dict[str, str]] = None
+_GO_NAMESPACE_LOAD_FAILED: bool = False
+
+
+def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
+    """
+    Read GO id → OBO namespace from semantic-sql sqlite directly.
+
+    Bypasses OAK's curies converter, which fails to build when the upstream
+    GO sqlite contains case-collision prefix rows (e.g. both 'CHR' and 'chr'
+    → 'obo/CHR_'). Newer `curies` rejects duplicate URI prefixes strictly,
+    so every entity_metadata_map call would otherwise throw and fall through
+    to the BiologicalProcess fallback for every GO node.
+
+    Caches both success (the dict) and failure (an empty dict + a flag) so a
+    missing / unreadable sqlite file does not retry per call.
+    """
+    global _GO_NAMESPACE_CACHE, _GO_NAMESPACE_LOAD_FAILED
+    if _GO_NAMESPACE_CACHE is not None:
+        return _GO_NAMESPACE_CACHE
+    if _GO_NAMESPACE_LOAD_FAILED:
+        return {}
+    try:
+        conn = sqlite3.connect(go_db_path)
+        try:
+            cur = conn.execute(
+                "SELECT subject, value FROM node_to_value_statement "
+                "WHERE predicate = 'oio:hasOBONamespace' AND subject LIKE 'GO:%'"
+            )
+            _GO_NAMESPACE_CACHE = {row[0]: row[1] for row in cur}
+        finally:
+            conn.close()
+        return _GO_NAMESPACE_CACHE
+    except Exception as exc:
+        print(f"Warning: failed to load GO namespace map from {go_db_path}: {exc}")
+        _GO_NAMESPACE_LOAD_FAILED = True
+        return {}
 
 
 def replace_category_ontology(line, id_index, category_index):
@@ -63,7 +102,8 @@ def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInte
     Args:
     ----
         go_term_id: GO term ID (e.g., "GO:0004096")
-        go_adapter: Optional OAK adapter for GO ontology. If None, will create one.
+        go_adapter: Unused (kept for backward compatibility with existing callers).
+            Namespace lookup uses a cached direct sqlite query against GO_SOURCE.
 
     Returns:
     -------
@@ -78,39 +118,25 @@ def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInte
         'biolink:BiologicalProcess'
 
     """
-    # Create adapter if not provided
-    if go_adapter is None:
-        try:
-            from oaklib import get_adapter
+    del go_adapter  # see docstring
+    from kg_microbe.transform_utils.constants import GO_SOURCE
 
-            from kg_microbe.transform_utils.constants import GO_SOURCE
-
-            go_adapter = get_adapter(f"sqlite:{GO_SOURCE}")
-        except Exception:
-            # Fallback to default path
-            from oaklib import get_adapter
-
-            go_adapter = get_adapter("sqlite:data/raw/go.db")
+    go_db_path = str(GO_SOURCE.with_suffix(".db")) if GO_SOURCE else "data/raw/go.db"
 
     try:
-        # Get term information
-        term_info = go_adapter.entity_metadata_map(go_term_id)
-
-        if term_info and go_term_id in term_info:
-            # Get namespace (aspect) from term metadata
-            namespace = term_info[go_term_id].get("namespace", "")
-
-            if namespace == "molecular_function":
-                return MOLECULAR_ACTIVITY_CATEGORY
-            elif namespace == "biological_process":
-                return BIOLOGICAL_PROCESS_CATEGORY
-            elif namespace == "cellular_component":
-                return CELLULAR_COMPONENT_CATEGORY
-
+        ns_map = _load_go_namespace_map(go_db_path)
     except Exception as e:
-        print(f"Warning: Could not determine GO aspect for {go_term_id}: {e}")
+        print(f"Warning: Could not load GO namespace map from {go_db_path}: {e}")
+        return BIOLOGICAL_PROCESS_CATEGORY
 
-    # Fallback to BiologicalProcess for unknown/error cases
+    namespace = ns_map.get(go_term_id, "")
+    if namespace == "molecular_function":
+        return MOLECULAR_ACTIVITY_CATEGORY
+    if namespace == "biological_process":
+        return BIOLOGICAL_PROCESS_CATEGORY
+    if namespace == "cellular_component":
+        return CELLULAR_COMPONENT_CATEGORY
+
     return BIOLOGICAL_PROCESS_CATEGORY
 
 

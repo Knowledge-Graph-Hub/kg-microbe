@@ -30354,3 +30354,7 @@ docs/COPILOT_*.md
 docs/202[0-9][0-9][0-9]_*.md
 docs/*_IMPLEMENTATION_SUMMARY.md
 docs/*_FIX.md
+
+# kg-release skill staging area (large tarballs, never committed)
+releases/
+.claude/skills/*/reviews/

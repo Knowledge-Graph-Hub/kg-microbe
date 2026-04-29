@@ -403,7 +403,7 @@ class MadinEtAlTransform(Transform):
                                         [
                                             tax_id,
                                             NCBI_TO_PATHWAY_EDGE,
-                                            PATHWAY_PREFIX + item.strip().lower(),
+                                            PATHWAY_PREFIX + item.strip(),
                                             BIOLOGICAL_PROCESS,
                                             self.knowledge_source,  # Use infores:madin_etal
                                             OBSERVATION,
@@ -929,9 +929,8 @@ class MadinEtAlTransform(Transform):
         drop_duplicates(
             self.output_node_file,
             sort_by_column=ID_COLUMN,
-            consolidation_columns=[ID_COLUMN, NAME_COLUMN],
         )
-        drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
+        drop_duplicates(self.output_edge_file)
         # dump_ont_nodes_from(
         #     self.output_node_file, self.input_base_dir / CHEBI_NODES_FILENAME, CHEBI_PREFIX
         # )

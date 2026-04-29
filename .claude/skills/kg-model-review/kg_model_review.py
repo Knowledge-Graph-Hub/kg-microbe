@@ -19,8 +19,19 @@ import sys
 import tarfile
 import yaml
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+
+
+def _save_review_artifact(content: str, scope: str, ext: str = "txt") -> Path:
+    """Save review output to <skill_dir>/reviews/<YYYYMMDD_HHMMSS>_<scope>.<ext>."""
+    out_dir = Path(__file__).parent / "reviews"
+    out_dir.mkdir(exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe = re.sub(r"[^\w.-]+", "_", scope).strip("_") or "review"
+    path = out_dir / f"{ts}_{safe}.{ext}"
+    path.write_text(content, encoding="utf-8")
+    return path
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 HERE = Path(__file__).parent
@@ -128,11 +139,50 @@ try:
 except ImportError:
     pass
 
+# Predicate → (allowed_subject_categories, allowed_object_categories) constraint.
+# Each set lists biolink category CURIEs; an edge's subject/object is compliant if
+# its declared category is either in the set or (via bmt) a descendant of any
+# member. Violations surface as WARNING under the new "DomainRange" check bucket.
+# The map covers: (a) every biolink predicate KG-Microbe emits with a non-trivial
+# domain or range narrower than NamedThing, and (b) every METPO:2000xxx predicate
+# KG-Microbe emits — METPO domain/range is not machine-readable yet, so these are
+# hand-curated from metpo.json labels. Keys are intentionally narrow; predicates
+# absent here are skipped (no false positives from permissive biolink defaults).
+PREDICATE_DOMAIN_RANGE = {
+    # ── Biolink ─────────────────────────────────────────────────────────────
+    "biolink:consumes":       ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
+    "biolink:produces":       ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
+    "biolink:located_in":     ({"biolink:BiologicalEntity", "biolink:Protein", "biolink:Gene"}, {"biolink:NamedThing"}),
+    "biolink:has_phenotype":  ({"biolink:BiologicalEntity", "biolink:OrganismTaxon"},  {"biolink:PhenotypicFeature", "biolink:Attribute", "biolink:OntologyClass"}),
+    "biolink:capable_of":     ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:OntologyClass"}),
+    "biolink:has_chemical_role": ({"biolink:ChemicalEntity"}, {"biolink:ChemicalRole", "biolink:OntologyClass"}),
+    "biolink:associated_with_resistance_to":  ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
+    "biolink:associated_with_sensitivity_to": ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
+    "biolink:enables":        ({"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}, {"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}),
+    "biolink:enabled_by":     ({"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}, {"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}),
+    # ── METPO:2000xxx (organism → chemical / pathway / medium) ──────────────
+    "METPO:2000002": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # assimilates
+    "METPO:2000003": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds acid from
+    "METPO:2000004": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds base from
+    "METPO:2000005": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds gas from
+    "METPO:2000006": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as carbon source
+    "METPO:2000007": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:EnvironmentalMaterial"}),  # degrades — covers crude oil and other ENVO materials
+    "METPO:2000009": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as electron donor
+    "METPO:2000010": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as energy source
+    "METPO:2000011": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # ferments
+    "METPO:2000013": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # hydrolyzes
+    "METPO:2000014": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as nitrogen source
+    "METPO:2000103": ({"biolink:OrganismTaxon"}, {"biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:OntologyClass"}),  # capable of
+    "METPO:2000517": ({"biolink:OrganismTaxon"}, {"biolink:GrowthMedium"}),  # grows in
+    "METPO:2000518": ({"biolink:OrganismTaxon"}, {"biolink:GrowthMedium"}),  # does not grow in
+}
+
 # ── Standard known CURIE prefixes ─────────────────────────────────────────────
 STANDARD_PREFIXES = {
     "NCBITaxon", "CHEBI", "GO", "EC", "RO", "METPO", "biolink",
     "FOODON", "UBERON", "HP", "MONDO", "ENVO", "infores", "semapv",
     "kgmicrobe.activity", "kgmicrobe.trait", "kgmicrobe.compound",
+    "kgmicrobe.assay", "kgmicrobe.pathway", "kgmicrobe.carbon_substrate",
     "UniProtKB", "PR", "SO", "RHEA", "OBI", "IAO", "BFO",
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
     "OMP", "MOP", "KEGG", "COG", "GTDB", "skos", "owl", "rdf",
@@ -247,12 +297,22 @@ def iter_tsv(path: Path, max_rows: int):
 
 
 def iter_tsv_from_tar(tar_path: Path, member_name: str, max_rows: int):
-    """Yield dicts from a TSV member inside a .tar.gz archive."""
+    """Yield dicts from a TSV member inside a .tar.gz archive.
+
+    Accepts member_name either at the archive root or nested under a single
+    top-level directory (e.g. `20260422_nometatraits/merged-kg_nodes.tsv`).
+    """
     count = 0
     with tarfile.open(tar_path, "r:gz") as tf:
+        member = None
         try:
             member = tf.getmember(member_name)
         except KeyError:
+            for m in tf.getmembers():
+                if m.name.endswith("/" + member_name) or m.name == member_name:
+                    member = m
+                    break
+        if member is None:
             return
         f = tf.extractfile(member)
         if f is None:
@@ -268,6 +328,108 @@ def iter_tsv_from_tar(tar_path: Path, member_name: str, max_rows: int):
 
 def get_prefix(curie: str) -> str:
     return curie.split(":")[0] if ":" in curie else ""
+
+
+# Cache of bmt-expanded allowed-category sets per predicate, so every edge
+# lookup is a plain set membership test.
+_DR_EXPANDED_CACHE: dict = {}
+
+
+def _expand_allowed(cats: set) -> set:
+    """Return `cats` unioned with all bmt descendants of each member.
+
+    Falls back to the literal set when bmt is unavailable.
+    """
+    key = frozenset(cats)
+    if key in _DR_EXPANDED_CACHE:
+        return _DR_EXPANDED_CACHE[key]
+    expanded = set(cats)
+    try:
+        import bmt
+        t = bmt.Toolkit()
+        for cat in cats:
+            slug = cat.replace("biolink:", "")
+            # bmt expects human-readable names; convert CamelCase → "space-separated"
+            # only if needed — get_descendants accepts both CURIE and snake forms.
+            try:
+                descendants = t.get_descendants(slug, formatted=True, reflexive=True)
+                expanded |= set(descendants)
+            except Exception:
+                # Unknown CURIE (e.g. KG-Microbe extension like biolink:GrowthMedium)
+                continue
+    except Exception:
+        pass
+    _DR_EXPANDED_CACHE[key] = expanded
+    return expanded
+
+
+def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
+    """Check that each edge's subject/object categories match the predicate's domain/range.
+
+    Violations are grouped by (predicate, side, observed-category); only
+    predicates present in ``PREDICATE_DOMAIN_RANGE`` are checked.
+    """
+    findings: list = []
+    if not edge_rows:
+        return findings
+
+    id_to_cats: dict = {}
+    for r in node_rows:
+        nid = r.get("id", "")
+        raw = r.get("category") or ""
+        cats = tuple(c.strip() for c in raw.split("|") if c.strip())
+        if nid and cats:
+            id_to_cats[nid] = cats
+
+    # group violations: (predicate, side, observed_cat) -> [example subject→object strings]
+    violations: dict = defaultdict(list)
+    checked_edges = 0
+    constrained_preds = set(PREDICATE_DOMAIN_RANGE.keys())
+    for e in edge_rows:
+        pred = (e.get("predicate") or "").strip()
+        if pred not in constrained_preds:
+            continue
+        checked_edges += 1
+        domain_allowed, range_allowed = PREDICATE_DOMAIN_RANGE[pred]
+        domain_ok = _expand_allowed(domain_allowed)
+        range_ok = _expand_allowed(range_allowed)
+
+        subj = e.get("subject", "")
+        obj = e.get("object", "")
+        subj_cats = id_to_cats.get(subj)
+        obj_cats = id_to_cats.get(obj)
+
+        # An edge is compliant if ANY of the node's categories is in the allowed
+        # set (categories are pipe-delimited; we expand each side via bmt
+        # descendants in _expand_allowed). Report against the primary (first)
+        # category for grouping purposes.
+        if subj_cats and not any(c in domain_ok for c in subj_cats):
+            violations[(pred, "subject", subj_cats[0])].append(f"{subj} → {obj}")
+        if obj_cats and not any(c in range_ok for c in obj_cats):
+            violations[(pred, "object", obj_cats[0])].append(f"{subj} → {obj}")
+
+    if not checked_edges:
+        return findings  # nothing constrained in this batch
+
+    if violations:
+        total_bad = sum(len(v) for v in violations.values())
+        ranked = sorted(violations.items(), key=lambda kv: -len(kv[1]))
+        examples = []
+        for (pred, side, cat), exs in ranked[:5]:
+            examples.append(f"{pred} ({side}={cat}): {len(exs)} edges, e.g. {exs[0]}")
+        findings.append(
+            Finding(
+                "WARNING",
+                "DomainRange",
+                f"{total_bad} edges violate predicate domain/range across {len(violations)} distinct constraints",
+                examples if verbose else [],
+            )
+        )
+    else:
+        findings.append(
+            Finding("INFO", "DomainRange", f"Domain/range OK across {checked_edges:,} constrained edges")
+        )
+    return findings
 
 
 # ── Per-file checks ───────────────────────────────────────────────────────────
@@ -481,6 +643,7 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
         edges_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_edges.tsv", max_rows))
         result["nodes"] = check_nodes_rows(nodes_rows, max_rows, registered_prefixes, metpo_curies, verbose)
         result["edges"] = check_edges_rows(edges_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        result["edges"].extend(check_domain_range(nodes_rows, edges_rows, verbose))
         if strict_kgx:
             # Strict validation runs against a loose TSV — extract if needed
             for kind, member in (("nodes", "merged-kg_nodes.tsv"), ("edges", "merged-kg_edges.tsv")):
@@ -522,14 +685,24 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
                 all_edge_rows.extend(iter_tsv(p, max_rows))
             result["nodes"] = check_nodes_rows(all_node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
             result["edges"] = check_edges_rows(all_edge_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+            result["edges"].extend(check_domain_range(all_node_rows, all_edge_rows, verbose))
             return _tally(result)
         # Empty directory (transform not run) — skip silently
         result["nodes"] = [Finding("INFO", "KGX", "No output files found (transform not run or no data)")]
         result["edges"] = []
         return result
 
-    result["nodes"] = check_nodes(nodes_path, max_rows, registered_prefixes, metpo_curies, verbose)
-    result["edges"] = check_edges(edges_path, max_rows, registered_prefixes, metpo_curies, verbose)
+    node_rows = list(iter_tsv(nodes_path, max_rows)) if nodes_path.exists() else []
+    edge_rows = list(iter_tsv(edges_path, max_rows)) if edges_path.exists() else []
+    result["nodes"] = (
+        check_nodes_rows(node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        if node_rows else [Finding("ERROR", "KGX", f"nodes.tsv not found: {nodes_path}")]
+    )
+    result["edges"] = (
+        check_edges_rows(edge_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        if edge_rows else [Finding("ERROR", "KGX", f"edges.tsv not found: {edges_path}")]
+    )
+    result["edges"].extend(check_domain_range(node_rows, edge_rows, verbose))
     if strict_kgx:
         if nodes_path.exists():
             result["nodes"].extend(run_kgx_strict(nodes_path, "nodes", max_rows))
@@ -660,9 +833,20 @@ def main():
                         help="Max rows to sample per file (0=all)")
     parser.add_argument("--strict-kgx", action="store_true",
                         help="Additionally run kgx.validator.Validator (authoritative KGX spec check)")
+    parser.add_argument("--no-save", action="store_true",
+                        help="Skip writing a timestamped artifact under <skill>/reviews/")
     args = parser.parse_args()
 
     max_rows = args.max_rows  # 0 means unlimited (iter_tsv handles 0 as no limit)
+
+    if args.merged and max_rows == 0:
+        print(
+            "  Error: --max-rows 0 with --merged would materialize the full nodes+edges "
+            "tarball in memory and is likely to OOM on real releases. "
+            "Specify a finite --max-rows (e.g. 1000000) for merged review.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
     registered_prefixes = load_registered_prefixes()
     metpo_curies = load_metpo_curies()
@@ -711,11 +895,25 @@ def main():
                 "edges": [{"severity": f.severity, "check": f.check, "message": f.message}
                           for f in r["edges"]],
             })
-        print(json.dumps(output, indent=2))
+        rendered = json.dumps(output, indent=2)
+        ext = "json"
     elif args.format == "md":
-        print(format_text(results, format_md=True))
+        rendered = format_text(results, format_md=True)
+        ext = "md"
     else:
-        print(format_text(results, format_md=False))
+        rendered = format_text(results, format_md=False)
+        ext = "txt"
+    print(rendered)
+
+    if not args.no_save:
+        if args.merged:
+            scope = "merged"
+        elif args.transform:
+            scope = args.transform
+        else:
+            scope = "all-transforms"
+        saved = _save_review_artifact(rendered, scope, ext=ext)
+        print(f"  Saved review to {saved}", file=sys.stderr)
 
 
 if __name__ == "__main__":

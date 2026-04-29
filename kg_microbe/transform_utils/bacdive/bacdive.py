@@ -140,7 +140,6 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_PREFIX,
     NCBITAXON_SOURCE,
     NUTRITION_TYPE,
-    OBJECT_ID_COLUMN,
     OBSERVATION,
     ORDER,
     OXYGEN_TOLERANCE,
@@ -217,6 +216,9 @@ class BacDiveTransform(Transform):
         """Instantiate part."""
         source_name = BACDIVE
         super().__init__(source_name, input_dir, output_dir)
+        # Extend edge schema with `value`/`unit` for quantitative provenance
+        # (e.g. antibiogram zone-of-inhibition diameter in mm).
+        self.edge_header = self.edge_header + ["value", "unit"]
         self.knowledge_source = "infores:bacdive"  # InforES standard knowledge source
         self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
 
@@ -1199,6 +1201,8 @@ class BacDiveTransform(Transform):
                         self.knowledge_source,
                         knowledge_level,
                         agent_type,
+                        numeric_val if numeric_val is not None else "",
+                        "mm",
                     ]
                     #            print(f"    Writing edge row for antibiotic: {edge_row}")
                     edge_writer.writerow(edge_row)
@@ -2890,7 +2894,6 @@ class BacDiveTransform(Transform):
         drop_duplicates(
             self.output_node_file,
             sort_by_column=ID_COLUMN,
-            consolidation_columns=[ID_COLUMN, NAME_COLUMN],
             dedup_on_sort_column=True,
         )
-        drop_duplicates(self.output_edge_file, consolidation_columns=[OBJECT_ID_COLUMN])
+        drop_duplicates(self.output_edge_file)

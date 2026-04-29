@@ -15,7 +15,7 @@ EXPECTED_EDGES = [
     ("produces: ethanol", "biolink:produces", "CHEBI:16236", "biolink:ChemicalEntity"),
     ("produces: hydrogen sulfide", "biolink:produces", "CHEBI:16136", "biolink:ChemicalEntity"),
     ("produces: indole", "biolink:produces", "CHEBI:16881", "biolink:ChemicalEntity"),
-    ("carbon source: acetate", "biolink:capable_of", "CHEBI:30089", "biolink:ChemicalEntity"),
+    ("carbon source: acetate", "METPO:2000006", "CHEBI:30089", "biolink:ChemicalEntity"),
     (
         "enzyme activity: catalase (EC1.11.1.6)",
         "biolink:capable_of",
@@ -271,6 +271,80 @@ class TestMetaTraitsTransform(unittest.TestCase):
             # Cleanup temporary input directory
             import shutil
 
+            if self.temp_input_dir.exists():
+                shutil.rmtree(self.temp_input_dir)
+
+    @patch.object(MetaTraitsTransform, "_search_ncbitaxon_by_label")
+    def test_tier2_false_majority_drops_positive_edges(self, mock_search, mock_adapter, mock_ensure):
+        """
+        False-majority Tier-2 rows must not emit positive phenotype/capability edges.
+
+        Covers the six traits flagged by the Codex review: enzyme activity catalase /
+        oxidase / urease (Tier-2 ``biolink:capable_of`` to EC/GO), and growth: MacConkey
+        agar / blood agar / bile acid susceptible (Tier-2 ``biolink:has_phenotype`` to
+        kgmicrobe.trait:* nodes). Each has no METPO negative predicate, so the helper
+        returns None and the row must be skipped.
+        """
+        import json
+        import shutil
+
+        false_majority_traits = [
+            ("enzyme activity: catalase (EC1.11.1.6)", "EC:1.11.1.6"),
+            ("enzyme activity: oxidase", "GO:0004129"),
+            ("enzyme activity: urease (EC3.5.1.5)", "EC:3.5.1.5"),
+            ("growth: MacConkey agar", "kgmicrobe.trait:macconkey_agar_growth"),
+            ("growth: blood agar", "kgmicrobe.trait:blood_agar_growth"),
+            ("growth: bile acid susceptible", "kgmicrobe.trait:bile_susceptible"),
+        ]
+        fixture_record = {
+            "tax_name": "Tier2NegStrain",
+            "summaries": [
+                {
+                    "name": name,
+                    "is_discrete": True,
+                    "num_observations": 5,
+                    "unique_databases": 1,
+                    "majority_label": "false: (100%)",
+                    "percentages": {"true": 0.0, "false": 100.0},
+                }
+                for name, _ in false_majority_traits
+            ],
+        }
+
+        mock_search.return_value = "NCBITaxon:562"
+        metatraits_subdir = self.temp_input_dir / "metatraits"
+        metatraits_subdir.mkdir(exist_ok=True)
+        fixture_path = metatraits_subdir / "ncbi_species_summary.jsonl"
+        fixture_path.write_text(json.dumps(fixture_record) + "\n")
+
+        try:
+            transform = MetaTraitsTransform(
+                input_dir=metatraits_subdir,
+                output_dir=self.temp_output_dir,
+            )
+            transform._search_ncbitaxon_by_label = mock_search
+            transform.run(show_status=False)
+
+            edges = transform.output_edge_file.read_text().strip().split("\n")
+            self.assertGreater(len(edges), 0)
+            header = edges[0].split("\t")
+            obj_idx = header.index("object")
+            pred_idx = header.index("predicate")
+
+            for _, expected_obj in false_majority_traits:
+                offending = [
+                    line
+                    for line in edges[1:]
+                    if (cols := line.split("\t"))
+                    and cols[obj_idx] == expected_obj
+                    and cols[pred_idx] in {"biolink:has_phenotype", "biolink:capable_of"}
+                ]
+                self.assertEqual(
+                    offending,
+                    [],
+                    f"Tier-2 false-majority row leaked a positive edge for {expected_obj}: {offending}",
+                )
+        finally:
             if self.temp_input_dir.exists():
                 shutil.rmtree(self.temp_input_dir)
 

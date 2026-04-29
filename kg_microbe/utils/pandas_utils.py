@@ -8,7 +8,6 @@ from typing import List
 import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
-    DO_NOT_CHANGE_PREFIXES,
     ID_COLUMN,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_SOLUTION_PREFIX,
@@ -22,7 +21,6 @@ from kg_microbe.transform_utils.constants import (
 def drop_duplicates(
     file_path: Path,
     sort_by_column: str = SUBJECT_COLUMN,
-    consolidation_columns: List = None,
     dedup_on_sort_column: bool = False,
 ):
     """
@@ -30,24 +28,11 @@ def drop_duplicates(
 
     :param file_path: Path to the TSV file.
     :param sort_by_column: Column name to sort the DataFrame.
-    :param consolidation_columns: List of columns to consolidate.
     :param dedup_on_sort_column: If True, also remove rows with duplicate sort_by_column values
         (keeping the first occurrence). Use for node files where the same ID may appear with
         different attributes.
     """
-    exclude_prefixes = DO_NOT_CHANGE_PREFIXES
     df = pd.read_csv(file_path, sep="\t", low_memory=False)
-
-    # Store the original NAME_COLUMN if it's in consolidation_columns
-    if consolidation_columns and NAME_COLUMN in consolidation_columns:
-        original_name_column = df[NAME_COLUMN].copy()
-
-    if consolidation_columns and all(col in df.columns for col in consolidation_columns):
-        for col in consolidation_columns:
-            df[col] = df[col].apply(
-                lambda x: str(x).lower() if not any(str(x).startswith(prefix) for prefix in exclude_prefixes) else x
-            )
-
     df.drop_duplicates(inplace=True)
     if dedup_on_sort_column and sort_by_column in df.columns:
         # Make retention deterministic: rank rows by data completeness so the
@@ -69,10 +54,6 @@ def drop_duplicates(
         df.drop_duplicates(subset=[sort_by_column], keep="first", inplace=True)
         df.drop(columns=[c for c in rank_cols if c.startswith("_")], inplace=True)
     df.sort_values(by=[sort_by_column], inplace=True)
-
-    # Restore the original values of the NAME_COLUMN
-    if consolidation_columns and NAME_COLUMN in consolidation_columns:
-        df[NAME_COLUMN] = original_name_column.loc[df.index]
 
     df.to_csv(file_path, sep="\t", index=False)
     return df

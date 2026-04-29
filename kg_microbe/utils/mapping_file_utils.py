@@ -752,7 +752,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
     :rtype: List[List]
 
     Example node structure:
-        id: assay:API_zym_alkaline_phosphatase
+        id: kgmicrobe.assay:API_zym_alkaline_phosphatase
         category: biolink:Procedure
         name: API zym - Alkaline phosphatase
         description: Tests for Alkaline phosphatase activity using chromogenic substrate.
@@ -790,7 +790,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
             if not well_name:
                 continue
 
-            # Build node ID: assay:API_{kit_name}_{well_name}
+            # Build node ID: {ASSAY_PREFIX}API_{kit_name}_{well_name}
             # Replace spaces with underscores for consistent IDs
             node_id = f"{ASSAY_PREFIX}{kit_name}_{well_name}".replace(" ", "_")
 
@@ -840,9 +840,9 @@ def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> Lis
     :rtype: List[List]
 
     Example edges:
-        assay:API_zym_alkaline_phosphatase → biolink:has_output → GO:0004035
-        assay:API_zym_alkaline_phosphatase → biolink:has_output → EC:3.1.3.1
-        assay:API_50CHac_ERY → biolink:has_input → CHEBI:17113
+        kgmicrobe.assay:API_zym_alkaline_phosphatase → biolink:has_output → GO:0004035
+        kgmicrobe.assay:API_zym_alkaline_phosphatase → biolink:has_output → EC:3.1.3.1
+        kgmicrobe.assay:API_50CHac_ERY → biolink:has_input → CHEBI:17113
     """
     from kg_microbe.transform_utils.constants import (
         AGENT_TYPE_COLUMN,

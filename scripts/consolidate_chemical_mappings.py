@@ -256,6 +256,54 @@ def extract_chebi_id(value: str) -> str:
     return ""
 
 
+# Map non-canonical prefix spellings seen in upstream TSVs to the canonical
+# form used by ``_CATEGORY_BY_PREFIX`` / ``_ACCEPTED_PREFIXES``.
+_PREFIX_ALIASES: Dict[str, str] = {
+    "PUBCHEM.COMPOUND": "pubchem.compound",
+    "PubChem": "pubchem.compound",
+    "PUBCHEM": "pubchem.compound",
+    "Pubchem": "pubchem.compound",
+    "CAS-RN": "cas",
+    "CAS": "cas",
+    "chebi": "CHEBI",
+    "foodon": "FOODON",
+    "uberon": "UBERON",
+    "envo": "ENVO",
+    "ncit": "NCIT",
+}
+
+
+def extract_curie(value: str) -> str:
+    """
+    Extract a recognized CURIE preserving the original ontology prefix.
+
+    Unlike ``extract_chebi_id``, this does not fabricate a CHEBI prefix from
+    bare digits or unknown inputs — it only returns a CURIE when the input
+    starts with one of the prefixes accepted as a primary id by this
+    consolidator (see ``_ACCEPTED_PREFIXES``). Common upstream spelling
+    variants (``PubChem:``, ``PUBCHEM.COMPOUND:``, ``CAS-RN:``) are
+    normalised to their canonical form (``pubchem.compound:``, ``cas:``).
+
+    Required when ingesting columns whose values mix prefixes — using
+    ``extract_chebi_id`` on such columns silently rewrites FOODON / UBERON
+    / PubChem / CAS-RN ids to ``CHEBI:<numeric_tail>`` and produces malformed
+    or wrong-entity references downstream (the prefix-mangling regression
+    documented in CultureBotHT/docs/AUDIT_TRAIL.md).
+    """
+    if pd.isna(value) or not value:
+        return ""
+    s = str(value).strip()
+    if not s or ":" not in s:
+        return ""
+    prefix, _, local = s.partition(":")
+    canonical = _PREFIX_ALIASES.get(prefix, prefix)
+    if not local:
+        return ""
+    if f"{canonical}:" in _ACCEPTED_PREFIXES:
+        return f"{canonical}:{local}"
+    return ""
+
+
 # Category lookup by CURIE prefix. The unified mapping stores the biolink
 # category as a data column so downstream transforms do not need hardcoded
 # prefix-to-category routing.
@@ -546,14 +594,18 @@ class ChemicalMappingConsolidator:
         df = pd.read_csv(filepath, sep="\t")
 
         for _, row in df.iterrows():
-            # Try multiple ChEBI ID columns
-            chebi_id = extract_chebi_id(row.get("chebi_id", "")) or extract_chebi_id(
+            # ``chebi_id`` / ``base_chebi_id`` / ``hydrated_chebi_id`` columns
+            # are CHEBI-typed by contract. The ``mapped`` column carries
+            # heterogeneous CURIEs (FOODON / UBERON / PubChem / CAS-RN /
+            # CHEBI / KEGG) — must use ``extract_curie`` there to preserve
+            # the original ontology prefix; ``extract_chebi_id`` would
+            # silently rewrite all of them to CHEBI:<numeric_tail>.
+            primary_id = extract_chebi_id(row.get("chebi_id", "")) or extract_curie(
                 row.get("mapped", "")
             )
-            if not chebi_id:
-                # Try base_chebi_id
-                chebi_id = extract_chebi_id(row.get("base_chebi_id", ""))
-            if not chebi_id:
+            if not primary_id:
+                primary_id = extract_chebi_id(row.get("base_chebi_id", ""))
+            if not primary_id:
                 continue
 
             canonical_name = row.get("chebi_label", "")
@@ -571,11 +623,11 @@ class ChemicalMappingConsolidator:
             xrefs = []
             if "hydrate" in str(filepath):
                 hydrated_chebi = extract_chebi_id(row.get("hydrated_chebi_id", ""))
-                if hydrated_chebi and hydrated_chebi != chebi_id:
+                if hydrated_chebi and hydrated_chebi != primary_id:
                     xrefs.append(hydrated_chebi)
 
             self.add_chemical(
-                id=chebi_id,
+                id=primary_id,
                 canonical_name=canonical_name,
                 formula=formula,
                 synonyms=synonyms,
@@ -763,9 +815,19 @@ class ChemicalMappingConsolidator:
             return best
 
         id_column = "id" if "id" in df.columns else "chebi_id"
+        skipped_mangled = 0
         for _, row in df.iterrows():
             curie = row.get(id_column, "")
             if not is_accepted_primary(curie):
+                continue
+            # Drop legacy-baseline rows whose id was mangled by the
+            # pre-fix ``extract_chebi_id`` regex. Real CHEBI primary ids
+            # never carry a leading zero in the local part — any such
+            # id is a FOODON/UBERON/PubChem/CAS-RN value rewritten by
+            # the ``re.search(r"(\d+)", v)`` bug. Including them would
+            # silently re-pollute the SSSOM with wrong-entity references.
+            if curie.startswith("CHEBI:0"):
+                skipped_mangled += 1
                 continue
             synonyms = [s for s in row.get("synonyms", "").split("|") if s]
             xrefs = [x for x in row.get("xrefs", "").split("|") if x]
@@ -784,6 +846,11 @@ class ChemicalMappingConsolidator:
             self.chemicals[curie]["sources"].update(sources)
 
         print(f"  Loaded {len(df)} legacy baseline entries")
+        if skipped_mangled:
+            print(
+                f"  Dropped {skipped_mangled} legacy entries with mangled "
+                f"CHEBI:0... ids (pre-fix prefix-mangling regression)"
+            )
 
     def load_existing_unified(self, filepath: Path):
         """
@@ -847,9 +914,19 @@ class ChemicalMappingConsolidator:
         # Guard against previously-polluted baselines.
         POLLUTION_CAP = 500
         pollution_skipped = 0
+        mangled_skipped = 0
 
         for curie, rec in records.items():
             if not is_accepted_primary(curie):
+                continue
+            # Drop entries whose id was mangled by the pre-fix
+            # ``extract_chebi_id`` regex (FOODON / UBERON / PubChem / CAS-RN
+            # values rewritten to ``CHEBI:<numeric_tail>`` with a leading
+            # zero). Real CHEBI primary ids never carry a leading zero, so
+            # any such row in a baseline SSSOM is residue from the
+            # prefix-mangling regression.
+            if curie.startswith("CHEBI:0"):
+                mangled_skipped += 1
                 continue
             synonyms = list(rec["synonyms"])
             xrefs = list(rec["xrefs"])
@@ -880,6 +957,11 @@ class ChemicalMappingConsolidator:
             print(
                 f"  Dropped polluted synonyms/xrefs from "
                 f"{pollution_skipped} baseline row(s)"
+            )
+        if mangled_skipped:
+            print(
+                f"  Dropped {mangled_skipped} baseline entries with mangled "
+                f"CHEBI:0... ids (pre-fix prefix-mangling regression)"
             )
         print(f"  Loaded {len(records)} baseline entries")
 

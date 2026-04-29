@@ -25,10 +25,22 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
+import re
 import sys
 from collections import Counter
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
+
+
+def _default_review_path(old_label: str, new_label: str) -> Path:
+    """Return <skill_dir>/reviews/<YYYYMMDD_HHMMSS>_<old>_vs_<new>.md."""
+    out_dir = Path(__file__).parent / "reviews"
+    out_dir.mkdir(exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_old = re.sub(r"[^\w.-]+", "_", old_label).strip("_") or "old"
+    safe_new = re.sub(r"[^\w.-]+", "_", new_label).strip("_") or "new"
+    return out_dir / f"{ts}_{safe_old}_vs_{safe_new}.md"
 
 csv.field_size_limit(sys.maxsize)
 
@@ -479,9 +491,12 @@ def main() -> None:
     ap.add_argument("--new-edges", type=Path)
     ap.add_argument("--old-label", default=None)
     ap.add_argument("--new-label", default=None)
-    ap.add_argument("--out", type=Path, default=None, help="Output markdown path (default: stdout)")
+    ap.add_argument("--out", type=Path, default=None,
+                    help="Output markdown path (default: timestamped file under <skill>/reviews/)")
     ap.add_argument("--max-rows", type=int, default=0, help="Row cap per file (0 = all)")
     ap.add_argument("--no-signatures", action="store_true", help="Skip predicate × category signature pass (saves memory)")
+    ap.add_argument("--no-save", action="store_true",
+                    help="Print to stdout only; skip writing a timestamped artifact")
     args = ap.parse_args()
 
     old_label = args.old_label or (args.old.name if args.old else "old")

@@ -50,7 +50,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         Transform.__init__(self, METATRAITS_GTDB, input_dir, output_dir)
 
         # Initialize MetaTraitsTransform-specific attributes (from parent class)
-        self.edge_header = self.edge_header + ["has_percentage"]
+        self.edge_header = self.edge_header + ["has_percentage", "value", "unit"]
         self.knowledge_source = "infores:gtdb-metatraits"
 
         # Load mappings (from parent class)

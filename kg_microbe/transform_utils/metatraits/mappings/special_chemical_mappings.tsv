@@ -13,7 +13,7 @@ degradation: egg yolk	egg yolk	FOODON:03315772	chicken egg yolk food product	MET
 degradation: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	METPO:2000007	biolink:ChemicalEntity	Chromogenic substrate for beta-galactosidase; CHEBI:52701 was 1-hydroxy-1,3-dioxobenziodoxole (IBX reagent), completely wrong; CHEBI:355715 confirmed as 4-nitrophenyl-beta-D-galactoside
 produces: methane from formate	methane	CHEBI:16183	methane	METPO:2000202	biolink:ChemicalEntity	Parse "from formate" separately; methanogenesis pathway from formate oxidation
 produces: DL-lactate	lactate	CHEBI:16651	lactate	METPO:2000202	biolink:ChemicalEntity	Generic lactate (unspecified stereochemistry); CHEBI:422 was (S)-lactic acid (only L-form), wrong for racemic DL mixture; CHEBI:16651 is the generic lactate anion
-reduction: arsenate detoxification	arsenate	CHEBI:29242	arsenate	METPO:2000017	biolink:ChemicalEntity	Dissimilatory arsenate reduction; detoxification context
+reduction: arsenate detoxification	arsenate	CHEBI:29125	arsenate(3-)	METPO:2000017	biolink:ChemicalEntity	Dissimilatory arsenate reduction; detoxification context. Corrected 2026-04-30 from CHEBI:29242 (arsenite(1-)) per MIM reconciliation
 reduction: amorphous iron (iii) oxide	amorphous iron (iii) oxide	CHEBI:192761	ferrihydrite	METPO:2000017	biolink:ChemicalEntity	Dissimilatory iron reduction to Fe(II); CHEBI:82594 was Ferritin (wrong); ferrihydrite is the amorphous Fe(III) oxyhydroxide used in iron reduction experiments
 reduction: amorphous fe(iii) oxyhydroxid	amorphous fe(iii) oxyhydroxid	CHEBI:192761	ferrihydrite	METPO:2000017	biolink:ChemicalEntity	Variant spelling; CHEBI:82594 was Ferritin (wrong)
 reduction: glutathione oxidized	glutathione oxidized	CHEBI:17858	glutathione disulfide	METPO:2000017	biolink:ChemicalEntity	Reduction of oxidized glutathione (GSSG) to reduced form (GSH)
@@ -23,7 +23,7 @@ hydrolysis: casein hydrolysate	casein	FOODON:03420180	casein	METPO:2000013	bioli
 hydrolysis: cationic chitosan	chitosan	CHEBI:16261	chitosan	METPO:2000013	biolink:ChemicalEntity	Cationic = positively charged; chitosan is the base polymer
 hydrolysis: crab shell chitin	chitin	CHEBI:17029	chitin	METPO:2000013	biolink:ChemicalEntity	Chitin from crab shells; chitinase activity
 hydrolysis: milk	milk	UBERON:0001913	milk	METPO:2000013	biolink:Food	Lactose or protein hydrolysis; FOODON:03301422 was "sweet corn kernel (raw)" (completely wrong); UBERON:0001913 confirmed as "milk"
-aerobic catabolization: dihydrogen	dihydrogen	CHEBI:29356	dihydrogen	METPO:2000032	biolink:ChemicalEntity	H2 oxidation under aerobic conditions; METPO:2000032 predicate confirmed in metpo.owl
+aerobic catabolization: dihydrogen	dihydrogen	CHEBI:18276	dihydrogen	METPO:2000032	biolink:ChemicalEntity	H2 oxidation under aerobic conditions; METPO:2000032 predicate confirmed in metpo.owl. Corrected 2026-04-30 from CHEBI:29356 (oxide(2-)) per MIM reconciliation
 aerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000032	biolink:ChemicalEntity	Aerobic acetate oxidation via TCA cycle
 anaerobic catabolization: acetate	acetate	CHEBI:30089	acetate	METPO:2000048	biolink:ChemicalEntity	Anaerobic acetate oxidation; METPO:2000048 predicate confirmed in metpo.owl
 utilizes: 4-nitrophenyl beta-D-galactopyranoside	4-nitrophenyl beta-D-galactopyranoside	CHEBI:355715	4-nitrophenyl-beta-D-galactoside	METPO:2000001	biolink:ChemicalEntity	Generic utilization; CHEBI:52701 was IBX reagent (wrong)
@@ -66,15 +66,15 @@ growth: meat extract	meat extract	FOODON:03315424	meat extract	METPO:2000012	bio
 growth: casitone	casein	FOODON:03420180	casein	METPO:2000012	biolink:Food	Casitone = tryptic digest of casein (BD brand); maps to parent protein casein; FOODON:03420180
 produces: setamycin	setamycin	kgmicrobe.compound:setamycin	setamycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: gardimycin	gardimycin	kgmicrobe.compound:gardimycin	gardimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: kijanimicin	kijanimicin	kgmicrobe.compound:kijanimicin	kijanimicin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: kijanimicin	kijanimicin	CHEBI:220048	kijanimicin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: candiplanecin	candiplanecin	kgmicrobe.compound:candiplanecin	candiplanecin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: decaplanin	decaplanin	kgmicrobe.compound:decaplanin	decaplanin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: ristocetin B	ristocetin B	kgmicrobe.compound:ristocetin_b	ristocetin B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: Cetocycline	Cetocycline	kgmicrobe.compound:cetocycline	Cetocycline	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: Cetocycline	Cetocycline	NCIT:C98044	Cetocycline	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative NCIT 2026-04-30 per MIM reconciliation
 produces: butyricin 7423	butyricin 7423	kgmicrobe.compound:butyricin_7423	butyricin 7423	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: dopsisamine	dopsisamine	kgmicrobe.compound:dopsisamine	dopsisamine	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: indochrome	indochrome	kgmicrobe.compound:indochrome	indochrome	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: nocamycin	nocamycin	kgmicrobe.compound:nocamycin	nocamycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: nocamycin	nocamycin	CHEBI:219652	nocamycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: hitachimycin	hitachimycin	kgmicrobe.compound:hitachimycin	hitachimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: ardacin B	ardacin B	kgmicrobe.compound:ardacin_b	ardacin B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: Ethylenediamine-N,N'-disuccinic acid	Ethylenediamine-N,N'-disuccinic acid	kgmicrobe.compound:ethylenediamine_n_n_prime_disuccinic_acid	Ethylenediamine-N,N'-disuccinic acid	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -83,11 +83,11 @@ produces: mycobacidin	mycobacidin	kgmicrobe.compound:mycobacidin	mycobacidin	MET
 produces: geomycin	geomycin	kgmicrobe.compound:geomycin	geomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: aburamycin A	aburamycin A	kgmicrobe.compound:aburamycin_a	aburamycin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: poly(L-lysine) polymer	poly(L-lysine) polymer	kgmicrobe.compound:poly_l_lysine_polymer	poly(L-lysine) polymer	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: monazomycin	monazomycin	kgmicrobe.compound:monazomycin	monazomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: monazomycin	monazomycin	CHEBI:201539	monazomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: azureomycin	azureomycin	kgmicrobe.compound:azureomycin	azureomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: avoparcin	avoparcin	kgmicrobe.compound:avoparcin	avoparcin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: avoparcin	avoparcin	NCIT:C169798	avoparcin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative NCIT 2026-04-30 per MIM reconciliation
 produces: actinohivin	actinohivin	kgmicrobe.compound:actinohivin	actinohivin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: dynemicin	dynemicin	kgmicrobe.compound:dynemicin	dynemicin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: dynemicin	dynemicin	NCIT:C1928	dynemicin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative NCIT 2026-04-30 per MIM reconciliation
 produces: abyssomicin B	abyssomicin B	kgmicrobe.compound:abyssomicin_b	abyssomicin B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: abyssomicin G	abyssomicin G	kgmicrobe.compound:abyssomicin_g	abyssomicin G	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: atrop-abyssomicin C	atrop-abyssomicin C	kgmicrobe.compound:atrop_abyssomicin_c	atrop-abyssomicin C	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -99,7 +99,7 @@ produces: chlororaphin	chlororaphin	kgmicrobe.compound:chlororaphin	chlororaphin
 produces: sarcidin	sarcidin	kgmicrobe.compound:sarcidin	sarcidin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: achromoviromycin	achromoviromycin	kgmicrobe.compound:achromoviromycin	achromoviromycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: primocarcin	primocarcin	kgmicrobe.compound:primocarcin	primocarcin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: alanosine	alanosine	kgmicrobe.compound:alanosine	alanosine	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: alanosine	alanosine	CHEBI:221124	alanosine	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: danomycin	danomycin	kgmicrobe.compound:danomycin	danomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: actinomycetin	actinomycetin	kgmicrobe.compound:actinomycetin	actinomycetin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: champamycin B	champamycin B	kgmicrobe.compound:champamycin_b	champamycin B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -107,7 +107,7 @@ produces: ascosin	ascosin	kgmicrobe.compound:ascosin	ascosin	METPO:2000202	bioli
 produces: limocrocin	limocrocin	kgmicrobe.compound:limocrocin	limocrocin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: eurocidin	eurocidin	kgmicrobe.compound:eurocidin	eurocidin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: pamamycin	pamamycin	kgmicrobe.compound:pamamycin	pamamycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: angustmycin	angustmycin	kgmicrobe.compound:angustmycin	angustmycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: angustmycin	angustmycin	CHEBI:8612	angustmycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: camphomycin	camphomycin	kgmicrobe.compound:camphomycin	camphomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: cinerubin A	cinerubin A	kgmicrobe.compound:cinerubin_a	cinerubin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: canarius	canarius	kgmicrobe.compound:canarius	canarius	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -128,7 +128,7 @@ produces: staphylomycin M1	staphylomycin M1	kgmicrobe.compound:staphylomycin_m1	
 produces: plicacetin	plicacetin	kgmicrobe.compound:plicacetin	plicacetin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: pluramycin A	pluramycin A	kgmicrobe.compound:pluramycin_a	pluramycin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: fradicin	fradicin	kgmicrobe.compound:fradicin	fradicin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: rubradirin	rubradirin	kgmicrobe.compound:rubradirin	rubradirin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: rubradirin	rubradirin	CHEBI:223718	rubradirin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: ardacin C	ardacin C	kgmicrobe.compound:ardacin_c	ardacin C	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: ardacin A	ardacin A	kgmicrobe.compound:ardacin_a	ardacin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: venturicidin B	venturicidin B	kgmicrobe.compound:venturicidin_b	venturicidin B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -156,10 +156,10 @@ produces: etamycin	etamycin	kgmicrobe.compound:etamycin	etamycin	METPO:2000202	b
 produces: destomycin	destomycin	kgmicrobe.compound:destomycin	destomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: candimycin	candimycin	kgmicrobe.compound:candimycin	candimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: caryomycin	caryomycin	kgmicrobe.compound:caryomycin	caryomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: ferroverdin	ferroverdin	kgmicrobe.compound:ferroverdin	ferroverdin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: ferroverdin	ferroverdin	CHEBI:219729	ferroverdin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: racemomycin E	racemomycin E	kgmicrobe.compound:racemomycin_e	racemomycin E	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: alboverticillin	alboverticillin	kgmicrobe.compound:alboverticillin	alboverticillin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: adenomycin	adenomycin	kgmicrobe.compound:adenomycin	adenomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: adenomycin	adenomycin	NCIT:C221830	adenomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative NCIT 2026-04-30 per MIM reconciliation
 produces: griseolutein A	griseolutein A	kgmicrobe.compound:griseolutein_a	griseolutein A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: griseolutein B	griseolutein B	kgmicrobe.compound:griseolutein_b	griseolutein B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: viridogrisein	viridogrisein	kgmicrobe.compound:viridogrisein	viridogrisein	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -169,10 +169,10 @@ produces: cladomycin	cladomycin	kgmicrobe.compound:cladomycin	cladomycin	METPO:2
 produces: grasseriomycin	grasseriomycin	kgmicrobe.compound:grasseriomycin	grasseriomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: levorin	levorin	kgmicrobe.compound:levorin	levorin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: bafilomycin	bafilomycin	kgmicrobe.compound:bafilomycin	bafilomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: lydimycin	lydimycin	kgmicrobe.compound:lydimycin	lydimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: lydimycin	lydimycin	NCIT:C90684	lydimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative NCIT 2026-04-30 per MIM reconciliation
 produces: chaninin	chaninin	kgmicrobe.compound:chaninin	chaninin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: miharamycin A	miharamycin A	kgmicrobe.compound:miharamycin_a	miharamycin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: stallimycin	stallimycin	kgmicrobe.compound:stallimycin	stallimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: miharamycin A	miharamycin A	CHEBI:216282	miharamycin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
+produces: stallimycin	stallimycin	CHEBI:41958	stallimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative CHEBI 2026-04-30 per MIM reconciliation
 produces: cytovirin	cytovirin	kgmicrobe.compound:cytovirin	cytovirin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: pactamycin	pactamycin	kgmicrobe.compound:pactamycin	pactamycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: etabetacin	etabetacin	kgmicrobe.compound:etabetacin	etabetacin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
@@ -180,7 +180,7 @@ produces: cephamycin A	cephamycin A	kgmicrobe.compound:cephamycin_a	cephamycin A
 produces: plumbemycin A	plumbemycin A	kgmicrobe.compound:plumbemycin_a	plumbemycin A	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: plumbemycin B	plumbemycin B	kgmicrobe.compound:plumbemycin_b	plumbemycin B	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: O-carbamyl-D-serine	O-carbamyl-D-serine	kgmicrobe.compound:o_carbamyl_d_serine	O-carbamyl-D-serine	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
-produces: steffimycin	steffimycin	kgmicrobe.compound:steffimycin	steffimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
+produces: steffimycin	steffimycin	NCIT:C152426	steffimycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; replaced kgmicrobe.compound placeholder with authoritative NCIT 2026-04-30 per MIM reconciliation
 produces: beta-Lipomycin	beta-Lipomycin	kgmicrobe.compound:beta_lipomycin	beta-Lipomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: kanchanomycin	kanchanomycin	kgmicrobe.compound:kanchanomycin	kanchanomycin	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]
 produces: (E)-4-Aminostyryl acetate	(E)-4-Aminostyryl acetate	kgmicrobe.compound:e_4_aminostyryl_acetate	(E)-4-Aminostyryl acetate	METPO:2000202	biolink:ChemicalEntity	Secondary metabolite/antibiotic; no public CHEBI ID; metatraits_unmapped[2026-04-09]

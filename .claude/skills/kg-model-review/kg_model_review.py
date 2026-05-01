@@ -617,6 +617,649 @@ def check_edges(path: Path, max_rows: int, registered_prefixes: set,
     return check_edges_rows(rows, max_rows, registered_prefixes, metpo_curies, verbose)
 
 
+# ── Mapping-file review ───────────────────────────────────────────────────────
+# Curation artifacts under `mappings/` and `kg_microbe/transform_utils/*/mappings/`
+# drive transform-side lookups and are also published upstream to MIM /
+# CultureBotAI / CultureBotHT. They are reviewed with their own validators
+# because they are not KGX nodes/edges files.
+
+MAPPINGS_DIR_REPO = REPO_ROOT / "mappings"
+MAPPINGS_DIR_METATRAITS = REPO_ROOT / "kg_microbe" / "transform_utils" / "metatraits" / "mappings"
+
+# Canonical mapping schema shared across the metatraits curation TSVs
+# (chemical, enzyme, metpo_alias, pathway, phenotype). Every row in a Group A
+# file MUST have these columns; missing columns are an ERROR.
+CANONICAL_MAPPING_COLS = {
+    "subject_label",
+    "subject_label_normalized",
+    "object_id",
+    "object_label",
+    "object_source",
+    "predicate_id",
+    "confidence",
+    "mapping_justification",
+    "curator",
+    "source_dataset",
+    "notes",
+    "verified_date",
+}
+
+# Files known to follow CANONICAL_MAPPING_COLS (Group A).
+GROUP_A_CANONICAL = {
+    "chemical_mappings.tsv",
+    "enzyme_mappings.tsv",
+    "metpo_alias_mappings.tsv",
+    "pathway_mappings.tsv",
+    "phenotype_mappings.tsv",
+}
+
+# Off-schema files with bespoke columns (Group B). Each gets its own validator.
+GROUP_B_BESPOKE = {
+    "enzyme_name_to_go.tsv": {"enzyme_name", "go_id", "go_label", "ec_number", "notes"},
+    "special_chemical_mappings.tsv": {
+        "trait_pattern", "chemical_name", "ontology_id",
+        "ontology_name", "predicate", "category", "notes",
+    },
+}
+
+# Allowed values for canonical confidence column.
+CANONICAL_CONFIDENCE_VALUES = {"high", "medium", "low"}
+
+# Allowed predicate prefixes in canonical mapping_justification / predicate_id.
+ALLOWED_JUSTIFICATION_PREFIX = ("semapv:",)
+ALLOWED_PREDICATE_ID_PREFIX = ("skos:",)
+
+
+def _read_tsv_rows(path: Path, comment_prefix: str = None) -> tuple:
+    """Return (header, rows) from a TSV. Skips lines beginning with comment_prefix.
+
+    Used for both plain TSVs and SSSOM (which has `# curie_map:` YAML header).
+    """
+    if not path.exists():
+        return None, []
+    rows: list = []
+    header: list = None
+    opener = gzip.open if path.suffix == ".gz" else open
+    mode = "rt" if path.suffix == ".gz" else "r"
+    with opener(path, mode, encoding="utf-8", errors="replace") as f:
+        reader = csv.reader(f, delimiter="\t")
+        for row in reader:
+            if not row:
+                continue
+            if comment_prefix and row[0].startswith(comment_prefix):
+                continue
+            if header is None:
+                header = row
+                continue
+            rows.append(dict(zip(header, row)))
+    return header, rows
+
+
+def _read_sssom_metadata(path: Path) -> dict:
+    """Parse the YAML metadata block from an SSSOM TSV (lines starting with `#`)."""
+    if not path.exists():
+        return {}
+    yaml_lines: list = []
+    opener = gzip.open if path.suffix == ".gz" else open
+    mode = "rt" if path.suffix == ".gz" else "r"
+    with opener(path, mode, encoding="utf-8", errors="replace") as f:
+        for line in f:
+            if not line.startswith("#"):
+                break
+            # Strip exactly the SSSOM "# " prefix (or just "#") so YAML indentation
+            # is preserved. lstrip() would collapse the indented map entries under
+            # `curie_map:` into a flat list, breaking the parse.
+            if line.startswith("# "):
+                yaml_lines.append(line[2:])
+            else:
+                yaml_lines.append(line[1:])
+    if not yaml_lines:
+        return {}
+    try:
+        return yaml.safe_load("".join(yaml_lines)) or {}
+    except yaml.YAMLError:
+        return {}
+
+
+def check_canonical_mapping_file(path: Path, registered_prefixes: set,
+                                 metpo_curies: set, ontology_ids: set,
+                                 verbose: bool) -> tuple:
+    """Validate a Group A canonical mapping TSV. Returns (findings, rows)."""
+    findings: list = []
+    header, rows = _read_tsv_rows(path)
+    if header is None:
+        findings.append(Finding("ERROR", "Mapping", f"file not found: {path}"))
+        return findings, []
+    if not rows:
+        findings.append(Finding("WARNING", "Mapping", f"{path.name} is empty"))
+        return findings, []
+
+    # Schema: required columns
+    missing = CANONICAL_MAPPING_COLS - set(header)
+    if missing:
+        findings.append(Finding("ERROR", "Mapping",
+                                f"{path.name} missing canonical columns: {sorted(missing)}"))
+    else:
+        findings.append(Finding("INFO", "Mapping",
+                                f"{path.name} canonical schema present ({len(rows)} rows)"))
+
+    # Per-row checks
+    bad_curies: list = []
+    bad_pred: list = []
+    bad_justification: list = []
+    bad_confidence: list = []
+    deprecated_targets: list = []
+    unregistered_prefixes: dict = defaultdict(int)
+    missing_metpo: list = []
+    missing_ontology_ref: list = []
+    blank_required: list = []
+
+    for r in rows:
+        subj = (r.get("subject_label") or "").strip()
+        oid = (r.get("object_id") or "").strip()
+        pred = (r.get("predicate_id") or "").strip()
+        just = (r.get("mapping_justification") or "").strip()
+        conf = (r.get("confidence") or "").strip().lower()
+
+        # Required-field non-blank checks
+        for col in ("subject_label", "object_id", "predicate_id", "mapping_justification"):
+            if not (r.get(col) or "").strip():
+                blank_required.append(f"{path.name}: blank {col} for subject={subj!r}")
+                break
+
+        if oid and not CURIE_RE.match(oid):
+            bad_curies.append(f"{subj} → {oid}")
+        if oid:
+            prefix = get_prefix(oid)
+            if prefix and prefix not in registered_prefixes:
+                unregistered_prefixes[prefix] += 1
+            # Deprecated biolink targets
+            if oid in DEPRECATED_CATEGORIES:
+                deprecated_targets.append(f"{subj} → {oid}")
+            # METPO refs must exist
+            if oid.startswith("METPO:") and metpo_curies and oid not in metpo_curies:
+                missing_metpo.append(f"{subj} → {oid}")
+            # Ontology-id resolvability against ontologies/nodes.tsv
+            if ontology_ids and oid not in ontology_ids and not oid.startswith("kgmicrobe."):
+                # only flag CHEBI/GO/EC/RO/UBERON/ENVO/HP/MONDO/PATO/PR/CL/FOODON/NCBITaxon
+                if get_prefix(oid) in {"CHEBI", "GO", "EC", "RO", "UBERON", "ENVO",
+                                       "HP", "MONDO", "PATO", "PR", "CL", "FOODON",
+                                       "NCBITaxon", "OMP"}:
+                    missing_ontology_ref.append(f"{subj} → {oid}")
+        if pred and not pred.startswith(ALLOWED_PREDICATE_ID_PREFIX):
+            bad_pred.append(f"{subj}: predicate_id={pred!r}")
+        if just and not just.startswith(ALLOWED_JUSTIFICATION_PREFIX):
+            bad_justification.append(f"{subj}: mapping_justification={just!r}")
+        if conf and conf not in CANONICAL_CONFIDENCE_VALUES:
+            bad_confidence.append(f"{subj}: confidence={conf!r}")
+
+    if blank_required:
+        findings.append(Finding("ERROR", "Mapping",
+                                f"{path.name}: {len(blank_required)} rows with blank required field",
+                                blank_required[:5] if verbose else []))
+    if bad_curies:
+        findings.append(Finding("ERROR", "Mapping",
+                                f"{path.name}: {len(bad_curies)} non-CURIE object_id values",
+                                bad_curies[:5] if verbose else []))
+    if bad_pred:
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{path.name}: {len(bad_pred)} predicate_id not in skos: namespace",
+                                bad_pred[:5] if verbose else []))
+    if bad_justification:
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{path.name}: {len(bad_justification)} mapping_justification not in semapv:",
+                                bad_justification[:5] if verbose else []))
+    if bad_confidence:
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{path.name}: {len(bad_confidence)} unknown confidence values",
+                                bad_confidence[:5] if verbose else []))
+    if deprecated_targets:
+        findings.append(Finding("INFO", "Mapping",
+                                f"{path.name}: {len(deprecated_targets)} rows target deprecated biolink classes",
+                                deprecated_targets[:5] if verbose else []))
+    if unregistered_prefixes:
+        findings.append(Finding("WARNING", "Prefix",
+                                f"{path.name}: unregistered object_id prefixes: "
+                                f"{dict(unregistered_prefixes)}"))
+    if missing_metpo:
+        findings.append(Finding("WARNING", "METPO",
+                                f"{path.name}: {len(missing_metpo)} METPO refs not in ontology output",
+                                missing_metpo[:5] if verbose else []))
+    if missing_ontology_ref:
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{path.name}: {len(missing_ontology_ref)} object_ids not resolvable "
+                                "in ontologies output (may indicate stale or upstream-only IDs)",
+                                missing_ontology_ref[:5] if verbose else []))
+
+    return findings, rows
+
+
+def check_bespoke_mapping_file(path: Path, expected_cols: set, verbose: bool) -> tuple:
+    """Group B: validate that bespoke-schema files have expected columns + plausible IDs."""
+    findings: list = []
+    header, rows = _read_tsv_rows(path)
+    if header is None:
+        findings.append(Finding("ERROR", "Mapping", f"file not found: {path}"))
+        return findings, []
+    if not rows:
+        findings.append(Finding("WARNING", "Mapping", f"{path.name} is empty"))
+        return findings, []
+    missing = expected_cols - set(header)
+    if missing:
+        findings.append(Finding("ERROR", "Mapping",
+                                f"{path.name} missing expected columns: {sorted(missing)}"))
+    else:
+        findings.append(Finding("INFO", "Mapping",
+                                f"{path.name} bespoke schema present ({len(rows)} rows)"))
+
+    # Common sense: any *_id column should look like a CURIE
+    bad: list = []
+    for r in rows:
+        for col in ("go_id", "ontology_id"):
+            v = (r.get(col) or "").strip()
+            if v and not CURIE_RE.match(v):
+                bad.append(f"{path.name}: {col}={v!r}")
+    if bad:
+        findings.append(Finding("ERROR", "Mapping",
+                                f"{path.name}: {len(bad)} non-CURIE id values",
+                                bad[:5] if verbose else []))
+
+    return findings, rows
+
+
+def check_unmapped_queue(path: Path, verbose: bool) -> tuple:
+    """Validate the `mediadive_unmapped_ingredients_to_curate.tsv` queue."""
+    findings: list = []
+    header, rows = _read_tsv_rows(path)
+    if header is None:
+        findings.append(Finding("ERROR", "Mapping", f"file not found: {path}"))
+        return findings, []
+    expected = {"id", "preferred_term", "mapping_status", "occurrences"}
+    missing = expected - set(header or [])
+    if missing:
+        findings.append(Finding("ERROR", "Mapping",
+                                f"{path.name} missing expected columns: {sorted(missing)}"))
+        return findings, rows
+    statuses: dict = defaultdict(int)
+    for r in rows:
+        statuses[(r.get("mapping_status") or "").strip() or "BLANK"] += 1
+    findings.append(Finding("INFO", "Mapping",
+                            f"{path.name}: {len(rows)} rows; status counts: {dict(statuses)}"))
+    return findings, rows
+
+
+def check_culturebotai_reviewed(path: Path, verbose: bool) -> tuple:
+    """Validate culturebotai_reviewed_ingredients.tsv (Group C audit)."""
+    findings: list = []
+    header, rows = _read_tsv_rows(path)
+    if header is None:
+        findings.append(Finding("INFO", "Mapping", f"{path.name} not present"))
+        return findings, []
+    expected = {"ingredient_name", "occurrence_count", "chebi_id", "mapping_status"}
+    missing = expected - set(header or [])
+    if missing:
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{path.name} missing expected columns: {sorted(missing)}"))
+    statuses: dict = defaultdict(int)
+    bad_chebi: list = []
+    for r in rows:
+        statuses[(r.get("mapping_status") or "").strip() or "BLANK"] += 1
+        cid = (r.get("chebi_id") or "").strip()
+        if cid and not CURIE_RE.match(cid):
+            bad_chebi.append(f"{r.get('ingredient_name')}: chebi_id={cid!r}")
+    findings.append(Finding("INFO", "Mapping",
+                            f"{path.name}: {len(rows)} rows; status counts: {dict(statuses)}"))
+    if bad_chebi:
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{path.name}: {len(bad_chebi)} non-CURIE chebi_id values",
+                                bad_chebi[:5] if verbose else []))
+    return findings, rows
+
+
+def check_sssom_file(path: Path, registered_prefixes: set, verbose: bool) -> tuple:
+    """Validate an SSSOM TSV: metadata block + per-row predicate/object format."""
+    findings: list = []
+    if not path.exists():
+        findings.append(Finding("INFO", "Mapping", f"{path.name} not present"))
+        return findings, []
+
+    meta = _read_sssom_metadata(path)
+    if not meta:
+        findings.append(Finding("WARNING", "SSSOM",
+                                f"{path.name}: missing or unparseable YAML metadata block"))
+    else:
+        # Required SSSOM fields per spec.
+        required_meta = {"curie_map", "mapping_set_id"}
+        missing_meta = required_meta - set(meta.keys())
+        if missing_meta:
+            findings.append(Finding("WARNING", "SSSOM",
+                                    f"{path.name}: metadata missing required keys: "
+                                    f"{sorted(missing_meta)}"))
+        else:
+            findings.append(Finding("INFO", "SSSOM",
+                                    f"{path.name}: metadata block valid ({len(meta)} keys)"))
+
+    header, rows = _read_tsv_rows(path, comment_prefix="#")
+    if not rows:
+        findings.append(Finding("WARNING", "SSSOM", f"{path.name}: no data rows"))
+        return findings, []
+
+    required_cols = {"subject_id", "subject_label", "predicate_id", "object_id",
+                     "mapping_justification"}
+    missing_cols = required_cols - set(header or [])
+    if missing_cols:
+        findings.append(Finding("ERROR", "SSSOM",
+                                f"{path.name}: missing required columns {sorted(missing_cols)}"))
+        return findings, rows
+
+    bad_pred: list = []
+    bad_obj: list = []
+    bad_subj: list = []
+    bad_just: list = []
+    for r in rows:
+        sid = (r.get("subject_id") or "").strip()
+        oid = (r.get("object_id") or "").strip()
+        pid = (r.get("predicate_id") or "").strip()
+        jst = (r.get("mapping_justification") or "").strip()
+        if sid and not CURIE_RE.match(sid):
+            bad_subj.append(sid)
+        if oid and not CURIE_RE.match(oid):
+            bad_obj.append(oid)
+        if pid and not pid.startswith(("skos:", "owl:", "rdfs:")):
+            bad_pred.append(pid)
+        if jst and not jst.startswith("semapv:"):
+            bad_just.append(jst)
+
+    if bad_subj:
+        findings.append(Finding("ERROR", "SSSOM",
+                                f"{path.name}: {len(bad_subj)} non-CURIE subject_id",
+                                bad_subj[:5] if verbose else []))
+    if bad_obj:
+        findings.append(Finding("ERROR", "SSSOM",
+                                f"{path.name}: {len(bad_obj)} non-CURIE object_id",
+                                bad_obj[:5] if verbose else []))
+    if bad_pred:
+        findings.append(Finding("WARNING", "SSSOM",
+                                f"{path.name}: {len(bad_pred)} predicate_id outside skos/owl/rdfs",
+                                bad_pred[:5] if verbose else []))
+    if bad_just:
+        findings.append(Finding("WARNING", "SSSOM",
+                                f"{path.name}: {len(bad_just)} mapping_justification outside semapv:",
+                                bad_just[:5] if verbose else []))
+
+    findings.append(Finding("INFO", "SSSOM",
+                            f"{path.name}: {len(rows)} rows validated"))
+    return findings, rows
+
+
+def load_ontology_ids(max_rows: int = 0) -> set:
+    """Load all node IDs from data/transformed/ontologies/*.tsv for cross-file checks."""
+    ids: set = set()
+    if not ONTOLOGIES_DIR.exists():
+        return ids
+    for path in ONTOLOGIES_DIR.glob("*_nodes.tsv"):
+        try:
+            with open(path, encoding="utf-8", errors="replace") as f:
+                reader = csv.DictReader(f, delimiter="\t")
+                for r in reader:
+                    nid = (r.get("id") or "").strip()
+                    if nid:
+                        ids.add(nid)
+        except Exception:
+            continue
+    return ids
+
+
+def cross_file_consistency(canonical_rows_by_file: dict, verbose: bool) -> list:
+    """Same subject_label across canonical files mapping to different object_ids."""
+    findings: list = []
+    label_to_targets: dict = defaultdict(set)
+    label_to_files: dict = defaultdict(set)
+    for fname, rows in canonical_rows_by_file.items():
+        for r in rows:
+            label = (r.get("subject_label") or "").strip().lower()
+            obj = (r.get("object_id") or "").strip()
+            if label and obj:
+                label_to_targets[label].add(obj)
+                label_to_files[label].add(fname)
+
+    conflicts: list = []
+    for label, targets in label_to_targets.items():
+        if len(targets) > 1:
+            conflicts.append((label, sorted(targets), sorted(label_to_files[label])))
+
+    if conflicts:
+        examples = [f"{label!r} → {targets} in {files}"
+                    for label, targets, files in conflicts[:5]]
+        findings.append(Finding("WARNING", "Mapping",
+                                f"{len(conflicts)} subject_labels mapped to >1 object_id "
+                                "across canonical files",
+                                examples if verbose else []))
+    else:
+        findings.append(Finding("INFO", "Mapping",
+                                "No cross-file subject_label → object_id conflicts"))
+    return findings
+
+
+def review_mappings(verbose: bool, registered_prefixes: set, metpo_curies: set) -> dict:
+    """Run all mapping-file validators and return a unified result dict.
+
+    Result shape mirrors review_transform but uses 'mappings' as the section key:
+    {
+      "name": "mappings",
+      "nodes": [Finding...],   # canonical + bespoke + queue + sssom
+      "edges": [Finding...],   # cross-file consistency + curation report
+      "errors": int,
+      "warnings": int,
+      "curation_report": str,  # markdown body for curation upgrade section
+    }
+    """
+    result = {"name": "mappings", "nodes": [], "edges": [], "errors": 0, "warnings": 0}
+    ontology_ids = load_ontology_ids()
+    canonical_rows_by_file: dict = {}
+
+    # Group A: canonical mapping files
+    for fname in sorted(GROUP_A_CANONICAL):
+        path = MAPPINGS_DIR_METATRAITS / fname
+        if not path.exists():
+            result["nodes"].append(Finding("INFO", "Mapping", f"{fname} not present"))
+            continue
+        findings, rows = check_canonical_mapping_file(
+            path, registered_prefixes, metpo_curies, ontology_ids, verbose
+        )
+        result["nodes"].extend(findings)
+        canonical_rows_by_file[fname] = rows
+
+    # Group B: bespoke schema files
+    for fname, expected in GROUP_B_BESPOKE.items():
+        path = MAPPINGS_DIR_METATRAITS / fname
+        if not path.exists():
+            result["nodes"].append(Finding("INFO", "Mapping", f"{fname} not present"))
+            continue
+        findings, _ = check_bespoke_mapping_file(path, expected, verbose)
+        result["nodes"].extend(findings)
+
+    # Group C: queues / audit / proposals (under repo /mappings/)
+    queue_path = MAPPINGS_DIR_REPO / "mediadive_unmapped_ingredients_to_curate.tsv"
+    f, queue_rows = check_unmapped_queue(queue_path, verbose)
+    result["nodes"].extend(f)
+
+    cb_path = MAPPINGS_DIR_REPO / "culturebotai_reviewed_ingredients.tsv"
+    f, cb_rows = check_culturebotai_reviewed(cb_path, verbose)
+    result["nodes"].extend(f)
+
+    # Group D: SSSOM
+    sssom_path = MAPPINGS_DIR_REPO / "ingredient_mappings.sssom.tsv"
+    f, _ = check_sssom_file(sssom_path, registered_prefixes, verbose)
+    result["nodes"].extend(f)
+
+    # Cross-file consistency
+    result["edges"].extend(cross_file_consistency(canonical_rows_by_file, verbose))
+
+    # Build curation upgrade report
+    result["curation_report"] = build_curation_report(
+        canonical_rows_by_file, queue_rows, cb_rows, ontology_ids
+    )
+
+    # Tally
+    for f in result["nodes"] + result["edges"]:
+        if f.severity == "ERROR":
+            result["errors"] += 1
+        elif f.severity == "WARNING":
+            result["warnings"] += 1
+    return result
+
+
+def build_curation_report(canonical_rows_by_file: dict, queue_rows: list,
+                          cb_rows: list, ontology_ids: set) -> str:
+    """Build a markdown report actionable for upstream curation repos.
+
+    Sections:
+      1. Top unmapped ingredients (mediadive queue) by occurrence
+      2. Cross-file conflicts (same subject_label, different object_id)
+      3. Object IDs not resolvable in ontologies output
+      4. Low-confidence canonical rows
+      5. Prefix normalization candidates
+      6. CultureBotAI review queue summary
+    """
+    lines: list = ["## Curation upgrade report",
+                   "_Targets: CultureBotAI / MIM / CultureBotHT_", ""]
+
+    # 1. Top unmapped queue
+    lines.append("### 1. Top unmapped MediaDive ingredients (by occurrence)")
+    if queue_rows:
+        unmapped = [r for r in queue_rows
+                    if (r.get("mapping_status") or "").strip().upper() == "UNMAPPED"]
+
+        def _occ(r):
+            try:
+                return int((r.get("occurrences") or "0").strip() or "0")
+            except ValueError:
+                return 0
+
+        unmapped.sort(key=_occ, reverse=True)
+        if unmapped:
+            lines.append("| ingredient | occurrences | mediadive id | parent ingredient |")
+            lines.append("|---|---:|---|---|")
+            for r in unmapped[:25]:
+                lines.append(
+                    f"| {r.get('preferred_term', '').strip()} "
+                    f"| {_occ(r)} "
+                    f"| {r.get('id', '').strip()} "
+                    f"| {r.get('parent_ingredient', '').strip() or '—'} |"
+                )
+        else:
+            lines.append("_All queue rows are MAPPED._")
+    else:
+        lines.append("_Queue file absent._")
+    lines.append("")
+
+    # 2. Conflicts
+    label_to_targets: dict = defaultdict(set)
+    label_to_files: dict = defaultdict(set)
+    for fname, rows in canonical_rows_by_file.items():
+        for r in rows:
+            label = (r.get("subject_label") or "").strip().lower()
+            obj = (r.get("object_id") or "").strip()
+            if label and obj:
+                label_to_targets[label].add(obj)
+                label_to_files[label].add(fname)
+    conflicts = [(label, targets, label_to_files[label])
+                 for label, targets in label_to_targets.items() if len(targets) > 1]
+    lines.append("### 2. Cross-file mapping conflicts")
+    if conflicts:
+        lines.append("| subject_label | object_ids | files |")
+        lines.append("|---|---|---|")
+        for label, targets, files in sorted(conflicts):
+            lines.append(f"| {label} | {', '.join(sorted(targets))} "
+                         f"| {', '.join(sorted(files))} |")
+    else:
+        lines.append("_No conflicts detected._")
+    lines.append("")
+
+    # 3. Broken refs
+    broken: list = []
+    if ontology_ids:
+        watched_prefixes = {"CHEBI", "GO", "EC", "RO", "UBERON", "ENVO", "HP",
+                            "MONDO", "PATO", "PR", "CL", "FOODON", "NCBITaxon", "OMP"}
+        for fname, rows in canonical_rows_by_file.items():
+            for r in rows:
+                oid = (r.get("object_id") or "").strip()
+                if not oid:
+                    continue
+                if get_prefix(oid) in watched_prefixes and oid not in ontology_ids:
+                    broken.append((fname, r.get("subject_label", ""), oid))
+    lines.append("### 3. Object IDs not resolvable in ontologies output")
+    if broken:
+        lines.append("| file | subject_label | object_id |")
+        lines.append("|---|---|---|")
+        for fname, label, oid in broken[:50]:
+            lines.append(f"| {fname} | {label} | {oid} |")
+        if len(broken) > 50:
+            lines.append(f"_…and {len(broken) - 50} more._")
+    else:
+        lines.append("_All object IDs resolvable (or ontology output not loaded)._")
+    lines.append("")
+
+    # 4. Low-confidence
+    low_conf: list = []
+    for fname, rows in canonical_rows_by_file.items():
+        for r in rows:
+            conf = (r.get("confidence") or "").strip().lower()
+            if conf and conf != "high":
+                low_conf.append((fname, r.get("subject_label", ""),
+                                 r.get("object_id", ""), conf))
+    lines.append("### 4. Low-confidence canonical rows")
+    if low_conf:
+        lines.append("| file | subject_label | object_id | confidence |")
+        lines.append("|---|---|---|---|")
+        for fname, label, oid, conf in low_conf[:50]:
+            lines.append(f"| {fname} | {label} | {oid} | {conf} |")
+    else:
+        lines.append("_All canonical rows are high-confidence._")
+    lines.append("")
+
+    # 5. Prefix normalization candidates
+    aliases = {
+        "PUBCHEM.COMPOUND": "pubchem.compound",
+        "PubChem": "pubchem.compound",
+        "CAS-RN": "cas",
+        "Cas-rn": "cas",
+    }
+    prefix_hits: dict = defaultdict(int)
+    for fname, rows in canonical_rows_by_file.items():
+        for r in rows:
+            oid = (r.get("object_id") or "").strip()
+            p = get_prefix(oid)
+            if p in aliases:
+                prefix_hits[(fname, p, aliases[p])] += 1
+    lines.append("### 5. Prefix normalization candidates")
+    if prefix_hits:
+        lines.append("| file | observed prefix | canonical prefix | rows |")
+        lines.append("|---|---|---|---:|")
+        for (fname, observed, canonical), n in sorted(prefix_hits.items()):
+            lines.append(f"| {fname} | {observed} | {canonical} | {n} |")
+    else:
+        lines.append("_No prefix aliasing observed in canonical files._")
+    lines.append("")
+
+    # 6. CultureBotAI summary
+    lines.append("### 6. CultureBotAI ingredient review queue")
+    if cb_rows:
+        statuses: dict = defaultdict(int)
+        for r in cb_rows:
+            statuses[(r.get("mapping_status") or "").strip() or "BLANK"] += 1
+        lines.append("| status | count |")
+        lines.append("|---|---:|")
+        for status, n in sorted(statuses.items(), key=lambda x: -x[1]):
+            lines.append(f"| {status} | {n} |")
+    else:
+        lines.append("_culturebotai_reviewed_ingredients.tsv not present._")
+    lines.append("")
+
+    return "\n".join(lines)
+
+
 # ── Main review ───────────────────────────────────────────────────────────────
 def _tally(result: dict) -> dict:
     """Count errors and warnings in result findings."""
@@ -833,6 +1476,13 @@ def main():
                         help="Max rows to sample per file (0=all)")
     parser.add_argument("--strict-kgx", action="store_true",
                         help="Additionally run kgx.validator.Validator (authoritative KGX spec check)")
+    parser.add_argument("--mappings", action="store_true",
+                        help="Review curation TSVs under mappings/ and "
+                             "kg_microbe/transform_utils/*/mappings/ in addition to the "
+                             "transform/merged scope. Adds canonical schema + SSSOM checks "
+                             "and a curation upgrade report.")
+    parser.add_argument("--mappings-only", action="store_true",
+                        help="Run ONLY the mappings review (skip transform/merged review).")
     parser.add_argument("--no-save", action="store_true",
                         help="Skip writing a timestamped artifact under <skill>/reviews/")
     args = parser.parse_args()
@@ -865,8 +1515,11 @@ def main():
         print("  Warning: No METPO CURIEs loaded (run ontologies transform first)", file=sys.stderr)
 
     results = []
+    mappings_result: dict = None
 
-    if args.merged:
+    if args.mappings_only:
+        targets: list = []
+    elif args.merged:
         targets = [("merged", MERGED_DIR)]
     elif args.transform:
         targets = [(args.transform, TRANSFORMS_DIR / args.transform)]
@@ -882,11 +1535,16 @@ def main():
                                   args.verbose, strict_kgx=args.strict_kgx)
         results.append(result)
 
+    if args.mappings or args.mappings_only:
+        print(f"  Reviewing mapping files...", file=sys.stderr)
+        mappings_result = review_mappings(args.verbose, registered_prefixes, metpo_curies)
+        results.append(mappings_result)
+
     if args.format == "json":
         # Serialize findings
         output = []
         for r in results:
-            output.append({
+            entry = {
                 "transform": r["name"],
                 "errors": r["errors"],
                 "warnings": r["warnings"],
@@ -894,7 +1552,10 @@ def main():
                           for f in r["nodes"]],
                 "edges": [{"severity": f.severity, "check": f.check, "message": f.message}
                           for f in r["edges"]],
-            })
+            }
+            if r.get("curation_report"):
+                entry["curation_report"] = r["curation_report"]
+            output.append(entry)
         rendered = json.dumps(output, indent=2)
         ext = "json"
     elif args.format == "md":
@@ -903,10 +1564,25 @@ def main():
     else:
         rendered = format_text(results, format_md=False)
         ext = "txt"
+
+    # Append the curation upgrade report (markdown) when mappings were reviewed.
+    # In text mode the markdown body is appended verbatim with a separator
+    # banner so the artifact is still useful to humans / upstream curators.
+    if mappings_result and mappings_result.get("curation_report"):
+        if args.format in ("md", "text"):
+            rendered += "\n\n" + mappings_result["curation_report"]
+
     print(rendered)
 
     if not args.no_save:
-        if args.merged:
+        if args.mappings_only:
+            scope = "mappings"
+        elif args.mappings:
+            scope = (
+                f"{args.transform or ('merged' if args.merged else 'all-transforms')}"
+                "+mappings"
+            )
+        elif args.merged:
             scope = "merged"
         elif args.transform:
             scope = args.transform

@@ -1,6 +1,6 @@
 ---
 name: chemical-mapping
-description: Work with KG-Microbe's unified chemical mapping system (`mappings/unified_chemical_mappings.tsv.gz` and `kg_microbe/utils/chemical_mapping_utils.py`). Use when adding a new mapping source, regenerating the unified file, debugging a missing ChEBI lookup, validating mappings against OLS, or reasoning about which source wins when sources disagree.
+description: Work with KG-Microbe's unified chemical mapping system (`mappings/unified_ingredient_mappings.sssom.tsv.gz` and `kg_microbe/utils/chemical_mapping_utils.py`). Use when adding a new mapping source, regenerating the unified file, debugging a missing ChEBI lookup, validating mappings against OLS, or reasoning about which source wins when sources disagree.
 ---
 
 # KG-Microbe Chemical Mapping
@@ -14,9 +14,8 @@ mapping set. All transforms that need "name → ChEBI" go through
 `kg_microbe.utils.chemical_mapping_utils`, which reads
 `mappings/unified_ingredient_mappings.sssom.tsv.gz` once per process
 and reconstructs the in-memory name/xref/formula/category indices from
-the SSSOM rows. The `unified_chemical_mappings.tsv.gz` TSV is retained
-only as a complementary entity-centric export for external consumers —
-the reader no longer loads it.
+the SSSOM rows. The unified SSSOM is the **single source of truth** for
+chemical mappings; legacy entity-centric TSV outputs have been retired.
 
 The unified file is built by `scripts/consolidate_chemical_mappings.py`
 from multiple source files with a **priority system** — higher-priority
@@ -27,11 +26,11 @@ win tie-breaks during duplicate-name merging.
 
 | Path | Role |
 |---|---|
-| `mappings/unified_ingredient_mappings.sssom.tsv.gz` | **Primary mapping product.** Standards-compliant SSSOM mapping set covering xrefs (`skos:exactMatch`) + canonical names + free-text synonyms via synthetic `kgm.name:<slug>` subjects (`skos:exactMatch` / `skos:closeMatch`, justification `semapv:LexicalMatching`). Validated with the `sssom` Python package on every write. |
-| `mappings/unified_chemical_mappings.tsv.gz` | **In-process runtime index.** 7-col gzipped TSV consumed by all transforms. Entity-centric (one row per primary CURIE). Needed because plain-string synonyms cannot be represented as SSSOM subjects. Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments) in a single file. |
+| `mappings/unified_ingredient_mappings.sssom.tsv.gz` | **Single source of truth.** Standards-compliant SSSOM mapping set covering xrefs (`skos:exactMatch`) + canonical names + free-text synonyms via synthetic `kgm.name:<slug>` subjects (`skos:exactMatch` / `skos:closeMatch`, justification `semapv:LexicalMatching`). Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments). Validated with the `sssom` Python package on every write. |
 | `scripts/dump_unmapped_mediadive_ingredients.py` | Emits a MIM-compatible TSV of MediaDive ingredients still unmapped after the current mappings + `fuzzy_hydrate` retry, for curator review. |
 | `mappings/culturebotai_reviewed_ingredients.tsv` | Authoritative reviewed source from CultureBotAI (priority=10). |
-| `mappings/ingredient_mappings.sssom.tsv` | Authoritative SSSOM mapping set from the MediaIngredientMech sibling repo (priority=11). |
+| `mappings/ingredient_mappings.sssom.tsv` | **Vendored copy** of the MediaIngredientMech SSSOM (priority=11). Auto-refreshed from the sibling repo on every consolidator run — never edit this file directly; edit upstream in MIM and let `sync_mim_sssom` overwrite it. |
+| `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` | **Source of truth** for MIM mappings. The MediaIngredientMech repo (https://github.com/KG-Hub/MediaIngredientMech) is expected to be checked out as a sibling of `kg-microbe`. The consolidator wins-from-sibling on content divergence. |
 | `mappings/chemical_mappings.tsv` | Legacy KEGG/BacDive primary mappings (may be absent). |
 | `mappings/README.md` | Schema + regeneration instructions. |
 | `scripts/consolidate_chemical_mappings.py` | Consolidator (run to rebuild). |
@@ -45,17 +44,29 @@ win tie-breaks during duplicate-name merging.
 | `kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv` | Expert annotation source (may be absent). |
 | `kg_microbe/transform_utils/bacdive/metabolite_mapping.json` | BacDive metabolite source (may be absent). |
 
-## Schema: `unified_chemical_mappings.tsv.gz`
+## Schema: SSSOM rows in `unified_ingredient_mappings.sssom.tsv.gz`
+
+Per-entity attributes are reconstructed at read time by grouping rows on
+`object_id`. Three row shapes (emitted by `export_unified_sssom`):
+
+| Row shape | `subject_id` | `comment` | Carries |
+|---|---|---|---|
+| canonical name | `kgm.name:<slug>` | `canonical_name` | the entity's preferred label via `subject_label` / `object_label` |
+| synonym | `kgm.name:<slug>` | `synonym` | one synonym per row via `subject_label` |
+| xref | plain CURIE (e.g. `cas:7647-14-5`) | _empty_ | an equivalent identifier mapped to the entity |
+| attribute carrier | _equal to_ `object_id` | _empty_ | extension columns only (when the entity has no other rows) |
+
+Extension columns ride on every row as per-entity attributes:
 
 | Column | Description |
 |---|---|
-| `id` | Primary key. Any supported ontology CURIE: `CHEBI:<int>` (preferred for chemicals), `FOODON:<int>`, `UBERON:<int>`, `ENVO:<int>`, etc. |
-| `category` | Biolink category for the entry (`biolink:ChemicalSubstance`, `biolink:Food`, `biolink:AnatomicalEntity`, `biolink:EnvironmentalFeature`, …). Populated at consolidation time; downstream transforms read it directly instead of deriving category from the CURIE prefix. |
-| `canonical_name` | Preferred name. Dominated by the highest-priority source. |
-| `formula` | Molecular formula (chemicals only). Higher-priority wins. |
-| `synonyms` | Pipe-delimited. Always unioned across all sources. |
-| `xrefs` | Pipe-delimited. Union. Includes `cas:*`, `kegg.compound:*`, `pubchem.compound:*`, `MediaIngredientMech:*`, etc. |
-| `sources` | Pipe-delimited provenance tags (one per contributing source loader). |
+| `object_id` | Primary key — any supported ontology CURIE: `CHEBI:<int>`, `FOODON:<int>`, `UBERON:<int>`, `ENVO:<int>`, `pubchem.compound:<int>`, `cas:<dash-separated>`, etc. |
+| `object_label` | The entity's canonical name. |
+| `object_formula` | Molecular formula (chemicals only). Higher-priority source wins. |
+| `object_category` | Biolink category (`biolink:ChemicalSubstance`, `biolink:Food`, `biolink:AnatomicalEntity`, `biolink:EnvironmentalFeature`, …). |
+| `predicate_id` | `skos:exactMatch` (default) or `skos:closeMatch` / `narrowMatch` / `broadMatch` for asymmetric matches. |
+| `mapping_justification` | `semapv:LexicalMatching` for synthetic name rows; `semapv:ManualMappingCuration` for curated xrefs. |
+| `source` | Pipe-delimited provenance tags (one per contributing source loader). |
 
 ## Priority system
 
@@ -120,15 +131,43 @@ poetry run python scripts/consolidate_chemical_mappings.py
 ```
 
 Behaviour:
-1. Seeds from the existing `mappings/unified_chemical_mappings.tsv.gz` (priority inferred per row from source labels).
+1. Seeds from the existing `mappings/unified_ingredient_mappings.sssom.tsv.gz` (the single source of truth; priority inferred per row from source labels).
 2. Layers in any still-present legacy source files (absent ones are skipped).
 3. Always loads `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
-4. Syncs + loads `mappings/ingredient_mappings.sssom.tsv` from the MIM sibling repo (priority=11).
+4. Calls `sync_mim_sssom` to refresh `mappings/ingredient_mappings.sssom.tsv` from the MIM sibling repo at `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` (sibling wins on divergence; vendored is a cache, not a fork), then loads it (priority=11).
 5. Enriches from `data/raw/chebi.db` via OAK (labels fill only when no higher-priority name is present; aliases always accumulate).
 6. Harvests CHEBI xref labels via OAK into owning-record synonyms.
 7. Propagates names across equivalent-CURIE records via xrefs (symmetric snapshot; no record merge).
 8. Resolves name-index conflicts by source priority (no cross-CURIE merge pass).
-9. Writes `mappings/unified_chemical_mappings.tsv.gz` and the SSSOM mapping product.
+9. Writes `mappings/unified_ingredient_mappings.sssom.tsv.gz` (validated round-trip via the `sssom` package).
+
+### MIM SSSOM source-of-truth contract
+
+The MediaIngredientMech repo is the **authoritative** source for ingredient
+mappings (priority=11). Its SSSOM lives at
+`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` (sibling of
+the kg-microbe repo). The vendored copy at
+`mappings/ingredient_mappings.sssom.tsv` is a cache, refreshed on every
+consolidator run by `sync_mim_sssom` (see `scripts/consolidate_chemical_mappings.py:182`):
+
+| Sibling | Vendored | Sync action |
+|---|---|---|
+| present, content matches | present | no-op (`MIM SSSOM up-to-date`) |
+| present, content differs | present | overwrite vendored (sibling wins) |
+| present | absent | copy sibling → vendored |
+| absent | present | warn, continue with stale vendored copy |
+| absent | absent | **fatal** — script aborts with clone instructions |
+
+Rules:
+- **Never edit the vendored copy directly** — your changes will be silently
+  overwritten by the next consolidator run.
+- To change a mapping: edit `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv`,
+  open a PR against MediaIngredientMech, and once it merges, re-run the consolidator.
+- New contributors must clone MIM as a sibling:
+  ```bash
+  cd $(dirname $(pwd))   # parent of kg-microbe
+  git clone https://github.com/KG-Hub/MediaIngredientMech.git
+  ```
 
 ### Add a new mapping source
 
@@ -166,7 +205,7 @@ If a name should map but doesn't:
 
 ## Known limitations
 
-- **Not ChEBI-only anymore**: `unified_chemical_mappings.tsv.gz` and the consolidator now support non-ChEBI primary IDs, including FOODON, UBERON, ENVO, NCIT, `pubchem.compound`, `cas`, `mediadive.ingredient`, and `kgmicrobe.compound`. Some downstream helpers and workflows are still ChEBI-oriented (for example `find_chebi_*` utilities), so callers that assume every row resolves to a ChEBI ID should handle non-ChEBI primary IDs explicitly.
+- **Not ChEBI-only anymore**: the unified SSSOM and the consolidator support non-ChEBI primary IDs, including FOODON, UBERON, ENVO, NCIT, `pubchem.compound`, `cas`, `mediadive.ingredient`, and `kgmicrobe.compound`. Some downstream helpers and workflows are still ChEBI-oriented (for example `find_chebi_*` utilities), so callers that assume every row resolves to a ChEBI ID should handle non-ChEBI primary IDs explicitly.
 - **CAS RN format**: stored as `cas:<dash-separated>` xrefs (e.g. `cas:7647-14-5`). Consumers must include the `cas:` prefix when calling `find_chebi_by_xref`.
 - **Priority inference on baseline reseed**: when `load_existing_unified` re-ingests the current `.tsv.gz`, the priority field is reconstructed from the `sources` column via prefix matching. A brand-new priority tier requires updating `priority_for` in that loader as well.
 - **ChEBI enrichment cost**: `enrich_with_chebi_synonyms` iterates every entry through an OAK adapter; it is the slowest step (~165k entries × label + aliases). If `data/raw/chebi.db` is absent, the enrichment is silently skipped.

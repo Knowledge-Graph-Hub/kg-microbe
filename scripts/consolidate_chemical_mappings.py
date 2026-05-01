@@ -273,6 +273,94 @@ _PREFIX_ALIASES: Dict[str, str] = {
 }
 
 
+# Highest CHEBI ID minted by EBI as of 2026-04. Real CHEBI accessions live
+# well below 1_000_000; anything ≥ this watermark in a CHEBI: id is a guaranteed
+# PubChem (or other 7+ digit numeric registry) value rewritten by the
+# pre-fix ``extract_chebi_id(re.search(r"(\d+)", v))`` regex. Used as a
+# unconditional blacklist threshold by ``is_mangled_chebi_id``.
+_CHEBI_LOCAL_MAX = 1_000_000
+
+
+def _build_mangle_blacklist(base_dir: Path) -> set:
+    r"""
+    Build the set of CHEBI:<n> ids the pre-fix mangler would emit.
+
+    Replays ``compound_mappings_strict`` to derive every CHEBI:<n> that the
+    legacy ``extract_chebi_id`` regex (``re.search(r"(\d+)", v)``) would emit
+    when fed a non-CHEBI ``mapped`` cell (PubChem:NNN, CAS-RN:N-N-N, etc).
+    Used to surgically drop matching rows from the legacy TSV and SSSOM
+    baselines without affecting CHEBI ids that were never mangled.
+
+    Returns an empty set if compound_mappings_strict is absent — in that
+    case only the >1_000_000 watermark catches obvious PubChem mangles.
+    """
+    blacklist: set = set()
+    candidates = [
+        base_dir / "data" / "raw" / "compound_mappings_strict.tsv",
+        base_dir / "data" / "raw" / "compound_mappings_strict_hydrate.tsv",
+    ]
+    for path in candidates:
+        if not path.exists():
+            continue
+        try:
+            df = pd.read_csv(path, sep="\t", dtype=str, usecols=["mapped"]).fillna("")
+        except Exception as exc:  # noqa: BLE001 - replay is best-effort
+            print(f"  Warning: could not read {path} for mangle blacklist: {exc}")
+            continue
+        for v in df["mapped"]:
+            v = v.strip()
+            # Only non-CHEBI ``mapped`` values get rewritten by the pre-fix
+            # regex into a fake CHEBI: id.
+            if not v or v.startswith("CHEBI:") or v.startswith("chebi:"):
+                continue
+            m = re.search(r"(\d+)", v)
+            if m:
+                blacklist.add(f"CHEBI:{m.group(1)}")
+    return blacklist
+
+
+def is_mangled_chebi_id(curie: str, sources_str: str = "",
+                        mangle_blacklist: set = frozenset()) -> bool:
+    r"""
+    Return True if ``curie`` is a CHEBI id mangled by the pre-fix mangler.
+
+    Detects CHEBI: ids produced by the legacy ``extract_chebi_id`` regex
+    (``re.search(r"(\d+)", v)``) when called on a FOODON/UBERON/PubChem/CAS-RN
+    value. Three rules, in order of confidence:
+
+    1. ``CHEBI:0*`` — real CHEBI ids never have a leading-zero local part;
+       these are FOODON/UBERON values rewritten by the regex.
+    2. ``CHEBI:N`` with ``N >= _CHEBI_LOCAL_MAX`` — well above the highest
+       minted CHEBI accession; PubChem CIDs are routinely 7-9 digits.
+    3. ``CHEBI:N`` in the data-driven ``mangle_blacklist`` AND the row's
+       sources are limited to mediadive-style auto-mappings — strict to
+       avoid nuking small real CHEBI ids that happen to collide with a
+       CAS-RN first-numeric-block (e.g. CHEBI:176 may be both real and a
+       mangle of CAS-RN:176-...). The source-restriction rule keeps the
+       curated authoritative rows safe.
+    """
+    if not curie or not curie.startswith("CHEBI:"):
+        return False
+    local = curie.split(":", 1)[1]
+    if not local:
+        return False
+    if local.startswith("0"):
+        return True
+    if local.isdigit() and int(local) >= _CHEBI_LOCAL_MAX:
+        return True
+    if curie in mangle_blacklist:
+        # Only drop when the row's provenance is exclusively auto-mapping
+        # sources — the pre-fix mangler only ran inside compound_mappings
+        # ingestion. Manual/MIM/CultureBot rows with the same CHEBI id are
+        # safe (those use authoritative curation paths).
+        sources = {s.strip() for s in (sources_str or "").split("|") if s.strip()}
+        if sources and sources.issubset({"mediadive_compounds",
+                                         "compound_mappings_strict",
+                                         "compound_mappings_strict_hydrate"}):
+            return True
+    return False
+
+
 def extract_curie(value: str) -> str:
     """
     Extract a recognized CURIE preserving the original ontology prefix.
@@ -436,6 +524,13 @@ class ChemicalMappingConsolidator:
         self.name_index: Dict[str, str] = {}  # normalized_name -> id
         self.formula_index: Dict[str, Set[str]] = defaultdict(set)  # formula -> set of ids
         self.chebi_adapter = None  # Will be initialized when needed
+        # Replay compound_mappings_strict to derive the set of CHEBI ids the
+        # pre-fix mangler would emit when fed PubChem/CAS-RN values. Used by
+        # both baseline loaders to surgically drop polluted rows. Empty when
+        # source files are absent.
+        self.mangle_blacklist: set = _build_mangle_blacklist(
+            Path(__file__).parent.parent
+        )
 
     def add_chemical(
         self,
@@ -607,6 +702,17 @@ class ChemicalMappingConsolidator:
                 primary_id = extract_chebi_id(row.get("base_chebi_id", ""))
             if not primary_id:
                 continue
+            # Some upstream rows in compound_mappings_strict already carry a
+            # pre-mangled ``CHEBI:<n>`` value in the ``mapped`` column where
+            # the local part is a 7-9-digit PubChem CID (e.g. CHEBI:1185531
+            # for Tris-HCl, CHEBI:7773015 for MnCl2). ``extract_curie``
+            # preserves the prefix so these slip through. Detect them via
+            # the same rule the baseline loaders use and skip the row — the
+            # canonical mapping comes from CultureBotAI / MIM / chebi_xrefs
+            # which are loaded later.
+            if is_mangled_chebi_id(primary_id, "mediadive_compounds",
+                                   self.mangle_blacklist):
+                continue
 
             canonical_name = row.get("chebi_label", "")
             formula = row.get("chebi_formula", "")
@@ -776,82 +882,6 @@ class ChemicalMappingConsolidator:
 
         print(f"  Loaded {loaded} entries")
 
-    def load_existing_unified_tsv(self, filepath: Path):
-        """
-        Load a legacy unified TSV.GZ baseline (migration fallback only).
-
-        The TSV outputs have been retired in favour of SSSOM-with-extension-
-        columns; this method exists only so the first consolidator run after
-        the switch can pick up ``formula`` and ``category`` values from the
-        old file before it is deleted. Delete this method and the matching
-        main() call once the SSSOM baseline reliably carries the extension
-        columns.
-        """
-        import gzip as _gzip
-
-        print(f"Loading legacy TSV baseline from {filepath}...")
-        with _gzip.open(filepath, "rt") as f:
-            df = pd.read_csv(f, sep="\t", dtype=str).fillna("")
-
-        priority_for = {
-            "mediaingredientmech_reviewed": 11,
-            "culturebotai_reviewed": 10,
-            "manual_annotation": 5,
-            "manual_corrections": 5,
-            "metatraits_manual": 5,
-            "metatraits_chemical_synonyms": 5,
-            "metatraits_special_chemicals": 5,
-            "metatraits_chemical_mappings": 5,
-            "chebi_xrefs": 2,
-        }
-
-        def infer_priority(sources_str: str) -> int:
-            parts = [p.strip() for p in sources_str.split("|") if p.strip()]
-            best = 1
-            for src in parts:
-                for prefix, pri in priority_for.items():
-                    if src.startswith(prefix):
-                        best = max(best, pri)
-            return best
-
-        id_column = "id" if "id" in df.columns else "chebi_id"
-        skipped_mangled = 0
-        for _, row in df.iterrows():
-            curie = row.get(id_column, "")
-            if not is_accepted_primary(curie):
-                continue
-            # Drop legacy-baseline rows whose id was mangled by the
-            # pre-fix ``extract_chebi_id`` regex. Real CHEBI primary ids
-            # never carry a leading zero in the local part — any such
-            # id is a FOODON/UBERON/PubChem/CAS-RN value rewritten by
-            # the ``re.search(r"(\d+)", v)`` bug. Including them would
-            # silently re-pollute the SSSOM with wrong-entity references.
-            if curie.startswith("CHEBI:0"):
-                skipped_mangled += 1
-                continue
-            synonyms = [s for s in row.get("synonyms", "").split("|") if s]
-            xrefs = [x for x in row.get("xrefs", "").split("|") if x]
-            sources = [s for s in row.get("sources", "").split("|") if s]
-            priority = infer_priority(row.get("sources", ""))
-
-            self.add_chemical(
-                id=curie,
-                canonical_name=row.get("canonical_name", ""),
-                formula=row.get("formula", ""),
-                synonyms=synonyms,
-                xrefs=xrefs,
-                source="",
-                priority=priority,
-            )
-            self.chemicals[curie]["sources"].update(sources)
-
-        print(f"  Loaded {len(df)} legacy baseline entries")
-        if skipped_mangled:
-            print(
-                f"  Dropped {skipped_mangled} legacy entries with mangled "
-                f"CHEBI:0... ids (pre-fix prefix-mangling regression)"
-            )
-
     def load_existing_unified(self, filepath: Path):
         """
         Load an existing unified SSSOM file as a baseline.
@@ -920,12 +950,12 @@ class ChemicalMappingConsolidator:
             if not is_accepted_primary(curie):
                 continue
             # Drop entries whose id was mangled by the pre-fix
-            # ``extract_chebi_id`` regex (FOODON / UBERON / PubChem / CAS-RN
-            # values rewritten to ``CHEBI:<numeric_tail>`` with a leading
-            # zero). Real CHEBI primary ids never carry a leading zero, so
-            # any such row in a baseline SSSOM is residue from the
-            # prefix-mangling regression.
-            if curie.startswith("CHEBI:0"):
+            # ``extract_chebi_id`` regex. Three modes covered: leading-zero
+            # (FOODON/UBERON), >=1M local (PubChem CIDs), and replay-derived
+            # blacklist (CAS-RN + small-numeric collisions, source-restricted).
+            # See ``is_mangled_chebi_id``.
+            if is_mangled_chebi_id(curie, "|".join(rec.get("sources", [])),
+                                   self.mangle_blacklist):
                 mangled_skipped += 1
                 continue
             synonyms = list(rec["synonyms"])
@@ -1239,7 +1269,7 @@ class ChemicalMappingConsolidator:
         extract, Seawater, Yeast extract, Vermont Soil, etc.) and
         therefore cannot ride in the CHEBI-only SSSOM.
 
-        Schema mirrors `unified_chemical_mappings.tsv.gz`:
+        TSV columns:
           id, category, canonical_name, formula, synonyms, xrefs, sources
 
         Rows are added at priority 11 (same as mediaingredientmech_reviewed)
@@ -1788,22 +1818,10 @@ def main():
     consolidator = ChemicalMappingConsolidator()
 
     sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
-    # Legacy TSV baselines. Read before the SSSOM baseline so the SSSOM
-    # (the new source of truth) can overlay/supersede any stale values.
-    # These paths are retired outputs — kept as read-only migration
-    # fallbacks and deleted after the first SSSOM regeneration that
-    # carries the extension columns forward.
-    legacy_tsv_paths = [
-        base_dir / "mappings" / "unified_chemical_mappings.tsv.gz",
-        base_dir / "mappings" / "unified_other_mappings.tsv.gz",
-    ]
-    for legacy in legacy_tsv_paths:
-        if legacy.exists():
-            consolidator.load_existing_unified_tsv(legacy)
 
-    # Seed from the existing unified SSSOM (single source of truth going
-    # forward). Each row's sources contribute to the accumulated per-entity
-    # source set; priority is inferred from the source labels.
+    # Seed from the existing unified SSSOM (single source of truth). Each
+    # row's sources contribute to the accumulated per-entity source set;
+    # priority is inferred from the source labels.
     if sssom_output_path.exists():
         consolidator.load_existing_unified(sssom_output_path)
 

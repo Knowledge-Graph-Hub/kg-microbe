@@ -63,12 +63,12 @@ Chicken	chicken	ENVO:00002266	chicken breeding waste material	ENVO	skos:closeMat
 Child	child	ENVO:03501333	child care environment	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	An anthropogenic environment which is designed for child care.	2026-05-01
 Clean-room	clean room	ENVO:03600000	cleanroom	ENVO	skos:exactMatch	high	semapv:ManualMappingCuration	codex_review_fix	bacdive	fix(codex): was NCIT:C106896 (ADCS-ADL questionnaire item)	2026-05-02
 Climate	climate	ENVO:01001082	climate	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	Climate is commonly defined as the weather averaged, or otherwise summarised, over a period of time much longer than the	2026-05-01
-Clinic	clinic	ENVO:03501182	clinic	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\"This sense of clinic does not necessarily involve medical services.  For medical services see \\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"medical clinic\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\".\\\\\\\\\\\\\\\"	2026-05-01
+Clinic	clinic	ENVO:03501182	clinic	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"This sense of clinic does not necessarily involve medical services.  For medical services see \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"medical clinic\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\".\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"	2026-05-01
 Cnidaria-Corals	cnidaria corals	mesh:D037421	Anthozoa	mesh	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='corals'	2026-05-01
 Co-culture	co culture	mesh:D018920	Coculture Techniques	mesh	skos:exactMatch	high	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='co culture'	2026-05-01
 Coalbed-water	coalbed water							codex_review_fix	bacdive	fix(codex): non-CURIE 'Coalbed-water' from OLS GOLD result; unmapped	2026-05-02
 Coast	coast	ENVO:01000687	coast	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	Used for both marine and lake coasts. The boundary of the coast is fuzzy and it overlaps both the water body and land in	2026-05-01
-Cold	cold	ENVO:01000263	cold seep	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\"MERGED DEFINITION:
+Cold	cold	ENVO:01000263	cold seep	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"MERGED DEFINITION:
 Composting	composting	ENVO:01000550	composting toilet	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	A composting toilet fixture is a dry toilet fixture in which managed, aerobic decomposition converts human excreta into 	2026-05-01
 Condition	condition	ENVO:00002874	air conditioning unit	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	A manufactuered product which is capable of removing heat and controlling the humidity of the air within a site.	2026-05-01
 Container-Reservoir	container reservoir	ENVO:00000025	reservoir	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='reservoir'	2026-05-01
@@ -96,7 +96,7 @@ Dust	dust	ENVO:00002008	dust	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ol
 Dust-Ash	dust ash	ENVO:02000090	ash	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='ash'	2026-05-01
 Ear	ear	UBERON:0001690	ear	UBERON	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	Sense organ in vertebrates that is specialized for the detection of sound, and the maintenance of balance. Includes the 	2026-05-01
 Echinodermata	echinodermata	NCBITaxon:7586	Echinodermata	NCBITaxon	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive		2026-05-01
-Egg	egg	FOODON:00001274	egg food product	FOODON	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\"Regarding American regulatory aspects of egg products, see this summary:
+Egg	egg	FOODON:00001274	egg food product	FOODON	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Regarding American regulatory aspects of egg products, see this summary:
 Endosphere	endosphere							codex_review_fix	bacdive	fix(codex): non-CURIE 'Endosphere' from OLS GOLD result; unmapped	2026-05-02
 Endosymbiont	endosymbiont	VariO:0570	endosymbiont	VariO	skos:exactMatch	high	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='endosymbiont'	2026-05-01
 Engineered	engineered							manual_review	bacdive	unmapped: was FOODON:00001240 (rennet GE); 'Engineered' alone is too generic	2026-05-02
@@ -111,7 +111,7 @@ Feces-Stool	feces stool	UBERON:0001988	feces	UBERON	skos:closeMatch	medium	semap
 Felidae-Cat	felidae cat	NCBITaxon:9681	Felidae	NCBITaxon	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive		2026-05-01
 Female	female	PATO:0000383	female	PATO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	A biological sex quality inhering in an individual or a population that only produces gametes that can be fertilised by 	2026-05-01
 Fermented	fermented	FOODON:00001098	fermented apple beverage	FOODON	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive		2026-05-01
-Field	field	ENVO:01000352	field	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\"This class was created to accommodate \\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"fields\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\" from agricultural fields to marine mesoscale eddy fields. Thus, it has a \\\\\\\\\\\\\\\"	2026-05-01
+Field	field	ENVO:01000352	field	ENVO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"This class was created to accommodate \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"fields\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" from agricultural fields to marine mesoscale eddy fields. Thus, it has a \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"	2026-05-01
 Fishes	fishes	NCBITaxon:119695	Calamus <ray-finned fishes>	NCBITaxon	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive		2026-05-01
 Flower	flower	PO:0009046	flower	PO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	A determinate reproductive shoot system (PO:0025082) that has as part at least one carpel (PO:0009030) or at least one s	2026-05-01
 Fluids	fluids	NCIT:C13452	Other Body Fluids and Secretions	NCIT	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	Liquid substances produced by living organisms to fulfill specific functions or excreted as waste. Secretions do not inc	2026-05-01
@@ -211,7 +211,7 @@ Muridae-Mouse/Rat	muridae mouse/rat	NCBITaxon:10114	Rattus	NCBITaxon	skos:closeM
 Mushroom	mushroom	ENVO:00003033	mushroom compost	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	A compost which generally consists of a combination of wheat straw, dried blood, horse manure and ground chalk, composte	2026-05-01
 Mycorrhiza	mycorrhiza	FAO:0001027	mycorrhiza	FAO	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	A composite structure formed by the symbiotic association of the mycelium of a fungus with the roots of a seed plant.	2026-05-01
 Mycosis	mycosis	MONDO:0009691	mycosis fungoides	MONDO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	Classical mycosis fungoides is the most common type of mycosis fungoides (MF), a form of cutaneous T-cell lymphoma, and 	2026-05-01
-Nectar	nectar	FOODON:03301107	nectarine (raw)	FOODON	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\"SIREN DB annotation:
+Nectar	nectar	FOODON:03301107	nectarine (raw)	FOODON	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"SIREN DB annotation:
 Nematoda	nematoda	NCBITaxon:6231	Nematoda	NCBITaxon	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive		2026-05-01
 Nephridium	nephridium	UBERON:0006972	nephridium	UBERON	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	An exceretory tubule that usually opens to the exterior by a nephridiopore. The inner end of the tubule may be blind, en	2026-05-01
 Non-marine-Saline-and-Alkaline	non marine saline and alkaline	PATO:0001430	alkaline	PATO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='alkaline'	2026-05-01
@@ -345,7 +345,7 @@ Water-reservoir-Aquarium/pool	water reservoir aquarium/pool	ENVO:00000025	reserv
 Water-treatment-plant	water treatment plant	ENVO:03600004	drinking water treatment plant	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	An industrial building in which water undergoes a purification process to make it fit for human consumption.	2026-05-01
 Wetland-Swamp	wetland swamp	ENVO:00000233	swamp ecosystem	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='swamp'	2026-05-01
 Wilt	wilt							manual_review	bacdive	unmapped: was ENVO:06105303 (wilting point - soil moisture); plant-disease wilt has no clean ontology term	2026-05-02
-Wound	wound	UBERON:0006988	wound	UBERON	skos:exactMatch	high	semapv:ManualMappingCuration	manual	bacdive	manual override: original auto-mapping went to GO BP (wound healing); replaced with UBERON anatomical	2026-05-02
+Wound	wound	mesh:D014947	Wounds and Injuries	mesh	skos:closeMatch	medium	semapv:ManualMappingCuration	manual_review	bacdive	fix: UBERON:0006988 does not exist; UBERON has no 'wound' term. mesh:D014947 'Wounds and Injuries' is the closest standard cross-domain term	2026-05-02
 Wound-fluid	wound fluid	BTO:0003114	wound fluid	BTO	skos:exactMatch	high	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='wound fluid'	2026-05-01
 Xerophilic	xerophilic								bacdive	UNMAPPED — no OLS match in ENVO/UBERON/FOODON/MONDO/NCIT	2026-05-01
 Xerophytic	xerophytic								bacdive	UNMAPPED — no OLS match in ENVO/UBERON/FOODON/MONDO/NCIT	2026-05-01

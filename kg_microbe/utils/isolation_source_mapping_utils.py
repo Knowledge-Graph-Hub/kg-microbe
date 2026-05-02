@@ -47,6 +47,21 @@ DEFAULT_ISOLATION_SOURCE_MAPPING_FILE = REPO_ROOT / "mappings" / "isolation_sour
 # similar problem belongs here.
 DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({"UO"})
 
+# Ontology prefixes that the BacDive isolation_source mapping TSV references
+# but that are NOT loaded by the ontologies transform (see ONTOLOGIES_MAP in
+# kg_microbe/transform_utils/ontologies/ontologies_transform.py). Each
+# prefix has only a tiny number of distinct IDs in use and loading the full
+# ontology would be wasteful, so the BacDive transform writes a thin node
+# row per resolved CURIE using the object_label from the mapping TSV. The
+# category is biolink:OntologyClass for all stubs because they're top-level
+# categorical terms (host body site, microbial community, ...) rather than
+# specific anatomy / environmental features.
+STUB_ONTOLOGY_PREFIXES: frozenset = frozenset({
+    "PRIDE",  # 3 IDs: host body site, host body product, antibiotic treatment
+    "PCO",    # 1 active ID: microbial community (PCO:1000004)
+})
+STUB_ONTOLOGY_CATEGORY = "biolink:OntologyClass"
+
 # Substrings in the *target* label that signal a family mismatch with any
 # isolation-source label kind. These are facilities, documents, processes, or
 # clinical instruments, not substrates / body parts / hosts / environments.
@@ -178,7 +193,7 @@ def load_isolation_source_mappings(
                 skipped_low_trust += 1
                 continue
 
-            raw_key = (row.get("subject_label_normalized") or row.get("subject_label") or "")
+            raw_key = row.get("subject_label_normalized") or row.get("subject_label") or ""
             key = normalize_isolation_source_label(raw_key)
             if not key:
                 continue
@@ -221,6 +236,8 @@ __all__: List[str] = [
     "DEFAULT_ISOLATION_SOURCE_MAPPING_FILE",
     "DISALLOWED_OBJECT_SOURCES",
     "BANNED_OBJECT_LABEL_SUBSTRINGS",
+    "STUB_ONTOLOGY_PREFIXES",
+    "STUB_ONTOLOGY_CATEGORY",
     "iter_validation_failures",
     "load_isolation_source_mappings",
     "normalize_isolation_source_label",

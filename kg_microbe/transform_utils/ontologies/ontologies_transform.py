@@ -83,6 +83,9 @@ ONTOLOGIES_MAP = {
     "foodon": "foodon.owl",
     "pato": "pato.owl",
     "ro": "ro.owl",
+    "po": "po.owl",            # Plant Ontology — BacDive isolation_source plant anatomy
+    "taxrank": "taxrank.owl",  # Taxonomic Rank — NCBITaxon transform rank annotations
+    "micro": "micro.owl",      # Microbial Conditions Ontology — MIM media ingredient mappings
 }
 
 

@@ -180,6 +180,8 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.isolation_source_mapping_utils import (
+    STUB_ONTOLOGY_CATEGORY,
+    STUB_ONTOLOGY_PREFIXES,
     load_isolation_source_mappings,
     normalize_isolation_source_label,
 )
@@ -2844,7 +2846,22 @@ class BacDiveTransform(Transform):
                             normalize_isolation_source_label(isol_source)
                         )
                         if mapping is not None:
-                            subject_id = mapping[0]
+                            subject_id, mapped_label = mapping[0], mapping[1]
+                            # Stub-prefix targets (PRIDE, PCO, ...) point at ontologies the
+                            # ontologies transform does not load — only a tiny number of
+                            # distinct IDs are referenced (3 PRIDE, 1 active PCO), so we
+                            # emit a thin node row here instead of pulling in the full
+                            # ontology. Loaded-ontology targets (UBERON, ENVO, ...) get
+                            # their canonical node from the ontologies transform.
+                            stub_prefix = subject_id.split(":", 1)[0] if ":" in subject_id else ""
+                            if stub_prefix in STUB_ONTOLOGY_PREFIXES:
+                                node_writer.writerow(
+                                    self._create_node_row(
+                                        subject_id,
+                                        STUB_ONTOLOGY_CATEGORY,
+                                        mapped_label or isol_source,
+                                    )
+                                )
                         else:
                             subject_id = ISOLATION_SOURCE_PREFIX + isol_source.lower()
                             # Only write a placeholder node when no ontology mapping exists;

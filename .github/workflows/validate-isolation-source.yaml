@@ -1,0 +1,58 @@
+name: Validate isolation_source_to_ontology mapping
+
+# Codex-adversarial-review follow-up gate. Validates
+# `mappings/isolation_source_to_ontology.tsv` against:
+#   1. CURIE format (every non-empty object_id is prefix:localpart)
+#   2. object_source matches the prefix of object_id
+#   3. predicate_id is a valid SKOS mapping predicate
+#   4. mapping_justification is a recognized semapv: term
+#   5. confidence is one of {high, medium, low}
+#   6. ontology category allowlist (no MONDO/DOID/HP — diseases are
+#      not isolation sources); warns on NCIT/mesh terms whose label
+#      contains non-isolation-source keywords (procedure, disease,
+#      questionnaire, organization, ...)
+#   7. unmapped rows have empty mapping fields
+#
+# Validator script lives in the orchestration repo (culturebotai-claw)
+# and is checked out alongside kg-microbe at workflow run time.
+
+on:
+  pull_request:
+    branches: [main, master, team-review-sssom]
+    paths:
+      - "mappings/isolation_source_to_ontology.tsv"
+      - ".github/workflows/validate-isolation-source.yaml"
+  push:
+    branches: [main, master, team-review-sssom]
+    paths:
+      - "mappings/isolation_source_to_ontology.tsv"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kg-microbe
+        uses: actions/checkout@v4
+        with:
+          path: kg-microbe
+
+      - name: Checkout culturebotai-claw (validator script)
+        uses: actions/checkout@v4
+        with:
+          repository: CultureBotAI/culturebotai-claw
+          path: culturebotai-claw
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate
+        env:
+          KGMICROBE_ROOT: ${{ github.workspace }}/kg-microbe
+        run: |
+          cd culturebotai-claw
+          python3 scripts/validate_isolation_source_mapping.py

@@ -933,6 +933,39 @@ CATEGORICAL_TERMS: List[Term] = [
         synonyms=["coagulase test negative", "coagulase -"],
         priority="MEDIUM",
     ),
+    # Xerophilic and epibiont phenotypes — surfaced from the bacdive
+    # isolation_source mapping audit (mappings/isolation_source_to_ontology.tsv,
+    # 2026-05-02) as residual unmapped microbial-trait labels with no
+    # existing ENVO/UBERON/PATO/MICRO term that fits.
+    Term(
+        proposed_id="METPO:1007092",
+        scope="categorical",
+        term_type="Class",
+        label="xerophilic phenotype",
+        definition=(
+            "A phenotypic quality describing a microbe that thrives in low water-activity "
+            "environments (typically aw < 0.85). Sibling concept of osmotic and metal "
+            "tolerance; distinct from halophily because the limiting factor is water "
+            "activity rather than salt concentration."
+        ),
+        parent_or_subproperty="METPO:1007073",
+        synonyms=["xerophile", "xerotolerant"],
+        priority="MEDIUM",
+    ),
+    Term(
+        proposed_id="METPO:1007093",
+        scope="categorical",
+        term_type="Class",
+        label="epibiont phenotype",
+        definition=(
+            "A phenotypic quality describing a microbe that lives on the external surface "
+            "of a host organism or substrate, as distinct from endosymbionts (which live "
+            "inside the host). Captures host-association mode, not specific host taxonomy."
+        ),
+        parent_or_subproperty=_PHENO_PARENT,
+        synonyms=["epibiont", "ectosymbiont"],
+        priority="LOW",
+    ),
 ]
 
 

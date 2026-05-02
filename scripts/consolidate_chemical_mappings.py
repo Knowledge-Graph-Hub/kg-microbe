@@ -270,6 +270,13 @@ _PREFIX_ALIASES: Dict[str, str] = {
     "uberon": "UBERON",
     "envo": "ENVO",
     "ncit": "NCIT",
+    # Newly admitted MIM-side primary prefixes (see _CATEGORY_BY_PREFIX).
+    "MESH": "mesh",
+    "Mesh": "mesh",
+    "micro": "MICRO",
+    "bto": "BTO",
+    "KGMICROBE.INGREDIENT": "kgmicrobe.ingredient",
+    "kgm.ingredient": "kgmicrobe.ingredient",
 }
 
 
@@ -402,6 +409,18 @@ _CATEGORY_BY_PREFIX: Dict[str, str] = {
     "ENVO": "biolink:EnvironmentalFeature",
     "NCIT": "biolink:ChemicalSubstance",
     "PO": "biolink:AnatomicalEntity",
+    # MeSH Supplementary Concept Records — primary id for chemicals/drugs that
+    # have no CHEBI accession but are uniquely identified by a mesh:C* code.
+    # Used by MediaIngredientMech for many natural-product antibiotics.
+    "mesh": "biolink:ChemicalSubstance",
+    # MICRO (Microbial Conditions Ontology) — primary id for prepared media
+    # components (peptone, tryptone, brain heart infusion, etc.) that are
+    # mixtures rather than pure substances.
+    "MICRO": "biolink:ChemicalEntity",
+    # BRENDA Tissue Ontology — same tier as UBERON; used for tissue-derived
+    # ingredients ("calf serum", "bovine albumin") that BTO scopes more
+    # specifically than UBERON.
+    "BTO": "biolink:AnatomicalEntity",
     # PubChem CID — used as primary when no ontology (CHEBI/FOODON/UBERON/ENVO)
     # match exists for an ingredient. Ranks above CAS-RN / mediadive.ingredient.
     "pubchem.compound": "biolink:ChemicalEntity",
@@ -413,6 +432,11 @@ _CATEGORY_BY_PREFIX: Dict[str, str] = {
     # curated names/synonyms for these ingredients when no ontology mapping
     # exists yet (tied with CAS-RN).
     "mediadive.ingredient": "biolink:ChemicalEntity",
+    # MediaIngredientMech-minted ingredient prefix for ingredients with
+    # specificity beyond what FOODON/ENVO/CHEBI provide (e.g. "Beef Brain
+    # Powder", "Vermont Soil"). Subclass-style mints from MIM's
+    # specificity-loss-review pass; ranks above kgmicrobe.compound.
+    "kgmicrobe.ingredient": "biolink:ChemicalEntity",
     # KG-Microbe native prefix for chemicals with no public ontology ID
     # (antibiotics / secondary metabolites minted from metatraits). Last-resort
     # mint — ranks below every other accepted prefix.
@@ -439,9 +463,13 @@ _PRIMARY_PREFIX_RANK: Dict[str, int] = {
     "ENVO": 100,
     "NCIT": 100,
     "PO": 100,
+    "BTO": 100,           # BRENDA tissue — same tier as UBERON/PO
+    "MICRO": 90,          # microbial conditions ontology (media components)
+    "mesh": 90,           # MeSH SCR codes — chemicals/drugs without CHEBI
     "pubchem.compound": 80,
     "cas": 60,
     "mediadive.ingredient": 60,
+    "kgmicrobe.ingredient": 50,  # MIM-minted ingredient subclasses
     "kgmicrobe.compound": 40,
 }
 
@@ -455,10 +483,14 @@ _PRIMARY_PREFIX_RANK: Dict[str, int] = {
 _CHEMICAL_PREFIXES = {
     "CHEBI",
     "kgmicrobe.compound",
+    "kgmicrobe.ingredient",
     "NCIT",
     "FOODON",
     "UBERON",
     "ENVO",
+    "BTO",
+    "MICRO",
+    "mesh",
     "pubchem.compound",
     "cas",
     "mediadive.ingredient",
@@ -1155,7 +1187,14 @@ class ChemicalMappingConsolidator:
         for _, row in df.iterrows():
             object_id = row.get("object_id", "").strip()
             if not is_accepted_primary(object_id):
-                recovered = extract_chebi_id(object_id)
+                # Use the prefix-preserving recovery rather than
+                # ``extract_chebi_id``: the latter regex-extracts the
+                # first digit run and stamps ``CHEBI:`` onto it, which
+                # silently rewrites mesh:C* / MICRO:* / etc. into
+                # nonexistent CHEBI accessions. ``extract_curie`` only
+                # normalises spelling variants and accepts the result
+                # iff its prefix is in ``_ACCEPTED_PREFIXES``.
+                recovered = extract_curie(object_id)
                 if not recovered:
                     skipped_unsupported += 1
                     continue

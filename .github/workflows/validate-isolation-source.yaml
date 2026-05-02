@@ -21,11 +21,15 @@ on:
     branches: [main, master, team-review-sssom]
     paths:
       - "mappings/isolation_source_to_ontology.tsv"
+      - "mappings/validate_isolation_source_mappings.py"
+      - "kg_microbe/utils/isolation_source_mapping_utils.py"
       - ".github/workflows/validate-isolation-source.yaml"
   push:
     branches: [main, master, team-review-sssom]
     paths:
       - "mappings/isolation_source_to_ontology.tsv"
+      - "mappings/validate_isolation_source_mappings.py"
+      - "kg_microbe/utils/isolation_source_mapping_utils.py"
   workflow_dispatch:
 
 permissions:
@@ -50,9 +54,14 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Validate
+      - name: Validate (structural — culturebotai-claw)
         env:
           KGMICROBE_ROOT: ${{ github.workspace }}/kg-microbe
         run: |
           cd culturebotai-claw
           python3 scripts/validate_isolation_source_mapping.py
+
+      - name: Validate (family compatibility — in-repo)
+        run: |
+          cd kg-microbe
+          python3 mappings/validate_isolation_source_mappings.py

@@ -179,6 +179,10 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.isolation_source_mapping_utils import (
+    load_isolation_source_mappings,
+    normalize_isolation_source_label,
+)
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
     load_assay_kit_mappings,
@@ -275,6 +279,13 @@ class BacDiveTransform(Transform):
                 "Unified chemical mappings file not found. Falling back to legacy METABOLITE_MAP for chemical lookups."
             )
             self.chemical_loader = None
+
+        # Load curated BacDive isolation-source → ontology mappings.
+        # Only high-confidence / manually-curated rows are honored; auto-generated
+        # lexical close-matches are dropped by the loader. Family-mismatched rows
+        # (units→anatomy, facilities→substrates, etc.) are also rejected. See
+        # kg_microbe/utils/isolation_source_mapping_utils.py for the policy.
+        self.isolation_source_mappings: Dict[str, tuple] = load_isolation_source_mappings()
 
     def _build_metpo_iri_index(self) -> Dict[str, dict]:
         """
@@ -2815,23 +2826,35 @@ class BacDiveTransform(Transform):
                     # Normalize strings (strip + translate)
                     all_values = [val.strip().translate(translation_table_for_ids) for val in all_values]
 
-                    # Create a node and an edge to the organism for each isolation source
+                    # Create a node and an edge to the organism for each isolation source.
+                    # Prefer a curated ontology CURIE (UBERON, ENVO, NCBITaxon, ...) when the
+                    # mapping table has a trusted entry for this label; the matching ontology
+                    # node is supplied by the ontologies transform on merge. Otherwise fall
+                    # back to the historical ``isolation_source:<label>`` placeholder node.
                     for isol_source in all_values:
-                        # Write an isolation source node
-                        node_writer.writerow(
-                            self._create_node_row(
-                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
-                                ISOLATION_SOURCE_CATEGORY,
-                                isol_source,
-                            )
+                        mapping = self.isolation_source_mappings.get(
+                            normalize_isolation_source_label(isol_source)
                         )
+                        if mapping is not None:
+                            subject_id = mapping[0]
+                        else:
+                            subject_id = ISOLATION_SOURCE_PREFIX + isol_source.lower()
+                            # Only write a placeholder node when no ontology mapping exists;
+                            # mapped CURIEs get their canonical node from the ontologies transform.
+                            node_writer.writerow(
+                                self._create_node_row(
+                                    subject_id,
+                                    ISOLATION_SOURCE_CATEGORY,
+                                    isol_source,
+                                )
+                            )
                         # Write edge from the isolation source to organism
                         knowledge_level, agent_type = self._add_edge_metadata(
                             NCBI_TO_ISOLATION_SOURCE_EDGE, LOCATION_OF, organism_id
                         )
                         edge_writer.writerow(
                             [
-                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
+                                subject_id,
                                 NCBI_TO_ISOLATION_SOURCE_EDGE,
                                 organism_id,
                                 LOCATION_OF,

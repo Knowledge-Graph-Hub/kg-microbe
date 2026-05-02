@@ -2792,18 +2792,26 @@ class BacDiveTransform(Transform):
                                             )
 
                                         # NEW: Add organism → assay edge (dual-edge pattern)
-                                        # This is in addition to the direct organism→ChEBI edges above
+                                        # This is in addition to the direct organism→ChEBI edges above.
                                         # Build assay ID: assay:{kit_name}_{well_name}
                                         assay_id = f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(" ", "_")
 
-                                        # Write organism→assay edge using same METPO predicate
+                                        # The assay node carries provenance for the trait claim, not the
+                                        # trait itself, so it must NOT use the trait predicate (ferments /
+                                        # assimilates etc.) — that would map an organism to a procedure as
+                                        # if it were a substrate, violating the predicate's biolink-mapped
+                                        # range. Use METPO:2000511 (has observation); the assay nodes carry
+                                        # METPO:1001000 (observation) in their multi-category (see
+                                        # ASSAY_CATEGORY in constants.py) so the predicate's existing
+                                        # METPO:1001000 range is satisfied without an upstream change.
+                                        assay_predicate = "METPO:2000511"
                                         knowledge_level, agent_type = self._add_edge_metadata(
-                                            metpo_predicate, "RO:0002434", assay_id
+                                            assay_predicate, "RO:0002434", assay_id
                                         )
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
-                                                metpo_predicate,
+                                                assay_predicate,
                                                 assay_id,
                                                 "RO:0002434",
                                                 self.knowledge_source,

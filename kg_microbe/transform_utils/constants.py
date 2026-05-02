@@ -234,7 +234,7 @@ ENZYME_TO_ASSAY_EDGE = "biolink:related_to_at_instance_level"  # [enzyme -> assa
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-RHEA_TO_EC_EDGE = "biolink:enabled_by"
+RHEA_TO_EC_EDGE = "biolink:close_match"
 
 # Assay → Entity predicates (methodological reference edges)
 ASSAY_HAS_OUTPUT_PREDICATE = "biolink:has_output"  # [assay -> GO/EC]
@@ -292,7 +292,12 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 GENOME_CATEGORY = "biolink:Genome"
 
 # Procedure categories
-ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
+# Multi-cat: biolink:Procedure carries the biolink semantic for downstream
+# tooling (Procedure is biolink's closest match for a microbial test kit / well),
+# and METPO:1001000 (observation) makes the node a valid object for the
+# METPO:2000511 (has observation) predicate that BacDive uses on the
+# organism→assay edge — so no METPO range-modification is needed upstream.
+ASSAY_CATEGORY = "biolink:Procedure|METPO:1001000"  # API kit assay tests
 
 # Deprecated categories - do not use
 # CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # removed from biolink; use CHEBI_CATEGORY

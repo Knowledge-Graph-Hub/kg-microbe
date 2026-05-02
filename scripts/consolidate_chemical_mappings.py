@@ -1565,6 +1565,11 @@ class ChemicalMappingConsolidator:
         # treated as bibliographic / descriptive and skipped.
         exact_prefixes = {
             "CHEBI", "FOODON", "UBERON", "ENVO", "NCIT",
+            # Newly admitted MIM-side primary prefixes — must appear here
+            # (not just in _ACCEPTED_PREFIXES) for their xref/identity rows
+            # to survive the SSSOM emission filter at line ~1727 and to be
+            # added to the output curie_map fallback below.
+            "mesh", "MICRO", "BTO", "kgmicrobe.ingredient",
             "kgmicrobe.compound",
             "mediadive.ingredient",
             "MIM", "MediaIngredientMech",

@@ -220,6 +220,13 @@ STANDARD_PREFIXES = {
     "dc", "dcterms", "doap", "foaf", "pav",
     # URL-style ids that occasionally leak through
     "http", "https", "urn", "orcid",
+    # Cross-references appearing in mapping TSVs (isolation_source_to_ontology
+    # uses these when nothing in the OBO Foundry tier fits): MeSH for medical
+    # subject headings, NCIT for clinical/biomedical, SNOMED for clinical,
+    # PRIDE for proteomics studies, ExO for exposure ontology, VariO for
+    # variation ontology.
+    "mesh", "MESH", "PRIDE", "ExO", "VariO", "SNOMED", "BTO", "AGRO", "FAO",
+    "OBI", "AEO", "GENEPIO", "PCO", "UO",
 }
 
 
@@ -645,12 +652,16 @@ CANONICAL_MAPPING_COLS = {
 }
 
 # Files known to follow CANONICAL_MAPPING_COLS (Group A).
+# Maps filename → directory ('metatraits' or 'repo'). The metatraits group
+# lives under kg_microbe/transform_utils/metatraits/mappings/; the repo group
+# lives at the top-level mappings/.
 GROUP_A_CANONICAL = {
-    "chemical_mappings.tsv",
-    "enzyme_mappings.tsv",
-    "metpo_alias_mappings.tsv",
-    "pathway_mappings.tsv",
-    "phenotype_mappings.tsv",
+    "chemical_mappings.tsv": "metatraits",
+    "enzyme_mappings.tsv": "metatraits",
+    "metpo_alias_mappings.tsv": "metatraits",
+    "pathway_mappings.tsv": "metatraits",
+    "phenotype_mappings.tsv": "metatraits",
+    "isolation_source_to_ontology.tsv": "repo",
 }
 
 # Off-schema files with bespoke columns (Group B). Each gets its own validator.
@@ -761,10 +772,33 @@ def check_canonical_mapping_file(path: Path, registered_prefixes: set,
         just = (r.get("mapping_justification") or "").strip()
         conf = (r.get("confidence") or "").strip().lower()
 
-        # Required-field non-blank checks
-        for col in ("subject_label", "object_id", "predicate_id", "mapping_justification"):
+        # subject_label is always required.
+        if not subj:
+            blank_required.append(f"{path.name}: blank subject_label")
+            continue
+
+        # Rows with blank object_id are intentionally-unmapped curation
+        # candidates (e.g. isolation_source residuals awaiting term mints).
+        # Skip the per-row mapping checks for them — the unmapped state is
+        # legal as long as object_id, object_label, predicate_id, etc. are
+        # ALL blank (no half-populated rows).
+        if not oid:
+            for col in ("object_label", "object_source", "predicate_id",
+                        "confidence", "mapping_justification"):
+                if (r.get(col) or "").strip():
+                    blank_required.append(
+                        f"{path.name}: row for subject={subj!r} has blank object_id "
+                        f"but non-blank {col}"
+                    )
+                    break
+            continue
+
+        # Mapped rows must have predicate_id + mapping_justification populated.
+        for col in ("predicate_id", "mapping_justification"):
             if not (r.get(col) or "").strip():
-                blank_required.append(f"{path.name}: blank {col} for subject={subj!r}")
+                blank_required.append(
+                    f"{path.name}: blank {col} for subject={subj!r} (object_id={oid})"
+                )
                 break
 
         if oid and not CURIE_RE.match(oid):
@@ -1059,8 +1093,9 @@ def review_mappings(verbose: bool, registered_prefixes: set, metpo_curies: set) 
     canonical_rows_by_file: dict = {}
 
     # Group A: canonical mapping files
-    for fname in sorted(GROUP_A_CANONICAL):
-        path = MAPPINGS_DIR_METATRAITS / fname
+    for fname, location in sorted(GROUP_A_CANONICAL.items()):
+        base = MAPPINGS_DIR_METATRAITS if location == "metatraits" else MAPPINGS_DIR_REPO
+        path = base / fname
         if not path.exists():
             result["nodes"].append(Finding("INFO", "Mapping", f"{fname} not present"))
             continue

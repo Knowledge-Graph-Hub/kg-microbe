@@ -523,9 +523,22 @@ def main() -> None:
         new.nodes.id_to_category.clear()
 
     report = build_report(old, new, include_signatures)
+
+    # Output policy:
+    #   --out PATH     → write to that path
+    #   --no-save      → stdout only, never write to disk
+    #   neither given  → auto-generate <skill>/reviews/<ts>_<old>_vs_<new>.md
+    out_path: Path | None
     if args.out:
-        args.out.write_text(report, encoding="utf-8")
-        print(f"[done] wrote {args.out}", file=sys.stderr)
+        out_path = args.out
+    elif args.no_save:
+        out_path = None
+    else:
+        out_path = _default_review_path(old_label, new_label)
+
+    if out_path is not None:
+        out_path.write_text(report, encoding="utf-8")
+        print(f"[done] wrote {out_path}", file=sys.stderr)
     else:
         sys.stdout.write(report)
 

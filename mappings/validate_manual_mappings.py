@@ -75,34 +75,46 @@ def _load_sssom_entities(path: Path) -> dict[str, dict]:
     rows_by_id: dict[str, dict] = defaultdict(
         lambda: {"canonical_name": "", "formula": "", "synonyms": "", "sources": set()}
     )
-    with gzip.open(path, "rt", encoding="utf-8") as f:
-        # Skip YAML metadata block
-        lines = [line for line in f if not line.startswith("#")]
-    reader = csv.DictReader(lines, delimiter="\t")
     syn_buckets: dict[str, set] = defaultdict(set)
-    for row in reader:
-        oid = (row.get("object_id") or "").strip()
-        if not oid.startswith("CHEBI:"):
-            continue
-        comment = (row.get("comment") or "").strip()
-        sid = (row.get("subject_id") or "").strip()
-        slabel = (row.get("subject_label") or "").strip()
-        olabel = (row.get("object_label") or "").strip()
-        source_tag = (row.get("source") or "").strip()
-        rec = rows_by_id[oid]
-        if olabel and not rec["canonical_name"]:
-            rec["canonical_name"] = olabel
-        formula = (row.get("object_formula") or "").strip()
-        if formula and not rec["formula"]:
-            rec["formula"] = formula
-        if source_tag:
-            rec["sources"].add(source_tag)
-        if sid.startswith("kgm.name:"):
-            if comment == "canonical_name" and slabel:
-                if not rec["canonical_name"]:
-                    rec["canonical_name"] = slabel
-            elif comment == "synonym" and slabel:
-                syn_buckets[oid].add(slabel)
+
+    # Stream the SSSOM row-by-row instead of materialising every non-comment
+    # line into a Python list — the unified file is ~600k rows, so the prior
+    # list comprehension caused an O(file_size) memory spike.
+    with gzip.open(path, "rt", encoding="utf-8", newline="") as f:
+        # Skip the YAML metadata block (lines beginning with `#`).
+        header_line = None
+        for line in f:
+            if not line.startswith("#"):
+                header_line = line
+                break
+        if header_line is None:
+            return {}
+        reader = csv.DictReader(f, fieldnames=header_line.rstrip("\n").split("\t"),
+                                delimiter="\t")
+        for row in reader:
+            oid = (row.get("object_id") or "").strip()
+            if not oid.startswith("CHEBI:"):
+                continue
+            comment = (row.get("comment") or "").strip()
+            sid = (row.get("subject_id") or "").strip()
+            slabel = (row.get("subject_label") or "").strip()
+            olabel = (row.get("object_label") or "").strip()
+            source_tag = (row.get("source") or "").strip()
+            rec = rows_by_id[oid]
+            if olabel and not rec["canonical_name"]:
+                rec["canonical_name"] = olabel
+            formula = (row.get("object_formula") or "").strip()
+            if formula and not rec["formula"]:
+                rec["formula"] = formula
+            if source_tag:
+                rec["sources"].add(source_tag)
+            if sid.startswith("kgm.name:"):
+                if comment == "canonical_name" and slabel:
+                    if not rec["canonical_name"]:
+                        rec["canonical_name"] = slabel
+                elif comment == "synonym" and slabel:
+                    syn_buckets[oid].add(slabel)
+
     for oid, syns in syn_buckets.items():
         rows_by_id[oid]["synonyms"] = "|".join(sorted(syns))
     # Materialize sources as the same pipe-delimited form the legacy TSV used.

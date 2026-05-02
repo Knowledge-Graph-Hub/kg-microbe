@@ -7,6 +7,7 @@
 #   MICRO: "http://purl.obolibrary.org/obo/MICRO_"
 #   mesh: "http://id.nlm.nih.gov/mesh/"
 #   kgmicrobe.compound: "https://w3id.org/kg-microbe/compound/"
+#   kgmicrobe.ingredient: "https://w3id.org/kg-microbe/ingredient/"
 #   cas: "https://commonchemistry.cas.org/detail?cas_rn="
 #   registry: "https://w3id.org/kg-microbe/registry/"
 #   MIM: "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/mapped/"
@@ -1790,7 +1791,7 @@ MIM:Venturicidin_B	Venturicidin B	skos:exactMatch	mesh:C068160	venturicidin B	re
 MIM:Veratric_Acid	Veratric Acid	skos:exactMatch	CHEBI:296881	3,4-dimethoxybenzoic acid	obo:chebi.owl	semapv:LexicalMatching	MIM:CultureBotHT|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.99			
 MIM:Veratrine_Hydrochloride	Veratrine hydrochloride	skos:closeMatch	cas:17666-25-0	Veratrine hydrochloride	registry:cas	semapv:ManualMappingCuration	MIM:CultureBotHT|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.9			
 MIM:Verbascose	Verbascose	skos:exactMatch	CHEBI:28586	verbascose	obo:chebi.owl	semapv:LexicalMatching	MIM:CultureBotHT|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.99			
-MIM:Vermont_Soil	Vermont Soil	skos:closeMatch	ENVO:00001998	soil	obo:envo.owl	semapv:ManualMappingCuration	MIM:cbclaw_envo_promotion|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.9			
+MIM:Vermont_Soil	Vermont Soil	skos:narrowMatch	ENVO:00001998	soil	obo:envo.owl	semapv:ManualMappingCuration	MIM:cbclaw_envo_promotion|MIM:specificity-loss-review (mint_kgm_ingredient)|MIM:curator=mint_kgm_ingredient	2026-05-02	0.9			
 MIM:Viridogrisein	Viridogrisein	skos:closeMatch	kgmicrobe.compound:viridogrisein	Viridogrisein	kgm:compound	semapv:ManualMappingCuration	MIM:kg-microbe metatraits unmapped_compounds.tsv|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.9			
 MIM:Visnagin	Visnagin	skos:exactMatch	CHEBI:10002	visnagin	obo:chebi.owl	semapv:LexicalMatching	MIM:CultureBotHT|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.99			
 MIM:Vitamin_B12	Vitamin B12	skos:exactMatch	CHEBI:176843	vitamin B12	obo:chebi.owl	semapv:LexicalMatching	MIM:CultureMech|MIM:PubMed search ('Vitamin B12')|MIM:curator=auto_classify_ingredient_type	2026-05-01	0.99		(add after autoclaving)|CN-Cbl|CO-CYANOCOBALAMIN|Coalpha-[alpha-(5,6-dimethylbenzimidazolyl)]-Cobeta-cyanocobamide|Cyanocob(III)alamin|Cyanocobalamin|Cyanocobalamin (B )|Cyanocobalamin (Vitamin B )|Cyanocobalamine|Cyanocobalamin in|Dicopac|Vitamin B12 complex|Vitamin B12  (4)|Vitamin B12  (8)|Vitamin B12  (9)|vitamin B-12|vitamin B12 vitamer|VitaminB12	

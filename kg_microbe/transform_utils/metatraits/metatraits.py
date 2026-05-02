@@ -139,7 +139,7 @@ def _ensure_ncbitaxon_db_ready() -> None:
         "  1. Remove corrupt cache: rm ~/.data/oaklib/ncbitaxon.db\n"
         "  2. Re-download sequentially (not in parallel):\n"
         "     poetry run python -c 'from oaklib import get_adapter; "
-        "get_adapter(\"sqlite:obo:ncbitaxon\")'\n"
+        'get_adapter("sqlite:obo:ncbitaxon")\'\n'
         "  3. Re-run the transform."
     )
 
@@ -355,6 +355,43 @@ class MetaTraitsTransform(Transform):
         """
         return METATRAITS_INPUT_FILES
 
+    # Upstream copy of metpo.json — used as a CI/test fallback when the local
+    # data/raw/metpo.json artifact (normally produced by ``poetry run kg
+    # download``) is not present. Without this fallback, every metatraits
+    # test that exercises METPO label/synonym lookups fails on a clean clone.
+    METPO_JSON_FALLBACK_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/main/metpo.json"
+
+    def _resolve_metpo_json_path(self) -> Optional[Path]:
+        """
+        Return a usable metpo.json path, fetching from upstream if necessary.
+
+        Order of resolution:
+        1. ``RAW_DATA_DIR / metpo.json`` if it already exists (fast path).
+        2. Otherwise, download :data:`METPO_JSON_FALLBACK_URL` into
+           ``RAW_DATA_DIR / metpo.json`` so subsequent loaders find it.
+        3. If both fail, return ``None`` and the caller short-circuits.
+
+        Idempotent: a successful download is reused by sibling loaders
+        (binned ranges + lookups) and by later transform invocations.
+        """
+        metpo_json_path = RAW_DATA_DIR / "metpo.json"
+        if metpo_json_path.exists():
+            return metpo_json_path
+
+        try:
+            import requests
+
+            print(f"  metpo.json missing locally — fetching from {self.METPO_JSON_FALLBACK_URL}")
+            response = requests.get(self.METPO_JSON_FALLBACK_URL, timeout=60)
+            response.raise_for_status()
+            metpo_json_path.parent.mkdir(parents=True, exist_ok=True)
+            metpo_json_path.write_bytes(response.content)
+            print(f"  Cached metpo.json to {metpo_json_path} ({len(response.content):,} bytes)")
+            return metpo_json_path
+        except Exception as exc:
+            print(f"  Warning: could not fetch metpo.json fallback ({exc}); METPO lookups will be empty")
+            return None
+
     def _load_metpo_binned_ranges(self) -> Dict[str, List[dict]]:
         """
         Load METPO binned range classes from metpo.json.
@@ -364,9 +401,9 @@ class MetaTraitsTransform(Transform):
 
         :return: Dict mapping parameter type to list of binned class dicts
         """
-        metpo_json_path = RAW_DATA_DIR / "metpo.json"
-        if not metpo_json_path.exists():
-            print(f"  Warning: METPO JSON not found at {metpo_json_path}, using empty ranges")
+        metpo_json_path = self._resolve_metpo_json_path()
+        if metpo_json_path is None:
+            print("  Warning: METPO JSON unavailable, using empty ranges")
             return {}
 
         try:
@@ -443,9 +480,9 @@ class MetaTraitsTransform(Transform):
         - synonym → class data (for synonym matching)
         - pattern keyword → predicate ID (for trait pattern resolution)
         """
-        metpo_json_path = RAW_DATA_DIR / "metpo.json"
-        if not metpo_json_path.exists():
-            print(f"  Warning: METPO JSON not found at {metpo_json_path}")
+        metpo_json_path = self._resolve_metpo_json_path()
+        if metpo_json_path is None:
+            print("  Warning: METPO JSON unavailable; METPO label/synonym lookups will be empty")
             return
 
         try:

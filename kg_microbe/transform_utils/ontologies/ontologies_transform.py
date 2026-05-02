@@ -1,6 +1,7 @@
 """Ontology transform module."""
 
 import gzip
+import json
 import re
 import shutil
 from collections import defaultdict
@@ -108,6 +109,9 @@ class OntologiesTransform(Transform):
         "foodon": "infores:foodon",
         "pato": "infores:pato",
         "ro": "infores:ro",
+        "po": "infores:po",
+        "taxrank": "infores:taxrank",
+        "micro": "infores:micro",
     }
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
@@ -187,6 +191,15 @@ class OntologiesTransform(Transform):
             else:
                 raise ValueError(f"Unsupported file format: {data_file}")
 
+        # Drop malformed synonym entries that crash KGX's obograph reader.
+        # Some upstream OWL→JSON conversions emit synonym annotations
+        # without a literal value (e.g. MICRO:0003152 has a hasRelatedSynonym
+        # entry with `pred` but no `val`); KGX's obograph_source assumes
+        # every synonym carries `val` and raises KeyError on the missing
+        # key. We post-process the converted JSON in place to drop those
+        # entries so the load proceeds.
+        self._sanitize_obograph_synonyms(Path(data_file))
+
         transform(
             inputs=[data_file],
             input_format="obojson",
@@ -203,6 +216,44 @@ class OntologiesTransform(Transform):
         with gzip.open(data_file, "rb") as f_in:
             with open(data_file.parent / data_file.stem, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
+
+    def _sanitize_obograph_synonyms(self, json_path: Path) -> None:
+        """
+        Drop synonym entries that lack a literal ``val`` field.
+
+        KGX's obograph reader assumes every ``meta.synonyms`` entry carries
+        a ``val`` key and crashes with ``KeyError: 'val'`` on malformed
+        entries. Some OWL→JSON conversions (notably MICRO:0003152) emit
+        synonym annotations with only a ``pred`` field. This routine
+        rewrites the JSON in place to drop those entries so the load
+        proceeds; well-formed synonyms are unchanged.
+        """
+        if not json_path.is_file() or json_path.suffix != ".json":
+            return
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return  # let downstream KGX raise the more informative error
+
+        dropped = 0
+        for graph in data.get("graphs", []) or []:
+            for node in graph.get("nodes", []) or []:
+                meta = node.get("meta")
+                if not meta:
+                    continue
+                syns = meta.get("synonyms")
+                if not syns:
+                    continue
+                kept = [s for s in syns if isinstance(s, dict) and "val" in s]
+                if len(kept) != len(syns):
+                    dropped += len(syns) - len(kept)
+                    meta["synonyms"] = kept
+
+        if dropped:
+            print(f"  Dropped {dropped} malformed synonym entries (missing 'val') from {json_path.name}")
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f)
 
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
         """

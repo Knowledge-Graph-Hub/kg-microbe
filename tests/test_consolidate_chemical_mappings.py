@@ -149,15 +149,16 @@ class IsMangledChebiTests(unittest.TestCase):
 
 class LoaderFilteringTests(unittest.TestCase):
 
-    """``load_compound_mappings`` and ``load_existing_unified`` skip mangled rows.
+    """
+    Loader-side filtering tests.
 
-    These exercises the loader-side filtering paths the unit tests on
-    ``is_mangled_chebi_id`` alone do not cover: a typo in source-label
-    matching or skip logic could silently discard legitimate mappings or
-    keep polluted ones. We feed each loader a hand-crafted fixture that
-    mixes clean rows, FOODON/UBERON-style mangles, PubChem-watermark
-    mangles, blacklist-with-auto-source rows, and blacklist-with-curated-
-    source rows, then assert which ids end up in ``consolidator.chemicals``.
+    Exercises the filtering paths the unit tests on ``is_mangled_chebi_id``
+    alone do not cover: a typo in source-label matching or skip logic could
+    silently discard legitimate mappings or keep polluted ones. We feed each
+    loader a hand-crafted fixture that mixes clean rows, FOODON/UBERON-style
+    mangles, PubChem-watermark mangles, blacklist-with-auto-source rows, and
+    blacklist-with-curated-source rows, then assert which ids end up in
+    ``consolidator.chemicals``.
     """
 
     @classmethod

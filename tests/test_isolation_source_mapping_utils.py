@@ -61,7 +61,8 @@ def test_loader_drops_family_mismatched_rows(mappings):
 
 
 def test_loader_honors_manually_curated_fixes(mappings):
-    """Rows promoted by manual curation are honored — but ONLY when predicate is skos:exactMatch.
+    """
+    Rows promoted by manual curation are honored — but ONLY when predicate is skos:exactMatch.
 
     The 2026-05 Codex adversarial review tightened the trust policy so that
     ``skos:closeMatch`` rows are no longer trusted for canonical node

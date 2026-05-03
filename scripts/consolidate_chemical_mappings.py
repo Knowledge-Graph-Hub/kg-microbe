@@ -46,7 +46,7 @@ multiple candidates exist for the same entity:
 See ``_PRIMARY_PREFIX_RANK`` and ``best_primary()``.
 
 Output:
-  mappings/unified_ingredient_mappings.sssom.tsv.gz
+  mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz
       The single unified mapping product, in SSSOM format (validated with
       the ``sssom`` package on write). Per-entity attributes that SSSOM
       cannot express natively — ``formula``, ``category`` (biolink class) —
@@ -256,6 +256,149 @@ def extract_chebi_id(value: str) -> str:
     return ""
 
 
+# Map non-canonical prefix spellings seen in upstream TSVs to the canonical
+# form used by ``_CATEGORY_BY_PREFIX`` / ``_ACCEPTED_PREFIXES``.
+_PREFIX_ALIASES: Dict[str, str] = {
+    "PUBCHEM.COMPOUND": "pubchem.compound",
+    "PubChem": "pubchem.compound",
+    "PUBCHEM": "pubchem.compound",
+    "Pubchem": "pubchem.compound",
+    "CAS-RN": "cas",
+    "CAS": "cas",
+    "chebi": "CHEBI",
+    "foodon": "FOODON",
+    "uberon": "UBERON",
+    "envo": "ENVO",
+    "ncit": "NCIT",
+    # Newly admitted MIM-side primary prefixes (see _CATEGORY_BY_PREFIX).
+    "MESH": "mesh",
+    "Mesh": "mesh",
+    "micro": "MICRO",
+    "bto": "BTO",
+    "KGMICROBE.INGREDIENT": "kgmicrobe.ingredient",
+    "kgm.ingredient": "kgmicrobe.ingredient",
+}
+
+
+# Highest CHEBI ID minted by EBI as of 2026-04. Real CHEBI accessions live
+# well below 1_000_000; anything ≥ this watermark in a CHEBI: id is a guaranteed
+# PubChem (or other 7+ digit numeric registry) value rewritten by the
+# pre-fix ``extract_chebi_id(re.search(r"(\d+)", v))`` regex. Used as a
+# unconditional blacklist threshold by ``is_mangled_chebi_id``.
+_CHEBI_LOCAL_MAX = 1_000_000
+
+
+def _build_mangle_blacklist(base_dir: Path) -> set:
+    r"""
+    Build the set of CHEBI:<n> ids the pre-fix mangler would emit.
+
+    Replays ``compound_mappings_strict`` to derive every CHEBI:<n> that the
+    legacy ``extract_chebi_id`` regex (``re.search(r"(\d+)", v)``) would emit
+    when fed a non-CHEBI ``mapped`` cell (PubChem:NNN, CAS-RN:N-N-N, etc).
+    Used to surgically drop matching rows from the legacy TSV and SSSOM
+    baselines without affecting CHEBI ids that were never mangled.
+
+    Returns an empty set if compound_mappings_strict is absent — in that
+    case only the >1_000_000 watermark catches obvious PubChem mangles.
+    """
+    blacklist: set = set()
+    candidates = [
+        base_dir / "data" / "raw" / "compound_mappings_strict.tsv",
+        base_dir / "data" / "raw" / "compound_mappings_strict_hydrate.tsv",
+    ]
+    for path in candidates:
+        if not path.exists():
+            continue
+        try:
+            df = pd.read_csv(path, sep="\t", dtype=str, usecols=["mapped"]).fillna("")
+        except Exception as exc:  # noqa: BLE001 - replay is best-effort
+            print(f"  Warning: could not read {path} for mangle blacklist: {exc}")
+            continue
+        for v in df["mapped"]:
+            v = v.strip()
+            # Only non-CHEBI ``mapped`` values get rewritten by the pre-fix
+            # regex into a fake CHEBI: id.
+            if not v or v.startswith("CHEBI:") or v.startswith("chebi:"):
+                continue
+            m = re.search(r"(\d+)", v)
+            if m:
+                blacklist.add(f"CHEBI:{m.group(1)}")
+    return blacklist
+
+
+def is_mangled_chebi_id(curie: str, sources_str: str = "",
+                        mangle_blacklist: set = frozenset()) -> bool:
+    r"""
+    Return True if ``curie`` is a CHEBI id mangled by the pre-fix mangler.
+
+    Detects CHEBI: ids produced by the legacy ``extract_chebi_id`` regex
+    (``re.search(r"(\d+)", v)``) when called on a FOODON/UBERON/PubChem/CAS-RN
+    value. Three rules, in order of confidence:
+
+    1. ``CHEBI:0*`` — real CHEBI ids never have a leading-zero local part;
+       these are FOODON/UBERON values rewritten by the regex.
+    2. ``CHEBI:N`` with ``N >= _CHEBI_LOCAL_MAX`` — well above the highest
+       minted CHEBI accession; PubChem CIDs are routinely 7-9 digits.
+    3. ``CHEBI:N`` in the data-driven ``mangle_blacklist`` AND the row's
+       sources are limited to mediadive-style auto-mappings — strict to
+       avoid nuking small real CHEBI ids that happen to collide with a
+       CAS-RN first-numeric-block (e.g. CHEBI:176 may be both real and a
+       mangle of CAS-RN:176-...). The source-restriction rule keeps the
+       curated authoritative rows safe.
+    """
+    if not curie or not curie.startswith("CHEBI:"):
+        return False
+    local = curie.split(":", 1)[1]
+    if not local:
+        return False
+    if local.startswith("0"):
+        return True
+    if local.isdigit() and int(local) >= _CHEBI_LOCAL_MAX:
+        return True
+    if curie in mangle_blacklist:
+        # Only drop when the row's provenance is exclusively auto-mapping
+        # sources — the pre-fix mangler only ran inside compound_mappings
+        # ingestion. Manual/MIM/CultureBot rows with the same CHEBI id are
+        # safe (those use authoritative curation paths).
+        sources = {s.strip() for s in (sources_str or "").split("|") if s.strip()}
+        if sources and sources.issubset({"mediadive_compounds",
+                                         "compound_mappings_strict",
+                                         "compound_mappings_strict_hydrate"}):
+            return True
+    return False
+
+
+def extract_curie(value: str) -> str:
+    """
+    Extract a recognized CURIE preserving the original ontology prefix.
+
+    Unlike ``extract_chebi_id``, this does not fabricate a CHEBI prefix from
+    bare digits or unknown inputs — it only returns a CURIE when the input
+    starts with one of the prefixes accepted as a primary id by this
+    consolidator (see ``_ACCEPTED_PREFIXES``). Common upstream spelling
+    variants (``PubChem:``, ``PUBCHEM.COMPOUND:``, ``CAS-RN:``) are
+    normalised to their canonical form (``pubchem.compound:``, ``cas:``).
+
+    Required when ingesting columns whose values mix prefixes — using
+    ``extract_chebi_id`` on such columns silently rewrites FOODON / UBERON
+    / PubChem / CAS-RN ids to ``CHEBI:<numeric_tail>`` and produces malformed
+    or wrong-entity references downstream (the prefix-mangling regression
+    documented in CultureBotHT/docs/AUDIT_TRAIL.md).
+    """
+    if pd.isna(value) or not value:
+        return ""
+    s = str(value).strip()
+    if not s or ":" not in s:
+        return ""
+    prefix, _, local = s.partition(":")
+    canonical = _PREFIX_ALIASES.get(prefix, prefix)
+    if not local:
+        return ""
+    if f"{canonical}:" in _ACCEPTED_PREFIXES:
+        return f"{canonical}:{local}"
+    return ""
+
+
 # Category lookup by CURIE prefix. The unified mapping stores the biolink
 # category as a data column so downstream transforms do not need hardcoded
 # prefix-to-category routing.
@@ -266,6 +409,18 @@ _CATEGORY_BY_PREFIX: Dict[str, str] = {
     "ENVO": "biolink:EnvironmentalFeature",
     "NCIT": "biolink:ChemicalSubstance",
     "PO": "biolink:AnatomicalEntity",
+    # MeSH Supplementary Concept Records — primary id for chemicals/drugs that
+    # have no CHEBI accession but are uniquely identified by a mesh:C* code.
+    # Used by MediaIngredientMech for many natural-product antibiotics.
+    "mesh": "biolink:ChemicalSubstance",
+    # MICRO (Microbial Conditions Ontology) — primary id for prepared media
+    # components (peptone, tryptone, brain heart infusion, etc.) that are
+    # mixtures rather than pure substances.
+    "MICRO": "biolink:ChemicalEntity",
+    # BRENDA Tissue Ontology — same tier as UBERON; used for tissue-derived
+    # ingredients ("calf serum", "bovine albumin") that BTO scopes more
+    # specifically than UBERON.
+    "BTO": "biolink:AnatomicalEntity",
     # PubChem CID — used as primary when no ontology (CHEBI/FOODON/UBERON/ENVO)
     # match exists for an ingredient. Ranks above CAS-RN / mediadive.ingredient.
     "pubchem.compound": "biolink:ChemicalEntity",
@@ -277,6 +432,11 @@ _CATEGORY_BY_PREFIX: Dict[str, str] = {
     # curated names/synonyms for these ingredients when no ontology mapping
     # exists yet (tied with CAS-RN).
     "mediadive.ingredient": "biolink:ChemicalEntity",
+    # MediaIngredientMech-minted ingredient prefix for ingredients with
+    # specificity beyond what FOODON/ENVO/CHEBI provide (e.g. "Beef Brain
+    # Powder", "Vermont Soil"). Subclass-style mints from MIM's
+    # specificity-loss-review pass; ranks above kgmicrobe.compound.
+    "kgmicrobe.ingredient": "biolink:ChemicalEntity",
     # KG-Microbe native prefix for chemicals with no public ontology ID
     # (antibiotics / secondary metabolites minted from metatraits). Last-resort
     # mint — ranks below every other accepted prefix.
@@ -303,9 +463,13 @@ _PRIMARY_PREFIX_RANK: Dict[str, int] = {
     "ENVO": 100,
     "NCIT": 100,
     "PO": 100,
+    "BTO": 100,           # BRENDA tissue — same tier as UBERON/PO
+    "MICRO": 90,          # microbial conditions ontology (media components)
+    "mesh": 90,           # MeSH SCR codes — chemicals/drugs without CHEBI
     "pubchem.compound": 80,
     "cas": 60,
     "mediadive.ingredient": 60,
+    "kgmicrobe.ingredient": 50,  # MIM-minted ingredient subclasses
     "kgmicrobe.compound": 40,
 }
 
@@ -319,10 +483,14 @@ _PRIMARY_PREFIX_RANK: Dict[str, int] = {
 _CHEMICAL_PREFIXES = {
     "CHEBI",
     "kgmicrobe.compound",
+    "kgmicrobe.ingredient",
     "NCIT",
     "FOODON",
     "UBERON",
     "ENVO",
+    "BTO",
+    "MICRO",
+    "mesh",
     "pubchem.compound",
     "cas",
     "mediadive.ingredient",
@@ -388,6 +556,30 @@ class ChemicalMappingConsolidator:
         self.name_index: Dict[str, str] = {}  # normalized_name -> id
         self.formula_index: Dict[str, Set[str]] = defaultdict(set)  # formula -> set of ids
         self.chebi_adapter = None  # Will be initialized when needed
+        # Parent / asymmetric mappings (skos:narrowMatch / skos:broadMatch).
+        # Stored separately because they are NOT identity statements and the
+        # entity-centric chemicals dict can't represent "child A is narrower
+        # than parent B" without losing the asymmetry. Each entry is a dict
+        # mirroring the SSSOM row layout; the consolidator passes them through
+        # unmodified into the unified output, so the runtime loader at
+        # ``kg_microbe.utils.chemical_mapping_utils`` can index them as
+        # parent-of relationships and downstream transforms can emit
+        # ``biolink:subclass_of`` edges from them. Rows whose ``subject_id``
+        # is ``MIM:*`` get translated to the equivalent kg-microbe primary
+        # at export time when an exactMatch registry row is present.
+        self.parent_relations: List[Dict[str, str]] = []
+        # Lookup of MIM:<slug> → kg-microbe primary id (e.g. ENVO:00001998
+        # or kgmicrobe.ingredient:vermont_soil). Populated from the
+        # symmetric (skos:exactMatch) MIM rows so we can rewrite
+        # narrowMatch subjects to point at the kg-microbe-side identifier.
+        self.mim_to_primary: Dict[str, str] = {}
+        # Replay compound_mappings_strict to derive the set of CHEBI ids the
+        # pre-fix mangler would emit when fed PubChem/CAS-RN values. Used by
+        # both baseline loaders to surgically drop polluted rows. Empty when
+        # source files are absent.
+        self.mangle_blacklist: set = _build_mangle_blacklist(
+            Path(__file__).parent.parent
+        )
 
     def add_chemical(
         self,
@@ -546,14 +738,29 @@ class ChemicalMappingConsolidator:
         df = pd.read_csv(filepath, sep="\t")
 
         for _, row in df.iterrows():
-            # Try multiple ChEBI ID columns
-            chebi_id = extract_chebi_id(row.get("chebi_id", "")) or extract_chebi_id(
+            # ``chebi_id`` / ``base_chebi_id`` / ``hydrated_chebi_id`` columns
+            # are CHEBI-typed by contract. The ``mapped`` column carries
+            # heterogeneous CURIEs (FOODON / UBERON / PubChem / CAS-RN /
+            # CHEBI / KEGG) — must use ``extract_curie`` there to preserve
+            # the original ontology prefix; ``extract_chebi_id`` would
+            # silently rewrite all of them to CHEBI:<numeric_tail>.
+            primary_id = extract_chebi_id(row.get("chebi_id", "")) or extract_curie(
                 row.get("mapped", "")
             )
-            if not chebi_id:
-                # Try base_chebi_id
-                chebi_id = extract_chebi_id(row.get("base_chebi_id", ""))
-            if not chebi_id:
+            if not primary_id:
+                primary_id = extract_chebi_id(row.get("base_chebi_id", ""))
+            if not primary_id:
+                continue
+            # Some upstream rows in compound_mappings_strict already carry a
+            # pre-mangled ``CHEBI:<n>`` value in the ``mapped`` column where
+            # the local part is a 7-9-digit PubChem CID (e.g. CHEBI:1185531
+            # for Tris-HCl, CHEBI:7773015 for MnCl2). ``extract_curie``
+            # preserves the prefix so these slip through. Detect them via
+            # the same rule the baseline loaders use and skip the row — the
+            # canonical mapping comes from CultureBotAI / MIM / chebi_xrefs
+            # which are loaded later.
+            if is_mangled_chebi_id(primary_id, "mediadive_compounds",
+                                   self.mangle_blacklist):
                 continue
 
             canonical_name = row.get("chebi_label", "")
@@ -571,11 +778,11 @@ class ChemicalMappingConsolidator:
             xrefs = []
             if "hydrate" in str(filepath):
                 hydrated_chebi = extract_chebi_id(row.get("hydrated_chebi_id", ""))
-                if hydrated_chebi and hydrated_chebi != chebi_id:
+                if hydrated_chebi and hydrated_chebi != primary_id:
                     xrefs.append(hydrated_chebi)
 
             self.add_chemical(
-                id=chebi_id,
+                id=primary_id,
                 canonical_name=canonical_name,
                 formula=formula,
                 synonyms=synonyms,
@@ -724,72 +931,11 @@ class ChemicalMappingConsolidator:
 
         print(f"  Loaded {loaded} entries")
 
-    def load_existing_unified_tsv(self, filepath: Path):
-        """
-        Load a legacy unified TSV.GZ baseline (migration fallback only).
-
-        The TSV outputs have been retired in favour of SSSOM-with-extension-
-        columns; this method exists only so the first consolidator run after
-        the switch can pick up ``formula`` and ``category`` values from the
-        old file before it is deleted. Delete this method and the matching
-        main() call once the SSSOM baseline reliably carries the extension
-        columns.
-        """
-        import gzip as _gzip
-
-        print(f"Loading legacy TSV baseline from {filepath}...")
-        with _gzip.open(filepath, "rt") as f:
-            df = pd.read_csv(f, sep="\t", dtype=str).fillna("")
-
-        priority_for = {
-            "mediaingredientmech_reviewed": 11,
-            "culturebotai_reviewed": 10,
-            "manual_annotation": 5,
-            "manual_corrections": 5,
-            "metatraits_manual": 5,
-            "metatraits_chemical_synonyms": 5,
-            "metatraits_special_chemicals": 5,
-            "metatraits_chemical_mappings": 5,
-            "chebi_xrefs": 2,
-        }
-
-        def infer_priority(sources_str: str) -> int:
-            parts = [p.strip() for p in sources_str.split("|") if p.strip()]
-            best = 1
-            for src in parts:
-                for prefix, pri in priority_for.items():
-                    if src.startswith(prefix):
-                        best = max(best, pri)
-            return best
-
-        id_column = "id" if "id" in df.columns else "chebi_id"
-        for _, row in df.iterrows():
-            curie = row.get(id_column, "")
-            if not is_accepted_primary(curie):
-                continue
-            synonyms = [s for s in row.get("synonyms", "").split("|") if s]
-            xrefs = [x for x in row.get("xrefs", "").split("|") if x]
-            sources = [s for s in row.get("sources", "").split("|") if s]
-            priority = infer_priority(row.get("sources", ""))
-
-            self.add_chemical(
-                id=curie,
-                canonical_name=row.get("canonical_name", ""),
-                formula=row.get("formula", ""),
-                synonyms=synonyms,
-                xrefs=xrefs,
-                source="",
-                priority=priority,
-            )
-            self.chemicals[curie]["sources"].update(sources)
-
-        print(f"  Loaded {len(df)} legacy baseline entries")
-
     def load_existing_unified(self, filepath: Path):
         """
         Load an existing unified SSSOM file as a baseline.
 
-        Reads ``unified_ingredient_mappings.sssom.tsv.gz`` (the primary and
+        Reads ``kgmicrobe_unified_entity_mappings.sssom.tsv.gz`` (the primary and
         only unified output) and reconstructs per-entity records by grouping
         rows on ``object_id``.
 
@@ -847,9 +993,19 @@ class ChemicalMappingConsolidator:
         # Guard against previously-polluted baselines.
         POLLUTION_CAP = 500
         pollution_skipped = 0
+        mangled_skipped = 0
 
         for curie, rec in records.items():
             if not is_accepted_primary(curie):
+                continue
+            # Drop entries whose id was mangled by the pre-fix
+            # ``extract_chebi_id`` regex. Three modes covered: leading-zero
+            # (FOODON/UBERON), >=1M local (PubChem CIDs), and replay-derived
+            # blacklist (CAS-RN + small-numeric collisions, source-restricted).
+            # See ``is_mangled_chebi_id``.
+            if is_mangled_chebi_id(curie, "|".join(rec.get("sources", [])),
+                                   self.mangle_blacklist):
+                mangled_skipped += 1
                 continue
             synonyms = list(rec["synonyms"])
             xrefs = list(rec["xrefs"])
@@ -880,6 +1036,11 @@ class ChemicalMappingConsolidator:
             print(
                 f"  Dropped polluted synonyms/xrefs from "
                 f"{pollution_skipped} baseline row(s)"
+            )
+        if mangled_skipped:
+            print(
+                f"  Dropped {mangled_skipped} baseline entries with mangled "
+                f"CHEBI:0... ids (pre-fix prefix-mangling regression)"
             )
         print(f"  Loaded {len(records)} baseline entries")
 
@@ -1043,7 +1204,14 @@ class ChemicalMappingConsolidator:
         for _, row in df.iterrows():
             object_id = row.get("object_id", "").strip()
             if not is_accepted_primary(object_id):
-                recovered = extract_chebi_id(object_id)
+                # Use the prefix-preserving recovery rather than
+                # ``extract_chebi_id``: the latter regex-extracts the
+                # first digit run and stamps ``CHEBI:`` onto it, which
+                # silently rewrites mesh:C* / MICRO:* / etc. into
+                # nonexistent CHEBI accessions. ``extract_curie`` only
+                # normalises spelling variants and accepts the result
+                # iff its prefix is in ``_ACCEPTED_PREFIXES``.
+                recovered = extract_curie(object_id)
                 if not recovered:
                     skipped_unsupported += 1
                     continue
@@ -1056,23 +1224,9 @@ class ChemicalMappingConsolidator:
             other = row.get("other", "").strip()
             mim_source = row.get("source", "").strip()
 
-            # Symmetric matches: MIM's curated term wins canonical naming.
-            # Asymmetric (narrow/broad): ontology label stays canonical; MIM
-            # term is still captured as a synonym.
-            if predicate in symmetric:
-                canonical = subject_label
-            else:
-                canonical = object_label
-
-            synonyms = [s for s in (subject_label, object_label) if s]
-            if other:
-                synonyms.extend(s.strip() for s in other.split("|") if s.strip())
-
-            xrefs = [subject_id] if subject_id.startswith("MIM:") else []
-
             # Preserve MIM curator provenance: MIM's `source` column carries
-            # pipe-delimited `MIM:curator=<name>` tags identifying which
-            # MIM curation pass authored the row. Extract them as additional
+            # pipe-delimited `MIM:curator=<name>` tags identifying which MIM
+            # curation pass authored the row. Extract them as additional
             # (priority-11) source labels so kg-microbe's emitted SSSOM
             # doesn't flatten the provenance to a single bucket.
             extra_sources: list[str] = []
@@ -1085,27 +1239,77 @@ class ChemicalMappingConsolidator:
                         extra_sources.append(tag)
                         curator_tags_seen.add(tag)
 
-            self.add_chemical(
-                id=object_id,
-                canonical_name=canonical,
-                synonyms=synonyms,
-                xrefs=xrefs,
-                source="mediaingredientmech_reviewed",
-                priority=11,
-            )
-            # MIM is the canonical-naming authority: its subject_label
-            # (for symmetric matches) or object_label (for asymmetric)
-            # MUST win even when a prior priority-11 baseline row already
-            # set a different value. add_chemical's first-seed tiebreaker
-            # can't see "MIM this run is fresher than MIM last run", so we
-            # force the overwrite here after the call returned.
-            if canonical and subject_id.startswith("MIM:"):
-                self.chemicals[object_id]["canonical_name"] = canonical
-            # Emit curator-specific sub-tags alongside the flat label.
-            if extra_sources:
-                self.chemicals[object_id]["sources"].update(extra_sources)
-            if subject_id.startswith("MIM:"):
-                current_mim_subjects[subject_id] = object_id
+            # Symmetric matches (skos:exactMatch / closeMatch): MIM and the
+            # ontology side denote the same entity. Merge MIM's labels and
+            # the MIM xref into the entity record at object_id; MIM's
+            # subject_label wins canonical naming when fresher.
+            if predicate in symmetric:
+                synonyms = [s for s in (subject_label, object_label) if s]
+                if other:
+                    synonyms.extend(s.strip() for s in other.split("|") if s.strip())
+                xrefs = [subject_id] if subject_id.startswith("MIM:") else []
+
+                # MIM exactMatch rows define the MIM:<slug> ↔ kg-microbe
+                # primary correspondence. Cache so narrowMatch subjects can
+                # be translated to the kg-microbe primary at export time.
+                if predicate == "skos:exactMatch" and subject_id.startswith("MIM:"):
+                    self.mim_to_primary[subject_id] = object_id
+
+                self.add_chemical(
+                    id=object_id,
+                    canonical_name=subject_label,
+                    synonyms=synonyms,
+                    xrefs=xrefs,
+                    source="mediaingredientmech_reviewed",
+                    priority=11,
+                )
+                # MIM is the canonical-naming authority — force overwrite
+                # even if a prior priority-11 baseline set a different
+                # value (add_chemical's first-seed tiebreaker can't see
+                # "MIM-this-run is fresher than MIM-last-run").
+                if subject_label:
+                    self.chemicals[object_id]["canonical_name"] = subject_label
+                if extra_sources:
+                    self.chemicals[object_id]["sources"].update(extra_sources)
+                added += 1
+                continue
+
+            # Asymmetric matches (skos:narrowMatch / broadMatch): the MIM
+            # subject is a NARROWER concept than the ontology object; they
+            # are NOT the same entity. Prior implementation also fed the
+            # subject_label / MIM xref into add_chemical(id=object_id, ...),
+            # which polluted the broader parent's lexical record so name
+            # lookup returned the parent (e.g. find_chebi_by_name("Vermont
+            # Soil") → ENVO:00001998 (soil)) and silently downgraded
+            # specificity. Codex adversarial review #558 round 3 caught this:
+            # only 19 of 194 narrowMatch rows resolved back to their
+            # intended child CURIE; 131 collapsed onto the parent.
+            #
+            # Fix: treat asymmetric rows as parent-of relations only. Don't
+            # add the child-side label/xref to the parent's entity record.
+            # The child CURIE registration comes from the separate symmetric
+            # row that MIM emits alongside (e.g. MIM:Vermont_Soil exactMatch
+            # kgmicrobe.ingredient:vermont_soil), processed via the branch
+            # above.
+            self.parent_relations.append({
+                "subject_id": subject_id,
+                "subject_label": subject_label,
+                "predicate_id": predicate,
+                "object_id": object_id,
+                "object_label": object_label,
+                "object_source": row.get("object_source", "").strip(),
+                "mapping_justification": row.get("mapping_justification", "").strip(),
+                "source": "mediaingredientmech_reviewed",
+                "mapping_date": row.get("mapping_date", "").strip(),
+                "confidence": row.get("confidence", "").strip(),
+                "comment": "asymmetric MIM mapping (parent relation)",
+            })
+            # Deliberately NOT updating current_mim_subjects here: for an
+            # asymmetric row, MIM:<subject> is the xref of the CHILD primary
+            # (set by the sibling symmetric row above), NOT of the parent
+            # object_id. Recording MIM:<subject> → parent here would mark the
+            # legitimate MIM xref of the child as "current" against the wrong
+            # entity and cause the stale-xref sweep below to act incorrectly.
             added += 1
 
         # Sweep stale MIM: and MediaIngredientMech: xrefs. Any xref in the
@@ -1157,7 +1361,7 @@ class ChemicalMappingConsolidator:
         extract, Seawater, Yeast extract, Vermont Soil, etc.) and
         therefore cannot ride in the CHEBI-only SSSOM.
 
-        Schema mirrors `unified_chemical_mappings.tsv.gz`:
+        TSV columns:
           id, category, canonical_name, formula, synonyms, xrefs, sources
 
         Rows are added at priority 11 (same as mediaingredientmech_reviewed)
@@ -1315,6 +1519,106 @@ class ChemicalMappingConsolidator:
             f"{synonyms_added} synonyms harvested from CHEBI xrefs"
         )
 
+    def purge_asymmetric_pollution(self):
+        """
+        Remove child labels that earlier consolidator runs leaked onto parents.
+
+        Prior versions of ``load_mediaingredientmech_sssom`` ran asymmetric
+        (skos:narrowMatch / broadMatch) rows through ``add_chemical(id=
+        object_id, ...)``, which made the broader parent absorb the child's
+        ``subject_label`` as one of its own synonyms and the child's MIM xref
+        as one of its own xrefs. Codex adversarial review #558 round 3 caught
+        this: the runtime name lookup then returned the parent CURIE instead
+        of the child, and the new ``get_parents()`` index was unreachable
+        because the lookup never landed on the child key it was indexed by.
+
+        The current loader skips that path for asymmetric rows, but baseline
+        runs from the existing unified file (via ``load_existing_unified``)
+        carry forward the old pollution. This sweep removes it surgically:
+        for each captured parent relation
+        (child=subject_id, parent=object_id), the child's canonical name and
+        synonyms are removed from the parent's synonym set, and the child's
+        MIM xref is removed from the parent's xref set. Both child and parent
+        records keep their own legitimate data; only the spillover is dropped.
+        """
+        if not self.parent_relations:
+            print("\nNo asymmetric MIM relations captured — skipping pollution purge.")
+            return
+        print("\nPurging asymmetric MIM pollution from parent entity records...")
+
+        # Resolve each parent relation to (child_primary, parent_primary,
+        # mim_subject) so the sweep can act on both label-side and xref-side
+        # spillover.
+        cleaned_synonyms = 0
+        cleaned_xrefs = 0
+        records_touched: set[str] = set()
+        for rel in self.parent_relations:
+            mim_subject = rel.get("subject_id", "")
+            parent_id = rel.get("object_id", "")
+            if not parent_id or parent_id not in self.chemicals:
+                continue
+            parent = self.chemicals[parent_id]
+
+            # The child primary is whatever symmetric MIM exactMatch row
+            # registered against the same MIM subject. Without that link we
+            # don't have a child to attribute the spillover to and the sweep
+            # is a no-op for this relation.
+            child_id = self.mim_to_primary.get(mim_subject)
+
+            # Names to purge: the child's subject_label from this MIM row,
+            # plus the child's canonical_name and all its synonyms (the prior
+            # asymmetric loader fed all of those onto the parent).
+            names_to_drop: set[str] = set()
+            row_subject_label = (rel.get("subject_label") or "").strip()
+            if row_subject_label:
+                names_to_drop.add(row_subject_label)
+            if child_id and child_id in self.chemicals:
+                child = self.chemicals[child_id]
+                if child["canonical_name"]:
+                    names_to_drop.add(child["canonical_name"])
+                names_to_drop.update(s for s in child["synonyms"] if s)
+
+            # Don't drop the parent's own canonical_name even if it
+            # accidentally matches one of these.
+            names_to_drop.discard(parent["canonical_name"])
+
+            removed_syns = parent["synonyms"] & names_to_drop
+            if removed_syns:
+                parent["synonyms"] -= removed_syns
+                cleaned_synonyms += len(removed_syns)
+                records_touched.add(parent_id)
+
+            # The child's MIM xref also leaked onto the parent in the old
+            # loader — remove it. The legitimate place for MIM:<slug> is on
+            # the child primary, not on the broader parent.
+            if mim_subject and mim_subject in parent["xrefs"]:
+                parent["xrefs"].discard(mim_subject)
+                cleaned_xrefs += 1
+                records_touched.add(parent_id)
+
+            # The child primary itself ended up cross-xref'd with the parent
+            # primary in some prior runs (each side claiming the other as an
+            # exactMatch xref), which made propagate_synonyms_via_xrefs treat
+            # them as the same entity and re-bridge the child's labels into
+            # the parent's synonym set. Break the symmetric xref so the
+            # narrowMatch parent_relations row stays the single channel.
+            if child_id and child_id in self.chemicals:
+                if child_id in parent["xrefs"]:
+                    parent["xrefs"].discard(child_id)
+                    cleaned_xrefs += 1
+                    records_touched.add(parent_id)
+                child = self.chemicals[child_id]
+                if parent_id in child["xrefs"]:
+                    child["xrefs"].discard(parent_id)
+                    cleaned_xrefs += 1
+                    records_touched.add(child_id)
+
+        print(
+            f"  Purged {cleaned_synonyms} stray child-label synonym(s) and "
+            f"{cleaned_xrefs} stray MIM xref(s) from {len(records_touched)} "
+            "parent record(s)."
+        )
+
     def propagate_synonyms_via_xrefs(self):
         """
         Pull names across equivalent-CURIE records into each primary's synonyms.
@@ -1414,6 +1718,11 @@ class ChemicalMappingConsolidator:
         # treated as bibliographic / descriptive and skipped.
         exact_prefixes = {
             "CHEBI", "FOODON", "UBERON", "ENVO", "NCIT",
+            # Newly admitted MIM-side primary prefixes — must appear here
+            # (not just in _ACCEPTED_PREFIXES) for their xref/identity rows
+            # to survive the SSSOM emission filter at line ~1727 and to be
+            # added to the output curie_map fallback below.
+            "mesh", "MICRO", "BTO", "kgmicrobe.ingredient",
             "kgmicrobe.compound",
             "mediadive.ingredient",
             "MIM", "MediaIngredientMech",
@@ -1635,7 +1944,46 @@ class ChemicalMappingConsolidator:
                     "semapv:UnspecifiedMatching", "attribute_carrier",
                 ))
 
-        rows_emitted = xref_rows + name_rows + synonym_rows
+        # Pass-through asymmetric (skos:narrowMatch / skos:broadMatch) MIM
+        # rows. These describe parent-of relationships ("kg-microbe ingredient
+        # X is a kind of ontology term Y") that the entity-centric mapping_rows
+        # above cannot express. Translate the MIM:<slug> subject to the
+        # corresponding kg-microbe primary (when an exactMatch registry row
+        # establishes the equivalence) so the runtime parent-index can be
+        # built directly from this file. Normalize ``object_source`` to the
+        # ``obo:<prefix>.owl`` convention used by entity-derived rows so the
+        # SSSOM validator's curie-map check accepts the file (the MIM source
+        # column sometimes carries ``registry:mesh`` etc., which would trip
+        # the validator).
+        parent_rows = 0
+        for rel in self.parent_relations:
+            subject_id = rel["subject_id"]
+            translated_subject = self.mim_to_primary.get(subject_id, subject_id)
+            obj_id = rel["object_id"]
+            obj_prefix = obj_id.split(":", 1)[0] if ":" in obj_id else ""
+            normalized_source = (
+                f"obo:{obj_prefix.lower()}.owl"
+                if obj_prefix
+                else "obo:kgmicrobe.compound.owl"
+            )
+            mapping_rows.append({
+                "subject_id": translated_subject,
+                "subject_label": rel["subject_label"],
+                "predicate_id": rel["predicate_id"],
+                "object_id": obj_id,
+                "object_label": rel["object_label"],
+                "object_source": normalized_source,
+                "mapping_justification": rel["mapping_justification"] or "semapv:ManualMappingCuration",
+                "source": rel["source"],
+                "mapping_date": rel["mapping_date"] or today,
+                "confidence": rel["confidence"],
+                "comment": rel["comment"],
+                "object_formula": "",
+                "object_category": "",
+            })
+            parent_rows += 1
+
+        rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows
 
         # Build the header.
         header_lines = ["# curie_map:"]
@@ -1705,23 +2053,11 @@ def main():
     base_dir = Path(__file__).parent.parent
     consolidator = ChemicalMappingConsolidator()
 
-    sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
-    # Legacy TSV baselines. Read before the SSSOM baseline so the SSSOM
-    # (the new source of truth) can overlay/supersede any stale values.
-    # These paths are retired outputs — kept as read-only migration
-    # fallbacks and deleted after the first SSSOM regeneration that
-    # carries the extension columns forward.
-    legacy_tsv_paths = [
-        base_dir / "mappings" / "unified_chemical_mappings.tsv.gz",
-        base_dir / "mappings" / "unified_other_mappings.tsv.gz",
-    ]
-    for legacy in legacy_tsv_paths:
-        if legacy.exists():
-            consolidator.load_existing_unified_tsv(legacy)
+    sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
-    # Seed from the existing unified SSSOM (single source of truth going
-    # forward). Each row's sources contribute to the accumulated per-entity
-    # source set; priority is inferred from the source labels.
+    # Seed from the existing unified SSSOM (single source of truth). Each
+    # row's sources contribute to the accumulated per-entity source set;
+    # priority is inferred from the source labels.
     if sssom_output_path.exists():
         consolidator.load_existing_unified(sssom_output_path)
 
@@ -1792,6 +2128,11 @@ def main():
 
     # Harvest labels for CHEBI xrefs that never got their own primary row.
     consolidator.enrich_with_chebi_xref_labels()
+
+    # Sweep child-label spillover that earlier consolidator runs leaked onto
+    # parent entities via asymmetric MIM rows. Must run BEFORE
+    # propagate_synonyms_via_xrefs so the cleaned data doesn't get re-amplified.
+    consolidator.purge_asymmetric_pollution()
 
     # Propagate names across equivalent-CURIE records via xrefs so losing
     # candidates' labels end up on the primary node as synonyms.

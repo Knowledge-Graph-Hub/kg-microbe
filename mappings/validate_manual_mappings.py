@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
-"""
-Phase 2: Validate manually-curated rows in unified_chemical_mappings.tsv.gz
-against EBI OLS4 ChEBI API.
+"""Validate manually-curated rows in the unified ingredient SSSOM.
 
-For each CHEBI ID from non-chebi_xrefs sources, checks:
+Validates ``mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`` against EBI
+OLS4 ChEBI for every CHEBI entity whose provenance does not include
+``chebi_xrefs`` (i.e. purely manual / metatraits-curated rows). For each:
+
 1. canonical_name matches OLS rdfs:label
-2. Synonyms in our file are all in OLS (flag spurious)
-3. Whether any OLS synonyms are missing from our file
+2. synonyms in our file are all in OLS (flag spurious)
+3. whether any OLS synonyms are missing from our file
 
-Writes: mappings/manual_mapping_audit_report.tsv
+Writes: ``mappings/manual_mapping_audit_report.tsv``
 """
 
+import csv
 import gzip
 import json
-import sys
 import time
+from collections import defaultdict
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
 HERE = Path(__file__).parent
-MAPPINGS_FILE = HERE / "unified_chemical_mappings.tsv.gz"
+MAPPINGS_FILE = HERE / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 REPORT_FILE = HERE / "manual_mapping_audit_report.tsv"
 OLS_BASE = "https://www.ebi.ac.uk/ols4/api/ontologies/chebi/terms"
 
@@ -61,22 +63,69 @@ def norm(s: str) -> str:
     return s.strip().lower()
 
 
-def main() -> None:
-    # Read file
-    rows_by_id: dict[str, dict] = {}
-    with gzip.open(MAPPINGS_FILE, "rt", encoding="utf-8") as f:
-        header = f.readline()
+def _load_sssom_entities(path: Path) -> dict[str, dict]:
+    """Group SSSOM rows by ``object_id`` into per-entity records.
+
+    Mirrors the row-shape conventions emitted by
+    ``scripts/consolidate_chemical_mappings.py:export_unified_sssom``:
+    canonical-name rows (``kgm.name:`` subject + ``comment == "canonical_name"``),
+    synonym rows (``kgm.name:`` subject + ``comment == "synonym"``), and
+    plain-CURIE xref rows. Only CHEBI entities are returned.
+    """
+    rows_by_id: dict[str, dict] = defaultdict(
+        lambda: {"canonical_name": "", "formula": "", "synonyms": "", "sources": set()}
+    )
+    syn_buckets: dict[str, set] = defaultdict(set)
+
+    # Stream the SSSOM row-by-row instead of materialising every non-comment
+    # line into a Python list — the unified file is ~600k rows, so the prior
+    # list comprehension caused an O(file_size) memory spike.
+    with gzip.open(path, "rt", encoding="utf-8", newline="") as f:
+        # Skip the YAML metadata block (lines beginning with `#`).
+        header_line = None
         for line in f:
-            parts = line.rstrip("\n").split("\t")
-            if len(parts) < 6:
+            if not line.startswith("#"):
+                header_line = line
+                break
+        if header_line is None:
+            return {}
+        reader = csv.DictReader(f, fieldnames=header_line.rstrip("\n").split("\t"),
+                                delimiter="\t")
+        for row in reader:
+            oid = (row.get("object_id") or "").strip()
+            if not oid.startswith("CHEBI:"):
                 continue
-            chebi_id, canonical_name, formula, synonyms, xrefs, sources = parts[:6]
-            rows_by_id[chebi_id] = {
-                "canonical_name": canonical_name,
-                "formula": formula,
-                "synonyms": synonyms,
-                "sources": sources,
-            }
+            comment = (row.get("comment") or "").strip()
+            sid = (row.get("subject_id") or "").strip()
+            slabel = (row.get("subject_label") or "").strip()
+            olabel = (row.get("object_label") or "").strip()
+            source_tag = (row.get("source") or "").strip()
+            rec = rows_by_id[oid]
+            if olabel and not rec["canonical_name"]:
+                rec["canonical_name"] = olabel
+            formula = (row.get("object_formula") or "").strip()
+            if formula and not rec["formula"]:
+                rec["formula"] = formula
+            if source_tag:
+                rec["sources"].add(source_tag)
+            if sid.startswith("kgm.name:"):
+                if comment == "canonical_name" and slabel:
+                    if not rec["canonical_name"]:
+                        rec["canonical_name"] = slabel
+                elif comment == "synonym" and slabel:
+                    syn_buckets[oid].add(slabel)
+
+    for oid, syns in syn_buckets.items():
+        rows_by_id[oid]["synonyms"] = "|".join(sorted(syns))
+    # Materialize sources as the same pipe-delimited form the legacy TSV used.
+    for rec in rows_by_id.values():
+        rec["sources"] = "|".join(sorted(rec["sources"]))
+    return dict(rows_by_id)
+
+
+def main() -> None:
+    """Validate manually-curated CHEBI rows in the unified SSSOM against OLS4."""
+    rows_by_id = _load_sssom_entities(MAPPINGS_FILE)
 
     # Identify rows to validate:
     # 1. Rows with NO chebi_xrefs source at all (purely manual, 208 rows)

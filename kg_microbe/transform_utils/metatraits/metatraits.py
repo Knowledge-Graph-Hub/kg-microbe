@@ -139,7 +139,7 @@ def _ensure_ncbitaxon_db_ready() -> None:
         "  1. Remove corrupt cache: rm ~/.data/oaklib/ncbitaxon.db\n"
         "  2. Re-download sequentially (not in parallel):\n"
         "     poetry run python -c 'from oaklib import get_adapter; "
-        "get_adapter(\"sqlite:obo:ncbitaxon\")'\n"
+        'get_adapter("sqlite:obo:ncbitaxon")\'\n'
         "  3. Re-run the transform."
     )
 
@@ -288,7 +288,7 @@ class MetaTraitsTransform(Transform):
         :param num_workers: Number of workers (default: auto-detect from resources)
         """
         super().__init__(METATRAITS, input_dir, output_dir)
-        self.edge_header = self.edge_header + ["has_percentage"]
+        self.edge_header = self.edge_header + ["has_percentage", "value", "unit"]
         self.knowledge_source = "infores:metatraits"
         self.microbial_mappings = load_microbial_trait_mappings()
         self.metpo_mappings = load_metpo_mappings("metatraits synonym")
@@ -1455,6 +1455,15 @@ class MetaTraitsTransform(Transform):
                 return None
         return None
 
+    # Source-data unit strings for the three quantitative parameters that drive
+    # METPO classification. Threaded into emitted edges as the `unit` column so
+    # the original measurement is recoverable after binning.
+    _PARAM_UNIT = {
+        "temperature": "Celsius",
+        "NaCl": "%NaCl(w/v)",
+        "pH": "pH",
+    }
+
     def _classify_into_binned_range(self, value: Optional[float], param_type: str) -> Optional[dict]:
         """
         Classify a value into appropriate METPO binned range class.
@@ -1463,7 +1472,7 @@ class MetaTraitsTransform(Transform):
 
         :param value: Numeric value to classify
         :param param_type: Parameter type ('temperature', 'pH', or 'NaCl')
-        :return: Binned class dict or None
+        :return: Binned class dict (with source `value`/`unit`) or None
         """
         if value is None:
             return None
@@ -1471,6 +1480,8 @@ class MetaTraitsTransform(Transform):
         bins = self.metpo_binned_ranges.get(param_type, [])
         if not bins:
             return None
+
+        unit = self._PARAM_UNIT.get(param_type, "")
 
         # Find the bin that contains this value
         for bin_class in bins:
@@ -1489,6 +1500,8 @@ class MetaTraitsTransform(Transform):
                     "category": "biolink:PhenotypicQuality",
                     "name": bin_class["label"],
                     "predicate": "biolink:has_phenotype",
+                    "value": value,
+                    "unit": unit,
                 }
 
         # No bin found (shouldn't happen if METPO data is complete)
@@ -1539,6 +1552,8 @@ class MetaTraitsTransform(Transform):
                             "category": metpo_class["category"],
                             "name": metpo_class["name"],
                             "predicate": "biolink:has_phenotype",
+                            "value": temp_max,
+                            "unit": "Celsius",
                         }
                     )
 
@@ -1552,6 +1567,8 @@ class MetaTraitsTransform(Transform):
                         "category": metpo_class["category"],
                         "name": metpo_class["name"],
                         "predicate": "biolink:has_phenotype",
+                        "value": temp_min,
+                        "unit": "Celsius",
                     }
                 )
 
@@ -1601,6 +1618,8 @@ class MetaTraitsTransform(Transform):
                             "category": metpo_class["category"],
                             "name": metpo_class["name"],
                             "predicate": "biolink:has_phenotype",
+                            "value": sal_max,
+                            "unit": "%NaCl(w/v)",
                         }
                     )
 
@@ -1641,6 +1660,8 @@ class MetaTraitsTransform(Transform):
                             "category": metpo_class["category"],
                             "name": metpo_class["name"],
                             "predicate": "biolink:has_phenotype",
+                            "value": ph_max,
+                            "unit": "pH",
                         }
                     )
                 # Check for obligate vs facultative
@@ -1653,6 +1674,8 @@ class MetaTraitsTransform(Transform):
                                 "category": metpo_class["category"],
                                 "name": metpo_class["name"],
                                 "predicate": "biolink:has_phenotype",
+                                "value": ph_min,
+                                "unit": "pH",
                             }
                         )
             elif ph_min > 8.5:
@@ -1668,10 +1691,12 @@ class MetaTraitsTransform(Transform):
                             "category": metpo_class["category"],
                             "name": metpo_class["name"],
                             "predicate": "biolink:has_phenotype",
+                            "value": ph_min,
+                            "unit": "pH",
                         }
                     )
             elif ph_min >= 5.5 and ph_max <= 8.5:
-                # Grows in neutral range
+                # Grows in neutral range; cite the midpoint of the recorded range
                 metpo_class = self.metpo_label_to_class.get("neutrophilic")
                 if metpo_class:
                     phenotypes.append(
@@ -1680,6 +1705,8 @@ class MetaTraitsTransform(Transform):
                             "category": metpo_class["category"],
                             "name": metpo_class["name"],
                             "predicate": "biolink:has_phenotype",
+                            "value": (ph_min + ph_max) / 2,
+                            "unit": "pH",
                         }
                     )
             # Broad pH tolerance (min < 5.5 and max > 8.5) - skip for now
@@ -2250,6 +2277,8 @@ class MetaTraitsTransform(Transform):
             "knowledge_level",
             "agent_type",
             "has_percentage",
+            "value",
+            "unit",
         ]
 
     def _process_single_file(self, input_file: Path, temp_output_dir: Path, show_status: bool = True) -> Dict[str, Any]:
@@ -2483,6 +2512,8 @@ class MetaTraitsTransform(Transform):
                                 OBSERVATION,
                                 AUTOMATED_AGENT,
                                 100.0,
+                                temp_opt_bin["value"],
+                                temp_opt_bin["unit"],
                             ]
                         )
 
@@ -2505,6 +2536,8 @@ class MetaTraitsTransform(Transform):
                                 OBSERVATION,
                                 AUTOMATED_AGENT,
                                 100.0,
+                                nacl_opt_bin["value"],
+                                nacl_opt_bin["unit"],
                             ]
                         )
 
@@ -2527,6 +2560,8 @@ class MetaTraitsTransform(Transform):
                                 OBSERVATION,
                                 AUTOMATED_AGENT,
                                 100.0,
+                                ph_opt_bin["value"],
+                                ph_opt_bin["unit"],
                             ]
                         )
 
@@ -2551,6 +2586,8 @@ class MetaTraitsTransform(Transform):
                                 OBSERVATION,
                                 AUTOMATED_AGENT,
                                 100.0,
+                                phenotype.get("value", ""),
+                                phenotype.get("unit", ""),
                             ]
                         )
 
@@ -2572,6 +2609,8 @@ class MetaTraitsTransform(Transform):
                                 OBSERVATION,
                                 AUTOMATED_AGENT,
                                 100.0,
+                                phenotype.get("value", ""),
+                                phenotype.get("unit", ""),
                             ]
                         )
 
@@ -2593,6 +2632,8 @@ class MetaTraitsTransform(Transform):
                                 OBSERVATION,
                                 AUTOMATED_AGENT,
                                 100.0,
+                                phenotype.get("value", ""),
+                                phenotype.get("unit", ""),
                             ]
                         )
 

@@ -82,7 +82,11 @@ biolink:EnvironmentalProcess
 biolink:PathologicalProcess
 biolink:Disease
 biolink:GrowthMedium  (KG-Microbe extension)
+biolink:Procedure  (used multi-cat as METPO:1001000|biolink:Procedure on kgmicrobe.assay nodes)
+biolink:PhenotypicQuality  (PATO terms, surfaced as ENVO has_attribute targets in madin_etal)
 ```
+
+**Multi-category nodes**: a node's `category` column may carry pipe-delimited categories (e.g. `METPO:1001000|biolink:Procedure` on the 503 `kgmicrobe.assay:*` nodes). The reviewer accepts any pipe-split component being valid; this is intentional, not a regression.
 
 Valid predicates (flag anything not in this list):
 ```
@@ -93,6 +97,7 @@ biolink:consumes
 biolink:located_in
 biolink:location_of
 biolink:has_part
+biolink:has_attribute  (used by madin_etal for ENVO substrate → PATO quality attachment)
 biolink:subclass_of
 biolink:related_to
 biolink:associated_with
@@ -120,6 +125,43 @@ biolink:contains_process
   - Standard known prefixes: `NCBITaxon`, `CHEBI`, `GO`, `EC`, `RO`, `METPO`, `biolink`, `FOODON`, `UBERON`, `HP`, `MONDO`, `ENVO`, `infores`, `semapv`, `KGM`
 - Flag any prefix not registered
 
+#### Mapping files (curation TSVs)
+
+Run with `--mappings` (in addition to a transform/merged scope) or
+`--mappings-only` (just the curation TSVs) to validate every curation artifact
+KG-Microbe ships and consumes. Four file groups are checked:
+
+| Group | Example files | Schema |
+|---|---|---|
+| A — canonical | `kg_microbe/transform_utils/metatraits/mappings/{chemical,enzyme,metpo_alias,pathway,phenotype}_mappings.tsv` | 12-column canonical (`subject_label`, `object_id`, `predicate_id`, `mapping_justification`, `confidence`, …) |
+| B — bespoke | `enzyme_name_to_go.tsv`, `special_chemical_mappings.tsv` | per-file expected columns |
+| C — queues / audit / proposals | `mappings/mediadive_unmapped_ingredients_to_curate.tsv`, `mappings/culturebotai_reviewed_ingredients.tsv`, METPO proposal TSVs | status counts + sanity |
+| D — SSSOM | `mappings/ingredient_mappings.sssom.tsv` | YAML metadata block + SSSOM required columns |
+
+Per-row checks include: CURIE format on every `_id` column; `predicate_id`
+restricted to the `skos:` namespace; `mapping_justification` restricted to
+`semapv:`; `confidence` ∈ {high, medium, low}; deprecated biolink target
+detection; METPO refs that don't exist in the ontology output; ontology IDs
+(CHEBI/GO/EC/UBERON/ENVO/HP/MONDO/PATO/PR/CL/FOODON/NCBITaxon/OMP) that don't
+resolve in `data/transformed/ontologies/*_nodes.tsv`.
+
+Cross-file checks:
+- Same `subject_label` mapped to conflicting `object_id` across canonical files
+
+**Curation upgrade report.** When `--mappings` (or `--mappings-only`) is
+specified, a markdown "Curation upgrade report" is appended to the artifact.
+It summarises:
+1. Top unmapped MediaDive ingredients by occurrence (drives MIM/CultureBotAI
+   curation priority).
+2. Cross-file mapping conflicts.
+3. Object IDs that don't resolve in the ontologies output.
+4. Low-confidence canonical rows.
+5. Prefix normalization candidates (e.g. `PUBCHEM.COMPOUND` → `pubchem.compound`).
+6. CultureBotAI ingredient review queue status counts.
+
+This section is what you hand to the upstream curation repos
+(`CultureBotAI`, `MIM`, `CultureBotHT`) to drive new mappings.
+
 ## Usage
 
 ### Review all transforms
@@ -137,6 +179,16 @@ biolink:contains_process
 /kg-model-review --merged
 ```
 
+### Review mapping files only (no transforms)
+```
+/kg-model-review --mappings-only --format md
+```
+
+### Combined: merged KG plus mapping files
+```
+/kg-model-review --merged --mappings --format md
+```
+
 ### Verbose output with example violations
 ```
 /kg-model-review --transform bacdive --verbose
@@ -151,6 +203,8 @@ biolink:contains_process
 
 - `--transform NAME` — review specific transform output in `data/transformed/NAME/`
 - `--merged` — review `data/merged/` instead of individual transforms
+- `--mappings` — additionally review curation TSVs (canonical, bespoke, queues, SSSOM) and append a curation upgrade report
+- `--mappings-only` — review ONLY the curation TSVs (skip transforms/merged)
 - `--format {text,md,json}` — output format (default: text)
 - `--verbose` — show up to 5 example violating rows per check
 - `--max-rows N` — limit rows sampled per file (default: 100000; use 0 for all)

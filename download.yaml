@@ -253,6 +253,34 @@
   local_name: ro.owl
 
 #
+# PO (Plant Ontology)
+# Used by BacDive isolation_source mappings (root, leaf, flower, rhizome, etc.)
+#
+-
+  url: http://purl.obolibrary.org/obo/po.owl
+  local_name: po.owl
+
+#
+# TAXRANK (Taxonomic Rank Vocabulary)
+# Tiny ontology of taxonomic ranks (species, genus, family, ...). Used directly
+# by the NCBITaxon transform's OAK rank annotations; loading provides labels
+# and definitions for the rank nodes already present in merged-kg.
+#
+-
+  url: http://purl.obolibrary.org/obo/taxrank.owl
+  local_name: taxrank.owl
+
+#
+# MICRO (Microbial Conditions Ontology / OntologyOfMicrobialConditions)
+# Source of truth for prepared-media ingredient terms (peptone, brain heart
+# infusion, tryptic soy broth, etc.). 48 high-confidence MIM mappings already
+# point at MICRO terms; loading provides labels/categories for them.
+#
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/MicrO.owl
+  local_name: micro.owl
+
+#
 # MicroMediaParam Chemical Mappings - High Confidence
 # Comprehensive compound name to ontology ID mappings from MicroMediaParam pipeline.
 # This high-confidence version includes:

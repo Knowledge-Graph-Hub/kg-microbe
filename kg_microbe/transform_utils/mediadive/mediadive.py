@@ -79,11 +79,13 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE_SOURCE_COLUMN,
     MEDIADIVE_TMP_DIR,
     MEDIUM,
-    MEDIUM_CATEGORY,
+    MEDIUM_COMPLEX_CATEGORY,
+    MEDIUM_DEFINED_CATEGORY,
     MEDIUM_STRAINS,
     MEDIUM_TO_INGREDIENT_EDGE,
     MEDIUM_TO_SOLUTION_EDGE,
-    MEDIUM_TYPE_CATEGORY,
+    MEDIUM_TYPE_COMPLEX_CATEGORY,
+    MEDIUM_TYPE_DEFINED_CATEGORY,
     MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE,
     MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE,
     MMOL_PER_LITER_COLUMN,
@@ -816,17 +818,20 @@ class MediaDiveTransform(Transform):
             # Choose the appropriate context manager based on the flag
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(total=len(input_json[DATA_KEY]) + 1, desc="Processing files") as progress:
-                # medium type nodes
+                # medium type nodes — defined media have known composition
+                # (biolink:ChemicalMixture), complex media have undefined
+                # composition like yeast extract / peptone
+                # (biolink:ComplexMolecularMixture).
                 node_writer.writerows(
                     [
                         self._create_node_row(
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
-                            MEDIUM_TYPE_CATEGORY,
+                            MEDIUM_TYPE_COMPLEX_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL,
                         ),
                         self._create_node_row(
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
-                            MEDIUM_TYPE_CATEGORY,
+                            MEDIUM_TYPE_DEFINED_CATEGORY,
                             MEDIADIVE_MEDIUM_TYPE_DEFINED_LABEL,
                         ),
                     ]
@@ -848,6 +853,13 @@ class MediaDiveTransform(Transform):
                     # Medium and Medium type edge
                     medium_type_edges = []
                     complex_medium_type = bool(dictionary[MEDIADIVE_COMPLEX_MEDIUM_COLUMN])
+                    # Pick the type-specific multi-cat category for the
+                    # individual medium node so downstream queries can filter
+                    # defined vs. complex media via biolink categories alone.
+                    medium_category = (
+                        MEDIUM_COMPLEX_CATEGORY if complex_medium_type
+                        else MEDIUM_DEFINED_CATEGORY
+                    )
                     if complex_medium_type:
                         medium_type_edges = [
                             [
@@ -873,6 +885,22 @@ class MediaDiveTransform(Transform):
                             ]
                         ]
                     edge_writer.writerows(medium_type_edges)
+
+                    # Emit the medium's own node row HERE — before any of the
+                    # downstream `continue` short-circuits (e.g. when the
+                    # medium has no SOLUTIONS_KEY in its detail JSON, see
+                    # ``if SOLUTIONS_KEY not in json_obj: continue`` below).
+                    # Previously this lived at the very end of the loop, so
+                    # short-circuiting media (P1–P10 pharmacopoeial entries
+                    # without solution definitions) emitted their
+                    # subclass_of edge to a medium-type without a node row,
+                    # surfacing as merge-time NamedThing fallbacks. Found by
+                    # the `orphan-edges` archetype in kg-path-review.
+                    node_writer.writerow(
+                        self._create_node_row(
+                            medium_id, medium_category, dictionary[NAME_COLUMN]
+                        )
+                    )
 
                     # Medium-Strains KG
                     if json_obj_medium_strain:
@@ -911,7 +939,7 @@ class MediaDiveTransform(Transform):
                                                 ),
                                                 self._create_node_row(
                                                     medium_id,
-                                                    MEDIUM_CATEGORY,
+                                                    medium_category,
                                                     dictionary[NAME_COLUMN],
                                                 ),
                                             ]
@@ -983,6 +1011,7 @@ class MediaDiveTransform(Transform):
                         )
 
                     ingredient_nodes = []
+                    ingredient_subclass_edges = []
                     for k, v in ingredients_dict.items():
                         ingredient_id = v[ID_COLUMN]
                         enrichment = self.chemical_loader.get_node_enrichment(ingredient_id)
@@ -995,9 +1024,46 @@ class MediaDiveTransform(Transform):
                                 synonym=enrichment["synonym"] or None,
                             )
                         )
+                        # If MIM curators have asserted a parent for this ingredient
+                        # via skos:narrowMatch (e.g. MIM:Vermont_Soil narrowMatch
+                        # ENVO:00001998), the unified mappings file now carries
+                        # those rows and the loader exposes them via get_parents().
+                        # Emit one biolink:subclass_of edge per parent so the
+                        # ingredient sits inside the canonical OBO hierarchy.
+                        for parent_id in self.chemical_loader.get_parents(ingredient_id):
+                            ingredient_subclass_edges.append([
+                                ingredient_id,
+                                "biolink:subclass_of",
+                                parent_id,
+                                "rdfs:subClassOf",
+                                self.knowledge_source,
+                                "knowledge_assertion",
+                                "manual_agent",
+                                "",
+                                "",
+                            ])
                     solution_nodes = [
                         self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()
+                    ]
+                    # Each MediaDive solution is a chemical mixture — subclass it under
+                    # CHEBI:60004 (mixture) so OBO-aware reasoners can navigate from any
+                    # solution back to the canonical chemical hierarchy. Edge schema is
+                    # the standard 9-col MediaDive edge_header (subject, predicate, object,
+                    # relation, primary_knowledge_source, knowledge_level, agent_type, value, unit).
+                    solution_subclass_edges = [
+                        [
+                            MEDIADIVE_SOLUTION_PREFIX + str(k),
+                            "biolink:subclass_of",
+                            "CHEBI:60004",
+                            "rdfs:subClassOf",
+                            self.source_name,
+                            "knowledge_assertion",
+                            "manual_agent",
+                            "",
+                            "",
+                        ]
+                        for k in solutions_dict.keys()
                     ]
 
                     # Get ChEBI role relationships using fast TSV lookup
@@ -1055,9 +1121,10 @@ class MediaDiveTransform(Transform):
 
                     writer.writerow(data)  # writing the data
 
-                    # Combine list creation and extension
+                    # The medium's own node row was already written earlier,
+                    # before the SOLUTIONS_KEY short-circuit. Solution and
+                    # ingredient rows are still emitted here.
                     nodes_data_to_write = [
-                        self._create_node_row(medium_id, MEDIUM_CATEGORY, dictionary[NAME_COLUMN]),
                         *solution_nodes,
                         *ingredient_nodes,
                         *medium_strain_nodes,
@@ -1065,6 +1132,10 @@ class MediaDiveTransform(Transform):
                     node_writer.writerows(nodes_data_to_write)
 
                     edge_writer.writerows(solution_ingredient_edges)
+                    if solution_subclass_edges:
+                        edge_writer.writerows(solution_subclass_edges)
+                    if ingredient_subclass_edges:
+                        edge_writer.writerows(ingredient_subclass_edges)
 
                     progress.set_description(f"Processing mediadive: {medium_id}")
                     # After each iteration, call the update method to advance the progress bar.

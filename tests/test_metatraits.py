@@ -243,30 +243,52 @@ class TestMetaTraitsTransform(unittest.TestCase):
             self.assertIn("category", nodes[0])
             self.assertIn("name", nodes[0])
 
-            # Check edge header
+            # Check edge header — value/unit added alongside has_percentage so
+            # quantitative phenotype edges (temperature/NaCl/pH binned optima)
+            # carry the source measurement through to downstream consumers.
+            # Header order is asserted to catch silent reorderings.
             self.assertIn("subject", edges[0])
             self.assertIn("predicate", edges[0])
             self.assertIn("object", edges[0])
             self.assertIn("has_percentage", edges[0])
+            self.assertIn("value", edges[0])
+            self.assertIn("unit", edges[0])
 
             # Verify that a 0% pct_true trait (gram positive) is included in edges
             # Parse TSV to check exact has_percentage value for gram positive trait
             header = edges[0].split("\t")
             pct_col_idx = header.index("has_percentage")
             obj_col_idx = header.index("object")
+            value_col_idx = header.index("value")
+            unit_col_idx = header.index("unit")
 
             found_zero_pct = False
+            found_quant_temp = False
             for edge_line in edges[1:]:
                 cols = edge_line.split("\t")
-                if len(cols) > max(pct_col_idx, obj_col_idx):
-                    # Look for gram positive trait (METPO:1000698)
-                    if "METPO:1000698" in cols[obj_col_idx]:
-                        pct_value = cols[pct_col_idx]
-                        self.assertEqual(pct_value, "0.0", "Gram positive trait should have 0.0 percentage")
-                        found_zero_pct = True
-                        break
+                if len(cols) <= max(pct_col_idx, obj_col_idx, value_col_idx, unit_col_idx):
+                    continue
+                # Look for gram positive trait (METPO:1000698)
+                if "METPO:1000698" in cols[obj_col_idx]:
+                    pct_value = cols[pct_col_idx]
+                    self.assertEqual(pct_value, "0.0", "Gram positive trait should have 0.0 percentage")
+                    found_zero_pct = True
+                # Quantitative phenotype edge from the "temperature growth"
+                # fixture record (Median: 37.0 Celsius) → binned optimum class.
+                # The edge must carry the source value+unit so a header/order
+                # mismatch (or the column-population path silently breaking) is
+                # caught here.
+                if cols[unit_col_idx] == "Celsius":
+                    self.assertEqual(cols[value_col_idx], "37.0",
+                                     "temperature growth edge value should equal 37.0")
+                    found_quant_temp = True
 
             self.assertTrue(found_zero_pct, "0% pct_true trait (gram positive) should be included in edges")
+            self.assertTrue(
+                found_quant_temp,
+                "temperature-growth quantitative edge with value=37.0/unit=Celsius "
+                "should be emitted; check edge_header order and binned-optimum path.",
+            )
         finally:
             # Cleanup temporary input directory
             import shutil

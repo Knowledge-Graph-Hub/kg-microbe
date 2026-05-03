@@ -2,12 +2,32 @@
 
 import csv
 import json
+import logging
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import curies
 import requests
 
 from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
+
+logger = logging.getLogger(__name__)
+
+# Local curator overrides for the remote METPO classes ROBOT template. Rows
+# in this TSV (high-confidence ManualMappingCuration entries) take precedence
+# over the remote sheet so a curator edit applies on the next transform run
+# without waiting on a berkeleybop/metpo release. Rows whose ``object_id`` is
+# not yet present in the loaded METPO tree are skipped (those refer to
+# proposed-but-unminted terms; the transform's ``kgmicrobe.*`` placeholder
+# path remains the correct destination for those).
+LOCAL_METPO_ALIAS_OVERRIDES_PATH = (
+    Path(__file__).resolve().parents[2]
+    / "kg_microbe"
+    / "transform_utils"
+    / "metatraits"
+    / "mappings"
+    / "metpo_alias_mappings.tsv"
+)
 
 # remote URL location in metpo GitHub repository for METPO classes and properties
 # sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
@@ -285,6 +305,119 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
         raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
+def _resolve_metpo_predicate(
+    metpo_curie: str,
+    nodes: Dict[str, "MetpoTreeNode"],
+    range_to_predicate: Dict[str, Dict[str, str]],
+) -> Dict[str, str]:
+    """
+    Resolve a METPO term's predicate routing via parent-chain traversal.
+
+    Walks the METPO parent chain to find the ``biolink equivalent``
+    ancestor that determines this term's predicate, biolink equivalent,
+    and category. Returns the same five fields the main mapping loop
+    populates so override entries are shape-compatible with
+    remote-fetched ones.
+    """
+    predicate_label = "has phenotype"
+    predicate_biolink_equivalent = ""
+    biolink_equivalent = ""
+    inferred_category = ""
+
+    if metpo_curie in nodes:
+        current = nodes[metpo_curie]
+        while current is not None:
+            if current.biolink_equivalent:
+                biolink_equivalent = current.biolink_equivalent
+                inferred_category = normalize_biolink_category(current.biolink_equivalent)
+                parent_label = current.label
+                if parent_label in range_to_predicate:
+                    predicate_label = range_to_predicate[parent_label]["label"]
+                    predicate_biolink_equivalent = range_to_predicate[parent_label][
+                        "biolink_equivalent"
+                    ]
+                break
+            current = current.parent
+
+    return {
+        "predicate": predicate_label,
+        "predicate_biolink_equivalent": predicate_biolink_equivalent,
+        "biolink_equivalent": biolink_equivalent,
+        "inferred_category": inferred_category,
+    }
+
+
+def _load_metpo_alias_overrides(
+    nodes: Dict[str, "MetpoTreeNode"],
+    range_to_predicate: Dict[str, Dict[str, str]],
+) -> Dict[str, Dict[str, str]]:
+    """
+    Load curator-authored label → existing-METPO-ID overrides.
+
+    Reads :data:`LOCAL_METPO_ALIAS_OVERRIDES_PATH`. Trust policy mirrors
+    the isolation-source loader: only rows with
+    ``mapping_justification == 'semapv:ManualMappingCuration'`` and
+    ``confidence in {'high', 'medium'}`` are honored. Rows pointing at
+    METPO IDs not present in the loaded tree are skipped — those refer
+    to proposed-but-unminted terms and stay on the placeholder path.
+
+    The returned dict is shape-compatible with :func:`load_metpo_mappings`
+    output and is intended to be applied as a final overlay so curator
+    edits win on key collision with the remote-fetched mappings.
+    """
+    overrides: Dict[str, Dict[str, str]] = {}
+    if not LOCAL_METPO_ALIAS_OVERRIDES_PATH.is_file():
+        logger.info(
+            "No local METPO alias overrides at %s; remote sheet is the only source.",
+            LOCAL_METPO_ALIAS_OVERRIDES_PATH,
+        )
+        return overrides
+
+    accepted_confidences = {"high", "medium"}
+    applied = 0
+    skipped_unminted = 0
+    skipped_low_trust = 0
+
+    with LOCAL_METPO_ALIAS_OVERRIDES_PATH.open("r", newline="", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh, delimiter="\t")
+        for row in reader:
+            justification = (row.get("mapping_justification") or "").strip()
+            confidence = (row.get("confidence") or "").strip().lower()
+            if justification != "semapv:ManualMappingCuration" or confidence not in accepted_confidences:
+                skipped_low_trust += 1
+                continue
+
+            metpo_curie = (row.get("object_id") or "").strip()
+            if not metpo_curie or metpo_curie not in nodes:
+                skipped_unminted += 1
+                continue
+
+            metpo_label = (row.get("object_label") or "").strip()
+            predicate_info = _resolve_metpo_predicate(metpo_curie, nodes, range_to_predicate)
+
+            mapping_data = {
+                "curie": metpo_curie,
+                "label": metpo_label,
+                **predicate_info,
+            }
+
+            for key_field in ("subject_label_normalized", "subject_label"):
+                key = (row.get(key_field) or "").strip()
+                if key:
+                    overrides[key] = mapping_data
+                    applied += 1
+
+    logger.info(
+        "Loaded %d local METPO alias override key(s) from %s "
+        "(skipped %d unminted, %d low-trust)",
+        applied,
+        LOCAL_METPO_ALIAS_OVERRIDES_PATH.name,
+        skipped_unminted,
+        skipped_low_trust,
+    )
+    return overrides
+
+
 def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
     """
     Load METPO mappings from METPO classes ROBOT template file for a given synonym column.
@@ -396,6 +529,12 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
 
             # Always add the simple key (last occurrence wins for ambiguous cases)
             mappings[syn] = mapping_data
+
+        # Apply local curator-authored overrides last so they win on key
+        # collision with remote-fetched mappings. See
+        # ``LOCAL_METPO_ALIAS_OVERRIDES_PATH`` for the source TSV and the
+        # trust policy applied at load time.
+        mappings.update(_load_metpo_alias_overrides(nodes, range_to_predicate))
 
         return mappings
 

@@ -4,14 +4,15 @@ This directory contains unified chemical mapping resources for KG-Microbe.
 
 ## Unified Chemical Mappings
 
-The consolidator now writes two complementary artifacts from the same run:
+`mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` is the **single source of truth** for chemical mappings. It is the standards-compliant SSSOM mapping product and the file read by transforms via `kg_microbe.utils.chemical_mapping_utils`. Row types:
 
-| File | Role |
-|---|---|
-| `unified_ingredient_mappings.sssom.tsv.gz` | **Primary, standards-compliant mapping product and the default file read by transforms via `kg_microbe.utils.chemical_mapping_utils`.** Row types: (1) xref-CURIE → primary-CURIE (`skos:exactMatch`); (2) canonical-name → primary-CURIE via `kgm.name:<slug>` (`skos:exactMatch`, `semapv:LexicalMatching`); (3) free-text synonym → primary-CURIE via `kgm.name:<slug>` (`skos:closeMatch`, `semapv:LexicalMatching`). Validated with the `sssom` Python package on every write (LinkML JSON-schema + `check_all_prefixes_in_curie_map`). |
-| `unified_chemical_mappings.tsv.gz` | **Complementary entity-centric index.** One row per primary CURIE with accumulated canonical name, formula, synonyms, and xrefs. Retains per-entity attributes (for example `formula` and biolink `category`) that SSSOM does not express directly, so it remains useful for downstream consumers that need a denormalized per-entity view. |
+1. xref-CURIE → primary-CURIE (`skos:exactMatch`)
+2. canonical-name → primary-CURIE via `kgm.name:<slug>` (`skos:exactMatch`, `semapv:LexicalMatching`)
+3. free-text synonym → primary-CURIE via `kgm.name:<slug>` (`skos:closeMatch`, `semapv:LexicalMatching`)
 
-In the SSSOM file, synonym rows use a synthetic `kgm.name:<slug>` subject namespace so that free-text names have a CURIE subject (SSSOM requires this). Slugs are deterministic via `normalize_name` with spaces → `_`. Both files are rebuilt by the same `scripts/consolidate_chemical_mappings.py` run and cover CHEBI chemicals plus non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments).
+Per-entity attributes (`object_label`, `object_formula`, `object_category`, `source`) ride on every row as SSSOM extension columns and are reconstructed at read time by grouping on `object_id`. Validated with the `sssom` Python package on every write (LinkML JSON-schema + `check_all_prefixes_in_curie_map`).
+
+Synonym rows use a synthetic `kgm.name:<slug>` subject namespace so free-text names have a CURIE subject (SSSOM requires this). Slugs are deterministic via `normalize_name` with spaces → `_`. The file covers CHEBI chemicals plus non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments).
 
 ### Primary-ID Prefix Preference
 
@@ -26,17 +27,19 @@ CHEBI = FOODON = ENVO = UBERON  (ontology-scoped, tied top)
 
 The ontology tier is tied because the four prefixes cover disjoint scopes (chemicals, foods, anatomy, environments). `pubchem.compound:*` is preferred over `cas:*` because PubChem CIDs resolve to a structured chemistry record; CAS-RN is a flat registry code. `mediadive.ingredient:N` is the fallback minted by the MediaDive transform when nothing else resolves; `kgmicrobe.compound:*` is reserved for secondary metabolites and antibiotics with no public ID. See `best_primary()` in the consolidator for the exact selection logic.
 
-### File Structure
+### Per-entity attributes (SSSOM extension columns)
+
+Every row carries the same per-entity values, reconstructed at read time by grouping on `object_id`:
 
 | Column | Description |
 |--------|-------------|
-| `id` | Primary key — picked from the per-row candidates using the prefix preference above. `CHEBI:*` for chemicals; `FOODON:*`, `UBERON:*`, `ENVO:*` for foods, anatomy, and environmental substrates; `pubchem.compound:*` / `cas:*` / `mediadive.ingredient:*` / `kgmicrobe.compound:*` as progressively lower-ranked fallbacks. |
-| `category` | Biolink category stored as a data column so downstream transforms read it instead of deriving it from the CURIE prefix. Values: `biolink:ChemicalSubstance`, `biolink:Food`, `biolink:AnatomicalEntity`, `biolink:EnvironmentalFeature`, etc. |
-| `canonical_name` | Preferred name; wins are decided by the **priority system** below |
-| `formula` | Chemical formula when available (chemicals only); priority-gated |
-| `synonyms` | Pipe-delimited union across all sources |
-| `xrefs` | Pipe-delimited union — `cas:*`, `kegg.compound:*`, `pubchem.compound:*`, `MediaIngredientMech:*`, etc. |
-| `sources` | Pipe-delimited provenance tags (one per contributing loader) |
+| `object_id` | Primary key — picked from the per-row candidates using the prefix preference above. `CHEBI:*` for chemicals; `FOODON:*`, `UBERON:*`, `ENVO:*` for foods, anatomy, and environmental substrates; `pubchem.compound:*` / `cas:*` / `mediadive.ingredient:*` / `kgmicrobe.compound:*` as progressively lower-ranked fallbacks. |
+| `object_label` | The entity's canonical name (priority-resolved). |
+| `object_formula` | Chemical formula when available (chemicals only); priority-gated. |
+| `object_category` | Biolink category. Downstream transforms read it instead of deriving it from the CURIE prefix. Values: `biolink:ChemicalSubstance`, `biolink:Food`, `biolink:AnatomicalEntity`, `biolink:EnvironmentalFeature`, etc. |
+| `source` | Pipe-delimited provenance tags (one per contributing loader). |
+
+Synonyms emit one row each (subject `kgm.name:<slug>` + `comment="synonym"`). Xrefs emit one row each (subject = the equivalent CURIE).
 
 ### Priority System
 
@@ -65,7 +68,7 @@ Normalized-name collisions do not merge records by name; instead, the name looku
 | 7 | `mappings/culturebotai_reviewed_ingredients.tsv` | 10 | present | **Authoritative.** CultureBotAI reviewed ingredients. |
 | 8 | `mappings/ingredient_mappings.sssom.tsv` | 11 | present | **Authoritative.** MediaIngredientMech SSSOM mapping set. **Auto-synced on every consolidation run** from the MediaIngredientMech sibling repo (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv`) — MIM is the source of truth; the vendored copy is refreshed when its content hash diverges. Contains 1,090 MIM→ontology rows with predicate-typed matches (exactMatch / closeMatch / narrowMatch). |
 
-Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `unified_chemical_mappings.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `sources` column.
+Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `kgmicrobe_unified_entity_mappings.sssom.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `source` column.
 
 ### Regenerating
 
@@ -74,7 +77,7 @@ poetry run python scripts/consolidate_chemical_mappings.py
 ```
 
 Pipeline order:
-1. Seed from the existing `mappings/unified_chemical_mappings.tsv.gz` (priority reconstructed per row from source labels).
+1. Seed from the existing `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (priority reconstructed per row from `source` labels).
 2. Layer in any still-present legacy inputs (absent ones are skipped).
 3. Load `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
 4. **Sync MIM SSSOM from sibling repo** (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. If the sibling repo is absent, the vendored copy is used with a warning.
@@ -83,23 +86,22 @@ Pipeline order:
 7. **Harvest CHEBI xref labels via OAK** — for every CHEBI CURIE that appears as an xref but has no primary row of its own, pull its label + aliases into the owning record's synonyms. Closes the gap where a non-CHEBI primary (or a secondary CHEBI ID) carries an xref whose preferred term would otherwise be lost.
 8. **Propagate names across equivalent-CURIE records via xrefs** — for every record, any xref that is itself a primary key of another record contributes that record's `canonical_name` + synonyms into this record's synonyms. Symmetric (both sides pick up each other's names), snapshot-based (no feedback), no record merge or deletion.
 9. Resolve name-index conflicts by priority (highest-priority name mapping wins); no cross-CURIE merge pass is performed.
-10. Write `unified_chemical_mappings.tsv.gz` (runtime index).
-11. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
+10. Write `kgmicrobe_unified_entity_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
 
 ### Usage Examples
 
 ```bash
-# Find an ingredient by name
-gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep -i "glucose"
+# Find an ingredient by name (skipping the YAML metadata block)
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | grep -i "glucose"
 
-# All synonyms for an id
-gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1=="CHEBI:42758" {print $5}'
+# All rows for an id
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | awk -F'\t' '$2=="CHEBI:42758" || $4=="CHEBI:42758"'
 
-# Ingredients carrying the MediaIngredientMech tag
-gunzip -c mappings/unified_chemical_mappings.tsv.gz | grep mediaingredientmech_reviewed | head
+# Ingredients carrying the MediaIngredientMech provenance tag
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | grep mediaingredientmech_reviewed | head
 
-# All FOODON foods
-gunzip -c mappings/unified_chemical_mappings.tsv.gz | awk -F'\t' '$1 ~ /^FOODON:/'
+# All FOODON foods (object_id is the 4th column)
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | awk -F'\t' '$4 ~ /^FOODON:/'
 ```
 
 Prefer the Python reader API (`kg_microbe.utils.chemical_mapping_utils.find_chebi_by_name`, `find_chebi_by_xref`, `find_chebi_by_formula`, `get_canonical_name`, `get_category`) inside transforms — it loads the file once per process and serves O(1) lookups. `find_chebi_by_name` is a legacy name; it returns any supported CURIE, including FOODON / UBERON / ENVO.

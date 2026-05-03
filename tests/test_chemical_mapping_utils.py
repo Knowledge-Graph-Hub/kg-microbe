@@ -716,3 +716,61 @@ class TestFuzzyHydrate:
             find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
             == "CHEBI:3312"
         )
+
+
+class TestNarrowMatchChildResolution:
+
+    """
+    Regression tests for the asymmetric-MIM child-CURIE resolution path.
+
+    Codex adversarial review #558 round 3 found that prior versions of
+    ``scripts/consolidate_chemical_mappings.load_mediaingredientmech_sssom``
+    fed asymmetric (skos:narrowMatch / broadMatch) rows through
+    ``add_chemical(id=object_id, ...)``, polluting the broader parent's
+    synonym/xref table with the child's labels. Name lookup then returned
+    the parent CURIE, the new ``_PARENT_INDEX`` was keyed under the child
+    CURIE that the lookup never landed on, and the MediaDive subclass-edge
+    emission was effectively unreachable.
+
+    These tests exercise the committed unified mapping file (not a mock)
+    and check end-to-end that representative MIM-curated child terms now:
+
+      1. Resolve to the kg-microbe-minted child primary, not the parent.
+      2. Carry their parent in ``get_parents()`` so MediaDive can emit
+         ``biolink:subclass_of`` edges on the next merge.
+
+    If a future consolidator regression re-pollutes parents with child
+    labels, the assertions for resolution-to-child will start returning
+    the parent CURIE again and these tests will fail loudly.
+    """
+
+    def test_vermont_soil_resolves_to_child(self):
+        """Vermont Soil should resolve to its kgmicrobe child, not ENVO:00001998 (soil)."""
+        # Use the committed mappings (not a mock) so we exercise the real
+        # consolidator output rather than reproducing its logic in the test.
+        chemical_mapping_utils._LOADED = False
+        cid = chemical_mapping_utils.find_chebi_by_name("Vermont Soil")
+        assert cid == "kgmicrobe.ingredient:vermont_soil", (
+            f"expected kgmicrobe.ingredient:vermont_soil, got {cid!r} "
+            "(asymmetric-MIM pollution likely re-introduced — see "
+            "scripts/consolidate_chemical_mappings.py purge_asymmetric_pollution)"
+        )
+        assert chemical_mapping_utils.get_parents(cid) == ["ENVO:00001998"]
+
+    def test_beef_brain_powder_resolves_to_child(self):
+        """Beef brain powder should resolve to the kgmicrobe ingredient, not the FOODON parent."""
+        chemical_mapping_utils._LOADED = False
+        cid = chemical_mapping_utils.find_chebi_by_name("Beef brain powder")
+        assert cid == "kgmicrobe.ingredient:beef_brain_powder", (
+            f"expected kgmicrobe.ingredient:beef_brain_powder, got {cid!r}"
+        )
+        assert chemical_mapping_utils.get_parents(cid) == ["FOODON:02020911"]
+
+    def test_actinomycin_a_resolves_to_child(self):
+        """Actinomycin A should resolve to the kgmicrobe.compound, not CHEBI:15369."""
+        chemical_mapping_utils._LOADED = False
+        cid = chemical_mapping_utils.find_chebi_by_name("Actinomycin A")
+        assert cid == "kgmicrobe.compound:actinomycin_a", (
+            f"expected kgmicrobe.compound:actinomycin_a, got {cid!r}"
+        )
+        assert chemical_mapping_utils.get_parents(cid) == ["CHEBI:15369"]

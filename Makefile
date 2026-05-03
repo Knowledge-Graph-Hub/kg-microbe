@@ -1,4 +1,5 @@
-.PHONY: run-summary process-metatraits-unmapped
+.PHONY: run-summary process-metatraits-unmapped \
+        validate-isolation-source-schema validate-ingredient-schema
 .SILENT:
 
 run-summary:
@@ -93,5 +94,18 @@ process-metatraits-unmapped:
 	@echo "Generated files:"
 	@wc -l data/transformed/metatraits/unmapped_traits_unique.tsv
 	@wc -l data/transformed/metatraits/unmapped_traits_unique_relations.tsv
+
+# Schema/category validation gates for SSSOM-shaped mapping TSVs.
+# Complements mappings/validate_isolation_source_mappings.py (runtime
+# family-mismatch check) — this one validates CURIE shape, predicate
+# vocab, ontology category allowlists, and lexical drift.
+# Exit codes: 2 = errors, 1 = warnings (with --strict), 0 = clean.
+validate-isolation-source-schema:
+	@echo "Validating mappings/isolation_source_to_ontology.tsv (schema)..."
+	python3 mappings/validate_mapping_schema.py
+
+validate-ingredient-schema:
+	@echo "Validating mappings/ingredient_mappings.sssom.tsv (schema)..."
+	python3 mappings/validate_mapping_schema.py --profile ingredient
 
 include kg-microbe.Makefile

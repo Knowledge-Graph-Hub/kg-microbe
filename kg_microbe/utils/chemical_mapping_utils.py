@@ -2,7 +2,7 @@
 Utilities for chemical mapping lookups.
 
 Reads the unified ingredient SSSOM mapping set
-(``mappings/unified_ingredient_mappings.sssom.tsv.gz``) and reconstructs an
+(``mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz``) and reconstructs an
 entity-centric in-memory index grouped on ``object_id``. The SSSOM carries
 the per-entity attributes (``canonical_name`` via ``object_label``,
 ``formula``/``category`` via extension columns) as well as the mappings
@@ -27,6 +27,11 @@ _ENTITY_COUNT: int = 0
 _NAME_INDEX: Optional[Dict[str, str]] = None
 _CANONICAL_NAME_INDEX: Optional[Dict[str, str]] = None
 _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
+# Parent-of relationships imported from skos:narrowMatch / skos:broadMatch
+# rows in the unified SSSOM. ``_PARENT_INDEX[child_curie]`` is the sorted
+# list of broader (parent) CURIEs the child is narrower than. Used by
+# transforms to emit ``biolink:subclass_of`` edges.
+_PARENT_INDEX: Optional[Dict[str, list]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
 _CATEGORY_INDEX: Optional[Dict[str, str]] = None
@@ -140,7 +145,7 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
     """
     Load the unified ingredient SSSOM mapping set.
 
-    Reads ``mappings/unified_ingredient_mappings.sssom.tsv.gz`` (or the
+    Reads ``mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`` (or the
     explicit path given) and builds the in-memory per-entity indices used
     by the lookup API (``find_chebi_by_name``, ``get_canonical_name``, …).
     Per-entity attributes that SSSOM cannot express natively —
@@ -167,7 +172,7 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
 
     if mappings_path is None:
         base_dir = Path(__file__).parent.parent.parent
-        mappings_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
+        mappings_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
     if _LOADED and _CACHED_PATH == mappings_path:
         return _ENTITY_COUNT
@@ -191,6 +196,7 @@ def _build_indices(mappings_path: Path):
     global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX
     global _PRIMARY_NAME_INDEX, _PRIMARY_SYNONYMS_INDEX
     global _PRIMARY_XREFS_INDEX, _PRIMARY_FORMULA_INDEX
+    global _PARENT_INDEX
     global _ENTITY_COUNT
 
     _NAME_INDEX = {}
@@ -203,9 +209,11 @@ def _build_indices(mappings_path: Path):
     _PRIMARY_SYNONYMS_INDEX = {}
     _PRIMARY_XREFS_INDEX = {}
     _PRIMARY_FORMULA_INDEX = {}
+    _PARENT_INDEX = {}
 
     primary_synonyms_sets: Dict[str, set] = {}
     primary_xrefs_sets: Dict[str, set] = {}
+    parent_sets: Dict[str, set] = {}
 
     def _index_name(curie: str, name: str):
         norm = normalize_name(name)
@@ -246,6 +254,20 @@ def _build_indices(mappings_path: Path):
         if not subject:
             continue
 
+        predicate = (row.get("predicate_id") or "").strip()
+        # skos:narrowMatch / skos:broadMatch carry parent-of (asymmetric)
+        # relationships that the entity-centric indices above can't express.
+        # Index them as ``child → [parents]`` so transforms can emit
+        # biolink:subclass_of edges from them. ``narrowMatch`` reads as
+        # "subject is narrower than object" (i.e. object is the parent);
+        # ``broadMatch`` is the inverse (subject is broader than object).
+        if predicate == "skos:narrowMatch":
+            parent_sets.setdefault(subject, set()).add(curie)
+            continue  # don't also treat the row as an xref/synonym
+        if predicate == "skos:broadMatch":
+            parent_sets.setdefault(curie, set()).add(subject)
+            continue
+
         if subject.startswith("kgm.name:"):
             comment = (row.get("comment") or "").strip()
             if comment == "synonym":
@@ -265,6 +287,8 @@ def _build_indices(mappings_path: Path):
         _PRIMARY_SYNONYMS_INDEX[curie] = sorted(syns)
     for curie, xrefs in primary_xrefs_sets.items():
         _PRIMARY_XREFS_INDEX[curie] = sorted(xrefs)
+    for curie, parents in parent_sets.items():
+        _PARENT_INDEX[curie] = sorted(parents)
 
     # Count of distinct entities: any object_id that appears in at least
     # one index. Use the union of keys to avoid double-counting.
@@ -449,6 +473,32 @@ def get_xrefs(chebi_id: str) -> List[str]:
     return list(_PRIMARY_XREFS_INDEX.get(chebi_id, ()))
 
 
+def get_parents(curie: str) -> List[str]:
+    """
+    Get parent CURIEs for an entity (asymmetric narrowMatch / broadMatch).
+
+    Returns the list of broader / parent CURIEs that ``curie`` is a kind-of.
+    Populated from MIM ``skos:narrowMatch`` rows in the unified SSSOM (where
+    e.g. ``MIM:Vermont_Soil → ENVO:00001998 narrowMatch`` translates to
+    ``kgmicrobe.ingredient:vermont_soil`` having parent ``ENVO:00001998``).
+
+    Transforms call this when emitting an ingredient / solution / sample edge
+    to also write a ``biolink:subclass_of`` edge to the broader OBO term, so
+    OBO-aware reasoners can navigate from kg-microbe-minted CURIEs back to
+    the canonical hierarchy.
+
+    :param curie: child CURIE
+    :return: sorted list of parent CURIEs (empty if no narrowMatch row exists)
+    """
+    if not curie:
+        return []
+    if not _LOADED:
+        load_unified_mappings()
+    if _PARENT_INDEX is None:
+        return []
+    return list(_PARENT_INDEX.get(curie, ()))
+
+
 def get_formula(chebi_id: str) -> Optional[str]:
     """
     Get molecular formula for a given CURIE.
@@ -598,6 +648,15 @@ class ChemicalMappingLoader:
         :return: List of xrefs
         """
         return get_xrefs(chebi_id)
+
+    def get_parents(self, curie: str) -> List[str]:
+        """
+        Get parent CURIEs (asymmetric narrowMatch) for an entity.
+
+        :param curie: child CURIE
+        :return: List of parent CURIEs (empty if none recorded)
+        """
+        return get_parents(curie)
 
     def get_formula(self, chebi_id: str) -> Optional[str]:
         """

@@ -179,6 +179,12 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.isolation_source_mapping_utils import (
+    STUB_ONTOLOGY_CATEGORY,
+    STUB_ONTOLOGY_PREFIXES,
+    load_isolation_source_mappings,
+    normalize_isolation_source_label,
+)
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
     load_assay_kit_mappings,
@@ -275,6 +281,70 @@ class BacDiveTransform(Transform):
                 "Unified chemical mappings file not found. Falling back to legacy METABOLITE_MAP for chemical lookups."
             )
             self.chemical_loader = None
+
+        # Load curated BacDive isolation-source → ontology mappings.
+        # Only high-confidence / manually-curated rows are honored; auto-generated
+        # lexical close-matches are dropped by the loader. Family-mismatched rows
+        # (units→anatomy, facilities→substrates, etc.) are also rejected. See
+        # kg_microbe/utils/isolation_source_mapping_utils.py for the policy.
+        self.isolation_source_mappings: Dict[str, tuple] = load_isolation_source_mappings()
+        self._validate_isolation_source_target_prefixes()
+
+    def _validate_isolation_source_target_prefixes(self) -> None:
+        """
+        Fail fast if a trusted isolation-source mapping has no node source.
+
+        Every trusted mapping target prefix must be either loaded by the
+        ontologies transform or in STUB_ONTOLOGY_PREFIXES; otherwise the
+        emitted edge would point at a non-existent node in the merged graph.
+
+        BacDive's emit path writes the mapped CURIE directly as the edge
+        subject. For that to land cleanly in the merged graph, *something* has
+        to supply a node for that CURIE — either the ontologies transform (if
+        the prefix is in ONTOLOGIES_MAP) or BacDive itself (if the prefix is in
+        STUB_ONTOLOGY_PREFIXES, in which case the emit path writes a thin
+        node row per occurrence).
+
+        Codex adversarial review #558 found 21 trusted mappings whose targets
+        had neither node source (mesh:*, NCIT:*, GENEPIO:*, FAO:*, BTO:*,
+        SNOMED:*), creating dangling references in the merged graph. The
+        STUB_ONTOLOGY_PREFIXES set has been extended to cover those, and this
+        check enforces the invariant going forward — any future curator who
+        adds a row with a new ontology prefix gets a clear, fail-fast error
+        instead of silently creating dangling edges.
+        """
+        from kg_microbe.transform_utils.ontologies.ontologies_transform import ONTOLOGIES_MAP
+
+        loaded_prefixes = {k.upper() for k in ONTOLOGIES_MAP}
+        loaded_prefixes.update(k for k in ONTOLOGIES_MAP)  # also accept lowercase
+        loaded_prefixes.add("NCBITaxon")  # canonical-case alias for ncbitaxon
+        permitted = loaded_prefixes | {p.upper() for p in STUB_ONTOLOGY_PREFIXES} | set(STUB_ONTOLOGY_PREFIXES)
+
+        bad: Dict[str, List[str]] = {}
+        for label, (curie, _label) in self.isolation_source_mappings.items():
+            prefix = curie.split(":", 1)[0] if ":" in curie else ""
+            if not prefix:
+                continue
+            if prefix not in permitted and prefix.upper() not in permitted:
+                bad.setdefault(prefix, []).append(f"{label!r}→{curie}")
+
+        if bad:
+            details = "; ".join(
+                f"{prefix} ({len(rows)} mapping(s); examples: {', '.join(rows[:3])})"
+                for prefix, rows in sorted(bad.items())
+            )
+            raise RuntimeError(
+                "BacDive isolation_source_to_ontology.tsv contains trusted mappings "
+                "whose target prefix is neither loaded by the ontologies transform "
+                "nor in STUB_ONTOLOGY_PREFIXES. These would create dangling node "
+                f"references in the merged graph: {details}. "
+                "Fix: add the prefix to ONTOLOGIES_MAP (in "
+                "kg_microbe/transform_utils/ontologies/ontologies_transform.py) if "
+                "it is a real OBO ontology you want loaded, or add it to "
+                "STUB_ONTOLOGY_PREFIXES (in "
+                "kg_microbe/utils/isolation_source_mapping_utils.py) if BacDive "
+                "should emit a thin stub node per occurrence."
+            )
 
     def _build_metpo_iri_index(self) -> Dict[str, dict]:
         """
@@ -1463,6 +1533,30 @@ class BacDiveTransform(Transform):
                     if self.assay_nodes_generated:
                         print(f"Writing {len(self.assay_nodes_generated)} assay nodes...")
                         node_writer.writerows(self.assay_nodes_generated)
+
+                        # Type each kgmicrobe.assay:* node as a subclass of MICRO:0000903
+                        # (microbial-conditions-ontology assay parent class). Pulls the
+                        # 503 stub-prefix assay nodes into the OBO hierarchy via the
+                        # MICRO ontology that ontologies_transform now loads.
+                        id_idx = self.node_header.index(ID_COLUMN)
+                        assay_subclass_edges = [
+                            [
+                                row[id_idx],
+                                "biolink:subclass_of",
+                                "MICRO:0000903",
+                                "rdfs:subClassOf",
+                                self.knowledge_source,
+                                "knowledge_assertion",
+                                "manual_agent",
+                                "",
+                                "",
+                            ]
+                            for row in self.assay_nodes_generated
+                            if row[id_idx]
+                        ]
+                        if assay_subclass_edges:
+                            print(f"Writing {len(assay_subclass_edges)} assay→MICRO subclass_of edges...")
+                            edge_writer.writerows(assay_subclass_edges)
 
                     # Write assay→entity edges
                     if self.assay_edges_generated:
@@ -2781,18 +2875,26 @@ class BacDiveTransform(Transform):
                                             )
 
                                         # NEW: Add organism → assay edge (dual-edge pattern)
-                                        # This is in addition to the direct organism→ChEBI edges above
+                                        # This is in addition to the direct organism→ChEBI edges above.
                                         # Build assay ID: assay:{kit_name}_{well_name}
                                         assay_id = f"{ASSAY_PREFIX}{assay_name}_{test_label}".replace(" ", "_")
 
-                                        # Write organism→assay edge using same METPO predicate
+                                        # The assay node carries provenance for the trait claim, not the
+                                        # trait itself, so it must NOT use the trait predicate (ferments /
+                                        # assimilates etc.) — that would map an organism to a procedure as
+                                        # if it were a substrate, violating the predicate's biolink-mapped
+                                        # range. Use METPO:2000511 (has observation); the assay nodes carry
+                                        # METPO:1001000 (observation) in their multi-category (see
+                                        # ASSAY_CATEGORY in constants.py) so the predicate's existing
+                                        # METPO:1001000 range is satisfied without an upstream change.
+                                        assay_predicate = "METPO:2000511"
                                         knowledge_level, agent_type = self._add_edge_metadata(
-                                            metpo_predicate, "RO:0002434", assay_id
+                                            assay_predicate, "RO:0002434", assay_id
                                         )
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
-                                                metpo_predicate,
+                                                assay_predicate,
                                                 assay_id,
                                                 "RO:0002434",
                                                 self.knowledge_source,
@@ -2815,23 +2917,60 @@ class BacDiveTransform(Transform):
                     # Normalize strings (strip + translate)
                     all_values = [val.strip().translate(translation_table_for_ids) for val in all_values]
 
-                    # Create a node and an edge to the organism for each isolation source
+                    # Create a node and an edge to the organism for each isolation source.
+                    # Prefer a curated ontology CURIE (UBERON, ENVO, NCBITaxon, ...) when the
+                    # mapping table has a trusted entry for this label; the matching ontology
+                    # node is supplied by the ontologies transform on merge. Otherwise fall
+                    # back to the historical ``isolation_source:<label>`` placeholder node.
                     for isol_source in all_values:
-                        # Write an isolation source node
-                        node_writer.writerow(
-                            self._create_node_row(
-                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
-                                ISOLATION_SOURCE_CATEGORY,
-                                isol_source,
-                            )
+                        mapping = self.isolation_source_mappings.get(
+                            normalize_isolation_source_label(isol_source)
                         )
+                        if mapping is not None:
+                            subject_id, mapped_label = mapping[0], mapping[1]
+                            # Stub-prefix targets (PRIDE, PCO, ...) point at ontologies the
+                            # ontologies transform does not load — only a tiny number of
+                            # distinct IDs are referenced (3 PRIDE, 1 active PCO), so we
+                            # emit a thin node row here instead of pulling in the full
+                            # ontology. Loaded-ontology targets (UBERON, ENVO, ...) get
+                            # their canonical node from the ontologies transform.
+                            stub_prefix = subject_id.split(":", 1)[0] if ":" in subject_id else ""
+                            if stub_prefix in STUB_ONTOLOGY_PREFIXES:
+                                node_writer.writerow(
+                                    self._create_node_row(
+                                        subject_id,
+                                        STUB_ONTOLOGY_CATEGORY,
+                                        mapped_label or isol_source,
+                                    )
+                                )
+                        else:
+                            subject_id = ISOLATION_SOURCE_PREFIX + isol_source.lower()
+                            # Only write a placeholder node when no ontology mapping exists;
+                            # mapped CURIEs get their canonical node from the ontologies transform.
+                            # Note: we deliberately do NOT add a blanket
+                            # ``biolink:subclass_of ENVO:01000254`` edge for these
+                            # placeholders. Many unmapped labels are NOT environmental
+                            # materials (e.g. 'Human', 'Leaf-Phyllosphere',
+                            # 'host_animal_endotherm_intratissue' are hosts / anatomy /
+                            # niches), and a blanket parent assertion would poison the
+                            # hierarchy for downstream reasoning over source type
+                            # (Codex review #558). Placeholders stay unparented until a
+                            # vetted host/anatomy/environment mapping is added to
+                            # mappings/isolation_source_to_ontology.tsv.
+                            node_writer.writerow(
+                                self._create_node_row(
+                                    subject_id,
+                                    ISOLATION_SOURCE_CATEGORY,
+                                    isol_source,
+                                )
+                            )
                         # Write edge from the isolation source to organism
                         knowledge_level, agent_type = self._add_edge_metadata(
                             NCBI_TO_ISOLATION_SOURCE_EDGE, LOCATION_OF, organism_id
                         )
                         edge_writer.writerow(
                             [
-                                ISOLATION_SOURCE_PREFIX + isol_source.lower(),
+                                subject_id,
                                 NCBI_TO_ISOLATION_SOURCE_EDGE,
                                 organism_id,
                                 LOCATION_OF,

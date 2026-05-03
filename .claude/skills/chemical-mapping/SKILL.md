@@ -1,6 +1,6 @@
 ---
 name: chemical-mapping
-description: Work with KG-Microbe's unified chemical mapping system (`mappings/unified_ingredient_mappings.sssom.tsv.gz` and `kg_microbe/utils/chemical_mapping_utils.py`). Use when adding a new mapping source, regenerating the unified file, debugging a missing ChEBI lookup, validating mappings against OLS, or reasoning about which source wins when sources disagree.
+description: Work with KG-Microbe's unified chemical mapping system (`mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` and `kg_microbe/utils/chemical_mapping_utils.py`). Use when adding a new mapping source, regenerating the unified file, debugging a missing ChEBI lookup, validating mappings against OLS, or reasoning about which source wins when sources disagree.
 ---
 
 # KG-Microbe Chemical Mapping
@@ -12,7 +12,7 @@ KG-Microbe resolves free-text chemical names from many source transforms
 etc.) to canonical **ChEBI** identifiers via a single consolidated
 mapping set. All transforms that need "name → ChEBI" go through
 `kg_microbe.utils.chemical_mapping_utils`, which reads
-`mappings/unified_ingredient_mappings.sssom.tsv.gz` once per process
+`mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` once per process
 and reconstructs the in-memory name/xref/formula/category indices from
 the SSSOM rows. The unified SSSOM is the **single source of truth** for
 chemical mappings; legacy entity-centric TSV outputs have been retired.
@@ -26,7 +26,7 @@ win tie-breaks during duplicate-name merging.
 
 | Path | Role |
 |---|---|
-| `mappings/unified_ingredient_mappings.sssom.tsv.gz` | **Single source of truth.** Standards-compliant SSSOM mapping set covering xrefs (`skos:exactMatch`) + canonical names + free-text synonyms via synthetic `kgm.name:<slug>` subjects (`skos:exactMatch` / `skos:closeMatch`, justification `semapv:LexicalMatching`). Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments). Validated with the `sssom` Python package on every write. |
+| `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` | **Single source of truth.** Standards-compliant SSSOM mapping set covering xrefs (`skos:exactMatch`) + canonical names + free-text synonyms via synthetic `kgm.name:<slug>` subjects (`skos:exactMatch` / `skos:closeMatch`, justification `semapv:LexicalMatching`). Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments). Validated with the `sssom` Python package on every write. |
 | `scripts/dump_unmapped_mediadive_ingredients.py` | Emits a MIM-compatible TSV of MediaDive ingredients still unmapped after the current mappings + `fuzzy_hydrate` retry, for curator review. |
 | `mappings/culturebotai_reviewed_ingredients.tsv` | Authoritative reviewed source from CultureBotAI (priority=10). |
 | `mappings/ingredient_mappings.sssom.tsv` | **Vendored copy** of the MediaIngredientMech SSSOM (priority=11). Auto-refreshed from the sibling repo on every consolidator run — never edit this file directly; edit upstream in MIM and let `sync_mim_sssom` overwrite it. |
@@ -44,7 +44,7 @@ win tie-breaks during duplicate-name merging.
 | `kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv` | Expert annotation source (may be absent). |
 | `kg_microbe/transform_utils/bacdive/metabolite_mapping.json` | BacDive metabolite source (may be absent). |
 
-## Schema: SSSOM rows in `unified_ingredient_mappings.sssom.tsv.gz`
+## Schema: SSSOM rows in `kgmicrobe_unified_entity_mappings.sssom.tsv.gz`
 
 Per-entity attributes are reconstructed at read time by grouping rows on
 `object_id`. Three row shapes (emitted by `export_unified_sssom`):
@@ -131,7 +131,7 @@ poetry run python scripts/consolidate_chemical_mappings.py
 ```
 
 Behaviour:
-1. Seeds from the existing `mappings/unified_ingredient_mappings.sssom.tsv.gz` (the single source of truth; priority inferred per row from source labels).
+1. Seeds from the existing `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (the single source of truth; priority inferred per row from source labels).
 2. Layers in any still-present legacy source files (absent ones are skipped).
 3. Always loads `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
 4. Calls `sync_mim_sssom` to refresh `mappings/ingredient_mappings.sssom.tsv` from the MIM sibling repo at `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` (sibling wins on divergence; vendored is a cache, not a fork), then loads it (priority=11).
@@ -139,7 +139,7 @@ Behaviour:
 6. Harvests CHEBI xref labels via OAK into owning-record synonyms.
 7. Propagates names across equivalent-CURIE records via xrefs (symmetric snapshot; no record merge).
 8. Resolves name-index conflicts by source priority (no cross-CURIE merge pass).
-9. Writes `mappings/unified_ingredient_mappings.sssom.tsv.gz` (validated round-trip via the `sssom` package).
+9. Writes `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (validated round-trip via the `sssom` package).
 
 ### MIM SSSOM source-of-truth contract
 

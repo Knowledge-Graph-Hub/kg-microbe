@@ -82,7 +82,11 @@ biolink:EnvironmentalProcess
 biolink:PathologicalProcess
 biolink:Disease
 biolink:GrowthMedium  (KG-Microbe extension)
+biolink:Procedure  (used multi-cat as METPO:1001000|biolink:Procedure on kgmicrobe.assay nodes)
+biolink:PhenotypicQuality  (PATO terms, surfaced as ENVO has_attribute targets in madin_etal)
 ```
+
+**Multi-category nodes**: a node's `category` column may carry pipe-delimited categories (e.g. `METPO:1001000|biolink:Procedure` on the 503 `kgmicrobe.assay:*` nodes). The reviewer accepts any pipe-split component being valid; this is intentional, not a regression.
 
 Valid predicates (flag anything not in this list):
 ```
@@ -93,6 +97,7 @@ biolink:consumes
 biolink:located_in
 biolink:location_of
 biolink:has_part
+biolink:has_attribute  (used by madin_etal for ENVO substrate → PATO quality attachment)
 biolink:subclass_of
 biolink:related_to
 biolink:associated_with

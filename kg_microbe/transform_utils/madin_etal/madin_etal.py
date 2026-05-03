@@ -2,7 +2,7 @@
 
 import csv
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -28,6 +28,8 @@ from kg_microbe.transform_utils.constants import (
     GO_PREFIX,
     GRAM_STAIN_COLUMN,
     HAS_PHENOTYPE,
+    HAS_QUALITY_PREDICATE,
+    HAS_QUALITY_RELATION,
     HAS_ROLE,
     ID_COLUMN,
     ISOLATION_SOURCE_COLUMN,
@@ -79,6 +81,45 @@ from kg_microbe.utils.pandas_utils import drop_duplicates
 OUTPUT_FILE_SUFFIX = "_ner.tsv"
 STOPWORDS_FN = "stopwords.txt"
 PARENT_DIR = Path(__file__).resolve().parent
+
+# Madin et al's environments.csv ENVO_ids column conflates substrate CURIEs
+# (ENVO / UBERON / FOODON / mesh / NCIT / ...) with PATO quality CURIEs in
+# compositional habitat names like "rock_deep" → ["ENVO:00001995 rock",
+# "PATO:0001596 increased depth"]. The transform splits the substrate part
+# off the quality part: substrates become organism→location_of edges (the
+# isolation source), and qualities are attached to those substrates via
+# RO:0000086 has_quality. Without this split the PATO quality would land on
+# the organism as a `location_of` subject — semantically wrong, since a
+# quality is not a location.
+_QUALITY_CURIE_PREFIXES = ("PATO:",)
+
+
+def _partition_substrate_quality_curies(
+    curies: List[str],
+    labels: List[str],
+) -> tuple[List[tuple[str, str]], List[tuple[str, str]]]:
+    """
+    Split a (curie, label) list into substrate and quality pairs.
+
+    A CURIE is a quality if its prefix matches :data:`_QUALITY_CURIE_PREFIXES`
+    (currently PATO only). Everything else — ENVO, UBERON, FOODON, mesh,
+    NCIT, etc. — is a substrate, eligible to anchor an organism→location_of
+    edge.
+
+    :param curies: Parallel list of CURIE strings from one CSV cell.
+    :param labels: Parallel list of label strings (same length as ``curies``;
+        the caller pads if upstream provided one shared label).
+    :returns: ``(substrate_pairs, quality_pairs)`` — two lists of
+        ``(curie, label)`` tuples partitioned by prefix kind.
+    """
+    substrate_pairs: List[tuple[str, str]] = []
+    quality_pairs: List[tuple[str, str]] = []
+    for curie, label in zip(curies, labels, strict=False):
+        if curie.startswith(_QUALITY_CURIE_PREFIXES):
+            quality_pairs.append((curie, label))
+        else:
+            substrate_pairs.append((curie, label))
+    return substrate_pairs, quality_pairs
 
 
 class MadinEtAlTransform(Transform):
@@ -286,12 +327,14 @@ class MadinEtAlTransform(Transform):
                     gram_stain_node = None
                     sporulation_node = None
                     isolation_source_node = None
+                    isolation_source_quality_node = None
                     metabolism_node = None
                     range_tmp_node = None
 
                     tax_pathway_edge = None
                     tax_metabolism_edge = None
                     tax_isolation_source_edge = None
+                    tax_isolation_source_quality_edge = None
                     tax_carbon_substrate_edge = None
                     tax_to_cell_shape_edge = None
                     tax_to_range_salinity_edge = None
@@ -829,73 +872,81 @@ class MadinEtAlTransform(Transform):
                                 ]
                             ]
                         else:
-                            if "," in isolation_source[ENVO_ID_COLUMN]:
-                                curies = [x.strip() for x in isolation_source[ENVO_ID_COLUMN].split(",")]
-                                labels = [x.strip() for x in isolation_source[ENVO_TERMS_COLUMN].split(",")]
-                                if len(labels) == 1 and len(labels) != len(curies):
-                                    labels = [labels[0] for _ in range(len(curies))]
-                                category = [ENVIRONMENT_CATEGORY for _ in range(len(curies))]
-                                preds = [NCBI_TO_ISOLATION_SOURCE_EDGE for _ in range(len(curies))]
-                                relations = [LOCATION_OF for _ in range(len(curies))]
-                                sources = [self.knowledge_source for _ in range(len(curies))]  # Use infores:madin_etal
-                                knowledge_levels = [OBSERVATION for _ in range(len(curies))]
-                                agent_types = [MANUAL_AGENT for _ in range(len(curies))]
-                                isolation_source_node = []
-                                for curie, cat, label in zip(curies, category, labels, strict=False):
-                                    env_enrich = (
-                                        self.chemical_loader.get_node_enrichment(curie)
-                                        if self.chemical_loader is not None
-                                        else {"xref": "", "synonym": ""}
-                                    )
-                                    isolation_source_node.append(
-                                        self._create_node_row(
-                                            curie,
-                                            cat,
-                                            label,
-                                            xref=env_enrich["xref"] or None,
-                                            synonym=env_enrich["synonym"] or None,
-                                        )
-                                    )
-                                tax_id_list = [tax_id for _ in range(len(labels))]
+                            # Normalise the cell to parallel lists. Single-CURIE rows are
+                            # treated as length-1 lists so the same partition + emission
+                            # logic covers both branches.
+                            raw_ids = isolation_source[ENVO_ID_COLUMN]
+                            raw_labels = isolation_source[ENVO_TERMS_COLUMN]
+                            curies = [x.strip() for x in raw_ids.split(",")]
+                            labels = [x.strip() for x in raw_labels.split(",")]
+                            if len(labels) == 1 and len(labels) != len(curies):
+                                labels = [labels[0] for _ in range(len(curies))]
 
-                                tax_isolation_source_edge = [
-                                    list(item)
-                                    for item in zip(
-                                        curies,
-                                        preds,
-                                        tax_id_list,
-                                        relations,
-                                        sources,
-                                        knowledge_levels,
-                                        agent_types,
-                                        strict=True,
-                                    )
-                                ]
-                            else:
-                                env_single_enrich = (
-                                    self.chemical_loader.get_node_enrichment(isolation_source[ENVO_ID_COLUMN])
+                            # Split substrates (ENVO/UBERON/FOODON/...) from qualities
+                            # (PATO). Substrates anchor organism→location_of edges; the
+                            # qualities are then attached to those substrates via
+                            # has_quality. See module-level comment on
+                            # _partition_substrate_quality_curies for rationale.
+                            substrate_pairs, quality_pairs = _partition_substrate_quality_curies(
+                                curies, labels
+                            )
+
+                            isolation_source_node = []
+                            for curie, label in substrate_pairs:
+                                env_enrich = (
+                                    self.chemical_loader.get_node_enrichment(curie)
                                     if self.chemical_loader is not None
                                     else {"xref": "", "synonym": ""}
                                 )
-                                isolation_source_node = [
+                                isolation_source_node.append(
                                     self._create_node_row(
-                                        isolation_source[ENVO_ID_COLUMN],
+                                        curie,
                                         ENVIRONMENT_CATEGORY,
-                                        isolation_source[ENVO_TERMS_COLUMN],
-                                        xref=env_single_enrich["xref"] or None,
-                                        synonym=env_single_enrich["synonym"] or None,
+                                        label,
+                                        xref=env_enrich["xref"] or None,
+                                        synonym=env_enrich["synonym"] or None,
                                     )
+                                )
+
+                            tax_isolation_source_edge = [
+                                [
+                                    curie,
+                                    NCBI_TO_ISOLATION_SOURCE_EDGE,
+                                    tax_id,
+                                    LOCATION_OF,
+                                    self.knowledge_source,
+                                    OBSERVATION,
+                                    MANUAL_AGENT,
                                 ]
-                                tax_isolation_source_edge = [
+                                for curie, _label in substrate_pairs
+                            ]
+
+                            # Emit a node row for each PATO quality and attach it to
+                            # every co-occurring substrate (multi-substrate rows like
+                            # 'sediment_fresh_alkaline' attach 'alkaline' to BOTH
+                            # 'sediment' and 'freshwater environment' since the
+                            # upstream CSV doesn't disambiguate ownership).
+                            if quality_pairs:
+                                isolation_source_quality_node = [
+                                    self._create_node_row(
+                                        curie,
+                                        PHENOTYPIC_CATEGORY,
+                                        label,
+                                    )
+                                    for curie, label in quality_pairs
+                                ]
+                                tax_isolation_source_quality_edge = [
                                     [
-                                        isolation_source[ENVO_ID_COLUMN],
-                                        NCBI_TO_ISOLATION_SOURCE_EDGE,
-                                        tax_id,
-                                        LOCATION_OF,
-                                        self.knowledge_source,  # Use infores:madin_etal
+                                        substrate_curie,
+                                        HAS_QUALITY_PREDICATE,
+                                        quality_curie,
+                                        HAS_QUALITY_RELATION,
+                                        self.knowledge_source,
                                         OBSERVATION,
                                         MANUAL_AGENT,
                                     ]
+                                    for substrate_curie, _ in substrate_pairs
+                                    for quality_curie, _ in quality_pairs
                                 ]
                     nodes_data_to_write = [
                         sublist
@@ -920,6 +971,11 @@ class MadinEtAlTransform(Transform):
                             if _nr[0] not in seen_nodes:
                                 seen_nodes.add(_nr[0])
                                 node_writer.writerow(_nr)
+                    if isolation_source_quality_node:
+                        for _nr in isolation_source_quality_node:
+                            if _nr[0] not in seen_nodes:
+                                seen_nodes.add(_nr[0])
+                                node_writer.writerow(_nr)
 
                     edges_data_to_write = [
                         sublist
@@ -938,6 +994,8 @@ class MadinEtAlTransform(Transform):
                         edge_writer.writerows(edges_data_to_write)
                     if tax_isolation_source_edge:
                         edge_writer.writerows(tax_isolation_source_edge)
+                    if tax_isolation_source_quality_edge:
+                        edge_writer.writerows(tax_isolation_source_quality_edge)
 
                     progress.set_description(f"Processing taxonomy: {tax_id}")
                     # After each iteration, call the update method to advance the progress bar.

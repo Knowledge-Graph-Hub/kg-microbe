@@ -260,8 +260,21 @@ NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 NCBI_CATEGORY = "biolink:OrganismTaxon"
 
 # Growth media categories (Biolink Model v4.3.6)
-MEDIUM_CATEGORY = "biolink:GrowthMedium"  # growth medium (KG-Microbe Biolink extension)
-MEDIUM_TYPE_CATEGORY = "biolink:ChemicalMixture"
+# Medium nodes are emitted multi-cat: the KG-Microbe extension `biolink:GrowthMedium`
+# carries the microbiology-specific semantic, and a biolink-upstream mixture category
+# (ChemicalMixture for defined media, ComplexMolecularMixture for complex media)
+# carries the composition semantic so downstream tooling can filter on either axis.
+# The same distinction propagates to the medium-type parent nodes:
+# `mediadive.medium-type:defined`  → biolink:ChemicalMixture          (known composition)
+# `mediadive.medium-type:complex`  → biolink:ComplexMolecularMixture  (undefined composition)
+MEDIUM_CATEGORY = "biolink:GrowthMedium"  # generic fallback (used by bacdive where type is unknown)
+MEDIUM_DEFINED_CATEGORY = "biolink:GrowthMedium|biolink:ChemicalMixture"
+MEDIUM_COMPLEX_CATEGORY = "biolink:GrowthMedium|biolink:ComplexMolecularMixture"
+MEDIUM_TYPE_DEFINED_CATEGORY = "biolink:ChemicalMixture"
+MEDIUM_TYPE_COMPLEX_CATEGORY = "biolink:ComplexMolecularMixture"
+# Backwards-compat alias (was the parent category before defined/complex were split).
+# Kept so external callers don't break; new code should use the specific constants.
+MEDIUM_TYPE_CATEGORY = MEDIUM_TYPE_DEFINED_CATEGORY
 SOLUTION_CATEGORY = "biolink:ChemicalMixture"  # Solutions are mixtures
 
 # Chemical entity categories (Biolink Model v4.3.6)
@@ -318,6 +331,14 @@ USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbo
 
 TROPHICALLY_INTERACTS_WITH = "RO:0002438"  # [org_name -> 'trophically interacts with' -> carbon_substrate]
 LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
+# RO:0000086 is "has quality" — used to attach a PATO quality term to the
+# substrate / environment node it qualifies (e.g. ENVO:00001995 'rock' →
+# has_quality → PATO:0001596 'increased depth' for "rock_deep" rows in
+# Madin et al's environments.csv). Attaching the quality to the substrate
+# (rather than to the organism) avoids the family-mismatch where PATO
+# qualities ended up as organism locations.
+HAS_QUALITY_RELATION = "RO:0000086"
+HAS_QUALITY_PREDICATE = "biolink:has_attribute"
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"

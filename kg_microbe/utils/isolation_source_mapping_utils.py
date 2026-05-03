@@ -73,7 +73,6 @@ BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "patient room",
     "indoor toilet",
     "child care environment",
-    "currency note",
     "house painting",
     "medical product document",
     "infection zone",

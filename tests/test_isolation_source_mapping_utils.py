@@ -72,11 +72,13 @@ def test_loader_rejects_low_trust_lexical_close_matches(mappings):
     """
     An ols4_auto skos:closeMatch row that has not been promoted must be silently dropped.
 
-    'Currency → ENVO:00003896 currency note' is a representative example of an
-    untrusted auto-match that is also family-mismatched (banned substring).
-    The loader should drop it without raising.
+    'Aquaculture → ENVO:03600074 aquaculture farm' is a representative example
+    of an untrusted auto-match (skos:closeMatch / medium / LexicalMatching /
+    ols4_auto) that the loader should silently drop without raising. If a
+    curator later promotes this row to skos:exactMatch / high / Manual, swap
+    this assertion to a different still-untrusted row from the TSV.
     """
-    assert mappings.get("currency") is None
+    assert mappings.get("aquaculture") is None
 
 
 def test_validator_passes_on_committed_mapping_file():

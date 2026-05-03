@@ -79,7 +79,7 @@ Coral-reef	coral reef	ENVO:00000150	coral reef	ENVO	skos:exactMatch	high	semapv:
 Core-sample	core sample	NCIT:C180316	Nucleotide Sequence Sample Name	NCIT	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='sample'	2026-05-01
 Cotton-other-fibres	cotton other fibres								bacdive	UNMAPPED — no OLS match in ENVO/UBERON/FOODON/MONDO/NCIT	2026-05-01
 Crustacea	crustacea	NCBITaxon:6657	Crustacea	NCBITaxon	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive		2026-05-01
-Currency	currency	ENVO:00003896	currency note	ENVO	skos:closeMatch	medium	semapv:LexicalMatching	ols4_auto	bacdive	A paper product which is used as legal tender in economic or other monetary trasactions.	2026-05-01
+Currency	currency	ENVO:00003896	currency note	ENVO	skos:exactMatch	high	semapv:ManualMappingCuration	kg_review_fix	bacdive	promote(kg-review): legitimate fomite isolation source — banknotes/coins as substrate. ENVO:00003896 'currency note' is the right ontology target for microbe-on-currency studies. Promoted from ols4_auto closeMatch.	2026-05-02
 Cystic-fibrosis	cystic fibrosis							codex_review_fix_v2	bacdive	fix(codex-v2): was MONDO:0009061 (disease); CF context isn't itself an isolation source — actual sources are lung/sputum samples from CF patients	2026-05-02
 Dairy-product	dairy product	NCIT:C413	Dairy Product	NCIT	skos:exactMatch	high	semapv:LexicalMatching	ols4_auto	bacdive	Food made from the milk of some mammals, most commonly cows, goats and sheep.	2026-05-01
 Decomposing-algae	decomposing algae	NCBITaxon:2836	Bacillariophyta	NCBITaxon	skos:closeMatch	medium	semapv:LexicalMatching	ols4_search_synonym	bacdive	matched via variant='algae'	2026-05-01

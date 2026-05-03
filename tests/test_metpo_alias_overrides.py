@@ -31,8 +31,12 @@ def _stub_nodes(curies_in_tree: list[str]) -> Dict[str, MetpoTreeNode]:
 
 
 def test_overrides_applied_when_object_id_in_tree() -> None:
-    """A high-confidence ManualMappingCuration row whose object_id is in
-    the loaded METPO tree appears in the override dict."""
+    """
+    Honor high-confidence ManualMappingCuration rows.
+
+    A row whose ``object_id`` is in the loaded METPO tree should appear
+    in the override dict.
+    """
     nodes = _stub_nodes(["METPO:2000702", "METPO:2000703"])
     overrides = _load_metpo_alias_overrides(nodes, range_to_predicate={})
 
@@ -42,18 +46,24 @@ def test_overrides_applied_when_object_id_in_tree() -> None:
 
 
 def test_overrides_skipped_when_metpo_id_missing() -> None:
-    """Rows whose object_id is not yet in the METPO tree (proposed-but-
-    unminted) are silently skipped — the kgmicrobe.* placeholder path
-    stays the correct destination for those terms."""
+    """
+    Skip rows whose ``object_id`` is not yet in the METPO tree.
+
+    Those refer to proposed-but-unminted terms; the ``kgmicrobe.*``
+    placeholder path stays the correct destination for them.
+    """
     nodes = _stub_nodes([])  # empty tree — every row should be skipped
     overrides = _load_metpo_alias_overrides(nodes, range_to_predicate={})
     assert overrides == {}
 
 
 def test_normalized_and_raw_label_keys_both_emitted() -> None:
-    """The override dict carries both ``subject_label_normalized`` and
-    ``subject_label`` keys when they differ, so case-mismatched callers
-    still find the override."""
+    """
+    Emit both ``subject_label_normalized`` and ``subject_label`` keys.
+
+    Case-mismatched callers should still find the override regardless
+    of which label form they look up.
+    """
     nodes = _stub_nodes(["METPO:2000708"])
     overrides = _load_metpo_alias_overrides(nodes, range_to_predicate={})
     # Row 3 of the TSV: subject_label='has NaCl concentration minimum',
@@ -64,8 +74,11 @@ def test_normalized_and_raw_label_keys_both_emitted() -> None:
 
 
 def test_override_file_exists_and_is_nonempty() -> None:
-    """Sanity check: the override TSV is present in the repo and has rows.
-    Without this the override layer is dead code."""
+    """
+    Confirm the override TSV is present and non-empty.
+
+    Without at least one data row the override layer is dead code.
+    """
     assert LOCAL_METPO_ALIAS_OVERRIDES_PATH.is_file(), (
         f"Expected {LOCAL_METPO_ALIAS_OVERRIDES_PATH} to exist."
     )

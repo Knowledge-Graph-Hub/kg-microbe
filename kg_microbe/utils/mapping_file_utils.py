@@ -311,11 +311,13 @@ def _resolve_metpo_predicate(
     range_to_predicate: Dict[str, Dict[str, str]],
 ) -> Dict[str, str]:
     """
-    Walk the METPO parent chain to find the ``biolink equivalent`` ancestor
-    that determines this term's predicate, biolink equivalent, and category.
+    Resolve a METPO term's predicate routing via parent-chain traversal.
 
-    Returns the same five fields the main mapping loop populates so override
-    entries are shape-compatible with remote-fetched ones.
+    Walks the METPO parent chain to find the ``biolink equivalent``
+    ancestor that determines this term's predicate, biolink equivalent,
+    and category. Returns the same five fields the main mapping loop
+    populates so override entries are shape-compatible with
+    remote-fetched ones.
     """
     predicate_label = "has phenotype"
     predicate_biolink_equivalent = ""
@@ -350,14 +352,14 @@ def _load_metpo_alias_overrides(
     range_to_predicate: Dict[str, Dict[str, str]],
 ) -> Dict[str, Dict[str, str]]:
     """
-    Load curator-authored label → existing-METPO-ID overrides from
-    :data:`LOCAL_METPO_ALIAS_OVERRIDES_PATH`.
+    Load curator-authored label → existing-METPO-ID overrides.
 
-    Trust policy mirrors the isolation-source loader: only rows with
+    Reads :data:`LOCAL_METPO_ALIAS_OVERRIDES_PATH`. Trust policy mirrors
+    the isolation-source loader: only rows with
     ``mapping_justification == 'semapv:ManualMappingCuration'`` and
     ``confidence in {'high', 'medium'}`` are honored. Rows pointing at
-    METPO IDs not present in the loaded tree are skipped (proposed-but-
-    unminted terms — those stay on the placeholder path).
+    METPO IDs not present in the loaded tree are skipped — those refer
+    to proposed-but-unminted terms and stay on the placeholder path.
 
     The returned dict is shape-compatible with :func:`load_metpo_mappings`
     output and is intended to be applied as a final overlay so curator

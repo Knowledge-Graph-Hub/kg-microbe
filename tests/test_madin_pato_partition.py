@@ -40,8 +40,12 @@ def test_partition_handles_pure_substrate_row() -> None:
 
 
 def test_partition_multi_substrate_with_quality() -> None:
-    """A 'sediment_fresh_alkaline' row keeps both substrates + the quality;
-    the cross-product attachment is the caller's responsibility."""
+    """
+    Keep all substrates and qualities for compositional rows.
+
+    A row like 'sediment_fresh_alkaline' has two ENVO substrates and
+    one PATO quality; cross-product attachment is the caller's job.
+    """
     substrates, qualities = _partition_substrate_quality_curies(
         ["ENVO:00002007", "ENVO:01000306", "PATO:0001430"],
         ["sediment", "freshwater environment", "alkaline"],
@@ -51,10 +55,13 @@ def test_partition_multi_substrate_with_quality() -> None:
 
 
 def test_partition_pato_only_row_yields_no_substrate() -> None:
-    """A degenerate row containing only PATO emits no substrate — the caller
-    will then emit zero ``location_of`` edges and zero ``has_quality`` edges
-    (no substrate to anchor them on). This guarantees PATO never appears as
-    a ``location_of`` subject even in an edge case."""
+    """
+    Handle the degenerate PATO-only row safely.
+
+    With no substrate to anchor edges on, the caller emits zero
+    ``location_of`` edges and zero ``has_quality`` edges — guaranteeing
+    PATO never lands as a ``location_of`` subject even in this edge case.
+    """
     substrates, qualities = _partition_substrate_quality_curies(
         ["PATO:0001429"],
         ["acidic"],
@@ -64,9 +71,13 @@ def test_partition_pato_only_row_yields_no_substrate() -> None:
 
 
 def test_partition_unknown_prefix_treated_as_substrate() -> None:
-    """The partition is permissive on the substrate side: only PATO is
-    recognised as a quality, everything else (UBERON, FOODON, mesh, NCIT,
-    novel ontologies) flows into substrates and may anchor location_of."""
+    """
+    Be permissive about substrate prefixes.
+
+    Only PATO is recognised as a quality; everything else (UBERON,
+    FOODON, mesh, NCIT, novel ontologies) flows into substrates and
+    may anchor a ``location_of`` edge.
+    """
     substrates, qualities = _partition_substrate_quality_curies(
         ["UBERON:0000178", "FOODON:00002441", "mesh:D000001"],
         ["blood", "yeast extract", "abscess"],

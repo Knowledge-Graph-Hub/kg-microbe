@@ -556,6 +556,23 @@ class ChemicalMappingConsolidator:
         self.name_index: Dict[str, str] = {}  # normalized_name -> id
         self.formula_index: Dict[str, Set[str]] = defaultdict(set)  # formula -> set of ids
         self.chebi_adapter = None  # Will be initialized when needed
+        # Parent / asymmetric mappings (skos:narrowMatch / skos:broadMatch).
+        # Stored separately because they are NOT identity statements and the
+        # entity-centric chemicals dict can't represent "child A is narrower
+        # than parent B" without losing the asymmetry. Each entry is a dict
+        # mirroring the SSSOM row layout; the consolidator passes them through
+        # unmodified into the unified output, so the runtime loader at
+        # ``kg_microbe.utils.chemical_mapping_utils`` can index them as
+        # parent-of relationships and downstream transforms can emit
+        # ``biolink:subclass_of`` edges from them. Rows whose ``subject_id``
+        # is ``MIM:*`` get translated to the equivalent kg-microbe primary
+        # at export time when an exactMatch registry row is present.
+        self.parent_relations: List[Dict[str, str]] = []
+        # Lookup of MIM:<slug> → kg-microbe primary id (e.g. ENVO:00001998
+        # or kgmicrobe.ingredient:vermont_soil). Populated from the
+        # symmetric (skos:exactMatch) MIM rows so we can rewrite
+        # narrowMatch subjects to point at the kg-microbe-side identifier.
+        self.mim_to_primary: Dict[str, str] = {}
         # Replay compound_mappings_strict to derive the set of CHEBI ids the
         # pre-fix mangler would emit when fed PubChem/CAS-RN values. Used by
         # both baseline loaders to surgically drop polluted rows. Empty when
@@ -1212,8 +1229,32 @@ class ChemicalMappingConsolidator:
             # term is still captured as a synonym.
             if predicate in symmetric:
                 canonical = subject_label
+                # MIM exactMatch rows define the MIM:<slug> ↔ kg-microbe
+                # primary correspondence. Cache this so we can later
+                # translate narrowMatch subjects into the kg-microbe
+                # primary when emitting the unified file.
+                if predicate == "skos:exactMatch" and subject_id.startswith("MIM:"):
+                    self.mim_to_primary[subject_id] = object_id
             else:
                 canonical = object_label
+                # Asymmetric MIM mapping (narrowMatch / broadMatch). Stash
+                # the row so we can pass it through into the unified file.
+                # The runtime loader uses these rows to populate a
+                # parent-of index for kg-microbe-minted CURIEs (e.g.
+                # kgmicrobe.ingredient:vermont_soil narrowMatch ENVO:00001998).
+                self.parent_relations.append({
+                    "subject_id": subject_id,
+                    "subject_label": subject_label,
+                    "predicate_id": predicate,
+                    "object_id": object_id,
+                    "object_label": object_label,
+                    "object_source": row.get("object_source", "").strip(),
+                    "mapping_justification": row.get("mapping_justification", "").strip(),
+                    "source": "mediaingredientmech_reviewed",
+                    "mapping_date": row.get("mapping_date", "").strip(),
+                    "confidence": row.get("confidence", "").strip(),
+                    "comment": "asymmetric MIM mapping (parent relation)",
+                })
 
             synonyms = [s for s in (subject_label, object_label) if s]
             if other:
@@ -1791,7 +1832,46 @@ class ChemicalMappingConsolidator:
                     "semapv:UnspecifiedMatching", "attribute_carrier",
                 ))
 
-        rows_emitted = xref_rows + name_rows + synonym_rows
+        # Pass-through asymmetric (skos:narrowMatch / skos:broadMatch) MIM
+        # rows. These describe parent-of relationships ("kg-microbe ingredient
+        # X is a kind of ontology term Y") that the entity-centric mapping_rows
+        # above cannot express. Translate the MIM:<slug> subject to the
+        # corresponding kg-microbe primary (when an exactMatch registry row
+        # establishes the equivalence) so the runtime parent-index can be
+        # built directly from this file. Normalize ``object_source`` to the
+        # ``obo:<prefix>.owl`` convention used by entity-derived rows so the
+        # SSSOM validator's curie-map check accepts the file (the MIM source
+        # column sometimes carries ``registry:mesh`` etc., which would trip
+        # the validator).
+        parent_rows = 0
+        for rel in self.parent_relations:
+            subject_id = rel["subject_id"]
+            translated_subject = self.mim_to_primary.get(subject_id, subject_id)
+            obj_id = rel["object_id"]
+            obj_prefix = obj_id.split(":", 1)[0] if ":" in obj_id else ""
+            normalized_source = (
+                f"obo:{obj_prefix.lower()}.owl"
+                if obj_prefix
+                else "obo:kgmicrobe.compound.owl"
+            )
+            mapping_rows.append({
+                "subject_id": translated_subject,
+                "subject_label": rel["subject_label"],
+                "predicate_id": rel["predicate_id"],
+                "object_id": obj_id,
+                "object_label": rel["object_label"],
+                "object_source": normalized_source,
+                "mapping_justification": rel["mapping_justification"] or "semapv:ManualMappingCuration",
+                "source": rel["source"],
+                "mapping_date": rel["mapping_date"] or today,
+                "confidence": rel["confidence"],
+                "comment": rel["comment"],
+                "object_formula": "",
+                "object_category": "",
+            })
+            parent_rows += 1
+
+        rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows
 
         # Build the header.
         header_lines = ["# curie_map:"]

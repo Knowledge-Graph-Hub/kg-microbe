@@ -983,6 +983,7 @@ class MediaDiveTransform(Transform):
                         )
 
                     ingredient_nodes = []
+                    ingredient_subclass_edges = []
                     for k, v in ingredients_dict.items():
                         ingredient_id = v[ID_COLUMN]
                         enrichment = self.chemical_loader.get_node_enrichment(ingredient_id)
@@ -995,6 +996,24 @@ class MediaDiveTransform(Transform):
                                 synonym=enrichment["synonym"] or None,
                             )
                         )
+                        # If MIM curators have asserted a parent for this ingredient
+                        # via skos:narrowMatch (e.g. MIM:Vermont_Soil narrowMatch
+                        # ENVO:00001998), the unified mappings file now carries
+                        # those rows and the loader exposes them via get_parents().
+                        # Emit one biolink:subclass_of edge per parent so the
+                        # ingredient sits inside the canonical OBO hierarchy.
+                        for parent_id in self.chemical_loader.get_parents(ingredient_id):
+                            ingredient_subclass_edges.append([
+                                ingredient_id,
+                                "biolink:subclass_of",
+                                parent_id,
+                                "rdfs:subClassOf",
+                                self.knowledge_source,
+                                "knowledge_assertion",
+                                "manual_agent",
+                                "",
+                                "",
+                            ])
                     solution_nodes = [
                         self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()
@@ -1086,6 +1105,8 @@ class MediaDiveTransform(Transform):
                     edge_writer.writerows(solution_ingredient_edges)
                     if solution_subclass_edges:
                         edge_writer.writerows(solution_subclass_edges)
+                    if ingredient_subclass_edges:
+                        edge_writer.writerows(ingredient_subclass_edges)
 
                     progress.set_description(f"Processing mediadive: {medium_id}")
                     # After each iteration, call the update method to advance the progress bar.

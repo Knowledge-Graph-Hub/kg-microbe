@@ -5,7 +5,11 @@ has NaCl concentration minimum		METPO:2000708	has minimum salinity value	salinit
 has NaCl concentration maximum		METPO:2000709	has maximum salinity value	salinity maximum	concept	Phase 1 datatype property already exists; reuse for max NaCl concentration.
 has pH minimum		METPO:2000705	has minimum pH value	pH minimum	concept	Phase 1 datatype property already exists; reuse for min growth pH.
 has pH maximum		METPO:2000706	has maximum pH value	pH maximum	concept	Phase 1 datatype property already exists; reuse for max growth pH.
-cell shape	cellular morphology|rod-shaped|coccus|spiral|filamentous	METPO:1000666	cell shape	Morphology.cell morphology.cell shape|cell shape|cell_shape	label	Existing class with rich children (rod shaped, coccus shaped, spiral shaped, ...).
+cell shape	cellular morphology	METPO:1000666	cell shape	Morphology.cell morphology.cell shape|cell shape|cell_shape	label	Existing class with rich children (rod shaped, coccus shaped, spiral shaped, ...).
+rod-shaped		METPO:1000681	rod shaped	S_rod|rod-shaped	synonym	kg-review-lit-check: 'rod-shaped' is a synonym of METPO:1000681 'rod shaped'.
+coccus		METPO:1000668	coccus shaped	coccus|coccus-shaped	synonym	kg-review-lit-check: 'coccus' is a synonym of METPO:1000668 'coccus shaped'.
+spiral		METPO:1000684	spiral shaped	S_curved_spiral|spiral|spiral-shaped	synonym	kg-review-lit-check: 'spiral' is a synonym of METPO:1000684 'spiral shaped'.
+filamentous		METPO:1000674	filament shaped	S_filament|filament|filament-shaped	concept	kg-review-lit-check: 'filamentous' is the adjectival form of METPO:1000674 'filament shaped'.
 cell length	cellular length	METPO:1000881	cell length	cell length	label	Existing class. Datatype property METPO:2000721 'has cell length value' covers the numeric value.
 cell width	cellular width|cell diameter	METPO:1000882	cell width	cell width	label	Existing class. Datatype property METPO:2000722 'has cell width value' covers the numeric value.
 cell color	cell pigmentation|colony color	METPO:1003021	pigmentation	cell color	synonym	'cell color' is already a synonym of METPO:1003021 'pigmentation'.
@@ -13,18 +17,30 @@ GC content percentage	GC%|mol% G+C|genomic GC content	METPO:1000127	GC content	G
 genome size	genome length|genomic size	METPO:2000711	has genome size value	genome size	synonym	'genome size' is already a synonym of the datatype property METPO:2000711.
 gene count	number of genes|total gene count	METPO:2000713	has gene count value	gene count	synonym	'gene count' is already a synonym of the datatype property METPO:2000713.
 coding density	coding sequence percentage|protein-coding percentage	METPO:2000716	has coding density value	coding density	synonym	'coding density' is already a synonym of the datatype property METPO:2000716.
-oxygen requirement	aerobic|anaerobic|facultative anaerobic|microaerophilic|aerotolerant	METPO:1000601	oxygen preference	Physiology and metabolism.oxygen tolerance.oxygen tolerance|metabolism|oxygen preference	concept	Existing parent class with full oxygen-requirement child set (METPO:1000602-1000612).
+oxygen requirement		METPO:1000601	oxygen preference	Physiology and metabolism.oxygen tolerance.oxygen tolerance|metabolism|oxygen preference	concept	Existing parent class with full oxygen-requirement child set (METPO:1000602-1000612).
+aerobic		METPO:1000602	aerobic	Ox_aerobic|aerobe|aerobic	label	kg-review-lit-check: METPO:1000602 is the specific 'aerobic' child class.
+anaerobic		METPO:1000603	anaerobic	Ox_anaerobic|anaerobe|anaerobic	label	kg-review-lit-check: METPO:1000603 is the specific 'anaerobic' child class.
+facultative anaerobic		METPO:1000605	facultatively anaerobic	facultative|facultative anaerobe	synonym	kg-review-lit-check: METPO:1000605 has 'facultative anaerobe' as a synonym.
+microaerophilic		METPO:1000604	microaerophilic	Ox_microerophile|microaerophile|microaerophilic	label	kg-review-lit-check: METPO:1000604 is the specific 'microaerophilic' child class.
+aerotolerant		METPO:1000609	aerotolerant	aerotolerant	label	kg-review-lit-check: METPO:1000609 is the specific 'aerotolerant' child class.
 pH tolerance range		METPO:1000332	pH range		concept	METPO:1000332 'pH range' already models the tolerated pH window.
 pH optimum		METPO:1000331	pH optimum		label	Exact label match.
 temperature tolerance range		METPO:1000306	temperature range		concept	METPO:1000306 'temperature range' already models the tolerated temperature window.
 temperature optimum		METPO:1000304	temperature optimum		label	Exact label match.
 salinity tolerance range		METPO:1000334	NaCl range		concept	METPO:1000334 'NaCl range' already models the tolerated salinity window.
 salinity optimum		METPO:1000333	NaCl optimum		concept	METPO:1000333 'NaCl optimum' already models the optimal salinity.
-indole production capability	indole test positive	METPO:1005011	indole test positive	indole test	synonym	'indole test positive' is the existing label.
+indole production capability		METPO:1005010	indole test	indole test	concept	kg-review-lit-check: was METPO:1005011 (the 'positive' test-outcome variant); 'production capability' is the underlying ability — METPO:1005010 (the test) is closer.
+indole test positive		METPO:1005011	indole test positive	indole test	label	Exact label match for the positive test-outcome variant.
 methyl red test positive	MR test positive	METPO:1005014	methyl red test positive	methyl red test	label	Exact label match.
 hemolytic activity	hemolysis|alpha-hemolysis|beta-hemolysis|gamma-hemolysis	METPO:1005025	hemolysis	presence of hemolysis	synonym	'hemolysis' is the existing METPO label.
-biosafety level classification	BSL classification|BSL-1|BSL-2|BSL-3|BSL-4	METPO:1001101	biosafety level	Safety information.risk assessment.biosafety level|biosafety level	concept	Existing parent class with BSL-1..BSL-5 children (METPO:1001102-1001106).
+biosafety level classification	BSL classification	METPO:1001101	biosafety level	Safety information.risk assessment.biosafety level|biosafety level	concept	Existing parent class with BSL-1..BSL-5 children (METPO:1001102-1001106).
+BSL-1		METPO:1001102	biosafety level 1	1	synonym	kg-review-lit-check: METPO:1001102 has '1' as a synonym.
+BSL-2		METPO:1001103	biosafety level 2	2	synonym	kg-review-lit-check: METPO:1001103 covers BSL-2.
+BSL-3		METPO:1001104	biosafety level 3	3|3**	synonym	kg-review-lit-check: METPO:1001104 covers BSL-3.
+BSL-4		METPO:1001105	biosafety level 4	4	synonym	kg-review-lit-check: METPO:1001105 covers BSL-4.
 colony pigmentation		METPO:1003021	pigmentation	cell color	concept	Same concept as METPO:1003021 'pigmentation' (children: black, brown, cream, green, orange, pink, red, white, yellow, carotenoid).
-motility phenotype	motile|non-motile	METPO:1000701	motility	Morphology.cell morphology.motility|motility|presence of motility	concept	Existing parent class with motile/non-motile/flagellated/gliding children.
+motility phenotype		METPO:1000701	motility	Morphology.cell morphology.motility|motility|presence of motility	concept	Existing parent class with motile/non-motile/flagellated/gliding children.
+motile		METPO:1000702	motile	motile|yes	label	kg-review-lit-check: METPO:1000702 is the specific 'motile' child class.
+non-motile		METPO:1000703	non motile	no|non-motile	synonym	kg-review-lit-check: METPO:1000703 has 'non-motile' as a synonym.
 spore formation capability		METPO:1000870	sporulation	General.keywords|Physiology and metabolism.spore formation.spore formation|sporulation	synonym	'spore formation' is already a synonym of METPO:1000870; children spore-forming/non-spore-forming exist.
 denitrification capability		METPO:1005038	denitrification	denitrification pathway	concept	Existing class. Predicate METPO:2000601 'denitrifies' / 2000602 'does not denitrify' for capability assertions.

@@ -2890,29 +2890,22 @@ class BacDiveTransform(Transform):
                             subject_id = ISOLATION_SOURCE_PREFIX + isol_source.lower()
                             # Only write a placeholder node when no ontology mapping exists;
                             # mapped CURIEs get their canonical node from the ontologies transform.
+                            # Note: we deliberately do NOT add a blanket
+                            # ``biolink:subclass_of ENVO:01000254`` edge for these
+                            # placeholders. Many unmapped labels are NOT environmental
+                            # materials (e.g. 'Human', 'Leaf-Phyllosphere',
+                            # 'host_animal_endotherm_intratissue' are hosts / anatomy /
+                            # niches), and a blanket parent assertion would poison the
+                            # hierarchy for downstream reasoning over source type
+                            # (Codex review #558). Placeholders stay unparented until a
+                            # vetted host/anatomy/environment mapping is added to
+                            # mappings/isolation_source_to_ontology.tsv.
                             node_writer.writerow(
                                 self._create_node_row(
                                     subject_id,
                                     ISOLATION_SOURCE_CATEGORY,
                                     isol_source,
                                 )
-                            )
-                            # Type the residual placeholder under ENVO:01000254
-                            # (environmental material) so OBO-aware reasoners can navigate
-                            # from any unmapped isolation source back to the canonical
-                            # ENVO hierarchy. Curated mappings (handled in the `if`
-                            # branch above) get their canonical parent from the ontologies
-                            # transform; only the kg-microbe-minted placeholders need this.
-                            edge_writer.writerow(
-                                [
-                                    subject_id,
-                                    "biolink:subclass_of",
-                                    "ENVO:01000254",
-                                    "rdfs:subClassOf",
-                                    self.source_name,
-                                    "knowledge_assertion",
-                                    "manual_agent",
-                                ]
                             )
                         # Write edge from the isolation source to organism
                         knowledge_level, agent_type = self._add_edge_metadata(

@@ -60,21 +60,17 @@ def _row_is_trusted(row: Dict[str, str]) -> bool:
     """
     Mirror of the loader's trust policy.
 
-    The validator only fails on rows that *would* be loaded at runtime — a
-    low-trust ``ols4_auto`` ``skos:closeMatch`` row is already dropped by the
-    loader, so flagging it here would be noise. Promoting such a row by
-    setting it to ``skos:exactMatch`` / high confidence / manual curation is
-    what makes a family-mismatched mapping actually dangerous, and that is
-    the case the validator is designed to catch.
+    Both paths require ``skos:exactMatch``: closeMatch is never trusted for
+    canonical node substitution because it only asserts similarity, not
+    equivalence (see Codex review #558). Two trust paths within exactMatch:
+    high-confidence auto-match, or manual curation.
     """
     predicate = (row.get("predicate_id") or "").strip()
+    if predicate != "skos:exactMatch":
+        return False
     confidence = (row.get("confidence") or "").strip().lower()
     justification = (row.get("mapping_justification") or "").strip()
-    if predicate == "skos:exactMatch" and confidence == "high":
-        return True
-    if justification == "semapv:ManualMappingCuration":
-        return True
-    return False
+    return (confidence == "high") or (justification == "semapv:ManualMappingCuration")
 
 
 def iter_validation_failures(

@@ -102,16 +102,38 @@ def _row_passes_family_check(row: Dict[str, str]) -> bool:
 
 
 def _row_is_trusted(row: Dict[str, str]) -> bool:
-    """Apply the trust policy described in the module docstring."""
+    """
+    Apply the trust policy described in the module docstring.
+
+    Substitution into the BacDive graph requires ``skos:exactMatch`` —
+    i.e. the curator (or the auto-matcher's high-confidence pass) has
+    asserted that the BacDive label and the ontology term denote the
+    SAME entity. ``skos:closeMatch`` rows are NOT trusted for canonical
+    node substitution because they only assert similarity; promoting
+    them would connect organisms to devices, qualities, phenotype
+    classes, etc., as if those were the source entity itself
+    (Codex adversarial review #558 found 41 such bad-substitution
+    candidates in the table — Catheter→NCIT 'Catheter Device',
+    Child→PATO juvenile, Humid→NCIT humidity quality, etc.).
+
+    Two acceptable trust paths, both requiring exactMatch:
+      1. Auto-matcher hit with high confidence
+         (``skos:exactMatch`` + ``confidence == 'high'``).
+      2. Manual curation
+         (``skos:exactMatch`` + ``mapping_justification ==
+         'semapv:ManualMappingCuration'``).
+
+    Anything else — closeMatch under any justification, low/medium
+    auto-matcher confidence — is dropped, leaving the BacDive transform
+    to emit its placeholder ``isolation_source:*`` node.
+    """
     predicate = (row.get("predicate_id") or "").strip()
+    if predicate != "skos:exactMatch":
+        return False
+
     confidence = (row.get("confidence") or "").strip().lower()
     justification = (row.get("mapping_justification") or "").strip()
-
-    if predicate == "skos:exactMatch" and confidence == "high":
-        return True
-    if justification == "semapv:ManualMappingCuration":
-        return True
-    return False
+    return (confidence == "high") or (justification == "semapv:ManualMappingCuration")
 
 
 def load_isolation_source_mappings(

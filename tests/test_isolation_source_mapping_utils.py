@@ -61,11 +61,22 @@ def test_loader_drops_family_mismatched_rows(mappings):
 
 
 def test_loader_honors_manually_curated_fixes(mappings):
-    """Rows promoted by manual curation (family_mismatch_fix and other curator tags) are honored."""
-    # 'Plant' was wrongly mapped to ENVO:01001255 (a process); manual fix points at Viridiplantae taxon
-    assert mappings.get("plant") == ("NCBITaxon:33090", "Viridiplantae")
-    # 'Mammals' was wrongly mapped to NCBITaxon:32525 (Theria, a subgroup); manual fix points at Mammalia
+    """Rows promoted by manual curation are honored — but ONLY when predicate is skos:exactMatch.
+
+    The 2026-05 Codex adversarial review tightened the trust policy so that
+    ``skos:closeMatch`` rows are no longer trusted for canonical node
+    substitution, even when manually curated, because closeMatch only
+    asserts similarity (not equivalence) and would connect organisms to
+    devices, qualities, and phenotype classes as if those were the source
+    entity itself.
+    """
+    # 'Mammals' was wrongly mapped to NCBITaxon:32525 (Theria, a subgroup); manual fix points
+    # at Mammalia with skos:exactMatch — honored under the new policy.
     assert mappings.get("mammals") == ("NCBITaxon:40674", "Mammalia")
+    # 'Plant' was promoted to NCBITaxon:33090 (Viridiplantae) via skos:closeMatch — NOT honored
+    # under the tightened policy (manual curation alone isn't enough; needs exactMatch).
+    # The BacDive transform falls back to the isolation_source:plant placeholder.
+    assert mappings.get("plant") is None
 
 
 def test_loader_rejects_low_trust_lexical_close_matches(mappings):

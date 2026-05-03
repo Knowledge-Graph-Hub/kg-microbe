@@ -1198,8 +1198,27 @@ class ChemicalMappingConsolidator:
         # seeding carried forward obsolete MIM xrefs).
         current_mim_subjects: dict[str, str] = {}
 
+        # Known-bad (subject_id, object_id) narrowMatch pairs from MIM's
+        # auto_classify_ingredient_type pipeline. These were flagged in the
+        # 2026-05-02 Codex adversarial review of PR #558 — the chemistry on
+        # both sides is unrelated (e.g. KH2PO4 → calcium sulfate dihydrate;
+        # MnCl2 → kaempferol glycoside; D-Maltose → amiloride analog).
+        # Without this filter the runtime emits demonstrably false
+        # ``biolink:subclass_of`` edges via MediaDive's get_parents() path.
+        # Drop these specific rows here; the proper upstream fix is to
+        # remove them in MIM (sibling repo). The filter is idempotent — a
+        # later MIM update that removes the rows is a no-op for us.
+        KNOWN_BAD_NARROWMATCH = {
+            ("MIM:Kh2po4", "CHEBI:32583"),                # KH2PO4 vs CaSO4·2H2O
+            ("MIM:Mncl2_X_2_H2o", "CHEBI:30200"),         # MnCl2·2H2O vs kaempferol glycoside
+            ("MIM:Mncl2_X_4_H2o", "CHEBI:30200"),         # MnCl2·4H2O vs kaempferol glycoside
+            ("MIM:Mncl2_anhydrous", "CHEBI:30200"),       # MnCl2 vs kaempferol glycoside
+            ("MIM:D-Maltose_Monohydrate", "CHEBI:233428"),  # maltose vs amiloride analog
+        }
+
         added = 0
         skipped_unsupported = 0
+        skipped_known_bad = 0
         curator_tags_seen: set[str] = set()
         for _, row in df.iterrows():
             object_id = row.get("object_id", "").strip()
@@ -1219,6 +1238,17 @@ class ChemicalMappingConsolidator:
 
             predicate = row.get("predicate_id", "").strip()
             subject_id = row.get("subject_id", "").strip()
+
+            # Drop the specific narrowMatch rows MIM's auto-classifier got
+            # wrong (see KNOWN_BAD_NARROWMATCH definition above). Done at
+            # row-load time rather than at export so the rows never enter
+            # the parent_relations capture in the first place.
+            if (
+                predicate in {"skos:narrowMatch", "skos:broadMatch"}
+                and (subject_id, object_id) in KNOWN_BAD_NARROWMATCH
+            ):
+                skipped_known_bad += 1
+                continue
             subject_label = row.get("subject_label", "").strip()
             object_label = row.get("object_label", "").strip()
             other = row.get("other", "").strip()
@@ -1326,7 +1356,8 @@ class ChemicalMappingConsolidator:
 
         print(
             f"  Loaded {added} MIM SSSOM entries "
-            f"(skipped {skipped_unsupported} unsupported object_id prefix)"
+            f"(skipped {skipped_unsupported} unsupported object_id prefix"
+            f", {skipped_known_bad} known-bad narrowMatch)"
         )
         if curator_tags_seen:
             print(

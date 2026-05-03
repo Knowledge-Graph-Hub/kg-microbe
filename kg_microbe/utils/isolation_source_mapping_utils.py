@@ -42,23 +42,48 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_ISOLATION_SOURCE_MAPPING_FILE = REPO_ROOT / "mappings" / "isolation_source_to_ontology.tsv"
 
 # Object-source ontologies that are categorically wrong for an isolation source.
-# UO is the unit of measurement ontology; UO terms can never represent a sample
-# substrate, body part, host, or environment. Any other source ontology with a
-# similar problem belongs here.
-DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({"UO"})
+# An isolation source is a substrate / body part / host taxon / environment —
+# never a quality, a phenotype assertion, or a unit. Source ontologies whose
+# terms are systematically of the wrong kind belong here.
+#
+# Codex adversarial review #558 flagged 8 trusted rows from these prefixes
+# (Acidic→PATO, Female→PATO, Juvenile→PATO, Surface-swab→SNOMED, etc.) that
+# would have made organisms 'location_of' a quality, procedure, or device.
+DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({
+    "UO",       # Unit ontology — never a substrate
+    "PATO",     # Phenotypic quality — Acidic, Female, Juvenile, etc.
+    "METPO",    # Microbial phenotype class — not the source the microbe was isolated from
+    # SNOMED is admitted only via STUB_ONTOLOGY_PREFIXES; clinical-procedure
+    # SNOMED terms (Surface-swab → SNOMED:258537007) are dropped by the
+    # banned-substring check below.
+})
 
 # Ontology prefixes that the BacDive isolation_source mapping TSV references
 # but that are NOT loaded by the ontologies transform (see ONTOLOGIES_MAP in
-# kg_microbe/transform_utils/ontologies/ontologies_transform.py). Each
-# prefix has only a tiny number of distinct IDs in use and loading the full
-# ontology would be wasteful, so the BacDive transform writes a thin node
-# row per resolved CURIE using the object_label from the mapping TSV. The
-# category is biolink:OntologyClass for all stubs because they're top-level
-# categorical terms (host body site, microbial community, ...) rather than
-# specific anatomy / environmental features.
+# kg_microbe/transform_utils/ontologies/ontologies_transform.py). Each prefix
+# either has only a tiny number of distinct IDs in use, or its full load is
+# impractical (mesh and NCIT are huge clinical thesauri), so the BacDive
+# transform writes a thin node row per resolved CURIE using the object_label
+# from the mapping TSV. The category is biolink:OntologyClass for all stubs
+# because they're typically categorical terms (host body site, microbial
+# community, abscess, etc.) rather than specific anatomy / environmental
+# features whose canonical metadata would come from a loaded ontology.
+#
+# Codex adversarial review #558 found that without stubs for these prefixes
+# the BacDive transform was emitting edges to dangling node IDs because the
+# ontologies pipeline didn't supply nodes for mesh:*, NCIT:*, GENEPIO:*,
+# FAO:*, BTO:*, or SNOMED:* targets. The build-time check in BacDive's
+# __init__ now verifies every trusted target prefix is either loaded by the
+# ontologies transform OR included in this stub set, and aborts otherwise.
 STUB_ONTOLOGY_PREFIXES: frozenset = frozenset({
-    "PRIDE",  # 3 IDs: host body site, host body product, antibiotic treatment
-    "PCO",    # 1 active ID: microbial community (PCO:1000004)
+    "PRIDE",    # 3 IDs: host body site, host body product, antibiotic treatment
+    "PCO",      # 1 active ID: microbial community (PCO:1000004)
+    "mesh",     # 9 IDs: Abscess, Wound, Inflammation, Built-environment, Periodontal-pocket, etc.
+    "NCIT",     # 7 trusted IDs: Aspirate, Blood-culture, Lesion, Parasite, Protozoa, etc.
+    "GENEPIO",  # 1 ID: caecal content
+    "FAO",      # 1 ID: mycorrhiza (Fungal Anatomy Ontology)
+    "BTO",      # 1 ID: wound fluid (BRENDA Tissue Ontology)
+    "SNOMED",   # 1 ID after filtering: sugary food (clinical procedure rows are dropped via banned substrings)
 })
 STUB_ONTOLOGY_CATEGORY = "biolink:OntologyClass"
 
@@ -66,6 +91,12 @@ STUB_ONTOLOGY_CATEGORY = "biolink:OntologyClass"
 # isolation-source label kind. These are facilities, documents, processes, or
 # clinical instruments, not substrates / body parts / hosts / environments.
 # The check is case-insensitive and substring-based.
+#
+# Note: NCIT and SNOMED contain a mix of substrates AND clinical procedures /
+# devices. The label-substring check catches the procedure / device rows
+# (e.g. NCIT:C17627 'Swab', NCIT:C16830 'Medical Device', SNOMED:258537007
+# 'Surface swab') without rejecting the legitimate substrate rows in those
+# prefixes (NCIT:C13347 'Aspirate', NCIT:C16403 'Blood Culture', etc.).
 BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "ability question",
     "processing plant",
@@ -78,6 +109,12 @@ BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "infection zone",
     "breeding waste material",
     "dependence on",
+    # Codex adversarial review #558 — clinical procedure / device / process
+    # labels that are NOT isolation sources:
+    "swab",                # NCIT:C17627, SNOMED:258537007
+    "medical device",      # NCIT:C16830
+    "food production",     # FOODON:03530206 (a process, not a substrate)
+    "antibiotic treatment",  # PRIDE:0001000 (a treatment, not a substrate)
 )
 
 

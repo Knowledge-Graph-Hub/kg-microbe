@@ -288,6 +288,60 @@ class BacDiveTransform(Transform):
         # (units→anatomy, facilities→substrates, etc.) are also rejected. See
         # kg_microbe/utils/isolation_source_mapping_utils.py for the policy.
         self.isolation_source_mappings: Dict[str, tuple] = load_isolation_source_mappings()
+        self._validate_isolation_source_target_prefixes()
+
+    def _validate_isolation_source_target_prefixes(self) -> None:
+        """
+        Fail fast if any trusted isolation_source mapping points at a CURIE prefix
+        that no part of the merged-kg pipeline materializes as a node.
+
+        BacDive's emit path writes the mapped CURIE directly as the edge
+        subject. For that to land cleanly in the merged graph, *something* has
+        to supply a node for that CURIE — either the ontologies transform (if
+        the prefix is in ONTOLOGIES_MAP) or BacDive itself (if the prefix is in
+        STUB_ONTOLOGY_PREFIXES, in which case the emit path writes a thin
+        node row per occurrence).
+
+        Codex adversarial review #558 found 21 trusted mappings whose targets
+        had neither node source (mesh:*, NCIT:*, GENEPIO:*, FAO:*, BTO:*,
+        SNOMED:*), creating dangling references in the merged graph. The
+        STUB_ONTOLOGY_PREFIXES set has been extended to cover those, and this
+        check enforces the invariant going forward — any future curator who
+        adds a row with a new ontology prefix gets a clear, fail-fast error
+        instead of silently creating dangling edges.
+        """
+        from kg_microbe.transform_utils.ontologies.ontologies_transform import ONTOLOGIES_MAP
+
+        loaded_prefixes = {k.upper() for k in ONTOLOGIES_MAP}
+        loaded_prefixes.update(k for k in ONTOLOGIES_MAP)  # also accept lowercase
+        loaded_prefixes.add("NCBITaxon")  # canonical-case alias for ncbitaxon
+        permitted = loaded_prefixes | {p.upper() for p in STUB_ONTOLOGY_PREFIXES} | set(STUB_ONTOLOGY_PREFIXES)
+
+        bad: Dict[str, List[str]] = {}
+        for label, (curie, _label) in self.isolation_source_mappings.items():
+            prefix = curie.split(":", 1)[0] if ":" in curie else ""
+            if not prefix:
+                continue
+            if prefix not in permitted and prefix.upper() not in permitted:
+                bad.setdefault(prefix, []).append(f"{label!r}→{curie}")
+
+        if bad:
+            details = "; ".join(
+                f"{prefix} ({len(rows)} mapping(s); examples: {', '.join(rows[:3])})"
+                for prefix, rows in sorted(bad.items())
+            )
+            raise RuntimeError(
+                "BacDive isolation_source_to_ontology.tsv contains trusted mappings "
+                "whose target prefix is neither loaded by the ontologies transform "
+                "nor in STUB_ONTOLOGY_PREFIXES. These would create dangling node "
+                f"references in the merged graph: {details}. "
+                "Fix: add the prefix to ONTOLOGIES_MAP (in "
+                "kg_microbe/transform_utils/ontologies/ontologies_transform.py) if "
+                "it is a real OBO ontology you want loaded, or add it to "
+                "STUB_ONTOLOGY_PREFIXES (in "
+                "kg_microbe/utils/isolation_source_mapping_utils.py) if BacDive "
+                "should emit a thin stub node per occurrence."
+            )
 
     def _build_metpo_iri_index(self) -> Dict[str, dict]:
         """

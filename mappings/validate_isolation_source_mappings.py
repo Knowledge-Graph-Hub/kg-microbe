@@ -39,7 +39,11 @@ from typing import Dict, Iterable, Tuple
 
 DEFAULT_MAPPING_FILE = Path(__file__).resolve().parent / "isolation_source_to_ontology.tsv"
 
-DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({"UO"})
+DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({
+    "UO",
+    "PATO",
+    "METPO",
+})
 
 BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "ability question",
@@ -53,6 +57,10 @@ BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "infection zone",
     "breeding waste material",
     "dependence on",
+    "swab",
+    "medical device",
+    "food production",
+    "antibiotic treatment",
 )
 
 

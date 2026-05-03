@@ -66,17 +66,24 @@ def test_loader_honors_manually_curated_fixes(mappings):
     The 2026-05 Codex adversarial review tightened the trust policy so that
     ``skos:closeMatch`` rows are no longer trusted for canonical node
     substitution, even when manually curated, because closeMatch only
-    asserts similarity (not equivalence) and would connect organisms to
-    devices, qualities, and phenotype classes as if those were the source
-    entity itself.
+    asserts similarity (not equivalence). After the post-Codex re-audit,
+    34 of the 41 originally-closeMatch manually-curated rows were promoted
+    to exactMatch (the BacDive label and the ontology term denote the same
+    entity in isolation-source context). The other 7 stayed dropped because
+    the targets were family-mismatched (devices, qualities, phenotype
+    classes).
     """
-    # 'Mammals' was wrongly mapped to NCBITaxon:32525 (Theria, a subgroup); manual fix points
-    # at Mammalia with skos:exactMatch — honored under the new policy.
+    # exactMatch rows that survive the tightened trust check:
     assert mappings.get("mammals") == ("NCBITaxon:40674", "Mammalia")
-    # 'Plant' was promoted to NCBITaxon:33090 (Viridiplantae) via skos:closeMatch — NOT honored
-    # under the tightened policy (manual curation alone isn't enough; needs exactMatch).
-    # The BacDive transform falls back to the isolation_source:plant placeholder.
-    assert mappings.get("plant") is None
+    assert mappings.get("plant") == ("NCBITaxon:33090", "Viridiplantae")
+    assert mappings.get("birds") == ("NCBITaxon:8782", "Aves")
+    assert mappings.get("gastrointestinal tract") == ("UBERON:0005409", "digestive tract")
+    assert mappings.get("wound") == ("mesh:D014947", "Wounds and Injuries")
+    # closeMatch rows that stay dropped (family-mismatched targets):
+    assert mappings.get("catheter") is None  # device, not isolation source
+    assert mappings.get("child") is None  # quality (juvenile), not source
+    assert mappings.get("humid") is None  # quality, not source
+    assert mappings.get("psychrophilic <10°c") is None  # phenotype class, not source
 
 
 def test_loader_rejects_low_trust_lexical_close_matches(mappings):

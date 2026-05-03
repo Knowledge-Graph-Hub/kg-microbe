@@ -2,7 +2,7 @@
 Utilities for chemical mapping lookups.
 
 Reads the unified ingredient SSSOM mapping set
-(``mappings/unified_ingredient_mappings.sssom.tsv.gz``) and reconstructs an
+(``mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz``) and reconstructs an
 entity-centric in-memory index grouped on ``object_id``. The SSSOM carries
 the per-entity attributes (``canonical_name`` via ``object_label``,
 ``formula``/``category`` via extension columns) as well as the mappings
@@ -145,7 +145,7 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
     """
     Load the unified ingredient SSSOM mapping set.
 
-    Reads ``mappings/unified_ingredient_mappings.sssom.tsv.gz`` (or the
+    Reads ``mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`` (or the
     explicit path given) and builds the in-memory per-entity indices used
     by the lookup API (``find_chebi_by_name``, ``get_canonical_name``, …).
     Per-entity attributes that SSSOM cannot express natively —
@@ -172,7 +172,7 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
 
     if mappings_path is None:
         base_dir = Path(__file__).parent.parent.parent
-        mappings_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
+        mappings_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
     if _LOADED and _CACHED_PATH == mappings_path:
         return _ENTITY_COUNT

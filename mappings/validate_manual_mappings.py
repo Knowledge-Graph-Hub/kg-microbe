@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate manually-curated rows in the unified ingredient SSSOM.
 
-Validates ``mappings/unified_ingredient_mappings.sssom.tsv.gz`` against EBI
+Validates ``mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`` against EBI
 OLS4 ChEBI for every CHEBI entity whose provenance does not include
 ``chebi_xrefs`` (i.e. purely manual / metatraits-curated rows). For each:
 
@@ -23,7 +23,7 @@ from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
 HERE = Path(__file__).parent
-MAPPINGS_FILE = HERE / "unified_ingredient_mappings.sssom.tsv.gz"
+MAPPINGS_FILE = HERE / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 REPORT_FILE = HERE / "manual_mapping_audit_report.tsv"
 OLS_BASE = "https://www.ebi.ac.uk/ols4/api/ontologies/chebi/terms"
 

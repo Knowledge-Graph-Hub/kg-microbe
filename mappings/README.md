@@ -4,7 +4,7 @@ This directory contains unified chemical mapping resources for KG-Microbe.
 
 ## Unified Chemical Mappings
 
-`mappings/unified_ingredient_mappings.sssom.tsv.gz` is the **single source of truth** for chemical mappings. It is the standards-compliant SSSOM mapping product and the file read by transforms via `kg_microbe.utils.chemical_mapping_utils`. Row types:
+`mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` is the **single source of truth** for chemical mappings. It is the standards-compliant SSSOM mapping product and the file read by transforms via `kg_microbe.utils.chemical_mapping_utils`. Row types:
 
 1. xref-CURIE → primary-CURIE (`skos:exactMatch`)
 2. canonical-name → primary-CURIE via `kgm.name:<slug>` (`skos:exactMatch`, `semapv:LexicalMatching`)
@@ -68,7 +68,7 @@ Normalized-name collisions do not merge records by name; instead, the name looku
 | 7 | `mappings/culturebotai_reviewed_ingredients.tsv` | 10 | present | **Authoritative.** CultureBotAI reviewed ingredients. |
 | 8 | `mappings/ingredient_mappings.sssom.tsv` | 11 | present | **Authoritative.** MediaIngredientMech SSSOM mapping set. **Auto-synced on every consolidation run** from the MediaIngredientMech sibling repo (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv`) — MIM is the source of truth; the vendored copy is refreshed when its content hash diverges. Contains 1,090 MIM→ontology rows with predicate-typed matches (exactMatch / closeMatch / narrowMatch). |
 
-Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `unified_ingredient_mappings.sssom.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `source` column.
+Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `kgmicrobe_unified_entity_mappings.sssom.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `source` column.
 
 ### Regenerating
 
@@ -77,7 +77,7 @@ poetry run python scripts/consolidate_chemical_mappings.py
 ```
 
 Pipeline order:
-1. Seed from the existing `mappings/unified_ingredient_mappings.sssom.tsv.gz` (priority reconstructed per row from `source` labels).
+1. Seed from the existing `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (priority reconstructed per row from `source` labels).
 2. Layer in any still-present legacy inputs (absent ones are skipped).
 3. Load `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
 4. **Sync MIM SSSOM from sibling repo** (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. If the sibling repo is absent, the vendored copy is used with a warning.
@@ -86,22 +86,22 @@ Pipeline order:
 7. **Harvest CHEBI xref labels via OAK** — for every CHEBI CURIE that appears as an xref but has no primary row of its own, pull its label + aliases into the owning record's synonyms. Closes the gap where a non-CHEBI primary (or a secondary CHEBI ID) carries an xref whose preferred term would otherwise be lost.
 8. **Propagate names across equivalent-CURIE records via xrefs** — for every record, any xref that is itself a primary key of another record contributes that record's `canonical_name` + synonyms into this record's synonyms. Symmetric (both sides pick up each other's names), snapshot-based (no feedback), no record merge or deletion.
 9. Resolve name-index conflicts by priority (highest-priority name mapping wins); no cross-CURIE merge pass is performed.
-10. Write `unified_ingredient_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
+10. Write `kgmicrobe_unified_entity_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
 
 ### Usage Examples
 
 ```bash
 # Find an ingredient by name (skipping the YAML metadata block)
-gunzip -c mappings/unified_ingredient_mappings.sssom.tsv.gz | grep -v '^#' | grep -i "glucose"
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | grep -i "glucose"
 
 # All rows for an id
-gunzip -c mappings/unified_ingredient_mappings.sssom.tsv.gz | grep -v '^#' | awk -F'\t' '$2=="CHEBI:42758" || $4=="CHEBI:42758"'
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | awk -F'\t' '$2=="CHEBI:42758" || $4=="CHEBI:42758"'
 
 # Ingredients carrying the MediaIngredientMech provenance tag
-gunzip -c mappings/unified_ingredient_mappings.sssom.tsv.gz | grep -v '^#' | grep mediaingredientmech_reviewed | head
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | grep mediaingredientmech_reviewed | head
 
 # All FOODON foods (object_id is the 4th column)
-gunzip -c mappings/unified_ingredient_mappings.sssom.tsv.gz | grep -v '^#' | awk -F'\t' '$4 ~ /^FOODON:/'
+gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz | grep -v '^#' | awk -F'\t' '$4 ~ /^FOODON:/'
 ```
 
 Prefer the Python reader API (`kg_microbe.utils.chemical_mapping_utils.find_chebi_by_name`, `find_chebi_by_xref`, `find_chebi_by_formula`, `get_canonical_name`, `get_category`) inside transforms — it loads the file once per process and serves O(1) lookups. `find_chebi_by_name` is a legacy name; it returns any supported CURIE, including FOODON / UBERON / ENVO.

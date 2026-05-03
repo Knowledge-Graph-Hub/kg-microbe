@@ -292,8 +292,11 @@ class BacDiveTransform(Transform):
 
     def _validate_isolation_source_target_prefixes(self) -> None:
         """
-        Fail fast if any trusted isolation_source mapping points at a CURIE prefix
-        that no part of the merged-kg pipeline materializes as a node.
+        Fail fast if a trusted isolation-source mapping has no node source.
+
+        Every trusted mapping target prefix must be either loaded by the
+        ontologies transform or in STUB_ONTOLOGY_PREFIXES; otherwise the
+        emitted edge would point at a non-existent node in the merged graph.
 
         BacDive's emit path writes the mapped CURIE directly as the edge
         subject. For that to land cleanly in the merged graph, *something* has

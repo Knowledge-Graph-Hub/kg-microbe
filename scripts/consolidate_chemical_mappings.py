@@ -46,7 +46,7 @@ multiple candidates exist for the same entity:
 See ``_PRIMARY_PREFIX_RANK`` and ``best_primary()``.
 
 Output:
-  mappings/unified_ingredient_mappings.sssom.tsv.gz
+  mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz
       The single unified mapping product, in SSSOM format (validated with
       the ``sssom`` package on write). Per-entity attributes that SSSOM
       cannot express natively — ``formula``, ``category`` (biolink class) —
@@ -935,7 +935,7 @@ class ChemicalMappingConsolidator:
         """
         Load an existing unified SSSOM file as a baseline.
 
-        Reads ``unified_ingredient_mappings.sssom.tsv.gz`` (the primary and
+        Reads ``kgmicrobe_unified_entity_mappings.sssom.tsv.gz`` (the primary and
         only unified output) and reconstructs per-entity records by grouping
         rows on ``object_id``.
 
@@ -1254,47 +1254,9 @@ class ChemicalMappingConsolidator:
             other = row.get("other", "").strip()
             mim_source = row.get("source", "").strip()
 
-            # Symmetric matches: MIM's curated term wins canonical naming.
-            # Asymmetric (narrow/broad): ontology label stays canonical; MIM
-            # term is still captured as a synonym.
-            if predicate in symmetric:
-                canonical = subject_label
-                # MIM exactMatch rows define the MIM:<slug> ↔ kg-microbe
-                # primary correspondence. Cache this so we can later
-                # translate narrowMatch subjects into the kg-microbe
-                # primary when emitting the unified file.
-                if predicate == "skos:exactMatch" and subject_id.startswith("MIM:"):
-                    self.mim_to_primary[subject_id] = object_id
-            else:
-                canonical = object_label
-                # Asymmetric MIM mapping (narrowMatch / broadMatch). Stash
-                # the row so we can pass it through into the unified file.
-                # The runtime loader uses these rows to populate a
-                # parent-of index for kg-microbe-minted CURIEs (e.g.
-                # kgmicrobe.ingredient:vermont_soil narrowMatch ENVO:00001998).
-                self.parent_relations.append({
-                    "subject_id": subject_id,
-                    "subject_label": subject_label,
-                    "predicate_id": predicate,
-                    "object_id": object_id,
-                    "object_label": object_label,
-                    "object_source": row.get("object_source", "").strip(),
-                    "mapping_justification": row.get("mapping_justification", "").strip(),
-                    "source": "mediaingredientmech_reviewed",
-                    "mapping_date": row.get("mapping_date", "").strip(),
-                    "confidence": row.get("confidence", "").strip(),
-                    "comment": "asymmetric MIM mapping (parent relation)",
-                })
-
-            synonyms = [s for s in (subject_label, object_label) if s]
-            if other:
-                synonyms.extend(s.strip() for s in other.split("|") if s.strip())
-
-            xrefs = [subject_id] if subject_id.startswith("MIM:") else []
-
             # Preserve MIM curator provenance: MIM's `source` column carries
-            # pipe-delimited `MIM:curator=<name>` tags identifying which
-            # MIM curation pass authored the row. Extract them as additional
+            # pipe-delimited `MIM:curator=<name>` tags identifying which MIM
+            # curation pass authored the row. Extract them as additional
             # (priority-11) source labels so kg-microbe's emitted SSSOM
             # doesn't flatten the provenance to a single bucket.
             extra_sources: list[str] = []
@@ -1307,27 +1269,77 @@ class ChemicalMappingConsolidator:
                         extra_sources.append(tag)
                         curator_tags_seen.add(tag)
 
-            self.add_chemical(
-                id=object_id,
-                canonical_name=canonical,
-                synonyms=synonyms,
-                xrefs=xrefs,
-                source="mediaingredientmech_reviewed",
-                priority=11,
-            )
-            # MIM is the canonical-naming authority: its subject_label
-            # (for symmetric matches) or object_label (for asymmetric)
-            # MUST win even when a prior priority-11 baseline row already
-            # set a different value. add_chemical's first-seed tiebreaker
-            # can't see "MIM this run is fresher than MIM last run", so we
-            # force the overwrite here after the call returned.
-            if canonical and subject_id.startswith("MIM:"):
-                self.chemicals[object_id]["canonical_name"] = canonical
-            # Emit curator-specific sub-tags alongside the flat label.
-            if extra_sources:
-                self.chemicals[object_id]["sources"].update(extra_sources)
-            if subject_id.startswith("MIM:"):
-                current_mim_subjects[subject_id] = object_id
+            # Symmetric matches (skos:exactMatch / closeMatch): MIM and the
+            # ontology side denote the same entity. Merge MIM's labels and
+            # the MIM xref into the entity record at object_id; MIM's
+            # subject_label wins canonical naming when fresher.
+            if predicate in symmetric:
+                synonyms = [s for s in (subject_label, object_label) if s]
+                if other:
+                    synonyms.extend(s.strip() for s in other.split("|") if s.strip())
+                xrefs = [subject_id] if subject_id.startswith("MIM:") else []
+
+                # MIM exactMatch rows define the MIM:<slug> ↔ kg-microbe
+                # primary correspondence. Cache so narrowMatch subjects can
+                # be translated to the kg-microbe primary at export time.
+                if predicate == "skos:exactMatch" and subject_id.startswith("MIM:"):
+                    self.mim_to_primary[subject_id] = object_id
+
+                self.add_chemical(
+                    id=object_id,
+                    canonical_name=subject_label,
+                    synonyms=synonyms,
+                    xrefs=xrefs,
+                    source="mediaingredientmech_reviewed",
+                    priority=11,
+                )
+                # MIM is the canonical-naming authority — force overwrite
+                # even if a prior priority-11 baseline set a different
+                # value (add_chemical's first-seed tiebreaker can't see
+                # "MIM-this-run is fresher than MIM-last-run").
+                if subject_label:
+                    self.chemicals[object_id]["canonical_name"] = subject_label
+                if extra_sources:
+                    self.chemicals[object_id]["sources"].update(extra_sources)
+                added += 1
+                continue
+
+            # Asymmetric matches (skos:narrowMatch / broadMatch): the MIM
+            # subject is a NARROWER concept than the ontology object; they
+            # are NOT the same entity. Prior implementation also fed the
+            # subject_label / MIM xref into add_chemical(id=object_id, ...),
+            # which polluted the broader parent's lexical record so name
+            # lookup returned the parent (e.g. find_chebi_by_name("Vermont
+            # Soil") → ENVO:00001998 (soil)) and silently downgraded
+            # specificity. Codex adversarial review #558 round 3 caught this:
+            # only 19 of 194 narrowMatch rows resolved back to their
+            # intended child CURIE; 131 collapsed onto the parent.
+            #
+            # Fix: treat asymmetric rows as parent-of relations only. Don't
+            # add the child-side label/xref to the parent's entity record.
+            # The child CURIE registration comes from the separate symmetric
+            # row that MIM emits alongside (e.g. MIM:Vermont_Soil exactMatch
+            # kgmicrobe.ingredient:vermont_soil), processed via the branch
+            # above.
+            self.parent_relations.append({
+                "subject_id": subject_id,
+                "subject_label": subject_label,
+                "predicate_id": predicate,
+                "object_id": object_id,
+                "object_label": object_label,
+                "object_source": row.get("object_source", "").strip(),
+                "mapping_justification": row.get("mapping_justification", "").strip(),
+                "source": "mediaingredientmech_reviewed",
+                "mapping_date": row.get("mapping_date", "").strip(),
+                "confidence": row.get("confidence", "").strip(),
+                "comment": "asymmetric MIM mapping (parent relation)",
+            })
+            # Deliberately NOT updating current_mim_subjects here: for an
+            # asymmetric row, MIM:<subject> is the xref of the CHILD primary
+            # (set by the sibling symmetric row above), NOT of the parent
+            # object_id. Recording MIM:<subject> → parent here would mark the
+            # legitimate MIM xref of the child as "current" against the wrong
+            # entity and cause the stale-xref sweep below to act incorrectly.
             added += 1
 
         # Sweep stale MIM: and MediaIngredientMech: xrefs. Any xref in the
@@ -1536,6 +1548,106 @@ class ChemicalMappingConsolidator:
         print(
             f"  Augmented {records_augmented} records with "
             f"{synonyms_added} synonyms harvested from CHEBI xrefs"
+        )
+
+    def purge_asymmetric_pollution(self):
+        """
+        Remove child labels that earlier consolidator runs leaked onto parents.
+
+        Prior versions of ``load_mediaingredientmech_sssom`` ran asymmetric
+        (skos:narrowMatch / broadMatch) rows through ``add_chemical(id=
+        object_id, ...)``, which made the broader parent absorb the child's
+        ``subject_label`` as one of its own synonyms and the child's MIM xref
+        as one of its own xrefs. Codex adversarial review #558 round 3 caught
+        this: the runtime name lookup then returned the parent CURIE instead
+        of the child, and the new ``get_parents()`` index was unreachable
+        because the lookup never landed on the child key it was indexed by.
+
+        The current loader skips that path for asymmetric rows, but baseline
+        runs from the existing unified file (via ``load_existing_unified``)
+        carry forward the old pollution. This sweep removes it surgically:
+        for each captured parent relation
+        (child=subject_id, parent=object_id), the child's canonical name and
+        synonyms are removed from the parent's synonym set, and the child's
+        MIM xref is removed from the parent's xref set. Both child and parent
+        records keep their own legitimate data; only the spillover is dropped.
+        """
+        if not self.parent_relations:
+            print("\nNo asymmetric MIM relations captured — skipping pollution purge.")
+            return
+        print("\nPurging asymmetric MIM pollution from parent entity records...")
+
+        # Resolve each parent relation to (child_primary, parent_primary,
+        # mim_subject) so the sweep can act on both label-side and xref-side
+        # spillover.
+        cleaned_synonyms = 0
+        cleaned_xrefs = 0
+        records_touched: set[str] = set()
+        for rel in self.parent_relations:
+            mim_subject = rel.get("subject_id", "")
+            parent_id = rel.get("object_id", "")
+            if not parent_id or parent_id not in self.chemicals:
+                continue
+            parent = self.chemicals[parent_id]
+
+            # The child primary is whatever symmetric MIM exactMatch row
+            # registered against the same MIM subject. Without that link we
+            # don't have a child to attribute the spillover to and the sweep
+            # is a no-op for this relation.
+            child_id = self.mim_to_primary.get(mim_subject)
+
+            # Names to purge: the child's subject_label from this MIM row,
+            # plus the child's canonical_name and all its synonyms (the prior
+            # asymmetric loader fed all of those onto the parent).
+            names_to_drop: set[str] = set()
+            row_subject_label = (rel.get("subject_label") or "").strip()
+            if row_subject_label:
+                names_to_drop.add(row_subject_label)
+            if child_id and child_id in self.chemicals:
+                child = self.chemicals[child_id]
+                if child["canonical_name"]:
+                    names_to_drop.add(child["canonical_name"])
+                names_to_drop.update(s for s in child["synonyms"] if s)
+
+            # Don't drop the parent's own canonical_name even if it
+            # accidentally matches one of these.
+            names_to_drop.discard(parent["canonical_name"])
+
+            removed_syns = parent["synonyms"] & names_to_drop
+            if removed_syns:
+                parent["synonyms"] -= removed_syns
+                cleaned_synonyms += len(removed_syns)
+                records_touched.add(parent_id)
+
+            # The child's MIM xref also leaked onto the parent in the old
+            # loader — remove it. The legitimate place for MIM:<slug> is on
+            # the child primary, not on the broader parent.
+            if mim_subject and mim_subject in parent["xrefs"]:
+                parent["xrefs"].discard(mim_subject)
+                cleaned_xrefs += 1
+                records_touched.add(parent_id)
+
+            # The child primary itself ended up cross-xref'd with the parent
+            # primary in some prior runs (each side claiming the other as an
+            # exactMatch xref), which made propagate_synonyms_via_xrefs treat
+            # them as the same entity and re-bridge the child's labels into
+            # the parent's synonym set. Break the symmetric xref so the
+            # narrowMatch parent_relations row stays the single channel.
+            if child_id and child_id in self.chemicals:
+                if child_id in parent["xrefs"]:
+                    parent["xrefs"].discard(child_id)
+                    cleaned_xrefs += 1
+                    records_touched.add(parent_id)
+                child = self.chemicals[child_id]
+                if parent_id in child["xrefs"]:
+                    child["xrefs"].discard(parent_id)
+                    cleaned_xrefs += 1
+                    records_touched.add(child_id)
+
+        print(
+            f"  Purged {cleaned_synonyms} stray child-label synonym(s) and "
+            f"{cleaned_xrefs} stray MIM xref(s) from {len(records_touched)} "
+            "parent record(s)."
         )
 
     def propagate_synonyms_via_xrefs(self):
@@ -1972,7 +2084,7 @@ def main():
     base_dir = Path(__file__).parent.parent
     consolidator = ChemicalMappingConsolidator()
 
-    sssom_output_path = base_dir / "mappings" / "unified_ingredient_mappings.sssom.tsv.gz"
+    sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
     # Seed from the existing unified SSSOM (single source of truth). Each
     # row's sources contribute to the accumulated per-entity source set;
@@ -2047,6 +2159,11 @@ def main():
 
     # Harvest labels for CHEBI xrefs that never got their own primary row.
     consolidator.enrich_with_chebi_xref_labels()
+
+    # Sweep child-label spillover that earlier consolidator runs leaked onto
+    # parent entities via asymmetric MIM rows. Must run BEFORE
+    # propagate_synonyms_via_xrefs so the cleaned data doesn't get re-amplified.
+    consolidator.purge_asymmetric_pollution()
 
     # Propagate names across equivalent-CURIE records via xrefs so losing
     # candidates' labels end up on the primary node as synonyms.

@@ -234,7 +234,16 @@ ENZYME_TO_ASSAY_EDGE = "biolink:related_to_at_instance_level"  # [enzyme -> assa
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-RHEA_TO_EC_EDGE = "biolink:close_match"
+# Rhea reactions → EC enzyme classes. Semantically "this reaction is enabled
+# by this enzyme class" — the historical and downstream-expected predicate is
+# biolink:enabled_by. Note: the kg-model-review domain/range checker flags
+# these edges because biolink:enabled_by has range=physical_entity and EC
+# nodes carry biolink:MolecularActivity in this graph. The mismatch is an
+# artifact of biolink's enabled_by being defined for gene-product → activity
+# (not activity-class → activity-class as Rhea↔EC is); changing the predicate
+# loses the directional reaction-to-enzyme semantics that the Rhea loader and
+# downstream consumers expect, so we accept the validator warning instead.
+RHEA_TO_EC_EDGE = "biolink:enabled_by"
 
 # Assay → Entity predicates (methodological reference edges)
 ASSAY_HAS_OUTPUT_PREDICATE = "biolink:has_output"  # [assay -> GO/EC]

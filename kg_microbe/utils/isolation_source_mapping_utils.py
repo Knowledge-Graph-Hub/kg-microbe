@@ -34,7 +34,7 @@ import csv
 import logging
 import re
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -113,34 +113,6 @@ def _row_is_trusted(row: Dict[str, str]) -> bool:
     if justification == "semapv:ManualMappingCuration":
         return True
     return False
-
-
-def iter_validation_failures(
-    mapping_path: Optional[Path] = None,
-) -> Iterable[Tuple[int, Dict[str, str], str]]:
-    """
-    Yield ``(row_number, row, reason)`` tuples for rows that fail family validation.
-
-    ``row_number`` is 1-based and counts data rows after the header (so the
-    first data row is row 1). Used by the standalone validator script.
-    """
-    path = Path(mapping_path) if mapping_path else DEFAULT_ISOLATION_SOURCE_MAPPING_FILE
-    with path.open("r", newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle, delimiter="\t")
-        for idx, row in enumerate(reader, start=1):
-            if not (row.get("object_id") or "").strip():
-                continue  # explicitly unmapped — not a validation failure
-
-            object_source = (row.get("object_source") or "").strip()
-            if object_source in DISALLOWED_OBJECT_SOURCES:
-                yield idx, row, f"object_source '{object_source}' is disallowed"
-                continue
-
-            object_label = (row.get("object_label") or "").strip().lower()
-            for banned in BANNED_OBJECT_LABEL_SUBSTRINGS:
-                if banned in object_label:
-                    yield idx, row, f"object_label contains banned substring '{banned}'"
-                    break
 
 
 def load_isolation_source_mappings(
@@ -237,7 +209,6 @@ __all__: List[str] = [
     "BANNED_OBJECT_LABEL_SUBSTRINGS",
     "STUB_ONTOLOGY_PREFIXES",
     "STUB_ONTOLOGY_CATEGORY",
-    "iter_validation_failures",
     "load_isolation_source_mappings",
     "normalize_isolation_source_label",
 ]

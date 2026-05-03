@@ -392,9 +392,10 @@ class MadinEtAlTransform(Transform):
                             if go_result_for_tax_id.empty:
                                 # Use fallback naming if no NER results
                                 for item in pathways_not_in_metpo:
+                                    pathway_id = PATHWAY_PREFIX + item.strip()
                                     pathway_nodes.append(
                                         self._create_node_row(
-                                            PATHWAY_PREFIX + item.strip(),
+                                            pathway_id,
                                             PATHWAY_CATEGORY,
                                             item.strip(),
                                         )
@@ -403,10 +404,26 @@ class MadinEtAlTransform(Transform):
                                         [
                                             tax_id,
                                             NCBI_TO_PATHWAY_EDGE,
-                                            PATHWAY_PREFIX + item.strip(),
+                                            pathway_id,
                                             BIOLOGICAL_PROCESS,
                                             self.knowledge_source,  # Use infores:madin_etal
                                             OBSERVATION,
+                                            MANUAL_AGENT,
+                                        ]
+                                    )
+                                    # Type the kg-microbe-minted pathway placeholder under
+                                    # GO:0008152 (metabolic process) so it sits inside
+                                    # the GO biological-process hierarchy. Curated GO
+                                    # matches go through the `else` branch below and
+                                    # already use canonical GO IDs.
+                                    tax_pathway_edge.append(
+                                        [
+                                            pathway_id,
+                                            "biolink:subclass_of",
+                                            "GO:0008152",
+                                            "rdfs:subClassOf",
+                                            self.knowledge_source,
+                                            "knowledge_assertion",
                                             MANUAL_AGENT,
                                         ]
                                     )

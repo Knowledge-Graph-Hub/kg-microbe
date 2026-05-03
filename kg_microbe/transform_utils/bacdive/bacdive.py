@@ -1477,6 +1477,30 @@ class BacDiveTransform(Transform):
                         print(f"Writing {len(self.assay_nodes_generated)} assay nodes...")
                         node_writer.writerows(self.assay_nodes_generated)
 
+                        # Type each kgmicrobe.assay:* node as a subclass of MICRO:0000903
+                        # (microbial-conditions-ontology assay parent class). Pulls the
+                        # 503 stub-prefix assay nodes into the OBO hierarchy via the
+                        # MICRO ontology that ontologies_transform now loads.
+                        id_idx = self.node_header.index(ID_COLUMN)
+                        assay_subclass_edges = [
+                            [
+                                row[id_idx],
+                                "biolink:subclass_of",
+                                "MICRO:0000903",
+                                "rdfs:subClassOf",
+                                self.knowledge_source,
+                                "knowledge_assertion",
+                                "manual_agent",
+                                "",
+                                "",
+                            ]
+                            for row in self.assay_nodes_generated
+                            if row[id_idx]
+                        ]
+                        if assay_subclass_edges:
+                            print(f"Writing {len(assay_subclass_edges)} assay→MICRO subclass_of edges...")
+                            edge_writer.writerows(assay_subclass_edges)
+
                     # Write assay→entity edges
                     if self.assay_edges_generated:
                         print(f"Writing {len(self.assay_edges_generated)} assay→entity edges...")
@@ -2872,6 +2896,23 @@ class BacDiveTransform(Transform):
                                     ISOLATION_SOURCE_CATEGORY,
                                     isol_source,
                                 )
+                            )
+                            # Type the residual placeholder under ENVO:01000254
+                            # (environmental material) so OBO-aware reasoners can navigate
+                            # from any unmapped isolation source back to the canonical
+                            # ENVO hierarchy. Curated mappings (handled in the `if`
+                            # branch above) get their canonical parent from the ontologies
+                            # transform; only the kg-microbe-minted placeholders need this.
+                            edge_writer.writerow(
+                                [
+                                    subject_id,
+                                    "biolink:subclass_of",
+                                    "ENVO:01000254",
+                                    "rdfs:subClassOf",
+                                    self.source_name,
+                                    "knowledge_assertion",
+                                    "manual_agent",
+                                ]
                             )
                         # Write edge from the isolation source to organism
                         knowledge_level, agent_type = self._add_edge_metadata(

@@ -999,6 +999,25 @@ class MediaDiveTransform(Transform):
                         self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()
                     ]
+                    # Each MediaDive solution is a chemical mixture — subclass it under
+                    # CHEBI:60004 (mixture) so OBO-aware reasoners can navigate from any
+                    # solution back to the canonical chemical hierarchy. Edge schema is
+                    # the standard 9-col MediaDive edge_header (subject, predicate, object,
+                    # relation, primary_knowledge_source, knowledge_level, agent_type, value, unit).
+                    solution_subclass_edges = [
+                        [
+                            MEDIADIVE_SOLUTION_PREFIX + str(k),
+                            "biolink:subclass_of",
+                            "CHEBI:60004",
+                            "rdfs:subClassOf",
+                            self.source_name,
+                            "knowledge_assertion",
+                            "manual_agent",
+                            "",
+                            "",
+                        ]
+                        for k in solutions_dict.keys()
+                    ]
 
                     # Get ChEBI role relationships using fast TSV lookup
                     chebi_list = [
@@ -1065,6 +1084,8 @@ class MediaDiveTransform(Transform):
                     node_writer.writerows(nodes_data_to_write)
 
                     edge_writer.writerows(solution_ingredient_edges)
+                    if solution_subclass_edges:
+                        edge_writer.writerows(solution_subclass_edges)
 
                     progress.set_description(f"Processing mediadive: {medium_id}")
                     # After each iteration, call the update method to advance the progress bar.

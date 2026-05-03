@@ -22,13 +22,13 @@ phosphatase	GO:0016791	phosphatase activity		Broad term for enzymes that hydroly
 alanine aminopeptidase	GO:0016285	alanyl aminopeptidase activity	3.4.11.2	Aminopeptidase with preference for alanine (EC 3.4.11.2)
 phenylalanine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, phenylalanine-specific
 histidine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, histidine-specific
-pyrazinamidase (ec3.5.1.b15)	GO:0008936	nicotinamidase activity	3.5.1.19	Pyrazinamidase = nicotinamidase (EC 3.5.1.19); source has malformed EC "B15" (preliminary number)
+pyrazinamidase (ec3.5.1.b15)	GO:0008936	nicotinamidase activity	3.5.1.19	"Pyrazinamidase = nicotinamidase (EC 3.5.1.19); source has malformed EC ""B15"" (preliminary number)"
 adenyl cyclase hemolysin	GO:0004016	adenylate cyclase activity		Bifunctional enzyme with adenylate cyclase activity
 nitrogenase	GO:0016163	nitrogenase activity	1.18.6.1	Nitrogen fixation enzyme
 beta-n-acetylgalactosaminidase	GO:0004563	beta-N-acetylhexosaminidase activity	3.2.1.52	Removes N-acetylgalactosamine from glycoconjugates
-nife-hydrogenase	GO:0033748	hydrogenase (acceptor) activity	1.12.99.6	Nickel-iron hydrogenase; GO:0033748 label is "hydrogenase (acceptor) activity", not "NiFe activity"
+nife-hydrogenase	GO:0033748	hydrogenase (acceptor) activity	1.12.99.6	"Nickel-iron hydrogenase; GO:0033748 label is ""hydrogenase (acceptor) activity"", not ""NiFe activity"""
 pyroglutamic acid arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, pyroglutamate-specific
-alpha-xylosidase	GO:0046558	arabinan endo-1,5-alpha-L-arabinosidase activity	3.2.1.99	Source name "alpha-xylosidase" maps to arabinosidase (EC 3.2.1.99); GO:0031222 was wrong namespace (biological process)
+alpha-xylosidase	GO:0061634	alpha-D-xyloside xylohydrolase activity	3.2.1.99; lit-audit-CRITICAL: was GO:0046558 (an arabinosidase, EC 3.2.1.99 — totally wrong enzyme); GO:0061634 (EC 3.2.1.177) is the actual alpha-xylosidase	"Source name ""alpha-xylosidase"" maps to arabinosidase (EC 3.2.1.99); GO:0031222 was wrong namespace (biological process)"
 n-acetyl-glucosidase	GO:0004563	beta-N-acetylhexosaminidase activity	3.2.1.52	N-acetylglucosaminidase activity
 beta-fucosidase	GO:0033907	beta-D-fucosidase activity	3.2.1.38	Cleaves beta-glycosidic bonds (EC 3.2.1.38); prior mapping used alpha-L-fucosidase (EC 3.2.1.51), wrong stereochemistry
 acc deaminase	GO:0008660	1-aminocyclopropane-1-carboxylate deaminase activity	3.5.99.7	Degrades ACC (ethylene precursor); GO:0019131 was obsolete (tripeptidyl-peptidase I)

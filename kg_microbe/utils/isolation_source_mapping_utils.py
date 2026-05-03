@@ -77,7 +77,6 @@ BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "medical product document",
     "infection zone",
     "breeding waste material",
-    "industrial waste material",
     "dependence on",
 )
 

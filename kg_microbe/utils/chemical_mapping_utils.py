@@ -226,13 +226,39 @@ def _build_indices(mappings_path: Path):
     parent_sets: Dict[str, set] = {}
     hydrate_sets: Dict[str, set] = {}
 
-    def _index_name(curie: str, name: str):
+    # Per-name source ranking. The unified SSSOM is exported sorted by
+    # ``object_id``, so a naive first-row-wins index lets a low-numbered CHEBI
+    # hijack a name via its synonym list before the higher-numbered CHEBI's
+    # canonical row is reached. Example: ``perillyl alcohol`` is a synonym of
+    # ``CHEBI:10782`` and the canonical name of ``CHEBI:15420``; setdefault()
+    # latches the wrong CURIE on first sight. Track rank per normalized name
+    # (0 = canonical, 1 = synonym) and only overwrite when the new row has
+    # strictly better rank. Within the same rank, first-row-wins remains.
+    _NAME_INDEX_RANK: Dict[str, int] = {}
+    _HYDRATE_FREE_NAME_INDEX_RANK: Dict[str, int] = {}
+
+    def _index_name(curie: str, name: str, rank: int = 1):
+        """
+        Index ``name`` against ``curie`` with explicit precedence.
+
+        ``rank=0`` for canonical-name hits (rows where ``comment ==
+        canonical_name`` or the entity's ``object_label``), ``rank=1`` for
+        synonym hits. Lower rank wins on collision; equal rank keeps the
+        first-seen CURIE for determinism.
+        """
         norm = normalize_name(name)
-        if norm:
-            _NAME_INDEX.setdefault(norm, curie)
-            norm_hf = normalize_name(name, strip_hydrate=True)
-            if norm_hf and norm_hf != norm:
-                _HYDRATE_FREE_NAME_INDEX.setdefault(norm_hf, curie)
+        if not norm:
+            return ""
+        existing = _NAME_INDEX_RANK.get(norm, 999)
+        if rank < existing or norm not in _NAME_INDEX:
+            _NAME_INDEX[norm] = curie
+            _NAME_INDEX_RANK[norm] = rank
+        norm_hf = normalize_name(name, strip_hydrate=True)
+        if norm_hf and norm_hf != norm:
+            existing_hf = _HYDRATE_FREE_NAME_INDEX_RANK.get(norm_hf, 999)
+            if rank < existing_hf or norm_hf not in _HYDRATE_FREE_NAME_INDEX:
+                _HYDRATE_FREE_NAME_INDEX[norm_hf] = curie
+                _HYDRATE_FREE_NAME_INDEX_RANK[norm_hf] = rank
         return norm
 
     for row in _iter_sssom_rows(mappings_path):
@@ -253,11 +279,13 @@ def _build_indices(mappings_path: Path):
                 _CATEGORY_INDEX[curie] = category
 
         # Canonical name: first non-empty ``object_label`` per object wins.
+        # Index canonical names at rank=0 so they outrank synonym hits for
+        # the same string (see _index_name docstring).
         if curie not in _PRIMARY_NAME_INDEX:
             obj_label = (row.get("object_label") or "").strip()
             if obj_label:
                 _PRIMARY_NAME_INDEX[curie] = obj_label
-                norm = _index_name(curie, obj_label)
+                norm = _index_name(curie, obj_label, rank=0)
                 if norm:
                     _CANONICAL_NAME_INDEX.setdefault(norm, curie)
 
@@ -294,7 +322,8 @@ def _build_indices(mappings_path: Path):
                 syn = (row.get("subject_label") or "").strip()
                 if syn:
                     primary_synonyms_sets.setdefault(curie, set()).add(syn)
-                    _index_name(curie, syn)
+                    # Synonym rank=1 (lower priority than canonical name).
+                    _index_name(curie, syn, rank=1)
             # canonical_name rows already handled via object_label above.
         elif subject != curie:
             # xref row: ``subject_id`` is an equivalent CURIE.

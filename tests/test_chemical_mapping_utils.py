@@ -881,3 +881,42 @@ class TestKnownBadFilters:
         assert "CHEBI:32599" not in xrefs_31795, (
             "Reverse direction also re-appeared — filter regressed"
         )
+
+
+class TestNamePrecedence:
+
+    """
+    Regression tests for canonical-vs-synonym name index precedence.
+
+    The unified SSSOM is exported sorted by ``object_id``, so a naive
+    first-row-wins index lets a low-numbered CHEBI hijack a name via its
+    synonym list before the higher-numbered CHEBI's canonical row is
+    reached. The fix tracks a per-name rank (0=canonical, 1=synonym) and
+    only overwrites when the new row has strictly better rank.
+    """
+
+    def test_perillyl_alcohol_resolves_to_canonical(self):
+        """
+        ``perillyl alcohol`` resolves to the canonical CHEBI, not a synonym hit.
+
+        ``perillyl alcohol`` is the canonical name of CHEBI:15420 and
+        also appears as a synonym of CHEBI:10782. Because the SSSOM is
+        sorted by object_id, CHEBI:10782 is processed first and would
+        win under setdefault() first-row-wins. The rank-aware indexer
+        must overwrite when CHEBI:15420's canonical row arrives.
+        """
+        chemical_mapping_utils._LOADED = False
+        cid = chemical_mapping_utils.find_chebi_by_name("perillyl alcohol")
+        assert cid == "CHEBI:15420", (
+            f"expected CHEBI:15420 (canonical), got {cid!r} — "
+            "name index precedence regressed: synonym hit hijacked the "
+            "canonical-name lookup. See _index_name(rank=...) in "
+            "kg_microbe/utils/chemical_mapping_utils.py."
+        )
+
+    def test_canonical_name_index_ranks_canonical_above_synonym(self):
+        """``_CANONICAL_NAME_INDEX`` should resolve to the canonical owner."""
+        chemical_mapping_utils._LOADED = False
+        chemical_mapping_utils.load_unified_mappings()
+        canonical = chemical_mapping_utils._CANONICAL_NAME_INDEX.get("perillyl alcohol")
+        assert canonical == "CHEBI:15420"

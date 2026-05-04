@@ -143,8 +143,26 @@ def load_microbial_trait_mappings(
                     if not object_id or not object_source:
                         continue
 
-                    biolink_predicate = _resolve_biolink_predicate(subject_label, notes, entity_category)
-                    object_category = _resolve_object_category(object_source, entity_category)
+                    # Phase-3 canonical-schema files (special_chemical_mappings.tsv,
+                    # enzyme_name_to_go.tsv) carry per-row routing overrides via
+                    # the bespoke ``emit_predicate`` / ``emit_category`` extension
+                    # columns. Honor those when present — they encode the
+                    # curator's intent at the row level (e.g. "electron acceptor:
+                    # sulfur compounds" → METPO:2000008, biolink:ChemicalEntity)
+                    # and would otherwise be silently rewritten to less specific
+                    # generic-loader defaults (biolink:consumes / biolink:NamedThing).
+                    # The generic resolvers run only as a fallback for rows
+                    # without explicit overrides.
+                    emit_predicate = (row.get("emit_predicate") or "").strip()
+                    emit_category = (row.get("emit_category") or "").strip()
+                    biolink_predicate = (
+                        emit_predicate
+                        or _resolve_biolink_predicate(subject_label, notes, entity_category)
+                    )
+                    object_category = (
+                        emit_category
+                        or _resolve_object_category(object_source, entity_category)
+                    )
 
                     result[subject_label] = {
                         "object_id": object_id,

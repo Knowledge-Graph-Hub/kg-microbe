@@ -402,17 +402,25 @@ def extract_curie(value: str) -> str:
 # Category lookup by CURIE prefix. The unified mapping stores the biolink
 # category as a data column so downstream transforms do not need hardcoded
 # prefix-to-category routing.
+#
+# CHEBI / NCIT / mesh chemicals are emitted as ``biolink:ChemicalEntity``
+# (not the deprecated ``biolink:ChemicalSubstance`` from biolink 3.x). The
+# rest of the codebase normalizes chemical nodes to ``biolink:ChemicalEntity``
+# (see ``CHEBI_CATEGORY`` in ``kg_microbe/transform_utils/constants.py``);
+# emitting the deprecated category here would let it leak straight into
+# downstream node category columns and reintroduce the merge-conflict /
+# category-validation risk this branch was trying to eliminate.
 _CATEGORY_BY_PREFIX: Dict[str, str] = {
-    "CHEBI": "biolink:ChemicalSubstance",
+    "CHEBI": "biolink:ChemicalEntity",
     "FOODON": "biolink:Food",
     "UBERON": "biolink:AnatomicalEntity",
     "ENVO": "biolink:EnvironmentalFeature",
-    "NCIT": "biolink:ChemicalSubstance",
+    "NCIT": "biolink:ChemicalEntity",
     "PO": "biolink:AnatomicalEntity",
     # MeSH Supplementary Concept Records — primary id for chemicals/drugs that
     # have no CHEBI accession but are uniquely identified by a mesh:C* code.
     # Used by MediaIngredientMech for many natural-product antibiotics.
-    "mesh": "biolink:ChemicalSubstance",
+    "mesh": "biolink:ChemicalEntity",
     # MICRO (Microbial Conditions Ontology) — primary id for prepared media
     # components (peptone, tryptone, brain heart infusion, etc.) that are
     # mixtures rather than pure substances.

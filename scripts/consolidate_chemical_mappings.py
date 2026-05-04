@@ -1862,11 +1862,51 @@ class ChemicalMappingConsolidator:
         skipped_unknown_prefix = 0
         skipped_malformed = 0
         skipped_empty_slug = 0
+        skipped_known_bad_entity = 0
+        skipped_known_bad_xref = 0
+
+        # Polluted "mega-nodes" — drop the entity entirely from the unified
+        # SSSOM because upstream merged distinct ingredients onto a single
+        # CURIE. The canonical mapping for each ingredient comes from
+        # CultureBotAI / MIM (priority 10/11), which correctly identify
+        # them as distinct entities.
+        KNOWN_BAD_PRIMARY_IDS = frozenset({
+            # MediaDive auto-mapping conflated peptone family + soy peptone +
+            # vitamin-free casamino acids onto a single PubChem stub. These
+            # are different products from different proteins by different
+            # processes; substituting one for the other will change
+            # experimental outcomes (e.g. tryptophan auxotrophs grow on soy
+            # peptone but fail on vitamin-free casamino acids). Filed
+            # upstream against MediaDive; until that lands, drop the node.
+            "pubchem.compound:167312541",
+        })
+
+        # Bad cross-ontology equivalences from upstream ChEBI dbxrefs that
+        # surface as skos:exactMatch xref rows here. Filtered as
+        # (subject_id, object_id) pairs so we drop the wrong direction
+        # only; the real entities stay in the SSSOM with their correct
+        # mappings.
+        KNOWN_BAD_XREF_PAIRS = frozenset({
+            # CHEBI:32599 (anhydrous magnesium sulfate, ``Mg.O4S``) is
+            # cross-referenced to CHEBI:31795 (magnesium sulfate
+            # heptahydrate, ``7H2O.Mg.O4S``) in the ChEBI ontology — they
+            # are different chemical entities with different formulas and
+            # different molecular weights. Dropping the xref here prevents
+            # the false ``skos:exactMatch`` claim. The recipe-equivalent
+            # relationship (if any) belongs in
+            # ``self.hydrate_equivalences`` as ``skos:closeMatch`` with
+            # ``comment=recipe_equivalent_hydrate``, not as exactMatch.
+            ("CHEBI:32599", "CHEBI:31795"),
+            ("CHEBI:31795", "CHEBI:32599"),
+        })
 
         mapping_rows = []
         today = date.today().isoformat()
 
         for curie in sorted(self.chemicals.keys()):
+            if curie in KNOWN_BAD_PRIMARY_IDS:
+                skipped_known_bad_entity += 1
+                continue
             chem = self.chemicals[curie]
             object_id = curie
             object_label = _sanitize_tsv(chem["canonical_name"])
@@ -1909,6 +1949,9 @@ class ChemicalMappingConsolidator:
                     continue
                 if subject_prefix not in exact_prefixes:
                     skipped_unknown_prefix += 1
+                    continue
+                if (xref, object_id) in KNOWN_BAD_XREF_PAIRS:
+                    skipped_known_bad_xref += 1
                     continue
 
                 mapping_rows.append(_row(
@@ -2104,7 +2147,9 @@ class ChemicalMappingConsolidator:
         print(
             f"  Skipped: self={skipped_self}, bibliographic={skipped_biblio}, "
             f"unknown_prefix={skipped_unknown_prefix}, malformed={skipped_malformed}, "
-            f"empty_slug={skipped_empty_slug}"
+            f"empty_slug={skipped_empty_slug}, "
+            f"known_bad_entity={skipped_known_bad_entity}, "
+            f"known_bad_xref={skipped_known_bad_xref}"
         )
 
         # Round-trip validate with the sssom package.

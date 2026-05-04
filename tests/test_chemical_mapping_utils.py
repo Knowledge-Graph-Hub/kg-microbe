@@ -832,3 +832,52 @@ class TestHydrateEquivalents:
             "CHEBI:32586 (hydrated form) leaked into xrefs of CHEBI:32149 "
             "(anhydrous) — must be in get_hydrate_equivalents instead"
         )
+
+
+class TestKnownBadFilters:
+
+    """
+    Regression guards for the consolidator's KNOWN_BAD_* filter lists.
+
+    Two upstream curation bugs surfaced in PR #559 review and were
+    filtered at consolidator export time. These tests assert the bad data
+    stays out of the unified SSSOM. If a future consolidator change
+    accidentally drops the filters, these tests fail loudly.
+    """
+
+    def test_polluted_pubchem_mega_node_dropped(self):
+        """``pubchem.compound:167312541`` (the peptone+casamino-acids merge) is gone."""
+        chemical_mapping_utils._LOADED = False
+        chemical_mapping_utils.load_unified_mappings()
+        # The mega-node should not appear as either a primary id (with a
+        # canonical name index entry) nor as the target of any synonym
+        # row. Lookups for the distinct ingredients should NOT resolve to
+        # this CURIE.
+        assert chemical_mapping_utils.get_canonical_name(
+            "pubchem.compound:167312541"
+        ) is None
+        assert chemical_mapping_utils.find_chebi_by_name("Peptone") != "pubchem.compound:167312541"
+        assert chemical_mapping_utils.find_chebi_by_name(
+            "Vitamin-free casamino acids"
+        ) != "pubchem.compound:167312541"
+
+    def test_wrong_chebi_hydrate_xref_dropped(self):
+        """
+        CHEBI:32599 ↔ CHEBI:31795 false ``skos:exactMatch`` xref is gone.
+
+        CHEBI:32599 is anhydrous magnesium sulfate; CHEBI:31795 is the
+        heptahydrate. Different formulas, different molecular weights —
+        not the same entity. The recipe-equivalent ``closeMatch`` row
+        (with comment=recipe_equivalent_hydrate) is the only relationship
+        between them that the unified SSSOM should carry.
+        """
+        chemical_mapping_utils._LOADED = False
+        xrefs_32599 = set(chemical_mapping_utils.get_xrefs("CHEBI:32599"))
+        xrefs_31795 = set(chemical_mapping_utils.get_xrefs("CHEBI:31795"))
+        assert "CHEBI:31795" not in xrefs_32599, (
+            "CHEBI:31795 (heptahydrate) re-appeared as exactMatch xref of "
+            "CHEBI:32599 (anhydrous) — KNOWN_BAD_XREF_PAIRS filter regressed"
+        )
+        assert "CHEBI:32599" not in xrefs_31795, (
+            "Reverse direction also re-appeared — filter regressed"
+        )

@@ -32,7 +32,13 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
 METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
-METATRAITS_MAPPINGS_DIR = METATRAITS_DIR / "mappings"
+# Canonical curation hub for hand-curated label -> ontology mappings used by
+# metatraits + metatraits_gtdb. Moved from per-transform location
+# (transform_utils/metatraits/mappings/) to repo-root mappings/canonical/ in
+# the phase-4 cleanup so all canonical-schema TSVs share one grep target.
+# Loaders that walk this dir (microbial_trait_mappings, scripts/extract_metpo_proposals)
+# pick the new location up automatically.
+METATRAITS_MAPPINGS_DIR = Path(__file__).parents[2] / "mappings" / "canonical"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 TRANSFORMED_DATA_DIR = Path(__file__).parents[2] / "data" / "transformed"
 RHEAMAPPINGS_DIR: Path = TRANSFORM_UTILS_DIR / RHEAMAPPINGS

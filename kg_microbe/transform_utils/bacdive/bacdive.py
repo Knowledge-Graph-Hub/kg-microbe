@@ -290,6 +290,62 @@ class BacDiveTransform(Transform):
         self.isolation_source_mappings: Dict[str, tuple] = load_isolation_source_mappings()
         self._validate_isolation_source_target_prefixes()
 
+        # Load BacDive phenotype-field → METPO-parent routing.
+        # Each row says: when processing this BacDive value blob, walk the
+        # METPO tree starting from this parent class to resolve the
+        # phenotype value. Previously these were 7 inline calls hardcoded
+        # at the call site; consolidating to a TSV makes the routing
+        # auditable and curatable without code edits.
+        repo_root = Path(__file__).resolve().parents[3]
+        self.phenotype_routing: List[Dict[str, str]] = self._load_phenotype_routing(
+            repo_root / "mappings" / "bacdive_phenotype_routing.tsv"
+        )
+        # Same pattern for the small pathogenicity (risk_assessment subkey)
+        # → METPO host-class table.
+        self.pathogenicity_mappings: Dict[str, tuple] = self._load_pathogenicity_mappings(
+            repo_root / "mappings" / "bacdive_pathogenicity_to_metpo.tsv"
+        )
+
+    @staticmethod
+    def _load_phenotype_routing(path: Path) -> List[Dict[str, str]]:
+        """
+        Load the BacDive phenotype-field → METPO-parent routing table.
+
+        Each row defines a single ``_process_phenotype_by_metpo_parent``
+        invocation. The ``bacdive_json_path`` column is curator-facing
+        documentation and is not consumed by the call.
+        """
+        rows: List[Dict[str, str]] = []
+        if not path.is_file():
+            return rows
+        with path.open("r", newline="", encoding="utf-8") as fh:
+            for row in csv.DictReader(fh, delimiter="\t"):
+                metpo_id = (row.get("metpo_parent_id") or "").strip()
+                field = (row.get("bacdive_field") or "").strip()
+                if metpo_id and field:
+                    rows.append({
+                        "bacdive_field": field,
+                        "metpo_parent_id": metpo_id,
+                        "metpo_parent_label": (row.get("metpo_parent_label") or "").strip(),
+                        "bacdive_json_path": (row.get("bacdive_json_path") or "").strip(),
+                    })
+        return rows
+
+    @staticmethod
+    def _load_pathogenicity_mappings(path: Path) -> Dict[str, tuple]:
+        """Load the pathogenicity-subkey → (METPO id, label) mapping table."""
+        mappings: Dict[str, tuple] = {}
+        if not path.is_file():
+            return mappings
+        with path.open("r", newline="", encoding="utf-8") as fh:
+            for row in csv.DictReader(fh, delimiter="\t"):
+                key = (row.get("bacdive_pathogenicity_field") or "").strip()
+                metpo_id = (row.get("metpo_object_id") or "").strip()
+                label = (row.get("metpo_object_label") or "").strip()
+                if key and metpo_id:
+                    mappings[key] = (metpo_id, label)
+        return mappings
+
     def _validate_isolation_source_target_prefixes(self) -> None:
         """
         Fail fast if a trusted isolation-source mapping has no node source.
@@ -1331,12 +1387,10 @@ class BacDiveTransform(Transform):
         :param node_writer: CSV writer for nodes
         :param edge_writer: CSV writer for edges
         """
-        # Define pathogenicity mappings: JSON key -> (node_id, label)
-        pathogenicity_mappings = {
-            "pathogenicity human": ("METPO:1004004", "human pathogen"),
-            "pathogenicity animal": ("METPO:1004002", "animal pathogen"),
-            "pathogenicity plant": ("METPO:1004003", "plant pathogen"),
-        }
+        # Pathogenicity mappings (BacDive risk_assessment subkey → METPO
+        # host-class CURIE/label) loaded from
+        # ``mappings/bacdive_pathogenicity_to_metpo.tsv`` at __init__.
+        pathogenicity_mappings = self.pathogenicity_mappings
 
         # Get risk assessment data
         safety_info = record.get(SAFETY_INFO, {})
@@ -2681,54 +2735,21 @@ class BacDiveTransform(Transform):
                                     ]
                                 )
 
-                    # Process oxygen tolerance using path-based extraction from METPO tree
-                    # Parent: METPO:1000601 (oxygen preference)
-                    # Path: "Physiology and metabolism.oxygen tolerance.oxygen tolerance"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000601", organism_id, key, node_writer, edge_writer
-                    )
-
-                    # Process spore formation using path-based extraction from METPO tree
-                    # Parent: METPO:1000870 (sporulation)
-                    # Path: "Physiology and metabolism.spore formation.spore formation"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000870", organism_id, key, node_writer, edge_writer
-                    )
-
-                    # Process nutrition type using path-based extraction from METPO tree
-                    # Parent: METPO:1000631 (trophic type)
-                    # Path: "Physiology and metabolism.nutrition type.type"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000631", organism_id, key, node_writer, edge_writer
-                    )
-
-                    # Process cell shape using path-based extraction from METPO tree
-                    # Parent: METPO:1000666 (cell shape)
-                    # Path: "Morphology.cell morphology.cell shape"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000666", organism_id, key, node_writer, edge_writer
-                    )
-
-                    # Process gram stain using path-based extraction from METPO tree
-                    # Parent: METPO:1000697 (gram stain)
-                    # Path: "Morphology.cell morphology.gram stain"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000697", organism_id, key, node_writer, edge_writer
-                    )
-
-                    # Process motility using path-based extraction from METPO tree
-                    # Parent: METPO:1000701 (motility)
-                    # Path: "Morphology.cell morphology.motility"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000701", organism_id, key, node_writer, edge_writer
-                    )
-
-                    # Process halophily preference using path-based extraction from METPO tree
-                    # Parent: METPO:1000629 (halophily preference)
-                    # Paths: "Physiology and metabolism.halophily.halophily level"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1000629", organism_id, key, node_writer, edge_writer
-                    )
+                    # Process each phenotype field using path-based extraction
+                    # from the METPO tree. The (bacdive_field, metpo_parent_id)
+                    # pairs are loaded from
+                    # ``mappings/bacdive_phenotype_routing.tsv`` at __init__
+                    # — edit that TSV (not this loop) to add or change a
+                    # phenotype routing rule.
+                    for routing in self.phenotype_routing:
+                        self._process_phenotype_by_metpo_parent(
+                            value,
+                            routing["metpo_parent_id"],
+                            organism_id,
+                            key,
+                            node_writer,
+                            edge_writer,
+                        )
 
                     if phys_and_metabolism_API:
                         # Process each API key separately (e.g. "API zym", "API coryne", etc.)

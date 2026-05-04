@@ -35,7 +35,9 @@ from kg_microbe.transform_utils.constants import (
     ATTRIBUTE_CATEGORY,
     BACDIVE,
     BACDIVE_API_BASE_URL,
+    BACDIVE_ASSAY_PREDICATE,
     BACDIVE_ENVIRONMENT_CATEGORY,
+    BACDIVE_GROWTH_MEDIUM_CLASS,
     BACDIVE_ID_COLUMN,
     BACDIVE_MAPPING_CAS_RN_ID,
     BACDIVE_MAPPING_CHEBI_ID,
@@ -86,6 +88,7 @@ from kg_microbe.transform_utils.constants import (
     HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
     INFERRED_SUBCLASS_RELATION,
+    INTERACTS_WITH_RELATION,
     IS_GROWN_IN,
     ISOLATION,
     ISOLATION_COLUMN,
@@ -2330,12 +2333,11 @@ class BacDiveTransform(Transform):
                         lpsn,
                     ]
 
-                    # Biosafety level - using METPO mappings
-                    # Parent: METPO:1001101 (biosafety level)
-                    # Path: "Safety information.risk assessment.biosafety level"
-                    self._process_phenotype_by_metpo_parent(
-                        value, "METPO:1001101", organism_id, key, node_writer, edge_writer
-                    )
+                    # Biosafety level routing is now driven by
+                    # mappings/bacdive_phenotype_routing.tsv
+                    # (biosafety_level -> METPO:1001101) — no inline call needed,
+                    # the loop below picks it up alongside the morphology /
+                    # physiology rows.
 
                     # Pathogenicity - extracted from Safety information.risk assessment
                     # Paths:
@@ -2371,7 +2373,7 @@ class BacDiveTransform(Transform):
                             medium_type_edge = [
                                 mid,  # subject: the medium node
                                 SUBCLASS_PREDICATE,  # predicate: instance/subclass of ontology class
-                                "METPO:1004005",  # object: growth medium ontology class
+                                BACDIVE_GROWTH_MEDIUM_CLASS,  # object: growth medium ontology class
                                 "rdf:type",  # relation: RDF semantics
                                 "infores:metpo",  # knowledge source: METPO ontology
                                 KNOWLEDGE_ASSERTION,  # knowledge_level: definitional assertion
@@ -2881,14 +2883,14 @@ class BacDiveTransform(Transform):
                                         for chebi_id in chebi_ids:
                                             # Write edge from organism to ChEBI chemical
                                             knowledge_level, agent_type = self._add_edge_metadata(
-                                                metpo_predicate, "RO:0002434", chebi_id
+                                                metpo_predicate, INTERACTS_WITH_RELATION, chebi_id
                                             )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     chebi_id,
-                                                    "RO:0002434",
+                                                    INTERACTS_WITH_RELATION,
                                                     self.knowledge_source,
                                                     knowledge_level,
                                                     agent_type,
@@ -2908,16 +2910,16 @@ class BacDiveTransform(Transform):
                                         # METPO:1001000 (observation) in their multi-category (see
                                         # ASSAY_CATEGORY in constants.py) so the predicate's existing
                                         # METPO:1001000 range is satisfied without an upstream change.
-                                        assay_predicate = "METPO:2000511"
+                                        assay_predicate = BACDIVE_ASSAY_PREDICATE
                                         knowledge_level, agent_type = self._add_edge_metadata(
-                                            assay_predicate, "RO:0002434", assay_id
+                                            assay_predicate, INTERACTS_WITH_RELATION, assay_id
                                         )
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
                                                 assay_predicate,
                                                 assay_id,
-                                                "RO:0002434",
+                                                INTERACTS_WITH_RELATION,
                                                 self.knowledge_source,
                                                 knowledge_level,
                                                 agent_type,

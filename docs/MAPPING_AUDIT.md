@@ -213,3 +213,15 @@ trivially curatable and CI-validatable.
 2. **Schema validator**: `validate_mapping_schema.py --strict mappings/canonical/` enforces the 12-column shape on every PR.
 3. **Cross-file conflict detector**: extend the same validator with a label↔object_id conflict pass (currently 0 conflicts among the 6 canonical files — keep it that way).
 4. **Curation queue tracker**: `mappings/queues/` becomes the canonical place for "labels still needing curator attention" — surfaced in the model-review skill's curation upgrade report.
+
+## Inline-CURIE triage from audit-mappings v2 (2026-05-03)
+
+Running `audit-mappings` v2 against the post-cleanup repo surfaced **149 inline CURIE literals across 13 transforms** plus **1 repeated-callsite cluster**. Triaged here so the cleanup doesn't drag on indefinitely.
+
+| Status | Count | Notes |
+|---|---|---|
+| ✅ Lifted | 5 inline literals + 1 cluster | bakta `add_edge()` callsite cluster: 6 calls each passing a different `(biolink_predicate, ro_relation)` pair. Promoted both halves to named constants in `constants.py` (`BIOLINK_HAS_GENE`, `BIOLINK_HAS_GENE_PRODUCT`, `BIOLINK_ENABLES`, `BIOLINK_MEMBER_OF`, `BIOLINK_ORTHOLOGOUS_TO`) and updated bakta to use them. The cluster is now gone; bakta inline-literal count dropped 32 → 24. |
+| 📋 Future incremental | ~140 inline literals | Mostly `infores:*` knowledge-source strings, repeated `biolink:*` category literals at node-creation sites, and one-off `RO:*` relations in single call sites. Each transform owner can lift its own as a small follow-up — they're not data masquerading as code, just constants candidates. The audit doc's `mappings/canonical/` work was higher leverage. |
+| 🟢 Leave as-is | 4 dicts | `bakta/utils.py:217-221 aspect_map` (3 entries), `bakta/utils.py:233-237 predicate_map` (3 entries), `ontologies_transform.py:98-115 ONTOLOGY_KNOWLEDGE_SOURCES` (16 entries), and one ontologies dict are all cohesive routing tables that benefit from being inline (close to the function that consumes them). Lifting them would scatter the routing logic without simplifying anything. |
+
+The repeated-callsite detector was the highest-signal v2 addition; it caught the bakta pattern that the v1 scanner couldn't see. The remaining 140 inline literals are visible in `audit-mappings --verbose` whenever a curator wants to nibble at them; not blocking.

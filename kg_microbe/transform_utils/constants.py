@@ -358,6 +358,14 @@ HAS_GENE = "RO:0002551"  # organism has gene
 MEMBER_OF = "RO:0002350"  # member of (for GO integration)
 INVOLVED_IN = "RO:0002331"  # involved in (biological process)
 ORTHOLOGOUS_TO = "RO:HOM0000017"  # orthologous to (homology)
+# Biolink-side predicates paired with the RO relations above. Bakta emits
+# (biolink_predicate, ro_relation) tuples per edge; keeping both names
+# colocated avoids the inline-literal pattern surfaced by audit-mappings v2.
+BIOLINK_HAS_GENE = "biolink:has_gene"
+BIOLINK_HAS_GENE_PRODUCT = "biolink:has_gene_product"
+BIOLINK_ENABLES = "biolink:enables"
+BIOLINK_MEMBER_OF = "biolink:member_of"
+BIOLINK_ORTHOLOGOUS_TO = "biolink:orthologous_to"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
 CLOSE_MATCH_PREDICATE = "biolink:close_match"

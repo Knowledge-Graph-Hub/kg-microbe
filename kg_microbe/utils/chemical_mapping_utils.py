@@ -32,6 +32,14 @@ _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 # list of broader (parent) CURIEs the child is narrower than. Used by
 # transforms to emit ``biolink:subclass_of`` edges.
 _PARENT_INDEX: Optional[Dict[str, list]] = None
+# Recipe-equivalent hydrate pairs imported from rows whose
+# ``predicate_id == 'skos:closeMatch'`` and ``comment ==
+# 'recipe_equivalent_hydrate'``. ``_HYDRATE_EQUIV_INDEX[curie]`` is the
+# sorted list of CHEBI CURIEs that are media-recipe interchangeable
+# with ``curie`` (e.g. CaCl2 ↔ CaCl2·2H2O). Distinct from xrefs, which
+# assert chemical identity. Symmetric: looking up either form returns
+# the other.
+_HYDRATE_EQUIV_INDEX: Optional[Dict[str, list]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
 _CATEGORY_INDEX: Optional[Dict[str, str]] = None
@@ -197,6 +205,7 @@ def _build_indices(mappings_path: Path):
     global _PRIMARY_NAME_INDEX, _PRIMARY_SYNONYMS_INDEX
     global _PRIMARY_XREFS_INDEX, _PRIMARY_FORMULA_INDEX
     global _PARENT_INDEX
+    global _HYDRATE_EQUIV_INDEX
     global _ENTITY_COUNT
 
     _NAME_INDEX = {}
@@ -210,10 +219,12 @@ def _build_indices(mappings_path: Path):
     _PRIMARY_XREFS_INDEX = {}
     _PRIMARY_FORMULA_INDEX = {}
     _PARENT_INDEX = {}
+    _HYDRATE_EQUIV_INDEX = {}
 
     primary_synonyms_sets: Dict[str, set] = {}
     primary_xrefs_sets: Dict[str, set] = {}
     parent_sets: Dict[str, set] = {}
+    hydrate_sets: Dict[str, set] = {}
 
     def _index_name(curie: str, name: str):
         norm = normalize_name(name)
@@ -267,6 +278,15 @@ def _build_indices(mappings_path: Path):
         if predicate == "skos:broadMatch":
             parent_sets.setdefault(curie, set()).add(subject)
             continue
+        # Recipe-equivalent hydrate pairs (anhydrous CHEBI ↔ hydrated
+        # CHEBI). Tagged at consolidator export time with
+        # ``predicate_id == 'skos:closeMatch'`` and
+        # ``comment == 'recipe_equivalent_hydrate'``. Index symmetrically
+        # so a lookup on either form returns the other.
+        if predicate == "skos:closeMatch" and (row.get("comment") or "").strip() == "recipe_equivalent_hydrate":
+            hydrate_sets.setdefault(subject, set()).add(curie)
+            hydrate_sets.setdefault(curie, set()).add(subject)
+            continue
 
         if subject.startswith("kgm.name:"):
             comment = (row.get("comment") or "").strip()
@@ -289,6 +309,8 @@ def _build_indices(mappings_path: Path):
         _PRIMARY_XREFS_INDEX[curie] = sorted(xrefs)
     for curie, parents in parent_sets.items():
         _PARENT_INDEX[curie] = sorted(parents)
+    for curie, equivs in hydrate_sets.items():
+        _HYDRATE_EQUIV_INDEX[curie] = sorted(equivs)
 
     # Count of distinct entities: any object_id that appears in at least
     # one index. Use the union of keys to avoid double-counting.
@@ -497,6 +519,35 @@ def get_parents(curie: str) -> List[str]:
     if _PARENT_INDEX is None:
         return []
     return list(_PARENT_INDEX.get(curie, ()))
+
+
+def get_hydrate_equivalents(curie: str) -> List[str]:
+    """
+    Return CHEBI CURIEs that are media-recipe interchangeable with ``curie``.
+
+    Anhydrous and hydrated forms of a salt (e.g. CaCl2 ↔ CaCl2·2H2O) are
+    DIFFERENT chemical entities -- different formula, different molecular
+    weight -- but routinely substituted for each other in microbial growth
+    media with a concentration adjustment. This accessor returns the
+    other-form CURIE(s) for recipe-comparison purposes only; it must NOT
+    be used to claim chemical identity (use ``get_xrefs`` for that, which
+    asserts ``skos:exactMatch``).
+
+    The relationship is symmetric: looking up either form returns the
+    other. Sourced from rows whose ``predicate_id == 'skos:closeMatch'``
+    and ``comment == 'recipe_equivalent_hydrate'`` in the unified SSSOM,
+    emitted by the consolidator's hydrate logic.
+
+    :param curie: CHEBI CURIE for either the anhydrous or hydrated form
+    :return: sorted list of recipe-equivalent CURIEs (empty if none)
+    """
+    if not curie:
+        return []
+    if not _LOADED:
+        load_unified_mappings()
+    if _HYDRATE_EQUIV_INDEX is None:
+        return []
+    return list(_HYDRATE_EQUIV_INDEX.get(curie, ()))
 
 
 def get_formula(chebi_id: str) -> Optional[str]:

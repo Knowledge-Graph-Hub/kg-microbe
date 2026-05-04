@@ -573,6 +573,18 @@ class ChemicalMappingConsolidator:
         # symmetric (skos:exactMatch) MIM rows so we can rewrite
         # narrowMatch subjects to point at the kg-microbe-side identifier.
         self.mim_to_primary: Dict[str, str] = {}
+        # Recipe-equivalent hydrate pairs: (anhydrous_chebi, hydrated_chebi).
+        # Anhydrous and hydrated forms of a salt are DIFFERENT chemical
+        # entities (different formula, different molecular weight) and must
+        # NOT be linked by skos:exactMatch. They ARE interchangeable for
+        # bench-prep substitutions in microbial growth media (curators
+        # routinely swap CaCl2 ↔ CaCl2·2H2O with a concentration adjust).
+        # Recorded here as ``skos:closeMatch`` candidates and emitted as
+        # closeMatch rows in the unified SSSOM so downstream recipe
+        # comparators (e.g. mediadive recipe-vs-raw checks) can treat the
+        # two forms as equivalent without fabricating a false identity
+        # claim.
+        self.hydrate_equivalences: Set[Tuple[str, str]] = set()
         # Replay compound_mappings_strict to derive the set of CHEBI ids the
         # pre-fix mangler would emit when fed PubChem/CAS-RN values. Used by
         # both baseline loaders to surgically drop polluted rows. Empty when
@@ -774,12 +786,25 @@ class ChemicalMappingConsolidator:
             if base_compound and base_compound != original:
                 synonyms.append(base_compound)
 
-            # Hydrate-specific data
+            # Hydrate-specific data: record the (anhydrous, hydrated) pair
+            # for closeMatch emission at export time. Do NOT push the
+            # hydrated CHEBI into ``xrefs`` — xrefs become skos:exactMatch
+            # rows and anhydrous + hydrated are not the same entity.
+            # Also strip any stale exactMatch xrefs the OLD hydrate loader
+            # emitted into prior unified SSSOMs (the consolidator seeds
+            # from the previous output, so without this cleanup the bad
+            # xref survives across runs).
             xrefs = []
             if "hydrate" in str(filepath):
                 hydrated_chebi = extract_chebi_id(row.get("hydrated_chebi_id", ""))
-                if hydrated_chebi and hydrated_chebi != primary_id:
-                    xrefs.append(hydrated_chebi)
+                if hydrated_chebi and hydrated_chebi != primary_id and primary_id.startswith("CHEBI:"):
+                    self.hydrate_equivalences.add((primary_id, hydrated_chebi))
+                    existing = self.chemicals.get(primary_id)
+                    if existing:
+                        existing["xrefs"].discard(hydrated_chebi)
+                        # Also strip the doubled-CHEBI variant the
+                        # baseline seeding sometimes carries in.
+                        existing["xrefs"].discard(f"CHEBI:{hydrated_chebi}")
 
             self.add_chemical(
                 id=primary_id,
@@ -1983,7 +2008,44 @@ class ChemicalMappingConsolidator:
             })
             parent_rows += 1
 
-        rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows
+        # Recipe-equivalent hydrate pairs. Anhydrous (e.g. CaCl2,
+        # CHEBI:23905) and hydrated (e.g. CaCl2·2H2O, CHEBI:86158) forms
+        # of the same salt are DIFFERENT chemical entities — they have
+        # different formulas and different molecular weights — but
+        # interchangeable for media-prep purposes (curators routinely
+        # swap them with a concentration adjust). Emit each pair as a
+        # ``skos:closeMatch`` so downstream recipe comparators treat them
+        # as equivalent without making the false claim that the molecules
+        # are identical (which an ``exactMatch`` xref would do).
+        # The pair direction is anhydrous → hydrated (closeMatch is
+        # symmetric, so consumers don't need both directions).
+        hydrate_rows = 0
+        for anhydrous, hydrated in sorted(self.hydrate_equivalences):
+            if not _is_valid_curie(anhydrous) or not _is_valid_curie(hydrated):
+                continue
+            # Use the canonical name and category of the hydrated entry
+            # if it's in self.chemicals; fall back to anhydrous's. Object
+            # source is obo:chebi.owl since both ends are CHEBI here.
+            hydrated_chem = self.chemicals.get(hydrated, {})
+            object_label = hydrated_chem.get("canonical_name") or ""
+            mapping_rows.append({
+                "subject_id": anhydrous,
+                "subject_label": self.chemicals.get(anhydrous, {}).get("canonical_name") or "",
+                "predicate_id": "skos:closeMatch",
+                "object_id": hydrated,
+                "object_label": object_label,
+                "object_source": "obo:chebi.owl",
+                "mapping_justification": "semapv:UnspecifiedMatching",
+                "source": "mediadive_compounds_hydrate",
+                "mapping_date": today,
+                "confidence": "",
+                "comment": "recipe_equivalent_hydrate",
+                "object_formula": hydrated_chem.get("formula") or "",
+                "object_category": hydrated_chem.get("category") or "biolink:ChemicalSubstance",
+            })
+            hydrate_rows += 1
+
+        rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows + hydrate_rows
 
         # Build the header.
         header_lines = ["# curie_map:"]
@@ -1993,7 +2055,7 @@ class ChemicalMappingConsolidator:
             '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
             '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"',
             f'# mapping_set_version: "{today}"',
-            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching. Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows."',
+            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching; (4) anhydrous-CHEBI → hydrated-CHEBI as skos:closeMatch with comment=recipe_equivalent_hydrate (NOT chemically identical, but media-recipe interchangeable). Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows, `recipe_equivalent_hydrate` for hydrate pairs."',
             f'# mapping_date: "{today}"',
             f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
             '# extension_definitions:',
@@ -2036,7 +2098,8 @@ class ChemicalMappingConsolidator:
 
         print(
             f"  Emitted {rows_emitted} mappings "
-            f"(xrefs={xref_rows}, names={name_rows}, synonyms={synonym_rows})"
+            f"(xrefs={xref_rows}, names={name_rows}, synonyms={synonym_rows}, "
+            f"parent_relations={parent_rows}, hydrate_pairs={hydrate_rows})"
         )
         print(
             f"  Skipped: self={skipped_self}, bibliographic={skipped_biblio}, "

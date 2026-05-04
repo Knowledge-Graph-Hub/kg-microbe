@@ -774,3 +774,61 @@ class TestNarrowMatchChildResolution:
             f"expected kgmicrobe.compound:actinomycin_a, got {cid!r}"
         )
         assert chemical_mapping_utils.get_parents(cid) == ["CHEBI:15369"]
+
+
+class TestHydrateEquivalents:
+
+    """
+    Regression tests for ``get_hydrate_equivalents``.
+
+    Anhydrous and hydrated forms of a salt are different chemical
+    entities (different formula, different molecular weight) but are
+    media-recipe interchangeable. The consolidator emits
+    ``skos:closeMatch`` rows for known pairs (e.g. CaCl2 ↔ CaCl2·2H2O)
+    with ``comment == 'recipe_equivalent_hydrate'``, and the runtime
+    reader exposes them through ``get_hydrate_equivalents`` for use by
+    recipe comparators.
+
+    The relationship is symmetric: looking up either form returns the
+    other. Distinct from ``get_xrefs`` which asserts chemical identity.
+    """
+
+    def test_lookup_returns_recipe_equivalent_pair(self):
+        """A known anhydrous CHEBI returns its hydrated companion."""
+        chemical_mapping_utils._LOADED = False
+        # CHEBI:32149 (Na2SO4) ↔ CHEBI:32586 (Na2SO4·10H2O) — committed
+        # in the unified mapping via the mediadive_compounds_hydrate path.
+        equivs = chemical_mapping_utils.get_hydrate_equivalents("CHEBI:32149")
+        assert equivs == ["CHEBI:32586"], (
+            f"expected ['CHEBI:32586'], got {equivs!r} "
+            "(consolidator hydrate-pair emission likely regressed)"
+        )
+
+    def test_lookup_is_symmetric(self):
+        """The reverse direction returns the original CURIE — closeMatch is symmetric."""
+        chemical_mapping_utils._LOADED = False
+        equivs = chemical_mapping_utils.get_hydrate_equivalents("CHEBI:32586")
+        assert "CHEBI:32149" in equivs
+
+    def test_unknown_curie_returns_empty(self):
+        """A CURIE with no hydrate pair returns an empty list, not None."""
+        chemical_mapping_utils._LOADED = False
+        # CHEBI:15377 (water) has no hydrate-pair partner.
+        equivs = chemical_mapping_utils.get_hydrate_equivalents("CHEBI:15377")
+        assert equivs == []
+
+    def test_get_xrefs_does_not_contain_hydrate_partner(self):
+        """
+        Hydrate pairs are NOT exactMatch — they must not leak into xrefs.
+
+        Regression guard for the prior behavior where the hydrate loader
+        appended hydrated_chebi to xrefs (incorrectly asserting chemical
+        identity). xref readers should now see only true exactMatch
+        cross-references.
+        """
+        chemical_mapping_utils._LOADED = False
+        xrefs = chemical_mapping_utils.get_xrefs("CHEBI:32149")
+        assert "CHEBI:32586" not in xrefs, (
+            "CHEBI:32586 (hydrated form) leaked into xrefs of CHEBI:32149 "
+            "(anhydrous) — must be in get_hydrate_equivalents instead"
+        )

@@ -549,7 +549,12 @@ class MetaTraitsTransform(Transform):
 
         :return: Dictionary mapping trait_pattern (lowercase) -> {curie, category, name, predicate}
         """
-        mappings_file = Path(__file__).parent / "mappings" / "special_chemical_mappings.tsv"
+        mappings_file = (
+            Path(__file__).resolve().parents[3]
+            / "mappings"
+            / "canonical"
+            / "special_chemical_mappings.tsv"
+        )
         special_mappings = {}
 
         if not mappings_file.exists():
@@ -632,7 +637,12 @@ class MetaTraitsTransform(Transform):
 
         :return: Dictionary mapping enzyme_name (lowercase) -> {go_id, go_label, ec_number, notes}
         """
-        mappings_file = Path(__file__).parent / "mappings" / "enzyme_name_to_go.tsv"
+        mappings_file = (
+            Path(__file__).resolve().parents[3]
+            / "mappings"
+            / "canonical"
+            / "enzyme_name_to_go.tsv"
+        )
         enzyme_mappings = {}
 
         if not mappings_file.exists():

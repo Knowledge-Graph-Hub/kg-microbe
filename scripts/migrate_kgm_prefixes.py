@@ -10,9 +10,9 @@ Rules (by Biolink category in custom_curies.yaml):
 
 Files updated:
   kg_microbe/transform_utils/custom_curies.yaml
-  kg_microbe/transform_utils/metatraits/mappings/special_chemical_mappings.tsv
-  kg_microbe/transform_utils/metatraits/mappings/enzyme_mappings.tsv
-  kg_microbe/transform_utils/metatraits/mappings/phenotype_mappings.tsv
+  mappings/canonical/special_chemical_mappings.tsv
+  mappings/canonical/enzyme_mappings.tsv
+  mappings/canonical/phenotype_mappings.tsv
   kg_microbe/utils/validation_utils.py
   mappings/add_kgm_secondary_metabolites.py
   .claude/skills/kg-model-review/kg_model_review.py
@@ -304,10 +304,10 @@ def main() -> None:
 
     print("\nUpdating TSV mapping files...")
     for tsv_rel in [
-        "kg_microbe/transform_utils/metatraits/mappings/special_chemical_mappings.tsv",
-        "kg_microbe/transform_utils/metatraits/mappings/enzyme_mappings.tsv",
-        "kg_microbe/transform_utils/metatraits/mappings/phenotype_mappings.tsv",
-        "kg_microbe/transform_utils/metatraits/mappings/microbial_trait_mappings.tsv",
+        "mappings/canonical/special_chemical_mappings.tsv",
+        "mappings/canonical/enzyme_mappings.tsv",
+        "mappings/canonical/phenotype_mappings.tsv",
+        "mappings/canonical/microbial_trait_mappings.tsv",
     ]:
         update_file_text(REPO_ROOT / tsv_rel, rename_map, tsv_rel.split("/")[-1])
 

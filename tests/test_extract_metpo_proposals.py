@@ -4,7 +4,7 @@ Regression tests for the METPO proposal extractor.
 The CI gate enforces that committed proposal artifacts equal the extractor's
 fresh output: re-running the script must not produce a diff against
 mappings/metpo_proposal_*.tsv, mappings/metpo_existing_aliases.tsv, or
-mappings/canonical/metpo_alias_mappings.tsv.
+kg_microbe/transform_utils/metatraits/mappings/metpo_alias_mappings.tsv.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPO_ROOT / "scripts" / "extract_metpo_proposals.py"
 COMMITTED_MAPPINGS = REPO_ROOT / "mappings"
-COMMITTED_METATRAITS = REPO_ROOT / "mappings" / "canonical"
+COMMITTED_METATRAITS = REPO_ROOT / "kg_microbe" / "transform_utils" / "metatraits" / "mappings"
 PROPOSAL_FILES = (
     "metpo_proposal_quantitative.tsv",
     "metpo_proposal_categorical.tsv",

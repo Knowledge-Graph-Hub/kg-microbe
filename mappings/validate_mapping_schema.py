@@ -197,37 +197,9 @@ INGREDIENT_PROFILE = Profile(
     keyword_warning="label contains off-ingredient keyword",
 )
 
-CANONICAL_PROFILE = Profile(
-    name="canonical",
-    # Permissive prefix set covering everything emitted by the canonical-
-    # schema mapping files in ``mappings/canonical/`` (chemicals → CHEBI/
-    # FOODON, enzymes → EC/GO, pathways → GO/UPA, METPO aliases → METPO,
-    # phenotypes → METPO/PATO, environment qualities → PATO).
-    allowed_prefixes=frozenset({
-        "CHEBI", "FOODON", "UBERON", "ENVO", "NCIT", "MICRO", "mesh",
-        "BTO", "PO", "FAO", "GENEPIO", "PCO", "PRIDE", "AGRO",
-        "GO", "EC", "RHEA", "UPA", "RO", "BFO",
-        "METPO", "PATO", "HP", "MONDO", "NCBITaxon",
-        "kgmicrobe.compound", "kgmicrobe.activity", "kgmicrobe.trait",
-        "kgmicrobe.pathway", "kgmicrobe.assay",
-        "cas", "pubchem.compound",
-    }),
-    disallowed_prefixes=frozenset({"DOID", "UO"}),
-    mixed_prefixes=frozenset({"NCIT", "mesh"}),
-    non_target_keywords=(
-        "questionnaire", "ability question",
-        "organization", "company", "registry document",
-    ),
-    drift_whitelist_subjects=frozenset(),
-    disallow_reason="not a valid mapping target for the canonical schema",
-    keyword_warning="label contains a non-mapping-target keyword",
-)
-
-
 PROFILES = {
     ISOLATION_SOURCE_PROFILE.name: ISOLATION_SOURCE_PROFILE,
     INGREDIENT_PROFILE.name: INGREDIENT_PROFILE,
-    CANONICAL_PROFILE.name: CANONICAL_PROFILE,
 }
 
 

@@ -18,7 +18,7 @@ Outputs:
                                                        upstream submission
     mappings/metpo_proposal_properties_robot.tsv     - ROBOT template (OWL properties) for
                                                        upstream submission
-    mappings/canonical/metpo_alias_mappings.tsv
+    kg_microbe/transform_utils/metatraits/mappings/metpo_alias_mappings.tsv
         Tier-2 override file consumed by metatraits transform.
 
 Validation:
@@ -86,7 +86,7 @@ TRAIT_MAPPINGS_HEADER = [
     "verified_date",
 ]
 
-METATRAITS_MAPPINGS_DIR = Path("mappings/canonical")
+METATRAITS_MAPPINGS_DIR = Path("kg_microbe/transform_utils/metatraits/mappings")
 
 
 @dataclass
@@ -530,7 +530,7 @@ QUANTITATIVE_TERMS: List[Term] = [
 # --------------------------------------------------------------------------- #
 # CATEGORICAL: parent classes + enumerated children sourced from BacDive
 # (data/raw/bacdive_strains.json) and existing kgmicrobe.trait:* placeholders
-# in mappings/canonical/phenotype_mappings.tsv.
+# in kg_microbe/transform_utils/metatraits/mappings/phenotype_mappings.tsv.
 # --------------------------------------------------------------------------- #
 CATEGORICAL_TERMS: List[Term] = [
     # ----- Flagellar arrangement -----

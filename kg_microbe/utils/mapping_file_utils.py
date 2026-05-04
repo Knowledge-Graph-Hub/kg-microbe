@@ -22,8 +22,10 @@ logger = logging.getLogger(__name__)
 # path remains the correct destination for those).
 LOCAL_METPO_ALIAS_OVERRIDES_PATH = (
     Path(__file__).resolve().parents[2]
+    / "kg_microbe"
+    / "transform_utils"
+    / "metatraits"
     / "mappings"
-    / "canonical"
     / "metpo_alias_mappings.tsv"
 )
 

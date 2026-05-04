@@ -1,7 +1,8 @@
 """
 Unit tests for the local METPO alias override layer.
 
-The ``mappings/canonical/metpo_alias_mappings.tsv`` file is loaded by
+The ``mappings/metpo_alias_mappings.tsv`` file (under
+``kg_microbe/transform_utils/metatraits/mappings/``) is loaded by
 ``_load_metpo_alias_overrides`` and overlaid on top of the remote-fetched
 METPO sheet so curator edits take effect on the next transform run without
 requiring an upstream berkeleybop/metpo release.

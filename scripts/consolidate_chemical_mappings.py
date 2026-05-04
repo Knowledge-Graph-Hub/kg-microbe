@@ -863,7 +863,7 @@ class ChemicalMappingConsolidator:
 
     def load_metatraits_chemical_mappings(self, filepath: Path):
         """
-        Load kg_microbe/transform_utils/metatraits/mappings/chemical_mappings.tsv.
+        Load mappings/canonical/chemical_mappings.tsv.
 
         SSSOM-style table mapping metatraits trait phrases (subject_label,
         e.g. "produces: ethanol") to ontology IDs. The subject_label is added
@@ -898,7 +898,7 @@ class ChemicalMappingConsolidator:
 
     def load_metatraits_special_chemicals(self, filepath: Path):
         """
-        Load kg_microbe/transform_utils/metatraits/mappings/special_chemical_mappings.tsv.
+        Load mappings/canonical/special_chemical_mappings.tsv.
 
         Manually corrected trait-pattern → ontology-ID overrides for high-frequency
         phrasings the NLP/synonym pipeline gets wrong (e.g. "electron acceptor:
@@ -2082,10 +2082,10 @@ def main():
          base_dir / "kg_microbe" / "transform_utils" / "madin_etal" / "chebi_manual_annotation.tsv",
          consolidator.load_manual_annotations),
         ("metatraits_chemical_mappings",
-         base_dir / "kg_microbe" / "transform_utils" / "metatraits" / "mappings" / "chemical_mappings.tsv",
+         base_dir / "mappings" / "canonical" / "chemical_mappings.tsv",
          consolidator.load_metatraits_chemical_mappings),
         ("metatraits_special_chemicals",
-         base_dir / "kg_microbe" / "transform_utils" / "metatraits" / "mappings" / "special_chemical_mappings.tsv",
+         base_dir / "mappings" / "canonical" / "special_chemical_mappings.tsv",
          consolidator.load_metatraits_special_chemicals),
     ]
     for name, path, loader in optional_inputs:

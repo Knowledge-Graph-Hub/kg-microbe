@@ -339,16 +339,6 @@ LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 # qualities ended up as organism locations.
 HAS_QUALITY_RELATION = "RO:0000086"
 HAS_QUALITY_PREDICATE = "biolink:has_attribute"
-# RO:0002434 — generic "interacts with" relation. Used by BacDive's assay
-# emission to link the metpo_predicate edge to the chemical/assay being
-# tested (organism --has_observation--> assay --interacts_with--> chebi).
-INTERACTS_WITH_RELATION = "RO:0002434"
-# METPO:2000511 — "has observation" (organism -> assay). Used by BacDive's
-# API biotype assay emission as the predicate from organism to assay node.
-BACDIVE_ASSAY_PREDICATE = "METPO:2000511"
-# METPO:1004005 — "growth medium" ontology class. Used as the parent class
-# for media references emitted from BacDive growth-medium fields.
-BACDIVE_GROWTH_MEDIUM_CLASS = "METPO:1004005"
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"

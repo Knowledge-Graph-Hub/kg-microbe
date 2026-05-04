@@ -147,13 +147,6 @@ data/raw_last_local/*/*
 !kg_microbe/transform_utils/uniprot/tmp/go_category_trees.tsv
 
 kg_microbe/transform_utils/*/tmp/*/*.yaml
-# Transient build-artifact backups left by some transforms. The
-# specific paths above (data/transformed_last_local, data/transformed_bak,
-# bacdive_mappings.tsv_bak) cover historical occurrences; this glob
-# catches new ones automatically so curators don't accidentally commit
-# stale backup files.
-*.tsv_bak
-*.tsv.bak
 data/transformed/ontologies/*.tsv
 data/merged/*
 **/.DS_Store

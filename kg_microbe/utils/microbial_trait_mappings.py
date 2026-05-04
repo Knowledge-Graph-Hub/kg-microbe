@@ -14,13 +14,22 @@ from kg_microbe.transform_utils.constants import METATRAITS_MAPPINGS_DIR
 # Mappings dir: project_root/mappings/metatraits/
 _MAPPINGS_DIR = METATRAITS_MAPPINGS_DIR
 
-# Object source -> Biolink category
+# Object source -> Biolink category. Keys are the literal values that appear in
+# the canonical TSVs' ``object_source`` column. The kgmicrobe.* keys are the
+# real-world namespace strings used by mappings/canonical/*_mappings.tsv (e.g.
+# ``object_source = kgmicrobe.trait``); ``KGM`` is a legacy alias kept for
+# back-compat with any older mapping that still uses the abbreviation.
 _OBJECT_SOURCE_TO_CATEGORY = {
     "CHEBI": "biolink:ChemicalEntity",  # Use ChemicalEntity for all CHEBI entities
     "EC": "biolink:MolecularActivity",
     "METPO": "biolink:PhenotypicQuality",  # Changed from PhenotypicFeature per Biolink Model
     "GO": "biolink:BiologicalProcess",
     "KGM": "biolink:PhenotypicQuality",  # Custom KG-Microbe terms for phenotypes not in METPO
+    "kgmicrobe.trait": "biolink:PhenotypicQuality",
+    "kgmicrobe.activity": "biolink:MolecularActivity",
+    "kgmicrobe.compound": "biolink:ChemicalEntity",
+    "kgmicrobe.pathway": "biolink:BiologicalProcess",
+    "kgmicrobe.ingredient": "biolink:ChemicalEntity",
 }
 
 # Category override: GO terms in enzyme_mappings.tsv are molecular functions.
@@ -28,8 +37,16 @@ _OBJECT_SOURCE_TO_CATEGORY = {
 # also resolves to MolecularActivity in the enzyme context — see
 # mappings/kgmicrobe_proposal_placeholders.tsv for the registry of these placeholders.
 _ENTITY_CATEGORY_OVERRIDE = {
-    "enzyme": {"GO": "biolink:MolecularActivity", "KGM": "biolink:MolecularActivity"},
-    "enzymes": {"GO": "biolink:MolecularActivity", "KGM": "biolink:MolecularActivity"},
+    "enzyme": {
+        "GO": "biolink:MolecularActivity",
+        "KGM": "biolink:MolecularActivity",
+        "kgmicrobe.activity": "biolink:MolecularActivity",
+    },
+    "enzymes": {
+        "GO": "biolink:MolecularActivity",
+        "KGM": "biolink:MolecularActivity",
+        "kgmicrobe.activity": "biolink:MolecularActivity",
+    },
 }
 
 

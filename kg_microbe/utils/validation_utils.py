@@ -34,6 +34,8 @@ KGMICROBE_CUSTOM_PREFIXES = {
     "kgmicrobe.activity",
     "kgmicrobe.trait",
     "kgmicrobe.compound",
+    "kgmicrobe.pathway",
+    "kgmicrobe.ingredient",
 }
 
 

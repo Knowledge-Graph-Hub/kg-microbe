@@ -1,45 +1,45 @@
-enzyme_name	go_id	go_label	ec_number	notes
-glycyl tryptophan arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, cleaves amino acids from peptides
-alpha-maltosidase	GO:0004558	alpha-1,4-glucosidase activity	3.2.1.20	Maltosidase hydrolyzes alpha-1,4 glucosidic bonds; GO:0004339 is glucan 1,4-alpha-glucosidase (EC 3.2.1.3), a different enzyme
-beta-Galactosidase 6-phosphate	GO:0004565	beta-galactosidase activity	3.2.1.23	Phosphorylated beta-galactosidase variant
-esterase (C 4)	GO:0016788	hydrolase activity, acting on ester bonds		C4 indicates chain length specificity
-esterase Lipase (C 8)	GO:0016788	hydrolase activity, acting on ester bonds		C8 indicates medium chain specificity
-L-arginine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, arginine-specific
-naphthol-AS-BI-phosphohydrolase	GO:0016791	phosphatase activity		Phosphohydrolase = phosphatase, naphthol substrate
-valine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, valine-specific
-lipase (C 14)	GO:0016788	hydrolase activity, acting on ester bonds		C14 indicates long chain specificity (lipase)
-arginine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, arginine-specific
-esterase lipase (C 8)	GO:0016788	hydrolase activity, acting on ester bonds		C8 indicates medium chain specificity
-glutamyl-glutamate arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, glutamyl-glutamate-specific
-esterase	GO:0016788	hydrolase activity, acting on ester bonds		Broad esterase activity without chain length specification
-glycin arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, glycine-specific
-tryptophan deaminase	GO:0009034	tryptophanase activity	4.1.99.1	Lyase cleaving tryptophan to indole, pyruvate, and ammonia; GO:0004838 is L-tyrosine transaminase (unrelated)
-protease	GO:0008233	peptidase activity		Broad term for enzymes that hydrolyze peptide bonds
-beta-galactopyranosidase	GO:0004565	beta-galactosidase activity	3.2.1.23	Synonym for beta-galactosidase (pyranose form)
-beta-xylosidase	GO:0009044	xylan 1,4-beta-xylosidase activity	3.2.1.37	Hydrolyzes beta-1,4-xylosidic linkages in xylans
-tween esterase	GO:0016788	hydrolase activity, acting on ester bonds		Esterase specific for Tween substrates (polysorbates)
-phosphatase	GO:0016791	phosphatase activity		Broad term for enzymes that hydrolyze phosphate ester bonds
-alanine aminopeptidase	GO:0016285	alanyl aminopeptidase activity	3.4.11.2	Aminopeptidase with preference for alanine (EC 3.4.11.2)
-phenylalanine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, phenylalanine-specific
-histidine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, histidine-specific
-pyrazinamidase (ec3.5.1.b15)	GO:0008936	nicotinamidase activity	3.5.1.19	"Pyrazinamidase = nicotinamidase (EC 3.5.1.19); source has malformed EC ""B15"" (preliminary number)"
-adenyl cyclase hemolysin	GO:0004016	adenylate cyclase activity		Bifunctional enzyme with adenylate cyclase activity
-nitrogenase	GO:0016163	nitrogenase activity	1.18.6.1	Nitrogen fixation enzyme
-beta-n-acetylgalactosaminidase	GO:0004563	beta-N-acetylhexosaminidase activity	3.2.1.52	Removes N-acetylgalactosamine from glycoconjugates
-nife-hydrogenase	GO:0033748	hydrogenase (acceptor) activity	1.12.99.6	"Nickel-iron hydrogenase; GO:0033748 label is ""hydrogenase (acceptor) activity"", not ""NiFe activity"""
-pyroglutamic acid arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, pyroglutamate-specific
-alpha-xylosidase	GO:0061634	alpha-D-xyloside xylohydrolase activity	3.2.1.99; lit-audit-CRITICAL: was GO:0046558 (an arabinosidase, EC 3.2.1.99 — totally wrong enzyme); GO:0061634 (EC 3.2.1.177) is the actual alpha-xylosidase	"Source name ""alpha-xylosidase"" maps to arabinosidase (EC 3.2.1.99); GO:0031222 was wrong namespace (biological process)"
-n-acetyl-glucosidase	GO:0004563	beta-N-acetylhexosaminidase activity	3.2.1.52	N-acetylglucosaminidase activity
-beta-fucosidase	GO:0033907	beta-D-fucosidase activity	3.2.1.38	Cleaves beta-glycosidic bonds (EC 3.2.1.38); prior mapping used alpha-L-fucosidase (EC 3.2.1.51), wrong stereochemistry
-acc deaminase	GO:0008660	1-aminocyclopropane-1-carboxylate deaminase activity	3.5.99.7	Degrades ACC (ethylene precursor); GO:0019131 was obsolete (tripeptidyl-peptidase I)
-peptide synthetase	GO:0016874	ligase activity		Peptide bond formation enzyme
-tyrosine arylamidase	GO:0004177	aminopeptidase activity		Arylamidase = aminopeptidase, tyrosine-specific
-alanine phenylalanin proline arylamidase	GO:0004177	aminopeptidase activity		Multi-substrate arylamidase (aminopeptidase)
-lipase (Tween 80)	GO:0016788	hydrolase activity, acting on ester bonds		Lipase tested with Tween 80 substrate (polysorbate)
-phenylalaninase	GO:0004177	aminopeptidase activity		Phenylalanine-specific aminopeptidase
-skimmed milk protease	GO:0008233	peptidase activity		Protease tested with skimmed milk substrate
-beta-alanine arylamidase pNA	GO:0004177	aminopeptidase activity		Beta-alanine specific arylamidase with pNA chromogen
-deaminases	GO:0019239	deaminase activity		Broad term for deamination enzymes
-glutamyl arylamidase pNA	GO:0004177	aminopeptidase activity		Glutamate-specific arylamidase with pNA chromogen
-glu–gly–arg-arylamidase	GO:0004177	aminopeptidase activity		Tripeptide-specific arylamidase
-lactosidase	GO:0004565	beta-galactosidase activity	3.2.1.23	Synonym for beta-galactosidase (lactose-specific)
+subject_label	subject_label_normalized	object_id	object_label	object_source	predicate_id	confidence	mapping_justification	curator	source_dataset	notes	verified_date	ec_number
+glycyl tryptophan arylamidase	glycyl tryptophan arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, cleaves amino acids from peptides	2026-05-03	
+alpha-maltosidase	alpha-maltosidase	GO:0004558	alpha-1,4-glucosidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Maltosidase hydrolyzes alpha-1,4 glucosidic bonds; GO:0004339 is glucan 1,4-alpha-glucosidase (EC 3.2.1.3), a different enzyme	2026-05-03	3.2.1.20
+beta-Galactosidase 6-phosphate	beta-galactosidase 6-phosphate	GO:0004565	beta-galactosidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Phosphorylated beta-galactosidase variant	2026-05-03	3.2.1.23
+esterase (C 4)	esterase (c 4)	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	C4 indicates chain length specificity	2026-05-03	
+esterase Lipase (C 8)	esterase lipase (c 8)	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	C8 indicates medium chain specificity	2026-05-03	
+L-arginine arylamidase	l-arginine arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, arginine-specific	2026-05-03	
+naphthol-AS-BI-phosphohydrolase	naphthol-as-bi-phosphohydrolase	GO:0016791	phosphatase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Phosphohydrolase = phosphatase, naphthol substrate	2026-05-03	
+valine arylamidase	valine arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, valine-specific	2026-05-03	
+lipase (C 14)	lipase (c 14)	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	C14 indicates long chain specificity (lipase)	2026-05-03	
+arginine arylamidase	arginine arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, arginine-specific	2026-05-03	
+esterase lipase (C 8)	esterase lipase (c 8)	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	C8 indicates medium chain specificity	2026-05-03	
+glutamyl-glutamate arylamidase	glutamyl-glutamate arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, glutamyl-glutamate-specific	2026-05-03	
+esterase	esterase	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Broad esterase activity without chain length specification	2026-05-03	
+glycin arylamidase	glycin arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, glycine-specific	2026-05-03	
+tryptophan deaminase	tryptophan deaminase	GO:0009034	tryptophanase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Lyase cleaving tryptophan to indole, pyruvate, and ammonia; GO:0004838 is L-tyrosine transaminase (unrelated)	2026-05-03	4.1.99.1
+protease	protease	GO:0008233	peptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Broad term for enzymes that hydrolyze peptide bonds	2026-05-03	
+beta-galactopyranosidase	beta-galactopyranosidase	GO:0004565	beta-galactosidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Synonym for beta-galactosidase (pyranose form)	2026-05-03	3.2.1.23
+beta-xylosidase	beta-xylosidase	GO:0009044	xylan 1,4-beta-xylosidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Hydrolyzes beta-1,4-xylosidic linkages in xylans	2026-05-03	3.2.1.37
+tween esterase	tween esterase	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Esterase specific for Tween substrates (polysorbates)	2026-05-03	
+phosphatase	phosphatase	GO:0016791	phosphatase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Broad term for enzymes that hydrolyze phosphate ester bonds	2026-05-03	
+alanine aminopeptidase	alanine aminopeptidase	GO:0016285	alanyl aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Aminopeptidase with preference for alanine (EC 3.4.11.2)	2026-05-03	3.4.11.2
+phenylalanine arylamidase	phenylalanine arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, phenylalanine-specific	2026-05-03	
+histidine arylamidase	histidine arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, histidine-specific	2026-05-03	
+pyrazinamidase (ec3.5.1.b15)	pyrazinamidase (ec3.5.1.b15)	GO:0008936	nicotinamidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	"Pyrazinamidase = nicotinamidase (EC 3.5.1.19); source has malformed EC ""B15"" (preliminary number)"	2026-05-03	3.5.1.19
+adenyl cyclase hemolysin	adenyl cyclase hemolysin	GO:0004016	adenylate cyclase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Bifunctional enzyme with adenylate cyclase activity	2026-05-03	
+nitrogenase	nitrogenase	GO:0016163	nitrogenase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Nitrogen fixation enzyme	2026-05-03	1.18.6.1
+beta-n-acetylgalactosaminidase	beta-n-acetylgalactosaminidase	GO:0004563	beta-N-acetylhexosaminidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Removes N-acetylgalactosamine from glycoconjugates	2026-05-03	3.2.1.52
+nife-hydrogenase	nife-hydrogenase	GO:0033748	hydrogenase (acceptor) activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	"Nickel-iron hydrogenase; GO:0033748 label is ""hydrogenase (acceptor) activity"", not ""NiFe activity"""	2026-05-03	1.12.99.6
+pyroglutamic acid arylamidase	pyroglutamic acid arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, pyroglutamate-specific	2026-05-03	
+alpha-xylosidase	alpha-xylosidase	GO:0061634	alpha-D-xyloside xylohydrolase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	"Source name ""alpha-xylosidase"" maps to arabinosidase (EC 3.2.1.99); GO:0031222 was wrong namespace (biological process)"	2026-05-03	3.2.1.99; lit-audit-CRITICAL: was GO:0046558 (an arabinosidase, EC 3.2.1.99 — totally wrong enzyme); GO:0061634 (EC 3.2.1.177) is the actual alpha-xylosidase
+n-acetyl-glucosidase	n-acetyl-glucosidase	GO:0004563	beta-N-acetylhexosaminidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	N-acetylglucosaminidase activity	2026-05-03	3.2.1.52
+beta-fucosidase	beta-fucosidase	GO:0033907	beta-D-fucosidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Cleaves beta-glycosidic bonds (EC 3.2.1.38); prior mapping used alpha-L-fucosidase (EC 3.2.1.51), wrong stereochemistry	2026-05-03	3.2.1.38
+acc deaminase	acc deaminase	GO:0008660	1-aminocyclopropane-1-carboxylate deaminase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Degrades ACC (ethylene precursor); GO:0019131 was obsolete (tripeptidyl-peptidase I)	2026-05-03	3.5.99.7
+peptide synthetase	peptide synthetase	GO:0016874	ligase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Peptide bond formation enzyme	2026-05-03	
+tyrosine arylamidase	tyrosine arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Arylamidase = aminopeptidase, tyrosine-specific	2026-05-03	
+alanine phenylalanin proline arylamidase	alanine phenylalanin proline arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Multi-substrate arylamidase (aminopeptidase)	2026-05-03	
+lipase (Tween 80)	lipase (tween 80)	GO:0016788	hydrolase activity, acting on ester bonds	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Lipase tested with Tween 80 substrate (polysorbate)	2026-05-03	
+phenylalaninase	phenylalaninase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Phenylalanine-specific aminopeptidase	2026-05-03	
+skimmed milk protease	skimmed milk protease	GO:0008233	peptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Protease tested with skimmed milk substrate	2026-05-03	
+beta-alanine arylamidase pNA	beta-alanine arylamidase pna	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Beta-alanine specific arylamidase with pNA chromogen	2026-05-03	
+deaminases	deaminases	GO:0019239	deaminase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Broad term for deamination enzymes	2026-05-03	
+glutamyl arylamidase pNA	glutamyl arylamidase pna	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Glutamate-specific arylamidase with pNA chromogen	2026-05-03	
+glu–gly–arg-arylamidase	glu–gly–arg-arylamidase	GO:0004177	aminopeptidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Tripeptide-specific arylamidase	2026-05-03	
+lactosidase	lactosidase	GO:0004565	beta-galactosidase activity	GO	skos:exactMatch	high	semapv:ManualMappingCuration	metatraits_enzyme_name_to_go	metatraits	Synonym for beta-galactosidase (lactose-specific)	2026-05-03	3.2.1.23

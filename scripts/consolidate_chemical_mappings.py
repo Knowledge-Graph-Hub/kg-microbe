@@ -1552,106 +1552,6 @@ class ChemicalMappingConsolidator:
             f"{synonyms_added} synonyms harvested from CHEBI xrefs"
         )
 
-    def purge_asymmetric_pollution(self):
-        """
-        Remove child labels that earlier consolidator runs leaked onto parents.
-
-        Prior versions of ``load_mediaingredientmech_sssom`` ran asymmetric
-        (skos:narrowMatch / broadMatch) rows through ``add_chemical(id=
-        object_id, ...)``, which made the broader parent absorb the child's
-        ``subject_label`` as one of its own synonyms and the child's MIM xref
-        as one of its own xrefs. Codex adversarial review #558 round 3 caught
-        this: the runtime name lookup then returned the parent CURIE instead
-        of the child, and the new ``get_parents()`` index was unreachable
-        because the lookup never landed on the child key it was indexed by.
-
-        The current loader skips that path for asymmetric rows, but baseline
-        runs from the existing unified file (via ``load_existing_unified``)
-        carry forward the old pollution. This sweep removes it surgically:
-        for each captured parent relation
-        (child=subject_id, parent=object_id), the child's canonical name and
-        synonyms are removed from the parent's synonym set, and the child's
-        MIM xref is removed from the parent's xref set. Both child and parent
-        records keep their own legitimate data; only the spillover is dropped.
-        """
-        if not self.parent_relations:
-            print("\nNo asymmetric MIM relations captured — skipping pollution purge.")
-            return
-        print("\nPurging asymmetric MIM pollution from parent entity records...")
-
-        # Resolve each parent relation to (child_primary, parent_primary,
-        # mim_subject) so the sweep can act on both label-side and xref-side
-        # spillover.
-        cleaned_synonyms = 0
-        cleaned_xrefs = 0
-        records_touched: set[str] = set()
-        for rel in self.parent_relations:
-            mim_subject = rel.get("subject_id", "")
-            parent_id = rel.get("object_id", "")
-            if not parent_id or parent_id not in self.chemicals:
-                continue
-            parent = self.chemicals[parent_id]
-
-            # The child primary is whatever symmetric MIM exactMatch row
-            # registered against the same MIM subject. Without that link we
-            # don't have a child to attribute the spillover to and the sweep
-            # is a no-op for this relation.
-            child_id = self.mim_to_primary.get(mim_subject)
-
-            # Names to purge: the child's subject_label from this MIM row,
-            # plus the child's canonical_name and all its synonyms (the prior
-            # asymmetric loader fed all of those onto the parent).
-            names_to_drop: set[str] = set()
-            row_subject_label = (rel.get("subject_label") or "").strip()
-            if row_subject_label:
-                names_to_drop.add(row_subject_label)
-            if child_id and child_id in self.chemicals:
-                child = self.chemicals[child_id]
-                if child["canonical_name"]:
-                    names_to_drop.add(child["canonical_name"])
-                names_to_drop.update(s for s in child["synonyms"] if s)
-
-            # Don't drop the parent's own canonical_name even if it
-            # accidentally matches one of these.
-            names_to_drop.discard(parent["canonical_name"])
-
-            removed_syns = parent["synonyms"] & names_to_drop
-            if removed_syns:
-                parent["synonyms"] -= removed_syns
-                cleaned_synonyms += len(removed_syns)
-                records_touched.add(parent_id)
-
-            # The child's MIM xref also leaked onto the parent in the old
-            # loader — remove it. The legitimate place for MIM:<slug> is on
-            # the child primary, not on the broader parent.
-            if mim_subject and mim_subject in parent["xrefs"]:
-                parent["xrefs"].discard(mim_subject)
-                cleaned_xrefs += 1
-                records_touched.add(parent_id)
-
-            # The child primary itself ended up cross-xref'd with the parent
-            # primary in some prior runs (each side claiming the other as an
-            # exactMatch xref), which made propagate_synonyms_via_xrefs treat
-            # them as the same entity and re-bridge the child's labels into
-            # the parent's synonym set. Break the symmetric xref so the
-            # narrowMatch parent_relations row stays the single channel.
-            if child_id and child_id in self.chemicals:
-                if child_id in parent["xrefs"]:
-                    parent["xrefs"].discard(child_id)
-                    cleaned_xrefs += 1
-                    records_touched.add(parent_id)
-                child = self.chemicals[child_id]
-                if parent_id in child["xrefs"]:
-                    child["xrefs"].discard(parent_id)
-                    cleaned_xrefs += 1
-                    records_touched.add(child_id)
-
-        print(
-            f"  Purged {cleaned_synonyms} stray child-label synonym(s) and "
-            f"{cleaned_xrefs} stray MIM xref(s) from {len(records_touched)} "
-            "parent record(s)."
-        )
-
     def propagate_synonyms_via_xrefs(self):
         """
         Pull names across equivalent-CURIE records into each primary's synonyms.
@@ -2244,11 +2144,6 @@ def main():
 
     # Harvest labels for CHEBI xrefs that never got their own primary row.
     consolidator.enrich_with_chebi_xref_labels()
-
-    # Sweep child-label spillover that earlier consolidator runs leaked onto
-    # parent entities via asymmetric MIM rows. Must run BEFORE
-    # propagate_synonyms_via_xrefs so the cleaned data doesn't get re-amplified.
-    consolidator.purge_asymmetric_pollution()
 
     # Propagate names across equivalent-CURIE records via xrefs so losing
     # candidates' labels end up on the primary node as synonyms.

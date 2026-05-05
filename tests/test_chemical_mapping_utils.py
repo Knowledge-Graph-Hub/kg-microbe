@@ -752,8 +752,8 @@ class TestNarrowMatchChildResolution:
         cid = chemical_mapping_utils.find_chebi_by_name("Vermont Soil")
         assert cid == "kgmicrobe.ingredient:vermont_soil", (
             f"expected kgmicrobe.ingredient:vermont_soil, got {cid!r} "
-            "(asymmetric-MIM pollution likely re-introduced — see "
-            "scripts/consolidate_chemical_mappings.py purge_asymmetric_pollution)"
+            "(asymmetric-MIM pollution likely re-introduced — upstream MIM "
+            "PRs #2/#3/#4 enforce the invariants that prevent it)"
         )
         assert chemical_mapping_utils.get_parents(cid) == ["ENVO:00001998"]
 

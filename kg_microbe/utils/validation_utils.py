@@ -59,12 +59,37 @@ def load_valid_kgm_terms(custom_curies_path: Optional[Path] = None) -> Set[str]:
         with open(custom_curies_path, encoding="utf-8") as f:
             config = yaml.safe_load(f)
 
-        kgm_terms = set()
+        kgm_terms: Set[str] = set()
+
+        # 1. Top-level kgmicrobe.* sections keyed by slug
+        #    (e.g. config["kgmicrobe.trait"]["voges_proskauer_test_positive"]).
         for prefix in KGMICROBE_CUSTOM_PREFIXES:
-            section = config.get(prefix, {})
-            if section:
+            section = config.get(prefix)
+            if isinstance(section, dict):
                 for term_id in section.keys():
                     kgm_terms.add(f"{prefix}:{term_id}")
+
+        # 2. Any nested entry that names its CURIE explicitly via a ``curie:``
+        #    field. The legacy ``other:`` block uses this shape (entries inherit
+        #    a category/predicate anchor and declare their CURIE inline) so
+        #    pathway terms like ``kgmicrobe.pathway:antibiotic_resistance``
+        #    that don't sit under a top-level ``kgmicrobe.pathway:`` block are
+        #    still picked up here. Without this pass the validator would reject
+        #    the repo's own pathway CURIEs.
+        def _walk(node):
+            if isinstance(node, dict):
+                curie = node.get("curie")
+                if isinstance(curie, str) and ":" in curie:
+                    prefix = curie.split(":", 1)[0]
+                    if prefix in KGMICROBE_CUSTOM_PREFIXES:
+                        kgm_terms.add(curie)
+                for v in node.values():
+                    _walk(v)
+            elif isinstance(node, list):
+                for v in node:
+                    _walk(v)
+
+        _walk(config)
 
         return kgm_terms
     except (OSError, yaml.YAMLError):

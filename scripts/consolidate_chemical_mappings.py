@@ -87,9 +87,21 @@ def _read_sssom_records(filepath: Path) -> dict:
         → entity's canonical name (from ``subject_label``).
       - subject starts with ``kgm.name:`` and ``comment == "synonym"``
         → synonym (added to the entity's synonym set).
-      - subject is any other CURIE → xref (added to the entity's xref set);
+      - subject is any other CURIE AND ``predicate_id`` is empty or
+        ``skos:exactMatch`` → xref (added to the entity's xref set);
         unless subject == object (attribute_carrier row, skipped as a no-op
         equivalence, formula/category still picked up from its columns).
+      - subject is any other CURIE AND ``predicate_id`` is
+        ``skos:closeMatch``, ``skos:narrowMatch``, or ``skos:broadMatch``
+        → **dropped on reload**. These are non-identity mappings (hydrate
+        recipe-equivalence, parent/child) that must not enter the xref set;
+        otherwise ``propagate_synonyms_via_xrefs`` bridges names across
+        non-equivalent entities on the next reseed cycle and re-introduces
+        the asymmetric/parent-child pollution we explicitly emit them to
+        signal *but not merge*. They are re-emitted at export time from
+        their own pipelines (hydrate_equivalences for closeMatch,
+        asymmetric_mappings for narrow/broadMatch); the loader does not
+        need to round-trip them.
 
     Extension columns ``object_formula`` / ``object_category`` ride on every
     row — the first non-empty value wins per ``object_id``.
@@ -152,6 +164,7 @@ def _read_sssom_records(filepath: Path) -> dict:
             comment = (row.get("comment") or "").strip()
             subj_label = (row.get("subject_label") or "").strip()
             obj_label = (row.get("object_label") or "").strip()
+            predicate = (row.get("predicate_id") or "").strip()
 
             if not rec["canonical_name"] and obj_label:
                 rec["canonical_name"] = obj_label
@@ -164,7 +177,20 @@ def _read_sssom_records(filepath: Path) -> dict:
                     rec["synonyms"].add(subj_label)
                 # canonical_name rows: subject_label matches canonical; no-op.
             elif subj and subj != obj:
-                rec["xrefs"].add(subj)
+                # Match-strength gate: only ``skos:exactMatch`` (or empty
+                # predicate from legacy baselines that pre-date the predicate
+                # column) is a real equivalence and round-trips as an xref.
+                # ``skos:closeMatch`` (recipe-equivalent hydrate pairs, free-
+                # text synonyms via kgm.name:) and ``skos:narrowMatch`` /
+                # ``skos:broadMatch`` (asymmetric parent/child mappings) are
+                # NOT identity equivalents — folding them into the xref set
+                # makes ``propagate_synonyms_via_xrefs`` bridge labels across
+                # distinct entities (e.g. anhydrous and hydrated CHEBIs, or
+                # parent and child kgmicrobe.compound terms) on the next
+                # reseed. Drop them; they are re-emitted at export from their
+                # own pipelines (hydrate_equivalences / asymmetric_mappings).
+                if predicate in ("", "skos:exactMatch"):
+                    rec["xrefs"].add(subj)
             # subj == obj is the attribute_carrier case — no xref/synonym.
 
     return records
@@ -552,6 +578,29 @@ def is_chemical_curie(curie: str) -> bool:
     if not curie or ":" not in curie:
         return False
     return curie.split(":", 1)[0] in _CHEMICAL_PREFIXES
+
+
+# Bad cross-ontology equivalences that surface as ``skos:exactMatch`` xrefs in
+# upstream sources (most often ChEBI dbxrefs) but are demonstrably wrong
+# (different formula, different molecular weight, etc.). Filtered as
+# (subject_id, object_id) pairs so we drop the wrong direction only; the real
+# entities stay in the SSSOM with their correct mappings.
+#
+# Module-level (not method-local) so ``purge_known_bad_xrefs`` can run BEFORE
+# ``propagate_synonyms_via_xrefs``: filtering only at export time leaves the
+# bad equivalence in ``self.chemicals[*]["xrefs"]`` during propagation, and
+# the lexical pollution it produces is then re-emitted as synonym rows.
+KNOWN_BAD_XREF_PAIRS: frozenset = frozenset({
+    # CHEBI:32599 (anhydrous magnesium sulfate, ``Mg.O4S``) is cross-referenced
+    # to CHEBI:31795 (magnesium sulfate heptahydrate, ``7H2O.Mg.O4S``) in the
+    # ChEBI ontology — they are different chemical entities with different
+    # formulas and different molecular weights. The recipe-equivalent
+    # relationship (if any) belongs in ``self.hydrate_equivalences`` as
+    # ``skos:closeMatch`` with ``comment=recipe_equivalent_hydrate``, not as
+    # exactMatch.
+    ("CHEBI:32599", "CHEBI:31795"),
+    ("CHEBI:31795", "CHEBI:32599"),
+})
 
 
 class ChemicalMappingConsolidator:
@@ -1588,6 +1637,42 @@ class ChemicalMappingConsolidator:
             f"{synonyms_added} synonyms harvested from CHEBI xrefs"
         )
 
+    def purge_known_bad_xrefs(self):
+        """
+        Drop demonstrably-wrong cross-ontology equivalences before propagation.
+
+        Walks every record and removes any xref where ``(xref, primary_id)``
+        appears in :data:`KNOWN_BAD_XREF_PAIRS`. This MUST run before
+        :meth:`propagate_synonyms_via_xrefs` — leaving a false equivalence
+        in ``self.chemicals[*]["xrefs"]`` during propagation makes the two
+        records share names as if they were identical, and that lexical
+        pollution then leaks into the export as synonym rows on the wrong
+        entity (the export-time filter only catches the bad xref ROWS, not
+        the synonyms it already polluted).
+
+        The export-time filter inside :meth:`export_unified_sssom` is kept
+        as a defense-in-depth belt for any pair injected after this pass.
+        """
+        purged = 0
+        purged_records = 0
+        for primary_id, chem in self.chemicals.items():
+            xrefs = chem.get("xrefs")
+            if not xrefs:
+                continue
+            bad = {
+                x for x in xrefs
+                if (x, primary_id) in KNOWN_BAD_XREF_PAIRS
+            }
+            if bad:
+                chem["xrefs"] = xrefs - bad
+                purged += len(bad)
+                purged_records += 1
+        if purged:
+            print(
+                f"  Purged {purged} known-bad xref(s) across "
+                f"{purged_records} record(s) before propagation"
+            )
+
     def propagate_synonyms_via_xrefs(self):
         """
         Pull names across equivalent-CURIE records into each primary's synonyms.
@@ -1825,24 +1910,11 @@ class ChemicalMappingConsolidator:
             "pubchem.compound:167312541",
         })
 
-        # Bad cross-ontology equivalences from upstream ChEBI dbxrefs that
-        # surface as skos:exactMatch xref rows here. Filtered as
-        # (subject_id, object_id) pairs so we drop the wrong direction
-        # only; the real entities stay in the SSSOM with their correct
-        # mappings.
-        KNOWN_BAD_XREF_PAIRS = frozenset({
-            # CHEBI:32599 (anhydrous magnesium sulfate, ``Mg.O4S``) is
-            # cross-referenced to CHEBI:31795 (magnesium sulfate
-            # heptahydrate, ``7H2O.Mg.O4S``) in the ChEBI ontology — they
-            # are different chemical entities with different formulas and
-            # different molecular weights. Dropping the xref here prevents
-            # the false ``skos:exactMatch`` claim. The recipe-equivalent
-            # relationship (if any) belongs in
-            # ``self.hydrate_equivalences`` as ``skos:closeMatch`` with
-            # ``comment=recipe_equivalent_hydrate``, not as exactMatch.
-            ("CHEBI:32599", "CHEBI:31795"),
-            ("CHEBI:31795", "CHEBI:32599"),
-        })
+        # KNOWN_BAD_XREF_PAIRS is module-level so ``purge_known_bad_xrefs``
+        # can apply it BEFORE ``propagate_synonyms_via_xrefs`` runs in main().
+        # Re-checking it here is a defense-in-depth belt — any xref that
+        # survived earlier purging (e.g. injected by a later loader) is still
+        # caught at export time.
 
         mapping_rows = []
         today = date.today().isoformat()
@@ -2196,6 +2268,13 @@ def main():
 
     # Harvest labels for CHEBI xrefs that never got their own primary row.
     consolidator.enrich_with_chebi_xref_labels()
+
+    # Drop known-bad cross-ontology xref pairs BEFORE propagation. If we
+    # waited until export-time filtering, the bad equivalence would still
+    # be present in chem["xrefs"] when propagate_synonyms_via_xrefs runs
+    # below, and the lexical pollution would already be baked into
+    # synonym sets on the wrong entity.
+    consolidator.purge_known_bad_xrefs()
 
     # Propagate names across equivalent-CURIE records via xrefs so losing
     # candidates' labels end up on the primary node as synonyms.

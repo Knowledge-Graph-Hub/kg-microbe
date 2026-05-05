@@ -1225,11 +1225,15 @@ class ChemicalMappingConsolidator:
 
         symmetric = {"skos:exactMatch", "skos:closeMatch"}
 
-        # Track MIM:* subject → current object_id. After loading, anything
-        # in the baseline that points elsewhere is stale and must be swept
-        # (fixes STALE_IN_KGM + CHEBI_DIVERGED regressions where baseline
-        # seeding carried forward obsolete MIM xrefs).
-        current_mim_subjects: dict[str, str] = {}
+        # Track every MIM:* subject → set of currently-asserted object_ids.
+        # MIM may emit multiple symmetric rows for the same subject
+        # (exactMatch + closeMatch to two different ontologies); the sweep
+        # below keeps an xref iff the chemical's id is in that set.
+        # Stored as instance state so a second sweep pass can run after
+        # load_complex_ingredients re-introduces stale MIM xrefs from the
+        # FOODON/ENVO companion artifact.
+        from collections import defaultdict as _defaultdict
+        current_mim_subjects: dict[str, set[str]] = _defaultdict(set)
 
         added = 0
         skipped_unsupported = 0
@@ -1288,6 +1292,17 @@ class ChemicalMappingConsolidator:
                 if predicate == "skos:exactMatch" and subject_id.startswith("MIM:"):
                     self.mim_to_primary[subject_id] = object_id
 
+                # Record both exactMatch AND closeMatch targets so the
+                # stale-xref sweep below recognises every MIM-asserted
+                # canonical entity. Without this, the sweep would treat
+                # every MIM xref as stale (target lookup → None) and
+                # drop them all, leaving MIM provenance entirely on
+                # baseline-residual records (the bug that left
+                # MIM:Bacto-tryptone pointing at FOODON:03315719 even
+                # after MIM had rolled back to MICRO:0000182).
+                if subject_id.startswith("MIM:"):
+                    current_mim_subjects[subject_id].add(object_id)
+
                 self.add_chemical(
                     id=object_id,
                     canonical_name=subject_label,
@@ -1345,29 +1360,14 @@ class ChemicalMappingConsolidator:
             # entity and cause the stale-xref sweep below to act incorrectly.
             added += 1
 
-        # Sweep stale MIM: and MediaIngredientMech: xrefs. Any xref in the
-        # MIM namespace that isn't in current_mim_subjects is stale (MIM
-        # has merged or dropped the record). Any MediaIngredientMech: xref
-        # is legacy namespace — MIM has migrated to MIM:<slug>.
-        swept_stale = 0
-        swept_diverged = 0
-        swept_legacy = 0
-        for cid, chem in self.chemicals.items():
-            new_xrefs = set()
-            for xref in chem["xrefs"]:
-                if xref.startswith("MediaIngredientMech:"):
-                    swept_legacy += 1
-                    continue
-                if xref.startswith("MIM:"):
-                    target = current_mim_subjects.get(xref)
-                    if target is None:
-                        swept_stale += 1
-                        continue
-                    if target != cid:
-                        swept_diverged += 1
-                        continue
-                new_xrefs.add(xref)
-            chem["xrefs"] = new_xrefs
+        # Persist for the post-complex_ingredients sweep run from main().
+        # Use a plain dict snapshot to avoid the defaultdict's auto-create
+        # surprising the second pass.
+        self._mim_current_subjects = {k: set(v) for k, v in current_mim_subjects.items()}
+
+        swept_stale, swept_diverged, swept_legacy = self._sweep_stale_mim_xrefs(
+            self._mim_current_subjects
+        )
 
         print(
             f"  Loaded {added} MIM SSSOM entries "
@@ -1384,6 +1384,42 @@ class ChemicalMappingConsolidator:
                 f"{swept_diverged} diverged, {swept_legacy} legacy "
                 f"(MediaIngredientMech: namespace)"
             )
+
+    def _sweep_stale_mim_xrefs(
+        self, current_mim_subjects: dict[str, set[str]]
+    ) -> tuple[int, int, int]:
+        """Drop MIM:* xrefs from any chemical the current MIM SSSOM doesn't
+        anchor to that entity. Used both at the end of
+        ``load_mediaingredientmech_sssom`` (cleans baseline residue) and
+        again from ``main()`` after ``load_complex_ingredients`` re-introduces
+        MIM xrefs from the FOODON/ENVO companion artifact.
+
+        Stale MIM:* xrefs are silently dropped:
+          - target set is empty → MIM no longer publishes the subject.
+          - target set non-empty but cid not in it → MIM redirected the
+            subject to a different canonical entity.
+
+        ``MediaIngredientMech:*`` xrefs (legacy namespace) are always purged.
+        Returns (stale, diverged, legacy) counts for log emission.
+        """
+        swept_stale = swept_diverged = swept_legacy = 0
+        for cid, chem in self.chemicals.items():
+            new_xrefs = set()
+            for xref in chem["xrefs"]:
+                if xref.startswith("MediaIngredientMech:"):
+                    swept_legacy += 1
+                    continue
+                if xref.startswith("MIM:"):
+                    targets = current_mim_subjects.get(xref)
+                    if not targets:
+                        swept_stale += 1
+                        continue
+                    if cid not in targets:
+                        swept_diverged += 1
+                        continue
+                new_xrefs.add(xref)
+            chem["xrefs"] = new_xrefs
+        return swept_stale, swept_diverged, swept_legacy
 
     def load_complex_ingredients(self, filepath: Path):
         """
@@ -2138,6 +2174,22 @@ def main():
         consolidator.load_complex_ingredients(complex_path)
     else:
         print("Skipping complex_ingredients.tsv.gz: not present")
+
+    # Re-sweep stale MIM:* xrefs after load_complex_ingredients. The companion
+    # artifact's xref column carries MIM:* CURIEs that may contradict MIM's
+    # current SSSOM (e.g. complex_ingredients.tsv.gz lists FOODON:03315719 with
+    # MIM:Bacto-tryptone as xref, but MIM's current SSSOM redirects
+    # MIM:Bacto-tryptone to MICRO:0000182). The first sweep ran before
+    # load_complex_ingredients and can't see those re-additions.
+    if hasattr(consolidator, "_mim_current_subjects"):
+        s_stale, s_div, s_leg = consolidator._sweep_stale_mim_xrefs(
+            consolidator._mim_current_subjects
+        )
+        if s_stale or s_div or s_leg:
+            print(
+                f"Post-complex_ingredients re-sweep: {s_stale} stale, "
+                f"{s_div} diverged, {s_leg} legacy MIM xrefs purged"
+            )
 
     # Enrich with ChEBI synonyms
     consolidator.enrich_with_chebi_synonyms()

@@ -1,0 +1,9 @@
+bacdive_field	metpo_parent_id	metpo_parent_label	bacdive_json_path	notes
+oxygen_tolerance	METPO:1000601	oxygen preference	Physiology and metabolism.oxygen tolerance.oxygen tolerance
+spore_formation	METPO:1000870	sporulation	Physiology and metabolism.spore formation.spore formation
+nutrition_type	METPO:1000631	trophic type	Physiology and metabolism.nutrition type.type
+cell_shape	METPO:1000666	cell shape	Morphology.cell morphology.cell shape
+gram_stain	METPO:1000697	gram stain	Morphology.cell morphology.gram stain
+motility	METPO:1000701	motility	Morphology.cell morphology.motility
+halophily	METPO:1000629	halophily preference	Physiology and metabolism.halophily.halophily level
+biosafety_level	METPO:1001101	biosafety level	Safety information.risk assessment.biosafety level

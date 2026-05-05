@@ -14,13 +14,22 @@ from kg_microbe.transform_utils.constants import METATRAITS_MAPPINGS_DIR
 # Mappings dir: project_root/mappings/metatraits/
 _MAPPINGS_DIR = METATRAITS_MAPPINGS_DIR
 
-# Object source -> Biolink category
+# Object source -> Biolink category. Keys are the literal values that appear in
+# the canonical TSVs' ``object_source`` column. The kgmicrobe.* keys are the
+# real-world namespace strings used by mappings/canonical/*_mappings.tsv (e.g.
+# ``object_source = kgmicrobe.trait``); ``KGM`` is a legacy alias kept for
+# back-compat with any older mapping that still uses the abbreviation.
 _OBJECT_SOURCE_TO_CATEGORY = {
     "CHEBI": "biolink:ChemicalEntity",  # Use ChemicalEntity for all CHEBI entities
     "EC": "biolink:MolecularActivity",
     "METPO": "biolink:PhenotypicQuality",  # Changed from PhenotypicFeature per Biolink Model
     "GO": "biolink:BiologicalProcess",
     "KGM": "biolink:PhenotypicQuality",  # Custom KG-Microbe terms for phenotypes not in METPO
+    "kgmicrobe.trait": "biolink:PhenotypicQuality",
+    "kgmicrobe.activity": "biolink:MolecularActivity",
+    "kgmicrobe.compound": "biolink:ChemicalEntity",
+    "kgmicrobe.pathway": "biolink:BiologicalProcess",
+    "kgmicrobe.ingredient": "biolink:ChemicalEntity",
 }
 
 # Category override: GO terms in enzyme_mappings.tsv are molecular functions.
@@ -28,8 +37,16 @@ _OBJECT_SOURCE_TO_CATEGORY = {
 # also resolves to MolecularActivity in the enzyme context — see
 # mappings/kgmicrobe_proposal_placeholders.tsv for the registry of these placeholders.
 _ENTITY_CATEGORY_OVERRIDE = {
-    "enzyme": {"GO": "biolink:MolecularActivity", "KGM": "biolink:MolecularActivity"},
-    "enzymes": {"GO": "biolink:MolecularActivity", "KGM": "biolink:MolecularActivity"},
+    "enzyme": {
+        "GO": "biolink:MolecularActivity",
+        "KGM": "biolink:MolecularActivity",
+        "kgmicrobe.activity": "biolink:MolecularActivity",
+    },
+    "enzymes": {
+        "GO": "biolink:MolecularActivity",
+        "KGM": "biolink:MolecularActivity",
+        "kgmicrobe.activity": "biolink:MolecularActivity",
+    },
 }
 
 
@@ -143,8 +160,26 @@ def load_microbial_trait_mappings(
                     if not object_id or not object_source:
                         continue
 
-                    biolink_predicate = _resolve_biolink_predicate(subject_label, notes, entity_category)
-                    object_category = _resolve_object_category(object_source, entity_category)
+                    # Phase-3 canonical-schema files (special_chemical_mappings.tsv,
+                    # enzyme_name_to_go.tsv) carry per-row routing overrides via
+                    # the bespoke ``emit_predicate`` / ``emit_category`` extension
+                    # columns. Honor those when present — they encode the
+                    # curator's intent at the row level (e.g. "electron acceptor:
+                    # sulfur compounds" → METPO:2000008, biolink:ChemicalEntity)
+                    # and would otherwise be silently rewritten to less specific
+                    # generic-loader defaults (biolink:consumes / biolink:NamedThing).
+                    # The generic resolvers run only as a fallback for rows
+                    # without explicit overrides.
+                    emit_predicate = (row.get("emit_predicate") or "").strip()
+                    emit_category = (row.get("emit_category") or "").strip()
+                    biolink_predicate = (
+                        emit_predicate
+                        or _resolve_biolink_predicate(subject_label, notes, entity_category)
+                    )
+                    object_category = (
+                        emit_category
+                        or _resolve_object_category(object_source, entity_category)
+                    )
 
                     result[subject_label] = {
                         "object_id": object_id,

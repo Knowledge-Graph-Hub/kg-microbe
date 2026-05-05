@@ -277,16 +277,68 @@ def load_mediadive_solutions_raw() -> Dict[str, Dict]:
         return json.load(f)
 
 
+def _load_hydrate_equivalents_fn():
+    """Lazy import of ``get_hydrate_equivalents`` from the runtime reader.
+
+    Returns the function (and triggers a one-time mappings load on first
+    call), or ``None`` if kg_microbe is not importable from this Python
+    environment. The skill stays usable even without the runtime reader
+    installed; recipe-vs-raw just falls back to non-hydrate-aware
+    cardinality comparison.
+    """
+    try:
+        # Make the kg_microbe package importable when running the skill
+        # script directly out of .claude/skills/.
+        sys.path.insert(0, str(REPO_ROOT))
+        from kg_microbe.utils.chemical_mapping_utils import get_hydrate_equivalents
+        return get_hydrate_equivalents
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _hydrate_dedupe_count(curies: Set[str], get_hydrate_equivalents) -> int:
+    """Count distinct ingredients, collapsing hydrate-equivalent pairs.
+
+    Two CHEBI CURIEs that the unified SSSOM links via
+    ``skos:closeMatch + comment=recipe_equivalent_hydrate`` count as one
+    logical ingredient (e.g. CaCl2 anhydrous + CaCl2-2H2O resolve to the
+    same recipe slot). Without this collapse, a transform that emits
+    both forms inflates the KG out-degree above the raw recipe size and
+    trips the cross-contamination cardinality check on a legitimate
+    bench-prep substitution.
+    """
+    if get_hydrate_equivalents is None:
+        return len(curies)
+    seen: Set[str] = set()
+    distinct = 0
+    for c in sorted(curies):
+        if c in seen:
+            continue
+        distinct += 1
+        seen.add(c)
+        for eq in get_hydrate_equivalents(c):
+            seen.add(eq)
+    return distinct
+
+
 def archetype_recipe_vs_raw(args: argparse.Namespace) -> Report:
     """
     For every mediadive.solution:N in edges.tsv, compare the KG `has_part`
     object set against the raw recipe in solutions.json[N].
+
+    Hydrate-aware: KG ingredients linked by the unified SSSOM's
+    ``skos:closeMatch + comment=recipe_equivalent_hydrate`` rows
+    (anhydrous <-> hydrated salt pairs) collapse to a single logical
+    slot before the cardinality check, so legitimate bench-prep
+    substitutions don't false-positive as cross-contamination.
 
     Calibrated against the medium-92a cross-contamination bug fixed at
     kg_microbe/transform_utils/mediadive/mediadive.py:943-966.
     """
     report = Report(archetype="recipe-vs-raw (mediadive)")
     sols_raw = load_mediadive_solutions_raw()
+    hydrate_fn = _load_hydrate_equivalents_fn()
+    report.stats["hydrate_aware"] = 1 if hydrate_fn is not None else 0
 
     # Accumulate KG out-edges per solution.
     solution_kg: Dict[str, Set[str]] = defaultdict(set)
@@ -369,10 +421,14 @@ def archetype_recipe_vs_raw(args: argparse.Namespace) -> Report:
             contaminated += 1
 
         # CRITICAL: KG ingredient count vastly exceeds raw recipe size.
-        # (Strict equality is impossible without compound→CHEBI lookup, but a
+        # (Strict equality is impossible without compound->CHEBI lookup, but a
         # KG count >2x the raw count is a strong cross-contamination signal.)
+        # Collapse hydrate-equivalent pairs before counting so legitimate
+        # bench-prep substitutions (e.g. raw recipe specifies CaCl2-2H2O,
+        # KG resolves both anhydrous and hydrated forms to has_part edges)
+        # don't fire the contamination warning.
         raw_total = raw_compound_count + len(raw_sub_solutions)
-        kg_total = len(kg_objects)
+        kg_total = _hydrate_dedupe_count(kg_objects, hydrate_fn)
         if raw_total > 0 and kg_total > 2 * raw_total + 2:
             report.add(
                 Finding(

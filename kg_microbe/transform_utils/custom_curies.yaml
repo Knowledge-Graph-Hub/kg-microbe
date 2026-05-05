@@ -1,10 +1,17 @@
 # Custom CURIE registry consumed by KG-Microbe transforms.
 #
 # kgmicrobe.* sub-prefixes:
-#   kgmicrobe.activity:* — molecular activities not yet in GO/EC/METPO
-#   kgmicrobe.trait:*    — phenotypic qualities not yet in METPO
-#   kgmicrobe.compound:* — chemical entities not yet in CHEBI
-#   kgmicrobe.pathway:*  — biological processes not yet in GO/METPO
+#   kgmicrobe.activity:*   — molecular activities not yet in GO/EC/METPO
+#   kgmicrobe.trait:*      — phenotypic qualities not yet in METPO
+#   kgmicrobe.compound:*   — chemical entities not yet in CHEBI
+#   kgmicrobe.pathway:*    — biological processes not yet in GO/METPO
+#   kgmicrobe.ingredient:* — MediaDive ingredients with no MIM/CHEBI/FOODON/UBERON/ENVO mapping
+#                            (dynamic; minted from the ingredient label, not statically registered)
+#
+# Cross-reference for non-kgmicrobe prefixes that show up in transform output and must be
+# recognized by validators (kg_model_review.py STANDARD_PREFIXES):
+#   MICRO — Microbiology Ontology (https://obofoundry.org/ontology/micro), used by MediaDive
+#           to label growth-medium ingredients (e.g. MICRO:0000082 "Nutrient broth No. 2").
 #
 # Any kgmicrobe.* CURIE that exists as a placeholder for a proposed METPO term
 # (i.e. one that appears in mappings/metpo_proposal_*.tsv and will be swapped to
@@ -373,6 +380,13 @@ other:
     label: "capnophilic"
     description: "Requires elevated CO2 levels for growth"
     category: "biolink:PhenotypicQuality"
+
+
+# Ingredient labels minted on the fly by mediadive/mediaingredientmech when no
+# MIM/CHEBI/FOODON/UBERON/ENVO mapping is available. The block is intentionally
+# empty: entries are generated at transform time (slug of the ingredient label),
+# not curated here. Listed so the prefix is registered for validators.
+"kgmicrobe.ingredient": {}
 
 
 "kgmicrobe.compound":

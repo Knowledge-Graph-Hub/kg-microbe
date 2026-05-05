@@ -24,10 +24,17 @@ from kg_microbe.transform_utils.bakta.utils import (
 from kg_microbe.transform_utils.constants import (
     BAKTA,
     BAKTA_DIR,
+    BIOLINK_ENABLES,
+    BIOLINK_HAS_GENE,
+    BIOLINK_HAS_GENE_PRODUCT,
+    BIOLINK_MEMBER_OF,
+    BIOLINK_ORTHOLOGOUS_TO,
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
+    ENABLES,
     GO_SOURCE,
     HAS_GENE,
+    HAS_GENE_PRODUCT,
     ID_COLUMN,
     MEMBER_OF,
     NAME_COLUMN,
@@ -36,7 +43,9 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
+    RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
+    SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
     XREF_COLUMN,
 )
@@ -256,9 +265,9 @@ class BaktaTransform(Transform):
             # Add strain -> species edge (subclass_of relationship)
             self.add_edge(
                 organism_id,
-                "biolink:subclass_of",
+                SUBCLASS_PREDICATE,
                 ncbitaxon_id,
-                "rdfs:subClassOf",
+                RDFS_SUBCLASS_OF,
             )
 
     def process_gene(self, gene_data: Dict[str, str], samn_id: str, organism_id: Optional[str]) -> None:
@@ -294,7 +303,7 @@ class BaktaTransform(Transform):
         if organism_id:
             self.add_edge(
                 organism_id,
-                "biolink:has_gene",
+                BIOLINK_HAS_GENE,
                 gene_id,
                 HAS_GENE,
             )
@@ -304,9 +313,9 @@ class BaktaTransform(Transform):
             self.add_protein_node(protein_id, product, annotations)
             self.add_edge(
                 gene_id,
-                "biolink:has_gene_product",
+                BIOLINK_HAS_GENE_PRODUCT,
                 protein_id,
-                "RO:0002205",  # has gene product
+                HAS_GENE_PRODUCT,
             )
 
             # Add protein functional annotations
@@ -448,9 +457,9 @@ class BaktaTransform(Transform):
         # Add protein -> EC edge (enables)
         self.add_edge(
             protein_id,
-            "biolink:enables",
+            BIOLINK_ENABLES,
             ec_id,
-            "RO:0002327",  # enables
+            ENABLES,
         )
 
     def add_cog_annotation(self, gene_id: str, cog_id: str) -> None:
@@ -474,7 +483,7 @@ class BaktaTransform(Transform):
         # Add gene -> COG edge (member_of)
         self.add_edge(
             gene_id,
-            "biolink:member_of",
+            BIOLINK_MEMBER_OF,
             cog_id,
             MEMBER_OF,
         )
@@ -500,7 +509,7 @@ class BaktaTransform(Transform):
         # Add gene -> KEGG edge (orthologous_to)
         self.add_edge(
             gene_id,
-            "biolink:orthologous_to",
+            BIOLINK_ORTHOLOGOUS_TO,
             kegg_id,
             ORTHOLOGOUS_TO,
         )

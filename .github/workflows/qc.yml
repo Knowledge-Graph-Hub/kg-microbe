@@ -40,5 +40,24 @@ jobs:
       - name: Linting
         run: poetry run tox -e lint
 
+      - name: Validate canonical mapping schemas
+        # Schema validator gate for mappings/canonical/*.tsv. Catches
+        # malformed CURIEs, prefix/source mismatches, off-domain target
+        # ontologies, and lexical drift. Runs only on Python 3.10 to
+        # avoid duplicating across the matrix (validator is stdlib-only).
+        if: matrix.python-version == '3.10'
+        run: |
+          for f in mappings/canonical/*.tsv; do
+            echo "=== $(basename "$f") ==="
+            poetry run python mappings/validate_mapping_schema.py --profile canonical --path "$f" || exit 1
+          done
+
+      - name: Detect cross-file label collisions in canonical mappings
+        # Fail the build if the same subject_label maps to different object_ids
+        # across the canonical mapping files. Currently 0; this gate keeps it
+        # at 0 by surfacing accidental drift the moment it lands in a PR.
+        if: matrix.python-version == '3.10'
+        run: poetry run python mappings/validate_mapping_schema.py --cross-file-conflicts
+
       - name: Test with pytest and generate coverage file
         run: poetry run tox -e py

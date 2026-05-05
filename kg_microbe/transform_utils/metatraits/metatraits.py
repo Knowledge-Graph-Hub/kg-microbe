@@ -539,14 +539,22 @@ class MetaTraitsTransform(Transform):
 
     def _load_special_chemical_mappings(self) -> Dict[str, dict]:
         """
-        Load special chemical mappings from TSV file for high-frequency unmapped traits.
+        Load special chemical mappings for high-frequency unmapped traits.
 
-        Maps trait patterns like "electron acceptor: sulfur compounds" to parent class
-        ontology terms (e.g., CHEBI:26833) or environmental materials (e.g., ENVO terms).
+        File schema is the canonical 12-column SSSOM-shape header plus two
+        bespoke extension columns (``emit_predicate``, ``emit_category``)
+        that carry the per-row METPO predicate and biolink category for
+        the emitted edge. Maps trait patterns like
+        "electron acceptor: sulfur compounds" to parent ontology terms.
 
         :return: Dictionary mapping trait_pattern (lowercase) -> {curie, category, name, predicate}
         """
-        mappings_file = Path(__file__).parent / "mappings" / "special_chemical_mappings.tsv"
+        mappings_file = (
+            Path(__file__).resolve().parents[3]
+            / "mappings"
+            / "canonical"
+            / "special_chemical_mappings.tsv"
+        )
         special_mappings = {}
 
         if not mappings_file.exists():
@@ -557,12 +565,15 @@ class MetaTraitsTransform(Transform):
             with open(mappings_file, "r", encoding="utf-8") as f:
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
-                    trait_pattern = row["trait_pattern"].strip().lower()
+                    trait_pattern = (
+                        row.get("subject_label_normalized")
+                        or row.get("subject_label", "")
+                    ).strip().lower()
                     special_mappings[trait_pattern] = {
-                        "curie": row["ontology_id"].strip(),
-                        "category": row["category"].strip(),
-                        "name": row["ontology_name"].strip(),
-                        "predicate": row["predicate"].strip(),
+                        "curie": (row.get("object_id") or "").strip(),
+                        "category": (row.get("emit_category") or "").strip(),
+                        "name": (row.get("object_label") or "").strip(),
+                        "predicate": (row.get("emit_predicate") or "").strip(),
                     }
             print(f"  Loaded {len(special_mappings)} special chemical mappings")
         except Exception as e:
@@ -617,14 +628,21 @@ class MetaTraitsTransform(Transform):
 
     def _load_enzyme_name_to_go(self) -> Dict[str, dict]:
         """
-        Load enzyme name to GO term mappings for enzymes without EC numbers.
+        Load enzyme name → GO term mappings for enzymes without EC numbers.
 
-        Maps enzyme names (e.g., "glycyl tryptophan arylamidase") to GO molecular
-        function terms for enzymes that don't have EC numbers in MetaTraits data.
+        File schema is the canonical 12-column SSSOM-shape header plus an
+        ``ec_number`` extension column. Maps enzyme names like
+        "glycyl tryptophan arylamidase" to GO molecular function terms
+        used for enzymes that lack EC numbers in MetaTraits data.
 
         :return: Dictionary mapping enzyme_name (lowercase) -> {go_id, go_label, ec_number, notes}
         """
-        mappings_file = Path(__file__).parent / "mappings" / "enzyme_name_to_go.tsv"
+        mappings_file = (
+            Path(__file__).resolve().parents[3]
+            / "mappings"
+            / "canonical"
+            / "enzyme_name_to_go.tsv"
+        )
         enzyme_mappings = {}
 
         if not mappings_file.exists():
@@ -635,12 +653,15 @@ class MetaTraitsTransform(Transform):
             with open(mappings_file, "r", encoding="utf-8") as f:
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
-                    enzyme_name = row["enzyme_name"].strip().lower()
+                    enzyme_name = (
+                        row.get("subject_label_normalized")
+                        or row.get("subject_label", "")
+                    ).strip().lower()
                     enzyme_mappings[enzyme_name] = {
-                        "go_id": row["go_id"].strip(),
-                        "go_label": row["go_label"].strip(),
-                        "ec_number": row.get("ec_number", "").strip(),
-                        "notes": row.get("notes", "").strip(),
+                        "go_id": (row.get("object_id") or "").strip(),
+                        "go_label": (row.get("object_label") or "").strip(),
+                        "ec_number": (row.get("ec_number") or "").strip(),
+                        "notes": (row.get("notes") or "").strip(),
                     }
             print(f"  Loaded {len(enzyme_mappings)} enzyme name to GO mappings")
         except Exception as e:

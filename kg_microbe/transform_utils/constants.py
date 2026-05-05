@@ -32,7 +32,13 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
 METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
-METATRAITS_MAPPINGS_DIR = METATRAITS_DIR / "mappings"
+# Canonical curation hub for hand-curated label -> ontology mappings used by
+# metatraits + metatraits_gtdb. Moved from per-transform location
+# (transform_utils/metatraits/mappings/) to repo-root mappings/canonical/ in
+# the phase-4 cleanup so all canonical-schema TSVs share one grep target.
+# Loaders that walk this dir (microbial_trait_mappings, scripts/extract_metpo_proposals)
+# pick the new location up automatically.
+METATRAITS_MAPPINGS_DIR = Path(__file__).parents[2] / "mappings" / "canonical"
 RAW_DATA_DIR = Path(__file__).parents[2] / "data" / "raw"
 TRANSFORMED_DATA_DIR = Path(__file__).parents[2] / "data" / "transformed"
 RHEAMAPPINGS_DIR: Path = TRANSFORM_UTILS_DIR / RHEAMAPPINGS
@@ -339,6 +345,16 @@ LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 # qualities ended up as organism locations.
 HAS_QUALITY_RELATION = "RO:0000086"
 HAS_QUALITY_PREDICATE = "biolink:has_attribute"
+# RO:0002434 — generic "interacts with" relation. Used by BacDive's assay
+# emission to link the metpo_predicate edge to the chemical/assay being
+# tested (organism --has_observation--> assay --interacts_with--> chebi).
+INTERACTS_WITH_RELATION = "RO:0002434"
+# METPO:2000511 — "has observation" (organism -> assay). Used by BacDive's
+# API biotype assay emission as the predicate from organism to assay node.
+BACDIVE_ASSAY_PREDICATE = "METPO:2000511"
+# METPO:1004005 — "growth medium" ontology class. Used as the parent class
+# for media references emitted from BacDive growth-medium fields.
+BACDIVE_GROWTH_MEDIUM_CLASS = "METPO:1004005"
 BIOLOGICAL_PROCESS = "RO:0002215"  # [org -> biological_process -> metabolism]
 HAS_ROLE = "RO:0000087"
 HAS_PARTICIPANT = "RO:0000057"
@@ -348,6 +364,14 @@ HAS_GENE = "RO:0002551"  # organism has gene
 MEMBER_OF = "RO:0002350"  # member of (for GO integration)
 INVOLVED_IN = "RO:0002331"  # involved in (biological process)
 ORTHOLOGOUS_TO = "RO:HOM0000017"  # orthologous to (homology)
+# Biolink-side predicates paired with the RO relations above. Bakta emits
+# (biolink_predicate, ro_relation) tuples per edge; keeping both names
+# colocated avoids the inline-literal pattern surfaced by audit-mappings v2.
+BIOLINK_HAS_GENE = "biolink:has_gene"
+BIOLINK_HAS_GENE_PRODUCT = "biolink:has_gene_product"
+BIOLINK_ENABLES = "biolink:enables"
+BIOLINK_MEMBER_OF = "biolink:member_of"
+BIOLINK_ORTHOLOGOUS_TO = "biolink:orthologous_to"
 ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
 CLOSE_MATCH_PREDICATE = "biolink:close_match"

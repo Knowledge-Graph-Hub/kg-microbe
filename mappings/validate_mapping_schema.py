@@ -197,9 +197,37 @@ INGREDIENT_PROFILE = Profile(
     keyword_warning="label contains off-ingredient keyword",
 )
 
+CANONICAL_PROFILE = Profile(
+    name="canonical",
+    # Permissive prefix set covering everything emitted by the canonical-
+    # schema mapping files in ``mappings/canonical/`` (chemicals → CHEBI/
+    # FOODON, enzymes → EC/GO, pathways → GO/UPA, METPO aliases → METPO,
+    # phenotypes → METPO/PATO, environment qualities → PATO).
+    allowed_prefixes=frozenset({
+        "CHEBI", "FOODON", "UBERON", "ENVO", "NCIT", "MICRO", "mesh",
+        "BTO", "PO", "FAO", "GENEPIO", "PCO", "PRIDE", "AGRO",
+        "GO", "EC", "RHEA", "UPA", "RO", "BFO",
+        "METPO", "PATO", "HP", "MONDO", "NCBITaxon",
+        "kgmicrobe.compound", "kgmicrobe.activity", "kgmicrobe.trait",
+        "kgmicrobe.pathway", "kgmicrobe.assay",
+        "cas", "pubchem.compound",
+    }),
+    disallowed_prefixes=frozenset({"DOID", "UO"}),
+    mixed_prefixes=frozenset({"NCIT", "mesh"}),
+    non_target_keywords=(
+        "questionnaire", "ability question",
+        "organization", "company", "registry document",
+    ),
+    drift_whitelist_subjects=frozenset(),
+    disallow_reason="not a valid mapping target for the canonical schema",
+    keyword_warning="label contains a non-mapping-target keyword",
+)
+
+
 PROFILES = {
     ISOLATION_SOURCE_PROFILE.name: ISOLATION_SOURCE_PROFILE,
     INGREDIENT_PROFILE.name: INGREDIENT_PROFILE,
+    CANONICAL_PROFILE.name: CANONICAL_PROFILE,
 }
 
 
@@ -373,6 +401,53 @@ def validate(path: Path, profile: Profile, strict: bool = False) -> int:
     return 0
 
 
+def detect_cross_file_conflicts(paths: list[Path]) -> int:
+    """
+    Across the given canonical-schema files, flag any ``subject_label``
+    (case-insensitive) that maps to more than one distinct ``object_id``.
+
+    Returns 2 if any conflict is found (treated as error), else 0. Reports
+    both the conflicting label and every (file, object_id) pair contributing
+    to the conflict so a curator can resolve it deterministically.
+
+    The 6 currently-canonical files have produced 0 conflicts since the
+    schema was unified (verified 2026-05-03); this gate keeps it that way.
+    """
+    label_to_targets: Dict[str, set] = {}
+    for p in paths:
+        if not p.is_file():
+            print(f"  skip (missing): {p}", file=sys.stderr)
+            continue
+        try:
+            reader = csv.DictReader(_open_data_rows(p), delimiter="\t")
+            for row in reader:
+                label = (row.get("subject_label") or "").strip().lower()
+                obj = (row.get("object_id") or "").strip()
+                if not label or not obj:
+                    continue
+                label_to_targets.setdefault(label, set()).add((p.name, obj))
+        except Exception as e:  # noqa: BLE001
+            print(f"  warn: {p}: {e}", file=sys.stderr)
+
+    conflicts = {
+        label: targets
+        for label, targets in label_to_targets.items()
+        if len({obj for _, obj in targets}) > 1
+    }
+
+    print(f"cross-file conflict scan: {len(label_to_targets)} distinct labels across {len(paths)} files")
+    if not conflicts:
+        print("  ✓ no conflicts")
+        return 0
+
+    print(f"  ✗ {len(conflicts)} conflict(s):", file=sys.stderr)
+    for label, targets in sorted(conflicts.items()):
+        print(f"    {label!r}", file=sys.stderr)
+        for fname, obj in sorted(targets):
+            print(f"      - {fname}: {obj}", file=sys.stderr)
+    return 2
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--path", type=Path, default=None,
@@ -382,7 +457,23 @@ def main() -> int:
                     help="validation profile (default: isolation-source)")
     ap.add_argument("--strict", action="store_true",
                     help="exit 1 on warnings (default: warnings non-blocking)")
+    ap.add_argument("--cross-file-conflicts", action="store_true",
+                    help=("detect subject_label collisions across the canonical "
+                          "mapping files (defaults to mappings/canonical/*.tsv)"))
+    ap.add_argument("--canonical-dir", type=Path, default=None,
+                    help="canonical mapping dir (default: mappings/canonical)")
     args = ap.parse_args()
+
+    if args.cross_file_conflicts:
+        canonical_dir = args.canonical_dir or (
+            Path(__file__).resolve().parent / "canonical"
+        )
+        paths = sorted(canonical_dir.glob("*.tsv"))
+        if not paths:
+            print(f"no .tsv files under {canonical_dir}", file=sys.stderr)
+            return 1
+        return detect_cross_file_conflicts(paths)
+
     profile = PROFILES[args.profile]
     path = args.path or (
         DEFAULT_INGREDIENT_PATH if profile.name == "ingredient"

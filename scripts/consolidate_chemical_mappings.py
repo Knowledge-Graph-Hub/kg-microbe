@@ -87,9 +87,21 @@ def _read_sssom_records(filepath: Path) -> dict:
         → entity's canonical name (from ``subject_label``).
       - subject starts with ``kgm.name:`` and ``comment == "synonym"``
         → synonym (added to the entity's synonym set).
-      - subject is any other CURIE → xref (added to the entity's xref set);
+      - subject is any other CURIE AND ``predicate_id`` is empty or
+        ``skos:exactMatch`` → xref (added to the entity's xref set);
         unless subject == object (attribute_carrier row, skipped as a no-op
         equivalence, formula/category still picked up from its columns).
+      - subject is any other CURIE AND ``predicate_id`` is
+        ``skos:closeMatch``, ``skos:narrowMatch``, or ``skos:broadMatch``
+        → **dropped on reload**. These are non-identity mappings (hydrate
+        recipe-equivalence, parent/child) that must not enter the xref set;
+        otherwise ``propagate_synonyms_via_xrefs`` bridges names across
+        non-equivalent entities on the next reseed cycle and re-introduces
+        the asymmetric/parent-child pollution we explicitly emit them to
+        signal *but not merge*. They are re-emitted at export time from
+        their own pipelines (hydrate_equivalences for closeMatch,
+        asymmetric_mappings for narrow/broadMatch); the loader does not
+        need to round-trip them.
 
     Extension columns ``object_formula`` / ``object_category`` ride on every
     row — the first non-empty value wins per ``object_id``.
@@ -152,6 +164,7 @@ def _read_sssom_records(filepath: Path) -> dict:
             comment = (row.get("comment") or "").strip()
             subj_label = (row.get("subject_label") or "").strip()
             obj_label = (row.get("object_label") or "").strip()
+            predicate = (row.get("predicate_id") or "").strip()
 
             if not rec["canonical_name"] and obj_label:
                 rec["canonical_name"] = obj_label
@@ -164,7 +177,20 @@ def _read_sssom_records(filepath: Path) -> dict:
                     rec["synonyms"].add(subj_label)
                 # canonical_name rows: subject_label matches canonical; no-op.
             elif subj and subj != obj:
-                rec["xrefs"].add(subj)
+                # Match-strength gate: only ``skos:exactMatch`` (or empty
+                # predicate from legacy baselines that pre-date the predicate
+                # column) is a real equivalence and round-trips as an xref.
+                # ``skos:closeMatch`` (recipe-equivalent hydrate pairs, free-
+                # text synonyms via kgm.name:) and ``skos:narrowMatch`` /
+                # ``skos:broadMatch`` (asymmetric parent/child mappings) are
+                # NOT identity equivalents — folding them into the xref set
+                # makes ``propagate_synonyms_via_xrefs`` bridge labels across
+                # distinct entities (e.g. anhydrous and hydrated CHEBIs, or
+                # parent and child kgmicrobe.compound terms) on the next
+                # reseed. Drop them; they are re-emitted at export from their
+                # own pipelines (hydrate_equivalences / asymmetric_mappings).
+                if predicate in ("", "skos:exactMatch"):
+                    rec["xrefs"].add(subj)
             # subj == obj is the attribute_carrier case — no xref/synonym.
 
     return records
@@ -402,17 +428,25 @@ def extract_curie(value: str) -> str:
 # Category lookup by CURIE prefix. The unified mapping stores the biolink
 # category as a data column so downstream transforms do not need hardcoded
 # prefix-to-category routing.
+#
+# CHEBI / NCIT / mesh chemicals are emitted as ``biolink:ChemicalEntity``
+# (not the deprecated ``biolink:ChemicalSubstance`` from biolink 3.x). The
+# rest of the codebase normalizes chemical nodes to ``biolink:ChemicalEntity``
+# (see ``CHEBI_CATEGORY`` in ``kg_microbe/transform_utils/constants.py``);
+# emitting the deprecated category here would let it leak straight into
+# downstream node category columns and reintroduce the merge-conflict /
+# category-validation risk this branch was trying to eliminate.
 _CATEGORY_BY_PREFIX: Dict[str, str] = {
-    "CHEBI": "biolink:ChemicalSubstance",
+    "CHEBI": "biolink:ChemicalEntity",
     "FOODON": "biolink:Food",
     "UBERON": "biolink:AnatomicalEntity",
     "ENVO": "biolink:EnvironmentalFeature",
-    "NCIT": "biolink:ChemicalSubstance",
+    "NCIT": "biolink:ChemicalEntity",
     "PO": "biolink:AnatomicalEntity",
     # MeSH Supplementary Concept Records — primary id for chemicals/drugs that
     # have no CHEBI accession but are uniquely identified by a mesh:C* code.
     # Used by MediaIngredientMech for many natural-product antibiotics.
-    "mesh": "biolink:ChemicalSubstance",
+    "mesh": "biolink:ChemicalEntity",
     # MICRO (Microbial Conditions Ontology) — primary id for prepared media
     # components (peptone, tryptone, brain heart infusion, etc.) that are
     # mixtures rather than pure substances.
@@ -546,6 +580,29 @@ def is_chemical_curie(curie: str) -> bool:
     return curie.split(":", 1)[0] in _CHEMICAL_PREFIXES
 
 
+# Bad cross-ontology equivalences that surface as ``skos:exactMatch`` xrefs in
+# upstream sources (most often ChEBI dbxrefs) but are demonstrably wrong
+# (different formula, different molecular weight, etc.). Filtered as
+# (subject_id, object_id) pairs so we drop the wrong direction only; the real
+# entities stay in the SSSOM with their correct mappings.
+#
+# Module-level (not method-local) so ``purge_known_bad_xrefs`` can run BEFORE
+# ``propagate_synonyms_via_xrefs``: filtering only at export time leaves the
+# bad equivalence in ``self.chemicals[*]["xrefs"]`` during propagation, and
+# the lexical pollution it produces is then re-emitted as synonym rows.
+KNOWN_BAD_XREF_PAIRS: frozenset = frozenset({
+    # CHEBI:32599 (anhydrous magnesium sulfate, ``Mg.O4S``) is cross-referenced
+    # to CHEBI:31795 (magnesium sulfate heptahydrate, ``7H2O.Mg.O4S``) in the
+    # ChEBI ontology — they are different chemical entities with different
+    # formulas and different molecular weights. The recipe-equivalent
+    # relationship (if any) belongs in ``self.hydrate_equivalences`` as
+    # ``skos:closeMatch`` with ``comment=recipe_equivalent_hydrate``, not as
+    # exactMatch.
+    ("CHEBI:32599", "CHEBI:31795"),
+    ("CHEBI:31795", "CHEBI:32599"),
+})
+
+
 class ChemicalMappingConsolidator:
 
     """Consolidate chemical mappings from multiple sources."""
@@ -573,6 +630,18 @@ class ChemicalMappingConsolidator:
         # symmetric (skos:exactMatch) MIM rows so we can rewrite
         # narrowMatch subjects to point at the kg-microbe-side identifier.
         self.mim_to_primary: Dict[str, str] = {}
+        # Recipe-equivalent hydrate pairs: (anhydrous_chebi, hydrated_chebi).
+        # Anhydrous and hydrated forms of a salt are DIFFERENT chemical
+        # entities (different formula, different molecular weight) and must
+        # NOT be linked by skos:exactMatch. They ARE interchangeable for
+        # bench-prep substitutions in microbial growth media (curators
+        # routinely swap CaCl2 ↔ CaCl2·2H2O with a concentration adjust).
+        # Recorded here as ``skos:closeMatch`` candidates and emitted as
+        # closeMatch rows in the unified SSSOM so downstream recipe
+        # comparators (e.g. mediadive recipe-vs-raw checks) can treat the
+        # two forms as equivalent without fabricating a false identity
+        # claim.
+        self.hydrate_equivalences: Set[Tuple[str, str]] = set()
         # Replay compound_mappings_strict to derive the set of CHEBI ids the
         # pre-fix mangler would emit when fed PubChem/CAS-RN values. Used by
         # both baseline loaders to surgically drop polluted rows. Empty when
@@ -774,12 +843,25 @@ class ChemicalMappingConsolidator:
             if base_compound and base_compound != original:
                 synonyms.append(base_compound)
 
-            # Hydrate-specific data
+            # Hydrate-specific data: record the (anhydrous, hydrated) pair
+            # for closeMatch emission at export time. Do NOT push the
+            # hydrated CHEBI into ``xrefs`` — xrefs become skos:exactMatch
+            # rows and anhydrous + hydrated are not the same entity.
+            # Also strip any stale exactMatch xrefs the OLD hydrate loader
+            # emitted into prior unified SSSOMs (the consolidator seeds
+            # from the previous output, so without this cleanup the bad
+            # xref survives across runs).
             xrefs = []
             if "hydrate" in str(filepath):
                 hydrated_chebi = extract_chebi_id(row.get("hydrated_chebi_id", ""))
-                if hydrated_chebi and hydrated_chebi != primary_id:
-                    xrefs.append(hydrated_chebi)
+                if hydrated_chebi and hydrated_chebi != primary_id and primary_id.startswith("CHEBI:"):
+                    self.hydrate_equivalences.add((primary_id, hydrated_chebi))
+                    existing = self.chemicals.get(primary_id)
+                    if existing:
+                        existing["xrefs"].discard(hydrated_chebi)
+                        # Also strip the doubled-CHEBI variant the
+                        # baseline seeding sometimes carries in.
+                        existing["xrefs"].discard(f"CHEBI:{hydrated_chebi}")
 
             self.add_chemical(
                 id=primary_id,
@@ -863,7 +945,7 @@ class ChemicalMappingConsolidator:
 
     def load_metatraits_chemical_mappings(self, filepath: Path):
         """
-        Load kg_microbe/transform_utils/metatraits/mappings/chemical_mappings.tsv.
+        Load mappings/canonical/chemical_mappings.tsv.
 
         SSSOM-style table mapping metatraits trait phrases (subject_label,
         e.g. "produces: ethanol") to ontology IDs. The subject_label is added
@@ -898,7 +980,7 @@ class ChemicalMappingConsolidator:
 
     def load_metatraits_special_chemicals(self, filepath: Path):
         """
-        Load kg_microbe/transform_utils/metatraits/mappings/special_chemical_mappings.tsv.
+        Load mappings/canonical/special_chemical_mappings.tsv.
 
         Manually corrected trait-pattern → ontology-ID overrides for high-frequency
         phrasings the NLP/synonym pipeline gets wrong (e.g. "electron acceptor:
@@ -1192,11 +1274,15 @@ class ChemicalMappingConsolidator:
 
         symmetric = {"skos:exactMatch", "skos:closeMatch"}
 
-        # Track MIM:* subject → current object_id. After loading, anything
-        # in the baseline that points elsewhere is stale and must be swept
-        # (fixes STALE_IN_KGM + CHEBI_DIVERGED regressions where baseline
-        # seeding carried forward obsolete MIM xrefs).
-        current_mim_subjects: dict[str, str] = {}
+        # Track every MIM:* subject → set of currently-asserted object_ids.
+        # MIM may emit multiple symmetric rows for the same subject
+        # (exactMatch + closeMatch to two different ontologies); the sweep
+        # below keeps an xref iff the chemical's id is in that set.
+        # Stored as instance state so a second sweep pass can run after
+        # load_complex_ingredients re-introduces stale MIM xrefs from the
+        # FOODON/ENVO companion artifact.
+        from collections import defaultdict as _defaultdict
+        current_mim_subjects: dict[str, set[str]] = _defaultdict(set)
 
         added = 0
         skipped_unsupported = 0
@@ -1255,6 +1341,17 @@ class ChemicalMappingConsolidator:
                 if predicate == "skos:exactMatch" and subject_id.startswith("MIM:"):
                     self.mim_to_primary[subject_id] = object_id
 
+                # Record both exactMatch AND closeMatch targets so the
+                # stale-xref sweep below recognises every MIM-asserted
+                # canonical entity. Without this, the sweep would treat
+                # every MIM xref as stale (target lookup → None) and
+                # drop them all, leaving MIM provenance entirely on
+                # baseline-residual records (the bug that left
+                # MIM:Bacto-tryptone pointing at FOODON:03315719 even
+                # after MIM had rolled back to MICRO:0000182).
+                if subject_id.startswith("MIM:"):
+                    current_mim_subjects[subject_id].add(object_id)
+
                 self.add_chemical(
                     id=object_id,
                     canonical_name=subject_label,
@@ -1312,29 +1409,14 @@ class ChemicalMappingConsolidator:
             # entity and cause the stale-xref sweep below to act incorrectly.
             added += 1
 
-        # Sweep stale MIM: and MediaIngredientMech: xrefs. Any xref in the
-        # MIM namespace that isn't in current_mim_subjects is stale (MIM
-        # has merged or dropped the record). Any MediaIngredientMech: xref
-        # is legacy namespace — MIM has migrated to MIM:<slug>.
-        swept_stale = 0
-        swept_diverged = 0
-        swept_legacy = 0
-        for cid, chem in self.chemicals.items():
-            new_xrefs = set()
-            for xref in chem["xrefs"]:
-                if xref.startswith("MediaIngredientMech:"):
-                    swept_legacy += 1
-                    continue
-                if xref.startswith("MIM:"):
-                    target = current_mim_subjects.get(xref)
-                    if target is None:
-                        swept_stale += 1
-                        continue
-                    if target != cid:
-                        swept_diverged += 1
-                        continue
-                new_xrefs.add(xref)
-            chem["xrefs"] = new_xrefs
+        # Persist for the post-complex_ingredients sweep run from main().
+        # Use a plain dict snapshot to avoid the defaultdict's auto-create
+        # surprising the second pass.
+        self._mim_current_subjects = {k: set(v) for k, v in current_mim_subjects.items()}
+
+        swept_stale, swept_diverged, swept_legacy = self._sweep_stale_mim_xrefs(
+            self._mim_current_subjects
+        )
 
         print(
             f"  Loaded {added} MIM SSSOM entries "
@@ -1351,6 +1433,42 @@ class ChemicalMappingConsolidator:
                 f"{swept_diverged} diverged, {swept_legacy} legacy "
                 f"(MediaIngredientMech: namespace)"
             )
+
+    def _sweep_stale_mim_xrefs(
+        self, current_mim_subjects: dict[str, set[str]]
+    ) -> tuple[int, int, int]:
+        """Drop MIM:* xrefs from any chemical the current MIM SSSOM doesn't
+        anchor to that entity. Used both at the end of
+        ``load_mediaingredientmech_sssom`` (cleans baseline residue) and
+        again from ``main()`` after ``load_complex_ingredients`` re-introduces
+        MIM xrefs from the FOODON/ENVO companion artifact.
+
+        Stale MIM:* xrefs are silently dropped:
+          - target set is empty → MIM no longer publishes the subject.
+          - target set non-empty but cid not in it → MIM redirected the
+            subject to a different canonical entity.
+
+        ``MediaIngredientMech:*`` xrefs (legacy namespace) are always purged.
+        Returns (stale, diverged, legacy) counts for log emission.
+        """
+        swept_stale = swept_diverged = swept_legacy = 0
+        for cid, chem in self.chemicals.items():
+            new_xrefs = set()
+            for xref in chem["xrefs"]:
+                if xref.startswith("MediaIngredientMech:"):
+                    swept_legacy += 1
+                    continue
+                if xref.startswith("MIM:"):
+                    targets = current_mim_subjects.get(xref)
+                    if not targets:
+                        swept_stale += 1
+                        continue
+                    if cid not in targets:
+                        swept_diverged += 1
+                        continue
+                new_xrefs.add(xref)
+            chem["xrefs"] = new_xrefs
+        return swept_stale, swept_diverged, swept_legacy
 
     def load_complex_ingredients(self, filepath: Path):
         """
@@ -1519,105 +1637,41 @@ class ChemicalMappingConsolidator:
             f"{synonyms_added} synonyms harvested from CHEBI xrefs"
         )
 
-    def purge_asymmetric_pollution(self):
+    def purge_known_bad_xrefs(self):
         """
-        Remove child labels that earlier consolidator runs leaked onto parents.
+        Drop demonstrably-wrong cross-ontology equivalences before propagation.
 
-        Prior versions of ``load_mediaingredientmech_sssom`` ran asymmetric
-        (skos:narrowMatch / broadMatch) rows through ``add_chemical(id=
-        object_id, ...)``, which made the broader parent absorb the child's
-        ``subject_label`` as one of its own synonyms and the child's MIM xref
-        as one of its own xrefs. Codex adversarial review #558 round 3 caught
-        this: the runtime name lookup then returned the parent CURIE instead
-        of the child, and the new ``get_parents()`` index was unreachable
-        because the lookup never landed on the child key it was indexed by.
+        Walks every record and removes any xref where ``(xref, primary_id)``
+        appears in :data:`KNOWN_BAD_XREF_PAIRS`. This MUST run before
+        :meth:`propagate_synonyms_via_xrefs` — leaving a false equivalence
+        in ``self.chemicals[*]["xrefs"]`` during propagation makes the two
+        records share names as if they were identical, and that lexical
+        pollution then leaks into the export as synonym rows on the wrong
+        entity (the export-time filter only catches the bad xref ROWS, not
+        the synonyms it already polluted).
 
-        The current loader skips that path for asymmetric rows, but baseline
-        runs from the existing unified file (via ``load_existing_unified``)
-        carry forward the old pollution. This sweep removes it surgically:
-        for each captured parent relation
-        (child=subject_id, parent=object_id), the child's canonical name and
-        synonyms are removed from the parent's synonym set, and the child's
-        MIM xref is removed from the parent's xref set. Both child and parent
-        records keep their own legitimate data; only the spillover is dropped.
+        The export-time filter inside :meth:`export_unified_sssom` is kept
+        as a defense-in-depth belt for any pair injected after this pass.
         """
-        if not self.parent_relations:
-            print("\nNo asymmetric MIM relations captured — skipping pollution purge.")
-            return
-        print("\nPurging asymmetric MIM pollution from parent entity records...")
-
-        # Resolve each parent relation to (child_primary, parent_primary,
-        # mim_subject) so the sweep can act on both label-side and xref-side
-        # spillover.
-        cleaned_synonyms = 0
-        cleaned_xrefs = 0
-        records_touched: set[str] = set()
-        for rel in self.parent_relations:
-            mim_subject = rel.get("subject_id", "")
-            parent_id = rel.get("object_id", "")
-            if not parent_id or parent_id not in self.chemicals:
+        purged = 0
+        purged_records = 0
+        for primary_id, chem in self.chemicals.items():
+            xrefs = chem.get("xrefs")
+            if not xrefs:
                 continue
-            parent = self.chemicals[parent_id]
-
-            # The child primary is whatever symmetric MIM exactMatch row
-            # registered against the same MIM subject. Without that link we
-            # don't have a child to attribute the spillover to and the sweep
-            # is a no-op for this relation.
-            child_id = self.mim_to_primary.get(mim_subject)
-
-            # Names to purge: the child's subject_label from this MIM row,
-            # plus the child's canonical_name and all its synonyms (the prior
-            # asymmetric loader fed all of those onto the parent).
-            names_to_drop: set[str] = set()
-            row_subject_label = (rel.get("subject_label") or "").strip()
-            if row_subject_label:
-                names_to_drop.add(row_subject_label)
-            if child_id and child_id in self.chemicals:
-                child = self.chemicals[child_id]
-                if child["canonical_name"]:
-                    names_to_drop.add(child["canonical_name"])
-                names_to_drop.update(s for s in child["synonyms"] if s)
-
-            # Don't drop the parent's own canonical_name even if it
-            # accidentally matches one of these.
-            names_to_drop.discard(parent["canonical_name"])
-
-            removed_syns = parent["synonyms"] & names_to_drop
-            if removed_syns:
-                parent["synonyms"] -= removed_syns
-                cleaned_synonyms += len(removed_syns)
-                records_touched.add(parent_id)
-
-            # The child's MIM xref also leaked onto the parent in the old
-            # loader — remove it. The legitimate place for MIM:<slug> is on
-            # the child primary, not on the broader parent.
-            if mim_subject and mim_subject in parent["xrefs"]:
-                parent["xrefs"].discard(mim_subject)
-                cleaned_xrefs += 1
-                records_touched.add(parent_id)
-
-            # The child primary itself ended up cross-xref'd with the parent
-            # primary in some prior runs (each side claiming the other as an
-            # exactMatch xref), which made propagate_synonyms_via_xrefs treat
-            # them as the same entity and re-bridge the child's labels into
-            # the parent's synonym set. Break the symmetric xref so the
-            # narrowMatch parent_relations row stays the single channel.
-            if child_id and child_id in self.chemicals:
-                if child_id in parent["xrefs"]:
-                    parent["xrefs"].discard(child_id)
-                    cleaned_xrefs += 1
-                    records_touched.add(parent_id)
-                child = self.chemicals[child_id]
-                if parent_id in child["xrefs"]:
-                    child["xrefs"].discard(parent_id)
-                    cleaned_xrefs += 1
-                    records_touched.add(child_id)
-
-        print(
-            f"  Purged {cleaned_synonyms} stray child-label synonym(s) and "
-            f"{cleaned_xrefs} stray MIM xref(s) from {len(records_touched)} "
-            "parent record(s)."
-        )
+            bad = {
+                x for x in xrefs
+                if (x, primary_id) in KNOWN_BAD_XREF_PAIRS
+            }
+            if bad:
+                chem["xrefs"] = xrefs - bad
+                purged += len(bad)
+                purged_records += 1
+        if purged:
+            print(
+                f"  Purged {purged} known-bad xref(s) across "
+                f"{purged_records} record(s) before propagation"
+            )
 
     def propagate_synonyms_via_xrefs(self):
         """
@@ -1837,11 +1891,38 @@ class ChemicalMappingConsolidator:
         skipped_unknown_prefix = 0
         skipped_malformed = 0
         skipped_empty_slug = 0
+        skipped_known_bad_entity = 0
+        skipped_known_bad_xref = 0
+
+        # Polluted "mega-nodes" — drop the entity entirely from the unified
+        # SSSOM because upstream merged distinct ingredients onto a single
+        # CURIE. The canonical mapping for each ingredient comes from
+        # CultureBotAI / MIM (priority 10/11), which correctly identify
+        # them as distinct entities.
+        KNOWN_BAD_PRIMARY_IDS = frozenset({
+            # MediaDive auto-mapping conflated peptone family + soy peptone +
+            # vitamin-free casamino acids onto a single PubChem stub. These
+            # are different products from different proteins by different
+            # processes; substituting one for the other will change
+            # experimental outcomes (e.g. tryptophan auxotrophs grow on soy
+            # peptone but fail on vitamin-free casamino acids). Filed
+            # upstream against MediaDive; until that lands, drop the node.
+            "pubchem.compound:167312541",
+        })
+
+        # KNOWN_BAD_XREF_PAIRS is module-level so ``purge_known_bad_xrefs``
+        # can apply it BEFORE ``propagate_synonyms_via_xrefs`` runs in main().
+        # Re-checking it here is a defense-in-depth belt — any xref that
+        # survived earlier purging (e.g. injected by a later loader) is still
+        # caught at export time.
 
         mapping_rows = []
         today = date.today().isoformat()
 
         for curie in sorted(self.chemicals.keys()):
+            if curie in KNOWN_BAD_PRIMARY_IDS:
+                skipped_known_bad_entity += 1
+                continue
             chem = self.chemicals[curie]
             object_id = curie
             object_label = _sanitize_tsv(chem["canonical_name"])
@@ -1884,6 +1965,9 @@ class ChemicalMappingConsolidator:
                     continue
                 if subject_prefix not in exact_prefixes:
                     skipped_unknown_prefix += 1
+                    continue
+                if (xref, object_id) in KNOWN_BAD_XREF_PAIRS:
+                    skipped_known_bad_xref += 1
                     continue
 
                 mapping_rows.append(_row(
@@ -1983,7 +2067,44 @@ class ChemicalMappingConsolidator:
             })
             parent_rows += 1
 
-        rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows
+        # Recipe-equivalent hydrate pairs. Anhydrous (e.g. CaCl2,
+        # CHEBI:23905) and hydrated (e.g. CaCl2·2H2O, CHEBI:86158) forms
+        # of the same salt are DIFFERENT chemical entities — they have
+        # different formulas and different molecular weights — but
+        # interchangeable for media-prep purposes (curators routinely
+        # swap them with a concentration adjust). Emit each pair as a
+        # ``skos:closeMatch`` so downstream recipe comparators treat them
+        # as equivalent without making the false claim that the molecules
+        # are identical (which an ``exactMatch`` xref would do).
+        # The pair direction is anhydrous → hydrated (closeMatch is
+        # symmetric, so consumers don't need both directions).
+        hydrate_rows = 0
+        for anhydrous, hydrated in sorted(self.hydrate_equivalences):
+            if not _is_valid_curie(anhydrous) or not _is_valid_curie(hydrated):
+                continue
+            # Use the canonical name and category of the hydrated entry
+            # if it's in self.chemicals; fall back to anhydrous's. Object
+            # source is obo:chebi.owl since both ends are CHEBI here.
+            hydrated_chem = self.chemicals.get(hydrated, {})
+            object_label = hydrated_chem.get("canonical_name") or ""
+            mapping_rows.append({
+                "subject_id": anhydrous,
+                "subject_label": self.chemicals.get(anhydrous, {}).get("canonical_name") or "",
+                "predicate_id": "skos:closeMatch",
+                "object_id": hydrated,
+                "object_label": object_label,
+                "object_source": "obo:chebi.owl",
+                "mapping_justification": "semapv:UnspecifiedMatching",
+                "source": "mediadive_compounds_hydrate",
+                "mapping_date": today,
+                "confidence": "",
+                "comment": "recipe_equivalent_hydrate",
+                "object_formula": hydrated_chem.get("formula") or "",
+                "object_category": hydrated_chem.get("category") or "biolink:ChemicalSubstance",
+            })
+            hydrate_rows += 1
+
+        rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows + hydrate_rows
 
         # Build the header.
         header_lines = ["# curie_map:"]
@@ -1993,7 +2114,7 @@ class ChemicalMappingConsolidator:
             '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
             '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"',
             f'# mapping_set_version: "{today}"',
-            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching. Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows."',
+            '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching; (4) anhydrous-CHEBI → hydrated-CHEBI as skos:closeMatch with comment=recipe_equivalent_hydrate (NOT chemically identical, but media-recipe interchangeable). Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows, `recipe_equivalent_hydrate` for hydrate pairs."',
             f'# mapping_date: "{today}"',
             f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
             '# extension_definitions:',
@@ -2036,12 +2157,15 @@ class ChemicalMappingConsolidator:
 
         print(
             f"  Emitted {rows_emitted} mappings "
-            f"(xrefs={xref_rows}, names={name_rows}, synonyms={synonym_rows})"
+            f"(xrefs={xref_rows}, names={name_rows}, synonyms={synonym_rows}, "
+            f"parent_relations={parent_rows}, hydrate_pairs={hydrate_rows})"
         )
         print(
             f"  Skipped: self={skipped_self}, bibliographic={skipped_biblio}, "
             f"unknown_prefix={skipped_unknown_prefix}, malformed={skipped_malformed}, "
-            f"empty_slug={skipped_empty_slug}"
+            f"empty_slug={skipped_empty_slug}, "
+            f"known_bad_entity={skipped_known_bad_entity}, "
+            f"known_bad_xref={skipped_known_bad_xref}"
         )
 
         # Round-trip validate with the sssom package.
@@ -2082,10 +2206,10 @@ def main():
          base_dir / "kg_microbe" / "transform_utils" / "madin_etal" / "chebi_manual_annotation.tsv",
          consolidator.load_manual_annotations),
         ("metatraits_chemical_mappings",
-         base_dir / "kg_microbe" / "transform_utils" / "metatraits" / "mappings" / "chemical_mappings.tsv",
+         base_dir / "mappings" / "canonical" / "chemical_mappings.tsv",
          consolidator.load_metatraits_chemical_mappings),
         ("metatraits_special_chemicals",
-         base_dir / "kg_microbe" / "transform_utils" / "metatraits" / "mappings" / "special_chemical_mappings.tsv",
+         base_dir / "mappings" / "canonical" / "special_chemical_mappings.tsv",
          consolidator.load_metatraits_special_chemicals),
     ]
     for name, path, loader in optional_inputs:
@@ -2123,16 +2247,34 @@ def main():
     else:
         print("Skipping complex_ingredients.tsv.gz: not present")
 
+    # Re-sweep stale MIM:* xrefs after load_complex_ingredients. The companion
+    # artifact's xref column carries MIM:* CURIEs that may contradict MIM's
+    # current SSSOM (e.g. complex_ingredients.tsv.gz lists FOODON:03315719 with
+    # MIM:Bacto-tryptone as xref, but MIM's current SSSOM redirects
+    # MIM:Bacto-tryptone to MICRO:0000182). The first sweep ran before
+    # load_complex_ingredients and can't see those re-additions.
+    if hasattr(consolidator, "_mim_current_subjects"):
+        s_stale, s_div, s_leg = consolidator._sweep_stale_mim_xrefs(
+            consolidator._mim_current_subjects
+        )
+        if s_stale or s_div or s_leg:
+            print(
+                f"Post-complex_ingredients re-sweep: {s_stale} stale, "
+                f"{s_div} diverged, {s_leg} legacy MIM xrefs purged"
+            )
+
     # Enrich with ChEBI synonyms
     consolidator.enrich_with_chebi_synonyms()
 
     # Harvest labels for CHEBI xrefs that never got their own primary row.
     consolidator.enrich_with_chebi_xref_labels()
 
-    # Sweep child-label spillover that earlier consolidator runs leaked onto
-    # parent entities via asymmetric MIM rows. Must run BEFORE
-    # propagate_synonyms_via_xrefs so the cleaned data doesn't get re-amplified.
-    consolidator.purge_asymmetric_pollution()
+    # Drop known-bad cross-ontology xref pairs BEFORE propagation. If we
+    # waited until export-time filtering, the bad equivalence would still
+    # be present in chem["xrefs"] when propagate_synonyms_via_xrefs runs
+    # below, and the lexical pollution would already be baked into
+    # synonym sets on the wrong entity.
+    consolidator.purge_known_bad_xrefs()
 
     # Propagate names across equivalent-CURIE records via xrefs so losing
     # candidates' labels end up on the primary node as synonyms.

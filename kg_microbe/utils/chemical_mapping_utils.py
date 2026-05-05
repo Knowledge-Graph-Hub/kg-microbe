@@ -32,6 +32,14 @@ _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 # list of broader (parent) CURIEs the child is narrower than. Used by
 # transforms to emit ``biolink:subclass_of`` edges.
 _PARENT_INDEX: Optional[Dict[str, list]] = None
+# Recipe-equivalent hydrate pairs imported from rows whose
+# ``predicate_id == 'skos:closeMatch'`` and ``comment ==
+# 'recipe_equivalent_hydrate'``. ``_HYDRATE_EQUIV_INDEX[curie]`` is the
+# sorted list of CHEBI CURIEs that are media-recipe interchangeable
+# with ``curie`` (e.g. CaCl2 ↔ CaCl2·2H2O). Distinct from xrefs, which
+# assert chemical identity. Symmetric: looking up either form returns
+# the other.
+_HYDRATE_EQUIV_INDEX: Optional[Dict[str, list]] = None
 _FORMULA_INDEX: Optional[Dict[str, List[str]]] = None
 _XREF_INDEX: Optional[Dict[str, str]] = None
 _CATEGORY_INDEX: Optional[Dict[str, str]] = None
@@ -197,6 +205,7 @@ def _build_indices(mappings_path: Path):
     global _PRIMARY_NAME_INDEX, _PRIMARY_SYNONYMS_INDEX
     global _PRIMARY_XREFS_INDEX, _PRIMARY_FORMULA_INDEX
     global _PARENT_INDEX
+    global _HYDRATE_EQUIV_INDEX
     global _ENTITY_COUNT
 
     _NAME_INDEX = {}
@@ -210,18 +219,46 @@ def _build_indices(mappings_path: Path):
     _PRIMARY_XREFS_INDEX = {}
     _PRIMARY_FORMULA_INDEX = {}
     _PARENT_INDEX = {}
+    _HYDRATE_EQUIV_INDEX = {}
 
     primary_synonyms_sets: Dict[str, set] = {}
     primary_xrefs_sets: Dict[str, set] = {}
     parent_sets: Dict[str, set] = {}
+    hydrate_sets: Dict[str, set] = {}
 
-    def _index_name(curie: str, name: str):
+    # Per-name source ranking. The unified SSSOM is exported sorted by
+    # ``object_id``, so a naive first-row-wins index lets a low-numbered CHEBI
+    # hijack a name via its synonym list before the higher-numbered CHEBI's
+    # canonical row is reached. Example: ``perillyl alcohol`` is a synonym of
+    # ``CHEBI:10782`` and the canonical name of ``CHEBI:15420``; setdefault()
+    # latches the wrong CURIE on first sight. Track rank per normalized name
+    # (0 = canonical, 1 = synonym) and only overwrite when the new row has
+    # strictly better rank. Within the same rank, first-row-wins remains.
+    _NAME_INDEX_RANK: Dict[str, int] = {}
+    _HYDRATE_FREE_NAME_INDEX_RANK: Dict[str, int] = {}
+
+    def _index_name(curie: str, name: str, rank: int = 1):
+        """
+        Index ``name`` against ``curie`` with explicit precedence.
+
+        ``rank=0`` for canonical-name hits (rows where ``comment ==
+        canonical_name`` or the entity's ``object_label``), ``rank=1`` for
+        synonym hits. Lower rank wins on collision; equal rank keeps the
+        first-seen CURIE for determinism.
+        """
         norm = normalize_name(name)
-        if norm:
-            _NAME_INDEX.setdefault(norm, curie)
-            norm_hf = normalize_name(name, strip_hydrate=True)
-            if norm_hf and norm_hf != norm:
-                _HYDRATE_FREE_NAME_INDEX.setdefault(norm_hf, curie)
+        if not norm:
+            return ""
+        existing = _NAME_INDEX_RANK.get(norm, 999)
+        if rank < existing or norm not in _NAME_INDEX:
+            _NAME_INDEX[norm] = curie
+            _NAME_INDEX_RANK[norm] = rank
+        norm_hf = normalize_name(name, strip_hydrate=True)
+        if norm_hf and norm_hf != norm:
+            existing_hf = _HYDRATE_FREE_NAME_INDEX_RANK.get(norm_hf, 999)
+            if rank < existing_hf or norm_hf not in _HYDRATE_FREE_NAME_INDEX:
+                _HYDRATE_FREE_NAME_INDEX[norm_hf] = curie
+                _HYDRATE_FREE_NAME_INDEX_RANK[norm_hf] = rank
         return norm
 
     for row in _iter_sssom_rows(mappings_path):
@@ -242,11 +279,13 @@ def _build_indices(mappings_path: Path):
                 _CATEGORY_INDEX[curie] = category
 
         # Canonical name: first non-empty ``object_label`` per object wins.
+        # Index canonical names at rank=0 so they outrank synonym hits for
+        # the same string (see _index_name docstring).
         if curie not in _PRIMARY_NAME_INDEX:
             obj_label = (row.get("object_label") or "").strip()
             if obj_label:
                 _PRIMARY_NAME_INDEX[curie] = obj_label
-                norm = _index_name(curie, obj_label)
+                norm = _index_name(curie, obj_label, rank=0)
                 if norm:
                     _CANONICAL_NAME_INDEX.setdefault(norm, curie)
 
@@ -267,6 +306,15 @@ def _build_indices(mappings_path: Path):
         if predicate == "skos:broadMatch":
             parent_sets.setdefault(curie, set()).add(subject)
             continue
+        # Recipe-equivalent hydrate pairs (anhydrous CHEBI ↔ hydrated
+        # CHEBI). Tagged at consolidator export time with
+        # ``predicate_id == 'skos:closeMatch'`` and
+        # ``comment == 'recipe_equivalent_hydrate'``. Index symmetrically
+        # so a lookup on either form returns the other.
+        if predicate == "skos:closeMatch" and (row.get("comment") or "").strip() == "recipe_equivalent_hydrate":
+            hydrate_sets.setdefault(subject, set()).add(curie)
+            hydrate_sets.setdefault(curie, set()).add(subject)
+            continue
 
         if subject.startswith("kgm.name:"):
             comment = (row.get("comment") or "").strip()
@@ -274,7 +322,8 @@ def _build_indices(mappings_path: Path):
                 syn = (row.get("subject_label") or "").strip()
                 if syn:
                     primary_synonyms_sets.setdefault(curie, set()).add(syn)
-                    _index_name(curie, syn)
+                    # Synonym rank=1 (lower priority than canonical name).
+                    _index_name(curie, syn, rank=1)
             # canonical_name rows already handled via object_label above.
         elif subject != curie:
             # xref row: ``subject_id`` is an equivalent CURIE.
@@ -289,6 +338,8 @@ def _build_indices(mappings_path: Path):
         _PRIMARY_XREFS_INDEX[curie] = sorted(xrefs)
     for curie, parents in parent_sets.items():
         _PARENT_INDEX[curie] = sorted(parents)
+    for curie, equivs in hydrate_sets.items():
+        _HYDRATE_EQUIV_INDEX[curie] = sorted(equivs)
 
     # Count of distinct entities: any object_id that appears in at least
     # one index. Use the union of keys to avoid double-counting.
@@ -497,6 +548,35 @@ def get_parents(curie: str) -> List[str]:
     if _PARENT_INDEX is None:
         return []
     return list(_PARENT_INDEX.get(curie, ()))
+
+
+def get_hydrate_equivalents(curie: str) -> List[str]:
+    """
+    Return CHEBI CURIEs that are media-recipe interchangeable with ``curie``.
+
+    Anhydrous and hydrated forms of a salt (e.g. CaCl2 ↔ CaCl2·2H2O) are
+    DIFFERENT chemical entities -- different formula, different molecular
+    weight -- but routinely substituted for each other in microbial growth
+    media with a concentration adjustment. This accessor returns the
+    other-form CURIE(s) for recipe-comparison purposes only; it must NOT
+    be used to claim chemical identity (use ``get_xrefs`` for that, which
+    asserts ``skos:exactMatch``).
+
+    The relationship is symmetric: looking up either form returns the
+    other. Sourced from rows whose ``predicate_id == 'skos:closeMatch'``
+    and ``comment == 'recipe_equivalent_hydrate'`` in the unified SSSOM,
+    emitted by the consolidator's hydrate logic.
+
+    :param curie: CHEBI CURIE for either the anhydrous or hydrated form
+    :return: sorted list of recipe-equivalent CURIEs (empty if none)
+    """
+    if not curie:
+        return []
+    if not _LOADED:
+        load_unified_mappings()
+    if _HYDRATE_EQUIV_INDEX is None:
+        return []
+    return list(_HYDRATE_EQUIV_INDEX.get(curie, ()))
 
 
 def get_formula(chebi_id: str) -> Optional[str]:

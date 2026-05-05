@@ -183,6 +183,8 @@ STANDARD_PREFIXES = {
     "FOODON", "UBERON", "HP", "MONDO", "ENVO", "infores", "semapv",
     "kgmicrobe.activity", "kgmicrobe.trait", "kgmicrobe.compound",
     "kgmicrobe.assay", "kgmicrobe.pathway", "kgmicrobe.carbon_substrate",
+    "kgmicrobe.ingredient",  # mediadive: un-mapped ingredient placeholders
+    "MICRO",                 # Microbiology Ontology (mediadive ingredients)
     "UniProtKB", "PR", "SO", "RHEA", "OBI", "IAO", "BFO",
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
     "OMP", "MOP", "KEGG", "COG", "GTDB", "skos", "owl", "rdf",

@@ -168,10 +168,25 @@ METATRAITS_EDGES_PATH = Path("data/transformed/metatraits/edges.tsv")
 # in metatraits edges; every value MUST be a Term in PHASE_4_TERMS. The
 # extractor cross-checks both directions on each run.
 KGMICROBE_PLACEHOLDER_MIGRATION: Dict[str, str] = {
-    "kgmicrobe.trait:macconkey_agar_growth": "METPO:1007053",
-    "kgmicrobe.trait:blood_agar_growth": "METPO:1007054",
-    "kgmicrobe.trait:bile_susceptible": "METPO:1007056",
     "kgmicrobe.activity:coagulase_activity": "METPO:1007089",
+}
+
+# Placeholders that should NOT migrate to a new METPO class — instead the
+# transform emits the existing METPO predicate pattern. The migration target
+# is recorded for documentation; the transform-side rewrite is already done
+# (see mappings/canonical/phenotype_mappings.tsv and the kgmicrobe.medium:*
+# block in custom_curies.yaml).
+DEFERRED_PLACEHOLDERS: Dict[str, str] = {
+    # Pre-existing transform output that older metatraits/edges.tsv files may
+    # still contain. New transform runs emit the predicate pattern instead;
+    # these entries are kept so the placeholder validator does not fail when
+    # scanning a stale edges.tsv.
+    "kgmicrobe.trait:macconkey_agar_growth":
+        "retired — transform now emits METPO:2000517 -> kgmicrobe.medium:macconkey_agar",
+    "kgmicrobe.trait:blood_agar_growth":
+        "retired — transform now emits METPO:2000517 -> kgmicrobe.medium:blood_agar",
+    "kgmicrobe.trait:bile_susceptible":
+        "retired — transform now emits METPO:2000065 'does not tolerate' -> CHEBI:3098 'bile acid'",
 }
 
 BACDIVE_BASELINE_COUNTS: Dict[str, int] = {
@@ -402,54 +417,186 @@ EXISTING_METPO_ALIASES: List[Alias] = [
 # METPO:2000702/2000703/2000705/2000706/2000708/2000709.
 # --------------------------------------------------------------------------- #
 QUANTITATIVE_TERMS: List[Term] = [
-    # Datatype properties — only "optimum" form is missing in METPO.
+    # ----- Object properties (chemical-tolerance pair) -----
+    # New paired predicate METPO:2000064 'tolerates' / METPO:2000065 'does
+    # not tolerate' (synonym 'is susceptible to'), placed in the contiguous
+    # gap METPO:2000064-2000070 of the chemical-interaction object-property
+    # family (2000001-2000056 are densely populated; 2000057 is a single
+    # isolated gap; 2000058-2000063 are DatatypeProperties; 2000064-2000070
+    # are unused; 2000071+ resume DatatypeProperties).
+    # Both terms carry the synonym 'tolerance' so the metatraits transform's
+    # `_build_metpo_lookups` (kg_microbe/transform_utils/metatraits/metatraits.py)
+    # auto-pairs them in `metpo_pattern_to_predicate`: it groups predicates
+    # by the lowercased synonym/label, splits positive vs negative on the
+    # `does not ` label prefix, and a downstream call to
+    # `_get_negative_predicate(METPO:2000064)` then resolves to METPO:2000065
+    # (and vice versa) via the shared `tolerance` key. This is the same
+    # pairing mechanism that makes 2000002/2000027 (assimilates / does not
+    # assimilate, synonym `assimilation`) work.
     Term(
-        proposed_id="METPO:has_growth_temperature_optimum",
+        proposed_id="METPO:2000064",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="tolerates",
+        definition=(
+            "A relation between a microbe and a chemical entity indicating that the "
+            "microbe's growth is not inhibited by the chemical at the concentration "
+            "tested. Positive form of the chemical-tolerance pair; the negative form "
+            "is METPO:2000065 'does not tolerate'."
+        ),
+        domain="METPO:1000525",
+        range="METPO:1000526",
+        synonyms=["tolerance", "tolerant of"],
+        priority="HIGH",
+        traits_addressed="1",
+        observations="bile acid + future heavy-metal/antibiotic resistance traits",
+    ),
+    Term(
+        proposed_id="METPO:2000065",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="does not tolerate",
+        definition=(
+            "A relation between a microbe and a chemical entity indicating that the "
+            "microbe's growth is inhibited by the chemical at the concentration "
+            "tested. Negative form of the chemical-tolerance pair; positive form "
+            "is METPO:2000064 'tolerates'. Equivalent in meaning to 'is susceptible "
+            "to' and 'is sensitive to'; the canonical label uses the 'does not X' "
+            "convention so the metatraits pairing logic auto-detects it as the "
+            "negative member."
+        ),
+        domain="METPO:1000525",
+        range="METPO:1000526",
+        synonyms=["tolerance", "is susceptible to", "is sensitive to"],
+        priority="HIGH",
+        traits_addressed="1",
+        observations="bile acid + future heavy-metal/antibiotic susceptibility traits",
+    ),
+
+    # ----- Object properties (isolation-source quality pair) -----
+    # New predicates METPO:2000067 / METPO:2000068, placed in the contiguous
+    # gap METPO:2000067-2000070 of the chemical-interaction object-property
+    # family (2000064/2000065 are the new tolerance pair above; 2000066 is
+    # held in reserve for future symmetry; 2000067-2000070 are unused).
+    # These predicates rescue ~9 BacDive isolation-source labels that name
+    # a host or environmental quality (Child, Female, Acidic, Anoxic-
+    # anaerobic, ...) and were previously dropped by the loader's coarse
+    # PATO/METPO ban (kg_microbe/utils/isolation_source_mapping_utils.py
+    # DISALLOWED_OBJECT_SOURCES). The earlier ban was a defensible default
+    # because the BacDive transform's standard isolation-source emit shape
+    # `<source> --biolink:location_of--> <organism>` is incoherent when the
+    # source is a quality (you cannot be 'located_in' a quality). The fix
+    # is to flip the edge direction AND use a quality-aware predicate:
+    #     <organism> --METPO:2000067 isolated from host with quality--> <PATO term>
+    #     <organism> --METPO:2000068 isolated from environment with quality--> <PATO term>
+    # The mapping rows in mappings/isolation_source_to_ontology.tsv carry
+    # the appropriate METPO:2000067 / 2000068 token in their `notes` column;
+    # the loader scans for it and returns it as a `predicate_override`, and
+    # the BacDive transform branches its emit shape on the override.
+    Term(
+        proposed_id="METPO:2000067",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="isolated from host with quality",
+        definition=(
+            "A relation between a microbe and a quality of the host from which the "
+            "microbe was isolated. Examples: a microbe isolated from a juvenile "
+            "host has the relation `<microbe> METPO:2000067 PATO:0001190 'juvenile'`; "
+            "a microbe isolated from a female host has the relation `<microbe> "
+            "METPO:2000067 PATO:0000383 'female'`. The relation is one-directional: "
+            "it asserts that the host bore the named quality at isolation time, not "
+            "that the microbe itself has the quality."
+        ),
+        domain="METPO:1000525",
+        range="PATO:0000001",
+        synonyms=["host quality at isolation"],
+        priority="MEDIUM",
+        traits_addressed="4",
+        observations="BacDive isolation-source labels: Child, Juvenile, Female, Male",
+    ),
+    Term(
+        proposed_id="METPO:2000068",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="isolated from environment with quality",
+        definition=(
+            "A relation between a microbe and a quality of the environment from "
+            "which the microbe was isolated. Examples: a microbe isolated from an "
+            "acidic environment has the relation `<microbe> METPO:2000068 "
+            "PATO:0001429 'acidic'`; a microbe isolated from an anaerobic "
+            "environment has `<microbe> METPO:2000068 PATO:0001456 'anaerobic'`. "
+            "The relation does not by itself entail that the microbe is acidophilic, "
+            "anaerobic, etc. as a phenotype — it only records the environment's "
+            "quality at the time of isolation. Microbe phenotype assertions belong "
+            "on a separate edge (e.g. METPO:1000615 acidophilic via has_phenotype)."
+        ),
+        domain="METPO:1000525",
+        range="PATO:0000001",
+        synonyms=["environment quality at isolation"],
+        priority="MEDIUM",
+        traits_addressed="5",
+        observations="BacDive isolation-source labels: Acidic, Alkaline, Cold, Anoxic-anaerobic, Non-marine-Saline-and-Alkaline",
+    ),
+
+    # ----- Datatype properties: optimum value -----
+    # "optimum" form is missing in METPO. Numeric IDs placed in the existing
+    # 2000700-series value-property family (gap slots 2000717-2000719 between
+    # 2000716 'coding density' and 2000721 'cell length'). Domain METPO:1000525
+    # ('microbe') and range xsd:decimal match the existing METPO:2000701-2000709
+    # / 2000711-2000716 value-property convention.
+    Term(
+        proposed_id="METPO:2000717",
         scope="quantitative",
         term_type="DatatypeProperty",
-        label="has growth temperature optimum",
+        label="has growth temperature optimum value",
         definition=(
-            "The optimal temperature at which an organism achieves maximum growth rate, "
-            "measured in degrees Celsius."
+            "The optimum growth temperature (Celsius) reported for this organism — the "
+            "temperature at which growth rate is maximal. Companion to METPO:1000304 "
+            "'temperature optimum' (class form)."
         ),
-        domain=ORG,
+        domain="METPO:1000525",
         range="xsd:decimal",
         xrefs=["UO:0000027"],
+        synonyms=["temperature optimum"],
         priority="CRITICAL",
         traits_addressed="1",
         observations="85311",
     ),
     Term(
-        proposed_id="METPO:has_NaCl_concentration_optimum",
+        proposed_id="METPO:2000718",
         scope="quantitative",
         term_type="DatatypeProperty",
-        label="has NaCl concentration optimum",
+        label="has growth pH optimum value",
         definition=(
-            "The optimal sodium chloride (NaCl) concentration for growth, "
-            "expressed as weight/volume percentage."
+            "The optimum growth pH reported for this organism — the pH at which growth "
+            "rate is maximal, on the pH scale (0-14). Companion to METPO:1000331 "
+            "'pH optimum' (class form)."
         ),
-        domain=ORG,
-        range="xsd:decimal",
-        xrefs=["UO:0000187", "CHEBI:26710"],
-        priority="CRITICAL",
-        traits_addressed="1",
-        observations="85311",
-    ),
-    Term(
-        proposed_id="METPO:has_pH_optimum",
-        scope="quantitative",
-        term_type="DatatypeProperty",
-        label="has pH optimum",
-        definition=(
-            "The optimal pH value for growth on the pH scale (0-14). Note: METPO:1000331 "
-            "models pH optimum as a *class*; this datatype property carries the numeric value."
-        ),
-        domain=ORG,
+        domain="METPO:1000525",
         range="xsd:decimal",
         xrefs=["PATO:0001842"],
+        synonyms=["pH optimum"],
         priority="HIGH",
         traits_addressed="1",
         observations="5479",
+    ),
+    Term(
+        proposed_id="METPO:2000719",
+        scope="quantitative",
+        term_type="DatatypeProperty",
+        label="has growth salinity optimum value",
+        definition=(
+            "The optimum growth salinity (% NaCl w/v) reported for this organism — the "
+            "salinity at which growth rate is maximal. Companion to METPO:1000333 "
+            "'NaCl optimum' (class form)."
+        ),
+        domain="METPO:1000525",
+        range="xsd:decimal",
+        xrefs=["UO:0000187", "CHEBI:26710"],
+        synonyms=["salinity optimum", "NaCl concentration optimum"],
+        priority="CRITICAL",
+        traits_addressed="1",
+        observations="85311",
     ),
     # Class forms for tolerance min/max (companion to existing datatype properties).
     Term(
@@ -567,91 +714,39 @@ CATEGORICAL_TERMS: List[Term] = [
         observations="4",
     ),
 
-    # ----- Selective media growth capability -----
-    # Parent + children migrating placeholders kgmicrobe.trait:macconkey_agar_growth /
-    # kgmicrobe.trait:blood_agar_growth / kgmicrobe.trait:bile_susceptible from
-    # phenotype_mappings.tsv into METPO.
-    Term(
-        proposed_id="METPO:1007050",
-        scope="categorical",
-        term_type="Class",
-        label="selective media growth capability",
-        definition="A phenotypic capability describing the ability to grow on selective or differential media.",
-        parent_or_subproperty=_PHENO_PARENT,
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007053",
-        scope="categorical",
-        term_type="Class",
-        label="growth on MacConkey agar",
-        definition=(
-            "Capability to grow on MacConkey agar; differential medium typically used to "
-            "distinguish lactose-fermenting Gram-negative bacteria."
-        ),
-        parent_or_subproperty="METPO:1007050",
-        synonyms=["MacConkey agar growth", "grows on MacConkey agar"],
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007054",
-        scope="categorical",
-        term_type="Class",
-        label="growth on blood agar",
-        definition=(
-            "Capability to grow on blood agar; enriched medium typically used for fastidious "
-            "organisms and hemolysis assessment."
-        ),
-        parent_or_subproperty="METPO:1007050",
-        synonyms=["blood agar growth", "grows on blood agar"],
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007055",
-        scope="categorical",
-        term_type="Class",
-        label="growth on EMB agar",
-        definition=(
-            "Capability to grow on Eosin Methylene Blue (EMB) agar; selective and "
-            "differential medium for Gram-negative enteric bacteria."
-        ),
-        parent_or_subproperty="METPO:1007050",
-        synonyms=["EMB agar growth", "Eosin Methylene Blue agar growth"],
-        priority="LOW",
-    ),
-    # Bile-acid response hierarchy: a neutral parent (METPO:1007051) groups
-    # the assay outcomes for bile-acid challenge. Susceptibility (growth
-    # inhibited) lives under the neutral response parent — NOT under a
-    # "selective media growth" parent, which would imply the opposite
-    # polarity (i.e. that susceptible taxa can grow on the selective
-    # medium).
-    Term(
-        proposed_id="METPO:1007051",
-        scope="categorical",
-        term_type="Class",
-        label="bile acid response",
-        definition=(
-            "A phenotypic quality describing the organism's growth response when "
-            "challenged with bile acids or bile salts. Encompasses both "
-            "tolerance/resistance (growth proceeds) and susceptibility (growth "
-            "is inhibited); the specific outcome is asserted by child classes."
-        ),
-        parent_or_subproperty=_PHENO_PARENT,
-        xrefs=["CHEBI:3098"],
-        synonyms=["bile resistance", "bile tolerance", "bile salt response"],
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007056",
-        scope="categorical",
-        term_type="Class",
-        label="bile acid susceptible",
-        definition="Phenotype where growth is inhibited by bile acids or bile salts.",
-        parent_or_subproperty="METPO:1007051",
-        xrefs=["CHEBI:3098"],
-        synonyms=["growth: bile acid susceptible"],
-        priority="LOW",
-    ),
+    # ----- Selective/differential media growth -----
+    # NOTE: medium-specific growth (MacConkey, blood agar, EMB, ...) is NOT
+    # modeled as phenotype classes here. METPO already provides the
+    # predicate-driven pattern: METPO:2000517 'grows in' / METPO:2000518
+    # 'does not grow in', domain METPO:1000525 'microbe', range METPO:1004005
+    # 'growth medium'. Encoding `growth on MacConkey` as a class would hide the
+    # medium as an object and bypass the existing positive/negative predicate
+    # pattern, making downstream queries over growth-medium evidence
+    # incomplete.
+    #
+    # The transform-side migration is DONE: mappings/canonical/phenotype_mappings.tsv
+    # now routes the BacDive `growth: MacConkey/blood agar` observations through
+    # the new kgmicrobe.medium:* placeholders (defined in custom_curies.yaml's
+    # kgmicrobe.medium block) so the metatraits transform emits
+    #     organism --METPO:2000517 'grows in'--> kgmicrobe.medium:{macconkey,blood}_agar
+    # The legacy kgmicrobe.trait:*_agar_growth placeholders only persist in
+    # already-generated edges.tsv files from before this refactor; they are
+    # listed in DEFERRED_PLACEHOLDERS so the placeholder-coverage validator
+    # does not fail when scanning a stale edges.tsv. Future work: replace the
+    # kgmicrobe.medium:* placeholders with a stable external medium IRI (a new
+    # METPO:1004xxx medium child or an upstream MediaDive entry) once one is
+    # minted.
+    # ----- Bile-acid response: superseded by predicate-driven pattern -----
+    # The earlier proposal modeled bile-acid susceptibility as a class hierarchy
+    # (METPO:1007051 'bile acid response' parent + METPO:1007056 'bile acid
+    # susceptible' child). Both are now removed in favour of the more general
+    # chemical-tolerance predicate pair METPO:2000064 'tolerates' /
+    # METPO:2000065 'does not tolerate' (above): the BacDive observation
+    # `growth: bile acid susceptible` now routes to
+    #     <organism> --METPO:2000065 'does not tolerate'--> CHEBI:3098 'bile acid'
+    # via mappings/canonical/phenotype_mappings.tsv. This generalizes cleanly
+    # to future heavy-metal / antibiotic / detergent susceptibility traits
+    # without minting a class per (challenge_chemical, polarity) combination.
 
     # ----- Colony morphology -----
     # Parent + colony-shape children sourced from BacDive (15 distinct colony
@@ -827,6 +922,21 @@ CATEGORICAL_TERMS: List[Term] = [
     # assay itself; its children are the observed test outcomes. Pattern
     # matches METPO's existing biochemical-test classes (e.g.
     # METPO:1005010-1005018 for indole/MR/VP).
+    #
+    # BRIDGING TO EXISTING ENZYME-ACTIVITY PREDICATES
+    # METPO already defines METPO:2000302 'shows activity of' / METPO:2000303
+    # 'does not show activity of' (domain METPO:1000525 'microbe', range
+    # METPO:1000527 'enzyme'). The test-outcome classes below do NOT replace
+    # that predicate pattern — they record the bench-test observation. The
+    # underlying enzyme-organism relation is asserted separately:
+    #   <organism> --METPO:2000302--> <GO/EC enzyme term>      (positive)
+    #   <organism> --METPO:2000303--> <GO/EC enzyme term>      (negative)
+    # The xrefs on each positive child (GO:0004096 catalase, GO:0004129
+    # oxidase, GO:0009039 urease) name the enzyme term to use as the predicate
+    # range. Downstream transforms must emit BOTH the test-outcome phenotype
+    # (organism --METPO:2000102 has phenotype--> <test-result class>) AND the
+    # enzyme-activity assertion (organism --METPO:2000302/2000303--> <enzyme
+    # term>) so neither encoding is lost.
     Term(
         proposed_id="METPO:1007080",
         scope="categorical",
@@ -848,9 +958,10 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="catalase positive",
         definition=(
-            "Phenotype where the catalase test yields a positive result (visible "
-            "bubbling on H2O2), indicating that the organism has detectable "
-            "catalase activity (GO:0004096)."
+            "Test-outcome phenotype where the catalase test yields a positive result "
+            "(visible bubbling on H2O2). The underlying enzyme-organism relation "
+            "should additionally be asserted via "
+            "<organism> METPO:2000302 'shows activity of' GO:0004096 'catalase activity'."
         ),
         parent_or_subproperty="METPO:1007080",
         xrefs=["GO:0004096"],
@@ -863,8 +974,11 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="catalase negative",
         definition=(
-            "Phenotype where the catalase test yields a negative result (no "
-            "bubbling on H2O2), indicating absence of detectable catalase activity."
+            "Test-outcome phenotype where the catalase test yields a negative result "
+            "(no bubbling on H2O2). The underlying enzyme-organism relation should "
+            "additionally be asserted via "
+            "<organism> METPO:2000303 'does not show activity of' GO:0004096 "
+            "'catalase activity'."
         ),
         parent_or_subproperty="METPO:1007080",
         synonyms=["catalase test negative", "catalase -"],
@@ -890,8 +1004,10 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="oxidase positive",
         definition=(
-            "Phenotype where the oxidase test yields a positive result, indicating "
-            "detectable cytochrome c oxidase activity (GO:0004129)."
+            "Test-outcome phenotype where the oxidase test yields a positive result. "
+            "The underlying enzyme-organism relation should additionally be asserted "
+            "via <organism> METPO:2000302 'shows activity of' GO:0004129 "
+            "'cytochrome-c oxidase activity'."
         ),
         parent_or_subproperty="METPO:1007081",
         xrefs=["GO:0004129"],
@@ -904,8 +1020,10 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="oxidase negative",
         definition=(
-            "Phenotype where the oxidase test yields a negative result, indicating "
-            "absence of detectable cytochrome c oxidase activity."
+            "Test-outcome phenotype where the oxidase test yields a negative result. "
+            "The underlying enzyme-organism relation should additionally be asserted "
+            "via <organism> METPO:2000303 'does not show activity of' GO:0004129 "
+            "'cytochrome-c oxidase activity'."
         ),
         parent_or_subproperty="METPO:1007081",
         synonyms=["oxidase test negative", "oxidase -"],
@@ -932,8 +1050,10 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="urease positive",
         definition=(
-            "Phenotype where the urease test yields a positive result, indicating "
-            "detectable urease activity (GO:0009039)."
+            "Test-outcome phenotype where the urease test yields a positive result. "
+            "The underlying enzyme-organism relation should additionally be asserted "
+            "via <organism> METPO:2000302 'shows activity of' GO:0009039 "
+            "'urease activity'."
         ),
         parent_or_subproperty="METPO:1007082",
         xrefs=["GO:0009039"],
@@ -946,8 +1066,10 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="urease negative",
         definition=(
-            "Phenotype where the urease test yields a negative result, indicating "
-            "absence of detectable urease activity."
+            "Test-outcome phenotype where the urease test yields a negative result. "
+            "The underlying enzyme-organism relation should additionally be asserted "
+            "via <organism> METPO:2000303 'does not show activity of' GO:0009039 "
+            "'urease activity'."
         ),
         parent_or_subproperty="METPO:1007082",
         synonyms=["urease test negative", "urease -"],
@@ -975,7 +1097,14 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="coagulase positive",
-        definition="Phenotype where the coagulase test yields a positive result (plasma clotting).",
+        definition=(
+            "Test-outcome phenotype where the coagulase test yields a positive result "
+            "(plasma clotting). The underlying enzyme-organism relation should "
+            "additionally be asserted via <organism> METPO:2000302 'shows activity of' "
+            "<coagulase enzyme term> once a sufficiently specific enzyme term is "
+            "selected (no GO/EC term currently exists at the bacteriological coagulase "
+            "test granularity)."
+        ),
         parent_or_subproperty="METPO:1007089",
         synonyms=["coagulase test positive", "coagulase +"],
         priority="MEDIUM",
@@ -985,7 +1114,12 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="coagulase negative",
-        definition="Phenotype where the coagulase test yields a negative result.",
+        definition=(
+            "Test-outcome phenotype where the coagulase test yields a negative result. "
+            "The underlying enzyme-organism relation should additionally be asserted "
+            "via <organism> METPO:2000303 'does not show activity of' <coagulase enzyme "
+            "term> once a sufficiently specific enzyme term is selected."
+        ),
         parent_or_subproperty="METPO:1007089",
         synonyms=["coagulase test negative", "coagulase -"],
         priority="MEDIUM",
@@ -994,6 +1128,13 @@ CATEGORICAL_TERMS: List[Term] = [
     # isolation_source mapping audit (mappings/isolation_source_to_ontology.tsv,
     # 2026-05-02) as residual unmapped microbial-trait labels with no
     # existing ENVO/UBERON/PATO/MICRO term that fits.
+    #
+    # Xerophily is parented at _PHENO_PARENT (sibling of osmotic, metal,
+    # radiation, pressure tolerance) — NOT under METPO:1007073 'osmotic
+    # tolerance' — because the limiting factor is water activity (aw), not
+    # solute concentration. Subclassing under osmotic tolerance would let the
+    # reasoner infer xerophily as osmotic tolerance, contradicting the
+    # definition that explicitly separates the two.
     Term(
         proposed_id="METPO:1007092",
         scope="categorical",
@@ -1002,10 +1143,10 @@ CATEGORICAL_TERMS: List[Term] = [
         definition=(
             "A phenotypic quality describing a microbe that thrives in low water-activity "
             "environments (typically aw < 0.85). Sibling concept of osmotic and metal "
-            "tolerance; distinct from halophily because the limiting factor is water "
-            "activity rather than salt concentration."
+            "tolerance; distinct from halophily and from osmotic tolerance because the "
+            "limiting factor is water activity (aw) rather than solute concentration."
         ),
-        parent_or_subproperty="METPO:1007073",
+        parent_or_subproperty=_PHENO_PARENT,
         synonyms=["xerophile", "xerotolerant"],
         priority="MEDIUM",
     ),
@@ -1243,18 +1384,23 @@ def validate_metatraits_placeholder_coverage(
             if obj.startswith(("kgmicrobe.trait:", "kgmicrobe.activity:")):
                 placeholders.add(obj)
 
-    uncovered = sorted(p for p in placeholders if p not in KGMICROBE_PLACEHOLDER_MIGRATION)
+    covered = set(KGMICROBE_PLACEHOLDER_MIGRATION) | set(DEFERRED_PLACEHOLDERS)
+    uncovered = sorted(p for p in placeholders if p not in covered)
     if uncovered:
         lines = "\n".join(f"  - {p}" for p in uncovered)
         raise SystemExit(
             "Uncovered kgmicrobe.{trait,activity}:* placeholders in metatraits edges:\n"
             + lines
-            + "\n\nAdd each to KGMICROBE_PLACEHOLDER_MIGRATION and add a Term to "
-            + "PHASE_4_TERMS in scripts/extract_metpo_proposals.py."
+            + "\n\nAdd each to KGMICROBE_PLACEHOLDER_MIGRATION (with a proposed METPO "
+            + "class target) or DEFERRED_PLACEHOLDERS (with a transform-rewrite note) "
+            + "in scripts/extract_metpo_proposals.py."
         )
+    deferred_hits = sorted(p for p in placeholders if p in DEFERRED_PLACEHOLDERS)
     print(
         f"[ok] {len(placeholders)} kgmicrobe.{{trait,activity}}:* placeholder(s) "
-        f"in metatraits edges — all covered by proposal."
+        f"in metatraits edges — {len(deferred_hits)} legacy placeholder(s) carried over "
+        f"in stale edges.tsv (already retired transform-side; see DEFERRED_PLACEHOLDERS), "
+        f"rest covered by proposal."
     )
 
 

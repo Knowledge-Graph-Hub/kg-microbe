@@ -299,13 +299,33 @@ class TestMetaTraitsTransform(unittest.TestCase):
     @patch.object(MetaTraitsTransform, "_search_ncbitaxon_by_label")
     def test_tier2_false_majority_drops_positive_edges(self, mock_search, mock_adapter, mock_ensure):
         """
-        False-majority Tier-2 rows must not emit positive phenotype/capability edges.
+        False-majority Tier-2 rows must not emit positive phenotype/capability/grows-in/tolerance edges.
 
-        Covers the six traits flagged by the Codex review: enzyme activity catalase /
-        oxidase / urease (Tier-2 ``biolink:capable_of`` to EC/GO), and growth: MacConkey
-        agar / blood agar / bile acid susceptible (Tier-2 ``biolink:has_phenotype`` to
-        kgmicrobe.trait:* nodes). Each has no METPO negative predicate, so the helper
-        returns None and the row must be skipped.
+        Covers the six traits flagged by the Codex review:
+        - Enzyme activity catalase / oxidase / urease (Tier-2 ``biolink:capable_of``
+          to EC/GO; no METPO negative predicate, so ``_get_negative_predicate``
+          returns None and the row is dropped).
+        - The two selective-medium growth observations (MacConkey/blood agar) which
+          now route through ``kgmicrobe.medium:*`` placeholders with positive
+          predicate ``METPO:2000517``. In principle their negative form is
+          ``METPO:2000518``, but because the upstream METPO ontology does not
+          give the 2000517/2000518 pair a shared synonym (other paired predicates
+          pair via shared synonyms — e.g. ``assimilation`` for 2000002/2000027),
+          the pairing is currently unreachable and false-majority grows-in rows
+          are silently dropped, just like the prior ``biolink:has_phenotype``
+          encoding.
+        - Bile acid susceptible: now routes to ``CHEBI:3098 'bile acid'`` with
+          predicate ``METPO:2000065 'does not tolerate'`` (the negative member
+          of the new chemical-tolerance pair METPO:2000064/2000065). For
+          majority=false the negative-of-a-negative is undefined and the row
+          is dropped.
+
+        This test asserts BOTH that no positive edge leaks AND that no edge of
+        any kind is emitted to the kgmicrobe.medium:* / CHEBI:3098 objects for
+        the false-majority case, so a future METPO synonym fix or pairing-
+        logic improvement that suddenly starts emitting METPO:2000518 (or any
+        inverted-tolerance) edges shows up here as a controlled test failure
+        rather than a silent behaviour change.
         """
         import json
         import shutil
@@ -314,9 +334,9 @@ class TestMetaTraitsTransform(unittest.TestCase):
             ("enzyme activity: catalase (EC1.11.1.6)", "EC:1.11.1.6"),
             ("enzyme activity: oxidase", "GO:0004129"),
             ("enzyme activity: urease (EC3.5.1.5)", "EC:3.5.1.5"),
-            ("growth: MacConkey agar", "kgmicrobe.trait:macconkey_agar_growth"),
-            ("growth: blood agar", "kgmicrobe.trait:blood_agar_growth"),
-            ("growth: bile acid susceptible", "kgmicrobe.trait:bile_susceptible"),
+            ("growth: MacConkey agar", "kgmicrobe.medium:macconkey_agar"),
+            ("growth: blood agar", "kgmicrobe.medium:blood_agar"),
+            ("growth: bile acid susceptible", "CHEBI:3098"),
         ]
         fixture_record = {
             "tax_name": "Tier2NegStrain",
@@ -353,19 +373,70 @@ class TestMetaTraitsTransform(unittest.TestCase):
             obj_idx = header.index("object")
             pred_idx = header.index("predicate")
 
+            positive_predicates = {
+                "biolink:has_phenotype",
+                "biolink:capable_of",
+                "METPO:2000517",  # grows in (positive form for kgmicrobe.medium:* objects)
+                "METPO:2000064",  # tolerates (positive form of the new chemical-tolerance pair)
+                "METPO:2000065",  # does not tolerate (the row's mapped predicate; treat as positive
+                                  # for assertion purposes — for false-majority we expect NO edge at
+                                  # all, neither the row's positive-mapped predicate nor an inverted
+                                  # one, so flagging it as "positive" here is the right guard)
+            }
+            # Also lock in: no edge of any kind to the kgmicrobe.medium:* object
+            # is emitted for these false-majority rows. The METPO ontology does
+            # not currently pair METPO:2000517 'grows in' with METPO:2000518
+            # 'does not grow in' via a shared synonym (METPO predicate pairing
+            # in metatraits._build_metpo_lookups requires a shared synonym
+            # between the positive and negative predicate, e.g. 'assimilation'
+            # for assimilates/does-not-assimilate), so _get_negative_predicate
+            # returns None for METPO:2000517 and the row is dropped — same
+            # behaviour as the previous biolink:has_phenotype encoding. If the
+            # upstream METPO 2000517/2000518 pair is given a shared synonym
+            # (or the pairing logic is patched to also pair by stripping the
+            # 'does not ' prefix), this assertion will need to be loosened to
+            # `>= 1` METPO:2000518 edge per medium object.
+            # Objects whose mapping uses a paired METPO predicate where the
+            # row's positive-mapped predicate is the *negative* member of the
+            # pair (so for majority=false there is no inverse to flip to and
+            # the row should be silently dropped, not emitted in either
+            # polarity). MacConkey/blood agar use METPO:2000517 grows in (the
+            # positive member; the negative METPO:2000518 is unreachable
+            # because the upstream pair lacks a shared synonym). bile acid
+            # uses METPO:2000065 does not tolerate (the negative member; no
+            # inverse-of-an-inverse path).
+            grows_in_kgmicrobe_objects = {
+                "kgmicrobe.medium:macconkey_agar",
+                "kgmicrobe.medium:blood_agar",
+                "CHEBI:3098",
+            }
             for _, expected_obj in false_majority_traits:
                 offending = [
                     line
                     for line in edges[1:]
                     if (cols := line.split("\t"))
                     and cols[obj_idx] == expected_obj
-                    and cols[pred_idx] in {"biolink:has_phenotype", "biolink:capable_of"}
+                    and cols[pred_idx] in positive_predicates
                 ]
                 self.assertEqual(
                     offending,
                     [],
                     f"Tier-2 false-majority row leaked a positive edge for {expected_obj}: {offending}",
                 )
+                if expected_obj in grows_in_kgmicrobe_objects:
+                    any_edge = [
+                        line
+                        for line in edges[1:]
+                        if (cols := line.split("\t")) and cols[obj_idx] == expected_obj
+                    ]
+                    self.assertEqual(
+                        any_edge,
+                        [],
+                        f"Tier-2 false-majority grows-in row unexpectedly emitted any "
+                        f"edge to {expected_obj} (METPO 2000517/2000518 pair lacks a "
+                        f"shared synonym so the negative form is not currently "
+                        f"reachable; the row should be silently dropped). Got: {any_edge}",
+                    )
         finally:
             if self.temp_input_dir.exists():
                 shutil.rmtree(self.temp_input_dir)

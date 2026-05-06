@@ -5,6 +5,9 @@
 #   kgmicrobe.trait:*      — phenotypic qualities not yet in METPO
 #   kgmicrobe.compound:*   — chemical entities not yet in CHEBI
 #   kgmicrobe.pathway:*    — biological processes not yet in GO/METPO
+#   kgmicrobe.medium:*     — growth media not present in MediaDive's catalog
+#                            (e.g. MacConkey/EMB agar). Object of METPO:2000517
+#                            'grows in' / METPO:2000518 'does not grow in'.
 #   kgmicrobe.ingredient:* — MediaDive ingredients with no MIM/CHEBI/FOODON/UBERON/ENVO mapping
 #                            (dynamic; minted from the ingredient label, not statically registered)
 #
@@ -355,22 +358,25 @@ other:
     category: "biolink:MolecularActivity"
 
 
+"kgmicrobe.medium":
+  macconkey_agar:
+    label: "MacConkey agar"
+    description: "Selective and differential growth medium for Gram-negative enteric bacteria; lactose fermenters appear pink, non-fermenters colourless. Not present in MediaDive's catalog."
+    category: "biolink:GrowthMedium"
+    predicate: "METPO:2000517"  # grows in
+  blood_agar:
+    label: "blood agar"
+    description: "Enriched growth medium containing 5-10% sheep or horse blood; supports fastidious organisms and is used for hemolysis assessment. Generic placeholder; specific formulations (Columbia, Heart Infusion, etc.) live as mediadive.medium:* nodes when present in MediaDive's catalog."
+    category: "biolink:GrowthMedium"
+    predicate: "METPO:2000517"  # grows in
+  emb_agar:
+    label: "Eosin Methylene Blue (EMB) agar"
+    description: "Selective and differential growth medium for Gram-negative enteric bacteria; lactose fermenters appear with a metallic green sheen. Not present in MediaDive's catalog."
+    category: "biolink:GrowthMedium"
+    predicate: "METPO:2000517"  # grows in
+
+
 "kgmicrobe.trait":
-  macconkey_agar_growth:
-    label: "growth on MacConkey agar"
-    description: "Ability to grow on MacConkey agar selective media"
-    category: "biolink:PhenotypicQuality"
-
-  blood_agar_growth:
-    label: "growth on blood agar"
-    description: "Ability to grow on blood agar enriched media"
-    category: "biolink:PhenotypicQuality"
-
-  bile_susceptible:
-    label: "bile acid susceptible"
-    description: "Growth inhibited by bile acids"
-    category: "biolink:PhenotypicQuality"
-
   voges_proskauer_test_positive:
     label: "Voges-Proskauer test positive"
     description: "Positive result in Voges-Proskauer biochemical test"

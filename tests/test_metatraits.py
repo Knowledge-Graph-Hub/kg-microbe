@@ -302,13 +302,21 @@ class TestMetaTraitsTransform(unittest.TestCase):
         False-majority Tier-2 rows must not emit positive phenotype/capability/grows-in edges.
 
         Covers the six traits flagged by the Codex review: enzyme activity catalase /
-        oxidase / urease (Tier-2 ``biolink:capable_of`` to EC/GO — no METPO negative form,
-        so the helper returns None and the row is skipped), bile acid susceptible (Tier-2
-        ``biolink:has_phenotype`` — also skipped), and the two selective-medium growth
-        observations (MacConkey/blood agar) which are now emitted as
-        ``organism --METPO:2000517 grows in--> kgmicrobe.medium:*`` and so DO have a
-        negative form (METPO:2000518) — the assertion only requires that no POSITIVE
-        edge of any flavour is emitted for the false-majority rows.
+        oxidase / urease (Tier-2 ``biolink:capable_of`` to EC/GO — no METPO negative
+        predicate, so ``_get_negative_predicate`` returns None and the row is dropped),
+        bile acid susceptible (Tier-2 ``biolink:has_phenotype`` — also dropped), and the
+        two selective-medium growth observations (MacConkey/blood agar). The grows-in
+        rows now route through ``kgmicrobe.medium:*`` placeholders with positive
+        predicate ``METPO:2000517``; in principle their negative form is
+        ``METPO:2000518``, but because the upstream METPO ontology does not give the
+        2000517/2000518 pair a shared synonym (other paired predicates pair via shared
+        synonyms — e.g. ``assimilation`` for 2000002/2000027), the pairing is currently
+        unreachable and false-majority grows-in rows are still silently dropped, just
+        like the prior ``biolink:has_phenotype`` encoding. This test asserts BOTH that
+        no positive edge leaks AND that no edge of any kind is emitted to the medium
+        object for the false-majority case (so a future METPO synonym fix that suddenly
+        starts emitting METPO:2000518 edges shows up here as a controlled test failure
+        rather than a silent behaviour change).
         """
         import json
         import shutil
@@ -361,6 +369,23 @@ class TestMetaTraitsTransform(unittest.TestCase):
                 "biolink:capable_of",
                 "METPO:2000517",  # grows in (positive form for kgmicrobe.medium:* objects)
             }
+            # Also lock in: no edge of any kind to the kgmicrobe.medium:* object
+            # is emitted for these false-majority rows. The METPO ontology does
+            # not currently pair METPO:2000517 'grows in' with METPO:2000518
+            # 'does not grow in' via a shared synonym (METPO predicate pairing
+            # in metatraits._build_metpo_lookups requires a shared synonym
+            # between the positive and negative predicate, e.g. 'assimilation'
+            # for assimilates/does-not-assimilate), so _get_negative_predicate
+            # returns None for METPO:2000517 and the row is dropped — same
+            # behaviour as the previous biolink:has_phenotype encoding. If the
+            # upstream METPO 2000517/2000518 pair is given a shared synonym
+            # (or the pairing logic is patched to also pair by stripping the
+            # 'does not ' prefix), this assertion will need to be loosened to
+            # `>= 1` METPO:2000518 edge per medium object.
+            grows_in_kgmicrobe_objects = {
+                "kgmicrobe.medium:macconkey_agar",
+                "kgmicrobe.medium:blood_agar",
+            }
             for _, expected_obj in false_majority_traits:
                 offending = [
                     line
@@ -374,6 +399,20 @@ class TestMetaTraitsTransform(unittest.TestCase):
                     [],
                     f"Tier-2 false-majority row leaked a positive edge for {expected_obj}: {offending}",
                 )
+                if expected_obj in grows_in_kgmicrobe_objects:
+                    any_edge = [
+                        line
+                        for line in edges[1:]
+                        if (cols := line.split("\t")) and cols[obj_idx] == expected_obj
+                    ]
+                    self.assertEqual(
+                        any_edge,
+                        [],
+                        f"Tier-2 false-majority grows-in row unexpectedly emitted any "
+                        f"edge to {expected_obj} (METPO 2000517/2000518 pair lacks a "
+                        f"shared synonym so the negative form is not currently "
+                        f"reachable; the row should be silently dropped). Got: {any_edge}",
+                    )
         finally:
             if self.temp_input_dir.exists():
                 shutil.rmtree(self.temp_input_dir)

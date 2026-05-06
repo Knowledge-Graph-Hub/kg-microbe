@@ -602,15 +602,18 @@ CATEGORICAL_TERMS: List[Term] = [
     # pattern, making downstream queries over growth-medium evidence
     # incomplete.
     #
-    # The transform-side migration of the kgmicrobe.trait:macconkey_agar_growth
-    # / kgmicrobe.trait:blood_agar_growth placeholders is therefore deferred to
-    # a follow-up transform refactor that emits
-    #     organism --METPO:2000517--> <medium IRI>
-    # using a CHEBI/medium IRI for MacConkey/blood/EMB agar (or a new minted
-    # METPO:1004xxx medium child) as the object. Until that refactor lands the
-    # placeholders remain `kgmicrobe.trait:*` and are listed in
-    # `DEFERRED_PLACEHOLDERS` so the placeholder-coverage validator does not
-    # demand a class-mint target for them.
+    # The transform-side migration is DONE: mappings/canonical/phenotype_mappings.tsv
+    # now routes the BacDive `growth: MacConkey/blood agar` observations through
+    # the new kgmicrobe.medium:* placeholders (defined in custom_curies.yaml's
+    # kgmicrobe.medium block) so the metatraits transform emits
+    #     organism --METPO:2000517 'grows in'--> kgmicrobe.medium:{macconkey,blood}_agar
+    # The legacy kgmicrobe.trait:*_agar_growth placeholders only persist in
+    # already-generated edges.tsv files from before this refactor; they are
+    # listed in DEFERRED_PLACEHOLDERS so the placeholder-coverage validator
+    # does not fail when scanning a stale edges.tsv. Future work: replace the
+    # kgmicrobe.medium:* placeholders with a stable external medium IRI (a new
+    # METPO:1004xxx medium child or an upstream MediaDive entry) once one is
+    # minted.
     # Bile-acid response hierarchy: a neutral parent (METPO:1007051) groups
     # the assay outcomes for bile-acid challenge. Susceptibility (growth
     # inhibited) lives under the neutral response parent — NOT under a
@@ -1295,7 +1298,8 @@ def validate_metatraits_placeholder_coverage(
     deferred_hits = sorted(p for p in placeholders if p in DEFERRED_PLACEHOLDERS)
     print(
         f"[ok] {len(placeholders)} kgmicrobe.{{trait,activity}}:* placeholder(s) "
-        f"in metatraits edges — {len(deferred_hits)} deferred to transform refactor, "
+        f"in metatraits edges — {len(deferred_hits)} legacy placeholder(s) carried over "
+        f"in stale edges.tsv (already retired transform-side; see DEFERRED_PLACEHOLDERS), "
         f"rest covered by proposal."
     )
 

@@ -473,6 +473,71 @@ QUANTITATIVE_TERMS: List[Term] = [
         observations="bile acid + future heavy-metal/antibiotic susceptibility traits",
     ),
 
+    # ----- Object properties (isolation-source quality pair) -----
+    # New predicates METPO:2000067 / METPO:2000068, placed in the contiguous
+    # gap METPO:2000067-2000070 of the chemical-interaction object-property
+    # family (2000064/2000065 are the new tolerance pair above; 2000066 is
+    # held in reserve for future symmetry; 2000067-2000070 are unused).
+    # These predicates rescue ~9 BacDive isolation-source labels that name
+    # a host or environmental quality (Child, Female, Acidic, Anoxic-
+    # anaerobic, ...) and were previously dropped by the loader's coarse
+    # PATO/METPO ban (kg_microbe/utils/isolation_source_mapping_utils.py
+    # DISALLOWED_OBJECT_SOURCES). The earlier ban was a defensible default
+    # because the BacDive transform's standard isolation-source emit shape
+    # `<source> --biolink:location_of--> <organism>` is incoherent when the
+    # source is a quality (you cannot be 'located_in' a quality). The fix
+    # is to flip the edge direction AND use a quality-aware predicate:
+    #     <organism> --METPO:2000067 isolated from host with quality--> <PATO term>
+    #     <organism> --METPO:2000068 isolated from environment with quality--> <PATO term>
+    # The mapping rows in mappings/isolation_source_to_ontology.tsv carry
+    # the appropriate METPO:2000067 / 2000068 token in their `notes` column;
+    # the loader scans for it and returns it as a `predicate_override`, and
+    # the BacDive transform branches its emit shape on the override.
+    Term(
+        proposed_id="METPO:2000067",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="isolated from host with quality",
+        definition=(
+            "A relation between a microbe and a quality of the host from which the "
+            "microbe was isolated. Examples: a microbe isolated from a juvenile "
+            "host has the relation `<microbe> METPO:2000067 PATO:0001190 'juvenile'`; "
+            "a microbe isolated from a female host has the relation `<microbe> "
+            "METPO:2000067 PATO:0000383 'female'`. The relation is one-directional: "
+            "it asserts that the host bore the named quality at isolation time, not "
+            "that the microbe itself has the quality."
+        ),
+        domain="METPO:1000525",
+        range="PATO:0000001",
+        synonyms=["host quality at isolation"],
+        priority="MEDIUM",
+        traits_addressed="4",
+        observations="BacDive isolation-source labels: Child, Juvenile, Female, Male",
+    ),
+    Term(
+        proposed_id="METPO:2000068",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="isolated from environment with quality",
+        definition=(
+            "A relation between a microbe and a quality of the environment from "
+            "which the microbe was isolated. Examples: a microbe isolated from an "
+            "acidic environment has the relation `<microbe> METPO:2000068 "
+            "PATO:0001429 'acidic'`; a microbe isolated from an anaerobic "
+            "environment has `<microbe> METPO:2000068 PATO:0001456 'anaerobic'`. "
+            "The relation does not by itself entail that the microbe is acidophilic, "
+            "anaerobic, etc. as a phenotype — it only records the environment's "
+            "quality at the time of isolation. Microbe phenotype assertions belong "
+            "on a separate edge (e.g. METPO:1000615 acidophilic via has_phenotype)."
+        ),
+        domain="METPO:1000525",
+        range="PATO:0000001",
+        synonyms=["environment quality at isolation"],
+        priority="MEDIUM",
+        traits_addressed="5",
+        observations="BacDive isolation-source labels: Acidic, Alkaline, Cold, Anoxic-anaerobic, Non-marine-Saline-and-Alkaline",
+    ),
+
     # ----- Datatype properties: optimum value -----
     # "optimum" form is missing in METPO. Numeric IDs placed in the existing
     # 2000700-series value-property family (gap slots 2000717-2000719 between

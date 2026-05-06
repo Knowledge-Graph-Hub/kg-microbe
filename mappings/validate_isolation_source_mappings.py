@@ -45,6 +45,16 @@ DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({
     "METPO",
 })
 
+# Mirror of kg_microbe/utils/isolation_source_mapping_utils.py:PREDICATE_OVERRIDE_CURIES.
+# Rows whose `notes` column references one of these CURIEs are exempt from the
+# PATO ban (the override token re-shapes the downstream edge so PATO is well-
+# formed as a quality of the source, not a broken location target). METPO is
+# never exempt — METPO terms describe organism phenotypes, not source qualities.
+PREDICATE_OVERRIDE_CURIES: frozenset = frozenset({
+    "METPO:2000067",  # isolated from host with quality
+    "METPO:2000068",  # isolated from environment with quality
+})
+
 BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "ability question",
     "processing plant",
@@ -62,6 +72,15 @@ BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "food production",
     "antibiotic treatment",
 )
+
+
+def _has_predicate_override(row: Dict[str, str]) -> bool:
+    """Return True iff the row's notes column references a known override CURIE."""
+    notes = (row.get("notes") or "")
+    if not notes:
+        return False
+    cleaned = notes.replace(";", " ").replace(",", " ").replace("(", " ").replace(")", " ")
+    return any(token in PREDICATE_OVERRIDE_CURIES for token in cleaned.split())
 
 
 def _row_is_trusted(row: Dict[str, str]) -> bool:
@@ -101,8 +120,11 @@ def iter_validation_failures(
 
             object_source = (row.get("object_source") or "").strip()
             if object_source in DISALLOWED_OBJECT_SOURCES:
-                yield idx, row, f"object_source '{object_source}' is disallowed"
-                continue
+                if object_source == "PATO" and _has_predicate_override(row):
+                    pass  # allow — override predicate handles the inversion
+                else:
+                    yield idx, row, f"object_source '{object_source}' is disallowed"
+                    continue
 
             object_label = (row.get("object_label") or "").strip().lower()
             for banned in BANNED_OBJECT_LABEL_SUBSTRINGS:

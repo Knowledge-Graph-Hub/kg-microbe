@@ -380,7 +380,8 @@ class BacDiveTransform(Transform):
         permitted = loaded_prefixes | {p.upper() for p in STUB_ONTOLOGY_PREFIXES} | set(STUB_ONTOLOGY_PREFIXES)
 
         bad: Dict[str, List[str]] = {}
-        for label, (curie, _label) in self.isolation_source_mappings.items():
+        for label, mapping_value in self.isolation_source_mappings.items():
+            curie = mapping_value[0]
             prefix = curie.split(":", 1)[0] if ":" in curie else ""
             if not prefix:
                 continue
@@ -2949,8 +2950,37 @@ class BacDiveTransform(Transform):
                         mapping = self.isolation_source_mappings.get(
                             normalize_isolation_source_label(isol_source)
                         )
+                        predicate_override: Optional[str] = None
                         if mapping is not None:
-                            subject_id, mapped_label = mapping[0], mapping[1]
+                            subject_id = mapping[0]
+                            mapped_label = mapping[1]
+                            # mapping = (object_id, object_label, object_source, predicate_override)
+                            predicate_override = mapping[3] if len(mapping) > 3 else None
+
+                            if predicate_override:
+                                # Quality-aware emit (PATO targets via METPO:2000067/2000068).
+                                # The PATO node is supplied by the ontologies transform
+                                # (PATO is in ONTOLOGIES_MAP), so no node write here. The
+                                # edge direction is INVERTED relative to the standard
+                                # location_of shape: organism is the subject, the PATO
+                                # quality is the object, and the predicate carries the
+                                # "isolated from {host,environment} with quality" semantics.
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    predicate_override, predicate_override, subject_id
+                                )
+                                edge_writer.writerow(
+                                    [
+                                        organism_id,
+                                        predicate_override,
+                                        subject_id,
+                                        predicate_override,
+                                        self.source_name,
+                                        knowledge_level,
+                                        agent_type,
+                                    ]
+                                )
+                                continue
+
                             # Stub-prefix targets (PRIDE, PCO, ...) point at ontologies the
                             # ontologies transform does not load — only a tiny number of
                             # distinct IDs are referenced (3 PRIDE, 1 active PCO), so we

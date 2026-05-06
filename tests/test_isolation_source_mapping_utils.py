@@ -50,7 +50,10 @@ def test_normalize_handles_hyphens_commas_and_case():
 
 def test_loader_returns_known_anatomy_mapping(mappings):
     """A high-confidence exactMatch like 'Blood' → UBERON:0000178 must be honored."""
-    assert mappings.get("blood") == ("UBERON:0000178", "blood")
+    # Loader returns (object_id, object_label, object_source, predicate_override).
+    # For non-PATO rows the override is None — the BacDive transform falls back
+    # to its standard <source> --location_of--> <organism> emit shape.
+    assert mappings.get("blood") == ("UBERON:0000178", "blood", "UBERON", None)
 
 
 def test_loader_drops_family_mismatched_rows(mappings):
@@ -75,16 +78,48 @@ def test_loader_honors_manually_curated_fixes(mappings):
     classes).
     """
     # exactMatch rows that survive the tightened trust check:
-    assert mappings.get("mammals") == ("NCBITaxon:40674", "Mammalia")
-    assert mappings.get("plant") == ("NCBITaxon:33090", "Viridiplantae")
-    assert mappings.get("birds") == ("NCBITaxon:8782", "Aves")
-    assert mappings.get("gastrointestinal tract") == ("UBERON:0005409", "digestive tract")
-    assert mappings.get("wound") == ("mesh:D014947", "Wounds and Injuries")
-    # closeMatch rows that stay dropped (family-mismatched targets):
+    assert mappings.get("mammals") == ("NCBITaxon:40674", "Mammalia", "NCBITaxon", None)
+    assert mappings.get("plant") == ("NCBITaxon:33090", "Viridiplantae", "NCBITaxon", None)
+    assert mappings.get("birds") == ("NCBITaxon:8782", "Aves", "NCBITaxon", None)
+    assert mappings.get("gastrointestinal tract") == ("UBERON:0005409", "digestive tract", "UBERON", None)
+    assert mappings.get("wound") == ("mesh:D014947", "Wounds and Injuries", "mesh", None)
+    # closeMatch rows that stay dropped (family-mismatched targets, no PATO override):
     assert mappings.get("catheter") is None  # device, not isolation source
-    assert mappings.get("child") is None  # quality (juvenile), not source
     assert mappings.get("humid") is None  # quality, not source
-    assert mappings.get("psychrophilic <10°c") is None  # phenotype class, not source
+    assert mappings.get("psychrophilic <10°c") == (
+        "ENVO:01000309", "cold environment", "ENVO", None,
+    )  # retargeted from METPO trait → ENVO environment
+
+
+def test_loader_loads_pato_rows_with_predicate_override(mappings):
+    """
+    Load PATO targets when the row carries a METPO:2000067/2000068 override token.
+
+    The override flips the BacDive transform's edge shape from the default
+    (incoherent) `<source> --location_of--> <organism>` to the quality-aware
+    `<organism> --METPO:2000067/2000068--> <PATO term>`. The loader returns
+    the override CURIE in the fourth tuple element so the transform can
+    branch on it.
+    """
+    # Host-quality rows route through METPO:2000067 (all skos:exactMatch — trusted):
+    assert mappings.get("child") == ("PATO:0001190", "juvenile", "PATO", "METPO:2000067")
+    assert mappings.get("juvenile") == ("PATO:0001190", "juvenile", "PATO", "METPO:2000067")
+    assert mappings.get("female") == ("PATO:0000383", "female", "PATO", "METPO:2000067")
+    assert mappings.get("male") == ("PATO:0000384", "male", "PATO", "METPO:2000067")
+    # Environment-quality rows route through METPO:2000068 (skos:exactMatch — trusted):
+    assert mappings.get("acidic") == ("PATO:0001429", "acidic", "PATO", "METPO:2000068")
+    assert mappings.get("alkaline") == ("PATO:0001430", "alkaline", "PATO", "METPO:2000068")
+    assert mappings.get("cold") == ("PATO:0001306", "decreased temperature", "PATO", "METPO:2000068")
+    assert mappings.get("anoxic anaerobic") == ("PATO:0001456", "anaerobic", "PATO", "METPO:2000068")
+
+    # The override is orthogonal to the trust check: a PATO row with the override
+    # token but only skos:closeMatch is still dropped, because closeMatch never
+    # passes the trust policy (closeMatch only asserts similarity, not equivalence,
+    # and the override does NOT promote it to exact). The 'Non-marine-Saline-and-
+    # Alkaline → PATO:0001430' row uses closeMatch because the PATO 'alkaline'
+    # term captures only the alkaline component (drops saline + non-marine aspects),
+    # so it correctly falls through to the placeholder path at runtime.
+    assert mappings.get("non marine saline and alkaline") is None
 
 
 def test_loader_rejects_low_trust_lexical_close_matches(mappings):

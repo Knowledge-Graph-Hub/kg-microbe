@@ -299,13 +299,16 @@ class TestMetaTraitsTransform(unittest.TestCase):
     @patch.object(MetaTraitsTransform, "_search_ncbitaxon_by_label")
     def test_tier2_false_majority_drops_positive_edges(self, mock_search, mock_adapter, mock_ensure):
         """
-        False-majority Tier-2 rows must not emit positive phenotype/capability edges.
+        False-majority Tier-2 rows must not emit positive phenotype/capability/grows-in edges.
 
         Covers the six traits flagged by the Codex review: enzyme activity catalase /
-        oxidase / urease (Tier-2 ``biolink:capable_of`` to EC/GO), and growth: MacConkey
-        agar / blood agar / bile acid susceptible (Tier-2 ``biolink:has_phenotype`` to
-        kgmicrobe.trait:* nodes). Each has no METPO negative predicate, so the helper
-        returns None and the row must be skipped.
+        oxidase / urease (Tier-2 ``biolink:capable_of`` to EC/GO — no METPO negative form,
+        so the helper returns None and the row is skipped), bile acid susceptible (Tier-2
+        ``biolink:has_phenotype`` — also skipped), and the two selective-medium growth
+        observations (MacConkey/blood agar) which are now emitted as
+        ``organism --METPO:2000517 grows in--> kgmicrobe.medium:*`` and so DO have a
+        negative form (METPO:2000518) — the assertion only requires that no POSITIVE
+        edge of any flavour is emitted for the false-majority rows.
         """
         import json
         import shutil
@@ -314,8 +317,8 @@ class TestMetaTraitsTransform(unittest.TestCase):
             ("enzyme activity: catalase (EC1.11.1.6)", "EC:1.11.1.6"),
             ("enzyme activity: oxidase", "GO:0004129"),
             ("enzyme activity: urease (EC3.5.1.5)", "EC:3.5.1.5"),
-            ("growth: MacConkey agar", "kgmicrobe.trait:macconkey_agar_growth"),
-            ("growth: blood agar", "kgmicrobe.trait:blood_agar_growth"),
+            ("growth: MacConkey agar", "kgmicrobe.medium:macconkey_agar"),
+            ("growth: blood agar", "kgmicrobe.medium:blood_agar"),
             ("growth: bile acid susceptible", "kgmicrobe.trait:bile_susceptible"),
         ]
         fixture_record = {
@@ -353,13 +356,18 @@ class TestMetaTraitsTransform(unittest.TestCase):
             obj_idx = header.index("object")
             pred_idx = header.index("predicate")
 
+            positive_predicates = {
+                "biolink:has_phenotype",
+                "biolink:capable_of",
+                "METPO:2000517",  # grows in (positive form for kgmicrobe.medium:* objects)
+            }
             for _, expected_obj in false_majority_traits:
                 offending = [
                     line
                     for line in edges[1:]
                     if (cols := line.split("\t"))
                     and cols[obj_idx] == expected_obj
-                    and cols[pred_idx] in {"biolink:has_phenotype", "biolink:capable_of"}
+                    and cols[pred_idx] in positive_predicates
                 ]
                 self.assertEqual(
                     offending,

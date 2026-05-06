@@ -30,6 +30,7 @@ _OBJECT_SOURCE_TO_CATEGORY = {
     "kgmicrobe.compound": "biolink:ChemicalEntity",
     "kgmicrobe.pathway": "biolink:BiologicalProcess",
     "kgmicrobe.ingredient": "biolink:ChemicalEntity",
+    "kgmicrobe.medium": "biolink:GrowthMedium",  # objects of METPO:2000517 'grows in'
 }
 
 # Category override: GO terms in enzyme_mappings.tsv are molecular functions.

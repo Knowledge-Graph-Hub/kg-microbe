@@ -173,14 +173,20 @@ KGMICROBE_PLACEHOLDER_MIGRATION: Dict[str, str] = {
 }
 
 # Placeholders that should NOT migrate to a new METPO class — instead the
-# transform should emit the existing METPO predicate pattern. The migration
-# target is recorded as a (predicate, range_class) pair for documentation; the
-# actual rewrite happens transform-side and is out of scope for this proposal.
+# transform emits the existing METPO predicate pattern. The migration target
+# is recorded for documentation; the transform-side rewrite is already done
+# (see mappings/canonical/phenotype_mappings.tsv and the kgmicrobe.medium:*
+# block in custom_curies.yaml).
 DEFERRED_PLACEHOLDERS: Dict[str, str] = {
+    # Pre-existing transform output (kgmicrobe.trait:*_agar_growth) that older
+    # metatraits/edges.tsv files may still contain. New transform runs emit
+    # `organism --METPO:2000517--> kgmicrobe.medium:{macconkey,blood}_agar`
+    # instead; these entries are kept so the placeholder validator does not
+    # fail when scanning a stale edges.tsv.
     "kgmicrobe.trait:macconkey_agar_growth":
-        "rewrite as METPO:2000517 'grows in' -> <MacConkey agar IRI> (METPO:1004005 child)",
+        "retired — transform now emits METPO:2000517 -> kgmicrobe.medium:macconkey_agar",
     "kgmicrobe.trait:blood_agar_growth":
-        "rewrite as METPO:2000517 'grows in' -> <blood agar IRI> (METPO:1004005 child)",
+        "retired — transform now emits METPO:2000517 -> kgmicrobe.medium:blood_agar",
 }
 
 BACDIVE_BASELINE_COUNTS: Dict[str, int] = {

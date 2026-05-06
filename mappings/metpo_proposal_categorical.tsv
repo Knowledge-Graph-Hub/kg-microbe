@@ -1,8 +1,6 @@
 proposed_id	scope	term_type	label	definition	parent_or_subproperty	domain	range	xrefs	synonyms	priority	traits_addressed	observations
 METPO:1007005	categorical	Class	flagellar arrangement	A phenotypic quality describing the arrangement pattern of flagella on a bacterial or archaeal cell. Parent class for METPO:1005031-1005037 (peritrichous, polar, amphitrichous, lophotrichous, monotrichous, lateral, subpolar).	METPO:1000000			GO:0001539	flagellation pattern	HIGH		
 METPO:1007006	categorical	Class	polytrichous flagellation	Multiple flagella per cell (typically a tuft); often combined with polar attachment.	METPO:1007005				polytrichous	MEDIUM		4
-METPO:1007051	categorical	Class	bile acid response	A phenotypic quality describing the organism's growth response when challenged with bile acids or bile salts. Encompasses both tolerance/resistance (growth proceeds) and susceptibility (growth is inhibited); the specific outcome is asserted by child classes.	METPO:1000000			CHEBI:3098	bile resistance|bile tolerance|bile salt response	LOW		
-METPO:1007056	categorical	Class	bile acid susceptible	Phenotype where growth is inhibited by bile acids or bile salts.	METPO:1007051			CHEBI:3098	growth: bile acid susceptible	LOW		
 METPO:1007062	categorical	Class	colony morphology	A phenotypic quality describing macroscopic colony characteristics (shape, margin, elevation, surface, color, size).	METPO:1000000			PATO:0000052		LOW		
 METPO:1007063	categorical	Class	colony shape	Subaspect of colony morphology describing the overall macroscopic colony outline as observed on solid medium.	METPO:1007062			PATO:0000052		LOW		
 METPO:1007064	categorical	Class	circular colony	Colony with a regular round outline.	METPO:1007063				round colony	LOW		2649

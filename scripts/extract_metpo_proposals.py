@@ -168,7 +168,6 @@ METATRAITS_EDGES_PATH = Path("data/transformed/metatraits/edges.tsv")
 # in metatraits edges; every value MUST be a Term in PHASE_4_TERMS. The
 # extractor cross-checks both directions on each run.
 KGMICROBE_PLACEHOLDER_MIGRATION: Dict[str, str] = {
-    "kgmicrobe.trait:bile_susceptible": "METPO:1007056",
     "kgmicrobe.activity:coagulase_activity": "METPO:1007089",
 }
 
@@ -178,15 +177,16 @@ KGMICROBE_PLACEHOLDER_MIGRATION: Dict[str, str] = {
 # (see mappings/canonical/phenotype_mappings.tsv and the kgmicrobe.medium:*
 # block in custom_curies.yaml).
 DEFERRED_PLACEHOLDERS: Dict[str, str] = {
-    # Pre-existing transform output (kgmicrobe.trait:*_agar_growth) that older
-    # metatraits/edges.tsv files may still contain. New transform runs emit
-    # `organism --METPO:2000517--> kgmicrobe.medium:{macconkey,blood}_agar`
-    # instead; these entries are kept so the placeholder validator does not
-    # fail when scanning a stale edges.tsv.
+    # Pre-existing transform output that older metatraits/edges.tsv files may
+    # still contain. New transform runs emit the predicate pattern instead;
+    # these entries are kept so the placeholder validator does not fail when
+    # scanning a stale edges.tsv.
     "kgmicrobe.trait:macconkey_agar_growth":
         "retired — transform now emits METPO:2000517 -> kgmicrobe.medium:macconkey_agar",
     "kgmicrobe.trait:blood_agar_growth":
         "retired — transform now emits METPO:2000517 -> kgmicrobe.medium:blood_agar",
+    "kgmicrobe.trait:bile_susceptible":
+        "retired — transform now emits METPO:2000065 'does not tolerate' -> CHEBI:3098 'bile acid'",
 }
 
 BACDIVE_BASELINE_COUNTS: Dict[str, int] = {
@@ -417,11 +417,68 @@ EXISTING_METPO_ALIASES: List[Alias] = [
 # METPO:2000702/2000703/2000705/2000706/2000708/2000709.
 # --------------------------------------------------------------------------- #
 QUANTITATIVE_TERMS: List[Term] = [
-    # Datatype properties — "optimum" form is missing in METPO. Numeric IDs
-    # placed in the existing 2000700-series value-property family (gap slots
-    # 2000717-2000719 between 2000716 'coding density' and 2000721 'cell length').
-    # Domain METPO:1000525 ('microbe') and range xsd:decimal match the existing
-    # METPO:2000701-2000709 / 2000711-2000716 value-property convention.
+    # ----- Object properties (chemical-tolerance pair) -----
+    # New paired predicate METPO:2000064 'tolerates' / METPO:2000065 'does
+    # not tolerate' (synonym 'is susceptible to'), placed in the contiguous
+    # gap METPO:2000064-2000070 of the chemical-interaction object-property
+    # family (2000001-2000056 are densely populated; 2000057 is a single
+    # isolated gap; 2000058-2000063 are DatatypeProperties; 2000064-2000070
+    # are unused; 2000071+ resume DatatypeProperties).
+    # Both terms carry the synonym 'tolerance' so the metatraits transform's
+    # `_build_metpo_lookups` (kg_microbe/transform_utils/metatraits/metatraits.py)
+    # auto-pairs them in `metpo_pattern_to_predicate`: it groups predicates
+    # by the lowercased synonym/label, splits positive vs negative on the
+    # `does not ` label prefix, and a downstream call to
+    # `_get_negative_predicate(METPO:2000064)` then resolves to METPO:2000065
+    # (and vice versa) via the shared `tolerance` key. This is the same
+    # pairing mechanism that makes 2000002/2000027 (assimilates / does not
+    # assimilate, synonym `assimilation`) work.
+    Term(
+        proposed_id="METPO:2000064",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="tolerates",
+        definition=(
+            "A relation between a microbe and a chemical entity indicating that the "
+            "microbe's growth is not inhibited by the chemical at the concentration "
+            "tested. Positive form of the chemical-tolerance pair; the negative form "
+            "is METPO:2000065 'does not tolerate'."
+        ),
+        domain="METPO:1000525",
+        range="METPO:1000526",
+        synonyms=["tolerance", "tolerant of"],
+        priority="HIGH",
+        traits_addressed="1",
+        observations="bile acid + future heavy-metal/antibiotic resistance traits",
+    ),
+    Term(
+        proposed_id="METPO:2000065",
+        scope="quantitative",
+        term_type="ObjectProperty",
+        label="does not tolerate",
+        definition=(
+            "A relation between a microbe and a chemical entity indicating that the "
+            "microbe's growth is inhibited by the chemical at the concentration "
+            "tested. Negative form of the chemical-tolerance pair; positive form "
+            "is METPO:2000064 'tolerates'. Equivalent in meaning to 'is susceptible "
+            "to' and 'is sensitive to'; the canonical label uses the 'does not X' "
+            "convention so the metatraits pairing logic auto-detects it as the "
+            "negative member."
+        ),
+        domain="METPO:1000525",
+        range="METPO:1000526",
+        synonyms=["tolerance", "is susceptible to", "is sensitive to"],
+        priority="HIGH",
+        traits_addressed="1",
+        observations="bile acid + future heavy-metal/antibiotic susceptibility traits",
+    ),
+
+    # ----- Datatype properties: optimum value -----
+    # "optimum" form is missing in METPO. Numeric IDs placed in the existing
+    # 2000700-series value-property family (gap slots 2000717-2000719 between
+    # 2000716 'coding density' and 2000721 'cell length'). Domain METPO:1000525
+    # ('microbe') and range xsd:decimal match the existing METPO:2000701-2000709
+    # / 2000711-2000716 value-property convention.
     Term(
         proposed_id="METPO:2000717",
         scope="quantitative",
@@ -614,39 +671,17 @@ CATEGORICAL_TERMS: List[Term] = [
     # kgmicrobe.medium:* placeholders with a stable external medium IRI (a new
     # METPO:1004xxx medium child or an upstream MediaDive entry) once one is
     # minted.
-    # Bile-acid response hierarchy: a neutral parent (METPO:1007051) groups
-    # the assay outcomes for bile-acid challenge. Susceptibility (growth
-    # inhibited) lives under the neutral response parent — NOT under a
-    # "selective media growth" parent, which would imply the opposite
-    # polarity (i.e. that susceptible taxa can grow on the selective
-    # medium).
-    Term(
-        proposed_id="METPO:1007051",
-        scope="categorical",
-        term_type="Class",
-        label="bile acid response",
-        definition=(
-            "A phenotypic quality describing the organism's growth response when "
-            "challenged with bile acids or bile salts. Encompasses both "
-            "tolerance/resistance (growth proceeds) and susceptibility (growth "
-            "is inhibited); the specific outcome is asserted by child classes."
-        ),
-        parent_or_subproperty=_PHENO_PARENT,
-        xrefs=["CHEBI:3098"],
-        synonyms=["bile resistance", "bile tolerance", "bile salt response"],
-        priority="LOW",
-    ),
-    Term(
-        proposed_id="METPO:1007056",
-        scope="categorical",
-        term_type="Class",
-        label="bile acid susceptible",
-        definition="Phenotype where growth is inhibited by bile acids or bile salts.",
-        parent_or_subproperty="METPO:1007051",
-        xrefs=["CHEBI:3098"],
-        synonyms=["growth: bile acid susceptible"],
-        priority="LOW",
-    ),
+    # ----- Bile-acid response: superseded by predicate-driven pattern -----
+    # The earlier proposal modeled bile-acid susceptibility as a class hierarchy
+    # (METPO:1007051 'bile acid response' parent + METPO:1007056 'bile acid
+    # susceptible' child). Both are now removed in favour of the more general
+    # chemical-tolerance predicate pair METPO:2000064 'tolerates' /
+    # METPO:2000065 'does not tolerate' (above): the BacDive observation
+    # `growth: bile acid susceptible` now routes to
+    #     <organism> --METPO:2000065 'does not tolerate'--> CHEBI:3098 'bile acid'
+    # via mappings/canonical/phenotype_mappings.tsv. This generalizes cleanly
+    # to future heavy-metal / antibiotic / detergent susceptibility traits
+    # without minting a class per (challenge_chemical, polarity) combination.
 
     # ----- Colony morphology -----
     # Parent + colony-shape children sourced from BacDive (15 distinct colony

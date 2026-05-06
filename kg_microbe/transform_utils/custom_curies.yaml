@@ -377,11 +377,6 @@ other:
 
 
 "kgmicrobe.trait":
-  bile_susceptible:
-    label: "bile acid susceptible"
-    description: "Growth inhibited by bile acids"
-    category: "biolink:PhenotypicQuality"
-
   voges_proskauer_test_positive:
     label: "Voges-Proskauer test positive"
     description: "Positive result in Voges-Proskauer biochemical test"

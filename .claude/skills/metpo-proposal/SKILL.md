@@ -195,6 +195,88 @@ Prefer the most specific existing METPO parent. Audit chain:
 
 Mass `SC METPO:1000000` is a code smell — flag it during review.
 
+## Numeric-ID range conventions
+
+When you mint a new ID, place it in the range that already groups its kind. METPO splits into two families by leading digit:
+
+| Range | What lives there | Example |
+|---|---|---|
+| `METPO:1000xxx` | Classes (organism, environment, phenotype, enzyme, growth medium, …) | `METPO:1000525` microbe, `METPO:1000526` chemical entity, `METPO:1000527` enzyme, `METPO:1004005` growth medium |
+| `METPO:1004xxx` | Growth-medium classes | `METPO:1004005` growth medium and its children |
+| `METPO:1005xxx` | Test-result / assay classes | `METPO:1005010` indole test, `METPO:1005011` indole test positive |
+| `METPO:1007xxx` | KG-Microbe proposal classes (pre-mint cohort) | All proposed classes in this PR cohort |
+| `METPO:2000001-2000020` | Object properties — chemical interaction, **positive** | `METPO:2000002` assimilates, `METPO:2000006` uses as carbon source |
+| `METPO:2000021-2000056` | Object properties — chemical interaction, **negative** (paired with the matching positive ~25 IDs lower; gaps in 2000040-2000056 also hold *positive* extensions) | `METPO:2000027` does not assimilate, `METPO:2000031` does not use as carbon source |
+| `METPO:2000057, 2000064-2000070` | Object-property gaps in the chemical-interaction range — use these for new pairs | `METPO:2000064` tolerates / `METPO:2000065` does not tolerate |
+| `METPO:2000101-2000103` | High-level capability/phenotype predicates | `METPO:2000102` has phenotype, `METPO:2000103` capable of |
+| `METPO:2000202, 2000222` | Production predicates | `METPO:2000202` produces / `METPO:2000222` does not produce |
+| `METPO:2000302/2000303` | Enzyme-activity predicates | shows activity of / does not show activity of |
+| `METPO:2000517/2000518` | Growth-medium predicates | grows in / does not grow in |
+| `METPO:2000601-2000606` | Process predicates | denitrifies, ammonifies, oxidizes in darkness, … |
+| `METPO:2000701-2000709, 2000711-2000716, 2000721+` | Datatype properties — observational values | `METPO:2000702` has minimum temperature value, `METPO:2000715` has GC percentage value |
+| `METPO:2000717-2000720` | Datatype-property gaps in the value-property family — use these for new value/optimum properties | `METPO:2000717` has growth temperature optimum value |
+
+**Rules of thumb:**
+
+1. **Match the family.** A new chemical-interaction object property goes in the 2000001-2000056 range, not in 2000700+. A new optimum-value datatype property goes in 2000700+, not in 2000001+.
+2. **Find the gap, don't fork.** Before minting, dump all ObjectProperty/DatatypeProperty IDs in the target family (`grep -nE "metpo/2000[0-9]{3}\"" data/raw/metpo.owl | grep -E "DatatypeProperty|ObjectProperty"`) and pick the next free slot in the conceptual range. The current gaps as of `metpo_proposal_2026_04`:
+   - **Object-property gaps in the chemical-interaction range:** `2000057`, `2000064-2000070`. Adjacent positive/negative pairs are preferred over the legacy "+25 offset" pattern when the offset would push you outside the conceptual range.
+   - **Datatype-property gaps in the value-property range:** `2000710`, `2000717-2000720`.
+   - **Class gaps for proposal cohorts:** `1007xxx` is reserved for KG-Microbe proposals; pick the next unused `1007NNN` slot in the relevant subrange.
+3. **Document the gap when you mint.** In the term's definition or the surrounding comment in `extract_metpo_proposals.py`, note WHY this ID was picked (`"placed in the 2000064-2000070 gap of the chemical-interaction object-property family because …"`). Keeps future curators from re-shuffling.
+
+## Paired predicates: positive ↔ negative via shared synonym
+
+The metatraits transform's `_build_metpo_lookups` (kg_microbe/transform_utils/metatraits/metatraits.py:919, helper `_get_negative_predicate` at metatraits.py:2103) auto-pairs METPO predicates so a downstream call like
+
+```python
+self._get_negative_predicate("METPO:2000064")  # tolerates
+# → "METPO:2000065"  # does not tolerate
+```
+
+resolves the partner without any hardcoded table. The pairing rule:
+
+1. The **negative** member's `rdfs:label` MUST start with `does not ` (lowercased). The loader uses this prefix to flag the entry as the negative half.
+2. Both members MUST share at least one `oboInOwl:hasRelatedSynonym` (or label) so they end up under the same `metpo_pattern_to_predicate` key.
+
+Worked example — METPO:2000002 / 2000027:
+
+| | METPO:2000002 (positive) | METPO:2000027 (negative) |
+|---|---|---|
+| label | `assimilates` | `does not assimilate` |
+| synonym | `assimilation` | `assimilation` |
+| Builds key `assimilation` | `positive=METPO:2000002` | `negative=METPO:2000027` |
+
+Result: `metpo_pattern_to_predicate["assimilation"] = {positive: METPO:2000002, negative: METPO:2000027}`. `_get_negative_predicate(METPO:2000002)` iterates the dict, finds the entry where `positive==METPO:2000002`, and returns its `negative`.
+
+**Counter-example (broken pairing)** — METPO:2000517/2000518 in the current upstream release:
+
+| | METPO:2000517 | METPO:2000518 |
+|---|---|---|
+| label | `grows in` | `does not grow in` |
+| synonyms | (none) | (none) |
+| Built keys | `positive["grows in"]=2000517` | `negative["does not grow in"]=2000518` |
+
+No shared key → not paired → `_get_negative_predicate("METPO:2000517")` returns `None` → false-majority `grows in` observations are silently dropped. Fix: add a shared related synonym to both upstream (e.g. `growth medium relation` or `growth in medium`).
+
+**When proposing a new paired predicate, always:**
+- Use `does not <stem>` as the negative label.
+- Give both members a shared `oboInOwl:hasRelatedSynonym` (a noun-form of the relation works well: `tolerance`, `assimilation`, `production`).
+- Optionally give the negative additional synonyms for human readability (`is susceptible to`, `is sensitive to`) — these become extra entries in `metpo_pattern_to_predicate` keyed on those synonyms but, because they're only on the negative member, they don't interfere with the pairing.
+
+## Predicate vs class: when to model with which
+
+The proposal occasionally has a choice: encode an organism-chemical relationship as a **predicate-driven edge** (`organism --P--> chemical`) or as a **class-subdivision phenotype** (`organism --has phenotype--> "X-susceptible" class`). Default to the predicate, not the class.
+
+| Modeling choice | Use when |
+|---|---|
+| **Predicate-driven** (mint or reuse a paired predicate; emit `org --P--> chem/medium/enzyme/process`) | The relationship is parametric over a chemical/medium/enzyme axis. New axis values shouldn't require new ontology mints. Examples: `tolerates(org, chem)`, `grows in(org, medium)`, `shows activity of(org, enzyme)`. |
+| **Class-subdivision** (mint a phenotype class per outcome and use `biolink:has_phenotype` / `METPO:2000102`) | The "outcome" is qualitative and not a function of a chemical/medium/enzyme. Examples: cell shape (rod-shaped, coccus-shaped), colony morphology (circular, irregular, fried-egg-shaped), Gram stain (positive/negative). |
+
+**Smell**: a class hierarchy whose name encodes a chemical or medium (`bile acid susceptible`, `growth on MacConkey agar`, `catalase positive`) is a candidate for collapse into a predicate-driven pattern. The METPO proposal in `metpo_proposal_2026_04` removed three such hierarchies (`growth on {MacConkey,blood,EMB} agar` and `bile acid response/susceptible`) in favour of the predicate-driven equivalents (`METPO:2000517 grows in` and `METPO:2000064/2000065 tolerates / does not tolerate`).
+
+Test-outcome classes are a special case — they encode a **bench observation** (catalase test positive) that is downstream of the underlying enzyme activity. Keep the test-outcome class AND assert the underlying predicate edge in parallel; the class records "the assay was performed and yielded outcome X", the predicate records "the organism has activity Y".
+
 ## Subset tagging
 
 All proposal rows must be tagged with a cohort identifier so curators can filter:
@@ -211,7 +293,7 @@ Use a date-stamped string (`metpo_proposal_<YYYY>_<MM>`). On the next proposal c
 When this skill is invoked, run through:
 
 - [ ] `scripts/extract_metpo_proposals.py` exits clean
-- [ ] `pytest tests/test_extract_metpo_proposals.py` passes
+- [ ] `pytest tests/test_extract_metpo_proposals.py tests/test_metatraits.py` passes
 - [ ] `*_robot.tsv` files have two header rows, consistent column counts
 - [ ] Every row has a `definition_source` (no `TODO:add_citation` if submitting)
 - [ ] Every row has a `subset` cohort tag
@@ -219,6 +301,9 @@ When this skill is invoked, run through:
 - [ ] `robot merge` produces a single OWL
 - [ ] `robot reason --reasoner ELK` exits clean with no UNSAT classes
 - [ ] No mass `SC METPO:1000000` (>3 rows) without curator review
+- [ ] Every minted ID lands in the conventional family range (see "Numeric-ID range conventions") and the choice of slot is documented in the surrounding source comment
+- [ ] Every newly proposed paired predicate has the negative member labelled `does not <stem>` AND a shared `oboInOwl:hasRelatedSynonym` with its positive partner — verify by simulating `_build_metpo_lookups` against the proposal OWL
+- [ ] Every class hierarchy whose name encodes a chemical / medium / enzyme has been audited against the "predicate vs class" rule; if a paired predicate already exists (or could be cheaply minted), prefer the predicate-driven edge
 
 ## See also
 

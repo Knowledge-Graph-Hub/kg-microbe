@@ -82,6 +82,16 @@ merged_graph:
         filename:
           - data/transformed/ontologies/metpo_nodes.tsv
           - data/transformed/ontologies/metpo_edges.tsv
+    # Selective per-CURIE stub-import for NCIT and MESH — only the IDs
+    # referenced by mappings/* are imported (not the full ontologies).
+    # See kg_microbe/transform_utils/ontologies_stubs/ for the transform.
+    ontologies_stubs:
+      name: "ontologies_stubs"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies_stubs/ncit_nodes.tsv
+          - data/transformed/ontologies_stubs/mesh_nodes.tsv
     bacdive:
       name: "bacdive"
       input:

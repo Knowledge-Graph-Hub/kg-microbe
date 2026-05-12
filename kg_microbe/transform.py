@@ -20,6 +20,7 @@ from kg_microbe.transform_utils.constants import (
     METATRAITS,
     METATRAITS_GTDB,
     ONTOLOGIES,
+    ONTOLOGIES_STUBS,
     RHEAMAPPINGS,
 )
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
@@ -31,6 +32,9 @@ from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import MetaTrait
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
     ONTOLOGIES_MAP,
     OntologiesTransform,
+)
+from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
+    OntologiesStubsTransform,
 )
 from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
 
@@ -44,6 +48,10 @@ DATA_SOURCES = {
     # "ProteinAtlasTransform": ProteinAtlasTransform,
     # "STRINGTransform": STRINGTransform,
     ONTOLOGIES: OntologiesTransform,
+    # Run ontologies_stubs after ontologies so the SemSQL DBs are present and
+    # so the stub-node TSVs land in data/transformed/ontologies_stubs/ before
+    # the merge step picks them up.
+    ONTOLOGIES_STUBS: OntologiesStubsTransform,
     BACDIVE: BacDiveTransform,
     BAKTA: BaktaTransform,
     COG: COGTransform,

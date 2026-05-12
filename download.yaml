@@ -423,3 +423,22 @@
 -
   url: https://raw.githubusercontent.com/biolink/kgx/master/docs/kgx_format.md
   local_name: kgx-format.md
+
+
+#
+# **** Selective stub-import ontologies (NCIT, MESH) ****
+#
+# KG-Microbe does NOT load the full NCIT or MESH ontologies — those belong to
+# kg-microbe-biomedical. But the chemical-mapping consolidator and BacDive
+# isolation-source mapper reference ~150 NCIT/MESH IDs as canonical xrefs for
+# ingredients (e.g. NCIT:C29298 'Oatmeal', mesh:D011136 'Tween'). The
+# OntologiesStubsTransform queries these SemSQL DBs to harvest just the
+# referenced IDs (label + synonyms + xrefs), emitting one labelled stub node
+# each. The DBs themselves are never loaded into the merged KG.
+#
+-
+  url: https://s3.amazonaws.com/bbop-sqlite/ncit.db.gz
+  local_name: ncit.db.gz
+-
+  url: https://s3.amazonaws.com/bbop-sqlite/mesh.db.gz
+  local_name: mesh.db.gz

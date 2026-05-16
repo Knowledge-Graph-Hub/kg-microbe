@@ -1,0 +1,42 @@
+# Dependabot configuration: opens PRs for dependency updates.
+# Does NOT merge anything automatically — every update still requires a human merge.
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Python dependencies (Poetry lockfile resolved by the pip ecosystem adapter)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    groups:
+      # One combined PR per week for all minor/patch Python bumps.
+      # Major bumps get their own PRs (Dependabot default) so they can be reviewed individually.
+      python-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions pinned in workflow files
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      # Only group minor/patch Actions updates; majors stay as individual PRs.
+      actions:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"

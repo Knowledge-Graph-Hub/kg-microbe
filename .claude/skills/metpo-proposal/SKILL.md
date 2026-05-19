@@ -23,6 +23,7 @@ Produce a clean, ROBOT-validated, ELK-coherent METPO term proposal that can be f
 | `mappings/metpo_proposal_categorical.tsv` | curation TSV (one header) | Human-edited proposal of categorical classes; emitted by `scripts/extract_metpo_proposals.py` |
 | `mappings/metpo_proposal_quantitative.tsv` | curation TSV | Datatype properties + numeric tolerance class forms |
 | `mappings/metpo_existing_aliases.tsv` | curation TSV | Proposed concepts that already exist in METPO (use these IDs instead) |
+| `mappings/metpo_label_corrections.tsv` | curation TSV | Upstream label-fix requests for *existing* METPO terms whose `rdfs:label` disagrees with their numeric-threshold or other intrinsic synonyms. Each row cites a `berkeleybop/metpo` issue. Distinct from `metpo_existing_aliases.tsv`: aliases route a kg-microbe-side label to an existing METPO ID *as-is*; corrections request that the upstream record itself be amended. |
 | `mappings/metpo_proposal_classes_robot.tsv` | **ROBOT template** (two header rows) | Class declarations submittable to METPO maintainers |
 | `mappings/metpo_proposal_properties_robot.tsv` | ROBOT template | Property declarations submittable to METPO maintainers |
 | `kg_microbe/transform_utils/metatraits/mappings/metpo_alias_mappings.tsv` | Tier-2 override | Consumed by metatraits transform to use existing METPO IDs |
@@ -304,6 +305,7 @@ When this skill is invoked, run through:
 - [ ] Every minted ID lands in the conventional family range (see "Numeric-ID range conventions") and the choice of slot is documented in the surrounding source comment
 - [ ] Every newly proposed paired predicate has the negative member labelled `does not <stem>` AND a shared `oboInOwl:hasRelatedSynonym` with its positive partner — verify by simulating `_build_metpo_lookups` against the proposal OWL
 - [ ] Every class hierarchy whose name encodes a chemical / medium / enzyme has been audited against the "predicate vs class" rule; if a paired predicate already exists (or could be cheaply minted), prefer the predicate-driven edge
+- [ ] Every entry in `METPO_LABEL_CORRECTIONS` cites a `berkeleybop/metpo` issue and the `validate_label_corrections()` freshness check passes (entries become stale once upstream fixes them — re-check before re-shipping)
 
 ## See also
 

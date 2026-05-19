@@ -23,6 +23,7 @@ PROPOSAL_FILES = (
     "metpo_proposal_quantitative.tsv",
     "metpo_proposal_categorical.tsv",
     "metpo_existing_aliases.tsv",
+    "metpo_label_corrections.tsv",
     "metpo_proposal_classes_robot.tsv",
     "metpo_proposal_properties_robot.tsv",
 )

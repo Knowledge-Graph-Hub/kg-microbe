@@ -145,6 +145,45 @@ class Alias:
     notes: str = ""
 
 
+@dataclass
+class LabelCorrection:
+
+    """
+    A request to fix the rdfs:label (and optionally synonyms) of an existing METPO term.
+
+    Distinct from :class:`Alias`: an ``Alias`` routes a kg-microbe-side label to
+    an existing METPO ID, leaving the METPO record alone. A
+    ``LabelCorrection`` records that the *METPO record itself* needs its label
+    swapped (and optionally other annotation cleanup) — typically because the
+    label and a numeric-threshold synonym disagree. The corrections are
+    aggregated into ``mappings/metpo_label_corrections.tsv`` so curators can
+    apply them upstream alongside the proposal cohort. Each entry must cite a
+    GitHub issue on berkeleybop/metpo so the upstream maintainer has the audit
+    trail.
+    """
+
+    metpo_id: str
+    current_label: str
+    corrected_label: str
+    current_synonyms: List[str]
+    corrected_synonyms: List[str]
+    github_issue_ref: str
+    notes: str = ""
+    verified_date: str = ""
+
+
+LABEL_CORRECTION_HEADER = [
+    "metpo_id",
+    "current_label",
+    "corrected_label",
+    "current_synonyms",
+    "corrected_synonyms",
+    "github_issue_ref",
+    "notes",
+    "verified_date",
+]
+
+
 ORG = "biolink:OrganismTaxon"
 
 METPO_SNAPSHOT = Path("data/transformed/ontologies/metpo_nodes.tsv")
@@ -242,6 +281,85 @@ _BACDIVE_RULES: Dict[str, Tuple[Tuple[str, ...], Tuple[str, ...], str]] = {
         "exact",
     ),
 }
+
+
+# --------------------------------------------------------------------------- #
+# Label corrections requested upstream. These are EXISTING METPO terms whose
+# rdfs:label disagrees with their numeric-threshold or other intrinsic
+# synonyms — typically because the labels were assigned in the wrong order
+# during initial bin minting. Each entry MUST cite a berkeleybop/metpo issue
+# so the upstream maintainer has an audit trail.
+#
+# These corrections are NOT applied to the local METPO snapshot — that file
+# stays in sync with upstream. The corrections are emitted to
+# `mappings/metpo_label_corrections.tsv` as a curator-facing artifact for
+# upstream submission alongside the rest of the proposal cohort.
+# --------------------------------------------------------------------------- #
+METPO_LABEL_CORRECTIONS: List[LabelCorrection] = [
+    # https://github.com/berkeleybop/metpo/issues/432
+    # The four GC-content bin records have labels and numeric-threshold
+    # synonyms that don't line up. Sorted by ascending GC%, the synonyms (the
+    # numeric ranges) are the source of truth; the labels need to be swapped
+    # to match. Three of the four labels change; METPO:1000431 'GC mid2' is
+    # the only one already arguably consistent and stays as-is.
+    LabelCorrection(
+        metpo_id="METPO:1000432",
+        current_label="GC high",
+        corrected_label="GC low",
+        current_synonyms=["GC_<=42.65"],
+        corrected_synonyms=["GC_<=42.65"],  # synonym kept; only the label is wrong
+        github_issue_ref="https://github.com/berkeleybop/metpo/issues/432",
+        notes=(
+            "Numeric range <=42.65% is the LOWEST GC bin, but the label says "
+            "'GC high'. Swap the label to 'GC low' to match the threshold "
+            "synonym. Same swap as METPO:1000430 in the opposite direction."
+        ),
+        verified_date="2026-05-15",
+    ),
+    LabelCorrection(
+        metpo_id="METPO:1000429",
+        current_label="GC low",
+        corrected_label="GC mid1",
+        current_synonyms=["GC_42.65_57.0"],
+        corrected_synonyms=["GC_42.65_57.0"],
+        github_issue_ref="https://github.com/berkeleybop/metpo/issues/432",
+        notes=(
+            "Numeric range 42.65-57.0% is the second-from-bottom GC bin "
+            "('mid1' in the four-bin scheme), but the label says 'GC low'. "
+            "Swap the label to 'GC mid1' to match the threshold synonym."
+        ),
+        verified_date="2026-05-15",
+    ),
+    LabelCorrection(
+        metpo_id="METPO:1000431",
+        current_label="GC mid2",
+        corrected_label="GC mid2",  # NO CHANGE — already consistent
+        current_synonyms=["GC_57.0_66.3"],
+        corrected_synonyms=["GC_57.0_66.3"],
+        github_issue_ref="https://github.com/berkeleybop/metpo/issues/432",
+        notes=(
+            "Listed for completeness — this is the only one of the four GC "
+            "bins where the label and the numeric-range synonym already "
+            "agree. No change requested. Recorded so curators know the full "
+            "set has been audited."
+        ),
+        verified_date="2026-05-15",
+    ),
+    LabelCorrection(
+        metpo_id="METPO:1000430",
+        current_label="GC mid1",
+        corrected_label="GC high",
+        current_synonyms=["GC_>66.3"],
+        corrected_synonyms=["GC_>66.3"],
+        github_issue_ref="https://github.com/berkeleybop/metpo/issues/432",
+        notes=(
+            "Numeric range >66.3% is the HIGHEST GC bin, but the label says "
+            "'GC mid1'. Swap the label to 'GC high' to match the threshold "
+            "synonym. Same swap as METPO:1000432 in the opposite direction."
+        ),
+        verified_date="2026-05-15",
+    ),
+]
 
 
 # --------------------------------------------------------------------------- #
@@ -1573,6 +1691,84 @@ def validate_with_robot(classes_path: Path, properties_path: Path) -> None:
         print("[ok] ROBOT template + ELK reason passed (no UNSAT classes)")
 
 
+def validate_label_corrections(
+    corrections: List[LabelCorrection],
+    snapshot: Path = METPO_SNAPSHOT,
+) -> None:
+    """
+    Sanity-check that every label-correction request still applies upstream.
+
+    Reads the local METPO snapshot and confirms that each correction's
+    ``current_label`` matches what METPO actually has today. Raises if the
+    upstream label has already been changed (so the entry is stale and
+    should be removed) or the METPO ID is missing entirely. This protects
+    against shipping stale correction requests when the upstream maintainer
+    fixes one and the local cohort isn't refreshed.
+    """
+    if not snapshot.exists():
+        # Snapshot is optional at script-run time — the proposal extractor
+        # is also run on machines that haven't materialized the ontologies
+        # transform output yet.
+        print("[skip] METPO snapshot absent — label-correction freshness not validated")
+        return
+
+    metpo_labels: Dict[str, str] = {}
+    with open(snapshot, newline="") as fh:
+        reader = csv.DictReader(fh, delimiter="\t")
+        for row in reader:
+            mid = row.get("id", "")
+            if mid.startswith("METPO:"):
+                metpo_labels[mid] = (row.get("name") or "").strip()
+
+    stale: List[str] = []
+    missing: List[str] = []
+    for c in corrections:
+        if c.metpo_id not in metpo_labels:
+            missing.append(c.metpo_id)
+            continue
+        actual = metpo_labels[c.metpo_id]
+        if actual != c.current_label:
+            stale.append(
+                f"  {c.metpo_id}: snapshot label is {actual!r}, "
+                f"correction request says {c.current_label!r} "
+                f"({c.github_issue_ref})"
+            )
+    if missing:
+        raise SystemExit(
+            "Label-correction requests reference METPO IDs not in the local "
+            f"snapshot: {missing}. Either refresh the snapshot or remove the "
+            "stale entries from METPO_LABEL_CORRECTIONS."
+        )
+    if stale:
+        raise SystemExit(
+            "Label-correction requests are stale (upstream may have already "
+            "fixed them; check before re-shipping):\n" + "\n".join(stale)
+        )
+    print(
+        f"[ok] label-correction freshness check passed for {len(corrections)} "
+        f"upstream label-fix request(s)"
+    )
+
+
+def write_label_correction_tsv(path: Path, corrections: List[LabelCorrection]) -> int:
+    """Emit the curator-facing TSV of label-correction requests."""
+    with open(path, "w", newline="") as f:
+        writer = csv.writer(f, delimiter="\t", lineterminator="\n")
+        writer.writerow(LABEL_CORRECTION_HEADER)
+        for c in corrections:
+            writer.writerow([
+                c.metpo_id,
+                c.current_label,
+                c.corrected_label,
+                "|".join(c.current_synonyms),
+                "|".join(c.corrected_synonyms),
+                c.github_issue_ref,
+                c.notes,
+                c.verified_date,
+            ])
+    return len(corrections)
+
+
 def write_alias_tsv(path: Path, aliases: List[Alias]) -> None:
     """Write the proposed-concept -> existing-METPO-ID alias map."""
     # Build a one-shot METPO row index so we can pull synonyms per existing_id.
@@ -1659,6 +1855,18 @@ def main(
     print(
         f"[ok] metpo_existing_aliases.tsv           ({len(EXISTING_METPO_ALIASES)} concepts "
         f"already in METPO; downstream transforms must reuse the existing IDs)"
+    )
+
+    validate_label_corrections(METPO_LABEL_CORRECTIONS)
+    n_corrections = write_label_correction_tsv(
+        output_dir / "metpo_label_corrections.tsv", METPO_LABEL_CORRECTIONS
+    )
+    n_label_changes = sum(
+        1 for c in METPO_LABEL_CORRECTIONS if c.current_label != c.corrected_label
+    )
+    print(
+        f"[ok] metpo_label_corrections.tsv          ({n_corrections} upstream label-fix "
+        f"request(s); {n_label_changes} actual label change(s) — see GitHub refs in TSV)"
     )
 
     n_rows = write_metatraits_alias_overrides(

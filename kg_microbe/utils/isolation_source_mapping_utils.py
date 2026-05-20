@@ -90,18 +90,18 @@ PREDICATE_OVERRIDE_CURIES: frozenset = frozenset({
 #
 # Two stub-import paths exist for these prefixes:
 #
-# 1. NCIT and mesh: a SemSQL-backed enriched stub source. The
+# 1. NCIT, mesh, and BTO: a SemSQL-backed enriched stub source. The
 #    OntologiesStubsTransform (kg_microbe/transform_utils/ontologies_stubs/)
-#    queries data/raw/ncit.db and data/raw/mesh.db via OAK to fetch
-#    rdfs:label, exact synonyms, and dbxrefs for every NCIT/mesh CURIE that
-#    appears anywhere under mappings/. Output:
-#    data/transformed/ontologies_stubs/{ncit,mesh}_nodes.tsv. This is the
-#    preferred path — stubs carry full metadata, not just a label. The
+#    queries data/raw/{ncit,mesh,bto}.db via OAK to fetch rdfs:label, exact
+#    synonyms, and dbxrefs for every NCIT/mesh/BTO CURIE that appears
+#    anywhere under mappings/. Output:
+#    data/transformed/ontologies_stubs/{ncit,mesh,bto}_nodes.tsv. This is
+#    the preferred path — stubs carry full metadata, not just a label. The
 #    BacDive inline emit at bacdive.py defers to this transform for these
-#    two prefixes (see the `not in {"NCIT", "mesh"}` branch there).
+#    three prefixes (see the `not in {"NCIT", "mesh", "BTO"}` branch there).
 #
-# 2. The long-tail prefixes (PRIDE, PCO, GENEPIO, FAO, BTO, SNOMED): each
-#    has 1-3 IDs in the whole repo, so the BacDive transform writes a thin
+# 2. The long-tail prefixes (PRIDE, PCO, GENEPIO, FAO, SNOMED): each has
+#    1-3 IDs in the whole repo, so the BacDive transform writes a thin
 #    label-only node row inline at edge-emit time using the object_label
 #    from the mapping TSV. Setting up SemSQL DBs for these would be
 #    overkill.

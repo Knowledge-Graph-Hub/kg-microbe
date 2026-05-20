@@ -2988,20 +2988,24 @@ class BacDiveTransform(Transform):
                             # ontology. Loaded-ontology targets (UBERON, ENVO, ...) get
                             # their canonical node from the ontologies transform.
                             #
-                            # NCIT and mesh stub nodes are NOT emitted here — the
+                            # NCIT, mesh, and BTO stub nodes are NOT emitted here — the
                             # OntologiesStubsTransform (kg_microbe/transform_utils/
                             # ontologies_stubs/) writes label+synonym+xref-enriched
                             # stubs from the SemSQL DBs, which is strictly richer
                             # than the label-only fallback below. Emitting both
                             # here and there would produce duplicate node rows
                             # that the merge would have to dedupe. The PRIDE/PCO/
-                            # GENEPIO/FAO/BTO/SNOMED prefixes stay on the inline
-                            # path because each has 1-3 IDs in the whole repo —
-                            # not worth a SemSQL fetch.
+                            # GENEPIO/FAO/SNOMED prefixes stay on the inline path
+                            # because each has 1-3 IDs in the whole repo — not
+                            # worth a SemSQL fetch. (BTO was originally in that
+                            # group too but moved to the SemSQL path after the
+                            # MIM 2026-05-18 republish added `BTO:0004304 cell
+                            # lysate`, doubling its in-repo footprint.)
                             stub_prefix = subject_id.split(":", 1)[0] if ":" in subject_id else ""
                             if stub_prefix in STUB_ONTOLOGY_PREFIXES and stub_prefix not in {
                                 "NCIT",
                                 "mesh",
+                                "BTO",
                             }:
                                 node_writer.writerow(
                                     self._create_node_row(

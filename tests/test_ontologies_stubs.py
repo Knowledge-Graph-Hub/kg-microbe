@@ -88,9 +88,15 @@ def test_stub_ontology_sources_subset_of_stub_prefixes():
     assert set(STUB_ONTOLOGY_SOURCES.keys()).issubset(STUB_ONTOLOGY_PREFIXES)
 
 
-def test_stub_ontology_sources_covers_ncit_and_mesh():
-    """NCIT and mesh are the two prefixes that need full enrichment."""
-    assert set(STUB_ONTOLOGY_SOURCES.keys()) == {"NCIT", "mesh"}
+def test_stub_ontology_sources_covers_ncit_mesh_bto():
+    """
+    Cover the three prefixes that need full SemSQL-backed enrichment.
+
+    NCIT and mesh were added in the initial commit; BTO was added after the
+    MIM 2026-05-18 republish brought in `BTO:0004304 cell lysate`, doubling
+    the BTO footprint and crossing the "worth a SemSQL fetch" threshold.
+    """
+    assert set(STUB_ONTOLOGY_SOURCES.keys()) == {"NCIT", "mesh", "BTO"}
 
 
 # ---------------------------------------------------------------------------

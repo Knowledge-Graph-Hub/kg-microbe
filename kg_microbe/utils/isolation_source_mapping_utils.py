@@ -86,12 +86,30 @@ PREDICATE_OVERRIDE_CURIES: frozenset = frozenset({
 # but that are NOT loaded by the ontologies transform (see ONTOLOGIES_MAP in
 # kg_microbe/transform_utils/ontologies/ontologies_transform.py). Each prefix
 # either has only a tiny number of distinct IDs in use, or its full load is
-# impractical (mesh and NCIT are huge clinical thesauri), so the BacDive
-# transform writes a thin node row per resolved CURIE using the object_label
-# from the mapping TSV. The category is biolink:OntologyClass for all stubs
-# because they're typically categorical terms (host body site, microbial
-# community, abscess, etc.) rather than specific anatomy / environmental
-# features whose canonical metadata would come from a loaded ontology.
+# impractical (mesh and NCIT are huge clinical thesauri).
+#
+# Two stub-import paths exist for these prefixes:
+#
+# 1. NCIT and mesh: a SemSQL-backed enriched stub source. The
+#    OntologiesStubsTransform (kg_microbe/transform_utils/ontologies_stubs/)
+#    queries data/raw/ncit.db and data/raw/mesh.db via OAK to fetch
+#    rdfs:label, exact synonyms, and dbxrefs for every NCIT/mesh CURIE that
+#    appears anywhere under mappings/. Output:
+#    data/transformed/ontologies_stubs/{ncit,mesh}_nodes.tsv. This is the
+#    preferred path — stubs carry full metadata, not just a label. The
+#    BacDive inline emit at bacdive.py defers to this transform for these
+#    two prefixes (see the `not in {"NCIT", "mesh"}` branch there).
+#
+# 2. The long-tail prefixes (PRIDE, PCO, GENEPIO, FAO, BTO, SNOMED): each
+#    has 1-3 IDs in the whole repo, so the BacDive transform writes a thin
+#    label-only node row inline at edge-emit time using the object_label
+#    from the mapping TSV. Setting up SemSQL DBs for these would be
+#    overkill.
+#
+# The category is biolink:OntologyClass for all stubs because they're
+# typically categorical terms (host body site, microbial community,
+# abscess, etc.) rather than specific anatomy / environmental features
+# whose canonical metadata would come from a loaded ontology.
 #
 # Codex adversarial review #558 found that without stubs for these prefixes
 # the BacDive transform was emitting edges to dangling node IDs because the

@@ -92,6 +92,7 @@ merged_graph:
         filename:
           - data/transformed/ontologies_stubs/ncit_nodes.tsv
           - data/transformed/ontologies_stubs/mesh_nodes.tsv
+          - data/transformed/ontologies_stubs/bto_nodes.tsv
     bacdive:
       name: "bacdive"
       input:

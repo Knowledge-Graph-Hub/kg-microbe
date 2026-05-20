@@ -442,3 +442,6 @@
 -
   url: https://s3.amazonaws.com/bbop-sqlite/mesh.db.gz
   local_name: mesh.db.gz
+-
+  url: https://s3.amazonaws.com/bbop-sqlite/bto.db.gz
+  local_name: bto.db.gz

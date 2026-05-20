@@ -68,6 +68,14 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, str]] = {
         "db_filename": "mesh.db",
         "knowledge_source": "infores:mesh",
     },
+    "BTO": {
+        # BRENDA Tissue Ontology. Only ~2 CURIEs in current kg-microbe
+        # mappings (wound fluid from BacDive isolation_source; cell lysate
+        # added by the MIM 2026-05-18 republish). Added here so those nodes
+        # carry full label + synonyms + xrefs instead of label-only stubs.
+        "db_filename": "bto.db",
+        "knowledge_source": "infores:bto",
+    },
 }
 
 ONTOLOGIES_STUBS_SOURCE_NAME = "ontologies_stubs"
@@ -75,7 +83,7 @@ ONTOLOGIES_STUBS_SOURCE_NAME = "ontologies_stubs"
 
 class OntologiesStubsTransform(Transform):
 
-    """Emit one labelled stub node per referenced NCIT / MESH CURIE."""
+    """Emit one labelled stub node per referenced NCIT / MESH / BTO CURIE."""
 
     def __init__(
         self,

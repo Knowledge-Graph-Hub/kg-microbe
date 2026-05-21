@@ -84,7 +84,7 @@ merged_graph:
         filename:
           - data/transformed/ontologies/metpo_nodes.tsv
           - data/transformed/ontologies/metpo_edges.tsv
-    # Selective per-CURIE stub-import for NCIT and MESH — see merge.yaml.
+    # Selective per-CURIE stub-import for NCIT, mesh, BTO, PO, MICRO — see merge.yaml.
     ontologies_stubs:
       name: "ontologies_stubs"
       input:
@@ -93,6 +93,8 @@ merged_graph:
           - data/transformed/ontologies_stubs/ncit_nodes.tsv
           - data/transformed/ontologies_stubs/mesh_nodes.tsv
           - data/transformed/ontologies_stubs/bto_nodes.tsv
+          - data/transformed/ontologies_stubs/po_nodes.tsv
+          - data/transformed/ontologies_stubs/micro_nodes.tsv
     bacdive:
       name: "bacdive"
       input:

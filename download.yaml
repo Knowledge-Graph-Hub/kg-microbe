@@ -253,12 +253,10 @@
   local_name: ro.owl
 
 #
-# PO (Plant Ontology)
-# Used by BacDive isolation_source mappings (root, leaf, flower, rhizome, etc.)
+# PO (Plant Ontology) is no longer downloaded as OWL — it has been
+# migrated to the per-CURIE SemSQL stub-import path. See the
+# `po.db.gz` entry under the stub-import section below.
 #
--
-  url: http://purl.obolibrary.org/obo/po.owl
-  local_name: po.owl
 
 #
 # TAXRANK (Taxonomic Rank Vocabulary)
@@ -426,15 +424,21 @@
 
 
 #
-# **** Selective stub-import ontologies (NCIT, MESH) ****
+# **** Selective stub-import ontologies (NCIT, MESH, BTO, PO, MICRO) ****
 #
-# KG-Microbe does NOT load the full NCIT or MESH ontologies — those belong to
-# kg-microbe-biomedical. But the chemical-mapping consolidator and BacDive
-# isolation-source mapper reference ~150 NCIT/MESH IDs as canonical xrefs for
-# ingredients (e.g. NCIT:C29298 'Oatmeal', mesh:D011136 'Tween'). The
-# OntologiesStubsTransform queries these SemSQL DBs to harvest just the
-# referenced IDs (label + synonyms + xrefs), emitting one labelled stub node
-# each. The DBs themselves are never loaded into the merged KG.
+# KG-Microbe does NOT load these ontologies in full. They each contribute
+# thousands of unrelated nodes when fully loaded but the chemical-mapping
+# consolidator and the BacDive isolation-source mapper reference only a
+# tiny per-ontology footprint (~150 NCIT, ~100 MESH, a handful of BTO/PO,
+# ~34 MICRO). The OntologiesStubsTransform queries these SemSQL DBs (or
+# the OBO Graph JSON in MICRO's case) to harvest just the referenced IDs
+# (label + synonyms + xrefs), emitting one labelled stub node each. The
+# DBs themselves are never loaded into the merged KG.
+#
+# MICRO uses the existing micro.owl download above (converted to micro.json
+# by ROBOT in the stub transform) because MICRO's bbop-sqlite distribution
+# at https://s3.amazonaws.com/bbop-sqlite/micro.db.gz is a 29-byte truncated
+# placeholder rather than a real SemSQL DB.
 #
 -
   url: https://s3.amazonaws.com/bbop-sqlite/ncit.db.gz
@@ -445,3 +449,6 @@
 -
   url: https://s3.amazonaws.com/bbop-sqlite/bto.db.gz
   local_name: bto.db.gz
+-
+  url: https://s3.amazonaws.com/bbop-sqlite/po.db.gz
+  local_name: po.db.gz

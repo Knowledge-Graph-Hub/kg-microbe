@@ -84,9 +84,16 @@ ONTOLOGIES_MAP = {
     "foodon": "foodon.owl",
     "pato": "pato.owl",
     "ro": "ro.owl",
-    "po": "po.owl",            # Plant Ontology — BacDive isolation_source plant anatomy
     "taxrank": "taxrank.owl",  # Taxonomic Rank — NCBITaxon transform rank annotations
-    "micro": "micro.owl",      # Microbial Conditions Ontology — MIM media ingredient mappings
+    # NOTE: PO (Plant Ontology) and MICRO (Microbial Conditions Ontology)
+    # used to be full-load entries here. The merged KG only references a
+    # handful of CURIEs from each (~6-8 PO, ~34 MICRO) — both ontologies
+    # are now per-CURIE imports via the OntologiesStubsTransform
+    # (kg_microbe/transform_utils/ontologies_stubs/), which emits one
+    # labelled stub node per referenced CURIE instead of pulling in
+    # ~2,170 + ~17,600 unrelated nodes. PO uses the bbop-sqlite SemSQL DB
+    # (data/raw/po.db); MICRO uses the obograph JSON (data/raw/micro.json)
+    # because MICRO's bbop-sqlite distribution is broken.
 }
 
 
@@ -95,6 +102,8 @@ class OntologiesTransform(Transform):
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
 
     # Mapping of ontology names to InforES standard knowledge sources
+    # (po and micro removed — now emitted as per-CURIE stubs via
+    # OntologiesStubsTransform; see ONTOLOGIES_MAP note above)
     ONTOLOGY_KNOWLEDGE_SOURCES = {
         "chebi": "infores:chebi",
         "envo": "infores:envo",
@@ -109,9 +118,7 @@ class OntologiesTransform(Transform):
         "foodon": "infores:foodon",
         "pato": "infores:pato",
         "ro": "infores:ro",
-        "po": "infores:po",
         "taxrank": "infores:taxrank",
-        "micro": "infores:micro",
     }
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

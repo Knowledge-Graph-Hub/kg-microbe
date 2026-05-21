@@ -206,7 +206,7 @@ def test_transform_synonym_does_not_duplicate_label(tmp_path):
 
 
 def test_transform_raises_when_db_missing(tmp_path):
-    """If neither the .db nor the .db.gz exists, the transform fails loudly (not silently)."""
+    """SemSQL prefix with neither .db nor .db.gz fails loudly with a SemSQL-specific message."""
     # Use the real OntologiesStubsTransform here (not the _StubbedTransform) so the
     # _open_adapter path runs against an empty input dir.
     transform = OntologiesStubsTransform(
@@ -226,7 +226,31 @@ def test_transform_raises_when_db_missing(tmp_path):
             output_file=tmp_path / "out" / "ncit_nodes.tsv",
         ),
     )
-    with pytest.raises(FileNotFoundError, match="ncit.db"):
+    with pytest.raises(FileNotFoundError, match="SemSQL DB.*ncit.db"):
+        transform.run()
+
+
+def test_transform_raises_with_obograph_json_message_when_micro_inputs_missing(tmp_path):
+    """MICRO with neither micro.json nor micro.owl fails with an obograph-JSON-specific message."""
+    transform = OntologiesStubsTransform(
+        input_dir=tmp_path / "raw",  # empty — neither micro.json nor micro.owl present
+        output_dir=tmp_path / "out",
+    )
+    (tmp_path / "raw").mkdir()
+    object.__setattr__(
+        transform,
+        "run",
+        lambda data_file=None: transform._write_stub_nodes(
+            prefix="MICRO",
+            curies=["MICRO:0000082"],
+            db_path=tmp_path / "raw" / "micro.json",
+            knowledge_source="infores:micro",
+            output_file=tmp_path / "out" / "micro_nodes.tsv",
+        ),
+    )
+    # Must mention OBO Graph JSON, the .json path, and the ROBOT-from-OWL fallback —
+    # not the SemSQL DB phrasing that's correct for NCIT/mesh/BTO/PO.
+    with pytest.raises(FileNotFoundError, match="OBO Graph JSON.*micro.json.*ROBOT"):
         transform.run()
 
 

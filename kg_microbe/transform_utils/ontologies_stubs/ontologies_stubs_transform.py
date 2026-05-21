@@ -4,10 +4,11 @@ Ontologies-stubs transform.
 KG-Microbe deliberately does NOT load the full NCIT, MESH, BTO, PO, or MICRO
 ontologies — those would each add thousands of unrelated nodes for what is in
 practice a small per-mapping reference footprint. But the chemical-mapping
-consolidator and the BacDive isolation-source mapper reference ~150 NCIT,
-~100 MESH, a handful of BTO/PO IDs, and ~150 MICRO IDs as canonical xrefs for
-ingredients, growth media, plant-anatomy isolation sources, and microbial
-conditions (e.g. ``NCIT:C29298 'Oatmeal'``, ``mesh:D011136 'Tween'``,
+consolidator and the BacDive isolation-source mapper reference ~73 distinct
+NCIT IDs, ~95 distinct mesh IDs, a handful of distinct BTO/PO IDs, and
+~34 distinct MICRO IDs (across ~150 total reference rows) as canonical
+xrefs for ingredients, growth media, plant-anatomy isolation sources, and
+microbial conditions (e.g. ``NCIT:C29298 'Oatmeal'``, ``mesh:D011136 'Tween'``,
 ``PO:0009046 'flower'``, ``MICRO:0000082 'nutrient broth'``). Without this
 transform those CURIEs would appear as dangling node ids in the merged KG:
 edges point at them but no node row carries the label.
@@ -25,10 +26,13 @@ This transform:
      used by the chemical-mapping consolidator for ChEBI in
      ``scripts/consolidate_chemical_mappings.py``.
    * ``"obograph_json"`` (MICRO): MICRO's bbop-sqlite SemSQL DB is broken
-     (a 29-byte placeholder), so we fall back to parsing the already-
-     downloaded ``data/raw/micro.json`` (produced by ROBOT during the
-     ontologies transform's OWL→JSON conversion) via an in-house
-     adapter. The adapter normalizes both standard
+     (a 29-byte placeholder), so we fall back to parsing
+     ``data/raw/micro.json`` via an in-house adapter. The JSON is
+     generated on demand by :func:`_open_adapter` (which invokes ROBOT
+     against the downloaded ``data/raw/micro.owl`` from ``download.yaml``
+     if the JSON is missing) — MICRO is no longer part of the full
+     ontologies-transform load path, so nothing else produces this file.
+     The adapter normalizes both standard
      (``http://purl.obolibrary.org/obo/MICRO_0000082``) and quirky
      (``http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0003152``) IRI
      forms to the canonical ``MICRO:NNNN`` CURIE.
@@ -121,8 +125,10 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, str]] = {
         # tryptic soy agar, peptone, etc. Previously loaded in full
         # (~17,600 nodes / ~10 MB OWL). MICRO's bbop-sqlite SemSQL DB is
         # a 29-byte placeholder, so the stub path parses the OBO Graph
-        # JSON produced by ROBOT (data/raw/micro.json, already required
-        # for legacy reasons by the full-load path) directly.
+        # JSON converted from micro.owl. The JSON is generated on demand
+        # by _open_adapter via a ROBOT subprocess; nothing else produces
+        # it (MICRO is no longer part of the full ontologies-transform
+        # load path).
         "source_type": "obograph_json",
         "db_filename": "micro.json",
         "knowledge_source": "infores:micro",
@@ -195,9 +201,22 @@ class OntologiesStubsTransform(Transform):
 
         adapter = self._open_adapter(prefix, db_path)
         if adapter is None:
+            source_type = STUB_ONTOLOGY_SOURCES.get(prefix, {}).get("source_type", "semsql")
+            if source_type == "obograph_json":
+                owl_path = db_path.with_suffix(".owl")
+                detail = (
+                    f"expected OBO Graph JSON at {db_path} (auto-generated from "
+                    f"{owl_path} via ROBOT on first run). Neither file is present — "
+                    f"run `poetry run kg download` to fetch the OWL, then re-run "
+                    f"this transform."
+                )
+            else:
+                detail = (
+                    f"expected SemSQL DB at {db_path} (or sibling {db_path.name}.gz "
+                    f"to auto-decompress). Run `poetry run kg download` to fetch it."
+                )
             raise FileNotFoundError(
-                f"OAK adapter for {prefix} could not be opened (expected SemSQL DB at "
-                f"{db_path}). Run `poetry run kg download` to fetch it. The stub "
+                f"OAK adapter for {prefix} could not be opened: {detail} The stub "
                 f"transform refuses to silently emit unlabelled nodes — that would "
                 f"reintroduce the dangling-xref hazard this transform exists to fix."
             )

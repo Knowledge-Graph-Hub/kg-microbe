@@ -90,15 +90,22 @@ PREDICATE_OVERRIDE_CURIES: frozenset = frozenset({
 #
 # Two stub-import paths exist for these prefixes:
 #
-# 1. NCIT, mesh, and BTO: a SemSQL-backed enriched stub source. The
-#    OntologiesStubsTransform (kg_microbe/transform_utils/ontologies_stubs/)
-#    queries data/raw/{ncit,mesh,bto}.db via OAK to fetch rdfs:label, exact
-#    synonyms, and dbxrefs for every NCIT/mesh/BTO CURIE that appears
-#    anywhere under mappings/. Output:
-#    data/transformed/ontologies_stubs/{ncit,mesh,bto}_nodes.tsv. This is
-#    the preferred path — stubs carry full metadata, not just a label. The
-#    BacDive inline emit at bacdive.py defers to this transform for these
-#    three prefixes (see the `not in {"NCIT", "mesh", "BTO"}` branch there).
+# 1. NCIT, mesh, BTO, PO, MICRO: enriched stub sources emitted by the
+#    OntologiesStubsTransform (kg_microbe/transform_utils/ontologies_stubs/).
+#    For each referenced CURIE the transform fetches rdfs:label, exact
+#    synonyms, and dbxrefs:
+#      * NCIT, mesh, BTO, PO use the OAK SemSQL adapter against
+#        data/raw/{ncit,mesh,bto,po}.db (downloaded from bbop-sqlite).
+#      * MICRO uses an in-house obograph-JSON adapter against
+#        data/raw/micro.json (MICRO's bbop-sqlite distribution is a broken
+#        29-byte file at time of writing).
+#    Output: data/transformed/ontologies_stubs/{ncit,mesh,bto,po,micro}_nodes.tsv.
+#    This is the preferred path — stubs carry full metadata, not just a
+#    label. The BacDive inline emit at bacdive.py defers to this transform
+#    for these five prefixes (see the inline skip-set there). MICRO is
+#    listed here for documentation completeness even though no
+#    isolation_source rows currently target MICRO; the bacdive transform
+#    never emits MICRO inline because the same skip-set covers it.
 #
 # 2. The long-tail prefixes (PRIDE, PCO, GENEPIO, FAO, SNOMED): each has
 #    1-3 IDs in the whole repo, so the BacDive transform writes a thin
@@ -126,6 +133,8 @@ STUB_ONTOLOGY_PREFIXES: frozenset = frozenset({
     "FAO",      # 1 ID: mycorrhiza (Fungal Anatomy Ontology)
     "BTO",      # 1 ID: wound fluid (BRENDA Tissue Ontology)
     "SNOMED",   # 1 ID after filtering: sugary food (clinical procedure rows are dropped via banned substrings)
+    "PO",       # ~6-8 IDs: root, leaf, flower, rhizome, etc. (Plant Ontology)
+    "MICRO",    # 0 isolation_source IDs but ~34 elsewhere (chemical/ingredient mappings)
 })
 STUB_ONTOLOGY_CATEGORY = "biolink:OntologyClass"
 

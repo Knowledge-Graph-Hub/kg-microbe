@@ -30,7 +30,7 @@ win tie-breaks during duplicate-name merging.
 | `scripts/dump_unmapped_mediadive_ingredients.py` | Emits a MIM-compatible TSV of MediaDive ingredients still unmapped after the current mappings + `fuzzy_hydrate` retry, for curator review. |
 | `mappings/culturebotai_reviewed_ingredients.tsv` | Authoritative reviewed source from CultureBotAI (priority=10). |
 | `mappings/ingredient_mappings.sssom.tsv` | **Vendored copy** of the MediaIngredientMech SSSOM (priority=11). Auto-refreshed from the sibling repo on every consolidator run — never edit this file directly; edit upstream in MIM and let `sync_mim_sssom` overwrite it. |
-| `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` | **Source of truth** for MIM mappings. The MediaIngredientMech repo (https://github.com/KG-Hub/MediaIngredientMech) is expected to be checked out as a sibling of `kg-microbe`. The consolidator wins-from-sibling on content divergence. |
+| `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` | **Source of truth** for MIM mappings. The MediaIngredientMech repo (https://github.com/CultureBotAI/MediaIngredientMech) is expected to be checked out as a sibling of `kg-microbe`. The consolidator wins-from-sibling on content divergence. |
 | `mappings/chemical_mappings.tsv` | Legacy KEGG/BacDive primary mappings (may be absent). |
 | `mappings/README.md` | Schema + regeneration instructions. |
 | `scripts/consolidate_chemical_mappings.py` | Consolidator (run to rebuild). |
@@ -166,7 +166,7 @@ Rules:
 - New contributors must clone MIM as a sibling:
   ```bash
   cd $(dirname $(pwd))   # parent of kg-microbe
-  git clone https://github.com/KG-Hub/MediaIngredientMech.git
+  git clone https://github.com/CultureBotAI/MediaIngredientMech.git
   ```
 
 ### Add a new mapping source

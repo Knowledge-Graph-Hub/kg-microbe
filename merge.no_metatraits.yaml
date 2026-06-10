@@ -75,10 +75,14 @@ merged_graph:
         format: tsv
         filename:
           - data/transformed/ontologies_stubs/ncit_nodes.tsv
+          - data/transformed/ontologies_stubs/ncit_edges.tsv
           - data/transformed/ontologies_stubs/mesh_nodes.tsv
+          - data/transformed/ontologies_stubs/mesh_edges.tsv
           - data/transformed/ontologies_stubs/bto_nodes.tsv
           - data/transformed/ontologies_stubs/po_nodes.tsv
+          - data/transformed/ontologies_stubs/po_edges.tsv
           - data/transformed/ontologies_stubs/micro_nodes.tsv
+          - data/transformed/ontologies_stubs/micro_edges.tsv
     bacdive:
       name: "bacdive"
       input:

@@ -243,6 +243,9 @@
 -
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
   local_name: metpo.owl
+-
+  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.json
+  local_name: metpo.json
 
 #
 # RO (Relations Ontology)
@@ -253,9 +256,18 @@
   local_name: ro.owl
 
 #
-# PO (Plant Ontology) is no longer downloaded as OWL — it has been
-# migrated to the per-CURIE SemSQL stub-import path. See the
-# `po.db.gz` entry under the stub-import section below.
+# PO (Plant Ontology)
+# The ~6 PO CURIEs referenced by BacDive isolation_source mappings sit in
+# a coherent subtree under PO:0025131 (plant anatomical entity). The stub
+# transform runs ROBOT MIREOT against this OWL to emit those stubs plus
+# their ancestor chain (~21 nodes, ~23 subClassOf edges). See also the
+# `po.db.gz` entry under the stub-import section below — kept for any
+# future caller wanting the full SemSQL DB.
+#
+-
+  url: http://purl.obolibrary.org/obo/po.owl
+  local_name: po.owl
+
 #
 
 #
@@ -430,25 +442,48 @@
 # thousands of unrelated nodes when fully loaded but the chemical-mapping
 # consolidator and the BacDive isolation-source mapper reference only a
 # tiny per-ontology footprint (~150 NCIT, ~100 MESH, a handful of BTO/PO,
-# ~34 MICRO). The OntologiesStubsTransform queries these SemSQL DBs (or
-# the OBO Graph JSON in MICRO's case) to harvest just the referenced IDs
-# (label + synonyms + xrefs), emitting one labelled stub node each. The
-# DBs themselves are never loaded into the merged KG.
+# ~34 MICRO). The OntologiesStubsTransform harvests just the referenced
+# IDs (label + synonyms + xrefs), emitting one labelled stub node each.
+# The DBs themselves are never loaded into the merged KG.
 #
-# MICRO uses the existing micro.owl download above (converted to micro.json
-# by ROBOT in the stub transform) because MICRO's bbop-sqlite distribution
-# at https://s3.amazonaws.com/bbop-sqlite/micro.db.gz is a 29-byte truncated
-# placeholder rather than a real SemSQL DB.
+# Per-source paths:
+#   BTO       — OAK against the SemSQL .db (label-only; the 2 BTO stubs
+#               attach via partonomic relations, not subClassOf, so MIREOT
+#               yields empty modules).
+#   NCIT      — OAK against the SemSQL .db with a curated multi-upper-term
+#               subClassOf walk (semsql_mireot — emits hierarchy edges).
+#   PO, MICRO — ROBOT MIREOT against the OWL under a curated upper_term
+#               (owl_mireot — emits hierarchy edges).
+#   mesh      — NLM N-Triples RDF, streamed once per run (mesh_nt_rdf —
+#               emits hierarchy edges). See the entry further below.
+#
+# MICRO's bbop-sqlite distribution at
+# https://s3.amazonaws.com/bbop-sqlite/micro.db.gz is a 29-byte truncated
+# placeholder rather than a real SemSQL DB; PO's SemSQL .db is fine but
+# the OWL path is the one the stub transform exercises for hierarchy.
+# The MICRO and PO OWLs are declared above in the ontologies section.
 #
 -
   url: https://s3.amazonaws.com/bbop-sqlite/ncit.db.gz
   local_name: ncit.db.gz
--
-  url: https://s3.amazonaws.com/bbop-sqlite/mesh.db.gz
-  local_name: mesh.db.gz
 -
   url: https://s3.amazonaws.com/bbop-sqlite/bto.db.gz
   local_name: bto.db.gz
 -
   url: https://s3.amazonaws.com/bbop-sqlite/po.db.gz
   local_name: po.db.gz
+
+#
+# MeSH (Medical Subject Headings) — full N-Triples RDF from NLM
+#
+# The bbop-sqlite mesh.db distribution strips relationships for C*
+# supplementary concept records (79 of our 95 mesh stubs), so the stub
+# transform can't reach C → D mappings from it. NLM's authoritative RDF
+# does carry those mappings (via meshv:preferredMappedTo / meshv:mappedTo)
+# as well as the D → D descriptor taxonomy (meshv:broaderDescriptor).
+# The stub transform streams this file once per run to build the mesh
+# hierarchy module.
+#
+-
+  url: https://nlmpubs.nlm.nih.gov/projects/mesh/rdf/2026/mesh2026.nt.gz
+  local_name: mesh2026.nt.gz

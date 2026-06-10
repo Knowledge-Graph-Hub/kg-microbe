@@ -1,0 +1,572 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 17392
+    composition: 'Name: MRS MEDIUM (DSMZ Medium 11)
+
+      Composition:
+
+      Glucose 20.0 g/l
+
+      Casein peptone 10.0 g/l
+
+      Meat extract 10.0 g/l
+
+      Na-acetate 5.0 g/l
+
+      Yeast extract 5.0 g/l
+
+      (NH4)3 citrate 2.0 g/l
+
+      K2HPO4 2.0 g/l
+
+      Tween 80 1.0 g/l
+
+      MgSO4 x 7 H2O 0.2 g/l
+
+      MnSO4 x H2O 0.05 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/11
+    name: MRS MEDIUM (DSMZ Medium 11)
+  culture temp:
+  - '@ref': 17392
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+External links:
+  '@ref': 17392
+  culture collection no.: DSM 23829, JCM 17196, LMG 29536
+  literature:
+  - DOI: 10.1099/ijs.0.027847-0
+    Pubmed-ID: '21075903'
+    authors: Kawasaki S, Kurosawa K, Miyazaki M, Sakamoto M, Ohkuma M, Niimura Y
+    journal: Int J Syst Evol Microbiol
+    mesh: Aerobiosis, Anaerobiosis, Bacterial Proteins/genetics, Bacterial Typing
+      Techniques, Catalase/metabolism, Cluster Analysis, DNA, Bacterial/chemistry/genetics,
+      DNA, Ribosomal/chemistry/genetics, Fermentation, Flowers/*microbiology, Heterotrophic
+      Processes, Japan, Lactobacillus/*classification/genetics/*isolation & purification/physiology,
+      Molecular Sequence Data, Phylogeny, RNA, Ribosomal, 16S/genetics, Sequence Analysis,
+      DNA
+    title: Lactobacillus ozensis sp. nov., isolated from mountain flowers.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2010
+  - DOI: 10.1016/j.ijbiomac.2017.10.092
+    Pubmed-ID: '29051101'
+    authors: Sharma A, Meena KR, Kanwar SS
+    journal: Int J Biol Macromol
+    mesh: Amino Acid Sequence, Anions, Bacillus/*enzymology, Chromatography, Ion Exchange,
+      Computational Biology/*methods, Dynamic Light Scattering, Enzyme Stability,
+      Extracellular Space/enzymology, Hydrogen-Ion Concentration, Kinetics, Lipase/chemistry/*genetics/isolation
+      & purification, Models, Molecular, Peptide Mapping, RNA, Ribosomal, 16S/genetics,
+      Sequence Analysis, RNA, Solvents, Spectrometry, Mass, Matrix-Assisted Laser
+      Desorption-Ionization, Structural Homology, Protein, Substrate Specificity,
+      Temperature
+    title: Molecular characterization and bioinformatics studies of a lipase from
+      Bacillus thermoamylovorans BHK67.
+    topic: Enzymology
+    topic2: Phylogeny
+    year: 2017
+  - DOI: 10.1007/s10482-018-1019-7
+    Pubmed-ID: '29353462'
+    authors: Chiou TY, Suda W, Oshima K, Hattori M, Matsuzaki C, Yamamoto K, Takahashi
+      T
+    journal: Antonie Van Leeuwenhoek
+    mesh: Base Composition, Beverages/analysis/*microbiology, DNA, Bacterial/genetics,
+      Fatty Acids/chemistry/metabolism, Fermentation, Fermented Foods/analysis/*microbiology,
+      Fructose/*metabolism, Hydrogen-Ion Concentration, Japan, Lactobacillus/classification/genetics/*isolation
+      & purification/metabolism, Phylogeny, RNA, Ribosomal, 16S/genetics, Sugars/chemistry/*metabolism,
+      Vegetables/chemistry/*microbiology
+    title: Lactobacillus kosoi sp. nov., a fructophilic species isolated from koso,
+      a Japanese sugar-vegetable fermented beverage.
+    topic: Phylogeny
+    topic2: Metabolism
+    year: 2018
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/868740
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/888838
+General:
+  '@ref': 17392
+  BacDive-ID: 6699
+  DSM-Number: 23829
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 866801
+  description: Apilactobacillus ozensis Mizu2-1 is a microaerophile, mesophilic bacterium
+    that was isolated from Inula ciliaris var. glandulosa, a chrysanthemum.
+  doi: 10.13145/bacdive6699.20220920.7
+  keywords:
+  - microaerophile
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - mesophilic
+  strain history:
+  - <- S. Kawasaki, Dept. Bio-Science, Tokyo Univ. Agriculture, Japan; JCM 17196 <-
+    S. Kawasaki, Dept. Bio-Science, Tokyo Univ. Agriculture, Japan
+  - S. Kawasaki Mizu2-1.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 17392
+    continent: Asia
+    country: Japan
+    geographic location: Gunma prefecture, Oze National Park
+    host species: Inula ciliaris var. glandulosa
+    origin.country: JPN
+    sample type: <i>Inula ciliaris</i>  var. <i>glandulosa</i>, a chrysanthemum
+  - '@ref': 67770
+    continent: Asia
+    country: Japan
+    geographic location: Oze National Park
+    origin.country: JPN
+    sample type: Mountain flowers
+  isolation source categories:
+    Cat1: '#Host'
+    Cat2: '#Plants'
+    Cat3: '#Herbaceous plants (Grass,Crops)'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 17392
+  LPSN:
+    '@ref': 20215
+    class: Bacilli
+    description: domain/bacteria
+    domain: Bacteria
+    family: Lactobacillaceae
+    full scientific name: <I>Apilactobacillus</I> <I>ozensis</I> (Kawasaki et al.
+      2011) Zheng et al. 2020
+    genus: Apilactobacillus
+    keyword: phylum/bacillota
+    order: Lactobacillales
+    phylum: Bacillota
+    species: Apilactobacillus ozensis
+    synonyms:
+      '@ref': 20215
+      synonym: Lactobacillus ozensis
+  class: Bacilli
+  domain: Bacteria
+  family: Lactobacillaceae
+  full scientific name: Apilactobacillus ozensis (Kawasaki et al. 2011) Zheng et al.
+    2020
+  genus: Apilactobacillus
+  order: Lactobacillales
+  phylum: Firmicutes
+  species: Apilactobacillus ozensis
+  strain designation: Mizu2-1
+  type strain: 'yes'
+Physiology and metabolism:
+  API 50CHac:
+    2KG: '-'
+    5KG: '-'
+    '@ref': 17392
+    ADO: '-'
+    AMD: '-'
+    AMY: '-'
+    ARB: '-'
+    CEL: '-'
+    DARA: '-'
+    DARL: '-'
+    DFUC: '-'
+    DUL: '-'
+    DXYL: '-'
+    ERY: '-'
+    ESC: '-'
+    FRU: +/-
+    GAL: '-'
+    GEN: '-'
+    GLU: +
+    GLY: '-'
+    GLYG: '-'
+    GNT: '-'
+    INO: '-'
+    INU: '-'
+    LAC: '-'
+    LARA: '-'
+    LARL: '-'
+    LFUC: '-'
+    LXYL: '-'
+    LYX: '-'
+    MAL: '-'
+    MAN: '-'
+    MDG: '-'
+    MDM: '-'
+    MDX: '-'
+    MEL: '-'
+    MLZ: '-'
+    MNE: '-'
+    NAG: '-'
+    Q: '-'
+    RAF: '-'
+    RHA: '-'
+    RIB: '-'
+    SAC: '-'
+    SAL: '-'
+    SBE: '-'
+    SOR: '-'
+    TAG: '-'
+    TRE: '-'
+    TUR: '-'
+    XLT: '-'
+  metabolite utilization:
+  - '@ref': 68371
+    kind of utilization tested: builds acid from
+    metabolite: Potassium 5-ketogluconate
+    utilization activity: '-'
+  - '@ref': 68371
+    kind of utilization tested: builds acid from
+    metabolite: Potassium 2-ketogluconate
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 24265
+    kind of utilization tested: builds acid from
+    metabolite: gluconate
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 18403
+    kind of utilization tested: builds acid from
+    metabolite: L-arabitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 18333
+    kind of utilization tested: builds acid from
+    metabolite: D-arabitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 18287
+    kind of utilization tested: builds acid from
+    metabolite: L-fucose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 28847
+    kind of utilization tested: builds acid from
+    metabolite: D-fucose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 16443
+    kind of utilization tested: builds acid from
+    metabolite: D-tagatose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 62318
+    kind of utilization tested: builds acid from
+    metabolite: D-lyxose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 32528
+    kind of utilization tested: builds acid from
+    metabolite: turanose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 28066
+    kind of utilization tested: builds acid from
+    metabolite: gentiobiose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17151
+    kind of utilization tested: builds acid from
+    metabolite: xylitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 28087
+    kind of utilization tested: builds acid from
+    metabolite: glycogen
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 28017
+    kind of utilization tested: builds acid from
+    metabolite: starch
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 16634
+    kind of utilization tested: builds acid from
+    metabolite: raffinose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 6731
+    kind of utilization tested: builds acid from
+    metabolite: melezitose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 15443
+    kind of utilization tested: builds acid from
+    metabolite: inulin
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 27082
+    kind of utilization tested: builds acid from
+    metabolite: trehalose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17992
+    kind of utilization tested: builds acid from
+    metabolite: sucrose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 28053
+    kind of utilization tested: builds acid from
+    metabolite: melibiose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17716
+    kind of utilization tested: builds acid from
+    metabolite: lactose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17306
+    kind of utilization tested: builds acid from
+    metabolite: maltose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17057
+    kind of utilization tested: builds acid from
+    metabolite: cellobiose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17814
+    kind of utilization tested: builds acid from
+    metabolite: salicin
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 4853
+    kind of utilization tested: builds acid from
+    metabolite: esculin
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 18305
+    kind of utilization tested: builds acid from
+    metabolite: arbutin
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 27613
+    kind of utilization tested: builds acid from
+    metabolite: amygdalin
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 59640
+    kind of utilization tested: builds acid from
+    metabolite: N-acetylglucosamine
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 320061
+    kind of utilization tested: builds acid from
+    metabolite: methyl alpha-D-glucopyranoside
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 43943
+    kind of utilization tested: builds acid from
+    metabolite: methyl alpha-D-mannoside
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17924
+    kind of utilization tested: builds acid from
+    metabolite: D-sorbitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 16899
+    kind of utilization tested: builds acid from
+    metabolite: D-mannitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17268
+    kind of utilization tested: builds acid from
+    metabolite: myo-inositol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 16813
+    kind of utilization tested: builds acid from
+    metabolite: galactitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 62345
+    kind of utilization tested: builds acid from
+    metabolite: L-rhamnose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17266
+    kind of utilization tested: builds acid from
+    metabolite: L-sorbose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 16024
+    kind of utilization tested: builds acid from
+    metabolite: D-mannose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17634
+    kind of utilization tested: builds acid from
+    metabolite: D-glucose
+    utilization activity: +
+  - '@ref': 68371
+    Chebi-ID: 12936
+    kind of utilization tested: builds acid from
+    metabolite: D-galactose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 74863
+    kind of utilization tested: builds acid from
+    metabolite: methyl beta-D-xylopyranoside
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 15963
+    kind of utilization tested: builds acid from
+    metabolite: ribitol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 65328
+    kind of utilization tested: builds acid from
+    metabolite: L-xylose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 65327
+    kind of utilization tested: builds acid from
+    metabolite: D-xylose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 16988
+    kind of utilization tested: builds acid from
+    metabolite: D-ribose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 30849
+    kind of utilization tested: builds acid from
+    metabolite: L-arabinose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17108
+    kind of utilization tested: builds acid from
+    metabolite: D-arabinose
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17113
+    kind of utilization tested: builds acid from
+    metabolite: erythritol
+    utilization activity: '-'
+  - '@ref': 68371
+    Chebi-ID: 17754
+    kind of utilization tested: builds acid from
+    metabolite: glycerol
+    utilization activity: '-'
+  oxygen tolerance:
+    '@ref': 17392
+    oxygen tolerance: microaerophile
+Reference:
+- '@id': 17392
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 23829)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-23829
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 66794
+  authors: Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz,
+    Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg
+  doi/url: 10.1093/nar/gkaa1025
+  journal: 'Nucleic Acids Res. 49: D498-D508 2020'
+  pubmed: 33211880
+  title: 'BRENDA, the ELIXIR core data resource in 2021: new developments and updates'
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+- '@id': 68371
+  title: Automatically annotated from API 50CH acid
+Safety information:
+  risk assessment:
+    '@ref': 17392
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 17392
+    NCBI tax ID: 1423781
+    accession: AB572588
+    database: ena
+    description: 'Lactobacillus ozensis gene for 16S rRNA, partial sequence, strain:
+      Mizu2-1'
+    length: 1541
+  - '@ref': 67770
+    NCBI tax ID: 866801
+    accession: LC519864
+    database: ena
+    description: Lactobacillus ozensis JCM 17196 gene for 16S rRNA, partial sequence
+    length: 1511
+  GC content:
+  - '@ref': 17392
+    GC-content: '41'
+    method: high performance liquid chromatography (HPLC)
+  - '@ref': 67770
+    GC-content: '31.9'
+    method: genome sequence analysis
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 1423781
+    accession: GCA_001435995
+    assembly level: scaffold
+    database: ncbi
+    description: Apilactobacillus ozensis DSM 23829 = JCM 17196 DSM 23829
+  - '@ref': 66792
+    NCBI tax ID: 1423781
+    accession: GCA_001311485
+    assembly level: contig
+    database: ncbi
+    description: Apilactobacillus ozensis DSM 23829 = JCM 17196 JCM 17196
+  - '@ref': 66792
+    NCBI tax ID: 1423781
+    accession: '1423781.4'
+    assembly level: wgs
+    database: patric
+    description: Lactobacillus ozensis DSM 23829 = JCM 17196
+  - '@ref': 66792
+    NCBI tax ID: 1423781
+    accession: '1423781.3'
+    assembly level: wgs
+    database: patric
+    description: Lactobacillus ozensis DSM 23829 = JCM 17196
+  - '@ref': 66792
+    NCBI tax ID: 1423781
+    accession: '2660238120'
+    assembly level: draft
+    database: img
+    description: Apilactobacillus ozensis DSM 23829
+  - '@ref': 66792
+    NCBI tax ID: 1423781
+    accession: '2675903667'
+    assembly level: draft
+    database: img
+    description: Apilactobacillus ozensis JCM 17196
+  - '@ref': 67770
+    NCBI tax ID: 1423781
+    accession: AYYQ00000000
+    database: ncbi
+    description: Apilactobacillus ozensis DSM 23829 = JCM 17196 strain DSM 23829,
+      whole genome shotgun sequencing project
+  - '@ref': 67770
+    NCBI tax ID: 1423781
+    accession: BBAX00000000
+    database: ncbi
+    description: Apilactobacillus ozensis DSM 23829 = JCM 17196, whole genome shotgun
+      sequencing project

@@ -1,0 +1,340 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 5499
+    composition: 'Name: CY-AGAR (DSMZ Medium 67)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Casitone 3.0 g/l
+
+      CaCl2 x 2 H2O 1.36 g/l
+
+      Yeast extract 1.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/67
+    name: CY-AGAR (DSMZ Medium 67)
+  - '@ref': 5499
+    composition: 'Name: VY/2 AGAR (DSMZ Medium 9)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Baker''s yeast 5.0 g/l
+
+      CaCl2 x 2 H2O 1.36 g/l
+
+      Vitamin B12 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/9
+    name: VY/2 AGAR (DSMZ Medium 9)
+  culture temp:
+  - '@ref': 5499
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+External links:
+  '@ref': 5499
+  culture collection no.: DSM 14714, JCM 12616
+  literature:
+  - DOI: 10.1016/j.chembiol.2006.06.002
+    Pubmed-ID: '16793524'
+    authors: Rachid S, Krug D, Kunze B, Kochems I, Scharfe M, Zabriskie TM, Blocker
+      H, Muller R
+    journal: Chem Biol
+    mesh: Adenine/metabolism, Amino Acid Sequence, Bacterial Proteins/*biosynthesis/*chemistry/genetics/toxicity,
+      Biological Products/*biosynthesis/*chemistry/genetics/toxicity, Cloning, Molecular,
+      Depsipeptides/*biosynthesis/*chemistry/genetics/toxicity, Gene Expression, Genome,
+      Bacterial/genetics, Molecular Sequence Data, Multigene Family/genetics, Myxococcales/genetics/*metabolism,
+      Plasmids/genetics, Sequence Alignment, Sequence Homology, Amino Acid, Tryptophan/analogs
+      & derivatives/metabolism
+    title: Molecular and biochemical studies of chondramide formation-highly cytotoxic
+      natural products from Chondromyces crocatus Cm c5.
+    topic: Genetics
+    topic2: Metabolism
+    year: 2006
+  - DOI: 10.1074/jbc.M703439200
+    Pubmed-ID: '17545150'
+    authors: Rachid S, Krug D, Weissman KJ, Muller R
+    journal: J Biol Chem
+    mesh: Adenosine Triphosphate/metabolism, Amino Acid Sequence, Bacterial Proteins/*biosynthesis/genetics/*toxicity,
+      Base Pairing, DNA Primers, Depsipeptides/*biosynthesis/*genetics/toxicity, Genetic
+      Complementation Test, Molecular Sequence Data, Myxococcales/*metabolism, Tyrosine/biosynthesis/*metabolism
+    title: Biosynthesis of (R)-beta-tyrosine and its incorporation into the highly
+      cytotoxic chondramides produced by Chondromyces crocatus.
+    topic: Metabolism
+    topic2: Genetics
+    year: 2007
+  - DOI: 10.1016/j.chembiol.2008.11.005
+    Pubmed-ID: '19171307'
+    authors: Rachid S, Scharfe M, Blocker H, Weissman KJ, Muller R
+    journal: Chem Biol
+    mesh: Amino Acid Sequence, Aniline Compounds/chemistry/*metabolism, Anti-Bacterial
+      Agents/*biosynthesis/chemistry, Methylation, Methyltransferases/chemistry/genetics/metabolism,
+      Molecular Sequence Data, Multigene Family/genetics, Myxococcales/chemistry/genetics/*metabolism,
+      Phenols/chemistry/*metabolism, Polyketide Synthases/chemistry/genetics/metabolism
+    title: Unusual chemistry in the biosynthesis of the antibiotic chondrochlorens.
+    topic: Metabolism
+    topic2: Genetics
+    year: 2009
+  - DOI: 10.1074/jbc.M109.079707
+    Pubmed-ID: '20080978'
+    authors: Rachid S, Revermann O, Dauth C, Kazmaier U, Muller R
+    journal: J Biol Chem
+    mesh: Aniline Compounds/*metabolism, Anti-Bacterial Agents/*biosynthesis, Bacterial
+      Proteins/chemistry/genetics/*metabolism, Carboxy-Lyases/chemistry/genetics/*metabolism,
+      Escherichia coli, Flavin-Adenine Dinucleotide/chemistry/genetics/*metabolism,
+      Gene Expression, Multigene Family/physiology, Mutation, Myxococcales/*enzymology/genetics,
+      Oxidation-Reduction, Recombinant Proteins/chemistry/genetics/metabolism
+    title: Characterization of a novel type of oxidative decarboxylase involved in
+      the biosynthesis of the styryl moiety of chondrochloren from an acylated tyrosine.
+    topic: Metabolism
+    topic2: Enzymology
+    year: 2010
+  - DOI: 10.1016/j.chembiol.2010.02.013
+    Pubmed-ID: '20416506'
+    authors: Buntin K, Irschik H, Weissman KJ, Luxenburger E, Blocker H, Muller R
+    journal: Chem Biol
+    mesh: Anti-Bacterial Agents/*metabolism, Base Sequence, Gene Expression Regulation,
+      Bacterial, *Genes, Bacterial, Macrolides/*metabolism, Molecular Sequence Data,
+      Multigene Family, Myxococcales/*genetics/*metabolism, Phylogeny
+    title: 'Biosynthesis of thuggacins in myxobacteria: comparative cluster analysis
+      reveals basis for natural product structural diversity.'
+    topic: Metabolism
+    topic2: Genetics
+    year: 2010
+  - DOI: 10.1002/cbic.200900712
+    Pubmed-ID: '20432424'
+    authors: Buntin K, Weissman KJ, Muller R
+    journal: Chembiochem
+    mesh: Coumarins/*metabolism, Gene Expression, Mutagenesis, Myxococcales/*enzymology,
+      Phylogeny, Protein Structure, Tertiary, Thiolester Hydrolases/chemistry/genetics/isolation
+      & purification/*metabolism
+    title: An unusual thioesterase promotes isochromanone ring formation in ajudazol
+      biosynthesis.
+    topic: Phylogeny
+    topic2: Metabolism
+    year: 2010
+  - DOI: 10.1099/ijs.0.056440-0
+    Pubmed-ID: '24187023'
+    authors: Lang E, Reichenbach H
+    journal: Int J Syst Evol Microbiol
+    mesh: Bacterial Typing Techniques, DNA, Bacterial/genetics, Myxococcales/*classification/cytology/genetics,
+      *Phylogeny, Sequence Analysis, DNA
+    title: Designation of type strains for seven species of the order Myxococcales
+      and proposal for neotype strains of Cystobacter ferrugineus, Cystobacter minus
+      and Polyangium fumosum.
+    topic: Phylogeny
+    topic2: Transcriptome
+    year: 2013
+  - DOI: 10.1016/j.chembiol.2014.05.012
+    Pubmed-ID: '24981773'
+    authors: Muller S, Rachid S, Hoffmann T, Surup F, Volz C, Zaburannyi N, Muller
+      R
+    journal: Chem Biol
+    mesh: Biological Products/metabolism, Genetic Engineering, Hydrolysis, Models,
+      Biological, Molecular Sequence Data, *Multigene Family, Myxococcales/*genetics/*metabolism,
+      Peptide Synthases/chemistry/metabolism, Polyenes/metabolism, Protein Structure,
+      Tertiary
+    title: Biosynthesis of crocacin involves an unusual hydrolytic release domain
+      showing similarity to condensation domains.
+    topic: Metabolism
+    topic2: Genetics
+    year: 2014
+  - DOI: 10.1128/AEM.03011-15
+    Pubmed-ID: '26773087'
+    authors: Zaburannyi N, Bunk B, Maier J, Overmann J, Muller R
+    journal: Appl Environ Microbiol
+    mesh: Biological Products/*metabolism, Biosynthetic Pathways/*genetics, Genes,
+      Bacterial, Genetic Variation, *Genome, Bacterial, Myxococcales/*genetics, Secondary
+      Metabolism, Sequence Analysis, DNA
+    title: Genome Analysis of the Fruiting Body-Forming Myxobacterium Chondromyces
+      crocatus Reveals High Potential for Natural Product Biosynthesis.
+    topic: Metabolism
+    topic2: Genetics
+    year: 2016
+  - DOI: 10.1002/anie.201612640
+    Pubmed-ID: '28544148'
+    authors: Viehrig K, Surup F, Volz C, Herrmann J, Abou Fayad A, Adam S, Kohnke
+      J, Trauner D, Muller R
+    journal: Angew Chem Int Ed Engl
+    mesh: Bacterial Proteins/*biosynthesis/*chemistry/genetics/metabolism, Biological
+      Products/chemistry/metabolism, Carbon-13 Magnetic Resonance Spectroscopy, Mass
+      Spectrometry/methods, Metabolome, Mutagenesis, Myxococcales/*metabolism, Peptides,
+      Cyclic/*biosynthesis/*chemistry/genetics/metabolism, Protein Binding, Protein
+      Conformation, *Protein Processing, Post-Translational, Proton Magnetic Resonance
+      Spectroscopy, Ribosomal Proteins/*biosynthesis/*chemistry/genetics/metabolism
+    title: 'Structure and Biosynthesis of Crocagins: Polycyclic Posttranslationally
+      Modified Ribosomal Peptides from Chondromyces crocatus.'
+    topic: Metabolism
+    year: 2017
+  - DOI: 10.1021/acschembio.7b00900
+    Pubmed-ID: '29220569'
+    authors: Surup F, Viehrig K, Rachid S, Plaza A, Maurer CK, Hartmann RW, Muller
+      R
+    journal: ACS Chem Biol
+    mesh: Aspartic Acid/chemistry, Depsipeptides/chemistry/*metabolism, Gene Silencing,
+      Genome, Bacterial, Genomics, Magnetic Resonance Spectroscopy, Metabolomics,
+      Molecular Structure, Multigene Family, Myxococcales/*genetics/metabolism
+    title: Crocadepsins-Depsipeptides from the Myxobacterium Chondromyces crocatus
+      Found by a Genome Mining Approach.
+    topic: Genetics
+    topic2: Metabolism
+    year: 2017
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/691036
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/892199
+General:
+  '@ref': 5499
+  BacDive-ID: 12016
+  DSM-Number: 14714
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 52
+  description: Chondromyces crocatus Cm c5 is a mesophilic bacterium that was isolated
+    from soil.
+  doi: 10.13145/bacdive12016.20220920.7
+  keywords:
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - mesophilic
+  strain history:
+  - <- H. Reichenbach; Cm c5
+  - DSM 14714 <-- H. Reichenbach Cm c5.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 5499
+    continent: Middle and South America
+    country: Brazil
+    geographic location: Parana
+    origin.country: BRA
+    sample type: soil
+  - '@ref': 67770
+    continent: Middle and South America
+    country: Brazil
+    origin.country: BRA
+    sample type: Soil
+  isolation source categories:
+    Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+Morphology:
+  multimedia:
+    '@ref': 5499
+    caption: swarm on agar medium 9
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_14714.jpg
+Name and taxonomic classification:
+  '@ref': 5499
+  LPSN:
+    '@ref': 20215
+    class: Deltaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Polyangiaceae
+    full scientific name: <I>Chondromyces</I> <I>crocatus</I> Berkeley and Curtis
+      1874 (Approved Lists 1980)
+    genus: Chondromyces
+    keyword: phylum/pseudomonadota
+    order: Myxococcales
+    phylum: Pseudomonadota
+    species: Chondromyces crocatus
+  class: Deltaproteobacteria
+  domain: Bacteria
+  family: Polyangiaceae
+  full scientific name: Chondromyces crocatus Berkeley and Curtis 1874
+  genus: Chondromyces
+  order: Myxococcales
+  phylum: Proteobacteria
+  species: Chondromyces crocatus
+  strain designation: Cm c5
+  type strain: 'yes'
+Physiology and metabolism: {}
+Reference:
+- '@id': 5499
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 14714)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-14714
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 66794
+  authors: Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz,
+    Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg
+  doi/url: 10.1093/nar/gkaa1025
+  journal: 'Nucleic Acids Res. 49: D498-D508 2020'
+  pubmed: 33211880
+  title: 'BRENDA, the ELIXIR core data resource in 2021: new developments and updates'
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 5499
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 5499
+    NCBI tax ID: 52
+    accession: GU207874
+    database: ena
+    description: Chondromyces crocatus strain Cm c5 16S ribosomal RNA gene, partial
+      sequence
+    length: 1497
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 52
+    accession: GCA_001189295
+    assembly level: complete
+    database: ncbi
+    description: Chondromyces crocatus Cm c5
+  - '@ref': 66792
+    NCBI tax ID: 52
+    accession: '52.12'
+    assembly level: complete
+    database: patric
+    description: Chondromyces crocatus strain Cm c5
+  - '@ref': 66792
+    NCBI tax ID: 52
+    accession: '2648501185'
+    assembly level: complete
+    database: img
+    description: Chondromyces crocatus Cm c5
+  - '@ref': 66792
+    NCBI tax ID: 52
+    accession: '2582581503'
+    assembly level: draft
+    database: img
+    description: Chondromyces crocatus Cm c5

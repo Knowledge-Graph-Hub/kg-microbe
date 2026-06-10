@@ -350,8 +350,7 @@ class TestECSubstrateEdges(unittest.TestCase):
             "tryptophanase\tkgmicrobe.assay:API_20A_IND\tIndole production",
             "CHEBI:16199\tUrea\tKEGG:C00086\tCAS-RN:57-13-6\tEC:3.5.1.5\t"
             "Urease\tkgmicrobe.assay:API_20A_URE\tUrease/urea hydrolysis",
-            "CHEBI:17634\tD-glucose\tKEGG:C00031\tCAS-RN:50-99-7\t\t\t"
-            "kgmicrobe.assay:API_20A_GLU\tAcid from D-glucose",
+            "CHEBI:17634\tD-glucose\tKEGG:C00031\tCAS-RN:50-99-7\t\t\tkgmicrobe.assay:API_20A_GLU\tAcid from D-glucose",
             "\t\t\t\tEC:1.11.1.6\tcatalase\tkgmicrobe.assay:API_20A_CAT\tCatalase",
             "CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\t"
             "EC:3.2.1.21\tbeta-glucosidase\tkgmicrobe.assay:API_20A_ESC\tEsculin hydrolysis",

@@ -279,8 +279,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
                 # mismatch (or the column-population path silently breaking) is
                 # caught here.
                 if cols[unit_col_idx] == "Celsius":
-                    self.assertEqual(cols[value_col_idx], "37.0",
-                                     "temperature growth edge value should equal 37.0")
+                    self.assertEqual(cols[value_col_idx], "37.0", "temperature growth edge value should equal 37.0")
                     found_quant_temp = True
 
             self.assertTrue(found_zero_pct, "0% pct_true trait (gram positive) should be included in edges")
@@ -379,9 +378,9 @@ class TestMetaTraitsTransform(unittest.TestCase):
                 "METPO:2000517",  # grows in (positive form for kgmicrobe.medium:* objects)
                 "METPO:2000064",  # tolerates (positive form of the new chemical-tolerance pair)
                 "METPO:2000065",  # does not tolerate (the row's mapped predicate; treat as positive
-                                  # for assertion purposes — for false-majority we expect NO edge at
-                                  # all, neither the row's positive-mapped predicate nor an inverted
-                                  # one, so flagging it as "positive" here is the right guard)
+                # for assertion purposes — for false-majority we expect NO edge at
+                # all, neither the row's positive-mapped predicate nor an inverted
+                # one, so flagging it as "positive" here is the right guard)
             }
             # Also lock in: no edge of any kind to the kgmicrobe.medium:* object
             # is emitted for these false-majority rows. The METPO ontology does
@@ -425,9 +424,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
                 )
                 if expected_obj in grows_in_kgmicrobe_objects:
                     any_edge = [
-                        line
-                        for line in edges[1:]
-                        if (cols := line.split("\t")) and cols[obj_idx] == expected_obj
+                        line for line in edges[1:] if (cols := line.split("\t")) and cols[obj_idx] == expected_obj
                     ]
                     self.assertEqual(
                         any_edge,

@@ -1,0 +1,122 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 15098
+    composition: 'Name: VY/2 AGAR (DSMZ Medium 9)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Baker''s yeast 5.0 g/l
+
+      CaCl2 x 2 H2O 1.36 g/l
+
+      Vitamin B12 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/9
+    name: VY/2 AGAR (DSMZ Medium 9)
+  culture temp:
+    '@ref': 15098
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 15098
+  culture collection no.: DSM 53435
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/535550
+General:
+  '@ref': 15098
+  BacDive-ID: 12307
+  DSM-Number: 53435
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 56
+  description: Sorangium cellulosum So ce454 is a mesophilic bacterium that builds
+    a fruiting body and was isolated from sandy soil.
+  doi: 10.13145/bacdive12307.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- H. Reichenbach, GBF; So ce454
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 15098
+    continent: Asia
+    country: Sri Lanka
+    geographic location: Wilpattu Nationalpark
+    origin.country: LKA
+    sample type: sandy soil
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Sandy'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+Morphology:
+  multicellular morphology:
+    '@ref': 18281
+    complex name: fruiting body
+    forms multicellular complex: 'yes'
+Name and taxonomic classification:
+  '@ref': 15098
+  LPSN:
+    '@ref': 20215
+    class: Deltaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Polyangiaceae
+    full scientific name: <I>Sorangium</I> <I>cellulosum</I> (Brockman 1989) Reichenbach
+      2007
+    genus: Sorangium
+    keyword: phylum/pseudomonadota
+    order: Myxococcales
+    phylum: Pseudomonadota
+    species: Sorangium cellulosum
+    synonyms:
+      '@ref': 20215
+      synonym: Polyangium cellulosum
+  class: Deltaproteobacteria
+  domain: Bacteria
+  family: Polyangiaceae
+  full scientific name: Sorangium cellulosum (Brockman 1989) Reichenbach 2007
+  genus: Sorangium
+  order: Myxococcales
+  phylum: Proteobacteria
+  species: Sorangium cellulosum
+  strain designation: So ce454
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 15098
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 53435)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-53435
+- '@id': 18281
+  authors: Reichenbach, H.
+  title: Collection description and documentation of myxobacteria by H. Reichenbach,
+    HZI (formerly GBF); Collection curr. located at the DSMZ
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information:
+  risk assessment:
+    '@ref': 15098
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

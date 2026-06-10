@@ -151,6 +151,7 @@ from kg_microbe.transform_utils.constants import (
     PHYSIOLOGY_AND_METABOLISM,
     PIGMENTATION,
     PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCTION_KEY,
     PROVIDED_BY_COLUMN,
     PROVISIONAL_GENUS_PREFIX,
@@ -326,12 +327,14 @@ class BacDiveTransform(Transform):
                 metpo_id = (row.get("metpo_parent_id") or "").strip()
                 field = (row.get("bacdive_field") or "").strip()
                 if metpo_id and field:
-                    rows.append({
-                        "bacdive_field": field,
-                        "metpo_parent_id": metpo_id,
-                        "metpo_parent_label": (row.get("metpo_parent_label") or "").strip(),
-                        "bacdive_json_path": (row.get("bacdive_json_path") or "").strip(),
-                    })
+                    rows.append(
+                        {
+                            "bacdive_field": field,
+                            "metpo_parent_id": metpo_id,
+                            "metpo_parent_label": (row.get("metpo_parent_label") or "").strip(),
+                            "bacdive_json_path": (row.get("bacdive_json_path") or "").strip(),
+                        }
+                    )
         return rows
 
     @staticmethod
@@ -523,9 +526,7 @@ class BacDiveTransform(Transform):
                                 self.ncbitaxon_name_to_id[name.lower()] = node_id
                                 if len(parts) > syn_col and parts[syn_col]:
                                     self.ncbitaxon_synonyms[node_id] = frozenset(
-                                        s.strip().lower()
-                                        for s in parts[syn_col].split("|")
-                                        if s.strip()
+                                        s.strip().lower() for s in parts[syn_col].split("|") if s.strip()
                                     )
                 print(f"  Loaded {len(self.ncbitaxon_labels)} NCBITaxon labels")
             except Exception as e:
@@ -1552,8 +1553,20 @@ class BacDiveTransform(Transform):
 
             node_writer = csv.writer(node, delimiter="\t")
             node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge, delimiter="\t")
-            edge_writer.writerow(self.edge_header)
+            # Wrap edge_writer so every infores:bacdive-sourced edge that
+            # involves a kgmicrobe.strain:bacdive_NNN node (subject or object)
+            # gets the BacDive strain id added to its primary_knowledge_source.
+            # The serialized list form matches KGX's multi-source convention,
+            # so downstream merge collapses these rows with their mediadive-
+            # sourced twins (which carry just "bacdive:NNN") into a single
+            # multi-provenance row instead of leaving them as two singletons.
+            raw_edge_writer = csv.writer(edge, delimiter="\t")
+            raw_edge_writer.writerow(self.edge_header)
+            edge_writer = _StrainProvenanceWriter(
+                raw_edge_writer,
+                knowledge_source=self.knowledge_source,
+                ks_column_index=self.edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN),
+            )
 
             # Generate and write assay nodes and edges upfront (before processing organisms)
             if self.assay_kit_mappings:
@@ -1561,6 +1574,7 @@ class BacDiveTransform(Transform):
                     from kg_microbe.transform_utils.constants import ASSAY_KITS_FILE
                     from kg_microbe.utils.mapping_file_utils import (
                         generate_assay_entity_edges,
+                        generate_assay_entity_nodes,
                         generate_assay_nodes,
                     )
 
@@ -1621,6 +1635,19 @@ class BacDiveTransform(Transform):
                         print(f"Writing {len(self.assay_edges_generated)} assay→entity edges...")
                         edge_writer.writerows(self.assay_edges_generated)
 
+                    # Emit labelled stubs for CHEBI/EC/GO targets referenced by
+                    # the assay edges. Most are also supplied by the ontologies
+                    # transform (merge prefers the canonical row); these stubs
+                    # cover obsolete / out-of-version CHEBI IDs (e.g. CHEBI:17004
+                    # D-Tagatose) that would otherwise become biolink:NamedThing
+                    # stubs at merge time.
+                    assay_target_nodes = generate_assay_entity_nodes(
+                        self.assay_raw_data, self.node_header
+                    )
+                    if assay_target_nodes:
+                        print(f"Writing {len(assay_target_nodes)} assay-target stub nodes...")
+                        node_writer.writerows(assay_target_nodes)
+
                 except Exception as e:
                     print(f"Warning: Failed to generate assay nodes/edges: {e}")
                     # Continue with transform even if assay generation fails
@@ -1630,8 +1657,14 @@ class BacDiveTransform(Transform):
 
             # Generate EC→substrate edges from bacdive_mappings.tsv
             # These represent enzymatic reactions where an enzyme (EC number) acts on a substrate (ChEBI)
-            # Note: EC and ChEBI nodes are created by the ontologies transform
+            # Note: EC and ChEBI nodes are normally created by the ontologies transform.
+            # Obsolete CHEBI IDs (e.g. CHEBI:54684 4-Nitrophenyl-alpha-D-galactoside) are
+            # missing from chebi_nodes.tsv, so we emit a labelled stub here using the
+            # `substrate` column from bacdive_mappings.tsv to prevent KGX from creating
+            # a biolink:NamedThing stub at merge time.
             ec_substrate_edges = []
+            ec_substrate_stub_nodes: list = []
+            seen_chebi_stub: set = set()
             for mapping in bacdive_mappings_list_of_dicts:
                 ec_id = mapping.get("EC_ID", "").strip()
                 chebi_id = mapping.get("CHEBI_ID", "").strip()
@@ -1649,11 +1682,24 @@ class BacDiveTransform(Transform):
                             MANUAL_AGENT,
                         ]
                     )
+                    if chebi_id not in seen_chebi_stub:
+                        seen_chebi_stub.add(chebi_id)
+                        substrate_name = (mapping.get("substrate") or "").strip()
+                        ec_substrate_stub_nodes.append(
+                            self._create_node_row(
+                                chebi_id,
+                                self._get_chebi_category(chebi_id),
+                                substrate_name,
+                            )
+                        )
 
             # Write EC→substrate edges
             if ec_substrate_edges:
                 print(f"Writing {len(ec_substrate_edges)} EC→substrate edges from bacdive_mappings.tsv...")
                 edge_writer.writerows(ec_substrate_edges)
+            if ec_substrate_stub_nodes:
+                print(f"Writing {len(ec_substrate_stub_nodes)} EC→substrate ChEBI stub nodes...")
+                node_writer.writerows(ec_substrate_stub_nodes)
 
             # ! DEPRECATED 2026-01-12: Old BacDive Mapping file processing.
             # This section has been replaced with comprehensive assay metadata from
@@ -1934,9 +1980,7 @@ class BacDiveTransform(Transform):
                                 if fallback_id and self._validate_higher_rank_match(fallback_id, original_token):
                                     higher_rank_ncbitaxon_id = fallback_id
                             if higher_rank_ncbitaxon_id:
-                                print(
-                                    f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}"
-                                )
+                                print(f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}")
                                 knowledge_level, agent_type = self._add_edge_metadata(
                                     SUBCLASS_PREDICATE,
                                     INFERRED_SUBCLASS_RELATION,
@@ -1955,11 +1999,7 @@ class BacDiveTransform(Transform):
                                 )
 
                         # Step 1: Parse genus from scientific name (skipped if higher-rank matched)
-                        genus = (
-                            None
-                            if higher_rank_ncbitaxon_id
-                            else self._parse_genus_from_scientific_name(full_name)
-                        )
+                        genus = None if higher_rank_ncbitaxon_id else self._parse_genus_from_scientific_name(full_name)
 
                         if genus:
                             print(f"  Extracted genus: {genus}")
@@ -2877,7 +2917,9 @@ class BacDiveTransform(Transform):
                                     if not metpo_predicate:
                                         continue
 
-                                    # Get ChEBI IDs for this chemical
+                                    # Get ChEBI IDs for this chemical. Target stub nodes are
+                                    # emitted upfront by generate_assay_entity_nodes — covers
+                                    # obsolete IDs missing from chebi_nodes.tsv (CHEBI:17004 etc.).
                                     chebi_ids = test_info.get("chebi_id", [])
 
                                     if chebi_ids:
@@ -2947,9 +2989,7 @@ class BacDiveTransform(Transform):
                     # node is supplied by the ontologies transform on merge. Otherwise fall
                     # back to the historical ``isolation_source:<label>`` placeholder node.
                     for isol_source in all_values:
-                        mapping = self.isolation_source_mappings.get(
-                            normalize_isolation_source_label(isol_source)
-                        )
+                        mapping = self.isolation_source_mappings.get(normalize_isolation_source_label(isol_source))
                         predicate_override: Optional[str] = None
                         if mapping is not None:
                             subject_id = mapping[0]
@@ -3114,3 +3154,61 @@ class BacDiveTransform(Transform):
             dedup_on_sort_column=True,
         )
         drop_duplicates(self.output_edge_file)
+
+
+# Tail of every kgmicrobe.strain CURIE the BacDive transform emits. Built
+# inline so this module-level helper doesn't need to import the (already
+# in-file) STRAIN_PREFIX + BACDIVE_PREFIX constants again.
+_STRAIN_BACDIVE_PREFIX = "kgmicrobe.strain:bacdive_"
+
+
+class _StrainProvenanceWriter:
+
+    """
+    csv.writer wrapper that augments ``primary_knowledge_source`` on bacdive edges.
+
+    For every row whose ``primary_knowledge_source`` is the bare
+    ``infores:bacdive`` constant and whose subject *or* object is a
+    ``kgmicrobe.strain:bacdive_NNN`` CURIE, the wrapper rewrites the
+    knowledge_source cell to a list literal carrying both the source
+    (``infores:bacdive``) and the specific BacDive strain id
+    (``bacdive:NNN``). The list literal matches KGX's merged
+    multi-source serialization, so downstream merge collapses these
+    rows with their mediadive-sourced twins (which emit just
+    ``bacdive:NNN``) into a single multi-provenance row instead of
+    leaving them as two separate singletons.
+
+    Edges that aren't strain-derived (e.g. METPO category subClassOf
+    axioms whose subject/object are both ontology classes) pass through
+    untouched — the wrapper only fires when at least one endpoint is a
+    BacDive strain CURIE.
+
+    Edges with a different existing knowledge_source (e.g. ``infores:metpo``
+    on a METPO ontology axiom, or the bare ``"bacdive"`` literal on
+    isolation-source edges from the BTO/UBERON/ENVO path) also pass
+    through untouched — those paths are out of scope for this
+    consolidation.
+    """
+
+    def __init__(self, inner_writer, *, knowledge_source: str, ks_column_index: int):
+        """Wrap ``inner_writer``; ``ks_column_index`` is the position of primary_knowledge_source in the edge row."""
+        self._inner = inner_writer
+        self._ks = knowledge_source
+        self._ks_idx = ks_column_index
+
+    def writerow(self, row):
+        """Write a single edge row, augmenting knowledge_source when the row references a BacDive strain."""
+        row = list(row)
+        if len(row) > self._ks_idx and row[self._ks_idx] == self._ks:
+            # Look at subject (col 0) then object (col 2) for a strain CURIE.
+            for endpoint in (row[0], row[2] if len(row) > 2 else None):
+                if isinstance(endpoint, str) and endpoint.startswith(_STRAIN_BACDIVE_PREFIX):
+                    bacdive_id = endpoint[len(_STRAIN_BACDIVE_PREFIX):]
+                    row[self._ks_idx] = f"['{self._ks}', 'bacdive:{bacdive_id}']"
+                    break
+        self._inner.writerow(row)
+
+    def writerows(self, rows):
+        """Pass each row through :meth:`writerow` so the augmentation applies to batched writes too."""
+        for row in rows:
+            self.writerow(row)

@@ -856,10 +856,7 @@ class MediaDiveTransform(Transform):
                     # Pick the type-specific multi-cat category for the
                     # individual medium node so downstream queries can filter
                     # defined vs. complex media via biolink categories alone.
-                    medium_category = (
-                        MEDIUM_COMPLEX_CATEGORY if complex_medium_type
-                        else MEDIUM_DEFINED_CATEGORY
-                    )
+                    medium_category = MEDIUM_COMPLEX_CATEGORY if complex_medium_type else MEDIUM_DEFINED_CATEGORY
                     if complex_medium_type:
                         medium_type_edges = [
                             [
@@ -896,11 +893,7 @@ class MediaDiveTransform(Transform):
                     # subclass_of edge to a medium-type without a node row,
                     # surfacing as merge-time NamedThing fallbacks. Found by
                     # the `orphan-edges` archetype in kg-path-review.
-                    node_writer.writerow(
-                        self._create_node_row(
-                            medium_id, medium_category, dictionary[NAME_COLUMN]
-                        )
-                    )
+                    node_writer.writerow(self._create_node_row(medium_id, medium_category, dictionary[NAME_COLUMN]))
 
                     # Medium-Strains KG
                     if json_obj_medium_strain:
@@ -945,6 +938,16 @@ class MediaDiveTransform(Transform):
                                             ]
                                         )
 
+                                        # Emit primary_knowledge_source as the list literal
+                                        # ['infores:bacdive', 'bacdive:NNN'] — matches the
+                                        # bacdive transform's _StrainProvenanceWriter output
+                                        # byte-for-byte so KGX dedupes the two rows (this
+                                        # mediadive row + the corresponding bacdive row for the
+                                        # same s,p,o) by exact-string match in the merge step.
+                                        # Without the matching format KGX nests the two values
+                                        # under a 2-element list of strings — uglier and harder
+                                        # to query.
+                                        provenance = f"['infores:bacdive', '{strain_id}']"
                                         medium_strain_edge.extend(
                                             [
                                                 [
@@ -952,7 +955,7 @@ class MediaDiveTransform(Transform):
                                                     predicate,
                                                     medium_id,
                                                     relation,
-                                                    strain_id,
+                                                    provenance,
                                                     OBSERVATION,
                                                     MANUAL_AGENT,
                                                 ],
@@ -1031,17 +1034,19 @@ class MediaDiveTransform(Transform):
                         # Emit one biolink:subclass_of edge per parent so the
                         # ingredient sits inside the canonical OBO hierarchy.
                         for parent_id in self.chemical_loader.get_parents(ingredient_id):
-                            ingredient_subclass_edges.append([
-                                ingredient_id,
-                                "biolink:subclass_of",
-                                parent_id,
-                                "rdfs:subClassOf",
-                                self.knowledge_source,
-                                "knowledge_assertion",
-                                "manual_agent",
-                                "",
-                                "",
-                            ])
+                            ingredient_subclass_edges.append(
+                                [
+                                    ingredient_id,
+                                    "biolink:subclass_of",
+                                    parent_id,
+                                    "rdfs:subClassOf",
+                                    self.knowledge_source,
+                                    "knowledge_assertion",
+                                    "manual_agent",
+                                    "",
+                                    "",
+                                ]
+                            )
                     solution_nodes = [
                         self._create_node_row(MEDIADIVE_SOLUTION_PREFIX + str(k), SOLUTION_CATEGORY, v)
                         for k, v in solutions_dict.items()

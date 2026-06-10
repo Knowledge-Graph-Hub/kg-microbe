@@ -1,0 +1,116 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 16932
+    composition: 'Name: CASO AGAR (Merck 105458) (DSMZ Medium 220)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Casein peptone 15.0 g/l
+
+      NaCl 5.0 g/l
+
+      Soy peptone 5.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/220
+    name: CASO AGAR (MERCK 105458) (DSMZ Medium 220)
+  culture temp:
+    '@ref': 16932
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 16932
+  culture collection no.: DSM 30554
+General:
+  '@ref': 16932
+  BacDive-ID: 8063
+  DSM-Number: 30554
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 28090
+  description: Acinetobacter lwoffii ES1-230-1c is a mesophilic bacterium that was
+    isolated from spacecraft-associated clean room class ISO 8, Herschel Space Observatory.
+  doi: 10.13145/bacdive8063.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  - 16S sequence
+  strain history: "<- European Space Agency, Noordwijk, Netherlands; ES1-230-1c <-\
+    \ P. Rettberg and S. Barczyk, DLR, K\xF6ln, Germany"
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 16932
+    continent: Europe
+    country: Netherlands
+    geographic location: Noordwijk, European Space Research and Technology Centre
+    origin.country: NLD
+    sample type: spacecraft-associated clean room class ISO 8, Herschel Space Observatory
+  isolation source categories:
+    Cat1: '#Engineered'
+    Cat2: '#Built environment'
+    Cat3: '#Clean room'
+Morphology:
+  multimedia:
+    '@ref': 16932
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_30554.jpg
+Name and taxonomic classification:
+  '@ref': 16932
+  LPSN:
+    '@ref': 20215
+    class: Gammaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Moraxellaceae
+    full scientific name: "<I>Acinetobacter</I> <I>lwoffii</I> (Audureau 1940) Brisou\
+      \ and Pr\xE9vot 1954 (Approved Lists 1980)"
+    genus: Acinetobacter
+    keyword: phylum/pseudomonadota
+    order: Pseudomonadales
+    phylum: Pseudomonadota
+    species: Acinetobacter lwoffii
+    synonyms:
+      '@ref': 20215
+      synonym: Moraxella lwoffi
+  class: Gammaproteobacteria
+  domain: Bacteria
+  family: Moraxellaceae
+  full scientific name: "Acinetobacter lwoffii (Audureau 1940) Brisou and Pr\xE9vot\
+    \ 1954 emend. Nemec et al. 2019"
+  genus: Acinetobacter
+  order: Pseudomonadales
+  phylum: Proteobacteria
+  species: Acinetobacter lwoffii
+  strain designation: ES1-230-1c
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 16932
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 30554)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-30554
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+Safety information:
+  risk assessment:
+    '@ref': 16932
+    biosafety level: '2'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 16932
+    NCBI tax ID: 28090
+    accession: FN393791
+    database: ena
+    description: Acinetobacter lwoffii partial 16S rRNA gene, strain ES-230-1c
+    length: 1354

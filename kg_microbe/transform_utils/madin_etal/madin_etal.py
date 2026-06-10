@@ -887,9 +887,7 @@ class MadinEtAlTransform(Transform):
                             # qualities are then attached to those substrates via
                             # has_quality. See module-level comment on
                             # _partition_substrate_quality_curies for rationale.
-                            substrate_pairs, quality_pairs = _partition_substrate_quality_curies(
-                                curies, labels
-                            )
+                            substrate_pairs, quality_pairs = _partition_substrate_quality_curies(curies, labels)
 
                             isolation_source_node = []
                             for curie, label in substrate_pairs:

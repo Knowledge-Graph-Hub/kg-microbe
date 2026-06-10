@@ -1,0 +1,7 @@
+# download.yaml for unit tests
+
+---
+-
+  # test download
+  url: https://test_url.org/test_1234.pdf
+  local_name: test_1234.pdf

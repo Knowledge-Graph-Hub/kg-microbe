@@ -38,9 +38,16 @@ def extract_accession_type(accession):
 
 def clean_taxon_name(taxon_name):
     """
-    Clean taxon name for use as node name.
+    Clean taxon name into the canonical GTDB local identifier form.
 
-    Replace spaces with underscores, handle special characters.
+    Replaces spaces with underscores. The output is also the local ID for
+    the `GTDB:` CURIE (e.g. `GTDB:s__Escherichia_coli`), matching the
+    Bioregistry-registered format for GTDB (regex `^[cdfgops]__\\w+\\S+$`,
+    URI pattern `https://gtdb.ecogenomic.org/tree?r={id}`).
+
+    Note: GTDB taxon names are only "best effort" stable across releases
+    (per GTDB's own FAQ), so consumers should pair the CURIE with a release
+    label (e.g. via `provided_by` or release-tagged provenance).
 
     Args:
         taxon_name: "s__Escherichia coli"

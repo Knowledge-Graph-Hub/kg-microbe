@@ -1,0 +1,115 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 10072
+    composition: 'Name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+
+      Composition:
+
+      Agar 12.0 g/l
+
+      Malt extract 10.0 g/l
+
+      Yeast extract 4.0 g/l
+
+      Glucose 4.0 g/l
+
+      CaCO3 2.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/65
+    name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+  culture temp:
+    '@ref': 10072
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 10072
+  culture collection no.: DSM 41138, ATCC 10762c, IMRU 3713
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/166786
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/95459
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/166787
+General:
+  '@ref': 10072
+  BacDive-ID: 15028
+  DSM-Number: 41138
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1894
+  description: Kitasatospora aureofaciens A-377-U290-3 is a mesophilic bacterium of
+    the family Streptomycetaceae.
+  doi: 10.13145/bacdive15028.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- R. E. Gordon, IMRU <- B. M. Duggar, Lederle Labs., A-377-U290-3
+Isolation, sampling and environmental information: {}
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 10072
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Streptomycetaceae
+    full scientific name: <I>Kitasatospora</I> <I>aureofaciens</I> (Duggar 1948) Labeda
+      et al. 2017
+    genus: Kitasatospora
+    keyword: phylum/actinomycetota
+    order: Streptomycetales
+    phylum: Actinomycetota
+    species: Kitasatospora aureofaciens
+    synonyms:
+    - '@ref': 20215
+      synonym: Streptomyces avellaneus
+    - '@ref': 20215
+      synonym: Streptomyces aureofaciens
+  class: Actinobacteria
+  domain: Bacteria
+  family: Streptomycetaceae
+  full scientific name: Kitasatospora aureofaciens (Duggar 1948) Labeda et al. 2017
+  genus: Kitasatospora
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Kitasatospora aureofaciens
+  strain designation: A-377-U290-3
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 10072
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 41138)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-41138
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66794
+  authors: Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz,
+    Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg
+  doi/url: 10.1093/nar/gkaa1025
+  journal: 'Nucleic Acids Res. 49: D498-D508 2020'
+  pubmed: 33211880
+  title: 'BRENDA, the ELIXIR core data resource in 2021: new developments and updates'
+Safety information:
+  risk assessment:
+    '@ref': 10072
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

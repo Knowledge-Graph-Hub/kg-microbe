@@ -1,0 +1,185 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 11484
+    composition: 'Name: GYM+S MEDIUM (DSMZ Medium 214)
+
+      Composition:
+
+      Starch 20.0 g/l
+
+      Agar 12.0 g/l
+
+      Malt extract 10.0 g/l
+
+      Glucose 4.0 g/l
+
+      Yeast extract 4.0 g/l
+
+      CaCO3 2.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/214
+    name: GYM+S MEDIUM (DSMZ Medium 214)
+  - '@ref': 11484
+    composition: 'Name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+
+      Composition:
+
+      Agar 12.0 g/l
+
+      Malt extract 10.0 g/l
+
+      Yeast extract 4.0 g/l
+
+      Glucose 4.0 g/l
+
+      CaCO3 2.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/65
+    name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+  culture temp:
+  - '@ref': 11484
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 11484
+  culture collection no.: DSM 44125, NRRL 18437, JCM 9926, CGMCC 4.2063, IFO 15111,
+    IFO 15562, NBRC 15111, NBRC 15562, NCIMB 13202, VKM Ac-2007
+  literature:
+    DOI: 10.1099/ijs.0.061978-0
+    Pubmed-ID: '24760800'
+    authors: Intra B, Matsumoto A, Inahashi Y, Omura S, Panbangred W, Takahashi Y
+    journal: Int J Syst Evol Microbiol
+    mesh: Actinomycetales/*classification/genetics/isolation & purification, Araceae,
+      Bacterial Typing Techniques, DNA, Bacterial/genetics, Fatty Acids/chemistry,
+      Molecular Sequence Data, Nucleic Acid Hybridization, Phospholipids/chemistry,
+      *Phylogeny, RNA, Ribosomal, 16S/genetics, *Rhizosphere, Sequence Analysis, DNA,
+      *Soil Microbiology, Thailand, Vitamin K 2/analogs & derivatives/chemistry
+    title: Streptosporangium jomthongense sp. nov., an actinomycete isolated from
+      rhizospheric soil and emendation of the genus Streptosporangium.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2014
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/186070
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/303994
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/186073
+General:
+  '@ref': 11484
+  BacDive-ID: 24854
+  DSM-Number: 44125
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 47481
+  description: Streptosporangium carneum A 84575 is a mesophilic bacterium that was
+    isolated from soil.
+  doi: 10.13145/bacdive24854.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  - 16S sequence
+  strain history:
+  - <- D. P. Labeda, NRRL
+  - IFO 15562 <-- R. C. Yao A84575.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 11484
+    continent: Africa
+    country: Kenya
+    geographic location: Nairobi, Tana River
+    origin.country: KEN
+    sample type: soil
+  - '@ref': 67770
+    continent: Africa
+    country: Kenya
+    geographic location: Nairobi
+    origin.country: KEN
+    sample type: Soil by the Tana River
+  isolation source categories:
+    Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+Morphology:
+  multimedia:
+    '@ref': 11484
+    caption: "Medium 65 28\xB0C"
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_44125.jpg
+Name and taxonomic classification:
+  '@ref': 11484
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Streptosporangiaceae
+    full scientific name: <I>Streptosporangium</I> <I>carneum</I> Mertz and Yao 1990
+    genus: Streptosporangium
+    keyword: phylum/actinomycetota
+    order: Streptosporangiales
+    phylum: Actinomycetota
+    species: Streptosporangium carneum
+  class: Actinobacteria
+  domain: Bacteria
+  family: Streptosporangiaceae
+  full scientific name: Streptosporangium carneum Mertz and Yao 1990
+  genus: Streptosporangium
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Streptosporangium carneum
+  strain designation: A 84575
+  type strain: 'yes'
+Physiology and metabolism:
+  compound production:
+    '@ref': 67770
+    compound: Lipoglycopeptide antibiotic
+  observation:
+    '@ref': 67770
+    observation: 'quinones: MK-9(H<sub>4</sub>), MK-9(H<sub>2</sub>)'
+Reference:
+- '@id': 11484
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 44125)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-44125
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 11484
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 20218
+    NCBI tax ID: 47481
+    accession: X89938
+    database: ena
+    description: S.carneum DNA for 16S ribosomal RNA gene
+    length: 1450

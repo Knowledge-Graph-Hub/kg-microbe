@@ -87,7 +87,10 @@ def test_loader_honors_manually_curated_fixes(mappings):
     assert mappings.get("catheter") is None  # device, not isolation source
     assert mappings.get("humid") is None  # quality, not source
     assert mappings.get("psychrophilic <10°c") == (
-        "ENVO:01000309", "cold environment", "ENVO", None,
+        "ENVO:01000309",
+        "cold environment",
+        "ENVO",
+        None,
     )  # retargeted from METPO trait → ENVO environment
 
 
@@ -162,16 +165,39 @@ def test_validator_flags_synthetic_family_mismatch(tmp_path):
     bad_file = tmp_path / "bad.tsv"
     with bad_file.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle, delimiter="\t")
-        writer.writerow([
-            "subject_label", "subject_label_normalized", "object_id", "object_label",
-            "object_source", "predicate_id", "confidence", "mapping_justification",
-            "curator", "source_dataset", "notes", "verified_date",
-        ])
+        writer.writerow(
+            [
+                "subject_label",
+                "subject_label_normalized",
+                "object_id",
+                "object_label",
+                "object_source",
+                "predicate_id",
+                "confidence",
+                "mapping_justification",
+                "curator",
+                "source_dataset",
+                "notes",
+                "verified_date",
+            ]
+        )
         # A trusted row (high-confidence exactMatch) but with a UO target — must fail.
-        writer.writerow([
-            "Foot", "foot", "UO:0010013", "foot", "UO", "skos:exactMatch", "high",
-            "semapv:LexicalMatching", "ols4_auto", "bacdive", "", "2026-05-02",
-        ])
+        writer.writerow(
+            [
+                "Foot",
+                "foot",
+                "UO:0010013",
+                "foot",
+                "UO",
+                "skos:exactMatch",
+                "high",
+                "semapv:LexicalMatching",
+                "ols4_auto",
+                "bacdive",
+                "",
+                "2026-05-02",
+            ]
+        )
     failures = list(validator.iter_validation_failures(bad_file))
     assert len(failures) == 1
     _, _, reason = failures[0]

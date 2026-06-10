@@ -1,0 +1,141 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 24738
+    composition: "Name: FUCHSIELLA ALKALIACETIGENA MEDIUM (DSMZ Medium 1352)\nComposition:\n\
+      Na2CO3 66.8952 g/l\nNaCl 58.7659 g/l\nNaHCO3 37.5122 g/l\nNa2S x 9 H2O 0.979432\
+      \ g/l\nNaNO3 0.832517 g/l\nNH4Cl 0.489716 g/l\nKCl 0.195886 g/l\nKH2PO4 0.195886\
+      \ g/l\nMgCl2 x 6 H2O 0.0979432 g/l\nYeast extract 0.0489716 g/l\nResazurin 0.000489716\
+      \ g/l\nEDTA 0.000489716 g/l\nFeSO4 x 7 H2O 0.000195886 g/l\nPyridoxine hydrochloride\
+      \ 9.79432e-05 g/l\nCalcium D-(+)-pantothenate 4.89716e-05 g/l\nNicotinic acid\
+      \ 4.89716e-05 g/l\nRiboflavin 4.89716e-05 g/l\nThiamine HCl 4.89716e-05 g/l\n\
+      (\xB1)-alpha-Lipoic acid 4.89716e-05 g/l\np-Aminobenzoic acid 4.89716e-05 g/l\n\
+      H3BO3 2.9383e-05 g/l\nBiotin 1.95886e-05 g/l\nCoCl2 x 6 H2O 1.95886e-05 g/l\n\
+      Folic acid 1.95886e-05 g/l\nZnSO4 x 7 H2O 9.79432e-06 g/l\nMnCl2 x 4 H2O 2.9383e-06\
+      \ g/l\nNa2MoO4 x 2 H2O 2.9383e-06 g/l\nNiCl2 x 6 H2O 1.95886e-06 g/l\nCuCl2\
+      \ x 2 H2O 9.79432e-07 g/l\nVitamin B12 9.79432e-07 g/l\nEthanol\nDistilled water"
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/1352
+    name: FUCHSIELLA ALKALIACETIGENA MEDIUM (DSMZ Medium 1352)
+  culture temp:
+    '@ref': 24738
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 24738
+  culture collection no.: DSM 26031, VKM B-2766
+  literature:
+    DOI: 10.1099/ijs.0.000278
+    Pubmed-ID: '25908709'
+    authors: Zhilina TN, Zavarzina DG, Detkova EN, Patutina EO, Kuznetsov BB
+    journal: Int J Syst Evol Microbiol
+    mesh: Base Composition, Chemoautotrophic Growth, DNA, Bacterial/genetics, Fatty
+      Acids/chemistry, Firmicutes/*classification/genetics/isolation & purification,
+      Hydrogen-Ion Concentration, Iron/*metabolism, Lakes/microbiology, Molecular
+      Sequence Data, Nucleic Acid Hybridization, *Phylogeny, RNA, Ribosomal, 16S/genetics,
+      Russia, Sequence Analysis, DNA, *Water Microbiology
+    title: Fuchsiella ferrireducens sp. nov., a novel haloalkaliphilic, lithoautotrophic
+      homoacetogen capable of iron reduction, and emendation of the description of
+      the genus Fuchsiella.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2015
+General:
+  '@ref': 24738
+  BacDive-ID: 132950
+  DSM-Number: 26031
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1242948
+  description: Fuchsiella ferrireducens Z-7101 is a mesophilic bacterium that was
+    isolated from bottom sediments of water collecting area.
+  doi: 10.13145/bacdive132950.20220920.7
+  keywords:
+  - Bacteria
+  - 16S sequence
+  - mesophilic
+  strain history: <- T. Zhilina, Winogradsky Inst. Microbiol., RAS, Moscow, Russia;
+    Z-7101
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 24738
+    continent: Asia
+    country: Russia
+    geographic location: Irtysh river, Tanatar soda lakes group
+    origin.country: RUS
+    sample type: bottom sediments of water collecting area
+  isolation source categories:
+    Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Sediment'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 24738
+  LPSN:
+    '@ref': 20215
+    class: Clostridia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Halobacteroidaceae
+    full scientific name: <I>Fuchsiella</I> <I>ferrireducens</I> Zhilina et al. 2015
+    genus: Fuchsiella
+    keyword: phylum/bacillota
+    order: Halanaerobiales
+    phylum: Bacillota
+    species: Fuchsiella ferrireducens
+  class: Clostridia
+  domain: Bacteria
+  family: Halobacteroidaceae
+  full scientific name: Fuchsiella ferrireducens Zhilina et al. 2015
+  genus: Fuchsiella
+  order: Halanaerobiales
+  phylum: Firmicutes
+  species: Fuchsiella ferrireducens
+  strain designation: Z-7101
+  type strain: 'yes'
+Physiology and metabolism: {}
+Reference:
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 24738
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 26031)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-26031
+Safety information:
+  risk assessment:
+    '@ref': 24738
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 24738
+    NCBI tax ID: 1242948
+    accession: JX566886
+    database: ena
+    description: Fuchsiella ferrireducens strain Z-7101 16S ribosomal RNA gene, partial
+      sequence
+    length: 1499
+  - '@ref': 24738
+    NCBI tax ID: 1242948
+    accession: JX566887
+    database: ena
+    description: Fuchsiella ferrireducens strain Z-7101 16S ribosomal RNA gene, partial
+      sequence
+    length: 1499
+  - '@ref': 24738
+    NCBI tax ID: 1242948
+    accession: JX566885
+    database: ena
+    description: Fuchsiella ferrireducens strain Z-7101 16S ribosomal RNA gene, partial
+      sequence
+    length: 1499
+  GC content:
+    '@ref': 24738
+    GC-content: '34.6'
+    method: thermal denaturation, midpoint method (Tm)

@@ -1,0 +1,174 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 16607
+    composition: 'Name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)
+
+      Composition:
+
+      Trypticase soy broth 30.0 g/l
+
+      Agar 15.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/535
+    name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)
+  - '@ref': 16607
+    composition: 'Name: MINERAL MEDIUM (BRUNNER) (DSMZ Medium 457)
+
+      Composition:
+
+      Na2HPO4 2.44 g/l
+
+      KH2PO4 1.52 g/l
+
+      (NH4)2SO4 0.5 g/l
+
+      MgSO4 x 7 H2O 0.2 g/l
+
+      CaCl2 x 2 H2O 0.05 g/l
+
+      EDTA 0.005 g/l
+
+      FeSO4 x 7 H2O 0.002 g/l
+
+      H3BO3 0.0003 g/l
+
+      CoCl2 x 6 H2O 0.0002 g/l
+
+      ZnSO4 x 7 H2O 0.0001 g/l
+
+      MnCl2 x 4 H2O 3e-05 g/l
+
+      Na2MoO4 x 2 H2O 3e-05 g/l
+
+      NiCl2 x 6 H2O 2e-05 g/l
+
+      CuCl2 x 2 H2O 1e-05 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/457
+    name: MINERAL MEDIUM (BRUNNER) (DSMZ Medium 457)
+  culture temp:
+    '@ref': 16607
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 16607
+  culture collection no.: DSM 22895
+General:
+  '@ref': 16607
+  BacDive-ID: 2896
+  DSM-Number: 22895
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1872122
+  description: Acidovorax sp. JS42 is a mesophilic bacterium that was isolated from
+    contaminated soil and groundwater.
+  doi: 10.13145/bacdive2896.20220920.7
+  keywords:
+  - genome sequence
+  - Bacteria
+  - mesophilic
+  strain history: <- R.-M. Wittich, Estacion Experimental del Zaidin, Granada, Spain
+    <- B. E. Haigler and J. C. Spain, Tyndall Air Force Base, Florida; JS42
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 16607
+    continent: North America
+    country: USA
+    origin.country: USA
+    sample type: contaminated soil and groundwater
+  isolation source categories:
+  - Cat1: '#Engineered'
+    Cat2: '#Contamination'
+  - Cat1: '#Environmental'
+    Cat2: '#Aquatic'
+    Cat3: '#Groundwater'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+Morphology:
+  multimedia:
+    '@ref': 16607
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_22895.jpg
+Name and taxonomic classification:
+  '@ref': 16607
+  LPSN:
+    '@ref': 20215
+    class: Betaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Comamonadaceae
+    full scientific name: <I>Acidovorax</I> Willems et al. 1990
+    genus: Acidovorax
+    keyword: phylum/pseudomonadota
+    order: Burkholderiales
+    phylum: Pseudomonadota
+    species: Acidovorax sp.
+  class: Betaproteobacteria
+  domain: Bacteria
+  family: Comamonadaceae
+  full scientific name: Acidovorax sp.
+  genus: Acidovorax
+  order: Burkholderiales
+  phylum: Proteobacteria
+  species: Acidovorax sp.
+  strain designation: JS42
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 16607
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 22895)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-22895
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+Safety information: {}
+Sequence information:
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 232721
+    accession: GCA_000015545
+    assembly level: complete
+    database: ncbi
+    description: Acidovorax sp. JS42 JS42
+  - '@ref': 66792
+    NCBI tax ID: 232721
+    accession: '232721.25'
+    assembly level: plasmid
+    database: patric
+    description: Acidovorax sp. JS42
+  - '@ref': 66792
+    NCBI tax ID: 232721
+    accession: '232721.24'
+    assembly level: plasmid
+    database: patric
+    description: Acidovorax sp. JS42
+  - '@ref': 66792
+    NCBI tax ID: 232721
+    accession: '232721.9'
+    assembly level: complete
+    database: patric
+    description: Acidovorax sp. JS42
+  - '@ref': 66792
+    NCBI tax ID: 232721
+    accession: '639633003'
+    assembly level: complete
+    database: img
+    description: Acidovorax sp. JS42

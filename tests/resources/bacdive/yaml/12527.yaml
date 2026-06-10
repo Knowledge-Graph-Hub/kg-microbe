@@ -1,0 +1,534 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 8963
+    composition: 'Name: COLUMBIA BLOOD MEDIUM (DSMZ Medium 693)
+
+      Composition:
+
+      Defibrinated sheep blood 50.0 g/l
+
+      Columbia agar base'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/693
+    name: COLUMBIA BLOOD MEDIUM (DSMZ Medium 693)
+  - '@ref': 8963
+    composition: 'Name: PYG MEDIUM (modified) (DSMZ Medium 104)
+
+      Composition:
+
+      Yeast extract 10.0 g/l
+
+      Peptone 5.0 g/l
+
+      Trypticase peptone 5.0 g/l
+
+      Beef extract 5.0 g/l
+
+      Glucose 5.0 g/l
+
+      L-Cysteine HCl x H2O 0.5 g/l
+
+      NaHCO3 0.4 g/l
+
+      NaCl 0.08 g/l
+
+      K2HPO4 0.04 g/l
+
+      KH2PO4 0.04 g/l
+
+      MgSO4 x 7 H2O 0.02 g/l
+
+      CaCl2 x 2 H2O 0.01 g/l
+
+      Hemin 0.005 g/l
+
+      Ethanol 0.0038 g/l
+
+      Resazurin 0.001 g/l
+
+      Tween 80
+
+      Vitamin K1
+
+      NaOH
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/104
+    name: PYG MEDIUM (MODIFIED) (DSMZ Medium 104)
+  culture temp:
+    '@ref': 8963
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 8963
+  culture collection no.: DSM 20615, NCDO 2353, CCUG 15559, ATCC 35309
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/164198
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/124575
+General:
+  '@ref': 8963
+  BacDive-ID: 12527
+  DSM-Number: 20615
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 28126
+  description: Prevotella buccae NP333 is an anaerobe, mesophilic human pathogen that
+    was isolated from dental plaque.
+  doi: 10.13145/bacdive12527.20220920.7
+  keywords:
+  - human pathogen
+  - mesophilic
+  - anaerobe
+  - Bacteria
+  strain history: <- NCDO <- H.N. Shaw, NP333 (<I>Bacteroides pentosaceus</I>)
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 8963
+    sample type: dental plaque
+  - '@ref': 46279
+    sample type: Human dental plaque
+  isolation source categories:
+    Cat1: '#Host Body-Site'
+    Cat2: '#Oral cavity and airways'
+    Cat3: '#Plaque'
+Morphology:
+  colony morphology:
+    '@ref': 8963
+    incubation period: 3-7 days
+Name and taxonomic classification:
+  '@ref': 8963
+  LPSN:
+    '@ref': 20215
+    class: Bacteroidia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Prevotellaceae
+    full scientific name: <I>Prevotella</I> <I>buccae</I> (Holdeman et al. 1982) Shah
+      and Collins 1990
+    genus: Prevotella
+    keyword: phylum/bacteroidota
+    order: Bacteroidales
+    phylum: Bacteroidota
+    species: Prevotella buccae
+    synonyms:
+    - '@ref': 20215
+      synonym: Bacteroides pentosaceus
+    - '@ref': 20215
+      synonym: Bacteroides capillus
+    - '@ref': 20215
+      synonym: Bacteroides buccae
+  class: Bacteroidia
+  domain: Bacteria
+  family: Prevotellaceae
+  full scientific name: Prevotella buccae (Holdeman et al. 1982) Shah and Collins
+    1990 emend. Hahnke et al. 2016
+  genus: Prevotella
+  order: Bacteroidales
+  phylum: Bacteroidetes
+  species: Prevotella buccae
+  strain designation: NP333
+  type strain: 'no'
+Physiology and metabolism:
+  API 20A:
+  - '@ref': 8963
+    ARA: '-'
+    CAT: '-'
+    CEL: '-'
+    ESC: +
+    GEL: '-'
+    GLU: '-'
+    GLY: '-'
+    IND: '-'
+    LAC: '-'
+    MAL: '-'
+    MAN: '-'
+    MLZ: '-'
+    MNE: '-'
+    RAF: '-'
+    RHA: '-'
+    SAC: '-'
+    SAL: '-'
+    SOR: '-'
+    TRE: '-'
+    URE: '-'
+    XYL: '-'
+  - '@ref': 8963
+    ARA: +
+    CEL: +
+    ESC: +
+    GEL: '-'
+    GLU: +
+    GLY: '-'
+    IND: '-'
+    LAC: +
+    MAL: +
+    MAN: '-'
+    MLZ: '-'
+    MNE: +
+    RAF: +
+    RHA: +
+    SAC: +
+    SAL: +
+    SOR: '-'
+    TRE: '-'
+    URE: '-'
+    XYL: +
+  API rID32A:
+  - '@ref': 8963
+    ADH Arg: '-'
+    AlaA: +
+    ArgA: '-'
+    GDC: '-'
+    GGA: '-'
+    GlyA: '-'
+    HisA: '-'
+    IND: '-'
+    LGA: +
+    LeuA: '-'
+    MNE: '-'
+    NIT: '-'
+    PAL: +
+    PheA: '-'
+    ProA: '-'
+    PyrA: '-'
+    RAF: '-'
+    SerA: '-'
+    TyrA: '-'
+    URE: '-'
+    alpha ARA: +
+    alpha FUC: '-'
+    alpha GAL: +/-
+    alpha GLU: +
+    beta GAL: +
+    beta GLU: +
+    beta GP: '-'
+    beta GUR: '-'
+    beta NAG: '-'
+  - '@ref': 8963
+    ADH Arg: '-'
+    AlaA: +
+    ArgA: '-'
+    GDC: '-'
+    GGA: '-'
+    GlyA: '-'
+    HisA: '-'
+    IND: '-'
+    LGA: +
+    LeuA: '-'
+    MNE: '-'
+    NIT: '-'
+    PAL: +
+    PheA: '-'
+    ProA: '-'
+    PyrA: '-'
+    RAF: '-'
+    SerA: '-'
+    TyrA: '-'
+    URE: '-'
+    alpha ARA: +/-
+    alpha FUC: '-'
+    alpha GAL: '-'
+    alpha GLU: +
+    beta GAL: +
+    beta GLU: +/-
+    beta GP: '-'
+    beta GUR: '-'
+    beta NAG: '-'
+  - '@ref': 8963
+    ADH Arg: '-'
+    AlaA: +
+    ArgA: '-'
+    GDC: '-'
+    GGA: '-'
+    GlyA: '-'
+    HisA: '-'
+    IND: '-'
+    LGA: +
+    LeuA: '-'
+    MNE: '-'
+    NIT: '-'
+    PAL: +
+    PheA: '-'
+    ProA: '-'
+    PyrA: '-'
+    RAF: '-'
+    SerA: '-'
+    TyrA: '-'
+    URE: '-'
+    alpha ARA: +
+    alpha FUC: '-'
+    alpha GAL: +
+    alpha GLU: +
+    beta GAL: +
+    beta GLU: +
+    beta GP: '-'
+    beta GUR: '-'
+    beta NAG: '-'
+  - '@ref': 8963
+    ADH Arg: '-'
+    AlaA: +
+    ArgA: '-'
+    GDC: '-'
+    GGA: +/-
+    GlyA: '-'
+    HisA: '-'
+    IND: '-'
+    LGA: +
+    LeuA: '-'
+    MNE: '-'
+    NIT: '-'
+    PAL: +
+    PheA: '-'
+    ProA: '-'
+    PyrA: '-'
+    RAF: '-'
+    SerA: '-'
+    TyrA: '-'
+    URE: '-'
+    alpha ARA: +
+    alpha FUC: '-'
+    alpha GAL: +
+    alpha GLU: +
+    beta GAL: +
+    beta GLU: +
+    beta GP: +
+    beta GUR: '-'
+    beta NAG: '-'
+  enzymes:
+  - '@ref': 68380
+    activity: '-'
+    value: serine arylamidase
+  - '@ref': 68380
+    activity: '-'
+    value: histidine arylamidase
+  - '@ref': 68380
+    activity: '-'
+    value: glycin arylamidase
+  - '@ref': 68380
+    activity: +
+    ec: 3.4.11.2
+    value: alanine arylamidase
+  - '@ref': 68380
+    activity: '-'
+    value: tyrosine arylamidase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.4.19.3
+    value: pyrrolidonyl arylamidase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.4.11.1
+    value: leucine arylamidase
+  - '@ref': 68380
+    activity: '-'
+    value: phenylalanine arylamidase
+  - '@ref': 68380
+    activity: +
+    ec: 3.4.11.1
+    value: leucyl glycin arylamidase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.4.11.5
+    value: proline-arylamidase
+  - '@ref': 68380
+    activity: '-'
+    value: L-arginine arylamidase
+  - '@ref': 68380
+    activity: +
+    ec: 3.1.3.1
+    value: alkaline phosphatase
+  - '@ref': 68380
+    activity: '-'
+    ec: 4.1.99.1
+    value: tryptophan deaminase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.2.1.51
+    value: alpha-fucosidase
+  - '@ref': 68380
+    activity: '-'
+    ec: 4.1.1.15
+    value: glutamate decarboxylase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.2.1.52
+    value: N-acetyl-beta-glucosaminidase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.2.1.31
+    value: beta-glucuronidase
+  - '@ref': 68380
+    activity: +
+    ec: 3.2.1.20
+    value: alpha-glucosidase
+  - '@ref': 68380
+    activity: +
+    ec: 3.2.1.23
+    value: beta-galactosidase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.5.3.6
+    value: arginine dihydrolase
+  - '@ref': 68380
+    activity: '-'
+    ec: 3.5.1.5
+    value: urease
+  - '@ref': 68367
+    activity: '-'
+    ec: 1.11.1.6
+    value: catalase
+  - '@ref': 68367
+    activity: +
+    ec: 3.2.1.21
+    value: beta-glucosidase
+  - '@ref': 68367
+    activity: '-'
+    value: gelatinase
+  - '@ref': 68367
+    activity: '-'
+    ec: 3.5.1.5
+    value: urease
+  metabolite production:
+  - '@ref': 68380
+    Chebi-ID: 35581
+    metabolite: indole
+    production: 'no'
+  - '@ref': 68367
+    Chebi-ID: 35581
+    metabolite: indole
+    production: 'no'
+  metabolite tests:
+  - '@ref': 68380
+    Chebi-ID: 35581
+    indole test: '-'
+    metabolite: indole
+  - '@ref': 68367
+    Chebi-ID: 35581
+    indole test: '-'
+    metabolite: indole
+  metabolite utilization:
+  - '@ref': 68380
+    Chebi-ID: 27897
+    kind of utilization tested: energy source
+    metabolite: tryptophan
+    utilization activity: '-'
+  - '@ref': 68380
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: '-'
+  - '@ref': 68380
+    Chebi-ID: 29985
+    kind of utilization tested: degradation
+    metabolite: L-glutamate
+    utilization activity: '-'
+  - '@ref': 68380
+    Chebi-ID: 16634
+    kind of utilization tested: fermentation
+    metabolite: raffinose
+    utilization activity: '-'
+  - '@ref': 68380
+    Chebi-ID: 16024
+    kind of utilization tested: fermentation
+    metabolite: D-mannose
+    utilization activity: '-'
+  - '@ref': 68380
+    Chebi-ID: 29016
+    kind of utilization tested: hydrolysis
+    metabolite: arginine
+    utilization activity: '-'
+  - '@ref': 68380
+    Chebi-ID: 16199
+    kind of utilization tested: hydrolysis
+    metabolite: urea
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 27082
+    kind of utilization tested: builds acid from
+    metabolite: trehalose
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 30911
+    kind of utilization tested: builds acid from
+    metabolite: sorbitol
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 6731
+    kind of utilization tested: builds acid from
+    metabolite: melezitose
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 17754
+    kind of utilization tested: builds acid from
+    metabolite: glycerol
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: +
+  - '@ref': 68367
+    Chebi-ID: 5291
+    kind of utilization tested: hydrolysis
+    metabolite: gelatin
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 16899
+    kind of utilization tested: builds acid from
+    metabolite: D-mannitol
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 16199
+    kind of utilization tested: hydrolysis
+    metabolite: urea
+    utilization activity: '-'
+  - '@ref': 68367
+    Chebi-ID: 27897
+    kind of utilization tested: energy source
+    metabolite: tryptophan
+    utilization activity: '-'
+  oxygen tolerance:
+    '@ref': 8963
+    oxygen tolerance: anaerobe
+Reference:
+- '@id': 8963
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 20615)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-20615
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 46279
+  authors: Curators of the CCUG
+  catalogue: Culture Collection University of Gothenburg (CCUG) (CCUG 15559)
+  doi/url: https://www.ccug.se/strain?id=15559
+- '@id': 68367
+  title: Automatically annotated from API 20A
+- '@id': 68380
+  title: Automatically annotated from API rID32A
+Safety information:
+  risk assessment:
+    '@ref': 8963
+    biosafety level: '2'
+    biosafety level comment: Risk group (German classification)
+    pathogenicity animal: 'yes'
+    pathogenicity human: 'yes'
+Sequence information:
+  GC content:
+    '@ref': 8963
+    GC-content: '51.0'

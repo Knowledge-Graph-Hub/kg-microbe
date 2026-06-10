@@ -1,0 +1,117 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 14605
+    composition: 'Name: VY/2 AGAR (DSMZ Medium 9)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Baker''s yeast 5.0 g/l
+
+      CaCl2 x 2 H2O 1.36 g/l
+
+      Vitamin B12 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/9
+    name: VY/2 AGAR (DSMZ Medium 9)
+  culture temp:
+    '@ref': 14605
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 14605
+  culture collection no.: DSM 52922
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/535033
+General:
+  '@ref': 14605
+  BacDive-ID: 3584
+  DSM-Number: 52922
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 38
+  description: Archangium disciforme Me l39 is a mesophilic bacterium that was isolated
+    from soil with plant residues.
+  doi: 10.13145/bacdive3584.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- H. Reichenbach, GBF; Me l39
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 14605
+    continent: Asia
+    country: Japan
+    geographic location: near Tokyo
+    origin.country: JPN
+    sample type: soil with plant residues
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+  - Cat1: '#Host'
+    Cat2: '#Plants'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 14605
+  LPSN:
+    '@ref': 20215
+    class: Deltaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Archangiaceae
+    full scientific name: <I>Archangium</I> <I>disciforme</I> (Thaxter 1904) Lang
+      et al. 2015
+    genus: Archangium
+    keyword: phylum/pseudomonadota
+    order: Myxococcales
+    phylum: Pseudomonadota
+    species: Archangium disciforme
+    synonyms:
+    - '@ref': 20215
+      synonym: Myxococcus disciformis
+    - '@ref': 20215
+      synonym: Cystobacter disciformis
+    - '@ref': 20215
+      synonym: Angiococcus disciformis
+  class: Deltaproteobacteria
+  domain: Bacteria
+  family: Archangiaceae
+  full scientific name: Archangium disciforme (Thaxter 1904) Lang et al. 2015
+  genus: Archangium
+  order: Myxococcales
+  phylum: Proteobacteria
+  species: Archangium disciforme
+  strain designation: Me l39
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 14605
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 52922)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-52922
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information:
+  risk assessment:
+    '@ref': 14605
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

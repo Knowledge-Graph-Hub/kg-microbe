@@ -66,6 +66,10 @@ KGMICROBE_EXTENSION_CATEGORIES = {
     "biolink:GrowthMedium",           # KG-Microbe native extension
     "biolink:SequenceFeature",        # removed upstream; OAK output (NCBITaxon, GO)
     "biolink:EnvironmentalMaterial",  # removed upstream; OAK output (ENVO)
+    # METPO class CURIEs intentionally carried alongside a biolink category in
+    # multi-cat node rows (the pipe-split check flags each component
+    # independently, so the METPO half needs to be whitelisted explicitly).
+    "METPO:1001000",                  # observation — BacDive assay nodes (paired with biolink:Procedure)
 }
 
 # Predicates we emit that are NOT biolink slots — structural/OWL predicates.
@@ -156,22 +160,34 @@ PREDICATE_DOMAIN_RANGE = {
     "biolink:has_phenotype":  ({"biolink:BiologicalEntity", "biolink:OrganismTaxon"},  {"biolink:PhenotypicFeature", "biolink:Attribute", "biolink:OntologyClass"}),
     "biolink:capable_of":     ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:OntologyClass"}),
     "biolink:has_chemical_role": ({"biolink:ChemicalEntity"}, {"biolink:ChemicalRole", "biolink:OntologyClass"}),
-    "biolink:associated_with_resistance_to":  ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
-    "biolink:associated_with_sensitivity_to": ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
+    # MacromolecularComplex is included in the object set for chemical-targeting
+    # predicates because KG-Microbe deliberately categorizes CHEBI:33839
+    # (macromolecule) descendants — polysaccharides, peptides, polynucleotides —
+    # as biolink:MacromolecularComplex (see kg_microbe/utils/ontology_utils.py
+    # get_chebi_category and kg_microbe/utils/category_consolidation_rules.yaml).
+    # MacromolecularComplex is not a descendant of ChemicalEntity in biolink,
+    # so without this explicit addition the reviewer would flag legitimate
+    # organism→polysaccharide edges (e.g. ferments starch).
+    "biolink:associated_with_resistance_to":  ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
+    "biolink:associated_with_sensitivity_to": ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
+    # EC nodes carry the multi-cat biolink:MolecularActivity|biolink:Protein
+    # per kg_microbe/transform_utils/constants.py:EC_CATEGORY, which satisfies
+    # the Protein clause of biolink's GeneProductOrComplex domain/range.
     "biolink:enables":        ({"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}, {"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}),
     "biolink:enabled_by":     ({"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}, {"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}),
     # ── METPO:2000xxx (organism → chemical / pathway / medium) ──────────────
-    "METPO:2000002": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # assimilates
-    "METPO:2000003": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds acid from
-    "METPO:2000004": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds base from
-    "METPO:2000005": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # builds gas from
-    "METPO:2000006": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as carbon source
-    "METPO:2000007": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:EnvironmentalMaterial"}),  # degrades — covers crude oil and other ENVO materials
-    "METPO:2000009": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as electron donor
-    "METPO:2000010": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as energy source
-    "METPO:2000011": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # ferments
-    "METPO:2000013": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # hydrolyzes
-    "METPO:2000014": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity"}),  # uses as nitrogen source
+    # Same MacromolecularComplex note as biolink:associated_with_resistance_to above.
+    "METPO:2000002": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # assimilates
+    "METPO:2000003": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # builds acid from
+    "METPO:2000004": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # builds base from
+    "METPO:2000005": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # builds gas from
+    "METPO:2000006": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # uses as carbon source
+    "METPO:2000007": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:EnvironmentalMaterial", "biolink:MacromolecularComplex"}),  # degrades — covers crude oil, ENVO materials, and CHEBI macromolecules
+    "METPO:2000009": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # uses as electron donor
+    "METPO:2000010": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # uses as energy source
+    "METPO:2000011": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # ferments
+    "METPO:2000013": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # hydrolyzes
+    "METPO:2000014": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # uses as nitrogen source
     "METPO:2000103": ({"biolink:OrganismTaxon"}, {"biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:OntologyClass"}),  # capable of
     "METPO:2000517": ({"biolink:OrganismTaxon"}, {"biolink:GrowthMedium"}),  # grows in
     "METPO:2000518": ({"biolink:OrganismTaxon"}, {"biolink:GrowthMedium"}),  # does not grow in
@@ -189,6 +205,9 @@ STANDARD_PREFIXES = {
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
     "OMP", "MOP", "KEGG", "COG", "GTDB", "skos", "owl", "rdf",
     "rdfs", "xsd", "oboInOwl", "dcterms", "schema",
+    # MeSH RDF vocabulary predicates emitted by ontologies_stubs_transform
+    # (meshv:broaderDescriptor, meshv:preferredMappedTo, meshv:mappedTo).
+    "meshv",
     # lowercase aliases used by madin_etal NER fallback
     "envo", "foodon", "pato", "po",
     # madin_etal provisional node prefixes (fallback when no ontology term found)

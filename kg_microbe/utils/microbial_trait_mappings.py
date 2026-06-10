@@ -173,14 +173,10 @@ def load_microbial_trait_mappings(
                     # without explicit overrides.
                     emit_predicate = (row.get("emit_predicate") or "").strip()
                     emit_category = (row.get("emit_category") or "").strip()
-                    biolink_predicate = (
-                        emit_predicate
-                        or _resolve_biolink_predicate(subject_label, notes, entity_category)
+                    biolink_predicate = emit_predicate or _resolve_biolink_predicate(
+                        subject_label, notes, entity_category
                     )
-                    object_category = (
-                        emit_category
-                        or _resolve_object_category(object_source, entity_category)
-                    )
+                    object_category = emit_category or _resolve_object_category(object_source, entity_category)
 
                     result[subject_label] = {
                         "object_id": object_id,

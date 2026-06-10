@@ -60,9 +60,10 @@ class GTDBTransform(Transform):
         self.seen_nodes = set()
         self.knowledge_source = "infores:gtdb"
 
-        # Mappings for efficient lookup
-        self.taxon_to_id = {}  # "d__Bacteria" -> "GTDB:1"
-        self.taxon_id_counter = 1
+        # Name -> CURIE cache. CURIEs are deterministic (derived from the
+        # cleaned taxon string) so this is purely a dedup/perf cache, not an
+        # ID allocator. Example: "d__Bacteria" -> "GTDB:d__Bacteria".
+        self.taxon_to_id = {}
         self._created_mappings = set()  # Track GTDB->NCBI mappings to avoid duplicates
 
         # Resolve input directory: prefer CLI-provided base dir, fall back to global default
@@ -257,29 +258,39 @@ class GTDBTransform(Transform):
 
     def _get_or_create_taxon_id(self, taxon_name: str) -> str:
         """
-        Get or create a unique ID for a taxon.
+        Get or create the canonical CURIE for a taxon.
+
+        The CURIE is derived deterministically from the cleaned taxon
+        string -- e.g. "s__Escherichia coli" -> "GTDB:s__Escherichia_coli".
+        This matches the Bioregistry-registered GTDB identifier scheme
+        (regex `^[cdfgops]__\\w+\\S+$`, URI pattern
+        `https://gtdb.ecogenomic.org/tree?r={id}`), so the resulting CURIE
+        is resolvable on the GTDB website and stable across builds.
 
         Args:
-            taxon_name: e.g., "d__Bacteria", "s__Escherichia_coli"
+            taxon_name: e.g., "d__Bacteria", "s__Escherichia coli"
+                        (raw or already cleaned -- this method idempotently
+                        re-cleans so callers don't have to remember).
 
         Returns:
-            GTDB prefixed ID: e.g., "GTDB:1"
+            GTDB-prefixed CURIE: e.g., "GTDB:d__Bacteria",
+            "GTDB:s__Escherichia_coli".
 
         """
-        if taxon_name not in self.taxon_to_id:
-            taxon_id = f"{GTDB_PREFIX}{self.taxon_id_counter}"
-            self.taxon_to_id[taxon_name] = taxon_id
-            self.taxon_id_counter += 1
+        cleaned = clean_taxon_name(taxon_name)
+        if cleaned not in self.taxon_to_id:
+            taxon_id = f"{GTDB_PREFIX}{cleaned}"
+            self.taxon_to_id[cleaned] = taxon_id
 
             # Create node
             self._add_node(
                 node_id=taxon_id,
                 category=NCBI_CATEGORY,  # biolink:OrganismTaxon
-                name=taxon_name,
-                description=f"GTDB taxon {taxon_name}",
+                name=cleaned,
+                description=f"GTDB taxon {cleaned}",
             )
 
-        return self.taxon_to_id[taxon_name]
+        return self.taxon_to_id[cleaned]
 
     def _create_genome_node(self, accession: str, gtdb_taxon: str, ncbi_taxid: str = None):
         """

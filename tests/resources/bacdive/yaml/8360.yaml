@@ -1,0 +1,110 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 11114
+    composition: 'Name: BHI MEDIUM WITH ADDITIONAL GLUCOSE (DSMZ Medium 215b)
+
+      Composition:
+
+      Brain heart infusion 37.0 g/l
+
+      Glucose 5.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/215b
+    name: BHI MEDIUM WITH ADDITIONAL GLUCOSE (DSMZ Medium 215b)
+  - '@ref': 11114
+    composition: "Name: L\xD6WENSTEIN-JENSEN MEDIUM (DSMZ Medium 354)\nComposition:\n\
+      Potato flour 18.6104 g/l\nL-Asparagin 2.23325 g/l\nKH2PO4 1.55087 g/l\nMg-citrate\
+      \ 0.372208 g/l\nMalachite green 0.248139 g/l\nMgSO4 0.148883 g/l\nGlycerol\n\
+      Fresh egg mixture\nDistilled water"
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/354
+    name: "L\xD6WENSTEIN-JENSEN MEDIUM (DSMZ Medium 354)"
+  culture temp:
+    '@ref': 11114
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 11114
+  culture collection no.: DSM 43526, SN 1601
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/168462
+General:
+  '@ref': 11114
+  BacDive-ID: 8360
+  DSM-Number: 43526
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 39692
+  description: Mycobacterium parafortuitum DSM 43526 is a mesophilic bacterium that
+    was isolated from soil.
+  doi: 10.13145/bacdive8360.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- I. Tarnok, SN 1601 <- P. Hauduroy, Lausanne 2488
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 11114
+    sample type: soil
+  isolation source categories:
+    Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 11114
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Mycobacteriaceae
+    full scientific name: <I>Mycobacterium</I> <I>parafortuitum</I> Tsukamura 1966
+      (Approved Lists 1980)
+    genus: Mycobacterium
+    keyword: phylum/actinomycetota
+    order: Mycobacteriales
+    phylum: Actinomycetota
+    species: Mycobacterium parafortuitum
+    synonyms:
+      '@ref': 20215
+      synonym: Mycolicibacterium parafortuitum
+  class: Actinobacteria
+  domain: Bacteria
+  family: Mycobacteriaceae
+  full scientific name: Mycobacterium parafortuitum Tsukamura 1966
+  genus: Mycobacterium
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Mycobacterium parafortuitum
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 11114
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 43526)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-43526
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information:
+  risk assessment:
+    '@ref': 11114
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

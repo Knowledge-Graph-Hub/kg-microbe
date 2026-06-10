@@ -78,9 +78,7 @@ def test_override_file_exists_and_is_nonempty() -> None:
 
     Without at least one data row the override layer is dead code.
     """
-    assert LOCAL_METPO_ALIAS_OVERRIDES_PATH.is_file(), (
-        f"Expected {LOCAL_METPO_ALIAS_OVERRIDES_PATH} to exist."
-    )
+    assert LOCAL_METPO_ALIAS_OVERRIDES_PATH.is_file(), f"Expected {LOCAL_METPO_ALIAS_OVERRIDES_PATH} to exist."
     with LOCAL_METPO_ALIAS_OVERRIDES_PATH.open("r", encoding="utf-8") as fh:
         # 1 header + at least 1 data row
         assert sum(1 for _ in fh) >= 2

@@ -23,9 +23,7 @@ SCRIPT_PATH = REPO_ROOT / "scripts" / "consolidate_chemical_mappings.py"
 
 def _load_module():
     """Load the consolidator script as an importable module for tests."""
-    spec = importlib.util.spec_from_file_location(
-        "consolidate_chemical_mappings", SCRIPT_PATH
-    )
+    spec = importlib.util.spec_from_file_location("consolidate_chemical_mappings", SCRIPT_PATH)
     module = importlib.util.module_from_spec(spec)
     sys.modules.setdefault(spec.name, module)
     spec.loader.exec_module(module)
@@ -122,17 +120,29 @@ class IsMangledChebiTests(unittest.TestCase):
         """Blacklist hits are dropped only when sources are auto-mappers."""
         bl = {"CHEBI:8013", "CHEBI:51142"}
         # mediadive_compounds source → drop
-        self.assertTrue(self.mod.is_mangled_chebi_id(
-            "CHEBI:8013", "mediadive_compounds", bl,
-        ))
+        self.assertTrue(
+            self.mod.is_mangled_chebi_id(
+                "CHEBI:8013",
+                "mediadive_compounds",
+                bl,
+            )
+        )
         # mixed-with-curated → keep (small CHEBI ids may be legitimate)
-        self.assertFalse(self.mod.is_mangled_chebi_id(
-            "CHEBI:8013", "mediadive_compounds|mediaingredientmech_reviewed", bl,
-        ))
+        self.assertFalse(
+            self.mod.is_mangled_chebi_id(
+                "CHEBI:8013",
+                "mediadive_compounds|mediaingredientmech_reviewed",
+                bl,
+            )
+        )
         # not in blacklist, sources auto → keep
-        self.assertFalse(self.mod.is_mangled_chebi_id(
-            "CHEBI:99999", "mediadive_compounds", bl,
-        ))
+        self.assertFalse(
+            self.mod.is_mangled_chebi_id(
+                "CHEBI:99999",
+                "mediadive_compounds",
+                bl,
+            )
+        )
 
     def test_real_chebi_passes(self):
         """Real CHEBI ids in the 4-6 digit range with no blacklist hit pass."""
@@ -179,19 +189,19 @@ class LoaderFilteringTests(unittest.TestCase):
         rows = [
             # (original, mapped, chebi_id, chebi_label) -> expected primary id
             # 1. real CHEBI in chebi_id → kept as CHEBI
-            ("water",        "",                  "CHEBI:15377", "water"),
+            ("water", "", "CHEBI:15377", "water"),
             # 2. real CHEBI in mapped (chebi_id empty) → kept as CHEBI
-            ("ethanol",      "CHEBI:16236",       "",            "ethanol"),
+            ("ethanol", "CHEBI:16236", "", "ethanol"),
             # 3. PubChem in mapped → routed to pubchem.compound
-            ("dummy_pubchem","PubChem:135398658", "",            ""),
+            ("dummy_pubchem", "PubChem:135398658", "", ""),
             # 4. CAS-RN in mapped → routed to cas:
-            ("dummy_cas",    "CAS-RN:7647-14-5",  "",            ""),
+            ("dummy_cas", "CAS-RN:7647-14-5", "", ""),
             # 5. FOODON in mapped → kept as FOODON
-            ("yeast_extract","FOODON:00002441",   "",            ""),
+            ("yeast_extract", "FOODON:00002441", "", ""),
             # 6. pre-mangled CHEBI:>=1M in mapped → DROPPED by source-loader guard
-            ("Tris-HCl",     "CHEBI:1185531",     "",            ""),
+            ("Tris-HCl", "CHEBI:1185531", "", ""),
             # 7. pre-mangled CHEBI:0... in mapped → DROPPED (leading-zero rule)
-            ("foodon_mangle","CHEBI:03315426",    "",            ""),
+            ("foodon_mangle", "CHEBI:03315426", "", ""),
         ]
 
         header = (
@@ -234,10 +244,8 @@ class LoaderFilteringTests(unittest.TestCase):
         self.assertIn("pubchem.compound:135398658", ids, "PubChem id mangled or dropped")
         self.assertIn("cas:7647-14-5", ids, "CAS-RN id mangled or dropped")
         self.assertIn("FOODON:00002441", ids, "FOODON id mangled or dropped")
-        self.assertNotIn("CHEBI:1185531", ids,
-                         "pre-mangled CHEBI:>=1M leaked through load_compound_mappings")
-        self.assertNotIn("CHEBI:03315426", ids,
-                         "leading-zero CHEBI mangle leaked through load_compound_mappings")
+        self.assertNotIn("CHEBI:1185531", ids, "pre-mangled CHEBI:>=1M leaked through load_compound_mappings")
+        self.assertNotIn("CHEBI:03315426", ids, "leading-zero CHEBI mangle leaked through load_compound_mappings")
 
     def test_load_existing_unified_filters_mangles_from_sssom(self):
         """SSSOM baseline loader drops mangled CHEBIs but keeps curated rows."""
@@ -249,11 +257,11 @@ class LoaderFilteringTests(unittest.TestCase):
         # row per entity. Sources column drives the mangle source-restriction.
         sssom_header = (
             "# curie_map:\n"
-            "#   CHEBI: \"http://purl.obolibrary.org/obo/CHEBI_\"\n"
-            "#   FOODON: \"http://purl.obolibrary.org/obo/FOODON_\"\n"
-            "#   skos: \"http://www.w3.org/2004/02/skos/core#\"\n"
-            "#   semapv: \"https://w3id.org/semapv/vocab/\"\n"
-            "# mapping_set_id: \"https://example.org/test\"\n"
+            '#   CHEBI: "http://purl.obolibrary.org/obo/CHEBI_"\n'
+            '#   FOODON: "http://purl.obolibrary.org/obo/FOODON_"\n'
+            '#   skos: "http://www.w3.org/2004/02/skos/core#"\n'
+            '#   semapv: "https://w3id.org/semapv/vocab/"\n'
+            '# mapping_set_id: "https://example.org/test"\n'
             "subject_id\tsubject_label\tpredicate_id\tobject_id\t"
             "object_label\tobject_formula\tobject_category\t"
             "mapping_justification\tcomment\tsource\n"
@@ -261,32 +269,71 @@ class LoaderFilteringTests(unittest.TestCase):
 
         rows = [
             # 1. clean CHEBI with auto source → kept
-            ("CHEBI:15377", "water", "CHEBI:15377", "water", "H2O",
-             "biolink:ChemicalSubstance", "mediadive_compounds"),
+            ("CHEBI:15377", "water", "CHEBI:15377", "water", "H2O", "biolink:ChemicalSubstance", "mediadive_compounds"),
             # 2. mangled CHEBI:0... → DROPPED (leading-zero rule)
-            ("CHEBI:03315426", "yeast extract", "CHEBI:03315426", "yeast extract", "",
-             "biolink:ChemicalSubstance", "mediadive_compounds"),
+            (
+                "CHEBI:03315426",
+                "yeast extract",
+                "CHEBI:03315426",
+                "yeast extract",
+                "",
+                "biolink:ChemicalSubstance",
+                "mediadive_compounds",
+            ),
             # 3. mangled CHEBI:>=1M → DROPPED (PubChem watermark)
-            ("CHEBI:1185531", "Tris-HCl", "CHEBI:1185531", "Tris-HCl", "",
-             "biolink:ChemicalSubstance", "mediadive_compounds"),
+            (
+                "CHEBI:1185531",
+                "Tris-HCl",
+                "CHEBI:1185531",
+                "Tris-HCl",
+                "",
+                "biolink:ChemicalSubstance",
+                "mediadive_compounds",
+            ),
             # 4. blacklist-hit CHEBI with auto source only → DROPPED
-            ("CHEBI:8013", "yeast extract", "CHEBI:8013", "yeast extract", "",
-             "biolink:ChemicalSubstance", "mediadive_compounds"),
+            (
+                "CHEBI:8013",
+                "yeast extract",
+                "CHEBI:8013",
+                "yeast extract",
+                "",
+                "biolink:ChemicalSubstance",
+                "mediadive_compounds",
+            ),
             # 5. blacklist-hit CHEBI with curated source → KEPT (small real CHEBI ids
             #    may legitimately collide with a CAS-RN first-numeric block)
-            ("CHEBI:7732", "(?)", "CHEBI:7732", "test entry",  "",
-             "biolink:ChemicalSubstance", "mediaingredientmech_reviewed"),
+            (
+                "CHEBI:7732",
+                "(?)",
+                "CHEBI:7732",
+                "test entry",
+                "",
+                "biolink:ChemicalSubstance",
+                "mediaingredientmech_reviewed",
+            ),
         ]
 
         def render(row):
             sid, slabel, oid, olabel, formula, category, source_tag = row
-            return "\t".join([
-                sid, slabel, "skos:exactMatch", oid, olabel,
-                formula, category, "semapv:LexicalMatching", "", source_tag,
-            ]) + "\n"
+            return (
+                "\t".join(
+                    [
+                        sid,
+                        slabel,
+                        "skos:exactMatch",
+                        oid,
+                        olabel,
+                        formula,
+                        category,
+                        "semapv:LexicalMatching",
+                        "",
+                        source_tag,
+                    ]
+                )
+                + "\n"
+            )
 
-        with tempfile.NamedTemporaryFile("wb", suffix=".sssom.tsv.gz",
-                                          delete=False) as fh:
+        with tempfile.NamedTemporaryFile("wb", suffix=".sssom.tsv.gz", delete=False) as fh:
             tmp_path = fh.name
         with gzip.open(tmp_path, "wt", encoding="utf-8") as gz:
             gz.write(sssom_header)
@@ -298,14 +345,10 @@ class LoaderFilteringTests(unittest.TestCase):
 
         ids = set(c.chemicals.keys())
         self.assertIn("CHEBI:15377", ids, "clean CHEBI dropped from SSSOM baseline")
-        self.assertNotIn("CHEBI:03315426", ids,
-                         "leading-zero mangle leaked through SSSOM baseline")
-        self.assertNotIn("CHEBI:1185531", ids,
-                         "PubChem-watermark mangle leaked through SSSOM baseline")
-        self.assertNotIn("CHEBI:8013", ids,
-                         "blacklist mangle with auto source not dropped")
-        self.assertIn("CHEBI:7732", ids,
-                      "blacklist hit with curated source incorrectly dropped")
+        self.assertNotIn("CHEBI:03315426", ids, "leading-zero mangle leaked through SSSOM baseline")
+        self.assertNotIn("CHEBI:1185531", ids, "PubChem-watermark mangle leaked through SSSOM baseline")
+        self.assertNotIn("CHEBI:8013", ids, "blacklist mangle with auto source not dropped")
+        self.assertIn("CHEBI:7732", ids, "blacklist hit with curated source incorrectly dropped")
 
 
 if __name__ == "__main__":

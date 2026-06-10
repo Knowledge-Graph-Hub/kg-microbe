@@ -64,23 +64,27 @@ DEFAULT_ISOLATION_SOURCE_MAPPING_FILE = REPO_ROOT / "mappings" / "isolation_sour
 # METPO is not exception-eligible: METPO terms describe organism phenotypes
 # (psychrophilic, thermophilic, etc.), not source qualities, so the inversion
 # trick doesn't help — the mapping is just wrong.
-DISALLOWED_OBJECT_SOURCES: frozenset = frozenset({
-    "UO",       # Unit ontology — never a substrate
-    "PATO",     # Phenotypic quality — defaulted as wrong; allow when override token present
-    "METPO",    # Microbial phenotype class — not the source the microbe was isolated from
-    # SNOMED is admitted only via STUB_ONTOLOGY_PREFIXES; clinical-procedure
-    # SNOMED terms (Surface-swab → SNOMED:258537007) are dropped by the
-    # banned-substring check below.
-})
+DISALLOWED_OBJECT_SOURCES: frozenset = frozenset(
+    {
+        "UO",  # Unit ontology — never a substrate
+        "PATO",  # Phenotypic quality — defaulted as wrong; allow when override token present
+        "METPO",  # Microbial phenotype class — not the source the microbe was isolated from
+        # SNOMED is admitted only via STUB_ONTOLOGY_PREFIXES; clinical-procedure
+        # SNOMED terms (Surface-swab → SNOMED:258537007) are dropped by the
+        # banned-substring check below.
+    }
+)
 
 # Predicate-override tokens recognized in the `notes` column. When one of these
 # CURIEs appears as a whitespace-bounded token in `notes`, it becomes the
 # `predicate_override` returned by `load_isolation_source_mappings`, and the
 # BacDive transform emits the inverted-shape edge documented above.
-PREDICATE_OVERRIDE_CURIES: frozenset = frozenset({
-    "METPO:2000067",   # isolated from host with quality
-    "METPO:2000068",   # isolated from environment with quality
-})
+PREDICATE_OVERRIDE_CURIES: frozenset = frozenset(
+    {
+        "METPO:2000067",  # isolated from host with quality
+        "METPO:2000068",  # isolated from environment with quality
+    }
+)
 
 # Ontology prefixes that the BacDive isolation_source mapping TSV references
 # but that are NOT loaded by the ontologies transform (see ONTOLOGIES_MAP in
@@ -124,18 +128,20 @@ PREDICATE_OVERRIDE_CURIES: frozenset = frozenset({
 # FAO:*, BTO:*, or SNOMED:* targets. The build-time check in BacDive's
 # __init__ now verifies every trusted target prefix is either loaded by the
 # ontologies transform OR included in this stub set, and aborts otherwise.
-STUB_ONTOLOGY_PREFIXES: frozenset = frozenset({
-    "PRIDE",    # 3 IDs: host body site, host body product, antibiotic treatment
-    "PCO",      # 1 active ID: microbial community (PCO:1000004)
-    "mesh",     # 9 IDs: Abscess, Wound, Inflammation, Built-environment, Periodontal-pocket, etc.
-    "NCIT",     # 7 trusted IDs: Aspirate, Blood-culture, Lesion, Parasite, Protozoa, etc.
-    "GENEPIO",  # 1 ID: caecal content
-    "FAO",      # 1 ID: mycorrhiza (Fungal Anatomy Ontology)
-    "BTO",      # 1 ID: wound fluid (BRENDA Tissue Ontology)
-    "SNOMED",   # 1 ID after filtering: sugary food (clinical procedure rows are dropped via banned substrings)
-    "PO",       # ~6-8 IDs: root, leaf, flower, rhizome, etc. (Plant Ontology)
-    "MICRO",    # 0 isolation_source IDs but ~34 elsewhere (chemical/ingredient mappings)
-})
+STUB_ONTOLOGY_PREFIXES: frozenset = frozenset(
+    {
+        "PRIDE",  # 3 IDs: host body site, host body product, antibiotic treatment
+        "PCO",  # 1 active ID: microbial community (PCO:1000004)
+        "mesh",  # 9 IDs: Abscess, Wound, Inflammation, Built-environment, Periodontal-pocket, etc.
+        "NCIT",  # 7 trusted IDs: Aspirate, Blood-culture, Lesion, Parasite, Protozoa, etc.
+        "GENEPIO",  # 1 ID: caecal content
+        "FAO",  # 1 ID: mycorrhiza (Fungal Anatomy Ontology)
+        "BTO",  # 1 ID: wound fluid (BRENDA Tissue Ontology)
+        "SNOMED",  # 1 ID after filtering: sugary food (clinical procedure rows are dropped via banned substrings)
+        "PO",  # ~6-8 IDs: root, leaf, flower, rhizome, etc. (Plant Ontology)
+        "MICRO",  # 0 isolation_source IDs but ~34 elsewhere (chemical/ingredient mappings)
+    }
+)
 STUB_ONTOLOGY_CATEGORY = "biolink:OntologyClass"
 
 # Substrings in the *target* label that signal a family mismatch with any
@@ -162,9 +168,9 @@ BANNED_OBJECT_LABEL_SUBSTRINGS: Tuple[str, ...] = (
     "dependence on",
     # Codex adversarial review #558 — clinical procedure / device / process
     # labels that are NOT isolation sources:
-    "swab",                # NCIT:C17627, SNOMED:258537007
-    "medical device",      # NCIT:C16830
-    "food production",     # FOODON:03530206 (a process, not a substrate)
+    "swab",  # NCIT:C17627, SNOMED:258537007
+    "medical device",  # NCIT:C16830
+    "food production",  # FOODON:03530206 (a process, not a substrate)
     "antibiotic treatment",  # PRIDE:0001000 (a treatment, not a substrate)
 )
 
@@ -176,7 +182,7 @@ def _extract_predicate_override(row: Dict[str, str]) -> Optional[str]:
     Scans the ``notes`` column for whitespace-bounded tokens matching any
     member of :data:`PREDICATE_OVERRIDE_CURIES`. Returns the first match.
     """
-    notes = (row.get("notes") or "")
+    notes = row.get("notes") or ""
     if not notes:
         return None
     # Notes uses free-form punctuation; split conservatively on whitespace and

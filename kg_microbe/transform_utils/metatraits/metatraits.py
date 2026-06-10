@@ -549,12 +549,7 @@ class MetaTraitsTransform(Transform):
 
         :return: Dictionary mapping trait_pattern (lowercase) -> {curie, category, name, predicate}
         """
-        mappings_file = (
-            Path(__file__).resolve().parents[3]
-            / "mappings"
-            / "canonical"
-            / "special_chemical_mappings.tsv"
-        )
+        mappings_file = Path(__file__).resolve().parents[3] / "mappings" / "canonical" / "special_chemical_mappings.tsv"
         special_mappings = {}
 
         if not mappings_file.exists():
@@ -566,9 +561,8 @@ class MetaTraitsTransform(Transform):
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
                     trait_pattern = (
-                        row.get("subject_label_normalized")
-                        or row.get("subject_label", "")
-                    ).strip().lower()
+                        (row.get("subject_label_normalized") or row.get("subject_label", "")).strip().lower()
+                    )
                     special_mappings[trait_pattern] = {
                         "curie": (row.get("object_id") or "").strip(),
                         "category": (row.get("emit_category") or "").strip(),
@@ -637,12 +631,7 @@ class MetaTraitsTransform(Transform):
 
         :return: Dictionary mapping enzyme_name (lowercase) -> {go_id, go_label, ec_number, notes}
         """
-        mappings_file = (
-            Path(__file__).resolve().parents[3]
-            / "mappings"
-            / "canonical"
-            / "enzyme_name_to_go.tsv"
-        )
+        mappings_file = Path(__file__).resolve().parents[3] / "mappings" / "canonical" / "enzyme_name_to_go.tsv"
         enzyme_mappings = {}
 
         if not mappings_file.exists():
@@ -653,10 +642,7 @@ class MetaTraitsTransform(Transform):
             with open(mappings_file, "r", encoding="utf-8") as f:
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
-                    enzyme_name = (
-                        row.get("subject_label_normalized")
-                        or row.get("subject_label", "")
-                    ).strip().lower()
+                    enzyme_name = (row.get("subject_label_normalized") or row.get("subject_label", "")).strip().lower()
                     enzyme_mappings[enzyme_name] = {
                         "go_id": (row.get("object_id") or "").strip(),
                         "go_label": (row.get("object_label") or "").strip(),

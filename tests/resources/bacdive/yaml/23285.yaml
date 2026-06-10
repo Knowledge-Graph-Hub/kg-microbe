@@ -1,0 +1,382 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 19228
+    composition: 'Name: R2A MEDIUM (DSMZ Medium 830)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Yeast extract 0.5 g/l
+
+      Proteose peptone 0.5 g/l
+
+      Casamino acids 0.5 g/l
+
+      Glucose 0.5 g/l
+
+      Starch 0.5 g/l
+
+      Na-pyruvate 0.3 g/l
+
+      K2HPO4 0.3 g/l
+
+      MgSO4 x 7 H2O 0.05 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/830
+    name: R2A MEDIUM (DSMZ Medium 830)
+  culture pH:
+  - '@ref': 30603
+    ability: positive
+    pH: 05-10
+    type: growth
+  - '@ref': 30603
+    ability: positive
+    pH: '6'
+    type: optimum
+  culture temp:
+  - '@ref': 19228
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+  - '@ref': 30603
+    growth: positive
+    temperature: 20-37
+    type: growth
+  - '@ref': 30603
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: optimum
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+External links:
+  '@ref': 19228
+  culture collection no.: DSM 27203, JCM 18079, KACC 16559
+  literature:
+    DOI: 10.1099/ijs.0.039743-0
+    Pubmed-ID: '22523167'
+    authors: Thawng CN, Park SJ, Cha JH, Cha CJ
+    journal: Int J Syst Evol Microbiol
+    mesh: Bacterial Typing Techniques, Base Composition, DNA, Bacterial/genetics,
+      Fatty Acids, Geologic Sediments/*microbiology, Molecular Sequence Data, *Phylogeny,
+      RNA, Ribosomal, 16S/genetics, Republic of Korea, Seawater/*microbiology, Sequence
+      Analysis, DNA, Sphingomonadaceae/*classification/genetics/isolation & purification,
+      Ubiquinone/analysis
+    title: Stakelama sediminis sp. nov., isolated from tidal flat sediment.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2012
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/884924
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/884925
+General:
+  '@ref': 19228
+  BacDive-ID: 23285
+  DSM-Number: 27203
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 463200
+  description: Stakelama sediminis CJ70 is an aerobe, mesophilic, Gram-negative bacterium
+    that was isolated from tidal flat sediment.
+  doi: 10.13145/bacdive23285.20220920.7
+  keywords:
+  - Gram-negative
+  - mesophilic
+  - aerobe
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - rod-shaped
+  strain history:
+  - <- C.-J. Cha, Chung-Ang Univ., Seoul, Republic of Korea; CJ70 <- C. N. Thawng
+  - C.-J. Cha CJ70.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 19228
+    continent: Asia
+    country: Republic of Korea
+    origin.country: KOR
+    sample type: tidal flat sediment
+  - '@ref': 67770
+    continent: Asia
+    country: Republic of Korea
+    origin.country: KOR
+    sample type: Tidal flat sediment
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Tidal flat'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Sediment'
+Morphology:
+  cell morphology:
+    '@ref': 30603
+    cell shape: rod-shaped
+    gram stain: negative
+    motility: 'no'
+  multimedia:
+    '@ref': 19228
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_27203.jpg
+  pigmentation:
+    '@ref': 30603
+    production: 'yes'
+Name and taxonomic classification:
+  '@ref': 19228
+  LPSN:
+    '@ref': 20215
+    class: Alphaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Sphingomonadaceae
+    full scientific name: <I>Stakelama</I> <I>sediminis</I> Thawng et al. 2013
+    genus: Stakelama
+    keyword: phylum/pseudomonadota
+    order: Sphingomonadales
+    phylum: Pseudomonadota
+    species: Stakelama sediminis
+  class: Alphaproteobacteria
+  domain: Bacteria
+  family: Sphingomonadaceae
+  full scientific name: Stakelama sediminis Thawng et al. 2013
+  genus: Stakelama
+  order: Sphingomonadales
+  phylum: Proteobacteria
+  species: Stakelama sediminis
+  strain designation: CJ70
+  type strain: 'yes'
+Physiology and metabolism:
+  enzymes:
+  - '@ref': 30603
+    activity: +
+    ec: 3.1.3.2
+    value: acid phosphatase
+  - '@ref': 30603
+    activity: +
+    ec: 3.1.3.1
+    value: alkaline phosphatase
+  - '@ref': 30603
+    activity: +
+    ec: 1.11.1.6
+    value: catalase
+  - '@ref': 30603
+    activity: +
+    ec: 1.9.3.1
+    value: cytochrome oxidase
+  - '@ref': 30603
+    activity: +
+    ec: 3.5.1.5
+    value: urease
+  halophily:
+  - '@ref': 30603
+    concentration: 0-5 %
+    growth: positive
+    salt: NaCl
+    tested relation: growth
+  - '@ref': 30603
+    concentration: 0.5 %
+    growth: positive
+    salt: NaCl
+    tested relation: optimum
+  metabolite utilization:
+  - '@ref': 30603
+    Chebi-ID: 21217
+    kind of utilization tested: carbon source
+    metabolite: L-alaninamide
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 16449
+    kind of utilization tested: carbon source
+    metabolite: alanine
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 22599
+    kind of utilization tested: carbon source
+    metabolite: arabinose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 17057
+    kind of utilization tested: carbon source
+    metabolite: cellobiose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 23652
+    kind of utilization tested: carbon source
+    metabolite: dextrin
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 28757
+    kind of utilization tested: carbon source
+    metabolite: fructose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 28260
+    kind of utilization tested: carbon source
+    metabolite: galactose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 17234
+    kind of utilization tested: carbon source
+    metabolite: glucose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 32323
+    kind of utilization tested: carbon source
+    metabolite: glucuronamide
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 29987
+    kind of utilization tested: carbon source
+    metabolite: glutamate
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 24996
+    kind of utilization tested: carbon source
+    metabolite: lactate
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 17306
+    kind of utilization tested: carbon source
+    metabolite: maltose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 37684
+    kind of utilization tested: carbon source
+    metabolite: mannose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 37657
+    kind of utilization tested: carbon source
+    metabolite: methyl D-glucoside
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 26271
+    kind of utilization tested: carbon source
+    metabolite: proline
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 51850
+    kind of utilization tested: carbon source
+    metabolite: methyl pyruvate
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 17822
+    kind of utilization tested: carbon source
+    metabolite: serine
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 30031
+    kind of utilization tested: carbon source
+    metabolite: succinate
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 27082
+    kind of utilization tested: carbon source
+    metabolite: trehalose
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 53426
+    kind of utilization tested: carbon source
+    metabolite: tween 80
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: +
+  - '@ref': 30603
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: +
+  observation:
+    '@ref': 67770
+    observation: 'quinones: Q-10'
+  oxygen tolerance:
+    '@ref': 30603
+    oxygen tolerance: aerobe
+Reference:
+- '@id': 19228
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 27203)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-27203
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 26934
+  doi/url: 10.1099/ijs.0.039743-0
+  pubmed: 22523167
+- '@id': 30603
+  ID_cross_reference: 26934
+  authors: Barberan A, Caceres Velazquez H, Jones S, Fierer N.
+  doi/url: 10.1128/mSphere.00237-17
+  pubmed: 28776041
+  title: 'Hiding in Plain Sight: Mining Bacterial Species Records for Phenotypic Trait
+    Information'
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 19228
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 19228
+    NCBI tax ID: 463200
+    accession: EU099873
+    database: ena
+    description: Stakelama sediminis strain CJ70 16S ribosomal RNA gene, partial sequence
+    length: 1410
+  GC content:
+  - '@ref': 19228
+    GC-content: '61.4'
+  - '@ref': 67770
+    GC-content: '61.4'
+    method: high performance liquid chromatography (HPLC)
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 463200
+    accession: GCA_014199335
+    assembly level: contig
+    database: ncbi
+    description: Stakelama sediminis DSM 27203
+  - '@ref': 66792
+    NCBI tax ID: 463200
+    accession: '463200.5'
+    assembly level: wgs
+    database: patric
+    description: Stakelama sediminis strain DSM 27203
+  - '@ref': 66792
+    NCBI tax ID: 463200
+    accession: '2828395373'
+    assembly level: draft
+    database: img
+    description: Stakelama sediminis DSM 27203

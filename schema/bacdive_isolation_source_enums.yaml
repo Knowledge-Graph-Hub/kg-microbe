@@ -1,0 +1,845 @@
+name: BacDiveIsolationSourceEnums
+id: https://w3id.org/kg-microbe/bacdive-isolation-source-enums
+description: 'Shared enums for the BacDive isolation-sources data: the continent vocabulary and BacDive''s
+  three-level isolation-source classification (the ''ontology''). Imported by both the flat table schema
+  (bacdive_isolation_sources) and the per-strain entity schema (bacdive_strain).'
+prefixes:
+  linkml: https://w3id.org/linkml/
+  BacDiveIsolationSourceEnums: https://w3id.org/kg-microbe/bacdive-isolation-source-enums/
+  ENVO: http://purl.obolibrary.org/obo/ENVO_
+default_prefix: BacDiveIsolationSourceEnums
+imports:
+- linkml:types
+enums:
+  continent_enum:
+    description: Continent of isolation (BacDive controlled vocabulary).
+    permissible_values:
+      Africa: {}
+      Antarctica: {}
+      Arctic: {}
+      Asia: {}
+      Australia and Oceania: {}
+      Europe: {}
+      Middle and South America: {}
+      North America: {}
+  category_1_enum:
+    permissible_values:
+      '#Host Body Product':
+        description: '#Host Body Product'
+      '#Host Body-Site':
+        description: '#Host Body-Site'
+      '#Climate':
+        description: '#Climate'
+        meaning: ENVO:01001082
+        title: climate
+      '#Infection':
+        description: '#Infection'
+      '#Engineered':
+        description: '#Engineered'
+      '#Host':
+        description: '#Host'
+      '#Environmental':
+        description: '#Environmental'
+      '#Condition':
+        description: '#Condition'
+    description: Top level (level 1) of BacDive's isolation-source classification.
+  category_2_enum:
+    permissible_values:
+      '#Arthropoda':
+        description: '#Arthropoda'
+      '#Industrial':
+        description: '#Industrial'
+      '#Humid':
+        description: '#Humid'
+      '#Acidic':
+        description: '#Acidic'
+      '#Human':
+        description: '#Human'
+      '#Medical product':
+        description: '#Medical product'
+      '#Thermophilic (>45°C)':
+        description: '#Thermophilic (>45°C)'
+      '#Sulfuric':
+        description: '#Sulfuric'
+      '#Bioremediation':
+        description: '#Bioremediation'
+      '#Treatment':
+        description: '#Treatment'
+      '#Alkaline':
+        description: '#Alkaline'
+      '#Terrestrial':
+        description: '#Terrestrial'
+      '#Fluids':
+        description: '#Fluids'
+      '#Temperate':
+        description: '#Temperate'
+        meaning: ENVO:01000206
+        title: temperate
+      '#Hot':
+        description: '#Hot'
+      '#Oral cavity and Airways':
+        description: '#Oral cavity and Airways'
+      '#Plant':
+        description: '#Plant'
+      '#Food production':
+        description: '#Food production'
+      '#Patient':
+        description: '#Patient'
+      '#Xerophilic':
+        description: '#Xerophilic'
+      '#Yeast':
+        description: '#Yeast'
+      '#Plant infections':
+        description: '#Plant infections'
+      '#Algae':
+        description: '#Algae'
+      '#Air':
+        description: '#Air'
+        meaning: ENVO:00002005
+        title: air
+      '#Reptilia':
+        description: '#Reptilia'
+      '#Birds':
+        description: '#Birds'
+      '#Protozoa':
+        description: '#Protozoa'
+      '#Mammals':
+        description: '#Mammals'
+      '#Agriculture':
+        description: '#Agriculture'
+        meaning: ENVO:01001442
+        title: agriculture
+      '#Cold':
+        description: '#Cold'
+      '#Microbial community':
+        description: '#Microbial community'
+      '#Disease':
+        description: '#Disease'
+      '#Other':
+        description: '#Other'
+      '#Organ':
+        description: '#Organ'
+        meaning: ENVO:01000162
+        title: organ
+      '#Laboratory':
+        description: '#Laboratory'
+      '#Bioreactor':
+        description: '#Bioreactor'
+        meaning: ENVO:00002123
+        title: bioreactor
+      '#Saline':
+        description: '#Saline'
+      '#Built environment':
+        description: '#Built environment'
+      '#Medical device':
+        description: '#Medical device'
+      '#Psychrophilic (<10°C)':
+        description: '#Psychrophilic (<10°C)'
+      '#Waste':
+        description: '#Waste'
+      '#Amphibia':
+        description: '#Amphibia'
+      '#Fishes':
+        description: '#Fishes'
+      '#Invertebrates (Other)':
+        description: '#Invertebrates (Other)'
+      '#Limb':
+        description: '#Limb'
+      '#Inflammation':
+        description: '#Inflammation'
+      '#Oral cavity and airways':
+        description: '#Oral cavity and airways'
+      '#Medical environment':
+        description: '#Medical environment'
+      '#Aquatic':
+        description: '#Aquatic'
+      '#Urogenital tract':
+        description: '#Urogenital tract'
+      '#Biodegradation':
+        description: '#Biodegradation'
+        meaning: ENVO:06105014
+        title: biodegradation
+      '#Plants':
+        description: '#Plants'
+      '#Fungi':
+        description: '#Fungi'
+      '#Biofilm':
+        description: '#Biofilm'
+        meaning: ENVO:00002034
+        title: biofilm
+      '#Microbial':
+        description: '#Microbial'
+      '#Gastrointestinal tract':
+        description: '#Gastrointestinal tract'
+      '#Anoxic (anaerobic)':
+        description: '#Anoxic (anaerobic)'
+      '#Juvenile':
+        description: '#Juvenile'
+      '#Contamination':
+        description: '#Contamination'
+    description: Level 2 of BacDive's isolation-source classification.
+  category_3_enum:
+    permissible_values:
+      '#Aquatic plant':
+        description: '#Aquatic plant'
+      '#Non-marine Saline and Alkaline':
+        description: '#Non-marine Saline and Alkaline'
+      '#Zooplankton':
+        description: '#Zooplankton'
+      '#Canidae (Dog)':
+        description: '#Canidae (Dog)'
+      '#Boreal':
+        description: '#Boreal'
+        meaning: ENVO:01000251
+        title: subpolar
+      '#Abort':
+        description: '#Abort'
+      '#Tooth':
+        description: '#Tooth'
+      '#Permafrost':
+        description: '#Permafrost'
+        meaning: ENVO:00000134
+        title: permafrost
+      '#Subarctic':
+        description: '#Subarctic'
+        meaning: ENVO:01000251
+        title: subpolar
+      '#Synovial fluid':
+        description: '#Synovial fluid'
+      '#Blood culture':
+        description: '#Blood culture'
+      '#Shrub (Scrub)':
+        description: '#Shrub (Scrub)'
+      '#Mine':
+        description: '#Mine'
+        meaning: ENVO:00000076
+        title: mine
+      '#Sandy':
+        description: '#Sandy'
+      '#Spot (Leaf,Stem)':
+        description: '#Spot (Leaf,Stem)'
+      '#Phlegm':
+        description: '#Phlegm'
+      '#Mouth':
+        description: '#Mouth'
+        meaning: ENVO:00000479
+        title: mouth
+      '#Endosphere':
+        description: '#Endosphere'
+      '#Soil':
+        description: '#Soil'
+        meaning: ENVO:00001998
+        title: soil
+      '#Rhizosphere':
+        description: '#Rhizosphere'
+        meaning: ENVO:00005801
+        title: rhizosphere
+      '#Industrial waste':
+        description: '#Industrial waste'
+      '#Heated (Burned)':
+        description: '#Heated (Burned)'
+      '#Egg':
+        description: '#Egg'
+      '#Defined media':
+        description: '#Defined media'
+      '#Industrial production':
+        description: '#Industrial production'
+      '#Xerophytic':
+        description: '#Xerophytic'
+      '#Straw':
+        description: '#Straw'
+        meaning: ENVO:00003869
+        title: straw
+      '#Lichen':
+        description: '#Lichen'
+      '#Phylloplane':
+        description: '#Phylloplane'
+      '#Cerebrospinal fluid':
+        description: '#Cerebrospinal fluid'
+      '#Extracellular':
+        description: '#Extracellular'
+      '#Cotton (other fibres)':
+        description: '#Cotton (other fibres)'
+      '#Urine':
+        description: '#Urine'
+      '#Rot (Root,Stem)':
+        description: '#Rot (Root,Stem)'
+      '#Groundwater':
+        description: '#Groundwater'
+        meaning: ENVO:01001004
+        title: groundwater
+      '#Tick':
+        description: '#Tick'
+      '#Female':
+        description: '#Female'
+      '#Bronchial wash':
+        description: '#Bronchial wash'
+      '#Plant exudate (Resin)':
+        description: '#Plant exudate (Resin)'
+      '#Subtropical':
+        description: '#Subtropical'
+        meaning: ENVO:01000205
+        title: subtropical
+      '#Animal habitation (Nest,Burrow)':
+        description: '#Animal habitation (Nest,Burrow)'
+      '#Core sample':
+        description: '#Core sample'
+      '#Liver':
+        description: '#Liver'
+      '#Volcanic':
+        description: '#Volcanic'
+      '#Field':
+        description: '#Field'
+        meaning: ENVO:01000352
+        title: field
+      '#Wound fluid':
+        description: '#Wound fluid'
+      '#Engineered product':
+        description: '#Engineered product'
+      '#Head':
+        description: '#Head'
+      '#Parasite':
+        description: '#Parasite'
+      '#Hand':
+        description: '#Hand'
+      '#Lab synthesis':
+        description: '#Lab synthesis'
+      '#Domestic waste':
+        description: '#Domestic waste'
+      '#Plaque':
+        description: '#Plaque'
+      '#Coast':
+        description: '#Coast'
+        meaning: ENVO:01000687
+        title: coast
+      '#Clean room':
+        description: '#Clean room'
+        meaning: ENVO:03600000
+        title: cleanroom
+      '#Feces (Stool)':
+        description: '#Feces (Stool)'
+      '#Immunocompromised':
+        description: '#Immunocompromised'
+      '#Iron mat':
+        description: '#Iron mat'
+      '#Geologic':
+        description: '#Geologic'
+      '#Transportation ways (Roads)':
+        description: '#Transportation ways (Roads)'
+      '#Torso':
+        description: '#Torso'
+      '#Outdoor Air':
+        description: '#Outdoor Air'
+      '#Currency':
+        description: '#Currency'
+      '#Abscess':
+        description: '#Abscess'
+      '#Biofilter':
+        description: '#Biofilter'
+        meaning: ENVO:00002152
+        title: biofilter
+      '#Vomit':
+        description: '#Vomit'
+      '#Root nodule':
+        description: '#Root nodule'
+        meaning: ENVO:01000164
+        title: root nodule
+      '#Brain':
+        description: '#Brain'
+      '#Abdomen':
+        description: '#Abdomen'
+      '#Meningitis':
+        description: '#Meningitis'
+      '#Oil (Food)':
+        description: '#Oil (Food)'
+      '#Starter culture':
+        description: '#Starter culture'
+      '#Ovary':
+        description: '#Ovary'
+      '#Muridae (Mouse/Rat)':
+        description: '#Muridae (Mouse/Rat)'
+      '#Bladder':
+        description: '#Bladder'
+      '#Lymph node':
+        description: '#Lymph node'
+      '#Indoor Air':
+        description: '#Indoor Air'
+      '#Beverage':
+        description: '#Beverage'
+      '#Child':
+        description: '#Child'
+      '#Clinic':
+        description: '#Clinic'
+        meaning: ENVO:03501182
+        title: clinic
+      '#Animal feed':
+        description: '#Animal feed'
+        meaning: ENVO:02000047
+        title: animal feed
+      '#Epibiont':
+        description: '#Epibiont'
+      '#Cooling tower':
+        description: '#Cooling tower'
+      '#Tidal flat':
+        description: '#Tidal flat'
+        meaning: ENVO:00000241
+        title: tidal mudflat
+      '#Landfill':
+        description: '#Landfill'
+        meaning: ENVO:00000533
+        title: landfill
+      '#Leporidae (Rabbit/Hare)':
+        description: '#Leporidae (Rabbit/Hare)'
+      '#Nectar':
+        description: '#Nectar'
+      '#Specimen':
+        description: '#Specimen'
+      '#Painting':
+        description: '#Painting'
+      '#Juice (natural)':
+        description: '#Juice (natural)'
+      '#Insecta':
+        description: '#Insecta'
+      '#Microbial mat':
+        description: '#Microbial mat'
+        meaning: ENVO:01000008
+        title: microbial mat
+      '#Canker':
+        description: '#Canker'
+      '#Mud (Sludge)':
+        description: '#Mud (Sludge)'
+      '#Thermal spring':
+        description: '#Thermal spring'
+        meaning: ENVO:00000051
+        title: hot spring
+      '#Zebrafish':
+        description: '#Zebrafish'
+      '#Garden':
+        description: '#Garden'
+        meaning: ENVO:00000011
+        title: garden
+      '#Timber':
+        description: '#Timber'
+      '#Container (Reservoir)':
+        description: '#Container (Reservoir)'
+      '#Vineyard':
+        description: '#Vineyard'
+        meaning: ENVO:00000116
+        title: vineyard
+      '#Lesion (incl. Necrosis)':
+        description: '#Lesion (incl. Necrosis)'
+      '#Salmonidae':
+        description: '#Salmonidae'
+      '#Peat moss':
+        description: '#Peat moss'
+      '#Cave water':
+        description: '#Cave water'
+      '#Arid':
+        description: '#Arid'
+        meaning: ENVO:01000230
+        title: arid
+      '#Spring':
+        description: '#Spring'
+        meaning: ENVO:00000027
+        title: spring
+      '#Viriome':
+        description: '#Viriome'
+      '#Thoracic segment':
+        description: '#Thoracic segment'
+      '#Meadow':
+        description: '#Meadow'
+        meaning: ENVO:00000108
+        title: meadow ecosystem
+      '#Stem (Branch)':
+        description: '#Stem (Branch)'
+      '#Catheter':
+        description: '#Catheter'
+      '#Rumen fluid':
+        description: '#Rumen fluid'
+      '#Polar':
+        description: '#Polar'
+        meaning: ENVO:01000238
+        title: polar
+      '#Chicken':
+        description: '#Chicken'
+      '#Solid animal waste':
+        description: '#Solid animal waste'
+      '#Male':
+        description: '#Male'
+      '#Plantation':
+        description: '#Plantation'
+        meaning: ENVO:00000117
+        title: plantation
+      '#Crustacea':
+        description: '#Crustacea'
+      '#Tundra':
+        description: '#Tundra'
+      '#River (Creek)':
+        description: '#River (Creek)'
+      '#Throat':
+        description: '#Throat'
+      '#Mangrove':
+        description: '#Mangrove'
+      '#Pesticide':
+        description: '#Pesticide'
+      '#Bladder stone':
+        description: '#Bladder stone'
+      '#Hydrothermal vent':
+        description: '#Hydrothermal vent'
+        meaning: ENVO:00000215
+        title: hydrothermal vent
+      '#Decomposing algae':
+        description: '#Decomposing algae'
+      '#Plant (Factory)':
+        description: '#Plant (Factory)'
+      '#Solid waste':
+        description: '#Solid waste'
+      '#Green algae':
+        description: '#Green algae'
+      '#Wastewater':
+        description: '#Wastewater'
+      '#Skin, Nail, Hair':
+        description: '#Skin, Nail, Hair'
+      '#Small intestine':
+        description: '#Small intestine'
+      '#Endosymbiont':
+        description: '#Endosymbiont'
+      '#Cnidaria (Corals)':
+        description: '#Cnidaria (Corals)'
+      '#Rhizoplane':
+        description: '#Rhizoplane'
+        meaning: ENVO:01001181
+        title: rhizoplane
+      '#Bovinae (Cow, Cattle)':
+        description: '#Bovinae (Cow, Cattle)'
+      '#Brackish':
+        description: '#Brackish'
+      '#Contaminant':
+        description: '#Contaminant'
+      '#Bottled, canned, packed food':
+        description: '#Bottled, canned, packed food'
+      '#Pond (small)':
+        description: '#Pond (small)'
+      '#Moss':
+        description: '#Moss'
+      '#Lung':
+        description: '#Lung'
+      '#Dairy product':
+        description: '#Dairy product'
+      '#Gall':
+        description: '#Gall'
+      '#Digestive fluid':
+        description: '#Digestive fluid'
+      '#Root (Rhizome)':
+        description: '#Root (Rhizome)'
+      '#Medical practice':
+        description: '#Medical practice'
+      '#Tropical':
+        description: '#Tropical'
+        meaning: ENVO:01000204
+        title: tropical
+      '#Decomposing plant':
+        description: '#Decomposing plant'
+      '#Brown Algae':
+        description: '#Brown Algae'
+      '#Alpine':
+        description: '#Alpine'
+        meaning: ENVO:01000340
+        title: alpine
+      '#House':
+        description: '#House'
+        meaning: ENVO:01000417
+        title: house
+      '#Tracheal aspirate':
+        description: '#Tracheal aspirate'
+      '#Meat':
+        description: '#Meat'
+      '#Food':
+        description: '#Food'
+      '#Antibiotic treatment':
+        description: '#Antibiotic treatment'
+      '#Waste gas':
+        description: '#Waste gas'
+      '#Caecal content':
+        description: '#Caecal content'
+      '#Post mortem':
+        description: '#Post mortem'
+      '#Animal produced food (natural)':
+        description: '#Animal produced food (natural)'
+      '#Sterilized (Desinfected)':
+        description: '#Sterilized (Desinfected)'
+      '#Oil (Fuel)':
+        description: '#Oil (Fuel)'
+      '#Wilt':
+        description: '#Wilt'
+      '#Decomposing animal':
+        description: '#Decomposing animal'
+      '#Bone':
+        description: '#Bone'
+      '#Spoiled':
+        description: '#Spoiled'
+      '#Water reservoir (Aquarium/pool)':
+        description: '#Water reservoir (Aquarium/pool)'
+      '#Joint':
+        description: '#Joint'
+      '#Porifera (Sponges)':
+        description: '#Porifera (Sponges)'
+      '#Semen':
+        description: '#Semen'
+      '#Foot':
+        description: '#Foot'
+      '#Water treatment plant':
+        description: '#Water treatment plant'
+      '#Periodontal pocket':
+        description: '#Periodontal pocket'
+      '#Industrial wastewater':
+        description: '#Industrial wastewater'
+        meaning: ENVO:01000964
+        title: industrial wastewater
+      '#In situ':
+        description: '#In situ'
+      '#Coral reef':
+        description: '#Coral reef'
+        meaning: ENVO:00000150
+        title: coral reef
+      '#Sediment':
+        description: '#Sediment'
+        meaning: ENVO:00002007
+        title: sediment
+      '#Urethra':
+        description: '#Urethra'
+      '#Mycorrhiza':
+        description: '#Mycorrhiza'
+      '#Large intestine':
+        description: '#Large intestine'
+      '#Ear':
+        description: '#Ear'
+      '#Sugary food':
+        description: '#Sugary food'
+      '#Foam':
+        description: '#Foam'
+      '#Aspirate':
+        description: '#Aspirate'
+      '#Spleen':
+        description: '#Spleen'
+      '#Primates':
+        description: '#Primates'
+      '#Mollusca':
+        description: '#Mollusca'
+      '#Bacteria':
+        description: '#Bacteria'
+      '#Protist':
+        description: '#Protist'
+      '#Sputum':
+        description: '#Sputum'
+      '#Airways':
+        description: '#Airways'
+      '#Saliva':
+        description: '#Saliva'
+      '#Tuberculosis':
+        description: '#Tuberculosis'
+      '#Oil reservoir':
+        description: '#Oil reservoir'
+        meaning: ENVO:00002185
+        title: oil reservoir
+      '#Glacier':
+        description: '#Glacier'
+        meaning: ENVO:00000133
+        title: glacier
+      '#Caprinae (Sheep/Goat)':
+        description: '#Caprinae (Sheep/Goat)'
+      '#Cystic fibrosis':
+        description: '#Cystic fibrosis'
+      '#Sterilized plant part':
+        description: '#Sterilized plant part'
+      '#Composting':
+        description: '#Composting'
+      '#Lab enrichment':
+        description: '#Lab enrichment'
+      '#Biopsy':
+        description: '#Biopsy'
+      '#Livestock (Husbandry)':
+        description: '#Livestock (Husbandry)'
+      '#Dust (Ash)':
+        description: '#Dust (Ash)'
+      '#Anaerobic digestor':
+        description: '#Anaerobic digestor'
+      '#Aquaculture':
+        description: '#Aquaculture'
+      '#Machines and devices':
+        description: '#Machines and devices'
+      '#Kidney':
+        description: '#Kidney'
+      '#Mushroom':
+        description: '#Mushroom'
+      '#Nephridium':
+        description: '#Nephridium'
+      '#Wetland (Swamp)':
+        description: '#Wetland (Swamp)'
+      '#Preserved':
+        description: '#Preserved'
+      '#Rodentia (Other)':
+        description: '#Rodentia (Other)'
+      '#Milk':
+        description: '#Milk'
+      '#Indoor':
+        description: '#Indoor'
+      '#Blood':
+        description: '#Blood'
+      '#Estuary':
+        description: '#Estuary'
+        meaning: ENVO:00000045
+        title: estuary
+      '#Fermented':
+        description: '#Fermented'
+      '#Air conditioner':
+        description: '#Air conditioner'
+      '#Freshwater':
+        description: '#Freshwater'
+        meaning: ENVO:00002011
+        title: fresh water
+      '#Dust':
+        description: '#Dust'
+        meaning: ENVO:00002008
+        title: dust
+      '#Grove (Orchard)':
+        description: '#Grove (Orchard)'
+      '#Annelida':
+        description: '#Annelida'
+      '#Mucus':
+        description: '#Mucus'
+      '#Desert':
+        description: '#Desert'
+        meaning: ENVO:01001357
+        title: desert
+      '#Eye':
+        description: '#Eye'
+      '#Nematoda':
+        description: '#Nematoda'
+      '#Echinodermata':
+        description: '#Echinodermata'
+      '#Flower':
+        description: '#Flower'
+      '#Rectum':
+        description: '#Rectum'
+      '#Trachea':
+        description: '#Trachea'
+      '#Nose':
+        description: '#Nose'
+      '#Ice':
+        description: '#Ice'
+        meaning: ENVO:01001125
+        title: ice
+      '#Paddy (Ricefield)':
+        description: '#Paddy (Ricefield)'
+      '#Wound':
+        description: '#Wound'
+      '#Solid plant waste':
+        description: '#Solid plant waste'
+      '#Intracellular':
+        description: '#Intracellular'
+      '#Root (Tooth)':
+        description: '#Root (Tooth)'
+      '#Felidae (Cat)':
+        description: '#Felidae (Cat)'
+      '#Gingiva':
+        description: '#Gingiva'
+      '#Salt marsh':
+        description: '#Salt marsh'
+        meaning: ENVO:00000054
+        title: saline marsh
+      '#Leg':
+        description: '#Leg'
+      '#Amniotic fluid':
+        description: '#Amniotic fluid'
+      '#Lake (large)':
+        description: '#Lake (large)'
+      '#Marine':
+        description: '#Marine'
+      '#Simulated communities':
+        description: '#Simulated communities'
+      '#Fruit (Seed)':
+        description: '#Fruit (Seed)'
+      '#Tree':
+        description: '#Tree'
+      '#Surface swab':
+        description: '#Surface swab'
+      '#Semiarid':
+        description: '#Semiarid'
+      '#Arm':
+        description: '#Arm'
+      '#Red algae':
+        description: '#Red algae'
+      '#Greenhouse':
+        description: '#Greenhouse'
+        meaning: ENVO:03600087
+        title: greenhouse
+      '#Activated sludge':
+        description: '#Activated sludge'
+        meaning: ENVO:00002046
+        title: activated sludge
+      '#Co-culture':
+        description: '#Co-culture'
+      '#Spinal Cord':
+        description: '#Spinal Cord'
+      '#Vaginal secretion':
+        description: '#Vaginal secretion'
+      '#Vascular system':
+        description: '#Vascular system'
+      '#Stomach':
+        description: '#Stomach'
+      '#Sewage sludge':
+        description: '#Sewage sludge'
+      '#Dinoflagellate':
+        description: '#Dinoflagellate'
+      '#Heart valve':
+        description: '#Heart valve'
+      '#Surface water':
+        description: '#Surface water'
+        meaning: ENVO:00002042
+        title: surface water
+      '#Plant litter (Forest)':
+        description: '#Plant litter (Forest)'
+      '#Mammary gland':
+        description: '#Mammary gland'
+      '#Equidae (Horse)':
+        description: '#Equidae (Horse)'
+      '#Plant sap (Flux)':
+        description: '#Plant sap (Flux)'
+      '#Vagina':
+        description: '#Vagina'
+      '#Tunicata':
+        description: '#Tunicata'
+      '#Heavy metal':
+        description: '#Heavy metal'
+      '#Aquatic mammal':
+        description: '#Aquatic mammal'
+      '#Pleural fluid':
+        description: '#Pleural fluid'
+      '#Vegetable (incl. Grains)':
+        description: '#Vegetable (incl. Grains)'
+      '#Heart':
+        description: '#Heart'
+      '#Leaf (Phyllosphere)':
+        description: '#Leaf (Phyllosphere)'
+      '#Suidae (Pig,Swine)':
+        description: '#Suidae (Pig,Swine)'
+      '#Bark':
+        description: '#Bark'
+      '#Swab':
+        description: '#Swab'
+      '#Forest':
+        description: '#Forest'
+      '#Rumen':
+        description: '#Rumen'
+      '#Seafood':
+        description: '#Seafood'
+      '#Grassland':
+        description: '#Grassland'
+        meaning: ENVO:01001206
+        title: grassland ecosystem
+      '#Coalbed water':
+        description: '#Coalbed water'
+      '#Herbaceous plants (Grass,Crops)':
+        description: '#Herbaceous plants (Grass,Crops)'
+    description: Level 3 (most specific) of BacDive's isolation-source classification.

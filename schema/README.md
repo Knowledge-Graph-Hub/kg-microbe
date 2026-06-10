@@ -3,15 +3,31 @@
 LinkML schemas for KG-Microbe data sources, bootstrapped with
 [schema-automator](https://github.com/linkml/schema-automator).
 
+## BacDive isolation sources
+
+Source: the BacDive **Isolation sources** table (`download.yaml` ->
+`data/raw/bacdive_isolation_sources.csv`, from
+<https://bacdive.dsmz.de/isolation-sources/csv>). One row per *strain x
+isolation-source category path*, with a three-level classification
+(`category_1/2/3`) that forms BacDive's controlled isolation-source vocabulary
+(the "ontology").
+
+Three schema files (enums shared via `imports`):
+
+| File | Purpose |
+| --- | --- |
+| `bacdive_isolation_source_enums.yaml` | Shared enums: `continent_enum` + `category_1/2/3_enum`, annotated with ENVO `meaning:` CURIEs. |
+| `bacdive_isolation_sources.yaml` | **Flat** schema — one `IsolationSource` row, faithful to the CSV export. |
+| `bacdive_strain.yaml` | **Normalized** schema — one `Strain` record with a multivalued list of `IsolationSourceCategoryPath`. |
+
+Helper scripts:
+
+- `scripts/reshape_isolation_sources.py` — collapse the flat CSV into per-strain
+  records (full JSONL + a validated YAML sample under `schema/examples/`).
+- `scripts/annotate_isolation_enums_envo.py` — annotate the enums against ENVO
+  from the local `data/raw/envo.json`.
+
 ## `bacdive_isolation_sources.yaml`
-
-First schema-automator target: the BacDive **Isolation sources** table
-(`download.yaml` -> `data/raw/bacdive_isolation_sources.csv`, from
-<https://bacdive.dsmz.de/isolation-sources/csv>).
-
-The table is one row per *strain x isolation-source assignment* with a
-three-level isolation-source classification (`category_1/2/3`) that forms
-BacDive's controlled isolation-source vocabulary (the "ontology").
 
 ### How it was generated
 
@@ -60,10 +76,44 @@ The raw schema-automator draft was then hand/script-refined:
 - Added slot/class/enum **descriptions** documenting the `#` value prefix, the
   `###` delimiter, and the multi-row-per-strain structure.
 
+## Per-strain reshape (`bacdive_strain.yaml`)
+
+The flat export is denormalized (mean ~2.5 rows/strain: strain-level fields on
+the first row, one category path per row). `bacdive_strain.yaml` models the
+entity directly — one `Strain` (keyed by the BacDive `id`) holding the strain's
+`isolation_source` / `country` / `continent` lists and a multivalued
+`isolation_source_categories` list of `IsolationSourceCategoryPath`
+(`category_1 > category_2 > category_3`).
+
+```bash
+python scripts/reshape_isolation_sources.py        # 144,199 rows -> 56,700 strains
+linkml-validate -s schema/bacdive_strain.yaml schema/examples/bacdive_strains_sample.yaml
+```
+
+The full set is written to `data/processed/bacdive_strains.jsonl` (gitignored);
+a 50-strain sample is committed at `schema/examples/bacdive_strains_sample.yaml`
+and validates cleanly.
+
+## ENVO annotation
+
+`scripts/annotate_isolation_enums_envo.py` grounds the enum values in ENVO using
+the local `data/raw/envo.json` (no network). Matching is conservative — a value
+matches only a **non-obsolete** ENVO term's **primary label** or an **exact**
+synonym (broad/related synonyms are ignored, since they produced homonym errors
+such as the body-site "mouth" matching the river-mouth synonym of *estuary*).
+
+Coverage: **56** values annotated (`category_1` 1/8, `category_2` 7/59,
+`category_3` 48/283; `continent` 0/8). The matches concentrate in the
+environmental level-3 terms; host / medical / condition categories have no ENVO
+equivalent and are intentionally left unmapped.
+
+```bash
+python scripts/annotate_isolation_enums_envo.py
+```
+
 ### Known refinements (TODO)
 
-- `id` is the BacDive strain ID and repeats across the multi-row records
-  (mean ~2.5 rows/strain). Consider reshaping to one record per strain with a
-  multivalued list of category paths (`category_1 > category_2 > category_3`).
-- Annotate the `category_*` enums against an environment ontology (ENVO) — e.g.
-  `schemauto annotate-schema -A envo` — to ground the BacDive vocabulary.
+- Extend grounding beyond ENVO: host body sites -> UBERON, medical/clinical
+  categories -> OBI/MONDO, continents -> GAZ.
+- Reuse these enums/`meaning:` CURIEs when wiring an isolation-sources transform
+  into the KG (BacDive isolation-source mapper).

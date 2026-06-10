@@ -1,0 +1,86 @@
+name: BacDiveStrain
+title: BacDive Strain (per-strain isolation provenance)
+id: https://w3id.org/kg-microbe/bacdive-strain
+description: >-
+  Normalized, per-strain view of the BacDive isolation-sources data
+  (data/raw/bacdive_isolation_sources.csv). The flat export
+  (see bacdive_isolation_sources.yaml) has one row per strain x
+  isolation-source category path; this schema collapses those rows into one
+  Strain record whose isolation_source_categories slot holds the strain's
+  one-or-more 3-level category paths (category_1 > category_2 > category_3).
+  Strain-level fields (species, culture collection number, isolation_source,
+  country, continent) appear once per strain; the '###'-delimited multi-value
+  fields are modelled as lists. Enums are shared with the flat schema via
+  bacdive_isolation_source_enums.
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  BacDiveStrain: https://w3id.org/kg-microbe/bacdive-strain/
+default_prefix: BacDiveStrain
+
+imports:
+  - linkml:types
+  - bacdive_isolation_source_enums
+
+classes:
+
+  StrainCollection:
+    tree_root: true
+    description: A container for a set of BacDive strain records (validation/serialization root).
+    attributes:
+      strains:
+        description: The strain records.
+        multivalued: true
+        inlined_as_list: true
+        range: Strain
+
+  Strain:
+    description: >-
+      A BacDive strain together with its isolation provenance and the set of
+      isolation-source category paths assigned to it.
+    attributes:
+      id:
+        description: BacDive strain ID (the BacDive ID column).
+        identifier: true
+        range: integer
+      species:
+        description: Species name of the strain.
+        range: string
+      culture_collection_number:
+        description: Culture collection number(s) for the strain, comma-separated (e.g. 'DSM 105287, LMG 29911').
+        range: string
+      isolation_source:
+        description: Free-text isolation-source description(s) (BacDive '###'-delimited).
+        range: string
+        multivalued: true
+      country:
+        description: Country/countries of isolation (BacDive '###'-delimited).
+        range: string
+        multivalued: true
+      continent:
+        description: Continent(s) of isolation.
+        range: continent_enum
+        multivalued: true
+      isolation_source_categories:
+        description: >-
+          One or more isolation-source category paths assigned to the strain;
+          each path is a level-1 -> level-2 -> level-3 classification.
+        range: IsolationSourceCategoryPath
+        multivalued: true
+        inlined_as_list: true
+
+  IsolationSourceCategoryPath:
+    description: >-
+      A single path through BacDive's three-level isolation-source
+      classification (the "ontology"). Levels may be partially filled
+      (a path can stop at level 1 or 2). Values are '#'-prefixed.
+    attributes:
+      category_1:
+        description: Level 1 (top) isolation-source category.
+        range: category_1_enum
+      category_2:
+        description: Level 2 isolation-source category.
+        range: category_2_enum
+      category_3:
+        description: Level 3 (most specific) isolation-source category.
+        range: category_3_enum

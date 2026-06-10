@@ -1,0 +1,825 @@
+strains:
+- id: 159652
+  species: Abditibacterium utsteinense
+  culture_collection_number: DSM 105287, LMG 29911
+  isolation_source:
+  - Top surface sample consisting of weathered granite parent material, elevation 1382 m
+  country:
+  - Antarctica
+  continent:
+  - Australia and Oceania
+  isolation_source_categories:
+  - category_1: '#Environmental'
+    category_2: '#Terrestrial'
+    category_3: '#Geologic'
+  - category_1: '#Climate'
+    category_2: '#Cold'
+    category_3: '#Alpine'
+- id: 144952
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 27280 A
+  isolation_source:
+  - Human pleural fluid
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body-Site'
+    category_2: '#Oral cavity and airways'
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Oral cavity and Airways'
+    category_3: '#Pleural fluid'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 145171
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 27805
+  isolation_source:
+  - Human blood,bacteremia
+  country:
+  - France
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Disease'
+  - category_1: '#Host'
+    category_2: '#Microbial'
+    category_3: '#Bacteria'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 145172
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 27806
+  isolation_source:
+  - Human blood,endocarditis
+  country:
+  - France
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 145173
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 27807
+  isolation_source:
+  - Human blood,endocarditis
+  country:
+  - France
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 145174
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 27808
+  isolation_source:
+  - Human blood,endocarditis
+  country:
+  - France
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 145313
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 28152
+  isolation_source:
+  - Human blood,73-yr-old male
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 145981
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 30076
+  isolation_source:
+  - Human blood,valve operation
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Medical environment'
+    category_3: '#Medical practice'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 146223
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 30642
+  isolation_source:
+  - Human eye,66-yr-old man,suspected endophthalmitis
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Disease'
+  - category_1: '#Host Body-Site'
+    category_2: '#Organ'
+    category_3: '#Eye'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 146761
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 32076
+  isolation_source:
+  - Human
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 147157
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 32966 B
+  isolation_source:
+  - Human intrathoraxal infection
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Disease'
+  - category_1: '#Host Body-Site'
+    category_2: '#Other'
+    category_3: '#Thoracic segment'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 147409
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 33542
+  isolation_source:
+  - Human eye (glaskroppsaspirat)
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body-Site'
+    category_2: '#Organ'
+    category_3: '#Eye'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 148055
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 34739
+  isolation_source:
+  - Human blood
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 148519
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 35584
+  isolation_source:
+  - Human blood,endocarditis
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 149144
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 36937
+  isolation_source:
+  - Human blood,endocarditis,70-yr-old man
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 149662
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 38140
+  isolation_source:
+  - Human
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 149983
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 38793
+  isolation_source:
+  - Human blood,suspected endocarditis,found x4
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 150007
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 38830
+  isolation_source:
+  - Human pericardial fluid
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body-Site'
+    category_2: '#Organ'
+    category_3: '#Heart'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 150039
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 38904
+  isolation_source:
+  - Human blood culture,heart valve totally destroyed
+  country:
+  - Finland
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+    category_3: '#Blood culture'
+  - category_1: '#Host Body-Site'
+    category_2: '#Organ'
+    category_3: '#Heart'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 150104
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 38998
+  isolation_source:
+  - Human blood,sepsis,chills,fever 39.5°C
+  country:
+  - Norway
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 150280
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 39479
+  isolation_source:
+  - Human blood and cerebrospinal fluid,endocarditis
+  country:
+  - Denmark
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Cerebrospinal fluid'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 150286
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 39499
+  isolation_source:
+  - Human tissue,hip
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 150539
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 41537
+  isolation_source:
+  - Human vitreous body,80-yr-old patient
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body-Site'
+    category_2: '#Organ'
+    category_3: '#Eye'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 152179
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 45983
+  isolation_source:
+  - Human blood,suspected endocarditis
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 152186
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 46001
+  isolation_source:
+  - Human blood
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 152516
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 46990 B
+  isolation_source:
+  - Human blood,68-yr-old woman
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Female'
+- id: 152552
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 47045
+  isolation_source:
+  - Human vitreous body,77-yr-old female,keratitis
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Disease'
+  - category_1: '#Host Body-Site'
+    category_2: '#Organ'
+    category_3: '#Eye'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Female'
+- id: 152579
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 47112
+  isolation_source:
+  - Human wound
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body-Site'
+    category_2: '#Other'
+    category_3: '#Wound'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 153374
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 49368
+  isolation_source:
+  - Human blood,66-yr-old man,endocarditis
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 154020
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 52016
+  isolation_source:
+  - Human blood
+  country:
+  - Norway
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 154929
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 55745
+  isolation_source:
+  - Human blood,67-yr-old woman
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Female'
+- id: 155280
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 57181
+  isolation_source:
+  - Human blood,3-yr-old male
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Child'
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 155432
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 57749
+  isolation_source:
+  - Human hip prosthesis,70-yr-old woman
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Medical environment'
+    category_3: '#Medical practice'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Female'
+- id: 155940
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 59700
+  isolation_source:
+  - Human blood,88-yr-old man
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 156779
+  species: Abiotrophia defectiva
+  culture_collection_number: CCUG 65103
+  isolation_source:
+  - Human blood,1-yr-old boy
+  country:
+  - Sweden
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Child'
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Host'
+    category_2: '#Human'
+    category_3: '#Male'
+- id: 219
+  species: Abiotrophia defectiva
+  culture_collection_number: DSM 9849, ATCC 49176, CIP 103242, SC 10, CCUG 27639
+  isolation_source:
+  - Human, Blood
+  - blood of bacterial endocarditis patient
+  country:
+  - France
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body Product'
+    category_2: '#Fluids'
+    category_3: '#Blood'
+  - category_1: '#Infection'
+    category_2: '#Patient'
+  - category_1: '#Infection'
+    category_2: '#Inflammation'
+  - category_1: '#Infection'
+    category_2: '#Disease'
+- id: 175515
+  species: Absicoccus intestinalis
+  culture_collection_number: DSM 114836, JCM 37183
+  isolation_source:
+  - Colon of a female Aachener minipig
+  country:
+  - Germany
+  continent:
+  - Europe
+- id: 164352
+  species: Absicoccus porci
+  culture_collection_number: JCM 32769, KCTC 15747, KCTC 1574
+  isolation_source:
+  - pig faeces
+  - Pig feces
+  country:
+  - Republic of Korea
+  continent:
+  - Asia
+- id: 159837
+  species: Abyssibacter profundi
+  culture_collection_number: KCTC 52933, MCCC 1K03450, JCM 32025
+  isolation_source:
+  - From 1000m sea water
+  - Seawater at a depth of 1000 m in the Mariana Trench
+  - the seawater at a depth of 1000 m in the Mariana Trench at station MT1
+  country:
+  - International waters
+  - Philippines
+  continent:
+  - Asia
+  isolation_source_categories:
+  - category_1: '#Environmental'
+    category_2: '#Aquatic'
+    category_3: '#Marine'
+- id: 132558
+  species: Abyssicoccus albus
+  culture_collection_number: DSM 29158, CCTCC AB 2014213, YIM M12140, JCM 30296
+  isolation_source:
+  - Sediment from the Indian Ocean (1° 53.375' N 81° 04.978' E) at a depth of 4,481 m
+  - deep sea sediment
+  country:
+  - Indian Ocean
+  continent:
+  - Asia
+  isolation_source_categories:
+  - category_1: '#Environmental'
+    category_2: '#Aquatic'
+    category_3: '#Sediment'
+  - category_1: '#Environmental'
+    category_2: '#Aquatic'
+    category_3: '#Marine'
+- id: 132478
+  species: Vallitalea guaymasensis
+  culture_collection_number: DSM 29592, JCM 30920
+  isolation_source:
+  - Biofilm sampled from a black smoker chimney at the Loki
+  - methane-producing, hydro- carbon-degrading microbial consortium enriched from a black smoker at the
+    Loki's Castle vent field, Arctic Mid-Ocean Ridge
+  - chimney of a deep-sea black smoker, approximately 2400 m depth
+  country:
+  - Arctic Ocean
+  isolation_source_categories:
+  - category_1: '#Environmental'
+    category_2: '#Biofilm'
+  - category_1: '#Environmental'
+    category_2: '#Aquatic'
+    category_3: '#Hydrothermal vent'
+- id: 24718
+  species: Acanthopleuribacter pedis
+  culture_collection_number: DSM 28897, KCTC 12899, NBRC 101209
+  isolation_source:
+  - From chitone, `Acanthopleura japonica`
+  - chiton <i>Acanthopleura japonica</i>
+  country:
+  - Japan
+  continent:
+  - Asia
+  isolation_source_categories:
+  - category_1: '#Host'
+    category_2: '#Invertebrates (Other)'
+    category_3: '#Mollusca'
+- id: 7517
+  species: Acaricomes phytoseiuli
+  culture_collection_number: DSM 14247, CCUG 49701, NBRC 107788, CIP 109141, JCM 14300
+  isolation_source:
+  - Predatory mite, Phytoseiulus persimilis
+  - From the predatory mite Phytoseiulus persimilis
+  - predatory mite <I>Phytoseiulus persimilis</I>
+  country:
+  - Germany
+  - Netherlands
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host'
+    category_2: '#Arthropoda'
+- id: 160325
+  species: Acerihabitans arboris
+  culture_collection_number: DSM 104038, KCTC 52622
+  isolation_source:
+  - Sap of plant
+  country:
+  - Republic of Korea
+  continent:
+  - Asia
+- id: 134101
+  species: Acetanaerobacterium elongatum
+  culture_collection_number: JCM 12359, AS 1.5012
+  isolation_source:
+  - wastewater
+  isolation_source_categories:
+  - category_1: '#Engineered'
+    category_2: '#Waste'
+    category_3: '#Wastewater'
+- id: 132028
+  species: Acetanaerobacterium sp.
+  culture_collection_number: DSM 102114
+  isolation_source:
+  - faeces from healthy human
+  country:
+  - United Kingdom
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body Product'
+    category_2: '#Gastrointestinal tract'
+    category_3: '#Feces (Stool)'
+  - category_1: '#Host'
+    category_2: '#Human'
+- id: 169741
+  species: Acetatifactor aquisgranensis
+  culture_collection_number: DSM 110981, JCM 36051
+  isolation_source:
+  - caecal content; SPF, female, C57BL/6J mouse
+  country:
+  - Germany
+  continent:
+  - Europe
+- id: 18089
+  species: Acetatifactor muris
+  culture_collection_number: DSM 23669, ATCC BAA-2170
+  isolation_source:
+  - cecal content of obese mouse
+  country:
+  - Germany
+  continent:
+  - Europe
+  isolation_source_categories:
+  - category_1: '#Host Body Product'
+    category_2: '#Gastrointestinal tract'
+    category_3: '#Caecal content'
+  - category_1: '#Host'
+    category_2: '#Mammals'
+    category_3: '#Muridae (Mouse/Rat)'
+- id: 175115
+  species: Aceticella autotrophica
+  culture_collection_number: DSM 108286, VKM B-3415
+  isolation_source:
+  - hot spring
+  country:
+  - Russia
+  continent:
+  - Europe
+- id: 164491
+  species: Acetilactobacillus jinshanensis
+  culture_collection_number: JCM 33270, CICC 6269
+  isolation_source:
+  - solid-state vinegar culture
+  - Solid-state vinegar culture of Zhenjiang aromatic vinegar
+  country:
+  - China
+  continent:
+  - Asia

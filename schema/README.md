@@ -42,11 +42,28 @@ uvx --from schema-automator schemauto generalize-tsv \
 
 Validate: `gen-linkml --format yaml schema/bacdive_isolation_sources.yaml`.
 
+### Refinements applied (post-generation)
+
+The raw schema-automator draft was then hand/script-refined:
+
+- **`###` multi-value delimiter** — BacDive joins multiple values with `###`.
+  The three columns that carry it (`isolation_source`, `country`, `continent`)
+  are now `multivalued: true`. `continent_enum` was rebuilt from the **8 base
+  continents** (the raw 33-value enum was unsplit `###` combinations such as
+  `Asia###Antarctica`). The `category_*` columns contain no `###` and stay
+  single-valued.
+- **Enums verified against the full data** — every `continent` (8), `category_1`
+  (8), `category_2` (59) and `category_3` (283) value in the 144,199-row export
+  is covered by its enum (0 missing).
+- **Dropped the bogus `unique_keys`** on `culture_collection_number` (it is null
+  on the follow-on rows of each multi-row strain record).
+- Added slot/class/enum **descriptions** documenting the `#` value prefix, the
+  `###` delimiter, and the multi-row-per-strain structure.
+
 ### Known refinements (TODO)
 
-- BacDive uses `###` as a multi-value delimiter. `isolation_source` was
-  inferred as multivalued, but `continent_enum` still holds `###`-joined
-  combinations (e.g. `Asia###Antarctica`) instead of ~8 base continents.
-  Split `continent` (and re-check `category_*`) on `###` in a refinement.
-- `id` is the BacDive ID and repeats across the multi-row records; consider
-  reshaping to one record per strain with multivalued category paths.
+- `id` is the BacDive strain ID and repeats across the multi-row records
+  (mean ~2.5 rows/strain). Consider reshaping to one record per strain with a
+  multivalued list of category paths (`category_1 > category_2 > category_3`).
+- Annotate the `category_*` enums against an environment ontology (ENVO) — e.g.
+  `schemauto annotate-schema -A envo` — to ground the BacDive vocabulary.

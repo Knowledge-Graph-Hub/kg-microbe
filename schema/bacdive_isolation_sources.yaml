@@ -1,95 +1,93 @@
 name: BacDiveIsolationSources
 title: BacDive Isolation Sources
-description: >-
-  LinkML schema for the BacDive "Isolation sources" table
-  (https://bacdive.dsmz.de/isolation-sources, "Download table" -> CSV,
-  downloaded 2026-06-08). One row per strain x isolation-source assignment.
-  Generated as a first draft by schema-automator (generalize-tsv) over the
-  144,199-row export, with continent and the three-level isolation-source
-  classification (category_1/2/3) forced to enums. The category_* enums are
-  BacDive's controlled isolation-source vocabulary (the "ontology"): 8 top
-  level, 59 second level, 283 third level terms, each value prefixed with '#'.
-
-  NOTE: BacDive uses '###' as a multi-value delimiter. schema-automator
-  inferred isolation_source as multivalued from it, but continent_enum still
-  contains '###'-joined combinations (e.g. "Asia###Antarctica") rather than
-  ~8 base continents -- split continent on '###' in a future refinement.
 id: https://w3id.org/BacDiveIsolationSources
-imports:
-- linkml:types
+description: 'LinkML schema for the BacDive "Isolation sources" table (https://bacdive.dsmz.de/isolation-sources,
+  "Download table" -> CSV, downloaded 2026-06-08; reproduced via download.yaml as
+  data/raw/bacdive_isolation_sources.csv). One row per strain x isolation-source category-path assignment.
+
+  Bootstrapped with schema-automator (generalize-tsv) over the 144,199-row export, then refined. The
+  category_1/2/3 slots are BacDive''s controlled three-level isolation-source classification (the "ontology"):
+  8 / 59 / 283 terms, each value prefixed with ''#''.
+
+  BacDive uses ''###'' as a multi-value delimiter. The columns that carry it -- isolation_source, country
+  and continent -- are modelled as multivalued. continent_enum is the 8 base continents (the raw 33-value
+  enum was an artifact of unsplit ''###'' combinations). The category_* columns are single-valued per row;
+  a strain accrues multiple category paths across its multiple rows (mean ~2.5 rows / strain).'
 prefixes:
   linkml: https://w3id.org/linkml/
   BacDiveIsolationSources: https://w3id.org/BacDiveIsolationSources
 default_prefix: BacDiveIsolationSources
+imports:
+- linkml:types
+slots:
+  id:
+    range: integer
+    required: false
+    description: 'BacDive strain ID. Repeats across rows: one row per isolation-source category path assigned
+      to the strain.'
+  species:
+    range: string
+    required: false
+    description: Species name of the strain (populated on the strain's first row).
+  culture_collection_number:
+    range: string
+    required: false
+    description: Culture collection number(s) for the strain, comma-separated (e.g. 'DSM 105287, LMG 29911').
+  isolation_source:
+    range: string
+    required: false
+    multivalued: true
+    description: Free-text isolation-source description(s). BacDive joins multiple descriptions with the
+      '###' delimiter.
+  country:
+    range: string
+    required: false
+    description: Country/countries of isolation; multiple values joined with '###'.
+    multivalued: true
+  continent:
+    range: continent_enum
+    required: false
+    description: Continent(s) of isolation; multiple values joined with '###'.
+    multivalued: true
+  category_1:
+    range: category_1_enum
+    required: false
+    description: Level 1 isolation-source category (the 'ontology'); value is '#'-prefixed (e.g. '#Environmental').
+  category_2:
+    range: category_2_enum
+    required: false
+    description: Level 2 isolation-source category; value is '#'-prefixed.
+  category_3:
+    range: category_3_enum
+    required: false
+    description: Level 3 isolation-source category; value is '#'-prefixed.
+classes:
+  IsolationSource:
+    slots:
+    - id
+    - species
+    - culture_collection_number
+    - isolation_source
+    - country
+    - continent
+    - category_1
+    - category_2
+    - category_3
+    description: 'One row of the BacDive isolation-sources export: a single isolation-source category
+      path (category_1 > category_2 > category_3) for a strain, with the strain''s species, culture collection
+      number, free-text source, country and continent.'
 enums:
   continent_enum:
+    description: Continent of isolation (BacDive controlled vocabulary).
     permissible_values:
-      Middle and South America:
-        description: Middle and South America
-      Asia###Antarctica###Australia and Oceania:
-        description: Asia###Antarctica###Australia and Oceania
-      Australia and Oceania###Antarctica:
-        description: Australia and Oceania###Antarctica
-      Europe###North America:
-        description: Europe###North America
-      Antarctica###Australia and Oceania:
-        description: Antarctica###Australia and Oceania
-      Asia###Australia and Oceania:
-        description: Asia###Australia and Oceania
-      Europe###Africa:
-        description: Europe###Africa
-      Arctic:
-        description: Arctic
-      North America###Asia:
-        description: North America###Asia
-      Asia###Europe:
-        description: Asia###Europe
-      Australia and Oceania###North America:
-        description: Australia and Oceania###North America
-      Middle and South America###North America:
-        description: Middle and South America###North America
-      North America###Europe:
-        description: North America###Europe
-      Asia:
-        description: Asia
-      Africa:
-        description: Africa
-      North America:
-        description: North America
-      Asia###North America:
-        description: Asia###North America
-      Europe###Middle and South America:
-        description: Europe###Middle and South America
-      Africa###Europe:
-        description: Africa###Europe
-      North America###Australia and Oceania:
-        description: North America###Australia and Oceania
-      Europe###Arctic:
-        description: Europe###Arctic
-      Europe###North America###Middle and South America:
-        description: Europe###North America###Middle and South America
-      Antarctica###Asia:
-        description: Antarctica###Asia
-      North America###Middle and South America:
-        description: North America###Middle and South America
-      Europe:
-        description: Europe
-      Australia and Oceania###Europe:
-        description: Australia and Oceania###Europe
-      Middle and South America###Australia and Oceania:
-        description: Middle and South America###Australia and Oceania
-      Antarctica:
-        description: Antarctica
-      Europe###Australia and Oceania:
-        description: Europe###Australia and Oceania
-      Asia###Antarctica:
-        description: Asia###Antarctica
-      Australia and Oceania:
-        description: Australia and Oceania
-      Europe###Asia:
-        description: Europe###Asia
-      Africa###Asia:
-        description: Africa###Asia
+      Africa: {}
+      Antarctica: {}
+      Arctic: {}
+      Asia: {}
+      Australia and Oceania: {}
+      Europe: {}
+      Middle and South America: {}
+      North America: {}
   category_1_enum:
     permissible_values:
       '#Host Body Product':
@@ -108,6 +106,7 @@ enums:
         description: '#Environmental'
       '#Condition':
         description: '#Condition'
+    description: Top level (level 1) of BacDive's isolation-source classification.
   category_2_enum:
     permissible_values:
       '#Arthropoda':
@@ -122,8 +121,8 @@ enums:
         description: '#Human'
       '#Medical product':
         description: '#Medical product'
-      "#Thermophilic (>45\xB0C)":
-        description: "#Thermophilic (>45\xB0C)"
+      '#Thermophilic (>45°C)':
+        description: '#Thermophilic (>45°C)'
       '#Sulfuric':
         description: '#Sulfuric'
       '#Bioremediation':
@@ -188,8 +187,8 @@ enums:
         description: '#Built environment'
       '#Medical device':
         description: '#Medical device'
-      "#Psychrophilic (<10\xB0C)":
-        description: "#Psychrophilic (<10\xB0C)"
+      '#Psychrophilic (<10°C)':
+        description: '#Psychrophilic (<10°C)'
       '#Waste':
         description: '#Waste'
       '#Amphibia':
@@ -228,6 +227,7 @@ enums:
         description: '#Juvenile'
       '#Contamination':
         description: '#Contamination'
+    description: Level 2 of BacDive's isolation-source classification.
   category_3_enum:
     permissible_values:
       '#Aquatic plant':
@@ -796,69 +796,4 @@ enums:
         description: '#Coalbed water'
       '#Herbaceous plants (Grass,Crops)':
         description: '#Herbaceous plants (Grass,Crops)'
-slots:
-  id:
-    examples:
-    - value: '14292'
-    range: integer
-    required: false
-  species:
-    examples:
-    - value: Zymomonas mobilis subsp. pomaceae
-    range: string
-    required: false
-  culture_collection_number:
-    examples:
-    - value: DSM 22645, ATCC 29192, LMG 448, NCIMB 11200, CCUG 17912, Barker I, JCM
-        10191, CCM 2771, CECT 814, IFO 13757, LMG 449, LMG 453, LMG 464, LMG 465,
-        LMG 466, NBRC 13757, NRRL B-4491
-    range: string
-    required: false
-  isolation_source:
-    examples:
-    - value: Sick cider###Cider,sick###spoiled ciders
-    range: string
-    required: false
-    multivalued: true
-  country:
-    examples:
-    - value: United Kingdom
-    range: string
-    required: false
-  continent:
-    examples:
-    - value: Europe
-    range: continent_enum
-    required: false
-  category_1:
-    examples:
-    - value: '#Engineered'
-    range: category_1_enum
-    required: false
-  category_2:
-    examples:
-    - value: '#Food production'
-    range: category_2_enum
-    required: false
-  category_3:
-    examples:
-    - value: '#Fermented'
-    range: category_3_enum
-    required: false
-classes:
-  IsolationSource:
-    slots:
-    - id
-    - species
-    - culture_collection_number
-    - isolation_source
-    - country
-    - continent
-    - category_1
-    - category_2
-    - category_3
-    unique_keys:
-      culture_collection_number_key:
-        unique_key_name: culture_collection_number_key
-        unique_key_slots:
-        - culture_collection_number
+    description: Level 3 (most specific) of BacDive's isolation-source classification.

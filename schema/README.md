@@ -3,6 +3,43 @@
 LinkML schemas for KG-Microbe data sources, bootstrapped with
 [schema-automator](https://github.com/linkml/schema-automator).
 
+## KG-Microbe merged KG (`kg_microbe_merged.yaml`)
+
+LinkML schema for the **merged knowledge graph** in KGX TSV format
+(`data/merged/<build>/{*_nodes.tsv,*_edges.tsv}`). Generated from the
+2026-06-10 build (**2,438,443 nodes; 12,900,316 edges**).
+
+- `Node` (id, category, name, description, xref, provided_by, synonym,
+  deprecated, same_as) and `Edge` (subject, predicate, object, relation,
+  primary_knowledge_source, knowledge_level, agent_type, has_percentage, unit,
+  value), wrapped by a `KnowledgeGraph` container.
+- Enums populated from the build's distinct values: `NodeCategoryEnum` (22),
+  `PredicateEnum` (88), `KnowledgeLevelEnum` (3), `AgentTypeEnum` (3); each
+  permissible value carries its occurrence count and (for CURIEs) a `meaning`.
+- List-valued node columns (`category`, `xref`, `provided_by`, `synonym`,
+  `same_as`) are `|`-delimited in the TSV → modelled `multivalued`.
+
+`scripts/generate_merged_kg_schema.py` streams the two TSVs once each and emits
+the schema, so it can be regenerated for any build:
+
+```bash
+python scripts/generate_merged_kg_schema.py --merged-dir data/merged/20260610 \
+  -o schema/kg_microbe_merged.yaml   # ~25s
+gen-linkml --format yaml schema/kg_microbe_merged.yaml
+linkml-validate -s schema/kg_microbe_merged.yaml schema/examples/kg_microbe_merged_sample.yaml
+```
+
+A referentially-consistent 116-node / 100-edge sample drawn from the real build
+is committed at `schema/examples/kg_microbe_merged_sample.yaml` and validates
+cleanly.
+
+**Data-quality notes** surfaced while building the schema (left as strings, not
+enums): `primary_knowledge_source` mixes clean `infores:` CURIEs, Python-list
+strain-provenance literals (`['infores:bacdive', 'bacdive:NNN']`) and raw source
+filenames (`chebi.json`); `unit` carries mojibake (`ï¿½g` for µg);
+`knowledge_level`/`agent_type` carry a few `|`-joined merge-dedup artifacts; and
+the `deprecated` node column holds malformed URI values on a few UPA rows.
+
 ## BacDive isolation sources
 
 Source: the BacDive **Isolation sources** table (`download.yaml` ->

@@ -1,0 +1,2689 @@
+nodes:
+- id: CHEBI:10024
+  category:
+  - biolink:ChemicalEntity
+  name: Vulgarin
+  xref:
+  - cas:3162-56-9
+  - kegg.compound:C09600
+  - kegg.compound:cpd:C09600
+  - knapsack:C00003393
+  provided_by:
+  - Graph
+  synonym:
+  - Vulgarin
+- id: CHEBI:11449
+  category:
+  - biolink:ChemicalEntity
+  name: 2,5-didehydro-D-gluconate
+  description: Conjugate base of 2,5-didehydro-<small>D</small>-gluconic acid.
+  xref:
+  - beilstein:3671140
+  provided_by:
+  - Graph
+  synonym:
+  - 2,5-Didehydro-D-gluconate
+  - 2,5-didehydro-D-gluconate
+  - 2,5-diketo-D-gluconate
+  - 2,5-diketogluconate
+  - 2-Dehydro-L-idonate
+  - D-threo-2,5-hexodiulosonate
+  - D-threo-hexo-2,5-diulosonate
+- id: CHEBI:115156
+  category:
+  - biolink:ChemicalEntity
+  name: Na2-fumarate
+  description: An organic sodium salt resulting from the replacement of the protons
+    from the carboxy groups of fumaric acid by sodium ions.
+  xref:
+  - MIM:Na2-fumarate
+  - cas:17013-01-3
+  - reaxys:4301302
+  - wikipedia.en:Sodium_fumarate
+  provided_by:
+  - Graph
+  synonym:
+  - Disodium fumarate
+  - E365
+  - Fumaric acid, disodium salt
+  - Na-fumarate
+  - Sodium fumarate
+  - disodium (2E)-but-2-enedioate
+- id: CHEBI:11986
+  category:
+  - biolink:ChemicalEntity
+  name: 4-fluoro-L-threonine
+  xref:
+  - beilstein:4372061
+  - cas:102130-93-8
+  - kegg.compound:C15533
+  - kegg.compound:cpd:C15533
+  provided_by:
+  - Graph
+  synonym:
+  - (2S,3S)-2-amino-4-fluoro-3-hydroxybutanoic acid
+  - 4-fluoro-L-threonine
+  - 4-fluorothreonine
+- id: CHEBI:12931
+  category:
+  - biolink:ChemicalEntity
+  name: D-galactonate
+  description: A galactonate compound having <small>D</small>-configuration.
+  xref:
+  - kegg.compound:C00880
+  - kegg.compound:cpd:C00880
+  provided_by:
+  - Graph
+  synonym:
+  - D-Galactonate
+  - D-galactonate
+  - galactonate
+- id: CHEBI:12936
+  category:
+  - biolink:ChemicalEntity
+  name: D-Galactose
+  xref:
+  - MIM:D-galactose
+  - cas:59-23-4
+  provided_by:
+  - Graph
+  synonym:
+  - D-Gal
+  - D-galacto-hexose
+  - D-galactose
+- id: CHEBI:12952
+  category:
+  - biolink:ChemicalEntity
+  name: aldehydo-D-galacturonate
+  xref:
+  - kegg.compound:C00333
+  - kegg.compound:cpd:C00333
+  provided_by:
+  - Graph
+  synonym:
+  - D-Galacturonate
+  - D-galacturonate
+  - aldehydo-D-galacturonate
+  - galacturonate
+- id: CHEBI:132112
+  category:
+  - biolink:ChemicalEntity
+  name: Na2S2O3
+  description: An inorganic sodium salt composed of sodium and thiosulfate ions in
+    a 2:1 ratio.
+  xref:
+  - MIM:Na2s2o3
+  - cas:7772-98-7
+  - foodb.food:FDB015436
+  - pubmed:26269005
+  - pubmed:26494591
+  - pubmed:26623950
+  - pubmed:26723482
+  - pubmed:26799451
+  - pubmed:26856696
+  - pubmed:26871829
+  - pubmed:27051974
+  - pubmed:27094188
+  - pubmed:27163355
+  - reaxys:11323704
+  - wikipedia.en:Sodium_thiosulfate
+  provided_by:
+  - Graph
+  synonym:
+  - (5% w/v solution)
+  - 2,5,8,11,14,17,20,23,26-nonaoxaoctacosan-28-ol
+  - Disodium thiosulfate
+  - Na-thiosulfate
+  - NaS2O3
+  - O-methyl-nonaethyleneglycol
+  - Sodium Thiosulfate
+  - Sodium hyposulfite
+  - Sodium oxide sulfide
+  - Sodium thiosulphate
+  - Thiosulfuric acid, disodium salt
+  - anhydrous sodium thiosulfate
+  - disodium sulfurothioate
+  - nonaethylene glycol monomethyl ether
+  - sodium thiosulfate (anhydrous)
+- id: CHEBI:134606
+  category:
+  - biolink:ChemicalEntity
+  name: toyocamycin
+  description: An <em>N</em>-glycosylpyrrolopyrimidine that is tubercidin in which
+    the hydrogen at position 5 of the pyrrolopyrimidine moiety has been replaced by
+    a cyano group.
+  xref:
+  - cas:606-58-6
+  - pubmed:22629386
+  - pubmed:22852048
+  - pubmed:23775805
+  - pubmed:23900861
+  - pubmed:24057064
+  - pubmed:24509772
+  - pubmed:26790416
+  - pubmed:26969435
+  - pubmed:27912102
+  - pubmed:28058639
+  - reaxys:48454
+  provided_by:
+  - Graph
+  synonym:
+  - 4-amino-5-cyano-7-(D-ribofuranosyl)-7H-pyrrolo(2,3-d)pyrimidine
+  - 4-amino-7-beta-D-ribofuranosyl-7H-pyrrolo[2,3-d]pyrimidine-5-carbonitrile
+  - 7-deaza-7-cyanoadenosine
+  - A-399-Y4
+  - Ahygroscopin-B
+  - Antibiotic 1037
+  - Antibiotic A-399-Y4
+  - Antibiotic E212
+  - E-212
+  - Siromycin
+  - Uramycin B
+  - Vengicide
+  - cyanotubericidin
+- id: CHEBI:135854
+  category:
+  - biolink:ChemicalEntity
+  name: guamecycline
+  xref:
+  - cas:16545-11-2
+  - drugcentral:3273
+  provided_by:
+  - Graph
+  synonym:
+  - Xanthomycin A
+  - tetrabiguanide
+  - xantomicina
+- id: CHEBI:135874
+  category:
+  - biolink:ChemicalEntity
+  name: lucimycin
+  xref:
+  - cas:13058-67-8
+  - drugcentral:3329
+  provided_by:
+  - Graph
+  synonym:
+  - etruscomycin
+  - leucensomycin
+  - lucensomycin
+  - lucimicina
+  - lucimycine
+- id: CHEBI:135974
+  category:
+  - biolink:ChemicalEntity
+  name: meradimate
+  xref:
+  - cas:134-09-8
+  - drugcentral:4444
+  provided_by:
+  - Graph
+  synonym:
+  - 2-aminobenzoate
+  - menthyl anthranilate
+- id: CHEBI:136511
+  category:
+  - biolink:ChemicalEntity
+  name: MnO2
+  description: A manganese molecular entity with formula MnO<small><sub>2</sub></small>.
+  xref:
+  - MIM:Mno2
+  - cas:1313-13-9
+  - chemspider:14117
+  - metacyc.compound:CPD-12610
+  - pubmed:26845107
+  - pubmed:27436142
+  - pubmed:27853275
+  - pubmed:27869184
+  - pubmed:28145407
+  - reaxys:11323289
+  - wikipedia.en:Manganese_dioxide
+  provided_by:
+  - Graph
+  synonym:
+  - Mangandioxid
+  - MnO2
+  - bis(oxido)manganese
+  - black manganese oxide
+  - manganese binoxide
+  - manganese dioxide
+  - manganese peroxide
+  - manganese superoxide
+  - manganese(IV) dioxide
+  - manganese(IV) oxide
+- id: CHEBI:13705
+  category:
+  - biolink:ChemicalEntity
+  name: acetoacetate
+  description: A 3-oxo monocarboxylic acid anion that is the conjugate base of acetoacetic
+    acid, arising from deprotonation of the carboxy group.
+  xref:
+  - cas:141-81-1
+  - kegg.compound:C00164
+  - kegg.compound:cpd:C00164
+  - metacyc.compound:3-KETOBUTYRATE
+  - reaxys:4128534
+  - umbbd.compound:c0069
+  provided_by:
+  - Graph
+  synonym:
+  - 3-oxobutanoate
+  - Acetoacetate
+  - Acetoacetate ion(1-)
+  - Butanoic acid, 3-oxo-, ion(1-)
+  - acetoacetate
+- id: CHEBI:13719
+  category:
+  - biolink:ChemicalEntity
+  name: acetylsalicylate
+  description: A benzoate that is the conjugate base of acetylsalicylic acid, arising
+    from deprotonation of the carboxy group.
+  xref:
+  - hmdb:HMDB0001879
+  - metacyc.compound:CPD-524
+  - reaxys:3906821
+  provided_by:
+  - Graph
+  synonym:
+  - 2-(acetyloxy)benzoate
+  - acetylsalicylate
+- id: CHEBI:138511
+  category:
+  - biolink:ChemicalEntity
+  name: piericidin A
+  description: A member of the class of monohydroxypyridines that acts as an irreversible
+    mitochondrial Complex I inhibitor that strongly associates with ubiquinone binding
+    sites in both mitochondrial and bacterial forms of NADH:ubiquinone oxidoreductase
+  xref:
+  - cas:2738-64-9
+  - metacyc.compound:CPD0-1233
+  - pubmed:12400692
+  - pubmed:16277503
+  - pubmed:16953619
+  - pubmed:17721005
+  - pubmed:17941090
+  - pubmed:19138148
+  - pubmed:22365607
+  - pubmed:24295981
+  - pubmed:24409990
+  - pubmed:25437199
+  - pubmed:25812110
+  - pubmed:26856451
+  - pubmed:27301663
+  - pubmed:28217742
+  - pubmed:9684860
+  - reaxys:4720916
+  provided_by:
+  - Graph
+  synonym:
+  - (+)-piericidin A1
+  - 2-[(2E,5E,7E,11E)-10R-hydroxy-3,7,9R,11-tetramethyl-2,5,7,11-tridecatetraen-1-yl]-5,6-dimethoxy-3-methyl-4-pyridinol
+  - 2-[(2E,5E,7E,9R,10R,11E)-10-hydroxy-3,7,9,11-tetramethyltrideca-2,5,7,11-tetraen-1-yl]-5,6-dimethoxy-3-methylpyridin-4-ol
+  - 2-[(2E,5E,7E,9R,10R,11E)-10-hydroxy-3,7,9,11-tetramethyltrideca-2,5,7,11-tetraenyl]-5,6-dimethoxy-3-methyl-1H-pyridin-4-one
+  - AR 054
+  - Piericidin A1
+  - SN 198E
+  - Shaoguanmycin B
+  - piericidin
+  - 'produces: piericidin'
+- id: CHEBI:13997
+  category:
+  - biolink:ChemicalEntity
+  name: citramalate(2-)
+  description: A dicarboxylic acid dianion that is obtained by removal of a proton
+    from both of the carboxylic acid groups of citramalic acid.
+  xref:
+  - reaxys:3944359
+  provided_by:
+  - Graph
+  synonym:
+  - 2-hydroxy-2-methylbutanedioate
+  - 2-hydroxy-2-methylsuccinate
+  - 2-methylmalate
+  - citramalate
+- id: CHEBI:140148
+  category:
+  - biolink:ChemicalEntity
+  name: rubrolone
+  xref:
+  - chemspider:4591126
+  provided_by:
+  - Graph
+- id: CHEBI:140435
+  category:
+  - biolink:ChemicalEntity
+  name: cholesterol
+  description: A deuterated compound that is cholesterol in which the hydrogens at
+    positions 2, 2, 3, 4, 4 and 6 are replaced by deuterium.
+  xref:
+  - CHEBI:16113
+  - MIM:cholesterol
+  - cas:57-88-5
+  - cas:92543-08-3
+  - chemspider:17341111
+  - drugbank:DB04540
+  - gmelin:550297
+  - hmdb:HMDB0000067
+  - kegg.compound:C00187
+  - kegg.compound:cpd:C00187
+  - kegg.drug:D00040
+  - knapsack:C00003648
+  - lipidmaps:LMST01010001
+  - metacyc.compound:CHOLESTEROL
+  - pdb-ccd:CLR
+  - pubmed:16969766
+  - pubmed:18494504
+  - pubmed:24012562
+  - pubmed:27591043
+  - reaxys:2060565
+  provided_by:
+  - Graph
+  synonym:
+  - (2,2,3,4,4,6-(2)H6)cholest-5-en-3beta-ol
+  - (2,2,3,4,4,6-(2)H6)cholesterol
+  - (3beta,14beta,17alpha)-cholest-5-en-3-ol
+  - 3beta-hydroxy-5-cholestene-2,2,3,4,4,5-d6
+  - 5-cholesten-3beta-ol-2,2,3,4,4,5-d6
+  - Cholest-5-en-3beta-ol
+  - Cholesterin
+  - cholesterol-2,2,3,4,4,6-d6
+- id: CHEBI:141991
+  category:
+  - biolink:ChemicalEntity
+  - biolink:MacromolecularComplex
+  name: cinnamycin
+  description: A type B lantibiotic consisting of a 19 amino acid tetracyclic polypeptide
+    produced by <em>Streptomyces cinnamoneus</em>.
+  xref:
+  - cas:110655-58-8
+  - patent:US2004101963
+  - pubmed:11827543
+  - pubmed:12446685
+  - pubmed:1623138
+  - pubmed:2070795
+  - pubmed:21770392
+  - pubmed:24542148
+  - pubmed:24543272
+  - pubmed:27858169
+  - pubmed:3370206
+  - pubmed:8882709
+  - reaxys:18329075
+  provided_by:
+  - Graph
+  synonym:
+  - L-cysteinyl-L-arginyl-L-glutaminyl-D-cysteinyl-L-cysteinyl-3-aminoalanyl-L-phenylalanylglycyl-L-prolyl-L-phenylalanyl-(2S,3S)-2-amino-3-mercaptobutanoyl-L-phenylalanyl-L-valyl-L-cysteinyl-(3R)-3-hydroxy-L-a-aspartylglycyl-L-asparaginyl-(2S,3S)-2-amino-3-mercaptobutanoyl-L-lysine,cyclic
+    (1->18),(4->14),(5->11)-tris(thioether),cyclic (6->19)-imine
+  - NSC 71936
+  - NSC-71936
+  - Ro 09-0198
+  - Ro-09-0198
+  - lanthiopeptin
+- id: CHEBI:142468
+  category:
+  - biolink:ChemicalEntity
+  name: 1,2-Dichloropropane
+  description: A chloroalkane that is propane in which a hydrogen from each of two
+    adjacent carbons has been replaced by chlorines.
+  xref:
+  - MIM:12-dichloropropane
+  - cas:78-87-5
+  - reaxys:1718880
+  provided_by:
+  - Graph
+- id: CHEBI:14321
+  category:
+  - biolink:ChemicalEntity
+  name: glutamate(1-)
+  description: An α-amino-acid anion that is the conjugate base of glutamic acid,
+    having anionic carboxy groups and a cationic amino group
+  xref:
+  - gmelin:327908
+  provided_by:
+  - Graph
+  synonym:
+  - 2-ammoniopentanedioate
+  - glutamate
+  - glutamate(1-)
+  - glutamic acid monoanion
+  - hydrogen glutamate
+- id: CHEBI:14336
+  category:
+  - biolink:ChemicalEntity
+  name: glycerol 1-phosphate
+  description: A glycerol monophosphate having the phosphate group located at position
+    1.
+  xref:
+  - cas:17603-42-8
+  - cas:57-03-4
+  - hmdb:HMDB0000126
+  - kegg.compound:C03189
+  - kegg.compound:cpd:C03189
+  - kgmicrobe.compound:dl-glycerol_1-phosphate_sodium_salt_hydrate
+  - metacyc.compound:Glycerol-1-phosphate
+  - pubmed:1694860
+  - pubmed:22770225
+  - pubmed:29438107
+  - pubmed:6083437
+  - reaxys:1723974
+  - wikipedia.en:Glycerol_1-phosphate
+  provided_by:
+  - Graph
+  synonym:
+  - 1,2,3-propanetriol, 1-(dihydrogen phosphate)
+  - 1-glycerophosphate
+  - 1-glycerophosphoric acid
+  - 1-phosphoglycerol
+  - 2,3-dihydroxypropyl dihydrogen phosphate
+  - 2,3-hydroxy-1-propyl dihydrogen phosphate
+  - 3-glycerophosphate
+  - D,L-alpha-glycerol-phosphate
+  - DL-Glycerol 1-phosphate sodium salt hydrate
+  - DL-Glycerol 3-phosphate
+  - DL-Glyceryl 1-phosphate
+  - DL-glycerol 1-phosphate
+  - Glycerol 1-phosphate
+  - PG
+  - alpha-glycerophosphoric acid
+  - alpha-phosphoglycerol
+  - glycerol 1-(dihydrogen phosphate)
+  - glycerol alpha-phosphate
+  - rac-Glycerol 1-phosphate
+- id: CHEBI:144421
+  category:
+  - biolink:ChemicalEntity
+  name: Fe(III) citrate
+  description: An iron chelate resulting from the combination of iron(3+) and citrate(3−).
+  xref:
+  - MIM:Fe_Iii_Citrate
+  - cas:3522-50-7
+  - foodb.food:FDB013680
+  - pubmed:11872840
+  - pubmed:19557539
+  - pubmed:19809738
+  - pubmed:21561126
+  - pubmed:22272265
+  - pubmed:23075669
+  - pubmed:23147696
+  - pubmed:25060056
+  - pubmed:31134521
+  - wikipedia.en:Iron(III)_citrate
+  provided_by:
+  - Graph
+  synonym:
+  - Auryxia
+  - Eisencitrat
+  - Fe(3+)-citrate
+  - Fe(NH3)citrate
+  - Ferric Citrate
+  - Ferric iron citrate
+  - Iron(III) citrate
+  - KRX-0502
+  - Zerenex
+  - '[2-hydroxypropane-1,2,3-tricarboxylato(3-)-kappa(3)O(1),O(2),O(3)]iron'
+  - ferric citrate
+  - ferric citrate anhydrous
+  - iron(3+) 2-hydroxypropane-1,2,3-tricarboxylate
+  - iron(III) citrate
+- id: CHEBI:144833
+  category:
+  - biolink:ChemicalEntity
+  name: L-beta-ethynylserine
+  description: A non-proteinogenic <small>L</small>-α-amino acid that is <small>L</small>-propargylglycine
+    which is carrying a hydroxy group at the 3<i>R</i> position.
+  xref:
+  - cas:64918-85-0
+  - cas:65207-64-9
+  - pubmed:3082841
+  provided_by:
+  - Graph
+  synonym:
+  - (2S,3R)-2-amino-3-hydroxy-4-pentynoic acid
+  - (2S,3R)-2-amino-3-hydroxypent-4-ynoic acid
+  - 2-amino-2,4,5-trideoxy-D-threo-pent-4-ynonic acid
+  - L-beta-ethynylserine
+  - beta-ethynylserine
+- id: CHEBI:145778
+  category:
+  - biolink:ChemicalEntity
+  name: sesaminol
+  description: A furofuran that is <i>cis</i>-tetrahydro-1<em>H</em>,3<em>H</em>-furo[3,4-<em>c</em>]furan
+    substituted by a 6-hydroxy-1,3-benzodioxol-5-yl group at position 1<i>S</i> and
+    a 1,3-benzodioxol-5-yl group at position 4<i>S</i>. It is metabolite found in
+    sesame seeds.
+  xref:
+  - cas:74061-79-3
+  - foodb.food:FDB018404
+  - hmdb:HMDB0038932
+  - metacyc.compound:CPD-14837
+  - pubmed:18248594
+  - pubmed:19561332
+  - pubmed:19824636
+  - pubmed:21384919
+  - pubmed:22894606
+  - pubmed:23280945
+  - pubmed:25403159
+  - pubmed:28368390
+  - pubmed:31654577
+  provided_by:
+  - Graph
+  synonym:
+  - (+)-sesaminol
+  - (1S-(1alpha,3aalpha,4alpha,6aalpha))-6-(4-(1,3-benzodioxol-5-yl)tetrahydro-1H,3H-furo(3,4-c)furan-1-yl)-1,3-benzodioxol-5-ol
+  - 6-[(1S,3aR,4S,6aR)-4-(1,3-benzodioxol-5-yl)tetrahydro-1H,3H-furo[3,4-c]furan-1-yl]-1,3-benzodioxol-5-ol
+  - justisolin
+- id: CHEBI:149531
+  category:
+  - biolink:ChemicalEntity
+  name: carminate(2-)
+  description: A monocarboxylic acid anion obtained from the deprotonation of the
+    3-hydroxy and 7-carboxy groups of carminic acid. Major species at pH 7.3.
+  xref:
+  - pubmed:29215010
+  provided_by:
+  - Graph
+  synonym:
+  - (1S)-1,5-anhydro-1-(7-carboxylato-1,4,6-trihydroxy-8-methyl-3-oxido-9,10-dioxo-9,10-dihydroanthracen-2-yl)-D-glucitol
+  - carminate
+  - carminic acid dianion
+  - carminic acid(2-)
+- id: CHEBI:16947
+  category:
+  - biolink:ChemicalEntity
+  name: Citrate
+  description: A tricarboxylic acid trianion, obtained by deprotonation of the three
+    carboxy groups of citric acid.
+  xref:
+  - MIM:Citrate
+  - cas:126-44-3
+  - gmelin:4239
+  - kegg.compound:C00158
+  - kegg.compound:cpd:C00158
+  - pdb-ccd:FLC
+  - reaxys:1884707
+  provided_by:
+  - Graph
+  synonym:
+  - 2-hydroxy-1,2,3-propanetricarboxylate
+  - 2-hydroxy-1,2,3-propanetricarboxylate(3-)
+  - 2-hydroxy-1,2,3-propanetricarboxylic acid, ion(3-)
+  - 2-hydroxypropane-1,2,3-tricarboxylate
+  - 2-hydroxytricarballylate
+  - CITRATE ANION
+  - 'assimilation: citrate'
+  - cit
+  - cit(3-)
+  - citrate
+  - citrate(3-)
+- id: CHEBI:17968
+  category:
+  - biolink:ChemicalEntity
+  name: butyrate
+  description: A short-chain fatty acid anion that is the conjugate base of butyric
+    acid, obtained by deprotonation of the carboxy group.
+  xref:
+  - cas:461-55-2
+  - gmelin:324289
+  - kegg.compound:C00246
+  - kegg.compound:cpd:C00246
+  - metacyc.compound:BUTYRIC_ACID
+  - pubmed:17190852
+  - pubmed:7496326
+  - reaxys:3601060
+  - umbbd.compound:c0035
+  provided_by:
+  - Graph
+  synonym:
+  - 1-butanoate
+  - 1-butyrate
+  - 1-propanecarboxylate
+  - CH3-[CH2]2-COO(-)
+  - Na-butyrate
+  - butanate
+  - butanoate
+  - butanoic acid, ion(1-)
+  - butyrate
+  - n-butanoate
+  - n-butyrate
+  - propanecarboxylate
+  - propylformate
+- id: CHEBI:18281
+  category:
+  - biolink:ChemicalEntity
+  name: 2,5-didehydro-D-gluconic acid
+  xref:
+  - cas:2595-33-7
+  - kegg.compound:C02780
+  - kegg.compound:cpd:C02780
+  provided_by:
+  - Graph
+  synonym:
+  - 2,5-Diketogluconic acid
+  - 2,5-Dioxo-D-gluconic acid
+  - 2,5-diketo-D-gluconic acid
+  - D-threo-2,5-Hexodiulosonic acid
+  - D-threo-hexo-2,5-diulosonic acid
+- id: CHEBI:18391
+  category:
+  - biolink:ChemicalEntity
+  name: D-gluconate
+  description: A gluconate having <small>D</small>-configuration.
+  xref:
+  - gmelin:83544
+  - hmdb:HMDB0000625
+  - kegg.compound:C00257
+  - kegg.compound:cpd:C00257
+  - metacyc.compound:GLUCONATE
+  - pubmed:17439666
+  - reaxys:3906521
+  provided_by:
+  - Graph
+  synonym:
+  - 2,3,4,5,6-pentahydroxyhexanoate
+  - D-Gluconic acid, monosodium salt
+  - D-gluconate
+  - Dextronate
+  - Gluconic acid sodium salt
+  - Glycogenate
+  - Glyconate
+  - Maltonate
+  - Monosodium D-gluconate
+  - Monosodium gluconate
+  - Na-gluconate
+  - Sodium gluconate
+  - sodium (2R,3S,4R,5R)-2,3,4,5,6-pentahydroxyhexanoate
+- id: CHEBI:28260
+  category:
+  - biolink:ChemicalEntity
+  name: Galactose
+  description: An aldohexose that is the C-4 epimer of glucose.
+  xref:
+  - MIM:Galactose
+  - cas:200-416-4
+  - cas:26566-61-0
+  - kegg.compound:C01582
+  - kegg.compound:cpd:C01582
+  - wikipedia.en:Galactose
+  provided_by:
+  - Graph
+  synonym:
+  - Gal
+  - Galactose
+  - Galaktose
+  - galacto-hexose
+  - galactose
+- id: CHEBI:29034
+  category:
+  - biolink:ChemicalEntity
+  name: iron(3+)
+  xref:
+  - cas:20074-52-6
+  - gmelin:15986
+  - kegg.compound:C14819
+  - kegg.compound:cpd:C14819
+  - pdb-ccd:FE
+  provided_by:
+  - Graph
+  synonym:
+  - FE (III) ION
+  - Fe(3+)
+  - Fe(III)
+  - Fe3+
+  - Ferric ion
+  - Iron(3+)
+  - ferric iron
+  - iron(3+)
+  - iron(3+) ion
+  - iron(III) cation
+  - iron, ion (Fe(3+))
+- id: CHEBI:29806
+  category:
+  - biolink:ChemicalEntity
+  name: fumarate(2-)
+  description: A C4-dicarboxylate that is the <i>E</i>-isomer of but-2-enedioate(2−)
+  xref:
+  - cas:142-42-7
+  - drugbank:DB01677
+  - gmelin:325288
+  - kegg.compound:C00122
+  - kegg.compound:cpd:C00122
+  - metacyc.compound:FUM
+  - pdb-ccd:FUM
+  - pubmed:15618158
+  - pubmed:16857679
+  - pubmed:17190852
+  - pubmed:22052553
+  - pubmed:22405071
+  - reaxys:1861276
+  - umbbd.compound:c0111
+  provided_by:
+  - Graph
+  synonym:
+  - (2E)-but-2-enedioate
+  - (E)-2-butenedioic acid, ion(2-)
+  - FUMARATE
+  - fumarate
+- id: CHEBI:131619
+  category:
+  - biolink:ChemicalEntity
+  name: C27-steroid
+  description: A steroid compound with a structure based on a 27-carbon (cholestane)
+    skeleton.
+  provided_by:
+  - Graph
+  synonym:
+  - C27-steroids
+- id: CHEBI:133292
+  category:
+  - biolink:ChemicalEntity
+  name: 3-oxo fatty acid anion
+  description: An oxo fatty acid anion obtained by deprotonation of the carboxy group
+    of any 3-oxo fatty acid.
+  provided_by:
+  - Graph
+  synonym:
+  - 3-keto fatty acid anion
+  - 3-keto fatty acid anions
+  - a 3-oxo fatty acid
+- id: CHEBI:133331
+  category:
+  - biolink:ChemicalEntity
+  name: metal oxide
+  description: An inorganic oxide that is an oxide of any metal.
+  provided_by:
+  - Graph
+  synonym:
+  - metal oxides
+- id: CHEBI:134179
+  category:
+  - biolink:ChemicalEntity
+  name: volatile organic compound
+  description: Any organic compound having an initial boiling point less than or equal
+    to 250 °C (482 °F) measured at a standard atmospheric pressure of 101.3 kPa.
+  xref:
+  - wikipedia.en:Volatile_organic_compound
+  provided_by:
+  - Graph
+  synonym:
+  - VOC
+  - VOCs
+  - volatile organic compounds
+- id: CHEBI:134396
+  category:
+  - biolink:ChemicalEntity
+  name: secondary allylic alcohol
+  description: An allylic alcohol in which the carbon atom that links the double bond
+    to the hydroxy group is also attached to one other carbon and one hydrogen.
+  provided_by:
+  - Graph
+  synonym:
+  - secondary allylic alcohols
+- id: CHEBI:144729
+  category:
+  - biolink:ChemicalEntity
+  name: L-beta-ethynylserine zwitterion
+  description: An <small>L</small>-α-amino acid zwitterion obtained by transfer of
+    a proton from the carboxy group to the amino group of <small>L</small>-β-ethynylserine.
+    The major species at pH 7.3.
+  xref:
+  - pubmed:3082841
+  - pubmed:30867596
+  provided_by:
+  - Graph
+  synonym:
+  - (2S,3R)-2-azaniumyl-3-hydroxypent-4-ynoate
+  - 2-azaniumyl-2,4,5-trideoxy-D-threo-pent-4-ynonate
+  - L-beta-ethynylserine zwitterion
+- id: CHEBI:15344
+  category:
+  - biolink:ChemicalEntity
+  name: acetoacetic acid
+  description: A 3-oxo monocarboxylic acid that is butyric acid bearing a 3-oxo substituent.
+  xref:
+  - cas:541-50-4
+  - drugbank:DB01762
+  - hmdb:HMDB0000060
+  - kegg.compound:C00164
+  - knapsack:C00007458
+  - lipidmaps:LMFA01060003
+  - metacyc.compound:3-KETOBUTYRATE
+  - pubmed:17190852
+  - pubmed:20444635
+  - pubmed:21806064
+  - pubmed:22382897
+  - pubmed:3884391
+  - reaxys:1747690
+  - umbbd.compound:c0069
+  - wikipedia.en:Acetoacetic_acid
+  provided_by:
+  - Graph
+  synonym:
+  - 3-Ketobutyric acid
+  - 3-Oxobutanoic acid
+  - 3-Oxobutyric acid
+  - 3-ketobutanoic acid
+  - 3-oxobutanoic acid
+  - Acetoacetic acid
+  - beta-Ketobutyric acid
+- id: CHEBI:15365
+  category:
+  - biolink:ChemicalEntity
+  name: acetylsalicylic acid
+  description: A member of the class of benzoic acids that is salicylic acid in which
+    the hydrogen that is attached to the phenolic hydroxy group has been replaced
+    by an acetoxy group. A non-steroidal anti-inflammatory drug with cyclooxygenase
+    inhibitor activity.
+  xref:
+  - cas:50-78-2
+  - drugbank:DB00945
+  - drugcentral:74
+  - gmelin:218864
+  - hmdb:HMDB0001879
+  - kegg.compound:C01405
+  - kegg.drug:D00109
+  - lincs.smallmolecule:LSM-5288
+  - metacyc.compound:CPD-524
+  - pdb-ccd:AIN
+  - pubmed:11203441
+  - pubmed:11402787
+  - pubmed:11597554
+  - pubmed:11733186
+  - pubmed:12852484
+  - pubmed:14753751
+  - pubmed:15542410
+  - pubmed:15590729
+  - pubmed:1650428
+  - pubmed:18226435
+  - pubmed:18335236
+  - pubmed:18631321
+  - pubmed:19010312
+  - pubmed:19386367
+  - pubmed:19706045
+  - pubmed:21699808
+  - pubmed:22866967
+  - pubmed:445303
+  - reaxys:779271
+  - wikipedia.en:Aspirin
+  provided_by:
+  - Graph
+  synonym:
+  - 2-(ACETYLOXY)BENZOIC ACID
+  - 2-(acetyloxy)benzoic acid
+  - 2-Acetoxybenzenecarboxylic acid
+  - 2-acetoxybenzoic acid
+  - ASA
+  - Acetylsalicylate
+  - Acetylsalicylic acid
+  - Acetylsalicylsaeure
+  - Aspirin
+  - Azetylsalizylsaeure
+  - Easprin
+  - O-acetylsalicylic acid
+  - acide 2-(acetyloxy)benzoique
+  - acide acetylsalicylique
+  - acido acetilsalicilico
+  - acidum acetylsalicylicum
+  - o-acetoxybenzoic acid
+  - o-carboxyphenyl acetate
+  - salicylic acid acetate
+- id: CHEBI:15584
+  category:
+  - biolink:ChemicalEntity
+  name: citramalic acid
+  description: A 2-hydroxydicarboxylic acid that is malic acid (hydroxysuccinic acid)
+    in which the hydrogen at position 2 is substituted by a methyl group.
+  xref:
+  - cas:2306-22-1
+  - hmdb:HMDB0000426
+  - kegg.compound:C00815
+  - knapsack:C00001181
+  - patent:US5650440
+  - pubmed:13160012
+  - pubmed:14470458
+  - pubmed:17439666
+  - pubmed:21871058
+  - pubmed:6145530
+  - pubmed:7408203
+  - reaxys:1723817
+  - ymdb:YMDB01584
+  provided_by:
+  - Graph
+  synonym:
+  - (+-)-2-hydroxy-2-methylsuccinic acid
+  - 2-Methylmalic acid
+  - 2-hydroxy-2-methylbutanedioic acid
+  - 2-hydroxy-2-methylsuccinic acid
+  - 2-methylmalic acid
+  - Citramalic acid
+  - alpha-Hydroxypyrotartaric acid
+  - alpha-hydroxypyrotartaric acid
+  - citramalic acids
+- id: CHEBI:16094
+  category:
+  - biolink:ChemicalEntity
+  name: thiosulfate(2-)
+  description: A divalent inorganic anion obtained by removal of both protons from
+    thiosulfuric acid.
+  xref:
+  - cas:14383-50-7
+  - gmelin:2031
+  - pdb-ccd:THJ
+  - umbbd.compound:c0570
+  - wikipedia.en:Thiosulfate
+  provided_by:
+  - Graph
+  synonym:
+  - Hyposulfite
+  - S2O3
+  - S2O3(2-)
+  - TETRATHIONATE
+  - Thiosulfate
+  - '[SO3S](2-)'
+  - sulfurothioate
+  - thiosulfate
+  - thiosulfate (S2O3(2-))
+  - thiosulfate dianion
+  - thiosulfate ion
+  - thiosulfate ion(2-)
+  - thiosulphate
+  - trioxido-1kappa(3)O-disulfate(S--S)(2-)
+  - trioxidosulfidosulfate(2-)
+- id: CHEBI:16534
+  category:
+  - biolink:ChemicalEntity
+  name: D-galactonic acid
+  description: A galactonic acid compound having <small>D</small>-configuration.
+  xref:
+  - cas:576-36-3
+  - hmdb:HMDB0000565
+  - kegg.compound:C00880
+  - reaxys:1726059
+  provided_by:
+  - Graph
+  synonym:
+  - D-Galactonic acid
+  - D-galactonic acid
+- id: CHEBI:16890
+  category:
+  - biolink:ChemicalEntity
+  name: glycerol monophosphate
+  xref:
+  - cas:27082-31-1
+  - kegg.compound:C03189
+  provided_by:
+  - Graph
+  synonym:
+  - glycerol dihydrogen phosphate
+  - glycerophosphoric acid
+  - sn-Glyceryl phosphate
+- id: CHEBI:1722
+  category:
+  - biolink:ChemicalEntity
+  name: 3beta-hydroxy-Delta(5)-steroid
+  description: Any 3β-hydroxy-steroid that contains a double bond between positions
+    5 and 6.
+  xref:
+  - kegg.compound:C03836
+  - metacyc.compound:3b-hydroxy-D5-steroids
+  provided_by:
+  - Graph
+  synonym:
+  - 3beta-hydroxy Delta(5)-steroids
+  - 3beta-hydroxy-Delta(5)-steroids
+  - a 3-beta-hydroxy-Delta(5)-steroid
+- id: CHEBI:17608
+  category:
+  - biolink:ChemicalEntity
+  name: D-aldohexose
+  description: Any <small>D</small>-aldose having a chain of six carbon atoms in the
+    molecule.
+  provided_by:
+  - Graph
+  synonym:
+  - D-aldohexoses
+- id: CHEBI:18237
+  category:
+  - biolink:ChemicalEntity
+  name: glutamic acid
+  description: An α-amino acid that is glutaric acid bearing a single amino substituent
+    at position 2.
+  xref:
+  - cas:56-86-0
+  - cas:617-65-2
+  - gmelin:101971
+  - kegg.compound:C00302
+  - kegg.compound:cpd:C00302
+  - kegg.drug:D04341
+  - knapsack:C00001358
+  - knapsack:C00019577
+  - pubmed:15739367
+  - pubmed:17190852
+  - pubmed:24616376
+  - pubmed:24984001
+  - reaxys:1723799
+  - wikipedia.en:Glutamic_acid
+  provided_by:
+  - Graph
+  synonym:
+  - 2-Aminoglutaric acid
+  - 2-aminopentanedioic acid
+  - DL-Glutamic acid
+  - DL-Glutaminic acid
+  - E
+  - Glu
+  - Glutamate
+  - Glutamic acid
+  - Glutaminic acid
+  - Glutaminsaeure
+  - glutamic acid
+- id: CHEBI:18254
+  category:
+  - biolink:ChemicalEntity
+  name: ribonucleoside
+  description: Any nucleoside where the sugar component is <small>D</small>-ribose.
+  xref:
+  - kegg.compound:C00911
+  provided_by:
+  - Graph
+  synonym:
+  - Ribonucleoside
+  - a ribonucleoside
+  - ribonucleosides
+- id: CHEBI:18379
+  category:
+  - biolink:ChemicalEntity
+  name: nitrile
+  description: A compound having the structure RC≡N; thus a <em>C</em>-substituted
+    derivative of hydrocyanic acid, HC≡N. In systematic nomenclature, the suffix nitrile
+    denotes the triply bound ≡N atom, not the carbon atom attached to it.
+  xref:
+  - kegg.compound:C00726
+  provided_by:
+  - Graph
+  synonym:
+  - Nitril
+  - Nitrile
+  - R-CN
+  - a nitrile
+  - nitrile
+  - nitriles
+  - nitrilos
+- id: CHEBI:22586
+  category:
+  - biolink:ChemicalRole
+  name: antioxidant
+  description: A substance that opposes oxidation or inhibits reactions brought about
+    by dioxygen or peroxides.
+  provided_by:
+  - Graph
+  synonym:
+  - antioxidants
+  - antioxydant
+  - antoxidant
+- id: CHEBI:22718
+  category:
+  - biolink:ChemicalEntity
+  name: benzoates
+  description: A monocarboxylic acid anion obtained by deprotonation of the carboxy
+    group of any benzoic acid.
+  provided_by:
+  - Graph
+  synonym:
+  - benzoate anion
+- id: CHEBI:23128
+  category:
+  - biolink:ChemicalEntity
+  name: chloroalkane
+  description: Any haloalkane that consists of an alkane substituted by at least one
+    chloro group.
+  provided_by:
+  - Graph
+  synonym:
+  - alkyl chloride
+  - alkyl chlorides
+  - chloroalkane
+  - chloroalkanes
+- id: CHEBI:231935
+  category:
+  - biolink:ChemicalEntity
+  name: glycerol 1-phosphate(2-)
+  description: An  organophosphate oxoanion that is the dianion of glycerol 1-phosphate
+    arising from deprotonation of the phosphate OH groups; major species at pH 7.3.
+  xref:
+  - gmelin:602374
+  - reaxys:1873731
+  provided_by:
+  - Graph
+  synonym:
+  - 2,3-dihydroxypropyl phosphate
+  - glycerol 1-phosphate
+  - glycerol 1-phosphate dianion
+- id: CHEBI:24068
+  category:
+  - biolink:ChemicalEntity
+  name: fluoroamino acid
+  description: An organofluorine compound that consists of an amino acid substituted
+    by a fluoro group.
+  provided_by:
+  - Graph
+  synonym:
+  - fluoroamino acids
+- id: CHEBI:24148
+  category:
+  - biolink:ChemicalEntity
+  name: galactonate
+  provided_by:
+  - Graph
+- id: CHEBI:24175
+  category:
+  - biolink:ChemicalEntity
+  name: galacturonate
+  provided_by:
+  - Graph
+  synonym:
+  - galacturonates
+- id: CHEBI:24533
+  category:
+  - biolink:ChemicalEntity
+  name: heterodetic cyclic peptide
+  description: A heterodetic cyclic peptide is a peptide consisting only of amino-acid
+    residues, but in which the linkages forming the ring are not solely peptide bonds;
+    one or more is an isopeptide, disulfide, ester, or other bond.
+  provided_by:
+  - Graph
+  synonym:
+  - heterodetic cyclic peptide
+  - heterodetic cyclic peptides
+  - peptide cyclique heterodetique
+  - peptido ciclico heterodetico
+- id: CHEBI:25154
+  category:
+  - biolink:ChemicalEntity
+  name: manganese molecular entity
+  provided_by:
+  - Graph
+  synonym:
+  - manganese compounds
+  - manganese molecular entities
+  - manganese molecular entity
+- id: CHEBI:25340
+  category:
+  - biolink:ChemicalEntity
+  name: methylpyridines
+  description: Any member of the class of pyridines that carries at least one methyl
+    substituent.
+  provided_by:
+  - Graph
+- id: CHEBI:25355
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: mitochondrial respiratory-chain inhibitor
+  provided_by:
+  - Graph
+  synonym:
+  - mitochondrial electron transport chain inhibitors
+  - mitochondrial electron-transport chain inhibitor
+  - mitochondrial respiratory chain inhibitors
+- id: CHEBI:25409
+  category:
+  - biolink:ChemicalEntity
+  name: monoterpenoid
+  description: Any terpenoid derived from a monoterpene. The term includes compounds
+    in which the C<small><sub>10</sub></small> skeleton of the parent monoterpene
+    has been rearranged or modified by the removal of one or more skeletal atoms (generally
+    methyl groups).
+  xref:
+  - lipidmaps_class:LMPR0102
+  provided_by:
+  - Graph
+  synonym:
+  - monoterpenoids
+- id: CHEBI:26658
+  category:
+  - biolink:ChemicalEntity
+  name: sesquiterpenoid
+  description: Any terpenoid derived from a sesquiterpene. The term includes compounds
+    in which the C15 skeleton of the parent sesquiterpene has been rearranged or modified
+    by the removal of one or more skeletal atoms (generally methyl groups).
+  xref:
+  - lipidmaps_class:LMPR0103
+  provided_by:
+  - Graph
+  synonym:
+  - sesquiterpenoides
+  - sesquiterpenoids
+- id: CHEBI:26895
+  category:
+  - biolink:ChemicalEntity
+  name: tetracyclines
+  description: A subclass of polyketides having an octahydrotetracene-2-carboxamide
+    skeleton, substituted with many hydroxy and other groups.
+  provided_by:
+  - Graph
+- id: CHEBI:27532
+  category:
+  - biolink:ChemicalEntity
+  name: L-cysteine thioether
+  description: Any <small>L</small>-cysteine derivative obtained by conversion of
+    the thiol group into a sulfide.
+  provided_by:
+  - Graph
+  synonym:
+  - L-cysteine thioethers
+  - cysteine thioether
+- id: CHEBI:28965
+  category:
+  - biolink:ChemicalEntity
+  name: dicarboxylic acid dianion
+  description: A carboxylic acid dianion obtained by deprotonation of both carboxy
+    groups of any dicarboxylic acid.
+  provided_by:
+  - Graph
+  synonym:
+  - a dicarboxylate
+  - dicarboxylate
+  - dicarboxylates
+  - dicarboxylic acid dianion
+  - dicarboxylic acid dianions
+- id: CHEBI:29987
+  category:
+  - biolink:ChemicalEntity
+  name: glutamate(2-)
+  description: A dicarboxylic acid dianion that is the conjugate base of glutamate(1−).
+  xref:
+  - gmelin:327903
+  - reaxys:4134100
+  provided_by:
+  - Graph
+  synonym:
+  - 2-aminopentanedioate
+  - glutamate
+  - glutamate(2-)
+  - glutamic acid dianion
+- id: CHEBI:30762
+  category:
+  - biolink:ChemicalEntity
+  name: salicylate
+  description: A monohydroxybenzoate that is the conjugate base of salicylic acid.
+  xref:
+  - cas:63-36-5
+  - gmelin:3417
+  - kegg.compound:C00805
+  - kegg.compound:cpd:C00805
+  - pubmed:16669002
+  - pubmed:16934829
+  - reaxys:3605209
+  - umbbd.compound:c0043
+  provided_by:
+  - Graph
+  synonym:
+  - 2-hydroxybenzoate
+  - 2-hydroxybenzoic acid ion(1-)
+  - Salicylate
+  - o-hydroxybenzoate
+  - sal
+  - salicylate
+- id: CHEBI:33281
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: antimicrobial agent
+  description: A substance that kills or slows the growth of microorganisms, including
+    bacteria, viruses, fungi and protozoans.
+  xref:
+  - pubmed:12964249
+  - pubmed:22117953
+  - pubmed:22439833
+  - pubmed:22849268
+  - pubmed:22849276
+  - pubmed:22958833
+  provided_by:
+  - Graph
+  synonym:
+  - Antibiotika
+  - Antibiotikum
+  - antibiotic
+  - antibiotics
+  - antibiotique
+  - antimicrobial
+  - antimicrobial agents
+  - antimicrobials
+  - microbicide
+  - microbicides
+- id: CHEBI:33282
+  category:
+  - biolink:ChemicalRole
+  name: antibacterial agent
+  description: A substance (or active part thereof) that kills or slows the growth
+    of bacteria.
+  provided_by:
+  - Graph
+  synonym:
+  - antibacterial agents
+  - antibacterials
+  - bactericide
+  - bactericides
+- id: CHEBI:33558
+  category:
+  - biolink:ChemicalEntity
+  name: alpha-amino-acid anion
+  description: An amino-acid anion obtained by deprotonation of any α-amino acid.
+  provided_by:
+  - Graph
+  synonym:
+  - alpha-amino acid anion
+  - alpha-amino acid anions
+  - alpha-amino-acid anions
+- id: CHEBI:33822
+  category:
+  - biolink:ChemicalEntity
+  name: organic hydroxy compound
+  description: An organic compound having at least one hydroxy group attached to a
+    carbon atom.
+  provided_by:
+  - Graph
+  synonym:
+  - hydroxy compounds
+  - organic alcohol
+  - organic hydroxy compounds
+- id: CHEBI:35179
+  category:
+  - biolink:ChemicalEntity
+  name: 2-oxo monocarboxylic acid anion
+  description: An oxo monocarboxylic acid anion in which the oxo group is located
+    at the 2-position.
+  xref:
+  - metacyc.compound:2-Oxo-carboxylates
+  - pubmed:10850983
+  provided_by:
+  - Graph
+  synonym:
+  - 2-oxo monocarboxylate
+  - 2-oxo monocarboxylic acid anions
+  - a 2-oxocarboxylate
+- id: CHEBI:35221
+  category:
+  - biolink:ChemicalEntity
+  name: antimetabolite
+  description: A substance which is structurally similar to a metabolite but which
+    competes with it or replaces it, and so prevents or reduces its normal utilization.
+  xref:
+  - wikipedia.en:Antimetabolite
+  provided_by:
+  - Graph
+  synonym:
+  - antimetabolite
+  - antimetabolites
+- id: CHEBI:35610
+  category:
+  - biolink:ChemicalRole
+  name: antineoplastic agent
+  description: A substance that inhibits or prevents the proliferation of neoplasms.
+  provided_by:
+  - Graph
+  synonym:
+  - anticancer agent
+  - anticancer agents
+  - antineoplastic
+  - antineoplastic agents
+  - cytostatic
+- id: CHEBI:35618
+  category:
+  - biolink:ChemicalEntity
+  name: aromatic ether
+  description: Any ether in which the oxygen is attached to at least one aryl substituent.
+  provided_by:
+  - Graph
+- id: CHEBI:35757
+  category:
+  - biolink:ChemicalEntity
+  name: monocarboxylic acid anion
+  description: A carboxylic acid anion formed when the carboxy group of a monocarboxylic
+    acid is deprotonated.
+  xref:
+  - kegg.compound:C00060
+  provided_by:
+  - Graph
+  synonym:
+  - Carboxylate
+  - Monocarboxylate
+  - a monocarboxylate
+  - monocarboxylates
+  - monocarboxylic acid anions
+- id: CHEBI:36180
+  category:
+  - biolink:ChemicalEntity
+  name: butenedioate
+  xref:
+  - gmelin:874013
+  provided_by:
+  - Graph
+  synonym:
+  - but-2-enedioate
+- id: CHEBI:38182
+  category:
+  - biolink:ChemicalEntity
+  name: monohydroxypyridine
+  description: A hydroxypyridine carrying a single hydroxy substituent.
+  provided_by:
+  - Graph
+  synonym:
+  - monohydroxypyridines
+- id: CHEBI:38298
+  category:
+  - biolink:ChemicalEntity
+  name: benzodioxoles
+  provided_by:
+  - Graph
+- id: CHEBI:38503
+  category:
+  - biolink:ChemicalRole
+  name: EC 1.6.5.3 [NADH:ubiquinone reductase (H(+)-translocating)] inhibitor
+  description: A respiratory-chain inhibitor that interferes with the action of the
+    the enzyme NADH:ubiquinone reductase (H<small><sup>+</small></sup>-translocating),
+    EC 1.6.5.3.
+  xref:
+  - wikipedia.en:NADH_dehydrogenase_(ubiquinone)
+  provided_by:
+  - Graph
+  synonym:
+  - DPNH-coenzyme Q reductase inhibitor
+  - DPNH-ubiquinone reductase inhibitor
+  - EC 1.6.5.3 (NADH:ubiquinone reductase (H(+)-translocating)) inhibitor
+  - EC 1.6.5.3 (NADH:ubiquinone reductase (H(+)-translocating)) inhibitors
+  - EC 1.6.5.3 [NADH:ubiquinone reductase (H(+)-translocating)] inhibitors
+  - EC 1.6.5.3 inhibitor
+  - EC 1.6.5.3 inhibitors
+  - NADH coenzyme Q1 reductase inhibitor
+  - NADH coenzyme Q1 reductase inhibitors
+  - NADH dehydrogenase (ubiquinone) inhibitor
+  - NADH dehydrogenase (ubiquinone) inhibitors
+  - NADH-CoQ oxidoreductase inhibitor
+  - NADH-CoQ oxidoreductase inhibitors
+  - NADH-CoQ reductase inhibitor
+  - NADH-CoQ reductase inhibitors
+  - NADH-Q6 oxidoreductase inhibitor
+  - NADH-coenzyme Q oxidoreductase inhibitors
+  - NADH-coenzyme Q reductase inhibitor
+  - NADH-coenzyme Q reductase inhibitors
+  - NADH-ubiquinone oxidoreductase inhibitor
+  - NADH-ubiquinone oxidoreductase inhibitors
+  - NADH-ubiquinone reductase inhibitor
+  - NADH-ubiquinone reductase inhibitors
+  - NADH-ubiquinone-1 reductase inhibitor
+  - NADH-ubiquinone-1 reductase inhibitors
+  - NADH2 dehydrogenase (ubiquinone) inhibitor
+  - NADH:ubiquinone oxidoreductase complex inhibitor
+  - NADH:ubiquinone oxidoreductase inhibitor
+  - NADH:ubiquinone oxidoreductase inhibitors
+  - NADH:ubiquinone reductase (H(+)-translocating) inhibitor
+  - NADH:ubiquinone reductase (H(+)-translocating) inhibitors
+  - NADH:ubiquinone reductase (H+-translocating) inhibitor
+  - NADH:ubiquinone reductase inhibitor
+  - coenzyme Q reductase
+  - complex 1 dehydrogenase inhibitor
+  - complex I (NADH:Q1 oxidoreductase) inhibitors
+  - complex I (electron transport chain) inhibitors
+  - complex I (mitochondrial electron transport) inhibitors
+  - dihydronicotinamide adenine dinucleotide-coenzyme Q reductase inhibitor
+  - electron transfer complex I inhibitor
+  - electron transfer complex I inhibitors
+  - mitochondrial electron transport complex 1 inhibitor
+  - mitochondrial electron transport complex I inhibitor
+  - mitochondrial electron transport complex I inhibitors
+  - reduced nicotinamide adenine dinucleotide-coenzyme Q reductase inhibitor
+  - reduced nicotinamide adenine dinucleotide-coenzyme Q reductase inhibitors
+  - type 1 dehydrogenase inhibitor
+  - type 1 dehydrogenase inhibitors
+  - ubiquinone reductase inhibitor
+  - ubiquinone reductase inhibitors
+- id: CHEBI:38700
+  category:
+  - biolink:ChemicalEntity
+  name: organic sodium salt
+  provided_by:
+  - Graph
+  synonym:
+  - organic sodium salt
+  - organic sodium salts
+- id: CHEBI:38702
+  category:
+  - biolink:ChemicalEntity
+  name: inorganic sodium salt
+  provided_by:
+  - Graph
+  synonym:
+  - inorganic sodium salts
+- id: CHEBI:43797
+  category:
+  - biolink:ChemicalEntity
+  name: L-propargylglycine
+  description: A non-proteinogenic <small>L</small>-α-amino acid that is <small>L</small>-alanine
+    in which one of the methyl hydrogens has been replaced by an ethynyl group. It
+    causes the irreversible inactivation of γ-cystathionase (also known as cystathionine
+    γ-lyase) and is used as an affinity labeling reagent for γ-cystathionase and other
+    enzymes.
+  xref:
+  - cas:23235-01-0
+  - pdb-ccd:LPG
+  - pubmed:23772385
+  - pubmed:30867596
+  - pubmed:387077
+  - pubmed:3994731
+  - pubmed:7094918
+  - pubmed:7364752
+  - pubmed:944577
+  provided_by:
+  - Graph
+  synonym:
+  - (2S)-2-aminopent-4-ynoic acid
+  - (S)-2-amino-4-pentynoic acid
+  - (S)-2-propargylglycine
+  - (S)-alpha-propargylglycine
+  - (S)-propargylglycine
+  - L-2-propynylglycine
+  - L-C-propargylglycine
+  - L-PROPARGYLGLYCINE
+- id: CHEBI:47779
+  category:
+  - biolink:ChemicalEntity
+  name: aminoglycoside
+  provided_by:
+  - Graph
+  synonym:
+  - aminoglycosides
+- id: CHEBI:47790
+  category:
+  - biolink:ChemicalEntity
+  name: furofuran
+  description: Organic heterobicyclic compounds containing a two furan rings ortho-fused
+    to each other.
+  provided_by:
+  - Graph
+  synonym:
+  - furofurans
+- id: CHEBI:47962
+  category:
+  - biolink:ChemicalEntity
+  name: aldehydo-D-galacturonic acid
+  xref:
+  - beilstein:1727087
+  - cas:685-73-4
+  - gmelin:465146
+  provided_by:
+  - Graph
+  synonym:
+  - (2S,3R,4S,5R)-2,3,4,5-tetrahydroxy-6-oxohexanoic acid
+  - D-galacturonic acid
+  - aldehydo-D-galacturonic acid
+- id: CHEBI:48036
+  category:
+  - biolink:ChemicalEntity
+  name: N-glycosylpyrrolopyrimidine
+  provided_by:
+  - Graph
+  synonym:
+  - N-glycosylpyrrolopyrimidines
+- id: CHEBI:50401
+  category:
+  - biolink:ChemicalEntity
+  name: cholestanoid
+  description: Any steroid based on a cholestane skeleton and its derivatives.
+  provided_by:
+  - Graph
+  synonym:
+  - cholestanoids
+- id: CHEBI:50525
+  category:
+  - biolink:ChemicalEntity
+  name: phenolate anion
+  description: An organic anion arising from deprotonation of the OH function of a
+    phenol compound.
+  provided_by:
+  - Graph
+  synonym:
+  - phenolate anions
+- id: CHEBI:50733
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: nutraceutical
+  description: A product in capsule, tablet or liquid form that provide essential
+    nutrients, such as a vitamin, an essential mineral, a protein, an herb, or similar
+    nutritional substance.
+  provided_by:
+  - Graph
+  synonym:
+  - Dietary Supplement
+  - Food Supplementation
+  - Nutritional supplement
+- id: CHEBI:51026
+  category:
+  - biolink:ChemicalEntity
+  name: macrocycle
+  description: A cyclic compound containing nine or more atoms as part of the cyclic
+    system.
+  xref:
+  - wikipedia.en:Macrocycle
+  provided_by:
+  - Graph
+  synonym:
+  - Makrocyclen
+  - Makrozyklen
+  - macrocycle
+  - macrocycles
+  - makrocyclische Verbindungen
+  - makrozyklische Verbindungen
+- id: CHEBI:53071
+  category:
+  - biolink:ChemicalEntity
+  name: L-galactonate
+  description: A galactonate that is the conjugate base of <small>L</small>-galactonic
+    acid.
+  xref:
+  - beilstein:3906527
+  - metacyc.compound:CPD0-1083
+  - patent:US4246348
+  - pubmed:381020
+  provided_by:
+  - Graph
+  synonym:
+  - L-galactonate
+- id: CHEBI:57264
+  category:
+  - biolink:ChemicalEntity
+  name: 4-fluoro-L-threonine zwitterion
+  description: Zwitterionic form of 4-fluoro-<small>L</small>-threonine.
+  provided_by:
+  - Graph
+  synonym:
+  - (2S,3S)-2-azaniumyl-4-fluoro-3-hydroxybutanoate
+  - 4-fluoro-L-threonine
+- id: CHEBI:5975
+  category:
+  - biolink:ChemicalEntity
+  name: iron chelate
+  xref:
+  - kegg.compound:C06704
+  provided_by:
+  - Graph
+  synonym:
+  - Iron chelate
+- id: CHEBI:64049
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: food acidity regulator
+  description: A food additive that is used to change or otherwise control the acidity
+    or alkalinity of foods. They may be acids, bases, neutralising agents or buffering
+    agents.
+  xref:
+  - wikipedia.en:Acidity_regulator
+  provided_by:
+  - Graph
+  synonym:
+  - acidity regulator
+  - acidity regulators
+  - food acidity regulators
+  - pH control agent
+  - pH control agents
+- id: CHEBI:68495
+  category:
+  - biolink:ChemicalRole
+  name: apoptosis inducer
+  description: Any substance that induces the process of apoptosis (programmed cell
+    death) in multi-celled organisms.
+  provided_by:
+  - Graph
+  synonym:
+  - Type I cell-death inducer
+  - Type I cell-death inducers
+  - Type I programmed cell-death inducer
+  - Type I programmed cell-death inducers
+  - apoptosis inducers
+- id: CHEBI:71647
+  category:
+  - biolink:MacromolecularComplex
+  name: type B lantibiotic
+  description: Any lantibiotic which has which has a rigid, globular structure. The
+    globular shape and its restricted flexibility confers stability against degradation
+    by proteases.
+  provided_by:
+  - Graph
+  synonym:
+  - type 2 lantibiotic
+  - type 2 lantibiotics
+  - type B lantibiotics
+  - type-B lantibiotic
+  - type-B lantibiotics
+- id: CHEBI:73477
+  category:
+  - biolink:ChemicalEntity
+  name: terminal acetylenic compound
+  description: An acetylenic compound which a carbon of the C≡C moiety is attached
+    to a hydrogen atom.
+  provided_by:
+  - Graph
+  synonym:
+  - C#C-H containing compound
+  - C#C-H containing compounds
+  - C#CH containing compound
+  - C#CH containing compounds
+  - terminal acetylenic compounds
+- id: CHEBI:74927
+  category:
+  - biolink:ChemicalEntity
+  name: furopyran
+  description: Any organic heterobicyclic compound containing ortho-fused furan and
+    pyran rings.
+  provided_by:
+  - Graph
+  synonym:
+  - furopyrans
+- id: CHEBI:75772
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: Saccharomyces cerevisiae metabolite
+  description: Any  fungal metabolite produced during a metabolic reaction in Baker's
+    yeast (<em>Saccharomyces cerevisiae </em>).
+  provided_by:
+  - Graph
+  synonym:
+  - S. cerevisiae metabolite
+  - S. cerevisiae metabolites
+  - S. cerevisiae secondary metabolite
+  - S. cerevisiae secondary metabolites
+  - Saccharomyces cerevisiae metabolites
+  - Saccharomyces cerevisiae secondary metabolites
+  - baker's yeast metabolite
+  - baker's yeast metabolites
+  - baker's yeast secondary metabolite
+  - baker's yeast secondary metabolites
+- id: CHEBI:75835
+  category:
+  - biolink:ChemicalRole
+  name: anti-anaemic agent
+  description: A compound which increases either the number of red cells or the amount
+    of haemoglobin in the blood.
+  provided_by:
+  - Graph
+  synonym:
+  - anti-anaemic agents
+  - anti-anaemic drug
+  - anti-anaemic drugs
+  - anti-anemia agent
+  - anti-anemia agents
+  - anti-anemia drug
+  - anti-anemia drugs
+  - anti-anemic agent
+  - anti-anemic agents
+  - anti-anemic drug
+  - anti-anemic drugs
+  - antianaemia agent
+  - antianaemia agents
+  - antianaemia drug
+  - antianaemia drugs
+  - antianaemic agent
+  - antianaemic agents
+  - antianaemic drug
+  - antianaemic drugs
+  - antianemia drug
+  - antianemia drugs
+- id: CHEBI:76107
+  category:
+  - biolink:ChemicalEntity
+  name: deuterated compound
+  description: Any isotopically modified compound that has one or more hydrogen atoms
+    replaced by deuterium.
+  provided_by:
+  - Graph
+  synonym:
+  - (2)H-labeled compound
+  - (2)H-labeled compounds
+  - (2)H-labelled compound
+  - (2)H-labelled compounds
+  - deuterated compounds
+  - deuterium-labeled compound
+  - deuterium-labeled compounds
+  - deuterium-labelled compound
+  - deuterium-labelled compounds
+- id: CHEBI:76595
+  category:
+  - biolink:ChemicalRole
+  name: nephroprotective agent
+  description: Any protective agent that is able to prevent damage to the kidney.
+  provided_by:
+  - Graph
+  synonym:
+  - nephroprotective agents
+- id: CHEBI:76924
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: plant metabolite
+  description: Any eukaryotic metabolite produced during a metabolic reaction in plants,
+    the kingdom that include flowering plants, conifers and other gymnosperms.
+  provided_by:
+  - Graph
+  synonym:
+  - plant metabolites
+  - plant secondary metabolites
+- id: CHEBI:76946
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: fungal metabolite
+  description: Any eukaryotic metabolite produced during a metabolic reaction in fungi,
+    the kingdom that includes microorganisms such as the yeasts and moulds.
+  provided_by:
+  - Graph
+  synonym:
+  - fungal metabolites
+- id: CHEBI:76969
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: bacterial metabolite
+  description: Any prokaryotic metabolite produced during a metabolic reaction in
+    bacteria.
+  provided_by:
+  - Graph
+- id: CHEBI:77746
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: human metabolite
+  description: Any mammalian metabolite  produced during a metabolic reaction in humans
+    (<em>Homo sapiens</em>).
+  provided_by:
+  - Graph
+  synonym:
+  - H. sapiens metabolite
+  - H. sapiens metabolites
+  - Homo sapiens metabolite
+  - Homo sapiens metabolites
+- id: CHEBI:78675
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: fundamental metabolite
+  description: Any metabolite produced by all living cells.
+  provided_by:
+  - Graph
+  synonym:
+  - essential metabolite
+  - essential metabolites
+  - fundamental metabolites
+- id: CHEBI:83822
+  category:
+  - biolink:ChemicalEntity
+  name: non-proteinogenic L-alpha-amino acid
+  description: Any <small>L</small>-α-amino acid which is not a member of the group
+    of 23 proteinogenic amino acids.
+  provided_by:
+  - Graph
+  synonym:
+  - non-proteinogenic L-alpha-amino acids
+- id: CHEBI:84189
+  category:
+  - biolink:ChemicalEntity
+  name: L-threonine derivative
+  description: A proteinogenic amino acid derivative resulting from reaction of <small>L</small>-threonine  at
+    the amino group or the carboxy group, or from the replacement of any hydrogen
+    of <small>L</small>-threonine  by a heteroatom.
+  provided_by:
+  - Graph
+  synonym:
+  - L-threonine derivatives
+- id: CHEBI:84735
+  category:
+  - biolink:ChemicalEntity
+  - biolink:ChemicalRole
+  name: algal metabolite
+  description: Any eukaryotic metabolite produced during a metabolic reaction in algae
+    including unicellular organisms like chlorella and diatoms to multicellular organisms
+    like giant kelps and brown algae.
+  provided_by:
+  - Graph
+  synonym:
+  - algal metabolites
+- id: CHEBI:86327
+  category:
+  - biolink:ChemicalEntity
+  name: antifungal drug
+  description: Any antifungal agent used to prevent or treat fungal infections in
+    humans or animals.
+  xref:
+  - wikipedia.en:Antifungal
+  provided_by:
+  - Graph
+  synonym:
+  - anti-fungal drug
+  - anti-fungal drugs
+  - anti-fungal medication
+  - anti-fungal medications
+  - antifungal drugs
+  - antifungal medication
+  - antifungal medications
+  - pharmaceutical fungicide
+  - pharmaceutical fungicides
+- id: CHEBI:86478
+  category:
+  - biolink:ChemicalRole
+  name: antibiotic antifungal agent
+  description: Heteroorganic entities that are microbial metabolites (or compounds
+    derived from them) which have significant antifungal properties.
+  provided_by:
+  - Graph
+  synonym:
+  - antibiotic antifungal agents
+- id: CHEBI:90749
+  category:
+  - biolink:ChemicalEntity
+  name: antidote to cyanide poisoning
+  description: A role borne by a molecule that acts to counteract or neutralize the
+    deleterious effects of cyanide.
+  provided_by:
+  - Graph
+edges:
+- subject: CHEBI:10024
+  predicate: biolink:subclass_of
+  object: CHEBI:26658
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11449
+  predicate: biolink:subclass_of
+  object: CHEBI:35179
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11449
+  predicate: biolink:related_to
+  object: CHEBI:18281
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11449
+  predicate: biolink:related_to
+  object: CHEBI:18391
+  relation: RO:0018038
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:115156
+  predicate: biolink:subclass_of
+  object: CHEBI:38700
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:115156
+  predicate: biolink:related_to
+  object: CHEBI:29806
+  relation: BFO:0000051
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:115156
+  predicate: biolink:related_to
+  object: CHEBI:64049
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11986
+  predicate: biolink:subclass_of
+  object: CHEBI:24068
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11986
+  predicate: biolink:subclass_of
+  object: CHEBI:83822
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11986
+  predicate: biolink:subclass_of
+  object: CHEBI:84189
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:11986
+  predicate: biolink:related_to
+  object: CHEBI:57264
+  relation: RO:0018036
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12931
+  predicate: biolink:subclass_of
+  object: CHEBI:24148
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12931
+  predicate: biolink:related_to
+  object: CHEBI:77746
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12931
+  predicate: biolink:related_to
+  object: CHEBI:16534
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12931
+  predicate: biolink:related_to
+  object: CHEBI:53071
+  relation: RO:0018039
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12936
+  predicate: biolink:subclass_of
+  object: CHEBI:17608
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12936
+  predicate: biolink:subclass_of
+  object: CHEBI:28260
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12936
+  predicate: biolink:related_to
+  object: CHEBI:75772
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12936
+  predicate: biolink:related_to
+  object: CHEBI:77746
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12952
+  predicate: biolink:subclass_of
+  object: CHEBI:24175
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12952
+  predicate: biolink:related_to
+  object: CHEBI:75772
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:12952
+  predicate: biolink:related_to
+  object: CHEBI:47962
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:132112
+  predicate: biolink:subclass_of
+  object: CHEBI:38702
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:132112
+  predicate: biolink:related_to
+  object: CHEBI:16094
+  relation: BFO:0000051
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:132112
+  predicate: biolink:related_to
+  object: CHEBI:76595
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:132112
+  predicate: biolink:related_to
+  object: CHEBI:86327
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:132112
+  predicate: biolink:related_to
+  object: CHEBI:90749
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:subclass_of
+  object: CHEBI:18254
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:subclass_of
+  object: CHEBI:18379
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:subclass_of
+  object: CHEBI:48036
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:subclass_of
+  object: CHEBI:86478
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:related_to
+  object: CHEBI:35221
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:related_to
+  object: CHEBI:35610
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:related_to
+  object: CHEBI:68495
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:134606
+  predicate: biolink:related_to
+  object: CHEBI:76969
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:135854
+  predicate: biolink:subclass_of
+  object: CHEBI:26895
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:135874
+  predicate: biolink:subclass_of
+  object: CHEBI:47779
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:135974
+  predicate: biolink:subclass_of
+  object: CHEBI:25409
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:136511
+  predicate: biolink:subclass_of
+  object: CHEBI:133331
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:136511
+  predicate: biolink:subclass_of
+  object: CHEBI:25154
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13705
+  predicate: biolink:subclass_of
+  object: CHEBI:133292
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13705
+  predicate: biolink:related_to
+  object: CHEBI:77746
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13705
+  predicate: biolink:related_to
+  object: CHEBI:15344
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13705
+  predicate: biolink:related_to
+  object: CHEBI:17968
+  relation: RO:0018038
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13719
+  predicate: biolink:subclass_of
+  object: CHEBI:22718
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13719
+  predicate: biolink:related_to
+  object: CHEBI:15365
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13719
+  predicate: biolink:related_to
+  object: CHEBI:30762
+  relation: RO:0018038
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:subclass_of
+  object: CHEBI:134396
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:subclass_of
+  object: CHEBI:25340
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:subclass_of
+  object: CHEBI:35618
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:subclass_of
+  object: CHEBI:38182
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:related_to
+  object: CHEBI:25355
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:related_to
+  object: CHEBI:33281
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:related_to
+  object: CHEBI:38503
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:138511
+  predicate: biolink:related_to
+  object: CHEBI:76969
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13997
+  predicate: biolink:subclass_of
+  object: CHEBI:28965
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13997
+  predicate: biolink:related_to
+  object: CHEBI:76924
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13997
+  predicate: biolink:related_to
+  object: CHEBI:77746
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13997
+  predicate: biolink:related_to
+  object: CHEBI:15584
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:13997
+  predicate: biolink:related_to
+  object: CHEBI:36180
+  relation: RO:0018038
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:140148
+  predicate: biolink:subclass_of
+  object: CHEBI:74927
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:140435
+  predicate: biolink:subclass_of
+  object: CHEBI:131619
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:140435
+  predicate: biolink:subclass_of
+  object: CHEBI:1722
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:140435
+  predicate: biolink:subclass_of
+  object: CHEBI:50401
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:140435
+  predicate: biolink:subclass_of
+  object: CHEBI:76107
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:141991
+  predicate: biolink:subclass_of
+  object: CHEBI:24533
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:141991
+  predicate: biolink:subclass_of
+  object: CHEBI:27532
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:141991
+  predicate: biolink:subclass_of
+  object: CHEBI:51026
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:141991
+  predicate: biolink:subclass_of
+  object: CHEBI:71647
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:142468
+  predicate: biolink:subclass_of
+  object: CHEBI:134179
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:142468
+  predicate: biolink:subclass_of
+  object: CHEBI:23128
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14321
+  predicate: biolink:subclass_of
+  object: CHEBI:33558
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14321
+  predicate: biolink:related_to
+  object: CHEBI:78675
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14321
+  predicate: biolink:has_chemical_role
+  object: CHEBI:78675
+  relation: RO:0000087
+  primary_knowledge_source: infores:chebi
+  knowledge_level: logical_entailment
+  agent_type: automated_agent
+- subject: CHEBI:14321
+  predicate: biolink:related_to
+  object: CHEBI:18237
+  relation: RO:0018033
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14321
+  predicate: biolink:related_to
+  object: CHEBI:29987
+  relation: RO:0018034
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14336
+  predicate: biolink:subclass_of
+  object: CHEBI:16890
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14336
+  predicate: biolink:related_to
+  object: CHEBI:77746
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14336
+  predicate: biolink:related_to
+  object: CHEBI:84735
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:14336
+  predicate: biolink:related_to
+  object: CHEBI:231935
+  relation: RO:0018034
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144421
+  predicate: biolink:subclass_of
+  object: CHEBI:5975
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144421
+  predicate: biolink:related_to
+  object: CHEBI:16947
+  relation: BFO:0000051
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144421
+  predicate: biolink:related_to
+  object: CHEBI:29034
+  relation: BFO:0000051
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144421
+  predicate: biolink:related_to
+  object: CHEBI:50733
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144421
+  predicate: biolink:related_to
+  object: CHEBI:75835
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:subclass_of
+  object: CHEBI:73477
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:subclass_of
+  object: CHEBI:83822
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:related_to
+  object: CHEBI:33282
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:related_to
+  object: CHEBI:35221
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:related_to
+  object: CHEBI:76946
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:related_to
+  object: CHEBI:76969
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:related_to
+  object: CHEBI:144729
+  relation: RO:0018036
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:144833
+  predicate: biolink:related_to
+  object: CHEBI:43797
+  relation: RO:0018038
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:145778
+  predicate: biolink:subclass_of
+  object: CHEBI:33822
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:145778
+  predicate: biolink:subclass_of
+  object: CHEBI:38298
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:145778
+  predicate: biolink:subclass_of
+  object: CHEBI:47790
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:145778
+  predicate: biolink:related_to
+  object: CHEBI:22586
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:145778
+  predicate: biolink:related_to
+  object: CHEBI:76924
+  relation: RO:0000087
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:149531
+  predicate: biolink:subclass_of
+  object: CHEBI:35757
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent
+- subject: CHEBI:149531
+  predicate: biolink:subclass_of
+  object: CHEBI:50525
+  relation: rdfs:subClassOf
+  primary_knowledge_source: chebi.json
+  knowledge_level: knowledge_assertion
+  agent_type: manual_agent

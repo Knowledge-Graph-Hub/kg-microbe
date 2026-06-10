@@ -405,6 +405,20 @@
   local_name: NCBI2GTDB.tsv.gz
 
 #
+# BacDive isolation sources table
+# Full export of the BacDive "Isolation sources" browser
+# (https://bacdive.dsmz.de/isolation-sources, "Download table" button).
+# One row per strain x isolation-source category assignment; columns:
+# ID, Species, Culture collection number, Isolation source, Country,
+# Continent, Category 1, Category 2, Category 3 (the 3-level isolation
+# source classification). Used as the first schema-automator LinkML
+# target and to enrich BacDive isolation-source mappings.
+#
+-
+  url: https://bacdive.dsmz.de/isolation-sources/csv
+  local_name: bacdive_isolation_sources.csv
+
+#
 # Biolink Model
 # The standard schema for biological knowledge graphs
 # Version 4.3.6 (latest as of Dec 2024)

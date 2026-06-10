@@ -289,8 +289,14 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         if not search_name or search_name.startswith("NCBITaxon:"):
             return None
 
+        # Retain the species rank prefix so the CURIE matches the canonical
+        # GTDB scheme emitted by the gtdb transform (GTDB:s__<species>), e.g.
+        # GTDB:s__Escherichia_coli. The lookup maps above stay prefix-stripped
+        # because they must match the prefix-free metatraits input labels;
+        # only the emitted CURIE carries s__. Input is species-level only
+        # (gtdb_species_summary.jsonl.gz; genus/family summaries disabled).
         gtdb_id = search_name.replace(" ", "_")
-        synthetic_node_id = f"GTDB:{gtdb_id}"
+        synthetic_node_id = f"GTDB:s__{gtdb_id}"
 
         # Extract accession for hierarchical linking
         accession_match = re.search(r"\bsp\d{9}\b", search_name)
@@ -384,7 +390,10 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                     {
                         SUBJECT_COLUMN: node_id,
                         PREDICATE_COLUMN: SUBCLASS_PREDICATE,
-                        OBJECT_COLUMN: f"GTDB:{current_species.replace(' ', '_')}",
+                        # s__ prefix matches the canonical gtdb-transform CURIE
+                        # scheme (GTDB:s__<species>) so this subClassOf edge lands
+                        # on a real GTDB taxonomy node in the merged graph.
+                        OBJECT_COLUMN: f"GTDB:s__{current_species.replace(' ', '_')}",
                         RELATION_COLUMN: RDFS_SUBCLASS_OF,
                         PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
                     }

@@ -1,0 +1,4995 @@
+name: BacDive
+title: BacDive strain (full JSON)
+id: https://w3id.org/kg-microbe/bacdive-strain-full
+description: 'LinkML schema for the full BacDive per-strain JSON export (data/raw/bacdive_strains.json;
+  a top-level array of strain records). Bootstrapped with schema-automator generalize-json over a sample,
+  then refined (scripts/build_bacdive_json_schema.py): object fields are typed to their nested classes
+  (inlined), list-bearing fields are multivalued (BacDive''s single-object-vs-list-of-objects inconsistency),
+  and scalar leaves are strings (BacDive types numeric leaves inconsistently). A few keys reused as both
+  an object group and a scalar value are disambiguated with slot_usage. Sample-derived enums are kept
+  as documentation but not enforced. Raw JSON must be normalized to validate -- see scripts/normalize_bacdive_json.py.
+  Coverage is bounded by the build sample size. Sections: General; Name and taxonomic classification;
+  Morphology; Culture and growth conditions; Physiology and metabolism; Isolation, sampling and environmental
+  information; Safety information; Sequence information; Genome-based predictions; External links; Reference;
+  _id.'
+prefixes:
+  linkml: https://w3id.org/linkml/
+  BacDive: https://w3id.org/kg-microbe/bacdive-strain-full/
+default_prefix: BacDive
+default_range: string
+imports:
+- linkml:types
+classes:
+  Id:
+    slots:
+    - $oid
+  NCBITaxId:
+    slots:
+    - NCBI tax id
+    - Matching level
+    slot_usage:
+      NCBI tax id:
+        range: string
+        inlined: false
+        inlined_as_list: false
+        multivalued: false
+  StrainHistory:
+    slots:
+    - '@ref'
+    - history
+  General:
+    slots:
+    - '@ref'
+    - BacDive-ID
+    - DSM-Number
+    - keywords
+    - description
+    - NCBI tax id
+    - strain history
+    - doi
+  Synonym:
+    slots:
+    - '@ref'
+    - synonym
+  LPSN:
+    slots:
+    - '@ref'
+    - description
+    - keyword
+    - domain
+    - phylum
+    - class
+    - order
+    - family
+    - genus
+    - species
+    - full scientific name
+    - synonyms
+  NameAndTaxonomicClassification:
+    slots:
+    - LPSN
+    - '@ref'
+    - domain
+    - phylum
+    - class
+    - order
+    - family
+    - genus
+    - species
+    - full scientific name
+    - strain designation
+    - type strain
+    - variant
+  Morphology:
+    slots:
+    - cell morphology
+    - colony morphology
+    - multimedia
+    - pigmentation
+  CultureMedium:
+    slots:
+    - '@ref'
+    - name
+    - growth
+    - link
+    - composition
+  CultureTemp:
+    slots:
+    - '@ref'
+    - growth
+    - type
+    - temperature
+  CultureAndGrowthCondition:
+    slots:
+    - culture medium
+    - culture temp
+    - culture pH
+  PhysiologyAndMetabolism:
+    slots:
+    - oxygen tolerance
+    - compound production
+    - observation
+    - metabolite utilization
+    - metabolite production
+    - enzymes
+    - API zym
+    - antibiotic resistance
+    - API 50CHac
+    - halophily
+    - spore formation
+    - metabolite tests
+    - API rID32A
+    - murein
+    - nutrition type
+    - API 20NE
+    - API biotype100
+    - tolerance
+    - fatty acid profile
+    - API 20E
+    - API rID32STR
+    - API coryne
+    - API NH
+    - API ID32STA
+    - API ID32E
+    - antibiogram
+    - API STA
+    - API CAM
+    - API LIST
+  Isolation:
+    slots:
+    - '@ref'
+    - sample type
+    - geographic location
+    - country
+    - origin.country
+    - continent
+    - isolation date
+    - enrichment culture
+    - enrichment culture duration
+    - enrichment culture temperature
+    - sampling date
+    - host species
+    - latitude
+    - longitude
+    - isolation procedure
+    - enrichment culture composition
+  IsolationSourceCategory:
+    slots:
+    - Cat1
+    - Cat2
+    - Cat3
+  IsolationSamplingAndEnvironmentalInformation:
+    slots:
+    - isolation
+    - isolation source categories
+    - taxonmaps
+  RiskAssessment:
+    slots:
+    - '@ref'
+    - pathogenicity animal
+    - biosafety level
+    - biosafety level comment
+    - pathogenicity human
+  SafetyInformation:
+    slots:
+    - risk assessment
+  SequenceInformation:
+    slots:
+    - x16S sequences
+    - Genome sequences
+    - GC content
+  Genome-basedPrediction: {}
+  StraininfoLink:
+    slots:
+    - '@ref'
+    - straininfo
+  ExternalLink:
+    slots:
+    - '@ref'
+    - culture collection no.
+    - straininfo link
+    - literature
+    - phages
+  Reference:
+    slots:
+    - '@id'
+    - authors
+    - catalogue
+    - doi/url
+    - title
+    - journal
+    - pubmed
+    - ID_cross_reference
+  OxygenTolerance:
+    slots:
+    - '@ref'
+    - oxygen tolerance
+    slot_usage:
+      oxygen tolerance:
+        range: string
+        inlined: false
+        inlined_as_list: false
+        multivalued: false
+  X16SSequence:
+    slots:
+    - '@ref'
+    - description
+    - accession
+    - length
+    - database
+    - NCBI tax ID
+  GenomeSequence:
+    slots:
+    - '@ref'
+    - description
+    - accession
+    - assembly level
+    - database
+    - NCBI tax ID
+  GCContent:
+    slots:
+    - '@ref'
+    - GC-content
+    - method
+  Literature:
+    slots:
+    - topic
+    - Pubmed-ID
+    - title
+    - authors
+    - journal
+    - DOI
+    - year
+    - mesh
+    - topic2
+  CellMorphology:
+    slots:
+    - '@ref'
+    - gram stain
+    - cell shape
+    - motility
+    - cell length
+    - cell width
+    - flagellum arrangement
+  ColonyMorphology:
+    slots:
+    - '@ref'
+    - incubation period
+    - type of hemolysis
+    - colony size
+    - colony color
+    - colony shape
+    - medium used
+    - hemolysis ability
+  Taxonmap:
+    slots:
+    - '@ref'
+    - File name
+    - url
+    - Last taxonomy
+    - x16S sequence
+    - Total samples
+    - aquatic counts
+    - animal counts
+    - plant counts
+    - soil counts
+  CompoundProduction:
+    slots:
+    - '@ref'
+    - compound
+  Observation:
+    slots:
+    - '@ref'
+    - observation
+    slot_usage:
+      observation:
+        range: string
+        inlined: false
+        inlined_as_list: false
+        multivalued: false
+  MetaboliteUtilization:
+    slots:
+    - '@ref'
+    - Chebi-ID
+    - metabolite
+    - utilization activity
+    - kind of utilization tested
+  MetaboliteProduction:
+    slots:
+    - '@ref'
+    - Chebi-ID
+    - metabolite
+    - production
+    - excretion
+  Enzyme:
+    slots:
+    - '@ref'
+    - value
+    - activity
+    - ec
+  APIZym:
+    slots:
+    - '@ref'
+    - Control
+    - Alkaline phosphatase
+    - Esterase
+    - Esterase Lipase
+    - Lipase
+    - Leucine arylamidase
+    - Valine arylamidase
+    - Cystine arylamidase
+    - Trypsin
+    - alpha- Chymotrypsin
+    - Acid phosphatase
+    - Naphthol-AS-BI-phosphohydrolase
+    - alpha- Galactosidase
+    - beta- Galactosidase
+    - beta- Glucuronidase
+    - alpha- Glucosidase
+    - beta- Glucosidase
+    - N-acetyl-beta- glucosaminidase
+    - alpha- Mannosidase
+    - alpha- Fucosidase
+  AntibioticResistance:
+    slots:
+    - '@ref'
+    - metabolite
+    - is antibiotic
+    - is sensitive
+    - is resistant
+    - ChEBI
+    - resistance conc.
+    - sensitivity conc.
+    - is intermediate
+    - intermediate conc.
+    - group ID
+  API50CHac:
+    slots:
+    - '@ref'
+    - GLY
+    - ERY
+    - DARA
+    - LARA
+    - RIB
+    - DXYL
+    - LXYL
+    - ADO
+    - MDX
+    - GAL
+    - GLU
+    - FRU
+    - MNE
+    - SBE
+    - RHA
+    - DUL
+    - INO
+    - MAN
+    - SOR
+    - MDM
+    - MDG
+    - NAG
+    - AMY
+    - ARB
+    - ESC
+    - SAL
+    - CEL
+    - MAL
+    - LAC
+    - MEL
+    - SAC
+    - TRE
+    - INU
+    - MLZ
+    - RAF
+    - AMD
+    - GLYG
+    - XLT
+    - GEN
+    - TUR
+    - LYX
+    - TAG
+    - DFUC
+    - LFUC
+    - DARL
+    - LARL
+    - GNT
+    - x2KG
+    - x5KG
+    - Q
+  Halophily:
+    slots:
+    - '@ref'
+    - salt
+    - growth
+    - tested relation
+    - concentration
+    - halophily level
+  SporeFormation:
+    slots:
+    - '@ref'
+    - spore formation
+    - type of spore
+    slot_usage:
+      spore formation:
+        range: string
+        inlined: false
+        inlined_as_list: false
+        multivalued: false
+  MetaboliteTest:
+    slots:
+    - '@ref'
+    - Chebi-ID
+    - metabolite
+    - indole test
+    - voges-proskauer-test
+    - methylred-test
+    - citrate test
+  APIRID32A:
+    slots:
+    - '@ref'
+    - URE
+    - ADH Arg
+    - alpha GAL
+    - beta GAL
+    - beta GP
+    - alpha GLU
+    - beta GLU
+    - alpha ARA
+    - beta GUR
+    - beta NAG
+    - MNE
+    - RAF
+    - GDC
+    - alpha FUC
+    - NIT
+    - IND
+    - PAL
+    - ArgA
+    - ProA
+    - LGA
+    - PheA
+    - LeuA
+    - PyrA
+    - TyrA
+    - AlaA
+    - GlyA
+    - HisA
+    - GGA
+    - SerA
+  Multimedia:
+    slots:
+    - '@ref'
+    - multimedia content
+    - caption
+    - intellectual property rights
+  Murein:
+    slots:
+    - '@ref'
+    - murein short key
+    - type
+  Pigmentation:
+    slots:
+    - '@ref'
+    - production
+    - color
+    - name
+  CulturePH:
+    slots:
+    - '@ref'
+    - ability
+    - type
+    - pH
+    - PH range
+  NutritionType:
+    slots:
+    - '@ref'
+    - type
+  API20NE:
+    slots:
+    - '@ref'
+    - NO3
+    - TRP
+    - GLU_ Ferm
+    - ADH Arg
+    - URE
+    - ESC
+    - GEL
+    - PNPG
+    - GLU_ Assim
+    - ARA
+    - MNE
+    - MAN
+    - NAG
+    - MAL
+    - GNT
+    - CAP
+    - ADI
+    - MLT
+    - CIT
+    - PAC
+    - OX
+  APIBiotype100:
+    slots:
+    - '@ref'
+    - GLU
+    - FRU
+    - GAL
+    - TRE
+    - MNE
+    - SBE
+    - MEL
+    - SAC
+    - RAF
+    - MTE
+    - MAL
+    - LAC
+    - LTE
+    - MbGa
+    - MaGa
+    - CEL
+    - GEN
+    - MbGu
+    - ESC
+    - RIB
+    - ARA
+    - XYL
+    - PLE
+    - RHA
+    - FUC
+    - MLZ
+    - DARL
+    - LARL
+    - XLT
+    - DUL
+    - TAG
+    - GLY
+    - INO
+    - MAN
+    - MTL
+    - TUR
+    - SOR
+    - ADO
+    - HBG
+    - LYX
+    - ERY
+    - MDG
+    - x3MDG
+    - SAT
+    - MUC
+    - LTAT
+    - DTAT
+    - MTAT
+    - DMLT
+    - LMLT
+    - CATE
+    - TATE
+    - TTE
+    - CIT
+    - GRT
+    - GAT
+    - x2KG
+    - x5KG
+    - TRY
+    - NAG
+    - GNT
+    - PAC
+    - PAT
+    - pOBE
+    - QAT
+    - GTE
+    - mOBE
+    - BAT
+    - PPAT
+    - CMT
+    - TGE
+    - BET
+    - PCE
+    - ABT
+    - HIN
+    - LAT
+    - CAP
+    - CYT
+    - HIS
+    - SUC
+    - FUM
+    - GRE
+    - GYT
+    - AVT
+    - ETN
+    - TTN
+    - GLN
+    - ITA
+    - x3OBU
+    - APT
+    - GTT
+    - PRO
+    - DALA
+    - LALA
+    - SER
+    - MNT
+    - PROP
+    - TYR
+    - x2KT
+  Tolerance:
+    slots:
+    - '@ref'
+    - compound
+    - percentage
+  FattyAcid:
+    slots:
+    - '@ref'
+    - fatty acid
+    - percentage
+    - ECL
+  FattyAcidProfile:
+    slots:
+    - fatty acids
+    - type of FA analysis
+    - method/protocol
+    - incubation medium
+    - agar/liquid
+    - incubation temperature
+    - incubation time
+    - software version
+    - system
+  API20E:
+    slots:
+    - '@ref'
+    - ONPG
+    - ADH Arg
+    - LDC Lys
+    - ODC
+    - CIT
+    - H2S
+    - URE
+    - TDA Trp
+    - IND
+    - VP
+    - GEL
+    - GLU
+    - INO
+    - Sor
+    - RHA
+    - SAC
+    - MEL
+    - NO2
+    - N2
+    - MAN
+    - AMY
+    - ARA
+    - OX
+    - MAC
+    - OF-O
+    - OF-F
+  APIRID32STR:
+    slots:
+    - '@ref'
+    - ADH Arg
+    - beta GLU
+    - beta GAR
+    - beta GUR
+    - alpha GAL
+    - PAL
+    - RIB
+    - MAN
+    - SOR
+    - LAC
+    - TRE
+    - RAF
+    - SAC
+    - LARA
+    - DARL
+    - CDEX
+    - VP
+    - APPA
+    - beta GAL
+    - PyrA
+    - beta NAG
+    - GTA
+    - HIP
+    - GLYG
+    - PUL
+    - MAL
+    - MEL
+    - MLZ
+    - Mbeta DG
+    - TAG
+    - beta MAN
+    - URE
+  APICoryne:
+    slots:
+    - '@ref'
+    - NIT
+    - PYZ
+    - PYRA
+    - PAL
+    - beta GUR
+    - beta GAL
+    - alpha GLU
+    - beta NAG
+    - ESC
+    - URE
+    - GEL
+    - Control
+    - GLU
+    - RIB
+    - XYL
+    - MAN
+    - MAL
+    - LAC
+    - SAC
+    - GLYG
+    - CAT
+  APINH:
+    slots:
+    - '@ref'
+    - PEN
+    - GLU
+    - FRU
+    - MAL
+    - SAC
+    - ODC
+    - URE
+    - LIP
+    - PAL
+    - beta GAL
+    - ProA
+    - GGT
+    - IND
+  APIID32STA:
+    slots:
+    - '@ref'
+    - URE
+    - ADH Arg
+    - ODC
+    - ESC
+    - GLU
+    - FRU
+    - MNE
+    - MAL
+    - LAC
+    - TRE
+    - MAN
+    - RAF
+    - RIB
+    - CEL
+    - NIT
+    - VP
+    - beta GAL
+    - ArgA
+    - PAL
+    - PyrA
+    - NOVO
+    - SAC
+    - NAG
+    - TUR
+    - ARA
+    - beta GUR
+  Phage:
+    slots:
+    - '@ref'
+    - name
+    - strain number
+    - link
+  APIID32E:
+    slots:
+    - '@ref'
+    - ODC
+    - ADH Arg
+    - LDC Lys
+    - URE
+    - LARL
+    - GAT
+    - x5KG
+    - LIP
+    - RP
+    - beta GLU
+    - MAN
+    - MAL
+    - ADO
+    - PLE
+    - beta GUR
+    - MNT
+    - IND
+    - beta NAG
+    - beta GAL
+    - GLU
+    - SAC
+    - LARA
+    - DARL
+    - alpha GLU
+    - alpha GAL
+    - TRE
+    - RHA
+    - INO
+    - CEL
+    - SOR
+    - alphaMAL
+    - AspA
+  Antibiogram:
+    slots:
+    - '@ref'
+    - medium
+    - Penicillin G
+    - oxacillin
+    - ampicillin
+    - ticarcillin
+    - mezlocillin
+    - cefalotin
+    - cefazolin
+    - cefotaxime
+    - aztreonam
+    - imipenem
+    - tetracycline
+    - chloramphenicol
+    - gentamycin
+    - amikacin
+    - vancomycin
+    - erythromycin
+    - lincomycin
+    - ofloxacin
+    - norfloxacin
+    - colistin
+    - pipemidic acid
+    - nitrofurantoin
+    - bacitracin
+    - polymyxin b
+    - kanamycin
+    - neomycin
+    - doxycycline
+    - ceftriaxone
+    - clindamycin
+    - fosfomycin
+    - moxifloxacin
+    - linezolid
+    - nystatin
+    - quinupristin/dalfopristin
+    - teicoplanin
+    - piperacillin/tazobactam
+  APISTA:
+    slots:
+    - '@ref'
+    - GLU
+    - FRU
+    - MNE
+    - MAL
+    - LAC
+    - TRE
+    - MAN
+    - XLT
+    - MEL
+    - NIT
+    - PAL
+    - VP
+    - RAF
+    - XYL
+    - SAC
+    - MDG
+    - NAG
+    - ADH
+    - URE
+    - LSTR
+  APICAM:
+    slots:
+    - '@ref'
+    - URE
+    - NIT
+    - EST
+    - HIP
+    - GGT
+    - TTC
+    - PYRA
+    - ArgA
+    - AspA
+    - PAL
+    - H2S
+    - GLU
+    - SUT
+    - NAL
+    - CFZ
+    - ACE
+    - PROP
+    - MLT
+    - CIT
+    - ERO
+    - CAT
+  APILIST:
+    slots:
+    - '@ref'
+    - DIM
+    - ESC
+    - alpha MAN
+    - DARL
+    - XYL
+    - RHA
+    - MDG
+    - RIB
+    - G1P
+    - TAG
+  BacDiveStrain:
+    slots:
+    - _id
+    - General
+    - Name and taxonomic classification
+    - Morphology
+    - Culture and growth conditions
+    - Physiology and metabolism
+    - Isolation, sampling and environmental information
+    - Safety information
+    - Sequence information
+    - Genome-based predictions
+    - External links
+    - Reference
+    description: One BacDive strain record (one item of the top-level JSON array).
+  BacDiveStrainCollection:
+    tree_root: true
+    description: Container for a set of BacDive strain records.
+    attributes:
+      strains:
+        range: BacDiveStrain
+        multivalued: true
+        inlined_as_list: true
+        description: The strain records.
+slots:
+  $oid:
+    examples:
+    - value: 688b702e16cfda6e4937d57d
+    identifier: true
+    range: string
+  NCBI tax id:
+    examples:
+    - value: '1390'
+    range: NCBITaxId
+    multivalued: true
+    inlined_as_list: true
+  Matching level:
+    examples:
+    - value: species
+    range: string
+  '@ref':
+    examples:
+    - value: '412'
+    range: string
+  history:
+    examples:
+    - value: <- OUT, 8421 (<I>Bacillus</I> <I>subtilis</I>) <- T. Seki, S219
+    range: string
+  BacDive-ID:
+    examples:
+    - value: '596'
+    range: string
+  DSM-Number:
+    examples:
+    - value: '1066'
+    range: string
+  keywords:
+    examples:
+    - value: '[''Bacteria'', ''mesophilic'']'
+    range: string
+    multivalued: true
+  description:
+    examples:
+    - value: Bacillus amyloliquefaciens S219 is a mesophilic bacterium that was isolated from soil.
+    range: string
+  strain history:
+    examples:
+    - value: '[''$ref:StrainHistory'', ''$ref:StrainHistory'']'
+    range: StrainHistory
+    multivalued: true
+    inlined_as_list: true
+  doi:
+    examples:
+    - value: 10.13145/bacdive596.20241212.9.2
+    range: string
+  synonym:
+    examples:
+    - value: Bacillus azotoformans
+    range: string
+  keyword:
+    examples:
+    - value: phylum/bacillota
+    range: string
+  domain:
+    examples:
+    - value: Bacteria
+    range: string
+  phylum:
+    examples:
+    - value: Bacillota
+    range: string
+  class:
+    examples:
+    - value: Bacilli
+    range: string
+  order:
+    examples:
+    - value: Caryophanales
+    range: string
+  family:
+    examples:
+    - value: Bacillaceae
+    range: string
+  genus:
+    examples:
+    - value: Bacillus
+    range: string
+  species:
+    examples:
+    - value: Bacillus amyloliquefaciens
+    range: string
+  full scientific name:
+    examples:
+    - value: <I>Bacillus</I> <I>amyloliquefaciens</I> (ex Fukomoto 1943) Priest et al. 1987
+    range: string
+  synonyms:
+    examples:
+    - value: '[''$ref:Synonym'', ''$ref:Synonym'']'
+    range: Synonym
+    multivalued: true
+    inlined_as_list: true
+  LPSN:
+    identifier: true
+    range: LPSN
+    inlined: true
+  strain designation:
+    examples:
+    - value: S219
+    range: string
+  type strain:
+    examples:
+    - value: 'no'
+    range: string
+  variant:
+    examples:
+    - value: Isotype of BacDive ID 131095
+    range: string
+  cell morphology:
+    examples:
+    - value: '[''$ref:CellMorphology'', ''$ref:CellMorphology'']'
+    range: CellMorphology
+    multivalued: true
+    inlined_as_list: true
+  colony morphology:
+    examples:
+    - value: '[''$ref:ColonyMorphology'', ''$ref:ColonyMorphology'']'
+    range: ColonyMorphology
+    multivalued: true
+    inlined_as_list: true
+  multimedia:
+    examples:
+    - value: '[''$ref:Multimedia'', ''$ref:Multimedia'', ''$ref:Multimedia'', ''$ref:Multimedia'']'
+    range: Multimedia
+    multivalued: true
+    inlined_as_list: true
+  pigmentation:
+    examples:
+    - value: '[''$ref:Pigmentation'', ''$ref:Pigmentation'']'
+    range: Pigmentation
+    multivalued: true
+    inlined_as_list: true
+  name:
+    examples:
+    - value: NUTRIENT AGAR (DSMZ Medium 1)
+    range: string
+  growth:
+    examples:
+    - value: 'yes'
+    range: string
+  link:
+    examples:
+    - value: https://mediadive.dsmz.de/medium/1
+    range: string
+  composition:
+    examples:
+    - value: 'Name: NUTRIENT AGAR (DSMZ Medium 1)
+
+        Composition:
+
+        Agar 15.0 g/l
+
+        Peptone 5.0 g/l
+
+        Meat extract 3.0 g/l
+
+        Distilled water'
+    range: string
+  type:
+    examples:
+    - value: growth
+    range: string
+  temperature:
+    examples:
+    - value: '30'
+    range: string
+  culture medium:
+    examples:
+    - value: '[''$ref:CultureMedium'', ''$ref:CultureMedium'', ''$ref:CultureMedium'']'
+    range: CultureMedium
+    multivalued: true
+    inlined_as_list: true
+  culture temp:
+    examples:
+    - value: '[''$ref:CultureTemp'', ''$ref:CultureTemp'', ''$ref:CultureTemp'', ''$ref:CultureTemp'',
+        ''$ref:CultureTemp'']'
+    range: CultureTemp
+    multivalued: true
+    inlined_as_list: true
+  culture pH:
+    examples:
+    - value: '[''$ref:CulturePH'', ''$ref:CulturePH'']'
+    range: CulturePH
+    multivalued: true
+    inlined_as_list: true
+  oxygen tolerance:
+    examples:
+    - value: '[''$ref:OxygenTolerance'', ''$ref:OxygenTolerance'', ''$ref:OxygenTolerance'', ''$ref:OxygenTolerance'']'
+    range: OxygenTolerance
+    multivalued: true
+    inlined_as_list: true
+  compound production:
+    examples:
+    - value: '[''$ref:CompoundProduction'', ''$ref:CompoundProduction'']'
+    range: CompoundProduction
+    multivalued: true
+    inlined_as_list: true
+  observation:
+    examples:
+    - value: '[''$ref:Observation'', ''$ref:Observation'']'
+    range: Observation
+    multivalued: true
+    inlined_as_list: true
+  metabolite utilization:
+    examples:
+    - value: '[''$ref:MetaboliteUtilization'', ''$ref:MetaboliteUtilization'', ''$ref:MetaboliteUtilization'',
+        ''$ref:MetaboliteUtilization'']'
+    range: MetaboliteUtilization
+    multivalued: true
+    inlined_as_list: true
+  metabolite production:
+    examples:
+    - value: '[''$ref:MetaboliteProduction'', ''$ref:MetaboliteProduction'']'
+    range: MetaboliteProduction
+    multivalued: true
+    inlined_as_list: true
+  enzymes:
+    examples:
+    - value: '[''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'',
+        ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'',
+        ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'',
+        ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'',
+        ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'', ''$ref:Enzyme'']'
+    range: Enzyme
+    multivalued: true
+    inlined_as_list: true
+  API zym:
+    examples:
+    - value: '[''$ref:APIZym'', ''$ref:APIZym'']'
+    range: APIZym
+    multivalued: true
+    inlined_as_list: true
+  antibiotic resistance:
+    examples:
+    - value: '[''$ref:AntibioticResistance'', ''$ref:AntibioticResistance'', ''$ref:AntibioticResistance'',
+        ''$ref:AntibioticResistance'', ''$ref:AntibioticResistance'']'
+    range: AntibioticResistance
+    multivalued: true
+    inlined_as_list: true
+  API 50CHac:
+    examples:
+    - value: '[''$ref:API50CHac'', ''$ref:API50CHac'']'
+    range: API50CHac
+    multivalued: true
+    inlined_as_list: true
+  halophily:
+    examples:
+    - value: '[''$ref:Halophily'', ''$ref:Halophily'', ''$ref:Halophily'', ''$ref:Halophily'', ''$ref:Halophily'',
+        ''$ref:Halophily'', ''$ref:Halophily'']'
+    range: Halophily
+    multivalued: true
+    inlined_as_list: true
+  spore formation:
+    examples:
+    - value: '[''$ref:SporeFormation'', ''$ref:SporeFormation'']'
+    range: SporeFormation
+    multivalued: true
+    inlined_as_list: true
+  metabolite tests:
+    examples:
+    - value: '[''$ref:MetaboliteTest'', ''$ref:MetaboliteTest'']'
+    range: MetaboliteTest
+    multivalued: true
+    inlined_as_list: true
+  API rID32A:
+    examples:
+    - value: '[''$ref:APIRID32A'', ''$ref:APIRID32A'', ''$ref:APIRID32A'']'
+    range: APIRID32A
+    multivalued: true
+    inlined_as_list: true
+  murein:
+    examples:
+    - value: '[''$ref:Murein'', ''$ref:Murein'']'
+    range: Murein
+    multivalued: true
+    inlined_as_list: true
+  nutrition type:
+    examples:
+    - value: '[''$ref:NutritionType'', ''$ref:NutritionType'']'
+    range: NutritionType
+    multivalued: true
+    inlined_as_list: true
+  API 20NE:
+    examples:
+    - value: '[''$ref:API20NE'', ''$ref:API20NE'']'
+    range: API20NE
+    multivalued: true
+    inlined_as_list: true
+  API biotype100:
+    range: APIBiotype100
+    inlined: true
+  tolerance:
+    examples:
+    - value: '[''$ref:Tolerance'', ''$ref:Tolerance'', ''$ref:Tolerance'']'
+    range: Tolerance
+    multivalued: true
+    inlined_as_list: true
+  fatty acid profile:
+    examples:
+    - value: '[''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'',
+        ''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'',
+        ''$ref:FattyAcidProfile'', ''$ref:FattyAcidProfile'']'
+    range: FattyAcidProfile
+    multivalued: true
+    inlined_as_list: true
+  API 20E:
+    examples:
+    - value: '[''$ref:API20E'', ''$ref:API20E'', ''$ref:API20E'']'
+    range: API20E
+    multivalued: true
+    inlined_as_list: true
+  API rID32STR:
+    examples:
+    - value: '[''$ref:APIRID32STR'', ''$ref:APIRID32STR'']'
+    range: APIRID32STR
+    multivalued: true
+    inlined_as_list: true
+  API coryne:
+    examples:
+    - value: '[''$ref:APICoryne'', ''$ref:APICoryne'']'
+    range: APICoryne
+    multivalued: true
+    inlined_as_list: true
+  API NH:
+    examples:
+    - value: '[''$ref:APINH'', ''$ref:APINH'', ''$ref:APINH'']'
+    range: APINH
+    multivalued: true
+    inlined_as_list: true
+  API ID32STA:
+    examples:
+    - value: '[''$ref:APIID32STA'', ''$ref:APIID32STA'']'
+    range: APIID32STA
+    multivalued: true
+    inlined_as_list: true
+  API ID32E:
+    range: APIID32E
+    inlined: true
+  antibiogram:
+    range: Antibiogram
+    inlined: true
+  API STA:
+    range: APISTA
+    inlined: true
+  API CAM:
+    examples:
+    - value: '[''$ref:APICAM'', ''$ref:APICAM'']'
+    range: APICAM
+    multivalued: true
+    inlined_as_list: true
+  API LIST:
+    range: APILIST
+    inlined: true
+  sample type:
+    examples:
+    - value: soil
+    range: string
+  geographic location:
+    examples:
+    - value: Azores
+    range: string
+  country:
+    examples:
+    - value: Portugal
+    range: string
+  origin.country:
+    examples:
+    - value: PRT
+    range: string
+  continent:
+    examples:
+    - value: Europe
+    range: string
+  isolation date:
+    examples:
+    - value: '1992'
+    range: string
+  enrichment culture:
+    examples:
+    - value: marine enrichment community growing on pulp mill eflluent as the sole carbon source
+    range: string
+  enrichment culture duration:
+    examples:
+    - value: 1 day
+    range: string
+  enrichment culture temperature:
+    examples:
+    - value: '25'
+    range: string
+  sampling date:
+    examples:
+    - value: '1992-11-24'
+    range: string
+  host species:
+    examples:
+    - value: Hibiscus
+    range: string
+  latitude:
+    examples:
+    - value: '37.5922'
+    range: string
+  longitude:
+    examples:
+    - value: '126.457'
+    range: string
+  isolation procedure:
+    examples:
+    - value: diluted with sterilized artificial sea water
+    range: string
+  enrichment culture composition:
+    examples:
+    - value: ferrous iron,ferrous iron,tryptone soya broth,potassium tetrathionate
+    range: string
+  Cat1:
+    examples:
+    - value: '#Environmental'
+    range: string
+  Cat2:
+    examples:
+    - value: '#Terrestrial'
+    range: string
+  Cat3:
+    examples:
+    - value: '#Soil'
+    range: string
+  isolation:
+    examples:
+    - value: '[''$ref:Isolation'', ''$ref:Isolation'']'
+    range: Isolation
+    multivalued: true
+    inlined_as_list: true
+  isolation source categories:
+    examples:
+    - value: '[''$ref:IsolationSourceCategory'', ''$ref:IsolationSourceCategory'']'
+    range: IsolationSourceCategory
+    multivalued: true
+    inlined_as_list: true
+  taxonmaps:
+    range: Taxonmap
+    inlined: true
+  pathogenicity animal:
+    examples:
+    - value: 'yes'
+    range: string
+  biosafety level:
+    examples:
+    - value: '1'
+    range: string
+  biosafety level comment:
+    examples:
+    - value: Risk group (German classification)
+    range: string
+  pathogenicity human:
+    examples:
+    - value: yes, in single cases
+    range: string
+  risk assessment:
+    examples:
+    - value: '[''$ref:RiskAssessment'', ''$ref:RiskAssessment'']'
+    range: RiskAssessment
+    multivalued: true
+    inlined_as_list: true
+  x16S sequences:
+    examples:
+    - value: '[''$ref:X16SSequence'', ''$ref:X16SSequence'', ''$ref:X16SSequence'', ''$ref:X16SSequence'']'
+    range: X16SSequence
+    multivalued: true
+    inlined_as_list: true
+  Genome sequences:
+    examples:
+    - value: '[''$ref:GenomeSequence'', ''$ref:GenomeSequence'', ''$ref:GenomeSequence'']'
+    range: GenomeSequence
+    multivalued: true
+    inlined_as_list: true
+  GC content:
+    examples:
+    - value: '[''$ref:GCContent'', ''$ref:GCContent'']'
+    range: GCContent
+    multivalued: true
+    inlined_as_list: true
+  straininfo:
+    examples:
+    - value: '47313'
+    range: string
+  culture collection no.:
+    examples:
+    - value: DSM 1066, OUT 8421
+    range: string
+  straininfo link:
+    examples:
+    - value: '[''$ref:StraininfoLink'', ''$ref:StraininfoLink'']'
+    range: StraininfoLink
+    multivalued: true
+    inlined_as_list: true
+  literature:
+    examples:
+    - value: '[''$ref:Literature'', ''$ref:Literature'']'
+    range: Literature
+    multivalued: true
+    inlined_as_list: true
+  phages:
+    examples:
+    - value: '[''$ref:Phage'', ''$ref:Phage'']'
+    range: Phage
+    multivalued: true
+    inlined_as_list: true
+  '@id':
+    examples:
+    - value: '70273'
+    range: string
+  authors:
+    examples:
+    - value: Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann,
+        J.
+    range: string
+  catalogue:
+    examples:
+    - value: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 1066)
+    range: string
+  doi/url:
+    examples:
+    - value: 10.60712/SI-ID47313.1
+    range: string
+  title:
+    examples:
+    - value: 'StrainInfo: A central database for resolving microbial strain identifiers'
+    range: string
+  journal:
+    examples:
+    - value: 'Nucleic Acids Res. 49: D498-D508 2020'
+    range: string
+  pubmed:
+    examples:
+    - value: '33211880'
+    range: string
+  ID_cross_reference:
+    examples:
+    - value: '26511'
+    range: string
+  _id:
+    identifier: true
+    range: Id
+    inlined: true
+    description: 'MongoDB document id wrapper ({$oid: ...}).'
+  General:
+    range: General
+    inlined: true
+  Name and taxonomic classification:
+    range: NameAndTaxonomicClassification
+    inlined: true
+  Morphology:
+    range: Morphology
+    inlined: true
+  Culture and growth conditions:
+    range: CultureAndGrowthCondition
+    inlined: true
+  Physiology and metabolism:
+    range: PhysiologyAndMetabolism
+    inlined: true
+  Isolation, sampling and environmental information:
+    range: IsolationSamplingAndEnvironmentalInformation
+    inlined: true
+  Safety information:
+    range: SafetyInformation
+    inlined: true
+  Sequence information:
+    range: SequenceInformation
+    inlined: true
+  Genome-based predictions:
+    range: Genome-basedPrediction
+    inlined: true
+  External links:
+    range: ExternalLink
+    inlined: true
+  Reference:
+    examples:
+    - value: '[''$ref:Reference'', ''$ref:Reference'', ''$ref:Reference'']'
+    range: Reference
+    multivalued: true
+    inlined_as_list: true
+  accession:
+    examples:
+    - value: AJ133633
+    range: string
+  length:
+    examples:
+    - value: '1485'
+    range: string
+  database:
+    examples:
+    - value: nuccore
+    range: string
+  NCBI tax ID:
+    examples:
+    - value: '89784'
+    range: string
+  assembly level:
+    examples:
+    - value: draft
+    range: string
+  GC-content:
+    examples:
+    - value: '53.1'
+    range: string
+  method:
+    examples:
+    - value: thermal denaturation, midpoint method (Tm)
+    range: string
+  topic:
+    examples:
+    - value: Phylogeny
+    range: string
+  Pubmed-ID:
+    examples:
+    - value: '10758847'
+    range: string
+  DOI:
+    examples:
+    - value: 10.1099/00207713-50-2-451
+    range: string
+  year:
+    examples:
+    - value: '2000'
+    range: string
+  mesh:
+    examples:
+    - value: Azores, Bacterial Typing Techniques, Fatty Acids/analysis, Genes, rRNA, Gram-Positive Endospore-Forming
+        Rods/*classification/genetics/*isolation & purification/physiology, Lipids/analysis, Molecular
+        Sequence Data, Phylogeny, RNA, Ribosomal, 16S/genetics, Sequence Analysis, DNA, *Soil Microbiology,
+        Temperature
+    range: string
+  topic2:
+    examples:
+    - value: Genetics
+    range: string
+  gram stain:
+    examples:
+    - value: negative
+    range: string
+  cell shape:
+    examples:
+    - value: rod-shaped
+    range: string
+  motility:
+    examples:
+    - value: 'no'
+    range: string
+  cell length:
+    examples:
+    - value: 2 µm
+    range: string
+  cell width:
+    examples:
+    - value: 0.5-1.0 µm
+    range: string
+  flagellum arrangement:
+    examples:
+    - value: monotrichous, polar
+    range: string
+  incubation period:
+    examples:
+    - value: 2 days
+    range: string
+  type of hemolysis:
+    examples:
+    - value: gamma
+    range: string
+  colony size:
+    examples:
+    - value: 2-5 mm
+    range: string
+  colony color:
+    examples:
+    - value: white, opaque
+    range: string
+  colony shape:
+    examples:
+    - value: circular
+    range: string
+  medium used:
+    examples:
+    - value: MA
+    range: string
+  hemolysis ability:
+    examples:
+    - value: '1'
+    range: string
+  File name:
+    examples:
+    - value: preview.99_7326.png
+    range: string
+  url:
+    examples:
+    - value: https://microbeatlas.org/index.html?action=taxon&taxon_id=90_313;96_2480;97_4206;98_5373;99_7326&stattab=map
+    range: string
+  Last taxonomy:
+    examples:
+    - value: Alicyclobacillus
+    range: string
+  x16S sequence:
+    examples:
+    - value: AJ133633
+    range: string
+  Total samples:
+    examples:
+    - value: '1443'
+    range: string
+  aquatic counts:
+    examples:
+    - value: '153'
+    range: string
+  animal counts:
+    examples:
+    - value: '406'
+    range: string
+  plant counts:
+    examples:
+    - value: '154'
+    range: string
+  soil counts:
+    examples:
+    - value: '730'
+    range: string
+  compound:
+    examples:
+    - value: inhibitors for glycoside hydrolases
+    range: string
+  Chebi-ID:
+    examples:
+    - value: '16301'
+    range: string
+  metabolite:
+    examples:
+    - value: nitrite
+    range: string
+  utilization activity:
+    examples:
+    - value: '-'
+    range: string
+  kind of utilization tested:
+    examples:
+    - value: reduction
+    range: string
+  production:
+    examples:
+    - value: 'no'
+    range: string
+  excretion:
+    examples:
+    - value: 'no'
+    range: string
+  value:
+    examples:
+    - value: beta-galactosidase
+    range: string
+  activity:
+    examples:
+    - value: +
+    range: string
+  ec:
+    examples:
+    - value: 3.2.1.23
+    range: string
+  Control:
+    examples:
+    - value: '-'
+    range: string
+  Alkaline phosphatase:
+    examples:
+    - value: '-'
+    range: string
+  Esterase:
+    examples:
+    - value: +
+    range: string
+  Esterase Lipase:
+    examples:
+    - value: +
+    range: string
+  Lipase:
+    examples:
+    - value: '-'
+    range: string
+  Leucine arylamidase:
+    examples:
+    - value: +
+    range: string
+  Valine arylamidase:
+    examples:
+    - value: +
+    range: string
+  Cystine arylamidase:
+    examples:
+    - value: +
+    range: string
+  Trypsin:
+    examples:
+    - value: +
+    range: string
+  alpha- Chymotrypsin:
+    examples:
+    - value: +
+    range: string
+  Acid phosphatase:
+    examples:
+    - value: +
+    range: string
+  Naphthol-AS-BI-phosphohydrolase:
+    examples:
+    - value: +
+    range: string
+  alpha- Galactosidase:
+    examples:
+    - value: +
+    range: string
+  beta- Galactosidase:
+    examples:
+    - value: +
+    range: string
+  beta- Glucuronidase:
+    examples:
+    - value: '-'
+    range: string
+  alpha- Glucosidase:
+    examples:
+    - value: +
+    range: string
+  beta- Glucosidase:
+    examples:
+    - value: +
+    range: string
+  N-acetyl-beta- glucosaminidase:
+    examples:
+    - value: '-'
+    range: string
+  alpha- Mannosidase:
+    examples:
+    - value: '-'
+    range: string
+  alpha- Fucosidase:
+    examples:
+    - value: '-'
+    range: string
+  is antibiotic:
+    examples:
+    - value: 'yes'
+    range: string
+  is sensitive:
+    examples:
+    - value: 'no'
+    range: string
+  is resistant:
+    examples:
+    - value: 'yes'
+    range: string
+  ChEBI:
+    examples:
+    - value: '48923'
+    range: string
+  resistance conc.:
+    examples:
+    - value: 30 µg
+    range: string
+  sensitivity conc.:
+    examples:
+    - value: 15 µg
+    range: string
+  is intermediate:
+    examples:
+    - value: 'yes'
+    range: string
+  intermediate conc.:
+    examples:
+    - value: 30 µg
+    range: string
+  group ID:
+    examples:
+    - value: '19'
+    range: string
+  GLY:
+    examples:
+    - value: '-'
+    range: string
+  ERY:
+    examples:
+    - value: '-'
+    range: string
+  DARA:
+    examples:
+    - value: '-'
+    range: string
+  LARA:
+    examples:
+    - value: '-'
+    range: string
+  RIB:
+    examples:
+    - value: '-'
+    range: string
+  DXYL:
+    examples:
+    - value: '-'
+    range: string
+  LXYL:
+    examples:
+    - value: '-'
+    range: string
+  ADO:
+    examples:
+    - value: '-'
+    range: string
+  MDX:
+    examples:
+    - value: '-'
+    range: string
+  GAL:
+    examples:
+    - value: '-'
+    range: string
+  GLU:
+    examples:
+    - value: +
+    range: string
+  FRU:
+    examples:
+    - value: +
+    range: string
+  MNE:
+    examples:
+    - value: +
+    range: string
+  SBE:
+    examples:
+    - value: '-'
+    range: string
+  RHA:
+    examples:
+    - value: '-'
+    range: string
+  DUL:
+    examples:
+    - value: '-'
+    range: string
+  INO:
+    examples:
+    - value: '-'
+    range: string
+  MAN:
+    examples:
+    - value: '-'
+    range: string
+  SOR:
+    examples:
+    - value: '-'
+    range: string
+  MDM:
+    examples:
+    - value: '-'
+    range: string
+  MDG:
+    examples:
+    - value: '-'
+    range: string
+  NAG:
+    examples:
+    - value: '-'
+    range: string
+  AMY:
+    examples:
+    - value: '-'
+    range: string
+  ARB:
+    examples:
+    - value: +/-
+    range: string
+  ESC:
+    examples:
+    - value: '-'
+    range: string
+  SAL:
+    examples:
+    - value: '-'
+    range: string
+  CEL:
+    examples:
+    - value: '-'
+    range: string
+  MAL:
+    examples:
+    - value: +
+    range: string
+  LAC:
+    examples:
+    - value: '-'
+    range: string
+  MEL:
+    examples:
+    - value: '-'
+    range: string
+  SAC:
+    examples:
+    - value: +
+    range: string
+  TRE:
+    examples:
+    - value: +
+    range: string
+  INU:
+    examples:
+    - value: '-'
+    range: string
+  MLZ:
+    examples:
+    - value: '-'
+    range: string
+  RAF:
+    examples:
+    - value: '-'
+    range: string
+  AMD:
+    examples:
+    - value: +/-
+    range: string
+  GLYG:
+    examples:
+    - value: '-'
+    range: string
+  XLT:
+    examples:
+    - value: '-'
+    range: string
+  GEN:
+    examples:
+    - value: '-'
+    range: string
+  TUR:
+    examples:
+    - value: +/-
+    range: string
+  LYX:
+    examples:
+    - value: '-'
+    range: string
+  TAG:
+    examples:
+    - value: '-'
+    range: string
+  DFUC:
+    examples:
+    - value: '-'
+    range: string
+  LFUC:
+    examples:
+    - value: '-'
+    range: string
+  DARL:
+    examples:
+    - value: '-'
+    range: string
+  LARL:
+    examples:
+    - value: '-'
+    range: string
+  GNT:
+    examples:
+    - value: '-'
+    range: string
+  x2KG:
+    examples:
+    - value: '-'
+    range: string
+  x5KG:
+    examples:
+    - value: +/-
+    range: string
+  Q:
+    examples:
+    - value: '-'
+    range: string
+  salt:
+    examples:
+    - value: NaCl
+    range: string
+  tested relation:
+    examples:
+    - value: growth
+    range: string
+  concentration:
+    examples:
+    - value: 10 %
+    range: string
+  halophily level:
+    examples:
+    - value: halotolerant
+    range: string
+  type of spore:
+    examples:
+    - value: spore
+    range: string
+  indole test:
+    examples:
+    - value: '-'
+    range: string
+  voges-proskauer-test:
+    examples:
+    - value: '-'
+    range: string
+  methylred-test:
+    examples:
+    - value: '-'
+    range: string
+  citrate test:
+    examples:
+    - value: '-'
+    range: string
+  URE:
+    examples:
+    - value: '-'
+    range: string
+  ADH Arg:
+    examples:
+    - value: '-'
+    range: string
+  alpha GAL:
+    examples:
+    - value: '-'
+    range: string
+  beta GAL:
+    examples:
+    - value: '-'
+    range: string
+  beta GP:
+    examples:
+    - value: '-'
+    range: string
+  alpha GLU:
+    examples:
+    - value: '-'
+    range: string
+  beta GLU:
+    examples:
+    - value: '-'
+    range: string
+  alpha ARA:
+    examples:
+    - value: '-'
+    range: string
+  beta GUR:
+    examples:
+    - value: '-'
+    range: string
+  beta NAG:
+    examples:
+    - value: '-'
+    range: string
+  GDC:
+    examples:
+    - value: '-'
+    range: string
+  alpha FUC:
+    examples:
+    - value: '-'
+    range: string
+  NIT:
+    examples:
+    - value: '-'
+    range: string
+  IND:
+    examples:
+    - value: '-'
+    range: string
+  PAL:
+    examples:
+    - value: '-'
+    range: string
+  ArgA:
+    examples:
+    - value: +
+    range: string
+  ProA:
+    examples:
+    - value: '-'
+    range: string
+  LGA:
+    examples:
+    - value: '-'
+    range: string
+  PheA:
+    examples:
+    - value: '-'
+    range: string
+  LeuA:
+    examples:
+    - value: +
+    range: string
+  PyrA:
+    examples:
+    - value: '-'
+    range: string
+  TyrA:
+    examples:
+    - value: '-'
+    range: string
+  AlaA:
+    examples:
+    - value: +
+    range: string
+  GlyA:
+    examples:
+    - value: '-'
+    range: string
+  HisA:
+    examples:
+    - value: '-'
+    range: string
+  GGA:
+    examples:
+    - value: '-'
+    range: string
+  SerA:
+    examples:
+    - value: '-'
+    range: string
+  multimedia content:
+    examples:
+    - value: EM_DSM_15300_4.jpg
+    range: string
+  caption:
+    examples:
+    - value: electron microscopic image
+    range: string
+  intellectual property rights:
+    examples:
+    - value: © HZI/Manfred Rohde
+    range: string
+  murein short key:
+    examples:
+    - value: A11.51
+    range: string
+  color:
+    examples:
+    - value: brown
+    range: string
+  ability:
+    examples:
+    - value: 'no'
+    range: string
+  pH:
+    examples:
+    - value: '6'
+    range: string
+  PH range:
+    examples:
+    - value: alkaliphile
+    range: string
+  NO3:
+    examples:
+    - value: '-'
+    range: string
+  TRP:
+    examples:
+    - value: '-'
+    range: string
+  GLU_ Ferm:
+    examples:
+    - value: '-'
+    range: string
+  GEL:
+    examples:
+    - value: +
+    range: string
+  PNPG:
+    examples:
+    - value: +
+    range: string
+  GLU_ Assim:
+    examples:
+    - value: '-'
+    range: string
+  ARA:
+    examples:
+    - value: '-'
+    range: string
+  CAP:
+    examples:
+    - value: '-'
+    range: string
+  ADI:
+    examples:
+    - value: '-'
+    range: string
+  MLT:
+    examples:
+    - value: '-'
+    range: string
+  CIT:
+    examples:
+    - value: '-'
+    range: string
+  PAC:
+    examples:
+    - value: '-'
+    range: string
+  OX:
+    examples:
+    - value: +
+    range: string
+  MTE:
+    examples:
+    - value: +
+    range: string
+  LTE:
+    examples:
+    - value: '-'
+    range: string
+  MbGa:
+    examples:
+    - value: '-'
+    range: string
+  MaGa:
+    examples:
+    - value: '-'
+    range: string
+  MbGu:
+    examples:
+    - value: '-'
+    range: string
+  XYL:
+    examples:
+    - value: '-'
+    range: string
+  PLE:
+    examples:
+    - value: '-'
+    range: string
+  FUC:
+    examples:
+    - value: '-'
+    range: string
+  MTL:
+    examples:
+    - value: '-'
+    range: string
+  HBG:
+    examples:
+    - value: '-'
+    range: string
+  x3MDG:
+    examples:
+    - value: '-'
+    range: string
+  SAT:
+    examples:
+    - value: '-'
+    range: string
+  MUC:
+    examples:
+    - value: '-'
+    range: string
+  LTAT:
+    examples:
+    - value: '-'
+    range: string
+  DTAT:
+    examples:
+    - value: '-'
+    range: string
+  MTAT:
+    examples:
+    - value: '-'
+    range: string
+  DMLT:
+    examples:
+    - value: '-'
+    range: string
+  LMLT:
+    examples:
+    - value: +
+    range: string
+  CATE:
+    examples:
+    - value: '-'
+    range: string
+  TATE:
+    examples:
+    - value: '-'
+    range: string
+  TTE:
+    examples:
+    - value: '-'
+    range: string
+  GRT:
+    examples:
+    - value: '-'
+    range: string
+  GAT:
+    examples:
+    - value: '-'
+    range: string
+  TRY:
+    examples:
+    - value: '-'
+    range: string
+  PAT:
+    examples:
+    - value: '-'
+    range: string
+  pOBE:
+    examples:
+    - value: '-'
+    range: string
+  QAT:
+    examples:
+    - value: '-'
+    range: string
+  GTE:
+    examples:
+    - value: '-'
+    range: string
+  mOBE:
+    examples:
+    - value: '-'
+    range: string
+  BAT:
+    examples:
+    - value: '-'
+    range: string
+  PPAT:
+    examples:
+    - value: '-'
+    range: string
+  CMT:
+    examples:
+    - value: '-'
+    range: string
+  TGE:
+    examples:
+    - value: '-'
+    range: string
+  BET:
+    examples:
+    - value: '-'
+    range: string
+  PCE:
+    examples:
+    - value: '-'
+    range: string
+  ABT:
+    examples:
+    - value: '-'
+    range: string
+  HIN:
+    examples:
+    - value: '-'
+    range: string
+  LAT:
+    examples:
+    - value: '-'
+    range: string
+  CYT:
+    examples:
+    - value: '-'
+    range: string
+  HIS:
+    examples:
+    - value: '-'
+    range: string
+  SUC:
+    examples:
+    - value: +
+    range: string
+  FUM:
+    examples:
+    - value: +
+    range: string
+  GRE:
+    examples:
+    - value: '-'
+    range: string
+  GYT:
+    examples:
+    - value: '-'
+    range: string
+  AVT:
+    examples:
+    - value: '-'
+    range: string
+  ETN:
+    examples:
+    - value: '-'
+    range: string
+  TTN:
+    examples:
+    - value: '-'
+    range: string
+  GLN:
+    examples:
+    - value: '-'
+    range: string
+  ITA:
+    examples:
+    - value: '-'
+    range: string
+  x3OBU:
+    examples:
+    - value: +
+    range: string
+  APT:
+    examples:
+    - value: '-'
+    range: string
+  GTT:
+    examples:
+    - value: '-'
+    range: string
+  PRO:
+    examples:
+    - value: '-'
+    range: string
+  DALA:
+    examples:
+    - value: '-'
+    range: string
+  LALA:
+    examples:
+    - value: +
+    range: string
+  SER:
+    examples:
+    - value: +
+    range: string
+  MNT:
+    examples:
+    - value: '-'
+    range: string
+  PROP:
+    examples:
+    - value: '-'
+    range: string
+  TYR:
+    examples:
+    - value: '-'
+    range: string
+  x2KT:
+    examples:
+    - value: '-'
+    range: string
+  percentage:
+    examples:
+    - value: '30'
+    range: string
+  fatty acid:
+    examples:
+    - value: unknown 11.798
+    range: string
+  ECL:
+    examples:
+    - value: '11.798'
+    range: string
+  fatty acids:
+    examples:
+    - value: '[''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'',
+        ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'',
+        ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'',
+        ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'',
+        ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'', ''$ref:FattyAcid'']'
+    range: FattyAcid
+    multivalued: true
+    inlined_as_list: true
+  type of FA analysis:
+    examples:
+    - value: whole cell analysis
+    range: string
+  method/protocol:
+    examples:
+    - value: CCUG
+    range: string
+  incubation medium:
+    examples:
+    - value: MA
+    range: string
+  agar/liquid:
+    examples:
+    - value: agar
+    range: string
+  incubation temperature:
+    examples:
+    - value: '25'
+    range: string
+  incubation time:
+    examples:
+    - value: '2'
+    range: string
+  software version:
+    examples:
+    - value: Sherlock 6.0
+    range: string
+  system:
+    examples:
+    - value: MIS MIDI
+    range: string
+  ONPG:
+    examples:
+    - value: '-'
+    range: string
+  LDC Lys:
+    examples:
+    - value: '-'
+    range: string
+  ODC:
+    examples:
+    - value: '-'
+    range: string
+  H2S:
+    examples:
+    - value: '-'
+    range: string
+  TDA Trp:
+    examples:
+    - value: '-'
+    range: string
+  VP:
+    examples:
+    - value: '-'
+    range: string
+  Sor:
+    examples:
+    - value: '-'
+    range: string
+  NO2:
+    examples:
+    - value: '-'
+    range: string
+  N2:
+    examples:
+    - value: '-'
+    range: string
+  MAC:
+    examples:
+    - value: +
+    range: string
+  OF-O:
+    examples:
+    - value: '-'
+    range: string
+  OF-F:
+    examples:
+    - value: '-'
+    range: string
+  beta GAR:
+    examples:
+    - value: '-'
+    range: string
+  CDEX:
+    examples:
+    - value: '-'
+    range: string
+  APPA:
+    examples:
+    - value: +
+    range: string
+  GTA:
+    examples:
+    - value: '-'
+    range: string
+  HIP:
+    examples:
+    - value: +
+    range: string
+  PUL:
+    examples:
+    - value: '-'
+    range: string
+  Mbeta DG:
+    examples:
+    - value: '-'
+    range: string
+  beta MAN:
+    examples:
+    - value: '-'
+    range: string
+  PYZ:
+    examples:
+    - value: +
+    range: string
+  PYRA:
+    examples:
+    - value: +
+    range: string
+  CAT:
+    examples:
+    - value: +
+    range: string
+  PEN:
+    examples:
+    - value: '-'
+    range: string
+  LIP:
+    examples:
+    - value: '-'
+    range: string
+  GGT:
+    examples:
+    - value: +
+    range: string
+  NOVO:
+    examples:
+    - value: +
+    range: string
+  strain number:
+    examples:
+    - value: DSM 13414
+    range: string
+  RP:
+    examples:
+    - value: +
+    range: string
+  alphaMAL:
+    examples:
+    - value: '-'
+    range: string
+  AspA:
+    examples:
+    - value: +
+    range: string
+  medium:
+    examples:
+    - value: Mueller-Hinton Agar
+    range: string
+  Penicillin G:
+    examples:
+    - value: '0'
+    range: string
+  oxacillin:
+    examples:
+    - value: '0'
+    range: string
+  ampicillin:
+    examples:
+    - value: '0'
+    range: string
+  ticarcillin:
+    examples:
+    - value: '14'
+    range: string
+  mezlocillin:
+    examples:
+    - value: '28'
+    range: string
+  cefalotin:
+    examples:
+    - value: '10'
+    range: string
+  cefazolin:
+    examples:
+    - value: '14'
+    range: string
+  cefotaxime:
+    examples:
+    - value: '40'
+    range: string
+  aztreonam:
+    examples:
+    - value: '42'
+    range: string
+  imipenem:
+    examples:
+    - value: '38'
+    range: string
+  tetracycline:
+    examples:
+    - value: 32-34
+    range: string
+  chloramphenicol:
+    examples:
+    - value: '40'
+    range: string
+  gentamycin:
+    examples:
+    - value: '22'
+    range: string
+  amikacin:
+    examples:
+    - value: '24'
+    range: string
+  vancomycin:
+    examples:
+    - value: '0'
+    range: string
+  erythromycin:
+    examples:
+    - value: 20-22
+    range: string
+  lincomycin:
+    examples:
+    - value: '0'
+    range: string
+  ofloxacin:
+    examples:
+    - value: '38'
+    range: string
+  norfloxacin:
+    examples:
+    - value: '38'
+    range: string
+  colistin:
+    examples:
+    - value: '16'
+    range: string
+  pipemidic acid:
+    examples:
+    - value: '32'
+    range: string
+  nitrofurantoin:
+    examples:
+    - value: '32'
+    range: string
+  bacitracin:
+    examples:
+    - value: '0'
+    range: string
+  polymyxin b:
+    examples:
+    - value: '16'
+    range: string
+  kanamycin:
+    examples:
+    - value: 34-36
+    range: string
+  neomycin:
+    examples:
+    - value: 18-20
+    range: string
+  doxycycline:
+    examples:
+    - value: '30'
+    range: string
+  ceftriaxone:
+    examples:
+    - value: '36'
+    range: string
+  clindamycin:
+    examples:
+    - value: '0'
+    range: string
+  fosfomycin:
+    examples:
+    - value: '38'
+    range: string
+  moxifloxacin:
+    examples:
+    - value: '34'
+    range: string
+  linezolid:
+    examples:
+    - value: '10'
+    range: string
+  nystatin:
+    examples:
+    - value: '0'
+    range: string
+  quinupristin/dalfopristin:
+    examples:
+    - value: '10'
+    range: string
+  teicoplanin:
+    examples:
+    - value: '0'
+    range: string
+  piperacillin/tazobactam:
+    examples:
+    - value: '32'
+    range: string
+  ADH:
+    examples:
+    - value: +
+    range: string
+  LSTR:
+    examples:
+    - value: '-'
+    range: string
+  EST:
+    examples:
+    - value: +
+    range: string
+  TTC:
+    examples:
+    - value: +
+    range: string
+  SUT:
+    examples:
+    - value: +
+    range: string
+  NAL:
+    examples:
+    - value: '-'
+    range: string
+  CFZ:
+    examples:
+    - value: '-'
+    range: string
+  ACE:
+    examples:
+    - value: +
+    range: string
+  ERO:
+    examples:
+    - value: '-'
+    range: string
+  DIM:
+    examples:
+    - value: '-'
+    range: string
+  alpha MAN:
+    examples:
+    - value: '-'
+    range: string
+  G1P:
+    examples:
+    - value: '-'
+    range: string
+enums:
+  Matching_level_enum:
+    permissible_values:
+      species:
+        description: species
+      subspecies:
+        description: subspecies
+      strain:
+        description: strain
+  keywords_enum:
+    permissible_values:
+      pigmented:
+        description: pigmented
+      genome sequence:
+        description: genome sequence
+      anaerobe:
+        description: anaerobe
+      facultative aerobe:
+        description: facultative aerobe
+      chemoheterotroph:
+        description: chemoheterotroph
+      Gram-positive:
+        description: Gram-positive
+      oval-shaped:
+        description: oval-shaped
+      aerobe:
+        description: aerobe
+      halophilic:
+        description: halophilic
+      slightly halophilic:
+        description: slightly halophilic
+      spore-forming:
+        description: spore-forming
+      heterotroph:
+        description: heterotroph
+      sphere-shaped:
+        description: sphere-shaped
+      mesophilic:
+        description: mesophilic
+      polysaccharide production:
+        description: polysaccharide production
+      animal pathogen:
+        description: animal pathogen
+      microaerophile:
+        description: microaerophile
+      antibiotic resistance:
+        description: antibiotic resistance
+      star-shaped:
+        description: star-shaped
+      non-halophilic:
+        description: non-halophilic
+      Gram-variable:
+        description: Gram-variable
+      ellipsoidal:
+        description: ellipsoidal
+      Bacteria:
+        description: Bacteria
+      chemoorganotroph:
+        description: chemoorganotroph
+      Gram-negative:
+        description: Gram-negative
+      rod-shaped:
+        description: rod-shaped
+      vibrio-shaped:
+        description: vibrio-shaped
+      ovoid-shaped:
+        description: ovoid-shaped
+      human pathogen:
+        description: human pathogen
+      obligate aerobe:
+        description: obligate aerobe
+      colony-forming:
+        description: colony-forming
+      facultative anaerobe:
+        description: facultative anaerobe
+      moderately halophilic:
+        description: moderately halophilic
+      thermophilic:
+        description: thermophilic
+      motile:
+        description: motile
+      filament-shaped:
+        description: filament-shaped
+      autotroph:
+        description: autotroph
+      psychrophilic:
+        description: psychrophilic
+      coccus-shaped:
+        description: coccus-shaped
+      16S sequence:
+        description: 16S sequence
+      halotolerant:
+        description: halotolerant
+  description_enum:
+    permissible_values:
+      domain/bacteria:
+        description: domain/bacteria
+  keyword_enum:
+    permissible_values:
+      phylum/acidobacteriota:
+        description: phylum/acidobacteriota
+      phylum/pseudomonadota:
+        description: phylum/pseudomonadota
+      phylum/mycoplasmatota:
+        description: phylum/mycoplasmatota
+      phylum/bacillota:
+        description: phylum/bacillota
+      phylum/actinomycetota:
+        description: phylum/actinomycetota
+  domain_enum:
+    permissible_values:
+      Bacteria:
+        description: Bacteria
+  phylum_enum:
+    permissible_values:
+      Mycoplasmatota:
+        description: Mycoplasmatota
+      Pseudomonadota:
+        description: Pseudomonadota
+      Acidobacteriota:
+        description: Acidobacteriota
+      Actinomycetota:
+        description: Actinomycetota
+      Bacillota:
+        description: Bacillota
+  class_enum:
+    permissible_values:
+      Actinomycetes:
+        description: Actinomycetes
+      Negativicutes:
+        description: Negativicutes
+      Alphaproteobacteria:
+        description: Alphaproteobacteria
+      Acidimicrobiia:
+        description: Acidimicrobiia
+      Mollicutes:
+        description: Mollicutes
+      Bacilli:
+        description: Bacilli
+      Gammaproteobacteria:
+        description: Gammaproteobacteria
+      Betaproteobacteria:
+        description: Betaproteobacteria
+      Terriglobia:
+        description: Terriglobia
+      Acidithiobacillia:
+        description: Acidithiobacillia
+  order_enum:
+    permissible_values:
+      Acidithiobacillales:
+        description: Acidithiobacillales
+      Terriglobales:
+        description: Terriglobales
+      Acidimicrobiales:
+        description: Acidimicrobiales
+      Oceanospirillales:
+        description: Oceanospirillales
+      Aeromonadales:
+        description: Aeromonadales
+      Caryophanales:
+        description: Caryophanales
+      Alteromonadales:
+        description: Alteromonadales
+      Acholeplasmatales:
+        description: Acholeplasmatales
+      Lactobacillales:
+        description: Lactobacillales
+      Acidaminococcales:
+        description: Acidaminococcales
+      Hyphomicrobiales:
+        description: Hyphomicrobiales
+      Burkholderiales:
+        description: Burkholderiales
+      Pseudomonadales:
+        description: Pseudomonadales
+      Rhodospirillales:
+        description: Rhodospirillales
+      Mycobacteriales:
+        description: Mycobacteriales
+      Chromatiales:
+        description: Chromatiales
+      Cellvibrionales:
+        description: Cellvibrionales
+      Actinomycetales:
+        description: Actinomycetales
+  family_enum:
+    permissible_values:
+      Actinomycetaceae:
+        description: Actinomycetaceae
+      Brucellaceae:
+        description: Brucellaceae
+      Kangiellaceae:
+        description: Kangiellaceae
+      Acetobacteraceae:
+        description: Acetobacteraceae
+      Stellaceae:
+        description: Stellaceae
+      Alcaligenaceae:
+        description: Alcaligenaceae
+      Sphaerotilaceae:
+        description: Sphaerotilaceae
+      Corynebacteriaceae:
+        description: Corynebacteriaceae
+      Acholeplasmataceae:
+        description: Acholeplasmataceae
+      Aeromonadaceae:
+        description: Aeromonadaceae
+      Pseudomonadaceae:
+        description: Pseudomonadaceae
+      Acidobacteriaceae:
+        description: Acidobacteriaceae
+      Halieaceae:
+        description: Halieaceae
+      Chromatiaceae:
+        description: Chromatiaceae
+      Bacillaceae:
+        description: Bacillaceae
+      Alicyclobacillaceae:
+        description: Alicyclobacillaceae
+      Acidaminococcaceae:
+        description: Acidaminococcaceae
+      Acidimicrobiaceae:
+        description: Acidimicrobiaceae
+      Aerococcaceae:
+        description: Aerococcaceae
+      Ilumatobacteraceae:
+        description: Ilumatobacteraceae
+      Burkholderiaceae:
+        description: Burkholderiaceae
+      Alteromonadaceae:
+        description: Alteromonadaceae
+      Alcanivoracaceae:
+        description: Alcanivoracaceae
+      Pseudoalteromonadaceae:
+        description: Pseudoalteromonadaceae
+      Acidithiobacillaceae:
+        description: Acidithiobacillaceae
+      Microbulbiferaceae:
+        description: Microbulbiferaceae
+      Cellvibrionaceae:
+        description: Cellvibrionaceae
+      Zavarziniaceae:
+        description: Zavarziniaceae
+  type_strain_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  growth_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  type_enum:
+    permissible_values:
+      minimum:
+        description: minimum
+      optimum:
+        description: optimum
+      growth:
+        description: growth
+      maximum:
+        description: maximum
+  origin.country_enum:
+    permissible_values:
+      ISR:
+        description: ISR
+      FRA:
+        description: FRA
+      GBR:
+        description: GBR
+      SWE:
+        description: SWE
+      CHN:
+        description: CHN
+      BGD:
+        description: BGD
+      KOR:
+        description: KOR
+      IDN:
+        description: IDN
+      ARG:
+        description: ARG
+      POL:
+        description: POL
+      ISL:
+        description: ISL
+      AUS:
+        description: AUS
+      HKG:
+        description: HKG
+      PYF:
+        description: PYF
+      GHA:
+        description: GHA
+      SAU:
+        description: SAU
+      PER:
+        description: PER
+      CAN:
+        description: CAN
+      BEL:
+        description: BEL
+      ESP:
+        description: ESP
+      ITA:
+        description: ITA
+      THA:
+        description: THA
+      CHE:
+        description: CHE
+      IND:
+        description: IND
+      SEN:
+        description: SEN
+      RUS:
+        description: RUS
+      ATA:
+        description: ATA
+      PLW:
+        description: PLW
+      HUN:
+        description: HUN
+      GRC:
+        description: GRC
+      FIN:
+        description: FIN
+      MEX:
+        description: MEX
+      PRT:
+        description: PRT
+      TWN:
+        description: TWN
+      DNK:
+        description: DNK
+      JPN:
+        description: JPN
+      DZA:
+        description: DZA
+      VNM:
+        description: VNM
+      USA:
+        description: USA
+      DEU:
+        description: DEU
+      AUT:
+        description: AUT
+      NZL:
+        description: NZL
+      NLD:
+        description: NLD
+      BRA:
+        description: BRA
+      NOR:
+        description: NOR
+  continent_enum:
+    permissible_values:
+      North America:
+        description: North America
+      Australia and Oceania:
+        description: Australia and Oceania
+      Asia:
+        description: Asia
+      Middle and South America:
+        description: Middle and South America
+      Africa:
+        description: Africa
+      Antarctica:
+        description: Antarctica
+      Europe:
+        description: Europe
+  Cat1_enum:
+    permissible_values:
+      '#Climate':
+        description: '#Climate'
+      '#Environmental':
+        description: '#Environmental'
+      '#Engineered':
+        description: '#Engineered'
+      '#Condition':
+        description: '#Condition'
+      '#Infection':
+        description: '#Infection'
+      '#Host':
+        description: '#Host'
+      '#Host Body-Site':
+        description: '#Host Body-Site'
+      '#Host Body Product':
+        description: '#Host Body Product'
+  pathogenicity_animal_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      yes, in single cases:
+        description: yes, in single cases
+  pathogenicity_human_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      yes, in single cases:
+        description: yes, in single cases
+  oxygen_tolerance_enum:
+    permissible_values:
+      microaerophile:
+        description: microaerophile
+      obligate anaerobe:
+        description: obligate anaerobe
+      anaerobe:
+        description: anaerobe
+      facultative aerobe:
+        description: facultative aerobe
+      obligate aerobe:
+        description: obligate aerobe
+      facultative anaerobe:
+        description: facultative anaerobe
+      aerobe:
+        description: aerobe
+  database_enum:
+    permissible_values:
+      nuccore:
+        description: nuccore
+      ena:
+        description: ena
+  assembly_level_enum:
+    permissible_values:
+      chromosome:
+        description: chromosome
+      scaffold:
+        description: scaffold
+      draft:
+        description: draft
+      plasmid:
+        description: plasmid
+      complete:
+        description: complete
+      contig:
+        description: contig
+      wgs:
+        description: wgs
+  topic_enum:
+    permissible_values:
+      Phylogeny:
+        description: Phylogeny
+      Metabolism:
+        description: Metabolism
+      Genetics:
+        description: Genetics
+      Biotechnology:
+        description: Biotechnology
+      Proteome:
+        description: Proteome
+      Transcriptome:
+        description: Transcriptome
+      Cultivation:
+        description: Cultivation
+      Enzymology:
+        description: Enzymology
+      Stress:
+        description: Stress
+      Phenotype:
+        description: Phenotype
+      Pathogenicity:
+        description: Pathogenicity
+  topic2_enum:
+    permissible_values:
+      Phylogeny:
+        description: Phylogeny
+      Metabolism:
+        description: Metabolism
+      Genetics:
+        description: Genetics
+      Biotechnology:
+        description: Biotechnology
+      Transcriptome:
+        description: Transcriptome
+      Proteome:
+        description: Proteome
+      Cultivation:
+        description: Cultivation
+      Enzymology:
+        description: Enzymology
+      Physiology:
+        description: Physiology
+      Stress:
+        description: Stress
+      Phenotype:
+        description: Phenotype
+      Pathogenicity:
+        description: Pathogenicity
+  gram_stain_enum:
+    permissible_values:
+      variable:
+        description: variable
+      negative:
+        description: negative
+      positive:
+        description: positive
+  cell_shape_enum:
+    permissible_values:
+      rod-shaped:
+        description: rod-shaped
+      filament-shaped:
+        description: filament-shaped
+      curved-shaped:
+        description: curved-shaped
+      vibrio-shaped:
+        description: vibrio-shaped
+      ovoid-shaped:
+        description: ovoid-shaped
+      pleomorphic-shaped:
+        description: pleomorphic-shaped
+      coccus-shaped:
+        description: coccus-shaped
+      star-shaped:
+        description: star-shaped
+      oval-shaped:
+        description: oval-shaped
+      ellipsoidal:
+        description: ellipsoidal
+      sphere-shaped:
+        description: sphere-shaped
+  motility_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  type_of_hemolysis_enum:
+    permissible_values:
+      alpha/beta:
+        description: alpha/beta
+      alpha:
+        description: alpha
+      gamma:
+        description: gamma
+      beta:
+        description: beta
+  colony_shape_enum:
+    permissible_values:
+      irregular:
+        description: irregular
+      punctiform:
+        description: punctiform
+      circular:
+        description: circular
+      rhizoid:
+        description: rhizoid
+      circular, highly cohesive:
+        description: circular, highly cohesive
+  utilization_activity_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  kind_of_utilization_tested_enum:
+    permissible_values:
+      required for growth:
+        description: required for growth
+      nitrogen source:
+        description: nitrogen source
+      builds acid from:
+        description: builds acid from
+      other:
+        description: other
+      fermentation:
+        description: fermentation
+      electron acceptor:
+        description: electron acceptor
+      builds base from:
+        description: builds base from
+      aerobic catabolization:
+        description: aerobic catabolization
+      reduction:
+        description: reduction
+      electron donor:
+        description: electron donor
+      carbon source:
+        description: carbon source
+      oxidation:
+        description: oxidation
+      growth:
+        description: growth
+      degradation:
+        description: degradation
+      anaerobic growth:
+        description: anaerobic growth
+      energy source:
+        description: energy source
+      respiration:
+        description: respiration
+      assimilation:
+        description: assimilation
+      hydrolysis:
+        description: hydrolysis
+      anaerobic catabolization:
+        description: anaerobic catabolization
+      builds gas from:
+        description: builds gas from
+  metabolite_enum:
+    permissible_values:
+      hydrogen sulfide:
+        description: hydrogen sulfide
+      2-dehydro-D-gluconate:
+        description: 2-dehydro-D-gluconate
+      dihydroxyacetone:
+        description: dihydroxyacetone
+      5-dehydro-D-gluconate:
+        description: 5-dehydro-D-gluconate
+      propionate:
+        description: propionate
+      dinitrogen:
+        description: dinitrogen
+      cytochrome:
+        description: cytochrome
+      indole:
+        description: indole
+      2,5-didehydro-D-gluconate:
+        description: 2,5-didehydro-D-gluconate
+      polyhydroxybutyrate:
+        description: polyhydroxybutyrate
+      bacteriochlorophyll a:
+        description: bacteriochlorophyll a
+      acetate:
+        description: acetate
+      4h-pyran-4-one:
+        description: 4h-pyran-4-one
+      ammonium:
+        description: ammonium
+      exopolysaccharide:
+        description: exopolysaccharide
+      succinate:
+        description: succinate
+      nitrite:
+        description: nitrite
+      formate:
+        description: formate
+      butyrate:
+        description: butyrate
+      fluorescein:
+        description: fluorescein
+      melanin:
+        description: melanin
+      beta-hydroxybutyrate:
+        description: beta-hydroxybutyrate
+      D-glucose:
+        description: D-glucose
+      dextran:
+        description: dextran
+      ethanol:
+        description: ethanol
+      toluene:
+        description: toluene
+      citrate:
+        description: citrate
+      D-gluconate:
+        description: D-gluconate
+      cellulose:
+        description: cellulose
+      bacteriochlorophyll alpha:
+        description: bacteriochlorophyll alpha
+      elemental sulfur:
+        description: elemental sulfur
+      lactate:
+        description: lactate
+      carotenoid:
+        description: carotenoid
+      acetoin:
+        description: acetoin
+  production_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  activity_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ec_enum:
+    permissible_values:
+      1.9.3.1:
+        description: 1.9.3.1
+      1.7.99.4:
+        description: 1.7.99.4
+      3.2.1.85:
+        description: 3.2.1.85
+      2.3.2.2:
+        description: 2.3.2.2
+      3.4.11.5:
+        description: 3.4.11.5
+      3.9.1.1:
+        description: 3.9.1.1
+      3.1.3.4:
+        description: 3.1.3.4
+      3.1.1.1:
+        description: 3.1.1.1
+      3.4.21.50:
+        description: 3.4.21.50
+      4.1.1.17:
+        description: 4.1.1.17
+      3.5.3.6:
+        description: 3.5.3.6
+      3.5.1.B15:
+        description: 3.5.1.B15
+      3.2.1.8:
+        description: 3.2.1.8
+      3.2.1.22:
+        description: 3.2.1.22
+      4.1.1.39:
+        description: 4.1.1.39
+      3.4.11.4:
+        description: 3.4.11.4
+      3.2.1.23:
+        description: 3.2.1.23
+      3.4.11.3:
+        description: 3.4.11.3
+      3.2.1.55:
+        description: 3.2.1.55
+      3.2.1.20:
+        description: 3.2.1.20
+      4.1.1.18:
+        description: 4.1.1.18
+      3.2.1.14:
+        description: 3.2.1.14
+      3.4.21.4:
+        description: 3.4.21.4
+      3.2.1.52:
+        description: 3.2.1.52
+      3.4.11.1:
+        description: 3.4.11.1
+      4.3.1.24:
+        description: 4.3.1.24
+      3.5.1.5:
+        description: 3.5.1.5
+      4.2.2.1:
+        description: 4.2.2.1
+      4.1.1.19:
+        description: 4.1.1.19
+      3.4.21.1:
+        description: 3.4.21.1
+      1.1.1.1:
+        description: 1.1.1.1
+      3.2.1.24:
+        description: 3.2.1.24
+      4.1.99.1:
+        description: 4.1.99.1
+      3.2.1.25:
+        description: 3.2.1.25
+      3.5.2.6:
+        description: 3.5.2.6
+      3.2.1.81:
+        description: 3.2.1.81
+      1.12.99.6:
+        description: 1.12.99.6
+      3.4.11.2:
+        description: 3.4.11.2
+      3.4.19.3:
+        description: 3.4.19.3
+      4.3.1.5:
+        description: 4.3.1.5
+      3.2.1.31:
+        description: 3.2.1.31
+      3.4.11.21:
+        description: 3.4.11.21
+      3.2.1.21:
+        description: 3.2.1.21
+      3.1.3.2:
+        description: 3.1.3.2
+      3.2.1.4:
+        description: 3.2.1.4
+      3.4.4.5:
+        description: 3.4.4.5
+      1.11.1.6:
+        description: 1.11.1.6
+      3.1.3.1:
+        description: 3.1.3.1
+      4.1.1.15:
+        description: 4.1.1.15
+      3.2.1.51:
+        description: 3.2.1.51
+  Control_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  Alkaline_phosphatase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  Esterase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  Esterase_Lipase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  Lipase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  Leucine_arylamidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  Valine_arylamidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  Cystine_arylamidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  Trypsin_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  alpha-_Chymotrypsin_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  Acid_phosphatase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  Naphthol-AS-BI-phosphohydrolase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  alpha-_Galactosidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta-_Galactosidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta-_Glucuronidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  alpha-_Glucosidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta-_Glucosidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  N-acetyl-beta-_glucosaminidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  alpha-_Mannosidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  alpha-_Fucosidase_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  is_antibiotic_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+  is_sensitive_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  is_resistant_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  GLY_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ERY_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  DARA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LARA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  RIB_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  DXYL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LXYL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  ADO_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MDX_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GAL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  GLU_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  FRU_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MNE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  SBE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  RHA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  DUL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  INO_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MAN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  SOR_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MDM_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MDG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  NAG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  AMY_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ARB_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ESC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  SAL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  CEL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MAL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LAC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MEL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  SAC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  TRE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  INU_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MLZ_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  RAF_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  AMD_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  GLYG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  XLT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GEN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  TUR_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LYX_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  TAG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  DFUC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+  LFUC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  DARL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LARL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GNT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  x2KG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+  x5KG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  salt_enum:
+    permissible_values:
+      Sea Salts (S9883):
+        description: Sea Salts (S9883)
+      Na2SO4:
+        description: Na2SO4
+      NaCl:
+        description: NaCl
+      KCl:
+        description: KCl
+  tested_relation_enum:
+    permissible_values:
+      minimum:
+        description: minimum
+      maximum:
+        description: maximum
+      growth:
+        description: growth
+      resistant:
+        description: resistant
+      optimum:
+        description: optimum
+  spore_formation_enum:
+    permissible_values:
+      'yes':
+        description: 'yes'
+      'no':
+        description: 'no'
+  indole_test_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  voges-proskauer-test_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  methylred-test_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  URE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  ADH_Arg_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  alpha_GAL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta_GAL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta_GP_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  alpha_GLU_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta_GLU_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  alpha_ARA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  beta_GUR_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  beta_NAG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  GDC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  alpha_FUC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  NIT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  IND_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  PAL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ArgA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ProA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LGA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  PheA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LeuA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  PyrA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  TyrA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  AlaA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  GlyA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  HisA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  GGA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  SerA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ability_enum:
+    permissible_values:
+      'no':
+        description: 'no'
+      positive:
+        description: positive
+  PH_range_enum:
+    permissible_values:
+      alkaliphile:
+        description: alkaliphile
+      acidophile:
+        description: acidophile
+  NO3_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  TRP_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GLU__Ferm_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GEL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PNPG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  GLU__Assim_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ARA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  CAP_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ADI_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MLT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  CIT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PAC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  OX_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  MTE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LTE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MbGa_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MaGa_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MbGu_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  XYL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PLE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  FUC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MTL_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  HBG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  x3MDG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  SAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MUC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LTAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  DTAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MTAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  DMLT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LMLT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  CATE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  TATE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  TTE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GRT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  TRY_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  pOBE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  QAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GTE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  mOBE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  BAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PPAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  CMT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  TGE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  BET_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PCE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  ABT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  HIN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  CYT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  HIS_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  SUC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  FUM_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GRE_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GYT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  AVT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  ETN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  TTN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GLN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  ITA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  x3OBU_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  APT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GTT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PRO_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  DALA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LALA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  SER_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  MNT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PROP_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  TYR_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  x2KT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  type_of_FA_analysis_enum:
+    permissible_values:
+      whole cell analysis:
+        description: whole cell analysis
+  method/protocol_enum:
+    permissible_values:
+      CCUG:
+        description: CCUG
+      Sasser 2001:
+        description: Sasser 2001
+  ONPG_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  LDC_Lys_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  ODC_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  H2S_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  TDA_Trp_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  VP_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  Sor_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  CDEX_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  beta_MAN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+  PYZ_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PYRA_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  CAT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  PEN_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +/-:
+        description: +/-
+      +:
+        description: +
+  LIP_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+  GGT_enum:
+    permissible_values:
+      '-':
+        description: '-'
+      +:
+        description: +
+types:
+  https identifier:
+    typeof: string
+  measurement:
+    description: Holds a measurement serialized as a string
+    typeof: string
+  identifier:
+    typeof: string

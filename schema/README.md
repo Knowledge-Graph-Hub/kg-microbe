@@ -3,6 +3,45 @@
 LinkML schemas for KG-Microbe data sources, bootstrapped with
 [schema-automator](https://github.com/linkml/schema-automator).
 
+## Full BacDive JSON (`bacdive_strain_full.yaml`)
+
+Schema for the **full BacDive per-strain JSON** (`data/raw/bacdive_strains.json`
+— a top-level array of strain records produced by the BacDive download). Each
+`BacDiveStrain` has the 12 BacDive sections (General; Name and taxonomic
+classification; Morphology; Culture and growth conditions; Physiology and
+metabolism; Isolation, sampling and environmental information; Safety
+information; Sequence information; Genome-based predictions; External links;
+Reference; `_id`), modelled as **65 nested classes** with 230 documented enums.
+
+`scripts/build_bacdive_json_schema.py` runs the whole pipeline (sample →
+schema-automator `generalize-json` → refine). BacDive's JSON is highly
+irregular, so the refinement handles four things that block a clean LinkML
+model:
+
+- **single-vs-multiple** — dozens of fields are a single object for one value
+  and a list of objects for several; modelled `multivalued`.
+- **leading-digit keys** (`16S sequences`, API codes `2KG`…) — prefixed `x` so
+  class names are valid.
+- **mixed scalar types** (pubmed/year as ints, GC content as ranges) — every
+  leaf is typed `string`.
+- **name collisions** (a key reused as both an object group and a scalar value,
+  e.g. `oxygen tolerance`, `NCBI tax id`) — disambiguated with `slot_usage`.
+
+`scripts/normalize_bacdive_json.py` applies the matching data transforms
+(singleton→list wrapping, `x`-prefix, LinkML `underscore()` on keys, leaf
+stringify) so raw BacDive JSON validates:
+
+```bash
+python scripts/build_bacdive_json_schema.py --sample-size 500
+python scripts/normalize_bacdive_json.py --limit 50 --container \
+  --output schema/examples/bacdive_strain_full_sample.json
+linkml-validate -s schema/bacdive_strain_full.yaml schema/examples/bacdive_strain_full_sample.json
+```
+
+The committed 50-record sample validates cleanly. **Coverage is bounded by the
+build sample size** (500 records): the long tail of optional fields (e.g.
+`antibiogram`) is not modelled — raise `--sample-size` to widen coverage.
+
 ## Fermentation Explorer (`fermentation_explorer.yaml`)
 
 Schema for the **clean** Fermentation Explorer database

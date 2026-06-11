@@ -36,6 +36,10 @@ validates cleanly. Note the `Isolation category 1/2/3` columns are the same
 BacDive classification as `bacdive_isolation_source_enums.yaml` but **without**
 the `#` value prefix — a future refinement could share/cross-reference them.
 
+A schema-and-data review (identity/linkage coverage, enum vocabularies,
+metabolism-content sparsity, and data-quality findings) is in
+[`fermentation_explorer_review.md`](fermentation_explorer_review.md).
+
 ## KG-Microbe merged KG (`kg_microbe_merged.yaml`)
 
 LinkML schema for the **merged knowledge graph** in KGX TSV format

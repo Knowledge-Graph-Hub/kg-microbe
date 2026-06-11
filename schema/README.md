@@ -3,6 +3,39 @@
 LinkML schemas for KG-Microbe data sources, bootstrapped with
 [schema-automator](https://github.com/linkml/schema-automator).
 
+## Fermentation Explorer (`fermentation_explorer.yaml`)
+
+Schema for the **clean** Fermentation Explorer database
+([thackmann/FermentationExplorer](https://github.com/thackmann/FermentationExplorer),
+`database_clean.zip` → `data/raw/fermentation_explorer_database_clean.csv`;
+also in `download.yaml`). 20,806 records × 52 columns: consolidated multi-source
+taxonomy (LPSN/GTDB/GOLD/NCBI/IMG/Bergey), organism phenotypes, and fermentation
+metabolism / end products.
+
+> The interactive site (microbe-decoder.org) serves this via ephemeral Shiny
+> "Download (clean)/(raw) database" links; the stable source is the GitHub repo.
+> The raw 95-column per-source table is mirrored at
+> `data/raw/fermentation_explorer_database_raw.csv` (`database.zip`) for
+> reference/triage.
+
+`scripts/generate_fermentation_explorer_schema.py` was bootstrapped from a
+schema-automator `generalize-tsv` draft, then curates the 52 columns: enums
+populated from the data (13 enums — Gram stain, oxygen tolerance, cell shape,
+type of metabolism, the BacDive isolation categories 1/2/3 = 8/59/273, …),
+`;`-delimited cells modelled `multivalued` (GOLD IDs use `,`), measurements typed
+`float`, and `*_link` columns flagged as HTML.
+
+```bash
+python scripts/generate_fermentation_explorer_schema.py
+gen-linkml --format yaml schema/fermentation_explorer.yaml
+linkml-validate -s schema/fermentation_explorer.yaml schema/examples/fermentation_explorer_sample.yaml
+```
+
+A 50-record sample (`schema/examples/fermentation_explorer_sample.yaml`)
+validates cleanly. Note the `Isolation category 1/2/3` columns are the same
+BacDive classification as `bacdive_isolation_source_enums.yaml` but **without**
+the `#` value prefix — a future refinement could share/cross-reference them.
+
 ## KG-Microbe merged KG (`kg_microbe_merged.yaml`)
 
 LinkML schema for the **merged knowledge graph** in KGX TSV format

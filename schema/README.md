@@ -37,6 +37,10 @@ A referentially-consistent 116-node / 100-edge sample drawn from the real build
 is committed at `schema/examples/kg_microbe_merged_sample.yaml` and validates
 cleanly.
 
+A full schema-and-data review of this build (category/predicate distributions,
+provenance breakdown, and data-quality findings) is in
+[`kg_microbe_merged_review.md`](kg_microbe_merged_review.md).
+
 **Data-quality notes** surfaced while building the schema (left as strings, not
 enums): `primary_knowledge_source` mixes clean `infores:` CURIEs, Python-list
 strain-provenance literals (`['infores:bacdive', 'bacdive:NNN']`) and raw source

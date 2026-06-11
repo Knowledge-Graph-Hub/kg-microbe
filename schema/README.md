@@ -7,7 +7,11 @@ LinkML schemas for KG-Microbe data sources, bootstrapped with
 
 LinkML schema for the **merged knowledge graph** in KGX TSV format
 (`data/merged/<build>/{*_nodes.tsv,*_edges.tsv}`). Generated from the
-2026-06-10 build (**2,438,443 nodes; 12,900,316 edges**).
+2026-06-10 build (**2,438,443 nodes; 12,900,316 edges**). This build includes
+the `metatraits` and `metatraits_gtdb` transforms, whose `has_phenotype` and
+`METPO:*` edges make up most of the edge volume (a merge config without them is
+correspondingly smaller — the difference is graph composition, not
+deduplication).
 
 - `Node` (id, category, name, description, xref, provided_by, synonym,
   deprecated, same_as) and `Edge` (subject, predicate, object, relation,
@@ -36,9 +40,10 @@ cleanly.
 **Data-quality notes** surfaced while building the schema (left as strings, not
 enums): `primary_knowledge_source` mixes clean `infores:` CURIEs, Python-list
 strain-provenance literals (`['infores:bacdive', 'bacdive:NNN']`) and raw source
-filenames (`chebi.json`); `unit` carries mojibake (`ï¿½g` for µg);
-`knowledge_level`/`agent_type` carry a few `|`-joined merge-dedup artifacts; and
-the `deprecated` node column holds malformed URI values on a few UPA rows.
+filenames (`chebi.json`); `unit` carries mojibake (`ï¿½g` for µg); a few edges
+contributed by more than one source carry `|`-joined `knowledge_level`/
+`agent_type` values (from KGX merge joining differing column values); and the
+`deprecated` node column holds malformed URI values on a few UPA rows.
 
 ## BacDive isolation sources
 

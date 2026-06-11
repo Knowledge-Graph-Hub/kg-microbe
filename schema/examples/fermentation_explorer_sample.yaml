@@ -1,0 +1,2944 @@
+records:
+- genus: Abditibacterium
+  species: utsteinense
+  strain:
+  - DSM 105287
+  - LMG 29911
+  - R-68213
+  lpsn_id: '797965'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/abditibacterium-utsteinense" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Abditibacteriota;c__Abditibacteriia;o__Abditibacteriales;f__Abditibacteriaceae;g__Abditibacterium;s__Abditibacterium
+    utsteinense
+  gtdb_id: RS_GCF_002973605.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_002973605.1" target="_blank">RS_GCF_002973605.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Armatimonadota;c__Abditibacteriia;o__Abditibacteriales;f__Abditibacteriaceae;g__Abditibacterium;s__Abditibacterium
+    utsteinense
+  gold_organism_id:
+  - Go0621336
+  - Go0621337
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0621336" target="_blank">Go0621336</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0621337" target="_blank">Go0621337</a>
+  ncbi_taxonomy_id: '1960156'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1960156"
+    target="_blank">1960156</a>
+  ncbi_taxonomy: d__NA;p__Abditibacteriota;c__Abditibacteriia;o__Abditibacteriales;f__Abditibacteriaceae;g__Abditibacterium;s__Abditibacterium
+    Abditibacterium utsteinense
+  bacdive_id: '159652'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/159652" target="_blank">159652</a>
+  temperature_for_growth_in_degrees: 20.0
+  isolation_category_1:
+  - Environmental
+  - Climate
+  isolation_category_2:
+  - Terrestrial
+  - Cold
+  isolation_category_3:
+  - Geologic
+  - Alpine
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Abiotrophia
+  species: defectiva
+  strain:
+  - ATCC 49176
+  - CCUG 27639
+  - CCUG 27804
+  - CIP 103.242
+  - DSM 9849
+  - GIFU 12707
+  - LMG 14740
+  - SC 10
+  lpsn_id: '772468'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/abiotrophia-defectiva" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Aerococcaceae;g__Abiotrophia;s__Abiotrophia
+    defectiva
+  gtdb_id: RS_GCF_000160075.2
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000160075.2" target="_blank">RS_GCF_000160075.2</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Aerococcaceae;g__Abiotrophia;s__Abiotrophia
+    defectiva
+  gold_organism_id:
+  - Go0004152
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0004152" target="_blank">Go0004152</a>
+  gold_project_id:
+  - Gp0004152
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0004152" target="_blank">Gp0004152</a>
+  ncbi_taxonomy_id: '592010'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=592010"
+    target="_blank">592010</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Aerococcaceae;g__Abiotrophia;s__Abiotrophia
+    Abiotrophia defectiva
+  img_genome_id: '2562617177'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2562617177"
+    target="_blank">2562617177</a>
+  img_genome_id_max_genes: '2562617177'
+  bacdive_id: '219'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/219" target="_blank">219</a>
+  cell_shape:
+  - coccus-shaped
+  gram_stain:
+  - positive
+  indole_test:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  - facultative anaerobe
+  temperature_for_growth_in_degrees: 35.0
+  voges_proskauer:
+  - negative
+  isolation_category_1:
+  - Host Body Product
+  - Infection
+  isolation_category_2:
+  - Fluids
+  - Patient
+  - Inflammation
+  - Disease
+  isolation_category_3:
+  - Blood
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00580" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Bacilli;o__Lactobacillales;f__Aerococcaceae;g__Abiotrophia;s__Abiotrophia
+    defectiva
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - lactate
+  major_end_products:
+  - lactate
+  substrates_for_end_products:
+  - glucose
+  fermentation_substrates:
+  - glucose
+  faprotax_traits:
+  - chemoheterotrophy
+  - fermentation
+- genus: Absicoccus
+  species: porci
+  strain:
+  - JCM 32769
+  - KCTC 15747
+  - YH-panp20
+  lpsn_id: '5758'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/absicoccus-porci" target="_blank" class="btn btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Erysipelotrichia;o__Erysipelotrichales;f__Erysipelotrichaceae;g__Absicoccus;s__Absicoccus
+    porci
+  gtdb_id: RS_GCF_003725415.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_003725415.1" target="_blank">RS_GCF_003725415.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_I;c__Bacilli_A;o__Erysipelotrichales;f__Erysipelotrichaceae;g__Absicoccus;s__Absicoccus
+    porci
+  gold_organism_id:
+  - Go0541823
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0541823" target="_blank">Go0541823</a>
+  gold_project_id:
+  - Gp0492673
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0492673" target="_blank">Gp0492673</a>
+  ncbi_taxonomy_id: '2486576'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2486576"
+    target="_blank">2486576</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Erysipelotrichia;o__Erysipelotrichales;f__Erysipelotrichaceae;g__Absicoccus;s__Absicoccus
+    Absicoccus porci
+  img_genome_id: '2881717282'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2881717282"
+    target="_blank">2881717282</a>
+  img_genome_id_max_genes: '2881717282'
+  bacdive_id: '164352'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/164352" target="_blank">164352</a>
+  cell_shape:
+  - coccus-shaped
+  gram_stain:
+  - positive
+  indole_test:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  ph_for_growth: 9.0
+  salt_for_growth_in_moles_per_liter: 0.256673511293635
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 36.0
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  type_of_metabolism:
+  - Fermentation
+  fermentation_substrates:
+  - arabinose
+  - cellobiose
+  - glucose
+  - glycerol
+  - lactose
+  - maltose
+  - mannose
+  - raffinose
+  - rhamnose
+  - trehalose
+- genus: Abyssalbus
+  species: ytuae
+  strain:
+  - KCTC 82823
+  - MCCC 1K06012
+  - MT3330
+  lpsn_id: '29444'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/abyssalbus-ytuae" target="_blank" class="btn btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacteroidota;c__Flavobacteriia;o__Flavobacteriales;f__Flavobacteriaceae;g__Abyssalbus;s__Abyssalbus
+    ytuae
+  gtdb_id: RS_GCF_022807975.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_022807975.1" target="_blank">RS_GCF_022807975.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacteroidota;c__Bacteroidia;o__Flavobacteriales;f__Flavobacteriaceae;g__Abyssalbus;s__Abyssalbus
+    ytuae
+  gold_organism_id:
+  - Go0635783
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0635783" target="_blank">Go0635783</a>
+  gold_project_id:
+  - Gp0653325
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0653325" target="_blank">Gp0653325</a>
+  ncbi_taxonomy_id: '2926907'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2926907"
+    target="_blank">2926907</a>
+  ncbi_taxonomy: d__NA;p__Bacteroidota;c__Flavobacteriia;o__Flavobacteriales;f__Flavobacteriaceae;g__Abyssalbus;s__Abyssalbus
+    Abyssalbus ytuae
+  img_genome_id: '8074039445'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8074039445"
+    target="_blank">8074039445</a>
+  img_genome_id_max_genes: '8074039445'
+  bacdive_id: '170183'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/170183" target="_blank">170183</a>
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - chemoheterotrophy
+- genus: Abyssibacter
+  species: profundi
+  strain:
+  - KCTC 52933
+  - MCCC 1K03450
+  - OUC007
+  lpsn_id: '797925'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/abyssibacter-profundi" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Nevskiales;f__Salinisphaeraceae;g__Abyssibacter;s__Abyssibacter
+    profundi
+  gtdb_id: RS_GCF_003151135.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_003151135.1" target="_blank">RS_GCF_003151135.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Nevskiales;f__OUC007;g__Abyssibacter;s__Abyssibacter
+    profundi
+  gold_organism_id:
+  - Go0505317
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0505317" target="_blank">Go0505317</a>
+  gold_project_id:
+  - Gp0390031
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0390031" target="_blank">Gp0390031</a>
+  ncbi_taxonomy_id: '2182787'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2182787"
+    target="_blank">2182787</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Gammaproteobacteria;o__Chromatiales;f__Oceanococcaceae;g__Abyssibacter;s__Abyssibacter
+    Abyssibacter profundi
+  img_genome_id: '2831460164'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2831460164"
+    target="_blank">2831460164</a>
+  img_genome_id_max_genes: '2831460164'
+  bacdive_id: '159837'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/159837" target="_blank">159837</a>
+  cell_shape:
+  - rod-shaped
+  colony_size: 1.5
+  flagellum_arrangement:
+  - polar
+  gram_stain:
+  - negative
+  incubation_period_in_days: 3.0
+  motility:
+  - positive
+  oxygen_tolerance:
+  - aerobe
+  salt_for_growth_in_moles_per_liter: 0.513347022587269
+  temperature_for_growth_in_degrees: 32.25
+  isolation_category_1:
+  - Environmental
+  isolation_category_2:
+  - Aquatic
+  isolation_category_3:
+  - Marine
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Abyssibius
+  species: alkaniclasticus
+  strain:
+  - '960558'
+  - KCTC 82619
+  - MCCC 1K04727
+  lpsn_id: '36886'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/abyssibius-alkaniclasticus" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodobacterales;f__Paracoccaceae;g__Abyssibius;s__Abyssibius
+    alkaniclasticus
+  gtdb_id: RS_GCF_020447305.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_020447305.1" target="_blank">RS_GCF_020447305.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodobacterales;f__Rhodobacteraceae;g__Abyssibius;s__Abyssibius
+    alkaniclasticus
+  gold_organism_id:
+  - Go0672745
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0672745" target="_blank">Go0672745</a>
+  gold_project_id:
+  - Gp0763929
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0763929" target="_blank">Gp0763929</a>
+  ncbi_taxonomy_id: '2881234'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2881234"
+    target="_blank">2881234</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodobacterales;f__Paracoccaceae;g__Abyssibius;s__Abyssibius
+    Abyssibius alkaniclasticus
+  img_genome_id: '8056721702'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8056721702"
+    target="_blank">8056721702</a>
+  img_genome_id_max_genes: '8056721702'
+  bacdive_id: '170673'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/170673" target="_blank">170673</a>
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Abyssicoccus
+  species: albus
+  strain:
+  - CCTCC AB 2014213
+  - DSM 29158
+  - YIM M12140
+  lpsn_id: '794216'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/abyssicoccus-albus" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Bacilli;o__Caryophanales;f__Staphylococcaceae;g__Abyssicoccus;s__Abyssicoccus
+    albus
+  gtdb_id: RS_GCF_003815035.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_003815035.1" target="_blank">RS_GCF_003815035.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota;c__Bacilli;o__Staphylococcales;f__DSM-29158;g__Abyssicoccus;s__Abyssicoccus
+    albus
+  gold_organism_id:
+  - Go0402721
+  - Go0618183
+  - Go0618184
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0402721" target="_blank">Go0402721</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0618183" target="_blank">Go0618183</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0618184" target="_blank">Go0618184</a>
+  gold_project_id:
+  - Gp0290620
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0290620" target="_blank">Gp0290620</a>
+  ncbi_taxonomy_id: '1817405'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1817405"
+    target="_blank">1817405</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Bacilli;o__Bacillales;f__Abyssicoccaceae;g__Abyssicoccus;s__Abyssicoccus
+    Abyssicoccus albus
+  img_genome_id: '2786546168'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2786546168"
+    target="_blank">2786546168</a>
+  img_genome_id_max_genes: '2786546168'
+  bacdive_id: '132558'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/132558" target="_blank">132558</a>
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Environmental
+  isolation_category_2:
+  - Aquatic
+  isolation_category_3:
+  - Sediment
+  - Marine
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acanthopleuribacter
+  species: pedis
+  strain:
+  - DSM 28897
+  - FYK2218
+  - KCTC 12899
+  - NBRC 101209
+  lpsn_id: '787601'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acanthopleuribacter-pedis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Acidobacteriota;c__Holophagae;o__Acanthopleuribacterales;f__Acanthopleuribacteraceae;g__Acanthopleuribacter;s__Acanthopleuribacter
+    pedis
+  gtdb_id: RS_GCF_017377855.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_017377855.1" target="_blank">RS_GCF_017377855.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Acidobacteriota;c__Holophagae;o__Acanthopleuribacterales;f__Acanthopleuribacteraceae;g__Acanthopleuribacter;s__Acanthopleuribacter
+    pedis
+  gold_organism_id:
+  - Go0030476
+  - Go0618056
+  - Go0618057
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0030476" target="_blank">Go0030476</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0618056" target="_blank">Go0618056</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0618057" target="_blank">Go0618057</a>
+  gold_project_id:
+  - Gp0592896
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0592896" target="_blank">Gp0592896</a>
+  ncbi_taxonomy_id: '442870'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=442870"
+    target="_blank">442870</a>
+  ncbi_taxonomy: d__NA;p__Acidobacteriota;c__Holophagae;o__Acanthopleuribacterales;f__Acanthopleuribacteraceae;g__Acanthopleuribacter;s__Acanthopleuribacter
+    Acanthopleuribacter pedis
+  img_genome_id: '2932994958'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2932994958"
+    target="_blank">2932994958</a>
+  img_genome_id_max_genes: '2932994958'
+  bacdive_id: '24718'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/24718" target="_blank">24718</a>
+  cell_shape:
+  - rod-shaped
+  cell_width_in_microns: 1.0
+  flagellum_arrangement:
+  - peritrichous
+  gram_stain:
+  - negative
+  incubation_period_in_days: 5.0
+  indole_test:
+  - negative
+  motility:
+  - positive
+  oxygen_tolerance:
+  - aerobe
+  ph_for_growth: 7.0
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 23.75
+  isolation_category_1:
+  - Host
+  isolation_category_2:
+  - Invertebrates (Other)
+  isolation_category_3:
+  - Mollusca
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00004" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Acidobacteria;c__Holophagae;o__Acanthopleuribacterales;f__Acanthopleuribacteraceae;g__Acanthopleuribacter;s__Acanthopleuribacter
+    pedis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acaricomes
+  species: phytoseiuli
+  strain:
+  - CCUG 49701
+  - CSC
+  - DSM 14247
+  - JCM 14300
+  lpsn_id: '772478'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acaricomes-phytoseiuli" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Micrococcales;f__Micrococcaceae;g__Acaricomes;s__Acaricomes
+    phytoseiuli
+  gtdb_id: RS_GCF_000376245.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000376245.1" target="_blank">RS_GCF_000376245.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Actinomycetota;c__Actinomycetes;o__Actinomycetales;f__Micrococcaceae;g__Acaricomes;s__Acaricomes
+    phytoseiuli
+  gold_organism_id:
+  - Go0013855
+  - Go0625830
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0013855" target="_blank">Go0013855</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0625830" target="_blank">Go0625830</a>
+  gold_project_id:
+  - Gp0013855
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0013855" target="_blank">Gp0013855</a>
+  ncbi_taxonomy_id: 1120917,291968
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1120917"
+    target="_blank">1120917</a>,<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=291968"
+    target="_blank">291968</a>
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  img_genome_id: '2517572146'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2517572146"
+    target="_blank">2517572146</a>
+  img_genome_id_max_genes: '2517572146'
+  bacdive_id: '7517'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/7517" target="_blank">7517</a>
+  cell_length_in_microns: 1.0
+  cell_shape:
+  - coccus-shaped
+  - rod-shaped
+  gram_stain:
+  - positive
+  incubation_period_in_days: 12.0
+  motility:
+  - negative
+  oxygen_tolerance:
+  - aerobe
+  - obligate aerobe
+  ph_for_growth: 6.0
+  pathogenicity:
+  - animal
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 25.8333333333333
+  isolation_category_1:
+  - Host
+  isolation_category_2:
+  - Arthropoda
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00117" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Actinobacteria;c__Actinobacteria;o__Micrococcales;f__Micrococcaceae;g__Acaricomes;s__Acaricomes
+    phytoseiuli
+  type_of_metabolism:
+  - Other
+- genus: Acerihabitans
+  species: arboris
+  strain:
+  - DSM 104038
+  - KCTC 52622
+  - SAP-6
+  lpsn_id: '17738'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acerihabitans-arboris" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Enterobacterales;f__Pectobacteriaceae;g__Acerihabitans;s__Acerihabitans
+    arboris
+  gtdb_id: RS_GCF_010131535.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_010131535.1" target="_blank">RS_GCF_010131535.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Gammaproteobacteria;o__Enterobacterales;f__Enterobacteriaceae;g__Acerihabitans;s__Acerihabitans
+    arboris
+  gold_organism_id:
+  - Go0541432
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0541432" target="_blank">Go0541432</a>
+  gold_project_id:
+  - Gp0492280
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0492280" target="_blank">Gp0492280</a>
+  ncbi_taxonomy_id: '2691583'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2691583"
+    target="_blank">2691583</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Gammaproteobacteria;o__Enterobacterales;f__Pectobacteriaceae;g__Acerihabitans;s__Acerihabitans
+    Acerihabitans arboris
+  img_genome_id: '2967478093'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2967478093"
+    target="_blank">2967478093</a>
+  img_genome_id_max_genes: '2967478093'
+  bacdive_id: '160325'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/160325" target="_blank">160325</a>
+  indole_test:
+  - negative
+  temperature_for_growth_in_degrees: 28.0
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  type_of_metabolism:
+  - Fermentation
+  fermentation_substrates:
+  - glucose
+- genus: Acetanaerobacterium
+  species: elongatum
+  strain:
+  - CGMCC 1.5012
+  - JCM 12359
+  - Z7
+  lpsn_id: '783232'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetanaerobacterium-elongatum" target="_blank"
+    class="btn btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetanaerobacterium;s__Acetanaerobacterium
+    elongatum
+  gtdb_id: RS_GCF_900103835.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_900103835.1" target="_blank">RS_GCF_900103835.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Oscillospirales;f__Ruminococcaceae;g__Acetanaerobacterium;s__Acetanaerobacterium
+    elongatum
+  gold_organism_id:
+  - Go0027238
+  - Go0115647
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0027238" target="_blank">Go0027238</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0115647" target="_blank">Go0115647</a>
+  gold_project_id:
+  - Gp0119896
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0119896" target="_blank">Gp0119896</a>
+  ncbi_taxonomy_id: '258515'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=258515"
+    target="_blank">258515</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetanaerobacterium;s__Acetanaerobacterium
+    Acetanaerobacterium elongatum
+  img_genome_id: '2667527408'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2667527408"
+    target="_blank">2667527408</a>
+  img_genome_id_max_genes: '2667527408'
+  bacdive_id: '134101'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/134101" target="_blank">134101</a>
+  cell_length_in_microns: 6.0
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - positive
+  motility:
+  - positive
+  oxygen_tolerance:
+  - anaerobe
+  ph_for_growth: 5.0
+  salt_for_growth_in_moles_per_liter: 0.171115674195756
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 31.0
+  isolation_category_1:
+  - Engineered
+  isolation_category_2:
+  - Waste
+  isolation_category_3:
+  - Wastewater
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00670" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Ruminococcaceae;g__Acetanaerobacterium;s__Acetanaerobacterium
+    elongatum
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - ethanol
+  - H2
+  - CO2
+  major_end_products:
+  - acetate
+  - ethanol
+  - H2
+  - CO2
+  substrates_for_end_products:
+  - glucose
+  fermentation_substrates:
+  - glucose
+- genus: Acetatifactor
+  species: aquisgranensis
+  strain:
+  - CLA-AA-M01
+  - DSM 110981
+  - JCM 36051
+  lpsn_id: '43744'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetatifactor-aquisgranensis" target="_blank"
+    class="btn btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    aquisgranensis
+  gtdb_id: RS_GCF_943193215.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_943193215.1" target="_blank">RS_GCF_943193215.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Lachnospirales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    aquisgranensis
+  gold_organism_id:
+  - Go0670255
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0670255" target="_blank">Go0670255</a>
+  gold_project_id:
+  - Gp0760425
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0760425" target="_blank">Gp0760425</a>
+  ncbi_taxonomy_id: '2941233'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2941233"
+    target="_blank">2941233</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Lachnospirales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    Acetatifactor aquisgranensis
+  img_genome_id: '8047459434'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8047459434"
+    target="_blank">8047459434</a>
+  img_genome_id_max_genes: '8047459434'
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acetatifactor
+  species: muris
+  strain:
+  - ATCC BAA-2170
+  - CT-m2
+  - DSM 23669
+  lpsn_id: '790255'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetatifactor-muris" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    muris
+  gtdb_id: RS_GCF_024623325.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_024623325.1" target="_blank">RS_GCF_024623325.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Lachnospirales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    muris
+  gold_organism_id:
+  - Go0043626
+  - Go0613088
+  - Go0613089
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0043626" target="_blank">Go0043626</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0613088" target="_blank">Go0613088</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0613089" target="_blank">Go0613089</a>
+  gold_project_id:
+  - Gp0290494
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0290494" target="_blank">Gp0290494</a>
+  ncbi_taxonomy_id: '879566'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=879566"
+    target="_blank">879566</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Lachnospirales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    Acetatifactor muris
+  bacdive_id: '18089'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/18089" target="_blank">18089</a>
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 37.0
+  isolation_category_1:
+  - Host Body Product
+  - Host
+  isolation_category_2:
+  - Gastrointestinal tract
+  - Mammals
+  isolation_category_3:
+  - Caecal content
+  - Muridae (Mouse/Rat)
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm01448" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Lachnospiraceae;g__Acetatifactor;s__Acetatifactor
+    muris
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - butyrate
+  major_end_products:
+  - acetate
+  - butyrate
+- genus: Aceticella
+  species: autotrophica
+  strain:
+  - 3443-3Ac
+  - DSM 108286
+  - VKM B-3415
+  lpsn_id: '46550'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/aceticella-autotrophica" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Thermoanaerobacterales;f__Thermoanaerobacteraceae;g__Aceticella;s__Aceticella
+    autotrophica
+  gtdb_id: RS_GCF_017357865.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_017357865.1" target="_blank">RS_GCF_017357865.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Thermoanaerobacteria;o__Thermoanaerobacterales;f__Thermoanaerobacteraceae;g__Aceticella;s__Aceticella
+    autotrophica
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acetilactobacillus
+  species: jinshanensis
+  strain:
+  - CICC 6269
+  - HSLZ-75
+  - JCM 33270
+  lpsn_id: '5493'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetilactobacillus-jinshanensis" target="_blank"
+    class="btn btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Lactobacillaceae;g__Acetilactobacillus;s__Acetilactobacillus
+    jinshanensis
+  gtdb_id: RS_GCF_004359375.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_004359375.1" target="_blank">RS_GCF_004359375.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Lactobacillaceae;g__Acetilactobacillus;s__Acetilactobacillus
+    jinshanensis
+  gold_organism_id:
+  - Go0518970
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0518970" target="_blank">Go0518970</a>
+  gold_project_id:
+  - Gp0443100
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0443100" target="_blank">Gp0443100</a>
+  ncbi_taxonomy_id: '1720083'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1720083"
+    target="_blank">1720083</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Lactobacillaceae;g__Acetilactobacillus;s__Acetilactobacillus
+    Acetilactobacillus jinshanensis
+  img_genome_id: '2870197841'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2870197841"
+    target="_blank">2870197841</a>
+  img_genome_id_max_genes: '2870197841'
+  bacdive_id: '164491'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/164491" target="_blank">164491</a>
+  cell_length_in_microns: 1.0
+  cell_shape:
+  - rod-shaped
+  colony_size: 1.5
+  gram_stain:
+  - positive
+  incubation_period_in_days: 7.0
+  motility:
+  - negative
+  oxygen_tolerance:
+  - facultative anaerobe
+  ph_for_growth: 4.0
+  salt_for_growth_in_moles_per_liter: 0.213894592744695
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 33.5
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acetitomaculum
+  species: ruminis
+  strain:
+  - ATCC 43876
+  - DSM 5522
+  - Strain 139B
+  lpsn_id: '772479'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetitomaculum-ruminis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Lachnospiraceae;g__Acetitomaculum;s__Acetitomaculum
+    ruminis
+  gtdb_id: RS_GCF_900112085.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_900112085.1" target="_blank">RS_GCF_900112085.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Lachnospirales;f__Lachnospiraceae;g__Acetitomaculum;s__Acetitomaculum
+    ruminis
+  gold_organism_id:
+  - Go0013856
+  - Go0622856
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0013856" target="_blank">Go0013856</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0622856" target="_blank">Go0622856</a>
+  gold_project_id:
+  - Gp0127372
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0127372" target="_blank">Gp0127372</a>
+  ncbi_taxonomy_id: 1120918,2382
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1120918"
+    target="_blank">1120918</a>,<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2382"
+    target="_blank">2382</a>
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  img_genome_id: '2651870361'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2651870361"
+    target="_blank">2651870361</a>
+  img_genome_id_max_genes: '2651870361'
+  bacdive_id: '6338'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/6338" target="_blank">6338</a>
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 37.0
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  isolation_category_2:
+  - Organ
+  - Mammals
+  isolation_category_3:
+  - Rumen
+  - Bovinae (Cow, Cattle)
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00637" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Lachnospiraceae;g__Acetitomaculum;s__Acetitomaculum
+    ruminis
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  major_end_products:
+  - acetate
+  substrates_for_end_products:
+  - glucose
+  fermentation_substrates:
+  - glucose
+  faprotax_traits:
+  - chemoheterotrophy
+  - dark hydrogen oxidation
+  - fermentation
+  - reductive acetogenesis
+- genus: Acetivibrio
+  species: aldrichii
+  strain:
+  - ATCC 49358
+  - DSM 6159
+  - OCM 112
+  - OGI 112
+  - P-1
+  lpsn_id: '5941'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-aldrichii" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    aldrichii
+  gtdb_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  gold_organism_id:
+  - Go0029721
+  - Go0623145
+  - Go0623146
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0029721" target="_blank">Go0029721</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0623145" target="_blank">Go0623145</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0623146" target="_blank">Go0623146</a>
+  ncbi_taxonomy_id: '29353'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=29353"
+    target="_blank">29353</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    Acetivibrio aldrichii
+  bacdive_id: '2764'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2764" target="_blank">2764</a>
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 35.0
+  isolation_category_1:
+  - Host Body Product
+  - Engineered
+  isolation_category_2:
+  - Plant
+  - Biodegradation
+  isolation_category_3:
+  - Timber
+  - Anaerobic digestor
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00619" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Clostridiaceae;g__Clostridium;s__Clostridium
+    aldrichii
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - propionate
+  - isobutyrate
+  - butyrate
+  - isovalerate
+  - lactate
+  - succinate
+  - H2
+  - CO2
+  major_end_products:
+  - acetate
+  - propionate
+  - isobutyrate
+  - butyrate
+  - isovalerate
+  - lactate
+  - succinate
+  - H2
+  - CO2
+  substrates_for_end_products:
+  - cellobiose
+  fermentation_substrates:
+  - cellobiose
+- genus: Acetivibrio
+  species: alkalicellulosi
+  strain:
+  - DSM 17461
+  - VKM 2349
+  - VKM B-2349
+  - Z-7026
+  lpsn_id: '5943'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-alkalicellulosi" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    alkalicellulosi
+  gtdb_id: GB_GCA_008125075.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=GB_GCA_008125075.1" target="_blank">GB_GCA_008125075.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Acetivibrionales;f__Acetivibrionaceae;g__Herbivorax;s__Herbivorax
+    alkalicellulosi
+  gold_organism_id:
+  - Go0003903
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0003903" target="_blank">Go0003903</a>
+  gold_project_id:
+  - Gp0003903
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0003903" target="_blank">Gp0003903</a>
+  ncbi_taxonomy_id: '320502'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=320502"
+    target="_blank">320502</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    Acetivibrio alkalicellulosi
+  img_genome_id: '2509887034'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2509887034"
+    target="_blank">2509887034</a>
+  img_genome_id_max_genes: '2509887034'
+  bacdive_id: '2838'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2838" target="_blank">2838</a>
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 35.0
+  isolation_category_1:
+  - Condition
+  - Environmental
+  - Engineered
+  isolation_category_2:
+  - Alkaline
+  - Aquatic
+  - Waste
+  isolation_category_3:
+  - Lake (large)
+  - Solid waste
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00619" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Clostridiaceae;g__Clostridium;s__Clostridium
+    alkalicellulosi
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - lactate
+  - ethanol
+  - acetate
+  - H2
+  - formate
+  major_end_products:
+  - lactate
+  - ethanol
+  - acetate
+  - H2
+  minor_end_products:
+  - formate
+  substrates_for_end_products:
+  - cellobiose
+  fermentation_substrates:
+  - cellobiose
+- genus: Acetivibrio
+  species: cellulolyticus
+  strain:
+  - ATCC 33288
+  - CD2
+  - DSM 1870
+  - LMG 8466
+  - NRC 2248
+  lpsn_id: '772481'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-cellulolyticus" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    cellulolyticus
+  gtdb_id: RS_GCF_000179595.2
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000179595.2" target="_blank">RS_GCF_000179595.2</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Acetivibrionales;f__Acetivibrionaceae;g__Acetivibrio;s__Acetivibrio
+    cellulolyticus
+  gold_organism_id:
+  - Go0004748
+  - Go0605150
+  - Go0605151
+  - Go0605152
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0004748" target="_blank">Go0004748</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0605150" target="_blank">Go0605150</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0605151" target="_blank">Go0605151</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0605152" target="_blank">Go0605152</a>
+  gold_project_id:
+  - Gp0004748
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0004748" target="_blank">Gp0004748</a>
+  ncbi_taxonomy_id: 509191,35830
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=509191"
+    target="_blank">509191</a>,<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=35830"
+    target="_blank">35830</a>
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  img_genome_id: '2510461053'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2510461053"
+    target="_blank">2510461053</a>
+  img_genome_id_max_genes: '2510461053'
+  bacdive_id: '17674'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/17674" target="_blank">17674</a>
+  incubation_period_in_days: 11.0
+  indole_test:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 37.0
+  isolation_category_1:
+  - Engineered
+  isolation_category_2:
+  - Waste
+  isolation_category_3:
+  - Sewage sludge
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00671" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Ruminococcaceae;g__Acetivibrio;s__Acetivibrio
+    cellulolyticus
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - ethanol
+  - H2
+  - CO2
+  major_end_products:
+  - acetate
+  - ethanol
+  - H2
+  - CO2
+  faprotax_traits:
+  - cellulolysis
+  - chemoheterotrophy
+- genus: Acetivibrio
+  species: clariflavus
+  strain:
+  - DSM 19732
+  - EBR-02E-0045
+  - EBR45
+  - NBRC 101661
+  lpsn_id: '5949'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-clariflavus" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    clariflavus
+  gtdb_id: RS_GCF_000237085.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000237085.1" target="_blank">RS_GCF_000237085.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Acetivibrionales;f__Acetivibrionaceae;g__Acetivibrio;s__Acetivibrio
+    clariflavus
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  bacdive_id: '2853'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2853" target="_blank">2853</a>
+  cell_length_in_microns: 3.5
+  cell_shape:
+  - rod-shaped
+  colony_size: 1.5
+  flagellum_arrangement:
+  - peritrichous
+  gram_stain:
+  - variable
+  motility:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  ph_for_growth: 7.0
+  spore_formation:
+  - positive
+  temperature_for_growth_in_degrees: 55.0
+  isolation_category_1:
+  - Condition
+  - Environmental
+  - Engineered
+  isolation_category_2:
+  - Anoxic (anaerobic)
+  - Terrestrial
+  - Bioreactor
+  - Biodegradation
+  isolation_category_3:
+  - Mud (Sludge)
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acetivibrio
+  species: ethanolgignens
+  strain:
+  - 77-6
+  - ATCC 33324
+  - DSM 3005
+  - LMG 7055
+  lpsn_id: '772482'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-ethanolgignens" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    ethanolgignens
+  gtdb_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  gold_organism_id:
+  - Go0026079
+  - Go0552672
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0026079" target="_blank">Go0026079</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0552672" target="_blank">Go0552672</a>
+  gold_project_id:
+  - Gp0505740
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0505740" target="_blank">Gp0505740</a>
+  ncbi_taxonomy_id: '290052'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=290052"
+    target="_blank">290052</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    Acetivibrio ethanolgignens
+  bacdive_id: '17675'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/17675" target="_blank">17675</a>
+  oxygen_tolerance:
+  - anaerobe
+  pathogenicity:
+  - animal
+  temperature_for_growth_in_degrees: 37.0
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  - Infection
+  isolation_category_2:
+  - Gastrointestinal tract
+  - Mammals
+  - Disease
+  isolation_category_3:
+  - Large intestine
+  - Suidae (Pig,Swine)
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00671" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Ruminococcaceae;g__Acetivibrio;s__Acetivibrio
+    ethanolgignens
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - ethanol
+  - H2
+  - CO2
+  major_end_products:
+  - acetate
+  - ethanol
+  - H2
+  - CO2
+- genus: Acetivibrio
+  species: mesophilus
+  strain:
+  - CECT 9704
+  - DSM 107956
+  - N2K1
+  lpsn_id: '5587'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-mesophilus" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    mesophilus
+  gtdb_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  gold_organism_id:
+  - Go0146500
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0146500" target="_blank">Go0146500</a>
+  gold_project_id:
+  - Gp0495217
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0495217" target="_blank">Gp0495217</a>
+  ncbi_taxonomy_id: '2487273'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2487273"
+    target="_blank">2487273</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    Acetivibrio mesophilus
+  img_genome_id: '2880951795'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2880951795"
+    target="_blank">2880951795</a>
+  img_genome_id_max_genes: '2880951795'
+  bacdive_id: '157972'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/157972" target="_blank">157972</a>
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - positive
+  motility:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  ph_for_growth: 7.0
+  spore_formation:
+  - positive
+  temperature_for_growth_in_degrees: 42.5
+  isolation_category_1:
+  - Engineered
+  - Host
+  isolation_category_2:
+  - Laboratory
+  - Bioreactor
+  - Industrial
+  - Plants
+  isolation_category_3:
+  - Plant (Factory)
+  - Herbaceous plants (Grass,Crops)
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acetivibrio
+  species: saccincola
+  strain:
+  - CECT 9155
+  - DSM 101079
+  - GGR1
+  lpsn_id: '5991'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-saccincola" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    saccincola
+  gtdb_id: RS_GCF_002844395.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_002844395.1" target="_blank">RS_GCF_002844395.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Acetivibrionales;f__Acetivibrionaceae;g__Herbivorax;s__Herbivorax
+    saccincola
+  gold_organism_id:
+  - Go0407950
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0407950" target="_blank">Go0407950</a>
+  gold_project_id:
+  - Gp0302128
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0302128" target="_blank">Gp0302128</a>
+  ncbi_taxonomy_id: '1677857'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1677857"
+    target="_blank">1677857</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    Acetivibrio saccincola
+  img_genome_id: '2775506833'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2775506833"
+    target="_blank">2775506833</a>
+  img_genome_id_max_genes: '2775506833'
+  bacdive_id: '132679'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/132679" target="_blank">132679</a>
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - positive
+  indole_test:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  salt_for_growth_in_moles_per_liter: 0.0
+  spore_formation:
+  - positive
+  temperature_for_growth_in_degrees: 55.0
+  isolation_category_1:
+  - Condition
+  - Engineered
+  isolation_category_2:
+  - Thermophilic (>45<U+00B0>C)
+  - Laboratory
+  - Industrial
+  - Bioreactor
+  isolation_category_3:
+  - Plant (Factory)
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+- genus: Acetivibrio
+  species: straminisolvens
+  strain:
+  - CSK1
+  - DSM 16021
+  - IAM 15070
+  - JCM 21531
+  - NBRC 103399
+  lpsn_id: '5955'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-straminisolvens" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    straminisolvens
+  gtdb_id: RS_GCF_000521465.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000521465.1" target="_blank">RS_GCF_000521465.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Acetivibrionales;f__Acetivibrionaceae;g__Hungateiclostridium;s__Hungateiclostridium
+    straminisolvens
+  gold_organism_id:
+  - Go0086731
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0086731" target="_blank">Go0086731</a>
+  gold_project_id:
+  - Gp0086731
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0086731" target="_blank">Gp0086731</a>
+  ncbi_taxonomy_id: '1294263'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1294263"
+    target="_blank">1294263</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    Acetivibrio straminisolvens
+  img_genome_id: '2772190653'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2772190653"
+    target="_blank">2772190653</a>
+  img_genome_id_max_genes: '2772190653'
+  bacdive_id: '2827'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2827" target="_blank">2827</a>
+  cell_shape:
+  - filament-shaped
+  motility:
+  - negative
+  oxygen_tolerance:
+  - anaerobe
+  spore_formation:
+  - positive
+  temperature_for_growth_in_degrees: 50.0
+  isolation_category_1:
+  - Environmental
+  - Engineered
+  isolation_category_2:
+  - Microbial community
+  - Biodegradation
+  isolation_category_3:
+  - Composting
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00619" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Clostridiaceae;g__Clostridium;s__Clostridium
+    straminisolvens
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - lactate
+  - ethanol
+  - H2
+  - CO2
+  major_end_products:
+  - acetate
+  - lactate
+  - ethanol
+  - H2
+  - CO2
+- genus: Acetivibrio
+  species: thermocellus
+  strain:
+  - ATCC 27405
+  - DSM 1237
+  - JCM 9322
+  - LMG 10435
+  - NBRC 103400
+  - NRRL B-4536
+  lpsn_id: '5956'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetivibrio-thermocellus" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Oscillospiraceae;g__Acetivibrio;s__Acetivibrio
+    thermocellus
+  gtdb_id: RS_GCF_000015865.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000015865.1" target="_blank">RS_GCF_000015865.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Acetivibrionales;f__Acetivibrionaceae;g__Hungateiclostridium;s__Hungateiclostridium
+    thermocellum
+  gold_organism_id:
+  - Go0015708
+  - Go0015753
+  - Go0015754
+  - Go0015755
+  - Go0015756
+  - Go0015765
+  - Go0018751
+  - Go0018904
+  - Go0019098
+  - Go0039822
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0015708" target="_blank">Go0015708</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0015753" target="_blank">Go0015753</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0015754" target="_blank">Go0015754</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0015755" target="_blank">Go0015755</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0015756" target="_blank">Go0015756</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0015765" target="_blank">Go0015765</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0018751" target="_blank">Go0018751</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0018904" target="_blank">Go0018904</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0019098" target="_blank">Go0019098</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0039822" target="_blank">Go0039822</a>
+  gold_project_id:
+  - Gp0015708
+  - Gp0015753
+  - Gp0015754
+  - Gp0015755
+  - Gp0015756
+  - Gp0015765
+  - Gp0000203
+  - Gp0018904
+  - Gp0230456
+  - Gp0230457
+  - Gp0230458
+  - Gp0230459
+  - Gp0230460
+  - Gp0230461
+  - Gp0230462
+  - Gp0230463
+  - Gp0230464
+  - Gp0230465
+  - Gp0230466
+  - Gp0230467
+  - Gp0230468
+  - Gp0230469
+  - Gp0230470
+  - Gp0230471
+  - Gp0230472
+  - Gp0230473
+  - Gp0230474
+  - Gp0230475
+  - Gp0230476
+  - Gp0247835
+  - Gp0247836
+  - Gp0247837
+  - Gp0247838
+  - Gp0247839
+  - Gp0247840
+  - Gp0247841
+  - Gp0247842
+  - Gp0247843
+  - Gp0247844
+  - Gp0247845
+  - Gp0247846
+  - Gp0247847
+  - Gp0247848
+  - Gp0247849
+  - Gp0247850
+  - Gp0247851
+  - Gp0247852
+  - Gp0247853
+  - Gp0247854
+  - Gp0247855
+  - Gp0247856
+  - Gp0247857
+  - Gp0247858
+  - Gp0247859
+  - Gp0247860
+  - Gp0247861
+  - Gp0247862
+  - Gp0247863
+  - Gp0247864
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0015708" target="_blank">Gp0015708</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0015753" target="_blank">Gp0015753</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0015754" target="_blank">Gp0015754</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0015755" target="_blank">Gp0015755</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0015756" target="_blank">Gp0015756</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0015765" target="_blank">Gp0015765</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0000203" target="_blank">Gp0000203</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0018904" target="_blank"> Gp0018904</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0230456" target="_blank">Gp0230456</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230457" target="_blank"> Gp0230457</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230458" target="_blank"> Gp0230458</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230459" target="_blank"> Gp0230459</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230460" target="_blank"> Gp0230460</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230461" target="_blank"> Gp0230461</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230462" target="_blank"> Gp0230462</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230463" target="_blank"> Gp0230463</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230464" target="_blank"> Gp0230464</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230465" target="_blank"> Gp0230465</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230466" target="_blank"> Gp0230466</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230467" target="_blank"> Gp0230467</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230468" target="_blank"> Gp0230468</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230469" target="_blank"> Gp0230469</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230470" target="_blank"> Gp0230470</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230471" target="_blank"> Gp0230471</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230472" target="_blank"> Gp0230472</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230473" target="_blank"> Gp0230473</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230474" target="_blank"> Gp0230474</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230475" target="_blank"> Gp0230475</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0230476" target="_blank"> Gp0230476</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247835" target="_blank"> Gp0247835</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247836" target="_blank"> Gp0247836</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247837" target="_blank"> Gp0247837</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247838" target="_blank"> Gp0247838</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247839" target="_blank"> Gp0247839</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247840" target="_blank"> Gp0247840</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247841" target="_blank"> Gp0247841</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247842" target="_blank"> Gp0247842</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247843" target="_blank"> Gp0247843</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247844" target="_blank"> Gp0247844</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247845" target="_blank"> Gp0247845</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247846" target="_blank"> Gp0247846</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247847" target="_blank"> Gp0247847</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247848" target="_blank"> Gp0247848</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247849" target="_blank"> Gp0247849</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247850" target="_blank"> Gp0247850</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247851" target="_blank"> Gp0247851</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247852" target="_blank"> Gp0247852</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247853" target="_blank"> Gp0247853</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247854" target="_blank"> Gp0247854</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247855" target="_blank"> Gp0247855</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247856" target="_blank"> Gp0247856</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247857" target="_blank"> Gp0247857</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247858" target="_blank"> Gp0247858</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247859" target="_blank"> Gp0247859</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247860" target="_blank"> Gp0247860</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247861" target="_blank"> Gp0247861</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247862" target="_blank"> Gp0247862</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247863" target="_blank"> Gp0247863</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0247864" target="_blank"> Gp0247864</a>
+  ncbi_taxonomy_id: 1515,203119
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1515"
+    target="_blank">1515</a>,<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=203119"
+    target="_blank">203119</a>
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  img_genome_id: '640069309'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=640069309"
+    target="_blank">640069309</a>
+  img_genome_id_max_genes: '640069309'
+  bacdive_id: '2729'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2729" target="_blank">2729</a>
+  oxygen_tolerance:
+  - anaerobe
+  spore_formation:
+  - positive
+  temperature_for_growth_in_degrees: 57.5
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00619" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Clostridiaceae;g__Clostridium;s__Clostridium
+    thermocellum
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  - lactate
+  - ethanol
+  - CO2
+  - H2
+  major_end_products:
+  - acetate
+  - lactate
+  - ethanol
+  - CO2
+  - H2
+  substrates_for_end_products:
+  - cellobiose
+  fermentation_substrates:
+  - cellobiose
+- genus: Acetoanaerobium
+  species: noterae
+  strain:
+  - ATCC 35199
+  - NOT-3
+  lpsn_id: '783234'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetoanaerobium-noterae" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Peptostreptococcaceae;g__Acetoanaerobium;s__Acetoanaerobium
+    noterae
+  gtdb_id: RS_GCF_900168025.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_900168025.1" target="_blank">RS_GCF_900168025.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Peptostreptococcales;f__Filifactoraceae;g__Acetoanaerobium;s__Acetoanaerobium
+    noterae
+  gold_organism_id:
+  - Go0088738
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0088738" target="_blank">Go0088738</a>
+  gold_project_id:
+  - Gp0088738
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0088738" target="_blank">Gp0088738</a>
+  ncbi_taxonomy_id: '745369'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=745369"
+    target="_blank">745369</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Peptostreptococcales;f__Filifactoraceae;g__Acetoanaerobium;s__Acetoanaerobium
+    Acetoanaerobium noterae
+  img_genome_id: '2588253727'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2588253727"
+    target="_blank">2588253727</a>
+  img_genome_id_max_genes: '2588253727'
+  bacdive_id: '168331'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/168331" target="_blank">168331</a>
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00732" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__incertae Sedis - Family VIII;g__Acetoanaerobium;s__Acetoanaerobium
+    noterae
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - acetate
+  major_end_products:
+  - acetate
+  substrates_for_end_products:
+  - glucose
+  fermentation_substrates:
+  - glucose
+  faprotax_traits:
+  - chemoheterotrophy
+  - fermentation
+  - reductive acetogenesis
+- genus: Acetoanaerobium
+  species: pronyense
+  strain:
+  - DSM 27512
+  - JCM 19400
+  - ST07-YE
+  lpsn_id: '793068'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetoanaerobium-pronyense" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Peptostreptococcaceae;g__Acetoanaerobium;s__Acetoanaerobium
+    pronyense
+  gtdb_id: RS_GCF_017874355.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_017874355.1" target="_blank">RS_GCF_017874355.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Peptostreptococcales;f__Filifactoraceae;g__Acetoanaerobium;s__Acetoanaerobium
+    pronyense
+  gold_organism_id:
+  - Go0552674
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0552674" target="_blank">Go0552674</a>
+  gold_project_id:
+  - Gp0505742
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0505742" target="_blank">Gp0505742</a>
+  ncbi_taxonomy_id: '1482736'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1482736"
+    target="_blank">1482736</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Peptostreptococcales;f__Filifactoraceae;g__Acetoanaerobium;s__Acetoanaerobium
+    Acetoanaerobium pronyense
+  img_genome_id: '2913505501'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2913505501"
+    target="_blank">2913505501</a>
+  img_genome_id_max_genes: '2913505501'
+  bacdive_id: '131392'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/131392" target="_blank">131392</a>
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 35.0
+  isolation_category_1:
+  - Condition
+  - Environmental
+  isolation_category_2:
+  - Thermophilic (>45<U+00B0>C)
+  - Alkaline
+  - Aquatic
+  isolation_category_3:
+  - Thermal spring
+  - Hydrothermal vent
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - chemoheterotrophy
+  - fermentation
+- genus: Acetoanaerobium
+  species: sticklandii
+  strain:
+  - ATCC 12662
+  - BCRC 14485
+  - CCRC 14485
+  - CCUG 9281
+  - DSM 519
+  - JCM 1433
+  - NCIB 10654
+  - NCIMB 10654
+  - StadtmanHF
+  lpsn_id: '794920'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetoanaerobium-sticklandii" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Bacillota;c__Clostridia;o__Eubacteriales;f__Peptostreptococcaceae;g__Acetoanaerobium;s__Acetoanaerobium
+    sticklandii
+  gtdb_id: RS_GCF_000196455.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000196455.1" target="_blank">RS_GCF_000196455.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Bacillota_A;c__Clostridia;o__Peptostreptococcales;f__Filifactoraceae;g__Acetoanaerobium;s__Acetoanaerobium
+    sticklandii
+  gold_organism_id:
+  - Go0001511
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0001511" target="_blank">Go0001511</a>
+  gold_project_id:
+  - Gp0001511
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0001511" target="_blank">Gp0001511</a>
+  ncbi_taxonomy_id: '1511'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1511"
+    target="_blank">1511</a>
+  ncbi_taxonomy: d__NA;p__Bacillota;c__Clostridia;o__Peptostreptococcales;f__Filifactoraceae;g__Acetoanaerobium;s__Acetoanaerobium
+    Acetoanaerobium sticklandii
+  img_genome_id: '649633033'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=649633033"
+    target="_blank">649633033</a>
+  img_genome_id_max_genes: '649633033'
+  bacdive_id: '2717'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2717" target="_blank">2717</a>
+  oxygen_tolerance:
+  - anaerobe
+  temperature_for_growth_in_degrees: 36.0
+  isolation_category_1:
+  - Environmental
+  isolation_category_2:
+  - Terrestrial
+  isolation_category_3:
+  - Mud (Sludge)
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00619" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Firmicutes;c__Clostridia;o__Clostridiales;f__Clostridiaceae;g__Clostridium;s__Clostridium
+    sticklandii
+  type_of_metabolism:
+  - Fermentation
+  end_products:
+  - isovalerate
+  - acetate
+  - butyrate
+  - isobutyrate
+  - lactate
+  - propionate
+  - succinate
+  - butanol
+  major_end_products:
+  - isovalerate
+  - acetate
+  - butyrate
+  minor_end_products:
+  - isobutyrate
+  - lactate
+  - propionate
+  - succinate
+  - butanol
+  substrates_for_end_products:
+  - PY
+  fermentation_substrates:
+  - PY
+  faprotax_traits:
+  - chemoheterotrophy
+  - fermentation
+- genus: Acetobacter
+  species: aceti
+  strain:
+  - ATCC 15973
+  - CCUG 18122
+  - CIP 103111
+  - DSM 3508
+  - ICMP 8807
+  - IFO 14818
+  - JCM 7641
+  - LMG 1261
+  - LMG 1504
+  - NBIMCC 8850
+  - NBRC 14818
+  - NCCB 23001
+  - NCIB 8621
+  - NCIMB 8621
+  lpsn_id: '772484'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-aceti" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    aceti
+  gtdb_id: RS_GCF_000963905.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000963905.1" target="_blank">RS_GCF_000963905.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    aceti
+  gold_organism_id:
+  - Go0008636
+  - Go0206070
+  - Go0206076
+  - Go0206200
+  - Go0206204
+  - Go0206210
+  - Go0206211
+  - Go0206215
+  - Go0206221
+  - Go0206224
+  - Go0206228
+  - Go0206229
+  - Go0206231
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0008636" target="_blank">Go0008636</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206070" target="_blank">Go0206070</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206076" target="_blank">Go0206076</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206200" target="_blank">Go0206200</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206204" target="_blank">Go0206204</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206210" target="_blank">Go0206210</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206211" target="_blank">Go0206211</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206215" target="_blank">Go0206215</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206221" target="_blank">Go0206221</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206224" target="_blank">Go0206224</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206228" target="_blank">Go0206228</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206229" target="_blank">Go0206229</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0206231" target="_blank">Go0206231</a>
+  gold_project_id:
+  - Gp0008636
+  - Gp0290487
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0008636" target="_blank">Gp0008636</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0290487" target="_blank">Gp0290487</a>
+  ncbi_taxonomy_id: 887700,435
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=887700"
+    target="_blank">887700</a>,<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=435"
+    target="_blank">435</a>
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  img_genome_id: 2784746776,2547132264
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2784746776"
+    target="_blank">2784746776</a>,<a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2547132264"
+    target="_blank">2547132264</a>
+  img_genome_id_max_genes: '2547132264'
+  bacdive_id: '2'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/2" target="_blank">2</a>
+  antibiotic_resistance:
+  - 2,4-Diamino-6,7-diisopropylpteridine
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - negative
+  incubation_period_in_days: 1.0
+  indole_test:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - aerobe
+  - obligate aerobe
+  temperature_for_growth_in_degrees: 27.0
+  voges_proskauer:
+  - negative
+  isolation_category_1:
+  - Environmental
+  - Engineered
+  isolation_category_2:
+  - Microbial community
+  - Food production
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    aceti
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: cerevisiae
+  strain:
+  - ATCC 23765
+  - DSM 14362
+  - LMG 1625
+  - NCIB 8894
+  - NCIMB 8894
+  lpsn_id: '772492'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-cerevisiae" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    cerevisiae
+  gtdb_id: RS_GCF_001580535.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_001580535.1" target="_blank">RS_GCF_001580535.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    cerevisiae
+  gold_organism_id:
+  - Go0027611
+  - Go0139147
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0027611" target="_blank">Go0027611</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0139147" target="_blank">Go0139147</a>
+  gold_project_id:
+  - Gp0818108
+  - Gp0144214
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0818108" target="_blank">Gp0818108</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0144214" target="_blank">Gp0144214</a>
+  ncbi_taxonomy_id: '178900'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=178900"
+    target="_blank">178900</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter cerevisiae
+  img_genome_id: '2724679583'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2724679583"
+    target="_blank">2724679583</a>
+  img_genome_id_max_genes: '2724679583'
+  bacdive_id: '12'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/12" target="_blank">12</a>
+  antibiotic_resistance:
+  - 2,4-Diamino-6,7-diisopropylpteridine
+  cell_shape:
+  - rod-shaped
+  cell_width_in_microns: 1.0
+  gram_stain:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - obligate aerobe
+  salt_for_growth_in_moles_per_liter: 0.992470910335387
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 29.8333333333333
+  isolation_category_1:
+  - Engineered
+  isolation_category_2:
+  - Food production
+  isolation_category_3:
+  - Beverage
+  - Fermented
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: cibinongensis
+  strain:
+  - 4H-1
+  - CIP 107380
+  - DSM 15549
+  - IFO 16605
+  - JCM 11196
+  - NBRC 16605
+  - NRIC 482
+  lpsn_id: '772493'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-cibinongensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    cibinongensis
+  gtdb_id: RS_GCF_007989305.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_007989305.1" target="_blank">RS_GCF_007989305.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    cibinongensis
+  gold_organism_id:
+  - Go0028606
+  - Go0626845
+  - Go0626846
+  - Go0626847
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0028606" target="_blank">Go0028606</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626845" target="_blank">Go0626845</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626846" target="_blank">Go0626846</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626847" target="_blank">Go0626847</a>
+  gold_project_id:
+  - Gp0503989
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0503989" target="_blank">Gp0503989</a>
+  ncbi_taxonomy_id: '146475'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=146475"
+    target="_blank">146475</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter cibinongensis
+  img_genome_id: '2901808964'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2901808964"
+    target="_blank">2901808964</a>
+  img_genome_id_max_genes: '2901808964'
+  bacdive_id: '15'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/15" target="_blank">15</a>
+  antibiotic_resistance:
+  - 2,4-Diamino-6,7-diisopropylpteridine
+  cell_shape:
+  - oval-shaped
+  gram_stain:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - obligate aerobe
+  salt_for_growth_in_moles_per_liter: 0.855578370978782
+  temperature_for_growth_in_degrees: 30.75
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  isolation_category_2:
+  - Plant
+  - Plants
+  isolation_category_3:
+  - Fruit (Seed)
+  - Tree
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    cibinongensis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: conturbans
+  strain:
+  - LMG 1627
+  - NCIMB 8945
+  lpsn_id: '14543'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-conturbans" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    conturbans
+  gtdb_id: RS_GCF_011516755.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_011516755.1" target="_blank">RS_GCF_011516755.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    conturbans
+  gold_organism_id:
+  - Go0541724
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0541724" target="_blank">Go0541724</a>
+  gold_project_id:
+  - Gp0492573
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0492573" target="_blank">Gp0492573</a>
+  ncbi_taxonomy_id: '1737472'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1737472"
+    target="_blank">1737472</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter conturbans
+  img_genome_id: '2905236147'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2905236147"
+    target="_blank">2905236147</a>
+  img_genome_id_max_genes: '2905236147'
+  bacdive_id: '167133'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/167133" target="_blank">167133</a>
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: estunensis
+  strain:
+  - ATCC 23753
+  - DSM 4493
+  - IFO 13751
+  - JCM 21172
+  - LMG 1626
+  - NBRC 13751
+  - NCIB 8935
+  - NCIMB 8935
+  lpsn_id: '772495'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-estunensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    estunensis
+  gtdb_id: RS_GCF_011516945.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_011516945.1" target="_blank">RS_GCF_011516945.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    estunensis
+  gold_organism_id:
+  - Go0028580
+  - Go0576608
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0028580" target="_blank">Go0028580</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0576608" target="_blank">Go0576608</a>
+  gold_project_id:
+  - Gp0551382
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0551382" target="_blank">Gp0551382</a>
+  ncbi_taxonomy_id: '104097'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=104097"
+    target="_blank">104097</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter estunensis
+  img_genome_id: '3003386530'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=3003386530"
+    target="_blank">3003386530</a>
+  img_genome_id_max_genes: '3003386530'
+  bacdive_id: '10'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/10" target="_blank">10</a>
+  temperature_for_growth_in_degrees: 26.5
+  isolation_category_1:
+  - Engineered
+  isolation_category_2:
+  - Food production
+  - Industrial
+  isolation_category_3:
+  - Beverage
+  - Fermented
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    estunensis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: fabarum
+  strain:
+  - '985'
+  - DSM 19596
+  - LMG 24244
+  - R-36330
+  lpsn_id: '786649'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-fabarum" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    fabarum
+  gtdb_id: RS_GCF_011516925.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_011516925.1" target="_blank">RS_GCF_011516925.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    fabarum
+  gold_organism_id:
+  - Go0030496
+  - Go0595694
+  - Go0599999
+  - Go0600000
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0030496" target="_blank">Go0030496</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0595694" target="_blank">Go0595694</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0599999" target="_blank">Go0599999</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0600000" target="_blank">Go0600000</a>
+  gold_project_id:
+  - Gp0609639
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0609639" target="_blank">Gp0609639</a>
+  ncbi_taxonomy_id: '483199'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=483199"
+    target="_blank">483199</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter fabarum
+  img_genome_id: '8114973991'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8114973991"
+    target="_blank">8114973991</a>
+  img_genome_id_max_genes: '8114973991'
+  bacdive_id: '23'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/23" target="_blank">23</a>
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - negative
+  incubation_period_in_days: 3.0
+  motility:
+  - positive
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Host Body-Site
+  - Engineered
+  isolation_category_2:
+  - Plant
+  - Food production
+  isolation_category_3:
+  - Fruit (Seed)
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: fallax
+  strain:
+  - LMG 1636
+  - NCIMB 8956
+  lpsn_id: '14544'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-fallax" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    fallax
+  gtdb_id: RS_GCF_011516735.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_011516735.1" target="_blank">RS_GCF_011516735.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    fallax
+  gold_organism_id:
+  - Go0541725
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0541725" target="_blank">Go0541725</a>
+  gold_project_id:
+  - Gp0492574
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0492574" target="_blank">Gp0492574</a>
+  ncbi_taxonomy_id: '1737473'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1737473"
+    target="_blank">1737473</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter fallax
+  img_genome_id: '2905232126'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2905232126"
+    target="_blank">2905232126</a>
+  img_genome_id_max_genes: '2905232126'
+  bacdive_id: '166754'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/166754" target="_blank">166754</a>
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: farinalis
+  strain:
+  - BCC 44845
+  - G360-1
+  - NBRC 107750
+  - PCU 319
+  lpsn_id: '789468'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-farinalis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    farinalis
+  gtdb_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  gold_organism_id:
+  - Go0029422
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0029422" target="_blank">Go0029422</a>
+  ncbi_taxonomy_id: '434'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=434"
+    target="_blank">434</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    NA
+  bacdive_id: '167683'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/167683" target="_blank">167683</a>
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: garciniae
+  strain:
+  - LMG 32243
+  - MS16-SU-2
+  - TBRC 12339
+  lpsn_id: '19470'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-garciniae" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    garciniae
+  gtdb_id: RS_GCF_017377735.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_017377735.1" target="_blank">RS_GCF_017377735.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    garciniae
+  gold_organism_id:
+  - Go0657102
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0657102" target="_blank">Go0657102</a>
+  gold_project_id:
+  - Gp0701369
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0701369" target="_blank">Gp0701369</a>
+  ncbi_taxonomy_id: '2817435'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=2817435"
+    target="_blank">2817435</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter garciniae
+  img_genome_id: '8003284770'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8003284770"
+    target="_blank">8003284770</a>
+  img_genome_id_max_genes: '8003284770'
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: ghanensis
+  strain:
+  - 430A
+  - DSM 18895
+  - LMG 23848
+  - R-29337
+  lpsn_id: '785827'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-ghanensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    ghanensis
+  gtdb_id: RS_GCF_025995755.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_025995755.1" target="_blank">RS_GCF_025995755.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    ghanensis
+  gold_organism_id:
+  - Go0031430
+  - Go0595695
+  - Go0608968
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0031430" target="_blank">Go0031430</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0595695" target="_blank">Go0595695</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0608968" target="_blank">Go0608968</a>
+  gold_project_id:
+  - Gp0818118
+  - Gp0609640
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0818118" target="_blank">Gp0818118</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0609640" target="_blank">Gp0609640</a>
+  ncbi_taxonomy_id: '431306'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=431306"
+    target="_blank">431306</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter ghanensis
+  img_genome_id: '8114971266'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8114971266"
+    target="_blank">8114971266</a>
+  img_genome_id_max_genes: '8114971266'
+  bacdive_id: '22'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/22" target="_blank">22</a>
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - negative
+  incubation_period_in_days: 4.0
+  temperature_for_growth_in_degrees: 30.0
+  isolation_category_1:
+  - Host Body-Site
+  - Engineered
+  isolation_category_2:
+  - Plant
+  - Food production
+  isolation_category_3:
+  - Fruit (Seed)
+  - Food
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: indonesiensis
+  strain:
+  - 5H-1
+  - DSM 15552
+  - IFO 16471
+  - JCM 10948
+  - LMG 19824
+  - NBRC 16471
+  - NRIC 313
+  lpsn_id: '772498'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-indonesiensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    indonesiensis
+  gtdb_id: RS_GCF_007991075.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_007991075.1" target="_blank">RS_GCF_007991075.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    indonesiensis
+  gold_organism_id:
+  - Go0028584
+  - Go0626854
+  - Go0626855
+  - Go0626856
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0028584" target="_blank">Go0028584</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626854" target="_blank">Go0626854</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626855" target="_blank">Go0626855</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626856" target="_blank">Go0626856</a>
+  gold_project_id:
+  - Gp0503991
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0503991" target="_blank">Gp0503991</a>
+  ncbi_taxonomy_id: '104101'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=104101"
+    target="_blank">104101</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter indonesiensis
+  img_genome_id: '2899141447'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2899141447"
+    target="_blank">2899141447</a>
+  img_genome_id_max_genes: '2899141447'
+  bacdive_id: '18'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/18" target="_blank">18</a>
+  temperature_for_growth_in_degrees: 30.0
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  isolation_category_2:
+  - Plant
+  - Plants
+  isolation_category_3:
+  - Fruit (Seed)
+  - Decomposing plant
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    indonesiensis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: lambici
+  strain:
+  - DSM 27328
+  - LMG 27439
+  lpsn_id: '791710'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-lambici" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    lambici
+  gtdb_id: RS_GCF_011516885.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_011516885.1" target="_blank">RS_GCF_011516885.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    lambici
+  gold_organism_id:
+  - Go0511001
+  - Go0576609
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0511001" target="_blank">Go0511001</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0576609" target="_blank">Go0576609</a>
+  gold_project_id:
+  - Gp0401055
+  - Gp0551383
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0401055" target="_blank">Gp0401055</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0551383" target="_blank">Gp0551383</a>
+  ncbi_taxonomy_id: '1332824'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1332824"
+    target="_blank">1332824</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter lambici
+  img_genome_id: '2996056227'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2996056227"
+    target="_blank">2996056227</a>
+  img_genome_id_max_genes: '2996056227'
+  bacdive_id: '23489'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/23489" target="_blank">23489</a>
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Engineered
+  isolation_category_2:
+  - Food production
+  isolation_category_3:
+  - Beverage
+  - Fermented
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: lovaniensis
+  strain:
+  - ATCC 12875
+  - DSM 4491
+  - DSM 46218
+  - IFO 13753
+  - LMG 1579
+  - LMG 1617
+  - NBRC 13753
+  - NCIB 8620
+  - NCIMB 8620
+  lpsn_id: '772502'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-lovaniensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    lovaniensis
+  gtdb_id: RS_GCF_014207635.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_014207635.1" target="_blank">RS_GCF_014207635.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    lovaniensis
+  gold_organism_id:
+  - Go0028583
+  - Go0672594
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0028583" target="_blank">Go0028583</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0672594" target="_blank">Go0672594</a>
+  gold_project_id:
+  - Gp0456268
+  - Gp0763778
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0456268" target="_blank">Gp0456268</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0763778" target="_blank">Gp0763778</a>
+  ncbi_taxonomy_id: '104100'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=104100"
+    target="_blank">104100</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter lovaniensis
+  img_genome_id: 2861688124,8055686949
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2861688124"
+    target="_blank">2861688124</a>,<a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8055686949"
+    target="_blank">8055686949</a>
+  img_genome_id_max_genes: '8055686949'
+  bacdive_id: '9'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/9" target="_blank">9</a>
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Environmental
+  isolation_category_2:
+  - Terrestrial
+  isolation_category_3:
+  - Soil
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    lovaniensis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: malorum
+  strain:
+  - DSM 14337
+  - LMG 1746
+  lpsn_id: '772503'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-malorum" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    malorum
+  gtdb_id: RS_GCF_025995655.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_025995655.1" target="_blank">RS_GCF_025995655.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    malorum
+  gold_organism_id:
+  - Go0027612
+  - Go0139165
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0027612" target="_blank">Go0027612</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0139165" target="_blank">Go0139165</a>
+  gold_project_id:
+  - Gp0818034
+  - Gp0144232
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0818034" target="_blank">Gp0818034</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0144232" target="_blank">Gp0144232</a>
+  ncbi_taxonomy_id: '178901'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=178901"
+    target="_blank">178901</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter malorum
+  img_genome_id: '2713897233'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2713897233"
+    target="_blank">2713897233</a>
+  img_genome_id_max_genes: '2713897233'
+  bacdive_id: '13'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/13" target="_blank">13</a>
+  cell_shape:
+  - ellipsoidal
+  - rod-shaped
+  gram_stain:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - obligate aerobe
+  salt_for_growth_in_moles_per_liter: 0.855578370978782
+  spore_formation:
+  - negative
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  isolation_category_2:
+  - Plant
+  - Plants
+  isolation_category_3:
+  - Fruit (Seed)
+  - Bark
+  - Decomposing plant
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: musti
+  strain:
+  - Bo7
+  - CECT 7722
+  - DSM 23824
+  lpsn_id: '793848'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-musti" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    musti
+  gtdb_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  gold_organism_id:
+  - Go0613230
+  - Go0613231
+  - Go0613232
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0613230" target="_blank">Go0613230</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0613231" target="_blank">Go0613231</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0613232" target="_blank">Go0613232</a>
+  ncbi_taxonomy_id: '864732'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=864732"
+    target="_blank">864732</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter musti
+  bacdive_id: '132413'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/132413" target="_blank">132413</a>
+  cell_shape:
+  - coccus-shaped
+  gram_stain:
+  - negative
+  incubation_period_in_days: 4.0
+  motility:
+  - positive
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Host Body Product
+  - Host
+  - Host Body-Site
+  isolation_category_2:
+  - Plant
+  - Plants
+  isolation_category_3:
+  - Juice (natural)
+  - Shrub (Scrub)
+  - Fruit (Seed)
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: nitrogenifigens
+  strain:
+  - DSM 23921
+  - LMG 23498
+  - MTCC 6912
+  - RG1
+  lpsn_id: '785323'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-nitrogenifigens" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    nitrogenifigens
+  gtdb_id: RS_GCF_025995635.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_025995635.1" target="_blank">RS_GCF_025995635.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    nitrogenifigens
+  gold_organism_id:
+  - Go0013857
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0013857" target="_blank">Go0013857</a>
+  gold_project_id:
+  - Gp0013857
+  - Gp0818040
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0013857" target="_blank">Gp0013857</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0818040" target="_blank"> Gp0818040</a>
+  ncbi_taxonomy_id: '1120919'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1120919"
+    target="_blank">1120919</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter nitrogenifigens
+  img_genome_id: '2522572157'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2522572157"
+    target="_blank">2522572157</a>
+  img_genome_id_max_genes: '2522572157'
+  bacdive_id: '20'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/20" target="_blank">20</a>
+  cell_shape:
+  - rod-shaped
+  colony_size: 2.5
+  flagellum_arrangement:
+  - polar
+  gram_stain:
+  - negative
+  incubation_period_in_days: 5.0
+  motility:
+  - positive
+  oxygen_tolerance:
+  - aerobe
+  temperature_for_growth_in_degrees: 30.0
+  isolation_category_1:
+  - Engineered
+  isolation_category_2:
+  - Food production
+  isolation_category_3:
+  - Beverage
+  - Fermented
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: oeni
+  strain:
+  - B 13
+  - CECT 5830
+  - DSM 23926
+  - LMG 21952
+  lpsn_id: '783238'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-oeni" target="_blank" class="btn btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    oeni
+  gtdb_id: RS_GCF_025995595.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_025995595.1" target="_blank">RS_GCF_025995595.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    oeni
+  gold_organism_id:
+  - Go0511000
+  - Go0595693
+  - Go0629471
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0511000" target="_blank">Go0511000</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0595693" target="_blank">Go0595693</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0629471" target="_blank">Go0629471</a>
+  gold_project_id:
+  - Gp0401054
+  - Gp0609638
+  - Gp0818023
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0401054" target="_blank">Gp0401054</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0609638" target="_blank">Gp0609638</a>
+  - <a href="https://gold.jgi.doe.gov/project?id= Gp0818023" target="_blank"> Gp0818023</a>
+  ncbi_taxonomy_id: '304077'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=304077"
+    target="_blank">304077</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter oeni
+  img_genome_id: 2829864053,8114967252
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2829864053"
+    target="_blank">2829864053</a>,<a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8114967252"
+    target="_blank">8114967252</a>
+  img_genome_id_max_genes: '8114967252'
+  bacdive_id: '132838'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/132838" target="_blank">132838</a>
+  temperature_for_growth_in_degrees: 28.0
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  - Engineered
+  isolation_category_2:
+  - Plant
+  - Plants
+  - Food production
+  isolation_category_3:
+  - Fruit (Seed)
+  - Shrub (Scrub)
+  - Fermented
+  - Beverage
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: okinawensis
+  strain:
+  - 1-35
+  - JCM 25146
+  - LMG 26457
+  lpsn_id: '790310'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-okinawensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    okinawensis
+  gtdb_id: RS_GCF_000613865.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000613865.1" target="_blank">RS_GCF_000613865.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    okinawensis
+  gold_organism_id:
+  - Go0044396
+  - Go0091939
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0044396" target="_blank">Go0044396</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0091939" target="_blank">Go0091939</a>
+  gold_project_id:
+  - Gp0091939
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0091939" target="_blank">Gp0091939</a>
+  ncbi_taxonomy_id: 1076594,1236501
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1076594"
+    target="_blank">1076594</a>,<a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1236501"
+    target="_blank">1236501</a>
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  img_genome_id: '2579778976'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2579778976"
+    target="_blank">2579778976</a>
+  img_genome_id_max_genes: '2579778976'
+  bacdive_id: '163333'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/163333" target="_blank">163333</a>
+  temperature_for_growth_in_degrees: 30.0
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: orientalis
+  strain:
+  - 21F-2
+  - CIP 107379
+  - DSM 15550
+  - IFO 16606
+  - JCM 11195
+  - NBRC 16606
+  - NRIC 481
+  lpsn_id: '772508'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-orientalis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    orientalis
+  gtdb_id: RS_GCF_000963965.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_000963965.1" target="_blank">RS_GCF_000963965.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    orientalis
+  gold_organism_id:
+  - Go0028605
+  - Go0626849
+  - Go0626850
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0028605" target="_blank">Go0028605</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626849" target="_blank">Go0626849</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0626850" target="_blank">Go0626850</a>
+  gold_project_id:
+  - Gp0503990
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0503990" target="_blank">Gp0503990</a>
+  ncbi_taxonomy_id: '146474'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=146474"
+    target="_blank">146474</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter orientalis
+  img_genome_id: '2899144674'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2899144674"
+    target="_blank">2899144674</a>
+  img_genome_id_max_genes: '2899144674'
+  bacdive_id: '16'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/16" target="_blank">16</a>
+  antibiotic_resistance:
+  - 2,4-Diamino-6,7-diisopropylpteridine
+  cell_shape:
+  - rod-shaped
+  gram_stain:
+  - negative
+  motility:
+  - negative
+  oxygen_tolerance:
+  - obligate aerobe
+  salt_for_growth_in_moles_per_liter: 0.855578370978782
+  temperature_for_growth_in_degrees: 29.75
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  isolation_category_2:
+  - Plant
+  - Plants
+  isolation_category_3:
+  - Flower
+  - Herbaceous plants (Grass,Crops)
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    orientalis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: orleanensis
+  strain:
+  - ATCC 12876
+  - CCUG 18126
+  - DSM 4492
+  - DSM 46223
+  - IFO 13752
+  - JCM 7639
+  - LMG 1583
+  - NBRC 13752
+  - NCCB 31003
+  - NCIB 8622
+  - NCIMB 8622
+  lpsn_id: '772509'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-orleanensis" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    orleanensis
+  gtdb_id: RS_GCF_001581005.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_001581005.1" target="_blank">RS_GCF_001581005.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    orleanensis
+  gold_organism_id:
+  - Go0028582
+  - Go0139158
+  - Go0636235
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0028582" target="_blank">Go0028582</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0139158" target="_blank">Go0139158</a>
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0636235" target="_blank">Go0636235</a>
+  gold_project_id:
+  - Gp0144225
+  - Gp0653852
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0144225" target="_blank">Gp0144225</a>
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0653852" target="_blank">Gp0653852</a>
+  ncbi_taxonomy_id: '104099'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=104099"
+    target="_blank">104099</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter orleanensis
+  img_genome_id: 2728368908,8110910277
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2728368908"
+    target="_blank">2728368908</a>,<a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=8110910277"
+    target="_blank">8110910277</a>
+  img_genome_id_max_genes: '8110910277'
+  bacdive_id: '8'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/8" target="_blank">8</a>
+  oxygen_tolerance:
+  - aerobe
+  temperature_for_growth_in_degrees: 28.5
+  isolation_category_1:
+  - Host Body-Site
+  - Host
+  - Engineered
+  isolation_category_2:
+  - Plant
+  - Plants
+  - Food production
+  isolation_category_3:
+  - Fruit (Seed)
+  - Herbaceous plants (Grass,Crops)
+  - Fermented
+  - Beverage
+  bergey_article_link: <a href="https://doi.org/10.1002/9781118960608.gbm00876" target="_blank" class="btn
+    btn-primary">Link</a>
+  bergey_taxonomy: d__NA;p__Proteobacteria;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    orleanensis
+  type_of_metabolism:
+  - Other
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: oryzifermentans
+  strain:
+  - JCM 31096
+  - KACC 19301
+  - SLV-7
+  lpsn_id: '800723'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-oryzifermentans" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    oryzifermentans
+  gtdb_id: RS_GCF_001628715.1
+  gtdb_id_link: <a href="https://gtdb.ecogenomic.org/searches?s=al&q=RS_GCF_001628715.1" target="_blank">RS_GCF_001628715.1</a>
+  gtdb_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Acetobacterales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    oryzifermentans
+  gold_organism_id:
+  - Go0116046
+  gold_organism_id_link:
+  - <a href="https://gold.jgi.doe.gov/organism?id=Go0116046" target="_blank">Go0116046</a>
+  gold_project_id:
+  - Gp0120405
+  gold_project_id_link:
+  - <a href="https://gold.jgi.doe.gov/project?id=Gp0120405" target="_blank">Gp0120405</a>
+  ncbi_taxonomy_id: '1633874'
+  ncbi_taxonomy_id_link: <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1633874"
+    target="_blank">1633874</a>
+  ncbi_taxonomy: d__NA;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    Acetobacter oryzifermentans
+  img_genome_id: '2627853949'
+  img_genome_id_link: <a href="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2627853949"
+    target="_blank">2627853949</a>
+  img_genome_id_max_genes: '2627853949'
+  bacdive_id: '163947'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/163947" target="_blank">163947</a>
+  temperature_for_growth_in_degrees: 30.0
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy
+- genus: Acetobacter
+  species: oryzoeni
+  strain:
+  - B 6
+  - JCM 33371
+  - KACC 21201
+  lpsn_id: '5839'
+  lpsn_page_link: <a href="https://lpsn.dsmz.de/species/acetobacter-oryzoeni" target="_blank" class="btn
+    btn-primary">Link</a>
+  lpsn_taxonomy: d__Bacteria;p__Pseudomonadota;c__Alphaproteobacteria;o__Rhodospirillales;f__Acetobacteraceae;g__Acetobacter;s__Acetobacter
+    oryzoeni
+  gtdb_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  ncbi_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  bacdive_id: '164536'
+  bacdive_id_link: <a href="https://bacdive.dsmz.de/strain/164536" target="_blank">164536</a>
+  temperature_for_growth_in_degrees: 30.0
+  bergey_taxonomy: d__NA;p__NA;c__NA;o__NA;f__NA;g__NA;s__NA NA
+  faprotax_traits:
+  - aerobic chemoheterotrophy
+  - chemoheterotrophy

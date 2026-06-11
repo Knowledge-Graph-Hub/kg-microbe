@@ -1,0 +1,755 @@
+name: FermentationExplorer
+title: Fermentation Explorer database (clean)
+id: https://w3id.org/kg-microbe/fermentation-explorer
+description: 'LinkML schema for the Fermentation Explorer clean database (thackmann/FermentationExplorer
+  database_clean.zip -> data/raw/fermentation_explorer_database_clean.csv): 20,806 records x 52 columns
+  of consolidated multi-source taxonomy (LPSN/GTDB/GOLD/NCBI/IMG/Bergey), organism phenotypes, and fermentation
+  metabolism / end products. Bootstrapped with schema-automator (generalize-tsv) then curated: enums populated
+  from the data, '';''-delimited cells modelled multivalued (GOLD IDs use '',''), measurements typed float,
+  and *_link columns flagged as HTML. The raw 95-column per-source table is data/raw/fermentation_explorer_database_raw.csv
+  (reference/triage).'
+prefixes:
+  linkml: https://w3id.org/linkml/
+  FermentationExplorer: https://w3id.org/kg-microbe/fermentation-explorer/
+default_prefix: FermentationExplorer
+default_range: string
+imports:
+- linkml:types
+classes:
+  FermentationDatabase:
+    tree_root: true
+    description: Container for Fermentation Explorer records.
+    attributes:
+      records:
+        range: FermentationRecord
+        multivalued: true
+        inlined_as_list: true
+  FermentationRecord:
+    description: 'One organism record: taxonomy, phenotype and fermentation metabolism for a strain.'
+    slots:
+    - genus
+    - species
+    - subspecies
+    - strain
+    - lpsn_id
+    - lpsn_page_link
+    - lpsn_taxonomy
+    - gtdb_id
+    - gtdb_id_link
+    - gtdb_taxonomy
+    - gold_organism_id
+    - gold_organism_id_link
+    - gold_project_id
+    - gold_project_id_link
+    - ncbi_taxonomy_id
+    - ncbi_taxonomy_id_link
+    - ncbi_taxonomy
+    - img_genome_id
+    - img_genome_id_link
+    - img_genome_id_max_genes
+    - bacdive_id
+    - bacdive_id_link
+    - antibiotic_resistance
+    - antibiotic_sensitivity
+    - cell_length_in_microns
+    - cell_shape
+    - cell_width_in_microns
+    - colony_size
+    - flagellum_arrangement
+    - gram_stain
+    - incubation_period_in_days
+    - indole_test
+    - motility
+    - oxygen_tolerance
+    - ph_for_growth
+    - pathogenicity
+    - salt_for_growth_in_moles_per_liter
+    - spore_formation
+    - temperature_for_growth_in_degrees
+    - voges_proskauer
+    - isolation_category_1
+    - isolation_category_2
+    - isolation_category_3
+    - bergey_article_link
+    - bergey_taxonomy
+    - type_of_metabolism
+    - end_products
+    - major_end_products
+    - minor_end_products
+    - substrates_for_end_products
+    - fermentation_substrates
+    - faprotax_traits
+slots:
+  genus:
+    description: Genus name.
+    range: string
+    required: true
+  species:
+    description: Species epithet.
+    range: string
+    required: false
+  subspecies:
+    description: Subspecies epithet.
+    range: string
+    required: false
+  strain:
+    description: Strain designation(s); ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  lpsn_id:
+    description: LPSN identifier (unique, non-null; used as the record identifier).
+    identifier: true
+    range: string
+    required: false
+  lpsn_page_link:
+    description: LPSN page link. HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    required: false
+  lpsn_taxonomy:
+    description: LPSN taxonomy. Lineage string in GTDB style (d__;p__;c__;o__;f__;g__;s__).
+    range: string
+    required: false
+  gtdb_id:
+    description: GTDB genome accession.
+    range: string
+    required: false
+  gtdb_id_link:
+    description: GTDB link. HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    required: false
+  gtdb_taxonomy:
+    description: GTDB taxonomy. Lineage string in GTDB style (d__;p__;c__;o__;f__;g__;s__).
+    range: string
+    required: false
+  gold_organism_id:
+    description: JGI GOLD organism ID(s); ','-delimited.
+    range: string
+    multivalued: true
+    required: false
+  gold_organism_id_link:
+    description: GOLD organism link(s). HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    multivalued: true
+    required: false
+  gold_project_id:
+    description: JGI GOLD project ID(s); ','-delimited.
+    range: string
+    multivalued: true
+    required: false
+  gold_project_id_link:
+    description: GOLD project link(s). HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    multivalued: true
+    required: false
+  ncbi_taxonomy_id:
+    description: NCBI Taxonomy ID.
+    range: string
+    required: false
+  ncbi_taxonomy_id_link:
+    description: NCBI Taxonomy link. HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    required: false
+  ncbi_taxonomy:
+    description: NCBI taxonomy. Lineage string in GTDB style (d__;p__;c__;o__;f__;g__;s__).
+    range: string
+    required: false
+  img_genome_id:
+    description: JGI IMG genome ID.
+    range: string
+    required: false
+  img_genome_id_link:
+    description: IMG genome link. HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    required: false
+  img_genome_id_max_genes:
+    description: IMG genome ID of the assembly with the most genes.
+    range: string
+    required: false
+  bacdive_id:
+    description: BacDive strain ID.
+    range: string
+    required: false
+  bacdive_id_link:
+    description: BacDive link. HTML anchor (<a href=...>) markup as stored in the clean database.
+    range: string
+    required: false
+  antibiotic_resistance:
+    description: Antibiotics the organism resists; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  antibiotic_sensitivity:
+    description: Antibiotics the organism is sensitive to; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  cell_length_in_microns:
+    description: Cell length (micrometres).
+    range: float
+    required: false
+  cell_shape:
+    description: Cell shape(s); ';'-delimited.
+    range: CellShapeEnum
+    multivalued: true
+    required: false
+  cell_width_in_microns:
+    description: Cell width (micrometres).
+    range: float
+    required: false
+  colony_size:
+    description: Colony size (mm).
+    range: float
+    required: false
+  flagellum_arrangement:
+    description: Flagellum arrangement(s); ';'-delimited.
+    range: FlagellumArrangementEnum
+    multivalued: true
+    required: false
+  gram_stain:
+    description: Gram stain result(s); ';'-delimited.
+    range: GramStainEnum
+    multivalued: true
+    required: false
+  incubation_period_in_days:
+    description: Incubation period (days).
+    range: float
+    required: false
+  indole_test:
+    description: Indole test result.
+    range: IndoleTestEnum
+    multivalued: true
+    required: false
+  motility:
+    description: Motility.
+    range: MotilityEnum
+    multivalued: true
+    required: false
+  oxygen_tolerance:
+    description: Oxygen tolerance class(es); ';'-delimited.
+    range: OxygenToleranceEnum
+    multivalued: true
+    required: false
+  ph_for_growth:
+    description: Representative pH for growth.
+    range: float
+    required: false
+  pathogenicity:
+    description: Pathogenicity host(s); ';'-delimited.
+    range: PathogenicityEnum
+    multivalued: true
+    required: false
+  salt_for_growth_in_moles_per_liter:
+    description: Representative salt concentration for growth (mol/L).
+    range: float
+    required: false
+  spore_formation:
+    description: Spore formation.
+    range: SporeFormationEnum
+    multivalued: true
+    required: false
+  temperature_for_growth_in_degrees:
+    description: Representative growth temperature (degrees C).
+    range: float
+    required: false
+  voges_proskauer:
+    description: Voges-Proskauer test result.
+    range: VogesProskauerEnum
+    multivalued: true
+    required: false
+  isolation_category_1:
+    description: Level 1 BacDive isolation-source category; ';'-delimited.
+    range: IsolationCategory1Enum
+    multivalued: true
+    required: false
+  isolation_category_2:
+    description: Level 2 BacDive isolation-source category; ';'-delimited.
+    range: IsolationCategory2Enum
+    multivalued: true
+    required: false
+  isolation_category_3:
+    description: Level 3 BacDive isolation-source category; ';'-delimited.
+    range: IsolationCategory3Enum
+    multivalued: true
+    required: false
+  bergey_article_link:
+    description: Bergey's Manual article link. HTML anchor (<a href=...>) markup as stored in the clean
+      database.
+    range: string
+    required: false
+  bergey_taxonomy:
+    description: Bergey taxonomy. Lineage string in GTDB style (d__;p__;c__;o__;f__;g__;s__).
+    range: string
+    required: false
+  type_of_metabolism:
+    description: Type of metabolism.
+    range: TypeOfMetabolismEnum
+    multivalued: true
+    required: false
+  end_products:
+    description: Metabolic end products; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  major_end_products:
+    description: Major metabolic end products; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  minor_end_products:
+    description: Minor metabolic end products; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  substrates_for_end_products:
+    description: Substrates yielding the end products; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  fermentation_substrates:
+    description: Substrates fermented; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+  faprotax_traits:
+    description: FAPROTAX functional traits; ';'-delimited.
+    range: string
+    multivalued: true
+    required: false
+enums:
+  CellShapeEnum:
+    description: Cell shapes observed in the database.
+    permissible_values:
+      coccus-shaped: {}
+      crescent-shaped: {}
+      curved-shaped: {}
+      diplococcus-shaped: {}
+      dumbbell-shaped: {}
+      ellipsoidal: {}
+      filament-shaped: {}
+      flask-shaped: {}
+      helical-shaped: {}
+      other: {}
+      oval-shaped: {}
+      ovoid-shaped: {}
+      pleomorphic-shaped: {}
+      ring-shaped: {}
+      rod-shaped: {}
+      sphere-shaped: {}
+      spiral-shaped: {}
+      spore-shaped: {}
+      star-shaped: {}
+      vibrio-shaped: {}
+  FlagellumArrangementEnum:
+    description: Flagellum arrangements observed in the database.
+    permissible_values:
+      amphitrichous: {}
+      gliding: {}
+      lophotrichous: {}
+      monopolar: {}
+      monotrichous: {}
+      monotrichous, polar: {}
+      peritrichous: {}
+      polar: {}
+      polytrichous, monopolar: {}
+      subpolar: {}
+  GramStainEnum:
+    description: Gram stain results.
+    permissible_values:
+      negative: {}
+      positive: {}
+      variable: {}
+  IndoleTestEnum:
+    description: Indole test results.
+    permissible_values:
+      negative: {}
+      positive: {}
+  MotilityEnum:
+    description: Motility values.
+    permissible_values:
+      negative: {}
+      positive: {}
+  OxygenToleranceEnum:
+    description: Oxygen tolerance classes.
+    permissible_values:
+      aerobe: {}
+      aerotolerant: {}
+      anaerobe: {}
+      facultative aerobe: {}
+      facultative anaerobe: {}
+      microaerophile: {}
+      microaerotolerant: {}
+      obligate aerobe: {}
+      obligate anaerobe: {}
+  PathogenicityEnum:
+    description: Pathogenicity hosts.
+    permissible_values:
+      animal: {}
+      human: {}
+      plant: {}
+  SporeFormationEnum:
+    description: Spore formation values.
+    permissible_values:
+      negative: {}
+      positive: {}
+  VogesProskauerEnum:
+    description: Voges-Proskauer test results.
+    permissible_values:
+      negative: {}
+      positive: {}
+      variable: {}
+  IsolationCategory1Enum:
+    description: Level 1 of BacDive's isolation-source classification (no '#' prefix).
+    permissible_values:
+      Climate: {}
+      Condition: {}
+      Engineered: {}
+      Environmental: {}
+      Host: {}
+      Host Body Product: {}
+      Host Body-Site: {}
+      Infection: {}
+  IsolationCategory2Enum:
+    description: Level 2 of BacDive's isolation-source classification (no '#' prefix).
+    permissible_values:
+      Acidic: {}
+      Agriculture: {}
+      Air: {}
+      Algae: {}
+      Alkaline: {}
+      Amphibia: {}
+      Anoxic (anaerobic): {}
+      Aquatic: {}
+      Arthropoda: {}
+      Biodegradation: {}
+      Biofilm: {}
+      Bioreactor: {}
+      Bioremediation: {}
+      Birds: {}
+      Built environment: {}
+      Cold: {}
+      Contamination: {}
+      Disease: {}
+      Fishes: {}
+      Fluids: {}
+      Food production: {}
+      Fungi: {}
+      Gastrointestinal tract: {}
+      Hot: {}
+      Human: {}
+      Humid: {}
+      Industrial: {}
+      Inflammation: {}
+      Invertebrates (Other): {}
+      Juvenile: {}
+      Laboratory: {}
+      Limb: {}
+      Mammals: {}
+      Medical device: {}
+      Medical environment: {}
+      Medical product: {}
+      Microbial: {}
+      Microbial community: {}
+      Oral cavity and Airways: {}
+      Oral cavity and airways: {}
+      Organ: {}
+      Other: {}
+      Patient: {}
+      Plant: {}
+      Plant infections: {}
+      Plants: {}
+      Protozoa: {}
+      Psychrophilic (<10<U+00B0>C): {}
+      Reptilia: {}
+      Saline: {}
+      Sulfuric: {}
+      Temperate: {}
+      Terrestrial: {}
+      Thermophilic (>45<U+00B0>C): {}
+      Treatment: {}
+      Urogenital tract: {}
+      Waste: {}
+      Xerophilic: {}
+      Yeast: {}
+  IsolationCategory3Enum:
+    description: Level 3 of BacDive's isolation-source classification (no '#' prefix).
+    permissible_values:
+      Abdomen: {}
+      Abort: {}
+      Abscess: {}
+      Activated sludge: {}
+      Air conditioner: {}
+      Airways: {}
+      Alpine: {}
+      Amniotic fluid: {}
+      Anaerobic digestor: {}
+      Animal feed: {}
+      Animal habitation (Nest,Burrow): {}
+      Animal produced food (natural): {}
+      Ankle: {}
+      Annelida: {}
+      Antibiotic treatment: {}
+      Aquaculture: {}
+      Aquatic mammal: {}
+      Aquatic plant: {}
+      Arid: {}
+      Arm: {}
+      Aspirate: {}
+      Bacteria: {}
+      Bark: {}
+      Beverage: {}
+      Biofilter: {}
+      Biopsy: {}
+      Bladder: {}
+      Bladder stone: {}
+      Blood: {}
+      Blood culture: {}
+      Bone: {}
+      Boreal: {}
+      Bottled, canned, packed food: {}
+      Bovinae (Cow, Cattle): {}
+      Brackish: {}
+      Brain: {}
+      Bronchial wash: {}
+      Brown Algae: {}
+      Caecal content: {}
+      Canidae (Dog): {}
+      Caprinae (Sheep/Goat): {}
+      Catheter: {}
+      Cave water: {}
+      Cerebrospinal fluid: {}
+      Chicken: {}
+      Child: {}
+      Clean room: {}
+      Clinic: {}
+      Cnidaria (Corals): {}
+      Co-culture: {}
+      Coalbed water: {}
+      Coast: {}
+      Composting: {}
+      Container (Reservoir): {}
+      Contaminant: {}
+      Cooling tower: {}
+      Coral reef: {}
+      Core sample: {}
+      Crustacea: {}
+      Currency: {}
+      Cystic fibrosis: {}
+      Dairy product: {}
+      Decomposing algae: {}
+      Decomposing animal: {}
+      Decomposing plant: {}
+      Defined media: {}
+      Dental plaque: {}
+      Desert: {}
+      Dinoflagellate: {}
+      Domestic waste: {}
+      Dust: {}
+      Dust (Ash): {}
+      Ear: {}
+      Echinodermata: {}
+      Egg: {}
+      Endosphere: {}
+      Endosymbiont: {}
+      Engineered product: {}
+      Epibiont: {}
+      Equidae (Horse): {}
+      Estuary: {}
+      Extracellular: {}
+      Eye: {}
+      Feces (Stool): {}
+      Felidae (Cat): {}
+      Female: {}
+      Fermented: {}
+      Field: {}
+      Flower: {}
+      Foam: {}
+      Food: {}
+      Foot: {}
+      Forest: {}
+      Freshwater: {}
+      Fruit (Seed): {}
+      Gall: {}
+      Garden: {}
+      Geologic: {}
+      Gingiva: {}
+      Glacier: {}
+      Grassland: {}
+      Green algae: {}
+      Greenhouse: {}
+      Groundwater: {}
+      Grove (Orchard): {}
+      Hand: {}
+      Head: {}
+      Heart: {}
+      Heart valve: {}
+      Heavy metal: {}
+      Herbaceous plants (Grass,Crops): {}
+      House: {}
+      Hydrothermal vent: {}
+      Ice: {}
+      In situ: {}
+      Indoor: {}
+      Indoor Air: {}
+      Industrial production: {}
+      Industrial waste: {}
+      Industrial wastewater: {}
+      Insecta: {}
+      Intracellular: {}
+      Joint: {}
+      Juice (natural): {}
+      Kidney: {}
+      Lab enrichment: {}
+      Lake (large): {}
+      Landfill: {}
+      Large intestine: {}
+      Leaf (Phyllosphere): {}
+      Leg: {}
+      Leporidae (Rabbit/Hare): {}
+      Lichen: {}
+      Liver: {}
+      Livestock (Husbandry): {}
+      Lung: {}
+      Lymph node: {}
+      Machines and devices: {}
+      Male: {}
+      Mammary gland: {}
+      Mangrove: {}
+      Marine: {}
+      Meadow: {}
+      Meat: {}
+      Medical practice: {}
+      Meningitis: {}
+      Microbial mat: {}
+      Milk: {}
+      Mine: {}
+      Mollusca: {}
+      Moss: {}
+      Mouth: {}
+      Mucus: {}
+      Mud (Sludge): {}
+      Muridae (Mouse/Rat): {}
+      Mushroom: {}
+      Mycosis: {}
+      Nectar: {}
+      Nematoda: {}
+      Nephridium: {}
+      Non-marine Saline and Alkaline: {}
+      Nose: {}
+      Oil (Food): {}
+      Oil (Fuel): {}
+      Oil reservoir: {}
+      Outdoor Air: {}
+      Ovary: {}
+      Paddy (Ricefield): {}
+      Painting: {}
+      Parasite: {}
+      Peat moss: {}
+      Periodontal pocket: {}
+      Permafrost: {}
+      Pesticide: {}
+      Phylloplane: {}
+      Plant (Factory): {}
+      Plant exudate (Resin): {}
+      Plant litter (Forest): {}
+      Plant sap (Flux): {}
+      Plantation: {}
+      Plaque: {}
+      Pleural fluid: {}
+      Polar: {}
+      Pond (small): {}
+      Porifera (Sponges): {}
+      Preserved: {}
+      Primates: {}
+      Protist: {}
+      Rectum: {}
+      Red algae: {}
+      Rhizoplane: {}
+      Rhizosphere: {}
+      River (Creek): {}
+      Rodentia (Other): {}
+      Root (Rhizome): {}
+      Root (Tooth): {}
+      Root nodule: {}
+      Rot (Root,Stem): {}
+      Rumen: {}
+      Rumen fluid: {}
+      Saliva: {}
+      Salmonidae: {}
+      Salt marsh: {}
+      Sandy: {}
+      Seafood: {}
+      Sediment: {}
+      Semen: {}
+      Semiarid: {}
+      Sewage sludge: {}
+      Shrub (Scrub): {}
+      Simulated communities: {}
+      Skin, Nail, Hair: {}
+      Small intestine: {}
+      Soil: {}
+      Solid animal waste: {}
+      Solid plant waste: {}
+      Solid waste: {}
+      Specimen: {}
+      Spinal Cord: {}
+      Spleen: {}
+      Spoiled: {}
+      Spot (Leaf,Stem): {}
+      Spring: {}
+      Sputum: {}
+      Starter culture: {}
+      Stem (Branch): {}
+      Sterilized (Desinfected): {}
+      Sterilized plant part: {}
+      Stomach: {}
+      Straw: {}
+      Subarctic: {}
+      Subgingival plaque: {}
+      Subtropical: {}
+      Sugary food: {}
+      Suidae (Pig,Swine): {}
+      Surface water: {}
+      Swab: {}
+      Synovial fluid: {}
+      Thermal spring: {}
+      Thoracic segment: {}
+      Throat: {}
+      Tick: {}
+      Tidal flat: {}
+      Timber: {}
+      Tooth: {}
+      Torso: {}
+      Trachea: {}
+      Transportation ways (Roads): {}
+      Tree: {}
+      Tropical: {}
+      Tuberculosis: {}
+      Tundra: {}
+      Tunicata: {}
+      Urethra: {}
+      Urine: {}
+      Vagina: {}
+      Vaginal secretion: {}
+      Vascular system: {}
+      Vegetable (incl. Grains): {}
+      Vineyard: {}
+      Viriome: {}
+      Volcanic: {}
+      Vomit: {}
+      Waste gas: {}
+      Wastewater: {}
+      Water reservoir (Aquarium/pool): {}
+      Water treatment plant: {}
+      Wetland (Swamp): {}
+      Wound: {}
+      Wound fluid: {}
+      Xerophytic: {}
+      Zebrafish: {}
+      Zooplankton: {}
+  TypeOfMetabolismEnum:
+    description: Types of energy metabolism.
+    permissible_values:
+      Fermentation: {}
+      Methanogenesis: {}
+      Other: {}

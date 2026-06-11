@@ -419,6 +419,25 @@
   local_name: bacdive_isolation_sources.csv
 
 #
+# Fermentation Explorer database (thackmann/FermentationExplorer)
+# Phenotype + genotype of fermentative prokaryotes (~20,806 records).
+# Source of the ephemeral Shiny "Download (clean)/(raw) database" buttons at
+# microbe-decoder.org; mirrored here from the project's GitHub repo.
+#   * database_clean.zip -> database_clean.csv: the consolidated, analysis-ready
+#     table (52 cols: unified taxonomy + phenotypes + metabolism/end-products).
+#     This is the primary schema target.
+#   * database.zip -> database.csv: the raw, per-source table (95 cols:
+#     LPSN_*/GTDB_*/Bergey_*/VPI_*/Literature_*/BacDive_*) for reference/triage.
+# kghub-downloader fetches the .zip as-is; unzip to get the .csv.
+#
+-
+  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database_clean.zip
+  local_name: fermentation_explorer_database_clean.zip
+-
+  url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Database/database.zip
+  local_name: fermentation_explorer_database_raw.zip
+
+#
 # Biolink Model
 # The standard schema for biological knowledge graphs
 # Version 4.3.6 (latest as of Dec 2024)

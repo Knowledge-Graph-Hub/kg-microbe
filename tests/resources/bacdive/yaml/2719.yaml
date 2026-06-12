@@ -1,0 +1,147 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 1181
+    composition: 'Name: CHOPPED MEAT MEDIUM (DSMZ Medium 78)
+
+      Composition:
+
+      Ground beef 500.0 g/l
+
+      Casitone 30.0 g/l
+
+      Agar 15.0 g/l
+
+      Yeast extract 5.0 g/l
+
+      K2HPO4 5.0 g/l
+
+      L-Cysteine HCl 0.5 g/l
+
+      Ethanol 0.19 g/l
+
+      Vitamin K3 0.05 g/l
+
+      Hemin 0.005 g/l
+
+      Resazurin 0.001 g/l
+
+      Vitamin K1
+
+      NaOH
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/78
+    name: CHOPPED MEAT MEDIUM (DSMZ Medium 78)
+  culture temp:
+    '@ref': 1181
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 1181
+  culture collection no.: DSM 2636, ATCC 29748
+  literature:
+    DOI: 10.1099/00207713-51-6-2105
+    Pubmed-ID: '11760953'
+    authors: Chamkha M, Garcia JL, Labat M
+    journal: Int J Syst Evol Microbiol
+    mesh: Bacterial Typing Techniques, Cinnamates/*metabolism, Clostridium/*classification/growth
+      & development/*metabolism, Culture Media, Glucose/metabolism
+    title: Metabolism of cinnamic acids by some Clostridiales and emendation of the
+      descriptions of Clostridium aerotolerans, Clostridium celerecrescens and Clostridium
+      xylanolyticum.
+    topic: Metabolism
+    topic2: Cultivation
+    year: 2001
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/158107
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/107270
+General:
+  '@ref': 1181
+  BacDive-ID: 2719
+  DSM-Number: 2636
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1550
+  description: Clostridium subterminale SB4 is an anaerobe, mesophilic bacterium of
+    the family Clostridiaceae.
+  doi: 10.13145/bacdive2719.20220920.7
+  keywords:
+  - anaerobe
+  - Bacteria
+  - 16S sequence
+  - mesophilic
+  strain history: <- ATCC <- H.A. Barker, SB4 <- O.M. Rochovansky
+Isolation, sampling and environmental information: {}
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 1181
+  LPSN:
+    '@ref': 20215
+    class: Clostridia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Clostridiaceae
+    full scientific name: <I>Clostridium</I> <I>subterminale</I> (Hall and Whitehead
+      1927) Spray 1948 (Approved Lists 1980)
+    genus: Clostridium
+    keyword: phylum/bacillota
+    order: Eubacteriales
+    phylum: Bacillota
+    species: Clostridium subterminale
+    synonyms:
+      '@ref': 20215
+      synonym: Bacillus subterminalis
+  class: Clostridia
+  domain: Bacteria
+  family: Clostridiaceae
+  full scientific name: Clostridium subterminale (Hall and Whitehead 1927) Spray 1948
+  genus: Clostridium
+  order: Clostridiales
+  phylum: Firmicutes
+  species: Clostridium subterminale
+  strain designation: SB4
+  type strain: 'no'
+Physiology and metabolism:
+  compound production:
+    '@ref': 1181
+    compound: glutamate dehydrogenase
+  oxygen tolerance:
+    '@ref': 1181
+    oxygen tolerance: anaerobe
+Reference:
+- '@id': 1181
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 2636)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-2636
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information:
+  risk assessment:
+    '@ref': 1181
+    biosafety level: '2'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 1181
+    NCBI tax ID: 1550
+    accession: AF241842
+    database: ena
+    description: Clostridium subterminale isolate DSM 2636 16S ribosomal RNA gene,
+      partial sequence
+    length: 1504

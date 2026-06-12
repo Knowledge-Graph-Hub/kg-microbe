@@ -1,0 +1,231 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 610
+    composition: 'Name: CHOPPED MEAT MEDIUM WITH CARBOHYDRATES (DSMZ Medium 110)
+
+      Composition:
+
+      Ground beef 500.0 g/l
+
+      Casitone 30.0 g/l
+
+      Agar 15.0 g/l
+
+      K2HPO4 5.0 g/l
+
+      Yeast extract 5.0 g/l
+
+      D-Glucose 4.0 g/l
+
+      Starch 1.0 g/l
+
+      Maltose 1.0 g/l
+
+      Cellobiose 1.0 g/l
+
+      L-Cysteine HCl 0.5 g/l
+
+      Ethanol 0.19 g/l
+
+      Vitamin K3 0.05 g/l
+
+      Hemin 0.005 g/l
+
+      Sodium resazurin 0.0005 g/l
+
+      NaOH
+
+      Vitamin K1
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/110
+    name: CHOPPED MEAT MEDIUM WITH CARBOHYDRATES (DSMZ Medium 110)
+  - '@ref': 610
+    composition: 'Name: WILKINS-CHALGREN ANAEROBE BROTH (DSMZ Medium 339)
+
+      Composition:
+
+      dehydrated Wilkins-Chalgren medium 33.0 g/l
+
+      L-Cysteine HCl 0.3 g/l
+
+      Sodium resazurin 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/339
+    name: WILKINS-CHALGREN ANAEROBE BROTH (DSMZ Medium 339)
+  culture temp:
+  - '@ref': 610
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 610
+  culture collection no.: DSM 1290, ATCC 25647, NCIMB 10625, VPI 3082, JCM 1407, BCRC
+    14482, LMG 3287
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/7907
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/7906
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/7908
+General:
+  '@ref': 610
+  BacDive-ID: 2620
+  DSM-Number: 1290
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1543
+  description: Clostridium oceanicum DSM 1290 is an anaerobe, mesophilic bacterium
+    that was isolated from marine sediment.
+  doi: 10.13145/bacdive2620.20220920.7
+  keywords:
+  - anaerobe
+  - Bacteria
+  - 16S sequence
+  - mesophilic
+  strain history:
+  - <- ATCC <- L. DS. Smith, Virginia Polytechnical Institute and State University,
+    Blacksburg, V., USA; VPI 3082
+  - ATCC 25647 <-- L. DS. Smith VPI 3082.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 610
+    geographic location: Atlantic Ocean
+    sample type: marine sediment
+  - '@ref': 67770
+    sample type: Marine sediment
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Aquatic'
+    Cat3: '#Marine'
+  - Cat1: '#Environmental'
+    Cat2: '#Aquatic'
+    Cat3: '#Sediment'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 610
+  LPSN:
+    '@ref': 20215
+    class: Clostridia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Clostridiaceae
+    full scientific name: <I>Clostridium</I> <I>oceanicum</I> Smith 1970 (Approved
+      Lists 1980)
+    genus: Clostridium
+    keyword: phylum/bacillota
+    order: Eubacteriales
+    phylum: Bacillota
+    species: Clostridium oceanicum
+  class: Clostridia
+  domain: Bacteria
+  family: Clostridiaceae
+  full scientific name: Clostridium oceanicum Smith 1970
+  genus: Clostridium
+  order: Clostridiales
+  phylum: Firmicutes
+  species: Clostridium oceanicum
+  type strain: 'yes'
+Physiology and metabolism:
+  oxygen tolerance:
+    '@ref': 610
+    oxygen tolerance: anaerobe
+Reference:
+- '@id': 610
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 1290)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-1290
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 610
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 20218
+    NCBI tax ID: 1543
+    accession: DQ911254
+    database: ena
+    description: Clostridium oceanicum strain ATCC 25647 16S ribosomal RNA gene, partial
+      sequence
+    length: 318
+  - '@ref': 20218
+    NCBI tax ID: 1543
+    accession: M59101
+    database: ena
+    description: Clostridium oceanicum 16S ribosomal RNA
+    length: 1460
+  - '@ref': 610
+    NCBI tax ID: 1543
+    accession: FR749923
+    database: ena
+    description: Clostridium oceanicum partial 16S rRNA gene, type strain DSM 1290T,
+      clone 1
+    length: 1560
+  - '@ref': 610
+    NCBI tax ID: 1543
+    accession: FR749924
+    database: ena
+    description: Clostridium oceanicum partial 16S rRNA gene, type strain DSM 1290T,
+      clone 2
+    length: 1560
+  - '@ref': 610
+    NCBI tax ID: 1543
+    accession: FR749925
+    database: ena
+    description: Clostridium oceanicum partial 16S rRNA gene, type strain DSM 1290T,
+      clone 3
+    length: 1620
+  - '@ref': 610
+    NCBI tax ID: 1543
+    accession: FR749926
+    database: ena
+    description: Clostridium oceanicum partial 16S rRNA gene, type strain DSM 1290T,
+      clone 4
+    length: 1597
+  - '@ref': 610
+    NCBI tax ID: 1543
+    accession: FR749927
+    database: ena
+    description: Clostridium oceanicum partial 16S rRNA gene, type strain DSM 1290T,
+      clone 5
+    length: 1560
+  - '@ref': 67770
+    NCBI tax ID: 1543
+    accession: LC007108
+    database: ena
+    description: 'Clostridium oceanicum gene for 16S ribosomal RNA, partial sequence,
+      strain: JCM 1407'
+    length: 1473
+  GC content:
+  - '@ref': 610
+    GC-content: '23.0'
+  - '@ref': 67770
+    GC-content: '23'
+    method: thermal denaturation, midpoint method (Tm)

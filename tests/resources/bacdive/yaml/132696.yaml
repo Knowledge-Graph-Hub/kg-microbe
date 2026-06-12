@@ -1,0 +1,92 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 24486
+    composition: 'Name: TRYPTICASE SOY YEAST EXTRACT MEDIUM (DSMZ Medium 92)
+
+      Composition:
+
+      Trypticase soy broth 30.0 g/l
+
+      Agar 15.0 g/l
+
+      Yeast extract 3.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/92
+    name: TRYPTICASE SOY YEAST EXTRACT MEDIUM (DSMZ Medium 92)
+  culture temp:
+    '@ref': 24486
+    growth: positive
+    range: psychrophilic
+    temperature: '15'
+    type: growth
+External links:
+  '@ref': 24486
+  culture collection no.: DSM 100969
+General:
+  '@ref': 24486
+  BacDive-ID: 132696
+  DSM-Number: 100969
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1667
+  description: Arthrobacter sp. R3.8 is a psychrophilic bacterium that was isolated
+    from soil.
+  doi: 10.13145/bacdive132696.20220920.7
+  keywords:
+  - psychrophilic
+  - Bacteria
+  strain history: <- W. S. See-Too, Univ. of Malaya, Kuala Lumpur, Malaysia; R3.8
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 24486
+    continent: Australia and Oceania
+    country: Antarctica
+    origin.country: ATA
+    sample type: soil
+  isolation source categories:
+    Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 24486
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Micrococcaceae
+    full scientific name: <I>Arthrobacter</I> Conn and Dimmick 1947 (Approved Lists
+      1980)
+    genus: Arthrobacter
+    keyword: phylum/actinomycetota
+    order: Micrococcales
+    phylum: Actinomycetota
+    species: Arthrobacter sp.
+  class: Actinobacteria
+  domain: Bacteria
+  family: Micrococcaceae
+  full scientific name: Arthrobacter sp.
+  genus: Arthrobacter
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Arthrobacter sp.
+  strain designation: R3.8
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 24486
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 100969)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-100969
+Safety information: {}
+Sequence information: {}

@@ -1,0 +1,243 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 4424
+    composition: 'Name: ANCYLOBACTER - SPIROSOMA MEDIUM (DSMZ Medium 7)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Yeast extract 1.0 g/l
+
+      Peptone 1.0 g/l
+
+      Glucose 1.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/7
+    name: ANCYLOBACTER - SPIROSOMA MEDIUM (DSMZ Medium 7)
+  - '@ref': 4424
+    composition: 'Name: PEPTONE-YEAST MEDIUM with MgSO4 (DSMZ Medium 790)
+
+      Composition:
+
+      Peptone 10.0 g/l
+
+      MgSO4 x 7 H2O 2.0 g/l
+
+      (NH4)2SO4 2.0 g/l
+
+      Yeast extract 1.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/790
+    name: PEPTONE-YEAST MEDIUM with MgSO4 (DSMZ Medium 790)
+  - '@ref': 39935
+    composition: Distilled water make up to (1000.000 ml);Sodium chloride (20.000
+      g);Magnesium sulphate heptahydrate (2.000 g);Yeast extract (1.000 g);Ammonium
+      sulphate (2.000 g);Peptone (10.000 g)
+    growth: 'yes'
+    name: MEDIUM 62 - for Oceanospirillum pusillum
+  culture temp:
+  - '@ref': 4424
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+  - '@ref': 39935
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+  - '@ref': 58561
+    growth: positive
+    temperature: 20-30
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+External links:
+  '@ref': 4424
+  culture collection no.: CCUG 49449, IAM 14946, LMG 5407, DSM 11589, ATCC 33334,
+    IFO 13617, NBRC 13617, JCM 21428
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/162765
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/3724
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/3725
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/486749
+General:
+  '@ref': 4424
+  BacDive-ID: 14019
+  DSM-Number: 11589
+  NCBI tax id:
+    Matching level: subspecies
+    NCBI tax id: 180200
+  description: Insolitispirillum peregrinum subsp. integrum MF 19 is an aerobe, mesophilic
+    bacterium that was isolated from putrid freshwater shellfish.
+  doi: 10.13145/bacdive14019.20220920.7
+  keywords:
+  - aerobe
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - mesophilic
+  strain history:
+  - <- ATCC <- IFO <- Y. Terasaki, MF 19
+  - IAM 14946 <-- IFO 13617 <-- Y. Terasaki MF19.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 4424
+    sample type: putrid freshwater shellfish
+  - '@ref': 58561
+    sample type: Putrid freshwater shellfish
+  - '@ref': 67770
+    sample type: Putrid freshwater shellfish
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Aquatic'
+    Cat3: '#Freshwater'
+  - Cat1: '#Host'
+    Cat2: '#Other'
+    Cat3: '#Decomposing animal'
+  - Cat1: '#Host'
+    Cat2: '#Invertebrates (Other)'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 4424
+  LPSN:
+    '@ref': 20215
+    class: Alphaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Rhodospirillaceae
+    full scientific name: <I>Insolitispirillum</I> <I>peregrinum</I> subsp. <I>integrum</I>
+      (Terasaki 1973) Yoon et al. 2007
+    genus: Insolitispirillum
+    keyword: phylum/pseudomonadota
+    order: Rhodospirillales
+    phylum: Pseudomonadota
+    species: Insolitispirillum peregrinum subsp. integrum
+    synonyms:
+    - '@ref': 20215
+      synonym: Spirillum peregrinum subsp. integrum
+    - '@ref': 20215
+      synonym: Levispirillum peregrinum subsp. integrum
+    - '@ref': 20215
+      synonym: Aquaspirillum peregrinum subsp. integrum
+  class: Alphaproteobacteria
+  domain: Bacteria
+  family: Rhodospirillaceae
+  full scientific name: Insolitispirillum peregrinum subsp. integrum (Terasaki 1973)
+    Yoon et al. 2007
+  genus: Insolitispirillum
+  order: Rhodospirillales
+  phylum: Proteobacteria
+  species: Insolitispirillum peregrinum subsp. integrum
+  strain designation: MF 19
+  type strain: 'yes'
+Physiology and metabolism:
+  oxygen tolerance:
+    '@ref': 58561
+    oxygen tolerance: aerobe
+Reference:
+- '@id': 4424
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 11589)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-11589
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 39935
+  authors: Curators of the CIP
+  doi/url: "https://brclims.pasteur.fr/brcWeb/souche/detail/1/5228\r"
+- '@id': 58561
+  authors: Curators of the CCUG
+  catalogue: Culture Collection University of Gothenburg (CCUG) (CCUG 49449)
+  doi/url: https://www.ccug.se/strain?id=49449
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 4424
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 20218
+    NCBI tax ID: 180200
+    accession: AB074521
+    database: ena
+    description: Aquaspirillum peregrinum subsp. integrum gene for 16S rRNA, partial
+      sequence
+    length: 1414
+  - '@ref': 20218
+    NCBI tax ID: 80876
+    accession: AB000480
+    database: ena
+    description: Aquaspirillum peregrinum gene for 16S rRNA, partial sequence, strain:IFO
+      13617
+    length: 1326
+  - '@ref': 20218
+    NCBI tax ID: 180200
+    accession: EF612768
+    database: ena
+    description: Aquaspirillum peregrinum subsp. integrum strain LMG 5407 16S ribosomal
+      RNA gene, partial sequence
+    length: 1442
+  - '@ref': 20218
+    NCBI tax ID: 180200
+    accession: AB680464
+    database: ena
+    description: 'Insolitispirillum peregrinum subsp. integrum gene for 16S rRNA,
+      partial sequence, strain: NBRC 13617'
+    length: 1412
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 80876
+    accession: GCA_900156605
+    assembly level: scaffold
+    database: ncbi
+    description: Insolitispirillum peregrinum DSM 11589
+  - '@ref': 66792
+    NCBI tax ID: 80876
+    accession: '80876.3'
+    assembly level: wgs
+    database: patric
+    description: Insolitispirillum peregrinum strain DSM 11589
+  - '@ref': 66792
+    NCBI tax ID: 80876
+    accession: '2681813507'
+    assembly level: draft
+    database: img
+    description: Insolitispirillum peregrinum integrum DSM 11589
+  - '@ref': 67770
+    NCBI tax ID: 80876
+    accession: FTOA00000000
+    database: ncbi
+    description: Insolitispirillum peregrinum strain DSM 11589, whole genome shotgun
+      sequencing project

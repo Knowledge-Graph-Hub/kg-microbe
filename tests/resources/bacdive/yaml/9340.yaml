@@ -1,0 +1,123 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 13436
+    composition: 'Name: VY/2 AGAR (DSMZ Medium 9)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Baker''s yeast 5.0 g/l
+
+      CaCl2 x 2 H2O 1.36 g/l
+
+      Vitamin B12 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/9
+    name: VY/2 AGAR (DSMZ Medium 9)
+  culture temp:
+    '@ref': 13436
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 13436
+  culture collection no.: DSM 51747
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/401789
+General:
+  '@ref': 13436
+  BacDive-ID: 9340
+  DSM-Number: 51747
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 184914
+  description: Corallococcus coralloides Cc c1545 is a mesophilic bacterium that builds
+    a fruiting body and was isolated from soil with plant residues.
+  doi: 10.13145/bacdive9340.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- H. Reichenbach, GBF; Cc c1545
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 13436
+    continent: North America
+    country: USA
+    geographic location: San Diego River, California
+    origin.country: USA
+    sample type: soil with plant residues
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+  - Cat1: '#Host'
+    Cat2: '#Plants'
+Morphology:
+  multicellular morphology:
+    '@ref': 18281
+    complex name: fruiting body
+    forms multicellular complex: 'yes'
+Name and taxonomic classification:
+  '@ref': 13436
+  LPSN:
+    '@ref': 20215
+    class: Deltaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Myxococcaceae
+    full scientific name: <I>Corallococcus</I> <I>coralloides</I> (Thaxter 1892) Reichenbach
+      2007
+    genus: Corallococcus
+    keyword: phylum/pseudomonadota
+    order: Myxococcales
+    phylum: Pseudomonadota
+    species: Corallococcus coralloides
+    synonyms:
+    - '@ref': 20215
+      synonym: Myxococcus coralloides
+    - '@ref': 20215
+      synonym: Chondrococcus coralloides
+  class: Deltaproteobacteria
+  domain: Bacteria
+  family: Myxococcaceae
+  full scientific name: Corallococcus coralloides (Thaxter 1892) Reichenbach 2007
+  genus: Corallococcus
+  order: Myxococcales
+  phylum: Proteobacteria
+  species: Corallococcus coralloides
+  strain designation: Cc c1545
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 13436
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 51747)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-51747
+- '@id': 18281
+  authors: Reichenbach, H.
+  title: Collection description and documentation of myxobacteria by H. Reichenbach,
+    HZI (formerly GBF); Collection curr. located at the DSMZ
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information:
+  risk assessment:
+    '@ref': 13436
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

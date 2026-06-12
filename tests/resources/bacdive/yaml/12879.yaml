@@ -1,0 +1,272 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 1422
+    composition: 'Name: NUTRIENT AGAR (DSMZ Medium 1)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Peptone 5.0 g/l
+
+      Meat extract 3.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/1
+    name: NUTRIENT AGAR (DSMZ Medium 1)
+  culture temp:
+    '@ref': 1422
+    growth: positive
+    range: mesophilic
+    temperature: '26'
+    type: growth
+External links:
+  '@ref': 1422
+  culture collection no.: DSM 3601
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/158438
+General:
+  '@ref': 1422
+  BacDive-ID: 12879
+  DSM-Number: 3601
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 306
+  description: Pseudomonas sp. To8 is a mesophilic human pathogen that was isolated
+    from tomato plant.
+  doi: 10.13145/bacdive12879.20220920.7
+  keywords:
+  - human pathogen
+  - mesophilic
+  - Bacteria
+  - 16S sequence
+  strain history: <- U. Hildebrand <- H. Korth
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 1422
+    continent: Europe
+    country: Germany
+    geographic location: "K\xF6ln"
+    origin.country: DEU
+    sample type: tomato plant
+  isolation source categories:
+    Cat1: '#Host'
+    Cat2: '#Plants'
+    Cat3: '#Herbaceous plants (Grass,Crops)'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 1422
+  LPSN:
+    '@ref': 20215
+    class: Gammaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Pseudomonadaceae
+    full scientific name: <I>Pseudomonas</I> Migula 1894 (Approved Lists 1980)
+    genus: Pseudomonas
+    keyword: phylum/pseudomonadota
+    order: Pseudomonadales
+    phylum: Pseudomonadota
+    species: Pseudomonas sp.
+    synonyms:
+    - '@ref': 20215
+      synonym: Serpens
+    - '@ref': 20215
+      synonym: Flavimonas
+    - '@ref': 20215
+      synonym: Chryseomonas
+    - '@ref': 20215
+      synonym: Stutzerimonas
+  class: Gammaproteobacteria
+  domain: Bacteria
+  family: Pseudomonadaceae
+  full scientific name: Pseudomonas sp.
+  genus: Pseudomonas
+  order: Pseudomonadales
+  phylum: Proteobacteria
+  species: Pseudomonas sp.
+  strain designation: To8
+  type strain: 'no'
+Physiology and metabolism:
+  API 20NE:
+    '@ref': 1422
+    ADH Arg: +
+    ADI: '-'
+    ARA: '-'
+    CAP: +
+    CIT: +
+    ESC: '-'
+    GEL: '-'
+    GLU_ Assim: +
+    GLU_ Ferm: '-'
+    GNT: +
+    MAL: '-'
+    MAN: '-'
+    MLT: +
+    MNE: +
+    NAG: '-'
+    NO3: '-'
+    OX: +
+    PAC: '-'
+    PNPG: '-'
+    TRP: '-'
+    URE: '-'
+  compound production:
+  - '@ref': 1422
+    compound: pyridine-2,6-di(monothiocarboxylic acid)
+  - '@ref': 1422
+    compound: siderophore
+  enzymes:
+  - '@ref': 68369
+    activity: +
+    ec: 1.9.3.1
+    value: cytochrome oxidase
+  - '@ref': 68369
+    activity: '-'
+    value: gelatinase
+  - '@ref': 68369
+    activity: '-'
+    ec: 3.2.1.21
+    value: beta-glucosidase
+  - '@ref': 68369
+    activity: '-'
+    ec: 3.5.1.5
+    value: urease
+  - '@ref': 68369
+    activity: +
+    ec: 3.5.3.6
+    value: arginine dihydrolase
+  metabolite production:
+    '@ref': 68369
+    Chebi-ID: 35581
+    metabolite: indole
+    production: 'no'
+  metabolite tests:
+    '@ref': 68369
+    Chebi-ID: 35581
+    indole test: '-'
+    metabolite: indole
+  metabolite utilization:
+  - '@ref': 68369
+    Chebi-ID: 25115
+    kind of utilization tested: assimilation
+    metabolite: malate
+    utilization activity: +
+  - '@ref': 68369
+    Chebi-ID: 17128
+    kind of utilization tested: assimilation
+    metabolite: adipate
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 27689
+    kind of utilization tested: assimilation
+    metabolite: decanoate
+    utilization activity: +
+  - '@ref': 68369
+    Chebi-ID: 24265
+    kind of utilization tested: assimilation
+    metabolite: gluconate
+    utilization activity: +
+  - '@ref': 68369
+    Chebi-ID: 17306
+    kind of utilization tested: assimilation
+    metabolite: maltose
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 59640
+    kind of utilization tested: assimilation
+    metabolite: N-acetylglucosamine
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 16899
+    kind of utilization tested: assimilation
+    metabolite: D-mannitol
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 16024
+    kind of utilization tested: assimilation
+    metabolite: D-mannose
+    utilization activity: +
+  - '@ref': 68369
+    Chebi-ID: 30849
+    kind of utilization tested: assimilation
+    metabolite: L-arabinose
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 17634
+    kind of utilization tested: assimilation
+    metabolite: D-glucose
+    utilization activity: +
+  - '@ref': 68369
+    Chebi-ID: 5291
+    kind of utilization tested: hydrolysis
+    metabolite: gelatin
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 16199
+    kind of utilization tested: hydrolysis
+    metabolite: urea
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 29016
+    kind of utilization tested: hydrolysis
+    metabolite: arginine
+    utilization activity: +
+  - '@ref': 68369
+    Chebi-ID: 17634
+    kind of utilization tested: fermentation
+    metabolite: D-glucose
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 27897
+    kind of utilization tested: energy source
+    metabolite: tryptophan
+    utilization activity: '-'
+  - '@ref': 68369
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: '-'
+Reference:
+- '@id': 1422
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 3601)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-3601
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 68369
+  title: Automatically annotated from API 20NE
+Safety information:
+  risk assessment:
+    '@ref': 1422
+    biosafety level: '2'
+    biosafety level comment: Risk group (German classification)
+    pathogenicity animal: 'yes'
+    pathogenicity human: 'yes'
+Sequence information:
+  16S sequences:
+    '@ref': 20218
+    NCBI tax ID: 303
+    accession: AF509330
+    database: ena
+    description: Pseudomonas putida strain DSM 3601 16S ribosomal RNA gene, partial
+      sequence
+    length: 1335

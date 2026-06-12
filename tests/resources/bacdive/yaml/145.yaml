@@ -1,0 +1,832 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 5990
+    composition: 'Name: BHI/2 MEDIUM (DSMZ Medium 217)
+
+      Composition:
+
+      Brain heart infusion 37.0 g/l
+
+      Casein hydrolysate 10.0 g/l
+
+      Glucose 5.0 g/l
+
+      Yeast extract 5.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/217
+    name: BHI/2 MEDIUM (DSMZ Medium 217)
+  - '@ref': 5990
+    composition: 'Name: COLUMBIA BLOOD MEDIUM (DSMZ Medium 693)
+
+      Composition:
+
+      Defibrinated sheep blood 50.0 g/l
+
+      Columbia agar base'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/693
+    name: COLUMBIA BLOOD MEDIUM (DSMZ Medium 693)
+  - '@ref': 23353
+    growth: 'yes'
+    name: 5% horse blood agar
+  - '@ref': 32828
+    composition: Distilled water make up to (1000.000 ml);Columbia agar (39.000 g);Horseblood
+      (100.000 ml);PolyVitex mischung (10.000 ml)
+    growth: 'yes'
+    name: MEDIUM 10 - Chocolate medium  for Actinobacillus pleuropneumoniae, Capnocytophaga
+      cynodegmi, Haemophilus and Neisseria
+  culture temp:
+  - '@ref': 5990
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+  - '@ref': 32828
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+  - '@ref': 48774
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 5990
+  culture collection no.: DSM 15541, CCUG 27420, CIP 105739, LMG 18293, CCM 4738
+  literature:
+  - DOI: 10.1099/00207713-47-3-899
+    Pubmed-ID: '9226926'
+    authors: Lawson PA, Falsen E, Akervall E, Vandamme P, Collins MD
+    journal: Int J Syst Bacteriol
+    mesh: Actinomyces/chemistry/*classification/metabolism, Actinomycosis/*microbiology,
+      Bacterial Proteins/analysis, Blood/microbiology, Humans, Molecular Sequence
+      Data, Phylogeny
+    title: 'Characterization of some Actinomyces-like isolates from human clinical
+      specimens: reclassification of Actinomyces suis (Soltys and Spratling) as Actinobaculum
+      suis comb. nov. and description of Actinobaculum schaalii sp. nov.'
+    topic: Phylogeny
+    topic2: Pathogenicity
+    year: 1997
+  - DOI: 10.1128/genomeA.00880-14
+    Pubmed-ID: '25189588'
+    authors: Kristiansen R, Dueholm MS, Bank S, Nielsen PH, Karst SM, Cattoir V, Lienhard
+      R, Grisold AJ, Olsen AB, Reinhard M, Soby KM, Christensen JJ, Prag J, Thomsen
+      TR
+    journal: Genome Announc
+    title: Complete Genome Sequence of Actinobaculum schaalii Strain CCUG 27420.
+    topic: Genetics
+    year: 2014
+  - DOI: 10.1099/ijs.0.069294-0
+    Pubmed-ID: '25406238'
+    authors: Yassin AF, Sproer C, Pukall R, Sylvester M, Siering C, Schumann P
+    journal: Int J Syst Evol Microbiol
+    mesh: Actinomycetaceae/*classification/genetics, Bacterial Typing Techniques,
+      Base Composition, DNA, Bacterial/genetics, Fatty Acids/chemistry, Molecular
+      Sequence Data, Nucleic Acid Hybridization, Peptidoglycan/chemistry, *Phylogeny,
+      RNA, Ribosomal, 16S/genetics, Sequence Analysis, DNA
+    title: 'Dissection of the genus Actinobaculum: Reclassification of Actinobaculum
+      schaalii Lawson et al. 1997 and Actinobaculum urinale Hall et al. 2003 as Actinotignum
+      schaalii gen. nov., comb. nov. and Actinotignum urinale comb. nov., description
+      of Actinotignum sanguinis sp. nov. and emended descriptions of the genus Actinobaculum
+      and Actinobaculum suis; and re-examination of the culture deposited as Actinobaculum
+      massiliense CCUG 47753T ( = DSM 19118T), revealing that it does not represent
+      a strain of this species.'
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2014
+  - DOI: 10.1371/journal.pone.0188914
+    Pubmed-ID: '29216246'
+    authors: Yassin AF, Langenberg S, Huntemann M, Clum A, Pillay M, Palaniappan K,
+      Varghese N, Mikhailova N, Mukherjee S, Reddy TBK, Daum C, Shapiro N, Ivanova
+      N, Woyke T, Kyrpides NC
+    journal: PLoS One
+    mesh: Actinomycetaceae/classification/*genetics/metabolism/pathogenicity, Anti-Bacterial
+      Agents/pharmacology, Carbohydrate Metabolism, Drug Resistance, Microbial, Fermentation,
+      *Genome, Bacterial, Genotype, Lipid Metabolism, Oxidative Stress, Phenotype,
+      Phylogeny, Pyruvic Acid/metabolism
+    title: 'Draft genome sequence of Actinotignum schaalii DSM 15541T: Genetic insights
+      into the lifestyle, cell fitness and virulence.'
+    topic: Genetics
+    topic2: Metabolism
+    year: 2017
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/301728
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/56095
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/148205
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/56094
+General:
+  '@ref': 5990
+  BacDive-ID: 145
+  DSM-Number: 15541
+  NCBI tax id:
+  - Matching level: species
+    NCBI tax id: 59505
+  - Matching level: strain
+    NCBI tax id: 1120932
+  description: Actinotignum schaalii B 5329 is a microaerophile, mesophilic, Gram-positive
+    bacterium that was isolated from human blood, chronic pyelonephritis, 64-yr-old
+    man.
+  doi: 10.13145/bacdive145.20220920.7
+  keywords:
+  - microaerophile
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - mesophilic
+  - Gram-positive
+  - rod-shaped
+  strain history: <- CCUG <- PHL, Sweden
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 5990
+    continent: Europe
+    country: Sweden
+    origin.country: SWE
+    sample type: human blood, chronic pyelonephritis, 64-yr-old man
+  - '@ref': 48774
+    continent: Europe
+    country: Sweden
+    geographic location: Kristianstad
+    origin.country: SWE
+    sample type: Human blood,chronic pyelonephritis,64-yr-old man
+    sampling date: '1990-10-30'
+  isolation source categories:
+  - Cat1: '#Infection'
+    Cat2: '#Disease'
+  - Cat1: '#Host'
+    Cat2: '#Human'
+    Cat3: '#Male'
+  - Cat1: '#Host Body-Site'
+    Cat2: '#Urogenital tract'
+    Cat3: '#Kidney'
+  - Cat1: '#Host Body Product'
+    Cat2: '#Fluids'
+    Cat3: '#Blood'
+Morphology:
+  cell morphology:
+    '@ref': 23353
+    cell shape: rod-shaped
+    gram stain: positive
+    motility: 'no'
+Name and taxonomic classification:
+  '@ref': 5990
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Actinomycetaceae
+    full scientific name: <I>Actinotignum</I> <I>schaalii</I> (Lawson et al. 1997)
+      Yassin et al. 2015
+    genus: Actinotignum
+    keyword: phylum/actinomycetota
+    order: Actinomycetales
+    phylum: Actinomycetota
+    species: Actinotignum schaalii
+    synonyms:
+      '@ref': 20215
+      synonym: Actinobaculum schaalii
+  class: Actinobacteria
+  domain: Bacteria
+  family: Actinomycetaceae
+  full scientific name: Actinotignum schaalii (Lawson et al. 1997) Yassin et al. 2015
+  genus: Actinotignum
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Actinotignum schaalii
+  strain designation: B 5329
+  type strain: 'yes'
+Physiology and metabolism:
+  API rID32STR:
+    '@ref': 5990
+    ADH Arg: '-'
+    APPA: +
+    CDEX: '-'
+    DARL: '-'
+    GLYG: '-'
+    GTA: '-'
+    HIP: '-'
+    LAC: '-'
+    LARA: +
+    MAL: +
+    MAN: '-'
+    MEL: '-'
+    MLZ: '-'
+    Mbeta DG: '-'
+    PAL: '-'
+    PUL: '-'
+    PyrA: +
+    RAF: '-'
+    RIB: +
+    SAC: +
+    SOR: '-'
+    TAG: '-'
+    TRE: +
+    URE: '-'
+    VP: +
+    alpha GAL: +
+    beta GAL: '-'
+    beta GAR: '-'
+    beta GLU: '-'
+    beta GUR: '-'
+    beta MAN: '-'
+    beta NAG: '-'
+  enzymes:
+  - '@ref': 23353
+    activity: '-'
+    ec: 3.1.3.1
+    value: alkaline phosphatase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.4.21.1
+    value: alpha-chymotrypsin
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.2.1.51
+    value: alpha-fucosidase
+  - '@ref': 23353
+    activity: '-'
+    ec: 3.2.1.22
+    value: alpha-galactosidase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.2.1.22
+    value: alpha-galactosidase
+  - '@ref': 23353
+    activity: '-'
+    ec: 3.5.3.6
+    value: arginine dihydrolase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.5.3.6
+    value: arginine dihydrolase
+  - '@ref': 23353
+    activity: '-'
+    ec: 3.2.1.23
+    value: beta-galactosidase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.2.1.23
+    value: beta-galactosidase
+  - '@ref': 23353
+    activity: '-'
+    ec: 3.2.1.31
+    value: beta-glucuronidase
+  - '@ref': 23353
+    activity: '-'
+    ec: 3.2.1.25
+    value: beta-mannosidase
+  - '@ref': 23354
+    activity: '-'
+    ec: 1.11.1.6
+    value: catalase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.4.11.3
+    value: cystine arylamidase
+  - '@ref': 23354
+    activity: '-'
+    ec: 1.9.3.1
+    value: cytochrome oxidase
+  - '@ref': 23354
+    activity: '-'
+    value: esterase (C 4)
+  - '@ref': 23354
+    activity: '-'
+    value: lipase (C 14)
+  - '@ref': 23353
+    activity: +/-
+    ec: 3.5.1.B15
+    value: pyrazinamidase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.5.1.B15
+    value: pyrazinamidase
+  - '@ref': 23353
+    activity: +/-
+    ec: 3.4.19.3
+    value: pyrrolidonyl arylamidase
+  - '@ref': 23354
+    activity: '-'
+    ec: 3.4.21.4
+    value: trypsin
+  - '@ref': 23354
+    activity: '-'
+    value: valine arylamidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.5.1.5
+    value: urease
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.2.1.25
+    value: beta-mannosidase
+  - '@ref': 68381
+    activity: '-'
+    value: glycyl tryptophan arylamidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.2.1.52
+    value: N-acetyl-beta-glucosaminidase
+  - '@ref': 68381
+    activity: +
+    ec: 3.4.19.3
+    value: pyrrolidonyl arylamidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.2.1.23
+    value: beta-galactosidase
+  - '@ref': 68381
+    activity: +
+    value: Alanyl-Phenylalanyl-Proline arylamidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.1.3.1
+    value: alkaline phosphatase
+  - '@ref': 68381
+    activity: +
+    ec: 3.2.1.22
+    value: alpha-galactosidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.2.1.31
+    value: beta-glucuronidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.2.1.21
+    value: beta-glucosidase
+  - '@ref': 68381
+    activity: '-'
+    ec: 3.5.3.6
+    value: arginine dihydrolase
+  metabolite production:
+    '@ref': 68381
+    Chebi-ID: 15688
+    metabolite: acetoin
+    production: 'yes'
+  metabolite tests:
+    '@ref': 68381
+    Chebi-ID: 15688
+    metabolite: acetoin
+    voges-proskauer-test: +
+  metabolite utilization:
+  - '@ref': 23353
+    Chebi-ID: 23456
+    kind of utilization tested: builds acid from
+    metabolite: cyclodextrin
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 18333
+    kind of utilization tested: builds acid from
+    metabolite: D-arabitol
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 16443
+    kind of utilization tested: builds acid from
+    metabolite: D-tagatose
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 28087
+    kind of utilization tested: builds acid from
+    metabolite: glycogen
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 17716
+    kind of utilization tested: builds acid from
+    metabolite: lactose
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 29864
+    kind of utilization tested: builds acid from
+    metabolite: mannitol
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 6731
+    kind of utilization tested: builds acid from
+    metabolite: melezitose
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 28053
+    kind of utilization tested: builds acid from
+    metabolite: melibiose
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 320055
+    kind of utilization tested: builds acid from
+    metabolite: methyl beta-D-glucopyranoside
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 506227
+    kind of utilization tested: builds acid from
+    metabolite: N-acetylglucosamine
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 27941
+    kind of utilization tested: builds acid from
+    metabolite: pullulan
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 16634
+    kind of utilization tested: builds acid from
+    metabolite: raffinose
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 30911
+    kind of utilization tested: builds acid from
+    metabolite: sorbitol
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 28087
+    kind of utilization tested: builds acid from
+    metabolite: glycogen
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 15443
+    kind of utilization tested: builds acid from
+    metabolite: inulin
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 17716
+    kind of utilization tested: builds acid from
+    metabolite: lactose
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 29864
+    kind of utilization tested: builds acid from
+    metabolite: mannitol
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 16634
+    kind of utilization tested: builds acid from
+    metabolite: raffinose
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 30911
+    kind of utilization tested: builds acid from
+    metabolite: sorbitol
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 28017
+    kind of utilization tested: builds acid from
+    metabolite: starch
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 27082
+    kind of utilization tested: builds acid from
+    metabolite: trehalose
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 5291
+    kind of utilization tested: hydrolysis
+    metabolite: gelatin
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 16199
+    kind of utilization tested: hydrolysis
+    metabolite: urea
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: '-'
+  - '@ref': 23354
+    Chebi-ID: 5291
+    kind of utilization tested: hydrolysis
+    metabolite: gelatin
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: '-'
+  - '@ref': 23353
+    Chebi-ID: 65327
+    kind of utilization tested: builds acid from
+    metabolite: D-xylose
+    utilization activity: +
+  - '@ref': 23353
+    Chebi-ID: 17234
+    kind of utilization tested: builds acid from
+    metabolite: glucose
+    utilization activity: +
+  - '@ref': 23353
+    Chebi-ID: 17306
+    kind of utilization tested: builds acid from
+    metabolite: maltose
+    utilization activity: +
+  - '@ref': 23353
+    Chebi-ID: 33942
+    kind of utilization tested: builds acid from
+    metabolite: ribose
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 17634
+    kind of utilization tested: builds acid from
+    metabolite: D-glucose
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 65327
+    kind of utilization tested: builds acid from
+    metabolite: D-xylose
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 30849
+    kind of utilization tested: builds acid from
+    metabolite: L-arabinose
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 17306
+    kind of utilization tested: builds acid from
+    metabolite: maltose
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 33942
+    kind of utilization tested: builds acid from
+    metabolite: ribose
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 17992
+    kind of utilization tested: builds acid from
+    metabolite: sucrose
+    utilization activity: +
+  - '@ref': 23353
+    Chebi-ID: 606565
+    kind of utilization tested: hydrolysis
+    metabolite: hippurate
+    utilization activity: +
+  - '@ref': 23354
+    Chebi-ID: 606565
+    kind of utilization tested: hydrolysis
+    metabolite: hippurate
+    utilization activity: +
+  - '@ref': 23353
+    Chebi-ID: 30849
+    kind of utilization tested: builds acid from
+    metabolite: L-arabinose
+    utilization activity: +/-
+  - '@ref': 23353
+    Chebi-ID: 37684
+    kind of utilization tested: builds acid from
+    metabolite: mannose
+    utilization activity: +/-
+  - '@ref': 23353
+    Chebi-ID: 28017
+    kind of utilization tested: builds acid from
+    metabolite: starch
+    utilization activity: +/-
+  - '@ref': 23353
+    Chebi-ID: 17992
+    kind of utilization tested: builds acid from
+    metabolite: sucrose
+    utilization activity: +/-
+  - '@ref': 23353
+    Chebi-ID: 27082
+    kind of utilization tested: builds acid from
+    metabolite: trehalose
+    utilization activity: +/-
+  - '@ref': 68381
+    Chebi-ID: 16199
+    kind of utilization tested: hydrolysis
+    metabolite: urea
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 16443
+    kind of utilization tested: builds acid from
+    metabolite: D-tagatose
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 320055
+    kind of utilization tested: builds acid from
+    metabolite: methyl beta-D-glucopyranoside
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 6731
+    kind of utilization tested: builds acid from
+    metabolite: melezitose
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 28053
+    kind of utilization tested: builds acid from
+    metabolite: melibiose
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 17306
+    kind of utilization tested: builds acid from
+    metabolite: maltose
+    utilization activity: +
+  - '@ref': 68381
+    Chebi-ID: 27941
+    kind of utilization tested: builds acid from
+    metabolite: pullulan
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 28087
+    kind of utilization tested: builds acid from
+    metabolite: glycogen
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 606565
+    kind of utilization tested: hydrolysis
+    metabolite: hippurate
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 40585
+    kind of utilization tested: builds acid from
+    metabolite: alpha-cyclodextrin
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 18333
+    kind of utilization tested: builds acid from
+    metabolite: D-arabitol
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 30849
+    kind of utilization tested: builds acid from
+    metabolite: L-arabinose
+    utilization activity: +
+  - '@ref': 68381
+    Chebi-ID: 17992
+    kind of utilization tested: builds acid from
+    metabolite: sucrose
+    utilization activity: +
+  - '@ref': 68381
+    Chebi-ID: 16634
+    kind of utilization tested: builds acid from
+    metabolite: raffinose
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 27082
+    kind of utilization tested: builds acid from
+    metabolite: trehalose
+    utilization activity: +
+  - '@ref': 68381
+    Chebi-ID: 17716
+    kind of utilization tested: builds acid from
+    metabolite: lactose
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 30911
+    kind of utilization tested: builds acid from
+    metabolite: sorbitol
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 16899
+    kind of utilization tested: builds acid from
+    metabolite: D-mannitol
+    utilization activity: '-'
+  - '@ref': 68381
+    Chebi-ID: 16988
+    kind of utilization tested: builds acid from
+    metabolite: D-ribose
+    utilization activity: +
+  - '@ref': 68381
+    Chebi-ID: 29016
+    kind of utilization tested: hydrolysis
+    metabolite: arginine
+    utilization activity: '-'
+  murein:
+    '@ref': 23353
+    type: A5alpha L-Lys-L-Lys-D-Glu
+  oxygen tolerance:
+  - '@ref': 5990
+    oxygen tolerance: microaerophile
+  - '@ref': 23353
+    oxygen tolerance: anaerobe
+  - '@ref': 48774
+    oxygen tolerance: anaerobe
+  - '@ref': 48774
+    oxygen tolerance: microaerophile
+Reference:
+- '@id': 5990
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 15541)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-15541
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 23353
+  authors: Paul A. Lawson, Enevold Falsen, Eva Akervall, Peter Vandamme, Matthew D.
+    Collins
+  doi/url: 10.1099/00207713-47-3-899
+  journal: 'IJSEM 47: 899-903 1997'
+  pubmed: 9226926
+  title: 'Characterization of Some Actinomyces-Like Isolates from Human Clinical Specimens:
+    Reclassification of Actinomyces suis (Soltys and Spratling) as Actinobaculum suis
+    comb. nov. and Description of Actinobaculum schaalii sp. nov.'
+- '@id': 23354
+  authors: "A. F. Yassin, C. Spr\xF6er, R. Pukall, M. Sylvester, C. Siering, P. Schumann"
+  doi/url: 10.1099/ijs.0.069294-0
+  journal: 'IJSEM 65: 615-624 2015'
+  pubmed: 25406238
+  title: 'Dissection of the genus Actinobaculum: Reclassification of Actinobaculum
+    schaalii Lawson et al. 1997 and Actinobaculum urinale Hall et al. 2003 as Actinotignum
+    schaalii gen. nov., comb. nov. and Actinotignum urinale comb. nov., description
+    of Actinotignum sanguinis sp. nov. and emended descriptions of the genus Actinobaculum
+    and Actinobaculum suis; and re-examination of the culture deposited as Actinobaculum
+    massiliense CCUG 47753T (=DSM 19118T), revealing that it does not represent a
+    strain of this species'
+- '@id': 32828
+  authors: Curators of the CIP
+  doi/url: "https://brclims.pasteur.fr/brcWeb/souche/detail/1/17792\r"
+- '@id': 48774
+  authors: Curators of the CCUG
+  catalogue: Culture Collection University of Gothenburg (CCUG) (CCUG 27420)
+  doi/url: https://www.ccug.se/strain?id=27420
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 68381
+  title: Automatically annotated from API rID32STR
+Safety information:
+  risk assessment:
+    '@ref': 5990
+    biosafety level: '2'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 20218
+    NCBI tax ID: 59505
+    accession: FJ960443
+    database: ena
+    description: Actinobaculum schaalii strain CCUG 27420 16S ribosomal RNA gene,
+      partial sequence
+    length: 1495
+  - '@ref': 20218
+    NCBI tax ID: 59505
+    accession: Y10773
+    database: ena
+    description: A.schaalii 16S rRNA gene
+    length: 1485
+  - '@ref': 5990
+    NCBI tax ID: 59505
+    accession: Y12329
+    database: ena
+    description: A.schaalii sp.nov rrn gene for 16S ribosomal RNA
+    length: 1485
+  GC content:
+    '@ref': 23353
+    GC-content: '57.0'
+    method: Thermal denaturation, fluorometry
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 59505
+    accession: GCA_000724605
+    assembly level: complete
+    database: ncbi
+    description: Actinotignum schaalii CCUG 27420
+  - '@ref': 66792
+    NCBI tax ID: 1120932
+    accession: GCA_000429205
+    assembly level: scaffold
+    database: ncbi
+    description: Actinotignum schaalii DSM 15541 DSM 15541
+  - '@ref': 66792
+    NCBI tax ID: 1120932
+    accession: '1120932.3'
+    assembly level: wgs
+    database: patric
+    description: Actinobaculum schaalii DSM 15541
+  - '@ref': 66792
+    NCBI tax ID: 59505
+    accession: '59505.5'
+    assembly level: complete
+    database: patric
+    description: Actinobaculum schaalii strain CCUG 27420
+  - '@ref': 66792
+    NCBI tax ID: 1120932
+    accession: '2524614731'
+    assembly level: draft
+    database: img
+    description: Actinotignum schaalii DSM 15541
+  - '@ref': 66792
+    NCBI tax ID: 59505
+    accession: '2585427650'
+    assembly level: complete
+    database: img
+    description: Actinotignum schaalii CCUG 27420

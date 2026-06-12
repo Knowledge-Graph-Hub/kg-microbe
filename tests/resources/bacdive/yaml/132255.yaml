@@ -1,0 +1,140 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 24044
+    composition: 'Name: BHI MEDIUM (DSMZ Medium 215)
+
+      Composition:
+
+      Brain heart infusion 37.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/215
+    name: BHI MEDIUM (DSMZ Medium 215)
+  culture temp:
+    '@ref': 24044
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 24044
+  culture collection no.: DSM 102210, CGMCC 4.7204, KCTC 29678, KLBMP S0043
+  literature:
+    DOI: 10.1007/s10482-015-0460-0
+    Pubmed-ID: '25896308'
+    authors: Wang Y, Liu W, Feng WW, Zhou XQ, Bai JL, Yuan B, Ju XY, Cao CL, Huang
+      Y, Jiang JH, Lv AJ, Qin S
+    journal: Antonie Van Leeuwenhoek
+    mesh: Artemisia/growth & development, Bacterial Typing Techniques, Base Composition,
+      Carbohydrates/analysis, Cell Wall/chemistry, China, Cluster Analysis, Cytosol/chemistry,
+      DNA, Bacterial/chemistry/genetics, DNA, Ribosomal/chemistry/genetics, Diaminopimelic
+      Acid/analysis, Fatty Acids/analysis, Microscopy, Electron, Scanning, Molecular
+      Sequence Data, Nocardia/*classification/genetics/*isolation & purification/physiology,
+      Nucleic Acid Hybridization, Peptidoglycan/analysis, Phospholipids/analysis,
+      Phylogeny, RNA, Ribosomal, 16S/genetics, *Rhizosphere, Sequence Analysis, DNA,
+      *Soil Microbiology, Vitamin K 2/analysis
+    title: Nocardia rhizosphaerae sp. nov., a novel actinomycete isolated from the
+      coastal rhizosphere of Artemisia Linn., China.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2015
+General:
+  '@ref': 24044
+  BacDive-ID: 132255
+  DSM-Number: 102210
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1691571
+  description: Nocardia rhizosphaerae DSM 102210 is a mesophilic bacterium that was
+    isolated from rhizosphere soil of Artemisia Linn..
+  doi: 10.13145/bacdive132255.20220920.7
+  keywords:
+  - Bacteria
+  - 16S sequence
+  - mesophilic
+  strain history: <- KCTC; KCTC 29678
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 24044
+    continent: Asia
+    country: China
+    geographic location: coastal region of Lianyuangang
+    host species: Artemisia
+    latitude: 35.1592
+    longitude: 119.7
+    origin.country: CHN
+    sample type: rhizosphere soil of <i>Artemisia</i> Linn.
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+  - Cat1: '#Host'
+    Cat2: '#Plants'
+    Cat3: '#Herbaceous plants (Grass,Crops)'
+  - Cat1: '#Host Body-Site'
+    Cat2: '#Plant'
+    Cat3: '#Rhizosphere'
+Morphology:
+  multimedia:
+  - '@ref': 24044
+    caption: "Medium 553 28\xB0C"
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_102210.jpg
+  - '@ref': 24044
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_102210-1.jpg
+Name and taxonomic classification:
+  '@ref': 24044
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Nocardiaceae
+    full scientific name: <I>Nocardia</I> <I>rhizosphaerae</I> Wang et al. 2015
+    genus: Nocardia
+    keyword: phylum/actinomycetota
+    order: Mycobacteriales
+    phylum: Actinomycetota
+    species: Nocardia rhizosphaerae
+  class: Actinobacteria
+  domain: Bacteria
+  family: Nocardiaceae
+  full scientific name: Nocardia rhizosphaerae Wang et al. 2015
+  genus: Nocardia
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Nocardia rhizosphaerae
+  type strain: 'yes'
+Physiology and metabolism: {}
+Reference:
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 24044
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 102210)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-102210
+Safety information:
+  risk assessment:
+    '@ref': 24044
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 24044
+    NCBI tax ID: 1691571
+    accession: KP972639
+    database: ena
+    description: Nocardia rhizosphaerae strain KLBMP S0043 16S ribosomal RNA gene,
+      partial sequence
+    length: 1425
+  GC content:
+    '@ref': 24044
+    GC-content: '71.4'
+    method: high performance liquid chromatography (HPLC)

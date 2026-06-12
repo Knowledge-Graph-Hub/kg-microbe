@@ -1,0 +1,676 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 8076
+    composition: 'Name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+
+      Composition:
+
+      Agar 12.0 g/l
+
+      Malt extract 10.0 g/l
+
+      Yeast extract 4.0 g/l
+
+      Glucose 4.0 g/l
+
+      CaCO3 2.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/65
+    name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+  - '@ref': 18347
+    composition: "Name: ISP 2 / Yeast Malt Agar (5265); 5265\r\nComposition \r\nMalt\
+      \ extract 10.0 g/l\r\nYeast extract 4.0 g/l\r\nGlucose 4.0 g/l\r\nAgar 15.0\
+      \ g/l\r\nPreparation:\r\nSterilisation: 20 minutes at 121\xB0C\r\npH before\
+      \ sterilisation: 7.0\r\nUsage: Maintenance and Taxonomy\r\nOrganisms: All Actinomycetes"
+    growth: 'yes'
+    name: ISP 2
+  - '@ref': 18347
+    composition: "Name: ISP 3; 5315\r\nComposition \r\nDog oat flakes 20.0 g/l\r\n\
+      Trace element solution (5314) 2.5 ml/l \r\nAgar 18.0 g/l\r\nPreparation: Oat\
+      \ flakes are cooked for 20 minutes, trace element solution and agar are added\
+      \ (in the case of non rolled oat flakes the suspension has to bee filtrated).\r\
+      \nSterilisation: 20 minutes at 121\xB0C\r\npH before sterilisation: 7.8\r\n\
+      Usage: Maintenance and taxonomy (e.g. SEM As liquid medium for metabolite production)\r\
+      \nOrganisms: All Actinomycetes\r\n\r\nTrace element solution 5314\r\n\r\nName:\
+      \  Trace element solution 5314; 5314                \r\nComposition\r\nCaCl2\
+      \ x H2O    3.0 g/l\r\nFe-III-citrate    1.0 g/l\r\nMnSO4    0.2 g/l\r\nZnCl2\
+      \     0.1 g/l\r\nCuSO4 x 5 H2O 0.025 g/l\r\nSodium tetra borate  0.2 g/l\r\n\
+      CoCl2 x 6 H2O 0.004 g/l\r\nSodium molybdate   0.01 g/l\r\nPreparation: Use double\
+      \ destillated water. \r\nSterilisation: 20 minutes at 121\xB0C \r\npH before\
+      \ sterilisation: \r\nUsage: Trace element solution for different media \r\n\
+      Organisms:"
+    growth: 'yes'
+    name: ISP 3
+  - '@ref': 18347
+    composition: "Name: ISP 4; DSM 547\r\n\r\nSolution I:\r\nDifco soluble starch,\
+      \ 10.0 g. \r\nMake a paste of the starch with a small amount of cold distilled\
+      \ water and bring to a volume of 500 ml.\r\n\r\nSolution II:\r\nCaCO3\t2.0\t\
+      g\r\nK2HPO4 (anhydrous)\t1.0\tg\r\nMgSO4 x 7 H2O\t1.0\tg\r\nNaCl\t1.0\tg\r\n\
+      (NH4)2SO4\t2.0\tg\r\nDistilled water\t500.0 ml\r\nTrace salt solution (see below)\t\
+      1.0\tml\r\n\r\nThe pH should be between 7.0 and 7.4. Do not adjust if it is\
+      \ within this range. Mix solutions I and II together. Add 20.0 g agar. Liquify\
+      \ agar by steaming at 100\xB0C for 10 to 20 min.\r\n\r\nTrace element solution:\r\
+      \nFeSO4 x 7 H2O\t0.1\tg\r\nMnCl2 x 4 H2O\t0.1\tg\r\nZnSO4 x 7 H2O\t0.1\tg\r\n\
+      Distilled water\t100.0 ml"
+    growth: 'yes'
+    name: ISP 4
+  - '@ref': 18347
+    composition: "Name: ISP 5 (5323)\r\nComposition \r\nL-Asparagine 1.0 g/l\r\nGlycerol\
+      \ 10.0 g/l\r\nK2HPO4 1.0 g/l\r\nSalt solution (see preparation) 1.0 ml/l\r\n\
+      Agar 20.0 g/l\r\nPreparation:\r\nSalt solution\r\n1.0 g FeSO4 x 7 H2O \r\n1.0\
+      \ g MnCl2 x 4 H2O\r\n1.0 g ZNSO4 x 7 H2O \r\nin 100 ml water\r\nSterilisation:\r\
+      \n20 minutes at 121\xB0C\r\npH before sterilisation:\r\n7.2\r\nUsage:\r\nMaintenance\
+      \ and taxonomy\r\nOrganisms:\r\nAll Actinomycetes"
+    growth: 'yes'
+    name: ISP 5
+  - '@ref': 18347
+    composition: "Name: ISP 6 (5318)\r\nComposition\r\nPeptone 15.0 g/l\r\nProteose\
+      \ peptose 5.0 g/l\r\nFerric ammonium citrate 0.5 g/l\r\nSodium glycerophosphate\
+      \ 1.0 g/l\r\nSodium thiosulfate 0.08 g/l\r\nYeast extract 1.0 g/l\r\nAgar 15.0\
+      \ g/l\r\nSterilisation:\r\n20 minutes at 121\xB0C\r\npH before sterilisation:\r\
+      \nUsage: Production of melanoid pigments\r\nOrganisms:\r\nAll Actinomycetes"
+    growth: 'yes'
+    name: ISP 6
+  - '@ref': 18347
+    composition: "Name: ISP 7 (5322)\r\nComposition \r\nGlycerol 15.0 g/l\r\nL-Tyrosine\
+      \ 0.5 g/l\r\nL-Asparagine 1.0 g/l\r\nK2HPO4 0.5 g/l\r\nNaCl 0.5 g/l\r\nFeSO4\
+      \ x 7 H2O 0.01 g/l\r\nTrace element solution 5343 1.0 ml/l\r\nAgar 20.0\r\n\
+      Sterilisation:\r\n20 minutes at 121\xB0C\r\npH before sterilisation:\r\n7.3\r\
+      \nUsage:\r\nProduction of melanoid pigments\r\nOrganisms:\r\nAll Actinomycetes"
+    growth: 'yes'
+    name: ISP 7
+  culture pH:
+    '@ref': 32480
+    ability: positive
+    pH: 5.1-9.1
+    type: growth
+  culture temp:
+  - '@ref': 8076
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+  - '@ref': 18347
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: optimum
+  - '@ref': 32480
+    growth: positive
+    temperature: 04-37
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+  - '@ref': 67771
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+External links:
+  '@ref': 8076
+  culture collection no.: DSM 19367, JCM 16024, KCTC 19285, DLS 10, NBRC 106258
+  literature:
+  - DOI: 10.1099/ijs.0.65558-0
+    Pubmed-ID: '18398192'
+    authors: Lee SD, Park SK, Yun YW, Lee DW
+    journal: Int J Syst Evol Microbiol
+    mesh: Actinomycetales/*classification/genetics/*isolation & purification/metabolism,
+      Base Composition, DNA, Bacterial/chemistry/genetics, Fatty Acids/metabolism,
+      Genes, Bacterial, Geologic Sediments/microbiology, Korea, Molecular Sequence
+      Data, Phenotype, Phylogeny, RNA, Bacterial/genetics, RNA, Ribosomal, 16S/genetics,
+      Species Specificity, Terminology as Topic
+    title: Saxeibacter lacteus gen. nov., sp. nov., an actinobacterium isolated from
+      rock.
+    topic: Phylogeny
+    topic2: Metabolism
+    year: 2008
+  - DOI: 10.1186/s40793-016-0216-0
+    Pubmed-ID: '28074122'
+    authors: Nouioui I, Goker M, Carro L, Montero-Calasanz MD, Rohde M, Woyke T, Kyrpides
+      NC, Klenk HP
+    journal: Stand Genomic Sci
+    title: High quality draft genome of Nakamurella lactea type strain, a rock actinobacterium,
+      and emended description of Nakamurella lactea.
+    year: 2017
+  - DOI: 10.1007/s00284-020-02274-y
+    Pubmed-ID: '33146743'
+    authors: Chaudhary DK, Lee H, Dahal RH, Kim DY, Cha IT, Lee KE, Kim DU
+    journal: Curr Microbiol
+    mesh: Actinobacteria, *Air Conditioning, *Automobiles, Bacterial Typing Techniques,
+      DNA, Bacterial/genetics, Diaminopimelic Acid, Fatty Acids, Phospholipids, Phylogeny,
+      RNA, Ribosomal, 16S/genetics, Republic of Korea, Sequence Analysis, DNA, Soil
+      Microbiology
+    title: Nakamurella aerolata sp. Nov., Isolated from an Automobile Air Conditioning
+      System.
+    topic: Phylogeny
+    topic2: Transcriptome
+    year: 2020
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/802430
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/856628
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/802431
+General:
+  '@ref': 8076
+  BacDive-ID: 10174
+  DSM-Number: 19367
+  NCBI tax id:
+  - Matching level: species
+    NCBI tax id: 459515
+  - Matching level: strain
+    NCBI tax id: 1123241
+  description: Nakamurella lactea DLS-10 is an aerobe, mesophilic, Gram-positive bacterium
+    that was isolated from rock sample.
+  doi: 10.13145/bacdive10174.20220920.7
+  keywords:
+  - Gram-positive
+  - mesophilic
+  - aerobe
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - rod-shaped
+  strain history:
+  - <- Soon Dong Lee; DLS-10
+  - KCTC 19285 <-- S. D. Lee DLS-10.
+  - <- SD Lee, Cheju Univ.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 8076
+    continent: Asia
+    country: Republic of Korea
+    geographic location: Jeju
+    origin.country: KOR
+    sample type: rock sample
+  - '@ref': 67770
+    continent: Asia
+    country: Republic of Korea
+    geographic location: Jeju
+    origin.country: KOR
+    sample type: Rock from the peak of Darangshi Oreum
+  - '@ref': 67771
+    continent: Asia
+    country: Republic of Korea
+    geographic location: Jeju
+    origin.country: KOR
+    sample type: From rock
+  isolation source categories:
+    Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Geologic'
+Morphology:
+  cell morphology:
+  - '@ref': 32480
+    cell length: "0.95 \xB5m"
+    cell shape: rod-shaped
+    cell width: "0.55 \xB5m"
+    gram stain: positive
+    motility: 'no'
+  - '@ref': 67771
+    gram stain: positive
+  colony morphology:
+  - '@ref': 18347
+    colony color: Ivory (1014)
+    incubation period: 10-14 days
+    medium used: ISP 2
+  - '@ref': 18347
+    colony color: Ivory (1014)
+    incubation period: 10-14 days
+    medium used: ISP 3
+  - '@ref': 18347
+    colony color: Ivory (1014)
+    incubation period: 10-14 days
+    medium used: ISP 4
+  - '@ref': 18347
+    colony color: Ivory (1014)
+    incubation period: 10-14 days
+    medium used: ISP 5
+  - '@ref': 18347
+    colony color: Ivory (1014)
+    incubation period: 10-14 days
+    medium used: ISP 6
+  - '@ref': 18347
+    colony color: Ivory (1014)
+    incubation period: 10-14 days
+    medium used: ISP 7
+  multicellular morphology:
+  - '@ref': 18347
+    forms multicellular complex: 'no'
+    medium name: ISP 2
+  - '@ref': 18347
+    forms multicellular complex: 'no'
+    medium name: ISP 3
+  - '@ref': 18347
+    forms multicellular complex: 'no'
+    medium name: ISP 4
+  - '@ref': 18347
+    forms multicellular complex: 'no'
+    medium name: ISP 5
+  - '@ref': 18347
+    forms multicellular complex: 'no'
+    medium name: ISP 6
+  - '@ref': 18347
+    forms multicellular complex: 'no'
+    medium name: ISP 7
+  multimedia:
+  - '@ref': 66793
+    caption: electron microscopic image
+    intellectual property rights: "\xA9 HZI/Manfred Rohde"
+    multimedia content: EM_DSM_19367_1.jpg
+  - '@ref': 66793
+    caption: electron microscopic image
+    intellectual property rights: "\xA9 HZI/Manfred Rohde"
+    multimedia content: EM_DSM_19367_2.jpg
+  - '@ref': 66793
+    caption: electron microscopic image
+    intellectual property rights: "\xA9 HZI/Manfred Rohde"
+    multimedia content: EM_DSM_19367_3.jpg
+  - '@ref': 66793
+    caption: electron microscopic image
+    intellectual property rights: "\xA9 HZI/Manfred Rohde"
+    multimedia content: EM_DSM_19367_4.jpg
+  - '@ref': 66793
+    caption: electron microscopic image
+    intellectual property rights: "\xA9 HZI/Manfred Rohde"
+    multimedia content: EM_DSM_19367_5.jpg
+Name and taxonomic classification:
+  '@ref': 8076
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Nakamurellaceae
+    full scientific name: <I>Nakamurella</I> <I>lactea</I> (Lee et al. 2008) Kim et
+      al. 2012
+    genus: Nakamurella
+    keyword: phylum/actinomycetota
+    order: Nakamurellales
+    phylum: Actinomycetota
+    species: Nakamurella lactea
+    synonyms:
+      '@ref': 20215
+      synonym: Saxeibacter lacteus
+  class: Actinobacteria
+  domain: Bacteria
+  family: Nakamurellaceae
+  full scientific name: Nakamurella lactea (Lee et al. 2008) Kim et al. 2012 emend.
+    Nouioui et al. 2017
+  genus: Nakamurella
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Nakamurella lactea
+  strain designation: DLS-10
+  type strain: 'yes'
+Physiology and metabolism:
+  API coryne:
+    '@ref': 18347
+    ESC: '-'
+    GEL: '-'
+    GLU: +
+    GLYG: '-'
+    LAC: +
+    MAL: '-'
+    MAN: '-'
+    NIT: '-'
+    PAL: +/-
+    PYRA: +/-
+    PYZ: '-'
+    RIB: '-'
+    SAC: +
+    URE: '-'
+    XYL: '-'
+    alpha GLU: +
+    beta GAL: '-'
+    beta GUR: '-'
+    beta NAG: +
+  API zym:
+    '@ref': 18347
+    Acid phosphatase: +
+    Alkaline phosphatase: '-'
+    Cystine arylamidase: '-'
+    Esterase: +
+    Esterase Lipase: +
+    Leucine arylamidase: +
+    Lipase: +
+    N-acetyl-beta- glucosaminidase: +
+    Naphthol-AS-BI-phosphohydrolase: +
+    Trypsin: '-'
+    Valine arylamidase: '-'
+    alpha- Chymotrypsin: '-'
+    alpha- Fucosidase: +
+    alpha- Galactosidase: +
+    alpha- Glucosidase: +
+    alpha- Mannosidase: +
+    beta- Galactosidase: +
+    beta- Glucosidase: '-'
+    beta- Glucuronidase: '-'
+  enzymes:
+  - '@ref': 32480
+    activity: +
+    ec: 3.1.3.2
+    value: acid phosphatase
+  - '@ref': 32480
+    activity: +
+    ec: 1.11.1.6
+    value: catalase
+  - '@ref': 68379
+    activity: '-'
+    value: gelatinase
+  - '@ref': 68379
+    activity: '-'
+    ec: 3.5.1.5
+    value: urease
+  - '@ref': 68379
+    activity: '-'
+    ec: 3.2.1.21
+    value: beta-glucosidase
+  - '@ref': 68379
+    activity: +
+    ec: 3.2.1.52
+    value: N-acetyl-beta-glucosaminidase
+  - '@ref': 68379
+    activity: +
+    ec: 3.2.1.20
+    value: alpha-glucosidase
+  - '@ref': 68379
+    activity: '-'
+    ec: 3.2.1.23
+    value: beta-galactosidase
+  - '@ref': 68379
+    activity: '-'
+    ec: 3.2.1.31
+    value: beta-glucuronidase
+  - '@ref': 68379
+    activity: '-'
+    ec: 3.5.1.B15
+    value: pyrazinamidase
+  - '@ref': 68382
+    activity: '-'
+    ec: 3.1.3.1
+    value: alkaline phosphatase
+  - '@ref': 68382
+    activity: +
+    value: esterase (C 4)
+  - '@ref': 68382
+    activity: +
+    value: esterase lipase (C 8)
+  - '@ref': 68382
+    activity: +
+    value: lipase (C 14)
+  - '@ref': 68382
+    activity: +
+    ec: 3.4.11.1
+    value: leucine arylamidase
+  - '@ref': 68382
+    activity: '-'
+    value: valine arylamidase
+  - '@ref': 68382
+    activity: '-'
+    ec: 3.4.11.3
+    value: cystine arylamidase
+  - '@ref': 68382
+    activity: '-'
+    ec: 3.4.21.4
+    value: trypsin
+  - '@ref': 68382
+    activity: '-'
+    ec: 3.4.21.1
+    value: alpha-chymotrypsin
+  - '@ref': 68382
+    activity: +
+    ec: 3.1.3.2
+    value: acid phosphatase
+  - '@ref': 68382
+    activity: +
+    value: naphthol-AS-BI-phosphohydrolase
+  - '@ref': 68382
+    activity: +
+    ec: 3.2.1.22
+    value: alpha-galactosidase
+  - '@ref': 68382
+    activity: +
+    ec: 3.2.1.23
+    value: beta-galactosidase
+  - '@ref': 68382
+    activity: '-'
+    ec: 3.2.1.31
+    value: beta-glucuronidase
+  - '@ref': 68382
+    activity: +
+    ec: 3.2.1.20
+    value: alpha-glucosidase
+  - '@ref': 68382
+    activity: '-'
+    ec: 3.2.1.21
+    value: beta-glucosidase
+  - '@ref': 68382
+    activity: +
+    ec: 3.2.1.52
+    value: N-acetyl-beta-glucosaminidase
+  - '@ref': 68382
+    activity: +
+    ec: 3.2.1.24
+    value: alpha-mannosidase
+  - '@ref': 68382
+    activity: +
+    ec: 3.2.1.51
+    value: alpha-fucosidase
+  halophily:
+    '@ref': 32480
+    concentration: <3 %
+    growth: positive
+    salt: NaCl
+    tested relation: growth
+  metabolite utilization:
+  - '@ref': 32480
+    Chebi-ID: 22599
+    kind of utilization tested: carbon source
+    metabolite: arabinose
+    utilization activity: +
+  - '@ref': 32480
+    Chebi-ID: 17268
+    kind of utilization tested: carbon source
+    metabolite: myo-inositol
+    utilization activity: +
+  - '@ref': 32480
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: +
+  - '@ref': 68379
+    Chebi-ID: 28087
+    kind of utilization tested: fermentation
+    metabolite: glycogen
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 17992
+    kind of utilization tested: fermentation
+    metabolite: sucrose
+    utilization activity: +
+  - '@ref': 68379
+    Chebi-ID: 17716
+    kind of utilization tested: fermentation
+    metabolite: lactose
+    utilization activity: +
+  - '@ref': 68379
+    Chebi-ID: 17306
+    kind of utilization tested: fermentation
+    metabolite: maltose
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 16899
+    kind of utilization tested: fermentation
+    metabolite: D-mannitol
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 65327
+    kind of utilization tested: fermentation
+    metabolite: D-xylose
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 16988
+    kind of utilization tested: fermentation
+    metabolite: D-ribose
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 17634
+    kind of utilization tested: fermentation
+    metabolite: D-glucose
+    utilization activity: +
+  - '@ref': 68379
+    Chebi-ID: 5291
+    kind of utilization tested: hydrolysis
+    metabolite: gelatin
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 16199
+    kind of utilization tested: hydrolysis
+    metabolite: urea
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: '-'
+  - '@ref': 68379
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: '-'
+  observation:
+    '@ref': 67770
+    observation: 'quinones: MK-8(H<sub>4</sub>), MK-9(H<sub>0</sub>), MK-7(H<sub>0</sub>),
+      MK-8(H<sub>2</sub>), MK-8(H<sub>4</sub>), MK-9(H<sub>4</sub>)'
+  oxygen tolerance:
+  - '@ref': 32480
+    oxygen tolerance: aerobe
+  - '@ref': 67771
+    oxygen tolerance: aerobe
+  spore formation:
+    '@ref': 32480
+    spore formation: 'no'
+Reference:
+- '@id': 8076
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 19367)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-19367
+- '@id': 18347
+  authors: Wink, J.
+  doi/url: http://www.dsmz.de/microorganisms/wink_pdf/DSM19367.pdf
+  title: Compendium of Actinobacteria. HZI-Helmholtz-Centre for Infection Research,
+    Braunschweig
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 28700
+  doi/url: 10.1099/ijs.0.65558-0
+  pubmed: 18398192
+- '@id': 32480
+  ID_cross_reference: 28700
+  authors: Barberan A, Caceres Velazquez H, Jones S, Fierer N.
+  doi/url: 10.1128/mSphere.00237-17
+  pubmed: 28776041
+  title: 'Hiding in Plain Sight: Mining Bacterial Species Records for Phenotypic Trait
+    Information'
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 66793
+  authors: Mukherjee et al.
+  doi/url: 10.1038/nbt.3886
+  journal: ' 35: 676-683 2017'
+  pubmed: 28604660
+  title: 'GEBA: 1,003 reference genomes of bacterial and archaeal isolates expand
+    coverage of the tree of life'
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+- '@id': 67771
+  authors: Curators of the KCTC
+  doi/url: https://kctc.kribb.re.kr/En/Kctc
+- '@id': 68379
+  title: Automatically annotated from API Coryne
+- '@id': 68382
+  title: Automatically annotated from API zym
+Safety information:
+  risk assessment:
+  - '@ref': 18347
+    biosafety level: '1'
+    biosafety level comment: German classification
+  - '@ref': 8076
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 8076
+    NCBI tax ID: 1123241
+    accession: AM778124
+    database: ena
+    description: Saxeibacter lacteus partial 16S rRNA gene, type strain DLS-10T
+    length: 1399
+  - '@ref': 8076
+    NCBI tax ID: 1123241
+    accession: HE599561
+    database: ena
+    description: Saxeibacter lacteus partial 16S rRNA gene, strain KCTC 19285
+    length: 1440
+  GC content:
+  - '@ref': 8076
+    GC-content: '70.4'
+    method: high performance liquid chromatography (HPLC)
+  - '@ref': 8076
+    GC-content: '74.3'
+  - '@ref': 8076
+    GC-content: '68.9'
+    method: sequence analysis
+  - '@ref': 67770
+    GC-content: '68.9'
+    method: genome sequence analysis
+  - '@ref': 67770
+    GC-content: '74.3'
+    method: high performance liquid chromatography (HPLC)
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 1123241
+    accession: GCA_000426645
+    assembly level: scaffold
+    database: ncbi
+    description: Nakamurella lactea DSM 19367 DSM 19367
+  - '@ref': 66792
+    NCBI tax ID: 1123241
+    accession: '1123241.3'
+    assembly level: wgs
+    database: patric
+    description: Saxeibacter lacteus DSM 19367
+  - '@ref': 66792
+    NCBI tax ID: 1123241
+    accession: '2524614512'
+    assembly level: draft
+    database: img
+    description: Nakamurella lactea DSM 19367
+  - '@ref': 67770
+    NCBI tax ID: 1123241
+    accession: AUFT00000000
+    database: ncbi
+    description: Nakamurella lactea DSM 19367, whole genome shotgun sequencing project

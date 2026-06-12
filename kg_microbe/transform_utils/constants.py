@@ -515,7 +515,16 @@ RHEA_LEFT_TO_RIGHT_DIRECTION = "left-to-right"
 RHEA_RIGHT_TO_LEFT_DIRECTION = "right-to-left"
 RHEA_CATEGORY_COLUMN = "category"
 RHEA_CATEGORY = "biolink:MolecularActivity"
-EC_CATEGORY = "biolink:MolecularActivity"
+# Multi-cat: EC numbers are both molecular activities AND enzyme classifications.
+# Carrying biolink:Protein alongside MolecularActivity lets RHEA→EC
+# enables/enabled_by edges satisfy biolink's GeneProductOrComplex domain/range
+# while preserving the MolecularActivity semantics needed for grouping EC nodes
+# with GO molecular functions. biolink:Protein is biolink's recommended successor
+# to the deprecated biolink:MacromolecularMachineMixin mixin (per the upstream
+# replacement listed in DEPRECATED_CATEGORIES in kg-model-review); using Protein
+# directly also matches the convention in most KGs that treat EC as a stand-in
+# for the enzyme class.
+EC_CATEGORY = "biolink:MolecularActivity|biolink:Protein"
 GO_CATEGORY = "biolink:BiologicalProcess"
 MOLECULAR_ACTIVITY_CATEGORY = "biolink:MolecularActivity"  # For GO molecular function terms
 BIOLOGICAL_PROCESS_CATEGORY = "biolink:BiologicalProcess"  # For GO biological process terms

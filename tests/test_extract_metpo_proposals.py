@@ -42,9 +42,7 @@ def _diff(actual: Path, expected: Path) -> str:
         return f"committed {expected} is missing"
     a = actual.read_text().splitlines()
     b = expected.read_text().splitlines()
-    diff = "\n".join(
-        unified_diff(b, a, fromfile=str(expected), tofile=str(actual), lineterm="")
-    )
+    diff = "\n".join(unified_diff(b, a, fromfile=str(expected), tofile=str(actual), lineterm=""))
     return diff
 
 

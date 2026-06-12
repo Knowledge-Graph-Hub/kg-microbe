@@ -21,10 +21,7 @@ logger = logging.getLogger(__name__)
 # proposed-but-unminted terms; the transform's ``kgmicrobe.*`` placeholder
 # path remains the correct destination for those).
 LOCAL_METPO_ALIAS_OVERRIDES_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "mappings"
-    / "canonical"
-    / "metpo_alias_mappings.tsv"
+    Path(__file__).resolve().parents[2] / "mappings" / "canonical" / "metpo_alias_mappings.tsv"
 )
 
 # remote URL location in metpo GitHub repository for METPO classes and properties
@@ -331,9 +328,7 @@ def _resolve_metpo_predicate(
                 parent_label = current.label
                 if parent_label in range_to_predicate:
                     predicate_label = range_to_predicate[parent_label]["label"]
-                    predicate_biolink_equivalent = range_to_predicate[parent_label][
-                        "biolink_equivalent"
-                    ]
+                    predicate_biolink_equivalent = range_to_predicate[parent_label]["biolink_equivalent"]
                 break
             current = current.parent
 
@@ -406,8 +401,7 @@ def _load_metpo_alias_overrides(
                     applied += 1
 
     logger.info(
-        "Loaded %d local METPO alias override key(s) from %s "
-        "(skipped %d unminted, %d low-trust)",
+        "Loaded %d local METPO alias override key(s) from %s (skipped %d unminted, %d low-trust)",
         applied,
         LOCAL_METPO_ALIAS_OVERRIDES_PATH.name,
         skipped_unminted,
@@ -484,9 +478,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
                         if current.biolink_equivalent:
                             # use the parent's biolink_equivalent URL as the category
                             parent_label = current.label
-                            inferred_category = normalize_biolink_category(
-                                current.biolink_equivalent
-                            )
+                            inferred_category = normalize_biolink_category(current.biolink_equivalent)
                             if parent_label in range_to_predicate:
                                 predicate_label = range_to_predicate[parent_label]["label"]
                                 predicate_biolink_equivalent = range_to_predicate[parent_label]["biolink_equivalent"]
@@ -956,6 +948,78 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
                 node_row[description_idx] = combined_description
 
             nodes.append(node_row)
+
+    return nodes
+
+
+def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> List[List]:
+    """
+    Generate stub node rows for CHEBI / EC / GO entities referenced by assays.
+
+    The companion ``generate_assay_entity_edges`` emits assay→CHEBI/EC/GO edges
+    whose targets are normally supplied by the ontologies transform. When an
+    obsolete CHEBI ID (e.g. CHEBI:17004 'D-Tagatose', missing from current
+    chebi.json) is referenced, the merge step falls back to a KGX-generated
+    ``biolink:NamedThing`` stub with empty name/category — which fails biolink
+    domain/range checks and erases the label.
+
+    Emitting a labelled node row here ensures every assay target has a proper
+    biolink category and human-readable name. KGX merge will prefer the
+    canonical ontology row when both exist (chebi.json / ec.json / go.json),
+    so this only "wins" for IDs missing from those sources.
+
+    :param assay_data: Dictionary loaded from assay_kits_simple.json
+    :param node_header: Node header (from Transform base class)
+    :return: List of node rows
+    """
+    from kg_microbe.transform_utils.constants import (
+        CATEGORY_COLUMN,
+        CHEBI_PREFIX,
+        EC_CATEGORY,
+        EC_PREFIX,
+        GO_CATEGORY,
+        ID_COLUMN,
+        METABOLITE_CATEGORY,
+        NAME_COLUMN,
+    )
+
+    nodes: List[List] = []
+    seen: set = set()
+    id_idx = node_header.index(ID_COLUMN)
+    category_idx = node_header.index(CATEGORY_COLUMN)
+    name_idx = node_header.index(NAME_COLUMN)
+
+    def _emit(node_id: str, name: str, category: str) -> None:
+        if not node_id or node_id in seen:
+            return
+        seen.add(node_id)
+        row = [None] * len(node_header)
+        row[id_idx] = node_id
+        row[category_idx] = category
+        row[name_idx] = name or ""
+        nodes.append(row)
+
+    for kit in assay_data.get("api_kits", []):
+        for well in kit.get("wells", []):
+            well_type = well.get("type", [])
+            if not well_type or well_type[0] not in ("enzyme", "chemical"):
+                continue
+
+            if well_type[0] == "enzyme":
+                for go_term in well.get("go_terms", []) or []:
+                    _emit(go_term, "", GO_CATEGORY)
+                ec_names = well.get("ec_name", []) or []
+                for idx, ec_number in enumerate(well.get("ec_number", []) or []):
+                    ec_id = f"{EC_PREFIX}{ec_number}"
+                    ec_name = ec_names[idx] if idx < len(ec_names) else ""
+                    _emit(ec_id, ec_name, EC_CATEGORY)
+            else:  # chemical
+                chebi_names = well.get("chebi_name", []) or []
+                for idx, chebi_id in enumerate(well.get("chebi_id", []) or []):
+                    if not chebi_id.startswith(CHEBI_PREFIX):
+                        continue
+                    chebi_name = chebi_names[idx] if idx < len(chebi_names) else ""
+                    _emit(chebi_id, chebi_name, METABOLITE_CATEGORY)
 
     return nodes
 

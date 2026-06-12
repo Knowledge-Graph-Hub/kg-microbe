@@ -1,0 +1,167 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 2801
+    composition: 'Name: REACTIVATION WITH TRYPTONE SOYA BROTH (DSMZ Medium 220a)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Peptone from casein 15.0 g/l
+
+      NaCl 5.0 g/l
+
+      Peptone from soymeal 5.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/220a
+    name: REACTIVATION WITH TRYPTONE SOYA BROTH (DSMZ Medium 220a)
+  - '@ref': 2801
+    composition: 'Name: MINERAL MEDIUM (BRUNNER) (DSMZ Medium 457; with strain-specific
+      modifications)
+
+      Composition:
+
+      Na2HPO4 2.44 g/l
+
+      KH2PO4 1.52 g/l
+
+      (NH4)2SO4 0.5 g/l
+
+      MgSO4 x 7 H2O 0.2 g/l
+
+      Yeast extract 0.1 g/l
+
+      CaCl2 x 2 H2O 0.05 g/l
+
+      EDTA 0.005 g/l
+
+      FeSO4 x 7 H2O 0.002 g/l
+
+      H3BO3 0.0003 g/l
+
+      CoCl2 x 6 H2O 0.0002 g/l
+
+      ZnSO4 x 7 H2O 0.0001 g/l
+
+      MnCl2 x 4 H2O 3e-05 g/l
+
+      Na2MoO4 x 2 H2O 3e-05 g/l
+
+      NiCl2 x 6 H2O 2e-05 g/l
+
+      CuCl2 x 2 H2O 1e-05 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/457
+    name: MINERAL MEDIUM (BRUNNER) (DSMZ Medium 457)
+  culture temp:
+    '@ref': 2801
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 2801
+  culture collection no.: DSM 6756, LMG 19512
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/20297
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/20295
+General:
+  '@ref': 2801
+  BacDive-ID: 1922
+  DSM-Number: 6756
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 60547
+  description: Caballeronia glathei AB V is a mesophilic bacterium that was isolated
+    from sediment of a municipal dumping ground.
+  doi: 10.13145/bacdive1922.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- A. Brokamp; AB V (<I>Alcaligenes</I> sp.)
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 2801
+    continent: Europe
+    country: Germany
+    geographic location: "M\xFCnster"
+    origin.country: DEU
+    sample type: sediment of a municipal dumping ground
+  isolation source categories:
+  - Cat1: '#Engineered'
+    Cat2: '#Waste'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Sediment'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 2801
+  LPSN:
+    '@ref': 20215
+    class: Betaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Burkholderiaceae
+    full scientific name: <I>Caballeronia</I> <I>glathei</I> (Zolg and Ottow 1975)
+      Dobritsa and Samadpour 2016
+    genus: Caballeronia
+    keyword: phylum/pseudomonadota
+    order: Burkholderiales
+    phylum: Pseudomonadota
+    species: Caballeronia glathei
+    synonyms:
+    - '@ref': 20215
+      synonym: Burkholderia glathei
+    - '@ref': 20215
+      synonym: Pseudomonas glathei
+    - '@ref': 20215
+      synonym: Paraburkholderia glathei
+  class: Betaproteobacteria
+  domain: Bacteria
+  family: Burkholderiaceae
+  full scientific name: Caballeronia glathei (Zolg and Ottow 1975) Dobritsa and Samadpour
+    2016
+  genus: Caballeronia
+  order: Burkholderiales
+  phylum: Proteobacteria
+  species: Caballeronia glathei
+  strain designation: AB V
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 2801
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 6756)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-6756
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66794
+  authors: Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz,
+    Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg
+  doi/url: 10.1093/nar/gkaa1025
+  journal: 'Nucleic Acids Res. 49: D498-D508 2020'
+  pubmed: 33211880
+  title: 'BRENDA, the ELIXIR core data resource in 2021: new developments and updates'
+Safety information:
+  risk assessment:
+    '@ref': 2801
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

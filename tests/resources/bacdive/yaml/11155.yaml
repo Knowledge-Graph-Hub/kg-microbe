@@ -1,0 +1,427 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 17996
+    composition: 'Name: R2A MEDIUM (DSMZ Medium 830)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Yeast extract 0.5 g/l
+
+      Proteose peptone 0.5 g/l
+
+      Casamino acids 0.5 g/l
+
+      Glucose 0.5 g/l
+
+      Starch 0.5 g/l
+
+      Na-pyruvate 0.3 g/l
+
+      K2HPO4 0.3 g/l
+
+      MgSO4 x 7 H2O 0.05 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/830
+    name: R2A MEDIUM (DSMZ Medium 830)
+  - '@ref': 17996
+    composition: 'Name: TRYPTICASE SOY YEAST EXTRACT MEDIUM (DSMZ Medium 92)
+
+      Composition:
+
+      Trypticase soy broth 30.0 g/l
+
+      Agar 15.0 g/l
+
+      Yeast extract 3.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/92
+    name: TRYPTICASE SOY YEAST EXTRACT MEDIUM (DSMZ Medium 92)
+  - '@ref': 17996
+    composition: 'Name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)
+
+      Composition:
+
+      Trypticase soy broth 30.0 g/l
+
+      Agar 15.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/535
+    name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)
+  culture pH:
+  - '@ref': 30315
+    ability: positive
+    pH: 5.5-9
+    type: growth
+  - '@ref': 30315
+    ability: positive
+    pH: 7.5-8
+    type: optimum
+  culture temp:
+  - '@ref': 17996
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+  - '@ref': 30315
+    growth: positive
+    temperature: 15-37
+    type: growth
+  - '@ref': 30315
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: optimum
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 17996
+  culture collection no.: DSM 25320, JCM 16922, KCTC 19772
+  literature:
+  - DOI: 10.1099/ijs.0.033308-0
+    Pubmed-ID: '21742819'
+    authors: Woo SG, Srinivasan S, Yang J, Jung YA, Kim MK, Lee M
+    journal: Int J Syst Evol Microbiol
+    mesh: Actinomycetales/*classification/genetics/*isolation & purification/physiology,
+      Aerobiosis, Bacterial Typing Techniques, Base Composition, Cluster Analysis,
+      DNA, Bacterial/chemistry/genetics, DNA, Ribosomal/chemistry/genetics, Denitrification,
+      Diaminopimelic Acid/analysis, Fatty Acids/analysis, Korea, Molecular Sequence
+      Data, Nucleic Acid Hybridization, Peptidoglycan/chemistry, Phylogeny, RNA, Ribosomal,
+      16S/genetics, Sequence Analysis, DNA, Sewage/*microbiology, Vitamin K 2/analysis
+    title: Nocardioides daejeonensis sp. nov., a denitrifying bacterium isolated from
+      sludge in a sewage-disposal plant.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2011
+  - DOI: 10.1099/ijs.0.000206
+    Pubmed-ID: '25805631'
+    authors: Lin SY, Wen CZ, Hameed A, Liu YC, Hsu YH, Shen FT, Lai WA, Young CC
+    journal: Int J Syst Evol Microbiol
+    mesh: Actinomycetales/*classification/genetics/isolation & purification, Animals,
+      Bacteria, Aerobic/classification/genetics/isolation & purification, Bacterial
+      Typing Techniques, Base Composition, DNA, Bacterial/genetics, Diaminopimelic
+      Acid/chemistry, Fatty Acids/chemistry, Molecular Sequence Data, Phospholipids/chemistry,
+      *Phylogeny, Pigmentation, RNA, Ribosomal, 16S/genetics, Sea Urchins/*microbiology,
+      Seafood/*microbiology, Sequence Analysis, DNA, Taiwan, Vitamin K 2/analogs &
+      derivatives/chemistry
+    title: Nocardioides echinoideorum sp. nov., isolated from sea urchins (Tripneustes
+      gratilla).
+    topic: Phylogeny
+    topic2: Enzymology
+    year: 2015
+  - DOI: 10.1007/s10482-015-0455-x
+    Pubmed-ID: '25893957'
+    authors: Sultanpuram VR, Mothe T, Mohammed F
+    journal: Antonie Van Leeuwenhoek
+    mesh: Actinobacteria/*classification/genetics/*isolation & purification/physiology,
+      Aerobiosis, Bacterial Typing Techniques, Base Composition, Cell Wall/chemistry,
+      Cluster Analysis, Cytosol/chemistry, DNA, Bacterial/chemistry/genetics, DNA,
+      Ribosomal/chemistry/genetics, Fatty Acids/analysis, Forests, India, Molecular
+      Sequence Data, Peptidoglycan/analysis, Phylogeny, RNA, Ribosomal, 16S/genetics,
+      Sequence Analysis, DNA, *Soil Microbiology, Vitamin K 2/analysis
+    title: Nocardioides solisilvae sp. nov., isolated from a forest soil.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2015
+  - DOI: 10.1007/s10482-016-0711-8
+    Pubmed-ID: '27170166'
+    authors: Amin A, Ahmed I, Habib N, Abbas S, Xiao M, Hozzein WN, Li WJ
+    journal: Antonie Van Leeuwenhoek
+    mesh: Actinomycetales/*classification/genetics/*isolation & purification/metabolism,
+      Aerobiosis, Bacterial Typing Techniques, Diaminopimelic Acid/analysis, Fatty
+      Acids/metabolism, Hot Springs/*microbiology, Nucleic Acid Hybridization, Pakistan,
+      Phenotype, Phospholipids/metabolism, Phylogeny, Sequence Analysis, DNA, Sodium
+      Chloride/metabolism, Water Microbiology
+    title: Nocardioides pakistanensis sp. nov., isolated from a hot water spring of
+      Tatta Pani in Pakistan.
+    topic: Phylogeny
+    topic2: Metabolism
+    year: 2016
+  - DOI: 10.1007/s10482-016-0735-0
+    Pubmed-ID: '27411814'
+    authors: Zhang HX, Wang K, Xu ZX, Chen GJ, Du ZJ
+    journal: Antonie Van Leeuwenhoek
+    mesh: Actinomycetales/classification/*isolation & purification, Base Composition,
+      DNA, Bacterial, Lakes/*microbiology, Molecular Typing, Phylogeny
+    title: Nocardioides gilvus sp. nov., isolated from Namtso Lake.
+    topic: Phylogeny
+    topic2: Enzymology
+    year: 2016
+  - DOI: 10.1099/ijsem.0.003076
+    Pubmed-ID: '30362934'
+    authors: Wang X, Yang J, Lu S, Lai XH, Jin D, Pu J, Zhang G, Huang Y, Zhu W, Wu
+      X, Liang H, Xu J
+    journal: Int J Syst Evol Microbiol
+    mesh: Actinomycetales/*classification/genetics/isolation & purification, Animals,
+      Antelopes/*microbiology, Bacterial Typing Techniques, Base Composition, DNA,
+      Bacterial/genetics, Diaminopimelic Acid/chemistry, Fatty Acids/chemistry, Feces/*microbiology,
+      Peptidoglycan/chemistry, Phospholipids/chemistry, *Phylogeny, RNA, Ribosomal,
+      16S/genetics, Sequence Analysis, DNA, Sheep, Tibet
+    title: Nocardioides houyundeii sp. nov., isolated from Tibetan antelope faeces.
+    topic: Phylogeny
+    topic2: Transcriptome
+    year: 2018
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/870204
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/870205
+General:
+  '@ref': 17996
+  BacDive-ID: 11155
+  DSM-Number: 25320
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1046556
+  description: Nocardioides daejeonensis MJ31 is an aerobe, mesophilic, Gram-positive
+    bacterium that was isolated from sludge sample of a sewage disposal plant.
+  doi: 10.13145/bacdive11155.20220920.7
+  keywords:
+  - Gram-positive
+  - mesophilic
+  - aerobe
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  - rod-shaped
+  strain history:
+  - <- KCTC; KCTC 19772
+  - M. K. Kim MJ31.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 17996
+    continent: Asia
+    country: Republic of Korea
+    geographic location: Daejeon
+    origin.country: KOR
+    sample type: sludge sample of a sewage disposal plant
+  - '@ref': 67770
+    continent: Asia
+    country: Republic of Korea
+    origin.country: KOR
+    sample type: Sludge at the Daejeon sewage-disposal plant
+  isolation source categories:
+  - Cat1: '#Engineered'
+    Cat2: '#Waste'
+    Cat3: '#Water treatment plant'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Mud (Sludge)'
+Morphology:
+  cell morphology:
+    '@ref': 30315
+    cell length: "0.8-2 \xB5m"
+    cell shape: rod-shaped
+    cell width: "0.5-0.8 \xB5m"
+    gram stain: positive
+    motility: 'no'
+  pigmentation:
+    '@ref': 30315
+    production: 'yes'
+Name and taxonomic classification:
+  '@ref': 17996
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Nocardioidaceae
+    full scientific name: <I>Nocardioides</I> <I>daejeonensis</I> Woo et al. 2012
+    genus: Nocardioides
+    keyword: phylum/actinomycetota
+    order: Propionibacteriales
+    phylum: Actinomycetota
+    species: Nocardioides daejeonensis
+  class: Actinobacteria
+  domain: Bacteria
+  family: Nocardioidaceae
+  full scientific name: Nocardioides daejeonensis Woo et al. 2012
+  genus: Nocardioides
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Nocardioides daejeonensis
+  strain designation: MJ31
+  type strain: 'yes'
+Physiology and metabolism:
+  enzymes:
+  - '@ref': 30315
+    activity: +
+    ec: 3.1.3.2
+    value: acid phosphatase
+  - '@ref': 30315
+    activity: +
+    ec: 3.1.3.1
+    value: alkaline phosphatase
+  - '@ref': 30315
+    activity: +
+    ec: 1.11.1.6
+    value: catalase
+  halophily:
+  - '@ref': 30315
+    concentration: 0-10 %
+    growth: positive
+    salt: NaCl
+    tested relation: growth
+  - '@ref': 30315
+    concentration: 2 %
+    growth: positive
+    salt: NaCl
+    tested relation: optimum
+  metabolite utilization:
+  - '@ref': 30315
+    Chebi-ID: 16808
+    kind of utilization tested: carbon source
+    metabolite: 2-dehydro-D-gluconate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 16193
+    kind of utilization tested: carbon source
+    metabolite: 3-hydroxybenzoate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 17879
+    kind of utilization tested: carbon source
+    metabolite: 4-hydroxybenzoate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 22599
+    kind of utilization tested: carbon source
+    metabolite: arabinose
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 27689
+    kind of utilization tested: carbon source
+    metabolite: decanoate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 16947
+    kind of utilization tested: carbon source
+    metabolite: citrate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 24996
+    kind of utilization tested: carbon source
+    metabolite: lactate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 15792
+    kind of utilization tested: carbon source
+    metabolite: malonate
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 17306
+    kind of utilization tested: carbon source
+    metabolite: maltose
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 26546
+    kind of utilization tested: carbon source
+    metabolite: rhamnose
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 17822
+    kind of utilization tested: carbon source
+    metabolite: serine
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 4853
+    kind of utilization tested: hydrolysis
+    metabolite: esculin
+    utilization activity: +
+  - '@ref': 30315
+    Chebi-ID: 17632
+    kind of utilization tested: reduction
+    metabolite: nitrate
+    utilization activity: +
+  observation:
+    '@ref': 67770
+    observation: 'quinones: MK-8(H<sub>4</sub>)'
+  oxygen tolerance:
+    '@ref': 30315
+    oxygen tolerance: aerobe
+Reference:
+- '@id': 17996
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 25320)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-25320
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 26656
+  doi/url: 10.1099/ijs.0.033308-0
+  pubmed: 21742819
+- '@id': 30315
+  ID_cross_reference: 26656
+  authors: Barberan A, Caceres Velazquez H, Jones S, Fierer N.
+  doi/url: 10.1128/mSphere.00237-17
+  pubmed: 28776041
+  title: 'Hiding in Plain Sight: Mining Bacterial Species Records for Phenotypic Trait
+    Information'
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 17996
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 17996
+    NCBI tax ID: 1046556
+    accession: JF937066
+    database: ena
+    description: Nocardioides daejeonensis strain MJ31 16S ribosomal RNA gene, partial
+      sequence
+    length: 1468
+  GC content:
+  - '@ref': 17996
+    GC-content: '71.2'
+    method: high performance liquid chromatography (HPLC)
+  - '@ref': 30315
+    GC-content: '71.2'
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 1046556
+    accession: GCA_003194585
+    assembly level: contig
+    database: ncbi
+    description: Nocardioides daejeonensis MJ31
+  - '@ref': 66792
+    NCBI tax ID: 1046556
+    accession: '2866264325'
+    assembly level: draft
+    database: img
+    description: Nocardioides daejeonensis MJ31
+  - '@ref': 67770
+    NCBI tax ID: 1046556
+    accession: QHKZ00000000
+    database: ncbi
+    description: Nocardioides daejeonensis strain MJ31, whole genome shotgun sequencing
+      project

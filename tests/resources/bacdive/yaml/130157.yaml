@@ -1,0 +1,211 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 21650
+    composition: 'Name: BACTO MARINE BROTH (DIFCO 2216) (DSMZ Medium 514)
+
+      Composition:
+
+      NaCl 19.45 g/l
+
+      MgCl2 5.9 g/l
+
+      Bacto peptone 5.0 g/l
+
+      Na2SO4 3.24 g/l
+
+      CaCl2 1.8 g/l
+
+      Yeast extract 1.0 g/l
+
+      KCl 0.55 g/l
+
+      NaHCO3 0.16 g/l
+
+      Fe(III) citrate 0.1 g/l
+
+      KBr 0.08 g/l
+
+      SrCl2 0.034 g/l
+
+      H3BO3 0.022 g/l
+
+      Na2HPO4 0.008 g/l
+
+      Na-silicate 0.004 g/l
+
+      NaF 0.0024 g/l
+
+      (NH4)NO3 0.0016 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/514
+    name: BACTO MARINE BROTH (DIFCO 2216) (DSMZ Medium 514)
+  culture temp:
+    '@ref': 21650
+    growth: positive
+    range: mesophilic
+    temperature: '25'
+    type: growth
+External links:
+  '@ref': 21650
+  culture collection no.: DSM 28101, LMG 27958
+  literature:
+  - DOI: 10.1099/ijs.0.066373-0
+    Pubmed-ID: '24944336'
+    authors: Zhang DC, Margesin R
+    journal: Int J Syst Evol Microbiol
+    mesh: Alphaproteobacteria/*classification/genetics/isolation & purification, Avicennia/*microbiology,
+      Bacterial Typing Techniques, Base Composition, China, DNA, Bacterial/genetics,
+      Fatty Acids/chemistry, Geologic Sediments/*microbiology, Molecular Sequence
+      Data, Nucleic Acid Hybridization, *Phylogeny, RNA, Ribosomal, 16S/genetics,
+      Rhizosphere, Sequence Analysis, DNA, Ubiquinone/chemistry
+    title: Martelella radicis sp. nov. and Martelella mangrovi sp. nov., isolated
+      from mangrove sediment.
+    topic: Phylogeny
+    topic2: Genetics
+    year: 2014
+  - DOI: 10.1099/ijsem.0.001288
+    Pubmed-ID: '27393138'
+    authors: Chung EJ, Hwang JM, Kim KH, Jeon CO, Chung YR
+    journal: Int J Syst Evol Microbiol
+    mesh: Alphaproteobacteria/*classification/genetics/isolation & purification, Bacterial
+      Typing Techniques, Base Composition, Chenopodiaceae/*microbiology, DNA, Bacterial/genetics,
+      Fatty Acids/chemistry, Nucleic Acid Hybridization, *Phylogeny, Plant Roots/*microbiology,
+      Plumbaginaceae/*microbiology, RNA, Ribosomal, 16S/genetics, Republic of Korea,
+      Salt-Tolerant Plants/*microbiology, Sequence Analysis, DNA, Ubiquinone/analogs
+      & derivatives/chemistry
+    title: Martelella suaedae sp. nov. and Martelella limonii sp. nov., isolated from
+      the root of halophytes.
+    topic: Phylogeny
+    topic2: Transcriptome
+    year: 2016
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/897665
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/892081
+General:
+  '@ref': 21650
+  BacDive-ID: 130157
+  DSM-Number: 28101
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1397476
+  description: Martelella radicis BM5-7 is a mesophilic bacterium that was isolated
+    from rhizosphere soil of a mangrove forest.
+  doi: 10.13145/bacdive130157.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  strain history: <- R. Margesin, Inst. Microbiology, Univ. Innsbruck, Austria; BM5-7
+    <- D.-C. Zhang, CAS
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 21650
+    continent: Asia
+    country: China
+    geographic location: Hainan Province, Beigang Island
+    origin.country: CHN
+    sample type: rhizosphere soil of a mangrove forest
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Aquatic'
+    Cat3: '#Mangrove'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Forest'
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+  - Cat1: '#Host Body-Site'
+    Cat2: '#Plant'
+    Cat3: '#Rhizosphere'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 21650
+  LPSN:
+    '@ref': 20215
+    class: Alphaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Rhizobiaceae
+    full scientific name: <I>Martelella</I> <I>radicis</I> Zhang and Margesin 2014
+    genus: Martelella
+    keyword: phylum/pseudomonadota
+    order: Hyphomicrobiales
+    phylum: Pseudomonadota
+    species: Martelella radicis
+  class: Alphaproteobacteria
+  domain: Bacteria
+  family: Rhizobiaceae
+  full scientific name: Martelella radicis Zhang and Margesin 2014
+  genus: Martelella
+  order: Rhizobiales
+  phylum: Proteobacteria
+  species: Martelella radicis
+  strain designation: BM5-7
+  type strain: 'yes'
+Physiology and metabolism: {}
+Reference:
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 21650
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 28101)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-28101
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+Safety information:
+  risk assessment:
+    '@ref': 21650
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 21650
+    NCBI tax ID: 1397476
+    accession: KF560339
+    database: ena
+    description: Martelella radicis strain BM5-7 16S ribosomal RNA gene, partial sequence
+    length: 1346
+  GC content:
+    '@ref': 21650
+    GC-content: '61.0'
+    method: high performance liquid chromatography (HPLC)
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 1397476
+    accession: GCA_014196625
+    assembly level: scaffold
+    database: ncbi
+    description: Martelella radicis DSM 28101
+  - '@ref': 66792
+    NCBI tax ID: 1397476
+    accession: '1397476.3'
+    assembly level: wgs
+    database: patric
+    description: Martelella radicis strain DSM 28101
+  - '@ref': 66792
+    NCBI tax ID: 1397476
+    accession: '2829929398'
+    assembly level: draft
+    database: img
+    description: Martelella radicis DSM 28101

@@ -1,0 +1,188 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 5512
+    composition: 'Name: AGAR WITH E. COLI AS FEED (DSMZ Medium 942)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      CaCl2 x 2 H2O 1.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/942
+    name: AGAR WITH E. COLI AS FEED (DSMZ Medium 942)
+  - '@ref': 5512
+    composition: 'Name: VY/2 AGAR (DSMZ Medium 9)
+
+      Composition:
+
+      Agar 15.0 g/l
+
+      Baker''s yeast 5.0 g/l
+
+      CaCl2 x 2 H2O 1.36 g/l
+
+      Vitamin B12 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/9
+    name: VY/2 AGAR (DSMZ Medium 9)
+  - '@ref': 37465
+    growth: 'yes'
+    name: MEDIUM 672 -for Cystobacter
+  culture temp:
+  - '@ref': 5512
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+  - '@ref': 37465
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '30'
+    type: growth
+External links:
+  '@ref': 5512
+  culture collection no.: DSM 14727, CIP 109131, JCM 12629
+  literature:
+    DOI: 10.1099/ijsem.0.000533
+    Pubmed-ID: '26286530'
+    authors: Lang E, Schumann P, Tindall BJ, Mohr KI, Sproer C
+    journal: Int J Syst Evol Microbiol
+    mesh: Bacterial Typing Techniques, Base Composition, DNA, Bacterial/genetics,
+      Fatty Acids/chemistry, Myxococcales/*classification, *Phylogeny, RNA, Ribosomal,
+      16S/genetics, Sequence Analysis, DNA
+    title: Reclassification of Angiococcus disciformis, Cystobacter minus and Cystobacter
+      violaceus as Archangium disciforme comb. nov., Archangium minus comb. nov. and
+      Archangium violaceum comb. nov., unification of the families Archangiaceae and
+      Cystobacteraceae, and emended descriptions of the families Myxococcaceae and
+      Archangiaceae.
+    topic: Phylogeny
+    topic2: Transcriptome
+    year: 2015
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/534148
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/718910
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/841994
+General:
+  '@ref': 5512
+  BacDive-ID: 3391
+  DSM-Number: 14727
+  NCBI tax id:
+  - Matching level: species
+    NCBI tax id: 83451
+  - Matching level: strain
+    NCBI tax id: 1406225
+  description: Archangium violaceum Cb vi61 is a mesophilic bacterium that was isolated
+    from soil with decaying plant material.
+  doi: 10.13145/bacdive3391.20220920.7
+  keywords:
+  - Bacteria
+  - 16S sequence
+  - mesophilic
+  strain history:
+  - <- H. Reichenbach; Cb vi61
+  - DSM 14727 <-- H. Reichenbach Cb vi61.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 5512
+    continent: Asia
+    country: India
+    geographic location: Rajasthan
+    origin.country: IND
+    sample type: soil with decaying plant material
+  - '@ref': 67770
+    continent: Asia
+    country: India
+    origin.country: IND
+    sample type: Soil with plant residues with faeces of goat
+  isolation source categories:
+  - Cat1: '#Environmental'
+    Cat2: '#Terrestrial'
+    Cat3: '#Soil'
+  - Cat1: '#Host'
+    Cat2: '#Plants'
+    Cat3: '#Decomposing plant'
+Morphology:
+  multimedia:
+    '@ref': 5512
+    intellectual property rights: "\xA9 Leibniz-Institut DSMZ"
+    multimedia content: https://www.dsmz.de/microorganisms/photos/DSM_14727.jpg
+Name and taxonomic classification:
+  '@ref': 5512
+  LPSN:
+    '@ref': 20215
+    class: Deltaproteobacteria
+    description: domain/bacteria
+    domain: Bacteria
+    family: Archangiaceae
+    full scientific name: <I>Archangium</I> <I>violaceum</I> (Reichenbach 2007) Lang
+      et al. 2015
+    genus: Archangium
+    keyword: phylum/pseudomonadota
+    order: Myxococcales
+    phylum: Pseudomonadota
+    species: Archangium violaceum
+    synonyms:
+      '@ref': 20215
+      synonym: Cystobacter violaceus
+  class: Deltaproteobacteria
+  domain: Bacteria
+  family: Archangiaceae
+  full scientific name: Archangium violaceum (Reichenbach 2007) Lang et al. 2015
+  genus: Archangium
+  order: Myxococcales
+  phylum: Proteobacteria
+  species: Archangium violaceum
+  strain designation: Cb vi61
+  type strain: 'yes'
+Physiology and metabolism: {}
+Reference:
+- '@id': 5512
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 14727)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-14727
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 37465
+  authors: Curators of the CIP
+  doi/url: "https://brclims.pasteur.fr/brcWeb/souche/detail/1/6838\r"
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 5512
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 5512
+    NCBI tax ID: 1406225
+    accession: DQ768114
+    database: ena
+    description: Cystobacter violaceus strain DSM 14727 16S ribosomal RNA gene, partial
+      sequence
+    length: 1489

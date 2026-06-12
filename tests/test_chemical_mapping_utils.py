@@ -21,11 +21,19 @@ from kg_microbe.utils.chemical_mapping_utils import (
 )
 
 _SSSOM_COLUMNS = [
-    "subject_id", "subject_label", "predicate_id",
-    "object_id", "object_label", "object_source",
-    "mapping_justification", "source", "mapping_date",
-    "confidence", "comment",
-    "object_formula", "object_category",
+    "subject_id",
+    "subject_label",
+    "predicate_id",
+    "object_id",
+    "object_label",
+    "object_source",
+    "mapping_justification",
+    "source",
+    "mapping_date",
+    "confidence",
+    "comment",
+    "object_formula",
+    "object_category",
 ]
 
 
@@ -64,67 +72,70 @@ def _write_mock_sssom(entries, path: Path):
         obj_label = entry.get("canonical_name", "")
         obj_formula = entry.get("formula", "")
         obj_category = entry.get("category", "")
-        obj_source = (
-            "obo:chebi.owl" if obj_id.startswith("CHEBI:")
-            else f"obo:{obj_id.split(':', 1)[0].lower()}.owl"
-        )
+        obj_source = "obo:chebi.owl" if obj_id.startswith("CHEBI:") else f"obo:{obj_id.split(':', 1)[0].lower()}.owl"
         source_tag = entry.get("sources", "")
 
         for xref in entry.get("xrefs", "").split("|"):
             if not xref:
                 continue
-            rows.append({
-                "subject_id": xref,
-                "subject_label": "",
-                "predicate_id": "skos:exactMatch",
-                "object_id": obj_id,
-                "object_label": obj_label,
-                "object_source": obj_source,
-                "mapping_justification": "semapv:UnspecifiedMatching",
-                "source": source_tag,
-                "mapping_date": "2026-04-20",
-                "confidence": "",
-                "comment": "",
-                "object_formula": obj_formula,
-                "object_category": obj_category,
-            })
+            rows.append(
+                {
+                    "subject_id": xref,
+                    "subject_label": "",
+                    "predicate_id": "skos:exactMatch",
+                    "object_id": obj_id,
+                    "object_label": obj_label,
+                    "object_source": obj_source,
+                    "mapping_justification": "semapv:UnspecifiedMatching",
+                    "source": source_tag,
+                    "mapping_date": "2026-04-20",
+                    "confidence": "",
+                    "comment": "",
+                    "object_formula": obj_formula,
+                    "object_category": obj_category,
+                }
+            )
 
         if obj_label:
-            rows.append({
-                "subject_id": f"kgm.name:{_slug(obj_label)}",
-                "subject_label": obj_label,
-                "predicate_id": "skos:exactMatch",
-                "object_id": obj_id,
-                "object_label": obj_label,
-                "object_source": obj_source,
-                "mapping_justification": "semapv:LexicalMatching",
-                "source": source_tag,
-                "mapping_date": "2026-04-20",
-                "confidence": "",
-                "comment": "canonical_name",
-                "object_formula": obj_formula,
-                "object_category": obj_category,
-            })
+            rows.append(
+                {
+                    "subject_id": f"kgm.name:{_slug(obj_label)}",
+                    "subject_label": obj_label,
+                    "predicate_id": "skos:exactMatch",
+                    "object_id": obj_id,
+                    "object_label": obj_label,
+                    "object_source": obj_source,
+                    "mapping_justification": "semapv:LexicalMatching",
+                    "source": source_tag,
+                    "mapping_date": "2026-04-20",
+                    "confidence": "",
+                    "comment": "canonical_name",
+                    "object_formula": obj_formula,
+                    "object_category": obj_category,
+                }
+            )
 
         for syn in entry.get("synonyms", "").split("|"):
             syn = syn.strip()
             if not syn or syn == obj_label:
                 continue
-            rows.append({
-                "subject_id": f"kgm.name:{_slug(syn)}",
-                "subject_label": syn,
-                "predicate_id": "skos:closeMatch",
-                "object_id": obj_id,
-                "object_label": obj_label,
-                "object_source": obj_source,
-                "mapping_justification": "semapv:LexicalMatching",
-                "source": source_tag,
-                "mapping_date": "2026-04-20",
-                "confidence": "",
-                "comment": "synonym",
-                "object_formula": obj_formula,
-                "object_category": obj_category,
-            })
+            rows.append(
+                {
+                    "subject_id": f"kgm.name:{_slug(syn)}",
+                    "subject_label": syn,
+                    "predicate_id": "skos:closeMatch",
+                    "object_id": obj_id,
+                    "object_label": obj_label,
+                    "object_source": obj_source,
+                    "mapping_justification": "semapv:LexicalMatching",
+                    "source": source_tag,
+                    "mapping_date": "2026-04-20",
+                    "confidence": "",
+                    "comment": "synonym",
+                    "object_formula": obj_formula,
+                    "object_category": obj_category,
+                }
+            )
 
     with gzip.open(path, "wt", encoding="utf-8") as fh:
         for line in header:
@@ -189,6 +200,7 @@ def mock_mappings_file():
 @pytest.fixture(autouse=True)
 def reset_cache():
     """Reset module-level cache before each test."""
+
     def _reset():
         chemical_mapping_utils._LOADED = False
         chemical_mapping_utils._ENTITY_COUNT = 0
@@ -676,10 +688,7 @@ class TestFuzzyHydrate:
         """Query "CaCl2 x 2 H2O" → hits entry whose canonical is "calcium chloride" (hydrate stripped from query)."""
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
         # Stereochemistry-stripped form of "calcium chloride · 2 H2O" is "calcium chloride".
-        assert (
-            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
-            == "CHEBI:3312"
-        )
+        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True) == "CHEBI:3312"
 
     def test_query_without_hydrate_finds_hydrated_canonical(self, hydrate_mappings_file):
         """Query without hydrate resolves via the hydrate-free canonical index."""
@@ -693,10 +702,7 @@ class TestFuzzyHydrate:
     def test_fuzzy_hydrate_off_does_not_retry(self, hydrate_mappings_file):
         """A query with a hydrate suffix misses when ``fuzzy_hydrate=False``."""
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
-        assert (
-            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False)
-            is None
-        )
+        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False) is None
 
     def test_fuzzy_hydrate_cache_key_is_distinct(self, hydrate_mappings_file):
         """
@@ -707,15 +713,9 @@ class TestFuzzyHydrate:
         """
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
         # First call: misses and caches under fuzzy_hydrate=False.
-        assert (
-            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False)
-            is None
-        )
+        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False) is None
         # Second call: same name, fuzzy_hydrate=True — different cache key → hits.
-        assert (
-            find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True)
-            == "CHEBI:3312"
-        )
+        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True) == "CHEBI:3312"
 
 
 class TestNarrowMatchChildResolution:
@@ -770,9 +770,7 @@ class TestNarrowMatchChildResolution:
         """Actinomycin A should resolve to the kgmicrobe.compound, not CHEBI:15369."""
         chemical_mapping_utils._LOADED = False
         cid = chemical_mapping_utils.find_chebi_by_name("Actinomycin A")
-        assert cid == "kgmicrobe.compound:actinomycin_a", (
-            f"expected kgmicrobe.compound:actinomycin_a, got {cid!r}"
-        )
+        assert cid == "kgmicrobe.compound:actinomycin_a", f"expected kgmicrobe.compound:actinomycin_a, got {cid!r}"
         assert chemical_mapping_utils.get_parents(cid) == ["CHEBI:15369"]
 
 
@@ -800,8 +798,7 @@ class TestHydrateEquivalents:
         # in the unified mapping via the mediadive_compounds_hydrate path.
         equivs = chemical_mapping_utils.get_hydrate_equivalents("CHEBI:32149")
         assert equivs == ["CHEBI:32586"], (
-            f"expected ['CHEBI:32586'], got {equivs!r} "
-            "(consolidator hydrate-pair emission likely regressed)"
+            f"expected ['CHEBI:32586'], got {equivs!r} (consolidator hydrate-pair emission likely regressed)"
         )
 
     def test_lookup_is_symmetric(self):
@@ -853,13 +850,9 @@ class TestKnownBadFilters:
         # canonical name index entry) nor as the target of any synonym
         # row. Lookups for the distinct ingredients should NOT resolve to
         # this CURIE.
-        assert chemical_mapping_utils.get_canonical_name(
-            "pubchem.compound:167312541"
-        ) is None
+        assert chemical_mapping_utils.get_canonical_name("pubchem.compound:167312541") is None
         assert chemical_mapping_utils.find_chebi_by_name("Peptone") != "pubchem.compound:167312541"
-        assert chemical_mapping_utils.find_chebi_by_name(
-            "Vitamin-free casamino acids"
-        ) != "pubchem.compound:167312541"
+        assert chemical_mapping_utils.find_chebi_by_name("Vitamin-free casamino acids") != "pubchem.compound:167312541"
 
     def test_wrong_chebi_hydrate_xref_dropped(self):
         """
@@ -878,9 +871,7 @@ class TestKnownBadFilters:
             "CHEBI:31795 (heptahydrate) re-appeared as exactMatch xref of "
             "CHEBI:32599 (anhydrous) — KNOWN_BAD_XREF_PAIRS filter regressed"
         )
-        assert "CHEBI:32599" not in xrefs_31795, (
-            "Reverse direction also re-appeared — filter regressed"
-        )
+        assert "CHEBI:32599" not in xrefs_31795, "Reverse direction also re-appeared — filter regressed"
 
 
 class TestNamePrecedence:

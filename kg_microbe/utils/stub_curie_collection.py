@@ -67,9 +67,7 @@ _CURIE_RE = re.compile(r"^([A-Za-z][A-Za-z0-9._-]*):([A-Za-z0-9_.\-]+)$")
 
 def _open_text(path: Path):
     """Open a TSV / TSV.GZ for text reading after stripping any SSSOM YAML header."""
-    handle = gzip.open(path, "rt", encoding="utf-8") if path.suffix == ".gz" else path.open(
-        "r", encoding="utf-8"
-    )
+    handle = gzip.open(path, "rt", encoding="utf-8") if path.suffix == ".gz" else path.open("r", encoding="utf-8")
     # SSSOM files prefix a YAML metadata header with `# `. Skip those before
     # handing the file to csv.DictReader.
     while True:

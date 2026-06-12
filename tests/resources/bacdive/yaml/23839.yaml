@@ -1,0 +1,187 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 21076
+    composition: 'Name: CULTIVATION MEDIUM FOR CHLAMYDIAE (DSMZ Medium 1193)
+
+      Composition:
+
+      Aminoacids
+
+      Fetal bovine serum
+
+      IMDM-Medium'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/1193
+    name: CULTIVATION MEDIUM FOR CHLAMYDIAE (DSMZ Medium 1193)
+  culture temp:
+    '@ref': 21076
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 21076
+  culture collection no.: DSM 27008
+  literature:
+  - DOI: 10.1016/j.ijmm.2014.12.022
+    Pubmed-ID: '25595025'
+    authors: Kastner J, Saluz HP, Hanel F
+    journal: Int J Med Microbiol
+    mesh: Animals, Antigens, Bacterial/*biosynthesis/genetics, Bacterial Proteins/*biosynthesis/genetics,
+      Cattle, Chlamydia Infections/microbiology/*veterinary, Chlamydophila psittaci/genetics/*physiology,
+      *Gene Expression Profiling, *Gene Expression Regulation, Bacterial, Lung/microbiology,
+      *Transcriptional Activation
+    title: Identification of in vivo-induced bacterial protein antigens during calf
+      infection with Chlamydia psittaci.
+    year: 2014
+  - DOI: 10.1128/mSphere.00787-20
+    Pubmed-ID: '32848009'
+    authors: Shima K, Weber MM, Schnee C, Sachse K, Kading N, Klinger M, Rupp J
+    journal: mSphere
+    mesh: Animals, Birds/microbiology, Chlamydophila psittaci/*genetics, Genetic Engineering/*methods,
+      *Genetic Vectors, Green Fluorescent Proteins/genetics, HeLa Cells, Humans, Luminescent
+      Proteins/genetics, Plasmids/*genetics, Psittacosis/microbiology/*veterinary
+    title: Development of a Plasmid Shuttle Vector System for Genetic Manipulation
+      of Chlamydia psittaci.
+    topic: Pathogenicity
+    year: 2020
+General:
+  '@ref': 21076
+  BacDive-ID: 23839
+  DSM-Number: 27008
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 83554
+  description: Chlamydia psittaci 01DE0183 is a mesophilic bacterium that was isolated
+    from aborted calf fetus.
+  doi: 10.13145/bacdive23839.20220920.7
+  keywords:
+  - 16S sequence
+  - genome sequence
+  - Bacteria
+  - mesophilic
+  strain history: <- K. Sachse, Friedrich-Loeffler-Institut, Jena, Germany; 02DC15
+    <- W. Peter and S. Scharf
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 21076
+    continent: Europe
+    country: Germany
+    geographic location: Saxony Anhalt, Stendal
+    origin.country: DEU
+    sample type: aborted calf fetus
+  isolation source categories:
+  - Cat1: '#Host Body Product'
+    Cat2: '#Urogenital tract'
+    Cat3: '#Abort'
+  - Cat1: '#Host'
+    Cat2: '#Mammals'
+    Cat3: '#Bovinae (Cow, Cattle)'
+  - Cat1: '#Host'
+    Cat2: '#Juvenile'
+Morphology:
+  colony morphology:
+    '@ref': 21076
+    incubation period: 3-7 days
+Name and taxonomic classification:
+  '@ref': 21076
+  LPSN:
+    '@ref': 20215
+    class: Chlamydiia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Chlamydiaceae
+    full scientific name: <I>Chlamydia</I> <I>psittaci</I> (Lillie 1930) Page 1968
+      (Approved Lists 1980)
+    genus: Chlamydia
+    keyword: phylum/chlamydiota
+    order: Chlamydiales
+    phylum: Chlamydiota
+    species: Chlamydia psittaci
+    synonyms:
+    - '@ref': 20215
+      synonym: Chlamydophila psittaci
+    - '@ref': 20215
+      synonym: Rickettsia psittaci
+  class: Chlamydiia
+  domain: Bacteria
+  family: Chlamydiaceae
+  full scientific name: Chlamydia psittaci (Lillie 1930) Page 1968
+  genus: Chlamydia
+  order: Chlamydiales
+  phylum: Chlamydiae
+  species: Chlamydia psittaci
+  strain designation: 01DE0183, DC15, 02DC15
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 21076
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 27008)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-27008
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+Safety information:
+  risk assessment:
+    '@ref': 21076
+    biosafety level: '2'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 21076
+    NCBI tax ID: 1112254
+    accession: NC_017292.1
+    database: nuccore
+    description: Chlamydia psittaci 02DC15, complete sequence
+    length: 1172182
+  GC content:
+    '@ref': 21076
+    GC-content: '39.1'
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 1112254
+    accession: GCA_000270425
+    assembly level: complete
+    database: ncbi
+    description: Chlamydia psittaci 02DC15 02DC15
+  - '@ref': 66792
+    NCBI tax ID: 1112254
+    accession: GCA_000415545
+    assembly level: scaffold
+    database: ncbi
+    description: Chlamydia psittaci 02DC15 02DC15
+  - '@ref': 66792
+    NCBI tax ID: 1112254
+    accession: '1112254.4'
+    assembly level: wgs
+    database: patric
+    description: Chlamydia psittaci 02DC15
+  - '@ref': 66792
+    NCBI tax ID: 1112254
+    accession: '1112254.5'
+    assembly level: complete
+    database: patric
+    description: Chlamydia psittaci 02DC15
+  - '@ref': 66792
+    NCBI tax ID: 1112254
+    accession: '651053013'
+    assembly level: complete
+    database: img
+    description: Chlamydia psittaci 02DC15
+  - '@ref': 66792
+    NCBI tax ID: 1112254
+    accession: '2541047491'
+    assembly level: draft
+    database: img
+    description: Chlamydia psittaci 02DC15

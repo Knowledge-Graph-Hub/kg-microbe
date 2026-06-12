@@ -1,0 +1,124 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 664
+    composition: 'Name: SPOROCYTOPHAGA MEDIUM (DSMZ Medium 167)
+
+      Composition:
+
+      NaNO3 2.0 g/l
+
+      K2HPO4 1.2 g/l
+
+      MgSO4 x 7 H2O 1.0 g/l
+
+      KCl 0.5 g/l
+
+      KH2PO4 0.14 g/l
+
+      Yeast extract 0.02 g/l
+
+      FeSO4 x 7 H2O 0.006 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/167
+    name: SPOROCYTOPHAGA MEDIUM (DSMZ Medium 167)
+  culture temp:
+    '@ref': 664
+    growth: positive
+    range: mesophilic
+    temperature: '25'
+    type: growth
+External links:
+  '@ref': 664
+  culture collection no.: DSM 1813
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/30828
+General:
+  '@ref': 664
+  BacDive-ID: 3826
+  DSM-Number: 1813
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 153721
+  description: Sporocytophaga myxococcoides S1 is a mesophilic bacterium that was
+    isolated from sewage water.
+  doi: 10.13145/bacdive3826.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: "<- H. Reichenbach, Sp m3 <- H. G\xFCde, S1"
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 664
+    continent: Europe
+    country: Germany
+    origin.country: DEU
+    sample type: sewage water
+  isolation source categories:
+    Cat1: '#Engineered'
+    Cat2: '#Waste'
+    Cat3: '#Wastewater'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 664
+  LPSN:
+    '@ref': 20215
+    class: Cytophagia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Cytophagaceae
+    full scientific name: <I>Sporocytophaga</I> <I>myxococcoides</I> (Krzemieniewska
+      1933) Stanier 1940 (Approved Lists 1980)
+    genus: Sporocytophaga
+    keyword: phylum/bacteroidota
+    order: Cytophagales
+    phylum: Bacteroidota
+    species: Sporocytophaga myxococcoides
+    synonyms:
+      '@ref': 20215
+      synonym: Cytophaga myxococcoides
+  class: Cytophagia
+  domain: Bacteria
+  family: Cytophagaceae
+  full scientific name: Sporocytophaga myxococcoides (Krzemieniewska 1933) Stanier
+    1940 emend. Hahnke et al. 2016
+  genus: Sporocytophaga
+  order: Cytophagales
+  phylum: Bacteroidetes
+  species: Sporocytophaga myxococcoides
+  strain designation: S1, Sp m3
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 664
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 1813)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-1813
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66794
+  authors: Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz,
+    Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg
+  doi/url: 10.1093/nar/gkaa1025
+  journal: 'Nucleic Acids Res. 49: D498-D508 2020'
+  pubmed: 33211880
+  title: 'BRENDA, the ELIXIR core data resource in 2021: new developments and updates'
+Safety information:
+  risk assessment:
+    '@ref': 664
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

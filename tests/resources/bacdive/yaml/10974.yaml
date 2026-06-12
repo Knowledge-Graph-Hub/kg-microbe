@@ -1,0 +1,94 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 11313
+    composition: 'Name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)
+
+      Composition:
+
+      Trypticase soy broth 30.0 g/l
+
+      Agar 15.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/535
+    name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)
+  culture temp:
+    '@ref': 11313
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 11313
+  culture collection no.: DSM 43977
+  straininfo link:
+    '@ref': 20218
+    passport: http://www.straininfo.net/strains/692066
+General:
+  '@ref': 11313
+  BacDive-ID: 10974
+  DSM-Number: 43977
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 1831
+  description: Rhodococcus sp. GN rough is a mesophilic bacterium of the family Nocardiaceae.
+  doi: 10.13145/bacdive10974.20220920.7
+  keywords:
+  - mesophilic
+  - Bacteria
+  strain history: <- M. Goodfellow; N914 <- E. G. Jeffreys; GN rough
+Isolation, sampling and environmental information: {}
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 11313
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Nocardiaceae
+    full scientific name: <I>Rhodococcus</I> Zopf 1891 (Approved Lists 1980)
+    genus: Rhodococcus
+    keyword: phylum/actinomycetota
+    order: Mycobacteriales
+    phylum: Actinomycetota
+    species: Rhodococcus sp.
+    synonyms:
+    - '@ref': 20215
+      synonym: Prescottia
+    - '@ref': 20215
+      synonym: Prescottella
+    - '@ref': 20215
+      synonym: Spelaeibacter
+  class: Actinobacteria
+  domain: Bacteria
+  family: Nocardiaceae
+  full scientific name: Rhodococcus sp.
+  genus: Rhodococcus
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Rhodococcus sp.
+  strain designation: GN rough, N914
+  type strain: 'no'
+Physiology and metabolism: {}
+Reference:
+- '@id': 11313
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 43977)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-43977
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information: {}
+Sequence information: {}

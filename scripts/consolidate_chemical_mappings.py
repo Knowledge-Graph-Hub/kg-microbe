@@ -250,7 +250,7 @@ def sync_mim_sssom(base_dir: Path) -> Path:
         "MIM SSSOM mapping not found. Expected either:\n"
         f"  sibling repo: {sibling}\n"
         f"  vendored copy: {vendored}\n"
-        "Clone MediaIngredientMech (https://github.com/KG-Hub/MediaIngredientMech) "
+        "Clone MediaIngredientMech (https://github.com/CultureBotAI/MediaIngredientMech) "
         "as a sibling of kg-microbe, or restore the vendored copy."
     )
 
@@ -1813,8 +1813,8 @@ class ChemicalMappingConsolidator:
             # SSSOM mapping set) vs MediaIngredientMech:<000NNN> (sequential
             # record identifiers). The SSSOM validator requires distinct URI
             # expansions per prefix, so they are differentiated by subpath.
-            "MIM": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/mapped/",
-            "MediaIngredientMech": "https://github.com/KG-Hub/MediaIngredientMech/blob/main/data/ingredients/records/",
+            "MIM": "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/mapped/",
+            "MediaIngredientMech": "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/records/",
             "kgmicrobe.compound": "https://w3id.org/kg-microbe/compound/",
             # MediaDive-minted fallback id. No upstream resolver; give it a
             # kg-microbe-scoped IRI so the SSSOM curie_map is complete.

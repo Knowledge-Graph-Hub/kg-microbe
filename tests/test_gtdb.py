@@ -91,6 +91,8 @@ class TestGTDBTransform(unittest.TestCase):
         self.assertEqual(len(self.transform.nodes), 0)
         self.assertEqual(len(self.transform.edges), 0)
         self.assertEqual(len(self.transform.taxon_to_id), 0)
+        # CURIE allocation is deterministic; no counter to assert on.
+        self.assertFalse(hasattr(self.transform, "taxon_id_counter"))
 
     def test_parse_taxonomy_file(self):
         """Test parsing taxonomy file."""
@@ -114,36 +116,47 @@ class TestGTDBTransform(unittest.TestCase):
         self.assertIn("Please run the GTDB downloader", str(context.exception))
 
     def test_get_or_create_taxon_id(self):
-        """Test creating taxon IDs."""
-        # First call creates new ID
+        """Test creating taxon CURIEs from taxon strings."""
+        # First call creates new node + CURIE derived from the taxon string.
         taxon_id1 = self.transform._get_or_create_taxon_id("d__Bacteria")
-        self.assertEqual(taxon_id1, "GTDB:1")
+        self.assertEqual(taxon_id1, "GTDB:d__Bacteria")
         self.assertIn("d__Bacteria", self.transform.taxon_to_id)
         self.assertEqual(len(self.transform.nodes), 1)
 
-        # Second call returns same ID
+        # Second call returns same ID, no duplicate node.
         taxon_id2 = self.transform._get_or_create_taxon_id("d__Bacteria")
-        self.assertEqual(taxon_id2, "GTDB:1")
-        self.assertEqual(len(self.transform.nodes), 1)  # No duplicate
+        self.assertEqual(taxon_id2, "GTDB:d__Bacteria")
+        self.assertEqual(len(self.transform.nodes), 1)
 
-        # Different taxon gets new ID
+        # Different taxon gets its own deterministic CURIE.
         taxon_id3 = self.transform._get_or_create_taxon_id("d__Archaea")
-        self.assertEqual(taxon_id3, "GTDB:2")
+        self.assertEqual(taxon_id3, "GTDB:d__Archaea")
         self.assertEqual(len(self.transform.nodes), 2)
 
-    def test_get_or_create_taxon_id_deterministic(self):
-        """Test taxon IDs are assigned deterministically."""
-        # Create taxa in different order
-        transform1 = GTDBTransform(input_dir=str(self.test_input_dir), output_dir=self.output_dir)
-        id1_a = transform1._get_or_create_taxon_id("s__Escherichia_coli")
-        id1_b = transform1._get_or_create_taxon_id("d__Bacteria")
-        id1_c = transform1._get_or_create_taxon_id("p__Pseudomonadota")
+        # Raw taxon strings with spaces are cleaned idempotently.
+        taxon_id4 = self.transform._get_or_create_taxon_id("s__Escherichia coli")
+        self.assertEqual(taxon_id4, "GTDB:s__Escherichia_coli")
 
-        # The IDs depend on creation order, but this test verifies they're consistent
-        # within the same transform instance
-        self.assertEqual(id1_a, "GTDB:1")
-        self.assertEqual(id1_b, "GTDB:2")
-        self.assertEqual(id1_c, "GTDB:3")
+    def test_get_or_create_taxon_id_deterministic(self):
+        """Two transform instances mint identical CURIEs for the same taxa."""
+        transform1 = GTDBTransform(input_dir=str(self.test_input_dir), output_dir=self.output_dir)
+        transform2 = GTDBTransform(input_dir=str(self.test_input_dir), output_dir=self.output_dir)
+
+        # Insertion order differs between the two instances; CURIEs must not.
+        a1 = transform1._get_or_create_taxon_id("s__Escherichia_coli")
+        b1 = transform1._get_or_create_taxon_id("d__Bacteria")
+        c1 = transform1._get_or_create_taxon_id("p__Pseudomonadota")
+
+        c2 = transform2._get_or_create_taxon_id("p__Pseudomonadota")
+        a2 = transform2._get_or_create_taxon_id("s__Escherichia_coli")
+        b2 = transform2._get_or_create_taxon_id("d__Bacteria")
+
+        self.assertEqual(a1, "GTDB:s__Escherichia_coli")
+        self.assertEqual(b1, "GTDB:d__Bacteria")
+        self.assertEqual(c1, "GTDB:p__Pseudomonadota")
+        self.assertEqual(a1, a2)
+        self.assertEqual(b1, b2)
+        self.assertEqual(c1, c2)
 
     def test_add_node(self):
         """Test adding node."""
@@ -218,7 +231,7 @@ class TestGTDBTransform(unittest.TestCase):
         # Check genome->taxon edge
         genome_edge = [e for e in self.transform.edges if e["subject"].startswith("GenBank:")][0]
         self.assertEqual(genome_edge["predicate"], "biolink:subclass_of")
-        self.assertEqual(genome_edge["object"], "GTDB:1")
+        self.assertEqual(genome_edge["object"], "GTDB:s__Escherichia_coli")
 
         # Check taxon->NCBI edge
         ncbi_edge = [e for e in self.transform.edges if e["object"].startswith("NCBITaxon:")][0]

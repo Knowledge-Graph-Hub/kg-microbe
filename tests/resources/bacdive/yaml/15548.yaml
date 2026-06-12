@@ -1,0 +1,107 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 10154
+    composition: 'Name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+
+      Composition:
+
+      Agar 12.0 g/l
+
+      Malt extract 10.0 g/l
+
+      Yeast extract 4.0 g/l
+
+      Glucose 4.0 g/l
+
+      CaCO3 2.0 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/65
+    name: GYM STREPTOMYCES MEDIUM (DSMZ Medium 65)
+  culture temp:
+    '@ref': 10154
+    growth: positive
+    range: mesophilic
+    temperature: '28'
+    type: growth
+External links:
+  '@ref': 10154
+  culture collection no.: DSM 41237, IMRU 3929
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/166926
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/166927
+General:
+  '@ref': 10154
+  BacDive-ID: 15548
+  DSM-Number: 41237
+  NCBI tax id:
+    Matching level: subspecies
+    NCBI tax id: 132474
+  description: Streptomyces rimosus subsp. rimosus FD 22519 is a mesophilic bacterium
+    that produces antibiotic compounds.
+  doi: 10.13145/bacdive15548.20220920.7
+  keywords:
+  - antibiotic compound production
+  - mesophilic
+  - Bacteria
+  strain history: <- R. E. Gordon, IMRU, FD 22519 <- J. Routien, Chas. Pfizer & Co.,
+    Inc.
+Isolation, sampling and environmental information: {}
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 10154
+  LPSN:
+    '@ref': 20215
+    class: Actinomycetes
+    description: domain/bacteria
+    domain: Bacteria
+    family: Streptomycetaceae
+    full scientific name: <I>Streptomyces</I> <I>rimosus</I> subsp. <I>rimosus</I>
+      (Sobin et al. 1953) Coffey et al. 1959 (Approved Lists 1980)
+    genus: Streptomyces
+    keyword: phylum/actinomycetota
+    order: Streptomycetales
+    phylum: Actinomycetota
+    species: Streptomyces rimosus subsp. rimosus
+  class: Actinobacteria
+  domain: Bacteria
+  family: Streptomycetaceae
+  full scientific name: Streptomyces rimosus subsp. rimosus (Sobin et al. 1953) Coffey
+    et al. 1959
+  genus: Streptomyces
+  order: Actinomycetales
+  phylum: Actinobacteria
+  species: Streptomyces rimosus subsp. rimosus
+  strain designation: FD 22519
+  type strain: 'no'
+Physiology and metabolism:
+  compound production:
+    '@ref': 10154
+    compound: oxytetracycline
+Reference:
+- '@id': 10154
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 41237)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-41237
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+Safety information:
+  risk assessment:
+    '@ref': 10154
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information: {}

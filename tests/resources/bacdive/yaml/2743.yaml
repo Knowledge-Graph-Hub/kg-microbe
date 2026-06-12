@@ -1,0 +1,185 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 2178
+    composition: "Name: CLOSTRIDIUM METHYLPENTOSUM MEDIUM (DSMZ Medium 492)\nComposition:\n\
+      L-Rhamnose 1.97239 g/l\nNaHCO3 0.986193 g/l\nL-Cysteine HCl x H2O 0.986193 g/l\n\
+      NaCl 0.887574 g/l\nKH2PO4 0.887574 g/l\nNH4Cl 0.887574 g/l\nCaCl2 x 2 H2O 0.0197239\
+      \ g/l\nMnCl2 x 4 H2O 0.0197239 g/l\nMgSO4 x 7 H2O 0.0197239 g/l\nCoCl2 x 6 H2O\
+      \ 0.00470414 g/l\nFeSO4 x 7 H2O 0.00470414 g/l\nZnSO4 x 7 H2O 0.00188166 g/l\n\
+      CuSO4 x H2O 0.00188166 g/l\nSodium resazurin 0.000470414 g/l\nPyridoxine hydrochloride\
+      \ 9.86193e-05 g/l\n(\xB1)-alpha-Lipoic acid 4.93097e-05 g/l\np-Aminobenzoic\
+      \ acid 4.93097e-05 g/l\nCalcium D-(+)-pantothenate 4.93097e-05 g/l\nRiboflavin\
+      \ 4.93097e-05 g/l\nThiamine HCl 4.93097e-05 g/l\nNicotinic acid 4.93097e-05\
+      \ g/l\nFolic acid 1.97239e-05 g/l\nBiotin 1.97239e-05 g/l\nVitamin B12 9.86193e-07\
+      \ g/l\nDistilled water"
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/492
+    name: CLOSTRIDIUM METHYLPENTOSUM MEDIUM (DSMZ Medium 492)
+  culture temp:
+    '@ref': 2178
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 2178
+  culture collection no.: DSM 5476, ATCC 43829
+  literature:
+  - DOI: 10.1007/BF00406553
+    Pubmed-ID: '2742449'
+    authors: Himelbloom BH, Canale-Parola E
+    journal: Arch Microbiol
+    mesh: Arabinose/metabolism, Clostridium/*metabolism/ultrastructure, Fermentation,
+      Fucose/metabolism, Humans, Intestines/*microbiology, Microscopy, Electron, Microscopy,
+      Electron, Scanning, Pentoses/*metabolism, Rhamnose/metabolism, Spores, Bacterial/ultrastructure
+    title: 'Clostridium methylpentosum sp. nov.: a ring-shaped intestinal bacterium
+      that ferments only methylpentoses and pentoses.'
+    topic: Metabolism
+    topic2: Pathogenicity
+    year: 1989
+  - DOI: 10.1099/ijsem.0.002260
+    Pubmed-ID: '28901896'
+    authors: Li Y, Zhang LL, Liu L, Tian YQ, Liu XF, Li WJ, Dai YM
+    journal: Int J Syst Evol Microbiol
+    mesh: Bacterial Typing Techniques, Base Composition, China, Chitin/metabolism,
+      Clostridiales/*classification/genetics/isolation & purification, DNA, Bacterial/genetics,
+      Fatty Acids/chemistry, *Phylogeny, RNA, Ribosomal, 16S/genetics, Sequence Analysis,
+      DNA, *Wetlands
+    title: Paludicola psychrotolerans gen. nov., sp. nov., a novel psychrotolerant
+      chitinolytic anaerobe of the family Ruminococcaceae.
+    topic: Phylogeny
+    topic2: Transcriptome
+    year: 2017
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/159214
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/113193
+General:
+  '@ref': 2178
+  BacDive-ID: 2743
+  DSM-Number: 5476
+  NCBI tax id:
+  - Matching level: species
+    NCBI tax id: 84026
+  - Matching level: strain
+    NCBI tax id: 537013
+  description: Clostridium methylpentosum R2 is an anaerobe, mesophilic bacterium
+    that was isolated from human faeces.
+  doi: 10.13145/bacdive2743.20220920.7
+  keywords:
+  - mesophilic
+  - anaerobe
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  strain history: <- ATCC <- B.H. Himelbloom and E. Canale-Parola, R2
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 2178
+    continent: North America
+    country: USA
+    origin.country: USA
+    sample type: human faeces
+  isolation source categories:
+  - Cat1: '#Host'
+    Cat2: '#Human'
+  - Cat1: '#Host Body Product'
+    Cat2: '#Gastrointestinal tract'
+    Cat3: '#Feces (Stool)'
+Morphology: {}
+Name and taxonomic classification:
+  '@ref': 2178
+  LPSN:
+    '@ref': 20215
+    class: Clostridia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Clostridiaceae
+    full scientific name: <I>Clostridium</I> <I>methylpentosum</I> Himelbloom and
+      Canale-Parola 1989
+    genus: Clostridium
+    keyword: phylum/bacillota
+    order: Eubacteriales
+    phylum: Bacillota
+    species: Clostridium methylpentosum
+  class: Clostridia
+  domain: Bacteria
+  family: Clostridiaceae
+  full scientific name: Clostridium methylpentosum Himelbloom and Canale-Parola 1989
+  genus: Clostridium
+  order: Clostridiales
+  phylum: Firmicutes
+  species: Clostridium methylpentosum
+  strain designation: R2
+  type strain: 'yes'
+Physiology and metabolism:
+  oxygen tolerance:
+    '@ref': 2178
+    oxygen tolerance: anaerobe
+Reference:
+- '@id': 2178
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 5476)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-5476
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 66794
+  authors: Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz,
+    Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg
+  doi/url: 10.1093/nar/gkaa1025
+  journal: 'Nucleic Acids Res. 49: D498-D508 2020'
+  pubmed: 33211880
+  title: 'BRENDA, the ELIXIR core data resource in 2021: new developments and updates'
+Safety information:
+  risk assessment:
+    '@ref': 2178
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 2178
+    NCBI tax ID: 537013
+    accession: Y18181
+    database: ena
+    description: Clostridium methylpentosum 16S rRNA gene, partial, strain DSM 5476
+    length: 1435
+  GC content:
+    '@ref': 2178
+    GC-content: '46.0'
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 537013
+    accession: GCA_000158655
+    assembly level: scaffold
+    database: ncbi
+    description: '[Clostridium] methylpentosum DSM 5476 DSM 5476'
+  - '@ref': 66792
+    NCBI tax ID: 537013
+    accession: '537013.3'
+    assembly level: wgs
+    database: patric
+    description: Clostridium methylpentosum DSM 5476
+  - '@ref': 66792
+    NCBI tax ID: 537013
+    accession: '643886206'
+    assembly level: draft
+    database: img
+    description: Clostridium methylpentosum R2, DSM 5476

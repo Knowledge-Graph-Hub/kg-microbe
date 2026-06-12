@@ -6,6 +6,7 @@
     "mediadive.ingredient": "https://mediadive.dsmz.de/ingredient/",
     "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/",
     "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/",
+    "GTDB": "https://gtdb.ecogenomic.org/tree?r=",
     "NCBIGene": "http://identifiers.org/ncbigene/",
     "chemrof": "https://w3id.org/chemrof/",
     "orcid": "https://orcid.org/",

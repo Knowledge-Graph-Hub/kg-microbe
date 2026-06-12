@@ -1,0 +1,171 @@
+Culture and growth conditions:
+  culture medium:
+  - '@ref': 22399
+    composition: 'Name: FASTIDIOUS ANAEROBE AGAR (DSMZ Medium 1203)
+
+      Composition:
+
+      Horse blood 100.0 g/l
+
+      Fastidious Anaerobe Agar 45.7 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/1203
+    name: FASTIDIOUS ANAEROBE AGAR (DSMZ Medium 1203)
+  - '@ref': 22399
+    composition: 'Name: BIFIDOBACTERIUM MEDIUM (DSMZ Medium 58)
+
+      Composition:
+
+      Glucose 10.0 g/l
+
+      Casein peptone 10.0 g/l
+
+      Bacto Soytone 5.0 g/l
+
+      Meat extract 5.0 g/l
+
+      Yeast extract 5.0 g/l
+
+      L-Cysteine HCl x H2O 0.5 g/l
+
+      NaHCO3 0.4 g/l
+
+      NaCl 0.08 g/l
+
+      MnSO4 x H2O 0.05 g/l
+
+      KH2PO4 0.04 g/l
+
+      K2HPO4 0.04 g/l
+
+      MgSO4 x 7 H2O 0.02 g/l
+
+      CaCl2 x 2 H2O 0.01 g/l
+
+      Tween 80
+
+      Resazurin
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/58
+    name: BIFIDOBACTERIUM MEDIUM (DSMZ Medium 58)
+  - '@ref': 22399
+    composition: 'Name: WILKINS-CHALGREN ANAEROBE BROTH (DSMZ Medium 339)
+
+      Composition:
+
+      dehydrated Wilkins-Chalgren medium 33.0 g/l
+
+      L-Cysteine HCl 0.3 g/l
+
+      Sodium resazurin 0.0005 g/l
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/339
+    name: WILKINS-CHALGREN ANAEROBE BROTH (DSMZ Medium 339)
+  culture temp:
+    '@ref': 22399
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 22399
+  culture collection no.: DSM 28733
+General:
+  '@ref': 22399
+  BacDive-ID: 131107
+  DSM-Number: 28733
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 214853
+  description: Anaerofustis stercorihominis WHC-424-CC-1 is an anaerobe, mesophilic
+    bacterium that was isolated from caecal content; TNFdeltaARE/+ C57BL/6 mouse.
+  doi: 10.13145/bacdive131107.20220920.7
+  keywords:
+  - anaerobe
+  - Bacteria
+  - 16S sequence
+  - mesophilic
+  strain history: <- T. Clavel, TU Munich, Freising-Weihenstephan, Germany; WHC-424-CC-1
+Isolation, sampling and environmental information:
+  isolation:
+    '@ref': 22399
+    continent: Europe
+    country: Germany
+    geographic location: Freising
+    origin.country: DEU
+    sample type: caecal content; TNF<sup>deltaARE/+</sup> C57BL/6 mouse
+  isolation source categories:
+  - Cat1: '#Host'
+    Cat2: '#Mammals'
+    Cat3: '#Muridae (Mouse/Rat)'
+  - Cat1: '#Host Body-Site'
+    Cat2: '#Gastrointestinal tract'
+    Cat3: '#Large intestine'
+  - Cat1: '#Host Body Product'
+    Cat2: '#Gastrointestinal tract'
+    Cat3: '#Caecal content'
+Morphology:
+  colony morphology:
+    '@ref': 22399
+    incubation period: 2-3 days
+Name and taxonomic classification:
+  '@ref': 22399
+  LPSN:
+    '@ref': 20215
+    class: Clostridia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Eubacteriaceae
+    full scientific name: <I>Anaerofustis</I> <I>stercorihominis</I> Finegold et al.
+      2004
+    genus: Anaerofustis
+    keyword: phylum/bacillota
+    order: Eubacteriales
+    phylum: Bacillota
+    species: Anaerofustis stercorihominis
+  class: Clostridia
+  domain: Bacteria
+  family: Eubacteriaceae
+  full scientific name: Anaerofustis stercorihominis Finegold et al. 2004
+  genus: Anaerofustis
+  order: Clostridiales
+  phylum: Firmicutes
+  species: Anaerofustis stercorihominis
+  strain designation: WHC-424-CC-1
+  type strain: 'no'
+Physiology and metabolism:
+  oxygen tolerance:
+    '@ref': 22399
+    oxygen tolerance: anaerobe
+Reference:
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 22399
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 28733)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-28733
+Safety information:
+  risk assessment:
+    '@ref': 22399
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+    '@ref': 22399
+    NCBI tax ID: 214853
+    accession: KR364732
+    database: ena
+    description: Anaerofustis stercorihominis strain WHC-424-CC-1 16S ribosomal RNA
+      gene, partial sequence
+    length: 1432

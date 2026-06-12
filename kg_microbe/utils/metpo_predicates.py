@@ -76,6 +76,13 @@ METPO_TO_BIOLINK_PREDICATE = {
     "METPO:2000604": "biolink:capable_of",  # does not ammonify
     "METPO:2000605": "biolink:capable_of",  # oxidizes in darkness
     "METPO:2000606": "biolink:capable_of",  # does not oxidize in darkness
+    # Observation / quality-aware isolation source. Emitted as raw METPO by
+    # BacDive (assay dual-edge + quality-aware isolation source override).
+    # Mapped here so the reviewer's VALID_PREDICATES set covers them and
+    # downstream consumers can resolve a biolink fallback if needed.
+    "METPO:2000511": "biolink:related_to",  # has observation (organism -> assay)
+    "METPO:2000067": "biolink:has_attribute",  # isolated from host with quality (organism -> PATO)
+    "METPO:2000068": "biolink:has_attribute",  # isolated from environment with quality (organism -> PATO)
 }
 
 # Biolink predicate -> RO relation

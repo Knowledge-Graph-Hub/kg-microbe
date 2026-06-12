@@ -1,0 +1,305 @@
+Culture and growth conditions:
+  culture medium:
+    '@ref': 637
+    composition: 'Name: RUMINICLOSTRIDIUM MEDIUM (DSMZ Medium 140)
+
+      Composition:
+
+      Cellobiose 5.0 g/l
+
+      Na2CO3 2.5 g/l
+
+      Yeast extract 1.2 g/l
+
+      NaCl 1.0 g/l
+
+      KH2PO4 0.5 g/l
+
+      (NH4)2SO4 0.5 g/l
+
+      K2HPO4 0.5 g/l
+
+      Na2S x 9 H2O 0.25 g/l
+
+      L-Cysteine HCl x H2O 0.25 g/l
+
+      MgSO4 x 7 H2O 0.1 g/l
+
+      CaCl2 x 2 H2O 0.1 g/l
+
+      Sodium resazurin 0.0005 g/l
+
+      Sludge
+
+      Rumen fluid
+
+      Distilled water'
+    growth: 'yes'
+    link: https://bacmedia.dsmz.de/medium/140
+    name: RUMINICLOSTRIDIUM MEDIUM (DSMZ Medium 140)
+  culture pH:
+  - '@ref': 66689
+    ability: positive
+    pH: 5-8.2
+    type: growth
+  - '@ref': 66689
+    ability: positive
+    pH: 7-7.5
+    type: optimum
+  culture temp:
+  - '@ref': 637
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+  - '@ref': 66689
+    growth: positive
+    temperature: 25-45
+    type: growth
+  - '@ref': 66689
+    growth: positive
+    range: mesophilic
+    temperature: 30-37
+    type: optimum
+  - '@ref': 67770
+    growth: positive
+    range: mesophilic
+    temperature: '37'
+    type: growth
+External links:
+  '@ref': 637
+  culture collection no.: DSM 1351, ATCC 15832, NCIMB 10669, JCM 1422, LMG 5589, BCRC
+    14495, KCTC 15225, KCTC 3044, VPI 3359
+  straininfo link:
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/7897
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/7896
+  - '@ref': 20218
+    passport: http://www.straininfo.net/strains/7899
+General:
+  '@ref': 637
+  BacDive-ID: 2567
+  DSM-Number: 1351
+  NCBI tax id:
+    Matching level: species
+    NCBI tax id: 29355
+  description: Ruminiclostridium cellobioparum Cc is an anaerobe, spore-forming, mesophilic
+    bacterium that was isolated from bovine rumen.
+  doi: 10.13145/bacdive2567.20220920.7
+  keywords:
+  - motile
+  - rod-shaped
+  - Gram-variable
+  - mesophilic
+  - spore-forming
+  - anaerobe
+  - Bacteria
+  - 16S sequence
+  - genome sequence
+  strain history:
+  - <- R. E. Hungate, University of California, Davis; Cc
+  - ATCC 15832 <-- L. V. Holdeman VIP 3359 <-- L. S. McClung and R. H. McBee <-- R.
+    E. Hungate strain Cc.
+Isolation, sampling and environmental information:
+  isolation:
+  - '@ref': 637
+    sample type: bovine rumen
+  - '@ref': 66689
+    sample type: mixture of bovine rumen and human faeces
+  - '@ref': 67770
+    sample type: Bovine rumen
+  isolation source categories:
+  - Cat1: '#Host'
+    Cat2: '#Mammals'
+    Cat3: '#Bovinae (Cow, Cattle)'
+  - Cat1: '#Host Body-Site'
+    Cat2: '#Organ'
+    Cat3: '#Rumen'
+Morphology:
+  cell morphology:
+    '@ref': 66689
+    cell length: "1.4-3.3 \xB5m"
+    cell shape: rod-shaped
+    cell width: "0.5-0.6 \xB5m"
+    gram stain: variable
+    motility: 'yes'
+Name and taxonomic classification:
+  '@ref': 637
+  LPSN:
+    '@ref': 20215
+    class: Clostridia
+    description: domain/bacteria
+    domain: Bacteria
+    family: Oscillospiraceae
+    full scientific name: <I>Ruminiclostridium</I> <I>cellobioparum</I> (Hungate 1944)
+      Zhang et al. 2018
+    genus: Ruminiclostridium
+    keyword: phylum/bacillota
+    order: Eubacteriales
+    phylum: Bacillota
+    species: Ruminiclostridium cellobioparum
+    synonyms:
+      '@ref': 20215
+      synonym: Clostridium cellobioparum
+  class: Clostridia
+  domain: Bacteria
+  family: Oscillospiraceae
+  full scientific name: Ruminiclostridium cellobioparum subsp. cellobioparum (Hungate
+    1944) Zhang et al. 2018
+  genus: Ruminiclostridium
+  order: Clostridiales
+  phylum: Firmicutes
+  species: Ruminiclostridium cellobioparum subsp. cellobioparum
+  strain designation: Cc
+  type strain: 'yes'
+Physiology and metabolism:
+  metabolite utilization:
+  - '@ref': 66689
+    Chebi-ID: 16634
+    kind of utilization tested: assimilation
+    metabolite: raffinose
+    utilization activity: '-'
+  - '@ref': 66689
+    Chebi-ID: 17992
+    kind of utilization tested: assimilation
+    metabolite: sucrose
+    utilization activity: '-'
+  - '@ref': 66689
+    Chebi-ID: 17057
+    kind of utilization tested: assimilation
+    metabolite: cellobiose
+    utilization activity: +
+  - '@ref': 66689
+    Chebi-ID: 17716
+    kind of utilization tested: assimilation
+    metabolite: lactose
+    utilization activity: +
+  - '@ref': 66689
+    Chebi-ID: 18222
+    kind of utilization tested: assimilation
+    metabolite: xylose
+    utilization activity: +
+  - '@ref': 66689
+    Chebi-ID: 28260
+    kind of utilization tested: assimilation
+    metabolite: galactose
+    utilization activity: +
+  - '@ref': 66689
+    Chebi-ID: 28757
+    kind of utilization tested: assimilation
+    metabolite: fructose
+    utilization activity: +
+  - '@ref': 66689
+    Chebi-ID: 37684
+    kind of utilization tested: assimilation
+    metabolite: mannose
+    utilization activity: +
+  - '@ref': 66689
+    Chebi-ID: 62968
+    kind of utilization tested: assimilation
+    metabolite: cellulose
+    utilization activity: +
+  observation:
+    '@ref': 66689
+    observation: End products of fermentation are acetate, ethanol, H2 and CO2 . No
+      growth factors are required, but addition of rumen fluids, yeast extract, biotrypcase
+      or vitamins stimulates growth.
+  oxygen tolerance:
+  - '@ref': 637
+    oxygen tolerance: anaerobe
+  - '@ref': 66689
+    oxygen tolerance: obligate anaerobe
+  spore formation:
+    '@ref': 66689
+    spore description: peritrichous, oval spores swelling the cell.
+    spore formation: 'yes'
+    type of spore: spore
+Reference:
+- '@id': 637
+  authors: Curators of the DSMZ
+  catalogue: Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen
+    GmbH (DSM 1351)
+  doi/url: https://www.dsmz.de/collection/catalogue/details/culture/DSM-1351
+- '@id': 20215
+  authors: "Parte, A.C., Sard\xE0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C.\
+    \ and G\xF6ker, M."
+  doi/url: 10.1099/ijsem.0.004332
+  title: List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the
+    DSMZ
+- '@id': 20218
+  authors: Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.
+  doi/url: 10.1016/j.syapm.2013.11.002
+  journal: 'Syst Appl Microbiol. 37: 42-50 2014'
+  pubmed: 24321274
+  title: StrainInfo introduces electronic passports for microorganisms.
+- '@id': 66689
+  authors: Xue Zhang, Bo Tu, Li-rong Dai, Paul A. Lawson, Zhen-zhen Zheng, Lai-Yan
+    Liu, Yu Deng, Hui Zhang, Lei Cheng
+  doi/url: 10.1099/ijsem.0.002966
+  journal: 'IJSEM 68: 3197-3211 2018'
+  pubmed: 30124399
+  title: Petroclostridium xylanilyticum gen. nov., sp. nov., a xylan-degrading bacterium
+    isolated from an oilfield, and reclassification of clostridial cluster III members
+    into four novel genera in a new Hungateiclostridiaceae fam. nov.
+- '@id': 66792
+  authors: "Julia Koblitz, Joaquim Sard\xE0, Lorenz Christian Reimer, Boyke Bunk,\
+    \ J\xF6rg Overmann"
+  doi/url: https://diaspora-project.de/progress.html#genomes
+  title: Automatically annotated for the DiASPora project (Digital Approaches for
+    the Synthesis of Poorly Accessible Biodiversity Information)
+- '@id': 67770
+  authors: Curators of the JCM
+  doi/url: https://jcm.brc.riken.jp/en/
+Safety information:
+  risk assessment:
+    '@ref': 637
+    biosafety level: '1'
+    biosafety level comment: Risk group (German classification)
+Sequence information:
+  16S sequences:
+  - '@ref': 20218
+    NCBI tax ID: 1121303
+    accession: AB627030
+    database: ena
+    description: 'Clostridium cellobioparum gene for 16S ribosomal RNA, partial sequence,
+      strain: JCM 1422'
+    length: 1484
+  - '@ref': 637
+    NCBI tax ID: 1121303
+    accession: X71856
+    database: ena
+    description: C.cellobioparum gene for 16S ribosomal RNA
+    length: 1510
+  GC content:
+  - '@ref': 637
+    GC-content: '41.0'
+    method: sequence analysis
+  - '@ref': 66689
+    GC-content: '41'
+    method: genome sequence analysis
+  Genome sequences:
+  - '@ref': 66792
+    NCBI tax ID: 1121303
+    accession: GCA_000621505
+    assembly level: scaffold
+    database: ncbi
+    description: Ruminiclostridium cellobioparum DSM 1351 = ATCC 15832 ATCC 15832
+  - '@ref': 66792
+    NCBI tax ID: 1121303
+    accession: '1121303.3'
+    assembly level: wgs
+    database: patric
+    description: '[Clostridium] cellobioparum DSM 1351 = ATCC 15832'
+  - '@ref': 66792
+    NCBI tax ID: 1121303
+    accession: '2556921656'
+    assembly level: draft
+    database: img
+    description: Clostridium cellobioparum ATCC 15832
+  - '@ref': 67770
+    NCBI tax ID: 1121303
+    accession: JHYD00000000
+    database: ncbi
+    description: Ruminiclostridium cellobioparum DSM 1351 = ATCC 15832, whole genome
+      shotgun sequencing project

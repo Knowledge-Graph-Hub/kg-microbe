@@ -375,6 +375,22 @@ class OntologiesTransform(Transform):
 
             df["category"] = df.apply(fix_ncbitaxon_category, axis=1)
 
+        elif ontology_name == "ec":
+            # EC terms get a multi-cat (MolecularActivity|MacromolecularMachineMixin)
+            # so RHEA→EC enables/enabled_by edges satisfy biolink's macromolecular-machine
+            # subject/object requirement while preserving the activity semantics.
+            from kg_microbe.transform_utils.constants import EC_CATEGORY, EC_PREFIX
+
+            print(f"  Fixing EC categories (all terms → {EC_CATEGORY})...")
+
+            def fix_ec_category(row):
+                ec_id = row["id"]
+                if pd.notna(ec_id) and ec_id.startswith(EC_PREFIX):
+                    return EC_CATEGORY
+                return replace_deprecated_categories(str(row["category"]))
+
+            df["category"] = df.apply(fix_ec_category, axis=1)
+
         else:
             # For other ontologies, just replace deprecated categories
             print(f"  Replacing deprecated categories in {ontology_name}...")

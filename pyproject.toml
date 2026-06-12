@@ -115,8 +115,11 @@ select = [
 max-complexity = 10
 
 [tool.ruff.lint.isort]
-# Configure known first-party modules for correct import sorting
-known-first-party = ["kg_microbe"]
+# Configure known first-party modules for correct import sorting.
+# `run` is the repo-root CLI module (run.py); declaring it explicitly keeps
+# isort classification deterministic in CI, where filesystem-based first-party
+# detection does not pick it up.
+known-first-party = ["kg_microbe", "run"]
 
 [tool.pytest.ini_options]
 norecursedirs = ["scripts", "notebooks", "docs", ".git"]

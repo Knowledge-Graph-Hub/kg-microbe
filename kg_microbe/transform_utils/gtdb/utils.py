@@ -37,7 +37,7 @@ def extract_accession_type(accession):
 
 
 def clean_taxon_name(taxon_name):
-    """
+    r"""
     Clean taxon name into the canonical GTDB local identifier form.
 
     Replaces spaces with underscores. The output is also the local ID for

@@ -257,7 +257,7 @@ class GTDBTransform(Transform):
             self._create_genome_node(accession, gtdb_taxon, ncbi_taxid=None)
 
     def _get_or_create_taxon_id(self, taxon_name: str) -> str:
-        """
+        r"""
         Get or create the canonical CURIE for a taxon.
 
         The CURIE is derived deterministically from the cleaned taxon

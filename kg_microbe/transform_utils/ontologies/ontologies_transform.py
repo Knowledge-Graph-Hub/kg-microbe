@@ -207,6 +207,14 @@ class OntologiesTransform(Transform):
         # entries so the load proceeds.
         self._sanitize_obograph_synonyms(Path(data_file))
 
+        # Drop owl:deprecated (obsolete) classes so retired terms do not enter
+        # the KG as orphan nodes. METPO, for example, retains ~1,200 deprecated
+        # classes from an ID-scheme migration alongside its ~370 active terms;
+        # ingesting all of them inflates the graph with disconnected obsolete
+        # nodes. Removal happens before the KGX load so neither the nodes nor
+        # any edges touching them reach the output.
+        self._drop_deprecated_terms(Path(data_file))
+
         transform(
             inputs=[data_file],
             input_format="obojson",
@@ -259,6 +267,71 @@ class OntologiesTransform(Transform):
 
         if dropped:
             print(f"  Dropped {dropped} malformed synonym entries (missing 'val') from {json_path.name}")
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f)
+
+    @staticmethod
+    def _is_deprecated_node(node: dict) -> bool:
+        """
+        Return True if an obograph node is flagged ``owl:deprecated true``.
+
+        Obograph JSON encodes deprecation either as a top-level
+        ``meta.deprecated`` boolean or as a ``meta.basicPropertyValues`` entry
+        whose predicate is ``owl#deprecated`` with the literal value ``"true"``.
+        Both forms are checked.
+        """
+        meta = node.get("meta") or {}
+        if meta.get("deprecated") is True:
+            return True
+        for bpv in meta.get("basicPropertyValues", []) or []:
+            pred = str(bpv.get("pred", ""))
+            if pred.endswith("owl#deprecated") and str(bpv.get("val", "")).lower() == "true":
+                return True
+        return False
+
+    def _drop_deprecated_terms(self, json_path: Path) -> None:
+        """
+        Remove ``owl:deprecated`` (obsolete) classes from an obograph JSON in place.
+
+        Retired terms are dropped before the KGX load so they never become KG
+        nodes, and any edges referencing a dropped term are removed too so no
+        dangling edges remain. Active terms are untouched. The file is only
+        rewritten when something is actually removed.
+        """
+        if not json_path.is_file() or json_path.suffix != ".json":
+            return
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return  # let downstream KGX raise the more informative error
+
+        dropped_nodes = 0
+        dropped_edges = 0
+        for graph in data.get("graphs", []) or []:
+            deprecated_ids = {
+                node["id"]
+                for node in graph.get("nodes", []) or []
+                if node.get("id") and self._is_deprecated_node(node)
+            }
+            if not deprecated_ids:
+                continue
+            kept_nodes = [n for n in graph.get("nodes", []) or [] if n.get("id") not in deprecated_ids]
+            dropped_nodes += len(graph.get("nodes", []) or []) - len(kept_nodes)
+            graph["nodes"] = kept_nodes
+
+            edges = graph.get("edges", []) or []
+            kept_edges = [
+                e for e in edges if e.get("sub") not in deprecated_ids and e.get("obj") not in deprecated_ids
+            ]
+            dropped_edges += len(edges) - len(kept_edges)
+            graph["edges"] = kept_edges
+
+        if dropped_nodes:
+            print(
+                f"  Dropped {dropped_nodes} deprecated (owl:deprecated) terms "
+                f"and {dropped_edges} edges touching them from {json_path.name}"
+            )
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f)
 

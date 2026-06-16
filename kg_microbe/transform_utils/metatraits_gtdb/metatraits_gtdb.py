@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, Optional, Set, Union
 
 from kg_microbe.transform_utils.constants import METATRAITS_GTDB, RAW_DATA_DIR
+from kg_microbe.transform_utils.gtdb.utils import clean_taxon_name
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
@@ -295,7 +296,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         # because they must match the prefix-free metatraits input labels;
         # only the emitted CURIE carries s__. Input is species-level only
         # (gtdb_species_summary.jsonl.gz; genus/family summaries disabled).
-        gtdb_id = search_name.replace(" ", "_")
+        gtdb_id = clean_taxon_name(search_name)
         synthetic_node_id = f"GTDB:s__{gtdb_id}"
 
         # Extract accession for hierarchical linking
@@ -393,7 +394,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                         # s__ prefix matches the canonical gtdb-transform CURIE
                         # scheme (GTDB:s__<species>) so this subClassOf edge lands
                         # on a real GTDB taxonomy node in the merged graph.
-                        OBJECT_COLUMN: f"GTDB:s__{current_species.replace(' ', '_')}",
+                        OBJECT_COLUMN: f"GTDB:s__{clean_taxon_name(current_species)}",
                         RELATION_COLUMN: RDFS_SUBCLASS_OF,
                         PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
                     }

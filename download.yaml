@@ -199,10 +199,17 @@
 
 #
 # BactoTraits
+# NOTE: Commented out — the host (ordar.otelo.univ-lorraine.fr) serves a broken
+# TLS certificate chain (incomplete intermediate) that no CA bundle can verify,
+# so this download aborts the whole run. BactoTraits V2 is a static Jun-2022
+# dataset; the last public copy is vendored into
+# data/raw/BactoTraits_databaseV2_Jun2022.csv from data/raw_last8/, so the
+# bactotraits transform runs normally. To refresh, fetch the CSV manually
+# (verification relaxed) to that path, then re-enable this entry.
 #
--
-  url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
-  local_name: BactoTraits_databaseV2_Jun2022.csv
+#-
+#  url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
+#  local_name: BactoTraits_databaseV2_Jun2022.csv
 
 #
 # CTD
@@ -394,27 +401,33 @@
 # Microbial trait data from MetaTraits organized by GTDB taxonomy (R220)
 # Enables genome-level trait associations via GTDB taxonomy
 # NOTE: Requires overlap analysis to assess value vs NCBITaxon metatraits
+# NOTE: Commented out — the metatraits.embl.de/static/downloads/ endpoint now
+# returns HTTP 404 for all of these (access moved behind permission from
+# antheaguo@berkeley.edu). The last public copies (2026-03-24) are vendored
+# into data/raw/ from data/raw_last8/. To refresh, obtain access and re-enable.
 #
--
-  url: https://metatraits.embl.de/static/downloads/gtdb_species_summary.jsonl.gz
-  local_name: gtdb_species_summary.jsonl.gz
--
-  url: https://metatraits.embl.de/static/downloads/gtdb_genus_summary.jsonl.gz
-  local_name: gtdb_genus_summary.jsonl.gz
--
-  url: https://metatraits.embl.de/static/downloads/gtdb_family_summary.jsonl.gz
-  local_name: gtdb_family_summary.jsonl.gz
+#-
+#  url: https://metatraits.embl.de/static/downloads/gtdb_species_summary.jsonl.gz
+#  local_name: gtdb_species_summary.jsonl.gz
+#-
+#  url: https://metatraits.embl.de/static/downloads/gtdb_genus_summary.jsonl.gz
+#  local_name: gtdb_genus_summary.jsonl.gz
+#-
+#  url: https://metatraits.embl.de/static/downloads/gtdb_family_summary.jsonl.gz
+#  local_name: gtdb_family_summary.jsonl.gz
 
 #
 # GTDB-NCBITaxon Mappings (for overlap analysis)
 # Maps between GTDB R220 and NCBITaxon taxonomies
+# NOTE: Commented out — same dead metatraits.embl.de endpoint (HTTP 404).
+# Last public copies (2026-03-24) vendored into data/raw/ from data/raw_last8/.
 #
--
-  url: https://metatraits.embl.de/static/downloads/GTDB2NCBI.tsv.gz
-  local_name: GTDB2NCBI.tsv.gz
--
-  url: https://metatraits.embl.de/static/downloads/NCBI2GTDB.tsv.gz
-  local_name: NCBI2GTDB.tsv.gz
+#-
+#  url: https://metatraits.embl.de/static/downloads/GTDB2NCBI.tsv.gz
+#  local_name: GTDB2NCBI.tsv.gz
+#-
+#  url: https://metatraits.embl.de/static/downloads/NCBI2GTDB.tsv.gz
+#  local_name: NCBI2GTDB.tsv.gz
 
 #
 # Biolink Model

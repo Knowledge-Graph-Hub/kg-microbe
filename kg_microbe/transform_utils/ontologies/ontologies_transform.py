@@ -310,9 +310,7 @@ class OntologiesTransform(Transform):
         dropped_edges = 0
         for graph in data.get("graphs", []) or []:
             deprecated_ids = {
-                node["id"]
-                for node in graph.get("nodes", []) or []
-                if node.get("id") and self._is_deprecated_node(node)
+                node["id"] for node in graph.get("nodes", []) or [] if node.get("id") and self._is_deprecated_node(node)
             }
             if not deprecated_ids:
                 continue
@@ -321,9 +319,7 @@ class OntologiesTransform(Transform):
             graph["nodes"] = kept_nodes
 
             edges = graph.get("edges", []) or []
-            kept_edges = [
-                e for e in edges if e.get("sub") not in deprecated_ids and e.get("obj") not in deprecated_ids
-            ]
+            kept_edges = [e for e in edges if e.get("sub") not in deprecated_ids and e.get("obj") not in deprecated_ids]
             dropped_edges += len(edges) - len(kept_edges)
             graph["edges"] = kept_edges
 
@@ -457,6 +453,7 @@ class OntologiesTransform(Transform):
             print(f"  Fixing EC categories (all terms → {EC_CATEGORY})...")
 
             def fix_ec_category(row):
+                """Force EC nodes to the EC category, else replace deprecated categories."""
                 ec_id = row["id"]
                 if pd.notna(ec_id) and ec_id.startswith(EC_PREFIX):
                     return EC_CATEGORY

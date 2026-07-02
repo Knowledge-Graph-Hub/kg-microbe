@@ -1349,7 +1349,10 @@ def validate_against_metpo(
 
     A collision is allowed only when the colliding label/synonym is also
     declared in EXISTING_METPO_ALIASES (i.e. we have explicitly accepted that
-    this concept is being modeled by an existing METPO ID).
+    this concept is being modeled by an existing METPO ID), or when the
+    existing METPO term shares the proposal's own ``proposed_id`` -- i.e. the
+    proposal has since been adopted into METPO at exactly its intended ID, so
+    it is the same concept rather than a clash with a different term.
     """
     label_index, synonym_index = _load_metpo_index(snapshot)
     alias_keys = _alias_proposed_keys()
@@ -1364,14 +1367,16 @@ def validate_against_metpo(
             if key in alias_keys:
                 continue
             hit = label_index.get(key)
-            if hit:
+            if hit and hit[0] != term.proposed_id:
                 collisions.append(
                     f"{term.proposed_id} ({source}={text!r}) collides with "
                     f"{hit[0]} {hit[1]!r} (existing label)"
                 )
                 continue
-            hit = synonym_index.get(key)
             if hit:
+                continue
+            hit = synonym_index.get(key)
+            if hit and hit[0] != term.proposed_id:
                 collisions.append(
                     f"{term.proposed_id} ({source}={text!r}) collides with "
                     f"{hit[0]} {hit[1]!r} (existing synonym)"

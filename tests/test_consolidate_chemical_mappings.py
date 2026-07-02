@@ -221,6 +221,7 @@ class LoaderFilteringTests(unittest.TestCase):
         cols = header.rstrip("\n").split("\t")
 
         def render_row(original, mapped, chebi_id, chebi_label):
+            """Build a compound-mappings TSV row dict for the given values."""
             d = {c: "" for c in cols}
             d["medium_id"] = "test_medium"
             d["original"] = original
@@ -314,6 +315,7 @@ class LoaderFilteringTests(unittest.TestCase):
         ]
 
         def render(row):
+            """Render a unified-SSSOM row tuple as a tab-separated line."""
             sid, slabel, oid, olabel, formula, category, source_tag = row
             return (
                 "\t".join(

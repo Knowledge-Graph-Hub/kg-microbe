@@ -83,6 +83,14 @@ METPO_TO_BIOLINK_PREDICATE = {
     "METPO:2000511": "biolink:related_to",  # has observation (organism -> assay)
     "METPO:2000067": "biolink:has_attribute",  # isolated from host with quality (organism -> PATO)
     "METPO:2000068": "biolink:has_attribute",  # isolated from environment with quality (organism -> PATO)
+    # Chemical-tolerance predicate pair (organism -> chemical). Emitted as raw
+    # METPO by metatraits (e.g. the bile-acid susceptibility trait routes through
+    # METPO:2000065 -> CHEBI:3098). Mapped here so the reviewer's VALID_PREDICATES
+    # set covers them and downstream consumers can resolve a biolink fallback.
+    # Neither biolink predicate is in PREDICATE_TO_RELATION, so the emitted
+    # relation column is unchanged (falls back to HAS_PHENOTYPE / RO:0002200).
+    "METPO:2000064": "biolink:associated_with_resistance_to",  # tolerates
+    "METPO:2000065": "biolink:associated_with_sensitivity_to",  # does not tolerate
 }
 
 # Biolink predicate -> RO relation

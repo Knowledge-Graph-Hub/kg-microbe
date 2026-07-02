@@ -30365,3 +30365,81 @@ docs/*_FIX.md
 # kg-release skill staging area (large tarballs, never committed)
 releases/
 .claude/skills/*/reviews/
+
+# --------------------------------------------------------------------------
+# Local build artifacts and dated snapshot working directories (2026-07)
+# --------------------------------------------------------------------------
+# Rationale: the branch cleanup on 2026-07-02 found ~80 untracked entries
+# that are all local snapshots, transform outputs, or scratch analysis
+# files produced by running the pipeline. These patterns keep the
+# working tree quiet without touching anything currently checked in.
+
+# Dated / snapshot copies of pipeline data directories
+data/raw_20*/
+data/raw_last[0-9]*/
+data/transformed_20*/
+data/transformed_last[0-9]*/
+data/transformed_test/
+data/merged_20*/
+data/bakta/
+data/db/
+data/pfas_bakta/
+data/pfas_bakta_transform/
+data/processed/
+data/raw/cog/
+data/raw/gtdb/
+data/raw/kegg/
+data/bacdive_media_links__crbip.txt
+
+# Transform / merge command outputs and working configs at repo root
+/*.out
+/download.yaml_all
+/download.yaml_last
+/merge.yaml_new
+/merge_compare_202502
+/merged-kg_stats.yaml
+/merged-kg_uniprot_nodes.tsv
+/my_kg.db
+/neo4j/
+/relation-graph/
+/trait_taxa/
+
+# One-off scratch analysis / comparison outputs at repo root
+/NCBITaxon_to_GO_Part*.tsv
+/akkermansia_muciniphila_edges*.csv
+/alicyclobacillus_montanus_edges*.csv
+/organism_comparison_summary*.csv
+/organism_edge_comparison.csv
+/methanotaxa_summary.tsv
+/gtdb_overlap_report.txt
+/chebi.json
+/custom_curies_table.tsv
+/source_attribution.json
+/1000_search.txt
+/kgm_casnr_leftovers.tsv
+/missing_chem.txt
+/missing_chem_casrn.txt
+/index.html
+
+# Scratch images / mockups at repo root
+/kg-microbe*.png
+/kg-microbe*.psd
+/kg_microbe_*_relations*.png
+/kg_microbe_*_relations*.svg
+
+# Notebook build outputs and rendered variants
+notebooks/catboost_info/
+notebooks/*.html
+notebooks/*_output.tsv
+notebooks/mergecount_vs_probmax*.pdf
+notebooks/species_not_processed.txt
+notebooks/NCBITaxon_to_medium.tsv
+notebooks/metacyc_pathway_hierarchy.tsv
+notebooks/pred*_merged_output.tsv
+
+# Editor / migration backup files (anywhere in tree)
+*.ipynb_bak
+*.py_bak
+
+# Transform-internal tmp/ subdirectories (never authored, always cached)
+kg_microbe/transform_utils/*/tmp/

@@ -24,6 +24,28 @@ class _NoNCBI:
         return []
 
 
+class _NoGTDB:
+
+    """GTDB-index stub used when a test wants GTDB enrichment disabled."""
+
+    def curies_by_rank_name(self, rank, name):
+        """Return an empty list — every LPSN name is treated as unmatched."""
+        return []
+
+
+class _FakeGTDB:
+
+    """Simple GTDB-index fake keyed on ``(rank, name)`` tuples."""
+
+    def __init__(self, mapping):
+        """Store the mapping and answer ``curies_by_rank_name`` from it."""
+        self._map = mapping
+
+    def curies_by_rank_name(self, rank, name):
+        """Return the CURIE list for ``(rank, name)`` (empty if unknown)."""
+        return list(self._map.get((rank, name), []))
+
+
 @pytest.fixture()
 def lpsn_transform(tmp_path):
     """
@@ -39,7 +61,12 @@ def lpsn_transform(tmp_path):
     disk. Tests that specifically exercise the NCBI cross-ref path use
     ``lpsn_transform_with_ncbi`` instead.
     """
-    return LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path, ncbi_impl=_NoNCBI())
+    return LPSNTransform(
+        input_dir=FIXTURE_DIR,
+        output_dir=tmp_path,
+        ncbi_impl=_NoNCBI(),
+        gtdb_index=_NoGTDB(),
+    )
 
 
 def _read_tsv(path: Path) -> list[dict]:
@@ -252,7 +279,12 @@ def lpsn_transform_with_ncbi(tmp_path):
             # Bacillus subtilis intentionally absent.
         }
     )
-    return LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path, ncbi_impl=fake)
+    return LPSNTransform(
+        input_dir=FIXTURE_DIR,
+        output_dir=tmp_path,
+        ncbi_impl=fake,
+        gtdb_index=_NoGTDB(),
+    )
 
 
 def test_single_hit_emits_ncbitaxon_close_match(lpsn_transform_with_ncbi):
@@ -310,7 +342,12 @@ def test_genus_row_now_gets_ncbi_edge_when_synonym_matches(tmp_path):
     injected fake stands in for that pre-resolved behavior.
     """
     fake = _FakeNCBI({"Escherichia": ["NCBITaxon:561"]})
-    xform = LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path, ncbi_impl=fake)
+    xform = LPSNTransform(
+        input_dir=FIXTURE_DIR,
+        output_dir=tmp_path,
+        ncbi_impl=fake,
+        gtdb_index=_NoGTDB(),
+    )
     xform.run()
     edges = _read_tsv(xform.output_edge_file)
     hits = [
@@ -321,3 +358,91 @@ def test_genus_row_now_gets_ncbi_edge_when_synonym_matches(tmp_path):
         and e["predicate"] == "biolink:close_match"
     ]
     assert len(hits) == 1
+
+
+# --------------------------------------------------------------------------
+# GTDB cross-refs
+# --------------------------------------------------------------------------
+
+
+@pytest.fixture()
+def lpsn_transform_with_gtdb(tmp_path):
+    """
+    LPSNTransform wired to a fake GTDB index with canned answers.
+
+    Fixture rows and their fake GTDB answers:
+    - genus ``Escherichia`` (1001) → ``GTDB:g__Escherichia``
+    - species ``Escherichia coli`` (1002) → ``GTDB:s__Escherichia_coli``
+    - subspecies ``Escherichia coli inactive`` (1003) → SKIPPED (no rank)
+    - genus ``Bacillus`` (1010) → 2 hits (ambiguous, no edge)
+    - species ``Bacillus subtilis`` (1011) → 0 hits (unmatched)
+    - synonym ``Notgenus orphan`` (1099) → not in map (unmatched)
+    """
+    fake = _FakeGTDB(
+        {
+            ("g__", "Escherichia"): ["GTDB:g__Escherichia"],
+            ("s__", "Escherichia coli"): ["GTDB:s__Escherichia_coli"],
+            ("g__", "Bacillus"): ["GTDB:g__Bacillus", "GTDB:g__Bacillus_A"],
+            # Bacillus subtilis and Notgenus orphan intentionally absent.
+        }
+    )
+    return LPSNTransform(
+        input_dir=FIXTURE_DIR,
+        output_dir=tmp_path,
+        ncbi_impl=_NoNCBI(),
+        gtdb_index=fake,
+    )
+
+
+def test_species_gets_gtdb_close_match(lpsn_transform_with_gtdb):
+    """Species row → single-hit GTDB match emitted as biolink:close_match."""
+    lpsn_transform_with_gtdb.run()
+    edges = _read_tsv(lpsn_transform_with_gtdb.output_edge_file)
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1002"
+        and e["object"] == "GTDB:s__Escherichia_coli"
+        and e["predicate"] == "biolink:close_match"
+    ]
+    assert len(hits) == 1
+    assert hits[0]["relation"] == "skos:closeMatch"
+
+
+def test_genus_gets_gtdb_close_match(lpsn_transform_with_gtdb):
+    """Genus row → GTDB g__ match emitted."""
+    lpsn_transform_with_gtdb.run()
+    edges = _read_tsv(lpsn_transform_with_gtdb.output_edge_file)
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1001"
+        and e["object"] == "GTDB:g__Escherichia"
+        and e["predicate"] == "biolink:close_match"
+    ]
+    assert len(hits) == 1
+
+
+def test_subspecies_row_skips_gtdb(lpsn_transform_with_gtdb):
+    """LPSN subspecies rows never get GTDB edges (no subspecies rank in GTDB)."""
+    lpsn_transform_with_gtdb.run()
+    edges = _read_tsv(lpsn_transform_with_gtdb.output_edge_file)
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1003" and e["object"].startswith("GTDB:")]
+    assert hits == []
+
+
+def test_ambiguous_gtdb_hit_emits_no_edge(lpsn_transform_with_gtdb):
+    """Multi-hit GTDB lookup → no edge, ambiguous counter incremented."""
+    lpsn_transform_with_gtdb.run()
+    edges = _read_tsv(lpsn_transform_with_gtdb.output_edge_file)
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1010" and e["object"].startswith("GTDB:")]
+    assert hits == []
+    assert lpsn_transform_with_gtdb._gtdb_stats["ambiguous"] >= 1
+
+
+def test_gtdb_disabled_when_index_absent(lpsn_transform):
+    """The default fixture (no gtdb_index) emits no GTDB edges."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    gtdb_edges = [e for e in edges if e["object"].startswith("GTDB:")]
+    assert gtdb_edges == []

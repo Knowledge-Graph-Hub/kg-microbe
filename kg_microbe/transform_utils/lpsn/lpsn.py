@@ -118,6 +118,51 @@ DEPRECATED_STATUSES = frozenset(
 )
 
 
+class _GTDBRankNameIndex:
+
+    """
+    Pre-load GTDB nodes.tsv into a ``(rank_prefix, name) -> [CURIE, ...]`` map.
+
+    Wraps the map behind a single ``curies_by_rank_name(rank, name)``
+    method so callers (and tests) inject either a real load or a fake
+    dict without noticing the difference.
+
+    GTDB CURIEs look like ``GTDB:s__Escherichia_coli``; we split on the
+    two-letter rank prefix and restore spaces, storing
+    ``("s__", "Escherichia coli")`` → ``["GTDB:s__Escherichia_coli"]``.
+    Multi-character names with underscores in them
+    (``s__Escherichia_flexneri_boydii`` → ``"Escherichia flexneri boydii"``)
+    end up under a longer normalized name that LPSN's two-word species
+    names won't match, which naturally filters out GTDB's placeholder
+    variants (``s__Escherichia_coli_E``, ``_F`` etc.) from LPSN's
+    canonical ``Escherichia coli``.
+    """
+
+    def __init__(self, gtdb_nodes_path: Path):
+        """Load ``data/transformed/gtdb/nodes.tsv`` into the index."""
+        self._map: Dict[tuple, list] = {}
+        with open(gtdb_nodes_path, newline="") as fh:
+            reader = csv.DictReader(fh, delimiter="\t")
+            for row in reader:
+                curie = (row.get("id") or "").strip()
+                if not curie.startswith("GTDB:"):
+                    continue
+                body = curie[len("GTDB:") :]
+                # A GTDB body starts with the rank code and a double
+                # underscore ("s__", "g__", "f__", ...). Guard against
+                # anything shorter than 4 chars (rank + "__" + 1 char).
+                if len(body) < 4 or body[1:3] != "__":
+                    continue
+                rank = body[:3]
+                name = body[3:].replace("_", " ")
+                self._map.setdefault((rank, name), []).append(curie)
+        print(f"[lpsn] GTDB index loaded: {len(self._map):,} distinct (rank, name) keys")
+
+    def curies_by_rank_name(self, rank: str, name: str) -> list:
+        """Return the GTDB CURIEs matching ``(rank, name)``, empty list if none."""
+        return list(self._map.get((rank, name), []))
+
+
 class _NCBILabelIndex:
 
     """
@@ -207,6 +252,7 @@ class LPSNTransform(Transform):
         input_dir: Optional[Path] = None,
         output_dir: Optional[Path] = None,
         ncbi_impl: Any = None,
+        gtdb_index: Any = None,
     ):
         """
         Instantiate.
@@ -221,22 +267,46 @@ class LPSNTransform(Transform):
             Defaults to ``data/transformed/lpsn`` resolved by the base
             class.
         ncbi_impl:
-            An OAK adapter for the NCBITaxon ontology, used to enrich
-            LPSN species / subspecies rows with ``biolink:close_match``
-            edges to the corresponding ``NCBITaxon:*`` CURIE. When
-            ``None`` (the default), the constructor auto-loads a SQLite
-            adapter over ``NCBITAXON_SOURCE`` if that file exists on
-            disk; otherwise NCBITaxon enrichment is silently skipped
-            (so the transform can still run on machines that haven't
-            downloaded the ~2 GB NCBITaxon dump). Tests inject a mock
-            here to keep the fixture self-contained.
+            NCBITaxon name → CURIE lookup. See ``_load_ncbi_adapter``.
+        gtdb_index:
+            GTDB (rank, normalized_name) → CURIE lookup. When
+            ``None`` (the default), the constructor auto-loads
+            ``data/transformed/gtdb/nodes.tsv`` if that file exists;
+            otherwise GTDB enrichment is silently skipped (so a fresh
+            checkout that hasn't run the GTDB transform yet still
+            produces a valid — GTDB-less — LPSN output). Tests inject a
+            mock here to keep the fixture self-contained.
 
         """
         super().__init__(LPSN_SOURCE, input_dir, output_dir)
         self.knowledge_source = LPSN_KNOWLEDGE_SOURCE
         self.ncbi_impl = ncbi_impl if ncbi_impl is not None else self._load_ncbi_adapter()
+        self.gtdb_index = gtdb_index if gtdb_index is not None else self._load_gtdb_index()
         # Track cross-ref outcomes for the end-of-run summary.
         self._ncbi_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
+        self._gtdb_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
+
+    @staticmethod
+    def _load_gtdb_index() -> Any:
+        """
+        Return a ``_GTDBRankNameIndex`` over ``data/transformed/gtdb/nodes.tsv``, or None.
+
+        GTDB CURIEs carry the rank as a leading two-letter code
+        (``d__``, ``p__``, ``c__``, ``o__``, ``f__``, ``g__``,
+        ``s__``) and the name with spaces replaced by underscores.
+        The index normalizes both sides — strip prefix, restore
+        spaces — so LPSN's ``full_name`` (e.g. ``"Escherichia coli"``)
+        looks up directly against the correct rank slot without
+        collisions between species and genera of the same name.
+        """
+        default_path = Path("data/transformed/gtdb/nodes.tsv")
+        if not default_path.is_file():
+            print(
+                f"[lpsn] {default_path} not found; GTDB cross-refs skipped. "
+                "Run `poetry run kg transform -s gtdb` to enable them."
+            )
+            return None
+        return _GTDBRankNameIndex(default_path)
 
     @staticmethod
     def _load_ncbi_adapter() -> Any:
@@ -357,14 +427,32 @@ class LPSNTransform(Transform):
                 ncbi_curie = self._lookup_ncbi(row)
                 if ncbi_curie:
                     edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie))
+                # GTDB cross-ref: rank-aware name match against a
+                # pre-loaded (rank, name) index of data/transformed/gtdb/
+                # nodes.tsv. GTDB is bacteria+archaea only so no subtree
+                # filter is needed, but rank pairing matters (LPSN genus
+                # → GTDB g__, LPSN species → GTDB s__). Subspecies rows
+                # are skipped because GTDB has no subspecies rank; the
+                # subclass_of chain from LPSN subspecies → species → GTDB
+                # gives downstream queries the same reachability in two
+                # hops.
+                gtdb_curie = self._lookup_gtdb(row)
+                if gtdb_curie:
+                    edge_writer.writerow(self._make_close_match_edge(record_no, gtdb_curie))
 
-        # End-of-run summary — useful diff signal when the NCBITaxon dump
-        # is refreshed and match rates shift.
+        # End-of-run summary — useful diff signal when NCBI / GTDB
+        # dumps are refreshed and match rates shift.
         print(
             f"[lpsn] NCBITaxon cross-refs: "
             f"{self._ncbi_stats['matched']:,} matched, "
             f"{self._ncbi_stats['unmatched']:,} unmatched, "
             f"{self._ncbi_stats['ambiguous']:,} ambiguous"
+        )
+        print(
+            f"[lpsn] GTDB cross-refs:      "
+            f"{self._gtdb_stats['matched']:,} matched, "
+            f"{self._gtdb_stats['unmatched']:,} unmatched, "
+            f"{self._gtdb_stats['ambiguous']:,} ambiguous"
         )
 
     # ------------------------------------------------------------------
@@ -574,6 +662,54 @@ class LPSNTransform(Transform):
             self._ncbi_stats["unmatched"] += 1
         else:
             self._ncbi_stats["ambiguous"] += 1
+        return None
+
+    def _lookup_gtdb(self, row: dict) -> Optional[str]:
+        """
+        Return the single matching ``GTDB:*`` CURIE for ``row``, or None.
+
+        Uses the pre-loaded (rank, name) index. Only genus and species
+        rows are attempted:
+
+        - LPSN genus row (``sp_epithet`` empty) → GTDB ``g__``
+        - LPSN species row (``sp_epithet`` set, ``subsp_epithet`` empty)
+          → GTDB ``s__``
+        - LPSN subspecies rows (``subsp_epithet`` set) → SKIPPED. GTDB
+          has no subspecies rank; the LPSN subclass_of chain from
+          subspecies → species → GTDB gives downstream queries the same
+          reachability in two hops without introducing spurious
+          equivalences.
+
+        Emits at most one edge per row, and only when the lookup returns
+        exactly one CURIE. Zero-hit and multi-hit rows are counted for
+        the end-of-run summary but do NOT produce an edge (GTDB
+        placeholder variants like ``s__Escherichia_coli_E`` naturally
+        fall out of the exact-name match — see ``_GTDBRankNameIndex``).
+        """
+        if self.gtdb_index is None:
+            return None
+
+        genus = (row.get(COL_GENUS) or "").strip()
+        sp = (row.get(COL_SP_EPITHET) or "").strip()
+        subsp = (row.get(COL_SUBSP_EPITHET) or "").strip()
+
+        if subsp:
+            return None  # no GTDB rank for subspecies
+        if sp:
+            rank, name = "s__", f"{genus} {sp}"
+        elif genus:
+            rank, name = "g__", genus
+        else:
+            return None
+
+        hits = self.gtdb_index.curies_by_rank_name(rank, name)
+        if len(hits) == 1:
+            self._gtdb_stats["matched"] += 1
+            return hits[0]
+        if not hits:
+            self._gtdb_stats["unmatched"] += 1
+        else:
+            self._gtdb_stats["ambiguous"] += 1
         return None
 
     def _make_same_as_edge(self, record_no: str, correct_record_no: str) -> list:

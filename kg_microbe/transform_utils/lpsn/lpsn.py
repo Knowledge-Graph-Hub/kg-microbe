@@ -22,11 +22,16 @@ Scope:
   parent row is present in the same CSV — no LPSN API calls).
 - close_match edges to `kgmicrobe.strain:*` for every culture-collection
   deposit named in ``nomenclatural_type``.
-- close_match edges to `NCBITaxon:*` for every species / subspecies row
-  whose ``full_name`` resolves to exactly one NCBITaxon via the local
-  NCBI adapter. Skipped when the adapter is absent
-  (``data/raw/ncbitaxon.owl`` not on disk) or when the name is ambiguous
-  (multiple NCBI hits — typically homonyms in other kingdoms).
+- close_match edges to `NCBITaxon:*` for every row (genus / species /
+  subspecies) whose scientific name resolves to exactly one NCBITaxon
+  via the local NCBI index. The index is pre-filtered to the bacterial
+  and archaeal subtree, so multi-kingdom homonyms (``Bacillus`` the
+  walking stick, ``Bacillus`` the mineral) are never candidates.
+  Lookups match against both ``rdfs:label`` and ``oio:hasExactSynonym``,
+  which is how genera resolve — NCBI stores each disambiguated genus's
+  bare form as an exact synonym (``Bacillus <firmicutes>`` has
+  ``hasExactSynonym Bacillus``). Skipped entirely when the adapter is
+  absent (``data/raw/ncbitaxon.owl`` not on disk).
 - same_as edges from historical names → correct-name LPSN taxon.
 - Illegitimate / synonym rows carry ``deprecated=True``.
 
@@ -116,38 +121,80 @@ DEPRECATED_STATUSES = frozenset(
 class _NCBILabelIndex:
 
     """
-    Pre-load NCBITaxon labels once, then answer ``curies_by_label`` in O(1).
+    Pre-load NCBITaxon labels + exact synonyms, filtered to bacteria + archaea.
 
-    Wraps a plain ``dict[label] -> list[CURIE]`` behind the same one-method
-    API OAK's SqlImplementation exposes so callers (and tests) can inject
+    Wraps a ``dict[name] -> list[CURIE]`` behind the same one-method
+    API OAK's SqlImplementation exposes so callers (and tests) inject
     either without noticing the difference.
 
-    Built via a direct SQL query on the semsql ``statements`` table so
-    the load is ~2 s for the full 2.7 M-row NCBITaxon dump, vs. hours if
-    we let OAK's ORM issue one query per LPSN row (the naive path we
-    tried first — see PR body for the perf bench).
+    On construction:
+
+    1. BFS the ``rdfs:subClassOf`` edges from ``NCBITaxon:2`` (Bacteria)
+       and ``NCBITaxon:2157`` (Archaea) to build the prokaryotic subtree
+       (~620 K CURIEs). Every subsequent lookup is filtered against
+       this set, which resolves the homonym problem end-to-end:
+       ``Bacillus`` disambiguates to ``NCBITaxon:1386``
+       ``Bacillus <firmicutes>`` and never to ``NCBITaxon:55087``
+       ``Bacillus <walking sticks>``.
+    2. Load ``rdfs:label`` (~2.7 M rows) and ``oio:hasExactSynonym``
+       (~115 K rows) into a single ``name -> [CURIE, ...]`` map. NCBI
+       stores every disambiguated genus's bare form as an exact
+       synonym (``Bacillus <firmicutes>`` has ``hasExactSynonym Bacillus``),
+       so adding synonyms fixes BOTH the homonym miss AND boosts the
+       overall match rate on species/subspecies where LPSN and NCBI
+       label the record differently.
+
+    Total build cost: ~5 s for the full DB, once at transform startup.
+    Per-lookup: O(1) dict access.
     """
 
     def __init__(self, db_path):
-        """Populate the in-memory index from ``db_path`` (semsql SQLite DB)."""
+        """Populate the subtree filter + name index from ``db_path``."""
         import sqlite3
 
-        self._map: Dict[str, list] = {}
         con = sqlite3.connect(db_path)
         try:
+            # 1) Bacterial + archaeal subtree via BFS over subClassOf.
+            children: Dict[str, list] = {}
             cur = con.execute(
-                "SELECT subject, value FROM statements WHERE predicate = 'rdfs:label' AND subject LIKE 'NCBITaxon:%'"
+                "SELECT subject, object FROM statements "
+                "WHERE predicate = 'rdfs:subClassOf' "
+                "AND subject LIKE 'NCBITaxon:%' AND object LIKE 'NCBITaxon:%'"
             )
-            for curie, label in cur:
-                if label is None:
+            for child, parent in cur:
+                children.setdefault(parent, []).append(child)
+            subtree: set = set()
+            stack = ["NCBITaxon:2", "NCBITaxon:2157"]
+            while stack:
+                node = stack.pop()
+                if node in subtree:
                     continue
-                self._map.setdefault(label, []).append(curie)
+                subtree.add(node)
+                stack.extend(children.get(node, []))
+            self._subtree = subtree
+
+            # 2) Names: rdfs:label ∪ oio:hasExactSynonym, filtered to subtree.
+            self._map: Dict[str, list] = {}
+            cur = con.execute(
+                "SELECT subject, value FROM statements "
+                "WHERE predicate IN ('rdfs:label', 'oio:hasExactSynonym') "
+                "AND subject LIKE 'NCBITaxon:%'"
+            )
+            for curie, name in cur:
+                if not name or curie not in subtree:
+                    continue
+                bucket = self._map.setdefault(name, [])
+                if curie not in bucket:
+                    bucket.append(curie)
         finally:
             con.close()
-        print(f"[lpsn] loaded {len(self._map):,} NCBITaxon labels for cross-ref lookup")
+        print(
+            f"[lpsn] NCBI index loaded: {len(subtree):,} bacterial/archaeal CURIEs, "
+            f"{len(self._map):,} distinct labels+synonyms"
+        )
 
     def curies_by_label(self, label: str) -> list:
-        """Return the list of NCBITaxon CURIEs whose label equals ``label``."""
+        """Return the list of NCBITaxon CURIEs matching ``label`` (bacteria+archaea only)."""
         return list(self._map.get(label, []))
 
 
@@ -298,15 +345,18 @@ class LPSNTransform(Transform):
                 if (row.get(COL_SP_EPITHET) or "").strip():
                     for strain_curie in self._extract_strain_curies(row):
                         edge_writer.writerow(self._make_close_match_edge(record_no, strain_curie))
-                    # NCBITaxon name-match cross-ref. Species and subspecies
-                    # rank only — LPSN's bacterial genera collide with insect
-                    # / mineral genera of the same name in NCBI's
-                    # multi-kingdom taxonomy (e.g. ``Bacillus`` is a walking
-                    # stick as well as a firmicute), so genus-rank matching
-                    # is deferred to a future PR with a rank-aware resolver.
-                    ncbi_curie = self._lookup_ncbi(row)
-                    if ncbi_curie:
-                        edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie))
+                # NCBITaxon cross-ref: every rank (genus / species /
+                # subspecies) is attempted because the index is filtered to
+                # the bacterial + archaeal subtree, so multi-kingdom
+                # homonyms (``Bacillus`` the insect, ``Bacillus`` the
+                # mineral) are never reachable and can't create false
+                # positives. Genera match via exact-synonym lookup because
+                # NCBI stores every disambiguated genus's bare form
+                # (``Bacillus <firmicutes>`` has ``hasExactSynonym
+                # Bacillus``).
+                ncbi_curie = self._lookup_ncbi(row)
+                if ncbi_curie:
+                    edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie))
 
         # End-of-run summary — useful diff signal when the NCBITaxon dump
         # is refreshed and match rates shift.

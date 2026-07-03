@@ -299,11 +299,25 @@ def test_ncbi_disabled_when_adapter_absent(lpsn_transform):
     assert ncbi_edges == []
 
 
-def test_genus_row_gets_no_ncbi_edge(lpsn_transform_with_ncbi):
-    """Genus rows skip NCBI matching (homonym risk in multi-kingdom NCBI)."""
-    lpsn_transform_with_ncbi.run()
-    edges = _read_tsv(lpsn_transform_with_ncbi.output_edge_file)
-    # Genus 1001 is Escherichia — even if the fake mapping had it, the
-    # sp_epithet-gated branch skips genera. Confirm no NCBI edge for 1001.
-    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1001" and e["object"].startswith("NCBITaxon:")]
-    assert hits == []
+def test_genus_row_now_gets_ncbi_edge_when_synonym_matches(tmp_path):
+    """
+    Genus rows match via bacterial-subtree-filtered exact-synonym lookup.
+
+    NCBI stores each disambiguated genus's bare form as an
+    ``oio:hasExactSynonym`` on the disambiguated CURIE (``Bacillus
+    <firmicutes>`` has ``hasExactSynonym Bacillus``), and the subtree
+    filter guarantees only the bacterial candidate is returned. The
+    injected fake stands in for that pre-resolved behavior.
+    """
+    fake = _FakeNCBI({"Escherichia": ["NCBITaxon:561"]})
+    xform = LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path, ncbi_impl=fake)
+    xform.run()
+    edges = _read_tsv(xform.output_edge_file)
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1001"
+        and e["object"] == "NCBITaxon:561"
+        and e["predicate"] == "biolink:close_match"
+    ]
+    assert len(hits) == 1

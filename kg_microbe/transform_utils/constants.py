@@ -102,6 +102,7 @@ STRAIN_DESIGNATION = "strain designation"
 TYPE_STRAIN = "type strain"
 LPSN = "LPSN"  # BacDive JSON key; do not reuse for source-name registration
 LPSN_SOURCE = "lpsn"  # DATA_SOURCES key + directory name for the standalone LPSN transform
+LPSN_API_SOURCE = "lpsn_api"  # DATA_SOURCES key + directory name for the JSON-API enrichment transform
 SYNONYMS = "synonyms"
 SYNONYM = "synonym"
 

@@ -1,0 +1,7 @@
+genus_name,sp_epithet,subsp_epithet,reference,status,authors,address,risk_grp,nomenclatural_type,record_no,record_lnk
+Escherichia,,,"Bergey et al. 1919",correct name,"Bergey et al. 1919",https://lpsn.dsmz.de/genus/escherichia,1,Escherichia coli,1001,https://lpsn.dsmz.de/genus/escherichia
+Escherichia,coli,,"Castellani and Chalmers 1919",correct name,"(Migula 1895) Castellani and Chalmers 1919",https://lpsn.dsmz.de/species/escherichia-coli,2,ATCC 11775,1002,https://lpsn.dsmz.de/species/escherichia-coli
+Escherichia,coli,inactive,"Chen and Kuo 1945",illegitimate name,"Chen and Kuo 1945",https://lpsn.dsmz.de/subspecies/escherichia-coli-inactive,,DSM 30083,1003,https://lpsn.dsmz.de/subspecies/escherichia-coli-inactive
+Bacillus,,,"Cohn 1872",correct name,"Cohn 1872",https://lpsn.dsmz.de/genus/bacillus,1,Bacillus subtilis,1010,https://lpsn.dsmz.de/genus/bacillus
+Bacillus,subtilis,,"Ehrenberg 1835",correct name,"(Ehrenberg 1835) Cohn 1872",https://lpsn.dsmz.de/species/bacillus-subtilis,1,DSM 10,1011,https://lpsn.dsmz.de/species/bacillus-subtilis
+Notgenus,orphan,,"Anon. 1900",synonym,"Anon. 1900",https://lpsn.dsmz.de/species/notgenus-orphan,,,1099,https://lpsn.dsmz.de/species/notgenus-orphan

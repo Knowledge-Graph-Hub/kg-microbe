@@ -15,6 +15,7 @@ from kg_microbe.transform_utils.constants import (
     COG,
     GTDB,
     KEGG,
+    LPSN_SOURCE,
     MADIN_ETAL,
     MEDIADIVE,
     METATRAITS,
@@ -25,6 +26,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
+from kg_microbe.transform_utils.lpsn.lpsn import LPSNTransform
 from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
@@ -57,6 +59,7 @@ DATA_SOURCES = {
     COG: COGTransform,
     GTDB: GTDBTransform,
     KEGG: KEGGTransform,
+    LPSN_SOURCE: LPSNTransform,
     MEDIADIVE: MediaDiveTransform,
     MADIN_ETAL: MadinEtAlTransform,
     METATRAITS: MetaTraitsTransform,

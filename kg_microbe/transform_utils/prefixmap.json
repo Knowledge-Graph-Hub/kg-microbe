@@ -7,6 +7,7 @@
     "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/",
     "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/",
     "GTDB": "https://gtdb.ecogenomic.org/tree?r=",
+    "lpsn": "https://lpsn.dsmz.de/",
     "NCBIGene": "http://identifiers.org/ncbigene/",
     "chemrof": "https://w3id.org/chemrof/",
     "orcid": "https://orcid.org/",

@@ -100,7 +100,8 @@ GENUS = "genus"
 FULL_SCIENTIFIC_NAME = "full scientific name"
 STRAIN_DESIGNATION = "strain designation"
 TYPE_STRAIN = "type strain"
-LPSN = "LPSN"
+LPSN = "LPSN"  # BacDive JSON key; do not reuse for source-name registration
+LPSN_SOURCE = "lpsn"  # DATA_SOURCES key + directory name for the standalone LPSN transform
 SYNONYMS = "synonyms"
 SYNONYM = "synonym"
 

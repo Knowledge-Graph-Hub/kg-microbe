@@ -221,6 +221,11 @@ STANDARD_PREFIXES = {
     "kgmicrobe.strain", "kgmicrobe.species", "kgmicrobe.genus",
     # LPSN — List of Prokaryotic names with Standing in Nomenclature
     "lpsn",
+    # INSDC (GenBank/EMBL/DDBJ) sequence accession umbrella, used by
+    # the lpsn_api transform's molecules bridge to NCBI sequence records.
+    "INSDC",
+    # DOI + PubMed CURIEs for publication provenance edges emitted by lpsn_api.
+    "doi", "PMID",
     # bacdive assay prefix
     "assay",
     # COG functional categories

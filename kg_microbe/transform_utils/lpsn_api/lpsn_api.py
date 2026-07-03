@@ -14,12 +14,14 @@ in LPSN's authenticated JSON API and not in the bulk CSV:
   (relation ``skos:exactMatch``) from a comb. nov. name to its basonym.
 - Node-level detail: ``is_legitimate`` (boolean) and richer
   ``nomenclatural_status`` (free-text) rolled into the description.
-
-INTENTIONALLY OUT OF SCOPE (per the "everything except molecules"
-decision on issue #484):
-
-- ``molecules``: LPSN's 16S rRNA sequence links (INSDC accessions). A
-  natural follow-up if the merged KG grows a molecular-sequence layer.
+- 16S rRNA sequence provenance: ``molecules`` → one
+  ``biolink:close_match`` edge from each LPSN taxon to every INSDC
+  (GenBank/EMBL/DDBJ) accession its type strain has registered, plus
+  a ``biolink:NucleicAcidEntity`` stub node per accession. Serves as
+  the TYGS-adjacent bridge to NCBI's sequence records — an LPSN taxon
+  that failed the direct name-match against NCBITaxon can still be
+  connected via ``lpsn → INSDC → (NCBI sequence organism) →
+  NCBITaxon`` in a downstream query.
 
 Access model
 ------------
@@ -83,10 +85,17 @@ JSON_BASONYM_ID = "basonym_id"
 JSON_IS_LEGITIMATE = "is_legitimate"
 JSON_NOMENCLATURAL_STATUS = "nomenclatural_status"
 JSON_LPSN_TAXONOMIC_STATUS = "lpsn_taxonomic_status"
+JSON_MOLECULES = "molecules"
 
-# CURIE prefixes for publication cross-refs.
+# CURIE prefixes for publication + sequence cross-refs.
 DOI_PREFIX = "doi:"
 PMID_PREFIX = "PMID:"
+INSDC_PREFIX = "INSDC:"
+
+# LPSN's ``molecules`` array uses one of these keys to store the
+# GenBank / EMBL / DDBJ accession per 16S rRNA record. The schema
+# hasn't been published as a formal spec, so we try each in order.
+INSDC_ACCESSION_KEYS = ("insdc_accession", "accession_number", "accession")
 
 # Cache directory relative to the transform's ``input_base_dir``
 # (typically ``data/raw/``).
@@ -335,6 +344,58 @@ class LPSNAPITransform(Transform):
                 self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{PMID_PREFIX}{pmid}", "skos:closeMatch")
             )
             node_writer.writerow(self._stub_publication_node(f"{PMID_PREFIX}{pmid}"))
+
+        # 16S rRNA sequence provenance — the TYGS-adjacent bridge to
+        # NCBI. Every INSDC accession registered by this taxon's type
+        # strain becomes a close_match target so downstream queries can
+        # walk ``lpsn → INSDC → NCBI sequence organism → NCBITaxon``.
+        for accession in self._extract_insdc_accessions(record):
+            edge_writer.writerow(
+                self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{INSDC_PREFIX}{accession}", "skos:closeMatch")
+            )
+            node_writer.writerow(self._stub_sequence_node(f"{INSDC_PREFIX}{accession}"))
+
+    def _extract_insdc_accessions(self, record: dict) -> list:
+        """
+        Return the deduplicated INSDC accessions on ``record[molecules]``.
+
+        LPSN's molecules[] is an array of dicts with per-sequence metadata.
+        The exact key holding the accession isn't published in a formal
+        schema, so we try INSDC_ACCESSION_KEYS in order and take the
+        first non-empty match on each molecule.
+        """
+        molecules = record.get(JSON_MOLECULES) or []
+        if not isinstance(molecules, list):
+            return []
+        seen: set = set()
+        out: list = []
+        for mol in molecules:
+            if not isinstance(mol, dict):
+                continue
+            for key in INSDC_ACCESSION_KEYS:
+                raw = mol.get(key)
+                if not raw:
+                    continue
+                acc = str(raw).strip()
+                if not acc or acc in seen:
+                    break
+                seen.add(acc)
+                out.append(acc)
+                break
+        return out
+
+    def _stub_sequence_node(self, curie: str) -> list:
+        """Build a minimal nodes.tsv row for an INSDC sequence stub target."""
+        headers = self.node_header
+        row = [""] * len(headers)
+        for col, val in {
+            "id": curie,
+            "category": "biolink:NucleicAcidEntity",
+            "provided_by": LPSN_KNOWLEDGE_SOURCE,
+        }.items():
+            if col in headers:
+                row[headers.index(col)] = val
+        return row
 
     def _make_enrichment_node(self, record_no: str, record: dict) -> list:
         """

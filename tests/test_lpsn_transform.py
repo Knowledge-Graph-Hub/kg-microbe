@@ -112,3 +112,63 @@ def test_missing_csv_raises_file_not_found(tmp_path):
     xform = LPSNTransform(input_dir=tmp_path, output_dir=tmp_path)
     with pytest.raises(FileNotFoundError, match="LPSN GSS CSV not found"):
         xform.run()
+
+
+def test_species_gets_close_match_edges_for_each_type_strain_deposit(lpsn_transform):
+    """
+    Emit one close_match edge per culture-collection deposit for a species row.
+
+    E. coli (1002) has ``ATCC 11775 = DSM 30083 = JCM 1649`` and should emit
+    one edge per deposit to the shared strain CURIE that BacDive
+    also uses (``kgmicrobe.strain:<code>``).
+    """
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    close_matches = [
+        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
+    ]
+    objects = {e["object"] for e in close_matches}
+    assert objects == {
+        "kgmicrobe.strain:ATCC-11775",
+        "kgmicrobe.strain:DSM-30083",
+        "kgmicrobe.strain:JCM-1649",
+    }
+    for e in close_matches:
+        assert e["relation"] == "skos:closeMatch"
+        assert e["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
+
+
+def test_subspecies_gets_close_match_edge(lpsn_transform):
+    """Subspecies row (1003) with ``DSM 30083`` emits one close_match edge."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    close_matches = [
+        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1003" and e["predicate"] == "biolink:close_match"
+    ]
+    assert len(close_matches) == 1
+    assert close_matches[0]["object"] == "kgmicrobe.strain:DSM-30083"
+
+
+def test_genus_row_does_not_emit_close_match(lpsn_transform):
+    """
+    Genus rows must not emit close_match edges.
+
+    Their ``nomenclatural_type`` carries the type species name, not a
+    culture-collection deposit.
+    """
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    close_matches = [
+        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1001" and e["predicate"] == "biolink:close_match"
+    ]
+    assert close_matches == []
+
+
+def test_row_with_no_nomenclatural_type_emits_no_close_match(lpsn_transform):
+    """The synonym row (1099) has blank ``nomenclatural_type`` → no edges."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    close_matches = [
+        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1099" and e["predicate"] == "biolink:close_match"
+    ]
+    assert close_matches == []

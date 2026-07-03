@@ -500,3 +500,21 @@
 -
   url: https://nlmpubs.nlm.nih.gov/projects/mesh/rdf/2026/mesh2026.nt.gz
   local_name: mesh2026.nt.gz
+
+#
+# LPSN — List of Prokaryotic names with Standing in Nomenclature
+# NOTE: The LPSN GSS (Genus/Species/Subspecies) CSV bulk export at
+# https://lpsn.dsmz.de/downloads is gated behind a free LPSN account,
+# so `poetry run kg download` cannot fetch it automatically. Manual
+# procedure:
+#   1. Register at https://lpsn.dsmz.de/register (free).
+#   2. Log in and download the GSS CSV from the Downloads page.
+#   3. Place the file at data/raw/lpsn/lpsn_gss.csv before running
+#      `poetry run kg transform -s lpsn`.
+# See kg_microbe/transform_utils/lpsn/README.md for redistribution
+# terms (LPSN copyright requires linking back to the source; the
+# transform emits the canonical LPSN URL as xref on every node).
+#
+# -
+#   url: https://lpsn.dsmz.de/downloads/gss
+#   local_name: lpsn_gss.csv

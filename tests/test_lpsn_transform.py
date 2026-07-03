@@ -15,17 +15,31 @@ from kg_microbe.transform_utils.lpsn.lpsn import (
 FIXTURE_DIR = Path(__file__).parent / "resources"
 
 
+class _NoNCBI:
+
+    """OAK-adapter stub used when a test wants NCBITaxon enrichment disabled."""
+
+    def curies_by_label(self, label):
+        """Return an empty list — every LPSN name is treated as unmatched."""
+        return []
+
+
 @pytest.fixture()
 def lpsn_transform(tmp_path):
     """
     Return an ``LPSNTransform`` configured to read the fixture CSV.
 
-    The transform's ``input_base_dir`` is set to ``tests/resources/lpsn``
-    so that ``lpsn_gss.csv`` resolves via the base ``Transform`` class,
-    and ``output_dir`` is set to a per-test temp dir so nodes.tsv /
+    The transform's ``input_base_dir`` is set to ``tests/resources`` so
+    ``lpsn_gss.csv`` resolves via the base ``Transform`` class, and
+    ``output_dir`` is set to a per-test temp dir so nodes.tsv /
     edges.tsv land in isolation.
+
+    A no-op NCBITaxon adapter is injected so the default fixture never
+    depends on the local ``data/raw/ncbitaxon.owl`` (~13 GB) being on
+    disk. Tests that specifically exercise the NCBI cross-ref path use
+    ``lpsn_transform_with_ncbi`` instead.
     """
-    return LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path)
+    return LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path, ncbi_impl=_NoNCBI())
 
 
 def _read_tsv(path: Path) -> list[dict]:
@@ -202,3 +216,94 @@ def test_row_with_no_nomenclatural_type_emits_no_close_match(lpsn_transform):
         e for e in edges if e["subject"] == f"{LPSN_PREFIX}1099" and e["predicate"] == "biolink:close_match"
     ]
     assert close_matches == []
+
+
+# --------------------------------------------------------------------------
+# NCBITaxon cross-refs
+# --------------------------------------------------------------------------
+
+
+class _FakeNCBI:
+
+    """Minimal stub of the subset of OAK's adapter API that LPSN uses."""
+
+    def __init__(self, mapping):
+        """Store the ``{scientific_name: [CURIE, ...]}`` lookup table."""
+        self._map = mapping
+
+    def curies_by_label(self, label):
+        """Return the CURIE list for ``label`` (empty list if unknown)."""
+        return list(self._map.get(label, []))
+
+
+@pytest.fixture()
+def lpsn_transform_with_ncbi(tmp_path):
+    """
+    LPSNTransform wired to a fake NCBI adapter with three canned answers.
+
+    - ``Escherichia coli`` → single hit ``NCBITaxon:562`` (should emit an edge)
+    - ``Escherichia coli inactive`` → **two** hits (ambiguous — no edge)
+    - ``Bacillus subtilis`` → zero hits (unmatched — no edge)
+    """
+    fake = _FakeNCBI(
+        {
+            "Escherichia coli": ["NCBITaxon:562"],
+            "Escherichia coli inactive": ["NCBITaxon:99999", "NCBITaxon:99998"],
+            # Bacillus subtilis intentionally absent.
+        }
+    )
+    return LPSNTransform(input_dir=FIXTURE_DIR, output_dir=tmp_path, ncbi_impl=fake)
+
+
+def test_single_hit_emits_ncbitaxon_close_match(lpsn_transform_with_ncbi):
+    """E. coli (1002) → NCBITaxon:562 close_match edge."""
+    lpsn_transform_with_ncbi.run()
+    edges = _read_tsv(lpsn_transform_with_ncbi.output_edge_file)
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1002"
+        and e["object"] == "NCBITaxon:562"
+        and e["predicate"] == "biolink:close_match"
+    ]
+    assert len(hits) == 1
+    assert hits[0]["relation"] == "skos:closeMatch"
+    assert hits[0]["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
+
+
+def test_ambiguous_hit_emits_no_edge(lpsn_transform_with_ncbi):
+    """Subspecies 1003's fake mapping returns 2 hits → no edge."""
+    lpsn_transform_with_ncbi.run()
+    edges = _read_tsv(lpsn_transform_with_ncbi.output_edge_file)
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1003" and e["object"].startswith("NCBITaxon:")]
+    assert hits == []
+    assert lpsn_transform_with_ncbi._ncbi_stats["ambiguous"] == 1
+
+
+def test_unmatched_row_emits_no_edge(lpsn_transform_with_ncbi):
+    """B. subtilis (1011) has no fake mapping → no edge, counted as unmatched."""
+    lpsn_transform_with_ncbi.run()
+    edges = _read_tsv(lpsn_transform_with_ncbi.output_edge_file)
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1011" and e["object"].startswith("NCBITaxon:")]
+    assert hits == []
+    # unmatched count includes 1011 + 1099 (both species-rank rows with no fake
+    # mapping): the orphan Notgenus (1099) is also species-rank so it counts.
+    assert lpsn_transform_with_ncbi._ncbi_stats["unmatched"] >= 1
+
+
+def test_ncbi_disabled_when_adapter_absent(lpsn_transform):
+    """The default fixture (no ncbi_impl) emits no NCBITaxon edges at all."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    ncbi_edges = [e for e in edges if e["object"].startswith("NCBITaxon:")]
+    assert ncbi_edges == []
+
+
+def test_genus_row_gets_no_ncbi_edge(lpsn_transform_with_ncbi):
+    """Genus rows skip NCBI matching (homonym risk in multi-kingdom NCBI)."""
+    lpsn_transform_with_ncbi.run()
+    edges = _read_tsv(lpsn_transform_with_ncbi.output_edge_file)
+    # Genus 1001 is Escherichia — even if the fake mapping had it, the
+    # sp_epithet-gated branch skips genera. Confirm no NCBI edge for 1001.
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1001" and e["object"].startswith("NCBITaxon:")]
+    assert hits == []

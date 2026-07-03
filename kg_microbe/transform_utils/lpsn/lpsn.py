@@ -16,20 +16,30 @@ does NOT fetch it — place the downloaded file at
 See ``kg_microbe/transform_utils/lpsn/README.md`` for the manual
 download procedure.
 
-MVP scope:
+Scope:
 - Nodes for every LPSN record (family / genus / species / subspecies).
 - subclass_of edges from subspecies → species → genus (only when the
   parent row is present in the same CSV — no LPSN API calls).
+- close_match edges to `kgmicrobe.strain:*` for every culture-collection
+  deposit named in ``nomenclatural_type``.
+- close_match edges to `NCBITaxon:*` for every species / subspecies row
+  whose ``full_name`` resolves to exactly one NCBITaxon via the local
+  NCBI adapter. Skipped when the adapter is absent
+  (``data/raw/ncbitaxon.owl`` not on disk) or when the name is ambiguous
+  (multiple NCBI hits — typically homonyms in other kingdoms).
+- same_as edges from historical names → correct-name LPSN taxon.
 - Illegitimate / synonym rows carry ``deprecated=True``.
-- Cross-references to NCBITaxon / GTDB / BacDive are deferred to a
-  follow-up PR (see issue #484); they require a name-matching layer
-  or the authenticated LPSN JSON API.
+
+Deferred to a follow-up PR (issue #484):
+- GTDB cross-refs (via ``data/transformed/gtdb/nodes.tsv`` name-matching).
+- Full LPSN JSON API ingest (publication DOI/PMID, ``lpsn_parent_id``
+  for the full taxonomic tree, 16S sequences).
 """
 
 import csv
 import re
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
@@ -38,6 +48,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     LPSN_SOURCE,
     NCBI_CATEGORY,
+    NCBITAXON_SOURCE,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
     STRAIN_PREFIX,
@@ -102,6 +113,44 @@ DEPRECATED_STATUSES = frozenset(
 )
 
 
+class _NCBILabelIndex:
+
+    """
+    Pre-load NCBITaxon labels once, then answer ``curies_by_label`` in O(1).
+
+    Wraps a plain ``dict[label] -> list[CURIE]`` behind the same one-method
+    API OAK's SqlImplementation exposes so callers (and tests) can inject
+    either without noticing the difference.
+
+    Built via a direct SQL query on the semsql ``statements`` table so
+    the load is ~2 s for the full 2.7 M-row NCBITaxon dump, vs. hours if
+    we let OAK's ORM issue one query per LPSN row (the naive path we
+    tried first — see PR body for the perf bench).
+    """
+
+    def __init__(self, db_path):
+        """Populate the in-memory index from ``db_path`` (semsql SQLite DB)."""
+        import sqlite3
+
+        self._map: Dict[str, list] = {}
+        con = sqlite3.connect(db_path)
+        try:
+            cur = con.execute(
+                "SELECT subject, value FROM statements WHERE predicate = 'rdfs:label' AND subject LIKE 'NCBITaxon:%'"
+            )
+            for curie, label in cur:
+                if label is None:
+                    continue
+                self._map.setdefault(label, []).append(curie)
+        finally:
+            con.close()
+        print(f"[lpsn] loaded {len(self._map):,} NCBITaxon labels for cross-ref lookup")
+
+    def curies_by_label(self, label: str) -> list:
+        """Return the list of NCBITaxon CURIEs whose label equals ``label``."""
+        return list(self._map.get(label, []))
+
+
 class LPSNTransform(Transform):
 
     """Transform LPSN GSS CSV bulk export into KGX nodes + edges."""
@@ -110,6 +159,7 @@ class LPSNTransform(Transform):
         self,
         input_dir: Optional[Path] = None,
         output_dir: Optional[Path] = None,
+        ncbi_impl: Any = None,
     ):
         """
         Instantiate.
@@ -117,15 +167,60 @@ class LPSNTransform(Transform):
         Parameters
         ----------
         input_dir:
-            Directory holding ``lpsn_gss.csv``. Defaults to ``data/raw/lpsn``
-            resolved by the base :class:`Transform` class.
+            Directory holding ``lpsn_gss.csv``. Defaults to
+            ``data/raw`` resolved by the base :class:`Transform` class.
         output_dir:
-            Directory to write ``nodes.tsv`` / ``edges.tsv`` into. Defaults
-            to ``data/transformed/lpsn`` resolved by the base class.
+            Directory to write ``nodes.tsv`` / ``edges.tsv`` into.
+            Defaults to ``data/transformed/lpsn`` resolved by the base
+            class.
+        ncbi_impl:
+            An OAK adapter for the NCBITaxon ontology, used to enrich
+            LPSN species / subspecies rows with ``biolink:close_match``
+            edges to the corresponding ``NCBITaxon:*`` CURIE. When
+            ``None`` (the default), the constructor auto-loads a SQLite
+            adapter over ``NCBITAXON_SOURCE`` if that file exists on
+            disk; otherwise NCBITaxon enrichment is silently skipped
+            (so the transform can still run on machines that haven't
+            downloaded the ~2 GB NCBITaxon dump). Tests inject a mock
+            here to keep the fixture self-contained.
 
         """
         super().__init__(LPSN_SOURCE, input_dir, output_dir)
         self.knowledge_source = LPSN_KNOWLEDGE_SOURCE
+        self.ncbi_impl = ncbi_impl if ncbi_impl is not None else self._load_ncbi_adapter()
+        # Track cross-ref outcomes for the end-of-run summary.
+        self._ncbi_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
+
+    @staticmethod
+    def _load_ncbi_adapter() -> Any:
+        """
+        Return a fast in-memory NCBITaxon label index, or None.
+
+        NCBITaxon has ~2.7 M labels. OAK's SqlImplementation issues one
+        SQL round-trip per ``curies_by_label`` call (~50 ms), which
+        blows up to hours for 34 K LPSN lookups. Instead, we build the
+        label → CURIE map once via a direct SQL query on the semsql
+        ``statements`` table (~2 s for the full 2.7 M-row build). The
+        wrapper class exposes the same one-method API OAK does so tests
+        can inject mocks unchanged.
+
+        Returns ``None`` — leaving NCBITaxon enrichment silently
+        disabled — if either the OWL file at ``NCBITAXON_SOURCE`` or
+        the paired semsql SQLite DB is absent. Absence is expected on
+        fresh checkouts and in CI, so this is not fatal.
+        """
+        if not NCBITAXON_SOURCE.exists():
+            print(
+                f"[lpsn] {NCBITAXON_SOURCE} not found; NCBITaxon cross-refs skipped. "
+                "Run `poetry run kg download` to fetch NCBITaxon."
+            )
+            return None
+        # semsql layout: the .db file lives next to the .owl file.
+        db_path = NCBITAXON_SOURCE.with_suffix(".db")
+        if not db_path.exists():
+            print(f"[lpsn] {db_path} not found (needed for fast label lookup); NCBITaxon cross-refs skipped.")
+            return None
+        return _NCBILabelIndex(db_path)
 
     # ------------------------------------------------------------------
     # public entry point
@@ -203,6 +298,24 @@ class LPSNTransform(Transform):
                 if (row.get(COL_SP_EPITHET) or "").strip():
                     for strain_curie in self._extract_strain_curies(row):
                         edge_writer.writerow(self._make_close_match_edge(record_no, strain_curie))
+                    # NCBITaxon name-match cross-ref. Species and subspecies
+                    # rank only — LPSN's bacterial genera collide with insect
+                    # / mineral genera of the same name in NCBI's
+                    # multi-kingdom taxonomy (e.g. ``Bacillus`` is a walking
+                    # stick as well as a firmicute), so genus-rank matching
+                    # is deferred to a future PR with a rank-aware resolver.
+                    ncbi_curie = self._lookup_ncbi(row)
+                    if ncbi_curie:
+                        edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie))
+
+        # End-of-run summary — useful diff signal when the NCBITaxon dump
+        # is refreshed and match rates shift.
+        print(
+            f"[lpsn] NCBITaxon cross-refs: "
+            f"{self._ncbi_stats['matched']:,} matched, "
+            f"{self._ncbi_stats['unmatched']:,} unmatched, "
+            f"{self._ncbi_stats['ambiguous']:,} ambiguous"
+        )
 
     # ------------------------------------------------------------------
     # internals
@@ -376,6 +489,42 @@ class LPSNTransform(Transform):
                 seen.add(curie)
                 curies.append(curie)
         return curies
+
+    def _lookup_ncbi(self, row: dict) -> Optional[str]:
+        """
+        Return the single matching ``NCBITaxon:X`` CURIE for ``row``, or None.
+
+        Uses the OAK adapter's ``curies_by_label`` on the assembled
+        scientific name (``genus + sp_epithet [+ subsp_epithet]``).
+        Emits at most one edge per row, and only when the lookup
+        returns exactly one CURIE. Zero-hit and multi-hit rows are
+        counted for the end-of-run summary but do NOT produce an edge:
+
+        - Zero hits: NCBITaxon doesn't index this name (recently
+          published, orphaned, or NCBI hasn't harmonized yet).
+        - Multi-hit: ambiguous / homonym across kingdoms (rare for
+          full species names, more common for genera — one reason
+          the caller restricts this to species/subspecies rank).
+        """
+        if self.ncbi_impl is None:
+            return None
+
+        genus = (row.get(COL_GENUS) or "").strip()
+        sp = (row.get(COL_SP_EPITHET) or "").strip()
+        subsp = (row.get(COL_SUBSP_EPITHET) or "").strip()
+        name = " ".join(p for p in (genus, sp, subsp) if p)
+        if not name:
+            return None
+
+        hits = list(self.ncbi_impl.curies_by_label(name))
+        if len(hits) == 1:
+            self._ncbi_stats["matched"] += 1
+            return hits[0]
+        if not hits:
+            self._ncbi_stats["unmatched"] += 1
+        else:
+            self._ncbi_stats["ambiguous"] += 1
+        return None
 
     def _make_same_as_edge(self, record_no: str, correct_record_no: str) -> list:
         """

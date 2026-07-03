@@ -13,7 +13,7 @@ free LPSN account. To fetch:
 2. Log in.
 3. Navigate to <https://lpsn.dsmz.de/downloads> and download the GSS
    file (CSV).
-4. Place the file at `data/raw/lpsn/lpsn_gss.csv` in this repo.
+4. Place the file at `data/raw/lpsn_gss.csv` in this repo.
 
 Neither `poetry run kg download` nor the transform itself will fetch
 the file automatically; the login step must happen in your browser.

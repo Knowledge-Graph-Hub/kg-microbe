@@ -219,6 +219,8 @@ STANDARD_PREFIXES = {
     "CAS-RN", "cas", "PubChem", "pubchem.compound", "PUBCHEM.COMPOUND",
     # bacdive / metatraits provisional organism prefixes
     "kgmicrobe.strain", "kgmicrobe.species", "kgmicrobe.genus",
+    # LPSN — List of Prokaryotic names with Standing in Nomenclature
+    "lpsn",
     # bacdive assay prefix
     "assay",
     # COG functional categories

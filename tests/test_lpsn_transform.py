@@ -12,7 +12,7 @@ from kg_microbe.transform_utils.lpsn.lpsn import (
     LPSNTransform,
 )
 
-FIXTURE_DIR = Path(__file__).parent / "resources" / "lpsn"
+FIXTURE_DIR = Path(__file__).parent / "resources"
 
 
 @pytest.fixture()
@@ -92,11 +92,41 @@ def test_species_gets_subclass_edge_to_genus(lpsn_transform):
 
 
 def test_subspecies_gets_subclass_edge_to_species(lpsn_transform):
-    """Escherichia coli inactive (1003) → Escherichia coli (1002)."""
+    """Escherichia coli inactive (1003) → Escherichia coli (1002) subclass edge."""
     lpsn_transform.run()
     edges = _read_tsv(lpsn_transform.output_edge_file)
-    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1003" and e["object"] == f"{LPSN_PREFIX}1002"]
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1003"
+        and e["object"] == f"{LPSN_PREFIX}1002"
+        and e["predicate"] == "biolink:subclass_of"
+    ]
     assert len(hits) == 1
+
+
+def test_synonym_row_emits_same_as_edge_to_correct_name(lpsn_transform):
+    """Row 1003 has ``record_lnk = 1002`` → biolink:same_as edge 1003 → 1002."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1003"
+        and e["object"] == f"{LPSN_PREFIX}1002"
+        and e["predicate"] == "biolink:same_as"
+    ]
+    assert len(hits) == 1
+    assert hits[0]["relation"] == "skos:exactMatch"
+    assert hits[0]["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
+
+
+def test_row_without_record_lnk_emits_no_same_as_edge(lpsn_transform):
+    """The current-name species row 1002 has blank record_lnk → no same_as edge."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:same_as"]
+    assert hits == []
 
 
 def test_orphan_species_produces_no_edge(lpsn_transform):

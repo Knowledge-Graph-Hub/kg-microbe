@@ -26,31 +26,40 @@ poetry run kg transform -s lpsn
 
 Output lands in `data/transformed/lpsn/nodes.tsv` and `edges.tsv`.
 
-## Output shape (MVP)
+## Output shape
 
 - **Nodes** — one `biolink:OrganismTaxon` node per LPSN record, with
   CURIE `lpsn:<record_no>`. Rows whose `status` matches an
   illegitimate / synonym / rejected category carry `deprecated=True`.
-- **Edges** — `biolink:subclass_of` from subspecies → species → genus
-  when both parent and child rows are present in the same CSV. No
-  external cross-references in the MVP (see follow-up section).
+- **`subclass_of` edges** — from subspecies → species → genus when
+  both parent and child rows are present in the same CSV.
+- **`close_match` edges** — from each species / subspecies row to
+  every culture-collection deposit named in `nomenclatural_type`.
+  Deposits are parsed from strings like
+  `"ATCC 11775 = DSM 30083 = JCM 1649"` and normalized to
+  `kgmicrobe.strain:<code>` CURIEs, matching the strain CURIEs BacDive
+  emits from the same culture-collection numbers. The merge step then
+  reconciles both sides, giving BacDive strains a route to the
+  authoritative LPSN taxon and vice-versa. Addresses the
+  "normalize strain IDs" ask in issue #484 via the culture-collection
+  path.
 
-## Follow-ups (issue #484)
+  Recognized culture-collection prefixes: `ATCC`, `DSM`, `JCM`, `LMG`,
+  `NCTC`, `NRRL`, `NBRC`, `CCUG`, `CCTM`, `CIP`, `IAM`, `IFO`, `KCTC`.
+  Additional prefixes can be added to the `_CULTURE_CODE` regex in
+  `lpsn.py` as needed.
 
-The MVP intentionally omits:
+## Still deferred (issue #484)
 
-- **NCBITaxon cross-refs** — LPSN doesn't publish these natively; we
-  need a name-matching layer against NCBI's taxonomy.
-- **GTDB cross-refs** — same story; via GTDB's own metadata, which
-  cites LPSN IDs for species names.
-- **BacDive cross-refs** — LPSN's `type_strain_names` (via the JSON
-  API, not the GSS CSV) links to culture-collection designations
-  (`DSM 12345`, `ATCC 12345`) that BacDive tracks. Normalizing
-  requires either the LPSN JSON API (also login-gated) or a merge-time
-  reconciliation step.
-
-These cross-refs are the point of the follow-up work tracked on
-issue #484.
+- **NCBITaxon cross-refs** — LPSN doesn't publish NCBI IDs natively;
+  needs a name-matching layer against NCBI's taxonomy (would use OAK's
+  NCBITaxon adapter — same pattern as BacDive's transform).
+- **GTDB cross-refs** — via GTDB's metadata, which cites LPSN IDs for
+  species names; or via GTDB2NCBI on top of the NCBITaxon layer.
+- **Full LPSN JSON API ingest** — richer than the GSS CSV
+  (nomenclatural status details, publication DOI/PMID,
+  `lpsn_correct_name_id` for reclassifications, `lpsn_parent_id` for
+  the full taxonomic tree, 16S sequences).
 
 ## Redistribution
 

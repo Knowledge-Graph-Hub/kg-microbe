@@ -27,15 +27,18 @@ MVP scope:
 """
 
 import csv
+import re
 from pathlib import Path
 from typing import Dict, Optional, Union
 
 from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
+    CLOSE_MATCH_RELATION,
     ID_COLUMN,
     LPSN_SOURCE,
     NCBI_CATEGORY,
     RDFS_SUBCLASS_OF,
+    STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -51,8 +54,22 @@ COL_REFERENCE = "reference"
 COL_STATUS = "status"
 COL_AUTHORS = "authors"
 COL_ADDRESS = "address"
+COL_NOMENCLATURAL_TYPE = "nomenclatural_type"
 COL_RECORD_NO = "record_no"
 COL_RECORD_LNK = "record_lnk"
+
+# Split ``nomenclatural_type`` on the standard separators used across
+# culture-collection deposit lists in LPSN. Real strings look like
+# "ATCC 11775 = DSM 30083 = JCM 1649 = NCTC 9001".
+_TYPE_STRAIN_SPLIT = re.compile(r"\s*(?:=|;|,)\s*")
+
+# A single culture-collection designation looks like "<PREFIX><whitespace/dashes><digits/letters>",
+# e.g. "ATCC 11775", "DSM-30083", "NCTC 9001". This regex extracts those tokens
+# from a raw ``nomenclatural_type`` value that may have additional prose.
+_CULTURE_CODE = re.compile(
+    r"\b(?:ATCC|DSM|JCM|LMG|NCTC|NRRL|NBRC|CCUG|CCTM|CIP|IAM|IFO|KCTC)"
+    r"[\s\-:]*[A-Z]*[\s\-]*[0-9]+[A-Za-z0-9\-]*"
+)
 
 # Nomenclatural statuses that should mark a node as ``deprecated=True``.
 DEPRECATED_STATUSES = frozenset(
@@ -142,6 +159,13 @@ class LPSNTransform(Transform):
                 parent_id = self._find_parent(row, parent_lookup)
                 if parent_id and parent_id != record_no:
                     edge_writer.writerow(self._make_subclass_edge(record_no, parent_id))
+                # Only species and subspecies rows carry a culture-collection
+                # type-strain designation worth cross-referencing. Genus rows'
+                # ``nomenclatural_type`` is the type species (a name, not a
+                # strain deposit) and is skipped.
+                if (row.get(COL_SP_EPITHET) or "").strip():
+                    for strain_curie in self._extract_strain_curies(row):
+                        edge_writer.writerow(self._make_close_match_edge(record_no, strain_curie))
 
     # ------------------------------------------------------------------
     # internals
@@ -270,8 +294,71 @@ class LPSNTransform(Transform):
                 row_out[headers.index(col)] = val
         return row_out
 
+    def _extract_strain_curies(self, row: dict) -> list:
+        """
+        Turn ``row[nomenclatural_type]`` into a list of ``kgmicrobe.strain:*`` CURIEs.
 
-# Silence flake8 F401 for CLOSE_MATCH_PREDICATE reserved for the
-# follow-up cross-ref PR (issue #484).
-_ = CLOSE_MATCH_PREDICATE
+        LPSN's ``nomenclatural_type`` for a species / subspecies row is one or
+        more culture-collection deposits separated by ``=`` / ``;`` / ``,``,
+        e.g. ``"ATCC 11775 = DSM 30083 = JCM 1649"``. Each deposit is
+        normalized with the same rule BacDive uses (see ``bacdive.py:2503``):
+        strip whitespace, replace spaces and colons with hyphens. That way
+        LPSN's cross-refs land on the same ``kgmicrobe.strain:<code>`` CURIEs
+        that BacDive is already emitting, so the merge step reconciles both
+        sides without extra plumbing.
+
+        Returns an empty list if the field is blank, whitespace, or contains
+        only a taxon name (no culture-collection prefix).
+        """
+        raw = (row.get(COL_NOMENCLATURAL_TYPE) or "").strip()
+        if not raw:
+            return []
+
+        curies: list = []
+        seen: set = set()
+        # First split on the standard deposit separators, then within each
+        # part scan for culture-collection tokens. A single part typically
+        # contains exactly one deposit; the second pass is defensive against
+        # rare "ATCC 11775 (T)" annotations or trailing prose.
+        for part in _TYPE_STRAIN_SPLIT.split(raw):
+            for match in _CULTURE_CODE.finditer(part):
+                token = match.group(0).strip()
+                cleaned = token.replace(" ", "-").replace(":", "-")
+                if len(cleaned) <= 3:
+                    # Same guard BacDive applies — tokens of 3 chars or fewer
+                    # are typos, not real deposits.
+                    continue
+                curie = f"{STRAIN_PREFIX}{cleaned}"
+                if curie in seen:
+                    continue
+                seen.add(curie)
+                curies.append(curie)
+        return curies
+
+    def _make_close_match_edge(self, record_no: str, strain_curie: str) -> list:
+        """
+        Build one edges.tsv row linking an LPSN taxon to a culture-collection strain.
+
+        Emits ``subject=lpsn:<record_no> predicate=biolink:close_match
+        object=kgmicrobe.strain:<code> relation=skos:closeMatch
+        primary_knowledge_source=infores:lpsn``. BacDive's transform emits
+        the same ``kgmicrobe.strain:*`` CURIE for every culture-collection
+        deposit it sees, so the merge step reconciles both sides.
+        """
+        headers = self.edge_header
+        row_out = [""] * len(headers)
+        for col, val in {
+            "subject": f"{LPSN_PREFIX}{record_no}",
+            "predicate": CLOSE_MATCH_PREDICATE,
+            "object": strain_curie,
+            "relation": CLOSE_MATCH_RELATION,
+            "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+        }.items():
+            if col in headers:
+                row_out[headers.index(col)] = val
+        return row_out
+
+
+# Silence flake8 F401 for ID_COLUMN reserved for future enrichment
+# (NCBITaxon / GTDB cross-refs — see issue #484).
 _ = ID_COLUMN

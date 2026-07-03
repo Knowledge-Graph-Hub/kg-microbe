@@ -8,6 +8,7 @@
     "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/",
     "GTDB": "https://gtdb.ecogenomic.org/tree?r=",
     "lpsn": "https://lpsn.dsmz.de/",
+    "INSDC": "https://www.ncbi.nlm.nih.gov/nuccore/",
     "NCBIGene": "http://identifiers.org/ncbigene/",
     "chemrof": "https://w3id.org/chemrof/",
     "orcid": "https://orcid.org/",

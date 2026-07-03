@@ -16,9 +16,14 @@ in LPSN's authenticated JSON API (per-record):
   `nomenclatural_status` / `lpsn_taxonomic_status` prose folded into
   each node's `description`.
 
-Intentionally out of scope (per issue #484): `molecules` (LPSN's 16S
-rRNA links). Natural follow-up if the merged KG grows a
-molecular-sequence layer.
+- **16S rRNA sequence provenance** — `molecules[]` → one
+  `biolink:close_match` edge from each LPSN taxon to every INSDC
+  (GenBank / EMBL / DDBJ) accession its type strain has registered,
+  plus a `biolink:NucleicAcidEntity` stub node per accession. Serves
+  as the TYGS-adjacent bridge to NCBI's sequence records — an LPSN
+  taxon that failed the direct name-match against NCBITaxon can still
+  reach it via `lpsn → INSDC → (NCBI sequence organism) → NCBITaxon`
+  in a downstream query.
 
 ## Prerequisites
 

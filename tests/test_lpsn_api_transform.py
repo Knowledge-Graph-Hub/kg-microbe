@@ -67,6 +67,13 @@ def api_records():
             "is_legitimate": True,
             "nomenclatural_status": "correct name",
             "lpsn_taxonomic_status": "correct name",
+            # Two type-strain 16S records with INSDC accessions. Exercises
+            # both dict-key alternatives so the schema tolerance is verified.
+            "molecules": [
+                {"insdc_accession": "M87049", "gene": "16S rRNA"},
+                {"accession_number": "AB030918", "gene": "16S rRNA"},
+                {"insdc_accession": "M87049"},  # dup; must be dedup'd
+            ],
         },
         "1005": {
             "id": 1005,
@@ -78,6 +85,7 @@ def api_records():
             "is_legitimate": True,
             "nomenclatural_status": "correct name (comb. nov.)",
             "lpsn_taxonomic_status": "",
+            "molecules": [],  # no molecules — must not emit any INSDC edge
         },
     }
 
@@ -231,3 +239,38 @@ def test_missing_gss_raises_file_not_found(tmp_path):
     )
     with pytest.raises(FileNotFoundError, match="LPSN GSS transform output"):
         xform.run()
+
+
+def test_molecules_emit_insdc_close_match_edges(api_transform):
+    """Each unique INSDC accession → biolink:close_match edge from lpsn: to INSDC:."""
+    api_transform.run()
+    edges = _read_tsv(api_transform.output_edge_file)
+    targets = {
+        e["object"]
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1002"
+        and e["object"].startswith("INSDC:")
+        and e["predicate"] == "biolink:close_match"
+    }
+    assert targets == {"INSDC:M87049", "INSDC:AB030918"}
+    # Dedup guard: the duplicate M87049 in the fixture must appear
+    # exactly once, not twice.
+    m87049 = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["object"] == "INSDC:M87049"]
+    assert len(m87049) == 1
+
+
+def test_molecules_emit_nucleic_acid_stub_nodes(api_transform):
+    """INSDC stub targets land as biolink:NucleicAcidEntity so edges aren't dangling."""
+    api_transform.run()
+    nodes = _read_tsv(api_transform.output_node_file)
+    seq = {n["id"] for n in nodes if n["category"] == "biolink:NucleicAcidEntity"}
+    assert "INSDC:M87049" in seq
+    assert "INSDC:AB030918" in seq
+
+
+def test_empty_molecules_emit_no_insdc_edges(api_transform):
+    """Record 1005 with molecules=[] emits no INSDC edges (or stub nodes)."""
+    api_transform.run()
+    edges = _read_tsv(api_transform.output_edge_file)
+    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")]
+    assert hits == []

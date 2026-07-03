@@ -9,7 +9,7 @@ taxonomic tree is queryable in the merged KG.
 
 The GSS CSV requires a free LPSN login to download. This transform
 does NOT fetch it — place the downloaded file at
-`data/raw/lpsn/lpsn_gss.csv` before running:
+`data/raw/lpsn_gss.csv` before running:
 
     poetry run kg transform -s lpsn
 
@@ -34,10 +34,12 @@ from typing import Dict, Optional, Union
 from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
+    EXACT_MATCH,
     ID_COLUMN,
     LPSN_SOURCE,
     NCBI_CATEGORY,
     RDFS_SUBCLASS_OF,
+    SAME_AS_PREDICATE,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
 )
@@ -71,15 +73,31 @@ _CULTURE_CODE = re.compile(
     r"[\s\-:]*[A-Z]*[\s\-]*[0-9]+[A-Za-z0-9\-]*"
 )
 
-# Nomenclatural statuses that should mark a node as ``deprecated=True``.
+# Nomenclatural / taxonomic status tokens that mark a row as ``deprecated=True``.
+#
+# LPSN's ``status`` column is a SEMICOLON-DELIMITED LIST — a typical value is
+# ``"VP; sp. nov.; validly published under the ICNP"`` for a valid current
+# species, and ``"VP; sp. nov.; validly published under the ICNP; synonym"``
+# or ``"VP; sp. nov.; misspelling, not recommended for medical use"`` for a
+# non-current name. We flag as ``deprecated`` any row whose semicolon-split
+# tokens intersect this set. Sourced from the real distribution of tokens in
+# the 2026-07-03 GSS CSV — see the profiling script in tests/ if this needs
+# to be updated for a future LPSN schema change.
 DEPRECATED_STATUSES = frozenset(
     {
-        "illegitimate name",
-        "not validly published",
         "synonym",
+        "synonym, not recommended for medical use",
+        "synonym of its species",
+        "misspelling",
+        "misspelling, not recommended for medical use",
+        "inaccurate spelling",
+        "illegitimate name",
         "rejected name",
         "later heterotypic synonym",
         "later homotypic synonym",
+        "not validly published",
+        "inappropriate correction",
+        "in need of a replacement",
     }
 )
 
@@ -112,7 +130,11 @@ class LPSNTransform(Transform):
     # ------------------------------------------------------------------
     # public entry point
     # ------------------------------------------------------------------
-    def run(self, data_file: Union[Optional[Path], Optional[str]] = None) -> None:
+    def run(
+        self,
+        data_file: Union[Optional[Path], Optional[str]] = None,
+        show_status: bool = True,
+    ) -> None:
         """
         Emit ``nodes.tsv`` and ``edges.tsv`` from the LPSN GSS CSV.
 
@@ -121,15 +143,21 @@ class LPSNTransform(Transform):
         data_file:
             Optional override for the input CSV path. If ``None``, uses
             ``self.input_base_dir / "lpsn_gss.csv"``.
+        show_status:
+            Accepted for compatibility with the ``kg transform`` CLI
+            (see ``transform.py``). Currently unused because LPSN parsing
+            is fast enough (< 1 s per 34K rows) that a progress bar isn't
+            worth pulling ``tqdm`` in.
 
         """
+        _ = show_status  # accepted for CLI compatibility; see docstring
         input_file = Path(data_file) if data_file else Path(self.input_base_dir) / "lpsn_gss.csv"
         if not input_file.is_file():
             raise FileNotFoundError(
                 f"LPSN GSS CSV not found at {input_file}. "
                 "Log in to https://lpsn.dsmz.de/downloads (free registration), "
                 "download the GSS CSV, and place it at "
-                "data/raw/lpsn/lpsn_gss.csv. "
+                "data/raw/lpsn_gss.csv. "
                 "See kg_microbe/transform_utils/lpsn/README.md for details."
             )
 
@@ -159,10 +187,19 @@ class LPSNTransform(Transform):
                 parent_id = self._find_parent(row, parent_lookup)
                 if parent_id and parent_id != record_no:
                     edge_writer.writerow(self._make_subclass_edge(record_no, parent_id))
+                # Non-current names (synonyms / misspellings / illegitimate
+                # names) carry a numeric ``record_lnk`` pointing at the
+                # correct name's ``record_no``. Emit an edge so downstream
+                # queries can resolve any historical name to its current
+                # authoritative version.
+                correct_no = (row.get(COL_RECORD_LNK) or "").strip()
+                if correct_no.isdigit() and correct_no != record_no:
+                    edge_writer.writerow(self._make_same_as_edge(record_no, correct_no))
                 # Only species and subspecies rows carry a culture-collection
                 # type-strain designation worth cross-referencing. Genus rows'
-                # ``nomenclatural_type`` is the type species (a name, not a
-                # strain deposit) and is skipped.
+                # ``nomenclatural_type`` is the record_no of the type species
+                # (a numeric link within the table, not a strain deposit) and
+                # is skipped.
                 if (row.get(COL_SP_EPITHET) or "").strip():
                     for strain_curie in self._extract_strain_curies(row):
                         edge_writer.writerow(self._make_close_match_edge(record_no, strain_curie))
@@ -239,9 +276,10 @@ class LPSNTransform(Transform):
             name          = full scientific name assembled from
                             genus/sp_epithet/subsp_epithet
             description   = ``authors`` (author citation + year)
-            xref          = ``record_lnk`` (canonical LPSN page URL)
+            xref          = ``address`` (canonical LPSN page URL)
             provided_by   = infores:lpsn
-            deprecated    = True if ``status`` matches a DEPRECATED_STATUS
+            deprecated    = True if any semicolon-delimited token of
+                            ``status`` intersects DEPRECATED_STATUSES
         """
         genus = (row.get(COL_GENUS) or "").strip()
         sp = (row.get(COL_SP_EPITHET) or "").strip()
@@ -250,10 +288,14 @@ class LPSNTransform(Transform):
         name = " ".join(name_parts)
 
         description = (row.get(COL_AUTHORS) or "").strip()
-        xref = (row.get(COL_RECORD_LNK) or row.get(COL_ADDRESS) or "").strip()
+        xref = (row.get(COL_ADDRESS) or "").strip()
 
-        status = (row.get(COL_STATUS) or "").strip().lower()
-        deprecated_flag = "True" if status in DEPRECATED_STATUSES else ""
+        # ``status`` is a semicolon-delimited list, e.g.
+        # ``"VP; sp. nov.; validly published under the ICNP; synonym"``.
+        # A row is deprecated if any token intersects DEPRECATED_STATUSES.
+        raw_status = (row.get(COL_STATUS) or "").lower()
+        status_tokens = {t.strip() for t in raw_status.split(";") if t.strip()}
+        deprecated_flag = "True" if status_tokens & DEPRECATED_STATUSES else ""
 
         # node_header is [id, category, name, description, xref,
         # provided_by, synonym, same_as, iri, deprecated, ...]
@@ -334,6 +376,31 @@ class LPSNTransform(Transform):
                 seen.add(curie)
                 curies.append(curie)
         return curies
+
+    def _make_same_as_edge(self, record_no: str, correct_record_no: str) -> list:
+        """
+        Build one edges.tsv row linking a non-current name to its correct name.
+
+        Emits ``subject=lpsn:<record_no> predicate=biolink:same_as
+        object=lpsn:<correct_record_no> relation=skos:exactMatch
+        primary_knowledge_source=infores:lpsn``. LPSN populates
+        ``record_lnk`` on every synonym / misspelling / illegitimate name
+        with the ``record_no`` of the currently-authoritative name, and
+        this edge preserves that link in the KG so historical names
+        resolve to their current version in a single hop.
+        """
+        headers = self.edge_header
+        row_out = [""] * len(headers)
+        for col, val in {
+            "subject": f"{LPSN_PREFIX}{record_no}",
+            "predicate": SAME_AS_PREDICATE,
+            "object": f"{LPSN_PREFIX}{correct_record_no}",
+            "relation": EXACT_MATCH,
+            "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+        }.items():
+            if col in headers:
+                row_out[headers.index(col)] = val
+        return row_out
 
     def _make_close_match_edge(self, record_no: str, strain_curie: str) -> list:
         """

@@ -532,6 +532,12 @@ MOLECULAR_ACTIVITY_CATEGORY = "biolink:MolecularActivity"  # For GO molecular fu
 BIOLOGICAL_PROCESS_CATEGORY = "biolink:BiologicalProcess"  # For GO biological process terms
 CELLULAR_COMPONENT_CATEGORY = "biolink:CellularComponent"  # For GO cellular component terms
 RDFS_SUBCLASS_OF = "rdfs:subClassOf"
+# "in taxon" relation for organism → taxonomic-classification edges. Semantically
+# stronger than close_match (asserts membership), but weaker than subclass_of
+# (which would demand ontological subsumption). Used by BacDive → LPSN edges
+# where a strain is classified within an LPSN taxonomic-name record.
+IN_TAXON_PREDICATE = "biolink:in_taxon"
+IN_TAXON_RELATION = "RO:0002162"
 # Relation for inferred taxonomic relationships
 INFERRED_SUBCLASS_RELATION = "kgmicrobe:inferred_subClassOf"
 SUBCLASS_PREDICATE = "biolink:subclass_of"

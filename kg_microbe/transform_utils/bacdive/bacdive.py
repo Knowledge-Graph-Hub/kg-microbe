@@ -87,6 +87,8 @@ from kg_microbe.transform_utils.constants import (
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     INFERRED_SUBCLASS_RELATION,
     INTERACTS_WITH_RELATION,
     IS_GROWN_IN,
@@ -258,6 +260,16 @@ class BacDiveTransform(Transform):
         self.assay_raw_data: Optional[dict] = None  # Raw JSON from assay_kits_simple.json
         self.assay_nodes_generated: Optional[List] = None  # Generated assay node rows
         self.assay_edges_generated: Optional[List] = None  # Generated assay→entity edge rows
+
+        # LPSN name → record_no index, loaded from data/raw/lpsn_gss.csv when
+        # present. Used to emit bacdive:<id> → biolink:close_match →
+        # lpsn:<record_no> for every strain whose LPSN block names an
+        # exactly-known LPSN species. Silent skip on missing CSV so a fresh
+        # checkout that hasn't downloaded LPSN still runs the BacDive
+        # transform cleanly.
+        self.lpsn_name_index = self._load_lpsn_name_index()
+        # Track cross-ref outcomes for the end-of-run summary.
+        self._lpsn_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
 
         # Load NCBITaxon labels from ontologies transform output (fast TSV lookup).
         # NOTE: This depends on TSV files produced by the ontologies transform being present.
@@ -447,6 +459,83 @@ class BacDiveTransform(Transform):
         for key, value in METABOLITE_MAP.items():
             if value == name:
                 return key
+        return None
+
+    def _load_lpsn_name_index(self) -> Dict[str, list]:
+        """
+        Load ``data/raw/lpsn_gss.csv`` into ``{full_name: [record_no, ...]}``.
+
+        The GSS CSV isn't shipped in the repo (LPSN download requires a
+        free account) so absence is expected and non-fatal — we log
+        and return an empty dict, and the LPSN cross-ref emission
+        becomes a no-op. Fast enough (~34K rows) that no dedicated
+        cache is needed.
+        """
+        lpsn_csv = Path(self.input_base_dir) / "lpsn_gss.csv"
+        if not lpsn_csv.is_file():
+            logger.info(
+                "LPSN GSS CSV not found at %s — BacDive → LPSN cross-refs skipped. "
+                "Download the GSS CSV from https://lpsn.dsmz.de/downloads and place "
+                "it at data/raw/lpsn_gss.csv to enable.",
+                lpsn_csv,
+            )
+            return {}
+        name_index: Dict[str, list] = {}
+        with open(lpsn_csv, newline="") as fh:
+            reader = csv.DictReader(fh)
+            for row in reader:
+                record_no = (row.get("record_no") or "").strip()
+                if not record_no:
+                    continue
+                genus = (row.get("genus_name") or "").strip()
+                sp = (row.get("sp_epithet") or "").strip()
+                subsp = (row.get("subsp_epithet") or "").strip()
+                # Assemble the same scientific-name form BacDive's LPSN
+                # block reports (`species` field): "Genus species [subspecies]".
+                full_name = " ".join(p for p in (genus, sp, subsp) if p)
+                if not full_name:
+                    continue
+                name_index.setdefault(full_name, []).append(record_no)
+        logger.info(
+            "LPSN name index loaded: %d distinct names for BacDive cross-refs",
+            len(name_index),
+        )
+        return name_index
+
+    def _lookup_lpsn(self, lpsn_block: dict) -> Optional[str]:
+        """
+        Return the LPSN ``record_no`` for ``lpsn_block``, or None.
+
+        BacDive's LPSN block reports the species-rank name in the
+        ``species`` field (e.g. ``"Moraxella canis"``); subspecies rows
+        add the epithet at the end. We match on ``species`` first
+        because it's the cleanest form; if that fails we fall back to
+        the first three tokens of ``full scientific name`` (stripping
+        the HTML italics tags LPSN wraps around genus/species).
+        """
+        if not lpsn_block or not self.lpsn_name_index:
+            return None
+        # Prefer the plain species field.
+        candidate = (lpsn_block.get("species") or "").strip()
+        if not candidate:
+            # Fallback: strip the HTML tags from full scientific name and
+            # keep the first two words (genus + species). Authorities and
+            # dates (e.g. "Jannes et al. 1993") sit past that, so slicing
+            # is safe.
+            raw = (lpsn_block.get("full scientific name") or "").strip()
+            cleaned = re.sub(r"<[^>]+>", "", raw).strip()
+            candidate = " ".join(cleaned.split()[:2]) if cleaned else ""
+        if not candidate:
+            return None
+
+        hits = self.lpsn_name_index.get(candidate, [])
+        if len(hits) == 1:
+            self._lpsn_stats["matched"] += 1
+            return hits[0]
+        if not hits:
+            self._lpsn_stats["unmatched"] += 1
+        else:
+            self._lpsn_stats["ambiguous"] += 1
         return None
 
     def _init_ontology_adapters(self):
@@ -1641,9 +1730,7 @@ class BacDiveTransform(Transform):
                     # cover obsolete / out-of-version CHEBI IDs (e.g. CHEBI:17004
                     # D-Tagatose) that would otherwise become biolink:NamedThing
                     # stubs at merge time.
-                    assay_target_nodes = generate_assay_entity_nodes(
-                        self.assay_raw_data, self.node_header
-                    )
+                    assay_target_nodes = generate_assay_entity_nodes(self.assay_raw_data, self.node_header)
                     if assay_target_nodes:
                         print(f"Writing {len(assay_target_nodes)} assay-target stub nodes...")
                         node_writer.writerows(assay_target_nodes)
@@ -2349,6 +2436,37 @@ class BacDiveTransform(Transform):
                         writer_2.writerow(phys_and_meta_data)
 
                     lpsn = name_tax_classification.get(LPSN)
+                    # BacDive → LPSN cross-ref via name-match against the
+                    # LPSN GSS index loaded in __init__. No-op when the CSV
+                    # isn't on disk, or when the LPSN block is absent /
+                    # ambiguous. Emitted per strain so the merge step
+                    # naturally reconciles bacdive:<id> with the LPSN
+                    # transform's lpsn:<record_no> nodes when both sources
+                    # ingest the same taxonomy.
+                    lpsn_record_no = self._lookup_lpsn(lpsn) if lpsn else None
+                    if lpsn_record_no:
+                        # ``biolink:in_taxon`` (RO:0002162) is the correct
+                        # predicate for a specific strain being classified
+                        # within an LPSN taxonomic-name record — the strain
+                        # is an instance of that taxon, not identical to it
+                        # (which would be exact_match) and not a subclass
+                        # (which would be subclass_of).
+                        knowledge_level, agent_type = self._add_edge_metadata(
+                            IN_TAXON_PREDICATE, IN_TAXON_RELATION, f"lpsn:{lpsn_record_no}"
+                        )
+                        edge_writer.writerow(
+                            [
+                                BACDIVE_PREFIX + key,
+                                IN_TAXON_PREDICATE,
+                                f"lpsn:{lpsn_record_no}",
+                                IN_TAXON_RELATION,
+                                self.knowledge_source,
+                                knowledge_level,
+                                agent_type,
+                                "",  # value
+                                "",  # unit
+                            ]
+                        )
                     synonyms = lpsn.get(SYNONYMS, {}) if lpsn and SYNONYMS in lpsn else None
                     if isinstance(synonyms, list):
                         synonym_parsed = " | ".join(synonym.get(SYNONYM, {}) for synonym in synonyms)
@@ -3155,6 +3273,13 @@ class BacDiveTransform(Transform):
         )
         drop_duplicates(self.output_edge_file)
 
+        logger.info(
+            "[bacdive] LPSN cross-refs: %s matched, %s unmatched, %s ambiguous",
+            f"{self._lpsn_stats['matched']:,}",
+            f"{self._lpsn_stats['unmatched']:,}",
+            f"{self._lpsn_stats['ambiguous']:,}",
+        )
+
 
 # Tail of every kgmicrobe.strain CURIE the BacDive transform emits. Built
 # inline so this module-level helper doesn't need to import the (already
@@ -3203,7 +3328,7 @@ class _StrainProvenanceWriter:
             # Look at subject (col 0) then object (col 2) for a strain CURIE.
             for endpoint in (row[0], row[2] if len(row) > 2 else None):
                 if isinstance(endpoint, str) and endpoint.startswith(_STRAIN_BACDIVE_PREFIX):
-                    bacdive_id = endpoint[len(_STRAIN_BACDIVE_PREFIX):]
+                    bacdive_id = endpoint[len(_STRAIN_BACDIVE_PREFIX) :]
                     row[self._ks_idx] = f"['{self._ks}', 'bacdive:{bacdive_id}']"
                     break
         self._inner.writerow(row)

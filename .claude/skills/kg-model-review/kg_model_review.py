@@ -1563,13 +1563,20 @@ def _extract_tar_member(tar_path: Path, member_name: str, dest: Path) -> bool:
 def _summarize_kgxval_csv(out_csv: Path) -> str:
     """Render kgxval's error CSV as a contextualized markdown section.
 
-    Splits BAD BIOLINK into METPO-native predicates (KG-Microbe emits these
-    intentionally and maps them to biolink downstream — expected) vs genuinely
-    unknown predicates (actionable). Surfaces the top BAD SUBJECT / BAD OBJECT
-    domain/range violations, which are the real modeling signal.
+    Buckets BAD BIOLINK predicates into three groups so the report is
+    honest about what is actionable:
+      * METPO-native (``METPO:*``) — KG-Microbe emits these intentionally and
+        maps them to biolink downstream; expected.
+      * structural — ontology metamodel axioms (``rdfs:subPropertyOf``,
+        ``owl:inverseOf``, ``rdf:type``) passed through by the ontologies
+        transform; the built-in review already accepts them via
+        ``STRUCTURAL_PREDICATES``, so they are expected too.
+      * other — genuinely unknown predicates; the only actionable ones.
+    Also surfaces the top BAD SUBJECT / BAD OBJECT domain/range violations.
     """
     by_type: dict = defaultdict(int)
     bad_biolink_metpo: set = set()
+    bad_biolink_structural: set = set()
     bad_biolink_other: set = set()
     domain_range: dict = defaultdict(int)  # (predicate, error, actual_cats) -> count
     with open(out_csv, newline="") as fh:
@@ -1578,7 +1585,12 @@ def _summarize_kgxval_csv(out_csv: Path) -> str:
             pred = row.get("PREDICATE", "")
             by_type[err] += 1
             if err == "BAD BIOLINK":
-                (bad_biolink_metpo if pred.startswith("METPO:") else bad_biolink_other).add(pred)
+                if pred.startswith("METPO:"):
+                    bad_biolink_metpo.add(pred)
+                elif pred in STRUCTURAL_PREDICATES:
+                    bad_biolink_structural.add(pred)
+                else:
+                    bad_biolink_other.add(pred)
             elif err in ("BAD SUBJECT", "BAD OBJECT"):
                 domain_range[(pred, err, row.get("ACTUAL_CATEGORIES", ""))] += 1
 
@@ -1593,12 +1605,17 @@ def _summarize_kgxval_csv(out_csv: Path) -> str:
     for etype in ("BAD BIOLINK", "BAD SUBJECT", "BAD OBJECT"):
         lines.append(f"| {etype} | {by_type.get(etype, 0)} |")
     lines.append("")
-    lines.append(f"**BAD BIOLINK predicates:** {len(bad_biolink_metpo)} METPO-native "
-                 "(expected — KG-Microbe maps these to biolink downstream), "
-                 f"{len(bad_biolink_other)} other.")
+    lines.append(f"**BAD BIOLINK predicates:** {len(bad_biolink_metpo)} METPO-native + "
+                 f"{len(bad_biolink_structural)} structural "
+                 "(both expected — METPO mapped to biolink downstream; structural = ontology "
+                 f"metamodel axioms accepted via STRUCTURAL_PREDICATES), "
+                 f"**{len(bad_biolink_other)} actionable**.")
+    if bad_biolink_structural:
+        lines.append("")
+        lines.append("Structural (expected): " + ", ".join(f"`{p}`" for p in sorted(bad_biolink_structural)))
     if bad_biolink_other:
         lines.append("")
-        lines.append("Non-METPO unknown predicates (actionable):")
+        lines.append("Unknown predicates (actionable):")
         for p in sorted(bad_biolink_other)[:25]:
             lines.append(f"- `{p}`")
     if domain_range:

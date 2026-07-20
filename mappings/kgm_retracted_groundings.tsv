@@ -1,0 +1,180 @@
+# kgm_retracted_groundings.tsv
+# Superseded chemical/ingredient groundings retracted during consolidation.
+#
+# WHY: consolidate_chemical_mappings.py seeds each run from its own prior
+# output (load_existing_unified), which is additive — a corrected upstream
+# grounding adds the right row but cannot remove the superseded one, so both
+# persist. apply_retractions() drops the listed stale objects, but only when
+# their sole contributing source is culturebotai_reviewed (attribution
+# unambiguous); an object that has gained another source is left in place and
+# reported for manual review.
+#
+# PROVENANCE: analysis by culturebotai-claw workspace/reports/propagation_2026-07-19.md
+# 161 name->object rows spanning 16 unique stale objects. Verified: after
+# dropping these objects, all 161 names still resolve to their now_asserted
+# grounding (zero orphans).
+#
+# Only stale_object (the CURIE dropped) is required; other columns document
+# provenance. Lines starting with # are ignored by the reader.
+subject_id	subject_label	stale_object	stale_object_label	now_asserted	source
+kgm.name:glycylglycine	Glycylglycine	CHEBI:15743	Glycylglycine	CHEBI:17201	culturebotai_reviewed
+kgm.name:p-aminobenzoic_acid	P-Aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
+kgm.name:paba	PABA	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
+kgm.name:para-aminobenzoic_acid	Para-aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
+kgm.name:p--aminobenzoic_acid	p--Aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
+kgm.name:cobalamin	COBALAMIN	CHEBI:30411	Cobalamine	CHEBI:28911	culturebotai_reviewed
+kgm.name:tricine	Tricine	CHEBI:35920	Tricine	CHEBI:46760	culturebotai_reviewed
+kgm.name:zncl_6h_o	ZnCl .6H O	CHEBI:86469	ZnCl .6H O	CHEBI:49976	culturebotai_reviewed
+kgm.name:pyridoxamine2hcl	Pyridoxamine.2HCl	CHEBI:8668	Pyridoxamine.2HCl	CHEBI:131532	culturebotai_reviewed
+kgm.name:malt_extract	Malt extract	FOODON:00001264	Malt extract	FOODON:03301056|kgmicrobe.ingredient:yeast_extract_malt_extract_agar	culturebotai_reviewed
+kgm.name:bacto_malt_extract_difco	Bacto Malt Extract (Difco)	FOODON:00001264	Malt extract	FOODON:03301056	culturebotai_reviewed
+kgm.name:malt_extract_agar_nissui	Malt Extract Agar (Nissui)	FOODON:00001264	Malt extract	kgmicrobe.ingredient:malt_extract_agar_~28nissui~29	culturebotai_reviewed
+kgm.name:malt_extract_bd--difco	Malt extract (BD--Difco)	FOODON:00001264	Malt extract	FOODON:03301056	culturebotai_reviewed
+kgm.name:malt_extract_bd-difco	Malt extract (BD-Difco)	FOODON:00001264	Malt extract	FOODON:03301056	culturebotai_reviewed
+kgm.name:malt_extract_agar	Malt extract agar	FOODON:00001264	Malt extract	CHEBI:2509	culturebotai_reviewed
+kgm.name:malt_extract_agar_oxoid	Malt extract agar (Oxoid)	FOODON:00001264	Malt extract	kgmicrobe.ingredient:malt_extract_agar_~28oxoid~29	culturebotai_reviewed
+kgm.name:malt_extract_broth	Malt extract broth	FOODON:00001264	Malt extract	kgmicrobe.ingredient:malt_extract_broth	culturebotai_reviewed
+kgm.name:malt_extract_powder	Malt extract powder	FOODON:00001264	Malt extract	FOODON:03301056	culturebotai_reviewed
+kgm.name:yeast_extract-malt_extract_agar	Yeast extract-malt extract agar	FOODON:00001264	Malt extract	kgmicrobe.ingredient:yeast_extract_malt_extract_agar	culturebotai_reviewed
+kgm.name:potato_flour	Potato flour	FOODON:00002316	Potato flour	FOODON:03302378|FOODON:03307543	culturebotai_reviewed
+kgm.name:yeast_extract	Yeast extract	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:bacto_yeast_extract_difco	Bacto Yeast  Extract (Difco)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:bacto_yeast_extract	Bacto yeast extract	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:bacto-yeast_extract	Bacto-yeast extract	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:difco_bacto-yeast_extract	Difco Bacto-yeast extract	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:dried_yeast_extract_s_wako	Dried yeast extract S (Wako)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:liquid_yeast_extract_flow	Liquid yeast extract (Flow)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd_211928	Yeast Extract (BD 211928)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd_212750	Yeast Extract (BD 212750)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_hardy_c7340	Yeast Extract (Hardy C7340)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extractdifco	Yeast Extract(Difco)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bbl	Yeast extract (BBL)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd_bacto	Yeast extract (BD Bacto)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd--difco	Yeast extract (BD--Difco)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd-bbl	Yeast extract (BD-BBL)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd-difco	Yeast extract (BD-Difco)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_difco_or_oxoid	Yeast extract (Difco or Oxoid)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_difco	Yeast extract (Difco)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_oxoid	Yeast extract (OXOID)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_oxoid_lp0021_bd_212750	Yeast extract (Oxoid LP0021, BD 212750)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extractoxoid	Yeast extract(Oxoid)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_bd_difco	yeast extract (BD Difco)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:yeast_extract_nacalai_tesque_kyoto_japan	yeast extract (Nacalai Tesque, Kyoto, Japan)	FOODON:00002441	Yeast extract	FOODON:03315426	culturebotai_reviewed
+kgm.name:whole_eggs	Whole eggs	FOODON:00002527	Whole eggs	FOODON:03316061	culturebotai_reviewed
+kgm.name:liver_extract	Liver extract	FOODON:03302129	Liver extract	MICRO:0001363	culturebotai_reviewed
+kgm.name:peptic_digest_of_soybean_meal	Peptic digest of soybean meal	FOODON:03303126	Peptic digest of soybean meal	FOODON:03315720	culturebotai_reviewed
+kgm.name:tryptone	Tryptone	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:acid-hydrolyzed_casein	Acid-hydrolyzed casein	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:bacto_casitone_difco	Bacto Casitone (Difco)	FOODON:03310387	Tryptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:bacto_tryptone	Bacto Tryptone	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:bacto_tryptone_difco	Bacto Tryptone (DIfco)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:bacto-tryptone	Bacto-tryptone	FOODON:03310387	Tryptone	CHEBI:78018|MICRO:0000182	culturebotai_reviewed
+kgm.name:casein_enzymic_hydrolysate	Casein Enzymic Hydrolysate	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_hydrolysate	Casein hydrolysate	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_hydrolysate_nz_case_tt_quest_international	Casein hydrolysate (NZ Case TT, Quest International)	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_peptone	Casein peptone	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_peptone_tryptic_digest	Casein peptone, tryptic digest	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_peptone_tryptic_digested	Casein peptone, tryptic digested	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:caseine_peptone	Caseine peptone	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casitone	Casitone	FOODON:03310387	Tryptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:casitone_bd--difco	Casitone (BD--Difco)	FOODON:03310387	Tryptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:casitone_bd-bbl	Casitone (BD-BBL)	FOODON:03310387	Tryptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:casitone_bd-difco	Casitone (BD-Difco)	FOODON:03310387	Tryptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:difco_bacto-_tryptone	Difco Bacto- Tryptone	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:enzymatic_digest_of_casein	Enzymatic digest of casein	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:pancreatic_digest_of_casein	Pancreatic Digest of Casein	FOODON:03310387	Tryptone	FOODON:03315719|MICRO:0000182	culturebotai_reviewed
+kgm.name:pancreatic_digest_of_casein_hardy_c6530	Pancreatic Digest of Casein (Hardy C6530)	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:peptone_from_casein	Peptone from casein	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:proteose_tryptone_difco_0123-01	Proteose tryptone (DIFCO 0123-01)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:trypticase	Trypticase	FOODON:03310387	Tryptone	CHEBI:78018|MICRO:0000175	culturebotai_reviewed
+kgm.name:tryptone_bd_211705	Tryptone (BD 211705)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd_bacto	Tryptone (BD BACTO)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd_bbl	Tryptone (BD BBL)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd--difco	Tryptone (BD--Difco)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd-difco	Tryptone (BD-Difco)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bacto_trypton_211705	Tryptone (Bacto Trypton 211705)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_difco_0123	Tryptone (Difco 0123)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_difco	Tryptone (Difco)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_diffico	Tryptone (Diffico)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_vwr_j859-500g	Tryptone (VWR, J859-500G)	FOODON:03310387	Tryptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:casein_hydrolyzate_acid	casein hydrolyzate acid	FOODON:03310387	Tryptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:peptone	Peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:acid_hydrolysate_of_casein	Acid hydrolysate of casein	FOODON:03316428	Peptone	MICRO:0001366	culturebotai_reviewed
+kgm.name:acid-hydrolyzed_casein	Acid-hydrolyzed casein	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:bacteriological_peptone	Bacteriological peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:bacto_casitone_difco	Bacto Casitone (Difco)	FOODON:03316428	Peptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:bacto_peptone_difco	Bacto Peptone (Difco)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:bacto_proteose_peptone_no_3_difco	Bacto Proteose Peptone No. 3 (Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:bacto_proteose_peptone_no3_difco	Bacto Proteose Peptone No.3 (Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:bacto_tryptone	Bacto Tryptone	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:bacto_tryptone_difco	Bacto Tryptone (DIfco)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:bacto_peptone	Bacto peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:bacto_peptone_bd--difco	Bacto peptone (BD--Difco)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:bacto_peptone_bd-difco	Bacto peptone (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:bacto-peptone_bd	Bacto-Peptone (BD)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:bacto-tryptone	Bacto-tryptone	FOODON:03316428	Peptone	CHEBI:78018|MICRO:0000182	culturebotai_reviewed
+kgm.name:casein_enzymic_hydrolysate	Casein Enzymic Hydrolysate	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_hydrolysate	Casein hydrolysate	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_hydrolysate_nz_case_tt_quest_international	Casein hydrolysate (NZ Case TT, Quest International)	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_peptone	Casein peptone	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_peptone_tryptic_digest	Casein peptone, tryptic digest	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casein_peptone_tryptic_digested	Casein peptone, tryptic digested	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:caseine_peptone	Caseine peptone	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:casitone	Casitone	FOODON:03316428	Peptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:casitone_bd--difco	Casitone (BD--Difco)	FOODON:03316428	Peptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:casitone_bd-bbl	Casitone (BD-BBL)	FOODON:03316428	Peptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:casitone_bd-difco	Casitone (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000606	culturebotai_reviewed
+kgm.name:difco_bacto-_tryptone	Difco Bacto- Tryptone	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:enzymatic_digest_of_casein	Enzymatic digest of casein	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:fish_peptone	Fish peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:fish_peptone_fluka	Fish peptone (Fluka)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:gelatin_peptone	Gelatin Peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:meat_peptone	Meat peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:neopeptone	Neopeptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:neopeptone_bd-difco	Neopeptone (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:neopeptone_difco_laboratories_detroit_ml	Neopeptone (Difco Laboratories, Detroit, Ml)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:oxoid_peptone	Oxoid peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:pancreatic_digest_of_casein	Pancreatic Digest of Casein	FOODON:03316428	Peptone	FOODON:03315719|MICRO:0000182	culturebotai_reviewed
+kgm.name:pancreatic_digest_of_casein_hardy_c6530	Pancreatic Digest of Casein (Hardy C6530)	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:peptic_digest_of_animal_tissue	Peptic digest of animal tissue	FOODON:03316428	Peptone	MICRO:0000178|MICRO:0000180	culturebotai_reviewed
+kgm.name:peptone_bbl_11910	Peptone (BBL 11910)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_bd_bacto	Peptone (BD BACTO)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_bd--difco	Peptone (BD--Difco)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_bd-difco	Peptone (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_oxoid	Peptone (Oxoid)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_meat	Peptone (meat)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_from_casein	Peptone from casein	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:peptone_from_meat	Peptone from meat	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_from_meat_pepsin-digested	Peptone from meat (pepsin-digested)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_mixture	Peptone mixture	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:peptone_bacto_bd_211677	Peptone, Bacto (BD 211677)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:proteose_peptone	Proteose Peptone	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_difco_no_3	Proteose Peptone (Difco no. 3)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_no_3	Proteose Peptone No. 3	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_bd_difco	Proteose peptone (BD Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_bd--difco	Proteose peptone (BD--Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_bd-difco	Proteose peptone (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_difco	Proteose peptone (Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_no_2_difco_0121-01-3	Proteose peptone No 2 (DIFCO 0121-01-3)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_no_3_bd--difco	Proteose peptone No. 3 (BD--Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_no_3_bd-difco	Proteose peptone No. 3 (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_no_2	Proteose peptone no. 2	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_peptone_no3_difco	Proteose peptone no.3 (Difco)	FOODON:03316428	Peptone	MICRO:0000180	culturebotai_reviewed
+kgm.name:proteose_tryptone_difco_0123-01	Proteose tryptone (DIFCO 0123-01)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:trypticase	Trypticase	FOODON:03316428	Peptone	CHEBI:78018|MICRO:0000175	culturebotai_reviewed
+kgm.name:tryptone	Tryptone	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd_211705	Tryptone (BD 211705)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd_bacto	Tryptone (BD BACTO)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd_bbl	Tryptone (BD BBL)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd--difco	Tryptone (BD--Difco)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bd-difco	Tryptone (BD-Difco)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_bacto_trypton_211705	Tryptone (Bacto Trypton 211705)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_difco_0123	Tryptone (Difco 0123)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_difco	Tryptone (Difco)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_diffico	Tryptone (Diffico)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:tryptone_vwr_j859-500g	Tryptone (VWR, J859-500G)	FOODON:03316428	Peptone	MICRO:0000182	culturebotai_reviewed
+kgm.name:universal_peptone	Universal peptone	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:universal_peptone_merck	Universal peptone (Merck)	FOODON:03316428	Peptone	MICRO:0000178	culturebotai_reviewed
+kgm.name:casein_hydrolyzate_acid	casein hydrolyzate acid	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
+kgm.name:cacl22h2o	CaCl2•2H2O	cas:10043-52-4	CaCl2•2H2O	CHEBI:86158	culturebotai_reviewed
+kgm.name:mgso47h2o	MgSO4•7H2O	cas:7487-88-9	MgSO4•7H2O	CHEBI:31795	culturebotai_reviewed

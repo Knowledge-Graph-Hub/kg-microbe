@@ -11,6 +11,10 @@ disagree about canonical_name/formula for the same entry):
 5. kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv - ChEBI xrefs (priority=2)
 6. kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv         (priority=5)
 7. mappings/culturebotai_reviewed_ingredients.tsv - CultureBotAI reviewed    (priority=10)
+   Auto-synced from the MediaIngredientMech sibling repo
+   (../MediaIngredientMech/UNIFIED_INGREDIENT_MAPPING.tsv) on every run via
+   ``sync_culturebotai_reviewed``, on the same source-of-truth contract as the
+   SSSOM below.
 8. mappings/ingredient_mappings.sssom.tsv - MediaIngredientMech SSSOM         (priority=11)
    Auto-synced from the MediaIngredientMech sibling repo
    (../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv) on every run
@@ -57,6 +61,7 @@ Output:
       entity-centric view in memory by grouping rows on ``object_id``.
 """
 
+import csv
 import hashlib
 import json
 import re
@@ -72,6 +77,11 @@ import pandas as pd
 # ingredient SSSOM mapping set and is synced into ``mappings/`` on every run.
 _MIM_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "mappings" / "ingredient_mappings.sssom.tsv"
 _MIM_VENDORED_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
+# MIM publishes the unified ingredient mapping at the repo root. kg-microbe's
+# vendored copy keeps its historical name (`culturebotai_reviewed_ingredients`)
+# and carries one extra column (`synonyms`) that the loader ignores.
+_CBAI_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "UNIFIED_INGREDIENT_MAPPING.tsv"
+_CBAI_VENDORED_RELPATH = Path("mappings") / "culturebotai_reviewed_ingredients.tsv"
 
 
 def _read_sssom_records(filepath: Path) -> dict:
@@ -205,15 +215,19 @@ def _file_sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def sync_mim_sssom(base_dir: Path) -> Path:
+def _sync_vendored_from_sibling(
+    base_dir: Path,
+    sibling_relpath: Path,
+    vendored_relpath: Path,
+    label: str,
+) -> Path:
     """
-    Sync the vendored MIM SSSOM mapping from the sibling repo if present.
+    Refresh a vendored copy of a MediaIngredientMech artifact from the sibling repo.
 
-    The MediaIngredientMech repo is the authoritative source of truth for
-    ingredient → ontology SSSOM mappings and is updated regularly. When
-    checked out as a sibling of kg-microbe, this function refreshes the
-    vendored copy at ``mappings/ingredient_mappings.sssom.tsv`` so the
-    consolidator always ingests the latest curations.
+    The MediaIngredientMech repo is the authoritative source of truth for the
+    ingredient mapping artifacts kg-microbe consumes. When checked out as a
+    sibling of kg-microbe, this refreshes the vendored copy so the consolidator
+    always ingests the latest curations.
 
     Behaviour:
       - sibling present, content differs → overwrite vendored (sibling wins)
@@ -224,34 +238,58 @@ def sync_mim_sssom(base_dir: Path) -> Path:
     Returns the path to use (always the vendored path, which is authoritative
     once synced).
     """
-    vendored = (base_dir / _MIM_VENDORED_RELPATH).resolve()
-    sibling = (base_dir / _MIM_SIBLING_RELPATH).resolve()
+    vendored = (base_dir / vendored_relpath).resolve()
+    sibling = (base_dir / sibling_relpath).resolve()
 
     if sibling.exists():
         if not vendored.exists():
-            print(f"Syncing MIM SSSOM (vendored copy missing): {sibling} → {vendored}")
+            print(f"Syncing {label} (vendored copy missing): {sibling} → {vendored}")
             shutil.copy2(sibling, vendored)
         elif _file_sha256(sibling) != _file_sha256(vendored):
-            print(f"Syncing MIM SSSOM from source of truth: {sibling} → {vendored}")
+            print(f"Syncing {label} from source of truth: {sibling} → {vendored}")
             shutil.copy2(sibling, vendored)
         else:
-            print(f"MIM SSSOM up-to-date with sibling repo ({sibling})")
+            print(f"{label} up-to-date with sibling repo ({sibling})")
         return vendored
 
     if vendored.exists():
         print(
             f"Warning: MediaIngredientMech sibling repo not found at {sibling};\n"
-            f"  using vendored copy {vendored} (may be stale — "
+            f"  using vendored {label} copy {vendored} (may be stale — "
             "clone/pull MediaIngredientMech as a sibling of kg-microbe and re-run)"
         )
         return vendored
 
     raise FileNotFoundError(
-        "MIM SSSOM mapping not found. Expected either:\n"
+        f"{label} not found. Expected either:\n"
         f"  sibling repo: {sibling}\n"
         f"  vendored copy: {vendored}\n"
         "Clone MediaIngredientMech (https://github.com/CultureBotAI/MediaIngredientMech) "
         "as a sibling of kg-microbe, or restore the vendored copy."
+    )
+
+
+def sync_mim_sssom(base_dir: Path) -> Path:
+    """Sync the vendored MIM SSSOM mapping from the sibling repo if present."""
+    return _sync_vendored_from_sibling(
+        base_dir, _MIM_SIBLING_RELPATH, _MIM_VENDORED_RELPATH, "MIM SSSOM"
+    )
+
+
+def sync_culturebotai_reviewed(base_dir: Path) -> Path:
+    """Sync the vendored unified ingredient mapping from the sibling repo.
+
+    MIM's ``UNIFIED_INGREDIENT_MAPPING.tsv`` is the source of truth; kg-microbe
+    vendors it as ``mappings/culturebotai_reviewed_ingredients.tsv``. The
+    sibling carries an extra ``synonyms`` column, which
+    ``load_culturebotai_reviewed`` ignores (it reads columns by name), so the
+    file is copied verbatim rather than projected.
+    """
+    return _sync_vendored_from_sibling(
+        base_dir,
+        _CBAI_SIBLING_RELPATH,
+        _CBAI_VENDORED_RELPATH,
+        "CultureBotAI reviewed ingredients",
     )
 
 
@@ -1673,6 +1711,74 @@ class ChemicalMappingConsolidator:
                 f"{purged_records} record(s) before propagation"
             )
 
+    def apply_retractions(self, filepath: Path):
+        """
+        Drop superseded groundings enumerated in a retraction TSV.
+
+        The consolidator seeds each run from its own prior output
+        (:meth:`load_existing_unified`), which is additive: a corrected
+        upstream grounding *adds* the right object record but cannot *remove*
+        the superseded one, so both persist in the published artifact. This
+        pass retracts explicitly-listed stale object records so a correction
+        upstream also retires the wrong grounding it replaced.
+
+        Conservative by construction. A listed object is dropped only when its
+        sole contributing source is ``culturebotai_reviewed`` (the retracting
+        source); an object that has since gained another source is left in
+        place and reported, because its attribution is no longer unambiguous
+        and a whole-record drop could remove a mapping another source still
+        asserts. Run AFTER all sources load and BEFORE
+        :meth:`propagate_synonyms_via_xrefs`, so a phantom's polluted xrefs
+        (e.g. a wrong CAS shared with the correct record) are gone before
+        propagation can copy its labels onto the correct entity.
+
+        File is tab-separated with a ``stale_object`` column (the CURIE to
+        drop); other columns document provenance. Lines beginning with ``#``
+        are ignored.
+        """
+        if not filepath.exists():
+            print(f"  No retraction list at {filepath}; skipping retraction pass.")
+            return
+
+        stale_objects = []
+        seen = set()
+        with open(filepath) as fh:
+            data_lines = [ln for ln in fh if not ln.lstrip().startswith("#")]
+        reader = csv.DictReader(data_lines, delimiter="\t")
+        for row in reader:
+            oid = (row.get("stale_object") or "").strip()
+            if oid and oid not in seen:
+                seen.add(oid)
+                stale_objects.append(oid)
+
+        dropped = 0
+        absent = 0
+        skipped_mixed = 0
+        for oid in stale_objects:
+            rec = self.chemicals.get(oid)
+            if rec is None:
+                absent += 1
+                continue
+            non_cbr = sorted(
+                s for s in rec.get("sources", set())
+                if not s.startswith("culturebotai_reviewed")
+            )
+            if non_cbr:
+                print(
+                    f"  Retraction SKIP {oid}: also sourced from {non_cbr} — "
+                    "left in place (attribution ambiguous; review manually)"
+                )
+                skipped_mixed += 1
+                continue
+            del self.chemicals[oid]
+            dropped += 1
+
+        print(
+            f"Applied retractions from {filepath.name}: dropped {dropped}, "
+            f"already-absent {absent}, skipped-mixed-source {skipped_mixed} "
+            f"(of {len(stale_objects)} listed stale objects)"
+        )
+
     def propagate_synonyms_via_xrefs(self):
         """
         Pull names across equivalent-CURIE records into each primary's synonyms.
@@ -2219,9 +2325,8 @@ def main():
             print(f"Skipping {name}: {path} not present")
 
     # Authoritative CultureBotAI reviewed mappings (required).
-    consolidator.load_culturebotai_reviewed(
-        base_dir / "mappings" / "culturebotai_reviewed_ingredients.tsv"
-    )
+    # MIM sibling repo is the source of truth — sync the vendored copy first.
+    consolidator.load_culturebotai_reviewed(sync_culturebotai_reviewed(base_dir))
 
     # Authoritative MediaIngredientMech SSSOM mapping set (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
@@ -2275,6 +2380,11 @@ def main():
     # below, and the lexical pollution would already be baked into
     # synonym sets on the wrong entity.
     consolidator.purge_known_bad_xrefs()
+
+    # Retract superseded groundings that additive re-seeding cannot remove on
+    # its own. Runs before propagation so a phantom's polluted xrefs don't
+    # leak its labels onto the correct entity.
+    consolidator.apply_retractions(base_dir / "mappings" / "kgm_retracted_groundings.tsv")
 
     # Propagate names across equivalent-CURIE records via xrefs so losing
     # candidates' labels end up on the primary node as synonyms.

@@ -59,6 +59,8 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
+from dotenv import load_dotenv
+
 from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     EXACT_MATCH,
@@ -220,15 +222,14 @@ class LPSNAPITransform(Transform):
 
         Lazy imports the ``lpsn`` PyPI package so a fresh checkout that
         never runs this transform never needs the package installed.
-        """
-        try:
-            from dotenv import load_dotenv
 
-            load_dotenv()
-        except ImportError:
-            # python-dotenv is already a project dep; the ImportError
-            # branch is defensive against unusual test environments.
-            pass
+        ``load_dotenv`` is imported at module level (not lazily) so tests
+        can neutralise it via ``monkeypatch.setattr(api_mod, "load_dotenv",
+        ...)`` — a function-local ``from dotenv import load_dotenv`` would
+        bypass that patch and let a real repo-root ``.env`` satisfy the
+        credential check under test.
+        """
+        load_dotenv()
 
         user = os.environ.get("LPSN_USERNAME")
         pw = os.environ.get("LPSN_PASSWORD")
@@ -280,10 +281,14 @@ class LPSNAPITransform(Transform):
                 # fall through to re-fetch
 
         try:
-            # The lpsn client returns an iterable of records. The wrapper
-            # for retrieve/search varies slightly across package versions;
-            # we accept either a single-record dict OR a list-of-dicts.
-            client.search(query={"id": record_no})
+            # The lpsn client is search-then-retrieve. The 1.0.0 package
+            # exposes a dedicated ``id=`` fast path on ``search(**params)``
+            # (``search(id="1002")``) that primes the result set directly;
+            # passing ``query=`` instead routes into advanced_search and
+            # 400s with "unexpected parameter -> query". ``retrieve()`` then
+            # yields the record(s). We accept either a single-record dict OR
+            # a list-of-dicts to stay tolerant of minor version drift.
+            client.search(id=record_no)
             records = list(client.retrieve())
         except Exception as e:  # noqa: BLE001 — LPSN raises varied exceptions
             self._stats["errors"] += 1

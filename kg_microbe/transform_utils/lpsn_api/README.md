@@ -38,12 +38,9 @@ in LPSN's authenticated JSON API (per-record):
 
 2. **Register a free LPSN account** at <https://lpsn.dsmz.de/register>.
 
-3. **Install the `lpsn` Python package** (not in poetry deps by
-   default; add manually only when you're ready to run this transform):
-
-   ```bash
-   poetry add lpsn
-   ```
+3. **Install dependencies.** The `lpsn` Python client is now a project
+   dependency (`lpsn = "^1.0.0"` in `pyproject.toml`), so a normal
+   `poetry install` provides it — no manual `poetry add` needed.
 
 4. **Add credentials to `.env` at the repo root** (same pattern the
    BacDive transform uses):
@@ -81,9 +78,3 @@ already-fetched records.
   `poetry add lpsn`.
 - Any per-record fetch error → counted, logged, and the run continues.
   Re-run to pick up whatever's left.
-
-## Licensing note
-
-LPSN data (both GSS CSV and JSON API responses) is CC BY-SA 4.0. This
-transform stays code-only — its outputs are not currently ingested by
-`merge.yaml` — until the licensing decision on issue #484 is made.

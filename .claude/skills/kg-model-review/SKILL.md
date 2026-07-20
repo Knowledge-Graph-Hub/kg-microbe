@@ -22,9 +22,13 @@ When this skill is invoked, run `kg_model_review.py` with the specified scope an
 
 1. **Identify scope** from user args (default: all transforms + merged)
 2. **Run the review script**: `poetry run python .claude/skills/kg-model-review/kg_model_review.py [args]`
+   - For a **merged-KG review**, add `--kgxval` to also run the external
+     [KGXVal](https://github.com/monarch-initiative/kgxval) Biolink domain/range
+     validator (see the KGXVal integration section below). Include it whenever
+     reviewing a merge / preparing a release; it complements the built-in checks.
 3. **Report findings** grouped by:
    - Transform name
-   - Check category (KGX / Biolink / METPO / Prefix)
+   - Check category (KGX / Biolink / METPO / Prefix / KGXVal)
    - Severity (ERROR / WARNING / INFO)
 4. **Highlight** any systematic issues that suggest a transform-level fix is needed
 
@@ -189,6 +193,11 @@ This section is what you hand to the upstream curation repos
 /kg-model-review --merged --mappings --format md
 ```
 
+### Merged KG plus external KGXVal biolink validation
+```
+/kg-model-review --merged --kgxval --format md
+```
+
 ### Verbose output with example violations
 ```
 /kg-model-review --transform bacdive --verbose
@@ -213,6 +222,58 @@ This section is what you hand to the upstream curation repos
   JSON-LD CURIE context). Off by default because it surfaces deviations we
   accept by design (e.g. KG-Microbe prefixes not in biolink's JSON-LD context,
   edges without `id` column). Use before a release to see the full gap list.
+- `--kgxval` — additionally run the external
+  [monarch-initiative/kgxval](https://github.com/monarch-initiative/kgxval)
+  Biolink validator on the merged KG (requires `--merged`). Appends a "KGXVal
+  biolink validation" section to the report. See below.
+
+## KGXVal integration (external Biolink domain/range validator)
+
+[KGXVal](https://github.com/monarch-initiative/kgxval) is Monarch's KGX→Biolink
+validator. It uses BMT to check, for every unique **(subject-category,
+object-category, predicate)** signature in the graph, that:
+
+- **BAD BIOLINK** — the predicate (and every edge category) is a real Biolink
+  element;
+- **BAD SUBJECT** — the subject's categories fall within the predicate's Biolink
+  **domain** (`get_descendants(domain)`);
+- **BAD OBJECT** — the object's categories fall within the predicate's Biolink
+  **range**.
+
+This is an authoritative, BMT-computed complement to this skill's own
+hand-curated `DomainRange` check — it derives the legal subject/object classes
+straight from the published Biolink model rather than a maintained allowlist.
+
+**Prerequisites.** KGXVal targets **Python ≥3.13** and is **not** a kg-microbe
+dependency, so it runs in an isolated [`uv`](https://docs.astral.sh/uv/)
+environment. `--kgxval` shells out to
+`uv run --no-project --python 3.13 --with 'kgxval @ git+https://github.com/monarch-initiative/kgxval'`
+(`--no-project` so uv ignores kg-microbe's poetry `pyproject.toml`).
+If `uv` is missing the section is skipped; if the run fails (offline, bad
+tarball, tool error) it degrades to a short "failed/skipped" note — either way
+the main review still completes and never raises. Set `KGXVAL_SOURCE` to a
+local checkout
+(e.g. `kgxval @ file:///abs/path/to/kgxval`) for pinned/offline runs.
+
+**How it's wired.** `kgxval_validate.py` (in this skill dir) is the driver.
+KGXVal's `Ingest` reads TSV natively, but its `TSVDictGen` does **not** split
+KG-Microbe's pipe-delimited `category` column, and the `ingest_summary` CLI
+ships with the biolink sub/obj check disabled. So the driver:
+1. extracts `merged-kg_{nodes,edges}.tsv` from `data/merged/merged-kg.tar.gz`;
+2. builds the node→category map itself — splitting on `|` and keeping only the
+   `biolink:` components (so `METPO:1001000|biolink:Procedure` and METPO-only
+   nodes don't create phantom errors);
+3. calls KGXVal's own `findSubObjErrorsForIngest`;
+4. writes an error CSV that this skill summarizes.
+
+**Reading the output.** `BAD BIOLINK` is split into **METPO-native predicates**
+(`METPO:2000xxx` — KG-Microbe emits these intentionally and maps them to biolink
+in `metatraits.py`; expected, not a defect) vs **other unknown predicates**
+(actionable). `BAD SUBJECT` / `BAD OBJECT` list the predicate and the offending
+actual categories; `_(no biolink category)_` means the endpoint node carries no
+`biolink:` category at all. Expect a large METPO-native `BAD BIOLINK` count on
+KG-Microbe by design — focus on the non-METPO predicates and the domain/range
+table.
 
 ## Output Format
 

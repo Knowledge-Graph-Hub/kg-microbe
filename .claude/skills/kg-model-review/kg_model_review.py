@@ -14,9 +14,13 @@ import csv
 import gzip
 import io
 import json
+import os
 import re
+import shutil
+import subprocess
 import sys
 import tarfile
+import tempfile
 import yaml
 from collections import defaultdict
 from datetime import date, datetime
@@ -1529,6 +1533,128 @@ def run_kgx_strict(path: Path, kind: str, max_rows: int) -> list:
     return findings
 
 
+# Default source spec for the external kgxval tool. Overridable via the
+# KGXVAL_SOURCE env var to a local checkout (path or `name @ file://…`) for
+# offline / pinned runs.
+KGXVAL_DEFAULT_SOURCE = "kgxval @ git+https://github.com/monarch-initiative/kgxval"
+
+
+def _extract_tar_member(tar_path: Path, member_name: str, dest: Path) -> bool:
+    """Extract a single member (root or nested under one top dir) to dest. True on success."""
+    with tarfile.open(tar_path, "r:gz") as tf:
+        member = None
+        try:
+            member = tf.getmember(member_name)
+        except KeyError:
+            for m in tf.getmembers():
+                if m.name.endswith("/" + member_name) or m.name == member_name:
+                    member = m
+                    break
+        if member is None:
+            return False
+        src = tf.extractfile(member)
+        if src is None:
+            return False
+        with src, open(dest, "wb") as fdst:
+            shutil.copyfileobj(src, fdst)
+    return True
+
+
+def _summarize_kgxval_csv(out_csv: Path) -> str:
+    """Render kgxval's error CSV as a contextualized markdown section.
+
+    Splits BAD BIOLINK into METPO-native predicates (KG-Microbe emits these
+    intentionally and maps them to biolink downstream — expected) vs genuinely
+    unknown predicates (actionable). Surfaces the top BAD SUBJECT / BAD OBJECT
+    domain/range violations, which are the real modeling signal.
+    """
+    by_type: dict = defaultdict(int)
+    bad_biolink_metpo: set = set()
+    bad_biolink_other: set = set()
+    domain_range: dict = defaultdict(int)  # (predicate, error, actual_cats) -> count
+    with open(out_csv, newline="") as fh:
+        for row in csv.DictReader(fh):
+            err = row.get("ERROR", "")
+            pred = row.get("PREDICATE", "")
+            by_type[err] += 1
+            if err == "BAD BIOLINK":
+                (bad_biolink_metpo if pred.startswith("METPO:") else bad_biolink_other).add(pred)
+            elif err in ("BAD SUBJECT", "BAD OBJECT"):
+                domain_range[(pred, err, row.get("ACTUAL_CATEGORIES", ""))] += 1
+
+    lines = ["## KGXVal biolink validation",
+             "",
+             "_External check: [monarch-initiative/kgxval](https://github.com/monarch-initiative/kgxval) "
+             "validates every unique (subject-category, object-category, predicate) signature against "
+             "BMT's Biolink domain/range descendants._",
+             "",
+             "| Error type | distinct signatures |",
+             "|---|---:|"]
+    for etype in ("BAD BIOLINK", "BAD SUBJECT", "BAD OBJECT"):
+        lines.append(f"| {etype} | {by_type.get(etype, 0)} |")
+    lines.append("")
+    lines.append(f"**BAD BIOLINK predicates:** {len(bad_biolink_metpo)} METPO-native "
+                 "(expected — KG-Microbe maps these to biolink downstream), "
+                 f"{len(bad_biolink_other)} other.")
+    if bad_biolink_other:
+        lines.append("")
+        lines.append("Non-METPO unknown predicates (actionable):")
+        for p in sorted(bad_biolink_other)[:25]:
+            lines.append(f"- `{p}`")
+    if domain_range:
+        lines.append("")
+        lines.append("Top domain/range violations (predicate → offending actual categories):")
+        lines.append("")
+        lines.append("| predicate | error | actual categories | count |")
+        lines.append("|---|---|---|---:|")
+        for (pred, err, actual), cnt in sorted(domain_range.items(), key=lambda kv: -kv[1])[:20]:
+            actual_disp = actual if actual else "_(no biolink category)_"
+            lines.append(f"| `{pred}` | {err} | {actual_disp} | {cnt} |")
+    return "\n".join(lines)
+
+
+def run_kgxval_biolink_validation(merged_dir: Path) -> "str | None":
+    """Run kgxval's biolink validation on the merged KG in an isolated uv env.
+
+    kgxval requires Python >=3.13 and is not a kg-microbe dependency, so it runs
+    via ``uv run --with``. Returns a markdown section for the report, or a short
+    skipped/failed note (never raises) so the main review always completes.
+    """
+    tar_path = merged_dir / "merged-kg.tar.gz"
+    if not tar_path.exists():
+        print(f"  [kgxval] {tar_path} not found; skipping", file=sys.stderr)
+        return "## KGXVal biolink validation\n\n_Skipped: merged-kg.tar.gz not found._"
+    if shutil.which("uv") is None:
+        print("  [kgxval] `uv` not on PATH; skipping (see https://docs.astral.sh/uv/)", file=sys.stderr)
+        return "## KGXVal biolink validation\n\n_Skipped: `uv` not installed (needed to run the Python≥3.13 tool)._"
+
+    driver = Path(__file__).parent / "kgxval_validate.py"
+    source = os.environ.get("KGXVAL_SOURCE", KGXVAL_DEFAULT_SOURCE)
+    with tempfile.TemporaryDirectory() as td:
+        tdp = Path(td)
+        nodes_p, edges_p, out_csv = tdp / "nodes.tsv", tdp / "edges.tsv", tdp / "kgxval_errors.csv"
+        for member, dest in (("merged-kg_nodes.tsv", nodes_p), ("merged-kg_edges.tsv", edges_p)):
+            if not _extract_tar_member(tar_path, member, dest):
+                print(f"  [kgxval] {member} not in tarball; skipping", file=sys.stderr)
+                return f"## KGXVal biolink validation\n\n_Skipped: {member} not found in tarball._"
+        # --no-project: ignore kg-microbe's poetry pyproject.toml (no [project]
+        # table) so uv builds a clean ephemeral env for the py>=3.13 tool.
+        cmd = ["uv", "run", "--no-project", "--python", "3.13", "--with", source,
+               "python", str(driver), str(nodes_p), str(edges_p), str(out_csv)]
+        print("  [kgxval] running (first run compiles the env; may take a few min)...", file=sys.stderr)
+        try:
+            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=7200)
+        except subprocess.TimeoutExpired:
+            return "## KGXVal biolink validation\n\n_Skipped: timed out after 2h._"
+        if proc.stdout:
+            print("  [kgxval] " + proc.stdout.strip().replace("\n", "\n  [kgxval] "), file=sys.stderr)
+        if proc.returncode != 0:
+            print(proc.stderr[-2000:], file=sys.stderr)
+            return (f"## KGXVal biolink validation\n\n_Failed (exit {proc.returncode}). "
+                    "Last stderr:_\n\n```\n" + proc.stderr[-1500:] + "\n```")
+        return _summarize_kgxval_csv(out_csv)
+
+
 def main():
     parser = argparse.ArgumentParser(description="KG-Microbe knowledge modeling review")
     parser.add_argument("--transform", help="Review specific transform (default: all)")
@@ -1548,7 +1674,16 @@ def main():
                         help="Run ONLY the mappings review (skip transform/merged review).")
     parser.add_argument("--no-save", action="store_true",
                         help="Skip writing a timestamped artifact under <skill>/reviews/")
+    parser.add_argument("--kgxval", action="store_true",
+                        help="Additionally run monarch-initiative/kgxval biolink domain/range "
+                             "validation on the merged KG (requires --merged, `uv`, and network "
+                             "for the Python>=3.13 tool). Appends a KGXVal section to the report.")
     args = parser.parse_args()
+
+    if args.kgxval and not args.merged:
+        print("  Error: --kgxval requires --merged (it validates the merged KG tarball).",
+              file=sys.stderr)
+        sys.exit(2)
 
     max_rows = args.max_rows  # 0 means unlimited (iter_tsv handles 0 as no limit)
 
@@ -1635,7 +1770,20 @@ def main():
         if args.format in ("md", "text"):
             rendered += "\n\n" + mappings_result["curation_report"]
 
+    # Append the external KGXVal biolink validation section when requested.
+    # The section is markdown; it appends to md/text reports. For json output
+    # it is saved as a sibling .md artifact and its path is noted on stderr.
+    kgxval_md = None
+    if args.kgxval:
+        print("  Reviewing merged KG with kgxval (external Biolink validator)...", file=sys.stderr)
+        kgxval_md = run_kgxval_biolink_validation(MERGED_DIR)
+        if kgxval_md and args.format in ("md", "text"):
+            rendered += "\n\n" + kgxval_md
+
     print(rendered)
+    if kgxval_md and args.format == "json" and not args.no_save:
+        kgxval_path = _save_review_artifact(kgxval_md, "merged-kgxval", ext="md")
+        print(f"  Saved kgxval section to {kgxval_path}", file=sys.stderr)
 
     if not args.no_save:
         if args.mappings_only:

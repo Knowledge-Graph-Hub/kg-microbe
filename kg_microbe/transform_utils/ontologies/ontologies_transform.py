@@ -97,6 +97,21 @@ ONTOLOGIES_MAP = {
 }
 
 
+# Ontology metamodel axioms the KGX OBO-JSON loader emits verbatim: a
+# relation's inverse (owl:inverseOf), a property hierarchy (rdfs:subPropertyOf),
+# and rdf:type assertions. These are property-level / typing statements with raw
+# RDF/OWL predicate CURIEs — not biolink entity relationships — so they clutter
+# the merged KG (kgxval flags them as non-biolink) without carrying queryable
+# entity data. Dropped from the edge output; nodes are left untouched.
+METAMODEL_EDGE_PREDICATES = frozenset(
+    {
+        "rdfs:subPropertyOf",
+        "owl:inverseOf",
+        "rdf:type",
+    }
+)
+
+
 class OntologiesTransform(Transform):
 
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
@@ -331,6 +346,31 @@ class OntologiesTransform(Transform):
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f)
 
+    def _drop_metamodel_edges(self, edges_file_path: Path):
+        """
+        Drop ontology metamodel axiom edges from an ontology edge file.
+
+        Removes rows whose predicate is in ``METAMODEL_EDGE_PREDICATES``
+        (``rdfs:subPropertyOf`` / ``owl:inverseOf`` / ``rdf:type``) — the
+        property-level / typing statements the KGX OBO-JSON loader passes
+        through verbatim. Nodes are left in place; only these non-biolink
+        metamodel edges are removed. No-op when the file or column is absent.
+        """
+        if not edges_file_path.exists():
+            return
+        df = pd.read_csv(edges_file_path, sep="\t")
+        if PREDICATE_COLUMN not in df.columns:
+            return
+        before = len(df)
+        df = df[~df[PREDICATE_COLUMN].isin(METAMODEL_EDGE_PREDICATES)]
+        dropped = before - len(df)
+        if dropped:
+            print(
+                f"  Dropped {dropped} ontology metamodel edge(s) "
+                f"(rdfs:subPropertyOf/owl:inverseOf/rdf:type) from {edges_file_path.name}"
+            )
+            df.to_csv(edges_file_path, sep="\t", index=False)
+
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
         """
         Add knowledge_level and agent_type columns to ontology edge files.
@@ -474,6 +514,11 @@ class OntologiesTransform(Transform):
         """Post process specific nodes and edges files."""
         nodes_file = self.output_dir / f"{name}_nodes.tsv"
         edges_file = self.output_dir / f"{name}_edges.tsv"
+
+        # Drop ontology metamodel axiom edges (rdfs:subPropertyOf / owl:inverseOf
+        # / rdf:type) before adding metadata, so the KG carries only biolink
+        # entity relationships.
+        self._drop_metamodel_edges(edges_file)
 
         # Add knowledge_level and agent_type columns to edge files
         self._add_kgx_metadata_to_edges(edges_file)

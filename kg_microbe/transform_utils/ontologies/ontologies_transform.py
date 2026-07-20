@@ -346,40 +346,42 @@ class OntologiesTransform(Transform):
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f)
 
-    def _drop_metamodel_edges(self, edges_file_path: Path):
+    def _drop_metamodel_edges(self, df: pd.DataFrame) -> tuple:
         """
-        Drop ontology metamodel axiom edges from an ontology edge file.
+        Return ``(filtered_df, dropped_count)`` with ontology metamodel edges removed.
 
-        Removes rows whose predicate is in ``METAMODEL_EDGE_PREDICATES``
+        Drops rows whose predicate is in ``METAMODEL_EDGE_PREDICATES``
         (``rdfs:subPropertyOf`` / ``owl:inverseOf`` / ``rdf:type``) — the
         property-level / typing statements the KGX OBO-JSON loader passes
-        through verbatim. Nodes are left in place; only these non-biolink
-        metamodel edges are removed. No-op when the file or column is absent.
+        through verbatim. Pure DataFrame transform (no I/O) so it can share the
+        single read/write in :meth:`_add_kgx_metadata_to_edges`; returns the
+        frame unchanged when the predicate column is absent.
         """
-        if not edges_file_path.exists():
-            return
-        df = pd.read_csv(edges_file_path, sep="\t")
         if PREDICATE_COLUMN not in df.columns:
-            return
+            return df, 0
         before = len(df)
         df = df[~df[PREDICATE_COLUMN].isin(METAMODEL_EDGE_PREDICATES)]
-        dropped = before - len(df)
+        return df, before - len(df)
+
+    def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
+        """
+        Drop metamodel edges and add knowledge_level/agent_type to an edge file.
+
+        Single read/filter/write pass over the (potentially very large — chebi,
+        ncbitaxon) edge file: removes ontology metamodel axiom edges
+        (:meth:`_drop_metamodel_edges`), then stamps every remaining edge with
+        knowledge_assertion + manual_agent since ontologies are manually curated
+        by domain expert curators (GO, ChEBI, ENVO, …).
+        """
+        df = pd.read_csv(edges_file_path, sep="\t", low_memory=False)
+
+        # Drop ontology metamodel axiom edges (non-biolink property/typing rows).
+        df, dropped = self._drop_metamodel_edges(df)
         if dropped:
             print(
                 f"  Dropped {dropped} ontology metamodel edge(s) "
                 f"(rdfs:subPropertyOf/owl:inverseOf/rdf:type) from {edges_file_path.name}"
             )
-            df.to_csv(edges_file_path, sep="\t", index=False)
-
-    def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
-        """
-        Add knowledge_level and agent_type columns to ontology edge files.
-
-        All ontology edges use knowledge_assertion + manual_agent since ontologies
-        are manually curated by domain expert curators (GO, ChEBI, ENVO, etc.).
-        The relationships represent definitional assertions made by experts.
-        """
-        df = pd.read_csv(edges_file_path, sep="\t")
 
         # Add columns if they don't exist
         if KNOWLEDGE_LEVEL_COLUMN not in df.columns:
@@ -516,11 +518,7 @@ class OntologiesTransform(Transform):
         edges_file = self.output_dir / f"{name}_edges.tsv"
 
         # Drop ontology metamodel axiom edges (rdfs:subPropertyOf / owl:inverseOf
-        # / rdf:type) before adding metadata, so the KG carries only biolink
-        # entity relationships.
-        self._drop_metamodel_edges(edges_file)
-
-        # Add knowledge_level and agent_type columns to edge files
+        # / rdf:type) and stamp knowledge_level/agent_type — single read/write.
         self._add_kgx_metadata_to_edges(edges_file)
 
         # Fix node categories: specialized handlers for go/chebi/uberon/ncbitaxon,

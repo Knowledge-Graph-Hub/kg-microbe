@@ -26,7 +26,7 @@ class MetamodelEdgeFilterTest(TestCase):
 
     def setUp(self):
         """Instantiate the transform without base __init__ side effects."""
-        # _drop_metamodel_edges uses no instance state; bypass Transform.__init__
+        # The filter methods use no instance state; bypass Transform.__init__
         # (which sets up source dirs) to keep the test isolated.
         self.transform = OntologiesTransform.__new__(OntologiesTransform)
 
@@ -36,34 +36,48 @@ class MetamodelEdgeFilterTest(TestCase):
         pd.DataFrame(rows, columns=_HEADER).to_csv(tmp, sep="\t", index=False)
         return tmp
 
-    def test_drops_metamodel_keeps_entity_edges(self):
-        """The three metamodel predicates are removed; entity edges survive."""
+    # ---- DataFrame-level helper ----
+
+    def test_drop_helper_removes_metamodel_keeps_entity(self):
+        """_drop_metamodel_edges returns (filtered_df, count); entity edges survive."""
+        df = pd.DataFrame(_ROWS, columns=_HEADER)
+        out, dropped = self.transform._drop_metamodel_edges(df)
+        self.assertEqual(dropped, 3)
+        self.assertEqual(set(out["predicate"]), {"biolink:subclass_of", "biolink:related_to"})
+        self.assertEqual(len(out), 2)
+
+    def test_drop_helper_noop_when_none(self):
+        """A frame with only entity edges is returned with a zero drop count."""
+        df = pd.DataFrame([r for r in _ROWS if r[1].startswith("biolink:")], columns=_HEADER)
+        out, dropped = self.transform._drop_metamodel_edges(df)
+        self.assertEqual(dropped, 0)
+        self.assertEqual(len(out), 2)
+
+    def test_drop_helper_missing_predicate_column(self):
+        """No predicate column → frame returned unchanged, zero dropped."""
+        df = pd.DataFrame([["a", "b"]], columns=["subject", "object"])
+        out, dropped = self.transform._drop_metamodel_edges(df)
+        self.assertEqual(dropped, 0)
+        self.assertEqual(len(out), 1)
+
+    # ---- Integration through the single read/write path ----
+
+    def test_metadata_pass_drops_and_preserves_columns(self):
+        """_add_kgx_metadata_to_edges drops metamodel rows, adds metadata, keeps other cols."""
         path = self._write_edges(_ROWS)
-        self.transform._drop_metamodel_edges(path)
+        self.transform._add_kgx_metadata_to_edges(path)
         df = pd.read_csv(path, sep="\t")
-        preds = set(df["predicate"])
-        self.assertNotIn("rdfs:subPropertyOf", preds)
-        self.assertNotIn("owl:inverseOf", preds)
-        self.assertNotIn("rdf:type", preds)
-        self.assertEqual(preds, {"biolink:subclass_of", "biolink:related_to"})
+        # metamodel predicates gone
+        self.assertEqual(set(df["predicate"]), {"biolink:subclass_of", "biolink:related_to"})
         self.assertEqual(len(df), 2)
-
-    def test_no_metamodel_edges_is_a_noop(self):
-        """An edge file with only entity edges is left unchanged."""
-        entity_only = [r for r in _ROWS if r[1].startswith("biolink:")]
-        path = self._write_edges(entity_only)
-        before = path.read_text()
-        self.transform._drop_metamodel_edges(path)
-        self.assertEqual(path.read_text(), before)
-
-    def test_idempotent(self):
-        """Running the filter twice does not raise and leaves entity edges intact."""
-        path = self._write_edges(_ROWS)
-        self.transform._drop_metamodel_edges(path)
-        self.transform._drop_metamodel_edges(path)
-        df = pd.read_csv(path, sep="\t")
-        self.assertEqual(len(df), 2)
-
-    def test_missing_file_is_a_noop(self):
-        """A non-existent edge file is a silent no-op (no raise)."""
-        self.transform._drop_metamodel_edges(Path(tempfile.mkdtemp()) / "does_not_exist.tsv")
+        # kgx metadata columns added
+        self.assertIn("knowledge_level", df.columns)
+        self.assertIn("agent_type", df.columns)
+        self.assertTrue((df["knowledge_level"] == "knowledge_assertion").all())
+        self.assertTrue((df["agent_type"] == "manual_agent").all())
+        # non-predicate columns survive intact on the kept rows (keyed by predicate,
+        # since both surviving rows share the same subject)
+        by_pred = df.set_index("predicate")
+        self.assertEqual(by_pred.loc["biolink:subclass_of", "relation"], "rdfs:subClassOf")
+        self.assertEqual(by_pred.loc["biolink:related_to", "relation"], "RO:0002131")
+        self.assertEqual(by_pred.loc["biolink:subclass_of", "primary_knowledge_source"], "envo.json")

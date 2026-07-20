@@ -67,12 +67,15 @@ def api_records():
             "is_legitimate": True,
             "nomenclatural_status": "correct name",
             "lpsn_taxonomic_status": "correct name",
-            # Two type-strain 16S records with INSDC accessions. Exercises
-            # both dict-key alternatives so the schema tolerance is verified.
+            # Real LPSN molecules[] schema: one dict per registered 16S
+            # sequence, keyed kind/database/identifier. Includes a dup
+            # (must be dedup'd) and a non-INSDC database row (must be
+            # skipped so only valid INSDC: CURIEs are emitted).
             "molecules": [
-                {"insdc_accession": "M87049", "gene": "16S rRNA"},
-                {"accession_number": "AB030918", "gene": "16S rRNA"},
-                {"insdc_accession": "M87049"},  # dup; must be dedup'd
+                {"kind": "16S rRNA gene", "database": "insdc-nucleotide", "identifier": "M87049"},
+                {"kind": "16S rRNA gene", "database": "insdc-nucleotide", "identifier": "AB030918"},
+                {"kind": "16S rRNA gene", "database": "insdc-nucleotide", "identifier": "M87049"},
+                {"kind": "16S rRNA gene", "database": "silva", "identifier": "SILVA123"},
             ],
         },
         "1005": {

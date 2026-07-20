@@ -94,10 +94,16 @@ DOI_PREFIX = "doi:"
 PMID_PREFIX = "PMID:"
 INSDC_PREFIX = "INSDC:"
 
-# LPSN's ``molecules`` array uses one of these keys to store the
-# GenBank / EMBL / DDBJ accession per 16S rRNA record. The schema
-# hasn't been published as a formal spec, so we try each in order.
-INSDC_ACCESSION_KEYS = ("insdc_accession", "accession_number", "accession")
+# LPSN's ``molecules`` array holds one dict per registered sequence,
+# shaped ``{"kind": "16S rRNA gene", "database": "insdc-nucleotide",
+# "identifier": "<accession>"}`` (verified across the full 34,301-record
+# API pull: every molecule uses exactly these three keys, database is
+# always ``insdc-nucleotide``). We take ``identifier`` from every molecule
+# whose ``database`` names an INSDC nucleotide archive (GenBank / EMBL /
+# DDBJ all share the INSDC accession space).
+MOLECULE_DATABASE_KEY = "database"
+MOLECULE_IDENTIFIER_KEY = "identifier"
+INSDC_DATABASE_PREFIX = "insdc"
 
 # Cache directory relative to the transform's ``input_base_dir``
 # (typically ``data/raw/``).
@@ -364,10 +370,12 @@ class LPSNAPITransform(Transform):
         """
         Return the deduplicated INSDC accessions on ``record[molecules]``.
 
-        LPSN's molecules[] is an array of dicts with per-sequence metadata.
-        The exact key holding the accession isn't published in a formal
-        schema, so we try INSDC_ACCESSION_KEYS in order and take the
-        first non-empty match on each molecule.
+        LPSN's molecules[] is an array of dicts, each shaped
+        ``{"kind": "16S rRNA gene", "database": "insdc-nucleotide",
+        "identifier": "<accession>"}``. We take ``identifier`` from every
+        molecule whose ``database`` names an INSDC nucleotide archive
+        (GenBank / EMBL / DDBJ share the INSDC accession space), skipping
+        any non-INSDC database so the emitted CURIE stays a valid INSDC ref.
         """
         molecules = record.get(JSON_MOLECULES) or []
         if not isinstance(molecules, list):
@@ -377,16 +385,14 @@ class LPSNAPITransform(Transform):
         for mol in molecules:
             if not isinstance(mol, dict):
                 continue
-            for key in INSDC_ACCESSION_KEYS:
-                raw = mol.get(key)
-                if not raw:
-                    continue
-                acc = str(raw).strip()
-                if not acc or acc in seen:
-                    break
-                seen.add(acc)
-                out.append(acc)
-                break
+            database = str(mol.get(MOLECULE_DATABASE_KEY) or "").strip().lower()
+            if not database.startswith(INSDC_DATABASE_PREFIX):
+                continue
+            acc = str(mol.get(MOLECULE_IDENTIFIER_KEY) or "").strip()
+            if not acc or acc in seen:
+                continue
+            seen.add(acc)
+            out.append(acc)
         return out
 
     def _stub_sequence_node(self, curie: str) -> list:

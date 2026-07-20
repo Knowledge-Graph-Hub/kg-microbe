@@ -21,6 +21,7 @@ _ROWS = [
 
 
 class MetamodelEdgeFilterTest(TestCase):
+
     """Test that rdfs:subPropertyOf / owl:inverseOf / rdf:type edges are dropped."""
 
     def setUp(self):

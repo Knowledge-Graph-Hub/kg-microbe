@@ -112,3 +112,50 @@ def test_missing_retraction_file_is_a_noop(consolidator, tmp_path):
     """A missing retraction file skips the pass without dropping anything."""
     consolidator.apply_retractions(tmp_path / "does_not_exist.tsv")
     assert "CHEBI:15743" in consolidator.chemicals
+
+
+def test_idempotent_across_runs(consolidator, tmp_path):
+    """Re-running the pass is a no-op on the already-dropped object (no raise)."""
+    rf = tmp_path / "retract.tsv"
+    _write_retraction_tsv(rf)
+    consolidator.apply_retractions(rf)
+    assert "CHEBI:15743" not in consolidator.chemicals
+    # Second run: the object is already absent — must not raise and must not
+    # resurrect or otherwise disturb the graph.
+    consolidator.apply_retractions(rf)
+    assert "CHEBI:15743" not in consolidator.chemicals
+    assert "CHEBI:17201" in consolidator.chemicals
+
+
+def test_curator_qualified_source_is_sole_source(tmp_path):
+    """A ``culturebotai_reviewed[curator=…]`` variant counts as sole-source and drops."""
+    mod = _load_consolidator_module()
+    c = mod.ChemicalMappingConsolidator()
+    c.add_chemical(
+        id="CHEBI:15743",
+        canonical_name="Glycylglycine",
+        source="culturebotai_reviewed[curator=auto_classify]",
+        priority=10,
+    )
+    rf = tmp_path / "retract.tsv"
+    _write_retraction_tsv(rf)
+    c.apply_retractions(rf)
+    assert "CHEBI:15743" not in c.chemicals
+
+
+def test_empty_source_object_is_not_dropped(tmp_path):
+    """An object with no culturebotai_reviewed source (empty/unknown) is left in place."""
+    mod = _load_consolidator_module()
+    c = mod.ChemicalMappingConsolidator()
+    # Seed a record then blank its source set to simulate unknown attribution.
+    c.add_chemical(
+        id="CHEBI:15743",
+        canonical_name="Glycylglycine",
+        source="culturebotai_reviewed",
+        priority=10,
+    )
+    c.chemicals["CHEBI:15743"]["sources"] = set()
+    rf = tmp_path / "retract.tsv"
+    _write_retraction_tsv(rf)
+    c.apply_retractions(rf)
+    assert "CHEBI:15743" in c.chemicals

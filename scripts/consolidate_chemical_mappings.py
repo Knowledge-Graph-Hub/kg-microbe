@@ -1740,7 +1740,16 @@ class ChemicalMappingConsolidator:
             print(f"  No retraction list at {filepath}; skipping retraction pass.")
             return
 
+        def _is_cbr(src: str) -> bool:
+            # A source belongs to the retracting source when it is exactly
+            # ``culturebotai_reviewed`` or its curator-qualified variant
+            # ``culturebotai_reviewed[curator=…]``. A genuinely distinct future
+            # source (e.g. ``culturebotai_reviewed_v2``) is deliberately NOT
+            # matched, so an old list can't retract its records.
+            return src == "culturebotai_reviewed" or src.startswith("culturebotai_reviewed[")
+
         stale_objects = []
+        now_asserted_targets: set = set()
         seen = set()
         with open(filepath) as fh:
             data_lines = [ln for ln in fh if not ln.lstrip().startswith("#")]
@@ -1750,6 +1759,10 @@ class ChemicalMappingConsolidator:
             if oid and oid not in seen:
                 seen.add(oid)
                 stale_objects.append(oid)
+            for tgt in (row.get("now_asserted") or "").split("|"):
+                tgt = tgt.strip()
+                if tgt:
+                    now_asserted_targets.add(tgt)
 
         dropped = 0
         absent = 0
@@ -1759,23 +1772,38 @@ class ChemicalMappingConsolidator:
             if rec is None:
                 absent += 1
                 continue
-            non_cbr = sorted(
-                s for s in rec.get("sources", set())
-                if not s.startswith("culturebotai_reviewed")
-            )
-            if non_cbr:
+            sources = rec.get("sources", set())
+            # Drop only when culturebotai_reviewed is the SOLE source. Skip when
+            # another source also asserts the object (ambiguous) OR when no
+            # culturebotai_reviewed source is present at all (unknown / empty).
+            if any(not _is_cbr(s) for s in sources) or not any(_is_cbr(s) for s in sources):
                 print(
-                    f"  Retraction SKIP {oid}: also sourced from {non_cbr} — "
-                    "left in place (attribution ambiguous; review manually)"
+                    f"  Retraction SKIP {oid}: sources={sorted(sources)} — "
+                    "not sole-source culturebotai_reviewed; left in place"
                 )
                 skipped_mixed += 1
                 continue
             del self.chemicals[oid]
             dropped += 1
 
+        # Non-fatal orphan guard: each row names the grounding that supersedes
+        # the dropped one. If such a target is itself an accepted primary yet
+        # absent after the pass, a retracted name may have no replacement —
+        # surface it. (The committed list is verified orphan-free today, but the
+        # synced upstream inputs evolve, so this catches future drift.)
+        missing_targets = sorted(
+            t for t in now_asserted_targets
+            if is_accepted_primary(t) and t not in self.chemicals
+        )
+        if missing_targets:
+            print(
+                f"  WARNING: {len(missing_targets)} now_asserted target(s) absent after "
+                f"retraction (possible orphaned names): {missing_targets[:10]}"
+            )
+
         print(
             f"Applied retractions from {filepath.name}: dropped {dropped}, "
-            f"already-absent {absent}, skipped-mixed-source {skipped_mixed} "
+            f"already-absent {absent}, skipped-not-sole-source {skipped_mixed} "
             f"(of {len(stale_objects)} listed stale objects)"
         )
 

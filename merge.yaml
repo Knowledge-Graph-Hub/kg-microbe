@@ -184,6 +184,26 @@ merged_graph:
         filename:
           - data/transformed/gtdb/nodes.tsv
           - data/transformed/gtdb/edges.tsv
+    # LPSN nomenclature. `lpsn` is the fast GSS/CSV base layer (taxon
+    # names, ranks, GTDB/NCBITaxon cross-refs); `lpsn_api` is the
+    # authenticated JSON-API enrichment (above-genus taxonomy, basonyms,
+    # publication DOIs/PMIDs, 16S INSDC accessions). The API enrichment
+    # nodes reference lpsn:* records minted by the GSS layer, so both are
+    # merged together.
+    lpsn:
+      name: "LPSN"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/lpsn/nodes.tsv
+          - data/transformed/lpsn/edges.tsv
+    lpsn_api:
+      name: "LPSN API"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/lpsn_api/nodes.tsv
+          - data/transformed/lpsn_api/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

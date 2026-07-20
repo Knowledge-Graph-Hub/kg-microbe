@@ -15,7 +15,7 @@ class _FakeLpsnClient:
     """
     Stand-in for ``lpsn.LpsnClient`` — deterministic and offline.
 
-    The real client is search-then-retrieve: ``search({"id": N})`` sets
+    The real client is search-then-retrieve: ``search(id=N)`` sets
     up a query, ``retrieve()`` yields matching records. The fake stores
     the last-searched id and yields the pre-canned response for it.
     """
@@ -25,9 +25,9 @@ class _FakeLpsnClient:
         self._records = records
         self._current = None
 
-    def search(self, query):
+    def search(self, id=None, **kwargs):  # noqa: A002 — mirrors lpsn's ``search(id=...)`` kwarg
         """Note which record_no to yield on the next ``retrieve()``."""
-        self._current = str(query["id"])
+        self._current = str(id)
 
     def retrieve(self):
         """Yield the record for the last-searched id (empty when unknown)."""
@@ -67,12 +67,15 @@ def api_records():
             "is_legitimate": True,
             "nomenclatural_status": "correct name",
             "lpsn_taxonomic_status": "correct name",
-            # Two type-strain 16S records with INSDC accessions. Exercises
-            # both dict-key alternatives so the schema tolerance is verified.
+            # Real LPSN molecules[] schema: one dict per registered 16S
+            # sequence, keyed kind/database/identifier. Includes a dup
+            # (must be dedup'd) and a non-INSDC database row (must be
+            # skipped so only valid INSDC: CURIEs are emitted).
             "molecules": [
-                {"insdc_accession": "M87049", "gene": "16S rRNA"},
-                {"accession_number": "AB030918", "gene": "16S rRNA"},
-                {"insdc_accession": "M87049"},  # dup; must be dedup'd
+                {"kind": "16S rRNA gene", "database": "insdc-nucleotide", "identifier": "M87049"},
+                {"kind": "16S rRNA gene", "database": "insdc-nucleotide", "identifier": "AB030918"},
+                {"kind": "16S rRNA gene", "database": "insdc-nucleotide", "identifier": "M87049"},
+                {"kind": "16S rRNA gene", "database": "silva", "identifier": "SILVA123"},
             ],
         },
         "1005": {
@@ -113,7 +116,9 @@ def test_species_row_emits_publication_edges(api_transform):
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
     targets = {
-        e["object"] for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
+        e["object"]
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
     }
     assert "doi:10.1099/00207713-19-1-1" in targets
     assert "doi:10.1099/ijsem.0.999999" in targets
@@ -167,7 +172,8 @@ def test_absent_fields_emit_no_edges(api_transform):
     pubs = [
         e
         for e in edges
-        if e["subject"] == f"{LPSN_PREFIX}1005" and (e["object"].startswith("doi:") or e["object"].startswith("PMID:"))
+        if e["subject"] == f"{LPSN_PREFIX}1005"
+        and (e["object"].startswith("doi:") or e["object"].startswith("PMID:"))
     ]
     assert pubs == []
 
@@ -255,7 +261,9 @@ def test_molecules_emit_insdc_close_match_edges(api_transform):
     assert targets == {"INSDC:M87049", "INSDC:AB030918"}
     # Dedup guard: the duplicate M87049 in the fixture must appear
     # exactly once, not twice.
-    m87049 = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["object"] == "INSDC:M87049"]
+    m87049 = [
+        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["object"] == "INSDC:M87049"
+    ]
     assert len(m87049) == 1
 
 
@@ -272,5 +280,9 @@ def test_empty_molecules_emit_no_insdc_edges(api_transform):
     """Record 1005 with molecules=[] emits no INSDC edges (or stub nodes)."""
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
-    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")]
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")
+    ]
     assert hits == []

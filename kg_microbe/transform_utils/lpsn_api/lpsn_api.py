@@ -59,6 +59,8 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Iterator, Optional, Union
 
+from dotenv import load_dotenv
+
 from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     EXACT_MATCH,
@@ -92,10 +94,16 @@ DOI_PREFIX = "doi:"
 PMID_PREFIX = "PMID:"
 INSDC_PREFIX = "INSDC:"
 
-# LPSN's ``molecules`` array uses one of these keys to store the
-# GenBank / EMBL / DDBJ accession per 16S rRNA record. The schema
-# hasn't been published as a formal spec, so we try each in order.
-INSDC_ACCESSION_KEYS = ("insdc_accession", "accession_number", "accession")
+# LPSN's ``molecules`` array holds one dict per registered sequence,
+# shaped ``{"kind": "16S rRNA gene", "database": "insdc-nucleotide",
+# "identifier": "<accession>"}`` (verified across the full 34,301-record
+# API pull: every molecule uses exactly these three keys, database is
+# always ``insdc-nucleotide``). We take ``identifier`` from every molecule
+# whose ``database`` names an INSDC nucleotide archive (GenBank / EMBL /
+# DDBJ all share the INSDC accession space).
+MOLECULE_DATABASE_KEY = "database"
+MOLECULE_IDENTIFIER_KEY = "identifier"
+INSDC_DATABASE_PREFIX = "insdc"
 
 # Cache directory relative to the transform's ``input_base_dir``
 # (typically ``data/raw/``).
@@ -220,15 +228,14 @@ class LPSNAPITransform(Transform):
 
         Lazy imports the ``lpsn`` PyPI package so a fresh checkout that
         never runs this transform never needs the package installed.
-        """
-        try:
-            from dotenv import load_dotenv
 
-            load_dotenv()
-        except ImportError:
-            # python-dotenv is already a project dep; the ImportError
-            # branch is defensive against unusual test environments.
-            pass
+        ``load_dotenv`` is imported at module level (not lazily) so tests
+        can neutralise it via ``monkeypatch.setattr(api_mod, "load_dotenv",
+        ...)`` — a function-local ``from dotenv import load_dotenv`` would
+        bypass that patch and let a real repo-root ``.env`` satisfy the
+        credential check under test.
+        """
+        load_dotenv()
 
         user = os.environ.get("LPSN_USERNAME")
         pw = os.environ.get("LPSN_PASSWORD")
@@ -265,9 +272,10 @@ class LPSNAPITransform(Transform):
         """
         Return the JSON record for ``record_no``, using disk cache when possible.
 
-        On cache miss, calls ``client.retrieve([record_no])``. Errors are
-        printed and counted; a failure on one record never aborts the
-        run so a partial re-fetch resumes on the next call.
+        On cache miss, calls ``client.search(id=record_no)`` then
+        ``client.retrieve()`` (the lpsn 1.0.0 search-then-retrieve flow).
+        Errors are printed and counted; a failure on one record never aborts
+        the run so a partial re-fetch resumes on the next call.
         """
         cache_path = cache_dir / f"{record_no}.json"
         if cache_path.exists():
@@ -280,10 +288,14 @@ class LPSNAPITransform(Transform):
                 # fall through to re-fetch
 
         try:
-            # The lpsn client returns an iterable of records. The wrapper
-            # for retrieve/search varies slightly across package versions;
-            # we accept either a single-record dict OR a list-of-dicts.
-            client.search(query={"id": record_no})
+            # The lpsn client is search-then-retrieve. The 1.0.0 package
+            # exposes a dedicated ``id=`` fast path on ``search(**params)``
+            # (``search(id="1002")``) that primes the result set directly;
+            # passing ``query=`` instead routes into advanced_search and
+            # 400s with "unexpected parameter -> query". ``retrieve()`` then
+            # yields the record(s). We accept either a single-record dict OR
+            # a list-of-dicts to stay tolerant of minor version drift.
+            client.search(id=record_no)
             records = list(client.retrieve())
         except Exception as e:  # noqa: BLE001 — LPSN raises varied exceptions
             self._stats["errors"] += 1
@@ -359,10 +371,12 @@ class LPSNAPITransform(Transform):
         """
         Return the deduplicated INSDC accessions on ``record[molecules]``.
 
-        LPSN's molecules[] is an array of dicts with per-sequence metadata.
-        The exact key holding the accession isn't published in a formal
-        schema, so we try INSDC_ACCESSION_KEYS in order and take the
-        first non-empty match on each molecule.
+        LPSN's molecules[] is an array of dicts, each shaped
+        ``{"kind": "16S rRNA gene", "database": "insdc-nucleotide",
+        "identifier": "<accession>"}``. We take ``identifier`` from every
+        molecule whose ``database`` names an INSDC nucleotide archive
+        (GenBank / EMBL / DDBJ share the INSDC accession space), skipping
+        any non-INSDC database so the emitted CURIE stays a valid INSDC ref.
         """
         molecules = record.get(JSON_MOLECULES) or []
         if not isinstance(molecules, list):
@@ -372,16 +386,14 @@ class LPSNAPITransform(Transform):
         for mol in molecules:
             if not isinstance(mol, dict):
                 continue
-            for key in INSDC_ACCESSION_KEYS:
-                raw = mol.get(key)
-                if not raw:
-                    continue
-                acc = str(raw).strip()
-                if not acc or acc in seen:
-                    break
-                seen.add(acc)
-                out.append(acc)
-                break
+            database = str(mol.get(MOLECULE_DATABASE_KEY) or "").strip().lower()
+            if not database.startswith(INSDC_DATABASE_PREFIX):
+                continue
+            acc = str(mol.get(MOLECULE_IDENTIFIER_KEY) or "").strip()
+            if not acc or acc in seen:
+                continue
+            seen.add(acc)
+            out.append(acc)
         return out
 
     def _stub_sequence_node(self, curie: str) -> list:

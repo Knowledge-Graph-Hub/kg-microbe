@@ -272,9 +272,10 @@ class LPSNAPITransform(Transform):
         """
         Return the JSON record for ``record_no``, using disk cache when possible.
 
-        On cache miss, calls ``client.retrieve([record_no])``. Errors are
-        printed and counted; a failure on one record never aborts the
-        run so a partial re-fetch resumes on the next call.
+        On cache miss, calls ``client.search(id=record_no)`` then
+        ``client.retrieve()`` (the lpsn 1.0.0 search-then-retrieve flow).
+        Errors are printed and counted; a failure on one record never aborts
+        the run so a partial re-fetch resumes on the next call.
         """
         cache_path = cache_dir / f"{record_no}.json"
         if cache_path.exists():

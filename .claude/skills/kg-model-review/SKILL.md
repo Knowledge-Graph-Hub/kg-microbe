@@ -249,8 +249,10 @@ dependency, so it runs in an isolated [`uv`](https://docs.astral.sh/uv/)
 environment. `--kgxval` shells out to
 `uv run --no-project --python 3.13 --with 'kgxval @ git+https://github.com/monarch-initiative/kgxval'`
 (`--no-project` so uv ignores kg-microbe's poetry `pyproject.toml`).
-If `uv` is missing or offline, the section is skipped with a note (the main
-review still completes). Set `KGXVAL_SOURCE` to a local checkout
+If `uv` is missing the section is skipped; if the run fails (offline, bad
+tarball, tool error) it degrades to a short "failed/skipped" note — either way
+the main review still completes and never raises. Set `KGXVAL_SOURCE` to a
+local checkout
 (e.g. `kgxval @ file:///abs/path/to/kgxval`) for pinned/offline runs.
 
 **How it's wired.** `kgxval_validate.py` (in this skill dir) is the driver.

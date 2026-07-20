@@ -42,7 +42,14 @@ from kgxval.dir.Ingest import Ingest
 
 # KG-Microbe merged edges can exceed the default field-size limit on long
 # provenance columns; lift the cap so csv.DictReader never truncates a row.
-csv.field_size_limit(sys.maxsize)
+# sys.maxsize can overflow C long on some platforms — halve until accepted.
+_limit = sys.maxsize
+while True:
+    try:
+        csv.field_size_limit(_limit)
+        break
+    except OverflowError:
+        _limit //= 2
 
 
 def build_node_category_map(nodes_path: Path) -> dict[str, tuple[str, ...]]:
@@ -51,9 +58,12 @@ def build_node_category_map(nodes_path: Path) -> dict[str, tuple[str, ...]]:
 
     KG-Microbe stores ``category`` as a pipe-delimited string that may mix
     biolink and non-biolink (METPO, …) CURIEs. We keep only the ``biolink:``
-    components so kgxval's domain/range checks run against real Biolink classes;
-    a node with no biolink category maps to an empty tuple (skipped by the
-    checks rather than flagged as a phantom error).
+    components so kgxval's domain/range checks run against real Biolink classes.
+    A node with no biolink category maps to an empty tuple; kgxval then reports
+    its incident edges as BAD SUBJECT / BAD OBJECT (an empty category set can't
+    intersect any predicate's domain/range). The summary surfaces these as
+    ``(no biolink category)`` so they are visible, not silently dropped — worth
+    knowing if a future METPO-only-category node is emitted (none exist today).
     """
     node_to_cat: dict[str, tuple[str, ...]] = {}
     with open(nodes_path, newline="") as fh:

@@ -1630,29 +1630,38 @@ def run_kgxval_biolink_validation(merged_dir: Path) -> "str | None":
 
     driver = Path(__file__).parent / "kgxval_validate.py"
     source = os.environ.get("KGXVAL_SOURCE", KGXVAL_DEFAULT_SOURCE)
-    with tempfile.TemporaryDirectory() as td:
-        tdp = Path(td)
-        nodes_p, edges_p, out_csv = tdp / "nodes.tsv", tdp / "edges.tsv", tdp / "kgxval_errors.csv"
-        for member, dest in (("merged-kg_nodes.tsv", nodes_p), ("merged-kg_edges.tsv", edges_p)):
-            if not _extract_tar_member(tar_path, member, dest):
-                print(f"  [kgxval] {member} not in tarball; skipping", file=sys.stderr)
-                return f"## KGXVal biolink validation\n\n_Skipped: {member} not found in tarball._"
-        # --no-project: ignore kg-microbe's poetry pyproject.toml (no [project]
-        # table) so uv builds a clean ephemeral env for the py>=3.13 tool.
-        cmd = ["uv", "run", "--no-project", "--python", "3.13", "--with", source,
-               "python", str(driver), str(nodes_p), str(edges_p), str(out_csv)]
-        print("  [kgxval] running (first run compiles the env; may take a few min)...", file=sys.stderr)
-        try:
-            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=7200)
-        except subprocess.TimeoutExpired:
-            return "## KGXVal biolink validation\n\n_Skipped: timed out after 2h._"
-        if proc.stdout:
-            print("  [kgxval] " + proc.stdout.strip().replace("\n", "\n  [kgxval] "), file=sys.stderr)
-        if proc.returncode != 0:
-            print(proc.stderr[-2000:], file=sys.stderr)
-            return (f"## KGXVal biolink validation\n\n_Failed (exit {proc.returncode}). "
-                    "Last stderr:_\n\n```\n" + proc.stderr[-1500:] + "\n```")
-        return _summarize_kgxval_csv(out_csv)
+    # Everything below is wrapped so the pass truly never raises (a corrupt
+    # tarball, a malformed CSV, or uv vanishing after the which() check must
+    # degrade to a note, not abort the whole review).
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            tdp = Path(td)
+            nodes_p, edges_p, out_csv = tdp / "nodes.tsv", tdp / "edges.tsv", tdp / "kgxval_errors.csv"
+            for member, dest in (("merged-kg_nodes.tsv", nodes_p), ("merged-kg_edges.tsv", edges_p)):
+                if not _extract_tar_member(tar_path, member, dest):
+                    print(f"  [kgxval] {member} not in tarball; skipping", file=sys.stderr)
+                    return f"## KGXVal biolink validation\n\n_Skipped: {member} not found in tarball._"
+            # --no-project: ignore kg-microbe's poetry pyproject.toml (no [project]
+            # table) so uv builds a clean ephemeral env for the py>=3.13 tool.
+            cmd = ["uv", "run", "--no-project", "--python", "3.13", "--with", source,
+                   "python", str(driver), str(nodes_p), str(edges_p), str(out_csv)]
+            print("  [kgxval] running (first run compiles the env; may take a few min)...", file=sys.stderr)
+            try:
+                proc = subprocess.run(cmd, capture_output=True, text=True, timeout=7200)
+            except subprocess.TimeoutExpired:
+                return "## KGXVal biolink validation\n\n_Skipped: timed out after 2h._"
+            if proc.stdout:
+                print("  [kgxval] " + proc.stdout.strip().replace("\n", "\n  [kgxval] "), file=sys.stderr)
+            if proc.returncode != 0:
+                print(proc.stderr[-2000:], file=sys.stderr)
+                # Strip backticks so the embedded stderr can't break the md fence.
+                tail = proc.stderr[-1500:].replace("`", "'")
+                return (f"## KGXVal biolink validation\n\n_Failed (exit {proc.returncode}). "
+                        "Last stderr:_\n\n```\n" + tail + "\n```")
+            return _summarize_kgxval_csv(out_csv)
+    except Exception as e:  # noqa: BLE001 — never let the external tool abort the review
+        print(f"  [kgxval] unexpected error: {e!r}", file=sys.stderr)
+        return f"## KGXVal biolink validation\n\n_Skipped: unexpected error ({type(e).__name__})._"
 
 
 def main():

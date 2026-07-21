@@ -475,9 +475,10 @@
 # s3.amazonaws.com/bbop-sqlite bucket, whose direct public access is being
 # retired (INCATools/semantic-sql#112; see kg-microbe #595). Object names are
 # identical — only the host changed. The CDN sits behind a Browser Integrity
-# Check that 403s default client User-Agents; kghub-downloader's HTTP path
-# already sends `User-Agent: Mozilla/5.0` (download.py), so no extra header
-# config is needed here.
+# Check that 403s default client User-Agents; kghub-downloader's HTTP-scheme
+# handler already sends `User-Agent: Mozilla/5.0` (in the library's own
+# download.py, not kg_microbe/download.py), so no extra header config is
+# needed here.
 #
 # MICRO's SemSQL distribution (micro.db.gz) is a 29-byte truncated placeholder
 # rather than a real SemSQL DB; PO's SemSQL .db is fine but the OWL path is the

@@ -67,10 +67,50 @@ def test_missing_source_is_a_noop(tmp_path, monkeypatch):
     ou.assert_go_version_alignment(strict=True)  # must not raise
 
 
+def test_env_var_downgrades_default_to_warn(tmp_path, monkeypatch, capsys):
+    """KG_GO_VERSION_CHECK=warn turns the default (strict) gate into a warning."""
+    owl = _write_go_pair(tmp_path, "2026-05-19", "2026-04-01")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    monkeypatch.setenv("KG_GO_VERSION_CHECK", "warn")
+    ou.assert_go_version_alignment()  # strict=None → env says warn → must not raise
+    assert "GO source version mismatch" in capsys.readouterr().out
+
+
+def test_fix_node_categories_invokes_gate(tmp_path, monkeypatch):
+    """The GO branch of _fix_node_categories actually calls the alignment gate."""
+    import pandas as pd
+
+    from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
+
+    called = {"gate": False}
+    monkeypatch.setattr(
+        "kg_microbe.utils.ontology_utils.assert_go_version_alignment",
+        lambda *a, **k: called.__setitem__("gate", True),
+    )
+    # Stub the per-term lookup so the wiring test needs no real go.db.
+    monkeypatch.setattr(
+        "kg_microbe.utils.ontology_utils.get_go_category_by_aspect",
+        lambda go_id, **k: "biolink:MolecularActivity",
+    )
+    nodes = tmp_path / "go_nodes.tsv"
+    pd.DataFrame(
+        [["GO:0004096", "biolink:BiologicalProcess", "catalase activity"]],
+        columns=["id", "category", "name"],
+    ).to_csv(nodes, sep="\t", index=False)
+
+    t = OntologiesTransform.__new__(OntologiesTransform)
+    t._fix_node_categories(nodes, "go")
+
+    assert called["gate"] is True
+    assert pd.read_csv(nodes, sep="\t").iloc[0]["category"] == "biolink:MolecularActivity"
+
+
 def test_ensure_go_db_skips_build_when_valid(tmp_path, monkeypatch):
     """A go.db already above the min-size threshold is left as-is (no rebuild)."""
+    # Shrink the threshold so the test writes a few bytes, not ~10 MB.
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
     db = tmp_path / "go.db"
-    db.write_bytes(b"0" * (ou._GO_DB_MIN_SIZE + 1))
+    db.write_bytes(b"0" * 16)
     # GO_SOURCE need not exist — the valid-db short-circuit returns before using it.
     assert ou._ensure_go_db(str(db)) is True
 

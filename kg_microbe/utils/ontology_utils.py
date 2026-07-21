@@ -61,7 +61,7 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000) -> Optional[str]
     return m.group(1) if m else None
 
 
-def assert_go_version_alignment(strict: bool = True) -> None:
+def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
     """
     Guard that GO's aspect-map source (go.owl→go.db) matches the transform's (go.json).
 
@@ -70,10 +70,17 @@ def assert_go_version_alignment(strict: bool = True) -> None:
     a GO release boundary the two diverge and MF/CC terms silently fall through
     to the ``biological_process`` default. Compare the two releases and, on
     mismatch, raise (``strict``) or warn loudly. No-op when either release stamp
-    can't be read (e.g. a source is absent).
+    can't be read (e.g. a source is absent), so a missed versionIRI never
+    false-alarms — only two readable-but-different stamps trip the gate.
+
+    ``strict`` defaults to fail-loud (raise). Since the verdict rests on a
+    release-stamp heuristic, ``KG_GO_VERSION_CHECK=warn`` downgrades to a
+    warning — an escape hatch if the stamps ever disagree spuriously.
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
+    if strict is None:
+        strict = os.environ.get("KG_GO_VERSION_CHECK", "strict").strip().lower() != "warn"
     if not GO_SOURCE:
         return
     owl_release = _obo_release_from_head(Path(GO_SOURCE))
@@ -117,7 +124,11 @@ def _ensure_go_db(go_db_path: str) -> bool:
     # Remove a truncated/0-byte stub so semsql rebuilds cleanly.
     if os.path.exists(go_db_path):
         os.remove(go_db_path)
-    print(f"Building {go_db_path} from {GO_SOURCE} via `semsql make` (one-time, a few minutes)...")
+    print(
+        f"Building {go_db_path} from {GO_SOURCE} via `semsql make` "
+        "(one-time; a full GO SemSQL build runs relation-graph and can take "
+        "10-30+ minutes / several GB RAM)..."
+    )
     try:
         subprocess.run(  # noqa: S603
             ["semsql", "make", os.path.basename(go_db_path)],  # noqa: S607

@@ -60,24 +60,34 @@ class MetamodelEdgeFilterTest(TestCase):
         self.assertEqual(dropped, 0)
         self.assertEqual(len(out), 1)
 
-    # ---- Integration through the single read/write path ----
+    # ---- Integration through _normalize_schema (post biolink:->CURIE remap) ----
 
-    def test_metadata_pass_drops_and_preserves_columns(self):
-        """_add_kgx_metadata_to_edges drops metamodel rows, adds metadata, keeps other cols."""
-        path = self._write_edges(_ROWS)
-        self.transform._add_kgx_metadata_to_edges(path)
-        df = pd.read_csv(path, sep="\t")
-        # metamodel predicates gone
-        self.assertEqual(set(df["predicate"]), {"biolink:subclass_of", "biolink:related_to"})
-        self.assertEqual(len(df), 2)
-        # kgx metadata columns added
-        self.assertIn("knowledge_level", df.columns)
-        self.assertIn("agent_type", df.columns)
-        self.assertTrue((df["knowledge_level"] == "knowledge_assertion").all())
-        self.assertTrue((df["agent_type"] == "manual_agent").all())
-        # non-predicate columns survive intact on the kept rows (keyed by predicate,
-        # since both surviving rows share the same subject)
-        by_pred = df.set_index("predicate")
-        self.assertEqual(by_pred.loc["biolink:subclass_of", "relation"], "rdfs:subClassOf")
-        self.assertEqual(by_pred.loc["biolink:related_to", "relation"], "RO:0002131")
-        self.assertEqual(by_pred.loc["biolink:subclass_of", "primary_knowledge_source"], "envo.json")
+    def test_normalize_schema_remaps_then_drops_metamodel(self):
+        """
+        Remap KGX's biolink: meta-predicates in _normalize_schema, then drop them.
+
+        KGX emits these axioms as ``biolink:subPropertyOf`` / ``biolink:inverseOf``
+        / ``biolink:type``; _normalize_schema remaps to rdfs/owl/rdf CURIEs and
+        only then can the drop match — so the drop must run there, not earlier.
+        """
+        header = ["subject", "predicate", "object", "relation", "primary_knowledge_source"]
+        self.transform.edge_header = header
+        rows = [
+            # Entity edge — kept (biolink:subclass_of is not a meta-predicate).
+            ["ENVO:00000015", "biolink:subclass_of", "ENVO:00000012", "rdfs:subClassOf", "envo.json"],
+            # Metamodel edges in KGX's biolink: serialization — remapped then dropped.
+            ["METPO:2000002", "biolink:subPropertyOf", "METPO:2000001", "subPropertyOf", "metpo.json"],
+            ["RO:0002327", "biolink:inverseOf", "RO:0002333", "inverseOf", "envo.json"],
+            ["WD_Entity:Q715269", "biolink:type", "ENVO:00000015", "type", "envo.json"],
+        ]
+        tmp = Path(tempfile.mkdtemp())
+        edges = tmp / "x_edges.tsv"
+        pd.DataFrame(rows, columns=header).to_csv(edges, sep="\t", index=False)
+        # nodes_file absent → node branch is skipped by its is_file() guard.
+        self.transform._normalize_schema(tmp / "x_nodes.tsv", edges)
+        df = pd.read_csv(edges, sep="\t")
+        self.assertEqual(set(df["predicate"]), {"biolink:subclass_of"})
+        self.assertEqual(len(df), 1)
+        # The surviving entity edge keeps its other columns intact.
+        self.assertEqual(df.iloc[0]["relation"], "rdfs:subClassOf")
+        self.assertEqual(df.iloc[0]["primary_knowledge_source"], "envo.json")

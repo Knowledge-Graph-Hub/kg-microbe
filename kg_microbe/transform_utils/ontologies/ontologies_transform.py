@@ -365,23 +365,13 @@ class OntologiesTransform(Transform):
 
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
         """
-        Drop metamodel edges and add knowledge_level/agent_type to an edge file.
+        Add knowledge_level and agent_type columns to ontology edge files.
 
-        Single read/filter/write pass over the (potentially very large — chebi,
-        ncbitaxon) edge file: removes ontology metamodel axiom edges
-        (:meth:`_drop_metamodel_edges`), then stamps every remaining edge with
-        knowledge_assertion + manual_agent since ontologies are manually curated
-        by domain expert curators (GO, ChEBI, ENVO, …).
+        All ontology edges use knowledge_assertion + manual_agent since ontologies
+        are manually curated by domain expert curators (GO, ChEBI, ENVO, etc.).
+        The relationships represent definitional assertions made by experts.
         """
         df = pd.read_csv(edges_file_path, sep="\t", low_memory=False)
-
-        # Drop ontology metamodel axiom edges (non-biolink property/typing rows).
-        df, dropped = self._drop_metamodel_edges(df)
-        if dropped:
-            print(
-                f"  Dropped {dropped} ontology metamodel edge(s) "
-                f"(rdfs:subPropertyOf/owl:inverseOf/rdf:type) from {edges_file_path.name}"
-            )
 
         # Add columns if they don't exist
         if KNOWLEDGE_LEVEL_COLUMN not in df.columns:
@@ -517,8 +507,9 @@ class OntologiesTransform(Transform):
         nodes_file = self.output_dir / f"{name}_nodes.tsv"
         edges_file = self.output_dir / f"{name}_edges.tsv"
 
-        # Drop ontology metamodel axiom edges (rdfs:subPropertyOf / owl:inverseOf
-        # / rdf:type) and stamp knowledge_level/agent_type — single read/write.
+        # Add knowledge_level/agent_type columns. (Metamodel-axiom edges are
+        # dropped later in _normalize_schema, after KGX's biolink:->rdfs/owl/rdf
+        # predicate remap, so the CURIE filter actually matches.)
         self._add_kgx_metadata_to_edges(edges_file)
 
         # Fix node categories: specialized handlers for go/chebi/uberon/ncbitaxon,
@@ -930,7 +921,19 @@ class OntologiesTransform(Transform):
                 # prefix too (belt-and-braces — same-row consistency).
                 df["relation"] = df["relation"].replace(owl_meta_predicate_map)
 
+            # Drop ontology metamodel-axiom edges now that predicates are in
+            # their final CURIE form (post the biolink:->rdfs/owl/rdf remap
+            # above). These property-level / typing statements are not biolink
+            # entity relationships. Nodes are left untouched.
+            df, dropped_metamodel = self._drop_metamodel_edges(df)
+
             df.to_csv(edges_file, sep="\t", index=False)
+            if dropped_metamodel:
+                print(
+                    f"  [_normalize_schema] {edges_file.name}: dropped "
+                    f"{dropped_metamodel} metamodel edge(s) "
+                    "(rdfs:subPropertyOf/owl:inverseOf/rdf:type)"
+                )
             if dropped_edge_cols or added_edge_cols or renamed:
                 rename_note = " rename(knowledge_source→primary_knowledge_source)" if renamed else ""
                 print(

@@ -114,9 +114,8 @@ Additional available transforms (commented out in DATA_SOURCES):
 ### Key Files
 
 - `kg_microbe/run.py`: CLI entry point with Click commands
-- `kg_microbe/transform_utils/constants.py`: Standard column names (ID_COLUMN, CATEGORY_COLUMN, etc.)
+- `kg_microbe/transform_utils/constants.py`: Standard column names (ID_COLUMN, CATEGORY_COLUMN, etc.) and entity-type translation tables (`TRANSLATION_TABLE_FOR_IDS` / `TRANSLATION_TABLE_FOR_LABELS`, applied via `str.maketrans`)
 - `kg_microbe/transform_utils/custom_curies.yaml`: Custom CURIE prefix mappings
-- `kg_microbe/transform_utils/translation_table.yaml`: Entity type translations
 - `pyproject.toml`: Poetry configuration, ruff/black settings
 
 ### Data Flow

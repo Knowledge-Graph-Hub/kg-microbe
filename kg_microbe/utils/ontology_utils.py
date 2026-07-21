@@ -1,6 +1,11 @@
 """Ontology utilities for category assignment and term processing."""
 
+import os
+import re
+import shutil
 import sqlite3
+import subprocess
+from pathlib import Path
 from typing import Dict, Optional
 
 from oaklib.interfaces import OboGraphInterface
@@ -26,6 +31,104 @@ from kg_microbe.transform_utils.constants import (
 _GO_NAMESPACE_CACHE: Optional[Dict[str, str]] = None
 _GO_NAMESPACE_LOAD_FAILED: bool = False
 
+# A healthy GO SemSQL DB is ~400 MB; anything below this is a truncated /
+# 0-byte stub (the failure that miscategorized every GO term as
+# biological_process this session).
+_GO_DB_MIN_SIZE = 10_000_000
+# OBO release stamp, e.g. ``releases/2026-05-19/`` in a versionIRI.
+_RELEASE_RE = re.compile(r"releases/(\d{4}-\d{2}-\d{2})")
+
+
+def _obo_release_from_head(path: Path, nbytes: int = 2_000_000) -> Optional[str]:
+    """
+    Return the ``YYYY-MM-DD`` OBO release stamped near the top of an .owl/.json.
+
+    Both OWL (``versionIRI rdf:resource=".../releases/DATE/..."``) and OBO-JSON
+    (``meta`` versionInfo) carry the release near the file head, so a bounded
+    read avoids parsing hundreds of MB. Returns None if unreadable / unstamped.
+    """
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as fh:
+            head = fh.read(nbytes)
+    except OSError:
+        return None
+    m = _RELEASE_RE.search(head)
+    if m:
+        return m.group(1)
+    # OBO-JSON versionInfo, e.g. {"pred": ".../versionInfo", "val": "2026-05-19"}
+    # — allow the intervening `","val":` before the date (non-greedy, bounded).
+    m = re.search(r"versionInfo.{0,40}?(\d{4}-\d{2}-\d{2})", head)
+    return m.group(1) if m else None
+
+
+def assert_go_version_alignment(strict: bool = True) -> None:
+    """
+    Guard that GO's aspect-map source (go.owl→go.db) matches the transform's (go.json).
+
+    The GO transform TSV is built from ``go.json`` while the MF/BP/CC aspect map
+    is read from ``go.db`` (built from ``go.owl``). If a ``kg download`` straddles
+    a GO release boundary the two diverge and MF/CC terms silently fall through
+    to the ``biological_process`` default. Compare the two releases and, on
+    mismatch, raise (``strict``) or warn loudly. No-op when either release stamp
+    can't be read (e.g. a source is absent).
+    """
+    from kg_microbe.transform_utils.constants import GO_SOURCE
+
+    if not GO_SOURCE:
+        return
+    owl_release = _obo_release_from_head(Path(GO_SOURCE))
+    json_release = _obo_release_from_head(Path(GO_SOURCE).with_suffix(".json"))
+    if owl_release and json_release and owl_release != json_release:
+        msg = (
+            f"GO source version mismatch: go.owl={owl_release} vs "
+            f"go.json={json_release}. The aspect map (go.owl → go.db) will not "
+            "match the terms in the transform output (go.json), silently "
+            "miscategorizing MolecularActivity/CellularComponent GO terms as "
+            "BiologicalProcess. Re-download GO so both are the same release "
+            "(poetry run kg download), then rebuild go.db."
+        )
+        if strict:
+            raise RuntimeError(msg)
+        print(f"WARNING: {msg}")
+
+
+def _ensure_go_db(go_db_path: str) -> bool:
+    """
+    Build the GO SemSQL DB from ``go.owl`` if missing/empty; return True if usable.
+
+    Unlike ``chebi.db`` (built on demand by OAK's ``sqlite:`` adapter), the GO
+    aspect map is read with a raw ``sqlite3`` query (to bypass OAK's curies
+    converter, which chokes on GO's case-collision prefixes), so nothing builds
+    ``go.db`` — a fresh checkout / cleaned ``data/raw`` leaves a 0-byte stub.
+    Build it once with ``semsql make`` (the same toolchain that produces
+    ``chebi.db``). Degrades gracefully (warn + return current state) when the
+    OWL source or ``semsql`` is unavailable.
+    """
+    from kg_microbe.transform_utils.constants import GO_SOURCE
+
+    if os.path.exists(go_db_path) and os.path.getsize(go_db_path) >= _GO_DB_MIN_SIZE:
+        return True
+    if not (GO_SOURCE and Path(GO_SOURCE).exists()):
+        print(f"Warning: cannot build {go_db_path} — GO OWL source {GO_SOURCE} is missing")
+        return False
+    if shutil.which("semsql") is None:
+        print(f"Warning: `semsql` not on PATH; cannot build {go_db_path}")
+        return False
+    # Remove a truncated/0-byte stub so semsql rebuilds cleanly.
+    if os.path.exists(go_db_path):
+        os.remove(go_db_path)
+    print(f"Building {go_db_path} from {GO_SOURCE} via `semsql make` (one-time, a few minutes)...")
+    try:
+        subprocess.run(  # noqa: S603
+            ["semsql", "make", os.path.basename(go_db_path)],  # noqa: S607
+            cwd=str(Path(GO_SOURCE).parent),
+            check=True,
+        )
+    except (subprocess.CalledProcessError, OSError) as e:
+        print(f"Warning: failed to build {go_db_path}: {e}")
+        return False
+    return os.path.exists(go_db_path) and os.path.getsize(go_db_path) >= _GO_DB_MIN_SIZE
+
 
 def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
     """
@@ -45,6 +148,9 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
         return _GO_NAMESPACE_CACHE
     if _GO_NAMESPACE_LOAD_FAILED:
         return {}
+    # Build go.db from go.owl if it's missing/empty — nothing else does, so a
+    # 0-byte stub would otherwise miscategorize every GO term (see _ensure_go_db).
+    _ensure_go_db(go_db_path)
     try:
         conn = sqlite3.connect(go_db_path)
         try:

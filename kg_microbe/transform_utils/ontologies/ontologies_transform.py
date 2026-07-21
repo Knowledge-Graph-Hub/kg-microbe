@@ -915,6 +915,10 @@ class OntologiesTransform(Transform):
             }
             if "predicate" in df.columns:
                 df["predicate"] = df["predicate"].replace(owl_meta_predicate_map)
+                # Belt-and-braces: obograph can emit bare local names (e.g.
+                # ``subPropertyOf``) rather than the biolink:-prefixed form, so
+                # normalise those too before the metamodel drop below.
+                df["predicate"] = df["predicate"].replace(owl_meta_relation_map)
             if "relation" in df.columns:
                 df["relation"] = df["relation"].replace(owl_meta_relation_map)
                 # Also catch cases where `relation` mistakenly got the biolink

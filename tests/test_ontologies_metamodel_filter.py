@@ -79,6 +79,8 @@ class MetamodelEdgeFilterTest(TestCase):
             ["METPO:2000002", "biolink:subPropertyOf", "METPO:2000001", "subPropertyOf", "metpo.json"],
             ["RO:0002327", "biolink:inverseOf", "RO:0002333", "inverseOf", "envo.json"],
             ["WD_Entity:Q715269", "biolink:type", "ENVO:00000015", "type", "envo.json"],
+            # Bare local-name predicate (belt-and-braces) — normalized then dropped.
+            ["GO:1", "subPropertyOf", "GO:2", "subPropertyOf", "go.json"],
         ]
         tmp = Path(tempfile.mkdtemp())
         edges = tmp / "x_edges.tsv"
@@ -88,6 +90,25 @@ class MetamodelEdgeFilterTest(TestCase):
         df = pd.read_csv(edges, sep="\t")
         self.assertEqual(set(df["predicate"]), {"biolink:subclass_of"})
         self.assertEqual(len(df), 1)
+        # Column set/order preserved to edge_header.
+        self.assertEqual(list(df.columns), header)
         # The surviving entity edge keeps its other columns intact.
         self.assertEqual(df.iloc[0]["relation"], "rdfs:subClassOf")
         self.assertEqual(df.iloc[0]["primary_knowledge_source"], "envo.json")
+
+    def test_add_kgx_metadata_only_adds_columns_no_drop(self):
+        """The reverted _add_kgx_metadata_to_edges adds metadata and drops nothing."""
+        # It runs before the biolink:->CURIE remap, so metamodel rows are still
+        # biolink:-namespaced here and must NOT be dropped by this method.
+        rows = [
+            ["ENVO:1", "biolink:subclass_of", "ENVO:2", "rdfs:subClassOf", "envo.json"],
+            ["METPO:2", "biolink:subPropertyOf", "METPO:1", "subPropertyOf", "metpo.json"],
+        ]
+        path = self._write_edges(rows)
+        self.transform._add_kgx_metadata_to_edges(path)
+        df = pd.read_csv(path, sep="\t")
+        # No rows dropped by this method.
+        self.assertEqual(len(df), 2)
+        # Metadata columns added.
+        self.assertTrue((df["knowledge_level"] == "knowledge_assertion").all())
+        self.assertTrue((df["agent_type"] == "manual_agent").all())

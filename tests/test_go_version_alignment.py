@@ -234,7 +234,7 @@ def _stub_go_transform(tmp_path, monkeypatch):
     invocations. convert_to_json is faked to write a fresh 2026-05-19 go.json
     (what ROBOT would produce from the new go.owl).
     """
-    import kg_microbe.transform_utils.ontologies.ontologies_transform as ot
+    from kg_microbe.transform_utils.ontologies import ontologies_transform as tf_mod
 
     calls = {"convert": 0}
 
@@ -242,9 +242,9 @@ def _stub_go_transform(tmp_path, monkeypatch):
         calls["convert"] += 1
         (Path(path) / f"{ont}.json").write_text(_JSON.format(d="2026-05-19"), encoding="utf-8")
 
-    monkeypatch.setattr(ot, "convert_to_json", fake_convert)
-    monkeypatch.setattr(ot, "transform", lambda **k: None)
-    t = ot.OntologiesTransform.__new__(ot.OntologiesTransform)
+    monkeypatch.setattr(tf_mod, "convert_to_json", fake_convert)
+    monkeypatch.setattr(tf_mod, "transform", lambda **k: None)
+    t = tf_mod.OntologiesTransform.__new__(tf_mod.OntologiesTransform)
     t.input_base_dir = tmp_path
     t.output_dir = tmp_path
     monkeypatch.setattr(t, "_sanitize_obograph_synonyms", lambda p: None, raising=False)

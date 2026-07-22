@@ -1,0 +1,123 @@
+placeholder_id	label_token	edge_count	predicate
+kgmicrobe.compound:aburamycin_a	aburamycin a	2	biolink:produces
+kgmicrobe.compound:abyssomicin_b	abyssomicin b	1	biolink:produces
+kgmicrobe.compound:abyssomicin_d	abyssomicin d	1	biolink:produces
+kgmicrobe.compound:abyssomicin_g	abyssomicin g	1	biolink:produces
+kgmicrobe.compound:abyssomicin_h	abyssomicin h	1	biolink:produces
+kgmicrobe.compound:achromoviromycin	achromoviromycin	1	biolink:produces
+kgmicrobe.compound:actinohivin	actinohivin	1	biolink:produces
+kgmicrobe.compound:actinomycetin	actinomycetin	1	biolink:produces
+kgmicrobe.compound:actinomycin_a	actinomycin a	1	biolink:produces
+kgmicrobe.compound:actinotiocin	actinotiocin	1	biolink:produces
+kgmicrobe.compound:adenomycin	adenomycin	1	biolink:produces
+kgmicrobe.compound:alanosine	alanosine	1	biolink:produces
+kgmicrobe.compound:alboverticillin	alboverticillin	1	biolink:produces
+kgmicrobe.compound:amphotericin_a	amphotericin a	1	biolink:produces
+kgmicrobe.compound:angolamycin	angolamycin	1	biolink:produces
+kgmicrobe.compound:angustmycin	angustmycin	1	biolink:produces
+kgmicrobe.compound:ardacin_a	ardacin a	1	biolink:produces
+kgmicrobe.compound:ardacin_b	ardacin b	1	biolink:produces
+kgmicrobe.compound:ardacin_c	ardacin c	1	biolink:produces
+kgmicrobe.compound:ascosin	ascosin	1	biolink:produces
+kgmicrobe.compound:atrop_abyssomicin_c	atrop abyssomicin c	1	biolink:produces
+kgmicrobe.compound:avoparcin	avoparcin	1	biolink:produces
+kgmicrobe.compound:azacolutin	azacolutin	1	biolink:produces
+kgmicrobe.compound:azureomycin	azureomycin	1	biolink:produces
+kgmicrobe.compound:bacteriocin_isk_1	bacteriocin isk 1	1	biolink:produces
+kgmicrobe.compound:bafilomycin	bafilomycin	1	biolink:produces
+kgmicrobe.compound:bandamycin	bandamycin	1	biolink:produces
+kgmicrobe.compound:beta_lipomycin	beta lipomycin	1	biolink:produces
+kgmicrobe.compound:butyricin_7423	butyricin 7423	1	biolink:produces
+kgmicrobe.compound:camphomycin	camphomycin	1	biolink:produces
+kgmicrobe.compound:canarius	canarius	1	biolink:produces
+kgmicrobe.compound:candimycin	candimycin	1	biolink:produces
+kgmicrobe.compound:candiplanecin	candiplanecin	1	biolink:produces
+kgmicrobe.compound:carcinomycin	carcinomycin	1	biolink:produces
+kgmicrobe.compound:caryomycin	caryomycin	1	biolink:produces
+kgmicrobe.compound:cellostatin	cellostatin	1	biolink:produces
+kgmicrobe.compound:cephamycin_a	cephamycin a	1	biolink:produces
+kgmicrobe.compound:cetocycline	cetocycline	1	biolink:produces
+kgmicrobe.compound:champamycin_b	champamycin b	1	biolink:produces
+kgmicrobe.compound:chaninin	chaninin	1	biolink:produces
+kgmicrobe.compound:chlororaphin	chlororaphin	1	biolink:produces
+kgmicrobe.compound:cinerubin_a	cinerubin a	1	biolink:produces
+kgmicrobe.compound:cladomycin	cladomycin	1	biolink:produces
+kgmicrobe.compound:collinomycin	collinomycin	1	biolink:produces
+kgmicrobe.compound:congocidin	congocidin	1	biolink:produces
+kgmicrobe.compound:cystargin	cystargin	1	biolink:produces
+kgmicrobe.compound:cytovirin	cytovirin	1	biolink:produces
+kgmicrobe.compound:danomycin	danomycin	1	biolink:produces
+kgmicrobe.compound:danubomycin	danubomycin	1	biolink:produces
+kgmicrobe.compound:decaplanin	decaplanin	1	biolink:produces
+kgmicrobe.compound:destomycin	destomycin	1	biolink:produces
+kgmicrobe.compound:dihydro_azathymidine	dihydro azathymidine	1	biolink:produces
+kgmicrobe.compound:dopsisamine	dopsisamine	1	biolink:produces
+kgmicrobe.compound:durhamycin	durhamycin	1	biolink:produces
+kgmicrobe.compound:dynemicin	dynemicin	1	biolink:produces
+kgmicrobe.compound:e_4_aminostyryl_acetate	e 4 aminostyryl acetate	1	biolink:produces
+kgmicrobe.compound:etabetacin	etabetacin	1	biolink:produces
+kgmicrobe.compound:etamycin	etamycin	1	biolink:produces
+kgmicrobe.compound:ethylenediamine_n_n_prime_disuccinic_acid	ethylenediamine n n prime disuccinic acid	1	biolink:produces
+kgmicrobe.compound:eurocidin	eurocidin	1	biolink:produces
+kgmicrobe.compound:exfoliatin	exfoliatin	1	biolink:produces
+kgmicrobe.compound:ferroverdin	ferroverdin	1	biolink:produces
+kgmicrobe.compound:flavensomycin	flavensomycin	1	biolink:produces
+kgmicrobe.compound:flavofungin	flavofungin	1	biolink:produces
+kgmicrobe.compound:fradicin	fradicin	1	biolink:produces
+kgmicrobe.compound:gardimycin	gardimycin	2	biolink:produces
+kgmicrobe.compound:geomycin	geomycin	1	biolink:produces
+kgmicrobe.compound:glebomycin	glebomycin	1	biolink:produces
+kgmicrobe.compound:grasseriomycin	grasseriomycin	1	biolink:produces
+kgmicrobe.compound:grisamine	grisamine	1	biolink:produces
+kgmicrobe.compound:griseolutein_a	griseolutein a	1	biolink:produces
+kgmicrobe.compound:griseolutein_b	griseolutein b	1	biolink:produces
+kgmicrobe.compound:halomicin	halomicin	2	biolink:produces
+kgmicrobe.compound:hitachimycin	hitachimycin	1	biolink:produces
+kgmicrobe.compound:hortesin	hortesin	1	biolink:produces
+kgmicrobe.compound:hydro_methylpteroylglutamylglutamic_acid	hydro methylpteroylglutamylglutamic acid	1	biolink:produces
+kgmicrobe.compound:indochrome	indochrome	1	biolink:produces
+kgmicrobe.compound:kanchanomycin	kanchanomycin	1	biolink:produces
+kgmicrobe.compound:ketomycin	ketomycin	1	biolink:produces
+kgmicrobe.compound:kijanimicin	kijanimicin	1	biolink:produces
+kgmicrobe.compound:levorin	levorin	1	biolink:produces
+kgmicrobe.compound:limocrocin	limocrocin	1	biolink:produces
+kgmicrobe.compound:lydimycin	lydimycin	1	biolink:produces
+kgmicrobe.compound:miharamycin_a	miharamycin a	1	biolink:produces
+kgmicrobe.compound:minimycin	minimycin	1	biolink:produces
+kgmicrobe.compound:monazomycin	monazomycin	2	biolink:produces
+kgmicrobe.compound:mycobacidin	mycobacidin	3	biolink:produces
+kgmicrobe.compound:nocamycin	nocamycin	1	biolink:produces
+kgmicrobe.compound:noformicin	noformicin	1	biolink:produces
+kgmicrobe.compound:o_carbamyl_d_serine	o carbamyl d serine	1	biolink:produces
+kgmicrobe.compound:pactamycin	pactamycin	1	biolink:produces
+kgmicrobe.compound:pamamycin	pamamycin	1	biolink:produces
+kgmicrobe.compound:phoslactomycin	phoslactomycin	1	biolink:produces
+kgmicrobe.compound:phyllomycin	phyllomycin	1	biolink:produces
+kgmicrobe.compound:piericidin	piericidin	1	biolink:produces
+kgmicrobe.compound:plicacetin	plicacetin	1	biolink:produces
+kgmicrobe.compound:plumbemycin_a	plumbemycin a	1	biolink:produces
+kgmicrobe.compound:plumbemycin_b	plumbemycin b	1	biolink:produces
+kgmicrobe.compound:pluramycin_a	pluramycin a	1	biolink:produces
+kgmicrobe.compound:poly_l_lysine_polymer	poly l lysine polymer	2	biolink:produces
+kgmicrobe.compound:primocarcin	primocarcin	2	biolink:produces
+kgmicrobe.compound:racemomycin_e	racemomycin e	1	biolink:produces
+kgmicrobe.compound:rhodomycin_a	rhodomycin a	1	biolink:produces
+kgmicrobe.compound:ristocetin_b	ristocetin b	1	biolink:produces
+kgmicrobe.compound:rubradirin	rubradirin	1	biolink:produces
+kgmicrobe.compound:sarcidin	sarcidin	1	biolink:produces
+kgmicrobe.compound:setamycin	setamycin	2	biolink:produces
+kgmicrobe.compound:sporangiomycin	sporangiomycin	1	biolink:produces
+kgmicrobe.compound:stallimycin	stallimycin	1	biolink:produces
+kgmicrobe.compound:staphylomycin_m1	staphylomycin m1	1	biolink:produces
+kgmicrobe.compound:steffimycin	steffimycin	1	biolink:produces
+kgmicrobe.compound:synergistin_a	synergistin a	1	biolink:produces
+kgmicrobe.compound:tertiomycin_a	tertiomycin a	1	biolink:produces
+kgmicrobe.compound:tertiomycin_b	tertiomycin b	1	biolink:produces
+kgmicrobe.compound:trans_styrylacetic_acid	trans styrylacetic acid	1	biolink:produces
+kgmicrobe.compound:transvalencin_a	transvalencin a	1	biolink:produces
+kgmicrobe.compound:tuberactinamine_a	tuberactinamine a	1	biolink:produces
+kgmicrobe.compound:tuberactinomycin	tuberactinomycin	1	biolink:produces
+kgmicrobe.compound:venturicidin_b	venturicidin b	1	biolink:produces
+kgmicrobe.compound:viridogrisein	viridogrisein	1	biolink:produces
+kgmicrobe.compound:vulgamycin	vulgamycin	1	biolink:produces
+kgmicrobe.compound:xanthocidin	xanthocidin	1	biolink:produces

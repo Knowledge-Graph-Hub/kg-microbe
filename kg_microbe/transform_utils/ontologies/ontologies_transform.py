@@ -399,6 +399,7 @@ class OntologiesTransform(Transform):
 
         """
         from kg_microbe.utils.ontology_utils import (
+            assert_go_version_alignment,
             get_chebi_category,
             get_go_category_by_aspect,
             get_ncbitaxon_category,
@@ -411,6 +412,10 @@ class OntologiesTransform(Transform):
         df = pd.read_csv(nodes_file_path, sep="\t", low_memory=False)
 
         if ontology_name == "go":
+            # Fail loudly if go.owl (→ go.db aspect map) and go.json (→ this TSV)
+            # are different releases — otherwise MF/CC terms silently become
+            # BiologicalProcess.
+            assert_go_version_alignment()
             # Apply GO aspect-based categorization (cached in-memory dict, no OAK).
             print("  Applying GO aspect-based categorization...")
 

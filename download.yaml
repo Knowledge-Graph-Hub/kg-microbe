@@ -470,20 +470,29 @@
 #   mesh      — NLM N-Triples RDF, streamed once per run (mesh_nt_rdf —
 #               emits hierarchy edges). See the entry further below.
 #
-# MICRO's bbop-sqlite distribution at
-# https://s3.amazonaws.com/bbop-sqlite/micro.db.gz is a 29-byte truncated
-# placeholder rather than a real SemSQL DB; PO's SemSQL .db is fine but
-# the OWL path is the one the stub transform exercises for hierarchy.
-# The MICRO and PO OWLs are declared above in the ontologies section.
+# The prebuilt SemSQL DBs below are fetched from the SemanticSQL CDN
+# (https://semanticsql.berkeleybop.io/<name>.db.gz), NOT the raw
+# s3.amazonaws.com/bbop-sqlite bucket, whose direct public access is being
+# retired (INCATools/semantic-sql#112; see kg-microbe #595). Object names are
+# identical — only the host changed. The CDN sits behind a Browser Integrity
+# Check that 403s default client User-Agents; kghub-downloader's HTTP-scheme
+# handler already sends `User-Agent: Mozilla/5.0` (in the library's own
+# download.py, not kg_microbe/download.py), so no extra header config is
+# needed here.
+#
+# MICRO's SemSQL distribution (micro.db.gz) is a 29-byte truncated placeholder
+# rather than a real SemSQL DB; PO's SemSQL .db is fine but the OWL path is the
+# one the stub transform exercises for hierarchy. The MICRO and PO OWLs are
+# declared above in the ontologies section.
 #
 -
-  url: https://s3.amazonaws.com/bbop-sqlite/ncit.db.gz
+  url: https://semanticsql.berkeleybop.io/ncit.db.gz
   local_name: ncit.db.gz
 -
-  url: https://s3.amazonaws.com/bbop-sqlite/bto.db.gz
+  url: https://semanticsql.berkeleybop.io/bto.db.gz
   local_name: bto.db.gz
 -
-  url: https://s3.amazonaws.com/bbop-sqlite/po.db.gz
+  url: https://semanticsql.berkeleybop.io/po.db.gz
   local_name: po.db.gz
 
 #

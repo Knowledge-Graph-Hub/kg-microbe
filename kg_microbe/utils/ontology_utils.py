@@ -66,16 +66,23 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000) -> Optional[str]
     return m.group(1) if m else None
 
 
-def _version_check_strict(env_var: str, strict: Optional[bool]) -> bool:
+def _version_check_strict(env_var: str, strict: Optional[bool], default_strict: bool = True) -> bool:
     """
     Resolve a version-gate's strictness: explicit arg wins, else the env var.
 
-    Defaults to fail-loud (raise). ``<env_var>=warn`` downgrades to a warning —
-    an escape hatch when the release-stamp heuristic disagrees spuriously.
+    ``<env_var>`` may be ``strict`` (raise) or ``warn``; unset falls back to
+    ``default_strict`` (which differs per gate — GO defaults strict because a
+    mismatch silently corrupts categories, NCBITaxon defaults warn because
+    owl/db release drift is common and low-risk).
     """
     if strict is not None:
         return strict
-    return os.environ.get(env_var, "strict").strip().lower() != "warn"
+    val = os.environ.get(env_var, "").strip().lower()
+    if val == "warn":
+        return False
+    if val == "strict":
+        return True
+    return default_strict
 
 
 def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
@@ -126,9 +133,11 @@ def _ncbitaxon_db_release(db_path: str) -> Optional[str]:
     try:
         conn = sqlite3.connect(db_path)
         try:
+            # Target the ontology node's versionInfo (subject carries "ncbitaxon")
+            # rather than any entity that happens to be annotated with one.
             row = conn.execute(
                 "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
-                "AND value IS NOT NULL LIMIT 1"
+                "AND subject LIKE '%ncbitaxon%' AND value IS NOT NULL LIMIT 1"
             ).fetchone()
         finally:
             conn.close()
@@ -144,20 +153,22 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
     """
     Guard that the NCBITaxon lookup DB matches the transform's OWL release.
 
-    metatraits/lpsn/bacdive do label + lineage lookups against ``ncbitaxon.db``
-    (an OAK-fetched prebuilt SemSQL DB whose release is whatever OAK last
-    downloaded), while the NCBITaxon transform output is built from
-    ``ncbitaxon.owl``. If the two are different releases, lookups can resolve
-    against taxa that differ from those emitted by the transform. Compare the
+    The metatraits transform looks taxa up in ``ncbitaxon.db`` (an OAK-fetched
+    prebuilt SemSQL DB whose release is whatever OAK last downloaded) while its
+    nodes are emitted from ``ncbitaxon.owl``. If the two are different releases,
+    lookups can resolve against taxa that differ from those emitted. Compare the
     ``owl:versionInfo`` in ``db_path`` with ``ncbitaxon.owl``'s versionIRI and,
-    on mismatch, raise (default) or warn. No-op when either stamp can't be read.
+    on mismatch, warn (default) or raise. No-op when either stamp can't be read.
 
-    ``KG_NCBITAXON_VERSION_CHECK=warn`` downgrades the default fail-loud to a
-    warning (release-stamp heuristic escape hatch).
+    Unlike the GO gate this **defaults to warn** — the OAK cache and the pinned
+    ``ncbitaxon.owl`` legitimately drift (OAK auto-refreshes to the latest),
+    and NCBITaxon labels/lineage are stable, so a mismatch is worth surfacing
+    loudly but not aborting. Set ``KG_NCBITAXON_VERSION_CHECK=strict`` (or pass
+    ``strict=True``) to fail loud instead.
     """
     from kg_microbe.transform_utils.constants import NCBITAXON_SOURCE
 
-    strict = _version_check_strict("KG_NCBITAXON_VERSION_CHECK", strict)
+    strict = _version_check_strict("KG_NCBITAXON_VERSION_CHECK", strict, default_strict=False)
     if not NCBITAXON_SOURCE:
         return
     owl_release = _obo_release_from_head(Path(NCBITAXON_SOURCE))
@@ -165,10 +176,10 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
     if owl_release and db_release and owl_release != db_release:
         msg = (
             f"NCBITaxon source version mismatch: ncbitaxon.owl={owl_release} vs "
-            f"ncbitaxon.db={db_release}. metatraits/lpsn/bacdive look taxa up in "
-            "ncbitaxon.db while the transform emits nodes from ncbitaxon.owl; the "
-            "two releases must match. Re-download NCBITaxon and refresh the OAK "
-            "SemSQL DB so both are the same release "
+            f"ncbitaxon.db={db_release}. The metatraits transform emits nodes from "
+            "ncbitaxon.owl but looks taxa up in ncbitaxon.db; a release gap can "
+            "resolve lookups against taxa the transform didn't emit. To realign, "
+            "refresh the OAK SemSQL DB to the pinned release "
             "(rm ~/.data/oaklib/ncbitaxon.db; poetry run python -c "
             "'from oaklib import get_adapter; get_adapter(\"sqlite:obo:ncbitaxon\")')."
         )

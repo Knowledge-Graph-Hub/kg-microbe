@@ -108,15 +108,12 @@ def _ensure_ncbitaxon_db_ready() -> None:
 
     Raises RuntimeError with remediation steps if no valid DB can be found.
     """
-    from kg_microbe.utils.ontology_utils import assert_ncbitaxon_version_alignment
-
     local_db, oak_cache = _ncbitaxon_db_paths()
 
     # Happy path: symlink resolves to a valid DB.
     ok, reason = _validate_ncbitaxon_db(local_db)
     if ok:
         print(f"  NCBITaxon DB validated: {local_db} -> {local_db.resolve()}")
-        assert_ncbitaxon_version_alignment(str(local_db))
         return
 
     print(f"  NCBITaxon DB at {local_db} invalid ({reason}); attempting repair")
@@ -129,7 +126,6 @@ def _ensure_ncbitaxon_db_ready() -> None:
                 local_db.unlink()
             local_db.symlink_to(oak_cache)
             print(f"  Repaired symlink: {local_db} -> {oak_cache}")
-            assert_ncbitaxon_version_alignment(str(local_db))
             return
         print(f"  OAK cache also invalid ({cache_reason})")
 
@@ -3602,6 +3598,15 @@ class MetaTraitsTransform(Transform):
         # retain the existing lazy OAK download/refresh behavior.
         if use_mp:
             _ensure_ncbitaxon_db_ready()
+
+        # Version-alignment guard runs regardless of MP mode (the mismatch it
+        # catches is independent of parallelism). No-ops when the DB isn't
+        # present yet — sequential runs fetch it lazily downstream.
+        local_db, _ = _ncbitaxon_db_paths()
+        if local_db.exists():
+            from kg_microbe.utils.ontology_utils import assert_ncbitaxon_version_alignment
+
+            assert_ncbitaxon_version_alignment(str(local_db))
 
         # Decide whether to use parallel or sequential processing
         try:

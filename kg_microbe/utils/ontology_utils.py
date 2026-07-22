@@ -128,7 +128,7 @@ def _ncbitaxon_db_release(db_path: str) -> Optional[str]:
 
     Reads ``owl:versionInfo`` from the ``statements`` table (OAK/SemanticSQL
     stores the ontology's version there). Returns None on any read error or a
-    missing/unparseable stamp.
+    missing/unparsable stamp.
     """
     try:
         conn = sqlite3.connect(db_path)

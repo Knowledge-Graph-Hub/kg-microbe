@@ -3599,6 +3599,15 @@ class MetaTraitsTransform(Transform):
         if use_mp:
             _ensure_ncbitaxon_db_ready()
 
+        # Version-alignment guard runs regardless of MP mode (the mismatch it
+        # catches is independent of parallelism). No-ops when the DB isn't
+        # present yet — sequential runs fetch it lazily downstream.
+        local_db, _ = _ncbitaxon_db_paths()
+        if local_db.exists():
+            from kg_microbe.utils.ontology_utils import assert_ncbitaxon_version_alignment
+
+            assert_ncbitaxon_version_alignment(str(local_db))
+
         # Decide whether to use parallel or sequential processing
         try:
             if use_mp and len(input_files) > 1:

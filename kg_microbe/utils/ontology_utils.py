@@ -174,15 +174,21 @@ def _go_db_release(db_path: str) -> Optional[str]:
     Return the GO release (YYYY-MM-DD) recorded in a SemSQL ``go.db``.
 
     SemSQL stamps the ontology node directly: ``obo:go.owl | owl:versionInfo |
-    2026-05-19``. Target that subject exactly (rather than any entity carrying
-    a version-shaped value) and return None on any read error / missing stamp.
+    2026-05-19``. Match the GO ontology subject across the encodings different
+    semsql/rdftab builds emit — the CURIE ``obo:go.owl`` / ``obo:go`` or the
+    full IRI ``.../obo/go.owl`` — while still excluding GO *term* subjects
+    (``GO:...``) that might carry a version-shaped value. Returns None on any
+    read error / missing stamp; a None here makes ``_ensure_go_db`` conservatively
+    reuse the existing db rather than force a spurious rebuild.
     """
     try:
         conn = sqlite3.connect(db_path)
         try:
             row = conn.execute(
                 "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
-                "AND subject = 'obo:go.owl' AND value IS NOT NULL LIMIT 1"
+                "AND value IS NOT NULL AND ("
+                "subject IN ('obo:go.owl', 'obo:go') OR subject LIKE '%/go.owl'"
+                ") LIMIT 1"
             ).fetchone()
         finally:
             conn.close()

@@ -210,8 +210,13 @@ class OntologiesTransform(Transform):
                 # ontologies (fix 2 #604: GO derives go.json from go.owl) this
                 # keeps the transform output locked to the same release the OWL
                 # (and go.db, built from it) carry, so a refreshed go.owl can't
-                # leave a stale go.json behind.
-                if not Path(json_path).is_file() or _derived_json_is_stale(data_file, Path(json_path)):
+                # leave a stale go.json behind. convert_to_json is a no-op when
+                # the target already exists, so a stale JSON must be removed
+                # first (mirrors _ensure_go_db's rebuild) — otherwise the
+                # reconversion silently keeps the old release.
+                if _derived_json_is_stale(data_file, Path(json_path)):
+                    Path(json_path).unlink()
+                if not Path(json_path).is_file():
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path
             elif data_file.suffix == ".obo":

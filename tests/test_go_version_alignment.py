@@ -211,3 +211,72 @@ def test_ensure_go_db_rebuilds_on_release_drift(tmp_path, monkeypatch, capsys):
     db = _make_go_db(tmp_path, "2026-01-01")  # drifted from go.owl (2026-05-19)
     assert ou._ensure_go_db(db) is False
     assert "drifted" in capsys.readouterr().out
+
+
+def test_go_db_release_reads_full_iri_subject(tmp_path):
+    """The db-release read also matches the full-IRI ontology subject encoding."""
+    path = str(tmp_path / "go.db")
+    conn = sqlite3.connect(path)
+    conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+    conn.execute(
+        "INSERT INTO statements VALUES ('http://purl.obolibrary.org/obo/go.owl', 'owl:versionInfo', NULL, '2026-05-19')"
+    )
+    conn.commit()
+    conn.close()
+    assert ou._go_db_release(path) == "2026-05-19"
+
+
+def _stub_go_transform(tmp_path, monkeypatch):
+    """
+    Build an OntologiesTransform whose post-conversion steps are stubbed out.
+
+    Returns (transform, calls) where calls['convert'] counts convert_to_json
+    invocations. convert_to_json is faked to write a fresh 2026-05-19 go.json
+    (what ROBOT would produce from the new go.owl).
+    """
+    import kg_microbe.transform_utils.ontologies.ontologies_transform as ot
+
+    calls = {"convert": 0}
+
+    def fake_convert(path, ont):
+        calls["convert"] += 1
+        (Path(path) / f"{ont}.json").write_text(_JSON.format(d="2026-05-19"), encoding="utf-8")
+
+    monkeypatch.setattr(ot, "convert_to_json", fake_convert)
+    monkeypatch.setattr(ot, "transform", lambda **k: None)
+    t = ot.OntologiesTransform.__new__(ot.OntologiesTransform)
+    t.input_base_dir = tmp_path
+    t.output_dir = tmp_path
+    monkeypatch.setattr(t, "_sanitize_obograph_synonyms", lambda p: None, raising=False)
+    monkeypatch.setattr(t, "_drop_deprecated_terms", lambda p: None, raising=False)
+    monkeypatch.setattr(t, "post_process", lambda n: None, raising=False)
+    return t, calls
+
+
+def test_stale_go_json_is_removed_and_reconverted(tmp_path, monkeypatch):
+    """
+    A stale go.json is unlinked then regenerated — convert_to_json won't overwrite it.
+
+    Regression for the review finding: without the unlink, convert_to_json is a
+    no-op on an existing (stale) file, so a refreshed go.owl would leave the old
+    go.json in place instead of self-healing.
+    """
+    (tmp_path / "go.owl").write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    (tmp_path / "go.json").write_text(_JSON.format(d="2026-04-01"), encoding="utf-8")  # stale
+    t, calls = _stub_go_transform(tmp_path, monkeypatch)
+
+    t.parse("go", tmp_path / "go.owl", "go")
+
+    assert calls["convert"] == 1
+    assert ou._obo_release_from_head(tmp_path / "go.json") == "2026-05-19"  # regenerated
+
+
+def test_aligned_go_json_is_not_reconverted(tmp_path, monkeypatch):
+    """An already-aligned go.json is reused (no needless ROBOT reconversion)."""
+    (tmp_path / "go.owl").write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    (tmp_path / "go.json").write_text(_JSON.format(d="2026-05-19"), encoding="utf-8")  # aligned
+    t, calls = _stub_go_transform(tmp_path, monkeypatch)
+
+    t.parse("go", tmp_path / "go.owl", "go")
+
+    assert calls["convert"] == 0

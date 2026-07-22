@@ -1,0 +1,10 @@
+proposed_id	kind	label	priority	subset	status
+METPO:1007022	class	pH minimum tolerance	HIGH	metpo_proposal_2026_04	absent
+METPO:1007023	class	pH maximum tolerance	HIGH	metpo_proposal_2026_04	absent
+METPO:1007026	class	temperature minimum tolerance	HIGH	metpo_proposal_2026_04	absent
+METPO:1007027	class	temperature maximum tolerance	HIGH	metpo_proposal_2026_04	absent
+METPO:1007030	class	salinity minimum tolerance	HIGH	metpo_proposal_2026_04	absent
+METPO:1007031	class	salinity maximum tolerance	HIGH	metpo_proposal_2026_04	absent
+METPO:2000717	property	has growth temperature optimum value	CRITICAL	metpo_proposal_2026_04	absent
+METPO:2000718	property	has growth pH optimum value	HIGH	metpo_proposal_2026_04	absent
+METPO:2000719	property	has growth salinity optimum value	CRITICAL	metpo_proposal_2026_04	absent

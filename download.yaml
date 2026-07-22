@@ -51,14 +51,10 @@
   local_name: chebi.owl.gz
 
 #
-# GO
-#
--
-  url: http://purl.obolibrary.org/obo/go.json
-  local_name: go.json
-
-#
-# GO
+# GO — single source of truth (fix 2, #604): download only go.owl; the
+# transform derives go.json from it (ROBOT owl→json) and go.db is built from
+# it (semsql), so the aspect map and the transform output can never drift to
+# different GO releases. Do NOT re-add a standalone go.json download.
 #
 -
   url: http://purl.obolibrary.org/obo/go.owl

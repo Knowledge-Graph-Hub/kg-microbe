@@ -48,7 +48,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
-from kg_microbe.utils.ontology_utils import replace_category_ontology
+from kg_microbe.utils.ontology_utils import _derived_json_is_stale, replace_category_ontology
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
@@ -73,7 +73,10 @@ ONTOLOGIES_MAP = {
     "ncbitaxon": "ncbitaxon.owl.gz",
     "chebi": "chebi.owl.gz",
     "envo": "envo.json",
-    "go": "go.json",
+    # GO is single-source (fix 2, #604): the transform derives go.json from
+    # go.owl (ROBOT owl→json), the same OWL that go.db is built from — so the
+    # aspect map (go.db) and the transform output (go.json) share one release.
+    "go": "go.owl",
     ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
     "ec": "ec.json",
     "upa": "upa.owl",
@@ -202,7 +205,13 @@ class OntologiesTransform(Transform):
                 data_file = json_path
             elif data_file.suffix == ".owl":
                 json_path = str(data_file).replace(".owl", ".json")
-                if not Path(json_path).is_file():
+                # Regenerate the derived JSON when it's missing OR its OBO
+                # release no longer matches the source OWL. For single-source
+                # ontologies (fix 2 #604: GO derives go.json from go.owl) this
+                # keeps the transform output locked to the same release the OWL
+                # (and go.db, built from it) carry, so a refreshed go.owl can't
+                # leave a stale go.json behind.
+                if not Path(json_path).is_file() or _derived_json_is_stale(data_file, Path(json_path)):
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path
             elif data_file.suffix == ".obo":

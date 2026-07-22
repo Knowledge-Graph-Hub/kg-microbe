@@ -66,6 +66,23 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000) -> Optional[str]
     return m.group(1) if m else None
 
 
+def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
+    """
+    Return True when a derived OBO-JSON's release no longer matches its source OWL.
+
+    Used by the ontologies transform to decide whether to re-run the ROBOT
+    ``owl→json`` conversion: a single-source ontology (e.g. GO, whose go.json
+    is derived from go.owl rather than downloaded) must regenerate the JSON
+    when the OWL is refreshed to a new release. Conservative — only reports
+    stale when *both* release stamps are readable and differ; an unstamped or
+    unreadable pair yields False so unstamped ``.owl`` inputs keep the prior
+    "convert only if missing" behavior.
+    """
+    owl_release = _obo_release_from_head(owl_path)
+    json_release = _obo_release_from_head(json_path)
+    return bool(owl_release and json_release and owl_release != json_release)
+
+
 def _version_check_strict(env_var: str, strict: Optional[bool], default_strict: bool = True) -> bool:
     """
     Resolve a version-gate's strictness: explicit arg wins, else the env var.
@@ -87,15 +104,18 @@ def _version_check_strict(env_var: str, strict: Optional[bool], default_strict: 
 
 def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
     """
-    Guard that GO's aspect-map source (go.owl→go.db) matches the transform's (go.json).
+    Guard that GO's derived ``go.json`` matches its single source ``go.owl``.
 
-    The GO transform TSV is built from ``go.json`` while the MF/BP/CC aspect map
-    is read from ``go.db`` (built from ``go.owl``). If a ``kg download`` straddles
-    a GO release boundary the two diverge and MF/CC terms silently fall through
-    to the ``biological_process`` default. Compare the two releases and, on
-    mismatch, raise (``strict``) or warn loudly. No-op when either release stamp
-    can't be read (e.g. a source is absent), so a missed versionIRI never
-    false-alarms — only two readable-but-different stamps trip the gate.
+    Since fix 2 (#604) GO is single-source: ``go.owl`` is the only download, and
+    ``go.json`` (transform output) and ``go.db`` (MF/BP/CC aspect map) are both
+    derived from it — the transform regenerates a stale go.json and
+    ``_ensure_go_db`` rebuilds a drifted go.db. This gate is the belt-and-braces
+    check that the derived go.json actually tracks go.owl: a leftover pre-fix-2
+    go.json, or a conversion that didn't re-run, would make MF/CC terms silently
+    fall through to the ``biological_process`` default. Compare the two releases
+    and, on mismatch, raise (``strict``) or warn loudly. No-op when either
+    release stamp can't be read (e.g. a source is absent), so a missed versionIRI
+    never false-alarms — only two readable-but-different stamps trip the gate.
 
     ``strict`` defaults to fail-loud (raise). Since the verdict rests on a
     release-stamp heuristic, ``KG_GO_VERSION_CHECK=warn`` downgrades to a
@@ -138,6 +158,31 @@ def _ncbitaxon_db_release(db_path: str) -> Optional[str]:
             row = conn.execute(
                 "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
                 "AND subject LIKE '%ncbitaxon%' AND value IS NOT NULL LIMIT 1"
+            ).fetchone()
+        finally:
+            conn.close()
+    except sqlite3.Error:
+        return None
+    if not row or not row[0]:
+        return None
+    m = re.search(r"(\d{4}-\d{2}-\d{2})", str(row[0]))
+    return m.group(1) if m else None
+
+
+def _go_db_release(db_path: str) -> Optional[str]:
+    """
+    Return the GO release (YYYY-MM-DD) recorded in a SemSQL ``go.db``.
+
+    SemSQL stamps the ontology node directly: ``obo:go.owl | owl:versionInfo |
+    2026-05-19``. Target that subject exactly (rather than any entity carrying
+    a version-shaped value) and return None on any read error / missing stamp.
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
+                "AND subject = 'obo:go.owl' AND value IS NOT NULL LIMIT 1"
             ).fetchone()
         finally:
             conn.close()
@@ -203,7 +248,20 @@ def _ensure_go_db(go_db_path: str) -> bool:
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
     if os.path.exists(go_db_path) and os.path.getsize(go_db_path) >= _GO_DB_MIN_SIZE:
-        return True
+        # An existing, non-stub go.db is reused — unless it has drifted from the
+        # source OWL's release (single-source invariant, fix 2 #604): a refreshed
+        # go.owl must rebuild go.db, else the aspect map lags the transform output
+        # and MF/CC terms silently fall through to BiologicalProcess. Only rebuild
+        # when both release stamps are readable and differ (an unreadable stamp
+        # never forces a costly spurious rebuild).
+        owl_release = _obo_release_from_head(Path(GO_SOURCE)) if GO_SOURCE else None
+        db_release = _go_db_release(go_db_path)
+        if not (owl_release and db_release and owl_release != db_release):
+            return True
+        print(
+            f"Rebuilding {go_db_path}: release {db_release} drifted from "
+            f"go.owl {owl_release} (single-source realign)..."
+        )
     if not (GO_SOURCE and Path(GO_SOURCE).exists()):
         print(f"Warning: cannot build {go_db_path} — GO OWL source {GO_SOURCE} is missing")
         return False

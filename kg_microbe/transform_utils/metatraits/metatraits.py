@@ -161,12 +161,18 @@ def _get_ncbitaxon_adapter():
     return get_adapter(f"sqlite:{local_db}")
 
 
-def _open_jsonl(path: Path):
+def _open_maybe_gzipped(path: Path):
     """
-    Open JSONL file; use gzip for .gz files, plain text otherwise.
+    Open a ``.gz`` file that may not actually be gzip-compressed.
 
-    If a .gz file is not actually gzip-compressed (e.g. misnamed plain JSON),
-    falls back to plain text.
+    Google Drive silently serves some uploads decompressed, so a file named
+    ``*.gz`` can arrive as plain text — this is how the Drive-hosted
+    ``ncbi_*_summary.jsonl.gz`` inputs ended up as plain JSON in ``data/raw``.
+    Every read of a Drive-hosted input must go through here rather than calling
+    ``gzip.open`` directly.
+
+    :param path: File to open.
+    :return: An open text-mode handle.
     """
     if path.name.endswith(".gz"):
         try:
@@ -177,6 +183,16 @@ def _open_jsonl(path: Path):
         except gzip.BadGzipFile:
             return open(path, "r", encoding="utf-8")
     return open(path, "r", encoding="utf-8")
+
+
+def _open_jsonl(path: Path):
+    """
+    Open JSONL file; use gzip for .gz files, plain text otherwise.
+
+    If a .gz file is not actually gzip-compressed (e.g. misnamed plain JSON),
+    falls back to plain text.
+    """
+    return _open_maybe_gzipped(path)
 
 
 def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[str, Any]:
@@ -672,7 +688,10 @@ class MetaTraitsTransform(Transform):
             return gtdb_mappings
 
         try:
-            with gzip.open(mappings_file, "rt", encoding="utf-8") as f:
+            # Not gzip.open: this file is Drive-hosted and can arrive
+            # decompressed. The except below would swallow BadGzipFile and
+            # leave the mappings silently empty.
+            with _open_maybe_gzipped(mappings_file) as f:
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
                     ncbi_species = row.get("species (NCBI)", "").strip()

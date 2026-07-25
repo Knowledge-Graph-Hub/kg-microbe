@@ -269,7 +269,7 @@
 # Original (broken TLS) source, kept for provenance:
 #   https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
 -
-  url: gdrive:REPLACE_ME_bactotraits_v2_jun2022
+  url: gdrive:REPLACE_ME_bactotraits_v2_jun2022  # md5 e6bca5b947c1aa692d45ac24aa9025f3
   local_name: BactoTraits_databaseV2_Jun2022.csv
   tag: bactotraits
 
@@ -490,16 +490,20 @@
 #   https://metatraits.embl.de/static/downloads/gtdb_{species,genus,family}_summary.jsonl.gz
 # Only the species summary is read by the transform; genus/family are declared
 # here for completeness (see METATRAITS_GTDB_INPUT_FILES).
+# The JSONL serialization is discontinued upstream; only *_all.tsv.gz and
+# *_no_predictions.tsv.gz are published now (ours corresponds to _all). Reading
+# the TSV would need a transform change, so the pinned JSONL build stays the
+# input. See docs/DATA_HOSTING.md.
 -
-  url: gdrive:REPLACE_ME_gtdb_species_summary
+  url: gdrive:REPLACE_ME_gtdb_species_summary   # md5 aca98ae9c978f238ae7844beaccec63b
   local_name: gtdb_species_summary.jsonl.gz
   tag: metatraits_gtdb
 -
-  url: gdrive:REPLACE_ME_gtdb_genus_summary
+  url: gdrive:REPLACE_ME_gtdb_genus_summary     # md5 159828de09d22a7c85e2116e8a97944a
   local_name: gtdb_genus_summary.jsonl.gz
   tag: metatraits_gtdb
 -
-  url: gdrive:REPLACE_ME_gtdb_family_summary
+  url: gdrive:REPLACE_ME_gtdb_family_summary    # md5 1443132d2aa0f3d8743b23096ce23a13
   local_name: gtdb_family_summary.jsonl.gz
   tag: metatraits_gtdb
 
@@ -509,21 +513,25 @@
 # NOTE: Commented out — same dead metatraits.embl.de endpoint (HTTP 404).
 # Last public copies (2026-03-24) vendored into data/raw/ from data/raw_last8/.
 #
-# These moved off metatraits.embl.de/static/downloads/ (now HTTP 404) to the
-# Bork group's own web space, which the metaTraits documentation page points at:
-# https://metatraits.embl.de/documentation. Verified 2026-07-25: both URLs
-# return byte-identical files to the copies previously vendored into data/raw
-# (NCBI2GTDB md5 eca29d35869dd9035730caa12de12598,
-#  GTDB2NCBI md5 a313f89ac32b7137c7225c789f724f63).
-# Mapping is GTDB r220 <-> NCBI 2025-07-28, assigned where >=85% of genomes
-# share the same ID in both taxonomies.
-# NCBI2GTDB.tsv.gz is read by the metatraits transform (_load_ncbi_gtdb_mappings).
+# GTDB r220 <-> NCBI 2025-07-28 crosswalks, assigned where >=85% of genomes
+# share the same ID in both taxonomies. NCBI2GTDB.tsv.gz is read by the
+# metatraits transform (_load_ncbi_gtdb_mappings).
+#
+# These are still published upstream, at the Bork group's web space (linked from
+# https://metatraits.embl.de/documentation):
+#   https://www.bork.embl.de/~robbani/metatraits/GTDB2NCBI.tsv.gz
+#   https://www.bork.embl.de/~robbani/metatraits/NCBI2GTDB.tsv.gz
+# Verified 2026-07-25: byte-identical to the pinned copies below. We deliberately
+# do NOT point at those URLs — it is an unversioned personal directory whose
+# contents are regenerated in place (our build is dated 2025-08-14), so a KG
+# rebuild months apart would silently use different crosswalks. The Drive copy
+# fixes the release; refresh it deliberately, from the URLs above.
 -
-  url: https://www.bork.embl.de/~robbani/metatraits/GTDB2NCBI.tsv.gz
+  url: gdrive:REPLACE_ME_gtdb2ncbi          # md5 a313f89ac32b7137c7225c789f724f63
   local_name: GTDB2NCBI.tsv.gz
   tag: metatraits_gtdb
 -
-  url: https://www.bork.embl.de/~robbani/metatraits/NCBI2GTDB.tsv.gz
+  url: gdrive:REPLACE_ME_ncbi2gtdb          # md5 eca29d35869dd9035730caa12de12598
   local_name: NCBI2GTDB.tsv.gz
   tag: metatraits_gtdb
 

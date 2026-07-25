@@ -11,30 +11,43 @@ Drive, plus the interim copy-by-hand procedure.
 
 ## Files to host
 
-Four files, ~75 MB total. Checksums are from the copies currently in `data/raw`,
-which came from `data/raw_202607_andOLD_mixed/`.
+Six files, ~81 MB total. Checksums are from the copies currently in `data/raw`,
+which came from `data/raw_202607_andOLD_mixed/`. Each md5 is also recorded inline
+in `download.yaml` next to its placeholder.
 
 | file | size | md5 | placeholder token in download.yaml |
 |---|---|---|---|
 | `gtdb_species_summary.jsonl.gz` | 46 MB | `aca98ae9c978f238ae7844beaccec63b` | `REPLACE_ME_gtdb_species_summary` |
 | `gtdb_genus_summary.jsonl.gz` | 16 MB | `159828de09d22a7c85e2116e8a97944a` | `REPLACE_ME_gtdb_genus_summary` |
 | `gtdb_family_summary.jsonl.gz` | 4.4 MB | `1443132d2aa0f3d8743b23096ce23a13` | `REPLACE_ME_gtdb_family_summary` |
+| `NCBI2GTDB.tsv.gz` | 2.8 MB | `eca29d35869dd9035730caa12de12598` | `REPLACE_ME_ncbi2gtdb` |
+| `GTDB2NCBI.tsv.gz` | 2.8 MB | `a313f89ac32b7137c7225c789f724f63` | `REPLACE_ME_gtdb2ncbi` |
 | `BactoTraits_databaseV2_Jun2022.csv` | 8.6 MB | `e6bca5b947c1aa692d45ac24aa9025f3` | `REPLACE_ME_bactotraits_v2_jun2022` |
 
-### No longer needs hosting
+All five MetaTraits files are hosted together so the KG builds against one fixed
+MetaTraits release, matching the three `ncbi_*_summary.jsonl.gz` inputs that are
+already Drive-hosted under the `metatraits` tag.
 
-`NCBI2GTDB.tsv.gz` and `GTDB2NCBI.tsv.gz` are live again. They moved off the
-dead `metatraits.embl.de/static/downloads/` path to the Bork group's own web
-space, linked from <https://metatraits.embl.de/documentation>:
+### Why pin the crosswalks rather than fetch them live
+
+`NCBI2GTDB.tsv.gz` and `GTDB2NCBI.tsv.gz` *are* still published upstream — they
+moved off the dead `metatraits.embl.de/static/downloads/` path to the Bork
+group's web space, linked from <https://metatraits.embl.de/documentation>:
 
 ```
 https://www.bork.embl.de/~robbani/metatraits/NCBI2GTDB.tsv.gz
 https://www.bork.embl.de/~robbani/metatraits/GTDB2NCBI.tsv.gz
 ```
 
-Verified 2026-07-25: both are **byte-identical** to the vendored copies
-(md5 `eca29d35…` and `a313f89a…`). They are now ordinary `download.yaml` entries
-under the `metatraits_gtdb` tag.
+Verified 2026-07-25: both are **byte-identical** to the copies in `data/raw`.
+
+We deliberately do not point `download.yaml` at them. That is an unversioned
+personal directory whose files are regenerated in place — the current build is
+dated 2025-08-14 and the name carries no release identifier — so two KG builds
+months apart would silently use different crosswalks with no way to tell from
+the config. The Drive copy fixes the release. **Those URLs are the refresh
+source**: when you want a newer crosswalk, download from there, re-upload, and
+update the md5 in `download.yaml` and in the table above as a deliberate act.
 
 ### Why each one needs hosting
 
@@ -97,10 +110,18 @@ under the `metatraits_gtdb` tag.
    ```
 
    This step is not optional. Drive has silently served `.gz` uploads
-   decompressed — that is exactly how `ncbi_*_summary.jsonl.gz` ended up as
-   plain JSON under a `.gz` name in `data/raw`. (The MetaTraits reader tolerates
-   it via a `BadGzipFile` fallback, but `metatraits_gtdb` and the `.tsv.gz`
-   crosswalks are read with plain `gzip.open` and would fail.)
+   decompressed — that is exactly how the already-hosted
+   `ncbi_*_summary.jsonl.gz` ended up as plain JSON under a `.gz` name in
+   `data/raw`, and the five files below go up the same way.
+
+   Every MetaTraits read path now tolerates a decompressed `.gz` via
+   `_open_maybe_gzipped` (`transform_utils/metatraits/metatraits.py`), so this
+   no longer breaks a build. It used to matter most for the crosswalk:
+   `_load_ncbi_gtdb_mappings` wraps its read in `except Exception`, so a
+   `BadGzipFile` there never crashed — it silently produced **zero** mappings
+   and the NCBI→GTDB fallback quietly stopped working. Verifying the checksum
+   still matters, because a decompressed upload has a different md5 than the
+   table above and is no longer the pinned artifact.
 4. Take the file ID from the sharing link's `/d/<id>/` segment and paste it over
    the placeholder in `download.yaml`:
 
@@ -131,11 +152,8 @@ hand:
 ```bash
 REF=data/raw_202607_andOLD_mixed
 cp -n $REF/gtdb_species_summary.jsonl.gz $REF/gtdb_genus_summary.jsonl.gz \
-      $REF/gtdb_family_summary.jsonl.gz \
-      $REF/BactoTraits_databaseV2_Jun2022.csv data/raw/
-
-# NCBI2GTDB / GTDB2NCBI no longer need copying — they download normally:
-poetry run kg download -t metatraits_gtdb
+      $REF/gtdb_family_summary.jsonl.gz $REF/NCBI2GTDB.tsv.gz \
+      $REF/GTDB2NCBI.tsv.gz $REF/BactoTraits_databaseV2_Jun2022.csv data/raw/
 ```
 
 ### These are NOT GTDB downloads

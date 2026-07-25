@@ -29,10 +29,28 @@
 #    kegg        KEGG KO list (see the KEGG section for the manual cache step)
 #    gtdb        GTDB taxonomy + metadata
 #    metatraits  MetaTraits per-taxon trait summaries (NCBITaxon ranks)
+#    metatraits_gtdb  MetaTraits summaries + crosswalks keyed by GTDB taxonomy
+#    bactotraits BactoTraits V2 (static Jun-2022 dataset)
 #    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
 #
 #  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so
 #  an untagged source can never be silently unreachable via -t.
+#
+#  PENDING HOSTING
+#  Some sources have a dead upstream URL and no hosted replacement yet. They are
+#  declared normally but with a placeholder URL containing "REPLACE_ME_":
+#
+#    -
+#      url: gdrive:REPLACE_ME_gtdb_species_summary
+#      local_name: gtdb_species_summary.jsonl.gz
+#      tag: metatraits_gtdb
+#
+#  kg download skips these and prints what it skipped, so a placeholder never
+#  aborts a run. To activate one, replace the whole url value with the real
+#  Google Drive file ID (`gdrive:<id>`, from the sharing link's /d/<id>/ segment;
+#  the file must be readable by anyone with the link). Until then, copy the file
+#  from a reference data/raw_* directory. See tests/test_download_tags.py, which
+#  enforces that placeholders stay skippable and tagged.
 #
 #  For downloading from S3 buckets, see here for information about what URL to use:
 #  https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro
@@ -248,9 +266,12 @@
 # bactotraits transform runs normally. To refresh, fetch the CSV manually
 # (verification relaxed) to that path, then re-enable this entry.
 #
-#-
-#  url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
-#  local_name: BactoTraits_databaseV2_Jun2022.csv
+# Original (broken TLS) source, kept for provenance:
+#   https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
+-
+  url: gdrive:REPLACE_ME_bactotraits_v2_jun2022
+  local_name: BactoTraits_databaseV2_Jun2022.csv
+  tag: bactotraits
 
 #
 # CTD
@@ -465,15 +486,22 @@
 # antheaguo@berkeley.edu). The last public copies (2026-03-24) are vendored
 # into data/raw/ from data/raw_last8/. To refresh, obtain access and re-enable.
 #
-#-
-#  url: https://metatraits.embl.de/static/downloads/gtdb_species_summary.jsonl.gz
-#  local_name: gtdb_species_summary.jsonl.gz
-#-
-#  url: https://metatraits.embl.de/static/downloads/gtdb_genus_summary.jsonl.gz
-#  local_name: gtdb_genus_summary.jsonl.gz
-#-
-#  url: https://metatraits.embl.de/static/downloads/gtdb_family_summary.jsonl.gz
-#  local_name: gtdb_family_summary.jsonl.gz
+# Original (now HTTP 404) sources, kept for provenance:
+#   https://metatraits.embl.de/static/downloads/gtdb_{species,genus,family}_summary.jsonl.gz
+# Only the species summary is read by the transform; genus/family are declared
+# here for completeness (see METATRAITS_GTDB_INPUT_FILES).
+-
+  url: gdrive:REPLACE_ME_gtdb_species_summary
+  local_name: gtdb_species_summary.jsonl.gz
+  tag: metatraits_gtdb
+-
+  url: gdrive:REPLACE_ME_gtdb_genus_summary
+  local_name: gtdb_genus_summary.jsonl.gz
+  tag: metatraits_gtdb
+-
+  url: gdrive:REPLACE_ME_gtdb_family_summary
+  local_name: gtdb_family_summary.jsonl.gz
+  tag: metatraits_gtdb
 
 #
 # GTDB-NCBITaxon Mappings (for overlap analysis)
@@ -481,12 +509,17 @@
 # NOTE: Commented out — same dead metatraits.embl.de endpoint (HTTP 404).
 # Last public copies (2026-03-24) vendored into data/raw/ from data/raw_last8/.
 #
-#-
-#  url: https://metatraits.embl.de/static/downloads/GTDB2NCBI.tsv.gz
-#  local_name: GTDB2NCBI.tsv.gz
-#-
-#  url: https://metatraits.embl.de/static/downloads/NCBI2GTDB.tsv.gz
-#  local_name: NCBI2GTDB.tsv.gz
+# Original (now HTTP 404) sources, kept for provenance:
+#   https://metatraits.embl.de/static/downloads/{GTDB2NCBI,NCBI2GTDB}.tsv.gz
+# NCBI2GTDB.tsv.gz is read by the metatraits transform (_load_ncbi_gtdb_mappings).
+-
+  url: gdrive:REPLACE_ME_gtdb2ncbi
+  local_name: GTDB2NCBI.tsv.gz
+  tag: metatraits_gtdb
+-
+  url: gdrive:REPLACE_ME_ncbi2gtdb
+  local_name: NCBI2GTDB.tsv.gz
+  tag: metatraits_gtdb
 
 #
 # Biolink Model

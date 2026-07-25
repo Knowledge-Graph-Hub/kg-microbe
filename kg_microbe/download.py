@@ -1,8 +1,10 @@
 """Download resources from YAML file."""
 
+import tempfile
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import List, Optional, Sequence, Tuple
 
+import yaml
 from kghub_downloader.download_utils import download_from_yaml
 
 from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
@@ -13,6 +15,13 @@ from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
 # off an hour of MediaDive API calls just because mediadive.json is on disk
 # from an earlier run.
 MEDIADIVE_TAG = "mediadive"
+
+# Marker for a source whose original URL is dead and whose replacement copy is
+# not hosted yet (see the "pending hosting" note in download.yaml). Such entries
+# are declared normally — so they carry a tag, appear in the config, and start
+# working the moment a real URL is pasted in — but are skipped at download time.
+# Without the skip, the placeholder URL would raise and abort the whole run.
+PENDING_HOSTING_MARKER = "REPLACE_ME_"
 
 
 def download(
@@ -41,13 +50,21 @@ def download(
     if tags:
         _validate_tags(yaml_file, tags)
 
-    download_from_yaml(
-        yaml_file=yaml_file,
-        output_dir=output_dir,
-        snippet_only=snippet_only,
-        ignore_cache=ignore_cache,
-        tags=tags,
-    )
+    effective_yaml, pending = _without_pending_hosting(yaml_file, tags)
+    if pending:
+        _report_pending(pending)
+
+    try:
+        download_from_yaml(
+            yaml_file=effective_yaml,
+            output_dir=output_dir,
+            snippet_only=snippet_only,
+            ignore_cache=ignore_cache,
+            tags=tags,
+        )
+    finally:
+        if effective_yaml != yaml_file:
+            Path(effective_yaml).unlink(missing_ok=True)
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
     if snippet_only:  # Skip bulk download in snippet mode
@@ -55,6 +72,56 @@ def download(
     if tags and MEDIADIVE_TAG not in tags:
         return
     _post_download_mediadive_bulk(output_dir, ignore_cache)
+
+
+def _without_pending_hosting(yaml_file: str, tags: Optional[Sequence[str]]) -> Tuple[str, List[dict]]:
+    """
+    Split off entries still carrying a hosting placeholder.
+
+    kghub-downloader reads the config file itself and aborts the whole run on the
+    first download error, so a placeholder URL cannot simply be left in place.
+    When any is present we hand the downloader a filtered copy of the config
+    instead.
+
+    :param yaml_file: Path to the download config.
+    :param tags: Tags the run is restricted to, or None for all.
+    :return: (config path to use, list of skipped entries). The path is the
+        original when nothing is pending; otherwise a temp file the caller must
+        delete.
+    """
+    with open(yaml_file) as f:
+        entries = yaml.safe_load(f) or []
+
+    def is_pending(entry: dict) -> bool:
+        """Report whether this entry's URL is still a hosting placeholder."""
+        return PENDING_HOSTING_MARKER in entry.get("url", "")
+
+    # Only entries this run would actually have attempted are worth reporting.
+    selected = [e for e in entries if not tags or e.get("tag") in tags]
+    pending = [e for e in selected if is_pending(e)]
+    if not pending:
+        return yaml_file, []
+
+    ready = [e for e in entries if not is_pending(e)]
+    with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False) as tmp:
+        yaml.safe_dump(ready, tmp, sort_keys=False)
+        return tmp.name, pending
+
+
+def _report_pending(pending: Sequence[dict]) -> None:
+    """
+    Tell the user which sources were skipped and why.
+
+    A silent skip would look like a successful download of a file that never
+    arrived — the same failure mode as an unknown tag.
+
+    :param pending: Entries skipped because their URL is a placeholder.
+    """
+    print(f"\nSkipping {len(pending)} source(s) whose replacement copy is not hosted yet:")
+    for entry in pending:
+        print(f"  - {entry.get('local_name')} (tag: {entry.get('tag')})")
+    print("  Copy these from a reference data/raw_* directory, or paste the real")
+    print("  URL over the REPLACE_ME_ placeholder in download.yaml once hosted.\n")
 
 
 def _validate_tags(yaml_file: str, tags: Sequence[str]) -> None:
@@ -68,8 +135,6 @@ def _validate_tags(yaml_file: str, tags: Sequence[str]) -> None:
     :param tags: Tags requested on the command line.
     :raises ValueError: If any tag matches no entry.
     """
-    import yaml  # local import: only needed when filtering
-
     with open(yaml_file) as f:
         entries = yaml.safe_load(f) or []
     known = {entry.get("tag") for entry in entries if entry.get("tag")}

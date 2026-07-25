@@ -2,16 +2,21 @@
 
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import MagicMock, patch
 
 import requests
 
 from kg_microbe.utils.mediadive_bulk_download import (
+    CACHE_FILENAME,
     DEFAULT_MAX_WORKERS,
     USER_AGENT,
+    _make_session,
+    _reset_sessions,
     download_detailed_media,
     download_medium_strains,
     get_json_from_api,
+    setup_cache,
 )
 
 
@@ -42,6 +47,108 @@ class TestDefaults:
         with patch("kg_microbe.utils.mediadive_bulk_download.get_json_from_api", return_value=[{"strain": "A"}]):
             result = download_medium_strains(media_list, max_workers=2)
         assert isinstance(result, dict)
+
+
+class TestCacheThreadSafety:
+
+    """
+    Verify HTTP sessions are never shared across threads.
+
+    requests_cache's SQLiteDict holds one sqlite3.Connection for all callers and
+    takes no lock on reads, so sharing a CachedSession across a ThreadPoolExecutor
+    raises "database disk image is malformed" against an intact database. Each
+    thread must get its own session, and therefore its own connection.
+    """
+
+    def teardown_method(self):
+        """Disable caching and drop per-thread sessions between tests."""
+        setup_cache(None)
+
+    def test_setup_cache_creates_db_in_given_dir(self, tmp_path):
+        """The cache database belongs next to the bulk output, not in the CWD."""
+        cache_path = setup_cache(tmp_path)
+        assert cache_path == tmp_path / CACHE_FILENAME
+        assert cache_path.exists()
+
+    def test_each_thread_gets_its_own_session(self, tmp_path):
+        """_make_session must return a distinct session per calling thread."""
+        setup_cache(tmp_path)
+        n_threads = 5
+
+        def grab(_):
+            """Return this thread's session object."""
+            return _make_session()
+
+        with ThreadPoolExecutor(max_workers=n_threads) as executor:
+            sessions = list(executor.map(grab, range(n_threads * 4)))
+
+        by_thread = {id(s) for s in sessions}
+        assert len(by_thread) == n_threads, "sessions must not be shared between threads"
+        assert all(s.headers["User-Agent"] == USER_AGENT for s in sessions)
+
+    def test_each_session_has_its_own_sqlite_connection(self, tmp_path):
+        """Distinct sessions must not end up sharing one sqlite3.Connection."""
+        setup_cache(tmp_path)
+        n_threads = 4
+
+        def open_connection(_):
+            """Force this thread's backend to open its connection, and return it."""
+            session = _make_session()
+            with session.cache.responses.connection() as con:
+                return id(con)
+
+        with ThreadPoolExecutor(max_workers=n_threads) as executor:
+            connection_ids = set(executor.map(open_connection, range(n_threads * 4)))
+
+        assert len(connection_ids) == n_threads
+
+    def test_repeated_calls_reuse_the_same_thread_session(self, tmp_path):
+        """Within one thread, _make_session must be idempotent (no session churn)."""
+        setup_cache(tmp_path)
+        assert _make_session() is _make_session()
+
+    def test_caching_is_not_installed_globally(self, tmp_path):
+        """setup_cache must not monkeypatch requests.Session for the whole process."""
+        setup_cache(tmp_path)
+        assert type(requests.Session()) is requests.Session
+        assert not hasattr(requests.Session(), "cache")
+
+    def test_disabled_cache_yields_plain_sessions(self):
+        """With caching off, sessions are plain requests.Session objects."""
+        setup_cache(None)
+        _reset_sessions()
+        assert type(_make_session()) is requests.Session
+
+    def test_existing_cache_is_adopted_when_requested(self, tmp_path, monkeypatch):
+        """With migrate_legacy=True, a cache left in the CWD by the old code is reused."""
+        cwd = tmp_path / "cwd"
+        cwd.mkdir()
+        monkeypatch.chdir(cwd)
+        legacy = cwd / CACHE_FILENAME
+        legacy.write_bytes(b"")
+
+        cache_path = setup_cache(tmp_path / "out", migrate_legacy=True)
+
+        assert cache_path.exists()
+        assert not legacy.exists(), "legacy cache should be moved, not left behind"
+
+    def test_cwd_cache_is_untouched_by_default(self, tmp_path, monkeypatch):
+        """
+        setup_cache must not move files outside cache_dir unless asked.
+
+        Regression guard: an unconditional migration meant any setup_cache call —
+        including from a test suite — would relocate a real cache sitting in the CWD.
+        """
+        cwd = tmp_path / "cwd"
+        cwd.mkdir()
+        monkeypatch.chdir(cwd)
+        bystander = cwd / CACHE_FILENAME
+        bystander.write_bytes(b"do not move me")
+
+        setup_cache(tmp_path / "out")
+
+        assert bystander.exists(), "default setup_cache must not touch the CWD"
+        assert bystander.read_bytes() == b"do not move me"
 
 
 class TestRetryAfter:

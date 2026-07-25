@@ -14,12 +14,20 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import requests
-import requests_cache
+from requests_cache import CachedSession
+from requests_cache.backends.sqlite import SQLiteCache
 from tqdm import tqdm
 
 # Default to 5 workers — still a large speedup over sequential but polite to
 # MediaDive, which is a small academic REST API at DSMZ.
 DEFAULT_MAX_WORKERS = 5
+
+# Name of the HTTP response cache, stored alongside the bulk output files.
+CACHE_FILENAME = "mediadive_bulk_cache.sqlite"
+
+# Milliseconds a thread waits for the SQLite write lock before giving up. Each
+# thread holds its own connection, so brief contention on writes is expected.
+CACHE_BUSY_TIMEOUT_MS = 30_000
 
 # Descriptive User-Agent so the API operator can identify traffic source.
 USER_AGENT = "kg-microbe (Knowledge-Graph-Hub; https://github.com/Knowledge-Graph-Hub/kg-microbe)"
@@ -45,16 +53,112 @@ COMPOUND_ID_KEY = "compound_id"
 SOLUTION_ID_KEY = "solution_id"
 
 
-def setup_cache(cache_name: str = "mediadive_bulk_cache"):
-    """Set up HTTP caching to avoid re-downloading data."""
-    requests_cache.install_cache(cache_name, backend="sqlite")
-    print(f"HTTP cache enabled: {cache_name}.sqlite")
+# Per-thread HTTP sessions.
+#
+# requests_cache's SQLiteDict keeps a *single* sqlite3.Connection shared by every
+# caller (backends/sqlite.py: `self._connection`, opened with
+# check_same_thread=False) and deliberately takes no lock on reads:
+#
+#     # Read operations can be run in parallel (no lock or COMMIT)
+#     else:
+#         yield self._connection
+#
+# Driving one CachedSession from a ThreadPoolExecutor therefore runs concurrent
+# execute() calls on one connection, which tramples its internal pager state and
+# makes SQLite raise "database disk image is malformed" against a perfectly
+# intact file. Giving each thread its own CachedSession gives each thread its own
+# connection; multiple connections to one SQLite file is supported usage, and the
+# cached responses are still shared because they live in the same database.
+#
+# The previous implementation used requests_cache.install_cache(), which
+# monkeypatches requests.Session globally — every session in the process became a
+# CachedSession as a side effect. Caching is now explicit and scoped to this
+# module.
+_thread_local = threading.local()
+
+# Set by setup_cache(); None means "no HTTP caching" (plain sessions).
+_cache_path: Optional[Path] = None
+
+
+def setup_cache(cache_dir: Optional[Path] = None, migrate_legacy: bool = False) -> Optional[Path]:
+    """
+    Enable HTTP caching for subsequent sessions created by this module.
+
+    Args:
+    ----
+        cache_dir: Directory to hold the cache database. If None, caching is
+            disabled and plain (uncached) sessions are used.
+        migrate_legacy: If True, adopt a cache database left in the current
+            working directory by older versions of this module (which stored it
+            there). Off by default: this *moves* a file outside cache_dir, so
+            only the real download entry point should ask for it.
+
+    Returns:
+    -------
+        Path to the cache database, or None if caching was disabled.
+
+    """
+    global _cache_path
+
+    # Drop any sessions built against a previously configured cache.
+    _reset_sessions()
+
+    if cache_dir is None:
+        _cache_path = None
+        return None
+
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    _cache_path = cache_dir / CACHE_FILENAME
+    if migrate_legacy:
+        _migrate_legacy_cache(_cache_path)
+
+    # Create the tables up front so worker threads don't race on the initial
+    # CREATE TABLE when they open their own connections.
+    _make_backend()
+    print(f"HTTP cache enabled: {_cache_path}")
+    return _cache_path
+
+
+def _migrate_legacy_cache(cache_path: Path) -> None:
+    """
+    Move a cache database left in the working directory to its new home.
+
+    Older versions called requests_cache.install_cache(), which put the database
+    in the CWD (normally the repo root). Adopting it avoids re-downloading
+    thousands of already-cached MediaDive responses.
+    """
+    legacy_path = Path.cwd() / CACHE_FILENAME
+    if cache_path.exists() or not legacy_path.exists() or legacy_path.resolve() == cache_path.resolve():
+        return
+    legacy_path.rename(cache_path)
+    print(f"Adopted existing HTTP cache: {legacy_path} -> {cache_path}")
+
+
+def _make_backend() -> SQLiteCache:
+    """Build a SQLiteCache backed by the configured cache path."""
+    # WAL keeps readers from blocking writers across the worker threads, and
+    # busy_timeout makes a thread wait for the write lock instead of failing.
+    return SQLiteCache(str(_cache_path), wal=True, busy_timeout=CACHE_BUSY_TIMEOUT_MS)
+
+
+def _reset_sessions() -> None:
+    """Discard cached per-thread sessions (used by setup_cache and tests)."""
+    global _thread_local
+    _thread_local = threading.local()
 
 
 def _make_session() -> requests.Session:
-    """Create a requests Session with the kg-microbe User-Agent."""
-    session = requests.Session()
-    session.headers.update({"User-Agent": USER_AGENT})
+    """
+    Return this thread's HTTP session, creating it on first use.
+
+    Must be called from the thread that will use the session — see the module
+    comment above on why sessions are never shared across threads.
+    """
+    session = getattr(_thread_local, "session", None)
+    if session is None:
+        session = CachedSession(backend=_make_backend()) if _cache_path else requests.Session()
+        session.headers.update({"User-Agent": USER_AGENT})
+        _thread_local.session = session
     return session
 
 
@@ -76,7 +180,7 @@ def get_json_from_api(
         retry_count: Number of retries on failure
         retry_delay: Delay in seconds between retries (overridden by Retry-After on 429)
         verbose: If True, log empty responses (useful for debugging)
-        session: Optional requests Session to reuse (uses module-level session if None)
+        session: Optional requests Session to reuse (uses this thread's session if None)
 
     Returns:
     -------
@@ -190,12 +294,12 @@ def download_detailed_media(
     """
     print(f"\nDownloading detailed recipes for {len(media_list)} media...")
     detailed_data: Dict[str, Dict] = {}
-    session = _make_session()
     rate_limiter = threading.Semaphore(max_workers)
 
     def fetch(medium: Dict) -> tuple[str, dict]:
-        """Fetch detail for a single medium using the shared session and rate limiter."""
-        return _fetch_medium_detail(medium, session, rate_limiter, retry_count, retry_delay)
+        """Fetch detail for a single medium using this thread's session and the rate limiter."""
+        # _make_session() runs inside the worker thread so each thread gets its own.
+        return _fetch_medium_detail(medium, _make_session(), rate_limiter, retry_count, retry_delay)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         for medium_id, data in tqdm(
@@ -235,12 +339,12 @@ def download_medium_strains(
     """
     print(f"\nDownloading strain associations for {len(media_list)} media...")
     strain_data: Dict[str, List] = {}
-    session = _make_session()
     rate_limiter = threading.Semaphore(max_workers)
 
     def fetch(medium: Dict) -> tuple[str, dict]:
-        """Fetch strain associations for a single medium using the shared session and rate limiter."""
-        return _fetch_medium_strains(medium, session, rate_limiter, retry_count, retry_delay)
+        """Fetch strain associations for a single medium using this thread's session."""
+        # _make_session() runs inside the worker thread so each thread gets its own.
+        return _fetch_medium_strains(medium, _make_session(), rate_limiter, retry_count, retry_delay)
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         for medium_id, data in tqdm(
@@ -374,8 +478,8 @@ def download_mediadive_bulk(
     print(f"API warnings will be logged to: {log_file}")
     print(f"Using {max_workers} parallel workers")
 
-    # Set up HTTP caching
-    setup_cache()
+    # Set up HTTP caching (stored alongside the bulk output, not in the CWD)
+    setup_cache(output_path, migrate_legacy=True)
 
     # Step 1: Load basic media list
     print("\n[1/5] Loading basic media list...")

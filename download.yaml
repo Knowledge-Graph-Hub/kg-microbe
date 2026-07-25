@@ -509,15 +509,21 @@
 # NOTE: Commented out — same dead metatraits.embl.de endpoint (HTTP 404).
 # Last public copies (2026-03-24) vendored into data/raw/ from data/raw_last8/.
 #
-# Original (now HTTP 404) sources, kept for provenance:
-#   https://metatraits.embl.de/static/downloads/{GTDB2NCBI,NCBI2GTDB}.tsv.gz
+# These moved off metatraits.embl.de/static/downloads/ (now HTTP 404) to the
+# Bork group's own web space, which the metaTraits documentation page points at:
+# https://metatraits.embl.de/documentation. Verified 2026-07-25: both URLs
+# return byte-identical files to the copies previously vendored into data/raw
+# (NCBI2GTDB md5 eca29d35869dd9035730caa12de12598,
+#  GTDB2NCBI md5 a313f89ac32b7137c7225c789f724f63).
+# Mapping is GTDB r220 <-> NCBI 2025-07-28, assigned where >=85% of genomes
+# share the same ID in both taxonomies.
 # NCBI2GTDB.tsv.gz is read by the metatraits transform (_load_ncbi_gtdb_mappings).
 -
-  url: gdrive:REPLACE_ME_gtdb2ncbi
+  url: https://www.bork.embl.de/~robbani/metatraits/GTDB2NCBI.tsv.gz
   local_name: GTDB2NCBI.tsv.gz
   tag: metatraits_gtdb
 -
-  url: gdrive:REPLACE_ME_ncbi2gtdb
+  url: https://www.bork.embl.de/~robbani/metatraits/NCBI2GTDB.tsv.gz
   local_name: NCBI2GTDB.tsv.gz
   tag: metatraits_gtdb
 

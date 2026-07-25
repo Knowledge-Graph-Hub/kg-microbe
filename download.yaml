@@ -11,6 +11,28 @@
 #    # brief comment about file, and optionally a local_name:
 #    url: http://curefordisease.org/some_data.txt
 #    local_name: some_data_more_chars_prevent_name_collision.pdf
+#    tag: some_group
+#
+#  Every active entry carries a 'tag', which groups it for selective
+#  downloads:  poetry run kg download -t ontologies -t gtdb
+#  Without -t, everything is downloaded. Current tags:
+#
+#    tools       ROBOT jar + wrapper (needed by the ontology transforms)
+#    ontologies  OBO ontology files (OWL/JSON) loaded by the ontologies transform
+#    stubs       Prebuilt SemSQL DBs / MeSH RDF for the selective stub-import
+#    mappings    Crosswalk tables (EC->GO, EPM curies, compound mappings)
+#    bacdive     BacDive strains + assay-kit metadata
+#    mediadive   MediaDive basic media list (also triggers the bulk API download)
+#    madin       Madin et al. condensed traits + environment conversion table
+#    rhea        Rhea reaction mappings (to GO and EC)
+#    cog         Clusters of Orthologous Groups definitions
+#    kegg        KEGG KO list (see the KEGG section for the manual cache step)
+#    gtdb        GTDB taxonomy + metadata
+#    metatraits  MetaTraits per-taxon trait summaries (NCBITaxon ranks)
+#    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
+#
+#  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so
+#  an untagged source can never be silently unreachable via -t.
 #
 #  For downloading from S3 buckets, see here for information about what URL to use:
 #  https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro
@@ -25,9 +47,11 @@
 -
   url: https://github.com/ontodev/robot/releases/download/v1.9.8/robot.jar
   local_name: robot.jar
+  tag: tools
 -
   url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
   local_name: robot
+  tag: tools
 
 # **** Ontology files ****
 #
@@ -36,12 +60,14 @@
 -
   url: http://purl.obolibrary.org/obo/envo.json
   local_name: envo.json
+  tag: ontologies
 
 # NCBITaxon
 #
 -
   url: http://purl.obolibrary.org/obo/ncbitaxon.owl.gz
   local_name: ncbitaxon.owl.gz
+  tag: ontologies
 
 #
 # ChEBI
@@ -49,6 +75,7 @@
 -
   url: http://purl.obolibrary.org/obo/chebi.owl.gz
   local_name: chebi.owl.gz
+  tag: ontologies
 
 #
 # GO — single source of truth (fix 2, #604): download only go.owl; the
@@ -59,6 +86,7 @@
 -
   url: http://purl.obolibrary.org/obo/go.owl
   local_name: go.owl
+  tag: ontologies
 
 #
 # EC to GO mappings (Gene Ontology Consortium)
@@ -66,6 +94,7 @@
 -
   url: https://current.geneontology.org/ontology/external2go/ec2go
   local_name: ec2go.txt
+  tag: mappings
 
 #
 # MONDO
@@ -73,12 +102,14 @@
 -
   url: https://purl.obolibrary.org/obo/mondo/mondo.json
   local_name: mondo.json
+  tag: ontologies
 #
 # HP
 #
 -
   url: https://purl.obolibrary.org/obo/hp/hp.json
   local_name: hp.json
+  tag: ontologies
 
 #
 # UBERON (Uber Anatomy Ontology)
@@ -86,6 +117,7 @@
 -
   url: https://purl.obolibrary.org/obo/uberon.owl
   local_name: uberon.owl
+  tag: ontologies
 
 #
 # FOODON
@@ -93,6 +125,7 @@
 -
   url: https://purl.obolibrary.org/obo/foodon.owl
   local_name: foodon.owl
+  tag: ontologies
 
 #
 # PATO (Phenotype And Trait Ontology)
@@ -100,6 +133,7 @@
 -
   url: http://purl.obolibrary.org/obo/pato.owl
   local_name: pato.owl
+  tag: ontologies
 
 # **** Data sources ****
 
@@ -108,12 +142,14 @@
 -
   url: gdrive:1b_UWdIvsIM81V5WdFedNoxN3R4UUf4F2
   local_name: bacdive_strains.json
+  tag: bacdive
 
 # BacDive Assay Metadata
 # Assay kit metadata for API and BiOLOG assay systems
 -
   url: https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json
   local_name: assay_kits_simple.json
+  tag: bacdive
 
 # MediaDive
 # Explore MediaDive data
@@ -125,11 +161,13 @@
 -
   url: https://mediadive.dsmz.de/rest/media
   local_name: mediadive.json
+  tag: mediadive
 
 # Madin et al Condensed-traits
 -
   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
   local_name: madin_etal.csv
+  tag: madin
 
 # # # ****Conversion Tables****
 #
@@ -138,6 +176,7 @@
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
+  tag: madin
 
 # 
 # EPM JSON for curies package
@@ -145,6 +184,7 @@
 -
   url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
   local_name: epm.json
+  tag: mappings
 
 #
 # Uniprot Functional Microbes
@@ -169,15 +209,18 @@
 -
   url: https://github.com/geneontology/unipathway/raw/master/upa.owl
   local_name: upa.owl
+  tag: ontologies
 
 # RHEA mappings
 - 
   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
   local_name: rhea2go.tsv
+  tag: rhea
 
 -
   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
   local_name: rhea2ec.tsv
+  tag: rhea
 
 # 
 # EC
@@ -185,6 +228,7 @@
 - 
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
   local_name: ec.json
+  tag: ontologies
 
 # 
 # EC OWL
@@ -192,6 +236,7 @@
 -
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.owl.gz
   local_name: ec.owl.gz
+  tag: ontologies
 
 #
 # BactoTraits
@@ -246,9 +291,11 @@
 -
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
   local_name: metpo.owl
+  tag: ontologies
 -
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.json
   local_name: metpo.json
+  tag: ontologies
 
 #
 # RO (Relations Ontology)
@@ -257,6 +304,7 @@
 -
   url: http://purl.obolibrary.org/obo/ro.owl
   local_name: ro.owl
+  tag: ontologies
 
 #
 # PO (Plant Ontology)
@@ -270,6 +318,7 @@
 -
   url: http://purl.obolibrary.org/obo/po.owl
   local_name: po.owl
+  tag: ontologies
 
 #
 
@@ -282,6 +331,7 @@
 -
   url: http://purl.obolibrary.org/obo/taxrank.owl
   local_name: taxrank.owl
+  tag: ontologies
 
 #
 # MICRO (Microbial Conditions Ontology / OntologyOfMicrobialConditions)
@@ -292,6 +342,7 @@
 -
   url: https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/MicrO.owl
   local_name: micro.owl
+  tag: ontologies
 
 #
 # MicroMediaParam Chemical Mappings - High Confidence
@@ -318,6 +369,7 @@
 -
   url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final.tsv
   local_name: compound_mappings_strict.tsv
+  tag: mappings
 
 #
 # MicroMediaParam Chemical Mappings - Hydrate (Takes Precedence)
@@ -330,6 +382,7 @@
 -
   url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final_hydrate.tsv
   local_name: compound_mappings_strict_hydrate.tsv
+  tag: mappings
 
 #
 # COG (Clusters of Orthologous Groups)
@@ -337,9 +390,11 @@
 -
   url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.def.tab
   local_name: cog/cog-24.def.tab
+  tag: cog
 -
   url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.fun.tab
   local_name: cog/cog-24.fun.tab
+  tag: cog
 
 #
 # KEGG (Kyoto Encyclopedia of Genes and Genomes)
@@ -358,6 +413,7 @@
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
+  tag: kegg
 
 #
 # GTDB (Genome Taxonomy Database)
@@ -365,15 +421,19 @@
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/bac120_taxonomy.tsv
   local_name: gtdb/bac120_taxonomy.tsv
+  tag: gtdb
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv
   local_name: gtdb/ar53_taxonomy.tsv
+  tag: gtdb
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz
   local_name: gtdb/bac120_metadata.tsv.gz
+  tag: gtdb
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz
   local_name: gtdb/ar53_metadata.tsv.gz
+  tag: gtdb
 
 #
 # MetaTraits
@@ -385,12 +445,15 @@
 -
   url: gdrive:1vL9wujvty4Xh2ZG2HHquX0RE7968Dkbm
   local_name: ncbi_species_summary.jsonl.gz
+  tag: metatraits
 -
   url: gdrive:1WL6VhD2I6MGuI3iHKbCQYTncG1UB-u6e
   local_name: ncbi_genus_summary.jsonl.gz
+  tag: metatraits
 -
   url: gdrive:1pgOugA5jQG96GbCktkTJN9FGn6rypTOI
   local_name: ncbi_family_summary.jsonl.gz
+  tag: metatraits
 
 #
 # MetaTraits GTDB
@@ -434,6 +497,7 @@
 -
   url: https://raw.githubusercontent.com/biolink/biolink-model/v4.3.6/biolink-model.yaml
   local_name: biolink-model.yaml
+  tag: schema
 
 #
 # KGX Format Specification
@@ -442,6 +506,7 @@
 -
   url: https://raw.githubusercontent.com/biolink/kgx/master/docs/kgx_format.md
   local_name: kgx-format.md
+  tag: schema
 
 
 #
@@ -484,12 +549,15 @@
 -
   url: https://semanticsql.berkeleybop.io/ncit.db.gz
   local_name: ncit.db.gz
+  tag: stubs
 -
   url: https://semanticsql.berkeleybop.io/bto.db.gz
   local_name: bto.db.gz
+  tag: stubs
 -
   url: https://semanticsql.berkeleybop.io/po.db.gz
   local_name: po.db.gz
+  tag: stubs
 
 #
 # MeSH (Medical Subject Headings) — full N-Triples RDF from NLM
@@ -505,6 +573,7 @@
 -
   url: https://nlmpubs.nlm.nih.gov/projects/mesh/rdf/2026/mesh2026.nt.gz
   local_name: mesh2026.nt.gz
+  tag: stubs
 
 #
 # LPSN — List of Prokaryotic names with Standing in Nomenclature

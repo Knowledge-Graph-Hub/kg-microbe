@@ -42,6 +42,13 @@ def main():
     default=False,
     help="ignore cache and download files even if they exist [false]",
 )
+@click.option(
+    "tags",
+    "-t",
+    "--tag",
+    multiple=True,
+    help="only download sources with this tag (repeatable); omit for all. See the tag list in download.yaml's header.",
+)
 def download(*args, **kwargs) -> None:
     """
     Download from list of URLs (default: download.yaml) into data directory (default: data/raw).
@@ -50,9 +57,15 @@ def download(*args, **kwargs) -> None:
     :param output_dir: A string pointing to the directory to download data to.
     :param snippet_only: Download 5 kB of each uncompressed source, for testing and file checks.
     :param ignore_cache: If specified, will ignore existing files and download again.
+    :param tags: Restrict the run to sources carrying these tags (all sources if empty).
+    :raises click.BadParameter: If a requested tag matches no entry in the YAML.
     :return: None
     """
-    kg_download(*args, **kwargs)
+    try:
+        kg_download(*args, **kwargs)
+    except ValueError as e:
+        # An unknown -t value is user error, not a crash — report it as such.
+        raise click.BadParameter(str(e)) from e
 
     return None
 

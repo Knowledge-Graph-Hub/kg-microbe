@@ -1,13 +1,27 @@
 """Download resources from YAML file."""
 
 from pathlib import Path
+from typing import Optional, Sequence
 
 from kghub_downloader.download_utils import download_from_yaml
 
 from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
 
+# Tag (in download.yaml) of the entry that pulls the MediaDive media list. A
+# tag-filtered run only does the follow-on bulk API download when MediaDive is
+# among the requested tags — otherwise `kg download -t ontologies` would kick
+# off an hour of MediaDive API calls just because mediadive.json is on disk
+# from an earlier run.
+MEDIADIVE_TAG = "mediadive"
 
-def download(yaml_file: str, output_dir: str, snippet_only: bool, ignore_cache: bool = False) -> None:
+
+def download(
+    yaml_file: str,
+    output_dir: str,
+    snippet_only: bool,
+    ignore_cache: bool = False,
+    tags: Optional[Sequence[str]] = None,
+) -> None:
     """
     Download data files from list of URLs.
 
@@ -19,18 +33,51 @@ def download(yaml_file: str, output_dir: str, snippet_only: bool, ignore_cache: 
     :param output_dir: A string pointing to the location to download data to.
     :param snippet_only: Downloads only the first 5 kB of the source,for testing and file checks.
     :param ignore_cache: Ignore cache and download files even if they exist [false]
+    :param tags: Only download entries carrying one of these tags. None or empty
+        means download everything.
     :return: None.
     """
+    tags = list(tags) if tags else None
+    if tags:
+        _validate_tags(yaml_file, tags)
+
     download_from_yaml(
         yaml_file=yaml_file,
         output_dir=output_dir,
         snippet_only=snippet_only,
         ignore_cache=ignore_cache,
+        tags=tags,
     )
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
-    if not snippet_only:  # Skip bulk download in snippet mode
-        _post_download_mediadive_bulk(output_dir, ignore_cache)
+    if snippet_only:  # Skip bulk download in snippet mode
+        return
+    if tags and MEDIADIVE_TAG not in tags:
+        return
+    _post_download_mediadive_bulk(output_dir, ignore_cache)
+
+
+def _validate_tags(yaml_file: str, tags: Sequence[str]) -> None:
+    """
+    Fail fast on a tag that matches nothing in the YAML.
+
+    kghub-downloader silently downloads zero files for an unknown tag, which
+    looks exactly like a successful no-op run.
+
+    :param yaml_file: Path to the download config being filtered.
+    :param tags: Tags requested on the command line.
+    :raises ValueError: If any tag matches no entry.
+    """
+    import yaml  # local import: only needed when filtering
+
+    with open(yaml_file) as f:
+        entries = yaml.safe_load(f) or []
+    known = {entry.get("tag") for entry in entries if entry.get("tag")}
+    unknown = sorted(set(tags) - known)
+    if unknown:
+        raise ValueError(
+            f"Unknown download tag(s): {', '.join(unknown)}. Available tags in {yaml_file}: {', '.join(sorted(known))}"
+        )
 
 
 def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -> None:

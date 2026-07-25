@@ -9,20 +9,28 @@ the only options are to host a copy or to copy one by hand from a reference
 This file is the manifest for hosting those copies on the public LBNL Google
 Drive, plus the interim copy-by-hand procedure.
 
-## Files to host
+## Hosted files
 
-Six files, ~81 MB total. Checksums are from the copies currently in `data/raw`,
-which came from `data/raw_202607_andOLD_mixed/`. Each md5 is also recorded inline
-in `download.yaml` next to its placeholder.
+Six files, ~81 MB total, in the shared Drive folder
+<https://drive.google.com/drive/folders/1vCKoGREJk45BzImfnPVtGhXAb_DyndLq>
+(General access: *Anyone with the link*, Viewer — `gdown` runs
+unauthenticated, so an org-restricted folder returns a sign-in page and
+fails with HTTP 401). Uploaded and verified end to end 2026-07-25.
 
-| file | size | md5 | placeholder token in download.yaml |
+Each md5 below is also recorded inline in `download.yaml` beside its URL, so the
+pinned artifact is identifiable from the config alone. They were confirmed by
+moving all six out of `data/raw`, running
+`kg download -t metatraits_gtdb -t bactotraits`, and re-checksumming what
+arrived.
+
+| file | size | md5 | Drive file ID |
 |---|---|---|---|
-| `gtdb_species_summary.jsonl.gz` | 46 MB | `aca98ae9c978f238ae7844beaccec63b` | `REPLACE_ME_gtdb_species_summary` |
-| `gtdb_genus_summary.jsonl.gz` | 16 MB | `159828de09d22a7c85e2116e8a97944a` | `REPLACE_ME_gtdb_genus_summary` |
-| `gtdb_family_summary.jsonl.gz` | 4.4 MB | `1443132d2aa0f3d8743b23096ce23a13` | `REPLACE_ME_gtdb_family_summary` |
-| `NCBI2GTDB.tsv.gz` | 2.8 MB | `eca29d35869dd9035730caa12de12598` | `REPLACE_ME_ncbi2gtdb` |
-| `GTDB2NCBI.tsv.gz` | 2.8 MB | `a313f89ac32b7137c7225c789f724f63` | `REPLACE_ME_gtdb2ncbi` |
-| `BactoTraits_databaseV2_Jun2022.csv` | 8.6 MB | `e6bca5b947c1aa692d45ac24aa9025f3` | `REPLACE_ME_bactotraits_v2_jun2022` |
+| `gtdb_species_summary.jsonl.gz` | 46 MB | `aca98ae9c978f238ae7844beaccec63b` | `1xfZiMly-lJgcPL5ihR6QK1zxlv_JwC6J` |
+| `gtdb_genus_summary.jsonl.gz` | 16 MB | `159828de09d22a7c85e2116e8a97944a` | `1Kotk8g5Ky_Cc9MNiywO_Tjz6JLEG0y7Y` |
+| `gtdb_family_summary.jsonl.gz` | 4.4 MB | `1443132d2aa0f3d8743b23096ce23a13` | `1HpkfGAtZI1uRwyPzbTJFtI6avWlkEAlE` |
+| `NCBI2GTDB.tsv.gz` | 2.8 MB | `eca29d35869dd9035730caa12de12598` | `1npQ1z2Yc0NRPHpBkKjsKIBy2_evDAyCV` |
+| `GTDB2NCBI.tsv.gz` | 2.8 MB | `a313f89ac32b7137c7225c789f724f63` | `1ip7ualwruocq9MvcaoNAcH0YtLtAEASP` |
+| `BactoTraits_databaseV2_Jun2022.csv` | 8.6 MB | `e6bca5b947c1aa692d45ac24aa9025f3` | `1u7snG4VxbH6sh6M03dS1GumoYgLgbZrr` |
 
 All five MetaTraits files are hosted together so the KG builds against one fixed
 MetaTraits release, matching the three `ncbi_*_summary.jsonl.gz` inputs that are
@@ -95,10 +103,13 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   older ontology release: the transforms skip regeneration when the derived file
   already exists.
 
-## Upload procedure
+## Upload procedure (for refreshing a file, or adding a new one)
 
-1. Upload each file to the public LBNL Drive folder **as binary**. Do not let
-   Drive or the browser recompress or rename anything.
+1. Upload the file to the Drive folder **as binary**. Do not let Drive or the
+   browser recompress or rename anything. Before the first upload, turn off
+   Drive → Settings → **"Convert uploaded files to Google Docs editor format"**,
+   or a `.csv` becomes a Google Sheet and `uc?id=` returns an export instead of
+   the file.
 2. Set sharing to **anyone with the link can view** — `kghub-downloader`'s
    `gdrive:` handler is unauthenticated.
 3. **Verify the round trip before trusting it.** Download your own upload and
@@ -122,14 +133,23 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
    and the NCBI→GTDB fallback quietly stopped working. Verifying the checksum
    still matters, because a decompressed upload has a different md5 than the
    table above and is no longer the pinned artifact.
-4. Take the file ID from the sharing link's `/d/<id>/` segment and paste it over
-   the placeholder in `download.yaml`:
+4. Take the file ID from the sharing link's `/d/<id>/` segment and put it in
+   `download.yaml`, updating the recorded md5 in the same edit:
 
    ```yaml
    -
-     url: gdrive:1AbCdEfGhIjKlMnOpQrStUvWxYz          # was gdrive:REPLACE_ME_...
+     url: gdrive:1AbCdEfGhIjKlMnOpQrStUvWxYz   # md5 <new checksum>
      local_name: gtdb_species_summary.jsonl.gz
      tag: metatraits_gtdb
+   ```
+
+   To list every ID in the folder at once, without clicking through six share
+   dialogs:
+
+   ```bash
+   poetry run python -c "import gdown; \
+     [print(f.id, f.path) for f in gdown.download_folder(
+        url='<folder url>', skip_download=True, quiet=True)]"
    ```
 
 5. Confirm the entry works in isolation:

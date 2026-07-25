@@ -269,7 +269,7 @@
 # Original (broken TLS) source, kept for provenance:
 #   https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
 -
-  url: gdrive:REPLACE_ME_bactotraits_v2_jun2022  # md5 e6bca5b947c1aa692d45ac24aa9025f3
+  url: gdrive:1u7snG4VxbH6sh6M03dS1GumoYgLgbZrr  # md5 e6bca5b947c1aa692d45ac24aa9025f3
   local_name: BactoTraits_databaseV2_Jun2022.csv
   tag: bactotraits
 
@@ -495,15 +495,15 @@
 # the TSV would need a transform change, so the pinned JSONL build stays the
 # input. See docs/DATA_HOSTING.md.
 -
-  url: gdrive:REPLACE_ME_gtdb_species_summary   # md5 aca98ae9c978f238ae7844beaccec63b
+  url: gdrive:1xfZiMly-lJgcPL5ihR6QK1zxlv_JwC6J   # md5 aca98ae9c978f238ae7844beaccec63b
   local_name: gtdb_species_summary.jsonl.gz
   tag: metatraits_gtdb
 -
-  url: gdrive:REPLACE_ME_gtdb_genus_summary     # md5 159828de09d22a7c85e2116e8a97944a
+  url: gdrive:1Kotk8g5Ky_Cc9MNiywO_Tjz6JLEG0y7Y     # md5 159828de09d22a7c85e2116e8a97944a
   local_name: gtdb_genus_summary.jsonl.gz
   tag: metatraits_gtdb
 -
-  url: gdrive:REPLACE_ME_gtdb_family_summary    # md5 1443132d2aa0f3d8743b23096ce23a13
+  url: gdrive:1HpkfGAtZI1uRwyPzbTJFtI6avWlkEAlE    # md5 1443132d2aa0f3d8743b23096ce23a13
   local_name: gtdb_family_summary.jsonl.gz
   tag: metatraits_gtdb
 
@@ -527,11 +527,11 @@
 # rebuild months apart would silently use different crosswalks. The Drive copy
 # fixes the release; refresh it deliberately, from the URLs above.
 -
-  url: gdrive:REPLACE_ME_gtdb2ncbi          # md5 a313f89ac32b7137c7225c789f724f63
+  url: gdrive:1ip7ualwruocq9MvcaoNAcH0YtLtAEASP          # md5 a313f89ac32b7137c7225c789f724f63
   local_name: GTDB2NCBI.tsv.gz
   tag: metatraits_gtdb
 -
-  url: gdrive:REPLACE_ME_ncbi2gtdb          # md5 eca29d35869dd9035730caa12de12598
+  url: gdrive:1npQ1z2Yc0NRPHpBkKjsKIBy2_evDAyCV          # md5 eca29d35869dd9035730caa12de12598
   local_name: NCBI2GTDB.tsv.gz
   tag: metatraits_gtdb
 

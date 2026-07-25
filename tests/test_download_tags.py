@@ -75,64 +75,67 @@ class TestPendingHosting:
     a REPLACE_ME_ URL in the config would break `kg download` for everyone.
     """
 
-    def _pending(self):
-        """Return the entries whose URL is still a hosting placeholder."""
-        return [e for e in _entries() if download_module.PENDING_HOSTING_MARKER in e["url"]]
+    # The mechanism is exercised against a synthetic config rather than
+    # download.yaml, which normally has no placeholders left: every file is
+    # hosted. Tying these to the real file made them pass only while something
+    # happened to be unhosted.
+    @staticmethod
+    def _config(tmp_path, *, pending=True):
+        """Write a small config with one ready entry and optionally one pending."""
+        entries = [{"url": "https://example.org/ready.tsv", "local_name": "ready.tsv", "tag": "ontologies"}]
+        if pending:
+            entries.append(
+                {
+                    "url": f"gdrive:{download_module.PENDING_HOSTING_MARKER}thing",
+                    "local_name": "unhosted.tsv.gz",
+                    "tag": "metatraits_gtdb",
+                }
+            )
+        path = tmp_path / "config.yaml"
+        with open(path, "w") as f:
+            yaml.safe_dump(entries, f, sort_keys=False)
+        return str(path)
 
-    def test_pending_entries_are_tagged(self):
-        """A placeholder entry still needs a tag so -t reaches it once hosted."""
-        untagged = [e["local_name"] for e in self._pending() if not e.get("tag")]
-        assert untagged == []
-
-    def _capture_config(self, tmp_path, **kwargs):
-        """
-        Run download() and return the config entries as the downloader saw them.
-
-        Read inside the call: download() deletes its temp config on the way out.
-        """
+    def _run(self, tmp_path, config, **kwargs):
+        """Run download() against `config`, capturing what the downloader saw."""
         captured = {}
 
         def record(**call_kwargs):
             """Parse the config file while it still exists."""
+            captured["path"] = call_kwargs["yaml_file"]
             with open(call_kwargs["yaml_file"]) as f:
                 captured["entries"] = yaml.safe_load(f)
 
         with patch.object(download_module, "download_from_yaml", side_effect=record):
             download_module.download(
-                yaml_file=str(DOWNLOAD_YAML),
-                output_dir=str(tmp_path),
+                yaml_file=config,
+                output_dir=str(tmp_path / "out"),
                 snippet_only=False,
                 **kwargs,
             )
-        return captured["entries"]
+        return captured
+
+    def test_real_config_pending_entries_are_tagged(self):
+        """Any placeholder left in download.yaml still needs a tag."""
+        pending = [e for e in _entries() if download_module.PENDING_HOSTING_MARKER in e["url"]]
+        assert [e["local_name"] for e in pending if not e.get("tag")] == []
 
     def test_pending_entries_are_filtered_out(self, tmp_path):
         """The config handed to the downloader must contain no placeholder URL."""
-        entries = self._capture_config(tmp_path)
-        assert entries, "filtered config should still contain the ready entries"
-        assert not [e for e in entries if download_module.PENDING_HOSTING_MARKER in e["url"]]
-
-    def test_ready_entries_survive_filtering(self, tmp_path):
-        """Filtering must drop only the placeholders."""
-        entries = self._capture_config(tmp_path)
-        assert len(entries) == len(_entries()) - len(self._pending())
+        seen = self._run(tmp_path, self._config(tmp_path))
+        assert [e["local_name"] for e in seen["entries"]] == ["ready.tsv"]
 
     def test_filtered_entries_keep_their_fields(self, tmp_path):
         """Round-tripping the config must not lose url/local_name/tag."""
-        entries = self._capture_config(tmp_path)
-        assert all({"url", "local_name", "tag"} <= set(e) for e in entries)
+        seen = self._run(tmp_path, self._config(tmp_path))
+        assert all({"url", "local_name", "tag"} <= set(e) for e in seen["entries"])
 
     def test_temp_config_is_cleaned_up(self, tmp_path):
         """The filtered copy is a temp file; it must not be left behind."""
-        with patch.object(download_module, "download_from_yaml") as mock_yaml:
-            download_module.download(
-                yaml_file=str(DOWNLOAD_YAML),
-                output_dir=str(tmp_path),
-                snippet_only=False,
-            )
-        used_yaml = mock_yaml.call_args.kwargs["yaml_file"]
-        assert used_yaml != str(DOWNLOAD_YAML)
-        assert not Path(used_yaml).exists()
+        config = self._config(tmp_path)
+        seen = self._run(tmp_path, config)
+        assert seen["path"] != config
+        assert not Path(seen["path"]).exists()
 
     def test_temp_config_cleaned_up_on_error(self, tmp_path):
         """A failed download must not leak the temp config either."""
@@ -146,45 +149,36 @@ class TestPendingHosting:
         with patch.object(download_module, "download_from_yaml", side_effect=boom):
             with pytest.raises(RuntimeError, match="exploded"):
                 download_module.download(
-                    yaml_file=str(DOWNLOAD_YAML),
-                    output_dir=str(tmp_path),
+                    yaml_file=self._config(tmp_path),
+                    output_dir=str(tmp_path / "out"),
                     snippet_only=False,
                 )
         assert not Path(seen["yaml"]).exists()
 
     def test_skipped_sources_are_reported(self, tmp_path, capsys):
         """A silent skip looks like a download of a file that never arrived."""
-        with patch.object(download_module, "download_from_yaml"):
-            download_module.download(
-                yaml_file=str(DOWNLOAD_YAML),
-                output_dir=str(tmp_path),
-                snippet_only=False,
-            )
+        self._run(tmp_path, self._config(tmp_path))
         out = capsys.readouterr().out
         assert "not hosted yet" in out
-        for entry in self._pending():
-            assert entry["local_name"] in out
+        assert "unhosted.tsv.gz" in out
+
+    def test_no_placeholders_means_original_config(self, tmp_path):
+        """With everything hosted, no filtered copy is made at all."""
+        config = self._config(tmp_path, pending=False)
+        seen = self._run(tmp_path, config)
+        assert seen["path"] == config
 
     def test_unaffected_tag_run_uses_the_original_config(self, tmp_path):
         """A run selecting no pending entry needs no filtered copy."""
-        with patch.object(download_module, "download_from_yaml") as mock_yaml:
-            download_module.download(
-                yaml_file=str(DOWNLOAD_YAML),
-                output_dir=str(tmp_path),
-                snippet_only=False,
-                tags=("ontologies",),
-            )
-        assert mock_yaml.call_args.kwargs["yaml_file"] == str(DOWNLOAD_YAML)
+        config = self._config(tmp_path)
+        seen = self._run(tmp_path, config, tags=("ontologies",))
+        assert seen["path"] == config
 
     def test_pending_tag_is_still_a_valid_tag(self, tmp_path):
-        """`-t metatraits_gtdb` must not be rejected as unknown while unhosted."""
-        with patch.object(download_module, "download_from_yaml"):
-            download_module.download(
-                yaml_file=str(DOWNLOAD_YAML),
-                output_dir=str(tmp_path),
-                snippet_only=False,
-                tags=("metatraits_gtdb",),
-            )
+        """A tag whose only entries are unhosted must not be rejected as unknown."""
+        config = self._config(tmp_path)
+        seen = self._run(tmp_path, config, tags=("metatraits_gtdb",))
+        assert seen["entries"] == [] or "unhosted.tsv.gz" not in str(seen["entries"])
 
 
 class TestTagPlumbing:

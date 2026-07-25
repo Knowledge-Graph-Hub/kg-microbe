@@ -80,7 +80,11 @@ _thread_local = threading.local()
 _cache_path: Optional[Path] = None
 
 
-def setup_cache(cache_dir: Optional[Path] = None, migrate_legacy: bool = False) -> Optional[Path]:
+def setup_cache(
+    cache_dir: Optional[Path] = None,
+    migrate_legacy: bool = False,
+    clear: bool = False,
+) -> Optional[Path]:
     """
     Enable HTTP caching for subsequent sessions created by this module.
 
@@ -92,6 +96,10 @@ def setup_cache(cache_dir: Optional[Path] = None, migrate_legacy: bool = False) 
             working directory by older versions of this module (which stored it
             there). Off by default: this *moves* a file outside cache_dir, so
             only the real download entry point should ask for it.
+        clear: If True, discard any existing cached responses so every request
+            goes back to the API. This is what `kg download --ignore-cache`
+            needs; without it the bulk JSON files are rebuilt from cached HTTP
+            responses and never actually refresh.
 
     Returns:
     -------
@@ -109,14 +117,29 @@ def setup_cache(cache_dir: Optional[Path] = None, migrate_legacy: bool = False) 
 
     cache_dir.mkdir(parents=True, exist_ok=True)
     _cache_path = cache_dir / CACHE_FILENAME
+    # Adopt the legacy cache before clearing, so a stale copy can't linger in
+    # the CWD and get picked up by a later run that isn't clearing.
     if migrate_legacy:
         _migrate_legacy_cache(_cache_path)
+    if clear:
+        _delete_cache(_cache_path)
 
     # Create the tables up front so worker threads don't race on the initial
     # CREATE TABLE when they open their own connections.
     _make_backend()
     print(f"HTTP cache enabled: {_cache_path}")
     return _cache_path
+
+
+def _delete_cache(cache_path: Path) -> None:
+    """Remove a cache database and its WAL sidecar files, if present."""
+    removed = False
+    for path in (cache_path, *(cache_path.with_name(cache_path.name + s) for s in ("-wal", "-shm"))):
+        if path.exists():
+            path.unlink()
+            removed = True
+    if removed:
+        print(f"Cleared HTTP cache: {cache_path}")
 
 
 def _migrate_legacy_cache(cache_path: Path) -> None:
@@ -447,6 +470,7 @@ def download_mediadive_bulk(
     max_workers: int = DEFAULT_MAX_WORKERS,
     retry_count: int = 3,
     retry_delay: float = 2.0,
+    ignore_cache: bool = False,
 ):
     """
     Download all MediaDive data in bulk.
@@ -460,6 +484,9 @@ def download_mediadive_bulk(
         max_workers: Number of parallel download threads (default: 5, polite for small APIs)
         retry_count: Number of retries on request failure
         retry_delay: Seconds between retries (overridden by Retry-After on 429)
+        ignore_cache: If True, discard cached HTTP responses and re-fetch from
+            the API. Rebuilding the bulk files from a warm cache would otherwise
+            reproduce the old data byte for byte.
 
     """
     output_path = Path(output_dir)
@@ -479,7 +506,7 @@ def download_mediadive_bulk(
     print(f"Using {max_workers} parallel workers")
 
     # Set up HTTP caching (stored alongside the bulk output, not in the CWD)
-    setup_cache(output_path, migrate_legacy=True)
+    setup_cache(output_path, migrate_legacy=True, clear=ignore_cache)
 
     # Step 1: Load basic media list
     print("\n[1/5] Loading basic media list...")

@@ -1,8 +1,10 @@
 """Tests for mediadive_bulk_download utility."""
 
+import inspect
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from importlib import import_module
 from unittest.mock import MagicMock, patch
 
 import requests
@@ -14,10 +16,16 @@ from kg_microbe.utils.mediadive_bulk_download import (
     _make_session,
     _reset_sessions,
     download_detailed_media,
+    download_mediadive_bulk,
     download_medium_strains,
     get_json_from_api,
     setup_cache,
 )
+
+# kg_microbe/__init__.py does `from .download import download`, so the name
+# kg_microbe.download resolves to the *function*, not the module. Fetch the
+# module from sys.modules so patch.object targets the right object.
+download_module = import_module("kg_microbe.download")
 
 
 class TestDefaults:
@@ -132,6 +140,38 @@ class TestCacheThreadSafety:
         assert cache_path.exists()
         assert not legacy.exists(), "legacy cache should be moved, not left behind"
 
+    def test_clear_discards_cached_responses(self, tmp_path):
+        """clear=True must drop cached responses so the API is re-queried."""
+        setup_cache(tmp_path)
+        session = _make_session()
+        session.cache.responses["some-key"] = "cached-value"
+        assert len(session.cache.responses) == 1
+
+        setup_cache(tmp_path, clear=True)
+
+        assert len(_make_session().cache.responses) == 0
+
+    def test_clear_removes_wal_sidecar_files(self, tmp_path):
+        """WAL mode leaves -wal/-shm files behind; clearing must not orphan them."""
+        cache_path = setup_cache(tmp_path)
+        for suffix in ("-wal", "-shm"):
+            cache_path.with_name(cache_path.name + suffix).write_bytes(b"stale")
+
+        setup_cache(tmp_path, clear=True)
+
+        for suffix in ("-wal", "-shm"):
+            sidecar = cache_path.with_name(cache_path.name + suffix)
+            assert not sidecar.exists() or sidecar.read_bytes() != b"stale"
+
+    def test_clear_is_off_by_default(self, tmp_path):
+        """Without clear=True, an existing cache survives setup_cache."""
+        setup_cache(tmp_path)
+        _make_session().cache.responses["keep-me"] = "cached-value"
+
+        setup_cache(tmp_path)
+
+        assert "keep-me" in _make_session().cache.responses
+
     def test_cwd_cache_is_untouched_by_default(self, tmp_path, monkeypatch):
         """
         setup_cache must not move files outside cache_dir unless asked.
@@ -149,6 +189,38 @@ class TestCacheThreadSafety:
 
         assert bystander.exists(), "default setup_cache must not touch the CWD"
         assert bystander.read_bytes() == b"do not move me"
+
+
+class TestIgnoreCachePlumbing:
+
+    """
+    Verify `kg download --ignore-cache` reaches the HTTP response cache.
+
+    Rebuilding the bulk JSON files from a warm HTTP cache reproduces the old
+    data byte for byte, so --ignore-cache has to clear that cache too.
+    """
+
+    def _write_basic_media(self, tmp_path):
+        """Create the mediadive.json that _post_download_mediadive_bulk looks for."""
+        (tmp_path / "mediadive.json").write_text('{"data": [{"id": 1}]}')
+
+    def test_ignore_cache_is_forwarded(self, tmp_path):
+        """ignore_cache=True must reach download_mediadive_bulk."""
+        self._write_basic_media(tmp_path)
+        with patch.object(download_module, "download_mediadive_bulk") as mock_bulk:
+            download_module._post_download_mediadive_bulk(str(tmp_path), ignore_cache=True)
+        assert mock_bulk.call_args.kwargs["ignore_cache"] is True
+
+    def test_default_leaves_cache_intact(self, tmp_path):
+        """Without --ignore-cache, cached HTTP responses must be reused."""
+        self._write_basic_media(tmp_path)
+        with patch.object(download_module, "download_mediadive_bulk") as mock_bulk:
+            download_module._post_download_mediadive_bulk(str(tmp_path))
+        assert mock_bulk.call_args.kwargs["ignore_cache"] is False
+
+    def test_bulk_download_accepts_ignore_cache(self):
+        """download_mediadive_bulk must expose ignore_cache for the CLI to pass."""
+        assert "ignore_cache" in inspect.signature(download_mediadive_bulk).parameters
 
 
 class TestRetryAfter:

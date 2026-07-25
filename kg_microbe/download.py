@@ -42,7 +42,8 @@ def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -
     API calls during transform.
 
     :param output_dir: Output directory where data is downloaded
-    :param ignore_cache: If True, re-download even if bulk files exist
+    :param ignore_cache: If True, re-download even if bulk files exist, and
+        discard cached HTTP responses so the API is actually re-queried
     """
     mediadive_basic_file = Path(output_dir) / "mediadive.json"
     mediadive_bulk_dir = Path(output_dir) / "mediadive"
@@ -72,7 +73,7 @@ def _post_download_mediadive_bulk(output_dir: str, ignore_cache: bool = False) -
     print("\n" + "=" * 80)
     print("Starting MediaDive bulk download...")
     print("=" * 80)
-    download_mediadive_bulk(str(mediadive_basic_file), str(mediadive_bulk_dir))
+    download_mediadive_bulk(str(mediadive_basic_file), str(mediadive_bulk_dir), ignore_cache=ignore_cache)
     print("=" * 80)
     print("MediaDive bulk download complete!")
     print("=" * 80 + "\n")

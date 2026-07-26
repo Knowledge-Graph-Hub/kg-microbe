@@ -144,9 +144,7 @@ class TestDegradesGracefully:
 
     def test_missing_owl_warns(self, tmp_path, monkeypatch, capsys):
         """No OWL source means no build; say so rather than failing obscurely."""
-        monkeypatch.setattr(
-            "kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", tmp_path / "absent.owl"
-        )
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", tmp_path / "absent.owl")
         assert ou._ensure_ncbitaxon_db(str(tmp_path / "ncbitaxon.db")) is False
         assert "missing" in capsys.readouterr().out
 

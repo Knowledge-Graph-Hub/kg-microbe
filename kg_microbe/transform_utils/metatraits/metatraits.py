@@ -60,9 +60,9 @@ METATRAITS_INPUT_FILES = [
 ]
 
 
-# Minimum plausible size for a healthy NCBITaxon OAK DB. Full file is ~12 GB;
-# any smaller and it's a partial extract/download, regardless of SQLite header.
-_NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
+# Single source of truth lives in ontology_utils, alongside the builder that
+# enforces it (_ensure_ncbitaxon_db).
+from kg_microbe.utils.ontology_utils import _NCBITAXON_DB_MIN_SIZE  # noqa: E402
 
 
 def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
@@ -108,6 +108,8 @@ def _ensure_ncbitaxon_db_ready() -> None:
 
     Raises RuntimeError with remediation steps if no valid DB can be found.
     """
+    from kg_microbe.utils.ontology_utils import _ensure_ncbitaxon_db
+
     local_db, oak_cache = _ncbitaxon_db_paths()
 
     # Happy path: symlink resolves to a valid DB.
@@ -118,7 +120,20 @@ def _ensure_ncbitaxon_db_ready() -> None:
 
     print(f"  NCBITaxon DB at {local_db} invalid ({reason}); attempting repair")
 
-    # Attempt repair from OAK cache.
+    # Preferred repair: build from the ncbitaxon.owl this run emits nodes from,
+    # so lookups and emitted nodes are the same release by construction (#604).
+    # A no-op when semsql or the OWL is unavailable, which leaves the OAK-cache
+    # fallback below as the last resort.
+    if _ensure_ncbitaxon_db(str(local_db)):
+        built_ok, built_reason = _validate_ncbitaxon_db(local_db)
+        if built_ok:
+            print(f"  Built NCBITaxon DB from OWL: {local_db}")
+            return
+        print(f"  Freshly built DB failed validation ({built_reason})")
+
+    # Fallback: adopt OAK's prebuilt cache. Its release is whatever the upstream
+    # CDN last published and may lag ncbitaxon.owl; assert_ncbitaxon_version_alignment
+    # surfaces that gap.
     if oak_cache.exists():
         cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
         if cache_ok:

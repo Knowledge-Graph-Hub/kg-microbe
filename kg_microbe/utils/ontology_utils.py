@@ -35,6 +35,11 @@ _GO_NAMESPACE_LOAD_FAILED: bool = False
 # 0-byte stub (the failure that miscategorized every GO term as
 # biological_process this session).
 _GO_DB_MIN_SIZE = 10_000_000
+
+# Minimum plausible size for a healthy NCBITaxon SemSQL DB. A full build is
+# ~13 GB; anything smaller is a partial extract/download or an interrupted
+# `semsql make`, regardless of whether the SQLite header looks valid.
+_NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
 # OBO release stamp, e.g. ``releases/2026-05-19/`` in a versionIRI.
 _RELEASE_RE = re.compile(r"releases/(\d{4}-\d{2}-\d{2})")
 
@@ -237,6 +242,66 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
         if strict:
             raise RuntimeError(msg)
         print(f"WARNING: {msg}")
+
+
+def _ensure_ncbitaxon_db(db_path: str) -> bool:
+    """
+    Build the NCBITaxon SemSQL DB from ``ncbitaxon.owl``; return True if usable.
+
+    Applies the GO single-source rule (#604) to NCBITaxon. The alternative — OAK's
+    ``sqlite:obo:ncbitaxon``, which fetches whatever prebuilt SemSQL the upstream
+    CDN last published — cannot be kept aligned: those builds lag the OBO release
+    train by months (checked 2026-07-26, the newest ``ncbitaxon.db.gz`` upstream
+    was built 2026-05-24 while ``ncbitaxon.owl`` was at 2026-07-12), so refreshing
+    the cache does not close a gap, it only re-downloads 2.3 GB. Building from the
+    OWL we actually ship makes the lookup DB and the emitted nodes the same
+    release by construction.
+
+    Rebuilds when the DB's release stamp has drifted from the OWL's, mirroring
+    :func:`_ensure_go_db`. Degrades gracefully (warn + report current state) when
+    the OWL source or ``semsql`` is unavailable, so a machine without the build
+    toolchain still falls back to whatever DB is already present.
+
+    :param db_path: Target path for ``ncbitaxon.db``.
+    :return: True if a usable DB exists at db_path when this returns.
+    """
+    from kg_microbe.transform_utils.constants import NCBITAXON_SOURCE
+
+    owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
+    if os.path.exists(db_path) and os.path.getsize(db_path) >= _NCBITAXON_DB_MIN_SIZE:
+        owl_release = _obo_release_from_head(owl_source) if owl_source else None
+        db_release = _ncbitaxon_db_release(db_path)
+        if not (owl_release and db_release and owl_release != db_release):
+            return True
+        print(
+            f"Rebuilding {db_path}: release {db_release} drifted from "
+            f"ncbitaxon.owl {owl_release} (single-source realign)..."
+        )
+    if not (owl_source and owl_source.exists()):
+        print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
+        return os.path.exists(db_path)
+    if shutil.which("semsql") is None:
+        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
+        return os.path.exists(db_path)
+    # A stale/partial file would otherwise be treated as an up-to-date target by
+    # semsql's make-based build.
+    if os.path.exists(db_path):
+        os.remove(db_path)
+    print(
+        f"Building {db_path} from {owl_source} via `semsql make` (one-time; "
+        "NCBITaxon is the heaviest source in the pipeline — expect hours and a "
+        "~13 GB result)..."
+    )
+    try:
+        subprocess.run(  # noqa: S603
+            ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
+            cwd=str(owl_source.parent),
+            check=True,
+        )
+    except (subprocess.CalledProcessError, OSError) as e:
+        print(f"Warning: failed to build {db_path}: {e}")
+        return False
+    return os.path.exists(db_path) and os.path.getsize(db_path) >= _NCBITAXON_DB_MIN_SIZE
 
 
 def _ensure_go_db(go_db_path: str) -> bool:

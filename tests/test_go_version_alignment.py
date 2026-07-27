@@ -239,6 +239,7 @@ def _stub_go_transform(tmp_path, monkeypatch):
     calls = {"convert": 0}
 
     def fake_convert(path, ont):
+        """Stand in for ROBOT owl->json: count the call, write a fresh go.json."""
         calls["convert"] += 1
         (Path(path) / f"{ont}.json").write_text(_JSON.format(d="2026-05-19"), encoding="utf-8")
 

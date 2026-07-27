@@ -21,6 +21,16 @@ poetry install
 # Download all data sources (configured in download.yaml)
 poetry run kg download
 
+# Download only selected source groups (tags are listed in download.yaml's header)
+poetry run kg download -t ontologies -t gtdb
+
+# Re-download a single file: delete it and re-run. `kg download` only fetches
+# files that are absent — it never checks whether the remote copy is newer.
+# `-i` ignores the cache for EVERY entry, so scope it with -t. Note that for
+# mediadive this also clears the HTTP response cache and re-runs the full
+# ~1h bulk API crawl, so it is not a cheap single-file refresh:
+poetry run kg download -i -t mediadive
+
 # Transform downloaded data into KG format (TSV: nodes.tsv, edges.tsv)
 poetry run kg transform
 

@@ -94,9 +94,11 @@ ONTOLOGIES_MAP = {
     # are now per-CURIE imports via the OntologiesStubsTransform
     # (kg_microbe/transform_utils/ontologies_stubs/), which emits one
     # labelled stub node per referenced CURIE instead of pulling in
-    # ~2,170 + ~17,600 unrelated nodes. PO uses the bbop-sqlite SemSQL DB
-    # (data/raw/po.db); MICRO uses the obograph JSON (data/raw/micro.json)
-    # because MICRO's bbop-sqlite distribution is broken.
+    # ~2,170 + ~17,600 unrelated nodes. Both go through ROBOT MIREOT against
+    # the OWL (owl_mireot): PO from data/raw/po.owl, MICRO from
+    # data/raw/micro.owl. Neither uses a SemSQL .db — MICRO's bbop-sqlite
+    # distribution is a truncated placeholder, and PO's was downloaded but
+    # never read, so it was dropped from download.yaml (#604).
 }
 
 

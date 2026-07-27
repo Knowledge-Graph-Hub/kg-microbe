@@ -76,6 +76,11 @@ SOLUTION_ID_KEY = "solution_id"
 # module.
 _thread_local = threading.local()
 
+# Every session handed out, so _reset_sessions can close them. A thread-local
+# alone is not enough: one thread cannot reach another's sessions to close them.
+_live_sessions: List[requests.Session] = []
+_sessions_lock = threading.Lock()
+
 # Set by setup_cache(); None means "no HTTP caching" (plain sessions).
 _cache_path: Optional[Path] = None
 
@@ -165,8 +170,22 @@ def _make_backend() -> SQLiteCache:
 
 
 def _reset_sessions() -> None:
-    """Discard cached per-thread sessions (used by setup_cache and tests)."""
+    """
+    Close and discard cached per-thread sessions (used by setup_cache and tests).
+
+    Rebinding rather than clearing an attribute is deliberate: it makes *every*
+    thread see a fresh local, which is what a cache reconfiguration needs. The
+    sessions themselves must be closed explicitly, or each one's SQLite
+    connection lingers until garbage collection (#617).
+    """
     global _thread_local
+    with _sessions_lock:
+        for session in _live_sessions:
+            try:
+                session.close()
+            except Exception as e:  # noqa: BLE001 — teardown must not mask the real work
+                logger.debug(f"Ignoring error while closing a cached session: {e}")
+        _live_sessions.clear()
     _thread_local = threading.local()
 
 
@@ -182,6 +201,8 @@ def _make_session() -> requests.Session:
         session = CachedSession(backend=_make_backend()) if _cache_path else requests.Session()
         session.headers.update({"User-Agent": USER_AGENT})
         _thread_local.session = session
+        with _sessions_lock:
+            _live_sessions.append(session)
     return session
 
 

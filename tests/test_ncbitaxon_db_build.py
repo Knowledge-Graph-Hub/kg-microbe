@@ -163,3 +163,35 @@ class TestDegradesGracefully:
         monkeypatch.setattr(ou, "_NCBITAXON_DB_MIN_SIZE", 1_000_000)
         _fake_build(monkeypatch, db, size=16)
         assert ou._ensure_ncbitaxon_db(str(db)) is False
+
+    def test_opt_out_skips_the_build(self, tmp_path, owl, tiny_threshold, monkeypatch, capsys):
+        """KG_SEMSQL_BUILD=off must not start a multi-hour build (#613)."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"0" * 16)
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")  # drifted
+        calls = _fake_build(monkeypatch, db)
+        monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+
+        assert ou._ensure_ncbitaxon_db(str(db)) is True
+        assert calls == [], "opt-out must skip semsql entirely"
+        assert "opt-out" in capsys.readouterr().out
+
+    @pytest.mark.parametrize("value", ["off", "false", "0", "no", "OFF"])
+    def test_opt_out_accepts_common_spellings(self, tmp_path, owl, tiny_threshold, monkeypatch, value):
+        """Any of the usual falsey spellings disables the build."""
+        owl()
+        db = tmp_path / "ncbitaxon.db"
+        calls = _fake_build(monkeypatch, db)
+        monkeypatch.setenv("KG_SEMSQL_BUILD", value)
+        ou._ensure_ncbitaxon_db(str(db))
+        assert calls == []
+
+    def test_build_runs_when_opt_out_unset(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """Default behaviour is unchanged: the build still runs."""
+        owl()
+        db = tmp_path / "ncbitaxon.db"
+        calls = _fake_build(monkeypatch, db)
+        monkeypatch.delenv("KG_SEMSQL_BUILD", raising=False)
+        assert ou._ensure_ncbitaxon_db(str(db)) is True
+        assert len(calls) == 1

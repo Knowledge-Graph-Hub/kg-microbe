@@ -50,6 +50,10 @@ from kg_microbe.utils.metpo_predicates import (  # noqa: E402
 )
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings  # noqa: E402
 from kg_microbe.utils.oak_utils import search_by_label  # noqa: E402
+
+# _NCBITAXON_DB_MIN_SIZE is single-sourced in ontology_utils, beside the
+# builder that enforces it (_ensure_ncbitaxon_db).
+from kg_microbe.utils.ontology_utils import _NCBITAXON_DB_MIN_SIZE  # noqa: E402
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
@@ -58,11 +62,6 @@ METATRAITS_INPUT_FILES = [
     "ncbi_species_summary.jsonl.gz",
     "metatraits_species_summary.jsonl.gz",
 ]
-
-
-# Single source of truth lives in ontology_utils, alongside the builder that
-# enforces it (_ensure_ncbitaxon_db).
-from kg_microbe.utils.ontology_utils import _NCBITAXON_DB_MIN_SIZE  # noqa: E402
 
 
 def _ncbitaxon_db_paths() -> Tuple[Path, Path]:

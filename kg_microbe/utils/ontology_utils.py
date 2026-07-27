@@ -6,6 +6,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -249,6 +250,46 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
         print(f"WARNING: {msg}")
 
 
+def _semsql_build_enabled() -> bool:
+    """
+    Report whether SemSQL DB builds are permitted in this run.
+
+    Building ``ncbitaxon.db`` (~13 GB, hours) or ``chebi.db`` (30+ minutes) is the
+    right default for a maintainer refreshing the KG, but it is triggered by
+    ordinary ``kg transform`` commands, so anyone else needs a way to decline
+    (see #613). ``KG_SEMSQL_BUILD=off`` (or ``false``/``0``/``no``) skips the
+    build; the caller then falls back to a prebuilt DB and the version gate warns
+    about any resulting drift.
+
+    :return: False when the opt-out is set, True otherwise.
+    """
+    return os.environ.get("KG_SEMSQL_BUILD", "").strip().lower() not in {"off", "false", "0", "no"}
+
+
+def _decompress_atomically(archive: Path, destination: Path) -> bool:
+    """
+    Decompress a ``.gz`` archive to ``destination`` via a temp file + rename.
+
+    Writing straight to the destination leaves a truncated file at the real
+    filename if interrupted (#615) — and a truncated OWL is not detectable
+    downstream, because the version stamp lives in the head and still parses.
+
+    :param archive: Source ``.gz`` file.
+    :param destination: Path to place the decompressed file at.
+    :return: True if destination now holds the complete contents.
+    """
+    tmp = destination.with_name(destination.name + ".partial")
+    try:
+        with gzip.open(archive, "rb") as src, open(tmp, "wb") as dst:
+            shutil.copyfileobj(src, dst)
+        os.replace(tmp, destination)
+    except OSError as e:
+        print(f"Warning: failed to decompress {archive}: {e}")
+        tmp.unlink(missing_ok=True)
+        return False
+    return True
+
+
 def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000) -> Optional[str]:
     """
     Return the ChEBI release recorded near the top of ``chebi.owl``.
@@ -375,16 +416,15 @@ def _ensure_chebi_db(db_path: str) -> bool:
             f"Rebuilding {db_path}: release {db_release} drifted from "
             f"chebi.owl {owl_release} (single-source realign)..."
         )
+    if not _semsql_build_enabled():
+        print(f"Skipping ChEBI SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
+        return os.path.exists(db_path)
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL; the download ships chebi.owl.gz.
         archive = owl_source.with_suffix(owl_source.suffix + ".gz")
         if archive.exists():
             print(f"Decompressing {archive} for the ChEBI SemSQL build...")
-            try:
-                with gzip.open(archive, "rb") as src, open(owl_source, "wb") as dst:
-                    shutil.copyfileobj(src, dst)
-            except OSError as e:
-                print(f"Warning: failed to decompress {archive}: {e}")
+            if not _decompress_atomically(archive, owl_source):
                 return os.path.exists(db_path)
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
@@ -395,8 +435,9 @@ def _ensure_chebi_db(db_path: str) -> bool:
     if os.path.exists(db_path):
         os.remove(db_path)
     print(
-        f"Building {db_path} from {owl_source} via `semsql make` (one-time; "
-        "ChEBI runs relation-graph and can take 30+ minutes / several GB RAM)..."
+        f"Building {db_path} from {owl_source} via `semsql make`.\n"
+        "  ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM.\n"
+        "  Set KG_SEMSQL_BUILD=off to skip and use a prebuilt DB instead."
     )
     try:
         subprocess.run(  # noqa: S603
@@ -410,6 +451,33 @@ def _ensure_chebi_db(db_path: str) -> bool:
     return os.path.exists(db_path) and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE
 
 
+@lru_cache(maxsize=None)
+def _chebi_adapter_for(db_path: str):
+    """
+    Build/realign ``chebi.db``, gate its release, and open an adapter over it.
+
+    Cached per path so the ensure + gate work (a 2 MB head read of ``chebi.owl``
+    plus a SQLite open) happens once per process rather than per call (#618).
+    Call :func:`get_chebi_adapter.cache_clear` to reset.
+
+    :param db_path: Path to ``chebi.db``.
+    :return: OAK adapter over ``chebi.db``.
+    :raises RuntimeError: If no usable DB could be produced.
+    """
+    from oaklib import get_adapter
+
+    if not _ensure_chebi_db(db_path):
+        # Without this the gate silently no-ops on the missing file and OAK is
+        # handed a nonexistent path, losing the actionable warning above (#616).
+        raise RuntimeError(
+            f"No usable ChEBI SemSQL DB at {db_path}. Install `semsql` and place "
+            "chebi.owl (or chebi.owl.gz) in data/raw so it can be built, or supply "
+            "a prebuilt chebi.db. See the warning above for which step failed."
+        )
+    assert_chebi_version_alignment(db_path)
+    return get_adapter(f"sqlite:{db_path}")
+
+
 def get_chebi_adapter():
     """
     Return an OAK adapter for ChEBI, building/realigning ``chebi.db`` first.
@@ -420,15 +488,14 @@ def get_chebi_adapter():
     accepted whatever DB happened to be on disk).
 
     :return: OAK adapter over ``chebi.db``.
+    :raises RuntimeError: If no usable DB could be produced.
     """
-    from oaklib import get_adapter
-
     from kg_microbe.transform_utils.constants import CHEBI_SOURCE
 
-    db_path = str(Path(CHEBI_SOURCE).parent / "chebi.db")
-    _ensure_chebi_db(db_path)
-    assert_chebi_version_alignment(db_path)
-    return get_adapter(f"sqlite:{db_path}")
+    return _chebi_adapter_for(str(Path(CHEBI_SOURCE).parent / "chebi.db"))
+
+
+get_chebi_adapter.cache_clear = _chebi_adapter_for.cache_clear
 
 
 def _ensure_ncbitaxon_db(db_path: str) -> bool:
@@ -464,6 +531,9 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
             f"Rebuilding {db_path}: release {db_release} drifted from "
             f"ncbitaxon.owl {owl_release} (single-source realign)..."
         )
+    if not _semsql_build_enabled():
+        print(f"Skipping NCBITaxon SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
+        return os.path.exists(db_path)
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
         return os.path.exists(db_path)
@@ -475,9 +545,10 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     if os.path.exists(db_path):
         os.remove(db_path)
     print(
-        f"Building {db_path} from {owl_source} via `semsql make` (one-time; "
-        "NCBITaxon is the heaviest source in the pipeline — expect hours and a "
-        "~13 GB result)..."
+        f"Building {db_path} from {owl_source} via `semsql make`.\n"
+        "  NCBITaxon is the heaviest source in the pipeline: expect hours and a\n"
+        "  ~13 GB result. Set KG_SEMSQL_BUILD=off to skip and use the prebuilt\n"
+        "  OAK cache instead (the version gate will warn about any drift)."
     )
     try:
         subprocess.run(  # noqa: S603

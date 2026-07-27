@@ -110,6 +110,30 @@ class TestCacheThreadSafety:
 
         assert len(connection_ids) == n_threads
 
+    def test_reset_closes_sessions_from_other_threads(self, tmp_path):
+        """Discarded sessions must be closed, not left to garbage collection (#617)."""
+        setup_cache(tmp_path)
+        closed = []
+
+        def build_and_track(_):
+            """Create this thread's session and wrap close() to record the call."""
+            session = _make_session()
+            original = session.close
+
+            def close():
+                """Record that close was called, then really close."""
+                closed.append(id(session))
+                original()
+
+            session.close = close
+            return id(session)
+
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            ids = set(executor.map(build_and_track, range(9)))
+
+        _reset_sessions()
+        assert set(closed) == ids, "every per-thread session should have been closed"
+
     def test_repeated_calls_reuse_the_same_thread_session(self, tmp_path):
         """Within one thread, _make_session must be idempotent (no session churn)."""
         setup_cache(tmp_path)

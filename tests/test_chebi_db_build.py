@@ -42,6 +42,14 @@ def _make_db(tmp_path, release, *, subject="obo:chebi.owl", name="chebi.db"):
     return path
 
 
+@pytest.fixture(autouse=True)
+def _clear_adapter_cache():
+    """Drop the memoized ChEBI adapter so tests can't see each other's."""
+    ou.get_chebi_adapter.cache_clear()
+    yield
+    ou.get_chebi_adapter.cache_clear()
+
+
 def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
     """Stand in for `semsql make`, recording the call and writing a fake DB."""
     calls = []
@@ -226,6 +234,38 @@ class TestChebiBuild:
         _fake_build(monkeypatch, db, size=16)  # threshold stays at 100 MB
         assert ou._ensure_chebi_db(str(db)) is False
 
+    def test_opt_out_skips_the_build(self, tmp_path, monkeypatch, capsys):
+        """KG_SEMSQL_BUILD=off must not start a 30-minute build (#613)."""
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        _make_db(tmp_path, 251)  # drifted, so a build would otherwise run
+        calls = _fake_build(monkeypatch, db)
+        monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+
+        assert ou._ensure_chebi_db(str(db)) is True
+        assert calls == [], "opt-out must skip semsql entirely"
+        assert "opt-out" in capsys.readouterr().out
+
+    def test_decompression_is_atomic(self, tmp_path, monkeypatch):
+        """An interrupted decompression must not leave a truncated OWL (#615)."""
+        import gzip as gz
+
+        owl = tmp_path / "chebi.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        with gz.open(tmp_path / "chebi.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_VERSION_IRI.format(v=253))
+
+        def boom(src, dst, *a, **k):
+            """Fail part-way through the copy, as a full disk or Ctrl-C would."""
+            dst.write(b"<owl:versionIRI rdf:resource=")
+            raise OSError("no space left on device")
+
+        monkeypatch.setattr(ou.shutil, "copyfileobj", boom)
+        assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
+        assert not owl.exists(), "a partial decompression must not appear at the real path"
+        assert not (tmp_path / "chebi.owl.partial").exists(), "temp file should be cleaned up"
+
 
 class TestAdapterEntryPoint:
 
@@ -246,3 +286,40 @@ class TestAdapterEntryPoint:
         assert seen["ensured"] == expected
         assert seen["gated"] == expected
         assert seen["adapter"] == f"sqlite:{expected}"
+
+    def test_failed_ensure_raises_actionable_error(self, tmp_path, monkeypatch):
+        """An unbuildable DB must not be handed to OAK as a missing path (#616)."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: False)
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: pytest.fail("must not open a missing DB"))
+        with pytest.raises(RuntimeError, match="No usable ChEBI SemSQL DB"):
+            ou.get_chebi_adapter()
+
+    def test_adapter_work_happens_once(self, tmp_path, monkeypatch):
+        """Repeat calls reuse the memoized adapter rather than re-ensuring (#618)."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        counts = {"ensure": 0, "gate": 0, "adapter": 0}
+
+        def ensure(_):
+            """Count ensure invocations."""
+            counts["ensure"] += 1
+            return True
+
+        def gate(_):
+            """Count gate invocations."""
+            counts["gate"] += 1
+
+        def adapter(_):
+            """Count adapter constructions."""
+            counts["adapter"] += 1
+            return object()
+
+        monkeypatch.setattr(ou, "_ensure_chebi_db", ensure)
+        monkeypatch.setattr(ou, "assert_chebi_version_alignment", gate)
+        monkeypatch.setattr("oaklib.get_adapter", adapter)
+
+        first = ou.get_chebi_adapter()
+        second = ou.get_chebi_adapter()
+
+        assert first is second
+        assert counts == {"ensure": 1, "gate": 1, "adapter": 1}

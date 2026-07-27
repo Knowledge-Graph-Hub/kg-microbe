@@ -175,10 +175,14 @@ class TestPendingHosting:
         assert seen["path"] == config
 
     def test_pending_tag_is_still_a_valid_tag(self, tmp_path):
-        """A tag whose only entries are unhosted must not be rejected as unknown."""
+        """A tag whose only entries are unhosted must be accepted, not rejected as unknown."""
         config = self._config(tmp_path)
+        # Reaching the downloader at all proves _validate_tags accepted the tag;
+        # a rejection would have raised ValueError before this point.
         seen = self._run(tmp_path, config, tags=("metatraits_gtdb",))
-        assert seen["entries"] == [] or "unhosted.tsv.gz" not in str(seen["entries"])
+        assert "path" in seen, "download_from_yaml should still have been called"
+        names = [e["local_name"] for e in seen["entries"]]
+        assert "unhosted.tsv.gz" not in names, "the pending entry must be filtered out"
 
 
 class TestTagPlumbing:

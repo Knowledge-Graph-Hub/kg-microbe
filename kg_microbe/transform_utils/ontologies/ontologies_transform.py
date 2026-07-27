@@ -217,7 +217,7 @@ class OntologiesTransform(Transform):
                 # first (mirrors _ensure_go_db's rebuild) — otherwise the
                 # reconversion silently keeps the old release.
                 if _derived_json_is_stale(data_file, Path(json_path)):
-                    Path(json_path).unlink()
+                    Path(json_path).unlink(missing_ok=True)
                 if not Path(json_path).is_file():
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path

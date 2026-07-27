@@ -167,15 +167,95 @@ class TestDegradesGracefully:
         assert not (tmp_path / "ncbitaxon.db.prev").exists()
 
     def test_successful_build_discards_the_keep_aside_copy(self, tmp_path, owl, tiny_threshold, monkeypatch):
-        """On success the moved-aside DB is removed, not left doubling disk use."""
+        """
+        On success the moved-aside DB is removed, not left doubling disk use.
+
+        Asserts the .prev existed *during* the build and is gone after — checking
+        only the end state passes trivially with the keep-aside reverted, since
+        then no .prev is ever created.
+        """
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
         db.write_bytes(b"0" * 16)
+        prev = tmp_path / "ncbitaxon.db.prev"
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
-        _fake_build(monkeypatch, db)
+        seen = {}
+
+        def run(cmd, **kwargs):
+            """Record whether the old DB was preserved while the build ran."""
+            seen["prev_during_build"] = prev.exists()
+            db.write_bytes(b"0" * 16)
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
 
         assert ou._ensure_ncbitaxon_db(str(db)) is True
-        assert not (tmp_path / "ncbitaxon.db.prev").exists()
+        assert seen["prev_during_build"] is True, "the old DB must be kept during the build"
+        assert not prev.exists(), "and discarded once the build verifies"
+
+    def test_interrupt_restores_the_db_and_leaves_no_orphan(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """Ctrl-C during a build must not strand a 14 GB .prev with the DB gone (F3)."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"0" * 16)
+        original = db.read_bytes()
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
+
+        def run(cmd, **kwargs):
+            """Die the way a Ctrl-C or an OOM kill does."""
+            raise KeyboardInterrupt
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
+
+        with pytest.raises(KeyboardInterrupt):
+            ou._ensure_ncbitaxon_db(str(db))
+        assert db.exists() and db.read_bytes() == original, "the DB must be restored"
+        assert not (tmp_path / "ncbitaxon.db.prev").exists(), "no orphaned .prev"
+
+    def test_orphaned_prev_from_an_earlier_kill_is_recovered(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """A .prev left by a previously killed run is adopted, not stranded forever."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        prev = tmp_path / "ncbitaxon.db.prev"
+        prev.write_bytes(b"0" * 16)  # DB missing, .prev orphaned
+        calls = _fake_build(monkeypatch, db)
+
+        assert ou._ensure_ncbitaxon_db(str(db)) is True
+        assert len(calls) == 1
+        assert not prev.exists(), "the orphan must not survive another run"
+
+    def test_short_build_result_restores_and_reports_the_restored_db(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """Semsql can exit 0 with a stub; report on what is on disk after restoring (F2)."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"0" * 16)
+        original = db.read_bytes()
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
+
+        def run(cmd, **kwargs):
+            """Exit 0 but leave an under-threshold file."""
+            db.write_bytes(b"x")
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
+
+        result = ou._ensure_ncbitaxon_db(str(db))
+        assert db.read_bytes() == original, "the working DB must be restored"
+        assert result is True, "and reported usable, since it is"
+
+    def test_symlinked_prebuilt_db_is_accepted_when_no_build_is_possible(
+        self, tmp_path, owl, tiny_threshold, monkeypatch
+    ):
+        """Pointing at a prebuilt DB with a symlink is supported (F4)."""
+        owl("2026-07-12")
+        real = tmp_path / "prebuilt.db"
+        real.write_bytes(b"0" * 16)
+        db = tmp_path / "ncbitaxon.db"
+        db.symlink_to(real)
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)  # cannot build
+
+        assert ou._ensure_ncbitaxon_db(str(db)) is True, "a symlinked prebuilt DB is usable"
 
     def test_missing_owl_warns(self, tmp_path, monkeypatch, capsys):
         """No OWL source means no build; say so rather than failing obscurely."""

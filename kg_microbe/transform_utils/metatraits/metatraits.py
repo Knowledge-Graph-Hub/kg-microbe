@@ -72,6 +72,24 @@ def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
     )
 
 
+def _db_fingerprint(db_path: Path) -> Optional[Tuple[int, int]]:
+    """
+    Return (mtime_ns, size) for a DB, or None when it is absent.
+
+    Used to tell "this call built a new DB" from "the DB that was already there",
+    which decides whether the OAK-cache fallback may replace it. Checking "is a
+    real file" instead would also match a pre-existing DB and strand the run.
+
+    :param db_path: Path to fingerprint.
+    :return: (mtime_ns, size), or None if the path cannot be stat'ed.
+    """
+    try:
+        st = db_path.stat()
+    except OSError:
+        return None
+    return (st.st_mtime_ns, st.st_size)
+
+
 def _validate_ncbitaxon_db(db_path: Path) -> Tuple[bool, str]:
     """
     Validate that db_path is a healthy NCBITaxon SQLite DB.
@@ -123,6 +141,7 @@ def _ensure_ncbitaxon_db_ready() -> None:
     # so lookups and emitted nodes are the same release by construction (#604).
     # A no-op when semsql or the OWL is unavailable, which leaves the OAK-cache
     # fallback below as the last resort.
+    before = _db_fingerprint(local_db)
     if _ensure_ncbitaxon_db(str(local_db)):
         built_ok, built_reason = _validate_ncbitaxon_db(local_db)
         if built_ok:
@@ -132,6 +151,17 @@ def _ensure_ncbitaxon_db_ready() -> None:
         # returns True on its reuse path, so this branch is usually reporting a
         # DB that was already present and still fails validation.
         print(f"  NCBITaxon DB at {local_db} still invalid after ensure ({built_reason})")
+        # Only a DB this call actually produced is worth protecting from the
+        # symlink fallback. Comparing the fingerprint is the honest test — "is a
+        # real file" would also match the pre-existing DB that has now failed
+        # validation twice, and keeping that would strand the run.
+        if _db_fingerprint(local_db) != before:
+            raise RuntimeError(
+                f"Built a fresh NCBITaxon DB at {local_db} but it failed validation "
+                f"({built_reason}). Not replacing it with the OAK cache, since that "
+                "would discard a build that takes hours. Inspect or delete it and "
+                "re-run."
+            )
 
     # Fallback: adopt OAK's prebuilt cache. Its release is whatever the upstream
     # CDN last published and may lag ncbitaxon.owl; assert_ncbitaxon_version_alignment
@@ -139,19 +169,12 @@ def _ensure_ncbitaxon_db_ready() -> None:
     if oak_cache.exists():
         cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
         if cache_ok:
-            # Never trade a real local DB for the symlink. _validate_ncbitaxon_db
-            # wraps an OAK query in a bare `except Exception`, so a transient
-            # adapter error would otherwise delete a 13 GB build that took hours
-            # and replace it with the very artifact this design avoids.
-            if local_db.is_symlink():
+            # Safe to replace: a DB built by this call is handled above (it
+            # raises rather than reaching here), so whatever is here now is a
+            # pre-existing file that failed validation both before and after the
+            # ensure. Self-healing to the cache is better than stranding the run.
+            if local_db.exists() or local_db.is_symlink():
                 local_db.unlink()
-            elif local_db.exists():
-                print(
-                    f"  Keeping the existing {local_db} rather than replacing it with "
-                    f"the OAK cache; it failed validation ({reason}) — delete it "
-                    "manually if it is genuinely corrupt."
-                )
-                return
             local_db.symlink_to(oak_cache)
             print(f"  Repaired symlink: {local_db} -> {oak_cache}")
             return

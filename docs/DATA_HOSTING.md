@@ -95,13 +95,19 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   *is* redistribution. Keep the manual procedure documented in `download.yaml`:
   register free at <https://lpsn.dsmz.de/register>, download the GSS CSV, place
   it at `data/raw/lpsn_gss.csv`.
-- **Anything derived from a downloaded ontology release** — `ncbitaxon.db`,
-  `ncbitaxon_removed_subset.json`, `chebi.{db,owl,json}`, `go.{db,json}`,
-  `ec.db`, `bto.db`, `ncit.db`, `*-relation-graph.tsv.gz`, and the ROBOT-derived
-  `pato/ro/taxrank/uberon/upa/foodon.json`. These must be rebuilt from the OWL
-  you actually downloaded. Hosting or copying them silently pins the KG to an
-  older ontology release: the transforms skip regeneration when the derived file
-  already exists.
+- **Anything the transforms derive locally** — `ncbitaxon_removed_subset.json`,
+  `chebi.json`, `go.json`, `*-relation-graph.tsv.gz`, and the ROBOT-derived
+  `pato/ro/taxrank/uberon/upa/foodon.json`. Hosting or copying these silently
+  pins the KG to an older ontology release, because the transforms skip
+  regeneration when the derived file already exists.
+
+  The SemSQL `.db` files are a different case and are **not** all derivable here:
+  `go.db` is built from `go.owl` by `_ensure_go_db`; `bto.db` and `ncit.db` are
+  downloaded as `.db.gz` (no OWL is declared for them, so there is nothing to
+  build from); `ncbitaxon.db` is a symlink to OAK's prebuilt cache, deliberately
+  whatever release that cache holds; and nothing builds `chebi.db`. Copying
+  those two is currently the only way to get them. Building `ncbitaxon.db` and
+  `chebi.db` from the OWLs we ship is a separate change.
 
 ## Upload procedure (for refreshing a file, or adding a new one)
 
@@ -123,7 +129,7 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
    This step is not optional. Drive has silently served `.gz` uploads
    decompressed — that is exactly how the already-hosted
    `ncbi_*_summary.jsonl.gz` ended up as plain JSON under a `.gz` name in
-   `data/raw`, and the five files below go up the same way.
+   `data/raw`, and the hosted files above go up the same way.
 
    Every MetaTraits read path now tolerates a decompressed `.gz` via
    `_open_maybe_gzipped` (`transform_utils/metatraits/metatraits.py`), so this
@@ -163,11 +169,13 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
    Move the file aside rather than relying on `-i`: `-i` deletes the local copy
    *before* fetching, so a failed download leaves you with nothing.
 
-## Interim: copy from a reference directory
+## Copying from a reference directory
 
-Until the files are hosted, `kg download` skips them with a message naming each
-one (see `PENDING_HOSTING_MARKER` in `kg_microbe/download.py`). Restore them by
-hand:
+All six are hosted, so `kg download` fetches them normally. This section covers
+the two remaining cases: a source that is still unhosted (`kg download` skips it
+with a message naming it — see `PENDING_HOSTING_MARKER` in
+`kg_microbe/download.py`), and restoring a `data/raw` you rotated away without
+re-downloading:
 
 ```bash
 REF=data/raw_202607_andOLD_mixed
@@ -192,15 +200,15 @@ Two related caches worth restoring the same way, both of which cost hours to
 rebuild and neither of which is a `download.yaml` entry:
 
 ```bash
-cp -Rn $REF/mediadive data/raw/     # 4 bulk JSONs; skips a ~1h MediaDive crawl
+cp -Rn $REF/mediadive data/raw/     # 4 bulk JSONs + the HTTP cache; skips a ~1h crawl
 cp -Rn $REF/lpsn data/raw/          # 34,301 per-record LPSN API responses
 cp -n  $REF/lpsn_gss.csv data/raw/
 ```
 
 Note both caches live *inside* `data/raw`, so rotating or replacing that
 directory loses them — which is what caused a full 34,300-record LPSN re-fetch.
-Once the six files above are hosted, only the LPSN artifacts still need this
-treatment.
+With the six files hosted, only the LPSN artifacts and these caches still need
+this treatment.
 
 Two inputs cannot be restored from any reference directory:
 

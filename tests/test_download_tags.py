@@ -35,6 +35,27 @@ KNOWN_TAGS = {
 }
 
 
+def _documented_tags():
+    """
+    Parse the tag names out of download.yaml's header comment block.
+
+    KNOWN_TAGS is otherwise a hand-copied duplicate: adding a tag to the test set
+    without adding it to the header leaves the header — which `kg download --help`
+    points users at — silently stale.
+    """
+    import re
+
+    tags = set()
+    with open(DOWNLOAD_YAML) as f:
+        for line in f:
+            if line.startswith("---"):
+                break
+            m = re.match(r"#\s{4}([a-z_]+)\s{2,}\S", line)
+            if m:
+                tags.add(m.group(1))
+    return tags
+
+
 def _entries():
     """Return the active (uncommented) resource entries in download.yaml."""
     with open(DOWNLOAD_YAML) as f:
@@ -62,13 +83,31 @@ class TestYamlTagging:
 
     def test_urls_have_no_surrounding_whitespace(self):
         """A stray space becomes part of the URL handed to urllib (#623)."""
-        offenders = [e["local_name"] for e in _entries() if e["url"] != e["url"].strip()]
+        # .get(): `url` is absent on `api: elasticsearch` entries and `local_name`
+        # is Optional in DownloadableResource, so indexing would turn a legal
+        # entry of either shape into a KeyError instead of a clear failure.
+        offenders = [
+            e.get("local_name") or e.get("url")
+            for e in _entries()
+            if (e.get("url") or "") != (e.get("url") or "").strip()
+        ]
         assert offenders == [], f"entries with padded URLs: {offenders}"
 
     def test_local_names_have_no_surrounding_whitespace(self):
         """Same hazard for the destination path."""
-        offenders = [e["local_name"] for e in _entries() if e["local_name"] != e["local_name"].strip()]
+        offenders = [
+            e.get("local_name")
+            for e in _entries()
+            if (e.get("local_name") or "") != (e.get("local_name") or "").strip()
+        ]
         assert offenders == []
+
+    def test_header_documents_exactly_the_known_tags(self):
+        """download.yaml's header and KNOWN_TAGS must not drift apart."""
+        documented = _documented_tags()
+        assert documented == KNOWN_TAGS, (
+            f"only in header: {sorted(documented - KNOWN_TAGS)}; only in KNOWN_TAGS: {sorted(KNOWN_TAGS - documented)}"
+        )
 
     def test_mediadive_tag_matches_the_constant(self):
         """The bulk-download gate keys off this exact tag string."""

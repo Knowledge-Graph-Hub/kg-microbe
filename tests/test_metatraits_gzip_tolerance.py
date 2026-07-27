@@ -58,27 +58,65 @@ class TestOpenMaybeGzipped:
         with mt._open_jsonl(path) as f:
             assert "tax_name" in f.read()
 
-    def test_probe_handle_is_closed_on_fallback(self, tmp_path, monkeypatch):
-        """The failed gzip probe must not leak its handle (#621)."""
-        path = tmp_path / "sample.tsv.gz"
-        _write_plain(path, "hello\n")
+    @staticmethod
+    def _track_probes(monkeypatch):
+        """Wrap gzip.open so a test can see whether probe handles get closed."""
         opened = []
-
         real_gzip_open = mt.gzip.open
 
         def tracking_open(*args, **kwargs):
-            """Wrap gzip.open so we can see whether the probe handle gets closed."""
+            """Record every handle gzip.open hands out."""
             handle = real_gzip_open(*args, **kwargs)
             opened.append(handle)
             return handle
 
         monkeypatch.setattr(mt.gzip, "open", tracking_open)
+        return opened
+
+    def test_probe_handle_is_closed_on_fallback(self, tmp_path, monkeypatch):
+        """The failed gzip probe must not leak its handle (#621)."""
+        path = tmp_path / "sample.tsv.gz"
+        _write_plain(path, "hello\n")
+        opened = self._track_probes(monkeypatch)
 
         with mt._open_maybe_gzipped(path) as f:
             assert f.read() == "hello\n"
 
         assert len(opened) == 1, "the gzip probe should have run once"
         assert opened[0].closed, "the probe handle must be closed before falling back"
+
+    def test_probe_handle_is_closed_for_a_header_truncated_gz(self, tmp_path, monkeypatch):
+        """
+        A .gz truncated inside its header raises EOFError, not BadGzipFile (#629).
+
+        The original close() only ran on BadGzipFile, so this realistic
+        partial-download shape leaked the handle — silently, since callers wrap
+        the read in `except Exception`.
+        """
+        real = tmp_path / "real.gz"
+        _write_gzipped(real, "hello\n")
+        path = tmp_path / "sample.tsv.gz"
+        path.write_bytes(real.read_bytes()[:5])  # cut inside the 10-byte header
+        opened = self._track_probes(monkeypatch)
+
+        handle = mt._open_maybe_gzipped(path)
+        handle.close()
+
+        assert opened, "the probe should have opened a handle"
+        assert all(h.closed for h in opened), "every probe handle must be closed"
+
+    def test_probe_handle_is_closed_for_undecodable_content(self, tmp_path, monkeypatch):
+        """A payload that is gzip but not UTF-8 raises UnicodeDecodeError (#629)."""
+        path = tmp_path / "sample.tsv.gz"
+        with gzip.open(path, "wb") as f:
+            f.write(b"\xff\xfe\x00binary\x80\x81")
+        opened = self._track_probes(monkeypatch)
+
+        handle = mt._open_maybe_gzipped(path)
+        handle.close()
+
+        assert opened
+        assert all(h.closed for h in opened), "every probe handle must be closed"
 
 
 class TestCrosswalkLoading:

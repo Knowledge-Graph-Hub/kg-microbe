@@ -30,7 +30,7 @@
 #    gtdb        GTDB taxonomy + metadata
 #    metatraits  MetaTraits per-taxon trait summaries (NCBITaxon ranks)
 #    metatraits_gtdb  MetaTraits summaries + crosswalks keyed by GTDB taxonomy
-#    bactotraits BactoTraits V2 (static Jun-2022 dataset)
+#    bactotraits      BactoTraits V2 (static Jun-2022 dataset)
 #    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
 #
 #  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so

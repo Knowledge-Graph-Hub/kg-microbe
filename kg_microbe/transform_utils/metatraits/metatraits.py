@@ -180,14 +180,17 @@ def _open_maybe_gzipped(path: Path):
             handle = gzip.open(path, "rt", encoding="utf-8")
             handle.read(1)  # Trigger gzip header read
             handle.seek(0)
-            return handle
-        except gzip.BadGzipFile:
-            # The probe already opened the file; without this close the handle
-            # leaks on every decompressed-.gz read (#621), which is the normal
-            # case for the Drive-hosted inputs.
+        except Exception:  # noqa: BLE001 — see below; any probe failure falls back
+            # The probe already opened the file, so it must be closed on *every*
+            # failure, not just BadGzipFile (#629): a .gz truncated inside its
+            # 10-byte header raises EOFError and a mis-decoded payload raises
+            # UnicodeDecodeError, both realistic partial-download states, and both
+            # leaked the handle silently because callers wrap this in
+            # `except Exception`.
             if handle is not None:
                 handle.close()
             return open(path, "r", encoding="utf-8")
+        return handle
     return open(path, "r", encoding="utf-8")
 
 

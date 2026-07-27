@@ -1,12 +1,15 @@
 """Tests for mediadive_bulk_download utility."""
 
 import inspect
+import json
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from importlib import import_module
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
 import requests
 
 from kg_microbe.utils.mediadive_bulk_download import (
@@ -252,6 +255,100 @@ class TestCacheThreadSafety:
 
         assert bystander.exists(), "default setup_cache must not touch the CWD"
         assert bystander.read_bytes() == b"do not move me"
+
+
+class TestBulkDownloadEndToEnd:
+
+    """
+    Exercise download_mediadive_bulk against a local HTTP server.
+
+    The rest of the suite mocks at or above download_mediadive_bulk, so the
+    behaviour that actually matters — cache warm/cold, --ignore-cache really
+    re-fetching, sessions torn down — was verifiable only by hand. Mutating
+    `clear=ignore_cache` to `clear=False` left the whole suite green (#630).
+    """
+
+    @staticmethod
+    def _serve(hits):
+        """Start a local HTTP server that answers every MediaDive path, counting hits."""
+        import http.server
+        import threading as th
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+
+            """Answer any path with a MediaDive-shaped payload."""
+
+            def do_GET(self):  # noqa: N802 — BaseHTTPRequestHandler's API
+                """Return a minimal MediaDive-shaped payload and count the request."""
+                hits.append(self.path)
+                body = json.dumps({"data": {"id": 1, "solutions": []}}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                """Silence the default stderr logging."""
+
+        server = http.server.HTTPServer(("127.0.0.1", 0), Handler)
+        th.Thread(target=server.serve_forever, daemon=True).start()
+        return server
+
+    @pytest.fixture
+    def runner(self, tmp_path, monkeypatch):
+        """
+        Yield a callable that runs the bulk download against one local server.
+
+        The server must outlive every run in a test: a fresh port would change the
+        request URLs, and the HTTP cache is keyed by URL — so a second run would
+        "miss" for the wrong reason and the test would prove nothing.
+        """
+        hits = []
+        server = self._serve(hits)
+        monkeypatch.setattr(
+            "kg_microbe.utils.mediadive_bulk_download.MEDIADIVE_REST_API_BASE_URL",
+            f"http://127.0.0.1:{server.server_port}/",
+        )
+        basic = tmp_path / "mediadive.json"
+        basic.write_text(json.dumps({"data": [{"id": i} for i in range(5)]}))
+        out = tmp_path / "mediadive"
+
+        def run(*, ignore_cache=False):
+            """Run once; return how many requests reached the server."""
+            hits.clear()
+            download_mediadive_bulk(str(basic), str(out), ignore_cache=ignore_cache)
+            return len(hits)
+
+        try:
+            yield run
+        finally:
+            server.shutdown()
+
+    def test_second_run_is_served_from_cache(self, runner):
+        """A warm HTTP cache means no network on the second run."""
+        first = runner()
+        assert first > 0, "the first run must actually fetch"
+        assert runner() == 0, "the second run must hit the cache"
+
+    def test_ignore_cache_really_refetches(self, runner):
+        """--ignore-cache must clear the response cache, not just rebuild the JSON."""
+        first = runner()
+        assert runner() == 0, "cache should be warm"
+        assert runner(ignore_cache=True) == first, "--ignore-cache must re-fetch everything"
+
+    def test_sessions_are_torn_down(self, runner):
+        """The finally: _reset_sessions() teardown must leave nothing open."""
+        from kg_microbe.utils import mediadive_bulk_download as mb
+
+        runner()
+        assert mb._live_sessions == [], "every per-thread session should be closed"
+
+    def test_cache_db_lands_beside_the_output(self, runner, tmp_path):
+        """The cache belongs in the output dir, not the working directory."""
+        runner()
+        assert (tmp_path / "mediadive" / CACHE_FILENAME).exists()
+        assert not (Path.cwd() / CACHE_FILENAME).exists()
 
 
 class TestIgnoreCachePlumbing:

@@ -1,0 +1,248 @@
+"""
+Tests for building chebi.db from the chebi.owl we ship, and gating its release.
+
+Third application of the GO single-source rule (#604), after GO and NCBITaxon.
+ChEBI is the awkward case: it versions by an incrementing integer
+(``versionIRI .../obo/chebi/253/chebi.owl``) rather than an OBO ``YYYY-MM-DD``
+stamp, so the shared date-based reader returns None for it and any gate built on
+that reader silently passes. These tests pin the ChEBI-specific reader, the
+builder, and the gate.
+
+No test runs a real `semsql make`: the build is mocked and size thresholds
+shrunk.
+"""
+
+import sqlite3
+import subprocess
+
+import pytest
+
+from kg_microbe.utils import ontology_utils as ou
+
+OWL_VERSION_IRI = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/chebi/{v}/chebi.owl"/>\n'
+OWL_VERSION_INFO = "<owl:versionInfo>{v}</owl:versionInfo>\n"
+
+
+def _write_owl(tmp_path, monkeypatch, body):
+    """Write a chebi.owl with `body` and point CHEBI_SOURCE at it."""
+    path = tmp_path / "chebi.owl"
+    path.write_text(body, encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", path)
+    return path
+
+
+def _make_db(tmp_path, release, *, subject="obo:chebi.owl", name="chebi.db"):
+    """Build a minimal SemSQL-shaped DB stamped with `release`."""
+    path = str(tmp_path / name)
+    conn = sqlite3.connect(path)
+    conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+    conn.execute("INSERT INTO statements VALUES (?, 'owl:versionInfo', NULL, ?)", (subject, str(release)))
+    conn.commit()
+    conn.close()
+    return path
+
+
+def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
+    """Stand in for `semsql make`, recording the call and writing a fake DB."""
+    calls = []
+
+    def run(cmd, **kwargs):
+        """Record the invocation, then emit a fake DB (or fail)."""
+        calls.append((cmd, kwargs.get("cwd")))
+        if fail:
+            raise subprocess.CalledProcessError(1, cmd)
+        db_path.write_bytes(b"0" * size)
+
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+    monkeypatch.setattr(ou.subprocess, "run", run)
+    return calls
+
+
+class TestChebiReleaseReader:
+
+    """ChEBI's integer stamp must be read where the date reader cannot."""
+
+    def test_reads_version_iri(self, tmp_path):
+        """The release comes out of the versionIRI path segment."""
+        path = tmp_path / "chebi.owl"
+        path.write_text(OWL_VERSION_IRI.format(v=253), encoding="utf-8")
+        assert ou._chebi_release_from_owl(path) == "253"
+
+    def test_reads_version_info(self, tmp_path):
+        """Falls back to owl:versionInfo when there is no versionIRI."""
+        path = tmp_path / "chebi.owl"
+        path.write_text(OWL_VERSION_INFO.format(v=251), encoding="utf-8")
+        assert ou._chebi_release_from_owl(path) == "251"
+
+    def test_date_reader_cannot_see_it(self, tmp_path):
+        """Regression note: this is why a date-based gate silently no-ops."""
+        path = tmp_path / "chebi.owl"
+        path.write_text(OWL_VERSION_IRI.format(v=253), encoding="utf-8")
+        assert ou._obo_release_from_head(path) is None
+        assert ou._chebi_release_from_owl(path) == "253"
+
+    def test_unstamped_returns_none(self, tmp_path):
+        """No stamp means None, which makes the gate and builder conservative."""
+        path = tmp_path / "chebi.owl"
+        path.write_text("no version here", encoding="utf-8")
+        assert ou._chebi_release_from_owl(path) is None
+
+    def test_missing_file_returns_none(self, tmp_path):
+        """An absent OWL is not an error for the reader."""
+        assert ou._chebi_release_from_owl(tmp_path / "absent.owl") is None
+
+    def test_db_release_read(self, tmp_path):
+        """_chebi_db_release reads the stamp off the ontology subject."""
+        assert ou._chebi_db_release(_make_db(tmp_path, 253)) == "253"
+
+    def test_db_release_ignores_term_subject(self, tmp_path):
+        """A version-shaped value on a CHEBI: term must not be mistaken for the release."""
+        path = str(tmp_path / "chebi.db")
+        conn = sqlite3.connect(path)
+        conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+        conn.execute("INSERT INTO statements VALUES ('CHEBI:16828', 'owl:versionInfo', NULL, '999')")
+        conn.execute("INSERT INTO statements VALUES ('obo:chebi.owl', 'owl:versionInfo', NULL, '253')")
+        conn.commit()
+        conn.close()
+        assert ou._chebi_db_release(path) == "253"
+
+    def test_db_release_none_on_garbage(self, tmp_path):
+        """A non-SQLite file yields None rather than raising."""
+        path = tmp_path / "chebi.db"
+        path.write_text("not a database", encoding="utf-8")
+        assert ou._chebi_db_release(str(path)) is None
+
+
+class TestChebiGate:
+
+    """The gate must fire on drift and stay quiet otherwise."""
+
+    def test_aligned_is_silent(self, tmp_path, monkeypatch, capsys):
+        """Matching releases produce no output."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        ou.assert_chebi_version_alignment(_make_db(tmp_path, 253))
+        assert capsys.readouterr().out == ""
+
+    def test_mismatch_warns_by_default(self, tmp_path, monkeypatch, capsys):
+        """Default is warn, so a fallback DB of another release can't abort a build."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        ou.assert_chebi_version_alignment(_make_db(tmp_path, 251))
+        out = capsys.readouterr().out
+        assert "WARNING" in out and "chebi.owl=253" in out and "chebi.db=251" in out
+
+    def test_mismatch_raises_in_strict_mode(self, tmp_path, monkeypatch):
+        """Explicit strict escalates the same mismatch to a failure."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        with pytest.raises(RuntimeError, match="ChEBI source version mismatch"):
+            ou.assert_chebi_version_alignment(_make_db(tmp_path, 251), strict=True)
+
+    def test_env_var_escalates(self, tmp_path, monkeypatch):
+        """KG_CHEBI_VERSION_CHECK=strict flips the default."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        monkeypatch.setenv("KG_CHEBI_VERSION_CHECK", "strict")
+        with pytest.raises(RuntimeError):
+            ou.assert_chebi_version_alignment(_make_db(tmp_path, 251))
+
+    def test_unreadable_stamp_is_a_noop(self, tmp_path, monkeypatch, capsys):
+        """An unstamped OWL must not warn (nothing to compare)."""
+        _write_owl(tmp_path, monkeypatch, "no version here")
+        ou.assert_chebi_version_alignment(_make_db(tmp_path, 251))
+        assert capsys.readouterr().out == ""
+
+
+class TestChebiBuild:
+
+    """Build behaviour mirrors _ensure_go_db / _ensure_ncbitaxon_db."""
+
+    def test_aligned_db_is_reused(self, tmp_path, monkeypatch):
+        """No rebuild when the DB already matches the OWL."""
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        _make_db(tmp_path, 253)
+        calls = _fake_build(monkeypatch, db)
+        assert ou._ensure_chebi_db(str(db)) is True
+        assert calls == []
+
+    def test_drifted_db_is_rebuilt(self, tmp_path, monkeypatch, capsys):
+        """A DB at a different ChEBI release is rebuilt from the OWL."""
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        source = _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        _make_db(tmp_path, 251)
+        calls = _fake_build(monkeypatch, db)
+
+        assert ou._ensure_chebi_db(str(db)) is True
+        assert calls == [(["semsql", "make", "chebi.db"], str(source.parent))]
+        assert "drifted" in capsys.readouterr().out
+
+    def test_decompresses_archive_when_owl_absent(self, tmp_path, monkeypatch):
+        """Semsql needs chebi.owl; the download only ships chebi.owl.gz."""
+        import gzip as gz
+
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        owl = tmp_path / "chebi.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        with gz.open(tmp_path / "chebi.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_VERSION_IRI.format(v=253))
+
+        db = tmp_path / "chebi.db"
+        calls = _fake_build(monkeypatch, db)
+
+        assert ou._ensure_chebi_db(str(db)) is True
+        assert owl.exists(), "chebi.owl.gz should have been decompressed"
+        assert "253" in owl.read_text(encoding="utf-8")
+        assert len(calls) == 1
+
+    def test_missing_semsql_keeps_existing_db(self, tmp_path, monkeypatch, capsys):
+        """Without semsql, keep whatever DB is present instead of deleting it."""
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db_path = _make_db(tmp_path, 251)
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+
+        assert ou._ensure_chebi_db(db_path) is True
+        assert "semsql" in capsys.readouterr().out
+
+    def test_missing_owl_and_archive_warns(self, tmp_path, monkeypatch, capsys):
+        """Neither OWL nor archive means no build; report it."""
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", tmp_path / "chebi.owl")
+        assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
+        assert "missing" in capsys.readouterr().out
+
+    def test_failed_build_returns_false(self, tmp_path, monkeypatch, capsys):
+        """A semsql crash is reported, not raised."""
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        _fake_build(monkeypatch, db, fail=True)
+        assert ou._ensure_chebi_db(str(db)) is False
+        assert "failed to build" in capsys.readouterr().out
+
+    def test_undersized_result_is_rejected(self, tmp_path, monkeypatch):
+        """A stub-sized build result is not reported as usable."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        _fake_build(monkeypatch, db, size=16)  # threshold stays at 100 MB
+        assert ou._ensure_chebi_db(str(db)) is False
+
+
+class TestAdapterEntryPoint:
+
+    """Both category-fixing paths must go through one ensured adapter."""
+
+    def test_get_chebi_adapter_ensures_and_gates(self, tmp_path, monkeypatch):
+        """get_chebi_adapter builds/realigns, runs the gate, then opens the DB."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        seen = {}
+
+        monkeypatch.setattr(ou, "_ensure_chebi_db", lambda p: seen.setdefault("ensured", p) or True)
+        monkeypatch.setattr(ou, "assert_chebi_version_alignment", lambda p: seen.setdefault("gated", p))
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: seen.setdefault("adapter", spec))
+
+        ou.get_chebi_adapter()
+
+        expected = str(tmp_path / "chebi.db")
+        assert seen["ensured"] == expected
+        assert seen["gated"] == expected
+        assert seen["adapter"] == f"sqlite:{expected}"

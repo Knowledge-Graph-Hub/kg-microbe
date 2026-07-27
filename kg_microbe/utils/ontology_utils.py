@@ -1,5 +1,6 @@
 """Ontology utilities for category assignment and term processing."""
 
+import gzip
 import os
 import re
 import shutil
@@ -40,6 +41,10 @@ _GO_DB_MIN_SIZE = 10_000_000
 # ~13 GB; anything smaller is a partial extract/download or an interrupted
 # `semsql make`, regardless of whether the SQLite header looks valid.
 _NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
+
+# Minimum plausible size for a healthy ChEBI SemSQL DB. A full build is ~1-2 GB;
+# the upstream distribution is ~800 MB compressed.
+_CHEBI_DB_MIN_SIZE = 100_000_000  # 100 MB
 # OBO release stamp, e.g. ``releases/2026-05-19/`` in a versionIRI.
 _RELEASE_RE = re.compile(r"releases/(\d{4}-\d{2}-\d{2})")
 
@@ -242,6 +247,188 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
         if strict:
             raise RuntimeError(msg)
         print(f"WARNING: {msg}")
+
+
+def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000) -> Optional[str]:
+    """
+    Return the ChEBI release recorded near the top of ``chebi.owl``.
+
+    ChEBI does not use OBO's ``YYYY-MM-DD`` stamp — it versions by an
+    incrementing integer (``versionIRI .../obo/chebi/253/chebi.owl``,
+    ``<owl:versionInfo>253</owl:versionInfo>``). :func:`_obo_release_from_head`
+    only recognises dates, so it silently returns None for ChEBI and any gate
+    built on it no-ops. Hence this separate reader.
+
+    :param path: Path to ``chebi.owl``.
+    :param nbytes: Bytes to read from the head (ChEBI OWL is ~1 GB uncompressed).
+    :return: Release as a string (e.g. ``"253"``), or None if unreadable/unstamped.
+    """
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as fh:
+            head = fh.read(nbytes)
+    except OSError:
+        return None
+    m = re.search(r"versionIRI[^>]{0,160}?/chebi/(\d+)/", head)
+    if m:
+        return m.group(1)
+    m = re.search(r"<owl:versionInfo>\s*(\d+)\s*</owl:versionInfo>", head)
+    return m.group(1) if m else None
+
+
+def _chebi_db_release(db_path: str) -> Optional[str]:
+    """
+    Return the ChEBI release recorded in a SemSQL ``chebi.db``.
+
+    Mirrors :func:`_go_db_release` but accepts ChEBI's bare integer stamp
+    instead of a date. Restricted to the ontology subject so a version-shaped
+    value on a ``CHEBI:...`` term subject can't be mistaken for the release.
+
+    :param db_path: Path to ``chebi.db``.
+    :return: Release as a string, or None on read error / missing stamp.
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        try:
+            row = conn.execute(
+                "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
+                "AND value IS NOT NULL AND ("
+                "subject IN ('obo:chebi.owl', 'obo:chebi') OR subject LIKE '%/chebi.owl'"
+                ") LIMIT 1"
+            ).fetchone()
+        finally:
+            conn.close()
+    except sqlite3.Error:
+        return None
+    if not row or not row[0]:
+        return None
+    m = re.search(r"(\d+)", str(row[0]))
+    return m.group(1) if m else None
+
+
+def assert_chebi_version_alignment(db_path: str, strict: Optional[bool] = None) -> None:
+    """
+    Guard that the ChEBI lookup DB matches the transform's OWL release.
+
+    ``chebi.db`` decides each ChEBI node's Biolink category (SmallMolecule vs
+    ChemicalRole vs macromolecule) via ancestor lookups, while the nodes
+    themselves are emitted from ``chebi.owl``. A release gap means a term the
+    transform emits may be absent from the DB, so its category silently falls
+    back to the default — the same failure mode the GO gate exists to prevent.
+
+    Defaults to **warn** rather than raise: when ``semsql`` is unavailable the
+    pipeline legitimately falls back to a prebuilt ``chebi.db`` of a different
+    release, and aborting the run would be worse than mis-categorising a handful
+    of terms. Set ``KG_CHEBI_VERSION_CHECK=strict`` (or pass ``strict=True``) to
+    fail loud. No-op when either stamp can't be read.
+
+    :param db_path: Path to ``chebi.db``.
+    :param strict: Override the env var / default strictness.
+    :raises RuntimeError: On mismatch when strict.
+    """
+    from kg_microbe.transform_utils.constants import CHEBI_SOURCE
+
+    strict = _version_check_strict("KG_CHEBI_VERSION_CHECK", strict, default_strict=False)
+    if not CHEBI_SOURCE:
+        return
+    owl_release = _chebi_release_from_owl(Path(CHEBI_SOURCE))
+    db_release = _chebi_db_release(db_path)
+    if owl_release and db_release and owl_release != db_release:
+        msg = (
+            f"ChEBI source version mismatch: chebi.owl={owl_release} vs "
+            f"chebi.db={db_release}. Node categories are resolved against "
+            "chebi.db but nodes are emitted from chebi.owl; a release gap can "
+            "leave emitted terms uncategorised. To realign, rebuild the DB from "
+            "the OWL (rm data/raw/chebi.db; the next run rebuilds via `semsql make`)."
+        )
+        if strict:
+            raise RuntimeError(msg)
+        print(f"WARNING: {msg}")
+
+
+def _ensure_chebi_db(db_path: str) -> bool:
+    """
+    Build the ChEBI SemSQL DB from ``chebi.owl``; return True if usable.
+
+    Third application of the GO single-source rule (#604), after GO and
+    NCBITaxon. Previously ``chebi.db`` was whatever OAK had fetched or a copy
+    carried over from an older ``data/raw``, with no gate — and unlike the other
+    two it could not even be checked, because ChEBI's integer release stamp is
+    invisible to the date-based reader.
+
+    Decompresses ``chebi.owl.gz`` when only the archive is present, since
+    ``semsql make`` needs the plain OWL beside it. Rebuilds on release drift and
+    degrades to a warning (keeping any existing DB) when the OWL or ``semsql`` is
+    unavailable.
+
+    :param db_path: Target path for ``chebi.db``.
+    :return: True if a usable DB exists at db_path when this returns.
+    """
+    from kg_microbe.transform_utils.constants import CHEBI_SOURCE
+
+    owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
+    if os.path.exists(db_path) and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE:
+        owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
+        db_release = _chebi_db_release(db_path)
+        if not (owl_release and db_release and owl_release != db_release):
+            return True
+        print(
+            f"Rebuilding {db_path}: release {db_release} drifted from "
+            f"chebi.owl {owl_release} (single-source realign)..."
+        )
+    if owl_source and not owl_source.exists():
+        # semsql needs the plain OWL; the download ships chebi.owl.gz.
+        archive = owl_source.with_suffix(owl_source.suffix + ".gz")
+        if archive.exists():
+            print(f"Decompressing {archive} for the ChEBI SemSQL build...")
+            try:
+                with gzip.open(archive, "rb") as src, open(owl_source, "wb") as dst:
+                    shutil.copyfileobj(src, dst)
+            except OSError as e:
+                print(f"Warning: failed to decompress {archive}: {e}")
+                return os.path.exists(db_path)
+    if not (owl_source and owl_source.exists()):
+        print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
+        return os.path.exists(db_path)
+    if shutil.which("semsql") is None:
+        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
+        return os.path.exists(db_path)
+    if os.path.exists(db_path):
+        os.remove(db_path)
+    print(
+        f"Building {db_path} from {owl_source} via `semsql make` (one-time; "
+        "ChEBI runs relation-graph and can take 30+ minutes / several GB RAM)..."
+    )
+    try:
+        subprocess.run(  # noqa: S603
+            ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
+            cwd=str(owl_source.parent),
+            check=True,
+        )
+    except (subprocess.CalledProcessError, OSError) as e:
+        print(f"Warning: failed to build {db_path}: {e}")
+        return False
+    return os.path.exists(db_path) and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE
+
+
+def get_chebi_adapter():
+    """
+    Return an OAK adapter for ChEBI, building/realigning ``chebi.db`` first.
+
+    Single entry point so the category-fixing code paths cannot diverge on how
+    the DB is obtained (they previously each did ``get_adapter("sqlite:<owl>")``
+    with an untested fallback to ``sqlite:data/raw/chebi.db``, which quietly
+    accepted whatever DB happened to be on disk).
+
+    :return: OAK adapter over ``chebi.db``.
+    """
+    from oaklib import get_adapter
+
+    from kg_microbe.transform_utils.constants import CHEBI_SOURCE
+
+    db_path = str(Path(CHEBI_SOURCE).parent / "chebi.db")
+    _ensure_chebi_db(db_path)
+    assert_chebi_version_alignment(db_path)
+    return get_adapter(f"sqlite:{db_path}")
 
 
 def _ensure_ncbitaxon_db(db_path: str) -> bool:
@@ -498,16 +685,7 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
 
     # Create adapter if not provided
     if chebi_adapter is None:
-        try:
-            from oaklib import get_adapter
-
-            from kg_microbe.transform_utils.constants import CHEBI_SOURCE
-
-            chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
-        except Exception:
-            from oaklib import get_adapter
-
-            chebi_adapter = get_adapter("sqlite:data/raw/chebi.db")
+        chebi_adapter = get_chebi_adapter()
 
     try:
         ancestors = list(chebi_adapter.ancestors(chebi_term_id))

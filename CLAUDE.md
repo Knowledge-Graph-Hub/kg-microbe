@@ -191,7 +191,13 @@ Optional, for the ontology transforms:
   the OWLs, and `kg transform -s metatraits` builds `ncbitaxon.db` (hours,
   ~13 GB), whenever one is missing or has drifted from its OWL release. With the
   opt-out set, whatever DB is already on disk is used and the version gate warns
-  about any mismatch.
+  about any mismatch. Peak disk for the NCBITaxon build is roughly old + new
+  (~28 GB) plus the decompressed `ncbitaxon.owl` (~2 GB) and a relation-graph
+  intermediate.
+
+  Caveat: the NCBITaxon rebuild runs from the multiprocessing pre-flight, so a
+  sequential metatraits run (`METATRAITS_MULTIPROCESSING=false`, or a single
+  unsplit input) skips it and only warns about drift — see issue #614.
 - `KG_GO_VERSION_CHECK` / `KG_NCBITAXON_VERSION_CHECK` / `KG_CHEBI_VERSION_CHECK`:
   `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently
   miscategorises terms; the other two default to warn.

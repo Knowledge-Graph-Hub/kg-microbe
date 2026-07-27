@@ -413,7 +413,27 @@ class DbEnsureResult(NamedTuple):
         return self.usable
 
 
-def _clear_build_target(db_path: str) -> KeptTarget:
+def _note_orphaned_prev(db_path: str) -> None:
+    """
+    Mention a leftover ``<db>.prev`` so it cannot sit unnoticed.
+
+    When the DB at the target is reused, ``_clear_build_target`` never runs, so a
+    ``.prev`` left by an interrupted build is never consulted — for NCBITaxon
+    that is 14 GB sitting unreferenced. We cannot tell a complete DB from a
+    partial one that clears the size floor, so this reports rather than acts.
+
+    :param db_path: The DB path whose sibling to check.
+    """
+    kept = f"{db_path}.prev"
+    if os.path.lexists(kept):
+        size = os.path.getsize(kept) if os.path.exists(kept) else 0
+        print(
+            f"  Note: {kept} ({size / 1e9:.1f} GB) is left over from an interrupted "
+            "build. Delete it if the current DB is good."
+        )
+
+
+def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
     """
     Clear the SemSQL build target, preserving whatever it displaced.
 
@@ -423,29 +443,43 @@ def _clear_build_target(db_path: str) -> KeptTarget:
     target instead, with the closing size check following the link too and
     reporting success.
 
-    A real file is moved aside rather than deleted, and a symlink's target is
-    recorded, so a build that fails (OOM is a live risk on the 13 GB NCBITaxon
-    build) can restore either. The cost is peak disk during a rebuild: old + new,
-    so ~28 GB for NCBITaxon and ~3 GB for ChEBI.
+    A real file is moved aside to ``<db>.prev`` and a symlink's target is
+    recorded, so a build that fails can restore either. The governing rule when
+    both a target and a ``.prev`` exist is **never trade a usable copy for an
+    unusable one**: a build killed part-way leaves a partial file at the target,
+    and blindly moving it aside used to overwrite — and destroy — the good
+    multi-GB DB sitting in ``.prev`` (#634).
+
+    Peak disk during a rebuild is old + new, plus the decompressed OWL
+    (~2 GB for NCBITaxon) and the relation-graph intermediate.
 
     :param db_path: Build target to clear.
+    :param min_size: Smallest plausible size for a complete DB, used to decide
+        which of the target and ``.prev`` is worth keeping.
     :return: What was displaced, for :func:`_restore_build_target`.
     """
     kept = f"{db_path}.prev"
-    db_is_real_file = os.path.lexists(db_path) and not os.path.islink(db_path)
+    prev_usable = os.path.lexists(kept) and _present_db(kept, min_size)
+    target_is_link = os.path.islink(db_path)
+    target_present = os.path.lexists(db_path)
+    target_usable = target_present and not target_is_link and _present_db(db_path, min_size)
 
-    if os.path.lexists(kept) and not db_is_real_file:
-        if os.path.lexists(db_path):
-            # A symlink coexisting with an orphan: leave the user's pointer alone,
-            # but say the orphan is there so it can be reclaimed or deleted.
-            print(f"  Note: {kept} is left over from an interrupted build; delete it if unwanted")
-        else:
-            # Killed between the move-aside and the build. Nothing else looks at
-            # .prev, so without this it is stranded forever (14 GB for NCBITaxon)
-            # with the DB still missing.
-            print(f"  Recovering {kept} left by an interrupted build")
+    if prev_usable and not target_usable:
+        # The .prev is the good copy: the target is absent, a symlink, or the
+        # partial remains of a killed build. Recover rather than overwrite.
+        if target_is_link:
+            target = os.readlink(db_path)
+            os.remove(db_path)
+            print(f"  Recovering {kept} left by an interrupted build (was symlinked to {target})")
             os.replace(kept, db_path)
-            db_is_real_file = True
+            return KeptTarget(link_target=target)
+        if target_present:
+            print(f"  Discarding the partial {db_path} and recovering {kept}")
+            os.remove(db_path)
+        else:
+            print(f"  Recovering {kept} left by an interrupted build")
+        os.replace(kept, db_path)
+        # Fall through so the recovered DB is moved aside for this build.
 
     if os.path.islink(db_path):
         target = os.readlink(db_path)
@@ -454,6 +488,7 @@ def _clear_build_target(db_path: str) -> KeptTarget:
     if not os.path.lexists(db_path):
         return KeptTarget()
     if os.path.lexists(kept):
+        # Only reached when the target is at least as good as the .prev.
         os.remove(kept)
     os.replace(db_path, kept)
     return KeptTarget(prev_path=kept)
@@ -629,6 +664,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
 
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
+    _note_orphaned_prev(db_path)
     if _present_db(db_path, min_size):
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
@@ -656,7 +692,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
         return DbEnsureResult(_present_db(db_path, min_size))
-    kept = _clear_build_target(db_path)
+    kept = _clear_build_target(db_path, min_size)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
         "  ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM.\n"
@@ -675,9 +711,11 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
         # A restored artifact is judged leniently: it may legitimately be a
         # symlink the user supplied, which _usable_db rejects by design.
         return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
-    except BaseException:  # noqa: BLE001 — KeyboardInterrupt/SIGTERM must not strand .prev
-        # Ctrl-C or a kill during a multi-hour build previously left the DB gone
-        # and a 14 GB .prev orphaned forever, since nothing ever looks at it again.
+    except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
+        # Ctrl-C during a multi-hour build previously left the DB gone and a
+        # 14 GB .prev orphaned. Note this cannot help against SIGKILL or an
+        # unhandled SIGTERM, which do not unwind — _clear_build_target's
+        # recovery is what covers those.
         _restore_build_target(db_path, kept)
         raise
     if _usable_db(db_path, min_size):
@@ -767,6 +805,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
 
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
+    _note_orphaned_prev(db_path)
     if _present_db(db_path, min_size):
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
@@ -797,7 +836,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
         return DbEnsureResult(_present_db(db_path, min_size))
-    kept = _clear_build_target(db_path)
+    kept = _clear_build_target(db_path, min_size)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
         "  NCBITaxon is the heaviest source in the pipeline: expect hours and a\n"
@@ -817,9 +856,11 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
         # A restored artifact is judged leniently: it may legitimately be a
         # symlink the user supplied, which _usable_db rejects by design.
         return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
-    except BaseException:  # noqa: BLE001 — KeyboardInterrupt/SIGTERM must not strand .prev
-        # Ctrl-C or a kill during a multi-hour build previously left the DB gone
-        # and a 14 GB .prev orphaned forever, since nothing ever looks at it again.
+    except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
+        # Ctrl-C during a multi-hour build previously left the DB gone and a
+        # 14 GB .prev orphaned. Note this cannot help against SIGKILL or an
+        # unhandled SIGTERM, which do not unwind — _clear_build_target's
+        # recovery is what covers those.
         _restore_build_target(db_path, kept)
         raise
     if _usable_db(db_path, min_size):
@@ -870,7 +911,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {go_db_path}")
         return DbEnsureResult(False)
-    kept = _clear_build_target(go_db_path)
+    kept = _clear_build_target(go_db_path, _GO_DB_MIN_SIZE)
     print(
         f"Building {go_db_path} from {GO_SOURCE} via `semsql make` "
         "(one-time; a full GO SemSQL build runs relation-graph and can take "

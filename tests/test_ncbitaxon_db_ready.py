@@ -95,16 +95,22 @@ class TestPreflightContract:
 
         monkeypatch.setattr("kg_microbe.utils.ontology_utils._ensure_ncbitaxon_db", restore_only)
 
-        mt._ensure_ncbitaxon_db_ready()
+        # A restore is not a build, so the message must not claim one — and the
+        # restored DB is still a real file, so it is kept rather than replaced.
+        with pytest.raises(RuntimeError) as excinfo:
+            mt._ensure_ncbitaxon_db_ready()
+        assert "just built from the OWL" not in str(excinfo.value)
+        assert local.exists() and not local.is_symlink()
 
-        assert local.is_symlink(), "should have fallen back to the OAK cache"
-
-    def test_invalid_local_db_falls_back_to_the_cache(self, paths, monkeypatch):
+    def test_a_real_but_invalid_local_db_is_never_silently_replaced(self, paths, monkeypatch):
         """
-        A pre-existing DB that fails validation is replaced by the OAK symlink.
+        A real local DB that fails validation must not be swapped for the cache.
 
-        This is the self-healing case; the round-5 regression turned it into a
-        silent success with the corrupt DB left in place.
+        Deliberate trade: this used to self-heal by symlinking to OAK, but the
+        pipeline cannot tell a corrupt leftover from a 13 GB build that took
+        hours, and silently deleting the latter is far worse than asking for an
+        explicit `rm`. Keying the protection on "did this call build it" instead
+        lasted exactly one run (#635).
         """
         local, cache = paths
         local.write_bytes(b"corrupt but large")
@@ -115,14 +121,52 @@ class TestPreflightContract:
             lambda _: DbEnsureResult(True),
         )
 
+        with pytest.raises(RuntimeError, match="failed validation"):
+            mt._ensure_ncbitaxon_db_ready()
+        assert local.exists() and not local.is_symlink(), "the local DB must survive"
+
+    def test_protection_holds_on_a_second_run(self, paths, monkeypatch):
+        """
+        The guard must not evaporate once `built` is False (#635).
+
+        Run 1 builds an invalid DB and raises. Run 2 reuses it, so the builder
+        reports built=False — and the old guard let the fallback delete it.
+        """
+        local, cache = paths
+        cache.write_bytes(b"good")
+        monkeypatch.setattr(mt, "_validate_ncbitaxon_db", _validation({str(cache): (True, "")}))
+
+        def build_once(_):
+            """Build on the first call, reuse on the second."""
+            if not local.exists():
+                local.write_bytes(b"freshly built but broken")
+                return DbEnsureResult(True, built=True)
+            return DbEnsureResult(True, built=False)
+
+        monkeypatch.setattr("kg_microbe.utils.ontology_utils._ensure_ncbitaxon_db", build_once)
+
+        for run in (1, 2):
+            with pytest.raises(RuntimeError, match="failed validation"):
+                mt._ensure_ncbitaxon_db_ready()
+            assert local.exists() and not local.is_symlink(), f"run {run} deleted the build"
+
+    def test_absent_local_db_still_falls_back_to_the_cache(self, paths, monkeypatch):
+        """With no local DB at all, the OAK symlink is still the right repair."""
+        local, cache = paths
+        cache.write_bytes(b"good")
+        monkeypatch.setattr(mt, "_validate_ncbitaxon_db", _validation({str(cache): (True, "")}))
+        monkeypatch.setattr(
+            "kg_microbe.utils.ontology_utils._ensure_ncbitaxon_db",
+            lambda _: DbEnsureResult(False),
+        )
+
         mt._ensure_ncbitaxon_db_ready()
 
         assert local.is_symlink() and local.resolve() == cache.resolve()
 
     def test_no_valid_db_anywhere_raises(self, paths, monkeypatch):
-        """With nothing usable it must raise, not return — workers fork after this."""
-        local, _ = paths
-        local.write_bytes(b"corrupt")
+        """With nothing usable anywhere it must raise — workers fork after this."""
+        local, _ = paths  # no local file, no valid cache
         monkeypatch.setattr(mt, "_validate_ncbitaxon_db", _validation({}))
         monkeypatch.setattr(
             "kg_microbe.utils.ontology_utils._ensure_ncbitaxon_db",
@@ -197,9 +241,13 @@ class TestRealBuilderIntegration:
         monkeypatch.setattr(ou.subprocess, "run", boom)
         monkeypatch.setattr(mt, "_validate_ncbitaxon_db", _validation({str(cache): (True, "")}))
 
-        mt._ensure_ncbitaxon_db_ready()
+        with pytest.raises(RuntimeError) as excinfo:
+            mt._ensure_ncbitaxon_db_ready()
 
-        assert local.is_symlink(), "a restore is not a build, so the cache fallback applies"
+        # A restore is not a build, so the message must not claim one; and the
+        # restored real DB is kept rather than swapped for the cache.
+        assert "just built from the OWL" not in str(excinfo.value)
+        assert local.exists() and not local.is_symlink(), "the restored DB must survive"
         assert not (local.parent / "ncbitaxon.db.prev").exists(), "no orphan left behind"
 
     def test_a_genuinely_fresh_but_invalid_build_raises(self, wired, monkeypatch):

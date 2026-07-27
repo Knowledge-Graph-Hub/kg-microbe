@@ -110,9 +110,14 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   build them from and copying is fine.
 
   Set `KG_SEMSQL_BUILD=off` to decline those builds — they run for tens of
-  minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB). With the opt-out set the
+  minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB, plus ~2 GB for the
+  decompressed OWL and a relation-graph intermediate). With the opt-out set the
   pipeline uses whatever DB is already on disk; supplying a prebuilt one, or a
   symlink to it, is supported.
+
+  One qualification on NCBITaxon: the rebuild is driven by the multiprocessing
+  pre-flight, so a sequential metatraits run skips it and only warns about drift
+  (issue #614). ChEBI and GO are rebuilt unconditionally.
 
 ## Upload procedure (for refreshing a file, or adding a new one)
 

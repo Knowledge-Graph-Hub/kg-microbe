@@ -116,6 +116,10 @@ def _ensure_ncbitaxon_db_ready() -> None:
     # the builder behind it made the drift rebuild unreachable in practice and
     # left the single-source rule advisory for NCBITaxon (F3). The cost is one
     # release-stamp read of the OWL head plus one sqlite query per run.
+    #
+    # Note this whole function is only called under `if use_mp:`, so sequential
+    # runs still bypass the rebuild and get only the version gate's warning
+    # (issue #614). The guarantee is enforced in multiprocessing mode only.
     ensured = _ensure_ncbitaxon_db(str(local_db))
 
     ok, reason = _validate_ncbitaxon_db(local_db)
@@ -127,15 +131,21 @@ def _ensure_ncbitaxon_db_ready() -> None:
         return
 
     print(f"  NCBITaxon DB at {local_db} invalid ({reason})")
-    if ensured.built:
-        # `built` comes from the builder itself rather than being inferred, so a
-        # restored .prev or an adopted orphan can no longer be misreported as a
-        # fresh build (F2). Keep the artifact: replacing hours of work with the
-        # OAK cache would be worse than stopping.
+    # Never replace a real local DB with the OAK symlink. Keying this on
+    # `ensured.built` protected it for exactly one run: the next run reuses the
+    # same DB, reports built=False, and the fallback below would unlink hours of
+    # work — which the old message's "re-run" advice walked users straight into
+    # (#635). Deleting it has to be the user's explicit act.
+    if local_db.exists() and not local_db.is_symlink():
+        built_note = " just built from the OWL" if ensured.built else ""
         raise RuntimeError(
-            f"Built a fresh NCBITaxon DB at {local_db} but it failed validation "
-            f"({reason}). Not replacing it with the OAK cache, since that would "
-            "discard a build that takes hours. Inspect or delete it and re-run."
+            f"The NCBITaxon DB at {local_db}{built_note} failed validation ({reason}).\n"
+            "Not replacing it with OAK's prebuilt cache, since that would discard a "
+            "build that takes hours and reintroduce the release drift this pipeline "
+            "avoids.\n"
+            f"If it is genuinely corrupt, delete it (rm {local_db}) and re-run — the "
+            "next run rebuilds from ncbitaxon.owl, or falls back to the cache if "
+            "`semsql` is unavailable."
         )
 
     # Fallback: adopt OAK's prebuilt cache. Its release is whatever the upstream
@@ -144,11 +154,9 @@ def _ensure_ncbitaxon_db_ready() -> None:
     if oak_cache.exists():
         cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
         if cache_ok:
-            # Safe to replace: a DB built by this call is handled above (it
-            # raises rather than reaching here), so whatever is here now is a
-            # pre-existing file that failed validation both before and after the
-            # ensure. Self-healing to the cache is better than stranding the run.
-            if local_db.exists() or local_db.is_symlink():
+            # Only an absent path or a stale symlink reaches here — a real file
+            # raises above — so this can never delete a local build.
+            if local_db.is_symlink():
                 local_db.unlink()
             local_db.symlink_to(oak_cache)
             print(f"  Repaired symlink: {local_db} -> {oak_cache}")

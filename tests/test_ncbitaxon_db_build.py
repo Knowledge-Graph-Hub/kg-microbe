@@ -213,6 +213,47 @@ class TestDegradesGracefully:
         assert db.exists() and db.read_bytes() == original, "the DB must be restored"
         assert not (tmp_path / "ncbitaxon.db.prev").exists(), "no orphaned .prev"
 
+    def test_partial_output_never_destroys_a_good_prev(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """
+        A killed build leaves a partial file; the good .prev must survive (#634).
+
+        os.remove(kept) used to run before the move-aside, destroying the good DB
+        and then reporting "Restored the previous ... after the failed build".
+        """
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"P" * 4)  # partial, below the threshold
+        prev = tmp_path / "ncbitaxon.db.prev"
+        prev.write_bytes(b"G" * 64)  # the good DB
+        _fake_build(monkeypatch, db, fail=True)
+
+        ou._ensure_ncbitaxon_db(str(db))
+
+        assert db.exists() and db.read_bytes() == b"G" * 64, "the good DB must be what remains"
+
+    def test_leftover_prev_is_reported_when_the_db_is_reused(self, tmp_path, owl, tiny_threshold, monkeypatch, capsys):
+        """
+        A .prev left by an interrupted build must not sit unnoticed (#634).
+
+        When the current DB is reused, _clear_build_target never runs, so nothing
+        consults .prev — 14 GB unreferenced for NCBITaxon. A partial that clears
+        the size floor is indistinguishable from a complete DB, so the honest
+        behaviour is to report the orphan rather than guess.
+        """
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"0" * 32)
+        prev = tmp_path / "ncbitaxon.db.prev"
+        prev.write_bytes(b"G" * 64)
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-07-12")  # aligned → reuse
+        calls = _fake_build(monkeypatch, db)
+
+        assert ou._ensure_ncbitaxon_db(str(db))
+
+        assert calls == [], "an aligned DB is reused"
+        assert prev.read_bytes() == b"G" * 64, "the leftover must not be destroyed"
+        assert "left over from an interrupted build" in capsys.readouterr().out
+
     def test_orphaned_prev_from_an_earlier_kill_is_recovered(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """A .prev left by a previously killed run is adopted, not stranded forever."""
         owl("2026-07-12")
@@ -247,15 +288,26 @@ class TestDegradesGracefully:
     def test_symlinked_prebuilt_db_is_accepted_when_no_build_is_possible(
         self, tmp_path, owl, tiny_threshold, monkeypatch
     ):
-        """Pointing at a prebuilt DB with a symlink is supported (F4)."""
+        """
+        Pointing at a prebuilt DB with a symlink is supported (F4).
+
+        The release is drifted on purpose so the reuse fast-path is skipped and
+        execution actually reaches the no-build exit this test is about — without
+        that, the `which -> None` stub was never consulted and the test passed
+        with the symlink rejection reinstated (#637).
+        """
         owl("2026-07-12")
         real = tmp_path / "prebuilt.db"
         real.write_bytes(b"0" * 16)
         db = tmp_path / "ncbitaxon.db"
         db.symlink_to(real)
-        monkeypatch.setattr(ou.shutil, "which", lambda _: None)  # cannot build
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")  # drifted
+        consulted = []
+        monkeypatch.setattr(ou.shutil, "which", lambda n: consulted.append(n) or None)
 
         assert ou._ensure_ncbitaxon_db(str(db)), "a symlinked prebuilt DB is usable"
+        assert consulted, "must reach the no-build exit, not the reuse fast-path"
+        assert db.is_symlink(), "and the symlink must survive"
 
     def test_missing_owl_warns(self, tmp_path, monkeypatch, capsys):
         """No OWL source means no build; say so rather than failing obscurely."""

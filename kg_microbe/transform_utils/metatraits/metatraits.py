@@ -50,6 +50,10 @@ from kg_microbe.utils.metpo_predicates import (  # noqa: E402
 )
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings  # noqa: E402
 from kg_microbe.utils.oak_utils import search_by_label  # noqa: E402
+
+# _NCBITAXON_DB_MIN_SIZE is single-sourced in ontology_utils, beside the
+# builder that enforces it (_ensure_ncbitaxon_db).
+from kg_microbe.utils.ontology_utils import _NCBITAXON_DB_MIN_SIZE  # noqa: E402
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
@@ -58,11 +62,6 @@ METATRAITS_INPUT_FILES = [
     "ncbi_species_summary.jsonl.gz",
     "metatraits_species_summary.jsonl.gz",
 ]
-
-
-# Minimum plausible size for a healthy NCBITaxon OAK DB. Full file is ~12 GB;
-# any smaller and it's a partial extract/download, regardless of SQLite header.
-_NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
 
 
 def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
@@ -108,6 +107,8 @@ def _ensure_ncbitaxon_db_ready() -> None:
 
     Raises RuntimeError with remediation steps if no valid DB can be found.
     """
+    from kg_microbe.utils.ontology_utils import _ensure_ncbitaxon_db
+
     local_db, oak_cache = _ncbitaxon_db_paths()
 
     # Happy path: symlink resolves to a valid DB.
@@ -118,12 +119,39 @@ def _ensure_ncbitaxon_db_ready() -> None:
 
     print(f"  NCBITaxon DB at {local_db} invalid ({reason}); attempting repair")
 
-    # Attempt repair from OAK cache.
+    # Preferred repair: build from the ncbitaxon.owl this run emits nodes from,
+    # so lookups and emitted nodes are the same release by construction (#604).
+    # A no-op when semsql or the OWL is unavailable, which leaves the OAK-cache
+    # fallback below as the last resort.
+    if _ensure_ncbitaxon_db(str(local_db)):
+        built_ok, built_reason = _validate_ncbitaxon_db(local_db)
+        if built_ok:
+            print(f"  NCBITaxon DB ready from OWL: {local_db}")
+            return
+        # Deliberately does not claim a build happened: _ensure_ncbitaxon_db also
+        # returns True on its reuse path, so this branch is usually reporting a
+        # DB that was already present and still fails validation.
+        print(f"  NCBITaxon DB at {local_db} still invalid after ensure ({built_reason})")
+
+    # Fallback: adopt OAK's prebuilt cache. Its release is whatever the upstream
+    # CDN last published and may lag ncbitaxon.owl; assert_ncbitaxon_version_alignment
+    # surfaces that gap.
     if oak_cache.exists():
         cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
         if cache_ok:
-            if local_db.exists() or local_db.is_symlink():
+            # Never trade a real local DB for the symlink. _validate_ncbitaxon_db
+            # wraps an OAK query in a bare `except Exception`, so a transient
+            # adapter error would otherwise delete a 13 GB build that took hours
+            # and replace it with the very artifact this design avoids.
+            if local_db.is_symlink():
                 local_db.unlink()
+            elif local_db.exists():
+                print(
+                    f"  Keeping the existing {local_db} rather than replacing it with "
+                    f"the OAK cache; it failed validation ({reason}) — delete it "
+                    "manually if it is genuinely corrupt."
+                )
+                return
             local_db.symlink_to(oak_cache)
             print(f"  Repaired symlink: {local_db} -> {oak_cache}")
             return
@@ -136,11 +164,12 @@ def _ensure_ncbitaxon_db_ready() -> None:
         f"  local: {local_db} ({reason})\n"
         f"  cache: {oak_cache} ({'missing' if not oak_cache.exists() else 'invalid'})\n"
         "Remediation:\n"
-        "  1. Remove corrupt cache: rm ~/.data/oaklib/ncbitaxon.db\n"
-        "  2. Re-download sequentially (not in parallel):\n"
-        "     poetry run python -c 'from oaklib import get_adapter; "
-        'get_adapter("sqlite:obo:ncbitaxon")\'\n'
-        "  3. Re-run the transform."
+        "  1. Remove the local DB (a symlink here is safe to delete):\n"
+        "     rm data/raw/ncbitaxon.db\n"
+        "  2. Re-run the transform; it rebuilds from ncbitaxon.owl via `semsql make`.\n"
+        "     Refreshing OAK's prebuilt cache instead does NOT realign the release,\n"
+        "     and deleting ~/.data/oaklib/ncbitaxon.db while data/raw/ncbitaxon.db\n"
+        "     symlinks to it leaves a dangling link."
     )
 
 

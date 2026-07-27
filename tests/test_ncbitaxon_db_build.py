@@ -143,6 +143,40 @@ class TestDegradesGracefully:
         assert db.exists(), "an unbuildable DB must not be destroyed"
         assert "semsql" in capsys.readouterr().out
 
+    def test_stub_db_is_not_reported_usable(self, tmp_path, owl, monkeypatch):
+        """A truncated DB must not pass as usable on the no-build paths (F1)."""
+        owl()
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"stub")  # threshold left at the real 1 GB
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+        assert ou._ensure_ncbitaxon_db(str(db)) is False
+
+    def test_failed_build_restores_the_previous_db(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """A failed build must not leave the caller without the 13 GB DB (F3)."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"0" * 16)
+        original = db.read_bytes()
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")  # drift → rebuild
+        _fake_build(monkeypatch, db, fail=True)
+
+        result = ou._ensure_ncbitaxon_db(str(db))
+        assert db.exists(), "the previous DB must be restored"
+        assert db.read_bytes() == original
+        assert result is True
+        assert not (tmp_path / "ncbitaxon.db.prev").exists()
+
+    def test_successful_build_discards_the_keep_aside_copy(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """On success the moved-aside DB is removed, not left doubling disk use."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"0" * 16)
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
+        _fake_build(monkeypatch, db)
+
+        assert ou._ensure_ncbitaxon_db(str(db)) is True
+        assert not (tmp_path / "ncbitaxon.db.prev").exists()
+
     def test_missing_owl_warns(self, tmp_path, monkeypatch, capsys):
         """No OWL source means no build; say so rather than failing obscurely."""
         monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", tmp_path / "absent.owl")

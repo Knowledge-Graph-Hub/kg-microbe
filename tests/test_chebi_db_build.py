@@ -14,6 +14,7 @@ shrunk.
 
 import sqlite3
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -241,6 +242,78 @@ class TestChebiBuild:
         assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
         assert not owl.exists()
         assert not (tmp_path / "chebi.owl.partial").exists()
+
+    def test_stub_db_is_not_reported_usable(self, tmp_path, monkeypatch):
+        """
+        A 0-byte chebi.db must not pass as usable on the no-build paths (F1).
+
+        os.path.exists is True for a stub, so the min-size guard used to apply
+        only to a freshly built result. A stub yields an adapter with no
+        entailed_edge table and collapses every ChEBI term to the default
+        category — the failure _GO_DB_MIN_SIZE exists to prevent.
+        """
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        db.write_bytes(b"")  # threshold left at the real 100 MB
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+        assert ou._ensure_chebi_db(str(db)) is False
+
+    def test_stub_db_rejected_under_opt_out(self, tmp_path, monkeypatch):
+        """The KG_SEMSQL_BUILD=off path must apply the same size guard."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        db.write_bytes(b"")
+        monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+        assert ou._ensure_chebi_db(str(db)) is False
+
+    def test_reuse_check_reads_release_from_the_archive(self, tmp_path, monkeypatch):
+        """
+        Drift must be detected when only chebi.owl.gz is on disk (F2).
+
+        The reuse branch reads chebi.owl, which a fresh checkout does not have —
+        so the release came back None, the drift check short-circuited, and the
+        stale DB was kept with the gate silently no-oping.
+        """
+        import gzip as gz
+
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        owl = tmp_path / "chebi.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        with gz.open(tmp_path / "chebi.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_VERSION_IRI.format(v=253))
+        db = tmp_path / "chebi.db"
+        _make_db(tmp_path, 251)  # older release, DB large enough to be "reusable"
+        calls = _fake_build(monkeypatch, db)
+
+        assert ou._ensure_chebi_db(str(db)) is True
+        assert len(calls) == 1, "drift against the .gz release should trigger a rebuild"
+
+    def test_gate_reads_release_from_the_archive(self, tmp_path, monkeypatch, capsys):
+        """The version gate must also see the release when only the .gz exists (F2)."""
+        import gzip as gz
+
+        owl = tmp_path / "chebi.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        with gz.open(tmp_path / "chebi.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_VERSION_IRI.format(v=253))
+
+        ou.assert_chebi_version_alignment(_make_db(tmp_path, 251))
+        assert "chebi.owl=253" in capsys.readouterr().out
+
+    def test_failed_build_restores_the_previous_db(self, tmp_path, monkeypatch):
+        """A build that dies must not leave the caller with nothing (F3)."""
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db_path = _make_db(tmp_path, 251)  # drifted but working
+        db = Path(db_path)
+        original = db.read_bytes()
+        _fake_build(monkeypatch, db, fail=True)
+
+        result = ou._ensure_chebi_db(db_path)
+        assert db.exists(), "the working DB must be restored after a failed build"
+        assert db.read_bytes() == original
+        assert result is True, "the restored DB is still usable"
+        assert not Path(f"{db_path}.prev").exists(), "the keep-aside copy should be gone"
 
     def test_missing_semsql_keeps_existing_db(self, tmp_path, monkeypatch, capsys):
         """Without semsql, keep whatever DB is present instead of deleting it."""

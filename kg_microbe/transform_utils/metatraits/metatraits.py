@@ -139,8 +139,19 @@ def _ensure_ncbitaxon_db_ready() -> None:
     if oak_cache.exists():
         cache_ok, cache_reason = _validate_ncbitaxon_db(oak_cache)
         if cache_ok:
-            if local_db.exists() or local_db.is_symlink():
+            # Never trade a real local DB for the symlink. _validate_ncbitaxon_db
+            # wraps an OAK query in a bare `except Exception`, so a transient
+            # adapter error would otherwise delete a 13 GB build that took hours
+            # and replace it with the very artifact this design avoids.
+            if local_db.is_symlink():
                 local_db.unlink()
+            elif local_db.exists():
+                print(
+                    f"  Keeping the existing {local_db} rather than replacing it with "
+                    f"the OAK cache; it failed validation ({reason}) — delete it "
+                    "manually if it is genuinely corrupt."
+                )
+                return
             local_db.symlink_to(oak_cache)
             print(f"  Repaired symlink: {local_db} -> {oak_cache}")
             return
@@ -153,11 +164,12 @@ def _ensure_ncbitaxon_db_ready() -> None:
         f"  local: {local_db} ({reason})\n"
         f"  cache: {oak_cache} ({'missing' if not oak_cache.exists() else 'invalid'})\n"
         "Remediation:\n"
-        "  1. Remove corrupt cache: rm ~/.data/oaklib/ncbitaxon.db\n"
-        "  2. Re-download sequentially (not in parallel):\n"
-        "     poetry run python -c 'from oaklib import get_adapter; "
-        'get_adapter("sqlite:obo:ncbitaxon")\'\n'
-        "  3. Re-run the transform."
+        "  1. Remove the local DB (a symlink here is safe to delete):\n"
+        "     rm data/raw/ncbitaxon.db\n"
+        "  2. Re-run the transform; it rebuilds from ncbitaxon.owl via `semsql make`.\n"
+        "     Refreshing OAK's prebuilt cache instead does NOT realign the release,\n"
+        "     and deleting ~/.data/oaklib/ncbitaxon.db while data/raw/ncbitaxon.db\n"
+        "     symlinks to it leaves a dangling link."
     )
 
 
@@ -734,9 +746,26 @@ class MetaTraitsTransform(Transform):
                             "mapping_type": mapping_type,
                             "confidence": "high",
                         }
-            print(f"  Loaded {len(gtdb_mappings)} NCBI to GTDB taxon mappings")
+            if not gtdb_mappings:
+                # _open_maybe_gzipped tolerates a non-gzip payload, which is right
+                # for the Drive-hosted inputs that arrive decompressed — but it also
+                # means an HTML quota interstitial or a 0-byte file reads as an empty
+                # table and would otherwise print the success line above. Master's
+                # bare gzip.open at least raised BadGzipFile here.
+                print(
+                    f"  Warning: {mappings_file} yielded no NCBI to GTDB mappings. "
+                    "The file is present but has no usable rows — check it is the "
+                    "real crosswalk and not an error page or a truncated download."
+                )
+            else:
+                print(f"  Loaded {len(gtdb_mappings)} NCBI to GTDB taxon mappings")
         except Exception as e:
-            print(f"  Warning: Could not load NCBI to GTDB mappings: {e}")
+            # A partially-read file keeps whatever rows were parsed; say so, because
+            # a half-loaded crosswalk is indistinguishable from a smaller one.
+            print(
+                f"  Warning: Could not fully load NCBI to GTDB mappings: {e} "
+                f"({len(gtdb_mappings)} mappings loaded before the error)"
+            )
 
         return gtdb_mappings
 

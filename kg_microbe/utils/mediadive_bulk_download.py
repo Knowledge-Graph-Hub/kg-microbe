@@ -7,6 +7,7 @@ to avoid repeated API calls during transforms.
 
 import json
 import logging
+import shutil
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -161,14 +162,23 @@ def _migrate_legacy_cache(cache_path: Path) -> None:
     legacy_path = Path.cwd() / CACHE_FILENAME
     if cache_path.exists() or not legacy_path.exists() or legacy_path.resolve() == cache_path.resolve():
         return
-    legacy_path.rename(cache_path)
+    try:
+        shutil.move(str(legacy_path), str(cache_path))
+    except OSError as e:
+        # Adopting the old cache is an optimisation; failing it (e.g. EXDEV when
+        # data/ is on another filesystem) must not abort the whole download.
+        print(f"Could not adopt {legacy_path} ({e}); continuing with a fresh cache")
+        return
     # Move the WAL sidecars too. A cache this module created is WAL-enabled, so
     # leaving them behind would drop uncheckpointed responses and orphan the
     # files in the working directory (#622).
     for suffix in ("-wal", "-shm"):
         sidecar = legacy_path.with_name(legacy_path.name + suffix)
         if sidecar.exists():
-            sidecar.rename(cache_path.with_name(cache_path.name + suffix))
+            try:
+                shutil.move(str(sidecar), str(cache_path.with_name(cache_path.name + suffix)))
+            except OSError as e:
+                print(f"Could not move {sidecar.name} ({e}); it can be deleted safely")
     print(f"Adopted existing HTTP cache: {legacy_path} -> {cache_path}")
 
 
@@ -539,53 +549,58 @@ def download_mediadive_bulk(
     # Set up HTTP caching (stored alongside the bulk output, not in the CWD)
     setup_cache(output_path, migrate_legacy=True, clear=ignore_cache)
 
-    # Step 1: Load basic media list
-    print("\n[1/5] Loading basic media list...")
-    media_list = load_basic_media_list(basic_file)
+    # Wrapped so an interrupted or failing run still closes its sessions:
+    # otherwise every per-thread SQLite connection stays open, which is exactly
+    # the case where a stale handle on a cache file matters most.
+    try:
+        # Step 1: Load basic media list
+        print("\n[1/5] Loading basic media list...")
+        media_list = load_basic_media_list(basic_file)
 
-    # Step 2: Download detailed medium recipes
-    print("\n[2/5] Downloading detailed medium recipes...")
-    detailed_media = download_detailed_media(
-        media_list, max_workers=max_workers, retry_count=retry_count, retry_delay=retry_delay
-    )
-    save_json_file(detailed_media, output_path / "media_detailed.json", "detailed media recipes")
+        # Step 2: Download detailed medium recipes
+        print("\n[2/5] Downloading detailed medium recipes...")
+        detailed_media = download_detailed_media(
+            media_list, max_workers=max_workers, retry_count=retry_count, retry_delay=retry_delay
+        )
+        save_json_file(detailed_media, output_path / "media_detailed.json", "detailed media recipes")
 
-    # Step 3: Download medium-strain associations
-    print("\n[3/5] Downloading medium-strain associations...")
-    media_strains = download_medium_strains(
-        media_list, max_workers=max_workers, retry_count=retry_count, retry_delay=retry_delay
-    )
-    save_json_file(media_strains, output_path / "media_strains.json", "medium-strain associations")
+        # Step 3: Download medium-strain associations
+        print("\n[3/5] Downloading medium-strain associations...")
+        media_strains = download_medium_strains(
+            media_list, max_workers=max_workers, retry_count=retry_count, retry_delay=retry_delay
+        )
+        save_json_file(media_strains, output_path / "media_strains.json", "medium-strain associations")
 
-    # Step 4: Extract solutions from embedded structure
-    print("\n[4/5] Extracting solutions from embedded structure...")
-    solutions_data = extract_solutions_from_media(detailed_media)
-    print(f"Extracted {len(solutions_data)} unique solutions from embedded data")
-    save_json_file(solutions_data, output_path / "solutions.json", "solution data")
+        # Step 4: Extract solutions from embedded structure
+        print("\n[4/5] Extracting solutions from embedded structure...")
+        solutions_data = extract_solutions_from_media(detailed_media)
+        print(f"Extracted {len(solutions_data)} unique solutions from embedded data")
+        save_json_file(solutions_data, output_path / "solutions.json", "solution data")
 
-    # Step 5: Extract compounds from embedded structure
-    # Compound data is embedded in the recipe structure of detailed media
-    # The transform will use MicroMediaParam mappings and fall back to mediadive.ingredient: prefix
-    print("\n[5/5] Extracting compounds from embedded structure...")
-    compounds_data = extract_compounds_from_media(detailed_media)
-    print(f"Extracted {len(compounds_data)} compounds from embedded data")
-    save_json_file(compounds_data, output_path / "compounds.json", "compound data")
+        # Step 5: Extract compounds from embedded structure
+        # Compound data is embedded in the recipe structure of detailed media
+        # The transform will use MicroMediaParam mappings and fall back to mediadive.ingredient: prefix
+        print("\n[5/5] Extracting compounds from embedded structure...")
+        compounds_data = extract_compounds_from_media(detailed_media)
+        print(f"Extracted {len(compounds_data)} compounds from embedded data")
+        save_json_file(compounds_data, output_path / "compounds.json", "compound data")
 
-    # Summary
-    print("\n" + "=" * 80)
-    print("MediaDive bulk download summary:")
-    print("=" * 80)
-    print(f"Output directory: {output_path}")
-    print(f"  - {len(media_list)} media records (basic)")
-    print(f"  - {len(detailed_media)} media recipes (detailed)")
-    print(f"  - {len(media_strains)} media-strain associations")
-    print(f"  - {len(solutions_data)} solutions")
-    print(f"  - {len(compounds_data)} compounds")
-    print(f"\nAPI warnings logged to: {output_path / 'mediadive_download.log'}")
-    print("These files will be used by the MediaDive transform to avoid API calls.")
+        # Summary
+        print("\n" + "=" * 80)
+        print("MediaDive bulk download summary:")
+        print("=" * 80)
+        print(f"Output directory: {output_path}")
+        print(f"  - {len(media_list)} media records (basic)")
+        print(f"  - {len(detailed_media)} media recipes (detailed)")
+        print(f"  - {len(media_strains)} media-strain associations")
+        print(f"  - {len(solutions_data)} solutions")
+        print(f"  - {len(compounds_data)} compounds")
+        print(f"\nAPI warnings logged to: {output_path / 'mediadive_download.log'}")
+        print("These files will be used by the MediaDive transform to avoid API calls.")
 
-    # Close every per-thread session. The worker threads from both pools are gone
-    # by now, but their sessions are still referenced by _live_sessions, so
-    # without this their SQLite connections stay open for the life of the process.
-    _reset_sessions()
+    finally:
+        # Close every per-thread session; the worker threads are gone but
+        # _live_sessions still holds their connections open.
+        _reset_sessions()
+
     print("=" * 80)

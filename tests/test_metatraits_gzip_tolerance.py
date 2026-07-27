@@ -111,6 +111,51 @@ class TestCrosswalkLoading:
             "a decompressed .gz must still yield mappings, not silently zero"
         )
 
+    def test_garbage_payload_is_reported_not_announced_as_success(self, tmp_path, monkeypatch, capsys):
+        """
+        A non-gzip error page must not print the success line (F6).
+
+        Tolerating a decompressed .gz is right for the Drive-hosted inputs, but it
+        also means an HTML quota interstitial reads as an empty table. Master's
+        bare gzip.open at least raised BadGzipFile here; the tolerant reader has
+        to say something instead of "Loaded 0 ... mappings".
+        """
+        (tmp_path / "NCBI2GTDB.tsv.gz").write_text("<html><body>Quota exceeded</body></html>", encoding="utf-8")
+        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
+        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+
+        assert transform._load_ncbi_gtdb_mappings() == {}
+        out = capsys.readouterr().out
+        assert "Warning" in out, "an unusable crosswalk must warn"
+        assert "no usable rows" in out or "no NCBI to GTDB mappings" in out
+
+    def test_empty_file_is_reported(self, tmp_path, monkeypatch, capsys):
+        """A 0-byte download is the other realistic gdrive failure mode."""
+        (tmp_path / "NCBI2GTDB.tsv.gz").write_bytes(b"")
+        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
+        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+
+        assert transform._load_ncbi_gtdb_mappings() == {}
+        assert "Warning" in capsys.readouterr().out
+
+    def test_partial_read_reports_how_much_loaded(self, tmp_path, monkeypatch, capsys):
+        """A truncated body yields a partial crosswalk; the count must be stated."""
+        import gzip as gz
+
+        path = tmp_path / "NCBI2GTDB.tsv.gz"
+        rows = "".join(f"{i}\t{i}\tSpecies {i}\tGenus{i}\tSpecies {i}\n" for i in range(2000))
+        with gz.open(path, "wt", encoding="utf-8") as f:
+            f.write(CROSSWALK_HEADER + rows)
+        path.write_bytes(path.read_bytes()[: path.stat().st_size // 2])  # truncate body
+
+        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
+        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+        mappings = transform._load_ncbi_gtdb_mappings()
+
+        out = capsys.readouterr().out
+        assert "Could not fully load" in out
+        assert f"{len(mappings)} mappings loaded" in out
+
     def test_missing_file_yields_empty_mapping(self, tmp_path, monkeypatch):
         """An absent crosswalk is tolerated (pre-existing behaviour)."""
         monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)

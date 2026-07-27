@@ -59,10 +59,8 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000) -> Optional[str]
     (``meta`` versionInfo) carry the release near the file head, so a bounded
     read avoids parsing hundreds of MB. Returns None if unreadable / unstamped.
     """
-    try:
-        with open(path, encoding="utf-8", errors="ignore") as fh:
-            head = fh.read(nbytes)
-    except OSError:
+    head = _read_head(path, nbytes)
+    if head is None:
         return None
     m = _RELEASE_RE.search(head)
     if m:
@@ -273,7 +271,51 @@ def _semsql_build_enabled() -> bool:
     return os.environ.get("KG_SEMSQL_BUILD", "").strip().lower() not in {"off", "false", "0", "no"}
 
 
-def _clear_build_target(db_path: str) -> None:
+def _usable_db(db_path: str, min_size: int) -> bool:
+    """
+    Report whether a SemSQL DB at ``db_path`` is present and plausibly complete.
+
+    Every "we could not build; use what's there" exit must go through this rather
+    than bare ``os.path.exists``: a 0-byte or truncated ``chebi.db`` passes an
+    existence check, yields an adapter with no ``entailed_edge`` table, and makes
+    every ChEBI term fall through to the default category — the same silent
+    miscategorisation ``_GO_DB_MIN_SIZE`` was introduced to prevent. A symlinked
+    result is rejected too: it means a build landed somewhere else.
+
+    :param db_path: Path to the DB.
+    :param min_size: Smallest plausible size for a complete build.
+    :return: True if the file is usable.
+    """
+    return os.path.exists(db_path) and not os.path.islink(db_path) and os.path.getsize(db_path) >= min_size
+
+
+def _read_head(path: Path, nbytes: int) -> Optional[str]:
+    """
+    Read the head of ``path``, transparently falling back to ``path`` + ``.gz``.
+
+    Release stamps live in the first few KB, and the downloads ship compressed
+    (``chebi.owl.gz``, ``ncbitaxon.owl.gz``) while the ``*_SOURCE`` constants name
+    the uncompressed path. Without this fallback the release reads return None on
+    a fresh checkout, which makes both the drift check and the version gate
+    silently no-op — leaving an old DB in place, the exact drift this module
+    exists to catch.
+
+    :param path: Uncompressed path to read.
+    :param nbytes: How many characters to read.
+    :return: The head as text, or None if neither form is readable.
+    """
+    for opener, target in ((open, path), (gzip.open, path.with_name(path.name + ".gz"))):
+        if not target.exists():
+            continue
+        try:
+            with opener(target, "rt", encoding="utf-8", errors="ignore") as fh:
+                return fh.read(nbytes)
+        except (OSError, EOFError, zlib.error):
+            return None
+    return None
+
+
+def _clear_build_target(db_path: str) -> Optional[str]:
     """
     Remove whatever occupies the SemSQL build target, including a broken symlink.
 
@@ -287,10 +329,45 @@ def _clear_build_target(db_path: str) -> None:
     creates ``data/raw/ncbitaxon.db -> ~/.data/oaklib/ncbitaxon.db``, and the
     remediation text tells users to ``rm`` the cache, leaving the link dangling.
 
+    A real file is moved aside rather than deleted, so a build that fails (OOM is
+    a live risk on the 13 GB NCBITaxon build) can put it back instead of leaving
+    the caller with nothing.
+
     :param db_path: Build target to clear.
+    :return: Path the previous DB was moved to, or None if there was nothing to keep.
     """
-    if os.path.lexists(db_path):
+    if not os.path.lexists(db_path):
+        return None
+    if os.path.islink(db_path):
         os.remove(db_path)
+        return None
+    kept = f"{db_path}.prev"
+    if os.path.lexists(kept):
+        os.remove(kept)
+    os.replace(db_path, kept)
+    return kept
+
+
+def _restore_build_target(db_path: str, kept: Optional[str]) -> None:
+    """
+    Put back the DB moved aside by :func:`_clear_build_target` after a failed build.
+
+    :param db_path: Original DB path.
+    :param kept: Path returned by :func:`_clear_build_target`, or None.
+    """
+    if kept and os.path.exists(kept):
+        os.replace(kept, db_path)
+        print(f"  Restored the previous {db_path} after the failed build")
+
+
+def _discard_kept_target(kept: Optional[str]) -> None:
+    """
+    Delete the moved-aside DB once a build has succeeded.
+
+    :param kept: Path returned by :func:`_clear_build_target`, or None.
+    """
+    if kept and os.path.exists(kept):
+        os.remove(kept)
 
 
 def _decompress_atomically(archive: Path, destination: Path) -> bool:
@@ -334,10 +411,8 @@ def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000) -> Optional[str
     :param nbytes: Bytes to read from the head (ChEBI OWL is ~1 GB uncompressed).
     :return: Release as a string (e.g. ``"253"``), or None if unreadable/unstamped.
     """
-    try:
-        with open(path, encoding="utf-8", errors="ignore") as fh:
-            head = fh.read(nbytes)
-    except OSError:
+    head = _read_head(path, nbytes)
+    if head is None:
         return None
     m = re.search(r"versionIRI[^>]{0,160}?/chebi/(\d+)/", head)
     if m:
@@ -436,8 +511,9 @@ def _ensure_chebi_db(db_path: str) -> bool:
     """
     from kg_microbe.transform_utils.constants import CHEBI_SOURCE
 
+    min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
-    if os.path.exists(db_path) and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE:
+    if _usable_db(db_path, min_size):
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -448,23 +524,23 @@ def _ensure_chebi_db(db_path: str) -> bool:
         )
     if not _semsql_build_enabled():
         print(f"Skipping ChEBI SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return os.path.exists(db_path)
+        return _usable_db(db_path, min_size)
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking ~1 GB only to then bail out is pure waste (#10).
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return os.path.exists(db_path)
+        return _usable_db(db_path, min_size)
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL; the download ships chebi.owl.gz.
         archive = owl_source.with_suffix(owl_source.suffix + ".gz")
         if archive.exists():
             print(f"Decompressing {archive} for the ChEBI SemSQL build...")
             if not _decompress_atomically(archive, owl_source):
-                return os.path.exists(db_path)
+                return _usable_db(db_path, min_size)
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
-        return os.path.exists(db_path)
-    _clear_build_target(db_path)
+        return _usable_db(db_path, min_size)
+    kept = _clear_build_target(db_path)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
         "  ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM.\n"
@@ -478,12 +554,14 @@ def _ensure_chebi_db(db_path: str) -> bool:
         )
     except (subprocess.CalledProcessError, OSError) as e:
         print(f"Warning: failed to build {db_path}: {e}")
-        return False
-    return (
-        os.path.exists(db_path)
-        and not os.path.islink(db_path)  # a symlinked result means the build went elsewhere
-        and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE
-    )
+        _restore_build_target(db_path, kept)
+        return _usable_db(db_path, min_size)
+    built = _usable_db(db_path, min_size)
+    if built:
+        _discard_kept_target(kept)
+    else:
+        _restore_build_target(db_path, kept)
+    return built
 
 
 @lru_cache(maxsize=None)
@@ -502,13 +580,10 @@ def _chebi_adapter_for(db_path: str):
     from oaklib import get_adapter
 
     if not _ensure_chebi_db(db_path):
-        # Without this the gate silently no-ops on the missing file and OAK is
-        # handed a nonexistent path, losing the actionable warning above (#616).
-        raise RuntimeError(
-            f"No usable ChEBI SemSQL DB at {db_path}. Install `semsql` and place "
-            "chebi.owl (or chebi.owl.gz) in data/raw so it can be built, or supply "
-            "a prebuilt chebi.db. See the warning above for which step failed."
-        )
+        # Returned, not raised: lru_cache does not memoise exceptions, so raising
+        # here would re-run the whole ensure — including a 30-minute `semsql make`
+        # — on every subsequent call. get_chebi_adapter turns this into the error.
+        return None
     assert_chebi_version_alignment(db_path)
     return get_adapter(f"sqlite:{db_path}")
 
@@ -527,7 +602,15 @@ def get_chebi_adapter():
     """
     from kg_microbe.transform_utils.constants import CHEBI_SOURCE
 
-    return _chebi_adapter_for(str(Path(CHEBI_SOURCE).parent / "chebi.db"))
+    db_path = str(Path(CHEBI_SOURCE).parent / "chebi.db")
+    adapter = _chebi_adapter_for(db_path)
+    if adapter is None:
+        raise RuntimeError(
+            f"No usable ChEBI SemSQL DB at {db_path}. Install `semsql` and place "
+            "chebi.owl (or chebi.owl.gz) in data/raw so it can be built, or supply "
+            "a prebuilt chebi.db. See the warning above for which step failed."
+        )
+    return adapter
 
 
 get_chebi_adapter.cache_clear = _chebi_adapter_for.cache_clear
@@ -556,8 +639,9 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     """
     from kg_microbe.transform_utils.constants import NCBITAXON_SOURCE
 
+    min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
-    if os.path.exists(db_path) and os.path.getsize(db_path) >= _NCBITAXON_DB_MIN_SIZE:
+    if _usable_db(db_path, min_size):
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -568,12 +652,12 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         )
     if not _semsql_build_enabled():
         print(f"Skipping NCBITaxon SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return os.path.exists(db_path)
+        return _usable_db(db_path, min_size)
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking ~2 GB only to then bail out is pure waste (#10).
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return os.path.exists(db_path)
+        return _usable_db(db_path, min_size)
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL, but the download ships ncbitaxon.owl.gz and
         # NCBITAXON_SOURCE names the uncompressed path — without this a fresh
@@ -583,11 +667,11 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         if archive.exists():
             print(f"Decompressing {archive} for the NCBITaxon SemSQL build...")
             if not _decompress_atomically(archive, owl_source):
-                return os.path.exists(db_path)
+                return _usable_db(db_path, min_size)
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
-        return os.path.exists(db_path)
-    _clear_build_target(db_path)
+        return _usable_db(db_path, min_size)
+    kept = _clear_build_target(db_path)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
         "  NCBITaxon is the heaviest source in the pipeline: expect hours and a\n"
@@ -602,12 +686,14 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         )
     except (subprocess.CalledProcessError, OSError) as e:
         print(f"Warning: failed to build {db_path}: {e}")
-        return False
-    return (
-        os.path.exists(db_path)
-        and not os.path.islink(db_path)  # a symlinked result means the build went elsewhere
-        and os.path.getsize(db_path) >= _NCBITAXON_DB_MIN_SIZE
-    )
+        _restore_build_target(db_path, kept)
+        return _usable_db(db_path, min_size)
+    built = _usable_db(db_path, min_size)
+    if built:
+        _discard_kept_target(kept)
+    else:
+        _restore_build_target(db_path, kept)
+    return built
 
 
 def _ensure_go_db(go_db_path: str) -> bool:

@@ -6,6 +6,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+import zlib
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Optional
@@ -241,9 +242,11 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
             f"ncbitaxon.db={db_release}. The metatraits transform emits nodes from "
             "ncbitaxon.owl but looks taxa up in ncbitaxon.db; a release gap can "
             "resolve lookups against taxa the transform didn't emit. To realign, "
-            "refresh the OAK SemSQL DB to the pinned release "
-            "(rm ~/.data/oaklib/ncbitaxon.db; poetry run python -c "
-            "'from oaklib import get_adapter; get_adapter(\"sqlite:obo:ncbitaxon\")')."
+            "rebuild the DB from the OWL: rm data/raw/ncbitaxon.db and re-run, and "
+            "the next transform rebuilds it via `semsql make`. Refreshing OAK's "
+            "prebuilt cache instead does NOT close the gap — those builds lag the "
+            "OBO release train by months. Do not delete ~/.data/oaklib/ncbitaxon.db "
+            "while data/raw/ncbitaxon.db symlinks to it."
         )
         if strict:
             raise RuntimeError(msg)
@@ -258,12 +261,36 @@ def _semsql_build_enabled() -> bool:
     right default for a maintainer refreshing the KG, but it is triggered by
     ordinary ``kg transform`` commands, so anyone else needs a way to decline
     (see #613). ``KG_SEMSQL_BUILD=off`` (or ``false``/``0``/``no``) skips the
-    build; the caller then falls back to a prebuilt DB and the version gate warns
+    build and uses whatever DB is already on disk, with the version gate warning
     about any resulting drift.
+
+    Note the opt-out only helps when a usable DB already exists — it declines to
+    *build* one, it does not conjure one. With no DB present, ChEBI category
+    lookups still fail; supply a prebuilt ``chebi.db`` in that case.
 
     :return: False when the opt-out is set, True otherwise.
     """
     return os.environ.get("KG_SEMSQL_BUILD", "").strip().lower() not in {"off", "false", "0", "no"}
+
+
+def _clear_build_target(db_path: str) -> None:
+    """
+    Remove whatever occupies the SemSQL build target, including a broken symlink.
+
+    ``os.path.exists`` follows symlinks and is False for a dangling one, so a
+    stale link would survive and ``semsql make`` — which opens the target name for
+    writing — would follow it and deposit the multi-GB result at the link's
+    target instead. The closing size check follows the link too, so the build
+    would be reported successful while the DB sat somewhere else entirely.
+
+    That state is reachable from the pipeline's own advice: the OAK-cache fallback
+    creates ``data/raw/ncbitaxon.db -> ~/.data/oaklib/ncbitaxon.db``, and the
+    remediation text tells users to ``rm`` the cache, leaving the link dangling.
+
+    :param db_path: Build target to clear.
+    """
+    if os.path.lexists(db_path):
+        os.remove(db_path)
 
 
 def _decompress_atomically(archive: Path, destination: Path) -> bool:
@@ -283,7 +310,10 @@ def _decompress_atomically(archive: Path, destination: Path) -> bool:
         with gzip.open(archive, "rb") as src, open(tmp, "wb") as dst:
             shutil.copyfileobj(src, dst)
         os.replace(tmp, destination)
-    except OSError as e:
+    # A truncated archive raises EOFError and a corrupt one zlib.error, neither of
+    # which is an OSError — catching OSError alone let those escape, defeating the
+    # "degrades gracefully" contract and orphaning a multi-GB .partial.
+    except (OSError, EOFError, zlib.error) as e:
         print(f"Warning: failed to decompress {archive}: {e}")
         tmp.unlink(missing_ok=True)
         return False
@@ -419,6 +449,11 @@ def _ensure_chebi_db(db_path: str) -> bool:
     if not _semsql_build_enabled():
         print(f"Skipping ChEBI SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
         return os.path.exists(db_path)
+    # Checked before decompressing: without semsql there is nothing to build, and
+    # unpacking ~1 GB only to then bail out is pure waste (#10).
+    if shutil.which("semsql") is None:
+        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
+        return os.path.exists(db_path)
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL; the download ships chebi.owl.gz.
         archive = owl_source.with_suffix(owl_source.suffix + ".gz")
@@ -429,11 +464,7 @@ def _ensure_chebi_db(db_path: str) -> bool:
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
         return os.path.exists(db_path)
-    if shutil.which("semsql") is None:
-        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return os.path.exists(db_path)
-    if os.path.exists(db_path):
-        os.remove(db_path)
+    _clear_build_target(db_path)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
         "  ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM.\n"
@@ -448,7 +479,11 @@ def _ensure_chebi_db(db_path: str) -> bool:
     except (subprocess.CalledProcessError, OSError) as e:
         print(f"Warning: failed to build {db_path}: {e}")
         return False
-    return os.path.exists(db_path) and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE
+    return (
+        os.path.exists(db_path)
+        and not os.path.islink(db_path)  # a symlinked result means the build went elsewhere
+        and os.path.getsize(db_path) >= _CHEBI_DB_MIN_SIZE
+    )
 
 
 @lru_cache(maxsize=None)
@@ -534,6 +569,11 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     if not _semsql_build_enabled():
         print(f"Skipping NCBITaxon SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
         return os.path.exists(db_path)
+    # Checked before decompressing: without semsql there is nothing to build, and
+    # unpacking ~2 GB only to then bail out is pure waste (#10).
+    if shutil.which("semsql") is None:
+        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
+        return os.path.exists(db_path)
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL, but the download ships ncbitaxon.owl.gz and
         # NCBITAXON_SOURCE names the uncompressed path — without this a fresh
@@ -547,13 +587,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
         return os.path.exists(db_path)
-    if shutil.which("semsql") is None:
-        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return os.path.exists(db_path)
-    # A stale/partial file would otherwise be treated as an up-to-date target by
-    # semsql's make-based build.
-    if os.path.exists(db_path):
-        os.remove(db_path)
+    _clear_build_target(db_path)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
         "  NCBITaxon is the heaviest source in the pipeline: expect hours and a\n"
@@ -569,7 +603,11 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     except (subprocess.CalledProcessError, OSError) as e:
         print(f"Warning: failed to build {db_path}: {e}")
         return False
-    return os.path.exists(db_path) and os.path.getsize(db_path) >= _NCBITAXON_DB_MIN_SIZE
+    return (
+        os.path.exists(db_path)
+        and not os.path.islink(db_path)  # a symlinked result means the build went elsewhere
+        and os.path.getsize(db_path) >= _NCBITAXON_DB_MIN_SIZE
+    )
 
 
 def _ensure_go_db(go_db_path: str) -> bool:
@@ -764,9 +802,16 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
     """
     from kg_microbe.transform_utils.constants import MACROMOLECULE_CATEGORY
 
-    # Create adapter if not provided
+    # Create adapter if not provided. A standalone call degrades to the default
+    # category when no DB can be produced, matching the behaviour before the
+    # adapter was centralised; the bulk transform path passes an adapter it built
+    # itself, so there the failure stays loud.
     if chebi_adapter is None:
-        chebi_adapter = get_chebi_adapter()
+        try:
+            chebi_adapter = get_chebi_adapter()
+        except RuntimeError as e:
+            print(f"WARNING: {e}\n  Falling back to the default ChEBI category.")
+            return SMALL_MOLECULE_CATEGORY
 
     try:
         ancestors = list(chebi_adapter.ancestors(chebi_term_id))

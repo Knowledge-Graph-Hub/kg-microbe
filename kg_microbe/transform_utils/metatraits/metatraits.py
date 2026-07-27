@@ -126,9 +126,12 @@ def _ensure_ncbitaxon_db_ready() -> None:
     if _ensure_ncbitaxon_db(str(local_db)):
         built_ok, built_reason = _validate_ncbitaxon_db(local_db)
         if built_ok:
-            print(f"  Built NCBITaxon DB from OWL: {local_db}")
+            print(f"  NCBITaxon DB ready from OWL: {local_db}")
             return
-        print(f"  Freshly built DB failed validation ({built_reason})")
+        # Deliberately does not claim a build happened: _ensure_ncbitaxon_db also
+        # returns True on its reuse path, so this branch is usually reporting a
+        # DB that was already present and still fails validation.
+        print(f"  NCBITaxon DB at {local_db} still invalid after ensure ({built_reason})")
 
     # Fallback: adopt OAK's prebuilt cache. Its release is whatever the upstream
     # CDN last published and may lag ncbitaxon.owl; assert_ncbitaxon_version_alignment

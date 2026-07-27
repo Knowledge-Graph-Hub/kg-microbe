@@ -130,8 +130,11 @@ def setup_cache(
         _delete_cache(_cache_path)
 
     # Create the tables up front so worker threads don't race on the initial
-    # CREATE TABLE when they open their own connections.
-    _make_backend()
+    # CREATE TABLE when they open their own connections. Closed immediately —
+    # SQLiteDict opens its connection eagerly in __init__, so an unreferenced
+    # backend would leave two connections open on a file a later clear() unlinks.
+    warmup = _make_backend()
+    warmup.close()
     print(f"HTTP cache enabled: {_cache_path}")
     return _cache_path
 
@@ -580,4 +583,9 @@ def download_mediadive_bulk(
     print(f"  - {len(compounds_data)} compounds")
     print(f"\nAPI warnings logged to: {output_path / 'mediadive_download.log'}")
     print("These files will be used by the MediaDive transform to avoid API calls.")
+
+    # Close every per-thread session. The worker threads from both pools are gone
+    # by now, but their sessions are still referenced by _live_sessions, so
+    # without this their SQLite connections stay open for the life of the process.
+    _reset_sessions()
     print("=" * 80)

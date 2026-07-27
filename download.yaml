@@ -258,13 +258,12 @@
 
 #
 # BactoTraits
-# NOTE: Commented out — the host (ordar.otelo.univ-lorraine.fr) serves a broken
-# TLS certificate chain (incomplete intermediate) that no CA bundle can verify,
-# so this download aborts the whole run. BactoTraits V2 is a static Jun-2022
-# dataset; the last public copy is vendored into
-# data/raw/BactoTraits_databaseV2_Jun2022.csv from data/raw_last8/, so the
-# bactotraits transform runs normally. To refresh, fetch the CSV manually
-# (verification relaxed) to that path, then re-enable this entry.
+# Served from our Drive copy, not from the origin: the host
+# (ordar.otelo.univ-lorraine.fr) presents a broken TLS chain (incomplete
+# intermediate) that no CA bundle can verify, which aborts the whole run.
+# BactoTraits V2 is a static Jun-2022 dataset, so a pinned copy loses nothing.
+# To refresh, fetch the CSV manually (verification relaxed), re-upload, and
+# update the md5 recorded beside the URL. See docs/DATA_HOSTING.md.
 #
 # Original (broken TLS) source, kept for provenance:
 #   https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
@@ -481,10 +480,17 @@
 # Microbial trait data from MetaTraits organized by GTDB taxonomy (R220)
 # Enables genome-level trait associations via GTDB taxonomy
 # NOTE: Requires overlap analysis to assess value vs NCBITaxon metatraits
-# NOTE: Commented out — the metatraits.embl.de/static/downloads/ endpoint now
-# returns HTTP 404 for all of these (access moved behind permission from
-# antheaguo@berkeley.edu). The last public copies (2026-03-24) are vendored
-# into data/raw/ from data/raw_last8/. To refresh, obtain access and re-enable.
+# Served from our Drive copy: metatraits.embl.de/static/downloads/ now returns
+# HTTP 404 for all of these, and the JSONL serialization is discontinued
+# upstream entirely (only .tsv.gz variants are published now). Pinned as one set
+# with the other MetaTraits inputs so a rebuild uses a single fixed release.
+#
+# Genus and family are declared but not read today — the transform reads only the
+# species summary (METATRAITS_GTDB_INPUT_FILES, genus/family commented out
+# there). They are kept because they belong to the pinned set and switching the
+# transform to read them is a one-line change; contrast po.db.gz, which was
+# removed because PO's hierarchy comes from po.owl and no code path could ever
+# read the DB. See docs/DATA_HOSTING.md.
 #
 # Original (now HTTP 404) sources, kept for provenance:
 #   https://metatraits.embl.de/static/downloads/gtdb_{species,genus,family}_summary.jsonl.gz
@@ -508,10 +514,10 @@
   tag: metatraits_gtdb
 
 #
-# GTDB-NCBITaxon Mappings (for overlap analysis)
-# Maps between GTDB R220 and NCBITaxon taxonomies
-# NOTE: Commented out — same dead metatraits.embl.de endpoint (HTTP 404).
-# Last public copies (2026-03-24) vendored into data/raw/ from data/raw_last8/.
+# GTDB-NCBITaxon Mappings
+# Maps between GTDB R220 and NCBITaxon taxonomies. NCBI2GTDB.tsv.gz is read by
+# the metatraits transform; GTDB2NCBI.tsv.gz is the reverse direction, declared
+# so the pinned set is complete and symmetric.
 #
 # GTDB r220 <-> NCBI 2025-07-28 crosswalks, assigned where >=85% of genomes
 # share the same ID in both taxonomies. NCBI2GTDB.tsv.gz is read by the

@@ -11,6 +11,7 @@ size threshold shrunk, so they stay fast.
 """
 
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -221,6 +222,80 @@ class TestDegradesGracefully:
         assert ou._ensure_ncbitaxon_db(str(tmp_path / "ncbitaxon.db")) is False
         assert not owl_path.exists()
         assert not (tmp_path / "ncbitaxon.owl.partial").exists()
+
+    def test_dangling_symlink_target_is_cleared(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """
+        A broken symlink must not survive and redirect the build (#1).
+
+        os.path.exists is False for a dangling link, so the old check skipped the
+        removal; semsql then opened the target name for writing, followed the link
+        and deposited the ~13 GB result at the link's target instead — while the
+        size check, also following the link, reported success.
+        """
+        source = owl("2026-07-12")
+        elsewhere = tmp_path / "oak"
+        elsewhere.mkdir()
+        db = tmp_path / "ncbitaxon.db"
+        db.symlink_to(elsewhere / "ncbitaxon.db")  # target does not exist
+
+        def run(cmd, **kwargs):
+            """Write to the target name the way semsql does, following any symlink."""
+            with open(Path(kwargs["cwd"]) / "ncbitaxon.db", "wb") as f:
+                f.write(b"0" * 32)
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
+
+        assert ou._ensure_ncbitaxon_db(str(db)) is True
+        assert not db.is_symlink(), "the dangling link should have been removed"
+        assert db.stat().st_size == 32, "the build must land at the real path"
+        assert list(elsewhere.iterdir()) == [], "nothing should have been written to the link target"
+        assert source.exists()
+
+    def test_symlinked_result_is_rejected(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """If a build somehow leaves a symlink behind, don't report success."""
+        owl()
+        elsewhere = tmp_path / "elsewhere.db"
+        elsewhere.write_bytes(b"0" * 32)
+        db = tmp_path / "ncbitaxon.db"
+
+        def run(cmd, **kwargs):
+            """Leave a symlink rather than a real DB at the target."""
+            db.symlink_to(elsewhere)
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
+        assert ou._ensure_ncbitaxon_db(str(db)) is False
+
+    def test_truncated_archive_degrades_gracefully(self, tmp_path, tiny_threshold, monkeypatch):
+        """A truncated .gz raises EOFError, not OSError — it must still be caught (#2)."""
+        import gzip as gz
+
+        owl_path = tmp_path / "ncbitaxon.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", owl_path)
+        archive = tmp_path / "ncbitaxon.owl.gz"
+        with gz.open(archive, "wt", encoding="utf-8") as f:
+            f.write(OWL_HEAD.format(d="2026-07-12") * 500)
+        archive.write_bytes(archive.read_bytes()[: archive.stat().st_size // 2])  # truncate
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        # Must return False rather than propagating EOFError.
+        assert ou._ensure_ncbitaxon_db(str(tmp_path / "ncbitaxon.db")) is False
+        assert not owl_path.exists()
+        assert not (tmp_path / "ncbitaxon.owl.partial").exists(), "orphaned .partial left behind"
+
+    def test_semsql_checked_before_decompressing(self, tmp_path, tiny_threshold, monkeypatch):
+        """Don't unpack ~2 GB only to discover semsql is absent (#10)."""
+        import gzip as gz
+
+        owl_path = tmp_path / "ncbitaxon.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", owl_path)
+        with gz.open(tmp_path / "ncbitaxon.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_HEAD.format(d="2026-07-12"))
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+
+        ou._ensure_ncbitaxon_db(str(tmp_path / "ncbitaxon.db"))
+        assert not owl_path.exists(), "should not have decompressed without semsql"
 
     def test_build_runs_when_opt_out_unset(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """Default behaviour is unchanged: the build still runs."""

@@ -195,6 +195,40 @@ class TestPendingHosting:
         assert "unhosted.tsv.gz" not in names, "the pending entry must be filtered out"
 
 
+class TestCliErrorHandling:
+
+    """The CLI must report bad tags as usage errors without hiding real crashes."""
+
+    def test_unknown_tag_is_a_usage_error(self, tmp_path):
+        """A bad -t is user error: exit 2, no traceback."""
+        from click.testing import CliRunner
+
+        from kg_microbe.run import download as download_cmd
+
+        result = CliRunner().invoke(download_cmd, ["-y", str(DOWNLOAD_YAML), "-o", str(tmp_path), "-t", "nosuchtag"])
+        assert result.exit_code == 2
+        assert "Unknown download tag" in result.output
+
+    def test_unrelated_valueerror_is_not_mislabelled(self, tmp_path):
+        """
+        A ValueError from deep in the download must not be reported as a bad tag.
+
+        JSONDecodeError and pydantic's ValidationError are both ValueError
+        subclasses, so a blanket `except ValueError` turned a corrupt
+        mediadive.json into 'Error: Invalid value: ...' against -t, swallowing the
+        traceback that pointed at the real cause.
+        """
+        from click.testing import CliRunner
+
+        from kg_microbe.run import download as download_cmd
+
+        with patch.object(download_module, "download_from_yaml", side_effect=ValueError("boom in json")):
+            result = CliRunner().invoke(download_cmd, ["-y", str(DOWNLOAD_YAML), "-o", str(tmp_path)])
+        assert result.exit_code != 2, "should not be reported as a usage error"
+        assert isinstance(result.exception, ValueError)
+        assert "boom in json" in str(result.exception)
+
+
 class TestTagPlumbing:
 
     """Tags must reach kghub-downloader, and gate the MediaDive bulk step."""

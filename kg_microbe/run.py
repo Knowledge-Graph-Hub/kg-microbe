@@ -10,6 +10,7 @@ import click
 warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
 
 from kg_microbe import download as kg_download  # noqa: E402
+from kg_microbe.download import UnknownDownloadTagError  # noqa: E402
 from kg_microbe.merge_utils.merge_kg import load_and_merge  # noqa: E402
 from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query  # noqa: E402
 from kg_microbe.transform import DATA_SOURCES  # noqa: E402
@@ -63,8 +64,11 @@ def download(*args, **kwargs) -> None:
     """
     try:
         kg_download(*args, **kwargs)
-    except ValueError as e:
+    except UnknownDownloadTagError as e:
         # An unknown -t value is user error, not a crash — report it as such.
+        # Deliberately narrow: a blanket `except ValueError` also caught
+        # JSONDecodeError and pydantic ValidationError from deeper in the
+        # download and mislabelled them as bad tags, hiding the traceback.
         raise click.BadParameter(str(e)) from e
 
     return None

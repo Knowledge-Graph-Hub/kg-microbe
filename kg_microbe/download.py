@@ -24,6 +24,18 @@ MEDIADIVE_TAG = "mediadive"
 PENDING_HOSTING_MARKER = "REPLACE_ME_"
 
 
+class UnknownDownloadTagError(ValueError):
+
+    """
+    Raised when a requested -t tag matches no entry in the download config.
+
+    A dedicated type so the CLI can report bad tags as usage errors without
+    also swallowing unrelated ValueErrors raised deeper in the download (JSON
+    decode failures and pydantic ValidationError are both ValueError
+    subclasses, and were being presented as "Invalid value" for -t).
+    """
+
+
 def download(
     yaml_file: str,
     output_dir: str,
@@ -133,14 +145,14 @@ def _validate_tags(yaml_file: str, tags: Sequence[str]) -> None:
 
     :param yaml_file: Path to the download config being filtered.
     :param tags: Tags requested on the command line.
-    :raises ValueError: If any tag matches no entry.
+    :raises UnknownDownloadTagError: If any tag matches no entry.
     """
     with open(yaml_file) as f:
         entries = yaml.safe_load(f) or []
     known = {entry.get("tag") for entry in entries if entry.get("tag")}
     unknown = sorted(set(tags) - known)
     if unknown:
-        raise ValueError(
+        raise UnknownDownloadTagError(
             f"Unknown download tag(s): {', '.join(unknown)}. Available tags in {yaml_file}: {', '.join(sorted(known))}"
         )
 

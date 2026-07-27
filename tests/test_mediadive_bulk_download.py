@@ -13,6 +13,7 @@ from kg_microbe.utils.mediadive_bulk_download import (
     CACHE_FILENAME,
     DEFAULT_MAX_WORKERS,
     USER_AGENT,
+    _delete_cache,
     _make_session,
     _reset_sessions,
     download_detailed_media,
@@ -78,37 +79,51 @@ class TestCacheThreadSafety:
         assert cache_path == tmp_path / CACHE_FILENAME
         assert cache_path.exists()
 
+    # These assert injectivity (no object seen from two different threads) rather
+    # than an exact count. ThreadPoolExecutor spawns workers lazily, so with fast
+    # tasks fewer than max_workers threads ever run and `== n_threads` failed
+    # ~75% of runs in isolation while passing under a slower full-suite run.
     def test_each_thread_gets_its_own_session(self, tmp_path):
-        """_make_session must return a distinct session per calling thread."""
+        """_make_session must never hand the same session to two threads."""
         setup_cache(tmp_path)
         n_threads = 5
 
         def grab(_):
-            """Return this thread's session object."""
-            return _make_session()
+            """Return (thread id, session) for this call."""
+            session = _make_session()
+            return threading.get_ident(), session
 
         with ThreadPoolExecutor(max_workers=n_threads) as executor:
-            sessions = list(executor.map(grab, range(n_threads * 4)))
+            results = list(executor.map(grab, range(n_threads * 20)))
 
-        by_thread = {id(s) for s in sessions}
-        assert len(by_thread) == n_threads, "sessions must not be shared between threads"
-        assert all(s.headers["User-Agent"] == USER_AGENT for s in sessions)
+        owners = {}
+        for tid, session in results:
+            owners.setdefault(id(session), set()).add(tid)
+        shared = {sid: tids for sid, tids in owners.items() if len(tids) > 1}
+        assert shared == {}, f"sessions shared across threads: {shared}"
+        assert len({tid for tid, _ in results}) > 1, "test did not exercise concurrency"
+        assert all(s.headers["User-Agent"] == USER_AGENT for _, s in results)
 
     def test_each_session_has_its_own_sqlite_connection(self, tmp_path):
-        """Distinct sessions must not end up sharing one sqlite3.Connection."""
+        """A sqlite3.Connection must never be reached from two threads."""
         setup_cache(tmp_path)
         n_threads = 4
 
         def open_connection(_):
-            """Force this thread's backend to open its connection, and return it."""
+            """Force this thread's backend to open its connection; return (tid, id)."""
             session = _make_session()
             with session.cache.responses.connection() as con:
-                return id(con)
+                return threading.get_ident(), id(con)
 
         with ThreadPoolExecutor(max_workers=n_threads) as executor:
-            connection_ids = set(executor.map(open_connection, range(n_threads * 4)))
+            results = list(executor.map(open_connection, range(n_threads * 20)))
 
-        assert len(connection_ids) == n_threads
+        owners = {}
+        for tid, con_id in results:
+            owners.setdefault(con_id, set()).add(tid)
+        shared = {cid: tids for cid, tids in owners.items() if len(tids) > 1}
+        assert shared == {}, f"connections shared across threads: {shared}"
+        assert len({tid for tid, _ in results}) > 1, "test did not exercise concurrency"
 
     def test_reset_closes_sessions_from_other_threads(self, tmp_path):
         """Discarded sessions must be closed, not left to garbage collection (#617)."""
@@ -176,16 +191,24 @@ class TestCacheThreadSafety:
         assert len(_make_session().cache.responses) == 0
 
     def test_clear_removes_wal_sidecar_files(self, tmp_path):
-        """WAL mode leaves -wal/-shm files behind; clearing must not orphan them."""
+        """
+        WAL mode leaves -wal/-shm files behind; clearing must not orphan them.
+
+        Asserts on the state right after _delete_cache. Going through
+        setup_cache(clear=True) instead would be vacuous: it calls _make_backend()
+        immediately afterwards, which reopens the DB in WAL mode and recreates the
+        sidecars, so the assertion passed even with the deletion reverted.
+        """
         cache_path = setup_cache(tmp_path)
         for suffix in ("-wal", "-shm"):
             cache_path.with_name(cache_path.name + suffix).write_bytes(b"stale")
 
-        setup_cache(tmp_path, clear=True)
+        _delete_cache(cache_path)
 
+        assert not cache_path.exists()
         for suffix in ("-wal", "-shm"):
             sidecar = cache_path.with_name(cache_path.name + suffix)
-            assert not sidecar.exists() or sidecar.read_bytes() != b"stale"
+            assert not sidecar.exists(), f"{sidecar.name} survived the clear"
 
     def test_clear_is_off_by_default(self, tmp_path):
         """Without clear=True, an existing cache survives setup_cache."""

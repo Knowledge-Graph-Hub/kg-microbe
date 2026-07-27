@@ -202,6 +202,46 @@ class TestChebiBuild:
         assert "253" in owl.read_text(encoding="utf-8")
         assert len(calls) == 1
 
+    def test_dangling_symlink_target_is_cleared(self, tmp_path, monkeypatch):
+        """A broken symlink must not redirect the build to the link's target (#1)."""
+        import pathlib
+
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        elsewhere = tmp_path / "elsewhere"
+        elsewhere.mkdir()
+        db = tmp_path / "chebi.db"
+        db.symlink_to(elsewhere / "chebi.db")
+
+        def run(cmd, **kwargs):
+            """Write to the target name the way semsql does, following any symlink."""
+            with open(pathlib.Path(kwargs["cwd"]) / "chebi.db", "wb") as f:
+                f.write(b"0" * 32)
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
+
+        assert ou._ensure_chebi_db(str(db)) is True
+        assert not db.is_symlink()
+        assert list(elsewhere.iterdir()) == [], "nothing should reach the link target"
+
+    def test_truncated_archive_degrades_gracefully(self, tmp_path, monkeypatch):
+        """A truncated chebi.owl.gz raises EOFError, which must still be caught (#2)."""
+        import gzip as gz
+
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        owl = tmp_path / "chebi.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        archive = tmp_path / "chebi.owl.gz"
+        with gz.open(archive, "wt", encoding="utf-8") as f:
+            f.write(OWL_VERSION_IRI.format(v=253) * 500)
+        archive.write_bytes(archive.read_bytes()[: archive.stat().st_size // 2])
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
+        assert not owl.exists()
+        assert not (tmp_path / "chebi.owl.partial").exists()
+
     def test_missing_semsql_keeps_existing_db(self, tmp_path, monkeypatch, capsys):
         """Without semsql, keep whatever DB is present instead of deleting it."""
         monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
@@ -294,6 +334,20 @@ class TestAdapterEntryPoint:
         monkeypatch.setattr("oaklib.get_adapter", lambda spec: pytest.fail("must not open a missing DB"))
         with pytest.raises(RuntimeError, match="No usable ChEBI SemSQL DB"):
             ou.get_chebi_adapter()
+
+    def test_standalone_category_lookup_degrades_instead_of_raising(self, tmp_path, monkeypatch):
+        """
+        get_chebi_category() with no adapter must not abort the caller (#7).
+
+        The bulk transform builds its adapter up front, so a missing DB fails
+        loudly there. But this helper's contract is "return a category", and
+        before the adapter was centralised it degraded to the default. Keep that.
+        """
+        from kg_microbe.transform_utils.constants import SMALL_MOLECULE_CATEGORY
+
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: False)
+        assert ou.get_chebi_category("CHEBI:16828") == SMALL_MOLECULE_CATEGORY
 
     def test_adapter_work_happens_once(self, tmp_path, monkeypatch):
         """Repeat calls reuse the memoized adapter rather than re-ensuring (#618)."""

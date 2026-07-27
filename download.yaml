@@ -332,9 +332,9 @@
 # The ~6 PO CURIEs referenced by BacDive isolation_source mappings sit in
 # a coherent subtree under PO:0025131 (plant anatomical entity). The stub
 # transform runs ROBOT MIREOT against this OWL to emit those stubs plus
-# their ancestor chain (~21 nodes, ~23 subClassOf edges). See also the
-# `po.db.gz` entry under the stub-import section below — kept for any
-# future caller wanting the full SemSQL DB.
+# their ancestor chain (~21 nodes, ~23 subClassOf edges). This OWL is the
+# single source for PO — there is intentionally no po.db entry in the
+# stub-import section below.
 #
 -
   url: http://purl.obolibrary.org/obo/po.owl
@@ -588,10 +588,13 @@
 # download.py, not kg_microbe/download.py), so no extra header config is
 # needed here.
 #
-# MICRO's SemSQL distribution (micro.db.gz) is a 29-byte truncated placeholder
-# rather than a real SemSQL DB; PO's SemSQL .db is fine but the OWL path is the
-# one the stub transform exercises for hierarchy. The MICRO and PO OWLs are
-# declared above in the ontologies section.
+# Only BTO and NCIT are fetched as SemSQL DBs, because only they are read that
+# way (source_type semsql_mireot / label-only OAK lookups), and neither has an
+# OWL declared here, so there is no second copy to drift from. MICRO's SemSQL
+# distribution (micro.db.gz) is a 29-byte truncated placeholder rather than a
+# real DB, and PO's — while a valid DB — was never read by anything. Both take
+# the ROBOT MIREOT path against their OWLs, declared above in the ontologies
+# section.
 #
 -
   url: https://semanticsql.berkeleybop.io/ncit.db.gz
@@ -601,10 +604,11 @@
   url: https://semanticsql.berkeleybop.io/bto.db.gz
   local_name: bto.db.gz
   tag: stubs
--
-  url: https://semanticsql.berkeleybop.io/po.db.gz
-  local_name: po.db.gz
-  tag: stubs
+# PO deliberately has no SemSQL .db entry. Its stub import is owl_mireot against
+# po.owl (see STUB_ONTOLOGY_SOURCES["PO"]), so nothing ever read po.db — the
+# downloaded po.db.gz was never even decompressed. Removing it also removes a
+# second, independently-versioned copy of PO that could drift from po.owl with no
+# gate to catch it (#604). Re-add only alongside a switch to semsql_mireot.
 
 #
 # MeSH (Medical Subject Headings) — full N-Triples RDF from NLM

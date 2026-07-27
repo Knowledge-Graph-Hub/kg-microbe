@@ -449,15 +449,12 @@ class OntologiesTransform(Transform):
             # small molecules default to CHEBI_CATEGORY (biolink:ChemicalEntity)
             print("  Fixing ChEBI categories (detecting roles/macromolecules; default → CHEBI_CATEGORY)...")
 
-            # Create ChEBI adapter once to avoid file descriptor leaks
-            from oaklib import get_adapter
+            # Create ChEBI adapter once to avoid file descriptor leaks. Goes
+            # through get_chebi_adapter so chebi.db is built from (and checked
+            # against) the chebi.owl these nodes are emitted from.
+            from kg_microbe.utils.ontology_utils import get_chebi_adapter
 
-            from kg_microbe.transform_utils.constants import CHEBI_SOURCE
-
-            try:
-                chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
-            except Exception:
-                chebi_adapter = get_adapter("sqlite:data/raw/chebi.db")
+            chebi_adapter = get_chebi_adapter()
 
             def fix_chebi_category(row):
                 """Fix ChEBI category (SmallMolecule/ChemicalRole) and replace deprecated categories."""

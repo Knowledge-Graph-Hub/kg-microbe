@@ -58,6 +58,28 @@ class TestOpenMaybeGzipped:
         with mt._open_jsonl(path) as f:
             assert "tax_name" in f.read()
 
+    def test_probe_handle_is_closed_on_fallback(self, tmp_path, monkeypatch):
+        """The failed gzip probe must not leak its handle (#621)."""
+        path = tmp_path / "sample.tsv.gz"
+        _write_plain(path, "hello\n")
+        opened = []
+
+        real_gzip_open = mt.gzip.open
+
+        def tracking_open(*args, **kwargs):
+            """Wrap gzip.open so we can see whether the probe handle gets closed."""
+            handle = real_gzip_open(*args, **kwargs)
+            opened.append(handle)
+            return handle
+
+        monkeypatch.setattr(mt.gzip, "open", tracking_open)
+
+        with mt._open_maybe_gzipped(path) as f:
+            assert f.read() == "hello\n"
+
+        assert len(opened) == 1, "the gzip probe should have run once"
+        assert opened[0].closed, "the probe handle must be closed before falling back"
+
 
 class TestCrosswalkLoading:
 

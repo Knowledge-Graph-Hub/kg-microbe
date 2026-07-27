@@ -189,12 +189,18 @@ def _open_maybe_gzipped(path: Path):
     :return: An open text-mode handle.
     """
     if path.name.endswith(".gz"):
+        handle = None
         try:
-            f = gzip.open(path, "rt", encoding="utf-8")
-            f.read(1)  # Trigger gzip header read
-            f.seek(0)
-            return f
+            handle = gzip.open(path, "rt", encoding="utf-8")
+            handle.read(1)  # Trigger gzip header read
+            handle.seek(0)
+            return handle
         except gzip.BadGzipFile:
+            # The probe already opened the file; without this close the handle
+            # leaks on every decompressed-.gz read (#621), which is the normal
+            # case for the Drive-hosted inputs.
+            if handle is not None:
+                handle.close()
             return open(path, "r", encoding="utf-8")
     return open(path, "r", encoding="utf-8")
 

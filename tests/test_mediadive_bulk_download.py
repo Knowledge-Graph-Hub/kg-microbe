@@ -196,6 +196,22 @@ class TestCacheThreadSafety:
 
         assert "keep-me" in _make_session().cache.responses
 
+    def test_migration_moves_wal_sidecars(self, tmp_path, monkeypatch):
+        """WAL sidecars must travel with the DB, not be orphaned in the CWD (#622)."""
+        cwd = tmp_path / "cwd"
+        cwd.mkdir()
+        monkeypatch.chdir(cwd)
+        legacy = cwd / CACHE_FILENAME
+        legacy.write_bytes(b"")
+        for suffix in ("-wal", "-shm"):
+            legacy.with_name(legacy.name + suffix).write_bytes(b"sidecar")
+
+        cache_path = setup_cache(tmp_path / "out", migrate_legacy=True)
+
+        for suffix in ("-wal", "-shm"):
+            assert not legacy.with_name(legacy.name + suffix).exists(), f"{suffix} orphaned in CWD"
+        assert cache_path.exists()
+
     def test_cwd_cache_is_untouched_by_default(self, tmp_path, monkeypatch):
         """
         setup_cache must not move files outside cache_dir unless asked.

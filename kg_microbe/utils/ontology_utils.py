@@ -534,6 +534,16 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     if not _semsql_build_enabled():
         print(f"Skipping NCBITaxon SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
         return os.path.exists(db_path)
+    if owl_source and not owl_source.exists():
+        # semsql needs the plain OWL, but the download ships ncbitaxon.owl.gz and
+        # NCBITAXON_SOURCE names the uncompressed path — without this a fresh
+        # checkout skips the build and silently falls back to OAK's prebuilt DB,
+        # defeating the single-source guarantee (#620).
+        archive = owl_source.with_suffix(owl_source.suffix + ".gz")
+        if archive.exists():
+            print(f"Decompressing {archive} for the NCBITaxon SemSQL build...")
+            if not _decompress_atomically(archive, owl_source):
+                return os.path.exists(db_path)
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
         return os.path.exists(db_path)

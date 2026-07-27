@@ -60,6 +60,16 @@ class TestYamlTagging:
         used = {e["tag"] for e in _entries() if e.get("tag")}
         assert KNOWN_TAGS - used == set(), f"documented but unused tag(s): {sorted(KNOWN_TAGS - used)}"
 
+    def test_urls_have_no_surrounding_whitespace(self):
+        """A stray space becomes part of the URL handed to urllib (#623)."""
+        offenders = [e["local_name"] for e in _entries() if e["url"] != e["url"].strip()]
+        assert offenders == [], f"entries with padded URLs: {offenders}"
+
+    def test_local_names_have_no_surrounding_whitespace(self):
+        """Same hazard for the destination path."""
+        offenders = [e["local_name"] for e in _entries() if e["local_name"] != e["local_name"].strip()]
+        assert offenders == []
+
     def test_mediadive_tag_matches_the_constant(self):
         """The bulk-download gate keys off this exact tag string."""
         tags = {e["tag"] for e in _entries() if e.get("tag")}

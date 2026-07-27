@@ -159,6 +159,13 @@ def _migrate_legacy_cache(cache_path: Path) -> None:
     if cache_path.exists() or not legacy_path.exists() or legacy_path.resolve() == cache_path.resolve():
         return
     legacy_path.rename(cache_path)
+    # Move the WAL sidecars too. A cache this module created is WAL-enabled, so
+    # leaving them behind would drop uncheckpointed responses and orphan the
+    # files in the working directory (#622).
+    for suffix in ("-wal", "-shm"):
+        sidecar = legacy_path.with_name(legacy_path.name + suffix)
+        if sidecar.exists():
+            sidecar.rename(cache_path.with_name(cache_path.name + suffix))
     print(f"Adopted existing HTTP cache: {legacy_path} -> {cache_path}")
 
 

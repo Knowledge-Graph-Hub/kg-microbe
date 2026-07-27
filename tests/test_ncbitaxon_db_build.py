@@ -187,6 +187,41 @@ class TestDegradesGracefully:
         ou._ensure_ncbitaxon_db(str(db))
         assert calls == []
 
+    def test_decompresses_archive_when_owl_absent(self, tmp_path, tiny_threshold, monkeypatch):
+        """A fresh checkout has only ncbitaxon.owl.gz; the build must still run (#620)."""
+        import gzip as gz
+
+        owl_path = tmp_path / "ncbitaxon.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", owl_path)
+        with gz.open(tmp_path / "ncbitaxon.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_HEAD.format(d="2026-07-12"))
+
+        db = tmp_path / "ncbitaxon.db"
+        calls = _fake_build(monkeypatch, db)
+
+        assert ou._ensure_ncbitaxon_db(str(db)) is True
+        assert owl_path.exists(), "ncbitaxon.owl.gz should have been decompressed"
+        assert len(calls) == 1, "the build must not be skipped as 'OWL missing'"
+
+    def test_partial_decompression_is_not_left_behind(self, tmp_path, tiny_threshold, monkeypatch):
+        """An interrupted decompression must not leave a truncated OWL (#615/#620)."""
+        import gzip as gz
+
+        owl_path = tmp_path / "ncbitaxon.owl"
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", owl_path)
+        with gz.open(tmp_path / "ncbitaxon.owl.gz", "wt", encoding="utf-8") as f:
+            f.write(OWL_HEAD.format(d="2026-07-12"))
+
+        def boom(src, dst, *a, **k):
+            """Fail part-way through, as a full disk would."""
+            dst.write(b"<owl:versionIRI")
+            raise OSError("no space left on device")
+
+        monkeypatch.setattr(ou.shutil, "copyfileobj", boom)
+        assert ou._ensure_ncbitaxon_db(str(tmp_path / "ncbitaxon.db")) is False
+        assert not owl_path.exists()
+        assert not (tmp_path / "ncbitaxon.owl.partial").exists()
+
     def test_build_runs_when_opt_out_unset(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """Default behaviour is unchanged: the build still runs."""
         owl()

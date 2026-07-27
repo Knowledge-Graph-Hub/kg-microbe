@@ -67,7 +67,7 @@
   local_name: robot.jar
   tag: tools
 -
-  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
+  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot
   local_name: robot
   tag: tools
 

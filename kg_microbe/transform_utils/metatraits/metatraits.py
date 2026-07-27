@@ -161,6 +161,36 @@ def _get_ncbitaxon_adapter():
     return get_adapter(f"sqlite:{local_db}")
 
 
+def _open_maybe_gzipped(path: Path):
+    """
+    Open a ``.gz`` file that may not actually be gzip-compressed.
+
+    Google Drive silently serves some uploads decompressed, so a file named
+    ``*.gz`` can arrive as plain text — this is how the Drive-hosted
+    ``ncbi_*_summary.jsonl.gz`` inputs ended up as plain JSON in ``data/raw``.
+    Every read of a Drive-hosted input must go through here rather than calling
+    ``gzip.open`` directly.
+
+    :param path: File to open.
+    :return: An open text-mode handle.
+    """
+    if path.name.endswith(".gz"):
+        handle = None
+        try:
+            handle = gzip.open(path, "rt", encoding="utf-8")
+            handle.read(1)  # Trigger gzip header read
+            handle.seek(0)
+            return handle
+        except gzip.BadGzipFile:
+            # The probe already opened the file; without this close the handle
+            # leaks on every decompressed-.gz read (#621), which is the normal
+            # case for the Drive-hosted inputs.
+            if handle is not None:
+                handle.close()
+            return open(path, "r", encoding="utf-8")
+    return open(path, "r", encoding="utf-8")
+
+
 def _open_jsonl(path: Path):
     """
     Open JSONL file; use gzip for .gz files, plain text otherwise.
@@ -168,15 +198,7 @@ def _open_jsonl(path: Path):
     If a .gz file is not actually gzip-compressed (e.g. misnamed plain JSON),
     falls back to plain text.
     """
-    if path.name.endswith(".gz"):
-        try:
-            f = gzip.open(path, "rt", encoding="utf-8")
-            f.read(1)  # Trigger gzip header read
-            f.seek(0)
-            return f
-        except gzip.BadGzipFile:
-            return open(path, "r", encoding="utf-8")
-    return open(path, "r", encoding="utf-8")
+    return _open_maybe_gzipped(path)
 
 
 def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[str, Any]:
@@ -672,7 +694,10 @@ class MetaTraitsTransform(Transform):
             return gtdb_mappings
 
         try:
-            with gzip.open(mappings_file, "rt", encoding="utf-8") as f:
+            # Not gzip.open: this file is Drive-hosted and can arrive
+            # decompressed. The except below would swallow BadGzipFile and
+            # leave the mappings silently empty.
+            with _open_maybe_gzipped(mappings_file) as f:
                 reader = csv.DictReader(f, delimiter="\t")
                 for row in reader:
                     ncbi_species = row.get("species (NCBI)", "").strip()
@@ -692,9 +717,26 @@ class MetaTraitsTransform(Transform):
                             "mapping_type": mapping_type,
                             "confidence": "high",
                         }
-            print(f"  Loaded {len(gtdb_mappings)} NCBI to GTDB taxon mappings")
+            if not gtdb_mappings:
+                # _open_maybe_gzipped tolerates a non-gzip payload, which is right
+                # for the Drive-hosted inputs that arrive decompressed — but it also
+                # means an HTML quota interstitial or a 0-byte file reads as an empty
+                # table and would otherwise print the success line above. Master's
+                # bare gzip.open at least raised BadGzipFile here.
+                print(
+                    f"  Warning: {mappings_file} yielded no NCBI to GTDB mappings. "
+                    "The file is present but has no usable rows — check it is the "
+                    "real crosswalk and not an error page or a truncated download."
+                )
+            else:
+                print(f"  Loaded {len(gtdb_mappings)} NCBI to GTDB taxon mappings")
         except Exception as e:
-            print(f"  Warning: Could not load NCBI to GTDB mappings: {e}")
+            # A partially-read file keeps whatever rows were parsed; say so, because
+            # a half-loaded crosswalk is indistinguishable from a smaller one.
+            print(
+                f"  Warning: Could not fully load NCBI to GTDB mappings: {e} "
+                f"({len(gtdb_mappings)} mappings loaded before the error)"
+            )
 
         return gtdb_mappings
 

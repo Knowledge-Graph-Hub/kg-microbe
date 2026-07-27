@@ -11,6 +11,46 @@
 #    # brief comment about file, and optionally a local_name:
 #    url: http://curefordisease.org/some_data.txt
 #    local_name: some_data_more_chars_prevent_name_collision.pdf
+#    tag: some_group
+#
+#  Every active entry carries a 'tag', which groups it for selective
+#  downloads:  poetry run kg download -t ontologies -t gtdb
+#  Without -t, everything is downloaded. Current tags:
+#
+#    tools       ROBOT jar + wrapper (needed by the ontology transforms)
+#    ontologies  OBO ontology files (OWL/JSON) loaded by the ontologies transform
+#    stubs       Prebuilt SemSQL DBs / MeSH RDF for the selective stub-import
+#    mappings    Crosswalk tables (EC->GO, EPM curies, compound mappings)
+#    bacdive     BacDive strains + assay-kit metadata
+#    mediadive   MediaDive basic media list (also triggers the bulk API download)
+#    madin       Madin et al. condensed traits + environment conversion table
+#    rhea        Rhea reaction mappings (to GO and EC)
+#    cog         Clusters of Orthologous Groups definitions
+#    kegg        KEGG KO list (see the KEGG section for the manual cache step)
+#    gtdb        GTDB taxonomy + metadata
+#    metatraits  MetaTraits per-taxon trait summaries (NCBITaxon ranks)
+#    metatraits_gtdb  MetaTraits summaries + crosswalks keyed by GTDB taxonomy
+#    bactotraits BactoTraits V2 (static Jun-2022 dataset)
+#    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
+#
+#  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so
+#  an untagged source can never be silently unreachable via -t.
+#
+#  PENDING HOSTING
+#  Some sources have a dead upstream URL and no hosted replacement yet. They are
+#  declared normally but with a placeholder URL containing "REPLACE_ME_":
+#
+#    -
+#      url: gdrive:REPLACE_ME_gtdb_species_summary
+#      local_name: gtdb_species_summary.jsonl.gz
+#      tag: metatraits_gtdb
+#
+#  kg download skips these and prints what it skipped, so a placeholder never
+#  aborts a run. To activate one, replace the whole url value with the real
+#  Google Drive file ID (`gdrive:<id>`, from the sharing link's /d/<id>/ segment;
+#  the file must be readable by anyone with the link). Until then, copy the file
+#  from a reference data/raw_* directory. See tests/test_download_tags.py, which
+#  enforces that placeholders stay skippable and tagged.
 #
 #  For downloading from S3 buckets, see here for information about what URL to use:
 #  https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro
@@ -25,9 +65,11 @@
 -
   url: https://github.com/ontodev/robot/releases/download/v1.9.8/robot.jar
   local_name: robot.jar
+  tag: tools
 -
-  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot 
+  url: https://raw.githubusercontent.com/ontodev/robot/master/bin/robot
   local_name: robot
+  tag: tools
 
 # **** Ontology files ****
 #
@@ -36,12 +78,14 @@
 -
   url: http://purl.obolibrary.org/obo/envo.json
   local_name: envo.json
+  tag: ontologies
 
 # NCBITaxon
 #
 -
   url: http://purl.obolibrary.org/obo/ncbitaxon.owl.gz
   local_name: ncbitaxon.owl.gz
+  tag: ontologies
 
 #
 # ChEBI
@@ -49,6 +93,7 @@
 -
   url: http://purl.obolibrary.org/obo/chebi.owl.gz
   local_name: chebi.owl.gz
+  tag: ontologies
 
 #
 # GO — single source of truth (fix 2, #604): download only go.owl; the
@@ -59,6 +104,7 @@
 -
   url: http://purl.obolibrary.org/obo/go.owl
   local_name: go.owl
+  tag: ontologies
 
 #
 # EC to GO mappings (Gene Ontology Consortium)
@@ -66,6 +112,7 @@
 -
   url: https://current.geneontology.org/ontology/external2go/ec2go
   local_name: ec2go.txt
+  tag: mappings
 
 #
 # MONDO
@@ -73,12 +120,14 @@
 -
   url: https://purl.obolibrary.org/obo/mondo/mondo.json
   local_name: mondo.json
+  tag: ontologies
 #
 # HP
 #
 -
   url: https://purl.obolibrary.org/obo/hp/hp.json
   local_name: hp.json
+  tag: ontologies
 
 #
 # UBERON (Uber Anatomy Ontology)
@@ -86,6 +135,7 @@
 -
   url: https://purl.obolibrary.org/obo/uberon.owl
   local_name: uberon.owl
+  tag: ontologies
 
 #
 # FOODON
@@ -93,6 +143,7 @@
 -
   url: https://purl.obolibrary.org/obo/foodon.owl
   local_name: foodon.owl
+  tag: ontologies
 
 #
 # PATO (Phenotype And Trait Ontology)
@@ -100,6 +151,7 @@
 -
   url: http://purl.obolibrary.org/obo/pato.owl
   local_name: pato.owl
+  tag: ontologies
 
 # **** Data sources ****
 
@@ -108,12 +160,14 @@
 -
   url: gdrive:1b_UWdIvsIM81V5WdFedNoxN3R4UUf4F2
   local_name: bacdive_strains.json
+  tag: bacdive
 
 # BacDive Assay Metadata
 # Assay kit metadata for API and BiOLOG assay systems
 -
   url: https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json
   local_name: assay_kits_simple.json
+  tag: bacdive
 
 # MediaDive
 # Explore MediaDive data
@@ -125,11 +179,13 @@
 -
   url: https://mediadive.dsmz.de/rest/media
   local_name: mediadive.json
+  tag: mediadive
 
 # Madin et al Condensed-traits
 -
   url: https://github.com/bacteria-archaea-traits/bacteria-archaea-traits/blob/master/output/condensed_traits_NCBI.csv?raw=true
   local_name: madin_etal.csv
+  tag: madin
 
 # # # ****Conversion Tables****
 #
@@ -138,6 +194,7 @@
 -
   url: https://raw.githubusercontent.com/bacteria-archaea-traits/bacteria-archaea-traits/master/data/conversion_tables/environments.csv
   local_name: environments.csv
+  tag: madin
 
 # 
 # EPM JSON for curies package
@@ -145,6 +202,7 @@
 -
   url: https://raw.githubusercontent.com/biopragmatics/bioregistry/main/exports/contexts/obo.epm.json
   local_name: epm.json
+  tag: mappings
 
 #
 # Uniprot Functional Microbes
@@ -169,15 +227,18 @@
 -
   url: https://github.com/geneontology/unipathway/raw/master/upa.owl
   local_name: upa.owl
+  tag: ontologies
 
 # RHEA mappings
 - 
   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
   local_name: rhea2go.tsv
+  tag: rhea
 
 -
   url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
   local_name: rhea2ec.tsv
+  tag: rhea
 
 # 
 # EC
@@ -185,6 +246,7 @@
 - 
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
   local_name: ec.json
+  tag: ontologies
 
 # 
 # EC OWL
@@ -192,20 +254,23 @@
 -
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.owl.gz
   local_name: ec.owl.gz
+  tag: ontologies
 
 #
 # BactoTraits
-# NOTE: Commented out — the host (ordar.otelo.univ-lorraine.fr) serves a broken
-# TLS certificate chain (incomplete intermediate) that no CA bundle can verify,
-# so this download aborts the whole run. BactoTraits V2 is a static Jun-2022
-# dataset; the last public copy is vendored into
-# data/raw/BactoTraits_databaseV2_Jun2022.csv from data/raw_last8/, so the
-# bactotraits transform runs normally. To refresh, fetch the CSV manually
-# (verification relaxed) to that path, then re-enable this entry.
+# Served from our Drive copy, not from the origin: the host
+# (ordar.otelo.univ-lorraine.fr) presents a broken TLS chain (incomplete
+# intermediate) that no CA bundle can verify, which aborts the whole run.
+# BactoTraits V2 is a static Jun-2022 dataset, so a pinned copy loses nothing.
+# To refresh, fetch the CSV manually (verification relaxed), re-upload, and
+# update the md5 recorded beside the URL. See docs/DATA_HOSTING.md.
 #
-#-
-#  url: https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
-#  local_name: BactoTraits_databaseV2_Jun2022.csv
+# Original (broken TLS) source, kept for provenance:
+#   https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv
+-
+  url: gdrive:1u7snG4VxbH6sh6M03dS1GumoYgLgbZrr  # md5 e6bca5b947c1aa692d45ac24aa9025f3
+  local_name: BactoTraits_databaseV2_Jun2022.csv
+  tag: bactotraits
 
 #
 # CTD
@@ -246,9 +311,11 @@
 -
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
   local_name: metpo.owl
+  tag: ontologies
 -
   url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.json
   local_name: metpo.json
+  tag: ontologies
 
 #
 # RO (Relations Ontology)
@@ -257,19 +324,21 @@
 -
   url: http://purl.obolibrary.org/obo/ro.owl
   local_name: ro.owl
+  tag: ontologies
 
 #
 # PO (Plant Ontology)
 # The ~6 PO CURIEs referenced by BacDive isolation_source mappings sit in
 # a coherent subtree under PO:0025131 (plant anatomical entity). The stub
 # transform runs ROBOT MIREOT against this OWL to emit those stubs plus
-# their ancestor chain (~21 nodes, ~23 subClassOf edges). See also the
-# `po.db.gz` entry under the stub-import section below — kept for any
-# future caller wanting the full SemSQL DB.
+# their ancestor chain (~21 nodes, ~23 subClassOf edges). This OWL is the
+# single source for PO — there is intentionally no po.db entry in the
+# stub-import section below.
 #
 -
   url: http://purl.obolibrary.org/obo/po.owl
   local_name: po.owl
+  tag: ontologies
 
 #
 
@@ -282,6 +351,7 @@
 -
   url: http://purl.obolibrary.org/obo/taxrank.owl
   local_name: taxrank.owl
+  tag: ontologies
 
 #
 # MICRO (Microbial Conditions Ontology / OntologyOfMicrobialConditions)
@@ -292,6 +362,7 @@
 -
   url: https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/MicrO.owl
   local_name: micro.owl
+  tag: ontologies
 
 #
 # MicroMediaParam Chemical Mappings - High Confidence
@@ -318,6 +389,7 @@
 -
   url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final.tsv
   local_name: compound_mappings_strict.tsv
+  tag: mappings
 
 #
 # MicroMediaParam Chemical Mappings - Hydrate (Takes Precedence)
@@ -330,6 +402,7 @@
 -
   url: https://github.com/CultureBotAI/MicroMediaParam/raw/main/pipeline_output/merge_mappings/compound_mappings_strict_final_hydrate.tsv
   local_name: compound_mappings_strict_hydrate.tsv
+  tag: mappings
 
 #
 # COG (Clusters of Orthologous Groups)
@@ -337,9 +410,11 @@
 -
   url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.def.tab
   local_name: cog/cog-24.def.tab
+  tag: cog
 -
   url: https://ftp.ncbi.nlm.nih.gov/pub/COG/COG2024/data/cog-24.fun.tab
   local_name: cog/cog-24.fun.tab
+  tag: cog
 
 #
 # KEGG (Kyoto Encyclopedia of Genes and Genomes)
@@ -358,6 +433,7 @@
 -
   url: https://rest.kegg.jp/list/ko
   local_name: kegg/ko_list.txt
+  tag: kegg
 
 #
 # GTDB (Genome Taxonomy Database)
@@ -365,15 +441,19 @@
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/bac120_taxonomy.tsv
   local_name: gtdb/bac120_taxonomy.tsv
+  tag: gtdb
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv
   local_name: gtdb/ar53_taxonomy.tsv
+  tag: gtdb
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz
   local_name: gtdb/bac120_metadata.tsv.gz
+  tag: gtdb
 -
   url: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz
   local_name: gtdb/ar53_metadata.tsv.gz
+  tag: gtdb
 
 #
 # MetaTraits
@@ -385,45 +465,81 @@
 -
   url: gdrive:1vL9wujvty4Xh2ZG2HHquX0RE7968Dkbm
   local_name: ncbi_species_summary.jsonl.gz
+  tag: metatraits
 -
   url: gdrive:1WL6VhD2I6MGuI3iHKbCQYTncG1UB-u6e
   local_name: ncbi_genus_summary.jsonl.gz
+  tag: metatraits
 -
   url: gdrive:1pgOugA5jQG96GbCktkTJN9FGn6rypTOI
   local_name: ncbi_family_summary.jsonl.gz
+  tag: metatraits
 
 #
 # MetaTraits GTDB
 # Microbial trait data from MetaTraits organized by GTDB taxonomy (R220)
 # Enables genome-level trait associations via GTDB taxonomy
 # NOTE: Requires overlap analysis to assess value vs NCBITaxon metatraits
-# NOTE: Commented out — the metatraits.embl.de/static/downloads/ endpoint now
-# returns HTTP 404 for all of these (access moved behind permission from
-# antheaguo@berkeley.edu). The last public copies (2026-03-24) are vendored
-# into data/raw/ from data/raw_last8/. To refresh, obtain access and re-enable.
+# Served from our Drive copy: metatraits.embl.de/static/downloads/ now returns
+# HTTP 404 for all of these, and the JSONL serialization is discontinued
+# upstream entirely (only .tsv.gz variants are published now). Pinned as one set
+# with the other MetaTraits inputs so a rebuild uses a single fixed release.
 #
-#-
-#  url: https://metatraits.embl.de/static/downloads/gtdb_species_summary.jsonl.gz
-#  local_name: gtdb_species_summary.jsonl.gz
-#-
-#  url: https://metatraits.embl.de/static/downloads/gtdb_genus_summary.jsonl.gz
-#  local_name: gtdb_genus_summary.jsonl.gz
-#-
-#  url: https://metatraits.embl.de/static/downloads/gtdb_family_summary.jsonl.gz
-#  local_name: gtdb_family_summary.jsonl.gz
+# Genus and family are declared but not read today — the transform reads only the
+# species summary (METATRAITS_GTDB_INPUT_FILES, genus/family commented out
+# there). They are kept because they belong to the pinned set and switching the
+# transform to read them is a one-line change; contrast po.db.gz, which was
+# removed because PO's hierarchy comes from po.owl and no code path could ever
+# read the DB. See docs/DATA_HOSTING.md.
+#
+# Original (now HTTP 404) sources, kept for provenance:
+#   https://metatraits.embl.de/static/downloads/gtdb_{species,genus,family}_summary.jsonl.gz
+# Only the species summary is read by the transform; genus/family are declared
+# here for completeness (see METATRAITS_GTDB_INPUT_FILES).
+# The JSONL serialization is discontinued upstream; only *_all.tsv.gz and
+# *_no_predictions.tsv.gz are published now (ours corresponds to _all). Reading
+# the TSV would need a transform change, so the pinned JSONL build stays the
+# input. See docs/DATA_HOSTING.md.
+-
+  url: gdrive:1xfZiMly-lJgcPL5ihR6QK1zxlv_JwC6J   # md5 aca98ae9c978f238ae7844beaccec63b
+  local_name: gtdb_species_summary.jsonl.gz
+  tag: metatraits_gtdb
+-
+  url: gdrive:1Kotk8g5Ky_Cc9MNiywO_Tjz6JLEG0y7Y     # md5 159828de09d22a7c85e2116e8a97944a
+  local_name: gtdb_genus_summary.jsonl.gz
+  tag: metatraits_gtdb
+-
+  url: gdrive:1HpkfGAtZI1uRwyPzbTJFtI6avWlkEAlE    # md5 1443132d2aa0f3d8743b23096ce23a13
+  local_name: gtdb_family_summary.jsonl.gz
+  tag: metatraits_gtdb
 
 #
-# GTDB-NCBITaxon Mappings (for overlap analysis)
-# Maps between GTDB R220 and NCBITaxon taxonomies
-# NOTE: Commented out — same dead metatraits.embl.de endpoint (HTTP 404).
-# Last public copies (2026-03-24) vendored into data/raw/ from data/raw_last8/.
+# GTDB-NCBITaxon Mappings
+# Maps between GTDB R220 and NCBITaxon taxonomies. NCBI2GTDB.tsv.gz is read by
+# the metatraits transform; GTDB2NCBI.tsv.gz is the reverse direction, declared
+# so the pinned set is complete and symmetric.
 #
-#-
-#  url: https://metatraits.embl.de/static/downloads/GTDB2NCBI.tsv.gz
-#  local_name: GTDB2NCBI.tsv.gz
-#-
-#  url: https://metatraits.embl.de/static/downloads/NCBI2GTDB.tsv.gz
-#  local_name: NCBI2GTDB.tsv.gz
+# GTDB r220 <-> NCBI 2025-07-28 crosswalks, assigned where >=85% of genomes
+# share the same ID in both taxonomies. NCBI2GTDB.tsv.gz is read by the
+# metatraits transform (_load_ncbi_gtdb_mappings).
+#
+# These are still published upstream, at the Bork group's web space (linked from
+# https://metatraits.embl.de/documentation):
+#   https://www.bork.embl.de/~robbani/metatraits/GTDB2NCBI.tsv.gz
+#   https://www.bork.embl.de/~robbani/metatraits/NCBI2GTDB.tsv.gz
+# Verified 2026-07-25: byte-identical to the pinned copies below. We deliberately
+# do NOT point at those URLs — it is an unversioned personal directory whose
+# contents are regenerated in place (our build is dated 2025-08-14), so a KG
+# rebuild months apart would silently use different crosswalks. The Drive copy
+# fixes the release; refresh it deliberately, from the URLs above.
+-
+  url: gdrive:1ip7ualwruocq9MvcaoNAcH0YtLtAEASP          # md5 a313f89ac32b7137c7225c789f724f63
+  local_name: GTDB2NCBI.tsv.gz
+  tag: metatraits_gtdb
+-
+  url: gdrive:1npQ1z2Yc0NRPHpBkKjsKIBy2_evDAyCV          # md5 eca29d35869dd9035730caa12de12598
+  local_name: NCBI2GTDB.tsv.gz
+  tag: metatraits_gtdb
 
 #
 # Biolink Model
@@ -434,6 +550,7 @@
 -
   url: https://raw.githubusercontent.com/biolink/biolink-model/v4.3.6/biolink-model.yaml
   local_name: biolink-model.yaml
+  tag: schema
 
 #
 # KGX Format Specification
@@ -442,6 +559,7 @@
 -
   url: https://raw.githubusercontent.com/biolink/kgx/master/docs/kgx_format.md
   local_name: kgx-format.md
+  tag: schema
 
 
 #
@@ -476,20 +594,27 @@
 # download.py, not kg_microbe/download.py), so no extra header config is
 # needed here.
 #
-# MICRO's SemSQL distribution (micro.db.gz) is a 29-byte truncated placeholder
-# rather than a real SemSQL DB; PO's SemSQL .db is fine but the OWL path is the
-# one the stub transform exercises for hierarchy. The MICRO and PO OWLs are
-# declared above in the ontologies section.
+# Only BTO and NCIT are fetched as SemSQL DBs, because only they are read that
+# way (source_type semsql_mireot / label-only OAK lookups), and neither has an
+# OWL declared here, so there is no second copy to drift from. MICRO's SemSQL
+# distribution (micro.db.gz) is a 29-byte truncated placeholder rather than a
+# real DB, and PO's — while a valid DB — was never read by anything. Both take
+# the ROBOT MIREOT path against their OWLs, declared above in the ontologies
+# section.
 #
 -
   url: https://semanticsql.berkeleybop.io/ncit.db.gz
   local_name: ncit.db.gz
+  tag: stubs
 -
   url: https://semanticsql.berkeleybop.io/bto.db.gz
   local_name: bto.db.gz
--
-  url: https://semanticsql.berkeleybop.io/po.db.gz
-  local_name: po.db.gz
+  tag: stubs
+# PO deliberately has no SemSQL .db entry. Its stub import is owl_mireot against
+# po.owl (see STUB_ONTOLOGY_SOURCES["PO"]), so nothing ever read po.db — the
+# downloaded po.db.gz was never even decompressed. Removing it also removes a
+# second, independently-versioned copy of PO that could drift from po.owl with no
+# gate to catch it (#604). Re-add only alongside a switch to semsql_mireot.
 
 #
 # MeSH (Medical Subject Headings) — full N-Triples RDF from NLM
@@ -505,6 +630,7 @@
 -
   url: https://nlmpubs.nlm.nih.gov/projects/mesh/rdf/2026/mesh2026.nt.gz
   local_name: mesh2026.nt.gz
+  tag: stubs
 
 #
 # LPSN — List of Prokaryotic names with Standing in Nomenclature

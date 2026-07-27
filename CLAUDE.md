@@ -185,6 +185,17 @@ Copy `.env.example` to `.env` and configure:
 - `BACDIVE_USERNAME`: BacDive API email
 - `BACDIVE_PASSWORD`: BacDive API password
 
+Optional, for the ontology transforms:
+- `KG_SEMSQL_BUILD=off`: skip building the SemSQL lookup DBs. `kg transform -s
+  ontologies` otherwise builds `chebi.db` (~30 min) and `go.db` (10-30 min) from
+  the OWLs, and `kg transform -s metatraits` builds `ncbitaxon.db` (hours,
+  ~13 GB), whenever one is missing or has drifted from its OWL release. With the
+  opt-out set, whatever DB is already on disk is used and the version gate warns
+  about any mismatch.
+- `KG_GO_VERSION_CHECK` / `KG_NCBITAXON_VERSION_CHECK` / `KG_CHEBI_VERSION_CHECK`:
+  `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently
+  miscategorises terms; the other two default to warn.
+
 ## Naming Conventions
 
 - Transform classes: `[SourceName]Transform` in `transform_utils/[source_name]/[source_name].py`

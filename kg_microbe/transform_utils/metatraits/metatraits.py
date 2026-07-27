@@ -72,24 +72,6 @@ def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
     )
 
 
-def _db_fingerprint(db_path: Path) -> Optional[Tuple[int, int]]:
-    """
-    Return (mtime_ns, size) for a DB, or None when it is absent.
-
-    Used to tell "this call built a new DB" from "the DB that was already there",
-    which decides whether the OAK-cache fallback may replace it. Checking "is a
-    real file" instead would also match a pre-existing DB and strand the run.
-
-    :param db_path: Path to fingerprint.
-    :return: (mtime_ns, size), or None if the path cannot be stat'ed.
-    """
-    try:
-        st = db_path.stat()
-    except OSError:
-        return None
-    return (st.st_mtime_ns, st.st_size)
-
-
 def _validate_ncbitaxon_db(db_path: Path) -> Tuple[bool, str]:
     """
     Validate that db_path is a healthy NCBITaxon SQLite DB.
@@ -129,39 +111,32 @@ def _ensure_ncbitaxon_db_ready() -> None:
 
     local_db, oak_cache = _ncbitaxon_db_paths()
 
-    # Happy path: symlink resolves to a valid DB.
+    # Build/realign FIRST, before validating. Validation only asks "is this DB
+    # readable" — a healthy 13 GB DB at the wrong release passes it — so gating
+    # the builder behind it made the drift rebuild unreachable in practice and
+    # left the single-source rule advisory for NCBITaxon (F3). The cost is one
+    # release-stamp read of the OWL head plus one sqlite query per run.
+    ensured = _ensure_ncbitaxon_db(str(local_db))
+
     ok, reason = _validate_ncbitaxon_db(local_db)
     if ok:
-        print(f"  NCBITaxon DB validated: {local_db} -> {local_db.resolve()}")
+        if ensured.built:
+            print(f"  NCBITaxon DB built from OWL: {local_db}")
+        else:
+            print(f"  NCBITaxon DB validated: {local_db} -> {local_db.resolve()}")
         return
 
-    print(f"  NCBITaxon DB at {local_db} invalid ({reason}); attempting repair")
-
-    # Preferred repair: build from the ncbitaxon.owl this run emits nodes from,
-    # so lookups and emitted nodes are the same release by construction (#604).
-    # A no-op when semsql or the OWL is unavailable, which leaves the OAK-cache
-    # fallback below as the last resort.
-    before = _db_fingerprint(local_db)
-    if _ensure_ncbitaxon_db(str(local_db)):
-        built_ok, built_reason = _validate_ncbitaxon_db(local_db)
-        if built_ok:
-            print(f"  NCBITaxon DB ready from OWL: {local_db}")
-            return
-        # Deliberately does not claim a build happened: _ensure_ncbitaxon_db also
-        # returns True on its reuse path, so this branch is usually reporting a
-        # DB that was already present and still fails validation.
-        print(f"  NCBITaxon DB at {local_db} still invalid after ensure ({built_reason})")
-        # Only a DB this call actually produced is worth protecting from the
-        # symlink fallback. Comparing the fingerprint is the honest test — "is a
-        # real file" would also match the pre-existing DB that has now failed
-        # validation twice, and keeping that would strand the run.
-        if _db_fingerprint(local_db) != before:
-            raise RuntimeError(
-                f"Built a fresh NCBITaxon DB at {local_db} but it failed validation "
-                f"({built_reason}). Not replacing it with the OAK cache, since that "
-                "would discard a build that takes hours. Inspect or delete it and "
-                "re-run."
-            )
+    print(f"  NCBITaxon DB at {local_db} invalid ({reason})")
+    if ensured.built:
+        # `built` comes from the builder itself rather than being inferred, so a
+        # restored .prev or an adopted orphan can no longer be misreported as a
+        # fresh build (F2). Keep the artifact: replacing hours of work with the
+        # OAK cache would be worse than stopping.
+        raise RuntimeError(
+            f"Built a fresh NCBITaxon DB at {local_db} but it failed validation "
+            f"({reason}). Not replacing it with the OAK cache, since that would "
+            "discard a build that takes hours. Inspect or delete it and re-run."
+        )
 
     # Fallback: adopt OAK's prebuilt cache. Its release is whatever the upstream
     # CDN last published and may lag ncbitaxon.owl; assert_ncbitaxon_version_alignment

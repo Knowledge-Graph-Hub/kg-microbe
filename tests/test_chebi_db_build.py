@@ -170,7 +170,7 @@ class TestChebiBuild:
         db = tmp_path / "chebi.db"
         _make_db(tmp_path, 253)
         calls = _fake_build(monkeypatch, db)
-        assert ou._ensure_chebi_db(str(db)) is True
+        assert ou._ensure_chebi_db(str(db))
         assert calls == []
 
     def test_drifted_db_is_rebuilt(self, tmp_path, monkeypatch, capsys):
@@ -181,7 +181,7 @@ class TestChebiBuild:
         _make_db(tmp_path, 251)
         calls = _fake_build(monkeypatch, db)
 
-        assert ou._ensure_chebi_db(str(db)) is True
+        assert ou._ensure_chebi_db(str(db))
         assert calls == [(["semsql", "make", "chebi.db"], str(source.parent))]
         assert "drifted" in capsys.readouterr().out
 
@@ -198,7 +198,7 @@ class TestChebiBuild:
         db = tmp_path / "chebi.db"
         calls = _fake_build(monkeypatch, db)
 
-        assert ou._ensure_chebi_db(str(db)) is True
+        assert ou._ensure_chebi_db(str(db))
         assert owl.exists(), "chebi.owl.gz should have been decompressed"
         assert "253" in owl.read_text(encoding="utf-8")
         assert len(calls) == 1
@@ -222,7 +222,7 @@ class TestChebiBuild:
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         monkeypatch.setattr(ou.subprocess, "run", run)
 
-        assert ou._ensure_chebi_db(str(db)) is True
+        assert ou._ensure_chebi_db(str(db))
         assert not db.is_symlink()
         assert list(elsewhere.iterdir()) == [], "nothing should reach the link target"
 
@@ -239,7 +239,7 @@ class TestChebiBuild:
         archive.write_bytes(archive.read_bytes()[: archive.stat().st_size // 2])
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
 
-        assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
+        assert not ou._ensure_chebi_db(str(tmp_path / "chebi.db"))
         assert not owl.exists()
         assert not (tmp_path / "chebi.owl.partial").exists()
 
@@ -256,7 +256,7 @@ class TestChebiBuild:
         db = tmp_path / "chebi.db"
         db.write_bytes(b"")  # threshold left at the real 100 MB
         monkeypatch.setattr(ou.shutil, "which", lambda _: None)
-        assert ou._ensure_chebi_db(str(db)) is False
+        assert not ou._ensure_chebi_db(str(db))
 
     def test_stub_db_rejected_under_opt_out(self, tmp_path, monkeypatch):
         """The KG_SEMSQL_BUILD=off path must apply the same size guard."""
@@ -264,7 +264,7 @@ class TestChebiBuild:
         db = tmp_path / "chebi.db"
         db.write_bytes(b"")
         monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
-        assert ou._ensure_chebi_db(str(db)) is False
+        assert not ou._ensure_chebi_db(str(db))
 
     def test_reuse_check_reads_release_from_the_archive(self, tmp_path, monkeypatch):
         """
@@ -285,7 +285,7 @@ class TestChebiBuild:
         _make_db(tmp_path, 251)  # older release, DB large enough to be "reusable"
         calls = _fake_build(monkeypatch, db)
 
-        assert ou._ensure_chebi_db(str(db)) is True
+        assert ou._ensure_chebi_db(str(db))
         assert len(calls) == 1, "drift against the .gz release should trigger a rebuild"
 
     def test_gate_reads_release_from_the_archive(self, tmp_path, monkeypatch, capsys):
@@ -312,8 +312,43 @@ class TestChebiBuild:
         result = ou._ensure_chebi_db(db_path)
         assert db.exists(), "the working DB must be restored after a failed build"
         assert db.read_bytes() == original
-        assert result is True, "the restored DB is still usable"
+        assert result, "the restored DB is still usable"
         assert not Path(f"{db_path}.prev").exists(), "the keep-aside copy should be gone"
+
+    def test_failed_build_restores_a_symlinked_prebuilt_db(self, tmp_path, monkeypatch):
+        """
+        A failed rebuild must not destroy a symlinked prebuilt DB (F1).
+
+        Supplying one by symlink is supported — get_chebi_adapter's own error text
+        recommends it — but _clear_build_target used to unlink it with no record,
+        so the failure path left the user with nothing and an error telling them
+        to supply the prebuilt DB they had just lost.
+        """
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        prebuilt = tmp_path / "prebuilt.db"
+        prebuilt.write_bytes(b"0" * 64)
+        db = tmp_path / "chebi.db"
+        db.symlink_to(prebuilt)
+        monkeypatch.setattr(ou, "_chebi_db_release", lambda _: "251")  # drift → rebuild
+        _fake_build(monkeypatch, db, fail=True)
+
+        result = ou._ensure_chebi_db(str(db))
+
+        assert db.is_symlink(), "the symlink must be restored"
+        assert db.resolve() == prebuilt.resolve()
+        assert result and not result.built
+
+    def test_strict_version_gate_is_not_swallowed(self, tmp_path, monkeypatch):
+        """KG_CHEBI_VERSION_CHECK=strict must abort, not degrade to a default (F6)."""
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        db_path = _make_db(tmp_path, 251)
+        monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: ou.DbEnsureResult(True))
+        monkeypatch.setenv("KG_CHEBI_VERSION_CHECK", "strict")
+
+        with pytest.raises(RuntimeError, match="ChEBI source version mismatch"):
+            ou.get_chebi_category("CHEBI:16828")
+        assert Path(db_path).exists()
 
     def test_missing_semsql_keeps_existing_db(self, tmp_path, monkeypatch, capsys):
         """Without semsql, keep whatever DB is present instead of deleting it."""
@@ -322,13 +357,13 @@ class TestChebiBuild:
         db_path = _make_db(tmp_path, 251)
         monkeypatch.setattr(ou.shutil, "which", lambda _: None)
 
-        assert ou._ensure_chebi_db(db_path) is True
+        assert ou._ensure_chebi_db(db_path)
         assert "semsql" in capsys.readouterr().out
 
     def test_missing_owl_and_archive_warns(self, tmp_path, monkeypatch, capsys):
         """Neither OWL nor archive means no build; report it."""
         monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", tmp_path / "chebi.owl")
-        assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
+        assert not ou._ensure_chebi_db(str(tmp_path / "chebi.db"))
         assert "missing" in capsys.readouterr().out
 
     def test_failed_build_returns_false(self, tmp_path, monkeypatch, capsys):
@@ -337,7 +372,7 @@ class TestChebiBuild:
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         db = tmp_path / "chebi.db"
         _fake_build(monkeypatch, db, fail=True)
-        assert ou._ensure_chebi_db(str(db)) is False
+        assert not ou._ensure_chebi_db(str(db))
         assert "failed to build" in capsys.readouterr().out
 
     def test_undersized_result_is_rejected(self, tmp_path, monkeypatch):
@@ -345,7 +380,7 @@ class TestChebiBuild:
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         db = tmp_path / "chebi.db"
         _fake_build(monkeypatch, db, size=16)  # threshold stays at 100 MB
-        assert ou._ensure_chebi_db(str(db)) is False
+        assert not ou._ensure_chebi_db(str(db))
 
     def test_opt_out_skips_the_build(self, tmp_path, monkeypatch, capsys):
         """KG_SEMSQL_BUILD=off must not start a 30-minute build (#613)."""
@@ -356,7 +391,7 @@ class TestChebiBuild:
         calls = _fake_build(monkeypatch, db)
         monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
 
-        assert ou._ensure_chebi_db(str(db)) is True
+        assert ou._ensure_chebi_db(str(db))
         assert calls == [], "opt-out must skip semsql entirely"
         assert "opt-out" in capsys.readouterr().out
 
@@ -375,7 +410,7 @@ class TestChebiBuild:
             raise OSError("no space left on device")
 
         monkeypatch.setattr(ou.shutil, "copyfileobj", boom)
-        assert ou._ensure_chebi_db(str(tmp_path / "chebi.db")) is False
+        assert not ou._ensure_chebi_db(str(tmp_path / "chebi.db"))
         assert not owl.exists(), "a partial decompression must not appear at the real path"
         assert not (tmp_path / "chebi.owl.partial").exists(), "temp file should be cleaned up"
 

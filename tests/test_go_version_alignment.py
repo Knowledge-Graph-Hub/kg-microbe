@@ -127,13 +127,13 @@ def test_ensure_go_db_skips_build_when_valid(tmp_path, monkeypatch):
     db = tmp_path / "go.db"
     db.write_bytes(b"0" * 16)
     # GO_SOURCE need not exist — the valid-db short-circuit returns before using it.
-    assert ou._ensure_go_db(str(db)) is True
+    assert ou._ensure_go_db(str(db))
 
 
 def test_ensure_go_db_cannot_build_without_owl(tmp_path, monkeypatch, capsys):
     """A missing/empty go.db with no OWL source degrades gracefully (warn, False)."""
     monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", tmp_path / "absent.owl")
-    assert ou._ensure_go_db(str(tmp_path / "go.db")) is False
+    assert not ou._ensure_go_db(str(tmp_path / "go.db"))
     assert "missing" in capsys.readouterr().out
 
 
@@ -192,7 +192,7 @@ def test_ensure_go_db_keeps_aligned_db(tmp_path, monkeypatch):
         _write_go_pair(tmp_path, "2026-05-19", "2026-05-19"),
     )
     db = _make_go_db(tmp_path, "2026-05-19")
-    assert ou._ensure_go_db(db) is True
+    assert ou._ensure_go_db(db)
 
 
 def test_ensure_go_db_rebuilds_on_release_drift(tmp_path, monkeypatch, capsys):
@@ -209,7 +209,7 @@ def test_ensure_go_db_rebuilds_on_release_drift(tmp_path, monkeypatch, capsys):
     )
     monkeypatch.setattr(ou.shutil, "which", lambda _cmd: None)  # no semsql → build can't run
     db = _make_go_db(tmp_path, "2026-01-01")  # drifted from go.owl (2026-05-19)
-    assert ou._ensure_go_db(db) is False
+    assert not ou._ensure_go_db(db)
     assert "drifted" in capsys.readouterr().out
 
 
@@ -281,3 +281,74 @@ def test_aligned_go_json_is_not_reconverted(tmp_path, monkeypatch):
     t.parse("go", tmp_path / "go.owl", "go")
 
     assert calls["convert"] == 0
+
+
+# --- gaps named in the #633 review -----------------------------------------
+
+
+def test_missing_json_is_not_stale_even_with_a_gz_sibling(tmp_path):
+    """_read_head falls back to `<path>.gz`, so guard the missing-JSON case (F5)."""
+    import gzip as gz
+
+    owl = tmp_path / "x.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    with gz.open(tmp_path / "x.json.gz", "wt", encoding="utf-8") as f:
+        f.write(_JSON.format(d="2026-04-01"))
+
+    assert ou._derived_json_is_stale(owl, tmp_path / "x.json") is False
+
+
+def test_go_gate_ignores_a_missing_json_with_a_gz_sibling(tmp_path, monkeypatch):
+    """The GO gate defaults to strict, so it must not abort over a file nothing reads (F8)."""
+    import gzip as gz
+
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    with gz.open(tmp_path / "go.json.gz", "wt", encoding="utf-8") as f:
+        f.write(_JSON.format(d="2026-04-01"))
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+
+    ou.assert_go_version_alignment()  # must not raise
+
+
+def test_go_build_honours_the_semsql_opt_out(tmp_path, monkeypatch):
+    """KG_SEMSQL_BUILD is generically named; it must gate GO too (F5)."""
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    db = tmp_path / "go.db"
+    db.write_bytes(b"0" * 16)
+    monkeypatch.setattr(ou, "_go_db_release", lambda _: "2026-01-01")  # drifted
+    calls = []
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+    monkeypatch.setattr(ou.subprocess, "run", lambda cmd, **kw: calls.append(cmd))
+    monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+
+    assert ou._ensure_go_db(str(db))
+    assert calls == [], "the opt-out must skip the GO build too"
+
+
+def test_go_failed_build_restores_the_previous_db(tmp_path, monkeypatch):
+    """GO was swept into the keep-aside fix but had no test for it."""
+    import subprocess as sp
+
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    db = tmp_path / "go.db"
+    db.write_bytes(b"0" * 16)
+    original = db.read_bytes()
+    monkeypatch.setattr(ou, "_go_db_release", lambda _: "2026-01-01")
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    def boom(cmd, **kwargs):
+        """Fail the build."""
+        raise sp.CalledProcessError(1, cmd)
+
+    monkeypatch.setattr(ou.subprocess, "run", boom)
+
+    assert ou._ensure_go_db(str(db))
+    assert db.read_bytes() == original, "the previous go.db must be restored"
+    assert not (tmp_path / "go.db.prev").exists()

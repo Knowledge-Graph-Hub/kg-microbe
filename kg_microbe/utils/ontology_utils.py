@@ -9,7 +9,7 @@ import subprocess
 import zlib
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, NamedTuple, Optional
 
 from oaklib.interfaces import OboGraphInterface
 
@@ -141,8 +141,14 @@ def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
     strict = _version_check_strict("KG_GO_VERSION_CHECK", strict)
     if not GO_SOURCE:
         return
+    json_path = Path(GO_SOURCE).with_suffix(".json")
+    if not json_path.exists():
+        # _read_head falls back to `<path>.gz`, so without this a *missing*
+        # go.json beside a stray go.json.gz would read as stale — and this gate
+        # defaults to strict, so it would abort over a file nothing reads (F8).
+        return
     owl_release = _obo_release_from_head(Path(GO_SOURCE))
-    json_release = _obo_release_from_head(Path(GO_SOURCE).with_suffix(".json"))
+    json_release = _obo_release_from_head(json_path)
     if owl_release and json_release and owl_release != json_release:
         msg = (
             f"GO source version mismatch: go.owl={owl_release} vs "
@@ -292,6 +298,23 @@ def _usable_db(db_path: str, min_size: int) -> bool:
     return _present_db(db_path, min_size) and not os.path.islink(db_path)
 
 
+def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool:
+    """
+    Judge the target after a failed build, according to what is now there.
+
+    If something was displaced and put back, it is the caller's own artifact —
+    possibly a symlink to a prebuilt DB, which is supported — so the lenient
+    check applies. If nothing was displaced, whatever sits at the target came
+    from the failed build itself, and a symlink there means it landed elsewhere.
+
+    :param db_path: Path to the DB.
+    :param min_size: Smallest plausible size for a complete build.
+    :param kept: What :func:`_clear_build_target` displaced.
+    :return: True if the file is usable.
+    """
+    return _present_db(db_path, min_size) if kept else _usable_db(db_path, min_size)
+
+
 def _present_db(db_path: str, min_size: int) -> bool:
     """
     Report whether a DB is present and plausibly complete, symlinks included.
@@ -338,69 +361,129 @@ def _read_head(path: Path, nbytes: int) -> Optional[str]:
     return None
 
 
-def _clear_build_target(db_path: str) -> Optional[str]:
+class ChebiDbUnavailableError(RuntimeError):
+
     """
-    Remove whatever occupies the SemSQL build target, including a broken symlink.
+    No usable ChEBI SemSQL DB could be produced.
+
+    Distinct from the version gate's RuntimeError so the standalone
+    ``get_chebi_category`` can degrade on the former without also swallowing a
+    deliberate ``KG_CHEBI_VERSION_CHECK=strict`` abort (F6).
+    """
+
+
+class KeptTarget(NamedTuple):
+
+    """
+    What :func:`_clear_build_target` displaced, so it can be put back.
+
+    A real file is moved aside to ``<db>.prev``; a symlink is recorded by its
+    target and recreated on restore. Recording the link matters: pointing at a
+    prebuilt DB with a symlink is a supported way to supply one, and a failed
+    build used to delete it irrecoverably while telling the user to supply a
+    prebuilt DB (F1).
+    """
+
+    prev_path: Optional[str] = None
+    link_target: Optional[str] = None
+
+    def __bool__(self) -> bool:
+        """Report whether something was displaced and can be restored."""
+        return bool(self.prev_path or self.link_target)
+
+
+class DbEnsureResult(NamedTuple):
+
+    """
+    Outcome of an ``_ensure_*_db`` call.
+
+    ``usable`` keeps the historical truthiness (callers write
+    ``if _ensure_chebi_db(...)``), while ``built`` says whether *this call*
+    produced a new DB. Callers need that distinction and cannot infer it: a
+    restored ``.prev`` or an adopted orphan also makes a file appear where there
+    was none, which is what made an earlier fingerprint-based guess misreport a
+    restore as a fresh build (F2).
+    """
+
+    usable: bool
+    built: bool = False
+
+    def __bool__(self) -> bool:
+        """Report whether a usable DB is at the target path."""
+        return self.usable
+
+
+def _clear_build_target(db_path: str) -> KeptTarget:
+    """
+    Clear the SemSQL build target, preserving whatever it displaced.
 
     ``os.path.exists`` follows symlinks and is False for a dangling one, so a
     stale link would survive and ``semsql make`` — which opens the target name for
     writing — would follow it and deposit the multi-GB result at the link's
-    target instead. The closing size check follows the link too, so the build
-    would be reported successful while the DB sat somewhere else entirely.
+    target instead, with the closing size check following the link too and
+    reporting success.
 
-    That state is reachable from the pipeline's own advice: the OAK-cache fallback
-    creates ``data/raw/ncbitaxon.db -> ~/.data/oaklib/ncbitaxon.db``, and the
-    remediation text tells users to ``rm`` the cache, leaving the link dangling.
-
-    A real file is moved aside rather than deleted, so a build that fails (OOM is
-    a live risk on the 13 GB NCBITaxon build) can put it back instead of leaving
-    the caller with nothing. The cost is peak disk during a rebuild: old + new,
-    so ~28 GB for NCBITaxon and ~3 GB for ChEBI, where deleting first needed only
-    the new copy. An orphaned ``<db>.prev`` from a killed process is adopted by
-    the next run rather than left forever.
+    A real file is moved aside rather than deleted, and a symlink's target is
+    recorded, so a build that fails (OOM is a live risk on the 13 GB NCBITaxon
+    build) can restore either. The cost is peak disk during a rebuild: old + new,
+    so ~28 GB for NCBITaxon and ~3 GB for ChEBI.
 
     :param db_path: Build target to clear.
-    :return: Path the previous DB was moved to, or None if there was nothing to keep.
+    :return: What was displaced, for :func:`_restore_build_target`.
     """
     kept = f"{db_path}.prev"
-    if not os.path.lexists(db_path):
-        # A previous run was killed between the move-aside and the build. Nothing
-        # else ever looks at .prev, so without this it is orphaned forever — for
-        # NCBITaxon a permanently stranded 14 GB file, with the DB still missing.
-        if os.path.exists(kept):
+    db_is_real_file = os.path.lexists(db_path) and not os.path.islink(db_path)
+
+    if os.path.lexists(kept) and not db_is_real_file:
+        if os.path.lexists(db_path):
+            # A symlink coexisting with an orphan: leave the user's pointer alone,
+            # but say the orphan is there so it can be reclaimed or deleted.
+            print(f"  Note: {kept} is left over from an interrupted build; delete it if unwanted")
+        else:
+            # Killed between the move-aside and the build. Nothing else looks at
+            # .prev, so without this it is stranded forever (14 GB for NCBITaxon)
+            # with the DB still missing.
             print(f"  Recovering {kept} left by an interrupted build")
             os.replace(kept, db_path)
-            return _clear_build_target(db_path)
-        return None
+            db_is_real_file = True
+
     if os.path.islink(db_path):
+        target = os.readlink(db_path)
         os.remove(db_path)
-        return None
+        return KeptTarget(link_target=target)
+    if not os.path.lexists(db_path):
+        return KeptTarget()
     if os.path.lexists(kept):
         os.remove(kept)
     os.replace(db_path, kept)
-    return kept
+    return KeptTarget(prev_path=kept)
 
 
-def _restore_build_target(db_path: str, kept: Optional[str]) -> None:
+def _restore_build_target(db_path: str, kept: KeptTarget) -> None:
     """
-    Put back the DB moved aside by :func:`_clear_build_target` after a failed build.
+    Put back whatever :func:`_clear_build_target` displaced, after a failed build.
 
     :param db_path: Original DB path.
-    :param kept: Path returned by :func:`_clear_build_target`, or None.
+    :param kept: Value returned by :func:`_clear_build_target`.
     """
-    if kept and os.path.exists(kept):
-        os.replace(kept, db_path)
+    if kept.prev_path and os.path.lexists(kept.prev_path):
+        os.replace(kept.prev_path, db_path)
         print(f"  Restored the previous {db_path} after the failed build")
+    elif kept.link_target:
+        if os.path.lexists(db_path):
+            os.remove(db_path)
+        os.symlink(kept.link_target, db_path)
+        print(f"  Restored the {db_path} -> {kept.link_target} symlink after the failed build")
 
 
-def _discard_kept_target(kept: Optional[str]) -> None:
+def _discard_kept_target(kept: KeptTarget) -> None:
     """
     Delete the moved-aside DB once a build has succeeded.
 
-    :param kept: Path returned by :func:`_clear_build_target`, or None.
+    :param kept: Value returned by :func:`_clear_build_target`.
     """
-    if kept and os.path.exists(kept):
-        os.remove(kept)
+    if kept.prev_path and os.path.lexists(kept.prev_path):
+        os.remove(kept.prev_path)
 
 
 def _decompress_atomically(archive: Path, destination: Path) -> bool:
@@ -524,7 +607,7 @@ def assert_chebi_version_alignment(db_path: str, strict: Optional[bool] = None) 
         print(f"WARNING: {msg}")
 
 
-def _ensure_chebi_db(db_path: str) -> bool:
+def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     """
     Build the ChEBI SemSQL DB from ``chebi.owl``; return True if usable.
 
@@ -540,7 +623,7 @@ def _ensure_chebi_db(db_path: str) -> bool:
     unavailable.
 
     :param db_path: Target path for ``chebi.db``.
-    :return: True if a usable DB exists at db_path when this returns.
+    :return: Whether a usable DB exists at db_path, and whether this call built it.
     """
     from kg_microbe.transform_utils.constants import CHEBI_SOURCE
 
@@ -550,29 +633,29 @@ def _ensure_chebi_db(db_path: str) -> bool:
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
-            return True
+            return DbEnsureResult(True)
         print(
             f"Rebuilding {db_path}: release {db_release} drifted from "
             f"chebi.owl {owl_release} (single-source realign)..."
         )
     if not _semsql_build_enabled():
         print(f"Skipping ChEBI SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return _present_db(db_path, min_size)
+        return DbEnsureResult(_present_db(db_path, min_size))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking ~1 GB only to then bail out is pure waste (#10).
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return _present_db(db_path, min_size)
+        return DbEnsureResult(_present_db(db_path, min_size))
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL; the download ships chebi.owl.gz.
         archive = owl_source.with_suffix(owl_source.suffix + ".gz")
         if archive.exists():
             print(f"Decompressing {archive} for the ChEBI SemSQL build...")
             if not _decompress_atomically(archive, owl_source):
-                return _present_db(db_path, min_size)
+                return DbEnsureResult(_present_db(db_path, min_size))
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
-        return _present_db(db_path, min_size)
+        return DbEnsureResult(_present_db(db_path, min_size))
     kept = _clear_build_target(db_path)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
@@ -589,7 +672,9 @@ def _ensure_chebi_db(db_path: str) -> bool:
         # Expected build failures degrade: restore the old DB and report on it.
         print(f"Warning: failed to build {db_path}: {e}")
         _restore_build_target(db_path, kept)
-        return _usable_db(db_path, min_size)
+        # A restored artifact is judged leniently: it may legitimately be a
+        # symlink the user supplied, which _usable_db rejects by design.
+        return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
     except BaseException:  # noqa: BLE001 — KeyboardInterrupt/SIGTERM must not strand .prev
         # Ctrl-C or a kill during a multi-hour build previously left the DB gone
         # and a 14 GB .prev orphaned forever, since nothing ever looks at it again.
@@ -597,12 +682,12 @@ def _ensure_chebi_db(db_path: str) -> bool:
         raise
     if _usable_db(db_path, min_size):
         _discard_kept_target(kept)
-        return True
+        return DbEnsureResult(True, built=True)
     # semsql can exit 0 having produced a short/misplaced file. Restore, then
     # report on what is actually at db_path now — not the pre-restore verdict.
     print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(db_path, kept)
-    return _usable_db(db_path, min_size)
+    return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
 
 
 @lru_cache(maxsize=None)
@@ -646,7 +731,7 @@ def get_chebi_adapter():
     db_path = str(Path(CHEBI_SOURCE).parent / "chebi.db")
     adapter = _chebi_adapter_for(db_path)
     if adapter is None:
-        raise RuntimeError(
+        raise ChebiDbUnavailableError(
             f"No usable ChEBI SemSQL DB at {db_path}. Install `semsql` and place "
             "chebi.owl (or chebi.owl.gz) in data/raw so it can be built, or supply "
             "a prebuilt chebi.db. See the warning above for which step failed."
@@ -657,7 +742,7 @@ def get_chebi_adapter():
 get_chebi_adapter.cache_clear = _chebi_adapter_for.cache_clear
 
 
-def _ensure_ncbitaxon_db(db_path: str) -> bool:
+def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     """
     Build the NCBITaxon SemSQL DB from ``ncbitaxon.owl``; return True if usable.
 
@@ -676,7 +761,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
     toolchain still falls back to whatever DB is already present.
 
     :param db_path: Target path for ``ncbitaxon.db``.
-    :return: True if a usable DB exists at db_path when this returns.
+    :return: Whether a usable DB exists at db_path, and whether this call built it.
     """
     from kg_microbe.transform_utils.constants import NCBITAXON_SOURCE
 
@@ -686,19 +771,19 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
-            return True
+            return DbEnsureResult(True)
         print(
             f"Rebuilding {db_path}: release {db_release} drifted from "
             f"ncbitaxon.owl {owl_release} (single-source realign)..."
         )
     if not _semsql_build_enabled():
         print(f"Skipping NCBITaxon SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return _present_db(db_path, min_size)
+        return DbEnsureResult(_present_db(db_path, min_size))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking ~2 GB only to then bail out is pure waste (#10).
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return _present_db(db_path, min_size)
+        return DbEnsureResult(_present_db(db_path, min_size))
     if owl_source and not owl_source.exists():
         # semsql needs the plain OWL, but the download ships ncbitaxon.owl.gz and
         # NCBITAXON_SOURCE names the uncompressed path — without this a fresh
@@ -708,10 +793,10 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         if archive.exists():
             print(f"Decompressing {archive} for the NCBITaxon SemSQL build...")
             if not _decompress_atomically(archive, owl_source):
-                return _present_db(db_path, min_size)
+                return DbEnsureResult(_present_db(db_path, min_size))
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
-        return _present_db(db_path, min_size)
+        return DbEnsureResult(_present_db(db_path, min_size))
     kept = _clear_build_target(db_path)
     print(
         f"Building {db_path} from {owl_source} via `semsql make`.\n"
@@ -729,7 +814,9 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         # Expected build failures degrade: restore the old DB and report on it.
         print(f"Warning: failed to build {db_path}: {e}")
         _restore_build_target(db_path, kept)
-        return _usable_db(db_path, min_size)
+        # A restored artifact is judged leniently: it may legitimately be a
+        # symlink the user supplied, which _usable_db rejects by design.
+        return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
     except BaseException:  # noqa: BLE001 — KeyboardInterrupt/SIGTERM must not strand .prev
         # Ctrl-C or a kill during a multi-hour build previously left the DB gone
         # and a 14 GB .prev orphaned forever, since nothing ever looks at it again.
@@ -737,15 +824,15 @@ def _ensure_ncbitaxon_db(db_path: str) -> bool:
         raise
     if _usable_db(db_path, min_size):
         _discard_kept_target(kept)
-        return True
+        return DbEnsureResult(True, built=True)
     # semsql can exit 0 having produced a short/misplaced file. Restore, then
     # report on what is actually at db_path now — not the pre-restore verdict.
     print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(db_path, kept)
-    return _usable_db(db_path, min_size)
+    return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
 
 
-def _ensure_go_db(go_db_path: str) -> bool:
+def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     """
     Build the GO SemSQL DB from ``go.owl`` if missing/empty; return True if usable.
 
@@ -769,17 +856,20 @@ def _ensure_go_db(go_db_path: str) -> bool:
         owl_release = _obo_release_from_head(Path(GO_SOURCE)) if GO_SOURCE else None
         db_release = _go_db_release(go_db_path)
         if not (owl_release and db_release and owl_release != db_release):
-            return True
+            return DbEnsureResult(True)
         print(
             f"Rebuilding {go_db_path}: release {db_release} drifted from "
             f"go.owl {owl_release} (single-source realign)..."
         )
+    if not _semsql_build_enabled():
+        print(f"Skipping GO SemSQL build (KG_SEMSQL_BUILD opt-out); using {go_db_path} as-is")
+        return DbEnsureResult(_present_db(go_db_path, _GO_DB_MIN_SIZE))
     if not (GO_SOURCE and Path(GO_SOURCE).exists()):
         print(f"Warning: cannot build {go_db_path} — GO OWL source {GO_SOURCE} is missing")
-        return False
+        return DbEnsureResult(False)
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {go_db_path}")
-        return False
+        return DbEnsureResult(False)
     kept = _clear_build_target(go_db_path)
     print(
         f"Building {go_db_path} from {GO_SOURCE} via `semsql make` "
@@ -795,16 +885,18 @@ def _ensure_go_db(go_db_path: str) -> bool:
     except (subprocess.CalledProcessError, OSError) as e:
         print(f"Warning: failed to build {go_db_path}: {e}")
         _restore_build_target(go_db_path, kept)
-        return _usable_db(go_db_path, _GO_DB_MIN_SIZE)
+        # A restored artifact is judged leniently: it may legitimately be a
+        # symlink the user supplied, which _usable_db rejects by design.
+        return DbEnsureResult(_restored_db_usable(go_db_path, _GO_DB_MIN_SIZE, kept))
     except BaseException:  # noqa: BLE001 — an interrupt must not strand .prev
         _restore_build_target(go_db_path, kept)
         raise
     if _usable_db(go_db_path, _GO_DB_MIN_SIZE):
         _discard_kept_target(kept)
-        return True
+        return DbEnsureResult(True, built=True)
     print(f"Warning: {go_db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(go_db_path, kept)
-    return _usable_db(go_db_path, _GO_DB_MIN_SIZE)
+    return DbEnsureResult(_restored_db_usable(go_db_path, _GO_DB_MIN_SIZE, kept))
 
 
 def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
@@ -951,7 +1043,9 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
     if chebi_adapter is None:
         try:
             chebi_adapter = get_chebi_adapter()
-        except RuntimeError as e:
+        except ChebiDbUnavailableError as e:
+            # Only the "no DB" case degrades. A strict version-gate failure is a
+            # deliberate abort and must propagate (F6).
             print(f"WARNING: {e}\n  Falling back to the default ChEBI category.")
             return SMALL_MOLECULE_CATEGORY
 

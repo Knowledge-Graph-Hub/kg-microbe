@@ -13,12 +13,16 @@ from pathlib import Path
 
 import pytest
 
-_CONSOLIDATOR_PATH = Path(__file__).resolve().parents[1] / "scripts" / "consolidate_chemical_mappings.py"
+_CONSOLIDATOR_PATH = (
+    Path(__file__).resolve().parents[1] / "scripts" / "consolidate_chemical_mappings.py"
+)
 
 
 def _load_consolidator_module():
     """Import the standalone consolidator script as a module."""
-    spec = importlib.util.spec_from_file_location("consolidate_chemical_mappings", _CONSOLIDATOR_PATH)
+    spec = importlib.util.spec_from_file_location(
+        "consolidate_chemical_mappings", _CONSOLIDATOR_PATH
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

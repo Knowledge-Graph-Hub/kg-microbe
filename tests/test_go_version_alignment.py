@@ -1,6 +1,7 @@
 """Tests for the GO version-alignment gate and go.db build helper (#604)."""
 
 import sqlite3
+import subprocess as sp_module
 from pathlib import Path
 
 import pytest
@@ -124,10 +125,12 @@ def test_ensure_go_db_skips_build_when_valid(tmp_path, monkeypatch):
     """A go.db already above the min-size threshold is left as-is (no rebuild)."""
     # Shrink the threshold so the test writes a few bytes, not ~10 MB.
     monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
-    db = tmp_path / "go.db"
-    db.write_bytes(b"0" * 16)
+    # A real SQLite file, not filler bytes: the reuse path now also probes that
+    # the DB actually opens, so a large-but-corrupt file is rebuilt rather than
+    # handed to OAK to fail silently against.
+    db = _make_go_db(tmp_path, None)
     # GO_SOURCE need not exist — the valid-db short-circuit returns before using it.
-    assert ou._ensure_go_db(str(db))
+    assert ou._ensure_go_db(db)
 
 
 def test_ensure_go_db_cannot_build_without_owl(tmp_path, monkeypatch, capsys):
@@ -349,6 +352,70 @@ def test_go_failed_build_restores_the_previous_db(tmp_path, monkeypatch):
 
     monkeypatch.setattr(ou.subprocess, "run", boom)
 
-    assert ou._ensure_go_db(str(db))
+    # The file is put back — a failed build must never cost the user their DB —
+    # but GO passes reuse_on_failure=False, so the *verdict* is unusable: this
+    # go.db drifted from go.owl and the rebuild that would realign it failed.
+    # Reporting it usable is what silently miscategorises MF/CC as
+    # BiologicalProcess, which is the whole reason GO's gate is strict.
+    assert not ou._ensure_go_db(str(db))
     assert db.read_bytes() == original, "the previous go.db must be restored"
     assert not (tmp_path / "go.db.prev").exists()
+
+
+def _drifted_go_db(tmp_path, monkeypatch):
+    """Set up a size-valid go.db whose release has drifted from go.owl."""
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    db = tmp_path / "go.db"
+    db.write_bytes(b"0" * 16)
+    monkeypatch.setattr(ou, "_go_db_release", lambda _: "2026-01-01")
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+    return db
+
+
+def test_go_short_build_output_is_refused_not_reused(tmp_path, monkeypatch):
+    """
+    `semsql` exiting 0 with a short file must not resurrect the drifted go.db.
+
+    reuse_on_failure=False used to cover only the preflight exits (no semsql,
+    missing OWL), so both post-build failure paths restored the drifted DB and
+    reported usable=True — handing _ensure_and_gate exactly the DB GO's strict
+    policy exists to reject.
+    """
+    db = _drifted_go_db(tmp_path, monkeypatch)
+    original = db.read_bytes()
+
+    def short_build(cmd, **kwargs):
+        """Exit 0 having written an undersized DB."""
+        db.write_bytes(b"x")
+
+    monkeypatch.setattr(ou.subprocess, "run", short_build)
+
+    assert not ou._ensure_go_db(str(db)), "a drifted go.db must not survive a failed rebuild"
+    assert db.read_bytes() == original, "the previous go.db must still be restored on disk"
+
+
+def test_non_go_ontology_still_reuses_after_a_failed_build(tmp_path, monkeypatch):
+    """
+    reuse_on_failure=True is the default and must be unchanged.
+
+    Only GO demands the rebuild; for the others a restored DB after a failed
+    build is still reported usable, so a transient build failure does not take
+    the whole pipeline down.
+    """
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+    owl = tmp_path / "ec.owl"
+    owl.write_text("<owl/>", encoding="utf-8")
+    db = tmp_path / "ec.db"
+    db.write_bytes(b"0" * 64)
+
+    def boom(cmd, **kwargs):
+        """Fail the build."""
+        raise sp_module.CalledProcessError(1, cmd)
+
+    monkeypatch.setattr(ou.subprocess, "run", boom)
+
+    result = ou._build_semsql_db(owl, str(db), 8, "EC", "note")
+    assert result.usable and not result.built

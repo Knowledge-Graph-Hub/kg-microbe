@@ -10,6 +10,7 @@ None of these tests run a real `semsql make`: the build is mocked and the
 size threshold shrunk, so they stay fast.
 """
 
+import sqlite3
 import subprocess
 from pathlib import Path
 
@@ -39,6 +40,24 @@ def tiny_threshold(monkeypatch):
     monkeypatch.setattr(ou, "_NCBITAXON_DB_MIN_SIZE", 8)
 
 
+def _write_real_db(path: Path, pad: int = 16) -> Path:
+    """
+    Write a genuinely openable SQLite file at ``path``.
+
+    The reuse fast-path probes that a DB actually opens, so filler bytes no
+    longer stand in for a healthy DB: a large-but-corrupt file must be rebuilt,
+    not handed to OAK to fail silently against. Tests that assert *reuse* have
+    to supply something SQLite can read.
+    """
+    conn = sqlite3.connect(str(path))
+    conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, value TEXT)")
+    conn.commit()
+    conn.close()
+    with path.open("ab") as fh:
+        fh.write(b"0" * pad)
+    return path
+
+
 def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
     """Stand in for `semsql make`, recording the call and writing a fake DB."""
     calls = []
@@ -62,8 +81,7 @@ class TestSkipsUnnecessaryBuilds:
     def test_valid_aligned_db_is_reused(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """Matching releases must not trigger a rebuild."""
         owl("2026-07-12")
-        db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db = _write_real_db(tmp_path / "ncbitaxon.db")
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-07-12")
         calls = _fake_build(monkeypatch, db)
         assert ou._ensure_ncbitaxon_db(str(db))
@@ -72,8 +90,7 @@ class TestSkipsUnnecessaryBuilds:
     def test_unreadable_release_does_not_force_rebuild(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """An unreadable stamp must not cause a spurious multi-hour rebuild."""
         owl("2026-07-12")
-        db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db = _write_real_db(tmp_path / "ncbitaxon.db")
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: None)
         calls = _fake_build(monkeypatch, db)
         assert ou._ensure_ncbitaxon_db(str(db))
@@ -231,6 +248,46 @@ class TestDegradesGracefully:
 
         assert db.exists() and db.read_bytes() == b"G" * 64, "the good DB must be what remains"
 
+    def test_dangling_symlink_over_a_good_prev_never_loses_the_db(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """
+        A dangling symlink at the target must not cost the user the good .prev.
+
+        Third recurrence of #634. _clear_build_target recovers the .prev onto the
+        target, but the symlink branch used to `return` before the fall-through
+        that moves the recovered DB aside — so `semsql make` wrote straight over
+        the 13 GB copy, and because the result recorded only the link, a failed
+        build put the *dangling symlink* back and the DB was gone for good.
+        """
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        prev = tmp_path / "ncbitaxon.db.prev"
+        prev.write_bytes(b"G" * 64)  # the only usable copy
+        db.symlink_to(tmp_path / "gone" / "cache.db")  # dangling
+        _fake_build(monkeypatch, db, fail=True)
+
+        ou._ensure_ncbitaxon_db(str(db))
+
+        assert not db.is_symlink(), "the dangling link must not be restored over the good DB"
+        assert db.exists() and db.read_bytes() == b"G" * 64, "the good DB must survive"
+
+    def test_corrupt_but_large_db_is_rebuilt_not_reused(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """
+        A DB that clears the size floor but is not SQLite must be rebuilt.
+
+        Every release reader turns the resulting sqlite3.Error into None, which
+        the reuse fast-path reads as "no stamp, do not rebuild" — so the corrupt
+        file was handed to OAK, whose queries then failed inside broad handlers
+        and collapsed every term to a default category (#625, same shape).
+        """
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        db.write_bytes(b"not a database" * 8)  # well above the shrunken floor
+        calls = _fake_build(monkeypatch, db)
+
+        ou._ensure_ncbitaxon_db(str(db))
+
+        assert calls, "an unopenable DB must trigger a rebuild rather than be reused"
+
     def test_leftover_prev_is_reported_when_the_db_is_reused(self, tmp_path, owl, tiny_threshold, monkeypatch, capsys):
         """
         A .prev left by an interrupted build must not sit unnoticed (#634).
@@ -241,8 +298,7 @@ class TestDegradesGracefully:
         behaviour is to report the orphan rather than guess.
         """
         owl("2026-07-12")
-        db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 32)
+        db = _write_real_db(tmp_path / "ncbitaxon.db", pad=32)
         prev = tmp_path / "ncbitaxon.db.prev"
         prev.write_bytes(b"G" * 64)
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-07-12")  # aligned → reuse

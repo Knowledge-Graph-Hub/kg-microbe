@@ -340,6 +340,36 @@ def _present_db(db_path: str, min_size: int) -> bool:
     return os.path.exists(db_path) and os.path.getsize(db_path) >= min_size
 
 
+def _db_is_readable(db_path: str) -> bool:
+    """
+    Report whether a DB is actually openable as SQLite.
+
+    The size floor alone cannot tell a complete build from a large corrupt file:
+    a truncated-mid-write or bit-rotted DB clears the floor, and every release
+    reader turns the resulting ``sqlite3.Error`` into ``None`` — which the reuse
+    fast-paths read as "no stamp recorded, do not rebuild". The DB is then handed
+    to OAK, whose own queries fail and are swallowed, so GO terms collapse to
+    BiologicalProcess and ChEBI terms to the default category. Probing here is
+    what turns that silent miscategorisation into a rebuild.
+
+    ``PRAGMA schema_version`` reads the file header only, so this stays O(1) even
+    on the 13 GB ``ncbitaxon.db`` — unlike ``PRAGMA integrity_check``, which
+    would walk every page and is far too expensive to run on every resolve.
+
+    :param db_path: Path to the DB.
+    :return: True if SQLite can open it and answer a header query.
+    """
+    try:
+        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        try:
+            conn.execute("PRAGMA schema_version").fetchone()
+        finally:
+            conn.close()
+    except (sqlite3.Error, OSError):
+        return False
+    return True
+
+
 def _read_head(path: Path, nbytes: int) -> Optional[str]:
     """
     Read the head of ``path``, transparently falling back to ``path`` + ``.gz``.
@@ -472,34 +502,39 @@ def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
     target_present = os.path.lexists(db_path)
     target_usable = target_present and not target_is_link and _present_db(db_path, min_size)
 
+    recovered_link: Optional[str] = None
+
     if prev_usable and not target_usable:
         # The .prev is the good copy: the target is absent, a symlink, or the
         # partial remains of a killed build. Recover rather than overwrite.
         if target_is_link:
-            target = os.readlink(db_path)
+            recovered_link = os.readlink(db_path)
             os.remove(db_path)
-            print(f"  Recovering {kept} left by an interrupted build (was symlinked to {target})")
-            os.replace(kept, db_path)
-            return KeptTarget(link_target=target)
-        if target_present:
+            print(f"  Recovering {kept} left by an interrupted build (was symlinked to {recovered_link})")
+        elif target_present:
             print(f"  Discarding the partial {db_path} and recovering {kept}")
             os.remove(db_path)
         else:
             print(f"  Recovering {kept} left by an interrupted build")
         os.replace(kept, db_path)
-        # Fall through so the recovered DB is moved aside for this build.
+        # Fall through so the recovered DB is moved aside for this build. The
+        # symlink case used to `return` here, leaving the recovered DB sitting at
+        # the build target for `semsql make` to overwrite — and since the result
+        # recorded only the link, a failed build restored the dangling symlink
+        # and the good copy was gone. That is #634 for the third time: the rule
+        # is never trade a usable copy for an unusable one, on *every* branch.
 
     if os.path.islink(db_path):
         target = os.readlink(db_path)
         os.remove(db_path)
         return KeptTarget(link_target=target)
     if not os.path.lexists(db_path):
-        return KeptTarget()
+        return KeptTarget(link_target=recovered_link)
     if os.path.lexists(kept):
         # Only reached when the target is at least as good as the .prev.
         os.remove(kept)
     os.replace(db_path, kept)
-    return KeptTarget(prev_path=kept)
+    return KeptTarget(prev_path=kept, link_target=recovered_link)
 
 
 def _restore_build_target(db_path: str, kept: KeptTarget) -> None:
@@ -674,13 +709,14 @@ def _build_semsql_db(
     :param min_size: Smallest plausible size for a complete build.
     :param label: Ontology name for messages.
     :param cost_note: One line telling the user what this build will cost them.
-    :param reuse_on_failure: When the build cannot run *involuntarily* (no
-        ``semsql``, missing OWL, failed decompression), whether an existing DB is
-        still reported usable. GO passes False: its gate is strict because a
-        release mismatch silently miscategorises MF/CC terms as BiologicalProcess,
-        so a drifted go.db that cannot be rebuilt must be rejected. An explicit
-        ``KG_SEMSQL_BUILD=off`` is not covered by this — a deliberate opt-out
-        always reuses what is on disk.
+    :param reuse_on_failure: Whether an existing DB is still reported usable when
+        a demanded build does not produce one — whether it could not start (no
+        ``semsql``, missing OWL, failed decompression) or ran and failed. GO
+        passes False: its gate is strict because a release mismatch silently
+        miscategorises MF/CC terms as BiologicalProcess, so a drifted go.db that
+        cannot be rebuilt must be rejected however the rebuild fell over. An
+        explicit ``KG_SEMSQL_BUILD=off`` is not covered by this — a deliberate
+        opt-out always reuses what is on disk.
     :return: Whether a usable DB exists, and whether this call built it.
     """
 
@@ -720,8 +756,10 @@ def _build_semsql_db(
         print(f"Warning: failed to build {db_path}: {e}")
         _restore_build_target(db_path, kept)
         # A restored artifact is judged leniently: it may legitimately be a
-        # symlink the user supplied, which _usable_db rejects by design.
-        return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
+        # symlink the user supplied, which _usable_db rejects by design. But a
+        # caller that passed reuse_on_failure=False wants the *rebuild*, so the
+        # restored copy is refused here exactly as it is at the preflight exits.
+        return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
     except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
         # Ctrl-C during a build previously left the DB gone and a multi-GB .prev
         # orphaned. This cannot help against SIGKILL or an unhandled SIGTERM,
@@ -735,7 +773,7 @@ def _build_semsql_db(
     # report on what is actually at db_path now — not the pre-restore verdict.
     print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(db_path, kept)
-    return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
+    return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
 
 
 def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
@@ -761,7 +799,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, min_size):
+    if _present_db(db_path, min_size) and _db_is_readable(db_path):
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -992,7 +1030,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, min_size):
+    if _present_db(db_path, min_size) and _db_is_readable(db_path):
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1026,7 +1064,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
     _note_orphaned_prev(go_db_path)
-    if _present_db(go_db_path, _GO_DB_MIN_SIZE):
+    if _present_db(go_db_path, _GO_DB_MIN_SIZE) and _db_is_readable(go_db_path):
         # An existing, non-stub go.db is reused — unless it has drifted from the
         # source OWL's release (single-source invariant, fix 2 #604): a refreshed
         # go.owl must rebuild go.db, else the aspect map lags the transform output
@@ -1068,7 +1106,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
 
     owl_source = Path(EC_SOURCE) if EC_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, _EC_DB_MIN_SIZE):
+    if _present_db(db_path, _EC_DB_MIN_SIZE) and _db_is_readable(db_path):
         # EC's OWL carries no reliable release stamp, so there is no drift check
         # to make: an existing DB is reused.
         return DbEnsureResult(True)

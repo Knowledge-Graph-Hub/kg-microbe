@@ -350,6 +350,29 @@ class TestChebiBuild:
             ou.get_chebi_category("CHEBI:16828")
         assert Path(db_path).exists()
 
+    def test_strict_gate_is_not_swallowed_on_the_bulk_path_either(self, tmp_path, monkeypatch):
+        """
+        The production path supplies an adapter, which the test above never did.
+
+        _fix_node_categories passes get_chebi_adapter() into get_chebi_category
+        for every row. Once that became a lazy proxy, resolution moved inside the
+        broad `except Exception` around the lookups, so the strict abort was
+        swallowed per-row and every ChEBI node took the default category — while
+        the adapter=None test above stayed green throughout.
+        """
+        _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        _make_db(tmp_path, 251)
+        monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: ou.DbEnsureResult(True))
+        monkeypatch.setenv("KG_CHEBI_VERSION_CHECK", "strict")
+        ou.get_ontology_adapter.cache_clear()
+
+        try:
+            adapter = ou.get_chebi_adapter()  # unresolved proxy, as production has
+            with pytest.raises(ou.OntologyVersionMismatchError, match="ChEBI source version mismatch"):
+                ou.get_chebi_category("CHEBI:16828", adapter)
+        finally:
+            ou.get_ontology_adapter.cache_clear()
+
     def test_missing_semsql_keeps_existing_db(self, tmp_path, monkeypatch, capsys):
         """Without semsql, keep whatever DB is present instead of deleting it."""
         monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)

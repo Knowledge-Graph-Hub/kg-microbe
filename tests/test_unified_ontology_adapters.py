@@ -11,6 +11,7 @@ reintroduces the pattern.
 """
 
 import ast
+import re
 import time
 from pathlib import Path
 
@@ -38,6 +39,17 @@ def _iter_sources():
             yield from root.rglob("*.py")
 
 
+def _unparsable_sources():
+    """Return the set of scanned files the AST parser cannot handle."""
+    unparsable = set()
+    for path in _iter_sources():
+        try:
+            ast.parse(path.read_text(encoding="utf-8"))
+        except SyntaxError:
+            unparsable.add(str(path.relative_to(REPO_ROOT)))
+    return unparsable
+
+
 def _get_adapter_calls():
     """Yield (relpath, lineno, arg-node, enclosing-source) for get_adapter calls."""
     for path in _iter_sources():
@@ -59,41 +71,122 @@ def _get_adapter_calls():
             yield path.relative_to(REPO_ROOT), node.lineno, node.args[0], text
 
 
+def _string_constants(node):
+    """
+    Yield every string literal inside an expression.
+
+    Matching on the rendered source segment alone is defeatable by splitting the
+    filename across a concatenation — `RAW_DATA_DIR / ("go" + ".owl")` contains
+    no contiguous "go.owl" in either the source text or the AST dump, so it
+    passed the old check. Looking at the literals individually means the ".owl"
+    fragment is caught however the path is assembled.
+    """
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Constant) and isinstance(sub.value, str):
+            yield sub.value
+
+
+def _reaches_suffix(node, source, suffix, _seen=None):
+    """
+    Report whether an expression reaches a path with ``suffix``.
+
+    Follows three kinds of indirection within the file, so neither an
+    intermediate variable nor a helper launders the path: assignment to a plain
+    name, tuple-unpacking assignment, and a call to a locally defined function
+    (whose ``return`` expressions are then checked). ``_seen`` breaks cycles.
+    """
+    if any(suffix in const for const in _string_constants(node)):
+        return True
+    _seen = _seen if _seen is not None else set()
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Name) and sub.id not in _seen:
+            _seen.add(sub.id)
+            for assigned in _assignments_of_node(sub.id, source):
+                if _reaches_suffix(assigned, source, suffix, _seen):
+                    return True
+        if isinstance(sub, ast.Call):
+            called = getattr(sub.func, "id", None) or getattr(sub.func, "attr", None)
+            if called and called not in _seen:
+                _seen.add(called)
+                for returned in _returns_of(called, source):
+                    if _reaches_suffix(returned, source, suffix, _seen):
+                        return True
+    return False
+
+
+def _returns_of(func_name, source):
+    """Yield every returned expression of a function defined in this file."""
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == func_name:
+            for sub in ast.walk(node):
+                if isinstance(sub, ast.Return) and sub.value is not None:
+                    yield sub.value
+
+
 def _mentions_owl(node, source):
     """
     Report whether an argument expression reaches an ontology OWL.
 
-    Covers the four shapes the name-only check missed: an aliased import, a bare
-    literal path, an intermediate variable, and a path built from RAW_DATA_DIR.
+    Covers an aliased import, a bare literal path, an intermediate variable, a
+    path built from RAW_DATA_DIR, and — since the guard was shown to be
+    bypassable — a filename split across a string concatenation.
     """
     rendered = ast.dump(node)
     if any(f"'{const}'" in rendered for const in OWL_SOURCE_NAMES):
         return True
-    try:
-        segment = ast.get_source_segment(source, node) or ""
-    except Exception:  # noqa: BLE001 — best effort on odd nodes
-        segment = ""
-    if any(owl in segment for owl in OWL_FILENAMES):
-        return True
-    # An f-string interpolating a plain Name: resolve that name's assignments.
     for sub in ast.walk(node):
         if isinstance(sub, ast.Name):
             for assigned in _assignments_of(sub.id, source):
                 if any(f"'{c}'" in assigned or c in assigned for c in OWL_SOURCE_NAMES):
                     return True
-                if any(owl in assigned for owl in OWL_FILENAMES):
-                    return True
-    return False
+    return _reaches_suffix(node, source, ".owl")
+
+
+def _is_db_shaped_parameter(node, source):
+    """
+    Report whether the expression is a db-named function parameter.
+
+    ``get_adapter(f"sqlite:{db_path}")`` inside a helper whose caller supplies
+    ``db_path`` cannot be resolved to a literal by static walking. Rather than
+    trust any name containing "db" — which is what let an OWL through before —
+    this only fires for names that are genuinely parameters of a function in the
+    file, and only after the ``.owl`` check has already cleared the expression.
+    """
+    names = {sub.id for sub in ast.walk(node) if isinstance(sub, ast.Name)}
+    if not names:
+        return False
+    parameters = set()
+    for func in ast.walk(ast.parse(source)):
+        if isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            args = func.args
+            for arg in [*args.posonlyargs, *args.args, *args.kwonlyargs]:
+                parameters.add(arg.arg)
+    return all("db" in name for name in names) and names <= parameters
 
 
 def _assignments_of(name, source):
     """Yield the rendered right-hand side of every assignment to `name`."""
+    for value in _assignments_of_node(name, source):
+        yield ast.get_source_segment(source, value) or ast.dump(value)
+
+
+def _assignments_of_node(name, source):
+    """
+    Yield the right-hand side *node* of every assignment to `name`.
+
+    Includes tuple-unpacking targets (``local_db, _ = _ncbitaxon_db_paths()``),
+    which a plain-Name-only match silently skipped — leaving the bound name
+    unresolvable and the call unchecked.
+    """
     tree = ast.parse(source)
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == name:
-                    yield ast.get_source_segment(source, node.value) or ast.dump(node.value)
+                    yield node.value
+                elif isinstance(target, (ast.Tuple, ast.List)):
+                    if any(isinstance(el, ast.Name) and el.id == name for el in target.elts):
+                        yield node.value
 
 
 class TestNoUnguardedAdapters:
@@ -102,16 +195,73 @@ class TestNoUnguardedAdapters:
 
     def test_unparsable_files_are_known(self):
         """The scanner skips files it cannot parse; keep that set from growing."""
-        unparsable = set()
-        for path in _iter_sources():
-            try:
-                ast.parse(path.read_text(encoding="utf-8"))
-            except SyntaxError:
-                unparsable.add(str(path.relative_to(REPO_ROOT)))
-        assert unparsable <= {
-            # Pre-existing: uses 3.12+ nested same-quote f-strings.
+        assert _unparsable_sources() <= {
+            # Pre-existing: uses 3.12+ nested same-quote f-strings, so this is
+            # unparsable on 3.10/3.11 and parses fine on 3.12.
             "scripts/validate_knowledge_sources.py",
-        }, f"new unparsable files escape the adapter guard: {sorted(unparsable)}"
+        }, f"new unparsable files escape the adapter guard: {sorted(_unparsable_sources())}"
+
+    def test_unparsable_files_are_still_scanned_textually(self):
+        """
+        An allow-listed file must not be a free pass.
+
+        The AST scanner skips what it cannot parse, so anything added to
+        scripts/validate_knowledge_sources.py escaped every assertion here. It
+        cannot be parsed on 3.10/3.11 — that is why it is listed — so it is
+        scanned with a regex instead. Crude, but a hole that only exists on some
+        interpreter versions is worse.
+        """
+        offenders = []
+        for path in _iter_sources():
+            if str(path.relative_to(REPO_ROOT)) not in _unparsable_sources():
+                continue
+            text = path.read_text(encoding="utf-8")
+            for match in re.finditer(r"get_adapter\s*\(([^)]*)\)", text):
+                if ".owl" in match.group(1) or any(c in match.group(1) for c in OWL_SOURCE_NAMES):
+                    line = text[: match.start()].count("\n") + 1
+                    offenders.append(f"{path.relative_to(REPO_ROOT)}:{line}")
+        assert offenders == [], f"unparsable file hands an OWL to get_adapter: {offenders}"
+
+    @pytest.mark.parametrize(
+        "snippet",
+        [
+            # Codex's bypass: the filename split across a concatenation, so no
+            # contiguous "go.owl" appears in the source text or the AST dump.
+            'db_path = RAW_DATA_DIR / ("go" + ".owl")\nget_adapter(f"sqlite:{db_path}")',
+            # The same trick with an f-string.
+            'p = RAW_DATA_DIR / f"{\'go\'}.owl"\nget_adapter(f"sqlite:{p}")',
+            # Direct literal, and via one hop of indirection.
+            'get_adapter("sqlite:data/raw/go.owl")',
+            'x = "data/raw/chebi.owl"\ny = x\nget_adapter(f"sqlite:{y}")',
+            # The named constants.
+            'get_adapter(f"sqlite:{GO_SOURCE}")',
+        ],
+    )
+    def test_known_bypasses_are_caught(self, snippet):
+        """
+        Each of these defeated an earlier version of the guard.
+
+        A guard that can be walked around is worse than none, because it reads
+        as coverage. These are pinned so a future simplification cannot quietly
+        reopen the hole.
+        """
+        tree = ast.parse(snippet)
+        call = next(
+            n for n in ast.walk(tree) if isinstance(n, ast.Call) and getattr(n.func, "id", None) == "get_adapter"
+        )
+        assert _mentions_owl(call.args[0], snippet), f"guard missed: {snippet!r}"
+
+    def test_a_real_db_path_is_not_flagged(self):
+        """The guard must not cry wolf over the sanctioned .db spellings."""
+        for snippet in (
+            "get_adapter(f\"sqlite:{ontology_db_path('go')}\")",
+            'db = RAW_DATA_DIR / "go.db"\nget_adapter(f"sqlite:{db}")',
+        ):
+            tree = ast.parse(snippet)
+            call = next(
+                n for n in ast.walk(tree) if isinstance(n, ast.Call) and getattr(n.func, "id", None) == "get_adapter"
+            )
+            assert not _mentions_owl(call.args[0], snippet), f"false positive: {snippet!r}"
 
     def test_no_module_maps_prefixes_to_owl_sources(self):
         """
@@ -146,13 +296,33 @@ class TestNoUnguardedAdapters:
         """
         Every direct get_adapter call must name a .db, not an ontology source.
 
-        Previously this allow-listed whole *files*, so any new call inside one of
-        them — handed anything at all — went unchecked.
+        This once allow-listed whole *files*, so any new call inside one of them
+        went unchecked. The replacement then keyed on the argument's source text
+        *containing* "db_path", which is just as weak in the other direction:
+        naming the variable db_path and pointing it at an OWL bought a pass. The
+        check now follows the expression to a real ".db" literal, and separately
+        insists it does not also reach an ".owl".
         """
         suspicious = []
         for path, lineno, arg, source in _get_adapter_calls():
             segment = ast.get_source_segment(source, arg) or ""
-            if ".db" in segment or "db_path" in segment or "local_db" in segment:
+            # Reaching an OWL disqualifies unconditionally, whatever the argument
+            # is named. This conjunct is the part that used to be missing: the
+            # name-shaped check alone accepted `db_path = RAW_DATA_DIR /
+            # ("go" + ".owl")`, which _mentions_owl now follows and rejects.
+            if _mentions_owl(arg, source):
+                suspicious.append(f"{path}:{lineno} -> {segment}")
+                continue
+            if _reaches_suffix(arg, source, ".db"):
+                continue
+            # ontology_db_path() is the sanctioned indirection: pure path
+            # arithmetic over the four DB names, which cannot yield an OWL.
+            if "ontology_db_path" in segment:
+                continue
+            # A bare name that is a function parameter cannot be resolved to a
+            # literal here. Accepting a db-shaped parameter name is a heuristic,
+            # but it is only reached once the .owl check above has passed.
+            if _is_db_shaped_parameter(arg, source):
                 continue
             suspicious.append(f"{path}:{lineno} -> {segment}")
         assert suspicious == [], f"get_adapter calls not clearly pointing at a .db: {suspicious}"

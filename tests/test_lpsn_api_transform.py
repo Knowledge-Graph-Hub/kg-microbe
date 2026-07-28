@@ -116,7 +116,9 @@ def test_species_row_emits_publication_edges(api_transform):
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
     targets = {
-        e["object"] for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
+        e["object"]
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
     }
     assert "doi:10.1099/00207713-19-1-1" in targets
     assert "doi:10.1099/ijsem.0.999999" in targets
@@ -170,7 +172,8 @@ def test_absent_fields_emit_no_edges(api_transform):
     pubs = [
         e
         for e in edges
-        if e["subject"] == f"{LPSN_PREFIX}1005" and (e["object"].startswith("doi:") or e["object"].startswith("PMID:"))
+        if e["subject"] == f"{LPSN_PREFIX}1005"
+        and (e["object"].startswith("doi:") or e["object"].startswith("PMID:"))
     ]
     assert pubs == []
 
@@ -258,7 +261,9 @@ def test_molecules_emit_insdc_close_match_edges(api_transform):
     assert targets == {"INSDC:M87049", "INSDC:AB030918"}
     # Dedup guard: the duplicate M87049 in the fixture must appear
     # exactly once, not twice.
-    m87049 = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["object"] == "INSDC:M87049"]
+    m87049 = [
+        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["object"] == "INSDC:M87049"
+    ]
     assert len(m87049) == 1
 
 
@@ -275,5 +280,9 @@ def test_empty_molecules_emit_no_insdc_edges(api_transform):
     """Record 1005 with molecules=[] emits no INSDC edges (or stub nodes)."""
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
-    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")]
+    hits = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")
+    ]
     assert hits == []

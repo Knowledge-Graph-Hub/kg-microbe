@@ -9,6 +9,7 @@ exists and skips regeneration. These tests pin the fix.
 
 import csv
 import os
+import time
 from pathlib import Path
 from unittest import mock
 
@@ -314,3 +315,56 @@ class TestCallSitesUseTheGuardedHelpers:
 
         assert not stale.exists(), "a day-old partial must be swept"
         assert fresh.exists(), "a concurrent writer's temp must be left alone"
+
+
+class TestMarkerAndSweeperAdversarial:
+
+    """Round-4: the completion marker and the stale-partial sweeper."""
+
+    def test_marker_does_not_certify_a_replaced_file(self, tmp_path):
+        """
+        An empty marker vouched for whatever later occupied the path.
+
+        So a header-only file dropped in after a complete run was re-certified
+        as complete — the poisoning the marker exists to prevent, reintroduced
+        by the marker itself.
+        """
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\nx\ty\n")
+        assert cache_is_complete(target)
+
+        target.write_text("a\tb\n")  # replaced out of band, header only
+        assert not cache_is_complete(target), "the marker must not vouch for a different file"
+
+    def test_marker_survives_an_ordinary_reread(self, tmp_path):
+        """Validation must not be so strict that a normal cache re-reads as incomplete."""
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\n")  # legitimately empty result
+        assert cache_is_complete(target)
+        assert cache_is_complete(target), "repeated checks must be stable"
+
+    @pytest.mark.parametrize("skew_days", [2, -2])
+    def test_sweeper_ignores_target_mtime_skew(self, tmp_path, skew_days):
+        """
+        The cutoff derives from wall clock, not the target's mtime.
+
+        Deriving it from the target meant a future timestamp swept a live
+        writer's temp, and an old one left stranded partials forever.
+        """
+        target = tmp_path / "cache.tsv"
+        target.write_text("seed\n")
+        live = tmp_path / "cache.tsv.999.0.partial"
+        live.write_text("another writer, still going")
+        orphan = tmp_path / "cache.tsv.998.0.partial"
+        orphan.write_text("stranded by a SIGKILL")
+        os.utime(orphan, (0, 0))
+
+        skew = time.time() + skew_days * 86400
+        os.utime(target, (skew, skew))
+        with atomic_write(target) as handle:
+            handle.write("done\n")
+
+        assert live.exists(), "a concurrent writer's temp must never be swept"
+        assert not orphan.exists(), "a long-dead partial must be swept regardless of skew"

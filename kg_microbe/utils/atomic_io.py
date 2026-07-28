@@ -3,6 +3,7 @@
 import csv
 import itertools
 import os
+import time
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Union
@@ -53,11 +54,21 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
             yield handle
         os.replace(tmp, path)
         committed = True
-        if mark_complete:
+        marker = Path(f"{path}.complete")
+        if mark_complete or marker.exists():
             # A cache can be legitimately empty. Row count alone cannot tell
             # "correctly produced nothing" from "truncated", so completion is
-            # recorded explicitly rather than inferred from content.
-            Path(f"{path}.complete").write_text("")
+            # recorded explicitly rather than inferred from content. The marker
+            # records the size it certifies: an empty marker vouched for
+            # whatever later occupied the path, so a header-only file dropped in
+            # afterwards was re-certified as complete.
+            #
+            # It is refreshed on *any* atomic rewrite, not only when the caller
+            # asks to mark. Legitimate post-processing follows some of these
+            # writes — annotate() commits a result and drop_duplicates then
+            # rewrites it — and a stale size would condemn a perfectly good
+            # cache to be regenerated on every future run.
+            marker.write_text(str(path.stat().st_size))
         _sweep_stale_partials(path)
     finally:
         if not committed:
@@ -116,7 +127,10 @@ def _sweep_stale_partials(path: Path) -> None:
     :param path: The final destination path whose siblings to sweep.
     """
     try:
-        cutoff = os.path.getmtime(path) - _STALE_PARTIAL_SECONDS
+        # Wall clock, not the target's mtime: a target with a future timestamp
+        # made the cutoff future too and swept a live writer's temp, while an
+        # old target left genuinely stranded partials in place forever.
+        cutoff = time.time() - _STALE_PARTIAL_SECONDS
         for sibling in path.parent.glob(f"{path.name}.*.partial"):
             try:
                 if os.path.getmtime(sibling) < cutoff:
@@ -145,6 +159,14 @@ def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
     path = Path(path)
     if not path.exists():
         return False
-    if Path(f"{path}.complete").exists():
-        return True
+    marker = Path(f"{path}.complete")
+    if marker.exists():
+        try:
+            certified = marker.read_text().strip()
+            # An unsized marker predates this check; accept it, but a sized one
+            # must match the file it claims to certify.
+            if not certified or int(certified) == path.stat().st_size:
+                return True
+        except (OSError, ValueError):
+            return False
     return has_data_rows(path, delimiter)

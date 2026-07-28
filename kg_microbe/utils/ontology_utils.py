@@ -311,7 +311,10 @@ def _usable_db(db_path: str, min_size: int) -> bool:
     """
     if os.path.islink(db_path):
         return False
-    return _classify_db(db_path, min_size, deep=True) == DB_OK
+    # Keep-states rather than == DB_OK: a build that finished correctly but was
+    # opened by another process classifies BUSY, and rejecting it discarded the
+    # new database and restored the stale one over it.
+    return _classify_db(db_path, min_size, deep=True) in _DB_KEEP_STATES
 
 
 def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool:
@@ -370,6 +373,12 @@ DB_OK = "ok"
 # process holding a write lock is not corruption, and treating it as such meant
 # moving a live writer's database aside and rebuilding over it.
 _DB_KEEP_STATES = (DB_OK, DB_BUSY)
+
+# States that positively justify throwing a file away. BUSY is deliberately
+# absent: a locked database cannot be verified, and "cannot verify" must never
+# be treated as "worthless" — that mistake unlinked a live DB and discarded a
+# healthy fresh build.
+_DB_DISCARDABLE_STATES = (DB_ABSENT, DB_TOO_SMALL, DB_CORRUPT)
 
 # Short, so a locked DB is classified as BUSY promptly rather than after
 # SQLite's multi-second default busy wait.
@@ -652,7 +661,12 @@ def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
         # deep check: the shallow probe reads only the schema page, and a target
         # corrupt in deeper pages would otherwise pass as "at least as good" and
         # take the good .prev's place (round-3 finding 1).
-        if prev_usable and _classify_db(db_path, min_size, deep=True) != DB_OK:
+        # Only a *positively bad* verdict may discard the target. Comparing
+        # `!= DB_OK` treated BUSY as bad, so a database another process had open
+        # was unlinked — reintroducing, at the deep check, exactly the data loss
+        # the shallow path was restructured to prevent. "Cannot verify" is not
+        # "worthless".
+        if prev_usable and _classify_db(db_path, min_size, deep=True) in _DB_DISCARDABLE_STATES:
             print(
                 f"  Keeping {kept}: it is usable and {db_path} did not pass a deep check. "
                 "Discarding the target instead of trading a good copy for a doubtful one."

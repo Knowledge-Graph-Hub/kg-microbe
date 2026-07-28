@@ -528,3 +528,102 @@ class TestDegradesGracefully:
         monkeypatch.delenv("KG_SEMSQL_BUILD", raising=False)
         assert ou._ensure_ncbitaxon_db(str(db))
         assert len(calls) == 1
+
+
+class TestLockedDatabasesAreNotDestroyed:
+
+    """
+    A database another process holds open is not damaged (round-4 findings).
+
+    BUSY was handled correctly on the shallow path and then treated as failure
+    at both deep-check sites, so `PRAGMA quick_check` on a locked DB returned
+    BUSY, every caller compared `!= DB_OK`, and a live database was unlinked
+    while a healthy fresh build was thrown away. "Cannot verify" is not
+    "worthless".
+    """
+
+    @staticmethod
+    def _real_db(path, rows=200, tag="x"):
+        """Write a genuinely populated SQLite DB."""
+        conn = sqlite3.connect(str(path))
+        conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, value TEXT)")
+        conn.executemany(
+            "INSERT INTO statements VALUES (?,?,?)",
+            [(f"{tag}{i}", "p", "v" * 100) for i in range(rows)],
+        )
+        conn.commit()
+        conn.close()
+        return path
+
+    @staticmethod
+    def _hold_write_lock(path):
+        """Open an exclusive transaction, as a concurrent writer would."""
+        conn = sqlite3.connect(str(path))
+        conn.execute("BEGIN EXCLUSIVE")
+        conn.execute("INSERT INTO statements VALUES ('a','b','c')")
+        return conn
+
+    def test_deep_check_reports_busy_not_corrupt(self, tmp_path):
+        """The distinction the fix rests on."""
+        db = self._real_db(tmp_path / "n.db")
+        conn = self._hold_write_lock(db)
+        try:
+            assert ou._classify_db(str(db), 8, deep=True) == ou.DB_BUSY
+        finally:
+            conn.rollback()
+            conn.close()
+
+    def test_a_locked_target_is_moved_aside_not_unlinked(self, tmp_path, tiny_threshold):
+        """A live DB must be preserved, exactly as an unlocked one would be."""
+        db = self._real_db(tmp_path / "ncbitaxon.db", tag="TARGET")
+        self._real_db(tmp_path / "ncbitaxon.db.prev", rows=100, tag="PREV")
+        original = db.read_bytes()
+        conn = self._hold_write_lock(db)
+        try:
+            ou._clear_build_target(str(db), 8)
+        finally:
+            conn.rollback()
+            conn.close()
+        survived = [p for p in tmp_path.iterdir() if p.is_file() and p.read_bytes() == original]
+        assert survived, "the live database's content must survive somewhere"
+
+    def test_a_locked_fresh_build_is_not_discarded(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """A build that finished correctly must not be thrown away for being open."""
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        self._real_db(db, rows=100, tag="OLD")
+        stale = db.read_bytes()
+        holder = {}
+
+        def build(cmd, **kwargs):
+            """Produce a healthy build that another process immediately opens."""
+            self._real_db(db, rows=400, tag="NEW")
+            holder["conn"] = self._hold_write_lock(db)
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", build)
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-01-01")  # drift → rebuild
+        try:
+            result = ou._ensure_ncbitaxon_db(str(db))
+        finally:
+            if "conn" in holder:
+                holder["conn"].rollback()
+                holder["conn"].close()
+
+        assert result.built, "a completed build must be reported as built"
+        assert db.read_bytes() != stale, "the new build must not be replaced by the old DB"
+
+    def test_deep_corruption_still_cannot_displace_a_good_prev(self, tmp_path, tiny_threshold):
+        """The round-3 protection must survive the round-4 fix."""
+        db = self._real_db(tmp_path / "ncbitaxon.db")
+        size = db.stat().st_size
+        with open(db, "r+b") as handle:  # corrupt past the schema page
+            handle.seek(size // 2)
+            handle.write(b"\xff" * 8192)
+        prev = self._real_db(tmp_path / "ncbitaxon.db.prev", rows=100, tag="GOOD")
+        good = prev.read_bytes()
+
+        kept = ou._clear_build_target(str(db), 8)
+        ou._restore_build_target(str(db), kept)
+
+        assert db.exists() and db.read_bytes() == good, "the good copy must be what remains"

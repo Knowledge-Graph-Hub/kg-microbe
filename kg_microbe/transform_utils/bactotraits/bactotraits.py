@@ -38,6 +38,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
@@ -237,10 +238,18 @@ class BactoTraitsTransform(Transform):
                 for row in mapping_reader:
                     bacdive_ncbitaxon_dict[row["Bacdive_ID"]] = row[NCBITAXON_ID_COLUMN]
         else:
-            with open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file, open(mapping_file, "w") as mapping_file:
+            # Atomic: this cache's only guard is the .exists() above, so a run
+            # that dies part-way through the loop would otherwise leave a
+            # truncated mapping that every later run silently accepts as
+            # complete — losing the bacdive→ncbitaxon links for every row after
+            # the failure point.
+            with (
+                open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file,
+                atomic_write(mapping_file) as mapping_handle,
+            ):
                 # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
                 bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
-                mapping_writer = csv.writer(mapping_file, delimiter="\t")
+                mapping_writer = csv.writer(mapping_handle, delimiter="\t")
                 mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
                 for row in bacdive_reader:
                     collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]

@@ -21,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_LABEL_COLUMN,
     TRAITS_DATASET_LABEL_COLUMN,
 )
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.ontology_utils import get_ontology_adapter, ontology_db_path
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -146,9 +147,12 @@ def annotate(
 
         # unique_terms_annotated.update(unique_terms_annotated_not_whole_match)
 
+    # Atomic: madin_etal guards these with a bare `.is_file()`, so an interrupted
+    # annotation run would otherwise leave a partial TSV that every later run
+    # accepts as a finished NER result.
     with (
-        open(str(outfile), "w", newline="") as file_1,
-        open(str(outfile_for_unmatched), "w", newline="") as file_2,
+        atomic_write(str(outfile), "w", newline="") as file_1,
+        atomic_write(str(outfile_for_unmatched), "w", newline="") as file_2,
     ):
         writer_1 = csv.writer(file_1, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_2 = csv.writer(file_2, delimiter="\t", quoting=csv.QUOTE_NONE)

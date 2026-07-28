@@ -19,6 +19,7 @@ from kg_microbe.transform_utils.constants import (
     WALLEN_ETAL_TMP_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # Constants
@@ -108,7 +109,9 @@ class WallenEtAlTransform(Transform):
 
             # Write to tmp file
             os.makedirs(WALLEN_ETAL_TMP_DIR, exist_ok=True)
-            with open(WALLEN_ETAL_TMP_FILEPATH, mode="w", newline="") as file:
+            # Atomic: guarded only by the .exists() above, so a truncated write
+            # would be treated as a complete label cache on every later run.
+            with atomic_write(WALLEN_ETAL_TMP_FILEPATH, mode="w", newline="") as file:
                 tmp_writer = csv.writer(file, delimiter="\t")
                 tmp_writer.writerow(["orig_node", "entity_uri"])
                 for key, value in self.microbe_labels_dict.items():

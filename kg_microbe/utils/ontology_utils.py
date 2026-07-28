@@ -1033,6 +1033,25 @@ class _LazyOntologyAdapter:
         return True
 
 
+def resolve_adapter(adapter):
+    """
+    Force a lazily-resolved adapter to resolve now; pass anything else through.
+
+    Use this at the top of a function that is about to open an output file or
+    start a long loop. Resolution is otherwise deferred to the first attribute
+    access, which can be well after work has begun — and a fatal failure there
+    aborts mid-write. The atomic-write helper stops that from leaving a poisoned
+    artifact, but surfacing the failure before any work starts is cheaper and
+    reads better in a log.
+
+    :param adapter: A lazy proxy, a real OAK adapter, or None.
+    :return: The resolved adapter (or the argument unchanged).
+    """
+    if isinstance(adapter, _LazyOntologyAdapter):
+        return adapter.resolve()
+    return adapter
+
+
 def get_ncbitaxon_adapter():
     """Return a lazily-resolved guarded NCBITaxon adapter. :return: adapter proxy."""
     return _LazyOntologyAdapter("ncbitaxon")

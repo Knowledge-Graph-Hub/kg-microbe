@@ -1574,28 +1574,25 @@ class ChemicalMappingConsolidator:
         print(f"  Loaded {added} complex-ingredient entries")
 
     def _get_chebi_adapter(self):
-        """Get or create ChEBI adapter."""
+        """
+        Get or create the guarded ChEBI adapter.
+
+        No try/except: the accessor resolves lazily so this cannot fail here, and
+        an unusable chebi.db is a FatalOntologyError on first lookup. Degrading
+        used to mean every ChEBI label and synonym was silently dropped — and
+        because this script writes its result back to the same SSSOM file it
+        seeds the next run from, a degraded run permanently strips synonyms from
+        the baseline.
+        """
         if self.chebi_adapter is None:
-            try:
-                from oaklib import get_adapter
-
-                from kg_microbe.transform_utils.constants import CHEBI_SOURCE
-
-                self.chebi_adapter = get_chebi_adapter()
-                print("  Initialized ChEBI adapter")
-            except Exception as e:
-                print(f"  Warning: Could not initialize ChEBI adapter: {e}")
-                print("  ChEBI synonyms will not be added")
+            self.chebi_adapter = get_chebi_adapter()
+            print("  Initialized ChEBI adapter")
         return self.chebi_adapter
 
     def enrich_with_chebi_synonyms(self):
         """Add ChEBI ontology synonyms to each chemical."""
         print("\nEnriching with ChEBI synonyms...")
         adapter = self._get_chebi_adapter()
-
-        if not adapter:
-            print("  Skipped - ChEBI adapter not available")
-            return
 
         enriched_count = 0
         synonym_count = 0
@@ -1639,9 +1636,6 @@ class ChemicalMappingConsolidator:
         """
         print("\nEnriching CHEBI xref labels via OAK...")
         adapter = self._get_chebi_adapter()
-        if not adapter:
-            print("  Skipped - ChEBI adapter not available")
-            return
 
         primaries = set(self.chemicals.keys())
         records_augmented = 0

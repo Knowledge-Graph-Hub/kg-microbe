@@ -65,7 +65,7 @@ def test_mismatch_raises_in_strict_mode(tmp_path, monkeypatch):
     """Divergent go.owl / go.json releases fail loudly under strict."""
     owl = _write_go_pair(tmp_path, "2026-05-19", "2026-04-01")
     monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
-    with pytest.raises(RuntimeError, match="GO source version mismatch"):
+    with pytest.raises(ou.OntologyVersionMismatchError, match="GO source version mismatch"):
         ou.assert_go_version_alignment(strict=True)
 
 

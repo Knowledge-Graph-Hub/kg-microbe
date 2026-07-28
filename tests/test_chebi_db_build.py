@@ -142,14 +142,14 @@ class TestChebiGate:
     def test_mismatch_raises_in_strict_mode(self, tmp_path, monkeypatch):
         """Explicit strict escalates the same mismatch to a failure."""
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
-        with pytest.raises(RuntimeError, match="ChEBI source version mismatch"):
+        with pytest.raises(ou.OntologyVersionMismatchError, match="ChEBI source version mismatch"):
             ou.assert_chebi_version_alignment(_make_db(tmp_path, 251), strict=True)
 
     def test_env_var_escalates(self, tmp_path, monkeypatch):
         """KG_CHEBI_VERSION_CHECK=strict flips the default."""
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         monkeypatch.setenv("KG_CHEBI_VERSION_CHECK", "strict")
-        with pytest.raises(RuntimeError):
+        with pytest.raises(ou.OntologyVersionMismatchError):
             ou.assert_chebi_version_alignment(_make_db(tmp_path, 251))
 
     def test_unreadable_stamp_is_a_noop(self, tmp_path, monkeypatch, capsys):
@@ -346,7 +346,7 @@ class TestChebiBuild:
         monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: ou.DbEnsureResult(True))
         monkeypatch.setenv("KG_CHEBI_VERSION_CHECK", "strict")
 
-        with pytest.raises(RuntimeError, match="ChEBI source version mismatch"):
+        with pytest.raises(ou.OntologyVersionMismatchError, match="ChEBI source version mismatch"):
             ou.get_chebi_category("CHEBI:16828")
         assert Path(db_path).exists()
 
@@ -440,7 +440,7 @@ class TestAdapterEntryPoint:
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: False)
         monkeypatch.setattr("oaklib.get_adapter", lambda spec: pytest.fail("must not open a missing DB"))
-        with pytest.raises(RuntimeError, match="No usable chebi SemSQL DB"):
+        with pytest.raises(ou.OntologyDbUnavailableError, match="No usable chebi SemSQL DB"):
             ou.get_ontology_adapter("chebi")
 
     def test_standalone_category_lookup_degrades_instead_of_raising(self, tmp_path, monkeypatch):

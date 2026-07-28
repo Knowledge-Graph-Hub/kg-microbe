@@ -73,17 +73,18 @@ class BaktaTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
 
         # Load GO ontology for aspect mapping
-        # Try to use GO adapter, but handle gracefully if not available
-        try:
-            # Always the guarded accessor. The old `if go.db exists: get_adapter(...)`
-            # branch was the live one on any populated checkout, and it bypassed the
-            # size floor, the drift rebuild and the version gate — accepting a
-            # 0-byte go.db, the exact failure _GO_DB_MIN_SIZE exists to catch.
-            self.go_adapter = get_go_adapter()
-        except Exception as e:
-            logger.warning(f"Could not load GO ontology: {e}")
-            logger.warning("GO term aspect mapping will default to molecular_function")
-            self.go_adapter = None
+        # Always the guarded accessor. The old `if go.db exists: get_adapter(...)`
+        # branch was the live one on any populated checkout, and it bypassed the
+        # size floor, the drift rebuild and the version gate — accepting a
+        # 0-byte go.db, the exact failure _GO_DB_MIN_SIZE exists to catch.
+        #
+        # Not wrapped: the accessor resolves lazily, so construction cannot fail,
+        # and an unusable GO DB is a FatalOntologyError on first use — degrading
+        # to `self.go_adapter = None` here would have handed get_go_aspect the
+        # None it defaults to molecular_function for, i.e. the silent
+        # miscategorisation of every biological-process and cellular-component
+        # term this accessor exists to prevent.
+        self.go_adapter = get_go_adapter()
 
         # Load SAMN to NCBITaxon mapping
         mapping_file = BAKTA_DIR / "samn_to_ncbitaxon.tsv"

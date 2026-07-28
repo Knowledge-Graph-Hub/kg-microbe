@@ -302,3 +302,113 @@ class TestLazyResolution:
     def test_chebi_alias_still_resolves(self, monkeypatch):
         """ChebiDbUnavailableError is kept as an alias for existing callers."""
         assert ou.ChebiDbUnavailableError is ou.OntologyDbUnavailableError
+
+
+class TestFatalErrorsAreNotSwallowed:
+
+    """
+    A fatal ontology failure must survive every broad handler in the tree.
+
+    Lazy resolution puts the failure wherever the transform first touches the
+    adapter, which is almost always inside a `try` whose `except Exception` was
+    written for a per-item lookup miss. Patching those handlers one at a time
+    was tried and regressed three times; deriving from BaseException makes it
+    structural. Each test below drives the *real* production helper, not a mock
+    of it.
+    """
+
+    class _Boom:
+
+        """A proxy whose resolution raises, standing in for an unusable DB."""
+
+        def __getattr__(self, name):
+            """Fail on any public attribute, as a failed resolution would."""
+            if name.startswith("_"):
+                raise AttributeError(name)
+            raise ou.OntologyVersionMismatchError("strict version mismatch")
+
+    def test_fatal_errors_are_not_exceptions(self):
+        """The whole mechanism rests on this: `except Exception` must not match."""
+        assert not issubclass(ou.FatalOntologyError, Exception)
+        assert issubclass(ou.OntologyDbUnavailableError, ou.FatalOntologyError)
+        assert issubclass(ou.OntologyVersionMismatchError, ou.FatalOntologyError)
+
+    def test_chebi_category_bulk_path_does_not_degrade(self):
+        """
+        get_chebi_category's broad handler swallowed the bulk path's abort.
+
+        The comment claiming "the bulk transform path passes an adapter it built
+        itself, so there the failure stays loud" was false once that adapter
+        became a lazy proxy: resolution moved inside the try, and every ChEBI row
+        fell back to the default category.
+        """
+        with pytest.raises(ou.FatalOntologyError):
+            ou.get_chebi_category("CHEBI:50906", self._Boom())
+
+    def test_chebi_category_survives_pandas_apply(self):
+        """The production path is df.apply, which must not absorb it either."""
+        import pandas as pd
+
+        with pytest.raises(ou.FatalOntologyError):
+            pd.Series([f"CHEBI:{i}" for i in range(5)]).apply(lambda c: ou.get_chebi_category(c, self._Boom()))
+
+    def test_bakta_go_aspect_does_not_default(self):
+        """Bakta's handler cached molecular_function for every term instead."""
+        from kg_microbe.transform_utils.bakta.utils import get_go_aspect
+
+        cache = {}
+        with pytest.raises(ou.FatalOntologyError):
+            get_go_aspect("GO:0008150", self._Boom(), cache)
+        assert cache == {}, "a fatal failure must not poison the aspect cache"
+
+    def test_get_label_does_not_return_a_bare_id(self):
+        """
+        A strict-gate abort must not degrade to a bare numeric ID.
+
+        oak_utils.get_label re-raised OntologyDbUnavailableError but not the
+        strict-gate abort, which was a plain RuntimeError — so a strict run
+        emitted bare numeric IDs as labels for every term.
+        """
+        from kg_microbe.utils.oak_utils import get_label
+
+        with pytest.raises(ou.FatalOntologyError):
+            get_label(self._Boom(), "GO:0008150")
+
+    def test_missing_db_still_degrades_for_standalone_chebi_calls(self, monkeypatch):
+        """
+        The one deliberate degrade must survive.
+
+        An ad-hoc call with no adapter and no DB falls back to the default
+        category rather than aborting.
+        """
+        monkeypatch.setattr(ou, "get_ontology_adapter", _raiser(ou.OntologyDbUnavailableError("no db")))
+        assert ou.get_chebi_category("CHEBI:50906") == "biolink:ChemicalEntity"
+
+    def test_strict_abort_is_not_degraded_even_standalone(self, monkeypatch):
+        """...but a version mismatch is a deliberate abort, not a missing DB."""
+        monkeypatch.setattr(ou, "get_ontology_adapter", _raiser(ou.OntologyVersionMismatchError("drifted")))
+        with pytest.raises(ou.OntologyVersionMismatchError):
+            ou.get_chebi_category("CHEBI:50906")
+
+    def test_proxy_is_truthy_without_resolving(self, monkeypatch):
+        """
+        Truthiness must be deliberate, and must not trigger a build.
+
+        `if not adapter:` guards were dead: implicit dunder lookup goes to the
+        type, bypassing __getattr__, so the proxy was truthy by accident. Make
+        it truthy on purpose, and never resolve to answer.
+        """
+        calls = []
+        monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: calls.append(a) or True)
+        assert bool(ou.get_chebi_adapter()) is True
+        assert calls == [], "truthiness must not start a multi-hour build"
+
+
+def _raiser(exc):
+    """Return a callable that raises ``exc`` (BaseException-safe side_effect)."""
+
+    def _raise(*args, **kwargs):
+        """Raise the configured error."""
+        raise exc
+
+    return _raise

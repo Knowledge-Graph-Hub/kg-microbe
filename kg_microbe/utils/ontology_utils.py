@@ -164,7 +164,7 @@ def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
             "(poetry run kg download), then rebuild go.db."
         )
         if strict:
-            raise RuntimeError(msg)
+            raise OntologyVersionMismatchError(msg)
         print(f"WARNING: {msg}")
 
 
@@ -263,7 +263,7 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
             "while data/raw/ncbitaxon.db symlinks to it."
         )
         if strict:
-            raise RuntimeError(msg)
+            raise OntologyVersionMismatchError(msg)
         print(f"WARNING: {msg}")
 
 
@@ -396,13 +396,55 @@ def _read_head(path: Path, nbytes: int) -> Optional[str]:
     return None
 
 
-class OntologyDbUnavailableError(RuntimeError):
+class FatalOntologyError(BaseException):
+
+    """
+    An ontology is unusable and no per-item fallback is honest.
+
+    Deliberately **not** an ``Exception``. Adapters resolve lazily, so the first
+    attribute access — and therefore the failure — lands wherever the transform
+    happens to touch the adapter first, which is almost always inside a ``try``
+    whose ``except Exception`` was written to absorb a per-item lookup miss. A
+    missing DB is not a lookup miss: swallowing it means every ChEBI node gets
+    the default category, every GO term becomes molecular_function, every label
+    becomes a bare numeric ID, and the run exits 0 with a systematically wrong
+    graph. Those handlers are individually reasonable, and patching each one was
+    tried — it regressed three times, because the next broad handler someone
+    writes re-opens the hole.
+
+    Inheriting ``BaseException`` makes that structural instead of a convention:
+    no ``except Exception``, here or in oaklib/pandas, can turn a fatal ontology
+    failure into wrong data. ``finally`` blocks still run, so cleanup is intact.
+
+    One constraint this imposes: a ``BaseException`` raised inside a
+    ``multiprocessing.Pool`` worker is not caught by the worker loop and can hang
+    the pool. The metatraits pool resolves NCBITaxon eagerly in the parent
+    (``_ensure_ncbitaxon_db_ready``) through its own module-local adapter, so no
+    worker ever resolves one of these proxies — keep it that way.
+    """
+
+
+class OntologyDbUnavailableError(FatalOntologyError):
 
     """
     No usable SemSQL DB could be produced for an ontology.
 
-    Distinct from the version gates' RuntimeError so callers can degrade on the
-    former without also swallowing a deliberate ``*_VERSION_CHECK=strict`` abort.
+    Distinct from :class:`OntologyVersionMismatchError` so callers can degrade on
+    "no DB at all" without also swallowing a deliberate ``*_VERSION_CHECK=strict``
+    abort — ``get_chebi_category`` relies on exactly that distinction.
+    """
+
+
+class OntologyVersionMismatchError(FatalOntologyError):
+
+    """
+    A DB and the OWL it must track are stamped with different releases.
+
+    Raised only by the ``assert_*_version_alignment`` gates under ``strict``. The
+    whole point is to abort rather than emit a graph built from two releases, so
+    this must not be catchable as ``Exception``: under the old plain
+    ``RuntimeError`` a strict ChEBI abort was swallowed per-row by
+    ``get_chebi_category`` and a strict GO abort by ``oak_utils.get_label``.
     """
 
 
@@ -681,7 +723,7 @@ def assert_chebi_version_alignment(db_path: str, strict: Optional[bool] = None) 
             "the OWL (rm data/raw/chebi.db; the next run rebuilds via `semsql make`)."
         )
         if strict:
-            raise RuntimeError(msg)
+            raise OntologyVersionMismatchError(msg)
         print(f"WARNING: {msg}")
 
 
@@ -972,6 +1014,23 @@ class _LazyOntologyAdapter:
         if name.startswith("_"):
             raise AttributeError(name)
         return getattr(self.resolve(), name)
+
+    def __bool__(self) -> bool:
+        """
+        Report truthy without resolving.
+
+        Implicit dunder lookup goes to the type, not ``__getattr__``, so without
+        this the proxy was truthy by default and ``if not adapter:`` guards
+        written for the old "returns None when unavailable" contract silently
+        never fired. Answering True is the honest contract now: an unavailable
+        ontology raises :class:`OntologyDbUnavailableError` on first use rather
+        than yielding a falsy adapter, so such guards should be deleted, not
+        satisfied. Resolving here instead would mean a truthiness test could
+        start a multi-hour build.
+
+        :return: Always True.
+        """
+        return True
 
 
 def get_ncbitaxon_adapter():

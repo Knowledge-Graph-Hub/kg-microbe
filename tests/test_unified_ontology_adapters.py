@@ -11,6 +11,7 @@ reintroduces the pattern.
 """
 
 import ast
+import time
 from pathlib import Path
 
 import pytest
@@ -412,3 +413,59 @@ def _raiser(exc):
         raise exc
 
     return _raise
+
+
+class TestResolutionIsSerialised:
+
+    """lru_cache does not lock across the wrapped call (Codex F7)."""
+
+    def test_concurrent_first_use_runs_one_ensure(self, monkeypatch):
+        """
+        Two threads missing the cache together must not both build.
+
+        Without the per-ontology lock both entered _ensure_and_gate and raced
+        through .prev move-aside, decompression and `semsql make` on the same
+        paths. The barrier below makes that race deterministic rather than
+        occasional.
+        """
+        import threading
+
+        barrier = threading.Barrier(2, timeout=10)
+        concurrent = []
+        active = []
+        active_lock = threading.Lock()
+
+        def slow_ensure(ontology, db_path):
+            """Record whether another thread is inside at the same time."""
+            with active_lock:
+                active.append(1)
+                concurrent.append(len(active))
+            time.sleep(0.05)
+            with active_lock:
+                active.pop()
+            return True
+
+        monkeypatch.setattr(ou, "_ensure_and_gate", slow_ensure)
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: object())
+        ou.get_ontology_adapter.cache_clear()
+
+        def worker():
+            """Resolve from a thread, all starting together."""
+            barrier.wait()
+            ou.get_ontology_adapter("go")
+
+        try:
+            threads = [threading.Thread(target=worker) for _ in range(2)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join(timeout=10)
+        finally:
+            ou.get_ontology_adapter.cache_clear()
+
+        assert max(concurrent) == 1, f"ensure ran concurrently: {concurrent}"
+
+    def test_locks_are_per_ontology(self):
+        """A slow NCBITaxon build must not block an unrelated EC resolve."""
+        assert ou._adapter_lock("go") is ou._adapter_lock("go")
+        assert ou._adapter_lock("go") is not ou._adapter_lock("ec")

@@ -23,7 +23,6 @@ from kg_microbe.transform_utils.constants import (
     DESCRIPTION_COLUMN,
     EC_CATEGORY,
     EC_PREFIX,
-    EC_SOURCE,
     GO_CATEGORY,
     GO_PREFIX,
     ID_COLUMN,
@@ -103,9 +102,12 @@ class RheaMappingsTransform(Transform):
         self.chebi_oi = get_chebi_adapter()
         self.knowledge_source = "infores:rhea"  # InforES standard knowledge source
         self.go_oi = get_go_adapter()
-        if not EC_SOURCE.is_file():
-            os.system(f"gzip -d {EC_SOURCE}.gz")
-
+        # No `gzip -d ec.owl.gz` here: the guarded builder decompresses on demand,
+        # atomically, and only once it has established there is a build to run.
+        # Doing it at construction ran unconditionally — even under
+        # KG_SEMSQL_BUILD=off or with no semsql on PATH — ignored the exit status,
+        # and deleted the archive on success, so an interrupted run could leave a
+        # partial ec.owl with no way back.
         self.ec_oi = get_ec_adapter()
 
     def _create_node_row(

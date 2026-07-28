@@ -6,6 +6,7 @@ import re
 import shutil
 import sqlite3
 import subprocess
+import threading
 import zlib
 from functools import lru_cache
 from pathlib import Path
@@ -918,6 +919,24 @@ def _ensure_and_gate(ontology: str, db_path: str) -> bool:
     return True
 
 
+# One lock per ontology, guarding the ensure+open critical section. A dict rather
+# than a single global lock so a slow NCBITaxon build does not block an unrelated
+# EC resolve; _ADAPTER_LOCKS_GUARD only covers creating the per-ontology entry.
+_ADAPTER_LOCKS: Dict[str, threading.Lock] = {}
+_ADAPTER_LOCKS_GUARD = threading.Lock()
+
+
+def _adapter_lock(ontology: str) -> threading.Lock:
+    """
+    Return the lock guarding one ontology's resolution.
+
+    :param ontology: Ontology key.
+    :return: A process-wide lock unique to that ontology.
+    """
+    with _ADAPTER_LOCKS_GUARD:
+        return _ADAPTER_LOCKS.setdefault(ontology, threading.Lock())
+
+
 @lru_cache(maxsize=None)
 def _ontology_adapter_for(ontology: str, db_path: str):
     """
@@ -932,9 +951,16 @@ def _ontology_adapter_for(ontology: str, db_path: str):
     """
     from oaklib import get_adapter
 
-    if not _ensure_and_gate(ontology, db_path):
-        return None
-    return get_adapter(f"sqlite:{db_path}")
+    # lru_cache does not hold a lock across the wrapped call, so two threads that
+    # miss concurrently both execute this body. Without serialising, both would
+    # enter _ensure_and_gate and race each other through .prev move-aside,
+    # decompression and `semsql make` on the same paths — two builds writing one
+    # file. The second thread re-runs _ensure_and_gate once the first releases,
+    # which is then the cheap reuse fast-path.
+    with _adapter_lock(ontology):
+        if not _ensure_and_gate(ontology, db_path):
+            return None
+        return get_adapter(f"sqlite:{db_path}")
 
 
 def get_ontology_adapter(ontology: str):

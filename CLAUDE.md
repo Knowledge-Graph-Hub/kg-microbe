@@ -213,6 +213,43 @@ Optional, for the ontology transforms:
   `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently
   miscategorises terms; the other two default to warn.
 
+### Ontology failures abort; they do not degrade
+
+`OntologyDbUnavailableError` (no usable DB) and `OntologyVersionMismatchError` (a
+strict gate tripping) both derive from `FatalOntologyError`, which derives from
+**`BaseException`, not `Exception`**. This is deliberate. Adapters resolve
+lazily, so the failure surfaces wherever a transform first touches the adapter —
+almost always inside a `try` whose `except Exception` was written to absorb a
+per-item lookup miss. Swallowed, that produced a systematically wrong graph with
+a zero exit code: every ChEBI node `biolink:ChemicalEntity`, every GO term
+`molecular_function`, every label a bare numeric ID, every protein→GO edge
+dropped.
+
+Consequences to know:
+
+- **Do not wrap adapter use in `except Exception` expecting to degrade.** You
+  cannot catch these that way, by design. Catch the specific class if a fallback
+  is genuinely correct — `get_chebi_category` does this for the standalone
+  no-DB case, and only for that case.
+- **Never resolve one of these proxies inside a `multiprocessing.Pool` worker.**
+  A `BaseException` is not caught by the worker loop and can hang the pool.
+  Metatraits resolves NCBITaxon eagerly in the parent
+  (`_ensure_ncbitaxon_db_ready`) via its own module-local adapter for exactly
+  this reason; that is a documented exception to "everything goes through
+  `get_ontology_adapter`", not an oversight.
+- **A GO rebuild that fails now refuses the old DB.** GO passes
+  `reuse_on_failure=False`, so with no `semsql` on PATH and a `go.db` that has
+  drifted from `go.owl`, GO-dependent transforms abort instead of running on
+  stale categories. An explicit `KG_SEMSQL_BUILD=off` is exempt — a deliberate
+  opt-out always reuses what is on disk.
+- **A DB that clears its size floor but is not openable SQLite is rebuilt**, not
+  reused, for all four ontologies.
+
+Derived caches guarded by a bare `path.exists()` are written through
+`kg_microbe/utils/atomic_io.py:atomic_write` (temp file + `os.replace`), so a
+failed run leaves no truncated file for the next run to accept as complete. Use
+it for any new cache of that shape.
+
 ## Naming Conventions
 
 - Transform classes: `[SourceName]Transform` in `transform_utils/[source_name]/[source_name].py`

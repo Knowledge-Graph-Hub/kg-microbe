@@ -51,6 +51,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.ontology_utils import get_go_adapter
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class BaktaTransform(Transform):
                 self.go_adapter = get_adapter(f"sqlite:{go_db}")
             else:
                 # Fall back to OWL file (OAK will auto-detect format)
-                self.go_adapter = get_adapter(str(GO_SOURCE))
+                self.go_adapter = get_go_adapter()
         except Exception as e:
             logger.warning(f"Could not load GO ontology: {e}")
             logger.warning("GO term aspect mapping will default to molecular_function")

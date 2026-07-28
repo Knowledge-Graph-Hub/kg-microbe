@@ -4,11 +4,8 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-from oaklib import get_adapter
-
 from kg_microbe.transform_utils.constants import (
     GO_CATEGORY_TREES_FILE,
-    GO_SOURCE,
     RAW_DATA_DIR,
     UNIPROT_FUNCTIONAL_MICROBES,
     UNIPROT_FUNCTIONAL_MICROBES_RELEVANT_FILE_LIST,
@@ -17,6 +14,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEOMES_FILE,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.ontology_utils import get_go_adapter
 from kg_microbe.utils.uniprot_utils import (
     create_pool,
     get_go_category_trees,
@@ -50,7 +48,7 @@ class UniprotFunctionalMicrobesTransform(Transform):
         """
         source_name = UNIPROT_FUNCTIONAL_MICROBES
         super().__init__(source_name, input_dir, output_dir)
-        self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
+        self.go_oi = get_go_adapter()
         # Check if the file already exists
         if not GO_CATEGORY_TREES_FILE.exists():
             get_go_category_trees(self.go_oi)

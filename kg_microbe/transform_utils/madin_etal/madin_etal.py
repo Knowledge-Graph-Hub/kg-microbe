@@ -6,7 +6,6 @@ from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
-from oaklib import get_adapter
 from oaklib.utilities.ner_utilities import get_exclusion_token_list
 from tqdm import tqdm
 
@@ -19,7 +18,6 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CELL_SHAPE_COLUMN,
     CHEBI_PREFIX,
-    CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
     DESCRIPTION_COLUMN,
     ENVIRONMENT_CATEGORY,
@@ -76,6 +74,7 @@ from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.ner_utils import annotate
+from kg_microbe.utils.ontology_utils import get_chebi_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 OUTPUT_FILE_SUFFIX = "_ner.tsv"
@@ -234,7 +233,7 @@ class MadinEtAlTransform(Transform):
         else:
             chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
         chebi_list = chebi_result[OBJECT_ID_COLUMN].to_list()
-        oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+        oi = get_chebi_adapter()
         chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
         roles = {x for (_, _, x) in chebi_roles}
         role_nodes = []

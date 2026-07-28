@@ -47,6 +47,9 @@ _NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
 # Minimum plausible size for a healthy ChEBI SemSQL DB. A full build is ~1-2 GB;
 # the upstream distribution is ~800 MB compressed.
 _CHEBI_DB_MIN_SIZE = 100_000_000  # 100 MB
+
+# EC is a small ontology; a complete build is tens of MB.
+_EC_DB_MIN_SIZE = 1_000_000  # 1 MB
 # OBO release stamp, e.g. ``releases/2026-05-19/`` in a versionIRI.
 _RELEASE_RE = re.compile(r"releases/(\d{4}-\d{2}-\d{2})")
 
@@ -361,15 +364,18 @@ def _read_head(path: Path, nbytes: int) -> Optional[str]:
     return None
 
 
-class ChebiDbUnavailableError(RuntimeError):
+class OntologyDbUnavailableError(RuntimeError):
 
     """
-    No usable ChEBI SemSQL DB could be produced.
+    No usable SemSQL DB could be produced for an ontology.
 
-    Distinct from the version gate's RuntimeError so the standalone
-    ``get_chebi_category`` can degrade on the former without also swallowing a
-    deliberate ``KG_CHEBI_VERSION_CHECK=strict`` abort (F6).
+    Distinct from the version gates' RuntimeError so callers can degrade on the
+    former without also swallowing a deliberate ``*_VERSION_CHECK=strict`` abort.
     """
+
+
+# Historical name; the ChEBI path is the one with existing callers.
+ChebiDbUnavailableError = OntologyDbUnavailableError
 
 
 class KeptTarget(NamedTuple):
@@ -642,6 +648,94 @@ def assert_chebi_version_alignment(db_path: str, strict: Optional[bool] = None) 
         print(f"WARNING: {msg}")
 
 
+def _build_semsql_db(
+    owl_source: Optional[Path],
+    db_path: str,
+    min_size: int,
+    label: str,
+    cost_note: str,
+    reuse_on_failure: bool = True,
+) -> DbEnsureResult:
+    """
+    Run the guarded ``semsql make`` for one ontology.
+
+    The body every ``_ensure_*_db`` shares once its own reuse/drift decision has
+    been made: honour the opt-out, require ``semsql``, decompress a ``.gz`` source
+    if that is all we have, move the existing DB aside, build, and restore it on
+    any failure. Keeping this in one place is what makes "guarded build" mean the
+    same thing for every ontology — the alternative is four copies of logic that
+    took several review rounds to get right.
+
+    :param owl_source: Plain OWL to build from; ``<source>.gz`` is decompressed
+        when only the archive is present.
+    :param db_path: Target DB path.
+    :param min_size: Smallest plausible size for a complete build.
+    :param label: Ontology name for messages.
+    :param cost_note: One line telling the user what this build will cost them.
+    :param reuse_on_failure: When the build cannot run *involuntarily* (no
+        ``semsql``, missing OWL, failed decompression), whether an existing DB is
+        still reported usable. GO passes False: its gate is strict because a
+        release mismatch silently miscategorises MF/CC terms as BiologicalProcess,
+        so a drifted go.db that cannot be rebuilt must be rejected. An explicit
+        ``KG_SEMSQL_BUILD=off`` is not covered by this — a deliberate opt-out
+        always reuses what is on disk.
+    :return: Whether a usable DB exists, and whether this call built it.
+    """
+
+    def _fallback() -> DbEnsureResult:
+        """Report the existing DB, or refuse it when the caller demands a build."""
+        return DbEnsureResult(_present_db(db_path, min_size) if reuse_on_failure else False)
+
+    if not _semsql_build_enabled():
+        # An explicit opt-out always reuses what is on disk, even for GO: the
+        # user asked to skip the build, not to have categorisation refuse to run.
+        print(f"Skipping {label} SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
+        return DbEnsureResult(_present_db(db_path, min_size))
+    # Checked before decompressing: without semsql there is nothing to build, and
+    # unpacking GB of OWL only to then bail out is pure waste.
+    if shutil.which("semsql") is None:
+        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
+        return _fallback()
+    if owl_source and not owl_source.exists():
+        archive = owl_source.with_suffix(owl_source.suffix + ".gz")
+        if archive.exists():
+            print(f"Decompressing {archive} for the {label} SemSQL build...")
+            if not _decompress_atomically(archive, owl_source):
+                return _fallback()
+    if not (owl_source and owl_source.exists()):
+        print(f"Warning: cannot build {db_path} — {label} OWL source {owl_source} is missing")
+        return _fallback()
+    kept = _clear_build_target(db_path, min_size)
+    print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
+    try:
+        subprocess.run(  # noqa: S603
+            ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
+            cwd=str(owl_source.parent),
+            check=True,
+        )
+    except (subprocess.CalledProcessError, OSError) as e:
+        # Expected build failures degrade: restore the old DB and report on it.
+        print(f"Warning: failed to build {db_path}: {e}")
+        _restore_build_target(db_path, kept)
+        # A restored artifact is judged leniently: it may legitimately be a
+        # symlink the user supplied, which _usable_db rejects by design.
+        return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
+    except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
+        # Ctrl-C during a build previously left the DB gone and a multi-GB .prev
+        # orphaned. This cannot help against SIGKILL or an unhandled SIGTERM,
+        # which do not unwind — _clear_build_target's recovery covers those.
+        _restore_build_target(db_path, kept)
+        raise
+    if _usable_db(db_path, min_size):
+        _discard_kept_target(kept)
+        return DbEnsureResult(True, built=True)
+    # semsql can exit 0 having produced a short/misplaced file. Restore, then
+    # report on what is actually at db_path now — not the pre-restore verdict.
+    print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
+    _restore_build_target(db_path, kept)
+    return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
+
+
 def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     """
     Build the ChEBI SemSQL DB from ``chebi.owl``; return True if usable.
@@ -674,58 +768,127 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
             f"Rebuilding {db_path}: release {db_release} drifted from "
             f"chebi.owl {owl_release} (single-source realign)..."
         )
-    if not _semsql_build_enabled():
-        print(f"Skipping ChEBI SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_present_db(db_path, min_size))
-    # Checked before decompressing: without semsql there is nothing to build, and
-    # unpacking ~1 GB only to then bail out is pure waste (#10).
-    if shutil.which("semsql") is None:
-        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return DbEnsureResult(_present_db(db_path, min_size))
-    if owl_source and not owl_source.exists():
-        # semsql needs the plain OWL; the download ships chebi.owl.gz.
-        archive = owl_source.with_suffix(owl_source.suffix + ".gz")
-        if archive.exists():
-            print(f"Decompressing {archive} for the ChEBI SemSQL build...")
-            if not _decompress_atomically(archive, owl_source):
-                return DbEnsureResult(_present_db(db_path, min_size))
-    if not (owl_source and owl_source.exists()):
-        print(f"Warning: cannot build {db_path} — ChEBI OWL source {owl_source} is missing")
-        return DbEnsureResult(_present_db(db_path, min_size))
-    kept = _clear_build_target(db_path, min_size)
-    print(
-        f"Building {db_path} from {owl_source} via `semsql make`.\n"
-        "  ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM.\n"
-        "  Set KG_SEMSQL_BUILD=off to skip and use a prebuilt DB instead."
+    return _build_semsql_db(
+        owl_source,
+        db_path,
+        min_size,
+        "ChEBI",
+        "ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM. "
+        "Set KG_SEMSQL_BUILD=off to skip and use a prebuilt DB instead.",
     )
-    try:
-        subprocess.run(  # noqa: S603
-            ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
-            cwd=str(owl_source.parent),
-            check=True,
+
+
+# Every ontology adapter in the pipeline is obtained through this table, so
+# "guarded build" means the same thing everywhere. Before it, seven transforms
+# called get_adapter(f"sqlite:{X_SOURCE}") with an *OWL* path — which OAK
+# silently interprets as "build the SemSQL DB for this OWL" and runs its own
+# unannounced `semsql make`, bypassing the opt-out, the size floor, the
+# keep-aside and the version gates.
+_ONTOLOGY_DB_NAMES = {
+    "ncbitaxon": ("NCBITAXON_SOURCE", "ncbitaxon.db"),
+    "chebi": ("CHEBI_SOURCE", "chebi.db"),
+    "go": ("GO_SOURCE", "go.db"),
+    "ec": ("EC_SOURCE", "ec.db"),
+}
+
+
+def ontology_db_path(ontology: str) -> str:
+    """
+    Return the SemSQL DB path for an ontology, beside its OWL source.
+
+    :param ontology: One of ``ncbitaxon``, ``chebi``, ``go``, ``ec``.
+    :return: Absolute path to the ``.db``.
+    :raises KeyError: For an unknown ontology name.
+    """
+    from kg_microbe.transform_utils import constants
+
+    source_attr, db_name = _ONTOLOGY_DB_NAMES[ontology]
+    return str(Path(getattr(constants, source_attr)).parent / db_name)
+
+
+def _ensure_and_gate(ontology: str, db_path: str) -> bool:
+    """
+    Build/realign one ontology's DB and run its version gate.
+
+    :param ontology: Ontology key.
+    :param db_path: Target DB path.
+    :return: Whether a usable DB is present afterwards.
+    """
+    ensure = {
+        "ncbitaxon": _ensure_ncbitaxon_db,
+        "chebi": _ensure_chebi_db,
+        "go": _ensure_go_db,
+        "ec": _ensure_ec_db,
+    }[ontology]
+    if not ensure(db_path):
+        return False
+    if ontology == "chebi":
+        assert_chebi_version_alignment(db_path)
+    elif ontology == "ncbitaxon":
+        assert_ncbitaxon_version_alignment(db_path)
+    elif ontology == "go":
+        assert_go_version_alignment()
+    return True
+
+
+@lru_cache(maxsize=None)
+def _ontology_adapter_for(ontology: str, db_path: str):
+    """
+    Ensure, gate and open one ontology's adapter, once per process.
+
+    :param ontology: Ontology key.
+    :param db_path: Target DB path.
+    :return: OAK adapter, or None when no usable DB could be produced. Returned
+        rather than raised so ``lru_cache`` memoises the failure — otherwise a
+        failing path re-runs the whole ensure, potentially a multi-hour build,
+        on every call.
+    """
+    from oaklib import get_adapter
+
+    if not _ensure_and_gate(ontology, db_path):
+        return None
+    return get_adapter(f"sqlite:{db_path}")
+
+
+def get_ontology_adapter(ontology: str):
+    """
+    Return an OAK adapter for one ontology, building its DB if needed.
+
+    The single entry point transforms should use. Never pass an ``.owl`` path to
+    ``get_adapter`` directly: OAK treats that as a request to build, outside
+    every guard this module provides.
+
+    :param ontology: One of ``ncbitaxon``, ``chebi``, ``go``, ``ec``.
+    :return: OAK adapter over the ontology's SemSQL DB.
+    :raises OntologyDbUnavailableError: If no usable DB could be produced.
+    """
+    db_path = ontology_db_path(ontology)
+    adapter = _ontology_adapter_for(ontology, db_path)
+    if adapter is None:
+        raise OntologyDbUnavailableError(
+            f"No usable {ontology} SemSQL DB at {db_path}. Install `semsql` and place "
+            f"the OWL (or its .gz) in data/raw so it can be built, or supply a prebuilt "
+            f"{Path(db_path).name}. See the warning above for which step failed."
         )
-    except (subprocess.CalledProcessError, OSError) as e:
-        # Expected build failures degrade: restore the old DB and report on it.
-        print(f"Warning: failed to build {db_path}: {e}")
-        _restore_build_target(db_path, kept)
-        # A restored artifact is judged leniently: it may legitimately be a
-        # symlink the user supplied, which _usable_db rejects by design.
-        return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
-    except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
-        # Ctrl-C during a multi-hour build previously left the DB gone and a
-        # 14 GB .prev orphaned. Note this cannot help against SIGKILL or an
-        # unhandled SIGTERM, which do not unwind — _clear_build_target's
-        # recovery is what covers those.
-        _restore_build_target(db_path, kept)
-        raise
-    if _usable_db(db_path, min_size):
-        _discard_kept_target(kept)
-        return DbEnsureResult(True, built=True)
-    # semsql can exit 0 having produced a short/misplaced file. Restore, then
-    # report on what is actually at db_path now — not the pre-restore verdict.
-    print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
-    _restore_build_target(db_path, kept)
-    return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
+    return adapter
+
+
+get_ontology_adapter.cache_clear = _ontology_adapter_for.cache_clear
+
+
+def get_ncbitaxon_adapter():
+    """Return the guarded NCBITaxon adapter. :return: OAK adapter."""
+    return get_ontology_adapter("ncbitaxon")
+
+
+def get_go_adapter():
+    """Return the guarded GO adapter. :return: OAK adapter."""
+    return get_ontology_adapter("go")
+
+
+def get_ec_adapter():
+    """Return the guarded EC adapter. :return: OAK adapter."""
+    return get_ontology_adapter("ec")
 
 
 @lru_cache(maxsize=None)
@@ -815,62 +978,14 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
             f"Rebuilding {db_path}: release {db_release} drifted from "
             f"ncbitaxon.owl {owl_release} (single-source realign)..."
         )
-    if not _semsql_build_enabled():
-        print(f"Skipping NCBITaxon SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_present_db(db_path, min_size))
-    # Checked before decompressing: without semsql there is nothing to build, and
-    # unpacking ~2 GB only to then bail out is pure waste (#10).
-    if shutil.which("semsql") is None:
-        print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
-        return DbEnsureResult(_present_db(db_path, min_size))
-    if owl_source and not owl_source.exists():
-        # semsql needs the plain OWL, but the download ships ncbitaxon.owl.gz and
-        # NCBITAXON_SOURCE names the uncompressed path — without this a fresh
-        # checkout skips the build and silently falls back to OAK's prebuilt DB,
-        # defeating the single-source guarantee (#620).
-        archive = owl_source.with_suffix(owl_source.suffix + ".gz")
-        if archive.exists():
-            print(f"Decompressing {archive} for the NCBITaxon SemSQL build...")
-            if not _decompress_atomically(archive, owl_source):
-                return DbEnsureResult(_present_db(db_path, min_size))
-    if not (owl_source and owl_source.exists()):
-        print(f"Warning: cannot build {db_path} — NCBITaxon OWL source {owl_source} is missing")
-        return DbEnsureResult(_present_db(db_path, min_size))
-    kept = _clear_build_target(db_path, min_size)
-    print(
-        f"Building {db_path} from {owl_source} via `semsql make`.\n"
-        "  NCBITaxon is the heaviest source in the pipeline: expect hours and a\n"
-        "  ~13 GB result. Set KG_SEMSQL_BUILD=off to skip and use the prebuilt\n"
-        "  OAK cache instead (the version gate will warn about any drift)."
+    return _build_semsql_db(
+        owl_source,
+        db_path,
+        min_size,
+        "NCBITaxon",
+        "NCBITaxon is the heaviest source in the pipeline: expect hours and a "
+        "~13 GB result. Set KG_SEMSQL_BUILD=off to skip.",
     )
-    try:
-        subprocess.run(  # noqa: S603
-            ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
-            cwd=str(owl_source.parent),
-            check=True,
-        )
-    except (subprocess.CalledProcessError, OSError) as e:
-        # Expected build failures degrade: restore the old DB and report on it.
-        print(f"Warning: failed to build {db_path}: {e}")
-        _restore_build_target(db_path, kept)
-        # A restored artifact is judged leniently: it may legitimately be a
-        # symlink the user supplied, which _usable_db rejects by design.
-        return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
-    except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
-        # Ctrl-C during a multi-hour build previously left the DB gone and a
-        # 14 GB .prev orphaned. Note this cannot help against SIGKILL or an
-        # unhandled SIGTERM, which do not unwind — _clear_build_target's
-        # recovery is what covers those.
-        _restore_build_target(db_path, kept)
-        raise
-    if _usable_db(db_path, min_size):
-        _discard_kept_target(kept)
-        return DbEnsureResult(True, built=True)
-    # semsql can exit 0 having produced a short/misplaced file. Restore, then
-    # report on what is actually at db_path now — not the pre-restore verdict.
-    print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
-    _restore_build_target(db_path, kept)
-    return DbEnsureResult(_restored_db_usable(db_path, min_size, kept))
 
 
 def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
@@ -902,42 +1017,44 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
             f"Rebuilding {go_db_path}: release {db_release} drifted from "
             f"go.owl {owl_release} (single-source realign)..."
         )
-    if not _semsql_build_enabled():
-        print(f"Skipping GO SemSQL build (KG_SEMSQL_BUILD opt-out); using {go_db_path} as-is")
-        return DbEnsureResult(_present_db(go_db_path, _GO_DB_MIN_SIZE))
-    if not (GO_SOURCE and Path(GO_SOURCE).exists()):
-        print(f"Warning: cannot build {go_db_path} — GO OWL source {GO_SOURCE} is missing")
-        return DbEnsureResult(False)
-    if shutil.which("semsql") is None:
-        print(f"Warning: `semsql` not on PATH; cannot build {go_db_path}")
-        return DbEnsureResult(False)
-    kept = _clear_build_target(go_db_path, _GO_DB_MIN_SIZE)
-    print(
-        f"Building {go_db_path} from {GO_SOURCE} via `semsql make` "
-        "(one-time; a full GO SemSQL build runs relation-graph and can take "
-        "10-30+ minutes / several GB RAM)..."
+    return _build_semsql_db(
+        Path(GO_SOURCE) if GO_SOURCE else None,
+        go_db_path,
+        _GO_DB_MIN_SIZE,
+        "GO",
+        "A full GO SemSQL build runs relation-graph and can take 10-30+ minutes "
+        "/ several GB RAM. Set KG_SEMSQL_BUILD=off to skip.",
+        reuse_on_failure=False,
     )
-    try:
-        subprocess.run(  # noqa: S603
-            ["semsql", "make", os.path.basename(go_db_path)],  # noqa: S607
-            cwd=str(Path(GO_SOURCE).parent),
-            check=True,
-        )
-    except (subprocess.CalledProcessError, OSError) as e:
-        print(f"Warning: failed to build {go_db_path}: {e}")
-        _restore_build_target(go_db_path, kept)
-        # A restored artifact is judged leniently: it may legitimately be a
-        # symlink the user supplied, which _usable_db rejects by design.
-        return DbEnsureResult(_restored_db_usable(go_db_path, _GO_DB_MIN_SIZE, kept))
-    except BaseException:  # noqa: BLE001 — an interrupt must not strand .prev
-        _restore_build_target(go_db_path, kept)
-        raise
-    if _usable_db(go_db_path, _GO_DB_MIN_SIZE):
-        _discard_kept_target(kept)
-        return DbEnsureResult(True, built=True)
-    print(f"Warning: {go_db_path} is not a complete build; restoring the previous DB")
-    _restore_build_target(go_db_path, kept)
-    return DbEnsureResult(_restored_db_usable(go_db_path, _GO_DB_MIN_SIZE, kept))
+
+
+def _ensure_ec_db(db_path: str) -> DbEnsureResult:
+    """
+    Build the EC SemSQL DB from ``ec.owl``; return whether one is usable.
+
+    EC had no builder, so ``get_adapter("sqlite:<ec.owl>")`` delegated to OAK's
+    own build — unannounced, unguarded, and outside the opt-out. EC is small, so
+    the build is quick, but it goes through the same guarded path as the others
+    for consistency.
+
+    :param db_path: Target path for ``ec.db``.
+    :return: Whether a usable DB exists, and whether this call built it.
+    """
+    from kg_microbe.transform_utils.constants import EC_SOURCE
+
+    owl_source = Path(EC_SOURCE) if EC_SOURCE else None
+    _note_orphaned_prev(db_path)
+    if _present_db(db_path, _EC_DB_MIN_SIZE):
+        # EC's OWL carries no reliable release stamp, so there is no drift check
+        # to make: an existing DB is reused.
+        return DbEnsureResult(True)
+    return _build_semsql_db(
+        owl_source,
+        db_path,
+        _EC_DB_MIN_SIZE,
+        "EC",
+        "EC is small; this build usually takes a couple of minutes.",
+    )
 
 
 def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:

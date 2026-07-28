@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import yaml
-from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -31,7 +30,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
-    NCBITAXON_SOURCE,
     OBSERVATION,
     PREDICATE_COLUMN,
     PROVIDED_BY_COLUMN,
@@ -43,6 +41,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
+from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
@@ -168,7 +167,7 @@ class BactoTraitsTransform(Transform):
         source_name = BACTOTRAITS
         super().__init__(source_name, input_dir, output_dir)
         self.knowledge_source = "infores:bactotraits"  # InforES standard knowledge source
-        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.ncbi_impl = get_ncbitaxon_adapter()
         self.bactotraits_metpo_mappings = load_metpo_mappings("bactotraits related synonym")
 
     def _create_node_row(

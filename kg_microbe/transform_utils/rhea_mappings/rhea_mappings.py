@@ -11,7 +11,6 @@ from typing import Optional, Union
 import pandas as pd
 import requests_ftp
 from curies import load_extended_prefix_map
-from oaklib import get_adapter
 from pyobo import get_id_name_mapping, get_relations_df
 from pyobo.sources.rhea import RheaGetter
 from tqdm import tqdm
@@ -20,7 +19,6 @@ from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
     CHEBI_PREFIX,
-    CHEBI_SOURCE,
     DEBIO_MAPPER,
     DESCRIPTION_COLUMN,
     EC_CATEGORY,
@@ -28,7 +26,6 @@ from kg_microbe.transform_utils.constants import (
     EC_SOURCE,
     GO_CATEGORY,
     GO_PREFIX,
-    GO_SOURCE,
     ID_COLUMN,
     KNOWLEDGE_LEVEL_COLUMN,
     LOGICAL_ENTAILMENT,
@@ -77,6 +74,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
+from kg_microbe.utils.ontology_utils import get_chebi_adapter, get_ec_adapter, get_go_adapter
 
 logger = logging.getLogger(__name__)
 
@@ -102,13 +100,13 @@ class RheaMappingsTransform(Transform):
             )
             self.converter = None
         self.reference_cache = defaultdict(lambda: None)
-        self.chebi_oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+        self.chebi_oi = get_chebi_adapter()
         self.knowledge_source = "infores:rhea"  # InforES standard knowledge source
-        self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
+        self.go_oi = get_go_adapter()
         if not EC_SOURCE.is_file():
             os.system(f"gzip -d {EC_SOURCE}.gz")
 
-        self.ec_oi = get_adapter(f"sqlite:{EC_SOURCE}")
+        self.ec_oi = get_ec_adapter()
 
     def _create_node_row(
         self,

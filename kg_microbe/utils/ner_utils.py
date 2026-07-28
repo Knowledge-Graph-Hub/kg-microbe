@@ -10,10 +10,8 @@ from oaklib.datamodels.text_annotator import TextAnnotation, TextAnnotationConfi
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
-    CHEBI_SOURCE,
     END_COLUMN,
     GO_PREFIX,
-    GO_SOURCE,
     MATCHES_WHOLE_TEXT_COLUMN,
     OBJECT_ALIASES_COLUMN,
     OBJECT_CATEGORIES_COLUMN,
@@ -24,16 +22,20 @@ from kg_microbe.transform_utils.constants import (
     TRAITS_DATASET_LABEL_COLUMN,
 )
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
+from kg_microbe.utils.ontology_utils import get_ontology_adapter, ontology_db_path
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # LLM_MODEL = "gpt-4"
 
-PREFIX_SOURCE_MAP = {
-    GO_PREFIX: GO_SOURCE,
-    CHEBI_PREFIX: CHEBI_SOURCE,
+# Prefix -> ontology key for the guarded adapter accessors. Mapping to the OWL
+# *paths* and handing those to get_adapter made OAK build the SemSQL DB itself,
+# bypassing every guard in ontology_utils.
+PREFIX_ONTOLOGY_MAP = {
+    GO_PREFIX: "go",
+    CHEBI_PREFIX: "chebi",
     # Add stripped versions for lookup
-    GO_PREFIX.strip(":"): GO_SOURCE,
-    CHEBI_PREFIX.strip(":"): CHEBI_SOURCE,
+    GO_PREFIX.strip(":"): "go",
+    CHEBI_PREFIX.strip(":"): "chebi",
 }
 
 
@@ -76,7 +78,7 @@ def annotate(
 
     if llm:
         # ! Experimental
-        oi = get_adapter(f"llm:sqlite:{PREFIX_SOURCE_MAP[ontology]}")
+        oi = get_adapter(f"llm:sqlite:{ontology_db_path(PREFIX_ONTOLOGY_MAP[ontology])}")
         matches_whole_text = False
         annotated_columns = [
             OBJECT_ID_COLUMN,
@@ -89,7 +91,7 @@ def annotate(
             TRAITS_DATASET_LABEL_COLUMN,
         ]
     else:
-        oi = get_adapter(f"sqlite:{PREFIX_SOURCE_MAP[ontology]}")
+        oi = get_ontology_adapter(PREFIX_ONTOLOGY_MAP[ontology])
         matches_whole_text = True
         annotated_columns = [
             OBJECT_ID_COLUMN,

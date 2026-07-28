@@ -198,7 +198,7 @@ from kg_microbe.utils.mapping_file_utils import (
     load_metpo_metabolite_utilization_mappings,
     uri_to_curie,
 )
-from kg_microbe.utils.ontology_utils import get_chebi_adapter, get_go_adapter, get_ncbitaxon_adapter
+from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError, get_ncbitaxon_adapter
 
 # Note: get_label and search_by_label are imported lazily in fallback methods
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -234,9 +234,6 @@ class BacDiveTransform(Transform):
         self.ncbi_impl = get_ncbitaxon_adapter()
 
         # Initialize ontology adapters for reuse
-        self.go_adapter = None
-        self.chebi_adapter = None
-        self._init_ontology_adapters()
 
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
@@ -536,15 +533,6 @@ class BacDiveTransform(Transform):
         else:
             self._lpsn_stats["ambiguous"] += 1
         return None
-
-    def _init_ontology_adapters(self):
-        """Initialize GO and ChEBI adapters once for reuse."""
-        try:
-            self.go_adapter = get_go_adapter()
-            self.chebi_adapter = get_chebi_adapter()
-            logger.info("Initialized GO and ChEBI adapters")
-        except Exception as e:
-            logger.warning(f"Could not initialize adapters: {e}")
 
     def _create_node_row(
         self,
@@ -850,6 +838,10 @@ class BacDiveTransform(Transform):
             ):
                 rank = obj.split(":", 1)[-1].lower() if obj else None
                 break
+        except OntologyDbUnavailableError:
+            # An unusable NCBITaxon DB is not a missing rank — surface it rather
+            # than silently emitting None for every taxon.
+            raise
         except Exception:
             rank = None
         self._ncbitaxon_rank_cache[ncbitaxon_id] = rank

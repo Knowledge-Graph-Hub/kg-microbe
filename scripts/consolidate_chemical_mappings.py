@@ -71,6 +71,7 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 import pandas as pd
+from kg_microbe.utils.ontology_utils import get_chebi_adapter
 
 # Path (relative to kg-microbe repo root) where the sibling MediaIngredientMech
 # checkout is expected to live. The MIM repo is the source of truth for the
@@ -1580,7 +1581,7 @@ class ChemicalMappingConsolidator:
 
                 from kg_microbe.transform_utils.constants import CHEBI_SOURCE
 
-                self.chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+                self.chebi_adapter = get_chebi_adapter()
                 print("  Initialized ChEBI adapter")
             except Exception as e:
                 print(f"  Warning: Could not initialize ChEBI adapter: {e}")

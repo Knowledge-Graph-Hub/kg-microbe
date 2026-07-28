@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set
 
 import pandas as pd
-from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.bakta.utils import (
@@ -32,7 +31,6 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
     ENABLES,
-    GO_SOURCE,
     HAS_GENE,
     HAS_GENE_PRODUCT,
     ID_COLUMN,
@@ -77,13 +75,11 @@ class BaktaTransform(Transform):
         # Load GO ontology for aspect mapping
         # Try to use GO adapter, but handle gracefully if not available
         try:
-            # First try SQLite if .db version exists
-            go_db = GO_SOURCE.with_suffix(".db")
-            if go_db.exists():
-                self.go_adapter = get_adapter(f"sqlite:{go_db}")
-            else:
-                # Fall back to OWL file (OAK will auto-detect format)
-                self.go_adapter = get_go_adapter()
+            # Always the guarded accessor. The old `if go.db exists: get_adapter(...)`
+            # branch was the live one on any populated checkout, and it bypassed the
+            # size floor, the drift rebuild and the version gate — accepting a
+            # 0-byte go.db, the exact failure _GO_DB_MIN_SIZE exists to catch.
+            self.go_adapter = get_go_adapter()
         except Exception as e:
             logger.warning(f"Could not load GO ontology: {e}")
             logger.warning("GO term aspect mapping will default to molecular_function")

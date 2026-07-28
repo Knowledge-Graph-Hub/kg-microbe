@@ -186,18 +186,29 @@ Copy `.env.example` to `.env` and configure:
 - `BACDIVE_PASSWORD`: BacDive API password
 
 Optional, for the ontology transforms:
-- `KG_SEMSQL_BUILD=off`: skip building the SemSQL lookup DBs. `kg transform -s
-  ontologies` otherwise builds `chebi.db` (~30 min) and `go.db` (10-30 min) from
-  the OWLs, and `kg transform -s metatraits` builds `ncbitaxon.db` (hours,
-  ~13 GB), whenever one is missing or has drifted from its OWL release. With the
-  opt-out set, whatever DB is already on disk is used and the version gate warns
-  about any mismatch. Peak disk for the NCBITaxon build is roughly old + new
-  (~28 GB) plus the decompressed `ncbitaxon.owl` (~2 GB) and a relation-graph
-  intermediate.
+- `KG_SEMSQL_BUILD=off`: skip building the SemSQL lookup DBs. Any transform that
+  looks something up in an ontology resolves its adapter through
+  `ontology_utils.get_*_adapter()`, which builds the DB from the OWL if it is
+  missing or has drifted from the OWL's release:
 
-  Caveat: the NCBITaxon rebuild runs from the multiprocessing pre-flight, so a
-  sequential metatraits run (`METATRAITS_MULTIPROCESSING=false`, or a single
-  unsplit input) skips it and only warns about drift — see issue #614.
+  | DB | built from | rough cost | triggered by |
+  |---|---|---|---|
+  | `chebi.db` | `chebi.owl` | ~30 min, ~4 GB | ontologies, bacdive, madin_etal, rhea_mappings, NER |
+  | `go.db` | `go.owl` | 10-30 min, ~400 MB | ontologies, bacdive, rhea_mappings, bakta, uniprot_*, NER |
+  | `ec.db` | `ec.owl` | a few min, ~300 MB | rhea_mappings |
+  | `ncbitaxon.db` | `ncbitaxon.owl` | hours, ~13 GB | metatraits (MP mode), bacdive, bactotraits |
+
+  Resolution is lazy — constructing a transform costs nothing; the build happens
+  on first lookup. With the opt-out set, whatever DB is already on disk is used
+  and the version gate warns about any mismatch. Peak disk for the NCBITaxon
+  build is roughly old + new (~28 GB) plus the decompressed `ncbitaxon.owl`
+  (~2 GB) and a relation-graph intermediate.
+
+  Caveat: the NCBITaxon *drift rebuild* runs from the multiprocessing pre-flight,
+  so a sequential metatraits run (`METATRAITS_MULTIPROCESSING=false`, or a single
+  unsplit input) skips it and only warns — see issue #614. Other transforms
+  resolve it on demand and will build it if it is absent.
+
 - `KG_GO_VERSION_CHECK` / `KG_NCBITAXON_VERSION_CHECK` / `KG_CHEBI_VERSION_CHECK`:
   `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently
   miscategorises terms; the other two default to warn.

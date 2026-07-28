@@ -48,8 +48,10 @@ _NCBITAXON_DB_MIN_SIZE = 1_000_000_000  # 1 GB
 # the upstream distribution is ~800 MB compressed.
 _CHEBI_DB_MIN_SIZE = 100_000_000  # 100 MB
 
-# EC is a small ontology; a complete build is tens of MB.
-_EC_DB_MIN_SIZE = 1_000_000  # 1 MB
+# A complete ec.db is ~300 MB. The floor sits well below that but in the same
+# proportion as the others (GO 10 MB/403 MB, ChEBI 100 MB/4.25 GB), so a
+# half-written build is still caught.
+_EC_DB_MIN_SIZE = 10_000_000  # 10 MB
 # OBO release stamp, e.g. ``releases/2026-05-19/`` in a versionIRI.
 _RELEASE_RE = re.compile(r"releases/(\d{4}-\d{2}-\d{2})")
 
@@ -822,12 +824,17 @@ def _ensure_and_gate(ontology: str, db_path: str) -> bool:
     }[ontology]
     if not ensure(db_path):
         return False
+    # Only DB-vs-OWL gates belong here. assert_go_version_alignment compares
+    # go.owl to go.json — a transform-output concern, checked where go.json is
+    # actually consumed. Running it for every GO adapter user made a stale
+    # go.json raise in rhea/uniprot and, in bakta (whose caller catches
+    # Exception), silently collapse every GO term to molecular_function — the
+    # opposite of what that gate exists for. go.db-vs-go.owl drift is already
+    # handled inside _ensure_go_db.
     if ontology == "chebi":
         assert_chebi_version_alignment(db_path)
     elif ontology == "ncbitaxon":
         assert_ncbitaxon_version_alignment(db_path)
-    elif ontology == "go":
-        assert_go_version_alignment()
     return True
 
 
@@ -911,11 +918,21 @@ class _LazyOntologyAdapter:
 
     def __getattr__(self, name):
         """
-        Forward everything to the resolved adapter.
+        Forward public attributes to the resolved adapter.
+
+        Private and dunder names are refused without resolving. ``pickle`` and
+        ``copy`` probe ``__getstate__``/``__setstate__``/``__deepcopy__`` on the
+        instance: answering those resolved the adapter, so merely *serialising* a
+        proxy could start a multi-hour build — and because they construct via
+        ``object.__new__`` with no ``__init__``, reading ``self._resolved`` from
+        inside ``__getattr__`` recursed until the stack blew.
 
         :param name: Attribute being accessed.
         :return: The attribute from the real adapter.
+        :raises AttributeError: For private and dunder names.
         """
+        if name.startswith("_"):
+            raise AttributeError(name)
         return getattr(self.resolve(), name)
 
 
@@ -1008,6 +1025,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
+    _note_orphaned_prev(go_db_path)
     if _present_db(go_db_path, _GO_DB_MIN_SIZE):
         # An existing, non-stub go.db is reused — unless it has drifted from the
         # source OWL's release (single-source invariant, fix 2 #604): a refreshed

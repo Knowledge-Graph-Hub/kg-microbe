@@ -17,16 +17,37 @@ import pytest
 
 from kg_microbe.utils import ontology_utils as ou
 
-SOURCE_ROOT = Path(__file__).parent.parent / "kg_microbe"
+REPO_ROOT = Path(__file__).parent.parent
+# scripts/ is in scope too: a live offender sat there, in a script the
+# chemical-mapping skill tells users to run, and the first version of this guard
+# never looked at it.
+SEARCH_ROOTS = [REPO_ROOT / "kg_microbe", REPO_ROOT / "scripts"]
 
 # Constants that name an .owl path. Passing one to get_adapter means "build".
 OWL_SOURCE_NAMES = {"NCBITAXON_SOURCE", "CHEBI_SOURCE", "GO_SOURCE", "EC_SOURCE"}
 
+# Any spelling of an ontology OWL, however it is arrived at.
+OWL_FILENAMES = {"ncbitaxon.owl", "chebi.owl", "go.owl", "ec.owl"}
+
+
+def _iter_sources():
+    """Yield every .py file the guard covers."""
+    for root in SEARCH_ROOTS:
+        if root.exists():
+            yield from root.rglob("*.py")
+
 
 def _get_adapter_calls():
-    """Yield (file, lineno, rendered-arg) for every get_adapter(...) call."""
-    for path in SOURCE_ROOT.rglob("*.py"):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    """Yield (relpath, lineno, arg-node, enclosing-source) for get_adapter calls."""
+    for path in _iter_sources():
+        text = path.read_text(encoding="utf-8")
+        try:
+            tree = ast.parse(text, filename=str(path))
+        except SyntaxError:
+            # Some scripts/ files use syntax newer than the project's Python
+            # (e.g. nested same-quote f-strings, 3.12+). They cannot be scanned
+            # here; test_unparsable_files_are_known keeps that list from growing.
+            continue
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call):
                 continue
@@ -34,51 +55,106 @@ def _get_adapter_calls():
             name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", None)
             if name != "get_adapter" or not node.args:
                 continue
-            yield path.relative_to(SOURCE_ROOT), node.lineno, ast.dump(node.args[0])
+            yield path.relative_to(REPO_ROOT), node.lineno, node.args[0], text
+
+
+def _mentions_owl(node, source):
+    """
+    Report whether an argument expression reaches an ontology OWL.
+
+    Covers the four shapes the name-only check missed: an aliased import, a bare
+    literal path, an intermediate variable, and a path built from RAW_DATA_DIR.
+    """
+    rendered = ast.dump(node)
+    if any(f"'{const}'" in rendered for const in OWL_SOURCE_NAMES):
+        return True
+    try:
+        segment = ast.get_source_segment(source, node) or ""
+    except Exception:  # noqa: BLE001 — best effort on odd nodes
+        segment = ""
+    if any(owl in segment for owl in OWL_FILENAMES):
+        return True
+    # An f-string interpolating a plain Name: resolve that name's assignments.
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Name):
+            for assigned in _assignments_of(sub.id, source):
+                if any(f"'{c}'" in assigned or c in assigned for c in OWL_SOURCE_NAMES):
+                    return True
+                if any(owl in assigned for owl in OWL_FILENAMES):
+                    return True
+    return False
+
+
+def _assignments_of(name, source):
+    """Yield the rendered right-hand side of every assignment to `name`."""
+    tree = ast.parse(source)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == name:
+                    yield ast.get_source_segment(source, node.value) or ast.dump(node.value)
 
 
 class TestNoUnguardedAdapters:
 
-    """No source file may construct an adapter from an OWL-path constant."""
+    """No source file may construct an adapter that points at an OWL."""
+
+    def test_unparsable_files_are_known(self):
+        """The scanner skips files it cannot parse; keep that set from growing."""
+        unparsable = set()
+        for path in _iter_sources():
+            try:
+                ast.parse(path.read_text(encoding="utf-8"))
+            except SyntaxError:
+                unparsable.add(str(path.relative_to(REPO_ROOT)))
+        assert unparsable <= {
+            # Pre-existing: uses 3.12+ nested same-quote f-strings.
+            "scripts/validate_knowledge_sources.py",
+        }, f"new unparsable files escape the adapter guard: {sorted(unparsable)}"
 
     def test_no_module_maps_prefixes_to_owl_sources(self):
         """
         Indirection must not smuggle an OWL path into get_adapter either.
 
         ner_utils used to map prefixes to GO_SOURCE/CHEBI_SOURCE and interpolate
-        the result, which the constant-name check below cannot see.
+        the result, which a constant-name check cannot see.
         """
-        ner = (SOURCE_ROOT / "utils" / "ner_utils.py").read_text(encoding="utf-8")
+        ner = (REPO_ROOT / "kg_microbe" / "utils" / "ner_utils.py").read_text(encoding="utf-8")
         assert "PREFIX_SOURCE_MAP" not in ner, "map prefixes to ontology keys, not OWL paths"
+        assert "GO_SOURCE" not in ner and "CHEBI_SOURCE" not in ner, (
+            "ner_utils must not reference OWL source constants at all"
+        )
 
-    def test_no_get_adapter_uses_an_owl_source_constant(self):
-        """The regression guard: an .owl path here means an unguarded build."""
+    def test_no_get_adapter_reaches_an_owl(self):
+        """
+        The regression guard: an OWL here means an unguarded OAK build.
+
+        Checks the rendered argument, its source text, and the assignments behind
+        any variable it interpolates — the name-only version passed for aliased
+        imports, literal paths and intermediate variables alike.
+        """
         offenders = [
-            f"{path}:{lineno}"
-            for path, lineno, arg in _get_adapter_calls()
-            if any(f"'{const}'" in arg or f'"{const}"' in arg for const in OWL_SOURCE_NAMES)
+            f"{path}:{lineno}" for path, lineno, arg, source in _get_adapter_calls() if _mentions_owl(arg, source)
         ]
         assert offenders == [], (
             "get_adapter must never be handed an OWL path — use "
             f"get_ontology_adapter()/get_*_adapter() instead. Offenders: {offenders}"
         )
 
-    def test_remaining_adapter_calls_are_in_known_places(self):
-        """Every direct get_adapter call should be a guarded accessor or a real .db."""
-        allowed = {
-            "utils/ontology_utils.py",  # the accessors themselves
-            "transform_utils/metatraits/metatraits.py",  # validated ncbitaxon.db
-            "transform_utils/ontologies_stubs/ontologies_stubs_transform.py",  # downloaded .db.gz
-            "transform_utils/bakta/bakta.py",  # explicit go.db path
-            # Experimental `llm:sqlite:` spec the accessors do not model; it goes
-            # through ontology_db_path(), so it points at the .db not the OWL.
-            "utils/ner_utils.py",
-        }
-        unexpected = {str(path) for path, _, _ in _get_adapter_calls() if str(path) not in allowed}
-        assert unexpected == set(), (
-            f"new direct get_adapter call sites: {sorted(unexpected)} — route them "
-            "through get_ontology_adapter() or add them here with a reason"
-        )
+    def test_remaining_adapter_calls_take_a_db(self):
+        """
+        Every direct get_adapter call must name a .db, not an ontology source.
+
+        Previously this allow-listed whole *files*, so any new call inside one of
+        them — handed anything at all — went unchecked.
+        """
+        suspicious = []
+        for path, lineno, arg, source in _get_adapter_calls():
+            segment = ast.get_source_segment(source, arg) or ""
+            if ".db" in segment or "db_path" in segment or "local_db" in segment:
+                continue
+            suspicious.append(f"{path}:{lineno} -> {segment}")
+        assert suspicious == [], f"get_adapter calls not clearly pointing at a .db: {suspicious}"
 
 
 class TestAccessorContract:
@@ -165,6 +241,41 @@ class TestLazyResolution:
         adapter = ou.get_ncbitaxon_adapter()  # must not raise
         with pytest.raises(ou.OntologyDbUnavailableError):
             adapter.resolve()  # only now
+
+    def test_pickling_does_not_resolve(self, monkeypatch):
+        """
+        Serialising a proxy must not start a build.
+
+        pickle probes __getstate__ on the instance; answering that from
+        __getattr__ resolved the adapter, so merely pickling one could kick off a
+        multi-hour semsql build.
+        """
+        import pickle
+
+        calls = []
+        monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: calls.append(a) or True)
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: object())
+
+        blob = pickle.dumps(ou.get_go_adapter())
+        assert calls == [], "pickling must not resolve"
+        assert isinstance(pickle.loads(blob), ou._LazyOntologyAdapter)
+
+    def test_copy_does_not_recurse(self, monkeypatch):
+        """copy/deepcopy construct without __init__; reading _resolved recursed."""
+        import copy as copy_mod
+
+        monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: True)
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: object())
+        proxy = ou.get_go_adapter()
+        assert isinstance(copy_mod.copy(proxy), ou._LazyOntologyAdapter)
+        assert isinstance(copy_mod.deepcopy(proxy), ou._LazyOntologyAdapter)
+
+    def test_private_names_are_not_forwarded(self, monkeypatch):
+        """A private name must raise AttributeError rather than resolve."""
+        monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: pytest.fail("resolved"))
+        proxy = ou.get_go_adapter()
+        with pytest.raises(AttributeError):
+            getattr(proxy, "_not_a_real_attribute")  # noqa: B009 — the point is the lookup
 
     def test_first_use_resolves_and_forwards(self, monkeypatch):
         """Attribute access resolves once and delegates to the real adapter."""

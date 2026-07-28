@@ -115,9 +115,15 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   pipeline uses whatever DB is already on disk; supplying a prebuilt one, or a
   symlink to it, is supported.
 
-  One qualification on NCBITaxon: the rebuild is driven by the multiprocessing
-  pre-flight, so a sequential metatraits run skips it and only warns about drift
-  (issue #614). ChEBI and GO are rebuilt unconditionally.
+  Every transform that looks something up in an ontology now resolves its adapter
+  through `ontology_utils.get_*_adapter()`, so any of them can trigger a build —
+  `kg transform -s bacdive` or `-s bactotraits` can start the NCBITaxon one, and
+  rhea/bakta/uniprot/madin can start GO, ChEBI or EC. Resolution is lazy, so the
+  cost lands on first lookup rather than at construction.
+
+  One qualification on NCBITaxon: the *drift* rebuild is driven by the
+  multiprocessing pre-flight, so a sequential metatraits run skips it and only
+  warns (issue #614). Other transforms will still build it if it is missing.
 
 ## Upload procedure (for refreshing a file, or adding a new one)
 

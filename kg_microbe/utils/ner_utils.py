@@ -78,6 +78,10 @@ def annotate(
 
     if llm:
         # ! Experimental
+        # Ensure the DB exists before naming it: ontology_db_path is pure path
+        # arithmetic, so without this SQLite would happily open an empty file and
+        # annotation would silently return nothing.
+        get_ontology_adapter(PREFIX_ONTOLOGY_MAP[ontology])
         oi = get_adapter(f"llm:sqlite:{ontology_db_path(PREFIX_ONTOLOGY_MAP[ontology])}")
         matches_whole_text = False
         annotated_columns = [

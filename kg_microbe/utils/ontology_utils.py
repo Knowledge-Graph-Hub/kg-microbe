@@ -298,11 +298,20 @@ def _usable_db(db_path: str, min_size: int) -> bool:
     :func:`_present_db` on the "could not build; use what's there" exits, where a
     symlink is a legitimate way to supply a prebuilt DB.
 
+    Checked deeply. This runs once per build, after a job that took minutes to
+    hours, so walking the pages is affordable — and this is the verdict that
+    decides whether the previous DB may be discarded, so a shallow "looks fine"
+    is not good enough. A build that exits 0 having written a file corrupt past
+    the schema page used to be accepted, and the old DB deleted on the strength
+    of it.
+
     :param db_path: Path to the DB.
     :param min_size: Smallest plausible size for a complete build.
     :return: True if the file is a usable, locally-built DB.
     """
-    return _present_db(db_path, min_size) and not os.path.islink(db_path)
+    if os.path.islink(db_path):
+        return False
+    return _classify_db(db_path, min_size, deep=True) == DB_OK
 
 
 def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool:
@@ -335,57 +344,98 @@ def _present_db(db_path: str, min_size: int) -> bool:
     Symlinks are accepted because pointing at a prebuilt DB is supported —
     :func:`get_chebi_adapter`'s own error text suggests doing exactly that.
 
-    The openability probe belongs *here*, not at individual call sites. It was
-    first added only to the four reuse fast-paths, which left every other
-    decision ranking artifacts by size alone — and that combination created a
-    new data-loss path rather than closing one: a large corrupt DB stopped being
-    reused (good) and so began triggering a rebuild (new), whereupon
-    :func:`_clear_build_target` judged it equal to a readable ``.prev`` and
-    deleted the readable copy. Every "is this DB any good" decision — ranking,
-    fallback, opt-out, post-build success, restore — must give the same answer,
-    so they all go through this one predicate.
+    A DB held open by another writer counts as present: locking is not damage,
+    and classifying it as corrupt meant moving a live writer's database aside
+    and rebuilding over it. See :func:`_classify_db` for why this returns a
+    coarse boolean while deletion decisions consult the finer classification.
 
     :param db_path: Path to the DB.
     :param min_size: Smallest plausible size for a complete build.
-    :return: True if the file is usable.
+    :return: True if the file is present and not damaged.
     """
-    if not (os.path.exists(db_path) and os.path.getsize(db_path) >= min_size):
-        return False
-    return _db_is_readable(db_path)
+    return _classify_db(db_path, min_size) in _DB_KEEP_STATES
 
 
-def _db_is_readable(db_path: str) -> bool:
+# How a DB on disk classifies. Deliberately more than a boolean: a single
+# "is it good?" verdict driving both *rebuild* and *delete* decisions is what
+# made the .prev data-loss bug recur four times. A wrong rebuild answer costs
+# time; a wrong delete answer costs a 13 GB database.
+DB_ABSENT = "absent"
+DB_TOO_SMALL = "too_small"
+DB_BUSY = "busy"
+DB_CORRUPT = "corrupt"
+DB_OK = "ok"
+
+# States that must never be destroyed. BUSY is in here deliberately: another
+# process holding a write lock is not corruption, and treating it as such meant
+# moving a live writer's database aside and rebuilding over it.
+_DB_KEEP_STATES = (DB_OK, DB_BUSY)
+
+# Short, so a locked DB is classified as BUSY promptly rather than after
+# SQLite's multi-second default busy wait.
+_DB_PROBE_TIMEOUT_SECONDS = 0.5
+
+
+def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
     """
-    Report whether a DB is actually openable as SQLite.
+    Classify a DB on disk, distinguishing "locked" from "corrupt".
 
-    The size floor alone cannot tell a complete build from a large corrupt file:
-    a truncated-mid-write or bit-rotted DB clears the floor, and every release
-    reader turns the resulting ``sqlite3.Error`` into ``None`` — which the reuse
-    fast-paths read as "no stamp recorded, do not rebuild". The DB is then handed
-    to OAK, whose own queries fail and are swallowed, so GO terms collapse to
-    BiologicalProcess and ChEBI terms to the default category. Probing here is
-    what turns that silent miscategorisation into a rebuild.
+    The shallow probe reads the schema page: enough to catch a truncated or
+    non-SQLite file, cheap enough to run on every resolve (microseconds even on
+    the 13 GB ncbitaxon.db). It cannot catch corruption in deeper pages, and
+    that is an accepted limit — because this verdict no longer authorises
+    deleting anything. A false "ok" now means a bad DB is reused, which is
+    recoverable; it can no longer mean a good copy is destroyed.
 
-    ``PRAGMA schema_version`` reads the file header only, so this stays O(1) even
-    on the 13 GB ``ncbitaxon.db`` — unlike ``PRAGMA integrity_check``, which
-    would walk every page and is far too expensive to run on every resolve.
+    ``deep=True`` additionally runs ``PRAGMA quick_check(1)``, which does walk
+    the pages. Reserved for the one decision where being wrong costs data — see
+    :func:`_clear_build_target` — and for validating a finished build. Never on
+    the hot path.
 
     :param db_path: Path to the DB.
-    :return: True if SQLite can open it and answer a header query.
+    :param min_size: Smallest plausible size for a complete build.
+    :param deep: Whether to also walk pages via ``quick_check``.
+    :return: One of the ``DB_*`` constants.
     """
+    if not os.path.exists(db_path):
+        return DB_ABSENT
+    try:
+        if os.path.getsize(db_path) < min_size:
+            return DB_TOO_SMALL
+    except OSError:
+        return DB_ABSENT
     try:
         # quote() the path: an unescaped "?" would start URI query parameters
         # and "#" a fragment, so SQLite would silently open a *different*
         # file than the one being checked.
         uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
-        conn = sqlite3.connect(uri, uri=True)
+        conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
         try:
-            conn.execute("PRAGMA schema_version").fetchone()
+            # Reads the schema page, not just the 100-byte header.
+            conn.execute("SELECT name FROM sqlite_master LIMIT 1").fetchone()
+            if deep:
+                row = conn.execute("PRAGMA quick_check(1)").fetchone()
+                if row and str(row[0]).lower() != "ok":
+                    return DB_CORRUPT
         finally:
             conn.close()
+    except sqlite3.OperationalError as e:
+        # "database is locked" / "database table is locked" — a live writer, not
+        # damage. Anything else from OperationalError is a genuine open failure.
+        return DB_BUSY if "locked" in str(e).lower() or "busy" in str(e).lower() else DB_CORRUPT
     except (sqlite3.Error, OSError):
-        return False
-    return True
+        return DB_CORRUPT
+    return DB_OK
+
+
+def _db_is_readable(db_path: str) -> bool:
+    """
+    Report whether SQLite can open a DB, treating a locked one as readable.
+
+    :param db_path: Path to the DB.
+    :return: True unless the file is missing or damaged.
+    """
+    return _classify_db(db_path, 0) in _DB_KEEP_STATES
 
 
 def _read_head(path: Path, nbytes: int) -> Optional[str]:
@@ -557,7 +607,8 @@ def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
     :return: What was displaced, for :func:`_restore_build_target`.
     """
     kept = f"{db_path}.prev"
-    prev_usable = os.path.lexists(kept) and _present_db(kept, min_size)
+    prev_state = _classify_db(kept, min_size) if os.path.lexists(kept) else DB_ABSENT
+    prev_usable = prev_state in _DB_KEEP_STATES
     target_is_link = os.path.islink(db_path)
     target_present = os.path.lexists(db_path)
     target_usable = target_present and not target_is_link and _present_db(db_path, min_size)
@@ -589,9 +640,28 @@ def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
         os.remove(db_path)
         return KeptTarget(link_target=target)
     if not os.path.lexists(db_path):
+        if prev_usable:
+            # An unreferenced but usable .prev with nothing at the target: say so
+            # rather than leaving 13 GB silently stranded through a build that
+            # will never look at it.
+            _note_orphaned_prev(db_path)
         return KeptTarget(link_target=recovered_link)
     if os.path.lexists(kept):
-        # Only reached when the target is at least as good as the .prev.
+        # About to overwrite the .prev with the target. This is the one decision
+        # where being wrong destroys data, so it is the one place that pays for a
+        # deep check: the shallow probe reads only the schema page, and a target
+        # corrupt in deeper pages would otherwise pass as "at least as good" and
+        # take the good .prev's place (round-3 finding 1).
+        if prev_usable and _classify_db(db_path, min_size, deep=True) != DB_OK:
+            print(
+                f"  Keeping {kept}: it is usable and {db_path} did not pass a deep check. "
+                "Discarding the target instead of trading a good copy for a doubtful one."
+            )
+            os.remove(db_path)
+            # prev_path is still reported: the good copy lives at .prev, so a
+            # failed build must move it back to the target, and a successful one
+            # may discard it.
+            return KeptTarget(prev_path=kept, link_target=recovered_link)
         os.remove(kept)
     os.replace(db_path, kept)
     return KeptTarget(prev_path=kept, link_target=recovered_link)

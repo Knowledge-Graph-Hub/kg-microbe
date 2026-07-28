@@ -13,6 +13,7 @@ reintroduces the pattern.
 import ast
 import re
 import time
+from functools import lru_cache
 from pathlib import Path
 
 import pytest
@@ -146,9 +147,24 @@ def _calls_exactly(node, func_name):
     return False
 
 
+@lru_cache(maxsize=None)
+def _parsed(source):
+    """
+    Parse a source string once.
+
+    The guard walks assignments, returns, parameters and callers, each of which
+    used to re-parse the whole file: five adapter calls cost 233 ast.parse
+    invocations and the suite spent 40s here.
+
+    :param source: File contents.
+    :return: The parsed module.
+    """
+    return ast.parse(source)
+
+
 def _returns_of(func_name, source):
     """Yield every returned expression of a function defined in this file."""
-    for node in ast.walk(ast.parse(source)):
+    for node in ast.walk(_parsed(source)):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == func_name:
             for sub in ast.walk(node):
                 if isinstance(sub, ast.Return) and sub.value is not None:
@@ -191,7 +207,7 @@ def _is_db_shaped_parameter(node, source):
     names = {sub.id for sub in ast.walk(node) if isinstance(sub, ast.Name)}
     if not names or not all("db" in name for name in names):
         return False
-    tree = ast.parse(source)
+    tree = _parsed(source)
     owning = {}
     for func in ast.walk(tree):
         if isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -219,7 +235,16 @@ def _is_db_shaped_parameter(node, source):
                 if index is not None and len(call.args) > index and _mentions_owl(call.args[index], source):
                     return False
                 for kw in call.keywords:
-                    if kw.arg == name and _mentions_owl(kw.value, source):
+                    # kw.arg is None for **{...} unpacking, whose contents cannot
+                    # be matched to a parameter — treat any OWL inside as reaching
+                    # this one rather than waving it through.
+                    if (kw.arg == name or kw.arg is None) and _mentions_owl(kw.value, source):
+                        return False
+            # An alias (`alias = helper; alias(GO_SOURCE)`) hides the call from the
+            # name match above, so any aliasing of the function disqualifies it.
+            for assign in ast.walk(tree):
+                if isinstance(assign, ast.Assign) and isinstance(assign.value, ast.Name):
+                    if assign.value.id == func.name:
                         return False
     return True
 
@@ -238,8 +263,7 @@ def _assignments_of_node(name, source):
     which a plain-Name-only match silently skipped — leaving the bound name
     unresolvable and the call unchecked.
     """
-    tree = ast.parse(source)
-    for node in ast.walk(tree):
+    for node in ast.walk(_parsed(source)):
         if isinstance(node, ast.Assign):
             for target in node.targets:
                 if isinstance(target, ast.Name) and target.id == name:

@@ -13,7 +13,7 @@ _COUNTER = itertools.count()
 
 
 @contextmanager
-def atomic_write(path: Union[str, Path], mode: str = "w", **open_kwargs):
+def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = False, **open_kwargs):
     """
     Write to ``path`` via a temp file that is renamed into place only on success.
 
@@ -53,6 +53,12 @@ def atomic_write(path: Union[str, Path], mode: str = "w", **open_kwargs):
             yield handle
         os.replace(tmp, path)
         committed = True
+        if mark_complete:
+            # A cache can be legitimately empty. Row count alone cannot tell
+            # "correctly produced nothing" from "truncated", so completion is
+            # recorded explicitly rather than inferred from content.
+            Path(f"{path}.complete").write_text("")
+        _sweep_stale_partials(path)
     finally:
         if not committed:
             try:
@@ -90,3 +96,55 @@ def has_data_rows(path: Union[str, Path], delimiter: str = "\t") -> bool:
             return next(reader, None) is not None
     except OSError:
         return False
+
+
+# Partials older than this are assumed to be from a process that died without
+# unwinding (SIGKILL, os._exit, power loss) — nothing else can clean them, since
+# the writer that would have is gone.
+_STALE_PARTIAL_SECONDS = 24 * 60 * 60
+
+
+def _sweep_stale_partials(path: Path) -> None:
+    """
+    Remove long-dead sibling ``.partial`` files.
+
+    Per-writer temp names stop concurrent writers colliding, but they mean a
+    process killed mid-write strands its temp file forever — potentially several
+    GB beside a node file. Only files older than a day are touched, so a
+    concurrently-running writer's temp is never removed.
+
+    :param path: The final destination path whose siblings to sweep.
+    """
+    try:
+        cutoff = os.path.getmtime(path) - _STALE_PARTIAL_SECONDS
+        for sibling in path.parent.glob(f"{path.name}.*.partial"):
+            try:
+                if os.path.getmtime(sibling) < cutoff:
+                    os.unlink(sibling)
+            except OSError:
+                continue
+    except OSError:
+        return
+
+
+def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
+    """
+    Report whether a derived cache was completely produced.
+
+    Complete means either an explicit completion marker written by
+    :func:`atomic_write` (``mark_complete=True``), or — for caches written before
+    markers existed — at least one data row. The marker is what lets a
+    legitimately *empty* result count as finished: judging on row count alone,
+    a run that correctly produced zero annotations looked identical to a
+    truncated one and was regenerated on every subsequent run forever.
+
+    :param path: Cache path.
+    :param delimiter: Field delimiter of the cache.
+    :return: True if the cache exists and is known to be complete.
+    """
+    path = Path(path)
+    if not path.exists():
+        return False
+    if Path(f"{path}.complete").exists():
+        return True
+    return has_data_rows(path, delimiter)

@@ -62,7 +62,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEOME_COLUMN_NAME,
     UNIPROT_RHEA_ID_COLUMN_NAME,
 )
-from kg_microbe.utils.atomic_io import atomic_write, has_data_rows
+from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.ontology_utils import resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -764,7 +764,7 @@ def go_category_trees_is_complete(path=None) -> bool:
     :param path: Cache path; defaults to GO_CATEGORY_TREES_FILE.
     :return: True if the cache exists and holds at least one term.
     """
-    return has_data_rows(path if path is not None else GO_CATEGORY_TREES_FILE)
+    return cache_is_complete(path if path is not None else GO_CATEGORY_TREES_FILE)
 
 
 def get_go_category_trees(go_oi):
@@ -786,7 +786,7 @@ def get_go_category_trees(go_oi):
     """
     go_oi = resolve_adapter(go_oi)
     os.makedirs(ONTOLOGIES_TREES_DIR, exist_ok=True)
-    with atomic_write(GO_CATEGORY_TREES_FILE) as file:
+    with atomic_write(GO_CATEGORY_TREES_FILE, mark_complete=True) as file:
         csv_writer = csv.writer(file, delimiter="\t")
         csv_writer.writerow([GO_CATEGORY_COLUMN, GO_TERM_COLUMN])
 

@@ -38,7 +38,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.atomic_io import atomic_write, has_data_rows
+from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
@@ -235,7 +235,7 @@ class BactoTraitsTransform(Transform):
         # Content, not mere existence: a mapping truncated by an interrupted run
         # before atomic_write landed would otherwise be accepted as complete
         # forever, silently losing the bacdive→ncbitaxon links past that point.
-        if has_data_rows(mapping_file):
+        if cache_is_complete(mapping_file):
             with open(mapping_file, "r") as mapping_file:
                 mapping_reader = csv.DictReader(mapping_file, delimiter="\t")
                 for row in mapping_reader:
@@ -248,7 +248,7 @@ class BactoTraitsTransform(Transform):
             # the failure point.
             with (
                 open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file,
-                atomic_write(mapping_file) as mapping_handle,
+                atomic_write(mapping_file, mark_complete=True) as mapping_handle,
             ):
                 # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
                 bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")

@@ -151,8 +151,8 @@ def annotate(
     # annotation run would otherwise leave a partial TSV that every later run
     # accepts as a finished NER result.
     with (
-        atomic_write(str(outfile), "w", newline="") as file_1,
-        atomic_write(str(outfile_for_unmatched), "w", newline="") as file_2,
+        atomic_write(str(outfile), "w", mark_complete=True, newline="") as file_1,
+        atomic_write(str(outfile_for_unmatched), "w", mark_complete=True, newline="") as file_2,
     ):
         writer_1 = csv.writer(file_1, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_2 = csv.writer(file_2, delimiter="\t", quoting=csv.QUOTE_NONE)

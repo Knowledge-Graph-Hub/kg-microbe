@@ -7,6 +7,7 @@ the header lands, the generator raises, and every later run sees a file that
 exists and skips regeneration. These tests pin the fix.
 """
 
+import ast
 import csv
 import os
 import time
@@ -243,78 +244,86 @@ class TestAllPoisonedCachesHeal:
 class TestCallSitesUseTheGuardedHelpers:
 
     """
-    Behavioural, not textual.
+    Every cache call site must guard on completeness and write atomically.
 
-    The first version of these asserted that certain strings appeared in the
-    source. Codex reverted all four call sites to `.exists()` while leaving the
-    expected strings behind in comments, and every one still passed. A test that
-    greps for its own fix is not a test.
+    Two failed attempts precede this one. The first asserted that certain
+    strings appeared in the source; reverting the call sites while leaving the
+    strings in comments kept it green. The second replaced those with
+    behavioural tests of `annotate` and `atomic_write` — which exercise neither
+    the BactoTraits, Wallen nor Madin call sites, so all four guards and all
+    four writers could be reverted with the suite still passing. Deleting a weak
+    test and leaving nothing is worse than the weak test.
+
+    These assert on the parsed syntax tree: a comment cannot satisfy them, and
+    reverting a guard to `.exists()` or a writer to `open(` removes the node
+    they look for.
     """
 
-    def test_annotate_marks_its_outputs_complete(self, tmp_path, monkeypatch):
-        """A finished NER run must record completion, even producing no rows."""
-        import pandas as pd
+    GUARDS = [
+        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", "cache_is_complete"),
+        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", "cache_is_complete"),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", "cache_is_complete"),
+        ("kg_microbe/utils/uniprot_utils.py", "cache_is_complete"),
+    ]
 
-        from kg_microbe.utils import ner_utils
+    WRITERS = [
+        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1),
+        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2),
+        ("kg_microbe/utils/ner_utils.py", 2),
+        ("kg_microbe/utils/uniprot_utils.py", 1),
+        ("kg_microbe/utils/pandas_utils.py", 1),
+    ]
 
-        class FakeAdapter:
+    @staticmethod
+    def _call_names(module_path):
+        """Return every called function name in a module, from its syntax tree."""
+        source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
+        names = []
+        for node in ast.walk(ast.parse(source)):
+            if isinstance(node, ast.Call):
+                called = getattr(node.func, "id", None) or getattr(node.func, "attr", None)
+                if called:
+                    names.append(called)
+        return names
 
-            """Annotates nothing, as a run over an unmatched input would."""
+    @pytest.mark.parametrize("module_path, guard", GUARDS)
+    def test_guards_call_the_completeness_helper(self, module_path, guard):
+        """Reverting a guard to a bare .exists()/.is_file() must fail here."""
+        assert guard in self._call_names(module_path), (
+            f"{module_path} must guard cache regeneration with {guard}(); "
+            "a bare existence check accepts a file poisoned by an interrupted run"
+        )
 
-            def annotate_text(self, text, configuration):
-                """Return no annotations."""
-                return []
+    @pytest.mark.parametrize("module_path, count", WRITERS)
+    def test_cache_writers_are_atomic(self, module_path, count):
+        """Replacing an atomic_write with a direct open() must fail here."""
+        actual = self._call_names(module_path).count("atomic_write")
+        assert actual >= count, (
+            f"{module_path} should make at least {count} atomic_write call(s), found {actual}; "
+            "an in-place write leaves a truncated cache that the guard then accepts"
+        )
 
-        monkeypatch.setattr(ner_utils, "get_ontology_adapter", lambda _: FakeAdapter())
-        outfile = tmp_path / "chebi_result.tsv"
-        ner_utils.annotate(pd.DataFrame({"terms": ["nothing-matches"]}), "CHEBI:", [], outfile)
-
-        assert outfile.exists()
-        assert cache_is_complete(outfile), "a correctly-empty result must count as complete"
-        assert not has_data_rows(outfile), "and it genuinely has no data rows"
-
-    def test_a_correctly_empty_cache_is_not_regenerated_forever(self, tmp_path):
+    def test_no_cache_consumer_guards_on_bare_existence(self):
         """
-        The regression the completion marker exists to prevent.
+        No guarded module may still branch on bare existence for these caches.
 
-        Judging on row count alone, a run that correctly produced zero rows was
-        indistinguishable from a truncated one, so it regenerated on every run.
+        Catches a call site that adds a completeness check while leaving the old
+        existence check in place beside it.
         """
-        target = tmp_path / "cache.tsv"
-        with atomic_write(target, mark_complete=True) as handle:
-            handle.write("a\tb\n")
-        assert cache_is_complete(target)
-
-    def test_a_legacy_header_only_cache_still_heals(self, tmp_path):
-        """Written by the pre-marker code, so no marker: must regenerate once."""
-        target = tmp_path / "cache.tsv"
-        target.write_text("a\tb\n")
-        assert not cache_is_complete(target)
-
-    def test_a_truncated_write_leaves_neither_file_nor_marker(self, tmp_path):
-        """An interrupted write must not publish a marker for a missing file."""
-        target = tmp_path / "cache.tsv"
-        with pytest.raises(ValueError):
-            with atomic_write(target, mark_complete=True) as handle:
-                handle.write("a\tb\n")
-                raise ValueError("boom")
-        assert not target.exists()
-        assert not Path(f"{target}.complete").exists()
-
-    def test_stale_partials_are_swept_but_live_ones_are_not(self, tmp_path):
-        """A SIGKILLed writer's temp must not accumulate; a live one must survive."""
-        target = tmp_path / "cache.tsv"
-        stale = tmp_path / "cache.tsv.999.0.partial"
-        stale.write_text("orphaned")
-        os.utime(stale, (0, 0))  # long dead
-        fresh = tmp_path / "cache.tsv.998.0.partial"
-        fresh.write_text("another writer, still going")
-
-        with atomic_write(target) as handle:
-            handle.write("done\n")
-
-        assert not stale.exists(), "a day-old partial must be swept"
-        assert fresh.exists(), "a concurrent writer's temp must be left alone"
+        offenders = []
+        for module_path, _ in self.GUARDS:
+            source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
+            for node in ast.walk(ast.parse(source)):
+                if not isinstance(node, ast.Call):
+                    continue
+                called = getattr(node.func, "attr", None)
+                if called not in {"exists", "is_file"}:
+                    continue
+                segment = ast.get_source_segment(source, node) or ""
+                if any(hint in segment for hint in ("mapping_file", "TMP_FILEPATH", "result_fn", "TREES_FILE")):
+                    offenders.append(f"{module_path}:{node.lineno} -> {segment}")
+        assert offenders == [], f"cache guards must not use bare existence checks: {offenders}"
 
 
 class TestMarkerAndSweeperAdversarial:
@@ -368,3 +377,47 @@ class TestMarkerAndSweeperAdversarial:
 
         assert live.exists(), "a concurrent writer's temp must never be swept"
         assert not orphan.exists(), "a long-dead partial must be swept regardless of skew"
+
+
+class TestMarkerIdentity:
+
+    """A marker must certify the file it was written for, and no other."""
+
+    def test_same_size_replacement_is_not_certified(self, tmp_path):
+        """
+        Size alone let any equal-length file inherit the certificate.
+
+        A cache replaced out of band by a different file of the same length was
+        still reported complete.
+        """
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\nx\ty\n")
+        assert cache_is_complete(target)
+
+        # Header-only, so the content fallback cannot vouch for it either — the
+        # marker is the only thing that could, which is what this isolates.
+        same_length = "q\tr\tuvw\n"
+        assert len(same_length) == target.stat().st_size, "the replacement must match byte length"
+        target.write_text(same_length)
+        assert not cache_is_complete(target), "an equal-sized replacement must not be certified"
+
+    def test_empty_legacy_marker_certifies_nothing(self, tmp_path):
+        """
+        The interim marker format was an empty file, which vouched for anything.
+
+        A legacy marker beside a broken cache must fall through to the content
+        check rather than declare it complete.
+        """
+        target = tmp_path / "cache.tsv"
+        target.write_text("broken\n")
+        Path(f"{target}.complete").write_text("")
+        assert not cache_is_complete(target)
+
+    def test_a_marked_empty_cache_is_still_complete(self, tmp_path):
+        """The behaviour the marker exists for must survive the hardening."""
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\n")  # header only, legitimately
+        assert cache_is_complete(target)
+        assert not has_data_rows(target)

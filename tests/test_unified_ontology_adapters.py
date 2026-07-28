@@ -80,12 +80,21 @@ def _get_adapter_calls():
             # (e.g. nested same-quote f-strings, 3.12+). They cannot be scanned
             # here; test_unparsable_files_are_known keeps that list from growing.
             continue
+        # `from oaklib import get_adapter as ga` then `ga(...)` was invisible to
+        # a name-only match, so an aliased import could reintroduce the pattern
+        # with the guard still green.
+        aliases = {"get_adapter"}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                for alias in node.names:
+                    if alias.name == "get_adapter" and alias.asname:
+                        aliases.add(alias.asname)
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call):
                 continue
             func = node.func
             name = func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", None)
-            if name != "get_adapter" or not node.args:
+            if name not in aliases or not node.args:
                 continue
             yield path.relative_to(REPO_ROOT), node.lineno, node.args[0], text
 
@@ -147,6 +156,39 @@ def _textual_offenders(text):
         if ".owl" in arg or any(c in arg for c in OWL_SOURCE_NAMES):
             hits.append(text[: match.start()].count("\n") + 1)
     return hits
+
+
+def _function_is_aliased(func_name, tree):
+    """
+    Report whether a function is bound to another name or partially applied.
+
+    Any of these hides a call from a name match, so a db-shaped parameter in
+    such a function cannot be trusted: ``alias = helper``,
+    ``alias: object = helper``, ``alias, other = helper, None``, and
+    ``functools.partial(helper, ...)``.
+
+    :param func_name: Name of the function to look for.
+    :param tree: Parsed module.
+    :return: True if the function is referenced other than by direct call.
+    """
+
+    def _binds(value):
+        """Report whether an assigned value references the function by name."""
+        if isinstance(value, ast.Name):
+            return value.id == func_name
+        if isinstance(value, (ast.Tuple, ast.List)):
+            return any(_binds(element) for element in value.elts)
+        return False
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Assign, ast.AnnAssign)) and node.value is not None:
+            if _binds(node.value):
+                return True
+        if isinstance(node, ast.Call):
+            called = getattr(node.func, "id", None) or getattr(node.func, "attr", None)
+            if called == "partial" and any(isinstance(a, ast.Name) and a.id == func_name for a in node.args):
+                return True
+    return False
 
 
 def _calls_exactly(node, func_name):
@@ -258,12 +300,12 @@ def _is_db_shaped_parameter(node, source):
                     # this one rather than waving it through.
                     if (kw.arg == name or kw.arg is None) and _mentions_owl(kw.value, source):
                         return False
-            # An alias (`alias = helper; alias(GO_SOURCE)`) hides the call from the
-            # name match above, so any aliasing of the function disqualifies it.
-            for assign in ast.walk(tree):
-                if isinstance(assign, ast.Assign) and isinstance(assign.value, ast.Name):
-                    if assign.value.id == func.name:
-                        return False
+            # Aliasing hides the call from the name match above, so any form of
+            # it disqualifies the parameter. Plain assignment was covered; an
+            # annotated assignment, a tuple assignment and functools.partial
+            # were not.
+            if _function_is_aliased(func.name, tree):
+                return False
     return True
 
 

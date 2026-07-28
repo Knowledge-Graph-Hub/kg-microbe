@@ -68,7 +68,8 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
             # writes — annotate() commits a result and drop_duplicates then
             # rewrites it — and a stale size would condemn a perfectly good
             # cache to be regenerated on every future run.
-            marker.write_text(str(path.stat().st_size))
+            stat = path.stat()
+            marker.write_text(f"{stat.st_size}:{stat.st_mtime_ns}")
         _sweep_stale_partials(path)
     finally:
         if not committed:
@@ -112,6 +113,14 @@ def has_data_rows(path: Union[str, Path], delimiter: str = "\t") -> bool:
 # Partials older than this are assumed to be from a process that died without
 # unwinding (SIGKILL, os._exit, power loss) — nothing else can clean them, since
 # the writer that would have is gone.
+#
+# Age is a proxy for "the writer is dead", and an imperfect one: a writer that
+# stalls or legitimately runs longer than this loses its temp file's pathname
+# and will fail its rename. Accepted deliberately. The alternative — asking
+# whether some process still holds the descriptor — has no portable answer, and
+# the failure mode here is a failed rename on an already-pathological run, not
+# a corrupted or lost cache. The window is generous precisely so ordinary long
+# writes stay well inside it.
 _STALE_PARTIAL_SECONDS = 24 * 60 * 60
 
 
@@ -163,9 +172,13 @@ def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
     if marker.exists():
         try:
             certified = marker.read_text().strip()
-            # An unsized marker predates this check; accept it, but a sized one
-            # must match the file it claims to certify.
-            if not certified or int(certified) == path.stat().st_size:
+            stat = path.stat()
+            # Size *and* modification time. Size alone certified any unrelated
+            # file that happened to be the same length, and an empty marker —
+            # the interim format — certified anything at all, so a legacy marker
+            # beside a broken file read as complete. An empty or unparsable
+            # marker now proves nothing and falls through to the content check.
+            if certified and certified == f"{stat.st_size}:{stat.st_mtime_ns}":
                 return True
         except (OSError, ValueError):
             return False

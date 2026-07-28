@@ -19,7 +19,7 @@ from kg_microbe.transform_utils.constants import (
     WALLEN_ETAL_TMP_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.atomic_io import atomic_write, has_data_rows
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # Constants
@@ -74,7 +74,9 @@ class WallenEtAlTransform(Transform):
 
         self.microbe_labels_dict = {}
         WALLEN_ETAL_TMP_FILEPATH = WALLEN_ETAL_TMP_DIR / "Wallen_etal_Microbe_Labels.csv"
-        if WALLEN_ETAL_TMP_FILEPATH.exists():
+        # Content, not mere existence — see bactotraits: a truncated label cache
+        # left by a pre-atomic-write run is otherwise permanent.
+        if has_data_rows(WALLEN_ETAL_TMP_FILEPATH):
             with open(WALLEN_ETAL_TMP_FILEPATH, "r") as file:
                 csv_reader = csv.DictReader(file, delimiter="\t")
                 for row in csv_reader:

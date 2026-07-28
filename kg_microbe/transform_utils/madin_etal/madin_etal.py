@@ -70,6 +70,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import has_data_rows
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
@@ -218,7 +219,9 @@ class MadinEtAlTransform(Transform):
         go_result_fn = GO_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
         chebi_result_fn = CHEBI_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
 
-        if not (self.nlp_output_dir / chebi_result_fn).is_file():
+        # Content, not mere existence: an interrupted annotation used to leave
+        # a partial TSV that this guard then accepted as a finished NER run.
+        if not has_data_rows(self.nlp_output_dir / chebi_result_fn):
             annotate(
                 chebi_nlp_df,
                 CHEBI_PREFIX,
@@ -265,7 +268,7 @@ class MadinEtAlTransform(Transform):
             for (subject, predicate, object) in chebi_roles
         ]
 
-        if not (self.nlp_output_dir / go_result_fn).is_file():
+        if not has_data_rows(self.nlp_output_dir / go_result_fn):
             annotate(
                 go_nlp_df,
                 GO_PREFIX,

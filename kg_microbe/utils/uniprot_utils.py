@@ -62,7 +62,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEOME_COLUMN_NAME,
     UNIPROT_RHEA_ID_COLUMN_NAME,
 )
-from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.atomic_io import atomic_write, has_data_rows
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.ontology_utils import resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -761,27 +761,10 @@ def go_category_trees_is_complete(path=None) -> bool:
     """
     Report whether the GO category-trees cache is present *and* has content.
 
-    Atomic writes stop this cache from being poisoned again, but they cannot
-    repair a file poisoned by the previous in-place writer — the guard was a bare
-    ``.exists()``, so a header-only file left by an interrupted run is accepted
-    forever, ``prepare_go_dictionary`` reads it as ``{}``, and every protein→GO
-    edge is dropped while every GO term is logged as obsolete. Checking for at
-    least one data row is what lets an existing poisoned cache heal itself on the
-    next run instead of requiring the user to know to delete it.
-
     :param path: Cache path; defaults to GO_CATEGORY_TREES_FILE.
     :return: True if the cache exists and holds at least one term.
     """
-    path = Path(path) if path is not None else GO_CATEGORY_TREES_FILE
-    if not path.exists():
-        return False
-    try:
-        with open(path) as handle:
-            reader = csv.reader(handle, delimiter="\t")
-            next(reader, None)  # header
-            return next(reader, None) is not None
-    except OSError:
-        return False
+    return has_data_rows(path if path is not None else GO_CATEGORY_TREES_FILE)
 
 
 def get_go_category_trees(go_oi):

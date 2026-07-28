@@ -38,7 +38,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.atomic_io import atomic_write, has_data_rows
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
@@ -232,7 +232,10 @@ class BactoTraitsTransform(Transform):
         BACTOTRAITS_TMP_DIR.mkdir(parents=True, exist_ok=True)
         bacdive_ncbitaxon_dict = {}
         mapping_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}_mapping.tsv"
-        if mapping_file.exists():
+        # Content, not mere existence: a mapping truncated by an interrupted run
+        # before atomic_write landed would otherwise be accepted as complete
+        # forever, silently losing the bacdive→ncbitaxon links past that point.
+        if has_data_rows(mapping_file):
             with open(mapping_file, "r") as mapping_file:
                 mapping_reader = csv.DictReader(mapping_file, delimiter="\t")
                 for row in mapping_reader:

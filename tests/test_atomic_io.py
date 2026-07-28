@@ -8,13 +8,14 @@ exists and skips regeneration. These tests pin the fix.
 """
 
 import csv
+from pathlib import Path
 from unittest import mock
 
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
 from kg_microbe.utils import uniprot_utils as uu
-from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.atomic_io import atomic_write, has_data_rows
 
 
 class TestAtomicWrite:
@@ -198,3 +199,86 @@ class TestExistingPoisonedCacheHeals:
                 seen = sorted(p.name for p in tmp_path.glob("*.partial"))
         assert len(seen) == 2, f"each writer needs its own temp file, saw {seen}"
         assert target.read_text() == "A", "the outer writer commits last and wins"
+
+
+class TestAllPoisonedCachesHeal:
+
+    """
+    Every .exists()-guarded cache must reject a header-only file, not just GO's.
+
+    The first pass fixed only go_category_trees.tsv, which was the one with a
+    demonstrated consequence — leaving BactoTraits, Wallen and the Madin NER
+    outputs able to keep an existing poisoned file forever.
+    """
+
+    @pytest.mark.parametrize(
+        "header",
+        [
+            "GO_Category\tGO_Term\n",
+            "Bacdive_ID\tculture_collection_number\tncbitaxon_id\n",
+            "orig_node\tentity_uri\n",
+            "object_id\tobject_label\tsubject_label\n",
+        ],
+    )
+    def test_header_only_files_are_not_complete(self, tmp_path, header):
+        """A header with no data rows must read as incomplete for every cache."""
+        target = tmp_path / "cache.tsv"
+        target.write_text(header)
+        assert not has_data_rows(target)
+
+    def test_one_data_row_is_enough(self, tmp_path):
+        """A cache with content must not be needlessly regenerated."""
+        target = tmp_path / "cache.tsv"
+        target.write_text("a\tb\nx\ty\n")
+        assert has_data_rows(target)
+
+    def test_unreadable_file_is_conservative(self, tmp_path):
+        """An unreadable cache regenerates rather than being trusted blindly."""
+        target = tmp_path / "nested" / "cache.tsv"
+        assert not has_data_rows(target)
+
+
+class TestCallSitesUseTheGuardedHelpers:
+
+    """
+    Codex noted there were no call-site tests for three of the four conversions.
+
+    These assert the wiring, which is what actually regressed: the helper being
+    correct is no use if a call site still writes in place or guards on
+    existence alone.
+    """
+
+    @pytest.mark.parametrize(
+        "module_path, needle",
+        [
+            ("kg_microbe/transform_utils/bactotraits/bactotraits.py", "has_data_rows(mapping_file)"),
+            ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", "has_data_rows(WALLEN_ETAL_TMP_FILEPATH)"),
+            (
+                "kg_microbe/transform_utils/madin_etal/madin_etal.py",
+                "has_data_rows(self.nlp_output_dir / chebi_result_fn)",
+            ),
+            (
+                "kg_microbe/transform_utils/madin_etal/madin_etal.py",
+                "has_data_rows(self.nlp_output_dir / go_result_fn)",
+            ),
+        ],
+    )
+    def test_guards_check_content_not_existence(self, module_path, needle):
+        """No cache consumer may go back to a bare .exists()/.is_file()."""
+        source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
+        assert needle in source, f"{module_path} must guard on content: {needle}"
+
+    @pytest.mark.parametrize(
+        "module_path, count",
+        [
+            ("kg_microbe/utils/ner_utils.py", 2),
+            ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1),
+            ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1),
+            ("kg_microbe/utils/pandas_utils.py", 1),
+            ("kg_microbe/utils/uniprot_utils.py", 1),
+        ],
+    )
+    def test_cache_writers_are_atomic(self, module_path, count):
+        """Each converted writer still goes through atomic_write."""
+        source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
+        assert source.count("atomic_write(") >= count, f"{module_path} lost an atomic_write call"

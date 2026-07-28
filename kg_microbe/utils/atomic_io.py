@@ -1,5 +1,6 @@
 """Atomic writes for derived caches, so a failed run leaves no half-written file."""
 
+import csv
 import itertools
 import os
 from contextlib import contextmanager
@@ -59,3 +60,33 @@ def atomic_write(path: Union[str, Path], mode: str = "w", **open_kwargs):
             except OSError:
                 # Nothing to clean up, or it is not ours to remove.
                 pass
+
+
+def has_data_rows(path: Union[str, Path], delimiter: str = "\t") -> bool:
+    """
+    Report whether a delimited cache exists and holds at least one data row.
+
+    The companion to :func:`atomic_write`. Atomicity stops a cache from being
+    poisoned *again*, but it cannot repair one poisoned before the fix landed —
+    and every consumer of these caches guards regeneration with a bare
+    ``.exists()``, so a header-only file is accepted forever. Checking for
+    content is what lets an already-poisoned cache heal on the next run instead
+    of requiring the user to know which file to delete.
+
+    Conservative on error: an unreadable file reports False, so the caller
+    regenerates rather than trusting something it could not inspect.
+
+    :param path: Cache path.
+    :param delimiter: Field delimiter of the cache.
+    :return: True if the file exists and has a row beyond the header.
+    """
+    path = Path(path)
+    if not path.exists():
+        return False
+    try:
+        with open(path, newline="") as handle:
+            reader = csv.reader(handle, delimiter=delimiter)
+            next(reader, None)  # header
+            return next(reader, None) is not None
+    except OSError:
+        return False

@@ -33,19 +33,38 @@ OWL_SOURCE_NAMES = {"NCBITAXON_SOURCE", "CHEBI_SOURCE", "GO_SOURCE", "EC_SOURCE"
 OWL_FILENAMES = {"ncbitaxon.owl", "chebi.owl", "go.owl", "ec.owl"}
 
 
+@lru_cache(maxsize=1)
+def _source_texts():
+    """
+    Read every scanned file once, as (path, text) pairs.
+
+    Each guard assertion used to re-read and re-parse the whole tree; the file
+    set does not change during a run, so it is read once and the parses are
+    memoised on content.
+
+    :return: Tuple of (Path, str) for every file the guard covers.
+    """
+    return tuple(
+        (path, path.read_text(encoding="utf-8"))
+        for root in SEARCH_ROOTS
+        if root.exists()
+        for path in sorted(root.rglob("*.py"))
+    )
+
+
 def _iter_sources():
     """Yield every .py file the guard covers."""
-    for root in SEARCH_ROOTS:
-        if root.exists():
-            yield from root.rglob("*.py")
+    for path, _ in _source_texts():
+        yield path
 
 
+@lru_cache(maxsize=1)
 def _unparsable_sources():
     """Return the set of scanned files the AST parser cannot handle."""
     unparsable = set()
-    for path in _iter_sources():
+    for path, text in _source_texts():
         try:
-            ast.parse(path.read_text(encoding="utf-8"))
+            _parsed(text)
         except SyntaxError:
             unparsable.add(str(path.relative_to(REPO_ROOT)))
     return unparsable
@@ -53,10 +72,9 @@ def _unparsable_sources():
 
 def _get_adapter_calls():
     """Yield (relpath, lineno, arg-node, enclosing-source) for get_adapter calls."""
-    for path in _iter_sources():
-        text = path.read_text(encoding="utf-8")
+    for path, text in _source_texts():
         try:
-            tree = ast.parse(text, filename=str(path))
+            tree = _parsed(text)
         except SyntaxError:
             # Some scripts/ files use syntax newer than the project's Python
             # (e.g. nested same-quote f-strings, 3.12+). They cannot be scanned
@@ -792,9 +810,7 @@ class TestGuardBypassesStayClosed:
 def _first_get_adapter(source):
     """Return the first get_adapter call node in a snippet."""
     return next(
-        n
-        for n in ast.walk(ast.parse(source))
-        if isinstance(n, ast.Call) and getattr(n.func, "id", None) == "get_adapter"
+        n for n in ast.walk(_parsed(source)) if isinstance(n, ast.Call) and getattr(n.func, "id", None) == "get_adapter"
     ).args[0]
 
 

@@ -428,7 +428,7 @@ class TestAdapterEntryPoint:
         monkeypatch.setattr(ou, "assert_chebi_version_alignment", lambda p: seen.setdefault("gated", p))
         monkeypatch.setattr("oaklib.get_adapter", lambda spec: seen.setdefault("adapter", spec))
 
-        ou.get_chebi_adapter()
+        ou.get_ontology_adapter("chebi")
 
         expected = str(tmp_path / "chebi.db")
         assert seen["ensured"] == expected
@@ -440,8 +440,8 @@ class TestAdapterEntryPoint:
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         monkeypatch.setattr(ou, "_ensure_chebi_db", lambda _: False)
         monkeypatch.setattr("oaklib.get_adapter", lambda spec: pytest.fail("must not open a missing DB"))
-        with pytest.raises(RuntimeError, match="No usable ChEBI SemSQL DB"):
-            ou.get_chebi_adapter()
+        with pytest.raises(RuntimeError, match="No usable chebi SemSQL DB"):
+            ou.get_ontology_adapter("chebi")
 
     def test_standalone_category_lookup_degrades_instead_of_raising(self, tmp_path, monkeypatch):
         """
@@ -458,7 +458,13 @@ class TestAdapterEntryPoint:
         assert ou.get_chebi_category("CHEBI:16828") == SMALL_MOLECULE_CATEGORY
 
     def test_adapter_work_happens_once(self, tmp_path, monkeypatch):
-        """Repeat calls reuse the memoized adapter rather than re-ensuring (#618)."""
+        """
+        Repeat calls reuse the memoized adapter rather than re-ensuring (#618).
+
+        Uses the eager entry point: get_chebi_adapter() now returns a lazy proxy,
+        and two proxies are distinct objects even though they share one cached
+        adapter underneath.
+        """
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         counts = {"ensure": 0, "gate": 0, "adapter": 0}
 
@@ -480,8 +486,8 @@ class TestAdapterEntryPoint:
         monkeypatch.setattr(ou, "assert_chebi_version_alignment", gate)
         monkeypatch.setattr("oaklib.get_adapter", adapter)
 
-        first = ou.get_chebi_adapter()
-        second = ou.get_chebi_adapter()
+        first = ou.get_ontology_adapter("chebi")
+        second = ou.get_ontology_adapter("chebi")
 
         assert first is second
         assert counts == {"ensure": 1, "gate": 1, "adapter": 1}

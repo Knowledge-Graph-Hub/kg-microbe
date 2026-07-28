@@ -110,7 +110,7 @@ class TestAccessorContract:
         monkeypatch.setattr(ou, "_ensure_and_gate", lambda *_: False)
         monkeypatch.setattr("oaklib.get_adapter", lambda spec: pytest.fail("must not open"))
         with pytest.raises(ou.OntologyDbUnavailableError, match="No usable go SemSQL DB"):
-            ou.get_go_adapter()
+            ou.get_ontology_adapter("go")
 
     def test_failure_is_memoised(self, monkeypatch):
         """A failing ensure must not re-run — it can be a multi-hour build."""
@@ -118,7 +118,7 @@ class TestAccessorContract:
         monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: calls.append(a) or False)
         for _ in range(3):
             with pytest.raises(ou.OntologyDbUnavailableError):
-                ou.get_ec_adapter()
+                ou.get_ontology_adapter("ec")
         assert len(calls) == 1, "the failed ensure should have been cached"
 
     def test_success_is_memoised(self, monkeypatch):
@@ -126,9 +126,67 @@ class TestAccessorContract:
         calls = []
         monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: calls.append(a) or True)
         monkeypatch.setattr("oaklib.get_adapter", lambda spec: object())
-        first, second = ou.get_go_adapter(), ou.get_go_adapter()
+        first, second = ou.get_ontology_adapter("go"), ou.get_ontology_adapter("go")
         assert first is second
         assert len(calls) == 1
+
+
+class TestLazyResolution:
+
+    """
+    Adapters must cost nothing until they are used.
+
+    Transforms build theirs in __init__. Resolving eagerly meant that merely
+    *constructing* a transform raised when a DB was absent — which failed every
+    transform-constructor test in CI, where data/raw is empty — and could kick
+    off a multi-hour semsql build before the transform did any work.
+    """
+
+    @pytest.fixture(autouse=True)
+    def _clear(self):
+        """Drop memoised adapters between tests."""
+        ou.get_ontology_adapter.cache_clear()
+        yield
+        ou.get_ontology_adapter.cache_clear()
+
+    def test_construction_touches_nothing(self, monkeypatch):
+        """Building the proxy must not ensure, gate, or open anything."""
+        monkeypatch.setattr(ou, "_ensure_and_gate", lambda *_: pytest.fail("ensured too early"))
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: pytest.fail("opened too early"))
+        ou.get_ncbitaxon_adapter()
+        ou.get_go_adapter()
+        ou.get_ec_adapter()
+        ou.get_chebi_adapter()
+
+    def test_construction_survives_a_missing_db(self, tmp_path, monkeypatch):
+        """The CI regression: no DB on disk must not break construction."""
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", tmp_path / "ncbitaxon.owl")
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)  # cannot build
+        adapter = ou.get_ncbitaxon_adapter()  # must not raise
+        with pytest.raises(ou.OntologyDbUnavailableError):
+            adapter.resolve()  # only now
+
+    def test_first_use_resolves_and_forwards(self, monkeypatch):
+        """Attribute access resolves once and delegates to the real adapter."""
+        calls = []
+
+        class FakeAdapter:
+
+            """Stand-in with one identifiable method."""
+
+            def basic_search(self, term):
+                """Return a fixed hit."""
+                return [f"hit:{term}"]
+
+        monkeypatch.setattr(ou, "_ensure_and_gate", lambda *a: calls.append(a) or True)
+        monkeypatch.setattr("oaklib.get_adapter", lambda spec: FakeAdapter())
+
+        proxy = ou.get_go_adapter()
+        assert calls == [], "still untouched"
+        assert proxy.basic_search("x") == ["hit:x"]
+        assert len(calls) == 1
+        proxy.basic_search("y")
+        assert len(calls) == 1, "resolution must happen once"
 
     def test_chebi_alias_still_resolves(self, monkeypatch):
         """ChebiDbUnavailableError is kept as an alias for existing callers."""

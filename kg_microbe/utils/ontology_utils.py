@@ -876,71 +876,77 @@ def get_ontology_adapter(ontology: str):
 get_ontology_adapter.cache_clear = _ontology_adapter_for.cache_clear
 
 
+class _LazyOntologyAdapter:
+
+    """
+    An ontology adapter that resolves on first use, not on construction.
+
+    Transforms build their adapters in ``__init__``. Resolving eagerly there
+    means merely *constructing* a transform can raise when a DB is absent — which
+    broke every transform-constructor test on a machine without ``data/raw``
+    populated — and, worse, can kick off a multi-hour ``semsql`` build before the
+    transform has done anything. Deferring to first attribute access keeps the
+    guard while making construction free.
+    """
+
+    def __init__(self, ontology: str):
+        """
+        Record which ontology to resolve, without touching the disk.
+
+        :param ontology: Ontology key.
+        """
+        self._ontology = ontology
+        self._resolved = None
+
+    def resolve(self):
+        """
+        Ensure, gate and open the adapter, once.
+
+        :return: The underlying OAK adapter.
+        :raises OntologyDbUnavailableError: If no usable DB could be produced.
+        """
+        if self._resolved is None:
+            self._resolved = get_ontology_adapter(self._ontology)
+        return self._resolved
+
+    def __getattr__(self, name):
+        """
+        Forward everything to the resolved adapter.
+
+        :param name: Attribute being accessed.
+        :return: The attribute from the real adapter.
+        """
+        return getattr(self.resolve(), name)
+
+
 def get_ncbitaxon_adapter():
-    """Return the guarded NCBITaxon adapter. :return: OAK adapter."""
-    return get_ontology_adapter("ncbitaxon")
+    """Return a lazily-resolved guarded NCBITaxon adapter. :return: adapter proxy."""
+    return _LazyOntologyAdapter("ncbitaxon")
 
 
 def get_go_adapter():
-    """Return the guarded GO adapter. :return: OAK adapter."""
-    return get_ontology_adapter("go")
+    """Return a lazily-resolved guarded GO adapter. :return: adapter proxy."""
+    return _LazyOntologyAdapter("go")
 
 
 def get_ec_adapter():
-    """Return the guarded EC adapter. :return: OAK adapter."""
-    return get_ontology_adapter("ec")
-
-
-@lru_cache(maxsize=None)
-def _chebi_adapter_for(db_path: str):
-    """
-    Build/realign ``chebi.db``, gate its release, and open an adapter over it.
-
-    Cached per path so the ensure + gate work (a 2 MB head read of ``chebi.owl``
-    plus a SQLite open) happens once per process rather than per call (#618).
-    Call :func:`get_chebi_adapter.cache_clear` to reset.
-
-    :param db_path: Path to ``chebi.db``.
-    :return: OAK adapter over ``chebi.db``.
-    :raises RuntimeError: If no usable DB could be produced.
-    """
-    from oaklib import get_adapter
-
-    if not _ensure_chebi_db(db_path):
-        # Returned, not raised: lru_cache does not memoise exceptions, so raising
-        # here would re-run the whole ensure — including a 30-minute `semsql make`
-        # — on every subsequent call. get_chebi_adapter turns this into the error.
-        return None
-    assert_chebi_version_alignment(db_path)
-    return get_adapter(f"sqlite:{db_path}")
+    """Return a lazily-resolved guarded EC adapter. :return: adapter proxy."""
+    return _LazyOntologyAdapter("ec")
 
 
 def get_chebi_adapter():
     """
-    Return an OAK adapter for ChEBI, building/realigning ``chebi.db`` first.
+    Return a lazily-resolved guarded ChEBI adapter.
 
-    Single entry point so the category-fixing code paths cannot diverge on how
-    the DB is obtained (they previously each did ``get_adapter("sqlite:<owl>")``
-    with an untested fallback to ``sqlite:data/raw/chebi.db``, which quietly
-    accepted whatever DB happened to be on disk).
+    Kept as a named accessor because ChEBI has the most callers; it is now the
+    same lazy proxy the other ontologies use, over the shared cache.
 
-    :return: OAK adapter over ``chebi.db``.
-    :raises RuntimeError: If no usable DB could be produced.
+    :return: adapter proxy.
     """
-    from kg_microbe.transform_utils.constants import CHEBI_SOURCE
-
-    db_path = str(Path(CHEBI_SOURCE).parent / "chebi.db")
-    adapter = _chebi_adapter_for(db_path)
-    if adapter is None:
-        raise ChebiDbUnavailableError(
-            f"No usable ChEBI SemSQL DB at {db_path}. Install `semsql` and place "
-            "chebi.owl (or chebi.owl.gz) in data/raw so it can be built, or supply "
-            "a prebuilt chebi.db. See the warning above for which step failed."
-        )
-    return adapter
+    return _LazyOntologyAdapter("chebi")
 
 
-get_chebi_adapter.cache_clear = _chebi_adapter_for.cache_clear
+get_chebi_adapter.cache_clear = _ontology_adapter_for.cache_clear
 
 
 def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
@@ -1200,8 +1206,11 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
     # itself, so there the failure stays loud.
     if chebi_adapter is None:
         try:
-            chebi_adapter = get_chebi_adapter()
-        except ChebiDbUnavailableError as e:
+            # Resolved here, not lazily: the strict version gate raises during
+            # resolution, and it must surface before the broad `except Exception`
+            # around the lookups below would quietly turn it into a default.
+            chebi_adapter = get_ontology_adapter("chebi")
+        except OntologyDbUnavailableError as e:
             # Only the "no DB" case degrades. A strict version-gate failure is a
             # deliberate abort and must propagate (F6).
             print(f"WARNING: {e}\n  Falling back to the default ChEBI category.")

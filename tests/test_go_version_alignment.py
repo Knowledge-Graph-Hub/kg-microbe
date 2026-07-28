@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
+from tests.db_helpers import valid_db_bytes
 
 _OWL = '<owl versionIRI rdf:resource="http://purl.obolibrary.org/obo/go/releases/{d}/go.owl"/>'
 _JSON = '{{"meta":{{"basicPropertyValues":[{{"pred":"owl#versionInfo","val":"{d}"}}]}}}}'
@@ -321,7 +322,7 @@ def test_go_build_honours_the_semsql_opt_out(tmp_path, monkeypatch):
     owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
     monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
     db = tmp_path / "go.db"
-    db.write_bytes(b"0" * 16)
+    db.write_bytes(valid_db_bytes(pad=16))
     monkeypatch.setattr(ou, "_go_db_release", lambda _: "2026-01-01")  # drifted
     calls = []
     monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
@@ -341,7 +342,7 @@ def test_go_failed_build_restores_the_previous_db(tmp_path, monkeypatch):
     owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
     monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
     db = tmp_path / "go.db"
-    db.write_bytes(b"0" * 16)
+    db.write_bytes(valid_db_bytes(pad=16))
     original = db.read_bytes()
     monkeypatch.setattr(ou, "_go_db_release", lambda _: "2026-01-01")
     monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
@@ -369,7 +370,7 @@ def _drifted_go_db(tmp_path, monkeypatch):
     owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
     monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
     db = tmp_path / "go.db"
-    db.write_bytes(b"0" * 16)
+    db.write_bytes(valid_db_bytes(pad=16))
     monkeypatch.setattr(ou, "_go_db_release", lambda _: "2026-01-01")
     monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
     return db
@@ -409,7 +410,7 @@ def test_non_go_ontology_still_reuses_after_a_failed_build(tmp_path, monkeypatch
     owl = tmp_path / "ec.owl"
     owl.write_text("<owl/>", encoding="utf-8")
     db = tmp_path / "ec.db"
-    db.write_bytes(b"0" * 64)
+    db.write_bytes(valid_db_bytes(pad=64))
 
     def boom(cmd, **kwargs):
         """Fail the build."""

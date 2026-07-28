@@ -7,6 +7,7 @@ import shutil
 import sqlite3
 import subprocess
 import threading
+import urllib.parse
 import zlib
 from functools import lru_cache
 from pathlib import Path
@@ -334,11 +335,23 @@ def _present_db(db_path: str, min_size: int) -> bool:
     Symlinks are accepted because pointing at a prebuilt DB is supported —
     :func:`get_chebi_adapter`'s own error text suggests doing exactly that.
 
+    The openability probe belongs *here*, not at individual call sites. It was
+    first added only to the four reuse fast-paths, which left every other
+    decision ranking artifacts by size alone — and that combination created a
+    new data-loss path rather than closing one: a large corrupt DB stopped being
+    reused (good) and so began triggering a rebuild (new), whereupon
+    :func:`_clear_build_target` judged it equal to a readable ``.prev`` and
+    deleted the readable copy. Every "is this DB any good" decision — ranking,
+    fallback, opt-out, post-build success, restore — must give the same answer,
+    so they all go through this one predicate.
+
     :param db_path: Path to the DB.
     :param min_size: Smallest plausible size for a complete build.
     :return: True if the file is usable.
     """
-    return os.path.exists(db_path) and os.path.getsize(db_path) >= min_size
+    if not (os.path.exists(db_path) and os.path.getsize(db_path) >= min_size):
+        return False
+    return _db_is_readable(db_path)
 
 
 def _db_is_readable(db_path: str) -> bool:
@@ -361,7 +374,11 @@ def _db_is_readable(db_path: str) -> bool:
     :return: True if SQLite can open it and answer a header query.
     """
     try:
-        conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        # quote() the path: an unescaped "?" would start URI query parameters
+        # and "#" a fragment, so SQLite would silently open a *different*
+        # file than the one being checked.
+        uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
+        conn = sqlite3.connect(uri, uri=True)
         try:
             conn.execute("PRAGMA schema_version").fetchone()
         finally:
@@ -842,7 +859,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, min_size) and _db_is_readable(db_path):
+    if _present_db(db_path, min_size):
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1134,7 +1151,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, min_size) and _db_is_readable(db_path):
+    if _present_db(db_path, min_size):
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1168,7 +1185,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
     _note_orphaned_prev(go_db_path)
-    if _present_db(go_db_path, _GO_DB_MIN_SIZE) and _db_is_readable(go_db_path):
+    if _present_db(go_db_path, _GO_DB_MIN_SIZE):
         # An existing, non-stub go.db is reused — unless it has drifted from the
         # source OWL's release (single-source invariant, fix 2 #604): a refreshed
         # go.owl must rebuild go.db, else the aspect map lags the transform output
@@ -1210,7 +1227,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
 
     owl_source = Path(EC_SOURCE) if EC_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, _EC_DB_MIN_SIZE) and _db_is_readable(db_path):
+    if _present_db(db_path, _EC_DB_MIN_SIZE):
         # EC's OWL carries no reliable release stamp, so there is no drift check
         # to make: an existing DB is reused.
         return DbEnsureResult(True)

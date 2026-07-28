@@ -757,6 +757,33 @@ def write_obsolete_file_header(obsolete_terms_csv_file):
         obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
 
+def go_category_trees_is_complete(path=None) -> bool:
+    """
+    Report whether the GO category-trees cache is present *and* has content.
+
+    Atomic writes stop this cache from being poisoned again, but they cannot
+    repair a file poisoned by the previous in-place writer — the guard was a bare
+    ``.exists()``, so a header-only file left by an interrupted run is accepted
+    forever, ``prepare_go_dictionary`` reads it as ``{}``, and every protein→GO
+    edge is dropped while every GO term is logged as obsolete. Checking for at
+    least one data row is what lets an existing poisoned cache heal itself on the
+    next run instead of requiring the user to know to delete it.
+
+    :param path: Cache path; defaults to GO_CATEGORY_TREES_FILE.
+    :return: True if the cache exists and holds at least one term.
+    """
+    path = Path(path) if path is not None else GO_CATEGORY_TREES_FILE
+    if not path.exists():
+        return False
+    try:
+        with open(path) as handle:
+            reader = csv.reader(handle, delimiter="\t")
+            next(reader, None)  # header
+            return next(reader, None) is not None
+    except OSError:
+        return False
+
+
 def get_go_category_trees(go_oi):
     """
     Extract category of all GO terms using oak, and write to file.

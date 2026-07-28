@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
+from tests.db_helpers import valid_db_bytes
 
 OWL_VERSION_IRI = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/chebi/{v}/chebi.owl"/>\n'
 OWL_VERSION_INFO = "<owl:versionInfo>{v}</owl:versionInfo>\n"
@@ -60,7 +61,7 @@ def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
         calls.append((cmd, kwargs.get("cwd")))
         if fail:
             raise subprocess.CalledProcessError(1, cmd)
-        db_path.write_bytes(b"0" * size)
+        db_path.write_bytes(valid_db_bytes(pad=size))
 
     monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
     monkeypatch.setattr(ou.subprocess, "run", run)
@@ -217,7 +218,7 @@ class TestChebiBuild:
         def run(cmd, **kwargs):
             """Write to the target name the way semsql does, following any symlink."""
             with open(pathlib.Path(kwargs["cwd"]) / "chebi.db", "wb") as f:
-                f.write(b"0" * 32)
+                f.write(valid_db_bytes(pad=32))
 
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         monkeypatch.setattr(ou.subprocess, "run", run)
@@ -327,7 +328,7 @@ class TestChebiBuild:
         monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
         _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
         prebuilt = tmp_path / "prebuilt.db"
-        prebuilt.write_bytes(b"0" * 64)
+        prebuilt.write_bytes(valid_db_bytes(pad=64))
         db = tmp_path / "chebi.db"
         db.symlink_to(prebuilt)
         monkeypatch.setattr(ou, "_chebi_db_release", lambda _: "251")  # drift → rebuild

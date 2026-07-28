@@ -155,3 +155,46 @@ class TestGoCategoryTreesIsNotPoisoned:
             ou.get_ontology_adapter.cache_clear()
 
         assert not trees_file.exists()
+
+
+class TestExistingPoisonedCacheHeals:
+
+    """Atomic writes stop new poisoning; an *existing* poisoned file must heal."""
+
+    def test_header_only_cache_is_not_treated_as_complete(self, tmp_path, monkeypatch):
+        """
+        The migration case: a user upgrades with a poisoned file already on disk.
+
+        The old in-place writer left header-only files, and the guard was a bare
+        .exists() — so the fix alone would never have repaired them.
+        """
+        target = tmp_path / "go_category_trees.tsv"
+        target.write_text("GO_Category\tGO_Term\n")
+        monkeypatch.setattr(uu, "GO_CATEGORY_TREES_FILE", target)
+        assert not uu.go_category_trees_is_complete(), "a header-only cache must count as absent"
+
+    def test_absent_and_complete_caches_are_classified_correctly(self, tmp_path, monkeypatch):
+        """A real cache is complete; a missing one is not."""
+        target = tmp_path / "go_category_trees.tsv"
+        monkeypatch.setattr(uu, "GO_CATEGORY_TREES_FILE", target)
+        assert not uu.go_category_trees_is_complete()
+        target.write_text("GO_Category\tGO_Term\nGO:0008150\tGO:0000001\n")
+        assert uu.go_category_trees_is_complete()
+
+    def test_concurrent_writers_do_not_share_a_temp_file(self, tmp_path):
+        """
+        A shared "<name>.partial" is not actually atomic across writers.
+
+        B truncates the same inode A is mid-write on, renames it into place, and
+        A keeps writing through a descriptor that now points at the published
+        file.
+        """
+        target = tmp_path / "cache.tsv"
+        seen = []
+        with atomic_write(target) as a:
+            a.write("A")
+            with atomic_write(target) as b:
+                b.write("B")
+                seen = sorted(p.name for p in tmp_path.glob("*.partial"))
+        assert len(seen) == 2, f"each writer needs its own temp file, saw {seen}"
+        assert target.read_text() == "A", "the outer writer commits last and wins"

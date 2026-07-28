@@ -1,9 +1,14 @@
 """Atomic writes for derived caches, so a failed run leaves no half-written file."""
 
+import itertools
 import os
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Union
+
+# Distinguishes concurrent writers within one process; os.getpid() covers
+# across processes. itertools.count is atomic under the GIL.
+_COUNTER = itertools.count()
 
 
 @contextmanager
@@ -35,7 +40,12 @@ def atomic_write(path: Union[str, Path], mode: str = "w", **open_kwargs):
     """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".partial")
+    # Unique per writer. A shared "<name>.partial" is not actually atomic under
+    # concurrent writers: B truncates the same inode A is writing, renames it
+    # into place, and A then continues writing through its descriptor — which
+    # now refers to the *published* file — before failing its own rename.
+    # Same directory, so os.replace stays a same-filesystem rename.
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.{next(_COUNTER)}.partial")
     committed = False
     try:
         with open(tmp, mode, **open_kwargs) as handle:

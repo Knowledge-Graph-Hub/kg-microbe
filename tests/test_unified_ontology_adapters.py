@@ -114,6 +114,38 @@ def _reaches_suffix(node, source, suffix, _seen=None):
     return False
 
 
+def _textual_offenders(text):
+    """
+    Return 1-indexed lines where a regex scan sees get_adapter handed an OWL.
+
+    Used for files the AST parser cannot handle. Factored out so the scan can be
+    exercised against content that *does* contain an offender — asserting the
+    real tree has none proves nothing about whether the scan works.
+    """
+    hits = []
+    for match in re.finditer(r"get_adapter\s*\(([^)]*)\)", text):
+        arg = match.group(1)
+        if ".owl" in arg or any(c in arg for c in OWL_SOURCE_NAMES):
+            hits.append(text[: match.start()].count("\n") + 1)
+    return hits
+
+
+def _calls_exactly(node, func_name):
+    """
+    Report whether the expression calls exactly ``func_name``.
+
+    Substring matching on the rendered segment is not enough: a helper named
+    ``evil_ontology_db_path`` contains the sanctioned name and was accepted on
+    that basis alone.
+    """
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Call):
+            called = getattr(sub.func, "id", None) or getattr(sub.func, "attr", None)
+            if called == func_name:
+                return True
+    return False
+
+
 def _returns_of(func_name, source):
     """Yield every returned expression of a function defined in this file."""
     for node in ast.walk(ast.parse(source)):
@@ -151,17 +183,45 @@ def _is_db_shaped_parameter(node, source):
     trust any name containing "db" — which is what let an OWL through before —
     this only fires for names that are genuinely parameters of a function in the
     file, and only after the ``.owl`` check has already cleared the expression.
+
+    Two ways this was still bypassable, both now closed: the parameter's
+    *default* could be an OWL constant, and a caller in the same file could pass
+    one in positionally or by keyword.
     """
     names = {sub.id for sub in ast.walk(node) if isinstance(sub, ast.Name)}
-    if not names:
+    if not names or not all("db" in name for name in names):
         return False
-    parameters = set()
-    for func in ast.walk(ast.parse(source)):
+    tree = ast.parse(source)
+    owning = {}
+    for func in ast.walk(tree):
         if isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
             args = func.args
-            for arg in [*args.posonlyargs, *args.args, *args.kwonlyargs]:
-                parameters.add(arg.arg)
-    return all("db" in name for name in names) and names <= parameters
+            positional = [*args.posonlyargs, *args.args]
+            for arg in [*positional, *args.kwonlyargs]:
+                owning.setdefault(arg.arg, []).append(func)
+            # A default that reaches an OWL disqualifies the parameter outright.
+            for default in [*args.defaults, *[d for d in args.kw_defaults if d is not None]]:
+                if _mentions_owl(default, source):
+                    return False
+    if not names <= set(owning):
+        return False
+    # Follow same-file callers: helper(GO_SOURCE) must not launder the path.
+    for name in names:
+        for func in owning[name]:
+            positional = [*func.args.posonlyargs, *func.args.args]
+            index = next((i for i, a in enumerate(positional) if a.arg == name), None)
+            for call in ast.walk(tree):
+                if not isinstance(call, ast.Call):
+                    continue
+                called = getattr(call.func, "id", None) or getattr(call.func, "attr", None)
+                if called != func.name:
+                    continue
+                if index is not None and len(call.args) > index and _mentions_owl(call.args[index], source):
+                    return False
+                for kw in call.keywords:
+                    if kw.arg == name and _mentions_owl(kw.value, source):
+                        return False
+    return True
 
 
 def _assignments_of(name, source):
@@ -216,10 +276,7 @@ class TestNoUnguardedAdapters:
             if str(path.relative_to(REPO_ROOT)) not in _unparsable_sources():
                 continue
             text = path.read_text(encoding="utf-8")
-            for match in re.finditer(r"get_adapter\s*\(([^)]*)\)", text):
-                if ".owl" in match.group(1) or any(c in match.group(1) for c in OWL_SOURCE_NAMES):
-                    line = text[: match.start()].count("\n") + 1
-                    offenders.append(f"{path.relative_to(REPO_ROOT)}:{line}")
+            offenders += [f"{path.relative_to(REPO_ROOT)}:{ln}" for ln in _textual_offenders(text)]
         assert offenders == [], f"unparsable file hands an OWL to get_adapter: {offenders}"
 
     @pytest.mark.parametrize(
@@ -317,7 +374,9 @@ class TestNoUnguardedAdapters:
                 continue
             # ontology_db_path() is the sanctioned indirection: pure path
             # arithmetic over the four DB names, which cannot yield an OWL.
-            if "ontology_db_path" in segment:
+            # Matched as a called name, not a substring — `evil_ontology_db_path()`
+            # contains the text and used to be waved through on that alone.
+            if _calls_exactly(arg, "ontology_db_path"):
                 continue
             # A bare name that is a function parameter cannot be resolved to a
             # literal here. Accepting a db-shaped parameter name is a heuristic,
@@ -589,9 +648,14 @@ class TestResolutionIsSerialised:
 
     """lru_cache does not lock across the wrapped call (Codex F7)."""
 
-    def test_concurrent_first_use_runs_one_ensure(self, monkeypatch):
+    def test_concurrent_first_use_is_serialised(self, monkeypatch):
         """
-        Two threads missing the cache together must not both build.
+        Two threads missing the cache together must not build concurrently.
+
+        Note what this does *not* claim: both threads still call
+        _ensure_and_gate. The lock serialises them, so the second runs only
+        after the first has finished and takes the cheap reuse fast-path. The
+        guarantee is non-overlap, not a single call.
 
         Without the per-ontology lock both entered _ensure_and_gate and raced
         through .prev move-aside, decompression and `semsql make` on the same
@@ -639,3 +703,83 @@ class TestResolutionIsSerialised:
         """A slow NCBITaxon build must not block an unrelated EC resolve."""
         assert ou._adapter_lock("go") is ou._adapter_lock("go")
         assert ou._adapter_lock("go") is not ou._adapter_lock("ec")
+
+
+class TestGuardBypassesStayClosed:
+
+    """Each of these walked past a previous version of the guard."""
+
+    @pytest.mark.parametrize(
+        "snippet",
+        [
+            # An OWL constant as the parameter's default.
+            'def helper(db_path=GO_SOURCE):\n    return get_adapter(f"sqlite:{db_path}")\n',
+            # A same-file caller passing one in positionally...
+            'def helper(db_path):\n    return get_adapter(f"sqlite:{db_path}")\nhelper(GO_SOURCE)\n',
+            # ...or by keyword.
+            'def helper(db_path):\n    return get_adapter(f"sqlite:{db_path}")\nhelper(db_path=GO_SOURCE)\n',
+            # A helper whose *name contains* the sanctioned indirection.
+            'def evil_ontology_db_path():\n    return GO_SOURCE\nget_adapter(f"sqlite:{evil_ontology_db_path()}")\n',
+        ],
+    )
+    def test_parameter_and_lookalike_bypasses_are_caught(self, snippet):
+        """A db-shaped parameter name must not launder an OWL path."""
+        call = _first_get_adapter(snippet)
+        assert not _accepted_by_guard(call, snippet), f"guard let this through: {snippet!r}"
+
+    @pytest.mark.parametrize(
+        "snippet",
+        [
+            'def helper(db_path):\n    return get_adapter(f"sqlite:{db_path}")\nhelper(RAW / "go.db")\n',
+            "get_adapter(f\"sqlite:{ontology_db_path('go')}\")\n",
+            'db = RAW_DATA_DIR / "go.db"\nget_adapter(f"sqlite:{db}")\n',
+        ],
+    )
+    def test_legitimate_spellings_are_not_flagged(self, snippet):
+        """The guard must not cry wolf over the sanctioned .db forms."""
+        call = _first_get_adapter(snippet)
+        assert _accepted_by_guard(call, snippet), f"false positive: {snippet!r}"
+
+    def test_textual_scanner_actually_detects_an_offender(self):
+        """
+        The unparsable-file scan must be shown to work, not merely to pass.
+
+        Asserting "no offenders" over a tree that has none is vacuous — the
+        assertion held even with the scanner's regex stubbed out to match
+        nothing. This drives the same scan over content known to contain one.
+        """
+        assert _textual_offenders('get_adapter("sqlite:data/raw/go.owl")\nbroken(\n')
+        assert _textual_offenders('get_adapter(f"sqlite:{GO_SOURCE}")\nbroken(\n')
+        assert not _textual_offenders('get_adapter(f"sqlite:{db_path}")\nbroken(\n')
+
+    def test_textual_scanner_cannot_follow_indirection(self):
+        """
+        Document what the fallback does *not* catch, rather than imply otherwise.
+
+        The regex only sees the argument text, so a variable assigned an OWL
+        elsewhere is invisible to it. That is inherent to scanning a file the
+        parser rejected. It is an accepted, bounded gap — it applies solely to
+        files in the unparsable allow-list, and `test_unparsable_files_are_known`
+        stops that list from growing.
+        """
+        assert not _textual_offenders('x = GO_SOURCE\nget_adapter(f"sqlite:{x}")\nbroken(\n')
+
+
+def _first_get_adapter(source):
+    """Return the first get_adapter call node in a snippet."""
+    return next(
+        n
+        for n in ast.walk(ast.parse(source))
+        if isinstance(n, ast.Call) and getattr(n.func, "id", None) == "get_adapter"
+    ).args[0]
+
+
+def _accepted_by_guard(arg, source):
+    """Replicate the two production assertions' combined verdict for one call."""
+    if _mentions_owl(arg, source):
+        return False
+    return bool(
+        _reaches_suffix(arg, source, ".db")
+        or _calls_exactly(arg, "ontology_db_path")
+        or _is_db_shaped_parameter(arg, source)
+    )

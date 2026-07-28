@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
+from tests.db_helpers import valid_db_bytes
 
 OWL_HEAD = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/ncbitaxon/{d}/ncbitaxon.owl"/>\n'
 
@@ -67,7 +68,7 @@ def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
         calls.append((cmd, kwargs.get("cwd")))
         if fail:
             raise subprocess.CalledProcessError(1, cmd)
-        db_path.write_bytes(b"0" * size)
+        db_path.write_bytes(valid_db_bytes(pad=size))
 
     monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
     monkeypatch.setattr(ou.subprocess, "run", run)
@@ -105,7 +106,7 @@ class TestRebuildsOnDrift:
         """A DB at an older release than the OWL is rebuilt from that OWL."""
         source = owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
         calls = _fake_build(monkeypatch, db)
 
@@ -135,7 +136,7 @@ class TestRebuildsOnDrift:
         def run(cmd, **kwargs):
             """Note whether the stale DB was cleared before the build ran."""
             seen["existed_at_build_time"] = db.exists()
-            db.write_bytes(b"0" * 16)
+            db.write_bytes(valid_db_bytes(pad=16))
 
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         monkeypatch.setattr(ou.subprocess, "run", run)
@@ -152,7 +153,7 @@ class TestDegradesGracefully:
         """Without semsql, report whatever DB is already present rather than deleting it."""
         owl()
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
         monkeypatch.setattr(ou.shutil, "which", lambda _: None)
 
@@ -172,7 +173,7 @@ class TestDegradesGracefully:
         """A failed build must not leave the caller without the 13 GB DB (F3)."""
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         original = db.read_bytes()
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")  # drift → rebuild
         _fake_build(monkeypatch, db, fail=True)
@@ -193,7 +194,7 @@ class TestDegradesGracefully:
         """
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         prev = tmp_path / "ncbitaxon.db.prev"
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
         seen = {}
@@ -201,7 +202,7 @@ class TestDegradesGracefully:
         def run(cmd, **kwargs):
             """Record whether the old DB was preserved while the build ran."""
             seen["prev_during_build"] = prev.exists()
-            db.write_bytes(b"0" * 16)
+            db.write_bytes(valid_db_bytes(pad=16))
 
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         monkeypatch.setattr(ou.subprocess, "run", run)
@@ -214,7 +215,7 @@ class TestDegradesGracefully:
         """Ctrl-C during a build must not strand a 14 GB .prev with the DB gone (F3)."""
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         original = db.read_bytes()
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
 
@@ -241,12 +242,12 @@ class TestDegradesGracefully:
         db = tmp_path / "ncbitaxon.db"
         db.write_bytes(b"P" * 4)  # partial, below the threshold
         prev = tmp_path / "ncbitaxon.db.prev"
-        prev.write_bytes(b"G" * 64)  # the good DB
+        prev.write_bytes(valid_db_bytes(b"G", 64))  # the good DB
         _fake_build(monkeypatch, db, fail=True)
 
         ou._ensure_ncbitaxon_db(str(db))
 
-        assert db.exists() and db.read_bytes() == b"G" * 64, "the good DB must be what remains"
+        assert db.exists() and db.read_bytes() == valid_db_bytes(b"G", 64), "the good DB must be what remains"
 
     def test_dangling_symlink_over_a_good_prev_never_loses_the_db(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """
@@ -261,14 +262,14 @@ class TestDegradesGracefully:
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
         prev = tmp_path / "ncbitaxon.db.prev"
-        prev.write_bytes(b"G" * 64)  # the only usable copy
+        prev.write_bytes(valid_db_bytes(b"G", 64))  # the only usable copy
         db.symlink_to(tmp_path / "gone" / "cache.db")  # dangling
         _fake_build(monkeypatch, db, fail=True)
 
         ou._ensure_ncbitaxon_db(str(db))
 
         assert not db.is_symlink(), "the dangling link must not be restored over the good DB"
-        assert db.exists() and db.read_bytes() == b"G" * 64, "the good DB must survive"
+        assert db.exists() and db.read_bytes() == valid_db_bytes(b"G", 64), "the good DB must survive"
 
     def test_corrupt_but_large_db_is_rebuilt_not_reused(self, tmp_path, owl, tiny_threshold, monkeypatch):
         """
@@ -300,14 +301,14 @@ class TestDegradesGracefully:
         owl("2026-07-12")
         db = _write_real_db(tmp_path / "ncbitaxon.db", pad=32)
         prev = tmp_path / "ncbitaxon.db.prev"
-        prev.write_bytes(b"G" * 64)
+        prev.write_bytes(valid_db_bytes(b"G", 64))
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-07-12")  # aligned → reuse
         calls = _fake_build(monkeypatch, db)
 
         assert ou._ensure_ncbitaxon_db(str(db))
 
         assert calls == [], "an aligned DB is reused"
-        assert prev.read_bytes() == b"G" * 64, "the leftover must not be destroyed"
+        assert prev.read_bytes() == valid_db_bytes(b"G", 64), "the leftover must not be destroyed"
         assert "left over from an interrupted build" in capsys.readouterr().out
 
     def test_orphaned_prev_from_an_earlier_kill_is_recovered(self, tmp_path, owl, tiny_threshold, monkeypatch):
@@ -315,7 +316,7 @@ class TestDegradesGracefully:
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
         prev = tmp_path / "ncbitaxon.db.prev"
-        prev.write_bytes(b"0" * 16)  # DB missing, .prev orphaned
+        prev.write_bytes(valid_db_bytes(pad=16))  # DB missing, .prev orphaned
         calls = _fake_build(monkeypatch, db)
 
         assert ou._ensure_ncbitaxon_db(str(db))
@@ -326,7 +327,7 @@ class TestDegradesGracefully:
         """Semsql can exit 0 with a stub; report on what is on disk after restoring (F2)."""
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         original = db.read_bytes()
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")
 
@@ -354,7 +355,7 @@ class TestDegradesGracefully:
         """
         owl("2026-07-12")
         real = tmp_path / "prebuilt.db"
-        real.write_bytes(b"0" * 16)
+        real.write_bytes(valid_db_bytes(pad=16))
         db = tmp_path / "ncbitaxon.db"
         db.symlink_to(real)
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")  # drifted
@@ -391,7 +392,7 @@ class TestDegradesGracefully:
         """KG_SEMSQL_BUILD=off must not start a multi-hour build (#613)."""
         owl("2026-07-12")
         db = tmp_path / "ncbitaxon.db"
-        db.write_bytes(b"0" * 16)
+        db.write_bytes(valid_db_bytes(pad=16))
         monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-05-13")  # drifted
         calls = _fake_build(monkeypatch, db)
         monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
@@ -463,14 +464,14 @@ class TestDegradesGracefully:
         def run(cmd, **kwargs):
             """Write to the target name the way semsql does, following any symlink."""
             with open(Path(kwargs["cwd"]) / "ncbitaxon.db", "wb") as f:
-                f.write(b"0" * 32)
+                f.write(valid_db_bytes(pad=32))
 
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         monkeypatch.setattr(ou.subprocess, "run", run)
 
         assert ou._ensure_ncbitaxon_db(str(db))
         assert not db.is_symlink(), "the dangling link should have been removed"
-        assert db.stat().st_size == 32, "the build must land at the real path"
+        assert db.stat().st_size == len(valid_db_bytes(pad=32)), "the build must land at the real path"
         assert list(elsewhere.iterdir()) == [], "nothing should have been written to the link target"
         assert source.exists()
 
@@ -478,7 +479,7 @@ class TestDegradesGracefully:
         """If a build somehow leaves a symlink behind, don't report success."""
         owl()
         elsewhere = tmp_path / "elsewhere.db"
-        elsewhere.write_bytes(b"0" * 32)
+        elsewhere.write_bytes(valid_db_bytes(pad=32))
         db = tmp_path / "ncbitaxon.db"
 
         def run(cmd, **kwargs):

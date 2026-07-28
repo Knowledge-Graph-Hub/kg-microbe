@@ -17,6 +17,7 @@ import pytest
 
 from kg_microbe.transform_utils.metatraits import metatraits as mt
 from kg_microbe.utils.ontology_utils import DbEnsureResult
+from tests.db_helpers import valid_db_bytes
 
 
 @pytest.fixture
@@ -232,7 +233,7 @@ class TestRealBuilderIntegration:
         """The end-to-end shape of F2: orphan adopted, build fails, restore, fall back."""
         local, cache, ou = wired
         cache.write_bytes(b"good cache")
-        (local.parent / "ncbitaxon.db.prev").write_bytes(b"an old but real DB")
+        (local.parent / "ncbitaxon.db.prev").write_bytes(valid_db_bytes(b"prev"))
 
         def boom(cmd, **kwargs):
             """Fail the way an OOM does."""

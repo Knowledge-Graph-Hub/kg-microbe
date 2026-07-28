@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_COLUMN,
     SUBJECT_COLUMN,
 )
+from kg_microbe.utils.atomic_io import atomic_write
 
 
 def drop_duplicates(
@@ -55,7 +56,13 @@ def drop_duplicates(
         df.drop(columns=[c for c in rank_cols if c.startswith("_")], inplace=True)
     df.sort_values(by=[sort_by_column], inplace=True)
 
-    df.to_csv(file_path, sep="\t", index=False)
+    # Atomic: this rewrites files in place that were themselves written
+    # atomically moments earlier (the madin_etal NER outputs), so writing
+    # directly here would undo that guarantee — an interruption or a full disk
+    # mid-`to_csv` leaves a truncated file that the caller's `.is_file()` guard
+    # then accepts as a finished result on every later run.
+    with atomic_write(file_path, "w", newline="") as handle:
+        df.to_csv(handle, sep="\t", index=False)
     return df
 
 

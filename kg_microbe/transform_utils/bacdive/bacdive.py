@@ -540,8 +540,6 @@ class BacDiveTransform(Transform):
     def _init_ontology_adapters(self):
         """Initialize GO and ChEBI adapters once for reuse."""
         try:
-
-
             self.go_adapter = get_go_adapter()
             self.chebi_adapter = get_chebi_adapter()
             logger.info("Initialized GO and ChEBI adapters")

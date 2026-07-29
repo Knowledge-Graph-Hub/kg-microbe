@@ -87,8 +87,13 @@ def test_versioninfo_query_targets_ontology_subject(tmp_path):
     conn = sqlite3.connect(path)
     conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
     # Decoy first (a random entity annotated with a version-shaped date), then the ontology row.
-    conn.execute("INSERT INTO statements VALUES ('SomeEntity:1', 'owl:versionInfo', NULL, '1999-12-31')")
-    conn.execute("INSERT INTO statements VALUES ('obo:ncbitaxon.owl', 'owl:versionInfo', NULL, '2026-05-13')")
+    conn.execute(
+        "INSERT INTO statements (subject, predicate, value) VALUES ('SomeEntity:1', 'owl:versionInfo', '1999-12-31')"
+    )
+    conn.execute(
+        "INSERT INTO statements (subject, predicate, value) "
+        "VALUES ('obo:ncbitaxon.owl', 'owl:versionInfo', '2026-05-13')"
+    )
     conn.commit()
     conn.close()
     assert ou._ncbitaxon_db_release(path) == "2026-05-13"

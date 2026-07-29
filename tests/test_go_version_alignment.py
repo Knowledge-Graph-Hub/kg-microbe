@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
-from tests.db_helpers import valid_db_bytes
+from tests.db_helpers import valid_db_bytes, write_semsql_db
 
 _OWL = '<owl versionIRI rdf:resource="http://purl.obolibrary.org/obo/go/releases/{d}/go.owl"/>'
 _JSON = '{{"meta":{{"basicPropertyValues":[{{"pred":"owl#versionInfo","val":"{d}"}}]}}}}'
@@ -23,23 +23,16 @@ def _write_go_pair(tmp_path: Path, owl_date: str, json_date: str) -> Path:
 def _make_go_db(tmp_path: Path, release, name: str = "go.db") -> str:
     """Write a minimal SemSQL-shaped go.db stamping obo:go.owl owl:versionInfo."""
     path = str(tmp_path / name)
-    conn = sqlite3.connect(path)
-    conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
-    conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
-    conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
-    conn.execute(
-        "CREATE VIEW rdfs_label_statement AS SELECT subject, value FROM statements WHERE predicate = 'rdfs:label'"
-    )
-    conn.execute("INSERT INTO statements VALUES ('obo:x', 'rdfs:label', NULL, 'x')")
-    conn.execute("INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')")
+    extra = []
     if release is not None:
-        conn.execute(
-            "INSERT INTO statements (subject, predicate, object, value) "
-            "VALUES ('obo:go.owl', 'owl:versionInfo', NULL, ?)",
-            (release,),
+        extra.append(
+            (
+                "INSERT INTO statements (subject, predicate, object, value) "
+                "VALUES ('obo:go.owl', 'owl:versionInfo', NULL, ?)",
+                (release,),
+            )
         )
-    conn.commit()
-    conn.close()
+    write_semsql_db(path, extra_statements=extra)
     return path
 
 
@@ -179,8 +172,12 @@ def test_go_db_release_ignores_decoy_subject(tmp_path):
     path = str(tmp_path / "go.db")
     conn = sqlite3.connect(path)
     conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
-    conn.execute("INSERT INTO statements VALUES ('GO:0008150', 'owl:versionInfo', NULL, '1999-01-01')")
-    conn.execute("INSERT INTO statements VALUES ('obo:go.owl', 'owl:versionInfo', NULL, '2026-05-19')")
+    conn.execute(
+        "INSERT INTO statements (subject, predicate, value) VALUES ('GO:0008150', 'owl:versionInfo', '1999-01-01')"
+    )
+    conn.execute(
+        "INSERT INTO statements (subject, predicate, value) VALUES ('obo:go.owl', 'owl:versionInfo', '2026-05-19')"
+    )
     conn.commit()
     conn.close()
     assert ou._go_db_release(path) == "2026-05-19"
@@ -230,7 +227,8 @@ def test_go_db_release_reads_full_iri_subject(tmp_path):
     conn = sqlite3.connect(path)
     conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
     conn.execute(
-        "INSERT INTO statements VALUES ('http://purl.obolibrary.org/obo/go.owl', 'owl:versionInfo', NULL, '2026-05-19')"
+        "INSERT INTO statements (subject, predicate, value) "
+        "VALUES ('http://purl.obolibrary.org/obo/go.owl', 'owl:versionInfo', '2026-05-19')"
     )
     conn.commit()
     conn.close()

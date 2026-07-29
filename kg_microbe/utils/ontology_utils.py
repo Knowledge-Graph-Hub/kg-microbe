@@ -448,11 +448,21 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
 # compiled fine while every consumer query failed with `no such column`. Naming
 # the columns is what makes the probe mean anything. LIMIT 0 parses without
 # scanning, so these stay in the low milliseconds even on the 14 GB DB.
+# Derived from what this repository and OAK actually select, not from a guess at
+# what a SemSQL DB looks like. node_to_value_statement in particular: it is what
+# _load_go_namespace_map reads, and a DB without it passed the earlier probe set
+# and then silently categorised every molecular-function GO term as
+# BiologicalProcess — the exact failure this PR exists to prevent.
 _SEMSQL_STRUCTURE_PROBES = (
     "SELECT subject, predicate, object, value FROM statements LIMIT 0",
+    # ancestors() / descendants()
     "SELECT subject, predicate, object FROM entailed_edge LIMIT 0",
+    # relationships()
     "SELECT subject, predicate, object FROM edge LIMIT 0",
-    "SELECT subject, value FROM rdfs_label_statement LIMIT 0",
+    # OAK labels() selects these columns, not just subject/value
+    "SELECT subject, predicate, object, value, datatype, language FROM rdfs_label_statement LIMIT 0",
+    # _load_go_namespace_map
+    "SELECT subject, predicate, value FROM node_to_value_statement LIMIT 0",
 )
 
 # Content probes: indexed lookups establishing the DB actually holds data.
@@ -467,8 +477,21 @@ _SEMSQL_CONTENT_PROBES = (
     "SELECT 1 FROM entailed_edge LIMIT 1",
 )
 
-# The ontologies whose DBs are known to be labelled and hierarchical.
+# The ontologies whose DBs are known to be labelled and hierarchical, keyed by
+# the label _build_semsql_db is called with. A source not listed here gets
+# structure-only validation, so a legitimately flat or property-only ontology is
+# not rejected and rebuilt on every run forever.
 _CONTENTFUL_ONTOLOGIES = frozenset({"ncbitaxon", "chebi", "go", "ec"})
+
+
+def _requires_content(label: str) -> bool:
+    """
+    Report whether an ontology's DB should be required to hold label/hierarchy rows.
+
+    :param label: Ontology name as passed to :func:`_build_semsql_db`.
+    :return: True when the source is known to be labelled and hierarchical.
+    """
+    return label.strip().lower() in _CONTENTFUL_ONTOLOGIES
 
 
 def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[bool]:
@@ -513,7 +536,7 @@ def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[b
     return True
 
 
-def _reusable_db(db_path: str, min_size: int) -> bool:
+def _reusable_db(db_path: str, min_size: int, require_content: bool = True) -> bool:
     """
     Report whether a DB may be handed to callers as usable.
 
@@ -531,7 +554,7 @@ def _reusable_db(db_path: str, min_size: int) -> bool:
     :param min_size: Smallest plausible size for a complete build.
     :return: True if the DB may be reported usable.
     """
-    return _present_db(db_path, min_size) and _has_semsql_schema(db_path) is not False
+    return _present_db(db_path, min_size) and _has_semsql_schema(db_path, require_content) is not False
 
 
 def _db_is_readable(db_path: str) -> bool:
@@ -713,11 +736,16 @@ def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
     :return: What was displaced, for :func:`_restore_build_target`.
     """
     kept = f"{db_path}.prev"
-    prev_state = _classify_db(kept, min_size) if os.path.lexists(kept) else DB_ABSENT
-    prev_usable = prev_state in _DB_KEEP_STATES
+    # Ranking uses the same "can this answer our queries" test as every other
+    # decision. Integrity alone ranked a physically valid but schema-less target
+    # equal to a SemSQL-valid .prev, so an interrupted build's leftovers could
+    # displace the good copy and a subsequent failure would restore the wrong
+    # one. Ranking decides what is destroyed, so it is the last place that
+    # should use a weaker test than the rest.
+    prev_usable = os.path.lexists(kept) and _reusable_db(kept, min_size)
     target_is_link = os.path.islink(db_path)
     target_present = os.path.lexists(db_path)
-    target_usable = target_present and not target_is_link and _present_db(db_path, min_size)
+    target_usable = target_present and not target_is_link and _reusable_db(db_path, min_size)
 
     recovered_link: Optional[str] = None
 
@@ -963,13 +991,13 @@ def _build_semsql_db(
 
     def _fallback() -> DbEnsureResult:
         """Report the existing DB, or refuse it when the caller demands a build."""
-        return DbEnsureResult(_reusable_db(db_path, min_size) if reuse_on_failure else False)
+        return DbEnsureResult(_reusable_db(db_path, min_size, _requires_content(label)) if reuse_on_failure else False)
 
     if not _semsql_build_enabled():
         # An explicit opt-out always reuses what is on disk, even for GO: the
         # user asked to skip the build, not to have categorisation refuse to run.
         print(f"Skipping {label} SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_reusable_db(db_path, min_size))
+        return DbEnsureResult(_reusable_db(db_path, min_size, _requires_content(label)))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking GB of OWL only to then bail out is pure waste.
     if shutil.which("semsql") is None:

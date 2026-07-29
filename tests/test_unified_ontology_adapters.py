@@ -188,7 +188,12 @@ def _function_is_aliased(func_name, tree):
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == func_name:
             benign.add(id(node.func))
         if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) and node.value.id == func_name:
-            benign.add(id(node.value))
+            # `helper.cache_clear` reaches an attribute and cannot hide a call.
+            # `helper.__call__(...)` invokes the function itself, so the argument
+            # is passed straight through — excluding it let an OWL source reach
+            # get_adapter with the guard still green.
+            if node.attr != "__call__":
+                benign.add(id(node.value))
     for node in ast.walk(tree):
         if isinstance(node, ast.Name) and node.id == func_name and id(node) not in benign:
             # The def itself is not a reference; FunctionDef carries the name as

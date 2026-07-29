@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
-from tests.db_helpers import valid_db_bytes
+from tests.db_helpers import valid_db_bytes, write_semsql_db
 
 OWL_VERSION_IRI = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/chebi/{v}/chebi.owl"/>\n'
 OWL_VERSION_INFO = "<owl:versionInfo>{v}</owl:versionInfo>\n"
@@ -36,18 +36,15 @@ def _write_owl(tmp_path, monkeypatch, body):
 def _make_db(tmp_path, release, *, subject="obo:chebi.owl", name="chebi.db"):
     """Build a minimal SemSQL-shaped DB stamped with `release`."""
     path = str(tmp_path / name)
-    conn = sqlite3.connect(path)
-    conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
-    conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
-    conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
-    conn.execute(
-        "CREATE VIEW rdfs_label_statement AS SELECT subject, value FROM statements WHERE predicate = 'rdfs:label'"
+    write_semsql_db(
+        path,
+        extra_statements=[
+            (
+                "INSERT INTO statements (subject, predicate, value) VALUES (?, 'owl:versionInfo', ?)",
+                (subject, str(release)),
+            )
+        ],
     )
-    conn.execute("INSERT INTO statements VALUES ('obo:x', 'rdfs:label', NULL, 'x')")
-    conn.execute("INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')")
-    conn.execute("INSERT INTO statements VALUES (?, 'owl:versionInfo', NULL, ?)", (subject, str(release)))
-    conn.commit()
-    conn.close()
     return path
 
 
@@ -117,8 +114,12 @@ class TestChebiReleaseReader:
         path = str(tmp_path / "chebi.db")
         conn = sqlite3.connect(path)
         conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
-        conn.execute("INSERT INTO statements VALUES ('CHEBI:16828', 'owl:versionInfo', NULL, '999')")
-        conn.execute("INSERT INTO statements VALUES ('obo:chebi.owl', 'owl:versionInfo', NULL, '253')")
+        conn.execute(
+            "INSERT INTO statements (subject, predicate, value) VALUES ('CHEBI:16828', 'owl:versionInfo', '999')"
+        )
+        conn.execute(
+            "INSERT INTO statements (subject, predicate, value) VALUES ('obo:chebi.owl', 'owl:versionInfo', '253')"
+        )
         conn.commit()
         conn.close()
         assert ou._chebi_db_release(path) == "253"

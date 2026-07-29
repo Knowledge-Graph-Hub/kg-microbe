@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
-from tests.db_helpers import valid_db_bytes
+from tests.db_helpers import SEMSQL_DDL, valid_db_bytes, write_semsql_db
 
 OWL_HEAD = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/ncbitaxon/{d}/ncbitaxon.owl"/>\n'
 
@@ -539,15 +539,17 @@ class TestLockedDatabasesAreNotDestroyed:
 
     @staticmethod
     def _real_db(path, rows=200, tag="x"):
-        """Write a genuinely populated SQLite DB."""
-        conn = sqlite3.connect(str(path))
-        conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, value TEXT)")
-        conn.executemany(
-            "INSERT INTO statements VALUES (?,?,?)",
-            [(f"{tag}{i}", "p", "v" * 100) for i in range(rows)],
+        """Write a genuinely usable SemSQL DB with distinguishable contents."""
+        write_semsql_db(
+            path,
+            extra_statements=[
+                (
+                    "INSERT INTO statements (subject, predicate, value) VALUES (?, ?, ?)",
+                    (f"{tag}{i}", "rdfs:label", "v" * 100),
+                )
+                for i in range(rows)
+            ],
         )
-        conn.commit()
-        conn.close()
         return path
 
     @staticmethod
@@ -555,7 +557,7 @@ class TestLockedDatabasesAreNotDestroyed:
         """Open an exclusive transaction, as a concurrent writer would."""
         conn = sqlite3.connect(str(path))
         conn.execute("BEGIN EXCLUSIVE")
-        conn.execute("INSERT INTO statements VALUES ('a','b','c')")
+        conn.execute("INSERT INTO statements (subject, predicate, value) VALUES ('a','b','c')")
         return conn
 
     def test_deep_check_reports_busy_not_corrupt(self, tmp_path):
@@ -711,13 +713,9 @@ class TestLockedDatabasesAreNotDestroyed:
         """
         db = tmp_path / "flat.db"
         conn = sqlite3.connect(str(db))
-        conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
-        conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
-        conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
-        conn.execute(
-            "CREATE VIEW rdfs_label_statement AS SELECT subject, value FROM statements WHERE predicate = 'rdfs:label'"
-        )
-        conn.commit()
+        for ddl in SEMSQL_DDL:  # full structure...
+            conn.execute(ddl)
+        conn.commit()  # ...and deliberately no rows
         conn.close()
 
         assert ou._has_semsql_schema(str(db), require_content=False) is True

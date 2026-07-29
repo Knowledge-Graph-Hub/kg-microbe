@@ -264,7 +264,8 @@ class TestCallSitesUseTheGuardedHelpers:
     GUARDS = [
         ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1, ("mapping_file",)),
         ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1, ("WALLEN_ETAL_TMP_FILEPATH",)),
-        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2, ("chebi_result_fn", "go_result_fn")),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 1, ("chebi_result_fn",)),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 1, ("go_result_fn",)),
         ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1, ()),
         ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1, ()),
     ]

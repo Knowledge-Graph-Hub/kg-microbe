@@ -443,26 +443,54 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
     return DB_OK
 
 
+# What a SemSQL DB must answer for the queries this codebase makes. Row probes
+# are indexed lookups; view probes are compiled with LIMIT 0, which parses the
+# view without scanning it. Measured on the real databases: label row 0.3 ms,
+# entailed_edge row 0.4 ms, view compilation 0.2 ms. Fetching an actual row from
+# the `edge` view is 1.1 s on ec.db and 25.7 s on the 14 GB ncbitaxon.db, so it
+# is deliberately not done.
+_SEMSQL_ROW_PROBES = (
+    # labels(), basic_search(), entity_metadata_map()
+    "SELECT 1 FROM statements WHERE predicate = 'rdfs:label' LIMIT 1",
+    # ancestors() / descendants() — the tables whose absence is invisible until
+    # a hierarchy query runs, and which a `statements`-only check missed
+    "SELECT 1 FROM entailed_edge LIMIT 1",
+)
+_SEMSQL_VIEW_PROBES = (
+    "SELECT * FROM edge LIMIT 0",
+    "SELECT * FROM rdfs_label_statement LIMIT 0",
+)
+
+
 def _has_semsql_schema(db_path: str) -> Optional[bool]:
     """
-    Report whether a DB actually carries a populated SemSQL ``statements`` table.
+    Report whether a DB can answer the queries this codebase actually makes.
 
-    File integrity and *usability* are different questions, and conflating them
+    File integrity and usability are different questions, and conflating them
     lost a database: ``semsql make`` can exit 0 having produced a structurally
-    valid SQLite file that passes ``quick_check`` yet contains none of the SemSQL
-    schema. That was accepted as a successful build and the previous, genuinely
-    usable copy was discarded on the strength of it.
+    valid SQLite file that passes ``quick_check`` yet carries none of the SemSQL
+    schema.
+
+    Checking a populated ``statements`` table was the first attempt and was also
+    insufficient. Removing ``entailed_edge`` from a real ec.db leaves labels,
+    metadata, search and relationships working while ``ancestors`` and
+    ``descendants`` raise ``no such table`` — so a replacement missing it looked
+    healthy, and the previous good copy was discarded for it.
 
     :param db_path: Path to the DB.
-    :return: True if the SemSQL schema is present and populated, False if it is
-        demonstrably absent or empty, and None when the answer cannot be
-        established — a locked DB, say — so callers can decline to act on it.
+    :return: True if every probe succeeds, False if one demonstrably fails, and
+        None when the answer cannot be established — a locked DB, say — so
+        callers can decline to act on an unknown.
     """
     try:
         uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
         conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
         try:
-            return conn.execute("SELECT 1 FROM statements LIMIT 1").fetchone() is not None
+            for sql in _SEMSQL_ROW_PROBES:
+                if conn.execute(sql).fetchone() is None:
+                    return False
+            for sql in _SEMSQL_VIEW_PROBES:
+                conn.execute(sql).fetchall()
         finally:
             conn.close()
     except sqlite3.OperationalError as e:
@@ -472,6 +500,7 @@ def _has_semsql_schema(db_path: str) -> Optional[bool]:
         return False
     except (sqlite3.Error, OSError):
         return False
+    return True
 
 
 def _db_is_readable(db_path: str) -> bool:
@@ -948,17 +977,24 @@ def _build_semsql_db(
         _restore_build_target(db_path, kept)
         raise
     if _usable_db(db_path, min_size):
-        if _has_semsql_schema(db_path):
+        confirmed = _has_semsql_schema(db_path)
+        if confirmed:
             _discard_kept_target(kept)
-        else:
-            # The build looks structurally fine but its SemSQL schema could not
-            # be confirmed. Keep the previous copy: nothing has established that
-            # the replacement is usable, and the old one is the only thing that
-            # is known to be.
-            print(
-                f"  Keeping {kept}: {db_path} was built but its SemSQL schema could not be "
-                "verified (locked?). Delete the .prev once the new DB is confirmed good."
-            )
+            return DbEnsureResult(True, built=True)
+        if confirmed is False:
+            # Not merely unverified — demonstrably bad. Treat it as a failed
+            # build: leaving it at the canonical path while reporting success
+            # meant the reuse fast-path then accepted it, with the good copy
+            # sitting dormant at .prev.
+            print(f"Warning: {db_path} lacks a usable SemSQL schema; restoring the previous DB")
+            _restore_build_target(db_path, kept)
+            return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
+        # None: the schema could not be established (locked). Keep the previous
+        # copy, since nothing has shown the replacement to be usable.
+        print(
+            f"  Keeping {kept}: {db_path} was built but its SemSQL schema could not be "
+            "verified (locked?). Delete the .prev once the new DB is confirmed good."
+        )
         return DbEnsureResult(True, built=True)
     # semsql can exit 0 having produced a short/misplaced file. Restore, then
     # report on what is actually at db_path now — not the pre-restore verdict.

@@ -257,12 +257,15 @@ class TestCallSitesUseTheGuardedHelpers:
     them actually do their job.
     """
 
+    # (module, expected count, substring the guarded argument must mention).
+    # Naming the cache is what stops `cache_is_complete(unrelated_path)` beside
+    # an unconditionally regenerated real cache from satisfying the assertion.
     GUARDS = [
-        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1),
-        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1),
-        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2),
-        ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1),
-        ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1),
+        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1, "mapping_file"),
+        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1, "TMP_FILEPATH"),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2, "result_fn"),
+        ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1, ""),
+        ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1, ""),
     ]
 
     WRITERS = [
@@ -282,17 +285,23 @@ class TestCallSitesUseTheGuardedHelpers:
         return ast.parse((Path(__file__).parent.parent / module_path).read_text(encoding="utf-8"))
 
     @classmethod
-    def _deciding_guard_calls(cls, module_path):
-        """Count guard calls whose result controls a branch."""
+    def _deciding_guard_calls(cls, module_path, names_cache=""):
+        """Count guard calls that control a branch and name the intended cache."""
+        source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
         found = 0
-        for node in ast.walk(cls._tree(module_path)):
+        for node in ast.walk(ast.parse(source)):
             if not isinstance(node, (ast.If, ast.IfExp)):
                 continue
             for sub in ast.walk(node.test):
-                if isinstance(sub, ast.Call):
-                    called = getattr(sub.func, "id", None) or getattr(sub.func, "attr", None)
-                    if called in cls.GUARD_NAMES:
-                        found += 1
+                if not isinstance(sub, ast.Call):
+                    continue
+                called = getattr(sub.func, "id", None) or getattr(sub.func, "attr", None)
+                if called not in cls.GUARD_NAMES:
+                    continue
+                argument = " ".join(ast.get_source_segment(source, a) or "" for a in sub.args)
+                if names_cache and names_cache not in argument:
+                    continue
+                found += 1
         return found
 
     @classmethod
@@ -313,17 +322,18 @@ class TestCallSitesUseTheGuardedHelpers:
                     found += 1
         return found
 
-    @pytest.mark.parametrize("module_path, count", GUARDS)
-    def test_guard_result_controls_regeneration(self, module_path, count):
+    @pytest.mark.parametrize("module_path, count, names_cache", GUARDS)
+    def test_guard_result_controls_regeneration(self, module_path, count, names_cache):
         """
         Calling the guard is not enough; its answer must decide the branch.
 
         Reverting to `.exists()`, or calling the helper and ignoring what it
         returns, both fail here.
         """
-        actual = self._deciding_guard_calls(module_path)
+        actual = self._deciding_guard_calls(module_path, names_cache)
         assert actual >= count, (
-            f"{module_path}: expected >= {count} completeness check(s) controlling a branch, found {actual}"
+            f"{module_path}: expected >= {count} completeness check(s) controlling a branch "
+            f"and naming {names_cache or 'the cache'}, found {actual}"
         )
 
     @pytest.mark.parametrize("module_path, count", WRITERS)
@@ -332,8 +342,8 @@ class TestCallSitesUseTheGuardedHelpers:
         actual = self._context_managed_writes(module_path)
         assert actual >= count, f"{module_path}: expected >= {count} atomic_write context manager(s), found {actual}"
 
-    @pytest.mark.parametrize("module_path, _count", GUARDS)
-    def test_no_cache_path_is_guarded_by_bare_existence(self, module_path, _count):
+    @pytest.mark.parametrize("module_path, _count, _names", GUARDS)
+    def test_no_cache_path_is_guarded_by_bare_existence(self, module_path, _count, _names):
         """
         No branch may test a cache path's mere existence.
 
@@ -362,9 +372,15 @@ class TestCallSitesUseTheGuardedHelpers:
             if not isinstance(node, (ast.If, ast.IfExp)):
                 continue
             for sub in ast.walk(node.test):
-                if not isinstance(sub, ast.Call) or getattr(sub.func, "attr", None) not in {"exists", "is_file"}:
+                if not isinstance(sub, ast.Call):
                     continue
-                value = sub.func.value
+                attr = getattr(sub.func, "attr", None)
+                if attr not in {"exists", "is_file"}:
+                    continue
+                # `os.path.exists(cache)` puts the cache in the arguments, while
+                # `cache.exists()` puts it in the receiver. Only the receiver was
+                # examined, so the function form went unnoticed.
+                value = sub.args[0] if sub.args else sub.func.value
                 names = {_root(n.id) for n in ast.walk(value) if isinstance(n, ast.Name)}
                 names |= {getattr(n, "attr", "") for n in ast.walk(value) if isinstance(n, ast.Attribute)}
                 if any(hint in name for name in names for hint in cache_hints):

@@ -219,10 +219,22 @@ def _function_is_aliased(func_name, tree):
             value = getattr(node, "value", None)
             if not (isinstance(value, ast.Call) and _is_ref(value.func)):
                 return True
-        # @helper  /  @something(helper)
+        # @helper  /  @something(helper)  /  def f(cb=helper)
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             if any(_contains_ref(decorator) for decorator in node.decorator_list):
                 return True
+            defaults = [*node.args.defaults, *[d for d in node.args.kw_defaults if d is not None]]
+            if any(_contains_ref(default) for default in defaults):
+                return True
+        # alias := helper
+        if isinstance(node, ast.NamedExpr) and _contains_ref(node.value):
+            return True
+        # alias += helper
+        if isinstance(node, ast.AugAssign) and _contains_ref(node.value):
+            return True
+        # for cb in (helper,)
+        if isinstance(node, (ast.For, ast.AsyncFor)) and _contains_ref(node.iter):
+            return True
         # setattr(x, "y", helper) / register(helper) / partial(helper, ...)
         if isinstance(node, ast.Call) and not _is_ref(node.func):
             if any(_is_ref(arg) for arg in node.args):

@@ -28,12 +28,18 @@ def valid_db_bytes(marker: bytes = b"", pad: int = 0) -> bytes:
         with tempfile.TemporaryDirectory() as d:
             p = os.path.join(d, "base.db")
             conn = sqlite3.connect(p)
+            # The minimal shape the post-build gate requires. A build that
+            # creates part of the SemSQL schema and loads nothing into it is not
+            # a usable database, and a fixture standing in for a healthy build
+            # has to be one. entailed_edge in particular: without it labels and
+            # search still work while ancestors/descendants fail, which is
+            # exactly the replacement that used to displace a good copy.
             conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
-            # At least one row: a build that creates the SemSQL schema and loads
-            # nothing into it is not a usable database, and the post-build gate
-            # now says so. A fixture standing in for a healthy build has to be
-            # one.
+            conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
+            conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
+            conn.execute("CREATE VIEW rdfs_label_statement AS SELECT * FROM statements WHERE predicate = 'rdfs:label'")
             conn.execute("INSERT INTO statements VALUES ('obo:x', 'rdfs:label', NULL, 'x')")
+            conn.execute("INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')")
             conn.commit()
             conn.close()
             _VALID_DB_BASE = Path(p).read_bytes()

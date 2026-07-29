@@ -749,3 +749,53 @@ class TestLockedDatabasesAreNotDestroyed:
         assert not ou._ensure_ncbitaxon_db(str(db)), "the no-semsql fallback must refuse it too"
         monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
         assert not ou._ensure_ncbitaxon_db(str(db)), "the opt-out path must refuse it too"
+
+    def test_a_partial_schema_is_rejected_however_plausible(self, tmp_path):
+        """
+        Object presence is compared against a real build, not a remembered list.
+
+        Three consecutive reviews found another view some OAK path needed —
+        node_to_value_statement most damagingly, whose absence filed every
+        molecular-function GO term as BiologicalProcess. A DB carrying only the
+        handful of objects previously probed must now be rejected.
+        """
+        db = tmp_path / "ncbitaxon.db"
+        conn = sqlite3.connect(str(db))
+        conn.execute(
+            "CREATE TABLE statements (stanza TEXT, subject TEXT, predicate TEXT, object TEXT, "
+            "value TEXT, datatype TEXT, language TEXT, graph TEXT)"
+        )
+        conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
+        conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
+        conn.commit()
+        conn.close()
+        assert ou._has_semsql_schema(str(db)) is False
+
+    def test_the_fixture_satisfies_the_production_gate(self, tmp_path):
+        """
+        The fixture and the gate must not drift apart.
+
+        Both now derive from the same real build: the gate compares against the
+        captured object set, the fixture is created from the captured DDL.
+        """
+        db = write_semsql_db(tmp_path / "fixture.db")
+        assert ou._has_semsql_schema(str(db), require_content=True) is True
+
+    def test_content_policy_is_explicit_not_inferred(self, tmp_path):
+        """
+        Policy is passed by the caller, not read off a display label.
+
+        Deriving it from `label` failed open — "ChEBI" enabled content
+        validation and "ChEBI ontology" silently disabled it — so a typo would
+        have weakened the check invisibly.
+        """
+        db = tmp_path / "empty.db"
+        conn = sqlite3.connect(str(db))
+        for ddl in SEMSQL_DDL:
+            conn.execute(ddl)
+        conn.commit()
+        conn.close()
+
+        assert ou._has_semsql_schema(str(db), require_content=False) is True
+        assert ou._has_semsql_schema(str(db), require_content=True) is False
+        assert not hasattr(ou, "_requires_content"), "label-derived policy must not return"

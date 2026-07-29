@@ -289,7 +289,7 @@ def _semsql_build_enabled() -> bool:
     return os.environ.get("KG_SEMSQL_BUILD", "").strip().lower() not in {"off", "false", "0", "no"}
 
 
-def _usable_db(db_path: str, min_size: int) -> bool:
+def _usable_db(db_path: str, min_size: int, require_content: bool = True) -> bool:
     """
     Report whether a SemSQL DB at ``db_path`` is present and plausibly complete.
 
@@ -320,10 +320,10 @@ def _usable_db(db_path: str, min_size: int) -> bool:
     # None means "could not establish" (locked); accept the build rather than
     # throw away work, but see _build_semsql_db, which then keeps the .prev
     # because nothing has verified the replacement.
-    return _has_semsql_schema(db_path) is not False
+    return _has_semsql_schema(db_path, require_content) is not False
 
 
-def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool:
+def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget", require_content: bool = True) -> bool:
     """
     Judge the target after a failed build, according to what is now there.
 
@@ -337,7 +337,7 @@ def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool
     :param kept: What :func:`_clear_build_target` displaced.
     :return: True if the file is usable.
     """
-    return _reusable_db(db_path, min_size) if kept else _usable_db(db_path, min_size)
+    return _reusable_db(db_path, min_size, require_content) if kept else _usable_db(db_path, min_size, require_content)
 
 
 def _present_db(db_path: str, min_size: int) -> bool:
@@ -448,20 +448,131 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
 # compiled fine while every consumer query failed with `no such column`. Naming
 # the columns is what makes the probe mean anything. LIMIT 0 parses without
 # scanning, so these stay in the low milliseconds even on the 14 GB DB.
-# Derived from what this repository and OAK actually select, not from a guess at
-# what a SemSQL DB looks like. node_to_value_statement in particular: it is what
-# _load_go_namespace_map reads, and a DB without it passed the earlier probe set
-# and then silently categorised every molecular-function GO term as
-# BiologicalProcess — the exact failure this PR exists to prevent.
-_SEMSQL_STRUCTURE_PROBES = (
-    "SELECT subject, predicate, object, value FROM statements LIMIT 0",
-    # ancestors() / descendants()
+# The complete set of tables and views a real `semsql make` produces, taken from
+# the four databases this pipeline ships — all of which carry an identical
+# 100-object schema. Enumerating the objects a consumer "needs" was tried three
+# times and was wrong three times: each round found another view that some OAK
+# call path required, most damagingly node_to_value_statement, whose absence let
+# every molecular-function GO term be filed as BiologicalProcess. Comparing
+# against the real schema is complete by construction rather than by my
+# recollection. Reading sqlite_master costs 0.4 ms on the 13 GB database.
+#
+# A future semsql release that changes the schema will surface here as a loud,
+# specific failure naming the missing objects — which is the right way to find
+# out, rather than through miscategorised terms months later.
+_SEMSQL_REQUIRED_OBJECTS = frozenset(
+    {
+        "all_problems",
+        "annotation_property_node",
+        "anonymous_class_expression",
+        "anonymous_expression",
+        "anonymous_individual_expression",
+        "anonymous_property_expression",
+        "asymmetric_property_node",
+        "axiom_dbxref_annotation",
+        "blank_node",
+        "class_node",
+        "contributor",
+        "count_of_instantiated_classes",
+        "count_of_predicates",
+        "count_of_subclasses",
+        "creator",
+        "deprecated_node",
+        "edge",
+        "entailed_edge",
+        "entailed_edge_cycle",
+        "entailed_edge_same_predicate_cycle",
+        "entailed_subclass_of_edge",
+        "entailed_type_edge",
+        "has_broad_match_statement",
+        "has_broad_synonym_statement",
+        "has_dbxref_statement",
+        "has_exact_match_statement",
+        "has_exact_synonym_statement",
+        "has_mapping_statement",
+        "has_match_statement",
+        "has_narrow_match_statement",
+        "has_narrow_synonym_statement",
+        "has_oio_synonym_statement",
+        "has_related_match_statement",
+        "has_related_synonym_statement",
+        "has_synonym_statement",
+        "has_text_definition_statement",
+        "iri_node",
+        "irreflexive_property_node",
+        "lexical_problem",
+        "named_individual_node",
+        "node",
+        "node_identifier",
+        "node_to_node_statement",
+        "node_to_value_statement",
+        "node_with_two_labels_problem",
+        "object_property_node",
+        "ontology_node",
+        "ontology_status_statement",
+        "orcid",
+        "owl_all_values_from",
+        "owl_axiom",
+        "owl_axiom_annotation",
+        "owl_complement_of_statement",
+        "owl_complex_axiom",
+        "owl_disjoint_class_statement",
+        "owl_equivalent_class_statement",
+        "owl_equivalent_to_intersection_member",
+        "owl_has_self",
+        "owl_has_value",
+        "owl_imports_statement",
+        "owl_inverse_of_statement",
+        "owl_reified_axiom",
+        "owl_restriction",
+        "owl_same_as_statement",
+        "owl_some_values_from",
+        "owl_subclass_of_some_values_from",
+        "prefix",
+        "problem",
+        "property_node",
+        "property_used_with_datatype_values_and_objects",
+        "rdf_first_statement",
+        "rdf_level_summary_statistic",
+        "rdf_list_member_statement",
+        "rdf_list_node",
+        "rdf_list_statement",
+        "rdf_rest_statement",
+        "rdf_rest_transitive_statement",
+        "rdf_type_statement",
+        "rdfs_domain_statement",
+        "rdfs_label_statement",
+        "rdfs_range_statement",
+        "rdfs_subclass_of_named_statement",
+        "rdfs_subclass_of_statement",
+        "rdfs_subproperty_of_statement",
+        "reflexive_property_node",
+        "relation_graph_construct",
+        "repair_action",
+        "statements",
+        "subgraph_edge_by_ancestor",
+        "subgraph_edge_by_ancestor_or_descendant",
+        "subgraph_edge_by_child",
+        "subgraph_edge_by_descendant",
+        "subgraph_edge_by_parent",
+        "subgraph_edge_by_self",
+        "subgraph_query",
+        "symmetric_property_node",
+        "term_association",
+        "trailing_whitespace_problem",
+        "transitive_edge",
+        "transitive_property_node",
+    }
+)
+
+# Columns our consumers select. Object presence is necessary but not sufficient:
+# a table can exist with the wrong shape, and `SELECT *` compiled happily
+# against one.
+_SEMSQL_COLUMN_PROBES = (
+    "SELECT stanza, subject, predicate, object, value, datatype, language, graph FROM statements LIMIT 0",
     "SELECT subject, predicate, object FROM entailed_edge LIMIT 0",
-    # relationships()
     "SELECT subject, predicate, object FROM edge LIMIT 0",
-    # OAK labels() selects these columns, not just subject/value
     "SELECT subject, predicate, object, value, datatype, language FROM rdfs_label_statement LIMIT 0",
-    # _load_go_namespace_map
     "SELECT subject, predicate, value FROM node_to_value_statement LIMIT 0",
 )
 
@@ -477,53 +588,43 @@ _SEMSQL_CONTENT_PROBES = (
     "SELECT 1 FROM entailed_edge LIMIT 1",
 )
 
-# The ontologies whose DBs are known to be labelled and hierarchical, keyed by
-# the label _build_semsql_db is called with. A source not listed here gets
-# structure-only validation, so a legitimately flat or property-only ontology is
-# not rejected and rebuilt on every run forever.
-_CONTENTFUL_ONTOLOGIES = frozenset({"ncbitaxon", "chebi", "go", "ec"})
-
-
-def _requires_content(label: str) -> bool:
-    """
-    Report whether an ontology's DB should be required to hold label/hierarchy rows.
-
-    :param label: Ontology name as passed to :func:`_build_semsql_db`.
-    :return: True when the source is known to be labelled and hierarchical.
-    """
-    return label.strip().lower() in _CONTENTFUL_ONTOLOGIES
+# Content policy is passed explicitly by each _ensure_*_db rather than inferred
+# from a display label. Deriving it from `label` failed open: "ChEBI" enabled
+# content validation and "ChEBI ontology" silently disabled it, so a typo would
+# have quietly weakened the check rather than breaking anything visibly.
 
 
 def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[bool]:
     """
-    Report whether a DB can answer the queries this codebase actually makes.
+    Report whether a DB can answer the queries this codebase makes.
 
-    File integrity and usability are different questions, and conflating them
-    lost a database: ``semsql make`` can exit 0 having produced a structurally
-    valid SQLite file that passes ``quick_check`` yet carrying none of the SemSQL
-    schema. Checking a populated ``statements`` table was the next attempt and
-    was also insufficient — removing ``entailed_edge`` from a real ec.db leaves
-    labels, metadata, search and relationships working while ``ancestors`` and
-    ``descendants`` raise ``no such table``.
-
-    Structure is checked always; content only when the caller knows the source
-    should have some. See the constants above for why that split exists.
+    Structure is checked against the complete object set a real ``semsql make``
+    produces, plus the columns our consumers select. Content — a label row and a
+    hierarchy row — is checked only when the caller says the source should have
+    some, because demanding it universally would reject a legitimately flat or
+    property-only ontology on every run and rebuild it forever.
 
     :param db_path: Path to the DB.
     :param require_content: Whether to also require label and hierarchy rows.
-    :return: True if every probe succeeds, False if one demonstrably fails, and
+    :return: True if every check passes, False if one demonstrably fails, and
         None when the answer cannot be established — a locked DB, say — so
         callers can decline to act on an unknown.
     """
-    probes = _SEMSQL_STRUCTURE_PROBES + (_SEMSQL_CONTENT_PROBES if require_content else ())
     try:
         uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
         conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
         try:
-            for sql in probes:
-                rows = conn.execute(sql).fetchall()
-                if sql in _SEMSQL_CONTENT_PROBES and not rows:
-                    return False
+            present = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type IN ('table', 'view')")}
+            missing = _SEMSQL_REQUIRED_OBJECTS - present
+            if missing:
+                print(f"  {db_path} is missing {len(missing)} SemSQL object(s), e.g. {sorted(missing)[:5]}")
+                return False
+            for sql in _SEMSQL_COLUMN_PROBES:
+                conn.execute(sql).fetchall()
+            if require_content:
+                for sql in _SEMSQL_CONTENT_PROBES:
+                    if conn.execute(sql).fetchone() is None:
+                        return False
         finally:
             conn.close()
     except sqlite3.OperationalError as e:
@@ -710,7 +811,7 @@ def _note_orphaned_prev(db_path: str) -> None:
         )
 
 
-def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
+def _clear_build_target(db_path: str, min_size: int, require_content: bool = True) -> KeptTarget:
     """
     Clear the SemSQL build target, preserving whatever it displaced.
 
@@ -742,10 +843,10 @@ def _clear_build_target(db_path: str, min_size: int) -> KeptTarget:
     # displace the good copy and a subsequent failure would restore the wrong
     # one. Ranking decides what is destroyed, so it is the last place that
     # should use a weaker test than the rest.
-    prev_usable = os.path.lexists(kept) and _reusable_db(kept, min_size)
+    prev_usable = os.path.lexists(kept) and _reusable_db(kept, min_size, require_content)
     target_is_link = os.path.islink(db_path)
     target_present = os.path.lexists(db_path)
-    target_usable = target_present and not target_is_link and _reusable_db(db_path, min_size)
+    target_usable = target_present and not target_is_link and _reusable_db(db_path, min_size, require_content)
 
     recovered_link: Optional[str] = None
 
@@ -961,6 +1062,7 @@ def _build_semsql_db(
     label: str,
     cost_note: str,
     reuse_on_failure: bool = True,
+    require_content: bool = True,
 ) -> DbEnsureResult:
     """
     Run the guarded ``semsql make`` for one ontology.
@@ -991,13 +1093,13 @@ def _build_semsql_db(
 
     def _fallback() -> DbEnsureResult:
         """Report the existing DB, or refuse it when the caller demands a build."""
-        return DbEnsureResult(_reusable_db(db_path, min_size, _requires_content(label)) if reuse_on_failure else False)
+        return DbEnsureResult(_reusable_db(db_path, min_size, require_content) if reuse_on_failure else False)
 
     if not _semsql_build_enabled():
         # An explicit opt-out always reuses what is on disk, even for GO: the
         # user asked to skip the build, not to have categorisation refuse to run.
         print(f"Skipping {label} SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_reusable_db(db_path, min_size, _requires_content(label)))
+        return DbEnsureResult(_reusable_db(db_path, min_size, require_content))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking GB of OWL only to then bail out is pure waste.
     if shutil.which("semsql") is None:
@@ -1012,7 +1114,7 @@ def _build_semsql_db(
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — {label} OWL source {owl_source} is missing")
         return _fallback()
-    kept = _clear_build_target(db_path, min_size)
+    kept = _clear_build_target(db_path, min_size, require_content)
     print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
     try:
         subprocess.run(  # noqa: S603
@@ -1028,19 +1130,21 @@ def _build_semsql_db(
         # symlink the user supplied, which _usable_db rejects by design. But a
         # caller that passed reuse_on_failure=False wants the *rebuild*, so the
         # restored copy is refused here exactly as it is at the preflight exits.
-        return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
+        return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, require_content))
     except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
         # Ctrl-C during a build previously left the DB gone and a multi-GB .prev
         # orphaned. This cannot help against SIGKILL or an unhandled SIGTERM,
         # which do not unwind — _clear_build_target's recovery covers those.
         _restore_build_target(db_path, kept)
         raise
-    if _usable_db(db_path, min_size):
+    if _usable_db(db_path, min_size, require_content):
         # Re-validate in full, not just the schema. Between the integrity check
         # and here the file can have been replaced by something schema-valid but
         # undersized or damaged, and confirming only the schema discarded the
         # previous copy for it.
-        confirmed = _has_semsql_schema(db_path) if _usable_db(db_path, min_size) else False
+        confirmed = (
+            _has_semsql_schema(db_path, require_content) if _usable_db(db_path, min_size, require_content) else False
+        )
         if confirmed:
             _discard_kept_target(kept)
             return DbEnsureResult(True, built=True)
@@ -1051,7 +1155,7 @@ def _build_semsql_db(
             # sitting dormant at .prev.
             print(f"Warning: {db_path} lacks a usable SemSQL schema; restoring the previous DB")
             _restore_build_target(db_path, kept)
-            return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
+            return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, require_content))
         # None: the schema could not be established (locked). Keep the previous
         # copy, since nothing has shown the replacement to be usable.
         print(

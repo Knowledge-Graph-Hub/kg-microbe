@@ -8,20 +8,35 @@ from pathlib import Path
 _VALID_DB_BASE = None
 
 
-# The minimal SemSQL shape the production gate requires, in one place. Four
-# separate fixtures used to declare their own partial version, and every time
-# the gate learned about another object or column, all four had to be found and
-# updated. Kept in sync with _SEMSQL_STRUCTURE_PROBES in ontology_utils.
-SEMSQL_DDL = (
-    "CREATE TABLE statements (stanza TEXT, subject TEXT, predicate TEXT, object TEXT, "
-    "value TEXT, datatype TEXT, language TEXT, graph TEXT)",
-    "CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)",
-    "CREATE VIEW edge AS SELECT subject, predicate, object FROM statements",
-    "CREATE VIEW rdfs_label_statement AS SELECT stanza, subject, predicate, object, value, "
-    "datatype, language, graph FROM statements WHERE predicate = 'rdfs:label'",
-    "CREATE VIEW node_to_value_statement AS SELECT stanza, subject, predicate, object, value, "
-    "datatype, language, graph FROM statements WHERE value IS NOT NULL",
-)
+# The schema a real `semsql make` emits, kept beside this module as data.
+# Hand-written partial shapes drifted from the production gate three rounds
+# running: each time the gate learned of another object, four fixtures had to be
+# found and corrected. Loading the whole captured schema makes a partial fixture
+# impossible by construction.
+_SCHEMA_PATH = Path(__file__).parent / "semsql_schema.sql"
+
+
+def _load_schema_statements(path):
+    """
+    Parse the captured schema file into individual statements.
+
+    Comment lines are stripped *before* splitting: leaving them in glued the
+    header to the first statement, which the filter then discarded, silently
+    producing a 99-of-100-object fixture that failed the gate for a reason that
+    looked like a code bug.
+
+    :param path: Path to the .sql file.
+    :return: Tuple of DDL statements.
+    """
+    lines = [
+        line
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.strip().startswith("--")
+    ]
+    return tuple(s.strip() for s in "\n".join(lines).split(";") if s.strip())
+
+
+SEMSQL_DDL = _load_schema_statements(_SCHEMA_PATH)
 
 SEMSQL_SEED = (
     "INSERT INTO statements (subject, predicate, object, value) VALUES ('obo:x', 'rdfs:label', NULL, 'x')",

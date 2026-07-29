@@ -537,6 +537,37 @@ _SEMSQL_CONTENT_PROBES = (
 # have quietly weakened the check rather than breaking anything visibly.
 
 
+def _probe_verdict(db_path: str, sql: Optional[str], error: Exception) -> Optional[bool]:
+    """
+    Decide what a probe failure proves about a database, and say so.
+
+    Only a missing table or column is evidence that a database cannot serve our
+    queries. A lock means "ask later" and is handled by the caller; anything else
+    — a disk error, a permission problem — means the probe established nothing.
+    Reporting False for those would send a healthy multi-gigabyte database off to
+    be rebuilt.
+
+    One classifier, used at every site that can see an ``OperationalError``. The
+    first version was applied to the structural probe loop alone, so the same
+    disk error was read as "schema is bad" during content probing and during
+    ``connect()``, but as "cannot tell" during structural probing.
+
+    :param db_path: Database being probed, for the message.
+    :param sql: The probe that failed, or None when the failure was in connect().
+    :param error: The exception raised.
+    :return: False when the schema is demonstrably wrong, None when nothing was
+        established.
+    """
+    message = str(error).lower()
+    definitive = "no such table" in message or "no such column" in message
+    where = f"`{sql}`" if sql else "connect()"
+    if definitive:
+        print(f"  {db_path} cannot serve {where}: {error}")
+        return False
+    print(f"  Could not probe {db_path} ({where}): {error}")
+    return None
+
+
 def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[bool]:
     """
     Report whether a DB can answer the queries this codebase makes.
@@ -561,30 +592,28 @@ def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[b
                 try:
                     conn.execute(sql).fetchall()
                 except sqlite3.OperationalError as probe_error:
-                    message = str(probe_error).lower()
-                    if "locked" in message or "busy" in message:
-                        raise
-                    if "no such table" not in message and "no such column" not in message:
-                        # Something else went wrong — a disk error, say. That is
-                        # not evidence the schema is bad, and returning False
-                        # would send a healthy database off to be rebuilt.
-                        print(f"  Could not probe {db_path} (`{sql}`): {probe_error}")
-                        return None
-                    print(f"  {db_path} cannot serve `{sql}`: {probe_error}")
-                    return False
+                    return _probe_verdict(db_path, sql, probe_error)
             if require_content:
                 for sql in _SEMSQL_CONTENT_PROBES:
-                    if conn.execute(sql).fetchone() is None:
-                        return False
+                    try:
+                        if conn.execute(sql).fetchone() is None:
+                            return False
+                    except sqlite3.OperationalError as probe_error:
+                        return _probe_verdict(db_path, sql, probe_error)
         finally:
             conn.close()
     except sqlite3.OperationalError as e:
-        message = str(e).lower()
-        if "locked" in message or "busy" in message:
-            return None
+        # Reached for connect() failures and anything re-raised above. Classified
+        # the same way: applying the rule to only one of the three sites meant an
+        # identical disk error was read as "schema is bad" or "cannot tell"
+        # depending on which probe happened to hit it.
+        return _probe_verdict(db_path, None, e)
+    except (sqlite3.DatabaseError, OSError):
+        # A corrupt or unreadable file is evidence about the database itself.
         return False
-    except (sqlite3.Error, OSError):
-        return False
+    except sqlite3.Error:
+        # Anything else establishes nothing.
+        return None
     return True
 
 

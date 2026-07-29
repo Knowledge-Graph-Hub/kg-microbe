@@ -890,3 +890,62 @@ class TestLockedDatabasesAreNotDestroyed:
 
         monkeypatch.setattr(ou.sqlite3, "connect", lambda *a, **k: Failing(real_connect(*a, **k)))
         assert ou._has_semsql_schema(str(db)) is None, "an unrelated error is not a schema failure"
+
+    @pytest.mark.parametrize(
+        "statements_before_failure, where",
+        [(2, "during a structural probe"), (22, "after the structural probes"), (23, "during a content probe")],
+    )
+    def test_an_unexpected_error_is_never_a_schema_verdict(
+        self, tmp_path, monkeypatch, statements_before_failure, where
+    ):
+        """
+        The same error must mean the same thing wherever it lands.
+
+        The classifier was first applied to the structural probe loop only, so an
+        identical disk error read as "cannot tell" there and as "schema is bad"
+        during content probing or connect() — and the latter would send a healthy
+        multi-gigabyte database off to a multi-hour rebuild.
+        """
+        db = write_semsql_db(tmp_path / "ncbitaxon.db")
+        real_connect = sqlite3.connect
+
+        class Failing:
+
+            """Answers a set number of statements, then fails unrelatedly."""
+
+            def __init__(self, conn):
+                """Wrap a real connection and count statements."""
+                self.conn = conn
+                self.calls = 0
+
+            def execute(self, sql, *args):
+                """Fail once the configured number of statements has passed."""
+                self.calls += 1
+                if self.calls > statements_before_failure:
+                    raise sqlite3.OperationalError("disk I/O error")
+                return self.conn.execute(sql, *args)
+
+            def close(self):
+                """Close the wrapped connection."""
+                self.conn.close()
+
+        monkeypatch.setattr(ou.sqlite3, "connect", lambda *a, **k: Failing(real_connect(*a, **k)))
+        verdict = ou._has_semsql_schema(str(db), require_content=True)
+        assert verdict is None, f"a disk error {where} must not be reported as a schema failure"
+
+    def test_a_connect_failure_is_not_a_schema_verdict(self, tmp_path, monkeypatch):
+        """connect() failing for an unrelated reason establishes nothing either."""
+        db = write_semsql_db(tmp_path / "ncbitaxon.db")
+
+        def boom(*args, **kwargs):
+            """Fail the connection itself."""
+            raise sqlite3.OperationalError("disk I/O error")
+
+        monkeypatch.setattr(ou.sqlite3, "connect", boom)
+        assert ou._has_semsql_schema(str(db)) is None
+
+    def test_a_non_sqlite_file_is_still_a_definitive_failure(self, tmp_path):
+        """Widening the unknown cases must not soften the evidential ones."""
+        db = tmp_path / "junk.db"
+        db.write_bytes(b"NOT A DATABASE" * 500)
+        assert ou._has_semsql_schema(str(db)) is False

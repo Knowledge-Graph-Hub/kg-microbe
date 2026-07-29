@@ -41,6 +41,22 @@ SEMSQL_DDL = _load_schema_statements(_SCHEMA_PATH)
 SEMSQL_SEED = (
     "INSERT INTO statements (subject, predicate, object, value) VALUES ('obo:x', 'rdfs:label', NULL, 'x')",
     "INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')",
+    # Ontology identity rows. Production refuses a database that does not contain
+    # the ontology it was asked for — `ncbitaxon.db` pointing at a copy of
+    # `chebi.db` used to pass every other check while taxon lookups returned
+    # nothing. One helper backs the NCBITaxon, ChEBI, GO and EC suites, so it
+    # claims all four; tests that care about mismatch use the real databases.
+    # rdf:type rather than owl:versionInfo: the identity check only needs the
+    # subject to exist, and seeding a version here would collide with the
+    # release-stamp tests that set their own.
+    "INSERT INTO statements (subject, predicate, object, value) "
+    "VALUES ('obo:ncbitaxon.owl', 'rdf:type', 'owl:Ontology', NULL)",
+    "INSERT INTO statements (subject, predicate, object, value) "
+    "VALUES ('obo:chebi.owl', 'rdf:type', 'owl:Ontology', NULL)",
+    "INSERT INTO statements (subject, predicate, object, value) "
+    "VALUES ('obo:go.owl', 'rdf:type', 'owl:Ontology', NULL)",
+    "INSERT INTO statements (subject, predicate, object, value) "
+    "VALUES ('obo:eccode.owl', 'rdf:type', 'owl:Ontology', NULL)",
 )
 
 

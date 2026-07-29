@@ -198,7 +198,11 @@ from kg_microbe.utils.mapping_file_utils import (
     load_metpo_metabolite_utilization_mappings,
     uri_to_curie,
 )
-from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError, get_ncbitaxon_adapter
+from kg_microbe.utils.ontology_utils import (
+    OntologyDbUnavailableError,
+    get_ncbitaxon_adapter,
+    resolve_adapter,
+)
 
 # Note: get_label and search_by_label are imported lazily in fallback methods
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -1526,6 +1530,12 @@ class BacDiveTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        # Resolve the ontology adapter before any output file is opened. The
+        # adapters are lazy, so without this the first lookup happens deep inside
+        # the write loop — and a fatal ontology error there leaves the previous,
+        # complete nodes/edges truncated to whatever had been flushed. Failing
+        # before the truncation costs a run; failing after costs the outputs.
+        resolve_adapter(self.ncbi_impl)
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
         # Read the JSON file into the variable input_json

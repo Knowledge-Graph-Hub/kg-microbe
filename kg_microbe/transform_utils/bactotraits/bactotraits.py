@@ -42,7 +42,7 @@ from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
-from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter
+from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter, resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
@@ -229,6 +229,12 @@ class BactoTraitsTransform(Transform):
         # - second column is actually NOT BacDive ID, in spite of the header. It is actually column 3
         # - we need to convert the file to a TSV file
 
+        # Resolve the ontology adapter before any output file is opened. The
+        # adapters are lazy, so without this the first lookup happens deep inside
+        # the write loop — and a fatal ontology error there leaves the previous,
+        # complete nodes/edges truncated to whatever had been flushed. Failing
+        # before the truncation costs a run; failing after costs the outputs.
+        resolve_adapter(self.ncbi_impl)
         BACTOTRAITS_TMP_DIR.mkdir(parents=True, exist_ok=True)
         bacdive_ncbitaxon_dict = {}
         mapping_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}_mapping.tsv"

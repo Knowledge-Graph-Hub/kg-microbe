@@ -7,6 +7,7 @@ import shutil
 import sqlite3
 import subprocess
 import threading
+import time
 import urllib.parse
 import zlib
 from functools import lru_cache
@@ -390,6 +391,9 @@ _DB_DISCARDABLE_STATES = (DB_ABSENT, DB_TOO_SMALL, DB_CORRUPT)
 # SQLite's multi-second default busy wait.
 _DB_PROBE_TIMEOUT_SECONDS = 0.5
 
+# A momentary lock should not abort a transform, so the serve check retries.
+_DB_PROBE_RETRIES = 3
+
 
 def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
     """
@@ -537,6 +541,52 @@ _SEMSQL_CONTENT_PROBES = (
 # have quietly weakened the check rather than breaking anything visibly.
 
 
+# The subject each ontology's own release row uses. An exact match on an indexed
+# column, so this costs microseconds where a LIKE scan for term prefixes costs
+# 1.6 s on ncbitaxon.db. Note EC's is `eccode`, not `ec`.
+_ONTOLOGY_IDENTITY_SUBJECT = {
+    "ncbitaxon": "obo:ncbitaxon.owl",
+    "chebi": "obo:chebi.owl",
+    "go": "obo:go.owl",
+    "ec": "obo:eccode.owl",
+}
+
+
+def _db_is_for_ontology(db_path: str, ontology: str) -> Optional[bool]:
+    """
+    Report whether a DB actually contains the ontology we asked for.
+
+    Everything else about a SemSQL database is generic: schema, columns, size and
+    content look identical whichever ontology built it. So `ncbitaxon.db` pointing
+    at a copy of `chebi.db` passed every check — schema, content, size, and
+    metatraits' own validation — while taxon lookups silently returned nothing and
+    the transform accumulated unresolved taxa.
+
+    :param db_path: Path to the DB.
+    :param ontology: Ontology key it is supposed to hold.
+    :return: True if the ontology's own release row is present, False if it is
+        demonstrably absent, None when the answer cannot be established.
+    """
+    subject = _ONTOLOGY_IDENTITY_SUBJECT.get(ontology)
+    if subject is None:
+        return None
+    try:
+        uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
+        conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
+        try:
+            row = conn.execute("SELECT 1 FROM statements WHERE subject = ? LIMIT 1", (subject,)).fetchone()
+        finally:
+            conn.close()
+    except sqlite3.OperationalError as e:
+        return _probe_verdict(db_path, f"identity of {ontology}", e)
+    except (sqlite3.Error, OSError):
+        return False
+    if row is None:
+        print(f"  {db_path} does not contain {ontology} (no `{subject}` row)")
+        return False
+    return True
+
+
 def _probe_verdict(db_path: str, sql: Optional[str], error: Exception) -> Optional[bool]:
     """
     Decide what a probe failure proves about a database, and say so.
@@ -615,6 +665,40 @@ def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[b
         # Anything else establishes nothing.
         return None
     return True
+
+
+def _servable_db(db_path: str, min_size: int, ontology: str, require_content: bool = True) -> bool:
+    """
+    Report whether queries may be run against this DB.
+
+    Stricter than :func:`_reusable_db`, and deliberately so. "Do not destroy
+    this" and "answer questions from this" are different decisions, and treating
+    an unverifiable answer as usable conflated them: a locked go.db probed as
+    None, was reported usable, and every per-term query then failed inside
+    bakta's broad handler, defaulting biological-process terms to
+    molecular_function. Declining to rebuild was right; authorising queries was
+    not.
+
+    A brief lock is retried rather than treated as fatal, since another process
+    holding the DB for a moment should not abort a multi-hour transform.
+
+    :param db_path: Path to the DB.
+    :param min_size: Smallest plausible size for a complete build.
+    :param ontology: Ontology the DB is supposed to hold.
+    :param require_content: Whether label and hierarchy rows are required.
+    :return: True only if the DB is positively verified as usable.
+    """
+    if not _present_db(db_path, min_size):
+        return False
+    for attempt in range(_DB_PROBE_RETRIES):
+        verdict = _has_semsql_schema(db_path, require_content)
+        if verdict is not None:
+            break
+        if attempt + 1 < _DB_PROBE_RETRIES:
+            time.sleep(_DB_PROBE_TIMEOUT_SECONDS)
+    if verdict is not True:
+        return False
+    return _db_is_for_ontology(db_path, ontology) is not False
 
 
 def _reusable_db(db_path: str, min_size: int, require_content: bool = True) -> bool:
@@ -1176,7 +1260,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _reusable_db(db_path, min_size):
+    if _servable_db(db_path, min_size, "chebi"):
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1469,7 +1553,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _reusable_db(db_path, min_size):
+    if _servable_db(db_path, min_size, "ncbitaxon"):
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1504,7 +1588,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
     _note_orphaned_prev(go_db_path)
-    if _reusable_db(go_db_path, _GO_DB_MIN_SIZE):
+    if _servable_db(go_db_path, _GO_DB_MIN_SIZE, "go"):
         # An existing, non-stub go.db is reused — unless it has drifted from the
         # source OWL's release (single-source invariant, fix 2 #604): a refreshed
         # go.owl must rebuild go.db, else the aspect map lags the transform output
@@ -1547,7 +1631,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
 
     owl_source = Path(EC_SOURCE) if EC_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _reusable_db(db_path, _EC_DB_MIN_SIZE):
+    if _servable_db(db_path, _EC_DB_MIN_SIZE, "ec"):
         # EC's OWL carries no reliable release stamp, so there is no drift check
         # to make: an existing DB is reused.
         return DbEnsureResult(True)
@@ -1581,9 +1665,22 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
         return {}
     # Build go.db from go.owl if it's missing/empty — nothing else does, so a
     # 0-byte stub would otherwise miscategorize every GO term (see _ensure_go_db).
-    _ensure_go_db(go_db_path)
+    #
+    # The result is not optional. Discarding it meant a failed ensure fell
+    # through to sqlite3.connect(), which *creates* an empty file, whose failed
+    # query was cached as an empty map — and every GO term then became
+    # BiologicalProcess. That is the failure this whole change exists to prevent,
+    # reached through the one path that never checked.
+    if not _ensure_go_db(go_db_path):
+        raise OntologyDbUnavailableError(
+            f"No usable GO SemSQL DB at {go_db_path}, so GO aspects cannot be read. "
+            "Install `semsql` and place go.owl (or its .gz) in data/raw, or supply a "
+            "prebuilt go.db. Continuing would file every MF/CC term as BiologicalProcess."
+        )
     try:
-        conn = sqlite3.connect(go_db_path)
+        # Read-only: a plain connect() creates the file when it is missing.
+        uri = f"file:{urllib.parse.quote(os.path.abspath(go_db_path))}?mode=ro"
+        conn = sqlite3.connect(uri, uri=True)
         try:
             cur = conn.execute(
                 "SELECT subject, value FROM node_to_value_statement "

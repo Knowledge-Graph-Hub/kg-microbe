@@ -73,7 +73,12 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.oak_utils import get_label
-from kg_microbe.utils.ontology_utils import get_chebi_adapter, get_ec_adapter, get_go_adapter
+from kg_microbe.utils.ontology_utils import (
+    get_chebi_adapter,
+    get_ec_adapter,
+    get_go_adapter,
+    resolve_adapter,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -181,6 +186,11 @@ class RheaMappingsTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        # Resolve all three adapters before any output is written; see
+        # bactotraits for why. A fatal ontology error mid-write would leave
+        # the previous complete outputs truncated.
+        for _adapter in (self.chebi_oi, self.go_oi, self.ec_oi):
+            resolve_adapter(_adapter)
         fn1 = "id_label_mapping.tsv"
         ks = self.knowledge_source  # Use InforES standard knowledge source
         # Create tmp dir

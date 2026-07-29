@@ -949,3 +949,74 @@ class TestLockedDatabasesAreNotDestroyed:
         db = tmp_path / "junk.db"
         db.write_bytes(b"NOT A DATABASE" * 500)
         assert ou._has_semsql_schema(str(db)) is False
+
+
+class TestOntologyIdentityAndServing:
+
+    """Round-13: a generic SemSQL database is not evidence of the right ontology."""
+
+    def test_the_wrong_ontology_is_refused(self):
+        """
+        Everything about a SemSQL DB is generic except which terms it holds.
+
+        `ncbitaxon.db` pointing at a copy of `chebi.db` passed schema, content,
+        size and metatraits' own validation, while taxon lookups returned nothing
+        and the transform quietly accumulated unresolved taxa.
+        """
+        if not Path("data/raw/chebi.db").exists():
+            pytest.skip("data/raw/chebi.db is not present")
+        assert ou._db_is_for_ontology("data/raw/chebi.db", "ncbitaxon") is False
+        assert ou._db_is_for_ontology("data/raw/chebi.db", "chebi") is True
+
+    def test_cross_references_do_not_count_as_identity(self):
+        """
+        ec.db contains thousands of GO subjects as cross-references.
+
+        A prefix-existence check would have accepted it as GO; matching the
+        ontology's own release row does not.
+        """
+        if not Path("data/raw/ec.db").exists():
+            pytest.skip("data/raw/ec.db is not present")
+        assert ou._db_is_for_ontology("data/raw/ec.db", "go") is False
+        assert ou._db_is_for_ontology("data/raw/ec.db", "ec") is True
+
+    def test_preserving_and_serving_are_different_questions(self, tmp_path):
+        """
+        A locked database may be kept but must not answer queries.
+
+        Reporting it usable meant every per-term query failed inside bakta's
+        broad handler, defaulting biological-process terms to molecular_function.
+        Declining to rebuild is right; authorising queries is not.
+        """
+        db = write_semsql_db(tmp_path / "go.db")
+        with db.open("ab") as handle:
+            handle.write(b"\0" * 20000)
+        holder = sqlite3.connect(str(db))
+        holder.execute("BEGIN EXCLUSIVE")
+        holder.execute("INSERT INTO statements (subject, predicate, value) VALUES ('a', 'b', 'c')")
+        try:
+            assert ou._reusable_db(str(db), 8) is True, "a locked DB must not be destroyed"
+            assert ou._servable_db(str(db), 8, "go") is False, "a locked DB must not serve queries"
+        finally:
+            holder.rollback()
+            holder.close()
+
+    def test_go_namespace_map_refuses_to_guess(self, tmp_path, monkeypatch):
+        """
+        A failed ensure must abort, not yield an empty map.
+
+        The result was discarded, so a missing go.db fell through to a plain
+        sqlite3.connect() — which *creates* the file — and the failed query was
+        cached as an empty map. Every GO term then became BiologicalProcess: the
+        exact failure this work exists to prevent, through the one path that
+        never checked.
+        """
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
+        monkeypatch.setattr(ou, "_ensure_go_db", lambda _: ou.DbEnsureResult(False))
+        target = tmp_path / "go.db"
+
+        with pytest.raises(ou.FatalOntologyError):
+            ou._load_go_namespace_map(str(target))
+
+        assert not target.exists(), "the loader must not create an empty database"

@@ -337,7 +337,7 @@ def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool
     :param kept: What :func:`_clear_build_target` displaced.
     :return: True if the file is usable.
     """
-    return _present_db(db_path, min_size) if kept else _usable_db(db_path, min_size)
+    return _reusable_db(db_path, min_size) if kept else _usable_db(db_path, min_size)
 
 
 def _present_db(db_path: str, min_size: int) -> bool:
@@ -443,54 +443,64 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
     return DB_OK
 
 
-# What a SemSQL DB must answer for the queries this codebase makes. Row probes
-# are indexed lookups; view probes are compiled with LIMIT 0, which parses the
-# view without scanning it. Measured on the real databases: label row 0.3 ms,
-# entailed_edge row 0.4 ms, view compilation 0.2 ms. Fetching an actual row from
-# the `edge` view is 1.1 s on ec.db and 25.7 s on the 14 GB ncbitaxon.db, so it
-# is deliberately not done.
-_SEMSQL_ROW_PROBES = (
-    # labels(), basic_search(), entity_metadata_map()
+# Structural probes: the objects and the exact columns our queries select.
+# `SELECT *` was not enough — a table declared `statements(predicate)` alone
+# compiled fine while every consumer query failed with `no such column`. Naming
+# the columns is what makes the probe mean anything. LIMIT 0 parses without
+# scanning, so these stay in the low milliseconds even on the 14 GB DB.
+_SEMSQL_STRUCTURE_PROBES = (
+    "SELECT subject, predicate, object, value FROM statements LIMIT 0",
+    "SELECT subject, predicate, object FROM entailed_edge LIMIT 0",
+    "SELECT subject, predicate, object FROM edge LIMIT 0",
+    "SELECT subject, value FROM rdfs_label_statement LIMIT 0",
+)
+
+# Content probes: indexed lookups establishing the DB actually holds data.
+# Deliberately NOT universal. Requiring a row is right for the hierarchical,
+# labelled ontologies this pipeline ships, but as a general invariant it would
+# reject a legitimately flat or property-only source on every run, restore the
+# previous copy, and rebuild again forever. Wrongly rejecting a good build costs
+# an endless loop; wrongly accepting one costs a database — so content is
+# demanded only where it is known to apply.
+_SEMSQL_CONTENT_PROBES = (
     "SELECT 1 FROM statements WHERE predicate = 'rdfs:label' LIMIT 1",
-    # ancestors() / descendants() — the tables whose absence is invisible until
-    # a hierarchy query runs, and which a `statements`-only check missed
     "SELECT 1 FROM entailed_edge LIMIT 1",
 )
-_SEMSQL_VIEW_PROBES = (
-    "SELECT * FROM edge LIMIT 0",
-    "SELECT * FROM rdfs_label_statement LIMIT 0",
-)
+
+# The ontologies whose DBs are known to be labelled and hierarchical.
+_CONTENTFUL_ONTOLOGIES = frozenset({"ncbitaxon", "chebi", "go", "ec"})
 
 
-def _has_semsql_schema(db_path: str) -> Optional[bool]:
+def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[bool]:
     """
     Report whether a DB can answer the queries this codebase actually makes.
 
     File integrity and usability are different questions, and conflating them
     lost a database: ``semsql make`` can exit 0 having produced a structurally
-    valid SQLite file that passes ``quick_check`` yet carries none of the SemSQL
-    schema.
+    valid SQLite file that passes ``quick_check`` yet carrying none of the SemSQL
+    schema. Checking a populated ``statements`` table was the next attempt and
+    was also insufficient — removing ``entailed_edge`` from a real ec.db leaves
+    labels, metadata, search and relationships working while ``ancestors`` and
+    ``descendants`` raise ``no such table``.
 
-    Checking a populated ``statements`` table was the first attempt and was also
-    insufficient. Removing ``entailed_edge`` from a real ec.db leaves labels,
-    metadata, search and relationships working while ``ancestors`` and
-    ``descendants`` raise ``no such table`` — so a replacement missing it looked
-    healthy, and the previous good copy was discarded for it.
+    Structure is checked always; content only when the caller knows the source
+    should have some. See the constants above for why that split exists.
 
     :param db_path: Path to the DB.
+    :param require_content: Whether to also require label and hierarchy rows.
     :return: True if every probe succeeds, False if one demonstrably fails, and
         None when the answer cannot be established — a locked DB, say — so
         callers can decline to act on an unknown.
     """
+    probes = _SEMSQL_STRUCTURE_PROBES + (_SEMSQL_CONTENT_PROBES if require_content else ())
     try:
         uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
         conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
         try:
-            for sql in _SEMSQL_ROW_PROBES:
-                if conn.execute(sql).fetchone() is None:
+            for sql in probes:
+                rows = conn.execute(sql).fetchall()
+                if sql in _SEMSQL_CONTENT_PROBES and not rows:
                     return False
-            for sql in _SEMSQL_VIEW_PROBES:
-                conn.execute(sql).fetchall()
         finally:
             conn.close()
     except sqlite3.OperationalError as e:
@@ -501,6 +511,27 @@ def _has_semsql_schema(db_path: str) -> Optional[bool]:
     except (sqlite3.Error, OSError):
         return False
     return True
+
+
+def _reusable_db(db_path: str, min_size: int) -> bool:
+    """
+    Report whether a DB may be handed to callers as usable.
+
+    Present, intact, and able to answer our queries. Every exit that reports
+    usability goes through this — the reuse fast-path, the no-semsql fallback,
+    the KG_SEMSQL_BUILD opt-out and the post-restore verdict. Hardening only the
+    fast-path left the others reporting a structurally valid but schema-less
+    file as usable, which is how a rejected build was adopted by the next run.
+
+    A schema answer of None (locked, unverifiable) counts as acceptable: the
+    file is not demonstrably bad, and refusing it would turn a transient lock
+    into a hard failure.
+
+    :param db_path: Path to the DB.
+    :param min_size: Smallest plausible size for a complete build.
+    :return: True if the DB may be reported usable.
+    """
+    return _present_db(db_path, min_size) and _has_semsql_schema(db_path) is not False
 
 
 def _db_is_readable(db_path: str) -> bool:
@@ -932,13 +963,13 @@ def _build_semsql_db(
 
     def _fallback() -> DbEnsureResult:
         """Report the existing DB, or refuse it when the caller demands a build."""
-        return DbEnsureResult(_present_db(db_path, min_size) if reuse_on_failure else False)
+        return DbEnsureResult(_reusable_db(db_path, min_size) if reuse_on_failure else False)
 
     if not _semsql_build_enabled():
         # An explicit opt-out always reuses what is on disk, even for GO: the
         # user asked to skip the build, not to have categorisation refuse to run.
         print(f"Skipping {label} SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_present_db(db_path, min_size))
+        return DbEnsureResult(_reusable_db(db_path, min_size))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking GB of OWL only to then bail out is pure waste.
     if shutil.which("semsql") is None:
@@ -977,7 +1008,11 @@ def _build_semsql_db(
         _restore_build_target(db_path, kept)
         raise
     if _usable_db(db_path, min_size):
-        confirmed = _has_semsql_schema(db_path)
+        # Re-validate in full, not just the schema. Between the integrity check
+        # and here the file can have been replaced by something schema-valid but
+        # undersized or damaged, and confirming only the schema discarded the
+        # previous copy for it.
+        confirmed = _has_semsql_schema(db_path) if _usable_db(db_path, min_size) else False
         if confirmed:
             _discard_kept_target(kept)
             return DbEnsureResult(True, built=True)
@@ -996,8 +1031,11 @@ def _build_semsql_db(
             "verified (locked?). Delete the .prev once the new DB is confirmed good."
         )
         return DbEnsureResult(True, built=True)
-    # semsql can exit 0 having produced a short/misplaced file. Restore, then
-    # report on what is actually at db_path now — not the pre-restore verdict.
+    # The rejected artifact is deliberately left in place. Removing it looked
+    # like the fix for "the next run adopts it", but that harm belongs to the
+    # reuse fast-path, which now checks the schema itself — and deleting it
+    # turned metatraits' hard error on a freshly built invalid DB into a silent
+    # fallback to the OAK cache.
     print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(db_path, kept)
     return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
@@ -1026,7 +1064,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, min_size):
+    if _reusable_db(db_path, min_size):
         owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1318,7 +1356,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, min_size):
+    if _reusable_db(db_path, min_size):
         owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
@@ -1352,7 +1390,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
     _note_orphaned_prev(go_db_path)
-    if _present_db(go_db_path, _GO_DB_MIN_SIZE):
+    if _reusable_db(go_db_path, _GO_DB_MIN_SIZE):
         # An existing, non-stub go.db is reused — unless it has drifted from the
         # source OWL's release (single-source invariant, fix 2 #604): a refreshed
         # go.owl must rebuild go.db, else the aspect map lags the transform output
@@ -1394,7 +1432,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
 
     owl_source = Path(EC_SOURCE) if EC_SOURCE else None
     _note_orphaned_prev(db_path)
-    if _present_db(db_path, _EC_DB_MIN_SIZE):
+    if _reusable_db(db_path, _EC_DB_MIN_SIZE):
         # EC's OWL carries no reliable release stamp, so there is no drift check
         # to make: an existing DB is reused.
         return DbEnsureResult(True)

@@ -10,6 +10,7 @@ exists and skips regeneration. These tests pin the fix.
 import ast
 import csv
 import os
+import re
 import time
 from pathlib import Path
 from unittest import mock
@@ -261,11 +262,11 @@ class TestCallSitesUseTheGuardedHelpers:
     # Naming the cache is what stops `cache_is_complete(unrelated_path)` beside
     # an unconditionally regenerated real cache from satisfying the assertion.
     GUARDS = [
-        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1, "mapping_file"),
-        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1, "TMP_FILEPATH"),
-        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2, "result_fn"),
-        ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1, ""),
-        ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1, ""),
+        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1, ("mapping_file",)),
+        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1, ("WALLEN_ETAL_TMP_FILEPATH",)),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2, ("chebi_result_fn", "go_result_fn")),
+        ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1, ()),
+        ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1, ()),
     ]
 
     WRITERS = [
@@ -299,7 +300,12 @@ class TestCallSitesUseTheGuardedHelpers:
                 if called not in cls.GUARD_NAMES:
                     continue
                 argument = " ".join(ast.get_source_segment(source, a) or "" for a in sub.args)
-                if names_cache and names_cache not in argument:
+                # Token match, not substring: `not_mapping_file` used to satisfy
+                # a `mapping_file` requirement.
+                tokens = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", argument))
+                # Exact token, not substring: `not_mapping_file` satisfied a
+                # `mapping_file` substring requirement while guarding nothing.
+                if names_cache and not tokens & set(names_cache):
                     continue
                 found += 1
         return found
@@ -333,7 +339,7 @@ class TestCallSitesUseTheGuardedHelpers:
         actual = self._deciding_guard_calls(module_path, names_cache)
         assert actual >= count, (
             f"{module_path}: expected >= {count} completeness check(s) controlling a branch "
-            f"and naming {names_cache or 'the cache'}, found {actual}"
+            f"and naming one of {names_cache or ('the cache',)}, found {actual}"
         )
 
     @pytest.mark.parametrize("module_path, count", WRITERS)

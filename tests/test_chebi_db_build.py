@@ -38,6 +38,13 @@ def _make_db(tmp_path, release, *, subject="obo:chebi.owl", name="chebi.db"):
     path = str(tmp_path / name)
     conn = sqlite3.connect(path)
     conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+    conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
+    conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
+    conn.execute(
+        "CREATE VIEW rdfs_label_statement AS SELECT subject, value FROM statements WHERE predicate = 'rdfs:label'"
+    )
+    conn.execute("INSERT INTO statements VALUES ('obo:x', 'rdfs:label', NULL, 'x')")
+    conn.execute("INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')")
     conn.execute("INSERT INTO statements VALUES (?, 'owl:versionInfo', NULL, ?)", (subject, str(release)))
     conn.commit()
     conn.close()

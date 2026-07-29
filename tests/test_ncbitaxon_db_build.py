@@ -50,12 +50,7 @@ def _write_real_db(path: Path, pad: int = 16) -> Path:
     not handed to OAK to fail silently against. Tests that assert *reuse* have
     to supply something SQLite can read.
     """
-    conn = sqlite3.connect(str(path))
-    conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, value TEXT)")
-    conn.commit()
-    conn.close()
-    with path.open("ab") as fh:
-        fh.write(b"0" * pad)
+    path.write_bytes(valid_db_bytes(pad=pad))
     return path
 
 
@@ -684,3 +679,75 @@ class TestLockedDatabasesAreNotDestroyed:
         finally:
             conn.rollback()
             conn.close()
+
+    def test_a_schema_shaped_but_wrong_columned_db_is_rejected(self, tmp_path):
+        """
+        `SELECT *` compiled fine against a table with the wrong columns.
+
+        A DB declaring `statements(predicate)` alone passed the probe while every
+        consumer query failed with `no such column`, so the probes name the exact
+        columns our queries select.
+        """
+        db = tmp_path / "ncbitaxon.db"
+        conn = sqlite3.connect(str(db))
+        conn.execute("CREATE TABLE statements (predicate TEXT)")
+        conn.execute("CREATE TABLE entailed_edge (x TEXT)")
+        conn.execute("CREATE VIEW edge AS SELECT * FROM entailed_edge")
+        conn.execute("CREATE VIEW rdfs_label_statement AS SELECT * FROM statements")
+        conn.execute("INSERT INTO statements VALUES ('rdfs:label')")
+        conn.execute("INSERT INTO entailed_edge VALUES ('a')")
+        conn.commit()
+        conn.close()
+        assert ou._has_semsql_schema(str(db)) is False
+
+    def test_content_requirements_are_opt_in(self, tmp_path):
+        """
+        Structure is universal; content is not.
+
+        Demanding a label row and a hierarchy row is right for the four sources
+        shipped here, but as a general invariant it would reject a legitimately
+        flat or property-only ontology on every run, restore the previous copy,
+        and rebuild again forever.
+        """
+        db = tmp_path / "flat.db"
+        conn = sqlite3.connect(str(db))
+        conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+        conn.execute("CREATE TABLE entailed_edge (subject TEXT, predicate TEXT, object TEXT)")
+        conn.execute("CREATE VIEW edge AS SELECT subject, predicate, object FROM statements")
+        conn.execute(
+            "CREATE VIEW rdfs_label_statement AS SELECT subject, value FROM statements WHERE predicate = 'rdfs:label'"
+        )
+        conn.commit()
+        conn.close()
+
+        assert ou._has_semsql_schema(str(db), require_content=False) is True
+        assert ou._has_semsql_schema(str(db), require_content=True) is False
+
+    def test_a_rejected_build_is_not_adopted_by_a_later_run(self, tmp_path, owl, tiny_threshold, monkeypatch):
+        """
+        The artifact stays for diagnosis, but must never be reported usable.
+
+        Deleting it was the first attempt and turned metatraits' hard error on a
+        freshly built invalid DB into a silent fallback to the OAK cache, so the
+        refusal belongs at every exit that reports usability instead.
+        """
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+
+        def build(cmd, **kwargs):
+            """Exit 0 with valid SQLite carrying none of the SemSQL schema."""
+            conn = sqlite3.connect(str(db))
+            conn.execute("CREATE TABLE unrelated (a TEXT)")
+            conn.executemany("INSERT INTO unrelated VALUES (?)", [("y" * 200,) for _ in range(200)])
+            conn.commit()
+            conn.close()
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", build)
+        assert not ou._ensure_ncbitaxon_db(str(db))
+
+        # A later run must not adopt it, whichever exit it reaches.
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+        assert not ou._ensure_ncbitaxon_db(str(db)), "the no-semsql fallback must refuse it too"
+        monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+        assert not ou._ensure_ncbitaxon_db(str(db)), "the opt-out path must refuse it too"

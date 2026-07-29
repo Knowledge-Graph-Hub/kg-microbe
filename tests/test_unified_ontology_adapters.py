@@ -164,83 +164,36 @@ def _function_is_aliased(func_name, tree):
 
     Any such reference can hide a call from the name match in
     :func:`_is_db_shaped_parameter`, so a db-shaped parameter in that function
-    cannot be vouched for. Covers assignment (plain, annotated, tuple, and into
-    a dict or subscript), ``setattr``, being returned from another function,
-    being passed as an argument (which covers decorators applied by call,
-    callback registration and ``functools.partial``), and decorator syntax.
+    cannot be vouched for.
 
-    Deliberately conservative: it errs toward disqualifying. Being wrong that
-    way fails a test, which someone then reads; being wrong the other way lets
-    an unguarded ontology build reach production silently. It is also
-    file-scoped rather than scope-aware, so a same-named nested function can
-    disqualify its outer namesake — accepted for the same reason.
+    Enumerating binding forms was the wrong approach: successive rounds added
+    assignment, tuple targets, dict storage, ``setattr``, closures, decorators,
+    default arguments, walrus, augmented assignment and for-targets, and a
+    review still found ``register([helper])``, ``@helper class C`` and a
+    generator expression slipping past. So the test is inverted — walk every
+    bare reference in the module and exclude only the two that cannot hide a
+    call: the callee of a direct call, and the receiver of an attribute access.
+    Anything else counts.
+
+    Deliberately conservative and file-scoped. Being wrong that way fails a
+    test, which someone reads; being wrong the other way lets an unguarded
+    ontology build reach production silently.
 
     :param func_name: Name of the function to look for.
     :param tree: Parsed module.
     :return: True if the function is referenced other than by direct call.
     """
-
-    def _is_ref(node):
-        """Report whether a node is a bare reference to the function."""
-        return isinstance(node, ast.Name) and node.id == func_name
-
-    def _bare_refs(node):
-        """
-        Yield references that are the value itself, not a call or an attribute.
-
-        ``x = helper(...)`` assigns a *result*, and ``helper.cache_clear``
-        reaches through to an attribute; neither hides a call the way
-        ``alias = helper`` does. Counting them disqualified ordinary correct
-        code in this repository.
-        """
-        if node is None:
-            return
-        skip = set()
-        for sub in ast.walk(node):
-            if isinstance(sub, ast.Call) and _is_ref(sub.func):
-                skip.add(id(sub.func))
-            if isinstance(sub, ast.Attribute) and _is_ref(sub.value):
-                skip.add(id(sub.value))
-        for sub in ast.walk(node):
-            if _is_ref(sub) and id(sub) not in skip:
-                yield sub
-
-    def _contains_ref(node):
-        """Report whether an expression embeds a bare reference to it."""
-        return any(True for _ in _bare_refs(node))
-
+    benign = set()
     for node in ast.walk(tree):
-        # alias = helper / alias: T = helper / a, b = helper, x / d["k"] = helper
-        if isinstance(node, (ast.Assign, ast.AnnAssign)) and _contains_ref(node.value):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == func_name:
+            benign.add(id(node.func))
+        if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) and node.value.id == func_name:
+            benign.add(id(node.value))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id == func_name and id(node) not in benign:
+            # The def itself is not a reference; FunctionDef carries the name as
+            # a plain string, so nothing to exclude there.
             return True
-        # return helper  /  yield helper
-        if isinstance(node, (ast.Return, ast.Expr)) and _contains_ref(getattr(node, "value", None)):
-            # A direct call is an Expr too, so exclude the call itself.
-            value = getattr(node, "value", None)
-            if not (isinstance(value, ast.Call) and _is_ref(value.func)):
-                return True
-        # @helper  /  @something(helper)  /  def f(cb=helper)
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if any(_contains_ref(decorator) for decorator in node.decorator_list):
-                return True
-            defaults = [*node.args.defaults, *[d for d in node.args.kw_defaults if d is not None]]
-            if any(_contains_ref(default) for default in defaults):
-                return True
-        # alias := helper
-        if isinstance(node, ast.NamedExpr) and _contains_ref(node.value):
-            return True
-        # alias += helper
-        if isinstance(node, ast.AugAssign) and _contains_ref(node.value):
-            return True
-        # for cb in (helper,)
-        if isinstance(node, (ast.For, ast.AsyncFor)) and _contains_ref(node.iter):
-            return True
-        # setattr(x, "y", helper) / register(helper) / partial(helper, ...)
-        if isinstance(node, ast.Call) and not _is_ref(node.func):
-            if any(_is_ref(arg) for arg in node.args):
-                return True
-            if any(_is_ref(kw.value) for kw in node.keywords):
-                return True
     return False
 
 

@@ -448,132 +448,67 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
 # compiled fine while every consumer query failed with `no such column`. Naming
 # the columns is what makes the probe mean anything. LIMIT 0 parses without
 # scanning, so these stay in the low milliseconds even on the 14 GB DB.
-# The complete set of tables and views a real `semsql make` produces, taken from
-# the four databases this pipeline ships — all of which carry an identical
-# 100-object schema. Enumerating the objects a consumer "needs" was tried three
-# times and was wrong three times: each round found another view that some OAK
-# call path required, most damagingly node_to_value_statement, whose absence let
-# every molecular-function GO term be filed as BiologicalProcess. Comparing
-# against the real schema is complete by construction rather than by my
-# recollection. Reading sqlite_master costs 0.4 ms on the 13 GB database.
+# What our consumers actually read, captured by observation rather than
+# recollection: SQLite's authorizer callback was attached while running every
+# OAK operation this codebase performs (labels, ancestors, descendants,
+# relationships, entity_metadata_map, basic_search) plus our own GO namespace
+# query, and it recorded each table and column touched.
 #
-# A future semsql release that changes the schema will surface here as a loud,
-# specific failure naming the missing objects — which is the right way to find
-# out, rather than through miscategorised terms months later.
-_SEMSQL_REQUIRED_OBJECTS = frozenset(
-    {
-        "all_problems",
-        "annotation_property_node",
-        "anonymous_class_expression",
-        "anonymous_expression",
-        "anonymous_individual_expression",
-        "anonymous_property_expression",
-        "asymmetric_property_node",
-        "axiom_dbxref_annotation",
-        "blank_node",
-        "class_node",
-        "contributor",
-        "count_of_instantiated_classes",
-        "count_of_predicates",
-        "count_of_subclasses",
-        "creator",
-        "deprecated_node",
-        "edge",
-        "entailed_edge",
-        "entailed_edge_cycle",
-        "entailed_edge_same_predicate_cycle",
-        "entailed_subclass_of_edge",
-        "entailed_type_edge",
-        "has_broad_match_statement",
-        "has_broad_synonym_statement",
-        "has_dbxref_statement",
-        "has_exact_match_statement",
-        "has_exact_synonym_statement",
-        "has_mapping_statement",
-        "has_match_statement",
-        "has_narrow_match_statement",
-        "has_narrow_synonym_statement",
-        "has_oio_synonym_statement",
-        "has_related_match_statement",
-        "has_related_synonym_statement",
-        "has_synonym_statement",
-        "has_text_definition_statement",
-        "iri_node",
-        "irreflexive_property_node",
-        "lexical_problem",
-        "named_individual_node",
-        "node",
-        "node_identifier",
-        "node_to_node_statement",
-        "node_to_value_statement",
-        "node_with_two_labels_problem",
-        "object_property_node",
-        "ontology_node",
-        "ontology_status_statement",
-        "orcid",
-        "owl_all_values_from",
-        "owl_axiom",
-        "owl_axiom_annotation",
-        "owl_complement_of_statement",
-        "owl_complex_axiom",
-        "owl_disjoint_class_statement",
-        "owl_equivalent_class_statement",
-        "owl_equivalent_to_intersection_member",
-        "owl_has_self",
-        "owl_has_value",
-        "owl_imports_statement",
-        "owl_inverse_of_statement",
-        "owl_reified_axiom",
-        "owl_restriction",
-        "owl_same_as_statement",
-        "owl_some_values_from",
-        "owl_subclass_of_some_values_from",
-        "prefix",
-        "problem",
-        "property_node",
-        "property_used_with_datatype_values_and_objects",
-        "rdf_first_statement",
-        "rdf_level_summary_statistic",
-        "rdf_list_member_statement",
-        "rdf_list_node",
-        "rdf_list_statement",
-        "rdf_rest_statement",
-        "rdf_rest_transitive_statement",
-        "rdf_type_statement",
-        "rdfs_domain_statement",
-        "rdfs_label_statement",
-        "rdfs_range_statement",
-        "rdfs_subclass_of_named_statement",
-        "rdfs_subclass_of_statement",
-        "rdfs_subproperty_of_statement",
-        "reflexive_property_node",
-        "relation_graph_construct",
-        "repair_action",
-        "statements",
-        "subgraph_edge_by_ancestor",
-        "subgraph_edge_by_ancestor_or_descendant",
-        "subgraph_edge_by_child",
-        "subgraph_edge_by_descendant",
-        "subgraph_edge_by_parent",
-        "subgraph_edge_by_self",
-        "subgraph_query",
-        "symmetric_property_node",
-        "term_association",
-        "trailing_whitespace_problem",
-        "transitive_edge",
-        "transitive_property_node",
-    }
-)
+# Three earlier mechanisms failed. Enumerating objects from memory was found
+# incomplete in four consecutive reviews — most damagingly node_to_value_statement,
+# whose absence filed every molecular-function GO term as BiologicalProcess.
+# Snapshotting all 100 objects of a real build fixed completeness but was
+# version-brittle (a renamed diagnostic view nothing uses would reject every
+# build, forever) and still shape-blind: owl_has_value with the wrong columns
+# passed, then failed at runtime.
+#
+# Probing exactly what is read, with the columns, is both complete and tolerant:
+# a semsql release may add or rename anything we do not use.
+#
+# Regenerate by attaching an authorizer to sqlite3.dbapi2.connect and running
+# the consumer operations against a real DB; see TODO/ for the round-10 notes.
+_SEMSQL_CAPABILITY_CONTRACT = {
+    "class_node": ("id",),
+    "edge": ("subject", "predicate", "object"),
+    "entailed_edge": ("subject", "predicate", "object"),
+    "object_property_node": ("id",),
+    "owl_has_value": ("id", "on_property", "filler"),
+    "owl_some_values_from": ("id", "on_property", "filler"),
+    "owl_subclass_of_some_values_from": ("subject", "predicate", "object"),
+    "prefix": ("prefix", "base"),
+    "rdf_type_statement": ("subject", "predicate", "object"),
+    "rdfs_label_statement": ("subject", "predicate", "object", "value", "datatype", "language"),
+    "rdfs_subclass_of_named_statement": ("subject", "predicate", "object"),
+    "rdfs_subclass_of_statement": (
+        "stanza",
+        "subject",
+        "predicate",
+        "object",
+        "value",
+        "datatype",
+        "language",
+        "graph",
+    ),
+    "rdfs_subproperty_of_statement": ("subject", "predicate", "object"),
+    "statements": (
+        "stanza",
+        "subject",
+        "predicate",
+        "object",
+        "value",
+        "datatype",
+        "language",
+        "graph",
+    ),
+    # Read by _load_go_namespace_map, which is our SQL rather than OAK's.
+    "node_to_value_statement": ("subject", "predicate", "value"),
+}
 
-# Columns our consumers select. Object presence is necessary but not sufficient:
-# a table can exist with the wrong shape, and `SELECT *` compiled happily
-# against one.
-_SEMSQL_COLUMN_PROBES = (
-    "SELECT stanza, subject, predicate, object, value, datatype, language, graph FROM statements LIMIT 0",
-    "SELECT subject, predicate, object FROM entailed_edge LIMIT 0",
-    "SELECT subject, predicate, object FROM edge LIMIT 0",
-    "SELECT subject, predicate, object, value, datatype, language FROM rdfs_label_statement LIMIT 0",
-    "SELECT subject, predicate, value FROM node_to_value_statement LIMIT 0",
+_SEMSQL_CAPABILITY_PROBES = tuple(
+    # noqa justified: table and column names come from the literal above, never
+    # from input. LIMIT 0 compiles the statement without reading any rows.
+    f"SELECT {', '.join(columns)} FROM {table} LIMIT 0"  # noqa: S608
+    for table, columns in sorted(_SEMSQL_CAPABILITY_CONTRACT.items())
 )
 
 # Content probes: indexed lookups establishing the DB actually holds data.
@@ -614,13 +549,15 @@ def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[b
         uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
         conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
         try:
-            present = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type IN ('table', 'view')")}
-            missing = _SEMSQL_REQUIRED_OBJECTS - present
-            if missing:
-                print(f"  {db_path} is missing {len(missing)} SemSQL object(s), e.g. {sorted(missing)[:5]}")
-                return False
-            for sql in _SEMSQL_COLUMN_PROBES:
-                conn.execute(sql).fetchall()
+            for sql in _SEMSQL_CAPABILITY_PROBES:
+                try:
+                    conn.execute(sql).fetchall()
+                except sqlite3.OperationalError as probe_error:
+                    message = str(probe_error).lower()
+                    if "locked" in message or "busy" in message:
+                        raise
+                    print(f"  {db_path} cannot serve `{sql}`: {probe_error}")
+                    return False
             if require_content:
                 for sql in _SEMSQL_CONTENT_PROBES:
                     if conn.execute(sql).fetchone() is None:
@@ -1170,7 +1107,7 @@ def _build_semsql_db(
     # fallback to the OAK cache.
     print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(db_path, kept)
-    return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept))
+    return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, require_content))
 
 
 def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
@@ -1212,6 +1149,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
         "ChEBI",
         "ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM. "
         "Set KG_SEMSQL_BUILD=off to skip and use a prebuilt DB instead.",
+        require_content=True,
     )
 
 
@@ -1504,6 +1442,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
         "NCBITaxon",
         "NCBITaxon is the heaviest source in the pipeline: expect hours and a "
         "~13 GB result. Set KG_SEMSQL_BUILD=off to skip.",
+        require_content=True,
     )
 
 
@@ -1545,6 +1484,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
         "A full GO SemSQL build runs relation-graph and can take 10-30+ minutes "
         "/ several GB RAM. Set KG_SEMSQL_BUILD=off to skip.",
         reuse_on_failure=False,
+        require_content=True,
     )
 
 
@@ -1574,6 +1514,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
         _EC_DB_MIN_SIZE,
         "EC",
         "EC is small; this build usually takes a couple of minutes.",
+        require_content=True,
     )
 
 

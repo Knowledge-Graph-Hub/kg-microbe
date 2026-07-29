@@ -773,13 +773,50 @@ class TestLockedDatabasesAreNotDestroyed:
 
     def test_the_fixture_satisfies_the_production_gate(self, tmp_path):
         """
-        The fixture and the gate must not drift apart.
+        The fixture and the gate must not drift apart, in either direction.
 
-        Both now derive from the same real build: the gate compares against the
-        captured object set, the fixture is created from the captured DDL.
+        Asserting only that the fixture passes is one-way: the gate could grow a
+        requirement the fixture happens to satisfy, or the fixture could be
+        regenerated with objects the gate never checks, and neither shows up.
+        This also asserts every contract object and column is genuinely present
+        in the fixture, so a contract entry naming something a real build does
+        not produce fails here rather than in production.
         """
         db = write_semsql_db(tmp_path / "fixture.db")
         assert ou._has_semsql_schema(str(db), require_content=True) is True
+
+        conn = sqlite3.connect(str(db))
+        try:
+            for table, columns in ou._SEMSQL_CAPABILITY_CONTRACT.items():
+                present = {
+                    row[1]
+                    for row in conn.execute(f"PRAGMA table_info({table})")  # noqa: S608
+                }
+                assert present, f"contract names {table}, which the captured schema does not create"
+                missing = set(columns) - present
+                assert not missing, f"{table} in the fixture lacks contract columns {sorted(missing)}"
+        finally:
+            conn.close()
+
+    def test_every_contract_object_exists_in_a_real_database(self):
+        """
+        The contract must describe real builds, not an idealised schema.
+
+        It was derived by tracing consumer queries against a shipped database;
+        this keeps it honest if someone edits it by hand later. Skipped when the
+        real databases are absent, as they are in CI.
+        """
+        real = Path("data/raw/ec.db")
+        if not real.exists():
+            pytest.skip("data/raw/ec.db is not present")
+        conn = sqlite3.connect(f"file:{real}?mode=ro", uri=True)
+        try:
+            for table, columns in ou._SEMSQL_CAPABILITY_CONTRACT.items():
+                present = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}  # noqa: S608
+                assert present, f"contract names {table}, absent from a real build"
+                assert not set(columns) - present, f"{table} lacks {sorted(set(columns) - present)}"
+        finally:
+            conn.close()
 
     def test_content_policy_is_explicit_not_inferred(self, tmp_path):
         """

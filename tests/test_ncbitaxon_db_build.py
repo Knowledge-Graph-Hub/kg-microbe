@@ -627,3 +627,60 @@ class TestLockedDatabasesAreNotDestroyed:
         ou._restore_build_target(str(db), kept)
 
         assert db.exists() and db.read_bytes() == good, "the good copy must be what remains"
+
+    def test_a_structurally_valid_build_without_semsql_schema_is_rejected(
+        self, tmp_path, owl, tiny_threshold, monkeypatch
+    ):
+        """
+        File integrity is not usability (round-5 finding 1).
+
+        `semsql make` can exit 0 having produced a well-formed SQLite file that
+        passes quick_check yet carries none of the SemSQL schema. That was
+        accepted as a successful build, and the previous — genuinely usable —
+        database was discarded on the strength of it.
+        """
+        owl("2026-07-12")
+        db = tmp_path / "ncbitaxon.db"
+        self._real_db(db, tag="GOOD")
+        good = db.read_bytes()
+
+        def build(cmd, **kwargs):
+            """Exit 0 with valid SQLite that has no statements table."""
+            db.unlink()
+            conn = sqlite3.connect(str(db))
+            conn.execute("CREATE TABLE unrelated (a TEXT, b TEXT)")
+            conn.executemany("INSERT INTO unrelated VALUES (?,?)", [(f"x{i}", "y" * 100) for i in range(200)])
+            conn.commit()
+            conn.close()
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", build)
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-01-01")  # drift → rebuild
+
+        result = ou._ensure_ncbitaxon_db(str(db))
+
+        assert not result.built, "a build with no SemSQL schema is not a successful build"
+        assert db.exists() and db.read_bytes() == good, "the previous usable DB must survive"
+
+    def test_an_empty_statements_table_is_not_a_usable_build(self, tmp_path):
+        """Schema present but nothing loaded is not a database anyone can use."""
+        db = tmp_path / "ncbitaxon.db"
+        conn = sqlite3.connect(str(db))
+        conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, value TEXT)")
+        conn.commit()
+        conn.close()
+        assert ou._has_semsql_schema(str(db)) is False
+
+    def test_a_locked_db_reports_unknown_schema_rather_than_absent(self, tmp_path):
+        """
+        None, not False: "could not establish" must not read as "no schema".
+
+        Reporting False for a locked database would discard a healthy build.
+        """
+        db = self._real_db(tmp_path / "ncbitaxon.db")
+        conn = self._hold_write_lock(db)
+        try:
+            assert ou._has_semsql_schema(str(db)) is None
+        finally:
+            conn.rollback()
+            conn.close()

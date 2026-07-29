@@ -29,6 +29,11 @@ def valid_db_bytes(marker: bytes = b"", pad: int = 0) -> bytes:
             p = os.path.join(d, "base.db")
             conn = sqlite3.connect(p)
             conn.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+            # At least one row: a build that creates the SemSQL schema and loads
+            # nothing into it is not a usable database, and the post-build gate
+            # now says so. A fixture standing in for a healthy build has to be
+            # one.
+            conn.execute("INSERT INTO statements VALUES ('obo:x', 'rdfs:label', NULL, 'x')")
             conn.commit()
             conn.close()
             _VALID_DB_BASE = Path(p).read_bytes()

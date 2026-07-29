@@ -1,6 +1,7 @@
 """Atomic writes for derived caches, so a failed run leaves no half-written file."""
 
 import csv
+import hashlib
 import itertools
 import os
 import time
@@ -68,8 +69,7 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
             # writes — annotate() commits a result and drop_duplicates then
             # rewrites it — and a stale size would condemn a perfectly good
             # cache to be regenerated on every future run.
-            stat = path.stat()
-            marker.write_text(f"{stat.st_size}:{stat.st_mtime_ns}")
+            marker.write_text(_content_digest(path))
         _sweep_stale_partials(path)
     finally:
         if not committed:
@@ -172,14 +172,34 @@ def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
     if marker.exists():
         try:
             certified = marker.read_text().strip()
-            stat = path.stat()
-            # Size *and* modification time. Size alone certified any unrelated
-            # file that happened to be the same length, and an empty marker —
-            # the interim format — certified anything at all, so a legacy marker
-            # beside a broken file read as complete. An empty or unparsable
-            # marker now proves nothing and falls through to the content check.
-            if certified and certified == f"{stat.st_size}:{stat.st_mtime_ns}":
+            # A digest of the contents. Size plus mtime was metadata, not
+            # identity: an equal-sized replacement whose mtime was restored (a
+            # metadata-preserving copy, or coarse filesystem timestamps) was
+            # still certified, while merely touching a genuinely complete but
+            # intentionally empty cache made it read as incomplete and
+            # regenerate on every run. An empty or unparsable marker — the
+            # interim format — proves nothing and falls through.
+            if certified and certified == _content_digest(path):
                 return True
         except (OSError, ValueError):
             return False
     return has_data_rows(path, delimiter)
+
+
+def _content_digest(path: Path) -> str:
+    """
+    Return a digest identifying a cache's contents.
+
+    Used to bind a completion marker to the exact bytes it certifies. These
+    caches are small (label maps, mapping tables, NER results), so hashing them
+    is cheap relative to regenerating one — which is what the marker exists to
+    avoid.
+
+    :param path: File to digest.
+    :return: Hex digest of the file's contents.
+    """
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()

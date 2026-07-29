@@ -244,26 +244,25 @@ class TestAllPoisonedCachesHeal:
 class TestCallSitesUseTheGuardedHelpers:
 
     """
-    Every cache call site must guard on completeness and write atomically.
+    Each cache guard must *decide* regeneration, and each writer must be used.
 
-    Two failed attempts precede this one. The first asserted that certain
-    strings appeared in the source; reverting the call sites while leaving the
-    strings in comments kept it green. The second replaced those with
-    behavioural tests of `annotate` and `atomic_write` — which exercise neither
-    the BactoTraits, Wallen nor Madin call sites, so all four guards and all
-    four writers could be reverted with the suite still passing. Deleting a weak
-    test and leaving nothing is worse than the weak test.
+    Three attempts precede this. Substrings were satisfied by comments.
+    Behavioural tests of the helpers exercised no call site at all. Counting
+    helper-shaped calls per module was satisfied by calling the helper and
+    discarding the result, or by leaving an `atomic_write(...)` expression whose
+    context manager is never entered.
 
-    These assert on the parsed syntax tree: a comment cannot satisfy them, and
-    reverting a guard to `.exists()` or a writer to `open(` removes the node
-    they look for.
+    So the assertions below require the guard call to sit inside a conditional
+    test, and the writer to appear as a `with` item — the two things that make
+    them actually do their job.
     """
 
     GUARDS = [
-        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", "cache_is_complete"),
-        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", "cache_is_complete"),
-        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", "cache_is_complete"),
-        ("kg_microbe/utils/uniprot_utils.py", "cache_is_complete"),
+        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1),
+        ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1),
+        ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 2),
+        ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1),
+        ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1),
     ]
 
     WRITERS = [
@@ -275,55 +274,102 @@ class TestCallSitesUseTheGuardedHelpers:
         ("kg_microbe/utils/pandas_utils.py", 1),
     ]
 
-    @staticmethod
-    def _call_names(module_path):
-        """Return every called function name in a module, from its syntax tree."""
-        source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
-        names = []
-        for node in ast.walk(ast.parse(source)):
-            if isinstance(node, ast.Call):
-                called = getattr(node.func, "id", None) or getattr(node.func, "attr", None)
-                if called:
-                    names.append(called)
-        return names
+    GUARD_NAMES = {"cache_is_complete", "go_category_trees_is_complete"}
 
-    @pytest.mark.parametrize("module_path, guard", GUARDS)
-    def test_guards_call_the_completeness_helper(self, module_path, guard):
-        """Reverting a guard to a bare .exists()/.is_file() must fail here."""
-        assert guard in self._call_names(module_path), (
-            f"{module_path} must guard cache regeneration with {guard}(); "
-            "a bare existence check accepts a file poisoned by an interrupted run"
+    @staticmethod
+    def _tree(module_path):
+        """Parse a module from the repository."""
+        return ast.parse((Path(__file__).parent.parent / module_path).read_text(encoding="utf-8"))
+
+    @classmethod
+    def _deciding_guard_calls(cls, module_path):
+        """Count guard calls whose result controls a branch."""
+        found = 0
+        for node in ast.walk(cls._tree(module_path)):
+            if not isinstance(node, (ast.If, ast.IfExp)):
+                continue
+            for sub in ast.walk(node.test):
+                if isinstance(sub, ast.Call):
+                    called = getattr(sub.func, "id", None) or getattr(sub.func, "attr", None)
+                    if called in cls.GUARD_NAMES:
+                        found += 1
+        return found
+
+    @classmethod
+    def _context_managed_writes(cls, module_path):
+        """Count atomic_write calls actually used as context managers."""
+        found = 0
+        for node in ast.walk(cls._tree(module_path)):
+            if not isinstance(node, (ast.With, ast.AsyncWith)):
+                continue
+            for item in node.items:
+                expr = item.context_expr
+                called = (
+                    getattr(expr.func, "id", None) or getattr(expr.func, "attr", None)
+                    if isinstance(expr, ast.Call)
+                    else None
+                )
+                if called == "atomic_write":
+                    found += 1
+        return found
+
+    @pytest.mark.parametrize("module_path, count", GUARDS)
+    def test_guard_result_controls_regeneration(self, module_path, count):
+        """
+        Calling the guard is not enough; its answer must decide the branch.
+
+        Reverting to `.exists()`, or calling the helper and ignoring what it
+        returns, both fail here.
+        """
+        actual = self._deciding_guard_calls(module_path)
+        assert actual >= count, (
+            f"{module_path}: expected >= {count} completeness check(s) controlling a branch, found {actual}"
         )
 
     @pytest.mark.parametrize("module_path, count", WRITERS)
-    def test_cache_writers_are_atomic(self, module_path, count):
-        """Replacing an atomic_write with a direct open() must fail here."""
-        actual = self._call_names(module_path).count("atomic_write")
-        assert actual >= count, (
-            f"{module_path} should make at least {count} atomic_write call(s), found {actual}; "
-            "an in-place write leaves a truncated cache that the guard then accepts"
-        )
+    def test_writers_are_atomic_context_managers(self, module_path, count):
+        """A bare `atomic_write(...)` that is never entered writes nothing."""
+        actual = self._context_managed_writes(module_path)
+        assert actual >= count, f"{module_path}: expected >= {count} atomic_write context manager(s), found {actual}"
 
-    def test_no_cache_consumer_guards_on_bare_existence(self):
+    @pytest.mark.parametrize("module_path, _count", GUARDS)
+    def test_no_cache_path_is_guarded_by_bare_existence(self, module_path, _count):
         """
-        No guarded module may still branch on bare existence for these caches.
+        No branch may test a cache path's mere existence.
 
-        Catches a call site that adds a completeness check while leaving the old
-        existence check in place beside it.
+        Resolves aliases, so renaming the variable before calling `.exists()`
+        does not hide it — that exact reversion previously went unnoticed.
         """
+        tree = self._tree(module_path)
+        aliases = {}
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign) and isinstance(node.value, ast.Name):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        aliases[target.id] = node.value.id
+
+        def _root(name, seen=None):
+            """Follow an alias chain back to the name it ultimately refers to."""
+            seen = seen or set()
+            while name in aliases and name not in seen:
+                seen.add(name)
+                name = aliases[name]
+            return name
+
+        cache_hints = ("mapping_file", "TMP_FILEPATH", "result_fn", "TREES_FILE", "CATEGORY_TREES")
         offenders = []
-        for module_path, _ in self.GUARDS:
-            source = (Path(__file__).parent.parent / module_path).read_text(encoding="utf-8")
-            for node in ast.walk(ast.parse(source)):
-                if not isinstance(node, ast.Call):
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.If, ast.IfExp)):
+                continue
+            for sub in ast.walk(node.test):
+                if not isinstance(sub, ast.Call) or getattr(sub.func, "attr", None) not in {"exists", "is_file"}:
                     continue
-                called = getattr(node.func, "attr", None)
-                if called not in {"exists", "is_file"}:
-                    continue
-                segment = ast.get_source_segment(source, node) or ""
-                if any(hint in segment for hint in ("mapping_file", "TMP_FILEPATH", "result_fn", "TREES_FILE")):
-                    offenders.append(f"{module_path}:{node.lineno} -> {segment}")
-        assert offenders == [], f"cache guards must not use bare existence checks: {offenders}"
+                value = sub.func.value
+                names = {_root(n.id) for n in ast.walk(value) if isinstance(n, ast.Name)}
+                names |= {getattr(n, "attr", "") for n in ast.walk(value) if isinstance(n, ast.Attribute)}
+                if any(hint in name for name in names for hint in cache_hints):
+                    offenders.append(f"{module_path}:{sub.lineno}")
+        assert offenders == [], f"cache regeneration must not be guarded by bare existence: {offenders}"
 
 
 class TestMarkerAndSweeperAdversarial:

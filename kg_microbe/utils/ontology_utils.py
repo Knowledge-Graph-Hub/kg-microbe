@@ -314,7 +314,13 @@ def _usable_db(db_path: str, min_size: int) -> bool:
     # Keep-states rather than == DB_OK: a build that finished correctly but was
     # opened by another process classifies BUSY, and rejecting it discarded the
     # new database and restored the stale one over it.
-    return _classify_db(db_path, min_size, deep=True) in _DB_KEEP_STATES
+    if _classify_db(db_path, min_size, deep=True) not in _DB_KEEP_STATES:
+        return False
+    # ...and a valid SQLite file is not necessarily a usable ontology DB.
+    # None means "could not establish" (locked); accept the build rather than
+    # throw away work, but see _build_semsql_db, which then keeps the .prev
+    # because nothing has verified the replacement.
+    return _has_semsql_schema(db_path) is not False
 
 
 def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget") -> bool:
@@ -435,6 +441,37 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
     except (sqlite3.Error, OSError):
         return DB_CORRUPT
     return DB_OK
+
+
+def _has_semsql_schema(db_path: str) -> Optional[bool]:
+    """
+    Report whether a DB actually carries a populated SemSQL ``statements`` table.
+
+    File integrity and *usability* are different questions, and conflating them
+    lost a database: ``semsql make`` can exit 0 having produced a structurally
+    valid SQLite file that passes ``quick_check`` yet contains none of the SemSQL
+    schema. That was accepted as a successful build and the previous, genuinely
+    usable copy was discarded on the strength of it.
+
+    :param db_path: Path to the DB.
+    :return: True if the SemSQL schema is present and populated, False if it is
+        demonstrably absent or empty, and None when the answer cannot be
+        established — a locked DB, say — so callers can decline to act on it.
+    """
+    try:
+        uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
+        conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
+        try:
+            return conn.execute("SELECT 1 FROM statements LIMIT 1").fetchone() is not None
+        finally:
+            conn.close()
+    except sqlite3.OperationalError as e:
+        message = str(e).lower()
+        if "locked" in message or "busy" in message:
+            return None
+        return False
+    except (sqlite3.Error, OSError):
+        return False
 
 
 def _db_is_readable(db_path: str) -> bool:
@@ -911,7 +948,17 @@ def _build_semsql_db(
         _restore_build_target(db_path, kept)
         raise
     if _usable_db(db_path, min_size):
-        _discard_kept_target(kept)
+        if _has_semsql_schema(db_path):
+            _discard_kept_target(kept)
+        else:
+            # The build looks structurally fine but its SemSQL schema could not
+            # be confirmed. Keep the previous copy: nothing has established that
+            # the replacement is usable, and the old one is the only thing that
+            # is known to be.
+            print(
+                f"  Keeping {kept}: {db_path} was built but its SemSQL schema could not be "
+                "verified (locked?). Delete the .prev once the new DB is confirmed good."
+            )
         return DbEnsureResult(True, built=True)
     # semsql can exit 0 having produced a short/misplaced file. Restore, then
     # report on what is actually at db_path now — not the pre-restore verdict.

@@ -836,3 +836,57 @@ class TestLockedDatabasesAreNotDestroyed:
         assert ou._has_semsql_schema(str(db), require_content=False) is True
         assert ou._has_semsql_schema(str(db), require_content=True) is False
         assert not hasattr(ou, "_requires_content"), "label-derived policy must not return"
+
+    def test_the_annotation_path_objects_are_in_the_contract(self):
+        """
+        The NER fallback reads objects the first trace never saw.
+
+        ner_utils.annotate switches to annotate_text(matches_whole_text=False)
+        when a term has no whole-text match, and that lazy branch builds a
+        lexical index over `node`, `deprecated_node` and the synonym views.
+        None appeared in the contract until the fallback was exercised.
+        """
+        required = {
+            "node",
+            "deprecated_node",
+            "has_exact_synonym_statement",
+            "has_broad_synonym_statement",
+            "has_narrow_synonym_statement",
+            "has_related_synonym_statement",
+            "has_synonym_statement",
+        }
+        assert required <= set(ou._SEMSQL_CAPABILITY_CONTRACT)
+
+    def test_an_unexpected_probe_error_is_not_a_schema_verdict(self, tmp_path, monkeypatch):
+        """
+        Only missing tables and columns prove a schema is bad.
+
+        Any other OperationalError — a disk error, say — means the probe could
+        not establish anything, and reporting False would send a healthy
+        database off to be rebuilt.
+        """
+        db = write_semsql_db(tmp_path / "ncbitaxon.db")
+        real_connect = sqlite3.connect
+
+        class Failing:
+
+            """Answers the first probe, then fails for an unrelated reason."""
+
+            def __init__(self, conn):
+                """Wrap a real connection and count statements."""
+                self.conn = conn
+                self.calls = 0
+
+            def execute(self, sql, *args):
+                """Fail after the first statement."""
+                self.calls += 1
+                if self.calls > 1:
+                    raise sqlite3.OperationalError("disk I/O error")
+                return self.conn.execute(sql, *args)
+
+            def close(self):
+                """Close the wrapped connection."""
+                self.conn.close()
+
+        monkeypatch.setattr(ou.sqlite3, "connect", lambda *a, **k: Failing(real_connect(*a, **k)))
+        assert ou._has_semsql_schema(str(db)) is None, "an unrelated error is not a schema failure"

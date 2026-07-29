@@ -465,12 +465,38 @@ def _classify_db(db_path: str, min_size: int, deep: bool = False) -> str:
 # Probing exactly what is read, with the columns, is both complete and tolerant:
 # a semsql release may add or rename anything we do not use.
 #
+# The first trace missed the NER path: ner_utils.annotate falls back to
+# annotate_text(matches_whole_text=False) when a term has no whole-text match,
+# and that lazy branch builds a lexical index reading `node`, `deprecated_node`
+# and five synonym views. None appeared until the fallback was actually
+# exercised — a reminder that this method is only as complete as the operations
+# the trace runs.
+#
 # Regenerate by attaching an authorizer to sqlite3.dbapi2.connect and running
-# the consumer operations against a real DB; see TODO/ for the round-10 notes.
+# every consumer operation, including both annotate_text configurations, against
+# a real DB. It takes a couple of minutes because annotation builds an index.
+_STATEMENT_COLUMNS = (
+    "stanza",
+    "subject",
+    "predicate",
+    "object",
+    "value",
+    "datatype",
+    "language",
+    "graph",
+)
+
 _SEMSQL_CAPABILITY_CONTRACT = {
     "class_node": ("id",),
+    "deprecated_node": ("id",),
     "edge": ("subject", "predicate", "object"),
     "entailed_edge": ("subject", "predicate", "object"),
+    "has_broad_synonym_statement": _STATEMENT_COLUMNS,
+    "has_exact_synonym_statement": _STATEMENT_COLUMNS,
+    "has_narrow_synonym_statement": _STATEMENT_COLUMNS,
+    "has_related_synonym_statement": _STATEMENT_COLUMNS,
+    "has_synonym_statement": ("subject", "predicate", "object", "value", "datatype", "language"),
+    "node": ("id",),
     "object_property_node": ("id",),
     "owl_has_value": ("id", "on_property", "filler"),
     "owl_some_values_from": ("id", "on_property", "filler"),
@@ -479,27 +505,9 @@ _SEMSQL_CAPABILITY_CONTRACT = {
     "rdf_type_statement": ("subject", "predicate", "object"),
     "rdfs_label_statement": ("subject", "predicate", "object", "value", "datatype", "language"),
     "rdfs_subclass_of_named_statement": ("subject", "predicate", "object"),
-    "rdfs_subclass_of_statement": (
-        "stanza",
-        "subject",
-        "predicate",
-        "object",
-        "value",
-        "datatype",
-        "language",
-        "graph",
-    ),
+    "rdfs_subclass_of_statement": _STATEMENT_COLUMNS,
     "rdfs_subproperty_of_statement": ("subject", "predicate", "object"),
-    "statements": (
-        "stanza",
-        "subject",
-        "predicate",
-        "object",
-        "value",
-        "datatype",
-        "language",
-        "graph",
-    ),
+    "statements": _STATEMENT_COLUMNS,
     # Read by _load_go_namespace_map, which is our SQL rather than OAK's.
     "node_to_value_statement": ("subject", "predicate", "value"),
 }
@@ -556,6 +564,12 @@ def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[b
                     message = str(probe_error).lower()
                     if "locked" in message or "busy" in message:
                         raise
+                    if "no such table" not in message and "no such column" not in message:
+                        # Something else went wrong — a disk error, say. That is
+                        # not evidence the schema is bad, and returning False
+                        # would send a healthy database off to be rebuilt.
+                        print(f"  Could not probe {db_path} (`{sql}`): {probe_error}")
+                        return None
                     print(f"  {db_path} cannot serve `{sql}`: {probe_error}")
                     return False
             if require_content:

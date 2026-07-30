@@ -10,6 +10,10 @@ None of these tests run a real `semsql make`: the build is mocked and the
 size threshold shrunk, so they stay fast.
 """
 
+import contextlib
+import fcntl
+import inspect
+import os
 import sqlite3
 import subprocess
 from pathlib import Path
@@ -1082,3 +1086,63 @@ class TestOntologyIdentityAndServing:
         monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: write_single_ontology_db(db, "chebi"))
         result = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", ontology="go")
         assert not result.built, "a build producing another ontology is not a successful build"
+
+    def test_the_build_lock_is_held_across_processes(self, tmp_path):
+        """
+        The threading lock orders threads only.
+
+        This repository ships an HPC array that starts several transform
+        processes, each resolving ontologies independently, so two of them could
+        clear the same target and run `semsql make` on the same basename at once.
+        """
+        first = tmp_path / "one.lock.db"
+        second = tmp_path / "one.lock.db"
+        with ou._build_file_lock(str(first)):
+            lock_file = Path(f"{second}.buildlock")
+            assert lock_file.exists(), "a lock file must exist while held"
+            handle = os.open(str(lock_file), os.O_CREAT | os.O_RDWR)
+            try:
+                with pytest.raises(OSError):
+                    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            finally:
+                os.close(handle)
+
+    def test_the_build_lock_is_released_on_the_way_out(self, tmp_path):
+        """A released lock must be acquirable again, including after an error."""
+        target = tmp_path / "two.db"
+        with contextlib.suppress(ValueError), ou._build_file_lock(str(target)):
+            raise ValueError("boom")
+        handle = os.open(f"{target}.buildlock", os.O_CREAT | os.O_RDWR)
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(handle, fcntl.LOCK_UN)
+        finally:
+            os.close(handle)
+
+    def test_a_go_db_without_namespace_rows_is_refused(self, tmp_path, monkeypatch):
+        """
+        A GO database with no namespace rows must be refused.
+
+        Schema, identity, labels and hierarchy can all be present while the
+        namespace rows are not, and an empty map sends every term to
+        BiologicalProcess.
+        """
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
+        with pytest.raises(ou.FatalOntologyError):
+            ou._load_go_namespace_map(str(db))
+
+    def test_identity_arguments_cannot_be_passed_positionally(self):
+        """
+        The ontology and content flags are keyword-only.
+
+        Threading `ontology` in as a positional parameter meant callers passing
+        `require_content` positionally silently supplied it as the ontology, so
+        _db_is_for_ontology(path, True) returned None and identity was never
+        checked at all. Keyword-only makes that mistake impossible.
+        """
+        for func in (ou._reusable_db, ou._usable_db, ou._restored_db_usable, ou._clear_build_target):
+            params = inspect.signature(func).parameters
+            for name in ("ontology", "require_content"):
+                assert params[name].kind is inspect.Parameter.KEYWORD_ONLY, f"{func.__name__}.{name}"

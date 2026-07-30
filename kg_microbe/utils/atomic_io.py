@@ -177,21 +177,23 @@ def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
         # dropped. Regenerating once is cheap and self-limiting: the new write
         # leaves a marker, so this happens at most once per cache.
         return False
-    if marker.exists():
-        try:
-            certified = marker.read_text().strip()
-            # A digest of the contents. Size plus mtime was metadata, not
-            # identity: an equal-sized replacement whose mtime was restored (a
-            # metadata-preserving copy, or coarse filesystem timestamps) was
-            # still certified, while merely touching a genuinely complete but
-            # intentionally empty cache made it read as incomplete and
-            # regenerate on every run. An empty or unparsable marker — the
-            # interim format — proves nothing and falls through.
-            if certified and certified == _content_digest(path):
-                return True
-        except (OSError, ValueError):
-            return False
-    return has_data_rows(path, delimiter)
+    try:
+        certified = marker.read_text().strip()
+    except OSError:
+        return False
+    if not certified:
+        # An empty marker is the interim format and proves nothing.
+        return False
+    # A digest of the contents. Size plus mtime was metadata, not identity: an
+    # equal-sized replacement whose mtime was restored (a metadata-preserving
+    # copy, or coarse filesystem timestamps) was still certified, while merely
+    # touching a genuinely complete but intentionally empty cache made it read as
+    # incomplete and regenerate on every run.
+    #
+    # A mismatch is conclusive. Falling through to a row count here undid the
+    # digest entirely: a marked three-row cache truncated to one row was still
+    # reported complete, so the remaining category mappings stayed lost.
+    return certified == _content_digest(path)
 
 
 def _content_digest(path: Path) -> str:

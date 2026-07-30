@@ -503,3 +503,32 @@ class TestMarkerIdentity:
             handle.write("a\tb\n")  # header only, legitimately
         assert cache_is_complete(target)
         assert not has_data_rows(target)
+
+
+class TestMarkerIsConclusive:
+
+    """Round-15: a digest mismatch must not be overridden by a row count."""
+
+    def test_a_truncated_marked_cache_is_incomplete(self, tmp_path):
+        """
+        The content fallback undid the digest entirely.
+
+        A marked three-row cache truncated to its header plus one row still
+        reported complete, so UniProt skipped regeneration and the remaining
+        category mappings stayed lost.
+        """
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\nr1\tx\nr2\ty\nr3\tz\n")
+        assert cache_is_complete(target)
+
+        target.write_text("a\tb\nr1\tx\n")
+        assert not cache_is_complete(target), "a digest mismatch is conclusive"
+
+    def test_a_marked_empty_cache_is_still_complete(self, tmp_path):
+        """The legitimately-empty case must survive the stricter rule."""
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\n")
+        assert cache_is_complete(target)
+        assert not has_data_rows(target)

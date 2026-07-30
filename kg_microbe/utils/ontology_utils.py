@@ -2,6 +2,7 @@
 
 import fcntl
 import gzip
+import itertools
 import os
 import re
 import shutil
@@ -173,6 +174,27 @@ def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
         print(f"WARNING: {msg}")
 
 
+def _read_only_connection(db_path: str) -> sqlite3.Connection:
+    """
+    Open a database strictly for reading, never creating it.
+
+    A plain ``sqlite3.connect()`` creates the file when it is missing, so asking
+    a *question* about a database had side effects: an absent path gained a 0-byte
+    file, and a path that was a dangling symlink gained one at the link's target —
+    which is exactly the 13 GB-in-the-wrong-place accident the build target
+    clearing exists to prevent. Every release/identity reader goes through here so
+    reading a database can never bring one into existence.
+
+    The path is quoted because an unescaped ``?`` would start URI query
+    parameters and ``#`` a fragment, silently opening a different file.
+
+    :param db_path: Path to the database.
+    :return: A read-only connection.
+    """
+    uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
+    return sqlite3.connect(uri, uri=True)
+
+
 def _ncbitaxon_db_release(db_path: str) -> Optional[str]:
     """
     Return the NCBITaxon release (YYYY-MM-DD) recorded in a SemSQL ``.db``.
@@ -182,7 +204,7 @@ def _ncbitaxon_db_release(db_path: str) -> Optional[str]:
     missing/unparsable stamp.
     """
     try:
-        conn = sqlite3.connect(db_path)
+        conn = _read_only_connection(db_path)
         try:
             # Target the ontology node's versionInfo (subject carries "ncbitaxon")
             # rather than any entity that happens to be annotated with one.
@@ -213,7 +235,7 @@ def _go_db_release(db_path: str) -> Optional[str]:
     reuse the existing db rather than force a spurious rebuild.
     """
     try:
-        conn = sqlite3.connect(db_path)
+        conn = _read_only_connection(db_path)
         try:
             row = conn.execute(
                 "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
@@ -771,7 +793,14 @@ def _read_head(path: Path, nbytes: int) -> Optional[str]:
     :param nbytes: How many characters to read.
     :return: The head as text, or None if neither form is readable.
     """
-    for opener, target in ((open, path), (gzip.open, path.with_name(path.name + ".gz"))):
+    # Archive first when both exist. `kg download` refreshes `<x>.gz` and leaves
+    # any previously decompressed `<x>` alone, so preferring the plain file made
+    # an ontology refresh invisible: the release gate compared the old stamp,
+    # declared the old DB aligned, and no rebuild ever ran. The archive is the
+    # downloaded artifact of record, so it decides the release.
+    archive = path.with_name(path.name + ".gz")
+    candidates = ((gzip.open, archive), (open, path)) if archive.exists() else ((open, path), (gzip.open, archive))
+    for opener, target in candidates:
         if not target.exists():
             continue
         try:
@@ -1030,6 +1059,43 @@ def _discard_kept_target(kept: KeptTarget) -> None:
         os.remove(kept.prev_path)
 
 
+def _archive_release_differs(owl_source: Path) -> bool:
+    """
+    Report whether ``<owl>.gz`` holds a different release than the plain ``<owl>``.
+
+    `kg download` refreshes the archive, not the decompressed copy, so a stale
+    plain OWL beside a newly downloaded one defeated the entire single-source
+    guarantee: _read_head prefers the plain file, the DB was declared aligned
+    against the old release, and the decompression step refused to run because a
+    plain file already existed. The refresh was therefore invisible.
+
+    :param owl_source: Path to the plain OWL.
+    :return: True when both forms exist and their release stamps differ.
+    """
+    archive = owl_source.with_name(owl_source.name + ".gz")
+    if not (archive.exists() and owl_source.exists()):
+        return False
+    plain_head = None
+    try:
+        with open(owl_source, "rt", encoding="utf-8", errors="ignore") as handle:
+            plain_head = handle.read(2_000_000)
+    except OSError:
+        return False
+    try:
+        with gzip.open(archive, "rt", encoding="utf-8", errors="ignore") as handle:
+            archive_head = handle.read(2_000_000)
+    except (OSError, EOFError, zlib.error):
+        return False
+    plain = _RELEASE_RE.search(plain_head) or re.search(r"versionIRI[^>]{0,160}?(\d{4}-\d{2}-\d{2})", plain_head)
+    packed = _RELEASE_RE.search(archive_head) or re.search(r"versionIRI[^>]{0,160}?(\d{4}-\d{2}-\d{2})", archive_head)
+    if not (plain and packed):
+        # ChEBI versions by integer rather than date; fall back to that reader.
+        plain_value = _chebi_release_from_owl(owl_source)
+        packed_value = _chebi_release_from_owl(archive)
+        return bool(plain_value and packed_value and plain_value != packed_value)
+    return plain.group(1) != packed.group(1)
+
+
 def _decompress_atomically(archive: Path, destination: Path) -> bool:
     """
     Decompress a ``.gz`` archive to ``destination`` via a temp file + rename.
@@ -1042,7 +1108,11 @@ def _decompress_atomically(archive: Path, destination: Path) -> bool:
     :param destination: Path to place the decompressed file at.
     :return: True if destination now holds the complete contents.
     """
-    tmp = destination.with_name(destination.name + ".partial")
+    # Per-writer, like atomic_write. A shared "<name>.partial" is not atomic
+    # across processes: B opens and truncates the same inode A is filling, A then
+    # completes from its advanced offset and publishes a file with a zero-filled
+    # gap, and semsql may start reading it.
+    tmp = destination.with_name(f"{destination.name}.{os.getpid()}.{next(_DECOMPRESS_COUNTER)}.partial")
     try:
         with gzip.open(archive, "rb") as src, open(tmp, "wb") as dst:
             shutil.copyfileobj(src, dst)
@@ -1093,7 +1163,7 @@ def _chebi_db_release(db_path: str) -> Optional[str]:
     :return: Release as a string, or None on read error / missing stamp.
     """
     try:
-        conn = sqlite3.connect(db_path)
+        conn = _read_only_connection(db_path)
         try:
             row = conn.execute(
                 "SELECT value FROM statements WHERE predicate = 'owl:versionInfo' "
@@ -1195,6 +1265,7 @@ def _build_semsql_db(
     reuse_on_failure: bool = True,
     require_content: bool = True,
     ontology: Optional[str] = None,
+    expected_release: Optional[str] = None,
 ) -> DbEnsureResult:
     """
     Run the guarded ``semsql make`` for one ontology.
@@ -1241,13 +1312,7 @@ def _build_semsql_db(
     if shutil.which("semsql") is None:
         print(f"Warning: `semsql` not on PATH; cannot build {db_path}")
         return _fallback()
-    if owl_source and not owl_source.exists():
-        archive = owl_source.with_suffix(owl_source.suffix + ".gz")
-        if archive.exists():
-            print(f"Decompressing {archive} for the {label} SemSQL build...")
-            if not _decompress_atomically(archive, owl_source):
-                return _fallback()
-    if not (owl_source and owl_source.exists()):
+    if not (owl_source and (owl_source.exists() or owl_source.with_name(owl_source.name + ".gz").exists())):
         print(f"Warning: cannot build {db_path} — {label} OWL source {owl_source} is missing")
         return _fallback()
     # Cross-process, not just cross-thread. The per-ontology threading lock only
@@ -1257,14 +1322,31 @@ def _build_semsql_db(
     # they can clear the same target, shuffle the same .prev and run `semsql make`
     # on the same basename simultaneously.
     with _build_file_lock(db_path):
-        # Deliberately no "did someone else already build it?" shortcut here. The
-        # caller decided a build was needed for reasons this function cannot see —
-        # release drift, most importantly — and a generic usability re-check
-        # answers a different question. An early version did exactly that and
-        # silently skipped every drift rebuild, because a drifted database is
-        # perfectly usable by every measure except the one that mattered. A
-        # redundant build after waiting costs time; skipping a required one costs
-        # correctness.
+        # Decompression happens under the lock, not before it: two processes
+        # otherwise raced on the same destination. A stale plain OWL is replaced
+        # rather than trusted — `kg download` refreshes the archive only, and
+        # preferring whatever plain file happened to exist made an ontology
+        # refresh invisible to both the release gate and the build.
+        archive = owl_source.with_name(owl_source.name + ".gz")
+        if archive.exists() and (not owl_source.exists() or _archive_release_differs(owl_source)):
+            reason = "missing" if not owl_source.exists() else "a different release than the archive"
+            print(f"Decompressing {archive} for the {label} build ({owl_source.name} is {reason})...")
+            if not _decompress_atomically(archive, owl_source):
+                return _fallback()
+        if not owl_source.exists():
+            print(f"Warning: cannot build {db_path} — {label} OWL source {owl_source} is missing")
+            return _fallback()
+        # Coalesce, but only on the question that actually prompted the build.
+        # A generic "is it usable?" re-check here silently skipped every drift
+        # rebuild, because a drifted database is usable by every measure except
+        # the one that mattered. Asking whether the release we need is now present
+        # is safe: if another process just produced it, ten queued HPC jobs stop
+        # running ten sequential multi-hour builds that each replace the last.
+        reader = _DB_RELEASE_READERS.get(ontology or "")
+        if expected_release and reader and reader(db_path) == expected_release:
+            if _reusable_db(db_path, min_size, ontology=ontology, require_content=require_content):
+                print(f"  {db_path} is already at {expected_release}; another process built it")
+                return DbEnsureResult(True)
         return _run_semsql_build(
             owl_source,
             db_path,
@@ -1396,9 +1478,9 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
 
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
+    owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
     _note_orphaned_prev(db_path)
     if _servable_db(db_path, min_size, "chebi"):
-        owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
             return DbEnsureResult(True)
@@ -1415,6 +1497,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
         "Set KG_SEMSQL_BUILD=off to skip and use a prebuilt DB instead.",
         require_content=True,
         ontology="chebi",
+        expected_release=owl_release,
     )
 
 
@@ -1479,6 +1562,17 @@ def _ensure_and_gate(ontology: str, db_path: str) -> bool:
 # One lock per ontology, guarding the ensure+open critical section. A dict rather
 # than a single global lock so a slow NCBITaxon build does not block an unrelated
 # EC resolve; _ADAPTER_LOCKS_GUARD only covers creating the per-ontology entry.
+# Release readers by ontology, used to answer "did the process we waited for
+# produce the release we need?". EC has no reliable stamp and is a minutes-long
+# build, so it simply rebuilds.
+_DB_RELEASE_READERS = {
+    "ncbitaxon": lambda path: _ncbitaxon_db_release(path),
+    "chebi": lambda path: _chebi_db_release(path),
+    "go": lambda path: _go_db_release(path),
+}
+
+_DECOMPRESS_COUNTER = itertools.count()
+
 _ADAPTER_LOCKS: Dict[str, threading.Lock] = {}
 _ADAPTER_LOCKS_GUARD = threading.Lock()
 
@@ -1690,9 +1784,9 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
 
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
+    owl_release = _obo_release_from_head(owl_source) if owl_source else None
     _note_orphaned_prev(db_path)
     if _servable_db(db_path, min_size, "ncbitaxon"):
-        owl_release = _obo_release_from_head(owl_source) if owl_source else None
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
             return DbEnsureResult(True)
@@ -1709,6 +1803,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
         "~13 GB result. Set KG_SEMSQL_BUILD=off to skip.",
         require_content=True,
         ontology="ncbitaxon",
+        expected_release=owl_release,
     )
 
 
@@ -1726,6 +1821,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
+    owl_release = _obo_release_from_head(Path(GO_SOURCE)) if GO_SOURCE else None
     _note_orphaned_prev(go_db_path)
     if _servable_db(go_db_path, _GO_DB_MIN_SIZE, "go"):
         # An existing, non-stub go.db is reused — unless it has drifted from the
@@ -1734,7 +1830,6 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
         # and MF/CC terms silently fall through to BiologicalProcess. Only rebuild
         # when both release stamps are readable and differ (an unreadable stamp
         # never forces a costly spurious rebuild).
-        owl_release = _obo_release_from_head(Path(GO_SOURCE)) if GO_SOURCE else None
         db_release = _go_db_release(go_db_path)
         if not (owl_release and db_release and owl_release != db_release):
             return DbEnsureResult(True)
@@ -1752,6 +1847,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
         reuse_on_failure=False,
         require_content=True,
         ontology="go",
+        expected_release=owl_release,
     )
 
 

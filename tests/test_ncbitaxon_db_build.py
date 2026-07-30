@@ -12,11 +12,13 @@ size threshold shrunk, so they stay fast.
 
 import contextlib
 import fcntl
+import gzip
 import inspect
 import os
 import sqlite3
 import subprocess
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -1146,3 +1148,109 @@ class TestOntologyIdentityAndServing:
             params = inspect.signature(func).parameters
             for name in ("ontology", "require_content"):
                 assert params[name].kind is inspect.Parameter.KEYWORD_ONLY, f"{func.__name__}.{name}"
+
+    def test_a_refreshed_archive_beats_a_stale_decompressed_owl(self, tmp_path, monkeypatch):
+        """
+        `kg download` refreshes <x>.owl.gz and leaves <x>.owl alone.
+
+        Preferring whatever plain file existed made an ontology refresh invisible:
+        the release gate compared the old stamp, declared the old DB aligned, and
+        the decompression step refused to run because a plain file was present. The
+        single-source guarantee did not survive a normal download.
+        """
+        owl = tmp_path / "ncbitaxon.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-01-01"), encoding="utf-8")
+        with gzip.open(f"{owl}.gz", "wt", encoding="utf-8") as handle:
+            handle.write(OWL_HEAD.format(d="2026-07-12"))
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.NCBITAXON_SOURCE", owl)
+        monkeypatch.setattr(ou, "_NCBITAXON_DB_MIN_SIZE", 3000)
+        db = write_single_ontology_db(tmp_path / "ncbitaxon.db", "ncbitaxon")
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-01-01")
+
+        calls = []
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: calls.append(a))
+
+        assert ou._obo_release_from_head(owl) == "2026-07-12", "the archive decides the release"
+        ou._ensure_ncbitaxon_db(str(db))
+        assert calls, "a refreshed archive must trigger a rebuild"
+        assert "2026-07-12" in owl.read_text(encoding="utf-8"), "the plain OWL must be refreshed"
+
+    def test_a_plain_only_owl_is_still_read(self, tmp_path):
+        """Preferring the archive must not break the ordinary no-archive case."""
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-06-15"), encoding="utf-8")
+        assert ou._obo_release_from_head(owl) == "2026-06-15"
+
+    def test_decompression_partials_are_per_writer(self, tmp_path):
+        """
+        A shared "<owl>.partial" is not atomic across processes.
+
+        B truncates the inode A is filling, A completes from its advanced offset,
+        and the published file has a zero-filled gap that semsql may then read.
+        """
+        source = tmp_path / "x.owl"
+        with gzip.open(f"{source}.gz", "wt", encoding="utf-8") as handle:
+            handle.write("<owl/>")
+        seen = []
+        real_open = open
+
+        def watching_open(path, *args, **kwargs):
+            """Record any partial file that gets opened."""
+            if str(path).endswith(".partial"):
+                seen.append(Path(str(path)).name)
+            return real_open(path, *args, **kwargs)
+
+        with mock.patch("builtins.open", watching_open):
+            assert ou._decompress_atomically(Path(f"{source}.gz"), source)
+        assert seen, "a temp file should have been used"
+        assert str(os.getpid()) in seen[0], f"the partial must be per-writer, got {seen[0]}"
+
+    def test_coalescing_only_applies_to_the_required_release(self, tmp_path, monkeypatch):
+        """
+        Waiting on the lock must not skip a rebuild that is still needed.
+
+        A generic usability re-check after waiting silently skipped every drift
+        rebuild, because a drifted database is usable by every measure except the
+        one that prompted the build.
+        """
+        owl = tmp_path / "ncbitaxon.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "ncbitaxon.db", "ncbitaxon")
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        for stamp, expect_build in (("2026-07-12", False), ("2026-01-01", True)):
+            calls = []
+            monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _, s=stamp: s)
+            monkeypatch.setattr(ou.subprocess, "run", lambda *a, _c=calls, **k: _c.append(a))
+            ou._build_semsql_db(
+                owl,
+                str(db),
+                3000,
+                "NCBITaxon",
+                "n",
+                ontology="ncbitaxon",
+                expected_release="2026-07-12",
+            )
+            assert bool(calls) is expect_build, f"db at {stamp}: build={bool(calls)}"
+
+    def test_reading_a_release_never_creates_the_database(self, tmp_path):
+        """
+        Asking a database a question must not bring one into existence.
+
+        A plain sqlite3.connect() creates the file. Every release reader took a
+        path that may not exist, so probing an absent database left a 0-byte file
+        behind — and probing one that was a dangling symlink created a file at the
+        *link's target*, the precise accident that clearing the build target
+        exists to prevent.
+        """
+        for reader in (ou._ncbitaxon_db_release, ou._chebi_db_release, ou._go_db_release):
+            missing = tmp_path / f"{reader.__name__}.db"
+            assert reader(str(missing)) is None
+            assert not missing.exists(), f"{reader.__name__} created {missing.name}"
+
+            elsewhere = tmp_path / f"{reader.__name__}_target"
+            link = tmp_path / f"{reader.__name__}_link.db"
+            link.symlink_to(elsewhere)
+            assert reader(str(link)) is None
+            assert not elsewhere.exists(), f"{reader.__name__} wrote through a dangling link"

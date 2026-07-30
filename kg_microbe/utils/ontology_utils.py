@@ -38,7 +38,6 @@ from kg_microbe.transform_utils.constants import (
 )
 
 _GO_NAMESPACE_CACHE: Optional[Dict[str, str]] = None
-_GO_NAMESPACE_LOAD_FAILED: bool = False
 
 # A healthy GO SemSQL DB is ~400 MB; anything below this is a truncated /
 # 0-byte stub (the failure that miscategorized every GO term as
@@ -111,6 +110,11 @@ def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
     # never speak for the plain JSON the transform actually reads.
     owl_release = _obo_release_from_head(owl_path, prefer_archive=True)
     json_release = _obo_release_from_head(json_path)
+    if not (owl_release and json_release):
+        # ChEBI versions by integer, so neither date reader can answer and the
+        # conservative "not stale" verdict applied to every ChEBI refresh.
+        owl_release = _chebi_release_from_owl(owl_path, prefer_archive=True)
+        json_release = _chebi_release_from_owl(json_path)
     return bool(owl_release and json_release and owl_release != json_release)
 
 
@@ -368,9 +372,15 @@ def _restored_db_usable(
     Judge the target after a failed build, according to what is now there.
 
     If something was displaced and put back, it is the caller's own artifact —
-    possibly a symlink to a prebuilt DB, which is supported — so the lenient
-    check applies. If nothing was displaced, whatever sits at the target came
-    from the failed build itself, and a symlink there means it landed elsewhere.
+    possibly a symlink to a prebuilt DB, which is supported — so the symlink-
+    tolerant check applies. If nothing was displaced, whatever sits at the target
+    came from the failed build itself, and a symlink there means it landed
+    elsewhere.
+
+    Tolerant of symlinks, not of doubt: this verdict is returned as ``usable``
+    from three build-failure exits, so it has to answer "may the caller use
+    this?", which :func:`_servable_db` answers and :func:`_reusable_db`
+    deliberately does not.
 
     :param db_path: Path to the DB.
     :param min_size: Smallest plausible size for a complete build.
@@ -378,7 +388,7 @@ def _restored_db_usable(
     :return: True if the file is usable.
     """
     return (
-        _reusable_db(db_path, min_size, ontology=ontology, require_content=require_content)
+        _servable_db(db_path, min_size, ontology, require_content=require_content)
         if kept
         else _usable_db(db_path, min_size, ontology=ontology, require_content=require_content)
     )
@@ -727,7 +737,7 @@ def _has_semsql_schema(db_path: str, require_content: bool = True) -> Optional[b
     return True
 
 
-def _servable_db(db_path: str, min_size: int, ontology: str, *, require_content: bool = True) -> bool:
+def _servable_db(db_path: str, min_size: int, ontology: Optional[str], *, require_content: bool = True) -> bool:
     """
     Report whether queries may be run against this DB.
 
@@ -765,6 +775,12 @@ def _servable_db(db_path: str, min_size: int, ontology: str, *, require_content:
     # per-item handlers quietly supply defaults. Declining to rebuild on an
     # unverifiable answer stays correct — that is `_reusable_db`'s job, and it
     # still accepts None.
+    if ontology is None:
+        # No ontology named, so there is no identity to confirm. None of the four
+        # ensure paths reach here — they all name one — but the build helpers
+        # carry it as Optional, and answering False would refuse every database
+        # rather than skip a check that does not apply.
+        return True
     for attempt in range(_DB_PROBE_RETRIES):
         identity = _db_is_for_ontology(db_path, ontology)
         if identity is not None:
@@ -777,17 +793,20 @@ def _servable_db(db_path: str, min_size: int, ontology: str, *, require_content:
 
 def _reusable_db(db_path: str, min_size: int, *, ontology: Optional[str] = None, require_content: bool = True) -> bool:
     """
-    Report whether a DB may be handed to callers as usable.
+    Report whether a DB is worth *keeping*.
 
-    Present, intact, and able to answer our queries. Every exit that reports
-    usability goes through this — the reuse fast-path, the no-semsql fallback,
-    the KG_SEMSQL_BUILD opt-out and the post-restore verdict. Hardening only the
-    fast-path left the others reporting a structurally valid but schema-less
-    file as usable, which is how a rejected build was adopted by the next run.
+    Present, intact, and not demonstrably unable to answer our queries. This is
+    the preservation predicate: it decides whether an existing database or a
+    ``.prev`` may be discarded, where an unverifiable answer must mean "keep it" —
+    a wrong answer here costs a 13 GB database.
 
-    A schema answer of None (locked, unverifiable) counts as acceptable: the
-    file is not demonstrably bad, and refusing it would turn a transient lock
-    into a hard failure.
+    A schema answer of None (locked, unverifiable) therefore counts as
+    acceptable. That is exactly why this must **not** answer "may the caller use
+    it?": every exit reporting usability once returned this predicate, so a
+    locked database that :func:`_servable_db` had just rejected was reported
+    usable one line later and handed to OAK, and the per-item handlers then
+    supplied a default category for every term. Serving goes through
+    :func:`_servable_db`; keeping comes here.
 
     :param db_path: Path to the DB.
     :param min_size: Smallest plausible size for a complete build.
@@ -1205,6 +1224,12 @@ def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000, *, prefer_archi
     if m:
         return m.group(1)
     m = re.search(r"<owl:versionInfo>\s*(\d+)\s*</owl:versionInfo>", head)
+    if m:
+        return m.group(1)
+    # ROBOT's OBO-JSON records the release as a bare `"version"` IRI with no
+    # `versionIRI` key, so the patterns above return None for chebi.json — which
+    # made every ChEBI staleness comparison unanswerable and therefore "fresh".
+    m = re.search(r"/chebi/(\d+)/chebi\.owl", head)
     return m.group(1) if m else None
 
 
@@ -1354,16 +1379,14 @@ def _build_semsql_db(
     def _fallback() -> DbEnsureResult:
         """Report the existing DB, or refuse it when the caller demands a build."""
         return DbEnsureResult(
-            _reusable_db(db_path, min_size, ontology=ontology, require_content=require_content)
-            if reuse_on_failure
-            else False
+            _servable_db(db_path, min_size, ontology, require_content=require_content) if reuse_on_failure else False
         )
 
     if not _semsql_build_enabled():
         # An explicit opt-out always reuses what is on disk, even for GO: the
         # user asked to skip the build, not to have categorisation refuse to run.
         print(f"Skipping {label} SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_reusable_db(db_path, min_size, ontology=ontology, require_content=require_content))
+        return DbEnsureResult(_servable_db(db_path, min_size, ontology, require_content=require_content))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking GB of OWL only to then bail out is pure waste.
     if shutil.which("semsql") is None:
@@ -1401,7 +1424,7 @@ def _build_semsql_db(
         # running ten sequential multi-hour builds that each replace the last.
         reader = _DB_RELEASE_READERS.get(ontology or "")
         if expected_release and reader and reader(db_path) == expected_release:
-            if _reusable_db(db_path, min_size, ontology=ontology, require_content=require_content):
+            if _servable_db(db_path, min_size, ontology, require_content=require_content):
                 print(f"  {db_path} is already at {expected_release}; another process built it")
                 return DbEnsureResult(True)
         return _run_semsql_build(
@@ -1975,6 +1998,12 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
     )
 
 
+# Attempts for the one-time GO namespace read, with a linear backoff between
+# them (~5 s in total at the default probe timeout). More generous than
+# _DB_PROBE_RETRIES because this read's failure is fatal rather than advisory.
+_GO_NAMESPACE_READ_ATTEMPTS = 5
+
+
 def _query_go_namespaces(go_db_path: str) -> Dict[str, str]:
     """
     Read the GO id → OBO namespace rows, retrying while the database is locked.
@@ -1990,7 +2019,7 @@ def _query_go_namespaces(go_db_path: str) -> Dict[str, str]:
     :raises sqlite3.Error: If the read fails for a reason retrying cannot fix, or
         remains locked after the last attempt.
     """
-    for attempt in range(_DB_PROBE_RETRIES):
+    for attempt in range(_GO_NAMESPACE_READ_ATTEMPTS):
         try:
             conn = _read_only_connection(go_db_path)
             try:
@@ -2002,10 +2031,13 @@ def _query_go_namespaces(go_db_path: str) -> Dict[str, str]:
             finally:
                 conn.close()
         except sqlite3.Error as exc:
-            if not _is_transient_db_error(exc) or attempt + 1 == _DB_PROBE_RETRIES:
+            if not _is_transient_db_error(exc) or attempt + 1 == _GO_NAMESPACE_READ_ATTEMPTS:
                 raise
             print(f"  {go_db_path} is locked; retrying the GO namespace read")
-            time.sleep(_DB_PROBE_TIMEOUT_SECONDS)
+            # Backs off, unlike the probe loop. Exhausting this budget aborts the
+            # run, so waiting a few seconds for a concurrent reader to finish is
+            # plainly worth it against a multi-hour transform.
+            time.sleep(_DB_PROBE_TIMEOUT_SECONDS * (attempt + 1))
     raise AssertionError("unreachable: the loop either returns or raises")
 
 
@@ -2019,19 +2051,18 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
     so every entity_metadata_map call would otherwise throw and fall through
     to the BiologicalProcess fallback for every GO node.
 
-    Caches success (the dict) and *permanent* failure (an empty dict + a flag) so
-    a missing or structurally unreadable sqlite file does not retry per call. A
-    lock is not a permanent failure and is not latched — see
-    :func:`_is_transient_db_error`.
+    Caches success only. A failed read raises rather than returning an empty map:
+    an empty map is not a weaker answer but a wrong one, since every MF and CC
+    term in it silently becomes a BiologicalProcess. Contention is absorbed by the
+    retry budget in :func:`_query_go_namespaces`, not by degrading.
 
     :param go_db_path: Path to ``go.db``.
-    :return: GO id → namespace, or an empty map if it could not be read.
+    :return: GO id → namespace.
+    :raises OntologyDbUnavailableError: If the map cannot be read.
     """
-    global _GO_NAMESPACE_CACHE, _GO_NAMESPACE_LOAD_FAILED
+    global _GO_NAMESPACE_CACHE
     if _GO_NAMESPACE_CACHE is not None:
         return _GO_NAMESPACE_CACHE
-    if _GO_NAMESPACE_LOAD_FAILED:
-        return {}
     # Build go.db from go.owl if it's missing/empty — nothing else does, so a
     # 0-byte stub would otherwise miscategorize every GO term (see _ensure_go_db).
     #
@@ -2067,17 +2098,18 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
         _GO_NAMESPACE_CACHE = namespaces
         return _GO_NAMESPACE_CACHE
     except Exception as exc:
-        print(f"Warning: failed to load GO namespace map from {go_db_path}: {exc}")
-        # A lock is not an answer. Latching the failure flag on one meant a
-        # momentary `database is locked` — routine when several transforms share
-        # data/raw — permanently cached an empty map, and every GO term for the
-        # rest of the process fell to the BiologicalProcess default with no
-        # further warning. Transient failures leave the flag clear so the next
-        # call re-reads; anything else still latches, since retrying a missing
-        # table forever only floods the log.
-        if not _is_transient_db_error(exc):
-            _GO_NAMESPACE_LOAD_FAILED = True
-        return {}
+        # An empty map is not a degraded answer, it is a wrong one: every MF and
+        # CC term in it becomes a BiologicalProcess. Not latching a transient
+        # failure fixed the *later* calls but left this one still returning {},
+        # so a lock outliving the retries silently miscategorised every term
+        # processed while it was held. There is no honest fallback here, which is
+        # what this error class is for — and it cannot be swallowed by the broad
+        # per-item handlers, so the run stops instead of emitting a wrong graph.
+        raise OntologyDbUnavailableError(
+            f"Could not read GO namespaces from {go_db_path}: {exc}. Every MF and CC "
+            "term would be filed as BiologicalProcess, so this run cannot continue. "
+            "Retry if another process holds the database, or rebuild go.db from go.owl."
+        ) from exc
 
 
 def replace_category_ontology(line, id_index, category_index):

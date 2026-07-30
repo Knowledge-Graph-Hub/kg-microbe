@@ -1,9 +1,7 @@
 """Ontology transform module."""
 
-import gzip
 import json
 import re
-import shutil
 from collections import defaultdict
 from os import makedirs
 from pathlib import Path
@@ -48,7 +46,11 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
-from kg_microbe.utils.ontology_utils import _derived_json_is_stale, replace_category_ontology
+from kg_microbe.utils.ontology_utils import (
+    _decompress_atomically,
+    _derived_json_is_stale,
+    replace_category_ontology,
+)
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
@@ -178,6 +180,7 @@ class OntologiesTransform(Transform):
                 # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
                 if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
                     json_path = str(data_file).replace(".owl.gz", ROBOT_REMOVED_SUFFIX + ".json")
+                    self._drop_stale_derived_json(data_file, Path(json_path))
                     if not Path(json_path).is_file():
                         self.decompress(data_file)
                         with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
@@ -193,6 +196,7 @@ class OntologiesTransform(Transform):
                     #     extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
                 else:
                     json_path = str(data_file).replace("owl.gz", "json")
+                    self._drop_stale_derived_json(data_file, Path(json_path))
                     if not Path(json_path).is_file():
                         # Unzip the file
                         self.decompress(data_file)
@@ -256,12 +260,45 @@ class OntologiesTransform(Transform):
         # (all ontologies benefit from these cleanups)
         self.post_process(name)
 
+    def _drop_stale_derived_json(self, source: Path, json_path: Path) -> None:
+        """
+        Remove a derived JSON whose release no longer matches its source.
+
+        The ``.owl`` branch below has done this since fix 2 (#604), but the two
+        compressed sources — ncbitaxon and chebi — regenerated only when the JSON
+        was *absent*, and both ``convert_to_json`` and ``remove_convert_to_json``
+        are no-ops when their target exists. So an ordinary ``kg download``, which
+        refreshes ``<x>.owl.gz`` in place, left the transform emitting nodes from
+        the previous release while the SemSQL builders — which do read the
+        refreshed archive — rebuilt from the new one. The version gates compare
+        the DB against the OWL, never against the JSON that is actually consumed,
+        so nothing caught it: ChEBI categories were resolved against terms that
+        differed from those emitted, and NCBITaxon lookups could resolve taxa
+        absent from the emitted nodes.
+
+        :param source: The downloaded source (``.owl`` or ``.owl.gz``).
+        :param json_path: The derived JSON to check.
+        """
+        if not _derived_json_is_stale(source, json_path):
+            return
+        print(f"{json_path.name} is from an older release than {source.name}; regenerating it.")
+        json_path.unlink(missing_ok=True)
+        # The plain OWL feeds ROBOT, so a stale one would just reproduce the
+        # stale JSON. Removing it makes `decompress` below refresh it.
+        plain_owl = source.parent / source.stem
+        if source.suffixes[-1:] == [".gz"] and plain_owl.exists():
+            plain_owl.unlink()
+
     def decompress(self, data_file):
         """Unzip file."""
         print(f"Decompressing {data_file}...")
-        with gzip.open(data_file, "rb") as f_in:
-            with open(data_file.parent / data_file.stem, "wb") as f_out:
-                shutil.copyfileobj(f_in, f_out)
+        # Temp file + rename: writing straight to the real filename left a
+        # truncated OWL there if interrupted, and a truncated OWL is not
+        # detectable downstream — its version stamp lives in the head and still
+        # parses, so both ROBOT and the SemSQL build would accept it.
+        destination = data_file.parent / data_file.stem
+        if not _decompress_atomically(Path(data_file), destination):
+            raise OSError(f"Failed to decompress {data_file} to {destination}")
 
     def _sanitize_obograph_synonyms(self, json_path: Path) -> None:
         """

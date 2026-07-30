@@ -1023,7 +1023,6 @@ class TestOntologyIdentityAndServing:
         never checked.
         """
         monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
-        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
         monkeypatch.setattr(ou, "_ensure_go_db", lambda _: ou.DbEnsureResult(False))
         target = tmp_path / "go.db"
 
@@ -1131,7 +1130,6 @@ class TestOntologyIdentityAndServing:
         """
         db = write_single_ontology_db(tmp_path / "go.db", "go")
         monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
-        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
         with pytest.raises(ou.FatalOntologyError):
             ou._load_go_namespace_map(str(db))
 
@@ -1298,39 +1296,28 @@ class TestOntologyIdentityAndServing:
 
     def test_a_momentary_lock_is_not_cached_as_go_having_no_namespaces(self, tmp_path, monkeypatch):
         """
-        A lock is not an answer, and latching it makes every GO term a process.
+        A lock survives the retries: no empty map may be returned.
 
-        Another process holds the database between the ensure and the namespace
-        query. The read raised `database is locked`, the failure flag latched, and
-        every GO term for the rest of the process fell to the BiologicalProcess
-        default -- silently, since the flag also suppressed the warning.
+        Not latching the failure fixed the *later* calls but left this one
+        returning {}, so every MF and CC term processed while the lock was held
+        still became a BiologicalProcess. An empty map is not a weaker answer, it
+        is a wrong one, so the read has no honest fallback.
         """
         monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
-        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
         monkeypatch.setattr(ou, "_ensure_go_db", lambda _: True)
-        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
 
-        attempts = []
+        def locked(_path):
+            """Stay locked past the last attempt."""
+            raise sqlite3.OperationalError("database is locked")
 
-        def flaky(_path):
-            """Fail as a lock would on the first attempts, then succeed."""
-            attempts.append(1)
-            if len(attempts) < 2:
-                raise sqlite3.OperationalError("database is locked")
-            return {"GO:0008150": "biological_process", "GO:0003674": "molecular_function"}
+        monkeypatch.setattr(ou, "_query_go_namespaces", locked)
+        with pytest.raises(ou.OntologyDbUnavailableError):
+            ou._load_go_namespace_map(str(tmp_path / "go.db"))
+        assert ou._GO_NAMESPACE_CACHE is None, "nothing may be cached from a failed read"
 
-        monkeypatch.setattr(ou, "_query_go_namespaces", flaky)
-        assert ou._load_go_namespace_map(str(tmp_path / "go.db")) == {}
-        assert not ou._GO_NAMESPACE_LOAD_FAILED, "a lock must not latch the failure"
-
+    def test_a_structural_read_failure_is_also_fatal(self, tmp_path, monkeypatch):
+        """A missing view is as uninformative as a lock, and just as wrong to guess at."""
         monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
-        loaded = ou._load_go_namespace_map(str(tmp_path / "go.db"))
-        assert loaded["GO:0003674"] == "molecular_function", "the next call must re-read"
-
-    def test_a_structural_failure_is_still_latched(self, tmp_path, monkeypatch):
-        """Retrying a missing table forever would only flood the log."""
-        monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
-        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
         monkeypatch.setattr(ou, "_ensure_go_db", lambda _: True)
 
         def broken(_path):
@@ -1338,8 +1325,8 @@ class TestOntologyIdentityAndServing:
             raise sqlite3.OperationalError("no such table: node_to_value_statement")
 
         monkeypatch.setattr(ou, "_query_go_namespaces", broken)
-        assert ou._load_go_namespace_map(str(tmp_path / "go.db")) == {}
-        assert ou._GO_NAMESPACE_LOAD_FAILED, "a structural failure should latch"
+        with pytest.raises(ou.OntologyDbUnavailableError):
+            ou._load_go_namespace_map(str(tmp_path / "go.db"))
 
     def test_serving_requires_a_confirmed_ontology_identity(self, tmp_path, monkeypatch):
         """
@@ -1410,6 +1397,7 @@ class TestOntologyIdentityAndServing:
                 "VALUES ('GO:0003674', 'oio:hasOBONamespace', NULL, 'molecular_function')"
             )
         monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_READ_ATTEMPTS", 3)
 
         real = ou._read_only_connection
         attempts = []
@@ -1437,3 +1425,77 @@ class TestOntologyIdentityAndServing:
         monkeypatch.setattr(ou, "_read_only_connection", always_locked)
         with pytest.raises(sqlite3.OperationalError):
             ou._query_go_namespaces(str(db))
+
+    def test_a_refreshed_archive_makes_the_derived_json_stale(self, tmp_path):
+        """
+        The DB side reads the refreshed archive; the JSON side must too.
+
+        `kg download` refreshes `<x>.owl.gz` in place. The compressed sources --
+        ncbitaxon and chebi -- regenerated their derived JSON only when it was
+        absent, and both ROBOT wrappers are no-ops when their target exists. So
+        the builders rebuilt from the new release while the transform kept
+        emitting nodes from the old one, and the version gates never noticed
+        because they compare the DB against the OWL, not against the JSON that is
+        actually consumed.
+        """
+        owl = tmp_path / "ncbitaxon.owl.gz"
+        with gzip.open(owl, "wt", encoding="utf-8") as handle:
+            handle.write(OWL_HEAD.format(d="2026-07-12"))
+        derived = tmp_path / "ncbitaxon_removed_subset.json"
+        derived.write_text('{"meta":{"basicPropertyValues":[{"pred":"versionInfo","val":"2026-01-01"}]}}')
+        assert ou._derived_json_is_stale(owl, derived) is True
+
+        derived.write_text('{"meta":{"basicPropertyValues":[{"pred":"versionInfo","val":"2026-07-12"}]}}')
+        assert ou._derived_json_is_stale(owl, derived) is False
+
+    def test_chebi_staleness_survives_its_integer_versioning(self, tmp_path):
+        """
+        ChEBI has no date stamp, so both date readers returned None.
+
+        "Both unreadable" means "not stale" by design, so every ChEBI refresh was
+        reported fresh. Its derived JSON also records the release as a bare
+        `"version"` IRI with no `versionIRI` key, which the integer reader could
+        not match either.
+        """
+        owl = tmp_path / "chebi.owl.gz"
+        with gzip.open(owl, "wt", encoding="utf-8") as handle:
+            handle.write("<owl:Ontology><owl:versionInfo>253</owl:versionInfo></owl:Ontology>")
+        derived = tmp_path / "chebi.json"
+        derived.write_text('{"meta":{"version": "http://purl.obolibrary.org/obo/chebi/252/chebi.owl"}}')
+
+        assert ou._chebi_release_from_owl(derived) == "252", "the OBO-JSON form must be readable"
+        assert ou._derived_json_is_stale(owl, derived) is True
+
+        derived.write_text('{"meta":{"version": "http://purl.obolibrary.org/obo/chebi/253/chebi.owl"}}')
+        assert ou._derived_json_is_stale(owl, derived) is False
+
+    def test_the_no_build_exits_do_not_serve_what_serving_rejected(self, tmp_path, monkeypatch):
+        """
+        `_reusable_db` accepts what it cannot verify; that is a keeping answer.
+
+        Returning it as `usable` meant a database `_servable_db` had just refused
+        was handed to OAK one line later, where the per-item handlers supply a
+        default category for every term. Both no-build exits -- no semsql, and the
+        KG_SEMSQL_BUILD opt-out -- did exactly that.
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+        # Unverifiable, not demonstrably bad: exactly the case the two predicates
+        # are supposed to answer differently.
+        monkeypatch.setattr(ou, "_has_semsql_schema", lambda *a, **k: None)
+        calls = []
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: calls.append(a))
+
+        assert ou._servable_db(str(db), 3000, "go") is False
+        assert ou._reusable_db(str(db), 3000, ontology="go") is True, "still worth keeping"
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+        no_semsql = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", ontology="go")
+        monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+        opt_out = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", ontology="go")
+
+        assert not no_semsql.usable, "the no-semsql exit must not serve an unverified db"
+        assert not opt_out.usable, "the opt-out exit must not serve an unverified db"
+        assert calls == [], "no build should have been attempted"

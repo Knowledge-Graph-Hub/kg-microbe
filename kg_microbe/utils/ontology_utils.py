@@ -1471,6 +1471,31 @@ def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_re
     )
 
 
+def _build_confirmed(db_path: str, ontology: Optional[str], require_content: bool) -> Optional[bool]:
+    """
+    Judge a finished build, tri-state, before anything irreversible happens.
+
+    This verdict gates :func:`_discard_kept_target`, which deletes the previous
+    database — so it has to be the strongest check in the module, not merely the
+    structural one. Confirming only the schema meant a complete database *for the
+    wrong ontology* was accepted whenever its identity probe came back
+    indeterminate — a transient lock is enough — and the known-good ``.prev`` was
+    deleted for it. ``_usable_db`` does not close this: it rejects a demonstrably
+    wrong ontology but, being a preservation predicate, accepts one it cannot
+    establish.
+
+    :param db_path: The database just built.
+    :param ontology: Ontology it must hold, or None if not applicable.
+    :param require_content: Whether label and hierarchy rows are required.
+    :return: True if confirmed good, False if demonstrably bad, None if neither
+        could be established.
+    """
+    schema = _has_semsql_schema(db_path, require_content)
+    if schema is not True or ontology is None:
+        return schema
+    return _db_is_for_ontology(db_path, ontology)
+
+
 def _run_semsql_build(
     owl_source: Path,
     db_path: str,
@@ -1501,6 +1526,19 @@ def _run_semsql_build(
         that did not produce it.
     :return: Whether a usable DB exists, and whether this call built it.
     """
+    if _classify_db(db_path, min_size) == DB_BUSY:
+        # Another process holds a write transaction. Every later step here is
+        # destructive — rename to .prev, build at the original path, discard .prev
+        # on success — and the writer's commits would land on the moved inode and
+        # then be thrown away with it. `_present_db` already documents that a live
+        # writer's database must not be moved aside; the clear path never enforced
+        # it, because BUSY counts as present and present meant "safe to displace".
+        # Nothing is touched: no rename, no build, no deletion.
+        print(
+            f"Warning: not rebuilding {db_path} — another process is writing to it. "
+            "Re-run once that process has finished."
+        )
+        return DbEnsureResult(_servable_db(db_path, min_size, ontology, require_content=require_content))
     kept = _clear_build_target(db_path, min_size, ontology=ontology, require_content=require_content)
     print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
     try:
@@ -1533,7 +1571,7 @@ def _run_semsql_build(
         # undersized or damaged, and confirming only the schema discarded the
         # previous copy for it.
         confirmed = (
-            _has_semsql_schema(db_path, require_content)
+            _build_confirmed(db_path, ontology, require_content)
             if _usable_db(db_path, min_size, ontology=ontology, require_content=require_content)
             else False
         )

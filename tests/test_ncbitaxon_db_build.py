@@ -1529,3 +1529,114 @@ class TestOntologyIdentityAndServing:
         assert result.built, "a build did run"
         assert not result.usable, "an unverifiable build must not be served"
         assert Path(f"{db}.prev").exists(), "and the previous copy must be kept"
+
+    def test_a_database_with_a_live_writer_is_never_moved(self, tmp_path, monkeypatch):
+        """
+        BUSY means someone is writing, not that the file is free to displace.
+
+        Every step after clearing is destructive -- rename to .prev, build at the
+        original path, discard .prev on success -- so the writer's commits land on
+        the moved inode and are then thrown away with it. `_present_db` already
+        documents that a live writer's database must not be moved aside; the clear
+        path never enforced it, because BUSY counts as present and present meant
+        "safe to displace".
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+
+        writer = sqlite3.connect(str(db), timeout=0.1, isolation_level=None)
+        try:
+            writer.execute("BEGIN EXCLUSIVE")
+            writer.execute(
+                "INSERT INTO statements (subject, predicate, object, value) VALUES ('S', 'p', NULL, 'sentinel')"
+            )
+            assert ou._classify_db(str(db), 3000) == ou.DB_BUSY, "precondition"
+
+            builds = []
+            monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+            monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: builds.append(a))
+
+            result = ou._run_semsql_build(
+                owl,
+                str(db),
+                3000,
+                "GO",
+                "n",
+                reuse_on_failure=True,
+                require_content=True,
+                ontology="go",
+            )
+
+            assert builds == [], "no build may run over a live writer"
+            assert not result.built
+            assert Path(db).exists(), "the database must stay at its real path"
+            assert not Path(f"{db}.prev").exists(), "and nothing may be displaced"
+            writer.execute("COMMIT")
+        finally:
+            writer.close()
+
+        row = sqlite3.connect(str(db)).execute("SELECT value FROM statements WHERE subject = 'S'").fetchone()
+        assert row is not None, "the writer's commit must survive in the canonical database"
+
+    def test_an_unconfirmed_identity_does_not_discard_the_previous_database(self, tmp_path, monkeypatch):
+        """
+        The verdict that gates an irreversible delete must be the strongest one.
+
+        Confirming only the schema accepted a complete database for the *wrong*
+        ontology whenever its identity probe came back indeterminate -- a
+        transient lock is enough -- and deleted the known-good .prev for it.
+        `_usable_db` does not close this: it rejects a demonstrably wrong ontology
+        but, being a preservation predicate, accepts one it cannot establish.
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        def builds_the_wrong_ontology(cmd, **kwargs):
+            """Publish a complete database that holds ChEBI, not GO."""
+            write_single_ontology_db(Path(kwargs["cwd"]) / "go.db", "chebi")
+
+        monkeypatch.setattr(ou.subprocess, "run", builds_the_wrong_ontology)
+        monkeypatch.setattr(ou, "_db_is_for_ontology", lambda *a: None)
+
+        result = ou._run_semsql_build(
+            owl,
+            str(db),
+            3000,
+            "GO",
+            "n",
+            reuse_on_failure=True,
+            require_content=True,
+            ontology="go",
+        )
+
+        assert not result.usable, "an unconfirmed identity must not be served"
+        assert Path(f"{db}.prev").exists(), "the known-good previous database must survive"
+
+    def test_a_confirmed_identity_still_discards_the_previous_database(self, tmp_path, monkeypatch):
+        """A good build must still be able to reclaim the .prev's disk."""
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        def good_build(cmd, **kwargs):
+            """Publish a complete GO database."""
+            write_single_ontology_db(Path(kwargs["cwd"]) / "go.db", "go")
+
+        monkeypatch.setattr(ou.subprocess, "run", good_build)
+        result = ou._run_semsql_build(
+            owl,
+            str(db),
+            3000,
+            "GO",
+            "n",
+            reuse_on_failure=True,
+            require_content=True,
+            ontology="go",
+        )
+        assert result.usable and result.built
+        assert not Path(f"{db}.prev").exists(), "a confirmed build reclaims the previous copy"

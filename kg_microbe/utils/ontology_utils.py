@@ -290,7 +290,7 @@ def _semsql_build_enabled() -> bool:
     return os.environ.get("KG_SEMSQL_BUILD", "").strip().lower() not in {"off", "false", "0", "no"}
 
 
-def _usable_db(db_path: str, min_size: int, require_content: bool = True) -> bool:
+def _usable_db(db_path: str, min_size: int, ontology: Optional[str] = None, require_content: bool = True) -> bool:
     """
     Report whether a SemSQL DB at ``db_path`` is present and plausibly complete.
 
@@ -312,6 +312,9 @@ def _usable_db(db_path: str, min_size: int, require_content: bool = True) -> boo
     """
     if os.path.islink(db_path):
         return False
+    if ontology is not None and _db_is_for_ontology(db_path, ontology) is False:
+        print(f"  {db_path} does not hold {ontology}; refusing to accept it as a build result")
+        return False
     # Keep-states rather than == DB_OK: a build that finished correctly but was
     # opened by another process classifies BUSY, and rejecting it discarded the
     # new database and restored the stale one over it.
@@ -324,7 +327,13 @@ def _usable_db(db_path: str, min_size: int, require_content: bool = True) -> boo
     return _has_semsql_schema(db_path, require_content) is not False
 
 
-def _restored_db_usable(db_path: str, min_size: int, kept: "KeptTarget", require_content: bool = True) -> bool:
+def _restored_db_usable(
+    db_path: str,
+    min_size: int,
+    kept: "KeptTarget",
+    ontology: Optional[str] = None,
+    require_content: bool = True,
+) -> bool:
     """
     Judge the target after a failed build, according to what is now there.
 
@@ -701,7 +710,7 @@ def _servable_db(db_path: str, min_size: int, ontology: str, require_content: bo
     return _db_is_for_ontology(db_path, ontology) is not False
 
 
-def _reusable_db(db_path: str, min_size: int, require_content: bool = True) -> bool:
+def _reusable_db(db_path: str, min_size: int, ontology: Optional[str] = None, require_content: bool = True) -> bool:
     """
     Report whether a DB may be handed to callers as usable.
 
@@ -719,7 +728,15 @@ def _reusable_db(db_path: str, min_size: int, require_content: bool = True) -> b
     :param min_size: Smallest plausible size for a complete build.
     :return: True if the DB may be reported usable.
     """
-    return _present_db(db_path, min_size) and _has_semsql_schema(db_path, require_content) is not False
+    if not _present_db(db_path, min_size):
+        return False
+    if _has_semsql_schema(db_path, require_content) is False:
+        return False
+    # Identity belongs here, not only on the serving path. Ranking, fallback,
+    # opt-out and restore all decide whether a file is worth keeping or handing
+    # back, and a database holding the wrong ontology is worth neither — it once
+    # displaced the only correct .prev and was then served in its place.
+    return ontology is None or _db_is_for_ontology(db_path, ontology) is not False
 
 
 def _db_is_readable(db_path: str) -> bool:
@@ -875,7 +892,9 @@ def _note_orphaned_prev(db_path: str) -> None:
         )
 
 
-def _clear_build_target(db_path: str, min_size: int, require_content: bool = True) -> KeptTarget:
+def _clear_build_target(
+    db_path: str, min_size: int, ontology: Optional[str] = None, require_content: bool = True
+) -> KeptTarget:
     """
     Clear the SemSQL build target, preserving whatever it displaced.
 
@@ -907,10 +926,10 @@ def _clear_build_target(db_path: str, min_size: int, require_content: bool = Tru
     # displace the good copy and a subsequent failure would restore the wrong
     # one. Ranking decides what is destroyed, so it is the last place that
     # should use a weaker test than the rest.
-    prev_usable = os.path.lexists(kept) and _reusable_db(kept, min_size, require_content)
+    prev_usable = os.path.lexists(kept) and _reusable_db(kept, min_size, ontology, require_content)
     target_is_link = os.path.islink(db_path)
     target_present = os.path.lexists(db_path)
-    target_usable = target_present and not target_is_link and _reusable_db(db_path, min_size, require_content)
+    target_usable = target_present and not target_is_link and _reusable_db(db_path, min_size, ontology, require_content)
 
     recovered_link: Optional[str] = None
 
@@ -1127,6 +1146,7 @@ def _build_semsql_db(
     cost_note: str,
     reuse_on_failure: bool = True,
     require_content: bool = True,
+    ontology: Optional[str] = None,
 ) -> DbEnsureResult:
     """
     Run the guarded ``semsql make`` for one ontology.
@@ -1157,13 +1177,13 @@ def _build_semsql_db(
 
     def _fallback() -> DbEnsureResult:
         """Report the existing DB, or refuse it when the caller demands a build."""
-        return DbEnsureResult(_reusable_db(db_path, min_size, require_content) if reuse_on_failure else False)
+        return DbEnsureResult(_reusable_db(db_path, min_size, ontology, require_content) if reuse_on_failure else False)
 
     if not _semsql_build_enabled():
         # An explicit opt-out always reuses what is on disk, even for GO: the
         # user asked to skip the build, not to have categorisation refuse to run.
         print(f"Skipping {label} SemSQL build (KG_SEMSQL_BUILD opt-out); using {db_path} as-is")
-        return DbEnsureResult(_reusable_db(db_path, min_size, require_content))
+        return DbEnsureResult(_reusable_db(db_path, min_size, ontology, require_content))
     # Checked before decompressing: without semsql there is nothing to build, and
     # unpacking GB of OWL only to then bail out is pure waste.
     if shutil.which("semsql") is None:
@@ -1178,7 +1198,7 @@ def _build_semsql_db(
     if not (owl_source and owl_source.exists()):
         print(f"Warning: cannot build {db_path} — {label} OWL source {owl_source} is missing")
         return _fallback()
-    kept = _clear_build_target(db_path, min_size, require_content)
+    kept = _clear_build_target(db_path, min_size, ontology, require_content)
     print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
     try:
         subprocess.run(  # noqa: S603
@@ -1194,14 +1214,16 @@ def _build_semsql_db(
         # symlink the user supplied, which _usable_db rejects by design. But a
         # caller that passed reuse_on_failure=False wants the *rebuild*, so the
         # restored copy is refused here exactly as it is at the preflight exits.
-        return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, require_content))
+        return DbEnsureResult(
+            reuse_on_failure and _restored_db_usable(db_path, min_size, kept, ontology, require_content)
+        )
     except BaseException:  # noqa: BLE001 — KeyboardInterrupt must not strand .prev
         # Ctrl-C during a build previously left the DB gone and a multi-GB .prev
         # orphaned. This cannot help against SIGKILL or an unhandled SIGTERM,
         # which do not unwind — _clear_build_target's recovery covers those.
         _restore_build_target(db_path, kept)
         raise
-    if _usable_db(db_path, min_size, require_content):
+    if _usable_db(db_path, min_size, ontology, require_content):
         # Re-validate in full, not just the schema. Between the integrity check
         # and here the file can have been replaced by something schema-valid but
         # undersized or damaged, and confirming only the schema discarded the
@@ -1219,7 +1241,9 @@ def _build_semsql_db(
             # sitting dormant at .prev.
             print(f"Warning: {db_path} lacks a usable SemSQL schema; restoring the previous DB")
             _restore_build_target(db_path, kept)
-            return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, require_content))
+            return DbEnsureResult(
+                reuse_on_failure and _restored_db_usable(db_path, min_size, kept, ontology, require_content)
+            )
         # None: the schema could not be established (locked). Keep the previous
         # copy, since nothing has shown the replacement to be usable.
         print(
@@ -1234,7 +1258,7 @@ def _build_semsql_db(
     # fallback to the OAK cache.
     print(f"Warning: {db_path} is not a complete build; restoring the previous DB")
     _restore_build_target(db_path, kept)
-    return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, require_content))
+    return DbEnsureResult(reuse_on_failure and _restored_db_usable(db_path, min_size, kept, ontology, require_content))
 
 
 def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
@@ -1277,6 +1301,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
         "ChEBI runs relation-graph: expect 30+ minutes and several GB of RAM. "
         "Set KG_SEMSQL_BUILD=off to skip and use a prebuilt DB instead.",
         require_content=True,
+        ontology="chebi",
     )
 
 
@@ -1570,6 +1595,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
         "NCBITaxon is the heaviest source in the pipeline: expect hours and a "
         "~13 GB result. Set KG_SEMSQL_BUILD=off to skip.",
         require_content=True,
+        ontology="ncbitaxon",
     )
 
 
@@ -1612,6 +1638,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
         "/ several GB RAM. Set KG_SEMSQL_BUILD=off to skip.",
         reuse_on_failure=False,
         require_content=True,
+        ontology="go",
     )
 
 
@@ -1642,6 +1669,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
         "EC",
         "EC is small; this build usually takes a couple of minutes.",
         require_content=True,
+        ontology="ec",
     )
 
 

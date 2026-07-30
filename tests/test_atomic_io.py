@@ -178,13 +178,26 @@ class TestExistingPoisonedCacheHeals:
         monkeypatch.setattr(uu, "GO_CATEGORY_TREES_FILE", target)
         assert not uu.go_category_trees_is_complete(), "a header-only cache must count as absent"
 
-    def test_absent_and_complete_caches_are_classified_correctly(self, tmp_path, monkeypatch):
-        """A real cache is complete; a missing one is not."""
+    def test_only_a_marked_cache_counts_as_complete(self, tmp_path, monkeypatch):
+        """
+        Content cannot establish completion; only the marker can.
+
+        Row count was the earlier rule, and it accepted a legacy cache
+        interrupted after its first row — for the GO trees that means the
+        molecular-function rows survive while biological-process and
+        cellular-component are silently missing. An unmarked cache is therefore
+        regenerated once, after which it carries a marker and never is again.
+        """
         target = tmp_path / "go_category_trees.tsv"
         monkeypatch.setattr(uu, "GO_CATEGORY_TREES_FILE", target)
-        assert not uu.go_category_trees_is_complete()
+        assert not uu.go_category_trees_is_complete(), "absent"
+
         target.write_text("GO_Category\tGO_Term\nGO:0008150\tGO:0000001\n")
-        assert uu.go_category_trees_is_complete()
+        assert not uu.go_category_trees_is_complete(), "unmarked legacy cache must regenerate once"
+
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("GO_Category\tGO_Term\nGO:0008150\tGO:0000001\n")
+        assert uu.go_category_trees_is_complete(), "a marked cache is complete"
 
     def test_concurrent_writers_do_not_share_a_temp_file(self, tmp_path):
         """

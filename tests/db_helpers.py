@@ -60,6 +60,42 @@ SEMSQL_SEED = (
 )
 
 
+def write_single_ontology_db(path, ontology, pad=8000):
+    """
+    Write a schema-complete database holding exactly one ontology's identity.
+
+    ``write_semsql_db`` claims all four, which is convenient for the suites but
+    makes wrong-ontology behaviour untestable — a review pointed out that no
+    builder test could produce a schema-valid database holding the wrong
+    ontology. This is the fixture for those cases.
+
+    :param path: Destination path.
+    :param ontology: One of ncbitaxon, chebi, go, ec.
+    :param pad: Bytes appended so the file clears a shrunken size floor.
+    :return: The path written.
+    """
+    from kg_microbe.utils.ontology_utils import _ONTOLOGY_IDENTITY_SUBJECT
+
+    conn = sqlite3.connect(str(path))
+    try:
+        for ddl in SEMSQL_DDL:
+            conn.execute(ddl)
+        conn.execute(
+            "INSERT INTO statements (subject, predicate, object, value) VALUES ('obo:x', 'rdfs:label', NULL, 'x')"
+        )
+        conn.execute("INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')")
+        conn.execute(
+            "INSERT INTO statements (subject, predicate, object, value) VALUES (?, 'rdf:type', 'owl:Ontology', NULL)",
+            (_ONTOLOGY_IDENTITY_SUBJECT[ontology],),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    with open(path, "ab") as handle:
+        handle.write(b"\0" * pad)
+    return path
+
+
 def write_semsql_db(path, extra_statements=()):
     """
     Create a genuinely usable minimal SemSQL database at ``path``.

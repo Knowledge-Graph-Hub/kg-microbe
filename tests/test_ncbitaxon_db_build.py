@@ -17,7 +17,12 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
-from tests.db_helpers import SEMSQL_DDL, valid_db_bytes, write_semsql_db
+from tests.db_helpers import (
+    SEMSQL_DDL,
+    valid_db_bytes,
+    write_semsql_db,
+    write_single_ontology_db,
+)
 
 OWL_HEAD = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/ncbitaxon/{d}/ncbitaxon.owl"/>\n'
 
@@ -1020,3 +1025,60 @@ class TestOntologyIdentityAndServing:
             ou._load_go_namespace_map(str(target))
 
         assert not target.exists(), "the loader must not create an empty database"
+
+    def test_a_wrong_ontology_target_cannot_displace_the_correct_prev(self, tmp_path, monkeypatch):
+        """
+        Ranking was ontology-blind, so it could delete the only correct copy.
+
+        A GO database sitting at chebi.db ranked equal to a genuine ChEBI .prev,
+        displaced it, and a failed build then restored the GO one — leaving no
+        copy of the ontology that was asked for.
+        """
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 3000)
+        owl = tmp_path / "chebi.owl"
+        owl.write_text("<owl/>", encoding="utf-8")
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        db = write_single_ontology_db(tmp_path / "chebi.db", "go")
+        prev = write_single_ontology_db(tmp_path / "chebi.db.prev", "chebi")
+        correct = prev.read_bytes()
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: None)
+        ou._build_semsql_db(owl, str(db), 3000, "ChEBI", "n", ontology="chebi")
+
+        survivors = [p for p in tmp_path.iterdir() if p.is_file() and p.read_bytes() == correct]
+        assert survivors, "the copy holding the requested ontology must survive"
+
+    @pytest.mark.parametrize("scenario", ["no-semsql", "opt-out"])
+    def test_a_wrong_ontology_is_refused_on_the_no_build_paths(self, tmp_path, monkeypatch, scenario):
+        """
+        Identity was checked on the serving path only.
+
+        The fallback and opt-out exits re-authorised a database the identity
+        probe had just rejected.
+        """
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 3000)
+        owl = tmp_path / "chebi.owl"
+        owl.write_text("<owl/>", encoding="utf-8")
+        monkeypatch.setattr("kg_microbe.transform_utils.constants.CHEBI_SOURCE", owl)
+        db = write_single_ontology_db(tmp_path / "chebi.db", "go")
+
+        if scenario == "no-semsql":
+            monkeypatch.setattr(ou.shutil, "which", lambda _: None)
+        else:
+            monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+            monkeypatch.setenv("KG_SEMSQL_BUILD", "off")
+
+        assert not ou._ensure_chebi_db(str(db)), f"{scenario} must not serve the wrong ontology"
+
+    def test_a_build_producing_the_wrong_ontology_is_not_a_success(self, tmp_path, monkeypatch):
+        """Post-build acceptance was identity-blind too."""
+        monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 3000)
+        owl = tmp_path / "go.owl"
+        owl.write_text("<owl/>", encoding="utf-8")
+        db = tmp_path / "go.db"
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: write_single_ontology_db(db, "chebi"))
+        result = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", ontology="go")
+        assert not result.built, "a build producing another ontology is not a successful build"

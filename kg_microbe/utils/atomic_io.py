@@ -169,6 +169,14 @@ def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
     if not path.exists():
         return False
     marker = Path(f"{path}.complete")
+    if not marker.exists():
+        # No marker means the cache predates completion tracking, and nothing
+        # about its contents can establish that it finished. Counting one data
+        # row as proof accepted a legacy cache interrupted after its first row —
+        # for the GO trees that means MF survives while BP and CC are silently
+        # dropped. Regenerating once is cheap and self-limiting: the new write
+        # leaves a marker, so this happens at most once per cache.
+        return False
     if marker.exists():
         try:
             certified = marker.read_text().strip()

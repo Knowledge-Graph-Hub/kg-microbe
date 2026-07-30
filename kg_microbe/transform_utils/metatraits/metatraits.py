@@ -53,7 +53,10 @@ from kg_microbe.utils.oak_utils import search_by_label  # noqa: E402
 
 # _NCBITAXON_DB_MIN_SIZE is single-sourced in ontology_utils, beside the
 # builder that enforces it (_ensure_ncbitaxon_db).
-from kg_microbe.utils.ontology_utils import _NCBITAXON_DB_MIN_SIZE  # noqa: E402
+from kg_microbe.utils.ontology_utils import (  # noqa: E402
+    _NCBITAXON_DB_MIN_SIZE,
+    _db_is_for_ontology,
+)
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
@@ -88,11 +91,21 @@ def _validate_ncbitaxon_db(db_path: Path) -> Tuple[bool, str]:
     size = resolved.stat().st_size
     if size < _NCBITAXON_DB_MIN_SIZE:
         return False, f"too small ({size / 1e6:.1f} MB < {_NCBITAXON_DB_MIN_SIZE / 1e9:.0f} GB)"
+    # Identity first: every SemSQL database has the same shape, so a queryable
+    # one proves nothing about which ontology it holds. The real chebi.db passed
+    # every check here while taxon lookups returned nothing, and the transform
+    # then accumulated unresolved taxa silently.
+    if _db_is_for_ontology(str(resolved), "ncbitaxon") is False:
+        return False, f"does not contain NCBITaxon: {resolved}"
     try:
         adapter = get_adapter(f"sqlite:{db_path}")
-        list(adapter.basic_search("Bacteria"))
+        hits = list(adapter.basic_search("Bacteria"))
     except Exception as e:  # noqa: BLE001
         return False, f"{e.__class__.__name__}: {e}"
+    # The search result was discarded, so a database that answered with nothing
+    # counted as valid.
+    if not hits:
+        return False, f"no match for 'Bacteria' in {resolved}"
     return True, ""
 
 

@@ -50,7 +50,12 @@ class DerivedJsonRefreshTest(TestCase):
             self.transform._drop_stale_derived_json(archive, derived)
 
             self.assertFalse(derived.exists(), "the stale JSON must be removed so ROBOT re-runs")
-            self.assertFalse(plain.exists(), "the stale plain OWL would just reproduce it")
+            # The plain OWL is left alone: `decompress` runs whenever the JSON is
+            # absent and republishes it atomically, so deleting it here bought
+            # nothing and could destroy the only good copy.
+            self.assertTrue(plain.exists())
+            self.transform.decompress(archive)
+            self.assertEqual(plain.read_text(encoding="utf-8"), _OWL.format(d="2026-07-12"), "and is refreshed")
 
     def test_a_current_derived_json_is_kept(self):
         """Regenerating an up-to-date JSON would re-run a very expensive conversion."""
@@ -86,3 +91,34 @@ class DerivedJsonRefreshTest(TestCase):
             plain = Path(tmp) / "ncbitaxon.owl"
             self.assertEqual(plain.read_text(encoding="utf-8"), _OWL.format(d="2026-07-12"))
             self.assertEqual(list(Path(tmp).glob("*.partial")), [], "no temp file may survive")
+
+    def test_a_good_plain_owl_survives_a_stale_json(self):
+        """
+        Forcing a refresh by deleting the plain OWL could destroy the last copy.
+
+        The archive's head reports the new release, so the JSON reads as stale --
+        but the plain OWL is complete and already at that release, while the
+        archive is truncated further in. Deleting both left the decompression that
+        was meant to replace the OWL to fail, with neither OWL nor JSON remaining.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            # Larger than the 2 MB head read, so the release is readable from the
+            # front while the truncation sits beyond it.
+            body = _OWL.format(d="2026-07-12") + ("<!-- pad -->" * 300_000)
+            archive = Path(tmp) / "ncbitaxon.owl.gz"
+            with gzip.open(archive, "wt", encoding="utf-8") as handle:
+                handle.write(body)
+            derived = Path(tmp) / "ncbitaxon_removed_subset.json"
+            derived.write_text(_JSON.format(d="2026-01-01"), encoding="utf-8")
+            plain = Path(tmp) / "ncbitaxon.owl"
+            plain.write_text(body, encoding="utf-8")
+            intact = archive.read_bytes()
+            archive.write_bytes(intact[: len(intact) - 200])
+
+            self.transform._drop_stale_derived_json(archive, derived)
+
+            self.assertFalse(derived.exists(), "the stale JSON is still removed")
+            self.assertTrue(plain.exists(), "the only good OWL must survive")
+            self.assertEqual(plain.read_text(encoding="utf-8"), body)

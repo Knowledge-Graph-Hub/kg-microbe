@@ -1552,13 +1552,19 @@ def _run_semsql_build(
                 reuse_on_failure
                 and _restored_db_usable(db_path, min_size, kept, ontology=ontology, require_content=require_content)
             )
-        # None: the schema could not be established (locked). Keep the previous
-        # copy, since nothing has shown the replacement to be usable.
+        # None: the schema could not be established (locked). Keeping the previous
+        # copy is right — nothing has shown the replacement to be usable — but
+        # that is the *preservation* answer, and this exit was returning it as the
+        # serving answer too. Round 18 tightened every other exit that reports
+        # usability and left this one: a build whose result could not be verified
+        # was handed to OAK unchecked, where per-term handlers turn the resulting
+        # lookup errors into default categories. Keep .prev, and let the serving
+        # predicate decide what the caller may do with what was built.
         print(
             f"  Keeping {kept}: {db_path} was built but its SemSQL schema could not be "
             "verified (locked?). Delete the .prev once the new DB is confirmed good."
         )
-        return DbEnsureResult(True, built=True)
+        return DbEnsureResult(_servable_db(db_path, min_size, ontology, require_content=require_content), built=True)
     # The rejected artifact is deliberately left in place. Removing it looked
     # like the fix for "the next run adopts it", but that harm belongs to the
     # reuse fast-path, which now checks the schema itself — and deleting it

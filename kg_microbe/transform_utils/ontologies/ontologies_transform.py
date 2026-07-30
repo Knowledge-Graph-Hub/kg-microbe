@@ -282,12 +282,14 @@ class OntologiesTransform(Transform):
         if not _derived_json_is_stale(source, json_path):
             return
         print(f"{json_path.name} is from an older release than {source.name}; regenerating it.")
+        # Only the JSON is removed. Deleting the plain OWL as well — to force a
+        # refresh — destroyed the last good copy of it: when the archive's head
+        # reported the new release but the archive was truncated further in, a
+        # complete plain OWL already at that release was removed and the
+        # decompression that was meant to replace it then failed, leaving neither
+        # OWL nor JSON. No deletion is needed anyway: `decompress` runs whenever
+        # the JSON is absent and republishes the plain OWL atomically.
         json_path.unlink(missing_ok=True)
-        # The plain OWL feeds ROBOT, so a stale one would just reproduce the
-        # stale JSON. Removing it makes `decompress` below refresh it.
-        plain_owl = source.parent / source.stem
-        if source.suffixes[-1:] == [".gz"] and plain_owl.exists():
-            plain_owl.unlink()
 
     def decompress(self, data_file):
         """Unzip file."""

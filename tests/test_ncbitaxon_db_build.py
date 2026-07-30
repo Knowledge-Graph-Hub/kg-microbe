@@ -1499,3 +1499,33 @@ class TestOntologyIdentityAndServing:
         assert not no_semsql.usable, "the no-semsql exit must not serve an unverified db"
         assert not opt_out.usable, "the opt-out exit must not serve an unverified db"
         assert calls == [], "no build should have been attempted"
+
+    def test_an_unverifiable_build_is_not_served_either(self, tmp_path, monkeypatch):
+        """
+        Round 18 tightened every exit that reports usability but this one.
+
+        `semsql` exits 0 and another process holds the new database during
+        validation, so the schema verdict is None. Keeping .prev is right -- the
+        replacement has not been shown usable -- but that is the preservation
+        answer, and returning it as the serving answer handed an unverified
+        database to OAK, where per-term handlers turn the lookup errors into
+        default categories.
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        def run(cmd, **kwargs):
+            """Produce a complete database, as a successful build would."""
+            write_single_ontology_db(Path(kwargs["cwd"]) / "go.db", "go")
+
+        monkeypatch.setattr(ou.subprocess, "run", run)
+        # Present and sizeable, but nothing can be established about it.
+        monkeypatch.setattr(ou, "_has_semsql_schema", lambda *a, **k: None)
+
+        result = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", ontology="go")
+        assert result.built, "a build did run"
+        assert not result.usable, "an unverifiable build must not be served"
+        assert Path(f"{db}.prev").exists(), "and the previous copy must be kept"

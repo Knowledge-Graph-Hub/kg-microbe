@@ -1171,7 +1171,7 @@ class TestOntologyIdentityAndServing:
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: calls.append(a))
 
-        assert ou._obo_release_from_head(owl) == "2026-07-12", "the archive decides the release"
+        assert ou._obo_release_from_head(owl, prefer_archive=True) == "2026-07-12"
         ou._ensure_ncbitaxon_db(str(db))
         assert calls, "a refreshed archive must trigger a rebuild"
         assert "2026-07-12" in owl.read_text(encoding="utf-8"), "the plain OWL must be refreshed"
@@ -1254,3 +1254,186 @@ class TestOntologyIdentityAndServing:
             link.symlink_to(elsewhere)
             assert reader(str(link)) is None
             assert not elsewhere.exists(), f"{reader.__name__} wrote through a dangling link"
+
+    def test_a_chebi_archive_refresh_is_seen_despite_integer_versions(self, tmp_path):
+        """
+        ChEBI versions by integer, so the integer fallback decides.
+
+        And it read both operands through the archive-preferring reader, which
+        compared the archive with itself.
+
+        Plain chebi.owl is 252, a download refreshes chebi.owl.gz to 253: the
+        comparison found no difference, the build ran from 252, accepted that as
+        newly built, and repeated its 30-minute rebuild on every invocation.
+        """
+        owl = tmp_path / "chebi.owl"
+        version = "<owl:Ontology><owl:versionInfo>%s</owl:versionInfo></owl:Ontology>"
+        owl.write_text(version % "252", encoding="utf-8")
+        with gzip.open(f"{owl}.gz", "wt", encoding="utf-8") as handle:
+            handle.write(version % "253")
+
+        assert ou._chebi_release_from_owl(owl) == "252", "the named path must be read"
+        assert ou._chebi_release_from_owl(owl, prefer_archive=True) == "253"
+        assert ou._chebi_release_from_owl(Path(f"{owl}.gz")) == "253", "a .gz name reads as an archive"
+        assert ou._archive_release_differs(owl) is True
+
+    def test_a_stray_json_archive_cannot_vouch_for_a_stale_json(self, tmp_path):
+        """
+        Archive precedence belongs to downloaded sources, not derived ones.
+
+        Nothing refreshes a `go.json.gz` -- the JSON is produced from go.owl by
+        ROBOT. A leftover one speaking for the plain go.json meant the transform
+        kept reading a stale JSON that was never regenerated, while the strict
+        alignment gate inspected the archive nobody consumes.
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-01"), encoding="utf-8")
+        derived = tmp_path / "go.json"
+        derived.write_text('{"meta":{"basicPropertyValues":[{"pred":"versionInfo","val":"2026-01-01"}]}}')
+        with gzip.open(f"{derived}.gz", "wt", encoding="utf-8") as handle:
+            handle.write('{"meta":{"basicPropertyValues":[{"pred":"versionInfo","val":"2026-07-01"}]}}')
+
+        assert ou._obo_release_from_head(derived) == "2026-01-01", "the consumed file decides"
+        assert ou._derived_json_is_stale(owl, derived) is True
+
+    def test_a_momentary_lock_is_not_cached_as_go_having_no_namespaces(self, tmp_path, monkeypatch):
+        """
+        A lock is not an answer, and latching it makes every GO term a process.
+
+        Another process holds the database between the ensure and the namespace
+        query. The read raised `database is locked`, the failure flag latched, and
+        every GO term for the rest of the process fell to the BiologicalProcess
+        default -- silently, since the flag also suppressed the warning.
+        """
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
+        monkeypatch.setattr(ou, "_ensure_go_db", lambda _: True)
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+
+        attempts = []
+
+        def flaky(_path):
+            """Fail as a lock would on the first attempts, then succeed."""
+            attempts.append(1)
+            if len(attempts) < 2:
+                raise sqlite3.OperationalError("database is locked")
+            return {"GO:0008150": "biological_process", "GO:0003674": "molecular_function"}
+
+        monkeypatch.setattr(ou, "_query_go_namespaces", flaky)
+        assert ou._load_go_namespace_map(str(tmp_path / "go.db")) == {}
+        assert not ou._GO_NAMESPACE_LOAD_FAILED, "a lock must not latch the failure"
+
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
+        loaded = ou._load_go_namespace_map(str(tmp_path / "go.db"))
+        assert loaded["GO:0003674"] == "molecular_function", "the next call must re-read"
+
+    def test_a_structural_failure_is_still_latched(self, tmp_path, monkeypatch):
+        """Retrying a missing table forever would only flood the log."""
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
+        monkeypatch.setattr(ou, "_GO_NAMESPACE_LOAD_FAILED", False)
+        monkeypatch.setattr(ou, "_ensure_go_db", lambda _: True)
+
+        def broken(_path):
+            """Fail the way a database missing the view would."""
+            raise sqlite3.OperationalError("no such table: node_to_value_statement")
+
+        monkeypatch.setattr(ou, "_query_go_namespaces", broken)
+        assert ou._load_go_namespace_map(str(tmp_path / "go.db")) == {}
+        assert ou._GO_NAMESPACE_LOAD_FAILED, "a structural failure should latch"
+
+    def test_serving_requires_a_confirmed_ontology_identity(self, tmp_path, monkeypatch):
+        """
+        An indeterminate identity must not authorize queries.
+
+        `_servable_db` retried and required the *schema* probe but accepted a
+        None identity, so a database that could not be shown to hold the right
+        ontology was served: every lookup returns nothing and the per-item
+        handlers quietly supply defaults. Refusing to *rebuild* on an
+        unverifiable answer stays correct -- that is `_reusable_db`'s job.
+        """
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+        assert ou._servable_db(str(db), 3000, "go") is True, "a good db is served"
+
+        monkeypatch.setattr(ou, "_db_is_for_ontology", lambda *a: None)
+        assert ou._servable_db(str(db), 3000, "go") is False, "unverifiable must not be served"
+        assert ou._reusable_db(str(db), 3000, ontology="go") is True, "but it is still preserved"
+
+    def test_a_build_that_reproduces_the_old_release_says_so(self, tmp_path, monkeypatch, capsys):
+        """
+        A rebuild that repeats forever must explain itself.
+
+        Acceptance stays generic -- a complete database of the wrong release is
+        still a real database. But the caller rebuilt *because* the releases
+        differed, so a build that reproduces the old one rebuilds again on every
+        later run, and saying nothing left no way to find out why.
+        """
+        owl = tmp_path / "ncbitaxon.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-01-01"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "ncbitaxon.db", "ncbitaxon")
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        def run(cmd, **kwargs):
+            """Produce a complete database, as a real build would."""
+            write_single_ontology_db(Path(kwargs["cwd"]) / "ncbitaxon.db", "ncbitaxon")
+
+        monkeypatch.setattr(ou.subprocess, "run", run)
+        monkeypatch.setattr(ou, "_ncbitaxon_db_release", lambda _: "2026-01-01")
+
+        result = ou._build_semsql_db(
+            owl,
+            str(db),
+            3000,
+            "NCBITaxon",
+            "n",
+            ontology="ncbitaxon",
+            expected_release="2026-07-12",
+        )
+        assert result.usable and result.built
+        out = capsys.readouterr().out
+        assert "2026-01-01" in out and "2026-07-12" in out, out
+        assert "repeat on every run" in out, out
+
+    def test_the_namespace_read_itself_retries_a_lock(self, tmp_path, monkeypatch):
+        """
+        The retry has to be around the read, not only around the caching.
+
+        Not retrying meant the very first lock -- routine when an HPC array runs
+        several transforms against one data/raw -- returned an empty map for that
+        call, and every GO term in it became a BiologicalProcess.
+        """
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        with sqlite3.connect(str(db)) as conn:
+            # node_to_value_statement is a view over statements in the real schema.
+            conn.execute(
+                "INSERT INTO statements (subject, predicate, object, value) "
+                "VALUES ('GO:0003674', 'oio:hasOBONamespace', NULL, 'molecular_function')"
+            )
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+
+        real = ou._read_only_connection
+        attempts = []
+
+        def locked_once(path):
+            """Behave as a held write lock does, for the first attempt only."""
+            attempts.append(path)
+            if len(attempts) == 1:
+                raise sqlite3.OperationalError("database is locked")
+            return real(path)
+
+        monkeypatch.setattr(ou, "_read_only_connection", locked_once)
+        assert ou._query_go_namespaces(str(db)) == {"GO:0003674": "molecular_function"}
+        assert len(attempts) == 2, "the read should have been retried once"
+
+    def test_the_namespace_read_gives_up_on_a_persistent_lock(self, tmp_path, monkeypatch):
+        """Retrying forever would hang the transform instead of reporting."""
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou, "_DB_PROBE_TIMEOUT_SECONDS", 0)
+
+        def always_locked(_path):
+            """Never yield the lock."""
+            raise sqlite3.OperationalError("database is locked")
+
+        monkeypatch.setattr(ou, "_read_only_connection", always_locked)
+        with pytest.raises(sqlite3.OperationalError):
+            ou._query_go_namespaces(str(db))

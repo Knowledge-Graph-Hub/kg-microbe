@@ -62,15 +62,17 @@ _EC_DB_MIN_SIZE = 10_000_000  # 10 MB
 _RELEASE_RE = re.compile(r"releases/(\d{4}-\d{2}-\d{2})")
 
 
-def _obo_release_from_head(path: Path, nbytes: int = 2_000_000) -> Optional[str]:
+def _obo_release_from_head(path: Path, nbytes: int = 2_000_000, *, prefer_archive: bool = False) -> Optional[str]:
     """
     Return the ``YYYY-MM-DD`` OBO release stamped near the top of an .owl/.json.
 
     Both OWL (``versionIRI rdf:resource=".../releases/DATE/..."``) and OBO-JSON
     (``meta`` versionInfo) carry the release near the file head, so a bounded
     read avoids parsing hundreds of MB. Returns None if unreadable / unstamped.
+
+    ``prefer_archive`` is for downloaded sources only — see :func:`_read_head`.
     """
-    head = _read_head(path, nbytes)
+    head = _read_head(path, nbytes, prefer_archive=prefer_archive)
     if head is None:
         return None
     m = _RELEASE_RE.search(head)
@@ -104,7 +106,10 @@ def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
     # unlink a path that does not exist.
     if not json_path.exists():
         return False
-    owl_release = _obo_release_from_head(owl_path)
+    # The OWL is downloaded, so its archive decides its release. The JSON is
+    # *derived* — nothing refreshes a `<x>.json.gz`, so a stray leftover one must
+    # never speak for the plain JSON the transform actually reads.
+    owl_release = _obo_release_from_head(owl_path, prefer_archive=True)
     json_release = _obo_release_from_head(json_path)
     return bool(owl_release and json_release and owl_release != json_release)
 
@@ -158,7 +163,7 @@ def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
         # go.json beside a stray go.json.gz would read as stale — and this gate
         # defaults to strict, so it would abort over a file nothing reads (F8).
         return
-    owl_release = _obo_release_from_head(Path(GO_SOURCE))
+    owl_release = _obo_release_from_head(Path(GO_SOURCE), prefer_archive=True)
     json_release = _obo_release_from_head(json_path)
     if owl_release and json_release and owl_release != json_release:
         msg = (
@@ -275,7 +280,7 @@ def assert_ncbitaxon_version_alignment(db_path: str, strict: Optional[bool] = No
     strict = _version_check_strict("KG_NCBITAXON_VERSION_CHECK", strict, default_strict=False)
     if not NCBITAXON_SOURCE:
         return
-    owl_release = _obo_release_from_head(Path(NCBITAXON_SOURCE))
+    owl_release = _obo_release_from_head(Path(NCBITAXON_SOURCE), prefer_archive=True)
     db_release = _ncbitaxon_db_release(db_path)
     if owl_release and db_release and owl_release != db_release:
         msg = (
@@ -625,6 +630,23 @@ def _db_is_for_ontology(db_path: str, ontology: str) -> Optional[bool]:
     return True
 
 
+def _is_transient_db_error(error: BaseException) -> bool:
+    """
+    Report whether a database error means "ask again later" rather than "bad".
+
+    Lock contention is the normal condition on a shared filesystem — an HPC array
+    runs several transforms against the same ontology databases — and it says
+    nothing about the database's contents. Distinguishing it matters wherever a
+    failure is *cached*: latching a permanent verdict on a momentary lock turns a
+    healthy database into an unusable one for the rest of the process.
+
+    :param error: The exception raised by a probe or query.
+    :return: True if retrying could plausibly succeed.
+    """
+    message = str(error).lower()
+    return "locked" in message or "busy" in message
+
+
 def _probe_verdict(db_path: str, sql: Optional[str], error: Exception) -> Optional[bool]:
     """
     Decide what a probe failure proves about a database, and say so.
@@ -736,7 +758,21 @@ def _servable_db(db_path: str, min_size: int, ontology: str, *, require_content:
             time.sleep(_DB_PROBE_TIMEOUT_SECONDS)
     if verdict is not True:
         return False
-    return _db_is_for_ontology(db_path, ontology) is not False
+    # Retried and *required*, symmetrically with the schema probe above. Accepting
+    # an indeterminate verdict here contradicted this function's contract: a
+    # database that could not be shown to hold the right ontology was authorised
+    # for queries, which is the case where every lookup returns nothing and the
+    # per-item handlers quietly supply defaults. Declining to rebuild on an
+    # unverifiable answer stays correct — that is `_reusable_db`'s job, and it
+    # still accepts None.
+    for attempt in range(_DB_PROBE_RETRIES):
+        identity = _db_is_for_ontology(db_path, ontology)
+        if identity is not None:
+            return identity
+        if attempt + 1 < _DB_PROBE_RETRIES:
+            time.sleep(_DB_PROBE_TIMEOUT_SECONDS)
+    print(f"  Refusing to serve {db_path}: could not confirm it holds {ontology}")
+    return False
 
 
 def _reusable_db(db_path: str, min_size: int, *, ontology: Optional[str] = None, require_content: bool = True) -> bool:
@@ -778,7 +814,7 @@ def _db_is_readable(db_path: str) -> bool:
     return _classify_db(db_path, 0) in _DB_KEEP_STATES
 
 
-def _read_head(path: Path, nbytes: int) -> Optional[str]:
+def _read_head(path: Path, nbytes: int, *, prefer_archive: bool = False) -> Optional[str]:
     """
     Read the head of ``path``, transparently falling back to ``path`` + ``.gz``.
 
@@ -789,17 +825,33 @@ def _read_head(path: Path, nbytes: int) -> Optional[str]:
     silently no-op — leaving an old DB in place, the exact drift this module
     exists to catch.
 
-    :param path: Uncompressed path to read.
+    ``prefer_archive`` is a statement about *provenance*, so it is per-call rather
+    than global. It belongs to downloaded OWL sources, where ``kg download``
+    refreshes ``<x>.gz`` and leaves any previously decompressed ``<x>`` alone, so
+    the archive is the artifact of record. Making that the blanket rule here broke
+    the two callers for which it is wrong: the comparator whose entire job is to
+    tell the two forms apart read the archive for *both* operands and so could
+    never see a difference, and the derived-JSON staleness check let a stray
+    leftover ``go.json.gz`` vouch for a stale ``go.json`` that the transform was
+    actually reading.
+
+    :param path: Path to read; a ``.gz`` name is read as an archive directly.
     :param nbytes: How many characters to read.
+    :param prefer_archive: Read ``<path>.gz`` first when both forms exist.
     :return: The head as text, or None if neither form is readable.
     """
-    # Archive first when both exist. `kg download` refreshes `<x>.gz` and leaves
-    # any previously decompressed `<x>` alone, so preferring the plain file made
-    # an ontology refresh invisible: the release gate compared the old stamp,
-    # declared the old DB aligned, and no rebuild ever ran. The archive is the
-    # downloaded artifact of record, so it decides the release.
-    archive = path.with_name(path.name + ".gz")
-    candidates = ((gzip.open, archive), (open, path)) if archive.exists() else ((open, path), (gzip.open, archive))
+    if path.name.endswith(".gz"):
+        # An archive named outright. Callers comparing the two forms pass the
+        # archive path itself, and text-opening gzip bytes yields mojibake in
+        # which no stamp matches — a silent "no difference".
+        candidates = ((gzip.open, path),)
+    else:
+        archive = path.with_name(path.name + ".gz")
+        candidates = (
+            ((gzip.open, archive), (open, path))
+            if prefer_archive and archive.exists()
+            else ((open, path), (gzip.open, archive))
+        )
     for opener, target in candidates:
         if not target.exists():
             continue
@@ -1090,6 +1142,10 @@ def _archive_release_differs(owl_source: Path) -> bool:
     packed = _RELEASE_RE.search(archive_head) or re.search(r"versionIRI[^>]{0,160}?(\d{4}-\d{2}-\d{2})", archive_head)
     if not (plain and packed):
         # ChEBI versions by integer rather than date; fall back to that reader.
+        # Both operands are read from the exact path named: with the archive
+        # preferred, both calls resolved to the archive and every ChEBI refresh
+        # compared identical to itself, so the build kept running from the stale
+        # plain OWL and repeated its 30-minute rebuild on every invocation.
         plain_value = _chebi_release_from_owl(owl_source)
         packed_value = _chebi_release_from_owl(archive)
         return bool(plain_value and packed_value and plain_value != packed_value)
@@ -1127,7 +1183,7 @@ def _decompress_atomically(archive: Path, destination: Path) -> bool:
     return True
 
 
-def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000) -> Optional[str]:
+def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000, *, prefer_archive: bool = False) -> Optional[str]:
     """
     Return the ChEBI release recorded near the top of ``chebi.owl``.
 
@@ -1139,9 +1195,10 @@ def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000) -> Optional[str
 
     :param path: Path to ``chebi.owl``.
     :param nbytes: Bytes to read from the head (ChEBI OWL is ~1 GB uncompressed).
+    :param prefer_archive: Read ``<path>.gz`` first — downloaded sources only.
     :return: Release as a string (e.g. ``"253"``), or None if unreadable/unstamped.
     """
-    head = _read_head(path, nbytes)
+    head = _read_head(path, nbytes, prefer_archive=prefer_archive)
     if head is None:
         return None
     m = re.search(r"versionIRI[^>]{0,160}?/chebi/(\d+)/", head)
@@ -1206,7 +1263,7 @@ def assert_chebi_version_alignment(db_path: str, strict: Optional[bool] = None) 
     strict = _version_check_strict("KG_CHEBI_VERSION_CHECK", strict, default_strict=False)
     if not CHEBI_SOURCE:
         return
-    owl_release = _chebi_release_from_owl(Path(CHEBI_SOURCE))
+    owl_release = _chebi_release_from_owl(Path(CHEBI_SOURCE), prefer_archive=True)
     db_release = _chebi_db_release(db_path)
     if owl_release and db_release and owl_release != db_release:
         msg = (
@@ -1356,7 +1413,39 @@ def _build_semsql_db(
             reuse_on_failure=reuse_on_failure,
             require_content=require_content,
             ontology=ontology,
+            expected_release=expected_release,
         )
+
+
+def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_release: Optional[str]) -> None:
+    """
+    Say so when a completed build did not produce the release that was asked for.
+
+    Acceptance is deliberately still generic — schema, content, identity and size.
+    A complete database of the wrong release is a real database, and refusing it
+    would leave the caller with nothing. But saying nothing was worse than either:
+    the caller rebuilds precisely because the database's release differs from the
+    source's, so a build that reproduces the old release rebuilds again on the
+    next invocation, and forever after, with no hint as to why. The cause is
+    always upstream — a stale source, or one whose stamp cannot be read — and
+    naming both releases points straight at it.
+
+    :param db_path: The database just built.
+    :param ontology: Ontology it holds, or None if unknown.
+    :param expected_release: Release the source was read as.
+    """
+    reader = _DB_RELEASE_READERS.get(ontology or "")
+    if not (expected_release and reader):
+        return
+    built_release = reader(db_path)
+    if built_release is None or built_release == expected_release:
+        return
+    print(
+        f"Warning: built {db_path} at release {built_release}, but {ontology}'s source "
+        f"reads as {expected_release}. The build ran against a source that is not the "
+        "one the release gate compared, so this rebuild will repeat on every run until "
+        "the two agree. Check for a stale decompressed OWL beside its .gz."
+    )
 
 
 def _run_semsql_build(
@@ -1369,6 +1458,7 @@ def _run_semsql_build(
     reuse_on_failure: bool,
     require_content: bool,
     ontology: Optional[str],
+    expected_release: Optional[str] = None,
 ) -> DbEnsureResult:
     """
     Clear the target, run ``semsql make``, and judge the result.
@@ -1384,6 +1474,8 @@ def _run_semsql_build(
     :param reuse_on_failure: Whether an existing DB may still be reported usable.
     :param require_content: Whether label and hierarchy rows are required.
     :param ontology: Ontology the DB must hold.
+    :param expected_release: Release the source was read as, for reporting a build
+        that did not produce it.
     :return: Whether a usable DB exists, and whether this call built it.
     """
     kept = _clear_build_target(db_path, min_size, ontology=ontology, require_content=require_content)
@@ -1423,6 +1515,7 @@ def _run_semsql_build(
             else False
         )
         if confirmed:
+            _report_release_shortfall(db_path, ontology, expected_release)
             _discard_kept_target(kept)
             return DbEnsureResult(True, built=True)
         if confirmed is False:
@@ -1478,7 +1571,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
 
     min_size = _CHEBI_DB_MIN_SIZE
     owl_source = Path(CHEBI_SOURCE) if CHEBI_SOURCE else None
-    owl_release = _chebi_release_from_owl(owl_source) if owl_source else None
+    owl_release = _chebi_release_from_owl(owl_source, prefer_archive=True) if owl_source else None
     _note_orphaned_prev(db_path)
     if _servable_db(db_path, min_size, "chebi"):
         db_release = _chebi_db_release(db_path)
@@ -1784,7 +1877,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
 
     min_size = _NCBITAXON_DB_MIN_SIZE
     owl_source = Path(NCBITAXON_SOURCE) if NCBITAXON_SOURCE else None
-    owl_release = _obo_release_from_head(owl_source) if owl_source else None
+    owl_release = _obo_release_from_head(owl_source, prefer_archive=True) if owl_source else None
     _note_orphaned_prev(db_path)
     if _servable_db(db_path, min_size, "ncbitaxon"):
         db_release = _ncbitaxon_db_release(db_path)
@@ -1821,7 +1914,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
-    owl_release = _obo_release_from_head(Path(GO_SOURCE)) if GO_SOURCE else None
+    owl_release = _obo_release_from_head(Path(GO_SOURCE), prefer_archive=True) if GO_SOURCE else None
     _note_orphaned_prev(go_db_path)
     if _servable_db(go_db_path, _GO_DB_MIN_SIZE, "go"):
         # An existing, non-stub go.db is reused — unless it has drifted from the
@@ -1882,6 +1975,40 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
     )
 
 
+def _query_go_namespaces(go_db_path: str) -> Dict[str, str]:
+    """
+    Read the GO id → OBO namespace rows, retrying while the database is locked.
+
+    Split out so the retry is around the read alone. A lock is the routine
+    condition on shared storage — the HPC array runs several transforms against
+    one ``data/raw`` — and without a retry a momentary one produced an empty map,
+    which files every MF and CC term as BiologicalProcess. Retrying costs
+    milliseconds against a multi-hour transform.
+
+    :param go_db_path: Path to ``go.db``.
+    :return: The namespace map as read.
+    :raises sqlite3.Error: If the read fails for a reason retrying cannot fix, or
+        remains locked after the last attempt.
+    """
+    for attempt in range(_DB_PROBE_RETRIES):
+        try:
+            conn = _read_only_connection(go_db_path)
+            try:
+                cur = conn.execute(
+                    "SELECT subject, value FROM node_to_value_statement "
+                    "WHERE predicate = 'oio:hasOBONamespace' AND subject LIKE 'GO:%'"
+                )
+                return {row[0]: row[1] for row in cur}
+            finally:
+                conn.close()
+        except sqlite3.Error as exc:
+            if not _is_transient_db_error(exc) or attempt + 1 == _DB_PROBE_RETRIES:
+                raise
+            print(f"  {go_db_path} is locked; retrying the GO namespace read")
+            time.sleep(_DB_PROBE_TIMEOUT_SECONDS)
+    raise AssertionError("unreachable: the loop either returns or raises")
+
+
 def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
     """
     Read GO id → OBO namespace from semantic-sql sqlite directly.
@@ -1892,8 +2019,13 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
     so every entity_metadata_map call would otherwise throw and fall through
     to the BiologicalProcess fallback for every GO node.
 
-    Caches both success (the dict) and failure (an empty dict + a flag) so a
-    missing / unreadable sqlite file does not retry per call.
+    Caches success (the dict) and *permanent* failure (an empty dict + a flag) so
+    a missing or structurally unreadable sqlite file does not retry per call. A
+    lock is not a permanent failure and is not latched — see
+    :func:`_is_transient_db_error`.
+
+    :param go_db_path: Path to ``go.db``.
+    :return: GO id → namespace, or an empty map if it could not be read.
     """
     global _GO_NAMESPACE_CACHE, _GO_NAMESPACE_LOAD_FAILED
     if _GO_NAMESPACE_CACHE is not None:
@@ -1915,34 +2047,36 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
             "prebuilt go.db. Continuing would file every MF/CC term as BiologicalProcess."
         )
     try:
-        # Read-only: a plain connect() creates the file when it is missing.
-        uri = f"file:{urllib.parse.quote(os.path.abspath(go_db_path))}?mode=ro"
-        conn = sqlite3.connect(uri, uri=True)
-        try:
-            cur = conn.execute(
-                "SELECT subject, value FROM node_to_value_statement "
-                "WHERE predicate = 'oio:hasOBONamespace' AND subject LIKE 'GO:%'"
+        namespaces = _query_go_namespaces(go_db_path)
+        if not namespaces:
+            # Schema, identity, labels and hierarchy can all be present while
+            # the namespace rows are not, and an empty map sends every term
+            # to the BiologicalProcess default — the miscategorisation this
+            # work exists to prevent, arrived at through a database that
+            # passed every generic check. The real go.db holds ~48k of these
+            # rows; zero means the build cannot answer the question.
+            raise OntologyDbUnavailableError(
+                f"{go_db_path} has no oio:hasOBONamespace rows, so GO aspects cannot be "
+                "read. Rebuild go.db from go.owl (delete it and re-run), or supply a "
+                "prebuilt one. Continuing would file every MF/CC term as "
+                "BiologicalProcess."
             )
-            _GO_NAMESPACE_CACHE = {row[0]: row[1] for row in cur}
-            if not _GO_NAMESPACE_CACHE:
-                # Schema, identity, labels and hierarchy can all be present while
-                # the namespace rows are not, and an empty map sends every term
-                # to the BiologicalProcess default — the miscategorisation this
-                # work exists to prevent, arrived at through a database that
-                # passed every generic check. The real go.db holds ~48k of these
-                # rows; zero means the build cannot answer the question.
-                raise OntologyDbUnavailableError(
-                    f"{go_db_path} has no oio:hasOBONamespace rows, so GO aspects cannot be "
-                    "read. Rebuild go.db from go.owl (delete it and re-run), or supply a "
-                    "prebuilt one. Continuing would file every MF/CC term as "
-                    "BiologicalProcess."
-                )
-        finally:
-            conn.close()
+        # Published only once validated. Assigning the map before the emptiness
+        # check meant that if anything ever caught the error above and carried on,
+        # the cache already held `{}` and served it to every later call.
+        _GO_NAMESPACE_CACHE = namespaces
         return _GO_NAMESPACE_CACHE
     except Exception as exc:
         print(f"Warning: failed to load GO namespace map from {go_db_path}: {exc}")
-        _GO_NAMESPACE_LOAD_FAILED = True
+        # A lock is not an answer. Latching the failure flag on one meant a
+        # momentary `database is locked` — routine when several transforms share
+        # data/raw — permanently cached an empty map, and every GO term for the
+        # rest of the process fell to the BiologicalProcess default with no
+        # further warning. Transient failures leave the flag clear so the next
+        # call re-reads; anything else still latches, since retrying a missing
+        # table forever only floods the log.
+        if not _is_transient_db_error(exc):
+            _GO_NAMESPACE_LOAD_FAILED = True
         return {}
 
 

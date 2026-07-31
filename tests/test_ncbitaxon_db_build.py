@@ -1640,3 +1640,104 @@ class TestOntologyIdentityAndServing:
         )
         assert result.usable and result.built
         assert not Path(f"{db}.prev").exists(), "a confirmed build reclaims the previous copy"
+
+    def test_an_ordinary_write_transaction_also_blocks_the_rebuild(self, tmp_path, monkeypatch):
+        """
+        A blocked read is the wrong test for "is someone writing this?".
+
+        SQLite's RESERVED lock -- what an ordinary BEGIN IMMEDIATE takes, and what
+        a writer holds for its whole transaction -- deliberately permits readers,
+        so the classification says `ok`. Only the brief EXCLUSIVE lock at commit
+        blocks reads, so guarding on readability caught a writer only in the
+        instant it was finishing.
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-12"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+
+        writer = sqlite3.connect(str(db), timeout=0.1, isolation_level=None)
+        try:
+            writer.execute("BEGIN IMMEDIATE")
+            writer.execute(
+                "INSERT INTO statements (subject, predicate, object, value) VALUES ('S', 'p', NULL, 'sentinel')"
+            )
+            assert ou._classify_db(str(db), 3000) == ou.DB_OK, "reads are not blocked by RESERVED"
+            assert ou._db_has_active_writer(str(db)) is True, "but a writer is plainly there"
+
+            builds = []
+            monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+            monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: builds.append(a))
+            ou._run_semsql_build(
+                owl,
+                str(db),
+                3000,
+                "GO",
+                "n",
+                reuse_on_failure=True,
+                require_content=True,
+                ontology="go",
+            )
+            assert builds == [], "no build may run over a live writer"
+            assert not Path(f"{db}.prev").exists(), "and nothing may be displaced"
+            writer.execute("COMMIT")
+        finally:
+            writer.close()
+
+        row = sqlite3.connect(str(db)).execute("SELECT value FROM statements WHERE subject = 'S'").fetchone()
+        assert row is not None, "the writer's commit must survive"
+
+    def test_an_idle_database_is_not_mistaken_for_a_written_one(self, tmp_path):
+        """The probe must not block every rebuild by reporting a writer that isn't there."""
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        assert ou._db_has_active_writer(str(db)) is False
+
+    def test_the_writer_probe_never_creates_a_database(self, tmp_path):
+        """
+        It connects read-write, which creates the file.
+
+        An absent path would gain a 0-byte file, and a dangling symlink one at the
+        link's target -- the wrong-path accident the build-target clearing exists
+        to prevent.
+        """
+        missing = tmp_path / "absent.db"
+        assert ou._db_has_active_writer(str(missing)) is False
+        assert not missing.exists()
+
+        elsewhere = tmp_path / "nowhere.db"
+        link = tmp_path / "dangling.db"
+        link.symlink_to(elsewhere)
+        assert ou._db_has_active_writer(str(link)) is False
+        assert not elsewhere.exists(), "nothing may be written through a dangling link"
+
+    def test_a_current_prebuilt_symlink_outranks_an_older_prev(self, tmp_path, monkeypatch):
+        """
+        A link is ranked on what it resolves to, since prebuilts are supported.
+
+        Dismissing every symlink made a current prebuilt lose to any usable .prev,
+        however old: the link was detached, the stale .prev became canonical, and a
+        failed build restored that older ontology and reported it usable -- which
+        NCBITaxon's and ChEBI's warn-level gates let the transform run against.
+        """
+        owl = tmp_path / "ncbitaxon.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-30"), encoding="utf-8")
+        prebuilt = write_single_ontology_db(tmp_path / "prebuilt.db", "ncbitaxon", pad=9000)
+        db = tmp_path / "ncbitaxon.db"
+        db.symlink_to(prebuilt)
+        write_single_ontology_db(Path(f"{db}.prev"), "ncbitaxon")
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(OSError("build failed")))
+
+        ou._run_semsql_build(
+            owl,
+            str(db),
+            3000,
+            "NCBITaxon",
+            "n",
+            reuse_on_failure=True,
+            require_content=True,
+            ontology="ncbitaxon",
+        )
+
+        assert db.is_symlink(), "the configured prebuilt must be restored, not the stale .prev"
+        assert db.resolve() == prebuilt.resolve()

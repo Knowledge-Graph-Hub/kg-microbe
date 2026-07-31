@@ -1038,10 +1038,15 @@ def _clear_build_target(
     )
     target_is_link = os.path.islink(db_path)
     target_present = os.path.lexists(db_path)
-    target_usable = (
-        target_present
-        and not target_is_link
-        and _reusable_db(db_path, min_size, ontology=ontology, require_content=require_content)
+    # Symlinks are ranked on what they resolve to, not dismissed for being links.
+    # Excluding them made a *current* prebuilt symlink lose to any usable .prev,
+    # however old: the link was detached, the stale .prev became canonical, and a
+    # failed build then restored that older ontology and reported it usable —
+    # which NCBITaxon's and ChEBI's warn-level gates let the transform run
+    # against. A dangling link still ranks as unusable, since it resolves to
+    # nothing, so the recovery below still clears it.
+    target_usable = target_present and _reusable_db(
+        db_path, min_size, ontology=ontology, require_content=require_content
     )
 
     recovered_link: Optional[str] = None
@@ -1496,6 +1501,57 @@ def _build_confirmed(db_path: str, ontology: Optional[str], require_content: boo
     return _db_is_for_ontology(db_path, ontology)
 
 
+def _db_has_active_writer(db_path: str) -> bool:
+    """
+    Report whether another process currently holds a write lock on ``db_path``.
+
+    A blocked *read* is not the test. SQLite's RESERVED lock — what an ordinary
+    ``BEGIN IMMEDIATE`` takes, and what a writer holds for the whole of its
+    transaction — deliberately permits readers, so the classification says ``ok``
+    and a live writer's database was renamed to ``.prev``, rebuilt over, and the
+    ``.prev`` deleted on success. Only an EXCLUSIVE lock, taken briefly at commit,
+    blocks readers, so classifying on readability caught a writer only in the
+    instant it was finishing.
+
+    The reliable question is the one a writer itself asks: try to take the write
+    lock. Failing to get it means someone else holds it.
+
+    Racy by construction — a writer may start immediately after this returns — and
+    that is accepted. It closes the window that matters, a *concurrent long-lived*
+    writer, which is the case that loses committed data. Nothing here is a
+    substitute for the build lock, which is what stops two of our own builds from
+    colliding.
+
+    :param db_path: Path to the DB.
+    :return: True if another process holds a write lock.
+    """
+    if not os.path.lexists(db_path):
+        return False
+    if os.path.islink(db_path) and not os.path.exists(db_path):
+        # A dangling link has no writer, and connecting read-write would *create*
+        # the file at the link's target — the accident `_read_only_connection`
+        # exists to prevent.
+        return False
+    try:
+        conn = sqlite3.connect(db_path, timeout=_DB_PROBE_TIMEOUT_SECONDS)
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            conn.execute("ROLLBACK")
+        finally:
+            conn.close()
+    except sqlite3.OperationalError as exc:
+        if _is_transient_db_error(exc):
+            return True
+        # Read-only file, read-only filesystem, or something else that stops us
+        # writing. Not a writer, and not this function's problem to report — the
+        # build will fail on its own terms and restore what it displaced.
+        return False
+    except sqlite3.Error:
+        return False
+    # The write lock was ours to take, so nobody else held it.
+    return False
+
+
 def _run_semsql_build(
     owl_source: Path,
     db_path: str,
@@ -1526,7 +1582,7 @@ def _run_semsql_build(
         that did not produce it.
     :return: Whether a usable DB exists, and whether this call built it.
     """
-    if _classify_db(db_path, min_size) == DB_BUSY:
+    if _db_has_active_writer(db_path):
         # Another process holds a write transaction. Every later step here is
         # destructive — rename to .prev, build at the original path, discard .prev
         # on success — and the writer's commits would land on the moved inode and

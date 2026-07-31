@@ -499,3 +499,41 @@ def test_lenient_ontology_still_serves_a_wrong_release_build(tmp_path, monkeypat
     assert not (tmp_path / "go.db.prev").exists(), (
         "the .prev is discarded on a served build — the strict-reject exit must not run for lenient callers"
     )
+
+
+def test_wrong_release_via_recovered_servability_is_also_refused(tmp_path, monkeypatch):
+    """
+    The confirmed=None → recovered-servability path must gate on release too.
+
+    `_build_confirmed` returns tri-state: True/False/None. Round 23 tightened
+    the True branch to honour reuse_on_failure=False on a wrong-release build,
+    but the None branch (`_has_semsql_schema` couldn't be established, usually
+    because a SQLite lock made the probe transient) recovered by returning
+    `usable=_servable_db(...)` — a predicate that says nothing about the
+    release stamp. So a build that produced the previous GO release, where
+    the initial schema probe happened to hit a lock, was still served from
+    that recovery exit — silently miscategorising every MF/CC term the new
+    release added as BiologicalProcess.
+    """
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    db_path = tmp_path / "go.db"
+    _make_go_db(tmp_path, "2026-01-01")
+    previous_bytes = db_path.read_bytes()
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    def build_at_the_wrong_release(cmd, **kwargs):
+        """Clean build; still at the old release."""
+        _make_go_db(Path(kwargs["cwd"]), "2026-01-01")
+
+    monkeypatch.setattr(ou.subprocess, "run", build_at_the_wrong_release)
+    # Force the confirmed=None branch: schema probe indeterminate under lock.
+    monkeypatch.setattr(ou, "_build_confirmed", lambda *a, **k: None)
+
+    assert not ou._ensure_go_db(str(db_path)), (
+        "a wrong-release build must not slip past the strict gate through the recovery exit either"
+    )
+    assert db_path.read_bytes() == previous_bytes, "the previous drifted go.db must be restored on disk"
+    assert not (tmp_path / "go.db.prev").exists(), "and .prev must not be left orphaned"

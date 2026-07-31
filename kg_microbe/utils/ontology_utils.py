@@ -1572,6 +1572,51 @@ def _db_has_active_writer(db_path: str) -> bool:
     return False
 
 
+def _reject_on_release_shortfall(
+    db_path: str,
+    min_size: int,
+    kept: "KeptTarget",
+    *,
+    ontology: Optional[str],
+    expected_release: Optional[str],
+    reuse_on_failure: bool,
+    require_content: bool,
+) -> Optional["DbEnsureResult"]:
+    """
+    Enforce the strict-release contract at every exit that would serve a build.
+
+    Shared by :func:`_run_semsql_build`'s two serving exits — the confirmed-
+    schema path and the recovered-servability path — so both honour GO's
+    ``reuse_on_failure=False`` policy in the same way. A strict caller demanded
+    a rebuild that would match the source's release; a build whose stamp is the
+    previous release is a failure under that contract, so restore ``.prev`` and
+    report unusable. The other post-build failure exits (short output, wrong
+    schema, unknown identity) already refuse under that flag, and this exit
+    used to be the one that let a wrong-release build slip past and hand a
+    caller who demanded matching-or-nothing the old drifted database, silently
+    miscategorising every MF/CC term the new release added as
+    BiologicalProcess.
+
+    :param db_path: The database just built.
+    :param min_size: Smallest plausible size for a complete build.
+    :param kept: What :func:`_clear_build_target` displaced, for restore.
+    :param ontology: Ontology the DB must hold.
+    :param expected_release: Release the source was read as, or None.
+    :param reuse_on_failure: The strict/lenient flag from the caller.
+    :param require_content: Whether label and hierarchy rows are required.
+    :return: An unusable ``DbEnsureResult`` when the strict-reject fires;
+        ``None`` to signal the calling exit that it may serve the build.
+    """
+    if not (_report_release_shortfall(db_path, ontology, expected_release) and not reuse_on_failure):
+        return None
+    print(f"Warning: rejecting {db_path} — strict caller demands the source's release; restoring the previous DB")
+    _restore_build_target(db_path, kept)
+    return DbEnsureResult(
+        reuse_on_failure
+        and _restored_db_usable(db_path, min_size, kept, ontology=ontology, require_content=require_content)
+    )
+
+
 def _run_semsql_build(
     owl_source: Path,
     db_path: str,
@@ -1661,31 +1706,17 @@ def _run_semsql_build(
             else False
         )
         if confirmed:
-            shortfall = _report_release_shortfall(db_path, ontology, expected_release)
-            if shortfall and not reuse_on_failure:
-                # A strict caller (GO) demanded a rebuild that would match the
-                # source's release. `semsql` exited clean and the schema, size,
-                # content and identity are all fine — but the release stamp is
-                # the previous one, so this build did not do what was asked.
-                # The other post-build failure exits (short output, wrong
-                # schema, unknown identity) already honour reuse_on_failure=
-                # False by restoring .prev and refusing to serve; this exit was
-                # the one that let a wrong-release build slip past that policy
-                # and hand a caller who demanded matching-or-nothing the old
-                # drifted database, with usable=True. Reuse-on-failure=False is
-                # exactly the "reject or restore, do not serve" contract, and
-                # a wrong-release build is a failure by that contract's own
-                # terms — refusing it here silently miscategorises every MF/CC
-                # term the new release added as BiologicalProcess.
-                print(
-                    f"Warning: rejecting {db_path} — strict caller demands the source's release; "
-                    "restoring the previous DB"
-                )
-                _restore_build_target(db_path, kept)
-                return DbEnsureResult(
-                    reuse_on_failure
-                    and _restored_db_usable(db_path, min_size, kept, ontology=ontology, require_content=require_content)
-                )
+            reject = _reject_on_release_shortfall(
+                db_path,
+                min_size,
+                kept,
+                ontology=ontology,
+                expected_release=expected_release,
+                reuse_on_failure=reuse_on_failure,
+                require_content=require_content,
+            )
+            if reject is not None:
+                return reject
             _discard_kept_target(kept)
             return DbEnsureResult(True, built=True)
         if confirmed is False:
@@ -1707,11 +1738,36 @@ def _run_semsql_build(
         # was handed to OAK unchecked, where per-term handlers turn the resulting
         # lookup errors into default categories. Keep .prev, and let the serving
         # predicate decide what the caller may do with what was built.
+        if _servable_db(db_path, min_size, ontology, require_content=require_content):
+            # Servability has since re-established schema, content and identity
+            # — the earlier `_build_confirmed` verdict was indeterminate only
+            # because a SQLite lock made the schema probe transient. Apply the
+            # same release gate as the confirmed exit: without it, a strict
+            # caller (GO) whose build produced the previous release was still
+            # served the drifted DB from this branch, because the recovery
+            # returned `usable=_servable_db(...)` and never called
+            # `_report_release_shortfall` or honoured `reuse_on_failure=False`.
+            reject = _reject_on_release_shortfall(
+                db_path,
+                min_size,
+                kept,
+                ontology=ontology,
+                expected_release=expected_release,
+                reuse_on_failure=reuse_on_failure,
+                require_content=require_content,
+            )
+            if reject is not None:
+                return reject
+            print(
+                f"  Keeping {kept}: {db_path} passes servability but the earlier verify was "
+                "indeterminate (locked?). Delete the .prev once the new DB is confirmed good."
+            )
+            return DbEnsureResult(True, built=True)
         print(
             f"  Keeping {kept}: {db_path} was built but its SemSQL schema could not be "
             "verified (locked?). Delete the .prev once the new DB is confirmed good."
         )
-        return DbEnsureResult(_servable_db(db_path, min_size, ontology, require_content=require_content), built=True)
+        return DbEnsureResult(False, built=True)
     # The rejected artifact is deliberately left in place. Removing it looked
     # like the fix for "the next run adopts it", but that harm belongs to the
     # reuse fast-path, which now checks the schema itself — and deleting it

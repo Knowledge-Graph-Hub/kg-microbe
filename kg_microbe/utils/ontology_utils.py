@@ -1635,6 +1635,22 @@ def _reject_on_release_shortfall(
         return None  # lenient: mismatch was warned; serve either way
     print(f"Warning: rejecting {db_path} — strict caller demands the source's release; restoring the previous DB")
     _restore_build_target(db_path, kept)
+    if not (kept.prev_path or kept.link_target) and os.path.lexists(db_path):
+        # Nothing was displaced (fresh build with no prior DB), so
+        # `_restore_build_target` is a no-op and the just-rejected artifact
+        # stays at db_path. Unlike the schema/size failure exits — whose
+        # rejected artifacts are structurally invalid and would be caught by
+        # the next call's servability probe — this exit rejects a database
+        # that is structurally *fine*; only its release stamp was wrong or
+        # unreadable. If we leave it, the next `_ensure_go_db` finds it
+        # servable, cannot read the stamp (still), and its reuse fast-path
+        # treats an unreadable stamp as "don't force a rebuild" — so the
+        # rejection is silently undone and the rejected DB is served on the
+        # rerun. Remove the artifact instead, so the next run rebuilds.
+        os.remove(db_path)
+        print(
+            f"  Removed {db_path}: no previous DB to restore, so the rejected artifact must not survive to the next run"
+        )
     return DbEnsureResult(
         reuse_on_failure
         and _restored_db_usable(db_path, min_size, kept, ontology=ontology, require_content=require_content)

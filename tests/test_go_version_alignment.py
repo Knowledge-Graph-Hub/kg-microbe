@@ -546,6 +546,54 @@ def test_unreadable_release_is_refused_by_strict_caller(tmp_path, monkeypatch):
     assert not result.usable, "an unverifiable release must not slip past reuse_on_failure=False — unknown ≠ match"
 
 
+def test_rejected_fresh_artifact_does_not_survive_to_the_next_run(tmp_path, monkeypatch):
+    """
+    A strict rejection with no `.prev` must not leave the DB on disk for reuse.
+
+    `_reject_on_release_shortfall` restores whatever `_clear_build_target`
+    displaced — but on a fresh build there is nothing to displace, so
+    `_restore_build_target` is a no-op and the just-rejected DB stays at
+    `db_path`. On the rerun, `_ensure_go_db`'s reuse fast-path finds it
+    servable, cannot read the stamp (same reason it was rejected first
+    time), and its rule "an unreadable stamp never forces a rebuild"
+    treats it as up-to-date — silently serving the rejected DB. If that
+    DB in fact holds the previous GO release, every MF/CC term the new
+    release added defaults to BiologicalProcess.
+    """
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-07-31"), encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    db_path = tmp_path / "go.db"  # fresh — no prior DB
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    build_calls = []
+
+    def build(cmd, **kwargs):
+        """Simulate `semsql make` producing a complete-but-wrong-release DB."""
+        build_calls.append(cmd)
+        _make_go_db(Path(kwargs["cwd"]), "2026-01-01")
+
+    monkeypatch.setattr(ou.subprocess, "run", build)
+    # Stamp reader always None: retries exhausted, strict caller rejects.
+    monkeypatch.setattr(ou, "_go_db_release", lambda _: None)
+    monkeypatch.setattr(ou.time, "sleep", lambda _: None)
+
+    first = ou._ensure_go_db(str(db_path))
+    assert not first, "first call must reject an unverifiable-release build"
+    assert not db_path.exists(), (
+        "the rejected fresh artifact must be removed — else the next run's reuse "
+        "gate serves it despite the just-emitted rejection"
+    )
+
+    second = ou._ensure_go_db(str(db_path))
+    assert not second, "second call must not accept the previously-rejected artifact"
+    assert len(build_calls) == 2, (
+        "both calls must attempt to rebuild — the second one is not a shortcut "
+        "past the strict gate on a leftover artifact"
+    )
+
+
 def test_unreadable_release_still_served_by_lenient_caller(tmp_path, monkeypatch):
     """
     Lenient callers must not be dragged into the strict-reject path.

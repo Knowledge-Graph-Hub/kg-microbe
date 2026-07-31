@@ -46,6 +46,7 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.ontology_utils import (
     _decompress_atomically,
     _derived_json_is_stale,
@@ -337,7 +338,13 @@ class OntologiesTransform(Transform):
 
         if dropped:
             print(f"  Dropped {dropped} malformed synonym entries (missing 'val') from {json_path.name}")
-            with open(json_path, "w", encoding="utf-8") as f:
+            # Atomic: ROBOT publishes this file atomically and then these
+            # post-processors rewrote it in place, so an interrupted or
+            # out-of-disk rewrite truncated the published JSON. Nothing recovers
+            # from that — the staleness check reads a release stamp from the head
+            # and still sees a current one, `is_file()` then blocks reconversion,
+            # and KGX fails on every later run until someone deletes the file.
+            with atomic_write(json_path, encoding="utf-8") as f:
                 json.dump(data, f)
 
     @staticmethod
@@ -398,7 +405,13 @@ class OntologiesTransform(Transform):
                 f"  Dropped {dropped_nodes} deprecated (owl:deprecated) terms "
                 f"and {dropped_edges} edges touching them from {json_path.name}"
             )
-            with open(json_path, "w", encoding="utf-8") as f:
+            # Atomic: ROBOT publishes this file atomically and then these
+            # post-processors rewrote it in place, so an interrupted or
+            # out-of-disk rewrite truncated the published JSON. Nothing recovers
+            # from that — the staleness check reads a release stamp from the head
+            # and still sees a current one, `is_file()` then blocks reconversion,
+            # and KGX fails on every later run until someone deletes the file.
+            with atomic_write(json_path, encoding="utf-8") as f:
                 json.dump(data, f)
 
     def _drop_metamodel_edges(self, df: pd.DataFrame) -> tuple:

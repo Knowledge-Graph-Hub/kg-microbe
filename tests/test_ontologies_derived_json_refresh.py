@@ -122,3 +122,73 @@ class DerivedJsonRefreshTest(TestCase):
             self.assertFalse(derived.exists(), "the stale JSON is still removed")
             self.assertTrue(plain.exists(), "the only good OWL must survive")
             self.assertEqual(plain.read_text(encoding="utf-8"), body)
+
+
+class PostProcessingAtomicityTest(TestCase):
+
+    """ROBOT publishes the JSON atomically; the post-processors must not undo that."""
+
+    def setUp(self):
+        """Instantiate the transform without base __init__ side effects."""
+        self.transform = OntologiesTransform.__new__(OntologiesTransform)
+
+    def _interrupted_dump(self, method_name, payload):
+        """Run a post-processor whose json.dump dies part-way, and return the file."""
+        import json
+        import tempfile
+        from unittest import mock
+
+        tmp = tempfile.mkdtemp()
+        target = Path(tmp) / "go.json"
+        target.write_text(json.dumps(payload), encoding="utf-8")
+        original = target.read_text(encoding="utf-8")
+
+        def dying_dump(data, handle, *args, **kwargs):
+            """Write a plausible prefix, then fail as a full disk would."""
+            handle.write('{"graphs": [{"nodes": [{"id": "GO:1"')
+            raise OSError("No space left on device")
+
+        with mock.patch.object(json, "dump", dying_dump):
+            with self.assertRaises(OSError):
+                getattr(self.transform, method_name)(target)
+        return target, original, Path(tmp)
+
+    def test_an_interrupted_synonym_pass_publishes_nothing(self):
+        """
+        A truncated derived JSON is unrecoverable.
+
+        The staleness check reads a release stamp from the head and still sees a
+        current one, `is_file()` then blocks reconversion, and KGX fails on every
+        later run until someone deletes the file by hand.
+        """
+        import json
+
+        payload = {
+            "graphs": [{"nodes": [{"id": "GO:1", "meta": {"synonyms": [{"pred": "x"}, {"pred": "y", "val": "ok"}]}}]}]
+        }
+        target, original, tmp = self._interrupted_dump("_sanitize_obograph_synonyms", payload)
+
+        self.assertEqual(target.read_text(encoding="utf-8"), original, "the published file must be untouched")
+        self.assertIsInstance(json.loads(target.read_text(encoding="utf-8")), dict)
+        self.assertEqual(list(tmp.glob("*.partial")), [], "and no temp may survive")
+
+    def test_an_interrupted_deprecated_pass_publishes_nothing(self):
+        """The deprecated-term removal rewrites the same file the same way."""
+        import json
+
+        payload = {
+            "graphs": [
+                {
+                    "nodes": [
+                        {"id": "GO:1", "meta": {"deprecated": True}},
+                        {"id": "GO:2"},
+                    ],
+                    "edges": [{"sub": "GO:1", "pred": "is_a", "obj": "GO:2"}],
+                }
+            ]
+        }
+        target, original, tmp = self._interrupted_dump("_drop_deprecated_terms", payload)
+
+        self.assertEqual(target.read_text(encoding="utf-8"), original)
+        self.assertIsInstance(json.loads(target.read_text(encoding="utf-8")), dict)
+        self.assertEqual(list(tmp.glob("*.partial")), [])

@@ -1741,3 +1741,33 @@ class TestOntologyIdentityAndServing:
 
         assert db.is_symlink(), "the configured prebuilt must be restored, not the stale .prev"
         assert db.resolve() == prebuilt.resolve()
+
+    def test_a_concurrent_writer_does_not_bypass_a_strict_rebuild(self, tmp_path, monkeypatch):
+        """
+        A build that was demanded and did not happen is a failed build.
+
+        The active-writer exit refused to rebuild -- correctly -- but reported the
+        existing database usable regardless of `reuse_on_failure`. GO passes False
+        precisely because a release mismatch silently miscategorises MF and CC
+        terms, so a concurrent writer was enough to bypass that policy: the
+        drifted database was served and every term the new release added defaulted
+        to BiologicalProcess.
+        """
+        owl = tmp_path / "go.owl"
+        owl.write_text(OWL_HEAD.format(d="2026-07-30"), encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "go.db", "go")
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        calls = []
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: calls.append(a))
+
+        writer = sqlite3.connect(str(db), timeout=0.1, isolation_level=None)
+        try:
+            writer.execute("BEGIN IMMEDIATE")
+            strict = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", reuse_on_failure=False, ontology="go")
+            lenient = ou._build_semsql_db(owl, str(db), 3000, "GO", "n", reuse_on_failure=True, ontology="go")
+        finally:
+            writer.close()
+
+        assert calls == [], "neither call may build over the writer"
+        assert not strict.usable, "a demanded rebuild that did not happen is a failure"
+        assert lenient.usable, "but a caller that tolerates failure still gets the existing db"

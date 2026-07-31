@@ -1594,7 +1594,16 @@ def _run_semsql_build(
             f"Warning: not rebuilding {db_path} — another process is writing to it. "
             "Re-run once that process has finished."
         )
-        return DbEnsureResult(_servable_db(db_path, min_size, ontology, require_content=require_content))
+        # Honours reuse_on_failure like every other "could not build" exit. This
+        # one ignored it, so GO — which passes False precisely because a release
+        # mismatch silently miscategorises MF and CC terms — had its strict policy
+        # bypassed by the presence of a concurrent writer: the drifted database was
+        # reported usable and every term the new release added defaulted to
+        # BiologicalProcess. A build that was demanded and did not happen is a
+        # failed build, whatever prevented it.
+        return DbEnsureResult(
+            reuse_on_failure and _servable_db(db_path, min_size, ontology, require_content=require_content)
+        )
     kept = _clear_build_target(db_path, min_size, ontology=ontology, require_content=require_content)
     print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
     try:

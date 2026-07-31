@@ -1460,13 +1460,13 @@ def _build_semsql_db(
         )
 
 
-def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_release: Optional[str]) -> bool:
+def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_release: Optional[str]) -> Optional[bool]:
     """
     Say so when a completed build did not produce the release that was asked for.
 
-    Acceptance of the built database is still delegated to the caller —
-    ``_run_semsql_build`` uses this verdict together with ``reuse_on_failure`` to
-    decide whether to serve or reject a demonstrably wrong-release build. A
+    Acceptance of the built database is delegated to the caller —
+    ``_reject_on_release_shortfall`` uses this verdict together with
+    ``reuse_on_failure`` to decide whether to serve or reject the build. A
     complete database of the wrong release is a real database, so a lenient
     caller keeps it and warns; a strict caller (GO) treats it as a failed build
     and restores the previous copy, because a release mismatch silently
@@ -1477,15 +1477,23 @@ def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_re
     :param db_path: The database just built.
     :param ontology: Ontology it holds, or None if unknown.
     :param expected_release: Release the source was read as.
-    :return: True when a demonstrable release mismatch was reported; False when
-        the releases matched or the release could not be established (in which
-        case nothing can be claimed either way).
+    :return: Tri-state — True when a demonstrable mismatch was reported
+        (warning printed); False when the built release equalled expected;
+        None when the comparison could not be made (no expected_release, no
+        reader, or the reader returned None for this call, most often because
+        a transient SQLite lock made the stamp read indeterminate). The strict
+        caller must not conflate None with False: an unverifiable release
+        cannot uphold the source-release contract, and the caller retries
+        (:func:`_reject_on_release_shortfall`) before treating None as a
+        reject.
     """
     reader = _DB_RELEASE_READERS.get(ontology or "")
     if not (expected_release and reader):
-        return False
+        return None
     built_release = reader(db_path)
-    if built_release is None or built_release == expected_release:
+    if built_release is None:
+        return None
+    if built_release == expected_release:
         return False
     print(
         f"Warning: built {db_path} at release {built_release}, but {ontology}'s source "
@@ -1607,14 +1615,77 @@ def _reject_on_release_shortfall(
     :return: An unusable ``DbEnsureResult`` when the strict-reject fires;
         ``None`` to signal the calling exit that it may serve the build.
     """
-    if not (_report_release_shortfall(db_path, ontology, expected_release) and not reuse_on_failure):
-        return None
+    verdict = _report_release_shortfall(db_path, ontology, expected_release)
+    if verdict is False:
+        return None  # match — serve
+    # None means indeterminate: no expected release, no reader, or the reader
+    # returned None for this call (most often a transient SQLite lock). A
+    # lenient caller has nothing to reject on. A strict caller cannot conflate
+    # "unverified" with "matched" — that fails open, exactly the failure GO's
+    # `reuse_on_failure=False` is meant to catch — so retry the stamp read
+    # a few times (matching `_servable_db`'s schema/identity retry policy)
+    # before treating the unknown as a reject.
+    if verdict is None:
+        if reuse_on_failure:
+            return None
+        verdict = _release_verdict_with_retry(db_path, ontology, expected_release)
+        if verdict is False:
+            return None  # match on retry — serve
+    if reuse_on_failure:
+        return None  # lenient: mismatch was warned; serve either way
     print(f"Warning: rejecting {db_path} — strict caller demands the source's release; restoring the previous DB")
     _restore_build_target(db_path, kept)
     return DbEnsureResult(
         reuse_on_failure
         and _restored_db_usable(db_path, min_size, kept, ontology=ontology, require_content=require_content)
     )
+
+
+def _release_verdict_with_retry(
+    db_path: str, ontology: Optional[str], expected_release: Optional[str]
+) -> Optional[bool]:
+    """
+    Retry the built-release read for a strict caller before rejecting on None.
+
+    A transient SQLite lock is the routine cause of an indeterminate stamp read
+    — the same cause :func:`_servable_db` already retries the schema and
+    identity probes for. Without this retry, a strict caller (GO) whose stamp
+    reader hit a lock on the first attempt would be rejected on a signal that
+    was only ever "wait a moment". Cannot be silent about the retry-exhausted
+    unknown either: serving would fail open on the source-release contract,
+    so treat the unknown as a rejectable mismatch and print why.
+
+    :param db_path: The database just built.
+    :param ontology: Ontology it holds.
+    :param expected_release: Release the source was read as.
+    :return: Same tri-state as :func:`_report_release_shortfall`, but True is
+        returned both for a real mismatch and for an unresolvable-unknown.
+    """
+    reader = _DB_RELEASE_READERS.get(ontology or "")
+    if not (expected_release and reader):
+        return None
+    built_release = None
+    for _attempt in range(1, _DB_PROBE_RETRIES):
+        time.sleep(_DB_PROBE_TIMEOUT_SECONDS)
+        built_release = reader(db_path)
+        if built_release is not None:
+            break
+    if built_release is None:
+        print(
+            f"Warning: could not read {db_path}'s release stamp after {_DB_PROBE_RETRIES} attempts "
+            f"(locked?). {ontology}'s source reads as {expected_release}; a strict caller cannot "
+            "serve a rebuild whose delivered release we cannot confirm."
+        )
+        return True
+    if built_release == expected_release:
+        return False
+    print(
+        f"Warning: built {db_path} at release {built_release}, but {ontology}'s source "
+        f"reads as {expected_release} (read on retry). The build ran against a source that "
+        "is not the one the release gate compared, so this rebuild will repeat on every run "
+        "until the two agree. Check for a stale decompressed OWL beside its .gz."
+    )
+    return True
 
 
 def _run_semsql_build(

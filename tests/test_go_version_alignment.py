@@ -501,6 +501,135 @@ def test_lenient_ontology_still_serves_a_wrong_release_build(tmp_path, monkeypat
     )
 
 
+def test_unreadable_release_is_refused_by_strict_caller(tmp_path, monkeypatch):
+    """
+    An unreadable release stamp must not fail open under a strict caller.
+
+    `_report_release_shortfall` used to return False both when the release
+    matched and when the reader returned None (transient SQLite lock,
+    unstamped DB, corrupt row). That conflated "matched" with "unverifiable"
+    and let a strict caller (GO) serve a rebuild whose delivered release we
+    could not confirm — silently miscategorising every MF/CC term the new
+    release added as BiologicalProcess if the build had in fact produced the
+    previous release. The retry helper distinguishes "match" from "unknown"
+    and, on an unresolved unknown for a strict caller, treats it as a
+    rejectable mismatch.
+    """
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-07-31"), encoding="utf-8")
+    db_path = tmp_path / "go.db"  # fresh — no existing DB, so build runs
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    def build(cmd, **kwargs):
+        """Complete build; release stamp unreadable (simulated below)."""
+        _make_go_db(Path(kwargs["cwd"]), "2026-01-01")
+
+    monkeypatch.setattr(ou.subprocess, "run", build)
+    # Reader returns None for every call — the stamp cannot be read at all,
+    # even after retry (transient lock that never clears within the retry
+    # budget, or an unstamped build). This is the exact fail-open shape.
+    monkeypatch.setattr(ou, "_go_db_release", lambda _: None)
+    # No-op sleep to keep the retry fast in tests.
+    monkeypatch.setattr(ou.time, "sleep", lambda _: None)
+
+    result = ou._build_semsql_db(
+        owl,
+        str(db_path),
+        8,
+        "GO",
+        "n",
+        reuse_on_failure=False,
+        ontology="go",
+        expected_release="2026-07-31",
+    )
+    assert not result.usable, "an unverifiable release must not slip past reuse_on_failure=False — unknown ≠ match"
+
+
+def test_unreadable_release_still_served_by_lenient_caller(tmp_path, monkeypatch):
+    """
+    Lenient callers must not be dragged into the strict-reject path.
+
+    ChEBI / NCBITaxon / EC accept an unverifiable release with a warning —
+    they explicitly `reuse_on_failure=True`. The strict retry-then-refuse
+    added for GO must not spill over onto them.
+    """
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-07-31"), encoding="utf-8")
+    db_path = tmp_path / "go.db"
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    def build(cmd, **kwargs):
+        """Simulate a `semsql make` that produces a wrong-release DB."""
+        _make_go_db(Path(kwargs["cwd"]), "2026-01-01")
+
+    monkeypatch.setattr(ou.subprocess, "run", build)
+    monkeypatch.setattr(ou, "_go_db_release", lambda _: None)
+    monkeypatch.setattr(ou.time, "sleep", lambda _: None)
+
+    result = ou._build_semsql_db(
+        owl,
+        str(db_path),
+        8,
+        "GO",
+        "n",
+        reuse_on_failure=True,
+        ontology="go",
+        expected_release="2026-07-31",
+    )
+    assert result.usable and result.built, "a lenient caller keeps an unverifiable-release build"
+
+
+def test_transient_stamp_lock_resolves_on_retry_and_serves(tmp_path, monkeypatch):
+    """
+    A transient stamp read failure must not reject a build whose release is fine.
+
+    The strict-caller retry exists to survive a momentary SQLite lock on the
+    release read — the same reason `_servable_db` retries schema and identity.
+    If the retry eventually reads the expected release, the build is served
+    normally.
+    """
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-07-31"), encoding="utf-8")
+    db_path = tmp_path / "go.db"
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    def build(cmd, **kwargs):
+        """Complete GO build at the expected release."""
+        _make_go_db(Path(kwargs["cwd"]), "2026-07-31")
+
+    monkeypatch.setattr(ou.subprocess, "run", build)
+
+    # First stamp read returns None (locked); subsequent reads succeed.
+    calls = {"n": 0}
+    real_release = ou._go_db_release
+
+    def flaky_reader(path):
+        """First stamp read is locked (None); later reads succeed."""
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return None
+        return real_release(path)
+
+    monkeypatch.setattr(ou, "_go_db_release", flaky_reader)
+    monkeypatch.setattr(ou.time, "sleep", lambda _: None)
+
+    result = ou._build_semsql_db(
+        owl,
+        str(db_path),
+        8,
+        "GO",
+        "n",
+        reuse_on_failure=False,
+        ontology="go",
+        expected_release="2026-07-31",
+    )
+    assert result.usable and result.built, "a stamp read that recovers on retry must let the build serve"
+    assert calls["n"] >= 2, "the retry must have run at least once"
+
+
 def test_wrong_release_via_recovered_servability_is_also_refused(tmp_path, monkeypatch):
     """
     The confirmed=None → recovered-servability path must gate on release too.

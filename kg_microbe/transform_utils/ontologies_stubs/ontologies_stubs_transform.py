@@ -144,12 +144,12 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
         "source_type": "semsql_mireot",
         "db_filename": "ncit.db",
         "upper_terms": [
-            "NCIT:C1908",   # Drug, Food, Chemical or Biomedical Material  (48 stubs)
+            "NCIT:C1908",  # Drug, Food, Chemical or Biomedical Material  (48 stubs)
             "NCIT:C20181",  # Conceptual Entity                              (9)
             "NCIT:C14250",  # Organism                                       (5)
             "NCIT:C20189",  # Property or Attribute                          (5)
             "NCIT:C12219",  # Anatomic Structure, System, or Substance       (2)
-            "NCIT:C3367",   # Finding                                        (1, Lesion)
+            "NCIT:C3367",  # Finding                                        (1, Lesion)
             "NCIT:C26548",  # Gene Product                                   (1, Calprotectin)
             "NCIT:C43431",  # Activity                                       (1, Biopsy Procedure)
             "NCIT:C97325",  # Manufactured Object                            (1, Catheter Device)
@@ -736,14 +736,12 @@ class OntologiesStubsTransform(Transform):
 
         if not nt_path.is_file():
             raise FileNotFoundError(
-                f"mesh N-Triples walk for {prefix} needs {nt_path} on disk. "
-                f"Run `poetry run kg download` to fetch it."
+                f"mesh N-Triples walk for {prefix} needs {nt_path} on disk. Run `poetry run kg download` to fetch it."
             )
 
         labels, parents = _stream_mesh_nt(nt_path)
         print(
-            f"  [{prefix}] streamed {nt_path.name}: "
-            f"{len(labels):,} labels, {len(parents):,} records with parent edges"
+            f"  [{prefix}] streamed {nt_path.name}: {len(labels):,} labels, {len(parents):,} records with parent edges"
         )
 
         # BFS from stubs upward (no explicit upper_terms — mesh chains
@@ -997,7 +995,7 @@ def _parse_nt_line(line: str) -> Optional[Tuple[str, str, str]]:
     except ValueError:
         return None
     subject = line[1:end_s]
-    rest = line[end_s + 2:]
+    rest = line[end_s + 2 :]
     if not rest.startswith("<"):
         return None
     try:
@@ -1005,7 +1003,7 @@ def _parse_nt_line(line: str) -> Optional[Tuple[str, str, str]]:
     except ValueError:
         return None
     predicate = rest[: end_p + 1]
-    obj = rest[end_p + 2:].strip()
+    obj = rest[end_p + 2 :].strip()
     return subject, predicate, obj
 
 
@@ -1044,10 +1042,10 @@ def _stream_mesh_nt(nt_gz_path: Path) -> Tuple[Dict[str, str], Dict[str, List[Tu
                 if not subj_curie:
                     continue
                 if obj_tok.endswith("@en"):
-                    val = obj_tok[1:obj_tok.rindex("@") - 1]
+                    val = obj_tok[1 : obj_tok.rindex("@") - 1]
                     labels[subj_curie] = val
                 elif obj_tok.startswith('"'):
-                    val = obj_tok[1:obj_tok.rindex('"')]
+                    val = obj_tok[1 : obj_tok.rindex('"')]
                     labels.setdefault(subj_curie, val)
                 continue
             relation = _MESH_HIERARCHY_PREDS.get(pred_tok)

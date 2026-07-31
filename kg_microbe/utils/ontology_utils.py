@@ -1445,35 +1445,40 @@ def _build_semsql_db(
         )
 
 
-def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_release: Optional[str]) -> None:
+def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_release: Optional[str]) -> bool:
     """
     Say so when a completed build did not produce the release that was asked for.
 
-    Acceptance is deliberately still generic — schema, content, identity and size.
-    A complete database of the wrong release is a real database, and refusing it
-    would leave the caller with nothing. But saying nothing was worse than either:
-    the caller rebuilds precisely because the database's release differs from the
-    source's, so a build that reproduces the old release rebuilds again on the
-    next invocation, and forever after, with no hint as to why. The cause is
-    always upstream — a stale source, or one whose stamp cannot be read — and
-    naming both releases points straight at it.
+    Acceptance of the built database is still delegated to the caller —
+    ``_run_semsql_build`` uses this verdict together with ``reuse_on_failure`` to
+    decide whether to serve or reject a demonstrably wrong-release build. A
+    complete database of the wrong release is a real database, so a lenient
+    caller keeps it and warns; a strict caller (GO) treats it as a failed build
+    and restores the previous copy, because a release mismatch silently
+    miscategorises MF/CC terms as BiologicalProcess. The cause is always
+    upstream — a stale source, or one whose stamp cannot be read — and naming
+    both releases points straight at it.
 
     :param db_path: The database just built.
     :param ontology: Ontology it holds, or None if unknown.
     :param expected_release: Release the source was read as.
+    :return: True when a demonstrable release mismatch was reported; False when
+        the releases matched or the release could not be established (in which
+        case nothing can be claimed either way).
     """
     reader = _DB_RELEASE_READERS.get(ontology or "")
     if not (expected_release and reader):
-        return
+        return False
     built_release = reader(db_path)
     if built_release is None or built_release == expected_release:
-        return
+        return False
     print(
         f"Warning: built {db_path} at release {built_release}, but {ontology}'s source "
         f"reads as {expected_release}. The build ran against a source that is not the "
         "one the release gate compared, so this rebuild will repeat on every run until "
         "the two agree. Check for a stale decompressed OWL beside its .gz."
     )
+    return True
 
 
 def _build_confirmed(db_path: str, ontology: Optional[str], require_content: bool) -> Optional[bool]:
@@ -1641,7 +1646,31 @@ def _run_semsql_build(
             else False
         )
         if confirmed:
-            _report_release_shortfall(db_path, ontology, expected_release)
+            shortfall = _report_release_shortfall(db_path, ontology, expected_release)
+            if shortfall and not reuse_on_failure:
+                # A strict caller (GO) demanded a rebuild that would match the
+                # source's release. `semsql` exited clean and the schema, size,
+                # content and identity are all fine — but the release stamp is
+                # the previous one, so this build did not do what was asked.
+                # The other post-build failure exits (short output, wrong
+                # schema, unknown identity) already honour reuse_on_failure=
+                # False by restoring .prev and refusing to serve; this exit was
+                # the one that let a wrong-release build slip past that policy
+                # and hand a caller who demanded matching-or-nothing the old
+                # drifted database, with usable=True. Reuse-on-failure=False is
+                # exactly the "reject or restore, do not serve" contract, and
+                # a wrong-release build is a failure by that contract's own
+                # terms — refusing it here silently miscategorises every MF/CC
+                # term the new release added as BiologicalProcess.
+                print(
+                    f"Warning: rejecting {db_path} — strict caller demands the source's release; "
+                    "restoring the previous DB"
+                )
+                _restore_build_target(db_path, kept)
+                return DbEnsureResult(
+                    reuse_on_failure
+                    and _restored_db_usable(db_path, min_size, kept, ontology=ontology, require_content=require_content)
+                )
             _discard_kept_target(kept)
             return DbEnsureResult(True, built=True)
         if confirmed is False:

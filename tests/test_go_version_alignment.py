@@ -425,3 +425,77 @@ def test_non_go_ontology_still_reuses_after_a_failed_build(tmp_path, monkeypatch
 
     result = ou._build_semsql_db(owl, str(db), 8, "EC", "note")
     assert result.usable and not result.built
+
+
+def test_go_wrong_release_build_is_refused_not_served(tmp_path, monkeypatch):
+    """
+    A clean build that produces the previous release is a failed build under GO.
+
+    `_build_confirmed` covers schema, size, content and identity, but not the
+    *release* the build produced. semsql could exit 0 having read a stale plain
+    OWL beside a refreshed .gz, land a complete database at the old release,
+    and satisfy every acceptance check — after which `_report_release_shortfall`
+    warned and the previous DB was discarded, and the transform ran against
+    exactly the drifted database GO's `reuse_on_failure=False` policy exists to
+    reject. Every MF/CC term the new release added would default to
+    BiologicalProcess.
+    """
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    db_path = tmp_path / "go.db"
+    # Existing (drifted) DB at the old release — this is what a strict rebuild
+    # is being demanded to replace.
+    _make_go_db(tmp_path, "2026-01-01")
+    previous_bytes = db_path.read_bytes()
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+    def build_at_the_wrong_release(cmd, **kwargs):
+        """Semsql exits clean but produces a database still stamped 2026-01-01."""
+        _make_go_db(Path(kwargs["cwd"]), "2026-01-01")
+
+    monkeypatch.setattr(ou.subprocess, "run", build_at_the_wrong_release)
+
+    assert not ou._ensure_go_db(str(db_path)), (
+        "a build that produced the wrong release must not slip past reuse_on_failure=False"
+    )
+    assert db_path.read_bytes() == previous_bytes, "the previous drifted go.db must be restored on disk, not discarded"
+    assert not (tmp_path / "go.db.prev").exists(), "and .prev must not be left orphaned"
+
+
+def test_lenient_ontology_still_serves_a_wrong_release_build(tmp_path, monkeypatch):
+    """
+    Lenient callers keep the warn-and-accept behaviour.
+
+    ChEBI / NCBITaxon / EC pass `reuse_on_failure=True` — a mismatched release
+    is worth a warning but does not warrant refusing the pipeline. The strict
+    exit added for GO must not spill over onto them.
+    """
+    monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+    monkeypatch.setattr(ou, "_GO_DB_MIN_SIZE", 8)
+    owl = tmp_path / "go.owl"
+    owl.write_text(_OWL.format(d="2026-05-19"), encoding="utf-8")
+    db_path = tmp_path / "go.db"
+    _make_go_db(tmp_path, "2026-01-01")
+
+    def build_at_the_wrong_release(cmd, **kwargs):
+        """Clean build; still at the old release."""
+        _make_go_db(Path(kwargs["cwd"]), "2026-01-01")
+
+    monkeypatch.setattr(ou.subprocess, "run", build_at_the_wrong_release)
+
+    result = ou._build_semsql_db(
+        owl,
+        str(db_path),
+        8,
+        "GO",
+        "n",
+        reuse_on_failure=True,
+        ontology="go",
+        expected_release="2026-05-19",
+    )
+    assert result.usable and result.built, "a lenient caller must still take the build"
+    assert not (tmp_path / "go.db.prev").exists(), (
+        "the .prev is discarded on a served build — the strict-reject exit must not run for lenient callers"
+    )

@@ -1422,16 +1422,31 @@ def _build_semsql_db(
             print(f"Warning: cannot build {db_path} — {label} OWL source {owl_source} is missing")
             return _fallback()
         # Coalesce, but only on the question that actually prompted the build.
-        # A generic "is it usable?" re-check here silently skipped every drift
+        # A generic "is it usable?" re-check silently skipped every drift
         # rebuild, because a drifted database is usable by every measure except
-        # the one that mattered. Asking whether the release we need is now present
-        # is safe: if another process just produced it, ten queued HPC jobs stop
-        # running ten sequential multi-hour builds that each replace the last.
+        # the one that mattered — so drift-capable calls (release + reader
+        # available) may only coalesce when the release we need is now present.
+        # Release-less calls (EC — no reliable stamp) cannot have entered on
+        # drift, only on "not servable at all", so a servable database after
+        # the lock releases is safe to reuse; without this exit, ten queued HPC
+        # jobs ran ten sequential rebuilds of the fresh database the first job
+        # had just produced.
         reader = _DB_RELEASE_READERS.get(ontology or "")
-        if expected_release and reader and reader(db_path) == expected_release:
-            if _servable_db(db_path, min_size, ontology, require_content=require_content):
+        if expected_release and reader:
+            if reader(db_path) == expected_release and _servable_db(
+                db_path, min_size, ontology, require_content=require_content
+            ):
                 print(f"  {db_path} is already at {expected_release}; another process built it")
                 return DbEnsureResult(True)
+        elif reader is None and _servable_db(db_path, min_size, ontology, require_content=require_content):
+            # Keyed on the ontology having no reader at all (EC), not on the
+            # caller having passed no expected_release: a release-carrying
+            # ontology with no release argument is either a test exercising a
+            # non-coalesce exit or a plumbing gap, and we would rather build
+            # again than serve on a servability signal that cannot even see
+            # drift.
+            print(f"  {db_path} was produced by another process while we waited on the lock")
+            return DbEnsureResult(True)
         return _run_semsql_build(
             owl_source,
             db_path,

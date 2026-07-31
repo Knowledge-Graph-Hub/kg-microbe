@@ -1232,6 +1232,68 @@ class TestOntologyIdentityAndServing:
             )
             assert bool(calls) is expect_build, f"db at {stamp}: build={bool(calls)}"
 
+    def test_release_less_ontology_coalesces_on_a_servable_db(self, tmp_path, monkeypatch):
+        """
+        Waiting on the lock must skip the rebuild when there is nothing to drift.
+
+        Post-lock coalescing required both `expected_release` and a release
+        reader — but EC supplies neither. The outer gate only enters
+        ``_build_semsql_db`` because the DB was not servable at all, so the
+        first waiting HPC job that gets the lock built it; every other job then
+        moved that fresh DB aside and rebuilt it from scratch, adding minutes
+        per queued transform. A release-less call cannot have entered on drift,
+        so a servable DB after the lock is the coalescing signal we can safely
+        use.
+        """
+        owl = tmp_path / "ec.owl"
+        owl.write_text("<owl/>", encoding="utf-8")
+        db = write_single_ontology_db(tmp_path / "ec.db", "ec")
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        calls = []
+        monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: calls.append(a))
+
+        result = ou._build_semsql_db(
+            owl,
+            str(db),
+            3000,
+            "EC",
+            "n",
+            ontology="ec",
+        )
+
+        assert result.usable and not result.built, "the servable DB must be coalesced, not rebuilt"
+        assert calls == [], "no `semsql make` may run when another process already produced a servable DB"
+
+    def test_release_less_ontology_still_builds_when_db_is_not_servable(self, tmp_path, monkeypatch):
+        """
+        The release-less coalesce exit must not swallow a genuine build need.
+
+        With no servable DB at the path, the caller is here precisely because
+        they need one built — the new post-lock exit must not short-circuit
+        that.
+        """
+        owl = tmp_path / "ec.owl"
+        owl.write_text("<owl/>", encoding="utf-8")
+        db = tmp_path / "ec.db"  # deliberately absent
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+
+        def build(cmd, **kwargs):
+            """Publish a complete EC database."""
+            write_single_ontology_db(Path(kwargs["cwd"]) / "ec.db", "ec")
+
+        monkeypatch.setattr(ou.subprocess, "run", build)
+
+        result = ou._build_semsql_db(
+            owl,
+            str(db),
+            3000,
+            "EC",
+            "n",
+            ontology="ec",
+        )
+
+        assert result.usable and result.built, "a missing release-less DB must still be built"
+
     def test_reading_a_release_never_creates_the_database(self, tmp_path):
         """
         Asking a database a question must not bring one into existence.

@@ -121,9 +121,10 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   rhea/bakta/uniprot/madin can start GO, ChEBI or EC. Resolution is lazy, so the
   cost lands on first lookup rather than at construction.
 
-  One qualification on NCBITaxon: the *drift* rebuild is driven by the
-  multiprocessing pre-flight, so a sequential metatraits run skips it and only
-  warns (issue #614). Other transforms will still build it if it is missing.
+  The metatraits pre-flight now runs on both MP and sequential paths, so a
+  drifted `ncbitaxon.db` is realigned regardless of mode (issue #614 is closed
+  on the sequential path too). Other transforms will still build the DB if it
+  is missing.
 
 ## Upload procedure (for refreshing a file, or adding a new one)
 

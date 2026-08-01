@@ -50,6 +50,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.ontology_utils import (
     _decompress_atomically,
     _derived_json_is_stale,
+    _derived_json_is_unusable,
     replace_category_ontology,
 )
 from kg_microbe.utils.pandas_utils import (
@@ -220,22 +221,27 @@ class OntologiesTransform(Transform):
                 data_file = json_path
             elif data_file.suffix == ".owl":
                 json_path = str(data_file).replace(".owl", ".json")
-                # Regenerate the derived JSON when it's missing OR its OBO
-                # release no longer matches the source OWL. For single-source
-                # ontologies (fix 2 #604: GO derives go.json from go.owl) this
-                # keeps the transform output locked to the same release the OWL
-                # (and go.db, built from it) carry, so a refreshed go.owl can't
-                # leave a stale go.json behind. convert_to_json is a no-op when
-                # the target already exists, so a stale JSON must be removed
-                # first (mirrors _ensure_go_db's rebuild) — otherwise the
-                # reconversion silently keeps the old release.
-                if _derived_json_is_stale(data_file, Path(json_path)):
+                # Regenerate the derived JSON when it's missing, drifted, or a
+                # zero-byte / truncated leftover. For single-source ontologies
+                # (fix 2 #604: GO derives go.json from go.owl) release-alignment
+                # keeps the transform output locked to the OWL (and go.db,
+                # built from it), so a refreshed go.owl can't leave a stale
+                # go.json behind. convert_to_json is a no-op when the target
+                # already exists, so either condition must remove the file
+                # first — otherwise a stale run silently keeps the old release
+                # and a crash-truncated file traps future runs forever.
+                if _derived_json_is_stale(data_file, Path(json_path)) or _derived_json_is_unusable(Path(json_path)):
                     Path(json_path).unlink(missing_ok=True)
                 if not Path(json_path).is_file():
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path
             elif data_file.suffix == ".obo":
                 json_path = str(data_file).replace(".obo", ".json")
+                # Same unusable-leftover guard: a JSON truncated mid-conversion
+                # otherwise persists across runs because convert_to_json skips
+                # existing targets.
+                if _derived_json_is_unusable(Path(json_path)):
+                    Path(json_path).unlink(missing_ok=True)
                 if not Path(json_path).is_file():
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path
@@ -285,9 +291,18 @@ class OntologiesTransform(Transform):
         differed from those emitted, and NCBITaxon lookups could resolve taxa
         absent from the emitted nodes.
 
+        Also unlinks a zero-byte / truncated leftover from a mid-conversion
+        crash: without this, ``convert_to_json`` / ``remove_convert_to_json``
+        see a file at the target, no-op, and every subsequent run keeps
+        reading the corrupt JSON.
+
         :param source: The downloaded source (``.owl`` or ``.owl.gz``).
         :param json_path: The derived JSON to check.
         """
+        if _derived_json_is_unusable(json_path):
+            print(f"{json_path.name} is empty or truncated; regenerating it.")
+            json_path.unlink(missing_ok=True)
+            return
         if not _derived_json_is_stale(source, json_path):
             return
         print(f"{json_path.name} is from an older release than {source.name}; regenerating it.")

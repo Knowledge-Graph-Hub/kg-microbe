@@ -532,3 +532,33 @@ class TestMarkerIsConclusive:
             handle.write("a\tb\n")
         assert cache_is_complete(target)
         assert not has_data_rows(target)
+
+    def test_cache_is_complete_survives_race_on_digest(self, tmp_path, monkeypatch):
+        """
+        Race-safe: a disappearing target reports incomplete, not raise.
+
+        Every ``cache_is_complete()`` caller sits ahead of a regenerator and
+        expects a bool. Raising here would abort the transform over a benign
+        race (another writer/sweeper unlinked the cache, or replaced it with
+        a directory) that the caller's own atomic writer is designed to
+        recover from.
+        """
+        target = tmp_path / "cache.tsv"
+        with atomic_write(target, mark_complete=True) as handle:
+            handle.write("a\tb\nx\ty\n")
+        assert cache_is_complete(target)
+
+        # Simulate the marker read succeeding while the file itself becomes
+        # unreadable before the digest hashes it — the concrete race is a
+        # concurrent unlink or a filesystem hiccup.
+        real_open = open
+
+        def flaky_open(file, *args, **kwargs):
+            """Raise for target, otherwise defer to the real ``open``."""
+            if str(file) == str(target):
+                raise OSError("simulated concurrent removal")
+            return real_open(file, *args, **kwargs)
+
+        monkeypatch.setattr("builtins.open", flaky_open)
+
+        assert cache_is_complete(target) is False

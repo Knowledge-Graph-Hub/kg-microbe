@@ -196,7 +196,7 @@ Optional, for the ontology transforms:
   | `chebi.db` | `chebi.owl` | ~30 min, ~4 GB | ontologies, bacdive, madin_etal, rhea_mappings, NER |
   | `go.db` | `go.owl` | 10-30 min, ~400 MB | ontologies, bacdive, rhea_mappings, bakta, uniprot_*, NER |
   | `ec.db` | `ec.owl` | a few min, ~300 MB | rhea_mappings |
-  | `ncbitaxon.db` | `ncbitaxon.owl` | hours, ~13 GB | metatraits (MP mode), bacdive, bactotraits |
+  | `ncbitaxon.db` | `ncbitaxon.owl` | hours, ~13 GB | metatraits, bacdive, bactotraits, lpsn |
 
   Resolution is lazy — constructing a transform costs nothing; the build happens
   on first lookup. With the opt-out set, whatever DB is already on disk is used

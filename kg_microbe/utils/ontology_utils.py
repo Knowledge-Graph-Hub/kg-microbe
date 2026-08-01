@@ -99,6 +99,45 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000, *, prefer_archiv
     return m.group(1) if m else None
 
 
+def _derived_json_is_unusable(json_path: Path) -> bool:
+    """
+    Return True when a derived OBO-JSON exists on disk but cannot be read.
+
+    A previous run that died mid-conversion — SIGKILL, disk full, semsql/ROBOT
+    crash — can leave a zero-byte or truncated ``.json`` file. Because
+    :func:`convert_to_json` skips regeneration when the file already exists,
+    such a leftover is treated as current forever and every subsequent
+    ontologies-transform run fails on the same corruption without an obvious
+    remediation.
+
+    Detected cheaply: an empty file, or a head that does not begin with a JSON
+    object/array token after whitespace, is unusable. Callers unlink an
+    unusable file to force :func:`convert_to_json` to run.
+
+    :param json_path: Path to a derived ``.json`` file.
+    :return: True if the file exists but is not a plausibly-complete JSON
+        document; False if it is absent (nothing to recover from) or looks
+        plausible.
+    """
+    if not json_path.exists():
+        return False
+    try:
+        size = json_path.stat().st_size
+    except OSError:
+        # If we cannot even stat it, do not delete it — let the caller's own
+        # error surface rather than silently discarding a file we cannot see.
+        return False
+    if size == 0:
+        return True
+    try:
+        with open(json_path, "rb") as handle:
+            head = handle.read(64)
+    except OSError:
+        return False
+    stripped = head.lstrip()
+    return not (stripped.startswith(b"{") or stripped.startswith(b"["))
+
+
 def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
     """
     Return True when a derived OBO-JSON's release no longer matches its source OWL.
@@ -109,7 +148,9 @@ def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
     when the OWL is refreshed to a new release. Conservative — only reports
     stale when *both* release stamps are readable and differ; an unstamped or
     unreadable pair yields False so unstamped ``.owl`` inputs keep the prior
-    "convert only if missing" behavior.
+    "convert only if missing" behavior. Corruption (empty / truncated JSON)
+    is a separate condition — see :func:`_derived_json_is_unusable` — and
+    callers must check both.
     """
     # _read_head falls back to `<path>.gz`, so without this guard a *missing*
     # X.json beside a stray X.json.gz would read as stale and the caller would
@@ -605,14 +646,22 @@ _SEMSQL_CONTENT_PROBES = (
 # have quietly weakened the check rather than breaking anything visibly.
 
 
-# The subject each ontology's own release row uses. An exact match on an indexed
-# column, so this costs microseconds where a LIKE scan for term prefixes costs
-# 1.6 s on ncbitaxon.db. Note EC's is `eccode`, not `ec`.
+# Subject forms each ontology's release row is known to take, across the
+# semsql/rdftab builds we encounter. Different toolchains stamp the ontology's
+# identity as either the CURIE (``obo:go``), the CURIE with the ``.owl``
+# suffix (``obo:go.owl``), or a full IRI ending in ``/<name>.owl``. The
+# release-reader queries (``_go_db_release`` and friends) already accept all
+# three, so the identity check must too — otherwise a prebuilt DB written by a
+# different build tool passes every generic probe but fails identity and
+# forces an unnecessary rebuild (or, under ``KG_SEMSQL_BUILD=off``, refuses to
+# serve). Exact matches are checked first (indexed lookup, microseconds); the
+# full-IRI form falls back to a LIKE and runs only when no exact match hits.
+# Note EC's is ``eccode``, not ``ec``.
 _ONTOLOGY_IDENTITY_SUBJECT = {
-    "ncbitaxon": "obo:ncbitaxon.owl",
-    "chebi": "obo:chebi.owl",
-    "go": "obo:go.owl",
-    "ec": "obo:eccode.owl",
+    "ncbitaxon": (("obo:ncbitaxon.owl", "obo:ncbitaxon"), "%/ncbitaxon.owl"),
+    "chebi": (("obo:chebi.owl", "obo:chebi"), "%/chebi.owl"),
+    "go": (("obo:go.owl", "obo:go"), "%/go.owl"),
+    "ec": (("obo:eccode.owl", "obo:eccode"), "%/eccode.owl"),
 }
 
 
@@ -631,14 +680,19 @@ def _db_is_for_ontology(db_path: str, ontology: str) -> Optional[bool]:
     :return: True if the ontology's own release row is present, False if it is
         demonstrably absent, None when the answer cannot be established.
     """
-    subject = _ONTOLOGY_IDENTITY_SUBJECT.get(ontology)
-    if subject is None:
+    subject_entry = _ONTOLOGY_IDENTITY_SUBJECT.get(ontology)
+    if subject_entry is None:
         return None
+    exact_subjects, like_pattern = subject_entry
+    placeholders = ",".join("?" * len(exact_subjects))
+    # noqa justified: placeholders is built from a fixed-count Python tuple,
+    # never from user input. Values are bound as parameters below.
+    sql = f"SELECT 1 FROM statements WHERE subject IN ({placeholders}) OR subject LIKE ? LIMIT 1"  # noqa: S608
     try:
         uri = f"file:{urllib.parse.quote(os.path.abspath(db_path))}?mode=ro"
         conn = sqlite3.connect(uri, uri=True, timeout=_DB_PROBE_TIMEOUT_SECONDS)
         try:
-            row = conn.execute("SELECT 1 FROM statements WHERE subject = ? LIMIT 1", (subject,)).fetchone()
+            row = conn.execute(sql, (*exact_subjects, like_pattern)).fetchone()
         finally:
             conn.close()
     except sqlite3.OperationalError as e:
@@ -646,7 +700,8 @@ def _db_is_for_ontology(db_path: str, ontology: str) -> Optional[bool]:
     except (sqlite3.Error, OSError):
         return False
     if row is None:
-        print(f"  {db_path} does not contain {ontology} (no `{subject}` row)")
+        forms = ", ".join(list(exact_subjects) + [like_pattern])
+        print(f"  {db_path} does not contain {ontology} (no row for any of: {forms})")
         return False
     return True
 

@@ -84,9 +84,12 @@ def write_single_ontology_db(path, ontology, pad=8000):
             "INSERT INTO statements (subject, predicate, object, value) VALUES ('obo:x', 'rdfs:label', NULL, 'x')"
         )
         conn.execute("INSERT INTO entailed_edge VALUES ('obo:x', 'rdfs:subClassOf', 'obo:root')")
+        # _ONTOLOGY_IDENTITY_SUBJECT is (exact_subjects_tuple, like_pattern);
+        # pick the canonical .owl form (first exact subject) for the row.
+        canonical_subject = _ONTOLOGY_IDENTITY_SUBJECT[ontology][0][0]
         conn.execute(
             "INSERT INTO statements (subject, predicate, object, value) VALUES (?, 'rdf:type', 'owl:Ontology', NULL)",
-            (_ONTOLOGY_IDENTITY_SUBJECT[ontology],),
+            (canonical_subject,),
         )
         conn.commit()
     finally:

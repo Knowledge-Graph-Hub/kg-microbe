@@ -193,7 +193,19 @@ def cache_is_complete(path: Union[str, Path], delimiter: str = "\t") -> bool:
     # A mismatch is conclusive. Falling through to a row count here undid the
     # digest entirely: a marked three-row cache truncated to one row was still
     # reported complete, so the remaining category mappings stayed lost.
-    return certified == _content_digest(path)
+    try:
+        actual = _content_digest(path)
+    except OSError:
+        # The cache disappeared, became unreadable, or turned into a directory
+        # between our earlier ``path.exists()`` and this digest call. This is
+        # the same conservative contract as :func:`has_data_rows`: "cannot
+        # inspect" means "not complete", so the caller regenerates rather than
+        # trusting a file we could not read. Raising here would defeat every
+        # bare-guarded caller — every one of the ``cache_is_complete()``
+        # sites in the transforms sits ahead of a regenerator, and a raise
+        # would abort the whole transform run over a benign race.
+        return False
+    return certified == actual
 
 
 def _content_digest(path: Path) -> str:

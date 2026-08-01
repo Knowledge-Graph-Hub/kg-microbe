@@ -124,6 +124,77 @@ class DerivedJsonRefreshTest(TestCase):
             self.assertEqual(plain.read_text(encoding="utf-8"), body)
 
 
+_EC_OWL = (
+    '<?xml version="1.0"?>\n<rdf:RDF>\n'
+    '<owl:Ontology rdf:about="http://purl.obolibrary.org/obo/eccode.owl">\n'
+    '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/eccode/{d}/eccode.owl"/>\n'
+    "</owl:Ontology>\n</rdf:RDF>\n"
+)
+_EC_JSON = '{{"meta":{{"basicPropertyValues":[{{"pred":"versionInfo","val":"{d}"}}]}}}}'
+
+
+class EcSingleSourceTest(TestCase):
+
+    """EC must ship one release, not two: derive ec.json from ec.owl, don't download both."""
+
+    def setUp(self):
+        """Instantiate the transform without base __init__ side effects."""
+        self.transform = OntologiesTransform.__new__(OntologiesTransform)
+
+    def test_ontologies_map_derives_ec_json_from_owl(self):
+        """
+        EC must consume ec.owl.gz, not a separately-downloaded ec.json.
+
+        A prior revision downloaded both ec.json and ec.owl.gz independently
+        from w3id.org/biopragmatics/resources/eccode/. Their release schedules
+        drifted (2024-11-27 JSON vs 2024-10-02 OWL when Codex round 29
+        checked): the ontologies transform emitted EC nodes from the newer
+        JSON while `_ensure_ec_db` built ec.db from the older OWL, so
+        `rhea_mappings` label enrichment against ec.db returned blank labels
+        for the ~42 terms unique to the newer JSON. This map keeps both the
+        transform output and the guarded lookup DB on the same release.
+        """
+        from kg_microbe.transform_utils.ontologies.ontologies_transform import ONTOLOGIES_MAP
+
+        self.assertEqual(
+            ONTOLOGIES_MAP["ec"],
+            "ec.owl.gz",
+            "EC must consume ec.owl.gz so ec.json is derived from the same OWL that ec.db is built from",
+        )
+
+    def test_download_yaml_has_no_standalone_ec_json(self):
+        """`kg download` must fetch only ec.owl.gz — a standalone ec.json download would re-open the drift."""
+        import yaml
+
+        from kg_microbe.transform_utils.constants import CHEBI_SOURCE
+
+        download_yaml = Path(CHEBI_SOURCE).parent.parent.parent / "download.yaml"
+        if not download_yaml.exists():
+            self.skipTest("download.yaml not present in this checkout")
+        entries = yaml.safe_load(download_yaml.read_text(encoding="utf-8"))
+        ec_json = [e for e in entries if e.get("local_name") == "ec.json"]
+        self.assertEqual(
+            ec_json,
+            [],
+            "download.yaml must not fetch ec.json — the ontologies transform derives it from ec.owl.gz",
+        )
+
+    def test_a_stale_derived_ec_json_is_dropped(self):
+        """A drifted ec.json left over from the standalone download must be dropped."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            archive = Path(tmp) / "ec.owl.gz"
+            with gzip.open(archive, "wt", encoding="utf-8") as handle:
+                handle.write(_EC_OWL.format(d="2026-07-31"))
+            derived = Path(tmp) / "ec.json"
+            derived.write_text(_EC_JSON.format(d="2024-11-27"), encoding="utf-8")
+
+            self.transform._drop_stale_derived_json(archive, derived)
+
+            self.assertFalse(derived.exists(), "a drifted derived ec.json must be dropped so ROBOT re-runs")
+
+
 class PostProcessingAtomicityTest(TestCase):
 
     """ROBOT publishes the JSON atomically; the post-processors must not undo that."""

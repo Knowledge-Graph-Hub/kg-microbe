@@ -81,7 +81,15 @@ ONTOLOGIES_MAP = {
     # aspect map (go.db) and the transform output (go.json) share one release.
     "go": "go.owl",
     ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
-    "ec": "ec.json",
+    # EC is single-source (round 29 of #604): the transform derives ec.json
+    # from ec.owl.gz (ROBOT owl→json), the same OWL that ec.db is built from
+    # — so `rhea_mappings` label enrichment against ec.db and the node
+    # emission this transform performs share one release. A prior revision
+    # downloaded ec.json separately from w3id.org/biopragmatics; that JSON
+    # drifted on its own schedule and could reference terms that were absent
+    # from ec.owl (and therefore from ec.db), so rhea_mappings emitted blank
+    # labels for them. Do NOT re-add a standalone ec.json download.
+    "ec": "ec.owl.gz",
     "upa": "upa.owl",
     "mondo": "mondo.json",
     "hp": "hp.json",

@@ -206,6 +206,76 @@ class EcSingleSourceTest(TestCase):
 
             self.assertFalse(derived.exists(), "a drifted derived ec.json must be dropped so ROBOT re-runs")
 
+    def test_a_mid_file_truncated_json_is_detected(self):
+        """
+        Head-only checks miss a JSON truncated after a valid start.
+
+        ROBOT can crash after writing several MB of a multi-GB conversion:
+        the file starts with ``{`` and may carry the current release stamp,
+        so the release-comparison guard passes and ``convert_to_json``
+        skips regeneration. Every subsequent run then fails on the same
+        corruption. The trailer check closes that gap.
+        """
+        import tempfile
+
+        from kg_microbe.utils.ontology_utils import _derived_json_is_unusable
+
+        with tempfile.TemporaryDirectory() as tmp:
+            derived = Path(tmp) / "big.json"
+            # Well over the tail window; the trailer never gets written.
+            derived.write_text(
+                '{"graphs":[{"id":"http://example.org/x","meta":{"basicPropertyValues":['
+                '{"pred":"versionInfo","val":"2026-07-31"}]},"nodes":['
+                + ",".join(f'{{"id":"X:{i}"}}' for i in range(20_000)),
+                encoding="utf-8",
+            )
+            self.assertTrue(
+                _derived_json_is_unusable(derived),
+                "a JSON that opens with '{' but never closes must be flagged unusable",
+            )
+
+    def test_a_complete_json_is_not_flagged_unusable(self):
+        """The trailer heuristic must accept a well-formed document."""
+        import tempfile
+
+        from kg_microbe.utils.ontology_utils import _derived_json_is_unusable
+
+        with tempfile.TemporaryDirectory() as tmp:
+            derived = Path(tmp) / "good.json"
+            derived.write_text('{"graphs":[{"nodes":[{"id":"X:1"}]}]}\n', encoding="utf-8")
+            self.assertFalse(_derived_json_is_unusable(derived))
+
+    def test_a_truncated_plain_owl_is_replaced(self):
+        """
+        A plain OWL missing its closing tag must be replaced from the archive.
+
+        Round 32 added the trailer check to :func:`_archive_release_differs`
+        so a partial plain OWL surviving a mid-decompression crash cannot
+        pass the release-only comparison and be reused for every subsequent
+        build.
+        """
+        import tempfile
+
+        from kg_microbe.utils.ontology_utils import _archive_release_differs
+
+        with tempfile.TemporaryDirectory() as tmp:
+            archive = Path(tmp) / "ncbitaxon.owl.gz"
+            body = _OWL.format(d="2026-07-31")
+            with gzip.open(archive, "wt", encoding="utf-8") as handle:
+                handle.write(body)
+            plain = Path(tmp) / "ncbitaxon.owl"
+            # Same release stamp, but no closing element.
+            plain.write_text(
+                '<?xml version="1.0"?>\n<owl:Ontology>'
+                '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/ncbitaxon/2026-07-31/ncbitaxon.owl"/>',
+                encoding="utf-8",
+            )
+
+            self.assertTrue(
+                _archive_release_differs(plain),
+                "a truncated plain OWL must be reported as needing replacement",
+            )
+
 
 class PostProcessingAtomicityTest(TestCase):
 

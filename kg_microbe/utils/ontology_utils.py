@@ -1,6 +1,5 @@
 """Ontology utilities for category assignment and term processing."""
 
-import fcntl
 import gzip
 import itertools
 import os
@@ -16,6 +15,18 @@ from contextlib import contextmanager
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict, NamedTuple, Optional
+
+try:
+    # POSIX-only. Windows / non-POSIX platforms fall back to the in-process
+    # threading lock alone — ontology_utils is imported at transform startup by
+    # nearly every transform, so an unconditional import broke every entry
+    # point on Windows with ModuleNotFoundError long before any lock was
+    # taken. The cross-process lock this guards is only meaningful when
+    # multiple builder processes exist (the HPC array pattern), which does
+    # not apply on Windows in this repo today.
+    import fcntl
+except ImportError:  # pragma: no cover — Windows/Jython fallback
+    fcntl = None  # type: ignore[assignment]
 
 from oaklib.interfaces import OboGraphInterface
 
@@ -110,9 +121,24 @@ def _derived_json_is_unusable(json_path: Path) -> bool:
     ontologies-transform run fails on the same corruption without an obvious
     remediation.
 
-    Detected cheaply: an empty file, or a head that does not begin with a JSON
-    object/array token after whitespace, is unusable. Callers unlink an
-    unusable file to force :func:`convert_to_json` to run.
+    Detected in three steps of increasing effort so the common healthy case is
+    cheap:
+
+    1. Empty or wrong-shaped head (does not start with ``{`` / ``[``): unusable.
+    2. Tail does not end with the matching close (``}`` / ``]``): unusable —
+       catches most crashes that leave the file dangling mid-record.
+    3. Bracket balance across the whole file (streaming byte counts): unusable
+       if the counts disagree. This catches a mid-file truncation where the
+       tail happens to end on a legitimate nested close (``…}]}`` from a
+       previous graph entry) but the top-level structure never terminated.
+       Runs in linear time with C-speed ``bytes.count``, so even the ~1.5 GB
+       NCBITaxon JSON completes in seconds — an acceptable one-time cost paid
+       once per transform.
+
+    OBO-JSON's string values do not normally contain unbalanced ``{}[]``
+    (ROBOT's node labels and descriptions do not), so the byte-count balance
+    is a reliable signal for this specific format even without a real JSON
+    parser.
 
     :param json_path: Path to a derived ``.json`` file.
     :return: True if the file exists but is not a plausibly-complete JSON
@@ -129,13 +155,47 @@ def _derived_json_is_unusable(json_path: Path) -> bool:
         return False
     if size == 0:
         return True
+    # Step 1+2: head and tail tokens. 64 B at the head is enough for the
+    # opening token past any BOM/whitespace; 4 KB at the tail covers ROBOT's /
+    # SemSQL's trailing whitespace and formatting.
     try:
         with open(json_path, "rb") as handle:
             head = handle.read(64)
+            if size <= 4096:
+                tail = head + handle.read()
+            else:
+                handle.seek(-4096, 2)
+                tail = handle.read()
     except OSError:
         return False
-    stripped = head.lstrip()
-    return not (stripped.startswith(b"{") or stripped.startswith(b"["))
+    head_stripped = head.lstrip()
+    if head_stripped.startswith(b"{"):
+        expected_open, expected_close = b"{", b"}"
+    elif head_stripped.startswith(b"["):
+        expected_open, expected_close = b"[", b"]"
+    else:
+        return True
+    if not tail.rstrip().endswith(expected_close):
+        return True
+    # Step 3: streaming bracket balance. The tail check passes when the
+    # truncation lands right after a nested close (``{"id":"X:1"}`` at the end
+    # of a partial nodes array), which is the most common mid-file corruption.
+    # Only the top-level pair is meaningful for this signal; counting both
+    # curly and square keeps it robust to whichever the file starts with.
+    opens_curly = closes_curly = 0
+    opens_square = closes_square = 0
+    try:
+        with open(json_path, "rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                opens_curly += chunk.count(b"{")
+                closes_curly += chunk.count(b"}")
+                opens_square += chunk.count(b"[")
+                closes_square += chunk.count(b"]")
+    except OSError:
+        return False
+    if expected_open == b"{":
+        return opens_curly != closes_curly or opens_square != closes_square
+    return opens_square != closes_square or opens_curly != closes_curly
 
 
 def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
@@ -1057,12 +1117,23 @@ def _note_orphaned_prev(db_path: str) -> None:
     :param db_path: The DB path whose sibling to check.
     """
     kept = f"{db_path}.prev"
-    if os.path.lexists(kept):
-        size = os.path.getsize(kept) if os.path.exists(kept) else 0
-        print(
-            f"  Note: {kept} ({size / 1e9:.1f} GB) is left over from an interrupted "
-            "build. Delete it if the current DB is good."
-        )
+    if not os.path.lexists(kept):
+        return
+    # `_note_orphaned_prev` runs outside the build lock — the point is to
+    # report on a leftover before the ensure path even starts — so a
+    # concurrent builder that unlinks .prev between our lexists() and
+    # getsize() would raise OSError and abort the waiting transform. This is
+    # a diagnostic, not a decision, so an unreadable .prev is silently
+    # ignored (best-effort: nothing correctness-critical hinges on the
+    # message landing).
+    try:
+        size = os.path.getsize(kept)
+    except OSError:
+        return
+    print(
+        f"  Note: {kept} ({size / 1e9:.1f} GB) is left over from an interrupted "
+        "build. Delete it if the current DB is good."
+    )
 
 
 def _clear_build_target(
@@ -1201,9 +1272,40 @@ def _discard_kept_target(kept: KeptTarget) -> None:
         os.remove(kept.prev_path)
 
 
+def _plain_owl_looks_truncated(owl_source: Path) -> bool:
+    """
+    Report whether a plain OWL file lacks a well-formed closing element.
+
+    A crash mid-decompression can leave a plain OWL that still carries its
+    ``versionIRI`` in the head, so :func:`_archive_release_differs` sees the
+    same release on both sides and the truncated file is reused for every
+    subsequent build. Every complete RDF/XML OWL ends with ``</rdf:RDF>``
+    (OBO downloads and the ROBOT-produced files this repo consumes both do);
+    an OWL2 XML variant ends with ``</Ontology>``. Reading the last 4 KB is
+    cheap and catches the failure mode without paying for a full parse of a
+    multi-gigabyte file.
+
+    :param owl_source: Path to the plain OWL to inspect.
+    :return: True when the plain file exists but is missing every known
+        closing element; False when it looks intact or cannot be read.
+    """
+    try:
+        with open(owl_source, "rb") as handle:
+            handle.seek(0, 2)
+            size = handle.tell()
+            handle.seek(max(0, size - 4096))
+            tail = handle.read()
+    except OSError:
+        # Unreadable is not "truncated" in the sense this function reports;
+        # callers reading _archive_release_differs treat False as "reuse it"
+        # and every other read site will surface its own error.
+        return False
+    return not any(marker in tail for marker in (b"</rdf:RDF>", b"</Ontology>"))
+
+
 def _archive_release_differs(owl_source: Path) -> bool:
     """
-    Report whether ``<owl>.gz`` holds a different release than the plain ``<owl>``.
+    Report whether ``<owl>.gz`` should replace the plain ``<owl>``.
 
     `kg download` refreshes the archive, not the decompressed copy, so a stale
     plain OWL beside a newly downloaded one defeated the entire single-source
@@ -1211,12 +1313,30 @@ def _archive_release_differs(owl_source: Path) -> bool:
     against the old release, and the decompression step refused to run because a
     plain file already existed. The refresh was therefore invisible.
 
+    Also reports True when the plain file is truncated but its head still
+    carries a matching release stamp — the pathological survivor of a
+    crash mid-decompression. Without that check a partial plain OWL is
+    reused for every build, and every build fails on the same corruption
+    with no obvious recovery short of manual deletion.
+
+    Content corrections published under an unchanged release identifier
+    (a common upstream practice) are still invisible to this comparison:
+    detecting them would require decompressing the archive and hashing it,
+    which is too expensive to run on every build. The two callers of this
+    predicate accept that limit.
+
     :param owl_source: Path to the plain OWL.
-    :return: True when both forms exist and their release stamps differ.
+    :return: True when both forms exist and either their release stamps
+        differ or the plain file lacks a well-formed closing element.
     """
     archive = owl_source.with_name(owl_source.name + ".gz")
     if not (archive.exists() and owl_source.exists()):
         return False
+    if _plain_owl_looks_truncated(owl_source):
+        # Announce it here so the caller's decompression message is preceded by
+        # the reason, matching the "different release" path's logging.
+        print(f"Note: {owl_source} has no closing element (looks truncated); replacing from {archive.name}.")
+        return True
     plain_head = None
     try:
         with open(owl_source, "rt", encoding="utf-8", errors="ignore") as handle:
@@ -1426,6 +1546,13 @@ def _build_file_lock(db_path: str):
     :param db_path: Database being built; the lock file sits beside it.
     :yield: Nothing; the lock is held for the duration of the block.
     """
+    if fcntl is None:
+        # No cross-process ordering; the per-ontology threading lock the caller
+        # already holds still orders builds within one interpreter. This is
+        # only reached on non-POSIX platforms where the HPC-array pattern that
+        # motivates the cross-process lock does not run.
+        yield
+        return
     lock_path = f"{db_path}.buildlock"
     os.makedirs(os.path.dirname(os.path.abspath(lock_path)) or ".", exist_ok=True)
     handle = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o644)

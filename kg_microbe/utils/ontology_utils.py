@@ -66,8 +66,9 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000, *, prefer_archiv
     Return the ``YYYY-MM-DD`` OBO release stamped near the top of an .owl/.json.
 
     Both OWL (``versionIRI rdf:resource=".../releases/DATE/..."``) and OBO-JSON
-    (``meta`` versionInfo) carry the release near the file head, so a bounded
-    read avoids parsing hundreds of MB. Returns None if unreadable / unstamped.
+    (``meta`` versionInfo or ``meta.version``) carry the release near the file
+    head, so a bounded read avoids parsing hundreds of MB. Returns None if
+    unreadable / unstamped.
 
     ``prefer_archive`` is for downloaded sources only — see :func:`_read_head`.
     """
@@ -85,6 +86,16 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000, *, prefer_archiv
     # OBO-JSON versionInfo, e.g. {"pred": ".../versionInfo", "val": "2026-05-19"}
     # — allow the intervening `","val":` before the date (non-greedy, bounded).
     m = re.search(r"versionInfo.{0,40}?(\d{4}-\d{2}-\d{2})", head)
+    if m:
+        return m.group(1)
+    # OBO-JSON `meta.version` — ROBOT preserves the source OWL's versionIRI
+    # verbatim as this field, so an ontology whose IRI omits the `releases/`
+    # segment (EC: `.../obo/eccode/2024-10-02/eccode.owl`) falls through every
+    # other pattern. Left as the last fallback so a `releases/DATE` or a
+    # `versionInfo` stamp wins first when the head carries both, and matched
+    # as a JSON string value so a bare `"version"` key elsewhere in the head
+    # cannot latch onto an unrelated date.
+    m = re.search(r'"version"\s*:\s*"[^"]{0,300}?(\d{4}-\d{2}-\d{2})[^"]*"', head)
     return m.group(1) if m else None
 
 

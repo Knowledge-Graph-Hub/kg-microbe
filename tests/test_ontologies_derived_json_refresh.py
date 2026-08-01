@@ -130,7 +130,19 @@ _EC_OWL = (
     '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/eccode/{d}/eccode.owl"/>\n'
     "</owl:Ontology>\n</rdf:RDF>\n"
 )
-_EC_JSON = '{{"meta":{{"basicPropertyValues":[{{"pred":"versionInfo","val":"{d}"}}]}}}}'
+# ROBOT-shaped: mirrors what `robot convert --input ec.owl -f json` actually
+# emits. EC's versionIRI is `.../obo/eccode/DATE/eccode.owl` with no
+# `releases/` segment, and ROBOT stashes it verbatim into `meta.version` —
+# it does not synthesise a `versionInfo` basicPropertyValue for EC, so a
+# fixture that fabricated one masked the real reader shape. The stamp lookup
+# has to catch the `"version": "..."` form to keep the transform's derived
+# JSON honest about its release.
+_EC_JSON = (
+    '{{"graphs":[{{"id":"http://purl.obolibrary.org/obo/eccode.owl",'
+    '"meta":{{"basicPropertyValues":['
+    '{{"pred":"http://www.geneontology.org/formats/oboInOwl#hasOBOFormatVersion","val":"1.2"}}],'
+    '"version":"http://purl.obolibrary.org/obo/eccode/{d}/eccode.owl"}}}}]}}'
+)
 
 
 class EcSingleSourceTest(TestCase):

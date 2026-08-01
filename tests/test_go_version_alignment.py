@@ -55,6 +55,29 @@ def test_release_none_when_unreadable(tmp_path):
     assert ou._obo_release_from_head(tmp_path / "blank.owl") is None
 
 
+def test_release_parsed_from_obojson_meta_version_without_releases_segment(tmp_path):
+    """
+    ROBOT's OBO-JSON stashes the source OWL's versionIRI in `meta.version`.
+
+    An ontology whose IRI omits the `releases/` segment (EC:
+    `.../obo/eccode/DATE/eccode.owl`) falls through the `releases/` regex,
+    the OWL-only `versionIRI` regex, and — if ROBOT did not synthesise a
+    `versionInfo` basicPropertyValue for it — the `versionInfo` regex too.
+    Without the `"version": "..."` fallback the reader returns None, the
+    staleness check reports "not stale", `convert_to_json` skips regeneration
+    even though ec.db has since realigned, and the release drift between the
+    transform's node emission and the guarded lookup DB reopens.
+    """
+    (tmp_path / "ec.json").write_text(
+        '{"graphs":[{"id":"http://purl.obolibrary.org/obo/eccode.owl",'
+        '"meta":{"basicPropertyValues":['
+        '{"pred":"http://www.geneontology.org/formats/oboInOwl#hasOBOFormatVersion","val":"1.2"}],'
+        '"version":"http://purl.obolibrary.org/obo/eccode/2024-10-02/eccode.owl"}}]}',
+        encoding="utf-8",
+    )
+    assert ou._obo_release_from_head(tmp_path / "ec.json") == "2024-10-02"
+
+
 def test_aligned_versions_do_not_raise(tmp_path, monkeypatch):
     """Matching go.owl / go.json releases pass the gate silently."""
     owl = _write_go_pair(tmp_path, "2026-05-19", "2026-05-19")

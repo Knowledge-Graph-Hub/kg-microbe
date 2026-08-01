@@ -204,10 +204,11 @@ Optional, for the ontology transforms:
   build is roughly old + new (~28 GB) plus the decompressed `ncbitaxon.owl`
   (~2 GB) and a relation-graph intermediate.
 
-  Caveat: the NCBITaxon *drift rebuild* runs from the multiprocessing pre-flight,
-  so a sequential metatraits run (`METATRAITS_MULTIPROCESSING=false`, or a single
-  unsplit input) skips it and only warns — see issue #614. Other transforms
-  resolve it on demand and will build it if it is absent.
+  The NCBITaxon drift rebuild runs from the metatraits pre-flight regardless of
+  MP mode — sequential runs (`METATRAITS_MULTIPROCESSING=false` or a single
+  unsplit input) invoke the same pre-flight, so #614's warn-and-continue on
+  release drift is closed there too. Other transforms resolve NCBITaxon on
+  demand and will build it if it is absent.
 
 - `KG_GO_VERSION_CHECK` / `KG_NCBITAXON_VERSION_CHECK` / `KG_CHEBI_VERSION_CHECK`:
   `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently

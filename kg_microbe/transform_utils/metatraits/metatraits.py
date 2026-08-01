@@ -130,9 +130,10 @@ def _ensure_ncbitaxon_db_ready() -> None:
     # left the single-source rule advisory for NCBITaxon (F3). The cost is one
     # release-stamp read of the OWL head plus one sqlite query per run.
     #
-    # Note this whole function is only called under `if use_mp:`, so sequential
-    # runs still bypass the rebuild and get only the version gate's warning
-    # (issue #614). The guarantee is enforced in multiprocessing mode only.
+    # Called from `run()` regardless of MP mode. Sequential runs used to
+    # bypass this entirely and rely on OAK's lazy download/refresh, which
+    # never realigned drift; the caller now invokes this unconditionally so
+    # #614 is closed on the sequential path too.
     ensured = _ensure_ncbitaxon_db(str(local_db))
 
     ok, reason = _validate_ncbitaxon_db(local_db)
@@ -3685,12 +3686,16 @@ class MetaTraitsTransform(Transform):
             use_mp = False
             print("  Multiprocessing disabled via METATRAITS_MULTIPROCESSING environment variable")
 
-        # Pre-flight check the NCBITaxon DB in the parent only when using
-        # multiprocessing. Workers must never attempt cache repair —
-        # concurrent heals corrupt the shared cache. Sequential runs should
-        # retain the existing lazy OAK download/refresh behavior.
-        if use_mp:
-            _ensure_ncbitaxon_db_ready()
+        # Pre-flight check the NCBITaxon DB — always, not only under MP.
+        # MP mode *requires* the parent to build/heal so workers never attempt
+        # cache repair concurrently (that is what corrupts the shared cache).
+        # Sequential mode previously deferred to OAK's lazy download/refresh,
+        # which never triggered the single-source drift rebuild: a stale
+        # ncbitaxon.db was reused and the warn-only version gate merely
+        # surfaced the gap rather than closing it (#614). Sequential runs are
+        # single-process, so running the pre-flight here shares MP's safety
+        # while extending the drift realign to that path too.
+        _ensure_ncbitaxon_db_ready()
 
         # Version-alignment guard runs regardless of MP mode (the mismatch it
         # catches is independent of parallelism). No-ops when the DB isn't

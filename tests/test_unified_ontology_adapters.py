@@ -677,13 +677,28 @@ class TestFatalErrorsAreNotSwallowed:
         with pytest.raises(ou.FatalOntologyError):
             pd.Series([f"CHEBI:{i}" for i in range(5)]).apply(lambda c: ou.get_chebi_category(c, self._Boom()))
 
-    def test_bakta_go_aspect_does_not_default(self):
-        """Bakta's handler cached molecular_function for every term instead."""
-        from kg_microbe.transform_utils.bakta.utils import get_go_aspect
+    def test_bakta_go_aspect_does_not_default(self, monkeypatch):
+        """
+        Bakta's handler cached molecular_function for every term instead.
+
+        The lookup now goes through the raw-sqlite ``get_go_aspect`` in
+        ``ontology_utils`` (the OAK ``entity_metadata_map`` path throws on
+        GO DBs with case-collision prefixes and the swallowed exception
+        used to leave the aspect at ``molecular_function`` for every term).
+        The invariant this test guards is unchanged: a fatal ontology
+        failure surfacing during the aspect read must propagate rather
+        than default and cache.
+        """
+        from kg_microbe.transform_utils.bakta import utils as bakta_utils
+
+        def _boom(_go_id):
+            raise ou.OntologyDbUnavailableError("no db")
+
+        monkeypatch.setattr(ou, "get_go_aspect", _boom)
 
         cache = {}
         with pytest.raises(ou.FatalOntologyError):
-            get_go_aspect("GO:0008150", self._Boom(), cache)
+            bakta_utils.get_go_aspect("GO:0008150", cache=cache)
         assert cache == {}, "a fatal failure must not poison the aspect cache"
 
     def test_get_label_does_not_return_a_bare_id(self):

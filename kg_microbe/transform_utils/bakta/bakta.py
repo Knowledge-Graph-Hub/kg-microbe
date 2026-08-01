@@ -49,7 +49,6 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.ontology_utils import get_go_adapter
 
 logger = logging.getLogger(__name__)
 
@@ -72,19 +71,14 @@ class BaktaTransform(Transform):
         source_name = BAKTA
         super().__init__(source_name, input_dir, output_dir)
 
-        # Load GO ontology for aspect mapping
-        # Always the guarded accessor. The old `if go.db exists: get_adapter(...)`
-        # branch was the live one on any populated checkout, and it bypassed the
-        # size floor, the drift rebuild and the version gate — accepting a
-        # 0-byte go.db, the exact failure _GO_DB_MIN_SIZE exists to catch.
-        #
-        # Not wrapped: the accessor resolves lazily, so construction cannot fail,
-        # and an unusable GO DB is a FatalOntologyError on first use — degrading
-        # to `self.go_adapter = None` here would have handed get_go_aspect the
-        # None it defaults to molecular_function for, i.e. the silent
-        # miscategorisation of every biological-process and cellular-component
-        # term this accessor exists to prevent.
-        self.go_adapter = get_go_adapter()
+        # GO aspect resolution goes through utils.get_go_aspect, which reads
+        # the raw-sqlite namespace map via _load_go_namespace_map. That path
+        # both ensures go.db is built and bypasses OAK's curies converter —
+        # entity_metadata_map throws on GO databases with case-collision
+        # prefixes and the swallowed exception used to default every
+        # biological-process / cellular-component term to molecular_function.
+        # No adapter handle is retained here; the direct-sqlite reader owns
+        # its own DB access.
 
         # Load SAMN to NCBITaxon mapping
         mapping_file = BAKTA_DIR / "samn_to_ncbitaxon.tsv"
@@ -414,7 +408,7 @@ class BaktaTransform(Transform):
         :param go_id: GO identifier (e.g., 'GO:0003677')
         """
         # Determine GO aspect (with caching to avoid repeated queries)
-        aspect = get_go_aspect(go_id, self.go_adapter, self.go_aspect_cache)
+        aspect = get_go_aspect(go_id, cache=self.go_aspect_cache)
 
         # Get Biolink category and predicate
         category = get_biolink_category_for_go(aspect)

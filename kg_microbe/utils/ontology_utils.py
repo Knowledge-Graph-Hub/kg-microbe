@@ -2501,6 +2501,31 @@ def replace_category_ontology(line, id_index, category_index):
     return new_line
 
 
+def get_go_aspect(go_term_id: str) -> Optional[str]:
+    """
+    Return the OBO namespace/aspect for a GO term (from ``go.db``).
+
+    Reads via :func:`_load_go_namespace_map` (raw sqlite), which bypasses OAK's
+    curies converter — the converter fails to build on GO databases carrying
+    case-collision prefix rows (e.g. both ``CHR`` and ``chr`` → ``obo/CHR_``),
+    so every ``entity_metadata_map`` call throws and any caller wrapped in
+    ``except Exception`` silently falls through to its default aspect. On a
+    GO DB with that prefix, the default was ``molecular_function``, filing
+    every biological-process / cellular-component term as MF.
+
+    :param go_term_id: GO CURIE (e.g. ``"GO:0004096"``).
+    :return: One of ``"molecular_function"``, ``"biological_process"``,
+        ``"cellular_component"``, or ``None`` when the term is not present in
+        the namespace map. Raises :class:`OntologyDbUnavailableError` (a
+        :class:`BaseException`) if the DB itself cannot be read.
+    """
+    from kg_microbe.transform_utils.constants import GO_SOURCE
+
+    go_db_path = str(GO_SOURCE.with_suffix(".db")) if GO_SOURCE else "data/raw/go.db"
+    ns_map = _load_go_namespace_map(go_db_path)
+    return ns_map.get(go_term_id)
+
+
 def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInterface] = None) -> str:
     """
     Return Biolink category based on GO aspect (namespace).

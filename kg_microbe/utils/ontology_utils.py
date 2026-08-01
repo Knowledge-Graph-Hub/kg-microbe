@@ -110,6 +110,15 @@ def _obo_release_from_head(path: Path, nbytes: int = 2_000_000, *, prefer_archiv
     return m.group(1) if m else None
 
 
+# Above this size the corruption check falls back to head+tail only. A full
+# json.load pulls the file into memory (~3-4x file size) and takes minutes for
+# NCBITaxon's ~1.5 GB JSON; the callers already run in memory-constrained
+# HPC contexts, so paying that on every ontologies-transform run is a bad
+# trade for the rare mid-file truncation that atomic_write already prevents
+# for new writes.
+_JSON_PARSE_MAX_BYTES = 200 * 1024 * 1024  # 200 MB
+
+
 def _derived_json_is_unusable(json_path: Path) -> bool:
     """
     Return True when a derived OBO-JSON exists on disk but cannot be read.
@@ -127,24 +136,27 @@ def _derived_json_is_unusable(json_path: Path) -> bool:
     1. Empty or wrong-shaped head (does not start with ``{`` / ``[``): unusable.
     2. Tail does not end with the matching close (``}`` / ``]``): unusable —
        catches most crashes that leave the file dangling mid-record.
-    3. Bracket balance across the whole file (streaming byte counts): unusable
-       if the counts disagree. This catches a mid-file truncation where the
-       tail happens to end on a legitimate nested close (``…}]}`` from a
-       previous graph entry) but the top-level structure never terminated.
-       Runs in linear time with C-speed ``bytes.count``, so even the ~1.5 GB
-       NCBITaxon JSON completes in seconds — an acceptable one-time cost paid
-       once per transform.
+    3. For files under :data:`_JSON_PARSE_MAX_BYTES` (200 MB): a full
+       :func:`json.load` catches a mid-file truncation where the tail happens
+       to end on a legitimate nested close from a previous graph entry.
+       Larger files (notably NCBITaxon's ~1.5 GB JSON) skip the full parse
+       because loading and parsing them costs multi-GB peak memory and
+       minutes of CPU on every transform run — trades not worth making for
+       the rare pre-existing corruption of this shape. New writes are
+       protected by :func:`kg_microbe.utils.atomic_io.atomic_write`.
 
-    OBO-JSON's string values do not normally contain unbalanced ``{}[]``
-    (ROBOT's node labels and descriptions do not), so the byte-count balance
-    is a reliable signal for this specific format even without a real JSON
-    parser.
+    A string-agnostic bracket-count fallback was tried and dropped: node
+    labels routinely contain ``[NADH]``-style brackets, so the count
+    disagreed on every real ontology and valid files were unlinked on every
+    run (round 34).
 
     :param json_path: Path to a derived ``.json`` file.
     :return: True if the file exists but is not a plausibly-complete JSON
         document; False if it is absent (nothing to recover from) or looks
         plausible.
     """
+    import json
+
     if not json_path.exists():
         return False
     try:
@@ -170,32 +182,25 @@ def _derived_json_is_unusable(json_path: Path) -> bool:
         return False
     head_stripped = head.lstrip()
     if head_stripped.startswith(b"{"):
-        expected_open, expected_close = b"{", b"}"
+        expected_close = b"}"
     elif head_stripped.startswith(b"["):
-        expected_open, expected_close = b"[", b"]"
+        expected_close = b"]"
     else:
         return True
     if not tail.rstrip().endswith(expected_close):
         return True
-    # Step 3: streaming bracket balance. The tail check passes when the
-    # truncation lands right after a nested close (``{"id":"X:1"}`` at the end
-    # of a partial nodes array), which is the most common mid-file corruption.
-    # Only the top-level pair is meaningful for this signal; counting both
-    # curly and square keeps it robust to whichever the file starts with.
-    opens_curly = closes_curly = 0
-    opens_square = closes_square = 0
+    # Step 3 (bounded): a real JSON parser is the only reliable way to
+    # distinguish brackets-in-strings from a mid-file truncation whose tail
+    # happens to end on a nested close. Skip for oversized files; see the
+    # constant above for the rationale.
+    if size > _JSON_PARSE_MAX_BYTES:
+        return False
     try:
         with open(json_path, "rb") as handle:
-            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-                opens_curly += chunk.count(b"{")
-                closes_curly += chunk.count(b"}")
-                opens_square += chunk.count(b"[")
-                closes_square += chunk.count(b"]")
-    except OSError:
-        return False
-    if expected_open == b"{":
-        return opens_curly != closes_curly or opens_square != closes_square
-    return opens_square != closes_square or opens_curly != closes_curly
+            json.load(handle)
+    except (ValueError, OSError):
+        return True
+    return False
 
 
 def _derived_json_is_stale(owl_path: Path, json_path: Path) -> bool:
@@ -485,25 +490,32 @@ def _restored_db_usable(
 
     If something was displaced and put back, it is the caller's own artifact —
     possibly a symlink to a prebuilt DB, which is supported — so the symlink-
-    tolerant check applies. If nothing was displaced, whatever sits at the target
-    came from the failed build itself, and a symlink there means it landed
-    elsewhere.
+    tolerant serve check applies. If nothing was displaced, whatever sits at
+    the target came from the failed build itself, and a symlink there means
+    ``semsql`` followed a stale link and the multi-GB output landed
+    elsewhere — refused outright.
 
-    Tolerant of symlinks, not of doubt: this verdict is returned as ``usable``
-    from three build-failure exits, so it has to answer "may the caller use
-    this?", which :func:`_servable_db` answers and :func:`_reusable_db`
-    deliberately does not.
+    Tolerant of symlinks (when kept), not of doubt: this verdict is returned
+    as ``usable`` from three build-failure exits, so it has to answer "may
+    the caller use this?" — which :func:`_servable_db` answers strictly
+    (positive schema + identity) and :func:`_reusable_db` deliberately does
+    not. The earlier no-kept branch delegated to :func:`_usable_db`, which
+    accepts ``DB_BUSY`` and indeterminate schema results by design (its
+    purpose is the preservation decision, not the serve decision), so a
+    failed build could be served without positive verification (round 34).
 
     :param db_path: Path to the DB.
     :param min_size: Smallest plausible size for a complete build.
     :param kept: What :func:`_clear_build_target` displaced.
     :return: True if the file is usable.
     """
-    return (
-        _servable_db(db_path, min_size, ontology, require_content=require_content)
-        if kept
-        else _usable_db(db_path, min_size, ontology=ontology, require_content=require_content)
-    )
+    if kept:
+        return _servable_db(db_path, min_size, ontology, require_content=require_content)
+    if os.path.islink(db_path):
+        # No prev, and the target is a symlink: the failed build followed
+        # a stale link and the result is not at this path.
+        return False
+    return _servable_db(db_path, min_size, ontology, require_content=require_content)
 
 
 def _present_db(db_path: str, min_size: int) -> bool:

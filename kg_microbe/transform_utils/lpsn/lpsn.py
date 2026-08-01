@@ -279,8 +279,14 @@ class LPSNTransform(Transform):
         """
         super().__init__(LPSN_SOURCE, input_dir, output_dir)
         self.knowledge_source = LPSN_KNOWLEDGE_SOURCE
-        self.ncbi_impl = ncbi_impl if ncbi_impl is not None else self._load_ncbi_adapter()
-        self.gtdb_index = gtdb_index if gtdb_index is not None else self._load_gtdb_index()
+        # Store what tests inject; auto-loading is deferred to run() so a
+        # missing lpsn_gss.csv fails fast without triggering the hours-long
+        # NCBITaxon build path via _load_ncbi_adapter -> get_ontology_adapter.
+        # ``kg transform -s lpsn`` on a fresh checkout otherwise built ~13 GB
+        # of ncbitaxon.db before checking whether its own input was present
+        # (round 34).
+        self.ncbi_impl = ncbi_impl
+        self.gtdb_index = gtdb_index
         # Track cross-ref outcomes for the end-of-run summary.
         self._ncbi_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
         self._gtdb_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
@@ -398,6 +404,15 @@ class LPSNTransform(Transform):
                 "data/raw/lpsn_gss.csv. "
                 "See kg_microbe/transform_utils/lpsn/README.md for details."
             )
+
+        # Deferred: __init__ deliberately does not touch the ontologies so
+        # that the CSV-presence check above fails fast on a fresh checkout.
+        # Tests inject non-None values via the constructor and preserve them
+        # unchanged; production callers get lazy loading here.
+        if self.ncbi_impl is None:
+            self.ncbi_impl = self._load_ncbi_adapter()
+        if self.gtdb_index is None:
+            self.gtdb_index = self._load_gtdb_index()
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
 

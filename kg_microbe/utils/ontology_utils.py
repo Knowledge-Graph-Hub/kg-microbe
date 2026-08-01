@@ -1238,6 +1238,40 @@ def _chebi_release_from_owl(path: Path, nbytes: int = 2_000_000, *, prefer_archi
     return m.group(1) if m else None
 
 
+def _ec_db_release(db_path: str) -> Optional[str]:
+    """
+    Return the EC release (YYYY-MM-DD) recorded in a SemSQL ``ec.db``.
+
+    Unlike GO / NCBITaxon / ChEBI (which stamp ``owl:versionInfo`` into the
+    ``value`` column), EC's SemSQL build only carries the ``owl:versionIRI``
+    triple: predicate ``owl:versionIRI``, object like
+    ``obo:eccode/2024-10-02/eccode.owl``. Read from the ``object`` column and
+    pull the date out of the IRI. Returns None on any read error / missing
+    stamp — the caller (:func:`_ensure_ec_db`) treats None as "cannot judge
+    drift" the same way the other ontology paths do.
+
+    :param db_path: Path to ``ec.db``.
+    :return: Release as ``YYYY-MM-DD`` string, or None.
+    """
+    try:
+        conn = _read_only_connection(db_path)
+        try:
+            row = conn.execute(
+                "SELECT object FROM statements WHERE predicate = 'owl:versionIRI' "
+                "AND object IS NOT NULL AND ("
+                "subject IN ('obo:eccode.owl', 'obo:eccode') OR subject LIKE '%/eccode.owl'"
+                ") LIMIT 1"
+            ).fetchone()
+        finally:
+            conn.close()
+    except sqlite3.Error:
+        return None
+    if not row or not row[0]:
+        return None
+    m = re.search(r"(\d{4}-\d{2}-\d{2})", str(row[0]))
+    return m.group(1) if m else None
+
+
 def _chebi_db_release(db_path: str) -> Optional[str]:
     """
     Return the ChEBI release recorded in a SemSQL ``chebi.db``.
@@ -1981,6 +2015,7 @@ _DB_RELEASE_READERS = {
     "ncbitaxon": lambda path: _ncbitaxon_db_release(path),
     "chebi": lambda path: _chebi_db_release(path),
     "go": lambda path: _go_db_release(path),
+    "ec": lambda path: _ec_db_release(path),
 }
 
 _DECOMPRESS_COUNTER = itertools.count()
@@ -2272,17 +2307,35 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
     the build is quick, but it goes through the same guarded path as the others
     for consistency.
 
+    Realigns on release drift, the same as GO / NCBITaxon / ChEBI. Earlier
+    revisions of this function claimed EC had no reliable release stamp, so
+    an existing DB was reused indefinitely. In fact `eccode.owl` carries a
+    ``versionIRI`` with a ``YYYY-MM-DD`` release, and the semsql build
+    stamps the same IRI into ``owl:versionIRI`` on the ``obo:eccode.owl``
+    subject — so `kg download` refreshing ``ec.owl.gz`` can silently leave
+    the old ``ec.db`` in place, missing whatever labels the new release
+    added or changed, unless we rebuild on drift.
+
     :param db_path: Target path for ``ec.db``.
     :return: Whether a usable DB exists, and whether this call built it.
     """
     from kg_microbe.transform_utils.constants import EC_SOURCE
 
     owl_source = Path(EC_SOURCE) if EC_SOURCE else None
+    owl_release = _obo_release_from_head(owl_source, prefer_archive=True) if owl_source else None
     _note_orphaned_prev(db_path)
     if _servable_db(db_path, _EC_DB_MIN_SIZE, "ec"):
-        # EC's OWL carries no reliable release stamp, so there is no drift check
-        # to make: an existing DB is reused.
-        return DbEnsureResult(True)
+        db_release = _ec_db_release(db_path)
+        if not (owl_release and db_release and owl_release != db_release):
+            # Only rebuild when both release stamps are readable and differ.
+            # An unreadable stamp never forces a spurious rebuild; the write-
+            # side gate on the strict callers is what stops an unverified
+            # build from being served.
+            return DbEnsureResult(True)
+        print(
+            f"Rebuilding {db_path}: release {db_release} drifted from "
+            f"eccode.owl {owl_release} (single-source realign)..."
+        )
     return _build_semsql_db(
         owl_source,
         db_path,
@@ -2291,6 +2344,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
         "EC is small; this build usually takes a couple of minutes.",
         require_content=True,
         ontology="ec",
+        expected_release=owl_release,
     )
 
 

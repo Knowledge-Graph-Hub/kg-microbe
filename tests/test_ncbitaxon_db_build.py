@@ -1232,22 +1232,26 @@ class TestOntologyIdentityAndServing:
             )
             assert bool(calls) is expect_build, f"db at {stamp}: build={bool(calls)}"
 
-    def test_release_less_ontology_coalesces_on_a_servable_db(self, tmp_path, monkeypatch):
+    def test_reader_less_ontology_coalesces_on_a_servable_db(self, tmp_path, monkeypatch):
         """
         Waiting on the lock must skip the rebuild when there is nothing to drift.
 
         Post-lock coalescing required both `expected_release` and a release
-        reader — but EC supplies neither. The outer gate only enters
-        ``_build_semsql_db`` because the DB was not servable at all, so the
-        first waiting HPC job that gets the lock built it; every other job then
+        reader. Ontologies without a registered reader in
+        ``_DB_RELEASE_READERS`` fall through this guard, meaning the first
+        waiting HPC job that gets the lock built the DB; every other job then
         moved that fresh DB aside and rebuilt it from scratch, adding minutes
-        per queued transform. A release-less call cannot have entered on drift,
-        so a servable DB after the lock is the coalescing signal we can safely
-        use.
+        per queued transform. A reader-less call cannot have entered on
+        drift (the outer gate cannot compare releases without one), so a
+        servable DB after the lock is the coalescing signal we can safely
+        use. Passes ``ontology=None`` so `_DB_RELEASE_READERS.get("")` is
+        None: EC used to fit this shape before round-28 registered its
+        reader, and this branch is now a defensive fallback for any future
+        ontology added without a release stamp.
         """
-        owl = tmp_path / "ec.owl"
+        owl = tmp_path / "no-reader.owl"
         owl.write_text("<owl/>", encoding="utf-8")
-        db = write_single_ontology_db(tmp_path / "ec.db", "ec")
+        db = write_single_ontology_db(tmp_path / "no-reader.db", "ec")
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
         calls = []
         monkeypatch.setattr(ou.subprocess, "run", lambda *a, **k: calls.append(a))
@@ -1256,30 +1260,30 @@ class TestOntologyIdentityAndServing:
             owl,
             str(db),
             3000,
-            "EC",
+            "no-reader",
             "n",
-            ontology="ec",
+            ontology=None,
         )
 
         assert result.usable and not result.built, "the servable DB must be coalesced, not rebuilt"
         assert calls == [], "no `semsql make` may run when another process already produced a servable DB"
 
-    def test_release_less_ontology_still_builds_when_db_is_not_servable(self, tmp_path, monkeypatch):
+    def test_reader_less_ontology_still_builds_when_db_is_not_servable(self, tmp_path, monkeypatch):
         """
-        The release-less coalesce exit must not swallow a genuine build need.
+        The reader-less coalesce exit must not swallow a genuine build need.
 
         With no servable DB at the path, the caller is here precisely because
         they need one built — the new post-lock exit must not short-circuit
         that.
         """
-        owl = tmp_path / "ec.owl"
+        owl = tmp_path / "no-reader.owl"
         owl.write_text("<owl/>", encoding="utf-8")
-        db = tmp_path / "ec.db"  # deliberately absent
+        db = tmp_path / "no-reader.db"  # deliberately absent
         monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
 
         def build(cmd, **kwargs):
-            """Publish a complete EC database."""
-            write_single_ontology_db(Path(kwargs["cwd"]) / "ec.db", "ec")
+            """Publish a complete database."""
+            write_single_ontology_db(Path(kwargs["cwd"]) / "no-reader.db", "ec")
 
         monkeypatch.setattr(ou.subprocess, "run", build)
 
@@ -1287,12 +1291,12 @@ class TestOntologyIdentityAndServing:
             owl,
             str(db),
             3000,
-            "EC",
+            "no-reader",
             "n",
-            ontology="ec",
+            ontology=None,
         )
 
-        assert result.usable and result.built, "a missing release-less DB must still be built"
+        assert result.usable and result.built, "a missing reader-less DB must still be built"
 
     def test_reading_a_release_never_creates_the_database(self, tmp_path):
         """

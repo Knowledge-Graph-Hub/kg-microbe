@@ -13,5 +13,6 @@
     "chemrof": "https://w3id.org/chemrof/",
     "orcid": "https://orcid.org/",
     "schema": "http://schema.org/",
-    "doap": "http://usefulinc.com/ns/doap#"
+    "doap": "http://usefulinc.com/ns/doap#",
+    "GO": "http://purl.obolibrary.org/obo/GO_"
 }

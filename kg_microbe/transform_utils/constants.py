@@ -462,6 +462,16 @@ EC_PYOBO_PREFIX = "eccode"
 EC_OBO_PREFIX = "OBO:eccode_"
 EC_INTENZ_URL_PREFIX = "https://www.ebi.ac.uk/intenz/query?cmd=SearchEC&ec="
 EC_EXPASY_URL_PREFIX = "https://enzyme.expasy.org/EC/"
+# Bioregistry URL form ROBOT emits for EC nodes when converting `eccode.owl`
+# → `ec.json` (raw shape, uses the lowercase full ontology name). Mapped
+# directly to the EC CURIE so compaction does not depend on the fragile
+# `EC_PYOBO_PREFIX` (`"eccode"` → `"EC"`) substring replacement — which happens
+# to reformat `.../eccode:1` to `.../EC:1` as a side effect. That side effect
+# is real today but latent: anyone removing the seemingly-redundant pyobo
+# entry would silently break EC compaction. Fixed by making the URL-form
+# match explicit. Must sit BEFORE `EC_PYOBO_PREFIX` in `SPECIAL_PREFIXES` so
+# `_replace_special_prefixes`' regex alternation prefers the longer match.
+EC_BIOREGISTRY_URL_PREFIX = "https://bioregistry.io/eccode:"
 UNIPROT_OBO_PREFIX = "OBO:uniprot_"
 CHEBI_CAS_PREFIX = "CAS:"
 ACTIVITY_KEY = "activity"
@@ -669,6 +679,12 @@ UNIPROT_DISEASE_COLUMN_NAME = "Involvement in disease"
 UNIPROT_GENE_PRIMARY_COLUMN_NAME = "Gene Names (primary)"
 UNIPROT_PREFIX = "UniprotKB:"
 TREMBL_PREFIX = "TrEMBL:"
+# Bioregistry URL form ROBOT emits for `uniprot:*` xrefs when converting
+# `eccode.owl` → `ec.json`. Compacted to UNIPROT_PREFIX so the "remove
+# UniProt/TrEMBL nodes since accounted for elsewhere" filter in the ontologies
+# transform actually matches these entries; without the compaction 236 K
+# URI-form UniProt nodes slipped past the filter into `ec_nodes.tsv`.
+UNIPROT_BIOREGISTRY_URL_PREFIX = "https://bioregistry.io/uniprot:"
 CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
 # PROTEIN_TO_GO_EDGE = "biolink:enables"
 PROTEIN_TO_ORGANISM_EDGE = "biolink:derives_from"
@@ -837,10 +853,15 @@ HGNC_NEW_PREFIX = "HGNC:"
 
 # Create a mapping for special cases
 SPECIAL_PREFIXES = {
+    # URL forms placed first so the regex alternation prefers the longer,
+    # more specific match over the bare `"eccode"` substring below.
+    EC_BIOREGISTRY_URL_PREFIX: EC_PREFIX,  # Compact `https://bioregistry.io/eccode:` → EC:
     EC_INTENZ_URL_PREFIX: EC_PREFIX,  # Convert IntEnz URLs to EC: CURIEs
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
     EC_OBO_PREFIX: EC_PREFIX,
     UNIPROT_OBO_PREFIX: UNIPROT_PREFIX,
+    # Compact ROBOT-emitted URI form so the ec-branch UniProt filter matches.
+    UNIPROT_BIOREGISTRY_URL_PREFIX: UNIPROT_PREFIX,
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
     # UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",  # comment for now since we do not need obo-db-ingest for uniprot

@@ -669,6 +669,12 @@ UNIPROT_DISEASE_COLUMN_NAME = "Involvement in disease"
 UNIPROT_GENE_PRIMARY_COLUMN_NAME = "Gene Names (primary)"
 UNIPROT_PREFIX = "UniprotKB:"
 TREMBL_PREFIX = "TrEMBL:"
+# Bioregistry URL form ROBOT emits for `uniprot:*` xrefs when converting
+# `eccode.owl` → `ec.json`. Compacted to UNIPROT_PREFIX so the "remove
+# UniProt/TrEMBL nodes since accounted for elsewhere" filter in the ontologies
+# transform actually matches these entries; without the compaction 236 K
+# URI-form UniProt nodes slipped past the filter into `ec_nodes.tsv`.
+UNIPROT_BIOREGISTRY_URL_PREFIX = "https://bioregistry.io/uniprot:"
 CHEMICAL_TO_PROTEIN_EDGE = "biolink:binds"
 # PROTEIN_TO_GO_EDGE = "biolink:enables"
 PROTEIN_TO_ORGANISM_EDGE = "biolink:derives_from"
@@ -841,6 +847,8 @@ SPECIAL_PREFIXES = {
     EC_PYOBO_PREFIX: EC_PREFIX.rstrip(":"),
     EC_OBO_PREFIX: EC_PREFIX,
     UNIPROT_OBO_PREFIX: UNIPROT_PREFIX,
+    # Compact ROBOT-emitted URI form so the ec-branch UniProt filter matches.
+    UNIPROT_BIOREGISTRY_URL_PREFIX: UNIPROT_PREFIX,
     RHEA_NEW_PREFIX.lower().rstrip(":"): RHEA_NEW_PREFIX.rstrip(":"),
     RHEA_OBO_PREFIX: RHEA_NEW_PREFIX,
     # UNIPROT_OBO_PREFIX: UNIPROT_PREFIX + ":",  # comment for now since we do not need obo-db-ingest for uniprot

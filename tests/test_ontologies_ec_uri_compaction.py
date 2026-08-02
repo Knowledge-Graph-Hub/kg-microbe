@@ -3,7 +3,7 @@ Regression tests for EC output URI → CURIE compaction.
 
 Round 29's single-source EC fix (derive ec.json from ec.owl.gz via ROBOT)
 regressed the ontologies transform. The fresh ec.json emitted full URIs
-(`https://bioregistry.io/EC:1.1.1`, `http://purl.obolibrary.org/obo/GO_...`,
+(`https://bioregistry.io/eccode:1.1.1`, `http://purl.obolibrary.org/obo/GO_...`,
 `https://bioregistry.io/uniprot:...`) instead of CURIEs. The ontologies
 transform's generic URI→CURIE compaction reads ``prefixmap.json``, which
 was missing the EC and GO entries — and the ec-branch UniProt filter
@@ -67,10 +67,12 @@ def _fixture_nodes() -> list:
 
     return [
         # Real EC entries in ROBOT's bioregistry URI form.
-        _node("https://bioregistry.io/EC:1", "biolink:MolecularActivity|biolink:Protein", "Oxidoreductases"),
-        _node("https://bioregistry.io/EC:1.1", "biolink:MolecularActivity|biolink:Protein", "Acting on CH-OH"),
+        _node("https://bioregistry.io/eccode:1", "biolink:MolecularActivity|biolink:Protein", "Oxidoreductases"),
+        _node("https://bioregistry.io/eccode:1.1", "biolink:MolecularActivity|biolink:Protein", "Acting on CH-OH"),
         _node(
-            "https://bioregistry.io/EC:1.1.1", "biolink:MolecularActivity|biolink:Protein", "with NAD(+) as acceptor"
+            "https://bioregistry.io/eccode:1.1.1",
+            "biolink:MolecularActivity|biolink:Protein",
+            "with NAD(+) as acceptor",
         ),
         # GO cross-references in ROBOT's OBO URI form.
         _node("http://purl.obolibrary.org/obo/GO_0004022", "biolink:BiologicalProcess", "alcohol dehydrogenase"),
@@ -90,17 +92,17 @@ def _fixture_edges() -> list:
         return [sub, pred, obj, "rdfs:subClassOf", "ec.json", "knowledge_assertion", "manual_agent"]
 
     return [
-        _edge("https://bioregistry.io/EC:1.1", "biolink:subclass_of", "https://bioregistry.io/EC:1"),
-        _edge("https://bioregistry.io/EC:1.1.1", "biolink:subclass_of", "https://bioregistry.io/EC:1.1"),
+        _edge("https://bioregistry.io/eccode:1.1", "biolink:subclass_of", "https://bioregistry.io/eccode:1"),
+        _edge("https://bioregistry.io/eccode:1.1.1", "biolink:subclass_of", "https://bioregistry.io/eccode:1.1"),
         # An EC → GO cross-reference: subject compacts to EC:, object to GO:.
         _edge(
-            "https://bioregistry.io/EC:1.1.1",
+            "https://bioregistry.io/eccode:1.1.1",
             "biolink:related_to",
             "http://purl.obolibrary.org/obo/GO_0016491",
         ),
         # An EC → UniProt edge that must be dropped alongside the node.
         _edge(
-            "https://bioregistry.io/EC:1.1.1",
+            "https://bioregistry.io/eccode:1.1.1",
             "biolink:enabled_by",
             "https://bioregistry.io/uniprot:A0A009IHW8",
         ),

@@ -8,6 +8,7 @@ GO:0015977	carbon fixation	autotrophy	True	1	10	autotrophy
 GO:0019332	aerobic respiration, using nitrite as electron donor	nitrite oxidation	True	1	17	nitrite_oxidation
 GO:0019409	aerobic respiration, using ammonia as electron donor	nitrification	True	1	13	nitrification
 GO:0019412	aerobic respiration, using hydrogen as electron donor	hydrogen oxidation	True	1	18	hydrogen_oxidation
+GO:0019416	thiosulfate oxidation	thiosulfate oxidation	True	1	21	thiosulfate_oxidation
 GO:0019417	sulfur oxidation	sulfur oxidation	True	1	16	sulfur_oxidation
 GO:0019418	sulfide oxidation	sulfide oxidation	True	1	17	sulfide_oxidation
 GO:0030245	cellulose catabolic process	cellulose degradation	True	1	21	cellulose_degradation

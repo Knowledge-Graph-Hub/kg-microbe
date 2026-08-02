@@ -240,17 +240,15 @@
   local_name: rhea2ec.tsv
   tag: rhea
 
-# 
-# EC
-# 
-- 
-  url: https://w3id.org/biopragmatics/resources/eccode/eccode.json
-  local_name: ec.json
-  tag: ontologies
-
-# 
-# EC OWL
-# 
+#
+# EC — single source of truth (round 29 of #604): download only ec.owl.gz;
+# the ontologies transform derives ec.json from it (ROBOT owl→json) and
+# ec.db is built from the same OWL. A prior revision downloaded ec.json
+# separately, which drifted from ec.owl on its own schedule and caused
+# rhea_mappings to emit blank labels for terms present in the newer JSON
+# but absent from the guarded lookup DB. Do NOT re-add a standalone
+# ec.json download.
+#
 -
   url: https://w3id.org/biopragmatics/resources/eccode/eccode.owl.gz
   local_name: ec.owl.gz

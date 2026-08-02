@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Optional, Union
 
 import yaml
-from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -31,7 +30,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_CATEGORY,
     NCBI_TO_PATHWAY_EDGE,
     NCBITAXON_ID_COLUMN,
-    NCBITAXON_SOURCE,
     OBSERVATION,
     PREDICATE_COLUMN,
     PROVIDED_BY_COLUMN,
@@ -40,9 +38,11 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
+from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter, resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 
@@ -168,7 +168,7 @@ class BactoTraitsTransform(Transform):
         source_name = BACTOTRAITS
         super().__init__(source_name, input_dir, output_dir)
         self.knowledge_source = "infores:bactotraits"  # InforES standard knowledge source
-        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.ncbi_impl = get_ncbitaxon_adapter()
         self.bactotraits_metpo_mappings = load_metpo_mappings("bactotraits related synonym")
 
     def _create_node_row(
@@ -229,19 +229,36 @@ class BactoTraitsTransform(Transform):
         # - second column is actually NOT BacDive ID, in spite of the header. It is actually column 3
         # - we need to convert the file to a TSV file
 
+        # Resolve the ontology adapter before any output file is opened. The
+        # adapters are lazy, so without this the first lookup happens deep inside
+        # the write loop — and a fatal ontology error there leaves the previous,
+        # complete nodes/edges truncated to whatever had been flushed. Failing
+        # before the truncation costs a run; failing after costs the outputs.
+        resolve_adapter(self.ncbi_impl)
         BACTOTRAITS_TMP_DIR.mkdir(parents=True, exist_ok=True)
         bacdive_ncbitaxon_dict = {}
         mapping_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}_mapping.tsv"
-        if mapping_file.exists():
+        # Content, not mere existence: a mapping truncated by an interrupted run
+        # before atomic_write landed would otherwise be accepted as complete
+        # forever, silently losing the bacdive→ncbitaxon links past that point.
+        if cache_is_complete(mapping_file):
             with open(mapping_file, "r") as mapping_file:
                 mapping_reader = csv.DictReader(mapping_file, delimiter="\t")
                 for row in mapping_reader:
                     bacdive_ncbitaxon_dict[row["Bacdive_ID"]] = row[NCBITAXON_ID_COLUMN]
         else:
-            with open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file, open(mapping_file, "w") as mapping_file:
+            # Atomic: this cache's only guard is the .exists() above, so a run
+            # that dies part-way through the loop would otherwise leave a
+            # truncated mapping that every later run silently accepts as
+            # complete — losing the bacdive→ncbitaxon links for every row after
+            # the failure point.
+            with (
+                open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file,
+                atomic_write(mapping_file, mark_complete=True) as mapping_handle,
+            ):
                 # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
                 bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
-                mapping_writer = csv.writer(mapping_file, delimiter="\t")
+                mapping_writer = csv.writer(mapping_handle, delimiter="\t")
                 mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
                 for row in bacdive_reader:
                     collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]

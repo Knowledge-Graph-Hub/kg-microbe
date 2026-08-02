@@ -1,9 +1,7 @@
 """Ontology transform module."""
 
-import gzip
 import json
 import re
-import shutil
 from collections import defaultdict
 from os import makedirs
 from pathlib import Path
@@ -48,7 +46,13 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PREFIX,
     XREF_COLUMN,
 )
-from kg_microbe.utils.ontology_utils import _derived_json_is_stale, replace_category_ontology
+from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.ontology_utils import (
+    _decompress_atomically,
+    _derived_json_is_stale,
+    _derived_json_is_unusable,
+    replace_category_ontology,
+)
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
     establish_transitive_relationship,
@@ -78,7 +82,15 @@ ONTOLOGIES_MAP = {
     # aspect map (go.db) and the transform output (go.json) share one release.
     "go": "go.owl",
     ## "rhea": "rhea.json.gz", # Redundant to RheaMappingsTransform
-    "ec": "ec.json",
+    # EC is single-source (round 29 of #604): the transform derives ec.json
+    # from ec.owl.gz (ROBOT owl→json), the same OWL that ec.db is built from
+    # — so `rhea_mappings` label enrichment against ec.db and the node
+    # emission this transform performs share one release. A prior revision
+    # downloaded ec.json separately from w3id.org/biopragmatics; that JSON
+    # drifted on its own schedule and could reference terms that were absent
+    # from ec.owl (and therefore from ec.db), so rhea_mappings emitted blank
+    # labels for them. Do NOT re-add a standalone ec.json download.
+    "ec": "ec.owl.gz",
     "upa": "upa.owl",
     "mondo": "mondo.json",
     "hp": "hp.json",
@@ -178,6 +190,7 @@ class OntologiesTransform(Transform):
                 # or CHEBI_PREFIX.strip(":").lower() in str(data_file):
                 if NCBITAXON_PREFIX.strip(":").lower() in str(data_file):
                     json_path = str(data_file).replace(".owl.gz", ROBOT_REMOVED_SUFFIX + ".json")
+                    self._drop_stale_derived_json(data_file, Path(json_path))
                     if not Path(json_path).is_file():
                         self.decompress(data_file)
                         with open(str(self.input_base_dir / EXCLUSION_TERMS_FILE), "r") as f:
@@ -193,6 +206,7 @@ class OntologiesTransform(Transform):
                     #     extract_convert_to_json(str(self.input_base_dir), name, terms, "BOT")
                 else:
                     json_path = str(data_file).replace("owl.gz", "json")
+                    self._drop_stale_derived_json(data_file, Path(json_path))
                     if not Path(json_path).is_file():
                         # Unzip the file
                         self.decompress(data_file)
@@ -207,22 +221,27 @@ class OntologiesTransform(Transform):
                 data_file = json_path
             elif data_file.suffix == ".owl":
                 json_path = str(data_file).replace(".owl", ".json")
-                # Regenerate the derived JSON when it's missing OR its OBO
-                # release no longer matches the source OWL. For single-source
-                # ontologies (fix 2 #604: GO derives go.json from go.owl) this
-                # keeps the transform output locked to the same release the OWL
-                # (and go.db, built from it) carry, so a refreshed go.owl can't
-                # leave a stale go.json behind. convert_to_json is a no-op when
-                # the target already exists, so a stale JSON must be removed
-                # first (mirrors _ensure_go_db's rebuild) — otherwise the
-                # reconversion silently keeps the old release.
-                if _derived_json_is_stale(data_file, Path(json_path)):
-                    Path(json_path).unlink()
+                # Regenerate the derived JSON when it's missing, drifted, or a
+                # zero-byte / truncated leftover. For single-source ontologies
+                # (fix 2 #604: GO derives go.json from go.owl) release-alignment
+                # keeps the transform output locked to the OWL (and go.db,
+                # built from it), so a refreshed go.owl can't leave a stale
+                # go.json behind. convert_to_json is a no-op when the target
+                # already exists, so either condition must remove the file
+                # first — otherwise a stale run silently keeps the old release
+                # and a crash-truncated file traps future runs forever.
+                if _derived_json_is_stale(data_file, Path(json_path)) or _derived_json_is_unusable(Path(json_path)):
+                    Path(json_path).unlink(missing_ok=True)
                 if not Path(json_path).is_file():
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path
             elif data_file.suffix == ".obo":
                 json_path = str(data_file).replace(".obo", ".json")
+                # Same unusable-leftover guard: a JSON truncated mid-conversion
+                # otherwise persists across runs because convert_to_json skips
+                # existing targets.
+                if _derived_json_is_unusable(Path(json_path)):
+                    Path(json_path).unlink(missing_ok=True)
                 if not Path(json_path).is_file():
                     convert_to_json(str(self.input_base_dir), name)
                 data_file = json_path
@@ -256,12 +275,56 @@ class OntologiesTransform(Transform):
         # (all ontologies benefit from these cleanups)
         self.post_process(name)
 
+    def _drop_stale_derived_json(self, source: Path, json_path: Path) -> None:
+        """
+        Remove a derived JSON whose release no longer matches its source.
+
+        The ``.owl`` branch below has done this since fix 2 (#604), but the two
+        compressed sources — ncbitaxon and chebi — regenerated only when the JSON
+        was *absent*, and both ``convert_to_json`` and ``remove_convert_to_json``
+        are no-ops when their target exists. So an ordinary ``kg download``, which
+        refreshes ``<x>.owl.gz`` in place, left the transform emitting nodes from
+        the previous release while the SemSQL builders — which do read the
+        refreshed archive — rebuilt from the new one. The version gates compare
+        the DB against the OWL, never against the JSON that is actually consumed,
+        so nothing caught it: ChEBI categories were resolved against terms that
+        differed from those emitted, and NCBITaxon lookups could resolve taxa
+        absent from the emitted nodes.
+
+        Also unlinks a zero-byte / truncated leftover from a mid-conversion
+        crash: without this, ``convert_to_json`` / ``remove_convert_to_json``
+        see a file at the target, no-op, and every subsequent run keeps
+        reading the corrupt JSON.
+
+        :param source: The downloaded source (``.owl`` or ``.owl.gz``).
+        :param json_path: The derived JSON to check.
+        """
+        if _derived_json_is_unusable(json_path):
+            print(f"{json_path.name} is empty or truncated; regenerating it.")
+            json_path.unlink(missing_ok=True)
+            return
+        if not _derived_json_is_stale(source, json_path):
+            return
+        print(f"{json_path.name} is from an older release than {source.name}; regenerating it.")
+        # Only the JSON is removed. Deleting the plain OWL as well — to force a
+        # refresh — destroyed the last good copy of it: when the archive's head
+        # reported the new release but the archive was truncated further in, a
+        # complete plain OWL already at that release was removed and the
+        # decompression that was meant to replace it then failed, leaving neither
+        # OWL nor JSON. No deletion is needed anyway: `decompress` runs whenever
+        # the JSON is absent and republishes the plain OWL atomically.
+        json_path.unlink(missing_ok=True)
+
     def decompress(self, data_file):
         """Unzip file."""
         print(f"Decompressing {data_file}...")
-        with gzip.open(data_file, "rb") as f_in:
-            with open(data_file.parent / data_file.stem, "wb") as f_out:
-                shutil.copyfileobj(f_in, f_out)
+        # Temp file + rename: writing straight to the real filename left a
+        # truncated OWL there if interrupted, and a truncated OWL is not
+        # detectable downstream — its version stamp lives in the head and still
+        # parses, so both ROBOT and the SemSQL build would accept it.
+        destination = data_file.parent / data_file.stem
+        if not _decompress_atomically(Path(data_file), destination):
+            raise OSError(f"Failed to decompress {data_file} to {destination}")
 
     def _sanitize_obograph_synonyms(self, json_path: Path) -> None:
         """
@@ -298,7 +361,13 @@ class OntologiesTransform(Transform):
 
         if dropped:
             print(f"  Dropped {dropped} malformed synonym entries (missing 'val') from {json_path.name}")
-            with open(json_path, "w", encoding="utf-8") as f:
+            # Atomic: ROBOT publishes this file atomically and then these
+            # post-processors rewrote it in place, so an interrupted or
+            # out-of-disk rewrite truncated the published JSON. Nothing recovers
+            # from that — the staleness check reads a release stamp from the head
+            # and still sees a current one, `is_file()` then blocks reconversion,
+            # and KGX fails on every later run until someone deletes the file.
+            with atomic_write(json_path, encoding="utf-8") as f:
                 json.dump(data, f)
 
     @staticmethod
@@ -359,7 +428,13 @@ class OntologiesTransform(Transform):
                 f"  Dropped {dropped_nodes} deprecated (owl:deprecated) terms "
                 f"and {dropped_edges} edges touching them from {json_path.name}"
             )
-            with open(json_path, "w", encoding="utf-8") as f:
+            # Atomic: ROBOT publishes this file atomically and then these
+            # post-processors rewrote it in place, so an interrupted or
+            # out-of-disk rewrite truncated the published JSON. Nothing recovers
+            # from that — the staleness check reads a release stamp from the head
+            # and still sees a current one, `is_file()` then blocks reconversion,
+            # and KGX fails on every later run until someone deletes the file.
+            with atomic_write(json_path, encoding="utf-8") as f:
                 json.dump(data, f)
 
     def _drop_metamodel_edges(self, df: pd.DataFrame) -> tuple:
@@ -449,15 +524,12 @@ class OntologiesTransform(Transform):
             # small molecules default to CHEBI_CATEGORY (biolink:ChemicalEntity)
             print("  Fixing ChEBI categories (detecting roles/macromolecules; default → CHEBI_CATEGORY)...")
 
-            # Create ChEBI adapter once to avoid file descriptor leaks
-            from oaklib import get_adapter
+            # Create ChEBI adapter once to avoid file descriptor leaks. Goes
+            # through get_chebi_adapter so chebi.db is built from (and checked
+            # against) the chebi.owl these nodes are emitted from.
+            from kg_microbe.utils.ontology_utils import get_chebi_adapter
 
-            from kg_microbe.transform_utils.constants import CHEBI_SOURCE
-
-            try:
-                chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
-            except Exception:
-                chebi_adapter = get_adapter("sqlite:data/raw/chebi.db")
+            chebi_adapter = get_chebi_adapter()
 
             def fix_chebi_category(row):
                 """Fix ChEBI category (SmallMolecule/ChemicalRole) and replace deprecated categories."""

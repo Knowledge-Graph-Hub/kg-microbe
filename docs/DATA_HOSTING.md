@@ -101,13 +101,30 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   pins the KG to an older ontology release, because the transforms skip
   regeneration when the derived file already exists.
 
-  The SemSQL `.db` files are a different case and are **not** all derivable here:
-  `go.db` is built from `go.owl` by `_ensure_go_db`; `bto.db` and `ncit.db` are
-  downloaded as `.db.gz` (no OWL is declared for them, so there is nothing to
-  build from); `ncbitaxon.db` is a symlink to OAK's prebuilt cache, deliberately
-  whatever release that cache holds; and nothing builds `chebi.db`. Copying
-  those two is currently the only way to get them. Building `ncbitaxon.db` and
-  `chebi.db` from the OWLs we ship is a separate change.
+  The SemSQL `.db` files: `go.db`, `ncbitaxon.db` and `chebi.db` are all built
+  locally from the OWLs we ship (`semsql make`, via `_ensure_go_db` /
+  `_ensure_ncbitaxon_db` / `_ensure_chebi_db`), so copying them pins the KG to
+  whatever release the copy holds — the version gates will warn, and a drifted DB
+  is rebuilt on the next run anyway. `bto.db` and `ncit.db` are the exception:
+  they are downloaded as `.db.gz` with no OWL declared, so there is nothing to
+  build them from and copying is fine.
+
+  Set `KG_SEMSQL_BUILD=off` to decline those builds — they run for tens of
+  minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB, plus ~2 GB for the
+  decompressed OWL and a relation-graph intermediate). With the opt-out set the
+  pipeline uses whatever DB is already on disk; supplying a prebuilt one, or a
+  symlink to it, is supported.
+
+  Every transform that looks something up in an ontology now resolves its adapter
+  through `ontology_utils.get_*_adapter()`, so any of them can trigger a build —
+  `kg transform -s bacdive` or `-s bactotraits` can start the NCBITaxon one, and
+  rhea/bakta/uniprot/madin can start GO, ChEBI or EC. Resolution is lazy, so the
+  cost lands on first lookup rather than at construction.
+
+  The metatraits pre-flight now runs on both MP and sequential paths, so a
+  drifted `ncbitaxon.db` is realigned regardless of mode (issue #614 is closed
+  on the sequential path too). Other transforms will still build the DB if it
+  is missing.
 
 ## Upload procedure (for refreshing a file, or adding a new one)
 

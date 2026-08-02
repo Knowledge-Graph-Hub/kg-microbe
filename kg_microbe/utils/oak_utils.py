@@ -4,12 +4,18 @@ from typing import List
 
 from oaklib.datamodels.search import SearchConfiguration, SearchProperty
 
+from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
+
 
 def get_label(oi, curie: str):
     """Return the label of a given curie via oaklib."""
     try:
         _, label = list(oi.labels([curie]))[0]
         return label
+    except OntologyDbUnavailableError:
+        # Not a lookup miss: the ontology DB itself is unusable. Swallowing it
+        # here would emit bare numeric IDs as labels for every term.
+        raise
     except Exception as e:
         print(f"Warning: Could not get label for {curie}: {e}")
         # Return the curie without prefix as fallback

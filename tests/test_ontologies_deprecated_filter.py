@@ -20,9 +20,7 @@ def _make_obograph():
                         "lbl": "obsolete term (basicPropertyValues)",
                         "type": "CLASS",
                         "meta": {
-                            "basicPropertyValues": [
-                                {"pred": "http://www.w3.org/2002/07/owl#deprecated", "val": "true"}
-                            ]
+                            "basicPropertyValues": [{"pred": "http://www.w3.org/2002/07/owl#deprecated", "val": "true"}]
                         },
                     },
                     {

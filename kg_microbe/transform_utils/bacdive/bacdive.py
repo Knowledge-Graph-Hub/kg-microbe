@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import yaml
-from oaklib import get_adapter
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -143,7 +142,6 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_ID_COLUMN,
     NCBITAXON_NODES_FILE,
     NCBITAXON_PREFIX,
-    NCBITAXON_SOURCE,
     NUTRITION_TYPE,
     OBSERVATION,
     ORDER,
@@ -200,6 +198,11 @@ from kg_microbe.utils.mapping_file_utils import (
     load_metpo_metabolite_utilization_mappings,
     uri_to_curie,
 )
+from kg_microbe.utils.ontology_utils import (
+    OntologyDbUnavailableError,
+    get_ncbitaxon_adapter,
+    resolve_adapter,
+)
 
 # Note: get_label and search_by_label are imported lazily in fallback methods
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -232,12 +235,9 @@ class BacDiveTransform(Transform):
         # (e.g. antibiogram zone-of-inhibition diameter in mm).
         self.edge_header = self.edge_header + ["value", "unit"]
         self.knowledge_source = "infores:bacdive"  # InforES standard knowledge source
-        self.ncbi_impl = get_adapter(f"sqlite:{NCBITAXON_SOURCE}")
+        self.ncbi_impl = get_ncbitaxon_adapter()
 
         # Initialize ontology adapters for reuse
-        self.go_adapter = None
-        self.chebi_adapter = None
-        self._init_ontology_adapters()
 
         self.bacdive_metpo_mappings = load_metpo_mappings("bacdive keyword synonym")
         self.bacdive_metpo_tree = _build_metpo_tree()
@@ -537,19 +537,6 @@ class BacDiveTransform(Transform):
         else:
             self._lpsn_stats["ambiguous"] += 1
         return None
-
-    def _init_ontology_adapters(self):
-        """Initialize GO and ChEBI adapters once for reuse."""
-        try:
-            from oaklib import get_adapter
-
-            from kg_microbe.transform_utils.constants import CHEBI_SOURCE, GO_SOURCE
-
-            self.go_adapter = get_adapter(f"sqlite:{GO_SOURCE}")
-            self.chebi_adapter = get_adapter(f"sqlite:{CHEBI_SOURCE}")
-            logger.info("Initialized GO and ChEBI adapters")
-        except Exception as e:
-            logger.warning(f"Could not initialize adapters: {e}")
 
     def _create_node_row(
         self,
@@ -855,6 +842,10 @@ class BacDiveTransform(Transform):
             ):
                 rank = obj.split(":", 1)[-1].lower() if obj else None
                 break
+        except OntologyDbUnavailableError:
+            # An unusable NCBITaxon DB is not a missing rank — surface it rather
+            # than silently emitting None for every taxon.
+            raise
         except Exception:
             rank = None
         self._ncbitaxon_rank_cache[ncbitaxon_id] = rank
@@ -1539,6 +1530,12 @@ class BacDiveTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        # Resolve the ontology adapter before any output file is opened. The
+        # adapters are lazy, so without this the first lookup happens deep inside
+        # the write loop — and a fatal ontology error there leaves the previous,
+        # complete nodes/edges truncated to whatever had been flushed. Failing
+        # before the truncation costs a run; failing after costs the outputs.
+        resolve_adapter(self.ncbi_impl)
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
         # Read the JSON file into the variable input_json

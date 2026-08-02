@@ -53,7 +53,6 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     LPSN_SOURCE,
     NCBI_CATEGORY,
-    NCBITAXON_SOURCE,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
     STRAIN_PREFIX,
@@ -280,8 +279,14 @@ class LPSNTransform(Transform):
         """
         super().__init__(LPSN_SOURCE, input_dir, output_dir)
         self.knowledge_source = LPSN_KNOWLEDGE_SOURCE
-        self.ncbi_impl = ncbi_impl if ncbi_impl is not None else self._load_ncbi_adapter()
-        self.gtdb_index = gtdb_index if gtdb_index is not None else self._load_gtdb_index()
+        # Store what tests inject; auto-loading is deferred to run() so a
+        # missing lpsn_gss.csv fails fast without triggering the hours-long
+        # NCBITaxon build path via _load_ncbi_adapter -> get_ontology_adapter.
+        # ``kg transform -s lpsn`` on a fresh checkout otherwise built ~13 GB
+        # of ncbitaxon.db before checking whether its own input was present
+        # (round 34).
+        self.ncbi_impl = ncbi_impl
+        self.gtdb_index = gtdb_index
         # Track cross-ref outcomes for the end-of-run summary.
         self._ncbi_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
         self._gtdb_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
@@ -321,22 +326,49 @@ class LPSNTransform(Transform):
         wrapper class exposes the same one-method API OAK does so tests
         can inject mocks unchanged.
 
-        Returns ``None`` — leaving NCBITaxon enrichment silently
-        disabled — if either the OWL file at ``NCBITAXON_SOURCE`` or
-        the paired semsql SQLite DB is absent. Absence is expected on
-        fresh checkouts and in CI, so this is not fatal.
+        The direct SQL still goes through the guarded lifecycle in
+        :mod:`kg_microbe.utils.ontology_utils`: an absent DB is built
+        from ``ncbitaxon.owl`` (or its ``.gz``) via ``semsql make``, a
+        drifted DB is realigned, and the version gate warns when the
+        DB and OWL disagree. Opening ``ncbitaxon.db`` directly without
+        this pass silently disabled cross-refs on a fresh checkout
+        (only ``ncbitaxon.owl.gz`` is downloaded) and consumed a stale
+        DB unchecked — the exact single-source invariant this PR
+        establishes for every transform.
+
+        Returns ``None`` — leaving NCBITaxon enrichment disabled —
+        when no usable DB can be produced (missing OWL, no ``semsql``
+        available, or an explicit ``KG_SEMSQL_BUILD=off`` with nothing
+        on disk). Absence is legitimate on machines without the build
+        toolchain, so this stays non-fatal.
         """
-        if not NCBITAXON_SOURCE.exists():
-            print(
-                f"[lpsn] {NCBITAXON_SOURCE} not found; NCBITaxon cross-refs skipped. "
-                "Run `poetry run kg download` to fetch NCBITaxon."
-            )
+        from kg_microbe.utils.ontology_utils import (
+            OntologyDbUnavailableError,
+            assert_ncbitaxon_version_alignment,
+            get_ontology_adapter,
+            ontology_db_path,
+        )
+
+        try:
+            # Triggers the ensure path: decompresses ncbitaxon.owl.gz if
+            # needed and builds/realigns ncbitaxon.db under KG_SEMSQL_BUILD.
+            # The returned adapter is discarded — we only need the DB on
+            # disk for the fast direct-sqlite index below.
+            get_ontology_adapter("ncbitaxon")
+        except OntologyDbUnavailableError as e:
+            print(f"[lpsn] {e}\n[lpsn] NCBITaxon cross-refs skipped.")
             return None
-        # semsql layout: the .db file lives next to the .owl file.
-        db_path = NCBITAXON_SOURCE.with_suffix(".db")
+
+        db_path = Path(ontology_db_path("ncbitaxon"))
         if not db_path.exists():
-            print(f"[lpsn] {db_path} not found (needed for fast label lookup); NCBITaxon cross-refs skipped.")
+            # get_ontology_adapter answered without laying a file at the
+            # expected path — its OAK contract was met, our direct-sqlite
+            # reader's was not.
+            print(f"[lpsn] {db_path} not found after ensure; NCBITaxon cross-refs skipped.")
             return None
+        # Warn on drift between the OWL nodes and the DB we are about to
+        # read against; strict opt-in via KG_NCBITAXON_VERSION_CHECK=strict.
+        assert_ncbitaxon_version_alignment(str(db_path))
         return _NCBILabelIndex(db_path)
 
     # ------------------------------------------------------------------
@@ -372,6 +404,15 @@ class LPSNTransform(Transform):
                 "data/raw/lpsn_gss.csv. "
                 "See kg_microbe/transform_utils/lpsn/README.md for details."
             )
+
+        # Deferred: __init__ deliberately does not touch the ontologies so
+        # that the CSV-presence check above fails fast on a fresh checkout.
+        # Tests inject non-None values via the constructor and preserve them
+        # unchanged; production callers get lazy loading here.
+        if self.ncbi_impl is None:
+            self.ncbi_impl = self._load_ncbi_adapter()
+        if self.gtdb_index is None:
+            self.gtdb_index = self._load_gtdb_index()
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
 

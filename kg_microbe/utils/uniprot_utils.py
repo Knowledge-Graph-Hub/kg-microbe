@@ -62,7 +62,9 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_PROTEOME_COLUMN_NAME,
     UNIPROT_RHEA_ID_COLUMN_NAME,
 )
+from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.ontology_utils import resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 RELATIONS_DICT = {
@@ -755,15 +757,36 @@ def write_obsolete_file_header(obsolete_terms_csv_file):
         obsolete_terms_csv_writer.writerow(obsolete_terms_csv_header)
 
 
+def go_category_trees_is_complete(path=None) -> bool:
+    """
+    Report whether the GO category-trees cache is present *and* has content.
+
+    :param path: Cache path; defaults to GO_CATEGORY_TREES_FILE.
+    :return: True if the cache exists and holds at least one term.
+    """
+    return cache_is_complete(path if path is not None else GO_CATEGORY_TREES_FILE)
+
+
 def get_go_category_trees(go_oi):
     """
     Extract category of all GO terms using oak, and write to file.
 
+    Written atomically, and the adapter is resolved before the file is opened.
+    Both matter because the only guard on this cache is a bare ``.exists()`` in
+    the two UniProt transforms: the previous in-place write emitted the header,
+    then resolved the adapter on the first ``descendants`` call, so an unusable
+    go.db left a header-only file behind. That file exists, so it is never
+    regenerated, and ``prepare_go_dictionary`` reads it as ``{}`` — dropping
+    every protein→GO edge and logging every GO term as obsolete on every run
+    thereafter, silently. A partial write is worse still: MF/CC survive while
+    every BP term is reclassified as obsolete.
+
     :param go_oi: A oaklib sql_implementation class to access GO information.
     :type go_oi: oaklib sql_implementation class
     """
+    go_oi = resolve_adapter(go_oi)
     os.makedirs(ONTOLOGIES_TREES_DIR, exist_ok=True)
-    with open(GO_CATEGORY_TREES_FILE, "w") as file:
+    with atomic_write(GO_CATEGORY_TREES_FILE, mark_complete=True) as file:
         csv_writer = csv.writer(file, delimiter="\t")
         csv_writer.writerow([GO_CATEGORY_COLUMN, GO_TERM_COLUMN])
 

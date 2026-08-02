@@ -10,10 +10,8 @@ from oaklib.datamodels.text_annotator import TextAnnotation, TextAnnotationConfi
 
 from kg_microbe.transform_utils.constants import (
     CHEBI_PREFIX,
-    CHEBI_SOURCE,
     END_COLUMN,
     GO_PREFIX,
-    GO_SOURCE,
     MATCHES_WHOLE_TEXT_COLUMN,
     OBJECT_ALIASES_COLUMN,
     OBJECT_CATEGORIES_COLUMN,
@@ -23,17 +21,22 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_LABEL_COLUMN,
     TRAITS_DATASET_LABEL_COLUMN,
 )
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
+from kg_microbe.utils.ontology_utils import get_ontology_adapter, ontology_db_path
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # LLM_MODEL = "gpt-4"
 
-PREFIX_SOURCE_MAP = {
-    GO_PREFIX: GO_SOURCE,
-    CHEBI_PREFIX: CHEBI_SOURCE,
+# Prefix -> ontology key for the guarded adapter accessors. Mapping to the OWL
+# *paths* and handing those to get_adapter made OAK build the SemSQL DB itself,
+# bypassing every guard in ontology_utils.
+PREFIX_ONTOLOGY_MAP = {
+    GO_PREFIX: "go",
+    CHEBI_PREFIX: "chebi",
     # Add stripped versions for lookup
-    GO_PREFIX.strip(":"): GO_SOURCE,
-    CHEBI_PREFIX.strip(":"): CHEBI_SOURCE,
+    GO_PREFIX.strip(":"): "go",
+    CHEBI_PREFIX.strip(":"): "chebi",
 }
 
 
@@ -76,7 +79,11 @@ def annotate(
 
     if llm:
         # ! Experimental
-        oi = get_adapter(f"llm:sqlite:{PREFIX_SOURCE_MAP[ontology]}")
+        # Ensure the DB exists before naming it: ontology_db_path is pure path
+        # arithmetic, so without this SQLite would happily open an empty file and
+        # annotation would silently return nothing.
+        get_ontology_adapter(PREFIX_ONTOLOGY_MAP[ontology])
+        oi = get_adapter(f"llm:sqlite:{ontology_db_path(PREFIX_ONTOLOGY_MAP[ontology])}")
         matches_whole_text = False
         annotated_columns = [
             OBJECT_ID_COLUMN,
@@ -89,7 +96,7 @@ def annotate(
             TRAITS_DATASET_LABEL_COLUMN,
         ]
     else:
-        oi = get_adapter(f"sqlite:{PREFIX_SOURCE_MAP[ontology]}")
+        oi = get_ontology_adapter(PREFIX_ONTOLOGY_MAP[ontology])
         matches_whole_text = True
         annotated_columns = [
             OBJECT_ID_COLUMN,
@@ -140,9 +147,12 @@ def annotate(
 
         # unique_terms_annotated.update(unique_terms_annotated_not_whole_match)
 
+    # Atomic: madin_etal guards these with a bare `.is_file()`, so an interrupted
+    # annotation run would otherwise leave a partial TSV that every later run
+    # accepts as a finished NER result.
     with (
-        open(str(outfile), "w", newline="") as file_1,
-        open(str(outfile_for_unmatched), "w", newline="") as file_2,
+        atomic_write(str(outfile), "w", mark_complete=True, newline="") as file_1,
+        atomic_write(str(outfile_for_unmatched), "w", mark_complete=True, newline="") as file_2,
     ):
         writer_1 = csv.writer(file_1, delimiter="\t", quoting=csv.QUOTE_NONE)
         writer_2 = csv.writer(file_2, delimiter="\t", quoting=csv.QUOTE_NONE)

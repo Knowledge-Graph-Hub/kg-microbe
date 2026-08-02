@@ -6,7 +6,6 @@ from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
-from oaklib import get_adapter
 from oaklib.utilities.ner_utilities import get_exclusion_token_list
 from tqdm import tqdm
 
@@ -19,7 +18,6 @@ from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     CELL_SHAPE_COLUMN,
     CHEBI_PREFIX,
-    CHEBI_SOURCE,
     CHEBI_TO_ROLE_EDGE,
     DESCRIPTION_COLUMN,
     ENVIRONMENT_CATEGORY,
@@ -72,10 +70,12 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.ner_utils import annotate
+from kg_microbe.utils.ontology_utils import get_chebi_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 OUTPUT_FILE_SUFFIX = "_ner.tsv"
@@ -219,7 +219,9 @@ class MadinEtAlTransform(Transform):
         go_result_fn = GO_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
         chebi_result_fn = CHEBI_PREFIX.strip(":").lower() + OUTPUT_FILE_SUFFIX
 
-        if not (self.nlp_output_dir / chebi_result_fn).is_file():
+        # Content, not mere existence: an interrupted annotation used to leave
+        # a partial TSV that this guard then accepted as a finished NER run.
+        if not cache_is_complete(self.nlp_output_dir / chebi_result_fn):
             annotate(
                 chebi_nlp_df,
                 CHEBI_PREFIX,
@@ -230,11 +232,15 @@ class MadinEtAlTransform(Transform):
             )
             chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
             chebi_result = chebi_result.drop_duplicates()
-            chebi_result.to_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", index=False)
+            # Atomic: annotate() commits this file atomically and this rewrite
+            # used to undo that — an interruption here left a truncated NER
+            # cache that the completeness guard then accepted forever.
+            with atomic_write(str(self.nlp_output_dir / chebi_result_fn), "w", newline="") as handle:
+                chebi_result.to_csv(handle, sep="\t", index=False)
         else:
             chebi_result = pd.read_csv(str(self.nlp_output_dir / chebi_result_fn), sep="\t", low_memory=False)
         chebi_list = chebi_result[OBJECT_ID_COLUMN].to_list()
-        oi = get_adapter(f"sqlite:{CHEBI_SOURCE}")
+        oi = get_chebi_adapter()
         chebi_roles = set(oi.relationships(subjects=set(chebi_list), predicates=[HAS_ROLE]))
         roles = {x for (_, _, x) in chebi_roles}
         role_nodes = []
@@ -266,7 +272,7 @@ class MadinEtAlTransform(Transform):
             for (subject, predicate, object) in chebi_roles
         ]
 
-        if not (self.nlp_output_dir / go_result_fn).is_file():
+        if not cache_is_complete(self.nlp_output_dir / go_result_fn):
             annotate(
                 go_nlp_df,
                 GO_PREFIX,
@@ -277,7 +283,11 @@ class MadinEtAlTransform(Transform):
             )
             go_result = pd.read_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False)
             go_result = go_result.drop_duplicates()
-            go_result.to_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", index=False)
+            # Atomic: annotate() commits this file atomically and this rewrite
+            # used to undo that — an interruption here left a truncated NER
+            # cache that the completeness guard then accepted forever.
+            with atomic_write(str(self.nlp_output_dir / go_result_fn), "w", newline="") as handle:
+                go_result.to_csv(handle, sep="\t", index=False)
         else:
             go_result = pd.read_csv(str(self.nlp_output_dir / go_result_fn), sep="\t", low_memory=False)
 

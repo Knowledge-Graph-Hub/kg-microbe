@@ -185,6 +185,42 @@ def test_missing_csv_raises_file_not_found(tmp_path):
         xform.run()
 
 
+def test_missing_csv_does_not_trigger_ncbitaxon_build(tmp_path, monkeypatch):
+    """
+    Round 34: __init__ must not eagerly resolve NCBITaxon.
+
+    ``kg transform -s lpsn`` on a fresh checkout used to call
+    ``get_ontology_adapter("ncbitaxon")`` from ``__init__``, which starts
+    a multi-hour ~13 GB build — only to have ``run()`` immediately fail
+    because the manually-downloaded ``lpsn_gss.csv`` is absent. The
+    constructor must be inert with respect to the ontologies, so an
+    absent CSV fails fast without triggering any build.
+    """
+    from kg_microbe.transform_utils.lpsn import lpsn as lpsn_module
+
+    calls = []
+
+    def _tripwire(*args, **kwargs):
+        """Record any attempt to auto-load ontology resources."""
+        calls.append(("_load_ncbi_adapter", args, kwargs))
+        return None
+
+    def _gtdb_tripwire(*args, **kwargs):
+        """Record any attempt to auto-load the GTDB index."""
+        calls.append(("_load_gtdb_index", args, kwargs))
+        return None
+
+    monkeypatch.setattr(lpsn_module.LPSNTransform, "_load_ncbi_adapter", staticmethod(_tripwire))
+    monkeypatch.setattr(lpsn_module.LPSNTransform, "_load_gtdb_index", staticmethod(_gtdb_tripwire))
+
+    xform = LPSNTransform(input_dir=tmp_path, output_dir=tmp_path)
+    assert calls == [], "the constructor must not auto-load ontologies"
+
+    with pytest.raises(FileNotFoundError, match="LPSN GSS CSV not found"):
+        xform.run()
+    assert calls == [], "an absent CSV must fail before any ontology load starts"
+
+
 def test_species_gets_close_match_edges_for_each_type_strain_deposit(lpsn_transform):
     """
     Emit one close_match edge per culture-collection deposit for a species row.

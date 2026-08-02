@@ -161,46 +161,38 @@ def get_protein_id(annotations: Dict[str, List[str]], prefer_refseq: bool = True
     return None
 
 
-def get_go_aspect(go_id: str, go_adapter, cache: Optional[Dict[str, str]] = None) -> str:
+def get_go_aspect(go_id: str, go_adapter=None, cache: Optional[Dict[str, str]] = None) -> str:
     """
     Determine the aspect (namespace) of a GO term.
 
+    Reads via the raw-sqlite namespace map exposed by
+    ``kg_microbe.utils.ontology_utils.get_go_aspect`` — OAK's
+    ``entity_metadata_map`` throws on GO databases with case-collision
+    prefixes, and the swallowed exception used to leave ``aspect`` at the
+    ``molecular_function`` default, silently miscategorising every
+    biological-process and cellular-component term. An unusable GO DB
+    raises :class:`OntologyDbUnavailableError` (a :class:`BaseException`),
+    which is intentionally not catchable as ``Exception`` here.
+
     :param go_id: GO identifier (e.g., 'GO:0003677')
-    :param go_adapter: OAK adapter for GO ontology (can be None)
-    :param cache: Optional cache dictionary for GO term → aspect mappings
-    :return: One of 'biological_process', 'molecular_function', 'cellular_component'
+    :param go_adapter: Unused; kept for backward compatibility with existing callers.
+    :param cache: Optional cache dictionary for GO term → aspect mappings.
+    :return: One of 'biological_process', 'molecular_function', 'cellular_component'.
     """
-    # Check cache first if provided
+    del go_adapter  # see docstring
     if cache is not None and go_id in cache:
         return cache[go_id]
 
-    aspect = "molecular_function"  # Default value
+    from kg_microbe.utils.ontology_utils import get_go_aspect as _lookup_go_aspect
 
-    # If no adapter available, use default
-    if go_adapter is None:
-        if cache is not None:
-            cache[go_id] = aspect
-        return aspect
+    aspect = _lookup_go_aspect(go_id)
+    if aspect is None:
+        # Genuinely missing from the namespace map (obsolete/replaced term).
+        # Distinct from the case-collision failure this refactor closes: that
+        # one raised out of ``_load_go_namespace_map`` as a BaseException.
+        logger.debug(f"GO term {go_id} not in GO namespace map; defaulting to molecular_function")
+        aspect = "molecular_function"
 
-    try:
-        # Try to get namespace/aspect from entity metadata
-        metadata = go_adapter.entity_metadata_map(go_id)
-        if metadata and "namespace" in metadata:
-            aspect = metadata["namespace"]
-        else:
-            # Fallback: Try getting label to check if term exists
-            label = go_adapter.label(go_id)
-            if not label:
-                # Term doesn't exist in ontology, use default
-                logger.debug(f"GO term {go_id} not found in ontology, using default aspect")
-            else:
-                # If metadata didn't have namespace, use default
-                logger.debug(f"No namespace found in metadata for {go_id}, using default")
-
-    except Exception as e:
-        logger.warning(f"Could not determine aspect for {go_id}: {e}")
-
-    # Cache the result if cache provided
     if cache is not None:
         cache[go_id] = aspect
 

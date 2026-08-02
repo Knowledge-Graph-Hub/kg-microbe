@@ -4,11 +4,7 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-from oaklib import get_adapter
-
 from kg_microbe.transform_utils.constants import (
-    GO_CATEGORY_TREES_FILE,
-    GO_SOURCE,
     RAW_DATA_DIR,
     UNIPROT_HUMAN,
     UNIPROT_HUMAN_FILE,
@@ -17,9 +13,11 @@ from kg_microbe.transform_utils.constants import (
     UNIPROT_HUMAN_TMP_NE_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.ontology_utils import get_go_adapter
 from kg_microbe.utils.uniprot_utils import (
     create_pool,
     get_go_category_trees,
+    go_category_trees_is_complete,
     prepare_go_dictionary,
     prepare_mondo_dictionary,
     write_obsolete_file_header,
@@ -50,9 +48,11 @@ class UniprotHumanTransform(Transform):
         """
         source_name = UNIPROT_HUMAN
         super().__init__(source_name, input_dir, output_dir)
-        self.go_oi = get_adapter(f"sqlite:{GO_SOURCE}")
-        # Check if the file already exists
-        if not GO_CATEGORY_TREES_FILE.exists():
+        self.go_oi = get_go_adapter()
+        # Not a bare .exists(): a header-only file left by the pre-atomic-write
+        # code would otherwise be accepted forever, and prepare_go_dictionary
+        # reads it as {} — silently dropping every protein→GO edge.
+        if not go_category_trees_is_complete():
             get_go_category_trees(self.go_oi)
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):

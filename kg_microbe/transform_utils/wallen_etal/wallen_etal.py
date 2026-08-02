@@ -19,6 +19,7 @@ from kg_microbe.transform_utils.constants import (
     WALLEN_ETAL_TMP_DIR,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 # Constants
@@ -73,7 +74,9 @@ class WallenEtAlTransform(Transform):
 
         self.microbe_labels_dict = {}
         WALLEN_ETAL_TMP_FILEPATH = WALLEN_ETAL_TMP_DIR / "Wallen_etal_Microbe_Labels.csv"
-        if WALLEN_ETAL_TMP_FILEPATH.exists():
+        # Content, not mere existence — see bactotraits: a truncated label cache
+        # left by a pre-atomic-write run is otherwise permanent.
+        if cache_is_complete(WALLEN_ETAL_TMP_FILEPATH):
             with open(WALLEN_ETAL_TMP_FILEPATH, "r") as file:
                 csv_reader = csv.DictReader(file, delimiter="\t")
                 for row in csv_reader:
@@ -108,7 +111,9 @@ class WallenEtAlTransform(Transform):
 
             # Write to tmp file
             os.makedirs(WALLEN_ETAL_TMP_DIR, exist_ok=True)
-            with open(WALLEN_ETAL_TMP_FILEPATH, mode="w", newline="") as file:
+            # Atomic: guarded only by the .exists() above, so a truncated write
+            # would be treated as a complete label cache on every later run.
+            with atomic_write(WALLEN_ETAL_TMP_FILEPATH, mode="w", mark_complete=True, newline="") as file:
                 tmp_writer = csv.writer(file, delimiter="\t")
                 tmp_writer.writerow(["orig_node", "entity_uri"])
                 for key, value in self.microbe_labels_dict.items():

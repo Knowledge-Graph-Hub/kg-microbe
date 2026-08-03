@@ -21,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIADIVE,
     METATRAITS,
     METATRAITS_GTDB,
+    MICROBEDECODER,
     ONTOLOGIES,
     ONTOLOGIES_STUBS,
     RHEAMAPPINGS,
@@ -33,6 +34,7 @@ from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import MetaTraitsGTDBTransform
+from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 from kg_microbe.transform_utils.ontologies.ontologies_transform import (
     ONTOLOGIES_MAP,
     OntologiesTransform,
@@ -69,6 +71,7 @@ DATA_SOURCES = {
     METATRAITS_GTDB: MetaTraitsGTDBTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
+    MICROBEDECODER: MicrobeDecoderTransform,
     # UNIPROT_HUMAN: UniprotHumanTransform,
     # CTD: CTDTransform,
     # DISBIOME: DisbiomeTransform,

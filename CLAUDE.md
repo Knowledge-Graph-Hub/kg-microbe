@@ -111,6 +111,7 @@ Key transform sources (currently active in DATA_SOURCES):
 - **mediadive**: Growth media composition data
 - **madin_etal**: Condensed bacterial/archaeal traits from literature
 - **bactotraits**: Bacterial trait data
+- **microbedecoder**: Bergey / VPI / literature-curated / FAPROTAX fermentation profiles per LPSN strain, plus a pre-joined LPSN ↔ GTDB ↔ NCBI ↔ GOLD ↔ IMG ↔ BacDive identity crosswalk (Hackmann & Zhang, Sci Adv 2023; CC BY 4.0). Emits edges only against existing `lpsn:<LPSN_ID>` nodes — needs the `lpsn` transform present alongside for organism identity.
 - **ontologies**: OBO ontologies (ENVO, ChEBI, GO, NCBITaxon, MONDO, HP, EC)
 - **rhea_mappings**: Rhea reaction mappings to GO and EC
 

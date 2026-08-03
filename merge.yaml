@@ -204,6 +204,17 @@ merged_graph:
         filename:
           - data/transformed/lpsn_api/nodes.tsv
           - data/transformed/lpsn_api/edges.tsv
+    # MicrobeDecoder (Hackmann & Zhang, Sci Adv 2023) — Bergey / VPI /
+    # Literature / FAPROTAX curated fermentation profiles keyed on
+    # lpsn:<LPSN_ID>, plus a pre-joined LPSN ↔ GTDB ↔ NCBI ↔ GOLD ↔ IMG ↔
+    # BacDive identity crosswalk. See kg_microbe/transform_utils/microbedecoder/.
+    microbedecoder:
+      name: "MicrobeDecoder"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/microbedecoder/nodes.tsv
+          - data/transformed/microbedecoder/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

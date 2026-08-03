@@ -10,11 +10,21 @@
 #                            'grows in' / METPO:2000518 'does not grow in'.
 #   kgmicrobe.ingredient:* — MediaDive ingredients with no MIM/CHEBI/FOODON/UBERON/ENVO mapping
 #                            (dynamic; minted from the ingredient label, not statically registered)
+#   kgmicrobe.fermentation:* — end-product / fermentation-pathway labels from MicrobeDecoder's
+#                            Bergey / VPI / Literature / FAPROTAX curated columns that don't
+#                            yet resolve to CHEBI / GO / METPO. Slugs land here; each is a
+#                            candidate for a METPO proposal (see
+#                            mappings/kgmicrobe_proposal_placeholders.tsv). Dynamic — minted
+#                            from the source label at transform time.
 #
 # Cross-reference for non-kgmicrobe prefixes that show up in transform output and must be
 # recognized by validators (kg_model_review.py STANDARD_PREFIXES):
 #   MICRO — Microbiology Ontology (https://obofoundry.org/ontology/micro), used by MediaDive
 #           to label growth-medium ingredients (e.g. MICRO:0000082 "Nutrient broth No. 2").
+#   GOLD  — Genomes OnLine Database (https://bioregistry.io/registry/gold.genome), organism
+#           and project IDs surfaced by MicrobeDecoder's pre-joined crosswalk.
+#   IMG   — JGI Integrated Microbial Genomes (https://bioregistry.io/registry/img.genome),
+#           genome IDs from the same MicrobeDecoder crosswalk.
 #
 # Any kgmicrobe.* CURIE that exists as a placeholder for a proposed METPO term
 # (i.e. one that appears in mappings/metpo_proposal_*.tsv and will be swapped to
@@ -393,6 +403,15 @@ other:
 # empty: entries are generated at transform time (slug of the ingredient label),
 # not curated here. Listed so the prefix is registered for validators.
 "kgmicrobe.ingredient": {}
+
+
+# End-product / fermentation-pathway labels from MicrobeDecoder (Bergey / VPI /
+# Literature / FAPROTAX curated columns) that don't yet resolve to CHEBI / GO /
+# METPO. Empty for the same reason as kgmicrobe.ingredient: entries are minted
+# from the source label at transform time. Anything landing here is a candidate
+# for a METPO proposal — record it in mappings/kgmicrobe_proposal_placeholders.tsv
+# so the swap table has the target METPO ID once minted upstream.
+"kgmicrobe.fermentation": {}
 
 
 "kgmicrobe.compound":

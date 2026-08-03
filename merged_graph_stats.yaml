@@ -17,37 +17,37 @@ edge_stats:
         unknown:
           count: 12664
     biolink:capable_of:
-      count: 122803
+      count: 128555
       provided_by:
         unknown:
-          count: 122803
+          count: 128555
       source:
         unknown:
-          count: 122803
+          count: 128555
     biolink:close_match:
-      count: 245471
+      count: 565624
       provided_by:
         unknown:
-          count: 245471
+          count: 565624
       source:
         unknown:
-          count: 245471
+          count: 565624
     biolink:enabled_by:
-      count: 7902
+      count: 7928
       provided_by:
         unknown:
-          count: 7902
+          count: 7928
       source:
         unknown:
-          count: 7902
+          count: 7928
     biolink:enables:
-      count: 4431
+      count: 6957
       provided_by:
         unknown:
-          count: 4431
+          count: 6957
       source:
         unknown:
-          count: 4431
+          count: 6957
     biolink:has_attribute:
       count: 11
       provided_by:
@@ -57,45 +57,53 @@ edge_stats:
         unknown:
           count: 11
     biolink:has_chemical_role:
-      count: 357
+      count: 447
       provided_by:
         unknown:
-          count: 357
+          count: 447
       source:
         unknown:
-          count: 357
+          count: 447
     biolink:has_input:
-      count: 89411
+      count: 90424
       provided_by:
         unknown:
-          count: 89411
+          count: 90424
       source:
         unknown:
-          count: 89411
+          count: 90424
     biolink:has_output:
-      count: 89370
+      count: 90383
       provided_by:
         unknown:
-          count: 89370
+          count: 90383
       source:
         unknown:
-          count: 89370
+          count: 90383
     biolink:has_part:
-      count: 48355
+      count: 48458
       provided_by:
         unknown:
-          count: 48355
+          count: 48458
       source:
         unknown:
-          count: 48355
+          count: 48458
     biolink:has_phenotype:
-      count: 1742331
+      count: 1818947
       provided_by:
         unknown:
-          count: 1742331
+          count: 1818947
       source:
         unknown:
-          count: 1742331
+          count: 1818947
+    biolink:in_taxon:
+      count: 62096
+      provided_by:
+        unknown:
+          count: 62096
+      source:
+        unknown:
+          count: 62096
     biolink:location_of:
       count: 249005
       provided_by:
@@ -113,37 +121,37 @@ edge_stats:
         unknown:
           count: 965
     biolink:produces:
-      count: 9433
+      count: 9753
       provided_by:
         unknown:
-          count: 9433
+          count: 9753
       source:
         unknown:
-          count: 9433
+          count: 9753
     biolink:related_to:
-      count: 118950
+      count: 133345
       provided_by:
         unknown:
-          count: 118950
+          count: 133345
       source:
         unknown:
-          count: 118950
+          count: 133345
     biolink:same_as:
-      count: 2531
+      count: 16977
       provided_by:
         unknown:
-          count: 2531
+          count: 16977
       source:
         unknown:
-          count: 2531
+          count: 16977
     biolink:subclass_of:
-      count: 2428275
+      count: 2757996
       provided_by:
         unknown:
-          count: 2428275
+          count: 2757996
       source:
         unknown:
-          count: 2428275
+          count: 2757996
     unknown:
       count: 0
   count_by_spo:
@@ -196,69 +204,69 @@ edge_stats:
         unknown:
           count: 2
     biolink:BiologicalProcess-biolink:part_of-biolink:BiologicalProcess:
-      count: 434
+      count: 432
       provided_by:
         unknown:
-          count: 434
+          count: 432
       source:
         unknown:
-          count: 434
+          count: 432
     biolink:BiologicalProcess-biolink:related_to-biolink:BiologicalProcess:
-      count: 13353
+      count: 13140
       provided_by:
         unknown:
-          count: 13353
+          count: 13140
       source:
         unknown:
-          count: 13353
+          count: 13140
     biolink:BiologicalProcess-biolink:related_to-biolink:CellularComponent:
-      count: 140
+      count: 138
       provided_by:
         unknown:
-          count: 140
+          count: 138
       source:
         unknown:
-          count: 140
+          count: 138
     biolink:BiologicalProcess-biolink:related_to-biolink:MolecularActivity:
-      count: 492
+      count: 422
       provided_by:
         unknown:
-          count: 492
+          count: 422
       source:
         unknown:
-          count: 492
+          count: 422
     biolink:BiologicalProcess-biolink:related_to-biolink:OntologyClass:
-      count: 53
+      count: 50
       provided_by:
         unknown:
-          count: 53
+          count: 50
       source:
         unknown:
-          count: 53
+          count: 50
     biolink:BiologicalProcess-biolink:subclass_of-biolink:BiologicalProcess:
-      count: 43983
+      count: 43547
       provided_by:
         unknown:
-          count: 43983
+          count: 43547
       source:
         unknown:
-          count: 43983
+          count: 43547
     biolink:BiologicalProcess-biolink:subclass_of-biolink:MolecularActivity:
-      count: 5966
+      count: 6264
       provided_by:
         unknown:
-          count: 5966
+          count: 6264
       source:
         unknown:
-          count: 5966
+          count: 6264
     biolink:BiologicalProcess-biolink:subclass_of-biolink:OntologyClass:
-      count: 550
+      count: 544
       provided_by:
         unknown:
-          count: 550
+          count: 544
       source:
         unknown:
-          count: 550
+          count: 544
     biolink:BiologicalProcess-biolink:subclass_of-biolink:PhenotypicQuality:
       count: 7
       provided_by:
@@ -268,46 +276,6 @@ edge_stats:
         unknown:
           count: 7
     biolink:CellularComponent-biolink:location_of-biolink:OrganismTaxon:
-      count: 3
-      provided_by:
-        unknown:
-          count: 3
-      source:
-        unknown:
-          count: 3
-    biolink:CellularComponent-biolink:related_to-biolink:CellularComponent:
-      count: 2008
-      provided_by:
-        unknown:
-          count: 2008
-      source:
-        unknown:
-          count: 2008
-    biolink:CellularComponent-biolink:subclass_of-biolink:CellularComponent:
-      count: 4663
-      provided_by:
-        unknown:
-          count: 4663
-      source:
-        unknown:
-          count: 4663
-    biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalEntity:
-      count: 330
-      provided_by:
-        unknown:
-          count: 330
-      source:
-        unknown:
-          count: 330
-    biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalRole:
-      count: 357
-      provided_by:
-        unknown:
-          count: 357
-      source:
-        unknown:
-          count: 357
-    biolink:ChemicalEntity-biolink:has_part-biolink:ChemicalEntity:
       count: 1
       provided_by:
         unknown:
@@ -315,6 +283,46 @@ edge_stats:
       source:
         unknown:
           count: 1
+    biolink:CellularComponent-biolink:related_to-biolink:CellularComponent:
+      count: 1983
+      provided_by:
+        unknown:
+          count: 1983
+      source:
+        unknown:
+          count: 1983
+    biolink:CellularComponent-biolink:subclass_of-biolink:CellularComponent:
+      count: 4693
+      provided_by:
+        unknown:
+          count: 4693
+      source:
+        unknown:
+          count: 4693
+    biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalEntity:
+      count: 365
+      provided_by:
+        unknown:
+          count: 365
+      source:
+        unknown:
+          count: 365
+    biolink:ChemicalEntity-biolink:has_chemical_role-biolink:ChemicalRole:
+      count: 447
+      provided_by:
+        unknown:
+          count: 447
+      source:
+        unknown:
+          count: 447
+    biolink:ChemicalEntity-biolink:has_part-biolink:ChemicalEntity:
+      count: 3
+      provided_by:
+        unknown:
+          count: 3
+      source:
+        unknown:
+          count: 3
     biolink:ChemicalEntity-biolink:has_part-biolink:EnvironmentalFeature:
       count: 1
       provided_by:
@@ -348,21 +356,21 @@ edge_stats:
         unknown:
           count: 1124
     biolink:ChemicalEntity-biolink:related_to-biolink:ChemicalEntity:
-      count: 80466
+      count: 85608
       provided_by:
         unknown:
-          count: 80466
+          count: 85608
       source:
         unknown:
-          count: 80466
+          count: 85608
     biolink:ChemicalEntity-biolink:related_to-biolink:ChemicalRole:
-      count: 33836
+      count: 46925
       provided_by:
         unknown:
-          count: 33836
+          count: 46925
       source:
         unknown:
-          count: 33836
+          count: 46925
     biolink:ChemicalEntity-biolink:related_to-biolink:EnvironmentalFeature:
       count: 5
       provided_by:
@@ -372,29 +380,29 @@ edge_stats:
         unknown:
           count: 5
     biolink:ChemicalEntity-biolink:related_to-biolink:MacromolecularComplex:
-      count: 47
+      count: 48
       provided_by:
         unknown:
-          count: 47
+          count: 48
       source:
         unknown:
-          count: 47
+          count: 48
     biolink:ChemicalEntity-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 278588
+      count: 300812
       provided_by:
         unknown:
-          count: 278588
+          count: 300812
       source:
         unknown:
-          count: 278588
+          count: 300812
     biolink:ChemicalEntity-biolink:subclass_of-biolink:ChemicalRole:
-      count: 522
+      count: 552
       provided_by:
         unknown:
-          count: 522
+          count: 552
       source:
         unknown:
-          count: 522
+          count: 552
     biolink:ChemicalEntity-biolink:subclass_of-biolink:EnvironmentalFeature:
       count: 107
       provided_by:
@@ -404,21 +412,21 @@ edge_stats:
         unknown:
           count: 107
     biolink:ChemicalEntity-biolink:subclass_of-biolink:MacromolecularComplex:
-      count: 79
+      count: 80
       provided_by:
         unknown:
-          count: 79
+          count: 80
       source:
         unknown:
-          count: 79
+          count: 80
     biolink:ChemicalEntity-biolink:subclass_of-biolink:OntologyClass:
-      count: 109
+      count: 110
       provided_by:
         unknown:
-          count: 109
+          count: 110
       source:
         unknown:
-          count: 109
+          count: 110
     biolink:ChemicalEntity-biolink:subclass_of-unknown:
       count: 1
       provided_by:
@@ -428,29 +436,29 @@ edge_stats:
         unknown:
           count: 1
     biolink:ChemicalMixture-biolink:has_part-biolink:AnatomicalEntity:
-      count: 60
+      count: 61
       provided_by:
         unknown:
-          count: 60
+          count: 61
       source:
         unknown:
-          count: 60
+          count: 61
     biolink:ChemicalMixture-biolink:has_part-biolink:ChemicalEntity:
-      count: 33607
+      count: 33712
       provided_by:
         unknown:
-          count: 33607
+          count: 33712
       source:
         unknown:
-          count: 33607
+          count: 33712
     biolink:ChemicalMixture-biolink:has_part-biolink:ChemicalMixture:
-      count: 6156
+      count: 8104
       provided_by:
         unknown:
-          count: 6156
+          count: 8104
       source:
         unknown:
-          count: 6156
+          count: 8104
     biolink:ChemicalMixture-biolink:has_part-biolink:ChemicalRole:
       count: 35
       provided_by:
@@ -460,21 +468,21 @@ edge_stats:
         unknown:
           count: 35
     biolink:ChemicalMixture-biolink:has_part-biolink:ComplexMolecularMixture:
-      count: 46
+      count: 37
       provided_by:
         unknown:
-          count: 46
+          count: 37
       source:
         unknown:
-          count: 46
+          count: 37
     biolink:ChemicalMixture-biolink:has_part-biolink:EnvironmentalFeature:
-      count: 110
+      count: 109
       provided_by:
         unknown:
-          count: 110
+          count: 109
       source:
         unknown:
-          count: 110
+          count: 109
     biolink:ChemicalMixture-biolink:has_part-biolink:EnvironmentalMaterial:
       count: 74
       provided_by:
@@ -484,85 +492,85 @@ edge_stats:
         unknown:
           count: 74
     biolink:ChemicalMixture-biolink:has_part-biolink:Food:
-      count: 2846
+      count: 2220
       provided_by:
         unknown:
-          count: 2846
+          count: 2220
       source:
         unknown:
-          count: 2846
+          count: 2220
     biolink:ChemicalMixture-biolink:has_part-biolink:MacromolecularComplex:
-      count: 1282
+      count: 1281
       provided_by:
         unknown:
-          count: 1282
+          count: 1281
       source:
         unknown:
-          count: 1282
+          count: 1281
     biolink:ChemicalMixture-biolink:has_part-biolink:OntologyClass:
-      count: 1762
+      count: 1788
       provided_by:
         unknown:
-          count: 1762
+          count: 1788
       source:
         unknown:
-          count: 1762
+          count: 1788
     biolink:ChemicalMixture-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 5418
+      count: 5437
       provided_by:
         unknown:
-          count: 5418
+          count: 5437
       source:
         unknown:
-          count: 5418
+          count: 5437
     biolink:ChemicalMixture-biolink:subclass_of-biolink:ChemicalMixture:
-      count: 660
+      count: 662
       provided_by:
         unknown:
-          count: 660
+          count: 662
       source:
         unknown:
-          count: 660
+          count: 662
     biolink:ChemicalMixture-biolink:subclass_of-biolink:OntologyClass:
-      count: 326
+      count: 327
       provided_by:
         unknown:
-          count: 326
+          count: 327
       source:
         unknown:
-          count: 326
+          count: 327
     biolink:ChemicalRole-biolink:related_to-biolink:ChemicalEntity:
-      count: 56
+      count: 66
       provided_by:
         unknown:
-          count: 56
+          count: 66
       source:
         unknown:
-          count: 56
+          count: 66
     biolink:ChemicalRole-biolink:related_to-biolink:ChemicalRole:
-      count: 116
+      count: 134
       provided_by:
         unknown:
-          count: 116
+          count: 134
       source:
         unknown:
-          count: 116
+          count: 134
     biolink:ChemicalRole-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 894
+      count: 939
       provided_by:
         unknown:
-          count: 894
+          count: 939
       source:
         unknown:
-          count: 894
+          count: 939
     biolink:ChemicalRole-biolink:subclass_of-biolink:ChemicalRole:
-      count: 1233
+      count: 1259
       provided_by:
         unknown:
-          count: 1233
+          count: 1259
       source:
         unknown:
-          count: 1233
+          count: 1259
     biolink:ComplexMolecularMixture-biolink:has_part-biolink:ChemicalEntity:
       count: 1
       provided_by:
@@ -572,29 +580,29 @@ edge_stats:
         unknown:
           count: 1
     biolink:ComplexMolecularMixture-biolink:has_part-biolink:ChemicalMixture:
-      count: 6151
+      count: 6144
       provided_by:
         unknown:
-          count: 6151
+          count: 6144
       source:
         unknown:
-          count: 6151
+          count: 6144
     biolink:ComplexMolecularMixture-biolink:subclass_of-biolink:ComplexMolecularMixture:
-      count: 2673
+      count: 2676
       provided_by:
         unknown:
-          count: 2673
+          count: 2676
       source:
         unknown:
-          count: 2673
+          count: 2676
     biolink:ComplexMolecularMixture-biolink:subclass_of-biolink:OntologyClass:
-      count: 1233
+      count: 1232
       provided_by:
         unknown:
-          count: 1233
+          count: 1232
       source:
         unknown:
-          count: 1233
+          count: 1232
     biolink:EnvironmentalFeature-biolink:has_attribute-biolink:OntologyClass:
       count: 11
       provided_by:
@@ -796,53 +804,53 @@ edge_stats:
         unknown:
           count: 2
     biolink:Food-biolink:subclass_of-biolink:OntologyClass:
-      count: 6
+      count: 2
       provided_by:
         unknown:
-          count: 6
+          count: 2
       source:
         unknown:
-          count: 6
+          count: 2
     biolink:Genome-biolink:subclass_of-biolink:OrganismTaxon:
-      count: 732475
+      count: 901341
       provided_by:
         unknown:
-          count: 732475
+          count: 901341
       source:
         unknown:
-          count: 732475
+          count: 901341
     biolink:GrowthMedium-biolink:has_part-biolink:ChemicalEntity:
-      count: 1
+      count: 2
       provided_by:
         unknown:
-          count: 1
+          count: 2
       source:
         unknown:
-          count: 1
+          count: 2
     biolink:GrowthMedium-biolink:has_part-biolink:ChemicalMixture:
-      count: 8623
+      count: 8631
       provided_by:
         unknown:
-          count: 8623
+          count: 8631
       source:
         unknown:
-          count: 8623
+          count: 8631
     biolink:GrowthMedium-biolink:subclass_of-biolink:ChemicalMixture:
-      count: 660
+      count: 662
       provided_by:
         unknown:
-          count: 660
+          count: 662
       source:
         unknown:
-          count: 660
+          count: 662
     biolink:GrowthMedium-biolink:subclass_of-biolink:ComplexMolecularMixture:
-      count: 2673
+      count: 2676
       provided_by:
         unknown:
-          count: 2673
+          count: 2676
       source:
         unknown:
-          count: 2673
+          count: 2676
     biolink:GrowthMedium-biolink:subclass_of-biolink:OntologyClass:
       count: 1575
       provided_by:
@@ -852,14 +860,118 @@ edge_stats:
         unknown:
           count: 1575
     biolink:MacromolecularComplex-biolink:has_chemical_role-biolink:ChemicalEntity:
-      count: 4
+      count: 6
       provided_by:
         unknown:
-          count: 4
+          count: 6
       source:
         unknown:
-          count: 4
+          count: 6
     biolink:MacromolecularComplex-biolink:has_chemical_role-biolink:ChemicalRole:
+      count: 13
+      provided_by:
+        unknown:
+          count: 13
+      source:
+        unknown:
+          count: 13
+    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalEntity:
+      count: 764
+      provided_by:
+        unknown:
+          count: 764
+      source:
+        unknown:
+          count: 764
+    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalRole:
+      count: 764
+      provided_by:
+        unknown:
+          count: 764
+      source:
+        unknown:
+          count: 764
+    biolink:MacromolecularComplex-biolink:related_to-biolink:MacromolecularComplex:
+      count: 533
+      provided_by:
+        unknown:
+          count: 533
+      source:
+        unknown:
+          count: 533
+    biolink:MacromolecularComplex-biolink:subclass_of-biolink:ChemicalEntity:
+      count: 3117
+      provided_by:
+        unknown:
+          count: 3117
+      source:
+        unknown:
+          count: 3117
+    biolink:MacromolecularComplex-biolink:subclass_of-biolink:MacromolecularComplex:
+      count: 4607
+      provided_by:
+        unknown:
+          count: 4607
+      source:
+        unknown:
+          count: 4607
+    biolink:MolecularActivity-biolink:enabled_by-biolink:MolecularActivity:
+      count: 7928
+      provided_by:
+        unknown:
+          count: 7928
+      source:
+        unknown:
+          count: 7928
+    biolink:MolecularActivity-biolink:enabled_by-biolink:Protein:
+      count: 7928
+      provided_by:
+        unknown:
+          count: 7928
+      source:
+        unknown:
+          count: 7928
+    biolink:MolecularActivity-biolink:enables-biolink:BiologicalProcess:
+      count: 6957
+      provided_by:
+        unknown:
+          count: 6957
+      source:
+        unknown:
+          count: 6957
+    biolink:MolecularActivity-biolink:enables-biolink:MolecularActivity:
+      count: 6955
+      provided_by:
+        unknown:
+          count: 6955
+      source:
+        unknown:
+          count: 6955
+    biolink:MolecularActivity-biolink:has_input-biolink:ChemicalEntity:
+      count: 88867
+      provided_by:
+        unknown:
+          count: 88867
+      source:
+        unknown:
+          count: 88867
+    biolink:MolecularActivity-biolink:has_input-biolink:ChemicalRole:
+      count: 974
+      provided_by:
+        unknown:
+          count: 974
+      source:
+        unknown:
+          count: 974
+    biolink:MolecularActivity-biolink:has_input-biolink:MacromolecularComplex:
+      count: 304
+      provided_by:
+        unknown:
+          count: 304
+      source:
+        unknown:
+          count: 304
+    biolink:MolecularActivity-biolink:has_input-unknown:
       count: 5
       provided_by:
         unknown:
@@ -867,142 +979,54 @@ edge_stats:
       source:
         unknown:
           count: 5
-    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalEntity:
-      count: 642
-      provided_by:
-        unknown:
-          count: 642
-      source:
-        unknown:
-          count: 642
-    biolink:MacromolecularComplex-biolink:related_to-biolink:ChemicalRole:
-      count: 452
-      provided_by:
-        unknown:
-          count: 452
-      source:
-        unknown:
-          count: 452
-    biolink:MacromolecularComplex-biolink:related_to-biolink:MacromolecularComplex:
-      count: 521
-      provided_by:
-        unknown:
-          count: 521
-      source:
-        unknown:
-          count: 521
-    biolink:MacromolecularComplex-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 2968
-      provided_by:
-        unknown:
-          count: 2968
-      source:
-        unknown:
-          count: 2968
-    biolink:MacromolecularComplex-biolink:subclass_of-biolink:MacromolecularComplex:
-      count: 4377
-      provided_by:
-        unknown:
-          count: 4377
-      source:
-        unknown:
-          count: 4377
-    biolink:MolecularActivity-biolink:enabled_by-biolink:MolecularActivity:
-      count: 7902
-      provided_by:
-        unknown:
-          count: 7902
-      source:
-        unknown:
-          count: 7902
-    biolink:MolecularActivity-biolink:enabled_by-biolink:Protein:
-      count: 7902
-      provided_by:
-        unknown:
-          count: 7902
-      source:
-        unknown:
-          count: 7902
-    biolink:MolecularActivity-biolink:enables-biolink:BiologicalProcess:
-      count: 4431
-      provided_by:
-        unknown:
-          count: 4431
-      source:
-        unknown:
-          count: 4431
-    biolink:MolecularActivity-biolink:enables-biolink:MolecularActivity:
-      count: 4431
-      provided_by:
-        unknown:
-          count: 4431
-      source:
-        unknown:
-          count: 4431
-    biolink:MolecularActivity-biolink:has_input-biolink:ChemicalEntity:
-      count: 87865
-      provided_by:
-        unknown:
-          count: 87865
-      source:
-        unknown:
-          count: 87865
-    biolink:MolecularActivity-biolink:has_input-biolink:ChemicalRole:
-      count: 970
-      provided_by:
-        unknown:
-          count: 970
-      source:
-        unknown:
-          count: 970
-    biolink:MolecularActivity-biolink:has_input-biolink:MacromolecularComplex:
-      count: 302
-      provided_by:
-        unknown:
-          count: 302
-      source:
-        unknown:
-          count: 302
     biolink:MolecularActivity-biolink:has_output-biolink:ChemicalEntity:
-      count: 87849
+      count: 88851
       provided_by:
         unknown:
-          count: 87849
+          count: 88851
       source:
         unknown:
-          count: 87849
+          count: 88851
     biolink:MolecularActivity-biolink:has_output-biolink:ChemicalRole:
-      count: 970
+      count: 974
       provided_by:
         unknown:
-          count: 970
+          count: 974
       source:
         unknown:
-          count: 970
+          count: 974
     biolink:MolecularActivity-biolink:has_output-biolink:MacromolecularComplex:
-      count: 302
+      count: 304
       provided_by:
         unknown:
-          count: 302
+          count: 304
       source:
         unknown:
-          count: 302
+          count: 304
+    biolink:MolecularActivity-biolink:has_output-unknown:
+      count: 5
+      provided_by:
+        unknown:
+          count: 5
+      source:
+        unknown:
+          count: 5
     biolink:MolecularActivity-biolink:part_of-biolink:BiologicalProcess:
-      count: 963
+      count: 942
       provided_by:
         unknown:
-          count: 963
+          count: 942
       source:
         unknown:
-          count: 963
+          count: 942
     biolink:MolecularActivity-biolink:related_to-biolink:BiologicalProcess:
-      count: 5368
+      count: 5657
       provided_by:
         unknown:
-          count: 5368
+          count: 5657
       source:
         unknown:
-          count: 5368
+          count: 5657
     biolink:MolecularActivity-biolink:related_to-biolink:CellularComponent:
       count: 36
       provided_by:
@@ -1012,13 +1036,13 @@ edge_stats:
         unknown:
           count: 36
     biolink:MolecularActivity-biolink:related_to-biolink:MolecularActivity:
-      count: 4916
+      count: 5149
       provided_by:
         unknown:
-          count: 4916
+          count: 5149
       source:
         unknown:
-          count: 4916
+          count: 5149
     biolink:MolecularActivity-biolink:related_to-biolink:OntologyClass:
       count: 1
       provided_by:
@@ -1028,45 +1052,29 @@ edge_stats:
         unknown:
           count: 1
     biolink:MolecularActivity-biolink:subclass_of-biolink:BiologicalProcess:
-      count: 1126
+      count: 1490
       provided_by:
         unknown:
-          count: 1126
+          count: 1490
       source:
         unknown:
-          count: 1126
+          count: 1490
     biolink:MolecularActivity-biolink:subclass_of-biolink:MolecularActivity:
-      count: 19698
+      count: 19512
       provided_by:
         unknown:
-          count: 19698
+          count: 19512
       source:
         unknown:
-          count: 19698
+          count: 19512
     biolink:MolecularActivity-biolink:subclass_of-biolink:Protein:
-      count: 7286
+      count: 7244
       provided_by:
         unknown:
-          count: 7286
+          count: 7244
       source:
         unknown:
-          count: 7286
-    biolink:OntologyClass-None-biolink:NamedThing:
-      count: 1
-      provided_by:
-        unknown:
-          count: 1
-      source:
-        unknown:
-          count: 1
-    biolink:OntologyClass-None-biolink:OntologyClass:
-      count: 328
-      provided_by:
-        unknown:
-          count: 328
-      source:
-        unknown:
-          count: 328
+          count: 7244
     biolink:OntologyClass-biolink:has_attribute-biolink:OntologyClass:
       count: 11
       provided_by:
@@ -1084,13 +1092,13 @@ edge_stats:
         unknown:
           count: 11
     biolink:OntologyClass-biolink:location_of-biolink:OrganismTaxon:
-      count: 61842
+      count: 61754
       provided_by:
         unknown:
-          count: 61842
+          count: 61754
       source:
         unknown:
-          count: 61842
+          count: 61754
     biolink:OntologyClass-biolink:related_to-biolink:AnatomicalEntity:
       count: 36
       provided_by:
@@ -1156,21 +1164,21 @@ edge_stats:
         unknown:
           count: 7
     biolink:OntologyClass-biolink:related_to-biolink:OntologyClass:
-      count: 1952
+      count: 1951
       provided_by:
         unknown:
-          count: 1952
+          count: 1951
       source:
         unknown:
-          count: 1952
+          count: 1951
     biolink:OntologyClass-biolink:related_to-biolink:OrganismTaxon:
-      count: 17
+      count: 21
       provided_by:
         unknown:
-          count: 17
+          count: 21
       source:
         unknown:
-          count: 17
+          count: 21
     biolink:OntologyClass-biolink:related_to-biolink:PhenotypicQuality:
       count: 6
       provided_by:
@@ -1188,21 +1196,21 @@ edge_stats:
         unknown:
           count: 22
     biolink:OntologyClass-biolink:subclass_of-biolink:BiologicalProcess:
-      count: 59
+      count: 61
       provided_by:
         unknown:
-          count: 59
+          count: 61
       source:
         unknown:
-          count: 59
+          count: 61
     biolink:OntologyClass-biolink:subclass_of-biolink:ChemicalEntity:
-      count: 14
+      count: 13
       provided_by:
         unknown:
-          count: 14
+          count: 13
       source:
         unknown:
-          count: 14
+          count: 13
     biolink:OntologyClass-biolink:subclass_of-biolink:ChemicalRole:
       count: 1
       provided_by:
@@ -1227,14 +1235,6 @@ edge_stats:
       source:
         unknown:
           count: 77
-    biolink:OntologyClass-biolink:subclass_of-biolink:Food:
-      count: 7
-      provided_by:
-        unknown:
-          count: 7
-      source:
-        unknown:
-          count: 7
     biolink:OntologyClass-biolink:subclass_of-biolink:MacromolecularComplex:
       count: 3
       provided_by:
@@ -1244,21 +1244,21 @@ edge_stats:
         unknown:
           count: 3
     biolink:OntologyClass-biolink:subclass_of-biolink:OntologyClass:
-      count: 6600
+      count: 6660
       provided_by:
         unknown:
-          count: 6600
+          count: 6660
       source:
         unknown:
-          count: 6600
+          count: 6660
     biolink:OntologyClass-biolink:subclass_of-biolink:PhenotypicQuality:
-      count: 102
+      count: 104
       provided_by:
         unknown:
-          count: 102
+          count: 104
       source:
         unknown:
-          count: 102
+          count: 104
     biolink:OntologyClass-biolink:subclass_of-unknown:
       count: 1
       provided_by:
@@ -1276,101 +1276,101 @@ edge_stats:
         unknown:
           count: 7
     biolink:OrganismTaxon-None-biolink:BiologicalProcess:
-      count: 880949
+      count: 908634
       provided_by:
         unknown:
-          count: 880949
+          count: 908634
       source:
         unknown:
-          count: 880949
+          count: 908634
     biolink:OrganismTaxon-None-biolink:ChemicalEntity:
-      count: 4896115
+      count: 5078154
       provided_by:
         unknown:
-          count: 4896115
+          count: 5078154
       source:
         unknown:
-          count: 4896115
+          count: 5078154
     biolink:OrganismTaxon-None-biolink:ChemicalMixture:
-      count: 2665
+      count: 2652
       provided_by:
         unknown:
-          count: 2665
+          count: 2652
       source:
         unknown:
-          count: 2665
+          count: 2652
     biolink:OrganismTaxon-None-biolink:ComplexMolecularMixture:
-      count: 73591
+      count: 70798
       provided_by:
         unknown:
-          count: 73591
+          count: 70798
       source:
         unknown:
-          count: 73591
+          count: 70798
     biolink:OrganismTaxon-None-biolink:EnvironmentalFeature:
-      count: 49153
+      count: 52073
       provided_by:
         unknown:
-          count: 49153
+          count: 52073
       source:
         unknown:
-          count: 49153
+          count: 52073
     biolink:OrganismTaxon-None-biolink:EnvironmentalMaterial:
-      count: 49117
+      count: 52036
       provided_by:
         unknown:
-          count: 49117
+          count: 52036
       source:
         unknown:
-          count: 49117
+          count: 52036
     biolink:OrganismTaxon-None-biolink:Food:
-      count: 94296
+      count: 98944
       provided_by:
         unknown:
-          count: 94296
+          count: 98944
       source:
         unknown:
-          count: 94296
+          count: 98944
     biolink:OrganismTaxon-None-biolink:GrowthMedium:
-      count: 133540
+      count: 133776
       provided_by:
         unknown:
-          count: 133540
+          count: 133776
       source:
         unknown:
-          count: 133540
+          count: 133776
     biolink:OrganismTaxon-None-biolink:MacromolecularComplex:
-      count: 301801
+      count: 313195
       provided_by:
         unknown:
-          count: 301801
+          count: 313195
       source:
         unknown:
-          count: 301801
+          count: 313195
     biolink:OrganismTaxon-None-biolink:MolecularActivity:
-      count: 1121037
+      count: 1132588
       provided_by:
         unknown:
-          count: 1121037
+          count: 1132588
       source:
         unknown:
-          count: 1121037
+          count: 1132588
     biolink:OrganismTaxon-None-biolink:OntologyClass:
-      count: 295231
+      count: 312918
       provided_by:
         unknown:
-          count: 295231
+          count: 312918
       source:
         unknown:
-          count: 295231
+          count: 312918
     biolink:OrganismTaxon-None-biolink:PhenotypicQuality:
-      count: 245654
+      count: 260416
       provided_by:
         unknown:
-          count: 245654
+          count: 260416
       source:
         unknown:
-          count: 245654
+          count: 260416
     biolink:OrganismTaxon-None-biolink:Procedure:
       count: 1156333
       provided_by:
@@ -1380,13 +1380,13 @@ edge_stats:
         unknown:
           count: 1156333
     biolink:OrganismTaxon-None-biolink:Protein:
-      count: 499455
+      count: 499523
       provided_by:
         unknown:
-          count: 499455
+          count: 499523
       source:
         unknown:
-          count: 499455
+          count: 499523
     biolink:OrganismTaxon-None-unknown:
       count: 5056
       provided_by:
@@ -1428,21 +1428,21 @@ edge_stats:
         unknown:
           count: 90
     biolink:OrganismTaxon-biolink:capable_of-biolink:BiologicalProcess:
-      count: 26193
+      count: 27586
       provided_by:
         unknown:
-          count: 26193
+          count: 27586
       source:
         unknown:
-          count: 26193
+          count: 27586
     biolink:OrganismTaxon-biolink:capable_of-biolink:MolecularActivity:
-      count: 121033
+      count: 126785
       provided_by:
         unknown:
-          count: 121033
+          count: 126785
       source:
         unknown:
-          count: 121033
+          count: 126785
     biolink:OrganismTaxon-biolink:capable_of-biolink:OntologyClass:
       count: 1770
       provided_by:
@@ -1460,53 +1460,69 @@ edge_stats:
         unknown:
           count: 1495
     biolink:OrganismTaxon-biolink:capable_of-biolink:Protein:
-      count: 35460
+      count: 37147
       provided_by:
         unknown:
-          count: 35460
+          count: 37147
       source:
         unknown:
-          count: 35460
+          count: 37147
+    biolink:OrganismTaxon-biolink:close_match-biolink:NucleicAcidEntity:
+      count: 28534
+      provided_by:
+        unknown:
+          count: 28534
+      source:
+        unknown:
+          count: 28534
     biolink:OrganismTaxon-biolink:close_match-biolink:OrganismTaxon:
-      count: 245120
+      count: 435120
       provided_by:
         unknown:
-          count: 245120
+          count: 435120
       source:
         unknown:
-          count: 245120
+          count: 435120
+    biolink:OrganismTaxon-biolink:close_match-biolink:Publication:
+      count: 95524
+      provided_by:
+        unknown:
+          count: 95524
+      source:
+        unknown:
+          count: 95524
     biolink:OrganismTaxon-biolink:close_match-unknown:
-      count: 351
+      count: 6446
       provided_by:
         unknown:
-          count: 351
+          count: 6446
       source:
         unknown:
-          count: 351
+          count: 6446
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:BiologicalProcess:
-      count: 202824
+      count: 211983
       provided_by:
         unknown:
-          count: 202824
+          count: 211983
       source:
         unknown:
-          count: 202824
+          count: 211983
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:OntologyClass:
-      count: 1742305
+      count: 1818919
       provided_by:
         unknown:
-          count: 1742305
+          count: 1818919
       source:
         unknown:
-          count: 1742305
+          count: 1818919
     biolink:OrganismTaxon-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 1742305
+      count: 1818919
       provided_by:
         unknown:
-          count: 1742305
+          count: 1818919
       source:
         unknown:
-          count: 1742305
+          count: 1818919
     biolink:OrganismTaxon-biolink:location_of-biolink:OrganismTaxon:
       count: 14664
       provided_by:
@@ -1516,29 +1532,29 @@ edge_stats:
         unknown:
           count: 14664
     biolink:OrganismTaxon-biolink:produces-biolink:ChemicalEntity:
-      count: 9433
+      count: 9753
       provided_by:
         unknown:
-          count: 9433
+          count: 9753
       source:
         unknown:
-          count: 9433
+          count: 9753
     biolink:OrganismTaxon-biolink:same_as-biolink:OrganismTaxon:
-      count: 2528
+      count: 15852
       provided_by:
         unknown:
-          count: 2528
+          count: 15852
       source:
         unknown:
-          count: 2528
+          count: 15852
     biolink:OrganismTaxon-biolink:same_as-unknown:
-      count: 3
+      count: 1125
       provided_by:
         unknown:
-          count: 3
+          count: 1125
       source:
         unknown:
-          count: 3
+          count: 1125
     biolink:OrganismTaxon-biolink:subclass_of-biolink:EnvironmentalFeature:
       count: 3
       provided_by:
@@ -1548,37 +1564,37 @@ edge_stats:
         unknown:
           count: 3
     biolink:OrganismTaxon-biolink:subclass_of-biolink:OntologyClass:
-      count: 5
+      count: 2
       provided_by:
         unknown:
-          count: 5
+          count: 2
       source:
         unknown:
-          count: 5
+          count: 2
     biolink:OrganismTaxon-biolink:subclass_of-biolink:OrganismTaxon:
-      count: 1324609
+      count: 1459203
       provided_by:
         unknown:
-          count: 1324609
+          count: 1459203
       source:
         unknown:
-          count: 1324609
+          count: 1459203
     biolink:OrganismTaxon-biolink:subclass_of-unknown:
-      count: 18
+      count: 4604
       provided_by:
         unknown:
-          count: 18
+          count: 4604
       source:
         unknown:
-          count: 18
+          count: 4604
     biolink:PhenotypicQuality-biolink:subclass_of-biolink:BiologicalProcess:
-      count: 1
+      count: 3
       provided_by:
         unknown:
-          count: 1
+          count: 3
       source:
         unknown:
-          count: 1
+          count: 3
     biolink:PhenotypicQuality-biolink:subclass_of-biolink:OntologyClass:
       count: 201
       provided_by:
@@ -1588,13 +1604,13 @@ edge_stats:
         unknown:
           count: 201
     biolink:PhenotypicQuality-biolink:subclass_of-biolink:PhenotypicQuality:
-      count: 90
+      count: 91
       provided_by:
         unknown:
-          count: 90
+          count: 91
       source:
         unknown:
-          count: 90
+          count: 91
     biolink:Procedure-biolink:has_input-biolink:ChemicalEntity:
       count: 294
       provided_by:
@@ -1620,13 +1636,13 @@ edge_stats:
         unknown:
           count: 129
     biolink:Procedure-biolink:has_output-biolink:MolecularActivity:
-      count: 266
+      count: 264
       provided_by:
         unknown:
-          count: 266
+          count: 264
       source:
         unknown:
-          count: 266
+          count: 264
     biolink:Procedure-biolink:has_output-biolink:Protein:
       count: 140
       provided_by:
@@ -1652,37 +1668,37 @@ edge_stats:
         unknown:
           count: 16
     biolink:Protein-biolink:related_to-biolink:BiologicalProcess:
-      count: 4483
+      count: 4777
       provided_by:
         unknown:
-          count: 4483
+          count: 4777
       source:
         unknown:
-          count: 4483
+          count: 4777
     biolink:Protein-biolink:related_to-biolink:MolecularActivity:
-      count: 4483
+      count: 4718
       provided_by:
         unknown:
-          count: 4483
+          count: 4718
       source:
         unknown:
-          count: 4483
+          count: 4718
     biolink:Protein-biolink:subclass_of-biolink:MolecularActivity:
-      count: 7286
+      count: 7244
       provided_by:
         unknown:
-          count: 7286
+          count: 7244
       source:
         unknown:
-          count: 7286
+          count: 7244
     biolink:Protein-biolink:subclass_of-biolink:Protein:
-      count: 7286
+      count: 7244
       provided_by:
         unknown:
-          count: 7286
+          count: 7244
       source:
         unknown:
-          count: 7286
+          count: 7244
     biolink:TaxonomicRank-biolink:subclass_of-biolink:TaxonomicRank:
       count: 48
       provided_by:
@@ -1691,30 +1707,62 @@ edge_stats:
       source:
         unknown:
           count: 48
+    unknown-None-unknown:
+      count: 1
+      provided_by:
+        unknown:
+          count: 1
+      source:
+        unknown:
+          count: 1
     unknown-biolink:has_phenotype-biolink:OntologyClass:
-      count: 26
+      count: 28
       provided_by:
         unknown:
-          count: 26
+          count: 28
       source:
         unknown:
-          count: 26
+          count: 28
     unknown-biolink:has_phenotype-biolink:PhenotypicQuality:
-      count: 26
+      count: 28
       provided_by:
         unknown:
-          count: 26
+          count: 28
       source:
         unknown:
-          count: 26
+          count: 28
+    unknown-biolink:in_taxon-biolink:OrganismTaxon:
+      count: 62096
+      provided_by:
+        unknown:
+          count: 62096
+      source:
+        unknown:
+          count: 62096
     unknown-biolink:location_of-biolink:OrganismTaxon:
-      count: 5958
+      count: 5960
       provided_by:
         unknown:
-          count: 5958
+          count: 5960
       source:
         unknown:
-          count: 5958
+          count: 5960
+    unknown-biolink:part_of-biolink:BiologicalProcess:
+      count: 20
+      provided_by:
+        unknown:
+          count: 20
+      source:
+        unknown:
+          count: 20
+    unknown-biolink:related_to-biolink:BiologicalProcess:
+      count: 47
+      provided_by:
+        unknown:
+          count: 47
+      source:
+        unknown:
+          count: 47
   predicates:
   - biolink:associated_with_resistance_to
   - biolink:associated_with_sensitivity_to
@@ -1728,6 +1776,7 @@ edge_stats:
   - biolink:has_output
   - biolink:has_part
   - biolink:has_phenotype
+  - biolink:in_taxon
   - biolink:location_of
   - biolink:part_of
   - biolink:produces
@@ -1738,7 +1787,7 @@ edge_stats:
   - unknown
   source:
   - unknown
-  total_edges: 12900316
+  total_edges: 13945914
 graph_name: kg-microbe graph
 node_stats:
   count_by_category:
@@ -1756,14 +1805,14 @@ node_stats:
         infores:metatraits:
           count: 2
     biolink:BiologicalProcess:
-      count: 40746
+      count: 30649
       provided_by:
-        Graph:
-          count: 4348
+        ec.json:
+          count: 4606
         envo.json:
           count: 36
         go.json:
-          count: 39602
+          count: 29448
         infores:bacdive:
           count: 12
         infores:bactotraits:
@@ -1775,7 +1824,7 @@ node_stats:
         infores:metatraits:
           count: 64
         infores:rhea:
-          count: 4431
+          count: 4729
         metpo.json:
           count: 17
         nodes.tsv:
@@ -1783,67 +1832,67 @@ node_stats:
         upa.json:
           count: 1053
     biolink:CellularComponent:
-      count: 4586
+      count: 4075
       provided_by:
         go.json:
-          count: 4586
+          count: 4075
     biolink:ChemicalEntity:
-      count: 219469
+      count: 212940
       provided_by:
         chebi.json:
-          count: 219037
+          count: 212513
         envo.json:
-          count: 839
+          count: 841
         infores:bacdive:
           count: 1057
         infores:gtdb-metatraits:
-          count: 694
+          count: 695
         infores:madin_etal:
-          count: 176
+          count: 192
         infores:mediadive:
-          count: 861
+          count: 854
         infores:metatraits:
-          count: 892
+          count: 893
         nodes.tsv:
           count: 44
         ontologies_stubs:
-          count: 95
+          count: 97
     biolink:ChemicalMixture:
-      count: 6082
+      count: 6105
       provided_by:
         infores:bacdive:
-          count: 326
+          count: 327
         infores:gtdb-metatraits:
-          count: 1
+          count: 2
         infores:mediadive:
-          count: 6082
+          count: 6105
         infores:metatraits:
-          count: 1
+          count: 2
     biolink:ChemicalRole:
-      count: 1410
+      count: 1441
       provided_by:
         chebi.json:
-          count: 1410
+          count: 1441
         envo.json:
-          count: 81
+          count: 83
         infores:madin_etal:
-          count: 95
+          count: 129
         infores:mediadive:
           count: 2
     biolink:ComplexMolecularMixture:
-      count: 2693
+      count: 2696
       provided_by:
         infores:bacdive:
-          count: 1233
+          count: 1232
         infores:mediadive:
-          count: 2693
+          count: 2696
     biolink:EnvironmentalFeature:
       count: 224
       provided_by:
         chebi.json:
           count: 2
         envo.json:
-          count: 54
+          count: 53
         infores:bacdive:
           count: 162
         infores:gtdb-metatraits:
@@ -1870,62 +1919,60 @@ node_stats:
         infores:metatraits:
           count: 1
     biolink:Food:
-      count: 26
+      count: 21
       provided_by:
         envo.json:
-          count: 5
+          count: 2
         infores:gtdb-metatraits:
-          count: 8
+          count: 6
         infores:madin_etal:
           count: 1
         infores:mediadive:
-          count: 21
+          count: 17
         infores:metatraits:
-          count: 11
+          count: 9
     biolink:Genome:
-      count: 732475
+      count: 901341
       provided_by:
         nodes.tsv:
-          count: 732475
+          count: 901341
     biolink:GrowthMedium:
-      count: 3351
+      count: 3356
       provided_by:
         infores:bacdive:
           count: 1575
         infores:gtdb-metatraits:
           count: 2
         infores:mediadive:
-          count: 3333
+          count: 3338
         infores:metatraits:
           count: 2
     biolink:MacromolecularComplex:
-      count: 4265
+      count: 4503
       provided_by:
         chebi.json:
-          count: 4265
+          count: 4503
         envo.json:
           count: 31
         infores:bacdive:
           count: 60
         infores:gtdb-metatraits:
-          count: 45
+          count: 46
         infores:madin_etal:
           count: 4
         infores:mediadive:
           count: 19
         infores:metatraits:
-          count: 47
+          count: 48
         nodes.tsv:
           count: 1
     biolink:MolecularActivity:
-      count: 95103
+      count: 91715
       provided_by:
-        Graph:
-          count: 4348
         ec.json:
-          count: 8778
+          count: 11800
         go.json:
-          count: 12825
+          count: 10041
         infores:bacdive:
           count: 79
         infores:gtdb-metatraits:
@@ -1933,29 +1980,29 @@ node_stats:
         infores:metatraits:
           count: 81
         infores:rhea:
-          count: 83990
+          count: 85161
         nodes.tsv:
-          count: 43
+          count: 42
         upa.json:
           count: 33
         upa_nodes.tsv:
           count: 963
-    biolink:NamedThing:
-      count: 1
+    biolink:NucleicAcidEntity:
+      count: 22773
       provided_by:
-        Graph:
-          count: 1
+        infores:lpsn:
+          count: 22773
     biolink:OntologyClass:
-      count: 7933
+      count: 6314
       provided_by:
         chebi.json:
           count: 48
         ec.json:
-          count: 4
+          count: 14
         envo.json:
-          count: 5608
+          count: 5168
         go.json:
-          count: 111
+          count: 110
         infores:bacdive:
           count: 78
         infores:bactotraits:
@@ -1963,38 +2010,40 @@ node_stats:
         infores:gtdb-metatraits:
           count: 89
         infores:madin_etal:
-          count: 112
+          count: 111
         infores:mediadive:
-          count: 60
+          count: 59
         infores:metatraits:
           count: 109
         metpo.json:
-          count: 1602
+          count: 423
         ncbitaxon_removed_subset.json:
-          count: 34
+          count: 30
         ontologies_stubs:
-          count: 669
+          count: 675
     biolink:OrganismTaxon:
-      count: 1327379
+      count: 1467280
       provided_by:
         envo.json:
-          count: 189
+          count: 193
         infores:bacdive:
-          count: 271773
+          count: 271774
         infores:bactotraits:
-          count: 9933
+          count: 9705
         infores:gtdb-metatraits:
-          count: 32791
+          count: 34476
+        infores:lpsn:
+          count: 34301
         infores:madin_etal:
           count: 49156
         infores:mediadive:
-          count: 21974
+          count: 20475
         infores:metatraits:
-          count: 53954
+          count: 53755
         ncbitaxon_removed_subset.json:
-          count: 888073
+          count: 925220
         nodes.tsv:
-          count: 181959
+          count: 247368
     biolink:PhenotypicQuality:
       count: 197
       provided_by:
@@ -2018,10 +2067,10 @@ node_stats:
         nodes.tsv:
           count: 503
     biolink:Protein:
-      count: 8848
+      count: 7384
       provided_by:
         ec.json:
-          count: 8778
+          count: 7251
         infores:bacdive:
           count: 79
         infores:gtdb-metatraits:
@@ -2029,113 +2078,122 @@ node_stats:
         infores:metatraits:
           count: 16
         infores:rhea:
-          count: 6184
+          count: 6199
         nodes.tsv:
           count: 10
+    biolink:Publication:
+      count: 36531
+      provided_by:
+        infores:lpsn:
+          count: 36531
     biolink:TaxonomicRank:
       count: 51
       provided_by:
         ncbitaxon_removed_subset.json:
           count: 51
     unknown:
-      count: 397
+      count: 68304
       provided_by:
         unknown:
-          count: 397
+          count: 68304
   count_by_id_prefixes:
     BFO: 34
     BTO: 2
-    CHEBI: 224728
-    EC: 17696
-    ENVO: 4415
+    CHEBI: 218482
+    EC: 14768
+    ENVO: 3968
     FAO: 2
-    FOODON: 471
+    FOODON: 477
     GENEPIO: 1
-    GO: 57049
-    GTDB: 186242
-    GenBank: 732475
-    IAO: 34
-    METPO: 1793
-    MICRO: 82
-    NCBITaxon: 889257
-    NCIT: 230
-    OBI: 7
-    OBO: 71
+    GO: 43724
+    GTDB: 255075
+    GenBank: 901341
+    IAO: 36
+    INSDC: 22773
+    METPO: 612
+    MICRO: 85
+    NCBITaxon: 926675
+    NCIT: 235
+    OBI: 3
+    OBO: 70
     OIO: 30
     PATO: 413
     PCO: 8
+    PMID: 17302
     PO: 54
     PRIDE: 2
     PubChem: 1
-    RHEA: 73396
-    RO: 173
+    RHEA: 74256
+    RO: 170
     SNOMED: 1
     TAXRANK: 51
     UBERON: 637
     UPA: 1086
     WD_Entity: 4
+    bacdive: 62096
     bacdive.isolation_source: 164
-    cas: 10
+    cas: 11
     chemrof: 8
     dc: 6
-    dcterms: 9
+    dcterms: 7
     doap: 2
     foaf: 1
     kgmicrobe.activity: 1
     kgmicrobe.assay: 503
     kgmicrobe.carbon_substrate: 1
-    kgmicrobe.compound: 70
+    kgmicrobe.compound: 67
     kgmicrobe.genus: 6
-    kgmicrobe.ingredient: 10
+    kgmicrobe.ingredient: 11
     kgmicrobe.medium: 2
-    kgmicrobe.pathway: 75
-    kgmicrobe.species: 41
-    kgmicrobe.strain: 251967
-    mediadive.ingredient: 217
-    mediadive.medium: 6689
+    kgmicrobe.pathway: 74
+    kgmicrobe.species: 183
+    kgmicrobe.strain: 255571
+    lpsn: 35645
+    mediadive.ingredient: 198
+    mediadive.medium: 6699
     mediadive.medium-type: 2
-    mediadive.solution: 5421
+    mediadive.solution: 5449
     mesh: 430
     owl: 1
-    pubchem.compound: 19
+    pubchem.compound: 18
     rdfs: 2
     schema: 1
-    skos: 5
+    skos: 4
   count_by_id_prefixes_by_category:
     biolink:AnatomicalEntity:
       UBERON: 597
     biolink:BiologicalProcess:
-      GO: 39602
+      GO: 29506
       METPO: 17
       UPA: 1053
-      kgmicrobe.pathway: 74
+      kgmicrobe.pathway: 73
     biolink:CellularComponent:
-      GO: 4586
+      GO: 4075
     biolink:ChemicalEntity:
-      CHEBI: 219051
-      FOODON: 4
-      MICRO: 26
+      CHEBI: 212534
+      FOODON: 2
+      MICRO: 28
       NCIT: 23
       PubChem: 1
-      cas: 10
+      cas: 11
       kgmicrobe.carbon_substrate: 1
-      kgmicrobe.compound: 70
-      kgmicrobe.ingredient: 10
-      mediadive.ingredient: 198
+      kgmicrobe.compound: 67
+      kgmicrobe.ingredient: 11
+      mediadive.ingredient: 179
       mediadive.medium: 7
-      mediadive.solution: 3
+      mediadive.solution: 12
       mesh: 46
-      pubchem.compound: 19
+      pubchem.compound: 18
     biolink:ChemicalMixture:
-      FOODON: 3
-      mediadive.medium: 660
+      FOODON: 5
+      mediadive.medium: 662
       mediadive.medium-type: 1
-      mediadive.solution: 5418
+      mediadive.solution: 5437
     biolink:ChemicalRole:
-      CHEBI: 1410
+      CHEBI: 1441
     biolink:ComplexMolecularMixture:
       mediadive.ingredient: 19
-      mediadive.medium: 2673
+      mediadive.medium: 2676
       mediadive.medium-type: 1
     biolink:EnvironmentalFeature:
       CHEBI: 2
@@ -2148,61 +2206,62 @@ node_stats:
     biolink:EnvironmentalMaterial:
       ENVO: 3
     biolink:Food:
-      FOODON: 25
+      FOODON: 20
       UBERON: 1
     biolink:Genome:
-      GenBank: 732475
+      GenBank: 901341
     biolink:GrowthMedium:
       kgmicrobe.medium: 2
-      mediadive.medium: 3349
+      mediadive.medium: 3354
     biolink:MacromolecularComplex:
-      CHEBI: 4265
+      CHEBI: 4503
     biolink:MolecularActivity:
-      EC: 8848
-      GO: 12825
-      RHEA: 73396
+      EC: 7384
+      GO: 10041
+      RHEA: 74256
       UPA: 33
       kgmicrobe.activity: 1
-    biolink:NamedThing:
-      RO: 1
+    biolink:NucleicAcidEntity:
+      INSDC: 22773
     biolink:OntologyClass:
       BFO: 34
       BTO: 2
-      ENVO: 4366
+      ENVO: 3919
       FAO: 2
-      FOODON: 429
+      FOODON: 440
       GENEPIO: 1
       GO: 36
-      IAO: 34
-      METPO: 1586
-      MICRO: 55
-      NCIT: 207
-      OBI: 6
-      OBO: 71
+      IAO: 36
+      METPO: 405
+      MICRO: 56
+      NCIT: 212
+      OBI: 2
+      OBO: 70
       OIO: 30
       PATO: 404
       PCO: 8
       PO: 53
       PRIDE: 2
-      RO: 172
+      RO: 170
       SNOMED: 1
       WD_Entity: 4
       chemrof: 8
       dc: 6
-      dcterms: 9
+      dcterms: 7
       doap: 2
       foaf: 1
       mesh: 384
       owl: 1
       rdfs: 2
       schema: 1
-      skos: 5
+      skos: 4
     biolink:OrganismTaxon:
-      GTDB: 186219
-      NCBITaxon: 888929
+      GTDB: 255050
+      NCBITaxon: 926185
       kgmicrobe.genus: 6
-      kgmicrobe.species: 41
-      kgmicrobe.strain: 251967
+      kgmicrobe.species: 183
+      kgmicrobe.strain: 251338
+      lpsn: 34301
     biolink:PhenotypicQuality:
       METPO: 190
       PATO: 6
@@ -2210,17 +2269,24 @@ node_stats:
     biolink:Procedure:
       kgmicrobe.assay: 503
     biolink:Protein:
-      EC: 8848
+      EC: 7384
+    biolink:Publication:
+      PMID: 17302
     biolink:TaxonomicRank:
       TAXRANK: 51
     unknown:
+      CHEBI: 2
       FOODON: 9
-      GTDB: 23
+      GO: 66
+      GTDB: 25
       MICRO: 1
-      NCBITaxon: 327
+      NCBITaxon: 489
       OBI: 1
       PATO: 3
       UBERON: 33
+      bacdive: 62096
+      kgmicrobe.strain: 4233
+      lpsn: 1344
   node_categories:
   - biolink:AnatomicalEntity
   - biolink:BiologicalProcess
@@ -2236,12 +2302,13 @@ node_stats:
   - biolink:GrowthMedium
   - biolink:MacromolecularComplex
   - biolink:MolecularActivity
-  - biolink:NamedThing
+  - biolink:NucleicAcidEntity
   - biolink:OntologyClass
   - biolink:OrganismTaxon
   - biolink:PhenotypicQuality
   - biolink:Procedure
   - biolink:Protein
+  - biolink:Publication
   - biolink:TaxonomicRank
   node_id_prefixes:
   - BFO
@@ -2256,6 +2323,7 @@ node_stats:
   - GTDB
   - GenBank
   - IAO
+  - INSDC
   - METPO
   - MICRO
   - NCBITaxon
@@ -2265,6 +2333,7 @@ node_stats:
   - OIO
   - PATO
   - PCO
+  - PMID
   - PO
   - PRIDE
   - PubChem
@@ -2275,6 +2344,7 @@ node_stats:
   - UBERON
   - UPA
   - WD_Entity
+  - bacdive
   - bacdive.isolation_source
   - cas
   - chemrof
@@ -2292,6 +2362,7 @@ node_stats:
   - kgmicrobe.pathway
   - kgmicrobe.species
   - kgmicrobe.strain
+  - lpsn
   - mediadive.ingredient
   - mediadive.medium
   - mediadive.medium-type
@@ -2315,11 +2386,11 @@ node_stats:
     biolink:ChemicalEntity:
     - CHEBI
     - FOODON
+    - MICRO
     - NCIT
     - cas
     - kgmicrobe.compound
     - mesh
-    - MICRO
     - mediadive.medium
     - PubChem
     - kgmicrobe.ingredient
@@ -2364,16 +2435,16 @@ node_stats:
     - kgmicrobe.activity
     - RHEA
     - UPA
-    biolink:NamedThing:
-    - RO
+    biolink:NucleicAcidEntity:
+    - INSDC
     biolink:OntologyClass:
     - ENVO
-    - FOODON
     - METPO
+    - MICRO
     - NCIT
     - mesh
-    - OBO
     - IAO
+    - OBO
     - dcterms
     - OIO
     - BFO
@@ -2381,6 +2452,7 @@ node_stats:
     - foaf
     - chemrof
     - FAO
+    - FOODON
     - GO
     - OBI
     - PATO
@@ -2394,7 +2466,6 @@ node_stats:
     - owl
     - skos
     - BTO
-    - MICRO
     - GENEPIO
     - PRIDE
     - SNOMED
@@ -2403,6 +2474,7 @@ node_stats:
     - kgmicrobe.species
     - kgmicrobe.strain
     - kgmicrobe.genus
+    - lpsn
     - GTDB
     biolink:PhenotypicQuality:
     - METPO
@@ -2412,18 +2484,24 @@ node_stats:
     - kgmicrobe.assay
     biolink:Protein:
     - EC
+    biolink:Publication:
+    - PMID
     biolink:TaxonomicRank:
     - TAXRANK
     unknown:
     - NCBITaxon
     - OBI
     - FOODON
+    - GO
     - UBERON
+    - bacdive
     - MICRO
     - PATO
+    - CHEBI
     - GTDB
+    - kgmicrobe.strain
+    - lpsn
   provided_by:
-  - Graph
   - chebi.json
   - ec.json
   - envo.json
@@ -2431,6 +2509,7 @@ node_stats:
   - infores:bacdive
   - infores:bactotraits
   - infores:gtdb-metatraits
+  - infores:lpsn
   - infores:madin_etal
   - infores:mediadive
   - infores:metatraits
@@ -2442,4 +2521,4 @@ node_stats:
   - unknown
   - upa.json
   - upa_nodes.tsv
-  total_nodes: 2438443
+  total_nodes: 2852351

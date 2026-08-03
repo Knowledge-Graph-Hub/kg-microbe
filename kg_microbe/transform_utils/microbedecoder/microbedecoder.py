@@ -25,7 +25,7 @@ Design decisions locked from the plan-mode Q&A:
 1. **Node identity**: attach every edge to the *existing* `lpsn:<LPSN_ID>`
    node emitted by the LPSN transform. This transform emits edges only
    (plus terminal nodes for end-products / cross-refs / provisional
-   provisional placeholders); it does not re-emit LPSN taxon nodes.
+   placeholders); it does not re-emit LPSN taxon nodes.
 2. **BacDive_* replay**: ingested with `primary_knowledge_source =
    infores:microbedecoder` so the paper's 2024-11-07 BacDive snapshot
    stays reproducible. The fresher `bacdive` transform is authoritative
@@ -105,6 +105,11 @@ logger = logging.getLogger(__name__)
 _DEFAULT_ZIP_NAME = "microbedecoder_database.zip"
 # Filename inside the zip. MicrobeDecoder ships one CSV: `database.csv`.
 _CSV_INSIDE_ZIP = "database.csv"
+# Per-run curation report of labels that fell through the mapping chain
+# and landed as ``kgmicrobe.*`` placeholders. Follows the metatraits
+# ``unmapped_traits.tsv`` convention (per-source, in the transform's
+# output dir, TSV with a stable header).
+_UNMAPPED_REPORT_FILENAME = "unmapped_labels.tsv"
 
 # Predicate map from metabolism-source group_label to the InforES knowledge
 # source used on every emitted edge. Kept as a dict so tests can override
@@ -156,6 +161,12 @@ class MicrobeDecoderTransform(Transform):
         # and successfully-resolved CHEBI CURIEs are never stubbed here —
         # their authoritative nodes come from other transforms.
         self._seen_nodes: set = set()
+        # Per-label tally of placeholder mintings so the end-of-run
+        # ``unmapped_labels.tsv`` can prioritise curation by frequency.
+        # Keyed by ``(placeholder_curie, category)``; value tracks the raw
+        # label, the pipe-set of source columns it appeared in, and the
+        # occurrence count. See ``_write_unmapped_report``.
+        self._unmapped: Dict[tuple, Dict[str, object]] = {}
         # End-of-run summary counters.
         self._stats: Dict[str, int] = {
             "rows_processed": 0,
@@ -257,6 +268,9 @@ class MicrobeDecoderTransform(Transform):
         # merged KG collapse duplicates cheaply.
         drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN)
         drop_duplicates(self.output_edge_file, sort_by_column=SUBJECT_COLUMN)
+        # Curation queue: per-label placeholder tally sorted by frequency
+        # descending. Matches the metatraits `unmapped_traits.tsv` pattern.
+        self._write_unmapped_report()
         self._log_summary()
 
     # ------------------------------------------------------------------
@@ -345,7 +359,9 @@ class MicrobeDecoderTransform(Transform):
             type_of_metabolism = fields.get("type_of_metabolism")
             if not is_empty_cell(type_of_metabolism):
                 for label in split_multivalue(type_of_metabolism):
-                    obj = self._resolve_metabolism_curie(label, node_writer)
+                    obj = self._resolve_metabolism_curie(
+                        label, node_writer, source_column=f"{group_label}:type_of_metabolism"
+                    )
                     edge_writer.writerow(
                         self._make_edge_row(
                             subject,
@@ -366,7 +382,7 @@ class MicrobeDecoderTransform(Transform):
                 ("minor_end_products", "minor"),
             ):
                 for label in split_multivalue(fields.get(role)):
-                    obj = self._resolve_chemical_curie(label, node_writer)
+                    obj = self._resolve_chemical_curie(label, node_writer, source_column=f"{group_label}:{role}")
                     edge_writer.writerow(
                         self._make_edge_row(
                             subject,
@@ -385,7 +401,7 @@ class MicrobeDecoderTransform(Transform):
             # organism→substrate emitter routes through, incl. madin_etal)
             # so merged-KG queries stay consistent.
             for label in split_multivalue(fields.get("substrates")):
-                obj = self._resolve_chemical_curie(label, node_writer)
+                obj = self._resolve_chemical_curie(label, node_writer, source_column=f"{group_label}:substrates")
                 edge_writer.writerow(
                     self._make_edge_row(
                         subject,
@@ -438,7 +454,12 @@ class MicrobeDecoderTransform(Transform):
     # ------------------------------------------------------------------
     # CURIE resolution
     # ------------------------------------------------------------------
-    def _resolve_chemical_curie(self, label: str, node_writer: "csv._writer") -> str:
+    def _resolve_chemical_curie(
+        self,
+        label: str,
+        node_writer: "csv._writer",
+        source_column: str,
+    ) -> str:
         """
         Resolve an end-product / substrate label to a CHEBI CURIE or placeholder.
 
@@ -446,7 +467,9 @@ class MicrobeDecoderTransform(Transform):
         a node stub; the ontologies transform owns the authoritative CHEBI
         node (per the add-transform skill's "don't stub cross-refs" rule).
         Miss → mint a ``kgmicrobe.compound:<slug>`` placeholder and emit
-        the terminal stub (nothing else will).
+        the terminal stub (nothing else will). ``source_column`` is
+        recorded in the unmapped-labels report so curators know which
+        source axis to prioritise.
         """
         curie: Optional[str] = None
         if self.chemical_loader is not None:
@@ -461,9 +484,15 @@ class MicrobeDecoderTransform(Transform):
             node_writer,
             prefix=COMPOUND_PREFIX,
             category=SMALL_MOLECULE_CATEGORY,
+            source_column=source_column,
         )
 
-    def _resolve_metabolism_curie(self, label: str, node_writer: "csv._writer") -> str:
+    def _resolve_metabolism_curie(
+        self,
+        label: str,
+        node_writer: "csv._writer",
+        source_column: str,
+    ) -> str:
         """
         Resolve a type_of_metabolism label to a pathway CURIE or placeholder.
 
@@ -479,6 +508,7 @@ class MicrobeDecoderTransform(Transform):
             node_writer,
             prefix=PATHWAY_PREFIX,
             category=METABOLISM_CATEGORY,
+            source_column=source_column,
         )
 
     def _resolve_phenotype_curie(
@@ -493,16 +523,16 @@ class MicrobeDecoderTransform(Transform):
         Category is left generic (:data:`PHENOTYPIC_CATEGORY`); the fresher
         ``bacdive`` transform provides the semantically-correct edge
         (MicrobeDecoder ingests the 2024-11-07 snapshot per the plan-mode
-        Q&A). ``source_column`` is accepted for a v2 compound-key lookup
-        where the same short string means different things under different
-        BacDive columns.
+        Q&A). ``source_column`` is recorded in the unmapped-labels report
+        so curators can distinguish the same short string (``yes``, ``0``)
+        appearing under different BacDive columns.
         """
-        del source_column  # kept in the API for a v2 compound-key lookup
         return self._mint_placeholder(
             label,
             node_writer,
             prefix=TRAIT_PREFIX,
             category=PHENOTYPIC_CATEGORY,
+            source_column=source_column,
         )
 
     def _mint_placeholder(
@@ -511,6 +541,7 @@ class MicrobeDecoderTransform(Transform):
         node_writer: "csv._writer",
         prefix: str,
         category: str,
+        source_column: str,
     ) -> str:
         """
         Return a stable ``<prefix><slug>`` CURIE and emit the terminal stub.
@@ -520,12 +551,71 @@ class MicrobeDecoderTransform(Transform):
         registered as a section of ``custom_curies.yaml``). The stub node
         carries the raw source label so the merged KG surfaces something
         human-readable even before the label gets a proper METPO / CHEBI
-        mapping.
+        mapping. ``source_column`` is tallied into ``self._unmapped`` so
+        the end-of-run ``unmapped_labels.tsv`` report knows which source
+        column(s) contributed this placeholder.
         """
         curie = f"{prefix}{slugify_label(label)}"
         self._ensure_terminal_node(curie, category, label, node_writer)
         self._stats["unmatched_labels"] += 1
+        # Aggregate per placeholder CURIE. Same CURIE from multiple
+        # columns keeps them all in the ``source_columns`` set so the
+        # curation report shows the union.
+        key = (curie, category)
+        entry = self._unmapped.setdefault(
+            key,
+            {"label": label, "source_columns": set(), "occurrences": 0},
+        )
+        entry["source_columns"].add(source_column)  # type: ignore[union-attr]
+        entry["occurrences"] = int(entry["occurrences"]) + 1
         return curie
+
+    def _write_unmapped_report(self) -> None:
+        """
+        Emit a per-label curation queue as ``unmapped_labels.tsv``.
+
+        Sorted by occurrence count descending so the top rows are the
+        highest-leverage curation targets. Feeds the "which MicrobeDecoder
+        labels most need a canonical mapping" question the paper's
+        readers and downstream curators care about (issue #650).
+
+        Columns:
+
+        - ``placeholder_curie`` — the ``kgmicrobe.{pathway,compound,trait}:<slug>``
+          CURIE this run minted for the label
+        - ``category`` — the placeholder's biolink category
+        - ``label`` — the raw source label
+        - ``source_columns`` — pipe-delimited set of source columns this
+          label appeared under (``bergey:type_of_metabolism`` /
+          ``vpi:major_end_products`` / ``BacDive_Oxygen_tolerance`` / …)
+        - ``occurrences`` — how many edges this placeholder anchors this run
+
+        No file is written when the run produced zero placeholders (all
+        labels mapped — the aspirational state).
+        """
+        if not self._unmapped:
+            return
+        target = self.output_dir / _UNMAPPED_REPORT_FILENAME
+        rows = [
+            {
+                "placeholder_curie": curie,
+                "category": category,
+                "label": entry["label"],
+                "source_columns": "|".join(sorted(entry["source_columns"])),  # type: ignore[arg-type]
+                "occurrences": entry["occurrences"],
+            }
+            for (curie, category), entry in self._unmapped.items()
+        ]
+        # Sort by count desc, then CURIE asc for stable output.
+        rows.sort(key=lambda r: (-int(r["occurrences"]), r["placeholder_curie"]))
+        with open(target, "w", newline="") as fh:
+            writer = csv.DictWriter(
+                fh,
+                fieldnames=["placeholder_curie", "category", "label", "source_columns", "occurrences"],
+                delimiter="\t",
+            )
+            writer.writeheader()
+            writer.writerows(rows)
 
     def _ensure_terminal_node(
         self,

@@ -204,6 +204,7 @@ STANDARD_PREFIXES = {
     "kgmicrobe.activity", "kgmicrobe.trait", "kgmicrobe.compound",
     "kgmicrobe.assay", "kgmicrobe.pathway", "kgmicrobe.carbon_substrate",
     "kgmicrobe.ingredient",  # mediadive: un-mapped ingredient placeholders
+    "kgmicrobe.medium",      # bacdive/mediadive: growth media not in MediaDive catalog
     "MICRO",                 # Microbiology Ontology (mediadive ingredients)
     "UniProtKB", "PR", "SO", "RHEA", "OBI", "IAO", "BFO",
     "PATO", "CL", "NCIT", "DOID", "MESH", "OMIM", "orphanet",
@@ -282,18 +283,28 @@ class Finding:
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def load_registered_prefixes() -> set:
-    """Load all registered prefixes from custom_curies.yaml."""
+    """Load all registered prefixes from ``custom_curies.yaml``.
+
+    Top-level YAML keys are the CURIE prefixes the file registers (e.g.
+    ``"kgmicrobe.medium"`` on line 361). The prior loader walked sections but
+    only added the string ``"KGM"`` regardless of what it found, so a legitimate
+    registration in ``custom_curies.yaml`` still produced an unregistered-prefix
+    warning here. Now every top-level string key becomes a recognized prefix,
+    making ``custom_curies.yaml`` the actual source of truth for custom prefix
+    registration.
+    """
     prefixes = set(STANDARD_PREFIXES)
     if CUSTOM_CURIES_FILE.exists():
         with open(CUSTOM_CURIES_FILE) as f:
             data = yaml.safe_load(f)
         if isinstance(data, dict):
-            for section in data.values():
-                if isinstance(section, dict):
-                    for key in section:
-                        # KGM slugs map to KGM: prefix
-                        prefixes.add("KGM")
-                        break
+            for key, section in data.items():
+                if isinstance(key, str) and key:
+                    prefixes.add(key)
+                # Keep the historical KGM alias so slugs under any section
+                # map to the KGM: prefix that transforms mint.
+                if isinstance(section, dict) and section:
+                    prefixes.add("KGM")
     return prefixes
 
 

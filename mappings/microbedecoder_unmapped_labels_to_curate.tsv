@@ -1,0 +1,452 @@
+placeholder_curie	category	label	source_columns	occurrences	target_curie	target_label	mapping_status	curator_notes
+kgmicrobe.pathway:chemoheterotrophy	biolink:BiologicalProcess	chemoheterotrophy	faprotax:type_of_metabolism	10493			UNMAPPED	
+kgmicrobe.trait:0	biolink:PhenotypicQuality	0	BacDive_Motility|BacDive_Salt_concentration|BacDive_Spore_formation|BacDive_Temperature_for_growth	10227			UNMAPPED	
+kgmicrobe.trait:rod_shaped	biolink:PhenotypicQuality	rod-shaped	BacDive_Cell_shape	7988			UNMAPPED	
+kgmicrobe.pathway:aerobic_chemoheterotrophy	biolink:BiologicalProcess	aerobic_chemoheterotrophy	faprotax:type_of_metabolism	7875			UNMAPPED	
+kgmicrobe.trait:environmental	biolink:PhenotypicQuality	#Environmental	BacDive_Isolation_category_1	7698			UNMAPPED	
+kgmicrobe.trait:1	biolink:PhenotypicQuality	1	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Metabolite_utilization|BacDive_Motility|BacDive_Pathogenicity_animal|BacDive_Pathogenicity_human|BacDive_Pathogenicity_plant|BacDive_Salt_concentration|BacDive_Spore_formation	7489			UNMAPPED	
+kgmicrobe.trait:unlabeled	biolink:PhenotypicQuality	%	BacDive_Indole_test|BacDive_Salt_concentration_unit|BacDive_Voges_proskauer	7379			UNMAPPED	
+kgmicrobe.trait:catalase	biolink:PhenotypicQuality	catalase	BacDive_Enzyme_activity	6827			UNMAPPED	
+kgmicrobe.trait:negative	biolink:PhenotypicQuality	negative	BacDive_Gram_stain	6114			UNMAPPED	
+kgmicrobe.trait:aerobe	biolink:PhenotypicQuality	aerobe	BacDive_Oxygen_tolerance	6092			UNMAPPED	
+kgmicrobe.trait:indole	biolink:PhenotypicQuality	indole	BacDive_Metabolite_production|BacDive_Metabolite_utilization	6005			UNMAPPED	
+kgmicrobe.trait:alkaline_phosphatase	biolink:PhenotypicQuality	alkaline phosphatase	BacDive_Enzyme_activity	5649			UNMAPPED	
+kgmicrobe.pathway:other	biolink:BiologicalProcess	Other	bergey:type_of_metabolism	5647			UNMAPPED	
+kgmicrobe.trait:acid_phosphatase	biolink:PhenotypicQuality	acid phosphatase	BacDive_Enzyme_activity	5448			UNMAPPED	
+kgmicrobe.pathway:phototrophy	biolink:BiologicalProcess	phototrophy	faprotax:type_of_metabolism	5391			UNMAPPED	
+kgmicrobe.pathway:photoautotrophy	biolink:BiologicalProcess	photoautotrophy	faprotax:type_of_metabolism	5327			UNMAPPED	
+kgmicrobe.pathway:oxygenic_photoautotrophy	biolink:BiologicalProcess	oxygenic_photoautotrophy	faprotax:type_of_metabolism	5221			UNMAPPED	
+kgmicrobe.pathway:photosynthetic_cyanobacteria	biolink:BiologicalProcess	photosynthetic_cyanobacteria	faprotax:type_of_metabolism	5221			UNMAPPED	
+kgmicrobe.trait:30	biolink:PhenotypicQuality	30	BacDive_Cell_length|BacDive_Temperature_for_growth	5168			UNMAPPED	
+kgmicrobe.trait:28	biolink:PhenotypicQuality	28	BacDive_Temperature_for_growth	5139			UNMAPPED	
+kgmicrobe.trait:host	biolink:PhenotypicQuality	#Host	BacDive_Isolation_category_1	4897			UNMAPPED	
+kgmicrobe.pathway:fermentation	biolink:BiologicalProcess	Fermentation	bergey:type_of_metabolism|faprotax:type_of_metabolism|literature:type_of_metabolism|vpi:type_of_metabolism	4819			UNMAPPED	
+kgmicrobe.trait:terrestrial	biolink:PhenotypicQuality	#Terrestrial	BacDive_Isolation_category_2	4376			UNMAPPED	
+kgmicrobe.trait:esterase_c_4	biolink:PhenotypicQuality	esterase (C 4)	BacDive_Enzyme_activity	4150			UNMAPPED	
+kgmicrobe.trait:leucine_arylamidase	biolink:PhenotypicQuality	leucine arylamidase	BacDive_Enzyme_activity	4036			UNMAPPED	
+kgmicrobe.trait:esterase_lipase_c_8	biolink:PhenotypicQuality	esterase lipase (C 8)	BacDive_Enzyme_activity	3904			UNMAPPED	
+kgmicrobe.trait:aquatic	biolink:PhenotypicQuality	#Aquatic	BacDive_Isolation_category_2	3870			UNMAPPED	
+kgmicrobe.trait:positive	biolink:PhenotypicQuality	positive	BacDive_Gram_stain	3870			UNMAPPED	
+kgmicrobe.trait:cytochrome_oxidase	biolink:PhenotypicQuality	cytochrome oxidase	BacDive_Enzyme_activity	3835			UNMAPPED	
+kgmicrobe.trait:37	biolink:PhenotypicQuality	37	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	3617			UNMAPPED	
+kgmicrobe.trait:esculin	biolink:PhenotypicQuality	esculin	BacDive_Metabolite_production|BacDive_Metabolite_utilization	3569			UNMAPPED	
+kgmicrobe.trait:alpha_glucosidase	biolink:PhenotypicQuality	alpha-glucosidase	BacDive_Enzyme_activity	3495			UNMAPPED	
+kgmicrobe.trait:d_glucose	biolink:PhenotypicQuality	D-glucose	BacDive_Metabolite_production|BacDive_Metabolite_utilization	3377			UNMAPPED	
+kgmicrobe.trait:glucose	biolink:PhenotypicQuality	glucose	BacDive_Metabolite_utilization	3329			UNMAPPED	
+kgmicrobe.trait:beta_galactosidase	biolink:PhenotypicQuality	beta-galactosidase	BacDive_Enzyme_activity	3280			UNMAPPED	
+kgmicrobe.trait:beta_glucosidase	biolink:PhenotypicQuality	beta-glucosidase	BacDive_Enzyme_activity	3028			UNMAPPED	
+kgmicrobe.trait:soil	biolink:PhenotypicQuality	#Soil	BacDive_Isolation_category_3	3007			UNMAPPED	
+kgmicrobe.trait:engineered	biolink:PhenotypicQuality	#Engineered	BacDive_Isolation_category_1	2711			UNMAPPED	
+kgmicrobe.trait:naphthol_as_bi_phosphohydrolase	biolink:PhenotypicQuality	naphthol-AS-BI-phosphohydrolase	BacDive_Enzyme_activity	2677			UNMAPPED	
+kgmicrobe.trait:cellobiose	biolink:PhenotypicQuality	cellobiose	BacDive_Metabolite_utilization	2622			UNMAPPED	
+kgmicrobe.trait:maltose	biolink:PhenotypicQuality	maltose	BacDive_Metabolite_production|BacDive_Metabolite_utilization	2536			UNMAPPED	
+kgmicrobe.trait:host_body_site	biolink:PhenotypicQuality	#Host Body-Site	BacDive_Isolation_category_1	2457			UNMAPPED	
+kgmicrobe.trait:hydrogen_sulfide	biolink:PhenotypicQuality	hydrogen sulfide	BacDive_Metabolite_production|BacDive_Metabolite_utilization	2365			UNMAPPED	
+kgmicrobe.trait:nitrate	biolink:PhenotypicQuality	nitrate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	2321			UNMAPPED	
+kgmicrobe.trait:anaerobe	biolink:PhenotypicQuality	anaerobe	BacDive_Oxygen_tolerance	2318			UNMAPPED	
+kgmicrobe.trait:d_mannose	biolink:PhenotypicQuality	D-mannose	BacDive_Metabolite_production|BacDive_Metabolite_utilization	2257			UNMAPPED	
+kgmicrobe.trait:w_v	biolink:PhenotypicQuality	%(w/v)	BacDive_Metabolite_utilization|BacDive_Salt_concentration_unit	2181			UNMAPPED	
+kgmicrobe.trait:d_fructose	biolink:PhenotypicQuality	D-fructose	BacDive_Metabolite_utilization	2179			UNMAPPED	
+kgmicrobe.trait:fructose	biolink:PhenotypicQuality	fructose	BacDive_Metabolite_utilization	2169			UNMAPPED	
+kgmicrobe.trait:arabinose	biolink:PhenotypicQuality	arabinose	BacDive_Metabolite_utilization	1998			UNMAPPED	
+kgmicrobe.trait:acetoin	biolink:PhenotypicQuality	acetoin	BacDive_Metabolite_production|BacDive_Metabolite_utilization	1908			UNMAPPED	
+kgmicrobe.trait:obligate_aerobe	biolink:PhenotypicQuality	obligate aerobe	BacDive_Oxygen_tolerance	1876			UNMAPPED	
+kgmicrobe.trait:gelatinase	biolink:PhenotypicQuality	gelatinase	BacDive_Enzyme_activity	1821			UNMAPPED	
+kgmicrobe.trait:facultative_anaerobe	biolink:PhenotypicQuality	facultative anaerobe	BacDive_Oxygen_tolerance	1808			UNMAPPED	
+kgmicrobe.trait:plants	biolink:PhenotypicQuality	#Plants	BacDive_Isolation_category_2	1785			UNMAPPED	
+kgmicrobe.trait:alpha_galactosidase	biolink:PhenotypicQuality	alpha-galactosidase	BacDive_Enzyme_activity	1724			UNMAPPED	
+kgmicrobe.trait:gelatin	biolink:PhenotypicQuality	gelatin	BacDive_Metabolite_production|BacDive_Metabolite_utilization	1699			UNMAPPED	
+kgmicrobe.trait:condition	biolink:PhenotypicQuality	#Condition	BacDive_Isolation_category_1	1668			UNMAPPED	
+kgmicrobe.trait:d_mannitol	biolink:PhenotypicQuality	D-mannitol	BacDive_Metabolite_production|BacDive_Metabolite_utilization	1659			UNMAPPED	
+kgmicrobe.trait:citrate	biolink:PhenotypicQuality	citrate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	1654			UNMAPPED	
+kgmicrobe.trait:marine	biolink:PhenotypicQuality	#Marine	BacDive_Isolation_category_3	1554			UNMAPPED	
+kgmicrobe.trait:25	biolink:PhenotypicQuality	25	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	1547			UNMAPPED	
+kgmicrobe.trait:d_galactose	biolink:PhenotypicQuality	D-galactose	BacDive_Metabolite_utilization	1489			UNMAPPED	
+kgmicrobe.trait:10	biolink:PhenotypicQuality	10	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	1465			UNMAPPED	
+kgmicrobe.pathway:nitrate_reduction	biolink:BiologicalProcess	nitrate_reduction	faprotax:type_of_metabolism	1450			UNMAPPED	
+kgmicrobe.trait:cystine_arylamidase	biolink:PhenotypicQuality	cystine arylamidase	BacDive_Enzyme_activity	1420			UNMAPPED	
+kgmicrobe.trait:urease	biolink:PhenotypicQuality	urease	BacDive_Enzyme_activity	1356			UNMAPPED	
+kgmicrobe.trait:galactose	biolink:PhenotypicQuality	galactose	BacDive_Metabolite_utilization	1352			UNMAPPED	
+kgmicrobe.trait:acetate	biolink:PhenotypicQuality	acetate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	1342			UNMAPPED	
+kgmicrobe.trait:2	biolink:PhenotypicQuality	2	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Metabolite_production|BacDive_Metabolite_utilization|BacDive_Salt_concentration|BacDive_Temperature_for_growth	1299			UNMAPPED	
+kgmicrobe.trait:sediment	biolink:PhenotypicQuality	#Sediment	BacDive_Isolation_category_3	1275			UNMAPPED	
+kgmicrobe.trait:sucrose	biolink:PhenotypicQuality	sucrose	BacDive_Metabolite_utilization	1265			UNMAPPED	
+kgmicrobe.trait:8	biolink:PhenotypicQuality	8	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	1230			UNMAPPED	
+kgmicrobe.trait:6	biolink:PhenotypicQuality	6	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	1219			UNMAPPED	
+kgmicrobe.trait:0129_2	biolink:PhenotypicQuality	0129 (2	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	1212			UNMAPPED	
+kgmicrobe.trait:4_diamino_6	biolink:PhenotypicQuality	4-Diamino-6	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	1212			UNMAPPED	
+kgmicrobe.trait:7_di_iso_propylpteridine_phosphate	biolink:PhenotypicQuality	7-di-iso-propylpteridine phosphate)	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	1212			UNMAPPED	
+kgmicrobe.trait:lactose	biolink:PhenotypicQuality	lactose	BacDive_Metabolite_utilization	1209			UNMAPPED	
+kgmicrobe.trait:alpha_chymotrypsin	biolink:PhenotypicQuality	alpha-chymotrypsin	BacDive_Enzyme_activity	1196			UNMAPPED	
+kgmicrobe.trait:host_body_product	biolink:PhenotypicQuality	#Host Body Product	BacDive_Isolation_category_1	1182			UNMAPPED	
+kgmicrobe.trait:mannose	biolink:PhenotypicQuality	mannose	BacDive_Metabolite_utilization	1180			UNMAPPED	
+kgmicrobe.trait:mannitol	biolink:PhenotypicQuality	mannitol	BacDive_Metabolite_utilization	1116			UNMAPPED	
+kgmicrobe.trait:plant	biolink:PhenotypicQuality	#Plant	BacDive_Isolation_category_2	1102			UNMAPPED	
+kgmicrobe.trait:10_14_days	biolink:PhenotypicQuality	10-14 days	BacDive_Incubation_period	1081			UNMAPPED	
+kgmicrobe.trait:malate	biolink:PhenotypicQuality	malate	BacDive_Metabolite_utilization	1076			UNMAPPED	
+kgmicrobe.trait:d_ribose	biolink:PhenotypicQuality	D-ribose	BacDive_Metabolite_utilization	1069			UNMAPPED	
+kgmicrobe.trait:0_5	biolink:PhenotypicQuality	0-5	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	1053			UNMAPPED	
+kgmicrobe.trait:glycerol	biolink:PhenotypicQuality	glycerol	BacDive_Metabolite_utilization	1052			UNMAPPED	
+kgmicrobe.trait:crops	biolink:PhenotypicQuality	Crops)	BacDive_Isolation_category_3	1021			UNMAPPED	
+kgmicrobe.trait:herbaceous_plants_grass	biolink:PhenotypicQuality	#Herbaceous plants (Grass	BacDive_Isolation_category_3	1021			UNMAPPED	
+kgmicrobe.trait:coccus_shaped	biolink:PhenotypicQuality	coccus-shaped	BacDive_Cell_shape	999			UNMAPPED	
+kgmicrobe.trait:microaerophile	biolink:PhenotypicQuality	microaerophile	BacDive_Oxygen_tolerance	982			UNMAPPED	
+kgmicrobe.trait:arginine	biolink:PhenotypicQuality	arginine	BacDive_Metabolite_utilization	947			UNMAPPED	
+kgmicrobe.trait:2_days	biolink:PhenotypicQuality	2 days	BacDive_Incubation_period	944			UNMAPPED	
+kgmicrobe.trait:gluconate	biolink:PhenotypicQuality	gluconate	BacDive_Metabolite_utilization	936			UNMAPPED	
+kgmicrobe.trait:arginine_dihydrolase	biolink:PhenotypicQuality	arginine dihydrolase	BacDive_Enzyme_activity	934			UNMAPPED	
+kgmicrobe.trait:4	biolink:PhenotypicQuality	4	BacDive_Cell_length|BacDive_Colony_size|BacDive_Metabolite_utilization|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	926			UNMAPPED	
+kgmicrobe.trait:gastrointestinal_tract	biolink:PhenotypicQuality	#Gastrointestinal tract	BacDive_Isolation_category_2	917			UNMAPPED	
+kgmicrobe.trait:l_arabinose	biolink:PhenotypicQuality	L-arabinose	BacDive_Metabolite_utilization	911			UNMAPPED	
+kgmicrobe.trait:mammals	biolink:PhenotypicQuality	#Mammals	BacDive_Isolation_category_2	887			UNMAPPED	
+kgmicrobe.trait:human	biolink:PhenotypicQuality	#Human	BacDive_Isolation_category_2	879			UNMAPPED	
+kgmicrobe.trait:n_acetyl_beta_glucosaminidase	biolink:PhenotypicQuality	N-acetyl-beta-glucosaminidase	BacDive_Enzyme_activity	867			UNMAPPED	
+kgmicrobe.trait:n_acetylglucosamine	biolink:PhenotypicQuality	N-acetylglucosamine	BacDive_Metabolite_utilization	856			UNMAPPED	
+kgmicrobe.trait:d_xylose	biolink:PhenotypicQuality	D-xylose	BacDive_Metabolite_utilization	828			UNMAPPED	
+kgmicrobe.trait:oxidase	biolink:PhenotypicQuality	oxidase	BacDive_Enzyme_activity	805			UNMAPPED	
+kgmicrobe.pathway:animal_parasites_or_symbionts	biolink:BiologicalProcess	animal_parasites_or_symbionts	faprotax:type_of_metabolism	802			UNMAPPED	
+kgmicrobe.trait:arbutin	biolink:PhenotypicQuality	arbutin	BacDive_Metabolite_utilization	792			UNMAPPED	
+kgmicrobe.trait:infection	biolink:PhenotypicQuality	#Infection	BacDive_Isolation_category_1	768			UNMAPPED	
+kgmicrobe.trait:valine_arylamidase	biolink:PhenotypicQuality	valine arylamidase	BacDive_Enzyme_activity	765			UNMAPPED	
+kgmicrobe.trait:chloramphenicol	biolink:PhenotypicQuality	chloramphenicol	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	757			UNMAPPED	
+kgmicrobe.trait:ampicillin	biolink:PhenotypicQuality	ampicillin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_utilization	734			UNMAPPED	
+kgmicrobe.trait:alpha_mannosidase	biolink:PhenotypicQuality	alpha-mannosidase	BacDive_Enzyme_activity	733			UNMAPPED	
+kgmicrobe.trait:amygdalin	biolink:PhenotypicQuality	amygdalin	BacDive_Metabolite_utilization	720			UNMAPPED	
+kgmicrobe.trait:0_4	biolink:PhenotypicQuality	0.4	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	687			UNMAPPED	
+kgmicrobe.trait:3_days	biolink:PhenotypicQuality	3 days	BacDive_Incubation_period	671			UNMAPPED	
+kgmicrobe.trait:glycogen	biolink:PhenotypicQuality	glycogen	BacDive_Metabolite_utilization	662			UNMAPPED	
+kgmicrobe.trait:kanamycin	biolink:PhenotypicQuality	kanamycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	662			UNMAPPED	
+kgmicrobe.trait:raffinose	biolink:PhenotypicQuality	raffinose	BacDive_Metabolite_utilization	643			UNMAPPED	
+kgmicrobe.trait:gentamicin	biolink:PhenotypicQuality	gentamicin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	638			UNMAPPED	
+kgmicrobe.trait:saline	biolink:PhenotypicQuality	#Saline	BacDive_Isolation_category_2	638			UNMAPPED	
+kgmicrobe.trait:0_2	biolink:PhenotypicQuality	0-2	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	633			UNMAPPED	
+kgmicrobe.trait:alanine	biolink:PhenotypicQuality	alanine	BacDive_Metabolite_production|BacDive_Metabolite_utilization	620			UNMAPPED	
+kgmicrobe.pathway:ureolysis	biolink:BiologicalProcess	ureolysis	faprotax:type_of_metabolism	600			UNMAPPED	
+kgmicrobe.trait:waste	biolink:PhenotypicQuality	#Waste	BacDive_Isolation_category_2	598			UNMAPPED	
+kgmicrobe.trait:urea	biolink:PhenotypicQuality	urea	BacDive_Metabolite_production|BacDive_Metabolite_utilization	592			UNMAPPED	
+kgmicrobe.trait:2_5	biolink:PhenotypicQuality	2-5	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	580			UNMAPPED	
+kgmicrobe.trait:melibiose	biolink:PhenotypicQuality	melibiose	BacDive_Metabolite_utilization	579			UNMAPPED	
+kgmicrobe.trait:amylase	biolink:PhenotypicQuality	amylase	BacDive_Enzyme_activity	577			UNMAPPED	
+kgmicrobe.trait:caseinase	biolink:PhenotypicQuality	caseinase	BacDive_Enzyme_activity	567			UNMAPPED	
+kgmicrobe.trait:hippurate	biolink:PhenotypicQuality	hippurate	BacDive_Metabolite_utilization	565			UNMAPPED	
+kgmicrobe.trait:rhamnose	biolink:PhenotypicQuality	rhamnose	BacDive_Metabolite_utilization	557			UNMAPPED	
+kgmicrobe.trait:lactate	biolink:PhenotypicQuality	lactate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	555			UNMAPPED	
+kgmicrobe.trait:food_production	biolink:PhenotypicQuality	#Food production	BacDive_Isolation_category_2	549			UNMAPPED	
+kgmicrobe.trait:casein	biolink:PhenotypicQuality	casein	BacDive_Metabolite_production|BacDive_Metabolite_utilization	546			UNMAPPED	
+kgmicrobe.trait:gamma_glutamyltransferase	biolink:PhenotypicQuality	gamma-glutamyltransferase	BacDive_Enzyme_activity	542			UNMAPPED	
+kgmicrobe.trait:trypsin	biolink:PhenotypicQuality	trypsin	BacDive_Enzyme_activity	540			UNMAPPED	
+kgmicrobe.trait:erythromycin	biolink:PhenotypicQuality	erythromycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	532			UNMAPPED	
+kgmicrobe.trait:3	biolink:PhenotypicQuality	3	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	531			UNMAPPED	
+kgmicrobe.trait:beta_glucuronidase	biolink:PhenotypicQuality	beta-glucuronidase	BacDive_Enzyme_activity	531			UNMAPPED	
+kgmicrobe.trait:feces_stool	biolink:PhenotypicQuality	#Feces (Stool)	BacDive_Isolation_category_3	531			UNMAPPED	
+kgmicrobe.trait:streptomycin	biolink:PhenotypicQuality	streptomycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	531			UNMAPPED	
+kgmicrobe.trait:agriculture	biolink:PhenotypicQuality	#Agriculture	BacDive_Isolation_category_2	520			UNMAPPED	
+kgmicrobe.trait:0_6	biolink:PhenotypicQuality	0.6	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	519			UNMAPPED	
+kgmicrobe.pathway:aromatic_compound_degradation	biolink:BiologicalProcess	aromatic_compound_degradation	faprotax:type_of_metabolism	516			UNMAPPED	
+kgmicrobe.trait:dextrin	biolink:PhenotypicQuality	dextrin	BacDive_Metabolite_utilization	513			UNMAPPED	
+kgmicrobe.trait:thermophilic_45_c	biolink:PhenotypicQuality	#Thermophilic (>45°C)	BacDive_Isolation_category_2	508			UNMAPPED	
+kgmicrobe.trait:other	biolink:PhenotypicQuality	#Other	BacDive_Cell_shape|BacDive_Isolation_category_2	506			UNMAPPED	
+kgmicrobe.trait:tetracycline	biolink:PhenotypicQuality	tetracycline	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	503			UNMAPPED	
+kgmicrobe.pathway:respiration_of_sulfur_compounds	biolink:BiologicalProcess	respiration_of_sulfur_compounds	faprotax:type_of_metabolism	502			UNMAPPED	
+kgmicrobe.trait:lake_large	biolink:PhenotypicQuality	#Lake (large)	BacDive_Isolation_category_3	498			UNMAPPED	
+kgmicrobe.trait:1_2_days	biolink:PhenotypicQuality	1-2 days	BacDive_Incubation_period	497			UNMAPPED	
+kgmicrobe.trait:patient	biolink:PhenotypicQuality	#Patient	BacDive_Isolation_category_2	482			UNMAPPED	
+kgmicrobe.trait:fluids	biolink:PhenotypicQuality	#Fluids	BacDive_Isolation_category_2	478			UNMAPPED	
+kgmicrobe.pathway:nitrogen_fixation	biolink:BiologicalProcess	nitrogen_fixation	faprotax:type_of_metabolism	477			UNMAPPED	
+kgmicrobe.trait:10_37	biolink:PhenotypicQuality	10-37	BacDive_Temperature_for_growth	476			UNMAPPED	
+kgmicrobe.trait:5	biolink:PhenotypicQuality	5	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	474			UNMAPPED	
+kgmicrobe.trait:adipate	biolink:PhenotypicQuality	adipate	BacDive_Metabolite_utilization	466			UNMAPPED	
+kgmicrobe.trait:glutamate	biolink:PhenotypicQuality	glutamate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	465			UNMAPPED	
+kgmicrobe.trait:15_37	biolink:PhenotypicQuality	15-37	BacDive_Temperature_for_growth	460			UNMAPPED	
+kgmicrobe.trait:oral_cavity_and_airways	biolink:PhenotypicQuality	#Oral cavity and airways	BacDive_Isolation_category_2	455			UNMAPPED	
+kgmicrobe.pathway:nitrogen_respiration	biolink:BiologicalProcess	nitrogen_respiration	faprotax:type_of_metabolism	453			UNMAPPED	
+kgmicrobe.trait:polar	biolink:PhenotypicQuality	polar	BacDive_Flagellum_arrangement|BacDive_Isolation_category_3	445			UNMAPPED	
+kgmicrobe.pathway:nitrate_respiration	biolink:BiologicalProcess	nitrate_respiration	faprotax:type_of_metabolism	441			UNMAPPED	
+kgmicrobe.trait:1_2	biolink:PhenotypicQuality	1-2	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	437			UNMAPPED	
+kgmicrobe.trait:industrial	biolink:PhenotypicQuality	#Industrial	BacDive_Isolation_category_2	433			UNMAPPED	
+kgmicrobe.trait:trehalose	biolink:PhenotypicQuality	trehalose	BacDive_Metabolite_utilization	432			UNMAPPED	
+kgmicrobe.trait:aspartate	biolink:PhenotypicQuality	aspartate	BacDive_Metabolite_utilization	431			UNMAPPED	
+kgmicrobe.trait:invertebrates_other	biolink:PhenotypicQuality	#Invertebrates (Other)	BacDive_Isolation_category_2	427			UNMAPPED	
+kgmicrobe.trait:cellulose	biolink:PhenotypicQuality	cellulose	BacDive_Metabolite_production|BacDive_Metabolite_utilization	425			UNMAPPED	
+kgmicrobe.pathway:human_associated	biolink:BiologicalProcess	human_associated	faprotax:type_of_metabolism	424			UNMAPPED	
+kgmicrobe.trait:myo_inositol	biolink:PhenotypicQuality	myo-inositol	BacDive_Metabolite_utilization	421			UNMAPPED	
+kgmicrobe.trait:0_3	biolink:PhenotypicQuality	0.3	BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	409			UNMAPPED	
+kgmicrobe.trait:20	biolink:PhenotypicQuality	20	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	408			UNMAPPED	
+kgmicrobe.trait:alpha_fucosidase	biolink:PhenotypicQuality	alpha-fucosidase	BacDive_Enzyme_activity	408			UNMAPPED	
+kgmicrobe.trait:0_1	biolink:PhenotypicQuality	0-1	BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	407			UNMAPPED	
+kgmicrobe.pathway:hydrocarbon_degradation	biolink:BiologicalProcess	hydrocarbon_degradation	faprotax:type_of_metabolism	406			UNMAPPED	
+kgmicrobe.trait:xylose	biolink:PhenotypicQuality	xylose	BacDive_Metabolite_utilization	404			UNMAPPED	
+kgmicrobe.trait:dnase	biolink:PhenotypicQuality	DNase	BacDive_Enzyme_activity	398			UNMAPPED	
+kgmicrobe.trait:30_37	biolink:PhenotypicQuality	30-37	BacDive_Temperature_for_growth	396			UNMAPPED	
+kgmicrobe.trait:novobiocin	biolink:PhenotypicQuality	novobiocin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	394			UNMAPPED	
+kgmicrobe.trait:alpha_d_glucose	biolink:PhenotypicQuality	alpha-D-glucose	BacDive_Metabolite_utilization	393			UNMAPPED	
+kgmicrobe.trait:decanoate	biolink:PhenotypicQuality	decanoate	BacDive_Metabolite_utilization	392			UNMAPPED	
+kgmicrobe.trait:3_hydroxybutyrate	biolink:PhenotypicQuality	3-hydroxybutyrate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	391			UNMAPPED	
+kgmicrobe.trait:2_3_days	biolink:PhenotypicQuality	2-3 days	BacDive_Incubation_period	383			UNMAPPED	
+kgmicrobe.trait:pyruvate	biolink:PhenotypicQuality	pyruvate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	381			UNMAPPED	
+kgmicrobe.trait:d_sorbitol	biolink:PhenotypicQuality	D-sorbitol	BacDive_Metabolite_utilization	380			UNMAPPED	
+kgmicrobe.trait:neomycin	biolink:PhenotypicQuality	neomycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	368			UNMAPPED	
+kgmicrobe.trait:nalidixic_acid	biolink:PhenotypicQuality	nalidixic acid	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_utilization	364			UNMAPPED	
+kgmicrobe.trait:tree	biolink:PhenotypicQuality	#Tree	BacDive_Isolation_category_3	360			UNMAPPED	
+kgmicrobe.trait:organ	biolink:PhenotypicQuality	#Organ	BacDive_Isolation_category_2	358			UNMAPPED	
+kgmicrobe.trait:lipase_c_14	biolink:PhenotypicQuality	lipase (C 14)	BacDive_Enzyme_activity	354			UNMAPPED	
+kgmicrobe.trait:freshwater	biolink:PhenotypicQuality	#Freshwater	BacDive_Isolation_category_3	353			UNMAPPED	
+kgmicrobe.trait:penicillin_g	biolink:PhenotypicQuality	penicillin g	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	353			UNMAPPED	
+kgmicrobe.trait:1_5	biolink:PhenotypicQuality	1-5	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	352			UNMAPPED	
+kgmicrobe.trait:0_10	biolink:PhenotypicQuality	0-10	BacDive_Salt_concentration|BacDive_Temperature_for_growth	351			UNMAPPED	
+kgmicrobe.trait:ovoid_shaped	biolink:PhenotypicQuality	ovoid-shaped	BacDive_Cell_shape	350			UNMAPPED	
+kgmicrobe.trait:0_8	biolink:PhenotypicQuality	0.8	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	349			UNMAPPED	
+kgmicrobe.trait:1_day	biolink:PhenotypicQuality	1 day	BacDive_Incubation_period	337			UNMAPPED	
+kgmicrobe.trait:35	biolink:PhenotypicQuality	35	BacDive_Temperature_for_growth	336			UNMAPPED	
+kgmicrobe.pathway:sulfate_respiration	biolink:BiologicalProcess	sulfate_respiration	faprotax:type_of_metabolism	334			UNMAPPED	
+kgmicrobe.trait:rifampicin	biolink:PhenotypicQuality	rifampicin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	334			UNMAPPED	
+kgmicrobe.trait:d_arabinose	biolink:PhenotypicQuality	D-arabinose	BacDive_Metabolite_utilization	332			UNMAPPED	
+kgmicrobe.trait:d_arabitol	biolink:PhenotypicQuality	D-arabitol	BacDive_Metabolite_utilization	331			UNMAPPED	
+kgmicrobe.trait:cytochrome_c_oxidase	biolink:PhenotypicQuality	cytochrome-c oxidase	BacDive_Enzyme_activity	329			UNMAPPED	
+kgmicrobe.trait:ribose	biolink:PhenotypicQuality	ribose	BacDive_Metabolite_utilization	325			UNMAPPED	
+kgmicrobe.trait:asparagine	biolink:PhenotypicQuality	asparagine	BacDive_Metabolite_utilization	320			UNMAPPED	
+kgmicrobe.trait:nitrite	biolink:PhenotypicQuality	nitrite	BacDive_Metabolite_production|BacDive_Metabolite_utilization	319			UNMAPPED	
+kgmicrobe.trait:tween_80	biolink:PhenotypicQuality	tween 80	BacDive_Antibiotic_resistance|BacDive_Metabolite_utilization	319			UNMAPPED	
+kgmicrobe.trait:25_37	biolink:PhenotypicQuality	25-37	BacDive_Temperature_for_growth	317			UNMAPPED	
+kgmicrobe.pathway:methanogenesis	biolink:BiologicalProcess	methanogenesis	bergey:type_of_metabolism|faprotax:type_of_metabolism|literature:type_of_metabolism	315			UNMAPPED	
+kgmicrobe.trait:mud_sludge	biolink:PhenotypicQuality	#Mud (Sludge)	BacDive_Isolation_category_3	312			UNMAPPED	
+kgmicrobe.trait:gliding	biolink:PhenotypicQuality	gliding	BacDive_Flagellum_arrangement	305			UNMAPPED	
+kgmicrobe.trait:rhizosphere	biolink:PhenotypicQuality	#Rhizosphere	BacDive_Isolation_category_3	304			UNMAPPED	
+kgmicrobe.trait:fucose	biolink:PhenotypicQuality	fucose	BacDive_Metabolite_utilization	302			UNMAPPED	
+kgmicrobe.trait:3_7_days	biolink:PhenotypicQuality	3-7 days	BacDive_Incubation_period	298			UNMAPPED	
+kgmicrobe.trait:thermal_spring	biolink:PhenotypicQuality	#Thermal spring	BacDive_Isolation_category_3	298			UNMAPPED	
+kgmicrobe.trait:0_7	biolink:PhenotypicQuality	0-7	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	296			UNMAPPED	
+kgmicrobe.trait:ornithine	biolink:PhenotypicQuality	ornithine	BacDive_Metabolite_utilization	295			UNMAPPED	
+kgmicrobe.pathway:human_pathogens_all	biolink:BiologicalProcess	human_pathogens_all	faprotax:type_of_metabolism	291			UNMAPPED	
+kgmicrobe.pathway:dark_hydrogen_oxidation	biolink:BiologicalProcess	dark_hydrogen_oxidation	faprotax:type_of_metabolism	288			UNMAPPED	
+kgmicrobe.trait:5_dehydro_d_gluconate	biolink:PhenotypicQuality	5-dehydro-D-gluconate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	288			UNMAPPED	
+kgmicrobe.trait:l_rhamnose	biolink:PhenotypicQuality	L-rhamnose	BacDive_Metabolite_utilization	287			UNMAPPED	
+kgmicrobe.trait:lysine	biolink:PhenotypicQuality	lysine	BacDive_Metabolite_production|BacDive_Metabolite_utilization	285			UNMAPPED	
+kgmicrobe.trait:lincomycin	biolink:PhenotypicQuality	lincomycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	281			UNMAPPED	
+kgmicrobe.trait:7	biolink:PhenotypicQuality	7	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_Temperature_for_growth|BacDive_pH_for_growth	280			UNMAPPED	
+kgmicrobe.trait:gentiobiose	biolink:PhenotypicQuality	gentiobiose	BacDive_Metabolite_utilization	279			UNMAPPED	
+kgmicrobe.trait:field	biolink:PhenotypicQuality	#Field	BacDive_Isolation_category_3	275			UNMAPPED	
+kgmicrobe.trait:succinate	biolink:PhenotypicQuality	succinate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	273			UNMAPPED	
+kgmicrobe.trait:polymyxin_b	biolink:PhenotypicQuality	polymyxin b	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	272			UNMAPPED	
+kgmicrobe.trait:starch	biolink:PhenotypicQuality	starch	BacDive_Metabolite_production|BacDive_Metabolite_utilization	271			UNMAPPED	
+kgmicrobe.trait:arthropoda	biolink:PhenotypicQuality	#Arthropoda	BacDive_Isolation_category_2	270			UNMAPPED	
+kgmicrobe.trait:carbenicillin	biolink:PhenotypicQuality	carbenicillin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	269			UNMAPPED	
+kgmicrobe.trait:salicin	biolink:PhenotypicQuality	salicin	BacDive_Metabolite_utilization	265			UNMAPPED	
+kgmicrobe.trait:forest	biolink:PhenotypicQuality	#Forest	BacDive_Isolation_category_3	259			UNMAPPED	
+kgmicrobe.trait:formate	biolink:PhenotypicQuality	formate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	257			UNMAPPED	
+kgmicrobe.trait:contamination	biolink:PhenotypicQuality	#Contamination	BacDive_Isolation_category_2	256			UNMAPPED	
+kgmicrobe.trait:2_oxoglutarate	biolink:PhenotypicQuality	2-oxoglutarate	BacDive_Metabolite_utilization	255			UNMAPPED	
+kgmicrobe.trait:built_environment	biolink:PhenotypicQuality	#Built environment	BacDive_Isolation_category_2	251			UNMAPPED	
+kgmicrobe.trait:vancomycin	biolink:PhenotypicQuality	vancomycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_production	251			UNMAPPED	
+kgmicrobe.trait:0_9	biolink:PhenotypicQuality	0.9	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	249			UNMAPPED	
+kgmicrobe.trait:25_41	biolink:PhenotypicQuality	25-41	BacDive_Temperature_for_growth	243			UNMAPPED	
+kgmicrobe.trait:alanine_arylamidase	biolink:PhenotypicQuality	alanine arylamidase	BacDive_Enzyme_activity	243			UNMAPPED	
+kgmicrobe.trait:root_rhizome	biolink:PhenotypicQuality	#Root (Rhizome)	BacDive_Isolation_category_3	242			UNMAPPED	
+kgmicrobe.trait:monotrichous	biolink:PhenotypicQuality	monotrichous	BacDive_Flagellum_arrangement	234			UNMAPPED	
+kgmicrobe.trait:alcohol_dehydrogenase	biolink:PhenotypicQuality	alcohol dehydrogenase	BacDive_Enzyme_activity	232			UNMAPPED	
+kgmicrobe.trait:tween_20	biolink:PhenotypicQuality	tween 20	BacDive_Metabolite_production|BacDive_Metabolite_utilization	232			UNMAPPED	
+kgmicrobe.trait:disease	biolink:PhenotypicQuality	#Disease	BacDive_Isolation_category_2	231			UNMAPPED	
+kgmicrobe.trait:lysine_decarboxylase	biolink:PhenotypicQuality	lysine decarboxylase	BacDive_Enzyme_activity	231			UNMAPPED	
+kgmicrobe.trait:10_40	biolink:PhenotypicQuality	10-40	BacDive_Cell_length|BacDive_Temperature_for_growth	227			UNMAPPED	
+kgmicrobe.trait:oval_shaped	biolink:PhenotypicQuality	oval-shaped	BacDive_Cell_shape	224			UNMAPPED	
+kgmicrobe.trait:tween_40	biolink:PhenotypicQuality	tween 40	BacDive_Metabolite_utilization	223			UNMAPPED	
+kgmicrobe.trait:25_30	biolink:PhenotypicQuality	25-30	BacDive_Temperature_for_growth	222			UNMAPPED	
+kgmicrobe.trait:10_30	biolink:PhenotypicQuality	10-30	BacDive_Salt_concentration|BacDive_Temperature_for_growth	221			UNMAPPED	
+kgmicrobe.trait:2_3	biolink:PhenotypicQuality	2-3	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration	220			UNMAPPED	
+kgmicrobe.trait:geologic	biolink:PhenotypicQuality	#Geologic	BacDive_Isolation_category_3	220			UNMAPPED	
+kgmicrobe.trait:peritrichous	biolink:PhenotypicQuality	peritrichous	BacDive_Flagellum_arrangement	220			UNMAPPED	
+kgmicrobe.trait:3_5	biolink:PhenotypicQuality	3-5	BacDive_Cell_length|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_pH_for_growth	218			UNMAPPED	
+kgmicrobe.trait:ciprofloxacin	biolink:PhenotypicQuality	ciprofloxacin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	218			UNMAPPED	
+kgmicrobe.trait:ethanol	biolink:PhenotypicQuality	ethanol	BacDive_Metabolite_production|BacDive_Metabolite_utilization	218			UNMAPPED	
+kgmicrobe.trait:ornithine_decarboxylase	biolink:PhenotypicQuality	ornithine decarboxylase	BacDive_Enzyme_activity	218			UNMAPPED	
+kgmicrobe.pathway:methylotrophy	biolink:BiologicalProcess	methylotrophy	faprotax:type_of_metabolism	217			UNMAPPED	
+kgmicrobe.trait:06_09	biolink:PhenotypicQuality	06-09	BacDive_pH_for_growth	216			UNMAPPED	
+kgmicrobe.trait:alpha_cyclodextrin	biolink:PhenotypicQuality	alpha-cyclodextrin	BacDive_Metabolite_utilization	216			UNMAPPED	
+kgmicrobe.trait:20_37	biolink:PhenotypicQuality	20-37	BacDive_Temperature_for_growth	215			UNMAPPED	
+kgmicrobe.trait:15_40	biolink:PhenotypicQuality	15-40	BacDive_Temperature_for_growth	212			UNMAPPED	
+kgmicrobe.trait:6_0_9_0	biolink:PhenotypicQuality	6.0-9.0	BacDive_pH_for_growth	211			UNMAPPED	
+kgmicrobe.trait:0_75	biolink:PhenotypicQuality	0.75	BacDive_Cell_length|BacDive_Cell_width|BacDive_Salt_concentration	210			UNMAPPED	
+kgmicrobe.trait:biodegradation	biolink:PhenotypicQuality	#Biodegradation	BacDive_Isolation_category_2	210			UNMAPPED	
+kgmicrobe.trait:sorbitol	biolink:PhenotypicQuality	sorbitol	BacDive_Metabolite_utilization	210			UNMAPPED	
+kgmicrobe.trait:pond_small	biolink:PhenotypicQuality	#Pond (small)	BacDive_Isolation_category_3	208			UNMAPPED	
+kgmicrobe.trait:acetoacetate	biolink:PhenotypicQuality	acetoacetate	BacDive_Metabolite_utilization	206			UNMAPPED	
+kgmicrobe.trait:propionate	biolink:PhenotypicQuality	propionate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	205			UNMAPPED	
+kgmicrobe.trait:river_creek	biolink:PhenotypicQuality	#River (Creek)	BacDive_Isolation_category_3	204			UNMAPPED	
+kgmicrobe.trait:anoxic_anaerobic	biolink:PhenotypicQuality	#Anoxic (anaerobic)	BacDive_Isolation_category_2	202			UNMAPPED	
+kgmicrobe.trait:insecta	biolink:PhenotypicQuality	#Insecta	BacDive_Isolation_category_3	202			UNMAPPED	
+kgmicrobe.trait:penicillin	biolink:PhenotypicQuality	penicillin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	201			UNMAPPED	
+kgmicrobe.pathway:xylanolysis	biolink:BiologicalProcess	xylanolysis	faprotax:type_of_metabolism	200			UNMAPPED	
+kgmicrobe.trait:bovinae_cow	biolink:PhenotypicQuality	#Bovinae (Cow	BacDive_Isolation_category_3	200			UNMAPPED	
+kgmicrobe.trait:cattle	biolink:PhenotypicQuality	Cattle)	BacDive_Isolation_category_3	200			UNMAPPED	
+kgmicrobe.trait:d_fucose	biolink:PhenotypicQuality	D-fucose	BacDive_Metabolite_utilization	200			UNMAPPED	
+kgmicrobe.trait:tidal_flat	biolink:PhenotypicQuality	#Tidal flat	BacDive_Isolation_category_3	199			UNMAPPED	
+kgmicrobe.trait:15_30	biolink:PhenotypicQuality	15-30	BacDive_Salt_concentration|BacDive_Temperature_for_growth	196			UNMAPPED	
+kgmicrobe.trait:alkaline	biolink:PhenotypicQuality	#Alkaline	BacDive_Isolation_category_2	195			UNMAPPED	
+kgmicrobe.trait:0_3_0_5	biolink:PhenotypicQuality	0.3-0.5	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	193			UNMAPPED	
+kgmicrobe.trait:55	biolink:PhenotypicQuality	55	BacDive_Temperature_for_growth	193			UNMAPPED	
+kgmicrobe.trait:0_4_0_6	biolink:PhenotypicQuality	0.4-0.6	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size	192			UNMAPPED	
+kgmicrobe.trait:amikacin	biolink:PhenotypicQuality	Amikacin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	192			UNMAPPED	
+kgmicrobe.trait:coast	biolink:PhenotypicQuality	#Coast	BacDive_Isolation_category_3	192			UNMAPPED	
+kgmicrobe.trait:5_days	biolink:PhenotypicQuality	5 days	BacDive_Incubation_period	191			UNMAPPED	
+kgmicrobe.trait:shrub_scrub	biolink:PhenotypicQuality	#Shrub (Scrub)	BacDive_Isolation_category_3	191			UNMAPPED	
+kgmicrobe.trait:6_5	biolink:PhenotypicQuality	6.5	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_pH_for_growth	190			UNMAPPED	
+kgmicrobe.trait:obligate_anaerobe	biolink:PhenotypicQuality	obligate anaerobe	BacDive_Oxygen_tolerance	188			UNMAPPED	
+kgmicrobe.trait:pyrazinamidase	biolink:PhenotypicQuality	pyrazinamidase	BacDive_Enzyme_activity	188			UNMAPPED	
+kgmicrobe.trait:d_tagatose	biolink:PhenotypicQuality	D-tagatose	BacDive_Metabolite_utilization	185			UNMAPPED	
+kgmicrobe.trait:wastewater	biolink:PhenotypicQuality	#Wastewater	BacDive_Isolation_category_3	184			UNMAPPED	
+kgmicrobe.trait:0_5_1_0	biolink:PhenotypicQuality	0.5-1.0	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	182			UNMAPPED	
+kgmicrobe.trait:10_45	biolink:PhenotypicQuality	10-45	BacDive_Temperature_for_growth	179			UNMAPPED	
+kgmicrobe.trait:pyrrolidonyl_arylamidase	biolink:PhenotypicQuality	pyrrolidonyl arylamidase	BacDive_Enzyme_activity	178			UNMAPPED	
+kgmicrobe.pathway:sulfur_respiration	biolink:BiologicalProcess	sulfur_respiration	faprotax:type_of_metabolism	177			UNMAPPED	
+kgmicrobe.trait:proline	biolink:PhenotypicQuality	proline	BacDive_Metabolite_production|BacDive_Metabolite_utilization	175			UNMAPPED	
+kgmicrobe.trait:tryptophan_deaminase	biolink:PhenotypicQuality	tryptophan deaminase	BacDive_Enzyme_activity	175			UNMAPPED	
+kgmicrobe.trait:0_4_0_5	biolink:PhenotypicQuality	0.4-0.5	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size	172			UNMAPPED	
+kgmicrobe.trait:1_0_2_0	biolink:PhenotypicQuality	1.0-2.0	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	171			UNMAPPED	
+kgmicrobe.pathway:intracellular_parasites	biolink:BiologicalProcess	intracellular_parasites	faprotax:type_of_metabolism	169			UNMAPPED	
+kgmicrobe.trait:06_08	biolink:PhenotypicQuality	06-08	BacDive_pH_for_growth	169			UNMAPPED	
+kgmicrobe.trait:0_5_0_7	biolink:PhenotypicQuality	0.5-0.7	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	169			UNMAPPED	
+kgmicrobe.trait:15_45	biolink:PhenotypicQuality	15-45	BacDive_Temperature_for_growth	169			UNMAPPED	
+kgmicrobe.trait:histidine	biolink:PhenotypicQuality	histidine	BacDive_Metabolite_utilization	169			UNMAPPED	
+kgmicrobe.trait:birds	biolink:PhenotypicQuality	#Birds	BacDive_Isolation_category_2	168			UNMAPPED	
+kgmicrobe.trait:6_0_8_0	biolink:PhenotypicQuality	6.0-8.0	BacDive_Salt_concentration|BacDive_pH_for_growth	167			UNMAPPED	
+kgmicrobe.trait:fishes	biolink:PhenotypicQuality	#Fishes	BacDive_Isolation_category_2	167			UNMAPPED	
+kgmicrobe.trait:sandy	biolink:PhenotypicQuality	#Sandy	BacDive_Isolation_category_3	167			UNMAPPED	
+kgmicrobe.trait:1_3	biolink:PhenotypicQuality	1-3	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_pH_for_growth	166			UNMAPPED	
+kgmicrobe.trait:bromosuccinate	biolink:PhenotypicQuality	bromosuccinate	BacDive_Metabolite_utilization	165			UNMAPPED	
+kgmicrobe.trait:lecithinase	biolink:PhenotypicQuality	lecithinase	BacDive_Enzyme_activity	165			UNMAPPED	
+kgmicrobe.trait:2_oxopentanoate	biolink:PhenotypicQuality	2-oxopentanoate	BacDive_Metabolite_utilization	164			UNMAPPED	
+kgmicrobe.trait:esculin_ferric_citrate	biolink:PhenotypicQuality	esculin ferric citrate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	164			UNMAPPED	
+kgmicrobe.trait:22	biolink:PhenotypicQuality	22	BacDive_Cell_length|BacDive_Temperature_for_growth	163			UNMAPPED	
+kgmicrobe.trait:0_45	biolink:PhenotypicQuality	0.45	BacDive_Cell_length|BacDive_Cell_width|BacDive_Salt_concentration|BacDive_Temperature_for_growth	160			UNMAPPED	
+kgmicrobe.trait:15	biolink:PhenotypicQuality	15	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	160			UNMAPPED	
+kgmicrobe.trait:50	biolink:PhenotypicQuality	50	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	160			UNMAPPED	
+kgmicrobe.trait:activated_sludge	biolink:PhenotypicQuality	#Activated sludge	BacDive_Isolation_category_3	160			UNMAPPED	
+kgmicrobe.trait:0_5_0_8	biolink:PhenotypicQuality	0.5-0.8	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size	159			UNMAPPED	
+kgmicrobe.trait:6_9	biolink:PhenotypicQuality	6-9	BacDive_Temperature_for_growth|BacDive_pH_for_growth	159			UNMAPPED	
+kgmicrobe.trait:d_lyxose	biolink:PhenotypicQuality	D-lyxose	BacDive_Metabolite_utilization	159			UNMAPPED	
+kgmicrobe.trait:05_09	biolink:PhenotypicQuality	05-09	BacDive_Salt_concentration|BacDive_pH_for_growth	158			UNMAPPED	
+kgmicrobe.trait:blood	biolink:PhenotypicQuality	#Blood	BacDive_Isolation_category_3	158			UNMAPPED	
+kgmicrobe.trait:fermented	biolink:PhenotypicQuality	#Fermented	BacDive_Isolation_category_3	158			UNMAPPED	
+kgmicrobe.trait:glycine	biolink:PhenotypicQuality	glycine	BacDive_Metabolite_utilization	156			UNMAPPED	
+kgmicrobe.trait:l_glutamate	biolink:PhenotypicQuality	L-glutamate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	156			UNMAPPED	
+kgmicrobe.trait:suidae_pig	biolink:PhenotypicQuality	#Suidae (Pig	BacDive_Isolation_category_3	156			UNMAPPED	
+kgmicrobe.trait:swine	biolink:PhenotypicQuality	Swine)	BacDive_Isolation_category_3	156			UNMAPPED	
+kgmicrobe.trait:hydrothermal_vent	biolink:PhenotypicQuality	#Hydrothermal vent	BacDive_Isolation_category_3	155			UNMAPPED	
+kgmicrobe.trait:laboratory	biolink:PhenotypicQuality	#Laboratory	BacDive_Isolation_category_2	154			UNMAPPED	
+kgmicrobe.pathway:cellulolysis	biolink:BiologicalProcess	cellulolysis	faprotax:type_of_metabolism	152			UNMAPPED	
+kgmicrobe.trait:20_40	biolink:PhenotypicQuality	20-40	BacDive_Temperature_for_growth	152			UNMAPPED	
+kgmicrobe.trait:2_dehydro_d_gluconate	biolink:PhenotypicQuality	2-dehydro-D-gluconate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	152			UNMAPPED	
+kgmicrobe.pathway:mammal_gut	biolink:BiologicalProcess	mammal_gut	faprotax:type_of_metabolism	151			UNMAPPED	
+kgmicrobe.trait:l_arginine_arylamidase	biolink:PhenotypicQuality	L-arginine arylamidase	BacDive_Enzyme_activity	151			UNMAPPED	
+kgmicrobe.pathway:human_gut	biolink:BiologicalProcess	human_gut	faprotax:type_of_metabolism	150			UNMAPPED	
+kgmicrobe.trait:0_5_1	biolink:PhenotypicQuality	0.5-1	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	150			UNMAPPED	
+kgmicrobe.trait:0_6_0_8	biolink:PhenotypicQuality	0.6-0.8	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size	150			UNMAPPED	
+kgmicrobe.trait:2_hydroxybutyrate	biolink:PhenotypicQuality	2-hydroxybutyrate	BacDive_Metabolite_utilization	150			UNMAPPED	
+kgmicrobe.trait:algae	biolink:PhenotypicQuality	#Algae	BacDive_Isolation_category_2	150			UNMAPPED	
+kgmicrobe.trait:leucyl_glycin_arylamidase	biolink:PhenotypicQuality	leucyl glycin arylamidase	BacDive_Enzyme_activity	150			UNMAPPED	
+kgmicrobe.trait:45	biolink:PhenotypicQuality	45	BacDive_Temperature_for_growth	149			UNMAPPED	
+kgmicrobe.trait:2_oxobutanoate	biolink:PhenotypicQuality	2-oxobutanoate	BacDive_Metabolite_utilization	146			UNMAPPED	
+kgmicrobe.trait:l_alanine	biolink:PhenotypicQuality	L-alanine	BacDive_Metabolite_utilization	146			UNMAPPED	
+kgmicrobe.pathway:plant_pathogen	biolink:BiologicalProcess	plant_pathogen	faprotax:type_of_metabolism	145			UNMAPPED	
+kgmicrobe.trait:tryptophan	biolink:PhenotypicQuality	tryptophan	BacDive_Metabolite_production|BacDive_Metabolite_utilization	145			UNMAPPED	
+kgmicrobe.pathway:hydrogenotrophic_methanogenesis	biolink:BiologicalProcess	hydrogenotrophic_methanogenesis	faprotax:type_of_metabolism	144			UNMAPPED	
+kgmicrobe.trait:0_65	biolink:PhenotypicQuality	0.65	BacDive_Cell_length|BacDive_Cell_width	144			UNMAPPED	
+kgmicrobe.trait:climate	biolink:PhenotypicQuality	#Climate	BacDive_Isolation_category_1	144			UNMAPPED	
+kgmicrobe.trait:microbial_community	biolink:PhenotypicQuality	#Microbial community	BacDive_Isolation_category_2	144			UNMAPPED	
+kgmicrobe.trait:d_gluconate	biolink:PhenotypicQuality	D-gluconate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	143			UNMAPPED	
+kgmicrobe.trait:05_10	biolink:PhenotypicQuality	05-10	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_pH_for_growth	141			UNMAPPED	
+kgmicrobe.trait:sterilized_plant_part	biolink:PhenotypicQuality	#Sterilized plant part	BacDive_Isolation_category_3	141			UNMAPPED	
+kgmicrobe.pathway:methanogenesis_by_co2_reduction_with_h2	biolink:BiologicalProcess	methanogenesis_by_CO2_reduction_with_H2	faprotax:type_of_metabolism	140			UNMAPPED	
+kgmicrobe.pathway:nitrite_respiration	biolink:BiologicalProcess	nitrite_respiration	faprotax:type_of_metabolism	140			UNMAPPED	
+kgmicrobe.trait:l_arabitol	biolink:PhenotypicQuality	L-arabitol	BacDive_Metabolite_utilization	139			UNMAPPED	
+kgmicrobe.trait:0_5_0_6	biolink:PhenotypicQuality	0.5-0.6	BacDive_Cell_length|BacDive_Cell_width	138			UNMAPPED	
+kgmicrobe.trait:bacitracin	biolink:PhenotypicQuality	bacitracin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	138			UNMAPPED	
+kgmicrobe.trait:surface_water	biolink:PhenotypicQuality	#Surface water	BacDive_Isolation_category_3	138			UNMAPPED	
+kgmicrobe.trait:6_8	biolink:PhenotypicQuality	6-8	BacDive_Salt_concentration|BacDive_pH_for_growth	137			UNMAPPED	
+kgmicrobe.trait:dna	biolink:PhenotypicQuality	dna	BacDive_Metabolite_utilization	137			UNMAPPED	
+kgmicrobe.trait:lipase	biolink:PhenotypicQuality	lipase	BacDive_Enzyme_activity	137			UNMAPPED	
+kgmicrobe.pathway:dark_oxidation_of_sulfur_compounds	biolink:BiologicalProcess	dark_oxidation_of_sulfur_compounds	faprotax:type_of_metabolism	136			UNMAPPED	
+kgmicrobe.trait:root_nodule	biolink:PhenotypicQuality	#Root nodule	BacDive_Isolation_category_3	136			UNMAPPED	
+kgmicrobe.trait:22_37	biolink:PhenotypicQuality	22-37	BacDive_Temperature_for_growth	135			UNMAPPED	
+kgmicrobe.trait:d_galacturonic_acid	biolink:PhenotypicQuality	D-galacturonic acid	BacDive_Metabolite_utilization	135			UNMAPPED	
+kgmicrobe.trait:1_25	biolink:PhenotypicQuality	1.25	BacDive_Cell_length|BacDive_Cell_width|BacDive_Salt_concentration|BacDive_Temperature_for_growth	134			UNMAPPED	
+kgmicrobe.trait:25_45	biolink:PhenotypicQuality	25-45	BacDive_Temperature_for_growth	134			UNMAPPED	
+kgmicrobe.trait:5_0_9_0	biolink:PhenotypicQuality	5.0-9.0	BacDive_pH_for_growth	133			UNMAPPED	
+kgmicrobe.trait:5_30	biolink:PhenotypicQuality	5-30	BacDive_Temperature_for_growth	133			UNMAPPED	
+kgmicrobe.trait:amoxicillin	biolink:PhenotypicQuality	amoxicillin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	133			UNMAPPED	
+kgmicrobe.trait:urogenital_tract	biolink:PhenotypicQuality	#Urogenital tract	BacDive_Isolation_category_2	133			UNMAPPED	
+kgmicrobe.trait:inflammation	biolink:PhenotypicQuality	#Inflammation	BacDive_Isolation_category_2	131			UNMAPPED	
+kgmicrobe.trait:malonate	biolink:PhenotypicQuality	malonate	BacDive_Metabolite_utilization	131			UNMAPPED	
+kgmicrobe.trait:tween_esterase	biolink:PhenotypicQuality	tween esterase	BacDive_Enzyme_activity	131			UNMAPPED	
+kgmicrobe.trait:0_0_5	biolink:PhenotypicQuality	0-0.5	BacDive_Salt_concentration	130			UNMAPPED	
+kgmicrobe.trait:26	biolink:PhenotypicQuality	26	BacDive_Salt_concentration|BacDive_Temperature_for_growth	130			UNMAPPED	
+kgmicrobe.trait:alanyl_phenylalanyl_proline_arylamidase	biolink:PhenotypicQuality	Alanyl-Phenylalanyl-Proline arylamidase	BacDive_Enzyme_activity	130			UNMAPPED	
+kgmicrobe.trait:engineered_product	biolink:PhenotypicQuality	#Engineered product	BacDive_Isolation_category_3	130			UNMAPPED	
+kgmicrobe.trait:mine	biolink:PhenotypicQuality	#Mine	BacDive_Isolation_category_3	130			UNMAPPED	
+kgmicrobe.trait:0_35	biolink:PhenotypicQuality	0.35	BacDive_Cell_length|BacDive_Cell_width|BacDive_Salt_concentration|BacDive_Temperature_for_growth	129			UNMAPPED	
+kgmicrobe.trait:10_41	biolink:PhenotypicQuality	10-41	BacDive_Temperature_for_growth	129			UNMAPPED	
+kgmicrobe.trait:leucine	biolink:PhenotypicQuality	leucine	BacDive_Metabolite_production|BacDive_Metabolite_utilization	129			UNMAPPED	
+kgmicrobe.trait:06_10	biolink:PhenotypicQuality	06-10	BacDive_Salt_concentration|BacDive_pH_for_growth	128			UNMAPPED	
+kgmicrobe.trait:2_4	biolink:PhenotypicQuality	2-4	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	127			UNMAPPED	
+kgmicrobe.trait:mollusca	biolink:PhenotypicQuality	#Mollusca	BacDive_Isolation_category_3	127			UNMAPPED	
+kgmicrobe.trait:4_days	biolink:PhenotypicQuality	4 days	BacDive_Incubation_period	126			UNMAPPED	
+kgmicrobe.trait:alpha_lactose	biolink:PhenotypicQuality	alpha-lactose	BacDive_Metabolite_utilization	126			UNMAPPED	
+kgmicrobe.trait:composting	biolink:PhenotypicQuality	#Composting	BacDive_Isolation_category_3	126			UNMAPPED	
+kgmicrobe.trait:proline_arylamidase	biolink:PhenotypicQuality	proline-arylamidase	BacDive_Enzyme_activity	126			UNMAPPED	
+kgmicrobe.pathway:methanol_oxidation	biolink:BiologicalProcess	methanol_oxidation	faprotax:type_of_metabolism	125			UNMAPPED	
+kgmicrobe.trait:04_37	biolink:PhenotypicQuality	04-37	BacDive_Temperature_for_growth	125			UNMAPPED	
+kgmicrobe.trait:leaf_phyllosphere	biolink:PhenotypicQuality	#Leaf (Phyllosphere)	BacDive_Isolation_category_3	123			UNMAPPED	
+kgmicrobe.trait:s_lactate	biolink:PhenotypicQuality	(S)-lactate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	123			UNMAPPED	
+kgmicrobe.trait:0_55	biolink:PhenotypicQuality	0.55	BacDive_Cell_length|BacDive_Cell_width|BacDive_Salt_concentration	120			UNMAPPED	
+kgmicrobe.trait:carboxymethylcellulose	biolink:PhenotypicQuality	carboxymethylcellulose	BacDive_Metabolite_utilization	120			UNMAPPED	
+kgmicrobe.trait:7_days	biolink:PhenotypicQuality	7 days	BacDive_Incubation_period	119			UNMAPPED	
+kgmicrobe.trait:ceftriaxone	biolink:PhenotypicQuality	ceftriaxone	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	118			UNMAPPED	
+kgmicrobe.trait:desert	biolink:PhenotypicQuality	#Desert	BacDive_Isolation_category_3	118			UNMAPPED	
+kgmicrobe.trait:variable	biolink:PhenotypicQuality	variable	BacDive_Gram_stain	116			UNMAPPED	
+kgmicrobe.trait:male	biolink:PhenotypicQuality	#Male	BacDive_Isolation_category_3	115			UNMAPPED	
+kgmicrobe.compound:pyg	biolink:ChemicalEntity	PYG	bergey:substrates	114			UNMAPPED	
+kgmicrobe.trait:60	biolink:PhenotypicQuality	60	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	114			UNMAPPED	
+kgmicrobe.trait:wetland_swamp	biolink:PhenotypicQuality	#Wetland (Swamp)	BacDive_Isolation_category_3	114			UNMAPPED	
+kgmicrobe.trait:sputum	biolink:PhenotypicQuality	#Sputum	BacDive_Isolation_category_3	113			UNMAPPED	
+kgmicrobe.trait:6_0_10_0	biolink:PhenotypicQuality	6.0-10.0	BacDive_Salt_concentration|BacDive_pH_for_growth	112			UNMAPPED	
+kgmicrobe.trait:6_10	biolink:PhenotypicQuality	6-10	BacDive_Salt_concentration|BacDive_pH_for_growth	112			UNMAPPED	
+kgmicrobe.trait:d_fructose_6_phosphate	biolink:PhenotypicQuality	D-fructose 6-phosphate	BacDive_Metabolite_utilization	112			UNMAPPED	
+kgmicrobe.trait:stomach	biolink:PhenotypicQuality	#Stomach	BacDive_Isolation_category_3	112			UNMAPPED	
+kgmicrobe.trait:7_5	biolink:PhenotypicQuality	7.5	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_pH_for_growth	110			UNMAPPED	
+kgmicrobe.trait:mangrove	biolink:PhenotypicQuality	#Mangrove	BacDive_Isolation_category_3	110			UNMAPPED	
+kgmicrobe.pathway:anoxygenic_photoautotrophy	biolink:BiologicalProcess	anoxygenic_photoautotrophy	faprotax:type_of_metabolism	109			UNMAPPED	
+kgmicrobe.trait:0_25	biolink:PhenotypicQuality	0.25	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration|BacDive_Temperature_for_growth	109			UNMAPPED	
+kgmicrobe.trait:20_30	biolink:PhenotypicQuality	20-30	BacDive_Salt_concentration|BacDive_Temperature_for_growth	109			UNMAPPED	
+kgmicrobe.trait:0_2_5	biolink:PhenotypicQuality	0-2.5	BacDive_Salt_concentration	108			UNMAPPED	
+kgmicrobe.trait:1_6	biolink:PhenotypicQuality	1-6	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size|BacDive_Salt_concentration	108			UNMAPPED	
+kgmicrobe.trait:bioreactor	biolink:PhenotypicQuality	#Bioreactor	BacDive_Isolation_category_2	108			UNMAPPED	
+kgmicrobe.trait:cefazolin	biolink:PhenotypicQuality	cefazolin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	108			UNMAPPED	
+kgmicrobe.trait:microbial_mat	biolink:PhenotypicQuality	#Microbial mat	BacDive_Isolation_category_3	108			UNMAPPED	
+kgmicrobe.trait:0_3_0_4	biolink:PhenotypicQuality	0.3-0.4	BacDive_Cell_length|BacDive_Cell_width|BacDive_Colony_size	107			UNMAPPED	
+kgmicrobe.trait:1_75	biolink:PhenotypicQuality	1.75	BacDive_Cell_length|BacDive_Cell_width|BacDive_Salt_concentration	107			UNMAPPED	
+kgmicrobe.trait:microbial	biolink:PhenotypicQuality	#Microbial	BacDive_Isolation_category_2	107			UNMAPPED	
+kgmicrobe.trait:5_9	biolink:PhenotypicQuality	5-9	BacDive_Cell_length|BacDive_pH_for_growth	106			UNMAPPED	
+kgmicrobe.trait:esterase	biolink:PhenotypicQuality	esterase	BacDive_Enzyme_activity	106			UNMAPPED	
+kgmicrobe.trait:sulfamethoxazole	biolink:PhenotypicQuality	sulfamethoxazole	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	106			UNMAPPED	
+kgmicrobe.trait:wound	biolink:PhenotypicQuality	#Wound	BacDive_Isolation_category_3	106			UNMAPPED	
+kgmicrobe.trait:cephalothin	biolink:PhenotypicQuality	cephalothin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	105			UNMAPPED	
+kgmicrobe.pathway:thiosulfate_respiration	biolink:BiologicalProcess	thiosulfate_respiration	faprotax:type_of_metabolism	104			UNMAPPED	
+kgmicrobe.trait:40	biolink:PhenotypicQuality	40	BacDive_Cell_length|BacDive_Salt_concentration|BacDive_Temperature_for_growth	104			UNMAPPED	
+kgmicrobe.trait:aztreonam	biolink:PhenotypicQuality	aztreonam	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity|BacDive_Metabolite_utilization	104			UNMAPPED	
+kgmicrobe.trait:beta_hydroxybutyrate	biolink:PhenotypicQuality	beta-hydroxybutyrate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	104			UNMAPPED	
+kgmicrobe.trait:clindamycin	biolink:PhenotypicQuality	clindamycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	104			UNMAPPED	
+kgmicrobe.trait:oleandomycin	biolink:PhenotypicQuality	oleandomycin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	104			UNMAPPED	
+kgmicrobe.trait:fumarate	biolink:PhenotypicQuality	fumarate	BacDive_Metabolite_production|BacDive_Metabolite_utilization	103			UNMAPPED	
+kgmicrobe.trait:glycin_arylamidase	biolink:PhenotypicQuality	glycin arylamidase	BacDive_Enzyme_activity	103			UNMAPPED	
+kgmicrobe.trait:l_proline	biolink:PhenotypicQuality	L-proline	BacDive_Metabolite_utilization	103			UNMAPPED	
+kgmicrobe.trait:norfloxacin	biolink:PhenotypicQuality	norfloxacin	BacDive_Antibiotic_resistance|BacDive_Antibiotic_sensitivity	103			UNMAPPED	
+kgmicrobe.trait:plant_factory	biolink:PhenotypicQuality	#Plant (Factory)	BacDive_Isolation_category_3	103			UNMAPPED	
+kgmicrobe.pathway:aromatic_hydrocarbon_degradation	biolink:BiologicalProcess	aromatic_hydrocarbon_degradation	faprotax:type_of_metabolism	102			UNMAPPED	
+kgmicrobe.trait:4_hydroxybenzoate	biolink:PhenotypicQuality	4-hydroxybenzoate	BacDive_Metabolite_utilization	102			UNMAPPED	
+kgmicrobe.trait:acetic_acid	biolink:PhenotypicQuality	acetic acid	BacDive_Metabolite_production|BacDive_Metabolite_utilization	102			UNMAPPED	
+kgmicrobe.trait:dinitrogen	biolink:PhenotypicQuality	dinitrogen	BacDive_Metabolite_production|BacDive_Metabolite_utilization	102			UNMAPPED	
+kgmicrobe.trait:filament_shaped	biolink:PhenotypicQuality	filament-shaped	BacDive_Cell_shape	101			UNMAPPED	
+kgmicrobe.compound:h2_co2	biolink:ChemicalEntity	H2 + CO2	bergey:substrates|literature:substrates	100			UNMAPPED	
+kgmicrobe.trait:14_days	biolink:PhenotypicQuality	14 days	BacDive_Incubation_period	100			UNMAPPED	
+kgmicrobe.trait:air	biolink:PhenotypicQuality	#Air	BacDive_Isolation_category_2	100			UNMAPPED	
+kgmicrobe.trait:water_treatment_plant	biolink:PhenotypicQuality	#Water treatment plant	BacDive_Isolation_category_3	100			UNMAPPED	

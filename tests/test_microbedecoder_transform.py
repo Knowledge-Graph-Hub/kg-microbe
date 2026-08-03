@@ -8,13 +8,14 @@ import pytest
 from kg_microbe.transform_utils.constants import (
     BERGEY_KNOWLEDGE_SOURCE,
     CLOSE_MATCH_PREDICATE,
+    COMPOUND_PREFIX,
     FAPROTAX_KNOWLEDGE_SOURCE,
-    FERMENTATION_PREFIX,
     HAS_PHENOTYPE_PREDICATE,
     LITERATURE_KNOWLEDGE_SOURCE,
     LPSN_PREFIX,
     MICROBEDECODER_KNOWLEDGE_SOURCE,
     PRODUCES_PREDICATE,
+    TRAIT_PREFIX,
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
@@ -28,7 +29,7 @@ class _NoChebi:
     ChemicalMappingLoader stub returning None for every lookup.
 
     Keeps tests self-contained (no ChEBI mapping file dependency) and
-    exercises the ``kgmicrobe.fermentation:<slug>`` placeholder fallback
+    exercises the ``kgmicrobe.compound:<slug>`` placeholder fallback
     path deterministically.
     """
 
@@ -67,19 +68,34 @@ def _read_tsv(path: Path) -> list:
 # ---------------------------------------------------------------------------
 
 
-def test_lpsn_nodes_are_emitted_as_organism_stubs(microbedecoder_transform):
-    """One organism stub per non-empty LPSN_ID row (7 fixture rows, 1 blank)."""
+def test_lpsn_subject_nodes_are_not_stubbed(microbedecoder_transform):
+    """
+    LPSN taxa are the ``lpsn`` transform's product; MicrobeDecoder must not stub.
+
+    Per the add-transform skill's Phase 6 anti-patterns: "Do NOT emit
+    stub nodes for cross-referenced entities that already exist in
+    KG-Microbe — emit the edge, and rely on merge-time reconciliation."
+    Every ``lpsn:<LPSN_ID>`` appears as an edge subject, but never as a
+    node in this transform's own output.
+    """
     microbedecoder_transform.run()
     nodes = _read_tsv(microbedecoder_transform.output_node_file)
-    lpsn_ids = {n["id"] for n in nodes if n["id"].startswith(LPSN_PREFIX)}
-    assert lpsn_ids == {
+    lpsn_node_ids = {n["id"] for n in nodes if n["id"].startswith(LPSN_PREFIX)}
+    assert lpsn_node_ids == set(), (
+        f"MicrobeDecoder must not emit lpsn:* nodes (lpsn transform owns them); found: {sorted(lpsn_node_ids)}"
+    )
+    # But every subject on emitted edges IS an lpsn:<id>, so downstream
+    # merge glues them to the lpsn transform's authoritative rows.
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+    edge_subject_lpsn_ids = {e["subject"] for e in edges if e["subject"].startswith(LPSN_PREFIX)}
+    assert edge_subject_lpsn_ids == {
         f"{LPSN_PREFIX}101",
         f"{LPSN_PREFIX}202",
         f"{LPSN_PREFIX}303",
         f"{LPSN_PREFIX}404",
         f"{LPSN_PREFIX}505",
         f"{LPSN_PREFIX}606",
-    }, "one node per non-blank LPSN_ID row"
+    }, "every non-blank LPSN_ID row produces edges keyed on lpsn:<id>"
 
 
 def test_empty_lpsn_row_is_skipped(microbedecoder_transform):
@@ -130,6 +146,24 @@ def test_missing_crosswalk_cells_are_skipped(microbedecoder_transform):
     assert not any(e["object"].startswith("GTDB:") for e in e_606)
 
 
+def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
+    """
+    No stub node for any cross-ref target the KG's own transforms own.
+
+    Add-transform skill rule (Phase 6 anti-pattern): NCBITaxon, GTDB,
+    bacdive, GOLD, IMG all have their authoritative nodes elsewhere.
+    MicrobeDecoder emits the edges to them but never a stub.
+    """
+    microbedecoder_transform.run()
+    nodes = _read_tsv(microbedecoder_transform.output_node_file)
+    for prefix in ("NCBITaxon:", "GTDB:", "bacdive:", "GOLD:", "IMG:", "CHEBI:"):
+        stubs = [n["id"] for n in nodes if n["id"].startswith(prefix)]
+        assert stubs == [], (
+            f"MicrobeDecoder must not emit stub nodes for cross-ref target "
+            f"prefix {prefix!r} (owner transform provides them); found: {stubs[:3]}"
+        )
+
+
 def test_crosswalk_normalizes_prefixed_source_ids(microbedecoder_transform):
     """A pre-CURIE'd source cell (``NCBITaxon:1423``) must not double-prefix."""
     microbedecoder_transform.run()
@@ -159,8 +193,8 @@ def test_bergey_edges_carry_bergey_provenance(microbedecoder_transform):
     ]
     objects = {e["object"] for e in e_101_produces}
     # Both fall through to placeholders because _NoChebi never resolves
-    assert f"{FERMENTATION_PREFIX}acetate" in objects
-    assert f"{FERMENTATION_PREFIX}lactate" in objects
+    assert f"{COMPOUND_PREFIX}acetate" in objects
+    assert f"{COMPOUND_PREFIX}lactate" in objects
 
 
 def test_vpi_edges_carry_vpi_provenance(microbedecoder_transform):
@@ -173,7 +207,7 @@ def test_vpi_edges_carry_vpi_provenance(microbedecoder_transform):
     e_303 = [e for e in vpi_edges if e["subject"] == f"{LPSN_PREFIX}303" and e["predicate"] == PRODUCES_PREDICATE]
     objects = {e["object"] for e in e_303}
     for product in ("acetone", "butanol", "ethanol"):
-        assert f"{FERMENTATION_PREFIX}{product}" in objects, f"missing produces edge for {product}"
+        assert f"{COMPOUND_PREFIX}{product}" in objects, f"missing produces edge for {product}"
 
 
 def test_literature_edges_carry_literature_provenance(microbedecoder_transform):
@@ -184,7 +218,7 @@ def test_literature_edges_carry_literature_provenance(microbedecoder_transform):
     assert lit_edges, "Literature columns in fixture must produce edges"
     # LPSN_ID=404 (Methanocaldococcus): Literature_Major_end_products=methane
     e_404 = [e for e in lit_edges if e["subject"] == f"{LPSN_PREFIX}404" and e["predicate"] == PRODUCES_PREDICATE]
-    assert any(e["object"] == f"{FERMENTATION_PREFIX}methane" for e in e_404)
+    assert any(e["object"] == f"{COMPOUND_PREFIX}methane" for e in e_404)
 
 
 def test_faprotax_edges_carry_faprotax_provenance(microbedecoder_transform):
@@ -207,8 +241,8 @@ def test_substrates_use_consumes_predicate(microbedecoder_transform):
         and e["primary_knowledge_source"] == BERGEY_KNOWLEDGE_SOURCE
     ]
     assert {e["object"] for e in consumes} == {
-        f"{FERMENTATION_PREFIX}glucose",
-        f"{FERMENTATION_PREFIX}fructose",
+        f"{COMPOUND_PREFIX}glucose",
+        f"{COMPOUND_PREFIX}fructose",
     }
 
 
@@ -234,13 +268,13 @@ def test_multivalue_split_produces_one_edge_per_token(microbedecoder_transform):
         and e["predicate"] == PRODUCES_PREDICATE
     }
     # Simple names must land as expected
-    assert f"{FERMENTATION_PREFIX}acetate" in lit_produces
-    assert f"{FERMENTATION_PREFIX}lactate" in lit_produces
+    assert f"{COMPOUND_PREFIX}acetate" in lit_produces
+    assert f"{COMPOUND_PREFIX}lactate" in lit_produces
     # And the known over-split fragments prove the fixture actually
     # exercised the multi-value path (fixture carries the corner case
     # deliberately as a regression anchor for the future smart-splitter).
-    assert f"{FERMENTATION_PREFIX}2" in lit_produces
-    assert f"{FERMENTATION_PREFIX}3_butanediol" in lit_produces
+    assert f"{COMPOUND_PREFIX}2" in lit_produces
+    assert f"{COMPOUND_PREFIX}3_butanediol" in lit_produces
 
 
 # ---------------------------------------------------------------------------
@@ -261,7 +295,7 @@ def test_bacdive_snapshot_edges_carry_microbedecoder_provenance(microbedecoder_t
     assert bacdive_snapshot, "BacDive_* columns must produce has_phenotype edges"
     # LPSN_ID=101 has BacDive_Oxygen_tolerance='facultative anaerobe'
     e_101 = [e for e in bacdive_snapshot if e["subject"] == f"{LPSN_PREFIX}101"]
-    assert any(e["object"] == f"{FERMENTATION_PREFIX}facultative_anaerobe" for e in e_101)
+    assert any(e["object"] == f"{TRAIT_PREFIX}facultative_anaerobe" for e in e_101)
 
 
 def test_bacdive_only_row_still_emits_snapshot(microbedecoder_transform):

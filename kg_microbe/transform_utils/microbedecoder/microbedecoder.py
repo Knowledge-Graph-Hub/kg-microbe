@@ -25,7 +25,7 @@ Design decisions locked from the plan-mode Q&A:
 1. **Node identity**: attach every edge to the *existing* `lpsn:<LPSN_ID>`
    node emitted by the LPSN transform. This transform emits edges only
    (plus terminal nodes for end-products / cross-refs / provisional
-   fermentation placeholders); it does not re-emit LPSN taxon nodes.
+   provisional placeholders); it does not re-emit LPSN taxon nodes.
 2. **BacDive_* replay**: ingested with `primary_knowledge_source =
    infores:microbedecoder` so the paper's 2024-11-07 BacDive snapshot
    stays reproducible. The fresher `bacdive` transform is authoritative
@@ -52,12 +52,11 @@ from kg_microbe.transform_utils.constants import (
     CAPABLE_OF,
     CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
-    CHEBI_CATEGORY,
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
+    COMPOUND_PREFIX,
     DESCRIPTION_COLUMN,
     FAPROTAX_KNOWLEDGE_SOURCE,
-    FERMENTATION_PREFIX,
     HAS_OUTPUT_RELATION,
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
@@ -72,15 +71,18 @@ from kg_microbe.transform_utils.constants import (
     MICROBEDECODER_KNOWLEDGE_SOURCE,
     MICROBEDECODER_RAW_DIR,
     NAME_COLUMN,
-    NCBI_CATEGORY,
+    NCBI_TO_SUBSTRATE_EDGE,
     OBJECT_COLUMN,
+    PATHWAY_PREFIX,
     PHENOTYPIC_CATEGORY,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCES_PREDICATE,
     PROVIDED_BY_COLUMN,
     RELATION_COLUMN,
+    SMALL_MOLECULE_CATEGORY,
     SUBJECT_COLUMN,
+    TRAIT_PREFIX,
     TROPHICALLY_INTERACTS_WITH,
     VPI_KNOWLEDGE_SOURCE,
 )
@@ -88,7 +90,6 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     BACDIVE_SNAPSHOT_COLUMNS,
     CROSSWALK_COLUMNS,
     LPSN_ID_COLUMN,
-    LPSN_STATUS_COLUMN,
     format_citation,
     is_empty_cell,
     iter_metabolism_columns,
@@ -150,8 +151,10 @@ class MicrobeDecoderTransform(Transform):
         super().__init__(MICROBEDECODER, input_dir, output_dir)
         self.knowledge_source = MICROBEDECODER_KNOWLEDGE_SOURCE
         self.chemical_loader = chemical_loader
-        # Track dedup state so cross-ref targets, end-product CHEBI nodes,
-        # and fermentation placeholders are emitted once per run.
+        # Track dedup state so unmatched-label placeholders are emitted
+        # once per run. Cross-ref targets (NCBITaxon/GTDB/bacdive/GOLD/IMG)
+        # and successfully-resolved CHEBI CURIEs are never stubbed here —
+        # their authoritative nodes come from other transforms.
         self._seen_nodes: set = set()
         # End-of-run summary counters.
         self._stats: Dict[str, int] = {
@@ -208,7 +211,7 @@ class MicrobeDecoderTransform(Transform):
                 logger.warning(
                     "[microbedecoder] Unified chemical mappings not present; "
                     "end-product CHEBI resolution disabled — every metabolism "
-                    "label falls through to a kgmicrobe.fermentation:* placeholder."
+                    "label falls through to a kgmicrobe.compound:* placeholder."
                 )
                 self.chemical_loader = None
 
@@ -248,27 +251,22 @@ class MicrobeDecoderTransform(Transform):
         node_writer: "csv._writer",
         edge_writer: "csv._writer",
     ) -> None:
-        """Emit all crosswalk + metabolism + BacDive-snapshot edges for one row."""
+        """
+        Emit all crosswalk + metabolism + BacDive-snapshot edges for one row.
+
+        Deliberately does NOT emit a node for the ``lpsn:<LPSN_ID>``
+        subject: LPSN taxon nodes are the ``lpsn`` transform's product.
+        Emitting a stub here would create a shallow duplicate the merge
+        step has to dedup, and violates the add-transform skill's rule
+        against stubbing cross-referenced entities that already exist
+        in KG-Microbe. ``lpsn`` is documented as a hard dependency in
+        CLAUDE.md.
+        """
         lpsn_id = row.get(LPSN_ID_COLUMN)
         if is_empty_cell(lpsn_id):
             return
         subject_curie = f"{LPSN_PREFIX}{str(lpsn_id).strip()}"
         self._stats["rows_processed"] += 1
-
-        # Emit the LPSN organism as a stub node so a merge that runs
-        # microbedecoder without lpsn still produces a well-formed graph
-        # (the lpsn transform overrides this stub with the full node when
-        # both are merged — merge-time dedup by `id` keeps the richer row).
-        if subject_curie not in self._seen_nodes:
-            node_writer.writerow(
-                self._make_node_row(
-                    subject_curie,
-                    NCBI_CATEGORY,
-                    _first_present(row, ("LPSN_Species", "LPSN_Strain")) or "",
-                    description=_first_present(row, (LPSN_STATUS_COLUMN,)) or None,
-                )
-            )
-            self._seen_nodes.add(subject_curie)
 
         self._emit_crosswalk_edges(subject_curie, row, node_writer, edge_writer)
         self._emit_metabolism_edges(subject_curie, row, node_writer, edge_writer)
@@ -323,8 +321,8 @@ class MicrobeDecoderTransform(Transform):
             provenance = _GROUP_TO_KS[group_label]
             citation_curie = format_citation(fields.get("citation"))
 
-            # `Type_of_metabolism` label → capable_of a fermentation-class
-            # object. Uses a kgmicrobe.fermentation: placeholder for now;
+            # `Type_of_metabolism` label → capable_of a metabolism-class
+            # object. Uses a kgmicrobe.pathway: placeholder for now;
             # curated METPO mappings (via load_metpo_mappings) can promote
             # these to METPO: CURIEs in a follow-up curation pass.
             type_of_metabolism = fields.get("type_of_metabolism")
@@ -366,15 +364,15 @@ class MicrobeDecoderTransform(Transform):
                     self._stats["metabolism_edges"] += 1
 
             # Substrate rows → biolink:consumes + relation trophically_interacts_with.
+            # Uses NCBI_TO_SUBSTRATE_EDGE (the standard constant every
+            # organism→substrate emitter routes through, incl. madin_etal)
+            # so merged-KG queries stay consistent.
             for label in split_multivalue(fields.get("substrates")):
                 obj = self._resolve_chemical_curie(label, node_writer)
                 edge_writer.writerow(
                     self._make_edge_row(
                         subject,
-                        # Same predicate/relation pair madin_etal uses for
-                        # organism → carbon_substrate edges, so merged-KG
-                        # queries stay consistent.
-                        "biolink:consumes",
+                        NCBI_TO_SUBSTRATE_EDGE,
                         obj,
                         TROPHICALLY_INTERACTS_WITH,
                         provenance,
@@ -424,7 +422,15 @@ class MicrobeDecoderTransform(Transform):
     # CURIE resolution
     # ------------------------------------------------------------------
     def _resolve_chemical_curie(self, label: str, node_writer: "csv._writer") -> str:
-        """Resolve an end-product / substrate label to a CHEBI CURIE or placeholder."""
+        """
+        Resolve an end-product / substrate label to a CHEBI CURIE or placeholder.
+
+        Successful CHEBI resolution → return the CURIE **without** emitting
+        a node stub; the ontologies transform owns the authoritative CHEBI
+        node (per the add-transform skill's "don't stub cross-refs" rule).
+        Miss → mint a ``kgmicrobe.compound:<slug>`` placeholder and emit
+        the terminal stub (nothing else will).
+        """
         curie: Optional[str] = None
         if self.chemical_loader is not None:
             try:
@@ -432,24 +438,31 @@ class MicrobeDecoderTransform(Transform):
             except Exception as exc:  # noqa: BLE001 — chemical loader has broad failure modes
                 logger.debug("[microbedecoder] chebi lookup failed for %r: %s", label, exc)
         if curie:
-            # Chemical loader returns bare CHEBI CURIEs; emit a category-
-            # aligned stub if we haven't seen it yet (merged KG's ontologies
-            # transform provides the authoritative row).
-            self._ensure_terminal_node(curie, CHEBI_CATEGORY, label, node_writer)
             return curie
-        return self._mint_fermentation_placeholder(label, node_writer)
+        return self._mint_placeholder(
+            label,
+            node_writer,
+            prefix=COMPOUND_PREFIX,
+            category=SMALL_MOLECULE_CATEGORY,
+        )
 
     def _resolve_metabolism_curie(self, label: str, node_writer: "csv._writer") -> str:
         """
-        Resolve a type_of_metabolism label. v1: always a placeholder.
+        Resolve a type_of_metabolism label to a pathway CURIE or placeholder.
 
-        A METPO alias pass (via ``load_metpo_mappings("microbedecoder synonym")``)
-        can promote these to METPO CURIEs once the upstream ROBOT template
-        gains that synonym column. Until then the placeholder path is the
-        graceful fallback — the merged KG carries the same fermentation
-        class as ``kgmicrobe.fermentation:<slug>`` regardless of source.
+        v1: no METPO integration yet — always mints a
+        ``kgmicrobe.pathway:<slug>`` placeholder (same prefix ``madin_etal``
+        uses for its unmatched pathway labels). A follow-up can promote
+        recognised labels (Fermentation, Homofermentative, Methanogenesis, …)
+        to METPO CURIEs via ``load_metpo_mappings("microbedecoder synonym")``
+        once the upstream METPO ROBOT template gains that synonym column.
         """
-        return self._mint_fermentation_placeholder(label, node_writer, category=METABOLISM_CATEGORY)
+        return self._mint_placeholder(
+            label,
+            node_writer,
+            prefix=PATHWAY_PREFIX,
+            category=METABOLISM_CATEGORY,
+        )
 
     def _resolve_phenotype_curie(
         self,
@@ -458,25 +471,41 @@ class MicrobeDecoderTransform(Transform):
         node_writer: "csv._writer",
     ) -> str:
         """
-        Resolve a BacDive_* value. v1: placeholder scoped by source column.
+        Resolve a BacDive_* value. v1: placeholder in the trait prefix.
 
-        Compound key (``<column>__<slug>``) so the same string value under
-        two different BacDive columns doesn't collide (mirrors the
-        madin_etal compound-key pattern for motility.yes vs sporulation.yes).
         Category is left generic (:data:`PHENOTYPIC_CATEGORY`); the fresher
-        bacdive transform provides the semantically-correct edge.
+        ``bacdive`` transform provides the semantically-correct edge
+        (MicrobeDecoder ingests the 2024-11-07 snapshot per the plan-mode
+        Q&A). ``source_column`` is accepted for a v2 compound-key lookup
+        where the same short string means different things under different
+        BacDive columns.
         """
-        del source_column  # currently unused; kept in the API for a v2 lookup table
-        return self._mint_fermentation_placeholder(label, node_writer, category=PHENOTYPIC_CATEGORY)
+        del source_column  # kept in the API for a v2 compound-key lookup
+        return self._mint_placeholder(
+            label,
+            node_writer,
+            prefix=TRAIT_PREFIX,
+            category=PHENOTYPIC_CATEGORY,
+        )
 
-    def _mint_fermentation_placeholder(
+    def _mint_placeholder(
         self,
         label: str,
         node_writer: "csv._writer",
-        category: str = METABOLISM_CATEGORY,
+        prefix: str,
+        category: str,
     ) -> str:
-        """Return a stable ``kgmicrobe.fermentation:<slug>`` CURIE for ``label``."""
-        curie = f"{FERMENTATION_PREFIX}{slugify_label(label)}"
+        """
+        Return a stable ``<prefix><slug>`` CURIE and emit the terminal stub.
+
+        Placeholder CURIEs land in the caller-supplied ``kgmicrobe.*``
+        prefix (``pathway``, ``compound``, or ``trait`` — each already
+        registered as a section of ``custom_curies.yaml``). The stub node
+        carries the raw source label so the merged KG surfaces something
+        human-readable even before the label gets a proper METPO / CHEBI
+        mapping.
+        """
+        curie = f"{prefix}{slugify_label(label)}"
         self._ensure_terminal_node(curie, category, label, node_writer)
         self._stats["unmatched_labels"] += 1
         return curie
@@ -488,7 +517,15 @@ class MicrobeDecoderTransform(Transform):
         name: str,
         node_writer: "csv._writer",
     ) -> None:
-        """Emit a stub terminal node once per run (dedup via _seen_nodes)."""
+        """
+        Emit a placeholder terminal node once per run (dedup via _seen_nodes).
+
+        Only ever called for placeholder / unmatched-label CURIEs — never
+        for a resolved cross-reference target (NCBITaxon, GTDB, CHEBI,
+        bacdive, GOLD, IMG) whose authoritative node is provided by
+        another transform. See the add-transform skill's Phase 6
+        "anti-patterns" for the reasoning.
+        """
         if curie in self._seen_nodes:
             return
         self._seen_nodes.add(curie)
@@ -615,12 +652,3 @@ class MicrobeDecoderTransform(Transform):
             f"bacdive_snapshot_edges={s['bacdive_snapshot_edges']}, "
             f"unmatched_labels={s['unmatched_labels']}"
         )
-
-
-def _first_present(row: Dict[str, Any], columns: tuple) -> Optional[str]:
-    """Return the first non-empty column value from ``row``, or None."""
-    for column in columns:
-        v = row.get(column)
-        if not is_empty_cell(v):
-            return str(v).strip()
-    return None

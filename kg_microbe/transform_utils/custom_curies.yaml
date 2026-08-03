@@ -10,12 +10,6 @@
 #                            'grows in' / METPO:2000518 'does not grow in'.
 #   kgmicrobe.ingredient:* — MediaDive ingredients with no MIM/CHEBI/FOODON/UBERON/ENVO mapping
 #                            (dynamic; minted from the ingredient label, not statically registered)
-#   kgmicrobe.fermentation:* — end-product / fermentation-pathway labels from MicrobeDecoder's
-#                            Bergey / VPI / Literature / FAPROTAX curated columns that don't
-#                            yet resolve to CHEBI / GO / METPO. Slugs land here; each is a
-#                            candidate for a METPO proposal (see
-#                            mappings/kgmicrobe_proposal_placeholders.tsv). Dynamic — minted
-#                            from the source label at transform time.
 #
 # Cross-reference for non-kgmicrobe prefixes that show up in transform output and must be
 # recognized by validators (kg_model_review.py STANDARD_PREFIXES):
@@ -403,15 +397,6 @@ other:
 # empty: entries are generated at transform time (slug of the ingredient label),
 # not curated here. Listed so the prefix is registered for validators.
 "kgmicrobe.ingredient": {}
-
-
-# End-product / fermentation-pathway labels from MicrobeDecoder (Bergey / VPI /
-# Literature / FAPROTAX curated columns) that don't yet resolve to CHEBI / GO /
-# METPO. Empty for the same reason as kgmicrobe.ingredient: entries are minted
-# from the source label at transform time. Anything landing here is a candidate
-# for a METPO proposal — record it in mappings/kgmicrobe_proposal_placeholders.tsv
-# so the swap table has the target METPO ID once minted upstream.
-"kgmicrobe.fermentation": {}
 
 
 "kgmicrobe.compound":

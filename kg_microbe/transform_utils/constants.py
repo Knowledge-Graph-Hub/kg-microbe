@@ -200,6 +200,13 @@ KEGG_PREFIX = "KEGG:"
 SHAPE_PREFIX = "cell_shape:"
 PATHWAY_PREFIX = "kgmicrobe.pathway:"
 CARBON_SUBSTRATE_PREFIX = "kgmicrobe.carbon_substrate:"
+# Placeholder CURIEs for chemical entities and phenotypic qualities that
+# don't yet resolve to CHEBI / METPO. Sections of the same name are already
+# registered in `custom_curies.yaml`; these constants let transforms mint
+# slugs without repeating the string. See the yaml header for guidance on
+# what belongs under each.
+COMPOUND_PREFIX = "kgmicrobe.compound:"
+TRAIT_PREFIX = "kgmicrobe.trait:"
 ISOLATION_SOURCE_PREFIX = "bacdive.isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
@@ -223,10 +230,6 @@ LPSN_PREFIX = "lpsn:"
 # custom_curies.yaml loader) accept them.
 GOLD_PREFIX = "GOLD:"  # Genomes OnLine Database (organism/project IDs)
 IMG_PREFIX = "IMG:"  # JGI Integrated Microbial Genomes
-# Placeholder prefix for end-product / fermentation-pathway labels that don't
-# yet resolve to CHEBI / GO / METPO. Slugs land here; each is a candidate for
-# a METPO proposal (see mappings/kgmicrobe_proposal_placeholders.tsv).
-FERMENTATION_PREFIX = "kgmicrobe.fermentation:"
 
 # Knowledge-source infores identifiers for the four curated sources
 # MicrobeDecoder pre-joins per LPSN strain. Each derived edge is tagged with

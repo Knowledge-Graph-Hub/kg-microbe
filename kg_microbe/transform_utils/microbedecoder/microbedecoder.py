@@ -231,7 +231,24 @@ class MicrobeDecoderTransform(Transform):
             # to floats with a ``.0`` suffix that then leaks into CURIEs.
             # NaN cells arrive as the string ``"nan"``; :func:`is_empty_cell`
             # recognises that already.
-            df = pd.read_csv(csv_path, dtype=str, keep_default_na=False, low_memory=False)
+            #
+            # ``encoding_errors="replace"`` because the real MicrobeDecoder
+            # CSV (R-produced) is mixed encoding: mostly UTF-8 (0xc3 lead
+            # bytes for ``°``, ``©``, fraction glyphs) with a handful of
+            # sporadic raw Latin-1 bytes (e.g. ``0xe9`` = ``é``) that break
+            # strict UTF-8 decode. Replace on error rather than fall back
+            # to Latin-1: latin-1 would misread every legitimate UTF-8
+            # multi-byte sequence (``°`` becomes ``°``, etc). U+FFFD
+            # affects ~2 bytes out of 57 MB — acceptable aesthetic loss
+            # on the name field, no impact on any CURIE.
+            df = pd.read_csv(
+                csv_path,
+                dtype=str,
+                keep_default_na=False,
+                low_memory=False,
+                encoding="utf-8",
+                encoding_errors="replace",
+            )
             for _, row_series in df.iterrows():
                 row = row_series.to_dict()
                 self._process_row(row, node_writer, edge_writer)

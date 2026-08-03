@@ -354,3 +354,31 @@ def test_dedup_sorts_output(microbedecoder_transform):
     nodes = _read_tsv(microbedecoder_transform.output_node_file)
     ids = [n["id"] for n in nodes]
     assert ids == sorted(ids), "nodes must be sorted by id"
+
+
+def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
+    """
+    The real MicrobeDecoder CSV is mixed UTF-8 + sporadic Latin-1 bytes.
+
+    R's ``write.csv`` emits mostly UTF-8 (``°C``, ``©``, fraction glyphs)
+    but leaves a handful of raw Latin-1 bytes (e.g. ``0xe9`` = ``é``)
+    unescaped. Strict UTF-8 decode raises; we read with
+    ``encoding_errors='replace'`` so the transform can consume the file
+    unchanged. Valid UTF-8 multi-byte sequences are preserved; bad bytes
+    become U+FFFD.
+
+    Fixture is a hand-crafted 8-row CSV extended with two rows: one
+    carrying a valid UTF-8 ``°C`` sequence and one carrying a raw
+    Latin-1 ``é`` byte injected post-write. Both must land in the
+    output; nothing about the malformed byte should abort the run.
+    """
+    xform = MicrobeDecoderTransform(
+        input_dir=FIXTURE_DIR,
+        output_dir=tmp_path,
+        chemical_loader=_NoChebi(),
+    )
+    xform.run(data_file="database_mixed_encoding.csv")
+    edges = _read_tsv(xform.output_edge_file)
+    subjects = {e["subject"] for e in edges}
+    assert f"{LPSN_PREFIX}777" in subjects, "the valid-UTF-8 row must be processed"
+    assert f"{LPSN_PREFIX}888" in subjects, "the mixed-encoding row must be processed too"

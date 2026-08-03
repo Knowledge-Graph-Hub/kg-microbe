@@ -31,6 +31,7 @@
 #    metatraits  MetaTraits per-taxon trait summaries (NCBITaxon ranks)
 #    metatraits_gtdb  MetaTraits summaries + crosswalks keyed by GTDB taxonomy
 #    bactotraits      BactoTraits V2 (static Jun-2022 dataset)
+#    microbedecoder   MicrobeDecoder wide CSV (Hackmann & Zhang, Sci Adv 2023; CC BY 4.0)
 #    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
 #
 #  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so
@@ -279,12 +280,18 @@
 #   local_name: CTD_chemicals_diseases.tsv.gz
 
 #
-# Fermentation explorer
-# NOTE: Commented out — no active transform uses this file
+# MicrobeDecoder (successor to FermentationExplorer, same authors and DOI)
+# Hackmann & Zhang, Science Advances 2023, https://doi.org/10.1126/sciadv.adg8687
+# License: CC BY 4.0 — redistribution permitted with attribution
+# Content: wide CSV keyed on LPSN strain, ~8,350 rows, joining Bergey / VPI /
+# literature-curated / FAPROTAX fermentation profiles + a pre-joined LPSN ↔
+# GTDB ↔ NCBI ↔ GOLD ↔ IMG ↔ BacDive crosswalk. The zip contains a single
+# `database.csv`; extraction happens once in MicrobeDecoderTransform.run().
 #
-# -
-#   url: https://raw.githubusercontent.com/thackmann/FermentationExplorer/main/Shiny/FermentationExplorer/data/database.zip
-#   local_name: fermentation_explorer.csv
+-
+  url: https://github.com/thackmann/MicrobeDecoder/raw/main/Shiny/MicrobeDecoder/data/database/database.zip
+  local_name: microbedecoder_database.zip
+  tag: microbedecoder
 
 #
 # Disbiome

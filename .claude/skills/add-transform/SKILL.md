@@ -105,11 +105,56 @@ Draft a small **entity model table** in the design note:
 
 If the source has phenotypes that don't fit any existing biolink or METPO predicate, spawn `/metpo-proposal` to propose new terms rather than inventing local ones.
 
+#### Reuse existing prefix constants before inventing new ones
+
+`kg_microbe/transform_utils/constants.py` already ships **facet-typed placeholder prefixes** for common unmatched-label cases; do NOT mint a new `kgmicrobe.<something>:` prefix when one of these fits:
+
+| Placeholder facet | Prefix constant | String | Category typically paired |
+|---|---|---|---|
+| Pathway / metabolism | `PATHWAY_PREFIX` | `kgmicrobe.pathway:` | `METABOLISM_CATEGORY` / `PATHWAY_CATEGORY` |
+| Chemical entity | `COMPOUND_PREFIX` | `kgmicrobe.compound:` | `SMALL_MOLECULE_CATEGORY` / `CHEBI_CATEGORY` |
+| Phenotypic quality / trait | `TRAIT_PREFIX` | `kgmicrobe.trait:` | `PHENOTYPIC_CATEGORY` |
+| Carbon substrate specifically | `CARBON_SUBSTRATE_PREFIX` | `kgmicrobe.carbon_substrate:` | `CARBON_SUBSTRATE_CATEGORY` |
+| Growth medium | (yaml section `kgmicrobe.medium`) | `kgmicrobe.medium:` | `MEDIUM_CATEGORY` |
+| Molecular activity | (yaml section `kgmicrobe.activity`) | `kgmicrobe.activity:` | `MOLECULAR_ACTIVITY_CATEGORY` |
+| Cell shape | `SHAPE_PREFIX` | `cell_shape:` | (madin-specific) |
+
+Route unmatched labels by their semantic role to the correct one of these; do NOT create a source-specific placeholder prefix (`kgmicrobe.<mysource>:`) unless the concept genuinely doesn't fit any of the above (rare — reviewed case-by-case in the PR).
+
+#### Reuse existing predicate constants before hardcoding
+
+`constants.py` also carries predicate/relation constants every transform routes through so the merged KG stays queryable:
+
+| Semantic role | Predicate constant | Relation constant |
+|---|---|---|
+| Organism consumes a substrate | `NCBI_TO_SUBSTRATE_EDGE` (== `"biolink:consumes"`) | `TROPHICALLY_INTERACTS_WITH` |
+| Organism uses as carbon source | `NCBI_TO_CARBON_SUBSTRATE_EDGE` (== `"METPO:2000006"`) | (source-specific) |
+| Organism produces a chemical | `PRODUCES_PREDICATE` | `HAS_OUTPUT_RELATION` / `PRODUCES_RELATION` |
+| Organism has a phenotype | `HAS_PHENOTYPE_PREDICATE` | `HAS_PHENOTYPE` |
+| Organism is capable of | `CAPABLE_OF_PREDICATE` | `CAPABLE_OF` |
+| Cross-reference | `CLOSE_MATCH_PREDICATE` / `SAME_AS_PREDICATE` | `CLOSE_MATCH_RELATION` / `EXACT_MATCH` |
+
+Never hardcode strings like `"biolink:consumes"` — grep for the constant first.
+
+#### Reuse canonical mapping loaders
+
+`kg_microbe/utils/mapping_file_utils.py` and `kg_microbe/utils/chemical_mapping_utils.py` expose the **only** blessed paths from a raw source label to an ontology CURIE. New transforms MUST attempt these before minting placeholders:
+
+- **`load_metpo_mappings(synonym_column)`** — canonical label → METPO alias resolution. Pass a source-specific synonym column name (e.g. `"madin synonym or field"`, `"bacdive keyword synonym"`); the METPO ROBOT template at `https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/<tag>/src/templates/metpo_sheet.tsv` carries the columns. Adding a new source almost always means adding a new synonym column to that upstream template — file the METPO PR early in Phase 3 so the mapping is queryable by Phase 6.
+- **`ChemicalMappingLoader.find_chebi_by_name(label)`** — unified CHEBI resolution (unified mappings + special_chemical_mappings + manual overrides). Reads the mappings gzip file; instantiate once per transform.
+- **`kg_microbe.utils.ner_utils.annotate(df, prefix, exclusion_list, outfile, llm, chemical_loader)`** — OAK-based NER fallback against CHEBI or GO. Cache-gated by `cache_is_complete` on the output TSV; call only when the mapping tables miss.
+- **Ontology adapters** — `kg_microbe.utils.ontology_utils.get_ontology_adapter("chebi" | "go" | "ec" | "ncbitaxon")` returns a lazy, drift-realigned adapter for label / ancestor / relationship lookups. `_NCBILabelIndex`-style direct-sqlite indices (see `lpsn.py:196-243`) are the pattern when label lookups dominate the transform's hot path.
+
+Every canonical mapping the source could produce should also land in the shared **`mappings/canonical/`** hub — `phenotype_mappings.tsv`, `pathway_mappings.tsv`, `chemical_mappings.tsv`, `enzyme_mappings.tsv`, `metpo_alias_mappings.tsv` — rather than being hidden in per-transform TSVs. The `chemical-mapping` skill enumerates the schema.
+
 **Gate 3 — the model is written down and:**
 - Every category is in the biolink model.
 - Every predicate is either biolink or a currently-registered METPO predicate (or a queued proposal).
 - Every prefix used exists in `custom_curies.yaml` OR is added in the same PR (add first, then reference).
 - No local CURIEs like `kgmicrobe.strain:` outside the two prefixes already reserved for that purpose.
+- **Placeholders route by facet** into `PATHWAY_PREFIX` / `COMPOUND_PREFIX` / `TRAIT_PREFIX` / `CARBON_SUBSTRATE_PREFIX` — no new `kgmicrobe.<source>:` prefix unless the concept truly doesn't fit any existing facet.
+- **Constants over hardcoded strings** for every predicate, relation, category, and infores knowledge-source (`grep` `kg_microbe/transform_utils/constants.py` first).
+- **Canonical mapping loaders attempted** for every label the transform tries to resolve (METPO alias, chemical mapping, ner fallback) — falling back to placeholders only after the mapping paths return None.
 
 ### Phase 4 — Design the cross-reference strategy
 
@@ -182,7 +227,10 @@ Now write the actual transform logic:
 - Do NOT hardcode inline CURIEs for the same concept at more than 2 call sites — the `audit-mappings` skill flags this. Route through a small mapping file or a dispatch dict.
 - Do NOT open output files with plain `open("w")` if the transform can be interrupted — use the writers the base class provides so the header + provenance are consistent.
 - Do NOT skip provenance. Every edge needs `primary_knowledge_source` set; leaving it blank shows up in `kg-model-review` as ERROR.
-- Do NOT emit stub nodes for cross-referenced entities that already exist in KG-Microbe — emit the edge, and rely on merge-time reconciliation.
+- Do NOT emit stub nodes for cross-referenced entities that already exist in KG-Microbe — emit the edge, and rely on merge-time reconciliation. This includes the transform's own *subject* nodes when they belong to another transform's namespace (e.g. a transform keyed on `lpsn:*` must NOT emit `lpsn:*` node stubs; the `lpsn` transform is the authoritative source, and the new transform's edges just reference those subjects).
+- Do NOT hardcode predicate / relation / category strings. Import the constant from `kg_microbe/transform_utils/constants.py` — the same reason: consistent typing across every transform makes the merged KG queryable.
+- Do NOT invent a new `kgmicrobe.<source>:` placeholder prefix without checking Phase 3's placeholder-prefix table first. `pathway` / `compound` / `trait` / `carbon_substrate` / `medium` / `activity` / `ingredient` are already registered — route to the one that matches your facet.
+- Do NOT bypass the canonical mapping loaders. Every unmatched label MUST have tried `load_metpo_mappings` and `ChemicalMappingLoader.find_chebi_by_name` (and NER when appropriate) before a placeholder is minted. Placeholders should be the exception, not the rule; the `kg-model-review` output makes it easy to see how many placeholders you're producing per run.
 
 **Gate 6 — `poetry run kg transform -s <source_name>` produces non-zero rows and the header matches `constants.py`.**
 

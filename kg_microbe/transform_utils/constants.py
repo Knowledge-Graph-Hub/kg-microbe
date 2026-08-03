@@ -22,6 +22,7 @@ UNIPROT_HUMAN = "uniprot_human"
 GTDB = "gtdb"
 METATRAITS = "metatraits"
 METATRAITS_GTDB = "metatraits_gtdb"
+MICROBEDECODER = "microbedecoder"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -33,6 +34,7 @@ MEDIADIVE_MEDIUM_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_yaml"
 MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
 METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
+MICROBEDECODER_DIR = TRANSFORM_UTILS_DIR / MICROBEDECODER
 # Canonical curation hub for hand-curated label -> ontology mappings used by
 # metatraits + metatraits_gtdb. Moved from per-transform location
 # (transform_utils/metatraits/mappings/) to repo-root mappings/canonical/ in
@@ -54,6 +56,8 @@ COG_DIR = TRANSFORM_UTILS_DIR / COG
 COG_RAW_DIR = RAW_DATA_DIR / COG
 KEGG_DIR = TRANSFORM_UTILS_DIR / KEGG
 KEGG_RAW_DIR = RAW_DATA_DIR / KEGG
+MICROBEDECODER_RAW_DIR = RAW_DATA_DIR / MICROBEDECODER
+MICROBEDECODER_MANUAL_ANNOTATION_FILE = MICROBEDECODER_DIR / "microbedecoder_manual_annotation.tsv"
 UNIPROT_TREMBL_DIR = TRANSFORM_UTILS_DIR / "uniprot_trembl"
 UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
 ONTOLOGIES_DIR = TRANSFORM_UTILS_DIR / ONTOLOGIES
@@ -196,6 +200,13 @@ KEGG_PREFIX = "KEGG:"
 SHAPE_PREFIX = "cell_shape:"
 PATHWAY_PREFIX = "kgmicrobe.pathway:"
 CARBON_SUBSTRATE_PREFIX = "kgmicrobe.carbon_substrate:"
+# Placeholder CURIEs for chemical entities and phenotypic qualities that
+# don't yet resolve to CHEBI / METPO. Sections of the same name are already
+# registered in `custom_curies.yaml`; these constants let transforms mint
+# slugs without repeating the string. See the yaml header for guidance on
+# what belongs under each.
+COMPOUND_PREFIX = "kgmicrobe.compound:"
+TRAIT_PREFIX = "kgmicrobe.trait:"
 ISOLATION_SOURCE_PREFIX = "bacdive.isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
@@ -210,6 +221,25 @@ BACDIVE_API_BASE_URL = "https://mediadive.dsmz.de/"
 BIOSAFETY_LEVEL_PREFIX = "BSL:"
 GTDB_PREFIX = "GTDB:"
 GENBANK_PREFIX = "GenBank:"
+# LPSN nomenclature spine (used both by the standalone `lpsn` transform and,
+# for organism identity, by MicrobeDecoder — whose row primary key is LPSN_ID).
+LPSN_PREFIX = "lpsn:"
+# Novel genome-project prefixes surfaced by MicrobeDecoder's pre-joined
+# LPSN ↔ GOLD ↔ IMG crosswalk. Registered here so cross_ref edges emit
+# well-formed CURIEs and validators (kg_model_review STANDARD_PREFIXES,
+# custom_curies.yaml loader) accept them.
+GOLD_PREFIX = "GOLD:"  # Genomes OnLine Database (organism/project IDs)
+IMG_PREFIX = "IMG:"  # JGI Integrated Microbial Genomes
+
+# Knowledge-source infores identifiers for the four curated sources
+# MicrobeDecoder pre-joins per LPSN strain. Each derived edge is tagged with
+# the InforES identifier for its original source so the merged KG can be
+# filtered / provenanced downstream.
+MICROBEDECODER_KNOWLEDGE_SOURCE = "infores:microbedecoder"
+BERGEY_KNOWLEDGE_SOURCE = "infores:bergey-manual"  # Bergey's Manual of Systematics
+VPI_KNOWLEDGE_SOURCE = "infores:vpi-anaerobe-manual"  # VPI Anaerobe Laboratory Manual
+LITERATURE_KNOWLEDGE_SOURCE = "infores:microbedecoder-literature"  # per-strain lit-curated
+FAPROTAX_KNOWLEDGE_SOURCE = "infores:faprotax"  # FAPROTAX functional labels
 
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL = "Complex Medium"

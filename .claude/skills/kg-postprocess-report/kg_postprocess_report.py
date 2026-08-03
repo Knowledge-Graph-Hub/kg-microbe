@@ -183,6 +183,48 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             notes="See `/metpo-proposal` skill for the full workflow.",
         ),
         Operation(
+            name="microbedecoder-unmapped-dump",
+            stage="post-transform",
+            title="MicrobeDecoder unmapped-labels curation queue",
+            purpose=(
+                "Reduce the per-run microbedecoder/unmapped_labels.tsv into a "
+                "tracked curation TSV under mappings/, filtered by placeholder "
+                "prefix and occurrence threshold. Feeds the METPO / chemical "
+                "mapping / trait vocabulary loops that shrink the report on "
+                "subsequent transform runs."
+            ),
+            command=(
+                "poetry run python scripts/dump_unmapped_microbedecoder_labels.py "
+                "--min-occurrences 100"
+            ),
+            inputs=[f"{transformed_dir}/microbedecoder/unmapped_labels.tsv"],
+            outputs=["mappings/microbedecoder_unmapped_labels_to_curate.tsv"],
+            required_for="microbedecoder curation loop (issue #650)",
+            severity=SEV_RECOMMENDED,
+            notes=(
+                "Split the queue per facet with --prefix {pathway,compound,trait} "
+                "so curators can hand each batch to the right target tool "
+                "(METPO PR / chemical_mappings.tsv / kgmicrobe.trait yaml)."
+            ),
+        ),
+        Operation(
+            name="microbedecoder-coverage-report",
+            stage="post-transform",
+            title="MicrobeDecoder coverage report",
+            purpose=(
+                "Quantify predicate distribution + ontology coverage + approximate "
+                "mapping rate for microbedecoder's live output."
+            ),
+            command="poetry run python scripts/generate_coverage_report.py -s microbedecoder",
+            inputs=[
+                f"{transformed_dir}/microbedecoder/edges.tsv",
+                f"{transformed_dir}/microbedecoder/unmapped_labels.tsv",
+            ],
+            outputs=[],
+            required_for="release notes",
+            severity=SEV_OPTIONAL,
+        ),
+        Operation(
             name="ro-relations-validate",
             stage="post-transform",
             title="RO / relation column validation",

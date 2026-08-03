@@ -356,6 +356,93 @@ def test_dedup_sorts_output(microbedecoder_transform):
     assert ids == sorted(ids), "nodes must be sorted by id"
 
 
+def test_unmapped_labels_report_is_written(microbedecoder_transform):
+    """
+    `unmapped_labels.tsv` lands next to nodes/edges with per-label tallies.
+
+    The report is the curation priority queue that feeds issue #650 —
+    sorted by occurrence count descending. Follows the metatraits
+    ``unmapped_traits.tsv`` convention. Each row names the placeholder
+    CURIE, its category, the raw source label, the pipe-set of source
+    columns it appeared in, and the occurrence count for this run.
+    """
+    microbedecoder_transform.run()
+    report = microbedecoder_transform.output_dir / "unmapped_labels.tsv"
+    assert report.is_file(), "run must emit unmapped_labels.tsv when placeholders were minted"
+    with open(report, newline="") as fh:
+        rows = list(csv.DictReader(fh, delimiter="\t"))
+    assert rows, "report has at least one row for the fixture's unmapped labels"
+    # Header shape
+    assert set(rows[0].keys()) == {
+        "placeholder_curie",
+        "category",
+        "label",
+        "source_columns",
+        "occurrences",
+    }
+    # Sorted by occurrences descending
+    counts = [int(r["occurrences"]) for r in rows]
+    assert counts == sorted(counts, reverse=True), "rows must be sorted by occurrences desc"
+    # `acetate` shows up in multiple Bergey/VPI/Literature columns for
+    # LPSN_ID=101 — its source_columns cell should carry the pipe-set.
+    acetate_rows = [r for r in rows if r["label"] == "acetate"]
+    assert acetate_rows, "acetate appeared in the fixture; must be in the report"
+    src_cols = acetate_rows[0]["source_columns"].split("|")
+    assert len(src_cols) >= 2, (
+        f"acetate appeared under multiple source columns in the fixture "
+        f"(bergey, vpi, literature); got source_columns={acetate_rows[0]['source_columns']}"
+    )
+
+
+def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
+    """
+    No report is written when every label maps cleanly (aspirational state).
+
+    Injects a chemical loader that resolves every label to a stub CHEBI
+    CURIE. The transform's fixture also carries BacDive_* and
+    Type_of_metabolism cells that route through the placeholder path
+    regardless of ChEBI, so the report file WILL still be written for
+    those. This test therefore uses a fixture-minimal transform whose
+    only unmapped-eligible content is the chemical labels the fake
+    loader resolves.
+    """
+
+    class _AlwaysResolves:
+
+        """ChemicalMappingLoader stub that resolves every label to CHEBI:0."""
+
+        def find_chebi_by_name(self, label, fuzzy_stereochemistry=True):
+            """Return a stub CHEBI CURIE for every lookup (so no placeholders)."""
+            del label, fuzzy_stereochemistry
+            return "CHEBI:15377"
+
+    # Write a minimal 1-row CSV with ONLY chemical fields populated (no
+    # Type_of_metabolism, no BacDive_* cells) so the placeholder path
+    # is only reachable for chemical labels.
+    fixture_dir = tmp_path
+    csv_path = fixture_dir / "database.csv"
+    header = [
+        "LPSN_ID",
+        "Bergey_Major_end_products",
+        "Bergey_Substrates_for_end_products",
+    ]
+    with open(csv_path, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(header)
+        w.writerow(["999", "acetate, lactate", "glucose"])
+
+    xform = MicrobeDecoderTransform(
+        input_dir=fixture_dir,
+        output_dir=tmp_path,
+        chemical_loader=_AlwaysResolves(),
+    )
+    xform.run(data_file="database.csv")
+    report = xform.output_dir / "unmapped_labels.tsv"
+    assert not report.exists(), (
+        "no report should be written when every label mapped cleanly; found unmapped_labels.tsv anyway"
+    )
+
+
 def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
     """
     The real MicrobeDecoder CSV is mixed UTF-8 + sporadic Latin-1 bytes.

@@ -95,6 +95,7 @@ def test_lpsn_subject_nodes_are_not_stubbed(microbedecoder_transform):
         f"{LPSN_PREFIX}404",
         f"{LPSN_PREFIX}505",
         f"{LPSN_PREFIX}606",
+        f"{LPSN_PREFIX}707",
     }, "every non-blank LPSN_ID row produces edges keyed on lpsn:<id>"
 
 
@@ -136,6 +137,39 @@ def test_crosswalk_edges_carry_microbedecoder_provenance(microbedecoder_transfor
     assert close_matches, "some crosswalk edges must exist"
     for e in close_matches:
         assert e["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
+
+
+def test_crosswalk_splits_multi_value_cells(microbedecoder_transform):
+    """
+    Multi-value crosswalk cells (comma-separated) must emit one edge per token.
+
+    Regression for issue #655: the source's ``IMG_Genome_ID`` column packs
+    multiple IMG genome IDs per row (e.g. ``3300000001,3300000002``).
+    Before the fix the raw cell was emitted as a single malformed CURIE
+    (``IMG:3300000001,3300000002``); ~2.6 K such edges landed in the
+    first live merge. The fix runs every crosswalk cell through
+    :func:`split_multivalue` so each token becomes its own
+    ``biolink:close_match`` edge.
+
+    Fixture row LPSN_ID=707 carries a two-value IMG cell that must split
+    into two edges pointing at ``IMG:3300000001`` and ``IMG:3300000002``.
+    """
+    microbedecoder_transform.run()
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+    img_edges_for_707 = [
+        e
+        for e in edges
+        if e["subject"] == f"{LPSN_PREFIX}707"
+        and e["predicate"] == CLOSE_MATCH_PREDICATE
+        and e["object"].startswith("IMG:")
+    ]
+    objects = {e["object"] for e in img_edges_for_707}
+    assert objects == {"IMG:3300000001", "IMG:3300000002"}, (
+        f"multi-value IMG cell must split into two edges; got {objects}"
+    )
+    # Nothing malformed: no CURIE should contain an embedded comma.
+    for obj in objects:
+        assert "," not in obj, f"multi-value cell escaped the split: {obj!r}"
 
 
 def test_missing_crosswalk_cells_are_skipped(microbedecoder_transform):

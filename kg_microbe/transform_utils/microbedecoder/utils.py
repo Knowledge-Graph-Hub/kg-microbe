@@ -117,28 +117,57 @@ BACDIVE_SNAPSHOT_COLUMNS: Tuple[str, ...] = (
 )
 
 
-# Multi-value cell splitter. Bergey / VPI / Literature end-product columns
-# use comma-separated values ("acetate, lactate, ethanol"), occasionally with
-# semicolons in the raw source text. Whitespace is collapsed; empties are
-# dropped. The strict=False regex is deliberate — one place, one rule.
+# Multi-value cell splitters. Two variants because MicrobeDecoder's
+# column-family conventions are not uniform:
 #
-# Known v1 limitation: a chemical name containing a literal comma (e.g.
-# ``2,3-butanediol``) will over-split into ``2`` and ``3-butanediol``. The
-# same limitation exists in madin_etal's multi-value handling; MicrobeDecoder
-# rows use simple end-product names in practice ("acetate", "lactate",
-# "butanol"). A follow-up can promote this to a smarter parser once a
-# curated exceptions list exists.
+# ``_MULTIVALUE_SPLIT`` (comma OR semicolon) is used for the metabolism
+# and BacDive-snapshot columns whose Bergey / VPI / Literature end-products
+# use comma-separated values ("acetate, lactate, ethanol") and occasionally
+# semicolons in the raw source text.
+#
+# ``_MULTIVALUE_SPLIT_COMMA_ONLY`` is used for the identity-crosswalk
+# columns (``NCBI_Taxonomy_ID``, ``GTDB_ID``, ``BacDive_ID``,
+# ``GOLD_Organism_ID``, ``IMG_Genome_ID``). Only ``IMG_Genome_ID`` actually
+# multi-values in practice — it packs multiple genome IDs per row
+# comma-separated. The other four columns are single-value but sometimes
+# contain internal semicolons that are part of the identifier itself
+# (``GTDB_ID`` uses semicolons as rank separators, e.g.
+# ``d__Bacteria;g__Bacillus;s__Bacillus subtilis``); a semicolon split
+# would shred those into three orphan CURIEs (issue #655 regression net).
+#
+# Known limitation shared with ``madin_etal``: a chemical name containing a
+# literal comma (e.g. ``2,3-butanediol``) still over-splits on the primary
+# splitter. MicrobeDecoder rows use simple end-product names in practice
+# ("acetate", "lactate", "butanol"); a follow-up can promote this to a
+# smarter parser once a curated exceptions list exists.
 _MULTIVALUE_SPLIT = re.compile(r"\s*[,;]\s*")
+_MULTIVALUE_SPLIT_COMMA_ONLY = re.compile(r"\s*,\s*")
 
 
 def split_multivalue(cell: object) -> List[str]:
-    """Split a multi-value cell into a list of trimmed non-empty tokens."""
+    """Split a multi-value cell on comma OR semicolon; return trimmed tokens."""
+    return _split(cell, _MULTIVALUE_SPLIT)
+
+
+def split_multivalue_comma_only(cell: object) -> List[str]:
+    """
+    Split a multi-value cell on comma ONLY (preserves in-value semicolons).
+
+    Use for identity-crosswalk cells (``IMG_Genome_ID`` and friends) where
+    a raw semicolon is part of the identifier (``GTDB_ID`` rank separator)
+    rather than a value separator.
+    """
+    return _split(cell, _MULTIVALUE_SPLIT_COMMA_ONLY)
+
+
+def _split(cell: object, pattern: "re.Pattern") -> List[str]:
+    """Shared helper for :func:`split_multivalue` and its comma-only variant."""
     if cell is None:
         return []
     text = str(cell).strip()
     if not text or text.lower() in _EMPTY_MARKERS:
         return []
-    return [tok for tok in (t.strip() for t in _MULTIVALUE_SPLIT.split(text)) if tok]
+    return [tok for tok in (t.strip() for t in pattern.split(text)) if tok]
 
 
 # Values MicrobeDecoder uses to indicate "no data" for a cell. Detected

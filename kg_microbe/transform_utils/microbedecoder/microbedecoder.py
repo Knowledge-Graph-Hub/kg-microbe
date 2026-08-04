@@ -95,6 +95,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     iter_metabolism_columns,
     slugify_label,
     split_multivalue,
+    split_multivalue_comma_only,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.pandas_utils import drop_duplicates
@@ -313,29 +314,45 @@ class MicrobeDecoderTransform(Transform):
         node_writer: "csv._writer",
         edge_writer: "csv._writer",
     ) -> None:
-        """One `biolink:close_match` edge per non-empty crosswalk cell."""
+        """
+        Emit one ``biolink:close_match`` edge per crosswalk local-ID token.
+
+        Multi-value cells are split via :func:`split_multivalue_comma_only`
+        before CURIE construction. Without a split the source's
+        ``IMG_Genome_ID`` column — which packs multiple genome IDs per row
+        separated by commas — landed as a single malformed CURIE like
+        ``IMG:2547132264,2784746776`` on ~2.6 K edges in the first live
+        merge (issue #655).
+
+        Comma-only rather than the metabolism emitter's comma-or-semicolon
+        split, because ``GTDB_ID`` uses ``;`` as an internal rank separator
+        (``d__Bacteria;g__Bacillus;s__Bacillus subtilis``) — a semicolon
+        split would shred a single GTDB CURIE into three orphan fragments.
+        The other four crosswalk columns (NCBI, BacDive, GOLD) are
+        single-value in practice; comma-only is safe there too.
+        """
         for column, prefix, _formatter in CROSSWALK_COLUMNS:
             raw = row.get(column)
             if is_empty_cell(raw):
                 continue
-            local_id = str(raw).strip()
-            # Strip a stray leading prefix if the source already CURIE'd it
-            # (`NCBI_Taxonomy_ID` occasionally arrives as ``"NCBITaxon:562"``
-            # rather than a bare integer — normalise so downstream nodes
-            # merge cleanly).
-            if local_id.upper().startswith(prefix.upper()):
-                local_id = local_id.split(":", 1)[1]
-            object_curie = f"{prefix}{local_id}"
-            edge_writer.writerow(
-                self._make_edge_row(
-                    subject,
-                    CLOSE_MATCH_PREDICATE,
-                    object_curie,
-                    CLOSE_MATCH_RELATION,
-                    self.knowledge_source,
+            for local_id in split_multivalue_comma_only(raw):
+                # Strip a stray leading prefix if the source already CURIE'd
+                # it (``NCBI_Taxonomy_ID`` occasionally arrives as
+                # ``"NCBITaxon:562"`` rather than a bare integer — normalise
+                # so downstream nodes merge cleanly).
+                if local_id.upper().startswith(prefix.upper()):
+                    local_id = local_id.split(":", 1)[1]
+                object_curie = f"{prefix}{local_id}"
+                edge_writer.writerow(
+                    self._make_edge_row(
+                        subject,
+                        CLOSE_MATCH_PREDICATE,
+                        object_curie,
+                        CLOSE_MATCH_RELATION,
+                        self.knowledge_source,
+                    )
                 )
-            )
-            self._stats["crosswalk_edges"] += 1
+                self._stats["crosswalk_edges"] += 1
 
     # ------------------------------------------------------------------
     # Metabolism edges (Bergey / VPI / Literature / FAPROTAX)

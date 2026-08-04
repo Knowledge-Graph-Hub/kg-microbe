@@ -218,7 +218,14 @@ STANDARD_PREFIXES = {
     # madin_etal provisional node prefixes (fallback when no ontology term found)
     "pathways", "carbon_substrates",
     # bacdive / mediadive domain-specific prefixes
+    "bacdive",                # BacDive strain ID (bare form; the transform mints these at run time)
     "bacdive.isolation_source",
+    # Genome-project crosswalk prefixes surfaced by MicrobeDecoder's
+    # pre-joined LPSN ↔ GOLD ↔ IMG ↔ NCBI ↔ GTDB ↔ BacDive close_match edges
+    # (registered as GOLD_PREFIX / IMG_PREFIX in constants.py; the authoritative
+    # nodes come from external genome catalogues, so we don't emit stubs).
+    "GOLD",                   # Genomes OnLine Database
+    "IMG",                    # JGI Integrated Microbial Genomes
     # mediadive prefixes
     "mediadive.medium", "mediadive.ingredient", "mediadive.solution", "mediadive.medium-type",
     "CAS-RN", "cas", "PubChem", "pubchem.compound", "PUBCHEM.COMPOUND",

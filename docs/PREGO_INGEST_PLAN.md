@@ -101,7 +101,7 @@ Both `entity1_type` and `entity2_type` use JensenLab tagger integer codes (`-2` 
 **No stub nodes** — every PREGO edge subject/object already resolves in an existing KGM transform.
 
 **Edge attributes** (per JensenLab convention, discovered schema):
-- `score` — PREGO scoring column (semantics per-channel; **isolates uses integer scores 3 / 4** per canary; literature and environmental score conventions to verify during their respective canaries).
+- `score` — PREGO scoring column (semantics per-channel; **integer scores 3 / 4 observed in the first 100 K isolates rows** — verify against the full 42 M-row file during implementation; literature and environmental score conventions to verify during their respective canaries).
 - `channel` — the sub-channel string from the source archive (isolates has `Isolates`, `Single Amplified Genome`, `Genome annotation`, `Aquatic`, `Oceanic`, `Human`, `Plants`, plus PMID-tagged BioProject rows). Kept as-is so consumers can filter by evidence type.
 - `direct_flag` — `TRUE` for direct curator/database rows. **All rows in the isolates archive are TRUE** (this whole channel IS the direct-annotation channel); the flag becomes discriminating only when literature rows (mostly `FALSE` / empty) get mixed in during merge.
 - `evidence_url` — deep link into the underlying evidence source (JGI IMG, PubMed abstract, etc.). Often empty for older rows.
@@ -174,7 +174,12 @@ Reference transforms (based on similarity):
 
 - Reuse `get_ontology_adapter("go" / "ncbitaxon")` for label lookups on emitted subject/object nodes (we still emit rich nodes for any subject/object not already carried by the merged graph, but that will be a small residual — most already exist).
 - **Stream the archives, don't materialise.** `literature.tar.gz` unpacks to ~19.6 GB. Read row-by-row with `gzip.open()` + `tarfile.open(mode="r|gz")` in streaming mode; do NOT load into a DataFrame.
-- **Deduplicate at emit time.** Every unique association appears twice in the raw data (`X, Y` and `Y, X`). The transform must keep only one direction — pick the one matching KGM convention (`NCBITaxon → GO` for capable_of; `ENVO → NCBITaxon` for location_of) and drop the inverse. Track `(subject, predicate, object)` in an on-disk sqlite bloom filter or `LMDB` if the in-memory dedup set doesn't fit; measure during Phase 6b.
+- **Deduplicate by canonical-direction filter, not by tracking-set.** Every unique association appears exactly twice as an ordered pair: as `(type_A, id_A, type_B, id_B)` AND as `(type_B, id_B, type_A, id_A)`. Instead of an in-memory / sqlite / LMDB dedup set (all of which have their own problems — memory pressure, complexity, or false positives), just **filter each row by `entity1_type`** to keep the canonical-subject direction per row shape:
+  - Taxon↔GO: keep rows where `entity1_type == -2` (drop the `-21/-22/-23 → -2` inverses).
+  - Taxon↔ENVO: keep rows where `entity1_type == -27` — this matches the bacdive convention (`ENVO → location_of → strain`) so the merged KG carries one canonical direction.
+  - Taxon↔DOID: keep rows where `entity1_type == -2` (biolink domain of `associated_with`).
+
+  O(1) memory per row, single streaming pass, deterministic.
 - **Canary before the full literature run.** Isolates archive canary complete 2026-08-04 (see [Canary findings](#canary-findings-2026-08-04)) — schema, row shapes, and scale confirmed. Extrapolate row-count and disk-cost predictions from those measurements before touching the 5.4 GB literature file.
 - **DOID→MONDO xref.** Not every DOID has a MONDO equivalent. Route through `ontologies/mondo_nodes.tsv` and skip rows with no xref rather than emitting an orphan DOID CURIE.
 - **Cardinality risk.** Isolates: ~21 M unique taxon↔GO_MF edges (post-dedup) confirmed. Literature likely 3-5x larger. Watch `NCBITaxon → capable_of` fan-out in Phase 7 for spike outliers (would indicate a runaway text-mining match on a single popular taxon).
@@ -197,7 +202,7 @@ Reference transforms (based on similarity):
 | DOID edges | 5,172 | small | ✅ |
 | BTO edges | 6,725 | small | ✅ deferred per v1 scope |
 | taxon-taxon rows | 3,992 (host associations e.g. `→ NCBITaxon:9606`) | Not listed | ❌ **plan now lists these as skip-in-v1** |
-| Score values | Integers `3` and `4` (isolates channel) | Floats + z_score assumed | ❌ **plan now clarifies per-channel score conventions** |
+| Score values | Integers `3` / `4` observed in first 100 K rows | Floats + z_score assumed | ❌ **plan now clarifies per-channel score conventions; verify full file during impl** |
 | `direct_flag` | 100% TRUE in isolates | Assumed mixed within a file | ❌ **plan now clarifies flag is per-channel discriminator, not per-row** |
 
 **Cost:** 21-second download, 3-second extract, 3.5-minute sort of the pair-type distribution, ~5 min of targeted sampling. Total ~10 min of wall-clock; ~8 GB disk in `/tmp/prego_isolates/`.

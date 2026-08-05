@@ -32,6 +32,7 @@
 #    metatraits_gtdb  MetaTraits summaries + crosswalks keyed by GTDB taxonomy
 #    bactotraits      BactoTraits V2 (static Jun-2022 dataset)
 #    microbedecoder   MicrobeDecoder wide CSV (Hackmann & Zhang, Sci Adv 2023; CC BY 4.0)
+#    prego            PREGO taxon↔env/process associations (Zafeiropoulos et al 2022; CC-BY)
 #    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
 #
 #  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so
@@ -292,6 +293,31 @@
   url: https://github.com/thackmann/MicrobeDecoder/raw/main/Shiny/MicrobeDecoder/data/database/database.zip
   local_name: microbedecoder_database.zip
   tag: microbedecoder
+
+#
+# PREGO — Prokaryotic Environment / Genotype text-mining knowledgebase
+# Zafeiropoulos et al. 2022, Microorganisms 10(2):293
+# License: CC-BY
+# Content: three separate association archives from three evidence channels.
+# All three unpack to a single database_pairs.tsv (JensenLab tagger format,
+# 9 cols). Unlinked from the prego.hcmr.gr/Downloads UI page but documented
+# in the paper's Appendix D — see docs/PREGO_INGEST_PLAN.md for the trail.
+# The Mamba/nginx server on prego.hcmr.gr occasionally returns HTTP 500 on
+# HEAD requests but 200 on GET — verify kghub-downloader tolerates this
+# during first `kg download -t prego`.
+#
+-
+  url: https://prego.hcmr.gr/download/literature.tar.gz
+  local_name: prego/literature.tar.gz
+  tag: prego
+-
+  url: https://prego.hcmr.gr/download/environmental_samples.tar.gz
+  local_name: prego/environmental_samples.tar.gz
+  tag: prego
+-
+  url: https://prego.hcmr.gr/download/annotated_genomes_isolates.tar.gz
+  local_name: prego/annotated_genomes_isolates.tar.gz
+  tag: prego
 
 #
 # Disbiome

@@ -78,7 +78,8 @@ Each open issue is scored against three signal sets:
 
    These cannot be derived from issue title/body — curator judgement, so add a
    row when you triage a new issue. Missing rows render as `?` in the doc so
-   the gap is visible. A category typo is caught at import time by
+   the gap is visible. Both category typos and malformed scale strings (must
+   match `10^N` or `?`) are caught at import time by
    `_validate_source_metadata`, so a bad value cannot ship silently.
 
 Every included issue is bucketed into one of:

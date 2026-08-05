@@ -152,26 +152,48 @@ SOURCE_METADATA: Dict[int, Dict[str, str]] = {
 }
 
 
+_VALID_SCALE_RE = re.compile(r"^(10\^\d+|\?)$")
+
+
 def _validate_source_metadata() -> None:
     """
     Fail fast on curator typos in :data:`SOURCE_METADATA`.
 
-    Runs at import time. Catches category typos (e.g. ``"phentoype"``) that
-    would otherwise ship a mystery tag to readers of the generated doc; the
-    error message names both the offending issue and the valid vocabulary so
-    the fix is one edit.
+    Runs at import time. Two independent checks, one shared error message:
+
+    - ``category`` values must be keys of :data:`DATA_CATEGORIES` (catches typos
+      like ``"phentoype"`` that would otherwise ship a mystery tag).
+    - ``nodes`` and ``edges`` values must match ``10^N`` or ``?`` (catches the
+      wrong-format cases from issue #660 — ``"5000"`` or ``"1e6"`` or
+      ``"10^abc"`` would render literal-garbage cells in the doc).
+
+    The error message names both the offending issue and the valid vocabulary,
+    so the fix is one edit.
     """
-    valid = set(DATA_CATEGORIES)
-    bad = [
+    valid_categories = set(DATA_CATEGORIES)
+    bad_categories = [
         (num, meta["category"])
         for num, meta in SOURCE_METADATA.items()
-        if "category" in meta and meta["category"] not in valid
+        if "category" in meta and meta["category"] not in valid_categories
     ]
-    if bad:
-        detail = ", ".join(f"#{num}='{cat}'" for num, cat in bad)
+    if bad_categories:
+        detail = ", ".join(f"#{num}='{cat}'" for num, cat in bad_categories)
         raise SystemExit(
             f"[novel-transforms] SOURCE_METADATA carries category values not in "
-            f"DATA_CATEGORIES: {detail}. Valid: {sorted(valid)}."
+            f"DATA_CATEGORIES: {detail}. Valid: {sorted(valid_categories)}."
+        )
+    bad_scales = [
+        (num, field, meta[field])
+        for num, meta in SOURCE_METADATA.items()
+        for field in ("nodes", "edges")
+        if field in meta and not _VALID_SCALE_RE.match(meta[field])
+    ]
+    if bad_scales:
+        detail = ", ".join(f"#{num}.{field}='{val}'" for num, field, val in bad_scales)
+        raise SystemExit(
+            f"[novel-transforms] SOURCE_METADATA has scale values that don't match "
+            f"'10^N' or '?': {detail}. Curator convention lives in the SOURCE_METADATA "
+            f"docstring at the top of novel_transforms.py."
         )
 
 

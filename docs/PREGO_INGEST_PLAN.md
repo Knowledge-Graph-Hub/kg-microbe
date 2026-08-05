@@ -180,11 +180,11 @@ Reference transforms (based on similarity):
 
 ### Phase 6b — dictionary synonym enrichment (multiplier)
 
-- Load `prego_entities.tsv` into a `{serial: CURIE}` dict for the 5 emitted entity types (`-2` NCBITaxon, `-21` GO, `-27` ENVO, `-26` DOID via xref to MONDO — plus `-25` BTO skipped per v1 scope). ~500 K useful serials out of 2.5 M total; ~50 MB of Python dict — cheap.
+- Load `prego_entities.tsv` into a `{serial: CURIE}` dict for the 4 emitted entity types (`-2` NCBITaxon, `-21` GO, `-27` ENVO, `-26` DOID via xref to MONDO — `-25` BTO skipped per v1 scope). Order-of-magnitude **~10⁵ useful serials** out of 2.5 M total; the exact fraction depends on how many taxa actually appear in the associations tables — **verify during Phase 6a canary** and update this estimate.
 - Stream `prego_names.tsv` (13.9 M rows) row-by-row; for each `(serial, name)` where the serial is in the dict, accumulate `{CURIE: [names...]}`.
-- After phase 6a has emitted nodes, second-pass update the `synonym` column with pipe-delimited names — OR do the join in-memory and emit synonyms as the node is first written (single pass; preferred). Choose the single-pass path if memory permits (~1 GB peak for the CURIE→names dict).
+- After phase 6a has emitted nodes, second-pass update the `synonym` column with pipe-delimited names — OR do the join in-memory and emit synonyms as the node is first written (single pass; preferred). The accumulator is small: ~10⁵ CURIEs × average ~6 names × ~40 B/name ≈ **~200 MB peak**.
 - **Only enrich nodes the associations tables produced** — do NOT ingest the full 2.5 M dictionary as standalone stubs. Prevents the transform from ballooning by ~2 M NCBITaxon rows that duplicate the `ontologies` transform.
-- **Deduplicate names** case-insensitively within each entity; preserve the preferred label (from `prego_preferred.tsv`) as the `name` column, everything else in `synonym`.
+- **Deduplicate names** case-insensitively within each entity. **Leave the `name` column untouched by 6b** — it's set by 6a from the CURIE lookup or the association row's preferred label, and PREGO's `prego_preferred.tsv` may or may not agree with the ontology's own canonical label. Put every dictionary name (including PREGO's preferred if it isn't identical to the existing `name`) into `synonym`. No clobbering, all the info stays available for matching.
 - **`prego_groups.tsv` (42 M hierarchy rows) is NOT ingested** — the NCBI tree and GO is_a hierarchy are already in the `ontologies` transform; duplicating them here would just produce redundant `subclass_of` edges.
 - **`prego_texts.tsv` (43 K GO definitions) is NOT ingested** — go.owl already carries these.
 
@@ -201,7 +201,7 @@ Gates:
   - DOID→MONDO xref path exercises the mapping; DOID with no MONDO xref is silently skipped.
   - Absent optional columns handled without raising.
   - JensenLab type-code table covers `-2 / -21 / -27 / -26 / -25`; unknown codes log-and-skip rather than raise.
-  - **6b enrichment:** an emitted `NCBITaxon:` node carries pipe-delimited alternate names from the dictionary; names are deduplicated case-insensitively; the preferred label lands in `name`, alternates in `synonym`.
+  - **6b enrichment:** an emitted `NCBITaxon:` node carries pipe-delimited alternate names from the dictionary in `synonym`; names are deduplicated case-insensitively; the `name` column is NOT touched by 6b (set by 6a from the CURIE lookup).
   - **6b scope:** a fixture serial that has names in `prego_names.tsv` but doesn't appear in any association row is NOT emitted as a standalone node.
 
 ## Phase 9 — Ship
@@ -232,7 +232,7 @@ Follow the `branch-triage-ship` playbook: adversarial review → file findings �
 
 Combined raw: **~280 M association rows**. After filtering to just taxon→(ENVO/GO/DOID/MONDO) shapes and applying merge-time dedup, expect **~10⁸ emitted edges** — an order of magnitude larger than the original `~10⁶` estimate in [`NOVEL_TRANSFORMS.md`](./NOVEL_TRANSFORMS.md); update that dict in the next `novel-transforms` skill refresh.
 
-**Dictionary (Phase 6b):** 278 MB compressed. `prego_names.tsv` has 13.9 M `(serial, synonym)` rows; after filtering to the ~500 K serials that survive Phase 6a (only entities that appear in the associations), expect **~10⁷ synonym enrichments** distributed across ~5 × 10⁵ nodes (average ~5.6 synonyms per enriched node, matching the dictionary-wide ratio).
+**Dictionary (Phase 6b):** 278 MB compressed. `prego_names.tsv` has 13.9 M `(serial, synonym)` rows; after filtering to the serials that survive Phase 6a (only entities that appear in the associations, order of magnitude ~10⁵), expect **~10⁶–10⁷ synonym enrichments** distributed across those same nodes. The dictionary-wide average is 5.6 aliases per entity, but the enriched subset skews toward well-known organisms which have *more* aliases than obscure ones — so the per-node synonym count in the enriched subset is likely higher than 5.6. Actual counts to be verified during Phase 6a canary.
 
 ### Where the "not downloadable" misread came from
 

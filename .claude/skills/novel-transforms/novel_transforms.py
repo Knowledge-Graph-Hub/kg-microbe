@@ -96,21 +96,21 @@ MANUAL_EXCLUDE: Set[int] = {
 # Missing entries render as ``?`` in the doc so a curator can see the gap.
 # ---------------------------------------------------------------------------
 
-# Kebab-case category taxonomy. Keep this list tight — every entry needs a
-# clear one-line meaning so unrelated sources don't collide under the same
-# tag. Add a new category by extending both the tuple and the doc that
-# render_markdown prints so downstream readers understand it.
-DATA_CATEGORIES: Tuple[str, ...] = (
-    "phenotype",  # organism trait observations (growth, morphology, metabolism)
-    "genome",  # gene / protein content, functional annotation
-    "metabolism",  # pathways, reactions, end-products
-    "identity",  # crosswalks, naming registries
-    "media",  # growth-media composition
-    "environmental",  # habitat, biogeography, distribution
-    "ecology",  # inter-organism / host-microbe / microbe-drug interactions
-    "fitness",  # gene-essentiality, knockout experiments
-    "literature",  # publication associations
-)
+# Kebab-case category taxonomy. Single source of truth: this dict feeds both
+# the runtime whitelist (used to validate SOURCE_METADATA at import) AND the
+# legend block in the generated doc. Adding a category is one edit here —
+# no drift possible.
+DATA_CATEGORIES: Dict[str, str] = {
+    "phenotype": "organism trait observations (growth, morphology, metabolism)",
+    "genome": "gene / protein content, functional annotation",
+    "metabolism": "pathways / reactions / end-products",
+    "identity": "crosswalks, naming registries",
+    "media": "growth-media composition",
+    "environmental": "habitat / biogeography / distribution",
+    "ecology": "inter-organism / host-microbe / microbe-drug interactions",
+    "fitness": "gene-essentiality / knockout experiments",
+    "literature": "publication associations",
+}
 
 SOURCE_METADATA: Dict[int, Dict[str, str]] = {
     # Novel bucket
@@ -150,6 +150,32 @@ SOURCE_METADATA: Dict[int, Dict[str, str]] = {
     321: {"nodes": "10^3", "edges": "10^3", "category": "identity"},  # periodic table of bacteria
     569: {"nodes": "10^5", "edges": "10^6", "category": "environmental"},  # nmdc.cn
 }
+
+
+def _validate_source_metadata() -> None:
+    """
+    Fail fast on curator typos in :data:`SOURCE_METADATA`.
+
+    Runs at import time. Catches category typos (e.g. ``"phentoype"``) that
+    would otherwise ship a mystery tag to readers of the generated doc; the
+    error message names both the offending issue and the valid vocabulary so
+    the fix is one edit.
+    """
+    valid = set(DATA_CATEGORIES)
+    bad = [
+        (num, meta["category"])
+        for num, meta in SOURCE_METADATA.items()
+        if "category" in meta and meta["category"] not in valid
+    ]
+    if bad:
+        detail = ", ".join(f"#{num}='{cat}'" for num, cat in bad)
+        raise SystemExit(
+            f"[novel-transforms] SOURCE_METADATA carries category values not in "
+            f"DATA_CATEGORIES: {detail}. Valid: {sorted(valid)}."
+        )
+
+
+_validate_source_metadata()
 
 # ---------------------------------------------------------------------------
 # Inclusion signals (regex). Case-insensitive.
@@ -440,20 +466,10 @@ def render_markdown(kept: List[Issue], dropped: List[Issue], verbose: bool) -> s
         "see `.claude/skills/novel-transforms/SKILL.md` for the full contract.\n\n"
     )
 
-    # Category legend — kept short; every entry in DATA_CATEGORIES should have
-    # a one-line meaning here so a reader can decode the table without opening
-    # the script.
+    # Category legend generated from DATA_CATEGORIES — no drift possible.
+    legend_entries = " · ".join(f"`{name}` = {desc}" for name, desc in DATA_CATEGORIES.items())
     category_legend = (
-        "**Category legend:** "
-        "`phenotype` = organism trait observations · "
-        "`genome` = gene/protein content, functional annotation · "
-        "`metabolism` = pathways / reactions / end-products · "
-        "`identity` = crosswalks, naming registries · "
-        "`media` = growth-media composition · "
-        "`environmental` = habitat / biogeography / distribution · "
-        "`ecology` = inter-organism / host-microbe / microbe-drug interactions · "
-        "`fitness` = gene-essentiality / knockout experiments · "
-        "`literature` = publication associations.\n\n"
+        f"**Category legend:** {legend_entries}.\n\n"
         "**Scale columns** (`~Nodes` / `~Edges`) are curator estimates in "
         "powers of ten — magnitude, not exact count. `?` means the entry "
         "hasn't been sized yet; add a row to `SOURCE_METADATA` in "

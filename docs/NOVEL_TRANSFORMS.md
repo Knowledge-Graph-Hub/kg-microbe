@@ -8,7 +8,7 @@ Open GitHub issues on `Knowledge-Graph-Hub/kg-microbe` that ask for the ingest o
 
 How to update this file: run `poetry run python .claude/skills/novel-transforms/novel_transforms.py`. The skill queries the live tracker, classifies each open issue, and rewrites this doc. Tuning is done by editing the `MANUAL_INCLUDE` / `MANUAL_EXCLUDE` sets at the top of that script; see `.claude/skills/novel-transforms/SKILL.md` for the full contract.
 
-**Category legend:** `phenotype` = organism trait observations · `genome` = gene/protein content, functional annotation · `metabolism` = pathways / reactions / end-products · `identity` = crosswalks, naming registries · `media` = growth-media composition · `environmental` = habitat / biogeography / distribution · `ecology` = inter-organism / host-microbe / microbe-drug interactions · `fitness` = gene-essentiality / knockout experiments · `literature` = publication associations.
+**Category legend:** `phenotype` = organism trait observations (growth, morphology, metabolism) · `genome` = gene / protein content, functional annotation · `metabolism` = pathways / reactions / end-products · `identity` = crosswalks, naming registries · `media` = growth-media composition · `environmental` = habitat / biogeography / distribution · `ecology` = inter-organism / host-microbe / microbe-drug interactions · `fitness` = gene-essentiality / knockout experiments · `literature` = publication associations.
 
 **Scale columns** (`~Nodes` / `~Edges`) are curator estimates in powers of ten — magnitude, not exact count. `?` means the entry hasn't been sized yet; add a row to `SOURCE_METADATA` in `novel_transforms.py` to fill it in.
 

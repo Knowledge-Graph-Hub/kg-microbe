@@ -72,12 +72,14 @@ Each open issue is scored against three signal sets:
    dict keyed by issue number, each entry carrying:
    - `nodes` — rough node-count magnitude as `10^N` (string; `"?"` for unknown)
    - `edges` — rough edge-count magnitude, same convention
-   - `category` — kebab-case tag from `DATA_CATEGORIES` (phenotype, genome,
-     metabolism, identity, media, environmental, ecology, fitness, literature)
+   - `category` — kebab-case key from `DATA_CATEGORIES` (see that dict for the
+     current vocabulary — it's the single source of truth for both the
+     runtime whitelist and the legend block in the doc)
 
    These cannot be derived from issue title/body — curator judgement, so add a
    row when you triage a new issue. Missing rows render as `?` in the doc so
-   the gap is visible.
+   the gap is visible. A category typo is caught at import time by
+   `_validate_source_metadata`, so a bad value cannot ship silently.
 
 Every included issue is bucketed into one of:
 

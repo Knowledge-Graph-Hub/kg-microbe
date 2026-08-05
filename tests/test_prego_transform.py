@@ -414,9 +414,7 @@ def test_bto_node_gets_dictionary_synonym(prego_transform_with_dictionary: Prego
     assert "bacterial gut microbiome" in bto["synonym"]
 
 
-def test_bto_row_with_non_bto_id_drops_to_prefix_mismatch(
-    tmp_path: Path, prego_output_dir: Path
-):
+def test_bto_row_with_non_bto_id_drops_to_prefix_mismatch(tmp_path: Path, prego_output_dir: Path):
     """
     A `-2 → -25` row whose entity2_id doesn't start with `BTO:` drops explicitly.
 
@@ -448,6 +446,100 @@ def test_bto_row_with_non_bto_id_drops_to_prefix_mismatch(
     report = _read_tsv(transform.unmapped_report_file)
     reasons = {r["reason"] for r in report}
     assert "bto_id_prefix_mismatch" in reasons
+
+
+def test_dictionary_cache_saves_and_reuses(prego_input_dir_with_dictionary: Path, prego_output_dir: Path):
+    """
+    Second run of PregoTransform hits the pickle cache instead of re-parsing.
+
+    Issue #672: the compiled ``_synonym_lookup`` is persisted after the
+    first successful load and rehydrated on subsequent runs, cutting the
+    ~15 s dictionary parse to ~0.1 s. Test asserts:
+
+    1. First run creates the cache file.
+    2. Second run's ``_synonym_lookup`` matches the first (identical output).
+    """
+    # First run — populates the cache.
+    t1 = PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+    t1.run()
+    cache_path = (
+        prego_input_dir_with_dictionary
+        / "prego"
+        / "prego_dictionary_extracted"
+        / "prego_dictionary_synonyms_cache.pickle"
+    )
+    assert cache_path.exists(), "first run should have persisted the cache"
+    first_lookup = dict(t1._synonym_lookup)  # snapshot
+
+    # Second run — must produce the same lookup.
+    t2 = PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+    t2.run()
+    assert t2._synonym_lookup == first_lookup, "cache-hit lookup must match cold-load lookup"
+
+
+def test_dictionary_cache_invalidates_on_mondo_mtime_change(
+    prego_input_dir_with_dictionary: Path, prego_output_dir: Path
+):
+    """
+    Bumping the mondo_nodes.tsv mtime invalidates the cache and forces a rebuild.
+
+    Regression net for the DOID→MONDO cache-key sensitivity — if the
+    ontologies transform re-runs and publishes a fresh DOID→MONDO
+    mapping, PREGO must rebuild the lookup rather than serve stale
+    MONDO enrichments from a previous run's cache.
+    """
+    # Prime the cache.
+    t1 = PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+    t1.run()
+    cache_path = (
+        prego_input_dir_with_dictionary
+        / "prego"
+        / "prego_dictionary_extracted"
+        / "prego_dictionary_synonyms_cache.pickle"
+    )
+    cache_mtime_before = cache_path.stat().st_mtime
+
+    # Bump the mondo file's mtime forward — cache key changes, so the
+    # next run must rebuild.
+    mondo_file = prego_output_dir / "ontologies" / "mondo_nodes.tsv"
+    import os
+
+    os.utime(mondo_file, (cache_mtime_before + 10, cache_mtime_before + 10))
+
+    t2 = PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+    t2.run()
+    assert cache_path.stat().st_mtime > cache_mtime_before, "cache should have been rewritten"
+
+
+def test_dictionary_cache_recovers_from_corrupt_file(prego_input_dir_with_dictionary: Path, prego_output_dir: Path):
+    """
+    A garbled cache file is logged-and-ignored, not fatal.
+
+    Robustness: an OOM / disk-full / interrupted pickle write could
+    leave the cache file half-populated. The transform must fall back
+    to a full parse rather than raise UnpicklingError.
+    """
+    # Prime the cache.
+    t1 = PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+    t1.run()
+    cache_path = (
+        prego_input_dir_with_dictionary
+        / "prego"
+        / "prego_dictionary_extracted"
+        / "prego_dictionary_synonyms_cache.pickle"
+    )
+    # Corrupt the cache.
+    cache_path.write_bytes(b"\x00\x01\x02 not a pickle")
+
+    # Next run must not raise, and must rebuild.
+    t2 = PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+    t2.run()  # would raise on unhandled UnpicklingError
+    # The rebuild happened → cache is a valid pickle again.
+    import pickle
+
+    with cache_path.open("rb") as fh:
+        rebuilt = pickle.load(fh)
+    assert "synonym_lookup" in rebuilt
 
 
 def test_mondo_node_enriched_via_doid_reverse_lookup(

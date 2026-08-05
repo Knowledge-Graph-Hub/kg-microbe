@@ -28,6 +28,7 @@ threshold on confidence.
 from __future__ import annotations
 
 import csv
+import pickle
 import tarfile
 from collections import defaultdict
 from pathlib import Path
@@ -212,6 +213,12 @@ class PregoTransform(Transform):
 
     _DICTIONARY_ARCHIVE_NAME = "prego_dictionary.tar.gz"
     _DICTIONARY_FILES = ("prego_entities.tsv", "prego_names.tsv")
+    # Pickle cache of the compiled `_synonym_lookup` (issue #672). Invalidated
+    # on any mtime change of the dictionary tarball OR the mondo_nodes.tsv
+    # file (which drives the DOID→MONDO xref routing). Sits alongside the
+    # extracted payload so it lives with what it's derived from.
+    _DICTIONARY_CACHE_NAME = "prego_dictionary_synonyms_cache.pickle"
+    _DICTIONARY_CACHE_VERSION = 1  # bump if the cache payload shape changes
 
     def _load_dictionary(self, prego_raw_dir: Path, doid_to_mondo: dict) -> None:
         """
@@ -251,6 +258,18 @@ class PregoTransform(Transform):
 
         payload_dir = prego_raw_dir / "prego_dictionary_extracted"
         payload_dir.mkdir(parents=True, exist_ok=True)
+
+        # ------------------------------------------------------------------
+        # Cache fast path: skip the ~15 s dictionary parse if the compiled
+        # lookup is still fresh vs both the dictionary tarball AND the
+        # mondo_nodes.tsv that drives DOID→MONDO routing. Keeps developer
+        # iteration cheap; production runs pay the cost once, then hit the
+        # cache on every subsequent kg-release build.
+        # ------------------------------------------------------------------
+        cache_path = payload_dir / self._DICTIONARY_CACHE_NAME
+        cache_key = self._dictionary_cache_key(archive)
+        if self._load_synonym_lookup_from_cache(cache_path, cache_key):
+            return
         # Same size-check-then-reuse pattern as _process_archive.
         with tarfile.open(archive, mode="r:gz") as tf:
             for member in tf.getmembers():
@@ -313,11 +332,92 @@ class PregoTransform(Transform):
             key = name_stripped.casefold()
             bucket.setdefault(key, name_stripped)
             n_kept += 1
+        # Persist the compiled lookup for the next run's fast path (issue #672).
+        # Wait to write until AFTER the flatten below so what's persisted is
+        # what `_emit_node` consumes at runtime.
         # Flatten the {casefold_key: original_case} inner dicts to sets of the
         # preserved-case names — that's what _emit_node consumes.
         self._synonym_lookup = {curie: set(inner.values()) for curie, inner in self._synonym_lookup.items()}
         self._stats["dictionary_synonyms_indexed"] = n_kept
         print(f"[prego] dictionary loaded: {n_kept:,} synonym rows kept across {len(self._synonym_lookup):,} CURIEs")
+
+        # Persist the compiled lookup so the next run skips the ~15 s parse.
+        self._save_synonym_lookup_cache(cache_path, cache_key)
+
+    # ------------------------------------------------------------------ #
+    # Cache helpers for the compiled synonym lookup (issue #672).
+    # ------------------------------------------------------------------ #
+
+    def _dictionary_cache_key(self, archive: Path) -> tuple:
+        """
+        Return a cache key sensitive to changes in either source-of-truth file.
+
+        The compiled ``_synonym_lookup`` is a function of the dictionary
+        tarball AND the mondo_nodes.tsv (which drives DOID→MONDO routing).
+        Cache invalidation triggers on any mtime change of either.
+        Version tag lets a schema change force a rebuild across the board.
+        """
+        dict_mtime = archive.stat().st_mtime
+        mondo_mtime = self._mondo_nodes_file.stat().st_mtime if self._mondo_nodes_file.is_file() else 0
+        return (self._DICTIONARY_CACHE_VERSION, dict_mtime, mondo_mtime)
+
+    def _load_synonym_lookup_from_cache(self, cache_path: Path, expected_key: tuple) -> bool:
+        """
+        Try to hydrate :attr:`_synonym_lookup` from the pickle cache.
+
+        Returns True on a cache hit (caller then skips the dictionary parse).
+        Returns False if the cache is missing, stale, corrupt, or version-
+        mismatched — the transform then does a full parse and re-writes
+        the cache at the end.
+        """
+        if not cache_path.exists():
+            return False
+        try:
+            with cache_path.open("rb") as fh:
+                cached = pickle.load(fh)  # noqa: S301 (trusted local-only cache)
+        except (pickle.UnpicklingError, EOFError, ValueError, AttributeError) as exc:
+            print(f"[prego] cache {cache_path.name} unreadable ({type(exc).__name__}); rebuilding")
+            return False
+        if cached.get("cache_key") != expected_key:
+            print(f"[prego] cache {cache_path.name} stale (source files changed); rebuilding")
+            return False
+        self._synonym_lookup = cached["synonym_lookup"]
+        for stat_key in (
+            "dictionary_curies_indexed",
+            "dictionary_synonyms_indexed",
+            "dictionary_doid_routed_to_mondo",
+        ):
+            self._stats[stat_key] = cached.get(stat_key, 0)
+        print(
+            f"[prego] loaded {len(self._synonym_lookup):,} CURIE synonyms from cache "
+            f"{cache_path.name} (skipped ~15 s parse)"
+        )
+        return True
+
+    def _save_synonym_lookup_cache(self, cache_path: Path, cache_key: tuple) -> None:
+        """
+        Persist the compiled synonym lookup atomically.
+
+        Writes to a ``.tmp`` sibling first, then ``rename()`` — that way a
+        crashed write doesn't leave a truncated cache the next run trusts.
+        """
+        tmp_path = cache_path.with_suffix(cache_path.suffix + ".tmp")
+        payload = {
+            "cache_key": cache_key,
+            "synonym_lookup": self._synonym_lookup,
+            "dictionary_curies_indexed": self._stats["dictionary_curies_indexed"],
+            "dictionary_synonyms_indexed": self._stats["dictionary_synonyms_indexed"],
+            "dictionary_doid_routed_to_mondo": self._stats["dictionary_doid_routed_to_mondo"],
+        }
+        try:
+            with tmp_path.open("wb") as fh:
+                pickle.dump(payload, fh, protocol=pickle.HIGHEST_PROTOCOL)
+            tmp_path.replace(cache_path)
+            print(f"[prego] persisted synonym lookup to {cache_path.name}")
+        except OSError as exc:
+            print(f"[prego] WARNING: could not persist cache {cache_path.name}: {exc}")
+            if tmp_path.exists():
+                tmp_path.unlink(missing_ok=True)
 
     # ------------------------------------------------------------------ #
     # Per-archive processing.

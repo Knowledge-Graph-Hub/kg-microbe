@@ -30458,3 +30458,4 @@ notebooks/.ipynb_checkpoints/
 # if the analysis is worth keeping; ignored as-is to avoid a permanent blob.
 notebooks/bacdive_reformat.ipynb
 data/raw/lpsn/*
+data/raw/prego/*_extracted/

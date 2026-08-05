@@ -8,61 +8,66 @@ Open GitHub issues on `Knowledge-Graph-Hub/kg-microbe` that ask for the ingest o
 
 How to update this file: run `poetry run python .claude/skills/novel-transforms/novel_transforms.py`. The skill queries the live tracker, classifies each open issue, and rewrites this doc. Tuning is done by editing the `MANUAL_INCLUDE` / `MANUAL_EXCLUDE` sets at the top of that script; see `.claude/skills/novel-transforms/SKILL.md` for the full contract.
 
+**Category legend:** `phenotype` = organism trait observations · `genome` = gene/protein content, functional annotation · `metabolism` = pathways / reactions / end-products · `identity` = crosswalks, naming registries · `media` = growth-media composition · `environmental` = habitat / biogeography / distribution · `ecology` = inter-organism / host-microbe / microbe-drug interactions · `fitness` = gene-essentiality / knockout experiments · `literature` = publication associations.
+
+**Scale columns** (`~Nodes` / `~Edges`) are curator estimates in powers of ten — magnitude, not exact count. `?` means the entry hasn't been sized yet; add a row to `SOURCE_METADATA` in `novel_transforms.py` to fill it in.
+
+
 ## Novel external sources
 
 New databases, APIs, or datasets that KG-Microbe does not cover yet. The default bucket — each entry corresponds to a transform directory that does not exist today.
 
-| # | Source | One-line | Link |
-|---|---|---|---|
-| #9 | **gene knockout** | ingest gene knockout data from LBL microbial fitness experiments | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/9) |
-| #27 | **Weissman** | Ingest Weissman et al human microbiome taxa microbial trait data | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/27) |
-| #33 | **gutMEGA** | Ingest gutMEGA | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/33) |
-| #34 | **global microbial gene biogeography** | Ingest global microbial gene biogeography | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/34) |
-| #36 | **Web of Microbes** | ingest Web of Microbes environment-metabolite change-microbe associations | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/36) |
-| #37 | **pathobionts** | Ingest distribution of pathobionts across 12 skin sites | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/37) |
-| #38 | **Microbe Directory** | Ingest The Microbe Directory | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/38) |
-| #39 | **PREGO** | Inspect data and sources for PREGO | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/39) |
-| #41 | **METABOLIC genomic** | ingest METABOLIC genomic source data and trait predictions | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/41) |
-| #42 | **FusionDB** | Ingest FusionDB | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/42) |
-| #44 | **ProGenomes3** | Ingest ProGenomes3 | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/44) |
-| #58 | **dbBact** | ingest dbBact data | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/58) |
-| #61 | **protraits** | ingest protraits | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/61) |
-| #66 | **ATCC** | strains and annotations from ATCC | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/66) |
-| #132 | **Names4Life** | ingest Names4Life | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/132) |
-| #140 | **BugSigDB** | ingest BugSigDB | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/140) |
-| #141 | **bugbase** | ingest bugbase phenotypes and predictions | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/141) |
-| #154 | **ATCC** | ingest some ATCC genome entry fields | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/154) |
-| #159 | **thermobase** | thermobase | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/159) |
-| #177 | **microbeatlas** | ingest microbeatlas environments | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/177) |
-| #182 | **PREGO** | ingest PREGO knowledgebase | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/182) |
-| #304 | **GOLD ingest** | GOLD ingest -- starting with growth information | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/304) |
-| #320 | **togomedium** | togomedium ingest exploration | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/320) |
-| #329 | **CRBIP** | ingest CRBIP media | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/329) |
-| #369 | **gut microbe media** | ingest gut microbe media table | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/369) |
-| #419 | **MediaDB** | MediaDB media, organisms and growth rates | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/419) |
-| #478 | **LASER** | ingest LASER db | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/478) |
-| #537 | **bac2feature** | ingest bac2feature data from Microbiome Datahub | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/537) |
+| # | Source | Category | ~Nodes | ~Edges | One-line | Link |
+|---|---|---|---:|---:|---|---|
+| #9 | **gene knockout** | fitness | 10⁴ | 10⁶ | ingest gene knockout data from LBL microbial fitness experiments | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/9) |
+| #27 | **Weissman** | phenotype | 10³ | 10⁴ | Ingest Weissman et al human microbiome taxa microbial trait data | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/27) |
+| #33 | **gutMEGA** | ecology | 10⁴ | 10⁵ | Ingest gutMEGA | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/33) |
+| #34 | **global microbial gene biogeography** | environmental | 10⁶ | 10⁷ | Ingest global microbial gene biogeography | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/34) |
+| #36 | **Web of Microbes** | ecology | 10³ | 10⁴ | ingest Web of Microbes environment-metabolite change-microbe associations | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/36) |
+| #37 | **pathobionts** | environmental | 10² | 10³ | Ingest distribution of pathobionts across 12 skin sites | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/37) |
+| #38 | **Microbe Directory** | environmental | 10³ | 10⁴ | Ingest The Microbe Directory | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/38) |
+| #39 | **PREGO** | environmental | 10⁵ | 10⁶ | Inspect data and sources for PREGO | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/39) |
+| #41 | **METABOLIC genomic** | metabolism | 10⁵ | 10⁶ | ingest METABOLIC genomic source data and trait predictions | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/41) |
+| #42 | **FusionDB** | genome | 10⁵ | 10⁵ | Ingest FusionDB | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/42) |
+| #44 | **ProGenomes3** | genome | 10⁶ | 10⁸ | Ingest ProGenomes3 | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/44) |
+| #58 | **dbBact** | environmental | 10⁴ | 10⁵ | ingest dbBact data | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/58) |
+| #61 | **protraits** | phenotype | 10³ | 10⁶ | ingest protraits | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/61) |
+| #66 | **ATCC** | identity | 10⁴ | 10⁵ | strains and annotations from ATCC | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/66) |
+| #132 | **Names4Life** | identity | 10⁴ | 10⁴ | ingest Names4Life | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/132) |
+| #140 | **BugSigDB** | ecology | 10⁴ | 10⁵ | ingest BugSigDB | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/140) |
+| #141 | **bugbase** | phenotype | 10³ | 10⁴ | ingest bugbase phenotypes and predictions | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/141) |
+| #154 | **ATCC** | genome | 10³ | 10⁴ | ingest some ATCC genome entry fields | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/154) |
+| #159 | **thermobase** | phenotype | 10² | 10³ | thermobase | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/159) |
+| #177 | **microbeatlas** | environmental | 10⁵ | 10⁶ | ingest microbeatlas environments | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/177) |
+| #182 | **PREGO** | environmental | 10⁵ | 10⁶ | ingest PREGO knowledgebase | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/182) |
+| #304 | **GOLD ingest** | identity | 10⁵ | 10⁵ | GOLD ingest -- starting with growth information | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/304) |
+| #320 | **togomedium** | media | 10³ | 10⁴ | togomedium ingest exploration | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/320) |
+| #329 | **CRBIP** | media | 10² | 10³ | ingest CRBIP media | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/329) |
+| #369 | **gut microbe media** | media | 10² | 10³ | ingest gut microbe media table | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/369) |
+| #419 | **MediaDB** | media | 10³ | 10⁴ | MediaDB media, organisms and growth rates | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/419) |
+| #478 | **LASER** | phenotype | 10³ | 10⁴ | ingest LASER db | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/478) |
+| #537 | **bac2feature** | phenotype | 10⁴ | 10⁵ | ingest bac2feature data from Microbiome Datahub | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/537) |
 
 
 ## Salvage from stale PRs
 
 Issues whose title marks them as recoveries of work-in-progress PRs that never merged. Same output as the Novel bucket — a new transform — but with a starting point in git history.
 
-| # | Source | One-line | Link |
-|---|---|---|---|
-| #518 | **UniRef** | Add UniRef90 transform (salvaged from stale PR #170) _(salvage from PR #170)_ | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/518) |
-| #519 | **HGNC** | Fix HGNC gene ingestion to include all UniProt mappings (salvaged from stale PR #290) _(salvage from PR #290)_ | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/519) |
-| #520 | **IJSEM** | Add IJSEM phenotypic data source (salvaged from stale PR #250, connects to OntoGPT work) _(salvage from PR #250)_ | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/520) |
+| # | Source | Category | ~Nodes | ~Edges | One-line | Link |
+|---|---|---|---:|---:|---|---|
+| #518 | **UniRef** | genome | 10⁸ | 10⁹ | Add UniRef90 transform (salvaged from stale PR #170) _(salvage from PR #170)_ | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/518) |
+| #519 | **HGNC** | identity | 10⁴ | 10⁵ | Fix HGNC gene ingestion to include all UniProt mappings (salvaged from stale … _(salvage from PR #290)_ | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/519) |
+| #520 | **IJSEM** | phenotype | 10⁴ | 10⁵ | Add IJSEM phenotypic data source (salvaged from stale PR #250, connects to On… _(salvage from PR #250)_ | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/520) |
 
 
 ## Exploratory
 
 Research-first: someone flagged an external resource worth understanding before deciding whether to ingest.
 
-| # | Source | One-line | Link |
-|---|---|---|---|
-| #321 | **periodic table of bacteria** | explore 'periodic table of bacteria' ingest | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/321) |
-| #569 | **nmdc.cn** | explore nmdc.cn data | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/569) |
+| # | Source | Category | ~Nodes | ~Edges | One-line | Link |
+|---|---|---|---:|---:|---|---|
+| #321 | **periodic table of bacteria** | identity | 10³ | 10³ | explore 'periodic table of bacteria' ingest | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/321) |
+| #569 | **nmdc.cn** | environmental | 10⁵ | 10⁶ | explore nmdc.cn data | [link](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/569) |
 
 
 ## Not in this list

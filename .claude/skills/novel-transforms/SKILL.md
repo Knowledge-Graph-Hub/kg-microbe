@@ -68,6 +68,17 @@ Each open issue is scored against three signal sets:
      accepted them (curator says "this is enhancement / infra / meta").
    Editing these is the primary curation lever.
 
+4. **Per-source metadata** in `SOURCE_METADATA` (also in `novel_transforms.py`):
+   dict keyed by issue number, each entry carrying:
+   - `nodes` — rough node-count magnitude as `10^N` (string; `"?"` for unknown)
+   - `edges` — rough edge-count magnitude, same convention
+   - `category` — kebab-case tag from `DATA_CATEGORIES` (phenotype, genome,
+     metabolism, identity, media, environmental, ecology, fitness, literature)
+
+   These cannot be derived from issue title/body — curator judgement, so add a
+   row when you triage a new issue. Missing rows render as `?` in the doc so
+   the gap is visible.
+
 Every included issue is bucketed into one of:
 
 - **Novel external source** — the default bucket. New database, new API, new

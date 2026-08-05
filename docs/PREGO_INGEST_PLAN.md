@@ -9,7 +9,7 @@
 
 ## Why ingest PREGO
 
-BacDive and `madin_etal` cover organism↔habitat associations partially and inconsistently — BacDive from strain-level isolation-source curation, `madin_etal` from a small compositional-habitat table. PREGO systematically closes that gap by text-mining the entire PubMed corpus for co-mentions of taxa with environments (ENVO), processes (GO), and diseases (DOID/BTO), and by consuming JGI IMG isolate metadata for direct experimental annotations. For the flagship taxa-media link-prediction use case, "grows in similar habitats" is a strong prior for "grows in similar media" — PREGO gives that signal at ~10⁸-edge scale across three channels (literature, environmental samples, JGI IMG isolates), uniformly across the tree of life rather than only for the ~50 K strains BacDive has curated.
+BacDive and `madin_etal` cover organism↔habitat associations partially and inconsistently — BacDive from strain-level isolation-source curation, `madin_etal` from a small compositional-habitat table. PREGO systematically closes that gap by text-mining the entire PubMed corpus for co-mentions of taxa with environments (ENVO), processes (GO), and diseases (DOID/BTO), and by consuming JGI IMG isolate metadata for direct experimental annotations. For the flagship taxa-media link-prediction use case, "grows in similar habitats" is a strong prior for "grows in similar media" — PREGO gives that signal at ~10⁸-edge scale across three channels (literature, environmental samples, JGI IMG isolates), uniformly across the tree of life rather than only for the ~250 K strains BacDive has curated.
 
 ## Correction to earlier assessment (2026-08-05)
 
@@ -62,15 +62,15 @@ All three verified 2026-08-05 with HTTP 200, real `application/x-gzip` payloads,
 - Organism↔process edges: partial from `bacdive` (metabolism keywords) and `metatraits`/`microbedecoder` (fermentation profiles).
 
 **What PREGO uniquely adds:**
-1. **Systematic taxon→ENVO edges** across the entire literature — not just BacDive-curated strains. Expands from ~50 K covered organisms toward the full ~2 M in the dictionary.
+1. **Systematic taxon→ENVO edges** across the entire literature — not just BacDive-curated strains. BacDive covers ~250 K strains (verified in `data/transformed/bacdive/nodes.tsv`); PREGO expands coverage toward the full ~2 M NCBITaxon vocabulary — and does so at *species / higher* rank rather than strain rank, so the two sources are complementary rather than redundant (text-mining doesn't hit strain identifiers, which don't appear in literature).
 2. **Taxon→GO process edges** with confidence scores from co-mention statistics — quantitative, not just presence/absence.
 3. **Taxon→DOID edges** — organism↔disease from text-mining. Complementary to `disbiome` and any human-microbiome data.
-4. **Direct experimental annotations** from the JGI IMG isolates channel (`annotated_genomes_isolates.tar.gz`) — carries a `direct-flag=TRUE` on each row plus a JGI IMG evidence URL, distinguishing curator-verified rows from text-mined ones.
+4. **Direct experimental annotations** from the JGI IMG isolates channel (`annotated_genomes_isolates.tar.gz`) — carries a `direct_flag` column that is `TRUE` for curator/database rows and something else (empty / `FALSE`) for text-mined rows, so consumers can filter for the high-confidence subset. Each row also carries a JGI IMG evidence URL.
 5. **Score-attributed edges** so downstream users can threshold on confidence.
 
 **Merge policy for overlap:** every PREGO edge carries `primary_knowledge_source: infores:prego` so it stays distinguishable from bacdive/madin edges to the same target. No dedup at the transform stage; merge-time dedup by `(subject, predicate, object, primary_knowledge_source)` is fine.
 
-**If we ingest this, "why do we need it when we have BacDive?" answer in one line:** BacDive covers ~50 K strains from strain-level isolation-source curation; PREGO covers ~2 M taxa from text-mining and adds confidence-scored process/disease edges that BacDive doesn't emit at all.
+**If we ingest this, "why do we need it when we have BacDive?" answer in one line:** BacDive covers ~250 K strains at strain rank from isolation-source curation; PREGO covers ~2 M NCBITaxa at species / higher rank from text-mining, and adds confidence-scored process/disease edges that BacDive doesn't emit at all.
 
 ## Phase 3 — Entity model
 
@@ -84,12 +84,12 @@ Example row: `-2 → 100 → (extra) → GO:0000034 → "JGI IMG" → "Isolates"
 
 The `entity1_type` column uses JensenLab tagger integer codes (`-2` = NCBITaxon, `-21` = GO biological_process, `-27` = ENVO, `-26` = DOID, `-25` = BTO). The `entity2_id` field is already a full CURIE for ontology entities; NCBITaxon rows carry a bare integer that needs the `NCBITaxon:` prefix prepended.
 
-| Row shape from source | Emitted edge | Predicate | Notes |
+| Row shape from source | Emitted edge (subject → object) | Predicate | Notes |
 |---|---|---|---|
-| taxon `-2` → ENVO `-27` | `NCBITaxon:X` → `ENVO:Y` | `biolink:located_in` | Novel content; carry `score`, `channel`, `direct_flag` as edge attributes |
-| taxon `-2` → GO process `-21` | `NCBITaxon:X` → `GO:Y` | `biolink:capable_of` | Novel content |
-| taxon `-2` → DOID `-26` | `NCBITaxon:X` → `MONDO:Y` | `biolink:associated_with` | Route DOID→MONDO through `ontologies` output; skip if no xref |
-| taxon `-2` → BTO `-25` | *(defer to v2)* | — | BTO not in KGM; not worth the ontology import for v1 |
+| taxon `-2` ↔ ENVO `-27` | `ENVO:Y` → `NCBITaxon:X` | `biolink:location_of` | **Direction matches bacdive** (`ENVO → location_of → strain`); use same predicate here so the merged KG carries a single canonical direction for organism–environment edges. Carry `score`, `channel`, `direct_flag` as edge attributes. |
+| taxon `-2` ↔ GO process `-21` | `NCBITaxon:X` → `GO:Y` | `biolink:capable_of` | Novel content |
+| taxon `-2` ↔ DOID `-26` | `NCBITaxon:X` → `MONDO:Y` | `biolink:associated_with` | Route DOID→MONDO through `ontologies` output; skip if no xref |
+| taxon `-2` ↔ BTO `-25` | *(defer to v2)* | — | BTO not in KGM; not worth the ontology import for v1 |
 | non-taxon subject (either side is ontology-ontology) | *(skip)* | — | PREGO's cross-ontology pairs (e.g. GO↔ENVO) are out of scope for the taxa-focused link-prediction use case |
 
 **Predicates:** all existing biolink; no METPO extensions needed.
@@ -145,14 +145,9 @@ No new prefix registration in `custom_curies.yaml` — every target CURIE prefix
   local_name: prego_annotated_genomes_isolates.tar.gz
   tag: prego
 
-- url: https://download.jensenlab.org/prego_dictionary.tar.gz
-  local_name: prego_dictionary.tar.gz
-  tag: prego
-  # NOTE: 278 MB. Entity vocabulary — needed only if we resolve preferred labels
-  # from serials, which we do NOT for v1 (association tables carry CURIEs directly
-  # for ontology entities, and NCBI taxon integers we prefix as NCBITaxon:).
-  # Kept in download.yaml for completeness / future use.
 ```
+
+The `prego_dictionary.tar.gz` (278 MB) is intentionally **not** added to `download.yaml` for v1 — association tables carry full CURIEs for ontology entities and bare integers for NCBI taxa (prefixed as `NCBITaxon:` at emit time), so v1 has no need for the tagger serial → preferred-label lookup. Add if a future v2 needs preferred labels or synonym expansion.
 
 ## Phase 6 — Implement
 
@@ -166,7 +161,7 @@ Reference transforms (based on similarity):
 - **Canary before the full literature run.** Start with the smallest archive (`annotated_genomes_isolates.tar.gz`, 269 MB) end-to-end — smoke it through Phase 7 gates first. Once that's clean, extrapolate row-count and disk-cost predictions before touching the 5.4 GB file. This is the standing global rule (see `~/.claude-work/CLAUDE.md` → "Canary first").
 - **DOID→MONDO xref.** Not every DOID has a MONDO equivalent. Route through `ontologies/mondo_nodes.tsv` and skip rows with no xref rather than emitting an orphan DOID CURIE.
 - **Cardinality risk.** 2.4 M taxa × N GO processes could produce 10⁸+ edges. Watch `NCBITaxon → capable_of` fan-out in Phase 7 for spike outliers (would indicate a runaway text-mining match on a single popular taxon).
-- **Server quirk.** The Mamba/nginx server on `prego.hcmr.gr` occasionally returns HTTP 500 on HEAD requests but 200 on GET. `kghub-downloader` should already handle this via GET-based verification, but note this in the download.yaml comment.
+- **Server quirk.** The Mamba/nginx server on `prego.hcmr.gr` occasionally returns HTTP 500 on HEAD requests but 200 on GET. **Verify during Phase 6 canary** that `kghub-downloader` tolerates this — if it HEAD-checks and refuses, we'll need a custom fetch wrapper for the PREGO entries.
 
 ## Phase 7-8 — Verify + test
 

@@ -24,6 +24,7 @@ from kg_microbe.transform_utils.constants import (
     MICROBEDECODER,
     ONTOLOGIES,
     ONTOLOGIES_STUBS,
+    PREGO,
     RHEAMAPPINGS,
 )
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
@@ -42,6 +43,7 @@ from kg_microbe.transform_utils.ontologies.ontologies_transform import (
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
     OntologiesStubsTransform,
 )
+from kg_microbe.transform_utils.prego.prego import PregoTransform
 from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
 
 DATA_SOURCES = {
@@ -72,6 +74,7 @@ DATA_SOURCES = {
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
     MICROBEDECODER: MicrobeDecoderTransform,
+    PREGO: PregoTransform,
     # UNIPROT_HUMAN: UniprotHumanTransform,
     # CTD: CTDTransform,
     # DISBIOME: DisbiomeTransform,

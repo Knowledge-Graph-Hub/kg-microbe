@@ -32,6 +32,7 @@ KNOWN_TAGS = {
     "metatraits_gtdb",
     "bactotraits",
     "microbedecoder",
+    "prego",
     "schema",
 }
 

@@ -1,0 +1,3 @@
+id	category	name	description	xref	provided_by	synonym	deprecated	same_as
+MONDO:0007256	biolink:Disease	acquired immunodeficiency syndrome		DOID:8|MESH:D000163	infores:mondo
+MONDO:0000000	biolink:Disease	unknown other		DOID:11111111|MESH:D999999	infores:mondo

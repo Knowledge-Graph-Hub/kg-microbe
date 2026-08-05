@@ -23,6 +23,7 @@ GTDB = "gtdb"
 METATRAITS = "metatraits"
 METATRAITS_GTDB = "metatraits_gtdb"
 MICROBEDECODER = "microbedecoder"
+PREGO = "prego"
 
 TRANSFORM_UTILS_DIR = Path(__file__).parent
 BACDIVE_DIR = TRANSFORM_UTILS_DIR / BACDIVE
@@ -35,6 +36,7 @@ MEDIADIVE_MEDIUM_STRAIN_YAML_DIR = MEDIADIVE_TMP_DIR / "medium_strain_yaml"
 MADIN_ETAL_DIR = TRANSFORM_UTILS_DIR / MADIN_ETAL
 METATRAITS_DIR = TRANSFORM_UTILS_DIR / METATRAITS
 MICROBEDECODER_DIR = TRANSFORM_UTILS_DIR / MICROBEDECODER
+PREGO_DIR = TRANSFORM_UTILS_DIR / PREGO
 # Canonical curation hub for hand-curated label -> ontology mappings used by
 # metatraits + metatraits_gtdb. Moved from per-transform location
 # (transform_utils/metatraits/mappings/) to repo-root mappings/canonical/ in
@@ -58,6 +60,7 @@ KEGG_DIR = TRANSFORM_UTILS_DIR / KEGG
 KEGG_RAW_DIR = RAW_DATA_DIR / KEGG
 MICROBEDECODER_RAW_DIR = RAW_DATA_DIR / MICROBEDECODER
 MICROBEDECODER_MANUAL_ANNOTATION_FILE = MICROBEDECODER_DIR / "microbedecoder_manual_annotation.tsv"
+PREGO_RAW_DIR = RAW_DATA_DIR / PREGO
 UNIPROT_TREMBL_DIR = TRANSFORM_UTILS_DIR / "uniprot_trembl"
 UNIPROT_TREMBL_TMP_DIR = UNIPROT_TREMBL_DIR / "tmp"
 ONTOLOGIES_DIR = TRANSFORM_UTILS_DIR / ONTOLOGIES
@@ -240,6 +243,13 @@ BERGEY_KNOWLEDGE_SOURCE = "infores:bergey-manual"  # Bergey's Manual of Systemat
 VPI_KNOWLEDGE_SOURCE = "infores:vpi-anaerobe-manual"  # VPI Anaerobe Laboratory Manual
 LITERATURE_KNOWLEDGE_SOURCE = "infores:microbedecoder-literature"  # per-strain lit-curated
 FAPROTAX_KNOWLEDGE_SOURCE = "infores:faprotax"  # FAPROTAX functional labels
+PREGO_KNOWLEDGE_SOURCE = "infores:prego"  # PREGO taxon↔environment/process associations
+# PREGO edge attributes carried through as additional columns on emitted edges.
+# score, channel, direct_flag, evidence_url per JensenLab tagger convention.
+PREGO_SCORE_COLUMN = "prego_score"
+PREGO_CHANNEL_COLUMN = "prego_channel"
+PREGO_DIRECT_FLAG_COLUMN = "prego_direct_flag"
+PREGO_EVIDENCE_URL_COLUMN = "prego_evidence_url"
 
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL = "Complex Medium"

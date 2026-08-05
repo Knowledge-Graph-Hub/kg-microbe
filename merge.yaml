@@ -215,6 +215,17 @@ merged_graph:
         filename:
           - data/transformed/microbedecoder/nodes.tsv
           - data/transformed/microbedecoder/edges.tsv
+    # PREGO — Prokaryotic Environment / Genotype text-mining knowledgebase
+    # (Zafeiropoulos et al 2022, Microorganisms 10:293). Emits
+    # NCBITaxon→GO capable_of, ENVO→NCBITaxon location_of, NCBITaxon→MONDO
+    # associated_with (via DOID→MONDO xref). See docs/PREGO_INGEST_PLAN.md.
+    prego:
+      name: "PREGO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/prego/nodes.tsv
+          - data/transformed/prego/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

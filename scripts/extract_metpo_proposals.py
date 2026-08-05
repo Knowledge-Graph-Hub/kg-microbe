@@ -112,6 +112,12 @@ class Term:
     priority: str = ""
     traits_addressed: str = ""
     observations: str = ""
+    # Optional overrides: default to the module-level SUBSET_TAG / TODO-citation
+    # so pre-existing rows keep their behaviour, but a new cohort can carry its
+    # own subset tag + real definition source without touching every existing
+    # Term instance.
+    subset: str = ""
+    definition_source: str = ""
 
     def as_row(self) -> List[str]:
         """Return the row in TSV column order."""
@@ -369,6 +375,15 @@ METPO_LABEL_CORRECTIONS: List[LabelCorrection] = [
 # rather than emitting `METPO:1007*` placeholders.
 # --------------------------------------------------------------------------- #
 EXISTING_METPO_ALIASES: List[Alias] = [
+    # Cohort metpo_proposal_2026_08_prego (PREGO): 'photosynthetic' was
+    # proposed as a new term with synonyms 'phototrophic' / 'photoautotrophic'
+    # but both collide with existing METPO:1000660 / METPO:1000656. Route to
+    # METPO:1000660 (phototrophic) — a photosynthetic organism IS phototrophic
+    # for phenotype-classification purposes.
+    Alias("photosynthetic",
+          ["phototrophic", "photoautotrophic"],
+          "METPO:1000660", "phototrophic", "synonym",
+          "PREGO cohort 2026_08 — reuse existing METPO:1000660; 72 PREGO edges from GO:0015979 photosynthesis."),
     # Phase 1: temperature/pH/salinity min & max -> existing datatype properties
     Alias("has growth temperature minimum", [],
           "METPO:2000702", "has minimum temperature value", "concept",
@@ -1282,6 +1297,238 @@ CATEGORICAL_TERMS: List[Term] = [
         synonyms=["epibiont", "ectosymbiont"],
         priority="LOW",
     ),
+
+    # ------------------------------------------------------------------ #
+    # Cohort: metpo_proposal_2026_08_prego
+    # Source: PREGO transform live-canary output on 2 channels
+    # (annotated_genomes_isolates + environmental_samples),
+    # data/transformed/prego/, 2026-08-05 (45M edges, 52K nodes).
+    # Definition source: Zafeiropoulos et al. 2022, Microorganisms 10:293
+    # (DOI:10.3390/microorganisms10020293).
+    # ------------------------------------------------------------------ #
+    # 1 new object property — placed in the 2000064-2000070 gap of the
+    # chemical-interaction object-property family, adjacent to METPO:2000067
+    # (isolated from host with quality) and METPO:2000068 (isolated from
+    # environment with quality). Distinct from those "isolated from"
+    # predicates because "has environmental niche" reflects a persistent
+    # literature-attested phenotype, not sample provenance.
+    Term(
+        proposed_id="METPO:2000069",
+        scope="categorical",
+        term_type="ObjectProperty",
+        label="has environmental niche",
+        definition=(
+            "Association between a microbe and an environmental context in "
+            "which it has been literature-attested to occur, whether as "
+            "habitat, substrate, or sampled origin."
+        ),
+        domain="METPO:1000525",
+        range="owl:Thing",
+        xrefs=["ENVO:00000428"],
+        synonyms=["occurs in environment", "found in", "inhabits"],
+        priority="HIGH",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="Adjacent to METPO:2000067/2000068 isolation predicates.",
+    ),
+    # 8 habitat-category classes — parent METPO:1000525 (microbe) or a nested
+    # aquatic/terrestrial parent. Each xref cites the ENVO CURIE(s) driving
+    # the proposal, aggregated from the PREGO edges.tsv (biolink:location_of
+    # edges keyed on the ENVO endpoint).
+    Term(
+        proposed_id="METPO:1007094",
+        scope="categorical",
+        term_type="Class",
+        label="aquatic microorganism",
+        definition=(
+            "Microbe with literature-attested occurrence in aquatic "
+            "environments (fresh water, marine, brackish)."
+        ),
+        parent_or_subproperty="METPO:1000525",
+        xrefs=["ENVO:00002030", "ENVO:00000873", "ENVO:00000447"],
+        synonyms=["waterborne microorganism"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 25,429 (aquatic biome 12,442 + freshwater biome 7,873 + marine biome 5,114).",
+    ),
+    Term(
+        proposed_id="METPO:1007095",
+        scope="categorical",
+        term_type="Class",
+        label="terrestrial microorganism",
+        definition="Microbe with literature-attested occurrence in terrestrial environments including soil and land biomes.",
+        parent_or_subproperty="METPO:1000525",
+        xrefs=["ENVO:00001998", "ENVO:00000446"],
+        synonyms=["land microorganism"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 28,198 (soil 15,684 + terrestrial biome 12,514).",
+    ),
+    Term(
+        proposed_id="METPO:1007096",
+        scope="categorical",
+        term_type="Class",
+        label="marine microorganism",
+        definition="Microbe with literature-attested occurrence in marine (saltwater) environments.",
+        parent_or_subproperty="METPO:1007094",
+        xrefs=["ENVO:00000447", "ENVO:00000015", "ENVO:01000320", "ENVO:00002113"],
+        synonyms=["seawater microorganism", "halophilic marine microbe"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 16,702 (aggregated marine biome + ocean + marine environment + deep marine sediment).",
+    ),
+    Term(
+        proposed_id="METPO:1007097",
+        scope="categorical",
+        term_type="Class",
+        label="freshwater microorganism",
+        definition="Microbe with literature-attested occurrence in freshwater environments (lakes, rivers, ponds).",
+        parent_or_subproperty="METPO:1007094",
+        xrefs=["ENVO:00000873", "ENVO:00002011", "ENVO:00000022", "ENVO:00000020"],
+        synonyms=["limnic microorganism"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 20,765 (freshwater biome 7,873 + fresh water 6,035 + river 3,936 + lake 2,921).",
+    ),
+    Term(
+        proposed_id="METPO:1007098",
+        scope="categorical",
+        term_type="Class",
+        label="soil microorganism",
+        definition="Microbe with literature-attested occurrence in soil environments.",
+        parent_or_subproperty="METPO:1007095",
+        xrefs=["ENVO:00001998", "ENVO:00002261"],
+        synonyms=["edaphic microorganism", "soil-dwelling microbe"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 18,850 (soil 15,684 + forest soil 3,166).",
+    ),
+    Term(
+        proposed_id="METPO:1007099",
+        scope="categorical",
+        term_type="Class",
+        label="gut-associated microorganism",
+        definition="Microbe with literature-attested occurrence in animal intestinal (gut) environments.",
+        parent_or_subproperty="METPO:1000525",
+        xrefs=["ENVO:2100002"],
+        synonyms=["intestinal microorganism", "enteric microbe", "gut microbe"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 3,675 (intestine environment).",
+    ),
+    Term(
+        proposed_id="METPO:1007100",
+        scope="categorical",
+        term_type="Class",
+        label="biofilm-associated microorganism",
+        definition="Microbe with literature-attested occurrence in biofilm structures.",
+        parent_or_subproperty="METPO:1000525",
+        xrefs=["ENVO:01000156", "ENVO:00002034"],
+        synonyms=["biofilm dweller"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 7,655 (biofilm material 4,731 + biofilm 2,924).",
+    ),
+    Term(
+        proposed_id="METPO:1007101",
+        scope="categorical",
+        term_type="Class",
+        label="anthropogenic-environment microorganism",
+        definition="Microbe with literature-attested occurrence in built or human-modified environments (farms, urban infrastructure, agricultural land).",
+        parent_or_subproperty="METPO:1000525",
+        xrefs=["ENVO:01000313", "ENVO:0010001", "ENVO:00000078", "ENVO:00000114"],
+        synonyms=["built-environment microbe", "human-associated environment microbe"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 16,884 (aggregated anthropogenic environment + agricultural land).",
+    ),
+    # 5 phenotype process classes — parent METPO:1000059 (phenotype).
+    # Each xref cites the GO term that drives the proposal; the PREGO edge
+    # count is the number of taxa literature-attested with the GO term.
+    Term(
+        proposed_id="METPO:1007102",
+        scope="categorical",
+        term_type="Class",
+        label="biofilm-forming",
+        definition=(
+            "Organism capable of forming a biofilm — a structured community of "
+            "microorganisms attached to a surface within a self-produced "
+            "extracellular matrix."
+        ),
+        parent_or_subproperty="METPO:1000059",
+        xrefs=["GO:0042710"],
+        synonyms=["biofilm producer", "biofilm-competent"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 109 (GO:0042710 biofilm formation).",
+    ),
+    Term(
+        proposed_id="METPO:1007103",
+        scope="categorical",
+        term_type="Class",
+        label="quorum-sensing capable",
+        definition=(
+            "Organism capable of quorum sensing — cell-to-cell communication "
+            "via secreted signaling molecules whose concentration reports on "
+            "population density."
+        ),
+        parent_or_subproperty="METPO:1000059",
+        xrefs=["GO:0009372"],
+        synonyms=["QS-capable", "autoinducer producer"],
+        priority="MEDIUM",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 109 (GO:0009372 quorum sensing).",
+    ),
+    # "photosynthetic" was originally proposed as METPO:1007104 but its
+    # synonyms `phototrophic` / `photoautotrophic` collide with existing
+    # METPO:1000660 / METPO:1000656. Since a photosynthetic organism IS
+    # phototrophic (equivalent for phenotype-classification purposes),
+    # route to the existing METPO:1000660 via an Alias below rather than
+    # mint a duplicate. Slot METPO:1007104 is now unused in this cohort.
+    Term(
+        proposed_id="METPO:1007105",
+        scope="categorical",
+        term_type="Class",
+        label="flocculating",
+        definition=(
+            "Organism capable of flocculation — forming aggregated cell "
+            "masses that settle out of suspension."
+        ),
+        parent_or_subproperty="METPO:1000059",
+        xrefs=["GO:0000128"],
+        synonyms=["flocculent", "aggregating"],
+        priority="LOW",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 144 (GO:0000128 flocculation).",
+    ),
+    Term(
+        proposed_id="METPO:1007106",
+        scope="categorical",
+        term_type="Class",
+        label="anaerobic ammonium oxidizing",
+        definition=(
+            "Organism capable of anaerobic respiration using ammonium as the "
+            "electron donor (anammox)."
+        ),
+        parent_or_subproperty="METPO:1000059",
+        xrefs=["GO:0019331"],
+        synonyms=["anammox", "anaerobic ammonium oxidizer"],
+        priority="LOW",
+        subset="metpo_proposal_2026_08_prego",
+        definition_source="DOI:10.3390/microorganisms10020293",
+        observations="PREGO edges: 88 (GO:0019331 anaerobic respiration using ammonium as electron donor).",
+    ),
 ]
 
 
@@ -1608,9 +1855,10 @@ def write_robot_template_classes(path: Path, terms: List[Term]) -> int:
         writer.writerow(directives)
         for t in classes:
             writer.writerow([
-                t.proposed_id, t.label, t.definition, "TODO:add_citation",
+                t.proposed_id, t.label, t.definition,
+                t.definition_source or "TODO:add_citation",
                 t.parent_or_subproperty, "|".join(t.synonyms),
-                "|".join(t.xrefs), SUBSET_TAG,
+                "|".join(t.xrefs), t.subset or SUBSET_TAG,
                 t.priority, t.observations, t.traits_addressed,
             ])
     return len(classes)
@@ -1637,9 +1885,10 @@ def write_robot_template_properties(path: Path, terms: List[Term]) -> int:
         for t in props:
             owl_type = f"owl:{t.term_type}"
             writer.writerow([
-                t.proposed_id, t.label, t.definition, "TODO:add_citation",
+                t.proposed_id, t.label, t.definition,
+                t.definition_source or "TODO:add_citation",
                 owl_type, t.domain, t.range,
-                "|".join(t.xrefs), SUBSET_TAG,
+                "|".join(t.xrefs), t.subset or SUBSET_TAG,
                 t.priority, t.traits_addressed, t.observations,
             ])
     return len(props)

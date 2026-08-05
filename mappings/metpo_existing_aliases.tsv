@@ -1,4 +1,5 @@
 proposed_label	proposed_synonyms	existing_metpo_id	existing_metpo_label	existing_metpo_synonyms	match_kind	notes
+photosynthetic	phototrophic|photoautotrophic	METPO:1000660	phototrophic	TT_phototroph|aerobic_anoxygenic_phototrophy|phototroph	synonym	PREGO cohort 2026_08 — reuse existing METPO:1000660; 72 PREGO edges from GO:0015979 photosynthesis.
 has growth temperature minimum		METPO:2000702	has minimum temperature value	temperature minimum	concept	Phase 1 datatype property already exists; reuse for min growth temperature.
 has growth temperature maximum		METPO:2000703	has maximum temperature value	temperature maximum	concept	Phase 1 datatype property already exists; reuse for max growth temperature.
 has NaCl concentration minimum		METPO:2000708	has minimum salinity value	salinity minimum	concept	Phase 1 datatype property already exists; reuse for min NaCl concentration.

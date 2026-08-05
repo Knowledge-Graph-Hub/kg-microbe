@@ -19,6 +19,7 @@ from kg_microbe.transform_utils.prego.utils import (
     DROP_TAXON_TAXON_HOST,
     KEEP_TAXON_TO_GO,
     classify_row,
+    entity_to_curie,
     load_doid_to_mondo,
 )
 
@@ -265,6 +266,117 @@ def test_missing_raw_dir_raises(tmp_path: Path):
     transform = PregoTransform(input_dir=tmp_path / "raw", output_dir=out)
     with pytest.raises(SystemExit, match="not found"):
         transform.run()
+
+
+# ---------------------------------------------------------------------------
+# Phase 6b — dictionary synonym enrichment
+# ---------------------------------------------------------------------------
+
+
+def test_entity_to_curie_type_dispatch():
+    """entity_to_curie routes each JensenLab type integer to the correct CURIE (or None)."""
+    assert entity_to_curie(-2, "100") == "NCBITaxon:100"
+    assert entity_to_curie(-21, "GO:0006355") == "GO:0006355"
+    assert entity_to_curie(-22, "GO:0005634") == "GO:0005634"
+    assert entity_to_curie(-23, "GO:0000034") == "GO:0000034"
+    assert entity_to_curie(-27, "ENVO:00000011") == "ENVO:00000011"
+    # Dropped: BTO, DOID, unknown types, empty ID
+    assert entity_to_curie(-25, "BTO:9999") is None  # deferred v2
+    assert entity_to_curie(-26, "DOID:8") is None  # DOID→MONDO deferred v2
+    assert entity_to_curie(-2, "") is None  # defensive against empty source_id
+
+
+@pytest.fixture()
+def prego_input_dir_with_dictionary(prego_input_dir: Path) -> Path:
+    """
+    Extend the base input fixture with the dictionary tarball.
+
+    Builds ``prego_dictionary.tar.gz`` on-the-fly from the tracked
+    ``prego_entities_fixture.tsv`` + ``prego_names_fixture.tsv`` so the
+    tarball itself doesn't need to sit in git (blocked by the repo-wide
+    ``*.tar.gz`` gitignore).
+    """
+    archive = prego_input_dir / "prego" / "prego_dictionary.tar.gz"
+    with tarfile.open(archive, "w:gz") as tf:
+        tf.add(FIXTURE_DIR / "prego_entities_fixture.tsv", arcname="prego_entities.tsv")
+        tf.add(FIXTURE_DIR / "prego_names_fixture.tsv", arcname="prego_names.tsv")
+    return prego_input_dir
+
+
+@pytest.fixture()
+def prego_transform_with_dictionary(prego_input_dir_with_dictionary: Path, prego_output_dir: Path) -> PregoTransform:
+    """PregoTransform wired to input that includes the dictionary tarball."""
+    return PregoTransform(input_dir=prego_input_dir_with_dictionary, output_dir=prego_output_dir)
+
+
+def test_phase_6b_populates_synonym_column(prego_transform_with_dictionary: PregoTransform):
+    """With the dictionary present, NCBITaxon:100 gets its dictionary synonyms."""
+    prego_transform_with_dictionary.run()
+    nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
+    ncbi100 = next(n for n in nodes if n["id"] == "NCBITaxon:100")
+    synonyms = set(ncbi100["synonym"].split("|"))
+    # Case-insensitive dedup: "Ancylobacter aquaticus" and
+    # "ancylobacter aquaticus" collapse to one entry; alternate
+    # "A. aquaticus" survives.
+    assert synonyms == {"Ancylobacter aquaticus", "A. aquaticus"} or synonyms == {
+        "ancylobacter aquaticus",
+        "A. aquaticus",
+    }, f"expected one of the two case-collapsed sets; got {synonyms}"
+
+
+def test_phase_6b_go_node_gets_synonyms(prego_transform_with_dictionary: PregoTransform):
+    """GO:0000034 node should carry its dictionary synonym."""
+    prego_transform_with_dictionary.run()
+    nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
+    go = next(n for n in nodes if n["id"] == "GO:0000034")
+    assert "aminoacyl-tRNA hydrolase activity" in go["synonym"]
+
+
+def test_phase_6b_only_enriches_emitted_nodes(prego_transform_with_dictionary: PregoTransform):
+    """
+    Dictionary entries whose CURIE isn't emitted by Phase 6a don't produce standalone nodes.
+
+    Regression against the plan's explicit anti-pattern: ingesting the full
+    2.5 M dictionary as standalone stubs would balloon the transform's node
+    count and duplicate the NCBITaxon transform's output.
+    """
+    prego_transform_with_dictionary.run()
+    nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
+    ids = {n["id"] for n in nodes}
+    # Serial 7777's "orphan name" is in prego_names but has no entities row —
+    # even if entities-only enrichment were bugged, it couldn't produce a node.
+    # Serial 9999 (BTO) is filtered by entity_to_curie so its "irrelevant tissue"
+    # name never enters the lookup either.
+    assert "BTO:9999" not in ids
+    # And the transform must not have invented a node for the orphan serial.
+    assert not any("orphan" in n.get("name", "") for n in nodes)
+
+
+def test_phase_6b_skipped_gracefully_when_dictionary_missing(prego_transform: PregoTransform):
+    """
+    Without a dictionary in the raw dir, Phase 6a still runs; synonym columns empty.
+
+    Regression net for the optional-dictionary contract — the fixture
+    ``prego_transform`` (no dictionary) must run end-to-end and produce
+    edges + nodes, just with empty synonym cells.
+    """
+    prego_transform.run()
+    nodes = _read_tsv(prego_transform.output_node_file)
+    assert all(n["synonym"] == "" for n in nodes), "no dictionary → all synonyms should be empty"
+
+
+def test_phase_6b_counts_enrichment_stats(prego_transform_with_dictionary: PregoTransform):
+    """Per-run stats expose Phase 6b metrics for the CI log."""
+    prego_transform_with_dictionary.run()
+    stats = prego_transform_with_dictionary._stats
+    # Fixture has 4 valid entity CURIEs (NCBI:100/562, GO:0000034, ENVO:00000011)
+    # + 2 skipped (BTO, empty source_id).
+    assert stats["dictionary_curies_indexed"] == 4
+    # 8 name rows for the 4 valid CURIEs (serial 7777 orphan and serial 9999
+    # BTO name never get indexed because their serial isn't in the CURIE map).
+    assert stats["dictionary_synonyms_indexed"] == 7
+    # ≥1 emitted node got at least one synonym.
+    assert stats["nodes_enriched_with_synonyms"] >= 1
 
 
 def test_missing_archives_raises(tmp_path: Path):

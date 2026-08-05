@@ -1,7 +1,7 @@
 # PREGO ingest plan
 
 **Tracking issue:** [#182 — ingest PREGO knowledgebase](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/182)
-**Status:** planning — **unblocked** (data URLs discovered 2026-08-05 via deep-research task `wg3yk78jd`)
+**Status:** Phase 6a shipped (PR #667, 2026-08-04) · Phase 6b shipped (PR TBD, 2026-08-04)
 **Owner:** unassigned
 **Estimated scale:** ~10⁵–10⁶ nodes, ~10⁸ edges, ~10⁷ synonym enrichments (see [Data volumes](#data-volumes))
 **Category:** environmental

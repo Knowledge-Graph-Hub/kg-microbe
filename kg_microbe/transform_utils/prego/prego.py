@@ -51,14 +51,18 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     RELATION_COLUMN,
     SUBJECT_COLUMN,
+    SYNONYM_COLUMN,
 )
 from kg_microbe.transform_utils.prego.utils import (
     KEEP_ENVO_TO_TAXON,
     KEEP_TAXON_TO_DOID,
     KEEP_TAXON_TO_GO,
     classify_row,
+    entity_to_curie,
     go_category_for_type,
     iter_database_pairs,
+    iter_dictionary_entities,
+    iter_dictionary_names,
     load_doid_to_mondo,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -125,6 +129,9 @@ class PregoTransform(Transform):
             "rows_dropped_by_reason": defaultdict(int),
             "doid_no_mondo_xref": 0,
             "unique_nodes_emitted": 0,
+            "nodes_enriched_with_synonyms": 0,
+            "dictionary_curies_indexed": 0,
+            "dictionary_synonyms_indexed": 0,
         }
         # Node de-dup set — a CURIE seen twice only emits one node row.
         self._emitted_nodes: set = set()
@@ -132,6 +139,11 @@ class PregoTransform(Transform):
         # can point curators at the specific IDs that got dropped, capped
         # per-reason to avoid unbounded memory on 10^8-row runs.
         self._drop_examples: dict = defaultdict(lambda: defaultdict(int))
+        # Phase 6b: CURIE → set of case-insensitively-unique synonyms from
+        # the tagger dictionary. Populated by _load_dictionary() when the
+        # optional prego_dictionary.tar.gz is present; empty when it isn't
+        # (Phase 6a still runs standalone).
+        self._synonym_lookup: dict = {}
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """
@@ -151,7 +163,9 @@ class PregoTransform(Transform):
         if not prego_raw_dir.is_dir():
             raise SystemExit(f"[prego] {prego_raw_dir} not found. Run `poetry run kg download -t prego` first.")
 
-        archives = sorted(prego_raw_dir.glob("*.tar.gz"))
+        # Association archives are every *.tar.gz EXCEPT the tagger dictionary,
+        # which Phase 6b loads through a separate code path.
+        archives = sorted(p for p in prego_raw_dir.glob("*.tar.gz") if p.name != self._DICTIONARY_ARCHIVE_NAME)
         if not archives:
             raise SystemExit(
                 f"[prego] no *.tar.gz archives in {prego_raw_dir}. Run `poetry run kg download -t prego` first."
@@ -164,6 +178,11 @@ class PregoTransform(Transform):
                 "every DOID row will drop to the unmapped report. Re-run the ontologies "
                 "transform if you want disease edges."
             )
+
+        # Phase 6b — dictionary synonym enrichment. Optional: if the
+        # tagger dictionary isn't downloaded, skip and log; 6a still
+        # produces useful output on its own.
+        self._load_dictionary(prego_raw_dir)
 
         Path.mkdir(self.output_dir, exist_ok=True, parents=True)
         with (
@@ -180,6 +199,104 @@ class PregoTransform(Transform):
 
         self._write_unmapped_report()
         self._print_summary()
+
+    # ------------------------------------------------------------------ #
+    # Phase 6b: dictionary synonym enrichment.
+    # ------------------------------------------------------------------ #
+
+    _DICTIONARY_ARCHIVE_NAME = "prego_dictionary.tar.gz"
+    _DICTIONARY_FILES = ("prego_entities.tsv", "prego_names.tsv")
+
+    def _load_dictionary(self, prego_raw_dir: Path) -> None:
+        """
+        Populate :attr:`_synonym_lookup` from the tagger dictionary if available.
+
+        Optional. If ``prego_dictionary.tar.gz`` isn't in the raw dir, log a
+        one-line note and continue — Phase 6a still produces useful output
+        with empty synonym columns.
+
+        Two-step join in memory (per the plan's §Phase 6b):
+
+        1. ``prego_entities.tsv`` → ``{serial: CURIE}`` for the 5 emitted
+           entity types (NCBITaxon, all 3 GO namespaces, ENVO). Non-target
+           types (BTO, DOID) are dropped so we don't waste memory on entries
+           whose synonyms would never enrich anything.
+        2. ``prego_names.tsv`` → for each ``(serial, name)`` where the serial
+           is in the type-filtered map, accumulate ``{CURIE: {names...}}``.
+           Case-insensitive dedup keeps only distinct spellings.
+
+        Memory profile per canary-scale estimates: ~200 MB peak for the
+        serial→CURIE map (~500 K useful entries out of 2.5 M) plus ~150 MB
+        for the accumulated synonym sets. Fine on any machine that can
+        already extract the 8.1 GB isolates payload.
+        """
+        archive = prego_raw_dir / self._DICTIONARY_ARCHIVE_NAME
+        if not archive.is_file():
+            print(
+                f"[prego] no {self._DICTIONARY_ARCHIVE_NAME} in {prego_raw_dir}; "
+                "skipping Phase 6b synonym enrichment. Node `synonym` columns "
+                "will be empty. Add the archive to download.yaml and re-run "
+                "if you want enrichment."
+            )
+            return
+
+        payload_dir = prego_raw_dir / "prego_dictionary_extracted"
+        payload_dir.mkdir(parents=True, exist_ok=True)
+        # Same size-check-then-reuse pattern as _process_archive.
+        with tarfile.open(archive, mode="r:gz") as tf:
+            for member in tf.getmembers():
+                target_name = Path(member.name).name
+                if target_name not in self._DICTIONARY_FILES:
+                    continue
+                dest = payload_dir / target_name
+                if not dest.exists() or dest.stat().st_size != member.size:
+                    print(f"[prego] extracting dictionary member {target_name}...")
+                    with tf.extractfile(member) as src, dest.open("wb") as out:
+                        while True:
+                            chunk = src.read(1024 * 1024)
+                            if not chunk:
+                                break
+                            out.write(chunk)
+
+        entities_file = payload_dir / "prego_entities.tsv"
+        names_file = payload_dir / "prego_names.tsv"
+        if not (entities_file.is_file() and names_file.is_file()):
+            print(
+                f"[prego] WARNING: dictionary archive found but expected members missing "
+                f"({self._DICTIONARY_FILES}); skipping Phase 6b."
+            )
+            return
+
+        print(f"[prego] loading dictionary entities from {entities_file.name}...")
+        serial_to_curie: dict = {}
+        for serial, entity_type, source_id in iter_dictionary_entities(entities_file):
+            curie = entity_to_curie(entity_type, source_id)
+            if curie is not None:
+                serial_to_curie[serial] = curie
+        self._stats["dictionary_curies_indexed"] = len(serial_to_curie)
+        print(f"[prego] indexed {len(serial_to_curie):,} target CURIEs from dictionary")
+
+        print(f"[prego] loading dictionary names from {names_file.name}...")
+        n_kept = 0
+        for serial, name in iter_dictionary_names(names_file):
+            curie = serial_to_curie.get(serial)
+            if curie is None:
+                continue
+            name_stripped = name.strip()
+            if not name_stripped:
+                continue
+            # Case-insensitive dedup: keep the first-seen casing of each
+            # distinct spelling so downstream match strategies work with
+            # what curators wrote in the literature.
+            bucket = self._synonym_lookup.setdefault(curie, {})
+            key = name_stripped.casefold()
+            bucket.setdefault(key, name_stripped)
+            n_kept += 1
+        # Flatten the {casefold_key: original_case} inner dicts to sets of the
+        # preserved-case names — that's what _emit_node consumes.
+        self._synonym_lookup = {curie: set(inner.values()) for curie, inner in self._synonym_lookup.items()}
+        self._stats["dictionary_synonyms_indexed"] = n_kept
+        print(f"[prego] dictionary loaded: {n_kept:,} synonym rows kept across {len(self._synonym_lookup):,} CURIEs")
 
     # ------------------------------------------------------------------ #
     # Per-archive processing.
@@ -208,13 +325,9 @@ class PregoTransform(Transform):
                 None,
             )
             if member is None:
-                raise SystemExit(
-                    f"[prego] {archive_path.name}: no database_pairs.tsv member found in tarball."
-                )
+                raise SystemExit(f"[prego] {archive_path.name}: no database_pairs.tsv member found in tarball.")
             expected_size = member.size
-            need_extract = (
-                not payload_file.exists() or payload_file.stat().st_size != expected_size
-            )
+            need_extract = not payload_file.exists() or payload_file.stat().st_size != expected_size
             if need_extract:
                 if payload_file.exists():
                     print(
@@ -324,7 +437,16 @@ class PregoTransform(Transform):
     # ------------------------------------------------------------------ #
 
     def _emit_node(self, node_writer, node_id: str, category: str) -> None:
-        """Emit a stub node row if not already emitted (dedup by id)."""
+        """
+        Emit a stub node row if not already emitted (dedup by id).
+
+        When Phase 6b is active (:attr:`_synonym_lookup` populated), the
+        dictionary's alternate names for ``node_id`` land as pipe-delimited
+        values in the ``synonym`` column. The ``name`` column stays empty —
+        merge-time dedup upgrades the name from the ontologies transform's
+        richer row, so PREGO doesn't need to compete for that source of
+        truth.
+        """
         if node_id in self._emitted_nodes:
             return
         self._emitted_nodes.add(node_id)
@@ -333,6 +455,12 @@ class PregoTransform(Transform):
         row[ID_COLUMN] = node_id
         row[CATEGORY_COLUMN] = category
         row[PROVIDED_BY_COLUMN] = PREGO_KNOWLEDGE_SOURCE
+        synonyms = self._synonym_lookup.get(node_id)
+        if synonyms:
+            # Case-insensitively deduplicated at load time; sort for stable
+            # output (deterministic diff on re-runs).
+            row[SYNONYM_COLUMN] = "|".join(sorted(synonyms))
+            self._stats["nodes_enriched_with_synonyms"] += 1
         node_writer.writerow([row[c] for c in self.node_header])
 
     def _make_edge_row(

@@ -157,6 +157,68 @@ def load_doid_to_mondo(mondo_nodes_file: Path) -> Dict[str, str]:
 # ---------------------------------------------------------------------------
 
 
+def iter_dictionary_entities(path: Path) -> Iterator[Tuple[int, int, str]]:
+    """
+    Yield ``(serial, entity_type, source_id)`` triples from ``prego_entities.tsv``.
+
+    JensenLab tagger convention: three tab-separated columns per row —
+    serial (unique positive integer), entity type (positive for NCBI-species
+    proteins, negative for the standardized vocabularies), and the
+    source-native identifier. Malformed rows are silently skipped; ~2.5 M
+    well-formed rows in the full PREGO dictionary.
+    """
+    with path.open("r", encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            parts = line.rstrip("\n\r").split("\t")
+            if len(parts) != 3:
+                continue
+            try:
+                yield int(parts[0]), int(parts[1]), parts[2]
+            except ValueError:
+                continue
+
+
+def iter_dictionary_names(path: Path) -> Iterator[Tuple[int, str]]:
+    """
+    Yield ``(serial, synonym)`` pairs from ``prego_names.tsv``.
+
+    ~13.9 M rows in the full dictionary. Callers must be O(1) per row —
+    materialising as a list defeats the streaming intent.
+    """
+    with path.open("r", encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            parts = line.rstrip("\n\r").split("\t")
+            if len(parts) != 2:
+                continue
+            try:
+                yield int(parts[0]), parts[1]
+            except ValueError:
+                continue
+
+
+# ---------------------------------------------------------------------------
+# CURIE construction from tagger (type, source_id) pairs.
+# ---------------------------------------------------------------------------
+
+
+def entity_to_curie(entity_type: int, source_id: str) -> Optional[str]:
+    """
+    Return the KG-Microbe CURIE for a tagger ``(type, source_id)`` pair, or None.
+
+    Skips types Phase 6b doesn't enrich (BTO, DOID, and anything not in the
+    small allowlist). The DOID→MONDO xref path is not applied here — DOID
+    synonyms would need a reverse lookup to land on the MONDO node, which is
+    deferred to v2 per the plan.
+    """
+    if entity_type == PREGO_TYPE_NCBITAXON and source_id:
+        return f"NCBITaxon:{source_id}"
+    if entity_type in _GO_TYPES and source_id.startswith("GO:"):
+        return source_id
+    if entity_type == PREGO_TYPE_ENVO and source_id.startswith("ENVO:"):
+        return source_id
+    return None
+
+
 def iter_database_pairs(path: Path) -> Iterator[Tuple[list, Optional[str]]]:
     """
     Yield ``(row, error)`` pairs from a ``database_pairs.tsv``.

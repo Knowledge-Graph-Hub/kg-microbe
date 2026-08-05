@@ -88,6 +88,96 @@ MANUAL_EXCLUDE: Set[int] = {
 }
 
 # ---------------------------------------------------------------------------
+# Per-source metadata. Cannot be reliably derived from title/body — this is
+# curator judgement. Fields:
+#   nodes    : rough node-count magnitude as ``10^N`` (string; use "?" if unknown)
+#   edges    : rough edge-count magnitude, same convention
+#   category : short kebab-case data-shape label from ``DATA_CATEGORIES`` below
+# Missing entries render as ``?`` in the doc so a curator can see the gap.
+# ---------------------------------------------------------------------------
+
+# Kebab-case category taxonomy. Single source of truth: this dict feeds both
+# the runtime whitelist (used to validate SOURCE_METADATA at import) AND the
+# legend block in the generated doc. Adding a category is one edit here —
+# no drift possible.
+DATA_CATEGORIES: Dict[str, str] = {
+    "phenotype": "organism trait observations (growth, morphology, metabolism)",
+    "genome": "gene / protein content, functional annotation",
+    "metabolism": "pathways / reactions / end-products",
+    "identity": "crosswalks, naming registries",
+    "media": "growth-media composition",
+    "environmental": "habitat / biogeography / distribution",
+    "ecology": "inter-organism / host-microbe / microbe-drug interactions",
+    "fitness": "gene-essentiality / knockout experiments",
+    "literature": "publication associations",
+}
+
+SOURCE_METADATA: Dict[int, Dict[str, str]] = {
+    # Novel bucket
+    9: {"nodes": "10^4", "edges": "10^6", "category": "fitness"},  # LBL knockouts
+    27: {"nodes": "10^3", "edges": "10^4", "category": "phenotype"},  # Weissman
+    33: {"nodes": "10^4", "edges": "10^5", "category": "ecology"},  # gutMEGA
+    34: {"nodes": "10^6", "edges": "10^7", "category": "environmental"},  # biogeography
+    36: {"nodes": "10^3", "edges": "10^4", "category": "ecology"},  # Web of Microbes
+    37: {"nodes": "10^2", "edges": "10^3", "category": "environmental"},  # skin pathobionts
+    38: {"nodes": "10^3", "edges": "10^4", "category": "environmental"},  # Microbe Directory
+    39: {"nodes": "10^5", "edges": "10^6", "category": "environmental"},  # PREGO (dup of #182)
+    41: {"nodes": "10^5", "edges": "10^6", "category": "metabolism"},  # METABOLIC
+    42: {"nodes": "10^5", "edges": "10^5", "category": "genome"},  # FusionDB
+    44: {"nodes": "10^6", "edges": "10^8", "category": "genome"},  # ProGenomes3
+    58: {"nodes": "10^4", "edges": "10^5", "category": "environmental"},  # dbBact
+    61: {"nodes": "10^3", "edges": "10^6", "category": "phenotype"},  # protraits
+    66: {"nodes": "10^4", "edges": "10^5", "category": "identity"},  # ATCC strains
+    132: {"nodes": "10^4", "edges": "10^4", "category": "identity"},  # Names4Life
+    140: {"nodes": "10^4", "edges": "10^5", "category": "ecology"},  # BugSigDB
+    141: {"nodes": "10^3", "edges": "10^4", "category": "phenotype"},  # bugbase
+    154: {"nodes": "10^3", "edges": "10^4", "category": "genome"},  # ATCC genomes
+    159: {"nodes": "10^2", "edges": "10^3", "category": "phenotype"},  # thermobase
+    177: {"nodes": "10^5", "edges": "10^6", "category": "environmental"},  # microbeatlas
+    182: {"nodes": "10^5", "edges": "10^6", "category": "environmental"},  # PREGO
+    304: {"nodes": "10^5", "edges": "10^5", "category": "identity"},  # GOLD
+    320: {"nodes": "10^3", "edges": "10^4", "category": "media"},  # togomedium
+    329: {"nodes": "10^2", "edges": "10^3", "category": "media"},  # CRBIP
+    369: {"nodes": "10^2", "edges": "10^3", "category": "media"},  # gut microbe media
+    419: {"nodes": "10^3", "edges": "10^4", "category": "media"},  # MediaDB
+    478: {"nodes": "10^3", "edges": "10^4", "category": "phenotype"},  # LASER (antibiotic resistance)
+    537: {"nodes": "10^4", "edges": "10^5", "category": "phenotype"},  # bac2feature
+    # Salvage bucket
+    518: {"nodes": "10^8", "edges": "10^9", "category": "genome"},  # UniRef90
+    519: {"nodes": "10^4", "edges": "10^5", "category": "identity"},  # HGNC
+    520: {"nodes": "10^4", "edges": "10^5", "category": "phenotype"},  # IJSEM
+    # Exploratory bucket
+    321: {"nodes": "10^3", "edges": "10^3", "category": "identity"},  # periodic table of bacteria
+    569: {"nodes": "10^5", "edges": "10^6", "category": "environmental"},  # nmdc.cn
+}
+
+
+def _validate_source_metadata() -> None:
+    """
+    Fail fast on curator typos in :data:`SOURCE_METADATA`.
+
+    Runs at import time. Catches category typos (e.g. ``"phentoype"``) that
+    would otherwise ship a mystery tag to readers of the generated doc; the
+    error message names both the offending issue and the valid vocabulary so
+    the fix is one edit.
+    """
+    valid = set(DATA_CATEGORIES)
+    bad = [
+        (num, meta["category"])
+        for num, meta in SOURCE_METADATA.items()
+        if "category" in meta and meta["category"] not in valid
+    ]
+    if bad:
+        detail = ", ".join(f"#{num}='{cat}'" for num, cat in bad)
+        raise SystemExit(
+            f"[novel-transforms] SOURCE_METADATA carries category values not in "
+            f"DATA_CATEGORIES: {detail}. Valid: {sorted(valid)}."
+        )
+
+
+_validate_source_metadata()
+
+# ---------------------------------------------------------------------------
 # Inclusion signals (regex). Case-insensitive.
 # ---------------------------------------------------------------------------
 
@@ -308,21 +398,46 @@ def _guess_source_name(iss: Issue) -> str:
     return stripped.split(" from ")[0].split(" for ")[0].strip() or title
 
 
+def _fmt_scale(power_str: str) -> str:
+    """Render ``10^N`` as ``10ⁿ`` using Unicode superscripts for compactness."""
+    if not power_str or power_str == "?":
+        return "?"
+    if not power_str.startswith("10^"):
+        return power_str
+    superscripts = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+    return "10" + power_str[3:].translate(superscripts)
+
+
 def _render_bucket(bucket_name: str, issues: List[Issue]) -> str:
-    """Render one bucket's table (or a 'none' placeholder)."""
+    """
+    Render one bucket's table (or a 'none' placeholder).
+
+    Columns: #, Source, Category, ~Nodes, ~Edges, Title, Link. Category and
+    scale come from :data:`SOURCE_METADATA`; missing entries render as ``?``
+    so a curator sees the gap.
+    """
     if not issues:
         return "_None open._\n"
-    lines = ["| # | Source | One-line | Link |", "|---|---|---|---|"]
+    lines = [
+        "| # | Source | Category | ~Nodes | ~Edges | One-line | Link |",
+        "|---|---|---|---:|---:|---|---|",
+    ]
     for iss in issues:
         source = _guess_source_name(iss)
         summary = iss.title.strip().replace("|", "\\|")
-        # Trim summary to a reasonable column width.
-        if len(summary) > 90:
-            summary = summary[:87] + "…"
+        if len(summary) > 80:
+            summary = summary[:77] + "…"
         salvage_note = ""
         if iss.bucket == "salvage" and iss.salvage_pr is not None:
             salvage_note = f" _(salvage from PR #{iss.salvage_pr})_"
-        lines.append(f"| #{iss.number} | **{source}** | {summary}{salvage_note} | [link]({iss.url}) |")
+        meta = SOURCE_METADATA.get(iss.number, {})
+        category = meta.get("category", "?")
+        nodes = _fmt_scale(meta.get("nodes", "?"))
+        edges = _fmt_scale(meta.get("edges", "?"))
+        lines.append(
+            f"| #{iss.number} | **{source}** | {category} | {nodes} | {edges} | "
+            f"{summary}{salvage_note} | [link]({iss.url}) |"
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -351,11 +466,22 @@ def render_markdown(kept: List[Issue], dropped: List[Issue], verbose: bool) -> s
         "see `.claude/skills/novel-transforms/SKILL.md` for the full contract.\n\n"
     )
 
+    # Category legend generated from DATA_CATEGORIES — no drift possible.
+    legend_entries = " · ".join(f"`{name}` = {desc}" for name, desc in DATA_CATEGORIES.items())
+    category_legend = (
+        f"**Category legend:** {legend_entries}.\n\n"
+        "**Scale columns** (`~Nodes` / `~Edges`) are curator estimates in "
+        "powers of ten — magnitude, not exact count. `?` means the entry "
+        "hasn't been sized yet; add a row to `SOURCE_METADATA` in "
+        "`novel_transforms.py` to fill it in.\n\n"
+    )
+
     sections = [
+        category_legend,
         "## Novel external sources\n\n"
         "New databases, APIs, or datasets that KG-Microbe does not cover yet. "
         "The default bucket — each entry corresponds to a transform directory "
-        "that does not exist today.\n\n" + _render_bucket("novel", novel) + "\n"
+        "that does not exist today.\n\n" + _render_bucket("novel", novel) + "\n",
     ]
 
     if salvage:
@@ -411,6 +537,7 @@ def render_json(kept: List[Issue], dropped: List[Issue]) -> str:
     """Machine-readable dump for other skills / pipelines."""
 
     def _asdict(iss: Issue) -> Dict:
+        meta = SOURCE_METADATA.get(iss.number, {})
         return {
             "number": iss.number,
             "title": iss.title,
@@ -418,6 +545,9 @@ def render_json(kept: List[Issue], dropped: List[Issue]) -> str:
             "bucket": iss.bucket,
             "salvage_pr": iss.salvage_pr,
             "source_name": _guess_source_name(iss),
+            "category": meta.get("category"),
+            "nodes_magnitude": meta.get("nodes"),
+            "edges_magnitude": meta.get("edges"),
         }
 
     payload = {

@@ -60,9 +60,10 @@ DATABASE_PAIRS_NCOL = len(DATABASE_PAIRS_COLUMNS)
 KEEP_TAXON_TO_GO = "taxon_to_go"
 KEEP_ENVO_TO_TAXON = "envo_to_taxon"
 KEEP_TAXON_TO_DOID = "taxon_to_doid"
+KEEP_TAXON_TO_BTO = "taxon_to_bto"
 DROP_INVERSE_TAXON_TO_GO = "inverse_go_to_taxon"
 DROP_INVERSE_ENVO_TO_TAXON = "inverse_taxon_to_envo"
-DROP_BTO_DEFERRED_V2 = "bto_deferred_v2"
+DROP_INVERSE_TAXON_TO_BTO = "inverse_bto_to_taxon"
 DROP_TAXON_TAXON_HOST = "taxon_taxon_host"
 DROP_UNKNOWN_SHAPE = "unknown_shape"
 
@@ -82,14 +83,15 @@ def classify_row(entity1_type: int, entity2_type: int) -> str:
         return KEEP_ENVO_TO_TAXON
     if entity1_type == PREGO_TYPE_NCBITAXON and entity2_type == PREGO_TYPE_DOID:
         return KEEP_TAXON_TO_DOID
-    # Inverses of the three canonical directions — drop, don't re-emit.
+    if entity1_type == PREGO_TYPE_NCBITAXON and entity2_type == PREGO_TYPE_BTO:
+        return KEEP_TAXON_TO_BTO
+    # Inverses of the four canonical directions — drop, don't re-emit.
     if entity1_type in _GO_TYPES and entity2_type == PREGO_TYPE_NCBITAXON:
         return DROP_INVERSE_TAXON_TO_GO
     if entity1_type == PREGO_TYPE_NCBITAXON and entity2_type == PREGO_TYPE_ENVO:
         return DROP_INVERSE_ENVO_TO_TAXON
-    # BTO deferred per v1 scope (see docs/PREGO_INGEST_PLAN.md §Explicitly out-of-scope).
-    if entity2_type == PREGO_TYPE_BTO or entity1_type == PREGO_TYPE_BTO:
-        return DROP_BTO_DEFERRED_V2
+    if entity1_type == PREGO_TYPE_BTO and entity2_type == PREGO_TYPE_NCBITAXON:
+        return DROP_INVERSE_TAXON_TO_BTO
     # Taxon-taxon host / co-occurrence rows (e.g. → NCBITaxon:9606 human).
     if entity1_type == PREGO_TYPE_NCBITAXON and entity2_type == PREGO_TYPE_NCBITAXON:
         return DROP_TAXON_TAXON_HOST
@@ -205,16 +207,19 @@ def entity_to_curie(entity_type: int, source_id: str) -> Optional[str]:
     """
     Return the KG-Microbe CURIE for a tagger ``(type, source_id)`` pair, or None.
 
-    Skips types Phase 6b doesn't enrich (BTO, DOID, and anything not in the
-    small allowlist). The DOID→MONDO xref path is not applied here — DOID
-    synonyms would need a reverse lookup to land on the MONDO node, which is
-    deferred to v2 per the plan.
+    Handles the direct-mapping types (NCBITaxon, all 3 GO namespaces, ENVO,
+    BTO). DOID is intentionally NOT handled here — DOID→MONDO xref
+    resolution is context-dependent (needs the ontologies output's xref
+    map) so ``_load_dictionary`` routes DOID synonyms to their MONDO
+    CURIEs separately.
     """
     if entity_type == PREGO_TYPE_NCBITAXON and source_id:
         return f"NCBITaxon:{source_id}"
     if entity_type in _GO_TYPES and source_id.startswith("GO:"):
         return source_id
     if entity_type == PREGO_TYPE_ENVO and source_id.startswith("ENVO:"):
+        return source_id
+    if entity_type == PREGO_TYPE_BTO and source_id.startswith("BTO:"):
         return source_id
     return None
 

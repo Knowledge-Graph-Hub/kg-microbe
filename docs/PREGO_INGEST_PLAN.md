@@ -75,23 +75,24 @@ All three verified 2026-08-05 with HTTP 200, real `application/x-gzip` payloads,
 
 ## Phase 3 — Entity model
 
-Each archive unpacks to a single `database_pairs.tsv` with a **nine-column schema** (verified via partial extraction of `annotated_genomes_isolates.tar.gz`):
+Each archive unpacks to a single `database_pairs.tsv` with a **nine-column schema** (verified end-to-end on `annotated_genomes_isolates.tar.gz` — see [Canary findings](#canary-findings-2026-08-04)):
 
 ```
-entity1_type    entity1_id    entity1_extra    entity2_id    source    channel    score    direct_flag    evidence_url
+entity1_type    entity1_id    entity2_type    entity2_id    source    channel    score    direct_flag    evidence_url
 ```
 
-Example row: `-2 → 100 → (extra) → GO:0000034 → "JGI IMG" → "Isolates" → 4 → TRUE → <JGI deep link>`.
+Example row: `-2 → 100 → -23 → GO:0000034 → "JGI IMG" → "Isolates" → 4 → TRUE → <JGI deep link>`.
 
-The `entity1_type` column uses JensenLab tagger integer codes (`-2` = NCBITaxon, `-21` = GO biological_process, `-27` = ENVO, `-26` = DOID, `-25` = BTO). The `entity2_id` field is already a full CURIE for ontology entities; NCBITaxon rows carry a bare integer that needs the `NCBITaxon:` prefix prepended.
+Both `entity1_type` and `entity2_type` use JensenLab tagger integer codes (`-2` = NCBITaxon, `-21` = GO biological_process, `-22` = GO cellular_component, `-23` = GO molecular_function, `-27` = ENVO, `-26` = DOID, `-25` = BTO). Entity IDs are already full CURIEs for ontology entities; NCBITaxon rows carry a bare integer that needs the `NCBITaxon:` prefix prepended. **Each unique association appears twice** in the raw data — as `(X, Y)` and as `(Y, X)` — so the transform must dedup to a canonical direction (see Phase 6a).
 
 | Row shape from source | Emitted edge (subject → object) | Predicate | Notes |
 |---|---|---|---|
 | taxon `-2` ↔ ENVO `-27` | `ENVO:Y` → `NCBITaxon:X` | `biolink:location_of` | **Direction matches bacdive** (`ENVO → location_of → strain`); use same predicate here so the merged KG carries a single canonical direction for organism–environment edges. Carry `score`, `channel`, `direct_flag` as edge attributes. |
-| taxon `-2` ↔ GO process `-21` | `NCBITaxon:X` → `GO:Y` | `biolink:capable_of` | Novel content |
+| taxon `-2` ↔ GO `-21` / `-22` / `-23` | `NCBITaxon:X` → `GO:Y` | `biolink:capable_of` | Novel content. Predicate fits **all three GO namespaces**: biological_process (`-21`), cellular_component (`-22`), molecular_function (`-23`). Isolates channel is 99.7% `-23` (molecular_function — see canary); literature channel likely biased toward `-21`. |
 | taxon `-2` ↔ DOID `-26` | `NCBITaxon:X` → `MONDO:Y` | `biolink:associated_with` | Route DOID→MONDO through `ontologies` output; skip if no xref |
 | taxon `-2` ↔ BTO `-25` | *(defer to v2)* | — | BTO not in KGM; not worth the ontology import for v1 |
-| non-taxon subject (either side is ontology-ontology) | *(skip)* | — | PREGO's cross-ontology pairs (e.g. GO↔ENVO) are out of scope for the taxa-focused link-prediction use case |
+| taxon `-2` ↔ taxon `-2` | *(skip)* | — | Host / co-occurrence taxon-taxon rows (e.g. `→ NCBITaxon:9606` = organism-associated-with-human). Small volume (~4K in isolates), out of scope for v1's taxa↔environment/process focus. |
+| any pair where subject and object are both ontology terms | *(skip)* | — | PREGO's cross-ontology pairs (e.g. GO↔ENVO) are out of scope for the taxa-focused link-prediction use case |
 | dictionary: `(serial, synonym)` × `(serial, CURIE)` join | node `synonym` column enrichment on `NCBITaxon:X` / `ENVO:Y` / `GO:Y` | — | Not an edge — the tagger dictionary's ~13.9 M name variants are joined via `prego_entities.tsv` → CURIE → `prego_names.tsv`, and the resulting alternate names are emitted as pipe-delimited `synonym` values on the node row. Only enriches nodes we already emit from the associations tables (avoids exploding into 2.5 M mostly-unused NCBITaxon stubs). |
 
 **Predicates:** all existing biolink; no METPO extensions needed.
@@ -100,10 +101,10 @@ The `entity1_type` column uses JensenLab tagger integer codes (`-2` = NCBITaxon,
 **No stub nodes** — every PREGO edge subject/object already resolves in an existing KGM transform.
 
 **Edge attributes** (per JensenLab convention, discovered schema):
-- `score` — PREGO scoring column (semantics per-channel; the literature file uses a two-score co-mention output that needs on-the-ground validation during Phase 6)
-- `channel` — one of `Literature` / `Environmental` / `Isolates` — kept so consumers can filter by evidence type
-- `direct_flag` — `TRUE` if the row is a direct curator/database annotation rather than text-mined
-- `evidence_url` — deep link into the underlying evidence source (JGI IMG, PubMed abstract, etc.)
+- `score` — PREGO scoring column (semantics per-channel; **isolates uses integer scores 3 / 4** per canary; literature and environmental score conventions to verify during their respective canaries).
+- `channel` — the sub-channel string from the source archive (isolates has `Isolates`, `Single Amplified Genome`, `Genome annotation`, `Aquatic`, `Oceanic`, `Human`, `Plants`, plus PMID-tagged BioProject rows). Kept as-is so consumers can filter by evidence type.
+- `direct_flag` — `TRUE` for direct curator/database rows. **All rows in the isolates archive are TRUE** (this whole channel IS the direct-annotation channel); the flag becomes discriminating only when literature rows (mostly `FALSE` / empty) get mixed in during merge.
+- `evidence_url` — deep link into the underlying evidence source (JGI IMG, PubMed abstract, etc.). Often empty for older rows.
 - `primary_knowledge_source: infores:prego`
 
 **Node enrichment** (from the tagger dictionary):
@@ -173,14 +174,39 @@ Reference transforms (based on similarity):
 
 - Reuse `get_ontology_adapter("go" / "ncbitaxon")` for label lookups on emitted subject/object nodes (we still emit rich nodes for any subject/object not already carried by the merged graph, but that will be a small residual — most already exist).
 - **Stream the archives, don't materialise.** `literature.tar.gz` unpacks to ~19.6 GB. Read row-by-row with `gzip.open()` + `tarfile.open(mode="r|gz")` in streaming mode; do NOT load into a DataFrame.
-- **Canary before the full literature run.** Start with the smallest archive (`annotated_genomes_isolates.tar.gz`, 269 MB) end-to-end — smoke it through Phase 7 gates first. Once that's clean, extrapolate row-count and disk-cost predictions before touching the 5.4 GB file. This is the standing global rule (see `~/.claude-work/CLAUDE.md` → "Canary first").
+- **Deduplicate at emit time.** Every unique association appears twice in the raw data (`X, Y` and `Y, X`). The transform must keep only one direction — pick the one matching KGM convention (`NCBITaxon → GO` for capable_of; `ENVO → NCBITaxon` for location_of) and drop the inverse. Track `(subject, predicate, object)` in an on-disk sqlite bloom filter or `LMDB` if the in-memory dedup set doesn't fit; measure during Phase 6b.
+- **Canary before the full literature run.** Isolates archive canary complete 2026-08-04 (see [Canary findings](#canary-findings-2026-08-04)) — schema, row shapes, and scale confirmed. Extrapolate row-count and disk-cost predictions from those measurements before touching the 5.4 GB literature file.
 - **DOID→MONDO xref.** Not every DOID has a MONDO equivalent. Route through `ontologies/mondo_nodes.tsv` and skip rows with no xref rather than emitting an orphan DOID CURIE.
-- **Cardinality risk.** 2.4 M taxa × N GO processes could produce 10⁸+ edges. Watch `NCBITaxon → capable_of` fan-out in Phase 7 for spike outliers (would indicate a runaway text-mining match on a single popular taxon).
-- **Server quirk.** The Mamba/nginx server on `prego.hcmr.gr` occasionally returns HTTP 500 on HEAD requests but 200 on GET. **Verify during Phase 6a canary** that `kghub-downloader` tolerates this — if it HEAD-checks and refuses, we'll need a custom fetch wrapper for the PREGO entries.
+- **Cardinality risk.** Isolates: ~21 M unique taxon↔GO_MF edges (post-dedup) confirmed. Literature likely 3-5x larger. Watch `NCBITaxon → capable_of` fan-out in Phase 7 for spike outliers (would indicate a runaway text-mining match on a single popular taxon).
+- **Server quirk.** The Mamba/nginx server on `prego.hcmr.gr` occasionally returns HTTP 500 on HEAD requests but 200 on GET. **Verify during actual `kg download`** that `kghub-downloader` tolerates this — if it HEAD-checks and refuses, we'll need a custom fetch wrapper for the PREGO entries.
+
+#### Canary findings (2026-08-04)
+
+`annotated_genomes_isolates.tar.gz` fetched, extracted, and profiled end-to-end. Measured facts:
+
+| Fact | Measured value | Plan estimate before canary | Status |
+|---|---|---|---|
+| Compressed size | 269 MB (verified) | 269 MB | ✅ |
+| Uncompressed `database_pairs.tsv` | 8.1 GB (measured) | ~8.7 GB | ✅ close |
+| Row count | **42,038,686** (measured) | ~48 M | ✅ close |
+| Column 3 meaning | `entity2_type` (integer type code) | `entity1_extra` (wrong) | ❌ **plan schema fixed** |
+| Row-shape dominance | **99.7% NCBITaxon ↔ GO molecular_function** (`-2` ↔ `-23`) | GO biological_process (`-21`) as focus | ❌ **plan predicate table now covers all 3 GO namespaces** |
+| Bidirectional emission | Yes — every association appears as `(X,Y)` AND `(Y,X)` | Not called out | ❌ **plan now specifies dedup step** |
+| Unique NCBI taxa in file | **38,737** | Was extrapolating ~500 K across all 3 archives | ✅ order-of-magnitude right for aggregate; isolates alone is 4 × 10⁴ |
+| ENVO edges | 97 K (asymmetric: 59 K `→` + 38 K `←`) | 60 K estimated | ✅ close |
+| DOID edges | 5,172 | small | ✅ |
+| BTO edges | 6,725 | small | ✅ deferred per v1 scope |
+| taxon-taxon rows | 3,992 (host associations e.g. `→ NCBITaxon:9606`) | Not listed | ❌ **plan now lists these as skip-in-v1** |
+| Score values | Integers `3` and `4` (isolates channel) | Floats + z_score assumed | ❌ **plan now clarifies per-channel score conventions** |
+| `direct_flag` | 100% TRUE in isolates | Assumed mixed within a file | ❌ **plan now clarifies flag is per-channel discriminator, not per-row** |
+
+**Cost:** 21-second download, 3-second extract, 3.5-minute sort of the pair-type distribution, ~5 min of targeted sampling. Total ~10 min of wall-clock; ~8 GB disk in `/tmp/prego_isolates/`.
+
+**Conclusion:** the plan's overall shape holds; the seven items in the "Status ❌" rows above have been folded in as concrete corrections. **No new blocker discovered.** Ready to proceed to full implementation when someone has 5-6 days.
 
 ### Phase 6b — dictionary synonym enrichment (multiplier)
 
-- Load `prego_entities.tsv` into a `{serial: CURIE}` dict for the 4 emitted entity types (`-2` NCBITaxon, `-21` GO, `-27` ENVO, `-26` DOID via xref to MONDO — `-25` BTO skipped per v1 scope). Order-of-magnitude **~10⁵ useful serials** out of 2.5 M total; the exact fraction depends on how many taxa actually appear in the associations tables — **verify during Phase 6a canary** and update this estimate.
+- Load `prego_entities.tsv` into a `{serial: CURIE}` dict for the emitted entity types (`-2` NCBITaxon, `-21`/`-22`/`-23` GO all namespaces, `-27` ENVO, `-26` DOID via xref to MONDO — `-25` BTO skipped per v1 scope). Canary measured **~4 × 10⁴ unique taxa in the isolates channel alone**; literature and environmental will add more. Full-aggregate estimate: **10⁵ order-of-magnitude** across all three channels.
 - Stream `prego_names.tsv` (13.9 M rows) row-by-row; for each `(serial, name)` where the serial is in the dict, accumulate `{CURIE: [names...]}`.
 - After phase 6a has emitted nodes, second-pass update the `synonym` column with pipe-delimited names — OR do the join in-memory and emit synonyms as the node is first written (single pass; preferred). The accumulator is small: ~10⁵ CURIEs × average ~6 names × ~40 B/name ≈ **~200 MB peak**.
 - **Only enrich nodes the associations tables produced** — do NOT ingest the full 2.5 M dictionary as standalone stubs. Prevents the transform from ballooning by ~2 M NCBITaxon rows that duplicate the `ontologies` transform.
@@ -224,11 +250,11 @@ Follow the `branch-triage-ship` playbook: adversarial review → file findings �
 
 ### Data volumes
 
-| Archive | Compressed | Uncompressed (est.) | Rows (est.) |
+| Archive | Compressed | Uncompressed | Rows |
 |---|---:|---:|---:|
-| `annotated_genomes_isolates.tar.gz` | 269 MB | ~8.7 GB | ~48 M (JGI IMG isolates channel; verified partial-extract) |
-| `environmental_samples.tar.gz` | 702 MB | ~22 GB | ~120 M |
-| `literature.tar.gz` | 5.4 GB | 19.6 GB (confirmed via tar header) | ~110 M (assuming ~180 B/row typical of tagger output) |
+| `annotated_genomes_isolates.tar.gz` | 269 MB (verified) | 8.1 GB (**measured 2026-08-04 canary**) | **42,038,686 (measured)** — dominates as taxon↔GO_MF ~21M unique after dedup |
+| `environmental_samples.tar.gz` | 702 MB | ~22 GB (est.) | ~120 M (est.; canary pending) |
+| `literature.tar.gz` | 5.4 GB | 19.6 GB (tar-header confirmed) | ~110 M (est.; assuming ~180 B/row typical of tagger output) |
 
 Combined raw: **~280 M association rows**. After filtering to just taxon→(ENVO/GO/DOID/MONDO) shapes and applying merge-time dedup, expect **~10⁸ emitted edges** — an order of magnitude larger than the original `~10⁶` estimate in [`NOVEL_TRANSFORMS.md`](./NOVEL_TRANSFORMS.md); update that dict in the next `novel-transforms` skill refresh.
 

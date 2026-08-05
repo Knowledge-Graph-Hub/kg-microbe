@@ -318,6 +318,16 @@
   url: https://prego.hcmr.gr/download/annotated_genomes_isolates.tar.gz
   local_name: prego/annotated_genomes_isolates.tar.gz
   tag: prego
+-
+  url: https://download.jensenlab.org/prego_dictionary.tar.gz
+  local_name: prego/prego_dictionary.tar.gz
+  tag: prego
+  # NOTE: 278 MB. Tagger vocabulary — Phase 6b enrichment joins
+  # prego_entities.tsv (serial → CURIE) with prego_names.tsv
+  # (serial → synonym) to populate the `synonym` column on every
+  # NCBITaxon / GO / ENVO node the associations tables produce.
+  # Optional: if this archive isn't downloaded, PregoTransform still
+  # runs Phase 6a (associations) with empty synonym columns.
 
 #
 # Disbiome

@@ -3,7 +3,7 @@
 **Tracking issue:** [#182 — ingest PREGO knowledgebase](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/182)
 **Status:** planning — **unblocked** (data URLs discovered 2026-08-05 via deep-research task `wg3yk78jd`)
 **Owner:** unassigned
-**Estimated scale:** ~10⁵–10⁶ nodes, ~10⁸ edges (see [Data volumes](#data-volumes) — larger than the original estimate now that the raw table sizes are known)
+**Estimated scale:** ~10⁵–10⁶ nodes, ~10⁸ edges, ~10⁷ synonym enrichments (see [Data volumes](#data-volumes))
 **Category:** environmental
 **Ranking:** #5 in the current novel-transform recommendations (see [`NOVEL_TRANSFORMS.md`](./NOVEL_TRANSFORMS.md))
 
@@ -67,6 +67,7 @@ All three verified 2026-08-05 with HTTP 200, real `application/x-gzip` payloads,
 3. **Taxon→DOID edges** — organism↔disease from text-mining. Complementary to `disbiome` and any human-microbiome data.
 4. **Direct experimental annotations** from the JGI IMG isolates channel (`annotated_genomes_isolates.tar.gz`) — carries a `direct_flag` column that is `TRUE` for curator/database rows and something else (empty / `FALSE`) for text-mined rows, so consumers can filter for the high-confidence subset. Each row also carries a JGI IMG evidence URL.
 5. **Score-attributed edges** so downstream users can threshold on confidence.
+6. **Literature-attested synonym expansion** (from the tagger dictionary, ~13.9 M name variants across ~2.5 M entities, ~5.6 aliases per entity on average). Every NCBITaxon / ENVO / GO node PREGO touches gains the alternate names that actually appear in PubMed abstracts — feeding better NER matching in other transforms and better user-facing search hits ("*Enterococcus faecium*" vs "*Streptococcus faecium*" vs "*E. faecium*" — one entity, many literature forms).
 
 **Merge policy for overlap:** every PREGO edge carries `primary_knowledge_source: infores:prego` so it stays distinguishable from bacdive/madin edges to the same target. No dedup at the transform stage; merge-time dedup by `(subject, predicate, object, primary_knowledge_source)` is fine.
 
@@ -91,6 +92,7 @@ The `entity1_type` column uses JensenLab tagger integer codes (`-2` = NCBITaxon,
 | taxon `-2` ↔ DOID `-26` | `NCBITaxon:X` → `MONDO:Y` | `biolink:associated_with` | Route DOID→MONDO through `ontologies` output; skip if no xref |
 | taxon `-2` ↔ BTO `-25` | *(defer to v2)* | — | BTO not in KGM; not worth the ontology import for v1 |
 | non-taxon subject (either side is ontology-ontology) | *(skip)* | — | PREGO's cross-ontology pairs (e.g. GO↔ENVO) are out of scope for the taxa-focused link-prediction use case |
+| dictionary: `(serial, synonym)` × `(serial, CURIE)` join | node `synonym` column enrichment on `NCBITaxon:X` / `ENVO:Y` / `GO:Y` | — | Not an edge — the tagger dictionary's ~13.9 M name variants are joined via `prego_entities.tsv` → CURIE → `prego_names.tsv`, and the resulting alternate names are emitted as pipe-delimited `synonym` values on the node row. Only enriches nodes we already emit from the associations tables (avoids exploding into 2.5 M mostly-unused NCBITaxon stubs). |
 
 **Predicates:** all existing biolink; no METPO extensions needed.
 **Prefixes:** all existing (`NCBITaxon`, `ENVO`, `GO`, `MONDO`).
@@ -103,6 +105,11 @@ The `entity1_type` column uses JensenLab tagger integer codes (`-2` = NCBITaxon,
 - `direct_flag` — `TRUE` if the row is a direct curator/database annotation rather than text-mined
 - `evidence_url` — deep link into the underlying evidence source (JGI IMG, PubMed abstract, etc.)
 - `primary_knowledge_source: infores:prego`
+
+**Node enrichment** (from the tagger dictionary):
+- For each `NCBITaxon:` / `ENVO:` / `GO:` node the transform emits, pipe-delimited alternate names from `prego_names.tsv` land in the `synonym` column.
+- Uses the `prego_entities.tsv` file as the serial → CURIE lookup, then joins `prego_names.tsv` on serial.
+- Only nodes that appear in the associations tables get enriched — the transform does NOT emit 2.5 M standalone NCBITaxon stubs just because they exist in the dictionary.
 
 **Threshold policy for v1:** emit all associations from all three channels. Downstream consumers can filter by `score`, `channel`, or `direct_flag`. If the total edge count exceeds ~10⁸ (see [Data volumes](#data-volumes)) and pushes merge-time cost past acceptable, add a `--min-score` flag or channel-select flag rather than dropping content silently.
 
@@ -145,23 +152,41 @@ No new prefix registration in `custom_curies.yaml` — every target CURIE prefix
   local_name: prego_annotated_genomes_isolates.tar.gz
   tag: prego
 
+- url: https://download.jensenlab.org/prego_dictionary.tar.gz
+  local_name: prego_dictionary.tar.gz
+  tag: prego
+  # NOTE: 278 MB. Tagger vocabulary — Phase 6b joins prego_entities.tsv
+  # (serial → CURIE) with prego_names.tsv (serial → synonym) to enrich
+  # the `synonym` column on every NCBITaxon / ENVO / GO node the
+  # associations tables produce.
 ```
-
-The `prego_dictionary.tar.gz` (278 MB) is intentionally **not** added to `download.yaml` for v1 — association tables carry full CURIEs for ontology entities and bare integers for NCBI taxa (prefixed as `NCBITaxon:` at emit time), so v1 has no need for the tagger serial → preferred-label lookup. Add if a future v2 needs preferred labels or synonym expansion.
 
 ## Phase 6 — Implement
 
-Reference transforms (based on similarity):
-- **`rhea_mappings`** — closest analog: a mapping file emitting many edges, thin on rich nodes. Read this first.
-- **`bacdive`** — for score-attribute handling and large-per-record source data if we ever ingest the dictionary.
+Split into two sub-phases in the same transform. Sub-phase 6a is the primary value; 6b is a multiplier. Canary 6a first — if 6b turns out messier than expected, ship 6a to master rather than blocking on the enrichment.
 
-**Implementation notes:**
+Reference transforms (based on similarity):
+- **`rhea_mappings`** — closest analog for 6a: a mapping file emitting many edges, thin on rich nodes. Read this first.
+- **`bacdive`** — closest analog for score-attribute handling.
+
+### Phase 6a — associations (primary value)
+
 - Reuse `get_ontology_adapter("go" / "ncbitaxon")` for label lookups on emitted subject/object nodes (we still emit rich nodes for any subject/object not already carried by the merged graph, but that will be a small residual — most already exist).
 - **Stream the archives, don't materialise.** `literature.tar.gz` unpacks to ~19.6 GB. Read row-by-row with `gzip.open()` + `tarfile.open(mode="r|gz")` in streaming mode; do NOT load into a DataFrame.
 - **Canary before the full literature run.** Start with the smallest archive (`annotated_genomes_isolates.tar.gz`, 269 MB) end-to-end — smoke it through Phase 7 gates first. Once that's clean, extrapolate row-count and disk-cost predictions before touching the 5.4 GB file. This is the standing global rule (see `~/.claude-work/CLAUDE.md` → "Canary first").
 - **DOID→MONDO xref.** Not every DOID has a MONDO equivalent. Route through `ontologies/mondo_nodes.tsv` and skip rows with no xref rather than emitting an orphan DOID CURIE.
 - **Cardinality risk.** 2.4 M taxa × N GO processes could produce 10⁸+ edges. Watch `NCBITaxon → capable_of` fan-out in Phase 7 for spike outliers (would indicate a runaway text-mining match on a single popular taxon).
-- **Server quirk.** The Mamba/nginx server on `prego.hcmr.gr` occasionally returns HTTP 500 on HEAD requests but 200 on GET. **Verify during Phase 6 canary** that `kghub-downloader` tolerates this — if it HEAD-checks and refuses, we'll need a custom fetch wrapper for the PREGO entries.
+- **Server quirk.** The Mamba/nginx server on `prego.hcmr.gr` occasionally returns HTTP 500 on HEAD requests but 200 on GET. **Verify during Phase 6a canary** that `kghub-downloader` tolerates this — if it HEAD-checks and refuses, we'll need a custom fetch wrapper for the PREGO entries.
+
+### Phase 6b — dictionary synonym enrichment (multiplier)
+
+- Load `prego_entities.tsv` into a `{serial: CURIE}` dict for the 4 emitted entity types (`-2` NCBITaxon, `-21` GO, `-27` ENVO, `-26` DOID via xref to MONDO — `-25` BTO skipped per v1 scope). Order-of-magnitude **~10⁵ useful serials** out of 2.5 M total; the exact fraction depends on how many taxa actually appear in the associations tables — **verify during Phase 6a canary** and update this estimate.
+- Stream `prego_names.tsv` (13.9 M rows) row-by-row; for each `(serial, name)` where the serial is in the dict, accumulate `{CURIE: [names...]}`.
+- After phase 6a has emitted nodes, second-pass update the `synonym` column with pipe-delimited names — OR do the join in-memory and emit synonyms as the node is first written (single pass; preferred). The accumulator is small: ~10⁵ CURIEs × average ~6 names × ~40 B/name ≈ **~200 MB peak**.
+- **Only enrich nodes the associations tables produced** — do NOT ingest the full 2.5 M dictionary as standalone stubs. Prevents the transform from ballooning by ~2 M NCBITaxon rows that duplicate the `ontologies` transform.
+- **Deduplicate names** case-insensitively within each entity. **Leave the `name` column untouched by 6b** — it's set by 6a from the CURIE lookup or the association row's preferred label, and PREGO's `prego_preferred.tsv` may or may not agree with the ontology's own canonical label. Put every dictionary name (including PREGO's preferred if it isn't identical to the existing `name`) into `synonym`. No clobbering, all the info stays available for matching.
+- **`prego_groups.tsv` (42 M hierarchy rows) is NOT ingested** — the NCBI tree and GO is_a hierarchy are already in the `ontologies` transform; duplicating them here would just produce redundant `subclass_of` edges.
+- **`prego_texts.tsv` (43 K GO definitions) is NOT ingested** — go.owl already carries these.
 
 ## Phase 7-8 — Verify + test
 
@@ -170,12 +195,14 @@ Gates:
 - `kg-model-review --transform prego` reports **0 ERRORs**.
 - `kg-path-review --transform prego` — sweep for self-loops, family-mismatch, orphan-edges.
 - Post-merge cardinality check: `NCBITaxon → capable_of` fan-out should have a plausible distribution (long tail, not spike-outliers).
-- Unit tests (target ~20):
+- Unit tests (target ~25):
   - Fixture-in → known node/edge count.
   - Every emitted edge carries `score`, `channel`, `direct_flag`, `primary_knowledge_source`.
   - DOID→MONDO xref path exercises the mapping; DOID with no MONDO xref is silently skipped.
   - Absent optional columns handled without raising.
   - JensenLab type-code table covers `-2 / -21 / -27 / -26 / -25`; unknown codes log-and-skip rather than raise.
+  - **6b enrichment:** an emitted `NCBITaxon:` node carries pipe-delimited alternate names from the dictionary in `synonym`; names are deduplicated case-insensitively; the `name` column is NOT touched by 6b (set by 6a from the CURIE lookup).
+  - **6b scope:** a fixture serial that has names in `prego_names.tsv` but doesn't appear in any association row is NOT emitted as a standalone node.
 
 ## Phase 9 — Ship
 
@@ -205,18 +232,21 @@ Follow the `branch-triage-ship` playbook: adversarial review → file findings �
 
 Combined raw: **~280 M association rows**. After filtering to just taxon→(ENVO/GO/DOID/MONDO) shapes and applying merge-time dedup, expect **~10⁸ emitted edges** — an order of magnitude larger than the original `~10⁶` estimate in [`NOVEL_TRANSFORMS.md`](./NOVEL_TRANSFORMS.md); update that dict in the next `novel-transforms` skill refresh.
 
+**Dictionary (Phase 6b):** 278 MB compressed. `prego_names.tsv` has 13.9 M `(serial, synonym)` rows; after filtering to the serials that survive Phase 6a (only entities that appear in the associations, order of magnitude ~10⁵), expect **~10⁶–10⁷ synonym enrichments** distributed across those same nodes. The dictionary-wide average is 5.6 aliases per entity, but the enriched subset skews toward well-known organisms which have *more* aliases than obscure ones — so the per-node synonym count in the enriched subset is likely higher than 5.6. Actual counts to be verified during Phase 6a canary.
+
 ### Where the "not downloadable" misread came from
 
 The `prego.hcmr.gr/Downloads` UI page still shows only a placeholder ("we will provide"), unchanged since the paper's publication in early 2022. The paper's Appendix D lists the actual URLs but they're unlinked from the UI. A first-pass check of the site's Downloads tab (which is what the original plan draft did) plausibly reads as "data not yet released" — but the paper is the authoritative reference and the endpoints have been live since ~2021-12-21. Documentation bug, not a data-availability bug.
 
 ## Effort estimate
 
-- Full-association path: **~4-5 days** once code starts.
-  - Day 1: canary on `annotated_genomes_isolates.tar.gz` (269 MB) end-to-end through Phase 7 gates.
-  - Day 2-3: implement streaming parser + DOID→MONDO xref path + tests against fixture derived from the canary output.
-  - Day 4: run the two larger archives end-to-end; verify cardinality + path review.
-  - Day 5: ship PR + adversarial review.
-- **Blocking risk: none.** Data is live and CC-BY. The prior estimate's "author-response latency (0-6 weeks)" no longer applies.
+- **~5-6 days** once code starts.
+  - **Day 1 (6a canary):** Isolates channel (269 MB) end-to-end through Phase 7 gates.
+  - **Day 2-3 (6a build-out):** streaming parser + DOID→MONDO xref path + tests against fixture derived from the canary output.
+  - **Day 4 (6a scale-out):** run the two larger archives end-to-end; verify cardinality + path review.
+  - **Day 5 (6b):** dictionary join + synonym enrichment pass. Ship 6a to master first (as PR-of-record) if 6b turns out messier than expected; 6b then lands as a follow-up PR.
+  - **Day 6:** ship PR + adversarial review.
+- **Blocking risk: none.** Data is live and CC-BY.
 
 ## Explicitly out-of-scope for v1
 
@@ -226,3 +256,6 @@ The `prego.hcmr.gr/Downloads` UI page still shows only a placeholder ("we will p
 - **Sequence-search endpoint** (`prego.hcmr.gr/SequenceSearch`) — separate concern.
 - **Score-based edge filtering.** Emit all associations from all three channels; let downstream consumers threshold.
 - **Taxon-taxon similarity edges** — orthogonal to the taxa↔environment focus.
+- **Dictionary `prego_groups.tsv`** (42 M child-parent rows) — redundant with the NCBI tree + GO is_a hierarchy already in `ontologies`. Ingesting would just duplicate `subclass_of` edges.
+- **Dictionary `prego_texts.tsv`** (43 K GO definitions) — redundant with go.owl.
+- **Standalone dictionary nodes** — the dictionary has 2.5 M entities; the transform only enriches nodes that already appear in an association row. Ingesting the full dictionary would duplicate the entire NCBITaxon transform's output.

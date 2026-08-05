@@ -414,6 +414,42 @@ def test_bto_node_gets_dictionary_synonym(prego_transform_with_dictionary: Prego
     assert "bacterial gut microbiome" in bto["synonym"]
 
 
+def test_bto_row_with_non_bto_id_drops_to_prefix_mismatch(
+    tmp_path: Path, prego_output_dir: Path
+):
+    """
+    A `-2 → -25` row whose entity2_id doesn't start with `BTO:` drops explicitly.
+
+    Regression net for the CLDB defense added during PR #674's live canary:
+    some source rows type-tag `-25` (BTO) but carry a CLDB or other prefix.
+    The transform must NOT emit those as malformed BTO nodes.
+    """
+    raw_dir = tmp_path / "raw"
+    prego_raw = raw_dir / "prego"
+    prego_raw.mkdir(parents=True)
+    tsv_path = prego_raw / "one_row.tsv"
+    # Well-formed 9 cols, entity2_type=-25 but entity2_id is CLDB, not BTO.
+    tsv_path.write_text("-2\t104623\t-25\tCLDB:0001165\tBioProject\tPMID:24336377\t3\tTRUE\t\n")
+    archive = prego_raw / "onerow.tar.gz"
+    with tarfile.open(archive, "w:gz") as tf:
+        tf.add(tsv_path, arcname="database_pairs.tsv")
+    tsv_path.unlink()
+
+    transform = PregoTransform(input_dir=raw_dir, output_dir=prego_output_dir)
+    transform.run()
+
+    # No edge should emit.
+    edges = _read_tsv(transform.output_edge_file)
+    assert edges == [], f"CLDB-prefixed row should not emit; got {edges}"
+    # And no node with a CLDB: prefix should appear.
+    nodes = _read_tsv(transform.output_node_file)
+    assert not any(n["id"].startswith("CLDB:") for n in nodes)
+    # Drop lands in the dedicated bucket.
+    report = _read_tsv(transform.unmapped_report_file)
+    reasons = {r["reason"] for r in report}
+    assert "bto_id_prefix_mismatch" in reasons
+
+
 def test_mondo_node_enriched_via_doid_reverse_lookup(
     prego_transform_with_dictionary: PregoTransform,
 ):

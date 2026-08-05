@@ -137,11 +137,13 @@ class PregoTransform(Transform):
         """
         Read every PREGO archive and emit nodes + edges + unmapped-associations report.
 
-        ``data_file`` is accepted for base-class compatibility but ignored —
-        PREGO ingests every ``*.tar.gz`` in its raw directory (typically the
-        three channels: literature / environmental_samples /
-        annotated_genomes_isolates). ``show_status`` toggles the tqdm progress
-        bar; false is used by the pytest suite to keep captured output clean.
+        ``data_file`` is accepted for base-class compatibility but ignored.
+        PREGO ingests every ``*.tar.gz`` in its raw directory — the full
+        three-channel set (literature / environmental_samples /
+        annotated_genomes_isolates) is the intended production input, but any
+        subset works (e.g. the isolates-only canary). ``show_status`` toggles
+        the tqdm progress bar; false is used by the pytest suite to keep
+        captured output clean.
         """
         del data_file  # multi-archive ingest; scanned from raw dir
 
@@ -184,27 +186,50 @@ class PregoTransform(Transform):
     # ------------------------------------------------------------------ #
 
     def _process_archive(self, archive_path, doid_to_mondo, node_writer, edge_writer, show_status: bool = True):
-        """Extract ``database_pairs.tsv`` from one archive and stream it row-by-row."""
-        # PREGO archives are single-file tar.gz payloads (verified 2026-08-04 canary).
-        # Extract the payload into the archive's own directory next to the tarball
-        # so the same file can be reused across re-runs without paying decompression
-        # cost twice.
+        """
+        Extract ``database_pairs.tsv`` from one archive and stream it row-by-row.
+
+        Cache-then-reuse: extract once into a sibling ``_extracted`` dir so
+        re-runs don't pay the ~30 s decompression cost twice. Guard against
+        interrupted-extraction: if the cached payload's size doesn't match the
+        tar member's declared size, re-extract rather than trusting a possibly
+        truncated file (the alternative would silently emit fewer edges on a
+        retry after Ctrl-C / disk-full / OOM).
+        """
         payload_dir = archive_path.parent / archive_path.stem.replace(".tar", "_extracted")
         payload_dir.mkdir(parents=True, exist_ok=True)
         payload_file = payload_dir / "database_pairs.tsv"
-        if not payload_file.exists():
-            print(f"[prego] extracting {archive_path.name} → {payload_file.name}...")
-            with tarfile.open(archive_path, mode="r:gz") as tf:
-                for member in tf.getmembers():
-                    if not member.name.endswith("database_pairs.tsv"):
-                        continue
-                    with tf.extractfile(member) as src, payload_file.open("wb") as dst:
-                        while True:
-                            chunk = src.read(1024 * 1024)
-                            if not chunk:
-                                break
-                            dst.write(chunk)
-                    break
+
+        # Read the member's declared size up front so we can compare against
+        # any cached file and decide whether re-extraction is needed.
+        with tarfile.open(archive_path, mode="r:gz") as tf:
+            member = next(
+                (m for m in tf.getmembers() if m.name.endswith("database_pairs.tsv")),
+                None,
+            )
+            if member is None:
+                raise SystemExit(
+                    f"[prego] {archive_path.name}: no database_pairs.tsv member found in tarball."
+                )
+            expected_size = member.size
+            need_extract = (
+                not payload_file.exists() or payload_file.stat().st_size != expected_size
+            )
+            if need_extract:
+                if payload_file.exists():
+                    print(
+                        f"[prego] cached {payload_file.name} size "
+                        f"({payload_file.stat().st_size:,}) != tar member "
+                        f"({expected_size:,}); re-extracting"
+                    )
+                else:
+                    print(f"[prego] extracting {archive_path.name} → {payload_file.name}...")
+                with tf.extractfile(member) as src, payload_file.open("wb") as dst:
+                    while True:
+                        chunk = src.read(1024 * 1024)
+                        if not chunk:
+                            break
+                        dst.write(chunk)
 
         print(f"[prego] processing {payload_file.name} ({payload_file.stat().st_size / 1024**3:.1f} GB)")
         row_iter = iter_database_pairs(payload_file)
@@ -230,6 +255,12 @@ class PregoTransform(Transform):
             entity2_id = row[3]
             source = row[4]
             channel = row[5]
+            # Defensive: an empty entity_id would produce a malformed
+            # CURIE like `NCBITaxon:` on emit. Not seen in the canary,
+            # but a two-line check is cheap insurance.
+            if not entity1_id or not entity2_id:
+                self._record_drop("empty_id", entity1_type, entity1_id, entity2_type, entity2_id)
+                return
             score = row[6]
             direct_flag = row[7]
             evidence_url = row[8]

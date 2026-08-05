@@ -229,6 +229,35 @@ def test_malformed_rows_are_counted_not_raised(prego_transform: PregoTransform):
     assert prego_transform._stats["rows_malformed"] >= 1
 
 
+def test_empty_entity_id_row_is_dropped(tmp_path: Path, prego_output_dir: Path):
+    """
+    A row with an empty entity_id lands in the unmapped report as `empty_id`.
+
+    Regression net for the CURIE-shape defense added in the review-fix
+    commit (issue #668 finding 2) — an empty local part would otherwise
+    emit a malformed CURIE like `NCBITaxon:`.
+    """
+    raw_dir = tmp_path / "raw"
+    prego_raw = raw_dir / "prego"
+    prego_raw.mkdir(parents=True)
+    tsv_path = prego_raw / "one_row.tsv"
+    # Well-formed 9 cols but entity1_id is empty.
+    tsv_path.write_text("-2\t\t-23\tGO:0000034\tJGI IMG\tIsolates\t4\tTRUE\t\n")
+    archive = prego_raw / "onerow.tar.gz"
+    with tarfile.open(archive, "w:gz") as tf:
+        tf.add(tsv_path, arcname="database_pairs.tsv")
+    tsv_path.unlink()
+
+    transform = PregoTransform(input_dir=raw_dir, output_dir=prego_output_dir)
+    transform.run()
+
+    edges = _read_tsv(transform.output_edge_file)
+    assert edges == [], f"empty-id row should NOT emit an edge; got {edges}"
+    report = _read_tsv(transform.unmapped_report_file)
+    empty_id_rows = [r for r in report if r["reason"] == "empty_id"]
+    assert len(empty_id_rows) == 1, f"expected 1 empty_id drop, got {report}"
+
+
 def test_missing_raw_dir_raises(tmp_path: Path):
     """If input_base_dir/prego/ doesn't exist, run() raises SystemExit with a clear message."""
     out = tmp_path / "out"

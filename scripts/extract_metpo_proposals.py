@@ -1392,7 +1392,7 @@ CATEGORICAL_TERMS: List[Term] = [
         priority="MEDIUM",
         subset="metpo_proposal_2026_08_prego",
         definition_source="DOI:10.3390/microorganisms10020293",
-        observations="PREGO edges: 18,765 (aggregated freshwater biome + fresh water + river + lake).",
+        observations="PREGO edges: 20,765 (freshwater biome 7,873 + fresh water 6,035 + river 3,936 + lake 2,921).",
     ),
     Term(
         proposed_id="METPO:1007098",

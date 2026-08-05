@@ -55,8 +55,10 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.prego.utils import (
     KEEP_ENVO_TO_TAXON,
+    KEEP_TAXON_TO_BTO,
     KEEP_TAXON_TO_DOID,
     KEEP_TAXON_TO_GO,
+    PREGO_TYPE_DOID,
     classify_row,
     entity_to_curie,
     go_category_for_type,
@@ -86,6 +88,7 @@ _RELATION_ASSOCIATED_WITH = "RO:0002610"  # correlated with
 _NCBITAXON_CATEGORY = "biolink:OrganismTaxon"
 _ENVO_CATEGORY = "biolink:OntologyClass"  # heterogeneous in ENVO; safe default
 _MONDO_CATEGORY = "biolink:Disease"
+_BTO_CATEGORY = "biolink:GrossAnatomicalStructure"  # BTO = Brenda Tissue Ontology
 
 # ---------------------------------------------------------------------------
 # Extra edge columns beyond the KGX minimum. Kept as a small tuple so the
@@ -132,6 +135,7 @@ class PregoTransform(Transform):
             "nodes_enriched_with_synonyms": 0,
             "dictionary_curies_indexed": 0,
             "dictionary_synonyms_indexed": 0,
+            "dictionary_doid_routed_to_mondo": 0,
         }
         # Node de-dup set — a CURIE seen twice only emits one node row.
         self._emitted_nodes: set = set()
@@ -181,8 +185,10 @@ class PregoTransform(Transform):
 
         # Phase 6b — dictionary synonym enrichment. Optional: if the
         # tagger dictionary isn't downloaded, skip and log; 6a still
-        # produces useful output on its own.
-        self._load_dictionary(prego_raw_dir)
+        # produces useful output on its own. The DOID→MONDO xref map is
+        # threaded through so DOID dictionary synonyms enrich the
+        # corresponding MONDO nodes (reverse-lookup, per the plan).
+        self._load_dictionary(prego_raw_dir, doid_to_mondo)
 
         Path.mkdir(self.output_dir, exist_ok=True, parents=True)
         with (
@@ -207,7 +213,7 @@ class PregoTransform(Transform):
     _DICTIONARY_ARCHIVE_NAME = "prego_dictionary.tar.gz"
     _DICTIONARY_FILES = ("prego_entities.tsv", "prego_names.tsv")
 
-    def _load_dictionary(self, prego_raw_dir: Path) -> None:
+    def _load_dictionary(self, prego_raw_dir: Path, doid_to_mondo: dict) -> None:
         """
         Populate :attr:`_synonym_lookup` from the tagger dictionary if available.
 
@@ -217,10 +223,13 @@ class PregoTransform(Transform):
 
         Two-step join in memory (per the plan's §Phase 6b):
 
-        1. ``prego_entities.tsv`` → ``{serial: CURIE}`` for the 5 emitted
-           entity types (NCBITaxon, all 3 GO namespaces, ENVO). Non-target
-           types (BTO, DOID) are dropped so we don't waste memory on entries
-           whose synonyms would never enrich anything.
+        1. ``prego_entities.tsv`` → ``{serial: CURIE}`` for the 6 emitted
+           entity types (NCBITaxon, all 3 GO namespaces, ENVO, BTO), PLUS
+           DOID entries reverse-mapped to their MONDO CURIE via
+           ``doid_to_mondo`` — so DOID synonyms enrich the MONDO nodes
+           that Phase 6a routes DOID rows to. Non-target types are dropped
+           so we don't waste memory on entries whose synonyms would never
+           enrich anything.
         2. ``prego_names.tsv`` → for each ``(serial, name)`` where the serial
            is in the type-filtered map, accumulate ``{CURIE: {names...}}``.
            Case-insensitive dedup keeps only distinct spellings.
@@ -269,11 +278,23 @@ class PregoTransform(Transform):
 
         print(f"[prego] loading dictionary entities from {entities_file.name}...")
         serial_to_curie: dict = {}
+        n_doid_via_mondo = 0
         for serial, entity_type, source_id in iter_dictionary_entities(entities_file):
             curie = entity_to_curie(entity_type, source_id)
             if curie is not None:
                 serial_to_curie[serial] = curie
+                continue
+            # DOID reverse-lookup: PREGO's dictionary keys synonyms by DOID
+            # serial, but the emitted edge/node CURIE is the MONDO xref. So
+            # we route DOID serials to their MONDO CURIEs at index time and
+            # every DOID's synonyms accumulate under the MONDO node.
+            if entity_type == PREGO_TYPE_DOID and source_id.startswith("DOID:"):
+                mondo = doid_to_mondo.get(source_id)
+                if mondo is not None:
+                    serial_to_curie[serial] = mondo
+                    n_doid_via_mondo += 1
         self._stats["dictionary_curies_indexed"] = len(serial_to_curie)
+        self._stats["dictionary_doid_routed_to_mondo"] = n_doid_via_mondo
         print(f"[prego] indexed {len(serial_to_curie):,} target CURIEs from dictionary")
 
         print(f"[prego] loading dictionary names from {names_file.name}...")
@@ -384,27 +405,35 @@ class PregoTransform(Transform):
         del source  # column carried in edge_attribute space for now; unused
 
         outcome = classify_row(entity1_type, entity2_type)
-        if outcome not in (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID):
+        if outcome not in (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO):
             self._record_drop(outcome, entity1_type, entity1_id, entity2_type, entity2_id)
             return
 
         if outcome == KEEP_TAXON_TO_GO:
+            # Defensive: some source rows type-tag GO (-21/-22/-23) but
+            # carry a non-GO identifier (rare data-quality edge case).
+            if not entity2_id.startswith("GO:"):
+                self._record_drop("go_id_prefix_mismatch", entity1_type, entity1_id, entity2_type, entity2_id)
+                return
             subject = f"NCBITaxon:{entity1_id}"
-            obj = entity2_id  # already "GO:xxxxxxx"
+            obj = entity2_id
             predicate = CAPABLE_OF_PREDICATE
             relation = _RELATION_CAPABLE_OF
             self._emit_node(node_writer, subject, _NCBITAXON_CATEGORY)
             self._emit_node(node_writer, obj, go_category_for_type(entity2_type))
 
         elif outcome == KEEP_ENVO_TO_TAXON:
-            subject = entity1_id  # already "ENVO:xxxxxxx"
+            if not entity1_id.startswith("ENVO:"):
+                self._record_drop("envo_id_prefix_mismatch", entity1_type, entity1_id, entity2_type, entity2_id)
+                return
+            subject = entity1_id
             obj = f"NCBITaxon:{entity2_id}"
             predicate = _LOCATION_OF_PREDICATE
             relation = _RELATION_LOCATION_OF
             self._emit_node(node_writer, subject, _ENVO_CATEGORY)
             self._emit_node(node_writer, obj, _NCBITAXON_CATEGORY)
 
-        else:  # KEEP_TAXON_TO_DOID
+        elif outcome == KEEP_TAXON_TO_DOID:
             mondo = doid_to_mondo.get(entity2_id)
             if mondo is None:
                 self._stats["doid_no_mondo_xref"] += 1
@@ -416,6 +445,24 @@ class PregoTransform(Transform):
             relation = _RELATION_ASSOCIATED_WITH
             self._emit_node(node_writer, subject, _NCBITAXON_CATEGORY)
             self._emit_node(node_writer, obj, _MONDO_CATEGORY)
+
+        else:  # KEEP_TAXON_TO_BTO
+            # Some source rows type-tag BTO (-25) but carry a non-BTO
+            # identifier (e.g. CLDB — Cell Line Data Base — observed in the
+            # 2026-08-04 isolates canary on rows tagged -25 but with a
+            # `CLDB:` entity ID). Drop to a curator-visible bucket rather
+            # than emit a malformed BTO node.
+            if not entity2_id.startswith("BTO:"):
+                self._record_drop("bto_id_prefix_mismatch", entity1_type, entity1_id, entity2_type, entity2_id)
+                return
+            # Flip direction to match bacdive convention: BTO tissue is the
+            # subject on `location_of` edges, taxon is the object.
+            subject = entity2_id
+            obj = f"NCBITaxon:{entity1_id}"
+            predicate = _LOCATION_OF_PREDICATE
+            relation = _RELATION_LOCATION_OF
+            self._emit_node(node_writer, subject, _BTO_CATEGORY)
+            self._emit_node(node_writer, obj, _NCBITAXON_CATEGORY)
 
         edge_writer.writerow(
             self._make_edge_row(

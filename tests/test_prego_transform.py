@@ -13,10 +13,11 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.prego.prego import PregoTransform
 from kg_microbe.transform_utils.prego.utils import (
-    DROP_BTO_DEFERRED_V2,
     DROP_INVERSE_ENVO_TO_TAXON,
+    DROP_INVERSE_TAXON_TO_BTO,
     DROP_INVERSE_TAXON_TO_GO,
     DROP_TAXON_TAXON_HOST,
+    KEEP_TAXON_TO_BTO,
     KEEP_TAXON_TO_GO,
     classify_row,
     entity_to_curie,
@@ -94,10 +95,10 @@ def test_classify_row_inverse_dropped():
     assert classify_row(-2, -27) == DROP_INVERSE_ENVO_TO_TAXON
 
 
-def test_classify_row_bto_deferred():
-    """BTO on either side maps to the v1 deferred bucket."""
-    assert classify_row(-2, -25) == DROP_BTO_DEFERRED_V2
-    assert classify_row(-25, -2) == DROP_BTO_DEFERRED_V2
+def test_classify_row_bto_kept():
+    """Taxon→BTO is emitted (as BTO→taxon on emit); BTO→taxon inverse is dropped."""
+    assert classify_row(-2, -25) == KEEP_TAXON_TO_BTO
+    assert classify_row(-25, -2) == DROP_INVERSE_TAXON_TO_BTO
 
 
 def test_classify_row_taxon_taxon_dropped():
@@ -194,13 +195,25 @@ def test_inverse_direction_rows_are_dropped(prego_transform: PregoTransform):
     assert not any(e["object"].startswith("ENVO:") for e in edges)
 
 
-def test_taxon_taxon_and_bto_rows_are_dropped(prego_transform: PregoTransform):
-    """Both fixture drop cases land in the unmapped report."""
+def test_taxon_taxon_dropped_but_bto_now_kept(prego_transform: PregoTransform):
+    """
+    Taxon-taxon host rows still drop; BTO rows now emit (as of PR #TBD).
+
+    Regression net for the v1→v2 scope change: BTO used to be deferred
+    and land in ``bto_deferred_v2``. It now emits as an edge with
+    ``biolink:location_of`` direction matching bacdive.
+    """
     prego_transform.run()
     report = _read_tsv(prego_transform.unmapped_report_file)
     reasons = {r["reason"] for r in report}
     assert DROP_TAXON_TAXON_HOST in reasons
-    assert DROP_BTO_DEFERRED_V2 in reasons
+    assert "bto_deferred_v2" not in reasons, "BTO should now emit, not drop"
+    # BTO edge should be present.
+    edges = _read_tsv(prego_transform.output_edge_file)
+    bto_edges = [e for e in edges if e["subject"].startswith("BTO:")]
+    assert len(bto_edges) == 1, f"expected 1 BTO→NCBITaxon edge; got {len(bto_edges)}"
+    assert bto_edges[0]["predicate"] == "biolink:location_of"
+    assert bto_edges[0]["object"] == "NCBITaxon:562"
 
 
 def test_edges_carry_prego_metadata(prego_transform: PregoTransform):
@@ -280,9 +293,9 @@ def test_entity_to_curie_type_dispatch():
     assert entity_to_curie(-22, "GO:0005634") == "GO:0005634"
     assert entity_to_curie(-23, "GO:0000034") == "GO:0000034"
     assert entity_to_curie(-27, "ENVO:00000011") == "ENVO:00000011"
-    # Dropped: BTO, DOID, unknown types, empty ID
-    assert entity_to_curie(-25, "BTO:9999") is None  # deferred v2
-    assert entity_to_curie(-26, "DOID:8") is None  # DOID→MONDO deferred v2
+    assert entity_to_curie(-25, "BTO:9999") == "BTO:9999"  # tissues now enriched
+    # DOID still not handled here — routed via doid_to_mondo in _load_dictionary.
+    assert entity_to_curie(-26, "DOID:8") is None
     assert entity_to_curie(-2, "") is None  # defensive against empty source_id
 
 
@@ -342,14 +355,16 @@ def test_phase_6b_only_enriches_emitted_nodes(prego_transform_with_dictionary: P
     """
     prego_transform_with_dictionary.run()
     nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
-    ids = {n["id"] for n in nodes}
     # Serial 7777's "orphan name" is in prego_names but has no entities row —
     # even if entities-only enrichment were bugged, it couldn't produce a node.
-    # Serial 9999 (BTO) is filtered by entity_to_curie so its "irrelevant tissue"
-    # name never enters the lookup either.
-    assert "BTO:9999" not in ids
-    # And the transform must not have invented a node for the orphan serial.
+    # The transform must not have invented a node for the orphan serial.
     assert not any("orphan" in n.get("name", "") for n in nodes)
+    # BTO:9999 IS in the dictionary but NOT referenced by any association row
+    # in database_pairs.tsv fixture — the association fixture references
+    # BTO:0000763 only. So BTO:9999 should NOT be emitted as a standalone
+    # node (dictionary-only entries don't stub).
+    ids = {n["id"] for n in nodes}
+    assert "BTO:9999" not in ids
 
 
 def test_phase_6b_skipped_gracefully_when_dictionary_missing(prego_transform: PregoTransform):
@@ -369,14 +384,89 @@ def test_phase_6b_counts_enrichment_stats(prego_transform_with_dictionary: Prego
     """Per-run stats expose Phase 6b metrics for the CI log."""
     prego_transform_with_dictionary.run()
     stats = prego_transform_with_dictionary._stats
-    # Fixture has 4 valid entity CURIEs (NCBI:100/562, GO:0000034, ENVO:00000011)
-    # + 2 skipped (BTO, empty source_id).
-    assert stats["dictionary_curies_indexed"] == 4
-    # 8 name rows for the 4 valid CURIEs (serial 7777 orphan and serial 9999
-    # BTO name never get indexed because their serial isn't in the CURIE map).
-    assert stats["dictionary_synonyms_indexed"] == 7
+    # Fixture has 8 valid CURIEs indexed after MONDO reverse-lookup:
+    #   NCBI:100/562, GO:0000034, ENVO:00000011, BTO:0000763, BTO:9999,
+    #   plus DOID:8 → MONDO:0007256 and DOID:11111111 → MONDO:0000000
+    # DOID:99999999 has no MONDO xref so isn't indexed.
+    assert stats["dictionary_curies_indexed"] == 8
+    assert stats["dictionary_doid_routed_to_mondo"] == 2
     # ≥1 emitted node got at least one synonym.
     assert stats["nodes_enriched_with_synonyms"] >= 1
+
+
+def test_bto_node_emitted_with_gross_anatomical_category(
+    prego_transform_with_dictionary: PregoTransform,
+):
+    """A taxon→BTO row emits BTO stub node with biolink:GrossAnatomicalStructure."""
+    prego_transform_with_dictionary.run()
+    nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
+    bto = [n for n in nodes if n["id"].startswith("BTO:")]
+    assert len(bto) == 1, f"expected 1 BTO node from fixture; got {[n['id'] for n in bto]}"
+    assert bto[0]["id"] == "BTO:0000763"
+    assert bto[0]["category"] == "biolink:GrossAnatomicalStructure"
+
+
+def test_bto_node_gets_dictionary_synonym(prego_transform_with_dictionary: PregoTransform):
+    """BTO:0000763 node emitted by Phase 6a gets its dictionary synonym via Phase 6b."""
+    prego_transform_with_dictionary.run()
+    nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
+    bto = next(n for n in nodes if n["id"] == "BTO:0000763")
+    assert "bacterial gut microbiome" in bto["synonym"]
+
+
+def test_bto_row_with_non_bto_id_drops_to_prefix_mismatch(
+    tmp_path: Path, prego_output_dir: Path
+):
+    """
+    A `-2 → -25` row whose entity2_id doesn't start with `BTO:` drops explicitly.
+
+    Regression net for the CLDB defense added during PR #674's live canary:
+    some source rows type-tag `-25` (BTO) but carry a CLDB or other prefix.
+    The transform must NOT emit those as malformed BTO nodes.
+    """
+    raw_dir = tmp_path / "raw"
+    prego_raw = raw_dir / "prego"
+    prego_raw.mkdir(parents=True)
+    tsv_path = prego_raw / "one_row.tsv"
+    # Well-formed 9 cols, entity2_type=-25 but entity2_id is CLDB, not BTO.
+    tsv_path.write_text("-2\t104623\t-25\tCLDB:0001165\tBioProject\tPMID:24336377\t3\tTRUE\t\n")
+    archive = prego_raw / "onerow.tar.gz"
+    with tarfile.open(archive, "w:gz") as tf:
+        tf.add(tsv_path, arcname="database_pairs.tsv")
+    tsv_path.unlink()
+
+    transform = PregoTransform(input_dir=raw_dir, output_dir=prego_output_dir)
+    transform.run()
+
+    # No edge should emit.
+    edges = _read_tsv(transform.output_edge_file)
+    assert edges == [], f"CLDB-prefixed row should not emit; got {edges}"
+    # And no node with a CLDB: prefix should appear.
+    nodes = _read_tsv(transform.output_node_file)
+    assert not any(n["id"].startswith("CLDB:") for n in nodes)
+    # Drop lands in the dedicated bucket.
+    report = _read_tsv(transform.unmapped_report_file)
+    reasons = {r["reason"] for r in report}
+    assert "bto_id_prefix_mismatch" in reasons
+
+
+def test_mondo_node_enriched_via_doid_reverse_lookup(
+    prego_transform_with_dictionary: PregoTransform,
+):
+    """
+    MONDO node emitted from a DOID association row gets synonyms via reverse-lookup.
+
+    The DOID synonyms in ``prego_names.tsv`` are keyed on the DOID serial;
+    the transform routes those serials to MONDO CURIEs during dictionary
+    load so the synonyms land on the MONDO nodes Phase 6a actually emits.
+    """
+    prego_transform_with_dictionary.run()
+    nodes = _read_tsv(prego_transform_with_dictionary.output_node_file)
+    mondo = next(n for n in nodes if n["id"] == "MONDO:0007256")
+    synonyms = set(mondo["synonym"].split("|"))
+    # DOID:8 has two names in the dictionary fixture: "AIDS" and "HIV/AIDS"
+    assert "AIDS" in synonyms
+    assert "HIV/AIDS" in synonyms
 
 
 @pytest.fixture()

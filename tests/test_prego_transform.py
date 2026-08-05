@@ -379,6 +379,84 @@ def test_phase_6b_counts_enrichment_stats(prego_transform_with_dictionary: Prego
     assert stats["nodes_enriched_with_synonyms"] >= 1
 
 
+@pytest.fixture()
+def prego_input_dir_multi_archive(prego_input_dir: Path) -> Path:
+    """
+    Extend the base input fixture with a second association tarball.
+
+    The base fixture provides ``literature.tar.gz`` with the primary
+    ``database_pairs.tsv`` (10 valid rows). This overlays a second
+    ``environmental.tar.gz`` built from ``database_pairs_second.tsv`` (3
+    rows) so we can verify multi-archive integrity (issue #668 finding 4):
+
+    1. Archive 1's edges + archive 2's edges both land in the same
+       edges.tsv without corruption.
+    2. A CURIE that appears in BOTH archives (NCBITaxon:100) is emitted
+       as one node (not two).
+    3. Header rows aren't accidentally re-emitted.
+    """
+    second_archive = prego_input_dir / "prego" / "environmental.tar.gz"
+    with tarfile.open(second_archive, "w:gz") as tf:
+        tf.add(FIXTURE_DIR / "database_pairs_second.tsv", arcname="database_pairs.tsv")
+    return prego_input_dir
+
+
+@pytest.fixture()
+def prego_transform_multi_archive(prego_input_dir_multi_archive: Path, prego_output_dir: Path) -> PregoTransform:
+    """PregoTransform wired to input that has two association tarballs."""
+    return PregoTransform(input_dir=prego_input_dir_multi_archive, output_dir=prego_output_dir)
+
+
+def test_multi_archive_edges_from_both_land_in_output(
+    prego_transform_multi_archive: PregoTransform,
+):
+    """
+    Both archives' unique rows appear in the final edges.tsv.
+
+    Regression net for issue #668 finding 4: the transform is designed to
+    loop over multiple tarballs, but the earlier fixture only exercised the
+    one-tarball path. This test proves both archives' contributions
+    survive to the merged output.
+    """
+    prego_transform_multi_archive.run()
+    edges = _read_tsv(prego_transform_multi_archive.output_edge_file)
+    edge_pairs = {(e["subject"], e["object"]) for e in edges}
+    # From archive 1 (literature.tar.gz):
+    assert ("NCBITaxon:100", "GO:0000034") in edge_pairs, "archive 1 taxon→GO_MF edge missing"
+    # From archive 2 (environmental.tar.gz):
+    assert ("ENVO:00003064", "NCBITaxon:1224") in edge_pairs, "archive 2 ENVO→taxon edge missing"
+    assert ("NCBITaxon:100", "GO:0000049") in edge_pairs, "archive 2 taxon→GO edge missing"
+    assert ("NCBITaxon:1224", "GO:0016020") in edge_pairs, "archive 2 second taxon→GO edge missing"
+
+
+def test_multi_archive_nodes_deduplicated_across_archives(
+    prego_transform_multi_archive: PregoTransform,
+):
+    """NCBITaxon:100 appears in both archives; should still emit one node row."""
+    prego_transform_multi_archive.run()
+    nodes = _read_tsv(prego_transform_multi_archive.output_node_file)
+    ids = [n["id"] for n in nodes]
+    assert ids.count("NCBITaxon:100") == 1, (
+        f"NCBITaxon:100 appears in both archives; expected 1 node row, got {ids.count('NCBITaxon:100')}"
+    )
+
+
+def test_multi_archive_no_stray_headers(prego_transform_multi_archive: PregoTransform):
+    """
+    Every emitted edge row carries CURIE-shaped subject and object.
+
+    Regression net for the possibility that row iteration accidentally
+    re-emits tarball headers or produces row-1 quirks — a raw
+    ``entity1_type`` integer string leaking through as a subject would
+    fail the ``":" in e["subject"]`` assertion.
+    """
+    prego_transform_multi_archive.run()
+    edges = _read_tsv(prego_transform_multi_archive.output_edge_file)
+    for e in edges:
+        assert ":" in e["subject"], f"non-CURIE subject: {e['subject']}"
+        assert ":" in e["object"], f"non-CURIE object: {e['object']}"
+
+
 def test_missing_archives_raises(tmp_path: Path):
     """If prego/ exists but has no *.tar.gz, run() raises SystemExit."""
     raw = tmp_path / "raw" / "prego"

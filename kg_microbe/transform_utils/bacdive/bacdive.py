@@ -260,8 +260,8 @@ class BacDiveTransform(Transform):
         self.assay_edges_generated: Optional[List] = None  # Generated assay→entity edge rows
 
         # LPSN name → record_no index, loaded from data/raw/lpsn_gss.csv when
-        # present. Used to emit bacdive:<id> → biolink:close_match →
-        # lpsn:<record_no> for every strain whose LPSN block names an
+        # present. Used to emit kgmicrobe.strain:bacdive_<id> →
+        # biolink:subclass_of → lpsn:<record_no> for every strain whose LPSN block names an
         # exactly-known LPSN species. Silent skip on missing CSV so a fresh
         # checkout that hasn't downloaded LPSN still runs the BacDive
         # transform cleanly.

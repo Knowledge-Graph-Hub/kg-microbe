@@ -16,6 +16,8 @@ point where the stale artifact would be written — while leaving construction
 cheap so unrelated tests can still instantiate the transform.
 """
 
+from pathlib import Path
+
 import pytest
 
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
@@ -69,6 +71,31 @@ def test_unrelated_env_value_still_refuses(tmp_path, monkeypatch):
     transform = _bare_transform(tmp_path, using_bulk_data=False)
     with pytest.raises(FileNotFoundError):
         transform._assert_bulk_data_available()
+
+
+def test_explicit_input_dir_is_not_silently_overridden():
+    """
+    An explicit ``-i DIR`` must resolve bulk data under DIR, never the repo copy.
+
+    Falling back to the repo-anchored raw dir whenever the given directory
+    lacks the bulk files would reintroduce exactly the failure this guard
+    exists to prevent: the user believes they ran against their own
+    directory and silently gets someone else's data. Only the class
+    default falls back, because it points at a directory that does not
+    exist.
+    """
+    from kg_microbe.transform_utils.constants import RAW_DATA_DIR
+
+    scratch = Path("/scratch/raw-does-not-exist")
+    resolved = MediaDiveTransform._resolve_bulk_data_dir(scratch)
+    assert resolved == scratch / "mediadive"
+    assert RAW_DATA_DIR not in resolved.parents
+
+    # The class default points at a directory that does not exist, so it
+    # is the one case that must fall back to the repo-anchored raw dir.
+    default_resolved = MediaDiveTransform._resolve_bulk_data_dir(MediaDiveTransform.DEFAULT_INPUT_DIR)
+    assert default_resolved == RAW_DATA_DIR / "mediadive"
+    assert not Path(MediaDiveTransform.DEFAULT_INPUT_DIR).is_dir()
 
 
 def test_run_invokes_the_guard(tmp_path, monkeypatch):

@@ -186,6 +186,17 @@ Copy `.env.example` to `.env` and configure:
 - `BACDIVE_USERNAME`: BacDive API email
 - `BACDIVE_PASSWORD`: BacDive API password
 
+Optional, for the mediadive transform:
+- `KG_MEDIADIVE_ALLOW_STALE_CACHE=true`: run mediadive even when the bulk
+  download in `data/raw/mediadive/` is absent or incomplete. Off by default:
+  without the bulk JSONs the transform falls back to the YAML medium cache
+  under `transform_utils/mediadive/tmp/medium_yaml` and to `requests_cache`,
+  neither of which has an expiry, so a run started before `kg download`
+  finishes exits 0 having built the graph from years-old recipes. Set this only
+  for deliberate offline / cache-only work. It must be a **shell** variable —
+  `load_dotenv()` is not guaranteed to have run on the transform path, so an
+  `.env` entry is not reliable here.
+
 Optional, for the ontology transforms:
 - `KG_SEMSQL_BUILD=off`: skip building the SemSQL lookup DBs. Any transform that
   looks something up in an ontology resolves its adapter through

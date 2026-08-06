@@ -233,7 +233,10 @@ def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
     """
     microbedecoder_transform.run()
     nodes = _read_tsv(microbedecoder_transform.output_node_file)
-    for prefix in ("NCBITaxon:", "GTDB:", "kgmicrobe.strain:", "GOLD:", "IMG:", "CHEBI:"):
+    # "bacdive:" stays in the list even though nothing emits it now — it is the
+    # prefix this transform used to target, and stubbing it would be a silent
+    # return of the dangling-edge bug.
+    for prefix in ("NCBITaxon:", "GTDB:", "kgmicrobe.strain:", "bacdive:", "GOLD:", "IMG:", "CHEBI:"):
         stubs = [n["id"] for n in nodes if n["id"].startswith(prefix)]
         assert stubs == [], (
             f"MicrobeDecoder must not emit stub nodes for cross-ref target "

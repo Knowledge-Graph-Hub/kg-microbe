@@ -150,14 +150,7 @@ class MediaDiveTransform(Transform):
         self._load_chebi_roles()
         self._load_chebi_categories()
 
-        # Load bulk downloaded data if available. Prefer the input dir this
-        # transform was actually given so `kg download -o DIR` + `kg transform
-        # -i DIR` finds the bulk files; fall back to the repo-anchored raw dir
-        # because Transform.DEFAULT_INPUT_DIR points at a path that does not
-        # exist. Neither branch is CWD-relative — resolving against the process
-        # CWD is what let a run silently fall through to the undated caches.
-        _input_bulk_dir = Path(self.input_base_dir) / "mediadive"
-        self.bulk_data_dir = _input_bulk_dir if _input_bulk_dir.is_dir() else RAW_DATA_DIR / "mediadive"
+        self.bulk_data_dir = self._resolve_bulk_data_dir(self.input_base_dir)
         self.media_detailed = {}
         self.media_strains = {}
         self.solutions_data = {}
@@ -775,6 +768,27 @@ class MediaDiveTransform(Transform):
                 except yaml.YAMLError as exc:
                     print(exc)
         return json_obj
+
+    @classmethod
+    def _resolve_bulk_data_dir(cls, input_base_dir) -> Path:
+        """
+        Return the directory the bulk MediaDive JSONs should be read from.
+
+        An explicit input dir is honoured exactly: `kg transform -i
+        /scratch/raw` that is missing its bulk files must fail naming
+        /scratch, never silently read the repo's copy instead — that would
+        reintroduce the same class of silent-wrong-data failure
+        :meth:`_assert_bulk_data_available` exists to prevent. Only the
+        class default falls back to the repo-anchored raw dir, because
+        ``Transform.DEFAULT_INPUT_DIR`` points at a directory that does not
+        exist.
+
+        :param input_base_dir: The input dir this transform was constructed with.
+        :return: Directory expected to contain the four bulk JSON files.
+        """
+        if Path(input_base_dir) == Path(cls.DEFAULT_INPUT_DIR):
+            return RAW_DATA_DIR / "mediadive"
+        return Path(input_base_dir) / "mediadive"
 
     def _assert_bulk_data_available(self) -> None:
         """

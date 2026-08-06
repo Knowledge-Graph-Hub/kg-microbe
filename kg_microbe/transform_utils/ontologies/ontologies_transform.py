@@ -858,14 +858,16 @@ class OntologiesTransform(Transform):
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
                         new_nf_lines.append(line + "\n")
-                # Update prefixes in edges file
+                # Update prefixes in edges file. The incoming header must be
+                # dropped by position: a canonical header is written below, and
+                # an edges header starts with "subject" (not "id"), so matching
+                # on a column name leaves the original as a duplicate data row.
                 new_ef_lines = []
-                for line in ef:
-                    if line.startswith("id"):
+                for edge_line_index, line in enumerate(ef):
+                    if edge_line_index == 0:
                         continue
-                    else:
-                        line = _replace_special_prefixes(line)
-                        new_ef_lines.append(line)
+                    line = _replace_special_prefixes(line)
+                    new_ef_lines.append(line)
             if name == "ec":
                 # Remove UniProt and TrEMBL nodes since accounted for elsewhere
                 protein_prefixes = [UNIPROT_PREFIX, TREMBL_PREFIX]

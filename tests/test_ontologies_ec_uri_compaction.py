@@ -215,3 +215,29 @@ class TestEcPostProcessUriCompaction(TestCase):
                     "uniprot" in row["subject"].lower() or "uniprot" in row["object"].lower(),
                     f"UniProt edge survived: {row}",
                 )
+
+    def test_edge_header_is_written_exactly_once(self):
+        """
+        The ec branch must not leave the incoming header as a data row.
+
+        The branch rewrites ec_edges.tsv with a canonical header, and the
+        read loop that feeds it skipped headers by matching ``id`` — the
+        node header's first column. An edges header starts with
+        ``subject``, so it never matched and survived into the body. KGX
+        then read ``subject``/``object`` as endpoint CURIEs and
+        synthesized two bare ``biolink:NamedThing`` nodes in the merged
+        KG. DictReader-based assertions cannot see this, so compare raw
+        lines.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            _, edges_path = self._run_post_process(Path(tmp))
+            with open(edges_path) as fh:
+                lines = [line.rstrip("\n") for line in fh if line.strip()]
+            header = lines[0].split("\t")
+            self.assertEqual(header[:3], ["subject", "predicate", "object"])
+            duplicates = [i for i, line in enumerate(lines[1:], start=2) if line.split("\t")[:3] == header[:3]]
+            self.assertEqual(
+                duplicates,
+                [],
+                f"edges header repeated as a data row at line(s) {duplicates}",
+            )

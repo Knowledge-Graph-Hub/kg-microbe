@@ -769,8 +769,37 @@ class MediaDiveTransform(Transform):
                     print(exc)
         return json_obj
 
+    def _assert_bulk_data_available(self):
+        """
+        Refuse to transform when the bulk MediaDive download is missing.
+
+        Without it the medium/solution lookups fall back to the YAML cache
+        under ``tmp/medium_yaml`` and to ``requests_cache``, neither of
+        which carries an expiry. Those caches hold responses from 2023 and
+        2025 that predate MediaDive restructuring solutions, so the run
+        succeeds with exit code 0 while emitting a graph built from years-old
+        recipes. Set ``KG_MEDIADIVE_ALLOW_STALE_CACHE=true`` to accept that
+        tradeoff deliberately (offline reruns, cache-only debugging).
+        """
+        if self.using_bulk_data:
+            return
+        if os.getenv("KG_MEDIADIVE_ALLOW_STALE_CACHE", "").strip().lower() in {"1", "true", "yes"}:
+            print(
+                "WARNING: MediaDive bulk data missing; proceeding on the undated YAML/HTTP "
+                "caches because KG_MEDIADIVE_ALLOW_STALE_CACHE is set. Output may reflect "
+                "long-superseded MediaDive recipes."
+            )
+            return
+        raise FileNotFoundError(
+            f"MediaDive bulk data not found in {self.bulk_data_dir}/. Refusing to transform: "
+            "the fallback YAML and HTTP caches have no expiry and can silently produce a graph "
+            "from years-old recipes. Run `poetry run kg download -t mediadive` and let it finish "
+            "first, or set KG_MEDIADIVE_ALLOW_STALE_CACHE=true to override."
+        )
+
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        self._assert_bulk_data_available()
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"

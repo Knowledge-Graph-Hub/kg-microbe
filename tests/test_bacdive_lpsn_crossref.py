@@ -11,6 +11,7 @@ class that owns a heavy constructor.
 """
 
 import csv
+import inspect
 from pathlib import Path
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
@@ -187,6 +188,38 @@ def test_ambiguous_species_emits_no_edge(tmp_path):
     x = _bare_transform(csv_path)
     assert x._lookup_lpsn({"species": "Escherichia coli"}) is None
     assert x._lpsn_stats["ambiguous"] == 1
+
+
+def test_strain_curie_matches_the_emitted_node_prefix():
+    """
+    The LPSN edge subject must be the strain CURIE this transform emits as a node.
+
+    The edge previously used ``bacdive:NNN``, which is never written as a
+    node row, so all ~62 K of these edges were orphaned and KGX
+    synthesized a bare ``biolink:NamedThing`` stub for each one in the
+    merged KG.
+    """
+    assert BacDiveTransform._strain_curie("7249") == "kgmicrobe.strain:bacdive_7249"
+    # The bare source prefix is precisely the form that produced the orphans.
+    assert not BacDiveTransform._strain_curie("7249").startswith("bacdive:")
+
+
+def test_lpsn_edge_uses_subclass_of_not_in_taxon():
+    """
+    Strain → LPSN record is emitted as ``biolink:subclass_of``/``rdfs:subClassOf``.
+
+    Both endpoints are typed ``biolink:OrganismTaxon``, and this transform
+    already relates the same strain nodes to their NCBITaxon species with
+    ``subclass_of``. ``biolink:in_taxon`` asserts instance-of, which
+    contradicts that class-like typing and made this edge the only
+    strain→taxon link in the transform using a different predicate.
+    """
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    lpsn_edge_block = source.split("lpsn_record_no = self._lookup_lpsn")[1].split("synonyms =")[0]
+    assert "SUBCLASS_PREDICATE" in lpsn_edge_block
+    assert "RDFS_SUBCLASS_OF" in lpsn_edge_block
+    assert "IN_TAXON_PREDICATE" not in lpsn_edge_block
+    assert "BACDIVE_PREFIX + key" not in lpsn_edge_block
 
 
 def test_blank_lpsn_block_returns_none(tmp_path):

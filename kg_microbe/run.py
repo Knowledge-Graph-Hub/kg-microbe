@@ -97,15 +97,28 @@ def transform(*args, **kwargs) -> None:
 @main.command()
 @click.option("yaml", "-y", default="merge.yaml", type=click.Path(exists=True))
 @click.option("processes", "-p", default=1, type=int)
-def merge(yaml: str, processes: int) -> None:
+@click.option(
+    "sources",
+    "-s",
+    "--source",
+    multiple=True,
+    help="Merge only these sources from the config (repeatable). Omit to merge all.",
+)
+def merge(yaml: str, processes: int, sources: tuple) -> None:
     """
     Use KGX to load subgraphs to create a merged graph.
 
+    Restricting to a subset with ``-s`` allows a staged merge, which is the
+    only way to keep a very large source from being resident at the same
+    time as every other one — KGX collects all source graphs in the parent
+    before combining them.
+
     :param yaml: A string pointing to a KGX compatible config YAML.
     :param processes: Number of processes to use.
+    :param sources: Source keys to merge; empty means all.
     :return: None
     """
-    load_and_merge(yaml, processes)
+    load_and_merge(yaml, processes, list(sources) or None)
 
 
 @main.command(name="query-organism")

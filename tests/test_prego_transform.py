@@ -141,6 +141,26 @@ def test_run_emits_nodes_and_edges(prego_transform: PregoTransform):
     assert len(edges) >= 5, "expected ≥5 emitted edges from the fixture"
 
 
+def test_edges_carry_the_originating_resource(prego_transform: PregoTransform):
+    """
+    The source/resource column must survive onto emitted edges.
+
+    It used to be read and immediately discarded (``del source``), so edges
+    carried ``prego_score`` and ``prego_channel`` but no way to tell which
+    resource produced them. Confidence calibration has to be per-resource —
+    the Environmental Samples channel aggregates MGnify and MG-RAST, whose
+    score marginals differ — so a shared cutoff across them would conflate
+    distributions that are not comparable.
+    """
+    prego_transform.run()
+    edges = _read_tsv(prego_transform.output_edge_file)
+    assert "prego_source" in edges[0], "prego_source missing from the edge header"
+    assert all(e["prego_source"] for e in edges), "every emitted edge must carry its resource"
+    # Passed through verbatim from the fixture's source column, so the values
+    # are real resource names rather than a derived or normalized label.
+    assert {e["prego_source"] for e in edges} == {"BioProject", "JGI IMG"}
+
+
 def test_taxon_to_go_edges_use_capable_of(prego_transform: PregoTransform):
     """NCBITaxon→GO edges use biolink:capable_of, all 3 GO namespaces."""
     prego_transform.run()

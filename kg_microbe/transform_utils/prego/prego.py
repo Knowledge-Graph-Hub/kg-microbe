@@ -48,6 +48,7 @@ from kg_microbe.transform_utils.constants import (
     PREGO_EVIDENCE_URL_COLUMN,
     PREGO_KNOWLEDGE_SOURCE,
     PREGO_SCORE_COLUMN,
+    PREGO_SOURCE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     RELATION_COLUMN,
@@ -98,6 +99,7 @@ _BTO_CATEGORY = "biolink:GrossAnatomicalStructure"  # BTO = Brenda Tissue Ontolo
 _PREGO_EDGE_EXTRA_COLUMNS = (
     PREGO_SCORE_COLUMN,
     PREGO_CHANNEL_COLUMN,
+    PREGO_SOURCE_COLUMN,
     PREGO_DIRECT_FLAG_COLUMN,
     PREGO_EVIDENCE_URL_COLUMN,
 )
@@ -502,8 +504,6 @@ class PregoTransform(Transform):
             self._stats["rows_malformed"] += 1
             return
 
-        del source  # column carried in edge_attribute space for now; unused
-
         outcome = classify_row(entity1_type, entity2_type)
         if outcome not in (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO):
             self._record_drop(outcome, entity1_type, entity1_id, entity2_type, entity2_id)
@@ -572,6 +572,7 @@ class PregoTransform(Transform):
                 relation=relation,
                 score=score,
                 channel=channel,
+                source=source,
                 direct_flag=direct_flag,
                 evidence_url=evidence_url,
             )
@@ -618,6 +619,7 @@ class PregoTransform(Transform):
         relation: str,
         score: str,
         channel: str,
+        source: str,
         direct_flag: str,
         evidence_url: str,
     ) -> list:
@@ -630,6 +632,7 @@ class PregoTransform(Transform):
         row[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = PREGO_KNOWLEDGE_SOURCE
         row[PREGO_SCORE_COLUMN] = score
         row[PREGO_CHANNEL_COLUMN] = channel
+        row[PREGO_SOURCE_COLUMN] = source
         row[PREGO_DIRECT_FLAG_COLUMN] = direct_flag
         row[PREGO_EVIDENCE_URL_COLUMN] = evidence_url
         return [row[c] for c in self.edge_header]

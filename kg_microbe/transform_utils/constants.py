@@ -250,6 +250,11 @@ PREGO_SCORE_COLUMN = "prego_score"
 PREGO_CHANNEL_COLUMN = "prego_channel"
 PREGO_DIRECT_FLAG_COLUMN = "prego_direct_flag"
 PREGO_EVIDENCE_URL_COLUMN = "prego_evidence_url"
+# Originating resource (MGnify / MG-RAST metagenome study / JGI IMG / ...).
+# Required for confidence calibration: the Environmental Samples channel
+# aggregates resources whose score marginals differ, so a single shared
+# cutoff would conflate them.
+PREGO_SOURCE_COLUMN = "prego_source"
 
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID = MEDIADIVE_MEDIUM_TYPE_PREFIX + "complex"
 MEDIADIVE_MEDIUM_TYPE_COMPLEX_LABEL = "Complex Medium"

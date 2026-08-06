@@ -28,6 +28,7 @@ threshold on confidence.
 from __future__ import annotations
 
 import csv
+import os
 import pickle
 import tarfile
 from collections import defaultdict
@@ -55,6 +56,14 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
     SYNONYM_COLUMN,
 )
+from kg_microbe.transform_utils.prego.calibration import (
+    ScoreHistogram,
+    build_cutoffs,
+    is_continuous_channel,
+    iter_calibration_rows,
+    keep_row,
+    validate_tau,
+)
 from kg_microbe.transform_utils.prego.utils import (
     KEEP_ENVO_TO_TAXON,
     KEEP_TAXON_TO_BTO,
@@ -70,6 +79,7 @@ from kg_microbe.transform_utils.prego.utils import (
     load_doid_to_mondo,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 
 # ---------------------------------------------------------------------------
 # Edge predicates and relations. PREGO uses only biolink predicates; the
@@ -96,6 +106,11 @@ _BTO_CATEGORY = "biolink:GrossAnatomicalStructure"  # BTO = Brenda Tissue Ontolo
 # Extra edge columns beyond the KGX minimum. Kept as a small tuple so the
 # header is single-sourced.
 # ---------------------------------------------------------------------------
+# Outcomes of classify_row that result in an emitted edge. Shared by the
+# calibration pass and the emit pass so the two can never disagree about
+# which rows count.
+_KEEP_OUTCOMES = (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO)
+
 _PREGO_EDGE_EXTRA_COLUMNS = (
     PREGO_SCORE_COLUMN,
     PREGO_CHANNEL_COLUMN,
@@ -103,6 +118,23 @@ _PREGO_EDGE_EXTRA_COLUMNS = (
     PREGO_DIRECT_FLAG_COLUMN,
     PREGO_EVIDENCE_URL_COLUMN,
 )
+
+
+def _as_float(value) -> float:
+    """
+    Parse a score, returning 0.0 when it is absent or unparsable.
+
+    A missing score must not crash a 44M-row run; 0.0 sorts to the bottom,
+    so such a row is dropped by any threshold above zero rather than being
+    silently promoted.
+
+    :param value: Raw score field.
+    :return: Parsed score, or 0.0.
+    """
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 class PregoTransform(Transform):
@@ -113,8 +145,17 @@ class PregoTransform(Transform):
         self,
         input_dir: Optional[Path] = None,
         output_dir: Optional[Path] = None,
+        min_confidence: Optional[float] = None,
     ):
-        """Instantiate; register the source name + extend the edge header with PREGO metadata."""
+        """
+        Instantiate; register the source name + extend the edge header with PREGO metadata.
+
+        :param input_dir: Raw data directory.
+        :param output_dir: Transform output directory.
+        :param min_confidence: Star threshold in [0, 4]; rows below it are
+            dropped. Defaults to the ``PREGO_MIN_CONFIDENCE`` environment
+            variable, else 0.0 (emit everything, preserving current behaviour).
+        """
         super().__init__(PREGO, input_dir, output_dir)
         # Extend edge header with PREGO's per-row metadata columns. Node
         # header is unchanged (id / category / name / description / xref /
@@ -125,6 +166,16 @@ class PregoTransform(Transform):
         # Curation report path — one row per (drop_reason, source_id) pair
         # with an occurrence count, so a curator can prioritise fix targets.
         self.unmapped_report_file = self.output_dir / "unmapped_associations.tsv"
+        # Confidence threshold on the calibrated star axis. 0.0 keeps every
+        # row, so the default is a no-op and existing runs are unchanged.
+        if min_confidence is None:
+            min_confidence = float(os.environ.get("PREGO_MIN_CONFIDENCE", "0") or 0)
+        validate_tau(min_confidence)
+        self.min_confidence = min_confidence
+        self._cutoffs: dict = {}
+        # Per-resource cutoffs actually applied, written next to the outputs
+        # so a filtered run says what it dropped.
+        self.calibration_table_file = self.output_dir / "confidence_calibration.tsv"
         # Per-run counters.
         self._stats = {
             "rows_read": 0,
@@ -194,6 +245,18 @@ class PregoTransform(Transform):
         self._load_dictionary(prego_raw_dir, doid_to_mondo)
 
         Path.mkdir(self.output_dir, exist_ok=True, parents=True)
+
+        # Pass 1 — derive per-resource cutoffs from the rows this run will
+        # actually emit. Skipped entirely at the default threshold, so the
+        # no-filter path stays single-pass.
+        if self.min_confidence > 0:
+            histograms = self._collect_calibration(archives, show_status=show_status)
+            if histograms:
+                self._cutoffs = build_cutoffs(histograms, self.min_confidence)
+                self._write_calibration_table(histograms)
+            else:
+                print("[prego] WARNING: no continuous-channel rows found; only flat-channel tiers will be thresholded.")
+
         with (
             self.output_node_file.open("w", newline="") as node_fh,
             self.output_edge_file.open("w", newline="") as edge_fh,
@@ -425,9 +488,67 @@ class PregoTransform(Transform):
     # Per-archive processing.
     # ------------------------------------------------------------------ #
 
-    def _process_archive(self, archive_path, doid_to_mondo, node_writer, edge_writer, show_status: bool = True):
+    def _collect_calibration(self, archives, show_status: bool = True) -> dict:
         """
-        Extract ``database_pairs.tsv`` from one archive and stream it row-by-row.
+        Build per-resource score histograms over exactly the rows pass 2 will emit.
+
+        This is the reason calibration happens inside the transform rather
+        than from a committed table: the cutoffs must be derived from the
+        emitted edge population, not from the raw file. The raw archives
+        contain rows this transform drops (non-canonical directions,
+        taxon–taxon pairs), and their score distribution differs. Calibrating
+        on the raw file would set cutoffs for a population that never ships.
+
+        Only the continuous channel is histogrammed — the flat channels are
+        constant-valued, so a quantile over them is meaningless.
+
+        :param archives: PREGO association archives to scan.
+        :param show_status: Whether to render the tqdm progress bar.
+        :return: Resource name to its accumulated :class:`ScoreHistogram`.
+        """
+        histograms: dict = {}
+        for archive_path in archives:
+            payload_file = self._ensure_payload(archive_path)
+            print(f"[prego] calibration pass over {payload_file.name}")
+            row_iter = iter_database_pairs(payload_file)
+            if show_status:
+                row_iter = tqdm(row_iter, desc=f"calibrate {archive_path.name}", unit="rows")
+            for row, err in row_iter:
+                if err is not None:
+                    continue
+                try:
+                    entity1_type = int(row[0])
+                    entity2_type = int(row[2])
+                    source = row[4]
+                    channel = row[5]
+                    score = float(row[6])
+                except (ValueError, IndexError):
+                    continue
+                if classify_row(entity1_type, entity2_type) not in _KEEP_OUTCOMES:
+                    continue
+                if not is_continuous_channel(channel):
+                    continue
+                histograms.setdefault(source, ScoreHistogram()).add(score)
+        return histograms
+
+    def _write_calibration_table(self, histograms) -> None:
+        """
+        Record the calibration next to the outputs so a run is auditable.
+
+        Without this the cutoffs live only in memory, and a consumer of the
+        filtered edges has no way to tell what was dropped or reproduce it.
+
+        :param histograms: Resource name to its accumulated histogram.
+        """
+        lines = ["resource\tn\ttau\tcutoff_score\tkept_fraction"]
+        for _resource, row in iter_calibration_rows(histograms, self.min_confidence):
+            lines.append(f"{row['resource']}\t{row['n']}\t{row['tau']}\t{row['cutoff_score']}\t{row['kept_fraction']}")
+        atomic_write(self.calibration_table_file, "\n".join(lines) + "\n")
+        print(f"[prego] wrote calibration table → {self.calibration_table_file}")
+
+    def _ensure_payload(self, archive_path) -> Path:
+        """
+        Return the extracted ``database_pairs.tsv`` for one archive.
 
         Cache-then-reuse: extract once into a sibling ``_extracted`` dir so
         re-runs don't pay the ~30 s decompression cost twice. Guard against
@@ -435,6 +556,12 @@ class PregoTransform(Transform):
         tar member's declared size, re-extract rather than trusting a possibly
         truncated file (the alternative would silently emit fewer edges on a
         retry after Ctrl-C / disk-full / OOM).
+
+        Split out from :meth:`_process_archive` so the calibration pass can
+        reuse the same payload without re-extracting it.
+
+        :param archive_path: Path to one PREGO ``*.tar.gz``.
+        :return: Path to the extracted TSV.
         """
         payload_dir = archive_path.parent / archive_path.stem.replace(".tar", "_extracted")
         payload_dir.mkdir(parents=True, exist_ok=True)
@@ -467,6 +594,19 @@ class PregoTransform(Transform):
                             break
                         dst.write(chunk)
 
+        return payload_file
+
+    def _process_archive(self, archive_path, doid_to_mondo, node_writer, edge_writer, show_status: bool = True):
+        """
+        Stream one archive's ``database_pairs.tsv`` row-by-row into the writers.
+
+        :param archive_path: Path to one PREGO ``*.tar.gz``.
+        :param doid_to_mondo: DOID→MONDO xref map.
+        :param node_writer: CSV writer for nodes.tsv.
+        :param edge_writer: CSV writer for edges.tsv.
+        :param show_status: Whether to render the tqdm progress bar.
+        """
+        payload_file = self._ensure_payload(archive_path)
         print(f"[prego] processing {payload_file.name} ({payload_file.stat().st_size / 1024**3:.1f} GB)")
         row_iter = iter_database_pairs(payload_file)
         if show_status:
@@ -502,6 +642,12 @@ class PregoTransform(Transform):
             evidence_url = row[8]
         except (ValueError, IndexError):
             self._stats["rows_malformed"] += 1
+            return
+
+        if self.min_confidence > 0 and not keep_row(
+            channel, _as_float(score), source, self._cutoffs, self.min_confidence
+        ):
+            self._record_drop("below_min_confidence", entity1_type, entity1_id, entity2_type, entity2_id)
             return
 
         outcome = classify_row(entity1_type, entity2_type)

@@ -216,11 +216,20 @@ def star_for_row(
     :param cutoffs: Per-resource raw-score cutoffs from :func:`build_cutoffs`.
     :return: Star rating, or None when the channel is unrecognised.
     """
-    flat = flat_channel_star(channel)
-    if flat is not None:
-        return flat
     if not is_continuous_channel(channel):
-        return None
+        if flat_channel_star(channel) is None:
+            # Unrecognised channel. Its score may or may not be on the star
+            # axis, and thresholding on semantics we have not verified is
+            # how data gets dropped for the wrong reason. Decline to rate it.
+            return None
+        # Recognised flat channel: the score is already a star — PREGO
+        # assigns these directly (4 for the genome channels, 3 for
+        # BioProject/PMID). Return the row's own value rather than the
+        # channel constant, so a row disagreeing with its channel's
+        # documented tier is preserved as the data-quality signal it is
+        # instead of being silently promoted. FLAT_CHANNEL_STARS documents
+        # the expected value for validation, not for substitution.
+        return score
     cut = cutoffs.get(resource)
     if cut is None:
         return None

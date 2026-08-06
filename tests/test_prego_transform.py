@@ -668,3 +668,57 @@ def test_missing_archives_raises(tmp_path: Path):
     transform = PregoTransform(input_dir=tmp_path / "raw", output_dir=out)
     with pytest.raises(SystemExit, match="no .* archives"):
         transform.run()
+
+
+# ---------------------------------------------------------------------------
+# Confidence thresholding (end-to-end)
+# ---------------------------------------------------------------------------
+
+
+def test_default_threshold_emits_everything(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The default must be a no-op so existing runs are byte-identical.
+
+    Filtering is opt-in; a transform that started silently dropping edges on
+    upgrade would be far worse than one that needs a flag.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    assert baseline.min_confidence == 0.0
+    baseline.run(show_status=False)
+    edges = _read_tsv(baseline.output_edge_file)
+    assert edges, "fixture must emit edges at the default threshold"
+    # No calibration pass runs, so no table is written.
+    assert not baseline.calibration_table_file.exists()
+
+
+def test_threshold_drops_only_rows_below_it(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    Raising the threshold drops flat-channel rows scoring below it.
+
+    The fixture's Isolates rows score 3 and 4, so a 3.5 cut must keep the 4s
+    and drop the 3s — and must do so on each row's own score, not on the
+    channel's documented constant.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    baseline.run(show_status=False)
+    all_edges = _read_tsv(baseline.output_edge_file)
+
+    filtered_transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=3.5)
+    filtered_transform.run(show_status=False)
+    kept = _read_tsv(filtered_transform.output_edge_file)
+
+    assert len(kept) < len(all_edges), "a 3.5 threshold must drop the score-3 rows"
+    assert kept, "it must not drop everything"
+    assert all(float(e["prego_score"]) >= 3.5 for e in kept)
+
+
+def test_threshold_is_read_from_the_environment(prego_input_dir, prego_output_dir, monkeypatch):
+    """PREGO_MIN_CONFIDENCE configures the run, matching the repo's env-var idiom."""
+    monkeypatch.setenv("PREGO_MIN_CONFIDENCE", "2.5")
+    assert PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir).min_confidence == 2.5
+
+
+def test_out_of_range_threshold_is_refused(prego_input_dir: Path, prego_output_dir: Path):
+    """Above the star ceiling every channel drops out; refuse rather than emit nothing."""
+    with pytest.raises(ValueError):
+        PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.5)

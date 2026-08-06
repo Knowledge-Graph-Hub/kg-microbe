@@ -163,14 +163,24 @@ def test_scores_above_the_documented_cap_are_binned():
 # ---------------------------------------------------------------------------
 
 
-def test_flat_channels_survive_below_their_tier_and_drop_above():
-    """A flat channel is all-or-nothing at its constant."""
+def test_flat_channel_rows_are_rated_by_their_own_score():
+    """
+    A recognised flat channel is thresholded on the row's own value.
+
+    Its score is already on the star axis, so it is used directly rather
+    than substituting the channel's documented constant. Overriding would
+    silently promote a row that disagrees with its channel — the fixture
+    has Isolates rows scoring 3, and a constant-substituting implementation
+    rated them 4.
+    """
     cutoffs = {"MGnify": 2.0}
-    assert keep_row("Isolates", 4.0, "MGnify", cutoffs, tau=3.0) is True
-    assert keep_row("PMID:1", 3.0, "MGnify", cutoffs, tau=3.0) is True
-    # PMID sits at 3.0, so a 3.5 threshold must drop it while Isolates stays.
-    assert keep_row("PMID:1", 3.0, "MGnify", cutoffs, tau=3.5) is False
     assert keep_row("Isolates", 4.0, "MGnify", cutoffs, tau=3.5) is True
+    # An Isolates row that actually scores 3 must not be promoted to 4.
+    assert keep_row("Isolates", 3.0, "MGnify", cutoffs, tau=3.5) is False
+    assert star_for_row("Isolates", 3.0, "MGnify", cutoffs) == 3.0
+    # PMID sits at 3.0, so a 3.5 threshold drops it.
+    assert keep_row("PMID:1", 3.0, "MGnify", cutoffs, tau=3.0) is True
+    assert keep_row("PMID:1", 3.0, "MGnify", cutoffs, tau=3.5) is False
 
 
 def test_continuous_rows_are_judged_against_their_own_resource():

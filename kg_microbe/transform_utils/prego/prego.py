@@ -108,8 +108,11 @@ _BTO_CATEGORY = "biolink:GrossAnatomicalStructure"  # BTO = Brenda Tissue Ontolo
 # header is single-sourced.
 # ---------------------------------------------------------------------------
 # Outcomes of classify_row that result in an emitted edge. Shared by the
-# calibration pass and the emit pass so the two can never disagree about
-# which rows count.
+# calibration pass and the emit pass. Sharing this is necessary but not
+# sufficient for the two populations to match: the emit pass applies further
+# checks (DOID rows needing a MONDO xref, ENVO/BTO prefix agreement) that the
+# calibration pass cannot cheaply replicate, so the histogrammed population
+# remains a slight superset. See the open issue on unifying the predicate.
 _KEEP_OUTCOMES = (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO)
 
 _PREGO_EDGE_EXTRA_COLUMNS = (
@@ -218,6 +221,16 @@ class PregoTransform(Transform):
         captured output clean.
         """
         del data_file  # multi-archive ingest; scanned from raw dir
+
+        # Reset run-scoped state. Without this a second run() on the same
+        # instance truncates nodes.tsv but re-emits nothing, because the
+        # node de-dup set still holds every ID from the first run — leaving
+        # edges whose endpoints have no node row.
+        self._emitted_nodes = set()
+        self._drop_examples = defaultdict(lambda: defaultdict(int))
+        self._cutoffs = {}
+        for key, value in list(self._stats.items()):
+            self._stats[key] = defaultdict(int) if isinstance(value, defaultdict) else 0
 
         prego_raw_dir = self.input_base_dir / PREGO
         if not prego_raw_dir.is_dir():
@@ -526,7 +539,16 @@ class PregoTransform(Transform):
                     score = float(row[6])
                 except (ValueError, IndexError):
                     continue
-                if classify_row(entity1_type, entity2_type) not in _KEEP_OUTCOMES:
+                # Mirror the emit pass's cheap eligibility checks. It also
+                # rejects empty IDs and GO-prefix mismatches, so histogramming
+                # on classify_row alone would calibrate over a population
+                # slightly larger than the one that ships.
+                if not row[1] or not row[3]:
+                    continue
+                outcome = classify_row(entity1_type, entity2_type)
+                if outcome not in _KEEP_OUTCOMES:
+                    continue
+                if outcome == KEEP_TAXON_TO_GO and not row[3].startswith("GO:"):
                     continue
                 if not is_continuous_channel(channel):
                     continue

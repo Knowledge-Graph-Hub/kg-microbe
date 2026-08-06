@@ -677,7 +677,11 @@ def test_missing_archives_raises(tmp_path: Path):
 
 def test_default_threshold_emits_everything(prego_input_dir: Path, prego_output_dir: Path):
     """
-    The default must be a no-op so existing runs are byte-identical.
+    The default must leave the emitted edge set unchanged.
+
+    Note this branch also adds a prego_source column, so the files are not
+    byte-identical to a pre-branch run; the invariant is that no edge is
+    dropped at the default threshold.
 
     Filtering is opt-in; a transform that started silently dropping edges on
     upgrade would be far worse than one that needs a flag.
@@ -722,3 +726,26 @@ def test_out_of_range_threshold_is_refused(prego_input_dir: Path, prego_output_d
     """Above the star ceiling every channel drops out; refuse rather than emit nothing."""
     with pytest.raises(ValueError):
         PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.5)
+
+
+def test_running_twice_produces_identical_output(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    A second run() on the same instance must not emit a truncated nodes.tsv.
+
+    run() rewrites nodes.tsv from scratch, but the node de-dup set used to
+    persist across runs, so every ID was suppressed as already-seen. The
+    second run left edges whose endpoints had no node row.
+    """
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run(show_status=False)
+    first_nodes = transform.output_node_file.read_text()
+    first_edges = transform.output_edge_file.read_text()
+
+    transform.run(show_status=False)
+    assert transform.output_node_file.read_text() == first_nodes, "nodes.tsv must be reproducible"
+    assert transform.output_edge_file.read_text() == first_edges, "edges.tsv must be reproducible"
+
+    # Every edge endpoint still resolves to a node row emitted by this run.
+    nodes = {n["id"] for n in _read_tsv(transform.output_node_file)}
+    for edge in _read_tsv(transform.output_edge_file):
+        assert edge["subject"] in nodes or edge["object"] in nodes

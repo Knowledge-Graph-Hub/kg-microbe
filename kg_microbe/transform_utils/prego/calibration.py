@@ -216,6 +216,12 @@ def star_for_row(
     :param cutoffs: Per-resource raw-score cutoffs from :func:`build_cutoffs`.
     :return: Star rating, or None when the channel is unrecognised.
     """
+    if not math.isfinite(score):
+        # A non-finite score is bottom-ranked by _bin_index during
+        # calibration, so retaining it here would be inconsistent: it would
+        # shape the histogram as a zero yet survive every positive cutoff
+        # because ``inf >= cutoff``. Rate it at the bottom in both passes.
+        return 0.0
     if not is_continuous_channel(channel):
         if flat_channel_star(channel) is None:
             # Unrecognised channel. Its score may or may not be on the star

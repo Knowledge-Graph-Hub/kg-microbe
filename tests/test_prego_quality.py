@@ -3,10 +3,10 @@ Tests for fold-enrichment measurement of PREGO scores.
 
 This module exists because the percentile calibration equalizes rank, not
 quality, and the difference is not rhetorical: measured against curated
-taxon→GO annotations, PREGO's score turns out to be *anti*-correlated with
-agreement. These tests pin the measurement machinery that established that,
-so the finding stays checkable and can be re-run against a better gold
-standard.
+taxon→GO annotations the direction of the score/agreement relationship is
+**gold-standard dependent** — falling against the trait-derived benchmark,
+rising against UniProt. These tests pin the measurement machinery, so the
+question stays checkable and can be re-run against a better gold standard.
 """
 
 import pytest
@@ -145,9 +145,12 @@ def test_monotonicity_ignores_degenerate_windows():
     Otherwise the flat channels' arbitrary tie ordering would flip the
     answer at random.
     """
-    scored = [(0.1, False)] * 25 + [(0.5, True)] * 25 + [(4.0, False)] * 50
+    # Two windows where the score varies, plus a dominant tie block.
+    varied = [(i / 200.0, i >= 25) for i in range(50)]
+    scored = varied + [(4.0, False)] * 50
     results = enrichment_by_window(scored, baseline=0.5, windows=4)
     assert any(r["degenerate"] for r in results), "fixture must produce a tied window"
+    assert sum(1 for r in results if not r["degenerate"]) >= 2, "and >=2 usable windows"
     # Verdict rests only on the windows where the score actually varies.
     assert is_monotone_increasing(results)
 
@@ -195,3 +198,24 @@ def test_tie_split_cannot_be_faked_by_hit_ordering():
     a = enrichment_by_window(block_sorted, baseline=0.5, windows=4)
     b = enrichment_by_window(block_reversed, baseline=0.5, windows=4)
     assert [r["fold"] for r in a] == [r["fold"] for r in b]
+
+
+def test_all_degenerate_is_insufficient_data_not_success():
+    """
+    A fully tied channel has no score ordering, so monotonicity is undefined.
+
+    ``all()`` over an empty sequence is vacuously true, so filtering out every
+    degenerate window and then calling ``all()`` reported a channel with zero
+    usable comparisons as monotonically increasing.
+    """
+    results = enrichment_by_window([(4.0, i < 10) for i in range(100)], baseline=0.1, windows=5)
+    assert all(r["degenerate"] for r in results)
+    assert is_monotone_increasing(results) is False
+
+
+def test_single_usable_window_is_also_insufficient():
+    """One window is not a comparison either."""
+    scored = [(0.1, True)] * 10 + [(4.0, False)] * 90
+    results = enrichment_by_window(scored, baseline=0.1, windows=5)
+    assert sum(1 for r in results if not r["degenerate"]) < 2
+    assert is_monotone_increasing(results) is False

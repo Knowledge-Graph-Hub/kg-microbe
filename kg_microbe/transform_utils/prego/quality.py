@@ -14,9 +14,11 @@ module is the equivalent measurement for taxon→GO associations.
     fold enrichment = P(pair in gold | pair in window) / P(pair in gold)
 
 where the denominator is the density of the gold standard over the shared
-entity space, i.e. what a random pair would achieve. Fold 1.0 means the
-score carries no information; above 1.0 means the window is enriched for
-curated agreement.
+entity space. Fold 1.0 means the window matches that baseline — **not**
+that the score carries no information, since the baseline weights every
+subject x object cell equally and so controls for neither taxon annotation
+depth nor GO-term ubiquity. A degree-preserving null would be a stronger
+test and is not implemented here.
 
 **What this measured, and why the answer depends on the gold standard.**
 Two were tried, and they disagree — which is the most important result
@@ -32,19 +34,21 @@ Against **metatraits + madin_etal** (trait-derived; 78 GO terms, ~1%
 comparable), it *falls*: 1.61x → 1.59x → 1.56x, with the flat channels at
 1.00x.
 
-The reversal is a provenance-alignment artifact, not a contradiction.
-UniProt annotations come from genome annotation, and PREGO's flat channels
-are genome-derived (JGI IMG, Struo-GTDB) — so they agree with each other
-for reasons unrelated to whether either is right. metatraits is
-trait/literature-derived and aligns better with PREGO's environmental
-channel. **Each gold standard flatters the PREGO channel that shares its
-provenance.** Any single-gold-standard verdict on this score should be
-treated as provisional.
+The leading *hypothesis* for the reversal is provenance alignment, which is
+not established: UniProt annotations come from genome annotation and PREGO's
+flat channels are genome-derived (JGI IMG, Struo-GTDB), so their agreement
+may reflect a shared source rather than either being right. metatraits is
+trait/literature-derived. Testing this needs a source-overlap exclusion and
+a degree-matched comparison; until then treat the UniProt figure for the
+genome channels as provenance agreement rather than quality, and treat any
+single-gold-standard verdict as provisional.
 
-What both agree on: the effect is weak. Fold enrichment spans roughly
-1.0–1.2x across the continuous channel's whole score range, so the score
-is at best a soft quality signal, and thresholding on it is not a strong
-quality lever in either direction.
+Effect sizes, stated per benchmark rather than pooled: against UniProt the
+continuous channel spans 0.94x-1.19x; against the trait-derived standard it
+spans 1.56x-1.61x. Neither range is accompanied by an uncertainty estimate.
+The observations are not independent — edges reuse the same taxa, GO terms
+and resources — so clustered intervals are needed before any ordering of
+these point estimates is called directional.
 
 Separately, the score tracks evidence volume: a GO term's edge count
 correlates with its mean score at Spearman +0.26, driven by rare terms
@@ -124,7 +128,7 @@ def fold_enrichment(hit_rate: float, baseline: float) -> float:
 
     :param hit_rate: Observed fraction of pairs that are curated hits.
     :param baseline: Expected fraction for a random pair.
-    :return: Fold enrichment; 1.0 means no information.
+    :return: Fold enrichment relative to ``baseline``; 1.0 matches it.
     :raises ValueError: If ``baseline`` is not positive.
     """
     if baseline <= 0:
@@ -232,4 +236,10 @@ def is_monotone_increasing(results: Sequence[Dict[str, float]]) -> bool:
     :return: True if fold is non-decreasing across usable windows.
     """
     folds = [r["fold"] for r in results if not r["degenerate"]]
+    if len(folds) < 2:
+        # Fewer than two usable windows means there is no comparison to make.
+        # Returning True here would report a fully tied channel — which has no
+        # score ordering at all — as monotonically increasing, because
+        # ``all()`` over an empty sequence is vacuously true.
+        return False
     return all(a <= b for a, b in zip(folds, folds[1:], strict=False))

@@ -219,7 +219,14 @@ def test_lpsn_edge_uses_subclass_of_not_in_taxon():
     assert "SUBCLASS_PREDICATE" in lpsn_edge_block
     assert "RDFS_SUBCLASS_OF" in lpsn_edge_block
     assert "IN_TAXON_PREDICATE" not in lpsn_edge_block
-    assert "BACDIVE_PREFIX + key" not in lpsn_edge_block
+    # Pin the subject positively on the helper, and ban the raw source prefix
+    # outright. Asserting only that one literal spelling of the old
+    # concatenation is absent passes for every other spelling of it —
+    # including the in-scope `bacdive_key`, which lacks the strain prefix.
+    assert "strain_curie = self._strain_curie(key)" in lpsn_edge_block
+    assert "strain_curie," in lpsn_edge_block
+    assert "BACDIVE_PREFIX" not in lpsn_edge_block
+    assert "bacdive_key" not in lpsn_edge_block
 
 
 def test_blank_lpsn_block_returns_none(tmp_path):

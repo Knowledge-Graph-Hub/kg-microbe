@@ -98,6 +98,7 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
+    RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
     ROLE_CATEGORY,
@@ -149,8 +150,14 @@ class MediaDiveTransform(Transform):
         self._load_chebi_roles()
         self._load_chebi_categories()
 
-        # Load bulk downloaded data if available
-        self.bulk_data_dir = Path("data/raw/mediadive")
+        # Load bulk downloaded data if available. Prefer the input dir this
+        # transform was actually given so `kg download -o DIR` + `kg transform
+        # -i DIR` finds the bulk files; fall back to the repo-anchored raw dir
+        # because Transform.DEFAULT_INPUT_DIR points at a path that does not
+        # exist. Neither branch is CWD-relative — resolving against the process
+        # CWD is what let a run silently fall through to the undated caches.
+        _input_bulk_dir = Path(self.input_base_dir) / "mediadive"
+        self.bulk_data_dir = _input_bulk_dir if _input_bulk_dir.is_dir() else RAW_DATA_DIR / "mediadive"
         self.media_detailed = {}
         self.media_strains = {}
         self.solutions_data = {}
@@ -769,7 +776,7 @@ class MediaDiveTransform(Transform):
                     print(exc)
         return json_obj
 
-    def _assert_bulk_data_available(self):
+    def _assert_bulk_data_available(self) -> None:
         """
         Refuse to transform when the bulk MediaDive download is missing.
 
@@ -794,7 +801,8 @@ class MediaDiveTransform(Transform):
             f"MediaDive bulk data not found in {self.bulk_data_dir}/. Refusing to transform: "
             "the fallback YAML and HTTP caches have no expiry and can silently produce a graph "
             "from years-old recipes. Run `poetry run kg download -t mediadive` and let it finish "
-            "first, or set KG_MEDIADIVE_ALLOW_STALE_CACHE=true to override."
+            "first, or export KG_MEDIADIVE_ALLOW_STALE_CACHE=true to override. It must be a shell "
+            "variable: load_dotenv() is not called on the transform path, so .env is not read."
         )
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):

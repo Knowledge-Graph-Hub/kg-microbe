@@ -69,3 +69,22 @@ def test_unrelated_env_value_still_refuses(tmp_path, monkeypatch):
     transform = _bare_transform(tmp_path, using_bulk_data=False)
     with pytest.raises(FileNotFoundError):
         transform._assert_bulk_data_available()
+
+
+def test_run_invokes_the_guard(tmp_path, monkeypatch):
+    """
+    ``run()`` must call the guard, not merely define it.
+
+    Asserting only on ``_assert_bulk_data_available`` in isolation leaves
+    the wiring untested — deleting the call from ``run()`` would keep every
+    other test in this file green while restoring the silent-stale-output
+    behaviour this guard exists to prevent. The guard also has to fire
+    before ``run()`` touches any input path, so this must raise
+    ``FileNotFoundError`` from the guard rather than from a missing
+    ``mediadive.json``.
+    """
+    monkeypatch.delenv("KG_MEDIADIVE_ALLOW_STALE_CACHE", raising=False)
+    transform = _bare_transform(tmp_path, using_bulk_data=False)
+    with pytest.raises(FileNotFoundError) as excinfo:
+        transform.run()
+    assert "KG_MEDIADIVE_ALLOW_STALE_CACHE" in str(excinfo.value)

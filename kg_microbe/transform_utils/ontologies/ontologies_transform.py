@@ -864,7 +864,10 @@ class OntologiesTransform(Transform):
                 # on a column name leaves the original as a duplicate data row.
                 new_ef_lines = []
                 for edge_line_index, line in enumerate(ef):
-                    if edge_line_index == 0:
+                    # Guarded on the column name too, so a headerless input
+                    # loses no edge — it would just re-duplicate the header,
+                    # which the tests catch, rather than silently drop a row.
+                    if edge_line_index == 0 and line.split("\t")[0] == SUBJECT_COLUMN:
                         continue
                     line = _replace_special_prefixes(line)
                     new_ef_lines.append(line)

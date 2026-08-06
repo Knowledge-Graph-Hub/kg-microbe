@@ -14,10 +14,8 @@
 # Rename the output afterwards (repo convention: *_noprego.tar.gz) so a
 # partial merge is not mistaken for the full graph.
 #
-# Standard merge configuration (Bakta and COG excluded)
-# For Bakta-enabled merge, use merge_bakta.yaml instead
-#
-# Usage: poetry run kg merge -y merge.yaml
+# Inherited from merge.yaml: Bakta and COG are excluded here too.
+# For a Bakta-enabled merge, use merge_bakta.yaml instead.
 #
 configuration:
   output_directory: data/merged

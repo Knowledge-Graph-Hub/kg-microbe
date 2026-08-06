@@ -259,3 +259,26 @@ def test_build_cutoffs_validates_before_inverting():
     """A bad tau must fail before any histogram work."""
     with pytest.raises(ValueError):
         build_cutoffs({"MGnify": _hist([1.0, 2.0])}, tau=STAR_MAX + 1)
+
+
+def test_cap_tie_block_makes_the_threshold_stop_discriminating():
+    """
+    A resource piled up at the cap plateaus instead of honouring the request.
+
+    Measured on the real archives: MG-RAST amplicon holds 46.4% of its rows
+    at the score cap, so every threshold above ~2.5 retains that same 46.4%
+    rather than the requested fraction. Ties are deliberately never split,
+    so this is correct behaviour — but it means the knob silently stops
+    responding, which the transform has to warn about.
+    """
+    # 46% of rows at the cap, the rest spread below it.
+    h = _hist([4.0] * 460 + [i / 540.0 * 2.0 for i in range(540)])
+    for tau in (2.5, 3.0, 3.5):
+        row = h.as_row("MG-RAST amplicon study", tau)
+        realized = float(row["kept_fraction"])
+        requested = 1.0 - tau / STAR_MAX
+        assert realized >= 0.46, "the capped block must survive intact"
+        assert realized > requested + 0.05, (
+            f"tau={tau} should over-retain (realized {realized:.3f} vs requested {requested:.3f}), "
+            "which is what the transform warns about"
+        )

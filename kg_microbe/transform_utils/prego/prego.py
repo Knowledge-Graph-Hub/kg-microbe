@@ -57,6 +57,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM_COLUMN,
 )
 from kg_microbe.transform_utils.prego.calibration import (
+    STAR_MAX,
     ScoreHistogram,
     build_cutoffs,
     is_continuous_channel,
@@ -173,6 +174,7 @@ class PregoTransform(Transform):
         validate_tau(min_confidence)
         self.min_confidence = min_confidence
         self._cutoffs: dict = {}
+        self._payload_cache: dict = {}
         # Per-resource cutoffs actually applied, written next to the outputs
         # so a filtered run says what it dropped.
         self.calibration_table_file = self.output_dir / "confidence_calibration.tsv"
@@ -540,9 +542,25 @@ class PregoTransform(Transform):
 
         :param histograms: Resource name to its accumulated histogram.
         """
+        target_keep = 1.0 - self.min_confidence / STAR_MAX
         lines = ["resource\tn\ttau\tcutoff_score\tkept_fraction"]
         for _resource, row in iter_calibration_rows(histograms, self.min_confidence):
             lines.append(f"{row['resource']}\t{row['n']}\t{row['tau']}\t{row['cutoff_score']}\t{row['kept_fraction']}")
+            # A resource whose scores pile up at the cap cannot honour the
+            # request: once the target quantile falls inside that tie block,
+            # raising the threshold changes nothing, because ties are never
+            # split. Measured on the real archives, MG-RAST amplicon holds
+            # 46.4% of its rows at the cap, so every threshold above ~2.5
+            # retains that same 46.4%. Silently returning far more than was
+            # asked for is exactly what has to be said out loud.
+            realized = float(row["kept_fraction"])
+            if realized > target_keep + 0.05:
+                print(
+                    f"[prego] WARNING: {row['resource']} retains {realized:.1%} at "
+                    f"min-confidence {self.min_confidence} but {target_keep:.1%} was requested. "
+                    f"Its scores pile up at the {row['cutoff_score']} cap, so the threshold "
+                    "has stopped discriminating for this resource."
+                )
         atomic_write(self.calibration_table_file, "\n".join(lines) + "\n")
         print(f"[prego] wrote calibration table → {self.calibration_table_file}")
 
@@ -563,6 +581,13 @@ class PregoTransform(Transform):
         :param archive_path: Path to one PREGO ``*.tar.gz``.
         :return: Path to the extracted TSV.
         """
+        # Memoized: listing members of a gzipped tar decompresses the whole
+        # archive — minutes for the 8.7 GB isolates file. A filtered run
+        # resolves each payload twice (calibrate, then emit), so without
+        # this the tar scan is paid twice for no benefit.
+        cached = self._payload_cache.get(archive_path)
+        if cached is not None:
+            return cached
         payload_dir = archive_path.parent / archive_path.stem.replace(".tar", "_extracted")
         payload_dir.mkdir(parents=True, exist_ok=True)
         payload_file = payload_dir / "database_pairs.tsv"
@@ -594,6 +619,7 @@ class PregoTransform(Transform):
                             break
                         dst.write(chunk)
 
+        self._payload_cache[archive_path] = payload_file
         return payload_file
 
     def _process_archive(self, archive_path, doid_to_mondo, node_writer, edge_writer, show_status: bool = True):

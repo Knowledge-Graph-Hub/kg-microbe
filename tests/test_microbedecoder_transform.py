@@ -124,9 +124,52 @@ def test_crosswalk_edges_use_close_match(microbedecoder_transform):
     objects = {e["object"] for e in e_101}
     assert "NCBITaxon:1423" in objects
     assert "GTDB:d__Bacteria;g__Bacillus;s__Bacillus subtilis" in objects
-    assert "bacdive:BAC01" in objects
+    assert "kgmicrobe.strain:bacdive_BAC01" in objects
     assert "GOLD:Gs0000101" in objects
     assert "IMG:3300000001" in objects
+
+
+def test_bacdive_crosswalk_targets_the_strain_curie(microbedecoder_transform):
+    """
+    BacDive crosswalk objects must be the CURIE the bacdive transform mints.
+
+    This used to emit the bare ``bacdive:<id>`` form, which no transform
+    emits as a node row. All ~19 K of these edges dangled and KGX turned
+    them into empty ``biolink:NamedThing`` stubs in the merged KG, while
+    the real strain nodes sat under ``kgmicrobe.strain:bacdive_<id>``
+    (99,392 rows). Every source BacDive ID resolves under that prefix.
+    """
+    microbedecoder_transform.run()
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+    close_matches = [e for e in edges if e["predicate"] == CLOSE_MATCH_PREDICATE]
+
+    bacdive_objects = {e["object"] for e in close_matches if "bacdive" in e["object"].lower()}
+    assert bacdive_objects, "fixture must produce BacDive crosswalk edges"
+    for obj in bacdive_objects:
+        assert obj.startswith("kgmicrobe.strain:bacdive_"), (
+            f"BacDive crosswalk target must use the strain CURIE; got {obj!r}"
+        )
+    # The bare source form must not survive anywhere.
+    assert not any(e["object"].startswith("bacdive:") for e in close_matches)
+
+
+def test_bacdive_crosswalk_normalizes_a_precuried_cell(microbedecoder_transform):
+    """
+    A cell already CURIE'd as ``bacdive:<id>`` must not be double-prefixed.
+
+    The prefix-stripping step keys off the *emitted* prefix, which for
+    BacDive no longer matches the prefix the source uses. Without also
+    stripping the source prefix, fixture row 505 (``bacdive:BAC05``) would
+    emit ``kgmicrobe.strain:bacdive_bacdive:BAC05``.
+    """
+    microbedecoder_transform.run()
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+    objects = {
+        e["object"] for e in edges if e["subject"] == f"{LPSN_PREFIX}505" and e["predicate"] == CLOSE_MATCH_PREDICATE
+    }
+    assert "kgmicrobe.strain:bacdive_BAC05" in objects, f"pre-CURIE'd cell was not normalized; got {objects}"
+    for obj in objects:
+        assert obj.count(":") == 1, f"double-prefixed CURIE: {obj!r}"
 
 
 def test_crosswalk_edges_carry_microbedecoder_provenance(microbedecoder_transform):
@@ -190,7 +233,7 @@ def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
     """
     microbedecoder_transform.run()
     nodes = _read_tsv(microbedecoder_transform.output_node_file)
-    for prefix in ("NCBITaxon:", "GTDB:", "bacdive:", "GOLD:", "IMG:", "CHEBI:"):
+    for prefix in ("NCBITaxon:", "GTDB:", "kgmicrobe.strain:", "GOLD:", "IMG:", "CHEBI:"):
         stubs = [n["id"] for n in nodes if n["id"].startswith(prefix)]
         assert stubs == [], (
             f"MicrobeDecoder must not emit stub nodes for cross-ref target "

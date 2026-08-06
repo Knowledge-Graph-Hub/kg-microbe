@@ -25,13 +25,18 @@ LPSN_STATUS_COLUMN = "LPSN_status"
 
 # Identity crosswalk MicrobeDecoder pre-joins per row. Emit each as a
 # `biolink:close_match` edge from `lpsn:<LPSN_ID>` to the target CURIE.
-# `(column, prefix, formatter)`: formatter takes the raw cell value and
-# returns the local ID part (or None to skip). None formatter means the raw
-# value is already the local ID.
+# `(column, emitted_prefix, source_prefix)`: `source_prefix` is the CURIE
+# prefix the raw cell may already carry when it differs from the emitted
+# one; None means the source uses the emitted prefix (or a bare local ID).
+#
+# BacDive emits `kgmicrobe.strain:bacdive_<id>` because that is the CURIE the
+# bacdive transform actually mints for a strain (99,392 node rows). The bare
+# `bacdive:<id>` form this used to emit is not a node anywhere in the graph,
+# so all ~19 K of these edges dangled and KGX turned them into empty stubs.
 CROSSWALK_COLUMNS: Tuple[Tuple[str, str, Optional[str]], ...] = (
     ("NCBI_Taxonomy_ID", "NCBITaxon:", None),
     ("GTDB_ID", "GTDB:", None),
-    ("BacDive_ID", "bacdive:", None),
+    ("BacDive_ID", "kgmicrobe.strain:bacdive_", "bacdive:"),
     ("GOLD_Organism_ID", "GOLD:", None),
     ("IMG_Genome_ID", "IMG:", None),
 )

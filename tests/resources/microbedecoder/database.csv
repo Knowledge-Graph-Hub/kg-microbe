@@ -3,7 +3,7 @@ LPSN_ID,LPSN_status,LPSN_Species,LPSN_Strain,NCBI_Taxonomy_ID,GTDB_ID,BacDive_ID
 202,correct name,Escherichia coli,Escherichia coli K-12,562,d__Bacteria;g__Escherichia;s__Escherichia coli,BAC02,Gs0000202,,Mixed-acid fermentation,"acetate, lactate, ethanol, formate, succinate",hydrogen,"glucose, xylose",Mixed-acid fermentation produces multiple organic acids,Glucose is main fermentable substrate,,,,,,,,,,Fermentation,facultative anaerobe,negative,yes,no,rod
 303,correct name,Clostridium acetobutylicum,ATCC 824,1488,,BAC03,Gs0000303,,,,,,,,ABE fermentation,"acetone, butanol, ethanol",acetate,,,,,,,Fermentation,anaerobe,positive,no,yes,rod
 404,correct name,Methanocaldococcus jannaschii,DSM 2661,243232,d__Archaea;g__Methanocaldococcus;s__Methanocaldococcus jannaschii,,,,,,,,,,,,,Methanogenesis,methane,,"H2, CO2",Hydrogenotrophic methanogen,PMID:9634230,Methanogenesis,anaerobe,,,,coccus
-505,synonym,Streptococcus faecalis,Streptococcus faecalis,,,BAC05,,,,,,,,,,,,,,,,,,,facultative anaerobe,positive,,no,coccus
+505,synonym,Streptococcus faecalis,Streptococcus faecalis,,,bacdive:BAC05,,,,,,,,,,,,,,,,,,,facultative anaerobe,positive,,no,coccus
 606,correct name,Lactobacillus acidophilus,DSM 20079,1579,,BAC06,,,Homofermentative,lactate,,glucose,Homofermentative lactic acid bacterium,,,,,,,,,,,Homofermentative,microaerophile,positive,no,no,rod
 707,correct name,Testicola multivalens,,9999,,,,"3300000001,3300000002",,,,,,,,,,,,,,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,aerobe,,,,

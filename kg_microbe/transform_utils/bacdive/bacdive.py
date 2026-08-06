@@ -86,8 +86,6 @@ from kg_microbe.transform_utils.constants import (
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
-    IN_TAXON_PREDICATE,
-    IN_TAXON_RELATION,
     INFERRED_SUBCLASS_RELATION,
     INTERACTS_WITH_RELATION,
     IS_GROWN_IN,
@@ -262,8 +260,8 @@ class BacDiveTransform(Transform):
         self.assay_edges_generated: Optional[List] = None  # Generated assay→entity edge rows
 
         # LPSN name → record_no index, loaded from data/raw/lpsn_gss.csv when
-        # present. Used to emit bacdive:<id> → biolink:close_match →
-        # lpsn:<record_no> for every strain whose LPSN block names an
+        # present. Used to emit kgmicrobe.strain:bacdive_<id> →
+        # biolink:subclass_of → lpsn:<record_no> for every strain whose LPSN block names an
         # exactly-known LPSN species. Silent skip on missing CSV so a fresh
         # checkout that hasn't downloaded LPSN still runs the BacDive
         # transform cleanly.
@@ -501,6 +499,20 @@ class BacDiveTransform(Transform):
             len(name_index),
         )
         return name_index
+
+    @staticmethod
+    def _strain_curie(bacdive_key: str) -> str:
+        """
+        Return the ``kgmicrobe.strain:bacdive_NNN`` CURIE for a BacDive record key.
+
+        Every edge touching a BacDive strain must build its subject here.
+        Composing a strain reference from ``BACDIVE_PREFIX`` alone yields
+        ``bacdive:NNN``, which this transform never emits as a node row.
+
+        :param bacdive_key: BacDive record ID as a string.
+        :return: The strain CURIE used for the corresponding node row.
+        """
+        return STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + bacdive_key
 
     def _lookup_lpsn(self, lpsn_block: dict) -> Optional[str]:
         """
@@ -1985,7 +1997,7 @@ class BacDiveTransform(Transform):
                             strain_designation = name_tax_classification.get(STRAIN_DESIGNATION).strip()
 
                     # Construct strain ID using BacDive ID
-                    organism_id = STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + key
+                    organism_id = self._strain_curie(key)
 
                     # Construct strain label
                     bacdive_key = BACDIVE_PREFIX.replace(":", "_") + key
@@ -2437,26 +2449,32 @@ class BacDiveTransform(Transform):
                     # LPSN GSS index loaded in __init__. No-op when the CSV
                     # isn't on disk, or when the LPSN block is absent /
                     # ambiguous. Emitted per strain so the merge step
-                    # naturally reconciles bacdive:<id> with the LPSN
-                    # transform's lpsn:<record_no> nodes when both sources
-                    # ingest the same taxonomy.
+                    # naturally reconciles kgmicrobe.strain:bacdive_<id> with
+                    # the LPSN transform's lpsn:<record_no> nodes when both
+                    # sources ingest the same taxonomy.
                     lpsn_record_no = self._lookup_lpsn(lpsn) if lpsn else None
                     if lpsn_record_no:
-                        # ``biolink:in_taxon`` (RO:0002162) is the correct
-                        # predicate for a specific strain being classified
-                        # within an LPSN taxonomic-name record — the strain
-                        # is an instance of that taxon, not identical to it
-                        # (which would be exact_match) and not a subclass
-                        # (which would be subclass_of).
+                        # Subject must be the strain node this transform
+                        # actually emits (``kgmicrobe.strain:bacdive_NNN``).
+                        # ``bacdive:NNN`` is never written as a node row, so
+                        # using it here left every one of these edges orphaned
+                        # and KGX synthesized a bare NamedThing stub per strain.
+                        strain_curie = self._strain_curie(key)
+                        # ``biolink:subclass_of`` matches how this transform
+                        # already relates the same strain nodes to their
+                        # NCBITaxon species. Both endpoints are typed
+                        # biolink:OrganismTaxon, i.e. class-like, so the
+                        # instance-of reading behind biolink:in_taxon
+                        # contradicts the node typing in use.
                         knowledge_level, agent_type = self._add_edge_metadata(
-                            IN_TAXON_PREDICATE, IN_TAXON_RELATION, f"lpsn:{lpsn_record_no}"
+                            SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, f"lpsn:{lpsn_record_no}"
                         )
                         edge_writer.writerow(
                             [
-                                BACDIVE_PREFIX + key,
-                                IN_TAXON_PREDICATE,
+                                strain_curie,
+                                SUBCLASS_PREDICATE,
                                 f"lpsn:{lpsn_record_no}",
-                                IN_TAXON_RELATION,
+                                RDFS_SUBCLASS_OF,
                                 self.knowledge_source,
                                 knowledge_level,
                                 agent_type,

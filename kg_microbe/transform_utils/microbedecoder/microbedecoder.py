@@ -331,7 +331,7 @@ class MicrobeDecoderTransform(Transform):
         The other four crosswalk columns (NCBI, BacDive, GOLD) are
         single-value in practice; comma-only is safe there too.
         """
-        for column, prefix, _formatter in CROSSWALK_COLUMNS:
+        for column, prefix, source_prefix in CROSSWALK_COLUMNS:
             raw = row.get(column)
             if is_empty_cell(raw):
                 continue
@@ -339,9 +339,14 @@ class MicrobeDecoderTransform(Transform):
                 # Strip a stray leading prefix if the source already CURIE'd
                 # it (``NCBI_Taxonomy_ID`` occasionally arrives as
                 # ``"NCBITaxon:562"`` rather than a bare integer — normalise
-                # so downstream nodes merge cleanly).
-                if local_id.upper().startswith(prefix.upper()):
-                    local_id = local_id.split(":", 1)[1]
+                # so downstream nodes merge cleanly). Both the emitted prefix
+                # and the source's own prefix are stripped, because they
+                # differ for BacDive; slice by length rather than splitting on
+                # ":" so a prefix ending in "_" strips fully.
+                for candidate in (prefix, source_prefix):
+                    if candidate and local_id.upper().startswith(candidate.upper()):
+                        local_id = local_id[len(candidate) :]
+                        break
                 object_curie = f"{prefix}{local_id}"
                 edge_writer.writerow(
                     self._make_edge_row(

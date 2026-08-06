@@ -166,7 +166,7 @@ For each cross-ref the source provides:
 |---|---|---|---|---|
 | `NCBI:12345` | `NCBITaxon:12345` | yes (ncbitaxon transform) | `biolink:close_match` | trivial |
 | `GTDB s__X` | `gtdb.species:X` | yes (gtdb transform) | `biolink:close_match` | strip s__ per repo convention (see [[feedback_gtdb_prefix]] if noted) |
-| `BacDive 12345` | `bacdive:12345` | yes (bacdive transform) | `biolink:close_match` | this is the merge glue |
+| `BacDive 12345` | `kgmicrobe.strain:bacdive_12345` | yes (bacdive transform) | `biolink:close_match` | this is the merge glue. **Not** `bacdive:12345` — no transform emits that as a node, so edges to it dangle and KGX turns them into empty `biolink:NamedThing` stubs |
 
 Cross-refs that point to entities NOT in KG-Microbe: emit the edge anyway if you're confident downstream analyses will use it. Note it in the design and stub-node it appropriately.
 

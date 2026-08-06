@@ -69,16 +69,30 @@ def test_fold_refuses_a_zero_baseline():
         fold_enrichment(0.5, 0.0)
 
 
-def test_windows_are_equal_count_not_equal_width():
+def test_windows_are_equal_count_where_the_score_varies():
     """
-    Equal-count windows are required because scores pile up at the cap.
+    Windows are equal-count, not equal-width.
 
-    Equal-width bins would put most of the mass in a single bin and measure
-    nothing.
+    PREGO's scores pile up at the cap, so equal-width bins would put most of
+    the mass in one bin and measure nothing.
+    """
+    scored = [(i / 100.0, i % 3 == 0) for i in range(100)]
+    results = enrichment_by_window(scored, baseline=0.3, windows=5)
+    assert [r["n"] for r in results] == [20, 20, 20, 20, 20]
+
+
+def test_a_dominant_tie_block_yields_fewer_windows():
+    """
+    Tie-safety outranks hitting the requested window count.
+
+    With 90% of rows sharing one score there is no way to cut five windows
+    without splitting that block, and splitting it would fabricate signal
+    from sort order. Returning fewer, honest windows is the right trade.
     """
     scored = [(0.1, True)] * 10 + [(4.0, False)] * 90
     results = enrichment_by_window(scored, baseline=0.1, windows=5)
-    assert [r["n"] for r in results] == [20, 20, 20, 20, 20]
+    assert len(results) < 5
+    assert sum(r["n"] for r in results) == 100, "no rows may be dropped"
 
 
 def test_tied_window_is_flagged_degenerate():
@@ -112,10 +126,12 @@ def test_monotonicity_predicate_detects_the_prego_failure():
     """
     An anti-correlated score must be reported as failing.
 
-    This is PREGO's measured shape: fold enrichment falls from 1.61x in the
-    lowest continuous-channel quintile to 1.17x in the highest. A threshold
-    on such a score selects edges that agree with curated knowledge less
-    often, so the predicate has to catch it.
+    This is PREGO's shape against the trait-derived gold standard: fold
+    enrichment falls from 1.61x in the lowest continuous-channel quintile to
+    1.56x by the third. (Against UniProt it rises instead — the direction is
+    gold-standard dependent.) A threshold on an anti-correlated score selects
+    edges that agree with curated knowledge less often, so the predicate has
+    to catch that case.
     """
     scored = [(i / 100.0, i < 50) for i in range(100)]
     results = enrichment_by_window(scored, baseline=0.5, windows=2)
@@ -145,3 +161,37 @@ def test_windows_must_be_positive():
     """A non-positive window count is a caller bug, not a silent no-op."""
     with pytest.raises(ValueError):
         enrichment_by_window([(1.0, True)], baseline=0.1, windows=0)
+
+
+def test_windows_never_split_a_tie_block():
+    """
+    A window boundary must fall only where the score changes.
+
+    Slicing a sorted list by index splits a tie block, and which tied rows
+    land either side is then decided by the sort's tiebreak rather than the
+    score. An ad-hoc analysis that sorted ``(score, is_hit)`` tuples did
+    exactly this on the real data: it pushed every non-hit to the low side
+    of the 4.0 block and every hit to the high side, manufacturing a 0.44x
+    window next to a 1.95x one out of pure ordering. Those numbers were
+    reported before the bug was caught.
+    """
+    # 20 varied rows then a 80-row tie block that no boundary may cut.
+    scored = [(i / 100.0, i % 2 == 0) for i in range(20)] + [(4.0, i < 40) for i in range(80)]
+    results = enrichment_by_window(scored, baseline=0.5, windows=5)
+    tied = [r for r in results if r["score_min"] == 4.0 or r["score_max"] == 4.0]
+    assert len(tied) == 1, f"the 4.0 block must live in exactly one window, got {len(tied)}"
+    assert tied[0]["n"] == 80, "the whole tie block belongs to that window"
+    assert tied[0]["degenerate"] is True
+
+
+def test_tie_split_cannot_be_faked_by_hit_ordering():
+    """
+    Ordering hits within a tie block must not change any window's fold.
+
+    This is the direct regression for the artifact above.
+    """
+    block_sorted = [(4.0, False)] * 40 + [(4.0, True)] * 40
+    block_reversed = [(4.0, True)] * 40 + [(4.0, False)] * 40
+    a = enrichment_by_window(block_sorted, baseline=0.5, windows=4)
+    b = enrichment_by_window(block_reversed, baseline=0.5, windows=4)
+    assert [r["fold"] for r in a] == [r["fold"] for r in b]

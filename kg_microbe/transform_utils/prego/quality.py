@@ -18,23 +18,39 @@ entity space, i.e. what a random pair would achieve. Fold 1.0 means the
 score carries no information; above 1.0 means the window is enriched for
 curated agreement.
 
-**What this measured on the real data, and why it matters.** Run against
-metatraits + metatraits_gtdb + madin_etal as the gold standard, PREGO's
-score is *anti*-correlated with agreement. Within the continuous channel,
-fold enrichment falls monotonically from 1.61x in the lowest score quintile
-to 1.17x in the highest, and the effect survives stratifying by GO term
-(30 of 47 terms show it; pooled hit rate 0.180 low-half vs 0.151
-high-half). The flat channels sit at exactly 1.00x — random.
+**What this measured, and why the answer depends on the gold standard.**
+Two were tried, and they disagree — which is the most important result
+here.
 
-So raising a threshold on ``prego_score`` selects edges that agree with
-curated annotation *less* often. The threshold remains a valid **size**
-lever; it is not a quality lever. See the module tests for the invariants
-this implies.
+Against **UniProt proteome annotations** (14.4M taxon→GO pairs derived
+from ``kg-microbe-function``; 4,209 GO terms, 41% of PREGO's taxon→GO
+edges comparable), fold enrichment *rises* with score across the
+continuous channel: 0.94x → 0.96x → 1.04x → 1.19x. The flat channels sit
+at 2.19x.
 
-Coverage is the main caveat and is deliberately reported alongside every
-result: only ~1% of PREGO's taxon→GO edges are comparable, over 70 shared
-GO terms. A calibration fitted on that slice should not be extrapolated to
-the whole graph without a broader gold standard.
+Against **metatraits + madin_etal** (trait-derived; 78 GO terms, ~1%
+comparable), it *falls*: 1.61x → 1.59x → 1.56x, with the flat channels at
+1.00x.
+
+The reversal is a provenance-alignment artifact, not a contradiction.
+UniProt annotations come from genome annotation, and PREGO's flat channels
+are genome-derived (JGI IMG, Struo-GTDB) — so they agree with each other
+for reasons unrelated to whether either is right. metatraits is
+trait/literature-derived and aligns better with PREGO's environmental
+channel. **Each gold standard flatters the PREGO channel that shares its
+provenance.** Any single-gold-standard verdict on this score should be
+treated as provisional.
+
+What both agree on: the effect is weak. Fold enrichment spans roughly
+1.0–1.2x across the continuous channel's whole score range, so the score
+is at best a soft quality signal, and thresholding on it is not a strong
+quality lever in either direction.
+
+Separately, the score tracks evidence volume: a GO term's edge count
+correlates with its mean score at Spearman +0.26, driven by rare terms
+scoring low (mean 0.67 in the lowest-ubiquity decile vs ~2.0 everywhere
+above). Raising a threshold therefore strips rare, specific annotations
+first — a coverage bias worth knowing about independent of quality.
 """
 
 from __future__ import annotations
@@ -141,27 +157,60 @@ def enrichment_by_window(
     """
     if windows <= 0:
         raise ValueError("windows must be positive")
-    rows = sorted(scored, key=lambda r: r[0])
-    if not rows:
+    if not scored:
         return []
-    size = max(1, len(rows) // windows)
+    # Aggregate by exact score first. Slicing a sorted list by index splits a
+    # tie block across the boundary, and then *which* tied rows land either
+    # side is decided by the sort's tiebreak rather than by the score. That
+    # is not hypothetical: an earlier ad-hoc analysis sorted (score, is_hit)
+    # tuples, which pushed every non-hit to the low side of the 4.0 block and
+    # every hit to the high side, manufacturing a 0.44x window next to a
+    # 1.95x one out of pure ordering. Windows must break only where the score
+    # actually changes.
+    by_score: Dict[float, List[int]] = {}
+    for score, hit in scored:
+        slot = by_score.setdefault(score, [0, 0])
+        slot[0] += 1
+        slot[1] += 1 if hit else 0
+
+    total = sum(v[0] for v in by_score.values())
+    target = total / windows
     out: List[Dict[str, float]] = []
-    for i in range(windows):
-        lo = i * size
-        hi = len(rows) if i == windows - 1 else min(len(rows), (i + 1) * size)
-        window = rows[lo:hi]
-        if not window:
-            continue
-        rate = sum(1 for _, hit in window if hit) / len(window)
+    n = h = 0
+    lo = hi = None
+    for score in sorted(by_score):
+        count, hits = by_score[score]
+        if lo is None:
+            lo = score
+        hi = score
+        n += count
+        h += hits
+        if n >= target and len(out) < windows - 1:
+            rate = h / n
+            out.append(
+                {
+                    "window": len(out) + 1,
+                    "score_min": lo,
+                    "score_max": hi,
+                    "n": n,
+                    "hit_rate": rate,
+                    "fold": fold_enrichment(rate, baseline),
+                    "degenerate": lo == hi,
+                }
+            )
+            n = h = 0
+            lo = None
+    if n:
+        rate = h / n
         out.append(
             {
-                "window": i + 1,
-                "score_min": window[0][0],
-                "score_max": window[-1][0],
-                "n": len(window),
+                "window": len(out) + 1,
+                "score_min": lo,
+                "score_max": hi,
+                "n": n,
                 "hit_rate": rate,
                 "fold": fold_enrichment(rate, baseline),
-                "degenerate": window[0][0] == window[-1][0],
+                "degenerate": lo == hi,
             }
         )
     return out
@@ -172,9 +221,10 @@ def is_monotone_increasing(results: Sequence[Dict[str, float]]) -> bool:
     Return whether fold enrichment rises with score across non-degenerate windows.
 
     This is the property a usable confidence score must have: a higher score
-    should mean a higher chance of agreeing with curated knowledge. PREGO's
-    does not, which is why this predicate exists — to make the failure
-    checkable rather than a matter of opinion.
+    should mean a higher chance of agreeing with curated knowledge. Whether
+    PREGO's has it depends on the gold standard — rising against UniProt,
+    falling against metatraits — so this predicate exists to make the
+    question checkable per gold standard rather than a matter of opinion.
 
     Degenerate (all-ties) windows are excluded; their ordering is arbitrary.
 

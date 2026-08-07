@@ -70,16 +70,52 @@ def parse_load_config(yaml_file: str) -> Dict:
     return config
 
 
-def load_and_merge(yaml_file: str, processes: int = 1) -> nx.MultiDiGraph:
+def _assert_sources_exist(yaml_file: str, sources: List[str]) -> None:
+    """
+    Fail before parsing anything if a requested source is not in the config.
+
+    KGX indexes the config dict directly, so an unknown key surfaces as a
+    bare ``KeyError: 'foo'`` only after the run is underway. A merge is a
+    long, expensive operation; a typo should not be discovered an hour in.
+
+    :param yaml_file: Path to the KGX merge config.
+    :param sources: Source keys requested on the command line.
+    :raises KeyError: If any requested source is absent from the config.
+    """
+    with open(yaml_file, "r") as fh:
+        config = yaml.safe_load(fh)
+    available = set((config.get("merged_graph", {}) or {}).get("source", {}) or {})
+    unknown = [s for s in sources if s not in available]
+    if unknown:
+        raise KeyError(f"Source(s) {sorted(unknown)} not in {yaml_file}. Available: {sorted(available)}")
+
+
+def load_and_merge(
+    yaml_file: str,
+    processes: int = 1,
+    sources: Optional[List[str]] = None,
+) -> nx.MultiDiGraph:
     """
     Load and merge sources defined in the config YAML.
 
-    :param yaml_file: A string pointing to a KGX compatible config YAML.
-    :param processes: Number of processes to use.
-    :return: networkx.MultiDiGraph: The merged graph.
+    ``sources`` restricts the merge to a subset of the config's sources.
+    KGX holds every source's graph in the parent process at once —
+    ``kgx.cli.cli_utils.merge`` collects them all before calling
+    ``merge_all_graphs`` — so peak memory scales with the whole set, not
+    with the largest member. Merging in stages is the only way to keep a
+    very large source (PREGO: 44.7M edges) from coexisting with all the
+    others.
 
+    :param yaml_file: A string pointing to a KGX compatible config YAML.
+    :param processes: Number of processes to use. Each concurrent process
+        holds its own source graph, so raising this raises peak memory.
+    :param sources: Optional subset of source keys to merge. None merges all.
+    :return: networkx.MultiDiGraph: The merged graph.
+    :raises KeyError: If a requested source is absent from the config.
     """
-    merged_graph = merge(yaml_file, processes=processes)
+    if sources:
+        _assert_sources_exist(yaml_file, sources)
+    merged_graph = merge(yaml_file, source=list(sources) if sources else None, processes=processes)
     try:
         _cleanup_merged_outputs(yaml_file)
     except Exception as exc:  # noqa: BLE001

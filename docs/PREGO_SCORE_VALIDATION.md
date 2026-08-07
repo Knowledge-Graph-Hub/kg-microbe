@@ -25,10 +25,43 @@ Companion to [`PREGO_INGEST_PLAN.md`](PREGO_INGEST_PLAN.md), which covers acquis
 
 **Candidate mechanism (post-hoc, untested).** PREGO's environmental-samples score counts taxon–sample co-occurrence, which is *direct* evidence for "found in location X" and only *indirect* evidence for "can perform function Y". This fits the observations but no analysis tests it or excludes alternatives such as taxon ascertainment or benchmark coverage. It should not be stated as established.
 
+<a name="matched-taxa-interaction-test"></a>
+### Matched-taxa interaction test — the confound-removing analysis
+
+External review named this the cheapest way to settle the verdict, so it was run
+([`predicate_interaction.py`](../scripts/prego_validation/predicate_interaction.py)).
+It removes the benchmark confound rather than adjusting for it: **only the 4,527 taxa
+carrying BOTH a BacDive isolation record and a BacDive assay result**, with within-term
+comparison, taxon-degree decile stratification, tie-safe boundaries, and a two-way
+clustered bootstrap over taxa and terms.
+
+| predicate | terms | in-stratum n | high/low ratio |
+|---|---:|---:|---:|
+| `location_of` | 66 | 9,682 | **1.502** |
+| `capable_of` | 31 | 12,325 | **1.023** |
+
+**Interaction (location − capable): +0.479, two-way clustered 95% CI [−0.015, +1.128].**
+96.8% of resamples put `location_of` above `capable_of`.
+
+**Reading.** The point estimate is exactly what the verdict predicts — the score
+discriminates for location (1.50) and essentially not at all for function (1.02) — and
+it survives on matched taxa with term and degree controls, which is much stronger than
+the original per-benchmark comparison. The location figure also reproduces the
+independent tie-safe ENVO estimate (1.49). But the 95% interval **just barely includes
+zero**. One-sided the evidence is fairly strong (~0.03); two-sided at 95% it does not
+clear the bar.
+
+**One confound survives even here:** the label policies still differ. Location gold is
+positive-only (absence = unknown) while function gold carries real negatives. Matching
+the taxa does not match that. Closing it needs either negatives for location or a
+positive-only recasting of the assay labels.
+
+Verdict after this test: **strengthened, still not established at 95%.**
+
 <a name="confounds-that-limit-the-verdict"></a>
 ### Confounds that limit the verdict
 
-1. **Predicate is inseparable from benchmark.** `location_of` was measured only against BacDive isolation records (positive-only); `capable_of` only against trait, genome, and assay standards. Nothing measures both predicates under one label policy.
+1. **Predicate was inseparable from benchmark.** Partly addressed by the matched-taxa test above, which uses one resource and one taxon set for both predicates. What remains unmatched is the **label policy**: location gold is positive-only, function gold has negatives.
 2. **BTO is not an independent replication of ENVO.** Both project the *same* BacDive isolation source. With tie-safe strata it is 6 of 8 terms (n=843 in-stratum), an unclustered one-sided sign test around p≈0.1 — a sensitivity check, not confirmation.
 3. **Within-term stratification controls term identity, not taxon degree.** In the BTO split the high-score half has mean BacDive gold degree 4.85 vs 3.56 and mean PREGO degree 23.10 vs 18.73; ENVO likewise 91.64 vs 70.67. Well-covered taxa remain an open path to apparent discrimination.
 4. **No clustered uncertainty anywhere.** Edges reuse taxa, terms and resources; all intervals quoted are iid and therefore optimistic.

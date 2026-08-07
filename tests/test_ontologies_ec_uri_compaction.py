@@ -241,3 +241,43 @@ class TestEcPostProcessUriCompaction(TestCase):
                 [],
                 f"edges header repeated as a data row at line(s) {duplicates}",
             )
+
+
+class TestStrayHeaderRowsAreDropped(TestCase):
+
+    """A header line that leaked into the body must not reach the merged KG."""
+
+    def test_second_header_row_is_removed(self):
+        """
+        Filtering by content, not position, is what makes this robust.
+
+        The real ec pipeline produced a file whose parse output already carried
+        two header lines. The first is consumed as the header; the second
+        survived as a data row, reached the merged KG, and KGX read
+        "subject"/"object" as endpoint CURIEs and synthesized two empty
+        biolink:NamedThing nodes.
+
+        An earlier fix skipped index 0 in the ec branch. That removes one
+        header but not a second, so the defect survived a full re-run of the
+        transform with the fix in place — the output was byte-identical.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            nodes_path = tmp_path / "ec_nodes.tsv"
+            edges_path = tmp_path / "ec_edges.tsv"
+            _write_tsv(nodes_path, _NODE_HEADER, _fixture_nodes())
+            # A duplicate header sitting in the body, exactly as observed.
+            rows = [list(_EDGE_HEADER)] + _fixture_edges()
+            _write_tsv(edges_path, _EDGE_HEADER, rows)
+
+            transform = _build_transform(tmp_path)
+            transform._normalize_schema(nodes_path, edges_path)
+
+            with open(edges_path) as fh:
+                lines = [ln.rstrip("\n") for ln in fh if ln.strip()]
+            header = lines[0].split("\t")
+            self.assertEqual(header[0], "subject")
+            strays = [i for i, ln in enumerate(lines[1:], start=2) if ln.split("\t")[0] == "subject"]
+            self.assertEqual(strays, [], f"stray header row(s) survived at line(s) {strays}")
+            # The real edges are untouched.
+            self.assertGreater(len(lines), 1, "dropping strays must not empty the file")

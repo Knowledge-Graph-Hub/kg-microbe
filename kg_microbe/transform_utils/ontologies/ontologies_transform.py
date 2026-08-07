@@ -975,6 +975,22 @@ class OntologiesTransform(Transform):
 
         if edges_file.is_file():
             df = pd.read_csv(edges_file, sep="\t", low_memory=False)
+            # Drop header rows that leaked into the body. The ec pipeline has
+            # produced a file whose parse output already carried two header
+            # lines: the first is consumed as the header, the second survives
+            # as a data row and reaches the merged KG, where KGX reads
+            # "subject"/"object" as endpoint CURIEs and synthesizes two empty
+            # biolink:NamedThing nodes.
+            #
+            # Filtering by content rather than by position deliberately: an
+            # earlier fix skipped index 0 in the ec branch, which removes one
+            # header but not a second, and left this defect in place through a
+            # full re-run. No real edge has "subject" as its subject.
+            if SUBJECT_COLUMN in df.columns:
+                stray = df[SUBJECT_COLUMN].astype(str) == SUBJECT_COLUMN
+                if stray.any():
+                    print(f"  [_normalize_schema] {edges_file.name}: dropped {int(stray.sum())} stray header row(s)")
+                    df = df[~stray]
             dropped_edge_cols = []
             renamed = False
             if "id" in df.columns:

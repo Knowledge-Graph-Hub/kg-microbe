@@ -858,16 +858,18 @@ class OntologiesTransform(Transform):
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index)
                         new_nf_lines.append(line + "\n")
-                # Update prefixes in edges file. The incoming header must be
-                # dropped by position: a canonical header is written below, and
-                # an edges header starts with "subject" (not "id"), so matching
-                # on a column name leaves the original as a duplicate data row.
+                # Drop the incoming header; a canonical one is written below.
+                # KGX's edges TSV leads with an `id` column, so its header's
+                # first field is "id", not "subject". PR #680 changed this
+                # guard to match "subject" only, on the mistaken belief that an
+                # edges header cannot start with "id" — which silently left the
+                # real header in the body as a data row, and KGX then read
+                # "subject"/"object" as endpoint CURIEs in the merged KG.
+                # Both tokens are accepted so the guard survives a schema
+                # change in either direction.
                 new_ef_lines = []
                 for edge_line_index, line in enumerate(ef):
-                    # Guarded on the column name too, so a headerless input
-                    # loses no edge — it would just re-duplicate the header,
-                    # which the tests catch, rather than silently drop a row.
-                    if edge_line_index == 0 and line.split("\t")[0] == SUBJECT_COLUMN:
+                    if edge_line_index == 0 and line.split("\t")[0] in (SUBJECT_COLUMN, ID_COLUMN):
                         continue
                     line = _replace_special_prefixes(line)
                     new_ef_lines.append(line)
@@ -975,6 +977,19 @@ class OntologiesTransform(Transform):
 
         if edges_file.is_file():
             df = pd.read_csv(edges_file, sep="\t", low_memory=False)
+            # Backstop against a header line reaching the body. The producer
+            # fix lives in the ec branch above; this catches a leak from any
+            # ontology and any future producer, and costs ~35 ms on the
+            # 925 K-row ncbitaxon file.
+            #
+            # Filtered by content, not position: position is what failed
+            # before. No real edge has "subject" as its subject — verified
+            # across all 14 ontology edge files, ~1.7 M rows.
+            if SUBJECT_COLUMN in df.columns:
+                stray = df[SUBJECT_COLUMN].astype(str) == SUBJECT_COLUMN
+                if stray.any():
+                    print(f"  [_normalize_schema] {edges_file.name}: dropped {int(stray.sum())} stray header row(s)")
+                    df = df[~stray]
             dropped_edge_cols = []
             renamed = False
             if "id" in df.columns:

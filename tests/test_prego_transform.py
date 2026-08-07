@@ -918,6 +918,44 @@ def test_unknown_channel_declines_to_assert_metadata():
     assert edge_metadata_for("mystery", "unknown") == ("not_provided", "not_provided")
 
 
+def test_unrecognised_archive_warns_that_it_bypasses_the_threshold(
+    prego_input_dir: Path, prego_output_dir: Path, capsys
+):
+    """
+    An archive whose channel is unrecognised must announce that it fails open.
+
+    This is the upstream-rename scenario. `channel_for_archive` returns the bare
+    stem, `flat_channel_star` returns None, `star_for_row` returns None and
+    `keep_row` returns True — so every row bypasses the threshold no matter how
+    high it is set. That is deliberate (never drop data for a reason unrelated
+    to confidence), but it must be loud.
+
+    The log previously called every skipped archive a "flat channel", which is
+    the one thing an unrecognised channel is NOT: a flat channel is rated and
+    thresholded on its own score, an unrecognised one is not rated at all. A
+    rename of `annotated_genomes_isolates.tar.gz` would silently exempt ~47% of
+    production edges while the log looked routine.
+    """
+    renamed = prego_input_dir / "prego" / "environmental_sampl3s.tar.gz"
+    with tarfile.open(renamed, "w:gz") as tf:
+        tf.add(FIXTURE_DIR / "database_pairs_environmental.tsv", arcname="database_pairs.tsv")
+
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.0)
+    transform.run(show_status=False)
+    out = capsys.readouterr().out
+
+    assert "WARNING" in out and "unrecognised channel" in out, f"an unrecognised archive must warn; got:\n{out}"
+    assert "environmental_sampl3s" in out
+    assert "flat channel 'environmental_sampl3s'" not in out, "must not be mislabelled as flat"
+
+    # And the warning must be true: those rows really do survive the maximum
+    # threshold, on channel rather than on score.
+    edges = _read_tsv(transform.output_edge_file)
+    bypassed = [e for e in edges if e["prego_channel"] == "environmental_sampl3s"]
+    assert bypassed, "the unrecognised-channel rows should have bypassed min_confidence=4.0"
+    assert all(e["knowledge_level"] == "not_provided" for e in bypassed)
+
+
 def test_emitted_edges_carry_populated_metadata(prego_input_dir: Path, prego_output_dir: Path):
     """
     Every edge must carry knowledge_level and agent_type.
@@ -925,13 +963,30 @@ def test_emitted_edges_carry_populated_metadata(prego_input_dir: Path, prego_out
     They shipped empty, so 44.7M text-mined and statistically-derived
     associations were indistinguishable from curated assertions anywhere in the
     merged KG — and PREGO is the single largest edge block in it.
+
+    Asserts membership in the documented value sets rather than truthiness.
+    ``not_provided`` is truthy, so a truthiness check passes even when EVERY
+    edge has unrecognised provenance — which is exactly the state an upstream
+    archive rename would produce, and exactly what this test exists to catch.
     """
     transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
     transform.run(show_status=False)
     edges = _read_tsv(transform.output_edge_file)
     assert edges
-    assert all(e["knowledge_level"] for e in edges), "knowledge_level must be populated"
-    assert all(e["agent_type"] for e in edges), "agent_type must be populated"
-    assert all(e["prego_channel"] for e in edges), "channel must be populated"
-    # The raw column is preserved verbatim under a name that says what it holds.
-    assert all("prego_evidence" in e for e in edges)
+
+    known_levels = {"statistical_association", "knowledge_assertion", "prediction"}
+    known_agents = {"data_analysis_pipeline", "automated_agent", "text_mining_agent"}
+    assert {e["knowledge_level"] for e in edges} <= known_levels, (
+        f"unrecognised knowledge_level(s): {{e['knowledge_level'] for e in edges}} - {known_levels}"
+    )
+    assert {e["agent_type"] for e in edges} <= known_agents
+    assert {e["prego_channel"] for e in edges} <= {
+        CHANNEL_ENVIRONMENTAL,
+        CHANNEL_GENOMES,
+        CHANNEL_LITERATURE,
+    }
+
+    # The raw column is preserved verbatim. Checking `"prego_evidence" in e`
+    # would only test the HEADER — `e` is a DictReader dict — and would pass
+    # with every cell empty, which is the failure this is meant to exclude.
+    assert all(e["prego_evidence"] for e in edges), "prego_evidence values must be populated"

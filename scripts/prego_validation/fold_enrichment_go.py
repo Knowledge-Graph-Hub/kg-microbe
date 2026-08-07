@@ -2,11 +2,9 @@
 import pickle
 from collections import defaultdict
 
-gold, gtaxa, ggos = pickle.load(open("/tmp/uniprot_gold.pkl", "rb"))
+from channel_compat import assert_non_empty, continuous_predicate
 
-def is_cont(ch):
-    p = ch.split()
-    return len(p) == 4 and p[1] == "of" and p[3] == "samples" and p[0].isdigit()
+gold, gtaxa, ggos = pickle.load(open("/tmp/uniprot_gold.pkl", "rb"))
 
 # score -> [n, hits], per channel. Aggregating by exact score keeps ties atomic.
 agg = {"continuous": defaultdict(lambda: [0, 0]), "flat": defaultdict(lambda: [0, 0])}
@@ -15,6 +13,7 @@ n = 0
 with open("data/transformed/prego/edges.tsv") as fh:
     h = next(fh).rstrip("\n").split("\t")
     si, oi, sci, chi = h.index("subject"), h.index("object"), h.index("prego_score"), h.index("prego_channel")
+    is_cont, layout = continuous_predicate(h)
     for line in fh:
         f = line.rstrip("\n").split("\t")
         if len(f) <= max(sci, chi): continue
@@ -26,11 +25,13 @@ with open("data/transformed/prego/edges.tsv") as fh:
         if t in gtaxa: stax.add(t)
         if g in ggos: sgos.add(g)
         if t in gtaxa and g in ggos:
-            key = "continuous" if is_cont(f[chi]) else "flat"
+            key = "continuous" if is_cont(f) else "flat"
             slot = agg[key][round(v, 4)]
             slot[0] += 1
             slot[1] += 1 if g in gold.get(t, ()) else 0
 
+assert_non_empty(sum(v[0] for v in agg["continuous"].values()), layout)
+print(f"  layout: {layout}")
 base = sum(len(gold[t] & sgos) for t in stax if t in gold) / (len(stax) * len(sgos))
 print(f"  baseline {base:.5f} | shared taxa {len(stax):,} GO {len(sgos):,}\n")
 

@@ -16,15 +16,12 @@ for k, (p, n) in tri.items():
     if p and not n: label[k] = 1
     elif n and not p: label[k] = 0
 
-def is_cont(ch):
-    q = ch.split()
-    return len(q) == 4 and q[1] == "of" and q[3] == "samples" and q[0].isdigit()
-
 agg = {"continuous": defaultdict(lambda: [0, 0]), "flat": defaultdict(lambda: [0, 0])}
 n = matched = 0
 with open("data/transformed/prego/edges.tsv") as fh:
     h = next(fh).rstrip("\n").split("\t")
     si, oi, sci, chi = h.index("subject"), h.index("object"), h.index("prego_score"), h.index("prego_channel")
+    is_cont, layout = continuous_predicate(h)
     for line in fh:
         f = line.rstrip("\n").split("\t")
         if len(f) <= max(sci, chi): continue
@@ -36,10 +33,12 @@ with open("data/transformed/prego/edges.tsv") as fh:
         matched += 1
         try: v = float(f[sci])
         except ValueError: continue
-        slot = agg["continuous" if is_cont(f[chi]) else "flat"][round(v, 4)]
+        slot = agg["continuous" if is_cont(f) else "flat"][round(v, 4)]
         slot[0] += 1
         slot[1] += lab
 
+assert_non_empty(sum(v[0] for v in agg["continuous"].values()), layout)
+print(f"  layout: {layout}")
 print(f"  prego taxon->GO edges          : {n:,}")
 print(f"  with unanimous assay evidence  : {matched:,} ({100*matched/n:.3f}%)")
 print(f"  assay labels available         : {len(label):,} "

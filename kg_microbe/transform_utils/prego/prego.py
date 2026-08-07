@@ -64,12 +64,16 @@ from kg_microbe.transform_utils.prego.calibration import (
     STAR_MAX,
     ScoreHistogram,
     build_cutoffs,
+    flat_channel_star,
     is_continuous_channel,
     iter_calibration_rows,
     keep_row,
     validate_tau,
 )
 from kg_microbe.transform_utils.prego.utils import (
+    CHANNEL_ENVIRONMENTAL,
+    CHANNEL_GENOMES,
+    CHANNEL_LITERATURE,
     KEEP_ENVO_TO_TAXON,
     KEEP_TAXON_TO_BTO,
     KEEP_TAXON_TO_DOID,
@@ -546,7 +550,22 @@ class PregoTransform(Transform):
                 # distribution to histogram, so decompressing the 8.7 GB
                 # isolates archive here would buy nothing. The emit pass
                 # extracts it when it actually needs it.
-                print(f"[prego] calibration pass skips {archive_path.name} (flat channel {channel!r})")
+                #
+                # Distinguish "flat" from "unrecognised". An unrecognised
+                # channel is precisely NOT flat: keep_row cannot rate it, so
+                # every one of its rows bypasses the threshold entirely. Calling
+                # that a flat-channel skip makes a silent fail-open read like
+                # routine expected output.
+                if flat_channel_star(channel) is None:
+                    print(
+                        f"[prego] WARNING: {archive_path.name} has unrecognised channel {channel!r}. "
+                        f"Its rows cannot be calibrated OR thresholded and will ALL be emitted "
+                        f"regardless of min-confidence, with no knowledge_level. Expected one of "
+                        f"{CHANNEL_ENVIRONMENTAL!r}, {CHANNEL_GENOMES!r}, {CHANNEL_LITERATURE!r} — "
+                        f"has the archive been renamed upstream?"
+                    )
+                else:
+                    print(f"[prego] calibration pass skips {archive_path.name} (flat channel {channel!r})")
                 continue
             payload_file = self._ensure_payload(archive_path)
             print(f"[prego] calibration pass over {payload_file.name} (channel {channel!r})")

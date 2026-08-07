@@ -10,26 +10,28 @@ correlate POSITIVELY with its mean score.
 """
 from collections import defaultdict
 
-
-def is_cont(ch):
-    p = ch.split()
-    return len(p) == 4 and p[1] == "of" and p[3] == "samples" and p[0].isdigit()
+from channel_compat import assert_non_empty, continuous_predicate
 
 deg = defaultdict(int)      # GO -> distinct taxa (approximated by edge count)
 tot = defaultdict(float)    # GO -> summed score
 with open("data/transformed/prego/edges.tsv") as fh:
     h = next(fh).rstrip("\n").split("\t")
     si, oi, sci, chi = h.index("subject"), h.index("object"), h.index("prego_score"), h.index("prego_channel")
+    is_cont, layout = continuous_predicate(h)
+    n_cont = 0
     for line in fh:
         f = line.rstrip("\n").split("\t")
         if len(f) <= max(sci, chi): continue
         if not (f[si].startswith("NCBITaxon:") and f[oi].startswith("GO:")): continue
-        if not is_cont(f[chi]): continue
+        if not is_cont(f): continue
+        n_cont += 1
         try: sc = float(f[sci])
         except ValueError: continue
         deg[f[oi]] += 1
         tot[f[oi]] += sc
 
+assert_non_empty(n_cont, layout)
+print(f"  layout: {layout}")
 rows = [(deg[g], tot[g] / deg[g], g) for g in deg if deg[g] >= 50]
 rows.sort()
 print(f"  GO terms with >=50 continuous-channel edges: {len(rows):,}\n")

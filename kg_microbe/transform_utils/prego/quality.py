@@ -59,10 +59,17 @@ sharply with score: 3.26x, 12.58x, 17.03x across the top three windows,
 terms with >=100 comparable edges show the higher-score half agreeing more,
 pooled 0.211 vs 0.331 within-term, a 1.57x ratio.
 
-That split has a plausible mechanism: the environmental-samples score counts
-taxon-environment co-occurrence, which is direct evidence for an ENVO edge
-and only indirect evidence for a functional one. Treat the score as
-meaningful for environmental associations and unproven for GO.
+The same holds for the other ``location_of`` edge type. ``BTO
+-location_of-> NCBITaxon`` edges, validated against BacDive host anatomy
+(joined through the BTO xrefs already present in ``uberon_nodes.tsv``),
+enrich 3.86x overall and 1.94x within-term (7 of 9 BTO terms).
+
+So the split is by **predicate**, not by edge type: the score discriminates
+on ``location_of`` (two independent edge types agree) and not on
+``capable_of``. The mechanism fits — PREGO's score counts taxon-sample
+co-occurrence, which is direct evidence for "this organism is found in
+location X" and only indirect evidence for "this organism can perform
+function Y".
 
 Separately, the score tracks evidence volume: a GO term's edge count
 correlates with its mean score at Spearman +0.26, driven by rare terms

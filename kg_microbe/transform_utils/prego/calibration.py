@@ -172,6 +172,34 @@ class ScoreHistogram:
                 return idx * BIN_WIDTH
         return SCORE_MAX
 
+    def cutoff_bin(self, tau: float) -> int:
+        """
+        Return the lowest histogram bin retained at ``tau``.
+
+        Both the calibration table and the row filter compare against this,
+        rather than one using a bin edge and the other a raw score. Those are
+        not interchangeable: ``int(score / 1e-4) * 1e-4`` can exceed ``score``
+        for 11.5% of representable 4-dp values — including 1.71, the measured
+        p50 of the real continuous channel. Mixing the two let the table report
+        a tie block as kept while the filter dropped it, a 40-point divergence
+        on a constructed probe.
+
+        :param tau: Star threshold in [0, STAR_MAX].
+        :return: Bin index; 0 retains everything.
+        :raises ValueError: If the histogram is empty.
+        """
+        if self.count == 0:
+            raise ValueError("cannot derive a cutoff from an empty histogram")
+        if tau <= 0.0:
+            return 0
+        target = (tau / STAR_MAX) * self.count
+        cumulative = 0
+        for idx in sorted(self._bins):
+            cumulative += self._bins[idx]
+            if cumulative >= target:
+                return idx
+        return BIN_COUNT
+
     def as_row(self, resource: str, tau: float) -> Dict[str, object]:
         """
         Return a serializable calibration row for this resource.
@@ -185,8 +213,9 @@ class ScoreHistogram:
         :param tau: Star threshold the cutoff was derived for.
         :return: Mapping of column name to value.
         """
-        cut = self.cutoff(tau)
-        kept = sum(n for idx, n in self._bins.items() if idx * BIN_WIDTH >= cut)
+        cut_bin = self.cutoff_bin(tau)
+        cut = cut_bin * BIN_WIDTH
+        kept = sum(n for idx, n in self._bins.items() if idx >= cut_bin)
         return {
             "resource": resource,
             "n": self.count,
@@ -213,7 +242,7 @@ def star_for_row(
     :param channel: Raw ``prego_channel`` value.
     :param score: Raw ``prego_score`` value.
     :param resource: Resource the row came from (MGnify, MG-RAST, …).
-    :param cutoffs: Per-resource raw-score cutoffs from :func:`build_cutoffs`.
+    :param cutoffs: Per-resource cutoff bin indices from :func:`build_cutoffs`.
     :return: Star rating, or None when the channel is unrecognised.
     """
     if not math.isfinite(score):
@@ -236,10 +265,10 @@ def star_for_row(
         # instead of being silently promoted. FLAT_CHANNEL_STARS documents
         # the expected value for validation, not for substitution.
         return score
-    cut = cutoffs.get(resource)
-    if cut is None:
+    cut_bin = cutoffs.get(resource)
+    if cut_bin is None:
         return None
-    return STAR_MAX if score >= cut else 0.0
+    return STAR_MAX if _bin_index(score) >= cut_bin else 0.0
 
 
 def keep_row(
@@ -259,7 +288,7 @@ def keep_row(
     :param channel: Raw ``prego_channel`` value.
     :param score: Raw ``prego_score`` value.
     :param resource: Resource the row came from.
-    :param cutoffs: Per-resource raw-score cutoffs.
+    :param cutoffs: Per-resource cutoff bin indices.
     :param tau: Star threshold in [0, STAR_MAX].
     :return: True if the edge should be emitted.
     """
@@ -275,11 +304,12 @@ def build_cutoffs(histograms: Mapping[str, ScoreHistogram], tau: float) -> Dict[
 
     :param histograms: Resource name to its accumulated histogram.
     :param tau: Star threshold in [0, STAR_MAX].
-    :return: Resource name to raw-score cutoff.
+    :return: Resource name to cutoff BIN INDEX (not a raw score) — the filter
+        and the calibration table must compare on the same quantity.
     :raises ValueError: If ``tau`` is outside [0, STAR_MAX].
     """
     validate_tau(tau)
-    return {resource: hist.cutoff(tau) for resource, hist in histograms.items()}
+    return {resource: hist.cutoff_bin(tau) for resource, hist in histograms.items()}
 
 
 def validate_tau(tau: float) -> None:

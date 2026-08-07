@@ -108,11 +108,16 @@ _BTO_CATEGORY = "biolink:GrossAnatomicalStructure"  # BTO = Brenda Tissue Ontolo
 # header is single-sourced.
 # ---------------------------------------------------------------------------
 # Outcomes of classify_row that result in an emitted edge. Shared by the
-# calibration pass and the emit pass. Sharing this is necessary but not
-# sufficient for the two populations to match: the emit pass applies further
-# checks (DOID rows needing a MONDO xref, ENVO/BTO prefix agreement) that the
-# calibration pass cannot cheaply replicate, so the histogrammed population
-# remains a slight superset. See the open issue on unifying the predicate.
+# calibration pass and the emit pass. Sharing this is necessary but NOT
+# sufficient: the emit pass applies further checks (DOID rows needing a MONDO
+# xref, ENVO/BTO prefix agreement) that pass 1 cannot cheaply replicate, so the
+# histogrammed population is a superset of what ships.
+#
+# The gap is not merely cosmetic. A resource whose non-emitting rows cluster at
+# one end of the score range gets a cutoff set by rows that never ship — enough
+# to make the filter a no-op for that resource while it reports having halved
+# it. See #699; until that lands, treat per-resource cutoffs as approximate
+# whenever a resource carries many ineligible rows.
 _KEEP_OUTCOMES = (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO)
 
 _PREGO_EDGE_EXTRA_COLUMNS = (
@@ -580,10 +585,12 @@ class PregoTransform(Transform):
                 print(
                     f"[prego] WARNING: {row['resource']} retains {realized:.1%} at "
                     f"min-confidence {self.min_confidence} but {target_keep:.1%} was requested. "
-                    f"Its scores pile up at the {row['cutoff_score']} cap, so the threshold "
-                    "has stopped discriminating for this resource."
+                    "Either its scores pile up at a cap (ties are never split) or its "
+                    "calibration population includes rows that do not ship (#699). "
+                    "Check the realized count before relying on this cutoff."
                 )
-        atomic_write(self.calibration_table_file, "\n".join(lines) + "\n")
+        with atomic_write(self.calibration_table_file, "w") as handle:
+            handle.write("\n".join(lines) + "\n")
         print(f"[prego] wrote calibration table → {self.calibration_table_file}")
 
     def _ensure_payload(self, archive_path) -> Path:
@@ -692,12 +699,6 @@ class PregoTransform(Transform):
             self._stats["rows_malformed"] += 1
             return
 
-        if self.min_confidence > 0 and not keep_row(
-            channel, _as_float(score), source, self._cutoffs, self.min_confidence
-        ):
-            self._record_drop("below_min_confidence", entity1_type, entity1_id, entity2_type, entity2_id)
-            return
-
         outcome = classify_row(entity1_type, entity2_type)
         if outcome not in (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO):
             self._record_drop(outcome, entity1_type, entity1_id, entity2_type, entity2_id)
@@ -757,6 +758,17 @@ class PregoTransform(Transform):
             relation = _RELATION_LOCATION_OF
             self._emit_node(node_writer, subject, _BTO_CATEGORY)
             self._emit_node(node_writer, obj, _NCBITAXON_CATEGORY)
+
+        # Applied last, after every eligibility check. Run earlier it attributed
+        # rows to "below_min_confidence" that would have been dropped anyway,
+        # inflating the reported cost of the knob (measured 418 vs 198 on a
+        # probe) and emptying unmapped_associations.tsv of the reasons a
+        # curator actually needs.
+        if self.min_confidence > 0 and not keep_row(
+            channel, _as_float(score), source, self._cutoffs, self.min_confidence
+        ):
+            self._record_drop("below_min_confidence", entity1_type, entity1_id, entity2_type, entity2_id)
+            return
 
         edge_writer.writerow(
             self._make_edge_row(

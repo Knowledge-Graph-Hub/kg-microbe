@@ -1,6 +1,6 @@
 """Fold enrichment of PREGO ENVO -location_of-> NCBITaxon vs BacDive isolation sources.
 
-This is the edge type where the score works. Also prints the threshold curve
+Prints the threshold curve
 (precision and retention at candidate cutoffs) and the within-ENVO-term
 stratified ratio, which is what controls for term degree — the raw fold numbers
 do not (see #698).
@@ -58,7 +58,7 @@ labelled.sort()
 all_scores.sort()
 n_all = len(all_scores)
 print(f"  comparable {len(labelled):,} of {n_all:,} ENVO edges | baseline {base:.5f}\n")
-print(f"  {'>= T':>6} {'precision':>10} {'fold':>8} {'kept':>10} {'kept %':>8}")
+print(f"  {'>= T':>6} {'overlap':>10} {'fold':>8} {'kept':>10} {'kept %':>8}")
 for t in (0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0):
     sub = [h for v, h in labelled if v >= t]
     if not sub:

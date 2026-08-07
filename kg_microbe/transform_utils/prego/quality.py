@@ -50,26 +50,21 @@ The observations are not independent — edges reuse the same taxa, GO terms
 and resources — so clustered intervals are needed before any ordering of
 these point estimates is called directional.
 
-**The score does discriminate — but on environmental edges, not functional
-ones.** Everything above concerns ``NCBITaxon -capable_of-> GO``. Tested
-instead against BacDive isolation sources (``ENVO -location_of-> strain``,
-lifted to taxon), PREGO's ``ENVO -location_of-> NCBITaxon`` edges enrich
-sharply with score: 3.26x, 12.58x, 17.03x across the top three windows,
-7.89x overall. It survives controlling for ENVO-term degree — 18 of 19
-terms with >=100 comparable edges show the higher-score half agreeing more,
-pooled 0.211 vs 0.331 within-term, a 1.57x ratio.
+**Status of the predicate hypothesis: NOT ESTABLISHED.** An earlier version of
+this docstring stated that the score discriminates on ``location_of`` edges and
+not on ``capable_of`` ones, citing 1.57x (18/19 ENVO terms) and 1.94x (7/9 BTO
+terms). Those figures came from a within-term split that used an index median
+and therefore split tied scores; tie-safe boundaries give 1.49x (18/20) and
+1.69x (6/8). BTO is also not an independent replication — it projects the same
+BacDive isolation source as ENVO.
 
-The same holds for the other ``location_of`` edge type. ``BTO
--location_of-> NCBITaxon`` edges, validated against BacDive host anatomy
-(joined through the BTO xrefs already present in ``uberon_nodes.tsv``),
-enrich 3.86x overall and 1.94x within-term (7 of 9 BTO terms).
+Under matched taxa *and* matched label policy the contrast largely dissolves:
+interaction +0.281, two-way clustered 95% CI [-0.237, +0.624], 82.5% one-sided.
+Both predicates show weak positive discrimination (1.40 and 1.12) and the
+difference between them is not distinguishable from zero.
 
-So the split is by **predicate**, not by edge type: the score discriminates
-on ``location_of`` (two independent edge types agree) and not on
-``capable_of``. The mechanism fits — PREGO's score counts taxon-sample
-co-occurrence, which is direct evidence for "this organism is found in
-location X" and only indirect evidence for "this organism can perform
-function Y".
+See ``docs/PREGO_SCORE_VALIDATION.md`` for the full record, including the
+corrections list. Do not cite the withdrawn figures.
 
 Separately, the score tracks evidence volume: a GO term's edge count
 correlates with its mean score at Spearman +0.26, driven by rare terms

@@ -158,7 +158,7 @@ def test_edges_carry_the_originating_resource(prego_transform: PregoTransform):
     assert all(e["prego_source"] for e in edges), "every emitted edge must carry its resource"
     # Passed through verbatim from the fixture's source column, so the values
     # are real resource names rather than a derived or normalized label.
-    assert {e["prego_source"] for e in edges} == {"BioProject", "JGI IMG"}
+    assert {e["prego_source"] for e in edges} == {"BioProject", "JGI IMG", "MGnify"}
 
 
 def test_taxon_to_go_edges_use_capable_of(prego_transform: PregoTransform):
@@ -166,7 +166,9 @@ def test_taxon_to_go_edges_use_capable_of(prego_transform: PregoTransform):
     prego_transform.run()
     edges = _read_tsv(prego_transform.output_edge_file)
     tax_go = [e for e in edges if e["subject"] == "NCBITaxon:100" and e["object"].startswith("GO:")]
-    assert len(tax_go) == 3, f"expected 3 canonical NCBITaxon:100→GO edges (BP/CC/MF), got {len(tax_go)}"
+    # 3 flat-channel rows (BP/CC/MF) plus the 12 continuous-channel rows that
+    # exercise the calibration path.
+    assert len(tax_go) == 15, f"expected 15 canonical NCBITaxon:100→GO edges, got {len(tax_go)}"
     assert all(e["predicate"] == CAPABLE_OF_PREDICATE for e in tax_go)
 
 
@@ -749,3 +751,62 @@ def test_running_twice_produces_identical_output(prego_input_dir: Path, prego_ou
     nodes = {n["id"] for n in _read_tsv(transform.output_node_file)}
     for edge in _read_tsv(transform.output_edge_file):
         assert edge["subject"] in nodes or edge["object"] in nodes
+
+
+def test_calibration_table_is_written_and_matches_what_ships(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The calibration table must exist and agree with the emitted edge count.
+
+    This covers three defects that all hid behind the same gap. ``atomic_write``
+    is a context manager; calling it as a plain function returned an un-entered
+    generator, so the table was never written while the run printed that it
+    was. Separately, the table measured retention by histogram bin while the
+    filter measured it by raw score — not interchangeable, since a bin's lower
+    edge can exceed the scores inside it for ~11.5% of representable 4-dp
+    values, including 1.71.
+
+    Neither was caught because the fixture had no continuous-channel rows at
+    all: pass 1 always returned an empty histogram, so the whole
+    histogram → cutoff → filter path was dead in every test.
+    """
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=2.0)
+    transform.run(show_status=False)
+
+    assert transform.calibration_table_file.exists(), "the calibration table was not written"
+    lines = [ln for ln in transform.calibration_table_file.read_text().splitlines() if ln.strip()]
+    assert lines[0].split("\t") == ["resource", "n", "tau", "cutoff_score", "kept_fraction"]
+    assert len(lines) > 1, "a resource row is required, not just a header"
+
+    table = {}
+    for line in lines[1:]:
+        resource, n, _tau, _cut, kept = line.split("\t")
+        table[resource] = (int(n), float(kept))
+
+    edges = _read_tsv(transform.output_edge_file)
+    for resource, (n_calibrated, kept_fraction) in table.items():
+        shipped = sum(1 for e in edges if e["prego_source"] == resource and " of " in e["prego_channel"])
+        expected = round(kept_fraction * n_calibrated)
+        assert shipped == expected, (
+            f"{resource}: table claims {kept_fraction:.4f} of {n_calibrated} ({expected} edges) but {shipped} shipped"
+        )
+
+
+def test_default_threshold_drops_no_edges(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The default must emit exactly what an unfiltered run emits.
+
+    Asserting only that ``min_confidence == 0.0`` is a literal check that would
+    still pass if the default silently dropped most edges — the same
+    assert-one-spelling weakness found twice before in this PR.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    baseline.run(show_status=False)
+    unfiltered = len(_read_tsv(baseline.output_edge_file))
+
+    explicit_zero = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=0.0)
+    explicit_zero.run(show_status=False)
+    assert len(_read_tsv(explicit_zero.output_edge_file)) == unfiltered
+
+    filtered = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.0)
+    filtered.run(show_status=False)
+    assert len(_read_tsv(filtered.output_edge_file)) < unfiltered, "the knob must actually do something"

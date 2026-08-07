@@ -19,6 +19,7 @@ import pytest
 from kg_microbe.transform_utils.prego.calibration import (
     STAR_MAX,
     ScoreHistogram,
+    _bin_index,
     build_cutoffs,
     estimate_retention,
     flat_channel_star,
@@ -173,7 +174,7 @@ def test_flat_channel_rows_are_rated_by_their_own_score():
     has Isolates rows scoring 3, and a constant-substituting implementation
     rated them 4.
     """
-    cutoffs = {"MGnify": 2.0}
+    cutoffs = {"MGnify": _bin_index(2.0)}
     assert keep_row("Isolates", 4.0, "MGnify", cutoffs, tau=3.5) is True
     # An Isolates row that actually scores 3 must not be promoted to 4.
     assert keep_row("Isolates", 3.0, "MGnify", cutoffs, tau=3.5) is False
@@ -190,7 +191,10 @@ def test_continuous_rows_are_judged_against_their_own_resource():
     Per-resource cutoffs are the point: a shared cutoff would conflate
     MGnify with MG-RAST, whose score marginals differ.
     """
-    cutoffs = {"MGnify": 1.0, "MG-RAST metagenome study": 3.0}
+    # Cutoffs are BIN INDICES, not raw scores: the filter and the calibration
+    # table have to compare on the same quantity, and a bin's lower edge can
+    # exceed the scores inside it for ~11.5% of representable 4-dp values.
+    cutoffs = {"MGnify": _bin_index(1.0), "MG-RAST metagenome study": _bin_index(3.0)}
     assert keep_row("10 of 20 samples", 2.0, "MGnify", cutoffs, tau=4.0) is True
     assert keep_row("10 of 20 samples", 2.0, "MG-RAST metagenome study", cutoffs, tau=4.0) is False
 

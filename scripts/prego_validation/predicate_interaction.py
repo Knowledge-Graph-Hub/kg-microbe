@@ -75,19 +75,38 @@ def build_location_gold():
     return gold, {t for t, _ in gold}, {x for _, x in gold}
 
 
-def build_function_labels():
-    """Return {(taxon, GO): bool} from unanimous BacDive assay results."""
+def build_function_labels(positive_only: bool):
+    """
+    Return function labels from unanimous BacDive assay results.
+
+    Two policies, because the label policy is itself a confound. The location
+    gold is positive-only — a pair absent from BacDive isolation is *unknown*,
+    but the hit-rate calculation necessarily counts it as a miss. The function
+    gold has explicit negatives, and pairs with no assay evidence are excluded
+    rather than counted.
+
+    ``positive_only=True`` recasts function to match location exactly: keep only
+    the positives as the gold set, and count any comparable pair not in it as a
+    miss. That makes the two predicates' label semantics identical, which is the
+    last confound the matched-taxa design does not remove.
+
+    :param positive_only: Whether to discard the explicit negatives.
+    :return: (labels dict or gold set, gold terms, gold taxa).
+    """
     tri = pickle.load(open("/tmp/assay_gold.pkl", "rb"))
-    out = {}
+    pos_pairs, labels = set(), {}
     for key, (pos, neg) in tri.items():
         if pos and not neg:
-            out[key] = True
+            pos_pairs.add(key)
+            labels[key] = True
         elif neg and not pos:
-            out[key] = False
-    return out
+            labels[key] = False
+    if positive_only:
+        return pos_pairs, {g for _, g in pos_pairs}, {t for t, _ in pos_pairs}
+    return labels, {g for _, g in labels}, {t for t, _ in labels}
 
 
-def collect(loc_gold, loc_terms, loc_taxa, fn_labels, taxa):
+def collect(loc_gold, loc_terms, loc_taxa, fn, fn_terms, fn_taxa_all, taxa, positive_only):
     """Return per-predicate {term: [(score, hit, taxon)]} restricted to ``taxa``."""
     obs = {"location_of": defaultdict(list), "capable_of": defaultdict(list)}
     with open(PREGO) as fh:
@@ -106,9 +125,15 @@ def collect(loc_gold, loc_terms, loc_taxa, fn_labels, taxa):
                 if o in taxa and s in loc_terms and o in loc_taxa:
                     obs["location_of"][s].append((score, (s, o) in loc_gold, o))
             elif s.startswith("NCBITaxon:") and o.startswith("GO:") and s in taxa:
-                lab = fn_labels.get((s, o))
-                if lab is not None:
-                    obs["capable_of"][o].append((score, lab, s))
+                if positive_only:
+                    # Same semantics as location: comparable if both endpoints are
+                    # in the gold entity space; absent from the gold set = miss.
+                    if s in fn_taxa_all and o in fn_terms:
+                        obs["capable_of"][o].append((score, (s, o) in fn, s))
+                else:
+                    lab = fn.get((s, o))
+                    if lab is not None:
+                        obs["capable_of"][o].append((score, lab, s))
     return obs
 
 
@@ -141,17 +166,22 @@ def ratio(per_term, degree, keep_taxa=None, keep_terms=None):
     return (hi_h / hi_n) / (lo_h / lo_n), lo_n + hi_n
 
 
-def main():
-    """Run the matched-taxa predicate-by-score interaction analysis."""
+def main(positive_only: bool = False):
+    """
+    Run the matched-taxa predicate-by-score interaction analysis.
+
+    :param positive_only: Recast function labels to match location's
+        positive-only policy, removing the last unmatched confound.
+    """
     loc_gold, loc_terms, loc_taxa = build_location_gold()
-    fn_labels = build_function_labels()
-    fn_taxa = {t for t, _ in fn_labels}
+    fn, fn_terms, fn_taxa = build_function_labels(positive_only)
     matched = loc_taxa & fn_taxa
+    print(f"  label policy: {'POSITIVE-ONLY (matched to location)' if positive_only else 'positives + explicit negatives'}")
     print(f"  taxa with isolation records : {len(loc_taxa):,}")
     print(f"  taxa with assay results     : {len(fn_taxa):,}")
     print(f"  MATCHED (used below)        : {len(matched):,}\n")
 
-    obs = collect(loc_gold, loc_terms, loc_taxa, fn_labels, matched)
+    obs = collect(loc_gold, loc_terms, loc_taxa, fn, fn_terms, fn_taxa, matched, positive_only)
     # Taxon degree = number of comparable observations, decile-binned.
     counts = defaultdict(int)
     for per_term in obs.values():
@@ -198,4 +228,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    main(positive_only="--positive-only" in sys.argv)

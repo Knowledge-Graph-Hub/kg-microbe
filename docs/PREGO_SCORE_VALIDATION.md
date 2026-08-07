@@ -9,13 +9,16 @@ Companion to [`PREGO_INGEST_PLAN.md`](PREGO_INGEST_PLAN.md), which covers acquis
 
 ## Verdict
 
->  **Status after external review: PLAUSIBLE BUT UNPROVEN.** The predicate-level
->  split below is confounded with benchmark design — each predicate was measured
->  against a different gold standard, with coverage ranging 0.1% to 41.5%. Read
->  the [Confounds](#confounds-that-limit-the-verdict) section before citing any
->  of it.
+>  **Status: NOT ESTABLISHED.** Under matched taxa *and* matched label policy the
+>  predicate contrast largely dissolves — interaction +0.281, clustered 95% CI
+>  [−0.237, +0.624], 82.5% one-sided. Both predicates show weak positive
+>  discrimination (1.40 vs 1.12) and the difference between them is not
+>  distinguishable from zero. See
+>  [Matched-taxa interaction test](#matched-taxa-interaction-test). The
+>  per-benchmark contrast reported below was driven substantially by differences
+>  in gold standard and label policy, not by the predicate.
 
-**Working hypothesis: the score discriminates on `location_of` edges and not on `capable_of` edges.**
+**Original hypothesis (now unsupported): the score discriminates on `location_of` edges and not on `capable_of` edges.**
 
 | predicate | edge types | count | score works? | within-term ratio (tie-safe) |
 |---|---|---:|---|---|
@@ -43,25 +46,41 @@ clustered bootstrap over taxa and terms.
 **Interaction (location − capable): +0.479, two-way clustered 95% CI [−0.015, +1.128].**
 96.8% of resamples put `location_of` above `capable_of`.
 
-**Reading.** The point estimate is exactly what the verdict predicts — the score
-discriminates for location (1.50) and essentially not at all for function (1.02) — and
-it survives on matched taxa with term and degree controls, which is much stronger than
-the original per-benchmark comparison. The location figure also reproduces the
-independent tie-safe ENVO estimate (1.49). But the 95% interval **just barely includes
-zero**. One-sided the evidence is fairly strong (~0.03); two-sided at 95% it does not
-clear the bar.
+That still left one confound: the **label policies differ.** Location gold is
+positive-only — absence means unknown but is necessarily counted as a miss — while
+function gold carries explicit negatives and excludes unlabelled pairs. Matching taxa
+does not match that.
 
-**One confound survives even here:** the label policies still differ. Location gold is
-positive-only (absence = unknown) while function gold carries real negatives. Matching
-the taxa does not match that. Closing it needs either negatives for location or a
-positive-only recasting of the assay labels.
+#### Matching the label policy too (`--positive-only`)
 
-Verdict after this test: **strengthened, still not established at 95%.**
+Recasting function labels as positive-only, so both predicates use identical semantics:
+
+| predicate | terms | in-stratum n | high/low ratio |
+|---|---:|---:|---:|
+| `location_of` | 65 | 8,805 | **1.396** |
+| `capable_of` | 31 | 28,892 | **1.115** |
+
+**Interaction +0.281, two-way clustered 95% CI [−0.237, +0.624].** 82.5% of resamples
+positive — down from 96.8%.
+
+**Reading — this is the decisive run.** Once taxa *and* label policy are matched, the
+contrast largely dissolves. The interaction nearly halves, the interval widens well
+across zero, and one-sided support falls to ~0.18 (not significant). Note especially
+that `capable_of` rises from 1.023 to **1.115** under matched semantics: the "no
+discrimination at all for function" result was **partly an artifact of the label
+policy**, not a property of the predicate.
+
+What survives: **both** predicates show weak positive discrimination (1.40 and 1.12),
+and the difference between them is not distinguishable from zero on matched data.
+
+Verdict after this test: **not established.** The dramatic per-benchmark contrast
+reported below was driven substantially by gold-standard and label-policy differences
+rather than by the predicate.
 
 <a name="confounds-that-limit-the-verdict"></a>
 ### Confounds that limit the verdict
 
-1. **Predicate was inseparable from benchmark.** Partly addressed by the matched-taxa test above, which uses one resource and one taxon set for both predicates. What remains unmatched is the **label policy**: location gold is positive-only, function gold has negatives.
+1. **Predicate was inseparable from benchmark and label policy.** Addressed by the matched-taxa test above, which controls both. The contrast did not survive: interaction +0.281, CI [−0.237, +0.624].
 2. **BTO is not an independent replication of ENVO.** Both project the *same* BacDive isolation source. With tie-safe strata it is 6 of 8 terms (n=843 in-stratum), an unclustered one-sided sign test around p≈0.1 — a sensitivity check, not confirmation.
 3. **Within-term stratification controls term identity, not taxon degree.** In the BTO split the high-score half has mean BacDive gold degree 4.85 vs 3.56 and mean PREGO degree 23.10 vs 18.73; ENVO likewise 91.64 vs 70.67. Well-covered taxa remain an open path to apparent discrimination.
 4. **No clustered uncertainty anywhere.** Edges reuse taxa, terms and resources; all intervals quoted are iid and therefore optimistic.

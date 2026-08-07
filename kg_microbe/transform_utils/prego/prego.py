@@ -913,8 +913,15 @@ class PregoTransform(Transform):
         their headers written. A corrupt tarball would therefore replace the
         previous run's outputs with a one-line file before failing (#716).
 
-        Reading only the tar index, not the members, so this is cheap even for
-        the 8.7 GB archive: it never decompresses a payload.
+        Cost, measured on the real 281 MB / 8.7 GB-payload genome archive: the
+        ``any()`` short-circuits on the first matching member, and the payload
+        *is* the first member, so the check returns in ~0.00s. Note this is
+        short-circuiting, not index lookup — a ``.tar.gz`` has no central
+        directory, so reaching a later member means decompressing everything
+        before it. The worst case is an archive with no payload member at all,
+        where the scan runs to the end of the stream: 4.3s for that same
+        archive. That is a failure path, and 4.3s to avoid destroying a good
+        run's outputs is a trade worth making.
 
         :param archives: PREGO association archives about to be processed.
         :raises SystemExit: If any archive has no ``database_pairs.tsv`` member,

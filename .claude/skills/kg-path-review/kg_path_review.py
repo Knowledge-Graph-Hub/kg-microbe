@@ -46,6 +46,10 @@ MERGED_DIR = REPO_ROOT / "data" / "merged"
 # real transform AND in each snapshot's edges.tsv. The discriminator is a
 # leading prefix that's reserved for non-transform output.
 NON_TRANSFORM_DIR_PREFIXES: Tuple[str, ...] = ("merged_", "merged-", ".")
+# Backup copies sit alongside real outputs and carry a full edges.tsv, so every
+# aggregate archetype counts them twice. Suffix-matched because the name varies
+# (microbedecoder_bak, foo.bak, bar_old).
+NON_TRANSFORM_DIR_SUFFIXES: Tuple[str, ...] = ("_bak", ".bak", "_old", "_backup", "_orig")
 
 
 def _list_transform_dirs() -> List[str]:
@@ -57,6 +61,7 @@ def _list_transform_dirs() -> List[str]:
         for d in TRANSFORMED_DIR.iterdir()
         if (d / "edges.tsv").exists()
         and not d.name.startswith(NON_TRANSFORM_DIR_PREFIXES)
+        and not d.name.endswith(NON_TRANSFORM_DIR_SUFFIXES)
     )
 
 
@@ -772,6 +777,12 @@ _CROSS_TRANSFORM_SUPPLIED_PREFIXES = frozenset({
     "GTDB", "GenBank", "BFO", "UPA",
     "mesh", "NCIT", "PRIDE", "PCO", "GENEPIO", "FAO", "BTO", "SNOMED",
     "pubchem.compound", "cas",
+    # The lpsn transform owns these and merge.yaml includes it, so bacdive's
+    # 62,096 strain->lpsn edges resolve at merge time. Without this entry every
+    # one of them is reported as a CRITICAL orphan.
+    # Caveat: merge.minimal.yaml has no lpsn source, so under that config they
+    # genuinely dangle — this frozenset is not merge-config aware.
+    "lpsn",
 })
 
 

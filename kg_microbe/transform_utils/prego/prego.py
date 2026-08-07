@@ -38,14 +38,18 @@ from typing import Optional, Union
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
     CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     ID_COLUMN,
+    KNOWLEDGE_LEVEL_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     PREGO,
     PREGO_CHANNEL_COLUMN,
     PREGO_DIRECT_FLAG_COLUMN,
+    PREGO_EVIDENCE_CLASS_COLUMN,
+    PREGO_EVIDENCE_COLUMN,
     PREGO_EVIDENCE_URL_COLUMN,
     PREGO_KNOWLEDGE_SOURCE,
     PREGO_SCORE_COLUMN,
@@ -71,7 +75,10 @@ from kg_microbe.transform_utils.prego.utils import (
     KEEP_TAXON_TO_DOID,
     KEEP_TAXON_TO_GO,
     PREGO_TYPE_DOID,
+    channel_for_archive,
+    classify_evidence,
     classify_row,
+    edge_metadata_for,
     entity_to_curie,
     go_category_for_type,
     iter_database_pairs,
@@ -124,6 +131,8 @@ _PREGO_EDGE_EXTRA_COLUMNS = (
     PREGO_SCORE_COLUMN,
     PREGO_CHANNEL_COLUMN,
     PREGO_SOURCE_COLUMN,
+    PREGO_EVIDENCE_COLUMN,
+    PREGO_EVIDENCE_CLASS_COLUMN,
     PREGO_DIRECT_FLAG_COLUMN,
     PREGO_EVIDENCE_URL_COLUMN,
 )
@@ -666,18 +675,20 @@ class PregoTransform(Transform):
         row_iter = iter_database_pairs(payload_file)
         if show_status:
             row_iter = tqdm(row_iter, desc=archive_path.name, unit="rows")
+        # The channel is a property of the archive, not of any column in it.
+        channel = channel_for_archive(archive_path.name)
         for row, err in row_iter:
             self._stats["rows_read"] += 1
             if err is not None:
                 self._stats["rows_malformed"] += 1
                 continue
-            self._process_row(row, doid_to_mondo, node_writer, edge_writer)
+            self._process_row(row, doid_to_mondo, node_writer, edge_writer, channel)
 
     # ------------------------------------------------------------------ #
     # Per-row processing.
     # ------------------------------------------------------------------ #
 
-    def _process_row(self, row, doid_to_mondo, node_writer, edge_writer):
+    def _process_row(self, row, doid_to_mondo, node_writer, edge_writer, channel):
         """Route one raw row through the canonical-direction filter + edge emission."""
         try:
             entity1_type = int(row[0])
@@ -685,7 +696,7 @@ class PregoTransform(Transform):
             entity2_type = int(row[2])
             entity2_id = row[3]
             source = row[4]
-            channel = row[5]
+            evidence = row[5]
             # Defensive: an empty entity_id would produce a malformed
             # CURIE like `NCBITaxon:` on emit. Not seen in the canary,
             # but a two-line check is cheap insurance.
@@ -779,6 +790,7 @@ class PregoTransform(Transform):
                 score=score,
                 channel=channel,
                 source=source,
+                evidence=evidence,
                 direct_flag=direct_flag,
                 evidence_url=evidence_url,
             )
@@ -826,6 +838,7 @@ class PregoTransform(Transform):
         score: str,
         channel: str,
         source: str,
+        evidence: str,
         direct_flag: str,
         evidence_url: str,
     ) -> list:
@@ -839,6 +852,12 @@ class PregoTransform(Transform):
         row[PREGO_SCORE_COLUMN] = score
         row[PREGO_CHANNEL_COLUMN] = channel
         row[PREGO_SOURCE_COLUMN] = source
+        row[PREGO_EVIDENCE_COLUMN] = evidence
+        evidence_class = classify_evidence(evidence)
+        row[PREGO_EVIDENCE_CLASS_COLUMN] = evidence_class
+        knowledge_level, agent_type = edge_metadata_for(channel, evidence_class)
+        row[KNOWLEDGE_LEVEL_COLUMN] = knowledge_level
+        row[AGENT_TYPE_COLUMN] = agent_type
         row[PREGO_DIRECT_FLAG_COLUMN] = direct_flag
         row[PREGO_EVIDENCE_URL_COLUMN] = evidence_url
         return [row[c] for c in self.edge_header]

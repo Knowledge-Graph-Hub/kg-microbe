@@ -247,7 +247,14 @@ PREGO_KNOWLEDGE_SOURCE = "infores:prego"  # PREGO taxon↔environment/process as
 # PREGO edge attributes carried through as additional columns on emitted edges.
 # score, channel, direct_flag, evidence_url per JensenLab tagger convention.
 PREGO_SCORE_COLUMN = "prego_score"
+# The archive-derived channel (environmental_samples / annotated_genomes_isolates
+# / literature). PREGO's own column 6 is NOT a channel — see PREGO_EVIDENCE_COLUMN.
 PREGO_CHANNEL_COLUMN = "prego_channel"
+# PREGO column 6, verbatim. Holds different things per channel: evidence tallies,
+# resource classes, citations, habitat names. Named for what it is rather than
+# what it was assumed to be.
+PREGO_EVIDENCE_COLUMN = "prego_evidence"
+PREGO_EVIDENCE_CLASS_COLUMN = "prego_evidence_class"
 PREGO_DIRECT_FLAG_COLUMN = "prego_direct_flag"
 PREGO_EVIDENCE_URL_COLUMN = "prego_evidence_url"
 # Originating resource (MGnify / MG-RAST metagenome study / JGI IMG / ...).

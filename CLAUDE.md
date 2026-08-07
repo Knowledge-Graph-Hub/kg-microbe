@@ -226,6 +226,38 @@ Optional, for the ontology transforms:
   `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently
   miscategorises terms; the other two default to warn.
 
+- `PREGO_MIN_CONFIDENCE`: star threshold in `[0, 4]` applied to the PREGO
+  transform. Default `0` — a no-op that emits all ~44.7 M edges, so unset
+  behaviour is unchanged. **This is a size lever, not a quality filter.** See
+  the table below before setting it.
+
+  PREGO's score is not one scale, so the knob does not mean the same thing in
+  every channel (`docs/PREGO_SCORE_VALIDATION.md` has the measurements):
+
+  | channel | share | what the threshold does |
+  |---|---|---|
+  | `environmental_samples` | ~53% | Genuine ranking. Retains about `1 - τ/4` of each resource, by within-resource empirical CDF. |
+  | `annotated_genomes_isolates` | ~47% | All-or-nothing. Every row is a flat 4.0 assigned by PREGO's authors, so nothing is dropped until `τ > 4`. |
+  | `literature` | ~0.05% | All-or-nothing. Flat 3.0, so the entire channel vanishes the moment `τ > 3`. |
+
+  Two consequences worth internalising. Above `τ = 3` you delete the literature
+  channel outright — on provenance, not on quality. And within the continuous
+  channel the score correlates positively with how many taxa carry a GO term
+  (`scripts/prego_validation/ubiquity_check.py`), so raising `τ` preferentially
+  keeps common, well-covered terms and strips rare, taxon-specific ones before
+  it strips wrong ones. An unrecognised channel is kept rather than dropped, so
+  a newly added archive fails open.
+
+  Calibration is per-resource (MGnify and MG-RAST have different marginals) and
+  runs as a first pass over the archives; each run writes the cutoffs it
+  actually applied to `data/transformed/prego/confidence_calibration.tsv`. The
+  channel is derived from the **archive filename**, not from any column.
+
+  **If your goal is merge memory or graph size, reach for `merge.noprego.yaml`
+  first** — it drops PREGO entirely (~76% of merge input) and needs none of this
+  machinery. `PREGO_MIN_CONFIDENCE` is the finer-grained alternative for when
+  you want *some* PREGO rather than none.
+
 ### Ontology failures abort; they do not degrade
 
 `OntologyDbUnavailableError` (no usable DB) and `OntologyVersionMismatchError` (a

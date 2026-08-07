@@ -237,8 +237,16 @@ Optional, for the ontology transforms:
   | channel | share | what the threshold does |
   |---|---|---|
   | `environmental_samples` | ~53% | Genuine ranking. Retains about `1 - τ/4` of each resource, by within-resource empirical CDF. |
-  | `annotated_genomes_isolates` | ~47% | All-or-nothing. Every row is a flat 4.0 assigned by PREGO's authors, so nothing is dropped until `τ > 4`. |
+  | `annotated_genomes_isolates` | ~47% | Near all-or-nothing. Predominantly a flat 4.0 assigned by PREGO's authors, so `τ ≤ 4` keeps essentially the whole channel — but see the caveat below. |
   | `literature` | ~0.05% | All-or-nothing. Flat 3.0, so the entire channel vanishes the moment `τ > 3`. |
+
+  The genome channel is *not* uniformly 4.0. Sampled across the real 8.68 GB
+  payload, roughly 0.1% of rows carry a 3 — and not only PMID-evidenced ones;
+  `Isolates` and `Single Amplified Genome` rows appear at 3 too. Because
+  `star_for_row` deliberately uses each flat row's **own** score rather than its
+  channel's documented constant (so a row disagreeing with its tier is kept as a
+  data-quality signal instead of being silently promoted), those rows drop once
+  `τ > 3` — on the order of 20k edges.
 
   Two consequences worth internalising. Above `τ = 3` you delete the literature
   channel outright — on provenance, not on quality. And within the continuous

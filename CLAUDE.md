@@ -250,11 +250,17 @@ Optional, for the ontology transforms:
 
   Two consequences worth internalising. Above `τ = 3` you delete the literature
   channel outright — on provenance, not on quality. And within the continuous
-  channel the score correlates positively with how many taxa carry a GO term
-  (`scripts/prego_validation/ubiquity_check.py`), so raising `τ` preferentially
-  keeps common, well-covered terms and strips rare, taxon-specific ones before
-  it strips wrong ones. An unrecognised channel is kept rather than dropped, so
-  a newly added archive fails open.
+  channel the score tracks how *common* a GO term is rather than how well
+  supported it is: measured Spearman +0.2592 of term degree against mean score,
+  with mean score climbing steeply across the bottom three deciles (0.67 → 1.98)
+  then flat at ~2.0 for the rest. So raising `τ` strips the rare,
+  taxon-specific tail first and barely discriminates within the bulk — the
+  opposite of what you want if the goal is to keep specific, informative edges.
+  Full decile table in `docs/PREGO_SCORE_VALIDATION.md`; reproduce with
+  `scripts/prego_validation/ubiquity_check.py`.
+
+  An unrecognised channel is kept rather than dropped, so a newly added or
+  renamed archive fails open — the transform warns when it sees one.
 
   Calibration is per-resource (MGnify and MG-RAST have different marginals) and
   runs as a first pass over the archives; each run writes the cutoffs it

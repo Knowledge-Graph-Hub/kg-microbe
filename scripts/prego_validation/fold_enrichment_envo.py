@@ -72,7 +72,15 @@ for _term, rows in per_term.items():
     if len(rows) < 100:
         continue
     rows.sort(key=lambda r: r[0])
+    # Tie-safe boundary: move the split to the next score change. An index
+    # median splits a tie block, letting sort order rather than the score
+    # decide which rows land in which half — the same defect fixed in
+    # quality.enrichment_by_window. It materially moved these numbers.
     mid = len(rows) // 2
+    while mid < len(rows) and rows[mid][0] == rows[mid - 1][0]:
+        mid += 1
+    if mid == 0 or mid >= len(rows):
+        continue
     lo, hi = rows[:mid], rows[mid:]
     a = sum(1 for _, x in lo if x) / len(lo)
     b = sum(1 for _, x in hi if x) / len(hi)

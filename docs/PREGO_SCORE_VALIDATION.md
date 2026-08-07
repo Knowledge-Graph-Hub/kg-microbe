@@ -9,15 +9,29 @@ Companion to [`PREGO_INGEST_PLAN.md`](PREGO_INGEST_PLAN.md), which covers acquis
 
 ## Verdict
 
-**The score discriminates on `location_of` edges and not on `capable_of` edges.**
+>  **Status after external review: PLAUSIBLE BUT UNPROVEN.** The predicate-level
+>  split below is confounded with benchmark design — each predicate was measured
+>  against a different gold standard, with coverage ranging 0.1% to 41.5%. Read
+>  the [Confounds](#confounds-that-limit-the-verdict) section before citing any
+>  of it.
 
-| predicate | edge types | count | score works? | within-term ratio |
+**Working hypothesis: the score discriminates on `location_of` edges and not on `capable_of` edges.**
+
+| predicate | edge types | count | score works? | within-term ratio (tie-safe) |
 |---|---|---:|---|---|
-| `biolink:location_of` | `ENVO→taxon`, `BTO→taxon` | 452,051 | **yes** | 1.57x (18/19 terms), 1.94x (7/9 terms) |
-| `biolink:capable_of` | `taxon→GO` | 44,258,939 | **no** | 0.84x — wrong direction, or flat |
+| `biolink:location_of` | `ENVO→taxon`, `BTO→taxon` | 452,051 | apparently yes | 1.49x (18/20 terms), 1.69x (6/8 terms) |
+| `biolink:capable_of` | `taxon→GO` | 44,258,939 | no | 0.84x — wrong direction, or flat |
 | `biolink:associated_with` | `taxon→MONDO` | 5,171 | untested | no in-graph reference exists |
 
-**Mechanism.** PREGO's environmental-samples score counts taxon–sample co-occurrence. That is *direct* evidence for "this organism is found in location X" and only *indirect* evidence for "this organism can perform function Y". The split is what the score is measuring, not a defect.
+**Candidate mechanism (post-hoc, untested).** PREGO's environmental-samples score counts taxon–sample co-occurrence, which is *direct* evidence for "found in location X" and only *indirect* evidence for "can perform function Y". This fits the observations but no analysis tests it or excludes alternatives such as taxon ascertainment or benchmark coverage. It should not be stated as established.
+
+<a name="confounds-that-limit-the-verdict"></a>
+### Confounds that limit the verdict
+
+1. **Predicate is inseparable from benchmark.** `location_of` was measured only against BacDive isolation records (positive-only); `capable_of` only against trait, genome, and assay standards. Nothing measures both predicates under one label policy.
+2. **BTO is not an independent replication of ENVO.** Both project the *same* BacDive isolation source. With tie-safe strata it is 6 of 8 terms (n=843 in-stratum), an unclustered one-sided sign test around p≈0.1 — a sensitivity check, not confirmation.
+3. **Within-term stratification controls term identity, not taxon degree.** In the BTO split the high-score half has mean BacDive gold degree 4.85 vs 3.56 and mean PREGO degree 23.10 vs 18.73; ENVO likewise 91.64 vs 70.67. Well-covered taxa remain an open path to apparent discrimination.
+4. **No clustered uncertainty anywhere.** Edges reuse taxa, terms and resources; all intervals quoted are iid and therefore optimistic.
 
 ---
 
@@ -55,7 +69,9 @@ All four are **in-graph**; none required external data.
 | 3 | **BacDive assays** | `strain -METPO:2000302\|2000303-> assay -has_output-> GO`, strain lifted to taxon | 36,844 pos / 67,571 neg, 36 GO terms | **wet-lab phenotype, with negatives** |
 | 4 | BacDive isolation | `ENVO -location_of-> strain` and `UBERON\|CL -location_of-> strain` (BTO via `uberon_nodes.xref`) | 13,212 ENVO + 6,288 BTO pairs | isolation records |
 
-Standard 3 is the only one with **labelled negatives**, so it supports direct precision measurement with no null model.
+Standard 3 is the only one with **labelled negatives**, so it supports precision measurement with no null model.
+
+**But its negatives are strain-level and the claim is taxon-level.** "Taxon capable_of GO" is existential — some strain having the capability makes it true — so strains testing negative do not refute it. Excluding the 12,916 mixed pairs does not repair that mismatch. The 0.3215 figure is agreement with strain-lifted labels, not a taxon-level false-positive rate.
 
 ---
 
@@ -88,7 +104,7 @@ The three standards disagree on the *continuous channel* (1.45x / 1.07x / 0.91x)
 | 4 | 2.103–3.951 | 2,202 | 0.429 | **12.58x** |
 | 5 | 3.951–4.007 | 2,197 | 0.581 | **17.03x** |
 
-**7.89x overall.** Stratified within ENVO term: **18 of 19** terms with ≥100 comparable edges have the higher-score half agreeing more; pooled 0.211 → 0.331 (**1.57x**).
+**7.89x overall.** Stratified within ENVO term (tie-safe boundaries): **18 of 20** terms with ≥100 comparable edges have the higher-score half agreeing more; pooled 0.219 → 0.325 (**1.49x**).
 
 ### `BTO -location_of-> NCBITaxon` — 35,822 edges (0.08%)
 
@@ -99,7 +115,7 @@ The three standards disagree on the *continuous channel* (1.45x / 1.07x / 0.91x)
 | 3 | 1.036–3.000 | 427 | 0.351 | **5.89x** |
 | 4 | 4.000 (tied) | 232 | 0.272 | 4.55x |
 
-**3.86x overall.** Stratified: **7 of 9** BTO terms (≥30 edges) agree; pooled **1.94x**.
+**3.86x overall.** Stratified (tie-safe): **6 of 8** BTO terms (≥30 edges) agree; pooled 0.158 → 0.266 (**1.69x**). The index-median split originally published gave 7 of 9 and 1.94x — the result is tie-sensitive.
 
 ### `NCBITaxon -associated_with-> MONDO` — 5,171 edges (0.01%)
 
@@ -109,11 +125,13 @@ Untested. PREGO is the only source of MONDO edges in the graph. Emitting BacDive
 
 ## Threshold selection for `location_of` edges
 
-Measured on ENVO (the larger of the two):
+Measured on ENVO (the larger of the two).
+
+**Terminology.** BacDive isolation is **positive-only**: an edge absent from it is *unknown*, not false. The column below is therefore an **overlap rate** among comparable edges, not precision. Only the assay standard supports true precision.
 
 Baseline 0.03411, over the entity space shared between PREGO and the gold standard (the TISSUES protocol).
 
-| ≥ T | precision | fold | ENVO kept |
+| ≥ T | overlap rate | fold | ENVO kept |
 |---:|---:|---:|---:|
 | 0.00 | 0.269 | 7.89x | 416,229 (100%) |
 | 0.50 | 0.324 | 9.51x | 301,988 (72.6%) |
@@ -125,9 +143,9 @@ Baseline 0.03411, over the entity space shared between PREGO and the gold standa
 | 3.50 | 0.570 | 16.71x | 54,615 (13.1%) |
 | 4.00 | 0.585 | 17.14x | 52,379 (12.6%) |
 
-**Precision peaks at 3.0 and then falls.** Thresholds above 3.0 lose recall *and* precision, so they are strictly dominated — the upper bound is not a judgement call.
+**Overlap peaks at 3.0 and then falls** — on the same data used to select it, with no held-out validation. Calling 3.0 "strictly dominated above" is only true of observed overlap on this selection set.
 
-Below 3.0 the choice is precision vs recall. Two defensible settings: **3.0** (precision 0.64, keeps 17%) or **1.0** (precision 0.40, keeps 52%, still a 47% precision gain over unfiltered).
+The 83% figure is **retention** loss, not measured recall loss — a positive-only standard cannot enumerate all true edges. Choosing between 3.0 (keeps 17%) and 1.0 (keeps 52%) requires a stated precision/utility target that does not yet exist, and for a recall-oriented KG **unfiltered may well be preferable**. No threshold curve was computed for BTO, so transferring 3.0 to it is unsupported.
 
 Note the floor: **unfiltered ENVO edges are already 7.9x enriched.** The threshold improves a signal that is present without it.
 
@@ -137,17 +155,17 @@ Note the floor: **unfiltered ENVO edges are already 7.9x enriched.** The thresho
 
 | edge type | count | recommendation | basis |
 |---|---:|---|---|
-| `ENVO -location_of->` | 416,229 | keep; threshold at 3.0 (or 1.0) | score validated, 18.8x at optimum |
-| `BTO -location_of->` | 35,822 | keep; same threshold | same predicate, 1.94x within-term |
+| `ENVO -location_of->` | 416,229 | keep; threshold **only against a stated utility target** | overlap rises with score; 3.0 is the in-sample optimum, not a validated operating point |
+| `BTO -location_of->` | 35,822 | keep; **no** threshold transfer | 1.69x tie-safe, 6/8 terms, same BacDive source as ENVO — not independent |
 | `taxon -capable_of-> GO`, flat channels | ~20.9M | keep, **no** threshold | provenance: 1.39x disjoint, 2.19x UniProt |
-| `taxon -capable_of-> GO`, continuous | ~23.3M | **drop** | 0.91x — below chance under the only test with negatives |
+| `taxon -capable_of-> GO`, continuous | 23,289,791 | **not yet — do not drop** | no reliable score ranking, but that is not evidence of no value; the standards reach 0.1–41.5% and PREGO-only content is unmeasurable by construction |
 | `taxon -associated_with-> MONDO` | 5,171 | keep, flag unvalidated | no reference exists |
 
 Supporting arguments:
 
 1. **Filter GO edges by channel, not by score.** The evidence speaks to provenance, not to the score. A channel filter is expressible in `merge.yaml` via `edge_filters` today (exact-string matching), so it needs no numeric comparison.
 2. **Per-predicate thresholds, not one global knob.** A single `min_confidence` is a validated quality filter on `location_of` and an arbitrary cut on `capable_of` simultaneously.
-3. **Dropping the continuous GO block removes ~52% of PREGO** — the part with no supporting evidence under any standard — taking `edges.tsv` from 7.4 GB to roughly 3.5 GB and largely dissolving the 48 GB merge problem in #693 as a side effect, without inventing a confidence claim to justify it.
+3. **Dropping the continuous GO block removes 23,289,791 rows — 52.08% of rows but only 33.33% of bytes**, since those rows are shorter. `edges.tsv` goes from 7.38 GiB to **4.92 GiB**, not the ~3.5 GB stated earlier. **No merge benchmark was run**, so the claim that this "largely dissolves" the 48 GB problem in #693 is unverified.
 
 ---
 
@@ -172,7 +190,12 @@ Recorded because each was stated confidently before being overturned:
 3. **"BTO is untestable."** Wrong — 1,645 anatomy terms in `uberon_nodes.tsv` already carry BTO xrefs, the same reverse-lookup the transform uses for DOID→MONDO. No new mapping was needed.
 4. **A tie-splitting bug in the analysis** sorted `(score, is_hit)` tuples, so the sort tiebreak pushed non-hits below the 4.0 block and hits above it, fabricating a 0.44x window adjacent to a 1.95x one. Fixed in `enrichment_by_window`; two regression tests.
 5. **"The calibration and emit passes can never disagree."** False — the emit pass applies further checks. The 1,200-row delta reported as reassuring was a symptom of this (#699).
-6. **Inconsistent fold baselines between two of my own ENVO runs.** The window table used the shared entity space (baseline 0.03411) while the threshold table used the full gold space (0.02421), so the latter's fold column was inflated — 11.11x rather than 7.89x at T=0. Caught by smoke-testing the extracted scripts against the published figures. Both now use the shared space; precision and the location of the optimum were unaffected, only the multipliers.
+6. **The within-term stratification split ties.** It used an index median, so sort order rather than the score decided which tied rows fell in which half — the same defect fixed in `enrichment_by_window` and then reintroduced in the very check meant to guard against confounding. Tie-safe boundaries move ENVO from 18/19 at 1.57x to 18/20 at 1.49x, and BTO from 7/9 at 1.94x to **6/8 at 1.69x**. Found by external review.
+7. **"Precision" applied to positive-only standards.** ENVO/BTO agreement rates are *overlap* rates; absence from BacDive means unknown, not false. Renamed throughout.
+8. **"BTO independently replicates ENVO."** Both project the same BacDive isolation source, so it is a sensitivity check rather than independent replication.
+9. **Post-filter size "roughly 3.5 GB".** Wrong: the dropped rows are 52.08% of rows but 33.33% of bytes, leaving **4.92 GiB**. And no merge benchmark was run, so "largely dissolves the 48 GB problem" was unsupported.
+10. **Verdict stated as established.** Downgraded to plausible-but-unproven: predicate is confounded with benchmark design.
+11. **Inconsistent fold baselines between two of my own ENVO runs.** The window table used the shared entity space (baseline 0.03411) while the threshold table used the full gold space (0.02421), so the latter's fold column was inflated — 11.11x rather than 7.89x at T=0. Caught by smoke-testing the extracted scripts against the published figures. Both now use the shared space; precision and the location of the optimum were unaffected, only the multipliers.
 
 ---
 

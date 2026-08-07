@@ -13,13 +13,19 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.prego.prego import PregoTransform
 from kg_microbe.transform_utils.prego.utils import (
+    CHANNEL_ENVIRONMENTAL,
+    CHANNEL_GENOMES,
+    CHANNEL_LITERATURE,
     DROP_INVERSE_ENVO_TO_TAXON,
     DROP_INVERSE_TAXON_TO_BTO,
     DROP_INVERSE_TAXON_TO_GO,
     DROP_TAXON_TAXON_HOST,
     KEEP_TAXON_TO_BTO,
     KEEP_TAXON_TO_GO,
+    channel_for_archive,
+    classify_evidence,
     classify_row,
+    edge_metadata_for,
     entity_to_curie,
     load_doid_to_mondo,
 )
@@ -37,17 +43,27 @@ def prego_input_dir(tmp_path: Path) -> Path:
     """
     Build the PREGO raw input layout the transform expects.
 
-    Wraps ``tests/resources/prego/database_pairs.tsv`` in a
-    ``literature.tar.gz``-shaped tarball under
-    ``<tmp>/raw/prego/literature.tar.gz``, matching the real archive
-    layout (single-file payload named ``database_pairs.tsv``).
+    Two tarballs under ``<tmp>/raw/prego/``, each with the real archive
+    layout (single-file payload named ``database_pairs.tsv``):
+
+    * ``literature.tar.gz`` — the flat-scored rows.
+    * ``environmental_samples.tar.gz`` — the continuous-scored rows.
+
+    Both are required. The channel is derived from the *archive name*, so a
+    single archive can only ever exercise one of the two calibration paths;
+    when every fixture row lived in ``literature.tar.gz`` the whole
+    histogram → cutoff → filter path was dead in every test.
     """
     raw_dir = tmp_path / "raw"
     prego_raw = raw_dir / "prego"
     prego_raw.mkdir(parents=True)
-    archive = prego_raw / "literature.tar.gz"
-    with tarfile.open(archive, "w:gz") as tf:
+    # Two archives, mirroring production: the channel is derived from the
+    # archive name, so a single archive cannot exercise both the flat and the
+    # continuous (environmental) calibration paths.
+    with tarfile.open(prego_raw / "literature.tar.gz", "w:gz") as tf:
         tf.add(FIXTURE_DIR / "database_pairs.tsv", arcname="database_pairs.tsv")
+    with tarfile.open(prego_raw / "environmental_samples.tar.gz", "w:gz") as tf:
+        tf.add(FIXTURE_DIR / "database_pairs_environmental.tsv", arcname="database_pairs.tsv")
     return raw_dir
 
 
@@ -701,9 +717,18 @@ def test_threshold_drops_only_rows_below_it(prego_input_dir: Path, prego_output_
     """
     Raising the threshold drops flat-channel rows scoring below it.
 
-    The fixture's Isolates rows score 3 and 4, so a 3.5 cut must keep the 4s
-    and drop the 3s — and must do so on each row's own score, not on the
-    channel's documented constant.
+    The fixture's flat rows score 3 and 4, so a 3.5 cut must keep the 4s and
+    drop the 3s — and must do so on each row's own score, not on the channel's
+    documented constant.
+
+    The raw-score assertion applies to FLAT rows only. Continuous rows are
+    filtered on the calibrated star axis, where a row at or above its
+    resource's cutoff rates STAR_MAX regardless of its raw score — so a
+    continuous row scoring 2.0 can legitimately outrank the 3.5 cut. Asserting
+    `raw >= 3.5` over every kept edge conflated the two axes and passed only
+    because both surviving continuous rows happened to score 4.0; a fixture row
+    scoring 2.0 in the top 12.5% of its resource would have failed the test for
+    correct behaviour.
     """
     baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
     baseline.run(show_status=False)
@@ -715,7 +740,22 @@ def test_threshold_drops_only_rows_below_it(prego_input_dir: Path, prego_output_
 
     assert len(kept) < len(all_edges), "a 3.5 threshold must drop the score-3 rows"
     assert kept, "it must not drop everything"
-    assert all(float(e["prego_score"]) >= 3.5 for e in kept)
+
+    flat_kept = [e for e in kept if e["prego_channel"] != CHANNEL_ENVIRONMENTAL]
+    assert flat_kept, "the flat-channel arm of this test must not be vacuous"
+    assert all(float(e["prego_score"]) >= 3.5 for e in flat_kept)
+
+    # The continuous arm: every kept row must be at or above its resource's
+    # calibrated cutoff, which is the quantity the filter actually compares.
+    cutoffs = {}
+    for line in filtered_transform.calibration_table_file.read_text().splitlines()[1:]:
+        if line.strip():
+            resource, _n, _tau, cutoff_score, _kept = line.split("\t")
+            cutoffs[resource] = float(cutoff_score)
+    continuous_kept = [e for e in kept if e["prego_channel"] == CHANNEL_ENVIRONMENTAL]
+    assert continuous_kept, "the continuous arm of this test must not be vacuous"
+    for e in continuous_kept:
+        assert float(e["prego_score"]) >= cutoffs[e["prego_source"]]
 
 
 def test_threshold_is_read_from_the_environment(prego_input_dir, prego_output_dir, monkeypatch):
@@ -784,7 +824,10 @@ def test_calibration_table_is_written_and_matches_what_ships(prego_input_dir: Pa
 
     edges = _read_tsv(transform.output_edge_file)
     for resource, (n_calibrated, kept_fraction) in table.items():
-        shipped = sum(1 for e in edges if e["prego_source"] == resource and " of " in e["prego_channel"])
+        # Continuous-channel edges are identified by the archive-derived
+        # channel, not by the shape of the raw evidence string — that string
+        # now lives in `prego_evidence`.
+        shipped = sum(1 for e in edges if e["prego_source"] == resource and e["prego_channel"] == CHANNEL_ENVIRONMENTAL)
         expected = round(kept_fraction * n_calibrated)
         assert shipped == expected, (
             f"{resource}: table claims {kept_fraction:.4f} of {n_calibrated} ({expected} edges) but {shipped} shipped"
@@ -810,3 +853,140 @@ def test_default_threshold_drops_no_edges(prego_input_dir: Path, prego_output_di
     filtered = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.0)
     filtered.run(show_status=False)
     assert len(_read_tsv(filtered.output_edge_file)) < unfiltered, "the knob must actually do something"
+
+
+# Channel identification and edge metadata (#694, #695)
+# ---------------------------------------------------------------------------
+
+
+def test_channel_comes_from_the_archive_not_column_six():
+    """
+    The channel is a property of the archive, not of any column in the data.
+
+    PREGO's column 6 was emitted as ``prego_channel``, but across the real
+    archives it holds evidence tallies, resource classes, citations and habitat
+    names — ~24k distinct values. That made channel-selection, one of the two
+    filters the ingest plan promises, impossible.
+    """
+    assert channel_for_archive("environmental_samples.tar.gz") == CHANNEL_ENVIRONMENTAL
+    assert channel_for_archive("annotated_genomes_isolates.tar.gz") == CHANNEL_GENOMES
+    assert channel_for_archive("literature.tar.gz") == CHANNEL_LITERATURE
+    # An unrecognised archive keeps its stem rather than being forced into a bucket.
+    assert channel_for_archive("something_else.tar.gz") == "something_else"
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("402 of 487 samples", "sample_count"),
+        ("Isolates", "resource_class"),
+        ("Genome annotation", "resource_class"),
+        ("Metagenome-Assembled Genome GOLD", "resource_class"),
+        ("PMID:24914180", "publication"),
+        ("Groundwater", "habitat"),
+        ("", "unknown"),
+    ],
+)
+def test_evidence_column_is_classified(value, expected):
+    """The grab-bag becomes filterable by classifying what each value actually is."""
+    assert classify_evidence(value) == expected
+
+
+def test_edge_metadata_differs_by_channel():
+    """
+    Channels are generated by different processes, so one constant would lie.
+
+    Environmental associations come from co-occurrence statistics; the genome
+    channels from annotation pipelines over curated resources; anything with a
+    citation from text mining over the linked abstract.
+    """
+    assert edge_metadata_for(CHANNEL_ENVIRONMENTAL, "sample_count") == (
+        "statistical_association",
+        "data_analysis_pipeline",
+    )
+    assert edge_metadata_for(CHANNEL_GENOMES, "resource_class") == (
+        "knowledge_assertion",
+        "automated_agent",
+    )
+    # A citation overrides the channel default — those rows are text-mined.
+    assert edge_metadata_for(CHANNEL_GENOMES, "publication") == ("prediction", "text_mining_agent")
+    assert edge_metadata_for(CHANNEL_LITERATURE, "resource_class") == ("prediction", "text_mining_agent")
+
+
+def test_unknown_channel_declines_to_assert_metadata():
+    """An unrecognised channel must not be given a confident provenance label."""
+    assert edge_metadata_for("mystery", "unknown") == ("not_provided", "not_provided")
+
+
+def test_unrecognised_archive_warns_that_it_bypasses_the_threshold(
+    prego_input_dir: Path, prego_output_dir: Path, capsys
+):
+    """
+    An archive whose channel is unrecognised must announce that it fails open.
+
+    This is the upstream-rename scenario. `channel_for_archive` returns the bare
+    stem, `flat_channel_star` returns None, `star_for_row` returns None and
+    `keep_row` returns True — so every row bypasses the threshold no matter how
+    high it is set. That is deliberate (never drop data for a reason unrelated
+    to confidence), but it must be loud.
+
+    The log previously called every skipped archive a "flat channel", which is
+    the one thing an unrecognised channel is NOT: a flat channel is rated and
+    thresholded on its own score, an unrecognised one is not rated at all. A
+    rename of `annotated_genomes_isolates.tar.gz` would silently exempt ~47% of
+    production edges while the log looked routine.
+    """
+    renamed = prego_input_dir / "prego" / "environmental_sampl3s.tar.gz"
+    with tarfile.open(renamed, "w:gz") as tf:
+        tf.add(FIXTURE_DIR / "database_pairs_environmental.tsv", arcname="database_pairs.tsv")
+
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.0)
+    transform.run(show_status=False)
+    out = capsys.readouterr().out
+
+    assert "WARNING" in out and "unrecognised channel" in out, f"an unrecognised archive must warn; got:\n{out}"
+    assert "environmental_sampl3s" in out
+    assert "flat channel 'environmental_sampl3s'" not in out, "must not be mislabelled as flat"
+
+    # And the warning must be true: those rows really do survive the maximum
+    # threshold, on channel rather than on score.
+    edges = _read_tsv(transform.output_edge_file)
+    bypassed = [e for e in edges if e["prego_channel"] == "environmental_sampl3s"]
+    assert bypassed, "the unrecognised-channel rows should have bypassed min_confidence=4.0"
+    assert all(e["knowledge_level"] == "not_provided" for e in bypassed)
+
+
+def test_emitted_edges_carry_populated_metadata(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    Every edge must carry knowledge_level and agent_type.
+
+    They shipped empty, so 44.7M text-mined and statistically-derived
+    associations were indistinguishable from curated assertions anywhere in the
+    merged KG — and PREGO is the single largest edge block in it.
+
+    Asserts membership in the documented value sets rather than truthiness.
+    ``not_provided`` is truthy, so a truthiness check passes even when EVERY
+    edge has unrecognised provenance — which is exactly the state an upstream
+    archive rename would produce, and exactly what this test exists to catch.
+    """
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run(show_status=False)
+    edges = _read_tsv(transform.output_edge_file)
+    assert edges
+
+    known_levels = {"statistical_association", "knowledge_assertion", "prediction"}
+    known_agents = {"data_analysis_pipeline", "automated_agent", "text_mining_agent"}
+    assert {e["knowledge_level"] for e in edges} <= known_levels, (
+        f"unrecognised knowledge_level(s): {{e['knowledge_level'] for e in edges}} - {known_levels}"
+    )
+    assert {e["agent_type"] for e in edges} <= known_agents
+    assert {e["prego_channel"] for e in edges} <= {
+        CHANNEL_ENVIRONMENTAL,
+        CHANNEL_GENOMES,
+        CHANNEL_LITERATURE,
+    }
+
+    # The raw column is preserved verbatim. Checking `"prego_evidence" in e`
+    # would only test the HEADER — `e` is a DictReader dict — and would pass
+    # with every cell empty, which is the failure this is meant to exclude.
+    assert all(e["prego_evidence"] for e in edges), "prego_evidence values must be populated"

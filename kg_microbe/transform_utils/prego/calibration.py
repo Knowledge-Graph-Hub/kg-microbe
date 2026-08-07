@@ -41,6 +41,12 @@ from __future__ import annotations
 import math
 from typing import Dict, Iterable, Mapping, Optional, Tuple
 
+from kg_microbe.transform_utils.prego.utils import (
+    CHANNEL_ENVIRONMENTAL,
+    CHANNEL_GENOMES,
+    CHANNEL_LITERATURE,
+)
+
 # The paper caps the Environmental Samples score at 4, but the shipped data
 # reaches 4.00735 — so 4.0 is not a safe upper bound for binning. Bin to a
 # hair above the observed maximum and clamp anything beyond it.
@@ -59,6 +65,13 @@ STAR_MAX = 4.0
 # Zafeiropoulos et al. 2022 §2.3 and Appendix C.1. These are tiers, not
 # measurements — every row in the channel carries the same value, so there
 # is no within-channel ordering to threshold on.
+#
+# NOTE: keyed on PREGO's *resource class*, which is NOT our channel. Our
+# channels come from the archive filename (CHANNEL_* in utils.py), and the
+# genome/isolate archive contains four of these resource classes at once. So
+# no key below is a valid argument to `flat_channel_star`. This table is
+# documentation of the upstream values for validation — not a lookup table.
+# See #712.
 FLAT_CHANNEL_STARS: Dict[str, float] = {
     "Isolates": 4.0,
     "Isolates GOLD": 4.0,
@@ -74,37 +87,38 @@ PMID_CHANNEL_STAR = 3.0
 
 def is_continuous_channel(channel: str) -> bool:
     """
-    Return True when ``channel`` is the computed-score (Environmental Samples) channel.
+    Return True for the channel whose score is computed and varies.
 
-    Identified by shape rather than by name: these rows carry an evidence
-    tally such as ``402 of 487 samples`` in the channel column. The column
-    is a grab-bag upstream (see the prego_channel issue), so matching the
-    tally shape is more robust than enumerating channel names.
+    This used to match the shape of an evidence tally (``402 of 487 samples``)
+    because ``prego_channel`` carried PREGO's column 6 verbatim, which was a
+    grab-bag of tallies, resource classes, citations and habitat names. Since
+    that column now holds the archive-derived channel, the check is a direct
+    comparison — and the shape-matching, which silently defined "continuous"
+    for every measurement in PREGO_SCORE_VALIDATION.md, is gone.
 
-    :param channel: Raw value of the ``prego_channel`` column.
+    :param channel: Value of the ``prego_channel`` column.
     :return: True if the row's score is computed and varies within-channel.
     """
-    if not channel:
-        return False
-    parts = channel.split()
-    return len(parts) == 4 and parts[1] == "of" and parts[3] == "samples" and parts[0].isdigit()
+    return channel == CHANNEL_ENVIRONMENTAL
 
 
 def flat_channel_star(channel: str) -> Optional[float]:
     """
-    Return the constant star tier for a degenerate channel, or None.
+    Return a constant tier for a recognised flat channel, or None.
 
-    :param channel: Raw value of the ``prego_channel`` column.
-    :return: The author-assigned constant, or None if the channel is not a
-        recognised flat channel.
+    Only the genome/isolate channel is flat. Its rows carry a score PREGO's
+    authors assigned by fiat rather than computed, so the value is already on
+    the star axis and :func:`star_for_row` uses the row's own score; this
+    function exists to answer "is this channel recognised", not to substitute a
+    value. FLAT_CHANNEL_STARS documents the expected constants.
+
+    :param channel: Value of the ``prego_channel`` column.
+    :return: The channel's documented constant, or None if unrecognised.
     """
-    if not channel:
-        return None
-    if channel.startswith("PMID:"):
+    if channel == CHANNEL_GENOMES:
+        return 4.0
+    if channel == CHANNEL_LITERATURE:
         return PMID_CHANNEL_STAR
-    for prefix, star in FLAT_CHANNEL_STARS.items():
-        if channel.startswith(prefix):
-            return star
     return None
 
 
@@ -339,13 +353,28 @@ def estimate_retention(
     percentile remap. Useful for warning that a threshold has become
     provenance-dominant.
 
+    Fails closed on an unrecognised channel. Scoring one as 0.0 and excluding
+    it silently — the previous behaviour — turns a typo or a stale key into a
+    confidently wrong number rather than an error, and this function exists
+    precisely to answer "what will this threshold cost me" before a run. Fed
+    the keys of :data:`FLAT_CHANNEL_STARS`, which are resource classes rather
+    than channels (#712), it returned 0.265 where the answer was 0.734.
+
     :param channel_shares: Flat channel name to its share of all edges (0-1).
+        Keys must be CHANNEL_* values, not PREGO resource-class names.
     :param tau: Star threshold.
     :param continuous_share: Share of all edges in the continuous channel.
     :return: Predicted retained fraction in [0, 1].
+    :raises ValueError: If a key is not a recognised flat channel.
     """
     validate_tau(tau)
-    retained = sum(share for channel, share in channel_shares.items() if (flat_channel_star(channel) or 0.0) >= tau)
+    unknown = sorted(c for c in channel_shares if flat_channel_star(c) is None)
+    if unknown:
+        raise ValueError(
+            f"unrecognised flat channel(s) {unknown}; expected CHANNEL_* values "
+            f"({CHANNEL_GENOMES!r}, {CHANNEL_LITERATURE!r}), not PREGO resource-class names"
+        )
+    retained = sum(share for channel, share in channel_shares.items() if flat_channel_star(channel) >= tau)
     return retained + continuous_share * (1.0 - tau / STAR_MAX)
 
 

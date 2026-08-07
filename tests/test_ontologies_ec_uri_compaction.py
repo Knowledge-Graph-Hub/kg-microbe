@@ -16,7 +16,9 @@ The fix is a two-line data addition (JSON + constants). These tests pin
 the resulting invariant end-to-end so the same regression cannot recur.
 """
 
+import contextlib
 import csv
+import io
 import tempfile
 from pathlib import Path
 from unittest import TestCase
@@ -245,39 +247,87 @@ class TestEcPostProcessUriCompaction(TestCase):
 
 class TestStrayHeaderRowsAreDropped(TestCase):
 
-    """A header line that leaked into the body must not reach the merged KG."""
+    """The incoming KGX header must not survive into the edge body."""
 
-    def test_second_header_row_is_removed(self):
+    # KGX's edges TSV leads with an `id` column, so its header's first field is
+    # "id" — not "subject". Using the canonical header in a fixture here is
+    # what let PR #680 ship green while broken: its guard matched "subject",
+    # which the test provided and production never does.
+    _KGX_EDGE_HEADER = ["id", "subject", "predicate", "object", "relation", "knowledge_source"]
+
+    def _kgx_shaped_edges(self, tmp_path: Path) -> Path:
+        """Write an edges file in the shape KGX actually produces."""
+        edges_path = tmp_path / "ec_edges.tsv"
+        rows = [
+            [
+                f"urn:uuid:{i}",
+                "https://bioregistry.io/eccode:1.1",
+                "biolink:subclass_of",
+                "https://bioregistry.io/eccode:1",
+                "rdfs:subClassOf",
+                "ec.json",
+            ]
+            for i in range(3)
+        ]
+        _write_tsv(edges_path, self._KGX_EDGE_HEADER, rows)
+        return edges_path
+
+    def test_kgx_header_is_consumed_not_left_in_the_body(self):
         """
-        Filtering by content, not position, is what makes this robust.
+        The producer must drop the real header, whose first field is "id".
 
-        The real ec pipeline produced a file whose parse output already carried
-        two header lines. The first is consumed as the header; the second
-        survived as a data row, reached the merged KG, and KGX read
-        "subject"/"object" as endpoint CURIEs and synthesized two empty
-        biolink:NamedThing nodes.
+        PR #680 replaced a working ``startswith("id")`` guard with one matching
+        "subject", on the mistaken belief that an edges header cannot start
+        with "id". That left the real header in the body, and KGX read its
+        "subject"/"object" cells as endpoint CURIEs in the merged KG,
+        synthesizing two empty biolink:NamedThing nodes. The pre-#680 output on
+        disk has zero stray rows; the post-#680 output has one.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            _write_tsv(tmp_path / "ec_nodes.tsv", _NODE_HEADER, _fixture_nodes())
+            edges_path = self._kgx_shaped_edges(tmp_path)
 
-        An earlier fix skipped index 0 in the ec branch. That removes one
-        header but not a second, so the defect survived a full re-run of the
-        transform with the fix in place — the output was byte-identical.
+            captured = io.StringIO()
+            with contextlib.redirect_stdout(captured):
+                _build_transform(tmp_path).post_process("ec")
+
+            with open(edges_path) as fh:
+                lines = [ln.rstrip("\n") for ln in fh if ln.strip()]
+            first_fields = [ln.split("\t")[0] for ln in lines[1:]]
+            self.assertNotIn("id", first_fields, "the KGX header survived into the body")
+            self.assertNotIn("subject", first_fields, "a header row survived into the body")
+            self.assertEqual(len(lines), 4, "3 edges plus exactly one header")
+
+            # Assert the leak is stopped at SOURCE, not swept up downstream.
+            # Without this the _normalize_schema backstop silently repairs a
+            # broken producer and the test passes either way — which is the
+            # same masking that let #680 ship green.
+            self.assertNotIn(
+                "stray header row",
+                captured.getvalue(),
+                "the backstop fired, so the producer guard is not doing its job",
+            )
+
+    def test_normalize_schema_backstops_a_leaked_header(self):
+        """
+        A leak from any producer is still removed downstream.
+
+        This is defence in depth, not the primary fix: with the producer guard
+        correct the backstop should never fire on a real run.
         """
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             nodes_path = tmp_path / "ec_nodes.tsv"
             edges_path = tmp_path / "ec_edges.tsv"
             _write_tsv(nodes_path, _NODE_HEADER, _fixture_nodes())
-            # A duplicate header sitting in the body, exactly as observed.
-            rows = [list(_EDGE_HEADER)] + _fixture_edges()
-            _write_tsv(edges_path, _EDGE_HEADER, rows)
+            _write_tsv(edges_path, _EDGE_HEADER, [list(_EDGE_HEADER)] + _fixture_edges())
 
             transform = _build_transform(tmp_path)
             transform._normalize_schema(nodes_path, edges_path)
 
             with open(edges_path) as fh:
                 lines = [ln.rstrip("\n") for ln in fh if ln.strip()]
-            header = lines[0].split("\t")
-            self.assertEqual(header[0], "subject")
             strays = [i for i, ln in enumerate(lines[1:], start=2) if ln.split("\t")[0] == "subject"]
             self.assertEqual(strays, [], f"stray header row(s) survived at line(s) {strays}")
-            # The real edges are untouched.
-            self.assertGreater(len(lines), 1, "dropping strays must not empty the file")
+            self.assertEqual(len(lines), 1 + len(_fixture_edges()), "real edges must be untouched")

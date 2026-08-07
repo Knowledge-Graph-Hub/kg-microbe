@@ -50,6 +50,20 @@ The observations are not independent — edges reuse the same taxa, GO terms
 and resources — so clustered intervals are needed before any ordering of
 these point estimates is called directional.
 
+**The score does discriminate — but on environmental edges, not functional
+ones.** Everything above concerns ``NCBITaxon -capable_of-> GO``. Tested
+instead against BacDive isolation sources (``ENVO -location_of-> strain``,
+lifted to taxon), PREGO's ``ENVO -location_of-> NCBITaxon`` edges enrich
+sharply with score: 3.26x, 12.58x, 17.03x across the top three windows,
+7.89x overall. It survives controlling for ENVO-term degree — 18 of 19
+terms with >=100 comparable edges show the higher-score half agreeing more,
+pooled 0.211 vs 0.331 within-term, a 1.57x ratio.
+
+That split has a plausible mechanism: the environmental-samples score counts
+taxon-environment co-occurrence, which is direct evidence for an ENVO edge
+and only indirect evidence for a functional one. Treat the score as
+meaningful for environmental associations and unproven for GO.
+
 Separately, the score tracks evidence volume: a GO term's edge count
 correlates with its mean score at Spearman +0.26, driven by rare terms
 scoring low (mean 0.67 in the lowest-ubiquity decile vs ~2.0 everywhere

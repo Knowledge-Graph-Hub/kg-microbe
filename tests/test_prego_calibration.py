@@ -17,6 +17,7 @@ and that cutoffs do not depend on row order.
 import pytest
 
 from kg_microbe.transform_utils.prego.calibration import (
+    FLAT_CHANNEL_STARS,
     STAR_MAX,
     ScoreHistogram,
     _bin_index,
@@ -238,6 +239,29 @@ def test_default_tau_lands_inside_the_75_percent_budget():
     retained = estimate_retention(MEASURED_FLAT_SHARES, 2.0, MEASURED_CONTINUOUS_SHARE)
     assert 0.73 <= retained <= 0.745
     assert retained <= 0.75
+
+
+def test_estimate_retention_rejects_resource_class_keys():
+    """
+    Feeding FLAT_CHANNEL_STARS' keys must raise, not silently mis-answer.
+
+    Those keys are PREGO *resource classes* (``Isolates``, ``Genome
+    annotation``, ...), while ``flat_channel_star`` keys on the
+    archive-derived channel — so none of them resolves. Scoring an
+    unrecognised channel as 0.0 and excluding it returned 0.265 where the
+    answer was 0.734, a 2.8x error with no exception. They live in the same
+    module and read as if they interoperate, which is exactly why this has to
+    fail loudly (#712).
+    """
+    stale = {"Isolates": 0.2866, "Genome annotation": 0.0917}
+    with pytest.raises(ValueError, match="unrecognised flat channel"):
+        estimate_retention(stale, 2.0, MEASURED_CONTINUOUS_SHARE)
+
+    # Every documented resource class must be rejected, so the guard cannot
+    # rot into covering only the two probed above.
+    for resource_class in FLAT_CHANNEL_STARS:
+        with pytest.raises(ValueError, match="unrecognised flat channel"):
+            estimate_retention({resource_class: 1.0}, 2.0, 0.0)
 
 
 def test_retention_is_monotone_decreasing_in_tau():

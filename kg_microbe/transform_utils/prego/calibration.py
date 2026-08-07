@@ -65,6 +65,13 @@ STAR_MAX = 4.0
 # Zafeiropoulos et al. 2022 §2.3 and Appendix C.1. These are tiers, not
 # measurements — every row in the channel carries the same value, so there
 # is no within-channel ordering to threshold on.
+#
+# NOTE: keyed on PREGO's *resource class*, which is NOT our channel. Our
+# channels come from the archive filename (CHANNEL_* in utils.py), and the
+# genome/isolate archive contains four of these resource classes at once. So
+# no key below is a valid argument to `flat_channel_star`. This table is
+# documentation of the upstream values for validation — not a lookup table.
+# See #712.
 FLAT_CHANNEL_STARS: Dict[str, float] = {
     "Isolates": 4.0,
     "Isolates GOLD": 4.0,
@@ -346,13 +353,28 @@ def estimate_retention(
     percentile remap. Useful for warning that a threshold has become
     provenance-dominant.
 
+    Fails closed on an unrecognised channel. Scoring one as 0.0 and excluding
+    it silently — the previous behaviour — turns a typo or a stale key into a
+    confidently wrong number rather than an error, and this function exists
+    precisely to answer "what will this threshold cost me" before a run. Fed
+    the keys of :data:`FLAT_CHANNEL_STARS`, which are resource classes rather
+    than channels (#712), it returned 0.265 where the answer was 0.734.
+
     :param channel_shares: Flat channel name to its share of all edges (0-1).
+        Keys must be CHANNEL_* values, not PREGO resource-class names.
     :param tau: Star threshold.
     :param continuous_share: Share of all edges in the continuous channel.
     :return: Predicted retained fraction in [0, 1].
+    :raises ValueError: If a key is not a recognised flat channel.
     """
     validate_tau(tau)
-    retained = sum(share for channel, share in channel_shares.items() if (flat_channel_star(channel) or 0.0) >= tau)
+    unknown = sorted(c for c in channel_shares if flat_channel_star(c) is None)
+    if unknown:
+        raise ValueError(
+            f"unrecognised flat channel(s) {unknown}; expected CHANNEL_* values "
+            f"({CHANNEL_GENOMES!r}, {CHANNEL_LITERATURE!r}), not PREGO resource-class names"
+        )
+    retained = sum(share for channel, share in channel_shares.items() if flat_channel_star(channel) >= tau)
     return retained + continuous_share * (1.0 - tau / STAR_MAX)
 
 

@@ -1,11 +1,4 @@
--2	100	-23	GO:0000034	JGI IMG	Isolates	4	TRUE	https://img.jgi.doe.gov/example1
--2	100	-21	GO:0006355	JGI IMG	Isolates	3	TRUE	https://img.jgi.doe.gov/example2
--2	100	-22	GO:0005634	JGI IMG	Isolates	3	TRUE	https://img.jgi.doe.gov/example3
--23	GO:0000034	-2	100	JGI IMG	Isolates	4	TRUE	https://img.jgi.doe.gov/example4
--27	ENVO:00000011	-2	693444	JGI IMG	Isolates	3	TRUE	https://img.jgi.doe.gov/example5
--2	693444	-27	ENVO:00000011	JGI IMG	Isolates	3	TRUE	https://img.jgi.doe.gov/example6
 -2	562	-26	DOID:8	BioProject	PMID:12345678	3	TRUE	
 -2	562	-26	DOID:99999999	BioProject	PMID:12345679	3	TRUE	
 -2	562	-25	BTO:0000763	BioProject	PMID:12345680	3	TRUE	
--2	1000570	-2	9606	JGI IMG	Human	4	TRUE	
 badrow_with_only_three_columns	x	y

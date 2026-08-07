@@ -17,7 +17,7 @@ and that cutoffs do not depend on row order.
 import pytest
 
 from kg_microbe.transform_utils.prego.calibration import (
-    FLAT_CHANNEL_STARS,
+    PREGO_RESOURCE_CLASS_STARS,
     STAR_MAX,
     ScoreHistogram,
     _bin_index,
@@ -243,7 +243,7 @@ def test_default_tau_lands_inside_the_75_percent_budget():
 
 def test_estimate_retention_rejects_resource_class_keys():
     """
-    Feeding FLAT_CHANNEL_STARS' keys must raise, not silently mis-answer.
+    Feeding PREGO_RESOURCE_CLASS_STARS' keys must raise, not silently mis-answer.
 
     Those keys are PREGO *resource classes* (``Isolates``, ``Genome
     annotation``, ...), while ``flat_channel_star`` keys on the
@@ -259,7 +259,7 @@ def test_estimate_retention_rejects_resource_class_keys():
 
     # Every documented resource class must be rejected, so the guard cannot
     # rot into covering only the two probed above.
-    for resource_class in FLAT_CHANNEL_STARS:
+    for resource_class in PREGO_RESOURCE_CLASS_STARS:
         with pytest.raises(ValueError, match="unrecognised flat channel"):
             estimate_retention({resource_class: 1.0}, 2.0, 0.0)
 
@@ -272,16 +272,31 @@ def test_retention_is_monotone_decreasing_in_tau():
 
 def test_tau_four_is_provenance_dominated():
     """
-    At tau=4.0 the flat channels dominate what survives.
+    At high tau the flat channels dominate what survives.
 
     This is the failure mode the design exists to avoid, so it must be
     detectable — a caller can compare these two numbers to decide whether
     to warn.
+
+    Measured strictly BELOW STAR_MAX. At tau exactly 4.0 the continuous term is
+    ``continuous_share * (1 - 4/4)``, i.e. exactly zero, so ``retained`` and
+    ``flat_only`` reduce to the same expression and their ratio is 1.0 by
+    construction — the old assertion could not fail for any implementation
+    (#716). At tau=3.9 the continuous term is non-zero, so the dominance claim
+    has real content.
     """
-    retained = estimate_retention(MEASURED_FLAT_SHARES, 4.0, MEASURED_CONTINUOUS_SHARE)
-    flat_only = sum(s for c, s in MEASURED_FLAT_SHARES.items() if (flat_channel_star(c) or 0) >= 4.0)
-    assert retained == pytest.approx(flat_only, abs=1e-9)
-    assert flat_only / retained > 0.99
+    tau = 3.9
+    retained = estimate_retention(MEASURED_FLAT_SHARES, tau, MEASURED_CONTINUOUS_SHARE)
+    flat_only = sum(s for c, s in MEASURED_FLAT_SHARES.items() if flat_channel_star(c) >= tau)
+    continuous_contribution = MEASURED_CONTINUOUS_SHARE * (1.0 - tau / STAR_MAX)
+
+    assert continuous_contribution > 0, "below STAR_MAX the continuous channel must still contribute"
+    assert retained == pytest.approx(flat_only + continuous_contribution, abs=1e-9)
+    # Provenance-dominated: the flat channels supply the overwhelming majority.
+    assert flat_only / retained > 0.95
+    # ...and that is a real measurement, not an identity — the continuous
+    # channel is present and simply outweighed.
+    assert flat_only < retained
 
 
 @pytest.mark.parametrize("bad", [-0.1, 4.1, float("nan"), float("inf")])

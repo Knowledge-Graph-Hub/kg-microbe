@@ -74,6 +74,7 @@ from kg_microbe.transform_utils.prego.utils import (
     CHANNEL_ENVIRONMENTAL,
     CHANNEL_GENOMES,
     CHANNEL_LITERATURE,
+    EVIDENCE_HABITAT,
     KEEP_ENVO_TO_TAXON,
     KEEP_TAXON_TO_BTO,
     KEEP_TAXON_TO_DOID,
@@ -163,6 +164,11 @@ class PregoTransform(Transform):
 
     """Ingest PREGO taxon↔environment/process associations."""
 
+    # Ceiling on distinct habitat values tracked per run. The measured value
+    # space is ~42; 1000 leaves generous headroom while bounding memory if the
+    # upstream column shape changes.
+    _HABITAT_VALUE_CAP = 1000
+
     def __init__(
         self,
         input_dir: Optional[Path] = None,
@@ -207,6 +213,9 @@ class PregoTransform(Transform):
             "edges_by_shape": defaultdict(int),
             "rows_dropped": 0,
             "rows_dropped_by_reason": defaultdict(int),
+            # Distinct values in the habitat catch-all — see _record_habitat_value.
+            "evidence_habitat_values": defaultdict(int),
+            "evidence_habitat_values_uncounted": 0,
             "doid_no_mondo_xref": 0,
             "unique_nodes_emitted": 0,
             "nodes_enriched_with_synonyms": 0,
@@ -261,6 +270,8 @@ class PregoTransform(Transform):
             raise SystemExit(
                 f"[prego] no *.tar.gz archives in {prego_raw_dir}. Run `poetry run kg download -t prego` first."
             )
+
+        self._assert_archives_have_payloads(archives)
 
         doid_to_mondo = load_doid_to_mondo(self._mondo_nodes_file)
         if not doid_to_mondo:
@@ -881,6 +892,8 @@ class PregoTransform(Transform):
         row[PREGO_SOURCE_COLUMN] = source
         row[PREGO_EVIDENCE_COLUMN] = evidence
         evidence_class = classify_evidence(evidence)
+        if evidence_class == EVIDENCE_HABITAT:
+            self._record_habitat_value(evidence)
         row[PREGO_EVIDENCE_CLASS_COLUMN] = evidence_class
         knowledge_level, agent_type = edge_metadata_for(channel, evidence_class)
         row[KNOWLEDGE_LEVEL_COLUMN] = knowledge_level
@@ -888,6 +901,64 @@ class PregoTransform(Transform):
         row[PREGO_DIRECT_FLAG_COLUMN] = direct_flag
         row[PREGO_EVIDENCE_URL_COLUMN] = evidence_url
         return [row[c] for c in self.edge_header]
+
+    def _assert_archives_have_payloads(self, archives) -> None:
+        """
+        Verify every archive contains a ``database_pairs.tsv`` before writing.
+
+        ``_ensure_payload`` already raises on a tarball with no payload member,
+        but it runs lazily — the first time each archive is actually needed.
+        The genome archive sorts first and is only touched inside the emit
+        loop, i.e. *after* ``nodes.tsv`` and ``edges.tsv`` have been opened and
+        their headers written. A corrupt tarball would therefore replace the
+        previous run's outputs with a one-line file before failing (#716).
+
+        Reading only the tar index, not the members, so this is cheap even for
+        the 8.7 GB archive: it never decompresses a payload.
+
+        :param archives: PREGO association archives about to be processed.
+        :raises SystemExit: If any archive has no ``database_pairs.tsv`` member,
+            or cannot be opened as a tarball at all.
+        """
+        for archive_path in archives:
+            try:
+                with tarfile.open(archive_path, mode="r:gz") as tf:
+                    if not any(m.name.endswith("database_pairs.tsv") for m in tf):
+                        raise SystemExit(f"[prego] {archive_path.name}: no database_pairs.tsv member found in tarball.")
+            except tarfile.TarError as exc:
+                raise SystemExit(f"[prego] {archive_path.name}: not a readable tar.gz ({exc}).") from exc
+
+    def _record_habitat_value(self, evidence: str) -> None:
+        """
+        Track the distinct values landing in the habitat catch-all.
+
+        ``classify_evidence`` returns ``habitat`` for anything that is not a
+        tally, not a PMID and not a known resource-class prefix — it is a
+        residual bucket, not a positive identification. That is the right
+        default on the shipped data (measured over 3M real genome rows: 1,693
+        habitat rows spanning just 42 distinct values, all genuine habitat
+        names like ``Aquatic``, ``Wastewater``, ``Hydrothermal vents``), so
+        reclassifying them as unknown would destroy a real signal to guard
+        against a hypothetical one.
+
+        But the bucket silently absorbs anything new. If PREGO adds a fifth
+        resource class, every row of it is asserted to be a habitat and a
+        consumer filtering on ``prego_evidence_class='habitat'`` gets it mixed
+        in with nothing flagging the drift (#714).
+
+        Recording the distinct values makes that visible: the value space is
+        tiny and stable, so a genuinely new one stands out in the run summary.
+        Capped so a malformed upstream column cannot grow this without bound
+        across 44.7M rows — past the cap the count keeps rising but no new keys
+        are added, which is enough to show that something changed.
+
+        :param evidence: The raw evidence value classified as a habitat.
+        """
+        counts = self._stats["evidence_habitat_values"]
+        if evidence in counts or len(counts) < self._HABITAT_VALUE_CAP:
+            counts[evidence] += 1
+        else:
+            self._stats["evidence_habitat_values_uncounted"] += 1
 
     # ------------------------------------------------------------------ #
     # Drop tracking + report.
@@ -948,3 +1019,24 @@ class PregoTransform(Transform):
             print(f"[prego] edges_by_shape={by_shape}")
         if by_reason:
             print(f"[prego] rows_dropped_by_reason={by_reason}")
+
+        # The habitat class is a residual bucket, not a positive match (#714).
+        # Printing the distinct values makes upstream drift visible: the real
+        # value space is ~42 stable habitat names, so a new resource class
+        # shipped by PREGO shows up here as an unfamiliar entry instead of
+        # being silently asserted to be a habitat.
+        habitat_values = self._stats["evidence_habitat_values"]
+        if habitat_values:
+            top = sorted(habitat_values.items(), key=lambda kv: (-kv[1], kv[0]))[:10]
+            total = sum(habitat_values.values())
+            print(
+                f"[prego] evidence_class=habitat is a residual bucket: {total:,} rows across "
+                f"{len(habitat_values):,} distinct values (top: {', '.join(f'{v}({n:,})' for v, n in top)})"
+            )
+            if len(habitat_values) >= self._HABITAT_VALUE_CAP:
+                print(
+                    f"[prego] WARNING: distinct habitat values hit the {self._HABITAT_VALUE_CAP:,} cap "
+                    f"({self._stats['evidence_habitat_values_uncounted']:,} further occurrences not "
+                    f"attributed). The measured value space is ~42 — this many distinct values means "
+                    f"the upstream column shape has changed."
+                )

@@ -717,9 +717,18 @@ def test_threshold_drops_only_rows_below_it(prego_input_dir: Path, prego_output_
     """
     Raising the threshold drops flat-channel rows scoring below it.
 
-    The fixture's Isolates rows score 3 and 4, so a 3.5 cut must keep the 4s
-    and drop the 3s — and must do so on each row's own score, not on the
-    channel's documented constant.
+    The fixture's flat rows score 3 and 4, so a 3.5 cut must keep the 4s and
+    drop the 3s — and must do so on each row's own score, not on the channel's
+    documented constant.
+
+    The raw-score assertion applies to FLAT rows only. Continuous rows are
+    filtered on the calibrated star axis, where a row at or above its
+    resource's cutoff rates STAR_MAX regardless of its raw score — so a
+    continuous row scoring 2.0 can legitimately outrank the 3.5 cut. Asserting
+    `raw >= 3.5` over every kept edge conflated the two axes and passed only
+    because both surviving continuous rows happened to score 4.0; a fixture row
+    scoring 2.0 in the top 12.5% of its resource would have failed the test for
+    correct behaviour.
     """
     baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
     baseline.run(show_status=False)
@@ -731,7 +740,22 @@ def test_threshold_drops_only_rows_below_it(prego_input_dir: Path, prego_output_
 
     assert len(kept) < len(all_edges), "a 3.5 threshold must drop the score-3 rows"
     assert kept, "it must not drop everything"
-    assert all(float(e["prego_score"]) >= 3.5 for e in kept)
+
+    flat_kept = [e for e in kept if e["prego_channel"] != CHANNEL_ENVIRONMENTAL]
+    assert flat_kept, "the flat-channel arm of this test must not be vacuous"
+    assert all(float(e["prego_score"]) >= 3.5 for e in flat_kept)
+
+    # The continuous arm: every kept row must be at or above its resource's
+    # calibrated cutoff, which is the quantity the filter actually compares.
+    cutoffs = {}
+    for line in filtered_transform.calibration_table_file.read_text().splitlines()[1:]:
+        if line.strip():
+            resource, _n, _tau, cutoff_score, _kept = line.split("\t")
+            cutoffs[resource] = float(cutoff_score)
+    continuous_kept = [e for e in kept if e["prego_channel"] == CHANNEL_ENVIRONMENTAL]
+    assert continuous_kept, "the continuous arm of this test must not be vacuous"
+    for e in continuous_kept:
+        assert float(e["prego_score"]) >= cutoffs[e["prego_source"]]
 
 
 def test_threshold_is_read_from_the_environment(prego_input_dir, prego_output_dir, monkeypatch):

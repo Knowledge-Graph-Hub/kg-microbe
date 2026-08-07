@@ -59,7 +59,7 @@ first — a coverage bias worth knowing about independent of quality.
 
 from __future__ import annotations
 
-from typing import Dict, Iterable, List, Sequence, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 
 class GoldStandard:
@@ -243,3 +243,126 @@ def is_monotone_increasing(results: Sequence[Dict[str, float]]) -> bool:
         # ``all()`` over an empty sequence is vacuously true.
         return False
     return all(a <= b for a, b in zip(folds, folds[1:], strict=False))
+
+
+# ---------------------------------------------------------------------------
+# Labelled evidence — precision measurement.
+#
+# Fold enrichment needs a null model, and the uniform subject x object null
+# used above controls for neither taxon annotation depth nor term ubiquity.
+# Where labelled *negatives* exist that problem disappears: precision is
+# measured directly against the empirical base rate, with nothing assumed
+# about how pairs are drawn.
+#
+# KG-Microbe has such labels. BacDive records assay outcomes with polarity —
+# METPO:2000302 "shows activity of" and METPO:2000303 "does not show activity
+# of" — so chaining strain -> assay -> GO and lifting strain to NCBITaxon
+# yields positives and negatives from wet-lab phenotype tests, provenance-
+# disjoint from both genome annotation and trait curation.
+# ---------------------------------------------------------------------------
+
+
+class LabelledEvidence:
+
+    """
+    Positive/negative labels for ``(subject, object)`` pairs.
+
+    Unlike :class:`GoldStandard`, which only knows which pairs are asserted,
+    this knows which are asserted *false*. That is what makes precision
+    measurable without a null model.
+    """
+
+    def __init__(self, positives: Iterable[Tuple[str, str]], negatives: Iterable[Tuple[str, str]]) -> None:
+        """
+        Build labelled evidence from disjoint positive and negative pairs.
+
+        :param positives: Pairs the evidence asserts hold.
+        :param negatives: Pairs the evidence asserts do not hold.
+        :raises ValueError: If a pair appears in both, which would make its
+            label ambiguous rather than merely unknown.
+        """
+        self.positives: Set[Tuple[str, str]] = set(positives)
+        self.negatives: Set[Tuple[str, str]] = set(negatives)
+        overlap = self.positives & self.negatives
+        if overlap:
+            raise ValueError(
+                f"{len(overlap)} pair(s) labelled both positive and negative; "
+                "resolve or exclude conflicting evidence before constructing"
+            )
+
+    def label(self, subject: str, object_: str) -> Optional[bool]:
+        """
+        Return True, False, or None when the pair is unlabelled.
+
+        :param subject: Subject CURIE.
+        :param object_: Object CURIE.
+        :return: The label, or None if this evidence says nothing about the pair.
+        """
+        key = (subject, object_)
+        if key in self.positives:
+            return True
+        if key in self.negatives:
+            return False
+        return None
+
+    def base_rate(self) -> float:
+        """
+        Return the fraction of labelled pairs that are positive.
+
+        This is the precision a selector achieves by picking labelled pairs at
+        random, and the only reference point precision needs — it is measured,
+        not modelled.
+
+        :return: Base rate in [0, 1].
+        :raises ValueError: If there are no labelled pairs.
+        """
+        total = len(self.positives) + len(self.negatives)
+        if total == 0:
+            raise ValueError("no labelled pairs; base rate is undefined")
+        return len(self.positives) / total
+
+
+def precision_by_window(
+    scored: Sequence[Tuple[float, bool]],
+    windows: int = 5,
+) -> List[Dict[str, float]]:
+    """
+    Return precision per equal-count score window, ascending by score.
+
+    Precision is the fraction of labelled edges in the window whose label is
+    positive. Compare against :meth:`LabelledEvidence.base_rate`; a score that
+    discriminates produces windows rising above it.
+
+    Windows break only where the score changes, for the same reason as
+    :func:`enrichment_by_window` — an index-based slice would let the sort's
+    tiebreak decide which tied rows land in which window.
+
+    :param scored: ``(score, is_positive)`` pairs for labelled edges only.
+    :param windows: Number of equal-count windows.
+    :return: One dict per window with score bounds, n, precision, degenerate.
+    :raises ValueError: If ``windows`` is not positive.
+    """
+    results = enrichment_by_window(scored, baseline=1.0, windows=windows)
+    for row in results:
+        # enrichment_by_window with baseline 1.0 makes `fold` the raw rate.
+        row["precision"] = row.pop("fold")
+        row.pop("hit_rate", None)
+    return results
+
+
+def lift(precision: float, base_rate: float) -> float:
+    """
+    Return precision relative to the measured base rate.
+
+    Distinct from :func:`fold_enrichment` in that the denominator is observed
+    rather than derived from a uniform-cell null, so it carries none of that
+    null's assumptions about how pairs are drawn.
+
+    :param precision: Observed precision.
+    :param base_rate: Fraction of labelled pairs that are positive.
+    :return: Lift; 1.0 means no better than picking labelled pairs at random.
+    :raises ValueError: If ``base_rate`` is not positive.
+    """
+    if base_rate <= 0:
+        raise ValueError("base rate must be positive to compute lift")
+    return precision / base_rate

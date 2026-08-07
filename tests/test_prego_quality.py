@@ -13,9 +13,12 @@ import pytest
 
 from kg_microbe.transform_utils.prego.quality import (
     GoldStandard,
+    LabelledEvidence,
     enrichment_by_window,
     fold_enrichment,
     is_monotone_increasing,
+    lift,
+    precision_by_window,
 )
 
 
@@ -219,3 +222,86 @@ def test_single_usable_window_is_also_insufficient():
     results = enrichment_by_window(scored, baseline=0.1, windows=5)
     assert sum(1 for r in results if not r["degenerate"]) < 2
     assert is_monotone_increasing(results) is False
+
+
+# ---------------------------------------------------------------------------
+# Labelled evidence — precision without a null model
+# ---------------------------------------------------------------------------
+
+
+def test_labelled_evidence_reports_three_states():
+    """Unlabelled must be distinguishable from labelled-negative."""
+    ev = LabelledEvidence(positives=[("T:1", "GO:1")], negatives=[("T:1", "GO:2")])
+    assert ev.label("T:1", "GO:1") is True
+    assert ev.label("T:1", "GO:2") is False
+    assert ev.label("T:1", "GO:9") is None, "unknown is not the same as negative"
+
+
+def test_conflicting_labels_are_refused():
+    """
+    A pair labelled both ways is ambiguous, not merely unknown.
+
+    Real assay data has this: 12,916 (taxon, GO) pairs had one strain testing
+    positive and another negative. Silently picking a side would invent
+    evidence, so construction refuses and the caller must exclude them.
+    """
+    with pytest.raises(ValueError):
+        LabelledEvidence(positives=[("T:1", "GO:1")], negatives=[("T:1", "GO:1")])
+
+
+def test_base_rate_is_measured_not_modelled():
+    """
+    The reference point is the observed positive fraction.
+
+    This is what makes precision free of the uniform-cell assumption that
+    fold enrichment's null carries.
+    """
+    ev = LabelledEvidence(
+        positives=[("T:1", "GO:1"), ("T:2", "GO:1")],
+        negatives=[("T:3", "GO:1"), ("T:4", "GO:1"), ("T:5", "GO:1"), ("T:6", "GO:1")],
+    )
+    assert ev.base_rate() == pytest.approx(2 / 6)
+
+
+def test_base_rate_refuses_empty_evidence():
+    """No labels means no reference point, not a zero one."""
+    with pytest.raises(ValueError):
+        LabelledEvidence([], []).base_rate()
+
+
+def test_precision_windows_are_tie_safe():
+    """Same tie guarantee as the enrichment path."""
+    scored = [(i / 100.0, i % 2 == 0) for i in range(20)] + [(4.0, False)] * 80
+    results = precision_by_window(scored, windows=5)
+    tied = [r for r in results if r["score_min"] == 4.0]
+    assert len(tied) == 1 and tied[0]["n"] == 80
+
+
+def test_precision_is_the_positive_fraction():
+    """Precision must be the raw rate, not scaled by any baseline."""
+    # Six rows per score so the two windows split cleanly on the score change.
+    scored = [(0.1, i < 3) for i in range(6)] + [(0.9, i < 5) for i in range(6)]
+    results = precision_by_window(scored, windows=2)
+    assert [r["n"] for r in results] == [6, 6]
+    assert results[0]["precision"] == pytest.approx(3 / 6)
+    assert results[1]["precision"] == pytest.approx(5 / 6)
+    assert all("hit_rate" not in r for r in results), "precision replaces hit_rate"
+
+
+def test_lift_of_one_means_no_better_than_random():
+    """
+    Lift compares against measured base rate, not a modelled null.
+
+    Measured on real assay data: the continuous channel scored 0.3215 against
+    a 0.3529 base rate — lift 0.91, i.e. slightly worse than picking labelled
+    pairs at random — while the flat channels reached 0.4897, lift 1.39.
+    """
+    assert lift(0.3529, 0.3529) == pytest.approx(1.0)
+    assert lift(0.3215, 0.3529) == pytest.approx(0.911, abs=1e-3)
+    assert lift(0.4897, 0.3529) == pytest.approx(1.388, abs=1e-3)
+
+
+def test_lift_refuses_a_zero_base_rate():
+    """A zero base rate would report infinite lift from nothing."""
+    with pytest.raises(ValueError):
+        lift(0.5, 0.0)

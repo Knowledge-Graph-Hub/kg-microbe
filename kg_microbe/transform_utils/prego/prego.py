@@ -539,6 +539,12 @@ class PregoTransform(Transform):
         for archive_path in archives:
             payload_file = self._ensure_payload(archive_path)
             print(f"[prego] calibration pass over {payload_file.name}")
+            # The channel is a property of the archive, not of any column —
+            # same derivation as the emit pass. Reading it from row[5] here
+            # would calibrate on a different quantity than the filter applies.
+            channel = channel_for_archive(archive_path.name)
+            if not is_continuous_channel(channel):
+                continue
             row_iter = iter_database_pairs(payload_file)
             if show_status:
                 row_iter = tqdm(row_iter, desc=f"calibrate {archive_path.name}", unit="rows")
@@ -549,7 +555,6 @@ class PregoTransform(Transform):
                     entity1_type = int(row[0])
                     entity2_type = int(row[2])
                     source = row[4]
-                    channel = row[5]
                     score = float(row[6])
                 except (ValueError, IndexError):
                     continue
@@ -563,8 +568,6 @@ class PregoTransform(Transform):
                 if outcome not in _KEEP_OUTCOMES:
                     continue
                 if outcome == KEEP_TAXON_TO_GO and not row[3].startswith("GO:"):
-                    continue
-                if not is_continuous_channel(channel):
                     continue
                 histograms.setdefault(source, ScoreHistogram()).add(score)
         return histograms

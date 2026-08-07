@@ -28,14 +28,20 @@ from kg_microbe.transform_utils.prego.calibration import (
     star_for_row,
     validate_tau,
 )
+from kg_microbe.transform_utils.prego.utils import (
+    CHANNEL_ENVIRONMENTAL,
+    CHANNEL_GENOMES,
+    CHANNEL_LITERATURE,
+)
 
 # Channel shares measured over all 44,716,161 emitted PREGO edges.
+# Channel shares measured over all 44,716,161 emitted PREGO edges. Keyed by
+# channel now that prego_channel is archive-derived: the genome channel carries
+# Isolates + Genome annotation + MAG + SAG (28.66 + 9.17 + 7.27 + 1.79), and the
+# literature channel the PMID rows.
 MEASURED_FLAT_SHARES = {
-    "Isolates": 0.2866,
-    "Genome annotation": 0.0917,
-    "Metagenome-Assembled Genome": 0.0727,
-    "Single Amplified Genome": 0.0179,
-    "PMID:12345678": 0.0005,
+    CHANNEL_GENOMES: 0.4689,
+    CHANNEL_LITERATURE: 0.0005,
 }
 MEASURED_CONTINUOUS_SHARE = 0.5300
 
@@ -45,32 +51,34 @@ MEASURED_CONTINUOUS_SHARE = 0.5300
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(
-    "channel",
-    ["402 of 487 samples", "1 of 1597 samples", "12183 of 40405 samples"],
-)
-def test_evidence_tally_is_the_continuous_channel(channel):
-    """Environmental Samples rows are identified by their tally shape."""
-    assert is_continuous_channel(channel)
-    assert flat_channel_star(channel) is None
+def test_environmental_samples_is_the_continuous_channel():
+    """
+    The continuous channel is now named, not shape-matched.
+
+    ``prego_channel`` used to carry PREGO's column 6 verbatim, so "continuous"
+    had to be inferred from an evidence tally like ``402 of 487 samples``. That
+    inference silently defined the channel for every measurement in
+    PREGO_SCORE_VALIDATION.md. The column now holds the archive-derived
+    channel, so the check is a direct comparison and the tally — which lives in
+    ``prego_evidence`` — is no longer a channel at all.
+    """
+    assert is_continuous_channel(CHANNEL_ENVIRONMENTAL)
+    assert flat_channel_star(CHANNEL_ENVIRONMENTAL) is None
+    for tally in ("402 of 487 samples", "1 of 1597 samples", "12183 of 40405 samples"):
+        assert not is_continuous_channel(tally), "an evidence tally is not a channel"
 
 
 @pytest.mark.parametrize(
     "channel,expected",
-    [
-        ("Isolates", 4.0),
-        ("Genome annotation", 4.0),
-        ("Metagenome-Assembled Genome", 4.0),
-        ("Single Amplified Genome", 4.0),
-        ("PMID:24914180", 3.0),
-    ],
+    [(CHANNEL_GENOMES, 4.0), (CHANNEL_LITERATURE, 3.0)],
 )
-def test_flat_channels_get_their_author_assigned_tier(channel, expected):
+def test_flat_channels_are_recognised_by_name(channel, expected):
     """
-    Flat channels carry a constant assigned by PREGO's authors.
+    Flat channels are those whose score PREGO's authors assigned by fiat.
 
-    These are tiers, not measurements — every row in the channel has the
-    same value, so there is nothing within the channel to threshold on.
+    The returned constant documents the expected value; ``star_for_row`` still
+    rates a row by its own score, so a row disagreeing with its channel's tier
+    is preserved rather than promoted.
     """
     assert flat_channel_star(channel) == expected
     assert not is_continuous_channel(channel)
@@ -78,8 +86,8 @@ def test_flat_channels_get_their_author_assigned_tier(channel, expected):
 
 def test_unrecognised_channel_is_neither():
     """An unknown channel must not be silently coerced into a tier."""
-    assert flat_channel_star("Kidneys") is None or isinstance(flat_channel_star("Kidneys"), float)
-    assert not is_continuous_channel("Kidneys")
+    assert flat_channel_star("mystery_channel") is None or isinstance(flat_channel_star("mystery_channel"), float)
+    assert not is_continuous_channel("mystery_channel")
 
 
 # ---------------------------------------------------------------------------
@@ -175,13 +183,13 @@ def test_flat_channel_rows_are_rated_by_their_own_score():
     rated them 4.
     """
     cutoffs = {"MGnify": _bin_index(2.0)}
-    assert keep_row("Isolates", 4.0, "MGnify", cutoffs, tau=3.5) is True
+    assert keep_row(CHANNEL_GENOMES, 4.0, "MGnify", cutoffs, tau=3.5) is True
     # An Isolates row that actually scores 3 must not be promoted to 4.
-    assert keep_row("Isolates", 3.0, "MGnify", cutoffs, tau=3.5) is False
-    assert star_for_row("Isolates", 3.0, "MGnify", cutoffs) == 3.0
+    assert keep_row(CHANNEL_GENOMES, 3.0, "MGnify", cutoffs, tau=3.5) is False
+    assert star_for_row(CHANNEL_GENOMES, 3.0, "MGnify", cutoffs) == 3.0
     # PMID sits at 3.0, so a 3.5 threshold drops it.
-    assert keep_row("PMID:1", 3.0, "MGnify", cutoffs, tau=3.0) is True
-    assert keep_row("PMID:1", 3.0, "MGnify", cutoffs, tau=3.5) is False
+    assert keep_row(CHANNEL_LITERATURE, 3.0, "MGnify", cutoffs, tau=3.0) is True
+    assert keep_row(CHANNEL_LITERATURE, 3.0, "MGnify", cutoffs, tau=3.5) is False
 
 
 def test_continuous_rows_are_judged_against_their_own_resource():
@@ -195,8 +203,8 @@ def test_continuous_rows_are_judged_against_their_own_resource():
     # table have to compare on the same quantity, and a bin's lower edge can
     # exceed the scores inside it for ~11.5% of representable 4-dp values.
     cutoffs = {"MGnify": _bin_index(1.0), "MG-RAST metagenome study": _bin_index(3.0)}
-    assert keep_row("10 of 20 samples", 2.0, "MGnify", cutoffs, tau=4.0) is True
-    assert keep_row("10 of 20 samples", 2.0, "MG-RAST metagenome study", cutoffs, tau=4.0) is False
+    assert keep_row(CHANNEL_ENVIRONMENTAL, 2.0, "MGnify", cutoffs, tau=4.0) is True
+    assert keep_row(CHANNEL_ENVIRONMENTAL, 2.0, "MG-RAST metagenome study", cutoffs, tau=4.0) is False
 
 
 def test_uncalibratable_row_is_kept_not_dropped():
@@ -206,13 +214,13 @@ def test_uncalibratable_row_is_kept_not_dropped():
     Dropping rows we cannot calibrate would remove data for a reason
     unrelated to confidence — the exact failure mode this module prevents.
     """
-    assert keep_row("Kidneys", 4.0, "unknown", {}, tau=2.0) is True
-    assert star_for_row("Kidneys", 4.0, "unknown", {}) is None
+    assert keep_row("mystery_channel", 4.0, "unknown", {}, tau=2.0) is True
+    assert star_for_row("mystery_channel", 4.0, "unknown", {}) is None
 
 
 def test_continuous_row_with_no_cutoff_for_its_resource_is_kept():
     """A resource missing from the calibration table must not silently vanish."""
-    assert keep_row("10 of 20 samples", 2.0, "BrandNewResource", {}, tau=2.0) is True
+    assert keep_row(CHANNEL_ENVIRONMENTAL, 2.0, "BrandNewResource", {}, tau=2.0) is True
 
 
 # ---------------------------------------------------------------------------

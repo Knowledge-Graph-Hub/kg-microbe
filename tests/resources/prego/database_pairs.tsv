@@ -9,15 +9,3 @@
 -2	562	-25	BTO:0000763	BioProject	PMID:12345680	3	TRUE	
 -2	1000570	-2	9606	JGI IMG	Human	4	TRUE	
 badrow_with_only_three_columns	x	y
--2	100	-21	GO:0005000	MGnify	1 of 20 samples	0.2	TRUE	
--2	100	-21	GO:0005001	MGnify	2 of 20 samples	0.4	TRUE	
--2	100	-21	GO:0005002	MGnify	3 of 20 samples	0.6	TRUE	
--2	100	-21	GO:0005003	MGnify	4 of 20 samples	0.8	TRUE	
--2	100	-21	GO:0005004	MGnify	5 of 20 samples	1.2	TRUE	
--2	100	-21	GO:0005005	MGnify	6 of 20 samples	1.71	TRUE	
--2	100	-21	GO:0005006	MGnify	7 of 20 samples	1.71	TRUE	
--2	100	-21	GO:0005007	MGnify	8 of 20 samples	1.71	TRUE	
--2	100	-21	GO:0005008	MGnify	9 of 20 samples	2.4	TRUE	
--2	100	-21	GO:0005009	MGnify	10 of 20 samples	3.2	TRUE	
--2	100	-21	GO:0005010	MGnify	11 of 20 samples	4.0	TRUE	
--2	100	-21	GO:0005011	MGnify	12 of 20 samples	4.0	TRUE	

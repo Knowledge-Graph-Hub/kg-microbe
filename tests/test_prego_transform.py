@@ -43,17 +43,27 @@ def prego_input_dir(tmp_path: Path) -> Path:
     """
     Build the PREGO raw input layout the transform expects.
 
-    Wraps ``tests/resources/prego/database_pairs.tsv`` in a
-    ``literature.tar.gz``-shaped tarball under
-    ``<tmp>/raw/prego/literature.tar.gz``, matching the real archive
-    layout (single-file payload named ``database_pairs.tsv``).
+    Two tarballs under ``<tmp>/raw/prego/``, each with the real archive
+    layout (single-file payload named ``database_pairs.tsv``):
+
+    * ``literature.tar.gz`` — the flat-scored rows.
+    * ``environmental_samples.tar.gz`` — the continuous-scored rows.
+
+    Both are required. The channel is derived from the *archive name*, so a
+    single archive can only ever exercise one of the two calibration paths;
+    when every fixture row lived in ``literature.tar.gz`` the whole
+    histogram → cutoff → filter path was dead in every test.
     """
     raw_dir = tmp_path / "raw"
     prego_raw = raw_dir / "prego"
     prego_raw.mkdir(parents=True)
-    archive = prego_raw / "literature.tar.gz"
-    with tarfile.open(archive, "w:gz") as tf:
+    # Two archives, mirroring production: the channel is derived from the
+    # archive name, so a single archive cannot exercise both the flat and the
+    # continuous (environmental) calibration paths.
+    with tarfile.open(prego_raw / "literature.tar.gz", "w:gz") as tf:
         tf.add(FIXTURE_DIR / "database_pairs.tsv", arcname="database_pairs.tsv")
+    with tarfile.open(prego_raw / "environmental_samples.tar.gz", "w:gz") as tf:
+        tf.add(FIXTURE_DIR / "database_pairs_environmental.tsv", arcname="database_pairs.tsv")
     return raw_dir
 
 
@@ -790,7 +800,10 @@ def test_calibration_table_is_written_and_matches_what_ships(prego_input_dir: Pa
 
     edges = _read_tsv(transform.output_edge_file)
     for resource, (n_calibrated, kept_fraction) in table.items():
-        shipped = sum(1 for e in edges if e["prego_source"] == resource and " of " in e["prego_channel"])
+        # Continuous-channel edges are identified by the archive-derived
+        # channel, not by the shape of the raw evidence string — that string
+        # now lives in `prego_evidence`.
+        shipped = sum(1 for e in edges if e["prego_source"] == resource and e["prego_channel"] == CHANNEL_ENVIRONMENTAL)
         expected = round(kept_fraction * n_calibrated)
         assert shipped == expected, (
             f"{resource}: table claims {kept_fraction:.4f} of {n_calibrated} ({expected} edges) but {shipped} shipped"
@@ -816,6 +829,8 @@ def test_default_threshold_drops_no_edges(prego_input_dir: Path, prego_output_di
     filtered = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.0)
     filtered.run(show_status=False)
     assert len(_read_tsv(filtered.output_edge_file)) < unfiltered, "the knob must actually do something"
+
+
 # Channel identification and edge metadata (#694, #695)
 # ---------------------------------------------------------------------------
 

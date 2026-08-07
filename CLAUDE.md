@@ -226,6 +226,52 @@ Optional, for the ontology transforms:
   `strict` (raise) or `warn`. GO defaults to strict because a mismatch silently
   miscategorises terms; the other two default to warn.
 
+- `PREGO_MIN_CONFIDENCE`: star threshold in `[0, 4]` applied to the PREGO
+  transform. Default `0` — a no-op that emits all ~44.7 M edges, so unset
+  behaviour is unchanged. **This is a size lever, not a quality filter.** See
+  the table below before setting it.
+
+  PREGO's score is not one scale, so the knob does not mean the same thing in
+  every channel (`docs/PREGO_SCORE_VALIDATION.md` has the measurements):
+
+  | channel | share | what the threshold does |
+  |---|---|---|
+  | `environmental_samples` | ~53% | Genuine ranking. Retains about `1 - τ/4` of each resource, by within-resource empirical CDF. |
+  | `annotated_genomes_isolates` | ~47% | Near all-or-nothing. Predominantly a flat 4.0 assigned by PREGO's authors, so `τ ≤ 4` keeps essentially the whole channel — but see the caveat below. |
+  | `literature` | ~0.05% | All-or-nothing. Flat 3.0, so the entire channel vanishes the moment `τ > 3`. |
+
+  The genome channel is *not* uniformly 4.0. Sampled across the real 8.68 GB
+  payload, roughly 0.1% of rows carry a 3 — and not only PMID-evidenced ones;
+  `Isolates` and `Single Amplified Genome` rows appear at 3 too. Because
+  `star_for_row` deliberately uses each flat row's **own** score rather than its
+  channel's documented constant (so a row disagreeing with its tier is kept as a
+  data-quality signal instead of being silently promoted), those rows drop once
+  `τ > 3` — on the order of 20k edges.
+
+  Two consequences worth internalising. Above `τ = 3` you delete the literature
+  channel outright — on provenance, not on quality. And within the continuous
+  channel the score tracks how *common* a GO term is rather than how well
+  supported it is: measured Spearman +0.2592 of term degree against mean score,
+  with mean score climbing steeply across the bottom three deciles (0.67 → 1.98)
+  then flat at ~2.0 for the rest. So raising `τ` strips the rare,
+  taxon-specific tail first and barely discriminates within the bulk — the
+  opposite of what you want if the goal is to keep specific, informative edges.
+  Full decile table in `docs/PREGO_SCORE_VALIDATION.md`; reproduce with
+  `scripts/prego_validation/ubiquity_check.py`.
+
+  An unrecognised channel is kept rather than dropped, so a newly added or
+  renamed archive fails open — the transform warns when it sees one.
+
+  Calibration is per-resource (MGnify and MG-RAST have different marginals) and
+  runs as a first pass over the archives; each run writes the cutoffs it
+  actually applied to `data/transformed/prego/confidence_calibration.tsv`. The
+  channel is derived from the **archive filename**, not from any column.
+
+  **If your goal is merge memory or graph size, reach for `merge.noprego.yaml`
+  first** — it drops PREGO entirely (~76% of merge input) and needs none of this
+  machinery. `PREGO_MIN_CONFIDENCE` is the finer-grained alternative for when
+  you want *some* PREGO rather than none.
+
 ### Ontology failures abort; they do not degrade
 
 `OntologyDbUnavailableError` (no usable DB) and `OntologyVersionMismatchError` (a

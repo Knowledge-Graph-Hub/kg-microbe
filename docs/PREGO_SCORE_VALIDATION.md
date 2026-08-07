@@ -219,6 +219,67 @@ Supporting arguments:
 2. **Per-predicate thresholds, not one global knob.** A single `min_confidence` is a validated quality filter on `location_of` and an arbitrary cut on `capable_of` simultaneously.
 3. **Dropping the continuous GO block removes 23,289,791 rows — 52.08% of rows but only 33.33% of bytes**, since those rows are shorter. `edges.tsv` goes from 7.38 GiB to **4.92 GiB**, not the ~3.5 GB stated earlier. **No merge benchmark was run**, so the claim that this "largely dissolves" the 48 GB problem in #693 is unverified.
 
+### How `PREGO_MIN_CONFIDENCE` relates to `merge.noprego.yaml`
+
+`PREGO_MIN_CONFIDENCE` (#697) ships a single global threshold — precisely the
+knob recommendation 2 above argues against. That tension is real and is not
+resolved by this document, so it is worth stating plainly what the knob is for.
+
+**`merge.noprego.yaml` (#691) is the primary size lever.** It drops PREGO
+entirely — ~76% of merge input, 44.7 M edges, 7.38 GiB — and requires no
+calibration pass, no histogram, no per-resource cutoffs and no threshold
+semantics. If the goal is to make the merge fit in RAM, that is the mechanism
+to reach for, and nothing in this document weakens it.
+
+**`PREGO_MIN_CONFIDENCE` is the finer-grained alternative to it**, for the case
+where you want *some* PREGO rather than none. It is a size lever with a
+principled ordering inside one channel, not a validated quality filter:
+
+- On `ENVO -location_of->` it is closest to a quality filter — overlap with
+  BacDive rises monotonically with score — but 3.0 is an in-sample optimum, not
+  a validated operating point.
+- On `taxon -capable_of-> GO` it is an arbitrary cut. No gold standard
+  established a score ranking there.
+- On the flat channels it is not a score filter at all, but provenance
+  selection by another name: those rows carry an author-assigned constant, so
+  the threshold either keeps the whole channel or deletes it.
+
+The knob defaults to `0` (no-op), so neither mechanism is on unless chosen.
+Documented with the full per-channel table in `CLAUDE.md`.
+
+---
+
+## Ubiquity: the score tracks how common a GO term is
+
+Measured 2026-08-07 on the full `data/transformed/prego/edges.tsv` (7.93 GB,
+pre-#703 layout) via `scripts/prego_validation/ubiquity_check.py`. 3,830 GO
+terms with >=50 continuous-channel edges.
+
+| ubiquity decile | degree range | terms | mean score |
+|---:|---|---:|---:|
+| 1 | 54–3,036 | 383 | 0.666 |
+| 2 | 3,036–5,393 | 383 | 1.657 |
+| 3 | 5,406–6,322 | 383 | 1.977 |
+| 4 | 6,323–6,787 | 383 | 2.031 |
+| 5 | 6,793–6,839 | 383 | 2.099 |
+| 6 | 6,839–6,982 | 383 | 2.056 |
+| 7 | 6,982–7,106 | 383 | 2.025 |
+| 8 | 7,106–7,151 | 383 | 2.021 |
+| 9 | 7,151–7,184 | 383 | 2.013 |
+| 10 | 7,184–7,218 | 383 | 2.007 |
+
+**Spearman rank correlation (GO degree vs mean score): +0.2592.**
+
+Read the shape, not just the coefficient. The relationship is **not** a smooth
+gradient: mean score climbs steeply from decile 1 to decile 3 (0.67 → 1.98) and
+then plateaus flat at ~2.0 for deciles 4–10. So the score separates *rare* terms
+from everything else, and carries almost no ordering among the common ones.
+
+Consequence for thresholding: raising `τ` strips the low-degree tail first —
+the rare, taxon-specific annotations — while barely discriminating within the
+bulk. That is the opposite of what a confidence filter should do if the goal is
+to keep specific, informative edges.
+
 ---
 
 ## Caveats

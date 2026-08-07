@@ -537,14 +537,19 @@ class PregoTransform(Transform):
         """
         histograms: dict = {}
         for archive_path in archives:
-            payload_file = self._ensure_payload(archive_path)
-            print(f"[prego] calibration pass over {payload_file.name}")
             # The channel is a property of the archive, not of any column —
             # same derivation as the emit pass. Reading it from row[5] here
             # would calibrate on a different quantity than the filter applies.
             channel = channel_for_archive(archive_path.name)
             if not is_continuous_channel(channel):
+                # Tested before extraction: only the continuous channel has a
+                # distribution to histogram, so decompressing the 8.7 GB
+                # isolates archive here would buy nothing. The emit pass
+                # extracts it when it actually needs it.
+                print(f"[prego] calibration pass skips {archive_path.name} (flat channel {channel!r})")
                 continue
+            payload_file = self._ensure_payload(archive_path)
+            print(f"[prego] calibration pass over {payload_file.name} (channel {channel!r})")
             row_iter = iter_database_pairs(payload_file)
             if show_status:
                 row_iter = tqdm(row_iter, desc=f"calibrate {archive_path.name}", unit="rows")

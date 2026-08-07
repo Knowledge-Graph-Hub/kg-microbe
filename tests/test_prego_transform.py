@@ -141,12 +141,34 @@ def test_run_emits_nodes_and_edges(prego_transform: PregoTransform):
     assert len(edges) >= 5, "expected ≥5 emitted edges from the fixture"
 
 
+def test_edges_carry_the_originating_resource(prego_transform: PregoTransform):
+    """
+    The source/resource column must survive onto emitted edges.
+
+    It used to be read and immediately discarded (``del source``), so edges
+    carried ``prego_score`` and ``prego_channel`` but no way to tell which
+    resource produced them. Confidence calibration has to be per-resource —
+    the Environmental Samples channel aggregates MGnify and MG-RAST, whose
+    score marginals differ — so a shared cutoff across them would conflate
+    distributions that are not comparable.
+    """
+    prego_transform.run()
+    edges = _read_tsv(prego_transform.output_edge_file)
+    assert "prego_source" in edges[0], "prego_source missing from the edge header"
+    assert all(e["prego_source"] for e in edges), "every emitted edge must carry its resource"
+    # Passed through verbatim from the fixture's source column, so the values
+    # are real resource names rather than a derived or normalized label.
+    assert {e["prego_source"] for e in edges} == {"BioProject", "JGI IMG", "MGnify"}
+
+
 def test_taxon_to_go_edges_use_capable_of(prego_transform: PregoTransform):
     """NCBITaxon→GO edges use biolink:capable_of, all 3 GO namespaces."""
     prego_transform.run()
     edges = _read_tsv(prego_transform.output_edge_file)
     tax_go = [e for e in edges if e["subject"] == "NCBITaxon:100" and e["object"].startswith("GO:")]
-    assert len(tax_go) == 3, f"expected 3 canonical NCBITaxon:100→GO edges (BP/CC/MF), got {len(tax_go)}"
+    # 3 flat-channel rows (BP/CC/MF) plus the 12 continuous-channel rows that
+    # exercise the calibration path.
+    assert len(tax_go) == 15, f"expected 15 canonical NCBITaxon:100→GO edges, got {len(tax_go)}"
     assert all(e["predicate"] == CAPABLE_OF_PREDICATE for e in tax_go)
 
 
@@ -648,3 +670,143 @@ def test_missing_archives_raises(tmp_path: Path):
     transform = PregoTransform(input_dir=tmp_path / "raw", output_dir=out)
     with pytest.raises(SystemExit, match="no .* archives"):
         transform.run()
+
+
+# ---------------------------------------------------------------------------
+# Confidence thresholding (end-to-end)
+# ---------------------------------------------------------------------------
+
+
+def test_default_threshold_emits_everything(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The default must leave the emitted edge set unchanged.
+
+    Note this branch also adds a prego_source column, so the files are not
+    byte-identical to a pre-branch run; the invariant is that no edge is
+    dropped at the default threshold.
+
+    Filtering is opt-in; a transform that started silently dropping edges on
+    upgrade would be far worse than one that needs a flag.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    assert baseline.min_confidence == 0.0
+    baseline.run(show_status=False)
+    edges = _read_tsv(baseline.output_edge_file)
+    assert edges, "fixture must emit edges at the default threshold"
+    # No calibration pass runs, so no table is written.
+    assert not baseline.calibration_table_file.exists()
+
+
+def test_threshold_drops_only_rows_below_it(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    Raising the threshold drops flat-channel rows scoring below it.
+
+    The fixture's Isolates rows score 3 and 4, so a 3.5 cut must keep the 4s
+    and drop the 3s — and must do so on each row's own score, not on the
+    channel's documented constant.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    baseline.run(show_status=False)
+    all_edges = _read_tsv(baseline.output_edge_file)
+
+    filtered_transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=3.5)
+    filtered_transform.run(show_status=False)
+    kept = _read_tsv(filtered_transform.output_edge_file)
+
+    assert len(kept) < len(all_edges), "a 3.5 threshold must drop the score-3 rows"
+    assert kept, "it must not drop everything"
+    assert all(float(e["prego_score"]) >= 3.5 for e in kept)
+
+
+def test_threshold_is_read_from_the_environment(prego_input_dir, prego_output_dir, monkeypatch):
+    """PREGO_MIN_CONFIDENCE configures the run, matching the repo's env-var idiom."""
+    monkeypatch.setenv("PREGO_MIN_CONFIDENCE", "2.5")
+    assert PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir).min_confidence == 2.5
+
+
+def test_out_of_range_threshold_is_refused(prego_input_dir: Path, prego_output_dir: Path):
+    """Above the star ceiling every channel drops out; refuse rather than emit nothing."""
+    with pytest.raises(ValueError):
+        PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.5)
+
+
+def test_running_twice_produces_identical_output(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    A second run() on the same instance must not emit a truncated nodes.tsv.
+
+    run() rewrites nodes.tsv from scratch, but the node de-dup set used to
+    persist across runs, so every ID was suppressed as already-seen. The
+    second run left edges whose endpoints had no node row.
+    """
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run(show_status=False)
+    first_nodes = transform.output_node_file.read_text()
+    first_edges = transform.output_edge_file.read_text()
+
+    transform.run(show_status=False)
+    assert transform.output_node_file.read_text() == first_nodes, "nodes.tsv must be reproducible"
+    assert transform.output_edge_file.read_text() == first_edges, "edges.tsv must be reproducible"
+
+    # Every edge endpoint still resolves to a node row emitted by this run.
+    nodes = {n["id"] for n in _read_tsv(transform.output_node_file)}
+    for edge in _read_tsv(transform.output_edge_file):
+        assert edge["subject"] in nodes or edge["object"] in nodes
+
+
+def test_calibration_table_is_written_and_matches_what_ships(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The calibration table must exist and agree with the emitted edge count.
+
+    This covers three defects that all hid behind the same gap. ``atomic_write``
+    is a context manager; calling it as a plain function returned an un-entered
+    generator, so the table was never written while the run printed that it
+    was. Separately, the table measured retention by histogram bin while the
+    filter measured it by raw score — not interchangeable, since a bin's lower
+    edge can exceed the scores inside it for ~11.5% of representable 4-dp
+    values, including 1.71.
+
+    Neither was caught because the fixture had no continuous-channel rows at
+    all: pass 1 always returned an empty histogram, so the whole
+    histogram → cutoff → filter path was dead in every test.
+    """
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=2.0)
+    transform.run(show_status=False)
+
+    assert transform.calibration_table_file.exists(), "the calibration table was not written"
+    lines = [ln for ln in transform.calibration_table_file.read_text().splitlines() if ln.strip()]
+    assert lines[0].split("\t") == ["resource", "n", "tau", "cutoff_score", "kept_fraction"]
+    assert len(lines) > 1, "a resource row is required, not just a header"
+
+    table = {}
+    for line in lines[1:]:
+        resource, n, _tau, _cut, kept = line.split("\t")
+        table[resource] = (int(n), float(kept))
+
+    edges = _read_tsv(transform.output_edge_file)
+    for resource, (n_calibrated, kept_fraction) in table.items():
+        shipped = sum(1 for e in edges if e["prego_source"] == resource and " of " in e["prego_channel"])
+        expected = round(kept_fraction * n_calibrated)
+        assert shipped == expected, (
+            f"{resource}: table claims {kept_fraction:.4f} of {n_calibrated} ({expected} edges) but {shipped} shipped"
+        )
+
+
+def test_default_threshold_drops_no_edges(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The default must emit exactly what an unfiltered run emits.
+
+    Asserting only that ``min_confidence == 0.0`` is a literal check that would
+    still pass if the default silently dropped most edges — the same
+    assert-one-spelling weakness found twice before in this PR.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    baseline.run(show_status=False)
+    unfiltered = len(_read_tsv(baseline.output_edge_file))
+
+    explicit_zero = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=0.0)
+    explicit_zero.run(show_status=False)
+    assert len(_read_tsv(explicit_zero.output_edge_file)) == unfiltered
+
+    filtered = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4.0)
+    filtered.run(show_status=False)
+    assert len(_read_tsv(filtered.output_edge_file)) < unfiltered, "the knob must actually do something"

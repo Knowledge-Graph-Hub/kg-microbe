@@ -253,16 +253,46 @@ Three things follow, and they are the actual budgeting answer:
 1. **Merge input grows 36.4% overall** (9.72 → 13.26 GiB) from a change that
    touches one source. PREGO's own +48% dilutes to +36% at the merge level only
    because the other 19 sources together are 2.32 GiB.
-2. **PREGO goes from dominant to overwhelming** — 76.2% → 82.5% of input. Any
-   future work on merge memory that is not about PREGO is rounding error.
+2. **PREGO's share of bytes goes 76.2% → 82.5%**, so it dominates input size
+   more than before. But see the caveat below before treating that as a
+   memory ranking — it is not one.
 3. **`merge.noprego.yaml` is a 4.2x reduction today and 5.7x after #703.**
    Nothing else available comes close: even deleting every non-PREGO source
    would save less than PREGO's growth alone.
 
-Peak RSS is not measured here — this is input bytes, and KGX's in-memory
-representation is several times larger and not a fixed multiple. Treat these as
-the ratio to reason with, not as an RSS prediction. **No merge benchmark has
-been run at the new size.**
+#### Bytes and objects rank differently — do not read the table as memory
+
+Peak RSS is not measured here. This is input bytes, and KGX's in-memory
+representation is several times larger and not a fixed multiple. **No merge
+benchmark has been run at the new size.**
+
+More than a magnitude gap, though: KGX peak RSS is dominated by per-object
+Python overhead, which scales with the **number** of nodes and edges, not their
+width. On that axis the picture shifts:
+
+| source | rows | share of rows | share of bytes |
+|---|---:|---:|---:|
+| prego | 44,768,164 | **68.6%** | **76.2%** |
+| metatraits | 4,651,069 | 7.1% | |
+| bacdive | 4,516,195 | 6.9% | |
+| metatraits_gtdb | 4,239,260 | 6.5% | |
+| gtdb | 2,619,745 | 4.0% | |
+| ncbitaxon | 1,850,570 | 2.8% | |
+| **total** | **65,258,838** | | |
+
+Two things follow that the bytes table hides:
+
+- **Non-PREGO is ~31% of objects (20.5M), not ~24%**, and it is concentrated in
+  four sources. Halving metatraits + metatraits_gtdb + bacdive would be a real
+  memory win, not a rounding error.
+- **The #703 columns add zero rows.** They widen existing rows by ~85 B. So in
+  object terms PREGO stays at 68.6% before and after, and if RSS is
+  object-dominated the merge's peak grows by considerably less than the 36.4%
+  the byte table implies.
+
+An earlier version of this section concluded "any future work on merge memory
+that is not about PREGO is rounding error." That was a memory ranking argued
+from a byte measurement, and the row counts do not support it.
 
 The columns are still worth having — `knowledge_level` and `agent_type` were
 shipping empty, which made 44.7M text-mined and statistically-derived

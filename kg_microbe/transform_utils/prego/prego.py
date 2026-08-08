@@ -736,8 +736,10 @@ class PregoTransform(Transform):
             entity2_id = row[3]
             source = row[4]
             evidence = row[5]
-            # Drift detection runs over every row whose evidence column parsed,
-            # not just emitted ones. The habitat class is a residual bucket, so
+            # Drift detection runs over every row whose evidence column read,
+            # not just emitted ones. "Well-formed" would be the wrong word:
+            # an empty-id row parses fine and fails a CONTENT check, and it is
+            # exactly the row this needs to cover. The habitat class is a residual bucket, so
             # its job is to reveal an upstream change — and a new PREGO resource
             # class that happened to land only on dropped shapes would be
             # invisible to a check further down the emit path (#719).

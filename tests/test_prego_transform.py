@@ -1034,6 +1034,12 @@ def test_emitted_provenance_snapshot(prego_transform: PregoTransform):
     }
     expected.update({("NCBITaxon:100", f"GO:000{5000 + i}"): env for i in range(12)})
 
+    # Count first. `actual` is keyed on (subject, object), so two edges sharing
+    # that pair collapse into one entry — and the transform does NOT dedupe.
+    # Without this line a refactor that processes an archive twice would double
+    # all 44.7M edges and every prego test would still pass, including this one,
+    # which exists to be the tripwire.
+    assert len(edges) == len(expected), f"expected {len(expected)} edges, got {len(edges)} (duplicates?)"
     assert actual == expected
 
 

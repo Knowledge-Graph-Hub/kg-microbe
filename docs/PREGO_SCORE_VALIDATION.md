@@ -219,6 +219,33 @@ Supporting arguments:
 2. **Per-predicate thresholds, not one global knob.** A single `min_confidence` is a validated quality filter on `location_of` and an arbitrary cut on `capable_of` simultaneously.
 3. **Dropping the continuous GO block removes 23,289,791 rows — 52.08% of rows but only 33.33% of bytes**, since those rows are shorter. `edges.tsv` goes from 7.38 GiB to **4.92 GiB**, not the ~3.5 GB stated earlier. **No merge benchmark was run**, so the claim that this "largely dissolves" the 48 GB problem in #693 is unverified.
 
+### Sizing: the provenance columns cost 48%
+
+Measured 2026-08-07 over all 44,716,161 rows of the real
+`data/transformed/prego/edges.tsv`, not estimated from a sample.
+
+| | |
+|---|---:|
+| rows | 44,716,161 |
+| `edges.tsv` before the #703 columns | **7.38 GiB** |
+| bytes added | **3.54 GiB** (85.1 B/row) |
+| projected `edges.tsv` | **10.93 GiB** (**+48.0%**) |
+
+The added columns are `prego_source`, `prego_evidence_class`, `knowledge_level`
+and `agent_type`, plus `prego_channel` changing from PREGO's verbatim column 6
+to a channel name. The raw column-6 string is not double-counted — it *moves*
+to `prego_evidence`, so it cancels.
+
+This matters for #693: KGX holds every source graph in the parent
+simultaneously, and PREGO is the single largest edge block in the merged KG. A
+48% increase on that block is material to the merge's peak RSS, and it lands on
+the same axis the two levers below are trying to reduce.
+
+The columns are still worth having — `knowledge_level` and `agent_type` were
+shipping empty, which made 44.7M text-mined and statistically-derived
+associations indistinguishable from curated assertions. But the cost should be
+budgeted rather than discovered mid-merge.
+
 ### How `PREGO_MIN_CONFIDENCE` relates to `merge.noprego.yaml`
 
 `PREGO_MIN_CONFIDENCE` (#697) ships a single global threshold — precisely the

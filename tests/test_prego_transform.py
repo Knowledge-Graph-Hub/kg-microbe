@@ -3,6 +3,7 @@
 import csv
 import shutil
 import tarfile
+from collections import defaultdict
 from pathlib import Path
 
 import pytest
@@ -43,27 +44,36 @@ def prego_input_dir(tmp_path: Path) -> Path:
     """
     Build the PREGO raw input layout the transform expects.
 
-    Two tarballs under ``<tmp>/raw/prego/``, each with the real archive
-    layout (single-file payload named ``database_pairs.tsv``):
+    All three production archives under ``<tmp>/raw/prego/``, each with the
+    real layout (single-file payload named ``database_pairs.tsv``):
 
-    * ``literature.tar.gz`` — the flat-scored rows.
+    * ``literature.tar.gz`` — BioProject/PMID rows at a flat 3.0.
+    * ``annotated_genomes_isolates.tar.gz`` — JGI IMG / Isolates rows.
     * ``environmental_samples.tar.gz`` — the continuous-scored rows.
 
-    Both are required. The channel is derived from the *archive name*, so a
-    single archive can only ever exercise one of the two calibration paths;
-    when every fixture row lived in ``literature.tar.gz`` the whole
-    histogram → cutoff → filter path was dead in every test.
+    All three are required, because the channel is derived from the *archive
+    name*: an archive can only ever exercise the one channel its filename
+    selects. Two earlier versions of this fixture were each blind in a way that
+    let real defects through — everything in one ``literature.tar.gz`` made the
+    whole histogram → cutoff → filter path dead in every test, and dropping the
+    genome archive left ~47% of production edges with no end-to-end coverage
+    while mislabelling genome rows as literature (#713).
+
+    The genome payload deliberately carries scores of both 3 and 4, matching
+    the real 8.68 GB archive where ~0.1% of rows score 3 (#717). Since
+    ``star_for_row`` uses each flat row's own score rather than its channel's
+    constant, a uniformly-4.0 fixture could not exercise that.
     """
     raw_dir = tmp_path / "raw"
     prego_raw = raw_dir / "prego"
     prego_raw.mkdir(parents=True)
-    # Two archives, mirroring production: the channel is derived from the
-    # archive name, so a single archive cannot exercise both the flat and the
-    # continuous (environmental) calibration paths.
-    with tarfile.open(prego_raw / "literature.tar.gz", "w:gz") as tf:
-        tf.add(FIXTURE_DIR / "database_pairs.tsv", arcname="database_pairs.tsv")
-    with tarfile.open(prego_raw / "environmental_samples.tar.gz", "w:gz") as tf:
-        tf.add(FIXTURE_DIR / "database_pairs_environmental.tsv", arcname="database_pairs.tsv")
+    for archive_name, payload in (
+        ("literature.tar.gz", "database_pairs.tsv"),
+        ("annotated_genomes_isolates.tar.gz", "database_pairs_genomes.tsv"),
+        ("environmental_samples.tar.gz", "database_pairs_environmental.tsv"),
+    ):
+        with tarfile.open(prego_raw / archive_name, "w:gz") as tf:
+            tf.add(FIXTURE_DIR / payload, arcname="database_pairs.tsv")
     return raw_dir
 
 
@@ -182,9 +192,9 @@ def test_taxon_to_go_edges_use_capable_of(prego_transform: PregoTransform):
     prego_transform.run()
     edges = _read_tsv(prego_transform.output_edge_file)
     tax_go = [e for e in edges if e["subject"] == "NCBITaxon:100" and e["object"].startswith("GO:")]
-    # 3 flat-channel rows (BP/CC/MF) plus the 12 continuous-channel rows that
-    # exercise the calibration path.
-    assert len(tax_go) == 15, f"expected 15 canonical NCBITaxon:100→GO edges, got {len(tax_go)}"
+    # 3 genome-channel rows (BP/CC/MF) + 1 habitat-evidenced genome row + the
+    # 12 continuous-channel rows that exercise the calibration path.
+    assert len(tax_go) == 16, f"expected 16 canonical NCBITaxon:100→GO edges, got {len(tax_go)}"
     assert all(e["predicate"] == CAPABLE_OF_PREDICATE for e in tax_go)
 
 
@@ -913,9 +923,273 @@ def test_edge_metadata_differs_by_channel():
     assert edge_metadata_for(CHANNEL_LITERATURE, "resource_class") == ("prediction", "text_mining_agent")
 
 
+def test_corrupt_archive_fails_before_overwriting_previous_outputs(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    A tarball with no payload must abort before the outputs are touched.
+
+    ``_ensure_payload`` raises on a missing ``database_pairs.tsv``, but lazily —
+    the genome archive sorts first and was only opened inside the emit loop,
+    after ``nodes.tsv`` / ``edges.tsv`` had been created and their headers
+    written. So a corrupt archive replaced a good previous run's outputs with a
+    one-line file before failing (#716).
+    """
+    good = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    good.run(show_status=False)
+    good_edges = good.output_edge_file.read_text()
+    good_nodes = good.output_node_file.read_text()
+    assert len(good_edges.splitlines()) > 1, "the baseline run must produce real output"
+
+    # Replace one archive with a tarball containing no database_pairs.tsv.
+    corrupt = prego_input_dir / "prego" / "annotated_genomes_isolates.tar.gz"
+    corrupt.unlink()
+    decoy = prego_input_dir / "prego" / "not_the_payload.txt"
+    decoy.write_text("nothing useful here\n")
+    with tarfile.open(corrupt, "w:gz") as tf:
+        tf.add(decoy, arcname="not_the_payload.txt")
+
+    with pytest.raises(SystemExit, match="no database_pairs.tsv"):
+        PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir).run(show_status=False)
+
+    assert good.output_edge_file.read_text() == good_edges, "the previous run's edges were clobbered"
+    assert good.output_node_file.read_text() == good_nodes, "the previous run's nodes were clobbered"
+
+
+def test_habitat_evidence_is_an_observation_not_an_assertion():
+    """
+    A habitat-evidenced genome row must not claim the highest provenance tier.
+
+    ``Marginal Sea`` / ``Hydrothermal vents`` / ``Birds`` rows in the real
+    genome archive carry score 3 — PREGO's lower tier, the same one it assigns
+    text-mined rows — because they come from sample metadata rather than the
+    annotation pipeline the channel is named for. They previously inherited the
+    genome channel's ``knowledge_assertion`` regardless (#716).
+
+    This is not a confidence demotion — measured over the real archive, all
+    1,693 habitat rows score 4, PREGO's *highest* tier. Biolink's
+    ``knowledge_level`` describes how knowledge was produced, not how confident
+    it is, so a high-confidence observation is coherent.
+    """
+    assert edge_metadata_for(CHANNEL_GENOMES, "habitat") == ("observation", "automated_agent")
+    # The resource-class rows the channel IS named for keep the higher tier.
+    assert edge_metadata_for(CHANNEL_GENOMES, "resource_class") == ("knowledge_assertion", "automated_agent")
+    # A citation still outranks the habitat rule — those rows are text-mined.
+    assert edge_metadata_for(CHANNEL_GENOMES, "publication") == ("prediction", "text_mining_agent")
+
+
+def test_edge_metadata_matrix_is_pinned():
+    """
+    Pin the whole (channel x evidence_class) matrix, not sampled cells.
+
+    ``edge_metadata_for`` is the single point where 44.7M edges acquire their
+    provenance, and its branches interact: the publication rule overrides every
+    channel, the habitat rule applies only inside the genome channel, and an
+    unrecognised channel must decline to assert. Point assertions missed that —
+    hoisting the habitat rule silently changed six cells while the test probing
+    that exact invariant still passed, because it sampled one of the other
+    twenty-four.
+
+    Diffed against master when this landed: exactly ONE cell changes, the
+    genome+habitat one. Everything else must stay put.
+    """
+    na = ("not_provided", "not_provided")
+    text_mined = ("prediction", "text_mining_agent")
+    stats = ("statistical_association", "data_analysis_pipeline")
+    genome = ("knowledge_assertion", "automated_agent")
+
+    expected = {}
+    for evidence_class in ("sample_count", "resource_class", "habitat", "unknown", ""):
+        expected[(CHANNEL_ENVIRONMENTAL, evidence_class)] = stats
+        expected[(CHANNEL_LITERATURE, evidence_class)] = text_mined
+        expected[(CHANNEL_GENOMES, evidence_class)] = genome
+        # Unrecognised and empty channels decline to assert.
+        expected[("metagenomes", evidence_class)] = na
+        expected[("", evidence_class)] = na
+    # Habitat is the one genome-channel exception.
+    expected[(CHANNEL_GENOMES, "habitat")] = ("observation", "automated_agent")
+    # A citation is evidence in its own right and overrides every channel,
+    # including ones the code does not recognise.
+    for channel in (CHANNEL_ENVIRONMENTAL, CHANNEL_GENOMES, CHANNEL_LITERATURE, "metagenomes", ""):
+        expected[(channel, "publication")] = text_mined
+
+    actual = {key: edge_metadata_for(*key) for key in expected}
+    assert actual == expected
+
+
+def test_emitted_knowledge_levels_are_real_biolink_enum_values(prego_transform: PregoTransform):
+    """
+    Every emitted knowledge_level / agent_type must exist in the Biolink model.
+
+    Checked against the imported enums, not a hand-maintained set. A docstring
+    claiming a value was "verified against the model" while the test hardcodes
+    the string verifies nothing: a typo like ``observations`` would pass the
+    whole suite and ship ~25k edges carrying an invalid enum value.
+    """
+    from biolink_model.datamodel.pydanticmodel_v2 import AgentTypeEnum, KnowledgeLevelEnum
+
+    knowledge_levels = {e.value for e in KnowledgeLevelEnum}
+    agent_types = {e.value for e in AgentTypeEnum}
+    # Guard against the enums themselves coming back empty, which would make
+    # the subset assertions below pass vacuously.
+    assert "observation" in knowledge_levels and "automated_agent" in agent_types
+
+    prego_transform.run(show_status=False)
+    edges = _read_tsv(prego_transform.output_edge_file)
+    assert edges
+    assert {e["knowledge_level"] for e in edges} <= knowledge_levels
+    assert {e["agent_type"] for e in edges} <= agent_types
+
+
 def test_unknown_channel_declines_to_assert_metadata():
-    """An unrecognised channel must not be given a confident provenance label."""
-    assert edge_metadata_for("mystery", "unknown") == ("not_provided", "not_provided")
+    """
+    An unrecognised channel must not be given a confident provenance label.
+
+    Probed across EVERY evidence class, not just ``unknown``. The habitat rule
+    was briefly hoisted above the channel checks, which made
+    ``edge_metadata_for("metagenomes", "habitat")`` answer a confident
+    ``("observation", "automated_agent")`` about a pipeline the code knows
+    nothing about. That is reachable: ``channel_for_archive`` returns the raw
+    stem for an unrecognised archive, and such archives ARE processed.
+    """
+    for evidence_class in ("unknown", "habitat", "resource_class", "sample_count"):
+        assert edge_metadata_for("metagenomes", evidence_class) == ("not_provided", "not_provided"), (
+            f"unrecognised channel must decline to assert, but evidence_class={evidence_class!r} did not"
+        )
+    # A citation is evidence in its own right and stays an exception.
+    assert edge_metadata_for("metagenomes", "publication") == ("prediction", "text_mining_agent")
+
+
+def test_habitat_bucket_is_reported_as_a_residual(prego_input_dir: Path, prego_output_dir: Path, capsys):
+    """
+    The habitat catch-all must report its distinct values, not hide them.
+
+    ``classify_evidence`` returns ``habitat`` for anything that is not a tally,
+    a PMID or a known resource-class prefix — a residual bucket, not a positive
+    match. Measured over 3M real genome rows that is 1,693 rows across just 42
+    distinct values, all genuine habitat names, so reclassifying them as
+    ``unknown`` would destroy a real signal. But the bucket silently absorbs
+    anything new: a fifth PREGO resource class would be asserted to be a
+    habitat, and a consumer filtering on ``prego_evidence_class='habitat'``
+    would get it mixed in (#714).
+
+    Printing the distinct values makes that visible — the real value space is
+    small and stable, so an unfamiliar entry stands out.
+    """
+    extra = prego_input_dir / "prego" / "annotated_genomes_isolates.tar.gz"
+    assert extra.exists(), "the genome archive carries the habitat-valued rows"
+
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run(show_status=False)
+    out = capsys.readouterr().out
+
+    tracked = transform._stats["evidence_habitat_values"]
+    assert tracked, "the fixture's habitat-valued row must be tracked"
+    assert "residual bucket" in out, f"the habitat summary must be printed; got:\n{out}"
+    # The value itself must appear, so a new resource class would be legible.
+    assert any(value in out for value in tracked), "the distinct values must be named in the summary"
+
+
+def test_habitat_value_tracking_is_bounded(prego_transform: PregoTransform):
+    """
+    Distinct-habitat tracking must not grow without bound across 44.7M rows.
+
+    A dict keyed on a free-text column is an O(N) memory risk if the upstream
+    shape changes; the cap keeps it O(1) while still counting occurrences, so
+    the drift stays visible without the run dying of it.
+    """
+    prego_transform.run(show_status=False)
+
+    # NB: no `len(counts) <= CAP` assertion here. The fixture yields one habitat
+    # value against a cap of 1000, so it would pass with the cap deleted
+    # entirely — decoration, not a check. The real check is the overflow path.
+    # A defaultdict, not dict.fromkeys: run()'s reset loop type-sniffs and would
+    # replace a plain dict with 0, making a second run() raise on `in 0`.
+    prego_transform._stats["evidence_habitat_values"] = defaultdict(
+        int, {f"habitat_{i}": 1 for i in range(PregoTransform._HABITAT_VALUE_CAP)}
+    )
+    prego_transform._stats["evidence_habitat_values_uncounted"] = 0
+    prego_transform._record_habitat_value("a_brand_new_resource_class")
+    assert len(prego_transform._stats["evidence_habitat_values"]) == PregoTransform._HABITAT_VALUE_CAP
+    assert prego_transform._stats["evidence_habitat_values_uncounted"] == 1
+
+
+def test_all_three_channels_are_exercised_end_to_end(prego_transform: PregoTransform):
+    """
+    Every production channel must appear in the emitted edges.
+
+    A fixture that omits a channel cannot fail for anything specific to it, and
+    this suite has been blind twice already: once with every row in
+    ``literature.tar.gz`` (which killed the whole calibration path), and once
+    without the genome archive at all — ~47% of production edges, whose rows
+    were additionally mislabelled as ``literature`` because the channel comes
+    from the filename (#713).
+
+    Asserting the full expected sets rather than "more than one" means adding a
+    fourth channel upstream, or dropping an archive from the fixture, fails
+    here rather than silently narrowing coverage.
+    """
+    prego_transform.run(show_status=False)
+    edges = _read_tsv(prego_transform.output_edge_file)
+
+    assert {e["prego_channel"] for e in edges} == {
+        CHANNEL_ENVIRONMENTAL,
+        CHANNEL_GENOMES,
+        CHANNEL_LITERATURE,
+    }
+    # Each channel routes to a distinct provenance pair, so full channel
+    # coverage must also mean full metadata coverage.
+    assert {e["knowledge_level"] for e in edges} == {
+        "statistical_association",
+        "knowledge_assertion",
+        "prediction",
+        # Habitat-evidenced genome rows are observations, not assertions (#716).
+        "observation",
+    }
+    assert {e["agent_type"] for e in edges} == {
+        "data_analysis_pipeline",
+        "automated_agent",
+        "text_mining_agent",
+    }
+    # `habitat` is the residual bucket (#714) and is deliberately present, so
+    # the class that silently absorbs upstream drift is covered too.
+    assert {e["prego_evidence_class"] for e in edges} == {
+        "sample_count",
+        "resource_class",
+        "publication",
+        "habitat",
+    }
+
+
+def test_genome_channel_rows_keep_their_own_score_not_the_channel_constant(
+    prego_input_dir: Path, prego_output_dir: Path
+):
+    """
+    A genome row scoring 3 must be dropped at tau=3.5, not promoted to 4.0.
+
+    ``FLAT_CHANNEL_STARS`` documents the genome channel as 4.0, but the real
+    8.68 GB archive has ~0.1% of rows at 3 — including ``Isolates`` and
+    ``Single Amplified Genome``, not just PMID-evidenced ones (#717).
+    ``star_for_row`` deliberately returns the row's own score for a recognised
+    flat channel so such a row is preserved as a data-quality signal rather
+    than silently promoted to its channel's documented tier.
+
+    The fixture's genome payload carries both 3 and 4 for exactly this reason.
+    """
+    baseline = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    baseline.run(show_status=False)
+    genome_scores = {
+        float(e["prego_score"]) for e in _read_tsv(baseline.output_edge_file) if e["prego_channel"] == CHANNEL_GENOMES
+    }
+    assert genome_scores == {3.0, 4.0}, (
+        f"the genome fixture must carry both tiers or this test proves nothing; got {genome_scores}"
+    )
+
+    filtered = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=3.5)
+    filtered.run(show_status=False)
+    kept = [e for e in _read_tsv(filtered.output_edge_file) if e["prego_channel"] == CHANNEL_GENOMES]
+    assert kept, "the score-4 genome rows must survive"
+    assert all(float(e["prego_score"]) >= 3.5 for e in kept), (
+        "a score-3 genome row must be dropped at tau=3.5, not promoted to its channel constant"
+    )
 
 
 def test_unrecognised_archive_warns_that_it_bypasses_the_threshold(
@@ -974,7 +1248,7 @@ def test_emitted_edges_carry_populated_metadata(prego_input_dir: Path, prego_out
     edges = _read_tsv(transform.output_edge_file)
     assert edges
 
-    known_levels = {"statistical_association", "knowledge_assertion", "prediction"}
+    known_levels = {"statistical_association", "knowledge_assertion", "prediction", "observation"}
     known_agents = {"data_analysis_pipeline", "automated_agent", "text_mining_agent"}
     assert {e["knowledge_level"] for e in edges} <= known_levels, (
         f"unrecognised knowledge_level(s): {{e['knowledge_level'] for e in edges}} - {known_levels}"

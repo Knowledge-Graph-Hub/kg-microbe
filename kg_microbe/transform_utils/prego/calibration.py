@@ -72,7 +72,7 @@ STAR_MAX = 4.0
 # no key below is a valid argument to `flat_channel_star`. This table is
 # documentation of the upstream values for validation — not a lookup table.
 # See #712.
-FLAT_CHANNEL_STARS: Dict[str, float] = {
+PREGO_RESOURCE_CLASS_STARS: Dict[str, float] = {
     "Isolates": 4.0,
     "Isolates GOLD": 4.0,
     "Genome annotation": 4.0,
@@ -110,7 +110,7 @@ def flat_channel_star(channel: str) -> Optional[float]:
     authors assigned by fiat rather than computed, so the value is already on
     the star axis and :func:`star_for_row` uses the row's own score; this
     function exists to answer "is this channel recognised", not to substitute a
-    value. FLAT_CHANNEL_STARS documents the expected constants.
+    value. PREGO_RESOURCE_CLASS_STARS documents the expected constants.
 
     :param channel: Value of the ``prego_channel`` column.
     :return: The channel's documented constant, or None if unrecognised.
@@ -276,7 +276,7 @@ def star_for_row(
         # BioProject/PMID). Return the row's own value rather than the
         # channel constant, so a row disagreeing with its channel's
         # documented tier is preserved as the data-quality signal it is
-        # instead of being silently promoted. FLAT_CHANNEL_STARS documents
+        # instead of being silently promoted. PREGO_RESOURCE_CLASS_STARS documents
         # the expected value for validation, not for substitution.
         return score
     cut_bin = cutoffs.get(resource)
@@ -357,7 +357,7 @@ def estimate_retention(
     it silently — the previous behaviour — turns a typo or a stale key into a
     confidently wrong number rather than an error, and this function exists
     precisely to answer "what will this threshold cost me" before a run. Fed
-    the keys of :data:`FLAT_CHANNEL_STARS`, which are resource classes rather
+    the keys of :data:`PREGO_RESOURCE_CLASS_STARS`, which are resource classes rather
     than channels (#712), it returned 0.265 where the answer was 0.734.
 
     :param channel_shares: Flat channel name to its share of all edges (0-1).

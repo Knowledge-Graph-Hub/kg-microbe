@@ -236,10 +236,33 @@ and `agent_type`, plus `prego_channel` changing from PREGO's verbatim column 6
 to a channel name. The raw column-6 string is not double-counted — it *moves*
 to `prego_evidence`, so it cancels.
 
-This matters for #693: KGX holds every source graph in the parent
-simultaneously, and PREGO is the single largest edge block in the merged KG. A
-48% increase on that block is material to the merge's peak RSS, and it lands on
-the same axis the two levers below are trying to reduce.
+#### What that does to the merge budget
+
+KGX holds every source graph in the parent simultaneously, so the number that
+matters for #693 is total merge input, not PREGO alone. Measured across the 20
+`merge.yaml` sources present on disk:
+
+| | total input | prego | prego share |
+|---|---:|---:|---:|
+| today | **9.72 GiB** | 7.40 GiB | **76.2%** |
+| after the #703 columns | **13.26 GiB** | 10.94 GiB | **82.5%** |
+| `merge.noprego.yaml` | **2.32 GiB** | — | — |
+
+Three things follow, and they are the actual budgeting answer:
+
+1. **Merge input grows 36.4% overall** (9.72 → 13.26 GiB) from a change that
+   touches one source. PREGO's own +48% dilutes to +36% at the merge level only
+   because the other 19 sources together are 2.32 GiB.
+2. **PREGO goes from dominant to overwhelming** — 76.2% → 82.5% of input. Any
+   future work on merge memory that is not about PREGO is rounding error.
+3. **`merge.noprego.yaml` is a 4.2x reduction today and 5.7x after #703.**
+   Nothing else available comes close: even deleting every non-PREGO source
+   would save less than PREGO's growth alone.
+
+Peak RSS is not measured here — this is input bytes, and KGX's in-memory
+representation is several times larger and not a fixed multiple. Treat these as
+the ratio to reason with, not as an RSS prediction. **No merge benchmark has
+been run at the new size.**
 
 The columns are still worth having — `knowledge_level` and `agent_type` were
 shipping empty, which made 44.7M text-mined and statistically-derived

@@ -216,6 +216,7 @@ class PregoTransform(Transform):
             # Distinct values in the habitat catch-all — see _record_habitat_value.
             "evidence_habitat_values": defaultdict(int),
             "evidence_habitat_values_uncounted": 0,
+            "evidence_habitat_emitted": 0,
             "doid_no_mondo_xref": 0,
             "unique_nodes_emitted": 0,
             "nodes_enriched_with_synonyms": 0,
@@ -748,6 +749,15 @@ class PregoTransform(Transform):
             self._stats["rows_malformed"] += 1
             return
 
+        # Drift detection runs over every well-formed row, not just emitted
+        # ones. The habitat class is a residual bucket, so its job is to reveal
+        # an upstream change — and a new PREGO resource class that happened to
+        # land only on dropped shapes (taxon-taxon rows, inverse directions,
+        # DOID rows with no MONDO xref) would be invisible to a check on the
+        # emit path (#719).
+        if classify_evidence(evidence) == EVIDENCE_HABITAT:
+            self._record_habitat_value(evidence)
+
         outcome = classify_row(entity1_type, entity2_type)
         if outcome not in (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO):
             self._record_drop(outcome, entity1_type, entity1_id, entity2_type, entity2_id)
@@ -893,7 +903,10 @@ class PregoTransform(Transform):
         row[PREGO_EVIDENCE_COLUMN] = evidence
         evidence_class = classify_evidence(evidence)
         if evidence_class == EVIDENCE_HABITAT:
-            self._record_habitat_value(evidence)
+            # Values are recorded in _process_row over ALL rows; here we only
+            # count how many of them actually ship. A divergence between the
+            # two is itself a signal (#719).
+            self._stats["evidence_habitat_emitted"] += 1
         row[PREGO_EVIDENCE_CLASS_COLUMN] = evidence_class
         knowledge_level, agent_type = edge_metadata_for(channel, evidence_class)
         row[KNOWLEDGE_LEVEL_COLUMN] = knowledge_level
@@ -1037,8 +1050,9 @@ class PregoTransform(Transform):
             top = sorted(habitat_values.items(), key=lambda kv: (-kv[1], kv[0]))[:10]
             total = sum(habitat_values.values())
             print(
-                f"[prego] evidence_class=habitat is a residual bucket: {total:,} rows across "
-                f"{len(habitat_values):,} distinct values (top: {', '.join(f'{v}({n:,})' for v, n in top)})"
+                f"[prego] evidence_class=habitat is a residual bucket: {total:,} rows seen across "
+                f"{len(habitat_values):,} distinct values, {self._stats['evidence_habitat_emitted']:,} "
+                f"emitted (top: {', '.join(f'{v}({n:,})' for v, n in top)})"
             )
             if len(habitat_values) >= self._HABITAT_VALUE_CAP:
                 print(

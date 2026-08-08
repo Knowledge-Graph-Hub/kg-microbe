@@ -3,6 +3,7 @@
 import csv
 import shutil
 import tarfile
+from collections import defaultdict
 from pathlib import Path
 
 import pytest
@@ -963,8 +964,10 @@ def test_habitat_evidence_is_an_observation_not_an_assertion():
     annotation pipeline the channel is named for. They previously inherited the
     genome channel's ``knowledge_assertion`` regardless (#716).
 
-    ``observation`` is a real Biolink ``KnowledgeLevelEnum`` value, verified
-    against the loaded model rather than invented.
+    This is not a confidence demotion — measured over the real archive, all
+    1,693 habitat rows score 4, PREGO's *highest* tier. Biolink's
+    ``knowledge_level`` describes how knowledge was produced, not how confident
+    it is, so a high-confidence observation is coherent.
     """
     assert edge_metadata_for(CHANNEL_GENOMES, "habitat") == ("observation", "automated_agent")
     # The resource-class rows the channel IS named for keep the higher tier.
@@ -973,9 +976,47 @@ def test_habitat_evidence_is_an_observation_not_an_assertion():
     assert edge_metadata_for(CHANNEL_GENOMES, "publication") == ("prediction", "text_mining_agent")
 
 
+def test_emitted_knowledge_levels_are_real_biolink_enum_values(prego_transform: PregoTransform):
+    """
+    Every emitted knowledge_level / agent_type must exist in the Biolink model.
+
+    Checked against the imported enums, not a hand-maintained set. A docstring
+    claiming a value was "verified against the model" while the test hardcodes
+    the string verifies nothing: a typo like ``observations`` would pass the
+    whole suite and ship ~25k edges carrying an invalid enum value.
+    """
+    from biolink_model.datamodel.pydanticmodel_v2 import AgentTypeEnum, KnowledgeLevelEnum
+
+    knowledge_levels = {e.value for e in KnowledgeLevelEnum}
+    agent_types = {e.value for e in AgentTypeEnum}
+    # Guard against the enums themselves coming back empty, which would make
+    # the subset assertions below pass vacuously.
+    assert "observation" in knowledge_levels and "automated_agent" in agent_types
+
+    prego_transform.run(show_status=False)
+    edges = _read_tsv(prego_transform.output_edge_file)
+    assert edges
+    assert {e["knowledge_level"] for e in edges} <= knowledge_levels
+    assert {e["agent_type"] for e in edges} <= agent_types
+
+
 def test_unknown_channel_declines_to_assert_metadata():
-    """An unrecognised channel must not be given a confident provenance label."""
-    assert edge_metadata_for("mystery", "unknown") == ("not_provided", "not_provided")
+    """
+    An unrecognised channel must not be given a confident provenance label.
+
+    Probed across EVERY evidence class, not just ``unknown``. The habitat rule
+    was briefly hoisted above the channel checks, which made
+    ``edge_metadata_for("metagenomes", "habitat")`` answer a confident
+    ``("observation", "automated_agent")`` about a pipeline the code knows
+    nothing about. That is reachable: ``channel_for_archive`` returns the raw
+    stem for an unrecognised archive, and such archives ARE processed.
+    """
+    for evidence_class in ("unknown", "habitat", "resource_class", "sample_count"):
+        assert edge_metadata_for("metagenomes", evidence_class) == ("not_provided", "not_provided"), (
+            f"unrecognised channel must decline to assert, but evidence_class={evidence_class!r} did not"
+        )
+    # A citation is evidence in its own right and stays an exception.
+    assert edge_metadata_for("metagenomes", "publication") == ("prediction", "text_mining_agent")
 
 
 def test_habitat_bucket_is_reported_as_a_residual(prego_input_dir: Path, prego_output_dir: Path, capsys):
@@ -1017,12 +1058,14 @@ def test_habitat_value_tracking_is_bounded(prego_transform: PregoTransform):
     the drift stays visible without the run dying of it.
     """
     prego_transform.run(show_status=False)
-    counts = prego_transform._stats["evidence_habitat_values"]
-    assert len(counts) <= PregoTransform._HABITAT_VALUE_CAP
 
-    # Past the cap, occurrences are still counted, just not attributed.
-    prego_transform._stats["evidence_habitat_values"] = dict.fromkeys(
-        (f"habitat_{i}" for i in range(PregoTransform._HABITAT_VALUE_CAP)), 1
+    # NB: no `len(counts) <= CAP` assertion here. The fixture yields one habitat
+    # value against a cap of 1000, so it would pass with the cap deleted
+    # entirely — decoration, not a check. The real check is the overflow path.
+    # A defaultdict, not dict.fromkeys: run()'s reset loop type-sniffs and would
+    # replace a plain dict with 0, making a second run() raise on `in 0`.
+    prego_transform._stats["evidence_habitat_values"] = defaultdict(
+        int, {f"habitat_{i}": 1 for i in range(PregoTransform._HABITAT_VALUE_CAP)}
     )
     prego_transform._stats["evidence_habitat_values_uncounted"] = 0
     prego_transform._record_habitat_value("a_brand_new_resource_class")

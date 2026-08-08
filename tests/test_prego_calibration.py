@@ -294,9 +294,10 @@ def test_tau_four_is_provenance_dominated():
     assert retained == pytest.approx(flat_only + continuous_contribution, abs=1e-9)
     # Provenance-dominated: the flat channels supply the overwhelming majority.
     assert flat_only / retained > 0.95
-    # ...and that is a real measurement, not an identity — the continuous
-    # channel is present and simply outweighed.
-    assert flat_only < retained
+    # No `flat_only < retained` assertion: it is entailed by the two lines
+    # above (a positive continuous term added to flat_only), so it would be a
+    # re-tautologized assertion inside the test whose purpose was to remove
+    # one. `flat_only / retained > 0.95` above is the load-bearing check.
 
 
 @pytest.mark.parametrize("bad", [-0.1, 4.1, float("nan"), float("inf")])

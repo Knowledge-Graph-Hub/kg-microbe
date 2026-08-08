@@ -976,6 +976,45 @@ def test_habitat_evidence_is_an_observation_not_an_assertion():
     assert edge_metadata_for(CHANNEL_GENOMES, "publication") == ("prediction", "text_mining_agent")
 
 
+def test_edge_metadata_matrix_is_pinned():
+    """
+    Pin the whole (channel x evidence_class) matrix, not sampled cells.
+
+    ``edge_metadata_for`` is the single point where 44.7M edges acquire their
+    provenance, and its branches interact: the publication rule overrides every
+    channel, the habitat rule applies only inside the genome channel, and an
+    unrecognised channel must decline to assert. Point assertions missed that —
+    hoisting the habitat rule silently changed six cells while the test probing
+    that exact invariant still passed, because it sampled one of the other
+    twenty-four.
+
+    Diffed against master when this landed: exactly ONE cell changes, the
+    genome+habitat one. Everything else must stay put.
+    """
+    na = ("not_provided", "not_provided")
+    text_mined = ("prediction", "text_mining_agent")
+    stats = ("statistical_association", "data_analysis_pipeline")
+    genome = ("knowledge_assertion", "automated_agent")
+
+    expected = {}
+    for evidence_class in ("sample_count", "resource_class", "habitat", "unknown", ""):
+        expected[(CHANNEL_ENVIRONMENTAL, evidence_class)] = stats
+        expected[(CHANNEL_LITERATURE, evidence_class)] = text_mined
+        expected[(CHANNEL_GENOMES, evidence_class)] = genome
+        # Unrecognised and empty channels decline to assert.
+        expected[("metagenomes", evidence_class)] = na
+        expected[("", evidence_class)] = na
+    # Habitat is the one genome-channel exception.
+    expected[(CHANNEL_GENOMES, "habitat")] = ("observation", "automated_agent")
+    # A citation is evidence in its own right and overrides every channel,
+    # including ones the code does not recognise.
+    for channel in (CHANNEL_ENVIRONMENTAL, CHANNEL_GENOMES, CHANNEL_LITERATURE, "metagenomes", ""):
+        expected[(channel, "publication")] = text_mined
+
+    actual = {key: edge_metadata_for(*key) for key in expected}
+    assert actual == expected
+
+
 def test_emitted_knowledge_levels_are_real_biolink_enum_values(prego_transform: PregoTransform):
     """
     Every emitted knowledge_level / agent_type must exist in the Biolink model.

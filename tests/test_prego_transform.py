@@ -958,14 +958,15 @@ def test_habitat_evidence_is_an_observation_not_an_assertion():
     """
     A habitat-evidenced genome row must not claim the highest provenance tier.
 
-    ``Marginal Sea`` / ``Hydrothermal vents`` / ``Birds`` rows in the real
-    genome archive carry score 3 — PREGO's lower tier, the same one it assigns
-    text-mined rows — because they come from sample metadata rather than the
-    annotation pipeline the channel is named for. They previously inherited the
-    genome channel's ``knowledge_assertion`` regardless (#716).
+    ``Marginal Sea`` / ``Hydrothermal vents`` / ``Birds`` rows come from
+    sample/isolation metadata rather than the annotation pipeline the genome
+    channel is named for, yet they inherited that channel's
+    ``knowledge_assertion`` (#716).
 
-    This is not a confidence demotion — measured over the real archive, all
-    1,693 habitat rows score 4, PREGO's *highest* tier. Biolink's
+    This is not a confidence demotion, and the two signals are orthogonal:
+    measured over the first 3M rows of the real archive, all 1,693 habitat rows
+    carry score 4 — PREGO's *highest* tier, none at 3 — including the three
+    named above (16, 17 and 18 rows respectively, all at 4). Biolink's
     ``knowledge_level`` describes how knowledge was produced, not how confident
     it is, so a high-confidence observation is coherent.
     """

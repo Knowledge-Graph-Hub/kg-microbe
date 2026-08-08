@@ -736,6 +736,25 @@ class PregoTransform(Transform):
             entity2_id = row[3]
             source = row[4]
             evidence = row[5]
+            # Drift detection runs over every row whose evidence column parsed,
+            # not just emitted ones. The habitat class is a residual bucket, so
+            # its job is to reveal an upstream change — and a new PREGO resource
+            # class that happened to land only on dropped shapes would be
+            # invisible to a check further down the emit path (#719).
+            #
+            # Placed above the empty-id check deliberately: that check returns
+            # inside this try, so tracking below it would silently exclude
+            # empty-id rows — reintroducing the same blind spot one drop reason
+            # further along.
+            #
+            # This does mean classify_evidence runs twice for an emitted row
+            # (again in _as_edge_row). Measured rather than assumed: 319 ns per
+            # call, so ~14 s added across all 44.7M rows — well under 1% of a
+            # run that streams 14 GB of archives. Threading the result through
+            # would remove it at the cost of a wider signature on every emit
+            # path; not worth it at that ratio.
+            if classify_evidence(evidence) == EVIDENCE_HABITAT:
+                self._record_habitat_value(evidence)
             # Defensive: an empty entity_id would produce a malformed
             # CURIE like `NCBITaxon:` on emit. Not seen in the canary,
             # but a two-line check is cheap insurance.
@@ -748,15 +767,6 @@ class PregoTransform(Transform):
         except (ValueError, IndexError):
             self._stats["rows_malformed"] += 1
             return
-
-        # Drift detection runs over every well-formed row, not just emitted
-        # ones. The habitat class is a residual bucket, so its job is to reveal
-        # an upstream change — and a new PREGO resource class that happened to
-        # land only on dropped shapes (taxon-taxon rows, inverse directions,
-        # DOID rows with no MONDO xref) would be invisible to a check on the
-        # emit path (#719).
-        if classify_evidence(evidence) == EVIDENCE_HABITAT:
-            self._record_habitat_value(evidence)
 
         outcome = classify_row(entity1_type, entity2_type)
         if outcome not in (KEEP_TAXON_TO_GO, KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_DOID, KEEP_TAXON_TO_BTO):

@@ -993,6 +993,16 @@ def test_emitted_provenance_snapshot(prego_transform: PregoTransform):
     unrecognised channels, and genome rows emitting as ``literature`` because
     they sat in the wrong archive. Both show up here as a changed value rather
     than as an absent test.
+
+    The expected values were cross-checked against the fixture *source* rather
+    than copied from the transform's output — generating a snapshot from
+    current behaviour is how a bug gets enshrined as the expectation. Each is
+    derivable from the archive a row lives in plus its column-6 value:
+    ``literature`` + ``PMID:*`` -> publication -> text-mined;
+    ``annotated_genomes_isolates`` + ``Isolates`` -> resource_class ->
+    knowledge_assertion; the same archive + ``Aquatic`` -> habitat ->
+    observation; ``environmental_samples`` + a tally -> sample_count ->
+    statistical_association.
     """
     prego_transform.run(show_status=False)
     edges = _read_tsv(prego_transform.output_edge_file)
@@ -1149,6 +1159,40 @@ def test_habitat_bucket_is_reported_as_a_residual(prego_input_dir: Path, prego_o
     assert "2 rows seen" in out and "1 emitted" in out, f"summary must separate seen from emitted; got:\n{out}"
     # The values must be named, so a new resource class would be legible.
     assert "Aquatic" in out and "Human" in out
+
+
+def test_habitat_drift_covers_every_drop_reason(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    A habitat value must be tracked no matter why its row is dropped.
+
+    #719 moved tracking off the emit path, but the empty-id guard returns from
+    inside the same try block, so tracking placed below it would have excluded
+    `empty_id` rows — the identical blind spot, one drop reason further along.
+
+    This asserts coverage across three distinct fates: emitted, dropped by
+    shape, and dropped by the empty-id guard.
+    """
+    extra = FIXTURE_DIR / "database_pairs_genomes.tsv"
+    rows = extra.read_text().rstrip("\n").split("\n")
+    # A habitat-valued row with an empty entity2_id -> dropped as empty_id.
+    rows.append("-2\t100\t-21\t\tJGI IMG\tSubglacial Lake\t4\tTRUE\thttps://example/x")
+    payload = prego_input_dir / "prego" / "genomes_with_empty_id.tsv"
+    payload.write_text("\n".join(rows) + "\n")
+    archive = prego_input_dir / "prego" / "annotated_genomes_isolates.tar.gz"
+    archive.unlink()
+    with tarfile.open(archive, "w:gz") as tf:
+        tf.add(payload, arcname="database_pairs.tsv")
+
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run(show_status=False)
+    tracked = transform._stats["evidence_habitat_values"]
+
+    assert "Subglacial Lake" in tracked, (
+        f"a habitat value on an empty-id row must still be tracked; got {dict(tracked)}"
+    )
+    # All three fates represented: emitted, dropped-by-shape, dropped-by-empty-id.
+    assert {"Aquatic", "Human", "Subglacial Lake"} <= set(tracked)
+    assert transform._stats["evidence_habitat_emitted"] == 1, "only Aquatic ships"
 
 
 def test_habitat_value_tracking_is_bounded(prego_transform: PregoTransform):

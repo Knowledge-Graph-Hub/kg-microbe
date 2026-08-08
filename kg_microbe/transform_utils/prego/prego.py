@@ -216,6 +216,7 @@ class PregoTransform(Transform):
             # Distinct values in the habitat catch-all — see _record_habitat_value.
             "evidence_habitat_values": defaultdict(int),
             "evidence_habitat_values_uncounted": 0,
+            "evidence_habitat_emitted": 0,
             "doid_no_mondo_xref": 0,
             "unique_nodes_emitted": 0,
             "nodes_enriched_with_synonyms": 0,
@@ -735,6 +736,27 @@ class PregoTransform(Transform):
             entity2_id = row[3]
             source = row[4]
             evidence = row[5]
+            # Drift detection runs over every row whose evidence column read,
+            # not just emitted ones. "Well-formed" would be the wrong word:
+            # an empty-id row parses fine and fails a CONTENT check, and it is
+            # exactly the row this needs to cover. The habitat class is a residual bucket, so
+            # its job is to reveal an upstream change — and a new PREGO resource
+            # class that happened to land only on dropped shapes would be
+            # invisible to a check further down the emit path (#719).
+            #
+            # Placed above the empty-id check deliberately: that check returns
+            # inside this try, so tracking below it would silently exclude
+            # empty-id rows — reintroducing the same blind spot one drop reason
+            # further along.
+            #
+            # This does mean classify_evidence runs twice for an emitted row
+            # (again in _as_edge_row). Measured rather than assumed: 319 ns per
+            # call, so ~14 s added across all 44.7M rows — well under 1% of a
+            # run that streams 14 GB of archives. Threading the result through
+            # would remove it at the cost of a wider signature on every emit
+            # path; not worth it at that ratio.
+            if classify_evidence(evidence) == EVIDENCE_HABITAT:
+                self._record_habitat_value(evidence)
             # Defensive: an empty entity_id would produce a malformed
             # CURIE like `NCBITaxon:` on emit. Not seen in the canary,
             # but a two-line check is cheap insurance.
@@ -893,7 +915,10 @@ class PregoTransform(Transform):
         row[PREGO_EVIDENCE_COLUMN] = evidence
         evidence_class = classify_evidence(evidence)
         if evidence_class == EVIDENCE_HABITAT:
-            self._record_habitat_value(evidence)
+            # Values are recorded in _process_row over ALL rows; here we only
+            # count how many of them actually ship. A divergence between the
+            # two is itself a signal (#719).
+            self._stats["evidence_habitat_emitted"] += 1
         row[PREGO_EVIDENCE_CLASS_COLUMN] = evidence_class
         knowledge_level, agent_type = edge_metadata_for(channel, evidence_class)
         row[KNOWLEDGE_LEVEL_COLUMN] = knowledge_level
@@ -1037,8 +1062,9 @@ class PregoTransform(Transform):
             top = sorted(habitat_values.items(), key=lambda kv: (-kv[1], kv[0]))[:10]
             total = sum(habitat_values.values())
             print(
-                f"[prego] evidence_class=habitat is a residual bucket: {total:,} rows across "
-                f"{len(habitat_values):,} distinct values (top: {', '.join(f'{v}({n:,})' for v, n in top)})"
+                f"[prego] evidence_class=habitat is a residual bucket: {total:,} rows seen across "
+                f"{len(habitat_values):,} distinct values, {self._stats['evidence_habitat_emitted']:,} "
+                f"emitted (top: {', '.join(f'{v}({n:,})' for v, n in top)})"
             )
             if len(habitat_values) >= self._HABITAT_VALUE_CAP:
                 print(

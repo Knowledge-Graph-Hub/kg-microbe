@@ -977,6 +977,72 @@ def test_habitat_evidence_is_an_observation_not_an_assertion():
     assert edge_metadata_for(CHANNEL_GENOMES, "publication") == ("prediction", "text_mining_agent")
 
 
+def test_emitted_provenance_snapshot(prego_transform: PregoTransform):
+    """
+    Pin the provenance of EVERY fixture edge, so any flip is caught.
+
+    ``test_edge_metadata_matrix_is_pinned`` covers the pure function; this
+    covers the wiring — that each real row reaches it with the channel and
+    evidence class it should. A bug in `channel_for_archive`, in
+    `classify_evidence`, or in which archive a row lives in would leave the
+    matrix test green while changing what ships.
+
+    This is the before/after coverage #720 asked for. Point assertions could
+    not catch a provenance flip on a pre-existing edge, which is exactly how
+    two defects reached master: the habitat rule silently answering for
+    unrecognised channels, and genome rows emitting as ``literature`` because
+    they sat in the wrong archive. Both show up here as a changed value rather
+    than as an absent test.
+
+    The expected values were cross-checked against the fixture *source* rather
+    than copied from the transform's output — generating a snapshot from
+    current behaviour is how a bug gets enshrined as the expectation. Each is
+    derivable from the archive a row lives in plus its column-6 value:
+    ``literature`` + ``PMID:*`` -> publication -> text-mined;
+    ``annotated_genomes_isolates`` + ``Isolates`` -> resource_class ->
+    knowledge_assertion; the same archive + ``Aquatic`` -> habitat ->
+    observation; ``environmental_samples`` + a tally -> sample_count ->
+    statistical_association.
+    """
+    prego_transform.run(show_status=False)
+    edges = _read_tsv(prego_transform.output_edge_file)
+
+    actual = {
+        (e["subject"], e["object"]): (
+            e["prego_channel"],
+            e["prego_evidence_class"],
+            e["knowledge_level"],
+            e["agent_type"],
+        )
+        for e in edges
+    }
+    genome_assertion = ("annotated_genomes_isolates", "resource_class", "knowledge_assertion", "automated_agent")
+    text_mined = ("literature", "publication", "prediction", "text_mining_agent")
+    env = ("environmental_samples", "sample_count", "statistical_association", "data_analysis_pipeline")
+
+    expected = {
+        ("BTO:0000763", "NCBITaxon:562"): text_mined,
+        ("NCBITaxon:562", "MONDO:0007256"): text_mined,
+        # Genome-annotation rows. These emitted as `literature`/`prediction`
+        # before #713 moved them into the archive they belong to.
+        ("ENVO:00000011", "NCBITaxon:693444"): genome_assertion,
+        ("NCBITaxon:100", "GO:0000034"): genome_assertion,
+        ("NCBITaxon:100", "GO:0005634"): genome_assertion,
+        ("NCBITaxon:100", "GO:0006355"): genome_assertion,
+        # The habitat exception: sample metadata, not genome annotation.
+        ("NCBITaxon:100", "GO:0008150"): ("annotated_genomes_isolates", "habitat", "observation", "automated_agent"),
+    }
+    expected.update({("NCBITaxon:100", f"GO:000{5000 + i}"): env for i in range(12)})
+
+    # Count first. `actual` is keyed on (subject, object), so two edges sharing
+    # that pair collapse into one entry — and the transform does NOT dedupe.
+    # Without this line a refactor that processes an archive twice would double
+    # all 44.7M edges and every prego test would still pass, including this one,
+    # which exists to be the tripwire.
+    assert len(edges) == len(expected), f"expected {len(expected)} edges, got {len(edges)} (duplicates?)"
+    assert actual == expected
+
+
 def test_edge_metadata_matrix_is_pinned():
     """
     Pin the whole (channel x evidence_class) matrix, not sampled cells.
@@ -1083,10 +1149,56 @@ def test_habitat_bucket_is_reported_as_a_residual(prego_input_dir: Path, prego_o
     out = capsys.readouterr().out
 
     tracked = transform._stats["evidence_habitat_values"]
-    assert tracked, "the fixture's habitat-valued row must be tracked"
     assert "residual bucket" in out, f"the habitat summary must be printed; got:\n{out}"
-    # The value itself must appear, so a new resource class would be legible.
-    assert any(value in out for value in tracked), "the distinct values must be named in the summary"
+
+    # Drift detection must cover DROPPED rows too (#719). The fixture has two
+    # habitat values: `Aquatic` on a taxon→GO row that emits, and `Human` on a
+    # taxon-taxon row that drops as taxon_taxon_host. Tracking only the emit
+    # path saw one of them, which would make a new PREGO resource class landing
+    # on a dropped shape invisible to the check built to catch it.
+    assert set(tracked) == {"Aquatic", "Human"}, (
+        f"habitat tracking must cover dropped rows, not just emitted ones; got {dict(tracked)}"
+    )
+    assert transform._stats["evidence_habitat_emitted"] == 1, "only Aquatic ships"
+
+    # Seen and emitted are reported separately, since a divergence is a signal.
+    assert "2 rows seen" in out and "1 emitted" in out, f"summary must separate seen from emitted; got:\n{out}"
+    # The values must be named, so a new resource class would be legible.
+    assert "Aquatic" in out and "Human" in out
+
+
+def test_habitat_drift_covers_every_drop_reason(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    A habitat value must be tracked no matter why its row is dropped.
+
+    #719 moved tracking off the emit path, but the empty-id guard returns from
+    inside the same try block, so tracking placed below it would have excluded
+    `empty_id` rows — the identical blind spot, one drop reason further along.
+
+    This asserts coverage across three distinct fates: emitted, dropped by
+    shape, and dropped by the empty-id guard.
+    """
+    extra = FIXTURE_DIR / "database_pairs_genomes.tsv"
+    rows = extra.read_text().rstrip("\n").split("\n")
+    # A habitat-valued row with an empty entity2_id -> dropped as empty_id.
+    rows.append("-2\t100\t-21\t\tJGI IMG\tSubglacial Lake\t4\tTRUE\thttps://example/x")
+    payload = prego_input_dir / "prego" / "genomes_with_empty_id.tsv"
+    payload.write_text("\n".join(rows) + "\n")
+    archive = prego_input_dir / "prego" / "annotated_genomes_isolates.tar.gz"
+    archive.unlink()
+    with tarfile.open(archive, "w:gz") as tf:
+        tf.add(payload, arcname="database_pairs.tsv")
+
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run(show_status=False)
+    tracked = transform._stats["evidence_habitat_values"]
+
+    assert "Subglacial Lake" in tracked, (
+        f"a habitat value on an empty-id row must still be tracked; got {dict(tracked)}"
+    )
+    # All three fates represented: emitted, dropped-by-shape, dropped-by-empty-id.
+    assert {"Aquatic", "Human", "Subglacial Lake"} <= set(tracked)
+    assert transform._stats["evidence_habitat_emitted"] == 1, "only Aquatic ships"
 
 
 def test_habitat_value_tracking_is_bounded(prego_transform: PregoTransform):

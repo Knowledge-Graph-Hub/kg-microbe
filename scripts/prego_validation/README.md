@@ -20,7 +20,8 @@ inline some of the same logic; prefer the module for new work.
 | `precision_assay_go.py` | precision + lift vs labelled assay evidence | ~8 min | as above |
 | `fold_enrichment_envo.py` | fold enrichment of ENVO edges vs BacDive isolation sources | ~2 min | as above |
 | `fold_enrichment_bto.py` | fold enrichment of BTO edges vs BacDive host anatomy | ~2 min | as above |
-| `ubiquity_check.py` | Spearman corr. of GO-term degree vs mean score | ~8 min | as above |
+| `ubiquity_check.py` | Spearman corr. of term degree vs mean score, any shape (`--shape go\|envo\|bto`) | ~1 min | as above |
+| `habitat_threshold_check.py` | edges / terms / taxa retained per threshold, and whether survivors are the ubiquitous habitats | ~40 s | as above |
 
 Run order: build the gold standards first (they pickle to `/tmp`), then the
 measurements.

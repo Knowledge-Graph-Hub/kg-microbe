@@ -248,6 +248,16 @@ Optional, for the ontology transforms:
   data-quality signal instead of being silently promoted), those rows drop once
   `τ > 3` — on the order of 20k edges.
 
+  **That 0.1% is not spread evenly, and "incidental" is the wrong reading.** It
+  is a whole-channel average dominated by the 44.3M `capable_of` edges. Counted
+  on the habitat shapes alone (measured 2026-08-10, full `edges.tsv`), the genome
+  channel is 33.3% score-3 for ENVO (12,562 of 37,749) and 80.5% for BTO (5,360
+  of 6,661) — no value other than 3 or 4 occurs. Those 17,922 rows are ~89% of
+  the ~20k above, so **`τ > 3` deletes 4.0% of all habitat edges**, and the
+  habitat data is where PREGO has measured enrichment (7.89x unfiltered for
+  ENVO). See `docs/PREGO_SCORE_VALIDATION.md` for the habitat threshold
+  recommendation, which keeps this channel whole.
+
   Two consequences worth internalising. Above `τ = 3` you delete the literature
   channel outright — on provenance, not on quality. And within the continuous
   channel the score tracks how *common* a GO term is rather than how well

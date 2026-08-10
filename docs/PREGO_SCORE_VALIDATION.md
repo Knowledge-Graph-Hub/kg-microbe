@@ -360,6 +360,144 @@ the rare, taxon-specific annotations — while barely discriminating within the
 bulk. That is the opposite of what a confidence filter should do if the goal is
 to keep specific, informative edges.
 
+### Habitat terms do **not** repeat the GO pattern
+
+Measured 2026-08-10 on the current `edges.tsv` (12.17 GB, post-#722) with
+`ubiquity_check.py --shape envo|bto`. Degree here is **distinct taxa**, not edge
+count: MG-RAST contributes both amplicon and metagenome studies, so one
+(term, taxon) pair can be reported twice (ENVO 1.063 edges per distinct taxon;
+BTO exactly 1.000). The published GO run used edge count, which was sound for
+that shape but would have overstated habitat degree by ~6%.
+
+| decile | ENVO degree range | ENVO mean score | BTO degree range | BTO mean score |
+|---:|---|---:|---|---:|
+| 1 | 56–106 | 1.050 | 50–68 | 0.559 |
+| 2 | 120–275 | 1.017 | 70–110 | 0.747 |
+| 3 | 292–510 | 1.093 | 117–142 | 0.511 |
+| 4 | 561–868 | **0.675** | 147–179 | 0.561 |
+| 5 | 890–1,289 | **0.633** | 204–345 | 0.775 |
+| 6 | 1,291–1,693 | 0.727 | 383–401 | 1.277 |
+| 7 | 1,694–2,129 | 1.010 | 417–506 | 1.202 |
+| 8 | 2,159–2,518 | 1.060 | 528–606 | 1.349 |
+| 9 | 2,563–3,086 | 1.330 | 676–856 | 1.664 |
+| 10 | 3,187–8,582 | 1.586 | 891–1,657 | 1.550 |
+
+**Spearman: ENVO +0.3016 (223 terms), BTO +0.5967 (70 terms).**
+
+Read the shape, not the coefficient — the same instruction as for GO, with the
+opposite conclusion. **ENVO is U-shaped, not monotone.** The rarest three
+deciles score ~1.0–1.09, *above* the mid-ubiquity deciles 4–6 (0.63–0.73), and
+only the top two deciles rise clearly (1.33, 1.59). So for ENVO the score does
+**not** systematically punish rare, specific habitats — the pathology that makes
+`τ` dangerous for GO does not transfer. The positive Spearman is carried by the
+rising top tail, not by a rare-terms-score-low gradient.
+
+**BTO is closer to monotone** (+0.5967, rising 0.56 → 1.66) and does look like a
+ubiquity ranking. It is also only 70 terms and, per the caveats, not independent
+of ENVO.
+
+### The genome channel is not flat for habitat edges
+
+`CLAUDE.md` records that the `annotated_genomes_isolates` channel is
+"predominantly a flat 4.0" with "roughly 0.1% of rows" carrying a 3, worth "on
+the order of 20k edges" above `τ = 3`. That is true of the channel *overall*,
+which is dominated by the 44.3M `capable_of` edges. It is badly wrong for the
+habitat subset:
+
+| shape | channel | score 3 | score 4 | share at 3 |
+|---|---|---:|---:|---:|
+| ENVO | `annotated_genomes_isolates` | 12,562 | 25,187 | **33.3%** |
+| BTO | `annotated_genomes_isolates` | 5,360 | 1,301 | **80.5%** |
+
+Genome-channel habitat scores are *exactly* 3 or 4 — no other value occurs.
+Those 17,922 rows at 3 are ~89% of the ~20k the docs attribute to the whole
+channel, so the "small incidental data-quality signal" is in fact almost
+entirely habitat. **Any `τ > 3` deletes 4.0% of all habitat edges outright**, on
+provenance rather than on quality.
+
+Note also that the BTO *continuous* channel is not continuous above 2.0: 23,565
+edges score < 2.0 and 5,596 score exactly 4.0, with **nothing in between**. Every
+threshold from 2.0 to 4.0 is therefore the same filter.
+
+---
+
+## Threshold recommendation for habitat ingest
+
+**Mind the denominator.** The threshold table above is **all-channel** ENVO
+(416,229 edges); the coverage table below is **continuous-channel only**
+(378,480). They reconcile exactly — at every τ the difference is the genome
+contribution, 37,749 for τ ≤ 3 and 25,187 at τ = 4 — but the fold figures and
+the retention figures are not quoted against the same base, so do not divide one
+by the other. Policy-level retention is given after the table.
+
+Coverage cost per threshold, continuous channel only
+(`habitat_threshold_check.py`). Median term degree is the distinct-taxon degree
+of the term each *surviving edge* belongs to, computed once on the unfiltered
+set so the baseline does not move with the filter:
+
+| ≥ τ | ENVO edges | kept | terms kept | taxa kept | median term degree |
+|---:|---:|---:|---:|---:|---:|
+| 0.0 | 378,480 | 100% | 100% (275) | 100% (13,316) | 2,585 |
+| 0.5 | 264,239 | 69.8% | 82.2% | 72.2% | 2,691 |
+| **1.0** | **180,205** | **47.6%** | **70.9%** | **60.6%** | **2,958** |
+| 1.5 | 116,124 | 30.7% | 61.8% | 51.1% | 3,187 |
+| 2.0 | 72,172 | 19.1% | 55.3% | 44.6% | 3,582 |
+| 2.5 | 44,078 | 11.6% | 49.5% | 41.1% | 4,198 |
+| 3.0 | 32,809 | 8.7% | 47.3% | 37.3% | 4,140 |
+| 4.0 | 27,192 | 7.2% | 47.3% | 31.1% | 3,325 |
+
+**Recommendation: `τ = 1.0` on the continuous channel, genome channel kept
+whole.** What that policy actually retains, counted over *all* habitat edges —
+not just the continuous ones, since 125 of the 400 ENVO terms appear only in the
+genome channel:
+
+| shape | edges | terms | taxa |
+|---|---|---|---|
+| ENVO | 416,229 → 217,954 (52.4%) | 400 → 351 (**87.8%**) | 21,183 → 16,008 (**75.6%**) |
+| BTO | 35,822 → 19,791 (55.2%) | 382 → 368 (**96.3%**) | 7,248 → 6,629 (**91.5%**) |
+
+The 52.4% is exactly the threshold table's `τ = 1.0` row (217,954), because every
+genome-channel habitat edge scores 3 or 4 and so survives `τ = 1.0` regardless.
+**11.59x therefore applies precisely to this set** — the two tables agree once
+the denominator is made explicit.
+
+The reasoning, and its limits:
+
+- It is the knee. Fold enrichment goes 7.89x → 11.59x (+47%) while retaining
+  **87.8% of distinct ENVO habitat terms and 75.6% of taxa**. Every further step
+  buys less: within the continuous channel, 1.0 → 2.0 costs 15.6 points of term
+  coverage for +2.9x.
+- Specificity damage is small here (median degree +14%, 2,585 → 2,958) and the
+  U-shaped ubiquity curve says the rarest habitats are not the ones being cut.
+  The damage peaks at τ = 2.5 (4,198, +62%) and then *eases*, so the mid-range
+  thresholds are the worst of both worlds.
+- `τ = 3.0` maximises measured overlap (18.79x) but keeps 8.7% of edges and 37%
+  of taxa. That optimum was selected in-sample with no held-out validation, and
+  overlap is not precision — the standard is positive-only. Paying 63% of taxa
+  for an unvalidated peak is not a good trade for a recall-oriented KG.
+- The genome channel must stay whole: at `τ > 3` it loses 17,922 habitat edges
+  for provenance reasons that say nothing about quality.
+
+**This is a judgement, not a measurement.** No precision/utility target exists
+for habitat edges, and one would change the answer: a precision-first consumer
+should prefer 3.0, and a pure-recall consumer 0.0. What the data settles is the
+*shape* of the trade, not the point on it.
+
+**For BTO, do not threshold** beyond 1.0. Its ubiquity correlation is twice
+ENVO's (+0.5967), so a threshold does preferentially keep ubiquitous anatomy
+terms, and its score gap makes every τ in [2.0, 4.0] identical anyway.
+
+`PREGO_MIN_CONFIDENCE` **cannot express this policy** — it applies one star
+threshold globally, so it cannot keep the genome channel whole while filtering
+the continuous one, and at τ > 3 it would also delete the literature channel.
+Ingest everything and filter downstream on `(prego_channel, prego_score)`:
+
+```bash
+awk -F'\t' 'NR==1 || ($2=="biolink:location_of" &&
+  ($9!="environmental_samples" || $8>=1.0))' \
+  data/transformed/prego/edges.tsv > habitat_tau1.tsv
+```
+
 ---
 
 ## Caveats

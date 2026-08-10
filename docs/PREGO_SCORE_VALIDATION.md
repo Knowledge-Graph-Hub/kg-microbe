@@ -429,9 +429,13 @@ Measured 2026-08-10, `fold_enrichment_envo.py --gold madin`.
 Every habitat number above rests on **one** gold standard used twice — the
 confound named above. Madin et al.'s condensed traits carry 14,888
 `ENVO -location_of-> NCBITaxon` pairs already at taxon level, and are effectively
-BacDive-free: of the 172,324 raw rows with an `isolation_source`, BacDive
-contributes **1,336 (0.78%)**, the bulk coming from GOLD (52%), PATRIC (10%),
-engqvist (7%) and GenBank (7%).
+BacDive-free: counting distinct `(taxon, isolation_source)` pairs — the basis
+closest to what the transform emits — BacDive contributes 1,248 of 69,430,
+about **1.8%**. (The raw-row share is lower, 1,336 of 172,324 = 0.78%, because
+BacDive rows are less duplicated than the bulk GOLD rows; quote 1.8% as the
+gold-relevant bound.) Both are upper-bound estimates — the mapping from raw rows
+to emitted ENVO edges is many-to-many. The bulk comes from GOLD (52%), PATRIC
+(10%), engqvist (7%) and GenBank (7%).
 
 **One trap had to be closed first.** PREGO's genome-channel habitat edges are
 *all* `JGI IMG`, and GOLD is also JGI. Scored against each other that is

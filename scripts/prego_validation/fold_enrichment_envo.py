@@ -14,9 +14,13 @@ directly comparable:
 
 ``--gold madin``
     Madin et al. condensed traits, already ``ENVO -location_of-> NCBITaxon``.
-    **Provenance-disjoint from BacDive**: of the 172,324 raw rows carrying an
-    ``isolation_source``, BacDive contributes 1,336 (0.78%); the bulk is GOLD
-    (52%), PATRIC (10%), engqvist (7%) and GenBank (7%). That makes it the first
+    **Provenance-disjoint from BacDive**: counting distinct
+    ``(taxon, isolation_source)`` pairs — the basis closest to what is emitted —
+    BacDive contributes 1,248 of 69,430, about **1.8%** (the raw-row share is
+    lower, 1,336 of 172,324 = 0.78%, because BacDive rows are less duplicated
+    than the bulk GOLD rows). Treat 1.8% as an upper-bound estimate: the mapping
+    from raw rows to emitted ENVO edges is many-to-many. The bulk is GOLD (52%),
+    PATRIC (10%), engqvist (7%) and GenBank (7%). That makes it the first
     habitat standard that is not a re-projection of the one PREGO was originally
     scored against — the gap named in the "confounds that limit the verdict"
     section of the findings doc, where BTO was rejected as a replication because
@@ -35,6 +39,8 @@ import argparse
 import bisect
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple
+
+from channel_compat import continuous_predicate
 
 THRESHOLDS = (0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
 GOLD_SOURCES = {
@@ -149,7 +155,22 @@ def main() -> None:
         si, oi = header.index("subject"), header.index("object")
         sci = header.index("prego_score")
         chi = header.index("prego_channel")
-        wanted = {"continuous": "environmental_samples", "genome": "annotated_genomes_isolates"}.get(args.channel)
+        # Layout-aware, via the shared helper. A hand-rolled `prego_channel ==
+        # "environmental_samples"` is valid only post-#703, and on a pre-#703 file
+        # it selects nothing — reporting "no comparable edges" for a file that is
+        # entirely comparable. That is the exact failure channel_compat exists to
+        # prevent; three scripts had already been caught by it.
+        is_continuous, layout = continuous_predicate(header)
+        if args.channel == "genome" and "prego_evidence" not in header:
+            raise SystemExit(
+                f"--channel genome needs the post-#703 layout; this file is {layout}. "
+                "Re-run against a current edges.tsv, or use --channel any."
+            )
+        keep = {
+            "any": lambda f: True,
+            "continuous": is_continuous,
+            "genome": lambda f: f[chi] == "annotated_genomes_isolates",
+        }[args.channel]
         for line in handle:
             fields = line.rstrip("\n").split("\t")
             if len(fields) <= max(sci, chi):
@@ -157,7 +178,7 @@ def main() -> None:
             subject, obj = fields[si], fields[oi]
             if not (subject.startswith("ENVO:") and obj.startswith("NCBITaxon:")):
                 continue
-            if wanted is not None and fields[chi] != wanted:
+            if not keep(fields):
                 continue
             try:
                 score = float(fields[sci])

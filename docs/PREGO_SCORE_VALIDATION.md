@@ -81,7 +81,7 @@ rather than by the predicate.
 ### Confounds that limit the verdict
 
 1. **Predicate was inseparable from benchmark and label policy.** Addressed by the matched-taxa test above, which controls both. The contrast did not survive: interaction +0.281, CI [−0.237, +0.624].
-2. **BTO is not an independent replication of ENVO.** Both project the *same* BacDive isolation source. With tie-safe strata it is 6 of 8 terms (n=843 in-stratum), an unclustered one-sided sign test around p≈0.1 — a sensitivity check, not confirmation.
+2. **BTO is not an independent replication of ENVO.** Both project the *same* BacDive isolation source. With tie-safe strata it is 6 of 8 terms (n=843 in-stratum), an unclustered one-sided sign test around p≈0.1 — a sensitivity check, not confirmation. **Now partly addressed** by an independent standard — see [Independent replication](#independent-replication) — which reproduces the direction and the threshold peak at reduced strength.
 3. **Within-term stratification controls term identity, not taxon degree.** In the BTO split the high-score half has mean BacDive gold degree 4.85 vs 3.56 and mean PREGO degree 23.10 vs 18.73; ENVO likewise 91.64 vs 70.67. Well-covered taxa remain an open path to apparent discrimination.
 4. **No clustered uncertainty anywhere.** Edges reuse taxa, terms and resources; all intervals quoted are iid and therefore optimistic.
 
@@ -421,6 +421,58 @@ threshold from 2.0 to 4.0 is therefore the same filter.
 
 ---
 
+<a name="independent-replication"></a>
+## Independent replication on a non-BacDive habitat standard
+
+Measured 2026-08-10, `fold_enrichment_envo.py --gold madin`.
+
+Every habitat number above rests on **one** gold standard used twice — the
+confound named above. Madin et al.'s condensed traits carry 14,888
+`ENVO -location_of-> NCBITaxon` pairs already at taxon level, and are effectively
+BacDive-free: counting distinct `(taxon, isolation_source)` pairs — the basis
+closest to what the transform emits — BacDive contributes 1,248 of 69,430,
+about **1.8%**. (The raw-row share is lower, 1,336 of 172,324 = 0.78%, because
+BacDive rows are less duplicated than the bulk GOLD rows; quote 1.8% as the
+gold-relevant bound.) Both are upper-bound estimates — the mapping from raw rows
+to emitted ENVO edges is many-to-many. The bulk comes from GOLD (52%), PATRIC
+(10%), engqvist (7%) and GenBank (7%).
+
+**One trap had to be closed first.** PREGO's genome-channel habitat edges are
+*all* `JGI IMG`, and GOLD is also JGI. Scored against each other that is
+circular, and those 37,749 edges are 53% of everything retained at `τ ≥ 3`.
+Measured all-channel, Madin appears to show 3.85x rising to 11.29x — but the
+clean test restricted to the MG-RAST/MGnify continuous channel, which shares no
+provenance with GOLD, is materially weaker:
+
+| | BacDive (all channels) | Madin (continuous only) |
+|---|---:|---:|
+| comparable edges | 11,008 | 27,803 |
+| baseline | 0.03411 | 0.03444 |
+| fold at τ=0 | **7.89x** | **2.01x** |
+| fold at τ=1.0 | 11.59x | 2.45x |
+| fold at τ=3.0 | **18.79x** (peak) | **4.38x** (peak) |
+| fold at τ=3.5 | 16.71x (falls) | 4.17x (falls) |
+| within-term, tie-safe | 18/20 terms, **1.49x** | 15/22 terms, **1.32x** |
+| one-sided sign test | p=0.0002 | p=0.0669 |
+
+**What replicates.** The direction (higher score agrees more), the monotone rise
+to `τ = 3.0`, and the fall above it. The peak at 3.0 was previously an in-sample
+optimum with no held-out validation; it now lands in the same place on a standard
+that does not share BacDive's provenance. That is the single most useful thing
+this test buys.
+
+**What weakens.** Absolute enrichment drops roughly fourfold (7.89x → 2.01x) and
+the within-term ratio from 1.49x to 1.32x, with the sign test falling to
+p=0.0669 — suggestive, not significant at the conventional bar. Some of the gap
+is expected from coverage differences (Madin spans 43 ENVO terms and 13,209 taxa
+against BacDive's 63 and 8,664), but the honest reading is that habitat
+discrimination is **real and weaker than the BacDive-only numbers imply**.
+
+The all-channel Madin figures are reported here only to document the circularity;
+**do not quote 3.85x or 11.29x** as independent evidence.
+
+---
+
 ## Threshold recommendation for habitat ingest
 
 **Mind the denominator.** The threshold table above is **all-channel** ENVO
@@ -472,9 +524,11 @@ The reasoning, and its limits:
   The damage peaks at τ = 2.5 (4,198, +62%) and then *eases*, so the mid-range
   thresholds are the worst of both worlds.
 - `τ = 3.0` maximises measured overlap (18.79x) but keeps 8.7% of edges and 37%
-  of taxa. That optimum was selected in-sample with no held-out validation, and
-  overlap is not precision — the standard is positive-only. Paying 63% of taxa
-  for an unvalidated peak is not a good trade for a recall-oriented KG.
+  of taxa. Overlap is not precision — the standard is positive-only — so paying
+  63% of taxa for it is not an obvious trade for a recall-oriented KG. Note the
+  "selected in-sample, never validated" objection to 3.0 **no longer holds**: the
+  independent Madin standard peaks at 3.0 too. What still argues against it is
+  the coverage cost, which is a values judgement rather than a measurement.
 - The genome channel must stay whole: at `τ > 3` it loses 17,922 habitat edges
   for provenance reasons that say nothing about quality.
 

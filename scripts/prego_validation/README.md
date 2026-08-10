@@ -18,7 +18,7 @@ inline some of the same logic; prefer the module for new work.
 | `build_assay_gold.py` | taxon→GO gold **with negatives** from BacDive assays | seconds | `data/transformed/bacdive/` |
 | `fold_enrichment_go.py` | fold enrichment vs the UniProt gold, tie-safe windows | ~8 min | `data/transformed/prego/` (7.4 GB) |
 | `precision_assay_go.py` | precision + lift vs labelled assay evidence | ~8 min | as above |
-| `fold_enrichment_envo.py` | fold enrichment of ENVO edges vs BacDive isolation sources | ~2 min | as above |
+| `fold_enrichment_envo.py` | fold enrichment of ENVO edges vs a habitat gold (`--gold bacdive\|madin`, `--channel any\|continuous\|genome`) | ~2 min | as above |
 | `fold_enrichment_bto.py` | fold enrichment of BTO edges vs BacDive host anatomy | ~2 min | as above |
 | `ubiquity_check.py` | Spearman corr. of term degree vs mean score, any shape (`--shape go\|envo\|bto`) | ~1 min | as above |
 | `habitat_threshold_check.py` | edges / terms / taxa retained per threshold, and whether survivors are the ubiquitous habitats | ~40 s | as above |

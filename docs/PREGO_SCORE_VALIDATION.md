@@ -423,6 +423,13 @@ threshold from 2.0 to 4.0 is therefore the same filter.
 
 ## Threshold recommendation for habitat ingest
 
+**Mind the denominator.** The threshold table above is **all-channel** ENVO
+(416,229 edges); the coverage table below is **continuous-channel only**
+(378,480). They reconcile exactly — at every τ the difference is the genome
+contribution, 37,749 for τ ≤ 3 and 25,187 at τ = 4 — but the fold figures and
+the retention figures are not quoted against the same base, so do not divide one
+by the other. Policy-level retention is given after the table.
+
 Coverage cost per threshold, continuous channel only
 (`habitat_threshold_check.py`). Median term degree is the distinct-taxon degree
 of the term each *surviving edge* belongs to, computed once on the unfiltered
@@ -440,11 +447,26 @@ set so the baseline does not move with the filter:
 | 4.0 | 27,192 | 7.2% | 47.3% | 31.1% | 3,325 |
 
 **Recommendation: `τ = 1.0` on the continuous channel, genome channel kept
-whole.** The reasoning, and its limits:
+whole.** What that policy actually retains, counted over *all* habitat edges —
+not just the continuous ones, since 125 of the 400 ENVO terms appear only in the
+genome channel:
+
+| shape | edges | terms | taxa |
+|---|---|---|---|
+| ENVO | 416,229 → 217,954 (52.4%) | 400 → 351 (**87.8%**) | 21,183 → 16,008 (**75.6%**) |
+| BTO | 35,822 → 19,791 (55.2%) | 382 → 368 (**96.3%**) | 7,248 → 6,629 (**91.5%**) |
+
+The 52.4% is exactly the threshold table's `τ = 1.0` row (217,954), because every
+genome-channel habitat edge scores 3 or 4 and so survives `τ = 1.0` regardless.
+**11.59x therefore applies precisely to this set** — the two tables agree once
+the denominator is made explicit.
+
+The reasoning, and its limits:
 
 - It is the knee. Fold enrichment goes 7.89x → 11.59x (+47%) while retaining
-  **70.9% of distinct habitat terms and 60.6% of taxa**. Every further step buys
-  less: 1.0 → 2.0 costs 15.6 points of term coverage for +2.9x.
+  **87.8% of distinct ENVO habitat terms and 75.6% of taxa**. Every further step
+  buys less: within the continuous channel, 1.0 → 2.0 costs 15.6 points of term
+  coverage for +2.9x.
 - Specificity damage is small here (median degree +14%, 2,585 → 2,958) and the
   U-shaped ubiquity curve says the rarest habitats are not the ones being cut.
   The damage peaks at τ = 2.5 (4,198, +62%) and then *eases*, so the mid-range

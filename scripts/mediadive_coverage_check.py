@@ -14,8 +14,13 @@ that can change under us without notice, and whose loss is unrecoverable by
 re-running.
 
 Compares an emitted ``mediadive/edges.tsv`` against a committed baseline of
-per-solution ingredient counts and reports what moved. Intended for a release
-pre-flight, or any time the mediadive raw is refreshed.
+per-solution ingredient counts and reports what moved. Run it from
+``make validate-mediadive-coverage``, as a release pre-flight, or any time the
+mediadive raw is refreshed.
+
+**The committed baseline records the post-regression state**, because the richer
+2024 recipes are gone from upstream and cannot be recovered. It is a floor to
+detect the *next* change, not a statement that current coverage is healthy.
 
 Usage:
 
@@ -23,7 +28,8 @@ Usage:
     python scripts/mediadive_coverage_check.py --update-baseline   # accept current as the new baseline
     python scripts/mediadive_coverage_check.py --compare OTHER/edges.tsv
 
-Exit codes: 0 = within tolerance, 1 = coverage dropped beyond ``--tolerance``.
+Exit codes: 0 = within tolerance, 1 = coverage moved beyond ``--tolerance`` in
+either direction.
 """
 
 import argparse
@@ -53,9 +59,11 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=5.0,
         help=(
-            "percent drop in total ingredient edges tolerated before failing. Default 5%%: "
-            "normal refreshes move this by well under 1%%, and the regression that motivated "
-            "this check was 48%%."
+            "percent change in total ingredient edges tolerated before failing, in EITHER "
+            "direction. Default 5%%: normal refreshes move this by well under 1%%, and the "
+            "regression that motivated this check was -48%%. Increases are checked too — a "
+            "doubling means duplicated rows or a fanned-out join at least as often as it means "
+            "recovered data."
         ),
     )
     parser.add_argument("--top", type=int, default=10, help="how many per-solution losses to list")
@@ -155,6 +163,17 @@ def main() -> int:
             f"\n  FAIL: coverage dropped {abs(delta):.1f}%, beyond the {args.tolerance:.1f}% tolerance.\n"
             "  Check whether MediaDive changed upstream before accepting this build — the loss is\n"
             "  not recoverable by re-running, and a release built on it silently ships thinner media."
+        )
+        return 1
+    if delta > args.tolerance:
+        # Not merely "more data". Duplicated rows, a fanned-out join, an append
+        # where a truncate was meant, or a CURIE split that turns one ingredient
+        # into two all inflate this number, and all corrupt the graph. Calling a
+        # doubling "within tolerance" would be the more misleading answer.
+        print(
+            f"\n  FAIL: coverage rose {delta:.1f}%, beyond the {args.tolerance:.1f}% tolerance.\n"
+            "  An increase is not self-evidently good — check for duplicated edges or a join\n"
+            "  fan-out before accepting it, then re-baseline with --update-baseline."
         )
         return 1
     print(f"\n  OK: within the {args.tolerance:.1f}% tolerance.")

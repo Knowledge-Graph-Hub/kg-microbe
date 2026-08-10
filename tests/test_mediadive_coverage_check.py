@@ -100,3 +100,58 @@ class MediaDiveCoverageCheckTest(TestCase):
         """A path typo must not be indistinguishable from an empty source."""
         with self.assertRaises(SystemExit):
             _MODULE.ingredient_counts(Path(self.tmp) / "absent.tsv")
+
+    def test_a_large_increase_fails_too(self):
+        """
+        A doubling is as suspicious as a halving.
+
+        Duplicated rows, a fanned-out join, an append where a truncate was meant,
+        or a CURIE split that turns one ingredient into two all inflate this
+        number and all corrupt the graph. Reporting +111% as "within tolerance"
+        was the more misleading answer.
+        """
+        import json
+        import subprocess
+
+        edges = _edges(self.tmp, [("solution:1", "biolink:has_part", f"CHEBI:{i}") for i in range(20)])
+        baseline = Path(self.tmp) / "base.json"
+        baseline.write_text(json.dumps({"solution:1": 5}))
+
+        result = subprocess.run(  # noqa: S603 — fixed argv, every path built by this test
+            [
+                sys.executable,
+                str(Path(__file__).parent.parent / "scripts" / "mediadive_coverage_check.py"),
+                "--edges",
+                str(edges),
+                "--baseline",
+                str(baseline),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn("rose", result.stdout)
+
+    def test_a_large_drop_fails(self):
+        """The case the guard was written for."""
+        import json
+        import subprocess
+
+        edges = _edges(self.tmp, [("solution:1", "biolink:has_part", "CHEBI:1")])
+        baseline = Path(self.tmp) / "base.json"
+        baseline.write_text(json.dumps({"solution:1": 20}))
+
+        result = subprocess.run(  # noqa: S603 — fixed argv, every path built by this test
+            [
+                sys.executable,
+                str(Path(__file__).parent.parent / "scripts" / "mediadive_coverage_check.py"),
+                "--edges",
+                str(edges),
+                "--baseline",
+                str(baseline),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn("dropped", result.stdout)

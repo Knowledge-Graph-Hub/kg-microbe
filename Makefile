@@ -108,4 +108,12 @@ validate-ingredient-schema:
 	@echo "Validating mappings/ingredient_mappings.sssom.tsv (schema)..."
 	python3 mappings/validate_mapping_schema.py --profile ingredient
 
+# MediaDive recipe coverage vs the committed baseline. Upstream thinned these
+# recipes by 48% between the 2024-12 and 2026-08 builds and nothing noticed for
+# ~20 months (#728); this is the check that would have caught it.
+# Exit codes: 1 = coverage moved beyond tolerance, 0 = clean.
+validate-mediadive-coverage:
+	@echo "Validating MediaDive recipe coverage against the committed baseline..."
+	python3 scripts/mediadive_coverage_check.py
+
 include kg-microbe.Makefile

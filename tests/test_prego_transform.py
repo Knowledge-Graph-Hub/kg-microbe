@@ -1473,3 +1473,46 @@ def test_shapes_defaults_to_all_and_rejects_nonsense(prego_input_dir: Path, preg
 
     with pytest.raises(ValueError, match="PREGO_SHAPES"):
         PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitats")
+
+
+def test_habitat_mode_writes_to_its_own_directory(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The two builds must not overwrite each other.
+
+    Sharing one output path made merge.habitat.yaml a label rather than a
+    selector: pointed at a full PREGO output it would ship a 44.7M-edge graph
+    as "habitat only", with nothing to catch the mislabelling.
+    """
+    full = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    habitat = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitat")
+
+    assert habitat.output_dir != full.output_dir
+    assert habitat.output_dir.name == "prego_habitat"
+    assert habitat.output_edge_file != full.output_edge_file
+    assert habitat.unmapped_report_file != full.unmapped_report_file
+
+    habitat.run()
+    full.run()
+    assert habitat.output_edge_file.exists() and full.output_edge_file.exists()
+    habitat_predicates = {e["predicate"] for e in _read_tsv(habitat.output_edge_file)}
+    assert habitat_predicates == {"biolink:location_of"}, "the habitat build must survive a later full run"
+
+
+def test_deliberate_filters_stay_out_of_the_curation_report(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The report is for data-quality problems a curator should act on.
+
+    Recording the shape and score filters there put the two largest entries in
+    front of a curator as things nobody should act on, burying the real signals.
+    They remain counted in the run summary.
+    """
+    transform = PregoTransform(
+        input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitat", habitat_min_score=1.0
+    )
+    transform.run()
+    reasons = {r["reason"] for r in _read_tsv(transform.unmapped_report_file)}
+
+    assert "non_habitat_shape" not in reasons, reasons
+    assert "below_habitat_min_score" not in reasons, reasons
+    counted = transform._stats["rows_dropped_by_reason"]
+    assert counted.get("non_habitat_shape", 0) > 0, "but it must still be counted in the summary"

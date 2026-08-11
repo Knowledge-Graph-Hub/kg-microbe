@@ -230,8 +230,8 @@ merged_graph:
       input:
         format: tsv
         filename:
-          - data/transformed/prego/nodes.tsv
-          - data/transformed/prego/edges.tsv
+          - data/transformed/prego_habitat/nodes.tsv
+          - data/transformed/prego_habitat/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

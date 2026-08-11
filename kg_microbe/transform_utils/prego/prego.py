@@ -101,6 +101,12 @@ from kg_microbe.utils.atomic_io import atomic_write
 # Emitted-shape selection. `habitat` keeps only the location_of shapes.
 _SHAPES_ALL = "all"
 _SHAPES_HABITAT = "habitat"
+# Habitat output lives apart from the full build so both can coexist.
+_HABITAT_OUTPUT_DIR = "prego_habitat"
+
+# Drops that are deliberate configuration rather than data-quality problems.
+# Counted in the summary, excluded from the curation report.
+_CONFIGURED_DROP_REASONS = frozenset({"non_habitat_shape", "below_habitat_min_score"})
 
 _LOCATION_OF_PREDICATE = "biolink:location_of"
 _ASSOCIATED_WITH_PREDICATE = "biolink:associated_with"
@@ -227,6 +233,16 @@ class PregoTransform(Transform):
         # it under `all` would silently thin habitat inside an otherwise
         # unfiltered run, which nothing documents and no caller asks for.
         self.habitat_min_score = habitat_min_score if shapes == _SHAPES_HABITAT else 0.0
+        if shapes == _SHAPES_HABITAT:
+            # Its own directory, so the two builds cannot overwrite each other and
+            # merge.habitat.yaml selects what it claims to. Sharing one path made
+            # the config a label rather than a selector: running it against a full
+            # PREGO output would silently ship a 44.7M-edge graph as "habitat only".
+            self.output_dir = self.output_base_dir / _HABITAT_OUTPUT_DIR
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+            self.output_node_file = self.output_dir / "nodes.tsv"
+            self.output_edge_file = self.output_dir / "edges.tsv"
+            self.unmapped_report_file = self.output_dir / "unmapped_associations.tsv"
         print(
             f"[prego] shapes={self.shapes} min_confidence={self.min_confidence} "
             f"habitat_min_score={self.habitat_min_score}"
@@ -1060,12 +1076,23 @@ class PregoTransform(Transform):
         """
         self._stats["rows_dropped"] += 1
         self._stats["rows_dropped_by_reason"][reason] += 1
+        if reason in _CONFIGURED_DROP_REASONS:
+            # Counted, but no exemplar: this is the operator getting what they
+            # configured, not a data-quality problem to chase. Bypassing this
+            # method entirely was the first attempt and it silently broke the
+            # `dropped=` summary, which is derived here — 44.5M rows vanished
+            # from the arithmetic while still being filtered.
+            return
         bucket = self._drop_examples[reason]
         if len(bucket) >= self._MAX_EXAMPLES_PER_REASON:
             return
         key = f"{e1_type}:{e1_id}->{e2_type}:{e2_id}"
         bucket[key] += 1
 
+    # Deliberate configuration is counted in rows_dropped_by_reason but kept out
+    # of the curation report: a curator opening it in habitat mode would find the
+    # two largest entries are things nobody should act on, burying the real
+    # signals (bto_id_prefix_mismatch, doid_no_mondo_xref, empty_id).
     def _write_unmapped_report(self) -> None:
         """
         Emit ``unmapped_associations.tsv`` — the per-run curation report.

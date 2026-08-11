@@ -129,17 +129,44 @@ The hybrid-marker loss is the only one that changes meaning — without the `x` 
 denotes a different taxon. KGX merge resolves by write order, so neither side should be
 allowed to overwrite the other's `name` on `NCBITaxon:` nodes.
 
-### 7. 23,695 GOLD-only taxa — *integration, needs a decision*
+### 7. GOLD would silently undo the NCBITaxon trim — *ours to fix, not GOLD's*
 
-23,695 of GOLD's NCBITaxon nodes are **not** in the ontologies output. They may be
-legitimate (recent NCBI additions, strains below the trimmed set) or artifacts of a stale
-taxonomy dump. They would enter the merged KG as new taxa with GOLD-supplied names and no
-ontology parentage — i.e. disconnected from the NCBITaxon hierarchy. Worth sampling before
-accepting.
+23,695 of GOLD's `NCBITaxon:` nodes are absent from our build. The first reading was that
+GOLD used a different NCBI release. **That is wrong**, and the correction matters because
+it moves the work to our side.
+
+Checked against NCBI directly: of a random sample of 40, **39 are current taxids**, not
+retired. What they are is out of scope for us — a random sample is `Wuhan Mosquito Virus 4`,
+`Serratia phage phiMAM1`, `Picea glauca`, `Eudorina sp.`, `Spodiopsar sericeus` (a
+starling). KG-Microbe deliberately trims NCBITaxon via `exclusion_branches.tsv`, which
+excludes **Viruses (10239), Viridiplantae (33090) and Metazoa (33208)** among others. GOLD
+is a genome database covering all of life; the difference is scope, and both sides are
+behaving correctly.
+
+The problem is what happens on merge:
+
+| | |
+|---|---|
+| GOLD taxa in excluded branches | **23,695** |
+| GOLD edges touching them | **76,034 (5.8% of the export)** |
+| `IndividualOrganism` nodes typed to an excluded taxon | **76,034** |
+
+Ingesting GOLD as-is reintroduces 23,695 viral, plant and animal taxa that the ontologies
+transform went to the trouble of removing, plus 76k organism nodes hanging off them.
+
+**Action (on us):** the GOLD transform should drop nodes and edges whose taxon falls outside
+the trimmed NCBITaxon set, the same way the ontologies transform applies
+`exclusion_branches.tsv`. Not yet implemented — the transform currently passes them through.
+
+An earlier spot check suggested these were *merged* taxids, because sorting by ascending
+taxid surfaced the oldest IDs, which are the ones most likely to have been merged
+(`NCBITaxon:1172` → 264691 `Trichormus variabilis`). Random sampling corrected that: merges
+are ~2% of the gap, not the explanation.
 
 ### 8. Ten nodes with an empty `name` — *content, trivial*
 
-Cosmetic, but they will surface as unlabelled nodes.
+Nine of the ten are among the excluded-branch taxa in issue 7, so they never reach our
+graph once that is handled. The tenth is cosmetic.
 
 ### 9. `xref` populated on 55.7% of nodes — *informational*
 
@@ -163,7 +190,8 @@ like again.
 | 8 — 10 unnamed nodes | carried through; upstream data issue |
 | 3 — `related_to` | **open** — needs a modelling decision |
 | 4 — orphan `MaterialSample` | **open** — warned at transform time, not dropped |
-| 6, 7 — taxon conflicts / GOLD-only taxa | **open** — needs a decision |
+| 6 — taxon name differences | **open** — 26 substantive; hybrid markers raised upstream |
+| 7 — excluded-branch taxa | **open, ours** — transform must apply the NCBITaxon trim |
 
 `kg-model-review --transform gold` now reports **0 errors, 0 warnings** on the
 conformed output.

@@ -57,52 +57,39 @@ thinned by 48% between refreshes and went unnoticed for ~20 months.
 **Request:** a versioned URL, a dated filename, or a published checksum — any of the three
 is enough. If GOLD has a release cadence we can follow, better still.
 
-## 4. Provenance for 23,695 taxa we do not recognise
+## 4. NCBI hybrid markers are being stripped
 
-Of the 125,354 `NCBITaxon:` nodes, **23,695 are absent from our NCBITaxon build**. They
-would enter our graph as new taxa with no parentage — disconnected from the taxonomy
-hierarchy.
+Six `Saccharomyces` entries lose NCBI's interspecific-hybrid marker:
 
-**Request:** which NCBI taxonomy release does the export use? If it is newer than ours the
-gap is expected and we will realign. If these are GOLD-internal or provisional identifiers
-minted in the `NCBITaxon:` namespace, we need to know, because that changes how we merge
-them.
+| NCBITaxon | NCBI | your export |
+|---|---|---|
+| 1387703 | `Saccharomyces x bayanus CBS 424` | `Saccharomyces bayanus CBS 424` |
+| 1387704–1387708 | same pattern | CBS 1502, 1542, 2946, 3008, 5184 |
 
-## 5. Twenty-six taxon names differ substantively
+The `x` marks a hybrid; without it the name denotes a different taxon. This looks like a
+normalisation step rather than a data entry choice.
 
-Of the 101,659 taxa shared with our NCBITaxon build, 78 carry a different `name`. To be
-clear about what our label is: **we do no curation of taxon labels.** Ours come straight
-from the NCBITaxon OBO release, so this is a comparison between the OBO label and yours,
-not between your data and anything we have edited.
+**Request:** confirm whether something in the export pipeline strips `x`, and restore it if
+so. This is the only taxon-name difference we found that changes meaning — we compared all
+101,659 taxa we share with you, and the other 72 differences are either OBO formatting on
+our side (homonym suffixes like `Microcystis <cyanobacteria>`, which are ours, not a
+problem with yours) or NCBI merges you can pick up with a taxonomy refresh
+(`Jeongeupia sp. HS-3` is now `Jeongeupia sacculi`).
 
-Splitting them:
+---
 
-| | count | example |
-|---|---:|---|
-| OBO disambiguation/annotation only | **52** | ours `Microcystis <cyanobacteria>` vs yours `Microcystis`; ours `Metschnikowia lopburiensis (nom. inval.)` vs yours without the qualifier |
-| genuine difference | **26** | see below |
+## Two things we checked that need nothing from you
 
-**The 52 need no action from anyone.** The `<...>` homonym suffixes and `(nom. inval.)`
-qualifiers are added by the OBO conversion; your plain NCBI scientific names are correct.
-We will not let GOLD rows overwrite the OBO labels, and vice versa.
+Recording these so they do not come back as questions later.
 
-**The 26 are worth your attention**, and they look like two different things:
+**23,695 of your taxa are absent from our NCBITaxon build.** This is our scope, not your
+error: KG-Microbe deliberately trims NCBITaxon to microbes, excluding Viruses,
+Viridiplantae and Metazoa among others. Your export covers all of life, so the difference
+is expected — a random sample of the 23,695 is phages, marine viruses, `Picea glauca` and a
+starling. We will drop those on our side.
 
-- **Hybrid markers dropped.** `Saccharomyces x bayanus CBS 424` (ours) vs
-  `Saccharomyces bayanus CBS 424` (yours), and the same for CBS 1502, 1542, 2946, 3008,
-  5184. NCBI's `x` marks an interspecific hybrid; without it the name denotes a different
-  taxon. This looks like a normalisation step stripping the marker.
-- **Taxonomy version skew.** `Jeongeupia sp. HS-3` vs `Jeongeupia sacculi`,
-  `Paucisalibacillus sp. EB02` vs `Paucisalibacillus algeriensis` — a strain designation
-  that NCBI has since replaced with a species name. This is the same underlying issue as
-  §4, so a taxonomy-release answer probably resolves both.
-
-**Request:** confirm whether the hybrid `x` is being stripped somewhere in the export
-pipeline. That one is a genuine loss rather than a cosmetic difference.
-
-## 6. Ten nodes have an empty `name`
-
-Minor, but they surface as unlabelled nodes. **Request:** a label, or omit the rows.
+**Nine nodes with an empty `name`.** All are in the branches above, so they never reach our
+graph. Not worth your time.
 
 ---
 
@@ -135,7 +122,7 @@ would prefer to match your intent than to carry a local divergence.
 1. **§1 — the `MaterialSample` edges.** By far the largest effect on usability.
 2. **§3 — versioned hosting.** Cheapest to do, and it protects every future refresh.
 3. **§2 — the `related_to` semantics.** Affects 27.5% of the export.
-4. §4–6 are smaller and we can work around them.
+4. **§4 — the hybrid marker.** Six rows, but a name that means the wrong taxon.
 
 Happy to jump on a call, or to send the exact queries behind any number here. Everything
 in this document is reproducible from

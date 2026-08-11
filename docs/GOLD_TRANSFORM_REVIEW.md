@@ -173,6 +173,12 @@ is meant to assert, which is a modeling question rather than a defect to patch.
 
 ---
 
+## Requests to the upstream author
+
+The items needing a decision by whoever produces the export are collected as a
+standalone request in [`GOLD_UPSTREAM_REQUESTS.md`](GOLD_UPSTREAM_REQUESTS.md),
+written to be sent as-is.
+
 ## Reproducing
 
 ```bash

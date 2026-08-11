@@ -277,6 +277,23 @@ Optional, for the ontology transforms:
   actually applied to `data/transformed/prego/confidence_calibration.tsv`. The
   channel is derived from the **archive filename**, not from any column.
 
+- `PREGO_SHAPES`: `all` (default) or `habitat`. `habitat` emits only the
+  `location_of` shapes (ENVO/BTO → taxon) — ~238k edges against 44.7M, a 55 MB
+  `edges.tsv` instead of 12.2 GB. PREGO's taxon→GO edges are 99% of the source
+  by volume and have no positive evidence in any of the four gold standards,
+  while the habitat edges are 7.89x enriched against BacDive isolation and
+  replicate at 2.01x against the independent Madin standard.
+
+- `PREGO_HABITAT_MIN_SCORE`: raw-score floor for *continuous-channel* habitat
+  rows, default `1.0`, applied only when `PREGO_SHAPES=habitat`. The genome
+  channel is kept whole deliberately: its habitat scores are only ever 3 or 4,
+  so a star threshold would delete 4% of habitat on provenance rather than
+  quality. Set `0` to disable. See `docs/PREGO_SCORE_VALIDATION.md`.
+
+  Standard merges use `merge.habitat.yaml` (habitat-only PREGO) or
+  `merge.noprego.yaml` (no PREGO); `merge.yaml` keeps the full source for
+  experimental builds.
+
   **If your goal is merge memory or graph size, reach for `merge.noprego.yaml`
   first** — it drops PREGO entirely (~76% of merge input) and needs none of this
   machinery. `PREGO_MIN_CONFIDENCE` is the finer-grained alternative for when

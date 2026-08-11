@@ -98,6 +98,16 @@ from kg_microbe.utils.atomic_io import atomic_write
 # Edge predicates and relations. PREGO uses only biolink predicates; the
 # RELATION_COLUMN carries an RO term where an obvious one applies, else empty.
 # ---------------------------------------------------------------------------
+# Emitted-shape selection. `habitat` keeps only the location_of shapes.
+_SHAPES_ALL = "all"
+_SHAPES_HABITAT = "habitat"
+# Habitat output lives apart from the full build so both can coexist.
+_HABITAT_OUTPUT_DIR = "prego_habitat"
+
+# Drops that are deliberate configuration rather than data-quality problems.
+# Counted in the summary, excluded from the curation report.
+_CONFIGURED_DROP_REASONS = frozenset({"non_habitat_shape", "below_habitat_min_score"})
+
 _LOCATION_OF_PREDICATE = "biolink:location_of"
 _ASSOCIATED_WITH_PREDICATE = "biolink:associated_with"
 _RELATION_LOCATION_OF = "RO:0001015"  # source → location_of → organism
@@ -174,12 +184,22 @@ class PregoTransform(Transform):
         input_dir: Optional[Path] = None,
         output_dir: Optional[Path] = None,
         min_confidence: Optional[float] = None,
+        shapes: Optional[str] = None,
+        habitat_min_score: Optional[float] = None,
     ):
         """
         Instantiate; register the source name + extend the edge header with PREGO metadata.
 
         :param input_dir: Raw data directory.
         :param output_dir: Transform output directory.
+        :param shapes: ``all`` (default) or ``habitat``. ``habitat`` emits only the
+            ``location_of`` shapes (ENVO/BTO -> taxon), which are ~1% of PREGO by
+            volume and the only part with measured, independently replicated
+            enrichment. Env: ``PREGO_SHAPES``.
+        :param habitat_min_score: Raw-score floor applied to *continuous-channel*
+            habitat rows only, leaving the genome channel whole. Defaults to 1.0,
+            the policy in ``docs/PREGO_SCORE_VALIDATION.md``; set 0 to disable.
+            Env: ``PREGO_HABITAT_MIN_SCORE``.
         :param min_confidence: Star threshold in [0, 4]; rows below it are
             dropped. Defaults to the ``PREGO_MIN_CONFIDENCE`` environment
             variable, else 0.0 (emit everything, preserving current behaviour).
@@ -200,6 +220,33 @@ class PregoTransform(Transform):
             min_confidence = float(os.environ.get("PREGO_MIN_CONFIDENCE", "0") or 0)
         validate_tau(min_confidence)
         self.min_confidence = min_confidence
+        if shapes is None:
+            shapes = os.environ.get("PREGO_SHAPES", _SHAPES_ALL).strip().lower() or _SHAPES_ALL
+        if shapes not in (_SHAPES_ALL, _SHAPES_HABITAT):
+            raise ValueError(f"PREGO_SHAPES must be {_SHAPES_ALL!r} or {_SHAPES_HABITAT!r}, got {shapes!r}")
+        self.shapes = shapes
+        if habitat_min_score is None:
+            habitat_min_score = float(os.environ.get("PREGO_HABITAT_MIN_SCORE", "1.0") or 0)
+        if habitat_min_score < 0:
+            raise ValueError(f"PREGO_HABITAT_MIN_SCORE must be >= 0, got {habitat_min_score}")
+        # Only meaningful when habitat shapes are what is being emitted. Applying
+        # it under `all` would silently thin habitat inside an otherwise
+        # unfiltered run, which nothing documents and no caller asks for.
+        self.habitat_min_score = habitat_min_score if shapes == _SHAPES_HABITAT else 0.0
+        if shapes == _SHAPES_HABITAT:
+            # Its own directory, so the two builds cannot overwrite each other and
+            # merge.habitat.yaml selects what it claims to. Sharing one path made
+            # the config a label rather than a selector: running it against a full
+            # PREGO output would silently ship a 44.7M-edge graph as "habitat only".
+            self.output_dir = self.output_base_dir / _HABITAT_OUTPUT_DIR
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+            self.output_node_file = self.output_dir / "nodes.tsv"
+            self.output_edge_file = self.output_dir / "edges.tsv"
+            self.unmapped_report_file = self.output_dir / "unmapped_associations.tsv"
+        print(
+            f"[prego] shapes={self.shapes} min_confidence={self.min_confidence} "
+            f"habitat_min_score={self.habitat_min_score}"
+        )
         self._cutoffs: dict = {}
         self._payload_cache: dict = {}
         # Per-resource cutoffs actually applied, written next to the outputs
@@ -775,6 +822,14 @@ class PregoTransform(Transform):
             self._record_drop(outcome, entity1_type, entity1_id, entity2_type, entity2_id)
             return
 
+        # Shape filter, applied before anything is emitted. Habitat is ~1% of
+        # PREGO by volume, so filtering here rather than downstream is what makes
+        # the difference between a 12.2 GB edges.tsv and a ~65 MB one — and a
+        # three-hour merge and a routine one.
+        if self.shapes == _SHAPES_HABITAT and outcome not in (KEEP_ENVO_TO_TAXON, KEEP_TAXON_TO_BTO):
+            self._record_drop("non_habitat_shape", entity1_type, entity1_id, entity2_type, entity2_id)
+            return
+
         if outcome == KEEP_TAXON_TO_GO:
             # Defensive: some source rows type-tag GO (-21/-22/-23) but
             # carry a non-GO identifier (rare data-quality edge case).
@@ -785,8 +840,7 @@ class PregoTransform(Transform):
             obj = entity2_id
             predicate = CAPABLE_OF_PREDICATE
             relation = _RELATION_CAPABLE_OF
-            self._emit_node(node_writer, subject, _NCBITAXON_CATEGORY)
-            self._emit_node(node_writer, obj, go_category_for_type(entity2_type))
+            pending_nodes = ((subject, _NCBITAXON_CATEGORY), (obj, go_category_for_type(entity2_type)))
 
         elif outcome == KEEP_ENVO_TO_TAXON:
             if not entity1_id.startswith("ENVO:"):
@@ -796,8 +850,7 @@ class PregoTransform(Transform):
             obj = f"NCBITaxon:{entity2_id}"
             predicate = _LOCATION_OF_PREDICATE
             relation = _RELATION_LOCATION_OF
-            self._emit_node(node_writer, subject, _ENVO_CATEGORY)
-            self._emit_node(node_writer, obj, _NCBITAXON_CATEGORY)
+            pending_nodes = ((subject, _ENVO_CATEGORY), (obj, _NCBITAXON_CATEGORY))
 
         elif outcome == KEEP_TAXON_TO_DOID:
             mondo = doid_to_mondo.get(entity2_id)
@@ -809,8 +862,7 @@ class PregoTransform(Transform):
             obj = mondo
             predicate = _ASSOCIATED_WITH_PREDICATE
             relation = _RELATION_ASSOCIATED_WITH
-            self._emit_node(node_writer, subject, _NCBITAXON_CATEGORY)
-            self._emit_node(node_writer, obj, _MONDO_CATEGORY)
+            pending_nodes = ((subject, _NCBITAXON_CATEGORY), (obj, _MONDO_CATEGORY))
 
         else:  # KEEP_TAXON_TO_BTO
             # Some source rows type-tag BTO (-25) but carry a non-BTO
@@ -827,8 +879,7 @@ class PregoTransform(Transform):
             obj = f"NCBITaxon:{entity1_id}"
             predicate = _LOCATION_OF_PREDICATE
             relation = _RELATION_LOCATION_OF
-            self._emit_node(node_writer, subject, _BTO_CATEGORY)
-            self._emit_node(node_writer, obj, _NCBITAXON_CATEGORY)
+            pending_nodes = ((subject, _BTO_CATEGORY), (obj, _NCBITAXON_CATEGORY))
 
         # Applied last, after every eligibility check. Run earlier it attributed
         # rows to "below_min_confidence" that would have been dropped anyway,
@@ -840,6 +891,23 @@ class PregoTransform(Transform):
         ):
             self._record_drop("below_min_confidence", entity1_type, entity1_id, entity2_type, entity2_id)
             return
+
+        # Habitat score policy (docs/PREGO_SCORE_VALIDATION.md): threshold the
+        # continuous channel, keep the genome channel whole. The genome channel
+        # scores only 3 or 4 for habitat shapes, so a star threshold cannot
+        # express this — above 3 it would delete 4% of habitat outright, on
+        # provenance rather than quality.
+        if self.habitat_min_score > 0 and channel == CHANNEL_ENVIRONMENTAL:
+            if _as_float(score) < self.habitat_min_score:
+                self._record_drop("below_habitat_min_score", entity1_type, entity1_id, entity2_type, entity2_id)
+                return
+
+        # Emitted only now, once the row is certain to survive. Emitting inside
+        # the shape branches wrote a node for every edge the filters below then
+        # dropped, so PREGO_MIN_CONFIDENCE left orphan nodes behind — nodes with
+        # no incident edge, which merge then carries into the graph.
+        for node_id, category in pending_nodes:
+            self._emit_node(node_writer, node_id, category)
 
         edge_writer.writerow(
             self._make_edge_row(
@@ -1008,12 +1076,23 @@ class PregoTransform(Transform):
         """
         self._stats["rows_dropped"] += 1
         self._stats["rows_dropped_by_reason"][reason] += 1
+        if reason in _CONFIGURED_DROP_REASONS:
+            # Counted, but no exemplar: this is the operator getting what they
+            # configured, not a data-quality problem to chase. Bypassing this
+            # method entirely was the first attempt and it silently broke the
+            # `dropped=` summary, which is derived here — 44.5M rows vanished
+            # from the arithmetic while still being filtered.
+            return
         bucket = self._drop_examples[reason]
         if len(bucket) >= self._MAX_EXAMPLES_PER_REASON:
             return
         key = f"{e1_type}:{e1_id}->{e2_type}:{e2_id}"
         bucket[key] += 1
 
+    # Deliberate configuration is counted in rows_dropped_by_reason but kept out
+    # of the curation report: a curator opening it in habitat mode would find the
+    # two largest entries are things nobody should act on, burying the real
+    # signals (bto_id_prefix_mismatch, doid_no_mondo_xref, empty_id).
     def _write_unmapped_report(self) -> None:
         """
         Emit ``unmapped_associations.tsv`` — the per-run curation report.

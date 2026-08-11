@@ -1377,3 +1377,99 @@ def test_emitted_edges_carry_populated_metadata(prego_input_dir: Path, prego_out
     # would only test the HEADER — `e` is a DictReader dict — and would pass
     # with every cell empty, which is the failure this is meant to exclude.
     assert all(e["prego_evidence"] for e in edges), "prego_evidence values must be populated"
+
+
+# ---------------------------------------------------------------------------
+# Shape selection: habitat-only emission (PREGO_SHAPES)
+# ---------------------------------------------------------------------------
+
+
+def test_habitat_shapes_emit_only_location_of(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    PREGO is ~99% taxon->GO by volume, and that part has no positive evidence.
+
+    Filtering in the transform rather than downstream is the difference between
+    a 12.2 GB edges.tsv and a ~65 MB one, and between a three-hour merge and a
+    routine one. Filtering downstream also cannot fix nodes.tsv.
+    """
+    transform = PregoTransform(
+        input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitat", habitat_min_score=0
+    )
+    transform.run()
+    edges = _read_tsv(transform.output_edge_file)
+
+    assert edges, "habitat mode must still emit something"
+    predicates = {e["predicate"] for e in edges}
+    assert predicates == {"biolink:location_of"}, predicates
+    assert not any(e["predicate"] == CAPABLE_OF_PREDICATE for e in edges)
+
+
+def test_habitat_mode_leaves_no_orphan_nodes(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    Every emitted node must be incident to an emitted edge.
+
+    Node emission used to happen inside the shape branches, before the filters
+    below could reject the row, so a dropped edge still wrote its nodes. In
+    habitat mode that would have written a GO node for all ~44M taxon->GO rows.
+    """
+    transform = PregoTransform(
+        input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitat", habitat_min_score=0
+    )
+    transform.run()
+    nodes = {n["id"] for n in _read_tsv(transform.output_node_file)}
+    incident = set()
+    for edge in _read_tsv(transform.output_edge_file):
+        incident.add(edge["subject"])
+        incident.add(edge["object"])
+
+    assert nodes, "habitat mode must still emit nodes"
+    assert not (nodes - incident), f"orphan nodes emitted: {sorted(nodes - incident)[:5]}"
+    assert not any(n.startswith("GO:") for n in nodes), "no GO nodes belong in a habitat-only build"
+
+
+def test_min_confidence_no_longer_leaves_orphan_nodes(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    The same ordering bug affected the pre-existing star threshold.
+
+    `_emit_node` ran before `keep_row`, so every edge PREGO_MIN_CONFIDENCE
+    dropped still contributed its nodes to nodes.tsv, and merge carried those
+    orphans into the graph.
+    """
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, min_confidence=4)
+    transform.run()
+    nodes = {n["id"] for n in _read_tsv(transform.output_node_file)}
+    incident = set()
+    for edge in _read_tsv(transform.output_edge_file):
+        incident.add(edge["subject"])
+        incident.add(edge["object"])
+
+    assert not (nodes - incident), f"orphan nodes emitted: {sorted(nodes - incident)[:5]}"
+
+
+def test_habitat_min_score_thresholds_only_the_continuous_channel(prego_input_dir: Path, prego_output_dir: Path):
+    """
+    Genome-channel habitat scores are only ever 3 or 4.
+
+    A threshold that applied to them would delete 4% of habitat outright on
+    provenance rather than quality, so the floor is continuous-channel only.
+    """
+    transform = PregoTransform(
+        input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitat", habitat_min_score=99
+    )
+    transform.run()
+    edges = _read_tsv(transform.output_edge_file)
+    channels = {e["prego_channel"] for e in edges}
+
+    assert CHANNEL_ENVIRONMENTAL not in channels, "an unreachable floor must empty the continuous channel"
+    assert channels, "the genome channel must survive any continuous-channel floor"
+    assert channels <= {CHANNEL_GENOMES, CHANNEL_LITERATURE}, channels
+
+
+def test_shapes_defaults_to_all_and_rejects_nonsense(prego_input_dir: Path, prego_output_dir: Path):
+    """Unfiltered stays the default, and a typo must fail loudly rather than silently emit everything."""
+    default = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    assert default.shapes == "all"
+    assert default.habitat_min_score == 0.0, "the habitat floor must not apply to an unfiltered run"
+
+    with pytest.raises(ValueError, match="PREGO_SHAPES"):
+        PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitats")

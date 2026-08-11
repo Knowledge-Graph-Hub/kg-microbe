@@ -154,9 +154,21 @@ The problem is what happens on merge:
 Ingesting GOLD as-is reintroduces 23,695 viral, plant and animal taxa that the ontologies
 transform went to the trouble of removing, plus 76k organism nodes hanging off them.
 
-**Action (on us):** the GOLD transform should drop nodes and edges whose taxon falls outside
-the trimmed NCBITaxon set, the same way the ontologies transform applies
-`exclusion_branches.tsv`. Not yet implemented — the transform currently passes them through.
+**Implemented.** The transform now drops taxa outside the trimmed set, the organisms typed
+to them, and the study nodes left holding nothing else — the last being orphaning *we*
+cause, so we clean it, while upstream orphans stay reported. Measured on the real payload:
+
+| | before | after |
+|---|---:|---:|
+| nodes | 1,086,930 | **975,839** (−111,091) |
+| edges | 1,314,901 | **1,110,984** (−203,917, 15.5%) |
+| excluded-branch taxa | 23,695 | **0** |
+| organisms with no taxon | 0 | **0** |
+| dangling endpoints | 0 | **0** |
+
+`GOLD_APPLY_TAXON_TRIM=false` ingests unfiltered for debugging. A missing ontologies output
+is fatal rather than a silent skip, since skipping would reintroduce every excluded branch
+with nothing to show it happened.
 
 An earlier spot check suggested these were *merged* taxids, because sorting by ascending
 taxid surfaced the oldest IDs, which are the ones most likely to have been merged
@@ -191,7 +203,7 @@ like again.
 | 3 — `related_to` | **open** — needs a modelling decision |
 | 4 — orphan `MaterialSample` | **open** — warned at transform time, not dropped |
 | 6 — taxon name differences | **open** — 26 substantive; hybrid markers raised upstream |
-| 7 — excluded-branch taxa | **open, ours** — transform must apply the NCBITaxon trim |
+| 7 — excluded-branch taxa | **fixed** — transform applies the NCBITaxon trim (−23,695 taxa, −203,917 edges) |
 
 `kg-model-review --transform gold` now reports **0 errors, 0 warnings** on the
 conformed output.

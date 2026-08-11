@@ -27,6 +27,14 @@ What it changes, and why each is safe:
   nodes already use (``METPO:1001000|biolink:Procedure``). Without it those 4,220
   edges are a Biolink violation.
 
+* **Applies the NCBITaxon trim.** KG-Microbe deliberately restricts NCBITaxon to
+  microbes (``exclusion_branches.tsv`` removes Viruses, Viridiplantae, Metazoa
+  and others). GOLD is a genome database covering all of life, so ingesting it
+  unfiltered reintroduces 23,695 excluded taxa — phages, marine viruses,
+  ``Picea glauca``, a starling — and the 76,034 organisms typed to them, undoing
+  the trim the ontologies transform performs. Those, and the study nodes left
+  holding nothing but them, are dropped.
+
 What it deliberately does **not** change, because each needs a modelling decision
 rather than a patch, and is reported instead:
 
@@ -38,6 +46,7 @@ rather than a patch, and is reported instead:
 """
 
 import csv
+import os
 from pathlib import Path
 from typing import Optional, Union
 
@@ -60,6 +69,16 @@ _ONTOLOGY_CLASS = "biolink:OntologyClass"
 
 #: Reported, not repaired — see the module docstring.
 _REPORTED_CATEGORIES = ("biolink:MaterialSample",)
+
+#: The trimmed NCBITaxon set, produced by the ontologies transform. GOLD must run
+#: after it. Same shape of dependency as PREGO's on ``mondo_nodes.tsv``.
+_NCBITAXON_NODES = "ncbitaxon_nodes.tsv"
+
+#: Set false to ingest GOLD unfiltered, for debugging what the trim removes.
+_APPLY_TRIM_ENV = "GOLD_APPLY_TAXON_TRIM"
+
+_IN_TAXON = "biolink:in_taxon"
+_TAXON_PREFIX = "NCBITaxon:"
 
 
 class GOLDTransform(Transform):
@@ -89,18 +108,129 @@ class GOLDTransform(Transform):
             if not path.exists():
                 raise FileNotFoundError(f"{path} is missing; run `poetry run kg download -t gold` first.")
 
-        node_ids = self._write_nodes(nodes_in)
-        self._write_edges(edges_in, node_ids)
+        dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
+        incident = self._write_edges(edges_in, dropped)
+        self._write_nodes(nodes_in, dropped, seen_before, incident)
 
-    def _write_nodes(self, nodes_in: Path) -> set:
+    def _trimmed_taxa(self) -> Optional[set]:
         """
-        Write nodes in the standard column order, adding the missing columns.
+        Load the taxon IDs that survived the NCBITaxon trim.
+
+        :return: The permitted ``NCBITaxon:`` IDs, or None when filtering is off.
+        :raises FileNotFoundError: If the ontologies output is absent while
+            filtering is on — silently skipping the trim would reintroduce every
+            excluded branch with nothing to show it had happened.
+        """
+        if os.environ.get(_APPLY_TRIM_ENV, "true").strip().lower() in ("false", "0", "no"):
+            print(f"[gold] {_APPLY_TRIM_ENV} is off — emitting excluded-branch taxa unfiltered")
+            return None
+        path = self.output_base_dir / "ontologies" / _NCBITAXON_NODES
+        if not path.exists():
+            raise FileNotFoundError(
+                f"{path} is missing, so the NCBITaxon trim cannot be applied. Run "
+                f"`poetry run kg transform -s ontologies` first, or set {_APPLY_TRIM_ENV}=false "
+                "to ingest GOLD unfiltered (which reintroduces viruses, plants and metazoa)."
+            )
+        with path.open(newline="") as handle:
+            return {row["id"] for row in csv.DictReader(handle, delimiter="\t")}
+
+    def _taxon_drop_set(self, nodes_in: Path, edges_in: Path) -> tuple:
+        """
+        Decide what the trim removes, before anything is written.
+
+        Three things go: taxa outside the trimmed set, the organisms typed to
+        them — an organism whose taxon is a spruce or a starling does not belong
+        in a microbial graph — and the studies left holding nothing else. The
+        last is a condition we create, so we clean it up; the orphans already in
+        the upstream payload are a separate modelling question and are left alone.
 
         :param nodes_in: Upstream ``GOLD_nodes.tsv``.
-        :return: The set of emitted node IDs, for the edge pass to check against.
+        :param edges_in: Upstream ``GOLD_edges.tsv``.
+        :return: ``(ids_to_drop, ids_that_had_an_edge_upstream)``.
         """
-        emitted: set = set()
-        counts: dict = {}
+        permitted = self._trimmed_taxa()
+        seen_before: set = set()
+        if permitted is None:
+            with edges_in.open(newline="") as handle:
+                for row in csv.DictReader(handle, delimiter="\t"):
+                    seen_before.add(row["subject"])
+                    seen_before.add(row["object"])
+            return set(), seen_before
+
+        with nodes_in.open(newline="") as handle:
+            excluded = {
+                row["id"]
+                for row in csv.DictReader(handle, delimiter="\t")
+                if row["id"].startswith(_TAXON_PREFIX) and row["id"] not in permitted
+            }
+        organisms: set = set()
+        with edges_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                seen_before.add(row["subject"])
+                seen_before.add(row["object"])
+                if row["predicate"] == _IN_TAXON and row["object"] in excluded:
+                    organisms.add(row["subject"])
+        print(
+            f"[gold] NCBITaxon trim: dropping {len(excluded):,} taxa outside the trimmed set "
+            f"and {len(organisms):,} organisms typed to them"
+        )
+        return excluded | organisms, seen_before
+
+    def _write_edges(self, edges_in: Path, dropped: set) -> set:
+        """
+        Write surviving edges in the standard column order.
+
+        :param edges_in: Upstream ``GOLD_edges.tsv``.
+        :param dropped: IDs removed by the trim.
+        :return: IDs incident to at least one surviving edge.
+        """
+        incident: set = set()
+        kept = removed = 0
+        with (
+            edges_in.open(newline="") as handle,
+            self.output_edge_file.open("w", newline="") as out,
+        ):
+            reader = csv.DictReader(handle, delimiter="\t")
+            writer = csv.writer(out, delimiter="\t")
+            writer.writerow(self.edge_header)
+            for row in reader:
+                subject, obj = row["subject"], row["object"]
+                if subject in dropped or obj in dropped:
+                    removed += 1
+                    continue
+                incident.add(subject)
+                incident.add(obj)
+                kept += 1
+                writer.writerow(
+                    [
+                        subject,
+                        row["predicate"],
+                        obj,
+                        row.get("relation", ""),
+                        row.get("primary_knowledge_source", "") or f"infores:{GOLD}",
+                        KNOWLEDGE_ASSERTION,
+                        MANUAL_AGENT,
+                    ]
+                )
+        print(f"[gold] edges emitted: {kept:,}" + (f" (dropped {removed:,} by the trim)" if removed else ""))
+        return incident
+
+    def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set) -> None:
+        """
+        Write surviving nodes in the standard column order, adding missing columns.
+
+        A node goes if the trim removed it, or if it had an edge upstream and has
+        none left — that second case is orphaning *we* caused, so we clean it up.
+        Nodes that were already edgeless upstream are kept and reported, because
+        whether to drop those is a modelling decision for GOLD, not ours.
+
+        :param nodes_in: Upstream ``GOLD_nodes.tsv``.
+        :param dropped: IDs removed by the trim.
+        :param seen_before: IDs incident to an edge in the upstream payload.
+        :param incident: IDs incident to a surviving edge.
+        """
+        emitted = removed = newly_orphaned = 0
+        pre_existing_orphans: set = set()
         with (
             nodes_in.open(newline="") as handle,
             self.output_node_file.open("w", newline="") as out,
@@ -110,11 +240,19 @@ class GOLDTransform(Transform):
             writer.writerow(self.node_header)
             for row in reader:
                 node_id = row["id"]
+                if node_id in dropped:
+                    removed += 1
+                    continue
+                if node_id in seen_before and node_id not in incident:
+                    newly_orphaned += 1
+                    removed += 1
+                    continue
+                if node_id not in seen_before:
+                    pre_existing_orphans.add(node_id)
                 category = row.get("category", "")
                 if node_id.startswith(_ECOSYSTEM_PREFIX) and _ONTOLOGY_CLASS not in category:
                     category = f"{category}|{_ONTOLOGY_CLASS}" if category else _ONTOLOGY_CLASS
-                counts[category] = counts.get(category, 0) + 1
-                emitted.add(node_id)
+                emitted += 1
                 writer.writerow(
                     [
                         node_id,
@@ -128,74 +266,33 @@ class GOLDTransform(Transform):
                         "",  # same_as
                     ]
                 )
-        print(f"[gold] nodes emitted: {len(emitted):,}")
-        return emitted
-
-    def _write_edges(self, edges_in: Path, node_ids: set) -> None:
-        """
-        Write edges in the standard column order, adding the knowledge columns.
-
-        Endpoints are checked against the emitted nodes. The shipped payload has
-        none dangling, and a regression there is worth hearing about rather than
-        discovering at merge time.
-
-        :param edges_in: Upstream ``GOLD_edges.tsv``.
-        :param node_ids: IDs emitted by :meth:`_write_nodes`.
-        """
-        incident: set = set()
-        dangling = 0
-        total = 0
-        with (
-            edges_in.open(newline="") as handle,
-            self.output_edge_file.open("w", newline="") as out,
-        ):
-            reader = csv.DictReader(handle, delimiter="\t")
-            writer = csv.writer(out, delimiter="\t")
-            writer.writerow(self.edge_header)
-            for row in reader:
-                subject, obj = row["subject"], row["object"]
-                total += 1
-                if subject not in node_ids or obj not in node_ids:
-                    dangling += 1
-                    continue
-                incident.add(subject)
-                incident.add(obj)
-                writer.writerow(
-                    [
-                        subject,
-                        row["predicate"],
-                        obj,
-                        row.get("relation", ""),
-                        row.get("primary_knowledge_source", "") or f"infores:{GOLD}",
-                        KNOWLEDGE_ASSERTION,
-                        MANUAL_AGENT,
-                    ]
-                )
-        print(f"[gold] edges emitted: {total - dangling:,}" + (f" (dropped {dangling:,} dangling)" if dangling else ""))
-        self._report_orphans(node_ids, incident)
+        print(f"[gold] nodes emitted: {emitted:,}" + (f" (dropped {removed:,})" if removed else ""))
+        if newly_orphaned:
+            print(f"[gold]   of which {newly_orphaned:,} were left edgeless by the trim and cleaned up")
+        self._report_orphans(pre_existing_orphans, emitted)
 
     @staticmethod
-    def _report_orphans(node_ids: set, incident: set) -> None:
+    def _report_orphans(orphans: set, emitted: int) -> None:
         """
-        Report nodes with no incident edge rather than silently shipping them.
+        Report nodes that were already edgeless upstream.
 
-        The upstream payload is 26.5% orphans, essentially all
-        ``MaterialSample``. Whether to drop them is a modelling decision, so this
-        surfaces the number instead of taking it.
+        The upstream payload is 26.5% orphans, essentially all ``MaterialSample``.
+        Whether to drop them is a modelling decision for GOLD, so this surfaces
+        the number rather than taking it — unlike the orphaning the trim causes,
+        which is ours and is cleaned up.
 
-        :param node_ids: All emitted node IDs.
-        :param incident: IDs touched by at least one emitted edge.
+        :param orphans: IDs that had no edge in the upstream payload.
+        :param emitted: Total nodes written.
         """
-        orphans = node_ids - incident
         if not orphans:
             return
-        share = 100 * len(orphans) / len(node_ids)
         by_prefix: dict = {}
         for node_id in orphans:
             prefix = node_id.split(":")[0]
             by_prefix[prefix] = by_prefix.get(prefix, 0) + 1
         top = ", ".join(f"{k}={v:,}" for k, v in sorted(by_prefix.items(), key=lambda kv: -kv[1])[:4])
         print(
-            f"[gold] WARNING: {len(orphans):,} orphan nodes ({share:.1f}%) have no incident edge — {top}. "
-            "See docs/GOLD_TRANSFORM_REVIEW.md; dropping them is a modelling decision, not taken here."
+            f"[gold] WARNING: {len(orphans):,} of {emitted:,} emitted nodes ({100 * len(orphans) / emitted:.1f}%) "
+            f"had no incident edge upstream — {top}. See docs/GOLD_TRANSFORM_REVIEW.md; dropping them is a "
+            "modelling decision for GOLD, not taken here."
         )

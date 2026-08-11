@@ -257,6 +257,64 @@ def test_blank_lpsn_block_returns_none(tmp_path):
     assert x._lpsn_stats["unmatched"] == 0
 
 
+# The wrapper is positional, so the tests derive the column index the way
+# production does (`edge_header.index(...)`) rather than hardcoding it. A pin
+# that cannot notice the column moving is not pinning much (#741). Rows are
+# full width for the same reason: the wrapper's `len(row) > ks_idx` guard means
+# a short row passes without exercising the shape production writes.
+_EDGE_HEADER = [
+    "subject",
+    "predicate",
+    "object",
+    "relation",
+    "primary_knowledge_source",
+    "knowledge_level",
+    "agent_type",
+]
+
+
+def _provenance_writer():
+    """
+    Build a `_StrainProvenanceWriter` over a capturing sink.
+
+    :return: ``(captured_rows, writer, primary_knowledge_source_index)``.
+    """
+    from kg_microbe.transform_utils.bacdive.bacdive import _StrainProvenanceWriter
+
+    captured = []
+
+    class _Sink:
+
+        """Collect rows instead of writing them."""
+
+        def writerow(self, row):
+            """Record one row."""
+            captured.append(list(row))
+
+    index = _EDGE_HEADER.index("primary_knowledge_source")
+    return captured, _StrainProvenanceWriter(_Sink(), knowledge_source="infores:bacdive", ks_column_index=index), index
+
+
+def _edge_row(subject, obj, knowledge_source):
+    """
+    Build a full-width edge row, matching what the transform actually writes.
+
+    :param subject: Edge subject CURIE.
+    :param obj: Edge object CURIE.
+    :param knowledge_source: Value for the primary_knowledge_source column.
+    :return: A row with one cell per column in the real edge header.
+    """
+    return [
+        subject,
+        "biolink:subclass_of",
+        obj,
+        "rdfs:subClassOf",
+        knowledge_source,
+        "knowledge_assertion",
+        "manual_agent",
+    ]
+
+
 def test_lpsn_edge_carries_the_list_form_knowledge_source():
     """
     The LPSN cross-ref edge must carry the same list-form provenance as its siblings.

@@ -374,3 +374,90 @@ def test_non_strain_edges_keep_their_bare_knowledge_source():
 
     assert captured[0][4] == "infores:bacdive", "an ontology axiom must not gain strain provenance"
     assert captured[1][4] == "infores:metpo", "a different knowledge source must pass through"
+
+
+def _gss_row(record_no, genus, sp, status, link=""):
+    """Build one GSS CSV row."""
+    return {
+        "genus_name": genus,
+        "sp_epithet": sp,
+        "subsp_epithet": "",
+        "status": status,
+        "record_no": record_no,
+        "record_lnk": link,
+    }
+
+
+_CORRECT = "VP; sp. nov.; validly published under the ICNP; correct name"
+_SYNONYM = "VP; sp. nov.; validly published under the ICNP; synonym"
+
+
+def test_a_synonym_match_is_repointed_to_its_accepted_name(tmp_path):
+    """
+    A strain reported under an LPSN synonym must land under the accepted name.
+
+    #680 made this edge `subclass_of`, so a synonym target places a living strain
+    in the subsumption hierarchy beneath a deprecated class — 992 of 62,096 edges
+    (#684). Dropping them would lose real information: the strain genuinely is
+    that organism, LPSN has simply renamed it. `record_lnk` is LPSN's own
+    crosswalk, so the edge is re-pointed instead.
+    """
+    csv_path = tmp_path / "lpsn_gss.csv"
+    _write_gss(
+        csv_path,
+        [
+            _gss_row("772466", "Abiotrophia", "adiacens", _SYNONYM, link="776611"),
+            _gss_row("776611", "Granulicatella", "adiacens", _CORRECT),
+        ],
+    )
+    index = _bare_transform(csv_path)._load_lpsn_name_index()
+
+    assert index["Abiotrophia adiacens"] == ["776611"], "the synonym must resolve to the accepted record"
+    assert index["Granulicatella adiacens"] == ["776611"]
+
+
+def test_a_synonym_chain_is_followed_to_the_accepted_name(tmp_path):
+    """Chains occur: 250 synonyms need two hops on the shipped GSS and 2 need three."""
+    csv_path = tmp_path / "lpsn_gss.csv"
+    _write_gss(
+        csv_path,
+        [
+            _gss_row("1", "Aaa", "one", _SYNONYM, link="2"),
+            _gss_row("2", "Bbb", "two", _SYNONYM, link="3"),
+            _gss_row("3", "Ccc", "three", _CORRECT),
+        ],
+    )
+    assert _bare_transform(csv_path)._load_lpsn_name_index()["Aaa one"] == ["3"]
+
+
+def test_a_dead_end_synonym_keeps_its_own_record(tmp_path):
+    """
+    192 GSS rows are non-current with no `record_lnk`.
+
+    There is nothing better to point them at, so they are left alone rather than
+    dropped — losing the edge would be worse than an imperfect target.
+    """
+    csv_path = tmp_path / "lpsn_gss.csv"
+    _write_gss(csv_path, [_gss_row("9", "Ddd", "four", _SYNONYM)])
+    assert _bare_transform(csv_path)._load_lpsn_name_index()["Ddd four"] == ["9"]
+
+
+def test_a_cyclic_synonym_chain_terminates(tmp_path):
+    """No cycles exist in the shipped GSS, but a future release could introduce one."""
+    csv_path = tmp_path / "lpsn_gss.csv"
+    _write_gss(
+        csv_path,
+        [
+            _gss_row("1", "Aaa", "one", _SYNONYM, link="2"),
+            _gss_row("2", "Bbb", "two", _SYNONYM, link="1"),
+        ],
+    )
+    index = _bare_transform(csv_path)._load_lpsn_name_index()
+    assert index["Aaa one"] == ["1"], "a cycle must leave the record untouched, not hang"
+
+
+def test_correct_names_are_left_alone(tmp_path):
+    """The common case must be untouched: 26,866 of 34,301 rows are already current."""
+    csv_path = tmp_path / "lpsn_gss.csv"
+    _write_gss(csv_path, [_gss_row("100", "Escherichia", "coli", _CORRECT)])
+    assert _bare_transform(csv_path)._load_lpsn_name_index()["Escherichia coli"] == ["100"]

@@ -68,14 +68,37 @@ gap is expected and we will realign. If these are GOLD-internal or provisional i
 minted in the `NCBITaxon:` namespace, we need to know, because that changes how we merge
 them.
 
-## 5. Seventy-eight taxon names disagree with NCBITaxon
+## 5. Twenty-six taxon names differ substantively
 
-Of the 101,659 taxa shared with our NCBITaxon build, **78 carry a different `name`** (all
-categories agree). On merge, whichever source is written last silently wins.
+Of the 101,659 taxa shared with our NCBITaxon build, 78 carry a different `name`. To be
+clear about what our label is: **we do no curation of taxon labels.** Ours come straight
+from the NCBITaxon OBO release, so this is a comparison between the OBO label and yours,
+not between your data and anything we have edited.
 
-**Request:** prefer NCBI's label for `NCBITaxon:` nodes, or drop `name` from those rows and
-let the ontology supply it. If any of the 78 are deliberate corrections we would like to
-know which — they may be worth reporting upstream to NCBI.
+Splitting them:
+
+| | count | example |
+|---|---:|---|
+| OBO disambiguation/annotation only | **52** | ours `Microcystis <cyanobacteria>` vs yours `Microcystis`; ours `Metschnikowia lopburiensis (nom. inval.)` vs yours without the qualifier |
+| genuine difference | **26** | see below |
+
+**The 52 need no action from anyone.** The `<...>` homonym suffixes and `(nom. inval.)`
+qualifiers are added by the OBO conversion; your plain NCBI scientific names are correct.
+We will not let GOLD rows overwrite the OBO labels, and vice versa.
+
+**The 26 are worth your attention**, and they look like two different things:
+
+- **Hybrid markers dropped.** `Saccharomyces x bayanus CBS 424` (ours) vs
+  `Saccharomyces bayanus CBS 424` (yours), and the same for CBS 1502, 1542, 2946, 3008,
+  5184. NCBI's `x` marks an interspecific hybrid; without it the name denotes a different
+  taxon. This looks like a normalisation step stripping the marker.
+- **Taxonomy version skew.** `Jeongeupia sp. HS-3` vs `Jeongeupia sacculi`,
+  `Paucisalibacillus sp. EB02` vs `Paucisalibacillus algeriensis` — a strain designation
+  that NCBI has since replaced with a species name. This is the same underlying issue as
+  §4, so a taxonomy-release answer probably resolves both.
+
+**Request:** confirm whether the hybrid `x` is being stripped somewhere in the export
+pipeline. That one is a genuine loss rather than a cosmetic difference.
 
 ## 6. Ten nodes have an empty `name`
 

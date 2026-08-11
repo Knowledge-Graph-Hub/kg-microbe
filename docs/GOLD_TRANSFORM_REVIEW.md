@@ -112,13 +112,22 @@ entries in `kg_microbe/transform_utils/custom_curies.yaml` with expansion URIs, 
 downstream RDF/SPARQL consumer will fail to expand them. This is the only issue the
 built-in review flagged on its own.
 
-### 6. 78 NCBITaxon name conflicts with the ontologies output — *integration*
+### 6. 26 substantive NCBITaxon name differences — *integration*
 
 GOLD carries 125,354 `NCBITaxon:` nodes; 101,659 also exist in
-`data/transformed/ontologies/ncbitaxon_nodes.tsv`. Of those, **78 disagree on `name`** (0 on
-`category`). KGX merge resolves by last-writer or first-writer depending on order, so GOLD
-could silently override curated NCBITaxon labels. Either drop `name` from GOLD's taxon rows
-and let the ontology own them, or reconcile the 78.
+`data/transformed/ontologies/ncbitaxon_nodes.tsv`. Of those, 78 disagree on `name` (0 on
+`category`). **KG-Microbe does not curate taxon labels** — ours are the NCBITaxon OBO
+labels — so this is an OBO-vs-GOLD comparison, not a conflict with anything we maintain.
+
+- **52 are OBO artifacts only**: homonym suffixes (`Microcystis <cyanobacteria>`) and
+  nomenclatural qualifiers (`(nom. inval.)`). Strip those and the names match. No action.
+- **26 are substantive**, in two groups: NCBI hybrid markers dropped by GOLD
+  (`Saccharomyces x bayanus CBS 424` → `Saccharomyces bayanus CBS 424`, and five more CBS
+  strains), and taxonomy version skew (`Jeongeupia sp. HS-3` vs `Jeongeupia sacculi`).
+
+The hybrid-marker loss is the only one that changes meaning — without the `x` the name
+denotes a different taxon. KGX merge resolves by write order, so neither side should be
+allowed to overwrite the other's `name` on `NCBITaxon:` nodes.
 
 ### 7. 23,695 GOLD-only taxa — *integration, needs a decision*
 

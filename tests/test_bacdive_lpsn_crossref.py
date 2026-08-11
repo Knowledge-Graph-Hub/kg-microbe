@@ -255,3 +255,64 @@ def test_blank_lpsn_block_returns_none(tmp_path):
     assert x._lookup_lpsn(None) is None
     # None + empty are treated as no-op; unmatched not incremented.
     assert x._lpsn_stats["unmatched"] == 0
+
+
+def test_lpsn_edge_carries_the_list_form_knowledge_source():
+    """
+    The LPSN cross-ref edge must carry the same list-form provenance as its siblings.
+
+    #680 changed the subject from ``bacdive:NNN`` to
+    ``kgmicrobe.strain:bacdive_NNN``, which as a side effect brought all
+    62,096 of these edges under ``_StrainProvenanceWriter``. The provenance
+    flipped from ``infores:bacdive`` to ``['infores:bacdive', 'bacdive:NNN']``.
+
+    That is the wanted value — mediadive emits a byte-identical literal so KGX
+    collapses the two rows by exact-string match at merge — but it was an
+    unintended side effect, unmentioned in any commit on #680, and nothing
+    pinned it. A refactor could flip it back silently (#688).
+    """
+    from kg_microbe.transform_utils.bacdive.bacdive import _StrainProvenanceWriter
+
+    captured = []
+
+    class _Sink:
+
+        """Collect rows instead of writing them."""
+
+        def writerow(self, row):
+            """Record one row."""
+            captured.append(list(row))
+
+    writer = _StrainProvenanceWriter(_Sink(), knowledge_source="infores:bacdive", ks_column_index=4)
+    writer.writerow(
+        ["kgmicrobe.strain:bacdive_7249", "biolink:subclass_of", "lpsn:12345", "rdfs:subClassOf", "infores:bacdive"]
+    )
+
+    assert captured[0][4] == "['infores:bacdive', 'bacdive:7249']", captured[0][4]
+
+
+def test_non_strain_edges_keep_their_bare_knowledge_source():
+    """
+    The wrapper must fire only when an endpoint is a BacDive strain.
+
+    METPO ontology axioms and isolation-source edges pass through untouched;
+    rewriting those would invent strain provenance for rows that have none.
+    """
+    from kg_microbe.transform_utils.bacdive.bacdive import _StrainProvenanceWriter
+
+    captured = []
+
+    class _Sink:
+
+        """Collect rows instead of writing them."""
+
+        def writerow(self, row):
+            """Record one row."""
+            captured.append(list(row))
+
+    writer = _StrainProvenanceWriter(_Sink(), knowledge_source="infores:bacdive", ks_column_index=4)
+    writer.writerow(["METPO:1000601", "biolink:subclass_of", "METPO:1000600", "rdfs:subClassOf", "infores:bacdive"])
+    writer.writerow(["kgmicrobe.strain:bacdive_7249", "biolink:location_of", "ENVO:00002006", "RO:1", "infores:metpo"])
+
+    assert captured[0][4] == "infores:bacdive", "an ontology axiom must not gain strain provenance"
+    assert captured[1][4] == "infores:metpo", "a different knowledge source must pass through"

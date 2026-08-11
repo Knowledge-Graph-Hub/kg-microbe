@@ -1018,22 +1018,55 @@ class BacDiveTransform(Transform):
         :return: List of extracted values (empty list if path not found)
         """
         parts = json_path.split(".")
-        current = record
 
-        # Traverse the path
-        for part in parts:
-            if isinstance(current, dict):
-                current = current.get(part)
-                if current is None:
-                    return []
-            else:
+        # Traverse as a frontier rather than a single cursor. BacDive gives the
+        # same path either shape: `Morphology.cell morphology` is a dict on one
+        # strain and a list of per-reference dicts on the next. The old cursor
+        # bailed (`return []`) the moment an *intermediate* node was a list, so
+        # every value under it was dropped — 24,808 of 118,613 record-path
+        # combinations, 20.9%, and 66.9% of halophily alone (#474). Note the
+        # final-value handling below already coped with a list; only the
+        # traversal did not.
+        #
+        # With no intermediate lists the frontier holds exactly one node, which
+        # is the old `current`, so the object path is unchanged by construction.
+        frontier = [record]
+        for part in parts[:-1]:
+            nxt = []
+            for node in frontier:
+                for candidate in node if isinstance(node, list) else [node]:
+                    if isinstance(candidate, dict):
+                        child = candidate.get(part)
+                        if child is not None:
+                            nxt.append(child)
+            if not nxt:
                 return []
+            frontier = nxt
 
-        # Handle the final value
+        results = []
+        for current in frontier:
+            results.extend(self._values_at_leaf(current, parts))
+        return results
+
+    @staticmethod
+    def _values_at_leaf(current, parts):
+        """
+        Pull the final key out of one traversed node.
+
+        Split out of :meth:`_extract_value_from_json_path` so the frontier can
+        apply it per branch. The logic is the original final-value handling,
+        unchanged: a list yields the key from each dict member, a dict yields the
+        key once, and a scalar is returned as-is.
+
+        :param current: Node reached by traversing all but the last path part.
+        :param parts: The split JSON path.
+        :return: List of stringified values.
+        """
+        last_key = parts[-1]
+        current = current.get(last_key) if isinstance(current, dict) else current
         if isinstance(current, list):
-            # If it's a list of dicts, extract the last key from path from each dict
+            # A list of dicts: take the key from each member.
             result = []
-            last_key = parts[-1]
             for item in current:
                 if isinstance(item, dict):
                     value = item.get(last_key)
@@ -1043,8 +1076,6 @@ class BacDiveTransform(Transform):
                     result.append(str(item).strip())
             return result
         elif isinstance(current, dict):
-            # If it's a dict, extract the value using the last part of the path
-            last_key = parts[-1]
             value = current.get(last_key)
             if value:
                 return [str(value).strip()]

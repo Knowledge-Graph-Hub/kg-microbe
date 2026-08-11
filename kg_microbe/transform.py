@@ -13,6 +13,7 @@ from kg_microbe.transform_utils.constants import (
     BACTOTRAITS,
     BAKTA,
     COG,
+    GOLD,
     GTDB,
     KEGG,
     LPSN_API_SOURCE,
@@ -27,6 +28,7 @@ from kg_microbe.transform_utils.constants import (
     PREGO,
     RHEAMAPPINGS,
 )
+from kg_microbe.transform_utils.gold.gold import GOLDTransform
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
 from kg_microbe.transform_utils.lpsn.lpsn import LPSNTransform
@@ -73,6 +75,7 @@ DATA_SOURCES = {
     METATRAITS_GTDB: MetaTraitsGTDBTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
+    GOLD: GOLDTransform,
     MICROBEDECODER: MicrobeDecoderTransform,
     PREGO: PregoTransform,
     # UNIPROT_HUMAN: UniprotHumanTransform,

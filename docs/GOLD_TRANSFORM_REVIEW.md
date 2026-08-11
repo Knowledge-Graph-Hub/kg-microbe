@@ -140,6 +140,25 @@ mistaken for partial loss.
 
 ---
 
+## Status after the transform in this branch
+
+The passthrough transform repairs the mechanical issues; the review above
+describes the **upstream payload**, which is what a future refresh will look
+like again.
+
+| issue | status |
+|---|---|
+| 1 — schema columns | **fixed** — standard node/edge headers, `knowledge_assertion` / `manual_agent`, upstream edge `id` dropped |
+| 2 — `subclass_of` violation | **fixed** — ecosystem nodes emit `biolink:EnvironmentalFeature\|biolink:OntologyClass` |
+| 5 — unregistered prefixes | **fixed** — `gold` / `gold.ecosystem` in `custom_curies.yaml` |
+| 8 — 10 unnamed nodes | carried through; upstream data issue |
+| 3 — `related_to` | **open** — needs a modelling decision |
+| 4 — orphan `MaterialSample` | **open** — warned at transform time, not dropped |
+| 6, 7 — taxon conflicts / GOLD-only taxa | **open** — needs a decision |
+
+`kg-model-review --transform gold` now reports **0 errors, 0 warnings** on the
+conformed output.
+
 ## Recommended order
 
 1. Add `gold` / `gold.ecosystem` to `custom_curies.yaml` (issue 5) — mechanical, unblocks RDF.

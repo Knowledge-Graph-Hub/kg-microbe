@@ -33,6 +33,7 @@
 #    bactotraits      BactoTraits V2 (static Jun-2022 dataset)
 #    microbedecoder   MicrobeDecoder wide CSV (Hackmann & Zhang, Sci Adv 2023; CC BY 4.0)
 #    prego            PREGO taxon↔env/process associations (Zafeiropoulos et al 2022; CC-BY)
+#    gold             GOLD pre-transformed KGX TSVs (Genomes OnLine Database, JGI)
 #    schema      Reference specs (Biolink Model, KGX format) — not pipeline inputs
 #
 #  A new entry MUST have a tag: tests/test_download_tags.py fails otherwise, so
@@ -690,3 +691,18 @@
 # -
 #   url: https://lpsn.dsmz.de/downloads/gss
 #   local_name: lpsn_gss.csv
+
+# GOLD (Genomes OnLine Database, JGI) — pre-transformed KGX TSVs.
+# Not parsed from a GOLD dump: these arrive already in KGX shape and the
+# transform is a validating passthrough. Hosted on Drive for now; move to a
+# versioned URL when GOLD publishes one, since a Drive file can be replaced in
+# place with no version to pin. See docs/GOLD_TRANSFORM_REVIEW.md for the
+# modeling review of this payload.
+-
+  url: gdrive:1hCf5mLhr_rN6IH2xY1MQtilw6wSbWX1o
+  local_name: gold/GOLD_nodes.tsv
+  tag: gold
+-
+  url: gdrive:1XYVjpPMW-CiuXm8274Ya5PmxZzRSMNxV
+  local_name: gold/GOLD_edges.tsv
+  tag: gold

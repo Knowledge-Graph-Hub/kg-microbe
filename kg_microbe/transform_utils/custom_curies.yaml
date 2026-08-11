@@ -1045,3 +1045,11 @@ other:
     description: "Pyridine-quinone electron transport inhibitor produced by Streptomyces mobaraensis"
     category: "biolink:ChemicalEntity"
 
+# GOLD (Genomes OnLine Database, JGI). Registered with no custom entities, as
+# `kgmicrobe.ingredient` is: GOLD supplies its own node rows, so nothing needs
+# defining here — the prefixes exist so they are recognised rather than flagged
+# unregistered. `gold:` covers organisms, biosamples and studies;
+# `gold.ecosystem:` is the ecosystem classification hierarchy, emitted as an
+# OntologyClass so its subclass_of edges satisfy Biolink's domain/range.
+gold: {}
+gold.ecosystem: {}

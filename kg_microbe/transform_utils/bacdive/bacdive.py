@@ -1063,7 +1063,24 @@ class BacDiveTransform(Transform):
         :return: List of stringified values.
         """
         last_key = parts[-1]
-        current = current.get(last_key) if isinstance(current, dict) else current
+        if isinstance(current, list):
+            # A list *at* the leaf position: flatten one level so a nested list
+            # yields its members rather than being stringified, then take the key
+            # from each dict. Members that are neither are not the requested key
+            # and are dropped — returning them would invent a value for a path
+            # that does not exist (#739).
+            flattened = []
+            for item in current:
+                flattened.extend(item if isinstance(item, list) else [item])
+            return [str(item[last_key]).strip() for item in flattened if isinstance(item, dict) and item.get(last_key)]
+        if not isinstance(current, dict):
+            # A scalar frontier member means the *second-to-last* path part
+            # resolved to a scalar, so `last_key` was never applied and there is
+            # nothing to return. The legitimate scalar case — a one-part path, or
+            # the last part resolving to a scalar — arrives here as a dict lookup
+            # below.
+            return []
+        current = current.get(last_key)
         if isinstance(current, list):
             # A list of dicts: take the key from each member.
             result = []

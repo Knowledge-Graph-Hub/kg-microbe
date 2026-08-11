@@ -81,3 +81,22 @@ class BacDiveJsonPathExtractionTest(TestCase):
         """
         record = {"a": [{"b": [{"c": "x"}, {"c": "y"}]}, {"b": {"c": "z"}}]}
         self.assertEqual(sorted(self._extract(record, "a.b.c")), ["x", "y", "z"])
+
+    def test_a_scalar_intermediate_does_not_invent_values(self):
+        """
+        The frontier must not treat a non-dict member as the requested value.
+
+        `{"a": ["x", "y"]}` asked for `a.b` has no `b` anywhere; returning the
+        strings would invent data for a path that does not exist (#739) — a new
+        failure mode rather than a leftover of the bug being fixed.
+        """
+        self.assertEqual(self._extract({"a": ["x", "y"]}, "a.b"), [])
+        self.assertEqual(self._extract({"a": [1, 2]}, "a.b"), [])
+
+    def test_nested_lists_are_flattened_not_stringified(self):
+        """A list inside a list yielded the repr of the inner list."""
+        self.assertEqual(self._extract({"a": [[{"b": "v"}]]}, "a.b"), ["v"])
+
+    def test_a_one_part_path_still_returns_its_scalar(self):
+        """The legitimate scalar case must survive the #739 tightening."""
+        self.assertEqual(self._extract({"a": "v"}, "a"), ["v"])

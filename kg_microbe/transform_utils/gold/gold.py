@@ -120,6 +120,13 @@ class GOLDTransform(Transform):
         :raises FileNotFoundError: If the ontologies output is absent while
             filtering is on — silently skipping the trim would reintroduce every
             excluded branch with nothing to show it had happened.
+        :raises ValueError: If the ontologies output carries no ``NCBITaxon:``
+            rows. An empty permitted set is never a legitimate trim: it makes
+            every GOLD taxon "excluded", drops every organism typed to one, and
+            cascades to an empty graph reported as a successful run. A
+            header-only or truncated derived file is a known failure mode in this
+            repo — ``atomic_io`` exists for it — and the ontologies output
+            predates that work, so it carries no completion marker to check.
         """
         if os.environ.get(_APPLY_TRIM_ENV, "true").strip().lower() in ("false", "0", "no"):
             print(f"[gold] {_APPLY_TRIM_ENV} is off — emitting excluded-branch taxa unfiltered")
@@ -132,7 +139,16 @@ class GOLDTransform(Transform):
                 "to ingest GOLD unfiltered (which reintroduces viruses, plants and metazoa)."
             )
         with path.open(newline="") as handle:
-            return {row["id"] for row in csv.DictReader(handle, delimiter="\t")}
+            permitted = {row["id"] for row in csv.DictReader(handle, delimiter="\t")}
+        taxa = {node_id for node_id in permitted if node_id.startswith(_TAXON_PREFIX)}
+        if not taxa:
+            raise ValueError(
+                f"{path} has no {_TAXON_PREFIX} rows ({len(permitted):,} rows total), so the trim "
+                "would exclude every GOLD taxon and emit an empty graph. Re-run "
+                f"`poetry run kg transform -s ontologies`, or set {_APPLY_TRIM_ENV}=false to "
+                "ingest GOLD unfiltered."
+            )
+        return taxa
 
     def _taxon_drop_set(self, nodes_in: Path, edges_in: Path) -> tuple:
         """

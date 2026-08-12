@@ -75,6 +75,9 @@ DATA_SOURCES = {
     METATRAITS_GTDB: MetaTraitsGTDBTransform,
     RHEAMAPPINGS: RheaMappingsTransform,
     BACTOTRAITS: BactoTraitsTransform,
+    # Run gold after ontologies: it reads ncbitaxon_nodes.tsv to apply the
+    # NCBITaxon trim, so GOLD cannot reintroduce excluded branches. Set
+    # GOLD_APPLY_TAXON_TRIM=false to ingest unfiltered.
     GOLD: GOLDTransform,
     MICROBEDECODER: MicrobeDecoderTransform,
     PREGO: PregoTransform,

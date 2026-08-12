@@ -151,3 +151,45 @@ class GoldTransformTest(TestCase):
         (self.tmp / "transformed" / "ontologies" / "ncbitaxon_nodes.tsv").unlink()
         with self.assertRaises(FileNotFoundError):
             self.transform.run()
+
+    def test_an_empty_trim_source_is_refused_rather_than_emptying_the_graph(self):
+        """
+        An empty permitted set is a broken input, not a configuration.
+
+        It makes every GOLD taxon "excluded", drops every organism typed to one,
+        and cascades to an empty graph reported as a successful run. Measured on a
+        3-taxon fixture before the guard: 6 nodes / 3 edges became 0 / 0, exit 0.
+
+        Header-only derived files are a known failure mode here — atomic_io exists
+        for it — and the ontologies output predates that work, so it carries no
+        completion marker to check.
+        """
+        (self.tmp / "transformed" / "ontologies" / "ncbitaxon_nodes.tsv").write_text("id\tcategory\tname\n")
+        with self.assertRaises(ValueError) as ctx:
+            GOLDTransform(input_dir=self.tmp / "raw", output_dir=self.tmp / "transformed").run()
+        self.assertIn("NCBITaxon:", str(ctx.exception))
+
+    def test_a_trim_source_with_rows_but_no_taxa_is_also_refused(self):
+        """
+        Non-empty is not enough — the rows have to be taxa.
+
+        A truncation leaving some other prefix behind, or the wrong ontology's
+        node file at that path, would pass a bare emptiness check and still
+        exclude every GOLD taxon.
+        """
+        _write(
+            self.tmp / "transformed" / "ontologies" / "ncbitaxon_nodes.tsv",
+            ["id", "category", "name"],
+            [("CHEBI:15377", "biolink:SmallMolecule", "water")],
+        )
+        with self.assertRaises(ValueError) as ctx:
+            GOLDTransform(input_dir=self.tmp / "raw", output_dir=self.tmp / "transformed").run()
+        self.assertIn("NCBITaxon:", str(ctx.exception))
+
+    def test_a_populated_trim_source_still_works(self):
+        """The guard must not reject the ordinary case it was added to protect."""
+        transform = GOLDTransform(input_dir=self.tmp / "raw", output_dir=self.tmp / "transformed")
+        transform.run()
+        nodes = {row["id"] for row in _read(transform.output_node_file)}
+        self.assertIn("NCBITaxon:1", nodes)
+        self.assertNotIn("NCBITaxon:99", nodes, "the excluded branch must still be trimmed")

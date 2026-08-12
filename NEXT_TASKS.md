@@ -5,15 +5,14 @@ Snapshot of the "needs your call" pile from the branch triage on
 2026-07-02). Each entry is either real work that should be committed
 (and to which branch), or scratch that should be gitignored / deleted.
 
-> **Last reconciled: 2026-07-21.** Status: **all items below still PENDING**
-> — none of these untracked files were resolved (36 untracked entries remain
-> in the worktree). Tracked as issue #579. The 2026-07-20/21 work threads
-> (LPSN download+transform+merge, chemical-mapping retraction, kgxval review
-> integration, ontology metamodel-edge drop, GO `go.db` rebuild, `ontologies_stubs`
-> regen) were all shipped in PRs #596–#603, #605 and are unrelated to this
-> cleanup backlog. New deferred follow-ups from that work live as GitHub issues:
-> **#599** (harden apply_retractions), **#600** (merge lpsn_api credential
-> coupling), **#604** (ontology .owl/.json/.db version alignment).
+> **Last reconciled: 2026-08-12.** Status: **28 of 36 resolved** — the
+> 2026-07-21 note claiming "all items still PENDING" is no longer true. 17 entries
+> are now committed, 11 are gone from the worktree, and **8 remain**, of which 4
+> are `_bak` files already marked *delete*. Resolved rows are ticked below with
+> how they resolved. Still tracked as issue #579.
+>
+> Reconciled by checking each path against `git ls-files` and the working tree,
+> not by reading the previous note.
 
 Legend:
 - **commit** — keep and stage on some branch (which one to decide per row)
@@ -27,46 +26,46 @@ Nothing in the branch topic (mappings refresh) references any of these,
 so they're either dead scratch or belong to a different feature branch.
 Open each and decide.
 
-- [ ] `kg_microbe/utils/biohub_converter.py` — ?
-- [ ] `kg_microbe/utils/diagnose_duplicates.py` — ?
-- [ ] `kg_microbe/utils/extract_taxon_strain_nodes.py` — ?
-- [ ] `kg_microbe/utils/nlp_utils.py` — ?
-- [ ] `kg_microbe/utils/parse_taxon_rank.py` — ? (there's also a `.py_bak` sibling → delete the bak regardless)
-- [ ] `kg_microbe/utils/transform_utils.py` — ? (name collides with the top-level `transform_utils/` package; check for shadowing bugs)
+- [x] `kg_microbe/utils/biohub_converter.py` — ?  ← **gone from the worktree**
+- [x] `kg_microbe/utils/diagnose_duplicates.py` — ?  ← **gone from the worktree**
+- [x] `kg_microbe/utils/extract_taxon_strain_nodes.py` — ?  ← **gone from the worktree**
+- [x] `kg_microbe/utils/nlp_utils.py` — ?  ← **gone from the worktree**
+- [x] `kg_microbe/utils/parse_taxon_rank.py` — ? (there's also a `.py_bak` sibling → delete the bak regardless)  ← **committed**
+- [x] `kg_microbe/utils/transform_utils.py` — ? (name collides with the top-level `transform_utils/` package; check for shadowing bugs)  ← **gone from the worktree**
 
 ## Scripts at repo root
 
 Root-level scripts are almost always one-offs. If any are permanent,
 move under `kg_microbe/` or `scripts/`.
 
-- [ ] `run.py` — ? (suspicious — `poetry run kg` is the canonical entry point)
-- [ ] `analyze_categories.py` — ?
-- [ ] `download_mediadive_bulk.py` — likely belongs alongside `download.yaml` MediaDive work; if permanent, move under `kg_microbe/`
-- [ ] `convert_merged_to_nt.yaml` — one-off config; if permanent, move under a config dir
+- [x] `run.py` — ? (suspicious — `poetry run kg` is the canonical entry point)  ← **gone from the worktree**
+- [x] `analyze_categories.py` — ?  ← **gone from the worktree**
+- [x] `download_mediadive_bulk.py` — likely belongs alongside `download.yaml` MediaDive work; if permanent, move under `kg_microbe/`  ← **gone from the worktree**
+- [x] `convert_merged_to_nt.yaml` — one-off config; if permanent, move under a config dir  ← **gone from the worktree**
 
 ## Unknown directories
 
 Peek inside before deciding.
 
 - [ ] `kg_microbe/transform_utils/data/` — ?
-- [ ] `kg_microbe/transform_utils/ontology/` — ? (possibly a typo of the existing `ontologies/` package)
+- [x] `kg_microbe/transform_utils/ontology/` — ? (possibly a typo of the existing `ontologies/` package)  ← **gone from the worktree**
 
 ## Data / mapping / xref files
 
-- [ ] `kg_microbe/transform_utils/bacdive/metabolite_mapping.json` — ?
-- [ ] `kg_microbe/transform_utils/bactotraits/BactoTraits.tsv` — per the `download.yaml` note, BactoTraits V2 is now vendored because the upstream TLS is broken. **This file probably needs to be committed** together with the `download.yaml` change on its own PR.
-- [ ] `kg_microbe/transform_utils/ontologies/xrefs/mondo_xrefs.tsv` — ?
-- [ ] `kg_microbe/transform_utils/ontologies/xrefs/unipathways_xrefs.tsv` — ?
+- [x] `kg_microbe/transform_utils/bacdive/metabolite_mapping.json` — ?  ← **committed**
+- [x] `kg_microbe/transform_utils/bactotraits/BactoTraits.tsv` — per the `download.yaml` note, BactoTraits V2 is now vendored because the upstream TLS is broken. **This file probably needs to be committed** together with the `download.yaml` change on its own PR.  ← **gone from the worktree**
+- [x] `kg_microbe/transform_utils/ontologies/xrefs/mondo_xrefs.tsv` — ?  ← **committed**
+- [x] `kg_microbe/transform_utils/ontologies/xrefs/unipathways_xrefs.tsv` — ?  ← **committed**
 
 ## Docs
 
-- [ ] `docs/MERGE_CLEANUP.md` — likely real; belongs on a docs / merge branch
-- [ ] `docs/metatraits/unmapped_compounds.tsv` — ?
+- [x] `docs/MERGE_CLEANUP.md` — likely real; belongs on a docs / merge branch  ← **committed**
+- [x] `docs/metatraits/unmapped_compounds.tsv` — ?  ← **committed**
 - [ ] `docs/metpo/` — likely belongs with the METPO commits (`b2b6c57f`, `a237751b`) that are currently misfiled on this branch
 
 ## Mappings
 
-- [ ] `mappings/mediadive_unmapped_ingredients_to_curate.tsv` — probably **THIS branch** (matches mappings-refresh topic). Confirm and stage.
+- [x] `mappings/mediadive_unmapped_ingredients_to_curate.tsv` — probably **THIS branch** (matches mappings-refresh topic). Confirm and stage.  ← **committed**
 
 ## Notebooks
 
@@ -75,21 +74,21 @@ purpose can be committed; anything with `_bak`, `_withoutput`,
 `catboost_info/`, or that's obviously scratch should be ignored or
 deleted.
 
-- [ ] `notebooks/bacdive-api-summary-table.ipynb` — ?
-- [ ] `notebooks/bacdive-process-errors-with-genus.ipynb` — ?
-- [ ] `notebooks/bacdive-summary-counts.ipynb` — ?
+- [x] `notebooks/bacdive-api-summary-table.ipynb` — ?  ← **committed**
+- [x] `notebooks/bacdive-process-errors-with-genus.ipynb` — ?  ← **committed**
+- [x] `notebooks/bacdive-summary-counts.ipynb` — ?  ← **committed**
 - [ ] `notebooks/bacdive_mapping_resource.ipynb_bak` — **delete** (`_bak`)
 - [ ] `notebooks/bacdive_reformat.ipynb` — ?
-- [ ] `notebooks/evaluate_link_pred.ipynb` — ?
+- [x] `notebooks/evaluate_link_pred.ipynb` — ?  ← **committed**
 - [ ] `notebooks/feba.ipynb_bak` — **delete** (`_bak`)
-- [ ] `notebooks/kg_bacdive.ipynb` — ?
-- [ ] `notebooks/kg_microbe_embedding.ipynb` — ?
+- [x] `notebooks/kg_bacdive.ipynb` — ?  ← **committed**
+- [x] `notebooks/kg_microbe_embedding.ipynb` — ?  ← **committed**
 - [ ] `notebooks/kg_microbe_embedding.ipynb_bak` — **delete**
-- [ ] `notebooks/kg_microbe_embedding_withoutput.ipynb` — **delete** (output variant)
+- [x] `notebooks/kg_microbe_embedding_withoutput.ipynb` — **delete** (output variant)  ← **committed**
 - [ ] `notebooks/kg_microbe_embedding.html` — **delete** or gitignore (rendered output)
-- [ ] `notebooks/kg_microbe_train_taxa_to_media.ipynb` — ?
-- [ ] `notebooks/load_feba.ipynb` — ? (duplicate at repo root `load_feba.ipynb` — pick one location)
-- [ ] `notebooks/train_taxa_to_media.ipynb` — ?
+- [x] `notebooks/kg_microbe_train_taxa_to_media.ipynb` — ?  ← **committed**
+- [x] `notebooks/load_feba.ipynb` — ? (duplicate at repo root `load_feba.ipynb` — pick one location)  ← **committed**
+- [x] `notebooks/train_taxa_to_media.ipynb` — ?  ← **committed**
 - [ ] `notebooks/train_taxa_to_media.ipynb_bak` — **delete**
 
 ---

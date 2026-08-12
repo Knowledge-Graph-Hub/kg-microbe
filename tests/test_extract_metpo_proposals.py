@@ -9,9 +9,11 @@ mappings/canonical/metpo_alias_mappings.tsv.
 
 from __future__ import annotations
 
+import csv
 import importlib.util
 import sys
 import unittest
+from collections import defaultdict
 from difflib import unified_diff
 from pathlib import Path
 
@@ -88,6 +90,141 @@ class TestProposalOutputsMatchCommitted(unittest.TestCase):
             self.assertTrue(actual_alias.exists(), "extractor did not write metpo_alias_mappings.tsv")
             diff = _diff(actual_alias, expected_alias)
             self.assertEqual(diff, "", f"metpo_alias_mappings.tsv drift:\n{diff}")
+
+
+def _load_property_rows() -> tuple[list[dict], dict]:
+    """
+    Parse the committed properties ROBOT template.
+
+    :return: ``(data rows as dicts keyed by column name, column -> directive)``.
+
+    Deliberately reads the *committed* artifact rather than regenerating: that
+    file is what gets submitted upstream, and it is the thing whose semantics
+    #749 broke. Columns are addressed by header name, not position, so
+    reordering or inserting a column cannot silently shift what this test reads
+    -- a positional index would reintroduce the same class of defect.
+    """
+    path = COMMITTED_MAPPINGS / "metpo_proposal_properties_robot.tsv"
+    with open(path, newline="") as f:
+        rows = list(csv.reader(f, delimiter="\t"))
+    header, directives, data = rows[0], rows[1], rows[2:]
+    # strict=True is load-bearing, not lint appeasement: a row whose column
+    # count differs from the header is precisely what ROBOT rejects with
+    # "Number of columns ... does not match", so raising here is correct.
+    return (
+        [dict(zip(header, r, strict=True)) for r in data],
+        dict(zip(header, directives, strict=True)),
+    )
+
+
+def _pattern_keys(row: dict) -> tuple[str, list[str]]:
+    """
+    Reproduce _build_metpo_lookups' keying for one property row.
+
+    The loader (metatraits.py, ``_build_metpo_lookups``) treats a label starting
+    with ``does not `` as the negative half and keys the pattern map on the
+    label plus every synonym, lowercased and stripped. It reads
+    ``node["meta"]["synonyms"]`` -- *all* synonym types -- so this keys on the
+    synonyms column whatever annotation directive that column carries.
+    """
+    label = row["label"]
+    polarity = "negative" if label.lower().startswith("does not ") else "positive"
+    synonyms = [s for s in (row.get("synonyms") or "").split("|") if s.strip()]
+    return polarity, [k.lower().strip() for k in [label] + synonyms if k.strip()]
+
+
+class TestProposedPredicatePairing(unittest.TestCase):
+
+    """
+    Guard the pairing contract that #749 broke silently.
+
+    The regenerate-and-diff gate above cannot catch an unpaired predicate: a
+    proposal that omits the shared synonym is perfectly self-consistent, so the
+    artifact matches and the gate stays green while ``_get_negative_predicate``
+    returns None and false-majority observations are dropped downstream.
+    """
+
+    def test_synonyms_column_carries_a_synonym_directive(self):
+        """The column must exist AND carry an annotation directive to reach OWL."""
+        _, directives = _load_property_rows()
+        self.assertIn(
+            "synonyms",
+            directives,
+            "properties template has no synonyms column -- Term.synonyms will be "
+            "silently dropped and no proposed predicate can auto-pair (#749)",
+        )
+        self.assertIn(
+            "Synonym",
+            directives["synonyms"],
+            f"synonyms column carries directive {directives['synonyms']!r}, which "
+            "emits no synonym annotation; the pairing loader will see nothing",
+        )
+
+    def test_no_orphan_negative_predicates(self):
+        """Every `does not X` property shares a pattern key with a positive."""
+        rows, _ = _load_property_rows()
+        by_key = defaultdict(dict)
+        for row in rows:
+            polarity, keys = _pattern_keys(row)
+            for key in keys:
+                by_key[key][polarity] = row["proposed_id"]
+
+        orphans = []
+        for row in rows:
+            polarity, keys = _pattern_keys(row)
+            if polarity != "negative":
+                continue
+            if not any("positive" in by_key[key] for key in keys):
+                orphans.append(f"{row['proposed_id']} {row['label']!r}")
+        self.assertEqual(
+            orphans,
+            [],
+            "negative predicates with no positive partner reachable through a "
+            "shared synonym; give both members a shared related synonym:\n  " + "\n  ".join(orphans),
+        )
+
+    def test_does_not_stem_siblings_are_paired(self):
+        """A `does not <stem>` sibling of a proposed positive must pair with it."""
+        rows, _ = _load_property_rows()
+        positives = {}
+        for row in rows:
+            polarity, keys = _pattern_keys(row)
+            if polarity == "positive":
+                # "tolerates" -> "tolerate", "produces" -> "produce"
+                stem = row["label"].lower().rstrip().removesuffix("s")
+                positives[stem] = (row["proposed_id"], set(keys))
+
+        unpaired = []
+        for row in rows:
+            polarity, keys = _pattern_keys(row)
+            if polarity != "negative":
+                continue
+            stem = row["label"].lower().removeprefix("does not ").strip()
+            sibling = positives.get(stem)
+            if sibling and not (sibling[1] & set(keys)):
+                unpaired.append(f"{sibling[0]} / {row['proposed_id']} ({row['label']!r}) share no key")
+        self.assertEqual(unpaired, [], "\n  ".join(unpaired))
+
+    def test_no_same_polarity_pattern_key_clash(self):
+        """Two same-polarity properties sharing a key silently collapse (#753)."""
+        rows, _ = _load_property_rows()
+        claims = defaultdict(set)
+        for row in rows:
+            polarity, keys = _pattern_keys(row)
+            for key in keys:
+                claims[(key, polarity)].add(row["proposed_id"])
+
+        clashes = [
+            f"{polarity} key {key!r} claimed by {sorted(ids)}"
+            for (key, polarity), ids in sorted(claims.items())
+            if len(ids) > 1
+        ]
+        self.assertEqual(
+            clashes,
+            [],
+            "the loader writes last-wins, so all but one of these becomes "
+            "unreachable through that pattern:\n  " + "\n  ".join(clashes),
+        )
 
 
 if __name__ == "__main__":

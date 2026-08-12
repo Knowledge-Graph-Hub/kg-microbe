@@ -33,6 +33,7 @@ KNOWN_TAGS = {
     "bactotraits",
     "microbedecoder",
     "prego",
+    "gold",
     "schema",
 }
 

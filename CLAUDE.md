@@ -277,6 +277,14 @@ Optional, for the ontology transforms:
   actually applied to `data/transformed/prego/confidence_calibration.tsv`. The
   channel is derived from the **archive filename**, not from any column.
 
+- `GOLD_APPLY_TAXON_TRIM`: `true` (default) or `false`. The GOLD export carries
+  23,695 taxa outside our trimmed NCBITaxon, so by default the transform drops
+  them plus the 76,034 organisms typed to them, then cleans up the nodes its own
+  trim left edgeless. Setting `false` ingests GOLD unfiltered, which reintroduces
+  viruses, plants and metazoa. **Requires the ontologies transform to have run**
+  — gold reads `data/transformed/ontologies/ncbitaxon_nodes.tsv` and refuses
+  rather than skipping the trim silently.
+
 - `PREGO_SHAPES`: `all` (default) or `habitat`. `habitat` emits only the
   `location_of` shapes (ENVO/BTO → taxon) — ~238k edges against 44.7M, a 55 MB
   `edges.tsv` instead of 12.2 GB. PREGO's taxon→GO edges are 99% of the source

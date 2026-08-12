@@ -103,10 +103,15 @@ def test_empty_lpsn_row_is_skipped(microbedecoder_transform):
     """The fixture's trailing empty-LPSN_ID row must not produce any output."""
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
-    subjects = {e["subject"] for e in edges}
-    # Every edge subject is a lpsn:<non-empty-id>; the blank row's would be
-    # `lpsn:` (no local) or empty, neither of which should appear.
-    assert all(s.startswith(LPSN_PREFIX) and len(s) > len(LPSN_PREFIX) for s in subjects)
+    # Most edges are subject-side lpsn:<non-empty-id>; the BacDive crosswalk is
+    # the exception, being strain -subclass_of-> lpsn (#687), so check whichever
+    # endpoint carries the LPSN CURIE. The blank row would give `lpsn:` with no
+    # local part, which must appear on neither side.
+    lpsn_endpoints = {
+        endpoint for edge in edges for endpoint in (edge["subject"], edge["object"]) if endpoint.startswith(LPSN_PREFIX)
+    }
+    assert lpsn_endpoints, "fixture must emit LPSN-anchored edges"
+    assert all(len(e) > len(LPSN_PREFIX) for e in lpsn_endpoints)
 
 
 # ---------------------------------------------------------------------------
@@ -114,8 +119,15 @@ def test_empty_lpsn_row_is_skipped(microbedecoder_transform):
 # ---------------------------------------------------------------------------
 
 
-def test_crosswalk_edges_use_close_match(microbedecoder_transform):
-    """Every crosswalk edge is a ``biolink:close_match`` from lpsn:<id> to the target."""
+def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
+    """
+    The identifier crosswalks stay ``biolink:close_match`` from lpsn:<id>.
+
+    NCBITaxon, GTDB, GOLD and IMG really are other identifiers for the same
+    taxon, so near-identity is right. BacDive is excluded — its target is a
+    *strain*, not another name, and it is asserted as subsumption instead
+    (#687); see :func:`test_bacdive_crosswalk_is_subsumption_not_close_match`.
+    """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
 
@@ -124,9 +136,40 @@ def test_crosswalk_edges_use_close_match(microbedecoder_transform):
     objects = {e["object"] for e in e_101}
     assert "NCBITaxon:1423" in objects
     assert "GTDB:d__Bacteria;g__Bacillus;s__Bacillus subtilis" in objects
-    assert "kgmicrobe.strain:bacdive_BAC01" in objects
     assert "GOLD:Gs0000101" in objects
     assert "IMG:3300000001" in objects
+    assert not any(o.startswith("kgmicrobe.strain:") for o in objects), (
+        "the BacDive crosswalk must not be a close_match"
+    )
+
+
+def test_bacdive_crosswalk_is_subsumption_not_close_match(microbedecoder_transform):
+    """
+    The BacDive crosswalk must not contradict what the bacdive transform asserts.
+
+    `close_match` claimed near-identity between an LPSN *name* and a BacDive
+    *strain*, while bacdive asserts `strain -subclass_of-> lpsn` over 18,425 of
+    the same pairs (#687). skos:closeMatch and proper subsumption cannot both
+    hold over one pair. Emitting the same subsumption makes the two transforms
+    agree, so merge collapses the duplicates and keeps both provenances.
+
+    The row means "this BacDive record is the type strain of this LPSN name" —
+    MicrobeDecoder's strain designation equals LPSN's own `nomenclatural_type`
+    for 98.9% of matched rows — but no predicate expresses that yet (#744).
+    """
+    microbedecoder_transform.run()
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+
+    strain_edges = [e for e in edges if "kgmicrobe.strain:bacdive_" in (e["subject"] + e["object"])]
+    assert strain_edges, "fixture must produce BacDive crosswalk edges"
+    for edge in strain_edges:
+        assert edge["predicate"] != CLOSE_MATCH_PREDICATE, f"close_match contradicts subsumption: {edge}"
+    assert any(
+        e["subject"] == "kgmicrobe.strain:bacdive_BAC01"
+        and e["predicate"] == "biolink:subclass_of"
+        and e["object"] == f"{LPSN_PREFIX}101"
+        for e in strain_edges
+    ), strain_edges
 
 
 def test_bacdive_crosswalk_targets_the_strain_curie(microbedecoder_transform):
@@ -141,16 +184,17 @@ def test_bacdive_crosswalk_targets_the_strain_curie(microbedecoder_transform):
     """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
-    close_matches = [e for e in edges if e["predicate"] == CLOSE_MATCH_PREDICATE]
 
-    bacdive_objects = {e["object"] for e in close_matches if "bacdive" in e["object"].lower()}
-    assert bacdive_objects, "fixture must produce BacDive crosswalk edges"
-    for obj in bacdive_objects:
-        assert obj.startswith("kgmicrobe.strain:bacdive_"), (
-            f"BacDive crosswalk target must use the strain CURIE; got {obj!r}"
+    # The BacDive crosswalk is now subject-side subsumption, not a close_match
+    # object, so look at subjects (#687).
+    bacdive_subjects = {e["subject"] for e in edges if "bacdive" in e["subject"].lower()}
+    assert bacdive_subjects, "fixture must produce BacDive crosswalk edges"
+    for subject in bacdive_subjects:
+        assert subject.startswith("kgmicrobe.strain:bacdive_"), (
+            f"BacDive crosswalk endpoint must use the strain CURIE; got {subject!r}"
         )
-    # The bare source form must not survive anywhere.
-    assert not any(e["object"].startswith("bacdive:") for e in close_matches)
+    # The bare source form must not survive anywhere, on either side.
+    assert not any(e["object"].startswith("bacdive:") or e["subject"].startswith("bacdive:") for e in edges)
 
 
 def test_bacdive_crosswalk_normalizes_a_precuried_cell(microbedecoder_transform):
@@ -164,12 +208,13 @@ def test_bacdive_crosswalk_normalizes_a_precuried_cell(microbedecoder_transform)
     """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
-    objects = {
-        e["object"] for e in edges if e["subject"] == f"{LPSN_PREFIX}505" and e["predicate"] == CLOSE_MATCH_PREDICATE
+    # Subject-side since #687: the BacDive crosswalk is strain -subclass_of-> lpsn.
+    strains = {
+        e["subject"] for e in edges if e["object"] == f"{LPSN_PREFIX}505" and e["subject"].startswith("kgmicrobe.")
     }
-    assert "kgmicrobe.strain:bacdive_BAC05" in objects, f"pre-CURIE'd cell was not normalized; got {objects}"
-    for obj in objects:
-        assert obj.count(":") == 1, f"double-prefixed CURIE: {obj!r}"
+    assert "kgmicrobe.strain:bacdive_BAC05" in strains, f"pre-CURIE'd cell was not normalized; got {strains}"
+    for strain in strains:
+        assert strain.count(":") == 1, f"double-prefixed CURIE: {strain!r}"
 
 
 def test_crosswalk_edges_carry_microbedecoder_provenance(microbedecoder_transform):
@@ -382,11 +427,12 @@ def test_bacdive_only_row_still_emits_snapshot(microbedecoder_transform):
     """LPSN_ID=505 has synonym status and BacDive-only content — must not crash."""
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
-    e_505 = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}505"]
-    # At minimum an oxygen tolerance edge + bacdive crosswalk
+    e_505 = [e for e in edges if f"{LPSN_PREFIX}505" in (e["subject"], e["object"])]
+    # At minimum an oxygen tolerance edge + the BacDive crosswalk, which is now
+    # subsumption from the strain rather than a close_match to it (#687).
     predicates = {e["predicate"] for e in e_505}
     assert HAS_PHENOTYPE_PREDICATE in predicates
-    assert CLOSE_MATCH_PREDICATE in predicates  # bacdive:BAC05
+    assert "biolink:subclass_of" in predicates, predicates
 
 
 # ---------------------------------------------------------------------------

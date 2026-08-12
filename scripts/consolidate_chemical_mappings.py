@@ -612,6 +612,32 @@ def best_primary(candidates) -> str:
     return best
 
 
+def corrected_column_primary(kg_node_id, mim_id, chebi_id, culturemech_term, cas_curie) -> str:
+    """
+    Return the primary that would be chosen if corrected columns outranked raw ones.
+
+    Same candidates and same ranking as the production call, only the order
+    differs: ``kg_microbe_node_id`` and ``mim_id`` are the columns a curator
+    writes a correction into, while ``chebi_id`` and ``culturemech_term_id``
+    carry the raw upstream value. CHEBI, FOODON, UBERON, ENVO and NCIT all rank
+    100, so within that tier order alone decides, and production puts the raw
+    columns first (#723).
+
+    Comparing the two orders is what makes a silently-overruled correction
+    visible. It deliberately does not change the grounding: 30 of the 35 rows it
+    flags are unreviewed curation questions, and resolving those by column
+    position is the defect, not the fix.
+
+    :param kg_node_id: ``kg_microbe_node_id`` cell.
+    :param mim_id: ``mim_id`` cell.
+    :param chebi_id: ``chebi_id`` cell.
+    :param culturemech_term: ``culturemech_term_id`` cell.
+    :param cas_curie: CAS CURIE, last-resort candidate in both orders.
+    :return: The CURIE a corrected-first order would pick, or ``''``.
+    """
+    return best_primary([kg_node_id, mim_id, chebi_id, culturemech_term, cas_curie])
+
+
 def is_chemical_curie(curie: str) -> bool:
     """Return True if the CURIE's prefix belongs in the unified chemical file."""
     if not curie or ":" not in curie:
@@ -1198,7 +1224,10 @@ class ChemicalMappingConsolidator:
         df = pd.read_csv(filepath, sep="\t", dtype=str).fillna("")
 
         added = 0
+
         skipped = 0
+
+        diverged: list = []
         for _, row in df.iterrows():
             ingredient_name = row.get("ingredient_name", "").strip()
             cas_rn = row.get("cas_rn", "").strip()
@@ -1223,6 +1252,27 @@ class ChemicalMappingConsolidator:
                 skipped += 1
                 continue
 
+            # The corrected columns are `mim_id` and `kg_microbe_node_id`; the raw
+            # upstream ones are `chebi_id` and `culturemech_term_id`. CHEBI,
+            # FOODON, UBERON, ENVO and NCIT all rank 100, so within that tier the
+            # winner is decided purely by the order candidates are passed — and
+            # that order puts the raw columns first. A curator who corrects a
+            # grounding by writing the new id to a corrected column, while a stale
+            # value survives in a raw one, is silently overruled and their
+            # correction demoted to an xref (#723).
+            #
+            # Reordering would fix the class outright, but it also moves 30
+            # groundings nobody has reviewed — `Casein` as a CHEBI protein or a
+            # FOODON food, `Beef heart` as anatomy or food. Deciding those by
+            # column position is exactly the problem. So this reports rather than
+            # resolves: the divergence stops being silent, and the curation call
+            # stays with a curator.
+            corrected_first = corrected_column_primary(
+                kg_node_id, mim_id, chebi_id, culturemech_term, cas_curie
+            )
+            if corrected_first and corrected_first != primary_id:
+                diverged.append((ingredient_name, primary_id, corrected_first))
+
             synonyms = [ingredient_name] if ingredient_name else []
             xrefs = []
             for candidate in (cas_curie, culturemech_term, mim_id, kg_node_id, chebi_id):
@@ -1244,6 +1294,18 @@ class ChemicalMappingConsolidator:
             added += 1
 
         print(f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE)")
+        if diverged:
+            print(
+                f"  WARNING: {len(diverged)} rows ground to a raw upstream column while a corrected "
+                f"column names a different accepted CURIE (#723). The raw value wins on a rank tie "
+                f"purely by candidate order, so a correction written only to mim_id / "
+                f"kg_microbe_node_id is demoted to an xref. Not changed here — several are open "
+                f"curation questions. Sample:"
+            )
+            for name, chosen, corrected in diverged[:5]:
+                print(f"    {(name or '<unnamed>')[:40]:42} grounds to {chosen:22} corrected column says {corrected}")
+            if len(diverged) > 5:
+                print(f"    ... and {len(diverged) - 5} more")
 
     @staticmethod
     def _validate_sssom_file(filepath: Path) -> None:

@@ -133,6 +133,60 @@ def _pattern_keys(row: dict) -> tuple[str, list[str]]:
     return polarity, [k.lower().strip() for k in [label] + synonyms if k.strip()]
 
 
+def _positive_stems(label: str) -> set[str]:
+    """
+    Candidate `does not <stem>` forms for a positive predicate label.
+
+    Inflects the *first* word only, which is where the third-person -s sits in
+    every METPO predicate shape (``grows in``, ``shows activity of``). Matching
+    on a candidate set rather than one ``removesuffix("s")`` is what makes
+    multi-word and -ies predicates visible; the naive form silently missed
+    ``grows in`` / ``does not grow in`` -- METPO:2000517/2000518, the very pair
+    the pairing fix exists to prevent (#755).
+    """
+    words = label.lower().split()
+    if not words:
+        return set()
+    head, rest = words[0], words[1:]
+    heads = {head}
+    if head.endswith("ies"):
+        heads.add(head[:-3] + "y")
+    if head.endswith("es"):
+        heads.update({head[:-2], head[:-1]})
+    if head.endswith("s"):
+        heads.add(head[:-1])
+    return {" ".join([h, *rest]).strip() for h in heads}
+
+
+class TestPositiveStemHeuristic(unittest.TestCase):
+
+    """
+    The pairing test is only as good as its stem derivation.
+
+    These are the real predicate shapes in METPO. A heuristic that misses one
+    makes the sibling check pass vacuously -- worse than no test, because the
+    suite then looks like it covers pairing.
+    """
+
+    def test_real_predicate_shapes_are_paired(self):
+        """Each positive must generate the stem its `does not` partner uses."""
+        shapes = [
+            ("tolerates", "does not tolerate"),
+            ("produces", "does not produce"),
+            ("grows in", "does not grow in"),  # METPO:2000517/2000518
+            ("shows activity of", "does not show activity of"),
+            ("denitrifies", "does not denitrify"),
+            ("assimilates", "does not assimilate"),
+            ("oxidizes", "does not oxidize"),
+        ]
+        missed = [
+            f"{pos!r} does not generate {neg!r} (stems: {sorted(_positive_stems(pos))})"
+            for pos, neg in shapes
+            if neg.removeprefix("does not ") not in _positive_stems(pos)
+        ]
+        self.assertEqual(missed, [], "\n  ".join(missed))
+
+
 class TestProposedPredicatePairing(unittest.TestCase):
 
     """
@@ -190,9 +244,8 @@ class TestProposedPredicatePairing(unittest.TestCase):
         for row in rows:
             polarity, keys = _pattern_keys(row)
             if polarity == "positive":
-                # "tolerates" -> "tolerate", "produces" -> "produce"
-                stem = row["label"].lower().rstrip().removesuffix("s")
-                positives[stem] = (row["proposed_id"], set(keys))
+                for stem in _positive_stems(row["label"]):
+                    positives[stem] = (row["proposed_id"], set(keys))
 
         unpaired = []
         for row in rows:

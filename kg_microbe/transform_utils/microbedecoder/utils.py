@@ -41,6 +41,24 @@ CROSSWALK_COLUMNS: Tuple[Tuple[str, str, Optional[str]], ...] = (
     ("IMG_Genome_ID", "IMG:", None),
 )
 
+# The BacDive crosswalk is not an identifier equivalence like the others. Its
+# target is a *strain*, not another name for the same taxon, and the source says
+# which strain: MicrobeDecoder's strain designation equals LPSN's own
+# `nomenclatural_type` for 98.9% of the 21,247 rows that match a GSS record, and
+# shares a culture-collection number for another 1.1% — so the row means "this
+# BacDive record is the type strain of this LPSN name". That is what makes it
+# strictly 1:1 where bacdive's relation is many-to-one.
+#
+# `close_match` asserted near-identity between a name and a strain, and after
+# #680 collided head-on with bacdive's `strain -subclass_of-> lpsn` over 18,425
+# of the same pairs (#687): skos:closeMatch and proper subsumption cannot both
+# hold. Emitting the same subsumption bacdive does makes the two transforms
+# agree instead, so merge collapses the duplicates and keeps both provenances.
+#
+# The type-strain *specificity* is still unexpressed — no Biolink or METPO
+# predicate carries it — and is deferred rather than invented here.
+BACDIVE_CROSSWALK_COLUMN = "BacDive_ID"
+
 # Metabolism / fermentation column groups. Each entry drives one predicate
 # family; see :func:`iter_metabolism_columns` for the emission rules.
 #

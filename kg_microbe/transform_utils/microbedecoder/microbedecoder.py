@@ -79,14 +79,17 @@ from kg_microbe.transform_utils.constants import (
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCES_PREDICATE,
     PROVIDED_BY_COLUMN,
+    RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
     SMALL_MOLECULE_CATEGORY,
+    SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
     TRAIT_PREFIX,
     TROPHICALLY_INTERACTS_WITH,
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.utils import (
+    BACDIVE_CROSSWALK_COLUMN,
     BACDIVE_SNAPSHOT_COLUMNS,
     CROSSWALK_COLUMNS,
     LPSN_ID_COLUMN,
@@ -348,15 +351,29 @@ class MicrobeDecoderTransform(Transform):
                         local_id = local_id[len(candidate) :]
                         break
                 object_curie = f"{prefix}{local_id}"
-                edge_writer.writerow(
-                    self._make_edge_row(
-                        subject,
-                        CLOSE_MATCH_PREDICATE,
-                        object_curie,
-                        CLOSE_MATCH_RELATION,
-                        self.knowledge_source,
+                if column == BACDIVE_CROSSWALK_COLUMN:
+                    # Strain -> name subsumption, matching what the bacdive
+                    # transform asserts for the same pair. See the note on
+                    # BACDIVE_CROSSWALK_COLUMN: close_match contradicted it.
+                    edge_writer.writerow(
+                        self._make_edge_row(
+                            object_curie,
+                            SUBCLASS_PREDICATE,
+                            subject,
+                            RDFS_SUBCLASS_OF,
+                            self.knowledge_source,
+                        )
                     )
-                )
+                else:
+                    edge_writer.writerow(
+                        self._make_edge_row(
+                            subject,
+                            CLOSE_MATCH_PREDICATE,
+                            object_curie,
+                            CLOSE_MATCH_RELATION,
+                            self.knowledge_source,
+                        )
+                    )
                 self._stats["crosswalk_edges"] += 1
 
     # ------------------------------------------------------------------

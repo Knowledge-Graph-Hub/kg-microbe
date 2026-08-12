@@ -3,8 +3,11 @@ name: kg-microbe QC
 on:
   push:
     branches: [ master ]
+  # No `branches:` filter on pull_request. That filter matches the *base*, so a
+  # PR targeting anything but master got no checks at all -- and reported as
+  # mergeable with a clean status, because there was nothing to be un-clean.
+  # A stacked PR then looks *better* than a verified one. (#758)
   pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 jobs:

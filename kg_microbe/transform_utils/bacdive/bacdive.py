@@ -487,6 +487,13 @@ class BacDiveTransform(Transform):
                 record_no = (row.get("record_no") or "").strip()
                 if not record_no:
                     continue
+                # Collected before the name check so the resolver sees every
+                # record, exactly as microbedecoder passes it. Both callers share
+                # one walk (#746); feeding it different subsets would let a chain
+                # hopping through a nameless record resolve for one transform and
+                # dead-end for the other. No GSS row is nameless today, so this
+                # is fragility rather than a live difference.
+                gss_rows[record_no] = row
                 genus = (row.get("genus_name") or "").strip()
                 sp = (row.get("sp_epithet") or "").strip()
                 subsp = (row.get("subsp_epithet") or "").strip()
@@ -496,7 +503,6 @@ class BacDiveTransform(Transform):
                 if not full_name:
                     continue
                 name_index.setdefault(full_name, []).append(record_no)
-                gss_rows[record_no] = row
         accepted = resolve_accepted_records(gss_rows)
         repointed = 0
         for full_name, record_nos in name_index.items():

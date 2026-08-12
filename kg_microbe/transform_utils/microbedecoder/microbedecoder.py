@@ -101,6 +101,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     split_multivalue_comma_only,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.lpsn_utils import resolve_accepted_records
 from kg_microbe.utils.pandas_utils import drop_duplicates
 
 logger = logging.getLogger(__name__)
@@ -175,10 +176,12 @@ class MicrobeDecoderTransform(Transform):
         self._stats: Dict[str, int] = {
             "rows_processed": 0,
             "crosswalk_edges": 0,
+            "lpsn_repointed": 0,
             "metabolism_edges": 0,
             "bacdive_snapshot_edges": 0,
             "unmatched_labels": 0,
         }
+        self._accepted_lpsn: Optional[Dict[str, str]] = None
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -300,7 +303,17 @@ class MicrobeDecoderTransform(Transform):
         lpsn_id = row.get(LPSN_ID_COLUMN)
         if is_empty_cell(lpsn_id):
             return
-        subject_curie = f"{LPSN_PREFIX}{str(lpsn_id).strip()}"
+        lpsn_id = str(lpsn_id).strip()
+        # Anchor on the accepted name, not whatever the source snapshot recorded.
+        # Everything this transform emits — crosswalk, metabolism, BacDive
+        # snapshot — hangs off this one CURIE, so a synonym LPSN_ID drags the
+        # whole row onto a deprecated record: 5,263 edges, 1.0% (#746). bacdive
+        # got this treatment in #684; the resolver is shared so the two agree.
+        accepted = self._accepted_lpsn_records()
+        if lpsn_id in accepted:
+            self._stats["lpsn_repointed"] += 1
+            lpsn_id = accepted[lpsn_id]
+        subject_curie = f"{LPSN_PREFIX}{lpsn_id}"
         self._stats["rows_processed"] += 1
 
         self._emit_crosswalk_edges(subject_curie, row, node_writer, edge_writer)
@@ -310,6 +323,40 @@ class MicrobeDecoderTransform(Transform):
     # ------------------------------------------------------------------
     # Crosswalk edges (novel identity mapping MicrobeDecoder pre-joins)
     # ------------------------------------------------------------------
+    def _accepted_lpsn_records(self) -> Dict[str, str]:
+        """
+        Return the LPSN synonym-to-accepted mapping, loading it once.
+
+        The GSS CSV is account-gated and not shipped, so absence is expected and
+        non-fatal — exactly as in the bacdive transform. Without it the mapping
+        is empty and every row anchors on the ID the source gave, which is the
+        behaviour before #746.
+
+        :return: ``record_no`` to accepted ``record_no``.
+        """
+        if self._accepted_lpsn is not None:
+            return self._accepted_lpsn
+        gss_csv = Path(self.input_base_dir) / "lpsn_gss.csv"
+        if not gss_csv.is_file():
+            print(
+                f"[microbedecoder] {gss_csv} not found — LPSN IDs are used as given. "
+                "Synonym IDs will anchor edges on deprecated records (#746)."
+            )
+            self._accepted_lpsn = {}
+            return self._accepted_lpsn
+        with gss_csv.open(newline="") as handle:
+            gss_rows = {
+                (r.get("record_no") or "").strip(): r
+                for r in csv.DictReader(handle)
+                if (r.get("record_no") or "").strip()
+            }
+        self._accepted_lpsn = resolve_accepted_records(gss_rows)
+        print(
+            f"[microbedecoder] LPSN: {len(self._accepted_lpsn):,} synonym records will be "
+            "re-pointed to their accepted name"
+        )
+        return self._accepted_lpsn
+
     def _emit_crosswalk_edges(
         self,
         subject: str,

@@ -187,6 +187,7 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     load_isolation_source_mappings,
     normalize_isolation_source_label,
 )
+from kg_microbe.utils.lpsn_utils import resolve_accepted_records
 from kg_microbe.utils.mapping_file_utils import (
     _build_metpo_tree,
     load_assay_kit_mappings,
@@ -486,6 +487,13 @@ class BacDiveTransform(Transform):
                 record_no = (row.get("record_no") or "").strip()
                 if not record_no:
                     continue
+                # Collected before the name check so the resolver sees every
+                # record, exactly as microbedecoder passes it. Both callers share
+                # one walk (#746); feeding it different subsets would let a chain
+                # hopping through a nameless record resolve for one transform and
+                # dead-end for the other. No GSS row is nameless today, so this
+                # is fragility rather than a live difference.
+                gss_rows[record_no] = row
                 genus = (row.get("genus_name") or "").strip()
                 sp = (row.get("sp_epithet") or "").strip()
                 subsp = (row.get("subsp_epithet") or "").strip()
@@ -495,8 +503,7 @@ class BacDiveTransform(Transform):
                 if not full_name:
                     continue
                 name_index.setdefault(full_name, []).append(record_no)
-                gss_rows[record_no] = row
-        accepted = self._resolve_accepted_records(gss_rows)
+        accepted = resolve_accepted_records(gss_rows)
         repointed = 0
         for full_name, record_nos in name_index.items():
             remapped = [accepted.get(no, no) for no in record_nos]
@@ -509,54 +516,6 @@ class BacDiveTransform(Transform):
             repointed,
         )
         return name_index
-
-    @staticmethod
-    def _resolve_accepted_records(gss_rows: Dict[str, dict]) -> Dict[str, str]:
-        """
-        Map each non-current LPSN record to the accepted name it defers to.
-
-        The GSS index previously matched on name alone, so a BacDive strain whose
-        reported species is an LPSN *synonym* was placed under the synonym's
-        record. #680 made that edge ``subclass_of`` rather than ``in_taxon``,
-        which puts a living strain in the subsumption hierarchy beneath a
-        deprecated class — 992 of 62,096 edges (#684).
-
-        Dropping those edges would lose real information: the strain genuinely is
-        that organism, LPSN has simply renamed it. ``record_lnk`` is LPSN's own
-        crosswalk to the accepted name, so the edge is re-pointed instead.
-        Measured on the shipped GSS: every ``record_lnk`` resolves to a real row,
-        7,018 synonyms reach a correct name in one hop, 250 in two, 2 in three,
-        and no chain cycles. 192 dead-end with no link and are left alone —
-        there is nothing better to point them at.
-
-        :param gss_rows: ``record_no`` to its GSS row.
-        :return: ``record_no`` to accepted ``record_no``, for those that move.
-        """
-        accepted: Dict[str, str] = {}
-        for record_no, row in gss_rows.items():
-            if _LPSN_CORRECT_NAME in (row.get("status") or ""):
-                continue
-            seen = {record_no}
-            current = row
-            # Bounded as well as cycle-guarded. The `seen` set is the real
-            # protection, but its failure mode if lost is an infinite loop rather
-            # than a wrong answer — a hang burns a CI job's whole budget and
-            # reports a timeout instead of pointing at the defect (#742). The
-            # deepest real chain in the shipped GSS is 3 hops.
-            for _ in range(_LPSN_MAX_SYNONYM_HOPS):
-                link = (current.get("record_lnk") or "").strip()
-                if not link or link in seen:
-                    # Dead-end or a cycle: keep the original rather than guess.
-                    break
-                seen.add(link)
-                target = gss_rows.get(link)
-                if target is None:
-                    break
-                if _LPSN_CORRECT_NAME in (target.get("status") or ""):
-                    accepted[record_no] = link
-                    break
-                current = target
-        return accepted
 
     @staticmethod
     def _strain_curie(bacdive_key: str) -> str:
@@ -3406,14 +3365,6 @@ class BacDiveTransform(Transform):
 # inline so this module-level helper doesn't need to import the (already
 # in-file) STRAIN_PREFIX + BACDIVE_PREFIX constants again.
 _STRAIN_BACDIVE_PREFIX = "kgmicrobe.strain:bacdive_"
-
-# LPSN GSS `status` marks the currently accepted name with this phrase; anything
-# else (synonym, illegitimate, rejected) defers to another record via record_lnk.
-_LPSN_CORRECT_NAME = "correct name"
-
-# Deepest synonym chain observed in the shipped GSS is 3 hops; the cap is a
-# backstop against a cyclic chain in a future release, not a real limit.
-_LPSN_MAX_SYNONYM_HOPS = 25
 
 
 class _StrainProvenanceWriter:

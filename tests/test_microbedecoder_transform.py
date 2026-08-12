@@ -595,3 +595,57 @@ def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
     subjects = {e["subject"] for e in edges}
     assert f"{LPSN_PREFIX}777" in subjects, "the valid-UTF-8 row must be processed"
     assert f"{LPSN_PREFIX}888" in subjects, "the mixed-encoding row must be processed too"
+
+
+def test_lpsn_anchor_is_repointed_to_the_accepted_name(tmp_path, microbedecoder_transform):
+    """
+    A synonym LPSN_ID must not drag the whole row onto a deprecated record.
+
+    Everything this transform emits — crosswalk, metabolism, BacDive snapshot —
+    hangs off one `lpsn:<LPSN_ID>` anchor, so a synonym ID puts all of a row's
+    edges under a deprecated class: 5,263 edges, 1.0% of the output (#746).
+    bacdive got this in #684; the resolver is shared so the two agree.
+    """
+    import shutil
+
+    # The transform resolves database.csv from input_base_dir, so the fixture has
+    # to move with the GSS file rather than the base dir being repointed alone.
+    staged = tmp_path / "input"
+    staged.mkdir()
+    shutil.copy(FIXTURE_DIR / "database.csv", staged / "database.csv")
+    (staged / "lpsn_gss.csv").write_text(
+        "record_no,status,record_lnk\n"
+        "101,VP; sp. nov.; validly published under the ICNP; synonym,999\n"
+        "999,VP; sp. nov.; validly published under the ICNP; correct name,\n",
+        encoding="utf-8",
+    )
+    microbedecoder_transform.input_base_dir = staged
+    microbedecoder_transform._accepted_lpsn = None
+    microbedecoder_transform.run()
+
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+    anchors = {e["object"] for e in edges if e["object"].startswith(LPSN_PREFIX)}
+    anchors |= {e["subject"] for e in edges if e["subject"].startswith(LPSN_PREFIX)}
+
+    assert f"{LPSN_PREFIX}999" in anchors, "the synonym anchor must be re-pointed to the accepted record"
+    assert f"{LPSN_PREFIX}101" not in anchors, "the synonym record must not survive as an anchor"
+
+
+def test_a_missing_gss_file_is_non_fatal(tmp_path, microbedecoder_transform):
+    """
+    The GSS CSV is account-gated and not shipped.
+
+    Absence must leave IDs as given rather than abort — the same contract the
+    bacdive transform honours.
+    """
+    import shutil
+
+    staged = tmp_path / "input_no_gss"
+    staged.mkdir()
+    shutil.copy(FIXTURE_DIR / "database.csv", staged / "database.csv")  # but no lpsn_gss.csv
+    microbedecoder_transform.input_base_dir = staged
+    microbedecoder_transform._accepted_lpsn = None
+    microbedecoder_transform.run()
+
+    edges = _read_tsv(microbedecoder_transform.output_edge_file)
+    assert edges, "the transform must still emit without the GSS file"

@@ -1331,47 +1331,6 @@ CATEGORICAL_TERMS: List[Term] = [
         definition_source="DOI:10.3390/microorganisms10020293",
         observations="Adjacent to METPO:2000067/2000068 isolation predicates.",
     ),
-    # ------------------------------------------------------------------ #
-    # Cohort: metpo_proposal_2026_08_typestrain
-    # Source: MicrobeDecoder (Hackmann & Zhang, Sci Adv 2023) BacDive_ID
-    # crosswalk measured against LPSN GSS `nomenclatural_type`, 2026-08-12.
-    # ------------------------------------------------------------------ #
-    # 1 new object property, opening the 2000800 nomenclature family rather
-    # than taking one of the two remaining slots (2000066, 2000070) in the
-    # chemical-interaction range. The relation is nomenclatural: it is neither
-    # a chemical interaction (2000001-2000070), a capability (2000101-2000103),
-    # a production/transport relation (2000200+), nor a process (2000601+), so
-    # filing it in any of those would misplace it permanently for the sake of a
-    # nearby free number.
-    #
-    # No negative partner is proposed. The paired `does not <stem>` convention
-    # exists because a negative assay result is itself an observation; the
-    # absence of a type-strain assertion is not a claim that a strain is *not*
-    # the type, so a `does not` form would have no observations to carry.
-    Term(
-        proposed_id="METPO:2000802",
-        scope="categorical",
-        term_type="ObjectProperty",
-        label="is nomenclatural type of",
-        definition=(
-            "A relation between a prokaryotic strain and a taxon name in which "
-            "the strain is the nomenclatural type on which valid publication of "
-            "that name is based under the Prokaryotic Code."
-        ),
-        domain="METPO:1000525",
-        range="owl:Thing",
-        xrefs=["LPSN:nomenclatural_type"],
-        synonyms=["is type strain of", "typifies"],
-        priority="MEDIUM",
-        subset="metpo_proposal_2026_08_typestrain",
-        definition_source="PMID:41797679",
-        observations=(
-            "21,010 of 21,247 MicrobeDecoder rows (98.9%) carry a strain designation "
-            "byte-identical to the LPSN GSS nomenclatural_type of the same LPSN_ID; a "
-            "further 233 (1.1%) share a culture-collection number, 4 disagree. Range is "
-            "owl:Thing following METPO:2000069, as METPO has no taxon-name class."
-        ),
-    ),
     # 8 habitat-category classes — parent METPO:1000525 (microbe) or a nested
     # aquatic/terrestrial parent. Each xref cites the ENVO CURIE(s) driving
     # the proposal, aggregated from the PREGO edges.tsv (biolink:location_of
@@ -1907,23 +1866,14 @@ def write_robot_template_classes(path: Path, terms: List[Term]) -> int:
 
 def write_robot_template_properties(path: Path, terms: List[Term]) -> int:
     """Emit a ROBOT template TSV for property declarations."""
-    # `synonyms` is not decoration here. The metatraits loader pairs a positive
-    # predicate with its `does not <stem>` partner by looking for a shared
-    # oboInOwl:hasRelatedSynonym (_build_metpo_lookups, metatraits.py:919). The
-    # template previously had no synonyms column at all, so Term.synonyms was
-    # accepted and silently dropped for every property — meaning no predicate
-    # proposed through this script could ever auto-pair, the same defect that
-    # leaves upstream METPO:2000517/2000518 unpaired (#749). Related, not exact,
-    # because related is the annotation the loader reads.
     header = [
         "proposed_id", "label", "definition", "definition_source",
-        "type", "domain", "range", "synonyms", "xrefs", "subset",
+        "type", "domain", "range", "xrefs", "subset",
         "priority", "traits_addressed", "observations",
     ]
     directives = [
         "ID", "LABEL", "A IAO:0000115", ">A IAO:0000119",
         "TYPE", "DOMAIN", "RANGE",
-        "A oboInOwl:hasRelatedSynonym SPLIT=|",
         "A oboInOwl:hasDbXref SPLIT=|", "A oboInOwl:inSubset",
         "", "", "",
     ]
@@ -1938,7 +1888,6 @@ def write_robot_template_properties(path: Path, terms: List[Term]) -> int:
                 t.proposed_id, t.label, t.definition,
                 t.definition_source or "TODO:add_citation",
                 owl_type, t.domain, t.range,
-                "|".join(t.synonyms),
                 "|".join(t.xrefs), t.subset or SUBSET_TAG,
                 t.priority, t.traits_addressed, t.observations,
             ])

@@ -298,9 +298,28 @@ Optional, for the ontology transforms:
   so a star threshold would delete 4% of habitat on provenance rather than
   quality. Set `0` to disable. See `docs/PREGO_SCORE_VALIDATION.md`.
 
-  Standard merges use `merge.habitat.yaml` (habitat-only PREGO) or
-  `merge.noprego.yaml` (no PREGO); `merge.yaml` keeps the full source for
-  experimental builds.
+  **`merge.yaml` now takes habitat-only PREGO**, from
+  `data/transformed/prego_habitat/`. Full PREGO — including the taxon→GO edges
+  that are 99% of the source by volume with no positive evidence in any of the
+  four gold standards — lives in `merge.prego-full.yaml`, which is experimental
+  and not for release. `merge.noprego.yaml` drops PREGO entirely.
+  `merge.habitat.yaml` was removed: once `merge.yaml` became the habitat merge it
+  was a byte-identical duplicate, and two copies of one config drift.
+
+  Merge configs, and what distinguishes them:
+
+  | config | PREGO | genome-annotation cluster |
+  |---|---|---|
+  | `merge.yaml` | habitat only | — |
+  | `merge.noprego.yaml` | none | — |
+  | `merge.prego-full.yaml` | **full** (experimental) | — |
+  | `merge_bakta.yaml` | habitat only | **bakta + cog + kegg** |
+  | `merge.minimal.yaml` | none | — |
+
+  `merge_bakta.yaml` exists because bakta is the *connector*: COG on its own is an
+  island of 5,368 edges, all internal `COG→COG_CAT→COG_GROUP` hierarchy, with
+  nothing from any other source pointing at it. Bakta emits the gene→COG and
+  gene→KEGG edges, so the three belong together or not at all.
 
   **If your goal is merge memory or graph size, reach for `merge.noprego.yaml`
   first** — it drops PREGO entirely (~76% of merge input) and needs none of this

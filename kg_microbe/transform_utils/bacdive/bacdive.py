@@ -113,6 +113,7 @@ from kg_microbe.transform_utils.constants import (
     MEDIUM_URL_COLUMN,
     METABOLITE_CATEGORY,
     METABOLITE_CHEBI_KEY,
+    REFERENCE_KEY,
     METABOLITE_KEY,
     METABOLITE_MAPPING_FILE,
     METABOLITE_PRODUCTION,
@@ -1936,6 +1937,9 @@ class BacDiveTransform(Transform):
                     isolation_dict = value.get(ISOLATION_SAMPLING_ENV_INFO, {})
                     morphology_dict = value.get(MORPHOLOGY, {})
                     physiology_dict = value.get(PHYSIOLOGY_AND_METABOLISM, {})
+                    # @ref -> DOI for this record, so a statement can name the
+                    # paper behind it rather than only the strain record.
+                    record_reference_dois = reference_dois(value)
                     safety_dict = value.get(SAFETY_INFO, {})
                     name_tax_classification = value.get(NAME_TAX_CLASSIFICATION, {})
 
@@ -2809,6 +2813,10 @@ class BacDiveTransform(Transform):
                                                 "utilization_type": utilization_type,
                                                 "metpo_predicate": metpo_predicate,
                                                 "metpo_label": metpo_label,
+                                                # The @ref of this specific item, not of the
+                                                # record: one strain record cites several
+                                                # papers and they can disagree.
+                                                "ref": metabolite.get(REFERENCE_KEY),
                                             }
                                         )
 
@@ -2869,6 +2877,7 @@ class BacDiveTransform(Transform):
                                 knowledge_level, agent_type = self._add_edge_metadata(
                                     item["metpo_predicate"], HAS_PARTICIPANT, item["chebi_key"]
                                 )
+                                doi = record_reference_dois.get(item.get("ref"))
                                 edge_writer.writerow(
                                     [
                                         organism_id,
@@ -2878,7 +2887,8 @@ class BacDiveTransform(Transform):
                                         self.knowledge_source,
                                         knowledge_level,
                                         agent_type,
-                                    ]
+                                    ],
+                                    publication=f"doi:{doi}" if doi else None,
                                 )
 
                     if phys_and_metabolism_metabolite_production:
@@ -3367,6 +3377,42 @@ class BacDiveTransform(Transform):
 _STRAIN_BACDIVE_PREFIX = "kgmicrobe.strain:bacdive_"
 
 
+def reference_dois(record: dict) -> dict:
+    """Map a BacDive record's ``@ref`` ids to publication DOIs.
+
+    BacDive attaches an ``@ref`` to every individual data item and lists the corresponding
+    citations in the record's ``Reference`` section, keyed by ``@id``. That linkage is the
+    only route from a single statement to the paper behind it, and it is discarded unless
+    it is read here: ``primary_knowledge_source`` identifies the strain *record*, which
+    says nothing about which of its several references supports a given statement.
+
+    Two kinds of ``doi/url`` value are skipped. Catalogue URLs (DSMZ, StrainInfo) are not
+    publications, and BacDive's own record DOI (``10.13145/bacdive...``) points back at the
+    record we already identify -- treating either as a citation would attach confident-
+    looking provenance that leads nowhere.
+    """
+    refs = record.get("Reference")
+    if refs is None:
+        return {}
+    if isinstance(refs, dict):
+        refs = [refs]
+    out = {}
+    for ref in refs:
+        if not isinstance(ref, dict):
+            continue
+        ref_id = ref.get("@id")
+        doi = str(ref.get("doi/url") or "").strip()
+        if ref_id is None or not doi.startswith("10."):
+            continue
+        if doi.lower().startswith("10.13145/bacdive"):
+            continue
+        try:
+            out[int(ref_id)] = doi
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
 class _StrainProvenanceWriter:
 
     """
@@ -3401,15 +3447,29 @@ class _StrainProvenanceWriter:
         self._ks = knowledge_source
         self._ks_idx = ks_column_index
 
-    def writerow(self, row):
-        """Write a single edge row, augmenting knowledge_source when the row references a BacDive strain."""
+    def writerow(self, row, publication: str = None):
+        """Write a single edge row, augmenting knowledge_source when the row references a BacDive strain.
+
+        ``publication`` is the DOI of the paper the statement came from, resolved from the
+        data item's ``@ref`` against the record's ``Reference`` section. When supplied it is
+        appended to the same list literal, so an edge carries the source, the strain record
+        *and* the citation:
+
+            ['infores:bacdive', 'bacdive:1', 'doi:10.1099/ijs.0.02862-0']
+
+        Callers that do not pass it are unaffected, so sections not yet threaded keep their
+        existing output byte for byte.
+        """
         row = list(row)
         if len(row) > self._ks_idx and row[self._ks_idx] == self._ks:
             # Look at subject (col 0) then object (col 2) for a strain CURIE.
             for endpoint in (row[0], row[2] if len(row) > 2 else None):
                 if isinstance(endpoint, str) and endpoint.startswith(_STRAIN_BACDIVE_PREFIX):
                     bacdive_id = endpoint[len(_STRAIN_BACDIVE_PREFIX) :]
-                    row[self._ks_idx] = f"['{self._ks}', 'bacdive:{bacdive_id}']"
+                    parts = [self._ks, f"bacdive:{bacdive_id}"]
+                    if publication:
+                        parts.append(publication)
+                    row[self._ks_idx] = "[" + ", ".join(f"'{p}'" for p in parts) + "]"
                     break
         self._inner.writerow(row)
 

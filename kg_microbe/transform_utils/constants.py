@@ -507,6 +507,8 @@ MORPHOLOGY_CELL_MORPHOLOGY_COLUMN = MORPHOLOGY + "_" + CELL_MORPHOLOGY
 MORPHOLOGY_PIGMENTATION_COLUMN = MORPHOLOGY + "_" + PIGMENTATION
 API_X_COLUMN = "API_X"
 METABOLITE_CHEBI_KEY = "Chebi-ID"
+# Per-item citation pointer; resolved against the record's "Reference" section.
+REFERENCE_KEY = "@ref"
 METABOLITE_KEY = "metabolite"
 PRODUCTION_KEY = "production"
 EC_PREFIX = "EC:"

@@ -30,10 +30,10 @@ from kg_microbe.transform import DATA_SOURCES
 REPO_ROOT = Path(__file__).parent.parent
 
 #: Output dirs that are not simply ``data/transformed/<registered source>/``.
-#: ``prego_habitat`` is written by ``PREGO_SHAPES=habitat``; the bakta subdirs are
-#: per-dataset. Anything else must correspond to a registered transform, so a
-#: typo or a renamed source cannot sit unnoticed in a shipped config.
-KNOWN_VARIANT_DIRS = {"prego_habitat", "bakta"}
+#: Only ``prego_habitat``, written by ``PREGO_SHAPES=habitat``. ``bakta`` was listed
+#: here too, which changed nothing — it is a registered ``DATA_SOURCES`` key — while
+#: implying to a reader that it is not one.
+KNOWN_VARIANT_DIRS = {"prego_habitat"}
 
 
 def _configs():
@@ -52,6 +52,13 @@ def _active_dirs(path: Path) -> set:
     Commented-out entries do not count — reading them is what made an earlier
     audit report 22 sources where the config had 14.
 
+    The pattern is deliberately permissive about the characters in a directory
+    name. An earlier ``[a-z_]+`` had to be followed by ``/``, so any name holding a
+    digit, hyphen or capital matched *nothing* and became invisible — the guard
+    then passed a config pointing at an unproducible directory, which is the exact
+    thing it exists to catch. Better to over-capture and let the allowlist
+    comparison report an unknown than to silently skip it.
+
     :param path: Merge config path.
     :return: Set of directory names under ``data/transformed/``.
     """
@@ -59,7 +66,7 @@ def _active_dirs(path: Path) -> set:
     for line in path.read_text().splitlines():
         if line.lstrip().startswith("#"):
             continue
-        match = re.search(r"data/transformed/([a-z_]+)/", line)
+        match = re.search(r"data/transformed/([^/\s]+)/", line)
         if match:
             dirs.add(match.group(1))
     return dirs
@@ -145,3 +152,20 @@ def test_the_prego_variants_differ_only_in_the_prego_source():
     assert standard - full == {"prego_habitat"}, f"prego-full is missing: {sorted(standard - full)}"
     assert not none - standard, f"noprego extras: {sorted(none - standard)}"
     assert standard - none == {"prego_habitat"}, f"noprego differs by more than PREGO: {sorted(standard - none)}"
+
+
+@pytest.mark.parametrize("odd_dir", ["kegg2", "go-terms", "Ontologies"], ids=["digit", "hyphen", "capital"])
+def test_an_oddly_named_unproducible_dir_is_caught(tmp_path, odd_dir):
+    """
+    The extractor must not go blind on names outside ``[a-z_]``.
+
+    With the original pattern each of these matched nothing, so a config reading
+    them passed the producibility check silently.
+    """
+    config = tmp_path / "merge.odd.yaml"
+    config.write_text(
+        "merged_graph:\n  source:\n    x:\n      input:\n        filename:\n"
+        f"          - data/transformed/{odd_dir}/nodes.tsv\n"
+    )
+    assert _active_dirs(config) == {odd_dir}, "the dir must be visible to the guard"
+    assert odd_dir not in set(DATA_SOURCES) | KNOWN_VARIANT_DIRS, "and recognised as unproducible"

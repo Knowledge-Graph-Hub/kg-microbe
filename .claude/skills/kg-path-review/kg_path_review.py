@@ -97,9 +97,21 @@ NO_SELF_LOOP_PREDICATES = {
 # are very likely transform bugs.
 CARDINALITY_ENVELOPES: Dict[Tuple[str, str], Tuple[int, int]] = {
     ("mediadive.solution:", "biolink:has_part"): (20, 50),
-    ("mediadive.medium:", "biolink:has_part"): (8, 20),
+    # 20 sat one below a real medium: "OMIZ-PAT Medium (modified)" (medium:1494)
+    # genuinely lists 21 solutions in media_detailed.json, so it filed CRITICAL on
+    # every run. Raised to 25; the accumulator bug this guards against produced
+    # hundreds, not 21.
+    ("mediadive.medium:", "biolink:has_part"): (8, 25),
     ("NCBITaxon:", "biolink:has_phenotype"): (500, 2000),
-    ("NCBITaxon:", "biolink:located_in"): (30, 100),
+    # Organism -> growth medium. NOT biolink:located_in: the KG carries this on
+    # METPO:2000517 (76,465 edges) with METPO:2000518 as a rare variant (3), and
+    # there are zero located_in edges into mediadive.medium. The old located_in row
+    # made the documented check return zero subjects, which reads as a missing-path
+    # gap while leaving the predicate that carries the relation unexamined.
+    # Envelope from the 2026-08-12 merged KG, distinct media per subject:
+    # taxa n=14,297 median 2, p99 7, max 47; strains n=35,244 median 1, p99 3, max 7.
+    ("NCBITaxon:", "METPO:2000517"): (10, 60),
+    ("kgmicrobe.strain:", "METPO:2000517"): (5, 20),
     ("NCBITaxon:", "biolink:capable_of"): (300, 1500),
 }
 
@@ -497,12 +509,39 @@ def archetype_self_loops(args: argparse.Namespace) -> Report:
 
 
 def archetype_cardinality(args: argparse.Namespace) -> Report:
-    """Top-K out-degree per (subject_prefix, predicate)."""
+    """
+    Top-K out-degree per (subject_prefix, predicate).
+
+    Two things this deliberately does not do, both of which produced false
+    CRITICALs calibrated against a per-graph envelope:
+
+    * **Count rows.** A transform may emit one ``(subject, predicate, object)``
+      triple many times with different provenance — ``metatraits_gtdb`` emits
+      2,072 rows for 33 distinct phenotypes on a single taxon, 63x duplication
+      that the merge collapses. Out-degree is *distinct objects*, which is what
+      the envelopes describe and what survives into the merged KG.
+    * **Sum across transforms.** Without ``--transform`` this walks every dir, and
+      a subject in both ``metatraits`` and ``metatraits_gtdb`` (or ``prego`` and
+      ``prego_habitat``) had its degrees added, producing a number belonging to no
+      graph. The **union** of distinct objects is reported instead, which is
+      exactly what the merge computes and therefore what the per-graph envelopes
+      describe — verified against the merged KG, where union matched the merged
+      degree for every subject checked (76, 67, 66, 66, 65).
+
+      A per-transform *maximum* was the first attempt and was wrong in the more
+      dangerous direction: it discards what the other sources contribute, reporting
+      36 where the merged graph holds 76. A subject with ~1,200 phenotypes in each
+      of two transforms and little overlap has a merged degree near 2,400 —
+      CRITICAL against the 2,000 envelope — which a maximum would report as 1,200
+      and file as at most a WARNING. Under-reporting defeats the check; the
+      contributing transforms are named instead so a spread degree is still legible.
+    """
     report = Report(archetype="cardinality")
     pred_filter = set(args.predicate) if args.predicate else None
     subj_prefix = args.subject_prefix
 
-    counts: Counter = Counter()
+    # (subject, predicate) -> transform -> set of distinct objects
+    per_transform: Dict[Tuple[str, str], Dict[str, Set[str]]] = defaultdict(lambda: defaultdict(set))
     transforms = args.transform or _list_transform_dirs()
     for tr in transforms:
         try:
@@ -512,12 +551,23 @@ def archetype_cardinality(args: argparse.Namespace) -> Report:
                     continue
                 if pred_filter and pred not in pred_filter:
                     continue
-                counts[(subj, pred)] += 1
+                per_transform[(subj, pred)][tr].add(row[OBJECT_IDX])
         except FileNotFoundError:
             continue
 
+    counts: Counter = Counter()
+    contributors: Dict[Tuple[str, str], str] = {}
+    for key, by_tr in per_transform.items():
+        union: Set[str] = set()
+        for objs in by_tr.values():
+            union |= objs
+        counts[key] = len(union)
+        ranked = sorted(by_tr.items(), key=lambda kv: -len(kv[1]))
+        contributors[key] = "+".join(tr for tr, _ in ranked[:3]) + ("+…" if len(ranked) > 3 else "")
+
     top = counts.most_common(args.top)
     report.stats["unique_subjects"] = len({s for s, _ in counts.keys()})
+    report.stats["degree_measured_as"] = "distinct objects, union over transforms (matches merged KG)"
     for (subj, pred), n in top:
         # Pick envelope by matching subject prefix.
         envelope = None
@@ -527,13 +577,13 @@ def archetype_cardinality(args: argparse.Namespace) -> Report:
                 break
         if envelope and n > envelope[1]:
             severity = "CRITICAL"
-            detail = f"out-degree={n} on {pred} (anomaly threshold {envelope[1]})"
+            detail = f"out-degree={n} on {pred} in {contributors[(subj, pred)]} (anomaly threshold {envelope[1]})"
         elif envelope and n > envelope[0]:
             severity = "WARNING"
-            detail = f"out-degree={n} on {pred} (typical max {envelope[0]})"
+            detail = f"out-degree={n} on {pred} in {contributors[(subj, pred)]} (typical max {envelope[0]})"
         else:
             severity = "INFO"
-            detail = f"out-degree={n} on {pred}"
+            detail = f"out-degree={n} on {pred} in {contributors[(subj, pred)]}"
         report.add(Finding(severity=severity, archetype="cardinality", subject=subj, detail=detail))
     return report
 

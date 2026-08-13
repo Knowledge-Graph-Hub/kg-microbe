@@ -156,15 +156,46 @@ def _has_local_diff(path: Path, ref: str) -> bool:
     return bool(_git(["diff", ref, "--", rel]).strip())
 
 
+#: Sources whose output directory is not simply ``data/transformed/<name>/``.
+#: PREGO writes ``prego_habitat/`` under its default (``PREGO_SHAPES=habitat``,
+#: since #766) and ``prego/`` under ``PREGO_SHAPES=all``. Watching only ``prego/``
+#: left the flag permanently STALE_VS_CODE — no default run writes it — while the
+#: directory ``merge.yaml`` actually consumes went unchecked entirely.
+OUTPUT_DIR_ALIASES: dict[str, tuple[str, ...]] = {
+    "prego": ("prego_habitat", "prego"),
+}
+
+
+def _output_dirs(source_name: str) -> list[pathlib.Path]:
+    """
+    Candidate output directories for a source, newest-populated first.
+
+    :param source_name: Transform name.
+    :return: Existing directories that could hold this source's output.
+    """
+    names = OUTPUT_DIR_ALIASES.get(source_name, (source_name,))
+    return [TRANSFORMED_DIR / n for n in names if (TRANSFORMED_DIR / n).is_dir()]
+
+
 def _output_mtime(source_name: str) -> Optional[float]:
-    """Newest mtime across the expected nodes/edges outputs for a source."""
-    src_dir = TRANSFORMED_DIR / source_name
-    if not src_dir.is_dir():
-        return None
-    hits = list(src_dir.glob("*.tsv")) + list(src_dir.glob("*.tsv.gz"))
-    if not hits:
-        return None
-    return max(p.stat().st_mtime for p in hits)
+    """
+    Newest mtime across the expected nodes/edges outputs for a source.
+
+    Takes the **newest** across candidate directories rather than the first that
+    exists: a source with a variant output path is fresh if any of its documented
+    outputs is, and reporting the stale one would nag about a build nobody makes.
+
+    :param source_name: Transform name.
+    :return: Newest output mtime, or None if nothing is on disk.
+    """
+    newest: Optional[float] = None
+    for src_dir in _output_dirs(source_name):
+        hits = list(src_dir.glob("*.tsv")) + list(src_dir.glob("*.tsv.gz"))
+        if not hits:
+            continue
+        candidate = max(p.stat().st_mtime for p in hits)
+        newest = candidate if newest is None else max(newest, candidate)
+    return newest
 
 
 def _list_transform_sources() -> list[str]:
@@ -204,7 +235,8 @@ def check_source(source: str, ref: str) -> SourceReport:
 
     if out_mtime is None:
         status = "MISSING_OUTPUT"
-        note = f"data/transformed/{source}/ has no .tsv/.tsv.gz"
+        expected = " or ".join(f"data/transformed/{n}/" for n in OUTPUT_DIR_ALIASES.get(source, (source,)))
+        note = f"{expected} has no .tsv/.tsv.gz"
     elif local:
         status = "LOCAL_CHANGES"
         note = (
@@ -277,7 +309,19 @@ def check_merge(source_reports: Iterable[SourceReport], ref: str) -> MergeReport
         stale_against.append(merge_yaml_path or "merge yaml")
     for r in source_reports:
         if r.output_mtime is not None and merged_mtime < r.output_mtime:
-            stale_against.append(f"data/transformed/{r.source}/")
+            # Name the directory that is actually newer, not the source name. For a
+            # source with a variant output path these differ, and printing
+            # "data/transformed/prego/" while the fresh build sits in
+            # "prego_habitat/" sends the reader to the wrong file.
+            fresher = [
+                d for d in _output_dirs(r.source)
+                if any(
+                    f.stat().st_mtime > merged_mtime
+                    for f in list(d.glob("*.tsv")) + list(d.glob("*.tsv.gz"))
+                )
+            ]
+            for d in fresher or [TRANSFORMED_DIR / r.source]:
+                stale_against.append(f"data/transformed/{d.name}/")
 
     if not stale_against:
         status = "FRESH"

@@ -266,6 +266,12 @@ ships with the biolink sub/obj check disabled. So the driver:
 3. calls KGXVal's own `findSubObjErrorsForIngest`;
 4. writes an error CSV that this skill summarizes.
 
+**Every merged review declares its KGXVal status**, including when the flag was
+not passed — the section reads `**NOT RUN**` in that case. Without it, an artifact
+built without `--kgxval` was indistinguishable from a full one and passed the
+kg-release gate identically, so a release could trust the weaker review with
+nothing recording that the external validation had been skipped.
+
 **Reading the output.** `BAD BIOLINK` is split into **METPO-native predicates**
 (`METPO:2000xxx` — KG-Microbe emits these intentionally and maps them to biolink
 in `metatraits.py`; expected, not a defect) vs **other unknown predicates**

@@ -107,6 +107,10 @@ poetry run python .claude/skills/kg-release/kg_release.py \
 
 1. **Pre-flight** — verify `gh auth status`, working tree clean, master/release branch, tag does not exist.
 2. **Review gate** — load the most recent artifact from each review skill's `reviews/` dir. If older than `--review-max-age-days` or missing, **abort** and tell the user to run `/kg-model-review` and `/kg-path-review` via Claude Code first. Block on `needs-attention` (kg-model-review error count > 0, or kg-path-review CRITICAL findings) unless `--ignore-review`.
+
+   **Check the KGXVal status line in the kg-model-review artifact.** A merged review now always ends with a `## KGXVal biolink validation` section stating whether the external validator ran. `**NOT RUN**` or `**REQUESTED BUT DID NOT COMPLETE**` means the artifact carries only the built-in `DomainRange` check — a maintained allowlist rather than the published Biolink model. That artifact is structurally identical to a full one and passes the same `Total ERRORs > 0` gate, so without reading this line the gate silently accepts the weaker review. Treat it as `needs-attention` for a release, and re-run `/kg-model-review --merged --kgxval`.
+
+   The reason this is a gate concern rather than a nicety: KGXVal derives legal subject/object classes from BMT at runtime, so it catches domain/range violations the in-tree allowlist has never been taught about. On the 2026-08-12 merged KG it reported 0 actionable findings — but that is a result, not a reason to skip it.
 3. **Stage assets** in `<out-dir>`:
    - `merged-kg_<release>.tar.gz` — recompress from `<merged-dir>` (always rebuild for reproducibility).
    - `data_transformed_<release>.tar.gz` — `tar c -I 'gzip -1' data/transformed`.

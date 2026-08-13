@@ -34,6 +34,25 @@ from kg_microbe.transform_utils.prego.utils import (
 FIXTURE_DIR = Path(__file__).parent / "resources" / "prego"
 
 
+@pytest.fixture(autouse=True)
+def _full_emission_by_default(monkeypatch):
+    """
+    Exercise full emission unless a test says otherwise.
+
+    Nearly every test here predates shape selection and asserts on the full
+    output — taxon→GO edges, all three channels, the MONDO path. The shipped
+    default is ``habitat``, so that the default transform writes where the default
+    merge reads; a test that silently inherited that default would be asserting
+    something it was never written to check, and ~20 of them failed that way when
+    the default changed.
+
+    Setting the environment rather than passing ``shapes="all"`` at ~30 call sites
+    keeps the intent in one place and covers the multi-line constructions too.
+    Tests that care about the real default unset this.
+    """
+    monkeypatch.setenv("PREGO_SHAPES", "all")
+
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -94,7 +113,11 @@ def prego_output_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture()
 def prego_transform(prego_input_dir: Path, prego_output_dir: Path) -> PregoTransform:
-    """Return a ``PregoTransform`` wired to the fixture input + output dirs."""
+    """
+    Return a ``PregoTransform`` wired to the fixture input + output dirs.
+
+    Full emission, via the module-wide ``_full_emission_by_default`` fixture.
+    """
     return PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
 
 
@@ -1465,11 +1488,20 @@ def test_habitat_min_score_thresholds_only_the_continuous_channel(prego_input_di
     assert channels <= {CHANNEL_GENOMES, CHANNEL_LITERATURE}, channels
 
 
-def test_shapes_defaults_to_all_and_rejects_nonsense(prego_input_dir: Path, prego_output_dir: Path):
-    """Unfiltered stays the default, and a typo must fail loudly rather than silently emit everything."""
+def test_shapes_defaults_to_habitat_and_rejects_nonsense(prego_input_dir: Path, prego_output_dir: Path, monkeypatch):
+    """
+    The default must produce what the default merge reads.
+
+    `merge.yaml` reads data/transformed/prego_habitat/. KGX silently skips a
+    missing input, so a default transform writing prego/ against a default merge
+    reading prego_habitat/ produced a graph with no PREGO edges and no warning.
+    A typo must still fail loudly rather than silently emit everything.
+    """
+    monkeypatch.delenv("PREGO_SHAPES", raising=False)
     default = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
-    assert default.shapes == "all"
-    assert default.habitat_min_score == 0.0, "the habitat floor must not apply to an unfiltered run"
+    assert default.shapes == "habitat"
+    assert default.output_dir.name == "prego_habitat", "and must write where merge.yaml looks"
+    assert default.habitat_min_score == 1.0, "the documented tau=1.0 policy applies by default"
 
     with pytest.raises(ValueError, match="PREGO_SHAPES"):
         PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitats")
@@ -1483,7 +1515,7 @@ def test_habitat_mode_writes_to_its_own_directory(prego_input_dir: Path, prego_o
     selector: pointed at a full PREGO output it would ship a 44.7M-edge graph
     as "habitat only", with nothing to catch the mislabelling.
     """
-    full = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    full = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="all")
     habitat = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitat")
 
     assert habitat.output_dir != full.output_dir

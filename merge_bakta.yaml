@@ -1,8 +1,19 @@
 ---
-# Merge configuration WITH Bakta sources enabled
-# Use this configuration when Bakta transform outputs are available:
-#   - data/transformed/bakta/cmm_bakta/nodes.tsv + edges.tsv
-#   - data/transformed/bakta/pfas_bakta/nodes.tsv + edges.tsv
+# Merge configuration WITH the genome-annotation cluster: Bakta, COG and KEGG.
+#
+# Bakta is the connector. COG and KEGG on their own are vocabularies with no
+# attachment points — in the standard graph COG is an island of 5,368 edges, all
+# internal COG->COG_CAT->COG_GROUP hierarchy, with nothing from any other source
+# pointing at it. Bakta is what emits the gene->COG and gene->KEGG edges
+# (`add_cog_annotation`, and the COG:/KEGG: branches in bakta/utils.py), so the
+# three belong together or not at all.
+#
+# Otherwise identical to merge.yaml, including habitat-only PREGO. Derived from
+# merge.yaml rather than maintained by hand: the previous version had drifted 7
+# sources behind (missing gtdb, lpsn, lpsn_api, metatraits, metatraits_gtdb,
+# microbedecoder, prego).
+#
+# Requires: poetry run kg transform -s bakta -s cog -s kegg
 #
 # Usage: poetry run kg merge -y merge_bakta.yaml
 #
@@ -84,7 +95,10 @@ merged_graph:
         filename:
           - data/transformed/ontologies/metpo_nodes.tsv
           - data/transformed/ontologies/metpo_edges.tsv
-    # Selective per-CURIE stub-import for NCIT, mesh, BTO, PO, MICRO — see merge.yaml.
+    # Selective per-CURIE stub-import for NCIT, mesh, BTO, PO, and MICRO —
+    # only the IDs referenced by mappings/* are imported (not the full
+    # ontologies). See kg_microbe/transform_utils/ontologies_stubs/ for
+    # the transform.
     ontologies_stubs:
       name: "ontologies_stubs"
       input:
@@ -134,6 +148,20 @@ merged_graph:
         filename:
           - data/transformed/madin_etal/nodes.tsv
           - data/transformed/madin_etal/edges.tsv
+    metatraits:
+      input:
+        name: "metatraits"
+        format: tsv
+        filename:
+          - data/transformed/metatraits/nodes.tsv
+          - data/transformed/metatraits/edges.tsv
+    metatraits_gtdb:
+      input:
+        name: "metatraits_gtdb"
+        format: tsv
+        filename:
+          - data/transformed/metatraits_gtdb/nodes.tsv
+          - data/transformed/metatraits_gtdb/edges.tsv
     bactotraits:
       input:
         name: "bactotraits"
@@ -155,20 +183,76 @@ merged_graph:
         filename:
           - data/transformed/bakta/pfas_bakta/nodes.tsv
           - data/transformed/bakta/pfas_bakta/edges.tsv
-    # cog:
-    #   name: "cog"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/cog/nodes.tsv
-    #       - data/transformed/cog/edges.tsv
-    # kegg:
-    #   name: "kegg"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/kegg/nodes.tsv
-    #       - data/transformed/kegg/edges.tsv
+    cog:
+      name: "cog"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/cog/nodes.tsv
+          - data/transformed/cog/edges.tsv
+    gtdb:
+      name: "GTDB Taxonomy"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/gtdb/nodes.tsv
+          - data/transformed/gtdb/edges.tsv
+    # LPSN nomenclature. `lpsn` is the fast GSS/CSV base layer (taxon
+    # names, ranks, GTDB/NCBITaxon cross-refs); `lpsn_api` is the
+    # authenticated JSON-API enrichment (above-genus taxonomy, basonyms,
+    # publication DOIs/PMIDs, 16S INSDC accessions). The API enrichment
+    # nodes reference lpsn:* records minted by the GSS layer, so both are
+    # merged together.
+    lpsn:
+      name: "LPSN"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/lpsn/nodes.tsv
+          - data/transformed/lpsn/edges.tsv
+    lpsn_api:
+      name: "LPSN API"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/lpsn_api/nodes.tsv
+          - data/transformed/lpsn_api/edges.tsv
+    # MicrobeDecoder (Hackmann & Zhang, Sci Adv 2023) — Bergey / VPI /
+    # Literature / FAPROTAX curated fermentation profiles keyed on
+    # lpsn:<LPSN_ID>, plus a pre-joined LPSN ↔ GTDB ↔ NCBI ↔ GOLD ↔ IMG ↔
+    # BacDive identity crosswalk. See kg_microbe/transform_utils/microbedecoder/.
+    microbedecoder:
+      name: "MicrobeDecoder"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/microbedecoder/nodes.tsv
+          - data/transformed/microbedecoder/edges.tsv
+    # PREGO — Prokaryotic Environment / Genotype text-mining knowledgebase
+    # (Zafeiropoulos et al 2022, Microorganisms 10:293). Emits
+    # NCBITaxon→GO capable_of, ENVO→NCBITaxon location_of, NCBITaxon→MONDO
+    # associated_with (via DOID→MONDO xref). See docs/PREGO_INGEST_PLAN.md.
+    # PREGO habitat only. Its taxon->GO edges are 99% of the source by volume and
+    # have no positive evidence in any of the four gold standards, so they are not
+    # part of the standard graph — see merge.prego-full.yaml for the experimental
+    # build that keeps them. Produce this input with:
+    #   PREGO_SHAPES=habitat poetry run kg transform -s prego
+    # which writes data/transformed/prego_habitat/ (~238k location_of edges at the
+    # tau=1.0 continuous-channel policy in docs/PREGO_SCORE_VALIDATION.md).
+    prego:
+      name: "PREGO (habitat only)"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/prego_habitat/nodes.tsv
+          - data/transformed/prego_habitat/edges.tsv
+    kegg:
+      name: "kegg"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/kegg/nodes.tsv
+          - data/transformed/kegg/edges.tsv
     # ctd:
     #   input:
     #     name: "ctd"

@@ -1,5 +1,5 @@
 ---
-# Standard merge configuration (Bakta and COG excluded)
+# Standard merge configuration (Bakta, COG and KEGG excluded; habitat-only PREGO)
 # For Bakta-enabled merge, use merge_bakta.yaml instead
 #
 # Usage: poetry run kg merge -y merge.yaml
@@ -219,13 +219,20 @@ merged_graph:
     # (Zafeiropoulos et al 2022, Microorganisms 10:293). Emits
     # NCBITaxon→GO capable_of, ENVO→NCBITaxon location_of, NCBITaxon→MONDO
     # associated_with (via DOID→MONDO xref). See docs/PREGO_INGEST_PLAN.md.
+    # PREGO habitat only. Its taxon->GO edges are 99% of the source by volume and
+    # have no positive evidence in any of the four gold standards, so they are not
+    # part of the standard graph — see merge.prego-full.yaml for the experimental
+    # build that keeps them. Produce this input with:
+    #   PREGO_SHAPES=habitat poetry run kg transform -s prego
+    # which writes data/transformed/prego_habitat/ (~238k location_of edges at the
+    # tau=1.0 continuous-channel policy in docs/PREGO_SCORE_VALIDATION.md).
     prego:
-      name: "PREGO"
+      name: "PREGO (habitat only)"
       input:
         format: tsv
         filename:
-          - data/transformed/prego/nodes.tsv
-          - data/transformed/prego/edges.tsv
+          - data/transformed/prego_habitat/nodes.tsv
+          - data/transformed/prego_habitat/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

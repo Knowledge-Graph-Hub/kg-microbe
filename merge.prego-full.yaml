@@ -1,8 +1,19 @@
 ---
-# Standard merge configuration (Bakta and COG excluded)
+# EXPERIMENTAL merge configuration — full PREGO, including its taxon->GO edges.
+#
+# This is not the standard graph. PREGO's taxon->GO edges are 99% of that source
+# by volume (44.3M of 44.7M) and have no positive evidence in any of the four
+# gold standards; only its habitat edges do. They are kept here for experiments
+# and analysis, not for release. The standard graph is merge.yaml, which takes
+# habitat-only PREGO from data/transformed/prego_habitat/.
+#
+# Cost, measured 2026-08-10: ~3 hours, 23.6 GB peak RSS, ~50 GB of swap, a
+# 56,805,952-edge graph of which ~74% is PREGO capable_of. Produce the input
+# with `PREGO_SHAPES=all poetry run kg transform -s prego` (12.2 GB edges.tsv).
+#
 # For Bakta-enabled merge, use merge_bakta.yaml instead
 #
-# Usage: poetry run kg merge -y merge.yaml
+# Usage: poetry run kg merge -y merge.prego-full.yaml
 #
 configuration:
   output_directory: data/merged
@@ -219,19 +230,13 @@ merged_graph:
     # (Zafeiropoulos et al 2022, Microorganisms 10:293). Emits
     # NCBITaxon→GO capable_of, ENVO→NCBITaxon location_of, NCBITaxon→MONDO
     # associated_with (via DOID→MONDO xref). See docs/PREGO_INGEST_PLAN.md.
-    # PREGO habitat only. Produce the input with:
-    #   PREGO_SHAPES=habitat poetry run kg transform -s prego
-    # which emits ~238k location_of edges instead of 44.7M, at the tau=1.0
-    # continuous-channel policy in docs/PREGO_SCORE_VALIDATION.md. PREGO's
-    # taxon->GO edges are excluded deliberately: they are 99% of the source by
-    # volume and have no positive evidence in any of the four gold standards.
     prego:
-      name: "PREGO (habitat only)"
+      name: "PREGO"
       input:
         format: tsv
         filename:
-          - data/transformed/prego_habitat/nodes.tsv
-          - data/transformed/prego_habitat/edges.tsv
+          - data/transformed/prego/nodes.tsv
+          - data/transformed/prego/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

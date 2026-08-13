@@ -192,10 +192,17 @@ class PregoTransform(Transform):
 
         :param input_dir: Raw data directory.
         :param output_dir: Transform output directory.
-        :param shapes: ``all`` (default) or ``habitat``. ``habitat`` emits only the
+        :param shapes: ``habitat`` (default) or ``all``. ``habitat`` emits only the
             ``location_of`` shapes (ENVO/BTO -> taxon), which are ~1% of PREGO by
             volume and the only part with measured, independently replicated
-            enrichment. Env: ``PREGO_SHAPES``.
+            enrichment, and it is what ``merge.yaml`` reads. ``all`` additionally
+            emits the taxon→GO edges and pairs with ``merge.prego-full.yaml``; it
+            is the experimental build, costing a 12.2 GB ``edges.tsv`` and a
+            three-hour merge. Defaulting to ``habitat`` keeps the default
+            transform and the default merge pointing at the same directory —
+            they disagreed, and KGX silently skips a missing input, so the
+            default pipeline produced a graph with no PREGO at all.
+            Env: ``PREGO_SHAPES``.
         :param habitat_min_score: Raw-score floor applied to *continuous-channel*
             habitat rows only, leaving the genome channel whole. Defaults to 1.0,
             the policy in ``docs/PREGO_SCORE_VALIDATION.md``; set 0 to disable.
@@ -221,7 +228,7 @@ class PregoTransform(Transform):
         validate_tau(min_confidence)
         self.min_confidence = min_confidence
         if shapes is None:
-            shapes = os.environ.get("PREGO_SHAPES", _SHAPES_ALL).strip().lower() or _SHAPES_ALL
+            shapes = os.environ.get("PREGO_SHAPES", _SHAPES_HABITAT).strip().lower() or _SHAPES_HABITAT
         if shapes not in (_SHAPES_ALL, _SHAPES_HABITAT):
             raise ValueError(f"PREGO_SHAPES must be {_SHAPES_ALL!r} or {_SHAPES_HABITAT!r}, got {shapes!r}")
         self.shapes = shapes

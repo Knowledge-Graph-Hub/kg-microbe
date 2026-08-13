@@ -523,9 +523,18 @@ def archetype_cardinality(args: argparse.Namespace) -> Report:
     * **Sum across transforms.** Without ``--transform`` this walks every dir, and
       a subject in both ``metatraits`` and ``metatraits_gtdb`` (or ``prego`` and
       ``prego_habitat``) had its degrees added, producing a number belonging to no
-      graph. The per-transform maximum is reported instead, and the finding names
-      the transform so 2,072-in-one-source is distinguishable from
-      33-plus-27-across-two.
+      graph. The **union** of distinct objects is reported instead, which is
+      exactly what the merge computes and therefore what the per-graph envelopes
+      describe — verified against the merged KG, where union matched the merged
+      degree for every subject checked (76, 67, 66, 66, 65).
+
+      A per-transform *maximum* was the first attempt and was wrong in the more
+      dangerous direction: it discards what the other sources contribute, reporting
+      36 where the merged graph holds 76. A subject with ~1,200 phenotypes in each
+      of two transforms and little overlap has a merged degree near 2,400 —
+      CRITICAL against the 2,000 envelope — which a maximum would report as 1,200
+      and file as at most a WARNING. Under-reporting defeats the check; the
+      contributing transforms are named instead so a spread degree is still legible.
     """
     report = Report(archetype="cardinality")
     pred_filter = set(args.predicate) if args.predicate else None
@@ -547,15 +556,18 @@ def archetype_cardinality(args: argparse.Namespace) -> Report:
             continue
 
     counts: Counter = Counter()
-    worst_transform: Dict[Tuple[str, str], str] = {}
+    contributors: Dict[Tuple[str, str], str] = {}
     for key, by_tr in per_transform.items():
-        tr, objs = max(by_tr.items(), key=lambda kv: len(kv[1]))
-        counts[key] = len(objs)
-        worst_transform[key] = tr
+        union: Set[str] = set()
+        for objs in by_tr.values():
+            union |= objs
+        counts[key] = len(union)
+        ranked = sorted(by_tr.items(), key=lambda kv: -len(kv[1]))
+        contributors[key] = "+".join(tr for tr, _ in ranked[:3]) + ("+…" if len(ranked) > 3 else "")
 
     top = counts.most_common(args.top)
     report.stats["unique_subjects"] = len({s for s, _ in counts.keys()})
-    report.stats["degree_measured_as"] = "distinct objects, max over transforms"
+    report.stats["degree_measured_as"] = "distinct objects, union over transforms (matches merged KG)"
     for (subj, pred), n in top:
         # Pick envelope by matching subject prefix.
         envelope = None
@@ -565,13 +577,13 @@ def archetype_cardinality(args: argparse.Namespace) -> Report:
                 break
         if envelope and n > envelope[1]:
             severity = "CRITICAL"
-            detail = f"out-degree={n} on {pred} in {worst_transform[(subj, pred)]} (anomaly threshold {envelope[1]})"
+            detail = f"out-degree={n} on {pred} in {contributors[(subj, pred)]} (anomaly threshold {envelope[1]})"
         elif envelope and n > envelope[0]:
             severity = "WARNING"
-            detail = f"out-degree={n} on {pred} in {worst_transform[(subj, pred)]} (typical max {envelope[0]})"
+            detail = f"out-degree={n} on {pred} in {contributors[(subj, pred)]} (typical max {envelope[0]})"
         else:
             severity = "INFO"
-            detail = f"out-degree={n} on {pred} in {worst_transform[(subj, pred)]}"
+            detail = f"out-degree={n} on {pred} in {contributors[(subj, pred)]}"
         report.add(Finding(severity=severity, archetype="cardinality", subject=subj, detail=detail))
     return report
 

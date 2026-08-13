@@ -148,7 +148,12 @@ Per `(subject_prefix, predicate)` pair, emits the top-K subjects by out-degree. 
 | `mediadive.solution → has_part` | 1–20 ingredients | >50 = likely cross-contamination |
 | `mediadive.medium → has_part` | 1–8 solutions | >20 = likely accumulator bug |
 | `NCBITaxon → has_phenotype` | 1–500 traits | >2000 = likely false-majority leak |
-| `NCBITaxon → located_in` (medium) | 1–30 media | >100 = likely strain dedup failure |
+| `NCBITaxon → METPO:2000517` (medium) | 1–10 media (median 2, p99 7) | >60 = likely strain dedup failure |
+| `kgmicrobe.strain → METPO:2000517` (medium) | 1–5 media (median 1, p99 3) | >20 = likely strain dedup failure |
+
+**Out-degree means distinct objects, taken as the maximum over transforms — not a row count and not a sum.** Both matter: `metatraits_gtdb` emits 2,072 rows for 33 distinct phenotypes on one taxon (63x duplication the merge collapses), and an unscoped run used to *add* a subject's degrees across `metatraits` + `metatraits_gtdb`, or `prego` + `prego_habitat`, producing a number belonging to no graph. Before this was fixed, `NCBITaxon:1965294` reported 2,099 and filed CRITICAL against a per-graph envelope, when the merged KG holds 33. Each finding now names the transform it came from.
+
+**Organism → medium is `METPO:2000517`, not `biolink:located_in`.** There are zero `located_in` edges into `mediadive.medium:*`; the relation carries 46,331 strain and 30,134 taxon edges on `METPO:2000517` (plus 3 on `METPO:2000518`). Running the old documented check returned `unique_subjects = 0`, which looks like a missing-path gap and instead means the predicate was never examined.
 
 ### `subclass-cycles`
 

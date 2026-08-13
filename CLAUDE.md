@@ -285,12 +285,18 @@ Optional, for the ontology transforms:
   — gold reads `data/transformed/ontologies/ncbitaxon_nodes.tsv` and refuses
   rather than skipping the trim silently.
 
-- `PREGO_SHAPES`: `all` (default) or `habitat`. `habitat` emits only the
+- `PREGO_SHAPES`: `habitat` (default) or `all`. `habitat` emits only the
   `location_of` shapes (ENVO/BTO → taxon) — ~238k edges against 44.7M, a 55 MB
   `edges.tsv` instead of 12.2 GB. PREGO's taxon→GO edges are 99% of the source
   by volume and have no positive evidence in any of the four gold standards,
   while the habitat edges are 7.89x enriched against BacDive isolation and
   replicate at 2.01x against the independent Madin standard.
+
+  **`habitat` is the default because `merge.yaml` reads
+  `data/transformed/prego_habitat/`.** The two defaults must agree: KGX silently
+  skips a missing input, so a default transform writing `prego/` and a default
+  merge reading `prego_habitat/` produced a graph with no PREGO and no warning.
+  `all` writes `prego/` and pairs with `merge.prego-full.yaml`.
 
 - `PREGO_HABITAT_MIN_SCORE`: raw-score floor for *continuous-channel* habitat
   rows, default `1.0`, applied only when `PREGO_SHAPES=habitat`. The genome

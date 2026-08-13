@@ -1824,6 +1824,31 @@ def main():
         if kgxval_md and args.format in ("md", "text"):
             rendered += "\n\n" + kgxval_md
 
+    # Always state the external-validation status on a merged review, including
+    # when it was not requested. The kg-release gate loads "the most recent
+    # artifact" and blocks on `Total ERRORs > 0`; an artifact built without
+    # --kgxval was structurally identical to one built with it, so the gate could
+    # not tell that BMT-derived domain/range validation had been skipped, and a
+    # release would trust the weaker review without saying so.
+    if args.merged and args.format in ("md", "text"):
+        if not args.kgxval:
+            rendered += (
+                "\n\n## KGXVal biolink validation\n\n"
+                "**NOT RUN** — this review was produced without `--kgxval`, so the external "
+                "BMT-derived domain/range validation "
+                "([monarch-initiative/kgxval](https://github.com/monarch-initiative/kgxval)) "
+                "did not run. The built-in `DomainRange` check is a maintained allowlist, not "
+                "the published Biolink model. Re-run with `--kgxval` before relying on this "
+                "artifact as a release gate.\n"
+            )
+        elif kgxval_md is None:
+            rendered += (
+                "\n\n## KGXVal biolink validation\n\n"
+                "**REQUESTED BUT DID NOT COMPLETE** — `--kgxval` was passed but the external "
+                "run produced no result (missing `uv`, offline, or a tool error). Treat this "
+                "artifact as if the check had not run.\n"
+            )
+
     print(rendered)
     if kgxval_md and args.format == "json" and not args.no_save:
         kgxval_path = _save_review_artifact(kgxval_md, "merged-kgxval", ext="md")

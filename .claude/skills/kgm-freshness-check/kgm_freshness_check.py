@@ -42,6 +42,7 @@ import os
 import subprocess
 import sys
 from dataclasses import dataclass, asdict, field
+import re
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -166,24 +167,63 @@ OUTPUT_DIR_ALIASES: dict[str, tuple[str, ...]] = {
 }
 
 
-def _output_dirs(source_name: str) -> list[pathlib.Path]:
+def _dirs_referenced_by_merge_config() -> set[str]:
     """
-    Candidate output directories for a source, newest-populated first.
+    Transform output directories the active merge config actually reads.
+
+    A release pre-flight has to answer "is what will be merged current?", not "is
+    any output for this source current?". Those differ for a source with more than
+    one output path: with a fresh ``prego/`` from ``PREGO_SHAPES=all`` and a stale
+    ``prego_habitat/``, picking by mtime reports FRESH while the standard merge
+    consumes the stale build.
+
+    :return: Directory names under ``data/transformed/`` named by the config.
+    """
+    for candidate in MERGE_YAML_CANDIDATES:
+        path = REPO / candidate
+        if not path.is_file():
+            continue
+        referenced: set[str] = set()
+        for line in path.read_text().splitlines():
+            if line.lstrip().startswith("#"):
+                continue
+            match = re.search(r"data/transformed/([^/\s]+)/", line)
+            if match:
+                referenced.add(match.group(1))
+        if referenced:
+            return referenced
+    return set()
+
+
+def _output_dirs(source_name: str) -> list[Path]:
+    """
+    Candidate output directories for a source, most authoritative first.
+
+    The directory the merge config names wins. Only when the config names none
+    does this fall back to whichever alias is populated, newest first — that
+    fallback is for a source not in the merge at all, where "any output" is the
+    best available answer.
 
     :param source_name: Transform name.
     :return: Existing directories that could hold this source's output.
     """
     names = OUTPUT_DIR_ALIASES.get(source_name, (source_name,))
-    return [TRANSFORMED_DIR / n for n in names if (TRANSFORMED_DIR / n).is_dir()]
+    existing = [n for n in names if (TRANSFORMED_DIR / n).is_dir()]
+    if len(existing) > 1:
+        merged_refs = _dirs_referenced_by_merge_config()
+        preferred = [n for n in existing if n in merged_refs]
+        if preferred:
+            existing = preferred
+    return [TRANSFORMED_DIR / n for n in existing]
 
 
 def _output_mtime(source_name: str) -> Optional[float]:
     """
     Newest mtime across the expected nodes/edges outputs for a source.
 
-    Takes the **newest** across candidate directories rather than the first that
-    exists: a source with a variant output path is fresh if any of its documented
-    outputs is, and reporting the stale one would nag about a build nobody makes.
+    Measures the directory the merge config consumes when the source has more than
+    one output path — see :func:`_output_dirs`. Taking the newest across all of
+    them reported FRESH while the merge read a stale build.
 
     :param source_name: Transform name.
     :return: Newest output mtime, or None if nothing is on disk.

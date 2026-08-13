@@ -71,3 +71,26 @@ class FreshnessOutputAliasTest(TestCase):
         """A source with neither directory present must report nothing."""
         self.assertIsNone(_MODULE._output_mtime("prego"))
         self.assertIsNone(_MODULE._output_mtime("bacdive"))
+
+    def test_the_dir_the_merge_reads_wins_over_the_newest(self):
+        """
+        A pre-flight must measure what will be merged, not whatever is newest.
+
+        The first fix took the newest across aliases, which inverted the bug: a
+        fresh `prego/` from `PREGO_SHAPES=all` beside a stale `prego_habitat/`
+        reported FRESH while the standard merge consumed the stale build.
+        """
+        self._write("prego", age_seconds=10)
+        stale = self._write("prego_habitat", age_seconds=999999)
+
+        # merge.yaml in the real repo references prego_habitat/, so that must win
+        # despite prego/ being far newer.
+        self.assertEqual([d.name for d in _MODULE._output_dirs("prego")], ["prego_habitat"])
+        self.assertAlmostEqual(_MODULE._output_mtime("prego"), stale.stat().st_mtime, places=3)
+
+    def test_the_merge_config_is_actually_parsed(self):
+        """A silently empty reference set would make the preference a no-op."""
+        referenced = _MODULE._dirs_referenced_by_merge_config()
+        self.assertIn("prego_habitat", referenced)
+        self.assertIn("bacdive", referenced)
+        self.assertNotIn("prego", referenced, "merge.yaml takes habitat-only PREGO since #766")

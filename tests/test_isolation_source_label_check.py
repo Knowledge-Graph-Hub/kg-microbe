@@ -31,6 +31,15 @@ HEADER = [
 ]
 
 
+def _nodes(path, rows):
+    """Write a minimal KGX nodes.tsv extract."""
+    with path.open("w", newline="") as handle:
+        writer = csv.writer(handle, delimiter="\t")
+        writer.writerow(["id", "category", "name"])
+        for curie, name in rows:
+            writer.writerow([curie, "biolink:NamedThing", name])
+
+
 def _mapping(tmp, rows):
     """Write a mapping TSV fixture."""
     path = Path(tmp) / "m.tsv"
@@ -64,21 +73,60 @@ class LabelCheckTest(TestCase):
     """A row whose object_id denotes something other than its object_label must fail."""
 
     def setUp(self):
-        """Point the validator at a scratch ontology extract."""
+        """Point the validator at scratch ontology extracts."""
         self.tmp = tempfile.mkdtemp()
         onto = Path(self.tmp) / "ontologies"
         onto.mkdir()
-        with (onto / "envo_nodes.tsv").open("w", newline="") as handle:
-            writer = csv.writer(handle, delimiter="\t")
-            writer.writerow(["id", "category", "name"])
-            writer.writerow(["ENVO:01000855", "biolink:NamedThing", "area of mixed forest"])
-            writer.writerow(["ENVO:01000008", "biolink:NamedThing", "microbial mat"])
-        self._orig = _MODULE.ONTOLOGY_NODES_DIR
-        _MODULE.ONTOLOGY_NODES_DIR = onto
+        _nodes(
+            onto / "envo_nodes.tsv",
+            [
+                ("ENVO:01000855", "area of mixed forest"),
+                ("ENVO:01000008", "microbial mat"),
+                # An imported term carrying a label older than the one UBERON defines.
+                ("UBERON:0005409", "gastrointestinal tract"),
+            ],
+        )
+        _nodes(onto / "uberon_nodes.tsv", [("UBERON:0005409", "alimentary part of gastrointestinal system")])
+        stubs = Path(self.tmp) / "ontologies_stubs"
+        stubs.mkdir()
+        _nodes(stubs / "ncit_nodes.tsv", [("NCIT:C16403", "Cell Line")])
+        self._orig = _MODULE.ONTOLOGY_NODES_DIRS
+        _MODULE.ONTOLOGY_NODES_DIRS = (onto, stubs)
 
     def tearDown(self):
-        """Restore the module-level path."""
-        _MODULE.ONTOLOGY_NODES_DIR = self._orig
+        """Restore the module-level paths."""
+        _MODULE.ONTOLOGY_NODES_DIRS = self._orig
+
+    def test_stub_ontologies_are_checked_too(self):
+        """
+        Issue #779: NCIT/mesh/BTO/PO/MICRO ids live in a sibling directory.
+
+        Globbing only `ontologies/` left 38 of 280 mapped rows unjudgeable, and two
+        of those were wrong — `Blood-culture` pointed at NCIT:C16403 "Cell Line",
+        which put 75 bacdive edges on a cell line.
+        """
+        path = _mapping(self.tmp, [_row("Blood-culture", "NCIT:C16403", "Blood Culture")])
+        failures = list(_MODULE.iter_validation_failures(path))
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("Cell Line", failures[0][2])
+
+    def test_the_defining_ontology_wins_over_an_importing_one(self):
+        """
+        Issue #782: 48 ids carry conflicting labels across extracts.
+
+        `envo_nodes.tsv` sorts before `uberon_nodes.tsv`, so a first-seen-wins
+        lookup would judge UBERON:0005409 by ENVO's imported copy and fail the
+        correct row.
+        """
+        self.assertEqual(
+            _MODULE.load_ontology_labels()["UBERON:0005409"],
+            "alimentary part of gastrointestinal system",
+        )
+        path = _mapping(
+            self.tmp,
+            [_row("Gastrointestinal-tract", "UBERON:0005409", "alimentary part of gastrointestinal system")],
+        )
+        self.assertEqual(list(_MODULE.iter_validation_failures(path)), [])
 
     def test_a_mismatched_label_fails(self):
         """
@@ -134,7 +182,7 @@ class LabelCheckTest(TestCase):
 
     def test_missing_extracts_skip_the_check_rather_than_failing(self):
         """The validator is stdlib-only for CI, where the extracts are not built."""
-        _MODULE.ONTOLOGY_NODES_DIR = Path(self.tmp) / "does-not-exist"
+        _MODULE.ONTOLOGY_NODES_DIRS = (Path(self.tmp) / "does-not-exist",)
         self.assertEqual(_MODULE.load_ontology_labels(), {})
         path = _mapping(self.tmp, [_row("Indoor-Air", "ENVO:01000855", "indoor air")])
         self.assertEqual(list(_MODULE.iter_validation_failures(path)), [])

@@ -101,29 +101,48 @@ def _row_is_trusted(row: Dict[str, str]) -> bool:
 
 
 #: Where kg-microbe's own ontology extracts live. Not committed — the ontologies
-#: transform produces them — so the label check below is skipped when they are
-#: absent rather than failing a lightweight CI container.
-ONTOLOGY_NODES_DIR = Path(__file__).resolve().parents[1] / "data" / "transformed" / "ontologies"
+#: transforms produce them — so the label check below is skipped when they are
+#: absent rather than failing a lightweight CI container. Both directories are
+#: needed: NCIT, mesh, BTO, PO and MICRO ids are only ever written by the stub
+#: transform, and leaving that one out made 38 of the 280 mapped rows invisible
+#: to this check (issue #779 — two of them were wrong).
+_TRANSFORMED_DIR = Path(__file__).resolve().parents[1] / "data" / "transformed"
+ONTOLOGY_NODES_DIRS = (_TRANSFORMED_DIR / "ontologies", _TRANSFORMED_DIR / "ontologies_stubs")
 
 
 def load_ontology_labels() -> Dict[str, str]:
     """
     Map ontology id to label from kg-microbe's own extracts.
 
-    :return: ``{curie: label}``, empty when the extracts are not on disk.
+    An id can appear in several extracts with different labels — an ontology
+    that imports a term may carry an older label for it than the ontology that
+    defines it. 48 such conflicts exist today. Resolve against the file that
+    owns the prefix (``uberon_nodes.tsv`` for ``UBERON:*``) so the defining
+    ontology wins, rather than whichever filename sorts first (issue #782).
+
+    :return: ``{curie: label}``, empty when no extracts are on disk.
     """
     labels: Dict[str, str] = {}
-    if not ONTOLOGY_NODES_DIR.is_dir():
-        return labels
-    for node_file in sorted(ONTOLOGY_NODES_DIR.glob("*_nodes.tsv")):
-        try:
-            with node_file.open("r", newline="", encoding="utf-8") as handle:
-                for row in csv.DictReader(handle, delimiter="\t"):
-                    curie, name = (row.get("id") or "").strip(), (row.get("name") or "").strip()
-                    if curie and name:
-                        labels.setdefault(curie, name)
-        except OSError:
+    owned: Dict[str, str] = {}
+
+    for nodes_dir in ONTOLOGY_NODES_DIRS:
+        if not nodes_dir.is_dir():
             continue
+        for node_file in sorted(nodes_dir.glob("*_nodes.tsv")):
+            owner = node_file.name[: -len("_nodes.tsv")].lower()
+            try:
+                with node_file.open("r", newline="", encoding="utf-8") as handle:
+                    for row in csv.DictReader(handle, delimiter="\t"):
+                        curie, name = (row.get("id") or "").strip(), (row.get("name") or "").strip()
+                        if not curie or not name:
+                            continue
+                        if curie.split(":", 1)[0].lower() == owner:
+                            owned[curie] = name
+                        labels.setdefault(curie, name)
+            except OSError:
+                continue
+
+    labels.update(owned)
     return labels
 
 
@@ -155,11 +174,13 @@ def iter_validation_failures(
             declared = (row.get("object_label") or "").strip()
             actual = ontology_labels.get(object_id)
             if actual and declared and actual.lower() != declared.lower():
+                # Deliberately no `continue`: a row can be both mislabelled and
+                # family-mismatched, and reporting one at a time would make a
+                # curator fix it in two rounds.
                 yield idx, row, (
                     f"object_id {object_id} is '{actual}' in our ontology extracts, "
                     f"not '{declared}' as object_label claims"
                 )
-                continue
 
             if not _row_is_trusted(row):
                 continue  # loader would drop this; nothing further to validate
@@ -191,16 +212,10 @@ def main(argv: list[str]) -> int:
         print(f"OK: {path.name} passed family-compatibility validation.")
         return 0
 
-    print(
-        f"FAIL: {len(failures)} row(s) in {path.name} have family-mismatched ontology mappings.",
-        file=sys.stderr,
-    )
-    print(
-        "Each row below maps a label to an ontology term whose semantic family is "
-        "incompatible with isolation-source semantics (e.g. units used for anatomy, "
-        "facilities used for substrates, clinical assessment items used for organisms).",
-        file=sys.stderr,
-    )
+    label_failures = [f for f in failures if "as object_label claims" in f[2]]
+    family_failures = [f for f in failures if f not in label_failures]
+
+    print(f"FAIL: {len(failures)} problem(s) in {path.name}.", file=sys.stderr)
     for row_num, row, reason in failures:
         subject = row.get("subject_label", "?")
         object_id = row.get("object_id", "?")
@@ -209,13 +224,29 @@ def main(argv: list[str]) -> int:
             f"  row {row_num}: '{subject}' → {object_id} ('{object_label}') — {reason}",
             file=sys.stderr,
         )
-    print(
-        "\nFix: clear object_id / object_label / object_source / predicate_id / "
-        "confidence / mapping_justification for the offending rows (set curator to "
-        "'manual_review' and add a 'fix(family-mismatch): ...' note), or replace "
-        "with a semantically correct ontology term.",
-        file=sys.stderr,
-    )
+
+    # The two failure classes want opposite first moves, so keep the advice apart.
+    # Conflating them is how issue #777 got three rows unmapped that only needed a
+    # corrected label.
+    if label_failures:
+        print(
+            f"\n{len(label_failures)} row(s) declare an object_label that disagrees with what "
+            "their object_id denotes. Decide which column is wrong: if the id is right, "
+            "correct object_label to the term's real label; if the label captured the "
+            "curator's intent, find the id that actually denotes it. Only unmap the row when "
+            "no ontology has the concept at all.",
+            file=sys.stderr,
+        )
+    if family_failures:
+        print(
+            f"\n{len(family_failures)} row(s) map to an ontology term whose semantic family is "
+            "incompatible with isolation-source semantics (e.g. units used for anatomy, "
+            "facilities used for substrates, clinical assessment items used for organisms). "
+            "Fix: clear object_id / object_label / object_source / predicate_id / confidence / "
+            "mapping_justification (set curator to 'manual_review' and add a "
+            "'fix(family-mismatch): ...' note), or replace with a semantically correct term.",
+            file=sys.stderr,
+        )
     return 1
 
 

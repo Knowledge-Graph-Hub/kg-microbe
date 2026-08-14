@@ -100,23 +100,69 @@ def _row_is_trusted(row: Dict[str, str]) -> bool:
     return (confidence == "high") or (justification == "semapv:ManualMappingCuration")
 
 
+#: Where kg-microbe's own ontology extracts live. Not committed — the ontologies
+#: transform produces them — so the label check below is skipped when they are
+#: absent rather than failing a lightweight CI container.
+ONTOLOGY_NODES_DIR = Path(__file__).resolve().parents[1] / "data" / "transformed" / "ontologies"
+
+
+def load_ontology_labels() -> Dict[str, str]:
+    """
+    Map ontology id to label from kg-microbe's own extracts.
+
+    :return: ``{curie: label}``, empty when the extracts are not on disk.
+    """
+    labels: Dict[str, str] = {}
+    if not ONTOLOGY_NODES_DIR.is_dir():
+        return labels
+    for node_file in sorted(ONTOLOGY_NODES_DIR.glob("*_nodes.tsv")):
+        try:
+            with node_file.open("r", newline="", encoding="utf-8") as handle:
+                for row in csv.DictReader(handle, delimiter="\t"):
+                    curie, name = (row.get("id") or "").strip(), (row.get("name") or "").strip()
+                    if curie and name:
+                        labels.setdefault(curie, name)
+        except OSError:
+            continue
+    return labels
+
+
 def iter_validation_failures(
     mapping_path: Path,
 ) -> Iterable[Tuple[int, Dict[str, str], str]]:
     """
     Yield ``(row_number, row, reason)`` for every row that violates a rule.
 
-    A row only counts as a failure if it would be loaded at runtime *and*
-    fails the family-compatibility check. Untrusted rows are skipped because
-    the loader drops them anyway.
+    The family-compatibility rules apply only to rows the loader would use, so
+    untrusted rows are skipped for those — the loader drops them anyway.
+
+    The **label check is deliberately not gated that way.** It runs on every row
+    carrying an ``object_id``, because this file is consumed directly by other
+    projects (HabitatMech grounds habitat records from it), and a wrong id
+    misleads them whether or not our loader happens to trust the row. Issue #777
+    found 14 such rows; 10 were trusted, so the trust gate was never what hid
+    them — nothing resolved an id against the ontology at all.
     """
+    ontology_labels = load_ontology_labels()
+
     with mapping_path.open("r", newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle, delimiter="\t")
         for idx, row in enumerate(reader, start=1):
             if not (row.get("object_id") or "").strip():
                 continue  # explicitly unmapped — not a validation failure
+
+            object_id = (row.get("object_id") or "").strip()
+            declared = (row.get("object_label") or "").strip()
+            actual = ontology_labels.get(object_id)
+            if actual and declared and actual.lower() != declared.lower():
+                yield idx, row, (
+                    f"object_id {object_id} is '{actual}' in our ontology extracts, "
+                    f"not '{declared}' as object_label claims"
+                )
+                continue
+
             if not _row_is_trusted(row):
-                continue  # loader would drop this; nothing to validate
+                continue  # loader would drop this; nothing further to validate
 
             object_source = (row.get("object_source") or "").strip()
             if object_source in DISALLOWED_OBJECT_SOURCES:

@@ -81,7 +81,15 @@ def test_loader_honors_manually_curated_fixes(mappings):
     assert mappings.get("mammals") == ("NCBITaxon:40674", "Mammalia", "NCBITaxon", None)
     assert mappings.get("plant") == ("NCBITaxon:33090", "Viridiplantae", "NCBITaxon", None)
     assert mappings.get("birds") == ("NCBITaxon:8782", "Aves", "NCBITaxon", None)
-    assert mappings.get("gastrointestinal tract") == ("UBERON:0005409", "digestive tract", "UBERON", None)
+    # The label here was wrong until issue #777: UBERON:0005409 is "alimentary part of
+    # gastrointestinal system" ("gastrointestinal tract" is one of its exact synonyms,
+    # which is how the wrong label went unnoticed). The id was always right.
+    assert mappings.get("gastrointestinal tract") == (
+        "UBERON:0005409",
+        "alimentary part of gastrointestinal system",
+        "UBERON",
+        None,
+    )
     assert mappings.get("wound") == ("mesh:D014947", "Wounds and Injuries", "mesh", None)
     # closeMatch rows that stay dropped (family-mismatched targets, no PATO override):
     assert mappings.get("catheter") is None  # device, not isolation source

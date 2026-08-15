@@ -470,3 +470,28 @@ def test_a_retract_names_row_for_an_absent_object_is_reported_not_crashed(name_l
     )
     name_level_consolidator.apply_retractions(rf)
     assert "no such record" in capsys.readouterr().out
+
+
+def test_a_rejected_row_is_not_ingested(tmp_path):
+    """
+    #789: `REJECTED` is upstream's tombstone for a record that lost a merge.
+
+    MIM's own merge scripts set it and drop the record's SSSOM rows, so
+    ingesting one at priority 10 resurrects a duplicate upstream retired —
+    `D-Glucose` carried CHEBI:42758 (aldehydo-D-glucose, the open-chain
+    tautomer) against a merge winner of CHEBI:17234.
+    """
+    mod = _load_consolidator_module()
+    c = mod.ChemicalMappingConsolidator()
+    src = tmp_path / "cbai.tsv"
+    src.write_text(
+        "ingredient_name\toccurrence_count\tchebi_id\tcas_rn\tkg_microbe_node_id\tmim_id"
+        "\tculturemech_term_id\tmapping_status\tsynonyms\texample_media\n"
+        "D-Glucose\t589\tCHEBI:42758\t50-99-7\tCHEBI:42758\tCHEBI:17234\tCHEBI:42758\tREJECTED\t\t\n"
+        "Kept\t1\tCHEBI:17234\t\t\t\t\tMAPPED\t\t\n",
+        encoding="utf-8",
+    )
+    c.load_culturebotai_reviewed(src)
+
+    assert "CHEBI:42758" not in c.chemicals, "a tombstoned record must not be ingested"
+    assert "CHEBI:17234" in c.chemicals, "non-REJECTED rows must still load"

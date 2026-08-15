@@ -1231,9 +1231,19 @@ class ChemicalMappingConsolidator:
         added = 0
 
         skipped = 0
+        tombstoned = 0
 
         diverged: list = []
         for _, row in df.iterrows():
+            # `REJECTED` is upstream's tombstone for a record that LOST a merge:
+            # MIM's own merge scripts set it and drop the record's SSSOM rows
+            # (see MediaIngredientMech scripts/merge_salt_label_duplicates.py).
+            # Ingesting one at priority 10 resurrects a duplicate that upstream
+            # deliberately retired — e.g. `D-Glucose` carrying CHEBI:42758
+            # (aldehydo-D-glucose) against a winner of CHEBI:17234 (#789).
+            if str(row.get("mapping_status", "")).strip().upper() == "REJECTED":
+                tombstoned += 1
+                continue
             ingredient_name = row.get("ingredient_name", "").strip()
             cas_rn = row.get("cas_rn", "").strip()
             culturemech_term = row.get("culturemech_term_id", "").strip()
@@ -1298,7 +1308,10 @@ class ChemicalMappingConsolidator:
             )
             added += 1
 
-        print(f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE)")
+        print(
+            f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE, "
+            f"{tombstoned} tombstoned upstream as mapping_status=REJECTED)"
+        )
         if diverged:
             print(
                 f"  WARNING: {len(diverged)} rows ground to a raw upstream column while a corrected "

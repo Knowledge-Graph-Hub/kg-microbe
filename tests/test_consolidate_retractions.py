@@ -155,3 +155,135 @@ def test_empty_source_object_is_not_dropped(tmp_path):
     _write_retraction_tsv(rf)
     c.apply_retractions(rf)
     assert "CHEBI:15743" in c.chemicals
+
+
+# --- name-level retraction (#599 item 1, motivated by #784) -------------------
+
+
+@pytest.fixture()
+def name_level_consolidator():
+    """
+    Return a consolidator in the shape #784 left behind.
+
+    ``CHEBI:28911`` is a real ChEBI term that accreted the bare-vitamer names
+    after upstream reground them to its parent ``CHEBI:30411``. It is
+    multi-source, so an object-level drop is refused — and should be: dropping
+    it would delete a legitimate term and its KEGG / PDB xrefs.
+    """
+    mod = _load_consolidator_module()
+    c = mod.ChemicalMappingConsolidator()
+    c.add_chemical(
+        id="CHEBI:28911",
+        canonical_name="Cobalamine",
+        synonyms=["COBALAMIN", "Cbl", "Cob(III)alamin", "cobalamin(III)"],
+        source="culturebotai_reviewed",
+        priority=10,
+        xrefs=["CHEBI:30411"],
+    )
+    c.add_chemical(id="CHEBI:28911", canonical_name="Cobalamine", source="chebi_xrefs", priority=2)
+    c.add_chemical(
+        id="CHEBI:30411",
+        canonical_name="Cobalamine",
+        synonyms=["COBALAMIN", "Cbl"],
+        source="culturebotai_reviewed",
+        priority=10,
+        xrefs=["CHEBI:28911"],
+    )
+    return c
+
+
+def _write_name_level_tsv(path: Path, names="Cobalamine|COBALAMIN|Cbl"):
+    """Write a retraction TSV carrying one name-level row."""
+    path.write_text(
+        "subject_id\tsubject_label\tstale_object\tstale_object_label\tnow_asserted\tsource\tretract_names\n"
+        f"kgm.name:cobalamine\tCobalamine\tCHEBI:28911\tcob(III)alamin\tCHEBI:30411\t"
+        f"culturebotai_reviewed\t{names}\n",
+        encoding="utf-8",
+    )
+
+
+def test_name_level_retraction_strips_names_but_keeps_the_record(name_level_consolidator, tmp_path):
+    """
+    The record survives; only the enumerated names leave.
+
+    Object-level granularity was the wrong tool here — CHEBI:28911 is a real
+    ChEBI term whose KEGG and PDB xrefs must not be collateral damage.
+    """
+    rf = tmp_path / "retract.tsv"
+    _write_name_level_tsv(rf)
+    name_level_consolidator.apply_retractions(rf)
+
+    rec = name_level_consolidator.chemicals["CHEBI:28911"]
+    assert rec is not None, "the record must not be dropped"
+    assert "COBALAMIN" not in rec["synonyms"]
+    assert "Cbl" not in rec["synonyms"]
+
+
+def test_name_level_retraction_keeps_the_terms_own_synonyms(name_level_consolidator, tmp_path):
+    """Names that genuinely belong to the term are untouched."""
+    rf = tmp_path / "retract.tsv"
+    _write_name_level_tsv(rf)
+    name_level_consolidator.apply_retractions(rf)
+
+    rec = name_level_consolidator.chemicals["CHEBI:28911"]
+    assert "Cob(III)alamin" in rec["synonyms"]
+    assert "cobalamin(III)" in rec["synonyms"]
+
+
+def test_a_name_level_row_does_not_drop_the_object(name_level_consolidator, tmp_path):
+    """A row with retract_names must never be treated as an object-level drop."""
+    rf = tmp_path / "retract.tsv"
+    _write_name_level_tsv(rf)
+    name_level_consolidator.apply_retractions(rf)
+    assert "CHEBI:28911" in name_level_consolidator.chemicals
+    assert "CHEBI:30411" in name_level_consolidator.chemicals
+
+
+def test_a_name_no_replacement_carries_is_refused(name_level_consolidator, tmp_path, capsys):
+    """
+    Retraction must never leave a name grounded nowhere.
+
+    The sole-source guard protects object-level rows; this is the equivalent
+    protection for name-level ones, and it is what makes them safe to apply
+    under mixed sources.
+    """
+    rf = tmp_path / "retract.tsv"
+    _write_name_level_tsv(rf, names="Cob(III)alamin")  # CHEBI:30411 does not carry this
+    name_level_consolidator.apply_retractions(rf)
+
+    rec = name_level_consolidator.chemicals["CHEBI:28911"]
+    assert "Cob(III)alamin" in rec["synonyms"], "must not be removed — nothing else carries it"
+    assert "no now_asserted target carries this name" in capsys.readouterr().out
+
+
+def test_propagation_cannot_hand_a_retracted_name_back(name_level_consolidator, tmp_path):
+    """
+    The regression that made the first implementation useless.
+
+    ``propagate_synonyms_via_xrefs`` copies names across the exactMatch xref —
+    which points straight at the target that superseded them — so every
+    retracted name reappeared as a synonym in the same run.
+    """
+    rf = tmp_path / "retract.tsv"
+    _write_name_level_tsv(rf)
+    name_level_consolidator.apply_retractions(rf)
+    name_level_consolidator.propagate_synonyms_via_xrefs()
+
+    rec = name_level_consolidator.chemicals["CHEBI:28911"]
+    assert "COBALAMIN" not in rec["synonyms"]
+    assert "Cbl" not in rec["synonyms"]
+
+
+def test_object_level_drop_prunes_the_name_index(consolidator, tmp_path):
+    """
+    #599 item 2: a dropped record must not leave indices pointing at it.
+
+    Inert for today's callers, but a name resolved via ``name_index`` after
+    this pass would hand back a CURIE that no longer has a record.
+    """
+    rf = tmp_path / "retract.tsv"
+    _write_retraction_tsv(rf)
+    assert "CHEBI:15743" in consolidator.name_index.values()
+    consolidator.apply_retractions(rf)
+    assert "CHEBI:15743" not in consolidator.chemicals
+    assert "CHEBI:15743" not in consolidator.name_index.values()

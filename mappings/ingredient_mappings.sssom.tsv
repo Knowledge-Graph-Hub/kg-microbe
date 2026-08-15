@@ -20,9 +20,9 @@
 #   cbclaw: "https://github.com/culturebotai/culturebotai-claw/blob/main/"
 # license: "https://creativecommons.org/publicdomain/zero/1.0/"
 # mapping_set_id: "https://w3id.org/sssom/mappings/culturebotai_mim_ingredient"
-# mapping_set_version: "2026-08-06"
+# mapping_set_version: "2026-08-14"
 # mapping_set_description: "Canonical MediaIngredientMech → ingredient-ontology mappings (CHEBI + FOODON; UBERON/ENVO when populated). One row per mapped MIM ingredient record. Per-row object_source distinguishes ontologies. Predicate is skos:exactMatch by default; narrowMatch/broadMatch/closeMatch where residual-P2.5 triage found a specificity or symmetry difference, or where mapping_quality != EXACT_MATCH. The `source` extension column records the upstream origin (MIM evidence + kg-microbe source pipeline, CHEBI only)."
-# mapping_date: "2026-08-06"
+# mapping_date: "2026-08-14"
 # creator_id:
 #   - "orcid:0000-0001-8175-045X"
 # subject_source: "MIM:ingredients"
@@ -34,6 +34,7 @@
 #     property: "cbclaw:validation-method"
 #     type_hint: "xsd:string"
 subject_id	subject_label	predicate_id	object_id	object_label	object_source	mapping_justification	source	mapping_date	confidence	comment	other	validation_method
+MIM:Sulfonamide	Sulfonamide	skos:exactMatch	CHEBI:35358	sulfonamide	obo:chebi.owl	semapv:ManualMappingCuration	MIM:curation (#308/#313)	2026-08-14				
 MIM:Bathophenanthrolinedisulfonic_Acid_Disodium_Salt_Hydrate	Bathophenanthrolinedisulfonic acid disodium salt hydrate	skos:exactMatch	kgmicrobe.compound:bathophenanthrolinedisulfonic_acid_disodium_salt_hydrate	Bathophenanthrolinedisulfonic acid disodium salt hydrate	kgm:compound	semapv:ManualMappingCuration	MIM:curation (#321/#334)	2026-08-13				
 MIM:Betaine_X_H2o	Betaine x H2O	skos:exactMatch	kgmicrobe.compound:betaine_x_h2o	Betaine x H2O	kgm:compound	semapv:ManualMappingCuration	MIM:curation (#321/#334)	2026-08-13				
 MIM:Cacl2_X_7_H2o	CaCl2 x 7 H2O	skos:exactMatch	kgmicrobe.compound:cacl2_x_7_h2o	CaCl2 x 7 H2O	kgm:compound	semapv:ManualMappingCuration	MIM:curation (#321/#334)	2026-08-13				

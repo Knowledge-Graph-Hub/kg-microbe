@@ -28,11 +28,17 @@
 # formula cannot select an oxidation state in any case (ChEBI records the same
 # C62H88CoN13O14P for the +1, +2 and +3 forms, which differ only in the separate
 # charge field). Upstream resolved this in CultureBotAI/MediaIngredientMech#362
-# and UNIFIED_INGREDIENT_MAPPING.tsv now carries CHEBI:30411 in every column.
+# and UNIFIED_INGREDIENT_MAPPING.tsv now carries CHEBI:30411 in every column of its
+# `Cobalamine` row. NOT of its `Cobalamin` / `cobalamin` rows, which still hold
+# CHEBI:28911 in chebi_id and culturemech_term_id, and best_primary reads chebi_id
+# first (#723), so those two rows re-assert the child term on every run. This
+# retraction is therefore masking a live upstream row, not tidying up after a
+# resolved one. Tracked at CultureBotAI/MediaIngredientMech#138.
 #
 # The row is now name-level. CHEBI:28911 is a real ChEBI term with real xrefs
-# (KEGG C05776, PDB-CCD B12); dropping the object would delete those. What needs
-# retracting is the four bare-vitamer names that additive re-seeding left on it
+# (CAS, Gmelin, KEGG C05776, KEGG-drug D00191); dropping the object would delete
+# those. What needs retracting is the bare-vitamer names that additive re-seeding
+# left on it
 # after the regrounding, which had left kgm.name:cobalamine with two exactMatch
 # objects. Its ChEBI-legitimate synonyms (Cob(III)alamin, cobalamin(III), ...)
 # stay put.
@@ -42,7 +48,7 @@ kgm.name:p-aminobenzoic_acid	P-Aminobenzoic acid	CHEBI:194474	4-Aminobenzoic aci
 kgm.name:paba	PABA	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
 kgm.name:para-aminobenzoic_acid	Para-aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
 kgm.name:p--aminobenzoic_acid	p--Aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
-kgm.name:cobalamine	Cobalamine	CHEBI:28911	cob(III)alamin	CHEBI:30411	culturebotai_reviewed	Cobalamine|COBALAMIN|Cbl|Cobalamin (B12)
+kgm.name:cobalamine	Cobalamine	CHEBI:28911	cob(III)alamin	CHEBI:30411	culturebotai_reviewed	Cobalamine|COBALAMIN|Cobalamin (B12)
 kgm.name:tricine	Tricine	CHEBI:35920	Tricine	CHEBI:46760	culturebotai_reviewed
 kgm.name:zncl_6h_o	ZnCl .6H O	CHEBI:86469	ZnCl .6H O	CHEBI:49976	culturebotai_reviewed
 kgm.name:pyridoxamine2hcl	Pyridoxamine.2HCl	CHEBI:8668	Pyridoxamine.2HCl	CHEBI:131532	culturebotai_reviewed

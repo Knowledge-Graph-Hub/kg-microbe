@@ -1,11 +1,74 @@
-# NEXT_TASKS.md — untracked entries that need a per-file decision
+# NEXT_TASKS.md
+
+## Live backlog — reconciled 2026-08-15
+
+The rest of this file is a narrow 2026-07-02 untracked-file triage (still valid,
+still 8 items open, all 8 verified present on disk today). It is **not** the
+repo's working backlog. This section is.
+
+### Blocking the release
+
+1. **Merge the three open PRs, then re-merge the KG.** `#778` (14+2 wrong
+   isolation-source ids, plus an id→label check), `#786` (cobalamin retraction
+   un-inverted, name-level retraction, upstream tombstone gate), `#776` (bacdive
+   metabolite-utilization reference DOI, open since 2026-08-13, not yet
+   reviewed). All three are MERGEABLE.
+2. **Re-merge — `#683`.** `kgm-freshness-check` reports merge `STALE_VS_INPUTS`
+   against `data/transformed/ontologies_stubs/` and `data/transformed/prego_habitat/`.
+   The stubs staleness is real, not a timestamp artifact: `#778` and `#786` add
+   `BTO:0000537`, `mesh:D010514` and 14 NCIT ids that the shipped graph has no
+   nodes for. Transform freshness is otherwise clean — 16 FRESH, 0 STALE_VS_CODE.
+
+### Data correctness, unblocked
+
+3. **`#737` — BacDive per-reference observations disagree**, giving 4,278
+   strains contradictory phenotype edges. Largest un-addressed correctness issue
+   in the graph; needs a conflict-resolution policy, not just a patch.
+4. **`#547` — KGX emits unencoded `:`/`>`/`°` in URIs**, breaking downstream NT
+   serialization. Open since 2026-04-17; affects every consumer that reads the
+   RDF copy rather than the TSVs.
+5. **`#780` — the new isolation-source label check never runs in CI.** It needs
+   `data/transformed/`, absent in a fresh checkout, so it silently passes. None
+   of the 16 ids `#778` fixes would have been caught automatically. Wants a
+   committed label snapshot (~280 rows).
+
+### Upstream-blocked — do not schedule as "next"
+
+6. **`#788` — two of the four grounding regressions need sibling-repo fixes.**
+   `Cysteine-HCl` (`CHEBI:52891`, a fluorescence quencher, in 165 CultureMech
+   files) and two `skos:exactMatch` slips in
+   `MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` (`alpha-Lactose`
+   line 954 → monohydrate; `Carboxymethyl cellulose` line 1183 → sodium salt).
+   `D-Glucose` is already neutralised here by the `#789` tombstone gate.
+   **Blocked on a human decision:** `../CultureMech` sits on branch
+   `fix/paba-and-potato-groundings-260` with **876 uncommitted modified files**
+   that already contain the PABA (251), D-Glucose (1132) and
+   Infusion-from-Potatoes (2) fixes. Nobody should commit that on the author's
+   behalf without being asked.
+7. **`CultureBotAI/MediaIngredientMech#138`** — the `chebi_id` /
+   `culturemech_term_id` columns outrank the corrected ones, so MIM-side fixes
+   cannot reach `Cobalamin`, `cobalamin`, `4-Aminobenzoic acid` or
+   `Infusion from Potatoes`. Mitigated here by `#723`'s divergence report (44
+   rows) and the retraction list.
+
+### Governance debt
+
+8. **`#757`** — branch protection still permits admin bypass, the failure mode
+   that caused `#754`. **`#546`** — 30 Dependabot alerts. Four draft PRs from
+   April (`#548`, `#550`, `#551`, `#552`) have sat untouched since; close or
+   land them rather than leaving them as noise.
+
+---
+
+# Untracked entries that need a per-file decision (2026-07-02 triage)
 
 Snapshot of the "needs your call" pile from the branch triage on
 `chore/refresh-unified-chemical-mappings` (working-tree state as of
 2026-07-02). Each entry is either real work that should be committed
 (and to which branch), or scratch that should be gitignored / deleted.
 
-> **Last reconciled: 2026-08-12.** Status: **28 of 36 resolved** — the
+> **Last reconciled: 2026-08-15** (all 8 remaining paths re-verified as still
+> present on disk; no change since 2026-08-12). Status: **28 of 36 resolved** — the
 > 2026-07-21 note claiming "all items still PENDING" is no longer true. 17 entries
 > are now committed, 11 are gone from the worktree, and **8 remain**, of which 4
 > are `_bak` files already marked *delete*. Resolved rows are ticked below with

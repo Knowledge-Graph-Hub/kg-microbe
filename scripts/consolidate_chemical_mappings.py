@@ -71,7 +71,7 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 import pandas as pd
-from kg_microbe.utils.ontology_utils import get_chebi_adapter
+from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
 
 # Path (relative to kg-microbe repo root) where the sibling MediaIngredientMech
 # checkout is expected to live. The MIM repo is the source of truth for the
@@ -678,6 +678,11 @@ class ChemicalMappingConsolidator:
         self.name_index: Dict[str, str] = {}  # normalized_name -> id
         self.formula_index: Dict[str, Set[str]] = defaultdict(set)  # formula -> set of ids
         self.chebi_adapter = None  # Will be initialized when needed
+        # {primary CURIE: {normalised name}} retracted at name level. Consulted
+        # by propagate_synonyms_via_xrefs, which would otherwise copy each name
+        # straight back across the exactMatch xref to the very target that
+        # superseded it — undoing the retraction in the same run.
+        self._retracted_names: Dict[str, Set[str]] = {}
         # Parent / asymmetric mappings (skos:narrowMatch / skos:broadMatch).
         # Stored separately because they are NOT identity statements and the
         # entity-centric chemicals dict can't represent "child A is narrower
@@ -1226,9 +1231,19 @@ class ChemicalMappingConsolidator:
         added = 0
 
         skipped = 0
+        tombstoned = 0
 
         diverged: list = []
         for _, row in df.iterrows():
+            # `REJECTED` is upstream's tombstone for a record that LOST a merge:
+            # MIM's own merge scripts set it and drop the record's SSSOM rows
+            # (see MediaIngredientMech scripts/merge_salt_label_duplicates.py).
+            # Ingesting one at priority 10 resurrects a duplicate that upstream
+            # deliberately retired — e.g. `D-Glucose` carrying CHEBI:42758
+            # (aldehydo-D-glucose) against a winner of CHEBI:17234 (#789).
+            if str(row.get("mapping_status", "")).strip().upper() == "REJECTED":
+                tombstoned += 1
+                continue
             ingredient_name = row.get("ingredient_name", "").strip()
             cas_rn = row.get("cas_rn", "").strip()
             culturemech_term = row.get("culturemech_term_id", "").strip()
@@ -1293,7 +1308,10 @@ class ChemicalMappingConsolidator:
             )
             added += 1
 
-        print(f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE)")
+        print(
+            f"  Loaded {added} reviewed entries (skipped {skipped} with no supported CURIE, "
+            f"{tombstoned} tombstoned upstream as mapping_status=REJECTED)"
+        )
         if diverged:
             print(
                 f"  WARNING: {len(diverged)} rows ground to a raw upstream column while a corrected "
@@ -1768,6 +1786,135 @@ class ChemicalMappingConsolidator:
                 f"{purged_records} record(s) before propagation"
             )
 
+    def _retract_names(
+        self,
+        name_retractions: Dict[str, Dict[str, Dict[str, str]]],
+        _unused: set = None,
+    ) -> int:
+        """
+        Strip enumerated names from a record without dropping the record.
+
+        Refuses per name rather than per row: a name is only removed once
+        **that row's own** ``now_asserted`` target actually carries it, so a
+        retraction can never leave a name grounded nowhere. Scoping to the row
+        matters — a file-global target set lets an unrelated row's replacement
+        satisfy the check for this one, which made the invariant hold only by
+        accident.
+
+        :param name_retractions: ``{stale_object: {normalised name: {"raw":
+            raw name, "targets": frozenset of that row's now_asserted CURIEs}}}``.
+        :param _unused: Retained for signature stability; ignored.
+        :return: Count of (object, name) groundings actually removed.
+        """
+        removed = 0
+        for oid, wanted in name_retractions.items():
+            rec = self.chemicals.get(oid)
+            if rec is None:
+                print(f"  Name-retraction SKIP {oid}: no such record")
+                continue
+
+            retracted_canonical = False
+
+            for norm, spec in sorted(wanted.items()):
+                raw, targets = spec["raw"], spec["targets"]
+                if not self._name_is_carried_by(norm, targets, exclude=oid):
+                    print(
+                        f"  Name-retraction SKIP {oid} '{raw}': none of this row's "
+                        f"now_asserted target(s) {sorted(targets)} carries it; "
+                        "dropping it would orphan the name"
+                    )
+                    continue
+
+                hit = False
+                for syn in {s for s in rec["synonyms"] if normalize_name(s) == norm}:
+                    rec["synonyms"].discard(syn)
+                    hit = True
+                if normalize_name(rec.get("canonical_name", "")) == norm:
+                    rec["canonical_name"] = ""
+                    retracted_canonical = True
+                    hit = True
+                if hit:
+                    removed += 1
+                    self._retracted_names.setdefault(oid, set()).add(norm)
+                    if self.name_index.get(norm) == oid:
+                        del self.name_index[norm]
+
+            if not retracted_canonical:
+                # Leave a canonical nobody retracted alone. Rewriting it here
+                # clobbered deliberate curator labels with raw ChEBI systematic
+                # names — the restore is a repair for the name we just removed,
+                # not a licence to relabel the record.
+                continue
+
+            # The canonical we removed belonged to another term, so prefer this
+            # term's own label over an arbitrary surviving synonym — promoting
+            # alphabetically once labelled cob(III)alamin
+            # "Coalpha-[alpha-(5,6-dimethylbenzimidazolyl)]-cobamide".
+            label = self._ontology_label(oid)
+            if normalize_name(label) in self._retracted_names.get(oid, set()):
+                # The ontology label is itself retracted; reinstating it would
+                # silently undo the retraction and re-export it as exactMatch.
+                label = ""
+            replacement = label or next(iter(sorted(rec["synonyms"])), "")
+            if not replacement:
+                print(
+                    f"  WARNING: {oid} has no name left after retraction — it will "
+                    "export with an empty object_label. Add a surviving synonym or "
+                    "retract the object instead."
+                )
+            elif replacement != label:
+                print(
+                    f"  Name-retraction {oid}: no ontology label available; "
+                    f"promoted surviving synonym '{replacement}'"
+                )
+            else:
+                print(f"  Name-retraction {oid}: canonical_name -> '{label}' (ontology label)")
+            rec["canonical_name"] = replacement
+        return removed
+
+    def _name_is_carried_by(self, norm: str, targets, exclude: str = "") -> bool:
+        """
+        Report whether any of ``targets`` carries the normalised name.
+
+        :param norm: Normalised name to look for.
+        :param targets: CURIEs to check.
+        :param exclude: CURIE to ignore (the record being retracted from).
+        :return: True when at least one target carries the name.
+        """
+        for tgt in targets:
+            other = self.chemicals.get(tgt)
+            if other is None or tgt == exclude:
+                continue
+            if normalize_name(other.get("canonical_name", "")) == norm:
+                return True
+            if any(normalize_name(s) == norm for s in other.get("synonyms", set())):
+                return True
+        return False
+
+    def _ontology_label(self, curie: str) -> str:
+        """
+        Look up a term's own label, for CHEBI terms only.
+
+        A missing ChEBI DB must not turn this pass into a hard failure. It was
+        not an ontology consumer before name-level retraction, and the tests run
+        where ``data/raw/chebi.db`` may be absent. ``FatalOntologyError`` derives
+        from ``BaseException`` precisely so it cannot be swallowed by a blanket
+        ``except Exception``, so catch it by name — this is the same deliberate
+        exemption ``get_chebi_category`` makes for the standalone no-DB case. A
+        caller that gets ``''`` falls back to a surviving synonym.
+
+        :param curie: The CURIE to resolve.
+        :return: The ontology label, or ``''`` when unavailable.
+        """
+        if not curie.startswith("CHEBI:"):
+            return ""
+        try:
+            return self._get_chebi_adapter().label(curie) or ""
+        except FatalOntologyError:
+            return ""
+        except Exception:
+            return ""
+
     def apply_retractions(self, filepath: Path):
         """
         Drop superseded groundings enumerated in a retraction TSV.
@@ -1789,9 +1936,30 @@ class ChemicalMappingConsolidator:
         (e.g. a wrong CAS shared with the correct record) are gone before
         propagation can copy its labels onto the correct entity.
 
-        File is tab-separated with a ``stale_object`` column (the CURIE to
-        drop); other columns document provenance. Lines beginning with ``#``
-        are ignored.
+        Two granularities, chosen per row:
+
+        * **object-level** (``retract_names`` empty) — drop the whole record.
+          Correct when the object is a phantom that nothing else asserts.
+        * **name-level** (``retract_names`` set to a pipe-separated list) —
+          strip those names from the record's ``canonical_name`` / ``synonyms``
+          and leave the record standing. Correct when the object is a real
+          ontology term that has merely accreted names belonging to a
+          different one. ``CHEBI:28911`` (cob(III)alamin) is the motivating
+          case: after upstream reground bare ``Cobalamine`` to ``CHEBI:30411``
+          (the unspecified-oxidation-state parent), additive re-seeding kept
+          the old names on 28911, so one name carried two exactMatch objects.
+          Dropping 28911 outright would delete a legitimate ChEBI term and its
+          real xrefs; dropping the *names* is the actual retraction (#599).
+
+        The sole-source guard applies to object-level rows only. A name-level
+        row is safe under mixed sources because it removes exactly what it
+        enumerates rather than a whole record, and each retracted name is
+        checked against ``now_asserted`` so a name is never left grounded
+        nowhere.
+
+        File is tab-separated with a ``stale_object`` column (the CURIE the row
+        acts on) and an optional ``retract_names``; other columns document
+        provenance. Lines beginning with ``#`` are ignored.
         """
         if not filepath.exists():
             print(f"  No retraction list at {filepath}; skipping retraction pass.")
@@ -1807,19 +1975,38 @@ class ChemicalMappingConsolidator:
 
         stale_objects = []
         now_asserted_targets: set = set()
+        # {stale_object: {normalised name: {"raw": ..., "targets": frozenset}}}.
+        # Targets are kept per row, not pooled, so one row's replacement cannot
+        # vouch for another row's name.
+        name_retractions: Dict[str, Dict[str, Dict[str, str]]] = defaultdict(dict)
         seen = set()
         with open(filepath) as fh:
             data_lines = [ln for ln in fh if not ln.lstrip().startswith("#")]
         reader = csv.DictReader(data_lines, delimiter="\t")
         for row in reader:
             oid = (row.get("stale_object") or "").strip()
-            if oid and oid not in seen:
+            names = [n.strip() for n in (row.get("retract_names") or "").split("|") if n.strip()]
+            row_targets = frozenset(
+                t.strip() for t in (row.get("now_asserted") or "").split("|") if t.strip()
+            )
+            now_asserted_targets |= row_targets
+
+            if not oid:
+                continue
+            if names:
+                # A name-level row claims the object, so a later name-less row
+                # for the same object must not silently escalate to a whole
+                # record drop after the name pass already ran on it.
+                seen.add(oid)
+                for name in names:
+                    norm = normalize_name(name)
+                    if norm:
+                        name_retractions[oid][norm] = {"raw": name, "targets": row_targets}
+            elif oid not in seen:
                 seen.add(oid)
                 stale_objects.append(oid)
-            for tgt in (row.get("now_asserted") or "").split("|"):
-                tgt = tgt.strip()
-                if tgt:
-                    now_asserted_targets.add(tgt)
+
+        names_dropped = self._retract_names(name_retractions)
 
         dropped = 0
         absent = 0
@@ -1840,6 +2027,19 @@ class ChemicalMappingConsolidator:
                 )
                 skipped_mixed += 1
                 continue
+            # Prune the derived indices too. `export_unified_sssom` and
+            # `propagate_synonyms_via_xrefs` both work off `self.chemicals`, so
+            # this is inert today — but a stale index entry pointing at a
+            # deleted CURIE is a trap for anything that later resolves a name
+            # after this pass (#599).
+            for norm_name, indexed_id in list(self.name_index.items()):
+                if indexed_id == oid:
+                    del self.name_index[norm_name]
+            formula = rec.get("formula")
+            if formula and oid in self.formula_index.get(formula, set()):
+                self.formula_index[formula].discard(oid)
+                if not self.formula_index[formula]:
+                    del self.formula_index[formula]
             del self.chemicals[oid]
             dropped += 1
 
@@ -1861,7 +2061,9 @@ class ChemicalMappingConsolidator:
         print(
             f"Applied retractions from {filepath.name}: dropped {dropped}, "
             f"already-absent {absent}, skipped-not-sole-source {skipped_mixed} "
-            f"(of {len(stale_objects)} listed stale objects)"
+            f"(of {len(stale_objects)} listed stale objects); "
+            f"name-level groundings removed {names_dropped} "
+            f"(across {len(name_retractions)} object(s))"
         )
 
     def propagate_synonyms_via_xrefs(self):
@@ -1897,8 +2099,10 @@ class ChemicalMappingConsolidator:
 
         records_augmented = 0
         synonyms_added = 0
-        for chem in self.chemicals.values():
+        blocked = 0
+        for curie, chem in self.chemicals.items():
             added_here: Set[str] = set()
+            retracted = self._retracted_names.get(curie, set())
             for xref in chem["xrefs"]:
                 other_names = name_snapshot.get(xref)
                 if not other_names:
@@ -1907,6 +2111,10 @@ class ChemicalMappingConsolidator:
                 # set — otherwise it would show up in synonyms.
                 incoming = other_names - {chem["canonical_name"]}
                 new_syns = incoming - chem["synonyms"]
+                if retracted:
+                    kept = {s for s in new_syns if normalize_name(s) not in retracted}
+                    blocked += len(new_syns) - len(kept)
+                    new_syns = kept
                 if new_syns:
                     added_here.update(new_syns)
             if added_here:
@@ -1917,6 +2125,7 @@ class ChemicalMappingConsolidator:
         print(
             f"  Augmented {records_augmented} records with "
             f"{synonyms_added} cross-CURIE synonyms"
+            + (f" (blocked {blocked} retracted name(s) from returning)" if blocked else "")
         )
 
     def export_unified_sssom(self, sssom_output_path: Path):

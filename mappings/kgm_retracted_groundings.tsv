@@ -16,13 +16,39 @@
 #
 # Only stale_object (the CURIE dropped) is required; other columns document
 # provenance. Lines starting with # are ignored by the reader.
-subject_id	subject_label	stale_object	stale_object_label	now_asserted	source
+#
+# 2026-08-14 (#784): the cobalamin row used to read
+#   kgm.name:cobalamin  COBALAMIN  CHEBI:30411  Cobalamine  CHEBI:28911
+# i.e. it retracted CHEBI:30411 in favour of CHEBI:28911. That is backwards.
+# CHEBI:30411 "cobalamin" is defined as the oxidation state being *unspecified*
+# and is the direct parent of CHEBI:28911 "cob(III)alamin"; the source media
+# list the bare vitamer name alongside Biotin and Thiamine. The +3 evidence was
+# circular — AUTO_BACKFILL_CHEBI_CHEMISTRY had copied the formula, InChI and
+# SMILES out of CHEBI:28911 while the record was already mapped there, and a
+# formula cannot select an oxidation state in any case (ChEBI records the same
+# C62H88CoN13O14P for the +1, +2 and +3 forms, which differ only in the separate
+# charge field). Upstream resolved this in CultureBotAI/MediaIngredientMech#362
+# and UNIFIED_INGREDIENT_MAPPING.tsv now carries CHEBI:30411 in every column of its
+# `Cobalamine` row. NOT of its `Cobalamin` / `cobalamin` rows, which still hold
+# CHEBI:28911 in chebi_id and culturemech_term_id, and best_primary reads chebi_id
+# first (#723), so those two rows re-assert the child term on every run. This
+# retraction is therefore masking a live upstream row, not tidying up after a
+# resolved one. Tracked at CultureBotAI/MediaIngredientMech#138.
+#
+# The row is now name-level. CHEBI:28911 is a real ChEBI term with real xrefs
+# (CAS, Gmelin, KEGG C05776, KEGG-drug D00191); dropping the object would delete
+# those. What needs retracting is the bare-vitamer names that additive re-seeding
+# left on it
+# after the regrounding, which had left kgm.name:cobalamine with two exactMatch
+# objects. Its ChEBI-legitimate synonyms (Cob(III)alamin, cobalamin(III), ...)
+# stay put.
+subject_id	subject_label	stale_object	stale_object_label	now_asserted	source	retract_names
 kgm.name:glycylglycine	Glycylglycine	CHEBI:15743	Glycylglycine	CHEBI:17201	culturebotai_reviewed
 kgm.name:p-aminobenzoic_acid	P-Aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
 kgm.name:paba	PABA	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
 kgm.name:para-aminobenzoic_acid	Para-aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
 kgm.name:p--aminobenzoic_acid	p--Aminobenzoic acid	CHEBI:194474	4-Aminobenzoic acid	CHEBI:30753	culturebotai_reviewed
-kgm.name:cobalamin	COBALAMIN	CHEBI:30411	Cobalamine	CHEBI:28911	culturebotai_reviewed
+kgm.name:cobalamine	Cobalamine	CHEBI:28911	cob(III)alamin	CHEBI:30411	culturebotai_reviewed	Cobalamine|COBALAMIN|Cobalamin (B12)
 kgm.name:tricine	Tricine	CHEBI:35920	Tricine	CHEBI:46760	culturebotai_reviewed
 kgm.name:zncl_6h_o	ZnCl .6H O	CHEBI:86469	ZnCl .6H O	CHEBI:49976	culturebotai_reviewed
 kgm.name:pyridoxamine2hcl	Pyridoxamine.2HCl	CHEBI:8668	Pyridoxamine.2HCl	CHEBI:131532	culturebotai_reviewed
@@ -178,3 +204,15 @@ kgm.name:universal_peptone_merck	Universal peptone (Merck)	FOODON:03316428	Pepto
 kgm.name:casein_hydrolyzate_acid	casein hydrolyzate acid	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
 kgm.name:cacl22h2o	CaCl2•2H2O	cas:10043-52-4	CaCl2•2H2O	CHEBI:86158	culturebotai_reviewed
 kgm.name:mgso47h2o	MgSO4•7H2O	cas:7487-88-9	MgSO4•7H2O	CHEBI:31795	culturebotai_reviewed
+#
+# 2026-08-15 (#788): the MIM re-sync in this same PR introduced two exactMatch
+# rows that beat the correct grounding at runtime. Verified against the exported
+# artifact, not inferred: find_chebi_by_name('alpha-Lactose') returned
+# CHEBI:189432 'Alpha-lactose monohydrate' and find_chebi_by_name('Carboxymethyl
+# cellulose') returned CHEBI:234035 'carboxymethylcellulose sodium salt'. Both are
+# real ChEBI terms, so the object must stay; it is the ingredient NAME that belongs
+# on the anhydrous / free-acid form. An anhydrous-vs-hydrate and a free-acid-vs-salt
+# identity is precisely what closeMatch and the hydrate machinery exist to express.
+# Fix upstream in MediaIngredientMech and these two rows can go.
+kgm.name:alpha-lactose	alpha-Lactose	CHEBI:189432	Alpha-lactose monohydrate	CHEBI:36219	culturebotai_reviewed	alpha-Lactose
+kgm.name:carboxymethyl_cellulose	Carboxymethyl cellulose	CHEBI:234035	carboxymethylcellulose sodium salt	CHEBI:85146	culturebotai_reviewed	Carboxymethyl cellulose

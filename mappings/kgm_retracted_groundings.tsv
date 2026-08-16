@@ -204,3 +204,15 @@ kgm.name:universal_peptone_merck	Universal peptone (Merck)	FOODON:03316428	Pepto
 kgm.name:casein_hydrolyzate_acid	casein hydrolyzate acid	FOODON:03316428	Peptone	FOODON:03315719	culturebotai_reviewed
 kgm.name:cacl22h2o	CaCl2•2H2O	cas:10043-52-4	CaCl2•2H2O	CHEBI:86158	culturebotai_reviewed
 kgm.name:mgso47h2o	MgSO4•7H2O	cas:7487-88-9	MgSO4•7H2O	CHEBI:31795	culturebotai_reviewed
+#
+# 2026-08-15 (#788): the MIM re-sync in this same PR introduced two exactMatch
+# rows that beat the correct grounding at runtime. Verified against the exported
+# artifact, not inferred: find_chebi_by_name('alpha-Lactose') returned
+# CHEBI:189432 'Alpha-lactose monohydrate' and find_chebi_by_name('Carboxymethyl
+# cellulose') returned CHEBI:234035 'carboxymethylcellulose sodium salt'. Both are
+# real ChEBI terms, so the object must stay; it is the ingredient NAME that belongs
+# on the anhydrous / free-acid form. An anhydrous-vs-hydrate and a free-acid-vs-salt
+# identity is precisely what closeMatch and the hydrate machinery exist to express.
+# Fix upstream in MediaIngredientMech and these two rows can go.
+kgm.name:alpha-lactose	alpha-Lactose	CHEBI:189432	Alpha-lactose monohydrate	CHEBI:36219	culturebotai_reviewed	alpha-Lactose
+kgm.name:carboxymethyl_cellulose	Carboxymethyl cellulose	CHEBI:234035	carboxymethylcellulose sodium salt	CHEBI:85146	culturebotai_reviewed	Carboxymethyl cellulose

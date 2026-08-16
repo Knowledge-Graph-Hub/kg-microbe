@@ -14,14 +14,18 @@ sys.modules["bacdive_reference_conflicts"] = _MODULE
 _SPEC.loader.exec_module(_MODULE)
 
 # A slice of the real METPO oxygen-tolerance chain, synonyms included.
-ALIASES = {
-    "anaerobic": "METPO:1000603",
-    "anaerobe": "METPO:1000603",
-    "obligately anaerobic": "METPO:1000607",
-    "obligate anaerobe": "METPO:1000607",
-    "strictly anaerobic": "METPO:1000611",
-    "microaerophilic": "METPO:1000604",
-    "microaerophile": "METPO:1000604",
+OWNERS = {
+    "anaerobic": {"METPO:1000603"},
+    "anaerobe": {"METPO:1000603"},
+    "obligately anaerobic": {"METPO:1000607"},
+    "obligate anaerobe": {"METPO:1000607"},
+    "strictly anaerobic": {"METPO:1000611"},
+    "microaerophilic": {"METPO:1000604"},
+    "microaerophile": {"METPO:1000604"},
+    # The real collision: 'yes'/'no' are claimed by both the motility and the
+    # spore-formation axes (verified in metpo_nodes.tsv; 67 aliases collide).
+    "yes": {"METPO:1000702", "METPO:1000871"},
+    "no": {"METPO:1000703", "METPO:1000872"},
 }
 SUBSUMPTION = {
     "METPO:1000607": {"METPO:1000603"},
@@ -79,14 +83,14 @@ class ClassifyTest(TestCase):
         true, so picking one would discard a true statement.
         """
         self.assertEqual(
-            _MODULE.classify({"anaerobe", "obligate anaerobe"}, ALIASES, SUBSUMPTION),
+            _MODULE.classify({"anaerobe", "obligate anaerobe"}, "oxygen tolerance", OWNERS, SUBSUMPTION),
             "specificity",
         )
 
     def test_subsumption_is_transitive(self):
         """'strictly anaerobic' is two hops from 'anaerobic'; one hop is not enough."""
         self.assertEqual(
-            _MODULE.classify({"anaerobe", "strictly anaerobic"}, ALIASES, SUBSUMPTION),
+            _MODULE.classify({"anaerobe", "strictly anaerobic"}, "oxygen tolerance", OWNERS, SUBSUMPTION),
             "specificity",
         )
 
@@ -98,14 +102,14 @@ class ClassifyTest(TestCase):
         assumption that subsumption explains most of #737.
         """
         self.assertEqual(
-            _MODULE.classify({"anaerobe", "microaerophile"}, ALIASES, SUBSUMPTION),
+            _MODULE.classify({"anaerobe", "microaerophile"}, "oxygen tolerance", OWNERS, SUBSUMPTION),
             "contradiction",
         )
 
     def test_two_spellings_of_one_term_are_not_a_disagreement(self):
         """String inequality is not term inequality — resolve before comparing."""
         self.assertEqual(
-            _MODULE.classify({"anaerobe", "anaerobic"}, ALIASES, SUBSUMPTION),
+            _MODULE.classify({"anaerobe", "anaerobic"}, "oxygen tolerance", OWNERS, SUBSUMPTION),
             "specificity",
         )
 
@@ -117,10 +121,55 @@ class ClassifyTest(TestCase):
         conflict — 1,196 `colony color` rows land here.
         """
         self.assertEqual(
-            _MODULE.classify({"anaerobe", "beige"}, ALIASES, SUBSUMPTION),
+            _MODULE.classify({"anaerobe", "beige"}, "colony color", OWNERS, SUBSUMPTION),
             "unresolved",
         )
 
     def test_no_ontology_means_unresolved_rather_than_a_guess(self):
         """Without the extracts the script must not assert conflicts it cannot check."""
-        self.assertEqual(_MODULE.classify({"a", "b"}, {}, {}), "unresolved")
+        self.assertEqual(_MODULE.classify({"a", "b"}, "motility", {}, {}), "unresolved")
+
+
+class FieldScopedResolutionTest(TestCase):
+
+    """
+    A synonym shared by two METPO terms must be resolved per field.
+
+    67 METPO aliases are claimed by more than one CURIE, and the collisions land
+    on exactly the yes/no fields: `yes` belongs to both METPO:1000702 (motile)
+    and METPO:1000871 (spore forming). A single flat index judged every yes/no
+    field on whichever axis sorted first.
+    """
+
+    def test_yes_resolves_to_motile_on_the_motility_field(self):
+        """Scoping by axis is what makes the two fields mean different things."""
+        self.assertEqual(_MODULE.resolve("yes", "motility", OWNERS), "METPO:1000702")
+
+    def test_yes_resolves_to_spore_forming_on_the_spore_field(self):
+        """Same string, different field, different term — the point of FIELD_AXIS."""
+        self.assertEqual(_MODULE.resolve("yes", "spore formation", OWNERS), "METPO:1000871")
+
+    def test_an_ambiguous_alias_on_an_unscoped_field_refuses_to_guess(self):
+        """
+        `forms multicellular complex` has no METPO terms at all.
+
+        Before scoping, its yes/no values were judged on the motility axis —
+        551 observations classified against terms that have nothing to do with
+        the field. Refusing is the honest answer.
+        """
+        self.assertEqual(_MODULE.resolve("yes", "forms multicellular complex", OWNERS), "")
+        self.assertEqual(
+            _MODULE.classify({"yes", "no"}, "forms multicellular complex", OWNERS, SUBSUMPTION),
+            "unresolved",
+        )
+
+    def test_a_scoped_field_still_yields_contradiction_for_real_opposites(self):
+        """Scoping must not cost the verdicts that were already right."""
+        self.assertEqual(
+            _MODULE.classify({"yes", "no"}, "motility", OWNERS, SUBSUMPTION),
+            "contradiction",
+        )
+
+    def test_an_unambiguous_alias_needs_no_axis(self):
+        """Most values are claimed by exactly one term and resolve without scoping."""
+        self.assertEqual(_MODULE.resolve("anaerobe", "oxygen tolerance", OWNERS), "METPO:1000603")

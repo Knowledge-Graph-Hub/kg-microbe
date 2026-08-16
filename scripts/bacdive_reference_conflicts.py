@@ -29,16 +29,16 @@ this reproduces its 4,278 exactly — and splits it:
   earlier guess that subsumption explained most of #737 was wrong; the
   dominant oxygen-tolerance patterns are genuine contradictions
   (``aerobe | facultative anaerobe`` 440, ``anaerobe | microaerophile`` 299).
-* **contradiction 3,342 strains** — the set that needs a policy.
+* **contradiction 2,828 strains** — the set that needs a policy.
 * **unresolved** — a value with no METPO term, so the relation cannot be
   judged. Evidence of a mapping gap, not of a conflict.
 
 The script also scans four fields #737 did not (``colony color``,
 ``colony shape``, ``type of spore``, ``forms multicellular complex``), which
-add 1,793 more disagreeing observations. ``colony color`` alone contributes
-1,196, every one ``unresolved`` — colours have no METPO terms, so that field is
-a curation gap rather than a contradiction, and should not be folded into a
-conflict headline.
+add 1,793 more disagreeing observations. Of those, 1,196 ``colony color`` and
+551 ``forms multicellular complex`` are ``unresolved``: neither colours nor
+multicellular complexes have METPO terms, so those are curation gaps rather
+than contradictions and should not be folded into a conflict headline.
 
 Usage::
 
@@ -92,10 +92,31 @@ VALUE_FIELDS: Dict[str, Tuple[str, ...]] = {
     "multicellular morphology": ("forms multicellular complex",),
 }
 
+#: Terms a field's values are allowed to resolve to.
+#:
+#: 67 METPO aliases map to more than one CURIE, and the collisions land exactly
+#: on the yes/no fields: ``yes`` is an alias of both ``METPO:1000702`` (motile)
+#: and ``METPO:1000871`` (spore forming), ``no`` of both ``METPO:1000703`` and
+#: ``METPO:1000872``. A single flat alias index therefore resolved *every*
+#: yes/no field through whichever axis sorted first — spore formation judged on
+#: the motility terms. It happened not to change any verdict, because the pairs
+#: are siblings either way, but that is luck: one METPO edit putting two
+#: collision-sharing terms into a subsumption relation would silently downgrade
+#: real contradictions to ``specificity``, discarding true statements — the
+#: exact failure this script exists to prevent.
+#:
+#: A field with no entry resolves against the whole index, but refuses any alias
+#: that is ambiguous. ``forms multicellular complex`` has no METPO terms at all,
+#: so its values are honestly ``unresolved`` rather than judged on borrowed ones.
+FIELD_AXIS: Dict[str, Tuple[str, ...]] = {
+    "motility": ("METPO:1000702", "METPO:1000703"),
+    "spore formation": ("METPO:1000871", "METPO:1000872"),
+}
+
 REF_KEY = "@ref"
 
 
-def load_metpo() -> Tuple[Dict[str, str], Dict[str, set]]:
+def load_metpo() -> Tuple[Dict[str, set], Dict[str, set]]:
     """
     Build a raw-value -> METPO CURIE index and the CURIE subsumption closure.
 
@@ -106,13 +127,13 @@ def load_metpo() -> Tuple[Dict[str, str], Dict[str, set]]:
     disagreement as a contradiction — which is how the "4,278 contradictions"
     framing in #737 overstates the problem.
 
-    :return: ``({alias: curie}, {curie: {ancestor curie, ...}})``; both empty when
-        the extracts are absent.
+    :return: ``({alias: {curie, ...}}, {curie: {ancestor curie, ...}})``; both
+        empty when the extracts are absent.
     """
     if not (METPO_NODES.is_file() and METPO_EDGES.is_file()):
         return {}, {}
 
-    alias_to_curie: Dict[str, str] = {}
+    alias_owners: Dict[str, set] = defaultdict(set)
     known: set = set()
     with METPO_NODES.open(newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh, delimiter="\t"):
@@ -124,9 +145,7 @@ def load_metpo() -> Tuple[Dict[str, str], Dict[str, set]]:
             aliases += [s.strip() for s in (row.get("synonym") or "").split("|")]
             for alias in aliases:
                 if alias:
-                    # First writer wins: the primary label is offered first, so a
-                    # synonym shared by two terms cannot displace an exact label.
-                    alias_to_curie.setdefault(alias.lower(), curie)
+                    alias_owners[alias.lower()].add(curie)
 
     parents: Dict[str, set] = defaultdict(set)
     with METPO_EDGES.open(newline="", encoding="utf-8") as fh:
@@ -148,7 +167,7 @@ def load_metpo() -> Tuple[Dict[str, str], Dict[str, set]]:
             seen.add(node)
             stack.extend(parents.get(node, ()))
         closed[curie] = seen
-    return alias_to_curie, closed
+    return dict(alias_owners), closed
 
 
 def _normalise(value) -> str:
@@ -182,9 +201,39 @@ def observations(block, field: str) -> List[Tuple[str, str]]:
     return out
 
 
+def resolve(value: str, field: str, alias_owners: Dict[str, set]) -> str:
+    """
+    Resolve one raw value to a METPO CURIE, within the field's axis if it has one.
+
+    Returns ``''`` rather than guessing. An unresolvable value makes the whole
+    comparison ``unresolved``, which reports a mapping gap — the honest answer —
+    instead of a conflict the script cannot actually judge.
+
+    :param value: Normalised raw value.
+    :param field: The field it was observed in.
+    :param alias_owners: ``{alias: {curie, ...}}`` over labels and synonyms.
+    :return: A CURIE, or ``''`` when it cannot be resolved unambiguously.
+    """
+    owners = alias_owners.get(value, set())
+    if not owners:
+        return ""
+
+    axis = FIELD_AXIS.get(field)
+    if axis:
+        # 'yes' means motile on the motility field and spore forming on the
+        # spore-formation one. Intersecting with the axis is what makes that
+        # distinction; without it the two fields share one answer.
+        scoped = owners & set(axis)
+        return scoped.pop() if len(scoped) == 1 else ""
+
+    # No declared axis: only an unambiguous alias can be trusted.
+    return next(iter(owners)) if len(owners) == 1 else ""
+
+
 def classify(
     values: Iterable[str],
-    alias_to_curie: Dict[str, str],
+    field: str,
+    alias_owners: Dict[str, set],
     subsumption: Dict[str, set],
 ) -> str:
     """
@@ -201,16 +250,17 @@ def classify(
       cannot be judged. Not evidence of a conflict; evidence of a mapping gap.
 
     :param values: The distinct observed values.
-    :param alias_to_curie: Raw value -> METPO CURIE.
+    :param field: The field the values were observed in, used to scope resolution.
+    :param alias_owners: Alias -> owning METPO CURIEs.
     :param subsumption: CURIE -> ancestor CURIEs.
     :return: One of the three labels above.
     """
     vals = sorted(set(values))
-    if not alias_to_curie:
+    if not alias_owners:
         return "unresolved"
 
-    curies = [alias_to_curie.get(v) for v in vals]
-    if any(c is None for c in curies):
+    curies = [resolve(v, field, alias_owners) for v in vals]
+    if any(not c for c in curies):
         return "unresolved"
     curies = sorted(set(curies))
     if len(curies) < 2:
@@ -235,8 +285,8 @@ def main(argv: List[str]) -> int:
         print(f"ERROR: no BacDive dump at {args.raw}", file=sys.stderr)
         return 1
 
-    alias_to_curie, subsumption = load_metpo()
-    if not alias_to_curie:
+    alias_owners, subsumption = load_metpo()
+    if not alias_owners:
         print(
             "WARNING: METPO extracts absent — every disagreement will be reported "
             "as 'unresolved'. Run `poetry run kg transform -s ontologies` for the "
@@ -267,7 +317,7 @@ def main(argv: List[str]) -> int:
                 distinct = {v for _, v in obs}
                 if len(distinct) < 2:
                     continue
-                kind = classify(distinct, alias_to_curie, subsumption)
+                kind = classify(distinct, field, alias_owners, subsumption)
                 kinds[kind] += 1
                 strains_with_conflict[kind].add(strain)
                 rows.append(

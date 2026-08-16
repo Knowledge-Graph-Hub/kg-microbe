@@ -10,9 +10,9 @@ The repository does publish [tagged releases](https://github.com/Knowledge-Graph
 
 Please **do not** open a public issue for vulnerabilities.
 
-Preferred route: **GitHub private vulnerability reporting** — Security tab → *Report a vulnerability*.
+Use **GitHub private vulnerability reporting**: Security tab → *Report a vulnerability*. This is enabled on the repository and routes the report privately to the maintainers.
 
-> **Note:** private vulnerability reporting is not currently enabled on this repository. Until a maintainer turns it on (Settings → Code security → Private vulnerability reporting), that option will not appear. In the meantime, contact the maintainer listed in the `authors` field of `pyproject.toml`.
+If you cannot use it, contact the maintainer listed in the `authors` field of `pyproject.toml`.
 
 ## What to expect
 

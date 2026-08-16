@@ -81,7 +81,17 @@ def test_loader_honors_manually_curated_fixes(mappings):
     assert mappings.get("mammals") == ("NCBITaxon:40674", "Mammalia", "NCBITaxon", None)
     assert mappings.get("plant") == ("NCBITaxon:33090", "Viridiplantae", "NCBITaxon", None)
     assert mappings.get("birds") == ("NCBITaxon:8782", "Aves", "NCBITaxon", None)
-    assert mappings.get("gastrointestinal tract") == ("UBERON:0005409", "digestive tract", "UBERON", None)
+    # The label here was wrong until issue #777: UBERON:0005409 is "alimentary part of
+    # gastrointestinal system", but the row claimed "digestive tract" (which is a
+    # different term, UBERON:0001555). The id was right; "gastrointestinal tract" is a
+    # related — not exact — synonym of 0005409, and UBERON flags it INCONSISTENT across
+    # species, but it is the only UBERON class denoting the tract itself.
+    assert mappings.get("gastrointestinal tract") == (
+        "UBERON:0005409",
+        "alimentary part of gastrointestinal system",
+        "UBERON",
+        None,
+    )
     assert mappings.get("wound") == ("mesh:D014947", "Wounds and Injuries", "mesh", None)
     # closeMatch rows that stay dropped (family-mismatched targets, no PATO override):
     assert mappings.get("catheter") is None  # device, not isolation source
@@ -153,6 +163,11 @@ def test_validator_rules_match_loader():
     minimal CI containers. This test catches drift between its rule set and
     the loader's rule set, which would otherwise let CI pass while the
     runtime drops mappings the validator considers fine (or vice versa).
+
+    Scope note: this asserts parity of the *family* rules only, not full parity.
+    Since issue #777 the validator also resolves each object_id against our
+    ontology extracts, a rule the loader has no counterpart for — do not read a
+    green result here as "the two see the same thing".
     """
     validator = _load_validator_module()
     assert validator.DISALLOWED_OBJECT_SOURCES == DISALLOWED_OBJECT_SOURCES

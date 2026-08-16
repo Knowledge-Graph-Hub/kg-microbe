@@ -132,11 +132,11 @@ STUB_ONTOLOGY_PREFIXES: frozenset = frozenset(
     {
         "PRIDE",  # 3 IDs: host body site, host body product, antibiotic treatment
         "PCO",  # 1 active ID: microbial community (PCO:1000004)
-        "mesh",  # 9 IDs: Abscess, Wound, Inflammation, Built-environment, Periodontal-pocket, etc.
-        "NCIT",  # 7 trusted IDs: Aspirate, Blood-culture, Lesion, Parasite, Protozoa, etc.
+        "mesh",  # 10 IDs: Abscess, Wound, Inflammation, Built-environment, Periodontal-pocket, etc.
+        "NCIT",  # 21 IDs: Aspirate, Lesion, Parasite, Protozoa, etc.
         "GENEPIO",  # 1 ID: caecal content
         "FAO",  # 1 ID: mycorrhiza (Fungal Anatomy Ontology)
-        "BTO",  # 1 ID: wound fluid (BRENDA Tissue Ontology)
+        "BTO",  # 2 IDs: wound fluid, nectar (BRENDA Tissue Ontology)
         "SNOMED",  # 1 ID after filtering: sugary food (clinical procedure rows are dropped via banned substrings)
         "PO",  # ~6-8 IDs: root, leaf, flower, rhizome, etc. (Plant Ontology)
         "MICRO",  # 0 isolation_source IDs but ~34 elsewhere (chemical/ingredient mappings)

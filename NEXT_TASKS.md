@@ -13,11 +13,20 @@ repo's working backlog. This section is.
    un-inverted, name-level retraction, upstream tombstone gate), `#776` (bacdive
    metabolite-utilization reference DOI, open since 2026-08-13, not yet
    reviewed). All three are MERGEABLE.
-2. **Re-merge — `#683`.** `kgm-freshness-check` reports merge `STALE_VS_INPUTS`
-   against `data/transformed/ontologies_stubs/` and `data/transformed/prego_habitat/`.
-   The stubs staleness is real, not a timestamp artifact: `#778` and `#786` add
-   `BTO:0000537`, `mesh:D010514` and 14 NCIT ids that the shipped graph has no
-   nodes for. Transform freshness is otherwise clean — 16 FRESH, 0 STALE_VS_CODE.
+2. **Re-merge — `#683`.** The merged KG is stale against
+   `data/transformed/ontologies_stubs/`, and that part is *substantively* real
+   rather than a timestamp artifact: `#778` and `#786` add `BTO:0000537`,
+   `mesh:D010514` and 14 NCIT ids the shipped graph has no nodes for. Transform
+   freshness is otherwise clean — 0 `STALE_VS_CODE`.
+
+   Do not quote `kgm-freshness-check`'s exact status code here; it is volatile.
+   The skill compares file **mtimes**, and `git checkout` between branches whose
+   content differs rewrites mtimes without changing content — so a session that
+   touches old branches can flip the verdict between `STALE_VS_INPUTS` and
+   `STALE_VS_YAML` with nothing having actually changed. Observed twice on
+   2026-08-15: `merge.yaml` showed an mtime of that day while `git status` was
+   clean and its last commit was 2026-08-12. Run the skill yourself and read the
+   `stale against` list rather than trusting a code recorded here.
 
 ### Data correctness, unblocked
 

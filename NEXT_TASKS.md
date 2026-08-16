@@ -34,12 +34,19 @@ repo's working backlog. This section is.
 
 ### Upstream-blocked — do not schedule as "next"
 
-6. **`#788` — two of the four grounding regressions need sibling-repo fixes.**
-   `Cysteine-HCl` (`CHEBI:52891`, a fluorescence quencher, in 165 CultureMech
-   files) and two `skos:exactMatch` slips in
-   `MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` (`alpha-Lactose`
-   line 954 → monohydrate; `Carboxymethyl cellulose` line 1183 → sodium salt).
-   `D-Glucose` is already neutralised here by the `#789` tombstone gate.
+6. **`#788` — upstream grounding regressions from the MIM re-sync.** Of the
+   four it names, `alpha-Lactose` (→ monohydrate) and `Carboxymethyl cellulose`
+   (→ sodium salt) were **live**, not latent: `find_chebi_by_name` returned the
+   wrong CURIE for both. Both are now overridden locally by name-level
+   retraction rows in `mappings/kgm_retracted_groundings.tsv`, so the shipped
+   artifact is correct — but the upstream rows in
+   `MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` still need
+   fixing, and until they are the override has to stay. `Berberine` and
+   `3,6-Dihydroxyflavone` are the other two and are not yet addressed.
+   Separately, `Cysteine-HCl` (`CHEBI:52891`, a fluorescence quencher, 165
+   CultureMech files) is a pre-existing wrong grounding, not a re-sync
+   regression. `D-Glucose` is neutralised here by the `#789` tombstone gate.
+   Line numbers in the sibling repo drift; search by ingredient name.
    **Blocked on a human decision:** `../CultureMech` sits on branch
    `fix/paba-and-potato-groundings-260` with **876 uncommitted modified files**
    that already contain the PABA (251), D-Glucose (1132) and
@@ -53,10 +60,14 @@ repo's working backlog. This section is.
 
 ### Governance debt
 
-8. **`#757`** — branch protection still permits admin bypass, the failure mode
-   that caused `#754`. **`#546`** — 30 Dependabot alerts. Four draft PRs from
-   April (`#548`, `#550`, `#551`, `#552`) have sat untouched since; close or
-   land them rather than leaving them as noise.
+8. **`#757`** — branch protection still permits admin bypass (`enforce_admins:
+   false`), the failure mode that caused `#754`. Note `master` now requires the
+   three `build` checks, so CI is a real gate as of 2026-08-15; the review
+   requirement is the part being bypassed. **`#546`** — the 30 Dependabot alerts
+   turned out to be **stale, not real**: all 33 named a package already pinned
+   at or past its patched version, and they have been dismissed with evidence.
+   Of the four April PRs, `#550` and `#551` are now closed (obsolete and
+   false-premise respectively); `#548` and `#552` are open and ready.
 
 ---
 

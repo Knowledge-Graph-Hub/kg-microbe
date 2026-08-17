@@ -44,6 +44,10 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_MAPPING_PATHS = (
     REPO_ROOT / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
     REPO_ROOT / "mappings" / "isolation_source_to_ontology.tsv",
+    # Registered so the ontologies_stubs transform emits nodes for the
+    # corrected targets. PO:0009005 is carried by no loaded ontology, so
+    # without this the correction would swap one phantom for another (#796).
+    REPO_ROOT / "mappings" / "madin_environment_id_corrections.tsv",
     REPO_ROOT / "mappings" / "ingredient_mappings.sssom.tsv",
     REPO_ROOT / "mappings" / "canonical" / "chemical_mappings.tsv",
     REPO_ROOT / "mappings" / "canonical" / "enzyme_mappings.tsv",

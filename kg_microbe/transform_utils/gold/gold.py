@@ -39,14 +39,16 @@ What it changes, and why each is safe:
   was 279,670 nodes with 242 incident edges, and ``Study`` was reachable only
   via ``IndividualOrganism -related_to-> Study``, a predicate asserting nothing
   usable (27.5% of the export). What the ingest is *for* — the organism to
-  environment link, ``occurs_in`` — is untouched. Measured: nodes 975,839 ->
-  637,286, edges 1,110,984 -> 823,250, and the pre-existing orphan warning falls
-  from 279,618 to 5.
+  environment link, ``occurs_in`` — is kept. Measured: nodes 975,839 -> 637,286,
+  edges 1,110,984 -> 823,250, and the pre-existing orphan warning falls from
+  279,618 to 5. ``occurs_in`` ends at 287,706 rather than its upstream 286,725 —
+  it *rises*, because organisms the taxid remap rescues keep their environment
+  edges.
 * **Remaps retired NCBI taxids** from ``merged.dmp`` in the taxonomy dump.
   GOLD's export carries taxa NCBI has since merged, and judging them by the
   retired id makes the trim drop them along with the organisms typed to them.
   Measured against the real payload: 611 taxa and 1,473 organisms retained that
-  would otherwise have been discarded, with 534 nodes collapsing onto an
+  would otherwise have been discarded, with 561 nodes collapsing onto an
   existing id. Applied before the trim, since that is the point.
 
 What it deliberately does **not** change, because each needs a modelling decision
@@ -91,9 +93,6 @@ _ONTOLOGY_CLASS = "biolink:OntologyClass"
 #: KG-Microbe wants neither samples nor studies; it wants the organism to
 #: environment link, which is ``occurs_in`` and is unaffected.
 _DROP_CATEGORIES = ("biolink:MaterialSample", "biolink:Study")
-
-#: Reported, not repaired — see the module docstring.
-_REPORTED_CATEGORIES = ()
 
 #: NCBI's retired-to-current taxid map lives in this member of the taxdump.
 _TAXDUMP_ARCHIVE = "taxdump.tar.gz"

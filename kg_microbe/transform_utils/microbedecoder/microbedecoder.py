@@ -308,13 +308,18 @@ class MicrobeDecoderTransform(Transform):
         the add-transform skill's rule on cross-referenced entities.
 
         It *does* emit one for a subject ``lpsn`` cannot supply. The rule
-        assumes the entity exists in KG-Microbe, and for 5,242 of these it does
-        not: ``lpsn_gss.csv`` carries only names validly published under the
+        assumes the entity exists in KG-Microbe, and for **5,763** of these it
+        does not: ``lpsn_gss.csv`` carries only names validly published under the
         **bacteriological** code (every record is ``VP;`` or ``VL;``), while
         MicrobeDecoder's crosswalk also spans the **botanical** code —
-        ``Species;`` / ``Variety;`` / ``Form;``. All 5,242 such ids are
-        Cyanobacteriota, which are historically named under the ICN rather than
-        the ICNP (#811).
+        ``Species;`` (4,500) / ``Variety;`` (822) / ``Form;`` (437) /
+        ``Subspecies;`` (4). All 5,763 are Cyanobacteriota, which are
+        historically named under the ICN rather than the ICNP (#811).
+
+        Note 5,763, not the 5,242 quoted on #811: that figure counted only the
+        ids appearing as ``capable_of`` subjects. This gate covers every
+        ``LPSN_ID`` the crosswalk references, which is the set that actually
+        needs nodes.
 
         Without the stub they reached the merged graph as untyped
         ``biolink:NamedThing`` endpoints and produced 21,196 ``capable_of``

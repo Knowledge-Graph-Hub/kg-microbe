@@ -22,6 +22,11 @@ from typing import Dict, Iterable, List, Optional, Tuple
 # Primary key + attribute columns emitted directly on the LPSN organism node.
 LPSN_ID_COLUMN = "LPSN_ID"
 LPSN_STATUS_COLUMN = "LPSN_status"
+#: Naming columns, used to label stubs for ids the lpsn transform cannot
+#: supply (botanical-code cyanobacteria absent from lpsn_gss.csv, #811).
+LPSN_GENUS_COLUMN = "LPSN_Genus"
+LPSN_SPECIES_COLUMN = "LPSN_Species"
+LPSN_SUBSPECIES_COLUMN = "LPSN_Subspecies"
 
 # Identity crosswalk MicrobeDecoder pre-joins per row. Emit each as a
 # `biolink:close_match` edge from `lpsn:<LPSN_ID>` to the target CURIE.

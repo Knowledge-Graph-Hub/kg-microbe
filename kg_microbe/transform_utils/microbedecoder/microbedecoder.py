@@ -71,6 +71,7 @@ from kg_microbe.transform_utils.constants import (
     MICROBEDECODER_KNOWLEDGE_SOURCE,
     MICROBEDECODER_RAW_DIR,
     NAME_COLUMN,
+    NCBI_CATEGORY,
     NCBI_TO_SUBSTRATE_EDGE,
     OBJECT_COLUMN,
     PATHWAY_PREFIX,
@@ -92,7 +93,10 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     BACDIVE_CROSSWALK_COLUMN,
     BACDIVE_SNAPSHOT_COLUMNS,
     CROSSWALK_COLUMNS,
+    LPSN_GENUS_COLUMN,
     LPSN_ID_COLUMN,
+    LPSN_SPECIES_COLUMN,
+    LPSN_SUBSPECIES_COLUMN,
     format_citation,
     is_empty_cell,
     iter_metabolism_columns,
@@ -182,8 +186,12 @@ class MicrobeDecoderTransform(Transform):
             "metabolism_edges": 0,
             "bacdive_snapshot_edges": 0,
             "unmatched_labels": 0,
+            "lpsn_stubbed": 0,
+            "lpsn_stub_unnamed": 0,
         }
         self._accepted_lpsn: Optional[Dict[str, str]] = None
+        self._lpsn_supplied: Optional[set] = None
+        self._stubbed_lpsn: set = set()
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -294,13 +302,29 @@ class MicrobeDecoderTransform(Transform):
         """
         Emit all crosswalk + metabolism + BacDive-snapshot edges for one row.
 
-        Deliberately does NOT emit a node for the ``lpsn:<LPSN_ID>``
-        subject: LPSN taxon nodes are the ``lpsn`` transform's product.
-        Emitting a stub here would create a shallow duplicate the merge
-        step has to dedup, and violates the add-transform skill's rule
-        against stubbing cross-referenced entities that already exist
-        in KG-Microbe. ``lpsn`` is documented as a hard dependency in
-        CLAUDE.md.
+        Does not emit a node for an ``lpsn:<LPSN_ID>`` subject the ``lpsn``
+        transform supplies: those are that transform's product, and stubbing
+        them would create a shallow duplicate the merge has to dedup, against
+        the add-transform skill's rule on cross-referenced entities.
+
+        It *does* emit one for a subject ``lpsn`` cannot supply. The rule
+        assumes the entity exists in KG-Microbe, and for **5,763** of these it
+        does not: ``lpsn_gss.csv`` carries only names validly published under the
+        **bacteriological** code (every record is ``VP;`` or ``VL;``), while
+        MicrobeDecoder's crosswalk also spans the **botanical** code —
+        ``Species;`` (4,500) / ``Variety;`` (822) / ``Form;`` (437) /
+        ``Subspecies;`` (4). All 5,763 are Cyanobacteriota, which are
+        historically named under the ICN rather than the ICNP (#811).
+
+        Note 5,763, not the 5,242 quoted on #811: that figure counted only the
+        ids appearing as ``capable_of`` subjects. This gate covers every
+        ``LPSN_ID`` the crosswalk references, which is the set that actually
+        needs nodes.
+
+        Without the stub they reached the merged graph as untyped
+        ``biolink:NamedThing`` endpoints and produced 21,196 ``capable_of``
+        domain violations. Dropping the edges instead would have deleted every
+        cyanobacterium this source describes.
         """
         lpsn_id = row.get(LPSN_ID_COLUMN)
         if is_empty_cell(lpsn_id):
@@ -317,6 +341,7 @@ class MicrobeDecoderTransform(Transform):
             lpsn_id = accepted[lpsn_id]
         subject_curie = f"{LPSN_PREFIX}{lpsn_id}"
         self._stats["rows_processed"] += 1
+        self._emit_lpsn_stub_if_unsupplied(subject_curie, row, node_writer)
 
         self._emit_crosswalk_edges(subject_curie, row, node_writer, edge_writer)
         self._emit_metabolism_edges(subject_curie, row, node_writer, edge_writer)
@@ -358,6 +383,72 @@ class MicrobeDecoderTransform(Transform):
             "re-pointed to their accepted name"
         )
         return self._accepted_lpsn
+
+    def _lpsn_supplied_ids(self) -> set:
+        """
+        CURIEs the ``lpsn`` transform emits, loaded once.
+
+        Absence is non-fatal and deliberate: ``lpsn`` may not have run, and the
+        GSS CSV it needs is account-gated. An empty set means every subject is
+        treated as supplied, i.e. no stubs — the behaviour before #811, which
+        under-reports rather than inventing nodes.
+
+        :return: Set of ``lpsn:<record_no>`` CURIEs, empty when unavailable.
+        """
+        if self._lpsn_supplied is not None:
+            return self._lpsn_supplied
+        supplied: set = set()
+        nodes_file = self.output_dir.parent / "lpsn" / "nodes.tsv"
+        if nodes_file.is_file():
+            with nodes_file.open(encoding="utf-8") as handle:
+                handle.readline()
+                for line in handle:
+                    curie = line.split("\t", 1)[0]
+                    if curie.startswith(LPSN_PREFIX):
+                        supplied.add(curie)
+        else:
+            logger.warning(
+                "%s not found — emitting no LPSN stubs; ids absent from the "
+                "lpsn transform will stay untyped in the merged graph (#811)",
+                nodes_file,
+            )
+        self._lpsn_supplied = supplied
+        return supplied
+
+    def _emit_lpsn_stub_if_unsupplied(
+        self,
+        subject_curie: str,
+        row: Dict[str, str],
+        node_writer: "csv._writer",
+    ) -> None:
+        """
+        Emit a typed node for an LPSN subject the ``lpsn`` transform cannot supply.
+
+        Named from the crosswalk's own genus/species/subspecies columns, which
+        are populated for all 5,242 affected records — so these are real labelled
+        taxa, not bare placeholders.
+
+        :param subject_curie: The ``lpsn:<record_no>`` subject.
+        :param row: The crosswalk row, for naming.
+        :param node_writer: Open nodes.tsv writer.
+        """
+        supplied = self._lpsn_supplied_ids()
+        if not supplied or subject_curie in supplied or subject_curie in self._stubbed_lpsn:
+            return
+
+        parts = [
+            str(row.get(col, "") or "").strip()
+            for col in (LPSN_GENUS_COLUMN, LPSN_SPECIES_COLUMN, LPSN_SUBSPECIES_COLUMN)
+        ]
+        # "NA" is the crosswalk's empty marker, not a name component.
+        name = " ".join(p for p in parts if p and p.upper() != "NA")
+        if not name:
+            self._stats["lpsn_stub_unnamed"] += 1
+            return
+
+        self._stubbed_lpsn.add(subject_curie)
+        self._stats["lpsn_stubbed"] += 1
+        node_writer.writerow(self._make_node_row(subject_curie, NCBI_CATEGORY, name))
 
     def _emit_crosswalk_edges(
         self,

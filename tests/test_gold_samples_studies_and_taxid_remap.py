@@ -13,7 +13,9 @@ from kg_microbe.transform_utils.gold.gold import GOLDTransform
 NODES = [
     ["id", "category", "name"],
     ["gold.organism:1", "biolink:IndividualOrganism", "Org 1"],
-    ["NCBITaxon:262981", "biolink:OrganismTaxon", "retired"],
+    # Retired row deliberately first: a naive first-wins dedup would emit
+    # NCBITaxon:4914 carrying this row's stale name.
+    ["NCBITaxon:262981", "biolink:OrganismTaxon", "stale retired name"],
     ["NCBITaxon:4914", "biolink:OrganismTaxon", "Lachancea waltii"],
     ["gold.sample:1", "biolink:MaterialSample", "Sample 1"],
     ["gold.study:1", "biolink:Study", "Study 1"],
@@ -134,3 +136,17 @@ class TaxidRemapTest(TestCase):
         """A merge table keyed on bare integers must not collide with other prefixes."""
         rows = _rows(_build() / "edges.tsv")
         self.assertTrue(any(r[0] == "gold.organism:1" for r in rows))
+
+    def test_the_surviving_node_keeps_the_current_name_not_the_retired_one(self):
+        """
+        On collision the replacement's own row must win, not whichever came first.
+
+        The retired row appears first in the fixture, so a naive dedup emits
+        `NCBITaxon:4914` labelled with the merged-away taxon's name. Measured on
+        the real GOLD payload before the fix: 232 of 420 collisions did exactly
+        that — `NCBITaxon:296995` came out as "Exiguobacterium enclense" instead
+        of "Exiguobacterium indicum".
+        """
+        names = {r[0]: r[2] for r in _rows(_build() / "nodes.tsv")}
+        self.assertEqual(names["NCBITaxon:4914"], "Lachancea waltii")
+        self.assertNotIn("stale", names["NCBITaxon:4914"])

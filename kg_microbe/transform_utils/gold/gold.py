@@ -357,6 +357,10 @@ class GOLDTransform(Transform):
         """
         emitted = removed = newly_orphaned = remapped_collisions = 0
         pre_existing_orphans: set = set()
+        # Which ids the upstream file carries verbatim, so a retired row can
+        # defer to its replacement's own row rather than donating a stale name.
+        with nodes_in.open(newline="") as handle:
+            verbatim_ids = {row["id"] for row in csv.DictReader(handle, delimiter="\t")}
         with (
             nodes_in.open(newline="") as handle,
             self.output_node_file.open("w", newline="") as out,
@@ -368,9 +372,19 @@ class GOLDTransform(Transform):
             for row in reader:
                 original_id = row["id"]
                 node_id = self._remap(original_id)
+                if original_id != node_id and node_id in verbatim_ids:
+                    # Both the retired id and its replacement are present
+                    # upstream. Skip the retired row and let the replacement's
+                    # own row supply the node, so the surviving node does not
+                    # carry the merged-away taxon's name: 232 of 420 collisions
+                    # would otherwise label NCBITaxon:296995 "Exiguobacterium
+                    # enclense" instead of "Exiguobacterium indicum", because
+                    # the retired row happens to come first in the file.
+                    remapped_collisions += 1
+                    continue
                 if node_id in written:
-                    # A retired id and its replacement can both be present
-                    # upstream; after the remap they are one node.
+                    # Several retired ids can merge into one target that is not
+                    # itself present upstream; the first is as good as any.
                     remapped_collisions += 1
                     continue
                 if original_id in dropped or node_id in dropped:

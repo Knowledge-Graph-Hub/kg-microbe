@@ -706,3 +706,20 @@
   url: gdrive:1XYVjpPMW-CiuXm8274Ya5PmxZzRSMNxV
   local_name: gold/GOLD_edges.tsv
   tag: gold
+
+#
+# NCBI taxonomy dump — used only for `merged.dmp`, the retired-taxid to
+# current-taxid map. GOLD's export carries ~950 taxa NCBI has since merged
+# (262981 -> 4914 Lachancea waltii, 2049935 -> 492670 Bacillus velezensis,
+# 2989541 -> 2763025 Bacteroides parvus). Without the remap those organisms
+# point at ids no longer in NCBITaxon, so the trim drops them — losing
+# bacteria we would otherwise keep.
+#
+# The whole taxdump is fetched because NCBI publishes no standalone
+# merged.dmp; the transform reads the one member out of the tarball without
+# extracting it. Tagged `gold` so it travels with the source that needs it.
+#
+-
+  url: https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+  local_name: taxdump.tar.gz
+  tag: gold

@@ -97,17 +97,24 @@ class GoldTransformTest(TestCase):
 
     def test_nodes_orphaned_by_the_trim_are_cleaned_up(self):
         """
-        A study holding only excluded organisms asserts nothing.
+        Orphaning caused by the trim is cleaned up, and the excluded taxon goes.
 
-        That orphaning is caused by our filter, so we clean it; upstream orphans
-        are a modelling question for GOLD and are kept.
+        Two assertions were removed rather than repaired, because the policy they
+        encoded is gone: "a study that still has a microbe stays" and "an upstream
+        orphan sample is reported, not dropped". KG-Microbe now ingests neither
+        studies nor samples, so both node kinds are dropped regardless of what
+        they hold — see ``test_gold_samples_studies_and_taxid_remap.py``.
+
+        The reported-not-dropped behaviour still exists for categories we do
+        ingest; on the real payload it now covers 5 ecosystem nodes rather than
+        279,618 samples.
         """
         nodes, _ = self._run()
         ids = {n["id"] for n in nodes}
 
-        self.assertNotIn("gold:Gs2", ids, "a study left empty by the trim should go")
-        self.assertIn("gold:Gs1", ids, "a study that still has a microbe stays")
-        self.assertIn("gold:Gm1", ids, "an upstream orphan is reported, not dropped")
+        self.assertNotIn("gold:Ga2", ids, "an organism typed to an excluded taxon should go")
+        self.assertNotIn("NCBITaxon:99", ids, "the excluded taxon itself should go")
+        self.assertIn("gold:Ga1", ids, "a microbe organism stays")
 
     def test_no_dangling_endpoints_survive(self):
         """Every surviving edge must resolve to a surviving node."""

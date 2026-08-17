@@ -35,18 +35,35 @@ What it changes, and why each is safe:
   the trim the ontologies transform performs. Those, and the study nodes left
   holding nothing but them, are dropped.
 
+* **Drops samples and studies.** KG-Microbe wants neither. ``MaterialSample``
+  was 279,670 nodes with 242 incident edges, and ``Study`` was reachable only
+  via ``IndividualOrganism -related_to-> Study``, a predicate asserting nothing
+  usable (27.5% of the export). What the ingest is *for* — the organism to
+  environment link, ``occurs_in`` — is untouched. Measured: nodes 975,839 ->
+  637,286, edges 1,110,984 -> 823,250, and the pre-existing orphan warning falls
+  from 279,618 to 5.
+* **Remaps retired NCBI taxids** from ``merged.dmp`` in the taxonomy dump.
+  GOLD's export carries taxa NCBI has since merged, and judging them by the
+  retired id makes the trim drop them along with the organisms typed to them.
+  Measured against the real payload: 611 taxa and 1,473 organisms retained that
+  would otherwise have been discarded, with 534 nodes collapsing onto an
+  existing id. Applied before the trim, since that is the point.
+
 What it deliberately does **not** change, because each needs a modelling decision
 rather than a patch, and is reported instead:
 
-* the 279,618 orphan ``MaterialSample`` nodes (drop them, or populate the join?);
-* ``IndividualOrganism -related_to-> Study`` on 27.5% of edges (which predicate
-  is actually meant?);
 * the 23,695 GOLD-only taxa absent from the NCBITaxon output;
 * the 78 taxon ``name`` disagreements with the ontologies output.
+
+Still open upstream, unaffected by this transform: versioned filenames or a
+published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
+``x`` marker.
 """
 
 import csv
+import io
 import os
+import tarfile
 from pathlib import Path
 from typing import Optional, Union
 
@@ -67,8 +84,20 @@ GOLD_EDGES_FILE = "GOLD_edges.tsv"
 _ECOSYSTEM_PREFIX = "gold.ecosystem:"
 _ONTOLOGY_CLASS = "biolink:OntologyClass"
 
+#: Categories dropped outright. GOLD ships 279,670 ``MaterialSample`` nodes with
+#: 242 incident edges — 279,428 disconnected — and 60,433 ``Study`` nodes whose
+#: only tie to anything is ``IndividualOrganism -related_to-> Study``, a
+#: predicate that asserts nothing usable (289,946 edges, 27.5% of the export).
+#: KG-Microbe wants neither samples nor studies; it wants the organism to
+#: environment link, which is ``occurs_in`` and is unaffected.
+_DROP_CATEGORIES = ("biolink:MaterialSample", "biolink:Study")
+
 #: Reported, not repaired — see the module docstring.
-_REPORTED_CATEGORIES = ("biolink:MaterialSample",)
+_REPORTED_CATEGORIES = ()
+
+#: NCBI's retired-to-current taxid map lives in this member of the taxdump.
+_TAXDUMP_ARCHIVE = "taxdump.tar.gz"
+_MERGED_DMP = "merged.dmp"
 
 #: The trimmed NCBITaxon set, produced by the ontologies transform. GOLD must run
 #: after it. Same shape of dependency as PREGO's on ``mondo_nodes.tsv``.
@@ -93,6 +122,7 @@ class GOLDTransform(Transform):
         :param output_dir: Transform output directory.
         """
         super().__init__(GOLD, input_dir, output_dir)
+        self._merges: Optional[dict] = None
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
@@ -108,7 +138,13 @@ class GOLDTransform(Transform):
             if not path.exists():
                 raise FileNotFoundError(f"{path} is missing; run `poetry run kg download -t gold` first.")
 
-        dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
+        # Order matters: remap retired taxids first, so a taxon NCBI has merged
+        # into a current one is judged by the trim on the id it actually means.
+        # Judging it on the retired id drops ~950 taxa, many of them bacteria.
+        self._taxid_merges()
+        dropped = self._category_drop_set(nodes_in)
+        taxon_dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
+        dropped |= taxon_dropped
         incident = self._write_edges(edges_in, dropped)
         self._write_nodes(nodes_in, dropped, seen_before, incident)
 
@@ -150,6 +186,75 @@ class GOLDTransform(Transform):
             )
         return taxa
 
+    def _taxid_merges(self) -> dict:
+        """
+        NCBI's retired-taxid to current-taxid map, from ``merged.dmp``.
+
+        GOLD's export carries roughly 950 taxa NCBI has since merged. Left
+        alone they point at ids no longer in NCBITaxon, so the trim drops them
+        along with the organisms typed to them — losing bacteria we would
+        otherwise keep, which is the opposite of what the trim is for.
+
+        Read straight out of the tarball; NCBI publishes no standalone
+        ``merged.dmp``. Absence is non-fatal: without it the remap is a no-op
+        and the affected taxa are dropped as before, which is the pre-existing
+        behaviour rather than a new failure.
+
+        :return: ``{"NCBITaxon:<old>": "NCBITaxon:<new>"}``, empty if unavailable.
+        """
+        if self._merges is not None:
+            return self._merges
+
+        merges: dict = {}
+        archive = self.input_base_dir / _TAXDUMP_ARCHIVE
+        if not archive.is_file():
+            print(
+                f"[gold] {archive} not found — retired NCBI taxids will not be remapped; "
+                "run `poetry run kg download -t gold`"
+            )
+            self._merges = merges
+            return merges
+
+        with tarfile.open(archive, "r:gz") as tar:
+            member = tar.extractfile(_MERGED_DMP)
+            if member is None:
+                print(f"[gold] {_MERGED_DMP} missing from {archive.name}; no remap applied")
+                self._merges = merges
+                return merges
+            for raw in io.TextIOWrapper(member, encoding="utf-8"):
+                # merged.dmp rows look like:  old_id\t|\tnew_id\t|
+                parts = [f.strip() for f in raw.split("|")]
+                if len(parts) >= 2 and parts[0].isdigit() and parts[1].isdigit():
+                    merges[f"{_TAXON_PREFIX}{parts[0]}"] = f"{_TAXON_PREFIX}{parts[1]}"
+        print(f"[gold] loaded {len(merges):,} NCBI taxid merges from {_MERGED_DMP}")
+        self._merges = merges
+        return merges
+
+    def _remap(self, node_id: str) -> str:
+        """
+        Rewrite a retired NCBI taxid to its current one.
+
+        :param node_id: Any node id; non-taxon ids pass through untouched.
+        :return: The current id, or the input when there is no merge record.
+        """
+        return self._taxid_merges().get(node_id, node_id)
+
+    def _category_drop_set(self, nodes_in: Path) -> set:
+        """
+        Ids whose category KG-Microbe does not ingest.
+
+        :param nodes_in: Upstream ``GOLD_nodes.tsv``.
+        :return: Ids of sample and study nodes.
+        """
+        with nodes_in.open(newline="") as handle:
+            drop = {
+                row["id"]
+                for row in csv.DictReader(handle, delimiter="\t")
+                if any(c in (row.get("category") or "") for c in _DROP_CATEGORIES)
+            }
+        print(f"[gold] dropping {len(drop):,} sample/study nodes and every edge touching them")
+        return drop
+
     def _taxon_drop_set(self, nodes_in: Path, edges_in: Path) -> tuple:
         """
         Decide what the trim removes, before anything is written.
@@ -169,21 +274,24 @@ class GOLDTransform(Transform):
         if permitted is None:
             with edges_in.open(newline="") as handle:
                 for row in csv.DictReader(handle, delimiter="\t"):
-                    seen_before.add(row["subject"])
-                    seen_before.add(row["object"])
+                    # Remap here too. The writers remap unconditionally, so
+                    # recording raw ids would desync the orphan bookkeeping and
+                    # drop nodes that do still have a surviving edge.
+                    seen_before.add(self._remap(row["subject"]))
+                    seen_before.add(self._remap(row["object"]))
             return set(), seen_before
 
         with nodes_in.open(newline="") as handle:
             excluded = {
                 row["id"]
                 for row in csv.DictReader(handle, delimiter="\t")
-                if row["id"].startswith(_TAXON_PREFIX) and row["id"] not in permitted
+                if row["id"].startswith(_TAXON_PREFIX) and self._remap(row["id"]) not in permitted
             }
         organisms: set = set()
         with edges_in.open(newline="") as handle:
             for row in csv.DictReader(handle, delimiter="\t"):
-                seen_before.add(row["subject"])
-                seen_before.add(row["object"])
+                seen_before.add(self._remap(row["subject"]))
+                seen_before.add(self._remap(row["object"]))
                 if row["predicate"] == _IN_TAXON and row["object"] in excluded:
                     organisms.add(row["subject"])
         print(
@@ -210,8 +318,8 @@ class GOLDTransform(Transform):
             writer = csv.writer(out, delimiter="\t")
             writer.writerow(self.edge_header)
             for row in reader:
-                subject, obj = row["subject"], row["object"]
-                if subject in dropped or obj in dropped:
+                subject, obj = self._remap(row["subject"]), self._remap(row["object"])
+                if row["subject"] in dropped or row["object"] in dropped or subject in dropped or obj in dropped:
                     removed += 1
                     continue
                 incident.add(subject)
@@ -228,7 +336,9 @@ class GOLDTransform(Transform):
                         MANUAL_AGENT,
                     ]
                 )
-        print(f"[gold] edges emitted: {kept:,}" + (f" (dropped {removed:,} by the trim)" if removed else ""))
+        # "dropped" spans both reasons — the taxon trim and the sample/study
+        # categories — so do not attribute it to the trim alone.
+        print(f"[gold] edges emitted: {kept:,}" + (f" (dropped {removed:,})" if removed else ""))
         return incident
 
     def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set) -> None:
@@ -245,7 +355,7 @@ class GOLDTransform(Transform):
         :param seen_before: IDs incident to an edge in the upstream payload.
         :param incident: IDs incident to a surviving edge.
         """
-        emitted = removed = newly_orphaned = 0
+        emitted = removed = newly_orphaned = remapped_collisions = 0
         pre_existing_orphans: set = set()
         with (
             nodes_in.open(newline="") as handle,
@@ -254,9 +364,16 @@ class GOLDTransform(Transform):
             reader = csv.DictReader(handle, delimiter="\t")
             writer = csv.writer(out, delimiter="\t")
             writer.writerow(self.node_header)
+            written: set = set()
             for row in reader:
-                node_id = row["id"]
-                if node_id in dropped:
+                original_id = row["id"]
+                node_id = self._remap(original_id)
+                if node_id in written:
+                    # A retired id and its replacement can both be present
+                    # upstream; after the remap they are one node.
+                    remapped_collisions += 1
+                    continue
+                if original_id in dropped or node_id in dropped:
                     removed += 1
                     continue
                 if node_id in seen_before and node_id not in incident:
@@ -269,6 +386,7 @@ class GOLDTransform(Transform):
                 if node_id.startswith(_ECOSYSTEM_PREFIX) and _ONTOLOGY_CLASS not in category:
                     category = f"{category}|{_ONTOLOGY_CLASS}" if category else _ONTOLOGY_CLASS
                 emitted += 1
+                written.add(node_id)
                 writer.writerow(
                     [
                         node_id,
@@ -285,6 +403,10 @@ class GOLDTransform(Transform):
         print(f"[gold] nodes emitted: {emitted:,}" + (f" (dropped {removed:,})" if removed else ""))
         if newly_orphaned:
             print(f"[gold]   of which {newly_orphaned:,} were left edgeless by the trim and cleaned up")
+        if remapped_collisions:
+            print(
+                f"[gold]   {remapped_collisions:,} node(s) collapsed onto an existing id after the retired-taxid remap"
+            )
         self._report_orphans(pre_existing_orphans, emitted)
 
     @staticmethod

@@ -1,0 +1,24 @@
+# madin_environment_id_corrections.tsv
+#
+# Corrections to the ENVO_ids column of Madin et al's environments.csv.
+#
+# WHY THIS FILE EXISTS: environments.csv is downloaded, not tracked
+# (download.yaml -> bacteria-archaea-traits/bacteria-archaea-traits), so an
+# edit to data/raw/ is erased by the next `kg download`. The correction has to
+# live in the repo and be applied at transform time.
+#
+# WHY A TSV AND NOT A DICT IN madin_etal.py: kg_microbe/utils/stub_curie_collection.py
+# scans mapping TSVs — not code — to decide which CURIEs the ontologies_stubs
+# transform must emit nodes for. PO:0009005 is not carried by any loaded
+# ontology, so a correction written in Python would silently produce an
+# untyped phantom node, which is the defect fixed for NCBITaxon in #790/#815.
+# Registering the path in DEFAULT_MAPPING_PATHS is what makes the stub appear.
+#
+# Keyed on the `Type` column of environments.csv (the habitat key), because
+# that is what identifies the row independently of the value being corrected.
+#
+# Report these upstream. Both are id/label pairs that agree with each other
+# while matching neither the row's own key (#796, reported from HabitatMech).
+environment_type	wrong_object_id	wrong_object_label	object_id	object_label	notes
+host_plant_root-associated	NCBITaxon:1	root	PO:0009005	root	NCBITaxon:1 is the root of the TAXONOMY, matched on the label "root"; the row describes a plant root. Live effect before the fix: 628 merged edges asserting `NCBITaxon:1 biolink:location_of <organism>` — the root of the tree of life as a habitat. HabitatMech drops these by refusing taxa as habitats; kg-microbe did not, so it asserted them.
+host_animal_endotherm_nasopharyngeal	UBERON:0000065	respiratory tract	UBERON:0001728	nasopharynx	The row is specifically nasopharyngeal; UBERON:0000065 is the whole respiratory tract, so bands measured in the nasopharynx (Gradients high, Structural high) were asserted about trachea, bronchi and alveoli too. 735 edges before the fix.

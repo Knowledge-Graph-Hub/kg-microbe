@@ -93,6 +93,65 @@ PARENT_DIR = Path(__file__).resolve().parent
 # quality is not a location.
 _QUALITY_CURIE_PREFIXES = ("PATO:",)
 
+#: Corrections to environments.csv, which is downloaded rather than tracked, so
+#: a fix to data/raw/ is erased by the next `kg download`.
+ENVIRONMENT_ID_CORRECTIONS_FILE = (
+    Path(__file__).resolve().parents[3] / "mappings" / "madin_environment_id_corrections.tsv"
+)
+
+
+def _apply_environment_id_corrections(envo_df: "pd.DataFrame") -> "pd.DataFrame":
+    """
+    Replace upstream ENVO_ids values that name the wrong term.
+
+    Two rows in Madin et al's environments.csv carry an id/label pair that agrees
+    with itself while matching neither the row's own key (#796):
+
+    * ``host_plant_root-associated`` -> ``NCBITaxon:1``, the root of the
+      *taxonomy*, matched on the label "root". The row describes a plant root.
+      This produced 628 merged edges asserting the root of the tree of life is
+      the ``location_of`` an organism.
+    * ``host_animal_endotherm_nasopharyngeal`` -> ``UBERON:0000065``, the whole
+      respiratory tract, so nasopharyngeal measurements were asserted about
+      trachea, bronchi and alveoli too.
+
+    Corrections are matched on the exact wrong value, not applied blindly: if
+    upstream fixes a row, the correction stops firing instead of overwriting the
+    new value with a stale one. Unapplied rows are reported so the file cannot
+    rot silently.
+
+    :param envo_df: Raw environments.csv frame.
+    :return: The frame with corrected ids and labels.
+    """
+    if not ENVIRONMENT_ID_CORRECTIONS_FILE.is_file():
+        return envo_df
+
+    corrections = pd.read_csv(ENVIRONMENT_ID_CORRECTIONS_FILE, sep="\t", comment="#", dtype=str).fillna("")
+    applied = 0
+    for _, row in corrections.iterrows():
+        target = envo_df[TYPE_COLUMN] == row["environment_type"]
+        wrong = envo_df[ENVO_ID_COLUMN].astype(str).str.strip() == row["wrong_object_id"]
+        match = target & wrong
+        hits = int(match.sum())
+        if not hits:
+            print(
+                f"  [madin_etal] environment correction not applied: "
+                f"{row['environment_type']!r} no longer carries {row['wrong_object_id']} "
+                "— upstream may have fixed it; drop the row from "
+                f"{ENVIRONMENT_ID_CORRECTIONS_FILE.name}"
+            )
+            continue
+        envo_df.loc[match, ENVO_ID_COLUMN] = row["object_id"]
+        envo_df.loc[match, ENVO_TERMS_COLUMN] = row["object_label"]
+        applied += hits
+        print(
+            f"  [madin_etal] corrected {row['environment_type']}: "
+            f"{row['wrong_object_id']} -> {row['object_id']} ({hits} row(s))"
+        )
+    if applied:
+        print(f"  [madin_etal] applied {applied} environment id correction(s)")
+    return envo_df
+
 
 def _partition_substrate_quality_curies(
     curies: List[str],
@@ -295,6 +354,7 @@ class MadinEtAlTransform(Transform):
 
         envo_cols = [TYPE_COLUMN, ENVO_TERMS_COLUMN, ENVO_ID_COLUMN]
         envo_df = pd.read_csv(self.environments_file, low_memory=False, usecols=envo_cols).drop_duplicates()
+        envo_df = _apply_environment_id_corrections(envo_df)
         envo_mapping = envo_df.set_index(TYPE_COLUMN).T.to_dict()
         traits_columns_of_interest = [
             TAX_ID_COLUMN,

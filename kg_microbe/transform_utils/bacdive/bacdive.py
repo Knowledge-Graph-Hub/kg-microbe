@@ -3264,6 +3264,30 @@ class BacDiveTransform(Transform):
                                         mapped_label or isol_source,
                                     )
                                 )
+                            elif stub_prefix == "NCBITaxon" and subject_id not in self.ncbitaxon_labels:
+                                # The prefix guard above permits NCBITaxon because the
+                                # ontologies transform loads it — but that transform
+                                # emits a *trimmed* taxonomy, so permission at prefix
+                                # granularity does not imply the specific id is there.
+                                # 8 of the 22 trusted NCBITaxon targets are absent
+                                # (Nematoda, Annelida, Crustacea, Tunicata, Fishes,
+                                # Salmonidae, Amphibia, Reptilia) and reached the merged
+                                # graph as `biolink:NamedThing` with no label (#790).
+                                #
+                                # The ones that ARE typed are typed by accident: ENVO's
+                                # import closure happens to carry 193 NCBITaxon nodes,
+                                # Mammalia among them. Which host taxa resolve should not
+                                # depend on that, so emit a typed stub for any the trim
+                                # dropped. OrganismTaxon, not STUB_ONTOLOGY_CATEGORY —
+                                # these are taxa, and typing them as OntologyClass is
+                                # what breaks the Biolink domain check on `location_of`.
+                                node_writer.writerow(
+                                    self._create_node_row(
+                                        subject_id,
+                                        NCBI_CATEGORY,
+                                        mapped_label or isol_source,
+                                    )
+                                )
                         else:
                             subject_id = ISOLATION_SOURCE_PREFIX + isol_source.lower()
                             # Only write a placeholder node when no ontology mapping exists;

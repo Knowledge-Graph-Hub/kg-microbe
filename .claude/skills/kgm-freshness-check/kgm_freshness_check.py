@@ -48,6 +48,48 @@ from typing import Iterable, Optional
 
 REPO = Path(__file__).resolve().parents[3]
 TRANSFORM_ROOT = REPO / "kg_microbe" / "transform_utils"
+
+
+def _declared_data_inputs(source: str) -> tuple:
+    """
+    Repo-relative curation files a transform reads, from its ``DATA_INPUTS``.
+
+    Read by importing the transform classes rather than by keeping a second
+    list here: a hard-coded table in this skill would drift from the code it
+    describes, and the whole point of #812 is that a stale declaration is
+    indistinguishable from a fresh one. Import failure degrades to "no declared
+    inputs" so the skill still runs in an environment without kg_microbe
+    importable.
+
+    :param source: Transform source name.
+    :return: Tuple of repo-relative paths, empty when none are declared.
+    """
+    try:
+        from kg_microbe.transform import DATA_SOURCES  # noqa: PLC0415 - optional, see docstring
+    except Exception:
+        return ()
+    cls = DATA_SOURCES.get(source)
+    return tuple(getattr(cls, "DATA_INPUTS", ()) or ()) if cls is not None else ()
+
+
+def _latest_data_input_commit(source: str, ref: str) -> tuple[Optional[int], Optional[str]]:
+    """
+    Latest commit time across a source's declared data inputs.
+
+    Uses commit time, not mtime: these files are tracked, and ``git checkout``
+    rewrites mtimes without changing content (#797).
+
+    :param source: Transform source name.
+    :param ref: Git ref to measure against.
+    :return: ``(timestamp, "path @ sha")``, or ``(None, None)``.
+    """
+    newest_ts: Optional[int] = None
+    newest_desc: Optional[str] = None
+    for rel in _declared_data_inputs(source):
+        ts, sha = _latest_commit(REPO / rel, ref)
+        if ts is not None and (newest_ts is None or ts > newest_ts):
+            newest_ts, newest_desc = ts, f"{rel} @ {sha}"
+    return newest_ts, newest_desc
 TRANSFORMED_DIR = REPO / "data" / "transformed"
 MERGE_UTILS_DIR = REPO / "kg_microbe" / "merge_utils"
 DEFAULT_REF = "origin/master"
@@ -286,16 +328,31 @@ def check_source(source: str, ref: str) -> SourceReport:
     elif commit_ts is None:
         status = "FRESH"
         note = f"no commit on {ref} touches this dir; treating as fresh"
-    elif out_mtime >= commit_ts:
-        status = "FRESH"
-        note = ""
-    else:
+    elif out_mtime < commit_ts:
         delta_days = (commit_ts - out_mtime) / 86400.0
         status = "STALE_VS_CODE"
         note = (
             f"code advanced {delta_days:.1f} days after last output build; "
             f"rerun `poetry run kg transform -s {source}`"
         )
+    else:
+        status = "FRESH"
+        note = ""
+
+    # Data staleness is checked even when the code is current: a mapping
+    # correction changes the output without touching a line of transform code,
+    # and reporting FRESH there is what let a re-merge ship groundings two
+    # merged PRs had already fixed (#812).
+    if status in {"FRESH", "STALE_VS_CODE"}:
+        data_ts, data_desc = _latest_data_input_commit(source, ref)
+        if data_ts is not None and out_mtime is not None and out_mtime < data_ts:
+            delta_days = (data_ts - out_mtime) / 86400.0
+            status = "STALE_VS_DATA" if status == "FRESH" else "STALE_VS_CODE_AND_DATA"
+            note = (
+                f"data input advanced {delta_days:.1f} days after last output build "
+                f"({data_desc}); rerun `poetry run kg transform -s {source}`"
+                + (f" — {note}" if note else "")
+            )
 
     return SourceReport(
         source=source,
@@ -486,8 +543,19 @@ def main() -> int:
         print("")
         print("SUMMARY")
         print("-------")
-        for status in ["FRESH", "STALE_VS_CODE", "LOCAL_CHANGES", "MISSING_OUTPUT", "NO_CODE"]:
-            print(f"  {status:<16} {c.get(status, 0)}")
+        # Any status seen must appear, even one added later: a summary that
+        # silently omits a category reads as a clean run (#812).
+        known = [
+            "FRESH",
+            "STALE_VS_CODE",
+            "STALE_VS_DATA",
+            "STALE_VS_CODE_AND_DATA",
+            "LOCAL_CHANGES",
+            "MISSING_OUTPUT",
+            "NO_CODE",
+        ]
+        for status in known + sorted(set(c) - set(known)):
+            print(f"  {status:<24} {c.get(status, 0)}")
         print(f"  merge            {merge.status}")
 
     # exit code

@@ -230,6 +230,8 @@ class OntologiesStubsTransform(Transform):
 
     """Emit one labelled stub node per referenced NCIT / mesh / BTO / PO / MICRO CURIE."""
 
+    DATA_INPUTS = ("mappings/isolation_source_to_ontology.tsv",)
+
     def __init__(
         self,
         input_dir: Optional[Path] = None,

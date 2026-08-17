@@ -222,6 +222,11 @@ class BacDiveTransform(Transform):
 
     """Template for how the transform class would be designed."""
 
+    DATA_INPUTS = (
+        "mappings/isolation_source_to_ontology.tsv",
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+    )
+
     def __init__(
         self,
         input_dir: Optional[Path] = None,

@@ -131,6 +131,8 @@ class MicrobeDecoderTransform(Transform):
 
     """Transform the MicrobeDecoder wide CSV into KGX nodes and edges."""
 
+    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+
     def __init__(
         self,
         input_dir: Optional[Union[str, Path]] = None,

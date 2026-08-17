@@ -34,6 +34,22 @@ class Transform:
     DEFAULT_INPUT_DIR = DATA_DIR / "raw"
     DEFAULT_OUTPUT_DIR = DATA_DIR / "transformed"
 
+    #: Repo-relative curation files this transform reads, beyond its own
+    #: ``data/raw/`` download.
+    #:
+    #: Declared so freshness tooling can tell that an output is stale against
+    #: its *data* rather than only its code. Without it a mapping correction
+    #: lands, every consumer keeps reporting FRESH, and a re-merge silently
+    #: ships the old groundings: #778 corrected 16 isolation-source ids and
+    #: #786 rewrote the unified chemical SSSOM, and the merged KG built
+    #: afterwards still asserted 75 organisms isolated from a "Cell Line",
+    #: because nothing re-ran the transforms that read those files (#812).
+    #:
+    #: Paths are relative to the repo root. Keep them tracked in git — the
+    #: freshness check uses commit time, not mtime, because `git checkout`
+    #: rewrites mtimes without changing content (#797).
+    DATA_INPUTS: tuple = ()
+
     def __init__(
         self,
         source_name,

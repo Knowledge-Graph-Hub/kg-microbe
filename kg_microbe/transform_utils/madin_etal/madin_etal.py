@@ -146,6 +146,8 @@ class MadinEtAlTransform(Transform):
         -   ROBOT using 'robot_utils' module.
     """
 
+    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+
     def __init__(self, input_dir: str, output_dir: str, nlp=True) -> None:
         """
         Initialize MadinEtAlTransform Class.

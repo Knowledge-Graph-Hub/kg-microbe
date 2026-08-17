@@ -40,6 +40,8 @@ class CTDTransform(Transform):
 
     """A class used to represent a transformation process for UniProt data."""
 
+    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """
         Initialize the class with optional input and output directories.

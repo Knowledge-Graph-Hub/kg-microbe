@@ -1,6 +1,5 @@
 """Transform module."""
 
-import logging
 from pathlib import Path
 from typing import List, Optional
 
@@ -106,16 +105,62 @@ def transform(
     :param input_dir: A string pointing to the directory to import data from.
     :param output_dir: A string pointing to the directory to output data to.
     :param sources: A list of sources to transform.
+    :raises ValueError: If a requested source is not registered in DATA_SOURCES.
     """
     if not sources:
         # run all sources
         sources = list(DATA_SOURCES.keys())
 
+    # Refuse an unknown source instead of skipping it. The old loop guarded with
+    # `if source in DATA_SOURCES:` and had no else, so a typo produced exit 0 and
+    # no output — indistinguishable from a successful run, and from a transform
+    # that died early (#813).
+    unknown = [s for s in sources if s not in DATA_SOURCES]
+    if unknown:
+        raise ValueError(
+            f"Unknown transform source(s): {', '.join(sorted(unknown))}. "
+            f"Registered sources: {', '.join(sorted(DATA_SOURCES))}"
+        )
+
     for source in sources:
-        if source in DATA_SOURCES:
-            logging.info(f"Parsing {source}")
-            t = DATA_SOURCES[source](input_dir, output_dir)
-            if source in ONTOLOGIES_MAP.keys():
-                t.run(ONTOLOGIES_MAP[source])
-            else:
-                t.run(show_status=show_status)
+        # print, not logging.info: the CLI does not configure a handler that
+        # shows INFO, so the old log line was invisible and a run that produced
+        # nothing looked identical to one that worked.
+        print(f"[transform] {source}: starting", flush=True)
+        t = DATA_SOURCES[source](input_dir, output_dir)
+        if source in ONTOLOGIES_MAP.keys():
+            t.run(ONTOLOGIES_MAP[source])
+        else:
+            t.run(show_status=show_status)
+
+        written = _describe_output(t, source)
+        print(f"[transform] {source}: done — {written}", flush=True)
+
+
+def _describe_output(transform_obj, source: str) -> str:
+    """
+    Summarise what a transform actually wrote, for the completion line.
+
+    Reports row counts rather than "done", because the failure this guards
+    against is a run that completes without producing anything (#813).
+
+    :param transform_obj: The Transform instance that just ran.
+    :param source: Source name, used when the instance exposes no output dir.
+    :return: Human-readable summary of the files written.
+    """
+    out_dir = getattr(transform_obj, "output_dir", None)
+    if out_dir is None:
+        return f"no output_dir attribute on {source} transform"
+    parts = []
+    for name in ("nodes.tsv", "edges.tsv"):
+        path = Path(out_dir) / name
+        if not path.is_file():
+            continue
+        try:
+            with path.open("r", encoding="utf-8") as handle:
+                rows = max(sum(1 for _ in handle) - 1, 0)
+        except OSError as exc:  # pragma: no cover - unreadable output is rare
+            parts.append(f"{name} unreadable ({exc})")
+            continue
+        parts.append(f"{name}: {rows:,} rows")
+    return "; ".join(parts) if parts else f"wrote no nodes.tsv/edges.tsv in {out_dir}"

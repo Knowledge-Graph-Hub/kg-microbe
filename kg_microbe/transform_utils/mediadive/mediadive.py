@@ -129,6 +129,8 @@ class MediaDiveTransform(Transform):
 
     """Template for how the transform class would be designed."""
 
+    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """Instantiate part."""
         source_name = MEDIADIVE

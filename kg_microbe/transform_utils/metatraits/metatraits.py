@@ -323,6 +323,8 @@ class MetaTraitsTransform(Transform):
 
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
+    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+
     # Measurement traits that should be excluded from unmapped_traits.tsv
     # These represent quantitative measurements, not ontology classes
     MEASUREMENT_TRAITS = {

@@ -85,11 +85,14 @@ published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
 import csv
 import io
 import os
+import re
 import tarfile
 from pathlib import Path
 from typing import Optional, Union
 
 from kg_microbe.transform_utils.constants import (
+    EXACT_MATCH,
+    EXACT_MATCH_PREDICATE,
     GOLD,
     KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
@@ -138,6 +141,12 @@ _UNINFORMATIVE_ECOSYSTEM_LABELS = frozenset({"", "unclassified", "unknown", "oth
 #: to the standard edge header for this transform so an upward resolution stays
 #: auditable and reversible.
 _ORIGINAL_OBJECT = "original_object"
+
+#: The GOLD ecosystem classification as OWL, carrying curated ENVO mappings.
+#: Joined on **label**, because the ontology uses label-derived IRIs
+#: (``GOLDVOCAB:Paddy-field/soil``) while the export uses numeric ids.
+_GOLD_ONTOLOGY_FILE = "gold_ontology.owl"
+_ENVO_PREFIX = "ENVO:"
 _TAXON_PREFIX = "NCBITaxon:"
 
 
@@ -154,6 +163,8 @@ class GOLDTransform(Transform):
         """
         super().__init__(GOLD, input_dir, output_dir)
         self._merges: Optional[dict] = None
+        self._envo_map: Optional[dict] = None
+        self._envo_nodes_cache: Optional[set] = None
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
@@ -176,8 +187,8 @@ class GOLDTransform(Transform):
         dropped = self._category_drop_set(nodes_in)
         taxon_dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
         dropped |= taxon_dropped
-        resolution = self._ecosystem_resolution(nodes_in, edges_in)
-        incident = self._write_edges(edges_in, dropped, resolution)
+        resolution, ecosystem_labels = self._ecosystem_resolution(nodes_in, edges_in)
+        incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels)
         self._write_nodes(nodes_in, dropped, seen_before, incident)
 
     def _trimmed_taxa(self) -> Optional[set]:
@@ -218,6 +229,75 @@ class GOLDTransform(Transform):
             )
         return taxa
 
+    def _envo_nodes(self) -> set:
+        """
+        ENVO ids the ontologies transform emits.
+
+        Used to refuse a crosswalk edge whose target has no node, rather than
+        creating an untyped endpoint the merge would materialise as
+        ``biolink:NamedThing``.
+
+        :return: Set of ENVO CURIEs, empty when the extract is absent.
+        """
+        if self._envo_nodes_cache is not None:
+            return self._envo_nodes_cache
+        available: set = set()
+        path = self.output_base_dir / "ontologies" / "envo_nodes.tsv"
+        if path.is_file():
+            with path.open(encoding="utf-8") as handle:
+                handle.readline()
+                for line in handle:
+                    curie = line.split("\t", 1)[0]
+                    if curie.startswith(_ENVO_PREFIX):
+                        available.add(curie)
+        self._envo_nodes_cache = available
+        return available
+
+    def _envo_crosswalk(self) -> dict:
+        """
+        Map lowercased GOLD ecosystem label to an ENVO CURIE.
+
+        Read from the GOLD ontology (``cmungall/gold-ontology``), which carries
+        curated ``skos:exactMatch`` links to ENVO. Only exactMatch is used: the
+        MIxS ``env_broad`` / ``env_local`` / ``env_medium`` triad is contextual
+        scale annotation rather than equivalence, and measured against our
+        targets it adds essentially nothing beyond exactMatch (26.9% edge
+        coverage either way).
+
+        Absence is non-fatal — no crosswalk edges are emitted and the ecosystem
+        vocabulary stays an island, which is the behaviour before this existed.
+
+        :return: ``{label: ENVO CURIE}``, empty when the ontology is unavailable.
+        """
+        if self._envo_map is not None:
+            return self._envo_map
+
+        mapping: dict = {}
+        path = self.input_base_dir / _GOLD_ONTOLOGY_FILE
+        if not path.is_file():
+            print(f"[gold] {path} not found — no ENVO crosswalk emitted; run `poetry run kg download -t gold`")
+            self._envo_map = mapping
+            return mapping
+
+        try:
+            import rdflib
+        except ImportError:  # pragma: no cover - rdflib is a hard dependency
+            print("[gold] rdflib unavailable; no ENVO crosswalk emitted")
+            self._envo_map = mapping
+            return mapping
+
+        graph = rdflib.Graph()
+        graph.parse(str(path))
+        skos_exact = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#exactMatch")
+        labels = {s: str(o) for s, o in graph.subject_objects(rdflib.RDFS.label)}
+        for subject, obj in graph.subject_objects(skos_exact):
+            match = re.search(r"ENVO_(\d+)$", str(obj))
+            if match and subject in labels:
+                mapping.setdefault(labels[subject].strip().lower(), f"{_ENVO_PREFIX}{match.group(1)}")
+        print(f"[gold] ENVO crosswalk: {len(mapping):,} GOLD labels carry a skos:exactMatch")
+        self._envo_map = mapping
+        return mapping
+
     def _ecosystem_resolution(self, nodes_in: Path, edges_in: Path) -> dict:
         """
         Map each uninformative ecosystem node to its nearest informative ancestor.
@@ -238,7 +318,7 @@ class GOLDTransform(Transform):
 
         :param nodes_in: Upstream ``GOLD_nodes.tsv``.
         :param edges_in: Upstream ``GOLD_edges.tsv``.
-        :return: ``{ecosystem id: resolved id or None}`` for nodes needing it.
+        :return: ``({ecosystem id: resolved id or None}, {ecosystem id: label})``.
         """
         labels: dict = {}
         with nodes_in.open(newline="") as handle:
@@ -275,7 +355,7 @@ class GOLDTransform(Transform):
             f"[gold] ecosystem resolution: {resolvable:,} of {len(resolution):,} uninformative "
             f"nodes resolve to a named ancestor; {len(resolution) - resolvable:,} resolve to nothing"
         )
-        return resolution
+        return resolution, labels
 
     def _taxid_merges(self) -> dict:
         """
@@ -391,13 +471,14 @@ class GOLDTransform(Transform):
         )
         return excluded | organisms, seen_before
 
-    def _write_edges(self, edges_in: Path, dropped: set, resolution: dict) -> set:
+    def _write_edges(self, edges_in: Path, dropped: set, resolution: dict, ecosystem_labels: dict) -> set:
         """
         Write surviving edges, resolving uninformative ecosystem targets upward.
 
         :param edges_in: Upstream ``GOLD_edges.tsv``.
         :param dropped: IDs removed by the trim.
         :param resolution: Ecosystem id to nearest informative ancestor, or None.
+        :param ecosystem_labels: Ecosystem id to its label, for the ENVO crosswalk.
         :return: IDs incident to at least one surviving edge.
         """
         incident: set = set()
@@ -443,6 +524,50 @@ class GOLDTransform(Transform):
                         original_object,
                     ]
                 )
+            # Bridge the ecosystem vocabulary to ENVO. Emitted as edges rather
+            # than by rewriting `occurs_in` targets, so GOLD's own hierarchy
+            # survives intact and the crosswalk is inspectable on its own. A
+            # consumer reaches ENVO in two hops:
+            #   organism -occurs_in-> gold.ecosystem: -exact_match-> ENVO:
+            crosswalk = self._envo_crosswalk()
+            bridged = unresolvable = 0
+            if crosswalk:
+                # Only bridge to ENVO terms the ontologies transform actually
+                # carries. 7 of the 210 targets are absent from our extract, and
+                # emitting those would mint untyped `biolink:NamedThing`
+                # phantoms — the defect fixed for NCBITaxon in #815, for LPSN in
+                # #817 and for the taxid remap in #819. Not repeating it here.
+                available = self._envo_nodes()
+                for eco_id, label in sorted(ecosystem_labels.items()):
+                    if eco_id not in incident:
+                        continue  # nothing points at it after resolution
+                    envo = crosswalk.get(label.strip().lower())
+                    if not envo:
+                        continue
+                    if available and envo not in available:
+                        unresolvable += 1
+                        continue
+                    kept += 1
+                    writer.writerow(
+                        [
+                            eco_id,
+                            EXACT_MATCH_PREDICATE,
+                            envo,
+                            EXACT_MATCH,
+                            f"infores:{GOLD}",
+                            KNOWLEDGE_ASSERTION,
+                            MANUAL_AGENT,
+                            "",
+                        ]
+                    )
+                    bridged += 1
+                print(f"[gold]   ENVO crosswalk: {bridged:,} ecosystem nodes bridged to ENVO")
+                if unresolvable:
+                    print(
+                        f"[gold]   {unresolvable:,} skipped — their ENVO term is not in "
+                        "data/transformed/ontologies/envo_nodes.tsv"
+                    )
+
         # "dropped" spans both reasons — the taxon trim and the sample/study
         # categories — so do not attribute it to the trim alone.
         print(f"[gold] edges emitted: {kept:,}" + (f" (dropped {removed:,})" if removed else ""))

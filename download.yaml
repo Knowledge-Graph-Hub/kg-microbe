@@ -723,3 +723,19 @@
   url: https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
   local_name: taxdump.tar.gz
   tag: gold
+
+#
+# GOLD ontology — the JGI ecosystem classification as OWL, with curated ENVO
+# mappings (`skos:exactMatch` plus the MIxS env_broad / env_local / env_medium
+# triad). Sourced from the canonical GitHub repo rather than BioPortal, which
+# gates its API behind a key; OLS4 lists this same file as the ontology's
+# location.
+#
+# Without it GOLD's `gold.ecosystem:` vocabulary is an island: KG-Microbe models
+# environments in ENVO everywhere else, so a GOLD environment and a BacDive
+# environment for the same organism never meet.
+#
+-
+  url: https://raw.githubusercontent.com/cmungall/gold-ontology/refs/heads/main/gold.owl
+  local_name: gold_ontology.owl
+  tag: gold

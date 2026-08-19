@@ -135,3 +135,40 @@ class EcosystemResolutionTest(TestCase):
         from kg_microbe.transform_utils.gold.gold import _UNINFORMATIVE_ECOSYSTEM_LABELS
 
         self.assertIn("root", _UNINFORMATIVE_ECOSYSTEM_LABELS)
+
+
+class EnvoCrosswalkTest(TestCase):
+
+    """The GOLD ontology's curated ENVO mappings bridge the ecosystem island."""
+
+    def test_the_crosswalk_is_gated_on_the_envo_node_existing(self):
+        """
+        7 of 210 real ENVO targets are absent from our ENVO extract.
+
+        Emitting those would mint untyped `biolink:NamedThing` phantoms — the
+        defect fixed for NCBITaxon in #815, LPSN in #817 and the taxid remap in
+        #819. Refusing is the third repetition of the same lesson, so it is a
+        guard rather than an accident.
+        """
+        tmp = Path(tempfile.mkdtemp())
+        out = tmp / "transformed"
+        (out / "ontologies").mkdir(parents=True)
+        with (out / "ontologies" / "envo_nodes.tsv").open("w", newline="") as fh:
+            w = csv.writer(fh, delimiter="\t")
+            w.writerow(["id", "category", "name"])
+            w.writerow(["ENVO:00002007", "biolink:NamedThing", "sediment"])
+        t = GOLDTransform(output_dir=out)
+        t.output_base_dir = out
+        available = t._envo_nodes()
+        self.assertIn("ENVO:00002007", available)
+        self.assertNotIn("ENVO:02000145", available)
+
+    def test_a_missing_ontology_degrades_to_no_crosswalk(self):
+        """
+        The crosswalk is an improvement, not a precondition.
+
+        Without it the ecosystem vocabulary stays an island, which is the
+        behaviour before this existed — not a new failure.
+        """
+        t = GOLDTransform(input_dir=Path(tempfile.mkdtemp()))
+        self.assertEqual(t._envo_crosswalk(), {})

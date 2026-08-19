@@ -207,6 +207,12 @@ class PredicateAndSiteTest(TestCase):
 
         for prefix in ("PATO:", "CHEBI:", "CL:"):
             self.assertNotIn(prefix, _SITE_PREFIXES)
+        # mesh spans anatomy, disease, chemicals AND organisms under one
+        # namespace, so a prefix cannot express "is a site" for it: the join
+        # produced `Invertebrates -> mesh:D007448` (a taxon group, the very case
+        # excluded for NCBITaxon) and `Polycyclic aromatic hydrocarbons ->
+        # mesh:D011084` (a chemical class), both label-matching exactly (#823).
+        self.assertNotIn("mesh:", _SITE_PREFIXES)
         for prefix in ("ENVO:", "UBERON:"):
             self.assertIn(prefix, _SITE_PREFIXES)
 

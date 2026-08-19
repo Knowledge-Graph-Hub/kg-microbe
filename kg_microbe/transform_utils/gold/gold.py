@@ -203,7 +203,17 @@ _HOST_TAXON_PREFIXES = ("NCBITaxon:",)
 #: family-mismatch class as `DISALLOWED_OBJECT_SOURCES` in
 #: `isolation_source_mapping_utils.py` and the substrate/quality partition in
 #: `madin_etal.py`, arrived at independently for a third time.
-_SITE_PREFIXES = ("ENVO:", "UBERON:", "FOODON:", "PO:", "FAO:", "mesh:")
+#:
+#: ``mesh:`` is deliberately absent. MeSH is a general-purpose thesaurus
+#: spanning anatomy, disease, chemicals and organisms, so a *prefix* cannot
+#: express "is a site" for it: the join produced ``Invertebrates ->
+#: mesh:D007448`` (a taxon group — the host-taxon case already excluded for
+#: NCBITaxon, readmitted through another door) and ``Polycyclic aromatic
+#: hydrocarbons -> mesh:D011084`` (a chemical class). Both label-match exactly,
+#: so nothing lexical catches them. Excluding the whole prefix costs 410 of
+#: 229,366 environment edges (0.18%) and removes a class of wrong assertion
+#: that cannot otherwise be bounded by a rule.
+_SITE_PREFIXES = ("ENVO:", "UBERON:", "FOODON:", "PO:", "FAO:")
 
 
 def _normalise_label(text: str) -> str:
@@ -325,7 +335,6 @@ class GOLDTransform(Transform):
             self.output_base_dir / "ontologies" / name
             for name in ("uberon_nodes.tsv", "envo_nodes.tsv", "foodon_nodes.tsv", "po_nodes.tsv")
         ]
-        sources.append(self.output_base_dir / "ontologies_stubs" / "mesh_nodes.tsv")
         for path in sources:
             if not path.is_file():
                 continue
@@ -719,7 +728,7 @@ class GOLDTransform(Transform):
             if anatomy:
                 print(
                     f"[gold]   label crosswalk: {anatomy:,} further ecosystem nodes bridged "
-                    "to UBERON/FOODON/mesh/PO by label"
+                    "to UBERON/FOODON/PO by label"
                 )
             if non_site:
                 print(f"[gold]   {non_site:,} label match(es) rejected as not a site (quality / molecule / cell type)")

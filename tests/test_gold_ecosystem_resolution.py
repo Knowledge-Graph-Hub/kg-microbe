@@ -74,7 +74,10 @@ class EcosystemResolutionTest(TestCase):
     def setUp(self):
         """Run once and keep only the environment edges."""
         self.edges = _run()
-        self.occurs = [e for e in self.edges if e["predicate"] == "biolink:occurs_in"]
+        # `located_in`, not `occurs_in`: Biolink defines the latter for a
+        # process, and the transform corrects the predicate while it rewrites
+        # the target.
+        self.occurs = [e for e in self.edges if e["predicate"] == "biolink:located_in"]
 
     def test_a_buried_target_resolves_to_its_nearest_named_ancestor(self):
         """
@@ -172,3 +175,51 @@ class EnvoCrosswalkTest(TestCase):
         """
         t = GOLDTransform(input_dir=Path(tempfile.mkdtemp()))
         self.assertEqual(t._envo_crosswalk(), {})
+
+
+class PredicateAndSiteTest(TestCase):
+
+    """Biolink's definitions decide the predicate and what may be a site."""
+
+    def test_environment_edges_are_located_in_not_occurs_in(self):
+        """
+        Biolink defines `occurs in` for a **process**; our subject is an organism.
+
+        `located in` is the one defined for "a material entity ... within which
+        it is located". Neither constrains domain/range beyond `named thing`, so
+        nothing mechanical rejects the wrong one — which is why KGXVal never
+        flagged the upstream `occurs_in`.
+        """
+        preds = {e["predicate"] for e in _run()}
+        self.assertIn("biolink:located_in", preds)
+        self.assertNotIn("biolink:occurs_in", preds)
+
+    def test_a_quality_is_not_accepted_as_a_site(self):
+        """
+        The lexical join finds whatever shares a label.
+
+        Unrestricted it produced `Alkaline -> PATO:0001430`, `Benzene ->
+        CHEBI:16716` and `Sperm -> CL:0000019`. An organism is not `located_in`
+        a quality, a molecule or a cell type — the same family-mismatch class as
+        `DISALLOWED_OBJECT_SOURCES` and the madin substrate/quality partition.
+        """
+        from kg_microbe.transform_utils.gold.gold import _SITE_PREFIXES
+
+        for prefix in ("PATO:", "CHEBI:", "CL:"):
+            self.assertNotIn(prefix, _SITE_PREFIXES)
+        for prefix in ("ENVO:", "UBERON:"):
+            self.assertIn(prefix, _SITE_PREFIXES)
+
+    def test_host_taxa_are_not_bridged_as_sites(self):
+        """
+        `Plants` names a host taxon, not a place.
+
+        `located_in NCBITaxon:33090` reads as taxonomic classification, and
+        `in_taxon` would assert the microbe *is* a plant — its range is
+        `organism taxon`. The correct shape is the inverse edge bacdive already
+        emits, `taxon location_of organism`, which is left for #790.
+        """
+        from kg_microbe.transform_utils.gold.gold import _HOST_TAXON_PREFIXES, _SITE_PREFIXES
+
+        self.assertIn("NCBITaxon:", _HOST_TAXON_PREFIXES)
+        self.assertNotIn("NCBITaxon:", _SITE_PREFIXES)

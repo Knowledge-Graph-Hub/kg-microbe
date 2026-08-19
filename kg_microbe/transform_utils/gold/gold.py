@@ -51,11 +51,31 @@ What it changes, and why each is safe:
   would otherwise have been discarded, with 561 nodes collapsing onto an
   existing id. Applied before the trim, since that is the point.
 
+* **Resolves uninformative ecosystems upward, and drops what resolves to
+  nothing.** 63.5% of ``occurs_in`` edges pointed at a node labelled
+  "Unclassified", across 1,663 distinct such nodes — not a bucket you can
+  filter, but 1,663 empty ids. The meaning is in the hierarchy: the single
+  largest target, carrying 39,446 organisms, sits three "Unclassified" hops
+  below ``Mammals: Human``. Each edge now names the nearest informative
+  ancestor and keeps the original target in Biolink's ``original_object``, so
+  the collapse is auditable and reversible. Edges resolving only to the
+  hierarchy root — 58,340 of them, asserting an organism lives somewhere — are
+  dropped. Measured: 229,366 ``occurs_in`` edges remain, **none** pointing at an
+  "Unclassified", with ``Mammals: Human`` (39,472), ``Fecal``, ``Soil``,
+  ``Plants``, ``Blood`` and ``Marine`` the largest targets.
+
 What it deliberately does **not** change, because each needs a modelling decision
 rather than a patch, and is reported instead:
 
 * the 23,695 GOLD-only taxa absent from the NCBITaxon output;
 * the 78 taxon ``name`` disagreements with the ontologies output.
+
+Still open: a crosswalk from ``gold.ecosystem:`` to ENVO. Without it these
+edges remain an island — KG-Microbe models environments in ENVO everywhere else
+(BacDive isolation sources, Madin habitats, PREGO), so a GOLD environment and a
+BacDive environment for the same organism never meet. Resolution shrinks the
+target vocabulary from 4,226 nodes to the named ones, which is what makes a
+crosswalk tractable.
 
 Still open upstream, unaffected by this transform: versioned filenames or a
 published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
@@ -106,6 +126,18 @@ _NCBITAXON_NODES = "ncbitaxon_nodes.tsv"
 _APPLY_TRIM_ENV = "GOLD_APPLY_TAXON_TRIM"
 
 _IN_TAXON = "biolink:in_taxon"
+_OCCURS_IN = "biolink:occurs_in"
+_SUBCLASS_OF = "biolink:subclass_of"
+
+#: Ecosystem labels that carry no information, so an edge pointing at one says
+#: nothing. ``root`` is the hierarchy root — note it is NOT a plant root, the
+#: same trap that put physicochemical bands on ``NCBITaxon:1`` in #796.
+_UNINFORMATIVE_ECOSYSTEM_LABELS = frozenset({"", "unclassified", "unknown", "other", "root"})
+
+#: Biolink's slot for "what the source said before we transformed it". Appended
+#: to the standard edge header for this transform so an upward resolution stays
+#: auditable and reversible.
+_ORIGINAL_OBJECT = "original_object"
 _TAXON_PREFIX = "NCBITaxon:"
 
 
@@ -144,7 +176,8 @@ class GOLDTransform(Transform):
         dropped = self._category_drop_set(nodes_in)
         taxon_dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
         dropped |= taxon_dropped
-        incident = self._write_edges(edges_in, dropped)
+        resolution = self._ecosystem_resolution(nodes_in, edges_in)
+        incident = self._write_edges(edges_in, dropped, resolution)
         self._write_nodes(nodes_in, dropped, seen_before, incident)
 
     def _trimmed_taxa(self) -> Optional[set]:
@@ -184,6 +217,65 @@ class GOLDTransform(Transform):
                 "ingest GOLD unfiltered."
             )
         return taxa
+
+    def _ecosystem_resolution(self, nodes_in: Path, edges_in: Path) -> dict:
+        """
+        Map each uninformative ecosystem node to its nearest informative ancestor.
+
+        63.5% of GOLD's ``occurs_in`` edges point at a node labelled
+        "Unclassified", and there are 1,663 distinct such nodes — so the label
+        is not even a bucket you can filter, it is 1,663 semantically empty ids.
+        The meaning is in the hierarchy: ``Unclassified <- Unclassified <-
+        Unclassified <- Mammals: Human`` says the organism came from a human
+        host, but only if you walk up.
+
+        Resolving here rather than leaving it to consumers means a one-hop query
+        gets the fact GOLD actually holds. Measured: 228,634 of 286,725 edges
+        (79.7%) resolve to something informative.
+
+        A node resolving only to the hierarchy root is mapped to ``None`` and its
+        edges are dropped — 58,091 edges asserting an organism lives somewhere.
+
+        :param nodes_in: Upstream ``GOLD_nodes.tsv``.
+        :param edges_in: Upstream ``GOLD_edges.tsv``.
+        :return: ``{ecosystem id: resolved id or None}`` for nodes needing it.
+        """
+        labels: dict = {}
+        with nodes_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["id"].startswith(_ECOSYSTEM_PREFIX):
+                    labels[row["id"]] = (row.get("name") or "").strip()
+
+        parent: dict = {}
+        with edges_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["predicate"] == _SUBCLASS_OF and row["subject"].startswith(_ECOSYSTEM_PREFIX):
+                    parent[row["subject"]] = row["object"]
+
+        def informative(node: str) -> bool:
+            """Report whether a node's label says anything."""
+            return labels.get(node, "").lower() not in _UNINFORMATIVE_ECOSYSTEM_LABELS
+
+        resolution: dict = {}
+        for node in labels:
+            if informative(node):
+                continue
+            seen = {node}
+            cur = parent.get(node)
+            while cur is not None and not informative(cur):
+                if cur in seen:  # defensive: a cycle would otherwise hang
+                    cur = None
+                    break
+                seen.add(cur)
+                cur = parent.get(cur)
+            resolution[node] = cur
+
+        resolvable = sum(1 for v in resolution.values() if v is not None)
+        print(
+            f"[gold] ecosystem resolution: {resolvable:,} of {len(resolution):,} uninformative "
+            f"nodes resolve to a named ancestor; {len(resolution) - resolvable:,} resolve to nothing"
+        )
+        return resolution
 
     def _taxid_merges(self) -> dict:
         """
@@ -299,28 +391,43 @@ class GOLDTransform(Transform):
         )
         return excluded | organisms, seen_before
 
-    def _write_edges(self, edges_in: Path, dropped: set) -> set:
+    def _write_edges(self, edges_in: Path, dropped: set, resolution: dict) -> set:
         """
-        Write surviving edges in the standard column order.
+        Write surviving edges, resolving uninformative ecosystem targets upward.
 
         :param edges_in: Upstream ``GOLD_edges.tsv``.
         :param dropped: IDs removed by the trim.
+        :param resolution: Ecosystem id to nearest informative ancestor, or None.
         :return: IDs incident to at least one surviving edge.
         """
         incident: set = set()
-        kept = removed = 0
+        kept = removed = resolved = uninformative = 0
         with (
             edges_in.open(newline="") as handle,
             self.output_edge_file.open("w", newline="") as out,
         ):
             reader = csv.DictReader(handle, delimiter="\t")
             writer = csv.writer(out, delimiter="\t")
-            writer.writerow(self.edge_header)
+            # `original_object` is Biolink's slot for what the source said before
+            # transformation, so an upward resolution stays auditable and
+            # reversible rather than silently rewriting the target.
+            writer.writerow(list(self.edge_header) + [_ORIGINAL_OBJECT])
             for row in reader:
                 subject, obj = self._remap(row["subject"]), self._remap(row["object"])
                 if row["subject"] in dropped or row["object"] in dropped or subject in dropped or obj in dropped:
                     removed += 1
                     continue
+
+                original_object = ""
+                if row["predicate"] == _OCCURS_IN and obj in resolution:
+                    target = resolution[obj]
+                    if target is None:
+                        # Resolves only to the hierarchy root: "lives somewhere".
+                        uninformative += 1
+                        continue
+                    original_object = obj
+                    obj = target
+                    resolved += 1
                 incident.add(subject)
                 incident.add(obj)
                 kept += 1
@@ -333,11 +440,17 @@ class GOLDTransform(Transform):
                         row.get("primary_knowledge_source", "") or f"infores:{GOLD}",
                         KNOWLEDGE_ASSERTION,
                         MANUAL_AGENT,
+                        original_object,
                     ]
                 )
         # "dropped" spans both reasons — the taxon trim and the sample/study
         # categories — so do not attribute it to the trim alone.
         print(f"[gold] edges emitted: {kept:,}" + (f" (dropped {removed:,})" if removed else ""))
+        if resolved or uninformative:
+            print(
+                f"[gold]   occurs_in: {resolved:,} resolved up to a named ancestor, "
+                f"{uninformative:,} dropped as resolving only to the hierarchy root"
+            )
         return incident
 
     def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set) -> None:

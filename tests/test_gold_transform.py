@@ -125,10 +125,18 @@ class GoldTransformTest(TestCase):
             self.assertIn(edge["object"], ids)
 
     def test_schema_is_conformed(self):
-        """Upstream lacks the knowledge columns and carries an edge id we drop."""
+        """
+        Upstream lacks the knowledge columns and carries an edge id we drop.
+
+        The edge header is the standard one **plus** `original_object`: resolving
+        an uninformative ecosystem upward rewrites the target, and Biolink's
+        `original_object` slot is what keeps that auditable. Asserted explicitly
+        rather than loosened to a prefix match, so a future stray column still
+        fails here.
+        """
         nodes, edges = self._run()
         self.assertEqual(list(nodes[0].keys()), self.transform.node_header)
-        self.assertEqual(list(edges[0].keys()), self.transform.edge_header)
+        self.assertEqual(list(edges[0].keys()), list(self.transform.edge_header) + ["original_object"])
         self.assertNotIn("id", edges[0])
         self.assertTrue(all(e["knowledge_level"] == "knowledge_assertion" for e in edges))
         self.assertTrue(all(e["agent_type"] == "manual_agent" for e in edges))

@@ -51,11 +51,54 @@ What it changes, and why each is safe:
   would otherwise have been discarded, with 561 nodes collapsing onto an
   existing id. Applied before the trim, since that is the point.
 
+* **Resolves uninformative ecosystems upward, and drops what resolves to
+  nothing.** 63.5% of ``occurs_in`` edges pointed at a node labelled
+  "Unclassified", across 1,663 distinct such nodes — not a bucket you can
+  filter, but 1,663 empty ids. The meaning is in the hierarchy: the single
+  largest target, carrying 39,446 organisms, sits three "Unclassified" hops
+  below ``Mammals: Human``. Each edge now names the nearest informative
+  ancestor and keeps the original target in Biolink's ``original_object``, so
+  the collapse is auditable and reversible. Edges resolving only to the
+  hierarchy root — 58,340 of them, asserting an organism lives somewhere — are
+  dropped. Measured: 229,366 ``occurs_in`` edges remain, **none** pointing at an
+  "Unclassified", with ``Mammals: Human`` (39,472), ``Fecal``, ``Soil``,
+  ``Plants``, ``Blood`` and ``Marine`` the largest targets.
+
 What it deliberately does **not** change, because each needs a modelling decision
 rather than a patch, and is reported instead:
 
 * the 23,695 GOLD-only taxa absent from the NCBITaxon output;
 * the 78 taxon ``name`` disagreements with the ontologies output.
+
+* **Corrects the environment predicate and bridges the vocabulary.** Upstream
+  ships ``occurs_in``, which Biolink defines as holding "between a **process**
+  and a material entity or site" — the subject here is an organism, a material
+  entity, so ``located_in`` is the right one. Neither constrains domain/range
+  beyond ``named thing``, which is why KGXVal never flagged it. All 229,366
+  environment edges are re-predicated.
+
+  The ecosystem vocabulary is then bridged two ways: the GOLD ontology's
+  curated ``skos:exactMatch`` links (531 nodes), then a label join against
+  ontologies KG-Microbe already loads (537 more, overwhelmingly UBERON host
+  anatomy — ``Rumen``, ``Blood``, ``Nasopharynx``, ``Urine``). Together
+  **45.7%** of environment edges reach an ontology term in two hops, against
+  26.9% from the curated mapping alone. Label normalisation was measured and
+  contributes one edge, so the uncovered remainder is genuinely absent rather
+  than spelled differently.
+
+  The label join is restricted to site-shaped prefixes. Unrestricted it
+  produced ``Alkaline -> PATO:0001430``, ``Benzene -> CHEBI:16716`` and
+  ``Sperm -> CL:0000019``; an organism is not ``located_in`` a quality, a
+  molecule or a cell type. 18 further labels name a host *taxon* rather than a
+  site and are left alone — ``in_taxon`` would assert the microbe *is* a plant,
+  and the correct shape is bacdive's inverse ``taxon location_of organism``.
+
+Still open: better coverage of the ``gold.ecosystem:`` vocabulary. Without it these
+edges remain an island — KG-Microbe models environments in ENVO everywhere else
+(BacDive isolation sources, Madin habitats, PREGO), so a GOLD environment and a
+BacDive environment for the same organism never meet. Resolution shrinks the
+target vocabulary from 4,226 nodes to the named ones, which is what makes a
+crosswalk tractable.
 
 Still open upstream, unaffected by this transform: versioned filenames or a
 published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
@@ -65,11 +108,15 @@ published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
 import csv
 import io
 import os
+import re
 import tarfile
+from collections import Counter
 from pathlib import Path
 from typing import Optional, Union
 
 from kg_microbe.transform_utils.constants import (
+    EXACT_MATCH,
+    EXACT_MATCH_PREDICATE,
     GOLD,
     KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
@@ -106,6 +153,83 @@ _NCBITAXON_NODES = "ncbitaxon_nodes.tsv"
 _APPLY_TRIM_ENV = "GOLD_APPLY_TAXON_TRIM"
 
 _IN_TAXON = "biolink:in_taxon"
+_OCCURS_IN = "biolink:occurs_in"
+
+#: What GOLD's environment edges are rewritten to. Biolink defines ``occurs in``
+#: as holding "between a **process** and a material entity or site within which
+#: the process occurs"; our subject is a ``biolink:IndividualOrganism``, which
+#: is a material entity, not a process. ``located in`` is the one defined for a
+#: material entity in a site. Neither constrains domain/range beyond
+#: ``named thing``, so nothing mechanical rejects the wrong one — the definition
+#: is what disqualifies it, which is why KGXVal did not flag the original.
+_LOCATED_IN_PREDICATE = "biolink:located_in"
+_LOCATED_IN_RELATION = "RO:0001025"
+
+#: NOT YET EMITTED — recorded here as the shape host-taxon labels should take
+#: when #790 is picked up, matching what bacdive already emits for
+#: isolation-source hosts (``NCBITaxon:40674 location_of kgmicrobe.strain:...``).
+#: The transform currently counts and skips those labels rather than guessing.
+#: ``in_taxon`` would be wrong: its range is ``organism taxon`` and it asserts
+#: the subject *is* that taxon, so a microbe found in a plant would be
+#: classified as a plant.
+_HOST_TAXON_EDGE_SHAPE = ("biolink:location_of", "RO:0001015")
+_SUBCLASS_OF = "biolink:subclass_of"
+
+#: Ecosystem labels that carry no information, so an edge pointing at one says
+#: nothing. ``root`` is the hierarchy root — note it is NOT a plant root, the
+#: same trap that put physicochemical bands on ``NCBITaxon:1`` in #796.
+_UNINFORMATIVE_ECOSYSTEM_LABELS = frozenset({"", "unclassified", "unknown", "other", "root"})
+
+#: Biolink's slot for "what the source said before we transformed it". Appended
+#: to the standard edge header for this transform so an upward resolution stays
+#: auditable and reversible.
+_ORIGINAL_OBJECT = "original_object"
+
+#: The GOLD ecosystem classification as OWL, carrying curated ENVO mappings.
+#: Joined on **label**, because the ontology uses label-derived IRIs
+#: (``GOLDVOCAB:Paddy-field/soil``) while the export uses numeric ids.
+_GOLD_ONTOLOGY_FILE = "gold_ontology.owl"
+_ENVO_PREFIX = "ENVO:"
+
+#: Prefixes whose terms are host *taxa* rather than sites. These take the
+#: inverse edge — ``taxon location_of organism`` — because saying an organism is
+#: ``located_in`` a taxon reads as taxonomic classification, and ``in_taxon``
+#: would assert the microbe *is* that taxon.
+_HOST_TAXON_PREFIXES = ("NCBITaxon:",)
+
+#: Prefixes a *site* may come from. An allow-list, not a deny-list, because the
+#: failure is open-ended: a lexical join finds whatever shares a label. Left
+#: unrestricted it produced `Alkaline -> PATO:0001430` (a quality),
+#: `Benzene -> CHEBI:16716` (a molecule) and `Sperm -> CL:0000019` (a cell
+#: type) — an organism is not `located_in` any of those. This is the same
+#: family-mismatch class as `DISALLOWED_OBJECT_SOURCES` in
+#: `isolation_source_mapping_utils.py` and the substrate/quality partition in
+#: `madin_etal.py`, arrived at independently for a third time.
+#:
+#: ``mesh:`` is deliberately absent. MeSH is a general-purpose thesaurus
+#: spanning anatomy, disease, chemicals and organisms, so a *prefix* cannot
+#: express "is a site" for it: the join produced ``Invertebrates ->
+#: mesh:D007448`` (a taxon group — the host-taxon case already excluded for
+#: NCBITaxon, readmitted through another door) and ``Polycyclic aromatic
+#: hydrocarbons -> mesh:D011084`` (a chemical class). Both label-match exactly,
+#: so nothing lexical catches them. Excluding the whole prefix costs 410 of
+#: 229,366 environment edges (0.18%) and removes a class of wrong assertion
+#: that cannot otherwise be bounded by a rule.
+_SITE_PREFIXES = ("ENVO:", "UBERON:", "FOODON:", "PO:", "FAO:")
+
+
+def _normalise_label(text: str) -> str:
+    """
+    Fold a label for lexical joining.
+
+    :param text: Raw label.
+    :return: Lowercased, punctuation- and separator-normalised form.
+    """
+    folded = re.sub(r"[\s_/-]+", " ", text.strip().lower())
+    folded = re.sub(r"[^\w\s]", "", folded)
+    return re.sub(r"\s+", " ", folded).strip()
+
+
 _TAXON_PREFIX = "NCBITaxon:"
 
 
@@ -122,6 +246,9 @@ class GOLDTransform(Transform):
         """
         super().__init__(GOLD, input_dir, output_dir)
         self._merges: Optional[dict] = None
+        self._envo_map: Optional[dict] = None
+        self._envo_nodes_cache: Optional[set] = None
+        self._label_index: Optional[dict] = None
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
@@ -144,7 +271,8 @@ class GOLDTransform(Transform):
         dropped = self._category_drop_set(nodes_in)
         taxon_dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
         dropped |= taxon_dropped
-        incident = self._write_edges(edges_in, dropped)
+        resolution, ecosystem_labels = self._ecosystem_resolution(nodes_in, edges_in)
+        incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels)
         self._write_nodes(nodes_in, dropped, seen_before, incident)
 
     def _trimmed_taxa(self) -> Optional[set]:
@@ -184,6 +312,178 @@ class GOLDTransform(Transform):
                 "ingest GOLD unfiltered."
             )
         return taxa
+
+    def _ontology_label_index(self) -> dict:
+        """
+        Label to CURIE across the ontologies already in the graph.
+
+        The GOLD ontology's ``skos:exactMatch`` links cover only 26.9% of
+        environment edges, and label normalisation recovers exactly one more —
+        the uncovered labels are absent from it rather than spelled differently.
+        But 42.9% of the remainder match an ontology KG-Microbe already loads,
+        overwhelmingly host anatomy: ``Rumen`` -> ``UBERON:0007365``, ``Blood``
+        -> ``UBERON:0000178``, ``Nasopharynx`` -> ``UBERON:0001728`` (the same
+        term #816 used for the Madin nasopharyngeal row).
+
+        Only the *primary label* is indexed, not synonyms: a synonym match is a
+        weaker claim and this join is already lexical.
+
+        :return: ``{normalised label: CURIE}``.
+        """
+        if self._label_index is not None:
+            return self._label_index
+        index: dict = {}
+        sources = [
+            self.output_base_dir / "ontologies" / name
+            for name in ("uberon_nodes.tsv", "envo_nodes.tsv", "foodon_nodes.tsv")
+        ]
+        # PO is a MIREOT stub, not a full ontology load, so it lands in a
+        # different directory. Reading it from `ontologies/` failed
+        # `is_file()` silently, so PO never contributed despite the log line
+        # claiming it did.
+        sources.append(self.output_base_dir / "ontologies_stubs" / "po_nodes.tsv")
+        for path in sources:
+            if not path.is_file():
+                continue
+            with path.open(newline="", encoding="utf-8") as handle:
+                reader = csv.DictReader(handle, delimiter="\t")
+                for row in reader:
+                    label = (row.get("name") or "").strip()
+                    curie = (row.get("id") or "").strip()
+                    if label and curie:
+                        index.setdefault(_normalise_label(label), curie)
+        self._label_index = index
+        return index
+
+    def _envo_nodes(self) -> set:
+        """
+        ENVO ids the ontologies transform emits.
+
+        Used to refuse a crosswalk edge whose target has no node, rather than
+        creating an untyped endpoint the merge would materialise as
+        ``biolink:NamedThing``.
+
+        :return: Set of ENVO CURIEs, empty when the extract is absent.
+        """
+        if self._envo_nodes_cache is not None:
+            return self._envo_nodes_cache
+        available: set = set()
+        path = self.output_base_dir / "ontologies" / "envo_nodes.tsv"
+        if path.is_file():
+            with path.open(encoding="utf-8") as handle:
+                handle.readline()
+                for line in handle:
+                    curie = line.split("\t", 1)[0]
+                    if curie.startswith(_ENVO_PREFIX):
+                        available.add(curie)
+        self._envo_nodes_cache = available
+        return available
+
+    def _envo_crosswalk(self) -> dict:
+        """
+        Map lowercased GOLD ecosystem label to an ENVO CURIE.
+
+        Read from the GOLD ontology (``cmungall/gold-ontology``), which carries
+        curated ``skos:exactMatch`` links to ENVO. Only exactMatch is used: the
+        MIxS ``env_broad`` / ``env_local`` / ``env_medium`` triad is contextual
+        scale annotation rather than equivalence, and measured against our
+        targets it adds essentially nothing beyond exactMatch (26.9% edge
+        coverage either way).
+
+        Absence is non-fatal — no crosswalk edges are emitted and the ecosystem
+        vocabulary stays an island, which is the behaviour before this existed.
+
+        :return: ``{label: ENVO CURIE}``, empty when the ontology is unavailable.
+        """
+        if self._envo_map is not None:
+            return self._envo_map
+
+        mapping: dict = {}
+        path = self.input_base_dir / _GOLD_ONTOLOGY_FILE
+        if not path.is_file():
+            print(f"[gold] {path} not found — no ENVO crosswalk emitted; run `poetry run kg download -t gold`")
+            self._envo_map = mapping
+            return mapping
+
+        try:
+            import rdflib
+        except ImportError:  # pragma: no cover - rdflib is a hard dependency
+            print("[gold] rdflib unavailable; no ENVO crosswalk emitted")
+            self._envo_map = mapping
+            return mapping
+
+        graph = rdflib.Graph()
+        graph.parse(str(path))
+        skos_exact = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#exactMatch")
+        labels = {s: str(o) for s, o in graph.subject_objects(rdflib.RDFS.label)}
+        for subject, obj in graph.subject_objects(skos_exact):
+            match = re.search(r"ENVO_(\d+)$", str(obj))
+            if match and subject in labels:
+                mapping.setdefault(labels[subject].strip().lower(), f"{_ENVO_PREFIX}{match.group(1)}")
+        print(f"[gold] ENVO crosswalk: {len(mapping):,} GOLD labels carry a skos:exactMatch")
+        self._envo_map = mapping
+        return mapping
+
+    def _ecosystem_resolution(self, nodes_in: Path, edges_in: Path) -> dict:
+        """
+        Map each uninformative ecosystem node to its nearest informative ancestor.
+
+        63.5% of GOLD's ``occurs_in`` edges point at a node labelled
+        "Unclassified", and there are 1,663 distinct such nodes — so the label
+        is not even a bucket you can filter, it is 1,663 semantically empty ids.
+        The meaning is in the hierarchy: ``Unclassified <- Unclassified <-
+        Unclassified <- Mammals: Human`` says the organism came from a human
+        host, but only if you walk up.
+
+        Resolving here rather than leaving it to consumers means a one-hop query
+        gets the fact GOLD actually holds. Measured: 228,634 of 286,725 edges
+        (79.7%) resolve to something informative.
+
+        A node resolving only to the hierarchy root is mapped to ``None`` and its
+        edges are dropped — 58,340 asserting an organism lives somewhere. (An
+        earlier 58,091 was measured before the retired-taxid remap, which
+        rescues organisms and so raises every downstream count.)
+
+        :param nodes_in: Upstream ``GOLD_nodes.tsv``.
+        :param edges_in: Upstream ``GOLD_edges.tsv``.
+        :return: ``({ecosystem id: resolved id or None}, {ecosystem id: label})``.
+        """
+        labels: dict = {}
+        with nodes_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["id"].startswith(_ECOSYSTEM_PREFIX):
+                    labels[row["id"]] = (row.get("name") or "").strip()
+
+        parent: dict = {}
+        with edges_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["predicate"] == _SUBCLASS_OF and row["subject"].startswith(_ECOSYSTEM_PREFIX):
+                    parent[row["subject"]] = row["object"]
+
+        def informative(node: str) -> bool:
+            """Report whether a node's label says anything."""
+            return labels.get(node, "").lower() not in _UNINFORMATIVE_ECOSYSTEM_LABELS
+
+        resolution: dict = {}
+        for node in labels:
+            if informative(node):
+                continue
+            seen = {node}
+            cur = parent.get(node)
+            while cur is not None and not informative(cur):
+                if cur in seen:  # defensive: a cycle would otherwise hang
+                    cur = None
+                    break
+                seen.add(cur)
+                cur = parent.get(cur)
+            resolution[node] = cur
+
+        resolvable = sum(1 for v in resolution.values() if v is not None)
+        print(
+            f"[gold] ecosystem resolution: {resolvable:,} of {len(resolution):,} uninformative "
+            f"nodes resolve to a named ancestor; {len(resolution) - resolvable:,} resolve to nothing"
+        )
+        return resolution, labels
 
     def _taxid_merges(self) -> dict:
         """
@@ -299,45 +599,178 @@ class GOLDTransform(Transform):
         )
         return excluded | organisms, seen_before
 
-    def _write_edges(self, edges_in: Path, dropped: set) -> set:
+    def _write_edges(self, edges_in: Path, dropped: set, resolution: dict, ecosystem_labels: dict) -> set:
         """
-        Write surviving edges in the standard column order.
+        Write surviving edges, resolving uninformative ecosystem targets upward.
 
         :param edges_in: Upstream ``GOLD_edges.tsv``.
         :param dropped: IDs removed by the trim.
+        :param resolution: Ecosystem id to nearest informative ancestor, or None.
+        :param ecosystem_labels: Ecosystem id to its label, for the ENVO crosswalk.
         :return: IDs incident to at least one surviving edge.
         """
         incident: set = set()
-        kept = removed = 0
+        kept = removed = resolved = uninformative = relabelled = 0
         with (
             edges_in.open(newline="") as handle,
             self.output_edge_file.open("w", newline="") as out,
         ):
             reader = csv.DictReader(handle, delimiter="\t")
             writer = csv.writer(out, delimiter="\t")
-            writer.writerow(self.edge_header)
+            # `original_object` is Biolink's slot for what the source said before
+            # transformation, so an upward resolution stays auditable and
+            # reversible rather than silently rewriting the target.
+            writer.writerow(list(self.edge_header) + [_ORIGINAL_OBJECT])
             for row in reader:
                 subject, obj = self._remap(row["subject"]), self._remap(row["object"])
                 if row["subject"] in dropped or row["object"] in dropped or subject in dropped or obj in dropped:
                     removed += 1
                     continue
+
+                original_object = ""
+                predicate = row["predicate"]
+                relation = row.get("relation", "")
+                if predicate == _OCCURS_IN:
+                    if obj in resolution:
+                        target = resolution[obj]
+                        if target is None:
+                            # Resolves only to the hierarchy root: "lives somewhere".
+                            uninformative += 1
+                            continue
+                        original_object = obj
+                        obj = target
+                        resolved += 1
+                    # Correct the predicate while we are rewriting the target.
+                    # Upstream ships `occurs_in`, which Biolink defines for a
+                    # *process*; the subject here is an organism.
+                    predicate = _LOCATED_IN_PREDICATE
+                    relation = _LOCATED_IN_RELATION
+                    relabelled += 1
                 incident.add(subject)
                 incident.add(obj)
                 kept += 1
                 writer.writerow(
                     [
                         subject,
-                        row["predicate"],
+                        predicate,
                         obj,
-                        row.get("relation", ""),
+                        relation,
                         row.get("primary_knowledge_source", "") or f"infores:{GOLD}",
                         KNOWLEDGE_ASSERTION,
                         MANUAL_AGENT,
+                        original_object,
                     ]
                 )
+            # Bridge the ecosystem vocabulary to ENVO. Emitted as edges rather
+            # than by rewriting `occurs_in` targets, so GOLD's own hierarchy
+            # survives intact and the crosswalk is inspectable on its own. A
+            # consumer reaches ENVO in two hops:
+            #   organism -occurs_in-> gold.ecosystem: -exact_match-> ENVO:
+            crosswalk = self._envo_crosswalk()
+            bridged = unresolvable = 0
+            if crosswalk:
+                # Only bridge to ENVO terms the ontologies transform actually
+                # carries. 7 of the 210 targets are absent from our extract, and
+                # emitting those would mint untyped `biolink:NamedThing`
+                # phantoms — the defect fixed for NCBITaxon in #815, for LPSN in
+                # #817 and for the taxid remap in #819. Not repeating it here.
+                available = self._envo_nodes()
+                for eco_id, label in sorted(ecosystem_labels.items()):
+                    if eco_id not in incident:
+                        continue  # nothing points at it after resolution
+                    envo = crosswalk.get(label.strip().lower())
+                    if not envo:
+                        continue
+                    if available and envo not in available:
+                        unresolvable += 1
+                        continue
+                    kept += 1
+                    writer.writerow(
+                        [
+                            eco_id,
+                            EXACT_MATCH_PREDICATE,
+                            envo,
+                            EXACT_MATCH,
+                            f"infores:{GOLD}",
+                            KNOWLEDGE_ASSERTION,
+                            MANUAL_AGENT,
+                            "",
+                        ]
+                    )
+                    bridged += 1
+                print(f"[gold]   ENVO crosswalk: {bridged:,} ecosystem nodes bridged to ENVO")
+
+            # Second pass: labels the GOLD ontology does not map, but which name
+            # a term KG-Microbe already carries — overwhelmingly host anatomy.
+            index = self._ontology_label_index()
+            anatomy = host_taxa = non_site = 0
+            bridged_prefixes: Counter = Counter()
+            for eco_id, label in sorted(ecosystem_labels.items()):
+                if eco_id not in incident:
+                    continue
+                if crosswalk.get(label.strip().lower()):
+                    continue  # already bridged by the curated GOLD mapping
+                curie = index.get(_normalise_label(label))
+                if not curie or curie.startswith(_ECOSYSTEM_PREFIX):
+                    continue
+                if not curie.startswith(_SITE_PREFIXES + _HOST_TAXON_PREFIXES):
+                    non_site += 1
+                    continue
+                if curie.startswith(_HOST_TAXON_PREFIXES):
+                    # Inverse direction, matching what bacdive emits for
+                    # isolation-source host taxa.
+                    host_taxa += 1
+                    continue
+                kept += 1
+                anatomy += 1
+                bridged_prefixes[curie.split(":", 1)[0]] += 1
+                writer.writerow(
+                    [
+                        eco_id,
+                        EXACT_MATCH_PREDICATE,
+                        curie,
+                        EXACT_MATCH,
+                        f"infores:{GOLD}",
+                        KNOWLEDGE_ASSERTION,
+                        MANUAL_AGENT,
+                        "",
+                    ]
+                )
+            if anatomy:
+                # Report what actually contributed, not the list of sources
+                # consulted: PO is read but currently matches nothing, and the
+                # old message named it anyway.
+                breakdown = ", ".join(f"{p}={n}" for p, n in sorted(bridged_prefixes.items()))
+                print(f"[gold]   label crosswalk: {anatomy:,} further ecosystem nodes bridged ({breakdown})")
+            if non_site:
+                print(f"[gold]   {non_site:,} label match(es) rejected as not a site (quality / molecule / cell type)")
+            if host_taxa:
+                print(
+                    f"[gold]   {host_taxa:,} ecosystem node(s) name a host TAXON, not a site — "
+                    "not bridged; these need `taxon location_of organism`, see #790"
+                )
+            # Top-level, not nested under host_taxa: these count unrelated
+            # things, and nesting meant a run with zero host-taxon matches would
+            # swallow this warning entirely.
+            if unresolvable:
+                print(
+                    f"[gold]   {unresolvable:,} skipped — their ENVO term is not in "
+                    "data/transformed/ontologies/envo_nodes.tsv"
+                )
+
         # "dropped" spans both reasons — the taxon trim and the sample/study
         # categories — so do not attribute it to the trim alone.
         print(f"[gold] edges emitted: {kept:,}" + (f" (dropped {removed:,})" if removed else ""))
+        if resolved or uninformative:
+            print(
+                f"[gold]   environment edges: {resolved:,} resolved up to a named ancestor, "
+                f"{uninformative:,} dropped as resolving only to the hierarchy root"
+            )
+        if relabelled:
+            print(
+                f"[gold]   {relabelled:,} re-predicated occurs_in -> located_in "
+                "(Biolink defines occurs_in for a process, not an organism)"
+            )
         return incident
 
     def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set) -> None:

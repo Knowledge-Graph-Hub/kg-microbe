@@ -91,13 +91,15 @@ class DropSamplesAndStudiesTest(TestCase):
         """
         Keep the edge the ingest exists for.
 
-        `occurs_in` links an organism to its GOLD ecosystem; it is untouched by
-        the sample/study removal and must stay.
+        The environment link is untouched by the sample/study removal. It is
+        emitted as `located_in`, not the upstream `occurs_in`: Biolink defines
+        `occurs in` for a process, and the subject here is an organism.
         """
         rows = _rows(_build() / "edges.tsv")
-        occurs = [r for r in rows if r[1] == "biolink:occurs_in"]
-        self.assertEqual(len(occurs), 1)
-        self.assertEqual(occurs[0][2], "gold.ecosystem:1")
+        env = [r for r in rows if r[1] == "biolink:located_in"]
+        self.assertEqual(len(env), 1)
+        self.assertEqual(env[0][2], "gold.ecosystem:1")
+        self.assertFalse([r for r in rows if r[1] == "biolink:occurs_in"])
 
     def test_the_ecosystem_node_keeps_its_ontology_class_category(self):
         """Environment nodes still anchor a subclass_of hierarchy."""

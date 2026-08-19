@@ -433,6 +433,7 @@ CLOSE_MATCH = "skos:closeMatch"
 CLOSE_MATCH_PREDICATE = "biolink:close_match"
 CLOSE_MATCH_RELATION = "skos:closeMatch"
 EXACT_MATCH = "skos:exactMatch"
+EXACT_MATCH_PREDICATE = "biolink:exact_match"
 ASSOCIATED_WITH = "PATO:0001668"
 
 ID_COLUMN = "id"

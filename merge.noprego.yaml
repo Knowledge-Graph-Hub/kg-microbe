@@ -228,6 +228,19 @@ merged_graph:
         filename:
           - data/transformed/microbedecoder/nodes.tsv
           - data/transformed/microbedecoder/edges.tsv
+    # GOLD — Genomes OnLine Database (JGI). Pre-transformed KGX, conformed by a
+    # validating passthrough: samples and studies dropped, retired NCBI taxids
+    # remapped from merged.dmp, uninformative ecosystems resolved up to their
+    # nearest named ancestor, and the ecosystem vocabulary bridged to ENVO and
+    # UBERON. Contributes organism→taxon and organism→environment; see
+    # docs/GOLD_TRANSFORM_REVIEW.md.
+    gold:
+      name: "GOLD"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/gold/nodes.tsv
+          - data/transformed/gold/edges.tsv
     # kegg:
     #   name: "kegg"
     #   input:

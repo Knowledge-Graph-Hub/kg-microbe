@@ -170,10 +170,17 @@ def read_predicate_semantics(path: Path) -> str:
             for line in handle:
                 if not line.startswith("#"):
                     break  # header ends at the first data line
-                stripped = line.lstrip("#").strip()
+                # Top-level keys only. SSSOM headers are nested YAML — `curie_map`
+                # already is — so a key of this name under some parent means
+                # something else, and reading it as the declaration would flip the
+                # data on a false positive (#831). Convention is `# key: value`,
+                # one space; anything more indented is nested.
+                body = line[1:]
+                if body[:1] not in ("", " ") or body[1:2] == " ":
+                    continue
+                stripped = body.strip()
                 if stripped.startswith(f"{PREDICATE_SEMANTICS_KEY}:"):
-                    value = stripped.split(":", 1)[1].strip().strip("\"'")
-                    return value
+                    return stripped.split(":", 1)[1].strip().strip("\"'")
     except OSError:
         return ""
     return ""
@@ -272,6 +279,7 @@ def _build_indices(mappings_path: Path):
     primary_synonyms_sets: Dict[str, set] = {}
     primary_xrefs_sets: Dict[str, set] = {}
     parent_sets: Dict[str, set] = {}
+    hydrate_sets: Dict[str, set] = {}
 
     # Which way round the asymmetric predicates read. Absence means legacy, so
     # this repo's behaviour cannot change until MIM declares the flip (#822).
@@ -281,7 +289,6 @@ def _build_indices(mappings_path: Path):
             f"[chemical-mappings] {PREDICATE_SEMANTICS_KEY}={SKOS_SEMANTICS!r} declared — "
             "reading narrowMatch/broadMatch per the SKOS spec"
         )
-    hydrate_sets: Dict[str, set] = {}
 
     # Per-name source ranking. The unified SSSOM is exported sorted by
     # ``object_id``, so a naive first-row-wins index lets a low-numbered CHEBI
@@ -354,9 +361,9 @@ def _build_indices(mappings_path: Path):
         # skos:narrowMatch / skos:broadMatch carry parent-of (asymmetric)
         # relationships that the entity-centric indices above can't express.
         # Index them as ``child → [parents]`` so transforms can emit
-        # biolink:subclass_of edges from them. ``narrowMatch`` reads as
-        # "subject is narrower than object" (i.e. object is the parent);
-        # ``broadMatch`` is the inverse (subject is broader than object).
+        # biolink:subclass_of edges from them. Which side is the parent
+        # depends on the set's declared semantics — see
+        # ``read_predicate_semantics`` and #822.
         if predicate == "skos:narrowMatch":
             # SKOS: ``A narrowMatch B`` means B is narrower, so A is the parent.
             # Legacy MIM: the object is the parent. Same row, opposite reading.

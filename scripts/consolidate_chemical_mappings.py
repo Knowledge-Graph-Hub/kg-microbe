@@ -71,6 +71,11 @@ from pathlib import Path
 from typing import Dict, List, Set
 
 import pandas as pd
+
+from kg_microbe.utils.chemical_mapping_utils import (
+    PREDICATE_SEMANTICS_KEY,
+    read_predicate_semantics,
+)
 from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
 
 # Path (relative to kg-microbe repo root) where the sibling MediaIngredientMech
@@ -278,7 +283,8 @@ def sync_mim_sssom(base_dir: Path) -> Path:
 
 
 def sync_culturebotai_reviewed(base_dir: Path) -> Path:
-    """Sync the vendored unified ingredient mapping from the sibling repo.
+    """
+    Sync the vendored unified ingredient mapping from the sibling repo.
 
     MIM's ``UNIFIED_INGREDIENT_MAPPING.tsv`` is the source of truth; kg-microbe
     vendors it as ``mappings/culturebotai_reviewed_ingredients.tsv``. The
@@ -695,6 +701,12 @@ class ChemicalMappingConsolidator:
         # is ``MIM:*`` get translated to the equivalent kg-microbe primary
         # at export time when an exactMatch registry row is present.
         self.parent_relations: List[Dict[str, str]] = []
+        #: Predicate semantics declared by the MIM set, propagated verbatim to
+        #: the unified header (#830). MIM is the only source of asymmetric rows
+        #: — ``parent_relations`` is appended in exactly one place — so one
+        #: file-level flag is sufficient. Add a second such source and this has
+        #: to become per-row.
+        self.predicate_semantics: str = ""
         # Lookup of MIM:<slug> → kg-microbe primary id (e.g. ENVO:00001998
         # or kgmicrobe.ingredient:vermont_soil). Populated from the
         # symmetric (skos:exactMatch) MIM rows so we can rewrite
@@ -1387,6 +1399,12 @@ class ChemicalMappingConsolidator:
         Rows whose ``object_id`` prefix is not in the consolidator's accepted
         set are skipped.
         """
+        # Carry the set's declared predicate semantics through to the unified
+        # header. The asymmetric rows below are passed through verbatim, so the
+        # declaration describes the rows the unified file ships and must travel
+        # with them (#830). Absent stays absent — fail-closed end to end.
+        self.predicate_semantics = read_predicate_semantics(filepath)
+
         self._validate_sssom_file(filepath)
         print(f"Loading {filepath}...")
         df = pd.read_csv(filepath, sep="\t", dtype=str, comment="#").fillna("")
@@ -1556,7 +1574,8 @@ class ChemicalMappingConsolidator:
     def _sweep_stale_mim_xrefs(
         self, current_mim_subjects: dict[str, set[str]]
     ) -> tuple[int, int, int]:
-        """Drop MIM:* xrefs from any chemical the current MIM SSSOM doesn't
+        """
+        Drop MIM:* xrefs from any chemical the current MIM SSSOM doesn't
         anchor to that entity. Used both at the end of
         ``load_mediaingredientmech_sssom`` (cleans baseline residue) and
         again from ``main()`` after ``load_complex_ingredients`` re-introduces
@@ -2516,6 +2535,10 @@ class ChemicalMappingConsolidator:
             f'# mapping_set_version: "{today}"',
             '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching; (4) anhydrous-CHEBI → hydrated-CHEBI as skos:closeMatch with comment=recipe_equivalent_hydrate (NOT chemically identical, but media-recipe interchangeable). Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows, `recipe_equivalent_hydrate` for hydrate pairs."',
             f'# mapping_date: "{today}"',
+        ]
+        if self.predicate_semantics:
+            header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: "{self.predicate_semantics}"')
+        header_lines += [
             f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
             '# extension_definitions:',
             '#   - slot_name: source',

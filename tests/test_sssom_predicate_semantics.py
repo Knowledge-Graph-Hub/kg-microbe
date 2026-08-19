@@ -116,3 +116,84 @@ class DirectionTest(TestCase):
         """
         parents = self._parents("sk0s")
         self.assertEqual(parents.get("MIM:Thing"), ["CHEBI:1"])
+
+
+class NestedKeyTest(TestCase):
+
+    """A key of this name under a parent is not the declaration (#831)."""
+
+    def setUp(self):
+        """Scratch dir."""
+        import tempfile
+
+        self.tmp = tempfile.mkdtemp()
+
+    def _read(self, header):
+        """Read the declaration out of a hand-built header."""
+        path = Path(self.tmp) / "n.sssom.tsv"
+        path.write_text(header + COLUMNS + ROW, encoding="utf-8")
+        return cmu.read_predicate_semantics(path)
+
+    def test_a_nested_key_is_not_the_declaration(self):
+        """
+        Fail closed on a false positive.
+
+        SSSOM headers are nested YAML — `curie_map` already is — so this string
+        can legitimately appear under a parent meaning something else. Reading
+        it as the declaration would invert 141 subclass edges, which is the one
+        outcome the whole fail-closed design exists to prevent.
+        """
+        self.assertEqual(
+            self._read('# extension_definitions:\n#   predicate_semantics: "skos"\n'),
+            "",
+        )
+
+    def test_the_top_level_key_is_still_read_alongside_a_nested_one(self):
+        """The guard must reject the nested line without rejecting the real one."""
+        self.assertEqual(
+            self._read('# extension_definitions:\n#   predicate_semantics: "other"\n# predicate_semantics: "skos"\n'),
+            "skos",
+        )
+
+
+class PropagationTest(TestCase):
+
+    """The declaration must survive the consolidator, or the reader never sees it (#830)."""
+
+    def test_the_consolidator_emits_the_declaration_it_was_given(self):
+        """
+        The reader opens the *unified* set, which the consolidator generates.
+
+        MIM's own file is only an input. Without propagation MIM could declare
+        the flip and kg-microbe would still read legacy — the reader would be
+        inert on the only path that matters.
+        """
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "consolidate_chemical_mappings",
+            Path(__file__).parent.parent / "scripts" / "consolidate_chemical_mappings.py",
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        source = (Path(__file__).parent.parent / "scripts" / "consolidate_chemical_mappings.py").read_text()
+        self.assertIn("self.predicate_semantics = read_predicate_semantics(filepath)", source)
+        self.assertIn(
+            "header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: \"{self.predicate_semantics}\"')",
+            source,
+        )
+
+    def test_the_emitted_header_round_trips(self):
+        """
+        What the consolidator writes must be what the reader reads.
+
+        Asserting the two halves independently would let a quoting or
+        indentation slip pass — including the nested-key guard from #831, which
+        the emitted line has to clear.
+        """
+        import tempfile
+
+        emitted = f'# {cmu.PREDICATE_SEMANTICS_KEY}: "{cmu.SKOS_SEMANTICS}"\n'
+        path = Path(tempfile.mkdtemp()) / "u.sssom.tsv"
+        path.write_text(HEADER + emitted + COLUMNS + ROW, encoding="utf-8")
+        self.assertEqual(cmu.read_predicate_semantics(path), cmu.SKOS_SEMANTICS)

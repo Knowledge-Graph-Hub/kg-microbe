@@ -1508,9 +1508,18 @@ class ChemicalMappingConsolidator:
                 added += 1
                 continue
 
-            # Asymmetric matches (skos:narrowMatch / broadMatch): the MIM
-            # subject is a NARROWER concept than the ontology object; they
-            # are NOT the same entity. Prior implementation also fed the
+            # Asymmetric matches (skos:narrowMatch / broadMatch): they are NOT
+            # the same entity, and this branch treats both identically —
+            # neither is folded into the object's record.
+            #
+            # It does NOT decide direction. `predicate_id` is passed through
+            # unchanged, and the parent/child orientation is settled in
+            # `chemical_mapping_utils.py:_build_indices`, which reads it from
+            # the set's own `predicate_semantics` header (#829). Read that
+            # before changing anything here: MIM's `narrowMatch` means "the
+            # object is the parent", the inverse of the SKOS spec, and an
+            # undeclared set is read that way. 141 subclass edges hang on it.
+            # Prior implementation also fed the
             # subject_label / MIM xref into add_chemical(id=object_id, ...),
             # which polluted the broader parent's lexical record so name
             # lookup returned the parent (e.g. find_chebi_by_name("Vermont

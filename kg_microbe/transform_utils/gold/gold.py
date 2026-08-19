@@ -110,6 +110,7 @@ import io
 import os
 import re
 import tarfile
+from collections import Counter
 from pathlib import Path
 from typing import Optional, Union
 
@@ -164,13 +165,14 @@ _OCCURS_IN = "biolink:occurs_in"
 _LOCATED_IN_PREDICATE = "biolink:located_in"
 _LOCATED_IN_RELATION = "RO:0001025"
 
-#: Host taxa use the inverse, matching what bacdive already emits for isolation
-#: sources (``NCBITaxon:40674 location_of kgmicrobe.strain:...``). ``in_taxon``
-#: would be wrong here: its range is ``organism taxon`` and it asserts the
-#: subject *is* that taxon, so a microbe found in a plant would be classified
-#: as a plant.
-_LOCATION_OF_PREDICATE = "biolink:location_of"
-_LOCATION_OF_RELATION = "RO:0001015"
+#: NOT YET EMITTED — recorded here as the shape host-taxon labels should take
+#: when #790 is picked up, matching what bacdive already emits for
+#: isolation-source hosts (``NCBITaxon:40674 location_of kgmicrobe.strain:...``).
+#: The transform currently counts and skips those labels rather than guessing.
+#: ``in_taxon`` would be wrong: its range is ``organism taxon`` and it asserts
+#: the subject *is* that taxon, so a microbe found in a plant would be
+#: classified as a plant.
+_HOST_TAXON_EDGE_SHAPE = ("biolink:location_of", "RO:0001015")
 _SUBCLASS_OF = "biolink:subclass_of"
 
 #: Ecosystem labels that carry no information, so an edge pointing at one says
@@ -333,8 +335,13 @@ class GOLDTransform(Transform):
         index: dict = {}
         sources = [
             self.output_base_dir / "ontologies" / name
-            for name in ("uberon_nodes.tsv", "envo_nodes.tsv", "foodon_nodes.tsv", "po_nodes.tsv")
+            for name in ("uberon_nodes.tsv", "envo_nodes.tsv", "foodon_nodes.tsv")
         ]
+        # PO is a MIREOT stub, not a full ontology load, so it lands in a
+        # different directory. Reading it from `ontologies/` failed
+        # `is_file()` silently, so PO never contributed despite the log line
+        # claiming it did.
+        sources.append(self.output_base_dir / "ontologies_stubs" / "po_nodes.tsv")
         for path in sources:
             if not path.is_file():
                 continue
@@ -433,7 +440,9 @@ class GOLDTransform(Transform):
         (79.7%) resolve to something informative.
 
         A node resolving only to the hierarchy root is mapped to ``None`` and its
-        edges are dropped — 58,091 edges asserting an organism lives somewhere.
+        edges are dropped — 58,340 asserting an organism lives somewhere. (An
+        earlier 58,091 was measured before the retired-taxid remap, which
+        rescues organisms and so raises every downstream count.)
 
         :param nodes_in: Upstream ``GOLD_nodes.tsv``.
         :param edges_in: Upstream ``GOLD_edges.tsv``.
@@ -695,6 +704,7 @@ class GOLDTransform(Transform):
             # a term KG-Microbe already carries — overwhelmingly host anatomy.
             index = self._ontology_label_index()
             anatomy = host_taxa = non_site = 0
+            bridged_prefixes: Counter = Counter()
             for eco_id, label in sorted(ecosystem_labels.items()):
                 if eco_id not in incident:
                     continue
@@ -713,6 +723,7 @@ class GOLDTransform(Transform):
                     continue
                 kept += 1
                 anatomy += 1
+                bridged_prefixes[curie.split(":", 1)[0]] += 1
                 writer.writerow(
                     [
                         eco_id,
@@ -726,10 +737,11 @@ class GOLDTransform(Transform):
                     ]
                 )
             if anatomy:
-                print(
-                    f"[gold]   label crosswalk: {anatomy:,} further ecosystem nodes bridged "
-                    "to UBERON/FOODON/PO by label"
-                )
+                # Report what actually contributed, not the list of sources
+                # consulted: PO is read but currently matches nothing, and the
+                # old message named it anyway.
+                breakdown = ", ".join(f"{p}={n}" for p, n in sorted(bridged_prefixes.items()))
+                print(f"[gold]   label crosswalk: {anatomy:,} further ecosystem nodes bridged ({breakdown})")
             if non_site:
                 print(f"[gold]   {non_site:,} label match(es) rejected as not a site (quality / molecule / cell type)")
             if host_taxa:
@@ -737,11 +749,14 @@ class GOLDTransform(Transform):
                     f"[gold]   {host_taxa:,} ecosystem node(s) name a host TAXON, not a site — "
                     "not bridged; these need `taxon location_of organism`, see #790"
                 )
-                if unresolvable:
-                    print(
-                        f"[gold]   {unresolvable:,} skipped — their ENVO term is not in "
-                        "data/transformed/ontologies/envo_nodes.tsv"
-                    )
+            # Top-level, not nested under host_taxa: these count unrelated
+            # things, and nesting meant a run with zero host-taxon matches would
+            # swallow this warning entirely.
+            if unresolvable:
+                print(
+                    f"[gold]   {unresolvable:,} skipped — their ENVO term is not in "
+                    "data/transformed/ontologies/envo_nodes.tsv"
+                )
 
         # "dropped" spans both reasons — the taxon trim and the sample/study
         # categories — so do not attribute it to the trim alone.

@@ -11,7 +11,7 @@ from unittest import TestCase
 from kg_microbe.transform_utils.gold.gold import GOLDTransform
 
 # Mirrors the real shape: the biggest target is three "Unclassified" hops below
-# "Mammals: Human", and 58,091 real edges point straight at the hierarchy root.
+# "Mammals: Human", and 58,340 real edges point straight at the hierarchy root.
 NODES = [
     ["id", "category", "name"],
     ["gold.organism:deep", "biolink:IndividualOrganism", "buried under Unclassified"],
@@ -105,7 +105,7 @@ class EcosystemResolutionTest(TestCase):
         """
         `occurs_in root` asserts the organism lives somewhere.
 
-        58,091 real edges say this. There is nothing above to recover, so the
+        58,340 real edges say this. There is nothing above to recover, so the
         edge carries no information at any depth.
         """
         self.assertFalse([e for e in self.occurs if e["subject"] == "gold.organism:rootonly"])

@@ -131,6 +131,54 @@ def normalize_name(
     return normalized
 
 
+#: Header key by which a mapping set declares which semantics its asymmetric
+#: predicates follow. Proposed on #822 / CultureBotAI/MediaIngredientMech#390.
+#: The name is MIM's to settle; it is a constant here so a rename is one line.
+PREDICATE_SEMANTICS_KEY = "predicate_semantics"
+
+#: Value meaning "read skos:narrowMatch / skos:broadMatch per the SKOS spec".
+SKOS_SEMANTICS = "skos"
+
+
+def read_predicate_semantics(path: Path) -> str:
+    """
+    Read a mapping set's declared predicate semantics from its header.
+
+    **Absence means legacy, and so does anything unrecognised.** MIM writes
+    ``skos:narrowMatch`` to mean "the object is the parent", which is the
+    inverse of the SKOS spec; this repo has always read it that way, so the two
+    agree and every asymmetric row yields a correct ``biolink:subclass_of``
+    edge (#822).
+
+    Failing closed is the whole point. It makes the two halves of the fix
+    order-independent: an old file, or a *rebuild of old content*, carries no
+    declaration and is read as legacy however new the reader is. A date
+    threshold could not do this — MIM's ``mapping_set_version`` is build time,
+    regenerated on every build, so rebuilding unfixed content would stamp a
+    post-cutover date onto legacy rows and silently invert 141 edges.
+
+    :param path: SSSOM file, plain or gzipped.
+    :return: The declared value, or ``""`` when absent or unreadable.
+    """
+    open_fn = (
+        (lambda p: gzip.open(p, "rt", encoding="utf-8", newline=""))
+        if str(path).endswith(".gz")
+        else (lambda p: open(p, "r", encoding="utf-8", newline=""))
+    )
+    try:
+        with open_fn(path) as handle:
+            for line in handle:
+                if not line.startswith("#"):
+                    break  # header ends at the first data line
+                stripped = line.lstrip("#").strip()
+                if stripped.startswith(f"{PREDICATE_SEMANTICS_KEY}:"):
+                    value = stripped.split(":", 1)[1].strip().strip("\"'")
+                    return value
+    except OSError:
+        return ""
+    return ""
+
+
 def _iter_sssom_rows(path: Path):
     """
     Stream SSSOM data rows from a (possibly gzipped) mapping set.
@@ -224,6 +272,15 @@ def _build_indices(mappings_path: Path):
     primary_synonyms_sets: Dict[str, set] = {}
     primary_xrefs_sets: Dict[str, set] = {}
     parent_sets: Dict[str, set] = {}
+
+    # Which way round the asymmetric predicates read. Absence means legacy, so
+    # this repo's behaviour cannot change until MIM declares the flip (#822).
+    skos_semantics = read_predicate_semantics(mappings_path) == SKOS_SEMANTICS
+    if skos_semantics:
+        print(
+            f"[chemical-mappings] {PREDICATE_SEMANTICS_KEY}={SKOS_SEMANTICS!r} declared — "
+            "reading narrowMatch/broadMatch per the SKOS spec"
+        )
     hydrate_sets: Dict[str, set] = {}
 
     # Per-name source ranking. The unified SSSOM is exported sorted by
@@ -301,10 +358,18 @@ def _build_indices(mappings_path: Path):
         # "subject is narrower than object" (i.e. object is the parent);
         # ``broadMatch`` is the inverse (subject is broader than object).
         if predicate == "skos:narrowMatch":
-            parent_sets.setdefault(subject, set()).add(curie)
+            # SKOS: ``A narrowMatch B`` means B is narrower, so A is the parent.
+            # Legacy MIM: the object is the parent. Same row, opposite reading.
+            if skos_semantics:
+                parent_sets.setdefault(curie, set()).add(subject)
+            else:
+                parent_sets.setdefault(subject, set()).add(curie)
             continue  # don't also treat the row as an xref/synonym
         if predicate == "skos:broadMatch":
-            parent_sets.setdefault(curie, set()).add(subject)
+            if skos_semantics:
+                parent_sets.setdefault(subject, set()).add(curie)
+            else:
+                parent_sets.setdefault(curie, set()).add(subject)
             continue
         # Recipe-equivalent hydrate pairs (anhydrous CHEBI ↔ hydrated
         # CHEBI). Tagged at consolidator export time with

@@ -77,22 +77,25 @@ class TaxonOverlapTest(TestCase):
 
 class NameConflictTest(TestCase):
 
-    """78 taxon names disagree between GOLD and the ontologies output."""
+    """187 taxon names disagree between GOLD and the ontologies output."""
 
     def test_the_first_source_wins_a_name_conflict(self):
         """
         Pins the behaviour the wiring depends on.
 
         KGX's `prepare_data_dict` docstring says a conflicting single-valued key
-        is "converted to a list and the new value appended", which would give 78
-        nodes a list-valued name. Measured, it does not: the first value wins
+        is "converted to a list and the new value appended", which would give
+        187 nodes a list-valued name. Measured, it does not: the first value wins
         under either `preserve` setting. `ontologies` is listed before `gold` in
         every config, so the OBO-canonical name is kept and GOLD's older label
         is discarded — `Saccharomyces x bayanus CBS 1502` keeps its hybrid
         marker rather than becoming `Saccharomyces bayanus CBS 1502`.
 
-        If a KGX upgrade changes this, 78 names silently degrade, so it is
+        If a KGX upgrade changes this, 187 names silently degrade, so it is
         asserted rather than assumed.
+
+        (An earlier 78 was measured against the *stale* on-disk gold output;
+        against what the current code emits it is 187. Caught by review.)
         """
         from kgx.utils.kgx_utils import prepare_data_dict
 
@@ -101,3 +104,36 @@ class NameConflictTest(TestCase):
         for preserve in (True, False):
             merged = prepare_data_dict(dict(first), dict(second), preserve=preserve)
             self.assertEqual(merged["name"], first["name"], f"preserve={preserve}")
+
+
+class StaleOutputGuardTest(TestCase):
+
+    """A merge config pointing at output older than its transform is a trap."""
+
+    def test_the_gold_output_is_not_older_than_the_code_that_writes_it(self):
+        """
+        Make the merge-order precondition mechanical, not a note in a PR body.
+
+        Wiring gold into the merge configs means `kg merge` will read whatever
+        is in `data/transformed/gold/`. If that predates #818/#821, the merge
+        ingests the shape those PRs removed — 279,670 disconnected
+        MaterialSample nodes, 60,433 Study nodes, `occurs_in` instead of
+        `located_in` — under a config that now expects the current shape.
+
+        Nothing stopped that: the PR said so and `kgm-freshness-check` reports
+        it, but neither blocks. This does, for anyone who runs the suite.
+
+        Skips where the output does not exist (CI, fresh checkout), because
+        absence is a different situation from staleness.
+        """
+        nodes = REPO_ROOT / "data" / "transformed" / "gold" / "nodes.tsv"
+        source = REPO_ROOT / "kg_microbe" / "transform_utils" / "gold" / "gold.py"
+        if not nodes.is_file():
+            self.skipTest("gold transform output not built")
+        self.assertGreaterEqual(
+            nodes.stat().st_mtime,
+            source.stat().st_mtime,
+            "data/transformed/gold/ is older than gold.py, and gold is now in the merge "
+            "configs — merging would ingest the pre-#818 shape. Run "
+            "`poetry run kg transform -s gold` before merging.",
+        )

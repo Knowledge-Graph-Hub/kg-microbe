@@ -122,6 +122,71 @@ def test_the_default_merge_reads_what_the_default_transform_writes():
     )
 
 
+#: How each shipped config relates to ``merge.yaml``, as
+#: ``{name: (extra dirs, missing dirs)}``. ``merge.yaml`` is the baseline and
+#: ``merge.minimal.yaml`` is exempt — it is a deliberately tiny 3-source config,
+#: not a variant of the standard graph.
+#:
+#: A table rather than one test per config, because the failure being fixed is
+#: that coverage was opt-in: the relational invariants named the configs someone
+#: remembered, and ``merge.no_metatraits.yaml`` — added later — inherited none
+#: and drifted seven sources behind (#827). ``test_every_config_has_a_declared
+#: _relationship`` closes that by making an undeclared config a failure.
+CONFIG_RELATIONS = {
+    "merge_bakta.yaml": ({"bakta", "cog", "kegg"}, set()),
+    "merge.noprego.yaml": (set(), {"prego_habitat"}),
+    "merge.prego-full.yaml": ({"prego"}, {"prego_habitat"}),
+    "merge.no_metatraits.yaml": (set(), {"metatraits", "metatraits_gtdb"}),
+}
+BASELINE_CONFIG = "merge.yaml"
+EXEMPT_CONFIGS = {"merge.minimal.yaml"}
+
+
+def test_every_config_has_a_declared_relationship():
+    """
+    A config shipped without a declared relationship gets no drift coverage.
+
+    This is the general defect behind #827, not just the one config that
+    exhibited it: the relational invariants below enumerate configs by hand, so
+    anything added later is silently uncovered. Deriving the expected set from
+    the filesystem makes adding a config *force* a decision about what it is.
+    """
+    on_disk = {p.name for p in _configs()}
+    declared = set(CONFIG_RELATIONS) | EXEMPT_CONFIGS | {BASELINE_CONFIG}
+    assert on_disk - declared == set(), (
+        f"merge configs with no declared relationship: {sorted(on_disk - declared)}. "
+        "Add them to CONFIG_RELATIONS (or EXEMPT_CONFIGS if they are not variants "
+        "of the standard graph), so they are covered by the drift check."
+    )
+    assert declared - on_disk - EXEMPT_CONFIGS - {BASELINE_CONFIG} == set(), (
+        f"CONFIG_RELATIONS names configs that no longer exist: "
+        f"{sorted(declared - on_disk - EXEMPT_CONFIGS - {BASELINE_CONFIG})}"
+    )
+
+
+@pytest.mark.parametrize("name", sorted(CONFIG_RELATIONS))
+def test_each_variant_differs_from_the_standard_graph_only_as_declared(name):
+    """
+    Every variant is `merge.yaml` plus its extras, minus its exclusions.
+
+    Both directions matter and the missing one is what bites: an *extra* is
+    visible when the merge runs, whereas a source silently absent from a variant
+    produces a graph that looks fine and is quietly incomplete. That is how
+    `merge_bakta.yaml` and later `merge.no_metatraits.yaml` each fell seven
+    sources behind.
+    """
+    standard = _active_dirs(REPO_ROOT / BASELINE_CONFIG)
+    variant = _active_dirs(REPO_ROOT / name)
+    expected_extra, expected_missing = CONFIG_RELATIONS[name]
+
+    assert variant - standard == expected_extra, (
+        f"{name} has unexpected extras: {sorted((variant - standard) - expected_extra)}"
+    )
+    assert standard - variant == expected_missing, (
+        f"{name} has fallen behind {BASELINE_CONFIG}: missing {sorted((standard - variant) - expected_missing)}"
+    )
+
+
 def test_the_bakta_config_is_the_standard_graph_plus_the_annotation_cluster():
     """
     `merge_bakta.yaml` is defined as `merge.yaml` plus bakta/cog/kegg.
@@ -169,3 +234,51 @@ def test_an_oddly_named_unproducible_dir_is_caught(tmp_path, odd_dir):
     )
     assert _active_dirs(config) == {odd_dir}, "the dir must be visible to the guard"
     assert odd_dir not in set(DATA_SOURCES) | KNOWN_VARIANT_DIRS, "and recognised as unproducible"
+
+
+def test_stale_sibling_artifacts_are_reported(tmp_path, capsys):
+    """
+    `data/merged/` accumulates, and consumers read whatever is there (#828).
+
+    A reviewer of #826 read `merged-kg_default_{nodes,edges}.tsv` — seven months
+    old, 1.2 GB, beside the current tarball — and reported 1.51M/6.13M against
+    the tarball's 2.85M/14.66M, flagging it as an unexplained discrepancy. Both
+    were right about different files; only the mtime distinguished them.
+    """
+    from kg_microbe.merge_utils.merge_kg import _warn_about_stale_siblings
+
+    written = tmp_path / "merged-kg.tar.gz"
+    written.write_bytes(b"current")
+    leftover = tmp_path / "merged-kg_default_nodes.tsv"
+    leftover.write_bytes(b"old")
+
+    _warn_about_stale_siblings(tmp_path, {written})
+    out = capsys.readouterr().out
+    assert "merged-kg_default_nodes.tsv" in out
+    assert "merged-kg.tar.gz" not in out, "the artifact this run wrote must not be reported as stale"
+
+
+def test_a_clean_output_directory_reports_nothing(tmp_path, capsys):
+    """No warning when there is nothing to warn about — noise trains people to ignore it."""
+    from kg_microbe.merge_utils.merge_kg import _warn_about_stale_siblings
+
+    written = tmp_path / "merged-kg.tar.gz"
+    written.write_bytes(b"current")
+    _warn_about_stale_siblings(tmp_path, {written})
+    assert capsys.readouterr().out == ""
+
+
+def test_the_stats_yaml_is_not_reported_as_a_stale_artifact(tmp_path, capsys):
+    """
+    `merged-kg_stats.yaml` sits in the same directory and is not a graph copy.
+
+    Reporting it would be a false positive on every single merge, which is the
+    reliable way to get a warning ignored.
+    """
+    from kg_microbe.merge_utils.merge_kg import _warn_about_stale_siblings
+
+    written = tmp_path / "merged-kg.tar.gz"
+    written.write_bytes(b"current")
+    (tmp_path / "merged-kg_stats.yaml").write_text("nodes: 1\n")
+    _warn_about_stale_siblings(tmp_path, {written})
+    assert capsys.readouterr().out == ""

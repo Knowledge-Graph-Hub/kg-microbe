@@ -55,11 +55,13 @@ CANONICAL_EDGE_HEADER = [
 
 EDGE_COLUMNS_TO_DROP = {ID_COLUMN, "meta"}
 NODE_COLUMNS_TO_DROP = {"subsets", "meta", "iri"}
-#: Known non-canonical edge columns. This is documentation, not a gate — the
-#: column planner appends any unrecognised column anyway — but listing them
-#: keeps "which sources add what" answerable without re-deriving it from every
-#: transform. ``original_object`` is Biolink's slot for the pre-transformation
-#: target, used by gold when it resolves an uninformative ecosystem upward.
+#: Known non-canonical edge columns. Membership is not what keeps a column:
+#: ``_resolve_column_plan`` appends any unrecognised header anyway, so an
+#: omission here loses no data — it only moves the column after the other
+#: unknowns. Listing them keeps "which sources add what" answerable without
+#: re-deriving it from every transform. ``original_object`` is Biolink's slot
+#: for the pre-transformation target, used by gold when it resolves an
+#: uninformative ecosystem upward.
 EDGE_EXTENSION_COLUMNS = {"has_percentage", "original_object"}
 
 

@@ -110,30 +110,41 @@ class StaleOutputGuardTest(TestCase):
 
     """A merge config pointing at output older than its transform is a trap."""
 
-    def test_the_gold_output_is_not_older_than_the_code_that_writes_it(self):
+    def test_the_gold_output_was_built_by_the_current_code(self):
         """
         Make the merge-order precondition mechanical, not a note in a PR body.
 
-        Wiring gold into the merge configs means `kg merge` will read whatever
-        is in `data/transformed/gold/`. If that predates #818/#821, the merge
+        Wiring gold into the merge configs means `kg merge` reads whatever is
+        in `data/transformed/gold/`. If that predates #818/#821/#832, the merge
         ingests the shape those PRs removed — 279,670 disconnected
         MaterialSample nodes, 60,433 Study nodes, `occurs_in` instead of
-        `located_in` — under a config that now expects the current shape.
+        `located_in`, `in_taxon` instead of `subclass_of` — under a config that
+        expects the current shape. The PR body said so and `kgm-freshness-check`
+        reports it, but neither blocks. This does.
 
-        Nothing stopped that: the PR said so and `kgm-freshness-check` reports
-        it, but neither blocks. This does, for anyone who runs the suite.
+        Compares **content**, not timestamps (#835). The first version of this
+        guard compared mtimes and false-positived twice over: `git checkout`
+        rewrites an mtime with no content change (the lesson of #797, already
+        applied in `test_bacdive_ncbitaxon_stubs.py`), and a squash merge mints
+        a fresh commit for content that already existed, so `git log %ct` fails
+        the same way. A guard that cries wolf on every rebase gets silenced,
+        and then it is not there on the day the output really is stale.
 
         Skips where the output does not exist (CI, fresh checkout), because
         absence is a different situation from staleness.
         """
-        nodes = REPO_ROOT / "data" / "transformed" / "gold" / "nodes.tsv"
-        source = REPO_ROOT / "kg_microbe" / "transform_utils" / "gold" / "gold.py"
-        if not nodes.is_file():
+        from kg_microbe.transform_utils.gold.gold import GOLDTransform
+
+        out = REPO_ROOT / "data" / "transformed" / "gold"
+        if not (out / "nodes.tsv").is_file():
             self.skipTest("gold transform output not built")
-        self.assertGreaterEqual(
-            nodes.stat().st_mtime,
-            source.stat().st_mtime,
-            "data/transformed/gold/ is older than gold.py, and gold is now in the merge "
-            "configs — merging would ingest the pre-#818 shape. Run "
+        marker = out / "source_checksum.txt"
+        if not marker.is_file():
+            self.skipTest("output predates the checksum marker; re-run `poetry run kg transform -s gold`")
+        self.assertEqual(
+            marker.read_text(encoding="utf-8").strip(),
+            GOLDTransform.source_checksum(),
+            "data/transformed/gold/ was built by a different version of gold.py, and gold is "
+            "in the merge configs — merging would ingest the wrong shape. Run "
             "`poetry run kg transform -s gold` before merging.",
         )

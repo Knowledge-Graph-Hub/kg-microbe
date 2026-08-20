@@ -246,7 +246,18 @@ class OntologiesStubsTransform(Transform):
     #: Note this makes the SSSOM dependency visible: `DEFAULT_MAPPING_PATHS[0]`
     #: is the unified mapping set, so `ontologies_stubs` is *not* independent of
     #: an incoming MIM release, which the one-file declaration implied it was.
-    DATA_INPUTS = tuple(sorted(path.relative_to(_STUB_REPO_ROOT).as_posix() for path in DEFAULT_MAPPING_PATHS))
+    #: Paths outside the repo are skipped rather than raising. This runs at
+    #: class-definition time, so `relative_to` raising would surface as an
+    #: ImportError from a tuple comprehension — breaking every importer, and
+    #: pointing nowhere near the entry that caused it (#841). An out-of-repo
+    #: path is not git-checkable anyway, so dropping it loses no signal.
+    DATA_INPUTS = tuple(
+        sorted(
+            path.relative_to(_STUB_REPO_ROOT).as_posix()
+            for path in DEFAULT_MAPPING_PATHS
+            if path.is_relative_to(_STUB_REPO_ROOT)
+        )
+    )
 
     def __init__(
         self,

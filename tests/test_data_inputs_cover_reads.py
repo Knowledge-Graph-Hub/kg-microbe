@@ -90,3 +90,27 @@ class OntologiesStubsDeclarationTest(TestCase):
         body = source.split("def collect_stub_curies")[1]
         self.assertNotIn(".glob(", body, "collector globs for files outside DEFAULT_MAPPING_PATHS")
         self.assertNotIn(".rglob(", body, "collector globs for files outside DEFAULT_MAPPING_PATHS")
+
+
+class OutOfRepoPathTest(TestCase):
+
+    """The derivation must not turn a config mistake into an ImportError (#841)."""
+
+    def test_a_path_outside_the_repo_is_skipped_not_raised(self):
+        """
+        `relative_to` raises; this runs in a class body, so it raises at import.
+
+        That breaks every importer of the module and points the traceback at a
+        tuple comprehension rather than at the entry someone just added. An
+        out-of-repo path carries no git signal anyway, so skipping it loses
+        nothing the checker could have used.
+        """
+        # Never opened — only its position relative to the repo root matters.
+        outside = Path(REPO_ROOT).parent / "elsewhere" / "mappings" / "external.tsv"
+        kept = sorted(
+            p.relative_to(REPO_ROOT).as_posix()
+            for p in (*DEFAULT_MAPPING_PATHS, outside)
+            if p.is_relative_to(REPO_ROOT)
+        )
+        self.assertEqual(len(kept), len(DEFAULT_MAPPING_PATHS))
+        self.assertNotIn("external.tsv", " ".join(kept))

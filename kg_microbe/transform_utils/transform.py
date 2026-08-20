@@ -48,6 +48,12 @@ class Transform:
     #: Paths are relative to the repo root. Keep them tracked in git — the
     #: freshness check uses commit time, not mtime, because `git checkout`
     #: rewrites mtimes without changing content (#797).
+    #:
+    #: List **every** curation file read, not a representative one. A partial
+    #: declaration fails silently and looks identical to a complete one:
+    #: ontologies_stubs declared 1 of the 11 files it read and was reported
+    #: fresh after changes to the other ten (#839). Where the set comes from a
+    #: constant, derive this from it rather than restating it.
     DATA_INPUTS: tuple = ()
 
     def __init__(

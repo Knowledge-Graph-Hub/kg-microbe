@@ -120,6 +120,8 @@ from kg_microbe.transform_utils.constants import (
     GOLD,
     KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
+    NCBI_CATEGORY,
+    RDFS_SUBCLASS_OF,
 )
 from kg_microbe.transform_utils.transform import Transform
 
@@ -152,6 +154,10 @@ _NCBITAXON_NODES = "ncbitaxon_nodes.tsv"
 #: Set false to ingest GOLD unfiltered, for debugging what the trim removes.
 _APPLY_TRIM_ENV = "GOLD_APPLY_TAXON_TRIM"
 
+#: The predicate the *upstream export* uses for organism to taxon. It is not
+#: what we emit — see ``_SUBCLASS_OF`` below. Kept as an input constant for the
+#: same reason ``_OCCURS_IN`` is: the trim has to recognise the source rows
+#: before the re-predication happens.
 _IN_TAXON = "biolink:in_taxon"
 _OCCURS_IN = "biolink:occurs_in"
 
@@ -173,7 +179,42 @@ _LOCATED_IN_RELATION = "RO:0001025"
 #: the subject *is* that taxon, so a microbe found in a plant would be
 #: classified as a plant.
 _HOST_TAXON_EDGE_SHAPE = ("biolink:location_of", "RO:0001015")
+
+#: What a GOLD organism's link to its taxon is emitted as, replacing the
+#: upstream ``in_taxon``. A GOLD organism record is a named isolate — the same
+#: kind of thing as a BacDive strain — and the graph already has a convention
+#: for "this named biological entity sits under this taxon":
+#:
+#:   NCBITaxon's own hierarchy   925,219  biolink:subclass_of
+#:   bacdive strains             251,916  biolink:subclass_of
+#:   metatraits                      186  biolink:subclass_of
+#:   gold (before this change)   531,324  biolink:in_taxon   <- lone dialect
+#:
+#: (gtdb / lpsn / microbedecoder use ``close_match``, but that is
+#: cross-identifier equivalence, not containment, so it is not a counterexample.)
+#:
+#: Read against Biolink alone, ``in_taxon`` looks better: its domain is ``thing
+#: with taxon``, which ``IndividualOrganism`` is, whereas ``subclass_of``
+#: requires ``ontology class`` on both ends and ``biolink:OrganismTaxon`` is not
+#: one. But that objection applies just as forcefully to NCBITaxon's own 925k
+#: hierarchy edges. The graph treats OrganismTaxon as class-like throughout;
+#: making GOLD the single source that obeys a rule the taxonomy backbone itself
+#: does not leaves it unreachable instead of correct. A query walking
+#: ``subclass_of`` down from a species finds BacDive's strains and silently
+#: misses every GOLD organism, which is the concrete cost of the split.
+#:
+#: The deviation from Biolink's letter is graph-wide and deliberate; #832 records
+#: it rather than leaving it implicit here.
 _SUBCLASS_OF = "biolink:subclass_of"
+
+#: Organism nodes carry the taxon category for the same reason, matching the
+#: 251,404 bacdive strain nodes. ``biolink:IndividualOrganism`` would be the
+#: honest type for an isolate in isolation, but it cannot be the subject of a
+#: ``subclass_of`` edge without inventing a fourth dialect.
+_ORGANISM_CATEGORY = NCBI_CATEGORY
+
+#: Upstream category for a GOLD organism, used to recognise the rows to retype.
+_INDIVIDUAL_ORGANISM = "biolink:IndividualOrganism"
 
 #: Ecosystem labels that carry no information, so an edge pointing at one says
 #: nothing. ``root`` is the hierarchy root — note it is NOT a plant root, the
@@ -272,8 +313,11 @@ class GOLDTransform(Transform):
         taxon_dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
         dropped |= taxon_dropped
         resolution, ecosystem_labels = self._ecosystem_resolution(nodes_in, edges_in)
-        incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels)
-        self._write_nodes(nodes_in, dropped, seen_before, incident)
+        # After the drops, so an organism is never folded onto a taxon the trim
+        # removed — that would resurrect an excluded branch through the back door.
+        collapse = self._organism_collapse(nodes_in, edges_in, dropped)
+        incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels, collapse)
+        self._write_nodes(nodes_in, dropped, seen_before, incident, collapse)
 
     def _trimmed_taxa(self) -> Optional[set]:
         """
@@ -312,6 +356,94 @@ class GOLDTransform(Transform):
                 "ingest GOLD unfiltered."
             )
         return taxa
+
+    def _taxon_labels(self) -> dict:
+        """
+        Names for the taxa a GOLD organism can sit under.
+
+        Prefers the trimmed NCBITaxon extract, because that is the row KGX keeps
+        on a merge — ``prepare_data_dict`` takes the first value for a
+        single-valued key, and the ontologies transform sorts ahead of gold, so
+        the OBO name is what a consumer actually sees. Falls back to GOLD's own
+        ``OrganismTaxon`` rows when the extract is absent, which is the
+        ``GOLD_APPLY_TAXON_TRIM=false`` case.
+
+        :return: Taxon CURIE to label.
+        """
+        path = self.output_base_dir / "ontologies" / _NCBITAXON_NODES
+        if path.exists():
+            with path.open(newline="") as handle:
+                return {
+                    row["id"]: row.get("name", "")
+                    for row in csv.DictReader(handle, delimiter="\t")
+                    if row["id"].startswith(_TAXON_PREFIX)
+                }
+        raw = self.input_base_dir / GOLD / GOLD_NODES_FILE
+        with raw.open(newline="") as handle:
+            return {
+                row["id"]: row.get("name", "")
+                for row in csv.DictReader(handle, delimiter="\t")
+                if row["id"].startswith(_TAXON_PREFIX)
+            }
+
+    def _organism_collapse(self, nodes_in: Path, edges_in: Path, dropped: set) -> dict:
+        """
+        Map each organism that adds no name of its own onto its taxon.
+
+        GOLD ships 5.2 organisms per taxon and 88.8% of them carry a strain-level
+        name the taxon cannot ("Methanococcoides sp. FTZ1" under the genus
+        ``NCBITaxon:2225``). Those earn their node. The other 11.2% are named
+        identically to their taxon, so the node is a second identifier for a
+        thing the graph already has — it adds an id, an edge, and nothing a
+        query can use. Those get folded into the taxon, and their environment
+        edges are re-pointed at it.
+
+        The comparison is on the name, not on rank or id shape, because the name
+        is the only thing the organism layer contributes. An organism under a
+        *genus* whose name is just the genus is as redundant as one under a
+        species; an organism under a species with a strain suffix is not.
+
+        :param nodes_in: Upstream ``GOLD_nodes.tsv``.
+        :param edges_in: Upstream ``GOLD_edges.tsv``.
+        :param dropped: IDs already removed, which must not be collapsed onto.
+        :return: Organism CURIE to the taxon CURIE it folds into.
+        """
+        taxon_labels = self._taxon_labels()
+        with nodes_in.open(newline="") as handle:
+            organism_names = {
+                row["id"]: row.get("name", "")
+                for row in csv.DictReader(handle, delimiter="\t")
+                if row.get("category") == _INDIVIDUAL_ORGANISM
+            }
+
+        collapse: dict = {}
+        considered = 0
+        with edges_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["predicate"] != _IN_TAXON:
+                    continue
+                organism, taxon = row["subject"], self._remap(row["object"])
+                if organism in dropped or taxon in dropped:
+                    continue
+                considered += 1
+                name, taxon_name = organism_names.get(organism, ""), taxon_labels.get(taxon, "")
+                # A nameless organism is not evidence of redundancy — we cannot
+                # tell whether it duplicates the taxon, so it keeps its node.
+                if not name or not taxon_name:
+                    continue
+                if _normalise_label(name) == _normalise_label(taxon_name):
+                    collapse[organism] = taxon
+        if collapse:
+            # Denominator is organisms that survived the drops, not every row in
+            # the upstream file — counting the 74,561 the trim removed as "kept"
+            # would overstate the layer by nine points.
+            kept = considered - len(collapse)
+            print(
+                f"[gold] organism layer: {kept:,} kept ({kept / considered:.1%}, "
+                f"name differs from the taxon's), {len(collapse):,} folded into their taxon "
+                f"({len(collapse) / considered:.1%}, name identical)"
+            )
+        return collapse
 
     def _ontology_label_index(self) -> dict:
         """
@@ -599,7 +731,14 @@ class GOLDTransform(Transform):
         )
         return excluded | organisms, seen_before
 
-    def _write_edges(self, edges_in: Path, dropped: set, resolution: dict, ecosystem_labels: dict) -> set:
+    def _write_edges(
+        self,
+        edges_in: Path,
+        dropped: set,
+        resolution: dict,
+        ecosystem_labels: dict,
+        collapse: dict,
+    ) -> set:
         """
         Write surviving edges, resolving uninformative ecosystem targets upward.
 
@@ -607,10 +746,16 @@ class GOLDTransform(Transform):
         :param dropped: IDs removed by the trim.
         :param resolution: Ecosystem id to nearest informative ancestor, or None.
         :param ecosystem_labels: Ecosystem id to its label, for the ENVO crosswalk.
+        :param collapse: Organism to taxon, for organisms that add no name.
         :return: IDs incident to at least one surviving edge.
         """
         incident: set = set()
         kept = removed = resolved = uninformative = relabelled = 0
+        retyped = folded = deduped = 0
+        # Re-pointing a collapsed organism's edges at its taxon can land two
+        # isolates of one taxon on the same environment. The upstream export has
+        # no duplicate triples at all, so anything caught here is ours.
+        seen_triples: set = set()
         with (
             edges_in.open(newline="") as handle,
             self.output_edge_file.open("w", newline="") as out,
@@ -630,6 +775,22 @@ class GOLDTransform(Transform):
                 original_object = ""
                 predicate = row["predicate"]
                 relation = row.get("relation", "")
+
+                if predicate == _IN_TAXON:
+                    if subject in collapse:
+                        # The organism *is* the taxon by every name the graph
+                        # carries, so this edge would say `X subclass_of X`.
+                        folded += 1
+                        continue
+                    # Re-predicate to the graph's convention for "named entity
+                    # sits under this taxon" — see `_SUBCLASS_OF`.
+                    predicate = _SUBCLASS_OF
+                    relation = RDFS_SUBCLASS_OF
+                    retyped += 1
+
+                subject = collapse.get(subject, subject)
+                obj = collapse.get(obj, obj)
+
                 if predicate == _OCCURS_IN:
                     if obj in resolution:
                         target = resolution[obj]
@@ -646,6 +807,15 @@ class GOLDTransform(Transform):
                     predicate = _LOCATED_IN_PREDICATE
                     relation = _LOCATED_IN_RELATION
                     relabelled += 1
+
+                # After the upward resolution, not before: two isolates on
+                # different uninformative ecosystems can resolve to the same
+                # ancestor, and checking the pre-resolution target would miss it.
+                if (subject, predicate, obj) in seen_triples:
+                    deduped += 1
+                    continue
+                seen_triples.add((subject, predicate, obj))
+
                 incident.add(subject)
                 incident.add(obj)
                 kept += 1
@@ -771,9 +941,19 @@ class GOLDTransform(Transform):
                 f"[gold]   {relabelled:,} re-predicated occurs_in -> located_in "
                 "(Biolink defines occurs_in for a process, not an organism)"
             )
+        if retyped:
+            print(
+                f"[gold]   {retyped:,} re-predicated in_taxon -> subclass_of "
+                "(matching bacdive strains and NCBITaxon's own hierarchy)"
+            )
+        if folded or deduped:
+            print(
+                f"[gold]   {folded:,} in_taxon edges dropped as self-referential after the fold, "
+                f"{deduped:,} duplicate triples removed by re-pointing"
+            )
         return incident
 
-    def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set) -> None:
+    def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set, collapse: dict) -> None:
         """
         Write surviving nodes in the standard column order, adding missing columns.
 
@@ -786,8 +966,10 @@ class GOLDTransform(Transform):
         :param dropped: IDs removed by the trim.
         :param seen_before: IDs incident to an edge in the upstream payload.
         :param incident: IDs incident to a surviving edge.
+        :param collapse: Organism to taxon, for organisms folded into their taxon.
         """
         emitted = removed = newly_orphaned = remapped_collisions = 0
+        folded = 0
         pre_existing_orphans: set = set()
         # Which ids the upstream file carries verbatim, so a retired row can
         # defer to its replacement's own row rather than donating a stale name.
@@ -822,6 +1004,12 @@ class GOLDTransform(Transform):
                 if original_id in dropped or node_id in dropped:
                     removed += 1
                     continue
+                if node_id in collapse:
+                    # Folded into its taxon. Checked before the orphan test, which
+                    # would otherwise catch these too and report them as damage
+                    # the trim did rather than a fold we chose.
+                    folded += 1
+                    continue
                 if node_id in seen_before and node_id not in incident:
                     newly_orphaned += 1
                     removed += 1
@@ -831,6 +1019,11 @@ class GOLDTransform(Transform):
                 category = row.get("category", "")
                 if node_id.startswith(_ECOSYSTEM_PREFIX) and _ONTOLOGY_CLASS not in category:
                     category = f"{category}|{_ONTOLOGY_CLASS}" if category else _ONTOLOGY_CLASS
+                elif category == _INDIVIDUAL_ORGANISM:
+                    # Retyped alongside the subclass_of re-predication: the two
+                    # have to move together or the edge's subject is an
+                    # individual, which no dialect in this graph licenses.
+                    category = _ORGANISM_CATEGORY
                 emitted += 1
                 written.add(node_id)
                 writer.writerow(
@@ -847,6 +1040,8 @@ class GOLDTransform(Transform):
                     ]
                 )
         print(f"[gold] nodes emitted: {emitted:,}" + (f" (dropped {removed:,})" if removed else ""))
+        if folded:
+            print(f"[gold]   {folded:,} organism node(s) folded into their taxon, adding no name of their own")
         if newly_orphaned:
             print(f"[gold]   of which {newly_orphaned:,} were left edgeless by the trim and cleaned up")
         if remapped_collisions:

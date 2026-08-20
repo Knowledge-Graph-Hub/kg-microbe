@@ -376,6 +376,40 @@ it for any new cache of that shape.
 - Output files: Always `nodes.tsv` and `edges.tsv` per source
 - Column names: Use constants from `constants.py` (e.g., `SUBJECT_COLUMN`, `PREDICATE_COLUMN`, `OBJECT_COLUMN`)
 
+### "This named entity sits under this taxon" is always `biolink:subclass_of`
+
+Not `biolink:in_taxon`. Every source that places a named biological entity
+beneath an NCBITaxon node uses `subclass_of` / `rdfs:subClassOf`, and the node
+on the narrow end is typed `biolink:OrganismTaxon`:
+
+| source | edges |
+|---|---|
+| NCBITaxon's own hierarchy (ontologies) | 925,219 |
+| bacdive strains (`kgmicrobe.strain:`) | 251,916 |
+| gold organisms (`gold:`) | 471,702 |
+| metatraits | 186 |
+
+**This deviates from Biolink's letter, deliberately.** `subclass_of` declares
+`domain: ontology class` / `range: ontology class`, and `biolink:OrganismTaxon`
+is not one — its ancestry is `OrganismTaxon → NamedThing → Entity`. Nothing
+enforces the constraint (KGXVal does not check domain/range on this slot), so
+~1.65M edges violate it, including the entire taxonomic backbone.
+
+`in_taxon` is the domain-valid alternative and GOLD used to use it. The problem
+is that a source which is *uniquely* valid is unreachable: a query walking
+`subclass_of` down from a species found bacdive's strains and silently missed
+all 531k GOLD organisms. Conforming GOLD to the house convention (#832) fixed
+that. Moving the other direction would additionally have to say what NCBITaxon's
+own hierarchy becomes, since `in_taxon` between two taxa is meaningless.
+
+So: if you are adding a source with strain- or isolate-level nodes, type them
+`biolink:OrganismTaxon` and link them with `subclass_of`, even though
+`biolink:IndividualOrganism` + `in_taxon` reads better in isolation. Background
+in #834.
+
+`close_match` is a different relation and not a counterexample — gtdb, lpsn and
+microbedecoder use it for cross-identifier equivalence, not containment.
+
 ## Code Style
 
 - Line length: 120 characters (ruff), 100 characters (black)

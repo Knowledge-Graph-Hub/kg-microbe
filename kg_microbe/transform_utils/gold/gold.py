@@ -106,7 +106,6 @@ published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
 """
 
 import csv
-import hashlib
 import io
 import os
 import re
@@ -230,13 +229,6 @@ _ORIGINAL_OBJECT = "original_object"
 #: The GOLD ecosystem classification as OWL, carrying curated ENVO mappings.
 #: Joined on **label**, because the ontology uses label-derived IRIs
 #: (``GOLDVOCAB:Paddy-field/soil``) while the export uses numeric ids.
-#: Written beside the output, holding the SHA-256 of the module that produced
-#: it. The merge guard compares content rather than timestamps: `git checkout`
-#: rewrites mtimes with no content change, and a squash merge mints a fresh
-#: commit for content that already existed, so both mtime and commit time
-#: false-positive on output that is perfectly current (#835).
-_SOURCE_CHECKSUM_FILE = "source_checksum.txt"
-
 _GOLD_ONTOLOGY_FILE = "gold_ontology.owl"
 _ENVO_PREFIX = "ENVO:"
 
@@ -326,22 +318,6 @@ class GOLDTransform(Transform):
         collapse = self._organism_collapse(nodes_in, edges_in, dropped)
         incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels, collapse)
         self._write_nodes(nodes_in, dropped, seen_before, incident, collapse)
-        # Last, so a run that died partway leaves no marker claiming the output
-        # matches this code.
-        self._write_source_checksum()
-
-    @staticmethod
-    def source_checksum() -> str:
-        """
-        SHA-256 of this module's source.
-
-        :return: Hex digest of ``gold.py`` as it exists on disk.
-        """
-        return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
-
-    def _write_source_checksum(self) -> None:
-        """Record which code produced this output, for the merge staleness guard."""
-        (self.output_dir / _SOURCE_CHECKSUM_FILE).write_text(self.source_checksum() + "\n", encoding="utf-8")
 
     def _trimmed_taxa(self) -> Optional[set]:
         """

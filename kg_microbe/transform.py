@@ -1,5 +1,6 @@
 """Transform module."""
 
+import inspect
 from pathlib import Path
 from typing import List, Optional
 
@@ -46,6 +47,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform impo
 )
 from kg_microbe.transform_utils.prego.prego import PregoTransform
 from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
+from kg_microbe.utils.transform_fingerprint import write_fingerprint
 
 DATA_SOURCES = {
     # "DrugCentralTransform": DrugCentralTransform,
@@ -134,7 +136,39 @@ def transform(
             t.run(show_status=show_status)
 
         written = _describe_output(t, source)
+        # After the outputs, so a run that dies partway leaves no marker
+        # claiming its output matches the current inputs. Central here rather
+        # than in each transform: every source gets it, and none can forget.
+        _record_fingerprint(t, source)
         print(f"[transform] {source}: done — {written}", flush=True)
+
+
+def _record_fingerprint(transform_obj, source: str) -> None:
+    """
+    Record what produced this output, for content-based freshness checks.
+
+    Timestamps do not survive routine git operations — `git checkout` rewrites
+    an mtime with no content change (#797), and a squash merge advances commit
+    time for content that already existed (#836). Both produced false "stale"
+    verdicts on output that was byte-for-byte current.
+
+    Best-effort: a transform that ran successfully must not be reported as
+    failed because bookkeeping could not be written. A missing marker degrades
+    to the timestamp comparison, which is what every consumer did before.
+
+    :param transform_obj: The transform that just ran.
+    :param source: Registered source name.
+    """
+    try:
+        code_dir = Path(inspect.getsourcefile(type(transform_obj))).parent
+        write_fingerprint(
+            output_dir=transform_obj.output_dir,
+            code_dir=code_dir,
+            repo_root=Path(__file__).resolve().parent.parent,
+            data_inputs=getattr(type(transform_obj), "DATA_INPUTS", ()),
+        )
+    except Exception as exc:  # noqa: BLE001 - bookkeeping must not fail the run
+        print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)
 
 
 def _describe_output(transform_obj, source: str) -> str:

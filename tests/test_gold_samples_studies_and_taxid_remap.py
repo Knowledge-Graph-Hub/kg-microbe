@@ -112,10 +112,17 @@ class TaxidRemapTest(TestCase):
     """NCBI merged ~950 of GOLD's taxids; judging them on the retired id loses them."""
 
     def test_a_retired_taxid_is_rewritten_on_the_edge(self):
-        """`262981` was merged into `4914` (Lachancea waltii)."""
+        """
+        `262981` was merged into `4914` (Lachancea waltii).
+
+        The organism-to-taxon edge is emitted as `subclass_of`, not the
+        upstream `in_taxon` — see `_SUBCLASS_OF` in gold.py. What this test
+        pins is the remap, which the re-predication did not change.
+        """
         rows = _rows(_build() / "edges.tsv")
-        in_taxon = [r for r in rows if r[1] == "biolink:in_taxon"]
-        self.assertEqual(in_taxon[0][2], "NCBITaxon:4914")
+        taxon_edges = [r for r in rows if r[2].startswith("NCBITaxon:")]
+        self.assertEqual([r[1] for r in taxon_edges], ["biolink:subclass_of"])
+        self.assertEqual(taxon_edges[0][2], "NCBITaxon:4914")
 
     def test_the_retired_node_collapses_onto_its_replacement(self):
         """Both ids are present upstream; after the remap they are one node."""
@@ -131,8 +138,8 @@ class TaxidRemapTest(TestCase):
         behaviour, not a new failure mode.
         """
         rows = _rows(_build(merges=None) / "edges.tsv")
-        in_taxon = [r for r in rows if r[1] == "biolink:in_taxon"]
-        self.assertEqual(in_taxon[0][2], "NCBITaxon:262981")
+        taxon_edges = [r for r in rows if r[2].startswith("NCBITaxon:")]
+        self.assertEqual(taxon_edges[0][2], "NCBITaxon:262981")
 
     def test_non_taxon_ids_pass_through_untouched(self):
         """A merge table keyed on bare integers must not collide with other prefixes."""

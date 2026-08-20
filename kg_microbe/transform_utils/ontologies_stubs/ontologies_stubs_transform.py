@@ -69,7 +69,13 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
-from kg_microbe.utils.stub_curie_collection import collect_stub_curies
+from kg_microbe.utils.stub_curie_collection import (
+    DEFAULT_MAPPING_PATHS,
+    collect_stub_curies,
+)
+from kg_microbe.utils.stub_curie_collection import (
+    REPO_ROOT as _STUB_REPO_ROOT,
+)
 
 # Stub ontologies handled by this transform. Each entry maps the canonical
 # CURIE prefix (case-sensitive — must match how the prefix appears in
@@ -230,7 +236,17 @@ class OntologiesStubsTransform(Transform):
 
     """Emit one labelled stub node per referenced NCIT / mesh / BTO / PO / MICRO CURIE."""
 
-    DATA_INPUTS = ("mappings/isolation_source_to_ontology.tsv",)
+    #: Derived from the collector's own list rather than restated, so the two
+    #: cannot drift (#839). Hand-maintaining it declared 1 of the 11 files this
+    #: transform reads, which made `kgm-freshness-check` — which consults
+    #: nothing but `DATA_INPUTS` — report the output fresh after a change to any
+    #: of the other ten. That is the #812 blind spot, and this was the last
+    #: transform still carrying it.
+    #:
+    #: Note this makes the SSSOM dependency visible: `DEFAULT_MAPPING_PATHS[0]`
+    #: is the unified mapping set, so `ontologies_stubs` is *not* independent of
+    #: an incoming MIM release, which the one-file declaration implied it was.
+    DATA_INPUTS = tuple(sorted(path.relative_to(_STUB_REPO_ROOT).as_posix() for path in DEFAULT_MAPPING_PATHS))
 
     def __init__(
         self,

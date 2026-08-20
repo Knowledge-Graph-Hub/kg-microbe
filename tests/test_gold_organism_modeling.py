@@ -206,3 +206,46 @@ class OrganismFoldTest(TestCase):
         nodes[2] = ["gold:same", "biolink:IndividualOrganism", "  methanococcoides "]
         ids = {n["id"] for n in _run(nodes=nodes)[0]}
         self.assertNotIn("gold:same", ids)
+
+
+class MultiTaxonGuardTest(TestCase):
+
+    """An organism claimed by two taxa must not be folded (#833)."""
+
+    def setUp(self):
+        """Give one organism two taxa, both matching its name."""
+        self.nodes = [r[:] for r in NODES] + [
+            ["NCBITaxon:777", "biolink:OrganismTaxon", "Methanococcoides"],
+        ]
+        self.edges = [r[:] for r in EDGES] + [
+            ["gold:same", "biolink:in_taxon", "NCBITaxon:777", "gold:organism_v2.ncbi_taxonomy_id"],
+        ]
+
+    def test_no_taxon_to_taxon_subclass_of_is_invented(self):
+        """
+        The failure this guards is silent and lands in the backbone.
+
+        Folding `gold:same` onto `NCBITaxon:2225` would rewrite its *other*
+        taxon edge to `NCBITaxon:2225 subclass_of NCBITaxon:777` — an assertion
+        GOLD never made, indistinguishable from the 925,219 real hierarchy
+        edges once merged.
+        """
+        _, edges = _run(nodes=self.nodes, edges=self.edges)
+        invented = [
+            e
+            for e in edges
+            if e["subject"].startswith("NCBITaxon:")
+            and e["object"].startswith("NCBITaxon:")
+            and e["predicate"] == "biolink:subclass_of"
+        ]
+        self.assertEqual(invented, [])
+
+    def test_the_multi_taxon_organism_keeps_its_node(self):
+        """
+        Skipping is the honest outcome, not merely the safe one.
+
+        Two taxa for one organism is exactly the case where the organism layer
+        carries something neither taxon does.
+        """
+        nodes, _ = _run(nodes=self.nodes, edges=self.edges)
+        self.assertIn("gold:same", {n["id"] for n in nodes})

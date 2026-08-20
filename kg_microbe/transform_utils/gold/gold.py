@@ -203,8 +203,8 @@ _HOST_TAXON_EDGE_SHAPE = ("biolink:location_of", "RO:0001015")
 #: ``subclass_of`` down from a species finds BacDive's strains and silently
 #: misses every GOLD organism, which is the concrete cost of the split.
 #:
-#: The deviation from Biolink's letter is graph-wide and deliberate; #832 records
-#: it rather than leaving it implicit here.
+#: The deviation from Biolink's letter is graph-wide (~1.65M edges) and
+#: deliberate; #834 records it rather than leaving it implicit here.
 _SUBCLASS_OF = "biolink:subclass_of"
 
 #: Organism nodes carry the taxon category for the same reason, matching the
@@ -416,8 +416,23 @@ class GOLDTransform(Transform):
                 if row.get("category") == _INDIVIDUAL_ORGANISM
             }
 
+        # Count first, fold second. An organism claimed by two taxa must not be
+        # folded: the fold re-points its edges at the chosen taxon, so its
+        # *other* in_taxon row would be rewritten to `T1 subclass_of T2` — a
+        # taxonomic assertion GOLD never made, landing in the backbone where it
+        # is indistinguishable from the 925,219 real hierarchy edges (#833).
+        # The current export has none, so this is a guard against a change in
+        # someone else's file, and skipping is the honest outcome regardless:
+        # two taxa for one organism is exactly when the organism layer carries
+        # something the taxon does not.
+        taxon_edge_count: Counter = Counter()
+        with edges_in.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["predicate"] == _IN_TAXON:
+                    taxon_edge_count[row["subject"]] += 1
+
         collapse: dict = {}
-        considered = 0
+        considered = multi_taxon = 0
         with edges_in.open(newline="") as handle:
             for row in csv.DictReader(handle, delimiter="\t"):
                 if row["predicate"] != _IN_TAXON:
@@ -426,6 +441,9 @@ class GOLDTransform(Transform):
                 if organism in dropped or taxon in dropped:
                     continue
                 considered += 1
+                if taxon_edge_count[organism] > 1:
+                    multi_taxon += 1
+                    continue
                 name, taxon_name = organism_names.get(organism, ""), taxon_labels.get(taxon, "")
                 # A nameless organism is not evidence of redundancy — we cannot
                 # tell whether it duplicates the taxon, so it keeps its node.
@@ -433,6 +451,11 @@ class GOLDTransform(Transform):
                     continue
                 if _normalise_label(name) == _normalise_label(taxon_name):
                     collapse[organism] = taxon
+        if multi_taxon:
+            print(
+                f"[gold]   {multi_taxon:,} organism(s) claimed by more than one taxon — not folded, "
+                "so no taxon-to-taxon subclass_of is invented (#833)"
+            )
         if collapse:
             # Denominator is organisms that survived the drops, not every row in
             # the upstream file — counting the 74,561 the trim removed as "kept"

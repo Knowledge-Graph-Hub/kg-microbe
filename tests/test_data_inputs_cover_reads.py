@@ -62,19 +62,35 @@ class OntologiesStubsDeclarationTest(TestCase):
             OntologiesStubsTransform.DATA_INPUTS,
         )
 
-    def test_declared_paths_are_repo_relative_and_resolvable(self):
+    def test_declared_paths_are_repo_relative_and_tracked(self):
         """
-        The checker resolves these against the repo root and asks git about them.
+        Assert the property the consumer actually uses: git-trackedness (#843).
 
-        An absolute path, or one that does not exist, silently contributes no
-        staleness signal — a declaration that looks complete but is inert.
-        `DEFAULT_MAPPING_PATHS` documents that missing files are skipped by the
-        *collector*, so absence is tolerated there; it must not be tolerated
-        here, where it would mean a typo reads as "nothing changed".
+        `_latest_data_input_commit` resolves each entry through `_latest_commit`,
+        which asks git. An untracked-but-present file returns `(None, None)` and
+        is skipped in silence, so checking `is_file()` — as the first version of
+        this test did — passes on a declaration that contributes no staleness
+        signal at all. That is #839 one layer down: complete on paper, partly
+        inert in fact.
+
+        The repo-relative assertion stays, and fails differently: `REPO / "/abs"`
+        resolves to the absolute path, so an absolute entry can *succeed* while
+        measuring a file outside the repo entirely.
         """
+        import subprocess
+
         for declared in OntologiesStubsTransform.DATA_INPUTS:
             self.assertFalse(Path(declared).is_absolute(), f"{declared} is absolute")
-            self.assertTrue((REPO / declared).is_file(), f"{declared} does not exist")
+            tracked = subprocess.run(  # noqa: S603 - fixed argv, paths from our own constant
+                ["/usr/bin/git", "ls-files", "--error-unmatch", declared],  # noqa: S607
+                cwd=REPO,
+                capture_output=True,
+            )
+            self.assertEqual(
+                tracked.returncode,
+                0,
+                f"{declared} is not tracked in git, so the freshness check silently ignores it",
+            )
 
     def test_the_collector_has_no_second_undeclared_source(self):
         """

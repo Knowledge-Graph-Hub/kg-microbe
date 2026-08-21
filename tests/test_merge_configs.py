@@ -282,3 +282,50 @@ def test_the_stats_yaml_is_not_reported_as_a_stale_artifact(tmp_path, capsys):
     (tmp_path / "merged-kg_stats.yaml").write_text("nodes: 1\n")
     _warn_about_stale_siblings(tmp_path, {written})
     assert capsys.readouterr().out == ""
+
+
+def test_a_second_destination_is_not_reported_as_stale(tmp_path):
+    """
+    "Did this run write it" is a property of the run, not of one destination (#848).
+
+    Warning inside the destination loop meant each destination reported the
+    others' fresh output as a leftover — the exact confusion #828 exists to
+    remove, manufactured by the fix for it. A non-TSV destination is skipped for
+    normalisation but is still ours, so it counts too.
+    """
+    import yaml
+
+    from kg_microbe.merge_utils.merge_kg import _cleanup_merged_outputs
+
+    out = tmp_path / "merged"
+    out.mkdir()
+    (out / "merged-kg_nodes.tsv").write_text("id\tcategory\n")
+    (out / "merged-kg_edges.tsv").write_text("subject\tpredicate\tobject\n")
+    (out / "merged-kg-second_nodes.tsv").write_text("id\tcategory\n")
+    (out / "merged-kg-second_edges.tsv").write_text("subject\tpredicate\tobject\n")
+
+    config = tmp_path / "merge.two.yaml"
+    config.write_text(
+        yaml.safe_dump(
+            {
+                "configuration": {"output_directory": str(out)},
+                "merged_graph": {
+                    "destination": {
+                        "a": {"format": "tsv", "filename": "merged-kg"},
+                        "b": {"format": "tsv", "filename": "merged-kg-second"},
+                    }
+                },
+            }
+        )
+    )
+
+    import io
+    from contextlib import redirect_stdout
+
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        _cleanup_merged_outputs(str(config))
+    printed = buf.getvalue()
+    assert "were NOT written by this run" not in printed, (
+        f"a destination's own output was reported as stale:\n{printed}"
+    )

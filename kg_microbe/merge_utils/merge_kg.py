@@ -169,11 +169,19 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
     output_dir = Path(config.get("configuration", {}).get("output_directory", "data/merged"))
     destinations = config.get("merged_graph", {}).get("destination", {})
 
+    # Accumulated across every destination, TSV or not: "did this run write it"
+    # is a property of the whole run. Warning per-destination made each one
+    # report the others' fresh output as stale (#848).
+    written: set = set()
+
     for dest in destinations.values():
-        if dest.get("format") != "tsv":
-            continue
         base = dest.get("filename")
         if not base:
+            continue
+        if dest.get("format") != "tsv":
+            # Not normalised here, but still ours — record it so it is never
+            # reported as a leftover.
+            written.add(output_dir / base)
             continue
         nodes_file = output_dir / f"{base}_nodes.tsv"
         edges_file = output_dir / f"{base}_edges.tsv"
@@ -206,7 +214,9 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
                     nodes_file.unlink(missing_ok=True)
                     edges_file.unlink(missing_ok=True)
 
-        _warn_about_stale_siblings(output_dir, {nodes_file, edges_file, archive})
+        written |= {nodes_file, edges_file, archive}
+
+    _warn_about_stale_siblings(output_dir, written)
 
 
 def _warn_about_stale_siblings(output_dir: Path, written: set) -> None:

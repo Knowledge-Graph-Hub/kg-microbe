@@ -4,6 +4,7 @@ import csv
 import shutil
 import tarfile
 import tempfile
+import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -168,11 +169,19 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
     output_dir = Path(config.get("configuration", {}).get("output_directory", "data/merged"))
     destinations = config.get("merged_graph", {}).get("destination", {})
 
+    # Accumulated across every destination, TSV or not: "did this run write it"
+    # is a property of the whole run. Warning per-destination made each one
+    # report the others' fresh output as stale (#848).
+    written: set = set()
+
     for dest in destinations.values():
-        if dest.get("format") != "tsv":
-            continue
         base = dest.get("filename")
         if not base:
+            continue
+        if dest.get("format") != "tsv":
+            # Not normalised here, but still ours — record it so it is never
+            # reported as a leftover.
+            written.add(output_dir / base)
             continue
         nodes_file = output_dir / f"{base}_nodes.tsv"
         edges_file = output_dir / f"{base}_edges.tsv"
@@ -204,6 +213,46 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
                     # KGX didn't leave loose TSVs before, so don't leave them now.
                     nodes_file.unlink(missing_ok=True)
                     edges_file.unlink(missing_ok=True)
+
+        written |= {nodes_file, edges_file, archive}
+
+    _warn_about_stale_siblings(output_dir, written)
+
+
+def _warn_about_stale_siblings(output_dir: Path, written: set) -> None:
+    """
+    Report merged artifacts in the output directory that this run did not write.
+
+    ``data/merged/`` is where consumers look, and it accumulates. A reviewer of
+    #826 read ``merged-kg_default_{nodes,edges}.tsv`` — seven months old, 1.2 GB,
+    sitting beside the current tarball — and reported the graph as 1.51M/6.13M
+    against the tarball's 2.85M/14.66M, then flagged the difference as an
+    unexplained discrepancy. Both numbers were right about different files, and
+    nothing but the mtime said which was current (#828).
+
+    Warns rather than deletes. These are large, untracked, and may be someone's
+    deliberate copy; silently removing a gigabyte of another person's output is
+    not a merge step's call to make.
+
+    :param output_dir: The merge output directory.
+    :param written: Paths this run produced, which are never reported.
+    """
+    if not output_dir.is_dir():
+        return
+    stale = sorted(
+        p for p in output_dir.glob("merged-kg*") if p.is_file() and p not in written and not p.name.endswith(".yaml")
+    )
+    if not stale:
+        return
+    print(
+        f"[merge-cleanup] {len(stale)} older merged artifact(s) remain in {output_dir}/ "
+        "and were NOT written by this run — anything reading them gets the previous graph:"
+    )
+    for path in stale:
+        size_mb = path.stat().st_size / 1_048_576
+        age_days = (time.time() - path.stat().st_mtime) / 86400.0
+        print(f"[merge-cleanup]   {path.name}  ({size_mb:,.0f} MB, {age_days:.0f} days old)")
+    print("[merge-cleanup] Remove them once you are sure nothing depends on them.")
 
 
 def _iter_clean_lines(path: Path):

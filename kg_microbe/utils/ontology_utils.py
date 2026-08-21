@@ -32,20 +32,15 @@ from oaklib.interfaces import OboGraphInterface
 
 from kg_microbe.transform_utils.constants import (
     BIOLOGICAL_PROCESS_CATEGORY,
-    CELLULAR_COMPONENT_CATEGORY,
-    EC_CATEGORY,
-    EC_PREFIX,
-    GENE_CATEGORY,
-    GO_CATEGORY,
-    GO_PREFIX,
-    HGNC_NEW_PREFIX,
-    MOLECULAR_ACTIVITY_CATEGORY,
-    PROTEIN_CATEGORY,
-    RHEA_CATEGORY,
-    RHEA_NEW_PREFIX,
-    ROLE_CATEGORY,
     SMALL_MOLECULE_CATEGORY,
-    UNIPROT_PREFIX,
+)
+from kg_microbe.utils.ontology_resolution import (
+    chebi_category,
+    go_category_for_namespace,
+    ncbitaxon_category,
+    replace_category_by_prefix,
+    replace_deprecated_category_names,
+    uberon_category,
 )
 
 _GO_NAMESPACE_CACHE: Optional[Dict[str, str]] = None
@@ -2674,25 +2669,7 @@ def replace_category_ontology(line, id_index, category_index):
     :param line: A line from the original triples.
     :type line: str
     """
-    parts = line.split("\t")
-    parts = [i.strip() for i in parts]
-    if EC_PREFIX in parts[id_index]:
-        new_category = EC_CATEGORY
-        parts[category_index] = new_category
-    if GO_PREFIX in parts[id_index]:
-        new_category = GO_CATEGORY
-        parts[category_index] = new_category
-    if UNIPROT_PREFIX in parts[id_index]:
-        new_category = PROTEIN_CATEGORY
-        parts[category_index] = new_category
-    if RHEA_NEW_PREFIX in parts[id_index]:
-        new_category = RHEA_CATEGORY
-        parts[category_index] = new_category
-    if HGNC_NEW_PREFIX in parts[id_index]:
-        new_category = GENE_CATEGORY
-        parts[category_index] = new_category
-    new_line = "\t".join(parts)
-    return new_line
+    return replace_category_by_prefix(line, id_index, category_index)
 
 
 def get_go_aspect(go_term_id: str) -> Optional[str]:
@@ -2759,15 +2736,7 @@ def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInte
         print(f"Warning: Could not load GO namespace map from {go_db_path}: {e}")
         return BIOLOGICAL_PROCESS_CATEGORY
 
-    namespace = ns_map.get(go_term_id, "")
-    if namespace == "molecular_function":
-        return MOLECULAR_ACTIVITY_CATEGORY
-    if namespace == "biological_process":
-        return BIOLOGICAL_PROCESS_CATEGORY
-    if namespace == "cellular_component":
-        return CELLULAR_COMPONENT_CATEGORY
-
-    return BIOLOGICAL_PROCESS_CATEGORY
+    return go_category_for_namespace(ns_map.get(go_term_id))
 
 
 def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInterface] = None) -> str:
@@ -2789,8 +2758,6 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
         Biolink category string
 
     """
-    from kg_microbe.transform_utils.constants import MACROMOLECULE_CATEGORY
-
     # Create adapter if not provided. A standalone call degrades to the default
     # category when no DB can be produced, matching the behaviour before the
     # adapter was centralised; the bulk transform path passes an adapter it built
@@ -2808,91 +2775,10 @@ def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInter
             return SMALL_MOLECULE_CATEGORY
 
     try:
-        ancestors = list(chebi_adapter.ancestors(chebi_term_id))
-
-        # FIRST: Check if this is a macromolecule (more specific than role)
-        # CHEBI:33839 is the parent class for all macromolecules
-        if "CHEBI:33839" in ancestors:
-            return MACROMOLECULE_CATEGORY
-
-        # SECOND: Check if this is a role term using name-based detection
-        # This is more reliable than checking ancestry because "role" is a very general parent
-        label = chebi_adapter.label(chebi_term_id)
-
-        if label:
-            label_lower = label.lower()
-
-            # ChEBI roles have specific patterns in their names
-            # Check for role terms (as suffix or complete word)
-            role_suffixes = [
-                "inhibitor",
-                "agonist",
-                "antagonist",
-                "activator",
-                "inducer",
-                "agent",
-                "cofactor",
-                "coenzyme",
-                "catalyst",
-                "ligand",
-                "substrate",
-                "product",
-                "intermediate",
-                "donor",
-                "acceptor",
-            ]
-
-            # Standalone role terms (the term itself IS a role)
-            standalone_roles = [
-                "antioxidant",
-                "drug",
-                "pharmaceutical",
-                "metabolite",
-                "nutrient",
-                "toxin",
-                "poison",
-                "mutagen",
-                "carcinogen",
-            ]
-
-            # Check if the term itself is a standalone role
-            if label_lower in standalone_roles:
-                return ROLE_CATEGORY
-
-            # Check for role suffixes at end of name
-            if any(label_lower.endswith(suffix) for suffix in role_suffixes):
-                return ROLE_CATEGORY
-
-            # Check for role suffixes with space prefix (e.g., "enzyme inhibitor")
-            if any(f" {suffix}" in label_lower for suffix in role_suffixes):
-                return ROLE_CATEGORY
-
-            # Check for "role" in the name itself
-            if " role" in label_lower or label_lower.endswith("role"):
-                return ROLE_CATEGORY
-
-            # Check for specific role parent classes (direct children of CHEBI:50906)
-            # These are more specific role categories
-            specific_role_parents = [
-                "CHEBI:50906",  # role
-                "CHEBI:23888",  # drug
-                "CHEBI:64047",  # chromophore
-                "CHEBI:52217",  # pharmaceutical
-            ]
-
-            # Only categorize as role if it's a close descendant of specific role classes
-            # (not just any distant ancestor)
-            parents = list(chebi_adapter.relationships(chebi_term_id, predicates=["rdfs:subClassOf"]))
-            parent_ids = [str(p[2]) for p in parents]
-
-            if any(role_parent in parent_ids for role_parent in specific_role_parents):
-                return ROLE_CATEGORY
-
+        return chebi_category(chebi_term_id, chebi_adapter)
     except Exception as e:
         print(f"Warning: Could not determine ChEBI category for {chebi_term_id}: {e}")
-
-    # Default to SmallMolecule for most ChEBI terms (chemical compounds)
-    return SMALL_MOLECULE_CATEGORY
+        return SMALL_MOLECULE_CATEGORY
 
 
 def get_uberon_category(uberon_term_id: str) -> str:
@@ -2919,10 +2805,7 @@ def get_uberon_category(uberon_term_id: str) -> str:
         'biolink:AnatomicalEntity'
 
     """
-    from kg_microbe.transform_utils.constants import ANATOMICAL_ENTITY_CATEGORY
-
-    # All UBERON terms are anatomical entities
-    return ANATOMICAL_ENTITY_CATEGORY
+    return uberon_category(uberon_term_id)
 
 
 def get_ncbitaxon_category(ncbitaxon_id: str) -> str:
@@ -2946,10 +2829,7 @@ def get_ncbitaxon_category(ncbitaxon_id: str) -> str:
         'biolink:OrganismTaxon'
 
     """
-    from kg_microbe.transform_utils.constants import NCBI_CATEGORY
-
-    # All NCBITaxon terms are organism taxa
-    return NCBI_CATEGORY
+    return ncbitaxon_category(ncbitaxon_id)
 
 
 def replace_deprecated_categories(category_str: str) -> str:
@@ -2965,17 +2845,4 @@ def replace_deprecated_categories(category_str: str) -> str:
         Updated category string with deprecated categories replaced
 
     """
-    if not category_str or category_str == "":
-        return category_str
-
-    # Map of deprecated → current categories (removed in biolink 4.x).
-    deprecated_map: dict = {
-        "biolink:ChemicalSubstance": "biolink:ChemicalEntity",
-        "biolink:Macromolecule": "biolink:MacromolecularComplex",
-    }
-
-    updated_category = category_str
-    for old_cat, new_cat in deprecated_map.items():
-        updated_category = updated_category.replace(old_cat, new_cat)
-
-    return updated_category
+    return replace_deprecated_category_names(category_str)

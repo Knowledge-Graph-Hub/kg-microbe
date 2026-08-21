@@ -1,7 +1,11 @@
 name: Auto-deployment of Documentation
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 jobs:
   build-docs:
     runs-on: ubuntu-latest
@@ -21,14 +25,11 @@ jobs:
         pipx install poetry
         pipx inject poetry poetry-dynamic-versioning
 
-    - name: Install dependencies.
-      run: |
-        poetry add setuptools@latest
-        poetry install --all-extras --with docs
+    - name: Install locked documentation dependencies.
+      run: poetry install --with docs --no-root --no-interaction
         
     - name: Build documentation.
       run: |
-        echo ${{ secrets.GH_TOKEN }} >> kg_microbe/token.txt
         mkdir gh-pages
         touch gh-pages/.nojekyll
         cd docs/
@@ -37,7 +38,6 @@ jobs:
         cp -r _build/* ../gh-pages/
     
     - name: Deploy documentation.
-      if: ${{ github.event_name == 'push' }}
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
         branch: gh-pages

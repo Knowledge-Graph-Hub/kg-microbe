@@ -10,8 +10,6 @@ from typing import Optional, Union
 import pandas as pd
 
 # from kgx.transformer import Transformer
-from kgx.cli.cli_utils import transform
-
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
@@ -127,6 +125,16 @@ METAMODEL_EDGE_PREDICATES = frozenset(
         "rdf:type",
     }
 )
+
+
+def _run_kgx_transform(**kwargs) -> None:
+    """Load KGX only when ontology parsing reaches graph conversion."""
+    from kg_microbe.utils.biolink_model import prepare_kgx
+
+    prepare_kgx()
+    from kgx.cli.cli_utils import transform
+
+    transform(**kwargs)
 
 
 class OntologiesTransform(Transform):
@@ -265,7 +273,7 @@ class OntologiesTransform(Transform):
         # any edges touching them reach the output.
         self._drop_deprecated_terms(Path(data_file))
 
-        transform(
+        _run_kgx_transform(
             inputs=[data_file],
             input_format="obojson",
             output=self.output_dir / name,

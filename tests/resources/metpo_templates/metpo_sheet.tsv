@@ -1,0 +1,4 @@
+ID	label	parent classes (one strongly preferred)	madin synonym or field	bacdive keyword synonym	bactotraits related synonym	metatraits synonym	microbedecoder synonym	biolink equivalent
+ID	LABEL	SC %	A oboInOwl:hasRelatedSynonym	A oboInOwl:hasRelatedSynonym	A oboInOwl:hasRelatedSynonym	A oboInOwl:hasRelatedSynonym	A oboInOwl:hasRelatedSynonym	A skos:exactMatch
+METPO:1000059	phenotype							http://w3id.org/biolink/vocab/PhenotypicQuality
+METPO:1000698	gram positive	phenotype				gram positive		http://w3id.org/biolink/vocab/PhenotypicQuality

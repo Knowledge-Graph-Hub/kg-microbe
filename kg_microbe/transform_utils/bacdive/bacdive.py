@@ -22,6 +22,7 @@ from typing import Dict, List, Optional, Union
 import yaml
 from tqdm import tqdm
 
+from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter as _StrainProvenanceWriter
 from kg_microbe.transform_utils.constants import (
     ACTIVITY_KEY,
     ANTIBIOGRAM,
@@ -3388,61 +3389,3 @@ class BacDiveTransform(Transform):
             f"{self._lpsn_stats['unmatched']:,}",
             f"{self._lpsn_stats['ambiguous']:,}",
         )
-
-
-# Tail of every kgmicrobe.strain CURIE the BacDive transform emits. Built
-# inline so this module-level helper doesn't need to import the (already
-# in-file) STRAIN_PREFIX + BACDIVE_PREFIX constants again.
-_STRAIN_BACDIVE_PREFIX = "kgmicrobe.strain:bacdive_"
-
-
-class _StrainProvenanceWriter:
-
-    """
-    csv.writer wrapper that augments ``primary_knowledge_source`` on bacdive edges.
-
-    For every row whose ``primary_knowledge_source`` is the bare
-    ``infores:bacdive`` constant and whose subject *or* object is a
-    ``kgmicrobe.strain:bacdive_NNN`` CURIE, the wrapper rewrites the
-    knowledge_source cell to a list literal carrying both the source
-    (``infores:bacdive``) and the specific BacDive strain id
-    (``bacdive:NNN``). The list literal matches KGX's merged
-    multi-source serialization, so downstream merge collapses these
-    rows with their mediadive-sourced twins (which emit just
-    ``bacdive:NNN``) into a single multi-provenance row instead of
-    leaving them as two separate singletons.
-
-    Edges that aren't strain-derived (e.g. METPO category subClassOf
-    axioms whose subject/object are both ontology classes) pass through
-    untouched — the wrapper only fires when at least one endpoint is a
-    BacDive strain CURIE.
-
-    Edges with a different existing knowledge_source (e.g. ``infores:metpo``
-    on a METPO ontology axiom, or the bare ``"bacdive"`` literal on
-    isolation-source edges from the BTO/UBERON/ENVO path) also pass
-    through untouched — those paths are out of scope for this
-    consolidation.
-    """
-
-    def __init__(self, inner_writer, *, knowledge_source: str, ks_column_index: int):
-        """Wrap ``inner_writer``; ``ks_column_index`` is the position of primary_knowledge_source in the edge row."""
-        self._inner = inner_writer
-        self._ks = knowledge_source
-        self._ks_idx = ks_column_index
-
-    def writerow(self, row):
-        """Write a single edge row, augmenting knowledge_source when the row references a BacDive strain."""
-        row = list(row)
-        if len(row) > self._ks_idx and row[self._ks_idx] == self._ks:
-            # Look at subject (col 0) then object (col 2) for a strain CURIE.
-            for endpoint in (row[0], row[2] if len(row) > 2 else None):
-                if isinstance(endpoint, str) and endpoint.startswith(_STRAIN_BACDIVE_PREFIX):
-                    bacdive_id = endpoint[len(_STRAIN_BACDIVE_PREFIX) :]
-                    row[self._ks_idx] = f"['{self._ks}', 'bacdive:{bacdive_id}']"
-                    break
-        self._inner.writerow(row)
-
-    def writerows(self, rows):
-        """Pass each row through :meth:`writerow` so the augmentation applies to batched writes too."""
-        for row in rows:
-            self.writerow(row)

@@ -257,6 +257,7 @@ class TestCacheThreadSafety:
         assert bystander.read_bytes() == b"do not move me"
 
 
+@pytest.mark.integration
 class TestBulkDownloadEndToEnd:
 
     """

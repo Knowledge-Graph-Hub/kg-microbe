@@ -1,305 +1,178 @@
----
-# merge.yaml minus the PREGO source.
-#
-# PREGO ships 44.7M edges in a 7.4 GB edges.tsv — ~76% of all merge input by
-# size. Including it drove a merge past 48 GB resident on a 64 GB machine and
-# into sustained swap. Use this config when the full merge will not fit.
-#
-# Kept byte-identical to merge.yaml otherwise, including category_allowlist.
-# Regenerate after editing merge.yaml, or the two will drift.
-#
-# Usage: poetry run kg merge -y merge.noprego.yaml
-#
-# NOTE: writes the SAME destination as merge.yaml (data/merged/merged-kg.tar.gz).
-# Rename the output afterwards (repo convention: *_noprego.tar.gz) so a
-# partial merge is not mistaken for the full graph.
-#
-# Inherited from merge.yaml: Bakta and COG are excluded here too.
-# For a Bakta-enabled merge, use merge_bakta.yaml instead.
-#
+# GENERATED from merge.yaml + config/merge_variants.yaml; do not edit directly.
+# Standard graph without PREGO.
 configuration:
   output_directory: data/merged
   checkpoint: false
-  # Allow domain-specific categories from METPO ontology
-  # METPO:1004005 represents the "growth medium" ontology class
-  # This preserves semantic precision for microbial growth media
   category_allowlist:
-    - "METPO:1004005"  # growth medium
-  curie_map:
-    # define non-canonical CURIE to IRI mappings (for RDF)
-  node_properties:
-    # define predicates that are to be treated as direct node properties (for RDF)
-  predicate_mappings:
-    # map non-canonical predicates to a property name (for RDF)
-  property_types:
-    # define the type for non-canonical properties for RDF export
+  - METPO:1004005
+  curie_map: null
+  node_properties: null
+  predicate_mappings: null
+  property_types: null
   preserve:
-    - primary_knowledge_source
-
+  - primary_knowledge_source
 merged_graph:
   name: kg-microbe graph
   source:
     ncbitaxon:
-      name: "NCBITaxon"
+      name: NCBITaxon
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies/ncbitaxon_nodes.tsv
-          - data/transformed/ontologies/ncbitaxon_edges.tsv
+        - data/transformed/ontologies/ncbitaxon_nodes.tsv
+        - data/transformed/ontologies/ncbitaxon_edges.tsv
     chebi:
-      name: "CHEBI"
+      name: CHEBI
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies/chebi_nodes.tsv
-          - data/transformed/ontologies/chebi_edges.tsv
+        - data/transformed/ontologies/chebi_nodes.tsv
+        - data/transformed/ontologies/chebi_edges.tsv
     envo:
-      name: "ENVO"
+      name: ENVO
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies/envo_nodes.tsv
-          - data/transformed/ontologies/envo_edges.tsv
+        - data/transformed/ontologies/envo_nodes.tsv
+        - data/transformed/ontologies/envo_edges.tsv
     go:
-      name: "GO"
+      name: GO
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies/go_nodes.tsv
-          - data/transformed/ontologies/go_edges.tsv
-    # mondo:
-    #   name: "MONDO"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/mondo_nodes.tsv
-    #       - data/transformed/ontologies/mondo_edges.tsv
-    # hp:
-    #   name: "HP"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ontologies/hp_nodes.tsv
-    #       - data/transformed/ontologies/hp_edges.tsv
+        - data/transformed/ontologies/go_nodes.tsv
+        - data/transformed/ontologies/go_edges.tsv
     ec:
-      name: "EC"
+      name: EC
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies/ec_nodes.tsv
-          - data/transformed/ontologies/ec_edges.tsv
+        - data/transformed/ontologies/ec_nodes.tsv
+        - data/transformed/ontologies/ec_edges.tsv
     metpo:
-      name: "METPO"
+      name: METPO
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies/metpo_nodes.tsv
-          - data/transformed/ontologies/metpo_edges.tsv
-    # Selective per-CURIE stub-import for NCIT, mesh, BTO, PO, and MICRO —
-    # only the IDs referenced by mappings/* are imported (not the full
-    # ontologies). See kg_microbe/transform_utils/ontologies_stubs/ for
-    # the transform.
+        - data/transformed/ontologies/metpo_nodes.tsv
+        - data/transformed/ontologies/metpo_edges.tsv
     ontologies_stubs:
-      name: "ontologies_stubs"
+      name: ontologies_stubs
       input:
         format: tsv
         filename:
-          - data/transformed/ontologies_stubs/ncit_nodes.tsv
-          - data/transformed/ontologies_stubs/ncit_edges.tsv
-          - data/transformed/ontologies_stubs/mesh_nodes.tsv
-          - data/transformed/ontologies_stubs/mesh_edges.tsv
-          - data/transformed/ontologies_stubs/bto_nodes.tsv
-          - data/transformed/ontologies_stubs/po_nodes.tsv
-          - data/transformed/ontologies_stubs/po_edges.tsv
-          - data/transformed/ontologies_stubs/micro_nodes.tsv
-          - data/transformed/ontologies_stubs/micro_edges.tsv
+        - data/transformed/ontologies_stubs/ncit_nodes.tsv
+        - data/transformed/ontologies_stubs/ncit_edges.tsv
+        - data/transformed/ontologies_stubs/mesh_nodes.tsv
+        - data/transformed/ontologies_stubs/mesh_edges.tsv
+        - data/transformed/ontologies_stubs/bto_nodes.tsv
+        - data/transformed/ontologies_stubs/po_nodes.tsv
+        - data/transformed/ontologies_stubs/po_edges.tsv
+        - data/transformed/ontologies_stubs/micro_nodes.tsv
+        - data/transformed/ontologies_stubs/micro_edges.tsv
     bacdive:
-      name: "bacdive"
+      name: bacdive
       input:
         format: tsv
         filename:
-          - data/transformed/bacdive/nodes.tsv
-          - data/transformed/bacdive/edges.tsv
+        - data/transformed/bacdive/nodes.tsv
+        - data/transformed/bacdive/edges.tsv
     mediadive:
-      name: "mediadive"
+      name: mediadive
       input:
         format: tsv
         filename:
-          - data/transformed/mediadive/nodes.tsv
-          - data/transformed/mediadive/edges.tsv
+        - data/transformed/mediadive/nodes.tsv
+        - data/transformed/mediadive/edges.tsv
     rhea_mappings:
-      name: "rhea_mappings"
+      name: rhea_mappings
       input:
         format: tsv
         filename:
-          - data/transformed/rhea_mappings/nodes.tsv
-          - data/transformed/rhea_mappings/edges.tsv
+        - data/transformed/rhea_mappings/nodes.tsv
+        - data/transformed/rhea_mappings/edges.tsv
     upa:
       input:
-        name: "upa"
+        name: upa
         format: tsv
         filename:
-          - data/transformed/ontologies/upa_nodes.tsv
-          - data/transformed/ontologies/upa_edges.tsv
+        - data/transformed/ontologies/upa_nodes.tsv
+        - data/transformed/ontologies/upa_edges.tsv
     madin_etal:
       input:
-        name: "madin_etal"
+        name: madin_etal
         format: tsv
         filename:
-          - data/transformed/madin_etal/nodes.tsv
-          - data/transformed/madin_etal/edges.tsv
+        - data/transformed/madin_etal/nodes.tsv
+        - data/transformed/madin_etal/edges.tsv
     metatraits:
       input:
-        name: "metatraits"
+        name: metatraits
         format: tsv
         filename:
-          - data/transformed/metatraits/nodes.tsv
-          - data/transformed/metatraits/edges.tsv
+        - data/transformed/metatraits/nodes.tsv
+        - data/transformed/metatraits/edges.tsv
     metatraits_gtdb:
       input:
-        name: "metatraits_gtdb"
+        name: metatraits_gtdb
         format: tsv
         filename:
-          - data/transformed/metatraits_gtdb/nodes.tsv
-          - data/transformed/metatraits_gtdb/edges.tsv
+        - data/transformed/metatraits_gtdb/nodes.tsv
+        - data/transformed/metatraits_gtdb/edges.tsv
     bactotraits:
       input:
-        name: "bactotraits"
+        name: bactotraits
         format: tsv
         filename:
-          - data/transformed/bactotraits/nodes.tsv
-          - data/transformed/bactotraits/edges.tsv
-    # bakta_cmm:
-    #   name: "bakta_cmm"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/bakta/cmm_bakta/nodes.tsv
-    #       - data/transformed/bakta/cmm_bakta/edges.tsv
-    # bakta_pfas:
-    #   name: "bakta_pfas"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/bakta/pfas_bakta/nodes.tsv
-    #       - data/transformed/bakta/pfas_bakta/edges.tsv
-    # cog:
-    #   name: "cog"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/cog/nodes.tsv
-    #       - data/transformed/cog/edges.tsv
+        - data/transformed/bactotraits/nodes.tsv
+        - data/transformed/bactotraits/edges.tsv
     gtdb:
-      name: "GTDB Taxonomy"
+      name: GTDB Taxonomy
       input:
         format: tsv
         filename:
-          - data/transformed/gtdb/nodes.tsv
-          - data/transformed/gtdb/edges.tsv
-    # LPSN nomenclature. `lpsn` is the fast GSS/CSV base layer (taxon
-    # names, ranks, GTDB/NCBITaxon cross-refs); `lpsn_api` is the
-    # authenticated JSON-API enrichment (above-genus taxonomy, basonyms,
-    # publication DOIs/PMIDs, 16S INSDC accessions). The API enrichment
-    # nodes reference lpsn:* records minted by the GSS layer, so both are
-    # merged together.
+        - data/transformed/gtdb/nodes.tsv
+        - data/transformed/gtdb/edges.tsv
     lpsn:
-      name: "LPSN"
+      name: LPSN
       input:
         format: tsv
         filename:
-          - data/transformed/lpsn/nodes.tsv
-          - data/transformed/lpsn/edges.tsv
+        - data/transformed/lpsn/nodes.tsv
+        - data/transformed/lpsn/edges.tsv
     lpsn_api:
-      name: "LPSN API"
+      name: LPSN API
       input:
         format: tsv
         filename:
-          - data/transformed/lpsn_api/nodes.tsv
-          - data/transformed/lpsn_api/edges.tsv
-    # MicrobeDecoder (Hackmann & Zhang, Sci Adv 2023) — Bergey / VPI /
-    # Literature / FAPROTAX curated fermentation profiles keyed on
-    # lpsn:<LPSN_ID>, plus a pre-joined LPSN ↔ GTDB ↔ NCBI ↔ GOLD ↔ IMG ↔
-    # BacDive identity crosswalk. See kg_microbe/transform_utils/microbedecoder/.
+        - data/transformed/lpsn_api/nodes.tsv
+        - data/transformed/lpsn_api/edges.tsv
     microbedecoder:
-      name: "MicrobeDecoder"
+      name: MicrobeDecoder
       input:
         format: tsv
         filename:
-          - data/transformed/microbedecoder/nodes.tsv
-          - data/transformed/microbedecoder/edges.tsv
-    # GOLD — Genomes OnLine Database (JGI). Pre-transformed KGX, conformed by a
-    # validating passthrough: samples and studies dropped, retired NCBI taxids
-    # remapped from merged.dmp, uninformative ecosystems resolved up to their
-    # nearest named ancestor, and the ecosystem vocabulary bridged to ENVO and
-    # UBERON. Contributes organism→taxon and organism→environment; see
-    # docs/GOLD_TRANSFORM_REVIEW.md.
+        - data/transformed/microbedecoder/nodes.tsv
+        - data/transformed/microbedecoder/edges.tsv
     gold:
-      name: "GOLD"
+      name: GOLD
       input:
         format: tsv
         filename:
-          - data/transformed/gold/nodes.tsv
-          - data/transformed/gold/edges.tsv
-    # kegg:
-    #   name: "kegg"
-    #   input:
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/kegg/nodes.tsv
-    #       - data/transformed/kegg/edges.tsv
-    # ctd:
-    #   input:
-    #     name: "ctd"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/ctd/nodes.tsv
-    #       - data/transformed/ctd/edges.tsv
-    # disbiome:
-    #   input:
-    #     name: "disbiome"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/disbiome/nodes.tsv
-    #       - data/transformed/disbiome/edges.tsv
-    # wallen_etal:
-    #   input:
-    #     name: "wallen_etal"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/wallen_etal/nodes.tsv
-    #       - data/transformed/wallen_etal/edges.tsv
-    # Not feasible using kgx merge process
-    # uniprot_functional_microbes:
-    #   input:
-    #     name: "uniprot_functional_microbes"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/uniprot_functional_microbes/nodes.tsv
-    #       - data/transformed/uniprot_functional_microbes/edges.tsv
-    # uniprot_human:
-    #   input:
-    #     name: "uniprot_human"
-    #     format: tsv
-    #     filename:
-    #       - data/transformed/uniprot_human/nodes.tsv
-    #       - data/transformed/uniprot_human/edges.tsv
+        - data/transformed/gold/nodes.tsv
+        - data/transformed/gold/edges.tsv
   operations:
-    - name: kgx.graph_operations.summarize_graph.generate_graph_stats
-      args:
-        graph_name: kg-microbe graph
-        filename: merged_graph_stats.yaml
-        node_facet_properties:
-          - provided_by
-        edge_facet_properties:
-          - provided_by
-          - source
+  - name: kgx.graph_operations.summarize_graph.generate_graph_stats
+    args:
+      graph_name: kg-microbe graph
+      filename: merged_graph_stats_no_prego.yaml
+      node_facet_properties:
+      - provided_by
+      edge_facet_properties:
+      - provided_by
+      - source
   destination:
     merged-kg-tsv:
       format: tsv
       compression: tar.gz
-      filename: merged-kg
-#    merged-kg-nt:
-#      format: nt
-#      compression: gz
-#      filename: kg_microbe.nt.gz
+      filename: merged-kg-no-prego

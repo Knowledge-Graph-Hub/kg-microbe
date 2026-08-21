@@ -3,13 +3,14 @@
 import csv
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import curies
 import requests
 
-from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH
+from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH, RAW_DATA_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,27 @@ METPO_CLASSES_ROBOT_TEMPLATE_URL = (
 METPO_PROPERTIES_ROBOT_TEMPLATE_URL = (
     "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo-properties.tsv"
 )
+
+
+class _LocalTemplateResponse:
+
+    """Small requests.Response-compatible wrapper for an immutable local fixture."""
+
+    def __init__(self, text: str) -> None:
+        """Store template text."""
+        self.text = text
+
+    def raise_for_status(self) -> None:
+        """Match the requests response API for successful local reads."""
+
+
+def _metpo_template_response(url: str, filename: str):
+    """Read a downloaded/test METPO template before considering the network."""
+    template_dir = Path(os.environ.get("KG_MICROBE_METPO_TEMPLATE_DIR", RAW_DATA_DIR))
+    local_path = template_dir / filename
+    if local_path.is_file():
+        return _LocalTemplateResponse(local_path.read_text(encoding="utf-8"))
+    return requests.get(url, timeout=30)
 
 # Remote URL for assay kits mapping (used for API keys from BacDive)
 ASSAY_KITS_SIMPLE_JSON_URL = (
@@ -183,7 +205,7 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
     :return: Dictionary mapping IRIs/CURIEs to MetpoTreeNode objects
     """
     try:
-        response = requests.get(METPO_CLASSES_ROBOT_TEMPLATE_URL, timeout=30)
+        response = _metpo_template_response(METPO_CLASSES_ROBOT_TEMPLATE_URL, "metpo_sheet.tsv")
         response.raise_for_status()
 
         if not response.text.strip():
@@ -272,7 +294,7 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
     :return: Dictionary mapping RANGE class labels to property info (label and biolink_equivalent)
     """
     try:
-        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response = _metpo_template_response(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, "metpo-properties.tsv")
         response.raise_for_status()
 
         if not response.text.strip():
@@ -438,7 +460,7 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
         range_to_predicate = _load_metpo_properties()  # load properties mapping (RANGE class label -> predicate label)
 
         # load the METPO classes ROBOT template file/sheet
-        response = requests.get(METPO_CLASSES_ROBOT_TEMPLATE_URL, timeout=30)
+        response = _metpo_template_response(METPO_CLASSES_ROBOT_TEMPLATE_URL, "metpo_sheet.tsv")
         response.raise_for_status()
 
         if not response.text.strip():
@@ -563,7 +585,7 @@ def load_metpo_metabolite_utilization_mappings() -> Dict[str, Dict[str, str]]:
     :raises ValueError: If the response content is empty or invalid
     """
     try:
-        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response = _metpo_template_response(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, "metpo-properties.tsv")
         response.raise_for_status()
 
         if not response.text.strip():
@@ -642,7 +664,7 @@ def load_metpo_metabolite_production_mappings() -> Dict[str, Dict[str, str]]:
     :raises ValueError: If the response content is empty or invalid
     """
     try:
-        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response = _metpo_template_response(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, "metpo-properties.tsv")
         response.raise_for_status()
 
         if not response.text.strip():
@@ -707,7 +729,7 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
     :raises ValueError: If the response content is empty or invalid
     """
     try:
-        response = requests.get(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, timeout=30)
+        response = _metpo_template_response(METPO_PROPERTIES_ROBOT_TEMPLATE_URL, "metpo-properties.tsv")
         response.raise_for_status()
 
         if not response.text.strip():

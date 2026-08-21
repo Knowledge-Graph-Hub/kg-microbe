@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.10", "3.11", "3.12" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13" ]
 
     steps:
       - name: Check out repository
@@ -35,7 +35,18 @@ jobs:
           cache: "poetry"
 
       - name: Install dependencies
-        run: poetry install --no-interaction --all-extras --no-root
+        run: poetry install --no-interaction --with docs --no-root
+
+      - name: Validate package metadata
+        run: poetry check --lock
+
+      - name: Validate generated merge configurations
+        if: matrix.python-version == '3.10'
+        run: poetry run python scripts/generate_merge_configs.py --check
+
+      - name: Validate GitHub Actions workflows
+        if: matrix.python-version == '3.10'
+        uses: docker://rhysd/actionlint:1.7.7
 
       - name: Run CodeSpell
         run: poetry run tox -e codespell
@@ -63,4 +74,6 @@ jobs:
         run: poetry run python mappings/validate_mapping_schema.py --cross-file-conflicts
 
       - name: Test with pytest and generate coverage file
+        env:
+          KG_MICROBE_TESTS_NO_NETWORK: "1"
         run: poetry run tox -e py

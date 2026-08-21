@@ -10,7 +10,7 @@
 
 [Documentation](http://kghub.org/kg-microbe/index.html)
 
-[latest KG-Microbe release](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/tag/2025-03-07)
+[Latest KG-Microbe release](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/latest)
 
 [KG-Microbe @KG-Registry](https://kghub.org/kg-registry/resource/kg-microbe/kg-microbe.html)
 
@@ -31,16 +31,51 @@
 ##  Merge
  - `poetry run kg merge`: This merges all transformed graphs above.
 
+The standard merge writes `data/merged/merged-kg.tar.gz`, containing
+`merged-kg_nodes.tsv` and `merged-kg_edges.tsv`, and writes statistics to
+`merged_graph_stats.yaml`. To work with the TSV files directly:
+
+```shell
+tar -xzf data/merged/merged-kg.tar.gz -C data/merged
+make run-summary
+```
+
+`make run-summary` also reads the archive directly, so extraction is optional.
+
+## Build and release artifacts
+
+The canonical `merge.yaml` build is the release graph. Other merge configs use
+distinct names such as `merged-kg-minimal.tar.gz`,
+`merged-kg-no-metatraits.tar.gz`, and `merged-kg-prego-full.tar.gz`, so running a
+variant cannot masquerade as the canonical graph. The source differences are
+defined in `config/merge_variants.yaml`.
+
+The release workflow publishes the checksum-verified Jenkins artifact as
+`kg-microbe-YYYYMMDD.tar.gz`. It contains the canonical
+`merged-kg_nodes.tsv`, `merged-kg_edges.tsv`, and dated graph statistics. The
+release also includes `artifact-provenance.txt` with the build URL, checksum,
+and workflow revision.
+
+- Immutable dated builds:
+  `https://kg-hub.berkeleybop.io/kg-microbe/YYYYMMDD/kg-microbe.tar.gz`
+- Mutable most-recent build:
+  `https://kg-hub.berkeleybop.io/kg-microbe/current/kg-microbe.tar.gz`
+- Latest curated GitHub release: [releases/latest](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/latest)
+
+Use a dated URL or a GitHub release checksum for reproducible downstream work;
+the `current` URL changes after a successful pipeline publication.
+
 ## Release
  ### Requirements
  In order to be able to make KG releases on this repository, you'll need:
  - Appropriate permissions to this repository.
- - A Github token that has permissions on this repository. [This is how you set it in GitHub](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/setting-a-personal-access-token-policy-for-your-organization#restricting-access-by-personal-access-tokens-classic). Make sure your token has access to this project.
- - Save this token locally assigned to the environemnt variable `GH_TOKEN`
+ - A GitHub token that has permissions on this repository. [This is how you set it in GitHub](https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/setting-a-personal-access-token-policy-for-your-organization#restricting-access-by-personal-access-tokens-classic). Make sure your token has access to this project.
+ - Save this token locally in the environment variable `GH_TOKEN`:
     ```shell
-    export GH_TOKEN = XXXX
+    export GH_TOKEN=XXXX
     ```
-    or add it to your `~/.bash_profile` or `~/.bashrc` file.
+   GitHub CLI reads the variable directly. Do not place the token in a Git URL,
+   repository file, or shell history.
 
 It should be noted that the KG construction process, particularly the transform step  involving trimming of NCBI Taxonomy for any KG and the steps involving the microbial UniProt dataset for KG-Microbe-Function and KG-Microbe-Biomedical-Function, is computationally intensive. Successful execution on a local machine may require significant memory resources (e.g., >500 GB of RAM), further details can be found in the project's code repository.
 

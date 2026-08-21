@@ -1,0 +1,68 @@
+---
+# Declarative differences from merge.yaml. Generated files must be refreshed
+# with: poetry run python scripts/generate_merge_configs.py
+variants:
+  merge.minimal.yaml:
+    description: Minimal three-source graph for smoke tests.
+    include_only: [bacdive, madin_etal, metatraits]
+    output_filename: merged-kg-minimal
+    stats_filename: merged_graph_stats_minimal.yaml
+
+  merge.no_metatraits.yaml:
+    description: Standard graph without either MetaTraits source.
+    remove_sources: [metatraits, metatraits_gtdb]
+    output_filename: merged-kg-no-metatraits
+    stats_filename: merged_graph_stats_no_metatraits.yaml
+
+  merge.noprego.yaml:
+    description: Standard graph without PREGO.
+    remove_sources: [prego]
+    output_filename: merged-kg-no-prego
+    stats_filename: merged_graph_stats_no_prego.yaml
+
+  merge.prego-full.yaml:
+    description: Experimental graph with full PREGO instead of habitat-only PREGO.
+    source_overrides:
+      prego:
+        name: PREGO
+        input:
+          format: tsv
+          filename:
+            - data/transformed/prego/nodes.tsv
+            - data/transformed/prego/edges.tsv
+    output_filename: merged-kg-prego-full
+    stats_filename: merged_graph_stats_prego_full.yaml
+
+  merge_bakta.yaml:
+    description: Standard graph plus Bakta, COG, and KEGG genome annotations.
+    add_sources:
+      bakta_cmm:
+        name: bakta_cmm
+        input:
+          format: tsv
+          filename:
+            - data/transformed/bakta/cmm_bakta/nodes.tsv
+            - data/transformed/bakta/cmm_bakta/edges.tsv
+      bakta_pfas:
+        name: bakta_pfas
+        input:
+          format: tsv
+          filename:
+            - data/transformed/bakta/pfas_bakta/nodes.tsv
+            - data/transformed/bakta/pfas_bakta/edges.tsv
+      cog:
+        name: cog
+        input:
+          format: tsv
+          filename:
+            - data/transformed/cog/nodes.tsv
+            - data/transformed/cog/edges.tsv
+      kegg:
+        name: kegg
+        input:
+          format: tsv
+          filename:
+            - data/transformed/kegg/nodes.tsv
+            - data/transformed/kegg/edges.tsv
+    output_filename: merged-kg-bakta
+    stats_filename: merged_graph_stats_bakta.yaml

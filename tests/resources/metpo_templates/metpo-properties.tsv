@@ -1,0 +1,3 @@
+ID	label	RANGE	biolink equivalent
+ID	LABEL	RANGE	A skos:exactMatch
+METPO:2000001	has phenotype	phenotype	http://w3id.org/biolink/vocab/has_phenotype

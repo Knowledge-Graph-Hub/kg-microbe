@@ -1,34 +1,71 @@
 name: Release
 
 on:
-  # push:
-  #   tags:
-  #     - "v*.*.*"
   workflow_dispatch:
+    inputs:
+      build_date:
+        description: Jenkins/S3 build directory in YYYYMMDD format
+        required: true
+        type: string
+      release_tag:
+        description: GitHub release tag to create (for example, 2026-08-20)
+        required: true
+        type: string
+      prerelease:
+        description: Mark the GitHub release as a prerelease
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    env:
+      BUILD_BASE_URL: https://kg-hub.berkeleybop.io/kg-microbe/${{ inputs.build_date }}
+      ARTIFACT_NAME: kg-microbe-${{ inputs.build_date }}.tar.gz
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 0 # Fetch all history for accurate versioning
+      - name: Validate inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${{ inputs.build_date }}" =~ ^[0-9]{8}$ ]]
+          [[ "${{ inputs.release_tag }}" =~ ^[A-Za-z0-9._-]+$ ]]
 
-      - name: Install zip utility
-        run: sudo apt-get install -y zip
+      - name: Download named Jenkins build artifact and checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "${BUILD_BASE_URL}/kg-microbe.tar.gz" \
+            --output "${ARTIFACT_NAME}"
+          curl --fail --location --retry 3 \
+            "${BUILD_BASE_URL}/kg-microbe.tar.gz.sha256" \
+            --output artifact.sha256
+          expected="$(cut -d ' ' -f 1 artifact.sha256)"
+          printf '%s  %s\n' "${expected}" "${ARTIFACT_NAME}" | sha256sum --check --strict
 
-      - name: Zip transformed directory
-        run: zip -r transformed.zip data/transformed
+      - name: Record artifact provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            printf 'build_date=%s\n' "${{ inputs.build_date }}"
+            printf 'source_url=%s\n' "${BUILD_BASE_URL}/kg-microbe.tar.gz"
+            printf 'sha256=%s\n' "$(cut -d ' ' -f 1 artifact.sha256)"
+            printf 'workflow_commit=%s\n' "${GITHUB_SHA}"
+          } > artifact-provenance.txt
 
-    #   - name: Copy merged-kg.tar.gz
-    #     run: cp data/merged/merged-kg.tar.gz .
-
-      - name: Release
+      - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: transformed.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ inputs.release_tag }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            ${{ env.ARTIFACT_NAME }}
+            artifact-provenance.txt

@@ -223,6 +223,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
             transform = MetaTraitsTransform(
                 input_dir=metatraits_subdir,
                 output_dir=self.temp_output_dir,
+                num_workers=1,
             )
             transform._search_ncbitaxon_by_label = mock_search
 
@@ -362,6 +363,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
             transform = MetaTraitsTransform(
                 input_dir=metatraits_subdir,
                 output_dir=self.temp_output_dir,
+                num_workers=1,
             )
             transform._search_ncbitaxon_by_label = mock_search
             transform.run(show_status=False)

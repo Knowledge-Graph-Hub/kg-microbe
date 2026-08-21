@@ -1,6 +1,7 @@
 """GOLD's merge wiring: prefixes, taxon overlap, and name-conflict resolution."""
 
 import csv
+import inspect
 from pathlib import Path
 from unittest import TestCase
 
@@ -134,17 +135,19 @@ class StaleOutputGuardTest(TestCase):
         absence is a different situation from staleness.
         """
         from kg_microbe.transform_utils.gold.gold import GOLDTransform
+        from kg_microbe.utils.transform_fingerprint import code_fingerprint, read_fingerprint
 
         out = REPO_ROOT / "data" / "transformed" / "gold"
         if not (out / "nodes.tsv").is_file():
             self.skipTest("gold transform output not built")
-        marker = out / "source_checksum.txt"
-        if not marker.is_file():
-            self.skipTest("output predates the checksum marker; re-run `poetry run kg transform -s gold`")
+        recorded = read_fingerprint(out)
+        if recorded is None:
+            self.skipTest("output predates the fingerprint marker; re-run `poetry run kg transform -s gold`")
+        code_dir = Path(inspect.getsourcefile(GOLDTransform)).parent
         self.assertEqual(
-            marker.read_text(encoding="utf-8").strip(),
-            GOLDTransform.source_checksum(),
-            "data/transformed/gold/ was built by a different version of gold.py, and gold is "
-            "in the merge configs — merging would ingest the wrong shape. Run "
+            recorded["code"],
+            code_fingerprint(code_dir),
+            "data/transformed/gold/ was built by a different version of the gold transform, and "
+            "gold is in the merge configs — merging would ingest the wrong shape. Run "
             "`poetry run kg transform -s gold` before merging.",
         )

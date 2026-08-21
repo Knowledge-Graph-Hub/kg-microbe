@@ -295,6 +295,40 @@ def _list_transform_sources() -> list[str]:
     return out
 
 
+def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
+    """
+    Compare the recorded fingerprint against the current code and data.
+
+    :param source: Transform source name.
+    :param code_dir: The transform's package directory.
+    :return: ``(status, note)``, or None when there is no usable marker and the
+        caller should fall back to comparing timestamps.
+    """
+    try:
+        from kg_microbe.utils.transform_fingerprint import (
+            code_fingerprint,
+            data_fingerprint,
+            read_fingerprint,
+        )
+    except ImportError:
+        return None
+
+    for name in OUTPUT_DIR_ALIASES.get(source, (source,)):
+        recorded = read_fingerprint(TRANSFORMED_DIR / name)
+        if recorded is None:
+            continue
+        code_stale = recorded.get("code") != code_fingerprint(code_dir)
+        data_stale = recorded.get("data") != data_fingerprint(REPO, _declared_data_inputs(source))
+        if code_stale and data_stale:
+            return "STALE_VS_CODE_AND_DATA", f"code and data differ from the recorded build; rerun `poetry run kg transform -s {source}`"
+        if code_stale:
+            return "STALE_VS_CODE", f"code differs from the recorded build; rerun `poetry run kg transform -s {source}`"
+        if data_stale:
+            return "STALE_VS_DATA", f"a declared data input differs from the recorded build; rerun `poetry run kg transform -s {source}`"
+        return "FRESH", "verified by content fingerprint"
+    return None
+
+
 def check_source(source: str, ref: str) -> SourceReport:
     """Evaluate freshness for one transform source."""
     code_dir = TRANSFORM_ROOT / source
@@ -314,6 +348,33 @@ def check_source(source: str, ref: str) -> SourceReport:
     commit_ts, commit_sha = _latest_commit(code_dir, ref)
     local = _has_local_diff(code_dir, ref)
     out_mtime = _output_mtime(source)
+
+    # Prefer the fingerprint the transform recorded, when there is one. It
+    # compares bytes, which is the only signal that survives routine git
+    # operations: `git checkout` rewrites an mtime with no content change
+    # (#797), and a squash merge advances commit time for content that already
+    # existed (#836). Both produced confident "stale" verdicts on output that
+    # was byte-for-byte current, and a pre-flight that cries wolf gets ignored.
+    # Consulted even when the branch diverges from `ref`. `LOCAL_CHANGES` exists
+    # because a *timestamp* comparison against master is undefined mid-branch —
+    # but a content comparison is not. "Does this output match the code sitting
+    # here right now" is both answerable and the question a pre-flight actually
+    # wants, so the fingerprint answers it rather than deferring.
+    if out_mtime is not None:
+        verdict = _fingerprint_verdict(source, code_dir)
+        if verdict is not None:
+            status, note = verdict
+            if local:
+                note = f"{note} (vs the working tree; branch diverges from {ref})"
+            return SourceReport(
+                source=source,
+                status=status,
+                code_commit_ts=commit_ts,
+                code_commit_sha=commit_sha,
+                output_mtime=out_mtime,
+                local_changes=local,
+                note=note,
+            )
 
     if out_mtime is None:
         status = "MISSING_OUTPUT"

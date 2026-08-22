@@ -365,18 +365,6 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             required_for="`kg query-organism`",
             severity=SEV_OPTIONAL,
         ),
-        Operation(
-            name="holdouts",
-            stage="post-merge",
-            title="Train / test / validation edge splits",
-            purpose="Generate positive/negative holdouts for ML link-prediction training.",
-            command="poetry run kg holdouts -n <nodes.tsv> -e <edges.tsv> -o data/holdouts/",
-            inputs=[merged_nodes, merged_edges] if merged_dir else [],
-            outputs=["data/holdouts/"],
-            required_for="ML training workflows (consumer-driven; not a release gate)",
-            severity=SEV_OPTIONAL,
-        ),
-
         # -------------------- REVIEW GATES (release prerequisites) --------------------
         Operation(
             name="kg-model-review",

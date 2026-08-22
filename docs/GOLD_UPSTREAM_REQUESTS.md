@@ -4,6 +4,10 @@
 **From:** KG-Microbe · **Date:** 2026-08-10
 **Full review:** [`GOLD_TRANSFORM_REVIEW.md`](GOLD_TRANSFORM_REVIEW.md)
 
+> Version note: the observations below are a dated Biolink 4.2.2 review. The
+> repository now pins 4.4.2; relevant predicate and category assumptions were
+> rechecked in [BIOLINK_4_4_2_REVALIDATION.md](BIOLINK_4_4_2_REVALIDATION.md).
+
 Thank you for the export — it is in better shape than most of what we ingest. Before
 listing requests, the things that are genuinely right, because they are not common:
 

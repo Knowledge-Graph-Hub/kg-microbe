@@ -35,6 +35,50 @@ FINGERPRINT_FILE = "source_fingerprint.json"
 #: absent rather than silently compared under different rules.
 FINGERPRINT_VERSION = 1
 
+# Files at or below this size are cheap enough to hash completely. Larger graph
+# TSVs are sampled at evenly spaced offsets so a freshness check does bounded IO
+# rather than rereading hundreds of gigabytes before every query.
+FULL_HASH_LIMIT = 8 * 1024 * 1024
+SAMPLE_SIZE = 128 * 1024
+SAMPLE_COUNT = 8
+
+
+def bounded_file_fingerprint(path: Path) -> str:
+    """
+    Return a content-sensitive fingerprint with bounded IO for large files.
+
+    Small files are hashed in full. For larger files, the digest covers the
+    size and eight evenly spaced 128 KiB windows (including both ends). This is
+    intentionally stronger than size/mtime metadata while keeping database
+    startup independent of graph size. It is a cache-invalidation signal, not
+    a cryptographic proof that two multi-gigabyte files are identical.
+
+    :param path: File to fingerprint.
+    :return: Versioned SHA-256 digest string.
+    """
+    size = path.stat().st_size
+    digest = hashlib.sha256()
+    digest.update(b"kg-microbe-bounded-file-fingerprint-v1\0")
+    digest.update(str(size).encode("ascii"))
+    digest.update(b"\0")
+    with path.open("rb") as handle:
+        if size <= FULL_HASH_LIMIT:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+            return f"full-sha256:{digest.hexdigest()}"
+
+        last_offset = max(size - SAMPLE_SIZE, 0)
+        offsets = sorted(
+            {(last_offset * index) // (SAMPLE_COUNT - 1) for index in range(SAMPLE_COUNT)}
+        )
+        for offset in offsets:
+            handle.seek(offset)
+            sample = handle.read(SAMPLE_SIZE)
+            digest.update(offset.to_bytes(8, "big"))
+            digest.update(len(sample).to_bytes(8, "big"))
+            digest.update(sample)
+    return f"sampled-sha256:{digest.hexdigest()}"
+
 
 def _hash_files(paths: Iterable[Path]) -> str:
     """

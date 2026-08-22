@@ -49,7 +49,7 @@ poetry run python .claude/skills/kg-postprocess-report/kg_postprocess_report.py 
 1. **Top-line summary** — release blockers that are missing or stale (the "what's left to ship" punch list), plus a counts table per status.
 2. **Per-stage detail** — for each of the four stages:
    - `post-transform` — operations on `data/transformed/<source>/*.tsv` (mapping consolidation, validators, coverage reports, METPO proposal extraction).
-   - `post-merge` — operations on the merged-KG (auto cleanup inside `kg merge`, summary stats, N-Triples conversion, Neo4j upload, DuckDB cache, holdouts).
+   - `post-merge` — operations on the merged-KG (auto cleanup inside `kg merge`, summary stats, N-Triples conversion, Neo4j upload, DuckDB cache).
    - `review-gate` — Claude-driven reviews that hard-block release (`kg-model-review`, `kg-path-review`) plus the recommended `audit-mappings`.
    - `release` — `kg-release-diff` and `kg-release` themselves.
 3. **Per-operation entry** — purpose, command, inputs, outputs, status, severity, and any operational notes.

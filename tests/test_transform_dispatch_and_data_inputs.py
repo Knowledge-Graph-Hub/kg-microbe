@@ -7,7 +7,7 @@ from unittest import TestCase, mock
 
 import pytest
 
-from kg_microbe.transform import DATA_SOURCES, transform
+from kg_microbe.transform import DATA_SOURCES, LazyTransform, transform
 from kg_microbe.transform_utils.transform import Transform
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +43,34 @@ class UnknownSourceTest(TestCase):
         with mock.patch.dict(DATA_SOURCES, {}, clear=False):
             with pytest.raises(ValueError):
                 transform(None, None, sources=["bacdive", "definitely-not-a-source"])
+
+
+class LazyTransformTest(TestCase):
+
+    """Registry metadata inspection must survive unavailable optional modules."""
+
+    def test_missing_module_uses_getattr_default_for_metadata(self):
+        """Registry metadata reads use the caller's default when import fails."""
+        proxy = LazyTransform("kg_microbe.not_installed.MissingTransform")
+        self.assertEqual(getattr(proxy, "DATA_INPUTS", ()), ())
+
+    def test_missing_module_still_fails_when_transform_is_run(self):
+        """Actually running an unavailable transform preserves the import error."""
+        proxy = LazyTransform("kg_microbe.not_installed.MissingTransform")
+        with self.assertRaises(ModuleNotFoundError):
+            proxy()
+
+    def test_freshness_helper_degrades_when_registered_module_is_unavailable(self):
+        """Freshness inspection continues when one optional transform cannot import."""
+        spec = importlib.util.spec_from_file_location(
+            "kgm_freshness_check_lazy",
+            REPO_ROOT / ".claude" / "skills" / "kgm-freshness-check" / "kgm_freshness_check.py",
+        )
+        module = importlib.util.module_from_spec(spec)
+        sys.modules["kgm_freshness_check_lazy"] = module
+        spec.loader.exec_module(module)
+        with mock.patch.dict(DATA_SOURCES, {"missing": LazyTransform("kg_microbe.not_installed.Missing")}, clear=False):
+            self.assertEqual(module._declared_data_inputs("missing"), ())
 
 
 class DataInputsTest(TestCase):

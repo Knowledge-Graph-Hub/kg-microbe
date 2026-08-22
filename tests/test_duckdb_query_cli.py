@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 from pathlib import Path
 
 import duckdb
@@ -61,6 +62,26 @@ def test_changed_source_rebuilds_database(tmp_path: Path) -> None:
     conn = get_or_create_database(nodes, edges, db_path)
     try:
         assert conn.execute("SELECT COUNT(*) FROM edges").fetchone()[0] == 3
+    finally:
+        conn.close()
+
+
+def test_same_size_same_mtime_content_change_rebuilds_database(tmp_path: Path) -> None:
+    """Preserved metadata must not make changed TSV bytes look current (#866)."""
+    nodes, edges = _write_graph(tmp_path)
+    db_path = tmp_path / "graph.duckdb"
+    get_or_create_database(nodes, edges, db_path).close()
+    original_stat = edges.stat()
+    changed = edges.read_text(encoding="utf-8").replace("located_in", "related_to")
+    assert len(changed.encode()) == edges.stat().st_size
+    edges.write_text(changed, encoding="utf-8")
+    os.utime(edges, ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns))
+
+    conn = get_or_create_database(nodes, edges, db_path)
+    try:
+        predicates = {row[0] for row in conn.execute("SELECT predicate FROM edges").fetchall()}
+        assert "biolink:related_to" in predicates
+        assert "biolink:located_in" not in predicates
     finally:
         conn.close()
 

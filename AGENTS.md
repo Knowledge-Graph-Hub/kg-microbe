@@ -1,6 +1,6 @@
 # Repository instructions
 
-KG-Microbe is a Python 3.10–3.13 Poetry project. Its pipeline is
+KG-Microbe is a Python 3.10–3.12 Poetry project. Its pipeline is
 `download.yaml -> data/raw -> transforms -> data/transformed -> merge.yaml ->
 data/merged/merged-kg.tar.gz`.
 

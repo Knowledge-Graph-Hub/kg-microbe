@@ -9,6 +9,8 @@ from typing import Dict, Iterable, Union
 
 import duckdb
 
+from kg_microbe.utils.transform_fingerprint import bounded_file_fingerprint
+
 SOURCE_METADATA_TABLE = "kg_microbe_source_metadata"
 REQUIRED_COLUMNS = {
     "nodes": {"id", "category", "name", "synonym"},
@@ -25,9 +27,9 @@ def get_or_create_database(
     """
     Load or connect to a DuckDB database built from KGX TSV files.
 
-    Existing databases are reused only when their recorded source path, size,
-    and nanosecond mtime match both input files. Rebuilds happen at a temporary
-    sibling path and replace the advertised database atomically.
+    Existing databases are reused only when their recorded source paths and
+    content-sensitive fingerprints match both input files. Rebuilds happen at
+    a temporary sibling path and replace the advertised database atomically.
 
     :param nodes_path: Path to nodes TSV file.
     :param edges_path: Path to edges TSV file.
@@ -58,18 +60,18 @@ def get_or_create_database(
     return duckdb.connect(str(db_path))
 
 
-def _source_fingerprints(nodes_path: Path, edges_path: Path) -> Dict[str, tuple[str, int, int]]:
-    """Return stable-enough freshness metadata without scanning multi-GB files."""
+def _source_fingerprints(nodes_path: Path, edges_path: Path) -> Dict[str, tuple[str, int, str]]:
+    """Return content-sensitive freshness metadata with bounded graph-scale IO."""
     result = {}
     for kind, path in (("nodes", nodes_path), ("edges", edges_path)):
         stat = path.stat()
-        result[kind] = (str(path), stat.st_size, stat.st_mtime_ns)
+        result[kind] = (str(path), stat.st_size, bounded_file_fingerprint(path))
     return result
 
 
 def _open_current_database(
     db_path: Path,
-    fingerprints: Dict[str, tuple[str, int, int]],
+    fingerprints: Dict[str, tuple[str, int, str]],
 ) -> duckdb.DuckDBPyConnection | None:
     """Open an existing database only if it is complete and current."""
     conn = None
@@ -78,9 +80,9 @@ def _open_current_database(
         conn.execute("SELECT 1 FROM nodes LIMIT 1")
         conn.execute("SELECT 1 FROM edges LIMIT 1")
         rows = conn.execute(
-            f"SELECT source_kind, source_path, source_size, source_mtime_ns FROM {SOURCE_METADATA_TABLE}"
+            f"SELECT source_kind, source_path, source_size, source_fingerprint FROM {SOURCE_METADATA_TABLE}"
         ).fetchall()
-        recorded = {kind: (path, size, mtime_ns) for kind, path, size, mtime_ns in rows}
+        recorded = {kind: (path, size, fingerprint) for kind, path, size, fingerprint in rows}
         if recorded == fingerprints:
             return conn
     except duckdb.Error:
@@ -94,7 +96,7 @@ def _rebuild_database(
     nodes_path: Path,
     edges_path: Path,
     db_path: Path,
-    fingerprints: Dict[str, tuple[str, int, int]],
+    fingerprints: Dict[str, tuple[str, int, str]],
 ) -> None:
     """Build at a temporary sibling path, then atomically publish it."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -155,7 +157,7 @@ def _create_database_from_tsv(
     nodes_path: Path,
     edges_path: Path,
     db_path: Path,
-    fingerprints: Dict[str, tuple[str, int, int]] | None = None,
+    fingerprints: Dict[str, tuple[str, int, str]] | None = None,
 ) -> duckdb.DuckDBPyConnection:
     """Create a database using DuckDB-native, bounded-memory TSV ingestion."""
     node_columns = _read_header(nodes_path, "nodes")
@@ -182,7 +184,7 @@ def _create_database_from_tsv(
         conn.execute(
             f"CREATE TABLE {SOURCE_METADATA_TABLE} ("
             "source_kind VARCHAR PRIMARY KEY, source_path VARCHAR, "
-            "source_size UBIGINT, source_mtime_ns UBIGINT)"
+            "source_size UBIGINT, source_fingerprint VARCHAR)"
         )
         conn.executemany(
             f"INSERT INTO {SOURCE_METADATA_TABLE} VALUES (?, ?, ?, ?)",

@@ -48,8 +48,19 @@ class LazyTransform:
         return self.transform_class(*args, **kwargs)
 
     def __getattr__(self, name: str) -> Any:
-        """Expose class attributes without changing the registry API."""
-        return getattr(self.transform_class, name)
+        """
+        Expose class attributes, treating unavailable modules as absent metadata.
+
+        Registry inspection uses normal ``getattr(proxy, name, default)``
+        semantics. Converting an import failure to ``AttributeError`` lets that
+        default work in a partial/offline environment, while ``__call__`` still
+        raises the original import error when the transform is actually run.
+        """
+        try:
+            transform_class = self.transform_class
+        except ImportError as error:
+            raise AttributeError(f"{self.dotted_path} is unavailable") from error
+        return getattr(transform_class, name)
 
 
 DATA_SOURCES = {

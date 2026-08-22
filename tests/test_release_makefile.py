@@ -6,8 +6,11 @@ import shutil
 import subprocess
 from pathlib import Path
 
+import yaml
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MAKEFILE = REPO_ROOT / "kg-microbe.Makefile"
+RELEASE_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "release.yml"
 
 
 def _make(tmp_path: Path, target: str) -> subprocess.CompletedProcess[str]:
@@ -58,3 +61,24 @@ def test_release_makefile_never_rewrites_git_remote_with_token() -> None:
     assert "git remote set-url" not in contents
     assert "https://$(GH_TOKEN)@" not in contents
     assert "rm -f *.tar.gz" not in contents
+
+
+def test_dispatch_inputs_are_not_interpolated_inside_release_shell() -> None:
+    """Untrusted workflow-dispatch values reach shell only through env (#869)."""
+    workflow = yaml.safe_load(RELEASE_WORKFLOW.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["release"]["steps"]
+    shell_scripts = [step["run"] for step in steps if "run" in step]
+    assert shell_scripts
+    for script in shell_scripts:
+        assert "${{ inputs." not in script
+
+
+def test_removed_holdouts_command_is_not_recommended_by_agent_tools() -> None:
+    """Repository guidance must not resurrect the removed no-op command (#867)."""
+    paths = [
+        REPO_ROOT / ".claude" / "skills" / "codex-review-kg-microbe" / "SKILL.md",
+        REPO_ROOT / ".claude" / "skills" / "kg-postprocess-report" / "SKILL.md",
+        REPO_ROOT / ".claude" / "skills" / "kg-postprocess-report" / "kg_postprocess_report.py",
+    ]
+    for path in paths:
+        assert "kg holdouts" not in path.read_text(encoding="utf-8")

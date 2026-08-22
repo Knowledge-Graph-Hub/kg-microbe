@@ -64,7 +64,7 @@ ChEBI, GO, NCBITaxon, MONDO, HP, EC), and emits Biolink-modeled
 
 Key entry points:
 
-- CLI: `poetry run kg download | transform | merge | holdouts | query`
+- CLI: `poetry run kg download | transform | merge | query-organism`
   (`kg_microbe/run.py`, Click-based).
 - Transforms: `kg_microbe/transform_utils/<source>/<source>.py`, each a
   subclass of `Transform` in `transform_utils/transform.py`. Registered

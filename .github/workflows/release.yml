@@ -30,10 +30,13 @@ jobs:
     steps:
       - name: Validate inputs
         shell: bash
+        env:
+          BUILD_DATE: ${{ inputs.build_date }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
           set -euo pipefail
-          [[ "${{ inputs.build_date }}" =~ ^[0-9]{8}$ ]]
-          [[ "${{ inputs.release_tag }}" =~ ^[A-Za-z0-9._-]+$ ]]
+          [[ "${BUILD_DATE}" =~ ^[0-9]{8}$ ]]
+          [[ "${RELEASE_TAG}" =~ ^[A-Za-z0-9._-]+$ ]]
 
       - name: Download named Jenkins build artifact and checksum
         shell: bash
@@ -50,10 +53,12 @@ jobs:
 
       - name: Record artifact provenance
         shell: bash
+        env:
+          BUILD_DATE: ${{ inputs.build_date }}
         run: |
           set -euo pipefail
           {
-            printf 'build_date=%s\n' "${{ inputs.build_date }}"
+            printf 'build_date=%s\n' "${BUILD_DATE}"
             printf 'source_url=%s\n' "${BUILD_BASE_URL}/kg-microbe.tar.gz"
             printf 'sha256=%s\n' "$(cut -d ' ' -f 1 artifact.sha256)"
             printf 'workflow_commit=%s\n' "${GITHUB_SHA}"

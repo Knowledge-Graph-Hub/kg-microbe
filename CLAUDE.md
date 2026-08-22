@@ -21,7 +21,8 @@ network access or modify `data/raw`; put small immutable inputs under
 `tests/resources` and use `tmp_path` for output. Mark intentional live-service
 coverage with `@pytest.mark.integration`.
 
-Supported Python versions are 3.10 through 3.13.
+Supported Python versions are 3.10 through 3.12. Python 3.13 is blocked by the
+KGX/pyarrow dependency chain; see issue #871.
 
 ## Pipeline commands
 
@@ -78,7 +79,45 @@ extension columns are allowed when the merge preserves them.
 
 For this graph, a named strain or isolate beneath an NCBITaxon is typed
 `biolink:OrganismTaxon` and linked with `biolink:subclass_of`. This deliberate
-house convention keeps the taxonomic backbone traversable; see issue #834.
+house convention means “sits under this taxon” and keeps the taxonomic backbone
+traversable; it is not a claim that the isolate is an ontology class. Biolink
+4.4.2 still gives `subclass_of` an `OntologyClass` domain/range, so strict
+validators will report it; do not silently change the convention. See issue
+#834 and [the 4.4.2 revalidation](docs/BIOLINK_4_4_2_REVALIDATION.md).
+
+## Operational traps
+
+- PREGO defaults to `PREGO_SHAPES=habitat` and `PREGO_MIN_CONFIDENCE=0`.
+  `PREGO_SHAPES=all` changes the output directory and graph size;
+  `PREGO_MIN_CONFIDENCE` is a global cutoff, not a substitute for per-shape
+  curation. Use `merge.noprego.yaml` when PREGO's size is not acceptable; see
+  [the measured tradeoffs](docs/PREGO_SCORE_VALIDATION.md).
+- GOLD applies the microbial NCBITaxon scope by default. Only set
+  `GOLD_APPLY_TAXON_TRIM=false` for explicit debugging: it restores viral,
+  plant, and animal branches that the ontology transform intentionally drops.
+- MediaDive rejects stale response caches by default. Setting
+  `KG_MEDIADIVE_ALLOW_STALE_CACHE=true` is an explicit reproducibility waiver;
+  outputs may no longer match the current recipe list.
+- `KG_SEMSQL_BUILD=on` is the safe default. Turning it off reuses prebuilt
+  ontology databases and accepts their version risk; follow the
+  [ontology-cache runbook](docs/runbooks/ontology-caches.md).
+- Cache existence must imply completeness. Use `atomic_write` from
+  `kg_microbe.utils.atomic_io`, including completion markers where the helper
+  requires them; never publish a partially written cache path.
+- Ontology acquisition or adapter failures abort the run. Do not catch them as
+  per-row lookup failures, and construct/resolve adapters in the parent process
+  before creating a `Pool`; adapters are large and generally not picklable.
+
+## Adding a new transform
+
+1. Create a `Transform` subclass with `run()`, standard headers, and declared
+   `DATA_INPUTS` for every tracked curation file it reads.
+2. Register it lazily in `kg_microbe/transform.py`; importing the CLI must not
+   import its heavy or network-aware dependencies.
+3. Add pinned downloads to `download.yaml`, merge inputs to the canonical merge
+   specification, and regenerate all variants.
+4. Add immutable unit fixtures, assert produced artifacts and CLI exit codes,
+   and keep live upstream checks in marked integration tests.
 
 ## Reliability and safety rules
 

@@ -91,13 +91,16 @@ KGMICROBE_EXTENSION_PREDICATES = {
 
 
 def _load_biolink_sets():
-    """Load authoritative biolink category + predicate sets from bmt.
+    """Load pinned local biolink category + predicate sets from bmt.
 
     Returns (categories, predicates, biolink_version). If bmt is unavailable,
     returns (None, None, None) and the caller falls back to a minimal
     hardcoded set.
     """
     try:
+        from kg_microbe.utils.biolink_model import prepare_kgx
+
+        prepare_kgx()
         import bmt
         t = bmt.Toolkit()
         # Union of (a) concrete classes via get_all_classes — includes things

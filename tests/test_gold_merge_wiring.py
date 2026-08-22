@@ -23,7 +23,6 @@ def _sources(name):
 
 
 class GoldMergeWiringTest(TestCase):
-
     """GOLD ran on every transform and reached no merge config until now."""
 
     def test_gold_is_in_every_config_that_carries_the_standard_graph(self):
@@ -43,7 +42,6 @@ class GoldMergeWiringTest(TestCase):
 
 
 class TaxonOverlapTest(TestCase):
-
     """GOLD re-states NCBITaxon nodes the ontologies transform already supplies."""
 
     def setUp(self):
@@ -77,7 +75,6 @@ class TaxonOverlapTest(TestCase):
 
 
 class NameConflictTest(TestCase):
-
     """187 taxon names disagree between GOLD and the ontologies output."""
 
     def test_the_first_source_wins_a_name_conflict(self):
@@ -111,7 +108,6 @@ class NameConflictTest(TestCase):
 
 
 class StaleOutputGuardTest(TestCase):
-
     """A merge config pointing at output older than its transform is a trap."""
 
     def test_the_gold_output_was_built_by_the_current_code(self):

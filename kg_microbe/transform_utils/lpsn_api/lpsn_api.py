@@ -115,7 +115,6 @@ GSS_NODES_RELPATH = "transformed/lpsn/nodes.tsv"
 
 
 class LPSNAPITransform(Transform):
-
     """Fetch per-record LPSN JSON, emit enrichment nodes + edges."""
 
     def __init__(

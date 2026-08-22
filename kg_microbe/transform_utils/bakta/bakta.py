@@ -54,7 +54,6 @@ logger = logging.getLogger(__name__)
 
 
 class BaktaTransform(Transform):
-
     """Transform Bakta genome annotations into KGX format."""
 
     def __init__(

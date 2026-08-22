@@ -66,7 +66,6 @@ def _entries():
 
 
 class TestYamlTagging:
-
     """Every active download entry must be reachable via -t."""
 
     def test_every_entry_has_a_tag(self):
@@ -119,7 +118,6 @@ class TestYamlTagging:
 
 
 class TestPendingHosting:
-
     """
     Sources with a placeholder URL must be skipped, not attempted.
 
@@ -238,7 +236,6 @@ class TestPendingHosting:
 
 
 class TestCliErrorHandling:
-
     """The CLI must report bad tags as usage errors without hiding real crashes."""
 
     def test_unknown_tag_is_a_usage_error(self, tmp_path):
@@ -272,7 +269,6 @@ class TestCliErrorHandling:
 
 
 class TestTagPlumbing:
-
     """Tags must reach kghub-downloader, and gate the MediaDive bulk step."""
 
     def _run(self, tmp_path, **kwargs):

@@ -74,7 +74,6 @@ def _run(nodes=None, edges=None):
 
 
 class HouseConventionTest(TestCase):
-
     """One graph, one way of saying "this named entity sits under this taxon"."""
 
     def setUp(self):
@@ -115,7 +114,6 @@ class HouseConventionTest(TestCase):
 
 
 class OrganismFoldTest(TestCase):
-
     """An organism node has to earn its place by carrying a name the taxon lacks."""
 
     def setUp(self):
@@ -209,7 +207,6 @@ class OrganismFoldTest(TestCase):
 
 
 class MultiTaxonGuardTest(TestCase):
-
     """An organism claimed by two taxa must not be folded (#833)."""
 
     def setUp(self):

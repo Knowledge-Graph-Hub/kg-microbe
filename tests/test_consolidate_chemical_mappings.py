@@ -31,7 +31,6 @@ def _load_module():
 
 
 class ExtractCurieTests(unittest.TestCase):
-
     """``extract_curie`` preserves accepted prefixes and rejects everything else."""
 
     @classmethod
@@ -96,7 +95,6 @@ class ExtractCurieTests(unittest.TestCase):
 
 
 class IsMangledChebiTests(unittest.TestCase):
-
     """``is_mangled_chebi_id`` recognises pre-fix mangler outputs."""
 
     @classmethod
@@ -158,7 +156,6 @@ class IsMangledChebiTests(unittest.TestCase):
 
 
 class LoaderFilteringTests(unittest.TestCase):
-
     """
     Loader-side filtering tests.
 

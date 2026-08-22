@@ -94,6 +94,7 @@ def test_failed_rebuild_preserves_last_valid_database(tmp_path: Path, monkeypatc
     before = hashlib.sha256(db_path.read_bytes()).hexdigest()
 
     def fail_edges(conn, table_name, path, columns):
+        """Load nodes normally, then fail on edges to leave a half-built database."""
         if table_name == "edges":
             raise ValueError("synthetic ingest failure")
         return original_load_table(conn, table_name, path, columns)

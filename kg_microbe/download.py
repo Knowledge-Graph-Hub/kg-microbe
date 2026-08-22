@@ -25,7 +25,6 @@ PENDING_HOSTING_MARKER = "REPLACE_ME_"
 
 
 class UnknownDownloadTagError(ValueError):
-
     """
     Raised when a requested -t tag matches no entry in the download config.
 

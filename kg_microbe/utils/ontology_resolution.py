@@ -25,7 +25,6 @@ from kg_microbe.transform_utils.constants import (
 
 
 class CategoryAdapter(Protocol):
-
     """Minimal adapter surface needed by ChEBI category policy."""
 
     def ancestors(self, term_id: str):

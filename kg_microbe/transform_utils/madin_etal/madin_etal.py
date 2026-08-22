@@ -182,7 +182,6 @@ def _partition_substrate_quality_curies(
 
 
 class MadinEtAlTransform(Transform):
-
     """
     Ingest Madin et al dataset (NCBI/GTDB).
 

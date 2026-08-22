@@ -4,7 +4,6 @@ STRAIN_BACDIVE_PREFIX = "kgmicrobe.strain:bacdive_"
 
 
 class StrainProvenanceWriter:
-
     """Add a BacDive strain CURIE to provenance for strain-derived edges."""
 
     def __init__(self, inner_writer, *, knowledge_source: str, ks_column_index: int):

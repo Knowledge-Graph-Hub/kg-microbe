@@ -29,7 +29,6 @@ ARRAY_SHAPED = {
 
 
 class BacDiveJsonPathExtractionTest(TestCase):
-
     """`_extract_value_from_json_path` must traverse arrays, not bail on them."""
 
     def setUp(self):

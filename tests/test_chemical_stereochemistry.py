@@ -6,7 +6,6 @@ from kg_microbe.utils.chemical_mapping_utils import normalize_name
 
 
 class TestStereochemistryHandling(unittest.TestCase):
-
     """Test stereochemistry prefix stripping."""
 
     def test_normalize_name_basic(self):

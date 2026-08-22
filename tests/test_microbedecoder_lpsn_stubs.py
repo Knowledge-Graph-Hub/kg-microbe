@@ -28,7 +28,6 @@ def _row(genus="Alborzia", species="kermanshahica", subsp="NA"):
 
 
 class LpsnStubTest(TestCase):
-
     """Emit a node only where lpsn cannot, and name it from the crosswalk."""
 
     def setUp(self):

@@ -135,7 +135,6 @@ def _bin_index(score: float) -> int:
 
 
 class ScoreHistogram:
-
     """
     Fixed-width histogram of raw scores for one resource.
 

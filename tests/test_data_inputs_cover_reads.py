@@ -14,7 +14,6 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 class OntologiesStubsDeclarationTest(TestCase):
-
     """The freshness checker reads DATA_INPUTS and nothing else."""
 
     def test_every_collected_mapping_file_is_declared(self):
@@ -109,7 +108,6 @@ class OntologiesStubsDeclarationTest(TestCase):
 
 
 class OutOfRepoPathTest(TestCase):
-
     """The derivation must not turn a config mistake into an ImportError (#841)."""
 
     def test_a_path_outside_the_repo_is_skipped_not_raised(self):

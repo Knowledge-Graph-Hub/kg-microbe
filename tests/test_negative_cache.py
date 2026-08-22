@@ -9,7 +9,6 @@ from kg_microbe.utils.chemical_mapping_utils import (
 
 
 class TestNegativeLookupCache(unittest.TestCase):
-
     """Test negative lookup cache functionality."""
 
     def test_negative_cache_populated_on_failed_lookup(self):

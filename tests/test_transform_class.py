@@ -10,7 +10,6 @@ from kg_microbe.transform_utils.transform import Transform
 
 
 class TestTransform(TestCase):
-
     """Tests for all transform child classes."""
 
     def setUp(self) -> None:
@@ -104,7 +103,6 @@ class TestTransform(TestCase):
 
 
 class TransformChildClass(Transform):
-
     """An example Transform class."""
 
     def __init__(self):

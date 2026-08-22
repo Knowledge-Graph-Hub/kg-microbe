@@ -31,7 +31,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 class _FakeAdapter:
-
     """Minimal stand-in for an OAK SemSQL adapter — enough for the stub transform."""
 
     def __init__(self, store: Dict[str, Dict]):
@@ -53,7 +52,6 @@ class _FakeAdapter:
 
 
 class _StubbedTransform(OntologiesStubsTransform):
-
     """Subclass that swaps in an in-memory adapter so semsql tests don't touch DBs on disk."""
 
     def __init__(

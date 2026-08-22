@@ -41,7 +41,6 @@ from kg_microbe.transform_utils.transform import Transform
 
 
 class GTDBTransform(Transform):
-
     """Transform GTDB taxonomy and genome data into KGX format."""
 
     def __init__(self, input_dir=None, output_dir=None):

@@ -73,7 +73,6 @@ def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
 
 
 class TestChebiReleaseReader:
-
     """ChEBI's integer stamp must be read where the date reader cannot."""
 
     def test_reads_version_iri(self, tmp_path):
@@ -132,7 +131,6 @@ class TestChebiReleaseReader:
 
 
 class TestChebiGate:
-
     """The gate must fire on drift and stay quiet otherwise."""
 
     def test_aligned_is_silent(self, tmp_path, monkeypatch, capsys):
@@ -169,7 +167,6 @@ class TestChebiGate:
 
 
 class TestChebiBuild:
-
     """Build behaviour mirrors _ensure_go_db / _ensure_ncbitaxon_db."""
 
     def test_aligned_db_is_reused(self, tmp_path, monkeypatch):
@@ -448,7 +445,6 @@ class TestChebiBuild:
 
 
 class TestAdapterEntryPoint:
-
     """Both category-fixing paths must go through one ensured adapter."""
 
     def test_get_chebi_adapter_ensures_and_gates(self, tmp_path, monkeypatch):

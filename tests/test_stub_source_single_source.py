@@ -26,7 +26,6 @@ def _local_names():
 
 
 class TestPoIsOwlOnly:
-
     """PO's hierarchy comes from the OWL; no SemSQL DB should be fetched."""
 
     def test_po_stub_uses_owl_mireot(self):
@@ -47,7 +46,6 @@ class TestPoIsOwlOnly:
 
 
 class TestNoStubHasTwoSources:
-
     """Generalise the rule across every stub source."""
 
     def test_owl_backed_stubs_have_no_db_download(self):

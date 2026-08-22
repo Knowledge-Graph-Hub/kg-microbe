@@ -28,9 +28,7 @@ def prepare_kgx() -> None:
     its no-argument construction to pinned repository files.
     """
     schema_path = _configured_path("KG_MICROBE_BIOLINK_MODEL", DEFAULT_SCHEMA_PATH)
-    predicate_map_path = _configured_path(
-        "KG_MICROBE_BIOLINK_PREDICATE_MAP", DEFAULT_PREDICATE_MAP_PATH
-    )
+    predicate_map_path = _configured_path("KG_MICROBE_BIOLINK_PREDICATE_MAP", DEFAULT_PREDICATE_MAP_PATH)
     missing = [path for path in (schema_path, predicate_map_path) if not path.is_file()]
     if missing:
         formatted = ", ".join(str(path) for path in missing)
@@ -49,7 +47,6 @@ def prepare_kgx() -> None:
         return
 
     class LocalToolkit(current):
-
         """BMT Toolkit whose omitted inputs resolve to pinned local files."""
 
         _kg_microbe_local_defaults = (str(schema_path), str(predicate_map_path))
@@ -60,6 +57,7 @@ def prepare_kgx() -> None:
             predicate_map: Any = None,
             **kwargs: Any,
         ) -> None:
+            """Substitute the pinned local files for any argument left unset."""
             resolved_schema = str(schema_path) if schema is None else schema
             resolved_predicate_map = predicate_map_path if predicate_map is None else predicate_map
 

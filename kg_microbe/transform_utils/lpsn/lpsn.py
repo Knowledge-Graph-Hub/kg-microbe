@@ -118,7 +118,6 @@ DEPRECATED_STATUSES = frozenset(
 
 
 class _GTDBRankNameIndex:
-
     """
     Pre-load GTDB nodes.tsv into a ``(rank_prefix, name) -> [CURIE, ...]`` map.
 
@@ -163,7 +162,6 @@ class _GTDBRankNameIndex:
 
 
 class _NCBILabelIndex:
-
     """
     Pre-load NCBITaxon labels + exact synonyms, filtered to bacteria + archaea.
 
@@ -243,7 +241,6 @@ class _NCBILabelIndex:
 
 
 class LPSNTransform(Transform):
-
     """Transform LPSN GSS CSV bulk export into KGX nodes + edges."""
 
     def __init__(

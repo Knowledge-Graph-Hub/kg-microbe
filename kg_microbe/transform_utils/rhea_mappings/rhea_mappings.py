@@ -84,7 +84,6 @@ logger = logging.getLogger(__name__)
 
 
 class RheaMappingsTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     def __init__(

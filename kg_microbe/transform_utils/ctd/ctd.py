@@ -37,7 +37,6 @@ RELATIONS_DICT = {
 
 
 class CTDTransform(Transform):
-
     """A class used to represent a transformation process for UniProt data."""
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)

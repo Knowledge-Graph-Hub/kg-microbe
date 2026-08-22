@@ -27,7 +27,6 @@ def _frame(rows):
 
 
 class EnvironmentCorrectionTest(TestCase):
-
     """The two upstream rows that name the wrong term."""
 
     def test_the_taxonomy_root_is_replaced_by_the_plant_root(self):
@@ -77,7 +76,6 @@ class EnvironmentCorrectionTest(TestCase):
 
 
 class StubRegistrationTest(TestCase):
-
     """The corrected targets must resolve to real nodes."""
 
     def test_the_corrections_file_is_scanned_for_stub_curies(self):

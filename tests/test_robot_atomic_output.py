@@ -12,7 +12,6 @@ _PARTIAL = '{"meta":{"basicPropertyValues":[{"pred":"versionInfo","val":"2026-07
 
 
 class RobotAtomicOutputTest(TestCase):
-
     """ROBOT wrote to the final filename and its exit status was discarded."""
 
     def test_a_failed_conversion_publishes_nothing(self):

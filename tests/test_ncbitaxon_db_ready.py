@@ -41,7 +41,6 @@ def _validation(results):
 
 
 class TestPreflightContract:
-
     """It must either leave a valid DB in place or raise."""
 
     def test_valid_local_db_is_accepted(self, paths, monkeypatch):
@@ -201,7 +200,6 @@ class TestPreflightContract:
 
 
 class TestRealBuilderIntegration:
-
     """
     Exercise the real _ensure_ncbitaxon_db through the pre-flight.
 

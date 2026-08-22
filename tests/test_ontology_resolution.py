@@ -11,7 +11,6 @@ from kg_microbe.utils.ontology_resolution import (
 
 
 class FakeAdapter:
-
     """Small injected ChEBI view for deterministic policy tests."""
 
     def __init__(self, *, ancestors=(), label=None, parents=()):

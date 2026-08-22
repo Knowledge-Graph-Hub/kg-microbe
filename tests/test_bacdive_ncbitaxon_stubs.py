@@ -59,7 +59,6 @@ def _output_predates(output: Path, tracked_input: Path) -> bool:
 
 
 class NcbiTaxonStubTest(TestCase):
-
     """The trim drops host taxa the isolation-source mapping still points at."""
 
     def test_the_category_used_for_stubs_is_organism_taxon(self):

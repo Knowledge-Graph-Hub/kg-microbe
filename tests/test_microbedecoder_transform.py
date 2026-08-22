@@ -24,7 +24,6 @@ FIXTURE_DIR = Path(__file__).parent / "resources" / "microbedecoder"
 
 
 class _NoChebi:
-
     """
     ChemicalMappingLoader stub returning None for every lookup.
 
@@ -459,7 +458,6 @@ def test_constructor_is_inert_wrt_chemical_loader(tmp_path, monkeypatch):
     calls: list = []
 
     class _Tripwire:
-
         """Explode if the transform tries to instantiate the loader eagerly."""
 
         def __init__(self, *a, **kw):
@@ -534,7 +532,6 @@ def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
     """
 
     class _AlwaysResolves:
-
         """ChemicalMappingLoader stub that resolves every label to CHEBI:0."""
 
         def find_chebi_by_name(self, label, fuzzy_stereochemistry=True):

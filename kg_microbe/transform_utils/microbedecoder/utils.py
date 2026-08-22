@@ -163,18 +163,41 @@ BACDIVE_SNAPSHOT_COLUMNS: Tuple[str, ...] = (
 # ``d__Bacteria;g__Bacillus;s__Bacillus subtilis``); a semicolon split
 # would shred those into three orphan CURIEs (issue #655 regression net).
 #
-# Known limitation shared with ``madin_etal``: a chemical name containing a
-# literal comma (e.g. ``2,3-butanediol``) still over-splits on the primary
-# splitter. MicrobeDecoder rows use simple end-product names in practice
-# ("acetate", "lactate", "butanol"); a follow-up can promote this to a
-# smarter parser once a curated exceptions list exists.
-_MULTIVALUE_SPLIT = re.compile(r"\s*[,;]\s*")
-_MULTIVALUE_SPLIT_COMMA_ONLY = re.compile(r"\s*,\s*")
+# Separators inside brackets are NOT separators (#838). Splitting on every
+# comma cut four real labels in half, each fragment then reaching
+# ``microbedecoder_unmapped_labels_to_curate.tsv`` as its own unmappable
+# "term":
+#
+#   "O/129 (2,4-diamino-6,7-di-iso-propylpteridine phosphate)"
+#       -> "0129 (2"  +  "7-di-iso-propylpteridine phosphate)"   (1,212 occ)
+#   "#Herbaceous plants (Grass, Crops)"
+#       -> "#Herbaceous plants (Grass"  +  "Crops)"              (1,021 occ)
+#   "#Bovinae (Cow, Cattle)"     -> ... (200 occ)
+#   "#Suidae (Pig, Swine)"       -> ... (156 occ)
+#
+# The matched occurrence counts are what proved these were one string each:
+# every label with an unclosed ``(`` paired exactly with one carrying an
+# orphan ``)``. MediaIngredientMech hit the same defect on the ingredient side
+# (its #308) and had to tombstone the fragments after the fact.
+#
+# Still a known limitation, shared with ``madin_etal``: a comma inside a
+# chemical name with no brackets around it (``2,3-butanediol``) is
+# indistinguishable from a separator by any structural rule, and still
+# over-splits. MicrobeDecoder rows use simple end-product names in practice.
+_MULTIVALUE_SEPARATORS = ",;"
+_COMMA_ONLY_SEPARATORS = ","
+_OPENERS = "([{"
+_CLOSERS = ")]}"
 
 
 def split_multivalue(cell: object) -> List[str]:
-    """Split a multi-value cell on comma OR semicolon; return trimmed tokens."""
-    return _split(cell, _MULTIVALUE_SPLIT)
+    """
+    Split a multi-value cell on comma OR semicolon, outside brackets only.
+
+    :param cell: Raw cell value.
+    :return: Trimmed, non-empty tokens.
+    """
+    return _split(cell, _MULTIVALUE_SEPARATORS)
 
 
 def split_multivalue_comma_only(cell: object) -> List[str]:
@@ -185,17 +208,46 @@ def split_multivalue_comma_only(cell: object) -> List[str]:
     a raw semicolon is part of the identifier (``GTDB_ID`` rank separator)
     rather than a value separator.
     """
-    return _split(cell, _MULTIVALUE_SPLIT_COMMA_ONLY)
+    return _split(cell, _COMMA_ONLY_SEPARATORS)
 
 
-def _split(cell: object, pattern: "re.Pattern") -> List[str]:
-    """Shared helper for :func:`split_multivalue` and its comma-only variant."""
+def _split(cell: object, separators: str) -> List[str]:
+    """
+    Split a cell on separators that sit outside any bracket.
+
+    An unclosed bracket leaves the depth above zero for the rest of the
+    string, so everything after it stays in one token. That is the
+    conservative reading: with the structure broken we cannot tell where a
+    value ends, and inventing a boundary is what produced the orphan fragments
+    in the first place.
+
+    :param cell: Raw cell value.
+    :param separators: Characters that separate values at bracket depth zero.
+    :return: Trimmed, non-empty tokens.
+    """
     if cell is None:
         return []
     text = str(cell).strip()
     if not text or text.lower() in _EMPTY_MARKERS:
         return []
-    return [tok for tok in (t.strip() for t in pattern.split(text)) if tok]
+
+    tokens: List[str] = []
+    buffer: List[str] = []
+    depth = 0
+    for char in text:
+        if char in _OPENERS:
+            depth += 1
+        elif char in _CLOSERS:
+            # Clamp at zero: a stray closer must not drive the depth negative
+            # and make every later separator look nested.
+            depth = max(0, depth - 1)
+        if depth == 0 and char in separators:
+            tokens.append("".join(buffer))
+            buffer = []
+        else:
+            buffer.append(char)
+    tokens.append("".join(buffer))
+    return [tok for tok in (t.strip() for t in tokens) if tok]
 
 
 # Values MicrobeDecoder uses to indicate "no data" for a cell. Detected

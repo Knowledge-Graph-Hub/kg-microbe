@@ -258,6 +258,14 @@ _HOST_TAXON_PREFIXES = ("NCBITaxon:",)
 #: that cannot otherwise be bounded by a rule.
 _SITE_PREFIXES = ("ENVO:", "UBERON:", "FOODON:", "PO:", "FAO:")
 
+#: Per-term MeSH decisions, because a prefix rule cannot express "is a site"
+#: for a thesaurus spanning anatomy, disease, chemicals and organisms (#823).
+#: Every reachable MeSH term is listed and decided; anything unlisted is not
+#: bridged, so unknown means no and a new upstream label cannot readmit the
+#: class of error the file exists to prevent.
+_MESH_SITE_FILE = "gold_ecosystem_mesh_sites.tsv"
+_MESH_PREFIX = "mesh:"
+
 
 def _normalise_label(text: str) -> str:
     """
@@ -277,6 +285,12 @@ _TAXON_PREFIX = "NCBITaxon:"
 class GOLDTransform(Transform):
     """Conform the pre-transformed GOLD KGX TSVs to the KG-Microbe standard."""
 
+    #: The MeSH site curation this transform reads. Declared so the freshness
+    #: check notices an edit to it — a transform that reads a curation file
+    #: without declaring it is reported fresh while its output is stale, which
+    #: is #812, then #839, and would have been this transform next (#876).
+    DATA_INPUTS = (f"mappings/{_MESH_SITE_FILE}",)
+
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """
         Instantiate the transform.
@@ -289,6 +303,7 @@ class GOLDTransform(Transform):
         self._envo_map: Optional[dict] = None
         self._envo_nodes_cache: Optional[set] = None
         self._label_index: Optional[dict] = None
+        self._mesh_sites: Optional[set] = None
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
@@ -467,6 +482,26 @@ class GOLDTransform(Transform):
             )
         return collapse
 
+    def _mesh_site_terms(self) -> set:
+        """
+        MeSH CURIEs curated as sites.
+
+        :return: The ``SITE`` CURIEs; empty when the curation file is absent,
+            which keeps the #821 behaviour of bridging no MeSH at all.
+        """
+        if self._mesh_sites is not None:
+            return self._mesh_sites
+        path = Path(__file__).resolve().parents[3] / "mappings" / _MESH_SITE_FILE
+        allowed: set = set()
+        if path.is_file():
+            with path.open(newline="", encoding="utf-8") as handle:
+                rows = (line for line in handle if not line.startswith("#"))
+                for row in csv.DictReader(rows, delimiter="\t"):
+                    if (row.get("decision") or "").strip().upper() == "SITE":
+                        allowed.add((row.get("mesh_id") or "").strip())
+        self._mesh_sites = {curie for curie in allowed if curie}
+        return self._mesh_sites
+
     def _ontology_label_index(self) -> dict:
         """
         Label to CURIE across the ontologies already in the graph.
@@ -496,6 +531,10 @@ class GOLDTransform(Transform):
         # `is_file()` silently, so PO never contributed despite the log line
         # claiming it did.
         sources.append(self.output_base_dir / "ontologies_stubs" / "po_nodes.tsv")
+        # MeSH is indexed so the curated SITE terms are reachable. Everything
+        # else it contributes is refused by the per-term gate below, which is
+        # why indexing the whole file here is safe.
+        sources.append(self.output_base_dir / "ontologies_stubs" / "mesh_nodes.tsv")
         for path in sources:
             if not path.is_file():
                 continue
@@ -904,6 +943,30 @@ class GOLDTransform(Transform):
                     continue  # already bridged by the curated GOLD mapping
                 curie = index.get(_normalise_label(label))
                 if not curie or curie.startswith(_ECOSYSTEM_PREFIX):
+                    continue
+                if curie.startswith(_MESH_PREFIX):
+                    # Per-term, not per-prefix: `Invertebrates`, `Bacteria` and
+                    # `Cnidaria` are taxon groups and `Polycyclic aromatic
+                    # hydrocarbons` is a chemical class, all label-matching
+                    # exactly. Unlisted MeSH terms are refused.
+                    if curie not in self._mesh_site_terms():
+                        non_site += 1
+                        continue
+                    kept += 1
+                    anatomy += 1
+                    bridged_prefixes[_MESH_PREFIX.rstrip(":")] += 1
+                    writer.writerow(
+                        [
+                            eco_id,
+                            EXACT_MATCH_PREDICATE,
+                            curie,
+                            EXACT_MATCH,
+                            f"infores:{GOLD}",
+                            KNOWLEDGE_ASSERTION,
+                            MANUAL_AGENT,
+                            "",
+                        ]
+                    )
                     continue
                 if not curie.startswith(_SITE_PREFIXES + _HOST_TAXON_PREFIXES):
                     non_site += 1

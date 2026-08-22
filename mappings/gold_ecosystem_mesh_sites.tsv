@@ -1,0 +1,35 @@
+# Per-term decisions for bridging GOLD ecosystem labels to MeSH (#823).
+#
+# WHY THIS FILE EXISTS
+# The GOLD ecosystem label join bridges `gold.ecosystem:` labels to ontology
+# terms KG-Microbe already loads, gated by an allow-list of prefixes
+# (`_SITE_PREFIXES` in gold.py). That works for ENVO / UBERON / FOODON / PO /
+# FAO because each is about one kind of thing, so the prefix carries the
+# semantics. It cannot work for MeSH, which spans anatomy, disease, chemicals,
+# organisms and environments under one namespace — and our MeSH stubs are all
+# `biolink:OntologyClass`, so the category does not disambiguate either.
+#
+# With `mesh:` allowed wholesale the join asserted that organisms are
+# `located_in` a taxon group and a chemical class. #821 dropped the prefix
+# entirely, which was correct but also discarded five genuine sites. This file
+# restores them one term at a time.
+#
+# Every MeSH term reachable by this join is listed, decided, and given a
+# reason. REJECTED rows are kept rather than deleted so the reasoning survives
+# and re-adding one is a deliberate act, not an oversight.
+#
+# `decision` is SITE (bridge it) or REJECTED (never bridge it). Any MeSH term
+# not listed here is not bridged: unknown means no, so a new upstream label
+# cannot quietly readmit the class of error this file exists to prevent.
+#
+# Edge counts measured 2026-08-21 against data/transformed/gold/edges.tsv.
+gold_label	mesh_id	mesh_label	decision	edges	reason	curator	verified_date
+Built environment	mesh:D000076624	Built Environment	SITE	277	Anthropogenic environment; a place an organism is isolated from.	claude	2026-08-21
+Solid waste	mesh:D062611	Solid Waste	SITE	77	Environmental material, and the substrate organisms are recovered from.	claude	2026-08-21
+Abscess	mesh:D000038	Abscess	SITE	34	Body site / lesion. bacdive already uses mesh:D000038 as an isolation-source target, so this is consistent with an existing decision rather than a new one.	claude	2026-08-21
+Eggs	mesh:D004531	Eggs	SITE	20	Food/biological material an organism is isolated from, in the same family as the FOODON targets this join already bridges.	claude	2026-08-21
+Seawater	mesh:D012623	Seawater	SITE	0	Unambiguously an environmental site. Zero edges today, listed so the decision is recorded if GOLD ever attaches organisms to it. ENVO has no matching label in our extract.	claude	2026-08-21
+Invertebrates	mesh:D007448	Invertebrates	REJECTED	188	A TAXON GROUP, not a site. `located_in <taxon>` reads as classification — the exact case already excluded for NCBITaxon, readmitted through a different prefix. Needs `taxon location_of organism` instead; see #790.	claude	2026-08-21
+Bacteria	mesh:D001419	Bacteria	REJECTED	189	A taxon group, and a self-referential one: the subject of these edges is itself a bacterium. Not named in #823 — found by enumerating every reachable term rather than trusting the two examples.	claude	2026-08-21
+Cnidaria	mesh:D003063	Cnidaria	REJECTED	175	A taxon group (corals, jellyfish). Host taxon, not a site. Also not named in #823.	claude	2026-08-21
+Polycyclic aromatic hydrocarbons	mesh:D011084	Polycyclic Aromatic Hydrocarbons	REJECTED	0	A CHEMICAL CLASS. An organism is not `located_in` a molecule; this is the substrate/quality confusion partitioned in madin_etal.py and DISALLOWED_OBJECT_SOURCES.	claude	2026-08-21

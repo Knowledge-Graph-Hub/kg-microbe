@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -59,9 +60,37 @@ def prepare_kgx() -> None:
             predicate_map: Any = None,
             **kwargs: Any,
         ) -> None:
+            resolved_schema = str(schema_path) if schema is None else schema
+            resolved_predicate_map = predicate_map_path if predicate_map is None else predicate_map
+
+            # BMT 1.4.8 (the version resolved by KGX 2.x in a clean install)
+            # calls requests.get() for every string predicate map, including a
+            # local path. Newer BMT releases accept local paths directly. Load
+            # local/file/mapping inputs here so both versions stay offline-safe.
+            predicate_payload = None
+            if isinstance(resolved_predicate_map, Mapping):
+                predicate_payload = dict(resolved_predicate_map)
+            elif hasattr(resolved_predicate_map, "read"):
+                import yaml
+
+                predicate_payload = yaml.safe_load(resolved_predicate_map)
+            elif isinstance(resolved_predicate_map, (str, os.PathLike)):
+                local_path = Path(resolved_predicate_map)
+                if local_path.is_file():
+                    import yaml
+
+                    predicate_payload = yaml.safe_load(local_path.read_text(encoding="utf-8"))
+
+            if predicate_payload is not None:
+                from linkml_runtime.utils.schemaview import SchemaView
+
+                self.view = SchemaView(resolved_schema)
+                self.pmap = predicate_payload
+                return
+
             super().__init__(
-                schema=str(schema_path) if schema is None else schema,
-                predicate_map=str(predicate_map_path) if predicate_map is None else predicate_map,
+                schema=resolved_schema,
+                predicate_map=resolved_predicate_map,
                 **kwargs,
             )
 

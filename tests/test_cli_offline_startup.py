@@ -59,3 +59,23 @@ def test_importing_cli_does_not_import_kgx() -> None:
         check=False,
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_pinned_predicate_map_does_not_use_legacy_bmt_network_path(monkeypatch) -> None:
+    """BMT 1.4.8 treats local string paths as URLs; the wrapper must not (#850)."""
+    import bmt
+
+    from kg_microbe.utils.biolink_model import prepare_kgx
+
+    class LegacyToolkit:
+
+        """Stand in for BMT 1.4.8, whose constructor always fetches the map."""
+
+        def __init__(self, *args, **kwargs):
+            raise AssertionError("legacy BMT constructor would perform requests.get")
+
+    monkeypatch.setattr(bmt, "Toolkit", LegacyToolkit)
+    prepare_kgx()
+    toolkit = bmt.Toolkit()
+    assert toolkit.view is not None
+    assert "predicate mappings" in toolkit.pmap

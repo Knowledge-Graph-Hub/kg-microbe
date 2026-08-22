@@ -285,6 +285,12 @@ _TAXON_PREFIX = "NCBITaxon:"
 class GOLDTransform(Transform):
     """Conform the pre-transformed GOLD KGX TSVs to the KG-Microbe standard."""
 
+    #: The MeSH site curation this transform reads. Declared so the freshness
+    #: check notices an edit to it — a transform that reads a curation file
+    #: without declaring it is reported fresh while its output is stale, which
+    #: is #812, then #839, and would have been this transform next (#876).
+    DATA_INPUTS = (f"mappings/{_MESH_SITE_FILE}",)
+
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """
         Instantiate the transform.

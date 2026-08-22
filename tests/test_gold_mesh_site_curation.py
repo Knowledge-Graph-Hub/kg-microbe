@@ -96,3 +96,50 @@ class TransformGateTest(TestCase):
             self.assertEqual(transform._mesh_site_terms(), set())
         finally:
             gold_module._MESH_SITE_FILE = original
+
+
+class DeclaredInputTest(TestCase):
+
+    """A curation file a transform reads must be declared, or staleness is invisible."""
+
+    def test_the_curation_file_is_declared_as_a_data_input(self):
+        """
+        `kgm-freshness-check` reads `DATA_INPUTS` and nothing else.
+
+        Undeclared, an edit to the MeSH decisions changes gold's output while
+        every check reports it fresh, and a re-merge ships the old bridges.
+        That is #812, then #839 for ontologies_stubs, and would have been this
+        transform next (#876) — the declaration is opt-in and nothing fails
+        when you forget it.
+        """
+        from kg_microbe.transform_utils.gold.gold import GOLDTransform
+
+        self.assertIn("mappings/gold_ecosystem_mesh_sites.tsv", GOLDTransform.DATA_INPUTS)
+
+    def test_the_declaration_is_derived_from_the_filename_constant(self):
+        """Two hand-kept copies of one path drift; the constant is the single source."""
+        import inspect
+
+        from kg_microbe.transform_utils.gold.gold import GOLDTransform
+
+        declaration = inspect.getsource(GOLDTransform).split("DATA_INPUTS = ")[1].split("\n")[0]
+        self.assertIn("_MESH_SITE_FILE", declaration)
+
+    def test_every_declared_input_exists_and_is_tracked(self):
+        """
+        An untracked path contributes no signal, so the declaration would be inert.
+
+        Same reasoning as #843: the checker asks git, and `is_file()` is the
+        wrong property to assert.
+        """
+        import subprocess
+
+        from kg_microbe.transform_utils.gold.gold import GOLDTransform
+
+        for declared in GOLDTransform.DATA_INPUTS:
+            tracked = subprocess.run(  # noqa: S603 - fixed argv, path from our own constant
+                ["/usr/bin/git", "ls-files", "--error-unmatch", declared],  # noqa: S607
+                cwd=REPO_ROOT,
+                capture_output=True,
+            )
+            self.assertEqual(tracked.returncode, 0, f"{declared} is not tracked in git")

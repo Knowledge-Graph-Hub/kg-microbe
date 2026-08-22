@@ -10,7 +10,6 @@ from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 
 
 class TestTransformCategoryAlignment:
-
     """Test that transforms correctly align categories with ontologies transform."""
 
     @pytest.fixture

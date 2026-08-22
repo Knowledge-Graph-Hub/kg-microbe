@@ -49,7 +49,6 @@ def _diff(actual: Path, expected: Path) -> str:
 
 
 class TestProposalOutputsMatchCommitted(unittest.TestCase):
-
     """Re-run the extractor and assert it reproduces every committed artifact byte-for-byte."""
 
     def test_outputs_match_committed(self):
@@ -159,7 +158,6 @@ def _positive_stems(label: str) -> set[str]:
 
 
 class TestPositiveStemHeuristic(unittest.TestCase):
-
     """
     The pairing test is only as good as its stem derivation.
 
@@ -188,7 +186,6 @@ class TestPositiveStemHeuristic(unittest.TestCase):
 
 
 class TestProposedPredicatePairing(unittest.TestCase):
-
     """
     Guard the pairing contract that #749 broke silently.
 

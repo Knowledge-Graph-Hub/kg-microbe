@@ -82,7 +82,6 @@ def _fake_build(monkeypatch, db_path, *, size=16, fail=False):
 
 
 class TestSkipsUnnecessaryBuilds:
-
     """A 13 GB build must only run when it is actually needed."""
 
     def test_valid_aligned_db_is_reused(self, tmp_path, owl, tiny_threshold, monkeypatch):
@@ -105,7 +104,6 @@ class TestSkipsUnnecessaryBuilds:
 
 
 class TestRebuildsOnDrift:
-
     """The whole point: a refreshed OWL must produce a matching DB."""
 
     def test_drifted_db_is_rebuilt(self, tmp_path, owl, tiny_threshold, monkeypatch, capsys):
@@ -152,7 +150,6 @@ class TestRebuildsOnDrift:
 
 
 class TestDegradesGracefully:
-
     """A machine without the build toolchain must not be left broken."""
 
     def test_missing_semsql_keeps_existing_db(self, tmp_path, owl, tiny_threshold, monkeypatch, capsys):
@@ -537,7 +534,6 @@ class TestDegradesGracefully:
 
 
 class TestLockedDatabasesAreNotDestroyed:
-
     """
     A database another process holds open is not damaged (round-4 findings).
 
@@ -880,7 +876,6 @@ class TestLockedDatabasesAreNotDestroyed:
         real_connect = sqlite3.connect
 
         class Failing:
-
             """Answers the first probe, then fails for an unrelated reason."""
 
             def __init__(self, conn):
@@ -921,7 +916,6 @@ class TestLockedDatabasesAreNotDestroyed:
         real_connect = sqlite3.connect
 
         class Failing:
-
             """Answers a set number of statements, then fails unrelatedly."""
 
             def __init__(self, conn):
@@ -963,7 +957,6 @@ class TestLockedDatabasesAreNotDestroyed:
 
 
 class TestOntologyIdentityAndServing:
-
     """Round-13: a generic SemSQL database is not evidence of the right ontology."""
 
     def test_the_wrong_ontology_is_refused(self):

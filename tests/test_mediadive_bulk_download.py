@@ -33,7 +33,6 @@ download_module = import_module("kg_microbe.download")
 
 
 class TestDefaults:
-
     """Verify that DEFAULT_MAX_WORKERS and USER_AGENT are sensible values."""
 
     def test_default_max_workers_is_polite(self):
@@ -62,7 +61,6 @@ class TestDefaults:
 
 
 class TestCacheThreadSafety:
-
     """
     Verify HTTP sessions are never shared across threads.
 
@@ -259,7 +257,6 @@ class TestCacheThreadSafety:
 
 @pytest.mark.integration
 class TestBulkDownloadEndToEnd:
-
     """
     Exercise download_mediadive_bulk against a local HTTP server.
 
@@ -276,7 +273,6 @@ class TestBulkDownloadEndToEnd:
         import threading as th
 
         class Handler(http.server.BaseHTTPRequestHandler):
-
             """Answer any path with a MediaDive-shaped payload."""
 
             def do_GET(self):  # noqa: N802 — BaseHTTPRequestHandler's API
@@ -353,7 +349,6 @@ class TestBulkDownloadEndToEnd:
 
 
 class TestIgnoreCachePlumbing:
-
     """
     Verify `kg download --ignore-cache` reaches the HTTP response cache.
 
@@ -385,7 +380,6 @@ class TestIgnoreCachePlumbing:
 
 
 class TestRetryAfter:
-
     """Verify that 429 responses with Retry-After headers are honoured."""
 
     def test_respects_retry_after_header(self):
@@ -420,7 +414,6 @@ class TestRetryAfter:
 
 
 class TestRetryParameters:
-
     """Verify retry_count and retry_delay flow from download functions into get_json_from_api."""
 
     def test_retry_count_is_configurable(self):
@@ -455,7 +448,6 @@ class TestRetryParameters:
 
 
 class TestRateLimiter:
-
     """Verify the Semaphore rate limiter bounds concurrency."""
 
     def test_concurrency_bounded_by_max_workers(self):

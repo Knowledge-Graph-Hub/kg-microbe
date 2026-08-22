@@ -16,7 +16,6 @@ FIXTURE_DIR = Path(__file__).parent / "resources"
 
 
 class _NoNCBI:
-
     """OAK-adapter stub used when a test wants NCBITaxon enrichment disabled."""
 
     def curies_by_label(self, label):
@@ -25,7 +24,6 @@ class _NoNCBI:
 
 
 class _NoGTDB:
-
     """GTDB-index stub used when a test wants GTDB enrichment disabled."""
 
     def curies_by_rank_name(self, rank, name):
@@ -34,7 +32,6 @@ class _NoGTDB:
 
 
 class _FakeGTDB:
-
     """Simple GTDB-index fake keyed on ``(rank, name)`` tuples."""
 
     def __init__(self, mapping):
@@ -287,7 +284,6 @@ def test_row_with_no_nomenclatural_type_emits_no_close_match(lpsn_transform):
 
 
 class _FakeNCBI:
-
     """Minimal stub of the subset of OAK's adapter API that LPSN uses."""
 
     def __init__(self, mapping):

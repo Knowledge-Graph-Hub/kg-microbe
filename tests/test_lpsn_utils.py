@@ -14,7 +14,6 @@ def _rows(*specs):
 
 
 class ResolveAcceptedRecordsTest(TestCase):
-
     """One resolver, shared by bacdive (#684) and microbedecoder (#746)."""
 
     def test_a_synonym_resolves_to_its_accepted_record(self):

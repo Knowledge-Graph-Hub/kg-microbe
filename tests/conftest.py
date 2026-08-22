@@ -59,11 +59,13 @@ def block_external_network(monkeypatch: pytest.MonkeyPatch, request: pytest.Fixt
     real_connect = socket.socket.connect
 
     def guarded_getaddrinfo(host: Any, *args: Any, **kwargs: Any):
+        """Resolve loopback hosts only, so a unit test cannot reach the network."""
         if not _is_loopback(host):
             raise RuntimeError(f"external network disabled in unit tests: {host}")
         return real_getaddrinfo(host, *args, **kwargs)
 
     def guarded_connect(sock: socket.socket, address: Any) -> Any:
+        """Permit connections to loopback only, for the same reason."""
         host = address[0] if isinstance(address, tuple) else address
         if not _is_loopback(host):
             raise RuntimeError(f"external network disabled in unit tests: {host}")

@@ -1016,7 +1016,6 @@ def _read_head(path: Path, nbytes: int, *, prefer_archive: bool = False) -> Opti
 
 
 class FatalOntologyError(BaseException):
-
     """
     An ontology is unusable and no per-item fallback is honest.
 
@@ -1044,7 +1043,6 @@ class FatalOntologyError(BaseException):
 
 
 class OntologyDbUnavailableError(FatalOntologyError):
-
     """
     No usable SemSQL DB could be produced for an ontology.
 
@@ -1055,7 +1053,6 @@ class OntologyDbUnavailableError(FatalOntologyError):
 
 
 class OntologyVersionMismatchError(FatalOntologyError):
-
     """
     A DB and the OWL it must track are stamped with different releases.
 
@@ -1072,7 +1069,6 @@ ChebiDbUnavailableError = OntologyDbUnavailableError
 
 
 class KeptTarget(NamedTuple):
-
     """
     What :func:`_clear_build_target` displaced, so it can be put back.
 
@@ -1092,7 +1088,6 @@ class KeptTarget(NamedTuple):
 
 
 class DbEnsureResult(NamedTuple):
-
     """
     Outcome of an ``_ensure_*_db`` call.
 
@@ -2288,7 +2283,6 @@ get_ontology_adapter.cache_clear = _ontology_adapter_for.cache_clear
 
 
 class _LazyOntologyAdapter:
-
     """
     An ontology adapter that resolves on first use, not on construction.
 

@@ -223,7 +223,6 @@ def reset_cache():
 
 
 class TestNormalizeName:
-
     """Test name normalization."""
 
     def test_normalize_lowercase(self):
@@ -249,7 +248,6 @@ class TestNormalizeName:
 
 
 class TestLoadUnifiedMappings:
-
     """Test loading unified mappings file."""
 
     def test_load_with_path(self, mock_mappings_file):
@@ -277,7 +275,6 @@ class TestLoadUnifiedMappings:
 
 
 class TestFindChebiByName:
-
     """Test ChEBI ID lookup by name."""
 
     def test_find_by_canonical_name(self, mock_mappings_file):
@@ -319,7 +316,6 @@ class TestFindChebiByName:
 
 
 class TestFindChebiByFormula:
-
     """Test ChEBI ID lookup by formula."""
 
     def test_find_by_formula(self, mock_mappings_file):
@@ -349,7 +345,6 @@ class TestFindChebiByFormula:
 
 
 class TestFindChebiByXref:
-
     """Test ChEBI ID lookup by cross-reference."""
 
     def test_find_by_cas_number(self, mock_mappings_file):
@@ -386,7 +381,6 @@ class TestFindChebiByXref:
 
 
 class TestGetCanonicalName:
-
     """Test getting canonical name for ChEBI ID."""
 
     def test_get_canonical_name(self, mock_mappings_file):
@@ -408,7 +402,6 @@ class TestGetCanonicalName:
 
 
 class TestGetSynonyms:
-
     """Test getting synonyms for ChEBI ID."""
 
     def test_get_synonyms(self, mock_mappings_file):
@@ -432,7 +425,6 @@ class TestGetSynonyms:
 
 
 class TestGetXrefs:
-
     """Test getting cross-references for ChEBI ID."""
 
     def test_get_xrefs(self, mock_mappings_file):
@@ -455,7 +447,6 @@ class TestGetXrefs:
 
 
 class TestGetFormula:
-
     """Test getting formula for ChEBI ID."""
 
     def test_get_formula(self, mock_mappings_file):
@@ -477,7 +468,6 @@ class TestGetFormula:
 
 
 class TestChemicalMappingLoader:
-
     """Test ChemicalMappingLoader class."""
 
     def test_loader_initialization(self, mock_mappings_file):
@@ -528,7 +518,6 @@ class TestChemicalMappingLoader:
 
 
 class TestStripStereochemistry:
-
     """Test stereochemistry prefix normalization."""
 
     def test_r_prefix(self):
@@ -567,7 +556,6 @@ class TestStripStereochemistry:
 
 
 class TestFuzzyStereochemistry:
-
     """Test fuzzy stereochemistry retry behavior in find_chebi_by_name."""
 
     def test_fuzzy_retry_finds_match(self, mock_mappings_file):
@@ -599,7 +587,6 @@ class TestFuzzyStereochemistry:
 
 
 class TestNegativeCache:
-
     """Test bounded negative-lookup cache behavior."""
 
     def test_miss_is_cached(self, mock_mappings_file):
@@ -650,7 +637,6 @@ class TestNegativeCache:
 
 
 class TestFuzzyHydrate:
-
     """Hydrate-suffix retry behavior in ``find_chebi_by_name``."""
 
     @pytest.fixture
@@ -719,7 +705,6 @@ class TestFuzzyHydrate:
 
 
 class TestNarrowMatchChildResolution:
-
     """
     Regression tests for the asymmetric-MIM child-CURIE resolution path.
 
@@ -775,7 +760,6 @@ class TestNarrowMatchChildResolution:
 
 
 class TestHydrateEquivalents:
-
     """
     Regression tests for ``get_hydrate_equivalents``.
 
@@ -832,7 +816,6 @@ class TestHydrateEquivalents:
 
 
 class TestKnownBadFilters:
-
     """
     Regression guards for the consolidator's KNOWN_BAD_* filter lists.
 
@@ -875,7 +858,6 @@ class TestKnownBadFilters:
 
 
 class TestNamePrecedence:
-
     """
     Regression tests for canonical-vs-synonym name index precedence.
 

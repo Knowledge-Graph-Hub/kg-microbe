@@ -23,7 +23,6 @@ from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete, has_data
 
 
 class TestAtomicWrite:
-
     """The helper itself."""
 
     def test_content_is_committed_on_success(self, tmp_path):
@@ -78,11 +77,9 @@ class TestAtomicWrite:
 
 
 class TestGoCategoryTreesIsNotPoisoned:
-
     """The concrete case: go_category_trees.tsv (Codex F2)."""
 
     class _Unavailable:
-
         """A lazy proxy whose resolution fails."""
 
         def __getattr__(self, name):
@@ -92,7 +89,6 @@ class TestGoCategoryTreesIsNotPoisoned:
             raise ou.OntologyDbUnavailableError("no usable go.db")
 
     class _Fake:
-
         """A working GO adapter."""
 
         def descendants(self, start_curies, predicates, reflexive):
@@ -163,7 +159,6 @@ class TestGoCategoryTreesIsNotPoisoned:
 
 
 class TestExistingPoisonedCacheHeals:
-
     """Atomic writes stop new poisoning; an *existing* poisoned file must heal."""
 
     def test_header_only_cache_is_not_treated_as_complete(self, tmp_path, monkeypatch):
@@ -219,7 +214,6 @@ class TestExistingPoisonedCacheHeals:
 
 
 class TestAllPoisonedCachesHeal:
-
     """
     Every .exists()-guarded cache must reject a header-only file, not just GO's.
 
@@ -256,7 +250,6 @@ class TestAllPoisonedCachesHeal:
 
 
 class TestCallSitesUseTheGuardedHelpers:
-
     """
     Each cache guard must *decide* regeneration, and each writer must be used.
 
@@ -409,7 +402,6 @@ class TestCallSitesUseTheGuardedHelpers:
 
 
 class TestMarkerAndSweeperAdversarial:
-
     """Round-4: the completion marker and the stale-partial sweeper."""
 
     def test_marker_does_not_certify_a_replaced_file(self, tmp_path):
@@ -462,7 +454,6 @@ class TestMarkerAndSweeperAdversarial:
 
 
 class TestMarkerIdentity:
-
     """A marker must certify the file it was written for, and no other."""
 
     def test_same_size_replacement_is_not_certified(self, tmp_path):
@@ -506,7 +497,6 @@ class TestMarkerIdentity:
 
 
 class TestMarkerIsConclusive:
-
     """Round-15: a digest mismatch must not be overridden by a row count."""
 
     def test_a_truncated_marked_cache_is_incomplete(self, tmp_path):

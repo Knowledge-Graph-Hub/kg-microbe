@@ -75,6 +75,15 @@ target-version = "py310"
 extend-ignore = [
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
+    # D203 and the formatter disagree, and `tox -e format` runs both in sequence:
+    # `ruff format` strips the blank line before a class docstring, then
+    # `ruff check --fix` puts it back. Net zero, exit 0 — so the format env has
+    # been a silent no-op, and `ruff format --check` has reported ~98 files
+    # unformatted indefinitely because the fix can never stick. Ruff warns about
+    # exactly this pairing on every run. D211 (its mutually exclusive opposite)
+    # is already ignored above, so ignoring D203 leaves the formatter to decide,
+    # which is the only self-consistent option (#874).
+    "D203",  # `one-blank-line-before-class` — conflicts with `ruff format`
     "S301",  # `pickle` and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue`
     "S605",  # Starting a process with a shell, possible injection detected
     "S202",  # Uses of `tarfile.extractall()` - needed for KGX merge workflow

@@ -50,7 +50,6 @@ def _make_obograph():
 
 
 class TestDeprecatedFilter(TestCase):
-
     """Test owl:deprecated term removal from obograph JSON before KGX load."""
 
     def setUp(self):

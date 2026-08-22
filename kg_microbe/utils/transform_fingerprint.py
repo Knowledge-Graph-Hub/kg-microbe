@@ -68,9 +68,7 @@ def bounded_file_fingerprint(path: Path) -> str:
             return f"full-sha256:{digest.hexdigest()}"
 
         last_offset = max(size - SAMPLE_SIZE, 0)
-        offsets = sorted(
-            {(last_offset * index) // (SAMPLE_COUNT - 1) for index in range(SAMPLE_COUNT)}
-        )
+        offsets = sorted({(last_offset * index) // (SAMPLE_COUNT - 1) for index in range(SAMPLE_COUNT)})
         for offset in offsets:
             handle.seek(offset)
             sample = handle.read(SAMPLE_SIZE)

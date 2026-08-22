@@ -16,7 +16,6 @@ from kg_microbe.transform_utils.bakta.utils import (
 
 
 class TestBaktaUtils(unittest.TestCase):
-
     """Test Bakta utility functions."""
 
     def test_parse_dbxrefs(self):
@@ -119,7 +118,6 @@ class TestBaktaUtils(unittest.TestCase):
 
 
 class TestBaktaTransform(unittest.TestCase):
-
     """Test BaktaTransform class."""
 
     def setUp(self):

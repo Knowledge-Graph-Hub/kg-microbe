@@ -31,7 +31,6 @@ def _write(tmp, declaration=None, gz=False):
 
 
 class ReadDeclarationTest(TestCase):
-
     """Absence means legacy — the property that makes either half land first."""
 
     def setUp(self):
@@ -76,7 +75,6 @@ class ReadDeclarationTest(TestCase):
 
 
 class DirectionTest(TestCase):
-
     """The same row must index opposite parents under the two declarations."""
 
     def setUp(self):
@@ -119,7 +117,6 @@ class DirectionTest(TestCase):
 
 
 class NestedKeyTest(TestCase):
-
     """A key of this name under a parent is not the declaration (#831)."""
 
     def setUp(self):
@@ -157,7 +154,6 @@ class NestedKeyTest(TestCase):
 
 
 class PropagationTest(TestCase):
-
     """The declaration must survive the consolidator, or the reader never sees it (#830)."""
 
     def test_the_consolidator_emits_the_declaration_it_was_given(self):

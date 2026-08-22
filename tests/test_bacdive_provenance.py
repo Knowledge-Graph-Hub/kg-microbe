@@ -6,7 +6,6 @@ from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter
 
 
 class _DummyWriter:
-
     """Minimal csv.writer stand-in that captures rows in memory for inspection."""
 
     def __init__(self):

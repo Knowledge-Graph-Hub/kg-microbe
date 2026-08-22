@@ -36,7 +36,6 @@ METPO_PROPERTIES_ROBOT_TEMPLATE_URL = (
 
 
 class _LocalTemplateResponse:
-
     """Small requests.Response-compatible wrapper for an immutable local fixture."""
 
     def __init__(self, text: str) -> None:
@@ -54,6 +53,7 @@ def _metpo_template_response(url: str, filename: str):
     if local_path.is_file():
         return _LocalTemplateResponse(local_path.read_text(encoding="utf-8"))
     return requests.get(url, timeout=30)
+
 
 # Remote URL for assay kits mapping (used for API keys from BacDive)
 ASSAY_KITS_SIMPLE_JSON_URL = (
@@ -112,7 +112,6 @@ def uri_to_curie(uri: str) -> str:
 
 
 class MetpoTreeNode:
-
     """
     Represents a node in the METPO class hierarchy tree.
 

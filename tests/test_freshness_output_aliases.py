@@ -16,7 +16,6 @@ _SPEC.loader.exec_module(_MODULE)
 
 
 class FreshnessOutputAliasTest(TestCase):
-
     """PREGO writes prego_habitat/ by default, prego/ only under PREGO_SHAPES=all."""
 
     def setUp(self):

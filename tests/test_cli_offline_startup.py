@@ -68,10 +68,10 @@ def test_pinned_predicate_map_does_not_use_legacy_bmt_network_path(monkeypatch) 
     from kg_microbe.utils.biolink_model import prepare_kgx
 
     class LegacyToolkit:
-
         """Stand in for BMT 1.4.8, whose constructor always fetches the map."""
 
         def __init__(self, *args, **kwargs):
+            """Fail loudly if constructed, proving the shim is what runs."""
             raise AssertionError("legacy BMT constructor would perform requests.get")
 
     monkeypatch.setattr(bmt, "Toolkit", LegacyToolkit)

@@ -28,7 +28,6 @@ METATRAITS_GTDB_INPUT_FILES = [
 
 
 class MetaTraitsGTDBTransform(MetaTraitsTransform):
-
     """Transform GTDB metatraits summary JSONL files into KGX nodes and edges."""
 
     def __init__(

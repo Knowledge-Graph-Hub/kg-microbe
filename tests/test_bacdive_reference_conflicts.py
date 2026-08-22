@@ -34,7 +34,6 @@ SUBSUMPTION = {
 
 
 class ObservationExtractionTest(TestCase):
-
     """Both BacDive block shapes must be read by one code path."""
 
     def test_a_list_of_per_reference_dicts(self):
@@ -72,7 +71,6 @@ class ObservationExtractionTest(TestCase):
 
 
 class ClassifyTest(TestCase):
-
     """Separating 'more specific' from 'contradictory' is the whole point."""
 
     def test_a_term_and_its_parent_is_specificity_not_conflict(self):
@@ -131,7 +129,6 @@ class ClassifyTest(TestCase):
 
 
 class FieldScopedResolutionTest(TestCase):
-
     """
     A synonym shared by two METPO terms must be resolved per field.
 

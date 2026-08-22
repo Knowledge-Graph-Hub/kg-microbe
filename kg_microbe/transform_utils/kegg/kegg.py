@@ -29,7 +29,6 @@ logger = logging.getLogger(__name__)
 
 
 class KEGGTransform(Transform):
-
     """Transform KEGG orthology data into KGX format."""
 
     def __init__(

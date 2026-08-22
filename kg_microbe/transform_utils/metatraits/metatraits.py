@@ -6,7 +6,6 @@ maps trait names to METPO/ontology terms, and outputs KGX nodes.tsv and edges.ts
 """
 
 import csv
-import gzip
 import json
 import multiprocessing
 import os
@@ -41,6 +40,11 @@ from kg_microbe.transform_utils.constants import (  # noqa: E402
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
 )
+from kg_microbe.transform_utils.metatraits.io import (  # noqa: E402
+    StreamingRowWriter as _StreamingRowWriter,
+)
+from kg_microbe.transform_utils.metatraits.io import open_jsonl as _open_jsonl  # noqa: E402
+from kg_microbe.transform_utils.metatraits.io import open_maybe_gzipped as _open_maybe_gzipped  # noqa: E402
 from kg_microbe.transform_utils.transform import Transform  # noqa: E402
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
@@ -65,6 +69,11 @@ METATRAITS_INPUT_FILES = [
     "ncbi_species_summary.jsonl.gz",
     "metatraits_species_summary.jsonl.gz",
 ]
+
+
+def _metpo_json_path() -> Path:
+    """Return the configured METPO JSON path without mutating repository data."""
+    return Path(os.environ.get("KG_MICROBE_METPO_JSON", RAW_DATA_DIR / "metpo.json"))
 
 
 def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
@@ -210,49 +219,6 @@ def _get_ncbitaxon_adapter():
     return get_adapter(f"sqlite:{local_db}")
 
 
-def _open_maybe_gzipped(path: Path):
-    """
-    Open a ``.gz`` file that may not actually be gzip-compressed.
-
-    Google Drive silently serves some uploads decompressed, so a file named
-    ``*.gz`` can arrive as plain text — this is how the Drive-hosted
-    ``ncbi_*_summary.jsonl.gz`` inputs ended up as plain JSON in ``data/raw``.
-    Every read of a Drive-hosted input must go through here rather than calling
-    ``gzip.open`` directly.
-
-    :param path: File to open.
-    :return: An open text-mode handle.
-    """
-    if path.name.endswith(".gz"):
-        handle = None
-        try:
-            handle = gzip.open(path, "rt", encoding="utf-8")
-            handle.read(1)  # Trigger gzip header read
-            handle.seek(0)
-        except Exception:  # noqa: BLE001 — see below; any probe failure falls back
-            # The probe already opened the file, so it must be closed on *every*
-            # failure, not just BadGzipFile (#629): a .gz truncated inside its
-            # 10-byte header raises EOFError and a mis-decoded payload raises
-            # UnicodeDecodeError, both realistic partial-download states, and both
-            # leaked the handle silently because callers wrap this in
-            # `except Exception`.
-            if handle is not None:
-                handle.close()
-            return open(path, "r", encoding="utf-8")
-        return handle
-    return open(path, "r", encoding="utf-8")
-
-
-def _open_jsonl(path: Path):
-    """
-    Open JSONL file; use gzip for .gz files, plain text otherwise.
-
-    If a .gz file is not actually gzip-compressed (e.g. misnamed plain JSON),
-    falls back to plain text.
-    """
-    return _open_maybe_gzipped(path)
-
-
 def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[str, Any]:
     """
     Worker function for parallel file processing.
@@ -282,41 +248,6 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
             transform._ncbi_adapter = None
         except Exception:  # noqa: S110
             pass  # Ignore cleanup errors
-
-
-class _StreamingRowWriter:
-
-    """Streaming TSV writer that writes rows incrementally to avoid memory accumulation."""
-
-    def __init__(self, output_file: Path, header: List[str]):
-        """
-        Initialize streaming writer.
-
-        :param output_file: Path to output TSV file
-        :param header: Column header list
-        """
-        self.output_file = output_file
-        self.header = header
-        self.file_handle = None
-        self.writer = None
-
-    def __enter__(self):
-        """Open file and write header."""
-        self.output_file.parent.mkdir(exist_ok=True, parents=True)
-        self.file_handle = open(self.output_file, "w", newline="", encoding="utf-8")
-        self.writer = csv.writer(self.file_handle, delimiter="\t")
-        self.writer.writerow(self.header)
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Close file handle."""
-        if self.file_handle:
-            self.file_handle.close()
-
-    def write_row(self, row: List):
-        """Write a single row to the TSV file."""
-        if self.writer:
-            self.writer.writerow(row)
 
 
 class MetaTraitsTransform(Transform):
@@ -440,7 +371,7 @@ class MetaTraitsTransform(Transform):
 
         :return: Dict mapping parameter type to list of binned class dicts
         """
-        metpo_json_path = RAW_DATA_DIR / "metpo.json"
+        metpo_json_path = _metpo_json_path()
         if not metpo_json_path.exists():
             print(f"  Warning: METPO JSON not found at {metpo_json_path}, using empty ranges")
             return {}
@@ -519,7 +450,7 @@ class MetaTraitsTransform(Transform):
         - synonym → class data (for synonym matching)
         - pattern keyword → predicate ID (for trait pattern resolution)
         """
-        metpo_json_path = RAW_DATA_DIR / "metpo.json"
+        metpo_json_path = _metpo_json_path()
         if not metpo_json_path.exists():
             print(f"  Warning: METPO JSON not found at {metpo_json_path}")
             return
@@ -3228,19 +3159,24 @@ class MetaTraitsTransform(Transform):
         shared_init = self._get_shared_init_data()
         worker_args = [(f, temp_dir, shared_init, show_status) for f in input_files]
 
-        # Execute in parallel
-        print(f"  Processing {len(input_files)} files with {num_workers} parallel workers...")
-        with multiprocessing.Pool(num_workers) as pool:
-            if show_status:
-                results = list(
-                    tqdm(
-                        pool.imap(_process_file_worker, worker_args),
-                        total=len(input_files),
-                        desc="Processing files in parallel",
+        # A single worker stays in-process. This keeps unit tests hermetic,
+        # avoids needless process startup, and preserves injected adapters.
+        if num_workers == 1:
+            print(f"  Processing {len(input_files)} files with 1 in-process worker...")
+            results = [_process_file_worker(args) for args in worker_args]
+        else:
+            print(f"  Processing {len(input_files)} files with {num_workers} parallel workers...")
+            with multiprocessing.Pool(num_workers) as pool:
+                if show_status:
+                    results = list(
+                        tqdm(
+                            pool.imap(_process_file_worker, worker_args),
+                            total=len(input_files),
+                            desc="Processing files in parallel",
+                        )
                     )
-                )
-            else:
-                results = pool.map(_process_file_worker, worker_args)
+                else:
+                    results = pool.map(_process_file_worker, worker_args)
 
         # Merge results
         self._merge_worker_outputs(results, temp_dir)

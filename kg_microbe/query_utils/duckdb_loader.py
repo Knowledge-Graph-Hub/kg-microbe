@@ -1,155 +1,198 @@
 """DuckDB database loader for KG-Microbe knowledge graph."""
 
+from __future__ import annotations
+
+import os
+import uuid
 from pathlib import Path
-from typing import Union
+from typing import Dict, Iterable, Union
 
 import duckdb
-import pandas as pd
+
+from kg_microbe.utils.transform_fingerprint import bounded_file_fingerprint
+
+SOURCE_METADATA_TABLE = "kg_microbe_source_metadata"
+REQUIRED_COLUMNS = {
+    "nodes": {"id", "category", "name", "synonym"},
+    "edges": {"subject", "predicate", "object", "relation", "primary_knowledge_source"},
+}
 
 
 def get_or_create_database(
-    nodes_path: Union[str, Path] = "data/merged/merged-kg_default_nodes.tsv",
-    edges_path: Union[str, Path] = "data/merged/merged-kg_default_edges.tsv",
+    nodes_path: Union[str, Path] = "data/merged/merged-kg_nodes.tsv",
+    edges_path: Union[str, Path] = "data/merged/merged-kg_edges.tsv",
     db_path: Union[str, Path] = "data/merged/kg-microbe.duckdb",
     force_reload: bool = False,
 ) -> duckdb.DuckDBPyConnection:
     """
-    Load or connect to DuckDB database from KG TSV files.
+    Load or connect to a DuckDB database built from KGX TSV files.
 
-    :param nodes_path: Path to nodes TSV file
-    :param edges_path: Path to edges TSV file
-    :param db_path: Path to DuckDB database file
-    :param force_reload: Force rebuild from TSV files
-    :return: DuckDB connection object
+    Existing databases are reused only when their recorded source paths and
+    content-sensitive fingerprints match both input files. Rebuilds happen at
+    a temporary sibling path and replace the advertised database atomically.
+
+    :param nodes_path: Path to nodes TSV file.
+    :param edges_path: Path to edges TSV file.
+    :param db_path: Path to DuckDB database file.
+    :param force_reload: Force rebuild from TSV files.
+    :return: Open DuckDB connection.
     """
-    nodes_path = Path(nodes_path)
-    edges_path = Path(edges_path)
-    db_path = Path(db_path)
+    nodes_path = Path(nodes_path).resolve()
+    edges_path = Path(edges_path).resolve()
+    db_path = Path(db_path).resolve()
 
-    # Check if source files exist
-    if not nodes_path.exists():
-        raise FileNotFoundError(f"Nodes file not found: {nodes_path}")
-    if not edges_path.exists():
-        raise FileNotFoundError(f"Edges file not found: {edges_path}")
+    for label, source_path in (("Nodes", nodes_path), ("Edges", edges_path)):
+        if not source_path.is_file():
+            raise FileNotFoundError(f"{label} file not found: {source_path}")
 
-    # Determine if we need to rebuild
-    needs_rebuild = force_reload or not db_path.exists()
+    fingerprints = _source_fingerprints(nodes_path, edges_path)
+    if not force_reload and db_path.is_file():
+        conn = _open_current_database(db_path, fingerprints)
+        if conn is not None:
+            print(f"  Using existing database: {db_path}")
+            return conn
 
-    if needs_rebuild:
-        print("  Building DuckDB database from TSV files...")
-        print(f"    - Nodes: {nodes_path}")
-        print(f"    - Edges: {edges_path}")
-
-        # Remove old database if exists
-        if db_path.exists():
-            db_path.unlink()
-
-        # Create new database
-        conn = _create_database_from_tsv(nodes_path, edges_path, db_path)
-        print(f"  ✅ Database created: {db_path}")
-    else:
-        print(f"  Using existing database: {db_path}")
-        # Verify database has required tables
-        try:
-            conn = duckdb.connect(str(db_path))
-            # Quick check that tables exist
-            conn.execute("SELECT COUNT(*) FROM nodes LIMIT 1;")
-            conn.execute("SELECT COUNT(*) FROM edges LIMIT 1;")
-        except Exception as e:
-            print(f"  Database appears corrupted: {e}")
-            print("  Rebuilding...")
-            db_path.unlink()
-            conn = _create_database_from_tsv(nodes_path, edges_path, db_path)
-
-    return conn
+    print("  Building DuckDB database directly from TSV files...")
+    print(f"    - Nodes: {nodes_path}")
+    print(f"    - Edges: {edges_path}")
+    _rebuild_database(nodes_path, edges_path, db_path, fingerprints)
+    print(f"  ✅ Database created: {db_path}")
+    return duckdb.connect(str(db_path))
 
 
-def _create_database_from_tsv(nodes_path: Path, edges_path: Path, db_path: Path) -> duckdb.DuckDBPyConnection:
-    """
-    Create DuckDB database from TSV files with indexes.
+def _source_fingerprints(nodes_path: Path, edges_path: Path) -> Dict[str, tuple[str, int, str]]:
+    """Return content-sensitive freshness metadata with bounded graph-scale IO."""
+    result = {}
+    for kind, path in (("nodes", nodes_path), ("edges", edges_path)):
+        stat = path.stat()
+        result[kind] = (str(path), stat.st_size, bounded_file_fingerprint(path))
+    return result
 
-    Uses Pandas to robustly read TSV files, then loads into DuckDB.
 
-    :param nodes_path: Path to nodes TSV file
-    :param edges_path: Path to edges TSV file
-    :param db_path: Path to output database file
-    :return: DuckDB connection object
-    """
-    # Connect to database (creates file)
-    conn = duckdb.connect(str(db_path))
-
+def _open_current_database(
+    db_path: Path,
+    fingerprints: Dict[str, tuple[str, int, str]],
+) -> duckdb.DuckDBPyConnection | None:
+    """Open an existing database only if it is complete and current."""
+    conn = None
     try:
-        # Set memory limit for large datasets
-        conn.execute("SET memory_limit='16GB';")
-
-        # Load nodes table via Pandas (more robust to format issues)
-        print("    Loading nodes table...")
-        nodes_df = pd.read_csv(
-            nodes_path,
-            sep="\t",
-            dtype=str,
-            na_values=[""],
-            keep_default_na=False,
-            low_memory=False,
-        )
-        conn.execute("CREATE TABLE nodes AS SELECT * FROM nodes_df;")
-        print(f"      Loaded {len(nodes_df):,} nodes")
-
-        # Create node indexes
-        print("    Creating node indexes...")
-        conn.execute("CREATE INDEX idx_nodes_id ON nodes(id);")
-        conn.execute("CREATE INDEX idx_nodes_name ON nodes(name);")
-        conn.execute("CREATE INDEX idx_nodes_category ON nodes(category);")
-
-        # Load edges table via Pandas
-        print("    Loading edges table...")
-        # Read header separately so we can deduplicate column names before parsing.
-        # Use default newline handling ("\r\n" or "\n") so a trailing \r never
-        # leaks into field values on CRLF files.
-        with open(edges_path, "r") as f:
-            header_line = f.readline().rstrip("\r\n")
-            raw_header = header_line.split("\t")
-
-            cleaned_header = []
-            seen = {}
-            for col in raw_header:
-                col = col.strip()
-                if col in seen:
-                    seen[col] += 1
-                    cleaned_header.append(f"{col}_{seen[col]}")
-                else:
-                    seen[col] = 0
-                    cleaned_header.append(col)
-
-        print(f"      Detected {len(cleaned_header)} columns in edges file")
-
-        # Let pandas handle CRLF/LF line endings normally; passing a custom
-        # lineterminator would leave \r at the end of each row's last field.
-        edges_df = pd.read_csv(
-            edges_path,
-            sep="\t",
-            dtype=str,
-            na_values=[""],
-            keep_default_na=False,
-            low_memory=False,
-            names=cleaned_header,
-            skiprows=1,  # Skip original header
-        )
-        conn.execute("CREATE TABLE edges AS SELECT * FROM edges_df;")
-        print(f"      Loaded {len(edges_df):,} edges")
-
-        # Create edge indexes
-        print("    Creating edge indexes...")
-        conn.execute("CREATE INDEX idx_edges_subject ON edges(subject);")
-        conn.execute("CREATE INDEX idx_edges_predicate ON edges(predicate);")
-        conn.execute("CREATE INDEX idx_edges_object ON edges(object);")
-        conn.execute("CREATE INDEX idx_edges_sub_pred ON edges(subject, predicate);")
-
-        return conn
-
-    except Exception as e:
-        # Clean up partial database on error
+        conn = duckdb.connect(str(db_path))
+        conn.execute("SELECT 1 FROM nodes LIMIT 1")
+        conn.execute("SELECT 1 FROM edges LIMIT 1")
+        rows = conn.execute(
+            f"SELECT source_kind, source_path, source_size, source_fingerprint FROM {SOURCE_METADATA_TABLE}"
+        ).fetchall()
+        recorded = {kind: (path, size, fingerprint) for kind, path, size, fingerprint in rows}
+        if recorded == fingerprints:
+            return conn
+    except duckdb.Error:
+        pass
+    if conn is not None:
         conn.close()
-        if db_path.exists():
-            db_path.unlink()
-        raise e
+    return None
+
+
+def _rebuild_database(
+    nodes_path: Path,
+    edges_path: Path,
+    db_path: Path,
+    fingerprints: Dict[str, tuple[str, int, str]],
+) -> None:
+    """Build at a temporary sibling path, then atomically publish it."""
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = db_path.with_name(f".{db_path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        _create_database_from_tsv(nodes_path, edges_path, temp_path, fingerprints).close()
+        os.replace(temp_path, db_path)
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+def _read_header(path: Path, table_name: str) -> list[str]:
+    """Read and deduplicate a TSV header, validating query-required columns."""
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        raw_header = handle.readline().rstrip("\r\n").split("\t")
+    if not raw_header or raw_header == [""]:
+        raise ValueError(f"{path} has no TSV header")
+
+    columns = []
+    seen: Dict[str, int] = {}
+    for raw_name in raw_header:
+        name = raw_name.strip()
+        if not name:
+            raise ValueError(f"{path} contains an empty column name")
+        occurrence = seen.get(name, 0)
+        seen[name] = occurrence + 1
+        columns.append(name if occurrence == 0 else f"{name}_{occurrence}")
+
+    missing = REQUIRED_COLUMNS[table_name] - set(columns)
+    if missing:
+        raise ValueError(f"{path} is missing required {table_name} columns: {sorted(missing)}")
+    return columns
+
+
+def _load_table(
+    conn: duckdb.DuckDBPyConnection,
+    table_name: str,
+    path: Path,
+    columns: Iterable[str],
+) -> int:
+    """Load one TSV through DuckDB's streaming CSV reader with VARCHAR schema."""
+    schema = {column: "VARCHAR" for column in columns}
+    relation = conn.read_csv(
+        str(path),
+        header=False,
+        skiprows=1,
+        columns=schema,
+        delimiter="\t",
+        quotechar="",
+        escapechar="",
+        strict_mode=True,
+    )
+    relation.create(table_name)
+    return conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+
+
+def _create_database_from_tsv(
+    nodes_path: Path,
+    edges_path: Path,
+    db_path: Path,
+    fingerprints: Dict[str, tuple[str, int, str]] | None = None,
+) -> duckdb.DuckDBPyConnection:
+    """Create a database using DuckDB-native, bounded-memory TSV ingestion."""
+    node_columns = _read_header(nodes_path, "nodes")
+    edge_columns = _read_header(edges_path, "edges")
+    fingerprints = fingerprints or _source_fingerprints(nodes_path, edges_path)
+    conn = duckdb.connect(str(db_path))
+    try:
+        conn.execute("SET memory_limit='16GB'")
+        print("    Loading nodes table...")
+        node_count = _load_table(conn, "nodes", nodes_path, node_columns)
+        print(f"      Loaded {node_count:,} nodes")
+        print("    Loading edges table...")
+        edge_count = _load_table(conn, "edges", edges_path, edge_columns)
+        print(f"      Loaded {edge_count:,} edges")
+
+        conn.execute("CREATE INDEX idx_nodes_id ON nodes(id)")
+        conn.execute("CREATE INDEX idx_nodes_name ON nodes(name)")
+        conn.execute("CREATE INDEX idx_nodes_category ON nodes(category)")
+        conn.execute("CREATE INDEX idx_edges_subject ON edges(subject)")
+        conn.execute("CREATE INDEX idx_edges_predicate ON edges(predicate)")
+        conn.execute("CREATE INDEX idx_edges_object ON edges(object)")
+        conn.execute("CREATE INDEX idx_edges_sub_pred ON edges(subject, predicate)")
+
+        conn.execute(
+            f"CREATE TABLE {SOURCE_METADATA_TABLE} ("
+            "source_kind VARCHAR PRIMARY KEY, source_path VARCHAR, "
+            "source_size UBIGINT, source_fingerprint VARCHAR)"
+        )
+        conn.executemany(
+            f"INSERT INTO {SOURCE_METADATA_TABLE} VALUES (?, ?, ?, ?)",
+            [(kind, *values) for kind, values in fingerprints.items()],
+        )
+        conn.execute("CHECKPOINT")
+        return conn
+    except Exception:
+        conn.close()
+        db_path.unlink(missing_ok=True)
+        raise

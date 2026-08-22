@@ -1,13 +1,11 @@
 """Transform module."""
 
 import inspect
+from functools import cached_property
+from importlib import import_module
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 
-from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
-from kg_microbe.transform_utils.bactotraits.bactotraits import BactoTraitsTransform
-from kg_microbe.transform_utils.bakta.bakta import BaktaTransform
-from kg_microbe.transform_utils.cog.cog import COGTransform
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACTOTRAITS,
@@ -28,26 +26,42 @@ from kg_microbe.transform_utils.constants import (
     PREGO,
     RHEAMAPPINGS,
 )
-from kg_microbe.transform_utils.gold.gold import GOLDTransform
-from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
-from kg_microbe.transform_utils.kegg.kegg import KEGGTransform
-from kg_microbe.transform_utils.lpsn.lpsn import LPSNTransform
-from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
-from kg_microbe.transform_utils.madin_etal.madin_etal import MadinEtAlTransform
-from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
-from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
-from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import MetaTraitsGTDBTransform
-from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
-from kg_microbe.transform_utils.ontologies.ontologies_transform import (
-    ONTOLOGIES_MAP,
-    OntologiesTransform,
-)
-from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
-    OntologiesStubsTransform,
-)
-from kg_microbe.transform_utils.prego.prego import PregoTransform
-from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
 from kg_microbe.utils.transform_fingerprint import write_fingerprint
+
+
+class LazyTransform:
+
+    """Resolve one transform class only when it is used."""
+
+    def __init__(self, dotted_path: str) -> None:
+        """Store the import path without importing its module."""
+        self.dotted_path = dotted_path
+
+    @cached_property
+    def transform_class(self):
+        """Import and return the registered transform class."""
+        module_name, class_name = self.dotted_path.rsplit(".", 1)
+        return getattr(import_module(module_name), class_name)
+
+    def __call__(self, *args: Any, **kwargs: Any):
+        """Construct the underlying transform class."""
+        return self.transform_class(*args, **kwargs)
+
+    def __getattr__(self, name: str) -> Any:
+        """
+        Expose class attributes, treating unavailable modules as absent metadata.
+
+        Registry inspection uses normal ``getattr(proxy, name, default)``
+        semantics. Converting an import failure to ``AttributeError`` lets that
+        default work in a partial/offline environment, while ``__call__`` still
+        raises the original import error when the transform is actually run.
+        """
+        try:
+            transform_class = self.transform_class
+        except ImportError as error:
+            raise AttributeError(f"{self.dotted_path} is unavailable") from error
+        return getattr(transform_class, name)
+
 
 DATA_SOURCES = {
     # "DrugCentralTransform": DrugCentralTransform,
@@ -58,30 +72,40 @@ DATA_SOURCES = {
     # "TCRDTransform": TCRDTransform,
     # "ProteinAtlasTransform": ProteinAtlasTransform,
     # "STRINGTransform": STRINGTransform,
-    ONTOLOGIES: OntologiesTransform,
+    ONTOLOGIES: LazyTransform(
+        "kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform"
+    ),
     # Run ontologies_stubs after ontologies so the SemSQL DBs are present and
     # so the stub-node TSVs land in data/transformed/ontologies_stubs/ before
     # the merge step picks them up.
-    ONTOLOGIES_STUBS: OntologiesStubsTransform,
-    BACDIVE: BacDiveTransform,
-    BAKTA: BaktaTransform,
-    COG: COGTransform,
-    GTDB: GTDBTransform,
-    KEGG: KEGGTransform,
-    LPSN_SOURCE: LPSNTransform,
-    LPSN_API_SOURCE: LPSNAPITransform,
-    MEDIADIVE: MediaDiveTransform,
-    MADIN_ETAL: MadinEtAlTransform,
-    METATRAITS: MetaTraitsTransform,
-    METATRAITS_GTDB: MetaTraitsGTDBTransform,
-    RHEAMAPPINGS: RheaMappingsTransform,
-    BACTOTRAITS: BactoTraitsTransform,
+    ONTOLOGIES_STUBS: LazyTransform(
+        "kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform"
+    ),
+    BACDIVE: LazyTransform("kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform"),
+    BAKTA: LazyTransform("kg_microbe.transform_utils.bakta.bakta.BaktaTransform"),
+    COG: LazyTransform("kg_microbe.transform_utils.cog.cog.COGTransform"),
+    GTDB: LazyTransform("kg_microbe.transform_utils.gtdb.gtdb.GTDBTransform"),
+    KEGG: LazyTransform("kg_microbe.transform_utils.kegg.kegg.KEGGTransform"),
+    LPSN_SOURCE: LazyTransform("kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform"),
+    LPSN_API_SOURCE: LazyTransform("kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform"),
+    MEDIADIVE: LazyTransform("kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform"),
+    MADIN_ETAL: LazyTransform("kg_microbe.transform_utils.madin_etal.madin_etal.MadinEtAlTransform"),
+    METATRAITS: LazyTransform("kg_microbe.transform_utils.metatraits.metatraits.MetaTraitsTransform"),
+    METATRAITS_GTDB: LazyTransform(
+        "kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb.MetaTraitsGTDBTransform"
+    ),
+    RHEAMAPPINGS: LazyTransform(
+        "kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform"
+    ),
+    BACTOTRAITS: LazyTransform("kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform"),
     # Run gold after ontologies: it reads ncbitaxon_nodes.tsv to apply the
     # NCBITaxon trim, so GOLD cannot reintroduce excluded branches. Set
     # GOLD_APPLY_TAXON_TRIM=false to ingest unfiltered.
-    GOLD: GOLDTransform,
-    MICROBEDECODER: MicrobeDecoderTransform,
-    PREGO: PregoTransform,
+    GOLD: LazyTransform("kg_microbe.transform_utils.gold.gold.GOLDTransform"),
+    MICROBEDECODER: LazyTransform(
+        "kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform"
+    ),
+    PREGO: LazyTransform("kg_microbe.transform_utils.prego.prego.PregoTransform"),
     # UNIPROT_HUMAN: UniprotHumanTransform,
     # CTD: CTDTransform,
     # DISBIOME: DisbiomeTransform,
@@ -130,7 +154,10 @@ def transform(
         # nothing looked identical to one that worked.
         print(f"[transform] {source}: starting", flush=True)
         t = DATA_SOURCES[source](input_dir, output_dir)
-        if source in ONTOLOGIES_MAP.keys():
+        if source == ONTOLOGIES:
+            from kg_microbe.transform_utils.ontologies.ontologies_transform import ONTOLOGIES_MAP
+
+        if source == ONTOLOGIES and source in ONTOLOGIES_MAP:
             t.run(ONTOLOGIES_MAP[source])
         else:
             t.run(show_status=show_status)

@@ -1,0 +1,67 @@
+{
+  "graphs": [
+    {
+      "nodes": [
+        {
+          "id": "https://w3id.org/metpo/1000442",
+          "lbl": "temperature optimum low",
+          "type": "CLASS",
+          "meta": {"basicPropertyValues": [
+            {"pred": "http://qudt.org/schema/qudt/ucumCode", "val": "Cel"},
+            {"pred": "https://w3id.org/metpo/range_min", "val": "10"},
+            {"pred": "https://w3id.org/metpo/range_max", "val": "22"}
+          ]}
+        },
+        {
+          "id": "https://w3id.org/metpo/1000443",
+          "lbl": "temperature optimum mid1",
+          "type": "CLASS",
+          "meta": {"basicPropertyValues": [
+            {"pred": "http://qudt.org/schema/qudt/ucumCode", "val": "Cel"},
+            {"pred": "https://w3id.org/metpo/range_min", "val": "22"},
+            {"pred": "https://w3id.org/metpo/range_max", "val": "27"}
+          ]}
+        },
+        {
+          "id": "https://w3id.org/metpo/1000444",
+          "lbl": "temperature optimum mid2",
+          "type": "CLASS",
+          "meta": {"basicPropertyValues": [
+            {"pred": "http://qudt.org/schema/qudt/ucumCode", "val": "Cel"},
+            {"pred": "https://w3id.org/metpo/range_min", "val": "27"},
+            {"pred": "https://w3id.org/metpo/range_max", "val": "30"}
+          ]}
+        },
+        {
+          "id": "https://w3id.org/metpo/1000445",
+          "lbl": "temperature optimum mid3",
+          "type": "CLASS",
+          "meta": {"basicPropertyValues": [
+            {"pred": "http://qudt.org/schema/qudt/ucumCode", "val": "Cel"},
+            {"pred": "https://w3id.org/metpo/range_min", "val": "30"},
+            {"pred": "https://w3id.org/metpo/range_max", "val": "34"}
+          ]}
+        },
+        {
+          "id": "https://w3id.org/metpo/1000446",
+          "lbl": "temperature optimum mid4",
+          "type": "CLASS",
+          "meta": {"basicPropertyValues": [
+            {"pred": "http://qudt.org/schema/qudt/ucumCode", "val": "Cel"},
+            {"pred": "https://w3id.org/metpo/range_min", "val": "34"},
+            {"pred": "https://w3id.org/metpo/range_max", "val": "40"}
+          ]}
+        },
+        {
+          "id": "https://w3id.org/metpo/1000447",
+          "lbl": "temperature optimum high",
+          "type": "CLASS",
+          "meta": {"basicPropertyValues": [
+            {"pred": "http://qudt.org/schema/qudt/ucumCode", "val": "Cel"},
+            {"pred": "https://w3id.org/metpo/range_min", "val": "40"}
+          ]}
+        }
+      ]
+    }
+  ]
+}

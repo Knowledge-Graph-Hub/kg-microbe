@@ -9,13 +9,6 @@ import click
 # eutils is unmaintained and uses deprecated API, but doesn't affect functionality
 warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
 
-from kg_microbe import download as kg_download  # noqa: E402
-from kg_microbe.download import UnknownDownloadTagError  # noqa: E402
-from kg_microbe.merge_utils.merge_kg import load_and_merge  # noqa: E402
-from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query  # noqa: E402
-from kg_microbe.transform import DATA_SOURCES  # noqa: E402
-from kg_microbe.transform import transform as kg_transform  # noqa: E402
-
 show_status_option = click.option("--show-status/--no-show-status", default=True)
 
 
@@ -62,6 +55,9 @@ def download(*args, **kwargs) -> None:
     :raises click.BadParameter: If a requested tag matches no entry in the YAML.
     :return: None
     """
+    from kg_microbe import download as kg_download
+    from kg_microbe.download import UnknownDownloadTagError
+
     try:
         kg_download(*args, **kwargs)
     except UnknownDownloadTagError as e:
@@ -77,7 +73,7 @@ def download(*args, **kwargs) -> None:
 @main.command()
 @click.option("input_dir", "-i", default="data/raw", type=click.Path(exists=True))
 @click.option("output_dir", "-o", default="data/transformed")
-@click.option("sources", "-s", default=None, multiple=True, type=click.Choice(DATA_SOURCES.keys()))
+@click.option("sources", "-s", default=None, multiple=True)
 @show_status_option
 def transform(*args, **kwargs) -> None:
     """
@@ -88,8 +84,12 @@ def transform(*args, **kwargs) -> None:
     :param sources: A list of sources to transform.
     :return: None
     """
-    # call transform script for each source
-    kg_transform(*args, **kwargs)
+    from kg_microbe.transform import transform as kg_transform
+
+    try:
+        kg_transform(*args, **kwargs)
+    except ValueError as e:
+        raise click.BadParameter(str(e), param_hint="--sources") from e
 
     return None
 
@@ -118,6 +118,8 @@ def merge(yaml: str, processes: int, sources: tuple) -> None:
     :param sources: Source keys to merge; empty means all.
     :return: None
     """
+    from kg_microbe.merge_utils.merge_kg import load_and_merge
+
     load_and_merge(yaml, processes, list(sources) or None)
 
 
@@ -132,13 +134,13 @@ def merge(yaml: str, processes: int, sources: tuple) -> None:
 @click.option(
     "--nodes-path",
     "-n",
-    default="data/merged/merged-kg_default_nodes.tsv",
+    default="data/merged/merged-kg_nodes.tsv",
     help="Nodes TSV path",
 )
 @click.option(
     "--edges-path",
     "-e",
-    default="data/merged/merged-kg_default_edges.tsv",
+    default="data/merged/merged-kg_edges.tsv",
     help="Edges TSV path",
 )
 @click.option("--output", "-o", default=None, help="Output markdown file")
@@ -161,21 +163,18 @@ def query_organism(
     try:
         conn = get_or_create_database(nodes_path, edges_path, db_path, force_reload)
     except Exception as e:
-        click.echo(f"❌ Error loading database: {e}", err=True)
-        return
+        raise click.ClickException(f"Error loading database: {e}") from e
 
     # Query organism
     click.echo(f"Querying organism: {organism_name}")
     try:
         result = query_organism_full(conn, organism_name)
     except ValueError as e:
-        click.echo(f"❌ Error: {e}", err=True)
         conn.close()
-        return
+        raise click.ClickException(str(e)) from e
     except Exception as e:
-        click.echo(f"❌ Query failed: {e}", err=True)
         conn.close()
-        return
+        raise click.ClickException(f"Query failed: {e}") from e
 
     # Format output
     report = format_organism_report(result)
@@ -210,75 +209,14 @@ def query(
     :param outfile_ext: file extension for output file [.tsv]
     :return: None.
     """
+    from kg_microbe.query import parse_query_yaml, result_dict_to_tsv, run_query
+
     query = parse_query_yaml(yaml)
     result_dict = run_query(query=query[query_key], endpoint=query[endpoint_key])
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     outfile = os.path.join(output_dir, os.path.splitext(os.path.basename(yaml))[0] + outfile_ext)
     result_dict_to_tsv(result_dict, outfile)
-
-
-@main.command()
-@click.option(
-    "nodes",
-    "-n",
-    help="nodes KGX TSV file",
-    default="data/merged/nodes.tsv",
-    type=click.Path(exists=True),
-)
-@click.option(
-    "edges",
-    "-e",
-    help="edges KGX TSV file",
-    default="data/merged/edges.tsv",
-    type=click.Path(exists=True),
-)
-@click.option("output_dir", "-o", help="output directory", default="data/holdouts/", type=click.Path())
-@click.option(
-    "train_fraction",
-    "-t",
-    help="fraction of input graph to use in training graph [0.8]",
-    default=0.8,
-    type=float,
-)
-@click.option("validation", "-v", help="make validation set", is_flag=True, default=False)
-def holdouts(*args, **kwargs) -> None:
-    """
-    Make holdouts for ML training.
-
-    Given a graph (from formatted node and edge TSVs), output positive edges and negative
-    edges for use in machine learning.
-
-    To generate positive edges: a set of test positive edges equal in number to
-    [(1 - train_fraction) * number of edges in input graph] are randomly selected from
-    the edges in the input graph that is not part of a minimal spanning tree, such that
-    removing the edge does not create new components. These edges are emitting as
-    positive test edges. (If -v == true, the test positive edges are divided equally to
-    yield test and validation positive edges.) These edges are then removed from the
-    edges of the input graph, and these are emitted as the training edges.
-
-    Negative edges are selected by randomly selecting pairs of nodes that are not
-    connected by an edge in the input graph. The number of negative edges emitted is
-    equal to the number of positive edges emitted above.
-
-    Outputs these files in [output_dir]:
-        pos_train_edges.tsv - positive edges for training (this is the input graph with
-                      test [and validation] positive edges removed)
-        pos_test_edges.tsv - positive edges for testing
-        pos_valid_edges.tsv (optional) - positive edges for validation
-        neg_train.tsv - a set of edges not present in input graph for training
-        neg_test.tsv - a set of edges not present in input graph for testing
-        neg_valid.tsv (optional) - a set of edges not present in input graph for
-                      validation
-
-    :param nodes:   nodes for input graph, in KGX TSV format [data/merged/nodes.tsv]
-    :param edges:   edges for input graph, in KGX TSV format [data/merged/edges.tsv]
-    :param output_dir:     directory to output edges and new graph [data/edges/]
-    :param train_fraction: fraction of edges to emit as training [0.8]
-    :param validation:     should we make validation edges? [False]
-
-    """
-    # make_holdouts(*args, **kwargs)
 
 
 if __name__ == "__main__":

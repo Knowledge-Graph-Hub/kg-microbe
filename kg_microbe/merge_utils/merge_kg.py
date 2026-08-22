@@ -10,7 +10,6 @@ from typing import Dict, List, Optional
 
 import networkx as nx  # type: ignore
 import yaml
-from kgx.cli.cli_utils import merge  # type: ignore
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
@@ -64,6 +63,16 @@ NODE_COLUMNS_TO_DROP = {"subsets", "meta", "iri"}
 #: for the pre-transformation target, used by gold when it resolves an
 #: uninformative ecosystem upward.
 EDGE_EXTENSION_COLUMNS = {"has_percentage", "original_object"}
+
+
+def merge(*args, **kwargs):
+    """Invoke KGX merge after configuring its import-time BMT toolkit locally."""
+    from kg_microbe.utils.biolink_model import prepare_kgx
+
+    prepare_kgx()
+    from kgx.cli.cli_utils import merge as kgx_merge
+
+    return kgx_merge(*args, **kwargs)
 
 
 def parse_load_config(yaml_file: str) -> Dict:

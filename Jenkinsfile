@@ -107,7 +107,7 @@ pipeline {
                 dir('./gitrepo') {
                     sh '. venv/bin/activate && kg merge -y merge.yaml'
                     sh 'cp merged_graph_stats.yaml merged_graph_stats_$BUILDSTARTDATE.yaml'
-                    sh 'tar -rvf data/merged/merged-kg.tar merged_graph_stats_$BUILDSTARTDATE.yaml'
+                    sh 'gunzip data/merged/merged-kg.tar.gz && tar -rf data/merged/merged-kg.tar merged_graph_stats_$BUILDSTARTDATE.yaml && gzip data/merged/merged-kg.tar'
                 }
             }
         }
@@ -165,6 +165,7 @@ pipeline {
                                 //
                                 sh 'mkdir $BUILDSTARTDATE/'
                                 sh 'cp -p data/merged/merged-kg.tar.gz $BUILDSTARTDATE/kg-microbe.tar.gz'
+                                sh 'cd $BUILDSTARTDATE && sha256sum kg-microbe.tar.gz > kg-microbe.tar.gz.sha256'
                                 // transformed data
                                 sh 'rm -fr data/transformed/.gitkeep'
                                 sh 'cp -pr data/transformed $BUILDSTARTDATE/'

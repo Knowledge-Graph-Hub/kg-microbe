@@ -7,6 +7,11 @@ via `bmt`), plus the merged-KG integrity checks that skill does not cover — da
 endpoints, orphan nodes, duplicate edges, self-loops, cross-transform ID collisions and
 Biolink domain/range per edge signature.
 
+> Historical model note: this report records the 4.2.2 review performed on
+> 2026-08-10. KG-Microbe now pins Biolink 4.4.2. The assumptions relevant to
+> GOLD were checked again against that exact schema; see
+> [BIOLINK_4_4_2_REVALIDATION.md](BIOLINK_4_4_2_REVALIDATION.md).
+
 GOLD arrives already in KGX shape rather than as a source to parse, so this review treats
 the TSVs as a transform's *output* and asks the question we would ask of any transform
 before it enters a merge.

@@ -5,9 +5,10 @@ RUNNER_DIR := actions-runner
 REPO_OWNER := Knowledge-Graph-Hub
 REPO_NAME := kg-microbe
 REPO_URL := https://github.com/$(REPO_OWNER)/$(REPO_NAME)
-TOKEN := $(GH_TOKEN)
 MERGED_TARBALL := data_merged.tar.gz
 PART_SIZE := 2000M  # Size of each part (less than 2GB)
+RELEASE_ARTIFACT_MANIFEST := .release-artifacts.txt
+SELF_MAKEFILE := $(lastword $(MAKEFILE_LIST))
 # Detect OS and set STAT_CMD accordingly
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -16,19 +17,12 @@ else ifeq ($(UNAME_S),Darwin)
 	STAT_CMD = stat -f %z
 endif
 
-.PHONY: release pre-release tag generate-tarballs check-and-split
+.PHONY: release pre-release tag generate-tarballs check-and-split cleanup-release-artifacts
 
-git_remote:
-	@if [ -z "$(GH_TOKEN)" ]; then \
-	  echo "Error: GH_TOKEN is not set. Aborting."; \
-	  exit 1; \
-	fi
-	git remote set-url origin "https://$(GH_TOKEN)@github.com/Knowledge-Graph-Hub/kg-microbe.git"
-
-release: git_remote generate-tarballs
+release: generate-tarballs
 	@$(call create_release,release)
 
-pre-release: git_remote generate-tarballs
+pre-release: generate-tarballs
 	$(call create_release,pre-release)
 
 tag: generate-tarballs
@@ -36,13 +30,14 @@ tag: generate-tarballs
 
 generate-tarballs:
 	@echo "Generating tarballs of the specified directories..."
+	@: > "$(RELEASE_ARTIFACT_MANIFEST)"
 	@for dir in data/transformed/*; do \
 		if [ -d "$$dir" ] && [ "$$(basename $$dir)" != "uniprot_functional_microbes" ]; then \
 			if [ $$(find $$dir -type f | wc -l) -gt 0 ]; then \
 				tarball_name=$$(basename $$dir).tar.gz; \
 				tar -czvf $$tarball_name -C $$dir .; \
 				echo "Tarball generated successfully as $$tarball_name."; \
-				$(MAKE) check-and-split TARFILE=$$tarball_name DIR=$$dir; \
+				$(MAKE) -f "$(SELF_MAKEFILE)" check-and-split TARFILE=$$tarball_name DIR=$$dir; \
 			else \
 				echo "Directory $$dir is empty. Skipping tarball generation."; \
 			fi \
@@ -53,7 +48,7 @@ generate-tarballs:
 		echo "Tarballing data/merged/kg-microbe-core..."; \
 		tar -czvf kg-microbe-core.tar.gz -C data/merged/kg-microbe-core .; \
 		echo "Tarball generated successfully as kg-microbe-core.tar.gz."; \
-		$(MAKE) check-and-split TARFILE=kg-microbe-core.tar.gz DIR=data/merged/kg-microbe-core; \
+		$(MAKE) -f "$(SELF_MAKEFILE)" check-and-split TARFILE=kg-microbe-core.tar.gz DIR=data/merged/kg-microbe-core; \
 	else \
 		echo "Directory data/merged/kg-microbe-core does not exist. Skipping."; \
 	fi
@@ -62,7 +57,7 @@ generate-tarballs:
 		echo "Tarballing data/merged/kg-microbe-biomedical..."; \
 		tar -czvf kg-microbe-biomedical.tar.gz -C data/merged/kg-microbe-biomedical .; \
 		echo "Tarball generated successfully as kg-microbe-biomedical.tar.gz."; \
-		$(MAKE) check-and-split TARFILE=kg-microbe-biomedical.tar.gz DIR=data/merged/kg-microbe-biomedical; \
+		$(MAKE) -f "$(SELF_MAKEFILE)" check-and-split TARFILE=kg-microbe-biomedical.tar.gz DIR=data/merged/kg-microbe-biomedical; \
 	else \
 		echo "Directory data/merged/kg-microbe-biomedical does not exist. Skipping."; \
 	fi
@@ -79,6 +74,7 @@ check-and-split:
 				filename=$$(basename $$file); \
                 tarball_name=$${dirname}_$${filename}.tar.gz; \
 				tar -czvf $$tarball_name -C $$(dirname $$file) $$(basename $$file); \
+				printf '%s\n' "$$tarball_name" >> "$(RELEASE_ARTIFACT_MANIFEST)"; \
 				echo "Tarball generated successfully as $$tarball_name."; \
 			else \
 				echo "$$file is not a regular file. Skipping."; \
@@ -87,12 +83,22 @@ check-and-split:
 		rm -f $(TARFILE); \
 		echo "$(TARFILE) deleted after splitting."; \
 	else \
+		printf '%s\n' "$(TARFILE)" >> "$(RELEASE_ARTIFACT_MANIFEST)"; \
 		echo "$(TARFILE) is less than 2GB. No need to split."; \
+	fi
+
+cleanup-release-artifacts:
+	@if [ -f "$(RELEASE_ARTIFACT_MANIFEST)" ]; then \
+		while IFS= read -r artifact; do \
+			if [ -n "$$artifact" ]; then rm -f -- "$$artifact"; fi; \
+		done < "$(RELEASE_ARTIFACT_MANIFEST)"; \
+		rm -f -- "$(RELEASE_ARTIFACT_MANIFEST)"; \
 	fi
 
 define create_release
 	@echo "Creating a $(1) on GitHub..."
-	@read -p "Enter $(1) tag (e.g., $(shell date +%Y-%m-%d)): " TAG_NAME; \
+	@set -e; \
+	read -p "Enter $(1) tag (e.g., $(shell date +%Y-%m-%d)): " TAG_NAME; \
 	read -p "Enter $(1) title: " RELEASE_TITLE; \
 	read -p "Enter $(1) notes: " RELEASE_NOTES; \
 	if git rev-parse "$$TAG_NAME" >/dev/null 2>&1; then \
@@ -102,24 +108,27 @@ define create_release
 	git tag -a $$TAG_NAME -m "$$RELEASE_TITLE"; \
 	git push origin $$TAG_NAME; \
 	gh release create $$TAG_NAME --title "$$RELEASE_TITLE" --notes "$$RELEASE_NOTES" $(if $(filter $(1),pre-release),--prerelease) --repo $(REPO_OWNER)/$(REPO_NAME); \
-	for tarball in *.tar.gz; do \
-		gh release upload $$TAG_NAME $$tarball --repo $(REPO_OWNER)/$(REPO_NAME); \
-	done; \
-	rm -f *.tar.gz; \
+	while IFS= read -r tarball; do \
+		[ -n "$$tarball" ] || continue; \
+		gh release upload "$$TAG_NAME" "$$tarball" --repo $(REPO_OWNER)/$(REPO_NAME); \
+	done < "$(RELEASE_ARTIFACT_MANIFEST)"; \
+	$(MAKE) -f "$(SELF_MAKEFILE)" cleanup-release-artifacts; \
 	echo "$(capitalize $(1)) $$TAG_NAME created successfully."
 endef
 
 define create_tag
 	@echo "Creating a release on GitHub..."
-	@read -p "Enter release tag (e.g., $(shell date +%Y-%m-%d)): " TAG; \
+	@set -e; \
+	read -p "Enter release tag (e.g., $(shell date +%Y-%m-%d)): " TAG; \
 	read -p "Enter release title: " RELEASE_TITLE; \
 	read -p "Enter release notes: " RELEASE_NOTES; \
 	git tag -a $$TAG -m "$$RELEASE_TITLE"; \
 	git push origin $$TAG; \
-	for tarball in *.tar.gz; do \
-		gh release upload $$TAG $$tarball --repo $(REPO_OWNER)/$(REPO_NAME); \
-	done; \
-	rm -f *.tar.gz; \
+	while IFS= read -r tarball; do \
+		[ -n "$$tarball" ] || continue; \
+		gh release upload "$$TAG" "$$tarball" --repo $(REPO_OWNER)/$(REPO_NAME); \
+	done < "$(RELEASE_ARTIFACT_MANIFEST)"; \
+	$(MAKE) -f "$(SELF_MAKEFILE)" cleanup-release-artifacts; \
 	echo "Release $$TAG created successfully."
 endef
 

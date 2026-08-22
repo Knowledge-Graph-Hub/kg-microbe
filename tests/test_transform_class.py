@@ -94,18 +94,13 @@ class TestTransform(TestCase):
         :param src_name:
         :return: None
         """
-        input_dir = Path("tests") / "resources"
-        output_dir = Path("output")
-
-        t = DATA_SOURCES[src_name](input_dir=input_dir, output_dir=output_dir)
-        self.assertEqual(t.input_base_dir, input_dir)
-        self.assertEqual(t.output_base_dir, output_dir)
-        self.assertTrue(hasattr(t, "run"))
-        # Check that class has default directories set
-        self.assertIsNotNone(t.DEFAULT_INPUT_DIR)
-        self.assertIsNotNone(t.DEFAULT_OUTPUT_DIR)
-        self.assertIsInstance(t.DEFAULT_INPUT_DIR, Path)
-        self.assertIsInstance(t.DEFAULT_OUTPUT_DIR, Path)
+        transform_class = DATA_SOURCES[src_name].transform_class
+        self.assertTrue(issubclass(transform_class, Transform))
+        self.assertTrue(callable(getattr(transform_class, "run", None)))
+        self.assertIsNotNone(transform_class.DEFAULT_INPUT_DIR)
+        self.assertIsNotNone(transform_class.DEFAULT_OUTPUT_DIR)
+        self.assertIsInstance(transform_class.DEFAULT_INPUT_DIR, Path)
+        self.assertIsInstance(transform_class.DEFAULT_OUTPUT_DIR, Path)
 
 
 class TransformChildClass(Transform):

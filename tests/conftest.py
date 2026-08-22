@@ -1,58 +1,73 @@
-"""
-Shared pytest fixtures for kg-microbe.
-
-Currently provides one autouse session fixture that ensures
-``data/raw/metpo.json`` is present before any metatraits test runs. The
-metatraits transform's discrete-trait pathway depends on METPO label/synonym
-lookups loaded from this file (see ``MetaTraitsTransform._load_metpo_lookups``).
-On a fresh clone or in CI, ``data/raw/metpo.json`` is not committed — it is a
-``download.yaml`` artifact normally produced by ``poetry run kg download``.
-This fixture fetches the file once per test session into ``data/raw/`` so the
-tests don't fail with a misleading "METPO JSON not found" warning.
-
-Production transform code intentionally does NOT do this fallback — the
-network fetch lives in test setup so production runs without ``data/raw/
-metpo.json`` fail loudly with a clear missing-prerequisite error rather than
-silently making external HTTP requests at transform time. (Copilot review
-finding #558: production transforms should not reach external services.)
-"""
+"""Shared hermetic-test configuration for kg-microbe."""
 
 from __future__ import annotations
 
+import ipaddress
 import os
+import socket
 from pathlib import Path
+from typing import Any
 
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-RAW_DATA_DIR = REPO_ROOT / "data" / "raw"
-METPO_JSON_PATH = RAW_DATA_DIR / "metpo.json"
-METPO_JSON_URL = "https://raw.githubusercontent.com/berkeleybop/metpo/main/metpo.json"
+TEST_RESOURCES = Path(__file__).resolve().parent / "resources"
 
 
-@pytest.fixture(scope="session", autouse=True)
-def ensure_metpo_json_for_tests():
-    """
-    Download metpo.json into ``data/raw/`` once per session if missing.
+def pytest_configure() -> None:
+    """Point data-dependent unit tests at committed immutable fixtures."""
+    os.environ.setdefault("KG_MICROBE_METPO_JSON", str(TEST_RESOURCES / "metpo_minimal.json"))
+    os.environ.setdefault("KG_MICROBE_METPO_TEMPLATE_DIR", str(TEST_RESOURCES / "metpo_templates"))
+    os.environ.setdefault("KG_MICROBE_BIOLINK_MODEL", str(TEST_RESOURCES / "biolink-model-minimal.yaml"))
+    os.environ.setdefault(
+        "KG_MICROBE_BIOLINK_PREDICATE_MAP",
+        str(TEST_RESOURCES / "predicate_mapping_minimal.yaml"),
+    )
 
-    Honors a ``KG_MICROBE_TESTS_NO_NETWORK`` environment variable: set it to a
-    truthy value to disable the fetch (the metatraits trait-resolution tests
-    will then skip / xfail naturally on the missing-data warning instead).
-    """
-    if METPO_JSON_PATH.exists():
-        return  # already present — fast path
 
-    if os.environ.get("KG_MICROBE_TESTS_NO_NETWORK"):
-        return  # opt-out for fully-offline test runs
-
-    try:
-        import requests
-
-        response = requests.get(METPO_JSON_URL, timeout=60)
-        response.raise_for_status()
-        RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
-        METPO_JSON_PATH.write_bytes(response.content)
-    except Exception:
-        # Silently leave the file absent; tests that depend on METPO lookups
-        # will then surface their own clearer skip/failure messages.
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    """Skip explicitly marked live/local-service tests unless opted in."""
+    run_integration = os.environ.get("KG_MICROBE_RUN_INTEGRATION", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    if run_integration:
         return
+    skip = pytest.mark.skip(reason="integration test; set KG_MICROBE_RUN_INTEGRATION=1 to run")
+    for item in items:
+        if item.get_closest_marker("integration"):
+            item.add_marker(skip)
+
+
+def _is_loopback(host: Any) -> bool:
+    """Return whether a socket destination is local to the test process."""
+    if host in {"localhost", "localhost.localdomain"}:
+        return True
+    try:
+        return ipaddress.ip_address(str(host)).is_loopback
+    except ValueError:
+        return False
+
+
+@pytest.fixture(autouse=True)
+def block_external_network(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
+    """Reject external DNS/socket use in unit tests while allowing loopback servers."""
+    if request.node.get_closest_marker("integration"):
+        return
+
+    real_getaddrinfo = socket.getaddrinfo
+    real_connect = socket.socket.connect
+
+    def guarded_getaddrinfo(host: Any, *args: Any, **kwargs: Any):
+        if not _is_loopback(host):
+            raise RuntimeError(f"external network disabled in unit tests: {host}")
+        return real_getaddrinfo(host, *args, **kwargs)
+
+    def guarded_connect(sock: socket.socket, address: Any) -> Any:
+        host = address[0] if isinstance(address, tuple) else address
+        if not _is_loopback(host):
+            raise RuntimeError(f"external network disabled in unit tests: {host}")
+        return real_connect(sock, address)
+
+    monkeypatch.setattr(socket, "getaddrinfo", guarded_getaddrinfo)
+    monkeypatch.setattr(socket.socket, "connect", guarded_connect)

@@ -98,6 +98,9 @@ class NameConflictTest(TestCase):
         (An earlier 78 was measured against the *stale* on-disk gold output;
         against what the current code emits it is 187. Caught by review.)
         """
+        from kg_microbe.utils.biolink_model import prepare_kgx
+
+        prepare_kgx()
         from kgx.utils.kgx_utils import prepare_data_dict
 
         first = {"id": "NCBITaxon:1387704", "name": "Saccharomyces x bayanus CBS 1502"}

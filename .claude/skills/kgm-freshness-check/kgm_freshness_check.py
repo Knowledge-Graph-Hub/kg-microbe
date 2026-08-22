@@ -69,7 +69,12 @@ def _declared_data_inputs(source: str) -> tuple:
     except Exception:
         return ()
     cls = DATA_SOURCES.get(source)
-    return tuple(getattr(cls, "DATA_INPUTS", ()) or ()) if cls is not None else ()
+    if cls is None:
+        return ()
+    try:
+        return tuple(getattr(cls, "DATA_INPUTS", ()) or ())
+    except (ImportError, AttributeError):
+        return ()
 
 
 def _latest_data_input_commit(source: str, ref: str) -> tuple[Optional[int], Optional[str]]:

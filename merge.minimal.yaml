@@ -1,54 +1,52 @@
----
+# GENERATED from merge.yaml + config/merge_variants.yaml; do not edit directly.
+# Minimal three-source graph for smoke tests.
 configuration:
   output_directory: data/merged
   checkpoint: false
-  curie_map:
-    # define non-canonical CURIE to IRI mappings (for RDF)
-  node_properties:
-    # define predicates that are to be treated as direct node properties (for RDF)
-  predicate_mappings:
-    # map non-canonical predicates to a property name (for RDF)
-  property_types:
-    # define the type for non-canonical properties for RDF export
+  category_allowlist:
+  - METPO:1004005
+  curie_map: null
+  node_properties: null
+  predicate_mappings: null
+  property_types: null
   preserve:
-    - primary_knowledge_source
-
+  - primary_knowledge_source
 merged_graph:
   name: kg-microbe graph
-  source:           # ← Missing this level!
+  source:
     bacdive:
-      name: "bacdive"
+      name: bacdive
       input:
         format: tsv
         filename:
-          - data/transformed/bacdive/nodes.tsv
-          - data/transformed/bacdive/edges.tsv
+        - data/transformed/bacdive/nodes.tsv
+        - data/transformed/bacdive/edges.tsv
     madin_etal:
-      name: "madin_etal"  # Note: should be under 'input:' based on line 98 in merge.yaml
       input:
+        name: madin_etal
         format: tsv
         filename:
-          - data/transformed/madin_etal/nodes.tsv
-          - data/transformed/madin_etal/edges.tsv
+        - data/transformed/madin_etal/nodes.tsv
+        - data/transformed/madin_etal/edges.tsv
     metatraits:
-      name: "metatraits"
       input:
+        name: metatraits
         format: tsv
         filename:
-          - data/transformed/metatraits/nodes.tsv
-          - data/transformed/metatraits/edges.tsv
+        - data/transformed/metatraits/nodes.tsv
+        - data/transformed/metatraits/edges.tsv
   operations:
-    - name: kgx.graph_operations.summarize_graph.generate_graph_stats
-      args:
-        graph_name: kg-microbe graph
-        filename: merged_graph_stats.yaml
-        node_facet_properties:
-          - provided_by
-        edge_facet_properties:
-          - provided_by
-          - source
+  - name: kgx.graph_operations.summarize_graph.generate_graph_stats
+    args:
+      graph_name: kg-microbe graph
+      filename: merged_graph_stats_minimal.yaml
+      node_facet_properties:
+      - provided_by
+      edge_facet_properties:
+      - provided_by
+      - source
   destination:
     merged-kg-tsv:
       format: tsv
       compression: tar.gz
-      filename: merged-kg
+      filename: merged-kg-minimal

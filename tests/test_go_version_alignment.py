@@ -276,7 +276,7 @@ def _stub_go_transform(tmp_path, monkeypatch):
         (Path(path) / f"{ont}.json").write_text(_JSON.format(d="2026-05-19"), encoding="utf-8")
 
     monkeypatch.setattr(tf_mod, "convert_to_json", fake_convert)
-    monkeypatch.setattr(tf_mod, "transform", lambda **k: None)
+    monkeypatch.setattr(tf_mod, "_run_kgx_transform", lambda **k: None)
     t = tf_mod.OntologiesTransform.__new__(tf_mod.OntologiesTransform)
     t.input_base_dir = tmp_path
     t.output_dir = tmp_path

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from kg_microbe.transform_utils.bacdive.bacdive import _StrainProvenanceWriter
+from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter
 
 
 class _DummyWriter:
@@ -18,9 +18,9 @@ class _DummyWriter:
         self.rows.append(list(row))
 
 
-def _make_writer() -> tuple[_StrainProvenanceWriter, _DummyWriter]:
+def _make_writer() -> tuple[StrainProvenanceWriter, _DummyWriter]:
     inner = _DummyWriter()
-    wrapped = _StrainProvenanceWriter(
+    wrapped = StrainProvenanceWriter(
         inner,
         knowledge_source="infores:bacdive",
         ks_column_index=4,

@@ -48,10 +48,11 @@ When this skill is invoked, run `kg_model_review.py` with the specified scope an
 
 #### Biolink Model Alignment
 
-**Reference data source**: `bmt` (Biolink Model Toolkit) loads the authoritative
-published biolink-model YAML at runtime. The skill prints the loaded version
-(e.g. `Biolink Model 4.2.2 loaded (154 categories, 469 predicates)`) so you can
-see what reference data you validated against.
+**Reference data source**: `bmt` (Biolink Model Toolkit) loads the repository's
+pinned `data/raw/biolink-model.yaml` and `predicate_mapping.yaml` (currently
+Biolink 4.4.2). It never uses BMT's remote default. The skill prints the loaded
+version (e.g. `Biolink Model 4.4.2 loaded`) so the review records its reference.
+Run `kg download -t schema` first when the pinned files are absent.
 
 On top of `bmt`, the skill layers a small `KGMICROBE_EXTENSION_CATEGORIES` /
 `KGMICROBE_EXTENSION_PREDICATES` whitelist for:

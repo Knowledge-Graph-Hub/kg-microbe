@@ -9,6 +9,7 @@ must tolerate both forms.
 
 import gzip
 
+from kg_microbe.transform_utils.metatraits import io as mt_io
 from kg_microbe.transform_utils.metatraits import metatraits as mt
 
 CROSSWALK_HEADER = "taxonID NCBI\ttaxonID GTDB\tspecies (NCBI)\tgenus (GTDB)\tspecies (GTDB)\n"
@@ -34,35 +35,35 @@ class TestOpenMaybeGzipped:
         """A genuinely compressed .gz still works."""
         path = tmp_path / "sample.tsv.gz"
         _write_gzipped(path, "hello\n")
-        with mt._open_maybe_gzipped(path) as f:
+        with mt_io.open_maybe_gzipped(path) as f:
             assert f.read() == "hello\n"
 
     def test_reads_plain_text_named_gz(self, tmp_path):
         """A .gz that Drive decompressed must not raise BadGzipFile."""
         path = tmp_path / "sample.tsv.gz"
         _write_plain(path, "hello\n")
-        with mt._open_maybe_gzipped(path) as f:
+        with mt_io.open_maybe_gzipped(path) as f:
             assert f.read() == "hello\n"
 
     def test_reads_uncompressed_name(self, tmp_path):
         """A file with no .gz suffix opens as plain text."""
         path = tmp_path / "sample.tsv"
         _write_plain(path, "hello\n")
-        with mt._open_maybe_gzipped(path) as f:
+        with mt_io.open_maybe_gzipped(path) as f:
             assert f.read() == "hello\n"
 
     def test_open_jsonl_delegates(self, tmp_path):
         """_open_jsonl keeps its tolerant behaviour after the refactor."""
         path = tmp_path / "sample.jsonl.gz"
         _write_plain(path, '{"tax_name": "x"}\n')
-        with mt._open_jsonl(path) as f:
+        with mt_io.open_jsonl(path) as f:
             assert "tax_name" in f.read()
 
     @staticmethod
     def _track_probes(monkeypatch):
         """Wrap gzip.open so a test can see whether probe handles get closed."""
         opened = []
-        real_gzip_open = mt.gzip.open
+        real_gzip_open = mt_io.gzip.open
 
         def tracking_open(*args, **kwargs):
             """Record every handle gzip.open hands out."""
@@ -70,7 +71,7 @@ class TestOpenMaybeGzipped:
             opened.append(handle)
             return handle
 
-        monkeypatch.setattr(mt.gzip, "open", tracking_open)
+        monkeypatch.setattr(mt_io.gzip, "open", tracking_open)
         return opened
 
     def test_probe_handle_is_closed_on_fallback(self, tmp_path, monkeypatch):
@@ -79,7 +80,7 @@ class TestOpenMaybeGzipped:
         _write_plain(path, "hello\n")
         opened = self._track_probes(monkeypatch)
 
-        with mt._open_maybe_gzipped(path) as f:
+        with mt_io.open_maybe_gzipped(path) as f:
             assert f.read() == "hello\n"
 
         assert len(opened) == 1, "the gzip probe should have run once"
@@ -99,7 +100,7 @@ class TestOpenMaybeGzipped:
         path.write_bytes(real.read_bytes()[:5])  # cut inside the 10-byte header
         opened = self._track_probes(monkeypatch)
 
-        handle = mt._open_maybe_gzipped(path)
+        handle = mt_io.open_maybe_gzipped(path)
         handle.close()
 
         assert opened, "the probe should have opened a handle"
@@ -112,7 +113,7 @@ class TestOpenMaybeGzipped:
             f.write(b"\xff\xfe\x00binary\x80\x81")
         opened = self._track_probes(monkeypatch)
 
-        handle = mt._open_maybe_gzipped(path)
+        handle = mt_io.open_maybe_gzipped(path)
         handle.close()
 
         assert opened

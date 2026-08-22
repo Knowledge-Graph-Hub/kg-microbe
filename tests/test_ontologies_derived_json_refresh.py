@@ -15,7 +15,6 @@ _JSON = '{{"meta":{{"basicPropertyValues":[{{"pred":"versionInfo","val":"{d}"}}]
 
 
 class DerivedJsonRefreshTest(TestCase):
-
     """`kg download` refreshes <x>.owl.gz in place; the derived JSON must follow."""
 
     def setUp(self):
@@ -146,7 +145,6 @@ _EC_JSON = (
 
 
 class EcSingleSourceTest(TestCase):
-
     """EC must ship one release, not two: derive ec.json from ec.owl, don't download both."""
 
     def setUp(self):
@@ -278,7 +276,6 @@ class EcSingleSourceTest(TestCase):
 
 
 class PostProcessingAtomicityTest(TestCase):
-
     """ROBOT publishes the JSON atomically; the post-processors must not undo that."""
 
     def setUp(self):

@@ -46,7 +46,6 @@ def _read(path):
 
 
 class GoldTransformTest(TestCase):
-
     """GOLD arrives KGX-shaped; the transform conforms it and applies our trim."""
 
     def setUp(self):

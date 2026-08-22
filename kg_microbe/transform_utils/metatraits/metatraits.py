@@ -251,7 +251,6 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
 
 
 class MetaTraitsTransform(Transform):
-
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)

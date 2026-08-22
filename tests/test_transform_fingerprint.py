@@ -15,7 +15,6 @@ from kg_microbe.utils.transform_fingerprint import (
 
 
 class FingerprintTest(TestCase):
-
     """The properties the freshness verdict rests on."""
 
     def setUp(self):

@@ -719,7 +719,6 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
 
 
 class ChemicalMappingLoader:
-
     """
     Loader class for unified chemical mappings.
 

@@ -15,7 +15,6 @@ from kg_microbe.utils.validation_utils import (
 
 
 class TestCURIEValidation(unittest.TestCase):
-
     """Test CURIE format validation."""
 
     def test_validate_curie_valid(self):
@@ -84,7 +83,6 @@ class TestCURIEValidation(unittest.TestCase):
 
 
 class TestKGMTermValidation(unittest.TestCase):
-
     """Test KGM custom term validation."""
 
     def test_load_valid_kgm_terms(self):

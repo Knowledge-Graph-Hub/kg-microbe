@@ -69,7 +69,6 @@ def _row(subject, object_id, object_label, confidence="high", justification="sem
 
 
 class LabelCheckTest(TestCase):
-
     """A row whose object_id denotes something other than its object_label must fail."""
 
     def setUp(self):

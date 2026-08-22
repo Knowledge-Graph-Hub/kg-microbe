@@ -275,7 +275,6 @@ _TAXON_PREFIX = "NCBITaxon:"
 
 
 class GOLDTransform(Transform):
-
     """Conform the pre-transformed GOLD KGX TSVs to the KG-Microbe standard."""
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

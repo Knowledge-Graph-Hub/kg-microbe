@@ -67,7 +67,6 @@ def _rows(path):
 
 
 class DropSamplesAndStudiesTest(TestCase):
-
     """KG-Microbe wants neither samples nor studies — but does want environments."""
 
     def test_sample_and_study_nodes_are_not_emitted(self):
@@ -108,7 +107,6 @@ class DropSamplesAndStudiesTest(TestCase):
 
 
 class TaxidRemapTest(TestCase):
-
     """NCBI merged ~950 of GOLD's taxids; judging them on the retired id loses them."""
 
     def test_a_retired_taxid_is_rewritten_on_the_edge(self):

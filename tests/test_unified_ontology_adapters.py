@@ -345,7 +345,6 @@ def _assignments_of_node(name, source):
 
 
 class TestNoUnguardedAdapters:
-
     """No source file may construct an adapter that points at an OWL."""
 
     def test_unparsable_files_are_known(self):
@@ -483,7 +482,6 @@ class TestNoUnguardedAdapters:
 
 
 class TestAccessorContract:
-
     """The accessors resolve, memoise and fail predictably."""
 
     @pytest.fixture(autouse=True)
@@ -533,7 +531,6 @@ class TestAccessorContract:
 
 
 class TestLazyResolution:
-
     """
     Adapters must cost nothing until they are used.
 
@@ -607,7 +604,6 @@ class TestLazyResolution:
         calls = []
 
         class FakeAdapter:
-
             """Stand-in with one identifiable method."""
 
             def basic_search(self, term):
@@ -630,7 +626,6 @@ class TestLazyResolution:
 
 
 class TestFatalErrorsAreNotSwallowed:
-
     """
     A fatal ontology failure must survive every broad handler in the tree.
 
@@ -643,7 +638,6 @@ class TestFatalErrorsAreNotSwallowed:
     """
 
     class _Boom:
-
         """A proxy whose resolution raises, standing in for an unusable DB."""
 
         def __getattr__(self, name):
@@ -755,7 +749,6 @@ def _raiser(exc):
 
 
 class TestResolutionIsSerialised:
-
     """lru_cache does not lock across the wrapped call (Codex F7)."""
 
     def test_concurrent_first_use_is_serialised(self, monkeypatch):
@@ -816,7 +809,6 @@ class TestResolutionIsSerialised:
 
 
 class TestGuardBypassesStayClosed:
-
     """Each of these walked past a previous version of the guard."""
 
     @pytest.mark.parametrize(

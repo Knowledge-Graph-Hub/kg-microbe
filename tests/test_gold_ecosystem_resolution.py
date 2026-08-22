@@ -68,7 +68,6 @@ def _run():
 
 
 class EcosystemResolutionTest(TestCase):
-
     """The meaning is in the hierarchy, so a one-hop query must still find it."""
 
     def setUp(self):
@@ -141,7 +140,6 @@ class EcosystemResolutionTest(TestCase):
 
 
 class EnvoCrosswalkTest(TestCase):
-
     """The GOLD ontology's curated ENVO mappings bridge the ecosystem island."""
 
     def test_the_crosswalk_is_gated_on_the_envo_node_existing(self):
@@ -178,7 +176,6 @@ class EnvoCrosswalkTest(TestCase):
 
 
 class PredicateAndSiteTest(TestCase):
-
     """Biolink's definitions decide the predicate and what may be a site."""
 
     def test_environment_edges_are_located_in_not_occurs_in(self):

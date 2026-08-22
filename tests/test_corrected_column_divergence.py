@@ -15,7 +15,6 @@ _SPEC.loader.exec_module(_MODULE)
 
 
 class CorrectedColumnDivergenceTest(TestCase):
-
     """`corrected_column_primary` must expose ties the production order hides."""
 
     def test_a_correction_that_loses_the_tie_is_visible(self):

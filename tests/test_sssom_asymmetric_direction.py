@@ -43,7 +43,6 @@ def _predicate_counts():
 
 
 class VendoredSetShapeTest(TestCase):
-
     """The declaration only helps if the file's shape matches what it declares."""
 
     def setUp(self):

@@ -220,7 +220,6 @@ logger = logging.getLogger(__name__)
 
 
 class BacDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     DATA_INPUTS = (

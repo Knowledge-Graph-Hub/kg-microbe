@@ -124,7 +124,6 @@ def _build_transform(output_dir: Path) -> OntologiesTransform:
 
 
 class TestEcPostProcessUriCompaction(TestCase):
-
     """post_process('ec') must convert every URI to its CURIE and drop UniProt stubs."""
 
     def _run_post_process(self, tmp: Path):
@@ -246,7 +245,6 @@ class TestEcPostProcessUriCompaction(TestCase):
 
 
 class TestStrayHeaderRowsAreDropped(TestCase):
-
     """The incoming KGX header must not survive into the edge body."""
 
     # KGX's edges TSV leads with an `id` column, so its header's first field is

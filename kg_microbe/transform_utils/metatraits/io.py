@@ -28,7 +28,6 @@ def open_jsonl(path: Path) -> IO[str]:
 
 
 class StreamingRowWriter:
-
     """Write TSV rows incrementally without accumulating a graph in memory."""
 
     def __init__(self, output_file: Path, header: List[str]):

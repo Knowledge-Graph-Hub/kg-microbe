@@ -55,7 +55,6 @@ ADDITIONAL_TEST_CASES = [
 @patch("kg_microbe.transform_utils.metatraits.metatraits._ensure_ncbitaxon_db_ready")
 @patch("kg_microbe.transform_utils.metatraits.metatraits._get_ncbitaxon_adapter")
 class TestMetaTraitsTransform(unittest.TestCase):
-
     """Test MetaTraitsTransform class."""
 
     def setUp(self):

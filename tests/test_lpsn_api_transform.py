@@ -11,7 +11,6 @@ from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
 
 
 class _FakeLpsnClient:
-
     """
     Stand-in for ``lpsn.LpsnClient`` — deterministic and offline.
 

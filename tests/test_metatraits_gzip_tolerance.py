@@ -28,7 +28,6 @@ def _write_plain(path, text):
 
 
 class TestOpenMaybeGzipped:
-
     """_open_maybe_gzipped must read both real gzip and misnamed plain text."""
 
     def test_reads_real_gzip(self, tmp_path):
@@ -121,7 +120,6 @@ class TestOpenMaybeGzipped:
 
 
 class TestCrosswalkLoading:
-
     """
     NCBI2GTDB.tsv.gz must load whether or not it arrives compressed.
 

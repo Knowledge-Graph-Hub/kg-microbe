@@ -126,7 +126,6 @@ from kg_microbe.utils.pandas_utils import (
 
 
 class MediaDiveTransform(Transform):
-
     """Template for how the transform class would be designed."""
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)

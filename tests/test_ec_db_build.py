@@ -44,7 +44,6 @@ def _make_ec_db(tmp_path: Path, release, name: str = "ec.db") -> str:
 
 
 class TestEcReleaseReader:
-
     """EC's versionIRI-object stamp must be read where the value-column reader cannot."""
 
     def test_reads_versioniri_date(self, tmp_path):
@@ -97,7 +96,6 @@ class TestEcReleaseReader:
 
 
 class TestEcDbBuild:
-
     """`_ensure_ec_db` must realign on release drift, not serve stale forever."""
 
     def test_aligned_db_is_reused(self, tmp_path, monkeypatch):

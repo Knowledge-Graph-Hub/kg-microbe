@@ -233,7 +233,6 @@ ONTOLOGIES_STUBS_SOURCE_NAME = "ontologies_stubs"
 
 
 class OntologiesStubsTransform(Transform):
-
     """Emit one labelled stub node per referenced NCIT / mesh / BTO / PO / MICRO CURIE."""
 
     #: Derived from the collector's own list rather than restated, so the two

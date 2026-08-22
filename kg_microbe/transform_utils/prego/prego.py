@@ -171,7 +171,6 @@ def _as_float(value) -> float:
 
 
 class PregoTransform(Transform):
-
     """Ingest PREGO taxon↔environment/process associations."""
 
     # Ceiling on distinct habitat values tracked per run. The measured value

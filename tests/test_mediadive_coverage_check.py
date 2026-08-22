@@ -32,7 +32,6 @@ def _edges(tmp_path, rows):
 
 
 class MediaDiveCoverageCheckTest(TestCase):
-
     """The counting rules the guard depends on."""
 
     def setUp(self):

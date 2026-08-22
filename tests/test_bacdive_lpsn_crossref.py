@@ -284,7 +284,6 @@ def _provenance_writer():
     captured = []
 
     class _Sink:
-
         """Collect rows instead of writing them."""
 
         def writerow(self, row):
@@ -334,7 +333,6 @@ def test_lpsn_edge_carries_the_list_form_knowledge_source():
     captured = []
 
     class _Sink:
-
         """Collect rows instead of writing them."""
 
         def writerow(self, row):
@@ -361,7 +359,6 @@ def test_non_strain_edges_keep_their_bare_knowledge_source():
     captured = []
 
     class _Sink:
-
         """Collect rows instead of writing them."""
 
         def writerow(self, row):

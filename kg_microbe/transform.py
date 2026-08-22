@@ -30,7 +30,6 @@ from kg_microbe.utils.transform_fingerprint import write_fingerprint
 
 
 class LazyTransform:
-
     """Resolve one transform class only when it is used."""
 
     def __init__(self, dotted_path: str) -> None:
@@ -72,9 +71,7 @@ DATA_SOURCES = {
     # "TCRDTransform": TCRDTransform,
     # "ProteinAtlasTransform": ProteinAtlasTransform,
     # "STRINGTransform": STRINGTransform,
-    ONTOLOGIES: LazyTransform(
-        "kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform"
-    ),
+    ONTOLOGIES: LazyTransform("kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform"),
     # Run ontologies_stubs after ontologies so the SemSQL DBs are present and
     # so the stub-node TSVs land in data/transformed/ontologies_stubs/ before
     # the merge step picks them up.
@@ -94,17 +91,13 @@ DATA_SOURCES = {
     METATRAITS_GTDB: LazyTransform(
         "kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb.MetaTraitsGTDBTransform"
     ),
-    RHEAMAPPINGS: LazyTransform(
-        "kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform"
-    ),
+    RHEAMAPPINGS: LazyTransform("kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform"),
     BACTOTRAITS: LazyTransform("kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform"),
     # Run gold after ontologies: it reads ncbitaxon_nodes.tsv to apply the
     # NCBITaxon trim, so GOLD cannot reintroduce excluded branches. Set
     # GOLD_APPLY_TAXON_TRIM=false to ingest unfiltered.
     GOLD: LazyTransform("kg_microbe.transform_utils.gold.gold.GOLDTransform"),
-    MICROBEDECODER: LazyTransform(
-        "kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform"
-    ),
+    MICROBEDECODER: LazyTransform("kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform"),
     PREGO: LazyTransform("kg_microbe.transform_utils.prego.prego.PregoTransform"),
     # UNIPROT_HUMAN: UniprotHumanTransform,
     # CTD: CTDTransform,

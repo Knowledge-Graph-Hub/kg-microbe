@@ -79,7 +79,6 @@ from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 
 class GoldStandard:
-
     """
     A set of curated ``(subject, object)`` pairs plus the entity space it covers.
 
@@ -279,7 +278,6 @@ def is_monotone_increasing(results: Sequence[Dict[str, float]]) -> bool:
 
 
 class LabelledEvidence:
-
     """
     Positive/negative labels for ``(subject, object)`` pairs.
 

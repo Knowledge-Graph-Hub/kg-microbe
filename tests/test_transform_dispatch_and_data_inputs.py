@@ -16,7 +16,6 @@ SSSOM = "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
 
 class UnknownSourceTest(TestCase):
-
     """A typo'd source must fail, not silently succeed."""
 
     def test_an_unknown_source_raises_rather_than_being_skipped(self):
@@ -46,7 +45,6 @@ class UnknownSourceTest(TestCase):
 
 
 class LazyTransformTest(TestCase):
-
     """Registry metadata inspection must survive unavailable optional modules."""
 
     def test_missing_module_uses_getattr_default_for_metadata(self):
@@ -74,7 +72,6 @@ class LazyTransformTest(TestCase):
 
 
 class DataInputsTest(TestCase):
-
     """Transforms declare the curation files they read, so staleness is visible."""
 
     def test_the_base_class_defaults_to_no_declared_inputs(self):
@@ -134,7 +131,6 @@ class DataInputsTest(TestCase):
 
 
 class FreshnessDataStalenessTest(TestCase):
-
     """The freshness check must report data staleness, not just code staleness."""
 
     def setUp(self):
